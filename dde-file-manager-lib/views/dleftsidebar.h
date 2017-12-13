@@ -94,6 +94,7 @@ protected:
 
 private:
     void loadBookmark();
+    void loadTagBookMarkItem();
     void addNetworkBookmarkItem();
     void addUserShareBookmarkItem();
     void loadDevices();

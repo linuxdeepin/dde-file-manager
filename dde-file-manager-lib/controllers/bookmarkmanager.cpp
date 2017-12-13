@@ -58,7 +58,11 @@ BookMarkManager::BookMarkManager(QObject *parent)
 
 BookMarkManager::~BookMarkManager()
 {
-
+    if(!m_tagBookmarks.empty()){
+        for(QExplicitlySharedDataPointer<BookMark> bookMark : m_tagBookmarks){
+            bookMark.reset();
+        }
+    }
 }
 
 void BookMarkManager::load()
@@ -100,6 +104,18 @@ void BookMarkManager::save()
 QList<BookMarkPointer> BookMarkManager::getBookmarks()
 {
     return m_bookmarks;
+}
+
+void BookMarkManager::appendTagBookmark(QExplicitlySharedDataPointer<BookMark> bookmark) noexcept
+{
+    m_tagBookmarks.push_back(bookmark);
+}
+
+void BookMarkManager::clearTagBookmark()
+{
+    if(!m_tagBookmarks.empty()){
+        m_tagBookmarks.clear();
+    }
 }
 
 QString BookMarkManager::cachePath()
@@ -187,6 +203,10 @@ void BookMarkManager::renameBookmark(BookMarkPointer bookmark, const QString &ne
 
 void BookMarkManager::moveBookmark(int from, int to)
 {
+    if(from == to){
+        return;
+    }
+
     m_bookmarks.move(from, to);
     save();
 }

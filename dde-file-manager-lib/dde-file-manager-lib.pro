@@ -8,7 +8,7 @@
 
 include(../common/common.pri)
 
-QT       += core gui svg dbus x11extras concurrent multimedia
+QT       += core gui svg dbus x11extras concurrent multimedia dbus
 #private
 QT       += gui-private
 
@@ -62,6 +62,7 @@ include(dbusinterface/dbusinterface.pri)
 include(../usershare/usershare.pri)
 include(../dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
 include(../partman/partman.pri)
+include(tag/tag.pri)
 isEqual(ARCH, sw_64){
 #    isEqual(ENABLE_SW_LABLE, YES){
         DEFINES += SW_LABEL
@@ -225,7 +226,17 @@ HEADERS += \
     dialogs/dfmsettingdialog.h \
     interfaces/dfmplaformmanager.h \
     controllers/operatorrevocation.h \
-    views/themeconfig.h
+    views/themeconfig.h \
+    interfaces/dfmplaformmanager.h\
+    controllers/tagcontroller.h \
+    models/tagfileinfo.h \
+    views/dtagactionwidget.h \
+    views/droundbutton.h \
+    views/dtagedit.h \
+    shutil/dsqlitehandle.h \
+    controllers/tagmanagerdaemoncontroller.h \
+    controllers/interface/tagmanagerdaemon_interface.h \
+    shutil/danythingmonitor.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -368,7 +379,16 @@ SOURCES += \
     dialogs/dfmsettingdialog.cpp \
     interfaces/dfmplaformmanager.cpp \
     controllers/operatorrevocation.cpp \
-    views/themeconfig.cpp
+    views/themeconfig.cpp \
+    controllers/tagcontroller.cpp \
+    models/tagfileinfo.cpp \
+    views/dtagactionwidget.cpp \
+    views/droundbutton.cpp \
+    views/dtagedit.cpp \
+    shutil/dsqlitehandle.cpp \
+    controllers/tagmanagerdaemoncontroller.cpp \
+    controllers/interface/tagmanagerdaemon_interface.cpp \
+    shutil/danythingmonitor.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET

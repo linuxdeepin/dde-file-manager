@@ -58,7 +58,7 @@
 #include "dialogs/dialogmanager.h"
 #include "singleton.h"
 
-
+#include "tagcontroller.h"
 #include "views/drenamebar.h"
 #include "shutil/filebatchprocess.h"
 
@@ -71,15 +71,39 @@
 #include <qprocess.h>
 #include <QtConcurrent>
 
-
+#include "tag/tagutil.h"
+#include "tag/tagmanager.h"
 #include "shutil/shortcut.h"
+#include "views/dbookmarkitem.h"
 #include "models/desktopfileinfo.h"
+#include "controllers/tagmanagerdaemoncontroller.h"
 
 #ifdef SW_LABEL
 #include "sw_label/filemanagerlibrary.h"
 #endif
 
-DWIDGET_USE_NAMESPACE
+using namespace Dtk::Widget;
+
+///###: be used for tag protocol.
+template<typename Ty>
+using iterator = typename QList<Ty>::iterator;
+
+template<typename Ty>
+using citerator = typename QList<Ty>::const_iterator;
+
+
+
+static const QMap<QString, QString> ColorsWithNames{
+                                                        { "#ffa503", "Orange"},
+                                                        { "#ff1c49", "Red"},
+                                                        { "#9023fc", "Purple"},
+                                                        { "#3468ff", "Navy-blue"},
+                                                        { "#00b5ff", "Azure"},
+                                                        { "#58df0a", "Grass green"},
+                                                        { "#fef144", "Yellow"} ,
+                                                        { "#cccccc", "Gray" }
+                                                   };
+
 
 QPair<DUrl, quint64> AppController::selectionAndRenameFile;
 QPair<DUrl, quint64> AppController::selectionFile;
@@ -106,6 +130,8 @@ void AppController::registerUrlHandle()
     DFileService::dRegisterUrlHandler<NetworkController>(SMB_SCHEME, "");
     DFileService::dRegisterUrlHandler<ShareControler>(USERSHARE_SCHEME, "");
     DFileService::dRegisterUrlHandler<AVFSFileController>(AVFS_SCHEME, "");
+
+    DFileService::dRegisterUrlHandler<TagController>(TAG_SCHEME, "");
 }
 
 void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
@@ -684,6 +710,97 @@ void AppController::actionSendToRemovableDisk()
     DUrlList urlList = DUrl::fromStringList(action->property("urlList").toStringList());
 
     fileService->pasteFile(action, DFMGlobal::CopyAction, targetUrl, urlList);
+}
+
+QList<QString> AppController::actionGetTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFileEvent>& event)
+{
+    QList<QString> tags{};
+
+    if(static_cast<bool>(event) && (!event->m_files.isEmpty())){
+        tags = TagManager::instance()->getSameTagsOfDiffFiles(event->m_files);
+    }
+    return tags;
+}
+
+void AppController::actionMakeFilesTagsThroughColor(const QSharedPointer<DFMMakeFilesTagsEvent> &event)
+{
+    if( static_cast<bool>(event) && (!event->m_files.isEmpty()) && (!event->m_tags.isEmpty()) ){
+            QList<QString> tags{};
+
+            for(const QString& tagColor : event->m_tags){
+                tags.push_back(::ColorsWithNames[tagColor]);
+            }
+
+        TagManager::instance()->makeFilesTags(tags, event->m_files);
+    }
+}
+
+QList<QString> AppController::actionGetFilesThroughTag(const QSharedPointer<DFMGetFilesThroughTag>& event)
+{
+    QList<QString> files{};
+
+    if( static_cast<bool>(event) && (!event->m_tagName.isEmpty()) ){
+        files = TagManager::instance()->getFilesThroughTag(event->m_tagName);
+    }
+
+    return files;
+}
+
+bool AppController::actionMakeFilesTags(const QSharedPointer<DFMMakeFilesTagsEvent> &event)
+{   
+    bool value{ false };
+
+     if( static_cast<bool>(event) && (!event->m_files.isEmpty()) && (!event->m_tags.isEmpty()) ){
+         value = TagManager::instance()->makeFilesTags(event->m_tags, event->m_files);
+     }
+
+     return value;
+}
+
+bool AppController::actionRemoveTagsOfFiles(const QSharedPointer<DFMRemoveTagsOfFilesEvent>& event)
+{
+    bool value{ false };
+
+    if(event && (!event->m_files.isEmpty()) && (!event->m_tags.isEmpty())){
+        value = TagManager::instance()->remveTagsOfFiles(event->m_tags, event->m_files);
+    }
+
+    return value;
+}
+
+void AppController::actionChangeTagColor(const QSharedPointer<DFMChangeTagColorEvent>& event)
+{
+    DBookmarkItem* item{ DBookmarkItem::ClickedItem.load(std::memory_order_consume) };
+
+    if( item != nullptr ){
+        item->changeIconThroughColor( event->m_newColorForTag );
+    }
+
+    item = nullptr;
+    DBookmarkItem::ClickedItem.store(nullptr, std::memory_order_release);
+}
+
+bool AppController::actionDeleteTags(const QSharedPointer<DFMDeleteTagsEvent>& event)
+{
+    bool value{ false };
+
+    if(event && !event->m_tagsForDeleting.isEmpty()){
+        value = TagManager::instance()->deleteTags(event->m_tagsForDeleting);
+    }
+
+    return value;
+}
+
+bool AppController::actionRenameTag(const QSharedPointer<DFMRenameTagEvent>& event)
+{
+    bool result{ false };
+    if(event && !event->m_oldAndNewName.first.isEmpty() &&
+                !event->m_oldAndNewName.second.isEmpty()){
+
+        result = TagManager::instance()->changeTagName(event->m_oldAndNewName);
+    }
+
+    return result;
 }
 
 #ifdef SW_LABEL

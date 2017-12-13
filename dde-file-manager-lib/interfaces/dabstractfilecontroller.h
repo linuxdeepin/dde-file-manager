@@ -56,6 +56,9 @@ class DFMFileShareEvnet;
 class DFMCancelFileShareEvent;
 class DUrl;
 class DAbstractFileWatcher;
+class DFMMakeFilesTagsEvent;
+class DFMRemoveTagsOfFilesEvent;
+
 typedef QList<DUrl> DUrlList;
 class DAbstractFileController : public QObject
 {
@@ -88,6 +91,11 @@ public:
     virtual bool shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const;
     virtual bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const;
     virtual bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const;
+
+
+
+    virtual bool makeFilesTags(const QSharedPointer<DFMMakeFilesTagsEvent> &event) const;
+    virtual bool removeTagsOfFiles(const QSharedPointer<DFMRemoveTagsOfFilesEvent> &event) const;
 
     virtual DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const;
 };

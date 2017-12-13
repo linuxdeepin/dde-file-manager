@@ -110,7 +110,6 @@ QVariant eventProcess(DFileService *service, const QSharedPointer<DFMEvent> &eve
 
     for (const DUrl &url : event->handleUrlList()) {
         QList<DAbstractFileController*> list = service->getHandlerTypeByUrl(url);
-
         if (!scheme_set.contains(url.scheme()))
             list << service->getHandlerTypeByUrl(url, true);
         else
@@ -314,6 +313,11 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     case DFMEvent::CreateFileWatcher:
         result = CALL_CONTROLLER(createFileWatcher);
         break;
+    case DFMEvent::Tag:
+    {
+        CALL_CONTROLLER(makeFilesTags);
+        break;
+    }
     default:
         return false;
     }
@@ -543,6 +547,19 @@ bool DFileService::unShareFolder(const QObject *sender, const DUrl &fileUrl) con
 bool DFileService::openInTerminal(const QObject *sender, const DUrl &fileUrl) const
 {
     return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenInTerminalEvent>(sender, fileUrl)).toBool();
+}
+
+
+///###: make file(s) tag(s).
+bool DFileService::makeFilesTags(const QObject* sender, QList<QString>& tags, const QList<DUrl>& files) const
+{
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMMakeFilesTagsEvent>(sender, tags, files)).toBool();
+}
+
+///###: remove tag(s) of file.
+bool DFileService::removeTagsOfFiles(const QObject* sender, const QList<QString>& tags, const QList<DUrl>& files) const
+{
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMRemoveTagsOfFilesEvent>(sender, tags, files)).toBool();
 }
 
 const DAbstractFileInfoPointer DFileService::createFileInfo(const QObject *sender, const DUrl &fileUrl) const

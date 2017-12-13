@@ -79,6 +79,8 @@ DWIDGET_USE_NAMESPACE
 
 #define DEFAULT_HEADER_SECTION_WIDTH 140
 
+QPoint DFileView::ClickedPosition{-1, -1};
+
 class DFileViewPrivate
 {
 public:
@@ -1309,6 +1311,12 @@ void DFileView::resizeEvent(QResizeEvent *event)
 void DFileView::contextMenuEvent(QContextMenuEvent *event)
 {
     D_DC(DFileView);
+
+    ///###: here, I stored the position  after clicking every time.
+    ///###: It will be used show the DTagEdit.
+    QPoint pos{ event->pos() };
+    DFileView::ClickedPosition = this->mapToGlobal(pos);
+
 
     const QModelIndex &index = indexAt(event->pos());
     bool indexIsSelected = this->isSelected(index);

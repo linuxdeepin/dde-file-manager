@@ -27,6 +27,7 @@
 #include <QDBusConnectionInterface>
 #include <QDebug>
 #include <DLog>
+#include <QObject>
 #include "app/global.h"
 #include "app/filemanagerdaemon.h"
 #include "client/filemanagerclient.h"

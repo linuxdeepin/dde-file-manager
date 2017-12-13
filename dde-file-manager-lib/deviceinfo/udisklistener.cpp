@@ -403,6 +403,7 @@ void UDiskListener::removeMountDiskInfo(const QDiskInfo &diskInfo)
         }else{
             removeDevice(device);
         }
+
         emit mountRemoved(device);
     }
 }

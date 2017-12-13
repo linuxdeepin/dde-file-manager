@@ -34,6 +34,7 @@ class UserShareManager;
 class UsbFormatter;
 class CommandManager;
 class DeviceInfoManager;
+class TagManagerDaemon;
 
 class AppController : public QObject
 {
@@ -55,6 +56,7 @@ private:
     UsbFormatter* m_usbFormatter = NULL;
     CommandManager* m_commandManager = NULL;
     DeviceInfoManager* m_deviceInfoManager = NULL;
+    TagManagerDaemon* m_tagManagerDaemon{ nullptr };
 };
 
 #endif // APPCONTROLLER_H

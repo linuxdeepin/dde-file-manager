@@ -44,6 +44,7 @@
 #define AVFS_SCHEME "avfs"
 #define FTP_SCHEME "ftp"
 #define SFTP_SCHEME "sftp"
+#define TAG_SCHEME "tag"
 
 #define TRASH_ROOT "trash:///"
 #define RECENT_ROOT "recent:///"
@@ -54,6 +55,7 @@
 #define SMB_ROOT "smb:///"
 #define USERSHARE_ROOT "usershare:///"
 #define AVFS_ROOT "avfs:///"
+#define TAG_ROOT "tag:///"
 
 class DUrl;
 
@@ -99,18 +101,21 @@ public:
     bool isAVFSFile() const;
     bool isFTPFile() const;
     bool isSFTPFile() const;
+    bool isTagedFile() const;
 
     QString toString(FormattingOptions options = FormattingOptions( PrettyDecoded )) const;
 
     QString searchKeyword() const;
     DUrl searchTargetUrl() const;
     DUrl searchedFileUrl() const;
+    DUrl tagedFileUrl() const noexcept;
 
     DUrl parentUrl() const;
 
     void setSearchKeyword(const QString &keyword);
     void setSearchTargetUrl(const DUrl &url);
     void setSearchedFileUrl(const DUrl &url);
+    void setTagedFileUrl(const DUrl& url)noexcept;
 
     static DUrl fromLocalFile(const QString &filePath);
     static DUrl fromTrashFile(const QString &filePath);
@@ -125,9 +130,12 @@ public:
     static DUrl fromMTPFile(const QString &filePath);
     static DUrl fromUserShareFile(const QString &filePath);
     static DUrl fromAVFSFile(const QString& filePath);
+    static DUrl fromUserTagedFile(const QString& filePath) noexcept;
+
     static DUrlList fromStringList(const QStringList &urls, ParsingMode mode = TolerantMode);
     static DUrlList fromQUrlList(const QList<QUrl> &urls);
     static DUrl fromUserInput(const QString &userInput, bool preferredLocalPath = true);
+
     // Return "file://$CURRENT_DIR/userInput" if preferredLocalPath is true and directory exists
     static DUrl fromUserInput(const QString &userInput, QString workingDirectory,
                               bool preferredLocalPath = true, UserInputResolutionOptions options = AssumeLocalFile);

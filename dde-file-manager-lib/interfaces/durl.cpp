@@ -46,7 +46,8 @@ QSet<QString> schemeList = QSet<QString>() << QString(TRASH_SCHEME)
                                            << QString(USERSHARE_SCHEME)
                                            << QString(AVFS_SCHEME)
                                            << QString(FTP_SCHEME)
-                                           << QString(SFTP_SCHEME);
+                                           << QString(SFTP_SCHEME)
+                                           << QString{ TAG_SCHEME };
 
 DUrl::DUrl()
     : QUrl()
@@ -199,6 +200,13 @@ bool DUrl::isSFTPFile() const
     return scheme() == SFTP_SCHEME;
 }
 
+
+///###: Jundge whether current the scheme of current url is equal to TAG_SCHEME.
+bool DUrl::isTagedFile() const
+{
+    return (this->scheme() == QString{TAG_SCHEME});
+}
+
 QString DUrl::toString(QUrl::FormattingOptions options) const
 {
     if(isLocalFile() || !schemeList.contains(scheme()))
@@ -239,6 +247,19 @@ DUrl DUrl::searchedFileUrl() const
     return DUrl(fragment(FullyDecoded));
 }
 
+///###: tag:///tagA#real file path(fregment).
+///###: so I get the true path from fregment of Uri.
+DUrl DUrl::tagedFileUrl() const noexcept
+{
+    if(this->isTagedFile() == true){
+        ///###: this uri is equal to Uri in Android. It extented URI.
+        DUrl uri{ this->QUrl::fragment(FullyDecoded) };
+        return uri;
+    }
+
+    return DUrl{};
+}
+
 DUrl DUrl::parentUrl() const
 {
     return parentUrl(*this);
@@ -276,6 +297,15 @@ void DUrl::setSearchedFileUrl(const DUrl &url)
         return;
 
     setFragment(url.toString(QUrl::FullyEncoded), QUrl::DecodedMode);
+}
+
+
+///###: the real path of file was puted in fragment field of Uri.
+void DUrl::setTagedFileUrl(const DUrl &url) noexcept
+{
+    if(this->isTagedFile() == true){
+        this->QUrl::setFragment(url.toString(QUrl::FullyEncoded), QUrl::DecodedMode);
+    }
 }
 
 DUrl DUrl::fromLocalFile(const QString &filePath)
@@ -408,6 +438,17 @@ DUrl DUrl::fromAVFSFile(const QString &filePath)
     url.setPath(filePath);
 
     return url;
+}
+
+
+///###: if a file is taged. Then add TAG_SCHEME as it's scheme.
+DUrl DUrl::fromUserTagedFile(const QString& filePath)noexcept
+{
+    DUrl uri;
+    uri.setScheme(TAG_SCHEME);
+    uri.setPath(filePath);
+
+    return uri;
 }
 
 DUrlList DUrl::fromStringList(const QStringList &urls, QUrl::ParsingMode mode)

@@ -20,6 +20,14 @@ CONFIG(release, release|debug) {
 }
 CONFIG += c++11 link_pkgconfig
 
+LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager
+
+CONFIG(debug, debug|release) {
+    DEPENDPATH += $$PWD/../dde-file-manager-lib
+    unix:QMAKE_RPATHDIR += $$OUT_PWD/../dde-file-manager-lib
+}
+
+
 include(../partman/partman.pri)
 
 TEMPLATE = app
@@ -28,8 +36,13 @@ TEMPLATE = app
 #include(../fileoperations/fileoperations.pri)
 
 INCLUDEPATH += dbusservice
+INCLUDEPATH += $$PWD/../dde-file-manager-lib $$PWD/.. \
+               $$PWD/../utils \
+               $$PWD/../dde-file-manager-lib/interfaces \
+               $$PWD/../dde-file-manager-lib/shutil
 
 DEFINES += QT_MESSAGELOGCONTEXT
+
 
 SOURCES += main.cpp \
     app/filemanagerdaemon.cpp \
@@ -70,7 +83,9 @@ SOURCES += main.cpp \
     dbusservice/dbusinterface/commandmanager_interface.cpp \
     deviceinfo/deviceinfomanager.cpp \
     dbusservice/dbusadaptor/deviceinfomanager_adaptor.cpp \
-    dbusservice/dbusinterface/deviceinfomanager_interface.cpp
+    dbusservice/dbusinterface/deviceinfomanager_interface.cpp \
+    tag/tagmanagerdaemon.cpp \
+    dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.cpp
 
 HEADERS += \
     app/filemanagerdaemon.h \
@@ -112,8 +127,9 @@ HEADERS += \
     dbusservice/dbusinterface/commandmanager_interface.h \
     deviceinfo/deviceinfomanager.h \
     dbusservice/dbusadaptor/deviceinfomanager_adaptor.h \
-    dbusservice/dbusinterface/deviceinfomanager_interface.h
-
+    dbusservice/dbusinterface/deviceinfomanager_interface.h \
+    tag/tagmanagerdaemon.h \
+    dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.h
 
 target.path = /usr/bin
 

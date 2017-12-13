@@ -69,17 +69,35 @@
 #include "dutil.h"
 #include "utils/utils.h"
 
+#include "tag/tagmanager.h"
 #include "interfaces/dfmplaformmanager.h"
+
+
 
 DWIDGET_USE_NAMESPACE
 
 
-int DBookmarkItem::DEFAULT_ICON_SIZE = 16;
+static const QMap<QString, QString> ColorsWithNames{
+                                                        { "#ffa503", "Orange"},
+                                                        { "#ff1c49", "Red"},
+                                                        { "#9023fc", "Purple"},
+                                                        { "#3468ff", "Navy-blue"},
+                                                        { "#00b5ff", "Azure"},
+                                                        { "#58df0a", "Grass green"},
+                                                        { "#fef144", "Yellow"} ,
+                                                        { "#cccccc", "Gray" }
+                                                   };
 
+
+int DBookmarkItem::DEFAULT_ICON_SIZE = 16;
+std::atomic<DBookmarkItem*> DBookmarkItem::ClickedItem{ nullptr };
 
 DBookmarkItem::DBookmarkItem(const QString &key)
     : m_key(key)
 {
+    ///###: install a event filter.
+    this->installEventFilter(this);
+
     init();
     m_isDefault = true;
 }
@@ -157,6 +175,15 @@ void DBookmarkItem::setIsCustomBookmark(bool isCustomBookmark)
     m_isCustomBookmark = isCustomBookmark;
 }
 
+void DBookmarkItem::changeIconThroughColor(const QColor& color)noexcept
+{
+    if(color.isValid()){
+        QString oldColor{ this->m_key };
+        this->m_key = ColorsWithNames[color.name()];
+        TagManager::instance()->changeTagColor(oldColor, ColorsWithNames[color.name()]);
+    }
+}
+
 bool DBookmarkItem::getMountBookmark() const
 {
     return m_mountBookmark;
@@ -183,8 +210,8 @@ void DBookmarkItem::editFinished()
         return;
 
     DFMUrlBaseEvent event(this, m_url);
-
     event.setWindowId(windowId());
+    QString oldTagName{ m_textContent };
 
     if (!m_lineEdit->text().isEmpty() && m_lineEdit->text() != m_textContent)
     {
@@ -193,10 +220,17 @@ void DBookmarkItem::editFinished()
         m_textContent = m_lineEdit->text();
     }
 
+    QString newTagName{ m_textContent };
+    QSharedPointer<DFMRenameTagEvent> renameTagEvent{ new DFMRenameTagEvent{ nullptr, { oldTagName, newTagName } } };
+
+    if( AppController::instance()->actionRenameTag(renameTagEvent)){
+        this->setUrl(DUrl::fromUserTagedFile( QString{"/"} + newTagName));
+    }
+
     m_widget->deleteLater();
     m_lineEdit = Q_NULLPTR;
 
-    emit fileSignalManager->requestFoucsOnFileView(windowId());
+//    emit fileSignalManager->requestFoucsOnFileView(windowId());
 }
 
 void DBookmarkItem::checkMountedItem(const DFMEvent &event)
@@ -418,6 +452,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
         }
     }
 
+
 //    if(m_isMounted)
 //    {
 //        QPixmap pressPic(":/icons/images/icons/unmount_press.svg");
@@ -612,19 +647,20 @@ void DBookmarkItem::editMode()
     m_lineEdit = new QLineEdit;
 
     connect(m_lineEdit, &QLineEdit::editingFinished, this, &DBookmarkItem::editFinished);
+
     m_widget = scene()->addWidget(m_lineEdit);
     m_lineEdit->setGeometry(37 + geometry().x(), geometry().y(), m_width - 37, m_height);
     m_lineEdit->setText(m_textContent);
     m_lineEdit->setSelection(0, m_textContent.length());
     m_lineEdit->setFocus();
     m_lineEdit->installEventFilter(this);
-    m_lineEdit->setStyleSheet("QLineEdit {\
-                              background: #0b8ade;\
-                              color:white;\
-                              selection-background-color: #70bfff;\
-                              padding-left: 6px;\
-                              border-radius: 4px;\
-                          }");
+//    m_lineEdit->setStyleSheet("QLineEdit {\
+//                              background: #0b8ade;\
+//                              color:white;\
+//                              selection-background-color: #70bfff;\
+//                              padding-left: 6px;\
+//                              border-radius: 4px;\
+//                          }");
     m_lineEdit->show();
 
 }
@@ -660,97 +696,118 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
 
-    if (!m_url.isValid() && !m_isDisk)
+    if (!m_url.isValid() && !m_isDisk){
         return;
+    }
 
-    if(m_group && m_pressed)
-    {
-        emit clicked();
+    if(m_url.isTagedFile()){
 
-        if(m_group)
-        {
+        if(static_cast<bool>(m_group) && m_pressed){
+            emit clicked();
             m_group->deselectAll();
             setChecked(true);
+            m_pressed = false;
+            update();
+
+            DFMEvent fmEvent{this};
+            fmEvent.setWindowId( this->windowId() );
+            fmEvent.setData(m_url);
+            emit m_group->url(fmEvent);
         }
-        m_pressed = false;
-        update();
 
-        QDir dir(m_url.path());
+    }else{
 
-        qDebug() << FileUtils::isFileExists(m_url.path());
 
-        if(!dir.exists() && !m_isDefault)
+        if(m_group && m_pressed)
         {
-            qDebug() << this << m_bookmarkModel->getDevcieId();
+            emit clicked();
 
-            DUrl deviceUrl(m_bookmarkModel->getDevcieId());
-
-            qDebug() << m_bookmarkModel->getDevcieId() << deviceUrl << NetworkManager::SupportScheme.contains(deviceUrl.scheme());
-
-            if (NetworkManager::SupportScheme.contains(deviceUrl.scheme())) {
-                setMountBookmark(true);
-                emit fileSignalManager->requestFetchNetworks(DFMUrlBaseEvent(this, deviceUrl));
-                return;
+            if(m_group)
+            {
+                m_group->deselectAll();
+                setChecked(true);
             }
+            m_pressed = false;
+            update();
 
-            /*handle bookmark of luks device when device is unmounted*/
-            if (m_bookmarkModel->getDevcieId().startsWith("/dev/dm")){
-                QString uuid = m_bookmarkModel->getUuid();
-                UDiskDeviceInfoPointer pDevice = deviceListener->getDeviceByUUID(uuid);
-                qDebug() << "uuid:" << uuid;
-                qDebug() << "device" << pDevice;
-                if (pDevice){
+            QDir dir(m_url.path());
+
+            qDebug() << FileUtils::isFileExists(m_url.path());
+
+            if(!dir.exists() && !m_isDefault)
+            {
+                qDebug() << this << m_bookmarkModel->getDevcieId();
+
+                DUrl deviceUrl(m_bookmarkModel->getDevcieId());
+
+                qDebug() << m_bookmarkModel->getDevcieId() << deviceUrl << NetworkManager::SupportScheme.contains(deviceUrl.scheme());
+
+                if (NetworkManager::SupportScheme.contains(deviceUrl.scheme())) {
                     setMountBookmark(true);
-                    deviceListener->mount(pDevice->getDiskInfo().id());
+                    emit fileSignalManager->requestFetchNetworks(DFMUrlBaseEvent(this, deviceUrl));
                     return;
                 }
-            }
 
-            deviceListener->mount(m_bookmarkModel->getDevcieId());
-            setMountBookmark(true);
-
-            TIMER_SINGLESHOT(1000, {
-
-                                 QDir dir(this->m_url.path());
-                                 if(!dir.exists()){
-                                     DFMUrlBaseEvent event(this, this->m_url);
-                                     event.setWindowId(windowId());
-
-                                     int result = dialogManager->showRemoveBookMarkDialog(event);
-                                     if (result == DDialog::Accepted)
-                                     {
-                                         emit fileSignalManager->requestBookmarkRemove(event);
-                                     }
-                                 }
-                             }, this)
-        }
-        else
-        {
-            DFMEvent e(this);
-            e.setWindowId(windowId());
-            if(m_url.isBookMarkFile())
-                e.setData(DUrl::fromLocalFile(m_url.path()));
-            else
-                e.setData(m_url);
-
-            if (m_isDisk){
-                if (m_deviceInfo){
-                    QDiskInfo info = m_deviceInfo->getDiskInfo();
-                    qDebug() << info << m_url << m_isMounted;
-                    if (!m_isMounted){
-                        m_url.setQuery(info.id());
-                        appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, m_url));
-                    }else{
-                        qDebug() << e;
-                        emit m_group->url(e);
+                /*handle bookmark of luks device when device is unmounted*/
+                if (m_bookmarkModel->getDevcieId().startsWith("/dev/dm")){
+                    QString uuid = m_bookmarkModel->getUuid();
+                    UDiskDeviceInfoPointer pDevice = deviceListener->getDeviceByUUID(uuid);
+                    qDebug() << "uuid:" << uuid;
+                    qDebug() << "device" << pDevice;
+                    if (pDevice){
+                        setMountBookmark(true);
+                        deviceListener->mount(pDevice->getDiskInfo().id());
+                        return;
                     }
                 }
-            }else{
-                emit m_group->url(e);
+
+                deviceListener->mount(m_bookmarkModel->getDevcieId());
+                setMountBookmark(true);
+
+                TIMER_SINGLESHOT(1000, {
+
+                                     QDir dir(this->m_url.path());
+                                     if(!dir.exists()){
+                                         DFMUrlBaseEvent event(this, this->m_url);
+                                         event.setWindowId(windowId());
+
+                                         int result = dialogManager->showRemoveBookMarkDialog(event);
+                                         if (result == DDialog::Accepted)
+                                         {
+                                             emit fileSignalManager->requestBookmarkRemove(event);
+                                         }
+                                     }
+                                 }, this)
             }
-            scene()->views().at(0)->ensureVisible(this, -10, 0);
+            else
+            {
+                DFMEvent e(this);
+                e.setWindowId(windowId());
+                if(m_url.isBookMarkFile())
+                    e.setData(DUrl::fromLocalFile(m_url.path()));
+                else
+                    e.setData(m_url);
+
+                if (m_isDisk){
+                    if (m_deviceInfo){
+                        QDiskInfo info = m_deviceInfo->getDiskInfo();
+                        qDebug() << info << m_url << m_isMounted;
+                        if (!m_isMounted){
+                            m_url.setQuery(info.id());
+                            appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, m_url));
+                        }else{
+                            qDebug() << e;
+                            emit m_group->url(e);
+                        }
+                    }
+                }else{
+                    emit m_group->url(e);
+                }
+                scene()->views().at(0)->ensureVisible(this, -10, 0);
+            }
         }
     }
+
 }
 
 void DBookmarkItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
@@ -821,19 +878,28 @@ void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)
     QGraphicsItem::dropEvent(event);
 }
 
-bool DBookmarkItem::eventFilter(QObject *obj, QEvent *e)
+bool DBookmarkItem::eventFilter(QObject* obj, QEvent* event)
 {
     if (obj == m_lineEdit) {
-        if (e->type() == QEvent::FocusOut) {
+        if (event->type() == QEvent::FocusOut) {
             editFinished();
 
             return false;
-        } else if (e->type() == QEvent::KeyPress) {
-            QKeyEvent *key_event = static_cast<QKeyEvent*>(e);
+        } else if (event->type() == QEvent::KeyPress) {
+            QKeyEvent *key_event = static_cast<QKeyEvent*>(event);
 
-            if (key_event->key() == Qt::Key_Escape) {
-                m_widget->deleteLater();
-                m_lineEdit = Q_NULLPTR;
+            switch(key_event->key())
+            {
+                case Qt::Key_Escape:
+                {
+                    m_widget->deleteLater();
+                    m_lineEdit = Q_NULLPTR;
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
             }
         }
     }
@@ -875,6 +941,7 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     m_isMenuOpened = true;
     DFileMenu *menu = 0;
 
+
     QSet<MenuAction> disableList;
 
     const bool tabAddable = WindowManager::tabAddableByWinId(windowId());
@@ -904,11 +971,17 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         menu = DFileMenuManager::createUserShareMarkMenu(disableList);
     }else if(PluginManager::instance()->getViewInterfaceByScheme(m_url.scheme())){
         menu = DFileMenuManager::createPluginBookMarkMenu(disableList);
-    }else if(m_isDefault)
+    }else if(m_isDefault){
         menu = DFileMenuManager::createDefaultBookMarkMenu(disableList);
-    else
-        menu = DFileMenuManager::createCustomBookMarkMenu(m_url, disableList);
 
+    ///###: tag protocol.
+    }else if( m_url.isTagedFile() ){
+        menu = DFileMenuManager::createTagMarkMenu(disableList);
+        DBookmarkItem::ClickedItem = this;
+
+    }else{
+        menu = DFileMenuManager::createCustomBookMarkMenu(m_url, disableList);
+    }
     QPointer<DBookmarkItem> me = this;
     if (menu && !menu->actions().isEmpty()) {
         menu->setEventData(DUrl(), DUrlList() << m_url, windowId(), this);

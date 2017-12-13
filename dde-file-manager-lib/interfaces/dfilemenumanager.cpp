@@ -43,6 +43,7 @@
 #include "dde-file-manager-plugins/plugininterfaces/menu/menuinterface.h"
 #include "dfmstandardpaths.h"
 #include "deviceinfo/udisklistener.h"
+#include "views/dtagactionwidget.h"
 
 #include <QMetaObject>
 #include <QMetaEnum>
@@ -55,6 +56,9 @@
 #include <QJsonObject>
 #include <QQueue>
 #include <QDebug>
+#include <QPushButton>
+#include <QWidgetAction>
+
 
 namespace DFileMenuData {
 static QMap<MenuAction, QString> actionKeys;
@@ -289,6 +293,20 @@ DFileMenu *DFileMenuManager::createListViewHeaderMenu(const QSet<MenuAction> &di
                << MenuAction::LastModifiedDate;
 
     DFileMenu *menu = genereteMenuByKeys(actionKeys, disableList, true);
+    return menu;
+}
+
+DFileMenu *DFileMenuManager::createTagMarkMenu(const QSet<MenuAction>& disableList)
+{
+    QVector<MenuAction> actionKeys;
+    actionKeys.push_back(MenuAction::OpenInNewWindow);
+    actionKeys.push_back(MenuAction::OpenInNewTab);
+    actionKeys.push_back(MenuAction::RenameTag);
+    actionKeys.push_back(MenuAction::DeleteTags);
+    actionKeys.push_back(MenuAction::Separator);
+    actionKeys.push_back(MenuAction::ChangeTagColor);
+
+    DFileMenu* menu{ genereteMenuByKeys(actionKeys, disableList, false) };
     return menu;
 }
 
@@ -749,6 +767,13 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::SetUserSharePassword] = QObject::tr("Set share password");
     actionKeys[MenuAction::FormatDevice] = QObject::tr("Format");
 
+    ///###: tag protocol.
+    actionKeys[MenuAction::TagInfo] = QObject::tr("Tag information");
+    actionKeys[MenuAction::TagFilesUseColor] = QString{"Add color tags"};
+    actionKeys[MenuAction::DeleteTags] = QObject::tr("Delete Tags");
+    actionKeys[MenuAction::ChangeTagColor] = QString{"Change color of present tag"};
+    actionKeys[MenuAction::RenameTag] = QObject::tr("Rename");
+
 }
 
 void DFileMenuData::initActions()
@@ -759,6 +784,37 @@ void DFileMenuData::initActions()
         if (unCachedActions.contains(key)){
             continue;
         }
+
+        ///###: MenuAction::TagFilesUseColor represents the button for tag files.
+        ///###: MenuAction::ChangeTagColor represents that you change the color of a present tag.
+        ///###: They are different event.
+        if(key == MenuAction::TagFilesUseColor || key == MenuAction::ChangeTagColor){
+            DTagActionWidget* tagWidget{ new DTagActionWidget };
+            QWidgetAction* tagAction{ new QWidgetAction{ nullptr } };
+
+            tagAction->setDefaultWidget(tagWidget);
+
+            switch(key)
+            {
+            case MenuAction::TagFilesUseColor:
+            {
+                tagAction->setText("Add color tags");
+                break;
+            }
+            case MenuAction::ChangeTagColor:
+            {
+                tagAction->setText("Change color of present tag");
+            }
+            default:
+                break;
+            }
+
+            tagAction->setData(key);
+            actions.insert(key, tagAction);
+            actionToMenuAction.insert(tagAction, key);
+            continue;
+        }
+
         QAction* action = new QAction(actionKeys.value(key), 0);
         action->setData(key);
         actions.insert(key, action);

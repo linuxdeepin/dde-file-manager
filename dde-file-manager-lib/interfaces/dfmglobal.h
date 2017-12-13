@@ -209,6 +209,14 @@ public:
         UnShare,
         SetUserSharePassword,
         FormatDevice,
+
+        ///###: tag protocol.
+        TagInfo,
+        TagFilesUseColor,
+        ChangeTagColor,
+        DeleteTags,
+        RenameTag,
+
 #ifdef SW_LABEL
         SetLabel,
         ViewLabel,
