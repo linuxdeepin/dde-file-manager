@@ -39,6 +39,8 @@ private slots:
 #endif
 
 private:
+    void paintEvent(QPaintEvent *e) override;
+
     QStringList m_ButtonNames;
     QStringList m_ActionStrs;
     QStringList m_ActionStrs2;
