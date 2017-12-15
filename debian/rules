@@ -1,4 +1,6 @@
 #!/usr/bin/make -f
+
+export QT_SELECT=5
 include /usr/share/dpkg/default.mk
 
 VERSION=$(shell dpkg-parsechangelog -ldebian/changelog -SVersion | awk -F'-' '{print $$1}')

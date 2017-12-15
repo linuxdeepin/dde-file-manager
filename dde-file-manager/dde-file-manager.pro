@@ -72,7 +72,7 @@ isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
 }
 
 dde-xdg-user-dirs-update.path = $$BINDIR
-dde-xdg-user-dirs-update.files = $$PWD/dde-xdg-user-dirs-update.sh
+dde-xdg-user-dirs-update.files = $$PWD/dde-xdg-user-dirs-update
 
 policy.path = $${PREFIX}/share/polkit-1/actions/
 policy.files = pkexec/com.deepin.pkexec.dde-file-manager.policy
