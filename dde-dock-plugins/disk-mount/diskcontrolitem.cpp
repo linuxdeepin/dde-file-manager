@@ -16,6 +16,7 @@
 #include "diskcontrolitem.h"
 #include "qdiskinfo.h"
 #include "dfileservices.h"
+#include "gvfsmountmanager.h"
 
 #include <QVBoxLayout>
 #include <QIcon>
@@ -171,5 +172,5 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
     QWidget::mouseReleaseEvent(e);
 
 //    emit requestOpenDrive(m_info.id());
-    DFileService::instance()->openFile(this, DUrl(m_info.mounted_root_uri()));
+    DFileService::instance()->openFile(this, GvfsMountManager::getRealMountUrl(m_info));
 }

@@ -1062,6 +1062,34 @@ void GvfsMountManager::setAutoMountSwitch(bool autoMountSwitch)
     m_autoMountSwitch = autoMountSwitch;
 }
 
+/*
+ * get real mount url from  mounted_root_uri of info
+ * smb://10.0.12.150/share -> file:///run/user/1000/gvfs/smb-share:server=10.0.12.150,share=share
+*/
+DUrl GvfsMountManager::getRealMountUrl(const QDiskInfo &info)
+{
+    QString path = QString("/run/user/%1/gvfs").arg(getuid());
+
+    QString mounted_root_uri = info.mounted_root_uri();
+    DUrl MountPointUrl = DUrl(mounted_root_uri);
+
+    if (mounted_root_uri == "/"){
+        MountPointUrl = DUrl::fromLocalFile("/");
+    }else{
+        if ((info.type() != "native" &&
+             info.type() != "removable" &&
+             info.type() != "dvd") && !info.id_filesystem().isEmpty()){
+            if (info.type() == "network"){
+                MountPointUrl = DUrl::fromLocalFile(QString("%1/%2%3").arg(path, info.id_filesystem(), DUrl(info.default_location()).path()));
+            }else{
+                MountPointUrl = DUrl::fromLocalFile(QString("%1/%2").arg(path, info.id_filesystem()));
+            }
+        }
+    }
+
+    return MountPointUrl;
+}
+
 void GvfsMountManager::autoMountAllDisks()
 {
     if (DFMSetting::instance()->isAutoMount()){
