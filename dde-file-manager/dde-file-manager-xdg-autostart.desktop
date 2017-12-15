@@ -1,5 +1,5 @@
 [Desktop Entry]
 Type=Application
 Name=dde-file-manager auto
-Exec=/usr/bin/dde-xdg-user-dirs-update.sh
+Exec=/usr/bin/dde-xdg-user-dirs-update
 NoShowIn=GNOME;Unity;Deepin
