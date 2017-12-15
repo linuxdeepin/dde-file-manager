@@ -101,35 +101,9 @@ QString UDiskDeviceInfo::getMountPoint() const
 DUrl UDiskDeviceInfo::getMountPointUrl()
 {
     if (!getId().isEmpty())
-        return getMountPointUrl(m_diskInfo);
+        return GvfsMountManager::getRealMountUrl(m_diskInfo);
     else
         return DUrl();
-}
-
-DUrl UDiskDeviceInfo::getMountPointUrl(QDiskInfo &info)
-{
-    QString path = QString("/run/user/%1/gvfs").arg(getuid());
-
-    QString mounted_root_uri = info.mounted_root_uri();
-    DUrl MountPointUrl = DUrl(mounted_root_uri);
-
-    if (mounted_root_uri == "/"){
-        MountPointUrl = DUrl::fromLocalFile("/");
-    }else{
-        if ((info.type() != "native" &&
-             info.type() != "removable" &&
-             info.type() != "dvd") && !info.id_filesystem().isEmpty()){
-            if (info.type() == "network"){
-                MountPointUrl = DUrl::fromLocalFile(QString("%1/%2%3").arg(path, info.id_filesystem(), DUrl(info.default_location()).path()));
-            }else{
-                MountPointUrl = DUrl::fromLocalFile(QString("%1/%2").arg(path, info.id_filesystem()));
-            }
-        }
-    }
-
-//    info.setMounted_url(MountPointUrl);
-
-    return MountPointUrl;
 }
 
 QString UDiskDeviceInfo::getIcon() const

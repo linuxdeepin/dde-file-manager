@@ -18,6 +18,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include "durl.h"
 
 class QDrive;
 class QVolume;
@@ -117,6 +118,7 @@ public:
 
     bool getAutoMountSwitch() const;
     void setAutoMountSwitch(bool autoMountSwitch);
+    static DUrl getRealMountUrl(const QDiskInfo& info);
 
 signals:
     void loadDiskInfoFinished();
