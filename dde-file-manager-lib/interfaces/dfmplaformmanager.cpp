@@ -24,3 +24,15 @@ bool DFMPlaformManager::isDisableUnMount()
 
     return ret;
 }
+
+bool DFMPlaformManager::isRoot_hidden()
+{
+    bool ret = false;
+    m_platformSettings->beginGroup("x86_pro");
+    if (m_platformSettings->value("root_hidden").toString() == "true"){
+        ret = true;
+    }
+    m_platformSettings->endGroup();
+
+    return ret;
+}

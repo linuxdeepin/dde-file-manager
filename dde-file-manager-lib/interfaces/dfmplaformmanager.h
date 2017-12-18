@@ -12,6 +12,7 @@ public:
     QString platformConfigPath();
 
     bool isDisableUnMount();
+    bool isRoot_hidden();
 
 signals:
 
