@@ -35,6 +35,7 @@
 #include "dfmsetting.h"
 #include "shutil/viewstatesmanager.h"
 #include "partman/partition.h"
+#include "interfaces/dfmplaformmanager.h"
 
 #include <dslider.h>
 
@@ -496,6 +497,7 @@ void ComputerView::initUI()
     if (isDiskConfExisted()){
         loadCustomItems();
     }
+
     loadNativeItems();
 
     if (m_removableItems.count() == 0){
@@ -567,7 +569,12 @@ void ComputerView::loadNativeItems()
     deviceInfo->setDiskInfo(diskInfo);
     UDiskDeviceInfoPointer device(deviceInfo);
 
-    volumeAdded(device);
+    if (dfmPlatformManager->isRoot_hidden()){
+        qDebug() << "hide root sytem";
+    }else{
+        volumeAdded(device);
+    }
+
     foreach (UDiskDeviceInfoPointer device, deviceListener->getDeviceList()) {
         volumeAdded(device);
     }
