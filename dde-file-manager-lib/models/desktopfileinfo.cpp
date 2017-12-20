@@ -279,7 +279,7 @@ bool DesktopFileInfo::canDrop() const
     if(d->deepinID == "dde-computer")
         return false;
 
-    return DFileInfo::canDrop();
+    return true;
 }
 
 DUrl DesktopFileInfo::trashDesktopFileUrl()
