@@ -1,10 +1,10 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="am_ET" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="uk" version="2.1">
 <context>
     <name>FinishPage</name>
     <message>
         <location filename="../view/finishpage.cpp" line="18"/>
         <source>Format successfully</source>
-        <translation>ተሳክቶ ተሰናድቷል</translation>
+        <translation>Форматування успішне</translation>
     </message>
 </context>
 <context>
@@ -12,7 +12,7 @@
     <message>
         <location filename="../view/formatingpage.cpp" line="19"/>
         <source>Formating, please wait for a minute...</source>
-        <translation>እባክዎን ይጠብቁ በ ማሰናዳት ላይ...</translation>
+        <translation>Форматую, будь ласка, зачекайте хвилину...</translation>
     </message>
 </context>
 <context>
@@ -20,22 +20,22 @@
     <message>
         <location filename="../view/mainpage.cpp" line="85"/>
         <source>Type</source>
-        <translation>አይነት</translation>
+        <translation>Тип</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="104"/>
         <source>Label</source>
-        <translation>ምልክት</translation>
+        <translation>Позначка</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="113"/>
         <source>Fast format</source>
-        <translation>በ ፍጥነት ማሰናጃ</translation>
+        <translation>Швидке форматування</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="130"/>
         <source>This operation will clear all data from your device.</source>
-        <translation>ይህ ተግባር ሁሉንም ዳታ ያጠፋል ከ እርስዎ አካል ውስጥ</translation>
+        <translation>Ця операція очистить всі дані вашого пристрою.</translation>
     </message>
 </context>
 <context>
@@ -44,42 +44,42 @@
         <location filename="../view/mainwindow.cpp" line="56"/>
         <location filename="../view/mainwindow.cpp" line="78"/>
         <source>Format</source>
-        <translation>አቀራረብ</translation>
+        <translation>Форматувати</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="165"/>
         <source>Continue</source>
-        <translation>ይቀጥሉ</translation>
+        <translation>Продовжити</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="170"/>
         <source>Formatting...</source>
-        <translation>በ ማሰናዳት ላይ...</translation>
+        <translation>Форматування...</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="194"/>
         <source>Done</source>
-        <translation>ጨርሷል</translation>
+        <translation>Готово</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="205"/>
         <source>Failed to format</source>
-        <translation>ማሰናዳት አልተቻለም</translation>
+        <translation>Не вдалося відформатувати</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="201"/>
         <source>Quit</source>
-        <translation>ማጥፊያ</translation>
+        <translation>Вийти</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="202"/>
         <source>Your disk is removed when formatting</source>
-        <translation>የ እርስዎን ዲስክ በ ማሰናዳት ላይ እንዳለ ወልቋል</translation>
+        <translation>Ваш диск видаляється при форматуванні</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="206"/>
         <source>Reformat</source>
-        <translation>እንደገና ማሰናጃ</translation>
+        <translation>Переформатувати</translation>
     </message>
 </context>
 <context>
@@ -87,7 +87,7 @@
     <message>
         <location filename="../dialogs/messagedialog.cpp" line="19"/>
         <source>OK</source>
-        <translation>እሺ</translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -95,12 +95,12 @@
     <message>
         <location filename="../main.cpp" line="71"/>
         <source>Device does not exist</source>
-        <translation>አካሉ አልተገኘም</translation>
+        <translation>Пристрій не існує</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="80"/>
         <source>Cannot format local device</source>
-        <translation>ይህን አካል ማሰናዳት አይቻልም</translation>
+        <translation>Неможливо відформатувати місцевий пристрій</translation>
     </message>
 </context>
 <context>
@@ -108,7 +108,7 @@
     <message>
         <location filename="../view/warnpage.cpp" line="19"/>
         <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
-        <translation>የ አቀራረብ ማሰናጃ ተግባር ሁሉንም ዳታ ከ እርስዎ አካል ላይ ያጠፋል: እርስዎ በ እርግጥ መቀጠል ይፈልጋሉ? ይህን ምርጫ እንደ ነበር መመለስ አይቻልም</translation>
+        <translation>Операція форматування очистить всі дані з вашого диску, ви впевнені що хочете продовжити? Цей параметр не може бути відновлений.</translation>
     </message>
 </context>
 </TS>

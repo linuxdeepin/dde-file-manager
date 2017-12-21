@@ -1552,7 +1552,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="727"/>
         <source>Exit</source>
-        <translation>Forlad</translation>
+        <translation>Afslut</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="22"/>

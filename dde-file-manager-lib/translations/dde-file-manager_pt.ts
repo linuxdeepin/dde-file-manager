@@ -400,7 +400,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="873"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
-        <translation>Desculpe, mas não tem permissão para alterar a seguinte pasta/ficheiro(s) %1!</translation>
+        <translation>Desculpe, mas não tem permissão(ões) para alterar as/os seguintes %1 pastas/ficheiros!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1149"/>
