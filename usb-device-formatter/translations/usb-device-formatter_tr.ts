@@ -49,7 +49,7 @@
     <message>
         <location filename="../view/mainwindow.cpp" line="165"/>
         <source>Continue</source>
-        <translation>Devam Et</translation>
+        <translation>Devam et</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="170"/>

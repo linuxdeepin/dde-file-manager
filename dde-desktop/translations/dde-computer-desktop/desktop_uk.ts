@@ -10,7 +10,7 @@
         <message>
             <location filename="Desktop Entry]Comment" line="0"/>
             <source>Show basic info of the computer.</source>
-            <translation>Показати базову інформаціїюпро компʼютер</translation>
+            <translation>Показати базову інформаціїю про компʼютер</translation>
         </message>
     </context>
 </TS>

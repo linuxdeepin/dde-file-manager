@@ -17,7 +17,7 @@
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="41"/>
         <source>Computer</source>
-        <translation>Ordenador</translation>
+        <translation>Equipo</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="52"/>
@@ -27,7 +27,7 @@
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="61"/>
         <source>Computer Name</source>
-        <translation>Nombre del ordenador</translation>
+        <translation>Nombre del equipo </translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="62"/>
@@ -119,7 +119,7 @@
     <message>
         <location filename="../views/dfileview.cpp" line="2319"/>
         <source>(Reverse)</source>
-        <translation type="unfinished"/>
+        <translation>(Hacia atrás)</translation>
     </message>
 </context>
 <context>
@@ -309,17 +309,17 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="442"/>
         <source>Empty</source>
-        <translation>Vacío</translation>
+        <translation>Vaciar</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="472"/>
         <source>This action cannot be restored</source>
-        <translation>Esta acción no se puede restaurar</translation>
+        <translation>Esta acción no se puede deshacer</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="485"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
-        <translation>Los sentimos, no se pudo localizar tu directorio favorito ¿desea quitarlo?</translation>
+        <translation>Los sentimos, no se pudo localizar tu directorio del marcador ¿desea quitarlo?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="487"/>
@@ -329,7 +329,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="625"/>
         <source>Disk file is being used, can not unmount now</source>
-        <translation>Archivo de disco esta siendo usado, no puede desmontar ahora</translation>
+        <translation>Se está usando el disco, no puede ser desmontado ahora</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="626"/>
@@ -359,12 +359,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="686"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
-        <translation>El Gestor de archivos Deepin es una herramienta de gestión, desarrollada de manera independiente por Deepin Technology, con características como búsqueda, copiado, papelera de reciclaje, compresión/descompresión, propiedades de archivo y otras funciones referidas al manejo de estos.</translation>
+        <translation>El Gestor de archivos Deepin es una herramienta, desarrollada de manera independiente por Deepin Technology, con características como búsqueda, copiado, papelera de reciclaje, compresión/descompresión, propiedades de archivo y otras funciones referidas al manejo de estos.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="739"/>
         <source>Target disk doesn&apos;t have enough space, unable to copy!</source>
-        <translation>¡No se puede copiar, El disco de destino no tiene suficiente espacio!</translation>
+        <translation>¡No se puede copiar. El disco de destino no tiene suficiente espacio!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="752"/>
@@ -400,12 +400,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="873"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
-        <translation type="unfinished"/>
+        <translation>Lo sentimos, ¡no tienes permiso para continuar operando %1 archivo(s) o carpeta(s)!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1149"/>
         <source>Share folder can&apos;t be named after the current username</source>
-        <translation type="unfinished"/>
+        <translation>La carpeta compartida no puede nombrarse después del nombre de usuario actual</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="901"/>
@@ -415,37 +415,37 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="935"/>
         <source>Mount partition%1 to be read only</source>
-        <translation type="unfinished"/>
+        <translation>Monte la partición %1 para solo lectura</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="939"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
-        <translation type="unfinished"/>
+        <translation>Los discos de Windows no se podrán leer ni escribir normalmente si marca &quot;Activar inicio rápido (recomendado)&quot; en la configuración de apagado</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="943"/>
         <source>Please restore by the following steps to normally access Windows disk</source>
-        <translation type="unfinished"/>
+        <translation>Restaure los siguientes pasos para acceder normalmente al disco de Windows</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="949"/>
         <source>1. Reboot to enter Windows</source>
-        <translation type="unfinished"/>
+        <translation>1. Reinicie para ingresar a Windows</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="950"/>
         <source>2. Select Reboot</source>
-        <translation type="unfinished"/>
+        <translation>2. Seleccione Reiniciar</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="951"/>
         <source>3. Reboot and enter deepin</source>
-        <translation type="unfinished"/>
+        <translation>3. Reinicie e ingrese a deepin</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="968"/>
         <source>Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Reiniciar</translation>
     </message>
 </context>
 <context>
@@ -514,17 +514,17 @@
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="624"/>
         <source>%1 m %2 s</source>
-        <translation>%1 minutos %2 segundos</translation>
+        <translation>%1 m %2 s</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="630"/>
         <source>%1 h %2 m %3 s</source>
-        <translation>%1 horas %2 minutos %3 segundos</translation>
+        <translation>%1 h %2 m %3 s</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="639"/>
         <source>%1 d %2 h %3 m %4 s</source>
-        <translation>%1 días %2 horas %3 minutos %4 segundos</translation>
+        <translation>%1 d %2 h %3 m %4 s</translation>
     </message>
 </context>
 <context>
@@ -773,7 +773,7 @@
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="29"/>
         <source>Are you sure to completely delete %1</source>
-        <translation>¿Estás seguro de que quiere eliminar definitivamente %1?</translation>
+        <translation>¿Estás seguro de que quiere borrar definitivamente %1?</translation>
     </message>
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="32"/>
@@ -783,7 +783,7 @@
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="33"/>
         <source>Are you sure to completely delete %1 files</source>
-        <translation>¿Estás seguro de que quiere eliminar definitivamente %1 archivos?</translation>
+        <translation>¿Estás seguro de que quiere borrar definitivamente %1 archivos?</translation>
     </message>
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="57"/>
@@ -912,7 +912,7 @@
     <message>
         <location filename="../controllers/pathmanager.cpp" line="48"/>
         <source>Computers in LAN</source>
-        <translation>Ordenadores en LAN</translation>
+        <translation>Equipos en LAN</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="49"/>
@@ -922,7 +922,7 @@
     <message>
         <location filename="../controllers/pathmanager.cpp" line="50"/>
         <source>Computer</source>
-        <translation>Ordenador</translation>
+        <translation>Equipo</translation>
     </message>
 </context>
 <context>
@@ -1070,7 +1070,7 @@
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="192"/>
         <source>Items: %1</source>
-        <translation>Elementos: %1</translation>
+        <translation>Elementos: %1 </translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="674"/>
@@ -1112,7 +1112,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="687"/>
         <source>Copy</source>
-        <translation>Copiar</translation>
+        <translation>Copia</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="688"/>
@@ -1230,22 +1230,22 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="734"/>
         <source>Source path</source>
-        <translation type="unfinished"/>
+        <translation>Ruta de origen</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="736"/>
         <source>Share folder</source>
-        <translation>Carpeta compartir</translation>
+        <translation>Compartir carpeta</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="737"/>
         <source>Cancel sharing</source>
-        <translation>Cancelar compartiendo</translation>
+        <translation>Dejar de compartir</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="738"/>
         <source>Set share password</source>
-        <translation>Establecer compartir contraseña</translation>
+        <translation>Establecer contraseña para compartir</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="739"/>
@@ -1271,7 +1271,7 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="696"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="697"/>
         <source>Delete</source>
-        <translation>Eliminar</translation>
+        <translation>Borrar</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="712"/>
@@ -1372,13 +1372,13 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="25"/>
         <source>Open from default window:</source>
-        <translation>Abrir desde la ventana predeterminada:</translation>
+        <translation>Abrir ventana por defecto:</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="26"/>
         <location filename="../configure/dfmconfigdict.cpp" line="36"/>
         <source>Computer</source>
-        <translation>Ordenador</translation>
+        <translation>Equipo</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="34"/>
@@ -1399,13 +1399,13 @@
         <location filename="../configure/dfmconfigdict.cpp" line="27"/>
         <location filename="../configure/dfmconfigdict.cpp" line="37"/>
         <source>Home</source>
-        <translation>Casa</translation>
+        <translation>Carpeta personal</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="7"/>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="66"/>
         <source>Open after auto mount</source>
-        <translation type="unfinished"/>
+        <translation>Abrir después de montar automáticamente</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="28"/>
@@ -1512,7 +1512,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="56"/>
         <source>Open behavior</source>
-        <translation>Conducta al abrir</translation>
+        <translation>Acciones al abrir</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="716"/>
@@ -1658,7 +1658,7 @@
     <message>
         <location filename="../interfaces/dfileinfo.cpp" line="384"/>
         <source>File has been moved or deleted</source>
-        <translation>El archivo se ha movido o eliminado</translation>
+        <translation>El archivo se ha movido o borrado</translation>
     </message>
     <message>
         <location filename="../interfaces/dfileinfo.cpp" line="386"/>
@@ -1882,7 +1882,7 @@
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="150"/>
         <source>Access time</source>
-        <translation>Tiempo de acceso</translation>
+        <translation>Último acceso</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="151"/>
@@ -1910,7 +1910,7 @@
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="65"/>
         <source>Read and write</source>
-        <translation>Leer y escribir</translation>
+        <translation>Lectura y escritura</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="65"/>
@@ -2173,7 +2173,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="50"/>
         <source>Switch display status</source>
-        <translation>Estado cambio pantalla</translation>
+        <translation>Cambiar estado de pantalla</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="51"/>
@@ -2327,7 +2327,7 @@
     <message>
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="28"/>
         <source>Please enter share password</source>
-        <translation>Por favor introduzca contraseña compartida</translation>
+        <translation>Por favor introduzca contraseña para compartir</translation>
     </message>
     <message>
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="39"/>

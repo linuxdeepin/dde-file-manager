@@ -9,7 +9,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="1831"/>
         <source>Auto arrange</source>
-        <translation type="unfinished"/>
+        <translation>Автоматичне розміщення</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1839"/>
@@ -38,27 +38,27 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="12"/>
         <source>Tiny</source>
-        <translation type="unfinished"/>
+        <translation>Крихітний</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="13"/>
         <source>Small</source>
-        <translation type="unfinished"/>
+        <translation>Малий</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="14"/>
         <source>Medium</source>
-        <translation type="unfinished"/>
+        <translation>Середній</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="15"/>
         <source>Large</source>
-        <translation type="unfinished"/>
+        <translation>Великий</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="16"/>
         <source>Super large</source>
-        <translation type="unfinished"/>
+        <translation>Супер великий</translation>
     </message>
 </context>
 <context>
@@ -66,12 +66,12 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="90"/>
         <source>Only desktop</source>
-        <translation type="unfinished"/>
+        <translation>Лише стільниця</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="93"/>
         <source>Only lock screen</source>
-        <translation type="unfinished"/>
+        <translation>Лише заблокований екран</translation>
     </message>
 </context>
 <context>
@@ -79,32 +79,32 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Fast Screen Off</source>
-        <translation type="unfinished"/>
+        <translation>Швидке вимикання екрану</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Control Center</source>
-        <translation type="unfinished"/>
+        <translation>Центр керування</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>All Windows</source>
-        <translation type="unfinished"/>
+        <translation>Всі вікна</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Launcher</source>
-        <translation type="unfinished"/>
+        <translation>Запускач</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation>Стільниця</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>Жоден</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="57"/>

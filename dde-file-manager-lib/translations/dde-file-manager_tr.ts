@@ -152,7 +152,7 @@
     <message>
         <location filename="../views/dstatusbar.cpp" line="55"/>
         <source>%1 folders selected (contains %2)</source>
-        <translation>%1 klasörler seçildi (%2 içeriyor)</translation>
+        <translation>%1 klasör seçildi (%2 içeriyor)</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="56"/>
@@ -200,7 +200,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="816"/>
         <location filename="../dialogs/dialogmanager.cpp" line="831"/>
         <source>Operation failed!</source>
-        <translation>Operasyon başarısız!</translation>
+        <translation>İşlem başarısız oldu!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="338"/>
@@ -395,7 +395,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="832"/>
         <location filename="../dialogs/dialogmanager.cpp" line="853"/>
         <source>You do not have permission to operate file/folder!</source>
-        <translation>Dosya/klasörü çalıştırma izniniz yok!</translation>
+        <translation>Dosya/klasör çalıştırma izniniz yok!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="873"/>
@@ -476,7 +476,7 @@
     <message>
         <location filename="../views/filedialogstatusbar.cpp" line="47"/>
         <source>Cancel</source>
-        <translation>İptal Et</translation>
+        <translation>İptal et</translation>
     </message>
     <message>
         <location filename="../views/filedialogstatusbar.cpp" line="68"/>
@@ -628,12 +628,12 @@
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="39"/>
         <source>Cancel</source>
-        <translation>İptal Et</translation>
+        <translation>İptal et</translation>
     </message>
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="39"/>
         <source>UnLock</source>
-        <translation>KilidiniAç</translation>
+        <translation>Kilidini Aç</translation>
     </message>
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="43"/>
@@ -677,7 +677,7 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="289"/>
         <source>Copy to %2</source>
-        <translation>%2&apos;ye kopyala</translation>
+        <translation>%2 öğesi kopyalanıyor</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="292"/>
@@ -867,7 +867,7 @@
     <message>
         <location filename="../controllers/pathmanager.cpp" line="39"/>
         <source>Home</source>
-        <translation>Ev</translation>
+        <translation>Ana Dizin</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="40"/>
@@ -993,7 +993,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="767"/>
         <source>Link path</source>
-        <translation>Bağlantı Yolu</translation>
+        <translation>Bağlantı yolu</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="818"/>
@@ -1145,7 +1145,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="694"/>
         <source>Send to</source>
-        <translation>-E gönder</translation>
+        <translation>Aygıta gönder</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="695"/>
@@ -1399,7 +1399,7 @@
         <location filename="../configure/dfmconfigdict.cpp" line="27"/>
         <location filename="../configure/dfmconfigdict.cpp" line="37"/>
         <source>Home</source>
-        <translation>Ev</translation>
+        <translation>Ana Sayfa</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="7"/>
@@ -1847,7 +1847,7 @@
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="372"/>
         <location filename="../views/drenamebar.cpp" line="289"/>
         <source>Cancel</source>
-        <translation>İptal Et</translation>
+        <translation>İptal et</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1115"/>
