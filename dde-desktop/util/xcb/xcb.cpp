@@ -91,10 +91,10 @@ bool XcbMisc::is_dock_window(xcb_window_t winId)
     return is_dock;
 }
 
-xcb_window_t XcbMisc::find_dock_window(int screen_nbr)
+DockInfo XcbMisc::find_dock_window(int)
 {
-    QList<xcb_window_t> docks;
-    for (int i = 0; i < screen_nbr; ++i) {
+    QList<DockInfo> docks;
+    for (int i = 0; i < m_ewmh_connection.nb_screens; ++i) {
         xcb_ewmh_get_windows_reply_t clients;
         xcb_generic_error_t *e;
         xcb_get_property_cookie_t cookie = xcb_ewmh_get_client_list(&m_ewmh_connection, i);
@@ -102,13 +102,17 @@ xcb_window_t XcbMisc::find_dock_window(int screen_nbr)
             for (uint32_t wi = 0; wi < clients.windows_len; ++wi) {
                 xcb_window_t winId = clients.windows[wi];
                 if (is_dock_window(winId)) {
-                    docks << winId;
+                    DockInfo info;
+                    info.winId = winId;
+                    info.screenId = i;
+                    docks << info;
+                    qDebug() << "find dock:" << info.winId << "on screen" << info.screenId;
                 }
             }
         }
     }
 
-    return docks.length() > 0 ? docks.value(0) : 0;
+    return docks.length() > 0 ? docks.value(0) : DockInfo();
 }
 
 }

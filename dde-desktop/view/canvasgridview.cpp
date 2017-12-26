@@ -65,6 +65,7 @@
 #include "dfmevent.h"
 
 //#define SHOW_GRID
+//#define DEBUG_PROFILER
 
 static inline bool isPersistFile(const DUrl &url)
 {
@@ -388,6 +389,7 @@ void CanvasGridView::mouseMoveEvent(QMouseEvent *event)
         auto command = QItemSelectionModel::Current | QItemSelectionModel::ClearAndSelect;
         setSelection(selectRect, command, true);
     }
+//    update();
 }
 
 void CanvasGridView::mousePressEvent(QMouseEvent *event)
@@ -504,7 +506,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Return:
         case Qt::Key_Enter:
             if (!itemDelegate()->editingIndex().isValid()) {
-                for (const DUrl& url : selectUrlsMap) {
+                for (const DUrl &url : selectUrlsMap) {
                     openUrl(url);
                 }
                 return;
@@ -799,13 +801,13 @@ void CanvasGridView::dropEvent(QDropEvent *event)
 void CanvasGridView::paintEvent(QPaintEvent *event)
 {
 #ifdef DEBUG_PROFILER
-//    qDebug() << "start repaint" << event->rect()  << event->region().rectCount();
-//    auto currentTime = QTime::currentTime().msecsSinceStartOfDay();
-//    auto deta = currentTime - d->lastRepaintTime;
-//    if (deta < 500) {
-////        return;
-//    }
-//    d->lastRepaintTime = currentTime;
+    qDebug() << "start repaint" << event->rect()  << event->region().rectCount();
+    auto currentTime = QTime::currentTime().msecsSinceStartOfDay();
+    auto deta = currentTime - d->lastRepaintTime;
+    if (deta < 500) {
+//        return;
+    }
+    d->lastRepaintTime = currentTime;
 #endif
 
     QPainter painter(viewport());
@@ -982,7 +984,10 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
             painter.restore();
         }
     }
-
+#ifdef DEBUG_PROFILER
+    auto delay = QTime::currentTime().msecsSinceStartOfDay() - currentTime;
+    qDebug() << "paint dealy" << delay;
+#endif
 }
 
 void CanvasGridView::resizeEvent(QResizeEvent * /*event*/)
@@ -1285,21 +1290,16 @@ void CanvasGridView::setDodgeDuration(double dodgeDuration)
 }
 
 // TODO: should fix by qt;
-static inline QRect fix_available_geometry(QRect virtualGeometry, QRect primaryGeometry)
+static inline QRect fix_dock_rect(xcb_ewmh_wm_strut_partial_t st, QRect virtualGeometry)
 {
-    xcb_window_t winId = Xcb::XcbMisc::instance().find_dock_window(qApp->screens().count());
-    xcb_ewmh_wm_strut_partial_t st = Xcb::XcbMisc::instance().get_strut_partial(winId);
-
     QRect dockRect;
     if (st.top > 0) {
         dockRect = QRect(0, 0, virtualGeometry.width(), st.top);
     }
-
     if (st.bottom > 0) {
         dockRect = QRect(0, virtualGeometry.height() - st.bottom,
                          virtualGeometry.width(), st.bottom);
     }
-
     if (st.left > 0) {
         dockRect = QRect(0, 0,
                          st.left, virtualGeometry.height());
@@ -1308,17 +1308,63 @@ static inline QRect fix_available_geometry(QRect virtualGeometry, QRect primaryG
         dockRect = QRect(virtualGeometry.width() - st.right, 0,
                          st.left, virtualGeometry.height());
     }
+    return dockRect;
+}
 
-    qDebug() << "dockRect:" << dockRect
-             << "virtualGeometry:" << virtualGeometry
-             << "primaryGeometry:" << primaryGeometry;
+static inline QRect fix_available_geometry()
+{
+    QRect dockRect;
+
+    auto screens = qApp->screens();
+    auto dockInfo = Xcb::XcbMisc::instance().find_dock_window(qApp->screens().count());
+    auto dockWinId = dockInfo.winId;
+
+    // virtualGeometry is same on all screen, so just get first one
+    auto virtualGeometry = qApp->screens().value(0)->virtualGeometry();
+    // try 5 time
+    for (int i = 0; i < 5; ++i) {
+        xcb_ewmh_wm_strut_partial_t st = Xcb::XcbMisc::instance().get_strut_partial(dockWinId);
+        dockRect = fix_dock_rect(st, virtualGeometry);
+        qDebug() << "\n"
+                 << "dump xcb_ewmh_wm_strut_partial_t begin ---------------------------" << "\n"
+                 << "st.left :" << st.left << "\n"
+                 << "st.right :" << st.right << "\n"
+                 << "st.top :" << st.top << "\n"
+                 << "st.left_start_y :" << st.left_start_y << "\n"
+                 << "st.left_end_y :" << st.left_end_y << "\n"
+                 << "st.right_start_y :" << st.right_start_y << "\n"
+                 << "st.right_end_y :" << st.right_end_y << "\n"
+                 << "st.top_start_x :" << st.top_start_x << "\n"
+                 << "st.top_end_x :" << st.top_end_x << "\n"
+                 << "st.bottom_start_x :" << st.bottom_start_x << "\n"
+                 << "st.bottom_end_x :" << st.bottom_end_x << "\n"
+                 << "dump xcb_ewmh_wm_strut_partial_t end ---------------------------" << "\n";
+        qDebug() << "get fix dockRect" << dockRect << virtualGeometry;
+        if (!dockRect.isEmpty()) {
+            break;
+        }
+        QThread::sleep(1);
+    }
+
+    if (dockRect.isEmpty()) {
+        qCritical() << "can not get dock post !!!!!!!!!!!!!!!!!";
+    }
 
     QRegion virtualRegion = QRegion(virtualGeometry);
     QRegion dockRegion = QRegion(dockRect);
 
     QRegion availableRegion = virtualRegion.subtracted(dockRegion);
-    QRect availableRect = availableRegion.intersected(primaryGeometry).rects().first();
 
+    auto primaryGeometry = qApp->primaryScreen()->geometry();
+    QRect availableRect = availableRegion.intersected(primaryGeometry).rects().value(0);
+
+    qDebug() << "\n"
+             << "dump dock info begin ---------------------------" << "\n"
+             << "dockRect:" << dockInfo.screenId << dockWinId << dockRect << "\n"
+             << "virtualGeometry:" << virtualGeometry << "\n"
+             << "primarygeometry:" << primaryGeometry << "\n"
+             << "availableRect:" << availableRect << "\n"
+             << "dump dock info end ---------------------------" << "\n";
 //    availableRect.moveTo(availableRect.x() - primaryGeometry.x(),
 //                         availableRect.y() - primaryGeometry.y());
     return availableRect;
@@ -1329,9 +1375,7 @@ static inline QRect getValidNewGeometry(const QRect &geometry, const QRect &oldG
     auto newGeometry = geometry;
 
     if (qApp->screens().length() >= 2) {
-        auto virtualGeometry = qApp->screens().value(0)->virtualGeometry();
-        auto primaryGeometry = qApp->primaryScreen()->geometry();
-        newGeometry = fix_available_geometry(virtualGeometry, primaryGeometry);
+        newGeometry = fix_available_geometry();
     }
     bool geometryValid = (newGeometry.width() > 0) && (newGeometry.height() > 0);
     if (geometryValid) {
@@ -1693,7 +1737,7 @@ void CanvasGridView::initConnection()
     });
 
     /*update model and view when mount added*/
-    connect(d->fileViewHelper, &CanvasViewHelper::mount_added, this , [=](const QDiskInfo& diskInfo){
+    connect(d->fileViewHelper, &CanvasViewHelper::mount_added, this, [ = ](const QDiskInfo & diskInfo) {
         Q_UNUSED(diskInfo)
         model()->update();
         update();
@@ -1850,7 +1894,6 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
         return;
     }
 
-
     if (d->mousePressed && ctrlShiftPress) {
         auto clickIndex = indexAt(d->lastPos);
         if (clickIndex.isValid()) {
@@ -1883,7 +1926,12 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
                 continue;
             }
             auto index = model()->index(DUrl::fromLocalFile(localFile));
-            auto list = QList<QRect>() << itemPaintGeomertys(index);
+//            auto list = QList<QRect>() << itemPaintGeomertys(index);
+            auto checkRect = visualRect(index);
+            auto marginW = checkRect.width() / 5;
+            auto marginH = checkRect.height() / 5;
+            checkRect = checkRect.marginsRemoved(QMargins(marginW, marginH, marginW, marginW));
+            auto list = QList<QRect>() << checkRect;
             for (const QRect &r : list) {
                 if (selectRect.intersects(r)) {
                     QItemSelectionRange selectionRange(index);

@@ -155,8 +155,10 @@ public:
     QTimer              *syncTimer          = nullptr;
 //    qint64              lastRepaintTime     = 0;
     DFileSystemWatcher  *filesystemWatcher  = nullptr;
-    WaterMaskFrame *waterMaskFrame          = nullptr;
-
+    WaterMaskFrame      *waterMaskFrame          = nullptr;
 
     DBusDock            *dbusDock           = nullptr;
+
+    // lastRepaintTime
+    int           lastRepaintTime;
 };
