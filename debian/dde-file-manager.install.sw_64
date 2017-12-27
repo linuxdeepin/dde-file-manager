@@ -8,7 +8,6 @@ usr/bin/usb-device-formatter-pkexec
 usr/bin/dde-computer.sh
 usr/bin/dde-trash.sh
 usr/bin/file-manager.sh
-etc/xdg/autostart/dde-file-manager-autostart.desktop
 
 usr/share/applications/dde-file-manager.desktop
 
