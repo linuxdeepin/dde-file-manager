@@ -210,7 +210,7 @@ QString UserShareManager::getCurrentUserName()
 void UserShareManager::initSamaServiceSettings()
 {
     addCurrentUserToSambashareGroup();
-    restartSambaService();
+//    restartSambaService();
 }
 
 ShareInfoList UserShareManager::shareInfoList() const
