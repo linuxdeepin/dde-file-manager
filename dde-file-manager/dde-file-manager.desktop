@@ -10,6 +10,7 @@ StartupNotify=true
 Terminal=false
 Type=Application
 Version=1.0
+X-Deepin-DEComponent=true
 
 # Translations:
 # Do not manually modify!

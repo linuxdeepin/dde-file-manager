@@ -88,7 +88,7 @@ private:
 
     DFileWatcherManager *m_fileMonitor = NULL;
     QTimer* m_shareInfosChangedTimer = NULL;
-    QTimer* m_lazyStartSambaServiceTimer = NULL;
+//    QTimer* m_lazyStartSambaServiceTimer = NULL;
     QMap<QString, ShareInfo> m_shareInfos = {};
     QMap<QString, QString> m_sharePathByFilePath = {};
     QMap<QString, QStringList> m_sharePathToNames = {};
