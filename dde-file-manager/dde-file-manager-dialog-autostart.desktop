@@ -3,3 +3,4 @@ Type=Application
 Name=dde-file-manager dialog dbus service
 Exec=/usr/bin/dde-file-manager -f
 NoShowIn=GNOME;Unity;Deepin
+X-Deepin-DEComponent=true

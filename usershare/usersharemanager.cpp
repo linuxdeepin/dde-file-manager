@@ -47,9 +47,9 @@ UserShareManager::UserShareManager(QObject *parent) : QObject(parent)
     m_shareInfosChangedTimer = new QTimer(this);
     m_shareInfosChangedTimer->setSingleShot(true);
     m_shareInfosChangedTimer->setInterval(300);
-    m_lazyStartSambaServiceTimer = new QTimer(this);
-    m_lazyStartSambaServiceTimer->setSingleShot(true);
-    m_lazyStartSambaServiceTimer->setInterval(3000);
+//    m_lazyStartSambaServiceTimer = new QTimer(this);
+//    m_lazyStartSambaServiceTimer->setSingleShot(true);
+//    m_lazyStartSambaServiceTimer->setInterval(3000);
     m_userShareInterface = new UserShareInterface("com.deepin.filemanager.daemon",
                                                                     "/com/deepin/filemanager/daemon/UserShareManager",
                                                                     QDBusConnection::systemBus(),
@@ -57,7 +57,7 @@ UserShareManager::UserShareManager(QObject *parent) : QObject(parent)
     initConnect();
     updateUserShareInfo();
     initMonitorPath();
-    m_lazyStartSambaServiceTimer->start();
+//    m_lazyStartSambaServiceTimer->start();
 
     connect(this, &UserShareManager::userShareAdded, this, &UserShareManager::updateFileAttributeInfo);
     connect(this, &UserShareManager::userShareDeleted, this, &UserShareManager::updateFileAttributeInfo);
@@ -85,7 +85,7 @@ void UserShareManager::initConnect()
         handleShareChanged(to);
     });
     connect(m_shareInfosChangedTimer, &QTimer::timeout, this, &UserShareManager::updateUserShareInfo);
-    connect(m_lazyStartSambaServiceTimer, &QTimer::timeout, this, &UserShareManager::initSamaServiceSettings);
+//    connect(m_lazyStartSambaServiceTimer, &QTimer::timeout, this, &UserShareManager::initSamaServiceSettings);
 }
 
 QString UserShareManager::getCacehPath()
@@ -209,7 +209,7 @@ QString UserShareManager::getCurrentUserName()
 
 void UserShareManager::initSamaServiceSettings()
 {
-    addCurrentUserToSambashareGroup();
+//    addCurrentUserToSambashareGroup();
 //    restartSambaService();
 }
 
