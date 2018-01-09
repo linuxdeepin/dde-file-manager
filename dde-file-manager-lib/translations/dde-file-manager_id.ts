@@ -359,7 +359,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="686"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
-        <translation type="unfinished"/>
+        <translation>Manajer Berkas adalah alat manajemen berkas yang dikembangkan secara mandiri oleh Deepin Technology, dilengkapi dengan fitur pencarian, penyalinan, tempat sampah, kompresi/ekstraksi, properti berkas dan fungsi-fungsi manajemen berkas lainnya.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="739"/>
@@ -379,28 +379,28 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="779"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
-        <translation type="unfinished"/>
+        <translation>Berkas yang terpilih merupakan berkas/direktori sistem, tidak dapat menyalin</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="818"/>
         <source>Target file removed or location changed</source>
-        <translation type="unfinished"/>
+        <translation>Berkas target telah terhapus atau berpindah lokasi</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="820"/>
         <source>%1 files failed to restore, target file removed or location changed</source>
-        <translation type="unfinished"/>
+        <translation>%1 Berkas gagal dipulihkan, berkas target telah dihapus atau berpindah lokasi</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="832"/>
         <location filename="../dialogs/dialogmanager.cpp" line="853"/>
         <source>You do not have permission to operate file/folder!</source>
-        <translation type="unfinished"/>
+        <translation>Kamu tidak memiliki ijin untuk mengolah berkas/folder!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="873"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
-        <translation type="unfinished"/>
+        <translation>Maaf, kamu tidak memiliki ijin untuk mengolah %1 berkas/folder ini!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1149"/>
@@ -430,22 +430,22 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="949"/>
         <source>1. Reboot to enter Windows</source>
-        <translation type="unfinished"/>
+        <translation>1. Boot ulang untuk masuk ke Windows</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="950"/>
         <source>2. Select Reboot</source>
-        <translation type="unfinished"/>
+        <translation>2. Pilih boot ulang</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="951"/>
         <source>3. Reboot and enter deepin</source>
-        <translation type="unfinished"/>
+        <translation>3. Boot ulang dan masuk ke deepin</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="968"/>
         <source>Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Boot ulang</translation>
     </message>
 </context>
 <context>
@@ -509,22 +509,22 @@
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="620"/>
         <source>%1 s</source>
-        <translation type="unfinished"/>
+        <translation>%1 d</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="624"/>
         <source>%1 m %2 s</source>
-        <translation type="unfinished"/>
+        <translation>%1 m %2 d</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="630"/>
         <source>%1 h %2 m %3 s</source>
-        <translation type="unfinished"/>
+        <translation>%1 j %2 m %3 d</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="639"/>
         <source>%1 d %2 h %3 m %4 s</source>
-        <translation type="unfinished"/>
+        <translation>%1 h %2 j %3 m %4 d</translation>
     </message>
 </context>
 <context>
@@ -628,17 +628,17 @@
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="39"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Batal</translation>
     </message>
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="39"/>
         <source>UnLock</source>
-        <translation type="unfinished"/>
+        <translation>Buka kunci</translation>
     </message>
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="43"/>
         <source>Please input password to decrypt the disk</source>
-        <translation type="unfinished"/>
+        <translation>Harap masukkan kata kunci untuk mendeskripsi disk penyimpanan</translation>
     </message>
 </context>
 <context>
@@ -1055,7 +1055,7 @@
         <location filename="../dialogs/filepreviewdialog.cpp" line="186"/>
         <location filename="../dialogs/filepreviewdialog.cpp" line="212"/>
         <source>Size: %1</source>
-        <translation type="unfinished"/>
+        <translation>Ukuran: %1</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="187"/>
@@ -1145,7 +1145,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="694"/>
         <source>Send to</source>
-        <translation type="unfinished"/>
+        <translation>Kirim ke</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="695"/>
@@ -1265,13 +1265,13 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="682"/>
         <source>Open file location</source>
-        <translation type="unfinished"/>
+        <translation>Buka lokasi berkas</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="696"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="697"/>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>Hapus</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="712"/>
@@ -1362,7 +1362,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="21"/>
         <source>Default view:</source>
-        <translation type="unfinished"/>
+        <translation>Tampilan standar</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="24"/>
@@ -1446,7 +1446,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="44"/>
         <source>Always open folder in new window</source>
-        <translation type="unfinished"/>
+        <translation>Selalu buka folder di jendela baru</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="45"/>
@@ -1735,13 +1735,13 @@
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="134"/>
         <location filename="../views/drenamebar.cpp" line="226"/>
         <source>Replace Text</source>
-        <translation type="unfinished"/>
+        <translation>Ganti teks</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="134"/>
         <location filename="../views/drenamebar.cpp" line="226"/>
         <source>Add Text</source>
-        <translation type="unfinished"/>
+        <translation>Tambah teks</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="134"/>
@@ -1752,12 +1752,12 @@
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="140"/>
         <source>Find:</source>
-        <translation type="unfinished"/>
+        <translation>Temukan:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="161"/>
         <source>Replace:</source>
-        <translation type="unfinished"/>
+        <translation>Ganti:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="163"/>
@@ -1768,17 +1768,17 @@
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="180"/>
         <source>Add:</source>
-        <translation type="unfinished"/>
+        <translation>Tambah:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="199"/>
         <source>Location:</source>
-        <translation type="unfinished"/>
+        <translation>Lokasi:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="206"/>
         <source>File name:</source>
-        <translation type="unfinished"/>
+        <translation>Nama berkas:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="223"/>
