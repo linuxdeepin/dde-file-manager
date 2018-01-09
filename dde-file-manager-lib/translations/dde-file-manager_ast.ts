@@ -628,7 +628,7 @@
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="39"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Encaboxar</translation>
     </message>
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="39"/>
@@ -1055,22 +1055,22 @@
         <location filename="../dialogs/filepreviewdialog.cpp" line="186"/>
         <location filename="../dialogs/filepreviewdialog.cpp" line="212"/>
         <source>Size: %1</source>
-        <translation type="unfinished"/>
+        <translation>Tamañu: %1</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="187"/>
         <source>Type: %1</source>
-        <translation type="unfinished"/>
+        <translation>Triba: %1</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="191"/>
         <source>Size: 0</source>
-        <translation type="unfinished"/>
+        <translation>Tamañu: 0</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="192"/>
         <source>Items: %1</source>
-        <translation type="unfinished"/>
+        <translation>Elementos: %1</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="674"/>
@@ -1145,7 +1145,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="694"/>
         <source>Send to</source>
-        <translation type="unfinished"/>
+        <translation>Unviar a</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="695"/>
@@ -1220,7 +1220,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="722"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation>Data de creación</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="732"/>
@@ -1230,7 +1230,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="734"/>
         <source>Source path</source>
-        <translation type="unfinished"/>
+        <translation>Camín de fonte</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="736"/>
@@ -1245,33 +1245,33 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="738"/>
         <source>Set share password</source>
-        <translation type="unfinished"/>
+        <translation>Afitar contraseña de compartición</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="739"/>
         <source>Format</source>
-        <translation type="unfinished"/>
+        <translation>Formatu</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="679"/>
         <source>Open in new window as admin</source>
-        <translation type="unfinished"/>
+        <translation>Abrir nuna ventana nueva como alministrador</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="681"/>
         <source>Select default program</source>
-        <translation type="unfinished"/>
+        <translation>Esbillar programa por defeutu</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="682"/>
         <source>Open file location</source>
-        <translation type="unfinished"/>
+        <translation>Abrir allugamientu del ficheru</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="696"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="697"/>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>Desaniciar</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="712"/>
@@ -1527,7 +1527,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="718"/>
         <source>Safely Remove</source>
-        <translation type="unfinished"/>
+        <translation>Estraición segura</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="719"/>
@@ -1729,56 +1729,56 @@
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="132"/>
         <source>Mode:</source>
-        <translation type="unfinished"/>
+        <translation>Mou:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="134"/>
         <location filename="../views/drenamebar.cpp" line="226"/>
         <source>Replace Text</source>
-        <translation type="unfinished"/>
+        <translation>Trocar testu</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="134"/>
         <location filename="../views/drenamebar.cpp" line="226"/>
         <source>Add Text</source>
-        <translation type="unfinished"/>
+        <translation>Amestar testu</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="134"/>
         <location filename="../views/drenamebar.cpp" line="226"/>
         <source>Custom Text</source>
-        <translation type="unfinished"/>
+        <translation>Testu personalizáu</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="140"/>
         <source>Find:</source>
-        <translation type="unfinished"/>
+        <translation>Alcontrar:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="161"/>
         <source>Replace:</source>
-        <translation type="unfinished"/>
+        <translation>Trocar:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="163"/>
         <location filename="../views/drenamebar.cpp" line="243"/>
         <source>Optional</source>
-        <translation type="unfinished"/>
+        <translation>Opcional</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="180"/>
         <source>Add:</source>
-        <translation type="unfinished"/>
+        <translation>Amestar:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="199"/>
         <source>Location:</source>
-        <translation type="unfinished"/>
+        <translation>Allugamientu</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="206"/>
         <source>File name:</source>
-        <translation type="unfinished"/>
+        <translation>Nome de ficheru:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="223"/>
@@ -1811,27 +1811,27 @@
     <message>
         <location filename="../views/drenamebar.cpp" line="233"/>
         <source>Find</source>
-        <translation type="unfinished"/>
+        <translation>Alcontrar</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="242"/>
         <source>Replace</source>
-        <translation type="unfinished"/>
+        <translation>Trocar</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="251"/>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>Amestar</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="260"/>
         <source>Location</source>
-        <translation type="unfinished"/>
+        <translation>Allugamientu</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="267"/>
         <source>File name</source>
-        <translation type="unfinished"/>
+        <translation>Nome de ficheru</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="276"/>
@@ -1847,47 +1847,47 @@
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="372"/>
         <location filename="../views/drenamebar.cpp" line="289"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Encaboxar</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1115"/>
         <source>Rename %1 Files</source>
-        <translation type="unfinished"/>
+        <translation>Renomar %1 ficheros</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="127"/>
         <source>Multiple Files</source>
-        <translation type="unfinished"/>
+        <translation>Ficheros múltiples</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="136"/>
         <source>Basic info</source>
-        <translation type="unfinished"/>
+        <translation>Información básica</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="144"/>
         <source>Total size</source>
-        <translation type="unfinished"/>
+        <translation>Tamañu total</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="145"/>
         <source>Number of files</source>
-        <translation type="unfinished"/>
+        <translation>Númberu de ficheros</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="145"/>
         <source>%1 file(s), %2 folder(s)</source>
-        <translation type="unfinished"/>
+        <translation>%1 ficheru(os), %2 carpeta(es)</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="150"/>
         <source>Access time</source>
-        <translation type="unfinished"/>
+        <translation>Hora d&apos;accesu</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="151"/>
         <source>Modify time</source>
-        <translation type="unfinished"/>
+        <translation>Hora de modificación</translation>
     </message>
 </context>
 <context>

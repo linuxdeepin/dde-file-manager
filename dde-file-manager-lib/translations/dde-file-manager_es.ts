@@ -400,7 +400,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="873"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
-        <translation>Lo sentimos, ¡no tienes permiso para continuar operando %1 archivo(s) o carpeta(s)!</translation>
+        <translation>Lo sentimos, no tienes permiso para continuar operando %1 archivo/carpeta(s)!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1149"/>
@@ -420,12 +420,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="939"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
-        <translation>Los discos de Windows no se podrán leer ni escribir normalmente si marca &quot;Activar inicio rápido (recomendado)&quot; en la configuración de apagado</translation>
+        <translation>Los discos de Windows no podrán leerse ni escribirse con normalidad si marca &quot;Activar inicio rápido (recomendado)&quot; en la Configuración de apagado del Panel de control</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="943"/>
         <source>Please restore by the following steps to normally access Windows disk</source>
-        <translation>Restaure los siguientes pasos para acceder normalmente al disco de Windows</translation>
+        <translation>Por favor realice los siguientes pasos para acceder al disco de Windows con normalidad</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="949"/>
@@ -435,7 +435,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="950"/>
         <source>2. Select Reboot</source>
-        <translation>2. Seleccione Reiniciar</translation>
+        <translation>2. Seleccione &quot;Reiniciar&quot;</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="951"/>
@@ -773,7 +773,7 @@
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="29"/>
         <source>Are you sure to completely delete %1</source>
-        <translation>¿Estás seguro de que quiere borrar definitivamente %1?</translation>
+        <translation>Estás seguro de que quiere borrar definitivamente %1?</translation>
     </message>
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="32"/>
@@ -783,7 +783,7 @@
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="33"/>
         <source>Are you sure to completely delete %1 files</source>
-        <translation>¿Estás seguro de que quiere borrar definitivamente %1 archivos?</translation>
+        <translation>Estás seguro de que quiere borrar definitivamente %1 archivos?</translation>
     </message>
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="57"/>
@@ -1112,7 +1112,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="687"/>
         <source>Copy</source>
-        <translation>Copia</translation>
+        <translation>Copiar</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="688"/>
@@ -1255,7 +1255,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="679"/>
         <source>Open in new window as admin</source>
-        <translation>Abrir en una nueva ventana como administrador</translation>
+        <translation>Abrir en nueva ventana como administrador</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="681"/>
@@ -1446,7 +1446,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="44"/>
         <source>Always open folder in new window</source>
-        <translation>Abrir siempre la carpeta en una nueva ventana</translation>
+        <translation>Abrir siempre la carpeta en una nueva ventana </translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="45"/>

@@ -400,12 +400,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="873"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
-        <translation type="unfinished"/>
+        <translation>عذراً ! . ليس لديك إذن لتنفيذ عملية في الملفات/المجلدات التالية %1 </translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1149"/>
         <source>Share folder can&apos;t be named after the current username</source>
-        <translation type="unfinished"/>
+        <translation>لا يمكن تسمية مجلد المشاركة باسم المستخدم الحالي</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="901"/>

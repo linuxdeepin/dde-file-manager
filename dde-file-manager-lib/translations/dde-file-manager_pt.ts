@@ -359,7 +359,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="686"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
-        <translation>Gestor de Ficheiros é uma ferramenta de gestão de ficheiros desenvolvida independentemente pela &quot;Deepin Technology&quot;, com funcionalidades de pesquisar, copiar, eliminar, comprimir/extrair, consultar as propriedades dos ficheiros e outras funções de gestão de ficheiros.</translation>
+        <translation>O Gestor de Ficheiros é uma ferramenta de gestão de ficheiros desenvolvida independentemente pela Deepin Technology, este possui as capacidades de pesquisar, copiar, eliminar, comprimir/extrair, consultar as propriedades dos ficheiros e outras funções de gestão de ficheiros.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="739"/>
@@ -1291,7 +1291,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="5"/>
         <source>Use the file chooser dialog of Deepin File Manager</source>
-        <translation>Use o diálgo de escolha de ficheiros do Gestor de Ficheiros do Deepin</translation>
+        <translation>Use o diálgo de escolha de ficheiros do Deepin File Manager</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="6"/>
@@ -2345,7 +2345,7 @@
     <message>
         <location filename="../views/windowmanager.cpp" line="75"/>
         <source>Deepin File Manager</source>
-        <translation>Gestor de Ficheiros Deepin</translation>
+        <translation>Deepin File Manager</translation>
     </message>
 </context>
 </TS>
