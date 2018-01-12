@@ -19,7 +19,9 @@
 #include "dfilewatcher.h"
 #include "dfileinfo.h"
 #include "trashmanager.h"
+#include "dfmeventdispatcher.h"
 #include "models/desktopfileinfo.h"
+#include "models/trashfileinfo.h"
 
 #include "app/define.h"
 #include "dfmevent.h"
@@ -233,6 +235,10 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
         }
     }
 
+    if (result) {
+        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(dMakeEventPointer<DFMRenameEvent>(nullptr, newUrl, oldUrl));
+    }
+
     return result;
 }
 
@@ -268,6 +274,30 @@ DUrlList FileController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &
 
     DUrlList list = job.doMoveToTrash(event->urlList());
     dialogManager->removeJob(job.getJobId());
+
+    // save event
+    const QVariant &result = DFMEventDispatcher::instance()->processEvent<DFMGetChildrensEvent>(event->sender(), DUrl::fromTrashFile("/"),
+                                                                                                QStringList(), QDir::AllEntries);
+    const QList<DAbstractFileInfoPointer> &infos = qvariant_cast<QList<DAbstractFileInfoPointer>>(result);
+
+    if (infos.isEmpty())
+        return list;
+
+    const QSet<DUrl> &files_set = event->urlList().toSet();
+    DUrlList has_restore_files;
+
+    for (const DAbstractFileInfoPointer &info : infos) {
+        const DUrl &source_file = DUrl::fromLocalFile(static_cast<const TrashFileInfo*>(info.constData())->sourceFilePath());
+
+        if (files_set.contains(source_file)) {
+            has_restore_files << info->fileUrl();
+        }
+    }
+
+    if (has_restore_files.isEmpty())
+        return list;
+
+    DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(dMakeEventPointer<DFMRestoreFromTrashEvent>(nullptr, has_restore_files));
 
     return list;
 }
@@ -320,6 +350,24 @@ DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) c
         dialogManager->removeJob(job.getJobId());
     }
 
+    DUrlList valid_files = list;
+
+    valid_files.removeAll(DUrl());
+
+    if (valid_files.isEmpty())
+        return list;
+
+    if (event->action() == DFMGlobal::CopyAction) {
+        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(dMakeEventPointer<DFMDeleteEvent>(nullptr, valid_files, true));
+    } else {
+        const QString targetDir(QFileInfo(urlList.first().toLocalFile()).absolutePath());
+
+        if (targetDir.isEmpty())
+            return list;
+
+        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromLocalFile(targetDir), valid_files));
+    }
+
     return list;
 }
 
@@ -331,7 +379,13 @@ bool FileController::newFolder(const QSharedPointer<DFMNewFolderEvent> &event) c
     QString folderName = checkDuplicateName(dir.absolutePath() + "/" + tr("New Folder"));
 
     AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(folderName), event->windowId());
-    return dir.mkdir(folderName);
+
+    bool ok = dir.mkdir(folderName);
+
+    if (ok)
+        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << DUrl::fromLocalFile(folderName), true));
+
+    return ok;
 }
 
 bool FileController::newFile(const QSharedPointer<DFMNewFileEvent> &event) const
@@ -347,6 +401,8 @@ bool FileController::newFile(const QSharedPointer<DFMNewFileEvent> &event) const
     } else {
         return false;
     }
+
+    DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << DUrl::fromLocalFile(name), true));
 
     return true;
 }

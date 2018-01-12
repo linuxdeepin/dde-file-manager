@@ -83,6 +83,12 @@ static QString fmeventType2String(DFMEvent::Type type)
         return QStringLiteral(QT_STRINGIFY(OpenUrl));
     case DFMEvent::MenuAction:
         return QStringLiteral(QT_STRINGIFY(MenuAction));
+    case DFMEvent::SaveOperator:
+        return QStringLiteral(QT_STRINGIFY(SaveOperator));
+    case DFMEvent::Revocation:
+        return QStringLiteral(QT_STRINGIFY(Revocation));
+    case DFMEvent::CleanSaveOperator:
+        return QStringLiteral(QT_STRINGIFY(CleanSaveOperator));
     default:
         return QStringLiteral("Custom: %1").arg(type);
     }
@@ -137,6 +143,11 @@ DFMEvent::Type DFMEvent::nameToType(const QString &name)
     }
 
     return UnknowType;
+}
+
+QString DFMEvent::typeToName(DFMEvent::Type type)
+{
+    return fmeventType2String(type);
 }
 
 quint64 DFMEvent::windowId() const
@@ -824,4 +835,27 @@ QSharedPointer<DFMForwardEvent> DFMForwardEvent::fromJson(const QJsonObject &jso
     Q_UNUSED(json)
 
     return dMakeEventPointer<DFMForwardEvent>(Q_NULLPTR);
+}
+
+DFMSaveOperatorEvent::DFMSaveOperatorEvent(const QSharedPointer<DFMEvent> &event)
+    : DFMEvent(SaveOperator, 0)
+{
+    setProperty(QT_STRINGIFY(DFMSaveOperatorEvent::event), QVariant::fromValue(event));
+}
+
+QSharedPointer<DFMEvent> DFMSaveOperatorEvent::event() const
+{
+    return qvariant_cast<QSharedPointer<DFMEvent>>(property(QT_STRINGIFY(DFMSaveOperatorEvent::event)));
+}
+
+DFMRevocationEvent::DFMRevocationEvent(const QObject *sender)
+    : DFMEvent(Revocation, sender)
+{
+
+}
+
+DFMCleanSaveOperatorEvent::DFMCleanSaveOperatorEvent(const QObject *sender)
+    : DFMEvent(CleanSaveOperator, sender)
+{
+
 }

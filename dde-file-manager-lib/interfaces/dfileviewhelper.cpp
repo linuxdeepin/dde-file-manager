@@ -24,6 +24,8 @@
 #include "controllers/appcontroller.h"
 #include "gvfs/qdiskinfo.h"
 #include "gvfs/gvfsmountmanager.h"
+#include "dfmeventdispatcher.h"
+
 #include <QTimer>
 #include <QAction>
 #define protected public
@@ -114,9 +116,19 @@ void DFileViewHelperPrivate::init()
         fileService->pasteFileByClipboard(q->parent(), q->currentUrl());
     });
 
+    QAction *revocation_action = new QAction(q->parent());
+
+    revocation_action->setShortcut(QKeySequence::Undo);
+
+    QObject::connect(revocation_action, &QAction::triggered,
+                     q, [q] {
+        DFMEventDispatcher::instance()->processEvent<DFMRevocationEvent>(q);
+    });
+
     q->parent()->addAction(copy_action);
     q->parent()->addAction(cut_action);
     q->parent()->addAction(paste_action);
+    q->parent()->addAction(revocation_action);
 
     q->connect(fileSignalManager, SIGNAL(requestRename(DFMUrlBaseEvent)), q, SLOT(_q_edit(DFMUrlBaseEvent)));
     q->connect(fileSignalManager, SIGNAL(requestSelectRenameFile(DFMUrlBaseEvent)), q, SLOT(_q_selectAndRename(DFMUrlBaseEvent)));

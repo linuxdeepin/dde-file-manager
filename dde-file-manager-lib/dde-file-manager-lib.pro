@@ -223,7 +223,8 @@ HEADERS += \
     dialogs/dmultifilepropertydialog.h \
     dialogs/movetotrashconflictdialog.h \
     dialogs/dfmsettingdialog.h \
-    interfaces/dfmplaformmanager.h
+    interfaces/dfmplaformmanager.h \
+    controllers/operatorrevocation.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -364,7 +365,8 @@ SOURCES += \
     dialogs/dmultifilepropertydialog.cpp \
     dialogs/movetotrashconflictdialog.cpp \
     dialogs/dfmsettingdialog.cpp \
-    interfaces/dfmplaformmanager.cpp
+    interfaces/dfmplaformmanager.cpp \
+    controllers/operatorrevocation.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET

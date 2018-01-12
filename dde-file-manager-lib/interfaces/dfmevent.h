@@ -68,6 +68,11 @@ public:
         MenuAction,
         Back,
         Forward,
+        // save operator
+        SaveOperator,
+        // Ctrl+Z
+        CleanSaveOperator,
+        Revocation,
         // user custom
         CustomBase = 1000                            // first user event id
     };
@@ -82,8 +87,11 @@ public:
     DFMEvent &operator =(const DFMEvent &other);
 
     static Type nameToType(const QString &name);
+    static QString typeToName(Type type);
     inline Type type() const { return static_cast<Type>(m_type);}
+    inline void setType(Type type) {m_type = type;}
     inline QPointer<const QObject> sender() const {return m_sender;}
+    inline void setSender(const QObject *sender) {m_sender = sender;}
 
     inline void setAccepted(bool accepted) { m_accept = accepted; }
     inline bool isAccepted() const { return m_accept; }
@@ -144,6 +152,33 @@ private:
     ushort m_accept : 1;
     quint64 m_id;
 };
+
+Q_DECLARE_METATYPE(DFMEvent)
+Q_DECLARE_METATYPE(QSharedPointer<DFMEvent>)
+
+template<typename T>
+const T dfmevent_cast(const DFMEvent &event)
+{
+    if (!QString(typeid(T).name()).contains(DFMEvent::typeToName(event.type()))) {
+        DFMEvent e;
+
+        return *reinterpret_cast<T*>(&e);
+    }
+
+    return *reinterpret_cast<const T*>(&event);
+}
+
+template<typename T>
+T dfmevent_cast(DFMEvent &event)
+{
+    if (!QString(typeid(T).name()).contains(DFMEvent::typeToName(event.type()))) {
+        DFMEvent e;
+
+        return *reinterpret_cast<T*>(&e);
+    }
+
+    return *reinterpret_cast<T*>(&event);
+}
 
 QT_BEGIN_NAMESPACE
 QDebug operator<<(QDebug deg, const DFMEvent &info);
@@ -488,6 +523,26 @@ public:
     explicit DFMForwardEvent(const QObject *sender);
 
     static QSharedPointer<DFMForwardEvent> fromJson(const QJsonObject &json);
+};
+
+class DFMSaveOperatorEvent : public DFMEvent
+{
+public:
+    explicit DFMSaveOperatorEvent(const QSharedPointer<DFMEvent> &event);
+
+    QSharedPointer<DFMEvent> event() const;
+};
+
+class DFMCleanSaveOperatorEvent : public DFMEvent
+{
+public:
+    explicit DFMCleanSaveOperatorEvent(const QObject *sender);
+};
+
+class DFMRevocationEvent : public DFMEvent
+{
+public:
+    explicit DFMRevocationEvent(const QObject *sender);
 };
 
 #endif // FMEVENT_H

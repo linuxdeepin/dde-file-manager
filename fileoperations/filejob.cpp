@@ -26,6 +26,7 @@
 #include "dfmstandardpaths.h"
 #include "partman/partition.h"
 #include "dfmevent.h"
+#include "dfmeventdispatcher.h"
 
 #ifdef SW_LABEL
 #include "sw_label/llsdeepinlabellibrary.h"
@@ -52,7 +53,7 @@
 #include <sys/stat.h>
 #include <sys/syscall.h>
 
-//DFM_USE_NAMESPACE
+DFM_USE_NAMESPACE
 
 int FileJob::FileJobCount = 0;
 DUrlList FileJob::CopyingFiles = {};
@@ -390,6 +391,8 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
 
         if (!targetPath.isEmpty())
             list << DUrl::fromLocalFile(targetPath);
+        else
+            list << DUrl();
     }
     if(m_isJobAdded)
         jobRemoved();
@@ -479,7 +482,7 @@ DUrlList FileJob::doMoveToTrash(const DUrlList &files)
     if(canNotMoveToTrashList.size() > 0){
         emit requestCanNotMoveToTrashDialogShowed(canNotMoveToTrashList);
     }else{
-        doMove(files, DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath)));
+        list = doMove(files, DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath)));
     }
 
     if(m_isJobAdded)
@@ -899,6 +902,9 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
 
                         if(!m_applyToAll)
                             m_isReplaced = false;
+
+                        // Clean saved events
+                        DFMEventDispatcher::instance()->processEvent<DFMCleanSaveOperatorEvent>(nullptr);
                     }
                 }
 
