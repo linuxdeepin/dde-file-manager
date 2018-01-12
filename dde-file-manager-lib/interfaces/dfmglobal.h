@@ -254,6 +254,7 @@ public:
     static void initUserShareManager();
     static void initGlobalSettings();
     static void initViewStatesManager();
+    static void initOperatorRevocation();
 
     static void autoMountAllDisks();
 

@@ -144,6 +144,9 @@ void FileManagerApp::initApp()
     /*init viewStatesManager*/
     DFMGlobal::initViewStatesManager();
 
+    /*init operator revocation*/
+    DFMGlobal::initOperatorRevocation();
+
     QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
 }
 

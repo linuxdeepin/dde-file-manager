@@ -38,6 +38,8 @@
 #include "models/desktopfileinfo.h"
 #include "shutil/viewstatesmanager.h"
 #include "dfmplaformmanager.h"
+#include "controllers/operatorrevocation.h"
+
 #include <dfmstandardpaths.h>
 
 #include <QGuiApplication>
@@ -317,6 +319,11 @@ void DFMGlobal::initGlobalSettings()
 void DFMGlobal::initViewStatesManager()
 {
     viewStatesManager;
+}
+
+void DFMGlobal::initOperatorRevocation()
+{
+    Q_UNUSED(OperatorRevocation::instance())
 }
 
 void DFMGlobal::autoMountAllDisks()
