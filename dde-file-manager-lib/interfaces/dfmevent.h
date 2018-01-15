@@ -526,8 +526,9 @@ public:
 class DFMSaveOperatorEvent : public DFMEvent
 {
 public:
-    explicit DFMSaveOperatorEvent(const QSharedPointer<DFMEvent> &event);
+    explicit DFMSaveOperatorEvent(const QSharedPointer<DFMEvent> &iniaiator, const QSharedPointer<DFMEvent> &event);
 
+    QSharedPointer<DFMEvent> iniaiator() const;
     QSharedPointer<DFMEvent> event() const;
 };
 
