@@ -225,18 +225,27 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
         }else{
             key = "Name";
         }
+
+        const QString old_name = desktop.value(key).toString();
+
         desktop.set(key, newfilePointer->fileName());
         result = desktop.save(filePath, "Desktop Entry");
+
+        if (result) {
+            const QString path = QFileInfo(file).absoluteDir().absoluteFilePath(old_name);
+
+            DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMRenameEvent>(nullptr, oldUrl, DUrl::fromLocalFile(path)));
+        }
     }else{
         result = file.rename(newFilePath);
 
         if (!result) {
             result = QProcess::execute("mv \"" + file.fileName().toUtf8() + "\" \"" + newFilePath.toUtf8() + "\"") == 0;
         }
-    }
 
-    if (result) {
-        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(dMakeEventPointer<DFMRenameEvent>(nullptr, newUrl, oldUrl));
+        if (result) {
+            DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMRenameEvent>(nullptr, newUrl, oldUrl));
+        }
     }
 
     return result;
@@ -297,7 +306,7 @@ DUrlList FileController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &
     if (has_restore_files.isEmpty())
         return list;
 
-    DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(dMakeEventPointer<DFMRestoreFromTrashEvent>(nullptr, has_restore_files));
+    DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMRestoreFromTrashEvent>(nullptr, has_restore_files));
 
     return list;
 }
@@ -358,14 +367,14 @@ DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) c
         return list;
 
     if (event->action() == DFMGlobal::CopyAction) {
-        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(dMakeEventPointer<DFMDeleteEvent>(nullptr, valid_files, true));
+        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMDeleteEvent>(nullptr, valid_files, true));
     } else {
         const QString targetDir(QFileInfo(urlList.first().toLocalFile()).absolutePath());
 
         if (targetDir.isEmpty())
             return list;
 
-        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromLocalFile(targetDir), valid_files));
+        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromLocalFile(targetDir), valid_files));
     }
 
     return list;
@@ -379,7 +388,7 @@ bool FileController::mkdir(const QSharedPointer<DFMMkdirEvent> &event) const
     bool ok = QDir::current().mkdir(event->url().toLocalFile());
 
     if (ok)
-        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << event->url(), true));
+        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << event->url(), true));
 
     return ok;
 }
@@ -397,7 +406,7 @@ bool FileController::touch(const QSharedPointer<DFMTouchFileEvent> &event) const
         return false;
     }
 
-    DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << event->url(), true));
+    DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event , dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << event->url(), true));
 
     return true;
 }

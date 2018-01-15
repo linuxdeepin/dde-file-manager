@@ -832,10 +832,16 @@ QSharedPointer<DFMForwardEvent> DFMForwardEvent::fromJson(const QJsonObject &jso
     return dMakeEventPointer<DFMForwardEvent>(Q_NULLPTR);
 }
 
-DFMSaveOperatorEvent::DFMSaveOperatorEvent(const QSharedPointer<DFMEvent> &event)
+DFMSaveOperatorEvent::DFMSaveOperatorEvent(const QSharedPointer<DFMEvent> &iniaiator, const QSharedPointer<DFMEvent> &event)
     : DFMEvent(SaveOperator, 0)
 {
+    setProperty(QT_STRINGIFY(DFMSaveOperatorEvent::iniaiator), QVariant::fromValue(iniaiator));
     setProperty(QT_STRINGIFY(DFMSaveOperatorEvent::event), QVariant::fromValue(event));
+}
+
+QSharedPointer<DFMEvent> DFMSaveOperatorEvent::iniaiator() const
+{
+    return qvariant_cast<QSharedPointer<DFMEvent>>(property(QT_STRINGIFY(DFMSaveOperatorEvent::iniaiator)));
 }
 
 QSharedPointer<DFMEvent> DFMSaveOperatorEvent::event() const

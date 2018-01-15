@@ -40,7 +40,7 @@ bool OperatorRevocation::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
 
     switch ((int)event->type()) {
     case DFMEvent::SaveOperator:
-        if (event->property("_dfm_is_revocaion_event").toBool())
+        if (static_cast<DFMSaveOperatorEvent*>(event.data())->iniaiator()->property("_dfm_is_revocaion_event").toBool())
             return true;
 
         operatorStack.push(*event.data());
