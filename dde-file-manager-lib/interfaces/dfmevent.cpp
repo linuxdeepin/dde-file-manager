@@ -51,10 +51,10 @@ static QString fmeventType2String(DFMEvent::Type type)
         return QStringLiteral(QT_STRINGIFY(RestoreFromTrash));
     case DFMEvent::PasteFile:
         return QStringLiteral(QT_STRINGIFY(PasteFile));
-    case DFMEvent::NewFolder:
-        return QStringLiteral(QT_STRINGIFY(NewFolder));
-    case DFMEvent::NewFile:
-        return QStringLiteral(QT_STRINGIFY(NewFile));
+    case DFMEvent::Mkdir:
+        return QStringLiteral(QT_STRINGIFY(Mkdir));
+    case DFMEvent::TouchFile:
+        return QStringLiteral(QT_STRINGIFY(TouchFile));
     case DFMEvent::OpenFileLocation:
         return QStringLiteral(QT_STRINGIFY(OpenFileLocation));
     case DFMEvent::CreateSymlink:
@@ -212,10 +212,10 @@ const QSharedPointer<DFMEvent> DFMEvent::fromJson(DFMEvent::Type type, const QJs
         return DFMRestoreFromTrashEvent::fromJson(json);
     case PasteFile:
         return DFMPasteEvent::fromJson(json);
-    case NewFolder:
-        return DFMNewFolderEvent::fromJson(json);
-    case NewFile:
-        return DFMNewFileEvent::fromJson(json);
+    case Mkdir:
+        return DFMMkdirEvent::fromJson(json);
+    case TouchFile:
+        return DFMTouchFileEvent::fromJson(json);
     case OpenFileLocation:
         return DFMOpenFileLocation::fromJson(json);
     case CreateSymlink:
@@ -487,31 +487,26 @@ QSharedPointer<DFMPasteEvent> DFMPasteEvent::fromJson(const QJsonObject &json)
                                             DUrl::fromUserInput(json["targetUrl"].toString()), event->urlList());
 }
 
-DFMNewFolderEvent::DFMNewFolderEvent(const QObject *sender, const DUrl &url)
-    : DFMUrlBaseEvent(NewFolder, sender, url)
+DFMMkdirEvent::DFMMkdirEvent(const QObject *sender, const DUrl &url)
+    : DFMUrlBaseEvent(Mkdir, sender, url)
 {
 
 }
 
-QSharedPointer<DFMNewFolderEvent> DFMNewFolderEvent::fromJson(const QJsonObject &json)
+QSharedPointer<DFMMkdirEvent> DFMMkdirEvent::fromJson(const QJsonObject &json)
 {
-    return DFMUrlBaseEvent::fromJson(NewFolder, json).staticCast<DFMNewFolderEvent>();
+    return DFMUrlBaseEvent::fromJson(Mkdir, json).staticCast<DFMMkdirEvent>();
 }
 
-DFMNewFileEvent::DFMNewFileEvent(const QObject *sender, const DUrl &url, const QString &suffix)
-    : DFMUrlBaseEvent(NewFile, sender, url)
+DFMTouchFileEvent::DFMTouchFileEvent(const QObject *sender, const DUrl &url)
+    : DFMUrlBaseEvent(TouchFile, sender, url)
 {
-    setProperty(QT_STRINGIFY(DFMNewFileEvent::fileSuffix), suffix);
+
 }
 
-QString DFMNewFileEvent::fileSuffix() const
+QSharedPointer<DFMTouchFileEvent> DFMTouchFileEvent::fromJson(const QJsonObject &json)
 {
-    return property(QT_STRINGIFY(DFMNewFileEvent::fileSuffix), QString());
-}
-
-QSharedPointer<DFMNewFileEvent> DFMNewFileEvent::fromJson(const QJsonObject &json)
-{
-    return dMakeEventPointer<DFMNewFileEvent>(Q_NULLPTR, DUrl::fromUserInput(json["url"].toString()), json["suffix"].toString());
+    return DFMUrlBaseEvent::fromJson(TouchFile, json).staticCast<DFMTouchFileEvent>();
 }
 
 DFMOpenFileLocation::DFMOpenFileLocation(const QObject *sender, const DUrl &url)

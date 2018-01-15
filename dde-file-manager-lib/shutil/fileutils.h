@@ -57,7 +57,7 @@ public:
     static QString formatSize( qint64 num );
     static QString formatSizeToGB( qint64 num, bool isUnitVisible = false);
     static QString newDocmentName(QString targetdir, const QString& baseName, const QString& suffix);
-    static bool cpTemplateFileToTargetDir(const QString& targetdir, const QString& baseName, const QString& suffix);
+    static bool cpTemplateFileToTargetDir(const QString& targetdir, const QString& baseName, const QString& suffix, WId windowId);
 
     static bool openFile(const QString& filePath);
     static bool launchApp(const QString& desktopFile, const QStringList& filePaths = {}); // open filePaths by desktopFile

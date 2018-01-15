@@ -34,8 +34,8 @@ class DFMDeleteEvent;
 class DFMMoveToTrashEvent;
 class DFMRestoreFromTrashEvent;
 class DFMPasteEvent;
-class DFMNewFolderEvent;
-class DFMNewFileEvent;
+class DFMMkdirEvent;
+class DFMTouchFileEvent;
 class DFMOpenFileLocation;
 class DFMCreateSymlinkEvent;
 class DFMGetChildrensEvent;
@@ -66,8 +66,8 @@ public:
     virtual DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const;
     virtual DUrlList pasteFile(const QSharedPointer<DFMPasteEvent> &event) const;
     virtual bool restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent> &event) const;
-    virtual bool newFolder(const QSharedPointer<DFMNewFolderEvent> &event) const;
-    virtual bool newFile(const QSharedPointer<DFMNewFileEvent> &event) const;
+    virtual bool mkdir(const QSharedPointer<DFMMkdirEvent> &event) const;
+    virtual bool touch(const QSharedPointer<DFMTouchFileEvent> &event) const;
 
     virtual bool openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const;
 

@@ -259,11 +259,11 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
 
         break;
     }
-    case DFMEvent::NewFolder:
-        result = CALL_CONTROLLER(newFolder);
+    case DFMEvent::Mkdir:
+        result = CALL_CONTROLLER(mkdir);
         break;
-    case DFMEvent::NewFile:
-        result = CALL_CONTROLLER(newFile);
+    case DFMEvent::TouchFile:
+        result = CALL_CONTROLLER(touch);
         break;
     case DFMEvent::OpenFileLocation:
         result = CALL_CONTROLLER(openFileLocation);
@@ -470,14 +470,14 @@ bool DFileService::restoreFile(const QObject *sender, const DUrlList &list) cons
     return DFMEventDispatcher::instance()->processEventWithEventLoop<DFMRestoreFromTrashEvent>(sender, list).toBool();
 }
 
-bool DFileService::newFolder(const QObject *sender, const DUrl &targetUrl) const
+bool DFileService::mkdir(const QObject *sender, const DUrl &targetUrl) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMNewFolderEvent>(sender, targetUrl)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMMkdirEvent>(sender, targetUrl)).toBool();
 }
 
-bool DFileService::newFile(const QObject *sender, const DUrl &targetUrl, const QString &fileSuffix) const
+bool DFileService::touchFile(const QObject *sender, const DUrl &targetUrl) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMNewFileEvent>(sender, targetUrl, fileSuffix)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMTouchFileEvent>(sender, targetUrl)).toBool();
 }
 
 bool DFileService::openFileLocation(const QObject *sender, const DUrl &url) const

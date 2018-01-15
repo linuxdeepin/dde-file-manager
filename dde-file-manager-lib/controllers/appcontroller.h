@@ -74,7 +74,6 @@ public slots:
     void actionSendToDesktop(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionAddToBookMark(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionNewFolder(const QSharedPointer<DFMUrlBaseEvent> &event);
-    void actionNewFile(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionSelectAll(quint64 winId);
     void actionClearRecent(const QSharedPointer<DFMMenuActionEvent>& event);
     void actionClearTrash(const QObject *sender = 0);
