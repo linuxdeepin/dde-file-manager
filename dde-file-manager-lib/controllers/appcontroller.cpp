@@ -315,12 +315,10 @@ void AppController::actionAddToBookMark(const QSharedPointer<DFMUrlBaseEvent> &e
 
 void AppController::actionNewFolder(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    fileService->newFolder(event->sender(), event->url());
-}
+    const QString targetDir = event->url().toLocalFile();
+    const QString name = FileUtils::newDocmentName(targetDir, tr("New Folder") , QString());
 
-void AppController::actionNewFile(const QSharedPointer<DFMUrlBaseEvent> &event)
-{
-    fileService->newFile(event->sender(), event->url(), "txt");
+    fileService->mkdir(event->sender(), DUrl::fromLocalFile(name));
 }
 
 void AppController::actionSelectAll(quint64 winId)
@@ -349,36 +347,36 @@ void AppController::actionNewWord(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl& fileUrl = event->url();
     int windowId = event->windowId();
-    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("Document"), "doc");
-    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
-    FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("Document"), "doc");
+//    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("Document"), "doc");
+//    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
+    FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("Document"), "doc", windowId);
 }
 
 void AppController::actionNewExcel(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl& fileUrl = event->url();
     int windowId = event->windowId();
-    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("Spreadsheet"), "xls");
-    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
-    FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("Spreadsheet"), "xls");
+//    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("Spreadsheet"), "xls");
+//    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
+    FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("Spreadsheet"), "xls", windowId);
 }
 
 void AppController::actionNewPowerpoint(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl& fileUrl = event->url();
     int windowId = event->windowId();
-    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("Presentation"), "ppt");
-    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
-    FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("Presentation"), "ppt");
+//    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("Presentation"), "ppt");
+//    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
+    FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("Presentation"), "ppt", windowId);
 }
 
 void AppController::actionNewText(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl& fileUrl = event->url();
     int windowId = event->windowId();
-    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("Text"), "txt");
-    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
-    FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("Text"), "txt");
+//    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("Text"), "txt");
+//    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
+    FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("Text"), "txt", windowId);
 }
 
 void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
@@ -759,10 +757,24 @@ QString AppController::createFile(const QString &sourceFile, const QString &targ
         return QString();
 
     const QString &targetFile = FileUtils::newDocmentName(targetDir, baseFileName, info.suffix());
-    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
+//    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
 
-    if (QFile::copy(sourceFile, targetFile))
+    if (DFileService::instance()->touchFile(WindowManager::getWindowById(windowId), DUrl::fromLocalFile(targetFile))) {
+        QFile target(targetFile);
+
+        if (!target.open(QIODevice::WriteOnly)) {
+            return QString();
+        }
+
+        QFile source(sourceFile);
+
+        if (!source.open(QIODevice::ReadOnly))
+            return QString();
+
+        target.write(source.readAll());
+
         return targetFile;
+    }
 
     return QString();
 }

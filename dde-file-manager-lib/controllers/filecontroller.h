@@ -46,8 +46,8 @@ public:
     bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const Q_DECL_OVERRIDE;
     DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const Q_DECL_OVERRIDE;
     DUrlList pasteFile(const QSharedPointer<DFMPasteEvent> &event) const Q_DECL_OVERRIDE;
-    bool newFolder(const QSharedPointer<DFMNewFolderEvent> &event) const Q_DECL_OVERRIDE;
-    bool newFile(const QSharedPointer<DFMNewFileEvent> &event) const Q_DECL_OVERRIDE;
+    bool mkdir(const QSharedPointer<DFMMkdirEvent> &event) const Q_DECL_OVERRIDE;
+    bool touch(const QSharedPointer<DFMTouchFileEvent> &event) const Q_DECL_OVERRIDE;
 
     bool shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const Q_DECL_OVERRIDE;
     bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const Q_DECL_OVERRIDE;

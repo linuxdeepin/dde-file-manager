@@ -103,14 +103,14 @@ bool DAbstractFileController::restoreFile(const QSharedPointer<DFMRestoreFromTra
     return false;
 }
 
-bool DAbstractFileController::newFolder(const QSharedPointer<DFMNewFolderEvent> &event) const
+bool DAbstractFileController::mkdir(const QSharedPointer<DFMMkdirEvent> &event) const
 {
     event->ignore();
 
     return false;
 }
 
-bool DAbstractFileController::newFile(const QSharedPointer<DFMNewFileEvent> &event) const
+bool DAbstractFileController::touch(const QSharedPointer<DFMTouchFileEvent> &event) const
 {
     event->ignore();
 

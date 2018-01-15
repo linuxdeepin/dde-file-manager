@@ -429,13 +429,14 @@ QString FileUtils::newDocmentName(QString targetdir, const QString &baseName, co
         targetdir.chop(1);
 
     int i = 0;
-    QString filePath = QString("%1/%2.%4").arg(targetdir, baseName, suffix);
+    QString filePath = suffix.isEmpty() ? QString("%1/%2").arg(targetdir, baseName) : QString("%1/%2.%3").arg(targetdir, baseName, suffix);
     while (true) {
-        if (QFile(filePath).exists()){
-            i++;
-            filePath = QString("%1/%2 %3.%4").arg(targetdir, baseName, QString::number(i), suffix);
-        }
-        else{
+        if (QFile(filePath).exists()) {
+            ++i;
+            filePath = suffix.isEmpty()
+                       ? QString("%1/%2 %3").arg(targetdir, baseName, QString::number(i))
+                       : QString("%1/%2 %3.%4").arg(targetdir, baseName, QString::number(i), suffix);
+        } else {
             return filePath;
         }
     }
@@ -443,7 +444,7 @@ QString FileUtils::newDocmentName(QString targetdir, const QString &baseName, co
     return QString();
 }
 
-bool FileUtils::cpTemplateFileToTargetDir(const QString& targetdir, const QString& baseName, const QString& suffix)
+bool FileUtils::cpTemplateFileToTargetDir(const QString& targetdir, const QString& baseName, const QString& suffix, WId windowId)
 {
     QString templateFile;
     QDirIterator it(DFMStandardPaths::standardLocation(DFMStandardPaths::TemplatesPath), QDir::Files);
@@ -458,12 +459,13 @@ bool FileUtils::cpTemplateFileToTargetDir(const QString& targetdir, const QStrin
     if (templateFile.isEmpty())
         return false;
 
-    QString targetFile = FileUtils::newDocmentName(targetdir, baseName, suffix);
+//    QString targetFile = FileUtils::newDocmentName(targetdir, baseName, suffix);
 
-    if (targetFile.isEmpty())
-        return false;
+//    if (targetFile.isEmpty())
+//        return false;
 
-    return QFile::copy(templateFile, targetFile);
+//    return QFile::copy(templateFile, targetFile);
+    return !AppController::createFile(templateFile, targetdir, baseName, windowId).isEmpty();
 }
 
 bool FileUtils::openFile(const QString &filePath)

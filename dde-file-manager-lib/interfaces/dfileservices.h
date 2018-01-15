@@ -97,8 +97,8 @@ public:
     DUrlList pasteFile(const QObject *sender, DFMGlobal::ClipboardAction action,
                        const DUrl &targetUrl, const DUrlList &list) const;
     bool restoreFile(const QObject *sender, const DUrlList &list) const;
-    bool newFolder(const QObject *sender, const DUrl &targetUrl) const;
-    bool newFile(const QObject *sender, const DUrl &targetUrl, const QString &fileSuffix) const;
+    bool mkdir(const QObject *sender, const DUrl &targetUrl) const;
+    bool touchFile(const QObject *sender, const DUrl &targetUrl) const;
     bool openFileLocation(const QObject *sender, const DUrl &url) const;
 
     bool createSymlink(const QObject *sender, const DUrl &fileUrl) const;

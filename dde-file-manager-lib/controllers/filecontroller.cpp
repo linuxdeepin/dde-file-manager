@@ -371,38 +371,33 @@ DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) c
     return list;
 }
 
-bool FileController::newFolder(const QSharedPointer<DFMNewFolderEvent> &event) const
+bool FileController::mkdir(const QSharedPointer<DFMMkdirEvent> &event) const
 {
     //Todo:: check if mkdir is ok
-    QDir dir(event->url().toLocalFile());
+    AppController::selectionAndRenameFile = qMakePair(event->url(), event->windowId());
 
-    QString folderName = checkDuplicateName(dir.absolutePath() + "/" + tr("New Folder"));
-
-    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(folderName), event->windowId());
-
-    bool ok = dir.mkdir(folderName);
+    bool ok = QDir::current().mkdir(event->url().toLocalFile());
 
     if (ok)
-        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << DUrl::fromLocalFile(folderName), true));
+        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << event->url(), true));
 
     return ok;
 }
 
-bool FileController::newFile(const QSharedPointer<DFMNewFileEvent> &event) const
+bool FileController::touch(const QSharedPointer<DFMTouchFileEvent> &event) const
 {
     //Todo:: check if mkdir is ok
-    QDir dir(event->url().toLocalFile());
-    QString name = checkDuplicateName(dir.absolutePath() + "/" + tr("New File") + event->fileSuffix());
+    QFile file(event->url().toLocalFile());
 
-    QFile file(name);
+    AppController::selectionAndRenameFile = qMakePair(event->url(), event->windowId());
 
-    if(file.open(QIODevice::WriteOnly)) {
+    if (file.open(QIODevice::WriteOnly)) {
         file.close();
     } else {
         return false;
     }
 
-    DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << DUrl::fromLocalFile(name), true));
+    DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << event->url(), true));
 
     return true;
 }

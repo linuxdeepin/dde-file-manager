@@ -48,8 +48,8 @@ public:
         MoveToTrash,
         RestoreFromTrash,
         PasteFile,
-        NewFolder,
-        NewFile,
+        Mkdir,
+        TouchFile,
         OpenFileLocation,
         CreateSymlink,
         FileShare,
@@ -322,22 +322,20 @@ public:
     static QSharedPointer<DFMPasteEvent> fromJson(const QJsonObject &json);
 };
 
-class DFMNewFolderEvent : public DFMUrlBaseEvent
+class DFMMkdirEvent : public DFMUrlBaseEvent
 {
 public:
-    explicit DFMNewFolderEvent(const QObject *sender, const DUrl &url);
+    explicit DFMMkdirEvent(const QObject *sender, const DUrl &url);
 
-    static QSharedPointer<DFMNewFolderEvent> fromJson(const QJsonObject &json);
+    static QSharedPointer<DFMMkdirEvent> fromJson(const QJsonObject &json);
 };
 
-class DFMNewFileEvent : public DFMUrlBaseEvent
+class DFMTouchFileEvent : public DFMUrlBaseEvent
 {
 public:
-    explicit DFMNewFileEvent(const QObject *sender, const DUrl &url, const QString &suffix);
+    explicit DFMTouchFileEvent(const QObject *sender, const DUrl &url);
 
-    QString fileSuffix() const;
-
-    static QSharedPointer<DFMNewFileEvent> fromJson(const QJsonObject &json);
+    static QSharedPointer<DFMTouchFileEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMOpenFileLocation : public DFMUrlBaseEvent
