@@ -512,14 +512,13 @@ void GvfsMountManager::monitor_mount_removed(GVolumeMonitor *volume_monitor, GMo
 
     qDebug() << "===================" << qMount.mounted_root_uri() << "=======================";
 
-    QMap<QString, QVolume>::iterator insertedPos{};
-
     QVolume volume = getVolumeByMountedRootUri(qMount.mounted_root_uri());
     qDebug() << volume.isValid() << volume;
     if (volume.isValid()){
         volume.setIsMounted(false);
-//        volume.setMounted_root_uri("");
-        insertedPos = Volumes.insert(volume.unix_device(), volume);
+        volume.setMounted_root_uri("");
+        Volumes.insert(volume.unix_device(), volume);
+
 
     }else{
         NoVolumes_Mounts_Keys.removeOne(qMount.mounted_root_uri());
@@ -533,26 +532,21 @@ void GvfsMountManager::monitor_mount_removed(GVolumeMonitor *volume_monitor, GMo
             DiskInfos.insert(diskInfo.id(), diskInfo);
             diskInfo.setHas_volume(true);
             emit gvfsMountManager->mount_removed(diskInfo);
-
         }else{
             QDiskInfo diskInfo = qMountToqDiskinfo(qMount);
             bool diskInfoRemoved = DiskInfos.remove(diskInfo.id());
             if (diskInfoRemoved){
                 diskInfo.setHas_volume(false);
                 emit gvfsMountManager->mount_removed(diskInfo);
-
             }
         }
-    }
-
-    if(insertedPos != QMap<QString, QVolume>::iterator{}){
-        insertedPos->setMounted_root_uri("");
     }
 }
 
 void GvfsMountManager::monitor_mount_changed(GVolumeMonitor *volume_monitor, GMount *mount)
 {
     Q_UNUSED(volume_monitor)
+    Q_UNUSED(mount)
 //    qDebug() << "==============================monitor_mount_changed==============================" ;
     GVolume *volume = g_mount_get_volume(mount);
     if (volume != NULL){
@@ -649,7 +643,7 @@ void GvfsMountManager::monitor_volume_changed(GVolumeMonitor *volume_monitor, GV
 
         QVolume qVolume = gVolumeToqVolume(volume);
         QDiskInfo diskInfo = qVolumeToqDiskInfo(qVolume);
-//        Volumes.insert(qVolume.unix_device(), qVolume);//###: clear the info of partion/device which was unmounted just now.
+        Volumes.insert(qVolume.unix_device(), qVolume);
         DiskInfos.insert(diskInfo.id(), diskInfo);
         qDebug() << diskInfo;
         emit gvfsMountManager->volume_changed(diskInfo);
