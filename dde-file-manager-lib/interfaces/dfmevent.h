@@ -526,10 +526,11 @@ public:
 class DFMSaveOperatorEvent : public DFMEvent
 {
 public:
-    explicit DFMSaveOperatorEvent(const QSharedPointer<DFMEvent> &iniaiator, const QSharedPointer<DFMEvent> &event);
+    explicit DFMSaveOperatorEvent(const QSharedPointer<DFMEvent> &iniaiator, const QSharedPointer<DFMEvent> &event, bool async = false);
 
     QSharedPointer<DFMEvent> iniaiator() const;
     QSharedPointer<DFMEvent> event() const;
+    bool async() const;
 };
 
 class DFMCleanSaveOperatorEvent : public DFMEvent

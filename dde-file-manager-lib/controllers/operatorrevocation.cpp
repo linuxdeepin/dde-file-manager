@@ -49,12 +49,15 @@ bool OperatorRevocation::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
         if (operatorStack.isEmpty())
             return true;
 
-        const DFMEvent &e = operatorStack.pop();
-        const QSharedPointer<DFMEvent> new_event = dfmevent_cast<DFMSaveOperatorEvent>(e).event();
+        const DFMSaveOperatorEvent &e = dfmevent_cast<DFMSaveOperatorEvent>(operatorStack.pop());
+        const QSharedPointer<DFMEvent> new_event = e.event();
 
         new_event->setProperty("_dfm_is_revocaion_event", true);
 
-        DFMEventDispatcher::instance()->processEvent(new_event);
+        if (e.async())
+            DFMEventDispatcher::instance()->processEventAsync(new_event);
+        else
+            DFMEventDispatcher::instance()->processEvent(new_event);
         break;
     }
     case DFMEvent::CleanSaveOperator:

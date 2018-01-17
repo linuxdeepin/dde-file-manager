@@ -292,13 +292,14 @@ DUrlList FileController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &
     if (infos.isEmpty())
         return list;
 
-    const QSet<DUrl> &files_set = event->urlList().toSet();
+    const QSet<DUrl> &source_files_set = event->urlList().toSet();
+    const QSet<DUrl> &target_files_set = list.toSet();
     DUrlList has_restore_files;
 
     for (const DAbstractFileInfoPointer &info : infos) {
         const DUrl &source_file = DUrl::fromLocalFile(static_cast<const TrashFileInfo*>(info.constData())->sourceFilePath());
 
-        if (files_set.contains(source_file)) {
+        if (source_files_set.contains(source_file) && target_files_set.contains(info->mimeDataUrl())) {
             has_restore_files << info->fileUrl();
         }
     }
@@ -306,7 +307,7 @@ DUrlList FileController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &
     if (has_restore_files.isEmpty())
         return list;
 
-    DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMRestoreFromTrashEvent>(nullptr, has_restore_files));
+    DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMRestoreFromTrashEvent>(nullptr, has_restore_files), true);
 
     return list;
 }
@@ -367,14 +368,14 @@ DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) c
         return list;
 
     if (event->action() == DFMGlobal::CopyAction) {
-        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMDeleteEvent>(nullptr, valid_files, true));
+        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMDeleteEvent>(nullptr, valid_files, true), true);
     } else {
         const QString targetDir(QFileInfo(urlList.first().toLocalFile()).absolutePath());
 
         if (targetDir.isEmpty())
             return list;
 
-        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromLocalFile(targetDir), valid_files));
+        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromLocalFile(targetDir), valid_files), true);
     }
 
     return list;
