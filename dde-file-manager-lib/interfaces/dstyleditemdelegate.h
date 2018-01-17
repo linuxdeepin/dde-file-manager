@@ -59,6 +59,9 @@ protected:
     void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const Q_DECL_OVERRIDE;
     QList<QRect> getCornerGeometryList(const QRect &baseRect, const QSize &cornerSize) const;
 
+    static void paintIcon(QPainter *painter, const QIcon &icon, const QRect &rect, Qt::Alignment alignment = Qt::AlignCenter,
+                          QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);
+
     QScopedPointer<DStyledItemDelegatePrivate> d_ptr;
 
     Q_PRIVATE_SLOT(d_ptr, void _q_onRowsInserted(const QModelIndex &parent, int first, int last))

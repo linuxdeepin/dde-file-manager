@@ -132,7 +132,7 @@ void DListItemDelegate::paint(QPainter *painter,
 
         painter->drawPixmap(icon_rect, pixmap);
     } else {
-        opt.icon.paint(painter, icon_rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
+        paintIcon(painter, opt.icon, icon_rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
     }
 
     /// draw file additional icon

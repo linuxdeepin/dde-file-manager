@@ -303,7 +303,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
 //            goto _return;
 //        }
 
-        if (imageSize.width() >= size || imageSize.height() >= size) {
+        if (imageSize.width() >= size || imageSize.height() >= size || mime.name() == "image/svg+xml") {
             reader.setScaledSize(reader.size().scaled(size, size, Qt::KeepAspectRatio));
         }
 
@@ -370,7 +370,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
         pr.set_render_hint(poppler::page_renderer::antialiasing, true);
         pr.set_render_hint(poppler::page_renderer::text_antialiasing, true);
 
-        poppler::image imageData = pr.render_page(page.data());
+        poppler::image imageData = pr.render_page(page.data(), 72, 72, -1, -1, -1, size);
 
         if (!imageData.is_valid()) {
             d->errorString = QStringLiteral("Render error");
@@ -402,7 +402,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
             goto _return;
         }
 
-        *image = img.scaled(QSize(size,size), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        *image = img.scaled(QSize(size, size), Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
 #ifdef SUPPORT_FFMEPG
     else if (mime.name().startsWith("video/")) {
