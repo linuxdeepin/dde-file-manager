@@ -13,6 +13,8 @@
 
 #include <QDebug>
 #include <QAbstractItemView>
+#include <QPainter>
+#include <QGuiApplication>
 
 DStyledItemDelegate::DStyledItemDelegate(DFileViewHelper *parent)
     : DStyledItemDelegate(*new DStyledItemDelegatePrivate(this), parent)
@@ -176,6 +178,48 @@ QList<QRect> DStyledItemDelegate::getCornerGeometryList(const QRect &baseRect, c
     list << QRect(QPoint(list.first().left(), list.at(2).top()), cornerSize);
 
     return list;
+}
+
+static inline Qt::Alignment visualAlignment(Qt::LayoutDirection direction, Qt::Alignment alignment)
+{
+    if (!(alignment & Qt::AlignHorizontal_Mask))
+        alignment |= Qt::AlignLeft;
+    if (!(alignment & Qt::AlignAbsolute) && (alignment & (Qt::AlignLeft | Qt::AlignRight))) {
+        if (direction == Qt::RightToLeft)
+            alignment ^= (Qt::AlignLeft | Qt::AlignRight);
+        alignment |= Qt::AlignAbsolute;
+    }
+    return alignment;
+}
+
+void DStyledItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const QRect &rect, Qt::Alignment alignment, QIcon::Mode mode, QIcon::State state)
+{
+    // Copy of QStyle::alignedRect
+    const QSize size = icon.actualSize(rect.size(), mode, state);
+    alignment = visualAlignment(painter->layoutDirection(), alignment);
+    const qreal pixel_ratio = painter->device()->devicePixelRatioF();
+    int x = rect.x();
+    int y = rect.y();
+    int w = size.width();
+    int h = size.height();
+    if ((alignment & Qt::AlignVCenter) == Qt::AlignVCenter)
+        y += rect.size().height()/2 - h/2;
+    else if ((alignment & Qt::AlignBottom) == Qt::AlignBottom)
+        y += rect.size().height() - h;
+    if ((alignment & Qt::AlignRight) == Qt::AlignRight)
+        x += rect.size().width() - w;
+    else if ((alignment & Qt::AlignHCenter) == Qt::AlignHCenter)
+        x += rect.size().width()/2 - w/2;
+    QRect alignedRect(x, y, w, h);
+
+    QSize pixmapSize = alignedRect.size() * pixel_ratio;
+    QPixmap px = icon.pixmap(pixmapSize, mode, state);
+
+    if (px.width() > alignedRect.width() * pixel_ratio || px.height() > alignedRect.height() * pixel_ratio)
+        px = px.scaled(alignedRect.size() * pixel_ratio, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+    px.setDevicePixelRatio(pixel_ratio);
+    painter->drawPixmap(alignedRect.topLeft(), px);
 }
 
 void DStyledItemDelegatePrivate::init()
