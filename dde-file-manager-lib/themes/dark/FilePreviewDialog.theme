@@ -1,0 +1,75 @@
+QPushButton#CloseButton{
+    border:none;
+    background: transparent;
+    image: url(:/icons/images/icons/preview-dialog-close_round_normal.png);
+    max-height: 24px;
+    max-width: 24px;
+}
+
+QPushButton#CloseButton::hover{
+    image: url(:/icons/images/icons/preview_dialog_close_round_hover.png);
+}
+
+QPushButton#CloseButton::pressed{
+    image: url(:/icons/images/icons/preview-dialog-close_round_press.png);
+}
+
+QPushButton#NextButton{
+    border-image: url(:/icons/images/icons/next_normal.svg);
+    height: 26px;
+    width: 27px;
+}
+
+QPushButton#NextButton::hover{
+    border-image: url(:/icons/images/icons/next_hover.svg);
+}
+
+QPushButton#NextButton::pressed{
+    border-image: url(:/icons/images/icons/next_press.svg);
+}
+
+QPushButton#NextButton::disabled{
+    border-image: url(:/icons/images/icons/next_disabled.svg);
+}
+
+QPushButton#PreButton{
+    border-image: url(:/icons/images/icons/previous_normal.svg);
+    height: 26px;
+    width: 27px;
+}
+
+QPushButton#PreButton::hover{
+    border-image: url(:/icons/images/icons/previous_hover.svg);
+}
+
+QPushButton#PreButton::pressed{
+    border-image: url(:/icons/images/icons/previous_press.svg);
+}
+
+QPushButton#PreButton::disabled{
+    border-image: url(:/icons/images/icons/previous_disabled.svg);
+}
+
+QFrame#StatusBar{
+    background-color: rgba(255, 255, 255, 0.85);
+    min-height: 40px;
+}
+
+QLabel#NameLabel {
+    font-family: SourceHanSansCN;
+    font-size: 16px;
+    font-weight: 500;
+    color: #000000;
+}
+
+QLabel#SizeLabel {
+    color: #5b5b5b;
+    font-size: 12px;
+    font-family: STHeitiSC;
+}
+
+QLabel#TypeLabel {
+    color: #5b5b5b;
+    font-size: 12px;
+    font-family: STHeitiSC;
+}

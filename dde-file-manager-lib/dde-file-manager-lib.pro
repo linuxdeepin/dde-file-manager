@@ -224,7 +224,8 @@ HEADERS += \
     dialogs/movetotrashconflictdialog.h \
     dialogs/dfmsettingdialog.h \
     interfaces/dfmplaformmanager.h \
-    controllers/operatorrevocation.h
+    controllers/operatorrevocation.h \
+    views/themeconfig.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -366,7 +367,8 @@ SOURCES += \
     dialogs/movetotrashconflictdialog.cpp \
     dialogs/dfmsettingdialog.cpp \
     interfaces/dfmplaformmanager.cpp \
-    controllers/operatorrevocation.cpp
+    controllers/operatorrevocation.cpp \
+    views/themeconfig.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET

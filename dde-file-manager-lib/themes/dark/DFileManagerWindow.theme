@@ -1,0 +1,628 @@
+/***********************************************************/
+/* QMainWindow Style*/
+/***********************************************************/
+QMainWindow{
+    /*background-color: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:1, fx:0.5, fy:0.5, stop:0 rgba(119, 255, 255, 255), stop:1 rgba(32, 127, 155, 255));*/
+    background-color: #202020;
+}
+
+
+QPushButton#LogoButton{
+   border: none;
+   image: url(:/images/images/dde-file-manager.png);
+}
+QPushButton#LogoButton:hover{
+   image: url(:/images/images/dde-file-manager.png);
+}
+QPushButton#LogoButton:press{
+   image: url(:/images/images/dde-file-manager.png);
+}
+
+QFrame#TitleBar{
+    background-color: rgba(0, 0, 0, 0.85);
+    border-bottom: 1px insert rgba(255, 255, 255, 0.05);
+}
+
+QGraphicsView#Bookmark{
+    background-color: transparent;
+    selection-background-color: transparent;
+    selection-color: transparent;
+}
+
+QListWidget#ListWidget::item{
+    padding-left: 0px;
+    selection-background-color: transparent;
+    selection-color: transparent;
+}
+
+QListWidget#ListWidget::icon{
+    padding-left: opx;
+}
+
+QFrame#LeftSideBar{
+    background-color: #252525;
+    border: 0px solid transparent;
+}
+
+QFrame#LeftSideHomeBar{
+    background-color: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+QFrame#LeftSideCommonFolderBar{
+    background-color: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+QFrame#LeftSideDiskBar{
+    background-color: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+FileDialogStatusBar {
+    background-color: #f9f9fa;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+QLabel#FileDialogStatusBarContentLabel {
+    color: #797979;
+}
+
+QPushButton#FileDialogStatusBarAcceptButton {
+    color: #2ca7f8;
+    border: 1px solid #2ca7f8;
+    border-radius: 4px;
+    background: qlineargradient(x1: 0, y1: 0 x2: 0, y2: 1, stop:0 rgba(255, 255, 255, 0.4), stop:1 rgba(253, 253, 253, 0.4));
+}
+
+QPushButton#FileDialogStatusBarAcceptButton:hover {
+    background: qlineargradient(x1: 0, y1: 0 x2: 0, y2: 1, stop:0 "#8ccfff", stop:1 "#4bb8ff");
+    color: "#fff";
+    border: 1px solid rgba(0, 117, 243, 0.2);
+}
+
+QPushButton#FileDialogStatusBarAcceptButton:pressed {
+    background: qlineargradient(x1: 0, y1: 0 x2: 0, y2: 1, stop:0 "#0b8cff", stop:1 "#0aa1ff");
+    color: "#fff";
+    border: 1px solid rgba(29, 129, 255, 0.3);
+}
+
+QFrame#ToolBar{
+    background-color: transparent;
+}
+
+QFrame#AddressToolBar{
+    background-color: transparent;
+}
+
+QFrame#ControllerToolBar{
+    background-color: transparent;
+}
+
+QPushButton#EmptyTrashButton{
+    background-color: rgba(255, 255, 255, 0.2);
+    border-top: 1px solid rgba(0, 0, 0, 0);
+    border-right: 1px solid rgba(0, 0, 0, 0);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-left: 1px solid rgba(0, 0, 0, 0, 0);
+    image: url(:/icons/images/icons/empty_trash_normal.png);
+}
+
+QPushButton#EmptyTrashButton:hover{
+    image: url(:/icons/images/icons/empty_trash_hover.png);
+}
+
+QPushButton#EmptyTrashButton::pressed{
+    image: url(:/icons/images/icons/empty_trash_press.png);
+}
+
+QFrame#FileView{
+    background-color: white;
+}
+
+QFrame#DetailView{
+    background-color: gray;
+}
+
+QToolBar {
+    background: rgb(40, 47, 63);
+    spacing: 0px; /* spacing between items in the tool bar */
+}
+
+/* ******************QStatusBar****************** */
+QStatusBar {
+    color: white;
+    background-color: white;
+    border: none;
+}
+
+QStatusBar QLabel#datatimelabel{
+    background-color: transparent;
+    color: black;
+}
+
+QSizeGrip {
+
+    width: 16px;
+    height: 16px;
+}
+/* ******************QStatusBar****************** */
+
+/* ******************QSplitter****************** */
+QSplitter{
+    border:none;
+}
+
+QSplitter::handle {
+    background-color:rgba(0, 0, 0, 0.1);
+}
+
+QSplitter::handle:horizontal {
+    width: 1px;
+}
+
+QSplitter::handle:vertical {
+    height: 1px;
+}
+
+/* ******************QSplitter****************** */
+
+QPushButton#backButton{
+    background-color:rgba(255, 255, 255, 0.15);
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    image: url(:/icons/images/icons/backward_normal.png);
+    icon-size: 16px 16px;
+}
+
+QPushButton#backButton:hover{
+    border: 1px solid #3caafd;
+    image: url(:/icons/images/icons/backward_hover.png);
+    icon-size: 16px 16px;
+}
+
+QPushButton#backButton:checked{
+    border: 1px solid #2794ff;
+    background-color:#2ca7f8;
+}
+
+QPushButton#backButton:disabled{
+    background-color:rgba(255, 255, 255, 0.15);
+    image: url(:/icons/images/icons/backward_disabled.png);
+}
+
+
+QPushButton#forwardButton{
+    background-color:rgba(255, 255, 255, 0.15);
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    image: url(:/icons/images/icons/forward_normal.png);
+    icon-size: 16px 16px;
+}
+
+QPushButton#forwardButton:hover{
+    border: 1px solid #3caafd;
+    image: url(:/icons/images/icons/forward_hover.png);
+    icon-size: 16px 16px;
+}
+
+QPushButton#forwardButton:disabled{
+    background-color:rgba(255, 255, 255, 0.15);
+    image: url(:/icons/images/icons/forward_disabled.png);
+}
+
+QPushButton#leftArrow:hover{
+    background-color:#2ca7f8;
+}
+
+QPushButton#leftArrow{
+    background-color:white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: black;
+}
+
+QPushButton#rightArrow:hover{
+    background-color:#2ca7f8;
+}
+
+QPushButton#rightArrow{
+    background-color:white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: black;
+}
+
+QListWidget#DCrumbList{
+    background-color:transparent;
+    border: none;
+}
+
+QFrame#ContollerToolBar {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+DFMActionButton {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+DFMActionButton:hover {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                        stop: 0 #8CCFFF,
+                        stop: 1  #4BB8FF);
+}
+
+DFMActionButton:checked {
+    background-color: #2ca7f8;
+}
+
+QPushButton#settingsButton{
+    background-color:white;
+    image: url(:/images/images/setting_normal.png);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: black;
+    border-radius: 4px;
+}
+
+QPushButton#settingsButton:pressed{
+    background-color:white;
+    image: url(:/images/images/setting_press.png);
+    border: 1px solid #1088ff;
+    color: white;
+}
+
+QPushButton#settingsButton:hover{
+    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                        stop: 0 #8CCFFF,
+                        stop: 1  #4BB8FF);
+    image: url(:/images/images/setting_hover.png);
+    border: 1px solid #3caafd;
+    color: white;
+}
+
+QPushButton#settingsButton::menu-indicator {
+     image: url();
+ }
+
+QPushButton#searchButton{
+    background-color: rgba(255, 255, 255, 0.15);
+    image: url(:/icons/images/icons/search_normal.png);
+    border-radius: 4px;
+    padding: 3px, 3px, 3px, 3px;
+}
+
+QPushButton#searchButton:pressed{
+    image: url(:/icons/images/icons/search_pressed.png);
+    padding: 3px, 3px, 3px, 3px;
+}
+
+
+QPushButton#searchButton:hover{
+    image: url(:/icons/images/icons/search_hover.png);
+    padding: 3px, 3px, 3px, 3px;
+}
+
+/* ******************DCrumbButton****************** */
+QFrame#DCrumbWidget{
+    background-color: transparent;
+}
+
+QWidget#DCrumbBackgroundWidget{
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    border: none;
+}
+
+QPushButton#DCrumbButton{
+    background-color:transparent;
+    border: 1px;
+    color: #bdbdbd;
+    padding: 0px 10px 0px  10px;
+    text-align: center;
+}
+
+QPushButton#DCrumbButton:hover{
+    background-color: transparent;
+}
+
+QPushButton#DCrumbButton:checked{
+    background-color: #2ca7f8;
+    border: 1px solid #1088ff;
+    color: white;
+}
+
+QPushButton#DCrumbIconButton{
+    background-color:transparent;
+    border: 1px;
+    color: #bdbdbd;
+    padding: 0px 4px 0px 4px;
+    text-align: center;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+QPushButton#DCrumbIconButton:hover{
+    background-color: transparent;
+}
+
+QPushButton#DCrumbIconButton:checked{
+    background-color: #2ca7f8;
+    color: white;
+}
+/* ******************End of DCrumbButton****************** */
+
+/* ******************DSearchBar****************** */
+
+QListWidget#SearchList{
+    background-color: #202020;
+    border:1px solid rgba(0, 0, 0, 50);
+    padding-top: 4px;
+    border-radius: 4px;
+    paddings: 0px;
+}
+QListWidget#SearchList::item{
+    height: 24px;
+    padding: 0px;
+}
+QListWidget#SearchList::item:selected{
+    background: #2ca7f8;
+}
+QListWidget#SearchList::item:hover{
+    color: white;
+    background-color: #2ca7f8
+}
+/*******************End of DSearchBar****************** */
+
+/******************Menu********************************/
+
+/******************End of Menu*************************/
+
+QPushButton#DCheckableButton{
+    background-color:transparent;
+    border: none;
+    color: white;
+}
+
+
+QPushButton#DCheckableButton:hover{
+    background-color: #e0e0e0;
+    color: rgb(255, 0, 0);
+    /*border:1px  solid black;*/
+}
+
+QPushButton#DCheckableButton:checked{
+    background-color: #2ca7f8;
+    color: white;
+}
+
+QPushButton#DCheckableButton:pressed{
+    background-color: #2ca7f8;
+    color: white;
+}
+
+QPushButton#DCheckableButton:disabled{
+    background-color: gray;
+}
+
+QLabel#LeftSideBarTextLabel{
+    background-color: transparent;
+    color: black;
+}
+
+/* ******************QGroupBox****************** */
+/* ******************QGroupBox****************** */
+
+
+/* ******************QPushButton**************** */
+
+QPushButton#close{
+    background-color: transparent;
+    color: white;
+}
+
+QPushButton#close:hover{
+    background-color: red;
+    border: 1px;
+}
+
+/*ComputerView*/
+
+QScrollArea#ComputerView{
+    border: none;
+    /*background-color: white;*/
+}
+
+QScrollArea#ComputerView #TitleLabel {
+    color: #bdbdbd;
+}
+
+QScrollArea#ComputerView #LineLabel {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+QScrollArea#ComputerView ComputerViewItem QTextEdit {
+    color: #bdbdbd;
+}
+
+/*TabBar*/
+TabBar#TabBar{
+    background-color: transparent;
+    border: none;
+}
+/*TabBar tab */
+TabBar>Tab#Tab{
+    border-right: 1px solid rgba(0,0,0,30);
+    border-bottom: 1px solid rgba(0,0,0,30);
+    background-color: #fafafa;
+    color: #949494;
+    border-radius: 0px;
+    font-size: 12px;
+    margin-top: -2px;
+}
+TabBar>Tab#Tab:selected {
+    border-right: 1px solid rgba(0,0,0,30);
+    border-bottom: 1px solid rgba(0,0,0,30);
+    background-color: #ffffff;
+    color: #303030;
+    border-radius: 0px;
+    font-size: 12px;
+}
+TabBar>Tab#Tab:hover {
+    border-right: 1px solid rgba(0,0,0,30);
+    border-bottom: 1px solid rgba(0,0,0,30);
+    background-color: #ededed;
+    color: #303030;
+    border-radius: 0px;
+    font-size: 12px;
+}
+TabBar>Tab#Tab:!selected {
+    margin-top: 0px; /* make non-selected tabs look smaller */
+}
+/* tabBar tab close button*/
+DTabCloseButton#TabCloseButton{
+    border:none;
+    image: url(:/icons/images/icons/tab_close_normal.png);
+    subcontrol-position: center center;
+    margin-left: 0px;
+}
+DTabCloseButton#TabCloseButton:hover{
+    image: url(:/icons/images/icons/tab_close_hover.png);
+    subcontrol-position: center center;
+}
+DTabCloseButton#TabCloseButton:pressed{
+    image: url(:/icons/images/icons/tab_close_press.png);
+    subcontrol-position: center center;
+}
+
+/*New tab button*/
+QPushButton#NewTabButton{
+    border: none;
+    image: url(:/icons/images/icons/new_tab_normal.png);
+}
+QPushButton#NewTabButton:hover{
+    border: none;
+    image: url(:/icons/images/icons/new_tab_hover.png);
+}
+QPushButton#NewTabButton:pressed{
+    border: none;
+    image: url(:/icons/images/icons/new_tab_press.png);
+}
+QPushButton#NewTabButton:disabled {
+    border: none;
+    image: url(:/icons/images/icons/new_tab_disabled.png);
+}
+
+
+/*DRenameBar ===================== DRenameBar*/
+QFrame#DRenameBar{
+    border: 1px;
+    border-bottom:1px solid rgba(0, 0, 0, 0.2);
+}
+
+
+QPushButton#DRenameBarRenameBtn:enabled{
+    background-color: white;
+    border-radius: 2px;
+    color: #0087ff;
+    border:1px solid rgba(0, 132, 255, 0.4);
+    border-radius: 2px;
+}
+
+
+
+QPushButton#DRenameBarRenameBtn:hover{
+    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                        stop: 0 #8ccfff,
+                        stop: 1  #4bb8ff);
+    border: 1px solid rgba(0, 117, 243, 0.2);
+    color: white;
+}
+
+
+QPushButton#DRenameBarRenameBtn:disabled{
+    background-color: white;
+    color: rgba(0, 132, 255, 0.4);
+    border: 1px solid rgba(0, 132, 255, 0.4);
+    border-radius: 2px;
+}
+
+
+
+
+
+
+QLineEdit#DRenameBarLineEditForFinding:focus
+{
+    border: 1px solid #2ca7f8;
+    border-radius: 2px;
+}
+
+QLineEdit#DRenameBarLineEditForFinding
+{
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 2px;
+    padding-top: 1px;
+}
+
+
+QLineEdit#DRenameBarLineEditForReplacing:focus
+{
+    border: 1px solid #2ca7f8;
+    border-radius: 2px;
+}
+
+QLineEdit#DRenameBarLineEditForReplacing
+{
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 2px;
+    padding-top: 1px;
+}
+
+QLineEdit#DRenameBarLineEditForAdding:focus
+{
+    border: 1px solid #2ca7f8;
+    border-radius: 2px;
+}
+
+QLineEdit#DRenameBarLineEditForAdding
+{
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 2px;
+    padding-top: 1px;
+}
+
+QLineEdit#DRenameBarLineEditForCustomizing:focus
+{
+    border: 1px solid #2ca7f8;
+    border-radius: 2px;
+}
+
+QLineEdit#DRenameBarLineEditForCustomizing
+{
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 2px;
+    padding-top: 1px;
+}
+
+
+QLineEdit#DRenameBarLineEditSN:focus
+{
+    border: 1px solid #2ca7f8;
+    border-radius: 2px;
+}
+
+QLineEdit#DRenameBarLineEditSN
+{
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 2px;
+    padding-top: 1px;
+}
+
+QLabel#DRenameBarLabel
+{
+    color: #606060;
+    font-family: SourceHanSansSC;
+    font-size: 11px;
+}
+
+
+/*DRenameBar ======================== DRenameBar*/

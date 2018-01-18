@@ -17,6 +17,7 @@
 #include "dabstractfileinfo.h"
 #include "dfilesystemmodel.h"
 #include "views/fileitem.h"
+#include "views/themeconfig.h"
 #include "singleton.h"
 #include "dfileservices.h"
 #include "dfmgenericfactory.h"
@@ -371,19 +372,19 @@ void DFileViewHelper::initStyleOption(QStyleOptionViewItem *option, const QModel
     else
         option->state &= QStyle::StateFlag(~QStyle::State_Selected);
 
-    option->palette.setColor(QPalette::Text, QColor("#303030"));
-    option->palette.setColor(QPalette::Disabled, QPalette::Text, QColor("#797979"));
+    option->palette.setColor(QPalette::Text, ThemeConfig::instace()->color("FileView", "color"));
+    option->palette.setColor(QPalette::Disabled, QPalette::Text, ThemeConfig::instace()->color("FileView", "color", ThemeConfig::Dislable));
     if ((option->state & QStyle::State_Selected) && option->showDecorationSelected)
-        option->palette.setColor(QPalette::Inactive, QPalette::Text, QColor("#e9e9e9"));
+        option->palette.setColor(QPalette::Inactive, QPalette::Text, ThemeConfig::instace()->color("FileView", "color", ThemeConfig::Checked | ThemeConfig::Inactive));
     else
-        option->palette.setColor(QPalette::Inactive, QPalette::Text, QColor("#797979"));
+        option->palette.setColor(QPalette::Inactive, QPalette::Text, ThemeConfig::instace()->color("FileView", "color", ThemeConfig::Inactive));
     option->palette.setColor(QPalette::BrightText, Qt::white);
-    option->palette.setBrush(QPalette::Shadow, QColor(0, 0, 0, 178));
+    option->palette.setBrush(QPalette::Shadow, ThemeConfig::instace()->color("FileView", "shadow"));
 
     if ((option->state & QStyle::State_HasFocus) && option->showDecorationSelected && selectedIndexsCount() > 1) {
-        option->backgroundBrush = QColor("#0076F9");
+        option->backgroundBrush = ThemeConfig::instace()->color("FileView", "background", ThemeConfig::Focus);
     } else {
-        option->backgroundBrush = QColor("#2da6f7");
+        option->backgroundBrush = ThemeConfig::instace()->color("FileView", "background");
     }
 }
 

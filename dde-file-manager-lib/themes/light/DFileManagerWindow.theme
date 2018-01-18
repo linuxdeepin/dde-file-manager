@@ -486,6 +486,14 @@ QScrollArea#ComputerView{
     background-color: white;
 }
 
+QScrollArea#ComputerView #TitleLabel {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+QScrollArea#ComputerView #LineLabel {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
 /*TabBar*/
 TabBar#TabBar{
     background-color: transparent;

@@ -1,0 +1,14 @@
+DStatusBar {
+    color: "#bdbdbd";
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #171717, stop: 0.98  #1d1d1d);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+DStatusBar QLabel {
+    color: "#bdbdbd";
+    margin-bottom: 2px;
+}
+
+DStatusBar[mode=0] {
+    broder: none;
+}

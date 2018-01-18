@@ -39,6 +39,9 @@ class DFMEvent;
 class DStatusBar : public QFrame
 {
     Q_OBJECT
+
+    Q_PROPERTY(Mode mode READ mode WRITE setMode NOTIFY modeChanged)
+
 public:
     enum Mode {
         Normal,
@@ -51,6 +54,7 @@ public:
     void initUI();
     void initConnect();
 
+    Mode mode() const;
     void setMode(Mode mode);
     void setComBoxItems(const QStringList &filters);
 
@@ -64,6 +68,9 @@ public:
 
     qint64 computerSize(const DUrlList& urllist);
     int computerFolderContains(const DUrlList& urllist);
+
+signals:
+    void modeChanged();
 
 public slots:
     void itemSelected(const DFMEvent &event, int number);
@@ -106,6 +113,8 @@ private:
     QComboBox *m_comboBox = Q_NULLPTR;
     QLabel *m_lineEditLabel = Q_NULLPTR;
     QLabel *m_comboBoxLabel = Q_NULLPTR;
+
+    Mode m_mode = Normal;
 };
 
 #endif // DSTATUSBAR_H

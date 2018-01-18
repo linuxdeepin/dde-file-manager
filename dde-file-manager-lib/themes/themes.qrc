@@ -8,5 +8,19 @@
         <file>light/MusicPreviewDialog.theme</file>
         <file>light/DocPreviewDialog.theme</file>
         <file>light/FilePreviewDialog.theme</file>
+        <file>dark/DFileManagerWindow.theme</file>
+        <file>dark/DFileView.theme</file>
+        <file>dark/DFileViewRoot.theme</file>
+        <file>dark/DocPreviewDialog.theme</file>
+        <file>dark/FilePreviewDialog.theme</file>
+        <file>dark/MusicPreviewDialog.theme</file>
+        <file>dark/OpenWithOtherDialog.theme</file>
+        <file>dark/PreviewDialogDefault.theme</file>
+        <file>dark/PropertyDialog.theme</file>
+        <file>light/DFileManagerWindow.theme</file>
+        <file>dark/DStatusBar.theme</file>
+        <file>light/DStatusBar.theme</file>
+        <file>dark/config.ini</file>
+        <file>light/config.ini</file>
     </qresource>
 </RCC>

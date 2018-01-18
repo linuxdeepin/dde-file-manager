@@ -55,7 +55,9 @@
 #include "view/viewinterface.h"
 #include "plugins/pluginmanager.h"
 #include "controllers/trashmanager.h"
+
 #include <dplatformwindowhandle.h>
+#include <DThemeManager>
 #include <DTitlebar>
 
 #include <QStatusBar>
@@ -216,6 +218,8 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     : DMainWindow(parent)
     , d_ptr(new DFileManagerWindowPrivate(this))
 {
+    D_THEME_INIT_WIDGET(DFileManagerWindow)
+
     /// init global AppController
 //    Q_UNUSED(AppController::instance());
     setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
@@ -636,9 +640,9 @@ void DFileManagerWindow::initUI()
     setCentralWidget(d->centralWidget);
 
     if (DFMGlobal::isRootUser()) {
-        setStyleSheet(getQssFromFile(":/qss/qss/filemanageradmin.qss"));
+//        setStyleSheet(getQssFromFile(":/qss/qss/filemanageradmin.qss"));
     } else {
-        setStyleSheet(getQssFromFile(":/qss/qss/filemanager.qss"));
+//        setStyleSheet(getQssFromFile(":/qss/qss/filemanager.qss"));
     }
 
 }
@@ -681,6 +685,20 @@ void DFileManagerWindow::initTitleBar()
     menu->setProperty("DFileManagerWindow", (quintptr)this);
     menu->setProperty("ToolBarSettingsMenu", true);
     menu->setEventData(DUrl(), DUrlList() << DUrl(), winId(), this);
+
+    QAction *set_theme_action = menu->actionAt(1);
+
+    set_theme_action->setText(tr("Dark Theme"));
+
+    connect(set_theme_action, &QAction::triggered, this, [this, set_theme_action] {
+        if (DThemeManager::instance()->theme() == "light") {
+            DThemeManager::instance()->setTheme("dark");
+            set_theme_action->setText(tr("Light Theme"));
+        } else {
+            DThemeManager::instance()->setTheme("light");
+            set_theme_action->setText(tr("Dark Theme"));
+        }
+    });
 
     bool isDXcbPlatform = false;
     SingleApplication* app = static_cast<SingleApplication*>(qApp);

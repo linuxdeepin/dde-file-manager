@@ -68,7 +68,8 @@ DWIDGET_USE_NAMESPACE
 int DBookmarkItem::DEFAULT_ICON_SIZE = 16;
 
 
-DBookmarkItem::DBookmarkItem()
+DBookmarkItem::DBookmarkItem(const QString &key)
+    : m_key(key)
 {
     init();
     m_isDefault = true;
@@ -81,8 +82,9 @@ DBookmarkItem::DBookmarkItem(UDiskDeviceInfoPointer deviceInfo)
 }
 
 DBookmarkItem::DBookmarkItem(BookMark *bookmark)
+    : DBookmarkItem("BookMarks")
 {
-    init();
+    m_isDefault = false;
     m_url = bookmark->getUrl();
     m_textContent = bookmark->getName();
 }
@@ -107,20 +109,33 @@ void DBookmarkItem::setDeviceInfo(UDiskDeviceInfoPointer deviceInfo)
 void DBookmarkItem::init()
 {
     setAcceptHoverEvents(true);
-    setReleaseBackgroundColor(QColor(238,232,205,0));
-    setPressBackgroundColor(QColor("#D5EDFE"));
-    setHoverBackgroundColor(QColor(0, 0, 0, 12));
-    setHighlightDiskBackgroundColor(QColor("#E9E9E9"));
+//    setReleaseBackgroundColor(QColor(238,232,205,0));
+//    setPressBackgroundColor(QColor("#D5EDFE"));
+//    setHoverBackgroundColor(QColor(0, 0, 0, 12));
+//    setHighlightDiskBackgroundColor(QColor("#E9E9E9"));
     setPressBackgroundEnable(true);
     setReleaseBackgroundEnable(true);
     setHoverBackgroundEnable(true);
     setHighlightDiskBackgroundEnable(false);
-    setTextColor(Qt::black);
-    setTextHoverColor(Qt::black);
-    setTextPressColor(QColor("#2ca7f8"));
-    setTextCheckedColor(QColor("#2ca7f8"));
+//    setTextColor(Qt::black);
+//    setTextHoverColor(Qt::black);
+//    setTextPressColor(QColor("#2ca7f8"));
+//    setTextCheckedColor(QColor("#2ca7f8"));
     setAcceptDrops(true);
     m_checkable = true;
+}
+
+QPixmap DBookmarkItem::getPixmap(const QString &key, ThemeConfig::State state) const
+{
+    QPixmap p;
+
+    if (!m_key.isEmpty())
+        p = ThemeConfig::instace()->pixmap("BookmarkItem." + m_key, key, state);
+
+    if (p.isNull())
+        p = ThemeConfig::instace()->pixmap("BookmarkItem", key, state);
+
+    return p;
 }
 
 bool DBookmarkItem::getIsCustomBookmark() const
@@ -264,36 +279,45 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
 
     if(m_isTightMode)
     {
-        press = m_pressImageBig;
-        if (m_checkedImageBig.isNull())
-            checked = press;
+//        press = m_pressImageBig;
+        press = getPixmap("icon.big", ThemeConfig::Checked);
+        if (press.isNull())
+            checked = getPixmap("icon.big", ThemeConfig::Pressed);
         else
-            checked = m_checkedImageBig;
-        release = m_releaseImageBig;
-        hover = m_hoverImageBig;
+            checked = press;
 
-        dy = m_height/2 - m_releaseImageBig.height()/2;
+//        release = m_releaseImageBig;
+        release = getPixmap("icon.big");
+//        hover = m_hoverImageBig;
+        hover = getPixmap("icon.big", ThemeConfig::Hover);
+
+        dy = m_height/2 - release.height()/2;
     }
     else
     {
-        press = m_pressImage;
-        if (m_checkedImage.isNull())
-            checked = press;
+        press = getPixmap("icon", ThemeConfig::Checked);
+        if (press.isNull())
+            checked = getPixmap("icon", ThemeConfig::Pressed);
         else
-            checked = m_checkedImage;
-        release = m_releaseImage;
-        hover = m_hoverImage;
-        dy = m_height/2 - m_releaseImage.height()/2;
+            checked = press;
+
+//        release = m_releaseImage;
+        release = getPixmap("icon");
+//        hover = m_hoverImage;
+        hover = getPixmap("icon", ThemeConfig::Hover);
+        dy = m_height/2 - release.height()/2;
     }
+
+    painter->setPen(Qt::transparent);
 
     if(m_hovered && !m_isHighlightDisk)
     {
         if(m_hoverBackgroundEnabled)
         {
-            painter->setBrush(m_hoverBackgroundColor);
-            painter->setPen(QColor(0,0,0,0));
+            painter->setBrush(ThemeConfig::instace()->color("BookmarkItem", "background", ThemeConfig::Hover));
+//            painter->setPen(QColor(0,0,0,0));
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
-            textColor = m_textHoverColor;
+            textColor = ThemeConfig::instace()->color("BookmarkItem", "color", ThemeConfig::Hover);
         }
         painter->drawPixmap(iconRect, hover);
     }
@@ -301,44 +325,44 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
     {
         if(m_pressBackgroundEnabled)
         {
-            painter->setPen(m_pressBackgroundColor);
-            painter->setBrush(m_pressBackgroundColor);
+//            painter->setPen(m_pressBackgroundColor);
+            painter->setBrush(ThemeConfig::instace()->color("BookmarkItem", "background", ThemeConfig::Pressed));
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
-            textColor = m_textPressColor;
+            textColor = ThemeConfig::instace()->color("BookmarkItem", "color", ThemeConfig::Pressed);
         }
         painter->drawPixmap(iconRect, press);
     }else if(!m_hovered && (m_checked && m_checkable))
     {
         if(m_pressBackgroundEnabled)
         {
-            painter->setPen(m_pressBackgroundColor);
-            painter->setBrush(m_pressBackgroundColor);
+//            painter->setPen(m_pressBackgroundColor);
+            painter->setBrush(ThemeConfig::instace()->color("BookmarkItem", "background", ThemeConfig::Checked));
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
-            textColor = m_textCheckedColor;
+            textColor = ThemeConfig::instace()->color("BookmarkItem", "color", ThemeConfig::Checked);
         }
         painter->drawPixmap(iconRect, checked);
         if (!m_isMountedIndicator){
-            painter->setPen(QColor(43,167,248,25));
+//            painter->setPen(QColor(43,167,248,25));
             painter->drawLine(0, 0, m_width-3, 0);
             painter->drawLine(0, m_height-1, m_width-3, m_height-1);
-            painter->setBrush(QColor("#2ca7f8"));
+//            painter->setBrush(QColor("#2ca7f8"));
             painter->drawRect(m_width-3, 0, 3, m_height);
         }
     }else if (m_isHighlightDisk){
         if(m_highlightDiskBackgroundEnabled)
         {
-            painter->setPen(m_highlightDiskBackgroundColor);
-            painter->setBrush(m_highlightDiskBackgroundColor);
+//            painter->setPen(m_highlightDiskBackgroundColor);
+            painter->setBrush(ThemeConfig::instace()->color("BookmarkItem", "background", ThemeConfig::Checked));
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
-            textColor = m_textCheckedColor;
+            textColor = ThemeConfig::instace()->color("BookmarkItem", "color", ThemeConfig::Checked);
         }
         painter->drawPixmap(iconRect, checked);
 
         if (!m_isMountedIndicator){
-            painter->setPen(QColor(0,0,0,25));
+//            painter->setPen(QColor(0,0,0,25));
             painter->drawLine(0, 0, m_width-3, 0);
             painter->drawLine(0, m_height-1, m_width-3, m_height-1);
-            painter->setBrush(QColor("#BDBDBD"));
+//            painter->setBrush(QColor("#BDBDBD"));
             painter->drawRect(m_width-3, 0, 3, m_height);
         }
     }
@@ -346,13 +370,13 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
     {
         if(m_releaseBackgroundEnabled)
         {
-            painter->setPen(m_releaseBackgroundColor);
-            painter->setBrush(m_releaseBackgroundColor);
+//            painter->setPen(m_releaseBackgroundColor);
+//            painter->setBrush(m_releaseBackgroundColor);
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
         }
 
         painter->drawPixmap(iconRect, release);
-        textColor = m_textColor;
+        textColor = ThemeConfig::instace()->color("BookmarkItem", "color");;
     }
 
     double textTopPadding = 4;
@@ -376,7 +400,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
         if(!m_isDefault && !m_textContent.isEmpty())
         {
             QString text = m_textContent.at(0);
-            painter->setPen(QColor(0x2CA7F8));
+//            painter->setPen(QColor(0x2CA7F8));
             m_font.setPointSize(8);
 
             painter->setFont(m_font);
@@ -402,93 +426,44 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
 //    }
 }
 
-void DBookmarkItem::boundImageToPress(QString imagePath)
-{
-    m_pressImage = svgToHDPIPixmap(imagePath);
-//    m_pressImage.load(imagePath);
-}
-
-void DBookmarkItem::boundImageToRelease(QString imagePath)
-{
-    m_releaseImage = svgToHDPIPixmap(imagePath);
-//    m_releaseImage.load(imagePath);
-}
-
-void DBookmarkItem::boundImageToHover(QString imagePath)
-{
-    m_hoverImage = svgToHDPIPixmap(imagePath);
-//    m_hoverImage.load(imagePath);
-}
-
-void DBookmarkItem::boundImageToChecked(QString imagePath)
-{
-    m_checkedImage = svgToHDPIPixmap(imagePath);
-//    m_checkedImage.load(imagePath);
-}
-
 void DBookmarkItem::setPressedIcon(const QString &iconPath)
 {
-    setPressedIcon(QIcon(iconPath));
+    ThemeConfig::instace()->setValue("BookmarkItem" + m_key, "icon", ThemeConfig::Pressed, iconPath);
 }
 
 void DBookmarkItem::setPressedIcon(const QIcon &icon)
 {
-    m_pressImage = icon.pixmap(DEFAULT_ICON_SIZE, DEFAULT_ICON_SIZE);
+    ThemeConfig::instace()->setValue("BookmarkItem" + m_key, "icon", ThemeConfig::Pressed, QVariant::fromValue(icon));
 }
 
 void DBookmarkItem::setHoverIcon(const QString &iconPath)
 {
-    setHoverIcon(QIcon(iconPath));
+    ThemeConfig::instace()->setValue("BookmarkItem" + m_key, "icon", ThemeConfig::Hover, iconPath);
 }
 
 void DBookmarkItem::setHoverIcon(const QIcon &icon)
 {
-    m_hoverImage = icon.pixmap(DEFAULT_ICON_SIZE, DEFAULT_ICON_SIZE);
+    ThemeConfig::instace()->setValue("BookmarkItem" + m_key, "icon", ThemeConfig::Hover, QVariant::fromValue(icon));
 }
 
 void DBookmarkItem::setReleaseIcon(const QString &iconPath)
 {
-    setReleaseIcon(QIcon(iconPath));
+    ThemeConfig::instace()->setValue("BookmarkItem" + m_key, "icon", ThemeConfig::Normal, iconPath);
 }
 
 void DBookmarkItem::setReleaseIcon(const QIcon &icon)
 {
-    m_releaseImage = icon.pixmap(DEFAULT_ICON_SIZE, DEFAULT_ICON_SIZE);
+    ThemeConfig::instace()->setValue("BookmarkItem" + m_key, "icon", ThemeConfig::Normal, QVariant::fromValue(icon));
 }
 
 void DBookmarkItem::setCheckedIcon(const QString &iconPath)
 {
-    setCheckedIcon(QIcon(iconPath));
+    ThemeConfig::instace()->setValue("BookmarkItem" + m_key, "icon", ThemeConfig::Checked, iconPath);
 }
 
 void DBookmarkItem::setCheckedIcon(const QIcon &icon)
 {
-    m_checkedImage = icon.pixmap(DEFAULT_ICON_SIZE, DEFAULT_ICON_SIZE);
-}
-
-QPixmap DBookmarkItem::getCheckedPixmap()
-{
-    return m_checkedImage;
-}
-
-void DBookmarkItem::boundBigImageToPress(QString imagePath)
-{
-    m_pressImageBig.load(imagePath);
-}
-
-void DBookmarkItem::boundBigImageToRelease(QString imagePath)
-{
-    m_releaseImageBig.load(imagePath);
-}
-
-void DBookmarkItem::boundBigImageToHover(QString imagePath)
-{
-    m_hoverImageBig.load(imagePath);
-}
-
-void DBookmarkItem::boundBigImageToChecked(QString imagePath)
-{
-    m_checkedImageBig.load(imagePath);
+    ThemeConfig::instace()->setValue("BookmarkItem" + m_key, "icon", ThemeConfig::Checked, QVariant::fromValue(icon));
 }
 
 void DBookmarkItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -954,25 +929,25 @@ void DBookmarkItem::setBounds(int x, int y, int w, int h)
     m_height = h;
 }
 
-void DBookmarkItem::setPressBackgroundColor(const QColor &color)
-{
-    m_pressBackgroundColor = color;
-}
+//void DBookmarkItem::setPressBackgroundColor(const QColor &color)
+//{
+////    m_pressBackgroundColor = color;
+//}
 
-void DBookmarkItem::setReleaseBackgroundColor(const QColor &color)
-{
-   m_releaseBackgroundColor = color;
-}
+//void DBookmarkItem::setReleaseBackgroundColor(const QColor &color)
+//{
+////   m_releaseBackgroundColor = color;
+//}
 
-void DBookmarkItem::setHoverBackgroundColor(const QColor &color)
-{
-    m_hoverBackgroundColor = color;
-}
+//void DBookmarkItem::setHoverBackgroundColor(const QColor &color)
+//{
+////    m_hoverBackgroundColor = color;
+//}
 
-void DBookmarkItem::setHighlightDiskBackgroundColor(const QColor &color)
-{
-    m_highlightDiskBackgroundColor = color;
-}
+//void DBookmarkItem::setHighlightDiskBackgroundColor(const QColor &color)
+//{
+////    m_highlightDiskBackgroundColor = color;
+//}
 
 void DBookmarkItem::setHoverEnableFlag(bool flag)
 {
@@ -1033,46 +1008,6 @@ void DBookmarkItem::setText(const QString & text)
 QString DBookmarkItem::text()
 {
     return m_textContent;
-}
-
-QColor DBookmarkItem::getTextColor()
-{
-    return m_textColor;
-}
-
-void DBookmarkItem::setTextColor(const QColor &color)
-{
-    m_textColor = color;
-}
-
-QColor DBookmarkItem::textCheckedColor() const
-{
-    return m_textCheckedColor;
-}
-
-void DBookmarkItem::setTextCheckedColor(const QColor &textCheckedColor)
-{
-    m_textCheckedColor = textCheckedColor;
-}
-
-QColor DBookmarkItem::textPressColor() const
-{
-    return m_textPressColor;
-}
-
-void DBookmarkItem::setTextPressColor(const QColor &textPressColor)
-{
-    m_textPressColor = textPressColor;
-}
-
-QColor DBookmarkItem::textHoverColor() const
-{
-    return m_textHoverColor;
-}
-
-void DBookmarkItem::setTextHoverColor(const QColor &textHoverColor)
-{
-    m_textHoverColor = textHoverColor;
 }
 
 void DBookmarkItem::setPress(bool b)

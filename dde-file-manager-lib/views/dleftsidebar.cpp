@@ -392,7 +392,7 @@ void DLeftSideBar::loadPluginBookmarks()
         QString name = viewInterface->bookMarkText();
         DUrl url = DUrl::fromUserInput(viewInterface->scheme() + ":///");
         qDebug() << viewInterface->scheme() << url;
-        DBookmarkItem * item = m_scene->createCustomBookmark(name, url);
+        DBookmarkItem * item = m_scene->createCustomBookmark(name, url, name);
         item->setReleaseIcon(viewInterface->bookMarkNormalIcon());
         item->setHoverIcon(viewInterface->bookMarkHoverIcon());
         item->setPressedIcon(viewInterface->bookMarkPressedIcon());

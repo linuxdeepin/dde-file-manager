@@ -1,0 +1,104 @@
+PropertyDialog {
+    background: #ffffff;
+}
+
+PropertyDialog QTextEdit {
+    background: transparent;
+    color: black;
+    padding: 0;
+}
+
+PropertyDialog QTextEdit[readOnly=false] {
+    background: #e6e6ec;
+    border: 1px solid rgba(44, 167, 248, 0.3);
+    border-radius: 4px;
+    color: black;
+    min-height: 42px;
+}
+
+
+QLabel#GroupTitleLabel{
+    color: #b4b4b4;
+    font-size: 12px;
+}
+
+
+QLabel#SectionKeyLabel{
+    color: #606060;
+    font-size: 11px;
+}
+
+QLabel#SectionValueLabel{
+    color: black;
+    font-size: 11px;
+}
+
+QListWidget{
+    border: none;
+}
+
+QCheckBox#OpenWithItem{
+    spacing: 5px;
+    color: #222222;
+    font-size: 12px;
+    text-align: center;
+    margin-left: 4px;
+}
+
+QCheckBox#OpenWithItem:pressed{
+    color: #4b4b4b;
+}
+
+
+QCheckBox#OpenWithItem::indicator {
+    width: 16px;
+    height: 16px;
+}
+
+QCheckBox#OpenWithItem::indicator:unchecked {
+    image: none;
+}
+
+QCheckBox#OpenWithItem::indicator:checked {
+    image: url(:/images/images/light/select.png);
+}
+
+QPushButton#OtherButton{
+    color: #222222;
+    font-size: 12px;
+    background-color: white;
+    padding-left: 26px;
+    border: none;
+}
+
+QPushButton#OtherButton:pressed{
+    color: #4b4b4b;
+}
+
+QPushButton#EditButton{
+    border-image: url(:/images/images/light/pencil_normal.svg);
+}
+
+QPushButton#EditButton:hover{
+    border-image: url(:/images/images/light/pencil_hover.svg);
+}
+
+QPushButton#EditButton:pressed{
+    border-image: url(:/images/images/light/pencil_press.svg);
+}
+
+QListWidget{
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+QLabel#Line{
+    background: #66aaaaaa;
+}
+
+QLineEdit#ShareNameEdit{
+    font-size: 12px;
+}
+
+QComboBox{
+    font-size: 11px;
+}

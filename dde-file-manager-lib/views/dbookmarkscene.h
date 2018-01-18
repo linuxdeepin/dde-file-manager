@@ -46,7 +46,7 @@ public:
     void initConnect();
 
     DBookmarkItem * createBookmarkByKey(const QString& key);
-    DBookmarkItem * createCustomBookmark(const QString &name, const DUrl &url);
+    DBookmarkItem * createCustomBookmark(const QString &name, const DUrl &url, const QString &key = QString());
 
     DUrl getStandardPathByKey(const QString& key);
 

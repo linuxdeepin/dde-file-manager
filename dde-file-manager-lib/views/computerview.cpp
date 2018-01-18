@@ -65,11 +65,11 @@ TitleLine::TitleLine(const QString &title, QWidget *parent):
 void TitleLine::initUI()
 {
     m_titleLable = new QLabel(m_title);
-    m_titleLable->setStyleSheet("color: rgba(0, 0, 0, 0.5)");
-    m_lineLable = new QLabel;
+    m_titleLable->setObjectName("TitleLabel");
+    m_lineLable = new QFrame();
+    m_lineLable->setObjectName("LineLabel");
     m_lineLable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_lineLable->setFixedHeight(1);
-    m_lineLable->setStyleSheet("background-color:rgba(0, 0, 0, 0.1)");
 
     QHBoxLayout* contentLayout = new QHBoxLayout;
     contentLayout->addWidget(m_titleLable);
@@ -451,19 +451,19 @@ void ComputerView::initUI()
 
     QFrame* contentFrame = new QFrame(this);
 
-    m_systemTitleLine = new TitleLine(tr("My Directories"));
+    m_systemTitleLine = new TitleLine(tr("My Directories"), this);
     m_systemFlowLayout = new FlowLayout();
     m_systemFlowLayout->setContentsMargins(20, 20, 20, 20);
     m_systemFlowLayout->setHorizontalSpacing(40);
     m_systemFlowLayout->setVorizontalSpacing(40);
 
-    m_nativeTitleLine = new TitleLine(tr("Internal Disk"));
+    m_nativeTitleLine = new TitleLine(tr("Internal Disk"), this);
     m_nativeFlowLayout = new FlowLayout();
     m_nativeFlowLayout->setContentsMargins(20, 20, 20, 20);
     m_nativeFlowLayout->setHorizontalSpacing(40);
     m_nativeFlowLayout->setVorizontalSpacing(40);
 
-    m_removableTitleLine = new TitleLine(tr("External Disk"));
+    m_removableTitleLine = new TitleLine(tr("External Disk"), this);
     m_removableFlowLayout = new FlowLayout();
     m_removableFlowLayout->setContentsMargins(20, 20, 20, 20);
     m_removableFlowLayout->setHorizontalSpacing(40);
