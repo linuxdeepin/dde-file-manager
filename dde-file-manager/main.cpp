@@ -41,6 +41,7 @@
 #include "dbusfiledialogmanager.h"
 #include "filemanager1_adaptor.h"
 #include "dbusfilemanager1.h"
+#include "views/themeconfig.h"
 
 #include <dthememanager.h>
 #include <dwindow.h>
@@ -145,7 +146,6 @@ int main(int argc, char *argv[])
 #endif
 
     DFMGlobal::installTranslator();
-    DThemeManager::instance()->setTheme("light");
 
     LogUtil::registerLogger();
 

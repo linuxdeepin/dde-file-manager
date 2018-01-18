@@ -25,8 +25,9 @@
 #include "windowmanager.h"
 #include <QDebug>
 
-DBookmarkMountedIndicatorItem::DBookmarkMountedIndicatorItem(DBookmarkItem *parentItem):
-    m_parentItem(parentItem)
+DBookmarkMountedIndicatorItem::DBookmarkMountedIndicatorItem(DBookmarkItem *parentItem)
+    : DBookmarkItem("MountedIndicator")
+    , m_parentItem(parentItem)
 {
     init();
 }
@@ -41,13 +42,13 @@ void DBookmarkMountedIndicatorItem::init()
     setParentItem(m_parentItem);
     setDefaultItem(true);
     setIsMountedIndicator(true);
-    boundImageToHover(":/leftsidebar/images/leftsidebar/unmount_active_16px.svg");
-    boundImageToPress(":/leftsidebar/images/leftsidebar/unmount_normal_16px.svg");
-    boundImageToRelease(":/leftsidebar/images/leftsidebar/unmount_normal_16px.svg");
-    boundImageToChecked(":/leftsidebar/images/leftsidebar/unmount_active_16px.svg");
-    setReleaseBackgroundColor(QColor(Qt::transparent));
-    setPressBackgroundColor(QColor(Qt::transparent));
-    setHoverBackgroundColor(QColor(Qt::transparent));
+//    boundImageToHover(":/leftsidebar/images/leftsidebar/unmount_active_16px.svg");
+//    boundImageToPress(":/leftsidebar/images/leftsidebar/unmount_normal_16px.svg");
+//    boundImageToRelease(":/leftsidebar/images/leftsidebar/unmount_normal_16px.svg");
+//    boundImageToChecked(":/leftsidebar/images/leftsidebar/unmount_active_16px.svg");
+//    setReleaseBackgroundColor(QColor(Qt::transparent));
+//    setPressBackgroundColor(QColor(Qt::transparent));
+//    setHoverBackgroundColor(QColor(Qt::transparent));
     setCheckable(true);
     setHoverBackgroundEnable(true);
     setPressBackgroundEnable(true);

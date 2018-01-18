@@ -52,7 +52,7 @@ protected:
 private:
     QString m_title;
     QLabel* m_titleLable=NULL;
-    QLabel* m_lineLable=NULL;
+    QFrame* m_lineLable=NULL;
 
 };
 

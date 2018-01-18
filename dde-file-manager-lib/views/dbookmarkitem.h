@@ -30,6 +30,7 @@
 #include "durl.h"
 #include "deviceinfo/udiskdeviceinfo.h"
 #include "models/bookmark.h"
+#include "themeconfig.h"
 
 #define MARGIN_IMAGE_BOUND 5
 
@@ -40,11 +41,13 @@ class DDragWidget;
 class DFMEvent;
 class DBookmarkMountedIndicatorItem;
 
+DFM_USE_NAMESPACE
+
 class DBookmarkItem : public QGraphicsWidget
 {
     Q_OBJECT
 public:
-    DBookmarkItem();
+    DBookmarkItem(const QString &key = QString());
 
     DBookmarkItem(UDiskDeviceInfoPointer deviceInfo);
 
@@ -56,10 +59,6 @@ public:
     void setTightMode(bool v);
     bool isTightModel();
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    void boundImageToPress(QString imagePath);
-    void boundImageToRelease(QString imagePath);
-    void boundImageToHover(QString imagePath);
-    void boundImageToChecked(QString imagePath);
 
     void setPressedIcon(const QString& iconPath);
     void setPressedIcon(const QIcon& icon);
@@ -70,19 +69,8 @@ public:
     void setCheckedIcon(const QString& iconPath);
     void setCheckedIcon(const QIcon& icon);
 
-
-    QPixmap getCheckedPixmap();
-
-    void boundBigImageToPress(QString imagePath);
-    void boundBigImageToRelease(QString imagePath);
-    void boundBigImageToHover(QString imagePath);
-    void boundBigImageToChecked(QString imagePath);
     void setDraggable(bool b);
     void setBounds(int x, int y, int w, int h);
-    void setPressBackgroundColor(const QColor &color);
-    void setReleaseBackgroundColor(const QColor &color);
-    void setHoverBackgroundColor(const QColor &color);
-    void setHighlightDiskBackgroundColor(const QColor &color);
     void setHoverEnableFlag(bool flag);
     void setAdjust(qreal value);
     bool isPressed();
@@ -95,18 +83,6 @@ public:
     int boundHeight();
     QString text();
     void setText(const QString & text);
-
-    QColor getTextColor();
-    void setTextColor(const QColor &color);
-
-    QColor textHoverColor() const;
-    void setTextHoverColor(const QColor &textHoverColor);
-
-    QColor textPressColor() const;
-    void setTextPressColor(const QColor &textPressColor);
-
-    QColor textCheckedColor() const;
-    void setTextCheckedColor(const QColor &textCheckedColor);
 
     void setPress(bool b);
     void setPressBackgroundEnable(bool b);
@@ -177,6 +153,10 @@ protected:
     bool eventFilter(QObject *obj, QEvent *e) Q_DECL_OVERRIDE;
 private:
     void init();
+    QPixmap getPixmap(const QString &key, ThemeConfig::State state = ThemeConfig::Normal) const;
+
+    QString m_key;
+
     QLineEdit * m_lineEdit;
     QGraphicsProxyWidget * m_widget = NULL;
     UDiskDeviceInfoPointer m_deviceInfo;
@@ -215,24 +195,24 @@ private:
     QFont m_font;
     qreal m_adjust = 0;
     DUrl m_url;
-    QPixmap m_pressImage;
-    QPixmap m_releaseImage;
-    QPixmap m_hoverImage;
-    QPixmap m_checkedImage;
-    QPixmap m_pressImageBig;
-    QPixmap m_releaseImageBig;
-    QPixmap m_hoverImageBig;
-    QPixmap m_checkedImageBig;
+//    QPixmap m_pressImage;
+//    QPixmap m_releaseImage;
+//    QPixmap m_hoverImage;
+//    QPixmap m_checkedImage;
+//    QPixmap m_pressImageBig;
+//    QPixmap m_releaseImageBig;
+//    QPixmap m_hoverImageBig;
+//    QPixmap m_checkedImageBig;
     QString m_textContent;
-    QColor m_hoverBackgroundColor;
-    QColor m_releaseBackgroundColor;
-    QColor m_pressBackgroundColor;
-    QColor m_highlightDiskBackgroundColor;
-    QColor m_textColor;
-    QColor m_textHoverColor;
-    QColor m_textPressColor;
-    QColor m_textCheckedColor;
-    QColor m_backGroundColor;
+//    QColor m_hoverBackgroundColor;
+//    QColor m_releaseBackgroundColor;
+//    QColor m_pressBackgroundColor;
+//    QColor m_highlightDiskBackgroundColor;
+//    QColor m_textColor;
+//    QColor m_textHoverColor;
+//    QColor m_textPressColor;
+//    QColor m_textCheckedColor;
+//    QColor m_backGroundColor;
     DDragWidget * drag = NULL;
     /* bookmark */
     bool m_isDefault = false;

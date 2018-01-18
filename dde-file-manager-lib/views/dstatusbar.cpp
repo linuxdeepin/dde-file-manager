@@ -29,6 +29,8 @@
 #include <dtextbutton.h>
 #include <dlineedit.h>
 #include <anchors.h>
+#include <DThemeManager>
+
 #include <QFutureWatcher>
 #include <QFuture>
 #include <QtConcurrent>
@@ -40,6 +42,10 @@ DWIDGET_USE_NAMESPACE
 DStatusBar::DStatusBar(QWidget *parent)
     : QFrame(parent)
 {
+    D_THEME_INIT_WIDGET(DStatusBar, mode)
+
+    setObjectName("DStatusBar");
+
     initUI();
     initConnect();
     setMode(Normal);
@@ -82,11 +88,18 @@ void DStatusBar::initConnect()
 {
 //    connect(fileSignalManager, &FileSignalManager::statusBarItemsSelected, this, &DStatusBar::itemSelected);
 //    connect(fileSignalManager, &FileSignalManager::statusBarItemsCounted, this, &DStatusBar::itemCounted);
-//    connect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, this, &DStatusBar::setLoadingIncatorVisible);
+    //    connect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, this, &DStatusBar::setLoadingIncatorVisible);
+}
+
+DStatusBar::Mode DStatusBar::mode() const
+{
+    return m_mode;
 }
 
 void DStatusBar::setMode(DStatusBar::Mode mode)
 {
+    m_mode = mode;
+
     if (mode == Normal) {
         if (m_label)
             return;
@@ -129,9 +142,9 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
         sliderAnchor.setAnchor(Qt::AnchorVerticalCenter, this, Qt::AnchorVerticalCenter);
         sliderAnchor.setRightMargin(20);
 
-        setStyleSheet("QFrame{"
-                      "background-color: white;"
-                      "color: #797979;}");
+//        setStyleSheet("QFrame{"
+//                      "background-color: white;"
+//                      "color: #797979;}");
 
         return;
     }
@@ -191,10 +204,7 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
     m_layout->setSpacing(10);
     m_layout->setContentsMargins(10, 10, 10, 10);
 
-    setStyleSheet("DStatusBar{"
-                  "background-color: white;"
-                  "border-top: 1px solid rgba(0, 0, 0, 0.1);}"
-                  "QLabel{color: #797979; margin-bottom: 2px;}");
+    emit modeChanged();
 }
 
 void DStatusBar::setComBoxItems(const QStringList &filters)

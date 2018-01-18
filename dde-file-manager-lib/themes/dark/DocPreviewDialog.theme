@@ -1,0 +1,67 @@
+QPushButton#CloseButton{
+    border:none;
+    background: transparent;
+    image: url(:/icons/images/icons/preview-dialog-close_round_normal.png);
+}
+
+QPushButton#CloseButton::hover{
+    image: url(:/icons/images/icons/preview_dialog_close_round_hover.png);
+}
+
+QPushButton#CloseButton::pressed{
+    image: url(:/icons/images/icons/preview-dialog-close_round_press.png);
+}
+
+QPushButton#ForwardButton{
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    background: white;
+    image: url(:/icons/images/icons/forward_normal.png);
+}
+
+QPushButton#ForwardButton::hover{
+    background-color: #2ca7f8;
+    border: 1px solid rgba(0, 128, 255, 0.22);
+    image: url(:/icons/images/icons/forward_hover.png);
+}
+
+QPushButton#ForwardButton::pressed{
+    image: url(:/icons/images/icons/forward_press.png);
+}
+
+QPushButton#ForwardButton::disabled{
+    image: url(:/icons/images/icons/forward_disabled.png);
+}
+
+QPushButton#BackwardButton{
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    background: white;
+    image: url(:/icons/images/icons/backward_normal.png);
+}
+
+QPushButton#BackwardButton::hover{
+    background-color: #2ca7f8;
+    border: 1px solid rgba(0, 128, 255, 0.22);
+    image: url(:/icons/images/icons/backward_hover.png);
+}
+
+QPushButton#BackwardButton::pressed{
+    image: url(:/icons/images/icons/backward_press.png);
+}
+
+QPushButton#BackwardButton::disabled{
+    image: url(:/icons/images/icons/backward_disabled.png);
+}
+
+QPushButton#OpenButton{
+    font-size: 12px;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    color: black;
+}
+
+QFrame#ToolBar{
+    background-color: white;
+}

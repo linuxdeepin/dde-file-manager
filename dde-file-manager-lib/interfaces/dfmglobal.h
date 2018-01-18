@@ -204,6 +204,7 @@ public:
         EditLabel,
         PrivateFileToPublic,
 #endif
+        ToggleTheme,
         Unknow,
         UserMenuAction = Unknow + 2000
     };

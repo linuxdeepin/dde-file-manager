@@ -33,7 +33,7 @@ DBookmarkRootItem::DBookmarkRootItem(DBookmarkScene *scene)
     setBackgroundEnable(false);
     setHoverBackgroundEnable(false);
     setCheckable(false);
-    setPressBackgroundColor(QColor(0,0,0,0));
+//    setPressBackgroundColor(QColor(0,0,0,0));
     setDefaultItem(true);
     setAcceptDrops(true);
     setAcceptHoverEvents(false);

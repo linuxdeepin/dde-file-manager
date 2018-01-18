@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/qss">
-        <file>qss/filemanager.qss</file>
         <file>qss/passwordAskDialog.qss</file>
         <file>qss/filemanageradmin.qss</file>
     </qresource>

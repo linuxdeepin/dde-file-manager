@@ -37,6 +37,7 @@
 #include "view/viewinterface.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "views/dfilemanagerwindow.h"
+#include "themeconfig.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -245,10 +246,6 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     if(m_dragOutSide)
         return;
     QPen pen;
-    QColor color(Qt::yellow);
-    pen.setStyle(Qt::SolidLine);
-    pen.setColor(color);
-    painter->setPen(pen);
     pen.setWidth(1);
 
     //draw text
@@ -267,36 +264,29 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
 
     //draw backgound
     if(isChecked()){
-        color.setNamedColor("#FFFFFF");
-        painter->fillRect(boundingRect(),color);
-        color.setNamedColor("#2ca7f8");
-        pen.setColor(color);
+        painter->fillRect(boundingRect(), ThemeConfig::instace()->color("Tab", "background", ThemeConfig::Checked));
+        pen.setColor(ThemeConfig::instace()->color("Tab", "color", ThemeConfig::Checked));
         painter->setPen(pen);
         painter->drawText((m_width-fm.width(str))/2,(m_height-fm.height())/2,
                           fm.width(str),fm.height(),0,str);
     }
     else if(m_hovered||(m_hovered&&!isChecked())){
-        color.setNamedColor("#EDEDED");
-        painter->fillRect(boundingRect(),color);
-        color.setNamedColor("#303030");
-        pen.setColor(color);
+        painter->fillRect(boundingRect(), ThemeConfig::instace()->color("Tab", "background", ThemeConfig::Hover));
+        pen.setColor(ThemeConfig::instace()->color("Tab", "color", ThemeConfig::Hover));
         painter->setPen(pen);
         painter->drawText((m_width-fm.width(str))/2,(m_height-fm.height())/2,
                           fm.width(str),fm.height(),0,str);
     }
     else{
-        color.setNamedColor("#FAFAFA");
-        painter->fillRect(boundingRect(),color);
-        color.setNamedColor("#949494");
-        pen.setColor(color);
+        painter->fillRect(boundingRect(), ThemeConfig::instace()->color("Tab", "background"));
+        pen.setColor(ThemeConfig::instace()->color("Tab", "color"));
         painter->setPen(pen);
         painter->drawText((m_width-fm.width(str))/2,(m_height-fm.height())/2,
                           fm.width(str),fm.height(),0,str);
     }
 
     //draw line
-    color.setRgb(0,0,0,33);
-    pen.setColor(color);
+    pen.setColor(ThemeConfig::instace()->color("Tab", "border"));
     painter->setPen(pen);
     painter->drawLine(QPointF(0,boundingRect().height()-1),
                       QPointF(boundingRect().width()-1,boundingRect().height()-1));
@@ -432,19 +422,19 @@ TabCloseButton::TabCloseButton(QGraphicsItem *parent):
     setFlag(QGraphicsItem::ItemIsSelectable);
     setAcceptHoverEvents(true);
 
-    m_active_normalIcon.addFile(":/icons/images/icons/active_tab_close_normal.png");
-    m_active_normalIcon.addFile(":/icons/images/icons/active_tab_close_normal@2x.png");
-    m_active_hoverIcon.addFile(":/icons/images/icons/active_tab_close_hover.png");
-    m_active_hoverIcon.addFile(":/icons/images/icons/active_tab_close_hover@2x.png");
-    m_active_pressIcon.addFile(":/icons/images/icons/active_tab_close_press.png");
-    m_active_pressIcon.addFile(":/icons/images/icons/active_tab_close_press@2x.png");
+//    m_active_normalIcon.addFile(":/icons/images/icons/active_tab_close_normal.png");
+//    m_active_normalIcon.addFile(":/icons/images/icons/active_tab_close_normal@2x.png");
+//    m_active_hoverIcon.addFile(":/icons/images/icons/active_tab_close_hover.png");
+//    m_active_hoverIcon.addFile(":/icons/images/icons/active_tab_close_hover@2x.png");
+//    m_active_pressIcon.addFile(":/icons/images/icons/active_tab_close_press.png");
+//    m_active_pressIcon.addFile(":/icons/images/icons/active_tab_close_press@2x.png");
 
-    m_normalIcon.addFile(":/icons/images/icons/tab_close_normal.png");
-    m_normalIcon.addFile(":/icons/images/icons/tab_close_normal@2x.png");
-    m_hoverIcon.addFile(":/icons/images/icons/tab_close_hover.png");
-    m_hoverIcon.addFile(":/icons/images/icons/tab_close_hover@2x.png");
-    m_pressIcon.addFile(":/icons/images/icons/tab_close_press.png");
-    m_pressIcon.addFile(":/icons/images/icons/tab_close_press@2x.png");
+//    m_normalIcon.addFile(":/icons/images/icons/tab_close_normal.png");
+//    m_normalIcon.addFile(":/icons/images/icons/tab_close_normal@2x.png");
+//    m_hoverIcon.addFile(":/icons/images/icons/tab_close_hover.png");
+//    m_hoverIcon.addFile(":/icons/images/icons/tab_close_hover@2x.png");
+//    m_pressIcon.addFile(":/icons/images/icons/tab_close_press.png");
+//    m_pressIcon.addFile(":/icons/images/icons/tab_close_press@2x.png");
 }
 
 QRectF TabCloseButton::boundingRect() const
@@ -459,24 +449,30 @@ void TabCloseButton::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     Q_UNUSED(widget);
     QPixmap pixmap;
     pixmap.setDevicePixelRatio(qApp->devicePixelRatio());
-    QSize size = boundingRect().size().toSize();
+//    QSize size = boundingRect().size().toSize();
     if(m_mousePressed){
         if(m_activeWidthTab)
-            pixmap = m_active_pressIcon.pixmap(size);
+//            pixmap = m_active_pressIcon.pixmap(size);
+            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon", ThemeConfig::Pressed | ThemeConfig::Focus);
         else
-            pixmap = m_pressIcon.pixmap(size);
+            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon", ThemeConfig::Pressed);
+//            pixmap = m_pressIcon.pixmap(size);
     }
     else if(m_mouseHovered){
         if(m_activeWidthTab)
-            pixmap = m_active_hoverIcon.pixmap(size);
+//            pixmap = m_active_hoverIcon.pixmap(size);
+            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon", ThemeConfig::Hover | ThemeConfig::Focus);
         else
-            pixmap = m_hoverIcon.pixmap(size);
+            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon", ThemeConfig::Hover);
+//            pixmap = m_hoverIcon.pixmap(size);
     }
     else{
         if(m_activeWidthTab)
-            pixmap = m_active_normalIcon.pixmap(size);
+//            pixmap = m_active_normalIcon.pixmap(size);
+            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon", ThemeConfig::Focus);
         else
-            pixmap = m_normalIcon.pixmap(size);
+            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon");
+//            pixmap = m_normalIcon.pixmap(size);
     }
     painter->drawPixmap(boundingRect().toRect(),pixmap);
 }
@@ -552,6 +548,10 @@ TabBar::TabBar(QWidget *parent):QGraphicsView(parent){
     m_TabCloseButton->setZValue(4);
     m_TabCloseButton->hide();
     m_scene->addItem(m_TabCloseButton);
+
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
     setMouseTracking(true);
 
     initConnections();

@@ -12,6 +12,7 @@
 #include "app/define.h"
 #include "dfilesystemmodel.h"
 #include "private/dstyleditemdelegate_p.h"
+#include "views/themeconfig.h"
 
 #include <QLabel>
 #include <QPainter>
@@ -24,6 +25,8 @@
 #define LIST_EDITER_HEIGHT 22
 #define LIST_MODE_EDITOR_LEFT_PADDING -3
 #define LIST_VIEW_ICON_SIZE 28
+
+DFM_USE_NAMESPACE
 
 class DListItemDelegatePrivate : public DStyledItemDelegatePrivate
 {
@@ -91,7 +94,7 @@ void DListItemDelegate::paint(QPainter *painter,
     } else {
         if (!isDragMode){
             if (index.row() % 2 == 0){
-                painter->fillRect(opt.rect, QColor(0, 0, 0, 3));
+                painter->fillRect(opt.rect, ThemeConfig::instace()->color("FileView", "overlap"));
             }else{
                 painter->fillRect(opt.rect, QColor(255, 255, 255, 0));
             }

@@ -144,23 +144,22 @@ void DBookmarkScene::initConnect()
 
 DBookmarkItem *DBookmarkScene::createBookmarkByKey(const QString &key)
 {
-    DBookmarkItem * item = new DBookmarkItem;
-    item->boundImageToHover(m_smallIcons.value(key));
-    item->boundImageToPress(m_smallCheckedIcons.value(key));
-    item->boundImageToRelease(m_smallIcons.value(key));
+    DBookmarkItem * item = new DBookmarkItem(key);
+//    item->boundImageToHover(m_smallIcons.value(key));
+//    item->boundImageToPress(m_smallCheckedIcons.value(key));
+//    item->boundImageToRelease(m_smallIcons.value(key));
     item->setText(m_systemBookMarks.value(key));
     item->setUrl(getStandardPathByKey(key));
     item->setDefaultItem(true);
     return item;
 }
 
-DBookmarkItem *DBookmarkScene::createCustomBookmark(const QString &name, const DUrl &url)
+DBookmarkItem *DBookmarkScene::createCustomBookmark(const QString &name, const DUrl &url, const QString &key)
 {
-    QString key = "BookMarks";
-    DBookmarkItem * item = new DBookmarkItem;
-    item->boundImageToHover(m_smallIcons.value(key));
-    item->boundImageToPress(m_smallCheckedIcons.value(key));
-    item->boundImageToRelease(m_smallIcons.value(key));
+    DBookmarkItem * item = new DBookmarkItem(key.isEmpty() ? "BookMarks" : key);
+//    item->boundImageToHover(m_smallIcons.value(key));
+//    item->boundImageToPress(m_smallCheckedIcons.value(key));
+//    item->boundImageToRelease(m_smallIcons.value(key));
     item->setText(name);
     item->setUrl(url);
     item->setDefaultItem(false);

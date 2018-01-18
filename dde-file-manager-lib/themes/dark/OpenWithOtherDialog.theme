@@ -1,0 +1,56 @@
+OpenWithOtherDialog{
+    background-color: blue;
+}
+
+QListWidget{
+    background-color: white;
+}
+QListWidget::item{
+    height: 32px;
+    color: black;
+    border-radius: 4px;
+    background: white;
+}
+
+QListWidget::item:selected{
+    background: rgba(0, 0, 0, 0.05);
+}
+
+QCheckBox{
+    spacing: 5px;
+    color: #222222;
+    font-size: 12px;
+    text-align: center;
+}
+
+QCheckBox:disable{
+    spacing: 5px;
+    color: #222222;
+    font-size: 12px;
+    text-align: center;
+}
+
+QCheckBox:pressed{
+    color: #4b4b4b;
+}
+
+
+QCheckBox::indicator {
+    width: 16px;
+    height: 16px;
+}
+
+
+QCheckBox::indicator:unchecked {
+    image: none;
+}
+
+QCheckBox::indicator:checked {
+    image: url(:/images/images/light/select.png);
+}
+
+QLabel#contentLabel {
+    font-family: SourceHanSansSC-Light;
+    font-size: 20px;
+    color: #D0D0D0;
+}
