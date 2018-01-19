@@ -54,40 +54,40 @@ DBookmarkScene::DBookmarkScene(QObject *parent)
 
 void DBookmarkScene::initData()
 {
-    QStringList IconKeys;
-    IconKeys << "File"
-             << "Home"
-             << "Desktop"
-             << "Videos"
-             << "Music"
-             << "Pictures"
-             << "Documents"
-             << "Downloads"
-             << "Trash"
-             << "Computer"
-             << "Disk"
-             << "Usb"
-             << "Iphone"
-             << "Android"
-             << "Network"
-             << "UserShare"
-             << "Dvd"
-             << "BookMarks"
-             << "System Disk";
+//    QStringList IconKeys;
+//    IconKeys << "File"
+//             << "Home"
+//             << "Desktop"
+//             << "Videos"
+//             << "Music"
+//             << "Pictures"
+//             << "Documents"
+//             << "Downloads"
+//             << "Trash"
+//             << "Computer"
+//             << "Disk"
+//             << "Usb"
+//             << "Iphone"
+//             << "Android"
+//             << "Network"
+//             << "UserShare"
+//             << "Dvd"
+//             << "BookMarks"
+//             << "System Disk";
 
-    foreach (QString key, IconKeys) {
-        QString _key = key.toLower();
+//    foreach (QString key, IconKeys) {
+//        QString _key = key.toLower();
 
-        /* specially handle for system disk icon(disk icon)*/
-        if(key == "System Disk")
-            _key = "disk";
-        QString smallNormal = QString(":/leftsidebar/images/leftsidebar/%1_normal_16px.svg").arg(_key);
-        QString smallHover = QString(":/leftsidebar/images/leftsidebar/%1_active_16px.svg").arg(_key);
-        QString smallChecked = QString(":/leftsidebar/images/leftsidebar/%1_active_16px.svg").arg(_key);
-        m_smallIcons.insert(key, smallNormal);
-        m_smallHoverIcons.insert(key, smallHover);
-        m_smallCheckedIcons.insert(key, smallChecked);
-    }
+//        /* specially handle for system disk icon(disk icon)*/
+//        if(key == "System Disk")
+//            _key = "disk";
+//        QString smallNormal = QString(":/leftsidebar/images/leftsidebar/%1_normal_16px.svg").arg(_key);
+//        QString smallHover = QString(":/leftsidebar/images/leftsidebar/%1_active_16px.svg").arg(_key);
+//        QString smallChecked = QString(":/leftsidebar/images/leftsidebar/%1_active_16px.svg").arg(_key);
+//        m_smallIcons.insert(key, smallNormal);
+//        m_smallHoverIcons.insert(key, smallHover);
+//        m_smallCheckedIcons.insert(key, smallChecked);
+//    }
 
 
     m_systemPathKeys << "Home"

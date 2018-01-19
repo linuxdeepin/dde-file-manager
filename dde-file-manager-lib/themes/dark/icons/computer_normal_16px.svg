@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>computer_normal_16px</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="UI图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="computer_normal_16px" stroke="#DDDDDD">
+            <polygon id="Rectangle-3" points="1.5 2.5 14.5 2.5 14.5 12.5 1.5 12.5"></polygon>
+            <path d="M4.5,14.5 L11.5,14.5" id="Path-4"></path>
+            <path d="M2,10.5 L14,10.5" id="Path-3"></path>
+            <rect id="Rectangle-4" x="6.5" y="12.5" width="3" height="2"></rect>
+        </g>
+    </g>
+</svg>

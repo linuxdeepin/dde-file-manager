@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="23px" height="23px" viewBox="0 0 23 23" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>tab_close_hover</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="4.93832997%" y1="50%" x2="96.8165261%" y2="50%" id="linearGradient-1">
+            <stop stop-color="#3E3E3E" stop-opacity="0.3" offset="0%"></stop>
+            <stop stop-color="#3E3E3E" offset="14.8557079%"></stop>
+            <stop stop-color="#3E3E3E" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="tab" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="tab_close_hover">
+            <rect id="Rectangle-2" fill="url(#linearGradient-1)" x="0" y="0" width="23" height="23"></rect>
+            <path d="M12.1847564,11.8333275 L10.2756871,13.7423968 C10.0413725,13.9767113 10.0413725,14.3566103 10.2756871,14.5909249 C10.5100017,14.8252395 10.8899007,14.8252395 11.1242152,14.5909249 L13.0332845,12.6818556 L14.9423538,14.5909249 C15.1766683,14.8252395 15.5565673,14.8252395 15.7908819,14.5909249 C16.0251965,14.3566103 16.0251965,13.9767113 15.7908819,13.7423968 L13.8818126,11.8333275 L15.7908819,9.92425824 C16.0251965,9.68994366 16.0251965,9.31004467 15.7908819,9.0757301 C15.5565673,8.84141552 15.1766683,8.84141552 14.9423538,9.0757301 L13.0332845,10.9847994 L11.1242152,9.0757301 C10.8899007,8.84141552 10.5100017,8.84141552 10.2756871,9.0757301 C10.0413725,9.31004467 10.0413725,9.68994366 10.2756871,9.92425824 L12.1847564,11.8333275 Z M13,19 C9.13400675,19 6,15.8659932 6,12 C6,8.13400675 9.13400675,5 13,5 C16.8659932,5 20,8.13400675 20,12 C20,15.8659932 16.8659932,19 13,19 Z" id="Combined-Shape" fill-opacity="0.7" fill="#FFFFFF"></path>
+            <g id="Group-15" transform="translate(9.699951, 8.500000)"></g>
+        </g>
+    </g>
+</svg>

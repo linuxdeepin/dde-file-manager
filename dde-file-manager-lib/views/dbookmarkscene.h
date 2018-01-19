@@ -116,9 +116,9 @@ private:
 
     int m_defaultCount = 0;
 
-    QMap<QString, QString> m_smallIcons;
-    QMap<QString, QString> m_smallHoverIcons;
-    QMap<QString, QString> m_smallCheckedIcons;
+//    QMap<QString, QString> m_smallIcons;
+//    QMap<QString, QString> m_smallHoverIcons;
+//    QMap<QString, QString> m_smallCheckedIcons;
     QStringList m_systemPathKeys;
     QMap<QString, QString> m_systemBookMarks;
 

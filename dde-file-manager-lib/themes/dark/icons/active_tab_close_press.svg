@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="23px" height="23px" viewBox="0 0 23 23" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>active_tab_close_press</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="50%" x2="100%" y2="50%" id="linearGradient-1">
+            <stop stop-color="#313131" stop-opacity="0.3" offset="0%"></stop>
+            <stop stop-color="#313131" offset="15.2484701%"></stop>
+            <stop stop-color="#313131" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="tab" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="active_tab_close_press">
+            <rect id="Rectangle-2" fill="url(#linearGradient-1)" x="0" y="0" width="23" height="23"></rect>
+            <circle id="Oval-58" fill="#2CA7F8" cx="13" cy="12" r="7"></circle>
+            <g id="Group-15" transform="translate(10.699951, 9.500000)" stroke="#FFFFFF" stroke-linecap="round" stroke-width="1.2">
+                <path d="M0,4.66666083 L4.66666667,-5.83333349e-06" id="Stroke-12"></path>
+                <path d="M4.66666667,4.66666083 L0,-5.83333349e-06" id="Stroke-13"></path>
+            </g>
+        </g>
+    </g>
+</svg>

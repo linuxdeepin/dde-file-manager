@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/qss">
         <file>qss/passwordAskDialog.qss</file>
-        <file>qss/filemanageradmin.qss</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/light/pencil_hover.svg</file>

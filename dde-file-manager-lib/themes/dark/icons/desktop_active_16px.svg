@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>desktop_active_16px</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="UI图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="desktop_active_16px">
+            <rect id="Rectangle-1" fill-opacity="0.5" fill="#A1A1A1" opacity="0" x="0" y="5.68434189e-14" width="16" height="16"></rect>
+            <g transform="translate(1.000000, 3.000000)" fill="#2CA7F8" fill-rule="nonzero" id="Combined-Shape">
+                <path d="M0,0.5 C0,0.223857625 0.223857625,0 0.5,0 L1,0 L13.5,0 C13.7761424,0 14,0.223857625 14,0.5 L14,10.5 C14,10.7761424 13.7761424,11 13.5,11 L0.5,11 C0.223857625,11 0,10.7761424 0,10.5 L0,0.5 Z M1,1 L1,10 L13,10 L13,1 L1,1 Z M2.5,9 C2.22385763,9 2,8.77614237 2,8.5 C2,8.22385763 2.22385763,8 2.5,8 L9.5,8 C9.77614237,8 10,8.22385763 10,8.5 C10,8.77614237 9.77614237,9 9.5,9 L2.5,9 Z M11,1 L13,1 L13,10 L11,10 L11,1 Z M11,1 L13,1 L13,10 L11,10 L13,10 L13,1 L11,1 Z"></path>
+            </g>
+        </g>
+    </g>
+</svg>

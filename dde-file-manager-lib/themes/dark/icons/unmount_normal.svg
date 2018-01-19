@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>unmount_normal</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="UI图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="unmount_normal" fill="#DDDDDD">
+            <g id="Group" transform="translate(4.000000, 3.000000)">
+                <g id="Group-3">
+                    <path d="M3.43923992,0.41701014 C3.74770962,-0.0383802134 4.2437882,-0.0446906033 4.55681852,0.417010145 L7.78300721,5.17544282 C8.09175913,5.63083318 7.89944253,6 7.34581961,6 L0.65369872,5.99999997 C0.103494755,5.99999997 -0.0967440796,5.63714353 0.216000121,5.17544279 L3.43923992,0.41701014 Z" id="Rectangle-87"></path>
+                    <rect id="Rectangle-88" x="0" y="7" width="8" height="1" rx="0.5"></rect>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

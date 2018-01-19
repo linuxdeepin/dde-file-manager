@@ -9,13 +9,13 @@ QMainWindow{
 
 QPushButton#LogoButton{
    border: none;
-   image: url(:/images/images/dde-file-manager.png);
+   image: url(:/images/images/dde-file-manager-admin.png);
 }
 QPushButton#LogoButton:hover{
-   image: url(:/images/images/dde-file-manager.png);
+   image: url(:/images/images/dde-file-manager-admin.png);
 }
 QPushButton#LogoButton:press{
-   image: url(:/images/images/dde-file-manager.png);
+   image: url(:/images/images/dde-file-manager-admin.png);
 }
 
 QFrame#TitleBar{
@@ -59,34 +59,6 @@ QFrame#LeftSideDiskBar{
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-FileDialogStatusBar {
-    background-color: #f9f9fa;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-QLabel#FileDialogStatusBarContentLabel {
-    color: #797979;
-}
-
-QPushButton#FileDialogStatusBarAcceptButton {
-    color: #2ca7f8;
-    border: 1px solid #2ca7f8;
-    border-radius: 4px;
-    background: qlineargradient(x1: 0, y1: 0 x2: 0, y2: 1, stop:0 rgba(255, 255, 255, 0.4), stop:1 rgba(253, 253, 253, 0.4));
-}
-
-QPushButton#FileDialogStatusBarAcceptButton:hover {
-    background: qlineargradient(x1: 0, y1: 0 x2: 0, y2: 1, stop:0 "#8ccfff", stop:1 "#4bb8ff");
-    color: "#fff";
-    border: 1px solid rgba(0, 117, 243, 0.2);
-}
-
-QPushButton#FileDialogStatusBarAcceptButton:pressed {
-    background: qlineargradient(x1: 0, y1: 0 x2: 0, y2: 1, stop:0 "#0b8cff", stop:1 "#0aa1ff");
-    color: "#fff";
-    border: 1px solid rgba(29, 129, 255, 0.3);
-}
-
 QFrame#ToolBar{
     background-color: transparent;
 }
@@ -114,14 +86,6 @@ QPushButton#EmptyTrashButton:hover{
 
 QPushButton#EmptyTrashButton::pressed{
     image: url(:/icons/images/icons/empty_trash_press.png);
-}
-
-QFrame#FileView{
-    background-color: white;
-}
-
-QFrame#DetailView{
-    background-color: gray;
 }
 
 QToolBar {
@@ -236,23 +200,86 @@ QListWidget#DCrumbList{
     border: none;
 }
 
-QFrame#ContollerToolBar {
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
+QPushButton#iconViewButton{
+    background-color:white;
+    color: white;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    image: url(:/icons/images/icons/icon_view_normal.png);
+    icon-size: 16px 16px;
+}
+
+QPushButton#iconViewButton:hover{
+    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                        stop: 0 #B1B1B1,
+                        stop: 1  #9D9D9D);
+    image: url(:/icons/images/icons/icon_view_hover.png);
+    border: 1px solid #909090;
+    color: white;
+}
+
+QPushButton#iconViewButton:checked{
+    border: 1px solid #5f5f5f;
+    background-color:#6a6a6a;
+    image: url(:/icons/images/icons/icon_view_checked.png);
+    icon-size: 16px 16px;
+}
+
+QPushButton#iconViewButton:unchecked{
+    background-color:white;
+    image: url(:/icons/images/icons/icon_view_normal.png);
+    icon-size: 16px 16px;
+}
+
+QPushButton#listViewButton{
+    background-color:white;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    color: black;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    image: url(:/icons/images/icons/list_view_normal.png);
+    icon-size: 16px 16px;
+}
+
+QPushButton#listViewButton:hover{
+    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                    stop: 0 #B1B1B1,
+                    stop: 1  #9D9D9D);
+    image: url(:/icons/images/icons/list_view_hover.png);
+    border: 1px solid #909090;
+    color: white;
+}
+
+QPushButton#listViewButton:checked{
+    border: 1px solid #5f5f5f;
+    background-color:#6a6a6a;
+    image: url(:/icons/images/icons/list_view_checked.png);
+    icon-size: 16px 16px;
+}
+
+QPushButton#listViewButton:unchecked{
+    background-color:white;
+    image: url(:/icons/images/icons/list_view_normal.png);
+    icon-size: 16px 16px;
 }
 
 DFMActionButton {
-    background-color: rgba(255, 255, 255, 0.15);
+    background-color: rgba(255, 255, 255, 0.15);;
 }
 
 DFMActionButton:hover {
-    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                        stop: 0 #8CCFFF,
-                        stop: 1  #4BB8FF);
+    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                    stop: 0 #B1B1B1,
+                    stop: 1  #9D9D9D);
 }
 
 DFMActionButton:checked {
-    background-color: #2ca7f8;
+    background-color: #6a6a6a;
 }
 
 QPushButton#settingsButton{
@@ -282,6 +309,28 @@ QPushButton#settingsButton:hover{
 QPushButton#settingsButton::menu-indicator {
      image: url();
  }
+
+QPushButton#hierarchicalButton{
+    background-color:white;
+    border: 1px;
+    color: black;
+    border-radius: 2px;
+    icon-size: 16px 16px;
+    image: url(:/icons/images/icons/hierarchical_view_normal.svg);
+
+}
+
+QPushButton#hierarchicalButton:checked{
+    background-color:#2ca7f8;
+    image: url(:/icons/images/icons/hierarchical_view_hover.svg);
+    icon-size: 16px 16px;
+}
+
+QPushButton#hierarchicalButton:unchecked{
+    background-color:white;
+    image: url(:/icons/images/icons/hierarchical_view_normal.svg);
+    icon-size: 16px 16px;
+}
 
 QPushButton#searchButton{
     background-color: rgba(255, 255, 255, 0.15);
@@ -345,13 +394,12 @@ QPushButton#DCrumbIconButton:hover{
 }
 
 QPushButton#DCrumbIconButton:checked{
-    background-color: #2ca7f8;
+    background-color: #646464;
     color: white;
 }
 /* ******************End of DCrumbButton****************** */
 
 /* ******************DSearchBar****************** */
-
 QListWidget#SearchList{
     background-color: #202020;
     border:1px solid rgba(0, 0, 0, 50);
@@ -376,6 +424,47 @@ QListWidget#SearchList::item:hover{
 
 /******************End of Menu*************************/
 
+/******************Left Side Bar************************/
+QLabel#FileLabel{
+    background: transparent;
+    color: black;
+    text-align: left;
+    font-size: 14px;
+}
+
+QPushButton#TightFileButton{
+    border: none;
+    color: white;
+    image: url(:/icons/images/icons/file_normal_22px.svg);
+    text-align: left;
+}
+
+QPushButton#TightFileButton:hover{
+    image: url(:/icons/images/icons/file_hover_22px.svg);
+}
+
+QPushButton#TightFileButton:press{
+    image: url(:/icons/images/icons/file_hover_22px.svg);
+}
+
+QPushButton#FileButton{
+    border: none;
+    color: white;
+    image: url(:/icons/images/icons/file_normal_16px.svg);
+    text-align: left;
+}
+
+QPushButton#FileButton:hover{
+    /*image: url(:/icons/images/icons/file_hover_16px.svg);*/
+}
+
+QPushButton#FileButton:press{
+    /*image: url(:/icons/images/icons/file_hover_16px.svg);*/
+}
+
+
+
+/******************End of Left Side Bar ****************/
 QPushButton#DCheckableButton{
     background-color:transparent;
     border: none;
@@ -424,11 +513,18 @@ QPushButton#close:hover{
     border: 1px;
 }
 
+QLineEdit#BookmarkLineEdit{
+    border-radius: 4px;
+    background-color: trasnparent;
+    border: solid 1px rgba(43, 167, 248, 1);
+    color: white;
+}
+
 /*ComputerView*/
 
 QScrollArea#ComputerView{
     border: none;
-    /*background-color: white;*/
+    background: transparent;
 }
 
 QScrollArea#ComputerView #TitleLabel {
@@ -496,133 +592,18 @@ DTabCloseButton#TabCloseButton:pressed{
 /*New tab button*/
 QPushButton#NewTabButton{
     border: none;
-    image: url(:/dark/icons/new_tab_normal.svg);
+    image: url(:/icons/images/icons/new_tab_normal.png);
 }
 QPushButton#NewTabButton:hover{
     border: none;
-    image: url(:/dark/icons/new_tab_hover.svg);
+    image: url(:/icons/images/icons/new_tab_hover.png);
 }
 QPushButton#NewTabButton:pressed{
     border: none;
-    image: url(:/dark/icons/new_tab_press.svg);
+    image: url(:/icons/images/icons/new_tab_press.png);
 }
 QPushButton#NewTabButton:disabled {
     border: none;
-    image: url(:/dark/icons/new_tab_disabled.svg);
+    image: url(:/icons/images/icons/new_tab_disabled.png);
 }
 
-
-/*DRenameBar ===================== DRenameBar*/
-QFrame#DRenameBar{
-    border: 1px;
-    border-bottom:1px solid rgba(0, 0, 0, 0.2);
-}
-
-
-QPushButton#DRenameBarRenameBtn:enabled{
-    background-color: white;
-    border-radius: 2px;
-    color: #0087ff;
-    border:1px solid rgba(0, 132, 255, 0.4);
-    border-radius: 2px;
-}
-
-
-
-QPushButton#DRenameBarRenameBtn:hover{
-    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                        stop: 0 #8ccfff,
-                        stop: 1  #4bb8ff);
-    border: 1px solid rgba(0, 117, 243, 0.2);
-    color: white;
-}
-
-
-QPushButton#DRenameBarRenameBtn:disabled{
-    background-color: white;
-    color: rgba(0, 132, 255, 0.4);
-    border: 1px solid rgba(0, 132, 255, 0.4);
-    border-radius: 2px;
-}
-
-
-
-
-
-
-QLineEdit#DRenameBarLineEditForFinding:focus
-{
-    border: 1px solid #2ca7f8;
-    border-radius: 2px;
-}
-
-QLineEdit#DRenameBarLineEditForFinding
-{
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 2px;
-    padding-top: 1px;
-}
-
-
-QLineEdit#DRenameBarLineEditForReplacing:focus
-{
-    border: 1px solid #2ca7f8;
-    border-radius: 2px;
-}
-
-QLineEdit#DRenameBarLineEditForReplacing
-{
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 2px;
-    padding-top: 1px;
-}
-
-QLineEdit#DRenameBarLineEditForAdding:focus
-{
-    border: 1px solid #2ca7f8;
-    border-radius: 2px;
-}
-
-QLineEdit#DRenameBarLineEditForAdding
-{
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 2px;
-    padding-top: 1px;
-}
-
-QLineEdit#DRenameBarLineEditForCustomizing:focus
-{
-    border: 1px solid #2ca7f8;
-    border-radius: 2px;
-}
-
-QLineEdit#DRenameBarLineEditForCustomizing
-{
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 2px;
-    padding-top: 1px;
-}
-
-
-QLineEdit#DRenameBarLineEditSN:focus
-{
-    border: 1px solid #2ca7f8;
-    border-radius: 2px;
-}
-
-QLineEdit#DRenameBarLineEditSN
-{
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 2px;
-    padding-top: 1px;
-}
-
-QLabel#DRenameBarLabel
-{
-    color: #606060;
-    font-family: SourceHanSansSC;
-    font-size: 11px;
-}
-
-
-/*DRenameBar ======================== DRenameBar*/
