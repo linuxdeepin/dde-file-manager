@@ -509,16 +509,6 @@ void ComputerView::initUI()
     const int number = m_systemItems.count() + m_nativeItems.count() + m_removableItems.count();
     m_statusBar->itemCounted(event, number);
 
-    if (DFMGlobal::isRootUser()) {
-        m_contentArea->setStyleSheet("QScrollArea{"
-                                        "background: #f9f9fa;"
-                                     "}");
-        m_statusBar->setStyleSheet("background: #f9f9fa;");
-        contentFrame->setStyleSheet("background-color: #f9f9fa;");
-    } else{
-        contentFrame->setStyleSheet("background-color: transparent;");
-    }
-
     //icon size
     resizeAllItemsBySizeIndex(globalSetting->iconSizeIndex());
     loadViewState();

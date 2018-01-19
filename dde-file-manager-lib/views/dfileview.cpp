@@ -24,6 +24,7 @@
 #include "dtoolbar.h"
 #include "dabstractfilewatcher.h"
 #include "dfmeventdispatcher.h"
+#include "themeconfig.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 
@@ -1665,35 +1666,12 @@ void DFileView::initUI()
 
     addFooterWidget(d->statusBar);
 
-    if (DFMGlobal::isRootUser()) {
-        d->statusBar->setStyleSheet("DStatusBar{"
-                                       "background: #f9f9fa;"
-                                    "}");
-    }
-
     d->verticalScrollBar = verticalScrollBar();
     d->verticalScrollBar->setParent(this);
 
-    QAction *icon_view_mode_action = new QAction(this);
-    QIcon icon_view_mode_icon;
-    icon_view_mode_icon.addFile(":/icons/images/icons/icon_view_normal.png");
-    icon_view_mode_icon.addFile(":/icons/images/icons/icon_view_hover.png", QSize(), QIcon::Active);
-    icon_view_mode_icon.addFile(":/icons/images/icons/icon_view_checked.png", QSize(), QIcon::Normal, QIcon::On);
-    icon_view_mode_action->setIcon(icon_view_mode_icon);
-    icon_view_mode_action->setCheckable(true);
-    icon_view_mode_action->setChecked(true);
-
-    QAction *list_view_mode_action = new QAction(this);
-    QIcon list_view_mode_icon;
-    list_view_mode_icon.addFile(":/icons/images/icons/list_view_normal.png");
-    list_view_mode_icon.addFile(":/icons/images/icons/list_view_hover.png", QSize(), QIcon::Active);
-    list_view_mode_icon.addFile(":/icons/images/icons/list_view_checked.png", QSize(), QIcon::Normal, QIcon::On);
-    list_view_mode_action->setIcon(list_view_mode_icon);
-    list_view_mode_action->setCheckable(true);
-
     d->toolbarActionGroup = new QActionGroup(this);
-    d->toolbarActionGroup->addAction(icon_view_mode_action);
-    d->toolbarActionGroup->addAction(list_view_mode_action);
+
+    updateToolBarActions();
 }
 
 void DFileView::initModel()
@@ -1752,6 +1730,8 @@ void DFileView::initConnects()
         else
             setViewModeToList();
     });
+
+    connect(DThemeManager::instance(), &DThemeManager::themeChanged, this, &DFileView::updateToolBarActions);
 }
 
 void DFileView::increaseIcon()
@@ -2435,6 +2415,36 @@ void DFileView::updateContentLabel()
     } else {
         setContentLabel(QString());
     }
+}
+
+void DFileView::updateToolBarActions()
+{
+    QAction *icon_view_mode_action = new QAction(this);
+    QIcon icon_view_mode_icon;
+    icon_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "iconview.icon"));
+    icon_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "iconview.icon", ThemeConfig::Hover), QSize(), QIcon::Active);
+    icon_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "iconview.icon", ThemeConfig::Checked), QSize(), QIcon::Normal, QIcon::On);
+    icon_view_mode_action->setIcon(icon_view_mode_icon);
+    icon_view_mode_action->setCheckable(true);
+    icon_view_mode_action->setChecked(true);
+
+    QAction *list_view_mode_action = new QAction(this);
+    QIcon list_view_mode_icon;
+    list_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "listview.icon"));
+    list_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "listview.icon", ThemeConfig::Hover), QSize(), QIcon::Active);
+    list_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "listview.icon", ThemeConfig::Checked), QSize(), QIcon::Normal, QIcon::On);
+    list_view_mode_action->setIcon(list_view_mode_icon);
+    list_view_mode_action->setCheckable(true);
+
+    D_D(DFileView);
+
+    for (QAction *action : d->toolbarActionGroup->actions()) {
+        d->toolbarActionGroup->removeAction(action);
+        action->deleteLater();
+    }
+
+    d->toolbarActionGroup->addAction(icon_view_mode_action);
+    d->toolbarActionGroup->addAction(list_view_mode_action);
 }
 
 void DFileView::preproccessDropEvent(QDropEvent *event) const

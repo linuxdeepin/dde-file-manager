@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>computer_active_16px</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="UI图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="computer_active_16px">
+            <g id="computer_active" transform="translate(1.000000, 2.000000)">
+                <g id="主窗口">
+                    <g id="computer_active">
+                        <g id="computer-normal-16px">
+                            <g id="Page-1">
+                                <g id="computer-normal-16px">
+                                    <polygon id="Rectangle-3" stroke="#2CA7F8" points="0.5 0.5 13.5 0.5 13.5 10.5 0.5 10.5"></polygon>
+                                    <path d="M3.5,12.5 L10.5,12.5" id="Path-4" stroke="#2CA7F8"></path>
+                                    <rect id="Rectangle-2" fill="#2CA7F8" x="1" y="9" width="12" height="1"></rect>
+                                    <rect id="Rectangle" fill="#2CA7F8" x="2" y="2" width="10" height="6"></rect>
+                                    <rect id="Rectangle-4" stroke="#2CA7F8" x="5.5" y="10.5" width="3" height="2"></rect>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="23px" height="23px" viewBox="0 0 23 23" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>active_tab_close_normal</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="50%" x2="100%" y2="50%" id="linearGradient-1">
+            <stop stop-color="#313131" stop-opacity="0.3" offset="0%"></stop>
+            <stop stop-color="#313131" offset="15.2484701%"></stop>
+            <stop stop-color="#313131" offset="100%"></stop>
+        </linearGradient>
+        <circle id="path-2" cx="7.71777291" cy="7.61111111" r="7"></circle>
+    </defs>
+    <g id="tab" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="active_tab_close_normal">
+            <rect id="Rectangle-2" fill="url(#linearGradient-1)" x="0" y="0" width="23" height="23"></rect>
+            <g id="tab_close_dark_normal" transform="translate(5.000000, 4.000000)">
+                <g id="Oval-58">
+                    <use fill-opacity="0.5" fill="#000000" fill-rule="evenodd" xlink:href="#path-2"></use>
+                    <circle stroke-opacity="0.4" stroke="#FFFFFF" stroke-width="1" cx="7.71777291" cy="7.61111111" r="7.5"></circle>
+                </g>
+                <g id="Group-15" stroke-width="1" fill-rule="evenodd" transform="translate(5.384440, 4.277778)" stroke="#FFFFFF" stroke-linecap="round">
+                    <path d="M0,5.66666083 L4.66666667,0.999994167" id="Stroke-12"></path>
+                    <path d="M4.66666667,5.66666083 L0,0.999994167" id="Stroke-13"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

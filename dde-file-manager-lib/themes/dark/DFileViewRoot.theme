@@ -1,5 +1,5 @@
 QListView {
-    background: #f9f9fa;
+    background: #202020;
     border: none;
 }
 
@@ -14,15 +14,15 @@ FileIconItem QLabel {
 
 FileIconItem QTextEdit {
     background: transparent;
-    color: white;
-    selection-background-color: #61B5F8;
+    color: "#bdbdbd";
+    selection-background-color: rgba(24, 135, 214, 0.5);
 }
 
 FileIconItem QTextEdit[readOnly=false] {
-    background: #e6e6ec;
-    border: 1px solid rgba(44, 167, 248, 0.3);
+    background: transparent;
+    border: 1px solid rgba(44, 167, 248, 0.6);
     border-radius: 4px;
-    color: black;
+    color: #bdbdbd;
     min-height: 42px;
 }
 
@@ -53,8 +53,7 @@ QListView::item:hover {
 }*/
 
 QHeaderView {
-    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                  stop:0 #f8f8f8, stop:1 rgba(255, 255, 255, 0.8));
+    background-color: rgba(0, 0, 0, 0.1);
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     max-height: 21px;
 }
@@ -75,5 +74,11 @@ QHeaderView::section:checked {
 DFileView QLabel#contentLabel {
     font-family: SourceHanSansSC-Light;
     font-size: 20px;
-    color: #D0D0D0;
+    color: #bdbdbd;
+}
+
+QLineEdit#DListItemDelegate_Editor {
+    color: white;
+    background: #0076F9;
+    border-radius: 4px;
 }

@@ -218,7 +218,11 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     : DMainWindow(parent)
     , d_ptr(new DFileManagerWindowPrivate(this))
 {
-    D_THEME_INIT_WIDGET(DFileManagerWindow)
+    if (DFMGlobal::isRootUser()) {
+        D_THEME_INIT_WIDGET(DFileManagerWindowAdmin)
+    } else {
+        D_THEME_INIT_WIDGET(DFileManagerWindow)
+    }
 
     /// init global AppController
 //    Q_UNUSED(AppController::instance());
@@ -638,13 +642,6 @@ void DFileManagerWindow::initUI()
     setMinimumSize(650, 420);
     initCentralWidget();
     setCentralWidget(d->centralWidget);
-
-    if (DFMGlobal::isRootUser()) {
-//        setStyleSheet(getQssFromFile(":/qss/qss/filemanageradmin.qss"));
-    } else {
-//        setStyleSheet(getQssFromFile(":/qss/qss/filemanager.qss"));
-    }
-
 }
 
 void DFileManagerWindow::initTitleFrame()

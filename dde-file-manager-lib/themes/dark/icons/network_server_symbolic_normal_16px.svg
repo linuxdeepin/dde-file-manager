@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>network_server_symbolic_normal_16px</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="UI图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="network_server_symbolic_normal_16px">
+            <rect id="Rectangle-1" fill-opacity="0.5" fill="#A1A1A1" opacity="0" x="0" y="0" width="16" height="16"></rect>
+            <path d="M14.5,8 C14.5,11.5895294 11.5895294,14.5 8,14.5 C4.41047059,14.5 1.5,11.5895294 1.5,8 C1.5,4.41047059 4.41047059,1.5 8,1.5 C11.5895294,1.5 14.5,4.41047059 14.5,8 L14.5,8 Z" id="Stroke-1" stroke="#DDDDDD" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M14.0167826,9.71255173 C6.91633108,10.8592322 3.48187201,6.66056419 2.41185962,4.97899729" id="Stroke-3" stroke="#DDDDDD" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M2.48270433,11.1849251 C2.94247748,9.20123564 4.74513032,4.20479674 11.4019292,2.4924044" id="Stroke-5" stroke="#DDDDDD" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M11.5512838,13.2210241 C11.9574432,6.37547744 7.5289101,3.13936964 5.69291375,2.09868453" id="Stroke-7" stroke="#DDDDDD" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M11.3506667,9.90392222 C11.3506667,9.90392222 8.11439897,11.5900206 6.17519562,14.0036856" id="Stroke-9" stroke="#DDDDDD" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M9.1298,3.84884444 C9.1298,4.49284444 8.60713333,5.01551111 7.96313333,5.01551111 C7.31913333,5.01551111 6.79646667,4.49284444 6.79646667,3.84884444 C6.79646667,3.20484444 7.31913333,2.68217778 7.96313333,2.68217778 C8.60713333,2.68217778 9.1298,3.20484444 9.1298,3.84884444" id="Fill-11" fill="#DDDDDD"></path>
+            <path d="M5.50566667,7.11022222 C5.50566667,7.75422222 4.983,8.27688889 4.339,8.27688889 C3.695,8.27688889 3.17233333,7.75422222 3.17233333,7.11022222 C3.17233333,6.46622222 3.695,5.94355556 4.339,5.94355556 C4.983,5.94355556 5.50566667,6.46622222 5.50566667,7.11022222" id="Fill-13" fill="#DDDDDD"></path>
+            <path d="M12.5173333,9.90812222 C12.5173333,10.5521222 11.9946667,11.0747889 11.3506667,11.0747889 C10.7066667,11.0747889 10.184,10.5521222 10.184,9.90812222 C10.184,9.26412222 10.7066667,8.74145556 11.3506667,8.74145556 C11.9946667,8.74145556 12.5173333,9.26412222 12.5173333,9.90812222" id="Fill-15" fill="#DDDDDD"></path>
+        </g>
+    </g>
+</svg>

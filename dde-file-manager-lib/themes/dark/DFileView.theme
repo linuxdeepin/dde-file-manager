@@ -15,14 +15,14 @@ FileIconItem QLabel {
 FileIconItem QTextEdit {
     background: transparent;
     color: "#bdbdbd";
-    selection-background-color: #61B5F8;
+    selection-background-color: rgba(24, 135, 214, 0.5);
 }
 
 FileIconItem QTextEdit[readOnly=false] {
-    background: #e6e6ec;
-    border: 1px solid rgba(44, 167, 248, 0.3);
+    background: transparent;
+    border: 1px solid rgba(44, 167, 248, 0.6);
     border-radius: 4px;
-    color: black;
+    color: #bdbdbd;
     min-height: 42px;
 }
 

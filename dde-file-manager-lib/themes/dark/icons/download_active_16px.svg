@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>download_active_16px</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="UI图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="download_active_16px">
+            <rect id="Rectangle-1" fill-opacity="0.5" fill="#A1A1A1" opacity="0" x="0" y="0" width="16" height="16"></rect>
+            <g id="下载" transform="translate(0.000000, 1.000000)" fill="#2CA7F8" fill-rule="nonzero">
+                <path d="M4.5,1 L11.5,1 C11.7761424,1 12,0.776142375 12,0.5 C12,0.223857625 11.7761424,0 11.5,0 L4.5,0 C4.22385763,0 4,0.223857625 4,0.5 C4,0.776142375 4.22385763,1 4.5,1 L4.5,1 Z" id="Line"></path>
+                <path d="M4.5,2 C4.22385763,2 4,2.14923842 4,2.33333333 L4,3.66666667 C4,3.85076158 4.22385763,4 4.5,4 L11.5,4 C11.7761424,4 12,3.85076158 12,3.66666667 L12,2.33333333 C12,2.14923842 11.7761424,2 11.5,2 L4.5,2 L4.5,2 Z" id="Rectangle-29"></path>
+                <path d="M4,8.5 L4.5,8 L1.5,8 C1.02257534,8 0.816726382,8.60522104 1.19514462,8.89631199 L7.69514462,13.896312 C7.8748705,14.0345627 8.1251295,14.0345627 8.30485538,13.896312 L14.8048554,8.89631199 C15.1832736,8.60522104 14.9774247,8 14.5,8 L11.5,8 L12,8.5 L12,5.5 C12,5.22385763 11.7761424,5 11.5,5 L4.5,5 C4.22385763,5 4,5.22385763 4,5.5 L4,8.5 Z" id="Path-23"></path>
+            </g>
+        </g>
+    </g>
+</svg>

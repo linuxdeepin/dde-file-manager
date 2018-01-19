@@ -226,6 +226,7 @@ private:
     void popupHeaderViewContextMenu(const QPoint &pos);
     void onModelStateChanged(int state);
     void updateContentLabel();
+    void updateToolBarActions();
 
     using DListView::setOrientation;
 
