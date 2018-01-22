@@ -5,19 +5,28 @@ Deepin File Manager is a file management tool independently  developed by Deepin
 ### Dependencies
 
 ### Build dependencies
-
-* qmake (>= 5.3)
-* gtk+-2.0
-* xcb
-* xcb-ewmh
-* libgsettings-qt
-* libudev
-* xext
-* libsecret-1
-* gio-unix-2.0
-* libpoppler-cpp0v5
-* libffmpegthumbnailer4v5
-* dtkwidget
+* pkg-config
+* libgtk2.0-dev
+* libglib2.0-dev
+* libxcb-dev
+* libxcb-ewmh-dev
+* libxcb-util0-dev
+* libx11-dev
+* libgsettings-qt-dev
+* libsecret-1-dev
+* libpoppler-cpp-dev
+* libffmpegthumbnailer-dev
+* libpolkit-agent-1-dev
+* libpolkit-qt5-1-dev
+* libuchardet-dev
+* Qt5(>= 5.6) with modules:
+  - qt5-default
+  - qt5-qmake
+  - libqt5svg5-dev
+  - qttools5-dev-tools
+* Deepin-tool-kit(>=2.0) with modules:
+  - dtkcore-dev
+  - dtkwidget-dev
 
 
 ## Installation
