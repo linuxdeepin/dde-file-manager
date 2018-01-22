@@ -81,6 +81,16 @@ void FMState::setWindowState(int windowState)
     m_windowState = windowState;
 }
 
+QString FMState::theme() const
+{
+    return m_theme;
+}
+
+void FMState::setTheme(const QString &theme)
+{
+    m_theme = theme;
+}
+
 
 
 

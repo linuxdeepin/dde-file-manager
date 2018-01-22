@@ -38,6 +38,8 @@
 #include "singleton.h"
 
 #include "shutil/fileutils.h"
+#include <DThemeManager>
+#include <DApplication>
 
 #include <QThread>
 #include <QDebug>
@@ -48,6 +50,7 @@
 #include <QTimer>
 #include <QProcess>
 
+DTK_USE_NAMESPACE
 
 DFM_USE_NAMESPACE
 
@@ -79,6 +82,11 @@ WindowManager::WindowManager(QObject *parent) : QObject(parent)
     m_restartProcessTimer->start();
 #endif
     initConnect();
+}
+
+FMStateManager *WindowManager::getFmStateManager() const
+{
+    return m_fmStateManager;
 }
 
 class WindowManager_ : public WindowManager {};
@@ -142,6 +150,7 @@ void WindowManager::saveWindowState(DFileManagerWindow *window)
         m_fmStateManager->fmState()->setHeight(window->size().height());
     }
     m_fmStateManager->fmState()->setWindowState(window->windowState());
+    m_fmStateManager->fmState()->setTheme(DThemeManager::instance()->theme(window));
     m_fmStateManager->saveCache();
 }
 

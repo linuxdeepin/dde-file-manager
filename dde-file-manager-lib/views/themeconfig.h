@@ -50,10 +50,10 @@ public:
     int integer(const QString &scope, const QString &key, States state = Normal) const;
     QPixmap pixmap(const QString &scope, const QString &key, States state = Normal, qreal scaleRatio = 0) const;
 
+    void update(const QString &theme);
+
 protected:
     ThemeConfig();
-
-    void update(const QString &theme);
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ThemeConfig::States)

@@ -30,6 +30,7 @@ class FMState : public DebugObejct
     Q_PROPERTY(int m_width READ width WRITE setWidth)
     Q_PROPERTY(int m_height READ height WRITE setHeight)
     Q_PROPERTY(int m_windowState READ windowState WRITE setWindowState)
+    Q_PROPERTY(QString m_theme READ theme WRITE setTheme)
 public:
     explicit FMState(QObject *parent = 0);
     ~FMState();
@@ -55,6 +56,9 @@ public:
     int windowState() const;
     void setWindowState(int windowState);
 
+    QString theme() const;
+    void setTheme(const QString &theme);
+
 signals:
 
 public slots:
@@ -66,6 +70,7 @@ private:
     int m_width = 950;
     int m_height = 600;
     int m_windowState = 0;
+    QString m_theme = "light";
 };
 
 

@@ -45,6 +45,8 @@ public:
 
     static bool tabAddableByWinId(const quint64& winId);
 
+    FMStateManager *getFmStateManager() const;
+
 signals:
     void start(const QString &src);
 
