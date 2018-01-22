@@ -685,17 +685,19 @@ void DFileManagerWindow::initTitleBar()
 
     QAction *set_theme_action = menu->actionAt(1);
 
-    set_theme_action->setText(tr("Dark Theme"));
+    if (set_theme_action) {
+        set_theme_action->setText(tr("Dark Theme"));
 
-    connect(set_theme_action, &QAction::triggered, this, [this, set_theme_action] {
-        if (DThemeManager::instance()->theme() == "light") {
-            DThemeManager::instance()->setTheme("dark");
-            set_theme_action->setText(tr("Light Theme"));
-        } else {
-            DThemeManager::instance()->setTheme("light");
-            set_theme_action->setText(tr("Dark Theme"));
-        }
-    });
+        connect(set_theme_action, &QAction::triggered, this, [this, set_theme_action] {
+            if (DThemeManager::instance()->theme() == "light") {
+                DThemeManager::instance()->setTheme(this, "dark");
+                set_theme_action->setText(tr("Light Theme"));
+            } else {
+                DThemeManager::instance()->setTheme(this, "light");
+                set_theme_action->setText(tr("Dark Theme"));
+            }
+        });
+    }
 
     bool isDXcbPlatform = false;
     SingleApplication* app = static_cast<SingleApplication*>(qApp);
