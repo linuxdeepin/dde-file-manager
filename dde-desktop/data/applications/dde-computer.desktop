@@ -10,6 +10,7 @@ Terminal=false
 Type=Application
 X-AppStream-Ignore=true
 X-Deepin-AppID=dde-computer
+X-Deepin-DEComponent=true
 
 # Translations:
 # Do not manually modify!
