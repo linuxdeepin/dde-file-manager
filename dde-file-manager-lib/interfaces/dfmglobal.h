@@ -28,7 +28,6 @@
 #include <functional>
 
 #include "durl.h"
-#include "../gvfs/qdiskinfo.h"
 
 // begin file item global define
 #define TEXT_LINE_HEIGHT 18
@@ -99,6 +98,9 @@
 #define DFM_BEGIN_NAMESPACE namespace dde_file_manager {
 #define DFM_END_NAMESPACE }
 #define DFM_USE_NAMESPACE using namespace dde_file_manager;
+
+
+class QDiskInfo;
 
 class DFMGlobal : public QObject
 {
