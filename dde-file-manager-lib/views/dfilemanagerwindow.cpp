@@ -55,6 +55,8 @@
 #include "view/viewinterface.h"
 #include "plugins/pluginmanager.h"
 #include "controllers/trashmanager.h"
+#include "themeconfig.h"
+#include "controllers/fmstatemanager.h"
 
 #include <dplatformwindowhandle.h>
 #include <DThemeManager>
@@ -218,11 +220,14 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     : DMainWindow(parent)
     , d_ptr(new DFileManagerWindowPrivate(this))
 {
+    QString currentTheme = WindowManager::instance()->getFmStateManager()->fmState()->theme();
+    DThemeManager::instance()->setTheme(this , currentTheme);
     if (DFMGlobal::isRootUser()) {
         D_THEME_INIT_WIDGET(DFileManagerWindowAdmin)
     } else {
         D_THEME_INIT_WIDGET(DFileManagerWindow)
     }
+    ThemeConfig::instace()->update(currentTheme);
 
     /// init global AppController
 //    Q_UNUSED(AppController::instance());
@@ -684,19 +689,9 @@ void DFileManagerWindow::initTitleBar()
     menu->setEventData(DUrl(), DUrlList() << DUrl(), winId(), this);
 
     QAction *set_theme_action = menu->actionAt(1);
-
     if (set_theme_action) {
-        set_theme_action->setText(tr("Dark Theme"));
-
-        connect(set_theme_action, &QAction::triggered, this, [this, set_theme_action] {
-            if (DThemeManager::instance()->theme() == "light") {
-                DThemeManager::instance()->setTheme(this, "dark");
-                set_theme_action->setText(tr("Light Theme"));
-            } else {
-                DThemeManager::instance()->setTheme(this, "light");
-                set_theme_action->setText(tr("Dark Theme"));
-            }
-        });
+        set_theme_action->setText(getThemeMenuActionText(DThemeManager::instance()->theme(this)));
+        connect(set_theme_action, &QAction::triggered, this, &DFileManagerWindow::onThemeChanged);
     }
 
     bool isDXcbPlatform = false;
@@ -918,6 +913,32 @@ void DFileManagerWindow::onReuqestCacheRenameBarState()const
     DFileManagerWindow::renameBarState = d->renameBar->getCurrentState();//###: record current state, when a new window is created from a already has tab.
 }
 
+void DFileManagerWindow::setTheme(const QString &theme)
+{
+    DThemeManager::instance()->setTheme(this , theme);
+    DFileMenu* dfmenu = static_cast<DFileMenu *>(titlebar()->menu());
+    QAction* theme_action = dfmenu->actionAt(1);
+    if (theme_action){
+        theme_action->setText(getThemeMenuActionText(theme));
+    }
+}
+
+void DFileManagerWindow::onThemeChanged()
+{
+    QString theme = DThemeManager::instance()->theme(this);
+    if (theme == "light") {
+        theme = "dark";
+    } else {
+        theme = "light";
+    }
+    foreach (const QWidget* w , WindowManager::instance()->getWindows().keys()) {
+        const DFileManagerWindow* dfm = static_cast<const DFileManagerWindow *>(w);
+        const_cast<DFileManagerWindow *>(dfm)->setTheme(theme);
+    }
+
+    WindowManager::instance()->saveWindowState(this);
+}
+
 void DFileManagerWindow::initRenameBarState()
 {
     DFileManagerWindowPrivate* const d{ d_func() };
@@ -954,5 +975,18 @@ void DFileManagerWindow::requestToSelectUrls()
 
         DFileManagerWindow::renameBarState.reset(nullptr);
     }
+}
+
+QString DFileManagerWindow::getThemeMenuActionText(const QString &theme)
+{
+    QString darkThemeText = tr("Dark Theme");
+    QString lightkThemeText = tr("Light Theme");
+    QString themeText = darkThemeText;
+    if (theme == "light") {
+        themeText = darkThemeText;
+    } else {
+        themeText = lightkThemeText;
+    }
+    return themeText;
 }
 

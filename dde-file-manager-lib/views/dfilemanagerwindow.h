@@ -87,6 +87,7 @@ public:
     bool tabAddable() const;
     void hideRenameBar() noexcept;
     void requestToSelectUrls();
+    QString getThemeMenuActionText(const QString& theme);
 
 signals:
     void aboutToClose();
@@ -118,6 +119,9 @@ public slots:
     void onShowRenameBar(const DFMUrlListBaseEvent& event)noexcept;
     void onTabBarCurrentIndexChange(const int& index)noexcept;
     void onReuqestCacheRenameBarState() const;
+
+    void setTheme(const QString& theme);
+    void onThemeChanged();
 
 protected:
     void closeEvent(QCloseEvent* event)  Q_DECL_OVERRIDE;
