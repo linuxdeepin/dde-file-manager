@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "themeconfig.h"
+#include "dfilemanagerwindow.h"
 
 #include <DThemeManager>
 
@@ -34,7 +35,9 @@ DFM_BEGIN_NAMESPACE
 
 class _ThemeConfig : public ThemeConfig {
 public:
-    _ThemeConfig() {update();}
+    _ThemeConfig() {update(DThemeManager::instance()->theme());}
+
+    QString theme;
     QVariantHash configs;
 
     static QHash<States, QString> stateMap;
@@ -242,19 +245,28 @@ QPixmap ThemeConfig::pixmap(const QString &scope, const QString &key, States sta
 
 ThemeConfig::ThemeConfig()
 {
-    QObject::connect(DThemeManager::instance(), &DThemeManager::themeChanged, [this] {
-        update();
+    QObject::connect(DThemeManager::instance(), &DThemeManager::widgetThemeChanged, [this] (QWidget *widget, const QString &theme) {
+        if (qobject_cast<DFileManagerWindow*>(widget))
+            update(theme);
     });
 }
 
-void ThemeConfig::update()
+void ThemeConfig::update(const QString &theme)
 {
-    for (const QString &key : _ThemeConfig::cachedPixmap)
-        QPixmapCache::remove(key);
+    if (theme.isEmpty())
+        return;
 
     _ThemeConfig *that = static_cast<_ThemeConfig*>(this);
 
-    QSettings settings(QString(":/%1/config.ini").arg(DThemeManager::instance()->theme()), QSettings::IniFormat);
+    if (that->theme == theme)
+        return;
+
+    that->theme = theme;
+
+    for (const QString &key : _ThemeConfig::cachedPixmap)
+        QPixmapCache::remove(key);
+
+    QSettings settings(QString(":/%1/config.ini").arg(theme), QSettings::IniFormat);
 
     for (const QString &group : settings.childGroups()) {
         settings.beginGroup(group);

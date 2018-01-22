@@ -53,7 +53,7 @@ public:
 protected:
     ThemeConfig();
 
-    void update();
+    void update(const QString &theme);
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ThemeConfig::States)
