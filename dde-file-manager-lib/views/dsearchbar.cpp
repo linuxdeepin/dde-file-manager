@@ -25,6 +25,9 @@
 #include "dfmevent.h"
 
 #include "singleton.h"
+#include "themeconfig.h"
+
+#include <DThemeManager>
 
 #include <QDirModel>
 #include <QLabel>
@@ -33,6 +36,8 @@
 #include <QFocusEvent>
 #include <QPainter>
 #include <QScrollBar>
+
+DWIDGET_USE_NAMESPACE
 
 DFM_USE_NAMESPACE
 
@@ -61,20 +66,11 @@ void DSearchBar::initUI()
     m_dirModel = new QDirModel;
     m_dirModel->setFilter(QDir::Dirs);
 
-    QIcon icon;
-    icon.addFile(":/icons/images/icons/input_clear_normal.svg", QSize(), QIcon::Normal);
-    icon.addFile(":/icons/images/icons/input_clear_press.svg", QSize(), QIcon::Selected);
-    icon.addFile(":/icons/images/icons/input_clear_hover.svg", QSize(), QIcon::Active);
-    m_clearAction = new QAction(icon, "", this);
+    m_clearAction = new QAction( this);
+    m_searchAction = new QAction(this);
+    m_jumpToAction = new QAction(this);
 
-    QIcon searchIcon;
-    searchIcon.addFile(":/icons/images/icons/search.svg"
-                       "");
-    m_searchAction = new QAction(searchIcon, "", this);
-
-    QIcon jumpToIcon;
-    jumpToIcon.addFile(":/icons/images/icons/jump_to.svg");
-    m_jumpToAction = new QAction(jumpToIcon, "", this);
+    updateSearchBarActions(this, "");
 
     setFixedHeight(24);
     setObjectName("DSearchBar");
@@ -204,6 +200,27 @@ void DSearchBar::initConnections()
     connect(m_list, &QListWidget::itemClicked, this, &DSearchBar::completeText);
     connect(qApp, &QApplication::focusChanged, this, &DSearchBar::handleApplicationChanged);
     connect(window(), SIGNAL(positionChanged(const QPoint&)), m_list, SLOT(hide()));
+    connect(DThemeManager::instance(), &DThemeManager::widgetThemeChanged, this, &DSearchBar::updateSearchBarActions);
+}
+
+void DSearchBar::updateSearchBarActions(QWidget *widget, QString theme)
+{
+    Q_UNUSED(theme)
+    if (widget == this){
+        QIcon clearIcon;
+        clearIcon.addFile(ThemeConfig::instace()->value("DSearchBar.clearAction", "icon", ThemeConfig::Normal).toString(), QSize(), QIcon::Normal);
+        clearIcon.addFile(ThemeConfig::instace()->value("DSearchBar.clearAction", "icon", ThemeConfig::Pressed).toString(), QSize(), QIcon::Selected);
+        clearIcon.addFile(ThemeConfig::instace()->value("DSearchBar.clearAction", "icon", ThemeConfig::Hover).toString(), QSize(), QIcon::Active);
+        m_clearAction->setIcon(clearIcon);
+
+        QIcon searchIcon;
+        searchIcon.addFile(ThemeConfig::instace()->value("DSearchBar.searchAction", "icon", ThemeConfig::Normal).toString());
+        m_searchAction->setIcon(searchIcon);
+
+        QIcon jumpToIcon;
+        jumpToIcon.addFile(ThemeConfig::instace()->value("DSearchBar.jumpToAction", "icon", ThemeConfig::Normal).toString());
+        m_jumpToAction->setIcon(jumpToIcon);
+    }
 }
 
 void DSearchBar::doTextChanged(QString text)

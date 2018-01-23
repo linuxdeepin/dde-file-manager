@@ -226,7 +226,7 @@ private:
     void popupHeaderViewContextMenu(const QPoint &pos);
     void onModelStateChanged(int state);
     void updateContentLabel();
-    void updateToolBarActions();
+    void updateToolBarActions(QWidget* widget = nullptr, QString theme = "");
 
     using DListView::setOrientation;
 

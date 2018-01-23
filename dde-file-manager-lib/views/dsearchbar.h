@@ -81,6 +81,7 @@ private:
     DUrl m_currentUrl;
     QScrollBar* m_listVerticalScrollBar = NULL;
 public slots:
+    void updateSearchBarActions(QWidget *widget = nullptr, QString theme = "");
     void doTextChanged(QString text);
     void searchHistoryLoaded(const QStringList &list);
     void historySaved();

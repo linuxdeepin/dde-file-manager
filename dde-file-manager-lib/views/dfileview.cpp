@@ -1731,7 +1731,7 @@ void DFileView::initConnects()
             setViewModeToList();
     });
 
-    connect(DThemeManager::instance(), &DThemeManager::themeChanged, this, &DFileView::updateToolBarActions);
+    connect(DThemeManager::instance(), &DThemeManager::widgetThemeChanged, this, &DFileView::updateToolBarActions);
 }
 
 void DFileView::increaseIcon()
@@ -2417,41 +2417,43 @@ void DFileView::updateContentLabel()
     }
 }
 
-void DFileView::updateToolBarActions()
+void DFileView::updateToolBarActions(QWidget *widget, QString theme)
 {
+    Q_UNUSED(theme)
     D_D(DFileView);
+    if (widget == this){
+        QAction *icon_view_mode_action;
+        QAction *list_view_mode_action;
+        const QList<QAction*> actions = d->toolbarActionGroup->actions();
 
-    QAction *icon_view_mode_action;
-    QAction *list_view_mode_action;
-    const QList<QAction*> actions = d->toolbarActionGroup->actions();
+        if (actions.count() > 1) {
+            icon_view_mode_action = actions.first();
+            list_view_mode_action = actions.at(1);
+        } else {
+            icon_view_mode_action = new QAction(this);
+            list_view_mode_action = new QAction(this);
 
-    if (actions.count() > 1) {
-        icon_view_mode_action = actions.first();
-        list_view_mode_action = actions.at(1);
-    } else {
-        icon_view_mode_action = new QAction(this);
-        list_view_mode_action = new QAction(this);
+            icon_view_mode_action->setCheckable(true);
+            icon_view_mode_action->setChecked(true);
 
-        icon_view_mode_action->setCheckable(true);
-        icon_view_mode_action->setChecked(true);
+            list_view_mode_action->setCheckable(true);
 
-        list_view_mode_action->setCheckable(true);
+            d->toolbarActionGroup->addAction(icon_view_mode_action);
+            d->toolbarActionGroup->addAction(list_view_mode_action);
+        }
 
-        d->toolbarActionGroup->addAction(icon_view_mode_action);
-        d->toolbarActionGroup->addAction(list_view_mode_action);
+        QIcon icon_view_mode_icon;
+        icon_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "iconview.icon"));
+        icon_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "iconview.icon", ThemeConfig::Hover), QSize(), QIcon::Active);
+        icon_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "iconview.icon", ThemeConfig::Checked), QSize(), QIcon::Normal, QIcon::On);
+        icon_view_mode_action->setIcon(icon_view_mode_icon);
+
+        QIcon list_view_mode_icon;
+        list_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "listview.icon"));
+        list_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "listview.icon", ThemeConfig::Hover), QSize(), QIcon::Active);
+        list_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "listview.icon", ThemeConfig::Checked), QSize(), QIcon::Normal, QIcon::On);
+        list_view_mode_action->setIcon(list_view_mode_icon);
     }
-
-    QIcon icon_view_mode_icon;
-    icon_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "iconview.icon"));
-    icon_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "iconview.icon", ThemeConfig::Hover), QSize(), QIcon::Active);
-    icon_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "iconview.icon", ThemeConfig::Checked), QSize(), QIcon::Normal, QIcon::On);
-    icon_view_mode_action->setIcon(icon_view_mode_icon);
-
-    QIcon list_view_mode_icon;
-    list_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "listview.icon"));
-    list_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "listview.icon", ThemeConfig::Hover), QSize(), QIcon::Active);
-    list_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "listview.icon", ThemeConfig::Checked), QSize(), QIcon::Normal, QIcon::On);
-    list_view_mode_action->setIcon(list_view_mode_icon);
 }
 
 void DFileView::preproccessDropEvent(QDropEvent *event) const
