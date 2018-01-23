@@ -496,8 +496,8 @@ void DialogManager::showOpenWithDialog(const DFMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());
     if (w){
-        OpenWithDialog* d = new OpenWithDialog(event.fileUrl(), w);
-        d->setDisplayPostion(OpenWithDialog::DisplayCenter);
+        OpenWithDialog* d = new OpenWithDialog(event.fileUrl());
+        d->setDisplayPosition(OpenWithDialog::Center);
         d->exec();
     }
 }
