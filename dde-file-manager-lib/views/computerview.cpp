@@ -219,7 +219,6 @@ void ComputerViewItem::mouseDoubleClickEvent(QMouseEvent *event)
 bool ComputerViewItem::event(QEvent *event)
 {
     if(event->type() == QEvent::Resize) {
-        updateEditorGeometry();
         resize(width(), getIconLabel()->height() + getTextEdit()->height() + ICON_MODE_ICON_SPACING + 50);
         adjustPosition();
         return true;

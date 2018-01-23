@@ -55,12 +55,14 @@ void DFMActionButton::paintEvent(QPaintEvent *)
 
     p.drawPrimitive(QStyle::PE_Widget, option);
 
-    const QIcon &icon = action()->icon();
-    QPixmap pixmap = icon.pixmap(size(), QIcon::Normal, option.state.testFlag(QStyle::State_On) ? QIcon::On : QIcon::Off);
+    if (action()){
+        const QIcon &icon = action()->icon();
+        QPixmap pixmap = icon.pixmap(size(), QIcon::Normal, option.state.testFlag(QStyle::State_On) ? QIcon::On : QIcon::Off);
 
-    if (option.state.testFlag(QStyle::State_MouseOver)) {
-        pixmap = icon.pixmap(size(), QIcon::Active, option.state.testFlag(QStyle::State_On) ? QIcon::On : QIcon::Off);
+        if (option.state.testFlag(QStyle::State_MouseOver)) {
+            pixmap = icon.pixmap(size(), QIcon::Active, option.state.testFlag(QStyle::State_On) ? QIcon::On : QIcon::Off);
+        }
+        pixmap.setDevicePixelRatio(qApp->devicePixelRatio());
+        p.drawItemPixmap(option.rect, Qt::AlignCenter, pixmap);
     }
-    pixmap.setDevicePixelRatio(qApp->devicePixelRatio());
-    p.drawItemPixmap(option.rect, Qt::AlignCenter, pixmap);
 }
