@@ -41,8 +41,6 @@
         <file>dark/icons/down.svg</file>
         <file>dark/icons/download_active_16px.svg</file>
         <file>dark/icons/download_normal_16px.svg</file>
-        <file>dark/icons/drive_harddisk_usb_symbolic_active_16px.svg</file>
-        <file>dark/icons/drive_harddisk_usb_symbolic_normal_16px.svg</file>
         <file>dark/icons/file_active_16px.svg</file>
         <file>dark/icons/file_normal_16px.svg</file>
         <file>dark/icons/forward_disabled.svg</file>
@@ -57,12 +55,8 @@
         <file>dark/icons/iphone_normal_16px.svg</file>
         <file>dark/icons/list_view_active.svg</file>
         <file>dark/icons/list_view_normal.svg</file>
-        <file>dark/icons/media_optical_symbolic_active_16px.svg</file>
-        <file>dark/icons/media_optical_symbolic_normal_16px.svg</file>
         <file>dark/icons/music_active_16px.svg</file>
         <file>dark/icons/music_normal_16px.svg</file>
-        <file>dark/icons/network_server_symbolic_active_16px.svg</file>
-        <file>dark/icons/network_server_symbolic_normal_16px.svg</file>
         <file>dark/icons/new_tab_disabled.svg</file>
         <file>dark/icons/new_tab_hover.svg</file>
         <file>dark/icons/new_tab_normal.svg</file>
@@ -74,8 +68,6 @@
         <file>dark/icons/search_hover.svg</file>
         <file>dark/icons/search_normal.svg</file>
         <file>dark/icons/search_press.svg</file>
-        <file>dark/icons/share_active_16px.svg</file>
-        <file>dark/icons/share_normal_16px.svg</file>
         <file>dark/icons/trash_active_16px.svg</file>
         <file>dark/icons/trash_normal_16px.svg</file>
         <file>dark/icons/unmount_active.svg</file>
@@ -95,5 +87,18 @@
         <file>dark/icons/tab_close_press.svg</file>
         <file>dark/DFileManagerWindowAdmin.theme</file>
         <file>light/DFileManagerWindowAdmin.theme</file>
+        <file>dark/icons/network_normal_16px.svg</file>
+        <file>dark/icons/network_active_16px.svg</file>
+        <file>dark/icons/usb_active_16px.svg</file>
+        <file>dark/icons/usb_normal_16px.svg</file>
+        <file>dark/icons/media_active_16px.svg</file>
+        <file>dark/icons/media_normal_16px.svg</file>
+        <file>dark/icons/usershare_active_16px.svg</file>
+        <file>dark/icons/usershare_normal_16px.svg</file>
+        <file>dark/icons/input_clear_hover.svg</file>
+        <file>dark/icons/input_clear_normal.svg</file>
+        <file>dark/icons/input_clear_press.svg</file>
+        <file>dark/icons/jump_to.svg</file>
+        <file>dark/icons/search.svg</file>
     </qresource>
 </RCC>

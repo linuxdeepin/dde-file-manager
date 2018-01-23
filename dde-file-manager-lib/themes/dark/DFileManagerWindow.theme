@@ -357,7 +357,7 @@ QListWidget#SearchList{
     border:1px solid rgba(0, 0, 0, 50);
     padding-top: 4px;
     border-radius: 4px;
-    paddings: 0px;
+    padding: 0px;
 }
 QListWidget#SearchList::item{
     height: 24px;

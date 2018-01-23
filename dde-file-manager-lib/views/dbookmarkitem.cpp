@@ -312,7 +312,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
 
     if(m_hovered && !m_isHighlightDisk)
     {
-        if(m_hoverBackgroundEnabled)
+        if(m_hoverBackgroundEnabled && !m_isMountedIndicator)
         {
             painter->setBrush(ThemeConfig::instace()->color("BookmarkItem", "background", ThemeConfig::Hover));
 //            painter->setPen(QColor(0,0,0,0));
@@ -323,7 +323,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
     }
     else if(m_pressed)
     {
-        if(m_pressBackgroundEnabled)
+        if(m_pressBackgroundEnabled && !m_isMountedIndicator)
         {
 //            painter->setPen(m_pressBackgroundColor);
             painter->setBrush(ThemeConfig::instace()->color("BookmarkItem", "background", ThemeConfig::Pressed));
@@ -333,7 +333,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
         painter->drawPixmap(iconRect, press);
     }else if(!m_hovered && (m_checked && m_checkable))
     {
-        if(m_pressBackgroundEnabled)
+        if(m_pressBackgroundEnabled && !m_isMountedIndicator)
         {
 //            painter->setPen(m_pressBackgroundColor);
             painter->setBrush(ThemeConfig::instace()->color("BookmarkItem", "background", ThemeConfig::Checked));
@@ -342,14 +342,14 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
         }
         painter->drawPixmap(iconRect, checked);
         if (!m_isMountedIndicator){
-//            painter->setPen(QColor(43,167,248,25));
+            painter->setPen(QColor(43,167,248,25));
             painter->drawLine(0, 0, m_width-3, 0);
             painter->drawLine(0, m_height-1, m_width-3, m_height-1);
-//            painter->setBrush(QColor("#2ca7f8"));
+            painter->setBrush(QColor("#2ca7f8"));
             painter->drawRect(m_width-3, 0, 3, m_height);
         }
     }else if (m_isHighlightDisk){
-        if(m_highlightDiskBackgroundEnabled)
+        if(m_highlightDiskBackgroundEnabled && !m_isMountedIndicator)
         {
 //            painter->setPen(m_highlightDiskBackgroundColor);
             painter->setBrush(ThemeConfig::instace()->color("BookmarkItem", "background", ThemeConfig::Checked));
@@ -359,10 +359,10 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
         painter->drawPixmap(iconRect, checked);
 
         if (!m_isMountedIndicator){
-//            painter->setPen(QColor(0,0,0,25));
+            painter->setPen(QColor(0,0,0,25));
             painter->drawLine(0, 0, m_width-3, 0);
             painter->drawLine(0, m_height-1, m_width-3, m_height-1);
-//            painter->setBrush(QColor("#BDBDBD"));
+            painter->setBrush(QColor("#BDBDBD"));
             painter->drawRect(m_width-3, 0, 3, m_height);
         }
     }
