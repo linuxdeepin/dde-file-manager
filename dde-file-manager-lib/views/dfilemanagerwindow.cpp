@@ -220,14 +220,17 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     : DMainWindow(parent)
     , d_ptr(new DFileManagerWindowPrivate(this))
 {
-    QString currentTheme = WindowManager::instance()->getFmStateManager()->fmState()->theme();
-    DThemeManager::instance()->setTheme(this , currentTheme);
+    if (!DFMGlobal::IsFileManagerDiloagProcess){
+        QString currentTheme = WindowManager::instance()->getFmStateManager()->fmState()->theme();
+        DThemeManager::instance()->setTheme(this , currentTheme);
+        ThemeConfig::instace()->update(currentTheme);
+    }
+
     if (DFMGlobal::isRootUser()) {
         D_THEME_INIT_WIDGET(DFileManagerWindowAdmin)
     } else {
         D_THEME_INIT_WIDGET(DFileManagerWindow)
     }
-    ThemeConfig::instace()->update(currentTheme);
 
     /// init global AppController
 //    Q_UNUSED(AppController::instance());

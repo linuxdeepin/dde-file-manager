@@ -1671,7 +1671,7 @@ void DFileView::initUI()
 
     d->toolbarActionGroup = new QActionGroup(this);
 
-    updateToolBarActions();
+    updateToolBarActions(this);
 }
 
 void DFileView::initModel()
