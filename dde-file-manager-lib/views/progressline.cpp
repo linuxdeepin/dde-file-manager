@@ -14,7 +14,11 @@
  */
 
 #include "progressline.h"
+#include "themeconfig.h"
 #include <QPainter>
+#include <QDebug>
+
+DFM_USE_NAMESPACE
 
 ProgressLine::ProgressLine(QWidget *parent) : QLabel(parent)
 {
@@ -32,7 +36,7 @@ void ProgressLine::paintEvent(QPaintEvent *event){
     bRect.setSize(size());
     cRect.setSize(QSize(width() * percent, height()));
 
-    QColor bColor = QColor(0,0,0,50);
+    QColor bColor = ThemeConfig::instace()->color("ComputerItem.ProgressLine", "background");
     QColor cColor;
     if(percent <= 0.5)
         cColor = QColor("#2ca7f8");

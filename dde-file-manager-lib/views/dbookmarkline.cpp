@@ -14,6 +14,9 @@
  */
 
 #include "dbookmarkline.h"
+#include "themeconfig.h"
+
+DFM_USE_NAMESPACE
 
 DBookmarkLine::DBookmarkLine()
 {
@@ -28,7 +31,8 @@ void DBookmarkLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     Q_UNUSED(widget);
     double w = boundWidth();
     double h = boundHeight();
-    painter->setPen(QColor(0, 0, 0, 25));
+    QColor bColor = ThemeConfig::instace()->color("BookmarkItem.DBookmarkLine", "background");
+    painter->setPen(bColor);
     if(!isTightModel())
         painter->drawLine(0, h/2 , w, h/2);
     else

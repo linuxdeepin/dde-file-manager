@@ -19,7 +19,7 @@ QPushButton#LogoButton:press{
 }
 
 QFrame#TitleBar{
-    background-color: rgba(0, 0, 0, 0.85);
+    background-color: #101010;
     border-bottom: 1px insert rgba(255, 255, 255, 0.05);
 }
 
@@ -173,6 +173,7 @@ QPushButton#backButton{
     border-bottom-left-radius: 4px;
     image: url(:/dark/icons/backward_normal.svg);
     icon-size: 16px 16px;
+    padding: 3px, 3px, 4px, 3px;
 }
 
 QPushButton#backButton:hover{
@@ -198,6 +199,7 @@ QPushButton#forwardButton{
     border-bottom-right-radius: 4px;
     image: url(:/dark/icons/forward_normal.svg);
     icon-size: 16px 16px;
+    padding: 4px, 3px, 3px, 3px;
 }
 
 QPushButton#forwardButton:hover{
