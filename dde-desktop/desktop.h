@@ -30,7 +30,10 @@ public:
     void loadView();
 
     void showWallpaperSettings();
+
+#ifndef DISABLE_ZONE
     void showZoneSettings();
+#endif
 
 public slots:
     void Show();

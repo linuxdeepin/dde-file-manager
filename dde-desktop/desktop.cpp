@@ -13,24 +13,33 @@
 #include <QApplication>
 #include <QStandardPaths>
 #include <QStyleOptionViewItem>
-
+#include <QDir>
 #include <durl.h>
 
 #include "view/canvasgridview.h"
 #include "presenter/apppresenter.h"
 
 #include "../dde-wallpaper-chooser/frame.h"
+
+#ifndef DISABLE_ZONE
 #include "../dde-zone/mainwindow.h"
+#endif
 
 using WallpaperSettings = Frame;
+
+#ifndef DISABLE_ZONE
 using ZoneSettings = ZoneMainWindow;
+#endif
 
 class DesktopPrivate
 {
 public:
     CanvasGridView      screenFrame;
     WallpaperSettings *wallpaperSettings{ nullptr };
+
+#ifndef DISABLE_ZONE
     ZoneSettings *zoneSettings{ nullptr };
+#endif
 };
 
 Desktop::Desktop()
@@ -78,6 +87,7 @@ void Desktop::showWallpaperSettings()
     d->wallpaperSettings->grabKeyboard();
 }
 
+#ifndef DISABLE_ZONE
 void Desktop::showZoneSettings()
 {
     if (d->zoneSettings) {
@@ -94,6 +104,7 @@ void Desktop::showZoneSettings()
     d->zoneSettings->show();
     d->zoneSettings->grabKeyboard();
 }
+#endif
 
 void Desktop::Show()
 {
