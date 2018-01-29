@@ -30,7 +30,9 @@ public:
 
     enum ContextMenuAction {
         DisplaySettings = MenuAction::Unknow + 1,
+#ifndef DISABLE_ZONE
         CornerSettings,
+#endif
         WallpaperSettings,
 
         FileManagerProperty,
