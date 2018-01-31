@@ -20,6 +20,7 @@
 #include <QDebug>
 #include "durl.h"
 
+class DFileInfo;
 class QDiskInfo
 {
 public:
@@ -95,6 +96,8 @@ public:
 
     QString drive_unix_device() const;
     void setDrive_unix_device(const QString &drive_unix_device);
+
+    static QDiskInfo getDiskInfo(const DFileInfo &fileInfo);
 
 private:
     QString m_id;

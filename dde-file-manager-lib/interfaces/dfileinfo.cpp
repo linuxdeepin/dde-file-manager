@@ -21,8 +21,6 @@
 
 #include "controllers/pathmanager.h"
 
-#include "singleton.h"
-
 #include "app/define.h"
 #include "singleton.h"
 #include "usershare/usersharemanager.h"
@@ -525,20 +523,6 @@ QFileInfo DFileInfo::toQFileInfo() const
     Q_D(const DFileInfo);
 
     return d->fileInfo;
-}
-
-QDiskInfo DFileInfo::getDiskinfo()
-{
-    QDiskInfo info;
-    qDebug() << this->filePath();
-    UDiskDeviceInfoPointer uDiskDeviceInfoPointer = deviceListener->getDeviceByPath(this->filePath());
-    if(!uDiskDeviceInfoPointer){
-        uDiskDeviceInfoPointer = deviceListener->getDeviceByFilePath(this->filePath());
-    }
-    if (uDiskDeviceInfoPointer){
-        info = uDiskDeviceInfoPointer->getDiskInfo();
-    }
-    return info;
 }
 
 DFileInfo::DFileInfo(DFileInfoPrivate &dd)

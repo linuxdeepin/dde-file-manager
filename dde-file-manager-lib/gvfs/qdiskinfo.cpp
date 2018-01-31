@@ -14,6 +14,10 @@
  */
 
 #include "qdiskinfo.h"
+#include "deviceinfo/udisklistener.h"
+
+#include "app/define.h"
+#include "singleton.h"
 
 #undef signals
 extern "C" {
@@ -294,6 +298,20 @@ QString QDiskInfo::drive_unix_device() const
 void QDiskInfo::setDrive_unix_device(const QString &drive_unix_device)
 {
     m_drive_unix_device = drive_unix_device;
+}
+
+QDiskInfo QDiskInfo::getDiskInfo(const DFileInfo &fileInfo)
+{
+    QDiskInfo info;
+    qDebug() << fileInfo.filePath();
+    UDiskDeviceInfoPointer uDiskDeviceInfoPointer = deviceListener->getDeviceByPath(fileInfo.filePath());
+    if(!uDiskDeviceInfoPointer){
+        uDiskDeviceInfoPointer = deviceListener->getDeviceByFilePath(fileInfo.filePath());
+    }
+    if (uDiskDeviceInfoPointer){
+        info = uDiskDeviceInfoPointer->getDiskInfo();
+    }
+    return info;
 }
 
 
