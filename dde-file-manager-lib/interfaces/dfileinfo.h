@@ -91,7 +91,7 @@ public:
 
     QString iconName() const Q_DECL_OVERRIDE;
 
-    QFileInfo toQFileInfo() const;
+    QFileInfo toQFileInfo() const Q_DECL_OVERRIDE;
 
     QDiskInfo getDiskinfo();
 
