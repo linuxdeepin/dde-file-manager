@@ -1111,6 +1111,16 @@ bool DAbstractFileInfo::canDrop() const
     return info->suffix() == "desktop";
 }
 
+QFileInfo DAbstractFileInfo::toQFileInfo() const
+{
+    return QFileInfo();
+}
+
+QIODevice *DAbstractFileInfo::createIODevice() const
+{
+    return 0;
+}
+
 void DAbstractFileInfo::makeToActive()
 {
     CALL_PROXY(makeToActive());

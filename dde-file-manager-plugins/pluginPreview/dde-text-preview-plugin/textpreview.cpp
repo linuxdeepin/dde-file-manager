@@ -14,6 +14,8 @@
  */
 
 #include "textpreview.h"
+#include "dabstractfileinfo.h"
+#include "dfileservices.h"
 
 #include <QProcess>
 #include <QMimeType>
@@ -42,10 +44,33 @@ bool TextPreview::setFileUrl(const DUrl &url)
     if (m_url == url)
         return true;
 
-    if (!url.isLocalFile())
-        return false;
-
     m_url = url;
+
+    QByteArray text;
+
+    {
+        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
+
+        if (!info)
+            return false;
+
+        QScopedPointer<QIODevice> device(info->createIODevice());
+
+        if (!device) {
+            if (url.isLocalFile()) {
+               device.reset(new QFile(url.toLocalFile()));
+            }
+        }
+
+        if (!device)
+            return false;
+
+        if (!device->open(QIODevice::ReadOnly)) {
+            return false;
+        }
+
+        text = device->readAll();
+    }
 
     if (!m_textBrowser) {
         m_textBrowser = new QPlainTextEdit();
@@ -57,22 +82,14 @@ bool TextPreview::setFileUrl(const DUrl &url)
         m_textBrowser->setFocusPolicy(Qt::NoFocus);
     }
 
-    QFile file(url.toLocalFile());
 
-    if (!file.open(QIODevice::ReadOnly)) {
-        return false;
-    }
-
-    const QByteArray &text = file.readAll();
     QSharedPointer<QString> convertedStr{ DFMGlobal::convertStrToUtf8(text) };
-    if( static_cast<bool>(convertedStr) == true ){
-        m_textBrowser->setPlainText(*convertedStr);
 
-    }else{
+    if (static_cast<bool>(convertedStr) == true) {
+        m_textBrowser->setPlainText(*convertedStr);
+    } else {
         m_textBrowser->setPlainText(QString{" "});
     }
-
-    file.close();
 
     m_title = QFileInfo(url.toLocalFile()).fileName();
 
