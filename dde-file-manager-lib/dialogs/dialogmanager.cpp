@@ -788,8 +788,8 @@ void DialogManager::showFilePreviewDialog(const DUrlList &selectUrls, const DUrl
     for (const DUrl &url : selectUrls) {
         const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
 
-        if (info && !info->toLocalFile().isEmpty())
-            canPreivewlist << DUrl::fromLocalFile(info->toLocalFile());
+        if (info && (info->fileUrl().isLocalFile() || info->toQFileInfo().exists()))
+            canPreivewlist << info->fileUrl();
     }
 
     if (canPreivewlist.isEmpty())
