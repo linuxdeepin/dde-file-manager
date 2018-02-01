@@ -271,6 +271,9 @@ public:
 
     virtual bool canDrop() const;
 
+    virtual QFileInfo toQFileInfo() const;
+    virtual QIODevice *createIODevice() const;
+
 protected:
     explicit DAbstractFileInfo(DAbstractFileInfoPrivate &dd);
     void setProxy(const DAbstractFileInfoPointer &proxy);
