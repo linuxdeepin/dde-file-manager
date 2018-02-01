@@ -678,6 +678,7 @@ void DFileManagerWindow::initTitleFrame()
     titleLayout->setContentsMargins(0, 0, 0, 0);
 
     d->titleFrame->setLayout(titleLayout);
+    titlebar()->setFixedHeight(TITLE_FIXED_HEIGHT - 2);
     d->titleFrame->setFixedHeight(TITLE_FIXED_HEIGHT);
 }
 
