@@ -18,11 +18,8 @@ QPushButton#LogoButton:press{
    image: url(:/images/images/dde-file-manager.png);
 }
 
-QFrame#TitleBar{
-    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                    stop: 0 #FFFFFF,
-                                    stop: 0.98  #F8F8F8);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+QFrame#CentralWidget{
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 QGraphicsView#Bookmark{

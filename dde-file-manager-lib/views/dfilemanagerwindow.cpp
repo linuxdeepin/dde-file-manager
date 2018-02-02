@@ -602,6 +602,13 @@ bool DFileManagerWindow::eventFilter(QObject *watched, QEvent *event)
     return d->processKeyPressEvent(static_cast<QKeyEvent*>(event));
 }
 
+void DFileManagerWindow::resizeEvent(QResizeEvent *event)
+{
+    Q_D(DFileManagerWindow);
+    DMainWindow::resizeEvent(event);
+    d->titleFrame->setFixedSize(event->size().width() - titlebar()->buttonAreaWidth(), TITLE_FIXED_HEIGHT);
+}
+
 bool DFileManagerWindow::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData)
 {
     Q_UNUSED(resultData)
@@ -648,6 +655,7 @@ void DFileManagerWindow::initUI()
 
     resize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
     setMinimumSize(650, 420);
+    initTitleBar();
     initCentralWidget();
     setCentralWidget(d->centralWidget);
 }
@@ -662,7 +670,6 @@ void DFileManagerWindow::initTitleFrame()
     d->logoButton->setFocusPolicy(Qt::NoFocus);
 
     initToolBar();
-    initTitleBar();
 
     d->titleFrame = new QFrame;
     d->titleFrame->setObjectName("TitleBar");
@@ -673,18 +680,17 @@ void DFileManagerWindow::initTitleFrame()
     titleLayout->addWidget(d->logoButton);
     titleLayout->addSpacing(12);
     titleLayout->addWidget(d->toolbar);
-    titleLayout->addWidget(titlebar());
     titleLayout->setSpacing(0);
     titleLayout->setContentsMargins(0, 0, 0, 0);
-
     d->titleFrame->setLayout(titleLayout);
-    titlebar()->setFixedHeight(TITLE_FIXED_HEIGHT - 2);
     d->titleFrame->setFixedHeight(TITLE_FIXED_HEIGHT);
 }
 
 void DFileManagerWindow::initTitleBar()
 {
     D_D(DFileManagerWindow);
+
+    initTitleFrame();
 
     DFileMenu* menu = fileMenuManger->createToolBarSettingsMenu();
 
@@ -694,7 +700,11 @@ void DFileManagerWindow::initTitleBar()
 
     QAction *set_theme_action = menu->actionAt(1);
     if (set_theme_action) {
-        set_theme_action->setText(getThemeMenuActionText(DThemeManager::instance()->theme(this)));
+        set_theme_action->setCheckable(true);
+        set_theme_action->setText(tr("Dark Theme"));
+        if (DThemeManager::instance()->theme(this) == "dark") {
+            set_theme_action->setChecked(true);
+        }
         connect(set_theme_action, &QAction::triggered, this, &DFileManagerWindow::onThemeChanged);
     }
 
@@ -709,10 +719,7 @@ void DFileManagerWindow::initTitleBar()
         titlebar()->setMenu(menu);
         titlebar()->setContentsMargins(0, 1, -1, 0);
 
-        QWidget *widget = new QWidget();
-
-        widget->setFixedSize(35, 0);
-        titlebar()->setCustomWidget(widget, false);
+        titlebar()->setCustomWidget(d->titleFrame, Qt::AlignLeft);
     }else{
        d->toolbar->getSettingsButton()->setMenu(menu);
     }
@@ -809,12 +816,11 @@ void DFileManagerWindow::initViewLayout()
 void DFileManagerWindow::initCentralWidget()
 {
     D_D(DFileManagerWindow);
-    initTitleFrame();
     initSplitter();
 
     d->centralWidget = new QFrame(this);
+    d->centralWidget->setObjectName("CentralWidget");
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(d->titleFrame);
     mainLayout->addWidget(d->splitter);
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -920,10 +926,13 @@ void DFileManagerWindow::onReuqestCacheRenameBarState()const
 void DFileManagerWindow::setTheme(const QString &theme)
 {
     DThemeManager::instance()->setTheme(this , theme);
+
     DFileMenu* dfmenu = static_cast<DFileMenu *>(titlebar()->menu());
     QAction* theme_action = dfmenu->actionAt(1);
     if (theme_action){
-        theme_action->setText(getThemeMenuActionText(theme));
+        if (theme == "dark") {
+            theme_action->setChecked(true);
+        }
     }
 }
 
@@ -980,17 +989,3 @@ void DFileManagerWindow::requestToSelectUrls()
         DFileManagerWindow::renameBarState.reset(nullptr);
     }
 }
-
-QString DFileManagerWindow::getThemeMenuActionText(const QString &theme)
-{
-    QString darkThemeText = tr("Dark Theme");
-    QString lightkThemeText = tr("Light Theme");
-    QString themeText = darkThemeText;
-    if (theme == "light") {
-        themeText = darkThemeText;
-    } else {
-        themeText = lightkThemeText;
-    }
-    return themeText;
-}
-
