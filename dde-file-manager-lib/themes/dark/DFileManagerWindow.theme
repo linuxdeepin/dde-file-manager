@@ -18,9 +18,9 @@ QPushButton#LogoButton:press{
    image: url(:/images/images/dde-file-manager.png);
 }
 
-QFrame#TitleBar{
-    background-color: #101010;
-    border-bottom: 1px insert rgba(255, 255, 255, 0.05);
+QFrame#CentralWidget{
+    background-color: transparent;
+    border-top: 1px insert rgba(255, 255, 255, 0.05);
 }
 
 QGraphicsView#Bookmark{
