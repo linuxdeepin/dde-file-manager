@@ -590,6 +590,13 @@ bool DFileManagerWindow::eventFilter(QObject *watched, QEvent *event)
     return d->processKeyPressEvent(static_cast<QKeyEvent*>(event));
 }
 
+void DFileManagerWindow::resizeEvent(QResizeEvent *event)
+{
+    Q_D(DFileManagerWindow);
+    DMainWindow::resizeEvent(event);
+    d->titleFrame->setFixedSize(event->size().width() - titlebar()->buttonAreaWidth(), TITLE_FIXED_HEIGHT);
+}
+
 bool DFileManagerWindow::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData)
 {
     Q_UNUSED(resultData)
@@ -636,6 +643,7 @@ void DFileManagerWindow::initUI()
 
     resize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
     setMinimumSize(650, 420);
+    initTitleBar();
     initCentralWidget();
     setCentralWidget(d->centralWidget);
 
@@ -657,7 +665,6 @@ void DFileManagerWindow::initTitleFrame()
     d->logoButton->setFocusPolicy(Qt::NoFocus);
 
     initToolBar();
-    initTitleBar();
 
     d->titleFrame = new QFrame;
     d->titleFrame->setObjectName("TitleBar");
@@ -668,10 +675,8 @@ void DFileManagerWindow::initTitleFrame()
     titleLayout->addWidget(d->logoButton);
     titleLayout->addSpacing(12);
     titleLayout->addWidget(d->toolbar);
-    titleLayout->addWidget(titlebar());
     titleLayout->setSpacing(0);
     titleLayout->setContentsMargins(0, 0, 0, 0);
-
     d->titleFrame->setLayout(titleLayout);
     d->titleFrame->setFixedHeight(TITLE_FIXED_HEIGHT);
 }
@@ -679,6 +684,8 @@ void DFileManagerWindow::initTitleFrame()
 void DFileManagerWindow::initTitleBar()
 {
     D_D(DFileManagerWindow);
+
+    initTitleFrame();
 
     DFileMenu* menu = fileMenuManger->createToolBarSettingsMenu();
 
@@ -697,10 +704,7 @@ void DFileManagerWindow::initTitleBar()
         titlebar()->setMenu(menu);
         titlebar()->setContentsMargins(0, 1, -1, 0);
 
-        QWidget *widget = new QWidget();
-
-        widget->setFixedSize(35, 0);
-        titlebar()->setCustomWidget(widget, false);
+        titlebar()->setCustomWidget(d->titleFrame, Qt::AlignLeft);
     }else{
        d->toolbar->getSettingsButton()->setMenu(menu);
     }
@@ -797,12 +801,11 @@ void DFileManagerWindow::initViewLayout()
 void DFileManagerWindow::initCentralWidget()
 {
     D_D(DFileManagerWindow);
-    initTitleFrame();
     initSplitter();
 
     d->centralWidget = new QFrame(this);
+    d->centralWidget->setObjectName("CentralWidget");
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(d->titleFrame);
     mainLayout->addWidget(d->splitter);
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -905,6 +908,7 @@ void DFileManagerWindow::onReuqestCacheRenameBarState()const
     DFileManagerWindow::renameBarState = d->renameBar->getCurrentState();//###: record current state, when a new window is created from a already has tab.
 }
 
+
 void DFileManagerWindow::initRenameBarState()
 {
     DFileManagerWindowPrivate* const d{ d_func() };
@@ -942,4 +946,3 @@ void DFileManagerWindow::requestToSelectUrls()
         DFileManagerWindow::renameBarState.reset(nullptr);
     }
 }
-
