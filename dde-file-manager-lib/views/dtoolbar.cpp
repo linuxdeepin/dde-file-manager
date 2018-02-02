@@ -301,6 +301,7 @@ void DToolBar::crumbChanged(const DFMEvent &event)
     }else{
         m_searchBar->hide();
         m_crumbWidget->show();
+        m_searchButton->show();
         setCrumb(event.fileUrl());
     }
 
