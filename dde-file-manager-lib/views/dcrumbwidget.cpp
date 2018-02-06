@@ -100,12 +100,13 @@ void DCrumbWidget::addCrumb(const QStringList &list)
 
         DCrumbButton * button;
         if(isHomeFolder(text)){
-            button = new DCrumbIconButton(
-                    m_group.buttons().size(),
-                    QIcon(":/leftsidebar/images/leftsidebar/home_normal_16px.svg"),
-                    QIcon(":/icons/images/icons/home_hover_16px.svg"),
-                    QIcon(":/icons/images/icons/home_checked_16px.svg"),
-                    text, this);
+//            button = new DCrumbIconButton(
+//                    m_group.buttons().size(),
+//                    QIcon(":/leftsidebar/images/leftsidebar/home_normal_16px.svg"),
+//                    QIcon(":/icons/images/icons/home_hover_16px.svg"),
+//                    QIcon(":/icons/images/icons/home_checked_16px.svg"),
+//                    text, this);
+            button = new DCrumbIconButton(m_group.buttons().size(), "Home", text, this);
         }else if(isDeviceFolder(text)){
             UDiskDeviceInfoPointer info = deviceListener->getDeviceByPath(text);
             if (info->getMediaType() == UDiskDeviceInfo::camera && info->getName() == "iPhone"){
@@ -264,12 +265,7 @@ DUrl DCrumbWidget::getCurrentUrl()
 void DCrumbWidget::addRecentCrumb()
 {
     QString text = RECENT_ROOT;
-    DCrumbButton * button = new DCrumbIconButton(
-                m_group.buttons().size(),
-                QIcon(":/leftsidebar/images/leftsidebar/recent_normal_16px.svg"),
-                QIcon(":/icons/images/icons/recent_hover_16px.svg"),
-                QIcon(":/icons/images/icons/recent_checked_16px.svg"),
-                text, this);
+    DCrumbButton* button = new DCrumbIconButton(m_group.buttons().size(), "Recent", text, this);
     button->setFocusPolicy(Qt::NoFocus);
     button->adjustSize();
 
@@ -282,12 +278,7 @@ void DCrumbWidget::addRecentCrumb()
 void DCrumbWidget::addComputerCrumb()
 {
     QString text = COMPUTER_ROOT;
-    DCrumbButton * button = new DCrumbIconButton(
-                m_group.buttons().size(),
-                QIcon(":/leftsidebar/images/leftsidebar/computer_normal_16px.svg"),
-                QIcon(":/icons/images/icons/computer_hover_16px.svg"),
-                QIcon(":/icons/images/icons/computer_checked_16px.svg"),
-                text, this);
+    DCrumbButton* button = new DCrumbIconButton(m_group.buttons().size(), "Computer", text, this);
     button->setFocusPolicy(Qt::NoFocus);
     button->adjustSize();
     button->setUrl(DUrl::fromComputerFile("/"));
@@ -299,12 +290,7 @@ void DCrumbWidget::addComputerCrumb()
 void DCrumbWidget::addTrashCrumb()
 {
     QString text = TRASH_ROOT;
-    DCrumbButton * button = new DCrumbIconButton(
-                m_group.buttons().size(),
-                QIcon(":/leftsidebar/images/leftsidebar/trash_normal_16px.svg"),
-                QIcon(":/icons/images/icons/trash_hover_16px.svg"),
-                QIcon(":/icons/images/icons/trash_checked_16px.svg"),
-                text, this);
+    DCrumbButton* button = new DCrumbIconButton(m_group.buttons().size(), "Trash", text, this);
     button->setFocusPolicy(Qt::NoFocus);
     button->adjustSize();
     button->setUrl(DUrl::fromTrashFile("/"));
@@ -316,12 +302,7 @@ void DCrumbWidget::addTrashCrumb()
 void DCrumbWidget::addNetworkCrumb()
 {
     QString text = NETWORK_ROOT;
-    DCrumbButton * button = new DCrumbIconButton(
-                m_group.buttons().size(),
-                QIcon(":/leftsidebar/images/leftsidebar/network_normal_16px.svg"),
-                QIcon(":/icons/images/icons/network_hover_16px.svg"),
-                QIcon(":/icons/images/icons/network_checked_16px.svg"),
-                text, this);
+    DCrumbButton* button = new DCrumbIconButton(m_group.buttons().size(), "Network", text, this);
     button->setFocusPolicy(Qt::NoFocus);
     button->adjustSize();
     button->setUrl(DUrl::fromNetworkFile("/"));
@@ -333,12 +314,7 @@ void DCrumbWidget::addNetworkCrumb()
 void DCrumbWidget::addSmbCrumb()
 {
     QString text = NETWORK_ROOT;
-    DCrumbButton * button = new DCrumbIconButton(
-                m_group.buttons().size(),
-                QIcon(":/leftsidebar/images/leftsidebar/network_normal_16px.svg"),
-                QIcon(":/icons/images/icons/network_hover_16px.svg"),
-                QIcon(":/icons/images/icons/network_checked_16px.svg"),
-                text, this);
+    DCrumbButton* button = new DCrumbIconButton(m_group.buttons().size(), "Network", text, this);
     button->setFocusPolicy(Qt::NoFocus);
     button->setUrl(m_url);
     button->setText(m_url.toString());
@@ -351,12 +327,7 @@ void DCrumbWidget::addSmbCrumb()
 void DCrumbWidget::addUserShareCrumb()
 {
     QString text = USERSHARE_ROOT;
-    DCrumbButton * button = new DCrumbIconButton(
-                m_group.buttons().size(),
-                QIcon(":/leftsidebar/images/leftsidebar/usershare_normal_16px.svg"),
-                QIcon(":/icons/images/icons/usershare_hover_16px.svg"),
-                QIcon(":/icons/images/icons/usershare_checked_16px.svg"),
-                text, this);
+    DCrumbButton* button = new DCrumbIconButton(m_group.buttons().size(), "UserShare", text, this);
     button->setFocusPolicy(Qt::NoFocus);
     button->adjustSize();
     button->setUrl(DUrl::fromUserShareFile("/"));
@@ -393,64 +364,29 @@ DCrumbButton *DCrumbWidget::createDeviceCrumbButtonByType(UDiskDeviceInfo::Media
     DCrumbButton * button = NULL;
     switch (type) {
     case UDiskDeviceInfo::native:{
-        button = new DCrumbIconButton(
-                    m_group.buttons().size(),
-                    QIcon(":/leftsidebar/images/leftsidebar/disk_normal_16px.svg"),
-                    QIcon(":/icons/images/icons/disk_hover_16px.svg"),
-                    QIcon(":/icons/images/icons/disk_checked_16px.svg"),
-                    mountPoint, this);
+        button = new DCrumbIconButton(m_group.buttons().size(), "Disk", mountPoint, this);
         break;
     }
     case UDiskDeviceInfo::phone:{
-        button = new DCrumbIconButton(
-                    m_group.buttons().size(),
-                    QIcon(":/icons/images/icons/android_normal_16px.svg"),
-                    QIcon(":/icons/images/icons/android_hover_16px.svg"),
-                    QIcon(":/icons/images/icons/android_checked_16px.svg"),
-                    mountPoint, this);
+        button = new DCrumbIconButton(m_group.buttons().size(), "Android", mountPoint, this);
         break;
     }case UDiskDeviceInfo::camera:{
-        button = new DCrumbIconButton(
-                    m_group.buttons().size(),
-                    QIcon(":/leftsidebar/images/leftsidebar/android_normal_16px.svg"),
-                    QIcon(":/icons/images/icons/android_hover_16px.svg"),
-                    QIcon(":/icons/images/icons/android_checked_16px.svg"),
-                    mountPoint, this);
+        button = new DCrumbIconButton(m_group.buttons().size(), "Android", mountPoint, this);
         break;
     }
     case UDiskDeviceInfo::iphone:{
-        button = new DCrumbIconButton(
-                    m_group.buttons().size(),
-                    QIcon(":/leftsidebar/images/leftsidebar/iphone_normal_16px.svg"),
-                    QIcon(":/icons/images/icons/iphone_hover_16px.svg"),
-                    QIcon(":/icons/images/icons/iphone_checked_16px.svg"),
-                    mountPoint, this);
+        button = new DCrumbIconButton(m_group.buttons().size(), "Iphone", mountPoint, this);
         break;
     }
     case UDiskDeviceInfo::removable:{
-        button = new DCrumbIconButton(
-                    m_group.buttons().size(),
-                    QIcon(":/leftsidebar/images/leftsidebar/usb_normal_16px.svg"),
-                    QIcon(":/icons/images/icons/usb_hover_16px.svg"),
-                    QIcon(":/icons/images/icons/usb_checked_16px.svg"),
-                    mountPoint, this);
+        button = new DCrumbIconButton(m_group.buttons().size(), "Usb", mountPoint, this);
         break;
     }
     case UDiskDeviceInfo::network:{
-        button = new DCrumbIconButton(
-                    m_group.buttons().size(),
-                    QIcon(":/icons/images/icons/network_normal_16px.svg"),
-                    QIcon(":/icons/images/icons/network_hover_16px.svg"),
-                    QIcon(":/icons/images/icons/network_checked_16px.svg"),
-                    mountPoint, this);
+        button = new DCrumbIconButton(m_group.buttons().size(), "Network", mountPoint, this);
         break;
     }case UDiskDeviceInfo::dvd:{
-        button = new DCrumbIconButton(
-                    m_group.buttons().size(),
-                    QIcon(":/leftsidebar/images/leftsidebar/dvd_normal_16px.svg"),
-                    QIcon(":/icons/images/icons/dvd_hover_16px.svg"),
-                    QIcon(":/icons/images/icons/dvd_checked_16px.svg"),
-                    mountPoint, this);
+        button = new DCrumbIconButton(m_group.buttons().size(), "Dvd", mountPoint, this);
         break;
     }
     default:

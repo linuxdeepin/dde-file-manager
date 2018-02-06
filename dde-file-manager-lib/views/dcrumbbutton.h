@@ -27,7 +27,11 @@
 
 #include <QPushButton>
 #include <QListWidgetItem>
+#include <QIcon>
+#include "themeconfig.h"
 #include "durl.h"
+
+DFM_USE_NAMESPACE
 
 class DCrumbButton : public QPushButton
 {
@@ -65,10 +69,18 @@ class DCrumbIconButton : public DCrumbButton
     Q_OBJECT
 public:
     DCrumbIconButton(int index, const QIcon& normalIcon, const QIcon& hoverIcon, const QIcon& checkedIcon, const QString &text, QWidget *parent = 0);
+    DCrumbIconButton(int index, const QString& id, const QString &text, QWidget *parent = 0);
+
+public slots:
+    void updateIcons(QWidget* widget = nullptr, QString theme = "");
+
 private:
+    QIcon getIcon(const QString &key, ThemeConfig::State state = ThemeConfig::Normal) const;
     QIcon m_normalIcon;
     QIcon m_hoverIcon;
     QIcon m_checkedIcon;
+    QString m_id;
+
 protected:
     void checkStateSet();
     void nextCheckState();
