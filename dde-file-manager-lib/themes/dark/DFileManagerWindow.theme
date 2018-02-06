@@ -177,6 +177,9 @@ QPushButton#backButton{
 }
 
 QPushButton#backButton:hover{
+    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                        stop: 0 #8CCFFF,
+                        stop: 1  #4BB8FF);
     border: 1px solid #3caafd;
     image: url(:/dark/icons/backward_hover.svg);
     icon-size: 16px 16px;
@@ -203,6 +206,9 @@ QPushButton#forwardButton{
 }
 
 QPushButton#forwardButton:hover{
+    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                        stop: 0 #8CCFFF,
+                        stop: 1  #4BB8FF);
     border: 1px solid #3caafd;
     image: url(:/dark/icons/forward_hover.svg);
     icon-size: 16px 16px;

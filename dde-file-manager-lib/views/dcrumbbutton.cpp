@@ -23,9 +23,12 @@
  */
 
 #include "dcrumbbutton.h"
+#include "dthememanager.h"
 #include <QPainter>
 #include <QDebug>
 #include <QMouseEvent>
+
+DWIDGET_USE_NAMESPACE
 
 DCrumbButton::DCrumbButton(int index, const QString &text, QWidget *parent)
     : QPushButton(text, parent)
@@ -137,6 +140,41 @@ DCrumbIconButton::DCrumbIconButton(int index, const QIcon &normalIcon, const QIc
     m_hoverIcon = hoverIcon;
     m_checkedIcon = checkedIcon;
     setObjectName("DCrumbIconButton");
+}
+
+DCrumbIconButton::DCrumbIconButton(int index, const QString &id, const QString &text, QWidget *parent)
+    : DCrumbButton(index, QIcon(), text, parent),
+      m_id(id)
+{
+    m_normalIcon = getIcon("icon", ThemeConfig::Normal);
+    m_hoverIcon = getIcon("icon", ThemeConfig::Hover);
+    m_checkedIcon = getIcon("icon", ThemeConfig::Checked);
+    setIcon(m_normalIcon);
+    setObjectName("DCrumbIconButton");
+    connect(DThemeManager::instance(), &DThemeManager::widgetThemeChanged, this, &DCrumbIconButton::updateIcons);
+}
+
+void DCrumbIconButton::updateIcons(QWidget *widget, QString theme)
+{
+    Q_UNUSED(theme)
+    if (widget == this){
+        m_normalIcon = getIcon("icon", ThemeConfig::Normal);
+        m_hoverIcon = getIcon("icon", ThemeConfig::Hover);
+        m_checkedIcon = getIcon("icon", ThemeConfig::Checked);
+        checkStateSet();
+        update();
+    }
+}
+
+QIcon DCrumbIconButton::getIcon(const QString &key, ThemeConfig::State state) const
+{
+    QPixmap p;
+    if (!m_id.isEmpty()){
+//        qDebug() << m_id << ":" << ThemeConfig::instace()->string("CrumbIconButton." + m_id, key, state);
+        p = ThemeConfig::instace()->pixmap("CrumbIconButton." + m_id, key, state);
+    }
+
+    return QIcon(p);
 }
 
 void DCrumbIconButton::checkStateSet()
