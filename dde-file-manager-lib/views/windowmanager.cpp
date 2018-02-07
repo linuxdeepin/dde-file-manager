@@ -255,6 +255,9 @@ quint64 WindowManager::getWindowId(const QWidget *window)
 
 QWidget *WindowManager::getWindowById(quint64 winId)
 {
+    if (winId <= 0)
+        return Q_NULLPTR;
+
     const QWidget *widget = m_windows.key(winId);
 
     if (widget)
