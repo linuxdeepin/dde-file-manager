@@ -520,33 +520,22 @@ void MoveCopyTaskWidget::setTipMessage(const QString& speedStr, const QString& r
 int DTaskDialog::MaxHeight = 0;
 
 DTaskDialog::DTaskDialog(QWidget *parent) :
-    QDialog(parent)
+    DAbstractDialog(parent)
 {
-    DPlatformWindowHandle handle(this);
-    Q_UNUSED(handle)
-
-    setFixedWidth(m_defaultWidth);
     initUI();
     initConnect();
-
-    QRect rect = geometry();
-    QPoint center = qApp->desktop()->geometry().center();
-    rect.moveCenter(center);
-    move(rect.x(), rect.y());
 }
 
 void DTaskDialog::initUI(){
+    setWindowFlags(windowFlags() &~ Qt::WindowSystemMenuHint);
+    setFixedWidth(m_defaultWidth);
 
-    setContentsMargins(0, 0, 0, 0);
-    setWindowFlags(Qt::FramelessWindowHint|Qt::Window);
+    m_titlebar = new DTitlebar(this);
+    m_titlebar->setFixedHeight(27);
+    m_titlebar->layout()->setContentsMargins(0, 0, 0, 0);
 
     m_taskListWidget = new QListWidget;
     m_taskListWidget->setSelectionMode(QListWidget::NoSelection);
-
-    m_titlebar = new DTitlebar;
-    m_titlebar->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
-    m_titlebar->setFixedHeight(27);
-    m_titlebar->layout()->setContentsMargins(0, 0, 0, 0);
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -556,6 +545,8 @@ void DTaskDialog::initUI(){
     mainLayout->addWidget(m_taskListWidget);
     mainLayout->addStretch(1);
     setLayout(mainLayout);
+
+    moveToCenter();
 }
 
 void DTaskDialog::initConnect(){
