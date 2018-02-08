@@ -133,7 +133,7 @@ private:
 };
 
 
-class DTaskDialog : public QDialog
+class DTaskDialog : public DAbstractDialog
 {
     Q_OBJECT
 public:
