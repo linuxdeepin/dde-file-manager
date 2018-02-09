@@ -177,21 +177,25 @@ QPushButton#backButton{
 }
 
 QPushButton#backButton:hover{
-    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                        stop: 0 #8CCFFF,
-                        stop: 1  #4BB8FF);
-    border: 1px solid #3caafd;
+    background-color:rgba(255, 255, 255, 0.3);
     image: url(:/dark/icons/backward_hover.svg);
     icon-size: 16px 16px;
 }
 
+QPushButton#backButton:pressed{
+    background-color:rgba(255, 255, 255, 0.1);
+    image: url(:/dark/icons/backward_press.svg);
+    icon-size: 16px 16px;
+}
+
 QPushButton#backButton:checked{
-    border: 1px solid #2794ff;
-    background-color:#2ca7f8;
+    background-color:rgba(255, 255, 255, 0.1);
+    image: url(:/dark/icons/backward_press.svg);
+    icon-size: 16px 16px;
 }
 
 QPushButton#backButton:disabled{
-    background-color:rgba(255, 255, 255, 0.15);
+    background-color:rgba(255, 255, 255, 0.06);
     image: url(:/dark/icons/backward_disabled.svg);
 }
 
@@ -206,17 +210,27 @@ QPushButton#forwardButton{
 }
 
 QPushButton#forwardButton:hover{
-    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                        stop: 0 #8CCFFF,
-                        stop: 1  #4BB8FF);
-    border: 1px solid #3caafd;
+    background-color:rgba(255, 255, 255, 0.3);
     image: url(:/dark/icons/forward_hover.svg);
     icon-size: 16px 16px;
 }
 
+QPushButton#forwardButton:pressed{
+    background-color:rgba(255, 255, 255, 0.1);
+    image: url(:/dark/icons/forward_press.svg);
+    icon-size: 16px 16px;
+}
+
+QPushButton#forwardButton:checked{
+    background-color:rgba(255, 255, 255, 0.3);
+    image: url(:/dark/icons/forward_press.svg);
+    icon-size: 16px 16px;
+}
+
 QPushButton#forwardButton:disabled{
-    background-color:rgba(255, 255, 255, 0.15);
+    background-color:rgba(255, 255, 255, 0.06);
     image: url(:/dark/icons/forward_disabled.svg);
+    icon-size: 16px 16px;
 }
 
 QPushButton#leftArrow:hover{
@@ -254,9 +268,7 @@ DFMActionButton {
 }
 
 DFMActionButton:hover {
-    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                        stop: 0 #8CCFFF,
-                        stop: 1  #4BB8FF);
+    background-color: rgba(255, 255, 255, 0.3);
 }
 
 DFMActionButton:checked {
@@ -298,14 +310,15 @@ QPushButton#searchButton{
     padding: 3px, 3px, 3px, 3px;
 }
 
-QPushButton#searchButton:pressed{
-    image: url(:/dark/icons/search_press.svg);
+QPushButton#searchButton:hover{
+    background-color: rgba(255, 255, 255, 0.3);
+    image: url(:/dark/icons/search_hover.svg);
     padding: 3px, 3px, 3px, 3px;
 }
 
-
-QPushButton#searchButton:hover{
-    image: url(:/dark/icons/search_hover.svg);
+QPushButton#searchButton:pressed{
+    background-color: rgba(255, 255, 255, 0.1);
+    image: url(:/dark/icons/search_press.svg);
     padding: 3px, 3px, 3px, 3px;
 }
 
