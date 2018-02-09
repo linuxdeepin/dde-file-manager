@@ -140,7 +140,10 @@ QPushButton#backButton{
 }
 
 QPushButton#backButton:hover{
-    border: 1px solid #3caafd;
+    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                stop: 0 #B1B1B1,
+                stop: 1  #9D9D9D);
+    border: 1px solid #909090;
     image: url(:/dark/icons/backward_hover.svg);
     icon-size: 16px 16px;
 }
@@ -165,7 +168,10 @@ QPushButton#forwardButton{
 }
 
 QPushButton#forwardButton:hover{
-    border: 1px solid #3caafd;
+    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                stop: 0 #B1B1B1,
+                stop: 1  #9D9D9D);
+    border: 1px solid #909090;
     image: url(:/dark/icons/forward_hover.svg);
     icon-size: 16px 16px;
 }
@@ -533,6 +539,10 @@ QScrollArea#ComputerView #TitleLabel {
 
 QScrollArea#ComputerView #LineLabel {
     background-color: rgba(255, 255, 255, 0.1);
+}
+
+QScrollArea#ComputerView #DiskSize {
+    color: #616161;
 }
 
 QScrollArea#ComputerView ComputerViewItem QTextEdit {

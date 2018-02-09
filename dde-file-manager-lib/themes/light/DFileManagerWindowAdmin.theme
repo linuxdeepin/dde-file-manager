@@ -595,6 +595,10 @@ QScrollArea#ComputerView #LineLabel {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
+QScrollArea#ComputerView #DiskSize {
+    color: #a2a2a2;
+}
+
 /*TabBar*/
 TabBar#TabBar{
     background-color: transparent;
