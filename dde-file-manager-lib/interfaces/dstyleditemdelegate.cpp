@@ -195,7 +195,11 @@ static inline Qt::Alignment visualAlignment(Qt::LayoutDirection direction, Qt::A
 void DStyledItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const QRect &rect, Qt::Alignment alignment, QIcon::Mode mode, QIcon::State state)
 {
     // Copy of QStyle::alignedRect
-    const QSize size = icon.actualSize(rect.size(), mode, state);
+    QSize size = icon.actualSize(rect.size(), mode, state);
+
+    if (size.width() > rect.width() || size.height() > rect.height())
+        size.scale(rect.size(), Qt::KeepAspectRatio);
+
     alignment = visualAlignment(painter->layoutDirection(), alignment);
     const qreal pixel_ratio = painter->device()->devicePixelRatioF();
     int x = rect.x();
