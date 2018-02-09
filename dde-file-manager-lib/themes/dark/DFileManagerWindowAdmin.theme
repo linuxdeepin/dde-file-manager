@@ -137,24 +137,29 @@ QPushButton#backButton{
     border-bottom-left-radius: 4px;
     image: url(:/dark/icons/backward_normal.svg);
     icon-size: 16px 16px;
+    padding: 3px, 3px, 4px, 3px;
 }
 
 QPushButton#backButton:hover{
-    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                stop: 0 #B1B1B1,
-                stop: 1  #9D9D9D);
-    border: 1px solid #909090;
+    background-color:rgba(255, 255, 255, 0.3);
     image: url(:/dark/icons/backward_hover.svg);
     icon-size: 16px 16px;
 }
 
+QPushButton#backButton:pressed{
+    background-color:rgba(255, 255, 255, 0.1);
+    image: url(:/dark/icons/backward_press.svg);
+    icon-size: 16px 16px;
+}
+
 QPushButton#backButton:checked{
-    border: 1px solid #2794ff;
-    background-color:#2ca7f8;
+    background-color:rgba(255, 255, 255, 0.1);
+    image: url(:/dark/icons/backward_press.svg);
+    icon-size: 16px 16px;
 }
 
 QPushButton#backButton:disabled{
-    background-color:rgba(255, 255, 255, 0.15);
+    background-color:rgba(255, 255, 255, 0.06);
     image: url(:/dark/icons/backward_disabled.svg);
 }
 
@@ -165,20 +170,31 @@ QPushButton#forwardButton{
     border-bottom-right-radius: 4px;
     image: url(:/dark/icons/forward_normal.svg);
     icon-size: 16px 16px;
+    padding: 4px, 3px, 3px, 3px;
 }
 
 QPushButton#forwardButton:hover{
-    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                stop: 0 #B1B1B1,
-                stop: 1  #9D9D9D);
-    border: 1px solid #909090;
+    background-color:rgba(255, 255, 255, 0.3);
     image: url(:/dark/icons/forward_hover.svg);
     icon-size: 16px 16px;
 }
 
+QPushButton#forwardButton:pressed{
+    background-color:rgba(255, 255, 255, 0.1);
+    image: url(:/dark/icons/forward_press.svg);
+    icon-size: 16px 16px;
+}
+
+QPushButton#forwardButton:checked{
+    background-color:rgba(255, 255, 255, 0.3);
+    image: url(:/dark/icons/forward_press.svg);
+    icon-size: 16px 16px;
+}
+
 QPushButton#forwardButton:disabled{
-    background-color:rgba(255, 255, 255, 0.15);
+    background-color:rgba(255, 255, 255, 0.06);
     image: url(:/dark/icons/forward_disabled.svg);
+    icon-size: 16px 16px;
 }
 
 QPushButton#leftArrow:hover{
@@ -275,17 +291,15 @@ QPushButton#listViewButton:unchecked{
 }
 
 DFMActionButton {
-    background-color: rgba(255, 255, 255, 0.15);;
+    background-color: rgba(255, 255, 255, 0.15);
 }
 
 DFMActionButton:hover {
-    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                    stop: 0 #B1B1B1,
-                    stop: 1  #9D9D9D);
+    background-color: rgba(255, 255, 255, 0.3);
 }
 
 DFMActionButton:checked {
-    background-color: #6a6a6a;
+    background-color: #2ca7f8;
 }
 
 QPushButton#settingsButton{
@@ -345,14 +359,15 @@ QPushButton#searchButton{
     padding: 3px, 3px, 3px, 3px;
 }
 
-QPushButton#searchButton:pressed{
-    image: url(:/dark/icons/search_press.svg);
+QPushButton#searchButton:hover{
+    background-color: rgba(255, 255, 255, 0.3);
+    image: url(:/dark/icons/search_hover.svg);
     padding: 3px, 3px, 3px, 3px;
 }
 
-
-QPushButton#searchButton:hover{
-    image: url(:/dark/icons/search_hover.svg);
+QPushButton#searchButton:pressed{
+    background-color: rgba(255, 255, 255, 0.1);
+    image: url(:/dark/icons/search_press.svg);
     padding: 3px, 3px, 3px, 3px;
 }
 

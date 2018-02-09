@@ -730,7 +730,7 @@ void DFileManagerWindow::initTitleBar()
     if (isDXcbPlatform){
         d->toolbar->getSettingsButton()->hide();
         titlebar()->setMenu(menu);
-        titlebar()->setContentsMargins(0, 1, -1, 0);
+        titlebar()->setContentsMargins(0, 0, 0, 0);
 
         titlebar()->setCustomWidget(d->titleFrame, Qt::AlignLeft);
     }else{
