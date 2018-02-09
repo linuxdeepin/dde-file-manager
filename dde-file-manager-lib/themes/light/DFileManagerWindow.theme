@@ -277,6 +277,7 @@ DFMActionButton:hover {
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                         stop: 0 #8CCFFF,
                         stop: 1  #4BB8FF);
+    border: 1px solid #3caafd;
 }
 
 DFMActionButton:checked {
@@ -489,6 +490,10 @@ QScrollArea#ComputerView #TitleLabel {
 
 QScrollArea#ComputerView #LineLabel {
     background-color: rgba(0, 0, 0, 0.1);
+}
+
+QScrollArea#ComputerView #DiskSize {
+    color: #a2a2a2;
 }
 
 /*TabBar*/

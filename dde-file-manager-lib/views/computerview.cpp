@@ -105,6 +105,7 @@ ComputerViewItem::ComputerViewItem(QWidget *parent):
 
 
     m_sizeLabel = new QLabel(this);
+    m_sizeLabel->setObjectName("DiskSize");
     m_sizeLabel->hide();
 
     m_progressLine = new ProgressLine(this);
