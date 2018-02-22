@@ -470,7 +470,7 @@ void CanvasGridView::wheelEvent(QWheelEvent *event)
         } else {
             decreaseIcon();
         }
-
+        QThread::msleep(200);
         event->accept();
     }
 }
@@ -1303,83 +1303,119 @@ void CanvasGridView::setDodgeDuration(double dodgeDuration)
 }
 
 // TODO: should fix by qt;
-static inline QRect fix_dock_rect(xcb_ewmh_wm_strut_partial_t st, QRect virtualGeometry)
+bool find_wm_strut_partial_rect_list(QList<QRect> rects)
 {
-    QRect dockRect;
-    if (st.top > 0) {
-        dockRect = QRect(0, 0, virtualGeometry.width(), st.top);
+    bool find = false;
+    for (auto &rect : rects) {
+        find |= rect.isEmpty();
     }
-    if (st.bottom > 0) {
-        dockRect = QRect(0, virtualGeometry.height() - st.bottom,
-                         virtualGeometry.width(), st.bottom);
-    }
-    if (st.left > 0) {
-        dockRect = QRect(0, 0,
-                         st.left, virtualGeometry.height());
-    }
-    if (st.right > 0) {
-        dockRect = QRect(virtualGeometry.width() - st.right, 0,
-                         st.left, virtualGeometry.height());
-    }
-    return dockRect;
+
+    return find;
+}
+
+static inline QList<QRect> wm_strut_partial_rect_list(xcb_ewmh_wm_strut_partial_t st, QRect virtualGeometry)
+{
+    QList<QRect> strutRectList;
+
+    auto w = virtualGeometry.width();
+    auto h = virtualGeometry.height();
+
+    // left
+    auto left = static_cast<int>(st.left);
+    auto left_start = static_cast<int>(st.left_start_y);
+    auto left_end = static_cast<int>(st.left_end_y);
+    QRect leftStruct = QRect(0, left_start, left, left_end - left_start);
+    leftStruct.setY(0);
+    leftStruct.setHeight(h);
+    strutRectList << leftStruct;
+
+    // right
+    auto right = static_cast<int>(st.right);
+    auto right_start = static_cast<int>(st.right_start_y);
+    auto right_end = static_cast<int>(st.right_end_y);
+    QRect rightStruct = QRect(w - right, right_start, right, right_end - right_start);
+    rightStruct.setY(0);
+    rightStruct.setHeight(h);
+    strutRectList << rightStruct;
+
+    // top
+    auto top = static_cast<int>(st.top);
+    auto top_start = static_cast<int>(st.top_start_x);
+    auto top_end = static_cast<int>(st.top_end_x);
+    QRect topStruct = QRect(top_start, 0, top_end - top_start, top);
+    topStruct.setX(0);
+    topStruct.setWidth(w);
+    strutRectList << topStruct;
+
+    // bottom
+    auto bottom = static_cast<int>(st.bottom);
+    auto bottom_start = static_cast<int>(st.bottom_start_x);
+    auto bottom_end = static_cast<int>(st.bottom_end_x);
+    QRect bottomStruct = QRect(bottom_start, h - bottom, bottom_end - bottom_start, bottom);
+    bottomStruct.setX(0);
+    bottomStruct.setWidth(w);
+    strutRectList << bottomStruct;
+
+    return strutRectList;
 }
 
 static inline QRect fix_available_geometry()
 {
-    QRect dockRect;
+    QList<QRect> strutParialRectList;
 
     auto screens = qApp->screens();
-    auto dockInfo = Xcb::XcbMisc::instance().find_dock_window(qApp->screens().count());
-    auto dockWinId = dockInfo.winId;
+    auto structParialInfoList = Xcb::XcbMisc::instance().find_dock_window();
 
     // virtualGeometry is same on all screen, so just get first one
     auto virtualGeometry = qApp->screens().value(0)->virtualGeometry();
     // try 5 time
     for (int i = 0; i < 5; ++i) {
-        xcb_ewmh_wm_strut_partial_t st = Xcb::XcbMisc::instance().get_strut_partial(dockWinId);
-        dockRect = fix_dock_rect(st, virtualGeometry);
-        qDebug() << "\n"
-                 << "dump xcb_ewmh_wm_strut_partial_t begin ---------------------------" << "\n"
-                 << "st.left :" << st.left << "\n"
-                 << "st.right :" << st.right << "\n"
-                 << "st.top :" << st.top << "\n"
-                 << "st.left_start_y :" << st.left_start_y << "\n"
-                 << "st.left_end_y :" << st.left_end_y << "\n"
-                 << "st.right_start_y :" << st.right_start_y << "\n"
-                 << "st.right_end_y :" << st.right_end_y << "\n"
-                 << "st.top_start_x :" << st.top_start_x << "\n"
-                 << "st.top_end_x :" << st.top_end_x << "\n"
-                 << "st.bottom_start_x :" << st.bottom_start_x << "\n"
-                 << "st.bottom_end_x :" << st.bottom_end_x << "\n"
-                 << "dump xcb_ewmh_wm_strut_partial_t end ---------------------------" << "\n";
-        qDebug() << "get fix dockRect" << dockRect << virtualGeometry;
-        if (!dockRect.isEmpty()) {
+        for (auto info : structParialInfoList) {
+            xcb_ewmh_wm_strut_partial_t st = Xcb::XcbMisc::instance().get_strut_partial(info.winId);
+            qDebug() << "\n"
+                     << "dump xcb_ewmh_wm_strut_partial_t begin ---------------------------" << "\n"
+                     << "st.left :" << st.left << "\n"
+                     << "st.right :" << st.right << "\n"
+                     << "st.top :" << st.top << "\n"
+                     << "st.left_start_y :" << st.left_start_y << "\n"
+                     << "st.left_end_y :" << st.left_end_y << "\n"
+                     << "st.right_start_y :" << st.right_start_y << "\n"
+                     << "st.right_end_y :" << st.right_end_y << "\n"
+                     << "st.top_start_x :" << st.top_start_x << "\n"
+                     << "st.top_end_x :" << st.top_end_x << "\n"
+                     << "st.bottom_start_x :" << st.bottom_start_x << "\n"
+                     << "st.bottom_end_x :" << st.bottom_end_x << "\n"
+                     << "dump xcb_ewmh_wm_strut_partial_t end ---------------------------" << "\n";
+            strutParialRectList << wm_strut_partial_rect_list(st, virtualGeometry);
+        }
+        if (find_wm_strut_partial_rect_list(strutParialRectList)) {
+            qDebug() << "get fix availableRect" << strutParialRectList << virtualGeometry;
             break;
         }
         QThread::sleep(1);
     }
-
-    if (dockRect.isEmpty()) {
-        qCritical() << "can not get dock post !!!!!!!!!!!!!!!!!";
+    if (!find_wm_strut_partial_rect_list(strutParialRectList)) {
+        qCritical() << "can not get struct partial post !!!!!!!!!!!!!!!!!";
     }
 
     QRegion virtualRegion = QRegion(virtualGeometry);
-    QRegion dockRegion = QRegion(dockRect);
+    QRegion strutParialRegion;
+    for (auto rect : strutParialRectList) {
+        strutParialRegion = strutParialRegion.united(rect);
+    }
 
-    QRegion availableRegion = virtualRegion.subtracted(dockRegion);
+    QRegion availableRegion = virtualRegion.subtracted(strutParialRegion);
 
     auto primaryGeometry = qApp->primaryScreen()->geometry();
     QRect availableRect = availableRegion.intersected(primaryGeometry).rects().value(0);
 
     qDebug() << "\n"
              << "dump dock info begin ---------------------------" << "\n"
-             << "dockRect:" << dockInfo.screenId << dockWinId << dockRect << "\n"
+             << "strutParialRegion:" << strutParialRegion << "\n"
              << "virtualGeometry:" << virtualGeometry << "\n"
              << "primarygeometry:" << primaryGeometry << "\n"
              << "availableRect:" << availableRect << "\n"
              << "dump dock info end ---------------------------" << "\n";
-//    availableRect.moveTo(availableRect.x() - primaryGeometry.x(),
-//                         availableRect.y() - primaryGeometry.y());
     return availableRect;
 }
 
@@ -1413,10 +1449,6 @@ void CanvasGridView::initUI()
     setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAttribute(Qt::WA_TranslucentBackground);
     Xcb::XcbMisc::instance().set_window_type(winId(), Xcb::XcbMisc::Desktop);
-
-    qDebug() << "Display::instance()->primaryScreen()" << Display::instance()->primaryScreen();
-    qDebug() << "qApp->primaryScreen()" << qApp->primaryScreen();
-    qDebug() << "qApp->primaryScreen()->availableGeometry()" << qApp->primaryScreen()->availableGeometry();
 
     auto primaryScreen = Display::instance()->primaryScreen();
     setGeometry(primaryScreen->geometry());
@@ -1565,15 +1597,19 @@ void CanvasGridView::initConnection()
     });
     d->syncTimer->start();
 
-    connect(Display::instance()->primaryScreen(), &QScreen::availableGeometryChanged,
-    this, [ = ](const QRect & /*geometry*/) {
-        QTimer::singleShot(400, this, [ = ]() {
-            auto geometry = Display::instance()->primaryScreen()->availableGeometry();
-            qDebug() << "Init primaryScreen availableGeometryChanged changed to:" << geometry;
-            qDebug() << "Init primaryScreen:" << qApp->primaryScreen() << qApp->primaryScreen()->geometry();
-            updateGeometry(geometry);
+    auto connectScreenGeometryChanged = [this](QScreen * screen) {
+        connect(screen, &QScreen::availableGeometryChanged,
+        this, [ = ](const QRect & /*geometry*/) {
+            QTimer::singleShot(400, this, [ = ]() {
+                auto geometry = Display::instance()->primaryScreen()->availableGeometry();
+                qDebug() << "primaryScreen availableGeometryChanged changed to:" << geometry;
+                qDebug() << "primaryScreen:" << qApp->primaryScreen() << qApp->primaryScreen()->geometry();
+                updateGeometry(geometry);
+            });
         });
-    });
+    };
+
+    connectScreenGeometryChanged(Display::instance()->primaryScreen());
 
     connect(Display::instance(), &Display::primaryScreenChanged,
     this, [ = ](QScreen * screen) {
@@ -1589,13 +1625,7 @@ void CanvasGridView::initConnection()
         for (auto screen : qApp->screens()) {
             disconnect(screen, &QScreen::availableGeometryChanged, this, Q_NULLPTR);
         }
-
-        connect(screen, &QScreen::availableGeometryChanged,
-        this, [ = ](const QRect & geometry) {
-            qDebug() << "primaryScreen availableGeometryChanged changed to:" << geometry;
-            qDebug() << "primaryScreen:" << qApp->primaryScreen() << qApp->primaryScreen()->geometry();
-            updateGeometry(geometry);
-        });
+        connectScreenGeometryChanged(screen);
 
         updateGeometry(screen->availableGeometry());
     });

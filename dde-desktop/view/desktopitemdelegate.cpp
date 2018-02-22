@@ -93,7 +93,7 @@ QSize DesktopItemDelegate::iconSizeByIconSizeLevel() const
 void DesktopItemDelegate::updateItemSizeHint()
 {
     DIconItemDelegate::updateItemSizeHint();
-    int width = parent()->parent()->iconSize().width() * 1.7;
+    int width = parent()->parent()->iconSize().width() * 17 / 10;
     int height = parent()->parent()->iconSize().height()
                  + 10 + 2 * d_ptr->textLineHeight;
 
