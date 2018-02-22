@@ -22,7 +22,7 @@ namespace Xcb
 XcbMisc::XcbMisc()
 {
     xcb_intern_atom_cookie_t *cookie = xcb_ewmh_init_atoms(QX11Info::connection(), &m_ewmh_connection);
-    xcb_ewmh_init_atoms_replies(&m_ewmh_connection, cookie, NULL);
+    xcb_ewmh_init_atoms_replies(&m_ewmh_connection, cookie, Q_NULLPTR);
 }
 
 XcbMisc::~XcbMisc()
@@ -36,7 +36,7 @@ XcbMisc &XcbMisc::instance()
     return *_xcb_misc_instance;
 }
 
-void XcbMisc::set_window_type(xcb_window_t winId, WindowType winType)
+void XcbMisc::set_window_type(WId winId, WindowType winType)
 {
     xcb_atom_t atoms[1];
 
@@ -47,11 +47,9 @@ void XcbMisc::set_window_type(xcb_window_t winId, WindowType winType)
     case WindowType::Dock:
         atoms[0] = m_ewmh_connection._NET_WM_WINDOW_TYPE_DOCK;
         break;
-    default:
-        break;
     }
 
-    xcb_ewmh_set_wm_window_type(&m_ewmh_connection, winId, 1, atoms);
+    xcb_ewmh_set_wm_window_type(&m_ewmh_connection, static_cast<xcb_window_t>(winId), 1, atoms);
 }
 
 
@@ -91,7 +89,7 @@ bool XcbMisc::is_dock_window(xcb_window_t winId)
     return is_dock;
 }
 
-DockInfo XcbMisc::find_dock_window(int)
+QList<DockInfo> XcbMisc::find_dock_window()
 {
     QList<DockInfo> docks;
 
@@ -114,7 +112,7 @@ DockInfo XcbMisc::find_dock_window(int)
         }
     }
 
-    return docks.length() > 0 ? docks.value(0) : DockInfo();
+    return docks;
 }
 
 }
