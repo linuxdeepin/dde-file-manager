@@ -302,6 +302,32 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
     return current;
 }
 
+void CanvasGridView::updateHiddenItems()
+{
+    QDir rootDir(currentUrl().toLocalFile());
+    rootDir.setFilter(model()->filters());
+
+    auto existItems = GridManager::instance()->itemIds();
+
+    QStringList items;
+    for (auto entry : rootDir.entryInfoList()) {
+        auto hideItem = entry.absoluteFilePath();
+        existItems.removeAll(hideItem);
+        if (!GridManager::instance()->contains(hideItem)) {
+            GridManager::instance()->add(hideItem);
+        }
+    }
+
+    for (auto nonexistItem : existItems) {
+        GridManager::instance()->remove(nonexistItem);
+    }
+
+    if (GridManager::instance()->autoAlign()) {
+        GridManager::instance()->reAlign();
+    }
+    d->quickSync();
+}
+
 QModelIndex CanvasGridView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
 {
 //    qDebug() << modifiers <<  d->currentCursorIndex;
@@ -559,6 +585,8 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             itemDelegate()->hideAllIIndexWidget();
             clearSelection();
             model()->toggleHiddenFiles(rootUrl);
+            updateHiddenItems();
+            update();
             return;
         }
         break;
@@ -1126,20 +1154,36 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
         d->filesystemWatcher->deleteLater();
     }
 
+    QDir rootDir(fileUrl.toLocalFile());
+    rootDir.setFilter(model()->filters());
+
+    QStringList items;
+    for (auto entry : rootDir.entryInfoList()) {
+        items << entry.absoluteFilePath();
+    }
+    GridManager::instance()->initProfile(items);
+
     d->filesystemWatcher = new DFileSystemWatcher(QStringList() << fileUrl.toLocalFile());
 
     connect(d->filesystemWatcher, &DFileSystemWatcher::fileCreated,
-    this, [ = ](const QString & path, const QString & name) {
-//        qDebug() << path << name;
-        const QString &filePath = path + QDir::separator() + name;
+    this, [ = ](const QString & rootPath, const QString & name) {
+        Q_UNUSED(rootPath);
+        Q_UNUSED(name);
+        qDebug() << "fileCreated" << rootPath << name;
+        const QString &filePath = rootPath + QDir::separator() + name;
+        // NOTE: ???
         if (filePath.endsWith(".desktop")) {
             d->filesystemWatcher->addPath(filePath);
         }
+
+        Q_EMIT itemCreated(DUrl::fromLocalFile(filePath));
     });
 
     connect(d->filesystemWatcher, &DFileSystemWatcher::fileClosed,
-    this, [ = ](const QString & path, const QString & /*name*/) {
-//        qDebug() << path << name;
+    this, [ = ](const QString & path, const QString & name) {
+        Q_UNUSED(path);
+        Q_UNUSED(name);
+        qDebug() << "fileClosed" << path << name;
         auto index = model()->index(DUrl::fromLocalFile(path));
         auto info = model()->fileInfo(index);
         if (info) {
@@ -1148,9 +1192,40 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     });
 
     connect(d->filesystemWatcher, &DFileSystemWatcher::fileDeleted,
-    this, [ = ](const QString & path, const QString & /*name*/) {
-//        qDebug() << path << name;
+    this, [ = ](const QString & path, const QString & name) {
+        Q_UNUSED(path);
+        Q_UNUSED(name);
+        qDebug() << "fileDeleted" << path << name;
         d->filesystemWatcher->removePath(path);
+
+        Q_EMIT itemDeleted(DUrl::fromLocalFile(path));
+    });
+
+    connect(d->filesystemWatcher, &DFileSystemWatcher::fileMoved,
+            this, [ = ](const QString & fromPath, const QString & fromName,
+    const QString & toPath, const QString & toName) {
+        Q_UNUSED(fromName);
+        Q_UNUSED(toName);
+        qDebug() << "fileMoved" << fromPath << fromName << toPath << toName;
+
+        auto fromUrl = DUrl::fromLocalFile(fromPath);
+        auto oldLocalFile = fromUrl.toLocalFile();
+        QPoint oldPos;
+        if (GridManager::instance()->contains(oldLocalFile)) {
+            oldPos = GridManager::instance()->position(oldLocalFile);
+            GridManager::instance()->remove(oldLocalFile);
+        }
+
+        if (!GridManager::instance()->autoAlign()) {
+            auto toUrl = DUrl::fromLocalFile(toPath);
+            auto newLoaclFile = toUrl.toLocalFile();
+
+            if (!GridManager::instance()->contains(newLoaclFile)) {
+                GridManager::instance()->add(oldPos, newLoaclFile);
+            }
+        }
+        d->quickSync();
+        update();
     });
     return true;
 }
@@ -1174,22 +1249,8 @@ bool CanvasGridView::setRootUrl(const DUrl &url)
     auto dfw = new DFileWatcher(url.toLocalFile(), this);
     connect(dfw, &DFileWatcher::fileMoved,
     this, [ = ](const DUrl & fromUrl, const DUrl & toUrl) {
-        if (!GridManager::instance()->autoAlign()) {
-            auto oldLocalFile = fromUrl.toLocalFile();
-            auto newLoaclFile = toUrl.toLocalFile();
 
-            QPoint oldPos;
-            if (GridManager::instance()->contains(oldLocalFile)) {
-                oldPos = GridManager::instance()->position(oldLocalFile);
-                GridManager::instance()->remove(oldLocalFile);
-            }
-
-            if (!GridManager::instance()->contains(newLoaclFile)) {
-                GridManager::instance()->add(oldPos, newLoaclFile);
-            }
-        }
     });
-    dfw->startWatcher();
 
     return setCurrentUrl(url);
 }
@@ -1642,64 +1703,26 @@ void CanvasGridView::initConnection()
         GridManager::instance()->move(QStringList() << localFile, localFile, gridPos.x(), gridPos.y());
     });
 
-    connect(this->model(), &QAbstractItemModel::rowsInserted,
-    this, [ = ](const QModelIndex & parent, int first, int last) {
-//        qDebug() << "rowsInserted";
-        if (d->filesystemWatcher) {
-            QStringList files;
-            for (int i = first; i <= last; ++i) {
-                auto index = model()->index(i, 0, parent);
-                if (!index.isValid()) {
-                    continue;
-                }
-                auto localFile = model()->getUrlByIndex(index).toLocalFile();
-                files << localFile;
-            }
-            d->filesystemWatcher->addPaths(files);
-        }
+    connect(this, &CanvasGridView::itemCreated, [ = ](const DUrl & url) {
+        qDebug() << "itemCreated";
+        d->lastMenuNewFilepath = url.toLocalFile();
+        GridManager::instance()->add(url.toLocalFile());
 
-        if (!GridManager::instance()->isInited()) {
-            QStringList files;
-            for (int i = first; i <= last; ++i) {
-                auto index = model()->index(i, 0, parent);
-                auto localFile = model()->getUrlByIndex(index).toLocalFile();
-                files << localFile;
-            }
-            qDebug() << "init GridManager cells";
-            GridManager::instance()->initProfile(files);
-            return;
-        }
-
-        for (int i = first; i <= last; ++i) {
-            auto index = model()->index(i, 0, parent);
-            auto localFile = model()->getUrlByIndex(index).toLocalFile();
-            d->lastMenuNewFilepath = localFile;
-            GridManager::instance()->add(localFile);
-        }
         d->quickSync();
     });
 
-    connect(this->model(), &QAbstractItemModel::rowsAboutToBeRemoved,
-    this, [ = ](const QModelIndex & parent, int first, int last) {
-//        qDebug() << "rowsAboutToBeRemoved";
-//        qDebug() << model()->getUrlByIndex(parent).toLocalFile();
-        for (int i = first; i <= last; ++i) {
-            auto index = model()->index(i, 0, parent);
-            if (d->currentCursorIndex == index) {
-                d->currentCursorIndex  = QModelIndex();
-                selectionModel()->setCurrentIndex(QModelIndex(), QItemSelectionModel::Clear);
-                setCurrentIndex(QModelIndex());
-            }
+    connect(this, &CanvasGridView::itemDeleted, [ = ](const DUrl & url) {
+        GridManager::instance()->remove(url.toLocalFile());
 
-            auto localFile = model()->getUrlByIndex(index).toLocalFile();
-            GridManager::instance()->remove(localFile);
+        auto index = model()->index(url);
+        if (d->currentCursorIndex == index) {
+            d->currentCursorIndex  = QModelIndex();
+            selectionModel()->setCurrentIndex(QModelIndex(), QItemSelectionModel::Clear);
+            setCurrentIndex(QModelIndex());
         }
-    });
 
-    connect(this->model(), &QAbstractItemModel::rowsRemoved,
-    this, [ = ](const QModelIndex & /*parent*/, int /*first*/, int /*last*/) {
-//        qDebug() << "rowsRemoved"<< GridManager::instance()->autoAlign();
         if (GridManager::instance()->autoAlign()) {
+            qDebug() << "reAlign on fileDeleted";
             GridManager::instance()->reAlign();
         }
         d->quickSync();
@@ -1710,7 +1733,7 @@ void CanvasGridView::initConnection()
 
     connect(this->model(), &QAbstractItemModel::dataChanged,
     this, [ = ](const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> &roles) {
-//        qDebug() << "dataChanged";
+        qDebug() << "dataChanged";
         if (d->resortCount > 0) {
             qDebug() << "dataChanged" << topLeft << bottomRight << roles;
             qDebug() << "resort desktop icons";
@@ -1774,6 +1797,7 @@ void CanvasGridView::initConnection()
             filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
         }
         model()->setFilters(filters);
+        qDebug() << "current filters" << filters;
     });
 
     /*update model and view when mount added*/
@@ -2064,7 +2088,7 @@ void CanvasGridView::handleContextMenuAction(int action)
 
         model()->setSortRole(sortRole, sortOrder);
         model()->sort();
-        emit sortRoleChanged(sortRole, sortOrder);
+        Q_EMIT sortRoleChanged(sortRole, sortOrder);
     }
 }
 

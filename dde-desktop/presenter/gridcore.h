@@ -39,6 +39,12 @@ inline QString positionKey(QPoint pos)
     return QString("%1_%2").arg(pos.x()).arg(pos.y());
 }
 
+/*!
+ * \brief qQPointLessThanKey sort by postition
+ * \param key1
+ * \param key2
+ * \return
+ */
 inline bool qQPointLessThanKey(const QPoint &key1, const QPoint &key2)
 {
     return (key1.x() < key2.x()) ||
