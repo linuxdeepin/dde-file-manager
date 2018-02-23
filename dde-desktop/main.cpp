@@ -73,8 +73,8 @@ int main(int argc, char *argv[])
     Config::instance();
 
     Desktop::instance()->loadData();
-    Desktop::instance()->loadView();
     Desktop::instance()->Show();
+    Desktop::instance()->loadView();
 
     DFMGlobal::installTranslator();
     DFMGlobal::autoLoadDefaultPlugins();
