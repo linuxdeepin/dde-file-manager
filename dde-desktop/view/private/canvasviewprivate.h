@@ -53,6 +53,14 @@ public:
         mousePressed = false;
         resortCount = 0;
         dodgeDelayTimer.setInterval(200);
+
+        if (qgetenv("_DDE_DESKTOP_DEBUG_SHOW_GRID") == "TRUE") {
+            _debug_show_grid = true;
+        }
+
+        if (qgetenv("_DDE_DESKTOP_DEBUG_PROFILER") == "TRUE") {
+            _debug_profiler = true;
+        }
     }
 
     void updateCanvasSize(const QSize &szSceeen, const QSize &szCanvas, const QMargins &geometryMargins, const QSize &szItem)
@@ -159,4 +167,9 @@ public:
 
 
     DBusDock            *dbusDock           = nullptr;
+
+    // debug
+    bool                _debug_show_grid    = false;
+    bool                _debug_profiler     = false;
+
 };

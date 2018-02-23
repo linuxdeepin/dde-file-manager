@@ -64,8 +64,6 @@
 #include "desktopitemdelegate.h"
 #include "dfmevent.h"
 
-//#define SHOW_GRID
-
 static inline bool isPersistFile(const DUrl &url)
 {
 #ifdef DDE_COMPUTER_TRASH
@@ -802,15 +800,15 @@ void CanvasGridView::dropEvent(QDropEvent *event)
 
 void CanvasGridView::paintEvent(QPaintEvent *event)
 {
-#ifdef DEBUG_PROFILER
-//    qDebug() << "start repaint" << event->rect()  << event->region().rectCount();
-//    auto currentTime = QTime::currentTime().msecsSinceStartOfDay();
-//    auto deta = currentTime - d->lastRepaintTime;
-//    if (deta < 500) {
+    if (d->_debug_profiler) {
+//        qDebug() << "start repaint" << event->rect()  << event->region().rectCount();
+//        auto currentTime = QTime::currentTime().msecsSinceStartOfDay();
+//        auto deta = currentTime - d->lastRepaintTime;
+//        if (deta < 500) {
 ////        return;
-//    }
-//    d->lastRepaintTime = currentTime;
-#endif
+//        }
+//        d->lastRepaintTime = currentTime;
+    }
 
     QPainter painter(viewport());
     auto repaintRect = event->rect();
@@ -829,27 +827,27 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
 
     painter.setBrush(QColor(255, 0, 0, 0));
 
-#ifdef SHOW_GRID
-    if (model()) {
-        for (int i = 0; i < d->colCount * d->rowCount; ++i) {
-            auto  pos = d->indexCoordinate(i).position();
-            auto x = pos.x() * d->cellWidth + d->viewMargins.left();
-            auto y = pos.y() * d->cellHeight + d->viewMargins.top();
+    if (d->_debug_show_grid) {
+        if (model()) {
+            for (int i = 0; i < d->colCount * d->rowCount; ++i) {
+                auto  pos = d->indexCoordinate(i).position();
+                auto x = pos.x() * d->cellWidth + d->viewMargins.left();
+                auto y = pos.y() * d->cellHeight + d->viewMargins.top();
 
-            auto rect =  QRect(x, y, d->cellWidth, d->cellHeight);
+                auto rect =  QRect(x, y, d->cellWidth, d->cellHeight);
 
-            int rowMode = pos.x() % 2;
-            int colMode = pos.y() % 2;
-            auto color = (colMode == rowMode) ? QColor(0, 0, 255, 32) : QColor(255, 0, 0, 32);
-            painter.fillRect(rect, color);
+                int rowMode = pos.x() % 2;
+                int colMode = pos.y() % 2;
+                auto color = (colMode == rowMode) ? QColor(0, 0, 255, 32) : QColor(255, 0, 0, 32);
+                painter.fillRect(rect, color);
 
 
-            if (pos == d->dragTargetGrid) {
-                painter.fillRect(rect, Qt::green);
+                if (pos == d->dragTargetGrid) {
+                    painter.fillRect(rect, Qt::green);
+                }
             }
         }
     }
-#endif
 
     DUrlList selecteds;
     if (d->dodgeAnimationing || d->startDodge) {
@@ -986,7 +984,6 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
             painter.restore();
         }
     }
-
 }
 
 void CanvasGridView::resizeEvent(QResizeEvent * /*event*/)
