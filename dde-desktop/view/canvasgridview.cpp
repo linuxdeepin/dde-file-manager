@@ -1769,17 +1769,16 @@ void CanvasGridView::initConnection()
     connect(this, &CanvasGridView::changeIconLevel,
             Presenter::instance(), &Presenter::OnIconLevelChanged);
 
-
     connect(d->dbusDock, &DBusDock::HideModeChanged,
     this, [ = ]() {
         if (3 == d->dbusDock->hideMode() || 1 == d->dbusDock->hideMode()) {
-            this->updateCanvas();
+            updateGeometry(Display::instance()->primaryScreen()->availableGeometry());
         }
     });
     connect(d->dbusDock, &DBusDock::PositionChanged,
     this, [ = ]() {
         if (3 == d->dbusDock->hideMode()) {
-            this->updateCanvas();
+            updateGeometry(Display::instance()->primaryScreen()->availableGeometry());
         }
     });
     connect(d->dbusDock, &DBusDock::IconSizeChanged,
