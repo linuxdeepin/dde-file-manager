@@ -97,13 +97,18 @@ public:
 
     double dodgeDuration() const;
 
-    void openUrl(const DUrl& url);
+    void openUrl(const DUrl &url);
 
 signals:
     void sortRoleChanged(int role, Qt::SortOrder order);
     void autoAlignToggled();
     void changeIconLevel(int iconLevel);
     void dodgeDurationChanged(double dodgeDuration);
+
+
+signals:
+    void itemDeleted(const DUrl &url);
+    void itemCreated(const DUrl &url);
 
 public slots:
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) Q_DECL_OVERRIDE;
@@ -140,6 +145,8 @@ private:
     void showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags);
     bool isIndexEmpty();
     QModelIndex moveCursorGrid(CursorAction cursorAction, Qt::KeyboardModifiers modifiers);
+
+    void updateHiddenItems();
 
     QScopedPointer<CanvasViewPrivate> d;
     double m_dragMoveTime;

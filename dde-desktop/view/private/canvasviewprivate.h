@@ -112,7 +112,7 @@ public:
 
     void quickSync()
     {
-        if (syncTimer->interval() > 1000) {
+        if (syncTimer->interval() > 5000) {
             syncTimer->setInterval(100);
             syncTimer->stop();
             syncTimer->start();
