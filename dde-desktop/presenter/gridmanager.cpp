@@ -402,7 +402,6 @@ public:
             for (auto &item : overlapItems) {
                 add(takeEmptyPos(), item);
             }
-
         }
     }
 
