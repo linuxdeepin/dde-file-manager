@@ -15,7 +15,7 @@
 class DFileSelectionModel : public QItemSelectionModel
 {
 public:
-    explicit DFileSelectionModel(QAbstractItemModel *model = 0);
+    explicit DFileSelectionModel(QAbstractItemModel *model = nullptr);
     explicit DFileSelectionModel(QAbstractItemModel *model, QObject *parent);
 
     bool isSelected(const QModelIndex &index) const;
