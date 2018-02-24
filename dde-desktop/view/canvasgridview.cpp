@@ -409,6 +409,7 @@ void CanvasGridView::mouseMoveEvent(QMouseEvent *event)
     }
 
     if (d->showSelectRect) {
+        setState(DragSelectingState);
         auto command = QItemSelectionModel::Current | QItemSelectionModel::ClearAndSelect;
         setSelection(selectRect, command, true);
     }
