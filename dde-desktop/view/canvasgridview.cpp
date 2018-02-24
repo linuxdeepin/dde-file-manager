@@ -113,7 +113,7 @@ QRect CanvasGridView::visualRect(const QModelIndex &index) const
 
     auto x = gridPos.x() * d->cellWidth + d->viewMargins.left();
     auto y = gridPos.y() * d->cellHeight + d->viewMargins.top();
-    return QRect(x, y, d->cellWidth, d->cellHeight).marginsRemoved(d->cellMargins);
+    return QRect(x, y, d->cellWidth, d->cellHeight);
 }
 
 QModelIndex CanvasGridView::indexAt(const QPoint &point) const
@@ -868,7 +868,6 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
                 auto color = (colMode == rowMode) ? QColor(0, 0, 255, 32) : QColor(255, 0, 0, 32);
                 painter.fillRect(rect, color);
 
-
                 if (pos == d->dragTargetGrid) {
                     painter.fillRect(rect, Qt::green);
                 }
@@ -939,6 +938,7 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
             continue;
         }
         option.rect = visualRect(index);
+
         bool needflash = false;
         for (auto &rr : event->region().rects())
             if (rr.intersects(option.rect)) {
@@ -956,7 +956,7 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
             continue;
         }
 
-        option.rect = option.rect.marginsRemoved(QMargins(2, 0, 2, 0));
+        option.rect = option.rect.marginsRemoved(d->cellMargins);
         option.state = state;
         if (selections && selections->isSelected(index)) {
             option.state |= QStyle::State_Selected;
@@ -991,7 +991,7 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
             auto localFile = animatingItem;
             auto index = model()->index(DUrl::fromLocalFile(localFile));
             if (index.isValid()) {
-                option.rect = visualRect(index);
+                option.rect = visualRect(index).marginsRemoved(d->cellMargins);
             }
 
             auto gridPos = d->dodgeTargetGrid->pos(localFile);
@@ -1111,6 +1111,11 @@ void CanvasGridView::setItemDelegate(DesktopItemDelegate *delegate)
 double CanvasGridView::dodgeDuration() const
 {
     return d->dodgeDuration;
+}
+
+QMargins CanvasGridView::cellMargins() const
+{
+    return d->cellMargins;
 }
 
 void CanvasGridView::openUrl(const DUrl &url)
@@ -1347,9 +1352,7 @@ bool CanvasGridView::edit(const QModelIndex &index, QAbstractItemView::EditTrigg
             return true;
         }
     }
-
     bool tmp = QAbstractItemView::edit(index, trigger, event);
-
     if (tmp) {
         d->fileViewHelper->triggerEdit(index);
     }
@@ -1862,6 +1865,13 @@ void CanvasGridView::updateCanvas()
     GridManager::instance()->updateGridSize(d->colCount, d->rowCount);
 
     updateEditorGeometries();
+
+    auto expandedWidget = reinterpret_cast<QWidget *>(itemDelegate()->expandedIndexWidget());
+    if (expandedWidget) {
+        QMargins margins(-1, d->cellMargins.top(), 0, 0);
+        expandedWidget ->setContentsMargins(margins);
+    }
+
     update();
 }
 

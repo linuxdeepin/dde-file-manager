@@ -28,6 +28,8 @@
 #include <dfileviewhelper.h>
 
 #include "private/dstyleditemdelegate_p.h"
+#include "canvasgridview.h"
+#include "canvasviewhelper.h"
 
 DesktopItemDelegate::DesktopItemDelegate(DFileViewHelper *parent) :
     DIconItemDelegate(parent)
@@ -43,6 +45,14 @@ DesktopItemDelegate::DesktopItemDelegate(DFileViewHelper *parent) :
 DesktopItemDelegate::~DesktopItemDelegate()
 {
 
+}
+
+QWidget *DesktopItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &opt, const QModelIndex &index) const
+{
+    auto widget = DIconItemDelegate::createEditor(parent, opt, index);
+    auto helper = qobject_cast<CanvasViewHelper *>(this->parent());
+    widget->setContentsMargins(-1, helper->parent()->cellMargins().top(), 0, 0);
+    return widget;
 }
 
 QString DesktopItemDelegate::iconSizeLevelDescription(int i) const
