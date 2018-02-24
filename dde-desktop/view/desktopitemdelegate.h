@@ -22,8 +22,9 @@ class DesktopItemDelegate : public DIconItemDelegate
     Q_OBJECT
 public:
     explicit DesktopItemDelegate(DFileViewHelper *parent);
-    ~DesktopItemDelegate();
+    virtual ~DesktopItemDelegate();
 
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const Q_DECL_OVERRIDE;
     QString iconSizeLevelDescription(int i) const;
     int iconSizeLevel() const Q_DECL_OVERRIDE;
     int minimumIconSizeLevel() const Q_DECL_OVERRIDE;

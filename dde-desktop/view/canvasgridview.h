@@ -97,6 +97,7 @@ public:
 
     void openUrl(const DUrl &url);
 
+    QMargins cellMargins() const;
 signals:
     void sortRoleChanged(int role, Qt::SortOrder order);
     void autoAlignToggled();

@@ -13,6 +13,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QBoxLayout>
 #include <QTextEdit>
 #include <QTextBlock>
 #include <QGraphicsOpacityEffect>
@@ -46,7 +47,12 @@ FileIconItem::FileIconItem(QWidget *parent) :
     edit->setAcceptRichText(false);
     edit->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    AnchorsBase::setAnchor(icon, Qt::AnchorHorizontalCenter, this, Qt::AnchorHorizontalCenter);
+    auto vlayout = new QVBoxLayout;
+    vlayout->setContentsMargins(0, 0, 0, 0);
+    setLayout(vlayout);
+
+    vlayout->addWidget(icon, 0, Qt::AlignTop | Qt::AlignHCenter);
+
     AnchorsBase::setAnchor(edit, Qt::AnchorTop, icon, Qt::AnchorBottom);
     AnchorsBase::setAnchor(edit, Qt::AnchorHorizontalCenter, icon, Qt::AnchorHorizontalCenter);
 
@@ -71,17 +77,20 @@ FileIconItem::FileIconItem(QWidget *parent) :
         QVector<uint> list = text.toUcs4();
         int cursor_pos = edit->textCursor().position() - text_length + text.length();
 
-        while (text.toUtf8().size() > MAX_FILE_NAME_CHAR_COUNT) {
+        while (text.toUtf8().size() > MAX_FILE_NAME_CHAR_COUNT)
+        {
             list.removeAt(--cursor_pos);
 
             text = QString::fromUcs4(list.data(), list.size());
         }
 
-        if (text.count() != old_text.count()) {
+        if (text.count() != old_text.count())
+        {
             edit->setPlainText(text);
         }
 
-        if (editTextStackCurrentItem() != text) {
+        if (editTextStackCurrentItem() != text)
+        {
             pushItemToEditTextStack(text);
         }
 
@@ -89,7 +98,8 @@ FileIconItem::FileIconItem(QWidget *parent) :
 
         cursor.movePosition(QTextCursor::Start);
 
-        do {
+        do
+        {
             QTextBlockFormat format = cursor.blockFormat();
 
             format.setLineHeight(text_line_height, QTextBlockFormat::FixedHeight);
@@ -116,7 +126,7 @@ void FileIconItem::setOpacity(qreal opacity)
         }
 
         return;
-    } else if(!opacityEffect) {
+    } else if (!opacityEffect) {
         opacityEffect = new QGraphicsOpacityEffect(this);
         setGraphicsEffect(opacityEffect);
     }
@@ -136,8 +146,9 @@ QColor FileIconItem::borderColor() const
 
 void FileIconItem::setBorderColor(QColor borderColor)
 {
-    if (m_borderColor == borderColor)
+    if (m_borderColor == borderColor) {
         return;
+    }
 
     m_borderColor = borderColor;
     emit borderColorChanged(borderColor);
@@ -149,11 +160,12 @@ void FileIconItem::popupEditContentMenu()
 {
     QMenu *menu = edit->createStandardContextMenu();
 
-    if (!menu)
+    if (!menu) {
         return;
+    }
 
-    QAction *undo_action = menu->findChild<QAction*>(QStringLiteral("edit-undo"));
-    QAction *redo_action = menu->findChild<QAction*>(QStringLiteral("edit-redo"));
+    QAction *undo_action = menu->findChild<QAction *>(QStringLiteral("edit-undo"));
+    QAction *redo_action = menu->findChild<QAction *>(QStringLiteral("edit-redo"));
 
     undo_action->setEnabled(editTextStackCurrentIndex > 0);
     redo_action->setEnabled(editTextStackCurrentIndex < editTextStack.count() - 1);
@@ -191,10 +203,10 @@ bool FileIconItem::event(QEvent *ee)
 
             return true;
         }
-    } else if(ee->type() == QEvent::Resize) {
+    } else if (ee->type() == QEvent::Resize) {
         updateEditorGeometry();
-
-        resize(width(), icon->height() + edit->height() + ICON_MODE_ICON_SPACING);
+        int marginsHeight = contentsMargins().top();
+        resize(width(), icon->height() + edit->height() + ICON_MODE_ICON_SPACING + marginsHeight);
     } else if (ee->type() == QEvent::FontChange) {
         edit->setFont(font());
     }
@@ -206,17 +218,17 @@ bool FileIconItem::eventFilter(QObject *obj, QEvent *ee)
 {
     switch (ee->type()) {
     case QEvent::Resize:
-        if(obj == icon || obj == edit) {
+        if (obj == icon || obj == edit) {
             resize(width(), icon->height() + edit->height() + ICON_MODE_ICON_SPACING);
         }
 
         break;
     case QEvent::KeyPress: {
-        if(obj != edit) {
-           return QFrame::eventFilter(obj, ee);
+        if (obj != edit) {
+            return QFrame::eventFilter(obj, ee);
         }
 
-        QKeyEvent *event = static_cast<QKeyEvent*>(ee);
+        QKeyEvent *event = static_cast<QKeyEvent *>(ee);
 
         if (event->key() != Qt::Key_Enter && event->key() != Qt::Key_Return) {
             if (event == QKeySequence::Undo) {
@@ -233,7 +245,7 @@ bool FileIconItem::eventFilter(QObject *obj, QEvent *ee)
             return true;
         }
 
-        if(!(event->modifiers() & Qt::ShiftModifier)) {
+        if (!(event->modifiers() & Qt::ShiftModifier)) {
             ee->accept();
             parentWidget()->setFocus();
 
@@ -269,8 +281,9 @@ void FileIconItem::updateEditorGeometry()
     if (edit->isReadOnly()) {
         int text_height = edit->document()->size().height();
 
-        if (edit->isVisible())
+        if (edit->isVisible()) {
             edit->setFixedHeight(text_height);
+        }
     } else {
         edit->setFixedHeight(fontMetrics().height() * 3 + TEXT_PADDING * 2);
     }
@@ -282,11 +295,14 @@ void FileIconItem::updateStyleSheet()
 
     base.append("FileIconItem QTextEdit {color: %4}");
     base = base.arg(palette().color(QPalette::Background).name(QColor::HexArgb))
-            .arg(palette().color(QPalette::BrightText).name(QColor::HexArgb))
-            .arg(m_borderColor.name(QColor::HexArgb))
-            .arg(palette().color(QPalette::Text).name(QColor::HexArgb));
+           .arg(palette().color(QPalette::BrightText).name(QColor::HexArgb))
+           .arg(m_borderColor.name(QColor::HexArgb))
+           .arg(palette().color(QPalette::Text).name(QColor::HexArgb));
 
+    // WARNING: setStyleSheet will clean margins!!!!!!
+    auto saveContent = contentsMargins();
     setStyleSheet(base);
+    setContentsMargins(saveContent);
 }
 
 QString FileIconItem::editTextStackCurrentItem() const
@@ -312,8 +328,9 @@ QString FileIconItem::editTextStackAdvance()
 
 void FileIconItem::pushItemToEditTextStack(const QString &item)
 {
-    if (disableEditTextStack)
+    if (disableEditTextStack) {
         return;
+    }
 
     editTextStack.remove(editTextStackCurrentIndex + 1, editTextStack.count() - editTextStackCurrentIndex - 1);
     editTextStack.push(item);
