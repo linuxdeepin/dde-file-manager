@@ -694,7 +694,9 @@ bool FileUtils::isFileRunnable(const QString &path)
         mimetype = getFileMimetype(path);
     }
 
-    if (mimetype == "application/x-executable" || mimetype == "application/x-sharedlib") {
+    if (mimetype == "application/x-executable" \
+        || mimetype == "application/x-sharedlib" \
+        || mimetype == "application/x-iso9660-appimage") {
         return isFileExecutable(_path);
     }
 
