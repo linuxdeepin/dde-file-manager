@@ -299,6 +299,7 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
         return newIndex;
     }
 
+    qDebug() << selectedUrls();
     return current;
 }
 
@@ -330,8 +331,7 @@ void CanvasGridView::updateHiddenItems()
 
 QModelIndex CanvasGridView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
 {
-//    qDebug() << modifiers <<  d->currentCursorIndex;
-
+    // Do not allow move when hold ctrl
     if (modifiers == Qt::ControlModifier) {
         return d->currentCursorIndex;
     }
@@ -350,7 +350,6 @@ QModelIndex CanvasGridView::moveCursor(QAbstractItemView::CursorAction cursorAct
     }
 
     QModelIndex index = moveCursorGrid(cursorAction, modifiers);
-
 
     if (index.isValid()) {
         d->currentCursorIndex = index;
@@ -1964,17 +1963,17 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
     bool ctrlShiftPress = DFMGlobal::keyShiftIsPressed() || DFMGlobal::keyCtrlIsPressed();
     if (ctrlShiftPress) {
         oldSelection = selectionModel()->selection();
-        oldSelection.clear();//###: here, I clear the file is selected.
     }
 
     // select by  key board, so mouse not pressed
     if (!d->mousePressed && d->currentCursorIndex.isValid()) {
         QItemSelectionRange selectionRange(d->currentCursorIndex);
-        oldSelection.push_back(selectionRange);
+        if (!oldSelection.contains(d->currentCursorIndex)) {
+            oldSelection.push_back(selectionRange);
+        }
         QAbstractItemView::selectionModel()->select(oldSelection, command);
         return;
     }
-
 
     if (d->mousePressed && ctrlShiftPress) {
         auto clickIndex = indexAt(d->lastPos);
@@ -2012,7 +2011,9 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
             for (const QRect &r : list) {
                 if (selectRect.intersects(r)) {
                     QItemSelectionRange selectionRange(index);
-                    rectSelection.push_back(selectionRange);
+                    if (!rectSelection.contains(index)) {
+                        rectSelection.push_back(selectionRange);
+                    }
                     if (DFMGlobal::keyCtrlIsPressed() && oldSelection.contains(index)) {
                         toRemoveSelection.push_back(selectionRange);
                     }
@@ -2026,7 +2027,13 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
     }
 
     if (command != QItemSelectionModel::Deselect) {
-        oldSelection += rectSelection;
+        // Remove dump select
+        for (auto &sel : rectSelection) {
+            for (auto &index : sel.indexes())
+                if (!oldSelection.contains(index)) {
+                    oldSelection += rectSelection;
+                }
+        }
         for (auto toRemove : toRemoveSelection) {
             oldSelection.removeAll(toRemove);
         }

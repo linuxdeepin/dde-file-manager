@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
     // Fixed the locale codec to utf-8
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
-    if (QFile("/usr/lib/dde-desktop/plugins/platform/libdxcb.so").exists()){
+    if (QFile("/usr/lib/dde-desktop/plugins/platform/libdxcb.so").exists()) {
         qDebug() << "load dxcb from local path: /usr/lib/dde-desktop/plugins/platform/libdxcb.so";
         qputenv("QT_QPA_PLATFORM_PLUGIN_PATH", "/usr/lib/dde-desktop/plugins/platform");
     }
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 
     app.loadTranslator();
 
-    qDebug() << "start "<< app.applicationName() << app.applicationVersion();
+    qDebug() << "start " << app.applicationName() << app.applicationVersion();
 
     QDBusConnection conn = QDBusConnection::sessionBus();
 
@@ -62,9 +62,9 @@ int main(int argc, char *argv[])
     }
 
     if (!conn.registerObject(DesktopServicePath, Desktop::instance(),
-            QDBusConnection::ExportAllSlots |
-            QDBusConnection::ExportAllSignals |
-            QDBusConnection::ExportAllProperties)) {
+                             QDBusConnection::ExportAllSlots |
+                             QDBusConnection::ExportAllSignals |
+                             QDBusConnection::ExportAllProperties)) {
         qDebug() << "registerObject Failed" << conn.lastError();
         exit(0x0003);
     }
