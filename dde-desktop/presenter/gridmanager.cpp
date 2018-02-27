@@ -353,7 +353,6 @@ public:
             m_overlapItems = sortItems;
         } else {
             // find start pos
-            qDebug() << emptyCellCount << outCellCount << m_overlapItems.length();
             auto newEmptyCellCount = emptyCellCount - outCellCount + m_overlapItems.length();
             QVector<int> keepPosIndex;
             QVector<QString> keepItems;
@@ -392,7 +391,6 @@ public:
                 }
             }
 
-            qDebug() << lastEmptyPosIndex;
             for (int i = 0; i < nokeepItems.length(); ++i) {
                 add(gridPosAt(lastEmptyPosIndex), nokeepItems.value(i));
                 lastEmptyPosIndex++;
@@ -556,7 +554,9 @@ bool GridManager::move(const QStringList &selecteds, const QString &current, int
     }
 
     for (int i = 0; i < selecteds.length(); ++i) {
-        remove(selecteds.value(i));
+        if (contains(selecteds.value(i))) {
+            remove(selecteds.value(i));
+        }
     }
     for (int i = 0; i < selecteds.length(); ++i) {
         add(destPosList.value(i), selecteds.value(i));
