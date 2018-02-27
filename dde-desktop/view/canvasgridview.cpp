@@ -1118,6 +1118,11 @@ QMargins CanvasGridView::cellMargins() const
     return d->cellMargins;
 }
 
+QSize CanvasGridView::cellSize() const
+{
+    return QSize(d->cellWidth, d->cellHeight);
+}
+
 void CanvasGridView::openUrl(const DUrl &url)
 {
     DFileService::instance()->openFile(this, url);
@@ -1238,6 +1243,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
             auto newLoaclFile = toFileUrl.toLocalFile();
             if (!GridManager::instance()->contains(newLoaclFile)) {
                 if (findOldPos) {
+                    GridManager::instance()->remove(oldLocalFile);
                     GridManager::instance()->add(oldPos, newLoaclFile);
                 } else {
                     Q_EMIT itemCreated(toFileUrl);
@@ -1823,7 +1829,6 @@ void CanvasGridView::updateCanvas()
     auto inRect = d->canvasRect;
 
     auto itemSize = itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex());
-    qDebug() << itemSize;
 
     QMargins geometryMargins;
     geometryMargins.setLeft(inRect.left() - outRect.left());
@@ -1868,7 +1873,8 @@ void CanvasGridView::updateCanvas()
 
     auto expandedWidget = reinterpret_cast<QWidget *>(itemDelegate()->expandedIndexWidget());
     if (expandedWidget) {
-        QMargins margins(-1, d->cellMargins.top(), 0, 0);
+        int offset = -1 * ((d->cellWidth - itemSize.width()) % 2);
+        QMargins margins(offset, d->cellMargins.top(), 0, 0);
         expandedWidget ->setContentsMargins(margins);
     }
 
@@ -1923,7 +1929,7 @@ inline QRect CanvasGridView::gridRectAt(const QPoint &pos) const
 inline QList<QRect> CanvasGridView::itemPaintGeomertys(const QModelIndex &index) const
 {
     QStyleOptionViewItem option = viewOptions();
-    option.rect = visualRect(index);
+    option.rect = visualRect(index).marginsRemoved(d->cellMargins);
     return itemDelegate()->paintGeomertys(option, index);
 }
 

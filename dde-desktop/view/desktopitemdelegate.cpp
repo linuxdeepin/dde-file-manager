@@ -42,7 +42,10 @@ QWidget *DesktopItemDelegate::createEditor(QWidget *parent, const QStyleOptionVi
 {
     auto widget = DIconItemDelegate::createEditor(parent, opt, index);
     auto helper = qobject_cast<CanvasViewHelper *>(this->parent());
-    widget->setContentsMargins(-1, helper->parent()->cellMargins().top(), 0, 0);
+    auto itemSize = sizeHint(QStyleOptionViewItem(), QModelIndex());
+    auto cellSize = helper->parent()->cellSize();
+    int offset = -1 * ((cellSize.width() - itemSize.width()) % 2);
+    widget->setContentsMargins(offset, helper->parent()->cellMargins().top(), 0, 0);
     return widget;
 }
 

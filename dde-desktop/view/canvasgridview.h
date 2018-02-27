@@ -98,12 +98,13 @@ public:
     void openUrl(const DUrl &url);
 
     QMargins cellMargins() const;
+    QSize cellSize() const;
+
 signals:
     void sortRoleChanged(int role, Qt::SortOrder order);
     void autoAlignToggled();
     void changeIconLevel(int iconLevel);
     void dodgeDurationChanged(double dodgeDuration);
-
 
 signals:
     void itemDeleted(const DUrl &url);
