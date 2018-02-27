@@ -52,15 +52,24 @@
 #include <sys/stat.h>
 #include <sys/syscall.h>
 
-//DFM_USE_NAMESPACE
+#include "sort.h"
 
 int FileJob::FileJobCount = 0;
 DUrlList FileJob::CopyingFiles = {};
 qint64 FileJob::Msec_For_Display = 1000;
-qint64 FileJob::Data_Block_Size = 65536;
+qint64 FileJob::Data_Block_Size = 139624;
 qint64 FileJob::Data_Flush_Size = 16777216;
 
 #define IS_IO_ERROR(__error, KIND) (((__error)->domain == G_IO_ERROR && (__error)->code == G_IO_ERROR_ ## KIND))
+
+
+static inline char * ptr_align (char const *ptr, size_t alignment)
+{
+  char const *p0 = ptr;
+  char const *p1 = p0 + alignment - 1;
+  return (char *) (p1 - (size_t) p1 % alignment);
+}
+
 
 bool FileJob::setDirPermissions(const QString &scrPath, const QString& tarDirPath)
 {
@@ -105,6 +114,7 @@ FileJob::~FileJob()
     close(m_filedes[1]);
     qDebug() << "close pipe";
 #endif
+    free(m_buffer);
 }
 
 void FileJob::setStatus(FileJob::Status status)
@@ -802,9 +812,6 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
 #endif
 
 
-
-    qDebug() << "copy file by qtio" << srcFile << tarDir << isMoved;
-
     if (checkFat32FileOutof4G(srcFile, tarDir))
         return false;
 
@@ -860,7 +867,10 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
     int in_fd = 0;
     int out_fd = 0;
 #else
-    char block[Data_Block_Size];
+    if (!m_bufferAlign){
+        m_buffer = (char *) malloc(Data_Block_Size + getpagesize());
+        m_bufferAlign = ptr_align(m_buffer, getpagesize());
+    }
 #endif
 
     while(true)
@@ -921,16 +931,10 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
                         return false;
                     }
                 }
+                posix_fadvise (from.handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
 
                 CopyingFiles.append(DUrl::fromLocalFile(m_tarPath));
 
-                if (!FileUtils::isGvfsMountFile(to.fileName())){
-                    if (!to.setPermissions(from.permissions())){
-                        qDebug() << "Set permissions from " << srcFile << "to" << m_tarPath << "failed";
-                    };
-                }else{
-                    qWarning() << "Set permissions from file" << srcFile << "to vfs file" << m_tarPath << "failed";
-                }
                 m_status = Run;
  #ifdef SPLICE_CP
                 in_fd = from.handle();
@@ -996,37 +1000,30 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
                     }
                 }
 #else
-                qint64 inBytes = from.read(block, Data_Block_Size);
+                qint64 inBytes = from.read(m_bufferAlign, Data_Block_Size);
 
                 if(inBytes == 0)
                 {
                     if ((m_totalSize - m_bytesCopied) <= 1){
                         m_bytesCopied = m_totalSize;
                     }
-                    if (from.size() == to.size()){
-                        int fsyncRet = fsync(to.handle());
-                        if(fsyncRet == -1)
-                        {
-                            //Operation failed
-                            qWarning() << "fsync data to disk failed";
-                        }
-                        to.flush();
-                        to.close();
-                        from.close();
-                        if (targetPath){
-                            *targetPath = m_tarPath;
-                        }
-                        return true;
-                    }else{
-                        qWarning() << m_srcPath << "from size:" << from.size() << FileUtils::formatSize(from.size());
-                        qWarning() << m_tarPath << "to size:" << to.size() << FileUtils::formatSize(to.size());
+                    to.close();
+                    from.close();
+
+                    if (!to.setPermissions(from.permissions())){
+                        qDebug() << "Set permissions from " << srcFile << "to" << m_tarPath << "failed";
                     }
+
+                    if (targetPath){
+                        *targetPath = m_tarPath;
+                    }
+                    return true;
                 }
 
                 qint64 availableBytes = inBytes;
 
                 while (true) {
-                    qint64 writtenBytes = to.write(block, availableBytes);
+                    qint64 writtenBytes = to.write(m_bufferAlign, availableBytes);
                     availableBytes = availableBytes - writtenBytes;
                     if (writtenBytes == 0 && availableBytes == 0){
                         break;
@@ -1035,15 +1032,6 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
 
                 m_bytesCopied += inBytes;
                 m_bytesPerSec += inBytes;
-
-                if (m_bytesCopied % (Data_Flush_Size) == 0){
-                    int fsyncRet = fsync(to.handle());
-                    if(fsyncRet == -1)
-                    {
-                        //Operation failed
-                        qWarning() << "fsync data to disk failed";
-                    }
-                }
 #endif
                 break;
             }
@@ -1082,7 +1070,7 @@ void FileJob::showProgress(goffset current_num_bytes, goffset total_num_bytes, g
 
 bool FileJob::copyFileByGio(const QString &srcFile, const QString &tarDir, bool isMoved, QString *targetPath)
 {
-    qDebug() << "copy file by gvfs" << srcFile << tarDir;
+//    qDebug() << "copy file by gvfs" << srcFile << tarDir;
 
     if (checkFat32FileOutof4G(srcFile, tarDir))
         return false;
@@ -1320,47 +1308,46 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
             }
             targetDir.setPath(m_tarPath);
 
-            if (!FileUtils::isGvfsMountFile(targetDir.path())){
-                bool isSetPermissionsSuccess = setDirPermissions(srcDir, targetDir.path());
-                if (!isSetPermissionsSuccess){
-                    qWarning() << "Set Permissions of "<< m_tarPath << "same as" <<  srcDir << "failed";
-//                    return false;
-                }
-            }
             m_status = Run;
             break;
         }
         case Run:
         {
-            QDirIterator tmp_iterator(sourceDir.absolutePath(),
-                                      QDir::AllEntries | QDir::System
-                                      | QDir::NoDotAndDotDot
-                                      | QDir::Hidden);
 
-            while (tmp_iterator.hasNext()) {
-
-                if (m_isAborted)
-                    break;
-
-                tmp_iterator.next();
-                const QFileInfo fileInfo = tmp_iterator.fileInfo();
-                if (fileInfo.isSymLink()){
-                    handleSymlinkFile(fileInfo.filePath(), targetDir.absolutePath());
-                }else if(!fileInfo.isSymLink() && fileInfo.isDir()){
-                    if(!copyDir(fileInfo.filePath(), targetDir.absolutePath(), isMoved)){
-                        qDebug() << "coye dir" << fileInfo.filePath() << "failed";
+            char *name_space;
+            char *namep;
+            name_space = savedir(srcDir.toStdString().data());
+            namep = name_space;
+            while (*namep != '\0')
+            {
+                QString srcFile = QString("%1/%2").arg(srcDir, QString(namep));
+                QFileInfo srcFileInfo(srcFile);
+                if (srcFileInfo.isSymLink()){
+                    handleSymlinkFile(srcFile, targetDir.absolutePath());
+                }else if(!srcFileInfo.isSymLink() && srcFileInfo.isDir()){
+                    if(!copyDir(srcFile, targetDir.absolutePath(), isMoved)){
+                        qDebug() << "coye dir" << srcFile << "failed";
                     }
                 }else
                 {
-                    if(!copyFile(fileInfo.filePath(), targetDir.absolutePath(), isMoved))
+                    if(!copyFile(srcFile, targetDir.absolutePath(), isMoved))
                     {
-                        qDebug() << "coye file" << fileInfo.filePath() << "failed";
+                        qDebug() << "coye file" << srcFile << "failed";
                     }
                 }
+                namep += strlen (namep) + 1;
             }
+           free (name_space);
 
             if (targetPath)
                 *targetPath = targetDir.absolutePath();
+
+            if (!FileUtils::isGvfsMountFile(targetDir.path())){
+                bool isSetPermissionsSuccess = setDirPermissions(srcDir, targetDir.path());
+                if (!isSetPermissionsSuccess){
+                    qWarning() << "Set Permissions of "<< m_tarPath << "same as" <<  srcDir << "failed";
+                }
+            }
 
             return true;
         }
@@ -1415,15 +1402,15 @@ bool FileJob::moveFile(const QString &srcFile, const QString &tarDir, QString *t
     }
 #endif
 
-    qDebug() << "moveFile start:" << srcFile << tarDir << targetPath;
+//    qDebug() << "moveFile start:" << srcFile << tarDir << targetPath;
     bool ret = handleMoveJob(srcFile, tarDir, targetPath);
-    qDebug() << "moveFile end:" << srcFile << tarDir << ret << targetPath;
+//    qDebug() << "moveFile end:" << srcFile << tarDir << ret << targetPath;
     return ret;
 }
 
 bool FileJob::moveFileByGio(const QString &srcFile, const QString &tarDir, QString *targetPath)
 {
-    qDebug() << "move file by gvfs" << srcFile << tarDir;
+//    qDebug() << "move file by gvfs" << srcFile << tarDir;
     QString srcPath(srcFile);
 
     QFileInfo scrFileInfo(srcPath);
@@ -1573,7 +1560,7 @@ bool FileJob::moveDir(const QString &srcDir, const QString &tarDir, QString *tar
 
 bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QString *targetPath)
 {
-    qDebug() << srcPath << tarDir;
+//    qDebug() << srcPath << tarDir;
 
     m_isSkip = false;
 
@@ -1948,10 +1935,9 @@ bool FileJob::deleteFile(const QString &file)
     }
 #endif
 
-    qDebug() << "delete file by qtio" << file;
+//    qDebug() << "delete file by qtio" << file;
 
     if(QFile::remove(file)){
-        qDebug() << " delete file:" << file << "successfully";
         return true;
     }
     else
@@ -1965,7 +1951,7 @@ bool FileJob::deleteFile(const QString &file)
 
 bool FileJob::deleteFileByGio(const QString &srcFile)
 {
-    qDebug() << "delete file by gvfs" << srcFile;
+//    qDebug() << "delete file by gvfs" << srcFile;
     GFile *source;
     GError* error = NULL;
 
@@ -2017,10 +2003,10 @@ bool FileJob::deleteDir(const QString &dir)
             }
         }
     }
-    qDebug() << "delete dir:" <<sourceDir.path();
+//    qDebug() << "delete dir:" <<sourceDir.path();
     if (!sourceDir.rmdir(QDir::toNativeSeparators(sourceDir.path()))) {
         qDebug() << "Unable to remove dir:" << sourceDir.path();
-        emit("Unable to remove dir: " + sourceDir.path());
+//        emit("Unable to remove dir: " + sourceDir.path());
 //        emit fileSignalManager->requestShowNoPermissionDialog(DUrl::fromLocalFile(dir));
         m_noPermissonUrls << DUrl::fromLocalFile(dir);
         return false;
