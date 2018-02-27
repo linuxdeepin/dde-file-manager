@@ -206,6 +206,9 @@ private:
 
     DUrlList m_noPermissonUrls;
 
+    char* m_bufferAlign = nullptr;
+    char* m_buffer = nullptr;
+
     bool copyFile(const QString &srcFile, const QString &tarDir, bool isMoved=false, QString *targetPath = 0);
     static void showProgress(goffset current_num_bytes, goffset total_num_bytes, gpointer user_data);
     bool copyFileByGio(const QString &srcFile, const QString &tarDir, bool isMoved=false, QString *targetPath = 0);
