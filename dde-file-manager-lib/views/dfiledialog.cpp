@@ -74,7 +74,7 @@ DFileDialog::DFileDialog(QWidget *parent)
 {
     d_ptr->view = qobject_cast<DFileView*>(DFileManagerWindow::getFileView()->widget());
 
-    overrideWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::Dialog);
+    setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::Dialog);
 
     if (titlebar())
         titlebar()->setDisableFlags(Qt::WindowSystemMenuHint);
