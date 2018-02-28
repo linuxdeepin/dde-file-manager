@@ -527,7 +527,7 @@ DTaskDialog::DTaskDialog(QWidget *parent) :
 }
 
 void DTaskDialog::initUI(){
-    setWindowFlags(windowFlags() &~ Qt::WindowSystemMenuHint);
+    setWindowFlags((windowFlags() &~ Qt::WindowSystemMenuHint & ~Qt::Dialog) | Qt::Window);
     setFixedWidth(m_defaultWidth);
 
     m_titlebar = new DTitlebar(this);
