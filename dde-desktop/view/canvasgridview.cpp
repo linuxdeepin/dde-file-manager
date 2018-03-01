@@ -855,6 +855,7 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
     painter.setBrush(QColor(255, 0, 0, 0));
 
     if (d->_debug_show_grid) {
+        painter.save();
         if (model()) {
             for (int i = 0; i < d->colCount * d->rowCount; ++i) {
                 auto  pos = d->indexCoordinate(i).position();
@@ -871,8 +872,11 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
                 if (pos == d->dragTargetGrid) {
                     painter.fillRect(rect, Qt::green);
                 }
+                painter.setPen(QPen(Qt::red, 2));
+                painter.drawText(rect, QString("%1-%2").arg(pos.x()).arg(pos.y()));
             }
         }
+        painter.restore();
     }
 
     DUrlList selecteds;
@@ -1180,25 +1184,8 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
         Q_UNUSED(name);
 //        qDebug() << "fileCreated" << rootPath << name;
         const QString &filePath = rootPath + QDir::separator() + name;
-        // NOTE: ???
-        if (filePath.endsWith(".desktop")) {
-            d->filesystemWatcher->addPath(filePath);
-        }
 
         Q_EMIT itemCreated(DUrl::fromLocalFile(filePath));
-        update();
-    });
-
-    connect(d->filesystemWatcher, &DFileSystemWatcher::fileClosed,
-    this, [ = ](const QString & path, const QString & name) {
-        Q_UNUSED(path);
-        Q_UNUSED(name);
-//        qDebug() << "fileClosed" << path << name;
-        auto index = model()->index(DUrl::fromLocalFile(path));
-        auto info = model()->fileInfo(index);
-        if (info) {
-            info->refresh();
-        }
         update();
     });
 
@@ -1206,10 +1193,15 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     this, [ = ](const QString & path, const QString & name) {
         Q_UNUSED(path);
         Q_UNUSED(name);
-//        qDebug() << "fileDeleted" << path << name;
-        d->filesystemWatcher->removePath(path);
+        auto fileUrl = DUrl::fromLocalFile(QString("%1/%2").arg(path).arg(name));
+        auto localFile = fileUrl.toLocalFile();
+//        qDebug() << "fileDeleted" << path << name << localFile;
 
-        Q_EMIT itemDeleted(DUrl::fromLocalFile(path));
+        if (localFile != currentUrl().toLocalFile()) {
+            d->filesystemWatcher->removePath(localFile);
+        }
+
+        Q_EMIT itemDeleted(fileUrl);
         update();
     });
 
@@ -1220,7 +1212,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
         Q_UNUSED(toName);
 //        qDebug() << "fileMoved" << fromPath << fromName << toPath << toName;
 
-        auto fromFileUrl = DUrl::fromLocalFile(QString("%1/%2").arg(fromPath, fromName));
+        auto fromFileUrl = DUrl::fromLocalFile(QString("%1/%2").arg(fromPath).arg(fromName));
         auto oldLocalFile = fromFileUrl.toLocalFile();
 
         bool findOldPos = false;
@@ -1239,7 +1231,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
         if (!findNewPos) {
             Q_EMIT itemDeleted(fromFileUrl);
         } else {
-            auto toFileUrl = DUrl::fromLocalFile(QString("%1/%2").arg(toPath, toName));
+            auto toFileUrl = DUrl::fromLocalFile(QString("%1/%2").arg(toPath).arg(toName));
             auto newLoaclFile = toFileUrl.toLocalFile();
             if (!GridManager::instance()->contains(newLoaclFile)) {
                 if (findOldPos) {
@@ -1374,6 +1366,42 @@ void CanvasGridView::setDodgeDuration(double dodgeDuration)
 
     d->dodgeDuration = dodgeDuration;
     emit dodgeDurationChanged(d->dodgeDuration);
+}
+
+void CanvasGridView::EnableUIDebug()
+{
+    d->_debug_show_grid = true;
+}
+
+QString CanvasGridView::Size()
+{
+    QBuffer buffer;
+    buffer.open(QBuffer::ReadWrite);
+    QDataStream debug(&buffer);
+
+    debug << GridManager::instance()->gridSize();
+
+    return QString::fromUtf8(buffer.buffer());
+}
+
+QString CanvasGridView::Dump()
+{
+    GridManager::instance()->dump();
+    return "";
+}
+
+#include <QJsonObject>
+
+QString CanvasGridView::DumpPos(qint32 x, qint32 y)
+{
+    QJsonObject debug;
+    QModelIndex index = indexAt(gridRectAt(QPoint(x, y)).center());
+
+    debug.insert("index", QJsonValue::fromVariant(QList<QVariant>({index.row(), index.column()})));
+    debug.insert("url", model()->getUrlByIndex(index).toString());
+    debug.insert("grid content", GridManager::instance()->itemId(x, y));
+
+    return QJsonDocument(debug).toJson();
 }
 
 // TODO: should fix by qt;
@@ -1720,7 +1748,6 @@ void CanvasGridView::initConnection()
     });
 
     connect(this, &CanvasGridView::itemCreated, [ = ](const DUrl & url) {
-        qDebug() << "itemCreated";
         d->lastMenuNewFilepath = url.toLocalFile();
         GridManager::instance()->add(url.toLocalFile());
 
