@@ -56,6 +56,10 @@ public:
     void updateGridSize(int w, int h);
 
     GridCore *core();
+
+public:
+    void dump();
+
 protected:
     bool remove(int x, int y, const QString &itemId);
     bool remove(QPoint pos, const QString &itemId);

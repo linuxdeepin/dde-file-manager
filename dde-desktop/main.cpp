@@ -21,6 +21,7 @@
 
 #include "config/config.h"
 #include "desktop.h"
+#include "view/canvasgridview.h"
 
 using namespace Dtk::Core;
 using namespace Dtk::Widget;
@@ -68,6 +69,8 @@ int main(int argc, char *argv[])
         qDebug() << "registerObject Failed" << conn.lastError();
         exit(0x0003);
     }
+
+    Desktop::instance()->initDebugDBus(conn);
 
     QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
     Config::instance();

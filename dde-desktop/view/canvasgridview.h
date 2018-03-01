@@ -14,6 +14,9 @@
 #include <QScopedPointer>
 #include <dfilemenumanager.h>
 
+#define DesktopCanvasPath           "/com/deepin/dde/desktop/canvas"
+#define DesktopCanvasInterface      "com.deepin.dde.desktop.Canvas"
+
 class DUrl;
 class DesktopItemDelegate;
 class DFileSystemModel;
@@ -22,11 +25,12 @@ class CanvasViewPrivate;
 class CanvasGridView: public QAbstractItemView
 {
     Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", DesktopCanvasInterface)
 
     Q_PROPERTY(double dodgeDuration READ dodgeDuration WRITE setDodgeDuration NOTIFY dodgeDurationChanged)
 public:
-    explicit CanvasGridView(QWidget *parent = nullptr);
-    ~CanvasGridView();
+    explicit CanvasGridView(QWidget *parent = Q_NULLPTR);
+    ~CanvasGridView() Q_DECL_OVERRIDE;
 
     enum ContextMenuAction {
         DisplaySettings = MenuAction::Unknow + 1,
@@ -116,6 +120,13 @@ public slots:
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) Q_DECL_OVERRIDE;
 
     void setDodgeDuration(double dragMoveTime);
+
+// Debug interface
+public Q_SLOTS:
+    Q_SCRIPTABLE void EnableUIDebug();
+    Q_SCRIPTABLE QString Size();
+    Q_SCRIPTABLE QString Dump();
+    Q_SCRIPTABLE QString DumpPos(qint32 x, qint32 y);
 
 private:
     Q_DISABLE_COPY(CanvasGridView)

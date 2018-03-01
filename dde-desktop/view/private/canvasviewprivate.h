@@ -169,6 +169,7 @@ public:
     DBusDock            *dbusDock           = nullptr;
 
     // debug
+    bool                _debug_log          = false;
     bool                _debug_show_grid    = false;
     bool                _debug_profiler     = false;
 

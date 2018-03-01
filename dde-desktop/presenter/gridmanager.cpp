@@ -550,7 +550,6 @@ bool GridManager::move(const QStringList &selecteds, const QString &current, int
                 destPosList << d->gridPosAt(i);
             }
         }
-
     }
 
     for (int i = 0; i < selecteds.length(); ++i) {
@@ -745,5 +744,16 @@ GridCore *GridManager::core()
     core->coordWidth = d->coordWidth;
     core->coordHeight = d->coordHeight;
     return core;
+}
+
+void GridManager::dump()
+{
+    for (auto key : d->m_gridItems.keys()) {
+        qDebug() << key << d->m_gridItems.value(key);
+    }
+
+    for (auto key : d->m_itemGrids.keys()) {
+        qDebug() << key << d->m_itemGrids.value(key);
+    }
 }
 

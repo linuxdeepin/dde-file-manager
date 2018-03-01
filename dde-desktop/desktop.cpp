@@ -14,6 +14,8 @@
 #include <QStandardPaths>
 #include <QStyleOptionViewItem>
 #include <QDir>
+#include <QDBusConnection>
+
 #include <durl.h>
 
 #include "view/canvasgridview.h"
@@ -63,7 +65,7 @@ void Desktop::loadView()
     auto desktopPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
     auto desktopUrl = DUrl::fromLocalFile(desktopPath);
 
-    if (!QDir(desktopPath).exists()){
+    if (!QDir(desktopPath).exists()) {
         QDir::home().mkpath(desktopPath);
     }
 
@@ -105,6 +107,15 @@ void Desktop::showZoneSettings()
     d->zoneSettings->grabKeyboard();
 }
 #endif
+
+void Desktop::initDebugDBus(QDBusConnection &conn)
+{
+    if (!conn.registerObject(DesktopCanvasPath, &d->screenFrame,
+                             QDBusConnection::ExportScriptableSlots)) {
+        qDebug() << "registerObject Failed" << conn.lastError();
+        exit(0x0004);
+    }
+}
 
 void Desktop::Show()
 {
