@@ -303,6 +303,41 @@ void DFileDialogHandle::setCurrentInputName(const QString &name)
     d->dialog->setCurrentInputName(name);
 }
 
+void DFileDialogHandle::addCustomWidget(int type, const QString &data)
+{
+    D_D(DFileDialogHandle);
+
+    d->dialog->addCustomWidget(static_cast<DFileDialog::CustomWidgetType>(type), data);
+}
+
+QDBusVariant DFileDialogHandle::getCustomWidgetValue(int type, const QString &text) const
+{
+    D_DC(DFileDialogHandle);
+
+    return QDBusVariant(d->dialog->getCustomWidgetValue(static_cast<DFileDialog::CustomWidgetType>(type), text));
+}
+
+QVariantMap DFileDialogHandle::allCustomWidgetsValue(int type) const
+{
+    D_DC(DFileDialogHandle);
+
+    return d->dialog->allCustomWidgetsValue(static_cast<DFileDialog::CustomWidgetType>(type));
+}
+
+void DFileDialogHandle::beginAddCustomWidget()
+{
+    D_D(DFileDialogHandle);
+
+    d->dialog->beginAddCustomWidget();
+}
+
+void DFileDialogHandle::endAddCustomWidget()
+{
+    D_D(DFileDialogHandle);
+
+    d->dialog->endAddCustomWidget();
+}
+
 void DFileDialogHandle::show()
 {
     D_D(DFileDialogHandle);
