@@ -13,6 +13,7 @@
 #include <QApplication>
 #include <QStandardPaths>
 #include <QStyleOptionViewItem>
+#include <QDBusConnection>
 
 #include <durl.h>
 
@@ -54,7 +55,7 @@ void Desktop::loadView()
     auto desktopPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
     auto desktopUrl = DUrl::fromLocalFile(desktopPath);
 
-    if (!QDir(desktopPath).exists()){
+    if (!QDir(desktopPath).exists()) {
         QDir::home().mkpath(desktopPath);
     }
 
@@ -93,6 +94,15 @@ void Desktop::showZoneSettings()
 
     d->zoneSettings->show();
     d->zoneSettings->grabKeyboard();
+}
+
+void Desktop::initDebugDBus(QDBusConnection &conn)
+{
+    if (!conn.registerObject(DesktopCanvasPath, &d->screenFrame,
+                             QDBusConnection::ExportScriptableSlots)) {
+        qDebug() << "registerObject Failed" << conn.lastError();
+        exit(0x0004);
+    }
 }
 
 void Desktop::Show()

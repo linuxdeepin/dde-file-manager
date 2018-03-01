@@ -19,18 +19,22 @@
 #define DesktopServicePath          "/com/deepin/dde/desktop"
 #define DesktopServiceInterface     "com.deepin.dde.desktop"
 
+class QDBusConnection;
+class CanvasGridView;
 class QStyleOptionViewItem;
 class DesktopPrivate;
 class Desktop : public QObject, public Singleton<Desktop>
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", DesktopServiceName)
+    Q_CLASSINFO("D-Bus Interface", DesktopServiceInterface)
 public:
     void loadData();
     void loadView();
 
     void showWallpaperSettings();
     void showZoneSettings();
+
+    void initDebugDBus(QDBusConnection &conn);
 
 public slots:
     void Show();
