@@ -40,6 +40,11 @@ class DFileDialog : public DFileManagerWindow
     Q_OBJECT
 
 public:
+    enum CustomWidgetType {
+        LineEditType = 0,
+        ComboBoxType = 1
+    };
+
     explicit DFileDialog(QWidget *parent = 0);
     ~DFileDialog();
 
@@ -84,6 +89,11 @@ public:
     QFileDialog::Options options() const;
 
     void setCurrentInputName(const QString &name);
+    void addCustomWidget(CustomWidgetType type, const QString &data);
+    void beginAddCustomWidget();
+    void endAddCustomWidget();
+    QVariant getCustomWidgetValue(CustomWidgetType type, const QString &text) const;
+    QVariantMap allCustomWidgetsValue(CustomWidgetType type) const;
 
     DFileView *getFileView() const;
 

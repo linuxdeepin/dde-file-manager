@@ -27,6 +27,7 @@
 
 #include <QFileDialog>
 #include <QScopedPointer>
+#include <QDBusVariant>
 
 class DFileDialogHandlePrivate;
 class DFileDialogHandle : public QObject
@@ -80,6 +81,11 @@ public:
     bool testOption(QFileDialog::Option option) const;
 
     void setCurrentInputName(const QString &name);
+    void addCustomWidget(int type, const QString &data);
+    QDBusVariant getCustomWidgetValue(int type, const QString &text) const;
+    QVariantMap allCustomWidgetsValue(int type) const;
+    void beginAddCustomWidget();
+    void endAddCustomWidget();
 
 Q_SIGNALS:
     void finished(int result);

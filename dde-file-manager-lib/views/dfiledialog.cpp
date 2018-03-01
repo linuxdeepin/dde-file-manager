@@ -43,6 +43,9 @@
 #include <QPushButton>
 #include <QComboBox>
 #include <QLineEdit>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 #include <QDebug>
 
 #include <private/qguiapplication_p.h>
@@ -487,6 +490,82 @@ void DFileDialog::setCurrentInputName(const QString &name)
         statusBar()->lineEdit()->selectAll();
     else
         statusBar()->lineEdit()->setSelection(0, name.length() - suffix.length() - 1);
+}
+
+void DFileDialog::addCustomWidget(CustomWidgetType type, const QString &data)
+{
+    const QJsonDocument &json = QJsonDocument::fromJson(data.toUtf8());
+    const QJsonObject &object = json.object();
+
+    if (type == LineEditType) {
+        int maxLength = object["maxLength"].toInt();
+        QLineEdit::EchoMode echoMode = static_cast<QLineEdit::EchoMode>(object["echoMode"].toInt());
+        QString inputMask = object["inputMask"].toString();
+        QLabel *label = new QLabel(object["text"].toString());
+        QLineEdit *edit = new QLineEdit(object["defaultValue"].toString());
+
+        if (maxLength > 0)
+            edit->setMaxLength(maxLength);
+
+        if (!inputMask.isEmpty())
+            edit->setInputMask(inputMask);
+
+        edit->setEchoMode(echoMode);
+        edit->setPlaceholderText(object["placeholderText"].toString());
+        edit->setFixedHeight(24);
+        statusBar()->addLineEdit(label, edit);
+    } else {
+        QStringList data;
+
+        for (const QVariant &v : object["data"].toArray().toVariantList()) {
+            data << v.toString();
+        }
+
+        QString defaultValue = object["defaultValue"].toString();
+
+        QLabel *label = new QLabel(object["text"].toString());
+        QComboBox *comboBox = new QComboBox();
+
+        comboBox->setEditable(object["editable"].toBool());
+        comboBox->addItems(data);
+
+        if (!defaultValue.isEmpty())
+            comboBox->setCurrentText(defaultValue);
+
+        comboBox->setFixedHeight(24);
+
+        statusBar()->addComboBox(label, comboBox);
+    }
+}
+
+void DFileDialog::beginAddCustomWidget()
+{
+    statusBar()->beginAddCustomWidget();
+}
+
+void DFileDialog::endAddCustomWidget()
+{
+    statusBar()->endAddCustomWidget();
+}
+
+QVariant DFileDialog::getCustomWidgetValue(DFileDialog::CustomWidgetType type, const QString &text) const
+{
+    if (type == LineEditType)
+        return statusBar()->getLineEditValue(text);
+    else if (type == ComboBoxType)
+        return statusBar()->getComboBoxValue(text);
+
+    return QVariant();
+}
+
+QVariantMap DFileDialog::allCustomWidgetsValue(DFileDialog::CustomWidgetType type) const
+{
+    if (type == LineEditType)
+        return statusBar()->allLineEditsValue();
+    else if (type == ComboBoxType)
+        return statusBar()->allComboBoxsValue();
+
+    return QVariantMap();
 }
 
 DFileView *DFileDialog::getFileView() const

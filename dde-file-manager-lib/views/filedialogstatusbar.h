@@ -41,6 +41,15 @@ public:
     QPushButton *acceptButton() const;
     QPushButton *rejectButton() const;
 
+    void addLineEdit(QLabel *label, QLineEdit *edit);
+    QString getLineEditValue(const QString &text) const;
+    QVariantMap allLineEditsValue() const;
+    void addComboBox(QLabel *label, QComboBox *box);
+    QString getComboBoxValue(const QString &text) const;
+    QVariantMap allComboBoxsValue() const;
+    void beginAddCustomWidget();
+    void endAddCustomWidget();
+
 private:
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
     void hideEvent(QHideEvent *event) Q_DECL_OVERRIDE;
@@ -62,6 +71,9 @@ private:
 
     QPushButton *m_acceptButton;
     QPushButton *m_rejectButton;
+
+    QList<QPair<QLabel*, QLineEdit*>> m_customLineEditList;
+    QList<QPair<QLabel*, QComboBox*>> m_customComboBoxList;
 
     friend class DFileDialog;
 };

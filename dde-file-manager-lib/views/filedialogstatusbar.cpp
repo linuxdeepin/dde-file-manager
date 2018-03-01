@@ -110,6 +110,75 @@ QPushButton *FileDialogStatusBar::rejectButton() const
     return m_rejectButton;
 }
 
+void FileDialogStatusBar::addLineEdit(QLabel *label, QLineEdit *edit)
+{
+    m_customLineEditList << qMakePair(label, edit);
+}
+
+QString FileDialogStatusBar::getLineEditValue(const QString &text) const
+{
+    for (auto i : m_customLineEditList)
+        if (i.first->text() == text)
+            return i.second->text();
+
+    return QString();
+}
+
+QVariantMap FileDialogStatusBar::allLineEditsValue() const
+{
+    QVariantMap map;
+
+    for (auto i : m_customLineEditList)
+        map[i.first->text()] = i.second->text();
+
+    return map;
+}
+
+void FileDialogStatusBar::addComboBox(QLabel *label, QComboBox *box)
+{
+    m_customComboBoxList << qMakePair(label, box);
+}
+
+QString FileDialogStatusBar::getComboBoxValue(const QString &text) const
+{
+    for (auto i : m_customComboBoxList)
+        if (i.first->text() == text)
+            return i.second->currentText();
+
+    return QString();
+}
+
+QVariantMap FileDialogStatusBar::allComboBoxsValue() const
+{
+    QVariantMap map;
+
+    for (auto i : m_customComboBoxList)
+        map[i.first->text()] = i.second->currentText();
+
+    return map;
+}
+
+void FileDialogStatusBar::beginAddCustomWidget()
+{
+    for (auto i : m_customLineEditList) {
+        i.first->deleteLater();
+        i.second->deleteLater();
+    }
+
+    for (auto i : m_customLineEditList) {
+        i.first->deleteLater();
+        i.second->deleteLater();
+    }
+
+    m_customComboBoxList.clear();
+    m_customLineEditList.clear();
+}
+
+void FileDialogStatusBar::endAddCustomWidget()
+{
+    updateLayout();
+}
+
 void FileDialogStatusBar::showEvent(QShowEvent *event)
 {
     const QString &title = window()->windowTitle();
@@ -171,49 +240,99 @@ void FileDialogStatusBar::updateLayout()
 
     m_contentLayout->addSpacing(10);
 
-    if (m_mode == Open) {
-        m_contentLayout->addWidget(m_filtersLabel);
-        m_contentLayout->addSpacing(10);
-        m_contentLayout->addWidget(m_filtersComboBox, 1);
-        m_contentLayout->addSpacing(10);
-        m_contentLayout->addStretch();
-        m_contentLayout->addWidget(m_rejectButton);
-        m_contentLayout->addWidget(m_acceptButton);
+    int widget_count = m_customComboBoxList.count() + m_customLineEditList.count();
 
-        if (m_filtersComboBox->count() > 0) {
-            m_filtersLabel->show();
-            m_filtersComboBox->show();
-        }
-
-        return;
+    if (m_mode == Save) {
+        ++widget_count;
     }
 
-    if (m_filtersComboBox->count() <= 0) {
-        m_contentLayout->addWidget(m_fileNameLabel);
-        m_contentLayout->addSpacing(10);
-        m_contentLayout->addWidget(m_fileNameEdit);
-        m_contentLayout->addSpacing(10);
-        m_contentLayout->addWidget(m_rejectButton);
-        m_contentLayout->addWidget(m_acceptButton);
+    if (m_filtersComboBox->count() > 0)
+        ++widget_count;
 
-        m_fileNameLabel->show();
-        m_fileNameEdit->show();
+    if (widget_count <= 1) {
+        int added_widget_count = 1;
 
-        return;
+        if (!m_customLineEditList.isEmpty()) {
+            m_contentLayout->addWidget(m_customLineEditList.first().first);
+            m_contentLayout->addSpacing(10);
+            m_contentLayout->addWidget(m_customLineEditList.first().second, 1);
+        } else if (!m_customComboBoxList.isEmpty()) {
+            m_contentLayout->addWidget(m_customComboBoxList.first().first);
+            m_contentLayout->addSpacing(10);
+            m_contentLayout->addWidget(m_customComboBoxList.first().second, 1);
+        } else {
+            added_widget_count = 0;
+        }
+
+        if (m_mode == Open) {
+            if (added_widget_count == 0) {
+                m_contentLayout->addWidget(m_filtersLabel);
+                m_contentLayout->addSpacing(10);
+                m_contentLayout->addWidget(m_filtersComboBox, 1);
+            }
+
+            m_contentLayout->addSpacing(10);
+            m_contentLayout->addStretch();
+            m_contentLayout->addWidget(m_rejectButton);
+            m_contentLayout->addWidget(m_acceptButton);
+
+            if (m_filtersComboBox->count() > 0) {
+                m_filtersLabel->show();
+                m_filtersComboBox->show();
+                ++widget_count;
+            }
+
+            return;
+        }
+
+        if (m_filtersComboBox->count() <= 0) {
+            if (added_widget_count == 0) {
+                m_contentLayout->addWidget(m_fileNameLabel);
+                m_contentLayout->addSpacing(10);
+                m_contentLayout->addWidget(m_fileNameEdit);
+            }
+
+            m_contentLayout->addSpacing(10);
+            m_contentLayout->addWidget(m_rejectButton);
+            m_contentLayout->addWidget(m_acceptButton);
+
+            m_fileNameLabel->show();
+            m_fileNameEdit->show();
+
+            return;
+        }
     }
 
     QVBoxLayout *label_layout = new QVBoxLayout();
-
-    label_layout->addWidget(m_fileNameLabel);
-    label_layout->addWidget(m_filtersLabel);
-
     QVBoxLayout *center_layout = new QVBoxLayout();
 
-    center_layout->addWidget(m_fileNameEdit);
-    center_layout->addWidget(m_filtersComboBox);
+    if (m_mode == Save) {
+        label_layout->addWidget(m_fileNameLabel);
+        center_layout->addWidget(m_fileNameEdit);
+        m_fileNameLabel->show();
+        m_fileNameEdit->show();
+    }
+
+    for (auto i : m_customLineEditList) {
+        label_layout->addWidget(i.first);
+        center_layout->addWidget(i.second);
+    }
+
+    if (m_filtersComboBox->count() > 0) {
+        label_layout->addWidget(m_filtersLabel);
+        center_layout->addWidget(m_filtersComboBox);
+        m_filtersLabel->show();
+        m_filtersComboBox->show();
+    }
+
+    for (auto i : m_customComboBoxList) {
+        label_layout->addWidget(i.first);
+        center_layout->addWidget(i.second);
+    }
 
     QVBoxLayout *button_layout = new QVBoxLayout();
 
+    button_layout->addStretch();
     button_layout->addWidget(m_rejectButton, 0, Qt::AlignRight | Qt::AlignVCenter);
     button_layout->addWidget(m_acceptButton, 0, Qt::AlignRight | Qt::AlignVCenter);
 
@@ -222,12 +341,6 @@ void FileDialogStatusBar::updateLayout()
     m_contentLayout->addLayout(center_layout);
     m_contentLayout->addSpacing(10);
     m_contentLayout->addLayout(button_layout);
-
-    m_fileNameLabel->show();
-    m_filtersLabel->show();
-
-    m_fileNameEdit->show();
-    m_filtersComboBox->show();
 }
 
 void FileDialogStatusBar::onWindowTitleChanged(const QString &title)
