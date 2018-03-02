@@ -447,10 +447,14 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl, bool canFetchNetwork)
             }
 
             if (!fileInfo || !fileInfo->exists()) {
-                if (!isCurrentUrlSupportSearch(currentUrl()))
+                DUrl searchUrl = currentUrl();
+                if (searchUrl.isComputerFile())
+                    searchUrl = DUrl::fromLocalFile("/");
+
+                if (!isCurrentUrlSupportSearch(searchUrl))
                     return false;
 
-                const DUrl &newUrl = DUrl::fromSearchFile(currentUrl(), fileUrl.toString());
+                const DUrl &newUrl = DUrl::fromSearchFile(searchUrl, fileUrl.toString());
                 const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, newUrl);
 
                 if (!fileInfo || !fileInfo->exists())
