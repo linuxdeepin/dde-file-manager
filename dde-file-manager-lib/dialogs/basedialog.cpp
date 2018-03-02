@@ -37,7 +37,7 @@ BaseDialog::BaseDialog(QWidget *parent) : DAbstractDialog(parent)
 {
     m_titlebar = new DTitlebar(this);
 
-    m_titlebar->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
+//    m_titlebar->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
 }
 
 BaseDialog::~BaseDialog()
