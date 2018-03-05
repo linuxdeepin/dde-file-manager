@@ -1182,7 +1182,9 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     this, [ = ](const QString & rootPath, const QString & name) {
         Q_UNUSED(rootPath);
         Q_UNUSED(name);
-//        qDebug() << "fileCreated" << rootPath << name;
+        if (d->_debug_log) {
+            qDebug() << "fileCreated" << rootPath << name;
+        }
         const QString &filePath = rootPath + QDir::separator() + name;
 
         Q_EMIT itemCreated(DUrl::fromLocalFile(filePath));
@@ -1195,7 +1197,10 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
         Q_UNUSED(name);
         auto fileUrl = DUrl::fromLocalFile(QString("%1/%2").arg(path).arg(name));
         auto localFile = fileUrl.toLocalFile();
-//        qDebug() << "fileDeleted" << path << name << localFile;
+
+        if (d->_debug_log) {
+            qDebug() << "fileDeleted" << path << name << localFile;
+        }
 
         if (localFile != currentUrl().toLocalFile()) {
             d->filesystemWatcher->removePath(localFile);
@@ -1210,7 +1215,9 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     const QString & toPath, const QString & toName) {
         Q_UNUSED(fromName);
         Q_UNUSED(toName);
-//        qDebug() << "fileMoved" << fromPath << fromName << toPath << toName;
+        if (d->_debug_log) {
+            qDebug() << "fileMoved" << fromPath << fromName << toPath << toName;
+        }
 
         auto fromFileUrl = DUrl::fromLocalFile(QString("%1/%2").arg(fromPath).arg(fromName));
         auto oldLocalFile = fromFileUrl.toLocalFile();
@@ -1220,7 +1227,9 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
         if (GridManager::instance()->contains(oldLocalFile) && !fromName.isEmpty()) {
             oldPos = GridManager::instance()->position(oldLocalFile);
             findOldPos = true;
-//            qDebug() << "find oldPos" << oldPos << oldLocalFile;
+            if (d->_debug_log) {
+                qDebug() << "find oldPos" << oldPos << oldLocalFile;
+            }
         }
 
         bool findNewPos = false;
@@ -1228,18 +1237,18 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
             findNewPos = true;
         }
 
+        auto toFileUrl = DUrl::fromLocalFile(QString("%1/%2").arg(toPath).arg(toName));
+        auto newLoaclFile = toFileUrl.toLocalFile();
+        findNewPos &= !GridManager::instance()->contains(newLoaclFile);
+
         if (!findNewPos) {
             Q_EMIT itemDeleted(fromFileUrl);
         } else {
-            auto toFileUrl = DUrl::fromLocalFile(QString("%1/%2").arg(toPath).arg(toName));
-            auto newLoaclFile = toFileUrl.toLocalFile();
-            if (!GridManager::instance()->contains(newLoaclFile)) {
-                if (findOldPos) {
-                    GridManager::instance()->remove(oldLocalFile);
-                    GridManager::instance()->add(oldPos, newLoaclFile);
-                } else {
-                    Q_EMIT itemCreated(toFileUrl);
-                }
+            if (findOldPos) {
+                GridManager::instance()->remove(oldLocalFile);
+                GridManager::instance()->add(oldPos, newLoaclFile);
+            } else {
+                Q_EMIT itemCreated(toFileUrl);
             }
         }
 
@@ -1370,6 +1379,7 @@ void CanvasGridView::setDodgeDuration(double dodgeDuration)
 
 void CanvasGridView::EnableUIDebug()
 {
+    d->_debug_log = true;
     d->_debug_show_grid = true;
 }
 
