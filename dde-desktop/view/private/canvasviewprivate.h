@@ -55,6 +55,7 @@ public:
         dodgeDelayTimer.setInterval(200);
 
         if (qgetenv("_DDE_DESKTOP_DEBUG_SHOW_GRID") == "TRUE") {
+            _debug_log = true;
             _debug_show_grid = true;
         }
 
