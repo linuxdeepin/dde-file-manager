@@ -226,6 +226,7 @@ public:
 
     inline bool remove(QPoint pos, const QString &id)
     {
+        m_overlapItems.removeAll(id);
         if (!m_itemGrids.contains(id)) {
             qDebug() << "can not remove" << pos << id;
             return false;
@@ -414,6 +415,8 @@ public:
             resetGridSize(w, h);
             return false;
         } else {
+            qDebug() << "change grid from" << coordWidth << coordHeight
+                     << "to" << w << h;
             changeGridSize(w, h);
 
             QStringList keyList;
@@ -630,12 +633,13 @@ QStringList GridManager::itemIds()
             ids.append(itemId(pos));
         }
     }
+    ids << d->m_overlapItems;
     return ids;
 }
 
 bool GridManager::contains(const QString &id)
 {
-    return d->m_itemGrids.contains(id);
+    return d->m_itemGrids.contains(id) || d->m_overlapItems.contains(id);
 }
 
 QPoint GridManager::position(const QString &id)

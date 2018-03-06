@@ -326,7 +326,7 @@ void CanvasGridView::updateHiddenItems()
     if (GridManager::instance()->autoAlign()) {
         GridManager::instance()->reAlign();
     }
-    d->quickSync();
+    d->quickSync(300);
 }
 
 QModelIndex CanvasGridView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
@@ -585,7 +585,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             clearSelection();
             model()->toggleHiddenFiles(rootUrl);
             updateHiddenItems();
-            update();
+            d->quickSync();
             return;
         }
         break;
@@ -1405,8 +1405,13 @@ QString CanvasGridView::Dump()
 QString CanvasGridView::DumpPos(qint32 x, qint32 y)
 {
     QJsonObject debug;
-    QModelIndex index = indexAt(gridRectAt(QPoint(x, y)).center());
 
+    auto px = x * d->cellWidth + d->cellWidth / 2 + d->viewMargins.left();
+    auto py = y * d->cellHeight + d->cellHeight / 2 + d->viewMargins.top();
+
+    QModelIndex index = indexAt(QPoint(px, py));
+
+    debug.insert("checkPoint:", QJsonValue::fromVariant(QList<QVariant>({px, py})));
     debug.insert("index", QJsonValue::fromVariant(QList<QVariant>({index.row(), index.column()})));
     debug.insert("url", model()->getUrlByIndex(index).toString());
     debug.insert("grid content", GridManager::instance()->itemId(x, y));
@@ -1783,6 +1788,15 @@ void CanvasGridView::initConnection()
 
     connect(this->model(), &DFileSystemModel::requestSelectFiles,
             d->fileViewHelper, &CanvasViewHelper::onRequestSelectFiles);
+
+    connect(this->model(), &QAbstractItemModel::rowsInserted,
+    this, [ = ](const QModelIndex & /*parent*/, int /*first*/, int /*last*/) {
+        d->quickSync();
+    });
+    connect(this->model(), &QAbstractItemModel::rowsRemoved,
+    this, [ = ](const QModelIndex & /*parent*/, int /*first*/, int /*last*/) {
+        d->quickSync();
+    });
 
     connect(this->model(), &QAbstractItemModel::dataChanged,
     this, [ = ](const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> &roles) {
