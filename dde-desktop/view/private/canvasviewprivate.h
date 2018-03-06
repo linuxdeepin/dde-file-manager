@@ -111,9 +111,9 @@ public:
                && (coord.position().y() >= 0 && coord.position().y() < rowCount);
     }
 
-    void quickSync()
+    void quickSync(int checkInterval = 5000)
     {
-        if (syncTimer->interval() > 5000) {
+        if (syncTimer->interval() > checkInterval) {
             syncTimer->setInterval(100);
             syncTimer->stop();
             syncTimer->start();
