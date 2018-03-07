@@ -578,7 +578,7 @@ void DialogManager::showTrashPropertyDialog(const DFMEvent &event)
     if (m_trashDialog){
         m_trashDialog->close();
     }
-    m_trashDialog = new TrashPropertyDialog(event.fileUrl());
+    m_trashDialog = new TrashPropertyDialog(DUrl::fromTrashFile("/"));
     connect(m_trashDialog, &TrashPropertyDialog::finished, [=](){
            m_trashDialog = NULL;
     });
