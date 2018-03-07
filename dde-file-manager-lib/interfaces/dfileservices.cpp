@@ -627,10 +627,18 @@ QString DFileService::getSymlinkFileName(const DUrl &fileUrl, const QDir &target
 
         forever {
             if (pInfo->isFile()) {
-                if (number == 1) {
-                    linkBaseName = QString("%1 %2.%3").arg(baseName, shortcut, pInfo->suffix());
-                } else {
-                    linkBaseName = QString("%1 %2%3.%4").arg(baseName, shortcut, QString::number(number), pInfo->suffix());
+                if (pInfo->suffix().isEmpty()){
+                    if (number == 1) {
+                        linkBaseName = QString("%1 %2").arg(baseName, shortcut);
+                    }else{
+                        linkBaseName = QString("%1 %2%3").arg(baseName, shortcut, QString::number(number));
+                    }
+                }else{
+                    if (number == 1) {
+                        linkBaseName = QString("%1 %2.%3").arg(baseName, shortcut, pInfo->suffix());
+                    } else {
+                        linkBaseName = QString("%1 %2%3.%4").arg(baseName, shortcut, QString::number(number), pInfo->suffix());
+                    }
                 }
             } else if (pInfo->isDir()) {
                 if (number == 1) {

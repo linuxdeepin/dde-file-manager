@@ -1117,7 +1117,7 @@ bool DAbstractFileInfo::canDrop() const
         }
     }
 
-    return info->suffix() == "desktop";
+    return isDesktopFile();
 }
 
 QFileInfo DAbstractFileInfo::toQFileInfo() const
