@@ -24,6 +24,7 @@
 #include <QIcon>
 #include <QtMath>
 #include <QApplication>
+#include <QDebug>
 
 DWIDGET_USE_NAMESPACE
 
@@ -116,8 +117,8 @@ void DiskControlItem::updateInfo(const QDiskInfo &info)
     else
         m_diskCapacity->setText(tr("Unknown volume"));
     m_capacityValueBar->setMinimum(0);
-    m_capacityValueBar->setMaximum(std::max(1ull, info.total()));
-    m_capacityValueBar->setValue(info.used());
+    m_capacityValueBar->setMaximum(100);
+    m_capacityValueBar->setValue(100 * info.used() / info.total());
 }
 
 QString DiskControlItem::sizeString(const QString &str)
