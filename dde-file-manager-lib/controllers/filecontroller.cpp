@@ -213,7 +213,7 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
 
     bool result(false);
 
-    if (oldfilePointer->isDesktopFile()){
+    if (oldfilePointer->isDesktopFile() && !oldfilePointer->isSymLink()){
         QString filePath = oldUrl.toLocalFile();
         Properties desktop(filePath, "Desktop Entry");
         QString key;

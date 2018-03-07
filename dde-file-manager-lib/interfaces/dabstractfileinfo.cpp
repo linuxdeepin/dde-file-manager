@@ -1108,7 +1108,7 @@ bool DAbstractFileInfo::canDrop() const
         }
     }
 
-    return info->suffix() == "desktop";
+    return isDesktopFile();
 }
 
 void DAbstractFileInfo::makeToActive()
