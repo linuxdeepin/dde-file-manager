@@ -112,6 +112,7 @@ QPushButton *FileDialogStatusBar::rejectButton() const
 
 void FileDialogStatusBar::addLineEdit(QLabel *label, QLineEdit *edit)
 {
+    label->setObjectName("FileDialogStatusBarContentLabel");
     m_customLineEditList << qMakePair(label, edit);
 }
 
@@ -136,6 +137,7 @@ QVariantMap FileDialogStatusBar::allLineEditsValue() const
 
 void FileDialogStatusBar::addComboBox(QLabel *label, QComboBox *box)
 {
+    label->setObjectName("FileDialogStatusBarContentLabel");
     m_customComboBoxList << qMakePair(label, box);
 }
 
