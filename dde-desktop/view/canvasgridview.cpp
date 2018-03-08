@@ -984,6 +984,13 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
         option.state &= ~QStyle::State_MouseOver;
 
         painter.save();
+        if (d->_debug_show_grid) {
+            for (auto rect : itemPaintGeomertys(index)) {
+                painter.setPen(Qt::red);
+                painter.drawRect(rect);
+            }
+        }
+
         this->itemDelegate()->paint(&painter, option, index);
 //        qDebug() << "---  end itemDelegate()->paint";
         painter.restore();
@@ -1327,7 +1334,7 @@ bool CanvasGridView::edit(const QModelIndex &index, QAbstractItemView::EditTrigg
     if (trigger == SelectedClicked) {
         QStyleOptionViewItem option = viewOptions();
 
-        option.rect = visualRect(index);
+        option.rect = visualRect(index).marginsRemoved(d->cellMargins);
 
         const QRect &file_name_rect = itemDelegate()->fileNameRect(option, index);
 
