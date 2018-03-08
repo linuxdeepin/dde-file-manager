@@ -373,10 +373,10 @@ void PdfWidget::resizeEvent(QResizeEvent *event)
         d->thumbScrollBar->show();
     }
 
-    d->thumbScrollBar->setFixedSize(8, event->size().height() - 10);
+    d->thumbScrollBar->setFixedSize(d->thumbScrollBar->sizeHint().width(), event->size().height() - 10);
     d->thumbScrollBar->move(d->thumbListWidget->width() - d->thumbScrollBar->width(), 10);
 
-    d->pageScrollBar->setFixedSize(8, event->size().height() - 30);
+    d->pageScrollBar->setFixedSize(d->pageScrollBar->sizeHint().width(), event->size().height() - 30);
     d->pageScrollBar->move(event->size().width() - d->pageScrollBar->width(), 30);
     d->pageListWidget->setFixedWidth(width() - d->thumbListWidget->width());
 

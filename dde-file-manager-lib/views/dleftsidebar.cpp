@@ -317,7 +317,7 @@ void DLeftSideBar::playtShareAddedAnimation()
 
 void DLeftSideBar::updateVerticalScrollBar()
 {
-    m_verticalScrollBar->setFixedSize(8, m_view->height());
+    m_verticalScrollBar->setFixedSize(m_verticalScrollBar->sizeHint().width(), m_view->height());
     m_verticalScrollBar->move(width() - m_verticalScrollBar->width(), 0);
     if(m_verticalScrollBar->maximum() <= 0){
         m_verticalScrollBar->hide();
