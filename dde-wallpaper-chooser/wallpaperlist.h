@@ -29,7 +29,7 @@
 #include <QPropertyAnimation>
 
 #include <dtkwidget_global.h>
-#include <anchors.h>
+#include <danchors.h>
 
 #include <com_deepin_wm.h>
 
@@ -102,8 +102,8 @@ private:
     WallpaperItem *prevItem = Q_NULLPTR;
     WallpaperItem *nextItem = Q_NULLPTR;
 
-    Anchors<DImageButton> prevButton;
-    Anchors<DImageButton> nextButton;
+    DAnchors<DImageButton> prevButton;
+    DAnchors<DImageButton> nextButton;
 
     QPropertyAnimation scrollAnimation;
 

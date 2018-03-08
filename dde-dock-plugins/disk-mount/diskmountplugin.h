@@ -26,6 +26,7 @@
 #define DISKMOUNTPLUGIN_H
 
 #include <QLabel>
+#include <QSettings>
 
 #include "pluginsiteminterface.h"
 #include "diskcontrolwidget.h"
@@ -50,6 +51,9 @@ public:
     const QString itemContextMenu(const QString &itemKey);
     void invokedMenuItem(const QString &itemKey, const QString &menuId, const bool checked);
 
+    int itemSortKey(const QString &itemKey) override;
+    void setSortKey(const QString &itemKey, const int order) override;
+
 private:
     void initCompoments();
 
@@ -64,6 +68,7 @@ private:
     QLabel *m_tipsLabel;
     DiskPluginItem *m_diskPluginItem;
     DiskControlWidget *m_diskControlApplet;
+    QSettings m_settings;
 };
 
 #endif // DISKMOUNTPLUGIN_H
