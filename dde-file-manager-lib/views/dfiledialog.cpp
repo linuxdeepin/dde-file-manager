@@ -65,10 +65,19 @@ DFileDialog::DFileDialog(QWidget *parent)
 {
     d_ptr->view = qobject_cast<DFileView*>(DFileManagerWindow::getFileView()->widget());
 
+#ifdef DTK_VERSION_CHECK
+    overrideWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::Dialog);
+
+    if (titlebar()) {
+        titlebar()->setDisableFlags(Qt::WindowSystemMenuHint);
+        titlebar()->setBackgroundTransparent(true);
+    }
+#else
     setWindowFlags(windowFlags() | Qt::Dialog);
 
     if (titlebar())
         titlebar()->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
+#endif
 
     d_ptr->statusBar = new FileDialogStatusBar(this);
     centralWidget()->layout()->addWidget(d_ptr->statusBar);
