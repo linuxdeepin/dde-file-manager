@@ -28,7 +28,15 @@ BaseDialog::BaseDialog(QWidget *parent) : DAbstractDialog(parent)
 {
     m_titlebar = new DTitlebar(this);
 
+#ifdef DTK_VERSION_CHECK
+    auto flags = windowFlags();
+    flags &= ~Qt::WindowMaximizeButtonHint;
+    flags &= ~Qt::WindowSystemMenuHint;
+    setWindowFlags(flags);
+    m_titlebar->setBackgroundTransparent(true);
+#else
     m_titlebar->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
+#endif
 }
 
 BaseDialog::~BaseDialog()

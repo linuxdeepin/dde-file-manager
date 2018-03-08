@@ -529,15 +529,30 @@ DTaskDialog::DTaskDialog(QWidget *parent) :
 void DTaskDialog::initUI(){
 
     setContentsMargins(0, 0, 0, 0);
+#ifdef DTK_VERSION_CHECK
+    auto flags = windowFlags();
+    flags &= ~Qt::WindowMaximizeButtonHint;
+    flags &= ~Qt::WindowSystemMenuHint;
+    setWindowFlags(flags);
+#else
     setWindowFlags(Qt::FramelessWindowHint|Qt::Window);
+#endif
 
     m_taskListWidget = new QListWidget;
     m_taskListWidget->setSelectionMode(QListWidget::NoSelection);
 
+#ifdef DTK_VERSION_CHECK
+    m_titlebar = new DTitlebar(this);
+    m_titlebar->setFixedHeight(27);
+    m_titlebar->layout()->setContentsMargins(0, 0, 0, 0);
+    m_titlebar->setBackgroundTransparent(true);
+    m_titlebar->setDisableFlags(Qt::WindowSystemMenuHint);
+#else
     m_titlebar = new DTitlebar;
     m_titlebar->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
     m_titlebar->setFixedHeight(27);
     m_titlebar->layout()->setContentsMargins(0, 0, 0, 0);
+#endif
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->setContentsMargins(0, 0, 0, 0);

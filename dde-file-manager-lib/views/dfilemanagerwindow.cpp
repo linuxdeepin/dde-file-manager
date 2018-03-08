@@ -692,6 +692,9 @@ void DFileManagerWindow::initTitleBar()
         d->toolbar->getSettingsButton()->hide();
         titlebar()->setMenu(menu);
         titlebar()->setContentsMargins(0, 1, -1, 0);
+#ifdef DTK_VERSION_CHECK
+        titlebar()->setBackgroundTransparent(true);
+#endif
 
         QWidget *widget = new QWidget();
 
