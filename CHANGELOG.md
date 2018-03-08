@@ -1,3 +1,52 @@
+<a name="4.4.8"></a>
+## 4.4.8 (2018-03-08)
+
+
+#### Bug Fixes
+
+*   use DTitlebar instead of custom titlebar ([8f522e26](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/8f522e264c4ecab19e14f9659d56707e81da9704))
+*   set QProgressBar value type to int instead of qulonglong ([10ed207f](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/10ed207f87ea0aef472b686708d7df5e10252a14))
+*   support search file from root / when current view is computer view ([d6949f06](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/d6949f0655cc33af265e15d5810ed4cb87c4d5e7))
+*   open file by desktop app when drop file on dekstop app file ([4df8d44c](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/4df8d44c35c0c747989bd93dc9d5e19f0175931d))
+*   remove fsync operation when copy action is finished ([bdb4af97](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/bdb4af975b437aaed7815943816daa9d4251f93d))
+*   file counts of trash property dialog ([73811339](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/73811339c6bc65a9cba1bc866c6bc6c7fca3be17))
+*   hide/show refresh too show ([0c77a75e](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/0c77a75e32704da6d30e1bb501a2d45bcc8e7226))
+*   move temp file case profile sync failed ([36676b17](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/36676b177edfaceb587aa56b202afadd8dc873c4))
+*   the BaseDialog window type not is Qt::Dialog ([b7c28aeb](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/b7c28aeb7a0a713b7ed101de28a4828aaa84c0fc))
+*   the file chooser dialog window type is Qt::Window ([94b88480](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/94b88480992d7cb4bc383542a1824341842af12e))
+*   resend desktop not update ([a6771c52](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/a6771c524ff84d23e49f357dd41881ac7bcb66ce))
+*   rename file missing ([a5034898](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/a5034898aec019da63b4561ff44019b780f7c4c1))
+*   shitf cannot select old files ([195d756c](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/195d756cb532344dbe9c6a698169ba4be017c0d2))
+*   clear select when mouse release ([edf0c118](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/edf0c1189fb8aa85d2a604699218129f44b0ae8c))
+*   visual rect error ([08f6a1d9](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/08f6a1d9a0fe236840c63f5844c79940999720b8))
+*   sync grid config when file move ([c7f906eb](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/c7f906ebf2ccb3dce8434fec3a880cbea248daaa))
+*   update geometry when dock mode change ([6f5b9b1a](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/6f5b9b1aa39985eb151a66d70515a2422d4c0c15))
+*   use DAbstractDialog instead of QDialog in DTaskDialog ([07e93b31](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/07e93b31d0ee9c8facadac2065b350c252cc6ed0))
+*   show dialog in screen center when window id is 0 ([90f0367e](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/90f0367eed7f38aa3a42d07bcfe871352b4eddb4))
+*   hidpi with three screen crash ([15ada352](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/15ada3529a3b61562f9efa5e286165b3f036530a))
+*   get correct icon and name which show in openwith menu ([748ab8a8](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/748ab8a85c6f7cb1bd73698c4e02a7065a5f0e3a))
+*   add dde-file-manager in DE group ([fdfa7b12](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/fdfa7b12dd04a67d86688c53ada9138c892285bf))
+*   disable restart samba service when file managerstart ([9472b2f3](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/9472b2f32dd16cdf1e2487fcf7c44ba53ef8d02d))
+*   Adapt lintian ([63abc36f](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/63abc36f81a62a6b1c45139f633d33a665c96eeb))
+*   menu plugin path ([a9581c76](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/a9581c76842f7b25e8425c109c95f356dfa4a725))
+*    desktop file filename same as displayname and single selection behavior ([15f8b558](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/15f8b5580fe8c096b4cfc539ba4c23156e597393))
+*   dde-xdg-user-dirs-update.sh ([24f31df2](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/24f31df29130aeadfd8461523fda76c44f919ecc))
+* **DDE zone:**  visible lines at window background on menu popup ([070823d0](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/070823d061397c9ffab35a30b4c4e5cac100c50a))
+
+#### Features
+
+*   direct map filesystem to config file ([aaa6c8cf](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/aaa6c8cfe45354651cf1d728db2d58bf7d3c1f36))
+*   use env to debug ([93bb7280](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/93bb7280f1f1bd8b8999980af95e57f234e5c2db))
+*   support multi struct parial ([ecfb6388](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/ecfb6388d1edc771d642965b19a2cd67cdc01346))
+*   add swicth in dfm-platform to hide root system ([a7da63f1](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/a7da63f151db789e43dc75a9310b9dd701957dbf))
+*   disbale unmount function in platform of x86 pro ([ad91a51b](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/ad91a51b2429a877c64a24078bc36d3e34433296))
+*   add build parameter BUILD_MINIMUM for live system ([fc0628de](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/fc0628de7f08d3cccebd49e3e35bbd6e9408b7eb))
+*   add copy/cut/paste action in DFileDiloag ([853e01c4](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/853e01c49cd9c5d2d1335cc4e3882f11f4709017))
+*   add "monitorFiles" for dbus file dialog manager ([de4429e2](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/de4429e25fe0f40970fcc9c84da4987096e6a826))
+*   add function "windowFlags" for dbus file dialog ([301dabb9](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/301dabb940158c63c053976054d7bcad6ba92891))
+
+
+
 <a name=""></a>
 ## 4.4.7 (2017-11-29)
 
