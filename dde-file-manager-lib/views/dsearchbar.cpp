@@ -345,7 +345,7 @@ void DSearchBar::setCompleter(const QString &text)
 
     m_list->setMinimumWidth(width());
     m_list->setMaximumWidth(width());
-    m_listVerticalScrollBar->setFixedSize(8, m_list->height());
+    m_listVerticalScrollBar->setFixedSize(m_listVerticalScrollBar->sizeHint().width(), m_list->height());
     m_listVerticalScrollBar->move(m_list->width() - m_listVerticalScrollBar->width(), 0);
 
     QPoint p(0, height());
