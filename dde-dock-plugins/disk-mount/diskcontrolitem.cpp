@@ -118,7 +118,8 @@ void DiskControlItem::updateInfo(const QDiskInfo &info)
         m_diskCapacity->setText(tr("Unknown volume"));
     m_capacityValueBar->setMinimum(0);
     m_capacityValueBar->setMaximum(100);
-    m_capacityValueBar->setValue(100 * info.used() / info.total());
+    if (info.total() > 0)
+        m_capacityValueBar->setValue(100 * info.used() / info.total());
 }
 
 QString DiskControlItem::sizeString(const QString &str)
