@@ -1296,7 +1296,7 @@ void DFileView::resizeEvent(QResizeEvent *event)
     if (itemDelegate()->editingIndex().isValid())
         doItemsLayout();
 
-    d->verticalScrollBar->setFixedSize(8, event->size().height());
+    d->verticalScrollBar->setFixedSize(d->verticalScrollBar->sizeHint().width(), event->size().height());
     if(d->currentViewMode == IconMode){
         d->verticalScrollBar->move(event->size().width(), 0);
     } else if (d->currentViewMode == ListMode){
