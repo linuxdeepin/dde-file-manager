@@ -1,3 +1,14 @@
+<a name="4.4.7.1"></a>
+## 4.4.7.1 (2018-03-08)
+
+
+#### Bug Fixes
+
+*   filedialog has system menu ([15d5bd31](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/15d5bd31f115944fa7d94a61cb21c3866c63f775))
+*   title style on dtk 2.0.7 ([7925557a](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/7925557aac7235a781b4a1554e6ce99cbf5793dd))
+
+
+
 <a name=""></a>
 ## 4.4.7 (2017-11-29)
 
