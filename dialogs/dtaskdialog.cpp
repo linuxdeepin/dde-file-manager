@@ -531,6 +531,7 @@ void DTaskDialog::initUI(){
     setFixedWidth(m_defaultWidth);
 
     m_titlebar = new DTitlebar(this);
+    m_titlebar->setBackgroundTransparent(true);
     m_titlebar->setFixedHeight(27);
     m_titlebar->layout()->setContentsMargins(0, 0, 0, 0);
 
