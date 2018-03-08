@@ -19,7 +19,8 @@
 TrashPlugin::TrashPlugin(QObject *parent)
     : QObject(parent),
       m_trashWidget(new TrashWidget),
-      m_tipsLabel(new QLabel)
+      m_tipsLabel(new QLabel),
+      m_settings("deepin", "dde-dock-trash")
 {
     m_tipsLabel->setObjectName("trash");
     m_tipsLabel->setStyleSheet("color:white;"
@@ -99,10 +100,14 @@ void TrashPlugin::invokedMenuItem(const QString &itemKey, const QString &menuId,
 
 int TrashPlugin::itemSortKey(const QString &itemKey)
 {
-    Q_UNUSED(itemKey);
+    const QString &key = QString("pos_%1_%2").arg(itemKey).arg(displayMode());
+    return m_settings.value(key, -1).toInt();
+}
 
-    // always place at last
-    return -1;
+void TrashPlugin::setSortKey(const QString &itemKey, const int order)
+{
+    const QString &key = QString("pos_%1_%2").arg(itemKey).arg(displayMode());
+    m_settings.setValue(key, order);
 }
 
 void TrashPlugin::displayModeChanged(const Dock::DisplayMode displayMode)

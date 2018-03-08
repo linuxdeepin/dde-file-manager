@@ -26,7 +26,8 @@ DiskMountPlugin::DiskMountPlugin(QObject *parent)
 
       m_tipsLabel(new QLabel),
       m_diskPluginItem(new DiskPluginItem),
-      m_diskControlApplet(nullptr)
+      m_diskControlApplet(nullptr),
+      m_settings("deepin", "dde-dock-diskmount")
 {
     qDebug() << "===============init=============";
     m_diskPluginItem->setVisible(false);
@@ -113,6 +114,18 @@ void DiskMountPlugin::invokedMenuItem(const QString &itemKey, const QString &men
         QProcess::startDetached("gvfs-open", QStringList() << "computer:///");
     else if (menuId == UNMOUNT_ALL)
         m_diskControlApplet->unmountAll();
+}
+
+int DiskMountPlugin::itemSortKey(const QString &itemKey)
+{
+    const QString &key = QString("pos_%1_%2").arg(itemKey).arg(displayMode());
+    return m_settings.value(key, 0).toInt();
+}
+
+void DiskMountPlugin::setSortKey(const QString &itemKey, const int order)
+{
+    const QString &key = QString("pos_%1_%2").arg(itemKey).arg(displayMode());
+    m_settings.setValue(key, order);
 }
 
 void DiskMountPlugin::initCompoments()
