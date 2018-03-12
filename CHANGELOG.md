@@ -1,3 +1,16 @@
+<a name="4.4.8.1"></a>
+## 4.4.8.1 (2018-03-12)
+
+
+#### Bug Fixes
+
+*   adjust click area ([c3f5b814](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/c3f5b8141338d65b42689f14bda2ac7c8c13c5d2))
+*   all scroll bar widget width ([cf928b29](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/cf928b29b05d3ebee7c620660dde649b52c48e28))
+*   the width of scroll bar of file view ([1e3c5323](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/1e3c53237c3f82e5649554fde3db617d37b145dd))
+*   disk mount plugin crash when disk total is 0 ([73e47995](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/73e479950230d867858a89e49191e6514ff7edf4))
+
+
+
 <a name="4.4.8"></a>
 ## 4.4.8 (2018-03-08)
 
