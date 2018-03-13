@@ -15,6 +15,8 @@
 #include <QJsonObject>
 #include <QVBoxLayout>
 #include <QUrl>
+#include <QDir>
+#include <QImageReader>
 
 #include "util/xcb/xcb.h"
 
@@ -72,8 +74,12 @@ void WaterMaskFrame::initUI()
     QString maskLogoUri;
     if (m_configs.contains("maskLogoUri")) {
         maskLogoUri = m_configs.value("maskLogoUri").toString();
+
+        if (maskLogoUri.startsWith("~/")) {
+            maskLogoUri.replace(0, 1, QDir::homePath());
+        }
     } else {
-        maskLogoUri = "";
+        maskLogoUri.clear();
     }
 
     QString maskLogoLayoutAlign;
@@ -179,8 +185,24 @@ void WaterMaskFrame::initUI()
     }
 
     m_logoLabel = new QLabel(this);
-    m_logoLabel->setPixmap(QPixmap(maskLogoUri).scaled(maskLogoWidth, maskLogoHeight));
-    m_logoLabel->setFixedSize(maskLogoWidth, maskLogoHeight);
+
+    {
+        QImageReader mask_image_reader(maskLogoUri);
+        const QSize &mask_size = QSize(maskLogoWidth, maskLogoHeight) * m_logoLabel->devicePixelRatioF();
+        const QSize &mask_image_size = mask_image_reader.size();
+
+        if (maskLogoUri.endsWith(".svg") || (mask_image_size.width() >= mask_size.width()
+                                             && mask_image_size.height() >= mask_image_size.height())) {
+            mask_image_reader.setScaledSize(mask_size);
+        } else {
+            mask_image_reader.setScaledSize(QSize(maskLogoWidth, maskLogoHeight));
+        }
+
+        QPixmap mask_pixmap = QPixmap::fromImage(mask_image_reader.read());
+        mask_pixmap.setDevicePixelRatio(m_logoLabel->devicePixelRatioF());
+
+        m_logoLabel->setPixmap(mask_pixmap);
+    }
 
     m_textLabel = new QLabel(this);
     m_textLabel->setText(maskText);
