@@ -314,10 +314,10 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
             continue;
         }
         QFileInfo srcInfo(srcPath);
-        if (!srcInfo.exists() && !srcInfo.isSymLink()){
-            m_noPermissonUrls << DUrl::fromLocalFile(srcPath);
+
+        if (!srcInfo.exists() && !srcInfo.isSymLink())
             continue;
-        }
+
         QString targetPath;
 
         if (m_isAborted)
@@ -2141,7 +2141,7 @@ bool FileJob::moveFileToTrash(const QString &file, QString *targetPath)
     qDebug() << "moveFileToTrash" << file;
 
     if (!writeTrashInfo(baseName, file, delTime))
-        return false; 
+        return false;
 
     if (targetPath)
         *targetPath = newName;
