@@ -524,6 +524,9 @@ void DTaskDialog::initUI(){
     m_titlebar = new DTitlebar(this);
     m_titlebar->setFixedHeight(27);
     m_titlebar->layout()->setContentsMargins(0, 0, 0, 0);
+#if DTK_VERSION > DTK_VERSION_CHECK(2, 0, 6, 0)
+    m_titlebar->setBackgroundTransparent(true);
+#endif
 
     m_taskListWidget = new QListWidget;
     m_taskListWidget->setSelectionMode(QListWidget::NoSelection);
