@@ -565,6 +565,9 @@ void DFileDialog::showEvent(QShowEvent *event)
     activateWindow();
 
     windowHandle()->installEventFilter(this);
+
+    if (windowFlags().testFlag(Qt::WindowSystemMenuHint))
+        overrideWindowFlags(windowFlags() & ~Qt::WindowSystemMenuHint);
 }
 
 void DFileDialog::closeEvent(QCloseEvent *event)
