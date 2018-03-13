@@ -302,10 +302,10 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
             continue;
         }
         QFileInfo srcInfo(srcPath);
-        if (!srcInfo.exists() && !srcInfo.isSymLink()){
-            m_noPermissonUrls << DUrl::fromLocalFile(srcPath);
+
+        if (!srcInfo.exists())
             continue;
-        }
+
         QString targetPath;
 
         if (m_isAborted)
