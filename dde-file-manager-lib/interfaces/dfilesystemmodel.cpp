@@ -81,7 +81,9 @@ public:
     };
 
     DFileSystemModelPrivate(DFileSystemModel *qq)
-        : q_ptr(qq) {
+        : q_ptr(qq)
+        , needQuitUpdateChildren(1)
+    {
         if (globalSetting->isShowedHiddenOnView())
             filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
         else
@@ -114,6 +116,7 @@ public:
     QPointer<JobController> jobController;
     QEventLoop *eventLoop = Q_NULLPTR;
     QFuture<void> updateChildrenFuture;
+    QSemaphore needQuitUpdateChildren;
     DAbstractFileWatcher *watcher = Q_NULLPTR;
 
     DFileSystemModel::State state = DFileSystemModel::Idle;
@@ -871,9 +874,18 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
     if (d->eventLoop)
         d->eventLoop->exit(1);
 
+    // 断开获取上个目录的job的信号
+    if (d->jobController) {
+        disconnect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren);
+        disconnect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
+        disconnect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildrenOnNewThread);
+    }
+
     if (d->updateChildrenFuture.isRunning()) {
-        d->updateChildrenFuture.cancel();
+        // 使用QFuture::cancel() 函数无效，定义个变量控制线程的退出
+        d->needQuitUpdateChildren.acquire();
         d->updateChildrenFuture.waitForFinished();
+        d->needQuitUpdateChildren.release();
     }
 
     if (d->rootNode) {
@@ -1235,6 +1247,9 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
     beginInsertRows(createIndex(node, 0), 0, list.count() - 1);
 
     for(const DAbstractFileInfoPointer &fileInfo : list) {
+        if (d->needQuitUpdateChildren.available() < 1)
+            break;
+
         if (node->children.contains(fileInfo->fileUrl()))
             continue;
 
