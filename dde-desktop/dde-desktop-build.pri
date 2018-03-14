@@ -17,3 +17,8 @@ CONFIG(release, release|debug) {
 } else {
     PKGCONFIG += dtkwidget
 }
+
+load(deepin_qt)
+
+# add computer/trash icon on professional system
+deepin_professional: DEFINES += DDE_COMPUTER_TRASH
