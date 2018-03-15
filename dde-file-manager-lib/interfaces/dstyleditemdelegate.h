@@ -59,6 +59,7 @@ protected:
     void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const Q_DECL_OVERRIDE;
     QList<QRect> getCornerGeometryList(const QRect &baseRect, const QSize &cornerSize) const;
 
+    static QPixmap getIconPixmap(const QIcon &icon, const QSize &size, qreal pixelRatio, QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);
     static void paintIcon(QPainter *painter, const QIcon &icon, const QRect &rect, Qt::Alignment alignment = Qt::AlignCenter,
                           QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);
 

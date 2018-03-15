@@ -186,8 +186,9 @@ void DIconItemDelegate::paint(QPainter *painter,
     if (index == d->expandedIndex && !parent()->isSelected(index))
         const_cast<DIconItemDelegate*>(this)->hideNotEditingIndexWidget();
 
-    if ((index == d->expandedIndex || index == d->editingIndex) && !isDragMode)
+    if ((index == d->expandedIndex || index == d->editingIndex) && !isDragMode) {
         return;
+    }
 
     if (parent()->isCut(index))
         painter->setOpacity(0.3);
@@ -451,7 +452,7 @@ void DIconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
         initStyleOption(&opt, index);
 
-        QPixmap pixmap = opt.icon.pixmap(icon_size, QIcon::Selected);
+        QPixmap pixmap = getIconPixmap(opt.icon, icon_size, editor->devicePixelRatioF(), QIcon::Selected);
         QPainter painter(&pixmap);
 
         /// draw file additional icon
@@ -482,7 +483,7 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     initStyleOption(&opt, index);
 
     const QSize &icon_size = parent()->parent()->iconSize();
-    QPixmap pixmap = opt.icon.pixmap(icon_size, QIcon::Selected);
+    QPixmap pixmap = getIconPixmap(opt.icon, icon_size, editor->devicePixelRatioF(), QIcon::Selected);
     QPainter painter(&pixmap);
 
     /// draw file additional icon
