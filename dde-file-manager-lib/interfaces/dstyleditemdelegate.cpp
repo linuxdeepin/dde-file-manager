@@ -180,6 +180,24 @@ QList<QRect> DStyledItemDelegate::getCornerGeometryList(const QRect &baseRect, c
     return list;
 }
 
+QPixmap DStyledItemDelegate::getIconPixmap(const QIcon &icon, const QSize &size, qreal pixelRatio = 1.0, QIcon::Mode mode, QIcon::State state)
+{
+    QSize icon_size = icon.actualSize(size, mode, state);
+
+    if (icon_size.width() > size.width() || icon_size.height() > size.height())
+        icon_size.scale(size, Qt::KeepAspectRatio);
+
+    QSize pixmapSize = icon_size * pixelRatio;
+    QPixmap px = icon.pixmap(pixmapSize, mode, state);
+
+    if (px.width() > icon_size.width() * pixelRatio || px.height() > icon_size.height() * pixelRatio)
+        px = px.scaled(icon_size * pixelRatio, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+    px.setDevicePixelRatio(pixelRatio);
+
+    return px;
+}
+
 static inline Qt::Alignment visualAlignment(Qt::LayoutDirection direction, Qt::Alignment alignment)
 {
     if (!(alignment & Qt::AlignHorizontal_Mask))
@@ -195,30 +213,24 @@ static inline Qt::Alignment visualAlignment(Qt::LayoutDirection direction, Qt::A
 void DStyledItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const QRect &rect, Qt::Alignment alignment, QIcon::Mode mode, QIcon::State state)
 {
     // Copy of QStyle::alignedRect
-    const QSize size = icon.actualSize(rect.size(), mode, state);
     alignment = visualAlignment(painter->layoutDirection(), alignment);
     const qreal pixel_ratio = painter->device()->devicePixelRatioF();
+    const QPixmap &px = getIconPixmap(icon, rect.size(), pixel_ratio, mode, state);
     int x = rect.x();
     int y = rect.y();
-    int w = size.width();
-    int h = size.height();
+    int w = px.width();
+    int h = px.height();
     if ((alignment & Qt::AlignVCenter) == Qt::AlignVCenter)
-        y += rect.size().height()/2 - h/2;
+        y += qRound((rect.size().height() - h) / 2.0);
     else if ((alignment & Qt::AlignBottom) == Qt::AlignBottom)
         y += rect.size().height() - h;
     if ((alignment & Qt::AlignRight) == Qt::AlignRight)
         x += rect.size().width() - w;
     else if ((alignment & Qt::AlignHCenter) == Qt::AlignHCenter)
-        x += rect.size().width()/2 - w/2;
+        x += qRound((rect.size().width() - w) / 2.0);
+
     QRect alignedRect(x, y, w, h);
 
-    QSize pixmapSize = alignedRect.size() * pixel_ratio;
-    QPixmap px = icon.pixmap(pixmapSize, mode, state);
-
-    if (px.width() > alignedRect.width() * pixel_ratio || px.height() > alignedRect.height() * pixel_ratio)
-        px = px.scaled(alignedRect.size() * pixel_ratio, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-
-    px.setDevicePixelRatio(pixel_ratio);
     painter->drawPixmap(alignedRect.topLeft(), px);
 }
 
