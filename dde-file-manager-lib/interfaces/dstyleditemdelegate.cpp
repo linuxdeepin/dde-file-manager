@@ -218,8 +218,8 @@ void DStyledItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const 
     const QPixmap &px = getIconPixmap(icon, rect.size(), pixel_ratio, mode, state);
     int x = rect.x();
     int y = rect.y();
-    int w = px.width();
-    int h = px.height();
+    int w = px.width() / px.devicePixelRatio();
+    int h = px.height() / px.devicePixelRatio();
     if ((alignment & Qt::AlignVCenter) == Qt::AlignVCenter)
         y += qRound((rect.size().height() - h) / 2.0);
     else if ((alignment & Qt::AlignBottom) == Qt::AlignBottom)

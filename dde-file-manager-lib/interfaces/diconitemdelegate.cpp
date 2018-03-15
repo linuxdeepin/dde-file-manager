@@ -363,10 +363,6 @@ void DIconItemDelegate::paint(QPainter *painter,
         painter->fillRect(label_rect, Qt::transparent);
     }
 
-    QImage text_image(label_rect.size()*qApp->devicePixelRatio(), QImage::Format_ARGB32_Premultiplied);
-    text_image.fill(Qt::transparent);
-    text_image.setDevicePixelRatio(qApp->devicePixelRatio());
-
     if (isSelected)
         painter->setPen(opt.palette.color(QPalette::BrightText));
     else
@@ -375,18 +371,26 @@ void DIconItemDelegate::paint(QPainter *painter,
     if (isSelected || !d->enabledTextShadow) {
         d->drawText(painter, label_rect, str, d->textLineHeight);
     } else {
+        qreal pixel_ratio = painter->device()->devicePixelRatioF();
+        QImage text_image(label_rect.size() * pixel_ratio, QImage::Format_ARGB32_Premultiplied);
+        text_image.fill(Qt::transparent);
+        text_image.setDevicePixelRatio(pixel_ratio);
+
         QPainter p(&text_image);
         p.setPen(painter->pen());
+        p.setFont(painter->font());
         d->drawText(&p, QRect(QPoint(0, 0), label_rect.size()), str, d->textLineHeight);
-    }
+        p.end();
 
-    if (!isSelected && d->enabledTextShadow) {
         QPixmap text_pixmap = QPixmap::fromImage(text_image);
-        text_pixmap.setDevicePixelRatio(qApp->devicePixelRatio());
+        text_pixmap.setDevicePixelRatio(pixel_ratio);
         qt_blurImage(text_image, 3, false);
-        QPainter tmpPainter(&text_image);
-        tmpPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-        tmpPainter.fillRect(text_image.rect(), opt.palette.color(QPalette::Shadow));
+
+        p.begin(&text_image);
+        p.setCompositionMode(QPainter::CompositionMode_SourceIn);
+        p.fillRect(text_image.rect(), opt.palette.color(QPalette::Shadow));
+        p.end();
+
         painter->drawImage(label_rect.translated(0, 1), text_image);
         painter->drawPixmap(label_rect, text_pixmap);
     }
