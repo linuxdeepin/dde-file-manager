@@ -1,3 +1,27 @@
+<a name="4.4.8.2"></a>
+## 4.4.8.2 (2018-03-15)
+
+
+#### Bug Fixes
+
+*   the files icon position offset on high-DPI screen ([7c1fc4bc](4.4.8.2/commit/7c1fc4bc4d37008562fb3de31afa4d00f70f21e3))
+*   the icon will become larger when the file is selected ([343e3162](4.4.8.2/commit/343e31625177f48ea69dbb65dd20872244e4c9c6))
+*   skip moving or copying of nonexistent files ([2b0e05f5](4.4.8.2/commit/2b0e05f5817a183a96310374722cbf8668c00e35))
+*   file icon blurred on hiDPI ([d911e1ad](4.4.8.2/commit/d911e1ad3e04909b63731f502738e8bd481d2dd1))
+*   watermark picture blurred on high-DPI screen ([27edfcc1](4.4.8.2/commit/27edfcc138b0226900775677e0f6b6d01b4afd62))
+*   the window tabs title follow other window current url to change ([7894196e](4.4.8.2/commit/7894196e34c0e2ffde017764c3e4f72a4075656f))
+*   remove the file chooser dialog menu button ([39b9f9ca](4.4.8.2/commit/39b9f9caa88a79b4770b6fd6a2d68e7f04b34ab3))
+*   the title bar background color for dialogs ([49ff1f97](4.4.8.2/commit/49ff1f97a47176d1790d69a7ce3dc34477a016f6))
+*   keep plugins order ([2ac78b25](4.4.8.2/commit/2ac78b25f984eca066e585dd5844322f3dec3464))
+* **desktop:**  enable DDE_COMPUTER_TRASH on professional system ([2ff10bc4](4.4.8.2/commit/2ff10bc41acf5af37be8241cbab6fc353eee809a))
+
+#### Features
+
+*   support preview the content files of dim file ([963cd828](4.4.8.2/commit/963cd82859096b1912b706f7433774aebce131d5))
+*   add "QIODevice *createIODevice()" for DAbstractFileInfo ([91903dea](4.4.8.2/commit/91903deaa28300089e72dd2c66aaa511d8ae3d6e))
+
+
+
 <a name="4.4.8.1"></a>
 ## 4.4.8.1 (2018-03-12)
 
