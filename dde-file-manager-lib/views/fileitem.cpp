@@ -80,6 +80,7 @@ FileIconItem::FileIconItem(QWidget *parent) :
         int text_length = text.length();
         int text_line_height = fontMetrics().height();
 
+        text = text.trimmed();
         text.remove('/');
         text.remove(QChar(0));
 
