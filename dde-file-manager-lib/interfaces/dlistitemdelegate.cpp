@@ -377,6 +377,7 @@ QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
 
         int text_length = text.length();
 
+        text = text.trimmed();
         text.remove('/');
         text.remove(QChar(0));
 
