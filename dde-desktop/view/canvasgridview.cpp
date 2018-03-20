@@ -1431,7 +1431,7 @@ bool find_wm_strut_partial_rect_list(QList<QRect> rects)
 {
     bool find = false;
     for (auto &rect : rects) {
-        find |= rect.isEmpty();
+        find |= rect.isValid();
     }
 
     return find;
