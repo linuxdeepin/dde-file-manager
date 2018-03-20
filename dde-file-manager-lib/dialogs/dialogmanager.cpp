@@ -1002,6 +1002,10 @@ void DialogManager::closeAllPropertyDialog()
     if (m_trashDialog){
         m_trashDialog->close();
     }
+
+    if (m_computerDialog) {
+        m_computerDialog->close();
+    }
 }
 
 void DialogManager::updateCloseIndicator()
