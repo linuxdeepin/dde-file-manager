@@ -148,7 +148,7 @@ public slots:
     void addTask(const QMap<QString, QString>& jobDetail);
     void addConflictTask(const QMap<QString, QString>& jobDetail);
     void handleTaskClose(const QMap<QString, QString>& jobDetail);
-    void removeTask(const QMap<QString, QString>& jobDetail);
+    void removeTask(const QMap<QString, QString>& jobDetail, bool adjustSize = true);
     void removeTaskImmediately(const QMap<QString, QString>& jobDetail);
     void delayRemoveTask(const QMap<QString, QString>& jobDetail);
     void removeTaskByPath(QString jobId);

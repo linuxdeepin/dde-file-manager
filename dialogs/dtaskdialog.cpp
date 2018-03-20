@@ -713,17 +713,19 @@ void DTaskDialog::onItemHovered(const bool& hover)
 
 void DTaskDialog::handleTaskClose(const QMap<QString, QString> &jobDetail){
     qDebug() << jobDetail;
-    removeTask(jobDetail);
+    removeTask(jobDetail, false);
     setTitle(m_taskListWidget->count());
     if (jobDetail.contains("type")){
         emit abortTask(jobDetail);
     }
 }
 
-void DTaskDialog::removeTask(const QMap<QString, QString> &jobDetail){
+void DTaskDialog::removeTask(const QMap<QString, QString> &jobDetail, bool adjustSize){
     if (jobDetail.contains("jobId")){
         removeTaskByPath(jobDetail.value("jobId"));
-        adjustSize();
+
+        if (adjustSize)
+            this->adjustSize();
     }
 }
 
