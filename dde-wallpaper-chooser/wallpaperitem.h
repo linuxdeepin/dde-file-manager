@@ -52,6 +52,7 @@ signals:
     void lockButtonClicked();
 
 public slots:
+    void onThumbnailFounded(const QString &key, const QPixmap &pixmap);
     void thumbnailFinished();
 
 protected:

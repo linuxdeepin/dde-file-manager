@@ -86,7 +86,7 @@ WallpaperItem::WallpaperItem(QFrame *parent, const QString &path) :
     initPixmap();
     initAnimation();
 
-    connect(m_thumbnailerWatcher, &QFutureWatcher<QPixmap>::finished, this, &WallpaperItem::thumbnailFinished);
+//    connect(m_thumbnailerWatcher, &QFutureWatcher<QPixmap>::finished, this, &WallpaperItem::thumbnailFinished);
 }
 
 WallpaperItem::~WallpaperItem()
@@ -140,13 +140,17 @@ void WallpaperItem::initAnimation()
 
 void WallpaperItem::initPixmap()
 {
-    ThumbnailManager * tnm = ThumbnailManager::instance();
+    ThumbnailManager *tnm = ThumbnailManager::instance();
 
-    if (!tnm->find(QUrl::toPercentEncoding(m_path), &m_wrapper->m_pixmap)
-            || m_wrapper->m_pixmap.size() != QSize(ItemWidth, ItemHeight)) {
-        QFuture<QPixmap> f = QtConcurrent::run(ThumbnailImage, m_path);
-        m_thumbnailerWatcher->setFuture(f);
-    }
+//    if (!tnm->find(QUrl::toPercentEncoding(m_path), &m_wrapper->m_pixmap)
+//            || m_wrapper->m_pixmap.size() != QSize(ItemWidth, ItemHeight)) {
+//        QFuture<QPixmap> f = QtConcurrent::run(ThumbnailImage, m_path);
+//        m_thumbnailerWatcher->setFuture(f);
+//    }
+
+    connect(tnm, &ThumbnailManager::thumbnailFounded, this, &WallpaperItem::onThumbnailFounded);
+
+    tnm->find(QUrl::toPercentEncoding(m_path));
 }
 
 void WallpaperItem::slideUp()
@@ -231,6 +235,15 @@ void WallpaperItem::setOpacity(qreal opacity)
 QRect WallpaperItem::conentImageGeometry() const
 {
     return m_wrapper->m_pixmapBoxGeometry;
+}
+
+void WallpaperItem::onThumbnailFounded(const QString &key, const QPixmap &pixmap)
+{
+    if (key != QUrl::toPercentEncoding(m_path))
+        return;
+
+    m_wrapper->m_pixmap = pixmap;
+    m_wrapper->update();
 }
 
 void WallpaperItem::setPath(const QString &path)

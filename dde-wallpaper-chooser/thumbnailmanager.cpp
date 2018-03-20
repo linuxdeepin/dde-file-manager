@@ -14,18 +14,48 @@
  */
 
 #include "thumbnailmanager.h"
+#include "constants.h"
 
 #include <QDir>
 #include <QPixmap>
 #include <QDebug>
 #include <QStandardPaths>
 #include <QApplication>
+#include <QUrl>
+#include <QtConcurrent>
+
+static QPixmap ThumbnailImage(const QString &path)
+{
+    QUrl url = QUrl::fromPercentEncoding(path.toUtf8());
+    QString realPath = url.toLocalFile();
+
+    ThumbnailManager * tnm = ThumbnailManager::instance();
+
+    const qreal ratio = qApp->devicePixelRatio();
+
+    QPixmap pix = QPixmap(realPath).scaled(QSize(ItemWidth * ratio, ItemHeight * ratio),
+                                           Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+
+    const QRect r(0, 0, ItemWidth * ratio, ItemHeight * ratio);
+    const QSize size(ItemWidth * ratio, ItemHeight * ratio);
+
+    if (pix.width() > ItemWidth * ratio || pix.height() > ItemHeight * ratio)
+        pix = pix.copy(QRect(pix.rect().center() - r.center(), size));
+
+    pix.setDevicePixelRatio(ratio);
+
+    tnm->replace(path, pix);
+
+    return pix;
+}
 
 ThumbnailManager::ThumbnailManager() :
     QObject(NULL)
 {
     const QString cacheDir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
     m_cacheDir = cacheDir + QDir::separator() + qApp->applicationVersion() + QDir::separator() + QString::number(qApp->devicePixelRatio());
+
+    connect(&m_futureWatcher, &QFutureWatcher<QPixmap>::finished, this, &ThumbnailManager::onProcessFinished);
 
     QDir::root().mkpath(m_cacheDir);
 }
@@ -39,15 +69,20 @@ void ThumbnailManager::clear()
     QDir::root().mkpath(m_cacheDir);
 }
 
-bool ThumbnailManager::find(const QString &key, QPixmap *pixmap)
+void ThumbnailManager::find(const QString &key)
 {
     QString file = QDir(m_cacheDir).absoluteFilePath(key);
-    if (QFile::exists(file)) {
-        *pixmap = QPixmap(file);
-        return true;
-    } else {
-        return false;
+    if (QFile::exists(file))
+    {
+        emit thumbnailFounded(key, QPixmap(file));
+        return;
     }
+
+    m_queuedRequests << key;
+
+    // first item, start
+    if (m_queuedRequests.size() == 1)
+        processNextReq();
 }
 
 void ThumbnailManager::remove(const QString &key)
@@ -71,5 +106,25 @@ bool ThumbnailManager::replace(const QString &key, const QPixmap &pixmap)
 
 ThumbnailManager *ThumbnailManager::instance()
 {
-   return ThumbnailManagerInstance;
+    return ThumbnailManagerInstance;
+}
+
+void ThumbnailManager::processNextReq()
+{
+    Q_ASSERT(m_futureWatcher.isFinished());
+
+    const QString &item = m_queuedRequests.front();
+
+    QFuture<QPixmap> future = QtConcurrent::run(ThumbnailImage, item);
+    m_futureWatcher.setFuture(future);
+}
+
+void ThumbnailManager::onProcessFinished()
+{
+    emit thumbnailFounded(m_queuedRequests.front(), m_futureWatcher.result());
+
+    m_queuedRequests.pop_front();
+
+    if (!m_queuedRequests.isEmpty())
+        processNextReq();
 }

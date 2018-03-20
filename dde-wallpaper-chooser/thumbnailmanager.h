@@ -17,6 +17,9 @@
 #define THUMBNAILMANAGER_H
 
 #include <QObject>
+#include <QQueue>
+#include <QFutureWatcher>
+#include <QPixmap>
 
 class ThumbnailManager : public QObject
 {
@@ -25,14 +28,25 @@ public:
     ThumbnailManager();
 
     void clear();
-    bool find(const QString & key, QPixmap * pixmap);
+    void find(const QString & key);
     void remove(const QString & key);
     bool replace(const QString & key, const QPixmap & pixmap);
 
     static ThumbnailManager * instance();
 
+signals:
+    void thumbnailFounded(const QString &key, const QPixmap &pixmap);
+
 private:
+    void processNextReq();
+
+private slots:
+    void onProcessFinished();
+
+private:
+    QQueue<QString> m_queuedRequests;
     QString m_cacheDir;
+    QFutureWatcher<QPixmap> m_futureWatcher;
 };
 
 #endif // THUMBNAILMANAGER_H
