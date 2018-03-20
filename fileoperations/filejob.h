@@ -240,6 +240,8 @@ private:
     bool checkUseGvfsFileOperation(const DUrlList &files, const DUrl &destination);
     bool checkUseGvfsFileOperation(const QString& path);
 
+    static QStorageInfo getStorageInfo(const QString &file);
+
 #ifdef SW_LABEL
 public:
     static bool isLabelFile(const QString &srcFileName);
