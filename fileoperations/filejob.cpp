@@ -265,9 +265,9 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
     DUrlList list;
     QString tarDirPath = destination.toLocalFile();
     QDir tarDir(tarDirPath);
-    QStorageInfo tarStorageInfo(tarDirPath);
+    QStorageInfo tarStorageInfo = getStorageInfo(tarDirPath);
     if (files.count() > 0){
-        QStorageInfo srcStorageInfo(files.at(0).toLocalFile());
+        QStorageInfo srcStorageInfo = getStorageInfo(files.at(0).toLocalFile());
         if (srcStorageInfo.rootPath() != tarStorageInfo.rootPath()){
             m_isInSameDisk = false;
         }else if (FileUtils::isGvfsMountFile(destination.toLocalFile())){
@@ -475,8 +475,8 @@ DUrlList FileJob::doMoveToTrash(const DUrlList &files)
     }
 
     if (files.count() > 0){
-        QStorageInfo storageInfo(files.at(0).toLocalFile());
-        QStorageInfo trashStorageInfo(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
+        QStorageInfo storageInfo = getStorageInfo(files.at(0).toLocalFile());
+        QStorageInfo trashStorageInfo = getStorageInfo(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
         if(storageInfo.rootPath() != trashStorageInfo.rootPath()){
             m_isInSameDisk = false;
         }
@@ -525,9 +525,9 @@ void FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
     m_totalSize = FileUtils::totalSize(files);
     jobPrepared();
 
-    QStorageInfo srcStorageInfo(srcFilePath);
+    QStorageInfo srcStorageInfo = getStorageInfo(srcFilePath);
     QString tarDir = DUrl::fromLocalFile(tarFilePath).parentUrl().toLocalFile();
-    QStorageInfo tarStorageInfo(tarDir);
+    QStorageInfo tarStorageInfo = getStorageInfo(tarDir);
     if (srcStorageInfo.rootPath() != tarStorageInfo.rootPath()){
         m_isInSameDisk = false;
     }
@@ -1662,7 +1662,7 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
                         }
                     }else{
                         QFile tarFile(m_tarPath);
-                        if(tarFile.exists()){
+                        if(tarFile.exists() || QFileInfo(tarFile).isSymLink()){
                             QFile(m_tarPath).remove();
                         }
                     }
@@ -1823,11 +1823,11 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
     QFileInfo toInfo(tarFile);
     m_srcFileName = toInfo.fileName();
     m_srcPath = srcFile;
-    m_tarPath = toInfo.absoluteDir().path();
+    m_tarPath = toInfo.absoluteFilePath();
     m_tarDirName = toInfo.absoluteDir().dirName();
     m_status = Started;
 
-    if(toInfo.exists())
+    if(toInfo.exists() || toInfo.isSymLink())
     {
         jobConflicted();
     }
@@ -1850,7 +1850,7 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
                 if (m_isReplaced){
                     m_tarPath = m_tarPath + "/" + toInfo.fileName();
 
-                    if(to.exists()){
+                    if(to.exists() || toInfo.isSymLink()){
                         if (toInfo.isDir()){
 //                            bool result = QDir(tarFile).removeRecursively();
 
@@ -2004,7 +2004,7 @@ bool FileJob::deleteDir(const QString &dir)
 
     while (iterator.hasNext()) {
         const QFileInfo &fileInfo = iterator.next();
-        if (fileInfo.exists()){
+        if (fileInfo.exists() || fileInfo.isSymLink()){
             if (fileInfo.isFile() || fileInfo.isSymLink()) {
                 if (!deleteFile(fileInfo.filePath())) {
                     qDebug() << "Unable to remove file:" << fileInfo.filePath();
@@ -2189,7 +2189,7 @@ bool FileJob::checkDiskSpaceAvailable(const DUrlList &files, const DUrl &destina
     }
 
     qint64 freeBytes;
-    freeBytes = QStorageInfo(destination.toLocalFile()).bytesFree();
+    freeBytes = getStorageInfo(destination.toLocalFile()).bytesFree();
 
     m_isCheckingDisk = true;
 
@@ -2290,6 +2290,15 @@ bool FileJob::checkUseGvfsFileOperation(const DUrlList &files, const DUrl &desti
 bool FileJob::checkUseGvfsFileOperation(const QString &path)
 {
     return FileUtils::isGvfsMountFile(path);
+}
+
+QStorageInfo FileJob::getStorageInfo(const QString &file)
+{
+    QFileInfo info(file);
+
+    return (info.isSymLink() && !info.exists())
+            ? QStorageInfo(info.absolutePath())
+            : QStorageInfo(info.absoluteFilePath());
 }
 
 #ifdef SW_LABEL
