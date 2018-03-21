@@ -535,7 +535,7 @@ void FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
         }else if (srcInfo.isDir()){
             if(copyDir(srcFilePath, tarDir, true, &_tarFilePath))
                 deleteDir(srcFilePath);
-        }else if (srcInfo.isFile()){
+        }else if (srcInfo.isFile() || srcInfo.isSymLink()){
             if(copyFile(srcFilePath, tarDir, true, &_tarFilePath))
                 deleteFile(srcFilePath);
         }
@@ -1827,12 +1827,10 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
 
                 if(m_isCoExisted && !m_isReplaced)
                 {
-                    m_tarPath = checkDuplicateName(m_tarPath + "/" + toInfo.fileName());
+                    m_tarPath = checkDuplicateName(m_tarPath);
                 }
 
                 if (m_isReplaced){
-                    m_tarPath = m_tarPath + "/" + toInfo.fileName();
-
                     if(to.exists() || toInfo.isSymLink()){
                         if (toInfo.isDir()){
 //                            bool result = QDir(tarFile).removeRecursively();
@@ -1843,7 +1841,7 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
 
 //                            if (!result)
 //                                return false;
-                        }else if (toInfo.isFile()){
+                        }else if (toInfo.isFile() || toInfo.isSymLink()){
                             to.remove();
 //                            qDebug() << to.error() << to.errorString();
                         }
