@@ -91,7 +91,7 @@ bool DFileInfo::exists() const
 {
     Q_D(const DFileInfo);
 
-    return d->fileInfo.exists();
+    return d->fileInfo.exists() || d->fileInfo.isSymLink();
 }
 
 QString DFileInfo::path() const
