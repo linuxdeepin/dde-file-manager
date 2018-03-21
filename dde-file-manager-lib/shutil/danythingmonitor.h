@@ -5,6 +5,7 @@
 #include <regex>
 #include <mutex>
 #include <tuple>
+#include <memory>
 #include <string>
 #include <future>
 #include <chrono>
@@ -13,14 +14,11 @@
 #include <sstream>
 #include <iterator>
 
-#include <QObject>
 
-
-class DAnythingMonitor : public QObject
+class DAnythingMonitor : public std::enable_shared_from_this<DAnythingMonitor>
 {
-    Q_OBJECT
 public:
-    explicit DAnythingMonitor(const QString& hookPath, QObject* const parent = nullptr);
+    explicit DAnythingMonitor(const QString& hookPath);
     DAnythingMonitor(const DAnythingMonitor& other)=delete;
     DAnythingMonitor& operator=(const DAnythingMonitor& other)=delete;
     virtual ~DAnythingMonitor();
@@ -28,10 +26,10 @@ public:
     const QString& getVfsChangePath()const noexcept;
     void setVfsChangePath(const QString& path)const=delete;
     void setVfsChangePath(const QString& path);
-    void readVfsChange();
+    void workSignal();
+    void doWork();
 
 private:
-    void doWork();
 
     std::list<QString> m_filesForDelete{};
     std::list<std::pair<QString, QString>> m_filesForRename{};

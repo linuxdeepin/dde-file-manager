@@ -412,6 +412,14 @@ QVariant DSqliteHandle::disposeClientData(const QMap<QString, QList<QString>>& f
                 var.setValue(value);
                 break;
             }
+            case 7:
+            {
+                std::lock_guard<std::mutex> raiiLock{ m_mutex };
+                bool value{ this->execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(filesAndTags, userName) };
+
+                var.setValue(value);
+                break;
+            }
 //            case 2: ///###: untag files(same partion).
 //            {
 //                std::lock_guard<std::mutex> raiiLock{ m_mutex };
@@ -2264,7 +2272,7 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::UntagDiffPartionFiles, bo
 
 
 template<>
-void DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName)
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName)
 {
     if(!filesAndTags.isEmpty() && !userName.isEmpty()){
         QMap<QString, QList<QString>>::const_iterator cbeg{ filesAndTags.cbegin() };
@@ -2303,6 +2311,7 @@ void DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles>(const QMap<Q
             }
 
             if(!sqlForDeletingFiles.empty()){
+                bool value{ true };
 
                 for(const std::pair<QString, std::map<QString, std::pair<QString, QString>>>& partion : sqlForDeletingFiles){
                     DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(partion.first, userName) };
@@ -2311,14 +2320,18 @@ void DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles>(const QMap<Q
                         this->connectToSqlite(partion.first, userName);
 
                         if(static_cast<bool>(m_sqlDatabasePtr)){
-                            this->helpExecSql<DSqliteHandle::SqlType::DeleteFiles,
-                                              std::map<QString, std::pair<QString, QString>>, bool>(partion.second, partion.first, userName);
+                            bool result{ this->helpExecSql<DSqliteHandle::SqlType::DeleteFiles,
+                                              std::map<QString, std::pair<QString, QString>>, bool>(partion.second, partion.first, userName) };
+                            value = (value && result);
                         }
                     }
                 }
+                return value;
             }
         }
     }
+
+    return false;
 }
 
 

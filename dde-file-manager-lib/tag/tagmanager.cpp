@@ -16,10 +16,9 @@
 #include <QVariant>
 
 
-QReadWriteLock TagManager::mutex{};
-QSqlDatabase TagManager::sqlDataBase{};
+
 std::once_flag TagManager::onceFlag{};
-std::atomic<int> TagManager::counter{ 0 };
+
 
 std::multimap<TagManager::SqlType, QString> SqlStr{
                                                         { TagManager::SqlType::GetAllTags, "SELECT * FROM tag_property" },
@@ -317,9 +316,49 @@ bool TagManager::deleteTags(const QList<QString>& tags)
             tagsAsKeys[tag] = QVariant{ QList<QString>{} };
         }
 
-        QVariant var{ TagManagerDaemonController::instance()->disposeClientData(tagsAsKeys, TagManager::getCurrentUserName(), Tag::ActionType::DeleteTags) };
+        QVariant var{ TagManagerDaemonController::instance()->disposeClientData(tagsAsKeys,
+                                                  TagManager::getCurrentUserName(), Tag::ActionType::DeleteTags) };
 
         return var.toBool();
+    }
+
+    return false;
+}
+
+bool TagManager::deleteFiles(const QList<DUrl>& fileList)
+{
+    if(!fileList.isEmpty()){
+        QList<QString> urlList{};
+
+        for(const DUrl& localFile : fileList){
+            QString localFileStr{ localFile.toLocalFile() };
+            urlList.push_back(localFileStr);
+        }
+
+        if(!urlList.isEmpty()){
+            bool value{ TagManager::instance()->deleteFiles(urlList) };
+            return value;
+        }
+    }
+
+    return false;
+}
+
+bool TagManager::deleteFiles(const QList<QString>& fileList)
+{
+    if(!fileList.isEmpty()){
+        QMap<QString, QVariant> filesForDeleting{};
+
+        for(const QString& file : fileList){
+            filesForDeleting[file] = QVariant{ QList<QString>{} };
+        }
+
+
+        if(!filesForDeleting.isEmpty()){
+            QVariant var{ TagManagerDaemonController::instance()->disposeClientData(filesForDeleting,
+                                                      TagManager::getCurrentUserName(), Tag::ActionType::DeleteFiles) };
+            return var.toBool();
+        }
     }
 
     return false;
@@ -335,7 +374,6 @@ bool TagManager::changeTagName(const QPair<QString, QString>& oldAndNewName)
         QString sqlStr{ "UPDATE tag_property SET tag_name = \'%1\' WHERE tag_property.tag_name = \'%2\'" };
 
         if(TagManager::sqlDataBase.open() /*&& TagManager::sqlDataBase.transaction()*/){
-            qDebug()<< TagManager::sqlDataBase.transaction();
 
             QSqlQuery sqlQuery{ TagManager::sqlDataBase };
             sqlStr = sqlStr.arg(oldAndNewName.second);
@@ -358,7 +396,6 @@ bool TagManager::changeTagName(const QPair<QString, QString>& oldAndNewName)
                 qDebug()<< oldAndNew;
                 var = TagManagerDaemonController::instance()->disposeClientData(oldAndNew,
                                                               TagManager::getCurrentUserName(), Tag::ActionType::ChangeTagName);
-                qDebug()<< var;
             }
 
             if(!flagForUpdatingMainDB && var.toBool()){

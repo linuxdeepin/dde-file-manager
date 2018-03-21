@@ -192,10 +192,14 @@ public:
 
     bool remveTagsOfFiles(const QList<QString>& tags, const QList<DUrl>& files);
 
-    bool deleteTags(const QList<QString>& tags);
 
     bool changeTagName(const QPair<QString, QString>& oldAndNewName);
 
+    ///###:delete
+    bool deleteTags(const QList<QString>& tags);
+
+    bool deleteFiles(const QList<QString>& fileList);
+    bool deleteFiles(const QList<DUrl>& urlList);
 
 
     static QSharedPointer<TagManager> instance()
@@ -208,38 +212,11 @@ public:
     }
 
 private:
-
     static QString getMainDBLocation();
 
-    static QString getTagNameFromTagUrl(const DUrl& tagUri)
-    {
-        std::basic_string<char> pathStr{ tagUri.toLocalFile().toStdString() };
-        std::match_results<std::basic_string<char>::const_iterator> result;
-        std::basic_regex<char> regexStr{"(\\{1})([\\w]+)"}; //###: search the tag_name from uri.
-
-        if(std::regex_search(pathStr, result, regexStr) == true){
-            QString tagName{ QString::fromStdString(result[2]) };
-            return tagName;
-        }
-
-        return QString{};
-    }
-
-
-    static void closeDataBase()
-    {
-        if(TagManager::counter.load(std::memory_order_acquire) <= 0 &&
-                                    TagManager::sqlDataBase.isOpen()){
-            TagManager::counter.store(0,std::memory_order_release);
-            TagManager::sqlDataBase.close();
-        }
-    }
-
-    static QReadWriteLock mutex;
-    static QSqlDatabase sqlDataBase;
-
+    QSqlDatabase sqlDataBase{};
+    QReadWriteLock mutex{};
     static std::once_flag onceFlag;
-    static std::atomic<int> counter;
 };
 
 #endif // TAGMANAGER_H

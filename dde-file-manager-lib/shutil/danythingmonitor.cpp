@@ -14,12 +14,10 @@
 
 static QString StartPoint{};
 
-DAnythingMonitor::DAnythingMonitor(const QString& hookPath, QObject* const parent)
-             :QObject{ parent },
-              m_hookFilePath{ hookPath }
+DAnythingMonitor::DAnythingMonitor(const QString& hookPath)
+                :m_hookFilePath{ hookPath }
 {
-    std::function<void(DAnythingMonitor* const monitor)> worker{ &DAnythingMonitor::doWork };
-    m_workThread = std::thread{std::move(worker), this};
+    ///###: constructor.
 }
 
 DAnythingMonitor::~DAnythingMonitor()
@@ -43,7 +41,7 @@ void DAnythingMonitor::setVfsChangePath(const QString& path)
     m_hookFilePath = path;
 }
 
-void DAnythingMonitor::readVfsChange()
+void DAnythingMonitor::workSignal()
 {
     if(!m_hookFilePath.isEmpty() && DFileInfo::exists(DUrl::fromLocalFile(m_hookFilePath))){
         m_iStream.open(m_hookFilePath.toStdString());
@@ -61,6 +59,8 @@ void DAnythingMonitor::readVfsChange()
 
         }
 
+        m_iStream.close();
+
         for(const std::basic_string<char>& content : lineContents){
             std::match_results<std::basic_string<char>::const_iterator> result{};
 
@@ -77,6 +77,8 @@ void DAnythingMonitor::readVfsChange()
                 std::basic_string<char>::const_iterator>>::const_iterator cend{ results.cend() };
         m_currentEnd = (--cend)->str(0);
         cend = results.cend();
+
+        qDebug()<< m_currentEnd.c_str();
 
         std::list<std::match_results<
                 std::basic_string<char>::const_iterator>>::const_iterator oldPos{};
@@ -126,12 +128,9 @@ void DAnythingMonitor::readVfsChange()
                 }else if(pieces[0] == RENAME){
                     m_filesForRename.emplace_back(pieces[1], pieces[2]);
                 }
-
             }
-
             m_readyFlag.store(true, std::memory_order_release);
         }
-
         m_conditionVar.notify_one();
     }
 }
@@ -141,10 +140,8 @@ void DAnythingMonitor::doWork()
     std::unique_lock<std::mutex> uniqueLock{ m_mutex };
     m_conditionVar.wait(uniqueLock, [&]{return  m_readyFlag.load(std::memory_order_consume);});
     m_readyFlag.store(false, std::memory_order_release);
-    QSharedPointer<TagManager> tagManager{ TagManager::instance() };
 
-    std::future<bool> resultOfDeleting{ std::async(std::launch::async,
-                                                   &TagManager::deleteTags, tagManager, QList<QString>::fromStdList(m_filesForDelete)) };
+    TagManager::instance()->deleteFiles(QList<QString>::fromStdList(m_filesForDelete));
 
     if(!m_filesForRename.empty()){
 
@@ -152,9 +149,6 @@ void DAnythingMonitor::doWork()
             TagManager::instance()->changeTagName(QPair<QString, QString>{ oldAndNewName.first, oldAndNewName.second });
         }
     }
-
-    resultOfDeleting.get();
-    std::this_thread::sleep_for(std::chrono::duration<std::size_t, std::ratio<1, 1000>>{100});
 }
 
 

@@ -10,7 +10,8 @@ namespace Tag
         GetTagsThroughFile,
         RemoveTagsOfFiles,
         DeleteTags,
-        ChangeTagName
+        ChangeTagName,
+        DeleteFiles
     };
 }
 
