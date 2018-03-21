@@ -244,7 +244,7 @@ bool TrashManager::restoreTrashFile(const DUrlList &list)
             // restore all
             DUrlList list;
 
-            for (const DAbstractFileInfoPointer &info : DFileService::instance()->getChildren(Q_NULLPTR, DUrl::fromTrashFile("/"), QStringList(), QDir::AllEntries | QDir::NoDotAndDotDot))
+            for (const DAbstractFileInfoPointer &info : DFileService::instance()->getChildren(Q_NULLPTR, DUrl::fromTrashFile("/"), QStringList(), QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System))
                 list << info->fileUrl();
 
             if (list.isEmpty())
