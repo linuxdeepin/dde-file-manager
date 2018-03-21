@@ -150,7 +150,7 @@ template<>
 bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::UntagDiffPartionFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName);
 
 template<>
-void DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName);
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName);
 
 template<>
 bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteTags, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName);
