@@ -72,13 +72,15 @@ public:
 
     void setEntryUrlList(const DUrlList &entryUrlList);
 
+    void done(int r) override;
+
 public slots:
     void playCurrentPreviewFile();
 
 private:
     void childEvent(QChildEvent *event) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
-    void hideEvent(QHideEvent *event) Q_DECL_OVERRIDE;
+    void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *obj, QEvent *event) Q_DECL_OVERRIDE;
 
