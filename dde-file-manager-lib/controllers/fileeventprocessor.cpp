@@ -142,11 +142,10 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent>& event)
         if(QWidgetAction* widgetAction = dynamic_cast<QWidgetAction*>(action)){
 
             if(DTagActionWidget* tagWidget = dynamic_cast<DTagActionWidget*>(widgetAction->defaultWidget())){
-
-                QSharedPointer<DFMMakeFilesTagsEvent> tagEvent{
-                    dMakeEventPointer<DFMMakeFilesTagsEvent>(event->sender(),
-                                                             QList<QString>{ tagWidget->selectedColor().name() }, event->selectedUrls())
-                                                              };
+                QSharedPointer<DFMMakeFilesTagThroughColorEvent> tagEvent{
+                                                                        dMakeEventPointer<DFMMakeFilesTagThroughColorEvent>(event->sender(),
+                                                                                          tagWidget->selectedColor().name(), event->selectedUrls())
+                                                                          };
                 AppController::instance()->actionMakeFilesTagsThroughColor(tagEvent);
                 break;
             }

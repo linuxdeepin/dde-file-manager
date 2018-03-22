@@ -113,12 +113,26 @@ static const std::multimap<DSqliteHandle::SqlType, QString> SqlTypeWithStrs {
                                                           {DSqliteHandle::SqlType::GetTagsThroughFile, "SELECT tag_with_file.tag_name FROM tag_with_file "
                                                                                                                                      "WHERE tag_with_file.file_name = \'%1\'"},
                                                           {DSqliteHandle::SqlType::GetFilesThroughTag, "SELECT tag_with_file.file_name FROM tag_with_file "
-                                                                                                                                       "WHERE tag_with_file.tag_name = \'%1\'"}
+                                                                                                                                       "WHERE tag_with_file.tag_name = \'%1\'"},
+
+                                                          {DSqliteHandle::SqlType::TagFilesThroughColor, "SELECT COUNT(tag_with_file.tag_name) AS counter FROM tag_with_file "
+                                                                                                          "WHERE tag_with_file.tag_name = \'%1\' AND tag_with_file.file_name = \'%2\'"},
+                                                          {DSqliteHandle::SqlType::TagFilesThroughColor, "INSERT INTO tag_with_file (tag_name, file_name) VALUES(\'%1\', \'%2\')"},
+                                                          {DSqliteHandle::SqlType::TagFilesThroughColor, "SELECT tag_with_file.tag_name FROM tag_with_file "
+                                                                                                                                        "WHERE tag_with_file.file_name = \'%1\'"},
+                                                          {DSqliteHandle::SqlType::TagFilesThroughColor, "INSERT INTO file_property (file_name, tag_1, tag_2, tag_3)  "
+                                                                                                         "VALUES (\'%1\', \'%2\', \'%3\', \'%4\')"},
+
+                                                          {DSqliteHandle::SqlType::TagFilesThroughColor2, "SELECT COUNT(file_property.file_name) AS counter FROM file_property "
+                                                                                                          "WHERE file_name = \'%1\'"},
+                                                          {DSqliteHandle::SqlType::TagFilesThroughColor2, "UPDATE file_property SET tag_1 = \'%1\', tag_2 = \'%2\', tag_3 = \'%3' "
+                                                                                                          "WHERE file_property.file_name = \'%4\'"},
                                                       };
 
 
 DSqliteHandle::DSqliteHandle(QObject * const parent)
-              :QObject{ parent }
+              :QObject{ parent },
+               m_sqlDatabasePtr{ new QSqlDatabase }
 {
     std::lock_guard<std::mutex> raiiLock{ m_mutex };
     m_partionsOfDevices.reset(new QList<QPair<QString, QList<QPair<QString, QString>>>>{ DSqliteHandle::queryPartionsInfoOfDevices() });
@@ -420,6 +434,14 @@ QVariant DSqliteHandle::disposeClientData(const QMap<QString, QList<QString>>& f
                 var.setValue(value);
                 break;
             }
+            case 8:
+            {
+                std::lock_guard<std::mutex> raiiLock{ m_mutex };
+                bool value{ this->execSqlstr<DSqliteHandle::SqlType::TagFilesThroughColor, bool>(filesAndTags, userName) };
+
+                var.setValue(value);
+                break;
+            }
 //            case 2: ///###: untag files(same partion).
 //            {
 //                std::lock_guard<std::mutex> raiiLock{ m_mutex };
@@ -538,7 +560,6 @@ void DSqliteHandle::connectToSqlite(const QString& mountPoint, const QString& us
                 m_sqlDatabasePtr.reset(nullptr);
             }
                                            } };
-
 
     if(code == DSqliteHandle::ReturnCode::NoExist){
         initDatabasePtr();
@@ -1346,12 +1367,229 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles3, QMap<QString,
 
 
 
+template<>
+bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFilesThroughColor,
+                    std::list<std::tuple<QString, QString, QString, QString, QString, QString>>,
+                    bool>(const std::list<std::tuple<QString, QString, QString, QString, QString, QString>>& sqlStrs,
+                                                                                     const QString& mountPoint, const QString& userName)
+{
+    if(!m_flag.load(std::memory_order_consume) && !sqlStrs.empty() &&
+            !mountPoint.isEmpty() && !userName.isEmpty()){
+        std::list<std::tuple<QString, QString, QString, QString, QString, QString>>::const_iterator cbeg{ sqlStrs.cbegin() };
+        std::list<std::tuple<QString, QString, QString, QString, QString, QString>>::const_iterator cend{ sqlStrs.cend() };
+        std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
+                  std::multimap<DSqliteHandle::SqlType, QString>::const_iterator> range{ SqlTypeWithStrs.equal_range(DSqliteHandle::SqlType::TagFilesThroughColor2) };
+
+
+        QSqlQuery sqlQuery{ *m_sqlDatabasePtr };
+        bool result{ true };
+
+        for(; cbeg != cend; ++cbeg){
+
+            if(!m_flag.load(std::memory_order_consume)){
+
+                if(!sqlQuery.exec(std::get<0>(*cbeg))){
+                    qWarning(sqlQuery.lastError().text().toStdString().c_str());
+                }
+
+                int counter{ 0 };
+
+                if(sqlQuery.next()){
+                    counter = sqlQuery.value("counter").toInt();
+                }
+
+
+                if(counter == 0){
+                    bool flag{ true };
+
+                    if(!sqlQuery.exec(std::get<1>(*cbeg))){
+                        flag = false;
+                        qWarning(sqlQuery.lastError().text().toStdString().c_str());
+                    }
+
+                    if(flag){
+
+                        if(!sqlQuery.exec(std::get<2>(*cbeg))){
+                            qWarning(sqlQuery.lastError().text().toStdString().c_str());
+                        }
+
+                        std::list<QString> tagNames{};
+
+                        while(sqlQuery.next()){
+                            QString tagName{ sqlQuery.value("tag_name").toString() };
+                            tagNames.emplace_back(std::move(tagName));
+                        }
+
+                        if(!tagNames.empty()){
+
+                            std::size_t size{ tagNames.size() };
+
+                            if(size < 3){
+                                std::size_t redundant{ 3 - size };
+
+                                for(std::size_t index = 0; index < redundant; ++index){
+                                    tagNames.emplace_back(QString{""});
+                                }
+                            }
+
+                            QString sqlForCounting{ range.first->second };
+                            sqlForCounting = sqlForCounting.arg(std::get<4>(*cbeg));
+                            std::list<QString>::const_iterator tagNameItr{ tagNames.cbegin() };
+
+                            if(!sqlQuery.exec(sqlForCounting)){
+                                qWarning(sqlQuery.lastError().text().toStdString().c_str());
+                                result = false;
+                                break;
+                            }
+
+                            if(sqlQuery.next()){
+                                int counter{ sqlQuery.value("counter").toInt() };
+
+                                if(counter == 0){
+                                    QString sqlForInsertingNewRow{ std::get<3>(*cbeg) };
+                                    sqlForInsertingNewRow = sqlForInsertingNewRow.arg(std::get<4>(*cbeg));
+                                    sqlForInsertingNewRow = sqlForInsertingNewRow.arg(*tagNameItr);
+                                    sqlForInsertingNewRow = sqlForInsertingNewRow.arg(*(++tagNameItr));
+                                    sqlForInsertingNewRow = sqlForInsertingNewRow.arg(*(++tagNameItr));
+
+                                    if(!sqlQuery.exec(sqlForInsertingNewRow)){
+                                         qWarning(sqlQuery.lastError().text().toStdString().c_str());
+                                         result = false;
+                                         break;
+                                    }
+                                    continue;
+
+                                }else{
+                                    std::multimap<DSqliteHandle::SqlType, QString>::const_iterator sqlItrForUpdating{ range.first };
+                                    ++sqlItrForUpdating;
+                                    QString sqlForUpdating{ sqlItrForUpdating->second };
+                                    sqlForUpdating = sqlForUpdating.arg(*tagNameItr);
+                                    sqlForUpdating = sqlForUpdating.arg(*(++tagNameItr));
+                                    sqlForUpdating = sqlForUpdating.arg(*(++tagNameItr));
+                                    sqlForUpdating = sqlForUpdating.arg(std::get<4>(*cbeg));
+
+                                    if(!sqlQuery.exec(sqlForUpdating)){
+                                         qWarning(sqlQuery.lastError().text().toStdString().c_str());
+                                         result = false;
+                                         break;
+                                    }
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                    result = false;
+                    break;
+                }
+
+            }else{
+
+                DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint, userName) };
+
+                if(code == DSqliteHandle::ReturnCode::Exist){
+
+                    if(!sqlQuery.exec(std::get<0>(*cbeg))){
+                        qWarning(sqlQuery.lastError().text().toStdString().c_str());
+                    }
+
+                    int counter{ 0 };
+
+                    if(sqlQuery.next()){
+                        counter = sqlQuery.value("counter").toInt();
+                    }
+
+
+                    if(counter == 0){
+                        bool flag{ true };
+
+                        if(!sqlQuery.exec(std::get<1>(*cbeg))){
+                            flag = false;
+                            qWarning(sqlQuery.lastError().text().toStdString().c_str());
+                        }
+
+                        if(flag){
+
+                            if(!sqlQuery.exec(std::get<2>(*cbeg))){
+                                qWarning(sqlQuery.lastError().text().toStdString().c_str());
+                            }
+
+                            std::list<QString> tagNames{};
+
+                            while(sqlQuery.next()){
+                                QString tagName{ sqlQuery.value("tag_name").toString() };
+                                tagNames.emplace_back(std::move(tagName));
+                            }
+
+                            if(!tagNames.empty()){
+                                QString sqlForInsertingNewRow{ std::get<3>(*cbeg) };
+                                std::size_t size{ tagNames.size() };
+
+                                if(size < 3){
+                                    std::size_t redundant{ 3 - size };
+
+                                    for(std::size_t index = 0; index < redundant; ++index){
+                                        tagNames.emplace_back(QString{""});
+                                    }
+                                }
+
+                                if(sqlQuery.next()){
+                                    int counter{ sqlQuery.value("counter").toInt() };
+                                    std::list<QString>::const_iterator tagNameItr{ tagNames.cbegin() };
+
+                                    if(counter == 0){
+                                        QString sqlForInsertingNewRow{ std::get<3>(*cbeg) };
+                                        sqlForInsertingNewRow = sqlForInsertingNewRow.arg(*tagNameItr);
+                                        sqlForInsertingNewRow = sqlForInsertingNewRow.arg(*(++tagNameItr));
+                                        sqlForInsertingNewRow = sqlForInsertingNewRow.arg(*(++tagNameItr));
+                                        sqlForInsertingNewRow = sqlForInsertingNewRow.arg(std::get<4>(*cbeg));
+
+                                        if(!sqlQuery.exec(sqlForInsertingNewRow)){
+                                             qWarning(sqlQuery.lastError().text().toStdString().c_str());
+                                             result = false;
+                                             break;
+                                        }
+                                        continue;
+
+                                    }else{
+                                        std::multimap<DSqliteHandle::SqlType, QString>::const_iterator sqlItrForUpdating{ range.first };
+                                        ++sqlItrForUpdating;
+                                        QString sqlForUpdating{ sqlItrForUpdating->second };
+                                        sqlForUpdating = sqlForUpdating.arg(*tagNameItr);
+                                        sqlForUpdating = sqlForUpdating.arg(*(++tagNameItr));
+                                        sqlForUpdating = sqlForUpdating.arg(*(++tagNameItr));
+                                        sqlForUpdating = sqlForUpdating.arg(std::get<4>(*cbeg));
+
+                                        if(!sqlQuery.exec(sqlForInsertingNewRow)){
+                                             qWarning(sqlQuery.lastError().text().toStdString().c_str());
+                                             result = false;
+                                             break;
+                                        }
+                                        continue;
+                                    }
+                                }
+                            }
+                        }
+                        result = false;
+                        break;
+                    }
+                    continue;
+                }
+                result = false;
+                break;
+            }
+        }
+        return result;
+    }
+    return false;
+}
+
+
 
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::UntagSamePartionFiles,
                                                         std::list<QString>>( const std::list<QString>& sqlStrs, const QString& mountPoint, const QString& userName)
 {
-    if(!m_flag.load(std::memory_order_acquire) && !sqlStrs.empty() && !mountPoint.isEmpty() && !userName.isEmpty()){
+    if(!m_flag.load(std::memory_order_consume) && !sqlStrs.empty() && !mountPoint.isEmpty() && !userName.isEmpty()){
         std::list<QString>::const_iterator cbeg{ sqlStrs.cbegin() };
         std::list<QString>::const_iterator cend{ sqlStrs.cend() };
         QSqlQuery sqlQuery{*m_sqlDatabasePtr};
@@ -1505,7 +1743,6 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::UntagSamePartionFiles2, 
                         }
                     }
                 }
-
 
             }else{
 
@@ -2165,6 +2402,84 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(const QMa
 }
 
 
+
+template<>
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFilesThroughColor, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName)
+{
+    if(!filesAndTags.isEmpty() && !userName.isEmpty()){
+        QMap<QString, QList<QString>>::const_iterator cbeg{ filesAndTags.cbegin() };
+        QMap<QString, QList<QString>>::const_iterator cend{ filesAndTags.cend() };
+        std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
+                  std::multimap<DSqliteHandle::SqlType, QString>::const_iterator> range{ SqlTypeWithStrs.equal_range(SqlType::TagFilesThroughColor) };
+        std::list<std::tuple<QString, QString, QString, QString, QString, QString>> sqlStrs{};
+
+        QPair<QString, QString> unixDeviceAndMountPoint{ DSqliteHandle::getMountPointOfFile(DUrl::fromLocalFile(cbeg.key()), m_partionsOfDevices) };
+
+        qDebug()<< unixDeviceAndMountPoint;
+
+        DSqliteHandle::ReturnCode code{
+                        this->checkWhetherHasSqliteInPartion(unixDeviceAndMountPoint.second, userName) };
+
+        if(code == DSqliteHandle::ReturnCode::Exist || code == DSqliteHandle::ReturnCode::NoExist){
+
+            qDebug()<< ((bool)m_sqlDatabasePtr);
+
+            if(static_cast<bool>(m_sqlDatabasePtr)){
+                qDebug()<< unixDeviceAndMountPoint.second;
+                this->connectToSqlite(unixDeviceAndMountPoint.second, userName);
+
+                for(; cbeg != cend; ++cbeg){
+                    std::multimap<DSqliteHandle::SqlType, QString>::const_iterator sqlItrBeg{ range.first };
+                    QString sqlForCounting{sqlItrBeg->second.arg(cbeg.value().first())};
+                    sqlForCounting = sqlForCounting.arg(cbeg.key());
+
+                    ++sqlItrBeg;
+
+                    QString sqlForInserting{sqlItrBeg->second.arg(cbeg.value().first())};
+                    sqlForInserting = sqlForInserting.arg(cbeg.key());
+
+                    ++sqlItrBeg;
+
+                    QString sqlForSelectingTagName{ sqlItrBeg->second.arg(cbeg.key()) };
+
+                    ++sqlItrBeg;
+
+                    QString sqlForInsertingNewRow{ sqlItrBeg->second };
+
+                    std::tuple<QString, QString, QString, QString, QString, QString> sqlTuple{ sqlForCounting, sqlForInserting, sqlForSelectingTagName,
+                                                                             sqlForInsertingNewRow, cbeg.key(), cbeg.value().first() };
+                    sqlStrs.push_back(std::move(sqlTuple));
+                }
+
+                if(!sqlStrs.empty()){
+                    bool value{ false };
+
+                    if(m_sqlDatabasePtr->open() && m_sqlDatabasePtr->transaction()){
+                        value = this->helpExecSql<DSqliteHandle::SqlType::TagFilesThroughColor,
+                                                  std::list<std::tuple<QString, QString, QString, QString, QString, QString>>,
+                                                  bool>(sqlStrs, unixDeviceAndMountPoint.second, userName);
+
+                        if(value){
+
+                            if(!m_sqlDatabasePtr->commit()){
+                                m_sqlDatabasePtr->rollback();
+
+                                return false;
+                            }
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
+
+
+
+
 template<>
 bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::UntagSamePartionFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName)
 {
@@ -2330,7 +2645,6 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(const 
             }
         }
     }
-
     return false;
 }
 

@@ -580,6 +580,21 @@ public:
     QList<DUrl> m_files{};
 };
 
+
+class DFMMakeFilesTagThroughColorEvent : public DFMEvent
+{
+public:
+    explicit DFMMakeFilesTagThroughColorEvent(const QObject* sender, const QString& color, const QList<DUrl>& files);
+    DFMMakeFilesTagThroughColorEvent(const DFMMakeFilesTagThroughColorEvent& other) = delete;
+    DFMMakeFilesTagThroughColorEvent& operator=(const DFMMakeFilesTagThroughColorEvent& other) = delete;
+
+    static QSharedPointer<DFMMakeFilesTagThroughColorEvent> fromJson(const QJsonObject& json);
+
+    QString m_color{}; //###: hexadecimal!
+    QList<DUrl> m_files{};
+};
+
+
 class DFMRemoveTagsOfFilesEvent : public DFMEvent
 {
 public:

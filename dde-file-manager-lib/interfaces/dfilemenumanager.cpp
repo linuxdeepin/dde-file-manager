@@ -804,6 +804,7 @@ void DFileMenuData::initActions()
             case MenuAction::ChangeTagColor:
             {
                 tagAction->setText("Change color of present tag");
+                break;
             }
             default:
                 break;

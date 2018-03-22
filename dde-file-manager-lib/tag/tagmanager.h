@@ -118,7 +118,8 @@ public:
         GetAllTags = 1,
         MakeFilesTags,
         GetTagsThroughFile,
-        GetFilesThroughTag
+        GetFilesThroughTag,
+        MakeFilesTagThroughColor
     };
 
 
@@ -192,8 +193,10 @@ public:
 
     bool remveTagsOfFiles(const QList<QString>& tags, const QList<DUrl>& files);
 
-
     bool changeTagName(const QPair<QString, QString>& oldAndNewName);
+
+    bool makeFilesTagThroughColor(const QString &color, const QList<DUrl>& files);
+
 
     ///###:delete
     bool deleteTags(const QList<QString>& tags);

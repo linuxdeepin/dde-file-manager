@@ -96,10 +96,10 @@ void DTagActionWidgetPrivate::initUiElement()
         m_roundButtons[index]->setRadius(20);
         m_HBoxLayout->addWidget(m_roundButtons[index], Qt::AlignCenter);
     }
+
     m_HBoxLayout->addSpacing(21);
     m_HBoxLayout->setMargin(0);
     m_HBoxLayout->setSpacing(0);
-
 }
 
 

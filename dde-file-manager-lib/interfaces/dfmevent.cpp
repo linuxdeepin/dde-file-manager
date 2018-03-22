@@ -965,3 +965,19 @@ QSharedPointer<DFMRenameTagEvent> DFMRenameTagEvent::fromJson(const QJsonObject&
     (void)json;
     return QSharedPointer<DFMRenameTagEvent>{ nullptr };
 }
+
+DFMMakeFilesTagThroughColorEvent::DFMMakeFilesTagThroughColorEvent(const QObject* sender, const QString& color, const QList<DUrl>& files)
+                                :DFMEvent{ sender },
+                                 m_color{ color },
+                                 m_files{ files }
+{
+    //constructor!
+}
+
+QSharedPointer<DFMMakeFilesTagThroughColorEvent> DFMMakeFilesTagThroughColorEvent::fromJson(const QJsonObject& json)
+{
+    (void)json;
+    return QSharedPointer<DFMMakeFilesTagThroughColorEvent>{ nullptr };
+}
+
+

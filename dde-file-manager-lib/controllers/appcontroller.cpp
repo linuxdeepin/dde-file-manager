@@ -99,7 +99,7 @@ static const QMap<QString, QString> ColorsWithNames{
                                                         { "#9023fc", "Purple"},
                                                         { "#3468ff", "Navy-blue"},
                                                         { "#00b5ff", "Azure"},
-                                                        { "#58df0a", "Grass green"},
+                                                        { "#58df0a", "Grass-green"},
                                                         { "#fef144", "Yellow"} ,
                                                         { "#cccccc", "Gray" }
                                                    };
@@ -722,17 +722,16 @@ QList<QString> AppController::actionGetTagsThroughFiles(const QSharedPointer<DFM
     return tags;
 }
 
-void AppController::actionMakeFilesTagsThroughColor(const QSharedPointer<DFMMakeFilesTagsEvent> &event)
+bool AppController::actionMakeFilesTagsThroughColor(const QSharedPointer<DFMMakeFilesTagThroughColorEvent>& event)
 {
-    if( static_cast<bool>(event) && (!event->m_files.isEmpty()) && (!event->m_tags.isEmpty()) ){
-            QList<QString> tags{};
+    if( static_cast<bool>(event) && (!event->m_files.isEmpty()) && (!event->m_color.isEmpty()) ){
+        bool value{ false };
 
-            for(const QString& tagColor : event->m_tags){
-                tags.push_back(::ColorsWithNames[tagColor]);
-            }
+        value = TagManager::instance()->makeFilesTagThroughColor(event->m_color, event->m_files);
 
-        TagManager::instance()->makeFilesTags(tags, event->m_files);
+        return value;
     }
+    return false;
 }
 
 QList<QString> AppController::actionGetFilesThroughTag(const QSharedPointer<DFMGetFilesThroughTag>& event)

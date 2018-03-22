@@ -43,6 +43,9 @@ public:
         ChangeTagsName,
         ChangeFilesName,
 
+        TagFilesThroughColor,
+        TagFilesThroughColor2,
+
         GetFilesThroughTag,
 
         GetTagsThroughFile,
@@ -63,7 +66,6 @@ public:
         PlaceHolder,
         FailedExecSql
     };
-
 
     DSqliteHandle(QObject* const parent = nullptr);
     virtual ~DSqliteHandle()=default;
@@ -115,7 +117,7 @@ private:
 
     ///###: ------------------<TotalDeviceName, [<DeviceName, mountPoint>]>
     QScopedPointer<QList<QPair<QString, QList<QPair<QString, QString>>>>> m_partionsOfDevices{ nullptr };
-    std::unique_ptr<QSqlDatabase> m_sqlDatabasePtr;
+    std::unique_ptr<QSqlDatabase> m_sqlDatabasePtr{ nullptr };
     std::atomic<bool> m_flag{ false };
     std::mutex m_mutex{};
 };
@@ -123,6 +125,9 @@ private:
 ///###: increase
 template<> ///###:-----------------------------------------------------------><file, [tagsName]>
 bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName);
+
+template<>
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFilesThroughColor, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName);
 
 ///###: query
 template<>
@@ -168,6 +173,12 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles2, QMap<QString,
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles3, QMap<QString, QList<QString>>, bool>(const QMap<QString, QList<QString>>&  fileNamesAndTagNames,
                                                                                                         const QString& mountPoint, const QString& userName);
+
+
+template<>
+bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFilesThroughColor,
+                    std::list<std::tuple<QString, QString, QString, QString, QString, QString>>, bool>(const std::list<std::tuple<QString, QString, QString, QString, QString, QString>>& sqlStrs,
+                                                                                                       const QString& mountPoint, const QString& userName);
 
 
 ///###: untag files in same/diff partion.
