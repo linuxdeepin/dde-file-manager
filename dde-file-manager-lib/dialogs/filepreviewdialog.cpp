@@ -274,10 +274,12 @@ void FilePreviewDialog::showEvent(QShowEvent *event)
     return DAbstractDialog::showEvent(event);
 }
 
-void FilePreviewDialog::hideEvent(QHideEvent *event)
+void FilePreviewDialog::closeEvent(QCloseEvent *event)
 {
-    m_preview->stop();
-    return DAbstractDialog::hideEvent(event);
+    if (m_preview)
+        m_preview->stop();
+
+    return DAbstractDialog::closeEvent(event);
 }
 
 void FilePreviewDialog::mouseReleaseEvent(QMouseEvent *event)
@@ -492,6 +494,14 @@ void FilePreviewDialog::setEntryUrlList(const DUrlList &entryUrlList)
         m_fileList = m_entryUrlList;
         m_currentPageIndex = m_entryUrlList.indexOf(currentUrl);
     }
+}
+
+void FilePreviewDialog::done(int r)
+{
+    DAbstractDialog::done(r);
+
+    if (m_preview)
+        m_preview->stop();
 }
 
 void FilePreviewDialog::playCurrentPreviewFile()
