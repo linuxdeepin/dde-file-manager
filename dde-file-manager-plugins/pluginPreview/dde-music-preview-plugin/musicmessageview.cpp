@@ -45,8 +45,8 @@ void MusicMessageView::initUI()
 
     m_imgLabel = new QLabel(this);
 
-    QMediaPlayer* player = new QMediaPlayer;
-    connect(player, &QMediaPlayer::mediaStatusChanged, [=](const QMediaPlayer::MediaStatus& status){
+    QMediaPlayer* player = new QMediaPlayer(this);
+    connect(player, &QMediaPlayer::mediaStatusChanged, this, [=] (const QMediaPlayer::MediaStatus& status) {
         if(status == QMediaPlayer::BufferedMedia || status == QMediaPlayer::LoadedMedia){
             m_title = player->metaData(QMediaMetaData::Title).toString();
 
