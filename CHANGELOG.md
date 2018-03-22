@@ -1,3 +1,22 @@
+<a name="4.4.8.3"></a>
+##  (2018-03-22)
+
+
+#### Bug Fixes
+
+*   list all symlink files include broken symlink by QDirIterator with QDir::System ([2d12ff78](4.4.8.3/commit/2d12ff78395a3404b4b56276b80ae923bd33d223))
+*   can not restore trash files if target file is exist ([08ea0526](4.4.8.3/commit/08ea0526bfc7b74f0bed2a4bb2d432fd0be72b95))
+*   can not move the invalid symlink to trash ([50be2a2f](4.4.8.3/commit/50be2a2f66e613631a03f4a7da7e49bb1dd68a6c))
+*   check dock rect failed ([a5d07f4a](4.4.8.3/commit/a5d07f4aeb27cf193cabc64f9fabe9eaf9e4cf9d))
+*   can not close computer property dialog  by CloseAllDialogIndicator ([6842e967](4.4.8.3/commit/6842e9674cd637a2b3d906c70533f78c80c75256))
+*   the copy file dialog position is wrong when close ([902f7707](4.4.8.3/commit/902f770725ebcab99b655b20e9a69d6cc5c1260f))
+
+#### Features
+
+*   prohibit file names from beginning or ending with spaces ([4d60ee49](4.4.8.3/commit/4d60ee49e60797e84047d11dc2c77a6091f3c117))
+
+
+
 <a name="4.4.8.2"></a>
 ## 4.4.8.2 (2018-03-15)
 
