@@ -11,7 +11,8 @@ namespace Tag
         RemoveTagsOfFiles,
         DeleteTags,
         ChangeTagName,
-        DeleteFiles
+        DeleteFiles,
+        MakeFilesTagThroughColor
     };
 }
 

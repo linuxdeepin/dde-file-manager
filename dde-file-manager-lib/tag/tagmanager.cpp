@@ -28,7 +28,11 @@ std::multimap<TagManager::SqlType, QString> SqlStr{
                                                                                                                                                "WHERE tag_property.tag_name = \'%1\'"},
                                                         { TagManager::SqlType::MakeFilesTags, "INSERT INTO tag_property (tag_name, tag_color)  "
                                                                                                                 "VALUES (\'%1\', \'%2\')" },
-                                                        { TagManager::SqlType::MakeFilesTags, "SELECT tag_property.tag_name FROM tag_property" }
+                                                        { TagManager::SqlType::MakeFilesTags, "SELECT tag_property.tag_name FROM tag_property" },
+
+                                                        { TagManager::SqlType::MakeFilesTagThroughColor, "SELECT COUNT(tag_property.tag_name) AS counting FROM tag_property "
+                                                                                                                                    "WHERE tag_property.tag_name = \'%1\'" },
+                                                        { TagManager::SqlType::MakeFilesTagThroughColor, "INSERT INTO tag_property (tag_name, tag_color) VALUES (\'%1\', \'%2\')" }
                                                   };
 
 
@@ -44,6 +48,17 @@ std::vector<QString> ColorName{
                               };
 
 
+static const QMap<QString, QString> ColorsWithNames{
+                                                        { "#ffa503", "Orange"},
+                                                        { "#ff1c49", "Red"},
+                                                        { "#9023fc", "Purple"},
+                                                        { "#3468ff", "Navy-blue"},
+                                                        { "#00b5ff", "Azure"},
+                                                        { "#58df0a", "Grass-green"},
+                                                        { "#fef144", "Yellow"} ,
+                                                        { "#cccccc", "Gray" }
+                                                   };
+
 static QString randomColor() noexcept
 {
     std::random_device device{};
@@ -57,11 +72,10 @@ static QString randomColor() noexcept
 
 QMap<QString, QString> TagManager::getAllTags()
 {
-    impl::shared_mutex<QReadWriteLock> sharedLck{ TagManager::mutex,
-                                                  impl::shared_mutex<QReadWriteLock>::Options::Read };
+    impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Read };
     QMap<QString, QString> tagNameAndColor{};
 
-    if(TagManager::sqlDataBase.open()){
+    if(sqlDataBase.open()){
         QSqlQuery sqlQuery{ TagManager::sqlDataBase };
         std::pair<std::multimap<TagManager::SqlType, QString>::const_iterator,
                   std::multimap<TagManager::SqlType, QString>::const_iterator> range{ SqlStr.equal_range(TagManager::SqlType::GetAllTags) };
@@ -85,7 +99,7 @@ QMap<QString, QString> TagManager::getAllTags()
 
 QList<QString> TagManager::getSameTagsOfDiffFiles(const QList<DUrl>& files)
 {
-    impl::shared_mutex<QReadWriteLock> sharedLck{ TagManager::mutex, impl::shared_mutex<QReadWriteLock>::Options::Read};
+    impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Read};
     QMap<QString, QVariant> varMap{};
 
     for(const DUrl& url : files){
@@ -99,14 +113,14 @@ QList<QString> TagManager::getSameTagsOfDiffFiles(const QList<DUrl>& files)
 
 QMap<QString, QString> TagManager::getTagColor(const QList<QString>& tags)
 {
-    impl::shared_mutex<QReadWriteLock> sharedLck{ TagManager::mutex, impl::shared_mutex<QReadWriteLock>::Options::Read};
+    impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Read};
     QMap<QString, QString> tagNameAndColor{};
 
     if(!tags.isEmpty()){
       QString sqlStr{ "SELECT * FROM tag_property WHERE tag_property.tag_name = \'%1\'" };
 
       if(TagManager::sqlDataBase.open()){
-          QSqlQuery sqlQuery{ TagManager::sqlDataBase };
+          QSqlQuery sqlQuery{ sqlDataBase };
 
           for(const QString& tagName : tags){
               QString sql{ sqlStr };
@@ -131,12 +145,11 @@ QMap<QString, QString> TagManager::getTagColor(const QList<QString>& tags)
 
 QList<QString> TagManager::getFilesThroughTag(const QString& tagName)
 {
-    impl::shared_mutex<QReadWriteLock> sharedLck{ TagManager::mutex,
-                                                  impl::shared_mutex<QReadWriteLock>::Options::Read};
+    impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Read};
     QList<QString> filesPath{};
 
-    if(TagManager::sqlDataBase.open()){
-        QSqlQuery sqlQuery{ TagManager::sqlDataBase };
+    if(sqlDataBase.open()){
+        QSqlQuery sqlQuery{ sqlDataBase };
         std::pair<std::multimap<TagManager::SqlType, QString>::const_iterator,
                   std::multimap<TagManager::SqlType, QString>::const_iterator> range{ SqlStr.equal_range(TagManager::SqlType::GetFilesThroughTag) };
 
@@ -159,19 +172,17 @@ QList<QString> TagManager::getFilesThroughTag(const QString& tagName)
             }
         }
     }
-
     return filesPath;
 }
 
 bool TagManager::makeFilesTags(const QList<QString>& tags, const QList<DUrl>& files)
 {
 
-    impl::shared_mutex<QReadWriteLock> sharedLck{ TagManager::mutex,
-                                                  impl::shared_mutex<QReadWriteLock>::Options::Write};
+    impl::shared_mutex<QReadWriteLock> sharedLck{ mutex,impl::shared_mutex<QReadWriteLock>::Options::Write};
     bool resultValue{ false };
 
-    if(TagManager::sqlDataBase.open() && TagManager::sqlDataBase.transaction()){
-        QSqlQuery sqlQuery{ TagManager::sqlDataBase };
+    if(sqlDataBase.open() && sqlDataBase.transaction()){
+        QSqlQuery sqlQuery{ sqlDataBase };
         std::pair<std::multimap<TagManager::SqlType, QString>::const_iterator,
                   std::multimap<TagManager::SqlType, QString>::const_iterator> range{ SqlStr.equal_range(TagManager::SqlType::MakeFilesTags) };
 
@@ -195,8 +206,18 @@ bool TagManager::makeFilesTags(const QList<QString>& tags, const QList<DUrl>& fi
                     }else{
                         std::multimap<TagManager::SqlType, QString>::const_iterator itrForInsertTag{ range.first };
                         ++itrForInsertTag;
+
+                        std::vector<QString>::const_iterator cbeg{ ColorName.cbegin() };
+                        std::vector<QString>::const_iterator cend{ ColorName.cend() };
+                        std::vector<QString>::const_iterator pos{ std::find(cbeg, cend, tagName) };
                         QString sqlForInsertingTag{ itrForInsertTag->second.arg(tagName) };
-                        sqlForInsertingTag = sqlForInsertingTag.arg(randomColor());
+
+                        if(pos == cend){
+                            sqlForInsertingTag = sqlForInsertingTag.arg(randomColor());
+
+                        }else{
+                            sqlForInsertingTag = sqlForInsertingTag.arg(*pos);
+                        }
 
                         if(!sqlQuery.exec(sqlForInsertingTag)){
                             flag = true;
@@ -206,7 +227,7 @@ bool TagManager::makeFilesTags(const QList<QString>& tags, const QList<DUrl>& fi
                 }
             }
 
-            if(!flag && TagManager::sqlDataBase.commit()){
+            if(!flag && sqlDataBase.commit()){
                 QMap<QString, QVariant> filesAndTags{};
 
                 for(const DUrl& url : files){
@@ -216,9 +237,8 @@ bool TagManager::makeFilesTags(const QList<QString>& tags, const QList<DUrl>& fi
                 QVariant var{ TagManagerDaemonController::instance()->disposeClientData(filesAndTags,
                                                                                 TagManager::getCurrentUserName(), Tag::ActionType::MakeFilesTags) };
                 resultValue = var.toBool();
-
             }else{
-                TagManager::sqlDataBase.rollback();
+                sqlDataBase.rollback();
             }
         }
     }
@@ -228,19 +248,16 @@ bool TagManager::makeFilesTags(const QList<QString>& tags, const QList<DUrl>& fi
 
 bool TagManager::changeTagColor(const QString& oldColorName, const QString& newColorName)
 {
-    impl::shared_mutex<QReadWriteLock> sharedLck{ TagManager::mutex,
-                                                  impl::shared_mutex<QReadWriteLock>::Options::Write};
+    impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Write};
 
 
     if(!oldColorName.isEmpty() && !newColorName.isEmpty()){
 
-        if(TagManager::sqlDataBase.open() && TagManager::sqlDataBase.transaction()){
+        if(sqlDataBase.open() && sqlDataBase.transaction()){
             QSqlQuery sqlQuery{ TagManager::sqlDataBase };
             QString sqlStr{ "UPDATE tag_property SET tag_color = \'%1\' WHERE tag_property.tag_color = \'%2\'" };
             sqlStr = sqlStr.arg(newColorName);
             sqlStr = sqlStr.arg(oldColorName);
-
-            qDebug()<< sqlStr;
 
             if(!sqlQuery.exec(sqlStr)){
                 qWarning(sqlQuery.lastError().text().toStdString().c_str());
@@ -251,18 +268,15 @@ bool TagManager::changeTagColor(const QString& oldColorName, const QString& newC
 
                 return false;
             }
-
             return true;
         }
     }
-
     return false;
 }
 
 bool TagManager::remveTagsOfFiles(const QList<QString>& tags, const QList<DUrl>& files)
 {
-    impl::shared_mutex<QReadWriteLock> sharedLck{ TagManager::mutex,
-                                                  impl::shared_mutex<QReadWriteLock>::Options::Write };
+    impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Write };
     bool value{ false };
 
     if(!tags.isEmpty() && !files.isEmpty()){
@@ -283,17 +297,16 @@ bool TagManager::remveTagsOfFiles(const QList<QString>& tags, const QList<DUrl>&
 
 bool TagManager::deleteTags(const QList<QString>& tags)
 {
-    impl::shared_mutex<QReadWriteLock> sharedLck{ TagManager::mutex,
-                                                  impl::shared_mutex<QReadWriteLock>::Options::Write };
+    impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Write };
 
     if(!tags.isEmpty()){
 
-        if(TagManager::sqlDataBase.open() && TagManager::sqlDataBase.transaction()){
+        if(sqlDataBase.open() && sqlDataBase.transaction()){
             bool value{ false };
             QString sqlStr{ "DELETE FROM tag_property WHERE tag_property.tag_name = \'%1\'" };
 
             for(const QString& tag : tags){
-                QSqlQuery sqlQuery{ TagManager::sqlDataBase };
+                QSqlQuery sqlQuery{ sqlDataBase };
                 sqlStr = sqlStr.arg(tag);
 
                 if(!sqlQuery.exec(sqlStr)){
@@ -304,8 +317,8 @@ bool TagManager::deleteTags(const QList<QString>& tags)
                 sqlQuery.clear();
             }
 
-            if(!(!value && TagManager::sqlDataBase.commit())){
-                TagManager::sqlDataBase.rollback();
+            if(!(!value && sqlDataBase.commit())){
+                sqlDataBase.rollback();
                 return false;
             }
         }
@@ -353,7 +366,6 @@ bool TagManager::deleteFiles(const QList<QString>& fileList)
             filesForDeleting[file] = QVariant{ QList<QString>{} };
         }
 
-
         if(!filesForDeleting.isEmpty()){
             QVariant var{ TagManagerDaemonController::instance()->disposeClientData(filesForDeleting,
                                                       TagManager::getCurrentUserName(), Tag::ActionType::DeleteFiles) };
@@ -366,16 +378,15 @@ bool TagManager::deleteFiles(const QList<QString>& fileList)
 
 bool TagManager::changeTagName(const QPair<QString, QString>& oldAndNewName)
 {
-    impl::shared_mutex<QReadWriteLock> sharedLck{ TagManager::mutex,
-                                                  impl::shared_mutex<QReadWriteLock>::Options::Write };
+    impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Write };
 
     if(!oldAndNewName.first.isEmpty() && !oldAndNewName.second.isEmpty()){
         bool flagForUpdatingMainDB{ false };
         QString sqlStr{ "UPDATE tag_property SET tag_name = \'%1\' WHERE tag_property.tag_name = \'%2\'" };
 
-        if(TagManager::sqlDataBase.open() /*&& TagManager::sqlDataBase.transaction()*/){
+        if(sqlDataBase.open() /*&& TagManager::sqlDataBase.transaction()*/){
 
-            QSqlQuery sqlQuery{ TagManager::sqlDataBase };
+            QSqlQuery sqlQuery{ sqlDataBase };
             sqlStr = sqlStr.arg(oldAndNewName.second);
             sqlStr = sqlStr.arg(oldAndNewName.first);
 
@@ -384,16 +395,15 @@ bool TagManager::changeTagName(const QPair<QString, QString>& oldAndNewName)
                 qWarning(sqlQuery.lastError().text().toStdString().c_str());
             }
 
-            if(!(!flagForUpdatingMainDB && TagManager::sqlDataBase.commit())){
+            if(!(!flagForUpdatingMainDB && sqlDataBase.commit())){
                 flagForUpdatingMainDB = true;
-                TagManager::sqlDataBase.rollback();
+                sqlDataBase.rollback();
             }
 
             QVariant var{};
-            QMap<QString, QVariant> oldAndNew{ {oldAndNewName.first, QVariant{oldAndNewName.second}} };
+            QMap<QString, QVariant> oldAndNew{ {oldAndNewName.first, QVariant{ QList<QString>{ oldAndNewName.second } }} };
 
             if(!flagForUpdatingMainDB){
-                qDebug()<< oldAndNew;
                 var = TagManagerDaemonController::instance()->disposeClientData(oldAndNew,
                                                               TagManager::getCurrentUserName(), Tag::ActionType::ChangeTagName);
             }
@@ -403,7 +413,70 @@ bool TagManager::changeTagName(const QPair<QString, QString>& oldAndNewName)
             }
         }
     }
+    return false;
+}
 
+bool TagManager::makeFilesTagThroughColor(const QString& color, const QList<DUrl>& files)
+{
+    impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Write };
+
+    if(!color.isEmpty() && !files.isEmpty()){
+        QString colorName{ ColorsWithNames[color] };
+
+        if(!colorName.isEmpty()){
+            std::pair<std::multimap<TagManager::SqlType, QString>::const_iterator,
+                      std::multimap<TagManager::SqlType, QString>::const_iterator> range{ SqlStr.equal_range(TagManager::SqlType::MakeFilesTagThroughColor) };
+            QString sqlForCounting{ range.first->second.arg(colorName) };
+
+            if(sqlDataBase.open() && sqlDataBase.transaction()){
+                QSqlQuery sqlQuery{ sqlDataBase };
+
+                if(!sqlQuery.exec(sqlForCounting)){
+                    qWarning(sqlQuery.lastError().text().toStdString().c_str());
+                }
+
+                if(sqlQuery.next()){
+                    int counting{ sqlQuery.value("counting").toInt() };
+
+                    if(counting == 0){
+                        std::multimap<TagManager::SqlType, QString>::const_iterator sqlItrBeg{ range.first };
+                        ++sqlItrBeg;
+
+                        QString sqlForInserting{ sqlItrBeg->second.arg(colorName) };
+                        sqlForInserting = sqlForInserting.arg(colorName);
+
+                        sqlQuery.clear();
+
+                        if(!sqlQuery.exec(sqlForInserting)){
+                            qWarning(sqlQuery.lastError().text().toStdString().c_str());
+
+                            sqlDataBase.rollback();
+                            return false;
+                        }
+                    }
+
+                    QMap<QString, QVariant> filesAndColorName{};
+                    QVariant dbusResult{};
+
+                    for(const DUrl& file : files){
+                        filesAndColorName[file.toString()] = QVariant{ QList<QString>{colorName} };
+                    }
+
+
+                    dbusResult =  TagManagerDaemonController::instance()->disposeClientData(filesAndColorName,
+                                                                                            TagManager::getCurrentUserName(),
+                                                                                            Tag::ActionType::MakeFilesTagThroughColor);
+                    if(dbusResult.toBool() && sqlDataBase.commit()){
+                        return true;
+                    }
+                    if(!dbusResult.toBool()){
+                        sqlDataBase.rollback();
+                        return false;
+                    }
+                }
+            }
+        }
+    }
     return false;
 }
 
