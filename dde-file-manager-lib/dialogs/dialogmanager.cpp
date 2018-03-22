@@ -806,6 +806,7 @@ void DialogManager::showFilePreviewDialog(const DUrlList &selectUrls, const DUrl
 
     if (!m_filePreviewDialog){
         m_filePreviewDialog = new FilePreviewDialog(canPreivewlist, nullptr);
+        DPlatformWindowHandle::enableDXcbForWindow(m_filePreviewDialog, true);
     }else{
         m_filePreviewDialog->updatePreviewList(canPreivewlist);
     }

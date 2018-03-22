@@ -53,7 +53,7 @@ public:
     void pause() Q_DECL_OVERRIDE;
     void stop() Q_DECL_OVERRIDE;
 
-    bool canPreview(const DUrl &url) const Q_DECL_OVERRIDE;
+    bool canPreview(const DUrl &url) const;
 
 private:
     DUrl m_url;

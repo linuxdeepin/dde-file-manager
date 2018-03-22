@@ -42,12 +42,6 @@ bool DFMFilePreview::showStatusBarSeparator() const
     return false;
 }
 
-bool DFMFilePreview::canPreview(const DUrl &url) const
-{
-    Q_UNUSED(url)
-    return false;
-}
-
 void DFMFilePreview::play()
 {
 
