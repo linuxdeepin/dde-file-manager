@@ -34,7 +34,7 @@ HEADERS += \
 DISTFILES += \
     dde-video-preview-plugin.json
 
-LUGIN_INSTALL_DIR = $$PLUGINDIR/previews
+PLUGIN_INSTALL_DIR = $$PLUGINDIR/previews
 
 DESTDIR = $$top_srcdir/plugins/previews
 
