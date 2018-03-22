@@ -1355,7 +1355,7 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
     for (const DUrl &url : event->mimeData()->urls()) {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
 
-        if (!fileInfo || !fileInfo->isWritable()) {
+        if (!fileInfo || !fileInfo->isReadable()) {
             event->ignore();
 
             return;
@@ -1378,20 +1378,22 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
 {
     D_D(DFileView);
 
-    d->dragMoveHoverIndex = d->fileViewHelper->isEmptyArea(event->pos()) ? QModelIndex() : indexAt(event->pos());
+    d->dragMoveHoverIndex = d->fileViewHelper->isEmptyArea(event->pos()) ? rootIndex() : indexAt(event->pos());
 
     if (d->dragMoveHoverIndex.isValid()) {
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(d->dragMoveHoverIndex);
 
         if (fileInfo) {
-            if (!fileInfo->canDrop()) {
+            if (!fileInfo->canDrop()
+                    || !fileInfo->supportedDropActions().testFlag(event->dropAction())
+                    || (fileInfo->isDir() && !fileInfo->isWritable())) {
                 d->dragMoveHoverIndex = QModelIndex();
-            } else if(!fileInfo->supportedDropActions().testFlag(event->dropAction())) {
-                d->dragMoveHoverIndex = QModelIndex();
-
                 update();
+
                 return event->ignore();
             }
+
+            event->accept();
         }
     }
 
@@ -1416,6 +1418,8 @@ void DFileView::dropEvent(QDropEvent *event)
     D_D(DFileView);
 
     d->dragMoveHoverIndex = QModelIndex();
+    // clean old index area
+    update();
 
     preproccessDropEvent(event);
 
