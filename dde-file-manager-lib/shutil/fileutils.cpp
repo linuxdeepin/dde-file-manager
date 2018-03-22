@@ -173,7 +173,7 @@ qint64 FileUtils::totalSize(const DUrlList &files) {
   foreach (QUrl url, files) {
     QFileInfo file = url.path();
     if (file.isFile()) total += file.size();
-    else {
+    else if (!file.isSymLink()) {
       QDirIterator it(url.path(), QDir::AllEntries | QDir::System
                       | QDir::NoDotAndDotDot | QDir::NoSymLinks
                       | QDir::Hidden, QDirIterator::Subdirectories);

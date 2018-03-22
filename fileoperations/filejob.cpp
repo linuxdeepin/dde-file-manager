@@ -313,7 +313,7 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
 
         if (srcInfo.isSymLink()){
             handleSymlinkFile(srcPath, tarDirPath, &targetPath);
-        }else if (!srcInfo.isSymLink() && srcInfo.isDir()){
+        }else if (srcInfo.isDir()){
             adjustSymlinkPath(srcPath, tarDirPath);
             if (m_jobType == Copy){
                 copyDir(srcPath, tarDirPath, false,  &targetPath);
@@ -2199,6 +2199,11 @@ bool FileJob::checkDiskSpaceAvailable(const DUrlList &files, const DUrl &destina
 
 bool FileJob::checkTrashFileOutOf1GB(const DUrl &url)
 {
+    const QFileInfo &info(url.toLocalFile());
+
+    if (info.isSymLink())
+        return true;
+
     DUrlList list;
     list << url;
     m_isCheckingDisk = true;
@@ -2277,7 +2282,7 @@ QStorageInfo FileJob::getStorageInfo(const QString &file)
 {
     QFileInfo info(file);
 
-    return (info.isSymLink() && !info.exists())
+    return info.isSymLink()
             ? QStorageInfo(info.absolutePath())
             : QStorageInfo(info.absoluteFilePath());
 }
