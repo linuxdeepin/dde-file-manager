@@ -4,15 +4,14 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets multimedia multimediawidgets x11extras
+QT       += core gui widgets
 
 TARGET = dde-video-preview-plugin
 TEMPLATE = lib
 
-PKGCONFIG += mpv x11 x11-xcb
+PKGCONFIG += libdmr
 CONFIG += plugin link_pkgconfig c++11
 
-include(../../plugininterfaces/plugininterfaces.pri)
 include(../../../common/common.pri)
 
 # The following define makes your compiler emit warnings if you use
@@ -26,17 +25,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-SOURCES += videopreviewplugin.cpp \
-    dvideowidget.cpp
+SOURCES += \
+    main.cpp \
+    videopreview.cpp
 
-HEADERS += videopreviewplugin.h \
-    dvideowidget.h
+HEADERS += \
+    videopreview.h
 DISTFILES += \
     dde-video-preview-plugin.json
 
-PLUGIN_INSTALL_DIR = $$PLUGINDIR/preview
+LUGIN_INSTALL_DIR = $$PLUGINDIR/previews
 
-DESTDIR = ../../preview
+DESTDIR = $$top_srcdir/plugins/previews
 
 unix {
     target.path = $$PLUGIN_INSTALL_DIR

@@ -294,11 +294,13 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
         switch (e->key()) {
         case Qt::Key_Left:
         case Qt::Key_Up:
-            previousPage();
+            if (!e->isAutoRepeat())
+                previousPage();
             break;
         case Qt::Key_Right:
         case Qt::Key_Down:
-            nextPage();
+            if (!e->isAutoRepeat())
+                nextPage();
             break;
         case Qt::Key_Space:{
             m_preview->stop();
@@ -393,7 +395,8 @@ void FilePreviewDialog::switchToPage(int index)
         if (m_preview && (DFMFilePreviewFactory::isSuitedWithKey(m_preview, key)
                           || DFMFilePreviewFactory::isSuitedWithKey(m_preview, general_key))) {
             if (m_preview->setFileUrl(m_fileList.at(index))) {
-                resize(sizeHint());
+                m_preview->contentWidget()->updateGeometry();
+                adjustSize();
                 updateTitle();
                 m_statusBar->openButton()->setFocus();
                 adjsutPostion();
@@ -496,12 +499,8 @@ void FilePreviewDialog::setEntryUrlList(const DUrlList &entryUrlList)
 
 void FilePreviewDialog::playCurrentPreviewFile()
 {
-    bool ret = m_preview->canPreview(m_fileList.at(m_currentPageIndex));
-    if (ret){
-        m_preview->play();
-    }
+    m_preview->play();
 }
-
 
 void FilePreviewDialog::previousPage()
 {
