@@ -1018,6 +1018,13 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
                         *targetPath = m_tarPath;
                     }
                     return true;
+                }else if (inBytes == -1 && from.error() == QFileDevice::ReadError){
+                    to.close();
+                    from.close();
+                    if (targetPath){
+                        *targetPath = m_tarPath;
+                    }
+                    return false;
                 }
 
                 qint64 availableBytes = inBytes;
