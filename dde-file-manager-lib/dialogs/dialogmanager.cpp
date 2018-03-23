@@ -398,7 +398,7 @@ int DialogManager::showRunExcutableFileDialog(const DUrl &url, quint64 winId)
     int maxDisplayNameLength = 200;
     QString _fileDisplayName = QFileInfo(url.path()).fileName();
     QString fileDisplayName = d.fontMetrics().elidedText(_fileDisplayName, Qt::ElideRight, maxDisplayNameLength);
-    QString message = tr("Do you sure to run %1?").arg(fileDisplayName);
+    QString message = tr("Do you want to run %1?").arg(fileDisplayName);
     QString tipMessage = tr("It is an executable file.");
     d.addButton(tr("Cancel"));
     d.addButton(tr("Run in terminal"));
