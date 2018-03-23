@@ -33,6 +33,11 @@
 #include <QDebug>
 #include <QUrlQuery>
 
+static inline QString parseDecodedComponent(const QString &data)
+{
+    return QString(data).replace(QLatin1Char('%'), QStringLiteral("%25"));
+}
+
 QSet<QString> schemeList = QSet<QString>() << QString(TRASH_SCHEME)
                                            << QString(RECENT_SCHEME)
                                            << QString(BOOKMARK_SCHEME)
@@ -209,7 +214,10 @@ bool DUrl::isTagedFile() const
 
 QString DUrl::toString(QUrl::FormattingOptions options) const
 {
-    if(isLocalFile() || !schemeList.contains(scheme()))
+    if (!isValid())
+        return m_virtualPath;
+
+    if (isLocalFile() || !schemeList.contains(scheme()))
         return QUrl::toString(options);
 
     QUrl url(*this);
@@ -273,7 +281,7 @@ void DUrl::setSearchKeyword(const QString &keyword)
     QUrlQuery query(this->query());
 
     query.removeQueryItem("keyword");
-    query.addQueryItem("keyword", QUrl::toPercentEncoding(keyword, QByteArray(), "%"));
+    query.addQueryItem("keyword", parseDecodedComponent(keyword));
 
     setQuery(query);
 }
@@ -286,7 +294,7 @@ void DUrl::setSearchTargetUrl(const DUrl &url)
     QUrlQuery query(this->query());
 
     query.removeQueryItem("url");
-    query.addQueryItem("url", url.toString());
+    query.addQueryItem("url", parseDecodedComponent(url.toString()));
 
     setQuery(query);
 }
@@ -296,7 +304,7 @@ void DUrl::setSearchedFileUrl(const DUrl &url)
     if (!isSearchFile())
         return;
 
-    setFragment(url.toString(QUrl::FullyEncoded), QUrl::DecodedMode);
+    setFragment(url.toString(), QUrl::DecodedMode);
 }
 
 
@@ -304,7 +312,7 @@ void DUrl::setSearchedFileUrl(const DUrl &url)
 void DUrl::setTagedFileUrl(const DUrl &url) noexcept
 {
     if(this->isTagedFile() == true){
-        this->QUrl::setFragment(url.toString(QUrl::FullyEncoded), QUrl::DecodedMode);
+        this->QUrl::setFragment(url.toString(), QUrl::DecodedMode);
     }
 }
 
@@ -359,13 +367,13 @@ DUrl DUrl::fromSearchFile(const DUrl &targetUrl, const QString &keyword, const D
 
     QUrlQuery query;
 
-    query.addQueryItem("url", targetUrl.toString());
-    query.addQueryItem("keyword", QUrl::toPercentEncoding(keyword, QByteArray(), "%"));
+    query.addQueryItem("url", parseDecodedComponent(targetUrl.toString()));
+    query.addQueryItem("keyword", parseDecodedComponent(keyword));
 
     url.setQuery(query);
 
     if (searchedFileUrl.isValid())
-        url.setFragment(searchedFileUrl.toString());
+        url.setFragment(searchedFileUrl.toString(), DecodedMode);
 
     return url;
 }
@@ -492,7 +500,18 @@ DUrl DUrl::fromUserInput(const QString &userInput, QString workingDirectory,
 
         return DUrl::fromLocalFile(dir.absolutePath());
     } else {
-        return DUrl(userInput);
+        DUrl url(userInput);
+
+        // NOTE(zccrs): 保证数据传入QUrl还能使用toString返回数据
+        if (!url.isValid() || (url.scheme().isEmpty() && url.toString() != userInput)) {
+            DUrl url;
+
+            url.m_virtualPath = userInput;
+
+            return url;
+        }
+
+        return url;
     }
 }
 
@@ -620,7 +639,7 @@ QString DUrl::toLocalFile() const
     if (isTrashFile()) {
         return DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + path();
     } else if (isSearchFile()) {
-        return DUrl(fragment()).toLocalFile();
+        return searchedFileUrl().toLocalFile();
     } else if(isAVFSFile()) {
         return path();
     } else {
@@ -630,7 +649,7 @@ QString DUrl::toLocalFile() const
 
 void DUrl::updateVirtualPath()
 {
-    m_virtualPath = this->toAbsolutePathUrl().path();
+    m_virtualPath = toAbsolutePathUrl().path();
 
     if (m_virtualPath.endsWith('/') && m_virtualPath.count() != 1) {
         m_virtualPath.remove(m_virtualPath.count() - 1, 1);
