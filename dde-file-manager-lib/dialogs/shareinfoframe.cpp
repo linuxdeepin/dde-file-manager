@@ -193,7 +193,11 @@ void ShareInfoFrame::updateShareInfo(const QString &filePath)
         m_shareCheckBox->setChecked(false);
         m_permissoComBox->setCurrentIndex(0);
         m_anonymityCombox->setCurrentIndex(0);
-        m_shareNamelineEdit->setText(m_fileinfo->fileDisplayName());
+
+        const QString share_name = m_fileinfo->fileDisplayName().remove(QRegExp("[%<>*?|\\\\+=;:\",]"));
+
+        m_shareNamelineEdit->setText(share_name);
+
         disactivateWidgets();
     }
 }
@@ -207,7 +211,7 @@ void ShareInfoFrame::activateWidgets()
 
 void ShareInfoFrame::disactivateWidgets()
 {
-    m_shareNamelineEdit->setEnabled(false);
+//    m_shareNamelineEdit->setEnabled(false);
     m_permissoComBox->setEnabled(false);
     m_anonymityCombox->setEnabled(false);
 }
