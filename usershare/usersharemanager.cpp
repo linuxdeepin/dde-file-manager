@@ -437,13 +437,24 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
         process.start();
         // Wait for process to finish without timeout.
         process.waitForFinished(-1);
+
         QString err = process.readAllStandardError();
+
         if (!err.isEmpty() && err.contains("is already a valid system user name")){
             emit fileSignalManager->requestShowAddUserShareFailedDialog(_info.path());
             return false;
         }
+
+        if (process.exitCode() != 0) {
+            qWarning() << err;
+
+            return false;
+        }
+
         return true;
     }
+
+    return false;
 }
 
 
