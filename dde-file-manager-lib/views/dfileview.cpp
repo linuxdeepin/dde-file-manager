@@ -897,9 +897,19 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         break;
     case Qt::ControlModifier:
         switch (event->key()) {
-        case Qt::Key_N:{
-            appController->actionNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls.isEmpty() ? DUrlList() << DUrl() : urls));
+        case Qt::Key_N: {
+            DUrlList list;
+
+            for (const DUrl &url : urls) {
+                const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
+
+                if (info && info->canFetch())
+                    list << url;
+            }
+
+            appController->actionNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(this, list.isEmpty() ? DUrlList() << DUrl() : list));
             return;
+        }
         case Qt::Key_H:
             d->preSelectionUrls = urls;
 
@@ -942,7 +952,6 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             return;
         }
         default: break;
-        }
         }
 
         break;
