@@ -24,6 +24,8 @@
 #include "views/filedialogstatusbar.h"
 
 #include <DTitlebar>
+#include <ddialog.h>
+#include <DPlatformWindowHandle>
 
 #include <QEventLoop>
 #include <QPointer>
@@ -799,8 +801,38 @@ void DFileDialog::onAcceptButtonClicked()
     D_DC(DFileDialog);
 
     if (d->acceptMode == QFileDialog::AcceptSave) {
-        if (!statusBar()->lineEdit()->text().isEmpty())
+        const QString &file_name = statusBar()->lineEdit()->text();
+
+        if (!file_name.isEmpty()) {
+            if (!d->options.testFlag(QFileDialog::DontConfirmOverwrite)) {
+                QFileInfo info(directory().absoluteFilePath(file_name));
+
+                if (info.exists() || info.isSymLink()) {
+                    DDialog dialog(this);
+
+                    // NOTE(zccrs): dxcb bug
+                    if (!DPlatformWindowHandle::isEnabledDXcb(this)
+#if DTK_VERSION > DTK_VERSION_CHECK(2, 0, 5, 0)
+                            || DPlatformWindowHandle::pluginVersion() > "1.1.8.3"
+#endif
+                            ) {
+                        dialog.setWindowModality(Qt::WindowModal);
+                    }
+
+                    dialog.setIcon(QIcon::fromTheme("dialog-warning"));
+                    dialog.setTitle(tr("%1 already exists, do you want to replace?").arg(file_name));
+                    dialog.addButton(tr("Cancel"), true);
+                    dialog.addButton(tr("Overwrite"), false, DDialog::ButtonWarning);
+
+                    if (dialog.exec() != DDialog::Accepted) {
+                        return;
+                    }
+                }
+            }
+
             accept();
+        }
+
         return;
     }
 
