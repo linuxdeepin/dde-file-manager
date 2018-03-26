@@ -133,7 +133,13 @@ QMap<QString, QString> TagManager::getTagColor(const QList<QString>& tags)
 
                   if(sqlQuery.next()){
                       QString tagColor{ sqlQuery.value("tag_color").toString() };
-                      tagNameAndColor[tagName] = tagColor;
+
+                      if(!tagColor.isEmpty()){
+                          tagNameAndColor[tagName] = tagColor;
+
+                      }else{
+                          qWarning()<< "Can not get the color of specify tag: "<< tagName;
+                      }
                   }
               }
           }
