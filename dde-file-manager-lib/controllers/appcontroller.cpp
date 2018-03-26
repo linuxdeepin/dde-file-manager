@@ -726,7 +726,6 @@ bool AppController::actionMakeFilesTagsThroughColor(const QSharedPointer<DFMMake
 {
     if( static_cast<bool>(event) && (!event->m_files.isEmpty()) && (!event->m_color.isEmpty()) ){
         bool value{ false };
-
         value = TagManager::instance()->makeFilesTagThroughColor(event->m_color, event->m_files);
 
         return value;

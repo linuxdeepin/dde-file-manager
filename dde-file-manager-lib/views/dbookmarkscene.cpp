@@ -788,6 +788,30 @@ void DBookmarkScene::onAddOrDecreaseBookmarkOfTags(const QPair<QList<QString>, Q
 
         if(!tagAndColor.isEmpty()){
             QMap<QString, QString>::const_iterator cbeg{ tagAndColor.cbegin() };
+            QMap<QString, QString>::const_iterator cend{ tagAndColor.cend() };
+            DBookmarkItemGroup* group{ this->getGroup() };
+            QList<DBookmarkItem*> allItem{ group->items() };
+            std::list<QString> backupForDeleting{};
+
+            for(DBookmarkItem* const item : allItem){
+                DUrl url{ item->getUrl() };
+                QString path{ url.path() };
+                path = path.remove(0, 1);
+                QMap<QString, QString>::const_iterator pos{ tagAndColor.find(path) };
+
+                if(pos != cend){
+                    backupForDeleting.emplace_back(std::move(path));
+                }
+            }
+
+            for(const QString& tag : backupForDeleting){
+                QMap<QString, QString>::iterator position{ tagAndColor.find(tag) };
+                tagAndColor.erase(position);
+            }
+
+            if(tagAndColor.isEmpty()){
+                return;
+            }
 
             for(; cbeg != tagAndColor.cend(); ++cbeg){
                 DBookmarkItem* item{ this->createTagBookmark(cbeg.key(), cbeg.value()) };
