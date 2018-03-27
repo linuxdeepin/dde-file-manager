@@ -23,12 +23,6 @@
 #include <player_widget.h>
 #include <player_engine.h>
 
-extern "C" {
-#include <libavformat/avformat.h>
-#include <libavutil/dict.h>
-#include <libavutil/avutil.h>
-}
-
 #include <danchors.h>
 
 DWIDGET_USE_NAMESPACE
