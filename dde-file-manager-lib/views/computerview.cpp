@@ -200,30 +200,23 @@ void ComputerViewItem::mousePressEvent(QMouseEvent *event)
 {
     Q_UNUSED(event)
     setChecked(true);
+
+    if (event->button() == Qt::LeftButton) {
+        if (globalSetting->openFileAction() == 0)
+            openUrl();
+    }
+
     FileIconItem::mousePressEvent(event);
 }
 
 void ComputerViewItem::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::LeftButton){
-        if (m_info){
-            DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, m_info->fileUrl(), window());
-        }else if (m_deviceInfo){
-            DUrl url = m_deviceInfo->getMountPointUrl();
-
-            QDiskInfo diskInfo = m_deviceInfo->getDiskInfo();
-
-            if (diskInfo.can_mount() && !diskInfo.can_unmount()){
-                url.setQuery(m_deviceInfo->getId());
-                appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, url));
-            }else{
-                DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, url, window());
-            }
-
-        }
+    if (event->button() == Qt::LeftButton) {
+        if (globalSetting->openFileAction() == 1)
+            openUrl();
     }
-    FileIconItem::mouseDoubleClickEvent(event);
 
+    FileIconItem::mouseDoubleClickEvent(event);
 }
 
 bool ComputerViewItem::event(QEvent *event)
@@ -329,6 +322,24 @@ void ComputerViewItem::setIconSizeState(int iconSize, QIcon::Mode mode)
         getIconLabel()->setPixmap(getIcon(iconSize).pixmap(iconSize, iconSize, mode));
     }else if (m_deviceInfo){
         getIconLabel()->setPixmap(getIcon(iconSize).pixmap(iconSize, iconSize, mode));
+    }
+}
+
+void ComputerViewItem::openUrl()
+{
+    if (m_info) {
+        DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, m_info->fileUrl(), window());
+    } else if (m_deviceInfo) {
+        DUrl url = m_deviceInfo->getMountPointUrl();
+
+        QDiskInfo diskInfo = m_deviceInfo->getDiskInfo();
+
+        if (diskInfo.can_mount() && !diskInfo.can_unmount()) {
+            url.setQuery(m_deviceInfo->getId());
+            appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, url));
+        } else {
+            DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, url, window());
+        }
     }
 }
 
