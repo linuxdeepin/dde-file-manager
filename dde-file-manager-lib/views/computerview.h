@@ -121,6 +121,8 @@ protected:
 private:
     void adjustPosition();
     void setIconSizeState(int iconSize, QIcon::Mode mode = QIcon::Normal);
+    void openUrl();
+
     ProgressLine* m_progressLine;
     QLabel* m_sizeLabel;
     DAbstractFileInfoPointer m_info;
