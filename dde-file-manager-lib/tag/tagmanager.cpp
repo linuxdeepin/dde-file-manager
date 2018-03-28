@@ -76,7 +76,7 @@ QMap<QString, QString> TagManager::getAllTags()
     QMap<QString, QString> tagNameAndColor{};
 
     if(sqlDataBase.open()){
-        QSqlQuery sqlQuery{ TagManager::sqlDataBase };
+        QSqlQuery sqlQuery{ sqlDataBase };
         std::pair<std::multimap<TagManager::SqlType, QString>::const_iterator,
                   std::multimap<TagManager::SqlType, QString>::const_iterator> range{ SqlStr.equal_range(TagManager::SqlType::GetAllTags) };
 
@@ -119,7 +119,7 @@ QMap<QString, QString> TagManager::getTagColor(const QList<QString>& tags)
     if(!tags.isEmpty()){
       QString sqlStr{ "SELECT * FROM tag_property WHERE tag_property.tag_name = \'%1\'" };
 
-      if(TagManager::sqlDataBase.open()){
+      if(sqlDataBase.open()){
           QSqlQuery sqlQuery{ sqlDataBase };
 
           for(const QString& tagName : tags){
@@ -254,7 +254,7 @@ bool TagManager::changeTagColor(const QString& oldColorName, const QString& newC
     if(!oldColorName.isEmpty() && !newColorName.isEmpty()){
 
         if(sqlDataBase.open() && sqlDataBase.transaction()){
-            QSqlQuery sqlQuery{ TagManager::sqlDataBase };
+            QSqlQuery sqlQuery{ sqlDataBase };
             QString sqlStr{ "UPDATE tag_property SET tag_color = \'%1\' WHERE tag_property.tag_color = \'%2\'" };
             sqlStr = sqlStr.arg(newColorName);
             sqlStr = sqlStr.arg(oldColorName);
@@ -263,8 +263,8 @@ bool TagManager::changeTagColor(const QString& oldColorName, const QString& newC
                 qWarning(sqlQuery.lastError().text().toStdString().c_str());
             }
 
-            if(!TagManager::sqlDataBase.commit()){
-                TagManager::sqlDataBase.rollback();
+            if(!sqlDataBase.commit()){
+                sqlDataBase.rollback();
 
                 return false;
             }
@@ -384,7 +384,7 @@ bool TagManager::changeTagName(const QPair<QString, QString>& oldAndNewName)
         bool flagForUpdatingMainDB{ false };
         QString sqlStr{ "UPDATE tag_property SET tag_name = \'%1\' WHERE tag_property.tag_name = \'%2\'" };
 
-        if(sqlDataBase.open() /*&& TagManager::sqlDataBase.transaction()*/){
+        if(sqlDataBase.open() && TagManager::sqlDataBase.transaction()){
 
             QSqlQuery sqlQuery{ sqlDataBase };
             sqlStr = sqlStr.arg(oldAndNewName.second);

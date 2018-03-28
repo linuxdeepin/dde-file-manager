@@ -126,21 +126,21 @@ public:
     TagManager()
     {
         QString mainDBLocation{ TagManager::getMainDBLocation() };
-        impl::shared_mutex<QReadWriteLock> sharedLck{ TagManager::mutex,
+        impl::shared_mutex<QReadWriteLock> sharedLck{ mutex,
                                                       impl::shared_mutex<QReadWriteLock>::Options::Write};
                 if(QSqlDatabase::contains(R"foo(deep)foo")){
-                    TagManager::sqlDataBase = QSqlDatabase::database(R"foo(deep)foo");
+                    sqlDataBase = QSqlDatabase::database(R"foo(deep)foo");
 
                 }else{
-                    TagManager::sqlDataBase = QSqlDatabase::addDatabase(R"foo(QSQLITE)foo", R"foo(deep)foo");
-                    TagManager::sqlDataBase.setDatabaseName(mainDBLocation);
-                    TagManager::sqlDataBase.setUserName(USERNAME);
-                    TagManager::sqlDataBase.setPassword(PASSWORD);
+                    sqlDataBase = QSqlDatabase::addDatabase(R"foo(QSQLITE)foo", R"foo(deep)foo");
+                    sqlDataBase.setDatabaseName(mainDBLocation);
+                    sqlDataBase.setUserName(USERNAME);
+                    sqlDataBase.setPassword(PASSWORD);
                 }
 
 
-                if(TagManager::sqlDataBase.open()){
-                    QSqlQuery sqlQuery{ TagManager::sqlDataBase };
+                if(sqlDataBase.open()){
+                    QSqlQuery sqlQuery{ sqlDataBase };
 
 
                         QString createTagProperty{
@@ -161,8 +161,8 @@ public:
     ~TagManager()
     {
         ///###: close database connection.
-        if(TagManager::sqlDataBase.isOpen()){
-            TagManager::sqlDataBase.close();
+        if(sqlDataBase.isOpen()){
+            sqlDataBase.close();
         }
     }
 
@@ -205,11 +205,9 @@ public:
     bool deleteFiles(const QList<DUrl>& urlList);
 
 
-    static QSharedPointer<TagManager> instance()
+    static TagManager* instance()
     {
-        static QSharedPointer<TagManager> tagManager{ nullptr };
-        std::call_once(TagManager::onceFlag,
-                       [&]{ tagManager = QSharedPointer<TagManager>{ new TagManager }; });
+        static TagManager* tagManager{ new TagManager };
 
         return tagManager;
     }
