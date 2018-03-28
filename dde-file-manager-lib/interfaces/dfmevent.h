@@ -618,8 +618,8 @@ public:
 
     static QSharedPointer<DFMChangeTagColorEvent> fromJson(const QJsonObject& json);
 
-    QColor m_newColorForTag{""};
-    DUrl m_tagUrl{""};
+    QColor m_newColorForTag{};
+    DUrl m_tagUrl{};
 };
 
 

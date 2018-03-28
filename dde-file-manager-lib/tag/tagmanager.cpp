@@ -271,7 +271,6 @@ bool TagManager::changeTagColor(const QString& oldColorName, const QString& newC
 
             if(!sqlDataBase.commit()){
                 sqlDataBase.rollback();
-
                 return false;
             }
             return true;
