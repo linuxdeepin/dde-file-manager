@@ -83,6 +83,8 @@ pkexec.files = pkexec/dde-file-manager-pkexec
 propertyDialogShell.path = /usr/bin/
 propertyDialogShell.files = dde-property-dialog
 
+
+
 INSTALLS += target desktop dde-xdg-user-dirs-update policy pkexec propertyDialogShell
 
 isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
