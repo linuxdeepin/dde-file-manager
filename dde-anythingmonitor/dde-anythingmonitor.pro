@@ -35,7 +35,11 @@ SOURCES += main.cpp
 
 target.path = /usr/bin
 
-INSTALLS = target
+service.path = /lib/systemd/system
+service.files = service/dde-anythingmonitor.service
+
+
+INSTALLS += target service
 
 
 
