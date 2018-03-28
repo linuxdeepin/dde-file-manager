@@ -393,18 +393,24 @@ void DLeftSideBar::loadTagBookMarkItem()
     QMap<QString, QString> tagNameAndColor{ TagManager::instance()->getAllTags() };
     QMap<QString, QString>::const_iterator cbeg{ tagNameAndColor.cbegin() };
     QMap<QString, QString>::const_iterator cend{ tagNameAndColor.cend() };
-    bookmarkManager->clearTagBookmark();
+    //    bookmarkManager->clearTagBookmark();
+
+    m_scene->addSeparator();
 
     for(; cbeg != cend; ++cbeg){
         DBookmarkItem* item{ m_scene->createTagBookmark(cbeg.key(), cbeg.value()) };
         ///###: it is redundant, copy-on-write.
         QExplicitlySharedDataPointer<BookMark> bookmarkPointer{ new BookMark{
+                QDateTime::currentDateTime(),
+                cbeg.key(),
                 DUrl::fromUserTagedFile( QString{"/"} + cbeg.key())
             } };
-        bookmarkManager->appendTagBookmark(bookmarkPointer);
 
-        item->setBookmarkModel(bookmarkPointer);
+//        bookmarkManager->appendBookmark(bookmarkPointer);
+//        bookmarkManager->appendTagBookmark(bookmarkPointer);
+
         item->setIsCustomBookmark(true);
+        item->setBookmarkModel(bookmarkPointer);
         m_scene->addItem(item);
     }
 }

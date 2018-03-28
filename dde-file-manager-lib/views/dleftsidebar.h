@@ -94,7 +94,7 @@ protected:
 
 private:
     void loadBookmark();
-    void loadTagBookMarkItem();
+    void loadTagBookMarkItem(); //###: tag protocal.
     void addNetworkBookmarkItem();
     void addUserShareBookmarkItem();
     void loadDevices();

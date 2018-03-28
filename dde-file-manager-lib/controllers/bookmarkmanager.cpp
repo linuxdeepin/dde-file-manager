@@ -40,6 +40,7 @@
 #include <stdlib.h>
 
 #include "shutil/fileutils.h"
+#include "views/dbookmarkitem.h"
 #include "deviceinfo/udisklistener.h"
 
 
@@ -58,11 +59,11 @@ BookMarkManager::BookMarkManager(QObject *parent)
 
 BookMarkManager::~BookMarkManager()
 {
-    if(!m_tagBookmarks.empty()){
-        for(QExplicitlySharedDataPointer<BookMark> bookMark : m_tagBookmarks){
-            bookMark.reset();
-        }
-    }
+//    if(!m_tagBookmarks.empty()){
+//        for(QExplicitlySharedDataPointer<BookMark> bookMark : m_tagBookmarks){
+//            bookMark.reset();
+//        }
+//    }
 }
 
 void BookMarkManager::load()
@@ -106,17 +107,22 @@ QList<BookMarkPointer> BookMarkManager::getBookmarks()
     return m_bookmarks;
 }
 
-void BookMarkManager::appendTagBookmark(QExplicitlySharedDataPointer<BookMark> bookmark) noexcept
-{
-    m_tagBookmarks.push_back(bookmark);
-}
+//void BookMarkManager::appendBookmark(QExplicitlySharedDataPointer<BookMark> bookmarkPointer)noexcept
+//{
+//    m_bookmarks.append(bookmarkPointer);
+//}
 
-void BookMarkManager::clearTagBookmark()
-{
-    if(!m_tagBookmarks.empty()){
-        m_tagBookmarks.clear();
-    }
-}
+//void BookMarkManager::appendTagBookmark(QExplicitlySharedDataPointer<BookMark> bookmark) noexcept
+//{
+//    m_tagBookmarks.push_back(bookmark);
+//}
+
+//void BookMarkManager::clearTagBookmark()
+//{
+//    if(!m_tagBookmarks.empty()){
+//        m_tagBookmarks.clear();
+//    }
+//}
 
 QString BookMarkManager::cachePath()
 {

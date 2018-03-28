@@ -35,6 +35,7 @@
 #include <QDir>
 
 class DAbstractFileInfo;
+class DBookmarkItem;
 
 class BookMarkManager : public DAbstractFileController, public BaseManager
 {
@@ -47,9 +48,12 @@ public:
     void save();
     QList<BookMarkPointer> getBookmarks();
 
-    ///###: tag protocol.
-    void appendTagBookmark(QExplicitlySharedDataPointer<BookMark> bookmark) noexcept;
-    void clearTagBookmark();
+
+
+    ///###: tag protocol. Maybe will be used later.
+//    void appendBookmark(QExplicitlySharedDataPointer<BookMark> bookmarkPointer)noexcept;
+//    void appendTagBookmark(QExplicitlySharedDataPointer<BookMark> bookmark) noexcept;
+//    void clearTagBookmark();
 
 
     static QString cachePath();
@@ -58,7 +62,7 @@ private:
     void writeJson(QJsonObject &json);
     QList<BookMarkPointer> m_bookmarks;
 
-    std::deque<QExplicitlySharedDataPointer<BookMark>> m_tagBookmarks{};
+//    std::deque<QExplicitlySharedDataPointer<BookMark>> m_tagBookmarks{};
 
 public slots:
     BookMarkPointer writeIntoBookmark(int index, const QString &name, const DUrl &url);

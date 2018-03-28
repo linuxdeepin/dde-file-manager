@@ -341,7 +341,7 @@ void AppController::actionAddToBookMark(const QSharedPointer<DFMUrlBaseEvent> &e
     const DAbstractFileInfoPointer& p = fileService->createFileInfo(NULL, fileUrl);
     if (p->canRedirectionFileUrl()){
         fileUrl = p->redirectedFileUrl();
-    };
+    }
 
     QString dirName = QDir(fileUrl.path()).dirName();
     bookmarkManager->writeIntoBookmark(0, dirName, fileUrl);
