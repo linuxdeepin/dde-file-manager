@@ -42,13 +42,11 @@ void ImageView::setFile(const QString &fileName)
 
     m_sourceSize = reader.size();
 
-    if (reader.canRead()) {
-        const QSize &dsize = qApp->desktop()->size();
+    const QSize &dsize = qApp->desktop()->size();
 
-        setPixmap(QPixmap::fromImageReader(&reader).scaled(QSize(qMin((int)(dsize.width() * 0.7), m_sourceSize.width()),
-                                                                 qMin((int)(dsize.height() * 0.8), m_sourceSize.height())),
-                                                           Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    }
+    setPixmap(QPixmap::fromImageReader(&reader).scaled(QSize(qMin((int)(dsize.width() * 0.7), m_sourceSize.width()),
+                                                             qMin((int)(dsize.height() * 0.8), m_sourceSize.height())),
+                                                       Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 QSize ImageView::sourceSize() const
