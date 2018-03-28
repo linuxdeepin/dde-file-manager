@@ -83,7 +83,7 @@ static const QMap<QString, QString> ColorsWithNames{
                                                         { "#9023fc", "Purple"},
                                                         { "#3468ff", "Navy-blue"},
                                                         { "#00b5ff", "Azure"},
-                                                        { "#58df0a", "Grass green"},
+                                                        { "#58df0a", "Grass-green"},
                                                         { "#fef144", "Yellow"} ,
                                                         { "#cccccc", "Gray" }
                                                    };
@@ -179,8 +179,13 @@ void DBookmarkItem::changeIconThroughColor(const QColor& color)noexcept
 {
     if(color.isValid()){
         QString oldColor{ this->m_key };
-        this->m_key = ColorsWithNames[color.name()];
-        TagManager::instance()->changeTagColor(oldColor, ColorsWithNames[color.name()]);
+        QString newColor{ ColorsWithNames[color.name()] };
+        bool result{ TagManager::instance()->changeTagColor(oldColor, ColorsWithNames[color.name()]) };
+
+        if(result){
+            this->m_key = newColor;
+            this->update();
+        }
     }
 }
 

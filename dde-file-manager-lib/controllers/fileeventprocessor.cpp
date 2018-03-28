@@ -118,7 +118,6 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent>& event)
         if(QWidgetAction* widgetAction = dynamic_cast<QWidgetAction*>(action)){
 
             if(DTagActionWidget* tagWidget = dynamic_cast<DTagActionWidget*>(widgetAction->defaultWidget())){
-
                 QSharedPointer<DFMChangeTagColorEvent> tagEvent{
                                                                     dMakeEventPointer<DFMChangeTagColorEvent>(event->sender(),
                                                                                                                tagWidget->selectedColor(), event->selectedUrls()[0])
