@@ -210,7 +210,6 @@ DBookmarkItem* DBookmarkScene::createTagBookmark(const QString& tagName, const Q
 
     if(pos == ActualAndFakerName.cend()){
         item->setText(tagName);
-
     }else{
         item->setText(*pos);
     }
@@ -819,16 +818,15 @@ void DBookmarkScene::onAddOrDecreaseBookmarkOfTags(const QPair<QList<QString>, Q
                 QExplicitlySharedDataPointer<BookMark> bookmarkPointer{ new BookMark{
                         DUrl::fromUserTagedFile( QString{"/"} + cbeg.key())
                     } };
-                bookmarkManager->appendTagBookmark(bookmarkPointer);
+//                bookmarkManager->appendTagBookmark(bookmarkPointer);
+//                bookmarkManager->appendBookmark(bookmarkPointer);
 
                 item->setBookmarkModel(bookmarkPointer);
                 this->addItem(item);
             }
         }
-
         return;
     }
-
 
     if(increasedAndDecreased.first.isEmpty() && !increasedAndDecreased.second.isEmpty()){
         DBookmarkItemGroup* group{ this->getGroup() };
@@ -851,7 +849,6 @@ void DBookmarkScene::onAddOrDecreaseBookmarkOfTags(const QPair<QList<QString>, Q
         for(DBookmarkItem* const item : backUpList){
             this->remove(item);
         }
-
         return;
     }
 
@@ -917,7 +914,7 @@ void DBookmarkScene::moveBefore(DBookmarkItem *from, DBookmarkItem *to)
     int indexFrom = m_itemGroup->items().indexOf(from);
     int indexTo = m_itemGroup->items().indexOf(to);
 
-    if(indexFrom == -1 || indexTo == -1)
+    if(indexFrom == -1 || indexTo == -1 || indexFrom == indexTo)
         return;
 
     if(indexFrom < indexTo)
@@ -926,7 +923,13 @@ void DBookmarkScene::moveBefore(DBookmarkItem *from, DBookmarkItem *to)
     }
 
     m_defaultLayout->insertItem(indexTo, from);
-    bookmarkManager->moveBookmark(indexFrom - getCustomBookmarkItemInsertIndex(), indexTo - getCustomBookmarkItemInsertIndex());
+
+    ///###: here, get the url which was stored in item.
+    ///###: then, jundge whether urls are begging with "tag://" or not.
+    if(!from->getUrl().isTagedFile() && !to->getUrl().isTagedFile()){
+        bookmarkManager->moveBookmark(indexFrom - getCustomBookmarkItemInsertIndex(),
+                                      indexTo - getCustomBookmarkItemInsertIndex());
+    }
     m_itemGroup->items().move(indexFrom, indexTo);
 
     DFMEvent event(this);
