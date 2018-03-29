@@ -241,6 +241,7 @@ private:
     bool checkUseGvfsFileOperation(const QString& path);
 
     static QStorageInfo getStorageInfo(const QString &file);
+    static bool canMove(const QString &filePath);
 
 #ifdef SW_LABEL
 public:
