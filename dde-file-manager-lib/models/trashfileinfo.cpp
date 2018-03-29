@@ -86,6 +86,13 @@ void TrashFileInfoPrivate::updateInfo()
         //inherits from parent trash info
         inheritParentTrashInfo();
 
+        // is trash root path
+        if (filePath == basePath || filePath == basePath + "/") {
+            displayName = QCoreApplication::translate("PathManager", "Trash");
+
+            return;
+        }
+
         if (systemPathManager->isSystemPath(filePath))
             displayName = systemPathManager->getSystemPathDisplayNameByPath(filePath);
         else
