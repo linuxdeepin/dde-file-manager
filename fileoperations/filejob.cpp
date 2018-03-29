@@ -64,6 +64,8 @@
 
 #include "sort.h"
 
+#include <qplatformdefs.h>
+
 DFM_USE_NAMESPACE
 
 int FileJob::FileJobCount = 0;
@@ -245,13 +247,25 @@ DUrlList FileJob::doCopy(const DUrlList &files, const DUrl &destination)
 DUrlList FileJob::doMove(const DUrlList &files, const DUrl &destination)
 {
     m_noPermissonUrls.clear();
-    DUrlList result = doMoveCopyJob(files, destination);
+    DUrlList new_list;
+
+    for (const DUrl &url : files) {
+        if (canMove(url.toLocalFile()))
+            new_list << url;
+        else
+            m_noPermissonUrls << url;
+    }
+
+    DUrlList result = doMoveCopyJob(new_list, destination);
+
     if (!m_noPermissonUrls.isEmpty()){
         DFMUrlListBaseEvent noPermissionEvent(nullptr, m_noPermissonUrls);
         noPermissionEvent.setWindowId(getWindowId());
         emit fileSignalManager->requestShowNoPermissionDialog(noPermissionEvent);
     }
+
     m_noPermissonUrls.clear();
+
     return result;
 }
 
@@ -2309,6 +2323,32 @@ QStorageInfo FileJob::getStorageInfo(const QString &file)
     return info.isSymLink()
             ? QStorageInfo(info.absolutePath())
             : QStorageInfo(info.absoluteFilePath());
+}
+
+bool FileJob::canMove(const QString &filePath)
+{
+    QFileInfo file_info(filePath);
+    QFileInfo dir_info(file_info.dir().absolutePath());
+
+    if (!dir_info.permission(QFile::WriteUser))
+        return false;
+
+#ifdef Q_OS_LINUX
+    // 如果是root，则拥有权限
+    if (getuid() == 0) {
+        return true;
+    }
+
+    QT_STATBUF statBuffer;
+    if (QT_LSTAT(dir_info.absoluteFilePath().toUtf8().constData(), &statBuffer) == 0) {
+        // 如果父目录拥有t权限，则判断当前用户是不是文件的owner，不是则无法操作文件
+        if ((statBuffer.st_mode & S_ISVTX) && file_info.ownerId() != getuid()) {
+            return false;
+        }
+    }
+#endif
+
+    return true;
 }
 
 #ifdef SW_LABEL
