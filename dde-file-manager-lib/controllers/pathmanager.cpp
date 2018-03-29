@@ -95,6 +95,9 @@ QString PathManager::getSystemPathDisplayName(QString key)
 
 QString PathManager::getSystemPathDisplayNameByPath(QString path)
 {
+    if (path.size() > 1 && path.endsWith("/"))
+        path.chop(1);
+
     if (isSystemPath(path)){
         foreach (QString key, systemPathsMap().keys()) {
             if (systemPathsMap().value(key) == path){
@@ -113,8 +116,11 @@ QString PathManager::getSystemPathIconName(QString key)
     return QString();
 }
 
-QString PathManager::getSystemPathIconNameByPath(const QString &path)
+QString PathManager::getSystemPathIconNameByPath(QString path)
 {
+    if (path.size() > 1 && path.endsWith("/"))
+        path.chop(1);
+
     if (isSystemPath(path)){
         foreach (QString key, systemPathsMap().keys()) {
             if (systemPathsMap().value(key) == path){
@@ -153,7 +159,7 @@ void PathManager::loadSystemPaths()
     foreach (const QString &key, m_systemPathsMap.keys()) {
         const QString &path = m_systemPathsMap.value(key);
 
-        if (key != "Trash")
+//        if (key != "Trash")
             m_systemPathsSet << path;
 
         if(key == "Desktop" || key == "Videos" || key == "Music" ||
@@ -179,6 +185,9 @@ QMap<QString, QString> PathManager::systemPathDisplayNamesMap() const
 
 bool PathManager::isSystemPath(QString path) const
 {
+    if (path.size() > 1 && path.endsWith("/"))
+        path.chop(1);
+
     return m_systemPathsSet.contains(path);
 }
 

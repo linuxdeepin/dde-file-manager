@@ -46,7 +46,7 @@ public:
     QString getSystemPathDisplayName(QString key);
     QString getSystemPathDisplayNameByPath(QString path);
     QString getSystemPathIconName(QString key);
-    QString getSystemPathIconNameByPath(const QString& path);
+    QString getSystemPathIconNameByPath(QString path);
 
     static QString getSystemCachePath();
 

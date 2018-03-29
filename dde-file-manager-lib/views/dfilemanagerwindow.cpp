@@ -872,13 +872,19 @@ void DFileManagerWindow::initConnect()
 
     QObject::connect(fileSignalManager, &FileSignalManager::trashStateChanged, this, &DFileManagerWindow::onTrashStateChanged);
     QObject::connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DFileManagerWindow::onTrashStateChanged);
-    QObject::connect(this, &DFileManagerWindow::currentUrlChanged, d->tabBar, [this, d] {
-        d->tabBar->onCurrentUrlChanged(DFMUrlBaseEvent(this, currentUrl()));
-    });
     QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTrashStateChanged);
 
-    QObject::connect(this, &DFileManagerWindow::currentUrlChanged, this, [this] {
+    QObject::connect(this, &DFileManagerWindow::currentUrlChanged, this, [this, d] {
+        d->tabBar->onCurrentUrlChanged(DFMUrlBaseEvent(this, currentUrl()));
         emit fileSignalManager->currentUrlChanged(DFMUrlBaseEvent(this, currentUrl()));
+
+        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, currentUrl());
+
+        if (info) {
+            setWindowTitle(info->fileDisplayName());
+        } else if (currentUrl().isComputerFile()) {
+            setWindowTitle(systemPathManager->getSystemPathDisplayName("Computer"));
+        }
     });
 
     QObject::connect(d->renameBar, &DRenameBar::clickCancelButton, this, &DFileManagerWindow::hideRenameBar);
