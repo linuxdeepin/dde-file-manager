@@ -81,6 +81,7 @@ QString PathManager::getSystemPathDisplayName(QString key)
 {
     if (m_systemPathDisplayNamesMap.contains(key))
         return m_systemPathDisplayNamesMap.value(key);
+
     return QString();
 }
 
@@ -150,7 +151,7 @@ void PathManager::loadSystemPaths()
     foreach (const QString &key, m_systemPathsMap.keys()) {
         const QString &path = m_systemPathsMap.value(key);
 
-//        if (key != "Trash")
+        if (key != "Trash")
             m_systemPathsSet << path;
 
         if(key == "Desktop" || key == "Videos" || key == "Music" ||
