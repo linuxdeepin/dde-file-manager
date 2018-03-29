@@ -341,7 +341,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="495"/>
         <source>Remove</source>
-        <translation>移除</translation>
+        <translation>移除书签</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="633"/>
