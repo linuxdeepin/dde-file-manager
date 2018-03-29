@@ -491,12 +491,13 @@ int DialogManager::showRemoveBookMarkDialog(const DFMEvent &event)
 {
     DDialog d(WindowManager::getWindowById(event.windowId()));
     d.setTitle(tr("Sorry, unable to locate your bookmark directory, remove it?"));
+    d.setMessage(" ");
     QStringList buttonTexts;
     buttonTexts << tr("Cancel") << tr("Remove");
     d.addButton(buttonTexts[0], true);
-    d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
+    d.addButton(buttonTexts[1], false, DDialog::ButtonRecommend);
     d.setDefaultButton(1);
-    d.setIconPixmap(QIcon::fromTheme("folder").pixmap(64, 64));
+    d.setIconPixmap(QIcon::fromTheme("folder-bookmark", QIcon::fromTheme("folder")).pixmap(64, 64));
     int code = d.exec();
     return code;
 }
