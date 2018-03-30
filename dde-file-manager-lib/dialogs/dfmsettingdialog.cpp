@@ -61,6 +61,7 @@ QWidget *DFMSettingDialog::createAutoMountCheckBox(QObject *opt)
 
     QObject::connect(mountCheckBox,
                      &QCheckBox::stateChanged,
+                     option,
                      [=](int state){
         if (state == 0){
             if (DFMSettingDialog::AutoMountOpenCheckBox){
@@ -77,7 +78,7 @@ QWidget *DFMSettingDialog::createAutoMountCheckBox(QObject *opt)
         }
     });
 
-    QObject::connect(option, &Core::DSettingsOption::valueChanged, [=](QVariant value){
+    QObject::connect(option, &Core::DSettingsOption::valueChanged, mountCheckBox, [=](QVariant value){
         mountCheckBox->setChecked(value.toBool());
     });
 
@@ -100,6 +101,7 @@ QWidget *DFMSettingDialog::createAutoMountOpenCheckBox(QObject *opt)
 
     QObject::connect(openCheckBox,
                      &QCheckBox::stateChanged,
+                     option,
                      [=](int state){
         if (state == 0){
             option->setValue(false);
@@ -108,7 +110,7 @@ QWidget *DFMSettingDialog::createAutoMountOpenCheckBox(QObject *opt)
         }
     });
 
-    QObject::connect(option, &Core::DSettingsOption::valueChanged, [=](QVariant value){
+    QObject::connect(option, &Core::DSettingsOption::valueChanged, openCheckBox, [=](QVariant value){
         openCheckBox->setChecked(value.toBool());
     });
 
