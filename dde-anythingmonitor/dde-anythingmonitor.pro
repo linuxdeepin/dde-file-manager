@@ -10,7 +10,11 @@ CONFIG += c++11 \
           console
 
 TARGET = dde-anythingmonitor
-CONFIG -= app_bundle
+CONFIG -= app_bundle \
+          create_pc \
+          create_prl \
+          no_install_prl \
+          link_pkgconfig
 
 
 TEMPLATE = app
@@ -25,7 +29,6 @@ CONFIG(debug, debug|release){
 INCLUDEPATH += $$PWD/../dde-file-manager-lib \
                $$PWD/../dde-file-manager-lib/interfaces \
                $$PWD/../dde-file-manager-lib/shutil
-
 
 
 

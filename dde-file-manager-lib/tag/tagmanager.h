@@ -33,16 +33,15 @@ extern "C"
 #endif /*__cplusplus*/
 
 
-
-
-namespace std {
+namespace std
+{
 
 template<>
 struct hash<QString>
 {
-    inline std::size_t operator()(const QString& qstr) const noexcept
+    inline std::size_t operator()(const QString& str)const noexcept
     {
-        return (std::hash<std::string>{}(qstr.toStdString()));
+        return (std::hash<std::string>{}(str.toStdString()));
     }
 };
 
