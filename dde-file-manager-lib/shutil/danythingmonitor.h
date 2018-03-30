@@ -1,6 +1,7 @@
 ﻿#ifndef FILEMONITOR_H
 #define FILEMONITOR_H
 
+
 #include <deque>
 #include <regex>
 #include <mutex>
@@ -13,15 +14,32 @@
 #include <fstream>
 #include <sstream>
 #include <iterator>
+#include <unordered_map>
+
+#include <QString>
+
+
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif //__cplusplus
+
+#include <deepin-anything/fs_buf.h>
+
+#ifdef __cplusplus
+}
+#endif //__cplusplus
+
 
 
 class DAnythingMonitor : public std::enable_shared_from_this<DAnythingMonitor>
 {
 public:
-    explicit DAnythingMonitor(const QString& hookPath);
+    explicit DAnythingMonitor();
     DAnythingMonitor(const DAnythingMonitor& other)=delete;
     DAnythingMonitor& operator=(const DAnythingMonitor& other)=delete;
-    virtual ~DAnythingMonitor();
+    virtual ~DAnythingMonitor()=default;
 
     const QString& getVfsChangePath()const noexcept;
     void setVfsChangePath(const QString& path)const=delete;
@@ -31,21 +49,16 @@ public:
 
 private:
 
-    std::list<QString> m_filesForDelete{};
-    std::list<std::pair<QString, QString>> m_filesForRename{};
-
-
-    std::basic_regex<char> m_regexDate{"([0-9]{4,4}-[0-9]{2,2}-[0-9]{2,2})"
-                                       "(\\s)"
-                                       "([0-9]{2,2}:[0-9]{2,2}:[0-9]{2,2}\\.[0-9]{3,3})"};
+    ///###: why delete and rename operation use the same data structure.
+    ///###: if use different data structure. Maybe the deleting was previous of renaming.
+    ///###  but we synchronize with sqlite through these data tructure. Maybe the renamed files were deleted.
+    ///###  Or, reverse.
+    std::deque<std::pair<QString, QString>> m_changedFiles{};
 
     std::mutex m_mutex{};
     std::condition_variable m_conditionVar{};
-    std::basic_ifstream<char> m_iStream{};
-    std::basic_string<char> m_currentEnd{};
-    QString m_hookFilePath{""};
 
-    std::atomic<bool> m_readyFlag{ true };
+    std::atomic<bool> m_readyFlag{ false };
     std::thread m_workThread{};
 };
 
