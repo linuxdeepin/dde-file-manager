@@ -150,11 +150,15 @@ void DiskControlWidget::onVolume_added(const QDiskInfo &diskInfo)
     qDebug() << "isAutoMount:" << globalSetting->isAutoMount();
     qDebug() << "isAutoMountAndOpen:" << globalSetting->isAutoMountAndOpen();
     if (m_gvfsMountManager->getAutoMountSwitch()){
-        if(globalSetting->isAutoMount() && !globalSetting->isAutoMountAndOpen()){
+        if (diskInfo.is_removable()) {
+            if (globalSetting->isAutoMountAndOpen()) {
+                gvfsMountManager->mount(diskInfo);
+                QProcess::startDetached("dde-file-manager", {"computer:///"});
+            } else if (globalSetting->isAutoMount()) {
+                gvfsMountManager->mount(diskInfo);
+            }
+        } else if (globalSetting->isAutoMount()) {
             gvfsMountManager->mount(diskInfo);
-        }else if (globalSetting->isAutoMountAndOpen()){
-            gvfsMountManager->mount(diskInfo);
-            QProcess::startDetached("dde-file-manager", {"computer:///"});
         }
     }
 }

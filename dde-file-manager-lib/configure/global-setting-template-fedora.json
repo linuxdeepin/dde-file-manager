@@ -180,13 +180,13 @@
                             "key": "auto_mount",
                             "text": "Auto mount",
                             "type": "mountCheckBox",
-                            "default": true
+                            "default": false
                         },
                         {
                             "key": "auto_mount_and_open",
                             "text": "Open after auto mount",
                             "type": "openCheckBox",
-                            "default": true
+                            "default": false
                         }
                     ]
                 },
