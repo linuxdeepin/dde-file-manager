@@ -26,6 +26,7 @@ public:
     mutable QMimeType mimeType;
     mutable QMimeDatabase::MatchMode mimeTypeMode;
     mutable QIcon icon;
+    mutable bool iconFromTheme = false;
     mutable QPointer<QTimer> getIconTimer;
     bool requestingThumbnail = false;
 };

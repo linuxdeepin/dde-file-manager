@@ -443,8 +443,11 @@ QIcon DFileInfo::fileIcon() const
 {
     Q_D(const DFileInfo);
 
-    if (!d->icon.isNull())
+    if (!d->icon.isNull() && !d->iconFromTheme && !d->icon.name().isEmpty()) {
         return d->icon;
+    }
+
+    d->iconFromTheme = false;
 
     const DUrl &fileUrl = this->fileUrl();
 
@@ -463,6 +466,7 @@ QIcon DFileInfo::fileIcon() const
             pa.setPen(Qt::gray);
             pa.drawRect(pixmap.rect().adjusted(0, 0, -1, -1));
             d->icon.addPixmap(pixmap);
+            d->iconFromTheme = false;
 
             return d->icon;
         }
@@ -481,8 +485,10 @@ QIcon DFileInfo::fileIcon() const
             QObject::connect(timer, &QTimer::timeout, timer, [fileUrl, timer, me] {
                 DThumbnailProvider::instance()->appendToProduceQueue(me->d_func()->fileInfo, DThumbnailProvider::Large,
                                                                      [me] (const QString &path) {
-                    if (path.isEmpty())
+                    if (path.isEmpty()) {
                         me->d_func()->icon = DFileIconProvider::globalProvider()->icon(*me.constData());
+                        me->d_func()->iconFromTheme = true;
+                    }
                 });
                 me->d_func()->requestingThumbnail = true;
                 timer->deleteLater();
@@ -502,12 +508,15 @@ QIcon DFileInfo::fileIcon() const
 
             if (fileInfo){
                 d->icon = fileInfo->fileIcon();
+                d->iconFromTheme = false;
+
                 return d->icon;
             }
         }
     }
 
     d->icon = DFileIconProvider::globalProvider()->icon(*this);
+    d->iconFromTheme = true;
 
     return d->icon;
 }
