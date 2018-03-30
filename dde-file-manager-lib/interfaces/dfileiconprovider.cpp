@@ -184,7 +184,7 @@ QIcon DFileIconProvider::icon(const DFileInfo &info, const QIcon &feedback) cons
 
     icon = d->fromTheme(info.genericIconName());
 
-    if(icon.isNull())
+    if (icon.isNull())
         icon = d->fromTheme("unknown");
 
     if (icon.isNull())
