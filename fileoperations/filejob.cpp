@@ -1356,6 +1356,11 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
             char *namep;
             name_space = savedir(srcDir.toStdString().data());
             namep = name_space;
+
+            // 打开目录失败则跳过此目录
+            if (!namep)
+                return false;
+
             while (*namep != '\0')
             {
                 QString srcFile = QString("%1/%2").arg(srcDir, QString(namep));
