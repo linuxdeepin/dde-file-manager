@@ -664,7 +664,7 @@ void DFileService::laterRequestSelectFiles(const DFMUrlListBaseEvent &event) con
 {
     FileSignalManager *manager = fileSignalManager;
 
-    TIMER_SINGLESHOT_OBJECT(manager, 200, {
+    TIMER_SINGLESHOT_OBJECT(manager, qMax(event.fileUrlList().count() *  (10 + event.fileUrlList().count() / 150), 200), {
                                 manager->requestSelectFile(event);
                             }, event, manager)
 }
