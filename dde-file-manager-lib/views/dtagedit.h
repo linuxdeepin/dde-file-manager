@@ -22,7 +22,7 @@ class DTagEdit final : public DArrowRectangle
 {
     Q_OBJECT
 public:
-    DTagEdit(QWidget* const parent = nullptr);
+    explicit DTagEdit(QWidget* const parent = nullptr);
     virtual ~DTagEdit()=default;
     DTagEdit(const DTagEdit& other)=delete;
     DTagEdit& operator=(const DTagEdit& other)=delete;
@@ -34,11 +34,19 @@ public:
 public slots:
     void onFocusOut();
 
+
+protected:
+    virtual void keyPressEvent(QKeyEvent* event) Q_DECL_OVERRIDE;
+
 private:
     void initializeWidgets();
     void initializeParameters();
     void initializeLayout();
     void initializeConnect();
+
+    void processTags();
+
+    void onPressESC()noexcept;
 
     DCrumbEdit* m_crumbEdit{ nullptr };
     QLabel* m_promptLabel{ nullptr };
