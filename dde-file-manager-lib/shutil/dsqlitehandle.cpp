@@ -144,45 +144,47 @@ DSqliteHandle::DSqliteHandle(QObject * const parent)
 QPair<QString, QString> DSqliteHandle::getMountPointOfFile(const DUrl& url,
                                                            QScopedPointer<QList<QPair<QString, QList<QPair<QString, QString>>>>> &partionsInfoPtr)
 {
-    QList<QPair<QString, QList<QPair<QString, QString>>>>::const_iterator cDevicePos{};
-    QList<QPair<QString, QString>>::const_iterator cPartionPos{};
     QPair<QString, QString> partionAndMountPoint{};
-    QString parentPath{ url.parentUrl().path() };
 
-    if(partionsInfoPtr && !partionsInfoPtr->isEmpty()){
-        QList<QPair<QString, QList<QPair<QString, QString>>>>::const_iterator cDeviceBeg{ partionsInfoPtr->cbegin() };
-        QList<QPair<QString, QList<QPair<QString, QString>>>>::const_iterator cDeviceEnd{ partionsInfoPtr->cend() };
+    if(DFileInfo::exists(url)){
+        QList<QPair<QString, QList<QPair<QString, QString>>>>::const_iterator cDevicePos{};
+        QList<QPair<QString, QString>>::const_iterator cPartionPos{};
+        QString parentPath{ url.parentUrl().path() };
 
-        for(; cDeviceBeg != cDeviceEnd; ++cDeviceBeg){
-            QList<QPair<QString, QString>>::const_iterator cPartionBeg{ cDeviceBeg->second.cbegin() };
-            QList<QPair<QString, QString>>::const_iterator cPartionEnd{ cDeviceBeg->second.cend() };
-            bool flag{ false };
+        if(partionsInfoPtr && !partionsInfoPtr->isEmpty()){
+            QList<QPair<QString, QList<QPair<QString, QString>>>>::const_iterator cDeviceBeg{ partionsInfoPtr->cbegin() };
+            QList<QPair<QString, QList<QPair<QString, QString>>>>::const_iterator cDeviceEnd{ partionsInfoPtr->cend() };
+
+            for(; cDeviceBeg != cDeviceEnd; ++cDeviceBeg){
+                QList<QPair<QString, QString>>::const_iterator cPartionBeg{ cDeviceBeg->second.cbegin() };
+                QList<QPair<QString, QString>>::const_iterator cPartionEnd{ cDeviceBeg->second.cend() };
+                bool flag{ false };
 
 
-            for(; cPartionBeg != cPartionEnd; ++cPartionBeg){
+                for(; cPartionBeg != cPartionEnd; ++cPartionBeg){
 
-                if(cPartionBeg->second != ROOTPATH && parentPath.startsWith(cPartionBeg->second)){
-                    cPartionPos = cPartionBeg;
-                    flag = true;
+                    if(cPartionBeg->second != ROOTPATH && parentPath.startsWith(cPartionBeg->second)){
+                        cPartionPos = cPartionBeg;
+                        flag = true;
+                        break;
+                    }
+                }
+
+                if(flag){
+                    cDevicePos = cDeviceBeg;
                     break;
                 }
             }
 
-            if(flag){
-                cDevicePos = cDeviceBeg;
-                break;
+            if(cDevicePos != cDeviceEnd &&
+                    (cDevicePos != QList<QPair<QString, QList<QPair<QString, QString>>>>::const_iterator{})){
+                partionAndMountPoint = *cPartionPos;
+
+            }else{
+                cDeviceBeg = partionsInfoPtr->cbegin();
+                partionAndMountPoint = *(cDeviceBeg->second.cbegin());
             }
         }
-
-        if(cDevicePos != cDeviceEnd &&
-                (cDevicePos != QList<QPair<QString, QList<QPair<QString, QString>>>>::const_iterator{})){
-            partionAndMountPoint = *cPartionPos;
-
-        }else{
-            cDeviceBeg = partionsInfoPtr->cbegin();
-            partionAndMountPoint = *(cDeviceBeg->second.cbegin());
-        }
-
     }
 
     return partionAndMountPoint;
