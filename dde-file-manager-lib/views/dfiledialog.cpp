@@ -27,6 +27,7 @@
 #include "dfileservices.h"
 #include "dfmevent.h"
 #include "dfmeventdispatcher.h"
+#include "dfmsidebar.h"
 #include "views/dstatusbar.h"
 #include "views/dleftsidebar.h"
 #include "views/dsearchbar.h"
@@ -90,7 +91,7 @@ DFileDialog::DFileDialog(QWidget *parent)
     setAcceptMode(QFileDialog::AcceptOpen);
     handleNewView(DFileManagerWindow::getFileView());
 
-    getLeftSideBar()->setDisableUrlSchemes(QList<QString>() << "trash" << "network");
+    getLeftSideBar()->setDisableUrlSchemes(QStringList() << "trash" << "network");
     getLeftSideBar()->setAcceptDrops(false);
 
     DFMEventDispatcher::instance()->installEventFilter(this);

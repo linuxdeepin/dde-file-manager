@@ -70,6 +70,7 @@ class DFMUrlListBaseEvent;
 
 DFM_BEGIN_NAMESPACE
 class DFMBaseView;
+class DFMSideBar;
 DFM_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
@@ -85,11 +86,11 @@ public:
     virtual ~DFileManagerWindow();
 
     DUrl currentUrl() const;
-    bool isCurrentUrlSupportSearch(const DUrl& currentUrl);
+    bool isCurrentUrlSupportSearch(const DUrl &currentUrl);
 
-    DToolBar* getToolBar() const;
+    DToolBar *getToolBar() const;
     DFMBaseView *getFileView() const;
-    DLeftSideBar *getLeftSideBar() const;
+    DFMSideBar *getLeftSideBar() const;
 
     quint64 windowId();
 
@@ -114,7 +115,7 @@ public slots:
     void switchToView(DFMBaseView *view);
     void onTabAddableChanged(bool addable);
     void onCurrentTabChanged(int tabIndex);
-    void onRequestCloseTab(const int index, const bool& remainState);
+    void onRequestCloseTab(const int index, const bool &remainState);
     void closeCurrentTab(quint64 winId);
     void showNewTabButton();
     void hideNewTabButton();
@@ -124,20 +125,20 @@ public slots:
     void requestEmptyTrashFiles();
     void onTrashStateChanged();
 
-    void onShowRenameBar(const DFMUrlListBaseEvent& event)noexcept;
-    void onTabBarCurrentIndexChange(const int& index)noexcept;
+    void onShowRenameBar(const DFMUrlListBaseEvent &event)noexcept;
+    void onTabBarCurrentIndexChange(const int &index)noexcept;
     void onReuqestCacheRenameBarState() const;
 
-    void setTheme(const QString& theme);
+    void setTheme(const QString &theme);
     void onThemeChanged();
 
 protected:
-    void closeEvent(QCloseEvent* event)  Q_DECL_OVERRIDE;
+    void closeEvent(QCloseEvent *event)  Q_DECL_OVERRIDE;
     void mouseDoubleClickEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void moveEvent(QMoveEvent *event) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
-    void resizeEvent(QResizeEvent* event) Q_DECL_OVERRIDE;
+    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
 
     bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData = 0) Q_DECL_OVERRIDE;
     QObject *object() const Q_DECL_OVERRIDE;
@@ -165,7 +166,7 @@ protected:
     void initConnect();
 
 private:
-    Tab* m_currentTab{ nullptr };
+    Tab *m_currentTab{ nullptr };
     std::atomic<bool> m_tabBarIndexChangeFlag{ false };//###: when the index of tabbar changed hide RenameBar through the value.
 
     QScopedPointer<DFileManagerWindowPrivate> d_ptr;
@@ -174,7 +175,7 @@ private:
 public:
     static std::unique_ptr<RecordRenameBarState>  renameBarState;//###: record pattern of RenameBar and the string of QLineEdit's content.
     static std::atomic<bool> flagForNewWindowFromTab;           //###: open a new window form a already has tab, this will be true.
-                                                               //and after opening new window this will be back to false.
+    //and after opening new window this will be back to false.
 };
 
 #endif // DFILEMANAGERWINDOW_H
