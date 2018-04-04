@@ -2,6 +2,7 @@
 
 #include <mutex>
 #include <string>
+#include <fstream>
 #include <algorithm>
 #include <functional>
 #include <unordered_set>
@@ -33,12 +34,56 @@ extern "C"
 #endif /*__cplusplus*/
 
 
+
+#include <iostream>
+
+
+namespace std
+{
+
+template<>
+struct less<QString>
+{
+    typedef bool result_type;
+    typedef QString first_argument_type;
+    typedef QString second_argument_type;
+    ///###: delete the codes above. When in c++17.
+
+
+    bool operator()(const QString& lhs, const QString& rhs) const
+    {
+        std::string lhStr{ lhs.toStdString() };
+        std::string rhStr{ rhs.toStdString() };
+
+        return (std::less<std::string>{}(lhStr, rhStr));
+    }
+};
+
+}
+
+
 static std::once_flag flag{};//###: flag for instance.
 static std::atomic<int> counter{ 0 };
 
+static constexpr const char* const MOUNTTABLE{"/proc/mounts"};
 static constexpr const char* const ROOTPATH{"/"};
 static constexpr const std::size_t MAXTHREAD{ 3 };
-static constexpr const char* DEFAULTMOUNTPOINT{"/media"};
+
+
+static const std::map<QString, QString> StrTableOfEscapeChar{
+                                                                {"\\007","\a"},
+                                                                {"\\010","\b"},
+                                                                {"\\014","\f"},
+                                                                {"\\012","\n"},
+                                                                {"\\015","\r"},
+                                                                {"\\011","\t"},
+                                                                {"\\013","\v"},
+                                                                {"\\134","\\"},
+                                                                {"\\047","\'"},
+                                                                {"\\042","\""},
+                                                                {"\\040"," "}
+                                                                };
+
 
 static const std::multimap<DSqliteHandle::SqlType, QString> SqlTypeWithStrs {
                                                           {DSqliteHandle::SqlType::TagFiles, "SELECT COUNT (tag_with_file.file_name) AS counter "
@@ -135,130 +180,141 @@ DSqliteHandle::DSqliteHandle(QObject * const parent)
                m_sqlDatabasePtr{ new QSqlDatabase }
 {
     std::lock_guard<std::mutex> raiiLock{ m_mutex };
-    m_partionsOfDevices.reset(new QList<QPair<QString, QList<QPair<QString, QString>>>>{ DSqliteHandle::queryPartionsInfoOfDevices() });
+    std::map<QString, std::multimap<QString, QString>> partionsAndMounPoints{ DSqliteHandle::queryPartionsInfoOfDevices() };
+
+    if(!partionsAndMounPoints.empty()){
+        m_partionsOfDevices.reset(new std::map<QString, std::multimap<QString, QString>>{ partionsAndMounPoints } );
+    }
+
     this->initializeConnect();
 }
 
 
 ///###: this is a auxiliary function. so do nont need a mutex.
 QPair<QString, QString> DSqliteHandle::getMountPointOfFile(const DUrl& url,
-                                                           QScopedPointer<QList<QPair<QString, QList<QPair<QString, QString>>>>> &partionsInfoPtr)
+                                                           std::unique_ptr<std::map<QString, std::multimap<QString, QString>>>& partionsAndMountPoints)
 {
     QPair<QString, QString> partionAndMountPoint{};
 
-    if(DFileInfo::exists(url)){
-        QList<QPair<QString, QList<QPair<QString, QString>>>>::const_iterator cDevicePos{};
-        QList<QPair<QString, QString>>::const_iterator cPartionPos{};
-        QString parentPath{ url.parentUrl().path() };
+    if(DFileInfo::exists(url) && partionsAndMountPoints
+                              && !partionsAndMountPoints->empty()){
+        QString parentPath{url.parentUrl().path()};
+        std::multimap<QString, QString>::const_iterator partionAndMounpointItr{};
+        std::multimap<QString, QString>::const_iterator rootPathPartionAndMountpointItr{};
+        std::map<QString, std::multimap<QString, QString>>::const_iterator cbeg{ partionsAndMountPoints->cbegin() };
+        std::map<QString, std::multimap<QString, QString>>::const_iterator cend{ partionsAndMountPoints->cend() };
 
-        if(partionsInfoPtr && !partionsInfoPtr->isEmpty()){
-            QList<QPair<QString, QList<QPair<QString, QString>>>>::const_iterator cDeviceBeg{ partionsInfoPtr->cbegin() };
-            QList<QPair<QString, QList<QPair<QString, QString>>>>::const_iterator cDeviceEnd{ partionsInfoPtr->cend() };
+        for(; cbeg != cend; ++cbeg){
+            std::multimap<QString, QString>::const_iterator itrOfPartionAndMountpoint{ cbeg->second.cbegin() };
+            std::multimap<QString, QString>::const_iterator itrOfPartionAndMountpointEnd{ cbeg->second.cend() };
+            bool flag{ false };
 
-            for(; cDeviceBeg != cDeviceEnd; ++cDeviceBeg){
-                QList<QPair<QString, QString>>::const_iterator cPartionBeg{ cDeviceBeg->second.cbegin() };
-                QList<QPair<QString, QString>>::const_iterator cPartionEnd{ cDeviceBeg->second.cend() };
-                bool flag{ false };
+            for(; itrOfPartionAndMountpoint != itrOfPartionAndMountpointEnd; ++itrOfPartionAndMountpoint){
 
-
-                for(; cPartionBeg != cPartionEnd; ++cPartionBeg){
-
-                    if(cPartionBeg->second != ROOTPATH && parentPath.startsWith(cPartionBeg->second)){
-                        cPartionPos = cPartionBeg;
-                        flag = true;
-                        break;
-                    }
+                if(itrOfPartionAndMountpoint->second == ROOTPATH){
+                    rootPathPartionAndMountpointItr = itrOfPartionAndMountpoint;
                 }
 
-                if(flag){
-                    cDevicePos = cDeviceBeg;
+                if(itrOfPartionAndMountpoint->second != ROOTPATH && parentPath.startsWith(itrOfPartionAndMountpoint->second)){
+                    partionAndMounpointItr = itrOfPartionAndMountpoint;
+                    flag = true;
                     break;
                 }
             }
 
-            if(cDevicePos != cDeviceEnd &&
-                    (cDevicePos != QList<QPair<QString, QList<QPair<QString, QString>>>>::const_iterator{})){
-                partionAndMountPoint = *cPartionPos;
-
-            }else{
-                cDeviceBeg = partionsInfoPtr->cbegin();
-                partionAndMountPoint = *(cDeviceBeg->second.cbegin());
+            if(flag){
+                break;
             }
         }
+
+        if(partionAndMounpointItr != std::multimap<QString, QString>::const_iterator{}){
+            partionAndMountPoint.first = partionAndMounpointItr->first;
+            partionAndMountPoint.second = partionAndMounpointItr->second;
+        }
+
+
+        if(partionAndMounpointItr == std::multimap<QString, QString>::const_iterator{} ||
+           parentPath.startsWith(ROOTPATH)){
+            partionAndMountPoint.first = rootPathPartionAndMountpointItr->first;
+            partionAndMountPoint.second = rootPathPartionAndMountpointItr->second;
+        }
+
     }
+
 
     return partionAndMountPoint;
 }
 
 
+
+
 ///###: this is a auxiliary function. so do not need a mutex.
-QList<QPair<QString, QList<QPair<QString, QString>>>>  DSqliteHandle::queryPartionsInfoOfDevices()
+std::map<QString, std::multimap<QString, QString>>  DSqliteHandle::queryPartionsInfoOfDevices()
 {
-    QList<QPair<QString, QList<QPair<QString, QString>>>> partionsOfDevices{};
-    QProcess lsblk{};
-    QList<QString> arguments{ {"-J"} };
-    lsblk.setProgram("lsblk");
-    lsblk.setArguments(arguments);
-    lsblk.start();
+    std::map<QString, std::multimap<QString, QString>> partionsAndMountpoints{};
 
-    if(!lsblk.waitForFinished(-1)){
-        qWarning(lsblk.readAllStandardError().constData()); //log!
-        return partionsOfDevices;
-    }
+    if(DFileInfo::exists(DUrl::fromLocalFile(MOUNTTABLE))){
+        std::basic_ifstream<char> iFstream{MOUNTTABLE};
+        std::list<std::basic_string<char>> partionInfoAndMountpoint{};
+        std::basic_regex<char> matchNumber{ "[0-9]+" };
 
-    QJsonParseError error{};
-    QJsonDocument document{ QJsonDocument::fromJson(lsblk.readAllStandardOutput(), &error) };
+        if(iFstream.is_open()){
+            std::basic_string<char> str{};
 
-    if(error.error == QJsonParseError::NoError){
-        QJsonObject totalObject{ document.object() };
 
-        if(totalObject.contains("blockdevices")){
-            QJsonValue blockdevicesValue{ totalObject.take("blockdevices") };
+            while(std::getline(iFstream, str)){
 
-            if(blockdevicesValue.isArray()){
-                QJsonArray blockdevicesArray(blockdevicesValue.toArray()); //###: do not use barace to initialize local variable.
+                if(!str.empty()){
+                    std::basic_string<char>::size_type pos{ str.find("/dev/") };
 
-                for(const QJsonValue& value : blockdevicesArray){
-                    QPair<QString, QList<QPair<QString, QString>>> devicePartions{};
-
-                    if(value.isObject()){
-                        QJsonObject objOfValue{ value.toObject() };
-
-                        if(objOfValue.contains("name")){
-                            QJsonValue nameValue{ objOfValue.take("name") };
-                            devicePartions.first = nameValue.toString();
-                        }
-
-                        if(objOfValue.contains("children")){
-                            QJsonValue childrenValue{ objOfValue.take("children") };
-
-                            if(childrenValue.isArray()){
-                                QJsonArray childrenArray(childrenValue.toArray()); //###: do not use brace!.
-
-                                for(const QJsonValue& value : childrenArray){
-                                    QJsonObject theChildren{ value.toObject() };
-
-                                    if(theChildren.contains("name") && theChildren.contains("mountpoint")){
-                                        QPair<QString, QString> nameAndMountPoint{};
-                                        nameAndMountPoint.first = theChildren.take("name").toString();
-                                        QString mountPointOfDevice{ theChildren.take("mountpoint").toString() };
-
-                                        if(!mountPointOfDevice.isNull() && !mountPointOfDevice.isEmpty()){
-                                            nameAndMountPoint.second = mountPointOfDevice;
-                                            devicePartions.second.push_back(nameAndMountPoint);
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                    if(pos != std::string::npos){
+                        partionInfoAndMountpoint.push_back(str);
                     }
-                    partionsOfDevices.push_back(devicePartions);
                 }
             }
         }
+
+        for(const std::basic_string<char>& theStr : partionInfoAndMountpoint){
+            QString qsTr{ QString::fromStdString(theStr) };
+            QString deviceName{};
+            QString partionName{};
+            QString mountpoint{};
+
+            QList<QString> subsTrs{ qsTr.split(' ') };
+            partionName = subsTrs[0];
+            mountpoint = subsTrs[1];
+
+            std::match_results<std::basic_string<char>::const_iterator> matchedResult{};
+            std::basic_string<char> partionNameStd{ partionName.toStdString() };
+
+            if(std::regex_search(partionNameStd, matchedResult, matchNumber)){
+                deviceName = QString::fromStdString( matchedResult.prefix() );
+
+                if(!deviceName.isEmpty() && !deviceName.isNull()){
+                    mountpoint = DSqliteHandle::restoreEscapedChar(mountpoint);
+
+                    ///###: do not delete this.
+//                    qDebug()<< deviceName << partionName << mountpoint;
+
+                    partionsAndMountpoints[deviceName].emplace(std::move(partionName), mountpoint);
+                }
+            }
+
+        }
     }
 
-    return partionsOfDevices;
+    ///###: do not delete this. It is convenient for testing.
+//    for(const auto& item : partionsAndMountpoints){
+//        qDebug()<< item.first;
+
+//        for(const auto& itm : item.second){
+//            qDebug()<< itm.first << "=====" <<itm.second;
+//        }
+
+//        qDebug()<< "\n";
+//    }
+
+    return partionsAndMountpoints;
 }
 
 QSharedPointer<DSqliteHandle> DSqliteHandle::instance()
@@ -270,75 +326,34 @@ QSharedPointer<DSqliteHandle> DSqliteHandle::instance()
 
 void DSqliteHandle::onMountAdded(UDiskDeviceInfoPointer infoPointer)
 {
+    (void)infoPointer;
     m_flag.store(true, std::memory_order_release);
-    UDiskDeviceInfo::MediaType mediaType{ infoPointer->getMediaType() };
-    QString mountPoint{ infoPointer->getMountPointUrl().toLocalFile() };
-    QPair<QString, QString> partion{ infoPointer->getDiskInfo().unix_device(),
-                                     mountPoint };
 
-    if((mediaType == UDiskDeviceInfo::MediaType::native || mediaType == UDiskDeviceInfo::MediaType::removable) &&
-                                                                        mountPoint.startsWith(DEFAULTMOUNTPOINT)){
-        std::lock_guard<std::mutex> raiiLock{ m_mutex };
-        QList<QPair<QString, QList<QPair<QString, QString>>>>::iterator beg{ m_partionsOfDevices->begin() };
-        QList<QPair<QString, QList<QPair<QString, QString>>>>::iterator end{ m_partionsOfDevices->end() };
+    std::lock_guard<std::mutex> raiiLock{ m_mutex };
+    std::map<QString, std::multimap<QString, QString>> partionsAndMountPoints{ DSqliteHandle::queryPartionsInfoOfDevices() };
+    m_partionsOfDevices.reset(nullptr);
 
-        QList<QPair<QString, QList<QPair<QString, QString>>>>::iterator pos{
-
-            std::find_if(beg, end, [&](const QPair<QString, QList<QPair<QString, QString>>>& device)->bool
-            {
-                if(partion.first.startsWith(device.first) == true){
-                    return true;
-                }
-                return false;
-            }
-            )
-        };
-
-        if(pos != end){
-            pos->second.push_back(partion);
-        }
+    if(!partionsAndMountPoints.empty()){
+        m_partionsOfDevices = std::unique_ptr<std::map<QString, std::multimap<QString, QString>>>{
+                                          new std::map<QString, std::multimap<QString, QString>>{ partionsAndMountPoints }
+                                                                                                 };
     }
     m_flag.store(false, std::memory_order_release);
 }
 
 void DSqliteHandle::onMountRemoved(UDiskDeviceInfoPointer infoPointer)
 {
+    (void)infoPointer;
+
     m_flag.store(true, std::memory_order_release);
-    UDiskDeviceInfo::MediaType mediaType{ infoPointer->getMediaType() };
-    QString unixDevice{ infoPointer->getDiskInfo().unix_device() };
-    QString mountPointPath{ infoPointer->getMountPointUrl().path() };
+    std::lock_guard<std::mutex> raiiLock{ m_mutex };
+    std::map<QString, std::multimap<QString, QString>> partionsAndMountPoints{ DSqliteHandle::queryPartionsInfoOfDevices() };
+    m_partionsOfDevices.reset(nullptr);
 
-    if((mediaType == UDiskDeviceInfo::MediaType::removable || mediaType == UDiskDeviceInfo::MediaType::native) &&
-                                                                       mountPointPath.startsWith(DEFAULTMOUNTPOINT)){
-        std::lock_guard<std::mutex> raiiLock{ m_mutex };
-        QList<QPair<QString, QList<QPair<QString, QString>>>>::iterator beg{ m_partionsOfDevices->begin() };
-        QList<QPair<QString, QList<QPair<QString, QString>>>>::iterator end{ m_partionsOfDevices->end() };
-        QList<QPair<QString, QList<QPair<QString, QString>>>>::iterator devicePos{};
-        QList<QPair<QString, QString>>::iterator pos{};
-
-        for(; beg != end; ++beg){
-            QList<QPair<QString, QString>>::iterator partionBeg{ beg->second.begin() };
-            QList<QPair<QString, QString>>::iterator partionEnd{ beg->second.end() };
-
-            pos = std::find_if(partionBeg, partionEnd, [&](const QPair<QString, QString>& partion)
-            {
-                if(partion.first == unixDevice){
-                    return true;
-                }
-                return false;
-            }
-                               );
-
-            if(pos != QList<QPair<QString, QString>>::iterator{} &&  pos != beg->second.end()){
-                devicePos = beg;
-                break;
-            }
-        }
-
-        if(devicePos != QList<QPair<QString, QList<QPair<QString, QString>>>>::iterator{} &&
-                pos != QList<QPair<QString, QString>>::iterator{}){
-            devicePos->second.erase(pos);
-        }
+    if(!partionsAndMountPoints.empty()){
+        m_partionsOfDevices = std::unique_ptr<std::map<QString, std::multimap<QString, QString>>>{
+                                          new std::map<QString, std::multimap<QString, QString>>{ partionsAndMountPoints }
+                                                                                                 };
     }
     m_flag.store(false, std::memory_order_release);
 }
@@ -348,7 +363,7 @@ void DSqliteHandle::onMountRemoved(UDiskDeviceInfoPointer infoPointer)
 QString DSqliteHandle::getConnectionNameFromPartion(const QString& partion) noexcept
 {
     if(partion == ROOTPATH){
-        return "root";
+        return QString{"root"};
 
     }else{
 
@@ -362,7 +377,32 @@ QString DSqliteHandle::getConnectionNameFromPartion(const QString& partion) noex
     return QString{};
 }
 
+QString DSqliteHandle::restoreEscapedChar(const QString& value)
+{
+    QString tempValue{ value };
 
+    if(!tempValue.isEmpty() && !tempValue.isNull()){
+
+        int pos{ -1 };
+        std::map<QString, QString>::const_iterator tableCBeg{ StrTableOfEscapeChar.cbegin() };
+        std::map<QString, QString>::const_iterator tableCEnd{ StrTableOfEscapeChar.cend() };
+
+        for(; tableCBeg != tableCEnd; ++tableCBeg){
+            pos = tempValue.indexOf(tableCBeg->first);
+
+            if(pos != -1){
+
+                while(pos != -1){
+                    tempValue = tempValue.replace(tableCBeg->first, tableCBeg->second);
+
+                    pos = tempValue.indexOf(tableCBeg->first);
+                }
+            }
+        }
+    }
+
+    return tempValue;
+}
 
 
 ///#:-----------------------------------------> <tagName, <tagColor, <files>>>.
@@ -444,46 +484,16 @@ QVariant DSqliteHandle::disposeClientData(const QMap<QString, QList<QString>>& f
                 var.setValue(value);
                 break;
             }
-//            case 2: ///###: untag files(same partion).
-//            {
-//                std::lock_guard<std::mutex> raiiLock{ m_mutex };
-//                m_sqlDatabasePtr=std::unique_ptr<QSqlDatabase>{ nullptr };
-//                this->execSqlstr<DSqliteHandle::SqlType::UntagSamePartionFiles>(filesAndTags, userName);
+            case 9:
+            {
+                std::lock_guard<std::mutex> raillLock{ m_mutex };
+                bool value{ this->execSqlstr<DSqliteHandle::SqlType::ChangeFilesName, bool>(filesAndTags, userName) };
 
-//                break;
-//            }
-//           case 3: ///###: untag files(diff partion).
-//           {
-//                std::lock_guard<std::mutex> raiiLock{ m_mutex };
-//                this->execSqlstr<DSqliteHandle::SqlType::UntagDiffPartionFiles>(filesAndTags, userName);
-
-//                break;
-//           }
-//           case 4:
-//           {
-//                std::lock_guard<std::mutex> raillLock{ m_mutex };
-//                this->execSqlstr<DSqliteHandle::SqlType::ChangeTagsName>(filesAndTags, userName);
-
-//                break;
-//           }
-//           case 5:
-//           {
-//                std::lock_guard<std::mutex> raillLock{ m_mutex };
-//                this->execSqlstr<DSqliteHandle::SqlType::DeleteTags>(filesAndTags, userName);
-
-//                break;
-//           }
-//           case 6:
-//           {
-//                std::lock_guard<std::mutex> raillLock{ m_mutex };
-//                this->execSqlstr<DSqliteHandle::SqlType::ChangeFilesName>(filesAndTags, userName);
-
-//                break;
-//           }
-          default:
-          {
+                var.setValue(value);
                 break;
-          }
+            }
+            default:
+                break;
         }
     }
 
@@ -562,6 +572,10 @@ void DSqliteHandle::connectToSqlite(const QString& mountPoint, const QString& us
                 m_sqlDatabasePtr.reset(nullptr);
             }
                                            } };
+
+    if(!m_sqlDatabasePtr){
+        m_sqlDatabasePtr = std::unique_ptr<QSqlDatabase>{ new QSqlDatabase };
+    }
 
     if(code == DSqliteHandle::ReturnCode::NoExist){
         initDatabasePtr();
@@ -2332,6 +2346,13 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(const QMa
         QPair<QString, QString> unixDeviceAndMountPoint{ DSqliteHandle::getMountPointOfFile(DUrl::fromLocalFile(cbeg.key()), m_partionsOfDevices) };
         DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(unixDeviceAndMountPoint.second, userName) };
 
+        qDebug()<< unixDeviceAndMountPoint.second;
+
+        if(unixDeviceAndMountPoint.second.isEmpty() || unixDeviceAndMountPoint.second.isNull()){
+            return false;
+        }
+
+        qDebug()<< unixDeviceAndMountPoint.first;
 
         if(code == DSqliteHandle::ReturnCode::Exist || code == DSqliteHandle::ReturnCode::NoExist){
             this->connectToSqlite(unixDeviceAndMountPoint.second, userName);
@@ -2604,7 +2625,10 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(const 
         for(; cbeg != cend; ++cbeg){
             QPair<QString, QString> unixDeviceAndMountPoint{
                                     DSqliteHandle::getMountPointOfFile(DUrl::fromLocalFile(cbeg.key()), m_partionsOfDevices) };
-            filesOfPartions[unixDeviceAndMountPoint.second].push_back(cbeg.key());
+
+            if(!unixDeviceAndMountPoint.second.isEmpty() && !unixDeviceAndMountPoint.second.isNull()){
+                filesOfPartions[unixDeviceAndMountPoint.second].push_back(cbeg.key());
+            }
         }
 
         ///###: splice sql.
@@ -2619,10 +2643,7 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(const 
 
                 for(const QString& file : partionBeg->second){
                     std::map<DSqliteHandle::SqlType, QString>::const_iterator rangeBeg{ range.first };
-                    std::pair<QString, QString> sqls{
-                        rangeBeg->second.arg(file),
-                        (++rangeBeg)->second.arg(file)
-                    };
+                    std::pair<QString, QString> sqls{ rangeBeg->second.arg(file), (++rangeBeg)->second.arg(file) };
                     sqlForDeletingFiles[partionBeg->first][file] = sqls;
                 }
             }
@@ -2636,9 +2657,10 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(const 
                     if(code == DSqliteHandle::ReturnCode::NoExist || code == DSqliteHandle::ReturnCode::Exist){
                         this->connectToSqlite(partion.first, userName);
 
-                        if(static_cast<bool>(m_sqlDatabasePtr)){
+                        if(static_cast<bool>(m_sqlDatabasePtr) && m_sqlDatabasePtr->open()){
+
                             bool result{ this->helpExecSql<DSqliteHandle::SqlType::DeleteFiles,
-                                              std::map<QString, std::pair<QString, QString>>, bool>(partion.second, partion.first, userName) };
+                                               std::map<QString, std::pair<QString, QString>>, bool>(partion.second, partion.first, userName) };
                             value = (value && result);
                         }
                     }
@@ -2669,22 +2691,21 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteTags, bool>(const Q
 
 
         if(m_partionsOfDevices && !m_partionsOfDevices->empty()){
-            QList<QPair<QString, QList<QPair<QString, QString>>>>::const_iterator deviceItr{ m_partionsOfDevices->cbegin() };
-            QList<QPair<QString, QList<QPair<QString, QString>>>>::const_iterator deviceItrEnd{ m_partionsOfDevices->cend() };
+            std::map<QString, std::multimap<QString, QString>>::const_iterator deviceItr{ m_partionsOfDevices->cbegin() };
+            std::map<QString, std::multimap<QString, QString>>::const_iterator deviceItrEnd{ m_partionsOfDevices->cend() };
 
             bool result{ true };
 
             for(; deviceItr != deviceItrEnd; ++deviceItr){
-                QList<QPair<QString, QString>>::const_iterator mountPointItr{ deviceItr->second.cbegin() };
-                QList<QPair<QString, QString>>::const_iterator mountPointItrEnd{ deviceItr->second.cend() };
+                std::multimap<QString, QString>::const_iterator mountPointItr{ deviceItr->second.cbegin() };
+                std::multimap<QString, QString>::const_iterator mountPointItrEnd{ deviceItr->second.cend() };
 
                 for(; mountPointItr != mountPointItrEnd; ++mountPointItr){
 
                     if(!mountPointItr->second.isEmpty() && !mountPointItr->second.isNull()){
                         DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPointItr->second, userName) };
 
-                        if(code == DSqliteHandle::ReturnCode::NoExist ||
-                           code == DSqliteHandle::ReturnCode::Exist){
+                        if(code == DSqliteHandle::ReturnCode::NoExist || code == DSqliteHandle::ReturnCode::Exist){
                             this->connectToSqlite(mountPointItr->second, userName);
                             bool flagForDeleteInTagWithFile{ false };
                             bool flagForUpdatingFileProperty{ false };
@@ -2720,27 +2741,25 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteTags, bool>(const Q
 
 
 template<>
-void DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeFilesName>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName)
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeFilesName, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName)
 {
     if(!filesAndTags.isEmpty() && !userName.isEmpty()){
-
         QMap<QString, QList<QString>>::const_iterator cbeg{ filesAndTags.cbegin() };
         QMap<QString, QList<QString>>::const_iterator cend{ filesAndTags.cend() };
         std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
                 std::multimap<DSqliteHandle::SqlType, QString>::const_iterator> range{ SqlTypeWithStrs.equal_range(DSqliteHandle::SqlType::ChangeFilesName) };
 
-        ///###: <mount-point, [<OldFileName, NewFileName>]>
         std::map<QString, std::map<QString, QString>> partionsAndFileNames{};
 
-        ///###: classify files through the mount-point of every file.
         for(; cbeg != cend; ++cbeg){
             QPair<QString, QString> unixDeviceAndMountPoint{
                 DSqliteHandle::getMountPointOfFile(DUrl::fromLocalFile(cbeg.key()), m_partionsOfDevices) };
-            partionsAndFileNames[unixDeviceAndMountPoint.second][cbeg.key()] = cbeg.value().first();
+
+            if(!unixDeviceAndMountPoint.second.isEmpty() && !unixDeviceAndMountPoint.second.isNull()){
+                partionsAndFileNames[unixDeviceAndMountPoint.second][cbeg.key()] = cbeg.value().first();
+            }
         }
 
-        ///###: splice sql.
-        ///###: <mount-point, [<sql, sql>]>
         std::map<QString, std::map<QString, QString>> sqlForChangingFilesName{};
 
         if(!partionsAndFileNames.empty()){
@@ -2763,28 +2782,30 @@ void DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeFilesName>(const QM
 
 
             if(!sqlForChangingFilesName.empty()){
+                bool result{ true };
 
-                for(const std::pair<QString,
-                    std::map<QString, QString>>& mountPointAndSqls : sqlForChangingFilesName){
+                for(const std::pair<QString, std::map<QString, QString>>& mountPointAndSqls : sqlForChangingFilesName){
                     DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPointAndSqls.first, userName) };
 
                     if(code == DSqliteHandle::ReturnCode::NoExist || code == DSqliteHandle::ReturnCode::Exist){
                         this->connectToSqlite(mountPointAndSqls.first, userName);
 
-                        if(static_cast<bool>(m_sqlDatabasePtr) && m_sqlDatabasePtr->open()
-                                && m_sqlDatabasePtr->transaction()){
+                        if(m_sqlDatabasePtr && m_sqlDatabasePtr->open() && m_sqlDatabasePtr->transaction()){
                             bool resultOfExecSql{ this->helpExecSql<DSqliteHandle::SqlType::ChangeFilesName,
-                                        std::map<QString, QString>, bool>(mountPointAndSqls.second, mountPointAndSqls.first, userName) };
+                                                                    std::map<QString, QString>, bool>(mountPointAndSqls.second, mountPointAndSqls.first, userName) };
 
                             if(!(resultOfExecSql && m_sqlDatabasePtr->commit())){
                                 m_sqlDatabasePtr->rollback();
+                                result = false;
                             }
                         }
                     }
                 }
+                return result;
             }
         }
     }
+    return false;
 }
 
 
@@ -2817,12 +2838,13 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagsName, bool>(con
         }
 
         if(m_partionsOfDevices && !m_partionsOfDevices->empty()){
-            QList<QPair<QString, QList<QPair<QString, QString>>>>::const_iterator deviceItr{ m_partionsOfDevices->cbegin() };
-            QList<QPair<QString, QList<QPair<QString, QString>>>>::const_iterator deviceItrEnd{ m_partionsOfDevices->cend() };
+            std::map<QString, std::multimap<QString, QString>>::const_iterator deviceItr{ m_partionsOfDevices->cbegin() };
+            std::map<QString, std::multimap<QString, QString>>::const_iterator deviceItrEnd{ m_partionsOfDevices->cend() };
+            bool result{ true };
 
             for(; deviceItr != deviceItrEnd; ++deviceItr){
-                QList<QPair<QString, QString>>::const_iterator mountPointItr{ deviceItr->second.cbegin() };
-                QList<QPair<QString, QString>>::const_iterator mountPointItrEnd{ deviceItr->second.cend() };
+                std::multimap<QString, QString>::const_iterator mountPointItr{ deviceItr->second.cbegin() };
+                std::multimap<QString, QString>::const_iterator mountPointItrEnd{ deviceItr->second.cend() };
 
                 for(; mountPointItr != mountPointItrEnd; ++mountPointItr){
 
@@ -2831,8 +2853,8 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagsName, bool>(con
 
                         if(code == DSqliteHandle::ReturnCode::NoExist || code == DSqliteHandle::ReturnCode::Exist){
                             this->connectToSqlite(mountPointItr->second, userName);
-                            bool resultOfChangeNameOfTag{ false };
-                            bool flagOfTransaction{ false };
+                            bool resultOfChangeNameOfTag{ true };
+                            bool flagOfTransaction{ true };
 
                             if(m_sqlDatabasePtr && m_sqlDatabasePtr->open()){
                                 flagOfTransaction = m_sqlDatabasePtr->transaction();
@@ -2844,21 +2866,17 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagsName, bool>(con
                                 }
                             }
 
-                            if(!(resultOfChangeNameOfTag && flagOfTransaction &&
-                               m_sqlDatabasePtr && m_sqlDatabasePtr->commit())){
+                            if(!(resultOfChangeNameOfTag && flagOfTransaction && m_sqlDatabasePtr && m_sqlDatabasePtr->commit())){
                                 m_sqlDatabasePtr->rollback();
-
-                                return false;
+                                result = false;
                             }
                         }
                     }
                 }
             }
-
-            return true;
+            return result;
         }
     }
-
     return false;
 }
 
@@ -2877,6 +2895,10 @@ QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetTagsThroughF
                   std::multimap<DSqliteHandle::SqlType, QString>::const_iterator> range{ SqlTypeWithStrs.equal_range(DSqliteHandle::SqlType::GetTagsThroughFile) };
         QString sqlForGetTagsThroughFile{range.first->second.arg(cbeg.key())};
 
+
+        if(partionAndMountPoint.second.isEmpty() || partionAndMountPoint.second.isNull()){
+            return tags;
+        }
 
         DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(partionAndMountPoint.second, userName) };
 
@@ -2906,12 +2928,12 @@ QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetFilesThrough
         QString sqlForGetFilesThroughTag{ range.first->second.arg(cbeg.key()) };
 
         if(m_partionsOfDevices && !m_partionsOfDevices->empty()){
-            QList<QPair<QString, QList<QPair<QString, QString>>>>::const_iterator deviceItr{ m_partionsOfDevices->cbegin() };
-            QList<QPair<QString, QList<QPair<QString, QString>>>>::const_iterator deviceItrEnd{ m_partionsOfDevices->cend() };
+            std::map<QString, std::multimap<QString, QString>>::const_iterator deviceItr{ m_partionsOfDevices->cbegin() };
+            std::map<QString, std::multimap<QString, QString>>::const_iterator deviceItrEnd{ m_partionsOfDevices->cend() };
 
             for(; deviceItr != deviceItrEnd; ++deviceItr){
-                QList<QPair<QString, QString>>::const_iterator mountPointItr{ deviceItr->second.cbegin() };
-                QList<QPair<QString, QString>>::const_iterator mountPointItrEnd{ deviceItr->second.cend() };
+                std::multimap<QString, QString>::const_iterator mountPointItr{ deviceItr->second.cbegin() };
+                std::multimap<QString, QString>::const_iterator mountPointItrEnd{ deviceItr->second.cend() };
 
                 for(; mountPointItr != mountPointItrEnd; ++mountPointItr){
 
@@ -2953,6 +2975,7 @@ QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetSameTagsOfDi
         for(; cbeg != cend; ++cbeg){
             QMap<QString, QList<QString>> file{};
             file.insert(cbeg.key(), cbeg.value());
+
             QList<QString> tagsNames{ this->execSqlstr<DSqliteHandle::SqlType::GetTagsThroughFile, QList<QString>>( file, userName) };
             totalTagsNames.append(tagsNames);
         }

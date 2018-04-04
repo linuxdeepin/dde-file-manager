@@ -7,7 +7,7 @@
 #include "deviceinfo/udisklistener.h"
 #include "deviceinfo/udiskdeviceinfo.h"
 
-
+#include <regex>
 #include <memory>
 #include <unordered_map>
 
@@ -79,8 +79,8 @@ public:
     void unlockBackend()noexcept;
 
     static QSharedPointer<DSqliteHandle> instance();
-    static QList<QPair<QString, QList<QPair<QString, QString>>>> queryPartionsInfoOfDevices();
-    static QPair<QString, QString> getMountPointOfFile(const DUrl& url, QScopedPointer<QList<QPair<QString, QList<QPair<QString, QString>>>>> &partionsInfoPtr);
+    static std::map<QString, std::multimap<QString, QString>> queryPartionsInfoOfDevices();
+    static QPair<QString, QString> getMountPointOfFile(const DUrl& url, std::unique_ptr<std::map<QString, std::multimap<QString, QString>>>& partionsAndMountPoints);
 
 
 signals:
@@ -92,6 +92,8 @@ private slots:
 
 private:
     static QString getConnectionNameFromPartion(const QString& partion)noexcept;
+    static QString restoreEscapedChar(const QString& value);
+
 
     template<SqlType Ty = SqlType::None, typename T = void>
     inline T execSqlstr(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName)
@@ -115,11 +117,11 @@ private:
     void initializeConnect();
     void connectToSqlite(const QString& mountPoint, const QString& userName);
 
-    ///###: ------------------<TotalDeviceName, [<DeviceName, mountPoint>]>
-    QScopedPointer<QList<QPair<QString, QList<QPair<QString, QString>>>>> m_partionsOfDevices{ nullptr };
+    std::unique_ptr<std::map<QString, std::multimap<QString, QString>>> m_partionsOfDevices{ nullptr };
     std::unique_ptr<QSqlDatabase> m_sqlDatabasePtr{ nullptr };
     std::atomic<bool> m_flag{ false };
     std::mutex m_mutex{};
+
 };
 
 ///###: increase
@@ -140,8 +142,8 @@ template<>
 QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetFilesThroughTag, QList<QString>>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName);
 
 ///###: modify
-template<> ///###: -------------------------------------------------------------> <OldName, NewName>
-void DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeFilesName>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName);
+template<> ///###: -------------------------------------------------------------> <OldFileName, NewFileName>
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeFilesName, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName);
 
 template<>///###: --------------------------------------------------------------><OldTagName, NewTagName>
 bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagsName, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName);
