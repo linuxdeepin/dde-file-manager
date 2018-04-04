@@ -364,7 +364,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="739"/>
         <source>Target disk doesn&apos;t have enough space, unable to copy!</source>
-        <translation>Dysk docelowy nie ma wystarczająco dużo miejsca, nie można go skopiować!</translation>
+        <translation>Dysk docelowy nie ma wystarczająco dużo miejsca, nie można przeprowadzić kopiowania!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="752"/>
@@ -400,12 +400,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="873"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
-        <translation>Niestety, nie masz uprawnień do obsługi następującego %1 pliku / folderu(ów)!</translation>
+        <translation>Niestety, nie masz uprawnień do obsługi następującego %1 pliku(ów) / katalogu(ów)!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1149"/>
         <source>Share folder can&apos;t be named after the current username</source>
-        <translation>Folder współdzielony nie może mieć  aktualnej nazwy użytkownika</translation>
+        <translation>Katalog współdzielony nie może mieć  aktualnej nazwy użytkownika</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="901"/>
@@ -420,7 +420,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="939"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
-        <translation>Dyski w systemie Windows nie będą w stanie normalnie odczytywać i zapisywać, jeśli zaznaczono &quot;Włącz szybki start (zalecane)&quot; w ustawieniach systemu Windows</translation>
+        <translation>Dyski w systemie Windows nie będą w stanie normalnie odczytywać i zapisywać, jeśli zaznaczono &quot;Włącz szybki start (zalecane)&quot; w ustawieniach Wyłączania.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="943"/>
@@ -1783,7 +1783,7 @@
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="223"/>
         <source>+SN:</source>
-        <translation type="unfinished"/>
+        <translation>+NS:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="143"/>
@@ -1836,7 +1836,7 @@
     <message>
         <location filename="../views/drenamebar.cpp" line="276"/>
         <source>+SN</source>
-        <translation type="unfinished"/>
+        <translation>+NS</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="284"/>

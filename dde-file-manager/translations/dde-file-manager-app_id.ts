@@ -9,7 +9,7 @@
     <message>
         <location filename="../main.cpp" line="118"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
-        <translation type="unfinished"/>
+        <translation>Manajer berkas merupakan alat manajemen berkas yang dikembangkan oleh Deepin Technology, memiliki fitur pencarian, penyalinan, hapus, kompresi/dekompresi, properti berkas dan fungsi manajemen berkas lainnya.</translation>
     </message>
 </context>
 </TS>

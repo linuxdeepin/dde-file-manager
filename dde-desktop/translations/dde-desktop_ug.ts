@@ -1,36 +1,36 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="sl" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="ug" version="2.1">
 <context>
     <name>CanvasGridView</name>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1825"/>
         <source>Icon size</source>
-        <translation>Velikost ikone</translation>
+        <translation>سىن بەلگە چوڭ-كىچكلىكى</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1831"/>
         <source>Auto arrange</source>
-        <translation>Samodejno razporedi</translation>
+        <translation>ئاپتۇماتىك تىزىش</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1839"/>
         <location filename="../view/canvasgridview.cpp" line="1952"/>
         <source>Properties</source>
-        <translation>Lastnosti</translation>
+        <translation>ئىقتىدار</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1870"/>
         <source>Display Settings</source>
-        <translation>Nastavitve zaslona</translation>
+        <translation>تەڭشەكنى كۆرسىتىش</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1875"/>
         <source>Corner Settings</source>
-        <translation>Nastavitve roba</translation>
+        <translation>بۇلۇڭ تەڭشىكى</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1880"/>
         <source>Set Wallpaper</source>
-        <translation>Nastavi ozadje</translation>
+        <translation>تەگلىك بەلگىلەش</translation>
     </message>
 </context>
 <context>
@@ -38,27 +38,27 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="12"/>
         <source>Tiny</source>
-        <translation>Drobna</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="13"/>
         <source>Small</source>
-        <translation>Majhna</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="14"/>
         <source>Medium</source>
-        <translation>Srednje</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="15"/>
         <source>Large</source>
-        <translation>Velika</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="16"/>
         <source>Super large</source>
-        <translation>Zelo velika</translation>
+        <translation>ئالاھىدە چوڭ</translation>
     </message>
 </context>
 <context>
@@ -66,12 +66,12 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="90"/>
         <source>Only desktop</source>
-        <translation>Samo namizje</translation>
+        <translation>پەقەتلا ئېكران</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="93"/>
         <source>Only lock screen</source>
-        <translation>Samo zaklenjen zaslon</translation>
+        <translation>پەقەتلا قۇلۇپ</translation>
     </message>
 </context>
 <context>
@@ -79,37 +79,37 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Fast Screen Off</source>
-        <translation>Hiter Zaslon Izključen</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Control Center</source>
-        <translation>Nadzorni center</translation>
+        <translation>كونتىرول مەركىزى</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>All Windows</source>
-        <translation>Vsa okna</translation>
+        <translation>بارلىق كۆزنەك</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Launcher</source>
-        <translation>Zaganjalec</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Desktop</source>
-        <translation>Namizje</translation>
+        <translation>ئېكران</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>None</source>
-        <translation>Nič</translation>
+        <translation>قۇرۇق</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="57"/>
         <source>Close Window</source>
-        <translation>Zapri okno</translation>
+        <translation>كوزنەكنى تاقاش</translation>
     </message>
 </context>
 </TS>

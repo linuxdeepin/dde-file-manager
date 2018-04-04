@@ -119,7 +119,7 @@
     <message>
         <location filename="../views/dfileview.cpp" line="2319"/>
         <source>(Reverse)</source>
-        <translation type="unfinished"/>
+        <translation>(Visszafele)</translation>
     </message>
 </context>
 <context>
@@ -364,7 +364,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="739"/>
         <source>Target disk doesn&apos;t have enough space, unable to copy!</source>
-        <translation type="unfinished"/>
+        <translation>A céllemez nem rendelkezik elégséges szabad hellyel, ezért a másolás nem lehetséges!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="752"/>
@@ -384,28 +384,28 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="818"/>
         <source>Target file removed or location changed</source>
-        <translation type="unfinished"/>
+        <translation>A célfájl eltávolítása került vagy megváltozott a helye</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="820"/>
         <source>%1 files failed to restore, target file removed or location changed</source>
-        <translation type="unfinished"/>
+        <translation>%1 fájlok visszaállítása sikertelen volt, mivel a célfájl eltávolításra került vagy megváltozott a helye</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="832"/>
         <location filename="../dialogs/dialogmanager.cpp" line="853"/>
         <source>You do not have permission to operate file/folder!</source>
-        <translation type="unfinished"/>
+        <translation>Önnek nincs jogosultsága műveleket végrehajtani ezen a fájlon/mappán!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="873"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
-        <translation type="unfinished"/>
+        <translation>Sajnáljuk, de önnek nincs jogosultsága végrehajtani a következő műveletet ezeken a fájlokon/mappákon: %1!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1149"/>
         <source>Share folder can&apos;t be named after the current username</source>
-        <translation type="unfinished"/>
+        <translation>A megosztott mappa neve nem egyezhet a jelenlegi felhasználó nevével</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="901"/>
@@ -415,7 +415,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="935"/>
         <source>Mount partition%1 to be read only</source>
-        <translation type="unfinished"/>
+        <translation>%1 partíció csatolása csak olvasható módban</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="939"/>
@@ -445,7 +445,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="968"/>
         <source>Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Újraindítás</translation>
     </message>
 </context>
 <context>
@@ -628,7 +628,7 @@
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="39"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Mégse</translation>
     </message>
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="39"/>
@@ -638,7 +638,7 @@
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="43"/>
         <source>Please input password to decrypt the disk</source>
-        <translation type="unfinished"/>
+        <translation>Kérem adja meg a jelszavát a lemez kititkosításához</translation>
     </message>
 </context>
 <context>
@@ -826,7 +826,7 @@
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="226"/>
         <source>Recommended Applications</source>
-        <translation type="unfinished"/>
+        <translation>Ajánlott Alkalmazások</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="228"/>
@@ -1055,17 +1055,17 @@
         <location filename="../dialogs/filepreviewdialog.cpp" line="186"/>
         <location filename="../dialogs/filepreviewdialog.cpp" line="212"/>
         <source>Size: %1</source>
-        <translation type="unfinished"/>
+        <translation>Méret: %1</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="187"/>
         <source>Type: %1</source>
-        <translation type="unfinished"/>
+        <translation>Típus: %1</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="191"/>
         <source>Size: 0</source>
-        <translation type="unfinished"/>
+        <translation>Méret: 0</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="192"/>
@@ -1145,7 +1145,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="694"/>
         <source>Send to</source>
-        <translation type="unfinished"/>
+        <translation>Küldés...</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="695"/>
@@ -1230,7 +1230,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="734"/>
         <source>Source path</source>
-        <translation type="unfinished"/>
+        <translation>Forrás Útvonal</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="736"/>
@@ -1265,13 +1265,13 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="682"/>
         <source>Open file location</source>
-        <translation type="unfinished"/>
+        <translation>Fájl helyének megnyitása</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="696"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="697"/>
         <source>Delete</source>
-        <translation type="unfinished"/>
+        <translation>Törlés</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="712"/>
@@ -1393,7 +1393,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="57"/>
         <source>Restore Defaults</source>
-        <translation type="unfinished"/>
+        <translation>Alapértelmezett értékek visszaállítása</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="27"/>
@@ -1405,7 +1405,7 @@
         <location filename="../configure/dfmconfigdict.cpp" line="7"/>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="66"/>
         <source>Open after auto mount</source>
-        <translation type="unfinished"/>
+        <translation>Automatikus csatolás után megnyitás</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="28"/>
@@ -1527,7 +1527,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="718"/>
         <source>Safely Remove</source>
-        <translation type="unfinished"/>
+        <translation>Biztonságos eltávolítás</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="719"/>
@@ -1729,7 +1729,7 @@
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="132"/>
         <source>Mode:</source>
-        <translation type="unfinished"/>
+        <translation> Mód:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="134"/>
@@ -1752,33 +1752,33 @@
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="140"/>
         <source>Find:</source>
-        <translation type="unfinished"/>
+        <translation>Keresés:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="161"/>
         <source>Replace:</source>
-        <translation type="unfinished"/>
+        <translation>Csere:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="163"/>
         <location filename="../views/drenamebar.cpp" line="243"/>
         <source>Optional</source>
-        <translation type="unfinished"/>
+        <translation>Opcionális</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="180"/>
         <source>Add:</source>
-        <translation type="unfinished"/>
+        <translation>Hozzáadás:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="199"/>
         <source>Location:</source>
-        <translation type="unfinished"/>
+        <translation>Hely:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="206"/>
         <source>File name:</source>
-        <translation type="unfinished"/>
+        <translation>Fájlnév:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="223"/>
@@ -1794,7 +1794,7 @@
         <location filename="../views/drenamebar.cpp" line="268"/>
         <location filename="../views/drenamebar.cpp" line="278"/>
         <source>Required</source>
-        <translation type="unfinished"/>
+        <translation>Szükséges</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="201"/>
@@ -1811,27 +1811,27 @@
     <message>
         <location filename="../views/drenamebar.cpp" line="233"/>
         <source>Find</source>
-        <translation type="unfinished"/>
+        <translation>Keresés</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="242"/>
         <source>Replace</source>
-        <translation type="unfinished"/>
+        <translation>Csere</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="251"/>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>Hozzáadás</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="260"/>
         <source>Location</source>
-        <translation type="unfinished"/>
+        <translation>Hely</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="267"/>
         <source>File name</source>
-        <translation type="unfinished"/>
+        <translation>Fájlnév</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="276"/>
@@ -1847,47 +1847,47 @@
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="372"/>
         <location filename="../views/drenamebar.cpp" line="289"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Mégsem</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1115"/>
         <source>Rename %1 Files</source>
-        <translation type="unfinished"/>
+        <translation>%1 Fájl Átnevezése</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="127"/>
         <source>Multiple Files</source>
-        <translation type="unfinished"/>
+        <translation>Több Fájl</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="136"/>
         <source>Basic info</source>
-        <translation type="unfinished"/>
+        <translation>Alapvető információk</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="144"/>
         <source>Total size</source>
-        <translation type="unfinished"/>
+        <translation>Összméret</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="145"/>
         <source>Number of files</source>
-        <translation type="unfinished"/>
+        <translation>Fájlok száma</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="145"/>
         <source>%1 file(s), %2 folder(s)</source>
-        <translation type="unfinished"/>
+        <translation>%1 fájl, %2 mappa</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="150"/>
         <source>Access time</source>
-        <translation type="unfinished"/>
+        <translation>Hozzáférés ideje</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="151"/>
         <source>Modify time</source>
-        <translation type="unfinished"/>
+        <translation>Módosítás ideje</translation>
     </message>
 </context>
 <context>

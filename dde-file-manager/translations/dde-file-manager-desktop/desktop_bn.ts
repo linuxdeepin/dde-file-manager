@@ -14,7 +14,7 @@
         <message>
             <location filename="Desktop Action new-window]Name" line="0"/>
             <source>New Window</source>
-            <translation type="unfinished"/>
+            <translation>নতুন উইন্ডো</translation>
         </message>
     </context>
 </TS>

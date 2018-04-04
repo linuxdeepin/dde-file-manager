@@ -96,7 +96,7 @@
         <location filename="../interfaces/dfilesystemmodel.cpp" line="591"/>
         <location filename="../models/searchfileinfo.cpp" line="105"/>
         <source>Time modified</source>
-        <translation type="unfinished"/>
+        <translation>Data de modificación</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="593"/>
@@ -111,7 +111,7 @@
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="597"/>
         <source>Time created</source>
-        <translation type="unfinished"/>
+        <translation>Data de creación</translation>
     </message>
 </context>
 <context>
@@ -172,7 +172,7 @@
     <message>
         <location filename="../views/dstatusbar.cpp" line="151"/>
         <source>Filter</source>
-        <translation type="unfinished"/>
+        <translation>Peñera</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="161"/>
@@ -309,7 +309,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="442"/>
         <source>Empty</source>
-        <translation type="unfinished"/>
+        <translation>Balero</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="472"/>
@@ -633,12 +633,12 @@
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="39"/>
         <source>UnLock</source>
-        <translation type="unfinished"/>
+        <translation>Desbloquiar</translation>
     </message>
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="43"/>
         <source>Please input password to decrypt the disk</source>
-        <translation type="unfinished"/>
+        <translation>Introduz la contraseña pa descifrar el discu</translation>
     </message>
 </context>
 <context>
@@ -728,7 +728,7 @@
         <location filename="../../dialogs/dtaskdialog.cpp" line="380"/>
         <location filename="../../dialogs/dtaskdialog.cpp" line="392"/>
         <source>Time modified:%1</source>
-        <translation type="unfinished"/>
+        <translation>Data de modificación:%1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="382"/>
@@ -755,12 +755,12 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="395"/>
         <source>Target folder:%1</source>
-        <translation type="unfinished"/>
+        <translation>Carpeta de destín:%1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="398"/>
         <source>Target file:%1</source>
-        <translation type="unfinished"/>
+        <translation>Ficheru de destín:%1</translation>
     </message>
 </context>
 <context>
@@ -826,7 +826,7 @@
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="226"/>
         <source>Recommended Applications</source>
-        <translation type="unfinished"/>
+        <translation>Aplicaciones aconseyaes</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="228"/>
@@ -988,12 +988,12 @@
         <location filename="../dialogs/propertydialog.cpp" line="745"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="723"/>
         <source>Time modified</source>
-        <translation type="unfinished"/>
+        <translation>Data de modificación</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="767"/>
         <source>Link path</source>
-        <translation type="unfinished"/>
+        <translation>Camín del enllaz</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="818"/>
@@ -1016,7 +1016,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="939"/>
         <source>WriteRead</source>
-        <translation type="unfinished"/>
+        <translation>Llectura y escritura</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="939"/>
@@ -1031,17 +1031,17 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="967"/>
         <source>Owner</source>
-        <translation type="unfinished"/>
+        <translation>Dueñu</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="968"/>
         <source>Group</source>
-        <translation>Grup</translation>
+        <translation>Grupu</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="969"/>
         <source>Other</source>
-        <translation type="unfinished"/>
+        <translation>Otru</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="74"/>
@@ -1291,7 +1291,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="5"/>
         <source>Use the file chooser dialog of Deepin File Manager</source>
-        <translation type="unfinished"/>
+        <translation>Usa&apos;l diálogu del seleutor de ficheros de Deepin File Manager</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="6"/>
@@ -1362,7 +1362,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="21"/>
         <source>Default view:</source>
-        <translation type="unfinished"/>
+        <translation>Vista por defeutu:</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="24"/>
@@ -1405,7 +1405,7 @@
         <location filename="../configure/dfmconfigdict.cpp" line="7"/>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="66"/>
         <source>Open after auto mount</source>
-        <translation type="unfinished"/>
+        <translation>Abrir tres el montaxe automáticu</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="28"/>
@@ -1451,7 +1451,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="45"/>
         <source>Open file:</source>
-        <translation type="unfinished"/>
+        <translation>Abrir ficheru:</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="46"/>
@@ -1466,12 +1466,12 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="48"/>
         <source>Advanced</source>
-        <translation type="unfinished"/>
+        <translation>Avanzao</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="52"/>
         <source>Basic</source>
-        <translation type="unfinished"/>
+        <translation>Básico</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="14"/>
@@ -1507,7 +1507,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="55"/>
         <source>New window and tab</source>
-        <translation type="unfinished"/>
+        <translation>Abrir ventana y llingüeta nueves</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="56"/>
@@ -1648,7 +1648,7 @@
         <location filename="../models/trashfileinfo.cpp" line="285"/>
         <location filename="../models/trashfileinfo.cpp" line="291"/>
         <source>Time deleted</source>
-        <translation type="unfinished"/>
+        <translation>Data de desaniciu</translation>
     </message>
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1022"/>
@@ -1794,13 +1794,13 @@
         <location filename="../views/drenamebar.cpp" line="268"/>
         <location filename="../views/drenamebar.cpp" line="278"/>
         <source>Required</source>
-        <translation type="unfinished"/>
+        <translation>Ríquese</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="201"/>
         <location filename="../views/drenamebar.cpp" line="261"/>
         <source>Before file name</source>
-        <translation type="unfinished"/>
+        <translation>Ficheru siguiente</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="201"/>
@@ -2188,7 +2188,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="52"/>
         <source>Input in address bar</source>
-        <translation type="unfinished"/>
+        <translation>Introducción na barra de direiciones</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="52"/>
@@ -2213,7 +2213,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="55"/>
         <source>Close current tab</source>
-        <translation type="unfinished"/>
+        <translation>Zarru de la llingüeta actual</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="55"/>
@@ -2258,7 +2258,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="60"/>
         <source>Next file</source>
-        <translation type="unfinished"/>
+        <translation>Ficheru siguiente</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="60"/>
@@ -2319,7 +2319,7 @@
     <message>
         <location filename="../dialogs/previewdialog.cpp" line="551"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>Triba</translation>
     </message>
 </context>
 <context>
