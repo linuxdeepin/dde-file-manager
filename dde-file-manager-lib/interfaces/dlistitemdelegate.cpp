@@ -165,17 +165,17 @@ void DListItemDelegate::paint(QPainter *painter,
         painter->setPen(opt.palette.color(drawBackground ? QPalette::BrightText : QPalette::Text));
         if (data.canConvert<QString>()) {
             const QString &file_name = DFMGlobal::elideText(index.data(role).toString().remove('\n'),
-                                                            rect.size(), QTextOption::NoWrap,
+                                                            rect.size(), QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                             opt.font, Qt::ElideRight,
                                                             d->textLineHeight);
 
             painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()), file_name);
         } else {
-            drawNotStringData(opt, d->textLineHeight, rect, data, drawBackground, painter, index);
+            drawNotStringData(opt, d->textLineHeight, rect, data, drawBackground, painter, 0);
         }
     }
 
-    if(isDragMode)
+    if (isDragMode)
         return;
 
     const DFileSystemModel *model = qobject_cast<const DFileSystemModel*>(index.model());
@@ -211,7 +211,7 @@ void DListItemDelegate::paint(QPainter *painter,
 
             painter->drawText(rect, Qt::Alignment(tmp_index.data(Qt::TextAlignmentRole).toInt()), text);
         } else {
-            drawNotStringData(opt, d->textLineHeight, rect, data, drawBackground, painter, index);
+            drawNotStringData(opt, d->textLineHeight, rect, data, drawBackground, painter, i);
         }
     }
 
@@ -235,69 +235,27 @@ void DListItemDelegate::paint(QPainter *painter,
 
 
 void DListItemDelegate::drawNotStringData(const QStyleOptionViewItem &opt, int lineHeight, const QRect &rect, const QVariant &data,
-                                          bool drawBackground, QPainter *painter, const QModelIndex &index) const
+                                          bool drawBackground, QPainter *painter, const int &column) const
 {
     Q_D(const DListItemDelegate);
-
-    /*draw highlight text in sort role by ColorGroup and ColorRole in search and trash view*/
-
-    QPalette::ColorGroup nameColorGroup = QPalette::Inactive;
-    QPalette::ColorRole nameColorRole = QPalette::Text;
-    QPalette::ColorGroup pathColorGroup = QPalette::Inactive;
-    QPalette::ColorRole pathColorRole = QPalette::Text;
-    QPalette::ColorGroup timeColorGroup = QPalette::Inactive;
-    QPalette::ColorRole  timeColorRole = QPalette::Text;
-    QPalette::ColorGroup sizeColorGroup = QPalette::Inactive;
-    QPalette::ColorRole sizeColorRole = QPalette::Text;
-    QPalette::ColorGroup typeColorGroup = QPalette::Inactive;
-    QPalette::ColorRole typeColorRole = QPalette::Text;
 
     const DFileSystemModel *model = parent()->model();
     const DAbstractFileInfoPointer &fileInfo = model->fileInfo(model->rootUrl());
 
     int sortRole = model->sortRole();
-    if (sortRole == fileInfo->sortSubMenuActionUserColumnRoles().at(0)){
-        nameColorGroup = QPalette::Active;
-        if (drawBackground){
-            nameColorRole = QPalette::BrightText;
-        }
-    }
-    if (sortRole == fileInfo->sortSubMenuActionUserColumnRoles().at(1)){
-        pathColorGroup = QPalette::Active;
-        if (drawBackground){
-            pathColorRole = QPalette::BrightText;
-        }
-    }
-    if (sortRole == fileInfo->sortSubMenuActionUserColumnRoles().at(2)){
-        timeColorGroup = QPalette::Active;
-        if (drawBackground){
-            timeColorRole = QPalette::BrightText;
-        }
-    }
-    if (sortRole == fileInfo->sortSubMenuActionUserColumnRoles().at(3)){
-        sizeColorGroup = QPalette::Active;
-        if (drawBackground){
-            sizeColorRole = QPalette::BrightText;
-        }
-    }
-    if (sortRole == fileInfo->sortSubMenuActionUserColumnRoles().at(4)){
-        typeColorGroup = QPalette::Active;
-        if (drawBackground){
-            typeColorRole = QPalette::BrightText;
-        }
-    }
+    int sortRoleIndexByColumnChildren = fileInfo->userColumnChildRoles(column).indexOf(sortRole);
 
+    const QColor &active_color = opt.palette.color(QPalette::Active, drawBackground ? QPalette::BrightText : QPalette::Text);
+    const QColor &normal_color = opt.palette.color(QPalette::Inactive, drawBackground ? QPalette::BrightText : QPalette::Text);
 
     if (data.canConvert<QPair<QString, QString>>()) {
-        //name
-        //path
         QPair<QString, QString> name_path = qvariant_cast<QPair<QString, QString>>(data);
 
         const QString &file_name = DFMGlobal::elideText(name_path.first.remove('\n'),
                                                         QSize(rect.width(), rect.height() / 2), QTextOption::NoWrap,
                                                         opt.font, Qt::ElideRight,
                                                         lineHeight);
-        painter->setPen(opt.palette.color(nameColorGroup, nameColorRole));
+        painter->setPen(sortRoleIndexByColumnChildren == 0 ? active_color : normal_color);
         painter->drawText(rect.adjusted(0, 0, 0, -rect.height() / 2), Qt::AlignBottom, file_name);
 
         const QString &file_path = DFMGlobal::elideText(name_path.second.remove('\n'),
@@ -305,11 +263,9 @@ void DListItemDelegate::drawNotStringData(const QStyleOptionViewItem &opt, int l
                                                         opt.font, Qt::ElideRight,
                                                         lineHeight);
 
-        painter->setPen(opt.palette.color(pathColorGroup, pathColorRole));
+        painter->setPen(sortRoleIndexByColumnChildren == 1 ? active_color : normal_color);
         painter->drawText(rect.adjusted(0, rect.height() / 2, 0, 0), Qt::AlignTop, file_path);
     } else if (data.canConvert<QPair<QString, QPair<QString, QString>>>()) {
-        //----time----
-        //size----type
         QRect new_rect = rect;
 
         const QPair<QString, QPair<QString, QString>> &dst = qvariant_cast<QPair<QString, QPair<QString, QString>>>(data);
@@ -318,7 +274,7 @@ void DListItemDelegate::drawNotStringData(const QStyleOptionViewItem &opt, int l
                                                    QTextOption::NoWrap, opt.font,
                                                    Qt::ElideRight, lineHeight);
 
-        painter->setPen(opt.palette.color(timeColorGroup, timeColorRole));
+        painter->setPen(sortRoleIndexByColumnChildren == 0 ? active_color : normal_color);
         painter->drawText(new_rect.adjusted(0, 0, 0, -new_rect.height() / 2), Qt::AlignBottom, date, &new_rect);
 
         new_rect = QRect(rect.left(), rect.top(), new_rect.width(), rect.height());
@@ -327,13 +283,13 @@ void DListItemDelegate::drawNotStringData(const QStyleOptionViewItem &opt, int l
                                                    QTextOption::NoWrap, opt.font,
                                                    Qt::ElideRight, lineHeight);
 
-        painter->setPen(opt.palette.color(sizeColorGroup, sizeColorRole));
+        painter->setPen(sortRoleIndexByColumnChildren == 1 ? active_color : normal_color);
         painter->drawText(new_rect.adjusted(0, new_rect.height() / 2, 0, 0), Qt::AlignTop | Qt::AlignLeft, size);
 
         const QString &type = DFMGlobal::elideText(dst.second.second, QSize(new_rect.width() / 2, new_rect.height() / 2),
                                                    QTextOption::NoWrap, opt.font,
                                                    Qt::ElideLeft, lineHeight);
-        painter->setPen(opt.palette.color(typeColorGroup, typeColorRole));
+        painter->setPen(sortRoleIndexByColumnChildren == 2 ? active_color : normal_color);
         painter->drawText(new_rect.adjusted(0, new_rect.height() / 2, 0, 0), Qt::AlignTop | Qt::AlignRight, type);
     }
 }

@@ -60,3 +60,25 @@ bool DFMPlaformManager::isRoot_hidden()
 
     return ret;
 }
+
+bool DFMPlaformManager::isCompactList() const
+{
+    m_platformSettings->beginGroup("x86_pro");
+
+    bool value = m_platformSettings->value("compact_list", "false").toString() == "true";
+
+    m_platformSettings->endGroup();
+
+    return value;
+}
+
+bool DFMPlaformManager::isAutoCompactList() const
+{
+    m_platformSettings->beginGroup("x86_pro");
+
+    bool value = m_platformSettings->value("auto_compact_list", "false").toString() == "true";
+
+    m_platformSettings->endGroup();
+
+    return value;
+}
