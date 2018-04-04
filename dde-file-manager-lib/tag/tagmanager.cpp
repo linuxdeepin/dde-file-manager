@@ -103,7 +103,7 @@ QList<QString> TagManager::getSameTagsOfDiffFiles(const QList<DUrl>& files)
     QMap<QString, QVariant> varMap{};
 
     for(const DUrl& url : files){
-        varMap[url.toString()] = QVariant{ QList<QString>{} };
+        varMap[url.toLocalFile()] = QVariant{ QList<QString>{} };
     }
 
     QVariant var{ TagManagerDaemonController::instance()->disposeClientData(varMap,
@@ -237,7 +237,7 @@ bool TagManager::makeFilesTags(const QList<QString>& tags, const QList<DUrl>& fi
                 QMap<QString, QVariant> filesAndTags{};
 
                 for(const DUrl& url : files){
-                    filesAndTags[url.toString()] = QVariant{tags};
+                    filesAndTags[url.toLocalFile()] = QVariant{tags};
                 }
 
                 QVariant var{ TagManagerDaemonController::instance()->disposeClientData(filesAndTags,
@@ -288,7 +288,7 @@ bool TagManager::remveTagsOfFiles(const QList<QString>& tags, const QList<DUrl>&
         QMap<QString, QVariant> filesAndTags{};
 
         for(const DUrl& url : files){
-            filesAndTags[url.toString()] = QVariant{tags};
+            filesAndTags[url.toLocalFile()] = QVariant{tags};
         }
 
         QVariant var{ TagManagerDaemonController::instance()->disposeClientData(filesAndTags,
@@ -464,12 +464,11 @@ bool TagManager::makeFilesTagThroughColor(const QString& color, const QList<DUrl
                     QVariant dbusResult{};
 
                     for(const DUrl& file : files){
-                        filesAndColorName[file.toString()] = QVariant{ QList<QString>{colorName} };
+                        filesAndColorName[file.toLocalFile()] = QVariant{ QList<QString>{colorName} };
                     }
 
 
-                    dbusResult =  TagManagerDaemonController::instance()->disposeClientData(filesAndColorName,
-                                                                                            TagManager::getCurrentUserName(),
+                    dbusResult =  TagManagerDaemonController::instance()->disposeClientData(filesAndColorName, TagManager::getCurrentUserName(),
                                                                                             Tag::ActionType::MakeFilesTagThroughColor);
                     if(dbusResult.toBool() && sqlDataBase.commit()){
                         return true;
@@ -482,6 +481,25 @@ bool TagManager::makeFilesTagThroughColor(const QString& color, const QList<DUrl
             }
         }
     }
+    return false;
+}
+
+bool TagManager::changeFilesName(const QList<QPair<DUrl, DUrl>>& oldAndNewFilesName)
+{
+    impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Write };
+
+    if(!oldAndNewFilesName.isEmpty()){
+        QMap<QString, QVariant> oldNewFilesName{};
+
+        for(const QPair<DUrl, DUrl>& oldAndNewFileName : oldAndNewFilesName){
+            oldNewFilesName[oldAndNewFileName.first.toLocalFile()] = QVariant{ QList<QString>{ oldAndNewFileName.second.toLocalFile() } };
+        }
+
+        QVariant dbusResult{ TagManagerDaemonController::instance()->disposeClientData(oldNewFilesName, TagManager::getCurrentUserName(),
+                                                                                       Tag::ActionType::ChangeFilesName) };
+        return dbusResult.toBool();
+    }
+
     return false;
 }
 

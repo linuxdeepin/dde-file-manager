@@ -100,7 +100,8 @@ void DAnythingMonitor::doWork()
                 continue;
             }
 
-            TagManager::instance()->changeTagName({cbeg->first, cbeg->second});
+            QPair<DUrl, DUrl> oldAndNewFileName{ DUrl::fromLocalFile(cbeg->first), DUrl::fromLocalFile(cbeg->second) };
+            TagManager::instance()->changeFilesName( { oldAndNewFileName } );
             std::this_thread::sleep_for( std::chrono::duration<std::size_t, std::ratio<1, 1000>>{50} );
         }
     }

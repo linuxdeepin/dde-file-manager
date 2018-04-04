@@ -29,7 +29,6 @@ void TagManagerDaemon::lockBackend()
     std::function<void(QSharedPointer<DSqliteHandle> handle)> handle{ &DSqliteHandle::lockBackend };
     std::thread threadForLock{ handle, DSqliteHandle::instance() };
     threadForLock.detach();
-    qDebug() << "locked backend!";
 }
 
 void TagManagerDaemon::unlockBackend()
@@ -50,7 +49,7 @@ QDBusVariant TagManagerDaemon::disposeClientData(const QMap<QString, QVariant>& 
             filesAndTagsName[cbeg.key()] = cbeg.value().toStringList();
         }
 
-        qDebug()<< filesAndTagsName;
+//        qDebug()<< filesAndTagsName;
 
         QVariant var{ DSqliteHandle::instance()->disposeClientData(filesAndTagsName, userName, type) };
         dbusVar.setVariant(var);

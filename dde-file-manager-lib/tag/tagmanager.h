@@ -196,6 +196,8 @@ public:
 
     bool makeFilesTagThroughColor(const QString &color, const QList<DUrl>& files);
 
+    bool changeFilesName(const QList<QPair<DUrl, DUrl>>& oldAndNewFilesName);
+
 
     ///###:delete
     bool deleteTags(const QList<QString>& tags);
