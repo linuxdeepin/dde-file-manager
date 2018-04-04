@@ -872,8 +872,33 @@ QList<DAbstractFileInfo::SelectionMode> DAbstractFileInfo::supportSelectionModes
                                   << ContiguousSelection << NoSelection;
 }
 
+void DAbstractFileInfo::setColumnCompact(bool compact)
+{
+    Q_D(DAbstractFileInfo);
+
+    d->columnCompact = compact;
+}
+
+bool DAbstractFileInfo::columnIsCompact() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    return d->columnCompact;
+}
+
 QList<int> DAbstractFileInfo::userColumnRoles() const
 {
+    Q_D(const DAbstractFileInfo);
+
+    if (d->columnCompact) {
+        static QList<int> userColumnRoles {
+            DFileSystemModel::FileDisplayNameRole,
+            DFileSystemModel::FileUserRole + 1
+        };
+
+        return userColumnRoles;
+    }
+
     static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileDisplayNameRole
                                                      << DFileSystemModel::FileLastModifiedRole
                                                      << DFileSystemModel::FileSizeRole
@@ -884,11 +909,22 @@ QList<int> DAbstractFileInfo::userColumnRoles() const
 
 QVariant DAbstractFileInfo::userColumnDisplayName(int userColumnRole) const
 {
+    Q_D(const DAbstractFileInfo);
+
+    if (d->columnCompact && userColumnRole == DFileSystemModel::FileUserRole + 1)
+        return qApp->translate("DFileSystemModel",  "Time modified");
+
     return DFileSystemModel::roleName(userColumnRole);
 }
 
 QVariant DAbstractFileInfo::userColumnData(int userColumnRole) const
 {
+    Q_D(const DAbstractFileInfo);
+
+    if (d->columnCompact && userColumnRole == DFileSystemModel::FileUserRole + 1) {
+        return QVariant::fromValue(qMakePair(lastModifiedDisplayName(), qMakePair(sizeDisplayName(), mimeTypeDisplayName())));
+    }
+
     switch (userColumnRole) {
     case DFileSystemModel::FileLastModifiedRole:
         return lastModifiedDisplayName();
@@ -907,9 +943,19 @@ QVariant DAbstractFileInfo::userColumnData(int userColumnRole) const
 
 QList<int> DAbstractFileInfo::userColumnChildRoles(int column) const
 {
-    Q_UNUSED(column)
-    QList<int> userColumnRoles{};
-    return userColumnRoles;
+    Q_D(const DAbstractFileInfo);
+
+    if (d->columnCompact && column == 1) {
+        static QList<int> userColumnRoles {
+            DFileSystemModel::FileLastModifiedRole,
+            DFileSystemModel::FileSizeRole,
+            DFileSystemModel::FileMimeTypeRole
+        };
+
+        return userColumnRoles;
+    }
+
+    return QList<int>();
 }
 
 int DAbstractFileInfo::userColumnWidth(int userColumnRole) const
@@ -939,11 +985,21 @@ int DAbstractFileInfo::userRowHeight() const
 
 int DAbstractFileInfo::userRowHeight(const QFontMetrics &fontMetrics) const
 {
+    Q_D(const DAbstractFileInfo);
+
+    if (d->columnCompact)
+        return fontMetrics.height() * 2 + 10;
+
     return fontMetrics.height();
 }
 
 bool DAbstractFileInfo::columnDefaultVisibleForRole(int role) const
 {
+    Q_D(const DAbstractFileInfo);
+
+    if (d->columnCompact && role == DFileSystemModel::FileUserRole + 1)
+        return true;
+
     return !(role == DFileSystemModel::FileCreatedRole);
 }
 
@@ -1395,7 +1451,25 @@ MenuAction DAbstractFileInfo::menuActionByColumnRole(int role) const
 
 QList<int> DAbstractFileInfo::sortSubMenuActionUserColumnRoles() const
 {
-    return userColumnRoles();
+    Q_D(const DAbstractFileInfo);
+
+    if (!d->columnCompact)
+        return userColumnRoles();
+
+    QList<int> roles;
+
+    int column = 0;
+
+    for (int role : userColumnRoles()) {
+        const QList<int> child_roles = userColumnChildRoles(column++);
+
+        if (child_roles.isEmpty())
+            roles << role;
+        else
+            roles << child_roles;
+    }
+
+    return roles;
 }
 
 QT_BEGIN_NAMESPACE

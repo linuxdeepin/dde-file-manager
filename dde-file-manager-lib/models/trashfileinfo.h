@@ -46,6 +46,7 @@ public:
     QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
     QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
 
+    void setColumnCompact(bool) Q_DECL_OVERRIDE;
     QList<int> userColumnRoles() const Q_DECL_OVERRIDE;
     QVariant userColumnData(int userColumnRole) const Q_DECL_OVERRIDE;
     QVariant userColumnDisplayName(int userColumnRole) const Q_DECL_OVERRIDE;

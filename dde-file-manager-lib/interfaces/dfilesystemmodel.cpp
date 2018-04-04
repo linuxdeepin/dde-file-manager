@@ -28,6 +28,7 @@
 #include "dfmevent.h"
 #include "dabstractfilewatcher.h"
 #include "dstyleditemdelegate.h"
+#include "dfmplaformmanager.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -88,6 +89,8 @@ public:
             filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
         else
             filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
+
+        columnCompact = dfmPlatformManager->isCompactList();
     }
 
     bool passNameFilters(const FileSystemNodePointer &node) const;
@@ -104,6 +107,8 @@ public:
     DFileSystemModel *q_ptr;
 
     FileSystemNodePointer rootNode;
+    // 是否支持一列中包含多个元素
+    bool columnCompact = false;
 
 //    QHash<DUrl, FileSystemNodePointer> d->urlToNode;
 
@@ -130,7 +135,8 @@ public:
 
     bool enabledSort = true;
 
-    QMap<QPair<QString, int>, int> UserColumnCurrentRoles;
+    // 每列包含多个role时，存储此列活跃的role
+    QMap<int, int> columnActiveRole;
 
     Q_DECLARE_PUBLIC(DFileSystemModel)
 };
@@ -526,11 +532,12 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
         option.rect = parent()->parent()->visualRect(index);
         const QList<QRect> &geometrys = parent()->itemDelegate()->paintGeomertys(option, index);
 
+        // 从1开始是为了排除掉icon区域
         for (int i = 1; i < geometrys.length() && i <= column_role_list.length(); ++i) {
             const QRect &rect = geometrys.at(i);
 
             if (rect.left() <= cursor_pos.x() && rect.right() >= cursor_pos.x()) {
-                const QString &tooltip = data(index, column_role_list.at(i - 1)).toString();
+                const QString &tooltip = data(index, columnActiveRole(i - 1)).toString();
 
                 if (option.fontMetrics.width(tooltip, -1, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt())) > rect.width())
                     return tooltip;
@@ -555,7 +562,7 @@ QVariant DFileSystemModel::headerData(int column, Qt::Orientation, int role) con
 {
     Q_D(const DFileSystemModel);
 
-    if(role == Qt::DisplayRole) {
+    if (role == Qt::DisplayRole) {
         int column_role = columnToRole(column);
 
         if (column_role < FileUserRole) {
@@ -564,23 +571,17 @@ QVariant DFileSystemModel::headerData(int column, Qt::Orientation, int role) con
 //            const AbstractFileInfoPointer &fileInfo = this->fileInfo(d->activeIndex);
             const DAbstractFileInfoPointer &fileInfo = d->rootNode->fileInfo;
 
-            if(fileInfo){
-                if (fileInfo->fileUrl().isSearchFile() || fileInfo->fileUrl().isTrashFile()){
-                    if (fileInfo->userColumnChildRoles(column).contains(d->sortRole))
-                        return fileInfo->userColumnDisplayName(d->sortRole);
-                    else{
-//                        qDebug() << d->UserColumnCurrentRoles;
-                        int role = getUserColumnCurrentRole(column);
-                        if (role == -1){
-                            return fileInfo->userColumnDisplayName(column_role);
-                        }else{
-                            return fileInfo->userColumnDisplayName(getUserColumnCurrentRole(column));
-                        }
-                    }
-                }else{
-                    return fileInfo->userColumnDisplayName(column_role);
+            if (fileInfo) {
+                if (fileInfo->columnIsCompact()) {
+                    const QList<int> roles = fileInfo->userColumnChildRoles(column);
+
+                    if (!roles.isEmpty())
+                        column_role = d->columnActiveRole.value(column, roles.first());
                 }
+
+                return fileInfo->userColumnDisplayName(column_role);
             }
+
             return QVariant();
         }
     } else if(role == Qt::BackgroundRole) {
@@ -617,7 +618,7 @@ int DFileSystemModel::columnToRole(int column) const
 
     const DAbstractFileInfoPointer &fileInfo = d->rootNode->fileInfo;
 
-    if (fileInfo){
+    if (fileInfo) {
         return fileInfo->userColumnRoles().value(column, UnknowRole);
     }
 
@@ -906,6 +907,7 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
 
     d->rootNode = createNode(Q_NULLPTR, fileService->createFileInfo(this, fileUrl));
     d->watcher = DFileService::instance()->createFileWatcher(this, fileUrl);
+    d->columnActiveRole.clear();
 
     if (d->watcher) {
         connect(d->watcher, SIGNAL(fileAttributeChanged(DUrl)),
@@ -948,7 +950,7 @@ DUrl DFileSystemModel::getUrlByIndex(const QModelIndex &index) const
 void DFileSystemModel::setSortColumn(int column, Qt::SortOrder order)
 {
     Q_D(DFileSystemModel);
-    int role = columnToRole(column);
+    int role = columnActiveRole(column);
     setSortRole(role, order);
 }
 
@@ -1025,9 +1027,23 @@ int DFileSystemModel::sortColumn() const
 {
     Q_D(const DFileSystemModel);
 
-    if (rootUrl().isSearchFile() || rootUrl().isTrashFile()){
-        int column = d->rootNode->fileInfo->sortSubMenuActionUserColumnRoles().indexOf(d->sortRole);
-        return column;
+    if (!d->rootNode || !d->rootNode->fileInfo)
+        return -1;
+
+    if (d->rootNode->fileInfo->columnIsCompact()) {
+        int i = 0;
+
+        for (const int role : d->rootNode->fileInfo->userColumnRoles()) {
+            if (role == d->sortRole)
+                return i;
+
+            const QList<int> childe_roles = d->rootNode->fileInfo->userColumnChildRoles(i);
+
+            if (childe_roles.indexOf(d->sortRole) >= 0)
+                return i;
+
+            ++i;
+        }
     }
 
     return roleToColumn(d->sortRole);
@@ -1063,42 +1079,42 @@ void DFileSystemModel::sort(int column, Qt::SortOrder order)
 
     setSortColumn(column, order);
 
-    if(old_sortRole == d->sortRole && old_sortOrder == d->srotOrder) {
+    if (old_sortRole == d->sortRole && old_sortOrder == d->srotOrder) {
         return;
     }
 
     sort();
 }
 
-void DFileSystemModel::sort()
+bool DFileSystemModel::sort()
 {
     Q_D(const DFileSystemModel);
 
     if (!enabledSort())
-        return;
+        return false;
 
     if (state() == Busy) {
         qWarning() << "I'm busying";
 
-        return;
+        return false;
     }
 
     if (QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
         qDebug() << "Beyond the maximum number of threads!";
-        return;
+        return false;
     }
 
     if (QThread::currentThread() == qApp->thread()) {
         QtConcurrent::run(QThreadPool::globalInstance(), this, &DFileSystemModel::sort);
 
-        return;
+        return false;
     }
 
 //    const FileSystemNodePointer &node = getNodeByIndex(d->activeIndex);
     const FileSystemNodePointer &node = d->rootNode;
 
-    if(!node)
-        return;
+    if (!node)
+        return false;
 
 //    const DUrl &node_absoluteFileUrl = node->fileInfo->fileUrl();
 
@@ -1122,13 +1138,15 @@ void DFileSystemModel::sort()
         list << node->children.value(fileUrl)->fileInfo;
     }
 
-    sort(node->fileInfo, list);
+    bool ok = sort(node->fileInfo, list);
 
     for(int i = 0; i < node->visibleChildren.count(); ++i) {
         node->visibleChildren[i] = list[i]->fileUrl();
     }
 
     emitAllDataChanged();
+
+    return ok;
 }
 
 const DAbstractFileInfoPointer DFileSystemModel::fileInfo(const QModelIndex &index) const
@@ -1212,16 +1230,62 @@ bool DFileSystemModel::enabledSort() const
     return d->enabledSort;
 }
 
-void DFileSystemModel::cacheUserColumnCurrentRoles(int column, int role)
+bool DFileSystemModel::setColumnCompact(bool compact)
 {
     Q_D(DFileSystemModel);
-    d->UserColumnCurrentRoles.insert(QPair<QString, int>(rootUrl().toString(), column), role);
+
+    if (d->columnCompact == compact)
+        return false;
+
+    d->columnCompact = compact;
+
+    if (d->rootNode) {
+        if (d->rootNode->fileInfo)
+            d->rootNode->fileInfo->setColumnCompact(compact);
+
+        for (const DUrl &child : d->rootNode->visibleChildren) {
+            if (FileSystemNodePointer node = d->rootNode->children.value(child)) {
+                node->fileInfo->setColumnCompact(compact);
+            }
+        }
+    }
+
+    return true;
 }
 
-int DFileSystemModel::getUserColumnCurrentRole(int column) const
+bool DFileSystemModel::columnIsCompact() const
 {
     Q_D(const DFileSystemModel);
-    return d->UserColumnCurrentRoles.value(QPair<QString, int>(rootUrl().toString(), column), -1);
+
+    if (d->rootNode && d->rootNode->fileInfo)
+        return d->rootNode->fileInfo->columnIsCompact();
+
+    return d->columnCompact;
+}
+
+void DFileSystemModel::setColumnActiveRole(int column, int role)
+{
+    Q_D(DFileSystemModel);
+
+    d->columnActiveRole[column] = role;
+}
+
+int DFileSystemModel::columnActiveRole(int column) const
+{
+    Q_D(const DFileSystemModel);
+
+    if (!d->rootNode || !d->rootNode->fileInfo)
+        return UnknowRole;
+
+    if (!d->rootNode->fileInfo->columnIsCompact())
+        return columnToRole(column);
+
+    const QList<int> &roles = d->rootNode->fileInfo->userColumnChildRoles(column);
+
+    if (roles.isEmpty())
+        return columnToRole(column);
+
+    return d->columnActiveRole.value(column, roles.first());
 }
 
 void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
@@ -1383,21 +1447,38 @@ bool DFileSystemModel::isDir(const FileSystemNodePointer &node) const
     return node->fileInfo->isDir();
 }
 
-void DFileSystemModel::sort(const DAbstractFileInfoPointer &parentInfo, QList<DAbstractFileInfoPointer> &list) const
+bool DFileSystemModel::sort(const DAbstractFileInfoPointer &parentInfo, QList<DAbstractFileInfoPointer> &list) const
 {
     Q_D(const DFileSystemModel);
 
     if (!parentInfo)
-        return;
+        return false;
 
     DAbstractFileInfo::CompareFunction sortFun = parentInfo->compareFunByColumn(d->sortRole);
 
     if (!sortFun)
-        return;
+        return false;
 
     qSort(list.begin(), list.end(), [sortFun, d] (const DAbstractFileInfoPointer &info1, const DAbstractFileInfoPointer &info2) {
         return sortFun(info1, info2, d->srotOrder);
     });
+
+    if (columnIsCompact() && d->rootNode && d->rootNode->fileInfo) {
+        int column = 0;
+
+        for (int role : d->rootNode->fileInfo->userColumnRoles()) {
+            if (role == d->sortRole)
+                return true;
+
+            if (d->rootNode->fileInfo->userColumnChildRoles(column).indexOf(d->sortRole) >= 0) {
+                const_cast<DFileSystemModel*>(this)->setColumnActiveRole(column, d->sortRole);
+            }
+
+            ++column;
+        }
+    }
+
+    return true;
 }
 
 const FileSystemNodePointer DFileSystemModel::createNode(FileSystemNode *parent, const DAbstractFileInfoPointer &info)
@@ -1417,6 +1498,7 @@ const FileSystemNodePointer DFileSystemModel::createNode(FileSystemNode *parent,
 //    } else {
         FileSystemNodePointer node(new FileSystemNode(parent, info));
 
+        node->fileInfo->setColumnCompact(columnIsCompact());
 //        d->urlToNode[info->fileUrl()] = node;
 
         return node;

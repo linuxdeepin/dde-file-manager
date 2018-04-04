@@ -37,6 +37,8 @@ public:
 
     bool isDisableUnMount();
     bool isRoot_hidden();
+    bool isCompactList() const;
+    bool isAutoCompactList() const;
 
 signals:
 

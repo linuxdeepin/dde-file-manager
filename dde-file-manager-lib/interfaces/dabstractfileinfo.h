@@ -226,6 +226,8 @@ public:
     /// support selection mode
     virtual QList<SelectionMode> supportSelectionModes() const;
 
+    virtual void setColumnCompact(bool compact);
+    bool columnIsCompact() const;
     virtual QList<int> userColumnRoles() const;
 
     virtual QVariant userColumnDisplayName(int userColumnRole) const;

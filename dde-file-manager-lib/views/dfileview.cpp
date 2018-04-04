@@ -60,6 +60,8 @@
 
 #include "singleton.h"
 #include "interfaces/dfilemenumanager.h"
+#include "dfmplaformmanager.h"
+
 #include <dthememanager.h>
 #include <anchors.h>
 
@@ -660,40 +662,6 @@ void DFileView::setViewMode(DFileView::ViewMode mode)
     emit viewStateChanged();
 }
 
-void DFileView::sortByColumn(int column)
-{
-    D_D(DFileView);
-
-    Qt::SortOrder order = (model()->sortColumn() == column && model()->sortOrder() == Qt::AscendingOrder)
-                            ? Qt::DescendingOrder
-                            : Qt::AscendingOrder;
-
-    if (d->headerView) {
-        QSignalBlocker blocker(d->headerView);
-        Q_UNUSED(blocker)
-        int indicatorColumn = column;
-        /*always indicator in 0/1 column if view is in search or trash mode*/
-        if (rootUrl().isSearchFile() || rootUrl().isTrashFile()){
-            if (column == 0 || column == 1){
-                indicatorColumn = 0;
-            }else{
-                indicatorColumn = 1;
-            }
-        }
-
-        d->headerView->setSortIndicator(indicatorColumn, order);
-    }
-
-    /*contextmenu sort column to real sort column of search or trash*/
-    if (rootUrl().isSearchFile() || rootUrl().isTrashFile()){
-        column += 2;
-    }
-
-    sort(column, order);
-
-    FMStateManager::cacheSortState(rootUrl(), model()->sortRole(), order);
-}
-
 void DFileView::sort(int column, Qt::SortOrder order)
 {
     D_D(DFileView);
@@ -813,8 +781,23 @@ void DFileView::sortByActionTriggered(QAction *action)
     D_DC(DFileView);
 
     QAction* dAction = static_cast<QAction*>(action);
+    const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(rootIndex());
 
-    sortByColumn(d->sortByActionGroup->actions().indexOf(dAction));
+    if (!fileInfo)
+        return;
+
+    int action_index = d->sortByActionGroup->actions().indexOf(dAction);
+
+    if (action_index < 0)
+        return;
+
+    int sort_role = fileInfo->sortSubMenuActionUserColumnRoles().at(action_index);
+
+    Qt::SortOrder order = (model()->sortRole() == sort_role && model()->sortOrder() == Qt::AscendingOrder) ? Qt::DescendingOrder : Qt::AscendingOrder;
+
+    sortByRole(sort_role, order);
+
+    FMStateManager::cacheSortState(rootUrl(), model()->sortRole(), order);
 }
 
 void DFileView::openWithActionTriggered(QAction *action)
@@ -1263,24 +1246,8 @@ void DFileView::saveViewState()
 void DFileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
 {
     Q_D(const DFileView);
-    if (rootUrl().isSearchFile() || rootUrl().isTrashFile()){
-//        qDebug() << logicalIndex << model()->sortRole() << order;
-        const QVariant role_data = model()->headerData(logicalIndex, d->headerView->orientation(), Qt::DisplayRole);
-        const DAbstractFileInfoPointer &file_info = model()->fileInfo(rootIndex());
 
-        QList<int> searchRealRoles = file_info->userColumnRoles();
-        searchRealRoles.removeOne(DFileSystemModel::FileUserRole + 1);
-        searchRealRoles.removeOne(DFileSystemModel::FileUserRole + 2);
-        for (int role : searchRealRoles) {
-            if (file_info->userColumnDisplayName(role) == role_data) {
-//                model()->cacheUserColumnCurrentRoles(logicalIndex, role);
-                sortByRole(role, order);
-                break;
-            }
-        }
-    }else{
-        sort(logicalIndex, order);
-    }
+    sort(logicalIndex, order);
 }
 
 void DFileView::focusInEvent(QFocusEvent *event)
@@ -1302,16 +1269,25 @@ void DFileView::resizeEvent(QResizeEvent *event)
 
     DListView::resizeEvent(event);
 
+    // auto switch list mode
+    if (d->currentViewMode == ListMode && dfmPlatformManager->isAutoCompactList()) {
+        if (model()->setColumnCompact(event->size().width() < 600)) {
+            updateListHeaderViewProperty();
+            doItemsLayout();
+        }
+    }
+
     updateHorizontalOffset();
 
     if (itemDelegate()->editingIndex().isValid())
         doItemsLayout();
 
     d->verticalScrollBar->setFixedSize(d->verticalScrollBar->sizeHint().width(), event->size().height());
+
     if(d->currentViewMode == IconMode){
-        d->verticalScrollBar->move(event->size().width(), 0);
+        d->verticalScrollBar->move(event->size().width() - d->verticalScrollBar->width(), 0);
     } else if (d->currentViewMode == ListMode){
-        d->verticalScrollBar->move(event->size().width(), d->headerView->height());
+        d->verticalScrollBar->move(event->size().width() - d->verticalScrollBar->width(), d->headerView->height());
     }
 
     updateModelActiveIndex();
@@ -1699,6 +1675,9 @@ void DFileView::initUI()
     d->verticalScrollBar = verticalScrollBar();
     d->verticalScrollBar->setParent(this);
 
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    setViewportMargins(0, 0, -verticalScrollBar()->sizeHint().width(), 0);
+
     d->toolbarActionGroup = new QActionGroup(this);
 
     updateToolBarActions(this);
@@ -1885,7 +1864,6 @@ bool DFileView::setRootUrl(const DUrl &url)
     const QPair<int, int> &sort_config = FMStateManager::SortStates.value(fileUrl, QPair<int, int>(DFileSystemModel::FileDisplayNameRole, Qt::AscendingOrder));
 
     model()->setSortRole(sort_config.first, (Qt::SortOrder)sort_config.second);
-
 
     if (info) {
         ViewModes modes = (ViewModes)info->supportViewMode();
@@ -2133,7 +2111,7 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
             action->setChecked(false);
         }
 
-        QAction *action = sortBySubMenu->actionAt(model()->sortColumn());
+        QAction *action = sortBySubMenu->actionAt(info->sortSubMenuActionUserColumnRoles().indexOf(model()->sortRole()));
 
         if (action)
             action->setChecked(true);
@@ -2208,20 +2186,7 @@ void DFileView::updateListHeaderViewProperty()
     d->headerView->setSectionResizeMode(QHeaderView::Fixed);
     d->headerView->setDefaultSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
     d->headerView->setMinimumSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
-
-    const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(rootIndex());
-    if (rootUrl().isSearchFile() || rootUrl().isTrashFile()){
-        int indicatorColumn = 0;
-        if (fileInfo->userColumnChildRoles(0).contains(model()->sortRole())){
-            indicatorColumn = 0;
-        }else if (fileInfo->userColumnChildRoles(1).contains(model()->sortRole())){
-            indicatorColumn = 1;
-        }
-        d->headerView->setSortIndicator(indicatorColumn, model()->sortOrder());
-    }else{
-        d->headerView->setSortIndicator(model()->sortColumn(), model()->sortOrder());
-    }
-
+    d->headerView->setSortIndicator(model()->sortColumn(), model()->sortOrder());
     d->columnRoles.clear();
 
     for (int i = 0; i < d->headerView->count(); ++i) {
@@ -2235,17 +2200,12 @@ void DFileView::updateListHeaderViewProperty()
             d->headerView->setSectionResizeMode(i, QHeaderView::Stretch);
         }
 
-        /*don't use columnForRoleHiddenMap cache to hide section for search/trash view in list mode*/
-        if (rootUrl().isSearchFile() || rootUrl().isTrashFile()){
-            d->headerView->setSectionHidden(i, !model()->columnDefaultVisibleForRole(model()->columnToRole(i)));
-        }else{
-            const QString &column_name = model()->headerData(i, Qt::Horizontal, Qt::DisplayRole).toString();
+        const QString &column_name = model()->headerData(i, Qt::Horizontal, Qt::DisplayRole).toString();
 
-            if (!d->columnForRoleHiddenMap.contains(column_name)) {
-                d->headerView->setSectionHidden(i, !model()->columnDefaultVisibleForRole(model()->columnToRole(i)));
-            } else {
-                d->headerView->setSectionHidden(i, d->columnForRoleHiddenMap.value(column_name));
-            }
+        if (!d->columnForRoleHiddenMap.contains(column_name)) {
+            d->headerView->setSectionHidden(i, !model()->columnDefaultVisibleForRole(model()->columnToRole(i)));
+        } else {
+            d->headerView->setSectionHidden(i, d->columnForRoleHiddenMap.value(column_name));
         }
     }
 
@@ -2315,49 +2275,56 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
     const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(rootIndex());
     QMenu *menu = new QMenu();
 
-    if (rootUrl().isSearchFile() || rootUrl().isTrashFile()){
+    if (fileInfo && fileInfo->columnIsCompact()) {
         /*contextmenu of headview for sort function*/
         int column = d->headerView->logicalIndexAt(pos.x());
 
-        QList<int> childRoles = fileInfo->userColumnChildRoles(column);
-        for(int i=0; i< childRoles.count() * 2 ; i++){
+        const QList<int> &childRoles = fileInfo->userColumnChildRoles(column);
+
+        if (childRoles.isEmpty()) {
+            menu->deleteLater();
+
+            return;
+        }
+
+        for (int i = 0; i < childRoles.count() * 2; ++i) {
             int childRole = childRoles.at(i / 2);
             QAction *action = new QAction(menu);
-            if (i % 2 == 0)
+
+            if (i % 2 == 0) {
                 action->setText(fileInfo->userColumnDisplayName(childRole).toString());
-            else if(i % 2 == 1){
+            } else if (i % 2 == 1) {
                 action->setText(fileInfo->userColumnDisplayName(childRole).toString() + tr("(Reverse)"));
             }
+
             action->setCheckable(true);
 
             if (!d->headerView->isSectionHidden(d->headerView->sortIndicatorSection())
-                    && model()->sortRole() == childRole){
-                if (i % 2 == 1 && model()->sortOrder() == Qt::DescendingOrder){
+                    && model()->sortRole() == childRole) {
+                if (i % 2 == 1 && model()->sortOrder() == Qt::DescendingOrder) {
                     action->setChecked(true);
-                }if (i % 2 == 0 && model()->sortOrder() == Qt::AscendingOrder){
+                } if (i % 2 == 0 && model()->sortOrder() == Qt::AscendingOrder) {
                     action->setChecked(true);
                 }
             }
 
             connect(action, &QAction::triggered, this, [this, action, column, i, d, childRoles] {
-                if (i % 2 == 0){
+                if (i % 2 == 0) {
                     sortByRole(childRoles.at(i / 2), Qt::AscendingOrder);
-                }else if (i % 2 == 1){
+                } else if (i % 2 == 1) {
                     sortByRole(childRoles.at(i / 2), Qt::DescendingOrder);
                 }
 
                 /*setSortIndicator but don't emit signal when sorted by menu action*/
                 QSignalBlocker blocker(d->headerView);
                 Q_UNUSED(blocker)
-                model()->cacheUserColumnCurrentRoles(column, childRoles.at(i / 2));
                 d->headerView->setSortIndicator(column, model()->sortOrder());
-
                 d->headerView->update();
             });
 
             menu->addAction(action);
         }
-    }else{
+    } else {
         for (int i = 1; i < d->headerView->count(); ++i) {
             QAction *action = new QAction(menu);
 
@@ -2522,13 +2489,13 @@ int DFileViewPrivate::iconModeColumnCount(int itemWidth) const
 {
     Q_Q(const DFileView);
 
-    int frameAroundContents = 0;
-    if (q->style()->styleHint(QStyle::SH_ScrollView_FrameOnlyAroundContents))
-        frameAroundContents = q->style()->pixelMetric(QStyle::PM_DefaultFrameWidth) * 2;
+//    int frameAroundContents = 0;
+//    if (q->style()->styleHint(QStyle::SH_ScrollView_FrameOnlyAroundContents))
+//        frameAroundContents = q->style()->pixelMetric(QStyle::PM_DefaultFrameWidth) * 2;
 
-    int horizontalMargin = q->verticalScrollBarPolicy()==Qt::ScrollBarAsNeeded
+    int horizontalMargin = /*q->verticalScrollBarPolicy()==Qt::ScrollBarAsNeeded
             ? q->style()->pixelMetric(QStyle::PM_ScrollBarExtent, 0, q->verticalScrollBar()) + frameAroundContents
-            : 0;
+            : */0;
 
     int contentWidth = q->maximumViewportSize().width();
 

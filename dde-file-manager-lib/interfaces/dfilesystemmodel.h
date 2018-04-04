@@ -141,7 +141,7 @@ public:
     QDir::Filters filters() const;
 
     void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) Q_DECL_OVERRIDE;
-    void sort();
+    bool sort();
 
     const DAbstractFileInfoPointer fileInfo(const QModelIndex &index) const;
     const DAbstractFileInfoPointer fileInfo(const DUrl &fileUrl) const;
@@ -157,8 +157,11 @@ public:
 
     bool enabledSort() const;
 
-    void cacheUserColumnCurrentRoles(int column, int role);
-    int getUserColumnCurrentRole(int column) const;
+    bool setColumnCompact(bool compact);
+    bool columnIsCompact() const;
+
+    void setColumnActiveRole(int column, int role);
+    int columnActiveRole(int column) const;
 
 public slots:
     void updateChildren(QList<DAbstractFileInfoPointer> list);
@@ -184,7 +187,7 @@ private:
 
     bool isDir(const FileSystemNodePointer &node) const;
 
-    void sort(const DAbstractFileInfoPointer &parentInfo, QList<DAbstractFileInfoPointer> &list) const;
+    bool sort(const DAbstractFileInfoPointer &parentInfo, QList<DAbstractFileInfoPointer> &list) const;
 
     const FileSystemNodePointer createNode(FileSystemNode *parent, const DAbstractFileInfoPointer &info);
 

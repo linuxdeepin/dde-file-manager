@@ -23,7 +23,7 @@ public:
                const QModelIndex &index) const Q_DECL_OVERRIDE;
 
     void drawNotStringData(const QStyleOptionViewItem &opt, int lineHeight, const QRect &rect, const QVariant &data,
-                           bool drawBackground, QPainter *painter, const QModelIndex &index) const;
+                           bool drawBackground, QPainter *painter, const int &column) const;
 
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &) const Q_DECL_OVERRIDE;
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const Q_DECL_OVERRIDE;
