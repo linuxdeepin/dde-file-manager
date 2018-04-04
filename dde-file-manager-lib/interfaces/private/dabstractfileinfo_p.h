@@ -38,6 +38,8 @@ public:
     DAbstractFileInfoPointer proxy;
     static DMimeDatabase mimeDatabase;
 
+    bool columnCompact = false;
+
 private:
     DUrl fileUrl;
     static QReadWriteLock *urlToFileInfoMapLock;

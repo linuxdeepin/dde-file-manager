@@ -140,7 +140,6 @@ public slots:
     { setViewMode(ExtendMode);}
     void setDefaultViewMode(ViewMode mode);
     void setViewMode(ViewMode mode);
-    void sortByColumn(int column);
     void sort(int column, Qt::SortOrder order);
     void sortByRole(int role, Qt::SortOrder order);
 

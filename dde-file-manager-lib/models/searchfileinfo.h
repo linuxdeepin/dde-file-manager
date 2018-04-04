@@ -31,6 +31,7 @@ public:
 
     DUrl parentUrl() const Q_DECL_OVERRIDE;
 
+    void setColumnCompact(bool) Q_DECL_OVERRIDE;
     QList<int> userColumnRoles() const Q_DECL_OVERRIDE;
     QVariant userColumnDisplayName(int userColumnRole) const Q_DECL_OVERRIDE;
     /// get custom column data

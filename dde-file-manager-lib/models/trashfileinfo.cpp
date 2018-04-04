@@ -40,7 +40,9 @@ class TrashFileInfoPrivate : public DAbstractFileInfoPrivate
 {
 public:
     TrashFileInfoPrivate(const DUrl &url, TrashFileInfo *qq)
-        : DAbstractFileInfoPrivate(url, qq, true) {}
+        : DAbstractFileInfoPrivate(url, qq, true) {
+        columnCompact = true;
+    }
 
     QString desktopIconName;
     QString displayName;
@@ -242,6 +244,11 @@ QSet<MenuAction> TrashFileInfo::disableMenuActionList() const
     }
 
     return list;
+}
+
+void TrashFileInfo::setColumnCompact(bool)
+{
+
 }
 
 QList<int> TrashFileInfo::userColumnRoles() const

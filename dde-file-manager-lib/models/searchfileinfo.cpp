@@ -34,6 +34,8 @@ COMPARE_FUN_DEFINE(absoluteFilePath, FilePath, SearchFileInfo)
 SearchFileInfo::SearchFileInfo(const DUrl &url)
     : DAbstractFileInfo(url)
 {
+    d_func()->columnCompact = true;
+
     if (url.searchedFileUrl().isValid()) {
         m_parentUrl = url;
         m_parentUrl.setSearchedFileUrl(DUrl());
@@ -82,6 +84,11 @@ int SearchFileInfo::filesCount() const
 DUrl SearchFileInfo::parentUrl() const
 {
     return m_parentUrl;
+}
+
+void SearchFileInfo::setColumnCompact(bool)
+{
+
 }
 
 QList<int> SearchFileInfo::userColumnRoles() const
