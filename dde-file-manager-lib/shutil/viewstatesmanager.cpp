@@ -170,17 +170,20 @@ bool ViewStatesManager::isValidViewState(const ViewState &state)
 
     //viewMode
     QMetaEnum viewModeMeta = QMetaEnum::fromType<DFileView::ViewMode>();
-    if(viewModeMeta.valueToKey(state.viewMode) == "")
+
+    if (QString(viewModeMeta.valueToKey(state.viewMode)).isEmpty())
         return false;
 
     //sortOrder
     QMetaEnum sortOrderMeta = QMetaEnum::fromType<Qt::SortOrder>();
-    if(sortOrderMeta.valueToKey(state.sortOrder) == "")
+
+    if (QString(sortOrderMeta.valueToKey(state.sortOrder)).isEmpty())
         return false;
 
     //sortRole
     QMetaEnum rolesMeta = QMetaEnum::fromType<DFileSystemModel::Roles>();
-    if(rolesMeta.valueToKey((DFileSystemModel::Roles)state.sortRole) == "")
+
+    if (QString(rolesMeta.valueToKey((DFileSystemModel::Roles)state.sortRole)).isEmpty())
         return false;
 
     return true;
