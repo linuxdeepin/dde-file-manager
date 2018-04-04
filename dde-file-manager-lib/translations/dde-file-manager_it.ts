@@ -65,7 +65,7 @@
     <message>
         <location filename="../views/computerview.cpp" line="453"/>
         <source>My Directories</source>
-        <translation>La mia directory</translation>
+        <translation>Preferiti</translation>
     </message>
     <message>
         <location filename="../views/computerview.cpp" line="459"/>
@@ -314,7 +314,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="472"/>
         <source>This action cannot be restored</source>
-        <translation>Questa azione non può esser ripristinata</translation>
+        <translation>Questa azione non può esser ripristinata!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="485"/>
@@ -344,7 +344,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="651"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
-        <translation>%1 questa scorciatoia è stata modificata o mossa</translation>
+        <translation>%1 questa scorciatoia è stata modificata o spostata</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="655"/>
@@ -359,7 +359,8 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="686"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
-        <translation>File manager è uno strumento di gestione files indipendente sviluppato da Deepin Technology, munito di funzionalità di ricerca, copia, cestinazione, compressione/decompressione, dettaglio delle proprietà dei files ed altre funzionalità di gestione. Traduzione italiana a cura di Massimo A. Carofano</translation>
+        <translation>File manager è uno strumento di gestione files indipendente sviluppato da Deepin Technology, munito di funzionalità di ricerca, copia, cestinazione, compressione/decompressione, dettaglio delle proprietà dei files ed altre funzionalità di gestione.
+Localizzazione italiana a cura di Massimo A. Carofano</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="739"/>
@@ -389,7 +390,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="820"/>
         <source>%1 files failed to restore, target file removed or location changed</source>
-        <translation>%1 files non ripristinati, file di destinazione rimossi o percorso di destinazione modificato</translation>
+        <translation>%1 file non ripristinati, file di destinazione rimossi o percorso di destinazione modificato</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="832"/>
@@ -897,7 +898,7 @@
     <message>
         <location filename="../controllers/pathmanager.cpp" line="45"/>
         <source>Downloads</source>
-        <translation>Downloads</translation>
+        <translation>Download</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="46"/>
@@ -912,7 +913,7 @@
     <message>
         <location filename="../controllers/pathmanager.cpp" line="48"/>
         <source>Computers in LAN</source>
-        <translation>Computers in LAN</translation>
+        <translation>Computer in LAN</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="49"/>
@@ -1225,7 +1226,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="732"/>
         <source>Log out and unmount</source>
-        <translation>Log out e unmount</translation>
+        <translation>Logout e smonta</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="734"/>
@@ -1367,7 +1368,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="24"/>
         <source>Show hidden files</source>
-        <translation>Mostra files nascosti</translation>
+        <translation>Mostra file nascosti</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="25"/>
@@ -1441,7 +1442,7 @@
         <location filename="../configure/dfmconfigdict.cpp" line="33"/>
         <location filename="../configure/dfmconfigdict.cpp" line="43"/>
         <source>Downloads</source>
-        <translation>Downloads</translation>
+        <translation>Download</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="44"/>
@@ -1574,7 +1575,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="731"/>
         <source>Set as wallpaper</source>
-        <translation>Imposta come wallpaper</translation>
+        <translation>Imposta come sfondo</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="222"/>
@@ -1841,7 +1842,7 @@
     <message>
         <location filename="../views/drenamebar.cpp" line="284"/>
         <source>Tips: Sort by selected file order</source>
-        <translation>Suggerimento: ordina selezionando l&apos;ordinamento che preferisci</translation>
+        <translation>Suggerimento: ordina selezionando la modalità che preferisci</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="372"/>

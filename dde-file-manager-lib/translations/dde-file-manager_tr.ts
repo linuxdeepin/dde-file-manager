@@ -1145,7 +1145,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="694"/>
         <source>Send to</source>
-        <translation>Aygıta gönder</translation>
+        <translation>Şuraya gönder</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="695"/>

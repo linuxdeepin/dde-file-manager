@@ -1,10 +1,10 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="bn" version="2.1">
 <context>
     <name>FinishPage</name>
     <message>
         <location filename="../view/finishpage.cpp" line="18"/>
         <source>Format successfully</source>
-        <translation>格式化成功</translation>
+        <translation>সফলভাবে ফরম্যাট হয়েছে</translation>
     </message>
 </context>
 <context>
@@ -12,7 +12,7 @@
     <message>
         <location filename="../view/formatingpage.cpp" line="19"/>
         <source>Formating, please wait for a minute...</source>
-        <translation>正在格式化，请稍候……</translation>
+        <translation>ফরম্যাট করা হচ্ছে। দয়া করে কিছুক্ষন অপেক্ষা করুন</translation>
     </message>
 </context>
 <context>
@@ -20,22 +20,22 @@
     <message>
         <location filename="../view/mainpage.cpp" line="85"/>
         <source>Type</source>
-        <translation>类型</translation>
+        <translation>ধরণ</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="104"/>
         <source>Label</source>
-        <translation>卷标</translation>
+        <translation>লেভেল</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="113"/>
         <source>Fast format</source>
-        <translation>快速格式化</translation>
+        <translation>দ্রুত ফরম্যাট </translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="130"/>
         <source>This operation will clear all data from your device.</source>
-        <translation>执行格式化后会彻底清空该磁盘内容。</translation>
+        <translation>এই অপারেশনটি আপনার ডিভাইস হতে সকল ডাটা মুছে ফেলবে</translation>
     </message>
 </context>
 <context>
@@ -44,42 +44,42 @@
         <location filename="../view/mainwindow.cpp" line="56"/>
         <location filename="../view/mainwindow.cpp" line="78"/>
         <source>Format</source>
-        <translation>格式化</translation>
+        <translation>ফরম্যাট</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="165"/>
         <source>Continue</source>
-        <translation>继续</translation>
+        <translation>চালিয়ে যান </translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="170"/>
         <source>Formatting...</source>
-        <translation>格式化中……</translation>
+        <translation>ফরম্যাট করা হচ্ছে...</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="194"/>
         <source>Done</source>
-        <translation>完成</translation>
+        <translation>সম্পূর্ণ</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="205"/>
         <source>Failed to format</source>
-        <translation>格式化失败</translation>
+        <translation>ফরম্যাট করতে ব্যার্থ</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="201"/>
         <source>Quit</source>
-        <translation>退出</translation>
+        <translation>বের হয়ে যান</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="202"/>
         <source>Your disk is removed when formatting</source>
-        <translation>您的磁盘在格式化过程中被移除</translation>
+        <translation>ফরম্যাট করার সময় আপনার ডিস্কটি সড়িয়ে ফেলা হয়েসে</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="206"/>
         <source>Reformat</source>
-        <translation>重新格式化</translation>
+        <translation>পুনরায় ফরমেট করুন</translation>
     </message>
 </context>
 <context>
@@ -87,7 +87,7 @@
     <message>
         <location filename="../dialogs/messagedialog.cpp" line="19"/>
         <source>OK</source>
-        <translation>确定</translation>
+        <translation>ঠিক আছে</translation>
     </message>
 </context>
 <context>
@@ -95,12 +95,12 @@
     <message>
         <location filename="../main.cpp" line="71"/>
         <source>Device does not exist</source>
-        <translation>设备不存在</translation>
+        <translation>ডিভাইস বিদ্যামান নেই</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="80"/>
         <source>Cannot format local device</source>
-        <translation>不能格式化本地设备</translation>
+        <translation>লোকাল ডিভাইস ফরমেট করা যাচ্ছে না</translation>
     </message>
 </context>
 <context>
@@ -108,7 +108,7 @@
     <message>
         <location filename="../view/warnpage.cpp" line="19"/>
         <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
-        <translation>格式化操作将会清除磁盘上所有内容，确定继续操作？该操作无法恢复。</translation>
+        <translation>ফরম্যাটিং অপারেশন আপনার ডিভাইসের সকল ডাটা মুছে ফেলবে। আপনি কি চালিয়ে যেতে চান? এই অপেরেশনটি আর পূর্বের অবস্থায় ফিরিয়ে আনা যাবেনা।</translation>
     </message>
 </context>
 </TS>
