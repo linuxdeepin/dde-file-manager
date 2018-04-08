@@ -58,6 +58,11 @@ ThemeConfig *ThemeConfig::instace()
     return tc_global;
 }
 
+bool ThemeConfig::hasValue(const QString &scope, const QString &key, States state) const
+{
+    return D(this)->configs.contains(QString("%1.%2.%3").arg(scope, key).arg((int)state));
+}
+
 void ThemeConfig::setValue(const QString &scope, const QString &key, States state, const QVariant &value)
 {
     _ThemeConfig *that = static_cast<_ThemeConfig*>(this);
@@ -262,6 +267,7 @@ void ThemeConfig::update(const QString &theme)
         return;
 
     that->theme = theme;
+    that->configs.clear();
 
     for (const QString &key : _ThemeConfig::cachedPixmap)
         QPixmapCache::remove(key);

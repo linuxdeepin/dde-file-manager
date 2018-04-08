@@ -1,0 +1,22 @@
+Dtk--Widget--DTitlebar {
+    background: qlineargradient(x1:1, y1:0, x2:1, y2:1,
+                stop:0 #ffffff, stop:1 #f8f8f8);
+}
+
+Dtk--Widget--DTitlebar[transparent=true] {
+    background: transparent;
+}
+
+Dtk--Widget--DWindowCloseButton {
+    qproperty-normalPic: url(:/images/light/images/window/close_normal.svg);
+    qproperty-hoverPic: url(:/images/light/images/window/close_hover.svg);
+    qproperty-pressPic: url(:/images/light/images/window/close_press.svg);
+    padding-right: 6px;
+}
+
+#DTitlebarDWindowQuitFullscreenButton {
+    qproperty-normalPic: url(:/images/light/images/window/quit_fullscreen_normal.svg);
+    qproperty-hoverPic: url(:/images/light/images/window/quit_fullscreen_hover.svg);
+    qproperty-pressPic: url(:/images/light/images/window/quit_fullscreen_press.svg);
+    padding-right: 6px;
+}

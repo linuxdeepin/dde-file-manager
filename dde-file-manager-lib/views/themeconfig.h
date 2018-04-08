@@ -42,6 +42,8 @@ public:
 
     static ThemeConfig *instace();
 
+    bool hasValue(const QString &scope, const QString &key, States state = Normal) const;
+
     void setValue(const QString &scope, const QString &key, States state, const QVariant &value);
 
     QVariant value(const QString &scope, const QString &key, States state = Normal) const;
