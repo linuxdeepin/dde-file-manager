@@ -565,11 +565,15 @@ void FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
             doMove(urls, DUrl::fromLocalFile(_tarFilePath).parentUrl());
 
         }else if (srcInfo.isDir()){
-            if(copyDir(srcFilePath, tarDir, true, &_tarFilePath))
+            if (copyDir(srcFilePath, tarDir, true, &_tarFilePath)) {
                 deleteDir(srcFilePath);
+                QFile::rename(_tarFilePath, tarFilePath);
+            }
         }else if (srcInfo.isFile() || srcInfo.isSymLink()){
-            if(copyFile(srcFilePath, tarDir, true, &_tarFilePath))
+            if (copyFile(srcFilePath, tarDir, true, &_tarFilePath)) {
                 deleteFile(srcFilePath);
+                QFile::rename(_tarFilePath, tarFilePath);
+            }
         }
     }
 
