@@ -347,7 +347,6 @@ QPushButton#DCrumbButton:hover{
 
 QPushButton#DCrumbButton:checked{
     background-color: #2ca7f8;
-    border: 1px solid #1088ff;
     color: white;
 }
 

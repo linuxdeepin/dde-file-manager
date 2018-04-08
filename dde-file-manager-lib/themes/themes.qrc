@@ -100,5 +100,7 @@
         <file>dark/icons/input_clear_press.svg</file>
         <file>dark/icons/jump_to.svg</file>
         <file>dark/icons/search.svg</file>
+        <file>dark/DTitleBar.theme</file>
+        <file>light/DTitleBar.theme</file>
     </qresource>
 </RCC>
