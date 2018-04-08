@@ -449,6 +449,10 @@ void FileJob::doDelete(const DUrlList &files)
     {
         QUrl url = files.at(i);
         QFileInfo info(url.path());
+
+        if (!info.exists() && !info.isSymLink())
+            continue;
+
         if (info.isFile() || info.isSymLink()){
             deleteFile(url.path());
         }else{
