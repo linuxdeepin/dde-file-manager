@@ -23,7 +23,7 @@
 #define LIST_MODE_RECT_RADIUS 2
 #define LIST_EDITER_HEIGHT 22
 #define LIST_MODE_EDITOR_LEFT_PADDING -3
-#define LIST_VIEW_ICON_SIZE 28
+#define LIST_VIEW_ICON_SIZE 24
 
 class DListItemDelegatePrivate : public DStyledItemDelegatePrivate
 {
