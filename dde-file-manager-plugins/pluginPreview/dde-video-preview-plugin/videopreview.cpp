@@ -22,8 +22,10 @@
 
 #include <player_widget.h>
 #include <player_engine.h>
+#include <compositing_manager.h>
 
 #include <danchors.h>
+#include <dimagebutton.h>
 
 DWIDGET_USE_NAMESPACE
 
@@ -61,6 +63,13 @@ public:
                                                            qMin(p->info.height, int(screen_size.height() * 0.5)), Qt::KeepAspectRatio);
     }
 
+    void mouseReleaseEvent(QMouseEvent *event) override
+    {
+        p->pause();
+
+        dmr::PlayerWidget::mouseReleaseEvent(event);
+    }
+
     VideoPreview *p;
     QLabel *title;
 };
@@ -76,6 +85,16 @@ public:
     {
         setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
+        DImageButton *control_button = new DImageButton(this);
+        QWidget *button_mask = new QWidget(control_button);
+
+        control_button->setNormalPic(":/icons/icons/start_normal.png");
+        control_button->setPressPic(":/icons/icons/start_pressed.png");
+        control_button->setHoverPic(":/icons/icons/start_hover.png");
+        button_mask->setAutoFillBackground(true);
+
+        DAnchorsBase(button_mask).setFill(control_button);
+
         QPalette pa_label;
 
         pa_label.setColor(QPalette::Foreground, QColor("#303030"));
@@ -87,10 +106,26 @@ public:
 
         QHBoxLayout *layout = new QHBoxLayout(this);
 
-        layout->setContentsMargins(20, 0, 20, 0);
+        layout->setContentsMargins(0, 0, 20, 0);
+        layout->addWidget(control_button);
         layout->addWidget(slider);
         layout->addWidget(timeLabel);
 
+        connect(control_button, &DImageButton::clicked, this, [this, button_mask] {
+            if (p->playerWidget->engine().paused()) {
+                p->pause();
+            } else {
+                p->playerWidget->engine().play();
+            }
+
+            button_mask->show();
+        });
+        connect(&p->playerWidget->engine(), &dmr::PlayerEngine::stateChanged, this, [this, button_mask] {
+            if (p->playerWidget->engine().state() == dmr::PlayerEngine::Playing)
+                button_mask->show();
+            else
+                button_mask->hide();
+        });
         connect(slider, &QSlider::valueChanged, this, [this] {
             p->playerWidget->engine().seekAbsolute(slider->value());
         });
@@ -120,6 +155,9 @@ VideoPreview::VideoPreview(QObject *parent)
     : DFMFilePreview(parent)
 {
     setlocale(LC_NUMERIC, "C");
+
+    // 强制不使用嵌入mpv窗口的模式
+    dmr::CompositingManager::get().overrideCompositeMode(true);
 
     playerWidget = new VideoWidget(this);
     statusBar = new VideoStatusBar(this);
