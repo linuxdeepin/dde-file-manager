@@ -200,6 +200,7 @@ QMap<QString, QVariant> DesktopFileInfo::getDesktopFileInfo(const DUrl &fileUrl)
     QMap<QString, QVariant> map;
     QSettings settings(fileUrl.path(), QSettings::IniFormat);
 
+    settings.setIniCodec("utf-8");
     settings.beginGroup("Desktop Entry");
     // Loads .desktop file (read from 'Desktop Entry' group)
     Properties desktop(fileUrl.path(), "Desktop Entry");

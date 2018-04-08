@@ -90,7 +90,7 @@ bool Properties::load(const QString &fileName, const QString &group) {
     int first_equal = line.indexOf('=');
 
     if (groupFound && first_equal >= 0) {
-      data.insert(line.left(first_equal), line.mid(first_equal + 1));
+      data.insert(line.left(first_equal).trimmed(), line.mid(first_equal + 1).trimmed());
     }
   }
   file.close();
