@@ -1535,16 +1535,29 @@ QModelIndex DFileView::moveCursor(QAbstractItemView::CursorAction cursorAction, 
     }
 
     if (index.isValid()) {
-        d->lastCursorIndex = index;
+        if (viewMode() == IconMode) {
+            bool last_row = indexOfRow(index) == rowCount() - 1;
 
-        // call later
-        QTimer::singleShot(0, this, [this, index, d] {
-            // last row
-            if (indexOfRow(index) == rowCount() - 1) {
-                // scroll to end
-                d->verticalScrollBar->setValue(d->verticalScrollBar->maximum());
+            if (!last_row
+                    && current == index
+                    && (cursorAction == MoveDown
+                        || cursorAction == MovePageDown
+                        || cursorAction == MoveNext)) {
+                // 当下一个位置没有元素时，QListView不会自动换一列选择，应该直接选中最后一个
+                index = model()->index(count() - 1, 0);
+                last_row = true;
             }
-        });
+
+            if (last_row) {
+                // call later
+                QTimer::singleShot(0, this, [this, index, d] {
+                    // scroll to end
+                    d->verticalScrollBar->setValue(d->verticalScrollBar->maximum());
+                });
+            }
+        }
+
+        d->lastCursorIndex = index;
 
         return index;
     }
