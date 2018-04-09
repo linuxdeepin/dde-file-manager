@@ -114,6 +114,7 @@ HEADERS += \
     views/dbookmarkscene.h \
     views/dbookmarkitem.h \
     views/dbookmarkitemgroup.h \
+    views/dfmsidebaritemgroup.h \
     views/dbookmarkrootitem.h \
     views/dbookmarkview.h \
     controllers/trashmanager.h \
@@ -238,7 +239,8 @@ HEADERS += \
     controllers/interface/tagmanagerdaemon_interface.h \
     shutil/danythingmonitor.h \
     interfaces/dfmsidebar.h \
-    interfaces/dfmsidebaritem.h
+    interfaces/dfmsidebaritem.h \
+    views/dfmsidebaritemseparator.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -275,6 +277,7 @@ SOURCES += \
     views/dbookmarkscene.cpp \
     views/dbookmarkitem.cpp \
     views/dbookmarkitemgroup.cpp \
+    views/dfmsidebaritemgroup.cpp \
     views/dbookmarkrootitem.cpp \
     views/dbookmarkview.cpp \
     controllers/trashmanager.cpp \
@@ -392,7 +395,8 @@ SOURCES += \
     controllers/interface/tagmanagerdaemon_interface.cpp \
     shutil/danythingmonitor.cpp \
     interfaces/dfmsidebar.cpp \
-    interfaces/dfmsidebaritem.cpp
+    interfaces/dfmsidebaritem.cpp \
+    views/dfmsidebaritemseparator.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET

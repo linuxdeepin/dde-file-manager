@@ -57,7 +57,7 @@ public:
     void setContentWidget(QWidget *widget);
     QWidget *contentWidget() const;
 
-    void setIconFromThemeConfig(const QString &group, const QString &key);
+    void setIconFromThemeConfig(const QString &group, const QString &key = "icon");
 
 public Q_SLOTS:
     void setHasDrag(bool hasDrag);
@@ -75,6 +75,9 @@ protected:
     virtual QMenu *createStandardContextMenu() const;
     virtual bool canDropMimeData(const QMimeData *data, Qt::DropAction action) const;
     virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action) const;
+
+    void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 
 private:
     QScopedPointer<DFMSideBarItemPrivate> d_ptr;
