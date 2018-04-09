@@ -53,7 +53,7 @@
 #include "dfmplaformmanager.h"
 
 #include <dthememanager.h>
-#include <anchors.h>
+#include <danchors.h>
 
 #include <QLineEdit>
 #include <QTextEdit>
@@ -107,7 +107,7 @@ public:
 
     DUrlList preSelectionUrls;
 
-    Anchors<QLabel> contentLabel = Q_NULLPTR;
+    DAnchors<QLabel> contentLabel = Q_NULLPTR;
 
     QModelIndex mouseLastPressedIndex;
 
@@ -1935,21 +1935,13 @@ void DFileView::setContentLabel(const QString &text)
 {
     D_D(DFileView);
 
-    if (text.isEmpty() && d->contentLabel) {
-        d->contentLabel->deleteLater();
-        d->contentLabel = Q_NULLPTR;
-
-        return;
-    }
-
     if (!d->contentLabel) {
         d->contentLabel = new QLabel(this);
-
-        d->contentLabel->show();
         d->contentLabel.setCenterIn(this);
         d->contentLabel->setObjectName("contentLabel");
         d->contentLabel->setStyleSheet(this->styleSheet());
         d->contentLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
+        d->contentLabel->show();
     }
 
     d->contentLabel->setText(text);
@@ -2423,20 +2415,26 @@ void DFileView::onModelStateChanged(int state)
 
 void DFileView::updateContentLabel()
 {
-    if (model()->state() != DFileSystemModel::Idle)
+    if (model()->state() != DFileSystemModel::Idle
+            || model()->canFetchMore(rootIndex())) {
+        setContentLabel(QString());
+
         return;
+    }
 
     int count = this->count();
-    const DUrl &currentUrl = this->rootUrl();
 
     if (count <= 0) {
-        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, currentUrl);
+        const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(rootIndex());
 
-        if (fileInfo)
+        if (fileInfo) {
             setContentLabel(fileInfo->subtitleForEmptyFloder());
-    } else {
-        setContentLabel(QString());
+
+            return;
+        }
     }
+
+    setContentLabel(QString());
 }
 
 void DFileView::preproccessDropEvent(QDropEvent *event) const
