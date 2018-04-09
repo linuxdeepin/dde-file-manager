@@ -47,6 +47,8 @@ public:
         title->setPalette(pa);
 
         DAnchorsBase::setAnchor(title, Qt::AnchorHorizontalCenter, this, Qt::AnchorHorizontalCenter);
+
+        engine().setBackendProperty("keep-open", "yes");
     }
 
     QSize sizeHint() const override
@@ -112,11 +114,12 @@ public:
         layout->addWidget(timeLabel);
 
         connect(control_button, &DImageButton::clicked, this, [this, button_mask] {
-            if (p->playerWidget->engine().paused()) {
-                p->pause();
-            } else {
-                p->playerWidget->engine().play();
-            }
+            // 由于调用了setBackendProperty("keep-open", "yes")
+            // 导致视频播放状态不对（要暂停到最后一帧，所以视频播放完毕后状态还是暂停）
+            // 如果是暂停状态，调用pause一定会播放，之后再调用play也没有影响
+            // 反之，如果是停止状态，调用pause无反应，之后再调用play肯定会播放
+            p->pause();
+            p->playerWidget->engine().play();
 
             button_mask->show();
         });
