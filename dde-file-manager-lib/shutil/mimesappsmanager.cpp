@@ -416,7 +416,6 @@ QStringList MimesAppsManager::getRecommendedApps(const DUrl &url)
 QStringList MimesAppsManager::getRecommendedAppsByQio(const QMimeType &mimeType)
 {
     QStringList recommendApps;
-    QSet<QString> recommendAppsIsSet;
     QList<QMimeType> mimeTypeList;
     QMimeDatabase mimeDatabase;
 
@@ -431,10 +430,20 @@ QStringList MimesAppsManager::getRecommendedAppsByQio(const QMimeType &mimeType)
 
             foreach (const QString &name, type_name_list) {
                 foreach (const QString &app, mimeAppsManager->MimeApps.value(name)) {
-                    if (!recommendAppsIsSet.contains(app)) {
-                        recommendAppsIsSet << app;
-                        recommendApps.append(app);
+                    bool app_exist = false;
+
+                    for (const QString &other : recommendApps) {
+                        const DesktopFile &app_desktop = mimeAppsManager->DesktopObjs.value(app);
+                        const DesktopFile &other_desktop = mimeAppsManager->DesktopObjs.value(other);
+
+                        if (app_desktop.getExec() == other_desktop.getExec() && app_desktop.getLocalName() == other_desktop.getLocalName()) {
+                            app_exist = true;
+                            break;
+                        }
                     }
+
+                    if (!app_exist)
+                        recommendApps.append(app);
                 }
             }
         }
