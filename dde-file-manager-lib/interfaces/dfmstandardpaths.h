@@ -58,7 +58,8 @@ public:
         DiskPath,
         NetworkRootPath,
         UserShareRootPath,
-        ComputerRootPath
+        ComputerRootPath,
+        Root
     };
 
     static QString standardLocation(StandardLocation type);

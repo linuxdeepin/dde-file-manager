@@ -43,7 +43,7 @@
 #define TITLE_FIXED_HEIGHT 40
 
 class DTitleBar;
-class DLeftSideBar;
+//class DLeftSideBar;
 class DToolBar;
 class DDetailView;
 class QStatusBar;

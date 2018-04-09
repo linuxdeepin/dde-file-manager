@@ -23,7 +23,7 @@
  */
 
 #include "dfilemanagerwindow.h"
-#include "dleftsidebar.h"
+//#include "dleftsidebar.h"
 #include "dtoolbar.h"
 #include "dfileview.h"
 #include "fileviewhelper.h"
