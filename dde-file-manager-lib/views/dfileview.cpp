@@ -1537,6 +1537,15 @@ QModelIndex DFileView::moveCursor(QAbstractItemView::CursorAction cursorAction, 
     if (index.isValid()) {
         d->lastCursorIndex = index;
 
+        // call later
+        QTimer::singleShot(0, this, [this, index, d] {
+            // last row
+            if (indexOfRow(index) == rowCount() - 1) {
+                // scroll to end
+                d->verticalScrollBar->setValue(d->verticalScrollBar->maximum());
+            }
+        });
+
         return index;
     }
 

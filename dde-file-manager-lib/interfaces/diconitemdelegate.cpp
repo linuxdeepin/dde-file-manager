@@ -406,6 +406,7 @@ QSize DIconItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelInde
 
     if (index.isValid() && index == d->lastAndExpandedInde) {
         d->expandedItem->setFixedWidth(size.width());
+        d->expandedItem->icon->setFixedSize(parent()->parent()->iconSize());
 
         return d->expandedItem->size();
     }
