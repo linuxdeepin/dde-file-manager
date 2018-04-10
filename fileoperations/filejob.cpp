@@ -36,6 +36,7 @@
 #include "partman/partition.h"
 #include "dfmevent.h"
 #include "dfmeventdispatcher.h"
+#include "dabstractfilewatcher.h"
 
 #ifdef SW_LABEL
 #include "sw_label/llsdeepinlabellibrary.h"
@@ -817,8 +818,15 @@ void FileJob::setIsAborted(bool isAborted)
 
 bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMoved, QString *targetPath)
 {
-    if (m_isGvfsFileOperationUsed){
-        return copyFileByGio(srcFile, tarDir, isMoved, targetPath);
+    if (m_isGvfsFileOperationUsed) {
+        QString targetFile;
+
+        bool ok = copyFileByGio(srcFile, tarDir, isMoved, &targetFile);
+
+        if (targetPath)
+            *targetPath = targetFile;
+
+        return ok;
     }
 #ifdef SW_LABEL
     if (LlsDeepinLabelLibrary::instance()->isCompletion()){
@@ -1112,6 +1120,19 @@ void FileJob::showProgress(goffset current_num_bytes, goffset total_num_bytes, g
     job->m_bytesPerSec += writtenBytes;
     job->m_bytesCopied += writtenBytes;
     job->m_last_current_num_bytes = current_num_bytes;
+
+    // 使用gio往远程挂载设备中复制文件时没有notify
+    // 需要手动更新文件信息
+    if (job->m_isGvfsFileOperationUsed) {
+        if (job->m_needGhostFileCreateSignal) {
+            DAbstractFileWatcher::ghostSignal(DUrl::fromLocalFile(QFileInfo(job->m_tarPath).absolutePath()),
+                                              &DAbstractFileWatcher::subfileCreated, DUrl::fromLocalFile(job->m_tarPath));
+            job->m_needGhostFileCreateSignal = false;
+        }
+
+        DAbstractFileWatcher::ghostSignal(DUrl::fromLocalFile(QFileInfo(job->m_tarPath).absolutePath()),
+                                          &DAbstractFileWatcher::fileModified, DUrl::fromLocalFile(job->m_tarPath));
+    }
 }
 
 bool FileJob::copyFileByGio(const QString &srcFile, const QString &tarDir, bool isMoved, QString *targetPath)
@@ -1211,6 +1232,10 @@ bool FileJob::copyFileByGio(const QString &srcFile, const QString &tarDir, bool 
             case FileJob::Run:
             {
                 GFileProgressCallback progress_callback = FileJob::showProgress;
+
+                // 需要模拟通知文件创建的信号
+                m_needGhostFileCreateSignal = true;
+
                 if (!g_file_copy (source, target, flags, m_abortGCancellable, progress_callback, this, &error)){
                     if (error){
                         qDebug() << error->message << g_file_error_from_errno(error->domain);
