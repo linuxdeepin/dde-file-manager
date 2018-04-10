@@ -400,38 +400,45 @@ void UDiskListener::removeMountDiskInfo(const QDiskInfo &diskInfo)
 
 void UDiskListener::addVolumeDiskInfo(const QDiskInfo &diskInfo)
 {
+    if (diskInfo.id().isEmpty())
+        return;
+
     UDiskDeviceInfoPointer device;
-    if(m_map.value(diskInfo.id())){
+
+    if (m_map.contains(diskInfo.id())) {
         device = m_map.value(diskInfo.id());
         device->setDiskInfo(diskInfo);
-    }else{
+    } else {
         device = new UDiskDeviceInfo();
         device->setDiskInfo(diskInfo);
         addDevice(device);
     }
+
     emit volumeAdded(device);
 }
 
 void UDiskListener::removeVolumeDiskInfo(const QDiskInfo &diskInfo)
 {
     UDiskDeviceInfoPointer device;
-    qDebug() << diskInfo << m_map.contains(diskInfo.id()) << m_map;
-    if (m_map.value(diskInfo.id())){
+    qDebug() << diskInfo << m_list;
+    if (m_map.contains(diskInfo.id())) {
         device = m_map.value(diskInfo.id());
 //        removeDevice(device);
 //        emit volumeRemoved(device);
-    }else{
+    } else {
         foreach (UDiskDeviceInfoPointer d, getDeviceList()) {
-            qDebug() << d->getDiskInfo().uuid() << diskInfo.uuid();
-            qDebug() << d->getDiskInfo().id() << diskInfo.id();
-            if (d->getDiskInfo().uuid() == diskInfo.uuid() || d->getDiskInfo().id() == diskInfo.id()){
+            qDebug() << d->getDiskInfo();
+
+            if (!(diskInfo.uuid().isEmpty() && d->getDiskInfo().uuid() == diskInfo.uuid())
+                    || d->getDiskInfo().id() == diskInfo.id()) {
                 device = d;
                 break;
             }
         }
     }
-    if (device){
-        qDebug() << device;
+
+    if (device) {
+        qDebug() << device->getDiskInfo();
         removeDevice(device);
         emit volumeRemoved(device);
     }
@@ -442,6 +449,10 @@ void UDiskListener::changeVolumeDiskInfo(const QDiskInfo &diskInfo)
     UDiskDeviceInfoPointer device;
     qDebug() << diskInfo;
     qDebug() << m_map.value(diskInfo.id());
+
+    if (diskInfo.id().isEmpty())
+        return;
+
     if(m_map.value(diskInfo.id())){
         device = m_map.value(diskInfo.id());
     }else{
