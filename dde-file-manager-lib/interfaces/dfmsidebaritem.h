@@ -76,6 +76,9 @@ protected:
     virtual bool canDropMimeData(const QMimeData *data, Qt::DropAction action) const;
     virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action) const;
 
+    bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
+    void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 

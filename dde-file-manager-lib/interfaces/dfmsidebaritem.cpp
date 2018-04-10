@@ -41,18 +41,23 @@ class DFMSideBarItemPrivate
 public:
     DFMSideBarItemPrivate(DFMSideBarItem *qq);
     void init();
+    QPixmap icon() const;
+    ThemeConfig::State getState() const;
 
     bool hasDrag = false;
     bool readOnly = true;
-    bool checked = false;
 
     DUrl url;
     QFont font;
-    QPixmap icon;
     QString displayText = "Placeholder";
-    ThemeConfig::State state = ThemeConfig::Normal;
 
     DFMSideBarItem *q_ptr = nullptr;
+
+private:
+    bool pressed = false;
+    bool checked = false;
+    bool hovered = false;
+    QString iconGroup, iconKey; // use `icon()` and you'll get proper QPixmap for drawing.
 };
 
 DFMSideBarItemPrivate::DFMSideBarItemPrivate(DFMSideBarItem *qq)
@@ -65,6 +70,8 @@ void DFMSideBarItemPrivate::init()
 {
     Q_Q(DFMSideBarItem);
 
+    q->installEventFilter(q);
+    q->setAcceptDrops(true);
     q->setMinimumSize(SIDEBAR_ITEM_WIDTH, SIDEBAR_ITEM_HEIGHT);
     q->setIconFromThemeConfig("BookmarkItem.BookMarks", "icon"); // Default icon
     // this approach seems bad, maybe manually set the name is a better idea.
@@ -73,6 +80,25 @@ void DFMSideBarItemPrivate::init()
     if (file_info) {
         displayText = file_info->fileDisplayName();
     }
+}
+
+QPixmap DFMSideBarItemPrivate::icon() const
+{
+    return ThemeConfig::instace()->pixmap(iconGroup, iconKey, getState());
+}
+
+ThemeConfig::State DFMSideBarItemPrivate::getState() const
+{
+    if (checked) {
+        return ThemeConfig::Checked;
+    }
+    if (pressed) {
+        return ThemeConfig::Pressed;
+    }
+    if (hovered) {
+        return ThemeConfig::Hover;
+    }
+    return ThemeConfig::Normal;
 }
 
 DFMSideBarItem::DFMSideBarItem(const DUrl &url, QWidget *parent)
@@ -121,7 +147,11 @@ void DFMSideBarItem::setIconFromThemeConfig(const QString &group, const QString 
 {
     Q_D(DFMSideBarItem);
 
-    d->icon = ThemeConfig::instace()->pixmap(group, key, d->state);
+    d->iconGroup = group;
+    d->iconKey = key;
+
+    // Do widget UI update.
+    update();
 }
 
 void DFMSideBarItem::setHasDrag(bool hasDrag)
@@ -142,8 +172,10 @@ void DFMSideBarItem::setChecked(bool checked)
 {
     Q_D(DFMSideBarItem);
 
-    d->state = ThemeConfig::Checked;
     d->checked = checked;
+
+    // Do widget UI update.
+    update();
 }
 
 void DFMSideBarItem::setText(QString text)
@@ -226,15 +258,66 @@ bool DFMSideBarItem::dropMimeData(const QMimeData *data, Qt::DropAction action) 
 
 }
 
+bool DFMSideBarItem::eventFilter(QObject *watched, QEvent *event)
+{
+    Q_D(DFMSideBarItem);
+
+    // Only care about events of current widget
+    if (watched != this) {
+        return false;
+    }
+
+    // Hover
+    if (event->type() == QEvent::Enter) {
+        d->pressed = false; // clear click state
+        d->hovered = true;
+        update();
+    } else if (event->type() == QEvent::Leave) {
+        d->pressed = false; // only able to press when mouse is on this widget
+        d->hovered = false;
+        update();
+    }
+
+    // Return: Event filters do NOT allow further processing of the event?
+    return QWidget::eventFilter(watched, event);
+}
+
+void DFMSideBarItem::mouseMoveEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+
+    // nothing for now, just ate mouse move event.
+
+    return;
+}
+
+void DFMSideBarItem::mousePressEvent(QMouseEvent *event)
+{
+    Q_D(DFMSideBarItem);
+
+    if (event->button() == Qt::MouseButton::LeftButton) {
+        d->pressed = true;
+    }
+
+    update();
+    return QWidget::mousePressEvent(event);
+}
+
 void DFMSideBarItem::mouseReleaseEvent(QMouseEvent *event)
 {
-    emit clicked();
+    Q_D(DFMSideBarItem);
+
+    if (event->button() == Qt::MouseButton::LeftButton && d->pressed) {
+        d->pressed = false;
+        emit clicked(); // don't set d->checked when clicked, wait for a signal.
+    }
 
     if (event->button() == Qt::MouseButton::RightButton) {
         QMenu *menu = createStandardContextMenu();
         menu->popup(event->globalPos());
     }
 
+    update();
     return QWidget::mouseReleaseEvent(event);
 }
 
@@ -249,19 +332,26 @@ void DFMSideBarItem::paintEvent(QPaintEvent *event)
     const int paddingLeft = 13;
     const int textPaddingLeft = paddingLeft + 24;
     int iconPaddingTop = (height() - SIDEBAR_ICON_SIZE) / 2;
+    QColor backgroundColor, textPenColor, iconBrushColor;
+    QRect iconRect(paddingLeft, iconPaddingTop, SIDEBAR_ICON_SIZE, SIDEBAR_ICON_SIZE);
+    QRect textRect(textPaddingLeft, 0, width() - textPaddingLeft, height());
 
-    // Draw background color
-    //painter.fillRect(rect(), QBrush(QColor(128, 128, 255, 128)));
+    backgroundColor = ThemeConfig::instace()->color("BookmarkItem", "background", d->getState());
+    textPenColor = ThemeConfig::instace()->color("BookmarkItem", "color", d->getState());
+    iconBrushColor = ThemeConfig::instace()->color("BookmarkItem", "background", d->getState()); // what color?
+
+    // Draw Background
+    painter.fillRect(rect(), QBrush(backgroundColor));
 
     // Draw Icon
-    QRect iconRect(paddingLeft, iconPaddingTop, SIDEBAR_ICON_SIZE, SIDEBAR_ICON_SIZE);
-    painter.drawPixmap(iconRect, d->icon);
+    painter.setBrush(iconBrushColor);
+    painter.drawPixmap(iconRect, d->icon());
 
     // Draw Text
-    QRect rect(textPaddingLeft, 0, width() - textPaddingLeft, height());
+    painter.setPen(textPenColor);
     QFontMetrics metrics(d->font);
     QString elidedText = metrics.elidedText(d->displayText, Qt::ElideMiddle, width() - textPaddingLeft - 60);
-    painter.drawText(rect, Qt::TextWordWrap | Qt::AlignLeft | Qt::AlignVCenter, elidedText);
+    painter.drawText(textRect, Qt::TextWordWrap | Qt::AlignLeft | Qt::AlignVCenter, elidedText);
 }
 
 DFM_END_NAMESPACE

@@ -39,7 +39,7 @@ void DFMSideBarItemSeparator::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     QColor bColor = ThemeConfig::instace()->color("BookmarkItem.DBookmarkLine", "background");
     painter.setPen(bColor);
-    painter.drawLine(0, height() / 2 + 1, width(), height() / 2 + 1);
+    painter.drawLine(0, height() / 2, width(), height() / 2);
 }
 
 DFM_END_NAMESPACE
