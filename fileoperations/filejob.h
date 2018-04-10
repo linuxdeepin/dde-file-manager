@@ -175,6 +175,8 @@ private:
     bool m_isCheckingDisk = false;
 
     bool m_isGvfsFileOperationUsed = false;
+    bool m_needGhostFileCreateSignal = false;
+
     qint64 m_bytesCopied = 0;
     qint64 m_totalSize = 1;
     qint64 m_bytesPerSec = 0;
