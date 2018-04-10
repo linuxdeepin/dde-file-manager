@@ -1493,9 +1493,11 @@ const FileSystemNodePointer DFileSystemModel::createNode(FileSystemNode *parent,
 
 //        return node;
 //    } else {
+    Q_D(const DFileSystemModel);
+
         FileSystemNodePointer node(new FileSystemNode(parent, info));
 
-        node->fileInfo->setColumnCompact(columnIsCompact());
+        node->fileInfo->setColumnCompact(d->columnCompact);
 //        d->urlToNode[info->fileUrl()] = node;
 
         return node;
