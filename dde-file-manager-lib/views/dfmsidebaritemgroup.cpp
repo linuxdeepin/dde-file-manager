@@ -21,7 +21,6 @@
 
 #include "dfmsidebaritem.h"
 #include "dfmsidebaritemgroup.h"
-#include "dfmsidebaritemseparator.h"
 
 #include "app/define.h"
 #include "deviceinfo/udisklistener.h"
@@ -34,7 +33,8 @@ DFM_BEGIN_NAMESPACE
 
 DFMSideBarItemGroup::DFMSideBarItemGroup(DFMSideBar::GroupName groupName)
 {
-    this->setSpacing(0);
+    setSpacing(0);
+    bottomSeparator = new DFMSideBarItemSeparator();
 
     switch (groupName) {
     case DFMSideBar::GroupName::Common:
@@ -62,6 +62,7 @@ DFMSideBarItemGroup::DFMSideBarItemGroup(DFMSideBar::GroupName groupName)
         for (const BookMarkPointer &bm : m_list) {
             DFMSideBarItem *item = new DFMSideBarItem(bm.data()->getUrl());
             item->setText(bm->getName());
+            itemList.append(item);
             this->addWidget(item);
             //item->setIsCustomBookmark(true);
             //item->setBookmarkModel(bm);
@@ -79,12 +80,19 @@ DFMSideBarItemGroup::DFMSideBarItemGroup(DFMSideBar::GroupName groupName)
         break;
     }
 
-    this->addWidget(new DFMSideBarItemSeparator()); // TODO: should hold by this class.
+    this->addWidget(bottomSeparator);
+    bottomSeparator->setVisible(itemList.count() != 0);
 }
 
 void DFMSideBarItemGroup::appendItem(DUrl url)
 {
+    DFMSideBarItem *item = new DFMSideBarItem(url);
+
+    // for better indexing, counting and etc.
+    itemList.append(item);
+
     this->addWidget(new DFMSideBarItem(url));
+    bottomSeparator->setVisible(itemList.count() != 0);
 }
 
 void DFMSideBarItemGroup::appendItem(DFMStandardPaths::StandardLocation location)
@@ -140,7 +148,11 @@ void DFMSideBarItemGroup::appendItem(DFMStandardPaths::StandardLocation location
         break;
     }
 
+    // for better indexing, counting and etc.
+    itemList.append(item);
+
     this->addWidget(item);
+    bottomSeparator->setVisible(itemList.count() != 0);
 }
 
 DFM_END_NAMESPACE

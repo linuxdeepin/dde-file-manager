@@ -28,6 +28,7 @@
 
 #include "dfmstandardpaths.h"
 #include "dfmsidebar.h"
+#include "dfmsidebaritemseparator.h"
 
 DFM_BEGIN_NAMESPACE
 
@@ -39,6 +40,10 @@ public:
     DFMSideBarItemGroup(DFMSideBar::GroupName groupName);
     void appendItem(DUrl url);
     void appendItem(DFMStandardPaths::StandardLocation location);
+
+private:
+    QList<DFMSideBarItem *> itemList;
+    DFMSideBarItemSeparator *bottomSeparator;
 };
 
 DFM_END_NAMESPACE
