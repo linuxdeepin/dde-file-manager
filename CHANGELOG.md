@@ -1,3 +1,32 @@
+<a name="4.4.8.4"></a>
+## 4.4.8.4 (2018-04-10)
+
+
+#### Features
+
+*   add compact mode for list view ([07b9aa5e](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/07b9aa5eea64e3f9ef660b578a8bb7b5d2ce3fb1))
+*   show current path on the window title ([b7f8f796](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/b7f8f796315aea7846ec1af4c760349f171450ba))
+*   add overwrite confirm dialog for DFileDialog ([949fe0a4](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/949fe0a4ed9fc99d59582cae5683c194753da792))
+
+#### Bug Fixes
+
+*   can not drag read only files to folder ([33031c9d](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/33031c9db668ec7405dd3a26ac59ce5e046d3d46))
+*   crash in DFMSettingDialog ([48c8ba1f](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/48c8ba1f50ddd8877f17fd40b6d17fe21f91f3cc))
+*   file icon is empty when icon theme update ([d04a0ab9](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/d04a0ab9a401cbac38edb2a6880aa9a653a97669))
+*   can not clean trash ([c691b32d](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/c691b32d48577599e2ad5f089c388474922dadb0))
+*   can preview the ico image ([a47c522c](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/a47c522ca193f736413ba25c106a8419d01ab905))
+*   crash at FileJob::copyDir ([ac43d8a3](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/ac43d8a32c957b173c3e3bb9045ab2aea841f831))
+*   can not click to open the file on computer view ([e6b4033c](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/e6b4033ce9502498813ed098ba39b8e3cb47dce1))
+*   the file chooser dialog window type is Qt::Window ([4b53f22c](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/4b53f22c9f4e8f98b377c40d62e12889dad55de2))
+*   disable open files by Ctrl+N ([06729f39](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/06729f39c658a0e5e0b4df4f241ce57d2949cefb))
+*   can not search in android phone mount path ([4be8bfc9](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/4be8bfc918b357568b512bf5ec1643e5dd546ce3))
+*   stop copy action when error occurred reading from file ([7d13a879](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/7d13a879feb37ba068581f11c444d6c6ed752bc8))
+*   can not move a symlink to trash if the symlink target size out of 1GB and the symlink target in other disk ([b8b80d35](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/b8b80d353d5a5681972f1f794b8ae39ad98864fc))
+*   crash on preview music ([16f57989](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/16f579898185967935ac0cc13b1e47da05fe427d))
+*   video stop when press Super+D ([15de66aa](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/15de66aab5335606dd25da434ecd3d26648fc7e0))
+
+
+
 <a name="4.4.8.3"></a>
 ##  (2018-03-22)
 
