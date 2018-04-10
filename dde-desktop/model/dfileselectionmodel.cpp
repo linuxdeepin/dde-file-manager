@@ -71,6 +71,9 @@ QModelIndexList DFileSelectionModel::selectedIndexes() const
                 m_selectedList << range.indexes();
             }
         }
+
+        // remove repeated item
+        m_selectedList = m_selectedList.toSet().toList();
     }
 
     return m_selectedList;
