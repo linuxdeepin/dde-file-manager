@@ -83,6 +83,7 @@ void MainWindow::initUI()
     titlebar->setTitle(title);
     titlebar->setFixedHeight(20);
     titlebar->layout()->setContentsMargins(0, 0, 0, 0);
+    titlebar->setBackgroundTransparent(true);
 
     m_pageStack = new QStackedWidget(this);
     m_pageStack->setFixedSize(width(), 340);
