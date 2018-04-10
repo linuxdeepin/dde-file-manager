@@ -830,13 +830,19 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 QMimeData *DFileSystemModel::mimeData(const QModelIndexList &indexes) const
 {
     QList<QUrl> urls;
+    QSet<QUrl> urls_set;
     QList<QModelIndex>::const_iterator it = indexes.begin();
 
     for (; it != indexes.end(); ++it) {
         if ((*it).column() == 0) {
             const DAbstractFileInfoPointer &fileInfo = this->fileInfo(*it);
+            const QUrl &url = fileInfo->mimeDataUrl();
 
-            urls << fileInfo->mimeDataUrl();
+            if (urls_set.contains(url))
+                continue;
+
+            urls << url;
+            urls_set << url;
         }
     }
 
