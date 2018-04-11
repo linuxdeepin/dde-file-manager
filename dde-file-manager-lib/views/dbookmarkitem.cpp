@@ -725,7 +725,7 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             deviceListener->mount(m_bookmarkModel->getDevcieId());
             setMountBookmark(true);
 
-            TIMER_SINGLESHOT(1000, {
+                TIMER_SINGLESHOT(0, {
 
                                  QDir dir(this->m_url.path());
                                  if(!dir.exists()){
