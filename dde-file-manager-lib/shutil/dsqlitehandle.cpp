@@ -233,7 +233,7 @@ QPair<QString, QString> DSqliteHandle::getMountPointOfFile(const DUrl& url,
         }
 
 
-        if(partionAndMounpointItr == std::multimap<QString, QString>::const_iterator{} ||
+        if(partionAndMounpointItr == std::multimap<QString, QString>::const_iterator{} &&
            parentPath.startsWith(ROOTPATH)){
             partionAndMountPoint.first = rootPathPartionAndMountpointItr->first;
             partionAndMountPoint.second = rootPathPartionAndMountpointItr->second;
