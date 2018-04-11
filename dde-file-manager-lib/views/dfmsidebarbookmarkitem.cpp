@@ -18,33 +18,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "dfmsidebarbookmarkitem.h"
+#include "dfilemenu.h"
+#include "dfilemenumanager.h"
 
-#ifndef DFMSIDEBARITEMGROUP_H
-#define DFMSIDEBARITEMGROUP_H
-
-#include <QVBoxLayout>
-
-#include <dfmglobal.h>
-
-#include "dfmstandardpaths.h"
-#include "dfmsidebar.h"
-#include "dfmsidebaritemseparator.h"
+#include "singleton.h"
 
 DFM_BEGIN_NAMESPACE
 
-class DFMSideBarItemGroup : public QVBoxLayout
+DFMSideBarBookmarkItem::DFMSideBarBookmarkItem(BookMarkPointer bookmark)
+    : DFMSideBarItem(bookmark->getUrl())
 {
-    Q_OBJECT
+    setText(bookmark->getName());
+    setIconFromThemeConfig("BookmarkItem.BookMarks", "icon");
+}
 
-public:
-    DFMSideBarItemGroup();
-    void appendItem(DFMSideBarItem *item);
+QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
+{
+    QMenu *menu = new QMenu();
 
-private:
-    QList<DFMSideBarItem *> itemList;
-    DFMSideBarItemSeparator *bottomSeparator;
-};
+    menu->addAction(QObject::tr("Open in new window"));
+    menu->addAction(QObject::tr("Open in new tab"));
+    menu->addAction(QObject::tr("Rename"));
+    menu->addAction(QObject::tr("Remove"));
+    menu->addAction(QObject::tr("Properties"));
+
+    return menu;
+}
 
 DFM_END_NAMESPACE
-
-#endif // DFMSIDEBARITEMGROUP_H

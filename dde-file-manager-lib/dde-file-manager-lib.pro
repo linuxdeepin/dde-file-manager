@@ -240,7 +240,10 @@ HEADERS += \
     shutil/danythingmonitor.h \
     interfaces/dfmsidebar.h \
     interfaces/dfmsidebaritem.h \
-    views/dfmsidebaritemseparator.h
+    views/dfmsidebaritemseparator.h \
+    views/dfmsidebardefaultitem.h \
+    views/dfmsidebarbookmarkitem.h \
+    views/dfmsidebartrashitem.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -396,7 +399,10 @@ SOURCES += \
     shutil/danythingmonitor.cpp \
     interfaces/dfmsidebar.cpp \
     interfaces/dfmsidebaritem.cpp \
-    views/dfmsidebaritemseparator.cpp
+    views/dfmsidebaritemseparator.cpp \
+    views/dfmsidebardefaultitem.cpp \
+    views/dfmsidebarbookmarkitem.cpp \
+    views/dfmsidebartrashitem.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET

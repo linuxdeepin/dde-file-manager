@@ -19,10 +19,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dfmsidebar.h"
+
+#include "app/define.h"
 #include "views/dfmsidebaritemgroup.h"
+#include "views/dfmsidebarbookmarkitem.h"
+#include "views/dfmsidebardefaultitem.h"
+#include "views/dfmsidebartrashitem.h"
+#include "controllers/bookmarkmanager.h"
+#include "deviceinfo/udisklistener.h"
 
 #include <DThemeManager>
 #include <QVBoxLayout>
+
+#include "singleton.h"
+
 
 DWIDGET_USE_NAMESPACE
 
@@ -37,10 +47,12 @@ public:
 
     DFMSideBar *q_ptr = nullptr;
     QVBoxLayout *mainLayout;
+    QMap<QString, DFMSideBarItemGroup *> groupNameMap;
 
 private:
     void initData();
     void initUI();
+    void addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::GroupName groupType);
 };
 
 DFMSideBarPrivate::DFMSideBarPrivate(DFMSideBar *qq)
@@ -78,7 +90,54 @@ void DFMSideBarPrivate::initUI()
     };
 
     foreach (const DFMSideBar::GroupName &groupType, groups) {
-        mainLayout->addLayout(new DFMSideBarItemGroup(groupType));
+        DFMSideBarItemGroup *group = new DFMSideBarItemGroup();
+        addItemToGroup(group, groupType);
+        groupNameMap[q->groupName(groupType)] = group;
+        mainLayout->addLayout(group);
+    }
+}
+
+void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::GroupName groupType)
+{
+    // to make group touch less DFM internal implement, we add item here.
+    using DFM_STD_LOCATION = DFMStandardPaths::StandardLocation;
+
+    switch (groupType) {
+    case DFMSideBar::GroupName::Common:
+        group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::HomePath));
+        group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::DesktopPath));
+        group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::VideosPath));
+        group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::MusicPath));
+        group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::PicturesPath));
+        group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::DocumentsPath));
+        group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::DownloadsPath));
+        group->appendItem(new DFMSideBarTrashItem());
+        break;
+    case DFMSideBar::GroupName::Device:
+        group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::ComputerRootPath));
+        group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::Root)); // TODO: check dfmPlatformManager->isRoot_hidden()
+        for (const UDiskDeviceInfoPointer &device : deviceListener->getDeviceList()) {
+            // take care of this part, it seems we should mount the device if it's not yet mounted
+            // and also for other devices like smartphone and etc.
+            // so maybe we need a `appendItem(UDiskDeviceInfoPointer device)`
+            group->appendItem(new DFMSideBarItem(device.data()->getMountPointUrl()));
+        }
+        break;
+    case DFMSideBar::GroupName::Bookmark: {
+        const QList<BookMarkPointer> &m_list = bookmarkManager->getBookmarks();
+        for (const BookMarkPointer &bm : m_list) {
+            group->appendItem(new DFMSideBarBookmarkItem(bm));
+        }
+        break;
+    }
+    case DFMSideBar::GroupName::Network:
+        group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::NetworkRootPath));
+        break;
+    case DFMSideBar::GroupName::Tag:
+        // nothing here
+        break;
+    default: // make compiler happy
+        break;
     }
 }
 

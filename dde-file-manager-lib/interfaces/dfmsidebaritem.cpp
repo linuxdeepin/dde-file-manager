@@ -70,7 +70,6 @@ void DFMSideBarItemPrivate::init()
 {
     Q_Q(DFMSideBarItem);
 
-    q->installEventFilter(q);
     q->setAcceptDrops(true);
     q->setMinimumSize(SIDEBAR_ITEM_WIDTH, SIDEBAR_ITEM_HEIGHT);
     q->setIconFromThemeConfig("BookmarkItem.BookMarks", "icon"); // Default icon
@@ -92,12 +91,15 @@ ThemeConfig::State DFMSideBarItemPrivate::getState() const
     if (checked) {
         return ThemeConfig::Checked;
     }
+
     if (pressed) {
         return ThemeConfig::Pressed;
     }
+
     if (hovered) {
         return ThemeConfig::Hover;
     }
+
     return ThemeConfig::Normal;
 }
 
@@ -113,6 +115,13 @@ DFMSideBarItem::DFMSideBarItem(const DUrl &url, QWidget *parent)
 DFMSideBarItem::~DFMSideBarItem()
 {
 
+}
+
+const DUrl DFMSideBarItem::url() const
+{
+    Q_D(const DFMSideBarItem);
+
+    return d->url;
 }
 
 bool DFMSideBarItem::hasDrag() const
@@ -200,51 +209,12 @@ void DFMSideBarItem::playAnimation()
 */
 QMenu *DFMSideBarItem::createStandardContextMenu() const
 {
-    Q_D(const DFMSideBarItem);
+    QMenu *menu = new QMenu();
 
-    // Thing: this acutally return a `DFileMenu` rather than a `DFileMenu`.
-    DFileMenu *menu = 0;
-    QSet<MenuAction> disableList;
+    menu->addAction(QObject::tr("Open in new window"));
+    menu->addAction(QObject::tr("Open in new tab"));
+    menu->addAction(QObject::tr("Properties"));
 
-    const bool tabAddable = true;// check out how to do this
-    if (!tabAddable || (d->url.isLocalFile() && !QFile::exists(d->url.toLocalFile()))) {
-        disableList << MenuAction::OpenInNewTab;
-    }
-
-    if (d->url.isRecentFile()) {
-        menu = DFileMenuManager::createRecentLeftBarMenu(disableList);
-    } else if (d->url.isTrashFile()) {
-        menu = DFileMenuManager::createTrashLeftBarMenu(disableList);
-    } else if (d->url.isComputerFile()) {
-        menu = DFileMenuManager::createComputerLeftBarMenu(disableList);
-    }/* else if (m_isDisk && m_deviceInfo) {
-        if (!tabAddable) {
-            disableList << MenuAction::OpenDiskInNewTab;
-        }
-
-        disableList |= m_deviceInfo->disableMenuActionList() ;
-        m_url.setQuery(m_deviceID);
-
-        menu = DFileMenuManager::genereteMenuByKeys(
-                   m_deviceInfo->menuActionList(DAbstractFileInfo::SingleFile),
-                   disableList);
-    } */else if (d->url.isNetWorkFile()) {
-        menu = DFileMenuManager::createNetworkMarkMenu(disableList);
-    } else if (d->url.isUserShareFile()) {
-        menu = DFileMenuManager::createUserShareMarkMenu(disableList);
-    }/* else if (PluginManager::instance()->getViewInterfaceByScheme(d->url.scheme())) {
-        menu = DFileMenuManager::createPluginBookMarkMenu(disableList);
-    } else if (d->m_isDefault) {
-        menu = DFileMenuManager::createDefaultBookMarkMenu(disableList);
-
-        ///###: tag protocol.
-    } else if (d->url.isTagedFile()) {
-        menu = DFileMenuManager::createTagMarkMenu(disableList);
-        //DBookmarkItem::ClickedItem = this; ???
-
-    }*/ else {
-        menu = DFileMenuManager::createCustomBookMarkMenu(d->url, disableList);
-    }
     return menu;
 }
 
@@ -258,28 +228,22 @@ bool DFMSideBarItem::dropMimeData(const QMimeData *data, Qt::DropAction action) 
 
 }
 
-bool DFMSideBarItem::eventFilter(QObject *watched, QEvent *event)
+void DFMSideBarItem::enterEvent(QEvent *event)
 {
     Q_D(DFMSideBarItem);
 
-    // Only care about events of current widget
-    if (watched != this) {
-        return false;
-    }
+    d->pressed = false; // clear click state
+    d->hovered = true;
+    update();
+}
 
-    // Hover
-    if (event->type() == QEvent::Enter) {
-        d->pressed = false; // clear click state
-        d->hovered = true;
-        update();
-    } else if (event->type() == QEvent::Leave) {
-        d->pressed = false; // only able to press when mouse is on this widget
-        d->hovered = false;
-        update();
-    }
+void DFMSideBarItem::leaveEvent(QEvent *event)
+{
+    Q_D(DFMSideBarItem);
 
-    // Return: Event filters do NOT allow further processing of the event?
-    return QWidget::eventFilter(watched, event);
+    d->pressed = false; // only able to press when mouse is on this widget
+    d->hovered = false;
+    update();
 }
 
 void DFMSideBarItem::mouseMoveEvent(QMouseEvent *event)

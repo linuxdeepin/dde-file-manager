@@ -18,33 +18,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef DFMSIDEBARITEMGROUP_H
-#define DFMSIDEBARITEMGROUP_H
-
-#include <QVBoxLayout>
+#ifndef DFMSIDEBARDEFAULTITEM_H
+#define DFMSIDEBARDEFAULTITEM_H
 
 #include <dfmglobal.h>
+#include <dfmsidebaritem.h>
 
 #include "dfmstandardpaths.h"
-#include "dfmsidebar.h"
-#include "dfmsidebaritemseparator.h"
 
 DFM_BEGIN_NAMESPACE
 
-class DFMSideBarItemGroup : public QVBoxLayout
+class DFMSideBarDefaultItem : public DFMSideBarItem
 {
-    Q_OBJECT
-
 public:
-    DFMSideBarItemGroup();
-    void appendItem(DFMSideBarItem *item);
+    DFMSideBarDefaultItem(DFMStandardPaths::StandardLocation location, QWidget *parent = nullptr);
 
-private:
-    QList<DFMSideBarItem *> itemList;
-    DFMSideBarItemSeparator *bottomSeparator;
+    DUrl GetDUrlFromStandardLocation(DFMStandardPaths::StandardLocation location);
 };
 
 DFM_END_NAMESPACE
 
-#endif // DFMSIDEBARITEMGROUP_H
+#endif // DFMSIDEBARDEFAULTITEM_H
