@@ -78,19 +78,19 @@ DWIDGET_USE_NAMESPACE
 
 
 static const QMap<QString, QString> ColorsWithNames{
-                                                        { "#ffa503", "Orange"},
-                                                        { "#ff1c49", "Red"},
-                                                        { "#9023fc", "Purple"},
-                                                        { "#3468ff", "Navy-blue"},
-                                                        { "#00b5ff", "Azure"},
-                                                        { "#58df0a", "Grass-green"},
-                                                        { "#fef144", "Yellow"} ,
-                                                        { "#cccccc", "Gray" }
-                                                   };
+    { "#ffa503", "Orange"},
+    { "#ff1c49", "Red"},
+    { "#9023fc", "Purple"},
+    { "#3468ff", "Navy-blue"},
+    { "#00b5ff", "Azure"},
+    { "#58df0a", "Grass-green"},
+    { "#fef144", "Yellow"},
+    { "#cccccc", "Gray" }
+};
 
 
 int DBookmarkItem::DEFAULT_ICON_SIZE = 16;
-std::atomic<DBookmarkItem*> DBookmarkItem::ClickedItem{ nullptr };
+std::atomic<DBookmarkItem *> DBookmarkItem::ClickedItem{ nullptr };
 
 DBookmarkItem::DBookmarkItem(const QString &key)
     : m_key(key)
@@ -128,8 +128,9 @@ void DBookmarkItem::setDeviceInfo(UDiskDeviceInfoPointer deviceInfo)
     m_isMounted = deviceInfo->getDiskInfo().can_unmount();
     m_deviceInfo = deviceInfo;
 
-    if (!m_mountBookmarkItem)
+    if (!m_mountBookmarkItem) {
         m_mountBookmarkItem = makeMountBookmark(this);
+    }
     updateMountIndicator();
 }
 
@@ -156,11 +157,13 @@ QPixmap DBookmarkItem::getPixmap(const QString &key, ThemeConfig::State state) c
 {
     QPixmap p;
 
-    if (!m_key.isEmpty())
+    if (!m_key.isEmpty()) {
         p = ThemeConfig::instace()->pixmap("BookmarkItem." + m_key, key, state);
+    }
 
-    if (p.isNull())
+    if (p.isNull()) {
         p = ThemeConfig::instace()->pixmap("BookmarkItem", key, state);
+    }
 
     return p;
 }
@@ -175,14 +178,14 @@ void DBookmarkItem::setIsCustomBookmark(bool isCustomBookmark)
     m_isCustomBookmark = isCustomBookmark;
 }
 
-void DBookmarkItem::changeIconThroughColor(const QColor& color)noexcept
+void DBookmarkItem::changeIconThroughColor(const QColor &color)noexcept
 {
-    if(color.isValid()){
+    if (color.isValid()) {
         QString oldColor{ this->m_key };
         QString newColor{ ColorsWithNames[color.name()] };
         bool result{ TagManager::instance()->changeTagColor(oldColor, ColorsWithNames[color.name()]) };
 
-        if(result){
+        if (result) {
             this->m_key = newColor;
             this->update();
         }
@@ -211,15 +214,15 @@ void DBookmarkItem::setIsMountedIndicator(bool isMountedIndicator)
 
 void DBookmarkItem::editFinished()
 {
-    if (!m_lineEdit)
+    if (!m_lineEdit) {
         return;
+    }
 
     DFMUrlBaseEvent event(this, m_url);
     event.setWindowId(windowId());
     QString oldTagName{ m_textContent };
 
-    if (!m_lineEdit->text().isEmpty() && m_lineEdit->text() != m_textContent)
-    {
+    if (!m_lineEdit->text().isEmpty() && m_lineEdit->text() != m_textContent) {
         bookmarkManager->renameBookmark(getBookmarkModel(), m_lineEdit->text());
         emit fileSignalManager->bookmarkRenamed(m_lineEdit->text(), event);
         m_textContent = m_lineEdit->text();
@@ -228,8 +231,8 @@ void DBookmarkItem::editFinished()
     QString newTagName{ m_textContent };
     QSharedPointer<DFMRenameTagEvent> renameTagEvent{ new DFMRenameTagEvent{ nullptr, { oldTagName, newTagName } } };
 
-    if( AppController::instance()->actionRenameTag(renameTagEvent)){
-        this->setUrl(DUrl::fromUserTagedFile( QString{"/"} + newTagName));
+    if (AppController::instance()->actionRenameTag(renameTagEvent)) {
+        this->setUrl(DUrl::fromUserTagedFile(QString{"/"} + newTagName));
     }
 
     m_widget->deleteLater();
@@ -240,15 +243,14 @@ void DBookmarkItem::editFinished()
 
 void DBookmarkItem::checkMountedItem(const DFMEvent &event)
 {
-    if (event.windowId() != windowId()){
+    if (event.windowId() != windowId()) {
         return;
     }
 
-    if (m_isDisk && m_deviceInfo){
+    if (m_isDisk && m_deviceInfo) {
         qDebug() << event;
 
-        if(m_group)
-        {
+        if (m_group) {
             m_group->deselectAll();
             setChecked(true);
         }
@@ -265,28 +267,28 @@ void DBookmarkItem::checkMountedItem(const DFMEvent &event)
 
 void DBookmarkItem::playAnimation()
 {
-    setTransformOriginPoint(26, size().height()/2);
-    QVariantAnimation* scaleUpAni = new QVariantAnimation(this);
+    setTransformOriginPoint(26, size().height() / 2);
+    QVariantAnimation *scaleUpAni = new QVariantAnimation(this);
     scaleUpAni->setStartValue(qreal(1.0));
     scaleUpAni->setEndValue(qreal(1.2));
     scaleUpAni->setDuration(80);
 
-    QVariantAnimation* scaleDownAni = new QVariantAnimation(this);
+    QVariantAnimation *scaleDownAni = new QVariantAnimation(this);
     scaleDownAni->setStartValue(qreal(1.2));
     scaleDownAni->setEndValue(qreal(1.0));
     scaleDownAni->setDuration(220);
 
-    connect(scaleUpAni, &QVariantAnimation::valueChanged, [=](const QVariant& fac){
+    connect(scaleUpAni, &QVariantAnimation::valueChanged, [ = ](const QVariant & fac) {
         setScale(fac.toReal());
     });
-    connect(scaleDownAni, &QVariantAnimation::valueChanged, [=](const QVariant& fac){
+    connect(scaleDownAni, &QVariantAnimation::valueChanged, [ = ](const QVariant & fac) {
         setScale(fac.toReal());
     });
-    connect(scaleUpAni, &QVariantAnimation::finished, [=]{
+    connect(scaleUpAni, &QVariantAnimation::finished, [ = ] {
         scaleDownAni->start();
         scaleUpAni->deleteLater();
     });
-    connect(scaleDownAni, &QVariantAnimation::finished, [=]{
+    connect(scaleDownAni, &QVariantAnimation::finished, [ = ] {
         scaleDownAni->deleteLater();
     });
     scaleUpAni->start();
@@ -310,14 +312,14 @@ bool DBookmarkItem::isTightModel()
     return m_isTightMode;
 }
 
-void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QWidget *widget)
+void DBookmarkItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget);
     painter->setClipRect(option->exposedRect);
 //    double w = m_width;
     QColor textColor;
     double leftPadding = 13;
-    double dy = (m_height - DEFAULT_ICON_SIZE)/2;
+    double dy = (m_height - DEFAULT_ICON_SIZE) / 2;
     QPixmap press;
     QPixmap checked;
     QPixmap release;
@@ -325,80 +327,71 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
 
     QRect iconRect(leftPadding, dy, DEFAULT_ICON_SIZE, DEFAULT_ICON_SIZE);
 
-    if(m_isTightMode)
-    {
+    if (m_isTightMode) {
 //        press = m_pressImageBig;
         press = getPixmap("icon.big", ThemeConfig::Checked);
-        if (press.isNull())
+        if (press.isNull()) {
             checked = getPixmap("icon.big", ThemeConfig::Pressed);
-        else
+        } else {
             checked = press;
+        }
 
 //        release = m_releaseImageBig;
         release = getPixmap("icon.big");
 //        hover = m_hoverImageBig;
         hover = getPixmap("icon.big", ThemeConfig::Hover);
 
-        dy = m_height/2 - release.height()/2;
-    }
-    else
-    {
+        dy = m_height / 2 - release.height() / 2;
+    } else {
         press = getPixmap("icon", ThemeConfig::Checked);
-        if (press.isNull())
+        if (press.isNull()) {
             checked = getPixmap("icon", ThemeConfig::Pressed);
-        else
+        } else {
             checked = press;
+        }
 
 //        release = m_releaseImage;
         release = getPixmap("icon");
 //        hover = m_hoverImage;
         hover = getPixmap("icon", ThemeConfig::Hover);
-        dy = m_height/2 - release.height()/2;
+        dy = m_height / 2 - release.height() / 2;
     }
 
     painter->setPen(Qt::transparent);
 
-    if(m_hovered && !m_isHighlightDisk)
-    {
-        if(m_hoverBackgroundEnabled && !m_isMountedIndicator)
-        {
+    if (m_hovered && !m_isHighlightDisk) {
+        if (m_hoverBackgroundEnabled && !m_isMountedIndicator) {
             painter->setBrush(ThemeConfig::instace()->color("BookmarkItem", "background", ThemeConfig::Hover));
 //            painter->setPen(QColor(0,0,0,0));
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
             textColor = ThemeConfig::instace()->color("BookmarkItem", "color", ThemeConfig::Hover);
         }
         painter->drawPixmap(iconRect, hover);
-    }
-    else if(m_pressed)
-    {
-        if(m_pressBackgroundEnabled && !m_isMountedIndicator)
-        {
+    } else if (m_pressed) {
+        if (m_pressBackgroundEnabled && !m_isMountedIndicator) {
 //            painter->setPen(m_pressBackgroundColor);
             painter->setBrush(ThemeConfig::instace()->color("BookmarkItem", "background", ThemeConfig::Pressed));
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
             textColor = ThemeConfig::instace()->color("BookmarkItem", "color", ThemeConfig::Pressed);
         }
         painter->drawPixmap(iconRect, press);
-    }else if(!m_hovered && (m_checked && m_checkable))
-    {
-        if(m_pressBackgroundEnabled && !m_isMountedIndicator)
-        {
+    } else if (!m_hovered && (m_checked && m_checkable)) {
+        if (m_pressBackgroundEnabled && !m_isMountedIndicator) {
 //            painter->setPen(m_pressBackgroundColor);
             painter->setBrush(ThemeConfig::instace()->color("BookmarkItem", "background", ThemeConfig::Checked));
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
             textColor = ThemeConfig::instace()->color("BookmarkItem", "color", ThemeConfig::Checked);
         }
         painter->drawPixmap(iconRect, checked);
-        if (!m_isMountedIndicator){
-            painter->setPen(QColor(43,167,248,25));
-            painter->drawLine(0, 0, m_width-3, 0);
-            painter->drawLine(0, m_height-1, m_width-3, m_height-1);
+        if (!m_isMountedIndicator) {
+            painter->setPen(QColor(43, 167, 248, 25));
+            painter->drawLine(0, 0, m_width - 3, 0);
+            painter->drawLine(0, m_height - 1, m_width - 3, m_height - 1);
             painter->setBrush(QColor("#2ca7f8"));
-            painter->drawRect(m_width-3, 0, 3, m_height);
+            painter->drawRect(m_width - 3, 0, 3, m_height);
         }
-    }else if (m_isHighlightDisk){
-        if(m_highlightDiskBackgroundEnabled && !m_isMountedIndicator)
-        {
+    } else if (m_isHighlightDisk) {
+        if (m_highlightDiskBackgroundEnabled && !m_isMountedIndicator) {
 //            painter->setPen(m_highlightDiskBackgroundColor);
             painter->setBrush(ThemeConfig::instace()->color("BookmarkItem", "background", ThemeConfig::Checked));
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
@@ -406,18 +399,15 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
         }
         painter->drawPixmap(iconRect, checked);
 
-        if (!m_isMountedIndicator){
-            painter->setPen(QColor(0,0,0,25));
-            painter->drawLine(0, 0, m_width-3, 0);
-            painter->drawLine(0, m_height-1, m_width-3, m_height-1);
+        if (!m_isMountedIndicator) {
+            painter->setPen(QColor(0, 0, 0, 25));
+            painter->drawLine(0, 0, m_width - 3, 0);
+            painter->drawLine(0, m_height - 1, m_width - 3, m_height - 1);
             painter->setBrush(QColor("#BDBDBD"));
-            painter->drawRect(m_width-3, 0, 3, m_height);
+            painter->drawRect(m_width - 3, 0, 3, m_height);
         }
-    }
-    else
-    {
-        if(m_releaseBackgroundEnabled)
-        {
+    } else {
+        if (m_releaseBackgroundEnabled) {
 //            painter->setPen(m_releaseBackgroundColor);
 //            painter->setBrush(m_releaseBackgroundColor);
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
@@ -428,32 +418,28 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
     }
 
     double textTopPadding = 4;
-    if (m_checkable && m_checked){
+    if (m_checkable && m_checked) {
         m_font.setWeight(QFont::Normal + 10);
-    }else{
+    } else {
         m_font.setWeight(QFont::Normal);
     }
 
-    if(!m_isTightMode)
-    {
+    if (!m_isTightMode) {
         painter->setPen(textColor);
         painter->setFont(m_font);
         QRect rect(leftPadding + 24, m_y_axis, m_width - 25, m_height);
         QFontMetrics metrics(m_font);
         QString elidedText = metrics.elidedText(m_textContent, Qt::ElideMiddle, m_width - leftPadding - 60);
-        painter->drawText(rect,Qt::TextWordWrap|Qt::AlignLeft| Qt::AlignVCenter, elidedText);
-    }
-    else
-    {
-        if(!m_isDefault && !m_textContent.isEmpty())
-        {
+        painter->drawText(rect, Qt::TextWordWrap | Qt::AlignLeft | Qt::AlignVCenter, elidedText);
+    } else {
+        if (!m_isDefault && !m_textContent.isEmpty()) {
             QString text = m_textContent.at(0);
 //            painter->setPen(QColor(0x2CA7F8));
             m_font.setPointSize(8);
 
             painter->setFont(m_font);
 
-            painter->drawText(leftPadding + 6, m_y_axis + m_height*3/4 - textTopPadding, text);
+            painter->drawText(leftPadding + 6, m_y_axis + m_height * 3 / 4 - textTopPadding, text);
         }
     }
 
@@ -517,10 +503,12 @@ void DBookmarkItem::setCheckedIcon(const QIcon &icon)
 
 void DBookmarkItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(event->button() == Qt::LeftButton)
-    {
-        if(m_isDraggable)
-        {
+    if (objectName() == "BMRootItem") {
+        return;
+    }
+
+    if (event->button() == Qt::LeftButton) {
+        if (m_isDraggable) {
             m_xPress = event->pos().x();
             m_yPress = event->pos().y();
         }
@@ -532,8 +520,7 @@ void DBookmarkItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void DBookmarkItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(m_pressed&&m_isDraggable)
-    {
+    if (m_pressed && m_isDraggable) {
         m_xOffset = event->pos().x() - m_xPress;
         m_xPos += m_xOffset;
         m_xPress = event->pos().x();
@@ -541,22 +528,21 @@ void DBookmarkItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         m_yOffset = event->pos().y() - m_yPress;
         m_yPos += m_yOffset;
         m_yPress = event->pos().y();
-        moveBy(m_xPos,m_yPos);
+        moveBy(m_xPos, m_yPos);
         update();
     }
 
-    if(m_pressed && !m_isDefault && scene()->views().first()->window()->windowType() == Qt::Window)
-    {
+    if (m_pressed && !m_isDefault && scene()->views().first()->window()->windowType() == Qt::Window) {
         if (QLineF(event->screenPos(), event->buttonDownScreenPos(Qt::LeftButton))
                 .length() < QApplication::startDragDistance()) {
-                return;
-            }
+            return;
+        }
 
-        drag = new DDragWidget((QObject*)event->widget());
+        drag = new DDragWidget((QObject *)event->widget());
         QMimeData *mimeData = new QMimeData;
         drag->setPixmap(toPixmap());
         drag->setMimeData(mimeData);
-        drag->setHotSpot(QPoint(m_width/4, 4));
+        drag->setHotSpot(QPoint(m_width / 4, 4));
         drag->startDrag();
         m_pressed = false;
         drag = NULL;
@@ -579,10 +565,11 @@ QPixmap DBookmarkItem::toPixmap()
     QImage image;
     QPainter painter;
 
-    if (m_isTightMode)
+    if (m_isTightMode) {
         image = QImage(60, renderer.defaultSize().height(), QImage::Format_ARGB32);
-    else
+    } else {
         image = QImage(200, renderer.defaultSize().height() * 200.0 / renderer.defaultSize().width(), QImage::Format_ARGB32);
+    }
 
     image.fill(Qt::transparent);
     painter.begin(&image);
@@ -625,7 +612,7 @@ QString DBookmarkItem::getDeviceID()
 
 int DBookmarkItem::windowId()
 {
-    if (scene() && scene()->views().count() > 0){
+    if (scene() && scene()->views().count() > 0) {
         return WindowManager::getWindowId(scene()->views().at(0));
     }
     return -1;
@@ -643,7 +630,7 @@ void DBookmarkItem::setBookmarkModel(BookMarkPointer bookmark)
 
 DBookmarkMountedIndicatorItem *DBookmarkItem::makeMountBookmark(DBookmarkItem *parentItem)
 {
-    DBookmarkMountedIndicatorItem * item = new DBookmarkMountedIndicatorItem(parentItem);
+    DBookmarkMountedIndicatorItem *item = new DBookmarkMountedIndicatorItem(parentItem);
     return item;
 }
 
@@ -673,19 +660,19 @@ void DBookmarkItem::editMode()
 void DBookmarkItem::updateMountIndicator()
 {
     qDebug() << m_isMounted << m_mountBookmarkItem;
-    if (m_isMounted && m_mountBookmarkItem){
+    if (m_isMounted && m_mountBookmarkItem) {
         m_mountBookmarkItem->show();
-        if(DFMGlobal::isRootUser()){
+        if (DFMGlobal::isRootUser()) {
             m_mountBookmarkItem->setEnabled(false);
         }
 
         /*Disable unmount of native disk in x86 pro*/
-        if (DFMGlobal::isDisableUnmount(m_deviceInfo->getDiskInfo())){
+        if (DFMGlobal::isDisableUnmount(m_deviceInfo->getDiskInfo())) {
             m_mountBookmarkItem->setEnabled(false);
             m_mountBookmarkItem->setOpacity(0.3);
         }
 
-    }else{
+    } else {
         m_mountBookmarkItem->hide();
     }
 }
@@ -701,13 +688,13 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
 
-    if (!m_url.isValid() && !m_isDisk){
+    if (!m_url.isValid() && !m_isDisk) {
         return;
     }
 
-    if(m_url.isTagedFile()){
+    if (m_url.isTagedFile()) {
 
-        if(static_cast<bool>(m_group) && m_pressed){
+        if (static_cast<bool>(m_group) && m_pressed) {
             emit clicked();
             m_group->deselectAll();
             setChecked(true);
@@ -715,20 +702,18 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             update();
 
             DFMEvent fmEvent{this};
-            fmEvent.setWindowId( this->windowId() );
+            fmEvent.setWindowId(this->windowId());
             fmEvent.setData(m_url);
             emit m_group->url(fmEvent);
         }
 
-    }else{
+    } else {
 
 
-        if(m_group && m_pressed)
-        {
+        if (m_group && m_pressed) {
             emit clicked();
 
-            if(m_group)
-            {
+            if (m_group) {
                 m_group->deselectAll();
                 setChecked(true);
             }
@@ -739,8 +724,7 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
             qDebug() << FileUtils::isFileExists(m_url.path());
 
-            if(!dir.exists() && !m_isDefault)
-            {
+            if (!dir.exists() && !m_isDefault) {
                 qDebug() << this << m_bookmarkModel->getDevcieId();
 
                 DUrl deviceUrl(m_bookmarkModel->getDevcieId());
@@ -754,12 +738,12 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                 }
 
                 /*handle bookmark of luks device when device is unmounted*/
-                if (m_bookmarkModel->getDevcieId().startsWith("/dev/dm")){
+                if (m_bookmarkModel->getDevcieId().startsWith("/dev/dm")) {
                     QString uuid = m_bookmarkModel->getUuid();
                     UDiskDeviceInfoPointer pDevice = deviceListener->getDeviceByUUID(uuid);
                     qDebug() << "uuid:" << uuid;
                     qDebug() << "device" << pDevice;
-                    if (pDevice){
+                    if (pDevice) {
                         setMountBookmark(true);
                         deviceListener->mount(pDevice->getDiskInfo().id());
                         return;
@@ -771,41 +755,40 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
                 TIMER_SINGLESHOT(1000, {
 
-                                     QDir dir(this->m_url.path());
-                                     if(!dir.exists()){
-                                         DFMUrlBaseEvent event(this, this->m_url);
-                                         event.setWindowId(windowId());
+                    QDir dir(this->m_url.path());
+                    if (!dir.exists())
+                    {
+                        DFMUrlBaseEvent event(this, this->m_url);
+                        event.setWindowId(windowId());
 
-                                         int result = dialogManager->showRemoveBookMarkDialog(event);
-                                         if (result == DDialog::Accepted)
-                                         {
-                                             emit fileSignalManager->requestBookmarkRemove(event);
-                                         }
-                                     }
-                                 }, this)
-            }
-            else
-            {
+                        int result = dialogManager->showRemoveBookMarkDialog(event);
+                        if (result == DDialog::Accepted) {
+                            emit fileSignalManager->requestBookmarkRemove(event);
+                        }
+                    }
+                }, this)
+            } else {
                 DFMEvent e(this);
                 e.setWindowId(windowId());
-                if(m_url.isBookMarkFile())
+                if (m_url.isBookMarkFile()) {
                     e.setData(DUrl::fromLocalFile(m_url.path()));
-                else
+                } else {
                     e.setData(m_url);
+                }
 
-                if (m_isDisk){
-                    if (m_deviceInfo){
+                if (m_isDisk) {
+                    if (m_deviceInfo) {
                         QDiskInfo info = m_deviceInfo->getDiskInfo();
                         qDebug() << info << m_url << m_isMounted;
-                        if (!m_isMounted){
+                        if (!m_isMounted) {
                             m_url.setQuery(info.id());
                             appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, m_url));
-                        }else{
+                        } else {
                             qDebug() << e;
                             emit m_group->url(e);
                         }
                     }
-                }else{
+                } else {
                     emit m_group->url(e);
                 }
                 scene()->views().at(0)->ensureVisible(this, -10, 0);
@@ -850,40 +833,44 @@ void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)
     m_hovered = false;
     update();
     emit dropped();
-    if(!event->mimeData()->hasUrls())
+    if (!event->mimeData()->hasUrls()) {
         return;
-    if(m_isDisk)
+    }
+    if (m_isDisk) {
         return;
+    }
 
     DUrlList urlList;
 #ifdef DDE_COMPUTER_TRASH
     //filter out trash desktop file and computer desktop file on desktop path
-    foreach (const DUrl& url, DUrl::fromQUrlList(event->mimeData()->urls())) {
-        if(url == DesktopFileInfo::trashDesktopFileUrl() || url == DesktopFileInfo::computerDesktopFileUrl()){
+    foreach (const DUrl &url, DUrl::fromQUrlList(event->mimeData()->urls())) {
+        if (url == DesktopFileInfo::trashDesktopFileUrl() || url == DesktopFileInfo::computerDesktopFileUrl()) {
 
             //prevent user unexpectedly creating new desktop file named as dde-trash/dde-computer on desktop,without specified deepinId
             DesktopFile df(url.toLocalFile());
-            if(df.getDeepinId() == "dde-trash" || df.getDeepinId() == "dde-computer")
+            if (df.getDeepinId() == "dde-trash" || df.getDeepinId() == "dde-computer") {
                 continue;
+            }
         }
         urlList << url;
     }
 
-    if(urlList.count() == 0)
+    if (urlList.count() == 0) {
         return;
+    }
 #else
     urlList = DUrl::fromQUrlList(event->mimeData()->urls());
 #endif
 
-    if (m_url == DUrl::fromTrashFile("/")){
+    if (m_url == DUrl::fromTrashFile("/")) {
         fileService->pasteFile(this, DFMGlobal::CutAction, m_url, urlList);
-    }else{
+    } else {
         fileService->pasteFile(this, DFMGlobal::CopyAction, m_url, urlList);
     }
     QGraphicsItem::dropEvent(event);
 }
 
-bool DBookmarkItem::eventFilter(QObject* obj, QEvent* event)
+bool DBookmarkItem::eventFilter(QObject *obj, QEvent *event)
 {
     if (obj == m_lineEdit) {
         if (event->type() == QEvent::FocusOut) {
@@ -891,20 +878,17 @@ bool DBookmarkItem::eventFilter(QObject* obj, QEvent* event)
 
             return false;
         } else if (event->type() == QEvent::KeyPress) {
-            QKeyEvent *key_event = static_cast<QKeyEvent*>(event);
+            QKeyEvent *key_event = static_cast<QKeyEvent *>(event);
 
-            switch(key_event->key())
-            {
-                case Qt::Key_Escape:
-                {
-                    m_widget->deleteLater();
-                    m_lineEdit = Q_NULLPTR;
-                    break;
-                }
-                default:
-                {
-                    break;
-                }
+            switch (key_event->key()) {
+            case Qt::Key_Escape: {
+                m_widget->deleteLater();
+                m_lineEdit = Q_NULLPTR;
+                break;
+            }
+            default: {
+                break;
+            }
             }
         }
     }
@@ -921,9 +905,9 @@ void DBookmarkItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
     event->accept();
-    if (m_checked){
+    if (m_checked) {
 
-    }else{
+    } else {
         m_hovered = true;
         update();
     }
@@ -933,8 +917,7 @@ void DBookmarkItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
     event->accept();
-    if(!m_isMenuOpened)
-    {
+    if (!m_isMenuOpened) {
         m_hovered = false;
         update();
     }
@@ -950,41 +933,42 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     QSet<MenuAction> disableList;
 
     const bool tabAddable = WindowManager::tabAddableByWinId(windowId());
-    if(!tabAddable || (m_url.isLocalFile() && !QFile::exists(m_url.toLocalFile())))
+    if (!tabAddable || (m_url.isLocalFile() && !QFile::exists(m_url.toLocalFile()))) {
         disableList << MenuAction::OpenInNewTab;
+    }
 
-    if (m_url.isRecentFile()){
+    if (m_url.isRecentFile()) {
         menu = DFileMenuManager::createRecentLeftBarMenu(disableList);
-    }else if (m_url.isTrashFile()){
+    } else if (m_url.isTrashFile()) {
         menu = DFileMenuManager::createTrashLeftBarMenu(disableList);
-    }else if (m_url.isComputerFile()){
+    } else if (m_url.isComputerFile()) {
         menu = DFileMenuManager::createComputerLeftBarMenu(disableList);
-    }else if(m_isDisk && m_deviceInfo)
-    {
-        if(!tabAddable)
+    } else if (m_isDisk && m_deviceInfo) {
+        if (!tabAddable) {
             disableList << MenuAction::OpenDiskInNewTab;
+        }
 
         disableList |= m_deviceInfo->disableMenuActionList() ;
         m_url.setQuery(m_deviceID);
 
         menu = DFileMenuManager::genereteMenuByKeys(
-                    m_deviceInfo->menuActionList(DAbstractFileInfo::SingleFile),
-                    disableList);
-    }else if (m_url.isNetWorkFile()){
+                   m_deviceInfo->menuActionList(DAbstractFileInfo::SingleFile),
+                   disableList);
+    } else if (m_url.isNetWorkFile()) {
         menu = DFileMenuManager::createNetworkMarkMenu(disableList);
-    }else if(m_url.isUserShareFile()){
+    } else if (m_url.isUserShareFile()) {
         menu = DFileMenuManager::createUserShareMarkMenu(disableList);
-    }else if(PluginManager::instance()->getViewInterfaceByScheme(m_url.scheme())){
+    } else if (PluginManager::instance()->getViewInterfaceByScheme(m_url.scheme())) {
         menu = DFileMenuManager::createPluginBookMarkMenu(disableList);
-    }else if(m_isDefault){
+    } else if (m_isDefault) {
         menu = DFileMenuManager::createDefaultBookMarkMenu(disableList);
 
-    ///###: tag protocol.
-    }else if( m_url.isTagedFile() ){
+        ///###: tag protocol.
+    } else if (m_url.isTagedFile()) {
         menu = DFileMenuManager::createTagMarkMenu(disableList);
         DBookmarkItem::ClickedItem = this;
 
-    }else{
+    } else {
         menu = DFileMenuManager::createCustomBookMarkMenu(m_url, disableList);
     }
     QPointer<DBookmarkItem> me = this;
@@ -993,8 +977,9 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         menu->exec();
         menu->deleteLater();
 
-        if (me)
+        if (me) {
             m_hovered = false;
+        }
     }
 
     if (me) {
@@ -1038,7 +1023,7 @@ void DBookmarkItem::setBounds(int x, int y, int w, int h)
 
 void DBookmarkItem::setHoverEnableFlag(bool flag)
 {
-     setAcceptHoverEvents(flag);
+    setAcceptHoverEvents(flag);
 }
 
 void DBookmarkItem::setAdjust(qreal value)
@@ -1086,7 +1071,7 @@ int DBookmarkItem::boundHeight()
     return m_height;
 }
 
-void DBookmarkItem::setText(const QString & text)
+void DBookmarkItem::setText(const QString &text)
 {
     m_textContent = text;
     update();
@@ -1124,11 +1109,12 @@ void DBookmarkItem::setHighlightDiskBackgroundEnable(bool b)
 
 void DBookmarkItem::setHighlightDisk(bool isHighlight)
 {
-    if (m_isHighlightDisk == isHighlight)
+    if (m_isHighlightDisk == isHighlight) {
         return;
+    }
 
     m_isHighlightDisk = isHighlight;
-    if (!m_checked){
+    if (!m_checked) {
         update();
     }
 }
@@ -1155,11 +1141,12 @@ void DBookmarkItem::setCheckable(bool b)
 
 void DBookmarkItem::setChecked(bool b)
 {
-    if (m_checked == b)
+    if (m_checked == b) {
         return;
+    }
 
     m_checked = b;
-    if (m_mountBookmarkItem){
+    if (m_mountBookmarkItem) {
         m_mountBookmarkItem->setChecked(b);
     }
 
