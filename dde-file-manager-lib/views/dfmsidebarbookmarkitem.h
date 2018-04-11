@@ -18,33 +18,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef DFMSIDEBARITEMGROUP_H
-#define DFMSIDEBARITEMGROUP_H
-
-#include <QVBoxLayout>
+#ifndef DFMSIDEBARBOOKMARKITEM_H
+#define DFMSIDEBARBOOKMARKITEM_H
 
 #include <dfmglobal.h>
+#include <dfmsidebaritem.h>
 
-#include "dfmstandardpaths.h"
-#include "dfmsidebar.h"
-#include "dfmsidebaritemseparator.h"
+#include "controllers/bookmarkmanager.h"
 
 DFM_BEGIN_NAMESPACE
 
-class DFMSideBarItemGroup : public QVBoxLayout
+class DFMSideBarBookmarkItem : public DFMSideBarItem
 {
-    Q_OBJECT
-
 public:
-    DFMSideBarItemGroup();
-    void appendItem(DFMSideBarItem *item);
+    DFMSideBarBookmarkItem(BookMarkPointer bookmark);
 
-private:
-    QList<DFMSideBarItem *> itemList;
-    DFMSideBarItemSeparator *bottomSeparator;
+protected:
+    virtual QMenu *createStandardContextMenu() const Q_DECL_OVERRIDE;
 };
 
 DFM_END_NAMESPACE
 
-#endif // DFMSIDEBARITEMGROUP_H
+#endif // DFMSIDEBARBOOKMARKITEM_H
