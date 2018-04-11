@@ -44,42 +44,42 @@
     <name>MainWindow</name>
     <message>
         <location filename="../view/mainwindow.cpp" line="80"/>
-        <location filename="../view/mainwindow.cpp" line="102"/>
+        <location filename="../view/mainwindow.cpp" line="103"/>
         <source>Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="189"/>
+        <location filename="../view/mainwindow.cpp" line="190"/>
         <source>Continue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="194"/>
+        <location filename="../view/mainwindow.cpp" line="195"/>
         <source>Formatting...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="218"/>
+        <location filename="../view/mainwindow.cpp" line="219"/>
         <source>Done</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="229"/>
+        <location filename="../view/mainwindow.cpp" line="230"/>
         <source>Failed to format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="225"/>
+        <location filename="../view/mainwindow.cpp" line="226"/>
         <source>Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="226"/>
+        <location filename="../view/mainwindow.cpp" line="227"/>
         <source>Your disk is removed when formatting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="230"/>
+        <location filename="../view/mainwindow.cpp" line="231"/>
         <source>Reformat</source>
         <translation type="unfinished"></translation>
     </message>
@@ -95,12 +95,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="95"/>
+        <location filename="../main.cpp" line="122"/>
         <source>Device does not exist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="104"/>
+        <location filename="../main.cpp" line="131"/>
         <source>Cannot format local device</source>
         <translation type="unfinished"></translation>
     </message>

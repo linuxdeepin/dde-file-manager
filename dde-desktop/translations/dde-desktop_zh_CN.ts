@@ -1,34 +1,35 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1825"/>
+        <location filename="../view/canvasgridview.cpp" line="2232"/>
         <source>Icon size</source>
         <translation>图标大小</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1831"/>
+        <location filename="../view/canvasgridview.cpp" line="2238"/>
         <source>Auto arrange</source>
         <translation>自动排列</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1839"/>
-        <location filename="../view/canvasgridview.cpp" line="1952"/>
+        <location filename="../view/canvasgridview.cpp" line="2365"/>
         <source>Properties</source>
         <translation>属性</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1870"/>
+        <location filename="../view/canvasgridview.cpp" line="2277"/>
         <source>Display Settings</source>
         <translation>显示设置</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1875"/>
+        <location filename="../view/canvasgridview.cpp" line="2283"/>
         <source>Corner Settings</source>
         <translation>热区设置</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1880"/>
+        <location filename="../view/canvasgridview.cpp" line="2289"/>
         <source>Set Wallpaper</source>
         <translation>设置壁纸</translation>
     </message>
@@ -36,27 +37,27 @@
 <context>
     <name>DesktopItemDelegate</name>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="12"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="38"/>
         <source>Tiny</source>
         <translation>极小</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="13"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="39"/>
         <source>Small</source>
         <translation>小</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="14"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="40"/>
         <source>Medium</source>
         <translation>中</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="15"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="41"/>
         <source>Large</source>
         <translation>大</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="16"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="42"/>
         <source>Super large</source>
         <translation>极大</translation>
     </message>
@@ -64,12 +65,12 @@
 <context>
     <name>WallpaperItem</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="90"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="124"/>
         <source>Only desktop</source>
         <translation>仅设置桌面</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="93"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="127"/>
         <source>Only lock screen</source>
         <translation>仅设置锁屏</translation>
     </message>
@@ -77,37 +78,37 @@
 <context>
     <name>ZoneMainWindow</name>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="51"/>
         <source>Fast Screen Off</source>
         <translation>快速黑屏</translation>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="51"/>
         <source>Control Center</source>
         <translation>控制中心</translation>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="51"/>
         <source>All Windows</source>
         <translation>所有窗口</translation>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="51"/>
         <source>Launcher</source>
         <translation>启动器</translation>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="51"/>
         <source>Desktop</source>
         <translation>显示桌面</translation>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="51"/>
         <source>None</source>
         <translation>无</translation>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="57"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Close Window</source>
         <translation>关闭窗口</translation>
     </message>

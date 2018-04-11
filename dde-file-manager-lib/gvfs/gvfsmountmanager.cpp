@@ -1245,6 +1245,7 @@ void GvfsMountManager::unmount_mounted(const QString &mounted_root_uri)
 {
     if (mounted_root_uri.isEmpty())
         return;
+
     std::string file_uri = mounted_root_uri.toStdString();
     GFile *file;
     file = g_file_new_for_uri(file_uri.data());
@@ -1257,8 +1258,44 @@ void GvfsMountManager::unmount_mounted(const QString &mounted_root_uri)
 
     mount = g_file_find_enclosing_mount (file, NULL, &error);
     if (mount == NULL){
-      qDebug() << "Error finding enclosing mount:" << error->message;
-      return;
+        bool no_permission = false;
+
+        QFileInfo fileInfo(QUrl(mounted_root_uri).toLocalFile());
+
+        while (!fileInfo.exists() && fileInfo.fileName() != QDir::rootPath() && !fileInfo.absolutePath().isEmpty()) {
+            fileInfo.setFile(fileInfo.absolutePath());
+        }
+
+        if (fileInfo.exists()) {
+            if (getuid() == fileInfo.ownerId()) {
+                if (!fileInfo.permission(QFile::ReadOwner | QFile::ExeOwner))
+                    no_permission = true;
+            } else if (getgid() == fileInfo.groupId()) {
+                if (!fileInfo.permission(QFile::ReadGroup | QFile::ExeGroup))
+                    no_permission = true;
+            } else if (!fileInfo.permission(QFile::ReadOther | QFile::ExeOther)) {
+                no_permission = true;
+            }
+        }
+
+        if (no_permission) {
+            QString user_name = fileInfo.owner();
+
+            if (fileInfo.absoluteFilePath().startsWith("/media/")) {
+                user_name = fileInfo.baseName();
+            }
+
+            DDialog error_dilaog(tr("The disk is mounted by user \"%1\", you cannot unmount it.").arg(user_name), QString(" "));
+
+            error_dilaog.setIcon(QIcon::fromTheme("dialog-error"));
+            error_dilaog.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
+            error_dilaog.setModal(true);
+            error_dilaog.exec();
+        }
+
+        qDebug() << "Error finding enclosing mount:" << error->message;
+
+        return;
     }
 
     mount_op = new_mount_op ();
