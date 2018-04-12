@@ -30,9 +30,30 @@
 DFM_BEGIN_NAMESPACE
 
 DFMSideBarDefaultItem::DFMSideBarDefaultItem(DFMStandardPaths::StandardLocation location, QWidget *parent)
-    : DFMSideBarItem(GetDUrlFromStandardLocation(location), parent)
+    : DFMSideBarItem(getDUrlFromStandardLocation(location), parent)
 {
-    // Should do change icon, update text here.
+    initItemByLocation(location);
+    setHasDrag(false);
+}
+
+DUrl DFMSideBarDefaultItem::getDUrlFromStandardLocation(DFMStandardPaths::StandardLocation location)
+{
+    DUrl path;
+
+    switch (location) {
+    case DFMStandardPaths::StandardLocation::TrashPath:
+        path = DUrl::fromTrashFile("/");
+        break;
+    default:
+        path = DUrl::fromUserInput(DFMStandardPaths::standardLocation(location));
+        break;
+    }
+
+    return path;
+}
+
+void DFMSideBarDefaultItem::initItemByLocation(DFMStandardPaths::StandardLocation location)
+{
     switch (location) {
     case DFMStandardPaths::StandardLocation::HomePath:
         setIconFromThemeConfig("BookmarkItem.Home");
@@ -72,22 +93,6 @@ DFMSideBarDefaultItem::DFMSideBarDefaultItem(DFMStandardPaths::StandardLocation 
     default:
         break;
     }
-}
-
-DUrl DFMSideBarDefaultItem::GetDUrlFromStandardLocation(DFMStandardPaths::StandardLocation location)
-{
-    DUrl path;
-
-    switch (location) {
-    case DFMStandardPaths::StandardLocation::TrashPath:
-        path = DUrl::fromTrashFile("/");
-        break;
-    default:
-        path = DUrl::fromUserInput(DFMStandardPaths::standardLocation(location));
-        break;
-    }
-
-    return path;
 }
 
 DFM_END_NAMESPACE

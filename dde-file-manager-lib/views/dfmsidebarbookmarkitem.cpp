@@ -31,6 +31,7 @@ DFMSideBarBookmarkItem::DFMSideBarBookmarkItem(BookMarkPointer bookmark)
 {
     setText(bookmark->getName());
     setIconFromThemeConfig("BookmarkItem.BookMarks", "icon");
+    setHasDrag(true);
 }
 
 QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
