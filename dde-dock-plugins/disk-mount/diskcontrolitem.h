@@ -43,6 +43,7 @@ private slots:
 
 private:
     void mouseReleaseEvent(QMouseEvent *e);
+    void showEvent(QShowEvent *e) override;
 
 private:
     QDiskInfo m_info;
