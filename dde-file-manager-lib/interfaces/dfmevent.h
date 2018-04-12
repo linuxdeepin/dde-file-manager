@@ -636,15 +636,15 @@ public:
 };
 
 
-class DFMGetTagsThroughFileEvent final : public DFMEvent
+class DFMGetTagsThroughFilesEvent final : public DFMEvent
 {
 public:
 public:
-    explicit DFMGetTagsThroughFileEvent(const QObject* sender, const QList<DUrl>& files);
-    DFMGetTagsThroughFileEvent(const DFMGetTagsThroughFileEvent& other)=delete;
-    DFMGetTagsThroughFileEvent& operator=(const DFMGetTagsThroughFileEvent& other)=delete;
+    explicit DFMGetTagsThroughFilesEvent(const QObject* sender, const QList<DUrl>& files);
+    DFMGetTagsThroughFilesEvent(const DFMGetTagsThroughFilesEvent& other)=delete;
+    DFMGetTagsThroughFilesEvent& operator=(const DFMGetTagsThroughFilesEvent& other)=delete;
 
-    static QSharedPointer<DFMGetTagsThroughFileEvent> fromJson(const QJsonObject& json);
+    static QSharedPointer<DFMGetTagsThroughFilesEvent> fromJson(const QJsonObject& json);
 
     QList<DUrl> m_files{};
 };
@@ -655,7 +655,7 @@ class DFMDeleteTagsEvent final : public DFMEvent
 public:
 public:
     explicit DFMDeleteTagsEvent(const QObject* sender, const QList<QString>& tags);
-    DFMDeleteTagsEvent(const DFMGetTagsThroughFileEvent& other)=delete;
+    DFMDeleteTagsEvent(const DFMDeleteTagsEvent& other)=delete;
     DFMDeleteTagsEvent& operator=(const DFMDeleteTagsEvent& other)=delete;
 
     static QSharedPointer<DFMDeleteTagsEvent> fromJson(const QJsonObject& json);

@@ -712,7 +712,7 @@ void AppController::actionSendToRemovableDisk()
     fileService->pasteFile(action, DFMGlobal::CopyAction, targetUrl, urlList);
 }
 
-QList<QString> AppController::actionGetTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFileEvent>& event)
+QList<QString> AppController::actionGetTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent>& event)
 {
     QList<QString> tags{};
 

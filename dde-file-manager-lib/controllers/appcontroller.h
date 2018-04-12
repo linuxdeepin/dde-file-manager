@@ -125,7 +125,7 @@ public slots:
 
 
     ///###: tag protocol
-    QList<QString> actionGetTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFileEvent>& event);
+    QList<QString> actionGetTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event);
     bool actionMakeFilesTagsThroughColor(const QSharedPointer<DFMMakeFilesTagThroughColorEvent>& event);
     QList<QString> actionGetFilesThroughTag(const QSharedPointer<DFMGetFilesThroughTag>& event);
     bool actionMakeFilesTags(const QSharedPointer<DFMMakeFilesTagsEvent> &event);

@@ -138,7 +138,7 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent>& event)
         ///###: Here, Used the position which was stored in DFileView.
         tagEdit->setFocusOutSelfClosing(true);
 
-        QSharedPointer<DFMGetTagsThroughFileEvent> getTagEvent{ new DFMGetTagsThroughFileEvent{ nullptr, event->selectedUrls() } };
+        QSharedPointer<DFMGetTagsThroughFilesEvent> getTagEvent{ new DFMGetTagsThroughFilesEvent{ nullptr, event->selectedUrls() } };
         QList<QString> sameTagsInDiffFiles{ AppController::instance()->actionGetTagsThroughFiles(getTagEvent) };
         tagEdit->show(DFileView::ClickedPosition.x(), DFileView::ClickedPosition.y());
 

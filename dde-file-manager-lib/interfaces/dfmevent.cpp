@@ -930,16 +930,16 @@ QSharedPointer<DFMGetFilesThroughTag> DFMGetFilesThroughTag::fromJson(const QJso
     return QSharedPointer<DFMGetFilesThroughTag>{ nullptr };
 }
 
-DFMGetTagsThroughFileEvent::DFMGetTagsThroughFileEvent(const QObject* sender, const QList<DUrl>& files)
+DFMGetTagsThroughFilesEvent::DFMGetTagsThroughFilesEvent(const QObject* sender, const QList<DUrl>& files)
                            :DFMEvent{ sender },
                             m_files{ files }
 {
 }
 
-QSharedPointer<DFMGetTagsThroughFileEvent> DFMGetTagsThroughFileEvent::fromJson(const QJsonObject &json)
+QSharedPointer<DFMGetTagsThroughFilesEvent> DFMGetTagsThroughFilesEvent::fromJson(const QJsonObject &json)
 {
     (void)json;
-    return QSharedPointer<DFMGetTagsThroughFileEvent>{ nullptr };
+    return QSharedPointer<DFMGetTagsThroughFilesEvent>{ nullptr };
 }
 
 DFMDeleteTagsEvent::DFMDeleteTagsEvent(const QObject* sender, const QList<QString>& tags)
