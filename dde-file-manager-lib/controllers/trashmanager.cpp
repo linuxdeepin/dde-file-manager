@@ -36,6 +36,8 @@
 #include "interfaces/dfmstandardpaths.h"
 #include "singleton.h"
 
+#include "dfmeventdispatcher.h"
+
 #include <QDebug>
 #include <QUrlQuery>
 #include <QTimer>
@@ -137,7 +139,15 @@ DUrlList TrashManager::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &ev
 
 bool TrashManager::restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent> &event) const
 {
-    return restoreTrashFile(event->urlList());
+    DUrlList originUrls;
+
+    bool ok = restoreTrashFile(event->urlList(), &originUrls);
+
+    if (ok && !originUrls.isEmpty()) {
+        DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMMoveToTrashEvent>(nullptr, originUrls));
+    }
+
+    return ok;
 }
 
 bool TrashManager::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
@@ -235,10 +245,13 @@ DAbstractFileWatcher *TrashManager::createFileWatcher(const QSharedPointer<DFMCr
                                  TrashManagerPrivate::localToTrash);
 }
 
-bool TrashManager::restoreTrashFile(const DUrlList &list)
+bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOriginUrls)
 {
     bool ok = true;
+
     DUrlList restoreFailedList;
+    DUrlList restoreFileOriginUrlList;
+
     for (const DUrl &url : list) {
         if (url == DUrl::fromTrashFile("/")) {
             // restore all
@@ -250,7 +263,7 @@ bool TrashManager::restoreTrashFile(const DUrlList &list)
             if (list.isEmpty())
                 return true;
 
-            return restoreTrashFile(list);
+            return restoreTrashFile(list, restoreOriginUrls);
         }
 
         //###(zccrs): 必须通过 DAbstractFileInfoPointer 使用
@@ -259,15 +272,22 @@ bool TrashManager::restoreTrashFile(const DUrlList &list)
         QExplicitlySharedDataPointer<TrashFileInfo> info(new TrashFileInfo(url));
 
         bool ret = info->restore();
-        if (!ret){
+
+        if (!ret && info->exists()) {
             restoreFailedList << info->fileUrl();
+        } else {
+            restoreFileOriginUrlList << info->originUrl();
         }
+
         ok = ok && ret;
     }
 
     if (!ok && restoreFailedList.count() > 0){
         emit fileSignalManager->requestShowRestoreFailedDialog(restoreFailedList);
     }
+
+    if (restoreOriginUrls)
+        *restoreOriginUrls = restoreFileOriginUrlList;
 
     return ok;
 }

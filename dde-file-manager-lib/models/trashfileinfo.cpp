@@ -382,6 +382,13 @@ bool TrashFileInfo::makeAbsolute()
     return true;
 }
 
+DUrl TrashFileInfo::originUrl() const
+{
+    Q_D(const TrashFileInfo);
+
+    return DUrl::fromLocalFile(d->originalFilePath);
+}
+
 DUrl TrashFileInfo::mimeDataUrl() const
 {
     return DUrl::fromLocalFile(absoluteFilePath());
