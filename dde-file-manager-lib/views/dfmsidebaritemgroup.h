@@ -38,9 +38,16 @@ class DFMSideBarItemGroup : public QVBoxLayout
 
 public:
     DFMSideBarItemGroup();
-    void appendItem(DFMSideBarItem *item);
+    int itemIndex(const DFMSideBarItem *item) const;
+    int appendItem(DFMSideBarItem *item);
+    void insertItem(int index, DFMSideBarItem *item);
+    void removeItem(int index);
+    DFMSideBarItem *takeItem(int index);
+    int itemCount() const;
+    DFMSideBarItem *operator [](int index);
 
 private:
+    QVBoxLayout *itemHolder;
     QList<DFMSideBarItem *> itemList;
     DFMSideBarItemSeparator *bottomSeparator;
 };

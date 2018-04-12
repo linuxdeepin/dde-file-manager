@@ -47,6 +47,7 @@ public:
 
     DFMSideBar *q_ptr = nullptr;
     QVBoxLayout *mainLayout;
+    QWidget *mainLayoutHolder;
     QMap<QString, DFMSideBarItemGroup *> groupNameMap;
 
 private:
@@ -72,6 +73,11 @@ void DFMSideBarPrivate::initUI()
     Q_Q(DFMSideBar);
     q->setAcceptDrops(true);
     q->setFocusPolicy(Qt::NoFocus);
+    q->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    // to make QScrollArea scroallable, we need a widget.
+    mainLayoutHolder = new QWidget();
+    q->setWidget(mainLayoutHolder);
 
     // our main QVBoxLayout, which hold our `DFMSideBarItemGroup`s
     mainLayout = new QVBoxLayout();
@@ -79,7 +85,8 @@ void DFMSideBarPrivate::initUI()
     mainLayout->setMargin(0);
     mainLayout->setAlignment(Qt::AlignTop);
     mainLayout->setSizeConstraint(QLayout::SetMinimumSize);
-    q->setLayout(mainLayout);
+    mainLayoutHolder->setLayout(mainLayout);
+    //q->setLayout(mainLayout);
 
     static QList<DFMSideBar::GroupName> groups = {
         DFMSideBar::GroupName::Common,
@@ -153,9 +160,150 @@ DFMSideBar::~DFMSideBar()
 
 }
 
+int DFMSideBar::count() const
+{
+    Q_D(const DFMSideBar);
+
+    int count = 0;
+
+    QMap<QString, DFMSideBarItemGroup *>::const_iterator i;
+    for (i = d->groupNameMap.begin(); i != d->groupNameMap.end(); ++i) {
+        count += i.value()->itemCount();
+    }
+
+    return count;
+}
+
+QStringList DFMSideBar::groupList() const
+{
+    Q_D(const DFMSideBar);
+
+    QStringList groupNameList;
+
+    QMap<QString, DFMSideBarItemGroup *>::const_iterator i;
+    for (i = d->groupNameMap.begin(); i != d->groupNameMap.end(); ++i) {
+        groupNameList.append(i.key());
+    }
+
+    return groupNameList;
+}
+
 void DFMSideBar::setDisableUrlSchemes(const QStringList &schemes)
 {
 
+}
+
+/*!
+ * \brief Add a sidebar item into a sidebar group.
+ * \param item The item which is going to be added.
+ * \param group The name (in `QString`, all lower case) of the sidebar group.
+ * \return the index of the inserted item in that group.
+ */
+int DFMSideBar::addItem(DFMSideBarItem *item, const QString &group)
+{
+    Q_D(DFMSideBar);
+
+    int index;
+
+    if (d->groupNameMap.contains(group)) {
+        DFMSideBarItemGroup *groupPointer = d->groupNameMap[group];
+        index = groupPointer->appendItem(item);
+    } else {
+        QString groupName = group.isEmpty() ? "" : group;
+        DFMSideBarItemGroup *group = new DFMSideBarItemGroup();
+        d->groupNameMap[groupName] = group;
+        index = group->appendItem(item);
+        d->mainLayout->addLayout(group);
+    }
+
+    return index;
+}
+
+/*!
+ * \fn void DFMSideBar::insertItem(int index, DFMSideBarItem *item, const QString &groupName)
+ * \brief Insert \a item before \a index into \a groupName .
+ *
+ * Insert a `DFMSideBarItem` \a item to group before \a index into the
+ * given \a groupName .
+ */
+void DFMSideBar::insertItem(int index, DFMSideBarItem *item, const QString &group)
+{
+    Q_D(DFMSideBar);
+
+    if (d->groupNameMap.contains(group)) {
+        DFMSideBarItemGroup *groupPointer = d->groupNameMap[group];
+        groupPointer->insertItem(index, item);
+    }
+}
+
+void DFMSideBar::removeItem(int index, const QString &group)
+{
+    Q_D(DFMSideBar);
+
+    if (d->groupNameMap.contains(group)) {
+        DFMSideBarItemGroup *groupPointer = d->groupNameMap[group];
+        groupPointer->removeItem(index);
+    }
+}
+
+QString DFMSideBar::itemGroup(const DFMSideBarItem *item) const
+{
+    Q_D(const DFMSideBar);
+
+    QMap<QString, DFMSideBarItemGroup *>::const_iterator i;
+    for (i = d->groupNameMap.begin(); i != d->groupNameMap.end(); ++i) {
+        DFMSideBarItemGroup *groupPointer = i.value();
+        if (groupPointer->itemIndex(item) != -1) {
+            return i.key();
+        }
+    }
+
+    // return a empty string if not found
+    return QString();
+}
+
+/*!
+ * \fn DFMSideBarItem *DFMSideBar::itemAt(int index, const QString &groupName) const
+ *
+ * \brief Get the reference of DFMSideBarItem at \a index in the given \a groupName.
+ * \param index The item index which is wanted.
+ * \param groupName The group name which is wanted.
+ * \return the reference (pointer) of the item.
+ */
+DFMSideBarItem *DFMSideBar::itemAt(int index, const QString &group) const
+{
+    Q_D(const DFMSideBar);
+
+    if (d->groupNameMap.contains(group)) {
+        DFMSideBarItemGroup *groupPointer = d->groupNameMap[group];
+        return (*groupPointer)[index];
+    }
+
+    return nullptr;
+}
+
+DFMSideBarItem *DFMSideBar::takeItem(int index, const QString &group)
+{
+    Q_D(const DFMSideBar);
+
+    if (d->groupNameMap.contains(group)) {
+        DFMSideBarItemGroup *groupPointer = d->groupNameMap[group];
+        return groupPointer->takeItem(index);
+    }
+
+    return nullptr;
+}
+
+int DFMSideBar::itemCount(const QString &group) const
+{
+    Q_D(const DFMSideBar);
+
+    if (d->groupNameMap.contains(group)) {
+        DFMSideBarItemGroup *groupPointer = d->groupNameMap[group];
+        return groupPointer->itemCount();
+    }
+
+    return 0;
 }
 
 QRect DFMSideBar::groupGeometry(const QString &group) const

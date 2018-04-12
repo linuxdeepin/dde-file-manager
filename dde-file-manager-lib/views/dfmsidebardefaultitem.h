@@ -28,12 +28,25 @@
 
 DFM_BEGIN_NAMESPACE
 
+/*!
+    \class DFMSideBarDefaultItem
+    \brief The DFMSideBarDefaultItem class is a kind of `DFMSideBarItem`.
+
+    \ingroup sidebar items
+
+    `DFMSideBarDefaultItem` defines a kind of `DFMSideBarItem` which is shown
+    in the sidebar by default, which means it's not editable and not dragable,
+    and with proper context menu that default item will got.
+
+    \sa DFMSideBarItem
+*/
 class DFMSideBarDefaultItem : public DFMSideBarItem
 {
 public:
     DFMSideBarDefaultItem(DFMStandardPaths::StandardLocation location, QWidget *parent = nullptr);
 
-    DUrl GetDUrlFromStandardLocation(DFMStandardPaths::StandardLocation location);
+    DUrl getDUrlFromStandardLocation(DFMStandardPaths::StandardLocation location);
+    void initItemByLocation(DFMStandardPaths::StandardLocation location);
 };
 
 DFM_END_NAMESPACE

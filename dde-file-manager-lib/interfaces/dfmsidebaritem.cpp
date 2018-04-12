@@ -26,7 +26,12 @@
 #include "views/windowmanager.h"
 #include "views/themeconfig.h"
 
+#include <QDrag>
+#include <QMimeData>
 #include <QPainter>
+#include <DSvgRenderer>
+
+DWIDGET_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
 
@@ -42,6 +47,7 @@ public:
     DFMSideBarItemPrivate(DFMSideBarItem *qq);
     void init();
     QPixmap icon() const;
+    QPixmap reorderLine() const;
     ThemeConfig::State getState() const;
 
     bool hasDrag = false;
@@ -49,6 +55,7 @@ public:
 
     DUrl url;
     QFont font;
+    QWidget *contentWidget = nullptr;
     QString displayText = "Placeholder";
 
     DFMSideBarItem *q_ptr = nullptr;
@@ -84,6 +91,25 @@ void DFMSideBarItemPrivate::init()
 QPixmap DFMSideBarItemPrivate::icon() const
 {
     return ThemeConfig::instace()->pixmap(iconGroup, iconKey, getState());
+}
+
+QPixmap DFMSideBarItemPrivate::reorderLine() const
+{
+    DSvgRenderer renderer;
+
+    renderer.load(QStringLiteral(":/icons/images/icons/reordering_line.svg"));
+
+    QPainter painter;
+    QImage image = QImage(200,
+                          renderer.defaultSize().height() * 200.0 / renderer.defaultSize().width(),
+                          QImage::Format_ARGB32);
+
+    image.fill(Qt::transparent);
+    painter.begin(&image);
+    renderer.render(&painter, QRect(QPoint(0, 0), image.size()));
+    painter.end();
+
+    return QPixmap::fromImage(image);
 }
 
 ThemeConfig::State DFMSideBarItemPrivate::getState() const
@@ -150,6 +176,21 @@ QString DFMSideBarItem::text() const
     Q_D(const DFMSideBarItem);
 
     return d->displayText;
+}
+
+void DFMSideBarItem::setContentWidget(QWidget *widget)
+{
+    Q_D(DFMSideBarItem);
+
+    d->contentWidget = widget;
+    // FIXME: attach this widget
+}
+
+QWidget *DFMSideBarItem::contentWidget() const
+{
+    Q_D(const DFMSideBarItem);
+
+    return d->contentWidget;
 }
 
 void DFMSideBarItem::setIconFromThemeConfig(const QString &group, const QString &key)
@@ -248,9 +289,17 @@ void DFMSideBarItem::leaveEvent(QEvent *event)
 
 void DFMSideBarItem::mouseMoveEvent(QMouseEvent *event)
 {
-    Q_UNUSED(event);
+    Q_D(DFMSideBarItem);
 
-    // nothing for now, just ate mouse move event.
+    if (d->pressed && hasDrag()) {
+        QDrag *drag = new QDrag(this);
+        QMimeData *mimeData = new QMimeData;
+        drag->setPixmap(d->reorderLine());
+        drag->setHotSpot(QPoint(event->x(), 4));
+        drag->setMimeData(mimeData);
+        drag->exec();
+        drag->deleteLater();
+    }
 
     return;
 }
