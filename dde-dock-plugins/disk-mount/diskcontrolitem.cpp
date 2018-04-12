@@ -34,6 +34,7 @@
 #include <QtMath>
 #include <QApplication>
 #include <QDebug>
+#include <QStorageInfo>
 
 DWIDGET_USE_NAMESPACE
 
@@ -190,4 +191,18 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
 
 //    emit requestOpenDrive(m_info.id());
     DFileService::instance()->openFile(this, GvfsMountManager::getRealMountUrl(m_info));
+}
+
+void DiskControlItem::showEvent(QShowEvent *e)
+{
+    QUrl url(m_info.mounted_root_uri());
+
+    if (url.isLocalFile()) {
+        QStorageInfo storage_info(url.toLocalFile());
+
+        if (storage_info.isValid())
+            m_diskCapacity->setText(QString("%1/%2").arg(formatDiskSize(storage_info.bytesTotal() - storage_info.bytesFree())).arg(formatDiskSize(storage_info.bytesTotal())));
+    }
+
+    QFrame::showEvent(e);
 }
