@@ -16,7 +16,7 @@ TagManagerDaemon::TagManagerDaemon(QObject* const parent)
                  :QObject{parent}
 {
     adaptor = new TagManagerDaemonAdaptor{ this };
-    QObject::connect( DSqliteHandle::instance().data(), &DSqliteHandle::backendIsBlocked,
+    QObject::connect( DSqliteHandle::instance(), &DSqliteHandle::backendIsBlocked,
                       adaptor, &TagManagerDaemonAdaptor::backendIsBlocked);
 
     if(!QDBusConnection::systemBus().registerObject(ObjectPath, this)){
@@ -26,7 +26,7 @@ TagManagerDaemon::TagManagerDaemon(QObject* const parent)
 
 void TagManagerDaemon::lockBackend()
 {
-    std::function<void(QSharedPointer<DSqliteHandle> handle)> handle{ &DSqliteHandle::lockBackend };
+    std::function<void(DSqliteHandle* handle)> handle{ &DSqliteHandle::lockBackend };
     std::thread threadForLock{ handle, DSqliteHandle::instance() };
     threadForLock.detach();
 }
@@ -38,6 +38,7 @@ void TagManagerDaemon::unlockBackend()
 
 QDBusVariant TagManagerDaemon::disposeClientData(const QMap<QString, QVariant>& filesAndTags, const QString& userName, const std::size_t& type)
 {
+
     QDBusVariant dbusVar{};
 
     if(!filesAndTags.isEmpty() && !userName.isEmpty()){
