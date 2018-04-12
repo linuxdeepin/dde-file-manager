@@ -616,8 +616,12 @@ void DBookmarkScene::volumeChanged(UDiskDeviceInfoPointer device)
         bool isChecked = item->isChecked();
         bool isHighlightDisk = item->isHighlightDisk();
         if(isChecked || isHighlightDisk){
-            DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, device->getMountPointUrl(), views().at(0)->window());
-            emit fileSignalManager->requestFreshFileView(windowId());
+            const DUrl mountdUrl = device->getMountPointUrl();
+
+            if (mountdUrl.isValid()) {
+                DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, mountdUrl, views().at(0)->window());
+                emit fileSignalManager->requestFreshFileView(windowId());
+            }
         }
     }
 }
