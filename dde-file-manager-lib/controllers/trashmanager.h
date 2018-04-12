@@ -55,7 +55,7 @@ public:
 
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
 
-    static bool restoreTrashFile(const DUrlList &list);
+    static bool restoreTrashFile(const DUrlList &list, DUrlList *restoreOriginUrls = 0);
     void cleanTrash(const QObject *sender = 0) const;
 
     static bool isEmpty();

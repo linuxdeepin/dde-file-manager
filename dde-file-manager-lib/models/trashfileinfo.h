@@ -66,6 +66,7 @@ public:
     bool canIteratorDir() const Q_DECL_OVERRIDE;
     bool makeAbsolute() Q_DECL_OVERRIDE;
 
+    DUrl originUrl() const;
     DUrl mimeDataUrl() const Q_DECL_OVERRIDE;
     Qt::DropActions supportedDragActions() const Q_DECL_OVERRIDE;
     Qt::DropActions supportedDropActions() const Q_DECL_OVERRIDE;
