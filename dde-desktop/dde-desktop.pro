@@ -87,8 +87,3 @@ TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
 
 
 include($$PWD/development.pri)
-
-isEqual(DISABLE_DEMO_VIDEO, YES){
-    DEFINES += DISABLE_DEMO_VIDEO
-}
-

@@ -15,3 +15,5 @@ HEADERS  += \
 RESOURCES += \
     $$PWD/image.qrc
 
+# disable demo video
+host_mips64el|host_mipsel|host_sw_64: DEFINES += DISABLE_DEMO_VIDEO
