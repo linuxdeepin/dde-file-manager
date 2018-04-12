@@ -94,6 +94,8 @@ QMap<QString, QString> TagManager::getAllTags()
         }
     }
 
+    this->closeSqlDatabase();
+
     return tagNameAndColor;
 }
 
@@ -146,6 +148,8 @@ QMap<QString, QString> TagManager::getTagColor(const QList<QString>& tags)
       }
     }
 
+    this->closeSqlDatabase();
+
     return tagNameAndColor;
 }
 
@@ -178,6 +182,9 @@ QList<QString> TagManager::getFilesThroughTag(const QString& tagName)
             }
         }
     }
+
+    this->closeSqlDatabase();
+
     return filesPath;
 }
 
@@ -249,13 +256,14 @@ bool TagManager::makeFilesTags(const QList<QString>& tags, const QList<DUrl>& fi
         }
     }
 
+    this->closeSqlDatabase();
+
     return resultValue;
 }
 
 bool TagManager::changeTagColor(const QString& oldColorName, const QString& newColorName)
 {
     impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Write};
-
 
     if(!oldColorName.isEmpty() && !newColorName.isEmpty()){
 
@@ -271,11 +279,19 @@ bool TagManager::changeTagColor(const QString& oldColorName, const QString& newC
 
             if(!sqlDataBase.commit()){
                 sqlDataBase.rollback();
+                this->closeSqlDatabase();
+
                 return false;
             }
+
+            this->closeSqlDatabase();
+
             return true;
         }
     }
+
+    this->closeSqlDatabase();
+
     return false;
 }
 
@@ -324,6 +340,8 @@ bool TagManager::deleteTags(const QList<QString>& tags)
 
             if(!(!value && sqlDataBase.commit())){
                 sqlDataBase.rollback();
+                this->closeSqlDatabase();
+
                 return false;
             }
         }
@@ -337,8 +355,12 @@ bool TagManager::deleteTags(const QList<QString>& tags)
         QVariant var{ TagManagerDaemonController::instance()->disposeClientData(tagsAsKeys,
                                                   TagManager::getCurrentUserName(), Tag::ActionType::DeleteTags) };
 
+        this->closeSqlDatabase();
+
         return var.toBool();
     }
+
+    this->closeSqlDatabase();
 
     return false;
 }
@@ -355,6 +377,7 @@ bool TagManager::deleteFiles(const QList<DUrl>& fileList)
 
         if(!urlList.isEmpty()){
             bool value{ TagManager::instance()->deleteFiles(urlList) };
+
             return value;
         }
     }
@@ -414,10 +437,15 @@ bool TagManager::changeTagName(const QPair<QString, QString>& oldAndNewName)
             }
 
             if(!flagForUpdatingMainDB && var.toBool()){
+                this->closeSqlDatabase();
+
                 return true;
             }
         }
     }
+
+    this->closeSqlDatabase();
+
     return false;
 }
 
@@ -454,8 +482,9 @@ bool TagManager::makeFilesTagThroughColor(const QString& color, const QList<DUrl
 
                         if(!sqlQuery.exec(sqlForInserting)){
                             qWarning(sqlQuery.lastError().text().toStdString().c_str());
-
                             sqlDataBase.rollback();
+                            this->closeSqlDatabase();
+
                             return false;
                         }
                     }
@@ -471,16 +500,23 @@ bool TagManager::makeFilesTagThroughColor(const QString& color, const QList<DUrl
                     dbusResult =  TagManagerDaemonController::instance()->disposeClientData(filesAndColorName, TagManager::getCurrentUserName(),
                                                                                             Tag::ActionType::MakeFilesTagThroughColor);
                     if(dbusResult.toBool() && sqlDataBase.commit()){
+                        this->closeSqlDatabase();
+
                         return true;
                     }
                     if(!dbusResult.toBool()){
                         sqlDataBase.rollback();
+                        this->closeSqlDatabase();
+
                         return false;
                     }
                 }
             }
         }
     }
+
+    this->closeSqlDatabase();
+
     return false;
 }
 

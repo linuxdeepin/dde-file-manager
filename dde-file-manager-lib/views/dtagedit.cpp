@@ -56,15 +56,19 @@ void DTagEdit::onFocusOut()
 
 void DTagEdit::keyPressEvent(QKeyEvent* event)
 {
-    if(event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return){
+    switch(event->key())
+    {
+    case Qt::Key_Enter:
+    case Qt::Key_Return:
+    case Qt::Key_Escape:
+    {
         this->processTags();
         event->accept();
         this->close();
-
-    }else if(event->key() == Qt::Key_Escape){
-        this->processTags();
-        event->accept();
-        this->close();
+        break;
+    }
+    default:
+        break;
     }
 
     DArrowRectangle::keyPressEvent(event);

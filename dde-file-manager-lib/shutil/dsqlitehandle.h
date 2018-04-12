@@ -78,7 +78,7 @@ public:
     void lockBackend()noexcept;
     void unlockBackend()noexcept;
 
-    static QSharedPointer<DSqliteHandle> instance();
+    static DSqliteHandle* instance();
     static std::map<QString, std::multimap<QString, QString>> queryPartionsInfoOfDevices();
     static QPair<QString, QString> getMountPointOfFile(const DUrl& url, std::unique_ptr<std::map<QString, std::multimap<QString, QString>>>& partionsAndMountPoints);
 
@@ -93,6 +93,13 @@ private slots:
 private:
     static QString getConnectionNameFromPartion(const QString& partion)noexcept;
     static QString restoreEscapedChar(const QString& value);
+
+    inline void closeSqlDatabase()noexcept
+    {
+        if(m_sqlDatabasePtr && m_sqlDatabasePtr->isOpen()){
+            m_sqlDatabasePtr->close();
+        }
+    }
 
 
     template<SqlType Ty = SqlType::None, typename T = void>

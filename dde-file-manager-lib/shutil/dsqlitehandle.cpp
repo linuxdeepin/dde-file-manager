@@ -7,6 +7,10 @@
 #include <functional>
 #include <unordered_set>
 
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #include "singleton.h"
 #include "dsqlitehandle.h"
 
@@ -33,9 +37,6 @@ extern "C"
 }
 #endif /*__cplusplus*/
 
-
-
-#include <iostream>
 
 
 namespace std
@@ -233,14 +234,11 @@ QPair<QString, QString> DSqliteHandle::getMountPointOfFile(const DUrl& url,
         }
 
 
-        if(partionAndMounpointItr == std::multimap<QString, QString>::const_iterator{} &&
-           parentPath.startsWith(ROOTPATH)){
+        if(partionAndMounpointItr == std::multimap<QString, QString>::const_iterator{} && parentPath.startsWith(ROOTPATH)){
             partionAndMountPoint.first = rootPathPartionAndMountpointItr->first;
             partionAndMountPoint.second = rootPathPartionAndMountpointItr->second;
         }
-
     }
-
 
     return partionAndMountPoint;
 }
@@ -317,10 +315,9 @@ std::map<QString, std::multimap<QString, QString>>  DSqliteHandle::queryPartions
     return partionsAndMountpoints;
 }
 
-QSharedPointer<DSqliteHandle> DSqliteHandle::instance()
+DSqliteHandle* DSqliteHandle::instance()
 {
-    static QSharedPointer<DSqliteHandle> theInstance{ nullptr };
-    std::call_once(flag, [&]{ theInstance = QSharedPointer<DSqliteHandle>{ new DSqliteHandle }; });
+    static DSqliteHandle* theInstance{ new DSqliteHandle };
     return theInstance;
 }
 
@@ -569,7 +566,7 @@ void DSqliteHandle::connectToSqlite(const QString& mountPoint, const QString& us
                 m_sqlDatabasePtr->setPassword(PASSWORD);
 
             }else{
-                m_sqlDatabasePtr.reset(nullptr);
+                m_sqlDatabasePtr = std::unique_ptr<QSqlDatabase>{ nullptr };
             }
                                            } };
 
@@ -621,6 +618,7 @@ void DSqliteHandle::connectToSqlite(const QString& mountPoint, const QString& us
                     DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint, userName) };
 
                     if(code == DSqliteHandle::ReturnCode::NoThisDir){
+                        m_sqlDatabasePtr->close();
                         return;
                     }
                 }
@@ -2330,7 +2328,6 @@ QList<QString> DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::GetFilesThroug
             }
         }
     }
-
     return files;
 }
 
@@ -2345,8 +2342,6 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(const QMa
         QMap<QString, QList<QString>>::const_iterator cend{ filesAndTags.cend() };
         QPair<QString, QString> unixDeviceAndMountPoint{ DSqliteHandle::getMountPointOfFile(DUrl::fromLocalFile(cbeg.key()), m_partionsOfDevices) };
         DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(unixDeviceAndMountPoint.second, userName) };
-
-        qDebug()<< unixDeviceAndMountPoint.second;
 
         if(unixDeviceAndMountPoint.second.isEmpty() || unixDeviceAndMountPoint.second.isNull()){
             return false;
@@ -2404,13 +2399,15 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(const QMa
                     if(m_sqlDatabasePtr->isOpen()){
 
                         if(!(resultOfDeletingRedundancy && resultOfInserting &&
-                             resultOfUpdating && m_sqlDatabasePtr->commit())){
+                            resultOfUpdating && m_sqlDatabasePtr->commit())){
                             m_sqlDatabasePtr->rollback();
+                            this->closeSqlDatabase();
                             qWarning(m_sqlDatabasePtr->lastError().text().toStdString().c_str());
 
                             return false;
                         }
 
+                        this->closeSqlDatabase();
                         return true;
                     }
                 }
@@ -2418,9 +2415,14 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(const QMa
 
         }else{
             qWarning("A partion was unmounted just now!");
+            this->closeSqlDatabase();
+
             return false;
         }
     }
+
+    this->closeSqlDatabase();
+
     return false;
 }
 
@@ -2429,26 +2431,30 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(const QMa
 template<>
 bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFilesThroughColor, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName)
 {
+    ///##: log! but you need specify the path of file.
+//    std::basic_ofstream<char> outStream{ "", std::ios_base::out | std::ios_base::app };
+
     if(!filesAndTags.isEmpty() && !userName.isEmpty()){
         QMap<QString, QList<QString>>::const_iterator cbeg{ filesAndTags.cbegin() };
         QMap<QString, QList<QString>>::const_iterator cend{ filesAndTags.cend() };
         std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
                   std::multimap<DSqliteHandle::SqlType, QString>::const_iterator> range{ SqlTypeWithStrs.equal_range(SqlType::TagFilesThroughColor) };
         std::list<std::tuple<QString, QString, QString, QString, QString, QString>> sqlStrs{};
-
         QPair<QString, QString> unixDeviceAndMountPoint{ DSqliteHandle::getMountPointOfFile(DUrl::fromLocalFile(cbeg.key()), m_partionsOfDevices) };
 
-        qDebug()<< unixDeviceAndMountPoint;
+        ///###: log!
+//        outStream << "LANG: " << qgetenv("LANG").toStdString()
+//                 << ", LANGUAGE: " << qgetenv("LANGUAGE").toStdString() << std::endl;
 
-        DSqliteHandle::ReturnCode code{
-                        this->checkWhetherHasSqliteInPartion(unixDeviceAndMountPoint.second, userName) };
+        if(unixDeviceAndMountPoint.second.isEmpty() || unixDeviceAndMountPoint.second.isNull()){
+            return false;
+        }
+
+        DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(unixDeviceAndMountPoint.second, userName) };
 
         if(code == DSqliteHandle::ReturnCode::Exist || code == DSqliteHandle::ReturnCode::NoExist){
 
-            qDebug()<< ((bool)m_sqlDatabasePtr);
-
             if(static_cast<bool>(m_sqlDatabasePtr)){
-                qDebug()<< unixDeviceAndMountPoint.second;
                 this->connectToSqlite(unixDeviceAndMountPoint.second, userName);
 
                 for(; cbeg != cend; ++cbeg){
@@ -2480,15 +2486,19 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFilesThroughColor, boo
                     if(m_sqlDatabasePtr->open() && m_sqlDatabasePtr->transaction()){
                         value = this->helpExecSql<DSqliteHandle::SqlType::TagFilesThroughColor,
                                                   std::list<std::tuple<QString, QString, QString, QString, QString, QString>>,
-                                                  bool>(sqlStrs, unixDeviceAndMountPoint.second, userName);
+                                                                                                                    bool>(sqlStrs, unixDeviceAndMountPoint.second, userName);
 
                         if(value){
 
                             if(!m_sqlDatabasePtr->commit()){
                                 m_sqlDatabasePtr->rollback();
+                                this->closeSqlDatabase();
 
                                 return false;
                             }
+
+                            this->closeSqlDatabase();
+
                             return true;
                         }
                     }
@@ -2496,6 +2506,9 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFilesThroughColor, boo
             }
         }
     }
+
+    this->closeSqlDatabase();
+
     return false;
 }
 
@@ -2551,9 +2564,12 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::UntagSamePartionFiles, bo
                         if(!(resultOfDeleteRowInTagWithFile && resultOfUpdateFileProperty
                                                             && m_sqlDatabasePtr->commit())){
                             m_sqlDatabasePtr->rollback();
+                            this->closeSqlDatabase();
 
                             return false;
                         }
+
+                        this->closeSqlDatabase();
 
                         return true;
                     }
@@ -2561,11 +2577,15 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::UntagSamePartionFiles, bo
             }
 
         }else{
+
             qWarning("A partion was unmounted just now!");
+            this->closeSqlDatabase();
 
             return false;
         }
     }
+
+    this->closeSqlDatabase();
 
     return false;
 }
@@ -2601,9 +2621,13 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::UntagDiffPartionFiles, bo
                 result = (val && result);
             }
 
+            this->closeSqlDatabase();
+
             return true;
         }
     }
+
+    this->closeSqlDatabase();
 
     return false;
 }
@@ -2665,10 +2689,16 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(const 
                         }
                     }
                 }
+
+                this->closeSqlDatabase();
+
                 return value;
             }
         }
     }
+
+    this->closeSqlDatabase();
+
     return false;
 }
 
@@ -2732,9 +2762,13 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteTags, bool>(const Q
                 }
             }
 
+            this->closeSqlDatabase();
+
             return result;
         }
     }
+
+    this->closeSqlDatabase();
 
     return false;
 }
@@ -2801,10 +2835,16 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeFilesName, bool>(co
                         }
                     }
                 }
+
+                this->closeSqlDatabase();
+
                 return result;
             }
         }
     }
+
+    this->closeSqlDatabase();
+
     return false;
 }
 
@@ -2874,9 +2914,15 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagsName, bool>(con
                     }
                 }
             }
+
+            this->closeSqlDatabase();
+
             return result;
         }
     }
+
+    this->closeSqlDatabase();
+
     return false;
 }
 
@@ -2912,6 +2958,8 @@ QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetTagsThroughF
             }
         }
     }
+
+    this->closeSqlDatabase();
 
     return tags;
 }
@@ -2959,6 +3007,8 @@ QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetFilesThrough
         }
     }
 
+    this->closeSqlDatabase();
+
     return files;
 }
 
@@ -2993,6 +3043,8 @@ QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetSameTagsOfDi
         totalTagsNames = QList<QString>::fromStdList(stdList);
     }
 
-   return totalTagsNames;
+    this->closeSqlDatabase();
+
+    return totalTagsNames;
 }
 

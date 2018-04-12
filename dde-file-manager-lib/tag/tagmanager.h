@@ -216,6 +216,13 @@ public:
 private:
     static QString getMainDBLocation();
 
+    inline void closeSqlDatabase()noexcept
+    {
+        if(sqlDataBase.isOpen()){
+            sqlDataBase.close();
+        }
+    }
+
     QSqlDatabase sqlDataBase{};
     QReadWriteLock mutex{};
     static std::once_flag onceFlag;

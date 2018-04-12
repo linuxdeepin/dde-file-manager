@@ -32,12 +32,21 @@
 #include "app/filemanagerdaemon.h"
 #include "client/filemanagerclient.h"
 
+
 int main(int argc, char *argv[])
 {
+
+    ///###: why?
+    ///###: when dbus invoke a daemon the variants in the environment of daemon are empty.
+    ///###: So we need to set them.
+    qputenv("LANG", "en_US.UTF8");
+    qputenv("LANGUAGE", "en_US");
+
     QCoreApplication a(argc, argv);
     QDBusConnection connection = QDBusConnection::systemBus();
     DTK_CORE_NAMESPACE::DLogManager::registerConsoleAppender();
     DTK_CORE_NAMESPACE::DLogManager::registerFileAppender();
+
     if (!connection.interface()->isServiceRegistered(DaemonServicePath)){
         qDebug() << connection.registerService(DaemonServicePath) << "register" << DaemonServicePath << "success";
         FileManagerDaemon* daemon = new FileManagerDaemon();
