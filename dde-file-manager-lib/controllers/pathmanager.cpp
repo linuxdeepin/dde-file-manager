@@ -94,10 +94,16 @@ QString PathManager::getSystemPathDisplayName(QString key)
     return QString();
 }
 
+void cleanPath(QString &path)
+{
+    if (path.size() > 1 && path.at(0) == '/' && path.endsWith("/")) {
+        path.chop(1);
+    }
+}
+
 QString PathManager::getSystemPathDisplayNameByPath(QString path)
 {
-    if (path.size() > 1 && path.endsWith("/"))
-        path.chop(1);
+    cleanPath(path);
 
     if (isSystemPath(path)){
         foreach (QString key, systemPathsMap().keys()) {
@@ -119,8 +125,7 @@ QString PathManager::getSystemPathIconName(QString key)
 
 QString PathManager::getSystemPathIconNameByPath(QString path)
 {
-    if (path.size() > 1 && path.endsWith("/"))
-        path.chop(1);
+    cleanPath(path);
 
     if (isSystemPath(path)){
         foreach (QString key, systemPathsMap().keys()) {
@@ -186,8 +191,7 @@ QMap<QString, QString> PathManager::systemPathDisplayNamesMap() const
 
 bool PathManager::isSystemPath(QString path) const
 {
-    if (path.size() > 1 && path.endsWith("/"))
-        path.chop(1);
+    cleanPath(path);
 
     return m_systemPathsSet.contains(path);
 }
