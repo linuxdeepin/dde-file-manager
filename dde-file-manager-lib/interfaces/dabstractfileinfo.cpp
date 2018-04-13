@@ -1148,6 +1148,12 @@ void DAbstractFileInfo::makeToInactive()
 
     if (!d->active)
         return;
+
+    {
+        Q_D(DAbstractFileInfo);
+
+        d->active = false;
+    }
 }
 
 DUrl DAbstractFileInfo::goToUrlWhenDeleted() const
@@ -1209,12 +1215,23 @@ QIODevice *DAbstractFileInfo::createIODevice() const
     return 0;
 }
 
+QVariantHash DAbstractFileInfo::extensionPropertys() const
+{
+    return QVariantHash();
+}
+
 void DAbstractFileInfo::makeToActive()
 {
     CALL_PROXY(makeToActive());
 
     if (d->active)
         return;
+
+    {
+        Q_D(DAbstractFileInfo);
+
+        d->active = true;
+    }
 }
 
 bool DAbstractFileInfo::isActive() const

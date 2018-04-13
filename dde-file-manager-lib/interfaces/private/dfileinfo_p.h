@@ -15,12 +15,15 @@
 #include <QFileInfo>
 #include <QIcon>
 #include <QTimer>
+#include <QFuture>
+#include <QQueue>
 
 class DFileInfo;
 class DFileInfoPrivate : public DAbstractFileInfoPrivate
 {
 public:
     DFileInfoPrivate(const DUrl &fileUrl, DFileInfo *qq, bool hasCache = true);
+    ~DFileInfoPrivate();
 
     QFileInfo fileInfo;
     mutable QMimeType mimeType;
@@ -29,6 +32,10 @@ public:
     mutable bool iconFromTheme = false;
     mutable QPointer<QTimer> getIconTimer;
     bool requestingThumbnail = false;
+
+    mutable QVariantHash extensionPropertys;
+    mutable bool epInitialized = false;
+    mutable QPointer<QTimer> getEPTimer;
 };
 
 #endif // DFILEINFO_P_H

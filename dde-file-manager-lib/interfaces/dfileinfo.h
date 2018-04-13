@@ -34,6 +34,7 @@ public:
     explicit DFileInfo(const QString& filePath, bool hasCache = true);
     explicit DFileInfo(const DUrl& fileUrl, bool hasCache = true);
     explicit DFileInfo(const QFileInfo &fileInfo, bool hasCache = true);
+    ~DFileInfo();
 
     static bool exists(const DUrl &fileUrl);
     static QMimeType mimeType(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
@@ -94,6 +95,7 @@ public:
     void refresh() Q_DECL_OVERRIDE;
     DUrl goToUrlWhenDeleted() const Q_DECL_OVERRIDE;
 
+    void makeToActive() Q_DECL_OVERRIDE;
     void makeToInactive() Q_DECL_OVERRIDE;
     QIcon fileIcon() const Q_DECL_OVERRIDE;
 
@@ -101,10 +103,17 @@ public:
 
     QFileInfo toQFileInfo() const Q_DECL_OVERRIDE;
 
+    QVariantHash extensionPropertys() const Q_DECL_OVERRIDE;
+
 protected:
     explicit DFileInfo(DFileInfoPrivate &dd);
 
+private:
     Q_DECLARE_PRIVATE(DFileInfo)
+
+    friend class RequestEP;
 };
+
+Q_DECLARE_METATYPE(DFileInfo*)
 
 #endif // FILEINFO_H

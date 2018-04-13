@@ -34,16 +34,19 @@
 #include "singleton.h"
 #include "usershare/usersharemanager.h"
 #include "deviceinfo/udisklistener.h"
+#include "tag/tagmanager.h"
 
 #include "dfileservices.h"
 #include "dthumbnailprovider.h"
 #include "dfileiconprovider.h"
 #include "dmimedatabase.h"
+#include "dabstractfilewatcher.h"
 
 #include <QDateTime>
 #include <QDir>
 #include <QPainter>
 #include <QApplication>
+#include <QtConcurrent>
 
 #include <sys/stat.h>
 
@@ -51,10 +54,141 @@ DFM_USE_NAMESPACE
 
 #define REQUEST_THUMBNAIL_DEALY 500
 
+class RequestEP : public QThread
+{
+    Q_OBJECT
+
+public:
+    explicit RequestEP(QObject *parent = 0);
+
+    // Request get the file extension propertys
+    QQueue<QPair<DUrl, DFileInfo*>> requestEPFiles;
+    QHash<DUrl, QVariantHash> epCache;
+    QReadWriteLock requestEPFilesLock;
+    QSet<DFileInfo*> dirtyFileInfos;
+
+    void run() override;
+    void requestEP(const DUrl &url, DFileInfo *info);
+    void cancelRequestEP(DFileInfo *info);
+
+Q_SIGNALS:
+    void requestEPFinished(const DUrl &url, const QVariantHash &ep);
+
+ private Q_SLOTS:
+    void processEPChanged(const DUrl &url, DFileInfo *info, const QVariantHash &ep);
+};
+
+RequestEP::RequestEP(QObject *parent)
+    : QThread(parent)
+{
+    connect(this, &RequestEP::finished, this, [this] {
+        dirtyFileInfos.clear();
+    });
+}
+
+void RequestEP::run()
+{
+    forever {
+        requestEPFilesLock.lockForRead();
+        if (requestEPFiles.isEmpty()) {
+            requestEPFilesLock.unlock();
+            return;
+        }
+        requestEPFilesLock.unlock();
+        requestEPFilesLock.lockForWrite();
+        auto file_info = requestEPFiles.dequeue();
+        requestEPFilesLock.unlock();
+
+        const DUrl &url = file_info.first;
+        const QStringList &tag_list = TagManager::instance()->getSameTagsOfDiffFiles({url});
+
+        QList<QColor> colors;
+
+        for (const QString &color : TagManager::instance()->getTagColor(tag_list)) {
+            colors << QColor(color);
+        }
+
+        QVariantHash ep;
+
+        if (!colors.isEmpty())
+            ep["colored"] = QVariant::fromValue(colors);
+
+        QMetaObject::invokeMethod(this, "processEPChanged", Qt::QueuedConnection,
+                                  Q_ARG(DUrl, url), Q_ARG(DFileInfo*, file_info.second), Q_ARG(QVariantHash, ep));
+    }
+}
+
+void RequestEP::requestEP(const DUrl &url, DFileInfo *info)
+{
+    requestEPFilesLock.lockForWrite();
+    requestEPFiles << qMakePair(url, info);
+    requestEPFilesLock.unlock();
+
+    if (!isRunning()) {
+        start();
+    }
+}
+
+void RequestEP::cancelRequestEP(DFileInfo *info)
+{
+    requestEPFilesLock.lockForRead();
+
+    for (int i = 0; i < requestEPFiles.count(); ++i) {
+        auto file_info = requestEPFiles.at(i);
+
+        if (file_info.second == info) {
+            requestEPFilesLock.unlock();
+            requestEPFilesLock.lockForWrite();
+            requestEPFiles.removeAt(i);
+            requestEPFilesLock.unlock();
+            return;
+        }
+    }
+
+    requestEPFilesLock.unlock();
+    dirtyFileInfos << info;
+}
+
+void RequestEP::processEPChanged(const DUrl &url, DFileInfo *info, const QVariantHash &ep)
+{
+    Q_EMIT requestEPFinished(url, ep);
+
+    if (ep.isEmpty())
+        epCache.remove(url);
+    else
+        epCache[url] = ep;
+
+    if (!ep.isEmpty()) {
+        DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url);
+    }
+
+    if (!dirtyFileInfos.contains(info)) {
+        info->d_func()->extensionPropertys = ep;
+        info->d_func()->epInitialized = true;
+    } else {
+        dirtyFileInfos.remove(info);
+    }
+}
+
+Q_GLOBAL_STATIC(RequestEP, requestEP)
+
 DFileInfoPrivate::DFileInfoPrivate(const DUrl &url, DFileInfo *qq, bool hasCache)
     : DAbstractFileInfoPrivate (url, qq, hasCache)
 {
     fileInfo.setFile(url.toLocalFile());
+}
+
+DFileInfoPrivate::~DFileInfoPrivate()
+{
+    if (getIconTimer) {
+        getIconTimer->stop();
+        getIconTimer->deleteLater();
+    }
+
+    if (getEPTimer) {
+        getEPTimer->stop();
+        getEPTimer->deleteLater();
+    }
 }
 
 DFileInfo::DFileInfo(const QString &filePath, bool hasCache)
@@ -73,6 +207,12 @@ DFileInfo::DFileInfo(const QFileInfo &fileInfo, bool hasCache)
     : DFileInfo(DUrl::fromLocalFile(fileInfo.absoluteFilePath()), hasCache)
 {
 
+}
+
+DFileInfo::~DFileInfo()
+{
+    if (requestEP)
+        requestEP->cancelRequestEP(this);
 }
 
 bool DFileInfo::exists(const DUrl &fileUrl)
@@ -424,6 +564,7 @@ void DFileInfo::refresh()
 
     d->fileInfo.refresh();
     d->icon = QIcon();
+    d->extensionPropertys.clear();
 }
 
 DUrl DFileInfo::goToUrlWhenDeleted() const
@@ -434,15 +575,28 @@ DUrl DFileInfo::goToUrlWhenDeleted() const
     return DAbstractFileInfo::goToUrlWhenDeleted();
 }
 
+void DFileInfo::makeToActive()
+{
+    DAbstractFileInfo::makeToActive();
+}
+
 void DFileInfo::makeToInactive()
 {
     Q_D(DFileInfo);
 
+    DAbstractFileInfo::makeToInactive();
+
     if (d->getIconTimer) {
         d->getIconTimer->stop();
+        d->getIconTimer->deleteLater();
     } else if (d->requestingThumbnail) {
         d->requestingThumbnail = false;
         DThumbnailProvider::instance()->removeInProduceQueue(d->fileInfo, DThumbnailProvider::Large);
+    }
+
+    if (d->getEPTimer) {
+        d->getEPTimer->stop();
+        d->getEPTimer->deleteLater();
     }
 }
 
@@ -543,8 +697,42 @@ QFileInfo DFileInfo::toQFileInfo() const
     return d->fileInfo;
 }
 
+QVariantHash DFileInfo::extensionPropertys() const
+{
+    Q_D(const DFileInfo);
+
+    // ensure extension propertys
+    if (!d->epInitialized) {
+        const DUrl &url = fileUrl();
+
+        d->epInitialized = requestEP->epCache.contains(url);
+
+        if (d->epInitialized) {
+            d->extensionPropertys = requestEP->epCache.value(url);
+        } else {
+            if (!d->getEPTimer) {
+                d->getEPTimer = new QTimer();
+                d->getEPTimer->setSingleShot(true);
+                d->getEPTimer->moveToThread(qApp->thread());
+                d->getEPTimer->setInterval(REQUEST_THUMBNAIL_DEALY);
+            }
+
+            QObject::connect(d->getEPTimer, &QTimer::timeout, requestEP, [d, url, this] {
+                requestEP->requestEP(url, const_cast<DFileInfo*>(this));
+                d->getEPTimer->deleteLater();
+            });
+
+            QMetaObject::invokeMethod(d->getEPTimer, "start", Qt::QueuedConnection);
+        }
+    }
+
+    return d->extensionPropertys;
+}
+
 DFileInfo::DFileInfo(DFileInfoPrivate &dd)
     : DAbstractFileInfo(dd)
 {
 
 }
+
+#include "dfileinfo.moc"
