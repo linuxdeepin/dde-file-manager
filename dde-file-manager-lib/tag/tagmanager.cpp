@@ -73,6 +73,7 @@ static QString randomColor() noexcept
 QMap<QString, QString> TagManager::getAllTags()
 {
     impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Read };
+    ++m_counter;
     QMap<QString, QString> tagNameAndColor{};
 
     if(sqlDataBase.open()){
@@ -94,6 +95,8 @@ QMap<QString, QString> TagManager::getAllTags()
         }
     }
 
+
+    --m_counter;
     this->closeSqlDatabase();
 
     return tagNameAndColor;
@@ -102,6 +105,7 @@ QMap<QString, QString> TagManager::getAllTags()
 QList<QString> TagManager::getSameTagsOfDiffFiles(const QList<DUrl>& files)
 {
     impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Read};
+    ++m_counter;
     QMap<QString, QVariant> varMap{};
 
     for(const DUrl& url : files){
@@ -110,12 +114,17 @@ QList<QString> TagManager::getSameTagsOfDiffFiles(const QList<DUrl>& files)
 
     QVariant var{ TagManagerDaemonController::instance()->disposeClientData(varMap,
                                               TagManager::getCurrentUserName(), Tag::ActionType::GetTagsThroughFile) };
+
+    --m_counter;
+    this->closeSqlDatabase();
+
     return var.toStringList();
 }
 
 QMap<QString, QString> TagManager::getTagColor(const QList<QString>& tags)
 {
     impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Read};
+    ++m_counter;
     QMap<QString, QString> tagNameAndColor{};
 
     if(!tags.isEmpty()){
@@ -148,6 +157,8 @@ QMap<QString, QString> TagManager::getTagColor(const QList<QString>& tags)
       }
     }
 
+
+    --m_counter;
     this->closeSqlDatabase();
 
     return tagNameAndColor;
@@ -156,6 +167,7 @@ QMap<QString, QString> TagManager::getTagColor(const QList<QString>& tags)
 QList<QString> TagManager::getFilesThroughTag(const QString& tagName)
 {
     impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Read};
+    ++m_counter;
     QList<QString> filesPath{};
 
     if(sqlDataBase.open()){
@@ -183,6 +195,8 @@ QList<QString> TagManager::getFilesThroughTag(const QString& tagName)
         }
     }
 
+
+    --m_counter;
     this->closeSqlDatabase();
 
     return filesPath;
@@ -192,6 +206,7 @@ bool TagManager::makeFilesTags(const QList<QString>& tags, const QList<DUrl>& fi
 {
 
     impl::shared_mutex<QReadWriteLock> sharedLck{ mutex,impl::shared_mutex<QReadWriteLock>::Options::Write};
+    ++m_counter;
     bool resultValue{ false };
 
     if(sqlDataBase.open() && sqlDataBase.transaction()){
@@ -256,6 +271,7 @@ bool TagManager::makeFilesTags(const QList<QString>& tags, const QList<DUrl>& fi
         }
     }
 
+    --m_counter;
     this->closeSqlDatabase();
 
     return resultValue;
@@ -264,6 +280,7 @@ bool TagManager::makeFilesTags(const QList<QString>& tags, const QList<DUrl>& fi
 bool TagManager::changeTagColor(const QString& oldColorName, const QString& newColorName)
 {
     impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Write};
+    ++m_counter;
 
     if(!oldColorName.isEmpty() && !newColorName.isEmpty()){
 
@@ -279,17 +296,20 @@ bool TagManager::changeTagColor(const QString& oldColorName, const QString& newC
 
             if(!sqlDataBase.commit()){
                 sqlDataBase.rollback();
+                --m_counter;
                 this->closeSqlDatabase();
 
                 return false;
             }
 
+            --m_counter;
             this->closeSqlDatabase();
 
             return true;
         }
     }
 
+    --m_counter;
     this->closeSqlDatabase();
 
     return false;
@@ -298,6 +318,7 @@ bool TagManager::changeTagColor(const QString& oldColorName, const QString& newC
 bool TagManager::remveTagsOfFiles(const QList<QString>& tags, const QList<DUrl>& files)
 {
     impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Write };
+    ++m_counter;
     bool value{ false };
 
     if(!tags.isEmpty() && !files.isEmpty()){
@@ -313,12 +334,16 @@ bool TagManager::remveTagsOfFiles(const QList<QString>& tags, const QList<DUrl>&
         value = var.toBool();
     }
 
+    --m_counter;
+    this->closeSqlDatabase();
+
     return value;
 }
 
 bool TagManager::deleteTags(const QList<QString>& tags)
 {
     impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Write };
+    ++m_counter;
 
     if(!tags.isEmpty()){
 
@@ -340,6 +365,7 @@ bool TagManager::deleteTags(const QList<QString>& tags)
 
             if(!(!value && sqlDataBase.commit())){
                 sqlDataBase.rollback();
+                --m_counter;
                 this->closeSqlDatabase();
 
                 return false;
@@ -355,11 +381,13 @@ bool TagManager::deleteTags(const QList<QString>& tags)
         QVariant var{ TagManagerDaemonController::instance()->disposeClientData(tagsAsKeys,
                                                   TagManager::getCurrentUserName(), Tag::ActionType::DeleteTags) };
 
+        --m_counter;
         this->closeSqlDatabase();
 
         return var.toBool();
     }
 
+    --m_counter;
     this->closeSqlDatabase();
 
     return false;
@@ -407,6 +435,7 @@ bool TagManager::deleteFiles(const QList<QString>& fileList)
 bool TagManager::changeTagName(const QPair<QString, QString>& oldAndNewName)
 {
     impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Write };
+    ++m_counter;
 
     if(!oldAndNewName.first.isEmpty() && !oldAndNewName.second.isEmpty()){
         bool flagForUpdatingMainDB{ false };
@@ -437,6 +466,7 @@ bool TagManager::changeTagName(const QPair<QString, QString>& oldAndNewName)
             }
 
             if(!flagForUpdatingMainDB && var.toBool()){
+                --m_counter;
                 this->closeSqlDatabase();
 
                 return true;
@@ -444,6 +474,7 @@ bool TagManager::changeTagName(const QPair<QString, QString>& oldAndNewName)
         }
     }
 
+    --m_counter;
     this->closeSqlDatabase();
 
     return false;
@@ -452,6 +483,7 @@ bool TagManager::changeTagName(const QPair<QString, QString>& oldAndNewName)
 bool TagManager::makeFilesTagThroughColor(const QString& color, const QList<DUrl>& files)
 {
     impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Write };
+    ++m_counter;
 
     if(!color.isEmpty() && !files.isEmpty()){
         QString colorName{ ColorsWithNames[color] };
@@ -483,6 +515,7 @@ bool TagManager::makeFilesTagThroughColor(const QString& color, const QList<DUrl
                         if(!sqlQuery.exec(sqlForInserting)){
                             qWarning(sqlQuery.lastError().text().toStdString().c_str());
                             sqlDataBase.rollback();
+                            --m_counter;
                             this->closeSqlDatabase();
 
                             return false;
@@ -500,12 +533,15 @@ bool TagManager::makeFilesTagThroughColor(const QString& color, const QList<DUrl
                     dbusResult =  TagManagerDaemonController::instance()->disposeClientData(filesAndColorName, TagManager::getCurrentUserName(),
                                                                                             Tag::ActionType::MakeFilesTagThroughColor);
                     if(dbusResult.toBool() && sqlDataBase.commit()){
+                        --m_counter;
                         this->closeSqlDatabase();
 
                         return true;
                     }
+
                     if(!dbusResult.toBool()){
                         sqlDataBase.rollback();
+                        --m_counter;
                         this->closeSqlDatabase();
 
                         return false;
@@ -515,6 +551,7 @@ bool TagManager::makeFilesTagThroughColor(const QString& color, const QList<DUrl
         }
     }
 
+    --m_counter;
     this->closeSqlDatabase();
 
     return false;
