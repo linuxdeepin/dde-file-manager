@@ -548,6 +548,8 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
 
         return QString();
     }
+    case ExtensionPropertys:
+        return indexNode->fileInfo->extensionPropertys();
     default: {
         const DAbstractFileInfoPointer &fileInfo = indexNode->fileInfo;
 

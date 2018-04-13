@@ -40,12 +40,12 @@ public:
 
     bool columnCompact = false;
 
+    Q_DECLARE_PUBLIC(DAbstractFileInfo)
+
 private:
     DUrl fileUrl;
     static QReadWriteLock *urlToFileInfoMapLock;
     static QMap<DUrl, DAbstractFileInfo*> urlToFileInfoMap;
-
-    Q_DECLARE_PUBLIC(DAbstractFileInfo)
 };
 
 #endif // DABSTRACTFILEINFO_P_H
