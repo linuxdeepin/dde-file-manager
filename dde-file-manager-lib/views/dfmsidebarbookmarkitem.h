@@ -30,11 +30,15 @@ DFM_BEGIN_NAMESPACE
 
 class DFMSideBarBookmarkItem : public DFMSideBarItem
 {
+    Q_OBJECT
+
 public:
     DFMSideBarBookmarkItem(BookMarkPointer bookmark);
 
 protected:
     virtual QMenu *createStandardContextMenu() const Q_DECL_OVERRIDE;
+//    void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
+//    void dragLeaveEvent(QDragLeaveEvent *event) Q_DECL_OVERRIDE;
 };
 
 DFM_END_NAMESPACE

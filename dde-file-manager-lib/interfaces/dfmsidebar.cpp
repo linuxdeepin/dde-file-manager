@@ -246,6 +246,45 @@ void DFMSideBar::removeItem(int index, const QString &group)
     }
 }
 
+void DFMSideBar::removeItem(DFMSideBarItem *item)
+{
+    Q_D(DFMSideBar);
+
+    QMap<QString, DFMSideBarItemGroup *>::const_iterator i;
+    for (i = d->groupNameMap.begin(); i != d->groupNameMap.end(); ++i) {
+        DFMSideBarItemGroup *groupPointer = i.value();
+        int index = groupPointer->itemIndex(item);
+        if (index != -1) {
+            groupPointer->removeItem(index);
+            return;
+        }
+    }
+}
+
+/*!
+ * \brief Get the item index from its group.
+ *
+ * \return the index from its group. return -1 if not found the item.
+ *
+ * Please notice that this return the index from the item's owner group,
+ * not the index of the full sidebar items.
+ */
+int DFMSideBar::itemIndex(const DFMSideBarItem *item) const
+{
+    Q_D(const DFMSideBar);
+
+    QMap<QString, DFMSideBarItemGroup *>::const_iterator i;
+    for (i = d->groupNameMap.begin(); i != d->groupNameMap.end(); ++i) {
+        DFMSideBarItemGroup *groupPointer = i.value();
+        int index = groupPointer->itemIndex(item);
+        if (index != -1) {
+            return index;
+        }
+    }
+
+    return -1;
+}
+
 QString DFMSideBar::itemGroup(const DFMSideBarItem *item) const
 {
     Q_D(const DFMSideBar);
@@ -308,7 +347,15 @@ int DFMSideBar::itemCount(const QString &group) const
 
 QRect DFMSideBar::groupGeometry(const QString &group) const
 {
+    Q_D(const DFMSideBar);
 
+    if (d->groupNameMap.contains(group)) {
+        DFMSideBarItemGroup *groupPointer = d->groupNameMap[group];
+        return groupPointer->geometry();
+    }
+
+    // or throw a exception if not found?
+    return QRect();
 }
 
 DFMSideBar::GroupName DFMSideBar::groupFromName(const QString &name)

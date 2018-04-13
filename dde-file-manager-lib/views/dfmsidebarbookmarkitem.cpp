@@ -31,7 +31,7 @@ DFMSideBarBookmarkItem::DFMSideBarBookmarkItem(BookMarkPointer bookmark)
 {
     setText(bookmark->getName());
     setIconFromThemeConfig("BookmarkItem.BookMarks", "icon");
-    setHasDrag(true);
+    setReorderable(true);
 }
 
 QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
@@ -46,5 +46,16 @@ QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
 
     return menu;
 }
+
+//void DFMSideBarBookmarkItem::dragEnterEvent(QDragEnterEvent *event)
+//{
+//    event->setDropAction(Qt::IgnoreAction);
+//    return DFMSideBarItem::dragEnterEvent(event);
+//}
+
+//void DFMSideBarBookmarkItem::dragLeaveEvent(QDragLeaveEvent *event)
+//{
+
+//}
 
 DFM_END_NAMESPACE
