@@ -218,13 +218,17 @@ private:
 
     inline void closeSqlDatabase()noexcept
     {
-        if(sqlDataBase.isOpen()){
-            sqlDataBase.close();
+        if(m_counter.load(std::memory_order_consume) == 0){
+
+            if(sqlDataBase.isOpen()){
+                sqlDataBase.close();
+            }
         }
     }
 
     QSqlDatabase sqlDataBase{};
     QReadWriteLock mutex{};
+    std::atomic<std::size_t> m_counter{ 0 };
     static std::once_flag onceFlag;
 };
 
