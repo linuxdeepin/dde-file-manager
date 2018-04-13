@@ -49,6 +49,7 @@ public:
     QVBoxLayout *mainLayout;
     QWidget *mainLayoutHolder;
     QMap<QString, DFMSideBarItemGroup *> groupNameMap;
+    // ^ this QMap is not neccessary since we added a name attrib to group itself
 
 private:
     void initData();
@@ -97,7 +98,7 @@ void DFMSideBarPrivate::initUI()
     };
 
     foreach (const DFMSideBar::GroupName &groupType, groups) {
-        DFMSideBarItemGroup *group = new DFMSideBarItemGroup();
+        DFMSideBarItemGroup *group = new DFMSideBarItemGroup(q->groupName(groupType));
         addItemToGroup(group, groupType);
         groupNameMap[q->groupName(groupType)] = group;
         mainLayout->addLayout(group);
@@ -210,7 +211,7 @@ int DFMSideBar::addItem(DFMSideBarItem *item, const QString &group)
         index = groupPointer->appendItem(item);
     } else {
         QString groupName = group.isEmpty() ? "" : group;
-        DFMSideBarItemGroup *group = new DFMSideBarItemGroup();
+        DFMSideBarItemGroup *group = new DFMSideBarItemGroup(groupName);
         d->groupNameMap[groupName] = group;
         index = group->appendItem(item);
         d->mainLayout->addLayout(group);
@@ -250,15 +251,14 @@ void DFMSideBar::removeItem(DFMSideBarItem *item)
 {
     Q_D(DFMSideBar);
 
-    QMap<QString, DFMSideBarItemGroup *>::const_iterator i;
-    for (i = d->groupNameMap.begin(); i != d->groupNameMap.end(); ++i) {
-        DFMSideBarItemGroup *groupPointer = i.value();
-        int index = groupPointer->itemIndex(item);
-        if (index != -1) {
-            groupPointer->removeItem(index);
-            return;
-        }
+    DFMSideBarItemGroup *groupPointer = d->groupNameMap[item->groupName()];
+    Q_CHECK_PTR(groupPointer);
+    int index = groupPointer->itemIndex(item);
+    if (index != -1) {
+        groupPointer->removeItem(index);
+        return;
     }
+
 }
 
 /*!
@@ -273,32 +273,9 @@ int DFMSideBar::itemIndex(const DFMSideBarItem *item) const
 {
     Q_D(const DFMSideBar);
 
-    QMap<QString, DFMSideBarItemGroup *>::const_iterator i;
-    for (i = d->groupNameMap.begin(); i != d->groupNameMap.end(); ++i) {
-        DFMSideBarItemGroup *groupPointer = i.value();
-        int index = groupPointer->itemIndex(item);
-        if (index != -1) {
-            return index;
-        }
-    }
-
-    return -1;
-}
-
-QString DFMSideBar::itemGroup(const DFMSideBarItem *item) const
-{
-    Q_D(const DFMSideBar);
-
-    QMap<QString, DFMSideBarItemGroup *>::const_iterator i;
-    for (i = d->groupNameMap.begin(); i != d->groupNameMap.end(); ++i) {
-        DFMSideBarItemGroup *groupPointer = i.value();
-        if (groupPointer->itemIndex(item) != -1) {
-            return i.key();
-        }
-    }
-
-    // return a empty string if not found
-    return QString();
+    DFMSideBarItemGroup *groupPointer = d->groupNameMap[item->groupName()];
+    Q_CHECK_PTR(groupPointer);
+    return groupPointer->itemIndex(item);
 }
 
 /*!

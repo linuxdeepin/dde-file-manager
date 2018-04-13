@@ -47,15 +47,5 @@ QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
     return menu;
 }
 
-//void DFMSideBarBookmarkItem::dragEnterEvent(QDragEnterEvent *event)
-//{
-//    event->setDropAction(Qt::IgnoreAction);
-//    return DFMSideBarItem::dragEnterEvent(event);
-//}
-
-//void DFMSideBarBookmarkItem::dragLeaveEvent(QDragLeaveEvent *event)
-//{
-
-//}
 
 DFM_END_NAMESPACE

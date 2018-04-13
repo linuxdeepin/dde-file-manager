@@ -37,8 +37,6 @@ public:
 
 protected:
     virtual QMenu *createStandardContextMenu() const Q_DECL_OVERRIDE;
-//    void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
-//    void dragLeaveEvent(QDragLeaveEvent *event) Q_DECL_OVERRIDE;
 };
 
 DFM_END_NAMESPACE

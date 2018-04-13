@@ -56,7 +56,6 @@ public:
     void removeItem(int index, const QString &group = QString());
     void removeItem(DFMSideBarItem *item);
     int itemIndex(const DFMSideBarItem *item) const;
-    QString itemGroup(const DFMSideBarItem *item) const;
     DFMSideBarItem *itemAt(int index, const QString &group = QString()) const;
     DFMSideBarItem *takeItem(int index, const QString &group = QString());
     int itemCount(const QString &group = QString()) const;
