@@ -37,19 +37,30 @@ class DFMSideBarItemGroup : public QVBoxLayout
     Q_OBJECT
 
 public:
-    DFMSideBarItemGroup();
+    explicit DFMSideBarItemGroup(QString groupName);
     int itemIndex(const DFMSideBarItem *item) const;
     int appendItem(DFMSideBarItem *item);
     void insertItem(int index, DFMSideBarItem *item);
     void removeItem(int index);
     DFMSideBarItem *takeItem(int index);
+    DFMSideBarItem *takeItem(DFMSideBarItem *item);
     int itemCount() const;
     DFMSideBarItem *operator [](int index);
 
 private:
+    QString groupName;
     QVBoxLayout *itemHolder;
     QList<DFMSideBarItem *> itemList;
     DFMSideBarItemSeparator *bottomSeparator;
+
+private slots:
+    void reorderItem(DFMSideBarItem *ori, DFMSideBarItem *dst, bool insertBefore);
+
+    void itemConnectionRegister(DFMSideBarItem *item);
+    void itemConnectionUnregister(DFMSideBarItem *item);
+
+signals:
+    void itemReordered(int oldIndex, int newIndex, DFMSideBarItem *item);
 };
 
 DFM_END_NAMESPACE

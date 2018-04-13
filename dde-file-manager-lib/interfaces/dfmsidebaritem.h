@@ -40,6 +40,7 @@ class DFMSideBarItem : public QWidget
     Q_PROPERTY(bool reorderable READ reorderable WRITE setReorderable)
     Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly)
     Q_PROPERTY(bool checked READ checked WRITE setChecked)
+    Q_PROPERTY(QString groupName READ groupName CONSTANT)
     Q_PROPERTY(QString text READ text WRITE setText)
 
 public:
@@ -52,6 +53,7 @@ public:
     bool readOnly() const;
     bool checked() const;
 
+    QString groupName() const;
     QString text() const;
 
     void setContentWidget(QWidget *widget);
@@ -70,20 +72,28 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void clicked();
+    void reorder(DFMSideBarItem *ori, DFMSideBarItem *dst, bool insertBefore);
 
 protected:
+
+    void setGroupName(QString groupName); // this function should be protected
+
     virtual QMenu *createStandardContextMenu() const;
     virtual bool canDropMimeData(const QMimeData *data, Qt::DropAction action) const;
     virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action) const;
 
     void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
     void dragLeaveEvent(QDragLeaveEvent *event) Q_DECL_OVERRIDE;
+    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
     void enterEvent(QEvent *event) Q_DECL_OVERRIDE;
     void leaveEvent(QEvent *event) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
+
+    //friend DFMSideBarItem *DFMSideBarItemGroup::takeItem(int index);
+    friend class DFMSideBarItemGroup;
 
 private:
     QScopedPointer<DFMSideBarItemPrivate> d_ptr;

@@ -56,7 +56,6 @@ public:
     DUrl url;
     QFont font;
     QWidget *contentWidget = nullptr;
-    QString displayText = "Placeholder";
 
     DFMSideBarItem *q_ptr = nullptr;
 
@@ -64,6 +63,8 @@ private:
     bool pressed = false;
     bool checked = false;
     bool hovered = false;
+    QString groupName = QString();
+    QString displayText = "Placeholder";
     QString iconGroup, iconKey; // use `icon()` and you'll get proper QPixmap for drawing.
 };
 
@@ -171,6 +172,13 @@ bool DFMSideBarItem::checked() const
     return d->checked;
 }
 
+QString DFMSideBarItem::groupName() const
+{
+    Q_D(const DFMSideBarItem);
+
+    return d->groupName;
+}
+
 QString DFMSideBarItem::text() const
 {
     Q_D(const DFMSideBarItem);
@@ -228,6 +236,20 @@ void DFMSideBarItem::setChecked(bool checked)
     update();
 }
 
+/*!
+ * \brief Set the group name which the item is belones to.
+ * \param groupName the group name.
+ *
+ * Notice: Don't manualy set the group name by hand. It should managed by
+ * a `DFMSideBarItemGroup`.
+ */
+void DFMSideBarItem::setGroupName(QString groupName)
+{
+    Q_D(DFMSideBarItem);
+
+    d->groupName = groupName;
+}
+
 void DFMSideBarItem::setText(QString text)
 {
     Q_D(DFMSideBarItem);
@@ -273,8 +295,7 @@ void DFMSideBarItem::dragEnterEvent(QDragEnterEvent *event)
     }
 
     if (DFMSideBarItem *item = qobject_cast<DFMSideBarItem *>(event->source())) {
-        // FIXME: it's not the right way to check draging is inside the same group
-        if (d->reorderable && this->parent() == item->parent()) {
+        if (d->reorderable && this->groupName() == item->groupName()) {
             event->acceptProposedAction();
         }
     }
@@ -294,8 +315,23 @@ void DFMSideBarItem::dragLeaveEvent(QDragLeaveEvent *event)
     update();
 }
 
+void DFMSideBarItem::dropEvent(QDropEvent *event)
+{
+    Q_D(DFMSideBarItem);
+
+    // If drop a sidebar item:
+    if (DFMSideBarItem *item = qobject_cast<DFMSideBarItem *>(event->source())) {
+        // do position change
+        emit reorder(item, this, event->pos().y() < (SIDEBAR_ITEM_HEIGHT / 2));
+    }
+
+    d->hovered = false;
+    update();
+}
+
 void DFMSideBarItem::enterEvent(QEvent *event)
 {
+    Q_UNUSED(event);
     Q_D(DFMSideBarItem);
 
     d->pressed = false; // clear click state
@@ -305,6 +341,7 @@ void DFMSideBarItem::enterEvent(QEvent *event)
 
 void DFMSideBarItem::leaveEvent(QEvent *event)
 {
+    Q_UNUSED(event);
     Q_D(DFMSideBarItem);
 
     d->pressed = false; // only able to press when mouse is on this widget

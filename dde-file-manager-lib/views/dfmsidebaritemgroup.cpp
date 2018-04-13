@@ -28,12 +28,13 @@
 
 DFM_BEGIN_NAMESPACE
 
-DFMSideBarItemGroup::DFMSideBarItemGroup()
+DFMSideBarItemGroup::DFMSideBarItemGroup(QString groupName)
 {
     setSpacing(0);
     itemHolder = new QVBoxLayout();
     bottomSeparator = new DFMSideBarItemSeparator();
 
+    this->groupName = groupName;
     this->addLayout(itemHolder);
     this->addWidget(bottomSeparator);
     bottomSeparator->setVisible(itemList.count() != 0);
@@ -57,6 +58,8 @@ int DFMSideBarItemGroup::appendItem(DFMSideBarItem *item)
     int index = itemList.count();
     itemList.append(item);
     itemHolder->addWidget(item);
+    item->setGroupName(groupName);
+    itemConnectionRegister(item);
 
     bottomSeparator->setVisible(itemList.count() != 0);
 
@@ -71,7 +74,9 @@ int DFMSideBarItemGroup::appendItem(DFMSideBarItem *item)
 void DFMSideBarItemGroup::insertItem(int index, DFMSideBarItem *item)
 {
     itemList.insert(index, item);
-    itemHolder->insertWidget(index, item); // FIXME: bottom line issue
+    itemHolder->insertWidget(index, item);
+    item->setGroupName(groupName);
+    itemConnectionRegister(item);
 }
 
 /*!
@@ -84,6 +89,7 @@ void DFMSideBarItemGroup::removeItem(int index)
     if (index >= 0 && index < itemList.count()) {
         DFMSideBarItem *item = itemList.takeAt(index);
         itemHolder->removeWidget(item);
+        itemConnectionUnregister(item);
         item->deleteLater();
     }
 }
@@ -106,14 +112,26 @@ void DFMSideBarItemGroup::removeItem(int index)
 */
 DFMSideBarItem *DFMSideBarItemGroup::takeItem(int index)
 {
-    DFMSideBarItem *value = nullptr;
+    DFMSideBarItem *item = nullptr;
 
     if (index >= 0 && index < itemList.count()) {
-        value = itemList.takeAt(index);
-        itemHolder->removeWidget(value);
+        item = itemList.takeAt(index);
+        itemHolder->removeWidget(item);
+        itemConnectionUnregister(item);
+        item->setGroupName(QString());
     }
 
-    return value;
+    return item;
+}
+
+DFMSideBarItem *DFMSideBarItemGroup::takeItem(DFMSideBarItem *item)
+{
+    itemList.removeOne(item);
+    itemHolder->removeWidget(item);
+    itemConnectionUnregister(item);
+    item->setGroupName(QString());
+
+    return item;
 }
 
 /*!
@@ -131,6 +149,37 @@ int DFMSideBarItemGroup::itemCount() const
 DFMSideBarItem *DFMSideBarItemGroup::operator [](int index)
 {
     return itemList[index];
+}
+
+void DFMSideBarItemGroup::reorderItem(DFMSideBarItem *ori, DFMSideBarItem *dst, bool insertBefore)
+{
+    int oldIndex = itemIndex(ori);
+    // since insertItem only provided an `index` argument to insert, we should take it first.
+    takeItem(ori);
+    int dstIndex = itemIndex(dst);
+    if (insertBefore) {
+        insertItem(dstIndex, ori);
+    } else {
+        if (dstIndex >= itemCount()) {
+            appendItem(ori);
+        } else {
+            insertItem(dstIndex + 1, ori);
+        }
+    }
+    int newIndex = itemIndex(ori);
+
+    emit itemReordered(oldIndex, newIndex, ori);
+}
+
+void DFMSideBarItemGroup::itemConnectionRegister(DFMSideBarItem *item)
+{
+    connect(item, SIGNAL(reorder(DFMSideBarItem *, DFMSideBarItem *, bool)),
+            this, SLOT(reorderItem(DFMSideBarItem *, DFMSideBarItem *, bool)));
+}
+
+void DFMSideBarItemGroup::itemConnectionUnregister(DFMSideBarItem *item)
+{
+    item->disconnect();
 }
 
 DFM_END_NAMESPACE
