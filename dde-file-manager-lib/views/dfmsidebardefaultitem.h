@@ -42,6 +42,8 @@ DFM_BEGIN_NAMESPACE
 */
 class DFMSideBarDefaultItem : public DFMSideBarItem
 {
+    Q_OBJECT
+
 public:
     DFMSideBarDefaultItem(DFMStandardPaths::StandardLocation location, QWidget *parent = nullptr);
 

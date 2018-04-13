@@ -33,7 +33,7 @@ DFMSideBarDefaultItem::DFMSideBarDefaultItem(DFMStandardPaths::StandardLocation 
     : DFMSideBarItem(getDUrlFromStandardLocation(location), parent)
 {
     initItemByLocation(location);
-    setHasDrag(false);
+    setReorderable(false);
 }
 
 DUrl DFMSideBarDefaultItem::getDUrlFromStandardLocation(DFMStandardPaths::StandardLocation location)

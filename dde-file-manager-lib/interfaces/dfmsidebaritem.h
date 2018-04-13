@@ -37,7 +37,7 @@ class DFMSideBarItem : public QWidget
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool hasDrag READ hasDrag WRITE setHasDrag)
+    Q_PROPERTY(bool reorderable READ reorderable WRITE setReorderable)
     Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly)
     Q_PROPERTY(bool checked READ checked WRITE setChecked)
     Q_PROPERTY(QString text READ text WRITE setText)
@@ -48,7 +48,7 @@ public:
 
     const DUrl url() const;
 
-    bool hasDrag() const;
+    bool reorderable() const;
     bool readOnly() const;
     bool checked() const;
 
@@ -60,7 +60,7 @@ public:
     void setIconFromThemeConfig(const QString &group, const QString &key = "icon");
 
 public Q_SLOTS:
-    void setHasDrag(bool hasDrag);
+    void setReorderable(bool reorderable);
     void setReadOnly(bool readOnly);
     void setChecked(bool checked);
 
@@ -76,6 +76,8 @@ protected:
     virtual bool canDropMimeData(const QMimeData *data, Qt::DropAction action) const;
     virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action) const;
 
+    void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
+    void dragLeaveEvent(QDragLeaveEvent *event) Q_DECL_OVERRIDE;
     void enterEvent(QEvent *event) Q_DECL_OVERRIDE;
     void leaveEvent(QEvent *event) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;

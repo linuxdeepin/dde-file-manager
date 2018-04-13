@@ -50,7 +50,7 @@ public:
     QPixmap reorderLine() const;
     ThemeConfig::State getState() const;
 
-    bool hasDrag = false;
+    bool reorderable = false;
     bool readOnly = true;
 
     DUrl url;
@@ -150,11 +150,11 @@ const DUrl DFMSideBarItem::url() const
     return d->url;
 }
 
-bool DFMSideBarItem::hasDrag() const
+bool DFMSideBarItem::reorderable() const
 {
     Q_D(const DFMSideBarItem);
 
-    return d->hasDrag;
+    return d->reorderable;
 }
 
 bool DFMSideBarItem::readOnly() const
@@ -204,11 +204,11 @@ void DFMSideBarItem::setIconFromThemeConfig(const QString &group, const QString 
     update();
 }
 
-void DFMSideBarItem::setHasDrag(bool hasDrag)
+void DFMSideBarItem::setReorderable(bool reorderable)
 {
     Q_D(DFMSideBarItem);
 
-    d->hasDrag = hasDrag;
+    d->reorderable = reorderable;
 }
 
 void DFMSideBarItem::setReadOnly(bool readOnly)
@@ -243,11 +243,6 @@ void DFMSideBarItem::playAnimation()
 
 }
 
-/*
-    TODO: Should create some new classes which extend `DFMSideBarItem`
-    and overwrite this function to get different context menu instead
-    of checking type or other attribs.
-*/
 QMenu *DFMSideBarItem::createStandardContextMenu() const
 {
     QMenu *menu = new QMenu();
@@ -267,6 +262,36 @@ bool DFMSideBarItem::canDropMimeData(const QMimeData *data, Qt::DropAction actio
 bool DFMSideBarItem::dropMimeData(const QMimeData *data, Qt::DropAction action) const
 {
 
+}
+
+void DFMSideBarItem::dragEnterEvent(QDragEnterEvent *event)
+{
+    Q_D(DFMSideBarItem);
+
+    if (event->source() == this) {
+        return;
+    }
+
+    if (DFMSideBarItem *item = qobject_cast<DFMSideBarItem *>(event->source())) {
+        // FIXME: it's not the right way to check draging is inside the same group
+        if (d->reorderable && this->parent() == item->parent()) {
+            event->acceptProposedAction();
+        }
+    }
+
+    if (event->isAccepted()) {
+        d->hovered = true;
+        update();
+    }
+}
+
+void DFMSideBarItem::dragLeaveEvent(QDragLeaveEvent *event)
+{
+    Q_UNUSED(event);
+    Q_D(DFMSideBarItem);
+
+    d->hovered = false;
+    update();
 }
 
 void DFMSideBarItem::enterEvent(QEvent *event)
@@ -291,7 +316,7 @@ void DFMSideBarItem::mouseMoveEvent(QMouseEvent *event)
 {
     Q_D(DFMSideBarItem);
 
-    if (d->pressed && hasDrag()) {
+    if (d->pressed && reorderable()) {
         QDrag *drag = new QDrag(this);
         QMimeData *mimeData = new QMimeData;
         drag->setPixmap(d->reorderLine());
