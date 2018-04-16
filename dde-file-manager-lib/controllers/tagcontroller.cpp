@@ -28,6 +28,7 @@ TagController::TagController(QObject* const parent)
 const DAbstractFileInfoPointer TagController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet>& event) const
 {
     DAbstractFileInfoPointer tagedFilesInfo{ new TagFileInfo{ event->url() } };
+
     return tagedFilesInfo;
 }
 
@@ -37,7 +38,7 @@ const QList<DAbstractFileInfoPointer> TagController::getChildren(const QSharedPo
     QList<DAbstractFileInfoPointer> infoList;
 
 
-    if(currentUrl.isTagedFile()){
+    if(currentUrl.isTaggedFile()){
         QString path{ currentUrl.path() };
 
         if(path == QString{"/"}){
@@ -61,13 +62,12 @@ const QList<DAbstractFileInfoPointer> TagController::getChildren(const QSharedPo
             QList<QString> files{ var.toStringList() };
 
             for(const QString& str : files){
-                currentUrl.setTagedFileUrl( DUrl{str} );
-                DAbstractFileInfoPointer fileInfo{ DFileService::instance()->createFileInfo(this, currentUrl) };
+                DUrl url{ DUrl::fromLocalFile(str) };
+                DAbstractFileInfoPointer fileInfo{ DFileService::instance()->createFileInfo(this, url) };
                 infoList.push_back(fileInfo);
             }
         }
     }
-
 
     return infoList;
 }

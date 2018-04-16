@@ -58,10 +58,17 @@ void DTagEdit::keyPressEvent(QKeyEvent* event)
 {
     switch(event->key())
     {
-    case Qt::Key_Enter:
-    case Qt::Key_Return:
     case Qt::Key_Escape:
     {
+        this->processTags();
+        event->accept();
+        this->close();
+        break;
+    }
+    case Qt::Key_Enter:
+    case Qt::Key_Return:
+    {
+        QObject::disconnect(this, &DTagEdit::windowDeactivate, this, &DTagEdit::onFocusOut);
         this->processTags();
         event->accept();
         this->close();

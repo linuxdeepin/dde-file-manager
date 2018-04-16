@@ -207,7 +207,7 @@ bool DUrl::isSFTPFile() const
 
 
 ///###: Jundge whether current the scheme of current url is equal to TAG_SCHEME.
-bool DUrl::isTagedFile() const
+bool DUrl::isTaggedFile() const
 {
     return (this->scheme() == QString{TAG_SCHEME});
 }
@@ -259,7 +259,7 @@ DUrl DUrl::searchedFileUrl() const
 ///###: so I get the true path from fregment of Uri.
 DUrl DUrl::tagedFileUrl() const noexcept
 {
-    if(this->isTagedFile() == true){
+    if(this->isTaggedFile() == true){
         ///###: this uri is equal to Uri in Android. It extented URI.
         DUrl uri{ this->QUrl::fragment(FullyDecoded) };
         return uri;
@@ -311,7 +311,7 @@ void DUrl::setSearchedFileUrl(const DUrl &url)
 ///###: the real path of file was puted in fragment field of Uri.
 void DUrl::setTagedFileUrl(const DUrl &url) noexcept
 {
-    if(this->isTagedFile() == true){
+    if(this->isTaggedFile() == true){
         this->QUrl::setFragment(url.toString(), QUrl::DecodedMode);
     }
 }
