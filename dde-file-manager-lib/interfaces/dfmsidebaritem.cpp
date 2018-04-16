@@ -40,7 +40,10 @@ DFM_BEGIN_NAMESPACE
 
 #define SIDEBAR_ITEM_WIDTH 201
 #define SIDEBAR_ITEM_HEIGHT 30
+#define SIDEBAR_ITEM_PADDING 13
 #define SIDEBAR_ICON_SIZE 16
+#define SIDEBAR_ICON_TEXT_GAP_SIZE 8
+#define SIDEBAR_CHECK_BORDER_SIZE 3
 
 class DFMSideBarItemPrivate
 {
@@ -50,8 +53,10 @@ public:
     DFMSideBarItemPrivate(DFMSideBarItem *qq);
     void init();
     QPixmap icon() const;
+    QPixmap icon(ThemeConfig::State state) const;
     QPixmap reorderLine() const;
     ThemeConfig::State getState() const;
+    void moveContextWidget();
 
     bool reorderable = false;
     bool readOnly = true;
@@ -121,6 +126,11 @@ QPixmap DFMSideBarItemPrivate::icon() const
     return ThemeConfig::instace()->pixmap(iconGroup, iconKey, getState());
 }
 
+QPixmap DFMSideBarItemPrivate::icon(ThemeConfig::State state) const
+{
+    return ThemeConfig::instace()->pixmap(iconGroup, iconKey, state);
+}
+
 QPixmap DFMSideBarItemPrivate::reorderLine() const
 {
     DSvgRenderer renderer;
@@ -155,6 +165,15 @@ ThemeConfig::State DFMSideBarItemPrivate::getState() const
     }
 
     return ThemeConfig::Normal;
+}
+
+void DFMSideBarItemPrivate::moveContextWidget()
+{
+    if (contentWidget) {
+        int paddingLeft = SIDEBAR_ITEM_WIDTH - contentWidget->width() - SIDEBAR_ITEM_PADDING;
+        int paddingTop = (SIDEBAR_ITEM_HEIGHT - contentWidget->height()) / 2;
+        contentWidget->move(QPoint(paddingLeft, paddingTop));
+    }
 }
 
 DFMSideBarItem::DFMSideBarItem(const DUrl &url, QWidget *parent)
@@ -217,8 +236,9 @@ void DFMSideBarItem::setContentWidget(QWidget *widget)
 {
     Q_D(DFMSideBarItem);
 
+    widget->setParent(this);
     d->contentWidget = widget;
-    // FIXME: attach this widget
+    d->moveContextWidget();
 }
 
 QWidget *DFMSideBarItem::contentWidget() const
@@ -291,7 +311,6 @@ void DFMSideBarItem::playAnimation()
 {
     Q_D(DFMSideBarItem);
 
-    qDebug() << "entered `playAnimation`";
     d->scaleAnimation.start();
 }
 
@@ -314,6 +333,22 @@ bool DFMSideBarItem::canDropMimeData(const QMimeData *data, Qt::DropAction actio
 bool DFMSideBarItem::dropMimeData(const QMimeData *data, Qt::DropAction action) const
 {
 
+}
+
+void DFMSideBarItem::showEvent(QShowEvent *event)
+{
+    Q_UNUSED(event);
+    Q_D(DFMSideBarItem);
+
+    d->moveContextWidget();
+}
+
+void DFMSideBarItem::resizeEvent(QResizeEvent *event)
+{
+    Q_UNUSED(event);
+    Q_D(DFMSideBarItem);
+
+    d->moveContextWidget();
 }
 
 void DFMSideBarItem::dragEnterEvent(QDragEnterEvent *event)
@@ -412,13 +447,15 @@ void DFMSideBarItem::mouseReleaseEvent(QMouseEvent *event)
 {
     Q_D(DFMSideBarItem);
 
-    if (event->button() == Qt::MouseButton::LeftButton && d->pressed) {
-        d->pressed = false;
+    bool mouseStillOnWidget = rect().contains(event->localPos().toPoint());
+    d->pressed = false;
+
+    if (event->button() == Qt::MouseButton::LeftButton && mouseStillOnWidget) {
         emit clicked(); // don't set d->checked when clicked, wait for a signal.
         playAnimation(); // for test!!
     }
 
-    if (event->button() == Qt::MouseButton::RightButton) {
+    if (event->button() == Qt::MouseButton::RightButton && mouseStillOnWidget) {
         QMenu *menu = createStandardContextMenu();
         menu->popup(event->globalPos());
     }
@@ -433,22 +470,22 @@ void DFMSideBarItem::paintEvent(QPaintEvent *event)
     Q_UNUSED(event);
 
     QPainter painter(this);
+    ThemeConfig::State curState = d->getState();
 
     bool animationPlaying = d->scaleAnimation.state() == QAbstractAnimation::Running;
     QVariantAnimation *p = static_cast<QVariantAnimation *>(d->scaleAnimation.currentAnimation());
     float curValue = p->currentValue().toFloat();
 
     // Const variables
-    const int paddingLeft = 13;
-    const int textPaddingLeft = paddingLeft + 24;
+    const int textPaddingLeft = SIDEBAR_ITEM_PADDING + SIDEBAR_ICON_SIZE + SIDEBAR_ICON_TEXT_GAP_SIZE;
     int iconPaddingTop = (height() - SIDEBAR_ICON_SIZE) / 2;
     QColor backgroundColor, textPenColor, iconBrushColor;
-    QRect iconRect(paddingLeft, iconPaddingTop, SIDEBAR_ICON_SIZE, SIDEBAR_ICON_SIZE);
+    QRect iconRect(SIDEBAR_ITEM_PADDING, iconPaddingTop, SIDEBAR_ICON_SIZE, SIDEBAR_ICON_SIZE);
     QRect textRect(textPaddingLeft, 0, width() - textPaddingLeft, height());
 
-    backgroundColor = ThemeConfig::instace()->color("BookmarkItem", "background", d->getState());
-    textPenColor = ThemeConfig::instace()->color("BookmarkItem", "color", d->getState());
-    iconBrushColor = ThemeConfig::instace()->color("BookmarkItem", "background", d->getState()); // what color?
+    backgroundColor = ThemeConfig::instace()->color("BookmarkItem", "background", curState);
+    textPenColor = ThemeConfig::instace()->color("BookmarkItem", "color", curState);
+    iconBrushColor = ThemeConfig::instace()->color("BookmarkItem", "color", curState); // what color?
 
     // Draw Background
     painter.fillRect(rect(), QBrush(backgroundColor));
@@ -461,8 +498,7 @@ void DFMSideBarItem::paintEvent(QPaintEvent *event)
     }
 
     // Draw Icon
-    painter.setBrush(iconBrushColor);
-    painter.drawPixmap(iconRect, d->icon());
+    painter.drawPixmap(iconRect, curState == ThemeConfig::Pressed ? d->icon(ThemeConfig::Checked) : d->icon());
 
     // Draw Text
     painter.setPen(textPenColor);
@@ -472,6 +508,12 @@ void DFMSideBarItem::paintEvent(QPaintEvent *event)
 
     // End: Icon and text will be scaled when scale animation is playing
     painter.scale(1, 1);
+
+    // Right border line
+    if (curState == ThemeConfig::Checked) {
+        painter.setBrush(iconBrushColor);
+        painter.drawRect(width() - SIDEBAR_CHECK_BORDER_SIZE, 0, SIDEBAR_CHECK_BORDER_SIZE, height());
+    }
 }
 
 DFM_END_NAMESPACE
