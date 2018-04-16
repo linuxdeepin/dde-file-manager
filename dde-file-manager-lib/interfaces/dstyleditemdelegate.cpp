@@ -152,6 +152,40 @@ int DStyledItemDelegate::setIconSizeByIconSizeLevel(int level)
     return -1;
 }
 
+QRect DStyledItemDelegate::drawText(QPainter *painter, const QString &text, const QRect &boundingRect,
+                                    int backgroundMargins, qreal radius, const QBrush &background, int lineHeight,
+                                    QTextOption::WrapMode wordWrap, Qt::TextElideMode mode, int flags, const QColor &shadowColor) const
+{
+    QRegion boundingRegion;
+    QTextLayout layout(text);
+
+    layout.setFont(painter->font());
+
+    DFMGlobal::elideText(&layout, boundingRect.size(), wordWrap, mode, lineHeight, flags, 0,
+                         painter, boundingRect.topLeft(), shadowColor, QPointF(0, 1),
+                         background, &boundingRegion);
+
+    if (background != Qt::NoBrush) {
+        QPainterPath background_path;
+        QPainterPath text_path;
+
+        const QMargins text_margin(backgroundMargins, backgroundMargins, backgroundMargins, backgroundMargins);
+
+        background_path.addRoundedRect(boundingRegion.boundingRect() + text_margin, radius, radius);
+        text_path.addRegion(boundingRegion);
+
+        // save
+        const QPainter::RenderHints hs = painter->renderHints();
+
+        painter->setRenderHints(QPainter::Antialiasing);
+        painter->fillPath(background_path - text_path, background);
+        // restore
+        painter->setRenderHints(hs);
+    }
+
+    return boundingRegion.boundingRect();
+}
+
 DStyledItemDelegate::DStyledItemDelegate(DStyledItemDelegatePrivate &dd, DFileViewHelper *parent)
     : QStyledItemDelegate(parent)
     , d_ptr(&dd)

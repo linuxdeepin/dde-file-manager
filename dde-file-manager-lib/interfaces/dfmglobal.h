@@ -311,6 +311,21 @@ public:
                              int lineHeight,
                              int flags = 0);
 
+    static void wordWrapText(QTextLayout *layout, int width,
+                             QTextOption::WrapMode wrapMode,
+                             int lineHeight,
+                             QStringList *lines = 0);
+
+    static void elideText(QTextLayout *layout, const QSize &size,
+                          QTextOption::WrapMode wordWrap,
+                          Qt::TextElideMode mode, int lineHeight,
+                          int flags = 0, QStringList *lines = 0,
+                          QPainter *painter = 0, QPointF offset = QPoint(0, 0),
+                          const QColor &shadowColor = QColor(),
+                          const QPointF &shadowOffset = QPointF(0, 1),
+                          const QBrush &background = QBrush(Qt::NoBrush),
+                          QRegion *boundingRegion = 0);
+
     static QString toPinyin(const QString &text);
     static bool startWithHanzi(const QString &text);
     template<typename T>

@@ -11,11 +11,7 @@
 #define DSTYLEDITEMDELEGATE_H
 
 #include <QStyledItemDelegate>
-
-#define DISABLE_LABEL_COLOR "#797979"
-#define SELECTED_BACKGROUND_COLOR "#2da6f7"
-#define FOCUS_BACKGROUND_COLOR "#0076F9"
-#define TEXT_COLOR "#303030"
+#include <QTextOption>
 
 class DFileViewHelper;
 class DStyledItemDelegatePrivate;
@@ -52,6 +48,12 @@ public:
     virtual int setIconSizeByIconSizeLevel(int level);
 
     virtual void updateItemSizeHint() = 0;
+
+    virtual QRect drawText(QPainter *painter, const QString &text, const QRect &boundingRect,
+                           int backgroundMargins, qreal radius, const QBrush &background,
+                           int lineHeight, QTextOption::WrapMode wordWrap = QTextOption::WrapAtWordBoundaryOrAnywhere,
+                           Qt::TextElideMode mode = Qt::ElideMiddle, int flags = Qt::AlignCenter,
+                           const QColor &shadowColor = QColor()) const;
 
 protected:
     DStyledItemDelegate(DStyledItemDelegatePrivate &dd, DFileViewHelper *parent);

@@ -69,6 +69,7 @@
 #include <QDBusObjectPath>
 #include <QGSettings>
 
+#include <private/qtextengine_p.h>
 
 #include <cstdio>
 #include <locale>
@@ -76,16 +77,10 @@
 #include <fstream>
 #include <uchardet/uchardet.h>
 
-#ifdef __cplusplus
 extern "C"
 {
-#endif __cplusplus
-
 #include <iconv.h>
-
-#ifdef __cplusplus
 }
-#endif __cplusplus
 
 namespace GlobalData {
 static QList<QUrl> clipboardFileUrls;
@@ -390,6 +385,23 @@ QIcon DFMGlobal::standardIcon(DFMGlobal::Icon iconType) const
     return QIcon();
 }
 
+QString DFMGlobal::wordWrapText(const QString &text, int width, QTextOption::WrapMode wrapMode,
+                                const QFont &font, int lineHeight, int *height)
+{
+    QTextLayout layout(text);
+
+    layout.setFont(font);
+
+    QStringList lines;
+
+    wordWrapText(&layout, width, wrapMode, lineHeight, &lines);
+
+    if (height)
+        *height = lines.count() * lineHeight;
+
+    return lines.join('\n');
+}
+
 DFMGlobal::DFMGlobal()
 {
     connect(qApp->clipboard(), &QClipboard::dataChanged, this, &DFMGlobal::onClipboardDataChanged);
@@ -408,90 +420,165 @@ void DFMGlobal::refreshPlugins()
     PluginManager::instance()->loadPlugin();
 }
 
-QString DFMGlobal::wordWrapText(const QString &text, int width, QTextOption::WrapMode wrapMode,
-                                const QFont &font, int lineHeight, int *height)
+void DFMGlobal::wordWrapText(QTextLayout *layout, int width, QTextOption::WrapMode wrapMode,
+                             int lineHeight, QStringList *lines)
 {
-    QTextLayout textLayout(text);
-    QTextOption &text_option = *const_cast<QTextOption*>(&textLayout.textOption());
-    text_option.setWrapMode(wrapMode);
-
-    textLayout.setFont(font);
-    textLayout.beginLayout();
-
-    QTextLine line = textLayout.createLine();
-    QString  str;
-
-    int text_height = 0;
-
-    while (line.isValid()) {
-        line.setLineWidth(width);
-
-        const QString &tmp_str = text.mid(line.textStart(), line.textLength());
-
-        str += tmp_str;
-
-        if (tmp_str.indexOf('\n') >= 0)
-            text_height += lineHeight;
-
-        text_height += lineHeight;
-        line = textLayout.createLine();
-
-        if(line.isValid())
-            str.append("\n");
-    }
-
-    textLayout.endLayout();
-
-    if(height)
-        *height = text_height;
-
-    return str;
+    elideText(layout, QSize(width, INT_MAX), wrapMode, Qt::ElideNone, lineHeight, 0, lines);
 }
 
-QString DFMGlobal::elideText(const QString &text, const QSize &size,
-                          QTextOption::WrapMode wordWrap, const QFont &font,
-                             Qt::TextElideMode mode, int lineHeight, int flags)
+void DFMGlobal::elideText(QTextLayout *layout, const QSize &size, QTextOption::WrapMode wordWrap,
+                          Qt::TextElideMode mode, int lineHeight, int flags, QStringList *lines,
+                          QPainter *painter, QPointF offset, const QColor &shadowColor, const QPointF &shadowOffset,
+                          const QBrush &background, QRegion *boundingRegion)
 {
     int height = 0;
+    bool drawBackground = background.style() != Qt::NoBrush;
+    bool drawShadow = shadowColor.isValid();
 
-    QTextLayout textLayout(text);
-    QString str;
-    QFontMetrics fontMetrics(font);
+    QString text = layout->text();
+    QTextOption &text_option = *const_cast<QTextOption*>(&layout->textOption());
 
-    textLayout.setFont(font);
-    const_cast<QTextOption*>(&textLayout.textOption())->setWrapMode(wordWrap);
+    text_option.setWrapMode(wordWrap);
 
-    textLayout.beginLayout();
+    if (flags & Qt::AlignRight)
+        text_option.setAlignment(Qt::AlignRight);
+    else if (flags & Qt::AlignHCenter)
+        text_option.setAlignment(Qt::AlignHCenter);
 
-    QTextLine line = textLayout.createLine();
+    if (painter) {
+        text_option.setTextDirection(painter->layoutDirection());
+        layout->setFont(painter->font());
+    } else {
+        // dont paint
+        layout->engine()->ignoreBidi = true;
+    }
+
+    auto naturalTextRect = [&] (const QRectF rect) {
+        QRectF new_rect = rect;
+
+        new_rect.setHeight(lineHeight);
+
+        if (flags & Qt::AlignVCenter) {
+            new_rect.moveCenter(rect.center());
+        } else if (flags & Qt::AlignBottom) {
+            new_rect.moveBottom(rect.bottom());
+        }
+
+        return new_rect;
+    };
+
+    auto drawShadowFun = [&] (const QTextLine &line) {
+        const QPen pen = painter->pen();
+
+        painter->setPen(shadowColor);
+        line.draw(painter, shadowOffset);
+
+        // restore
+        painter->setPen(pen);
+    };
+
+    layout->beginLayout();
+
+    QTextLine line = layout->createLine();
 
     while (line.isValid()) {
         height += lineHeight;
 
-        if(height + lineHeight >= size.height()) {
-            str += fontMetrics.elidedText(text.mid(line.textStart() + line.textLength() + 1), mode, size.width(), flags);
+        if (height + lineHeight >= size.height()) {
+            const QString &end_str = layout->engine()->elidedText(mode, size.width(), flags, line.textStart() + line.textLength() + 1);
 
-            break;
+            QRectF rect;
+            QTextLine line;
+
+            if (painter || boundingRegion) {
+                layout->endLayout();
+                layout->setText(end_str);
+                layout->beginLayout();
+
+                line = layout->createLine();
+                line.setLineWidth(size.width());
+                line.setPosition(offset);
+                layout->endLayout();
+
+                rect = naturalTextRect(line.naturalTextRect());
+            }
+
+            if (painter) {
+                if (drawBackground) {
+                    painter->fillRect(rect.adjusted(-1, -1, 1, 1), background);
+                }
+
+                if (drawShadow) {
+                    drawShadowFun(line);
+                }
+
+                line.draw(painter, QPointF(0, 0));
+            }
+
+            if (boundingRegion) {
+                boundingRegion->operator +=(rect.toRect());
+            }
+
+            if (lines) {
+                lines->append(end_str);
+            }
+
+            return;
         }
 
+        line.setPosition(offset);
         line.setLineWidth(size.width());
 
-        const QString &tmp_str = text.mid(line.textStart(), line.textLength());
+        const QRectF rect = naturalTextRect(line.naturalTextRect());
 
-        if (tmp_str.indexOf('\n'))
-            height += lineHeight;
+        if (painter) {
+            if (drawBackground) {
+                painter->fillRect(rect.adjusted(-1, -1, 1, 1), background);
+            }
 
-        str += tmp_str;
+            if (drawShadow) {
+                drawShadowFun(line);
+            }
 
-        line = textLayout.createLine();
+            line.draw(painter, QPointF(0, 0));
+        }
 
-        if(line.isValid())
-            str.append("\n");
+        if (boundingRegion) {
+            boundingRegion->operator +=(rect.toRect());
+        }
+
+        offset.setY(offset.y() + lineHeight);
+
+        // find '\n'
+        int text_length_line = line.textLength();
+        for (int start = line.textStart(); start < line.textStart() + text_length_line; ++start) {
+            if (text.at(start) == '\n')
+                height += lineHeight;
+        }
+
+        if (lines) {
+            lines->append(text.mid(line.textStart(), line.textLength()));
+        }
+
+        line = layout->createLine();
     }
 
-    textLayout.endLayout();
+    layout->endLayout();
+}
 
-    return str;
+QString DFMGlobal::elideText(const QString &text, const QSize &size,
+                             QTextOption::WrapMode wordWrap, const QFont &font,
+                             Qt::TextElideMode mode, int lineHeight, int flags)
+{
+    QTextLayout textLayout(text);
+
+    textLayout.setFont(font);
+
+    QStringList lines;
+
+    elideText(&textLayout, size, wordWrap, mode, lineHeight, flags, &lines);
+
+    return lines.join('\n');
 }
 
 QString DFMGlobal::toPinyin(const QString &text)
