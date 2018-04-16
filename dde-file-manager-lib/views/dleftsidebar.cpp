@@ -399,18 +399,7 @@ void DLeftSideBar::loadTagBookMarkItem()
 
     for(; cbeg != cend; ++cbeg){
         DBookmarkItem* item{ m_scene->createTagBookmark(cbeg.key(), cbeg.value()) };
-        ///###: it is redundant, copy-on-write.
-        QExplicitlySharedDataPointer<BookMark> bookmarkPointer{ new BookMark{
-                QDateTime::currentDateTime(),
-                cbeg.key(),
-                DUrl::fromUserTagedFile( QString{"/"} + cbeg.key())
-            } };
-
-//        bookmarkManager->appendBookmark(bookmarkPointer);
-//        bookmarkManager->appendTagBookmark(bookmarkPointer);
-
         item->setIsCustomBookmark(true);
-        item->setBookmarkModel(bookmarkPointer);
         m_scene->addItem(item);
     }
 }

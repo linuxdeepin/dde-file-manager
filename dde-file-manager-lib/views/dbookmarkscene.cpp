@@ -555,7 +555,7 @@ void DBookmarkScene::doBookmarkRemoved(const DFMEvent &event)
 {
     DUrl url{ event.fileUrl() };
 
-    if(url.isTagedFile()){
+    if(url.isTaggedFile()){
         QString thePath{ url.path() };
         thePath = thePath.remove(0, 1);
 
@@ -818,14 +818,6 @@ void DBookmarkScene::onAddOrDecreaseBookmarkOfTags(const QPair<QList<QString>, Q
 
             for(; cbeg != tagAndColor.cend(); ++cbeg){
                 DBookmarkItem* item{ this->createTagBookmark(cbeg.key(), cbeg.value()) };
-                ///###: it is redundant, copy-on-write.
-                QExplicitlySharedDataPointer<BookMark> bookmarkPointer{ new BookMark{
-                        DUrl::fromUserTagedFile( QString{"/"} + cbeg.key())
-                    } };
-//                bookmarkManager->appendTagBookmark(bookmarkPointer);
-//                bookmarkManager->appendBookmark(bookmarkPointer);
-
-                item->setBookmarkModel(bookmarkPointer);
                 this->addItem(item);
             }
         }
@@ -930,7 +922,7 @@ void DBookmarkScene::moveBefore(DBookmarkItem *from, DBookmarkItem *to)
 
     ///###: here, get the url which was stored in item.
     ///###: then, jundge whether urls are begging with "tag://" or not.
-    if(!from->getUrl().isTagedFile() && !to->getUrl().isTagedFile()){
+    if(!from->getUrl().isTaggedFile() && !to->getUrl().isTaggedFile()){
         bookmarkManager->moveBookmark(indexFrom - getCustomBookmarkItemInsertIndex(),
                                       indexTo - getCustomBookmarkItemInsertIndex());
     }

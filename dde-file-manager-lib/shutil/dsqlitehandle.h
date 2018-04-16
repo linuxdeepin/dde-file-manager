@@ -173,14 +173,15 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteTags, bool>(const Q
 ///###:auxiliary function.
 ///###: tag files
 template<>
-bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles, QList<QString>, bool>(const QList<QString>& sqlStrs, const QString& mountPoint, const QString& userName);
+bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles, QMap<QString, QList<QString>>, bool>(const QMap<QString, QList<QString>>& forDecreasing,
+                                                                                                       const QString& mountPoint, const QString& userName);
 
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles2, QMap<QString, QList<QString>>, bool>(
-                                                               const QMap<QString, QList<QString>>&  fileNamesAndTagNames, const QString& mountPoint, const QString& userName);
+                                                               const QMap<QString, QList<QString>>&  forIncreasing, const QString& mountPoint, const QString& userName);
 
 template<>
-bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles3, QMap<QString, QList<QString>>, bool>(const QMap<QString, QList<QString>>&  fileNamesAndTagNames,
+bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles3, QList<QString>, bool>(const QList<QString>& forUpdating,
                                                                                                         const QString& mountPoint, const QString& userName);
 
 

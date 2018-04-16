@@ -101,7 +101,7 @@ public:
     bool isAVFSFile() const;
     bool isFTPFile() const;
     bool isSFTPFile() const;
-    bool isTagedFile() const;
+    bool isTaggedFile() const;
 
     QString toString(FormattingOptions options = FormattingOptions( PrettyDecoded )) const;
 

@@ -692,7 +692,7 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         return;
     }
 
-    if (m_url.isTagedFile()) {
+    if (m_url.isTaggedFile()) {
 
         if (static_cast<bool>(m_group) && m_pressed) {
             emit clicked();
@@ -964,7 +964,7 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         menu = DFileMenuManager::createDefaultBookMarkMenu(disableList);
 
         ///###: tag protocol.
-    } else if (m_url.isTagedFile()) {
+    } else if (m_url.isTaggedFile()) {
         menu = DFileMenuManager::createTagMarkMenu(disableList);
         DBookmarkItem::ClickedItem = this;
 

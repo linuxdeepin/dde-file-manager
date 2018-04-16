@@ -9,7 +9,7 @@
 
 
 TagFileInfo::TagFileInfo(const DUrl &url)
-            :DAbstractFileInfo{ url } //###: hasCached = true.
+            :DAbstractFileInfo{ url, false } //###: Do not cache.
 {
     ///###: if the true url of file is put into fragment field of Uri. Then setup proxy.
     if(url.tagedFileUrl().isValid() == true){

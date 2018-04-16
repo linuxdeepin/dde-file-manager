@@ -981,7 +981,7 @@ void DFileManagerWindow::initRenameBarState()
     DFileManagerWindowPrivate* const d{ d_func() };
 
     bool expected{ true };
-    ///###: CAS, when we draged a tab to leave TabBar for creating a new window.
+    ///###: CAS, after we draged a tab to leave TabBar for creating a new window.
     if(DFileManagerWindow::flagForNewWindowFromTab.compare_exchange_strong(expected, false, std::memory_order_seq_cst)){
 
         if(static_cast<bool>(DFileManagerWindow::renameBarState) == true){ //###: when we drag a tab to create a new window, but the RenameBar is showing in last window.
