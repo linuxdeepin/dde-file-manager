@@ -49,7 +49,6 @@ public:
     QVBoxLayout *mainLayout;
     QWidget *mainLayoutHolder;
     QMap<QString, DFMSideBarItemGroup *> groupNameMap;
-    // ^ this QMap is not neccessary since we added a name attrib to group itself
 
 private:
     void initData();

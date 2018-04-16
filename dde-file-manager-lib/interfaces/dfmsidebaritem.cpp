@@ -29,6 +29,9 @@
 #include <QDrag>
 #include <QMimeData>
 #include <QPainter>
+#include <QSequentialAnimationGroup>
+#include <QVariantAnimation>
+
 #include <DSvgRenderer>
 
 DWIDGET_USE_NAMESPACE
@@ -56,6 +59,7 @@ public:
     DUrl url;
     QFont font;
     QWidget *contentWidget = nullptr;
+    QSequentialAnimationGroup scaleAnimation;
 
     DFMSideBarItem *q_ptr = nullptr;
 
@@ -87,6 +91,29 @@ void DFMSideBarItemPrivate::init()
     if (file_info) {
         displayText = file_info->fileDisplayName();
     }
+
+    // Scale animation.
+    QVariantAnimation *scaleBegin = new QVariantAnimation();
+    QVariantAnimation *scaleEnd = new QVariantAnimation();
+
+    scaleBegin->setDuration(150);
+    scaleBegin->setEasingCurve(QEasingCurve::OutQuad);
+    scaleBegin->setStartValue(QVariant(1.0f));
+    scaleBegin->setEndValue(QVariant(1.13f));
+
+    scaleEnd->setDuration(150);
+    scaleEnd->setEasingCurve(QEasingCurve::OutQuad);
+    scaleEnd->setStartValue(QVariant(1.13f));
+    scaleEnd->setEndValue(QVariant(1.0f));
+
+    scaleAnimation.addAnimation(scaleBegin);
+    scaleAnimation.addAnimation(scaleEnd);
+
+    q->connect(scaleBegin, &QVariantAnimation::valueChanged,
+               q, static_cast<void(DFMSideBarItem::*)()>(&DFMSideBarItem::update));
+    q->connect(scaleEnd, &QVariantAnimation::valueChanged,
+               q, static_cast<void(DFMSideBarItem::*)()>(&DFMSideBarItem::update));
+
 }
 
 QPixmap DFMSideBarItemPrivate::icon() const
@@ -262,7 +289,10 @@ void DFMSideBarItem::setText(QString text)
 
 void DFMSideBarItem::playAnimation()
 {
+    Q_D(DFMSideBarItem);
 
+    qDebug() << "entered `playAnimation`";
+    d->scaleAnimation.start();
 }
 
 QMenu *DFMSideBarItem::createStandardContextMenu() const
@@ -385,6 +415,7 @@ void DFMSideBarItem::mouseReleaseEvent(QMouseEvent *event)
     if (event->button() == Qt::MouseButton::LeftButton && d->pressed) {
         d->pressed = false;
         emit clicked(); // don't set d->checked when clicked, wait for a signal.
+        playAnimation(); // for test!!
     }
 
     if (event->button() == Qt::MouseButton::RightButton) {
@@ -403,6 +434,10 @@ void DFMSideBarItem::paintEvent(QPaintEvent *event)
 
     QPainter painter(this);
 
+    bool animationPlaying = d->scaleAnimation.state() == QAbstractAnimation::Running;
+    QVariantAnimation *p = static_cast<QVariantAnimation *>(d->scaleAnimation.currentAnimation());
+    float curValue = p->currentValue().toFloat();
+
     // Const variables
     const int paddingLeft = 13;
     const int textPaddingLeft = paddingLeft + 24;
@@ -418,6 +453,13 @@ void DFMSideBarItem::paintEvent(QPaintEvent *event)
     // Draw Background
     painter.fillRect(rect(), QBrush(backgroundColor));
 
+    // Begin: Icon and text will be scaled when scale animation is playing
+    if (animationPlaying) {
+        painter.scale(curValue, curValue);
+        iconRect.adjust(0, (curValue - 1.0f) * height() / -2.0f, 0, 0);
+        textRect.adjust(0, (curValue - 1.0f) * height() / -2.0f, 0, 0);
+    }
+
     // Draw Icon
     painter.setBrush(iconBrushColor);
     painter.drawPixmap(iconRect, d->icon());
@@ -427,6 +469,9 @@ void DFMSideBarItem::paintEvent(QPaintEvent *event)
     QFontMetrics metrics(d->font);
     QString elidedText = metrics.elidedText(d->displayText, Qt::ElideMiddle, width() - textPaddingLeft - 60);
     painter.drawText(textRect, Qt::TextWordWrap | Qt::AlignLeft | Qt::AlignVCenter, elidedText);
+
+    // End: Icon and text will be scaled when scale animation is playing
+    painter.scale(1, 1);
 }
 
 DFM_END_NAMESPACE
