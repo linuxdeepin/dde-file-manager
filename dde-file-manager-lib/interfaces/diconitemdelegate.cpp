@@ -55,8 +55,8 @@ public:
 
     QPointer<FileIconItem> expandedItem;
 
-    mutable QHash<QString, QString> elideMap;
-    mutable QHash<QString, QString> wordWrapMap;
+//    mutable QHash<QString, QString> elideMap;
+//    mutable QHash<QString, QString> wordWrapMap;
     mutable QHash<QString, int> textHeightMap;
     mutable QModelIndex expandedIndex;
     mutable QModelIndex lastAndExpandedInde;
@@ -65,7 +65,7 @@ public:
     /// default icon size is 64px.
     int currentIconSizeIndex = 1;
 
-    QColor focusTextBackgroundBorderColor = Qt::transparent;
+    QColor focusTextBackgroundBorderColor;
     bool enabledTextShadow = false;
 };
 
@@ -260,24 +260,24 @@ void DIconItemDelegate::paint(QPainter *painter,
 
         /// init file name text
 
-        if(d->wordWrapMap.contains(str)) {
-            str = d->wordWrapMap.value(str);
+        if (d->textHeightMap.contains(str)) {
+//            str = d->wordWrapMap.value(str);
             height = d->textHeightMap.value(str);
         } else {
-            QString wordWrap_str = DFMGlobal::wordWrapText(str, label_rect.width(),
-                                                           QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                           opt.font,
-                                                           d->textLineHeight,
-                                                           &height);
+            DFMGlobal::wordWrapText(str, label_rect.width(),
+                                    QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                    opt.font,
+                                    d->textLineHeight,
+                                    &height);
 
-            wordWrap_str = trimmedEnd(wordWrap_str);
+//            wordWrap_str = trimmedEnd(wordWrap_str);
 
-            d->wordWrapMap[str] = wordWrap_str;
-            d->textHeightMap[wordWrap_str] = height;
-            str = wordWrap_str;
+//            d->wordWrapMap[str] = wordWrap_str;
+            d->textHeightMap[str] = height;
+//            str = wordWrap_str;
         }
 
-        if(height > label_rect.height()) {
+        if (height > label_rect.height()) {
             /// use widget(FileIconItem) show file icon and file name label.
 
             d->expandedIndex = index;
@@ -302,21 +302,21 @@ void DIconItemDelegate::paint(QPainter *painter,
             return;
         }
     } else {
-        /// init file name text
-        if(d->elideMap.contains(str)) {
-            str = d->elideMap.value(str);
-        } else {
-            QString elide_str = DFMGlobal::elideText(str, label_rect.size(),
-                                                     QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                     opt.font,
-                                                     opt.textElideMode, d->textLineHeight);
+//        /// init file name text
+//        if (d->elideMap.contains(str)) {
+//            str = d->elideMap.value(str);
+//        } else {
+//            QString elide_str = DFMGlobal::elideText(str, label_rect.size(),
+//                                                     QTextOption::WrapAtWordBoundaryOrAnywhere,
+//                                                     opt.font,
+//                                                     opt.textElideMode, d->textLineHeight);
 
-            elide_str = trimmedEnd(elide_str);
+//            elide_str = trimmedEnd(elide_str);
 
-            d->elideMap[str] = elide_str;
+//            d->elideMap[str] = elide_str;
 
-            str = elide_str;
-        }
+//            str = elide_str;
+//        }
 
         if (!singleSelected) {
             const_cast<DIconItemDelegate*>(this)->hideNotEditingIndexWidget();
@@ -341,8 +341,6 @@ void DIconItemDelegate::paint(QPainter *painter,
         paintIcon(painter, opt.icon, icon_rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
     }
 
-
-
     /// draw file additional icon
 
     QList<QRect> cornerGeometryList = getCornerGeometryList(icon_rect, icon_rect.size() / 3);
@@ -352,28 +350,28 @@ void DIconItemDelegate::paint(QPainter *painter,
         cornerIconList.at(i).paint(painter, cornerGeometryList.at(i));
     }
 
-    /// draw file name label
-    if (isSelected) {
-        QPainterPath path;
+//    /// draw file name label
+//    if (isSelected) {
+//        QPainterPath path;
 
-        QRect label_background_rect = label_rect;
+//        QRect label_background_rect = label_rect;
 
-        label_background_rect.setSize(d->textSize(str, painter->fontMetrics(), d->textLineHeight));
-        label_background_rect.moveLeft(label_rect.left() + (label_rect.width() - label_background_rect.width()) / 2);
-        label_background_rect += QMargins(TEXT_PADDING, TEXT_PADDING, TEXT_PADDING, TEXT_PADDING);
+//        label_background_rect.setSize(d->textSize(str, painter->fontMetrics(), d->textLineHeight));
+//        label_background_rect.moveLeft(label_rect.left() + (label_rect.width() - label_background_rect.width()) / 2);
+//        label_background_rect += QMargins(TEXT_PADDING, TEXT_PADDING, TEXT_PADDING, TEXT_PADDING);
 
-        path.addRoundedRect(label_background_rect, ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
-        painter->save();
-        painter->setRenderHint(QPainter::Antialiasing);
-        painter->fillPath(path, opt.backgroundBrush);
-        if (hasFocus && !singleSelected) {
-            painter->setPen(QPen(focusTextBackgroundBorderColor(), 2));
-            painter->drawPath(path);
-        }
-        painter->restore();
-    } else {
-        painter->fillRect(label_rect, Qt::transparent);
-    }
+//        path.addRoundedRect(label_background_rect, ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
+//        painter->save();
+//        painter->setRenderHint(QPainter::Antialiasing);
+//        painter->fillPath(path, opt.backgroundBrush);
+//        if (hasFocus && !singleSelected) {
+//            painter->setPen(QPen(focusTextBackgroundBorderColor(), 2));
+//            painter->drawPath(path);
+//        }
+//        painter->restore();
+//    } else {
+//        painter->fillRect(label_rect, Qt::transparent);
+//    }
 
     if (isSelected)
         painter->setPen(opt.palette.color(QPalette::BrightText));
@@ -381,7 +379,16 @@ void DIconItemDelegate::paint(QPainter *painter,
         painter->setPen(opt.palette.color(QPalette::Text));
 
     if (isSelected || !d->enabledTextShadow) {
-        d->drawText(painter, label_rect, str, d->textLineHeight);
+        const QRect &boundingRect = drawText(painter, str, label_rect, TEXT_PADDING, ICON_MODE_RECT_RADIUS,
+                                             isSelected ? opt.backgroundBrush : QBrush(Qt::NoBrush), d->textLineHeight);
+
+        const QColor &border_color = focusTextBackgroundBorderColor();
+
+        if (hasFocus && border_color.isValid()) {
+            painter->setPen(QPen(border_color, 2));
+            painter->drawRoundedRect(boundingRect.adjusted(-TEXT_PADDING, -TEXT_PADDING, TEXT_PADDING, TEXT_PADDING),
+                                     ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
+        }
     } else {
         qreal pixel_ratio = painter->device()->devicePixelRatioF();
         QImage text_image(label_rect.size() * pixel_ratio, QImage::Format_ARGB32_Premultiplied);
@@ -391,7 +398,8 @@ void DIconItemDelegate::paint(QPainter *painter,
         QPainter p(&text_image);
         p.setPen(painter->pen());
         p.setFont(painter->font());
-        d->drawText(&p, QRect(QPoint(0, 0), label_rect.size()), str, d->textLineHeight);
+        drawText(&p, str, QRect(QPoint(0, 0), text_image.size()), TEXT_PADDING,
+                 ICON_MODE_RECT_RADIUS, QBrush(Qt::NoBrush), d->textLineHeight);
         p.end();
 
         QPixmap text_pixmap = QPixmap::fromImage(text_image);
@@ -563,7 +571,7 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 
     QString str = index.data(Qt::DisplayRole).toString();
 
-    if(str.isEmpty()) {
+    if (str.isEmpty()) {
         return geometrys;
     }
 
@@ -580,43 +588,55 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     /// if has selected show all file name else show elide file name.
     bool singleSelected = parent()->selectedIndexsCount() < 2;
 
-    if (isSelected && singleSelected) {
-        int height = 0;
+//    if (isSelected && singleSelected) {
+//        int height = 0;
 
-        if (d->wordWrapMap.contains(str)) {
-            str = d->wordWrapMap.value(str);
-            height = d->textHeightMap.value(str);
-        } else {
-            QString wordWrap_str = DFMGlobal::wordWrapText(str, label_rect.width(),
-                                                           QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                           opt.font,
-                                                           d->textLineHeight,
-                                                           &height);
+//        if (d->wordWrapMap.contains(str)) {
+//            str = d->wordWrapMap.value(str);
+//            height = d->textHeightMap.value(str);
+//        } else {
+//            QString wordWrap_str = DFMGlobal::wordWrapText(str, label_rect.width(),
+//                                                           QTextOption::WrapAtWordBoundaryOrAnywhere,
+//                                                           opt.font,
+//                                                           d->textLineHeight,
+//                                                           &height);
 
-            wordWrap_str = trimmedEnd(wordWrap_str);
+//            wordWrap_str = trimmedEnd(wordWrap_str);
 
-            d->wordWrapMap[str] = wordWrap_str;
-            d->textHeightMap[wordWrap_str] = height;
-            str = wordWrap_str;
-        }
-    } else {
-        if (d->elideMap.contains(str)) {
-            str = d->elideMap.value(str);
-        } else {
-            QString elide_str = DFMGlobal::elideText(str, label_rect.size(), QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                     opt.font, opt.textElideMode, d->textLineHeight);
+//            d->wordWrapMap[str] = wordWrap_str;
+//            d->textHeightMap[wordWrap_str] = height;
+//            str = wordWrap_str;
+//        }
+//    } else {
+//        if (d->elideMap.contains(str)) {
+//            str = d->elideMap.value(str);
+//        } else {
+//            QString elide_str = DFMGlobal::elideText(str, label_rect.size(), QTextOption::WrapAtWordBoundaryOrAnywhere,
+//                                                     opt.font, opt.textElideMode, d->textLineHeight);
 
-            d->elideMap[str] = elide_str;
-            str = elide_str;
-        }
-    }
+//            d->elideMap[str] = elide_str;
+//            str = elide_str;
+//        }
+//    }
 
-    /// draw icon and file name label
+//    /// draw icon and file name label
 
-    label_rect = option.fontMetrics.boundingRect(label_rect, Qt::AlignHCenter, str);
-    label_rect.setTop(icon_rect.bottom());
+//    label_rect = option.fontMetrics.boundingRect(label_rect, Qt::AlignHCenter, str);
 
-    geometrys << label_rect;
+    QTextLayout text_layout;
+    QRegion text_region;
+
+    text_layout.setFont(option.font);
+    text_layout.setText(str);
+
+    bool elide = (!isSelected || !singleSelected);
+
+    DFMGlobal::elideText(&text_layout, QSize(label_rect.width(), elide ? label_rect.height() : INT_MAX),
+                         QTextOption::WrapAtWordBoundaryOrAnywhere, elide ? Qt::ElideMiddle : Qt::ElideNone,
+                         d->textLineHeight, Qt::AlignCenter, 0, 0, label_rect.topLeft(), QColor(), QPointF(0, 0),
+                         QBrush(Qt::NoBrush), &text_region);
+
+    geometrys << text_region.boundingRect();
 
     return geometrys;
 }
@@ -725,8 +745,8 @@ void DIconItemDelegate::updateItemSizeHint()
 {
     Q_D(DIconItemDelegate);
 
-    d->elideMap.clear();
-    d->wordWrapMap.clear();
+//    d->elideMap.clear();
+//    d->wordWrapMap.clear();
     d->textHeightMap.clear();
     d->textLineHeight = parent()->parent()->fontMetrics().height();
 
