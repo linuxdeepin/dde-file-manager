@@ -600,9 +600,11 @@ bool TagManager::changeFilesName(const QList<QPair<DUrl, DUrl>>& oldAndNewFilesN
 
 QString TagManager::getMainDBLocation()
 {
-    passwd* pwd = getpwuid(getuid());
-    QString mainDBLocation{ QString{"/home/"} + QString::fromStdString(pwd->pw_name)+
-                            QString{"/.config/deepin/dde-file-manager/"} + QString{"main.db" } };
+//    passwd* pwd = getpwuid(getuid());
+    QString homePath{QDir::homePath()};
+
+    qDebug()<< "homePath:  " << homePath;
+    QString mainDBLocation{ homePath + QString{"/.config/deepin/dde-file-manager/"} + QString{"main.db" } };
 
     return mainDBLocation;
 }

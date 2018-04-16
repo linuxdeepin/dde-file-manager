@@ -11,7 +11,12 @@
 #include <type_traits>
 
 #include "glob.h"
-#include "taginfo.h"
+//#include "taginfo.h"
+
+
+#include <interfaces/durl.h>
+
+
 
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
@@ -45,24 +50,24 @@ struct hash<QString>
     }
 };
 
-template<>
-struct less<TagProperty>
-{
-    inline bool operator()(const TagProperty& lh, const TagProperty& rh)const noexcept
-    {
-        return lh.operator<(rh);
-    }
-};
+//template<>
+//struct less<TagProperty>
+//{
+//    inline bool operator()(const TagProperty& lh, const TagProperty& rh)const noexcept
+//    {
+//        return lh.operator<(rh);
+//    }
+//};
 
 
-template<>
-struct less<FileProperty>
-{
-    inline bool operator()(const FileProperty& lh, const FileProperty& rh)const noexcept
-    {
-        return lh.operator<(rh);
-    }
-};
+//template<>
+//struct less<FileProperty>
+//{
+//    inline bool operator()(const FileProperty& lh, const FileProperty& rh)const noexcept
+//    {
+//        return lh.operator<(rh);
+//    }
+//};
 
 }
 
