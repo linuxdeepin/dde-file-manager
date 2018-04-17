@@ -23,6 +23,10 @@
 #include "dfilemenu.h"
 #include "dfilemenumanager.h"
 
+#include "singleton.h"
+
+#include "app/define.h"
+#include "app/filesignalmanager.h"
 #include "views/windowmanager.h"
 #include "views/themeconfig.h"
 
@@ -33,6 +37,8 @@
 #include <QVariantAnimation>
 
 #include <DSvgRenderer>
+
+#include <views/dfilemanagerwindow.h>
 
 DWIDGET_USE_NAMESPACE
 
@@ -316,11 +322,22 @@ void DFMSideBarItem::playAnimation()
 
 QMenu *DFMSideBarItem::createStandardContextMenu() const
 {
-    QMenu *menu = new QMenu();
+    QMenu *menu = new QMenu(const_cast<DFMSideBarItem *>(this));
+    DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
 
-    menu->addAction(QObject::tr("Open in new window"));
-    menu->addAction(QObject::tr("Open in new tab"));
-    menu->addAction(QObject::tr("Properties"));
+    menu->addAction(QObject::tr("Open in new window"), [this]() {
+        WindowManager::instance()->showNewWindow(url());
+    });
+
+    menu->addAction(QObject::tr("Open in new tab"), [wnd, this]() {
+        wnd->openNewTab(url());
+    });
+
+    menu->addAction(QObject::tr("Properties"), [this]() {
+        DUrlList list;
+        list.append(url());
+        fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(this, list));
+    });
 
     return menu;
 }
@@ -414,6 +431,13 @@ void DFMSideBarItem::leaveEvent(QEvent *event)
     update();
 }
 
+void DFMSideBarItem::contextMenuEvent(QContextMenuEvent *event)
+{
+    QMenu *menu = createStandardContextMenu();
+    menu->exec(event->globalPos());
+    menu->deleteLater();
+}
+
 void DFMSideBarItem::mouseMoveEvent(QMouseEvent *event)
 {
     Q_D(DFMSideBarItem);
@@ -451,13 +475,10 @@ void DFMSideBarItem::mouseReleaseEvent(QMouseEvent *event)
     d->pressed = false;
 
     if (event->button() == Qt::MouseButton::LeftButton && mouseStillOnWidget) {
-        emit clicked(); // don't set d->checked when clicked, wait for a signal.
-        playAnimation(); // for test!!
-    }
-
-    if (event->button() == Qt::MouseButton::RightButton && mouseStillOnWidget) {
-        QMenu *menu = createStandardContextMenu();
-        menu->popup(event->globalPos());
+        emit clicked();
+        // mouse click: cd to `url()`
+        DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
+        wnd->cd(url()); // don't `d->setChecked` here, wait for a signal.
     }
 
     update();

@@ -22,6 +22,13 @@
 
 #include <QMenu>
 
+#include "dfilemanagerwindow.h"
+#include "singleton.h"
+
+#include "app/define.h"
+#include "app/filesignalmanager.h"
+#include "views/windowmanager.h"
+
 DFM_BEGIN_NAMESPACE
 
 DFMSideBarTrashItem::DFMSideBarTrashItem()
@@ -32,12 +39,24 @@ DFMSideBarTrashItem::DFMSideBarTrashItem()
 
 QMenu *DFMSideBarTrashItem::createStandardContextMenu() const
 {
-    QMenu *menu = new QMenu();
+    QMenu *menu = new QMenu(const_cast<DFMSideBarTrashItem *>(this));
+    DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
 
-    menu->addAction(QObject::tr("Open in new window"));
-    menu->addAction(QObject::tr("Open in new tab"));
+    menu->addAction(QObject::tr("Open in new window"), [this]() {
+        WindowManager::instance()->showNewWindow(url());
+    });
+
+    menu->addAction(QObject::tr("Open in new tab"), [wnd, this]() {
+        wnd->openNewTab(url());
+    });
+
     menu->addAction(QObject::tr("Empty Trash"));
-    menu->addAction(QObject::tr("Properties"));
+
+    menu->addAction(QObject::tr("Properties"), [this]() {
+        DUrlList list;
+        list.append(url());
+        fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(this, list));
+    });
 
     return menu;
 }

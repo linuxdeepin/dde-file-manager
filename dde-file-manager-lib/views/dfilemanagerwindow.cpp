@@ -789,6 +789,10 @@ void DFileManagerWindow::initLeftSideBar()
     d->leftSideBar = new DFMSideBar(this);
     d->leftSideBar->setObjectName("LeftSideBar");
     d->leftSideBar->setFixedWidth(LEFTSIDEBAR_MAX_WIDTH);
+    // connections
+    connect(this, &DFileManagerWindow::currentUrlChanged, this, [this, d]() {
+        d->leftSideBar->setCurrentUrl(currentUrl());
+    });
 }
 
 void DFileManagerWindow::initRightView()

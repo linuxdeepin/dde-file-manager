@@ -31,7 +31,10 @@ class DFMSideBarItem;
 class DFMSideBarPrivate;
 class DFMSideBar : public QScrollArea
 {
+    Q_OBJECT
+
 public:
+
     enum GroupName {
         Common,
         Device,
