@@ -16,12 +16,25 @@
 #ifndef SINGLETON_H
 #define SINGLETON_H
 
+#include <QObject>
+#include <QCoreApplication>
+
 template<typename T>
 class Singleton
 {
 public:
-    static T* instance(){
+    static T *instance() {
         static T instance;
+        static bool moveToMainThread = true;
+
+        if (QtPrivate::AreArgumentsCompatible<T, QObject>::value && moveToMainThread) {
+            moveToMainThread = false;
+
+            QObject *object = dynamic_cast<QObject*>(&instance);
+
+            object->moveToThread(qApp->thread());
+        }
+
         return &instance;
     }
 
