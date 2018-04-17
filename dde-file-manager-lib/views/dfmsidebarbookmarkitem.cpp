@@ -55,7 +55,11 @@ QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
         wnd->openNewTab(url());
     });
 
-    menu->addAction(QObject::tr("Rename"));
+    menu->addAction(QObject::tr("Rename"), [this]() {
+        DFMSideBarBookmarkItem *ccItem = const_cast<DFMSideBarBookmarkItem *>(this);
+        ccItem->showRenameEditor();
+    });
+
     menu->addAction(QObject::tr("Remove"));
 
     menu->addAction(QObject::tr("Properties"), [this]() {

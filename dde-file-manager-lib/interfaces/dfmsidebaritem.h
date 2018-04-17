@@ -56,6 +56,8 @@ public:
     QString groupName() const;
     QString text() const;
 
+    void showRenameEditor();
+
     void setContentWidget(QWidget *widget);
     QWidget *contentWidget() const;
 
@@ -65,13 +67,14 @@ public Q_SLOTS:
     void setReorderable(bool reorderable);
     void setReadOnly(bool readOnly);
     void setChecked(bool checked);
-
     void setText(QString text);
 
+    void hideRenameEditor();
     void playAnimation();
 
 Q_SIGNALS:
     void clicked();
+    void renameFinished(QString name);
     void reorder(DFMSideBarItem *ori, DFMSideBarItem *dst, bool insertBefore);
 
 protected:

@@ -31,6 +31,7 @@
 #include "views/themeconfig.h"
 
 #include <QDrag>
+#include <QLineEdit>
 #include <QMimeData>
 #include <QPainter>
 #include <QSequentialAnimationGroup>
@@ -70,6 +71,7 @@ public:
     DUrl url;
     QFont font;
     QWidget *contentWidget = nullptr;
+    QLineEdit *renameLineEdit = nullptr;
     QSequentialAnimationGroup scaleAnimation;
 
     DFMSideBarItem *q_ptr = nullptr;
@@ -238,6 +240,26 @@ QString DFMSideBarItem::text() const
     return d->displayText;
 }
 
+void DFMSideBarItem::showRenameEditor()
+{
+    Q_D(DFMSideBarItem);
+
+    if (d->renameLineEdit) {
+        return;
+    }
+
+    int paddingLeft = SIDEBAR_ITEM_PADDING + SIDEBAR_ICON_SIZE + SIDEBAR_ICON_TEXT_GAP_SIZE;
+
+    d->renameLineEdit = new QLineEdit(this);
+    d->renameLineEdit->resize(SIDEBAR_ITEM_WIDTH - paddingLeft, SIDEBAR_ITEM_HEIGHT);
+    d->renameLineEdit->move(paddingLeft, 0);
+    d->renameLineEdit->setText(d->displayText);
+    d->renameLineEdit->show();
+    d->renameLineEdit->setFocus(Qt::MouseFocusReason);
+    connect(d->renameLineEdit, &QLineEdit::editingFinished,
+            this, &DFMSideBarItem::hideRenameEditor);
+}
+
 void DFMSideBarItem::setContentWidget(QWidget *widget)
 {
     Q_D(DFMSideBarItem);
@@ -311,6 +333,19 @@ void DFMSideBarItem::setText(QString text)
 
     // Do widget UI update.
     update();
+}
+
+void DFMSideBarItem::hideRenameEditor()
+{
+    Q_D(DFMSideBarItem);
+
+    Q_CHECK_PTR(d->renameLineEdit);
+    QString text = d->renameLineEdit->text();
+    d->renameLineEdit->hide();
+    d->renameLineEdit->deleteLater();
+    d->renameLineEdit = nullptr;
+
+    emit renameFinished(text);
 }
 
 void DFMSideBarItem::playAnimation()
