@@ -33,6 +33,7 @@ class QTextEdit;
 class QGraphicsOpacityEffect;
 QT_END_NAMESPACE
 
+class FileIconItemEdit;
 class FileIconItem : public QFrame
 {
     Q_OBJECT

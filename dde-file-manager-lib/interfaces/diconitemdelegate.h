@@ -82,6 +82,8 @@ public slots:
     void setEnabledTextShadow(bool enabledTextShadow);
 
 protected:
+    void initTextLayout(const QModelIndex &index, QTextLayout *layout) const override;
+
     bool eventFilter(QObject *object, QEvent *event) Q_DECL_OVERRIDE;
 
 private:

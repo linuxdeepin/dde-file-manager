@@ -10,6 +10,8 @@
 #include "shutil/dsqlitehandle.h"
 #include "controllers/appcontroller.h"
 #include "controllers/tagmanagerdaemoncontroller.h"
+#include "app/filesignalmanager.h"
+#include "singleton.h"
 
 #include <QMap>
 #include <QDebug>
@@ -274,6 +276,10 @@ bool TagManager::makeFilesTags(const QList<QString>& tags, const QList<DUrl>& fi
     --m_counter;
     this->closeSqlDatabase();
 
+    if (resultValue) {
+        emit fileSignalManager->fileTagInfoChanged(files);
+    }
+
     return resultValue;
 }
 
@@ -337,11 +343,23 @@ bool TagManager::remveTagsOfFiles(const QList<QString>& tags, const QList<DUrl>&
     --m_counter;
     this->closeSqlDatabase();
 
+    if (value) {
+        emit fileSignalManager->fileTagInfoChanged(files);
+    }
+
     return value;
 }
 
 bool TagManager::deleteTags(const QList<QString>& tags)
 {
+    DUrlList filesOfTags;
+
+    for (const QString &tag : tags) {
+        for (const QString &path : getFilesThroughTag(tag)) {
+            filesOfTags << DUrl::fromLocalFile(path);
+        }
+    }
+
     impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Write };
     ++m_counter;
 
@@ -383,6 +401,10 @@ bool TagManager::deleteTags(const QList<QString>& tags)
 
         --m_counter;
         this->closeSqlDatabase();
+
+        if (var.toBool() && !filesOfTags.isEmpty()) {
+            emit fileSignalManager->fileTagInfoChanged(filesOfTags);
+        }
 
         return var.toBool();
     }

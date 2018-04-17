@@ -28,8 +28,9 @@
 #include <QGraphicsOpacityEffect>
 #include <QApplication>
 #include <QMenu>
+#include <QPainter>
 
-#include <anchors.h>
+#include <danchors.h>
 
 #include "fileitem.h"
 #include "dfmglobal.h"
@@ -37,11 +38,37 @@
 
 DWIDGET_USE_NAMESPACE
 
+class FileIconItemEdit : public QTextEdit
+{
+public:
+    explicit FileIconItemEdit(QWidget *parent = 0)
+        : QTextEdit(parent) {}
+
+protected:
+    void paintEvent(QPaintEvent *event) override
+    {
+        QTextEdit::paintEvent(event);
+
+        if (!borderColor.isValid())
+            return;
+
+        QPainter pa(viewport());
+
+        pa.setPen(QPen(borderColor, 2));
+        pa.drawRoundedRect(rect(), 4, 4);
+    }
+
+private:
+    QColor borderColor;
+
+    friend class FileIconItem;
+};
+
 FileIconItem::FileIconItem(QWidget *parent) :
     QFrame(parent)
 {
     icon = new QLabel(this);
-    edit = new QTextEdit(this);
+    edit = new FileIconItemEdit(this);
 
     icon->setAlignment(Qt::AlignCenter);
     icon->setFrameShape(QFrame::NoFrame);
@@ -62,10 +89,10 @@ FileIconItem::FileIconItem(QWidget *parent) :
 
     vlayout->addWidget(icon, 0, Qt::AlignTop | Qt::AlignHCenter);
 
-    AnchorsBase::setAnchor(edit, Qt::AnchorTop, icon, Qt::AnchorBottom);
-    AnchorsBase::setAnchor(edit, Qt::AnchorHorizontalCenter, icon, Qt::AnchorHorizontalCenter);
+    DAnchorsBase::setAnchor(edit, Qt::AnchorTop, icon, Qt::AnchorBottom);
+    DAnchorsBase::setAnchor(edit, Qt::AnchorHorizontalCenter, icon, Qt::AnchorHorizontalCenter);
 
-    AnchorsBase::getAnchorBaseByWidget(edit)->setTopMargin(ICON_MODE_ICON_SPACING);
+    DAnchorsBase::getAnchorBaseByWidget(edit)->setTopMargin(ICON_MODE_ICON_SPACING);
 
     setFrameShape(QFrame::NoFrame);
     setFocusProxy(edit);
@@ -163,7 +190,8 @@ void FileIconItem::setBorderColor(QColor borderColor)
     m_borderColor = borderColor;
     emit borderColorChanged(borderColor);
 
-    updateStyleSheet();
+    static_cast<FileIconItemEdit*>(edit)->borderColor = borderColor;
+    edit->update();
 }
 
 void FileIconItem::popupEditContentMenu()
@@ -301,12 +329,11 @@ void FileIconItem::updateEditorGeometry()
 
 void FileIconItem::updateStyleSheet()
 {
-    QString base = "FileIconItem[showBackground=true] QTextEdit {background: %1; color: %2; border: 2px solid %3;}";
+    QString base = "FileIconItem[showBackground=true] QTextEdit {background: %1; color: %2;}";
 
-    base.append("FileIconItem QTextEdit {color: %4}");
+    base.append("FileIconItem QTextEdit {color: %3}");
     base = base.arg(palette().color(QPalette::Background).name(QColor::HexArgb))
            .arg(palette().color(QPalette::BrightText).name(QColor::HexArgb))
-           .arg(m_borderColor.name(QColor::HexArgb))
            .arg(palette().color(QPalette::Text).name(QColor::HexArgb));
 
     // WARNING: setStyleSheet will clean margins!!!!!!

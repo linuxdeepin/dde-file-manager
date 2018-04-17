@@ -51,6 +51,8 @@
 #include "interfaces/dfmsetting.h"
 #include "shutil/fileutils.h"
 #include "utils/utils.h"
+#include "app/filesignalmanager.h"
+#include "dabstractfilewatcher.h"
 
 #include <QDataStream>
 #include <QGuiApplication>
@@ -188,6 +190,12 @@ void FileManagerApp::initSysPathWatcher()
 void FileManagerApp::initConnect()
 {
     connect(m_sysPathWatcher, &QFileSystemWatcher::directoryChanged, systemPathManager, &PathManager::loadSystemPaths);
+
+    connect(fileSignalManager, &FileSignalManager::fileTagInfoChanged, this, [] (const DUrlList &files) {
+        for (const DUrl &file : files) {
+            DAbstractFileWatcher::ghostSignal(file.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, file);
+        }
+    });
 }
 
 void FileManagerApp::initService()
