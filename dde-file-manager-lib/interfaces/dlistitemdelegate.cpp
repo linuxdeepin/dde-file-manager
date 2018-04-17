@@ -160,6 +160,20 @@ void DListItemDelegate::paint(QPainter *painter,
     int role = columnRoleList.at(0);
 
     if (index != d->editingIndex || (role != DFileSystemModel::FileNameRole && role != DFileSystemModel::FileDisplayNameRole)) {
+        const QVariantHash &ep = index.data(DFileSystemModel::ExtensionPropertys).toHash();
+        const QList<QColor> &colors = qvariant_cast<QList<QColor>>(ep.value("colored"));
+
+        if (!colors.isEmpty()) {
+            qreal diameter = 10;
+            QRectF tag_boundingRect(0, 0, (colors.size() + 1) * diameter / 2, diameter);
+
+            tag_boundingRect.moveCenter(rect.center());
+            tag_boundingRect.moveRight(rect.right());
+
+            paintCircleList(painter, tag_boundingRect, diameter, colors);
+            rect.setRight(tag_boundingRect.left() - ICON_SPACING);
+        }
+
         /// draw file name label
         const QVariant &data = index.data(role);
         painter->setPen(opt.palette.color(drawBackground ? QPalette::BrightText : QPalette::Text));

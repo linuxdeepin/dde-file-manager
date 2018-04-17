@@ -152,20 +152,18 @@ int DStyledItemDelegate::setIconSizeByIconSizeLevel(int level)
     return -1;
 }
 
-QRect DStyledItemDelegate::drawText(QPainter *painter, const QString &text, const QRect &boundingRect,
+QRect DStyledItemDelegate::drawText(const QModelIndex &index, QPainter *painter, QTextLayout *layout, const QRect &boundingRect,
                                     int backgroundMargins, qreal radius, const QBrush &background, int lineHeight,
                                     QTextOption::WrapMode wordWrap, Qt::TextElideMode mode, int flags, const QColor &shadowColor) const
 {
+    initTextLayout(index, layout);
+
     QRegion boundingRegion;
-    QTextLayout layout(text);
-
-    layout.setFont(painter->font());
-
-    DFMGlobal::elideText(&layout, boundingRect.size(), wordWrap, mode, lineHeight, flags, 0,
+    DFMGlobal::elideText(layout, boundingRect.size(), wordWrap, mode, lineHeight, flags, 0,
                          painter, boundingRect.topLeft(), shadowColor, QPointF(0, 1),
                          background, &boundingRegion);
 
-    if (background != Qt::NoBrush) {
+    if (background != Qt::NoBrush && painter) {
         QPainterPath background_path;
         QPainterPath text_path;
 
@@ -186,11 +184,32 @@ QRect DStyledItemDelegate::drawText(QPainter *painter, const QString &text, cons
     return boundingRegion.boundingRect();
 }
 
+QRect DStyledItemDelegate::drawText(const QModelIndex &index, QPainter *painter, const QString &text, const QRect &boundingRect,
+                                    int backgroundMargins, qreal radius, const QBrush &background, int lineHeight,
+                                    QTextOption::WrapMode wordWrap, Qt::TextElideMode mode, int flags, const QColor &shadowColor) const
+{
+    QTextLayout layout;
+
+    layout.setText(text);
+
+    if (painter)
+        layout.setFont(painter->font());
+
+    return drawText(index, painter, &layout, boundingRect, backgroundMargins,
+                    radius, background, lineHeight, wordWrap, mode, flags, shadowColor);
+}
+
 DStyledItemDelegate::DStyledItemDelegate(DStyledItemDelegatePrivate &dd, DFileViewHelper *parent)
     : QStyledItemDelegate(parent)
     , d_ptr(&dd)
 {
     dd.init();
+}
+
+void DStyledItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *layout) const
+{
+    Q_UNUSED(index)
+    Q_UNUSED(layout)
 }
 
 void DStyledItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const
@@ -266,6 +285,25 @@ void DStyledItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const 
     QRect alignedRect(x, y, w, h);
 
     painter->drawPixmap(alignedRect.topLeft(), px);
+}
+
+void DStyledItemDelegate::paintCircleList(QPainter *painter, QRectF boundingRect, qreal diameter, const QList<QColor> &colors)
+{
+    bool antialiasing = painter->testRenderHint(QPainter::Antialiasing);
+
+    painter->setRenderHint(QPainter::Antialiasing);
+
+    for (const QColor &color : colors) {
+        QPainterPath circle;
+
+        circle.addEllipse(QRectF(QPointF(boundingRect.right() - diameter, boundingRect.top()), boundingRect.bottomRight()));
+        painter->fillPath(circle, color);
+        painter->setPen(QPen(Qt::white, 1));
+        painter->drawPath(circle);
+        boundingRect.setRight(boundingRect.right() - diameter / 2);
+    }
+
+    painter->setRenderHint(QPainter::Antialiasing, antialiasing);
 }
 
 void DStyledItemDelegatePrivate::init()

@@ -13,6 +13,10 @@
 #include <QStyledItemDelegate>
 #include <QTextOption>
 
+QT_BEGIN_NAMESPACE
+class QTextLayout;
+QT_END_NAMESPACE
+
 class DFileViewHelper;
 class DStyledItemDelegatePrivate;
 class DStyledItemDelegate : public QStyledItemDelegate
@@ -49,15 +53,24 @@ public:
 
     virtual void updateItemSizeHint() = 0;
 
-    virtual QRect drawText(QPainter *painter, const QString &text, const QRect &boundingRect,
-                           int backgroundMargins, qreal radius, const QBrush &background,
+    virtual QRect drawText(const QModelIndex &index, QPainter *painter, QTextLayout *layout,
+                           const QRect &boundingRect, int backgroundMargins, qreal radius, const QBrush &background,
                            int lineHeight, QTextOption::WrapMode wordWrap = QTextOption::WrapAtWordBoundaryOrAnywhere,
                            Qt::TextElideMode mode = Qt::ElideMiddle, int flags = Qt::AlignCenter,
                            const QColor &shadowColor = QColor()) const;
 
+    QRect drawText(const QModelIndex &index, QPainter *painter, const QString &text, const QRect &boundingRect,
+                   int backgroundMargins, qreal radius, const QBrush &background,
+                   int lineHeight, QTextOption::WrapMode wordWrap = QTextOption::WrapAtWordBoundaryOrAnywhere,
+                   Qt::TextElideMode mode = Qt::ElideMiddle, int flags = Qt::AlignCenter,
+                   const QColor &shadowColor = QColor()) const;
+
+    static void paintCircleList(QPainter *painter, QRectF boundingRect, qreal diameter, const QList<QColor> &colors);
+
 protected:
     DStyledItemDelegate(DStyledItemDelegatePrivate &dd, DFileViewHelper *parent);
 
+    virtual void initTextLayout(const QModelIndex &index, QTextLayout *layout) const;
     void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const Q_DECL_OVERRIDE;
     QList<QRect> getCornerGeometryList(const QRect &baseRect, const QSize &cornerSize) const;
 

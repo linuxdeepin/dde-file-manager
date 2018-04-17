@@ -63,7 +63,6 @@ public:
 
     // Request get the file extension propertys
     QQueue<QPair<DUrl, DFileInfo*>> requestEPFiles;
-    QHash<DUrl, QVariantHash> epCache;
     QReadWriteLock requestEPFilesLock;
     QSet<DFileInfo*> dirtyFileInfos;
 
@@ -81,6 +80,8 @@ Q_SIGNALS:
 RequestEP::RequestEP(QObject *parent)
     : QThread(parent)
 {
+    QMetaType::registerEqualsComparator<QList<QColor>>();
+
     connect(this, &RequestEP::finished, this, [this] {
         dirtyFileInfos.clear();
     });
@@ -110,8 +111,9 @@ void RequestEP::run()
 
         QVariantHash ep;
 
-        if (!colors.isEmpty())
+        if (!colors.isEmpty()) {
             ep["colored"] = QVariant::fromValue(colors);
+        }
 
         QMetaObject::invokeMethod(this, "processEPChanged", Qt::QueuedConnection,
                                   Q_ARG(DUrl, url), Q_ARG(DFileInfo*, file_info.second), Q_ARG(QVariantHash, ep));
@@ -152,21 +154,20 @@ void RequestEP::cancelRequestEP(DFileInfo *info)
 void RequestEP::processEPChanged(const DUrl &url, DFileInfo *info, const QVariantHash &ep)
 {
     Q_EMIT requestEPFinished(url, ep);
-
-    if (ep.isEmpty())
-        epCache.remove(url);
-    else
-        epCache[url] = ep;
-
-    if (!ep.isEmpty()) {
-        DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url);
-    }
+    QVariantHash oldEP = info->d_func()->extensionPropertys;
 
     if (!dirtyFileInfos.contains(info)) {
         info->d_func()->extensionPropertys = ep;
-        info->d_func()->epInitialized = true;
     } else {
         dirtyFileInfos.remove(info);
+    }
+
+    info->d_func()->epInitialized = true;
+
+    if (!ep.isEmpty() && oldEP != ep) {
+        DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url);
+        // ###(zccrs): DFileSystemModel中收到通知后会调用DAbstractFileInfo::refresh，导致会重新获取扩展属性
+        info->d_func()->epInitialized = true;
     }
 }
 
@@ -564,7 +565,7 @@ void DFileInfo::refresh()
 
     d->fileInfo.refresh();
     d->icon = QIcon();
-    d->extensionPropertys.clear();
+    d->epInitialized = false;
 }
 
 DUrl DFileInfo::goToUrlWhenDeleted() const
@@ -703,27 +704,23 @@ QVariantHash DFileInfo::extensionPropertys() const
 
     // ensure extension propertys
     if (!d->epInitialized) {
+        d->epInitialized = true;
+
         const DUrl &url = fileUrl();
 
-        d->epInitialized = requestEP->epCache.contains(url);
-
-        if (d->epInitialized) {
-            d->extensionPropertys = requestEP->epCache.value(url);
-        } else {
-            if (!d->getEPTimer) {
-                d->getEPTimer = new QTimer();
-                d->getEPTimer->setSingleShot(true);
-                d->getEPTimer->moveToThread(qApp->thread());
-                d->getEPTimer->setInterval(REQUEST_THUMBNAIL_DEALY);
-            }
-
-            QObject::connect(d->getEPTimer, &QTimer::timeout, requestEP, [d, url, this] {
-                requestEP->requestEP(url, const_cast<DFileInfo*>(this));
-                d->getEPTimer->deleteLater();
-            });
-
-            QMetaObject::invokeMethod(d->getEPTimer, "start", Qt::QueuedConnection);
+        if (!d->getEPTimer) {
+            d->getEPTimer = new QTimer();
+            d->getEPTimer->setSingleShot(true);
+            d->getEPTimer->moveToThread(qApp->thread());
+            d->getEPTimer->setInterval(REQUEST_THUMBNAIL_DEALY);
         }
+
+        QObject::connect(d->getEPTimer, &QTimer::timeout, requestEP, [d, url, this] {
+            requestEP->requestEP(url, const_cast<DFileInfo*>(this));
+            d->getEPTimer->deleteLater();
+        });
+
+        QMetaObject::invokeMethod(d->getEPTimer, "start", Qt::QueuedConnection);
     }
 
     return d->extensionPropertys;

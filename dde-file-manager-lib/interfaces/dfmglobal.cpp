@@ -435,7 +435,7 @@ void DFMGlobal::elideText(QTextLayout *layout, const QSize &size, QTextOption::W
     bool drawBackground = background.style() != Qt::NoBrush;
     bool drawShadow = shadowColor.isValid();
 
-    QString text = layout->text();
+    QString text = layout->engine()->hasFormats() ? layout->engine()->block.text() : layout->text();
     QTextOption &text_option = *const_cast<QTextOption*>(&layout->textOption());
 
     text_option.setWrapMode(wordWrap);
@@ -493,6 +493,11 @@ void DFMGlobal::elideText(QTextLayout *layout, const QSize &size, QTextOption::W
             if (painter || boundingRegion) {
                 layout->endLayout();
                 layout->setText(end_str);
+
+                if (layout->engine()->block.docHandle()) {
+                    const_cast<QTextDocument*>(layout->engine()->block.document())->setPlainText(end_str);
+                }
+
                 layout->beginLayout();
 
                 line = layout->createLine();
