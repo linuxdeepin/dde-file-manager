@@ -21,8 +21,13 @@
 #include "dfmsidebarbookmarkitem.h"
 #include "dfilemenu.h"
 #include "dfilemenumanager.h"
+#include "dfilemanagerwindow.h"
 
 #include "singleton.h"
+
+#include "app/define.h"
+#include "app/filesignalmanager.h"
+#include "views/windowmanager.h"
 
 DFM_BEGIN_NAMESPACE
 
@@ -36,13 +41,28 @@ DFMSideBarBookmarkItem::DFMSideBarBookmarkItem(BookMarkPointer bookmark)
 
 QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
 {
-    QMenu *menu = new QMenu();
+    // this part could be duplicate since it seems every sidebar item should got
+    // a new window/tab option and a properties option. maybe we need a menu manager
+    // or other workaround?
+    QMenu *menu = new QMenu(const_cast<DFMSideBarBookmarkItem *>(this));
+    DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
 
-    menu->addAction(QObject::tr("Open in new window"));
-    menu->addAction(QObject::tr("Open in new tab"));
+    menu->addAction(QObject::tr("Open in new window"), [this]() {
+        WindowManager::instance()->showNewWindow(url());
+    });
+
+    menu->addAction(QObject::tr("Open in new tab"), [wnd, this]() {
+        wnd->openNewTab(url());
+    });
+
     menu->addAction(QObject::tr("Rename"));
     menu->addAction(QObject::tr("Remove"));
-    menu->addAction(QObject::tr("Properties"));
+
+    menu->addAction(QObject::tr("Properties"), [this]() {
+        DUrlList list;
+        list.append(url());
+        fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(this, list));
+    });
 
     return menu;
 }

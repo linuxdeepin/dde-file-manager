@@ -49,6 +49,7 @@ public:
     QVBoxLayout *mainLayout;
     QWidget *mainLayoutHolder;
     QMap<QString, DFMSideBarItemGroup *> groupNameMap;
+    DFMSideBarItem *lastCheckedItem = nullptr; //< managed by setCurrentUrl()
 
 private:
     void initData();
@@ -188,6 +189,28 @@ QStringList DFMSideBar::groupList() const
     return groupNameList;
 }
 
+void DFMSideBar::setCurrentUrl(const DUrl &url)
+{
+    Q_D(DFMSideBar);
+
+    if (d->lastCheckedItem) {
+        d->lastCheckedItem->setChecked(false);
+    }
+
+    for (QString &key : d->groupNameMap.keys()) {
+        DFMSideBarItemGroup *groupPointer = d->groupNameMap.value(key);
+        int itemCount = groupPointer->itemCount();
+        for (int idx = 0; idx < itemCount; idx++) {
+            DFMSideBarItem *item = (*groupPointer)[idx];
+            if (item->url() == url) {
+                item->setChecked(true);
+                d->lastCheckedItem = item;
+                return;
+            }
+        }
+    }
+}
+
 void DFMSideBar::setDisableUrlSchemes(const QStringList &schemes)
 {
 
@@ -242,6 +265,10 @@ void DFMSideBar::removeItem(int index, const QString &group)
 
     if (d->groupNameMap.contains(group)) {
         DFMSideBarItemGroup *groupPointer = d->groupNameMap[group];
+        Q_CHECK_PTR(groupPointer);
+        if ((*groupPointer)[index] == d->lastCheckedItem) {
+            d->lastCheckedItem = nullptr;
+        }
         groupPointer->removeItem(index);
     }
 }
@@ -249,6 +276,10 @@ void DFMSideBar::removeItem(int index, const QString &group)
 void DFMSideBar::removeItem(DFMSideBarItem *item)
 {
     Q_D(DFMSideBar);
+
+    if (item == d->lastCheckedItem) {
+        d->lastCheckedItem = nullptr;
+    }
 
     DFMSideBarItemGroup *groupPointer = d->groupNameMap[item->groupName()];
     Q_CHECK_PTR(groupPointer);
@@ -299,11 +330,15 @@ DFMSideBarItem *DFMSideBar::itemAt(int index, const QString &group) const
 
 DFMSideBarItem *DFMSideBar::takeItem(int index, const QString &group)
 {
-    Q_D(const DFMSideBar);
+    Q_D(DFMSideBar);
 
     if (d->groupNameMap.contains(group)) {
         DFMSideBarItemGroup *groupPointer = d->groupNameMap[group];
-        return groupPointer->takeItem(index);
+        DFMSideBarItem *item = groupPointer->takeItem(index);
+        if (d->lastCheckedItem == item) {
+            d->lastCheckedItem = nullptr;
+        }
+        return item;
     }
 
     return nullptr;
