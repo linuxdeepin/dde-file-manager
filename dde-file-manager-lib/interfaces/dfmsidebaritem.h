@@ -82,8 +82,8 @@ protected:
     void setGroupName(QString groupName); // this function should be protected
 
     virtual QMenu *createStandardContextMenu() const;
-    virtual bool canDropMimeData(const QMimeData *data, Qt::DropAction action) const;
-    virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action) const;
+    virtual bool canDropMimeData(const QMimeData *data, Qt::DropActions action) const;
+    virtual bool dropMimeData(const QMimeData *data, Qt::DropActions action) const;
 
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
