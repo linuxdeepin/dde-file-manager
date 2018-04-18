@@ -38,4 +38,6 @@ public:
     mutable QPointer<QTimer> getEPTimer;
 };
 
+Q_DECLARE_METATYPE(DFileInfoPrivate*)
+
 #endif // DFILEINFO_P_H
