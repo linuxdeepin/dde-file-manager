@@ -24,14 +24,16 @@
 
 #include <QVBoxLayout>
 
-#include <dfmglobal.h>
+#include "dfmglobal.h"
 
 #include "dfmstandardpaths.h"
 #include "dfmsidebar.h"
 #include "dfmsidebaritemseparator.h"
 
-DFM_BEGIN_NAMESPACE
+class UDiskDeviceInfo;
+typedef QExplicitlySharedDataPointer<UDiskDeviceInfo> UDiskDeviceInfoPointer;
 
+DFM_BEGIN_NAMESPACE
 class DFMSideBarItemGroup : public QVBoxLayout
 {
     Q_OBJECT
@@ -44,6 +46,7 @@ public:
     void removeItem(int index);
     void removeItem(DFMSideBarItem *item);
     DFMSideBarItem *findItem(const DUrl &url);
+    DFMSideBarItem *findItem(const UDiskDeviceInfoPointer &info);
     DFMSideBarItem *takeItem(int index);
     DFMSideBarItem *takeItem(DFMSideBarItem *item);
     int itemCount() const;
