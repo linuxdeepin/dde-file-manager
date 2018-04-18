@@ -495,9 +495,6 @@ void DFMSideBarItem::mouseMoveEvent(QMouseEvent *event)
         drag->setHotSpot(QPoint(event->x(), 4));
         drag->setMimeData(mimeData);
         drag->exec();
-
-        qDebug() << drag->target();
-
         drag->deleteLater();
     }
 

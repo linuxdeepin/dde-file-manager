@@ -243,7 +243,8 @@ HEADERS += \
     views/dfmsidebaritemseparator.h \
     views/dfmsidebardefaultitem.h \
     views/dfmsidebarbookmarkitem.h \
-    views/dfmsidebartrashitem.h
+    views/dfmsidebartrashitem.h \
+    views/dfmsidebardeviceitem.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -402,7 +403,8 @@ SOURCES += \
     views/dfmsidebaritemseparator.cpp \
     views/dfmsidebardefaultitem.cpp \
     views/dfmsidebarbookmarkitem.cpp \
-    views/dfmsidebartrashitem.cpp
+    views/dfmsidebartrashitem.cpp \
+    views/dfmsidebardeviceitem.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET

@@ -25,6 +25,7 @@
 #include "views/dfmsidebarbookmarkitem.h"
 #include "views/dfmsidebardefaultitem.h"
 #include "views/dfmsidebartrashitem.h"
+#include "views/dfmsidebardeviceitem.h"
 #include "controllers/bookmarkmanager.h"
 #include "deviceinfo/udisklistener.h"
 
@@ -108,31 +109,24 @@ void DFMSideBarPrivate::initMountedVolumes()
     DFMSideBarItemGroup *group = groupNameMap[q->groupName(DFMSideBar::GroupName::Device)];
     Q_CHECK_PTR(group);
 
+    auto lambdaAppendDevice = [ = ](const UDiskDeviceInfoPointer & info) {
+        group->appendItem(new DFMSideBarDeviceItem(info));
+    };
+
+    auto lambdaRemoveDevice = [ = ](const UDiskDeviceInfoPointer & info) {
+        DFMSideBarItem *item = group->findItem(info);
+        Q_CHECK_PTR(item); // should always find one
+        group->removeItem(item);
+    };
+
     for (const UDiskDeviceInfoPointer &device : deviceListener->getDeviceList()) {
-        group->appendItem(new DFMSideBarItem(device.data()->getMountPointUrl()));
+        group->appendItem(new DFMSideBarDeviceItem(device));
     }
 
-    q->connect(deviceListener, &UDiskListener::mountAdded,
-    q_func(), [ = ](const UDiskDeviceInfoPointer & info) {
-        //group->appendItem(new DFMSideBarItem(info->fileUrl()));
-    });
-
-    q->connect(deviceListener, &UDiskListener::mountRemoved,
-    q_func(), [ = ](const UDiskDeviceInfoPointer & info) {
-        //DFMSideBarItem *item = group->findItem(info->fileUrl());
-        //Q_CHECK_PTR(item); // should always find one
-        //group->removeItem(item);
-    });
-
-    q->connect(deviceListener, &UDiskListener::volumeAdded,
-    q_func(), [ = ](const UDiskDeviceInfoPointer & info) {
-        qDebug() << ">>>> added" << info->fileUrl();
-    });
-
-    q->connect(deviceListener, &UDiskListener::volumeRemoved,
-    q_func(), [ = ](const UDiskDeviceInfoPointer & info) {
-        qDebug() << ">>>> remove" << info->fileUrl() << info->getDiskInfo();
-    });
+    q->connect(deviceListener, &UDiskListener::mountAdded, group, lambdaAppendDevice);
+    q->connect(deviceListener, &UDiskListener::mountRemoved, group, lambdaRemoveDevice);
+    q->connect(deviceListener, &UDiskListener::volumeAdded, group, lambdaAppendDevice);
+    q->connect(deviceListener, &UDiskListener::volumeRemoved, group, lambdaRemoveDevice);
 }
 
 void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::GroupName groupType)

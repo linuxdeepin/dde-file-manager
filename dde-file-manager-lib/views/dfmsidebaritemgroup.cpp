@@ -19,10 +19,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "dfmsidebardeviceitem.h"
 #include "dfmsidebaritem.h"
 #include "dfmsidebaritemgroup.h"
 
 #include "singleton.h"
+
+#include "deviceinfo/udisklistener.h"
 
 #include <QDebug>
 
@@ -88,6 +91,7 @@ void DFMSideBarItemGroup::removeItem(int index)
 {
     if (index >= 0 && index < itemList.count()) {
         DFMSideBarItem *item = itemList.takeAt(index);
+        item->hide();
         itemHolder->removeWidget(item);
         itemConnectionUnregister(item);
         item->deleteLater();
@@ -96,6 +100,7 @@ void DFMSideBarItemGroup::removeItem(int index)
 
 void DFMSideBarItemGroup::removeItem(DFMSideBarItem *item)
 {
+    item->hide();
     itemList.removeOne(item);
     itemHolder->removeWidget(item);
     itemConnectionUnregister(item);
@@ -116,6 +121,25 @@ DFMSideBarItem *DFMSideBarItemGroup::findItem(const DUrl &url)
     for (int idx = 0, cnt = itemCount(); idx < cnt; idx++) {
         DFMSideBarItem *item = (*this)[idx];
         if (item->url() == url) {
+            return item;
+        }
+    }
+
+    return nullptr;
+}
+
+/*!
+ * \brief Find item by the given device \a info
+ * \param info Disk device info pointer
+ * \return the first match item, will return nullptr if not found.
+ *
+ * The matching rule is the deviceId provided by `UDiskDeviceInfo`.
+ */
+DFMSideBarItem *DFMSideBarItemGroup::findItem(const UDiskDeviceInfoPointer &info)
+{
+    for (int idx = 0, cnt = itemCount(); idx < cnt; idx++) {
+        DFMSideBarDeviceItem *item = qobject_cast<DFMSideBarDeviceItem *>((*this)[idx]);
+        if (item && info->getId() == item->deviceInfo->getId()) {
             return item;
         }
     }

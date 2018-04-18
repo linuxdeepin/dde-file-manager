@@ -19,8 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dfmsidebardefaultitem.h"
-#include "dfilemenu.h"
-#include "dfilemenumanager.h"
 
 #include "app/define.h"
 #include "controllers/pathmanager.h"

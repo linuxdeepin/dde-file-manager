@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "dfmsidebarbookmarkitem.h"
 #include "dfilemanagerwindow.h"
+#include "dfmsidebardeviceitem.h"
 
 #include "singleton.h"
 
@@ -31,20 +31,36 @@
 
 DFM_BEGIN_NAMESPACE
 
-DFMSideBarBookmarkItem::DFMSideBarBookmarkItem(BookMarkPointer bookmark)
-    : DFMSideBarItem(bookmark->getUrl())
+DFMSideBarDeviceItem::DFMSideBarDeviceItem(UDiskDeviceInfoPointer infoPointer, QWidget *parent)
+    : DFMSideBarItem(infoPointer->getMountPointUrl(), parent)
 {
-    setText(bookmark->getName());
-    setIconFromThemeConfig("BookmarkItem.BookMarks", "icon");
-    setReorderable(true);
+    deviceInfo = infoPointer;
+    setText(deviceInfo->getName());
+
+    switch (deviceInfo->getMediaType()) {
+    case UDiskDeviceInfo::MediaType::native:
+        setIconFromThemeConfig("BookmarkItem.Disk");
+        break;
+    case UDiskDeviceInfo::MediaType::removable:
+        setIconFromThemeConfig("BookmarkItem.Usb");
+        break;
+    case UDiskDeviceInfo::MediaType::dvd:
+        setIconFromThemeConfig("BookmarkItem.Dvd");
+        break;
+    case UDiskDeviceInfo::MediaType::phone:
+        setIconFromThemeConfig("BookmarkItem.Android");
+        break;
+    case UDiskDeviceInfo::MediaType::iphone:
+        setIconFromThemeConfig("BookmarkItem.Iphone");
+        break;
+    default:
+        break;
+    }
 }
 
-QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
+QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
 {
-    // this part could be duplicate since it seems every sidebar item should got
-    // a new window/tab option and a properties option. maybe we need a menu manager
-    // or other workaround?
-    QMenu *menu = new QMenu(const_cast<DFMSideBarBookmarkItem *>(this));
+    QMenu *menu = new QMenu(const_cast<DFMSideBarDeviceItem *>(this));
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
 
     menu->addAction(QObject::tr("Open in new window"), [this]() {
@@ -55,12 +71,7 @@ QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
         wnd->openNewTab(url());
     });
 
-    menu->addAction(QObject::tr("Rename"), [this]() {
-        DFMSideBarBookmarkItem *ccItem = const_cast<DFMSideBarBookmarkItem *>(this);
-        ccItem->showRenameEditor();
-    });
-
-    menu->addAction(QObject::tr("Remove"));
+    menu->addAction(QObject::tr("Unmount"));
 
     menu->addAction(QObject::tr("Properties"), [this]() {
         DUrlList list;
@@ -70,6 +81,5 @@ QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
 
     return menu;
 }
-
 
 DFM_END_NAMESPACE
