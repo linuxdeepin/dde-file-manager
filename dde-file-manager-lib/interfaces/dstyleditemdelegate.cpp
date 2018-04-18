@@ -287,22 +287,24 @@ void DStyledItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const 
     painter->drawPixmap(alignedRect.topLeft(), px);
 }
 
-void DStyledItemDelegate::paintCircleList(QPainter *painter, QRectF boundingRect, qreal diameter, const QList<QColor> &colors)
+void DStyledItemDelegate::paintCircleList(QPainter *painter, QRectF boundingRect, qreal diameter, const QList<QColor> &colors, const QColor &borderColor)
 {
     bool antialiasing = painter->testRenderHint(QPainter::Antialiasing);
+    const QPen pen = painter->pen();
 
     painter->setRenderHint(QPainter::Antialiasing);
+    painter->setPen(QPen(borderColor, 1));
 
     for (const QColor &color : colors) {
         QPainterPath circle;
 
         circle.addEllipse(QRectF(QPointF(boundingRect.right() - diameter, boundingRect.top()), boundingRect.bottomRight()));
         painter->fillPath(circle, color);
-        painter->setPen(QPen(Qt::white, 1));
         painter->drawPath(circle);
         boundingRect.setRight(boundingRect.right() - diameter / 2);
     }
 
+    painter->setPen(pen);
     painter->setRenderHint(QPainter::Antialiasing, antialiasing);
 }
 
