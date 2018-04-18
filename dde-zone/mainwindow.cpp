@@ -15,9 +15,11 @@
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
 #include <QPainter>
+#include <QGSettings>
 
 ZoneMainWindow::ZoneMainWindow(QWidget *parent)
     : QWidget(parent)
+    , m_videoWidget(nullptr)
 {
     m_dbusZoneInter = new ZoneInterface("com.deepin.daemon.Zone", "/com/deepin/daemon/Zone", QDBusConnection::sessionBus(), this);
 
@@ -41,11 +43,13 @@ ZoneMainWindow::ZoneMainWindow(QWidget *parent)
     QWidget *back = new QWidget(this);
     back->setGeometry(0, MAIN_ITEM_TOP_MARGIN, this->width(), this->height() - MAIN_ITEM_TOP_MARGIN);
 
-#ifndef DISABLE_DEMO_VIDEO
-    m_videoWidget = new DVideoWidget(this);
-    m_videoWidget->setSourceVideoPixelRatio(devicePixelRatioF());
-    QTimer::singleShot(1000, this, &ZoneMainWindow::onDemoVideo);
-#endif
+    // check demo video gsettings value
+    QGSettings gsetting("com.deepin.dde.desktop", "/com/deepin/dde/desktop/");
+    if (gsetting.keys().contains("enableHotzoneVideo") && gsetting.get("enable-hotzone-video").toBool()) {
+        m_videoWidget = new DVideoWidget(this);
+        m_videoWidget->setSourceVideoPixelRatio(devicePixelRatioF());
+        QTimer::singleShot(1000, this, &ZoneMainWindow::onDemoVideo);
+    }
 
     // init corresponding QList for addButtons()
     m_ButtonNames << tr("Fast Screen Off") << tr("Control Center") << tr("All Windows") << tr("Launcher") << tr("Desktop") << tr("None");
@@ -92,9 +96,10 @@ void ZoneMainWindow::keyPressEvent(QKeyEvent *e)
     }
 }
 
-#ifndef DISABLE_DEMO_VIDEO
 void ZoneMainWindow::onDemoVideo()
 {
+    if (!m_videoWidget) return;
+
     QMediaPlayer *player = new QMediaPlayer(this);
 
     QMediaPlaylist *list = new QMediaPlaylist(this);
@@ -119,4 +124,3 @@ void ZoneMainWindow::paintEvent(QPaintEvent *e)
 
     pa.fillRect(rect(), QColor(0, 0, 0, 178));
 }
-#endif
