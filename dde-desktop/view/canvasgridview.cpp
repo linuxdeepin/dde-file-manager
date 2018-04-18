@@ -48,6 +48,8 @@
 #include <dfmsetting.h>
 #include <dfilewatcher.h>
 
+#include <QGSettings>
+
 #include "../model/dfileselectionmodel.h"
 #include "../presenter/gridmanager.h"
 #include "../presenter/apppresenter.h"
@@ -2120,11 +2122,9 @@ void CanvasGridView::handleContextMenuAction(int action)
         startProcessDetached("dbus-send", args);
         break;
     }
-#ifndef DISABLE_ZONE
     case CornerSettings:
         Desktop::instance()->showZoneSettings();
         break;
-#endif
     case WallpaperSettings:
         Desktop::instance()->showWallpaperSettings();
         break;
@@ -2278,12 +2278,13 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     display.setData(DisplaySettings);
     menu->addAction(&display);
 
-#ifndef DISABLE_ZONE
     QAction corner(menu);
-    corner.setText(tr("Corner Settings"));
-    corner.setData(CornerSettings);
-    menu->addAction(&corner);
-#endif
+    QGSettings gsetting("com.deepin.dde.desktop", "/com/deepin/dde/desktop/");
+    if (gsetting.keys().contains("enableHotzoneSettings") && gsetting.get("enable-hotzone-settings").toBool()) {
+        corner.setText(tr("Corner Settings"));
+        corner.setData(CornerSettings);
+        menu->addAction(&corner);
+    }
 
     QAction wallpaper(menu);
     wallpaper.setText(tr("Set Wallpaper"));
