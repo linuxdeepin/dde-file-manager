@@ -42,6 +42,8 @@ public:
     int appendItem(DFMSideBarItem *item);
     void insertItem(int index, DFMSideBarItem *item);
     void removeItem(int index);
+    void removeItem(DFMSideBarItem *item);
+    DFMSideBarItem *findItem(const DUrl &url);
     DFMSideBarItem *takeItem(int index);
     DFMSideBarItem *takeItem(DFMSideBarItem *item);
     int itemCount() const;

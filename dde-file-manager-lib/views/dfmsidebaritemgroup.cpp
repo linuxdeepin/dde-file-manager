@@ -94,6 +94,35 @@ void DFMSideBarItemGroup::removeItem(int index)
     }
 }
 
+void DFMSideBarItemGroup::removeItem(DFMSideBarItem *item)
+{
+    itemList.removeOne(item);
+    itemHolder->removeWidget(item);
+    itemConnectionUnregister(item);
+    item->deleteLater();
+}
+
+/*!
+ * \brief Find item by the given \a url
+ * \return the first match item, will return nullptr if not found.
+ *
+ * This function will find the first item which match the given `DUrl`
+ *
+ * Notice: Any unmounted volume will got an empty `DUrl`. When processing
+ * items in *Device* group, do not use this function to get item.
+ */
+DFMSideBarItem *DFMSideBarItemGroup::findItem(const DUrl &url)
+{
+    for (int idx = 0, cnt = itemCount(); idx < cnt; idx++) {
+        DFMSideBarItem *item = (*this)[idx];
+        if (item->url() == url) {
+            return item;
+        }
+    }
+
+    return nullptr;
+}
+
 /*!
  * \fn DFMSideBarItem *DFMSideBarItemGroup::takeItem(int index)
  *

@@ -30,6 +30,7 @@
 
 #include <DThemeManager>
 #include <QVBoxLayout>
+#include <QTimer>
 
 #include "singleton.h"
 
@@ -52,21 +53,16 @@ public:
     DFMSideBarItem *lastCheckedItem = nullptr; //< managed by setCurrentUrl()
 
 private:
-    void initData();
     void initUI();
+    void initMountedVolumes();
     void addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::GroupName groupType);
 };
 
 DFMSideBarPrivate::DFMSideBarPrivate(DFMSideBar *qq)
     : q_ptr(qq)
 {
-    initData();
     initUI();
-}
-
-void DFMSideBarPrivate::initData()
-{
-
+    initMountedVolumes();
 }
 
 void DFMSideBarPrivate::initUI()
@@ -105,6 +101,40 @@ void DFMSideBarPrivate::initUI()
     }
 }
 
+void DFMSideBarPrivate::initMountedVolumes()
+{
+    Q_Q(DFMSideBar);
+
+    DFMSideBarItemGroup *group = groupNameMap[q->groupName(DFMSideBar::GroupName::Device)];
+    Q_CHECK_PTR(group);
+
+    for (const UDiskDeviceInfoPointer &device : deviceListener->getDeviceList()) {
+        group->appendItem(new DFMSideBarItem(device.data()->getMountPointUrl()));
+    }
+
+    q->connect(deviceListener, &UDiskListener::mountAdded,
+    q_func(), [ = ](const UDiskDeviceInfoPointer & info) {
+        //group->appendItem(new DFMSideBarItem(info->fileUrl()));
+    });
+
+    q->connect(deviceListener, &UDiskListener::mountRemoved,
+    q_func(), [ = ](const UDiskDeviceInfoPointer & info) {
+        //DFMSideBarItem *item = group->findItem(info->fileUrl());
+        //Q_CHECK_PTR(item); // should always find one
+        //group->removeItem(item);
+    });
+
+    q->connect(deviceListener, &UDiskListener::volumeAdded,
+    q_func(), [ = ](const UDiskDeviceInfoPointer & info) {
+        qDebug() << ">>>> added" << info->fileUrl();
+    });
+
+    q->connect(deviceListener, &UDiskListener::volumeRemoved,
+    q_func(), [ = ](const UDiskDeviceInfoPointer & info) {
+        qDebug() << ">>>> remove" << info->fileUrl() << info->getDiskInfo();
+    });
+}
+
 void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::GroupName groupType)
 {
     // to make group touch less DFM internal implement, we add item here.
@@ -124,12 +154,6 @@ void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::G
     case DFMSideBar::GroupName::Device:
         group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::ComputerRootPath));
         group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::Root)); // TODO: check dfmPlatformManager->isRoot_hidden()
-        for (const UDiskDeviceInfoPointer &device : deviceListener->getDeviceList()) {
-            // take care of this part, it seems we should mount the device if it's not yet mounted
-            // and also for other devices like smartphone and etc.
-            // so maybe we need a `appendItem(UDiskDeviceInfoPointer device)`
-            group->appendItem(new DFMSideBarItem(device.data()->getMountPointUrl()));
-        }
         break;
     case DFMSideBar::GroupName::Bookmark: {
         const QList<BookMarkPointer> &m_list = bookmarkManager->getBookmarks();
@@ -199,14 +223,11 @@ void DFMSideBar::setCurrentUrl(const DUrl &url)
 
     for (QString &key : d->groupNameMap.keys()) {
         DFMSideBarItemGroup *groupPointer = d->groupNameMap.value(key);
-        int itemCount = groupPointer->itemCount();
-        for (int idx = 0; idx < itemCount; idx++) {
-            DFMSideBarItem *item = (*groupPointer)[idx];
-            if (item->url() == url) {
-                item->setChecked(true);
-                d->lastCheckedItem = item;
-                return;
-            }
+        DFMSideBarItem *item = groupPointer->findItem(url);
+        if (item) {
+            item->setChecked(true);
+            d->lastCheckedItem = item;
+            return;
         }
     }
 }

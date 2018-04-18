@@ -361,7 +361,7 @@ QMenu *DFMSideBarItem::createStandardContextMenu() const
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
 
     menu->addAction(QObject::tr("Open in new window"), [this]() {
-        WindowManager::instance()->showNewWindow(url());
+        WindowManager::instance()->showNewWindow(url(), true);
     });
 
     menu->addAction(QObject::tr("Open in new tab"), [wnd, this]() {
@@ -377,12 +377,14 @@ QMenu *DFMSideBarItem::createStandardContextMenu() const
     return menu;
 }
 
-bool DFMSideBarItem::canDropMimeData(const QMimeData *data, Qt::DropAction action) const
+bool DFMSideBarItem::canDropMimeData(const QMimeData *data, Qt::DropActions action) const
 {
-
+    Q_UNUSED(data);
+    Q_UNUSED(action);
+    return false;
 }
 
-bool DFMSideBarItem::dropMimeData(const QMimeData *data, Qt::DropAction action) const
+bool DFMSideBarItem::dropMimeData(const QMimeData *data, Qt::DropActions action) const
 {
 
 }
@@ -406,6 +408,11 @@ void DFMSideBarItem::resizeEvent(QResizeEvent *event)
 void DFMSideBarItem::dragEnterEvent(QDragEnterEvent *event)
 {
     Q_D(DFMSideBarItem);
+
+    if (canDropMimeData(event->mimeData(), event->possibleActions())) {
+        event->acceptProposedAction();
+        return;
+    }
 
     if (event->source() == this) {
         return;
@@ -435,6 +442,10 @@ void DFMSideBarItem::dragLeaveEvent(QDragLeaveEvent *event)
 void DFMSideBarItem::dropEvent(QDropEvent *event)
 {
     Q_D(DFMSideBarItem);
+
+    if (dropMimeData(event->mimeData(), event->possibleActions())) {
+        return;
+    }
 
     // If drop a sidebar item:
     if (DFMSideBarItem *item = qobject_cast<DFMSideBarItem *>(event->source())) {
@@ -484,6 +495,9 @@ void DFMSideBarItem::mouseMoveEvent(QMouseEvent *event)
         drag->setHotSpot(QPoint(event->x(), 4));
         drag->setMimeData(mimeData);
         drag->exec();
+
+        qDebug() << drag->target();
+
         drag->deleteLater();
     }
 

@@ -43,7 +43,7 @@ QMenu *DFMSideBarTrashItem::createStandardContextMenu() const
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
 
     menu->addAction(QObject::tr("Open in new window"), [this]() {
-        WindowManager::instance()->showNewWindow(url());
+        WindowManager::instance()->showNewWindow(url(), true);
     });
 
     menu->addAction(QObject::tr("Open in new tab"), [wnd, this]() {
