@@ -65,7 +65,7 @@ public:
                    Qt::TextElideMode mode = Qt::ElideMiddle, int flags = Qt::AlignCenter,
                    const QColor &shadowColor = QColor()) const;
 
-    static void paintCircleList(QPainter *painter, QRectF boundingRect, qreal diameter, const QList<QColor> &colors);
+    static void paintCircleList(QPainter *painter, QRectF boundingRect, qreal diameter, const QList<QColor> &colors, const QColor &borderColor);
 
 protected:
     DStyledItemDelegate(DStyledItemDelegatePrivate &dd, DFileViewHelper *parent);

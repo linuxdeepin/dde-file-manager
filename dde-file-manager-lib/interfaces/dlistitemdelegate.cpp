@@ -170,7 +170,8 @@ void DListItemDelegate::paint(QPainter *painter,
             tag_boundingRect.moveCenter(rect.center());
             tag_boundingRect.moveRight(rect.right());
 
-            paintCircleList(painter, tag_boundingRect, diameter, colors);
+            paintCircleList(painter, tag_boundingRect, diameter, colors,
+                            (drawBackground || colors.size() > 1) ? Qt::white : QColor(0, 0, 0, 25));
             rect.setRight(tag_boundingRect.left() - ICON_SPACING);
         }
 

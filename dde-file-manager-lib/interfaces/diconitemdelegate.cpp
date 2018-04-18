@@ -47,21 +47,28 @@
 class TagTextFormat : public QTextCharFormat
 {
 public:
-    TagTextFormat(int objectType, const QList<QColor> &colors);
+    TagTextFormat(int objectType, const QList<QColor> &colors, const QColor &borderColor);
 
     QList<QColor> colors() const;
+    QColor borderColor() const;
     qreal diameter() const;
 };
 
-TagTextFormat::TagTextFormat(int objectType, const QList<QColor> &colors)
+TagTextFormat::TagTextFormat(int objectType, const QList<QColor> &colors, const QColor &borderColor)
 {
     setObjectType(objectType);
     setProperty(QTextFormat::UserProperty + 1, QVariant::fromValue(colors));
+    setProperty(QTextFormat::UserProperty + 2, borderColor);
 }
 
 QList<QColor> TagTextFormat::colors() const
 {
     return qvariant_cast<QList<QColor>>(property(QTextFormat::UserProperty + 1));
+}
+
+QColor TagTextFormat::borderColor() const
+{
+    return colorProperty(QTextFormat::UserProperty + 2);
 }
 
 qreal TagTextFormat::diameter() const
@@ -110,13 +117,14 @@ void FileTagObjectInterface::drawObject(QPainter *painter, const QRectF &rect, Q
 
     const TagTextFormat &f = static_cast<const TagTextFormat&>(format);
     const QList<QColor> &colors = f.colors();
+    const QColor borderColor = f.borderColor();
     qreal diameter = f.diameter();
     const qreal padding = diameter / 10.0;
     QRectF boundingRect = rect.marginsRemoved(QMarginsF(padding, padding, padding, padding));
 
     diameter -= padding * 2;
 
-    DStyledItemDelegate::paintCircleList(painter, boundingRect, diameter, colors);
+    DStyledItemDelegate::paintCircleList(painter, boundingRect, diameter, colors, borderColor);
 }
 
 class DIconItemDelegatePrivate : public DStyledItemDelegatePrivate
@@ -144,6 +152,8 @@ public:
 
     QColor focusTextBackgroundBorderColor;
     bool enabledTextShadow = false;
+    // 最后一次绘制item时是否画了背景
+    mutable bool drawTextBackgroundOnLast = true;
 
     QTextDocument *document = nullptr;
 
@@ -372,7 +382,7 @@ void DIconItemDelegate::paint(QPainter *painter,
             if (!colors.isEmpty()) {
                 d->expandedItem->edit->document()->documentLayout()->registerHandler(d->textObjectType, d->textObjectInterface);
                 QTextCursor cursor(d->expandedItem->edit->document());
-                TagTextFormat format(d->textObjectType, colors);
+                TagTextFormat format(d->textObjectType, colors, Qt::white);
 
                 cursor.setPosition(0);
                 cursor.insertText(QString(QChar::ObjectReplacementCharacter), format);
@@ -466,10 +476,13 @@ void DIconItemDelegate::paint(QPainter *painter,
 //        painter->fillRect(label_rect, Qt::transparent);
 //    }
 
-    if (isSelected)
+    if (isSelected) {
         painter->setPen(opt.palette.color(QPalette::BrightText));
-    else
+    } else {
         painter->setPen(opt.palette.color(QPalette::Text));
+    }
+
+    d->drawTextBackgroundOnLast = isSelected;
 
     if (isSelected || !d->enabledTextShadow) {
         const QRect &boundingRect = drawText(index, painter, str, label_rect, TEXT_PADDING, ICON_MODE_RECT_RADIUS,
@@ -897,7 +910,7 @@ void DIconItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *la
 
         layout->engine()->docLayout()->registerHandler(d->textObjectType, d->textObjectInterface);
         QTextCursor cursor(layout->engine()->docLayout()->document());
-        TagTextFormat format(d->textObjectType, colors);
+        TagTextFormat format(d->textObjectType, colors, (d->drawTextBackgroundOnLast || colors.size() > 1) ? Qt::white : QColor(0, 0, 0, 25));
 
         cursor.setPosition(0);
         cursor.insertText(QString(QChar::ObjectReplacementCharacter), format);
