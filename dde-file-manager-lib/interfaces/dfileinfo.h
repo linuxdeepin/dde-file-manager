@@ -114,6 +114,4 @@ private:
     friend class RequestEP;
 };
 
-Q_DECLARE_METATYPE(DFileInfo*)
-
 #endif // FILEINFO_H

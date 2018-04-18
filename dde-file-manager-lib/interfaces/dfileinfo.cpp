@@ -62,25 +62,26 @@ public:
     explicit RequestEP(QObject *parent = 0);
 
     // Request get the file extension propertys
-    QQueue<QPair<DUrl, DFileInfo*>> requestEPFiles;
+    QQueue<QPair<DUrl, DFileInfoPrivate*>> requestEPFiles;
     QReadWriteLock requestEPFilesLock;
-    QSet<DFileInfo*> dirtyFileInfos;
+    QSet<DFileInfoPrivate*> dirtyFileInfos;
 
     void run() override;
-    void requestEP(const DUrl &url, DFileInfo *info);
-    void cancelRequestEP(DFileInfo *info);
+    void requestEP(const DUrl &url, DFileInfoPrivate *info);
+    void cancelRequestEP(DFileInfoPrivate *info);
 
 Q_SIGNALS:
     void requestEPFinished(const DUrl &url, const QVariantHash &ep);
 
  private Q_SLOTS:
-    void processEPChanged(const DUrl &url, DFileInfo *info, const QVariantHash &ep);
+    void processEPChanged(const DUrl &url, DFileInfoPrivate *info, const QVariantHash &ep);
 };
 
 RequestEP::RequestEP(QObject *parent)
     : QThread(parent)
 {
     QMetaType::registerEqualsComparator<QList<QColor>>();
+    qRegisterMetaType<DFileInfoPrivate*>();
 
     connect(this, &RequestEP::finished, this, [this] {
         dirtyFileInfos.clear();
@@ -116,11 +117,11 @@ void RequestEP::run()
         }
 
         QMetaObject::invokeMethod(this, "processEPChanged", Qt::QueuedConnection,
-                                  Q_ARG(DUrl, url), Q_ARG(DFileInfo*, file_info.second), Q_ARG(QVariantHash, ep));
+                                  Q_ARG(DUrl, url), Q_ARG(DFileInfoPrivate*, file_info.second), Q_ARG(QVariantHash, ep));
     }
 }
 
-void RequestEP::requestEP(const DUrl &url, DFileInfo *info)
+void RequestEP::requestEP(const DUrl &url, DFileInfoPrivate *info)
 {
     requestEPFilesLock.lockForWrite();
     requestEPFiles << qMakePair(url, info);
@@ -131,7 +132,7 @@ void RequestEP::requestEP(const DUrl &url, DFileInfo *info)
     }
 }
 
-void RequestEP::cancelRequestEP(DFileInfo *info)
+void RequestEP::cancelRequestEP(DFileInfoPrivate *info)
 {
     requestEPFilesLock.lockForRead();
 
@@ -151,23 +152,28 @@ void RequestEP::cancelRequestEP(DFileInfo *info)
     dirtyFileInfos << info;
 }
 
-void RequestEP::processEPChanged(const DUrl &url, DFileInfo *info, const QVariantHash &ep)
+void RequestEP::processEPChanged(const DUrl &url, DFileInfoPrivate *info, const QVariantHash &ep)
 {
     Q_EMIT requestEPFinished(url, ep);
-    QVariantHash oldEP = info->d_func()->extensionPropertys;
+
+    QVariantHash oldEP;
 
     if (!dirtyFileInfos.contains(info)) {
-        info->d_func()->extensionPropertys = ep;
+        oldEP = info->extensionPropertys;
+        info->extensionPropertys = ep;
+        info->epInitialized = true;
     } else {
         dirtyFileInfos.remove(info);
+        info = nullptr;
     }
-
-    info->d_func()->epInitialized = true;
 
     if (!ep.isEmpty() && oldEP != ep) {
         DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url);
-        // ###(zccrs): DFileSystemModel中收到通知后会调用DAbstractFileInfo::refresh，导致会重新获取扩展属性
-        info->d_func()->epInitialized = true;
+
+        if (info) {
+            // ###(zccrs): DFileSystemModel中收到通知后会调用DAbstractFileInfo::refresh，导致会重新获取扩展属性
+            info->epInitialized = true;
+        }
     }
 }
 
@@ -190,6 +196,9 @@ DFileInfoPrivate::~DFileInfoPrivate()
         getEPTimer->stop();
         getEPTimer->deleteLater();
     }
+
+    if (requestEP)
+        requestEP->cancelRequestEP(this);
 }
 
 DFileInfo::DFileInfo(const QString &filePath, bool hasCache)
@@ -212,8 +221,7 @@ DFileInfo::DFileInfo(const QFileInfo &fileInfo, bool hasCache)
 
 DFileInfo::~DFileInfo()
 {
-    if (requestEP)
-        requestEP->cancelRequestEP(this);
+
 }
 
 bool DFileInfo::exists(const DUrl &fileUrl)
@@ -716,7 +724,7 @@ QVariantHash DFileInfo::extensionPropertys() const
         }
 
         QObject::connect(d->getEPTimer, &QTimer::timeout, requestEP, [d, url, this] {
-            requestEP->requestEP(url, const_cast<DFileInfo*>(this));
+            requestEP->requestEP(url, const_cast<DFileInfoPrivate*>(d));
             d->getEPTimer->deleteLater();
         });
 
