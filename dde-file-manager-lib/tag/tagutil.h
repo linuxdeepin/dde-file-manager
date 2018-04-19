@@ -1,6 +1,14 @@
 #ifndef TAGUTIL_H
 #define TAGUTIL_H
 
+
+#include <QMap>
+#include <QString>
+
+#include <vector>
+
+
+///###: ODR!
 namespace Tag
 {
     enum class ActionType : std::size_t
@@ -15,6 +23,11 @@ namespace Tag
         MakeFilesTagThroughColor,
         ChangeFilesName
     };
+
+extern const QMap<QString, QString> ColorsWithNames;
+
+
+extern std::vector<QString> ColorName;
 }
 
 

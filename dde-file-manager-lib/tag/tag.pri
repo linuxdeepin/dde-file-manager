@@ -9,4 +9,5 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/taginfo.cpp \
-    $$PWD/tagmanager.cpp
+    $$PWD/tagmanager.cpp \
+    $$PWD/tagutil.cpp

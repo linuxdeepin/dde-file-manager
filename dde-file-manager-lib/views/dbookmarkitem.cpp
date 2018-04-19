@@ -69,6 +69,7 @@
 #include "dutil.h"
 #include "utils/utils.h"
 
+#include "tag/tagutil.h"
 #include "tag/tagmanager.h"
 #include "interfaces/dfmplaformmanager.h"
 
@@ -77,20 +78,8 @@
 DWIDGET_USE_NAMESPACE
 
 
-static const QMap<QString, QString> ColorsWithNames{
-    { "#ffa503", "Orange"},
-    { "#ff1c49", "Red"},
-    { "#9023fc", "Purple"},
-    { "#3468ff", "Navy-blue"},
-    { "#00b5ff", "Azure"},
-    { "#58df0a", "Grass-green"},
-    { "#fef144", "Yellow"},
-    { "#cccccc", "Gray" }
-};
-
-
 int DBookmarkItem::DEFAULT_ICON_SIZE = 16;
-std::atomic<DBookmarkItem *> DBookmarkItem::ClickedItem{ nullptr };
+std::atomic<DBookmarkItem*> DBookmarkItem::ClickedItem{ nullptr };
 
 DBookmarkItem::DBookmarkItem(const QString &key)
     : m_key(key)
@@ -182,8 +171,11 @@ void DBookmarkItem::changeIconThroughColor(const QColor &color)noexcept
 {
     if (color.isValid()) {
         QString oldColor{ this->m_key };
-        QString newColor{ ColorsWithNames[color.name()] };
-        bool result{ TagManager::instance()->changeTagColor(oldColor, ColorsWithNames[color.name()]) };
+        QString newColor{ Tag::ColorsWithNames[color.name()] };
+        QString tagName{ this->text() };
+        QPair<QString, QString> oldAndNewColor{ oldColor, newColor };
+
+        bool result{ TagManager::instance()->changeTagColor(tagName, oldAndNewColor) };
 
         if (result) {
             this->m_key = newColor;
