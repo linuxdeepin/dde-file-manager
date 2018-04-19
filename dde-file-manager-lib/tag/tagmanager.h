@@ -193,7 +193,7 @@ public:
     ///###:modify
     bool makeFilesTags(const QList<QString>& tags, const QList<DUrl>& files);
 
-    bool changeTagColor(const QString& oldColorName, const QString& newColorName);
+    bool changeTagColor(const QString& tagName, const QPair<QString, QString>& oldAndNewTagColor);
 
     bool remveTagsOfFiles(const QList<QString>& tags, const QList<DUrl>& files);
 

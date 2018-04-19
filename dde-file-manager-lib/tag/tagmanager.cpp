@@ -5,13 +5,13 @@
 #include <random>
 
 
+#include "singleton.h"
 #include "tagmanager.h"
 #include "tag/tagutil.h"
 #include "shutil/dsqlitehandle.h"
+#include "app/filesignalmanager.h"
 #include "controllers/appcontroller.h"
 #include "controllers/tagmanagerdaemoncontroller.h"
-#include "app/filesignalmanager.h"
-#include "singleton.h"
 
 #include <QMap>
 #include <QDebug>
@@ -38,28 +38,7 @@ std::multimap<TagManager::SqlType, QString> SqlStr{
                                                   };
 
 
-std::vector<QString> ColorName{
-                                "Orange",
-                                "Red",
-                                "Purple",
-                                "Navy-blue",
-                                "Azure",
-                                "Grass-green",
-                                "Yellow",
-                                "Gray"
-                              };
 
-
-static const QMap<QString, QString> ColorsWithNames{
-                                                        { "#ffa503", "Orange"},
-                                                        { "#ff1c49", "Red"},
-                                                        { "#9023fc", "Purple"},
-                                                        { "#3468ff", "Navy-blue"},
-                                                        { "#00b5ff", "Azure"},
-                                                        { "#58df0a", "Grass-green"},
-                                                        { "#fef144", "Yellow"} ,
-                                                        { "#cccccc", "Gray" }
-                                                   };
 
 static QString randomColor() noexcept
 {
@@ -68,7 +47,7 @@ static QString randomColor() noexcept
     // Choose a random mean between 0 and 6
     std::default_random_engine engine(device());
     std::uniform_int_distribution<int> uniform_dist(0, 6);
-    return  ColorName[uniform_dist(engine)];
+    return  Tag::ColorName[uniform_dist(engine)];
 }
 
 
@@ -237,8 +216,8 @@ bool TagManager::makeFilesTags(const QList<QString>& tags, const QList<DUrl>& fi
                         std::multimap<TagManager::SqlType, QString>::const_iterator itrForInsertTag{ range.first };
                         ++itrForInsertTag;
 
-                        std::vector<QString>::const_iterator cbeg{ ColorName.cbegin() };
-                        std::vector<QString>::const_iterator cend{ ColorName.cend() };
+                        std::vector<QString>::const_iterator cbeg{ Tag::ColorName.cbegin() };
+                        std::vector<QString>::const_iterator cend{ Tag::ColorName.cend() };
                         std::vector<QString>::const_iterator pos{ std::find(cbeg, cend, tagName) };
                         QString sqlForInsertingTag{ itrForInsertTag->second.arg(tagName) };
 
@@ -283,18 +262,20 @@ bool TagManager::makeFilesTags(const QList<QString>& tags, const QList<DUrl>& fi
     return resultValue;
 }
 
-bool TagManager::changeTagColor(const QString& oldColorName, const QString& newColorName)
+bool TagManager::changeTagColor(const QString& tagName, const QPair<QString, QString>& oldAndNewTagColor)
 {
     impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Write};
     ++m_counter;
 
-    if(!oldColorName.isEmpty() && !newColorName.isEmpty()){
+    if(!tagName.isEmpty() && !oldAndNewTagColor.first.isEmpty() && !oldAndNewTagColor.second.isEmpty()){
 
         if(sqlDataBase.open() && sqlDataBase.transaction()){
             QSqlQuery sqlQuery{ sqlDataBase };
-            QString sqlStr{ "UPDATE tag_property SET tag_color = \'%1\' WHERE tag_property.tag_color = \'%2\'" };
-            sqlStr = sqlStr.arg(newColorName);
-            sqlStr = sqlStr.arg(oldColorName);
+            QString sqlStr{ "UPDATE tag_property SET tag_color = \'%1\' WHERE tag_property.tag_color = \'%2\' "
+                            "AND tag_property.tag_name = \'%3\'" };
+            sqlStr = sqlStr.arg(oldAndNewTagColor.second);
+            sqlStr = sqlStr.arg(oldAndNewTagColor.first);
+            sqlStr = sqlStr.arg(tagName);
 
             if(!sqlQuery.exec(sqlStr)){
                 qWarning(sqlQuery.lastError().text().toStdString().c_str());
@@ -508,7 +489,7 @@ bool TagManager::makeFilesTagThroughColor(const QString& color, const QList<DUrl
     ++m_counter;
 
     if(!color.isEmpty() && !files.isEmpty()){
-        QString colorName{ ColorsWithNames[color] };
+        QString colorName{ Tag::ColorsWithNames[color] };
 
         if(!colorName.isEmpty()){
             std::pair<std::multimap<TagManager::SqlType, QString>::const_iterator,
