@@ -29,6 +29,7 @@
 #include "app/filesignalmanager.h"
 #include "views/windowmanager.h"
 #include "views/themeconfig.h"
+#include "deviceinfo/udisklistener.h"
 
 #include <QDrag>
 #include <QHBoxLayout>
@@ -408,24 +409,75 @@ QMenu *DFMSideBarItem::createStandardContextMenu() const
     return menu;
 }
 
-bool DFMSideBarItem::canDropMimeData(const QMimeData *data, Qt::DropActions action) const
+bool DFMSideBarItem::canDropMimeData(const QMimeData *data, Qt::DropAction action) const
 {
-    Q_UNUSED(data);
-    Q_UNUSED(action);
-    return false;
+    Q_D(const DFMSideBarItem);
+
+    if (data->urls().empty()) {
+        return false;
+    }
+
+    for (const DUrl &url : data->urls()) {
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, url);
+        if (!fileInfo || !fileInfo->isReadable()) {
+            return false;
+        }
+    }
+
+    const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, url());
+
+    return info && info->canDrop() && info->supportedDropActions().testFlag(action);
 }
 
-bool DFMSideBarItem::dropMimeData(const QMimeData *data, Qt::DropActions action) const
+bool DFMSideBarItem::dropMimeData(const QMimeData *data, Qt::DropAction action) const
 {
+    Q_D(const DFMSideBarItem);
 
+    DUrl destUrl = url();
+    DUrlList oriUrlList = DUrl::fromQUrlList(data->urls());
+    const DAbstractFileInfoPointer &destInfo = fileService->createFileInfo(this, destUrl);
+
+    // convert destnation url to real path if it's a symbol link.
+    if (destInfo->isSymLink()) {
+        destUrl = destInfo->rootSymLinkTarget();
+    }
+
+    // Check?
+    if (DFMGlobal::isComputerDesktopFile(destUrl)) {
+        return true;
+    }
+
+    switch (action) {
+    case Qt::CopyAction:
+        if (oriUrlList.count() > 0) {
+            bool isInSameDevice = deviceListener->isInSameDevice(oriUrlList.at(0).toLocalFile(), destUrl.toLocalFile());
+            if (isInSameDevice && !DFMGlobal::keyCtrlIsPressed()) {
+                fileService->pasteFile(this, DFMGlobal::CutAction, destUrl, oriUrlList);
+            } else {
+                fileService->pasteFile(this, DFMGlobal::CopyAction, destUrl, oriUrlList);
+            }
+        }
+        break;
+    case Qt::LinkAction:
+        break;
+    case Qt::MoveAction:
+        fileService->pasteFile(this, DFMGlobal::CutAction, destUrl, oriUrlList);
+        break;
+    default:
+        return false;
+    }
+
+    return true;
 }
 
 void DFMSideBarItem::dragEnterEvent(QDragEnterEvent *event)
 {
     Q_D(DFMSideBarItem);
 
-    if (canDropMimeData(event->mimeData(), event->possibleActions())) {
+    if (canDropMimeData(event->mimeData(), event->dropAction())) {
         event->acceptProposedAction();
+        d->hovered = true;
+        update();
         return;
     }
 
@@ -458,8 +510,17 @@ void DFMSideBarItem::dropEvent(QDropEvent *event)
 {
     Q_D(DFMSideBarItem);
 
-    if (dropMimeData(event->mimeData(), event->possibleActions())) {
-        return;
+    // do it first to avoid unexpect return.
+    d->hovered = false;
+    update();
+
+    // for robust, we should filter the drop action and only process *file* drop action here.
+    // other drop event like DFMSideBarItem reorder and etc should be handle after `dropMimeData()`
+    // so here we should simply check `canDropMimeData()` again.
+    if (canDropMimeData(event->mimeData(), event->dropAction())) {
+        if (dropMimeData(event->mimeData(), event->dropAction())) {
+            return;
+        }
     }
 
     // If drop a sidebar item:
@@ -467,9 +528,6 @@ void DFMSideBarItem::dropEvent(QDropEvent *event)
         // do position change
         emit reorder(item, this, event->pos().y() < (SIDEBAR_ITEM_HEIGHT / 2));
     }
-
-    d->hovered = false;
-    update();
 }
 
 void DFMSideBarItem::enterEvent(QEvent *event)
