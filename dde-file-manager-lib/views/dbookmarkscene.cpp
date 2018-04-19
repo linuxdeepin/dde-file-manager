@@ -52,22 +52,8 @@
 #include "../controllers/appcontroller.h"
 
 
+#include "tag/tagutil.h"
 #include "tag/tagmanager.h"
-
-
-///###: Why has a faker name?
-///###: pair.second represent the faker name,
-///###: and them are used in translation.
-static const QMap<QString, QString> ActualAndFakerName{
-    {"Orange", QObject::tr("Orange")},
-    {"Red", QObject::tr("Red")},
-    {"Purple", QObject::tr("Purple")},
-    {"Navy-blue", QObject::tr("Navy-blue")},
-    {"Azure", QObject::tr("Azure")},
-    {"Grass-green", QObject::tr("Grass green")},
-    {"Yellow", QObject::tr("Yellow")},
-    {"Gray", QObject::tr("Gray")}
-};
 
 
 DWIDGET_USE_NAMESPACE
@@ -206,9 +192,9 @@ DBookmarkItem* DBookmarkScene::createTagBookmark(const QString& tagName, const Q
     DBookmarkItem* item{ new DBookmarkItem{ key.isEmpty() ? QString{"BookMarks"} : key } };
     item->setDefaultItem(false);
 
-    QMap<QString, QString>::const_iterator pos{ ActualAndFakerName.find(tagName) };
+    QMap<QString, QString>::const_iterator pos{ Tag::ActualAndFakerName.find(tagName) };
 
-    if(pos == ActualAndFakerName.cend()){
+    if(pos == Tag::ActualAndFakerName.cend()){
         item->setText(tagName);
     }else{
         item->setText(*pos);
@@ -787,11 +773,11 @@ void DBookmarkScene::chooseMountedItem(const DFMEvent &event)
 void DBookmarkScene::onAddOrDecreaseBookmarkOfTags(const QPair<QList<QString>, QList<QString>>& increasedAndDecreased)
 {
     if(!increasedAndDecreased.first.isEmpty() && increasedAndDecreased.second.isEmpty()){
-        QMap<QString, QString> tagAndColor{ TagManager::instance()->getTagColor(increasedAndDecreased.first) };
+        QMap<QString, QColor> tagAndColor{ TagManager::instance()->getTagColor(increasedAndDecreased.first) };
 
         if(!tagAndColor.isEmpty()){
-            QMap<QString, QString>::const_iterator cbeg{ tagAndColor.cbegin() };
-            QMap<QString, QString>::const_iterator cend{ tagAndColor.cend() };
+            QMap<QString, QColor>::const_iterator cbeg{ tagAndColor.cbegin() };
+            QMap<QString, QColor>::const_iterator cend{ tagAndColor.cend() };
             DBookmarkItemGroup* group{ this->getGroup() };
             QList<DBookmarkItem*> allItem{ group->items() };
             std::list<QString> backupForDeleting{};
@@ -800,7 +786,7 @@ void DBookmarkScene::onAddOrDecreaseBookmarkOfTags(const QPair<QList<QString>, Q
                 DUrl url{ item->getUrl() };
                 QString path{ url.path() };
                 path = path.remove(0, 1);
-                QMap<QString, QString>::const_iterator pos{ tagAndColor.find(path) };
+                QMap<QString, QColor>::const_iterator pos{ tagAndColor.find(path) };
 
                 if(pos != cend){
                     backupForDeleting.emplace_back(std::move(path));
@@ -808,7 +794,7 @@ void DBookmarkScene::onAddOrDecreaseBookmarkOfTags(const QPair<QList<QString>, Q
             }
 
             for(const QString& tag : backupForDeleting){
-                QMap<QString, QString>::iterator position{ tagAndColor.find(tag) };
+                QMap<QString, QColor>::iterator position{ tagAndColor.find(tag) };
                 tagAndColor.erase(position);
             }
 
@@ -817,7 +803,9 @@ void DBookmarkScene::onAddOrDecreaseBookmarkOfTags(const QPair<QList<QString>, Q
             }
 
             for(; cbeg != tagAndColor.cend(); ++cbeg){
-                DBookmarkItem* item{ this->createTagBookmark(cbeg.key(), cbeg.value()) };
+                QString colorName{ Tag::ColorsWithNames[cbeg.value().name()] };
+                QString fakerName{ Tag::ActualAndFakerName[colorName] };
+                DBookmarkItem* item{ this->createTagBookmark(cbeg.key(), fakerName) };
                 this->addItem(item);
             }
         }

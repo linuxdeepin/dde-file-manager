@@ -106,8 +106,8 @@ void RequestEP::run()
 
         QList<QColor> colors;
 
-        for (const QString &color : TagManager::instance()->getTagColor(tag_list)) {
-            colors << QColor(color);
+        for (const QColor &color : TagManager::instance()->getTagColor(tag_list)) {
+            colors << color;
         }
 
         QVariantHash ep;

@@ -4,7 +4,6 @@
 
 #include "tagcontroller.h"
 #include "tag/tagmanager.h"
-#include "../tag/taginfo.h"
 #include "../tag/tagmanager.h"
 #include "../models/tagfileinfo.h"
 #include "../interfaces/dfileinfo.h"

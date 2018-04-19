@@ -3,6 +3,8 @@
 
 
 #include <QMap>
+#include <QColor>
+#include <QObject>
 #include <QString>
 
 #include <vector>
@@ -25,6 +27,8 @@ namespace Tag
     };
 
 extern const QMap<QString, QString> ColorsWithNames;
+extern const QMap<QString, QColor> NamesWithColors;
+extern const QMap<QString, QString> ActualAndFakerName;
 
 
 extern std::vector<QString> ColorName;
