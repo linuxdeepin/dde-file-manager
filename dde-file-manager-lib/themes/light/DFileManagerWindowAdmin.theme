@@ -665,3 +665,12 @@ QPushButton#NewTabButton:disabled {
     image: url(:/icons/images/icons/new_tab_disabled.png);
 }
 
+/*=============== Sidebar Begin ================*/
+
+dde_file_manager--DFMSideBarDeviceItem > Dtk--Widget--DImageButton {
+    qproperty-normalPic: ":/leftsidebar/images/leftsidebar/unmount_normal_16px.svg";
+    qproperty-hoverPic: ":/leftsidebar/images/leftsidebar/unmount_hover_16px.svg";
+    qproperty-pressPic: ":/leftsidebar/images/leftsidebar/unmount_press_16px.svg";
+}
+
+/*================ Sidebar End =================*/

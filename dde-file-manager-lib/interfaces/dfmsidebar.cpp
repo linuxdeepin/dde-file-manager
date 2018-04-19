@@ -26,6 +26,7 @@
 #include "views/dfmsidebardefaultitem.h"
 #include "views/dfmsidebartrashitem.h"
 #include "views/dfmsidebardeviceitem.h"
+#include "views/dfilemanagerwindow.h"
 #include "controllers/bookmarkmanager.h"
 #include "deviceinfo/udisklistener.h"
 
@@ -109,24 +110,53 @@ void DFMSideBarPrivate::initMountedVolumes()
     DFMSideBarItemGroup *group = groupNameMap[q->groupName(DFMSideBar::GroupName::Device)];
     Q_CHECK_PTR(group);
 
-    auto lambdaAppendDevice = [ = ](const UDiskDeviceInfoPointer & info) {
-        group->appendItem(new DFMSideBarDeviceItem(info));
-    };
-
-    auto lambdaRemoveDevice = [ = ](const UDiskDeviceInfoPointer & info) {
-        DFMSideBarItem *item = group->findItem(info);
-        Q_CHECK_PTR(item); // should always find one
-        group->removeItem(item);
-    };
-
     for (const UDiskDeviceInfoPointer &device : deviceListener->getDeviceList()) {
         group->appendItem(new DFMSideBarDeviceItem(device));
     }
 
-    q->connect(deviceListener, &UDiskListener::mountAdded, group, lambdaAppendDevice);
-    q->connect(deviceListener, &UDiskListener::mountRemoved, group, lambdaRemoveDevice);
-    q->connect(deviceListener, &UDiskListener::volumeAdded, group, lambdaAppendDevice);
-    q->connect(deviceListener, &UDiskListener::volumeRemoved, group, lambdaRemoveDevice);
+    // During DFM's init once it found a new device, this signal got triggered.
+    // Once new volume mounted, this signal IS ALSO TRIGGERED so we should check item exist.
+    q->connect(deviceListener, &UDiskListener::mountAdded, group,
+    [ = ](const UDiskDeviceInfoPointer & info) {
+        qDebug() << "aaa mountAdded()";
+        DFMSideBarItem *item = group->findItem(info);
+        if (!item) {
+            group->appendItem(new DFMSideBarDeviceItem(info));
+        } else {
+            DFMSideBarDeviceItem *casted = qobject_cast<DFMSideBarDeviceItem *>(item);
+            // when a new item got mounted, it's url should be changed.
+            casted->postMount(info);
+            // and this will only got happend when item is clicked, so we do `cd` here
+            DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(q->parent()->parent()->parent());
+            Q_CHECK_PTR(wnd);
+            wnd->cd(item->url());
+        }
+    });
+
+    // Once volume got unmounted, this signal got triggered.
+    q->connect(deviceListener, &UDiskListener::mountRemoved, group,
+    [ = ](const UDiskDeviceInfoPointer & info) {
+        DFMSideBarItem *item = group->findItem(info);
+        if (item) {
+            DFMSideBarDeviceItem *casted = qobject_cast<DFMSideBarDeviceItem *>(item);
+            casted->postUnmount(info);
+        }
+    });
+
+    // Once NEW volume MOUNTED, this signal got triggered.
+    q->connect(deviceListener, &UDiskListener::volumeAdded, group,
+    [ = ](const UDiskDeviceInfoPointer & info) {
+        qDebug() << "aaa volumeAdded() setUrl";
+        group->appendItem(new DFMSideBarDeviceItem(info));
+    });
+
+    // Once volume got REMOVED, this signal got triggered.
+    q->connect(deviceListener, &UDiskListener::volumeRemoved, group,
+    [ = ](const UDiskDeviceInfoPointer & info) {
+        DFMSideBarItem *item = group->findItem(info);
+        Q_CHECK_PTR(item); // should always find one
+        group->removeItem(item);
+    });
 }
 
 void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::GroupName groupType)
