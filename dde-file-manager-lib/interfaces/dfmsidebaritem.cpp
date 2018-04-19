@@ -38,6 +38,7 @@
 #include <QVariantAnimation>
 
 #include <DSvgRenderer>
+#include <danchors.h>
 
 #include <views/dfilemanagerwindow.h>
 
@@ -80,6 +81,7 @@ private:
     bool pressed = false;
     bool checked = false;
     bool hovered = false;
+    bool autoOpenUrlOnClick = true;
     QString groupName = QString();
     QString displayText = "Placeholder";
     QString iconGroup, iconKey; // use `icon()` and you'll get proper QPixmap for drawing.
@@ -226,6 +228,13 @@ bool DFMSideBarItem::checked() const
     return d->checked;
 }
 
+bool DFMSideBarItem::autoOpenUrlOnClick() const
+{
+    Q_D(const DFMSideBarItem);
+
+    return d->autoOpenUrlOnClick;
+}
+
 QString DFMSideBarItem::groupName() const
 {
     Q_D(const DFMSideBarItem);
@@ -335,6 +344,24 @@ void DFMSideBarItem::setText(QString text)
     update();
 }
 
+/*!
+ * \brief Disable auto change directory (`cd`) on sidebar item is clicked
+ * \param autoCd
+ *
+ * The `DFMSideBarItem`'s default click behavior is change directory to
+ * `url()` path. If you are going to write a custom item and don't want
+ * the default behavior, then set it to false and handle `clicked()` signal
+ * by yourself.
+ *
+ * \sa url(), clicked()
+ */
+void DFMSideBarItem::setAutoOpenUrlOnClick(bool autoCd)
+{
+    Q_D(DFMSideBarItem);
+
+    d->autoOpenUrlOnClick = autoCd;
+}
+
 void DFMSideBarItem::hideRenameEditor()
 {
     Q_D(DFMSideBarItem);
@@ -353,6 +380,13 @@ void DFMSideBarItem::playAnimation()
     Q_D(DFMSideBarItem);
 
     d->scaleAnimation.start();
+}
+
+void DFMSideBarItem::setUrl(DUrl url)
+{
+    Q_D(DFMSideBarItem);
+
+    d->url = url;
 }
 
 QMenu *DFMSideBarItem::createStandardContextMenu() const
@@ -523,8 +557,10 @@ void DFMSideBarItem::mouseReleaseEvent(QMouseEvent *event)
     if (event->button() == Qt::MouseButton::LeftButton && mouseStillOnWidget) {
         emit clicked();
         // mouse click: cd to `url()`
-        DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
-        wnd->cd(url()); // don't `d->setChecked` here, wait for a signal.
+        if (autoOpenUrlOnClick()) {
+            DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
+            wnd->cd(url()); // don't `d->setChecked` here, wait for a signal.
+        }
     }
 
     update();

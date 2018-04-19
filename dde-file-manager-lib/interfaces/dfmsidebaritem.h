@@ -40,6 +40,9 @@ class DFMSideBarItem : public QWidget
     Q_PROPERTY(bool reorderable READ reorderable WRITE setReorderable)
     Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly)
     Q_PROPERTY(bool checked READ checked WRITE setChecked)
+    Q_PROPERTY(bool autoOpenUrlOnClick
+               READ autoOpenUrlOnClick WRITE setAutoOpenUrlOnClick)
+    Q_PROPERTY(DUrl url READ url CONSTANT)
     Q_PROPERTY(QString groupName READ groupName CONSTANT)
     Q_PROPERTY(QString text READ text WRITE setText)
 
@@ -52,6 +55,7 @@ public:
     bool reorderable() const;
     bool readOnly() const;
     bool checked() const;
+    bool autoOpenUrlOnClick() const;
 
     QString groupName() const;
     QString text() const;
@@ -68,6 +72,7 @@ public Q_SLOTS:
     void setReadOnly(bool readOnly);
     void setChecked(bool checked);
     void setText(QString text);
+    void setAutoOpenUrlOnClick(bool autoCd);
 
     void hideRenameEditor();
     void playAnimation();
@@ -78,8 +83,8 @@ Q_SIGNALS:
     void reorder(DFMSideBarItem *ori, DFMSideBarItem *dst, bool insertBefore);
 
 protected:
-
-    void setGroupName(QString groupName); // this function should be protected
+    void setUrl(DUrl url);
+    void setGroupName(QString groupName);
 
     virtual QMenu *createStandardContextMenu() const;
     virtual bool canDropMimeData(const QMimeData *data, Qt::DropActions action) const;

@@ -26,6 +26,7 @@
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "views/windowmanager.h"
+#include "gvfs/gvfsmountmanager.h"
 
 #include <QMenu>
 
@@ -36,6 +37,20 @@ DFMSideBarDeviceItem::DFMSideBarDeviceItem(UDiskDeviceInfoPointer infoPointer, Q
 {
     deviceInfo = infoPointer;
     setText(deviceInfo->getName());
+    setAutoOpenUrlOnClick(false);
+
+    connect(this, &DFMSideBarDeviceItem::clicked,
+            this, &DFMSideBarDeviceItem::itemOnClick);
+
+    unmountButton = new DImageButton(this);
+    unmountButton->show(); // FIXME: use layout
+    this->setContentWidget(unmountButton);
+    if (url().isEmpty()) {
+        unmountButton->hide();
+    }
+
+    connect(unmountButton, &DImageButton::clicked,
+            this, &DFMSideBarDeviceItem::doUnmount);
 
     switch (deviceInfo->getMediaType()) {
     case UDiskDeviceInfo::MediaType::native:
@@ -56,6 +71,23 @@ DFMSideBarDeviceItem::DFMSideBarDeviceItem(UDiskDeviceInfoPointer infoPointer, Q
     default:
         break;
     }
+}
+
+void DFMSideBarDeviceItem::postMount(UDiskDeviceInfoPointer infoPointer)
+{
+    setUrl(infoPointer->getMountPointUrl());
+
+    qDebug() << "bbb" << unmountButton->rect();
+
+    unmountButton->show();
+
+    qDebug() << "bbb" << unmountButton->rect();
+}
+
+void DFMSideBarDeviceItem::postUnmount(UDiskDeviceInfoPointer infoPointer)
+{
+    setUrl(infoPointer->getMountPointUrl()); // url then should be empty.
+    unmountButton->hide();
 }
 
 QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
@@ -80,6 +112,27 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
     });
 
     return menu;
+}
+
+void DFMSideBarDeviceItem::itemOnClick()
+{
+    if (url().isEmpty() && deviceInfo->getDiskInfo().can_mount()) {
+        gvfsMountManager->mount(this->deviceInfo->getDiskInfo());
+        qDebug() << "aaa do mount";
+    }
+
+    if (!url().isEmpty()) {
+        DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
+        wnd->cd(url());
+        qDebug() << "aaa do cd" << this->deviceInfo->getMountPointUrl();
+    }
+}
+
+void DFMSideBarDeviceItem::doUnmount()
+{
+    if (deviceInfo->getDiskInfo().can_unmount()) {
+        gvfsMountManager->unmount(deviceInfo->getId());
+    }
 }
 
 DFM_END_NAMESPACE

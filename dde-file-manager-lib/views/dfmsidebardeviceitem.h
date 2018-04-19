@@ -23,8 +23,11 @@
 
 #include <dfmglobal.h>
 #include <dfmsidebaritem.h>
+#include <dimagebutton.h>
 
 #include "deviceinfo/udiskdeviceinfo.h"
+
+DWIDGET_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
 
@@ -35,10 +38,18 @@ class DFMSideBarDeviceItem : public DFMSideBarItem
 public:
     DFMSideBarDeviceItem(UDiskDeviceInfoPointer infoPointer, QWidget *parent = nullptr);
 
+    void postMount(UDiskDeviceInfoPointer infoPointer);
+    void postUnmount(UDiskDeviceInfoPointer infoPointer);
+
+    DImageButton *unmountButton;
     UDiskDeviceInfoPointer deviceInfo;
 
 protected:
     virtual QMenu *createStandardContextMenu() const Q_DECL_OVERRIDE;
+
+public slots:
+    void itemOnClick();
+    void doUnmount();
 };
 
 DFM_END_NAMESPACE
