@@ -31,6 +31,7 @@
 #include "views/themeconfig.h"
 
 #include <QDrag>
+#include <QHBoxLayout>
 #include <QLineEdit>
 #include <QMimeData>
 #include <QPainter>
@@ -38,7 +39,6 @@
 #include <QVariantAnimation>
 
 #include <DSvgRenderer>
-#include <danchors.h>
 
 #include <views/dfilemanagerwindow.h>
 
@@ -64,7 +64,6 @@ public:
     QPixmap icon(ThemeConfig::State state) const;
     QPixmap reorderLine() const;
     ThemeConfig::State getState() const;
-    void moveContextWidget();
 
     bool reorderable = false;
     bool readOnly = true;
@@ -73,6 +72,7 @@ public:
     QFont font;
     QWidget *contentWidget = nullptr;
     QLineEdit *renameLineEdit = nullptr;
+    QHBoxLayout *contentLayout = nullptr;
     QSequentialAnimationGroup scaleAnimation;
 
     DFMSideBarItem *q_ptr = nullptr;
@@ -100,6 +100,13 @@ void DFMSideBarItemPrivate::init()
     q->setAcceptDrops(true);
     q->setMinimumSize(SIDEBAR_ITEM_WIDTH, SIDEBAR_ITEM_HEIGHT);
     q->setIconFromThemeConfig("BookmarkItem.BookMarks", "icon"); // Default icon
+
+    // layout for contentWidget
+    contentLayout = new QHBoxLayout(q);
+    contentLayout->setAlignment(Qt::AlignVCenter);
+    contentLayout->setAlignment(Qt::AlignRight);
+    contentLayout->setContentsMargins(0, 0, SIDEBAR_ITEM_PADDING, 0);
+
     // this approach seems bad, maybe manually set the name is a better idea.
     // and seems DUrl should add a method to generate standard urls directly by a name or enum.
     DAbstractFileInfoPointer file_info = DFileService::instance()->createFileInfo(q, url);
@@ -175,15 +182,6 @@ ThemeConfig::State DFMSideBarItemPrivate::getState() const
     }
 
     return ThemeConfig::Normal;
-}
-
-void DFMSideBarItemPrivate::moveContextWidget()
-{
-    if (contentWidget) {
-        int paddingLeft = SIDEBAR_ITEM_WIDTH - contentWidget->width() - SIDEBAR_ITEM_PADDING;
-        int paddingTop = (SIDEBAR_ITEM_HEIGHT - contentWidget->height()) / 2;
-        contentWidget->move(QPoint(paddingLeft, paddingTop));
-    }
 }
 
 DFMSideBarItem::DFMSideBarItem(const DUrl &url, QWidget *parent)
@@ -273,9 +271,8 @@ void DFMSideBarItem::setContentWidget(QWidget *widget)
 {
     Q_D(DFMSideBarItem);
 
-    widget->setParent(this);
+    d->contentLayout->addWidget(widget);
     d->contentWidget = widget;
-    d->moveContextWidget();
 }
 
 QWidget *DFMSideBarItem::contentWidget() const
@@ -421,22 +418,6 @@ bool DFMSideBarItem::canDropMimeData(const QMimeData *data, Qt::DropActions acti
 bool DFMSideBarItem::dropMimeData(const QMimeData *data, Qt::DropActions action) const
 {
 
-}
-
-void DFMSideBarItem::showEvent(QShowEvent *event)
-{
-    Q_UNUSED(event);
-    Q_D(DFMSideBarItem);
-
-    d->moveContextWidget();
-}
-
-void DFMSideBarItem::resizeEvent(QResizeEvent *event)
-{
-    Q_UNUSED(event);
-    Q_D(DFMSideBarItem);
-
-    d->moveContextWidget();
 }
 
 void DFMSideBarItem::dragEnterEvent(QDragEnterEvent *event)
