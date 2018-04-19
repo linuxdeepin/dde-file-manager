@@ -276,8 +276,11 @@ void FilePreviewDialog::showEvent(QShowEvent *event)
 
 void FilePreviewDialog::closeEvent(QCloseEvent *event)
 {
-    if (m_preview)
+    if (m_preview) {
         m_preview->stop();
+        m_preview->deleteLater();
+        m_preview = nullptr;
+    }
 
     return DAbstractDialog::closeEvent(event);
 }
@@ -368,6 +371,10 @@ static QString generalKey(const QString &key)
 
 void FilePreviewDialog::switchToPage(int index)
 {
+    if (m_preview) {
+        m_preview->stop();
+    }
+
     m_currentPageIndex = index;
     m_statusBar->preButton()->setEnabled(index > 0);
     m_statusBar->nextButton()->setEnabled(index < m_fileList.count() - 1);
@@ -503,8 +510,11 @@ void FilePreviewDialog::done(int r)
 {
     DAbstractDialog::done(r);
 
-    if (m_preview)
+    if (m_preview) {
         m_preview->stop();
+        m_preview->deleteLater();
+        m_preview = nullptr;
+    }
 }
 
 void FilePreviewDialog::playCurrentPreviewFile()
