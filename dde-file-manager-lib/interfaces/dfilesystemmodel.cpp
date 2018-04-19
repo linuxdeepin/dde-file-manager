@@ -177,7 +177,7 @@ bool DFileSystemModelPrivate::passFileFilters(const DAbstractFileInfoPointer &in
     if ((filters & QDir::Executable) && !info->isExecutable())
         return false;
 
-    return true;
+    return !info->isPrivate();
 }
 
 void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl)
@@ -906,7 +906,7 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
     d->watcher = DFileService::instance()->createFileWatcher(this, fileUrl);
     d->columnActiveRole.clear();
 
-    if (d->watcher) {
+    if (d->watcher && !d->rootNode->fileInfo->isPrivate()) {
         connect(d->watcher, SIGNAL(fileAttributeChanged(DUrl)),
                 this, SLOT(_q_onFileUpdated(DUrl)));
         connect(d->watcher, SIGNAL(fileDeleted(DUrl)),

@@ -44,6 +44,8 @@
 #include <QProcess>
 #include <QGuiApplication>
 #include <QUrlQuery>
+#include <QRegularExpression>
+#include <QSettings>
 
 #include <unistd.h>
 
@@ -70,6 +72,7 @@ private:
     QDirIterator iterator;
     QProcess *processRlocate = Q_NULLPTR;
     QFileInfo currentFileInfo;
+    QDir::Filters filters;
 };
 
 FileController::FileController(QObject *parent)
@@ -412,6 +415,91 @@ DAbstractFileWatcher *FileController::createFileWatcher(const QSharedPointer<DFM
     return new DFileWatcher(event->url().toLocalFile());
 }
 
+class Match
+{
+public:
+    Match(const QString &group)
+    {
+        QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(),
+                           "dde-file-manager/" + qApp->applicationName());
+
+        settings.setIniCodec("utf-8");
+        settings.beginGroup(group);
+
+        for (const QString &key : settings.childKeys()) {
+            const QString &value = settings.value(key).toString();
+
+            int last_dir_split = value.lastIndexOf(QDir::separator());
+
+            if (last_dir_split >= 0) {
+                QString path = value.left(last_dir_split);
+
+                if (path.startsWith("~/")) {
+                    path.replace(0, 1, QDir::homePath());
+                }
+
+                patternList << qMakePair(path, value.mid(last_dir_split + 1));
+            } else {
+                patternList << qMakePair(QString(), value);
+            }
+        }
+
+        settings.endGroup();
+    }
+
+    bool match(const QString &path, const QString &name)
+    {
+        for (auto pattern : patternList) {
+            QRegularExpression re(QString(), QRegularExpression::MultilineOption);
+
+            if (!pattern.first.isEmpty()) {
+                re.setPattern(pattern.first);
+
+                if (!re.isValid()) {
+                    qWarning() << re.errorString();
+                    continue;
+                }
+
+                if (!re.match(path).hasMatch())
+                    continue;
+            }
+
+            if (pattern.second.isEmpty()) {
+                return true;
+            }
+
+            re.setPattern(pattern.second);
+
+            if (!re.isValid()) {
+                qWarning() << re.errorString();
+                continue;
+            }
+
+            if (re.match(name).hasMatch()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    QList<QPair<QString, QString>> patternList;
+};
+
+bool FileController::customHiddenFileMatch(const QString &absolutePath, const QString &fileName)
+{
+    static Match match("Hidden Files");
+
+    return match.match(absolutePath, fileName);
+}
+
+bool FileController::privateFileMatch(const QString &absolutePath, const QString &fileName)
+{
+    static Match match("Private Files");
+
+    return match.match(absolutePath, fileName);
+}
+
 QString FileController::checkDuplicateName(const QString &name) const
 {
     QString destUrl = name;
@@ -434,6 +522,7 @@ FileDirIterator::FileDirIterator(const QString &path, const QStringList &nameFil
                                  QDir::Filters filter, QDirIterator::IteratorFlags flags)
     : DDirIterator()
     , iterator(path, nameFilters, filter, flags)
+    , filters(filter)
 {
 
 }
@@ -450,8 +539,17 @@ FileDirIterator::~FileDirIterator()
 
 DUrl FileDirIterator::next()
 {
-    if (!processRlocate)
+    if (!processRlocate) {
+        if (currentFileInfo.exists() || currentFileInfo.isSymLink()) {
+            DUrl url = DUrl::fromLocalFile(currentFileInfo.absoluteFilePath());
+
+            currentFileInfo.setFile(QString());
+
+            return url;
+        }
+
         return DUrl::fromLocalFile(iterator.next());
+    }
 
     processRlocate->waitForReadyRead();
     QString filePath = processRlocate->readLine();
@@ -469,8 +567,40 @@ DUrl FileDirIterator::next()
 
 bool FileDirIterator::hasNext() const
 {
-    if (!processRlocate)
-        return iterator.hasNext();
+    if (!processRlocate) {
+        if (currentFileInfo.exists() || currentFileInfo.isSymLink())
+            return true;
+
+        bool hasNext = iterator.hasNext();
+        bool showHidden = filters.testFlag(QDir::Hidden);
+
+        if (!hasNext)
+            return false;
+
+        DFileInfo *info = nullptr;
+
+        while (iterator.hasNext()) {
+            const_cast<FileDirIterator*>(this)->iterator.next();
+            info = new DFileInfo(iterator.fileInfo(), false);
+
+            if (!info->isPrivate() && (showHidden || !info->isHidden())) {
+                break;
+            }
+
+            delete info;
+            info = nullptr;
+        }
+
+        // file is exists
+        if (info) {
+            const_cast<FileDirIterator*>(this)->currentFileInfo = info->toQFileInfo();
+            delete info;
+
+            return true;
+        }
+
+        return false;
+    }
 
     return processRlocate->state() != QProcess::NotRunning || processRlocate->canReadLine();
 }

@@ -130,6 +130,7 @@ public:
     static const DAbstractFileInfoPointer getFileInfo(const DUrl &fileUrl);
 
     virtual bool exists() const;
+    virtual bool isPrivate() const;
 
     virtual QString path() const;
     virtual QString filePath() const;
