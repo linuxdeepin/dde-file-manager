@@ -66,6 +66,9 @@ public:
 
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
 
+    static bool customHiddenFileMatch(const QString &absolutePath, const QString &fileName);
+    static bool privateFileMatch(const QString &absolutePath, const QString &fileName);
+
 private:
     QString checkDuplicateName(const QString &name) const;
 };
