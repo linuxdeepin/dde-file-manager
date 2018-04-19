@@ -549,6 +549,16 @@ void DBookmarkScene::doBookmarkRemoved(const DFMEvent &event)
             QSharedPointer<DFMDeleteTagsEvent> event{ new DFMDeleteTagsEvent{ nullptr, QList<QString>{ thePath } } };
             AppController::instance()->actionDeleteTags( event );
         }
+
+        DBookmarkItem * item = hasBookmarkItem(url);
+
+        if(!item){
+            return;
+        }
+
+//        qDebug()<< "index: " << indexOf(item);
+        remove(item);
+        return;
     }
 
     DBookmarkItem * item = hasBookmarkItem(url);
