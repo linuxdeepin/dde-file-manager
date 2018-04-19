@@ -33,6 +33,7 @@
 #include <DThemeManager>
 #include <QVBoxLayout>
 #include <QTimer>
+#include <QScrollBar>
 
 #include "singleton.h"
 
@@ -73,6 +74,8 @@ void DFMSideBarPrivate::initUI()
     q->setAcceptDrops(true);
     q->setFocusPolicy(Qt::NoFocus);
     q->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    q->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    q->setViewportMargins(0, 0, -q->verticalScrollBar()->sizeHint().width(), 0);
 
     // to make QScrollArea scroallable, we need a widget.
     mainLayoutHolder = new QWidget();
@@ -118,7 +121,6 @@ void DFMSideBarPrivate::initMountedVolumes()
     // Once new volume mounted, this signal IS ALSO TRIGGERED so we should check item exist.
     q->connect(deviceListener, &UDiskListener::mountAdded, group,
     [ = ](const UDiskDeviceInfoPointer & info) {
-        qDebug() << "aaa mountAdded()";
         DFMSideBarItem *item = group->findItem(info);
         if (!item) {
             group->appendItem(new DFMSideBarDeviceItem(info));
@@ -146,7 +148,6 @@ void DFMSideBarPrivate::initMountedVolumes()
     // Once NEW volume MOUNTED, this signal got triggered.
     q->connect(deviceListener, &UDiskListener::volumeAdded, group,
     [ = ](const UDiskDeviceInfoPointer & info) {
-        qDebug() << "aaa volumeAdded() setUrl";
         group->appendItem(new DFMSideBarDeviceItem(info));
     });
 

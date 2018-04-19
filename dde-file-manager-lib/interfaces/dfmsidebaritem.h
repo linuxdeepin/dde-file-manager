@@ -90,8 +90,6 @@ protected:
     virtual bool canDropMimeData(const QMimeData *data, Qt::DropActions action) const;
     virtual bool dropMimeData(const QMimeData *data, Qt::DropActions action) const;
 
-    void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
-    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
     void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
     void dragLeaveEvent(QDragLeaveEvent *event) Q_DECL_OVERRIDE;
     void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
