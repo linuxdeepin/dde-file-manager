@@ -40,6 +40,7 @@ public:
     static QMimeType mimeType(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
 
     bool exists() const Q_DECL_OVERRIDE;
+    bool isPrivate() const Q_DECL_OVERRIDE;
 
     QString path() const Q_DECL_OVERRIDE;
     QString filePath() const Q_DECL_OVERRIDE;

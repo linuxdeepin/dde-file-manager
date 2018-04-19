@@ -29,6 +29,7 @@
 #include "shutil/fileutils.h"
 
 #include "controllers/pathmanager.h"
+#include "controllers/filecontroller.h"
 
 #include "app/define.h"
 #include "singleton.h"
@@ -243,6 +244,13 @@ bool DFileInfo::exists() const
     return d->fileInfo.exists() || d->fileInfo.isSymLink();
 }
 
+bool DFileInfo::isPrivate() const
+{
+    Q_D(const DFileInfo);
+
+    return FileController::privateFileMatch(d->fileInfo.absolutePath(), d->fileInfo.fileName());
+}
+
 QString DFileInfo::path() const
 {
     Q_D(const DFileInfo);
@@ -320,26 +328,36 @@ bool DFileInfo::canShare() const
 
 bool DFileInfo::canFetch() const
 {
+    if (isPrivate())
+        return false;
+
     return isDir() || FileUtils::isArchive(absoluteFilePath());
 }
 
 bool DFileInfo::isReadable() const
 {
+    if (isPrivate())
+        return false;
+
     Q_D(const DFileInfo);
 
-    if (FileUtils::isGvfsMountFile(absoluteFilePath())){
+    if (FileUtils::isGvfsMountFile(absoluteFilePath())) {
         return true;
-    }else{
+    } else {
         return d->fileInfo.isReadable();
     }
 }
 
 bool DFileInfo::isWritable() const
 {
+    if (isPrivate())
+        return false;
+
     Q_D(const DFileInfo);
-    if (FileUtils::isGvfsMountFile(absoluteFilePath())){
+
+    if (FileUtils::isGvfsMountFile(absoluteFilePath())) {
         return true;
-    }else{
+    } else {
         return d->fileInfo.isWritable();
     }
 }
@@ -358,7 +376,7 @@ bool DFileInfo::isHidden() const
 {
     Q_D(const DFileInfo);
 
-    return d->fileInfo.isHidden();
+    return d->fileInfo.isHidden() || FileController::customHiddenFileMatch(d->fileInfo.absolutePath(), d->fileInfo.fileName());
 }
 
 bool DFileInfo::isRelative() const
@@ -464,12 +482,18 @@ bool DFileInfo::permission(QFileDevice::Permissions permissions) const
 {
     Q_D(const DFileInfo);
 
+    if (isPrivate())
+        return false;
+
     return d->fileInfo.permission(permissions);
 }
 
 QFileDevice::Permissions DFileInfo::permissions() const
 {
     Q_D(const DFileInfo);
+
+    if (isPrivate())
+        return QFileDevice::Permissions();
 
     return d->fileInfo.permissions();
 }

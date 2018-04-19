@@ -171,6 +171,11 @@ bool DAbstractFileInfo::exists() const
     return false;
 }
 
+bool DAbstractFileInfo::isPrivate() const
+{
+    return false;
+}
+
 QString DAbstractFileInfo::path() const
 {
     CALL_PROXY(path());
@@ -290,7 +295,7 @@ bool DAbstractFileInfo::canFetch() const
 {
     CALL_PROXY(canFetch());
 
-    return isDir();
+    return isDir() && !isPrivate();
 }
 
 bool DAbstractFileInfo::isReadable() const
@@ -1182,6 +1187,9 @@ QString DAbstractFileInfo::toLocalFile() const
 
 bool DAbstractFileInfo::canDrop() const
 {
+    if (isPrivate())
+        return false;
+
     if (isDir()) {
         return true;
     }
