@@ -102,11 +102,11 @@ QList<QString> TagManager::getSameTagsOfDiffFiles(const QList<DUrl>& files)
     return var.toStringList();
 }
 
-QMap<QString, QString> TagManager::getTagColor(const QList<QString>& tags)
+QMap<QString, QColor> TagManager::getTagColor(const QList<QString>& tags)
 {
     impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Read};
     ++m_counter;
-    QMap<QString, QString> tagNameAndColor{};
+    QMap<QString, QColor> tagNameAndColor{};
 
     if(!tags.isEmpty()){
       QString sqlStr{ "SELECT * FROM tag_property WHERE tag_property.tag_name = \'%1\'" };
@@ -127,7 +127,8 @@ QMap<QString, QString> TagManager::getTagColor(const QList<QString>& tags)
                       QString tagColor{ sqlQuery.value("tag_color").toString() };
 
                       if(!tagColor.isEmpty()){
-                          tagNameAndColor[tagName] = tagColor;
+//                          qDebug()<< "color name: " << Tag::NamesWithColors[tagColor].name();
+                          tagNameAndColor[tagName] = Tag::NamesWithColors[tagColor];
 
                       }else{
                           qWarning()<< "Can not get the color of specify tag: "<< tagName;

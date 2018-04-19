@@ -11,8 +11,6 @@
 #include <type_traits>
 
 #include "glob.h"
-//#include "taginfo.h"
-
 
 #include <interfaces/durl.h>
 
@@ -49,25 +47,6 @@ struct hash<QString>
         return (std::hash<std::string>{}(str.toStdString()));
     }
 };
-
-//template<>
-//struct less<TagProperty>
-//{
-//    inline bool operator()(const TagProperty& lh, const TagProperty& rh)const noexcept
-//    {
-//        return lh.operator<(rh);
-//    }
-//};
-
-
-//template<>
-//struct less<FileProperty>
-//{
-//    inline bool operator()(const FileProperty& lh, const FileProperty& rh)const noexcept
-//    {
-//        return lh.operator<(rh);
-//    }
-//};
 
 }
 
@@ -184,7 +163,7 @@ public:
 
     QList<QString> getSameTagsOfDiffFiles(const QList<DUrl>& files);
 
-    QMap<QString, QString> getTagColor(const QList<QString>& tags);
+    QMap<QString, QColor> getTagColor(const QList<QString>& tags);
 
     QList<QString> getFilesThroughTag(const QString& tagName);
 
