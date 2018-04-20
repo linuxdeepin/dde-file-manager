@@ -679,6 +679,13 @@ void DFileView::sortByRole(int role, Qt::SortOrder order)
 
     clearSelection();
     model()->sort();
+
+    if (d->headerView) {
+        QSignalBlocker blocker(d->headerView);
+        Q_UNUSED(blocker)
+        d->headerView->setSortIndicator(model()->sortColumn(), model()->sortOrder());
+    }
+
     emit viewStateChanged();
 }
 
@@ -2331,12 +2338,6 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
                 } else if (i % 2 == 1) {
                     sortByRole(childRoles.at(i / 2), Qt::DescendingOrder);
                 }
-
-                /*setSortIndicator but don't emit signal when sorted by menu action*/
-                QSignalBlocker blocker(d->headerView);
-                Q_UNUSED(blocker)
-                d->headerView->setSortIndicator(column, model()->sortOrder());
-                d->headerView->update();
             });
 
             menu->addAction(action);
