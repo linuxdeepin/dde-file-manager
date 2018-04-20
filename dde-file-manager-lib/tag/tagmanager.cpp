@@ -540,6 +540,8 @@ bool TagManager::makeFilesTagThroughColor(const QString& color, const QList<DUrl
                         --m_counter;
                         this->closeSqlDatabase();
 
+                        emit fileSignalManager->fileTagInfoChanged(files);
+
                         return true;
                     }
 
