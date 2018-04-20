@@ -88,6 +88,11 @@ void DFMSideBarDefaultItem::initItemByLocation(DFMStandardPaths::StandardLocatio
     case DFMStandardPaths::StandardLocation::NetworkRootPath:
         setText(systemPathManager->getSystemPathDisplayName("Network"));
         setIconFromThemeConfig("BookmarkItem.Network");
+        break;
+    case DFMStandardPaths::StandardLocation::UserShareRootPath:
+        setText(systemPathManager->getSystemPathDisplayName("UserShare"));
+        setIconFromThemeConfig("BookmarkItem.UserShare");
+        break;
     default:
         break;
     }

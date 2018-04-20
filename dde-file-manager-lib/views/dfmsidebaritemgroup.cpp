@@ -86,6 +86,9 @@ void DFMSideBarItemGroup::insertItem(int index, DFMSideBarItem *item)
  * \brief Remove sidebar item at \a index .
  *
  * Index from 0 to `count() - 1`
+ *
+ * Notice: always call `DFMSideBar::removeItem()` instead of this function
+ * since that one managed some `DFMSideBar` internal state like `lastCheckedItem`
  */
 void DFMSideBarItemGroup::removeItem(int index)
 {
@@ -98,6 +101,12 @@ void DFMSideBarItemGroup::removeItem(int index)
     }
 }
 
+/*!
+ * \brief Remove \a item from sidebar.
+ *
+ * Notice: always call `DFMSideBar::removeItem()` instead of this function
+ * since that one managed some `DFMSideBar` internal state like `lastCheckedItem`
+ */
 void DFMSideBarItemGroup::removeItem(DFMSideBarItem *item)
 {
     item->hide();

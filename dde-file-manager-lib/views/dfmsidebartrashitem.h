@@ -34,6 +34,8 @@ public:
 
 protected:
     virtual QMenu *createStandardContextMenu() const Q_DECL_OVERRIDE;
+    virtual bool canDropMimeData(const QMimeData *data, Qt::DropAction action) const;
+    virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action) const;
 };
 
 DFM_END_NAMESPACE

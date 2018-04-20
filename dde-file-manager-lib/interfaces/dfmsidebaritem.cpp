@@ -411,8 +411,6 @@ QMenu *DFMSideBarItem::createStandardContextMenu() const
 
 bool DFMSideBarItem::canDropMimeData(const QMimeData *data, Qt::DropAction action) const
 {
-    Q_D(const DFMSideBarItem);
-
     if (data->urls().empty()) {
         return false;
     }

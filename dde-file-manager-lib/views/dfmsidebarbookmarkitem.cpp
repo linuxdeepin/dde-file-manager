@@ -60,7 +60,9 @@ QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
         ccItem->showRenameEditor();
     });
 
-    menu->addAction(QObject::tr("Remove"));
+    menu->addAction(QObject::tr("Remove"), [ = ]() {
+        qDebug() << url();
+    });
 
     menu->addAction(QObject::tr("Properties"), [this]() {
         DUrlList list;
