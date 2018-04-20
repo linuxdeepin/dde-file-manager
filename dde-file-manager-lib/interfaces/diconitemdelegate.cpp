@@ -647,22 +647,22 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 {
     Q_D(const DIconItemDelegate);
 
-    QList<QRect> geometrys;
+    QList<QRect> geometries;
 
     if (index == d->expandedIndex) {
         QRect geometry = d->expandedItem->icon->geometry();
 
         geometry.moveTopLeft(geometry.topLeft() + d->expandedItem->pos());
 
-        geometrys << geometry;
+        geometries << geometry;
 
         geometry = d->expandedItem->edit->geometry();
         geometry.moveTopLeft(geometry.topLeft() + d->expandedItem->pos());
         geometry.setTop(d->expandedItem->icon->y() + d->expandedItem->icon->height() + d->expandedItem->y());
 
-        geometrys << geometry;
+        geometries << geometry;
 
-        return geometrys;
+        return geometries;
     }
 
     /// init icon geomerty
@@ -673,12 +673,12 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     icon_rect.moveCenter(option.rect.center());
     icon_rect.moveTop(option.rect.top());
 
-    geometrys << icon_rect;
+    geometries << icon_rect;
 
     QString str = index.data(Qt::DisplayRole).toString();
 
     if (str.isEmpty()) {
-        return geometrys;
+        return geometries;
     }
 
     /// init file name geometry
@@ -742,9 +742,9 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
                          d->textLineHeight, Qt::AlignCenter, 0, 0, label_rect.topLeft(), QColor(), QPointF(0, 0),
                          QBrush(Qt::NoBrush), &text_region);
 
-    geometrys << text_region.boundingRect();
+    geometries << text_region.boundingRect();
 
-    return geometrys;
+    return geometries;
 }
 
 QModelIndexList DIconItemDelegate::hasWidgetIndexs() const
