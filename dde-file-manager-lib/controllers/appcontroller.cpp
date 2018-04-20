@@ -490,8 +490,19 @@ void AppController::actionSetAsWallpaper(const QSharedPointer<DFMUrlBaseEvent> &
 {
     const DUrl& fileUrl = event->url();
 
-    if (fileUrl.isLocalFile())
+    if (fileUrl.isLocalFile()) {
         FileUtils::setBackground(fileUrl.toLocalFile());
+    } else {
+        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(nullptr, fileUrl);
+
+        if (info) {
+            const QString &local_file = info->toLocalFile();
+
+            if (!local_file.isEmpty()) {
+                FileUtils::setBackground(local_file);
+            }
+        }
+    }
 }
 
 void AppController::actionShare(const QSharedPointer<DFMUrlListBaseEvent> &event)

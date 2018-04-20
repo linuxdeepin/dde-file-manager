@@ -198,6 +198,8 @@ bool SearchFileWatcherPrivate::start()
     for (DAbstractFileWatcher *watcher : urlToWatcherMap)
         ok = ok && watcher->startWatcher();
 
+    started = ok;
+
     return ok;
 }
 
@@ -207,6 +209,8 @@ bool SearchFileWatcherPrivate::stop()
 
     for (DAbstractFileWatcher *watcher : urlToWatcherMap)
         ok = ok && watcher->stopWatcher();
+
+    started = !ok;
 
     return ok;
 }
@@ -436,6 +440,12 @@ bool SearchController::decompressFile(const QSharedPointer<DFMDecompressEvnet> &
 bool SearchController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const
 {
     return DFileService::instance()->createSymlink(event->sender(), realUrl(event->fileUrl()), event->toUrl());
+}
+
+bool SearchController::shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const
+{
+    return DFileService::instance()->shareFolder(event->sender(), realUrl(event->url()),
+                                                 event->name(), event->isWritable(), event->allowGuest());
 }
 
 bool SearchController::unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const
