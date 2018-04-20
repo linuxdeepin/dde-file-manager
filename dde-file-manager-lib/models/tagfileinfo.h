@@ -27,11 +27,10 @@ public:
 //    virtual bool columnDefaultVisibleForRole(int role) const override;
 
 
-//    virtual DUrl parentUrl() const override;
-//    virtual DUrl mimeDataUrl() const override;
+    virtual DUrl parentUrl() const override;
     virtual QString iconName() const override;
+    virtual DUrl goToUrlWhenDeleted() const override;
     virtual DUrl redirectedFileUrl() const override;
-    virtual QString fileDisplayName() const override;
     virtual Qt::ItemFlags fileItemDisableFlags() const override;
     virtual QSet<MenuAction> disableMenuActionList() const override;
     virtual QVector<MenuAction> menuActionList(MenuType type) const override;

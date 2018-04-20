@@ -258,6 +258,7 @@ bool TagManager::makeFilesTags(const QList<QString>& tags, const QList<DUrl>& fi
 
     if (resultValue) {
         emit fileSignalManager->fileTagInfoChanged(files);
+        emit taggedFileAdded(files);
     }
 
     return resultValue;
@@ -327,6 +328,7 @@ bool TagManager::remveTagsOfFiles(const QList<QString>& tags, const QList<DUrl>&
 
     if (value) {
         emit fileSignalManager->fileTagInfoChanged(files);
+        emit taggedFileDeleted(files);
     }
 
     return value;
@@ -386,6 +388,7 @@ bool TagManager::deleteTags(const QList<QString>& tags)
 
         if (var.toBool() && !filesOfTags.isEmpty()) {
             emit fileSignalManager->fileTagInfoChanged(filesOfTags);
+            emit taggedFileDeleted(filesOfTags);
         }
 
         return var.toBool();
@@ -410,6 +413,10 @@ bool TagManager::deleteFiles(const QList<DUrl>& fileList)
         if(!urlList.isEmpty()){
             bool value{ TagManager::instance()->deleteFiles(urlList) };
 
+            if(value){
+                emit taggedFileDeleted(fileList);
+            }
+
             return value;
         }
     }
@@ -429,7 +436,10 @@ bool TagManager::deleteFiles(const QList<QString>& fileList)
         if(!filesForDeleting.isEmpty()){
             QVariant var{ TagManagerDaemonController::instance()->disposeClientData(filesForDeleting,
                                                       TagManager::getCurrentUserName(), Tag::ActionType::DeleteFiles) };
-            return var.toBool();
+
+            if(var.toBool()){
+                return var.toBool();
+            }
         }
     }
 
@@ -539,8 +549,8 @@ bool TagManager::makeFilesTagThroughColor(const QString& color, const QList<DUrl
                     if(dbusResult.toBool() && sqlDataBase.commit()){
                         --m_counter;
                         this->closeSqlDatabase();
-
                         emit fileSignalManager->fileTagInfoChanged(files);
+                        emit taggedFileAdded(files);
 
                         return true;
                     }
@@ -576,6 +586,13 @@ bool TagManager::changeFilesName(const QList<QPair<DUrl, DUrl>>& oldAndNewFilesN
 
         QVariant dbusResult{ TagManagerDaemonController::instance()->disposeClientData(oldNewFilesName, TagManager::getCurrentUserName(),
                                                                                        Tag::ActionType::ChangeFilesName) };
+
+        bool result{ dbusResult.toBool() };
+
+        if(result){
+            emit taggedFileMoved(oldAndNewFilesName);
+        }
+
         return dbusResult.toBool();
     }
 

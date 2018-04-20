@@ -15,9 +15,11 @@ public:
     virtual const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet>& event) const override;
     virtual const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const override;
 
+    virtual DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
 
-    virtual bool makeFilesTags(const QSharedPointer<DFMMakeFilesTagsEvent>& event) const override;
-    virtual bool removeTagsOfFiles(const QSharedPointer<DFMRemoveTagsOfFilesEvent>& event) const override;
+
+//    virtual bool makeFilesTags(const QSharedPointer<DFMMakeFilesTagsEvent>& event) const override;
+//    virtual bool removeTagsOfFiles(const QSharedPointer<DFMRemoveTagsOfFilesEvent>& event) const override;
 };
 
 

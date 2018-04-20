@@ -224,7 +224,7 @@ void DBookmarkItem::editFinished()
     QSharedPointer<DFMRenameTagEvent> renameTagEvent{ new DFMRenameTagEvent{ nullptr, { oldTagName, newTagName } } };
 
     if (AppController::instance()->actionRenameTag(renameTagEvent)) {
-        this->setUrl(DUrl::fromUserTagedFile(QString{"/"} + newTagName));
+        this->setUrl(DUrl::fromUserTaggedFile(QString{"/"} + newTagName, QString{}));
     }
 
     m_widget->deleteLater();

@@ -726,9 +726,9 @@ bool DFileService::multiFilesCustomName(const QList<DUrl>& urls, const QPair<QSt
 ///###: helper function.
 bool DFileService::checkMultiSelectionFilesCache()
 {
-    if(static_cast<bool>(AppController::multiSelectionFilesCache.first) == true){
+    if(static_cast<bool>(AppController::multiSelectionFilesCache.first)){
 
-        if(AppController::multiSelectionFilesCache.first->isEmpty() == true){
+        if(AppController::multiSelectionFilesCache.first->isEmpty()){
 
             return false;
         }

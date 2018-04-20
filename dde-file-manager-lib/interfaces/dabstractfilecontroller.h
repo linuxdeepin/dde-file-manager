@@ -94,6 +94,7 @@ public:
 
 
 
+    ///###: it's redundant, but do not delete this.
     virtual bool makeFilesTags(const QSharedPointer<DFMMakeFilesTagsEvent> &event) const;
     virtual bool removeTagsOfFiles(const QSharedPointer<DFMRemoveTagsOfFilesEvent> &event) const;
 

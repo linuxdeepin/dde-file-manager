@@ -257,15 +257,15 @@ DUrl DUrl::searchedFileUrl() const
 
 ///###: tag:///tagA#real file path(fregment).
 ///###: so I get the true path from fregment of Uri.
-DUrl DUrl::tagedFileUrl() const noexcept
+QString DUrl::taggedLocalFilePath() const noexcept
 {
-    if(this->isTaggedFile() == true){
-        ///###: this uri is equal to Uri in Android. It extented URI.
-        DUrl uri{ this->QUrl::fragment(FullyDecoded) };
-        return uri;
+    if(this->isTaggedFile()){
+        QString localFilePath{ this->QUrl::fragment(FullyDecoded) };
+
+        return localFilePath;
     }
 
-    return DUrl{};
+    return QString{};
 }
 
 DUrl DUrl::parentUrl() const
@@ -309,10 +309,10 @@ void DUrl::setSearchedFileUrl(const DUrl &url)
 
 
 ///###: the real path of file was puted in fragment field of Uri.
-void DUrl::setTagedFileUrl(const DUrl &url) noexcept
+void DUrl::setTaggedFileUrl(const QString& localFilePath) noexcept
 {
-    if(this->isTaggedFile() == true){
-        this->QUrl::setFragment(url.toString(), QUrl::DecodedMode);
+    if(this->isTaggedFile()){
+        this->QUrl::setFragment(localFilePath, QUrl::DecodedMode);
     }
 }
 
@@ -449,12 +449,15 @@ DUrl DUrl::fromAVFSFile(const QString &filePath)
 }
 
 
-///###: if a file is taged. Then add TAG_SCHEME as it's scheme.
-DUrl DUrl::fromUserTagedFile(const QString& filePath)noexcept
+DUrl DUrl::fromUserTaggedFile(const QString& path, const QString& localFilePath)noexcept
 {
-    DUrl uri;
+    DUrl uri{};
     uri.setScheme(TAG_SCHEME);
-    uri.setPath(filePath);
+    uri.setPath(path);
+
+    if(!localFilePath.isEmpty()){
+        uri.setFragment(localFilePath);
+    }
 
     return uri;
 }

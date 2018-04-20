@@ -108,14 +108,14 @@ public:
     QString searchKeyword() const;
     DUrl searchTargetUrl() const;
     DUrl searchedFileUrl() const;
-    DUrl tagedFileUrl() const noexcept;
+    QString taggedLocalFilePath() const noexcept;
 
     DUrl parentUrl() const;
 
     void setSearchKeyword(const QString &keyword);
     void setSearchTargetUrl(const DUrl &url);
     void setSearchedFileUrl(const DUrl &url);
-    void setTagedFileUrl(const DUrl& url)noexcept;
+    void setTaggedFileUrl(const QString& localFilePath)noexcept;
 
     static DUrl fromLocalFile(const QString &filePath);
     static DUrl fromTrashFile(const QString &filePath);
@@ -130,7 +130,7 @@ public:
     static DUrl fromMTPFile(const QString &filePath);
     static DUrl fromUserShareFile(const QString &filePath);
     static DUrl fromAVFSFile(const QString& filePath);
-    static DUrl fromUserTagedFile(const QString& filePath) noexcept;
+    static DUrl fromUserTaggedFile(const QString& path, const QString& localFilePath) noexcept;
 
     static DUrlList fromStringList(const QStringList &urls, ParsingMode mode = TolerantMode);
     static DUrlList fromQUrlList(const QList<QUrl> &urls);
