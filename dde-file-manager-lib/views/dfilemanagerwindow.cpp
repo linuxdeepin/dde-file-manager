@@ -85,23 +85,23 @@ public:
     void setCurrentView(DFMBaseView *view);
     bool processKeyPressEvent(QKeyEvent *event);
 
-    QPushButton* logoButton{ nullptr };
-    QFrame* centralWidget{ nullptr };
-    DLeftSideBar* leftSideBar{ nullptr };
-    QFrame* rightView { nullptr };
-    DToolBar* toolbar{ nullptr };
-    TabBar* tabBar { nullptr };
+    QPushButton *logoButton{ nullptr };
+    QFrame *centralWidget{ nullptr };
+    DLeftSideBar *leftSideBar{ nullptr };
+    QFrame *rightView { nullptr };
+    DToolBar *toolbar{ nullptr };
+    TabBar *tabBar { nullptr };
     QPushButton *newTabButton;
     DFMBaseView *currentView { nullptr };
-    DStatusBar* statusBar { nullptr };
-    QVBoxLayout* mainLayout { nullptr };
-    DSplitter* splitter { nullptr };
-    QFrame * titleFrame { nullptr };
-    QStackedLayout* viewStackLayout { nullptr };
-    QPushButton* emptyTrashButton { nullptr };
-    DRenameBar* renameBar{ nullptr };
+    DStatusBar *statusBar { nullptr };
+    QVBoxLayout *mainLayout { nullptr };
+    DSplitter *splitter { nullptr };
+    QFrame *titleFrame { nullptr };
+    QStackedLayout *viewStackLayout { nullptr };
+    QPushButton *emptyTrashButton { nullptr };
+    DRenameBar *renameBar{ nullptr };
 
-    QMap<DUrl, QWidget*> views;
+    QMap<DUrl, QWidget *> views;
 
     DFileManagerWindow *q_ptr{ nullptr };
 
@@ -112,16 +112,19 @@ void DFileManagerWindowPrivate::setCurrentView(DFMBaseView *view)
 {
     Q_Q(DFileManagerWindow);
 
-    if (currentView && currentView->widget())
+    if (currentView && currentView->widget()) {
         currentView->widget()->removeEventFilter(q);
+    }
 
     currentView = view;
 
-    if (currentView && currentView->widget())
+    if (currentView && currentView->widget()) {
         currentView->widget()->installEventFilter(q);
+    }
 
-    if (!view)
+    if (!view) {
         return;
+    }
 
     toolbar->setCustomActionList(view->toolBarActionList());
 
@@ -144,8 +147,9 @@ bool DFileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
             appController->actionHelp();
             return true;
         case Qt::Key_F5:
-            if (currentView)
+            if (currentView) {
                 currentView->refresh();
+            }
             return true;
         }
         break;
@@ -197,7 +201,7 @@ bool DFileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
         if (event->key() == Qt::Key_Question) {
             appController->actionShowHotkeyHelp(q->windowId());
             return true;
-        } else if (event->key() == Qt::Key_Tab) {
+        } else if (event->key() == Qt::Key_Backtab) {
             tabBar->activatePreviousTab();
             return true;
         }
@@ -219,7 +223,7 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     /// init global AppController
 //    Q_UNUSED(AppController::instance());
     setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
-    titlebar()->setWindowFlags(Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint| Qt::WindowSystemMenuHint);
+    titlebar()->setWindowFlags(Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::WindowSystemMenuHint);
 
     setWindowIcon(QIcon(":/images/images/dde-file-manager.svg"));
 
@@ -239,10 +243,11 @@ void DFileManagerWindow::onRequestCloseTab(const int index, const bool &remainSt
 {
     D_D(DFileManagerWindow);
 
-    Tab * tab = d->tabBar->tabAt(index);
+    Tab *tab = d->tabBar->tabAt(index);
 
-    if (!tab)
+    if (!tab) {
         return;
+    }
 
     DFMBaseView *view = tab->fileView();
 
@@ -257,8 +262,9 @@ void DFileManagerWindow::closeCurrentTab(quint64 winId)
 {
     D_D(DFileManagerWindow);
 
-    if (winId != this->winId())
+    if (winId != this->winId()) {
         return;
+    }
 
     if (d->tabBar->count() == 1) {
         close();
@@ -295,11 +301,12 @@ void DFileManagerWindow::hideEmptyTrashButton()
 void DFileManagerWindow::onNewTabButtonClicked()
 {
     DUrl url;
-    const QString& path = globalSetting->newTabPath();
-    if(path == "Current Path")
+    const QString &path = globalSetting->newTabPath();
+    if (path == "Current Path") {
         url = currentUrl();
-    else
+    } else {
         url = DUrl::fromUserInput(path);
+    }
 
     openNewTab(url);
 }
@@ -312,9 +319,9 @@ void DFileManagerWindow::requestEmptyTrashFiles()
 void DFileManagerWindow::onTrashStateChanged()
 {
     Q_D(DFileManagerWindow);
-    if(currentUrl() == DUrl::fromTrashFile("/") && !TrashManager::isEmpty()){
+    if (currentUrl() == DUrl::fromTrashFile("/") && !TrashManager::isEmpty()) {
         showEmptyTrashButton();
-    } else{
+    } else {
         hideEmptyTrashButton();
     }
 }
@@ -330,24 +337,25 @@ void DFileManagerWindow::onCurrentTabChanged(int tabIndex)
 {
     D_D(DFileManagerWindow);
 
-    Tab* tab = d->tabBar->tabAt(tabIndex);
+    Tab *tab = d->tabBar->tabAt(tabIndex);
 
     if (tab) {
         d->toolbar->switchHistoryStack(tabIndex);
 
-        if (!tab->fileView())
+        if (!tab->fileView()) {
             return;
+        }
 
         d->toolbar->setCrumb(tab->fileView()->rootUrl());
         switchToView(tab->fileView());
 
         if (currentUrl().isSearchFile()) {
-            if(!d->toolbar->getSearchBar()->isVisible()) {
+            if (!d->toolbar->getSearchBar()->isVisible()) {
                 d->toolbar->searchBarActivated();
                 d->toolbar->getSearchBar()->setText(tab->fileView()->rootUrl().searchKeyword());
             }
         } else {
-            if(d->toolbar->getSearchBar()->isVisible()) {
+            if (d->toolbar->getSearchBar()->isVisible()) {
                 d->toolbar->searchBarDeactivated();
             }
         }
@@ -365,8 +373,9 @@ bool DFileManagerWindow::isCurrentUrlSupportSearch(const DUrl &currentUrl)
 {
     const DAbstractFileInfoPointer &currentFileInfo = DFileService::instance()->createFileInfo(this, currentUrl);
 
-    if (!currentFileInfo || !currentFileInfo->canIteratorDir())
+    if (!currentFileInfo || !currentFileInfo->canIteratorDir()) {
         return false;
+    }
     return true;
 }
 
@@ -406,8 +415,9 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl, bool canFetchNetwork)
 {
     D_D(DFileManagerWindow);
 
-    if (currentUrl() == fileUrl)
+    if (currentUrl() == fileUrl) {
         return true;
+    }
 
     if (canFetchNetwork && NetworkManager::SupportScheme.contains(fileUrl.scheme())) {
         emit fileSignalManager->requestFetchNetworks(DFMUrlBaseEvent(this, fileUrl));
@@ -448,17 +458,20 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl, bool canFetchNetwork)
 
             if (!fileInfo || !fileInfo->exists()) {
                 DUrl searchUrl = currentUrl();
-                if (searchUrl.isComputerFile())
+                if (searchUrl.isComputerFile()) {
                     searchUrl = DUrl::fromLocalFile("/");
+                }
 
-                if (!isCurrentUrlSupportSearch(searchUrl))
+                if (!isCurrentUrlSupportSearch(searchUrl)) {
                     return false;
+                }
 
                 const DUrl &newUrl = DUrl::fromSearchFile(searchUrl, fileUrl.toString());
                 const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, newUrl);
 
-                if (!fileInfo || !fileInfo->exists())
+                if (!fileInfo || !fileInfo->exists()) {
                     return false;
+                }
 
                 return cd(newUrl, canFetchNetwork);
             }
@@ -466,16 +479,18 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl, bool canFetchNetwork)
             return false;
         }
 
-        if (d->currentView)
+        if (d->currentView) {
             d->currentView->deleteLater();
+        }
 
         d->setCurrentView(view);
     }
 
     bool ok = false;
 
-    if (d->currentView)
-       ok = d->currentView->setRootUrl(fileUrl);
+    if (d->currentView) {
+        ok = d->currentView->setRootUrl(fileUrl);
+    }
 
     emit currentUrlChanged();
     this->hideRenameBar();
@@ -487,11 +502,13 @@ bool DFileManagerWindow::openNewTab(DUrl fileUrl)
 {
     D_D(DFileManagerWindow);
 
-    if (!d->tabBar->tabAddable())
+    if (!d->tabBar->tabAddable()) {
         return false;
+    }
 
-    if (fileUrl.isEmpty())
+    if (fileUrl.isEmpty()) {
         fileUrl = DUrl::fromLocalFile(QDir::homePath());
+    }
 
     d->toolbar->addHistoryStack();
     d->setCurrentView(0);
@@ -504,8 +521,9 @@ void DFileManagerWindow::switchToView(DFMBaseView *view)
 {
     D_D(DFileManagerWindow);
 
-    if (d->currentView == view)
+    if (d->currentView == view) {
         return;
+    }
 
     const DUrl &old_url = currentUrl();
 
@@ -553,10 +571,11 @@ void DFileManagerWindow::mouseDoubleClickEvent(QMouseEvent *event)
     D_DC(DFileManagerWindow);
 
     if (event->y() <= d->titleFrame->height()) {
-        if (isMaximized())
+        if (isMaximized()) {
             showNormal();
-        else
+        } else {
             showMaximized();
+        }
     } else {
         DMainWindow::mouseDoubleClickEvent(event);
     }
@@ -573,21 +592,24 @@ void DFileManagerWindow::keyPressEvent(QKeyEvent *event)
 {
     Q_D(DFileManagerWindow);
 
-    if (!d->processKeyPressEvent(event))
+    if (!d->processKeyPressEvent(event)) {
         return DMainWindow::keyPressEvent(event);
+    }
 }
 
 bool DFileManagerWindow::eventFilter(QObject *watched, QEvent *event)
 {
-    if (!getFileView() || watched != getFileView()->widget())
+    if (!getFileView() || watched != getFileView()->widget()) {
         return false;
+    }
 
-    if (event->type() != QEvent::KeyPress)
+    if (event->type() != QEvent::KeyPress) {
         return false;
+    }
 
     Q_D(DFileManagerWindow);
 
-    return d->processKeyPressEvent(static_cast<QKeyEvent*>(event));
+    return d->processKeyPressEvent(static_cast<QKeyEvent *>(event));
 }
 
 void DFileManagerWindow::resizeEvent(QResizeEvent *event)
@@ -610,8 +632,9 @@ bool DFileManagerWindow::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
         d->toolbar->forward();
         return true;
     case DFMEvent::OpenNewTab:
-        if (event->windowId() != this->internalWinId())
+        if (event->windowId() != this->internalWinId()) {
             return false;
+        }
 
         openNewTab(event.staticCast<DFMUrlBaseEvent>()->url());
 
@@ -624,7 +647,7 @@ bool DFileManagerWindow::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
 
 QObject *DFileManagerWindow::object() const
 {
-    return const_cast<DFileManagerWindow*>(this);
+    return const_cast<DFileManagerWindow *>(this);
 }
 
 void DFileManagerWindow::handleNewView(DFMBaseView *view)
@@ -668,7 +691,7 @@ void DFileManagerWindow::initTitleFrame()
 
     d->titleFrame = new QFrame;
     d->titleFrame->setObjectName("TitleBar");
-    QHBoxLayout * titleLayout = new QHBoxLayout;
+    QHBoxLayout *titleLayout = new QHBoxLayout;
     titleLayout->setMargin(0);
     titleLayout->setSpacing(0);
     titleLayout->addSpacing(12);
@@ -687,26 +710,26 @@ void DFileManagerWindow::initTitleBar()
 
     initTitleFrame();
 
-    DFileMenu* menu = fileMenuManger->createToolBarSettingsMenu();
+    DFileMenu *menu = fileMenuManger->createToolBarSettingsMenu();
 
     menu->setProperty("DFileManagerWindow", (quintptr)this);
     menu->setProperty("ToolBarSettingsMenu", true);
     menu->setEventData(DUrl(), DUrlList() << DUrl(), winId(), this);
 
     bool isDXcbPlatform = false;
-    SingleApplication* app = static_cast<SingleApplication*>(qApp);
-    if (app){
+    SingleApplication *app = static_cast<SingleApplication *>(qApp);
+    if (app) {
         isDXcbPlatform = app->isDXcbPlatform();
     }
 
-    if (isDXcbPlatform){
+    if (isDXcbPlatform) {
         d->toolbar->getSettingsButton()->hide();
         titlebar()->setMenu(menu);
         titlebar()->setContentsMargins(0, 1, -1, 0);
 
         titlebar()->setCustomWidget(d->titleFrame, Qt::AlignLeft);
-    }else{
-       d->toolbar->getSettingsButton()->setMenu(menu);
+    } else {
+        d->toolbar->getSettingsButton()->setMenu(menu);
     }
 }
 
@@ -748,7 +771,7 @@ void DFileManagerWindow::initRightView()
     d->emptyTrashButton = new QPushButton{ this };
     d->emptyTrashButton->setFixedHeight(25);
     d->emptyTrashButton->hide();
-    d->emptyTrashButton->setContentsMargins(0,0,0,0);
+    d->emptyTrashButton->setContentsMargins(0, 0, 0, 0);
     d->emptyTrashButton->setObjectName("EmptyTrashButton");
 
     QHBoxLayout *tabBarLayout = new QHBoxLayout;
@@ -757,7 +780,7 @@ void DFileManagerWindow::initRightView()
     tabBarLayout->addWidget(d->tabBar);
     tabBarLayout->addWidget(d->newTabButton);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout;
+    QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addLayout(tabBarLayout);
     mainLayout->addWidget(d->emptyTrashButton);
     mainLayout->addWidget(d->renameBar);
@@ -785,7 +808,7 @@ void DFileManagerWindow::initTabBar()
 
     d->newTabButton = new QPushButton(this);
     d->newTabButton->setObjectName("NewTabButton");
-    d->newTabButton->setFixedSize(25,24);
+    d->newTabButton->setFixedSize(25, 24);
     d->newTabButton->hide();
 }
 
@@ -805,7 +828,7 @@ void DFileManagerWindow::initCentralWidget()
 
     d->centralWidget = new QFrame(this);
     d->centralWidget->setObjectName("CentralWidget");
-    QVBoxLayout* mainLayout = new QVBoxLayout;
+    QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(d->splitter);
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -823,17 +846,18 @@ void DFileManagerWindow::initConnect()
         QObject::connect(titlebar(), SIGNAL(closeClicked()), parentWidget(), SLOT(close()));
     }
 
-    QObject::connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed, this, [this] (const DFMUrlBaseEvent &event) {
-        if (event.windowId() != windowId())
+    QObject::connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed, this, [this](const DFMUrlBaseEvent & event) {
+        if (event.windowId() != windowId()) {
             return;
+        }
 
         cd(event.fileUrl(), false);
     });
     QObject::connect(fileSignalManager, &FileSignalManager::requestCloseCurrentTab, this, &DFileManagerWindow::closeCurrentTab);
 
     QObject::connect(d->tabBar, &TabBar::tabMoved, d->toolbar, &DToolBar::moveNavStacks);
-    QObject::connect(d->tabBar, &TabBar::currentChanged,this, &DFileManagerWindow::onCurrentTabChanged);
-    QObject::connect(d->tabBar, &TabBar::tabCloseRequested, this,&DFileManagerWindow::onRequestCloseTab);
+    QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onCurrentTabChanged);
+    QObject::connect(d->tabBar, &TabBar::tabCloseRequested, this, &DFileManagerWindow::onRequestCloseTab);
     QObject::connect(d->tabBar, &TabBar::tabAddableChanged, this, &DFileManagerWindow::onTabAddableChanged);
 
     QObject::connect(d->tabBar, &TabBar::tabBarShown, this, &DFileManagerWindow::showNewTabButton);
@@ -852,9 +876,11 @@ void DFileManagerWindow::initConnect()
 
         const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, currentUrl());
 
-        if (info) {
+        if (info)
+        {
             setWindowTitle(info->fileDisplayName());
-        } else if (currentUrl().isComputerFile()) {
+        } else if (currentUrl().isComputerFile())
+        {
             setWindowTitle(systemPathManager->getSystemPathDisplayName("Computer"));
         }
     });
@@ -872,26 +898,26 @@ void DFileManagerWindow::moveCenterByRect(QRect rect)
 }
 
 
-void DFileManagerWindow::onShowRenameBar(const DFMUrlListBaseEvent& event) noexcept
+void DFileManagerWindow::onShowRenameBar(const DFMUrlListBaseEvent &event) noexcept
 {
-   DFileManagerWindowPrivate* const d { d_func() };
+    DFileManagerWindowPrivate *const d { d_func() };
 
-   if(event.windowId() == this->windowId()){
-       d->renameBar->storeUrlList(event.urlList()); //### get the urls of selection.
+    if (event.windowId() == this->windowId()) {
+        d->renameBar->storeUrlList(event.urlList()); //### get the urls of selection.
 
-       m_currentTab = d->tabBar->currentTab();
-       d->renameBar->setVisible(true);
-   }
+        m_currentTab = d->tabBar->currentTab();
+        d->renameBar->setVisible(true);
+    }
 }
 
 void DFileManagerWindow::onTabBarCurrentIndexChange(const int &index)noexcept
 {
-    DFileManagerWindowPrivate* const d{ d_func() };
+    DFileManagerWindowPrivate *const d{ d_func() };
 
-    if(m_currentTab != d->tabBar->tabAt(index)){
+    if (m_currentTab != d->tabBar->tabAt(index)) {
 
-        if(d->renameBar->isVisible() == true){
-            if(d->renameBar->isVisible() == true){
+        if (d->renameBar->isVisible() == true) {
+            if (d->renameBar->isVisible() == true) {
                 this->onReuqestCacheRenameBarState();//###: invoke this function before setVisible.
 
                 d->renameBar->setVisible(false);
@@ -899,12 +925,12 @@ void DFileManagerWindow::onTabBarCurrentIndexChange(const int &index)noexcept
             }
         }
 
-     }
+    }
 }
 
 void DFileManagerWindow::hideRenameBar() noexcept //###: Hide renamebar and then clear history.
 {
-    DFileManagerWindowPrivate* const d{ d_func() };
+    DFileManagerWindowPrivate *const d{ d_func() };
     d->renameBar->setVisible(false);
     d->renameBar->restoreRenameBar();
 }
@@ -912,36 +938,36 @@ void DFileManagerWindow::hideRenameBar() noexcept //###: Hide renamebar and then
 
 void DFileManagerWindow::onReuqestCacheRenameBarState()const
 {
-    const DFileManagerWindowPrivate* const d{ d_func() };
+    const DFileManagerWindowPrivate *const d{ d_func() };
     DFileManagerWindow::renameBarState = d->renameBar->getCurrentState();//###: record current state, when a new window is created from a already has tab.
 }
 
 
 void DFileManagerWindow::initRenameBarState()
 {
-    DFileManagerWindowPrivate* const d{ d_func() };
+    DFileManagerWindowPrivate *const d{ d_func() };
 
     bool expected{ true };
-    ///###: CAS, when we draged a tab to leave TabBar for creating a new window.
-    if(DFileManagerWindow::flagForNewWindowFromTab.compare_exchange_strong(expected, false, std::memory_order_seq_cst)){
+    ///###: CAS, after we draged a tab to leave TabBar for creating a new window.
+    if (DFileManagerWindow::flagForNewWindowFromTab.compare_exchange_strong(expected, false, std::memory_order_seq_cst)) {
 
-        if(static_cast<bool>(DFileManagerWindow::renameBarState) == true){ //###: when we drag a tab to create a new window, but the RenameBar is showing in last window.
-             d->renameBar->loadState(DFileManagerWindow::renameBarState);
+        if (static_cast<bool>(DFileManagerWindow::renameBarState) == true) { //###: when we drag a tab to create a new window, but the RenameBar is showing in last window.
+            d->renameBar->loadState(DFileManagerWindow::renameBarState);
 
-        }else{  //###: when we drag a tab to create a new window, but the RenameBar is hiding.
-             d->renameBar->setVisible(false);
+        } else { //###: when we drag a tab to create a new window, but the RenameBar is hiding.
+            d->renameBar->setVisible(false);
         }
 
-    }else{ //###: when open a new window from right click menu.
-         d->renameBar->setVisible(false);
+    } else { //###: when open a new window from right click menu.
+        d->renameBar->setVisible(false);
     }
 }
 
 
 void DFileManagerWindow::requestToSelectUrls()
 {
-    DFileManagerWindowPrivate* const d{ d_func() };
-    if(static_cast<bool>(DFileManagerWindow::renameBarState) == true){
+    DFileManagerWindowPrivate *const d{ d_func() };
+    if (static_cast<bool>(DFileManagerWindow::renameBarState) == true) {
         d->renameBar->loadState(DFileManagerWindow::renameBarState);
 
         QList<DUrl> selectedUrls{ DFileManagerWindow::renameBarState->getSelectedUrl() };
@@ -949,7 +975,7 @@ void DFileManagerWindow::requestToSelectUrls()
         DFMUrlListBaseEvent event{ nullptr,  selectedUrls};
         event.setWindowId(winId);
 
-        QTimer::singleShot(100, [=]{ emit fileSignalManager->requestSelectFile(event); });
+        QTimer::singleShot(100, [ = ] { emit fileSignalManager->requestSelectFile(event); });
 
         DFileManagerWindow::renameBarState.reset(nullptr);
     }
