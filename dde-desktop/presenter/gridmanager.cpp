@@ -510,16 +510,16 @@ bool GridManager::move(const QStringList &selecteds, const QString &current, int
         destPosList << destPos;
     }
 
-    bool confict = false;
+    bool conflict = false;
     for (auto pos : destPosList) {
         if (destPosMap.contains(pos) || !d->isValid(pos)) {
-            confict = true;
+            conflict = true;
             break;
         }
     }
 
     // no need to resize
-    if (confict) {
+    if (conflict) {
         auto selectedHeadCount = selecteds.indexOf(current);
         // find free grid before destPos
         auto destIndex = d->indexOfGridPos(destPos);
