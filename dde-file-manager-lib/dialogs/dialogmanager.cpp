@@ -161,7 +161,7 @@ void DialogManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestShowPropertyDialog, this, &DialogManager::showPropertyDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowShareOptionsInPropertyDialog, this, &DialogManager::showShareOptionsInPropertyDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowComputerPropertyDialog, this, &DialogManager::showComputerPropertyDialog);
-        connect(fileSignalManager, &FileSignalManager::requestShowTrashPropertyDialog, this, &DialogManager::showTrashPropertyDialog);
+    connect(fileSignalManager, &FileSignalManager::requestShowTrashPropertyDialog, this, &DialogManager::showTrashPropertyDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowDevicePropertyDialog, this, &DialogManager::showDevicePropertyDialog);
     connect(fileSignalManager, &FileSignalManager::showDiskErrorDialog,
             this, &DialogManager::showDiskErrorDialog);
@@ -203,36 +203,37 @@ QPoint DialogManager::getPerportyPos(int dialogWidth, int dialogHeight, int coun
         }
     }
 
-    if (!cursor_screen)
+    if (!cursor_screen) {
         cursor_screen = qApp->primaryScreen();
+    }
 
     int desktopWidth = cursor_screen->size().width();
     int desktopHeight = cursor_screen->size().height();
     int SpaceWidth = 20;
     int SpaceHeight = 100;
-    int row, x , y;
+    int row, x, y;
 
     int numberPerRow =  desktopWidth / (dialogWidth + SpaceWidth);
 
 
-    if (count % numberPerRow == 0){
+    if (count % numberPerRow == 0) {
         row = count / numberPerRow;
 
-    }else{
+    } else {
         row = count / numberPerRow + 1;
 
     }
 
     int dialogsWidth;
-    if (count / numberPerRow > 0){
+    if (count / numberPerRow > 0) {
         dialogsWidth = dialogWidth * numberPerRow + SpaceWidth * (numberPerRow - 1);
-    }else{
+    } else {
         dialogsWidth = dialogWidth * (count % numberPerRow)  + SpaceWidth * (count % numberPerRow - 1);
     }
 
     int dialogsHeight = dialogHeight + SpaceHeight * (row - 1);
 
-    x =  (desktopWidth - dialogsWidth) / 2 + (dialogWidth + SpaceWidth) * (index % numberPerRow);
+    x = (desktopWidth - dialogsWidth) / 2 + (dialogWidth + SpaceWidth) * (index % numberPerRow);
 
     y = (desktopHeight - dialogsHeight) / 2 + (index / numberPerRow) * SpaceHeight;
 
@@ -241,8 +242,9 @@ QPoint DialogManager::getPerportyPos(int dialogWidth, int dialogHeight, int coun
 
 bool DialogManager::isTaskDialogEmpty()
 {
-    if (m_taskDialog->getTaskListWidget()->count() == 0)
+    if (m_taskDialog->getTaskListWidget()->count() == 0) {
         return true;
+    }
     return false;
 }
 
@@ -264,8 +266,8 @@ void DialogManager::addJob(FileJob *job)
 
 void DialogManager::removeJob(const QString &jobId)
 {
-    if (m_jobs.contains(jobId)){
-        FileJob* job = m_jobs.value(jobId);
+    if (m_jobs.contains(jobId)) {
+        FileJob *job = m_jobs.value(jobId);
         job->setIsAborted(true);
         job->setApplyToAll(true);
         job->cancelled();
@@ -277,14 +279,14 @@ void DialogManager::removeJob(const QString &jobId)
 //            }
 //        }
     }
-    if (m_jobs.count() == 0){
+    if (m_jobs.count() == 0) {
         emit fileSignalManager->requestStopUpdateJobTimer();
     }
 }
 
 void DialogManager::removeAllJobs()
 {
-    foreach (const QString& jobId, m_jobs.keys()) {
+    foreach (const QString &jobId, m_jobs.keys()) {
         removeJob(jobId);
     }
 }
@@ -292,13 +294,13 @@ void DialogManager::removeAllJobs()
 void DialogManager::updateJob()
 {
     foreach (QString jobId, m_jobs.keys()) {
-        FileJob* job = m_jobs.value(jobId);
-        if (job){
-            if (job->currentMsec() - job->lastMsec() > FileJob::Msec_For_Display){
-                if (!job->isJobAdded()){
+        FileJob *job = m_jobs.value(jobId);
+        if (job) {
+            if (job->currentMsec() - job->lastMsec() > FileJob::Msec_For_Display) {
+                if (!job->isJobAdded()) {
                     job->jobAdded();
                     job->jobUpdated();
-                }else{
+                } else {
                     job->jobUpdated();
                 }
             }
@@ -332,9 +334,9 @@ void DialogManager::abortJobByDestinationUrl(const DUrl &url)
 {
     qDebug() << url;
     foreach (QString jobId, m_jobs.keys()) {
-        FileJob* job = m_jobs.value(jobId);
+        FileJob *job = m_jobs.value(jobId);
         qDebug() << jobId << job->getTargetDir();
-        if (!QFile(job->getTargetDir()).exists()){
+        if (!QFile(job->getTargetDir()).exists()) {
             job->jobAborted();
         }
     }
@@ -353,7 +355,7 @@ void DialogManager::showCopyMoveToSelfDialog(const QMap<QString, QString> &jobDe
     QTimer::singleShot(200, &d, &DDialog::raise);
     int code = d.exec();
     qDebug() << code;
-    if (code == 0){
+    if (code == 0) {
         qDebug() << "close CopyMoveToSelf dialog" << jobDetail;
     }
 }
@@ -368,7 +370,7 @@ int DialogManager::showRunExcutableScriptDialog(const DUrl &url, quint64 winId)
     DDialog d(WindowManager::getWindowById(winId));
     int maxDisplayNameLength = 250;
     QString _fileDisplayName = QFileInfo(url.path()).fileName();
-    QString fileDisplayName = d.fontMetrics().elidedText(_fileDisplayName,Qt::ElideRight, maxDisplayNameLength);
+    QString fileDisplayName = d.fontMetrics().elidedText(_fileDisplayName, Qt::ElideRight, maxDisplayNameLength);
     QString message = tr("Do you want to run %1 or display its content?").arg(fileDisplayName);
     QString tipMessage = tr("It is an executable text file.");
     QStringList buttonKeys, buttonTexts;
@@ -395,7 +397,7 @@ int DialogManager::showRunExcutableScriptDialog(const DUrl &url, quint64 winId)
 int DialogManager::showRunExcutableFileDialog(const DUrl &url, quint64 winId)
 {
     DDialog d(WindowManager::getWindowById(winId));
-    const DAbstractFileInfoPointer& pfileInfo = fileService->createFileInfo(this, url);
+    const DAbstractFileInfoPointer &pfileInfo = fileService->createFileInfo(this, url);
     int maxDisplayNameLength = 200;
     QString _fileDisplayName = QFileInfo(url.path()).fileName();
     QString fileDisplayName = d.fontMetrics().elidedText(_fileDisplayName, Qt::ElideRight, maxDisplayNameLength);
@@ -442,40 +444,42 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &ev
 
     DDialog d;
 
-    if (!d.parentWidget())
+    if (!d.parentWidget()) {
         d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
+    }
 
     QFontMetrics fm(d.font());
     d.setIcon(m_dialogTrashFullIcon);
-    if (urlList.first() == DUrl::fromTrashFile("/")){
-        buttonTexts[1]= tr("Empty");
+    if (urlList.first() == DUrl::fromTrashFile("/")) {
+        buttonTexts[1] = tr("Empty");
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, urlList.first());
-        if(fileInfo->filesCount() == 1)
+        if (fileInfo->filesCount() == 1) {
             d.setTitle(ClearTrash.arg(fileInfo->filesCount()));
-        else
+        } else {
             d.setTitle(ClearTrashMutliple.arg(fileInfo->filesCount()));
-    }else if (urlList.first().isLocalFile()){
+        }
+    } else if (urlList.first().isLocalFile()) {
         if (urlList.size() == 1) {
             DFileInfo f(urlList.first());
-            d.setTitle(DeleteFileName.arg(fm.elidedText(f.fileDisplayName(),Qt::ElideMiddle, maxFileNameWidth)));
+            d.setTitle(DeleteFileName.arg(fm.elidedText(f.fileDisplayName(), Qt::ElideMiddle, maxFileNameWidth)));
         } else {
             d.setTitle(DeleteFileItems.arg(urlList.size()));
         }
-    }else if (urlList.first().isTrashFile()){
+    } else if (urlList.first().isTrashFile()) {
         if (urlList.size() == 1) {
             TrashFileInfo f(urlList.first());
-            d.setTitle(DeleteFileName.arg(fm.elidedText(f.fileDisplayName(),Qt::ElideMiddle, maxFileNameWidth)));
+            d.setTitle(DeleteFileName.arg(fm.elidedText(f.fileDisplayName(), Qt::ElideMiddle, maxFileNameWidth)));
         } else {
             d.setTitle(DeleteFileItems.arg(urlList.size()));
         }
-    }else if (urlList.first().isTrashFile()){
+    } else if (urlList.first().isTrashFile()) {
         if (urlList.size() == 1) {
             TrashFileInfo f(urlList.first());
-            d.setTitle(DeleteFileName.arg(fm.elidedText(f.fileDisplayName(),Qt::ElideMiddle, maxFileNameWidth)));
+            d.setTitle(DeleteFileName.arg(fm.elidedText(f.fileDisplayName(), Qt::ElideMiddle, maxFileNameWidth)));
         } else {
             d.setTitle(DeleteFileItems.arg(urlList.size()));
         }
-    }else{
+    } else {
         d.setTitle(DeleteFileItems.arg(urlList.size()));
     }
     d.setMessage(tr("This action cannot be restored"));
@@ -505,9 +509,9 @@ int DialogManager::showRemoveBookMarkDialog(const DFMEvent &event)
 
 void DialogManager::showOpenWithDialog(const DFMEvent &event)
 {
-    QWidget* w = WindowManager::getWindowById(event.windowId());
-    if (w){
-        OpenWithDialog* d = new OpenWithDialog(event.fileUrl());
+    QWidget *w = WindowManager::getWindowById(event.windowId());
+    if (w) {
+        OpenWithDialog *d = new OpenWithDialog(event.fileUrl());
         d->setDisplayPosition(OpenWithDialog::Center);
         d->exec();
     }
@@ -515,26 +519,26 @@ void DialogManager::showOpenWithDialog(const DFMEvent &event)
 
 void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
 {
-    const DUrlList& urlList  = event.urlList();
+    const DUrlList &urlList  = event.urlList();
     int count = urlList.count();
 
-    if(count <= MAX_PROPERTY_DIALOG_NUMBER){
+    if (count <= MAX_PROPERTY_DIALOG_NUMBER) {
 
-        foreach (const DUrl& url, urlList) {
+        foreach (const DUrl &url, urlList) {
             int index = urlList.indexOf(url);
-            if (DFMGlobal::isComputerDesktopFile(url)){
+            if (DFMGlobal::isComputerDesktopFile(url) || url == DUrl::fromComputerFile("/")) {
                 showComputerPropertyDialog();
-            }else if (DFMGlobal::isTrashDesktopFile(url)){
+            } else if (DFMGlobal::isTrashDesktopFile(url)) {
                 DFMEvent event(this);
                 event.setData(url);
                 showTrashPropertyDialog(event);
-            }else{
+            } else {
 
                 PropertyDialog *dialog;
-                if (m_propertyDialogs.contains(url)){
+                if (m_propertyDialogs.contains(url)) {
                     dialog = m_propertyDialogs.value(url);
                     dialog->raise();
-                }else{
+                } else {
                     dialog = new PropertyDialog(event, url);
                     m_propertyDialogs.insert(url, dialog);
                     QPoint pos = getPerportyPos(dialog->size().width(), dialog->size().height(), count, index);
@@ -543,22 +547,22 @@ void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
                     dialog->move(pos);
 
                     connect(dialog, &PropertyDialog::closed, this, &DialogManager::removePropertyDialog);
-        //                connect(dialog, &PropertyDialog::raised, this, &DialogManager::raiseAllPropertyDialog);
+                    //                connect(dialog, &PropertyDialog::raised, this, &DialogManager::raiseAllPropertyDialog);
                     QTimer::singleShot(100, dialog, &PropertyDialog::raise);
                 }
 
-                if (urlList.count() >= 2){
+                if (urlList.count() >= 2) {
                     m_closeIndicatorDialog->show();
                     m_closeIndicatorTimer->start();
                 }
             }
         }
 
-    }else{
-            m_multiFilesPropertyDialog = std::unique_ptr<DMultiFilePropertyDialog>{ new DMultiFilePropertyDialog{ std::move(urlList) } };
-            m_multiFilesPropertyDialog->show();
-            m_multiFilesPropertyDialog->moveToCenter();
-            m_multiFilesPropertyDialog->raise();
+    } else {
+        m_multiFilesPropertyDialog = std::unique_ptr<DMultiFilePropertyDialog> { new DMultiFilePropertyDialog{ std::move(urlList) } };
+        m_multiFilesPropertyDialog->show();
+        m_multiFilesPropertyDialog->moveToCenter();
+        m_multiFilesPropertyDialog->raise();
     }
 }
 
@@ -567,9 +571,9 @@ void DialogManager::showShareOptionsInPropertyDialog(const DFMUrlListBaseEvent &
     DUrl url = event.fileUrlList().first();
     showPropertyDialog(event);
     PropertyDialog *dialog;
-    if (m_propertyDialogs.contains(url)){
+    if (m_propertyDialogs.contains(url)) {
         dialog = m_propertyDialogs.value(url);
-        if (dialog->expandGroup()->expands().count() > 1){
+        if (dialog->expandGroup()->expands().count() > 1) {
             dialog->expandGroup()->expand(1)->setExpand(true);
         }
     }
@@ -577,25 +581,25 @@ void DialogManager::showShareOptionsInPropertyDialog(const DFMUrlListBaseEvent &
 
 void DialogManager::showTrashPropertyDialog(const DFMEvent &event)
 {
-    if (m_trashDialog){
+    if (m_trashDialog) {
         m_trashDialog->close();
     }
     m_trashDialog = new TrashPropertyDialog(DUrl::fromTrashFile("/"));
-    connect(m_trashDialog, &TrashPropertyDialog::finished, [=](){
-           m_trashDialog = NULL;
+    connect(m_trashDialog, &TrashPropertyDialog::finished, [ = ]() {
+        m_trashDialog = NULL;
     });
     QPoint pos = getPerportyPos(m_trashDialog->size().width(), m_trashDialog->size().height(), 1, 0);
     m_trashDialog->show();
     m_trashDialog->move(pos);
 
     TIMER_SINGLESHOT(100, {
-                         m_trashDialog->raise();
-                     }, this)
+        m_trashDialog->raise();
+    }, this)
 }
 
 void DialogManager::showComputerPropertyDialog()
 {
-    if (m_computerDialog){
+    if (m_computerDialog) {
         m_computerDialog->show();
         m_computerDialog->raise();
         return;
@@ -606,31 +610,32 @@ void DialogManager::showComputerPropertyDialog()
     m_computerDialog->move(pos);
 
     TIMER_SINGLESHOT(100, {
-                         m_computerDialog->raise();
-                     }, this)
+        m_computerDialog->raise();
+    }, this)
 }
 
 void DialogManager::showDevicePropertyDialog(const DFMEvent &event)
 {
-    QWidget* w = WindowManager::getWindowById(event.windowId());
-    if (w){
-        PropertyDialog* dialog = new PropertyDialog(event, event.fileUrl());
+    QWidget *w = WindowManager::getWindowById(event.windowId());
+    if (w) {
+        PropertyDialog *dialog = new PropertyDialog(event, event.fileUrl());
         dialog->show();
     }
 }
 
-void DialogManager::showDiskErrorDialog(const QString & id, const QString & errorText)
+void DialogManager::showDiskErrorDialog(const QString &id, const QString &errorText)
 {
     Q_UNUSED(errorText)
 
     static QSet<QString> dialogHadShowForId;
 
-    if (dialogHadShowForId.contains(id))
+    if (dialogHadShowForId.contains(id)) {
         return;
+    }
 
     UDiskDeviceInfoPointer info = deviceListener->getDevice(id);
 
-    if (info){
+    if (info) {
         DDialog d;
         d.setTitle(tr("Disk file is being used, can not unmount now"));
         d.setMessage(tr("Name: ") + info->fileDisplayName()/* + ", " + tr("Path: ") + info->getPath()*/);
@@ -647,7 +652,7 @@ void DialogManager::showDiskErrorDialog(const QString & id, const QString & erro
 
         dialogHadShowForId.remove(id);
 
-        if (code == 1){
+        if (code == 1) {
             deviceListener->forceUnmount(id);
         }
     }
@@ -670,7 +675,7 @@ void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl
     d.setDefaultButton(1);
     d.setIcon(fileInfo->fileIcon().pixmap(64, 64));
     int code = d.exec();
-    if (code == 1){
+    if (code == 1) {
         DUrlList urls;
         urls << linkfile;
         fileService->moveToTrash(this, urls);
@@ -679,13 +684,14 @@ void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl
 
 void DialogManager::showAboutDialog(quint64 winId)
 {
-    QWidget* w = WindowManager::getWindowById(winId);
-    if(!w || w->property("AboutDialogShown").toBool())
+    QWidget *w = WindowManager::getWindowById(winId);
+    if (!w || w->property("AboutDialogShown").toBool()) {
         return;
+    }
 
     QIcon productIcon;
     productIcon.addFile(":/images/images/dde-file-manager_96.png", QSize(96, 96));
-    productIcon.addFile(":/images/images/dde-file-manager_96@2x.png",QSize(192, 192));
+    productIcon.addFile(":/images/images/dde-file-manager_96@2x.png", QSize(192, 192));
     DAboutDialog *dialog = new DAboutDialog(w);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->setWindowTitle("");
@@ -701,49 +707,52 @@ void DialogManager::showAboutDialog(quint64 winId)
     dialog->move(global.x() - dialog->width() / 2, global.y() - dialog->height() / 2);
     dialog->show();
     w->setProperty("AboutDialogShown", true);
-    connect(dialog, &DAboutDialog::closed, [=]{
+    connect(dialog, &DAboutDialog::closed, [ = ] {
         w->setProperty("AboutDialogShown", false);
     });
 }
 
 void DialogManager::showUserSharePasswordSettingDialog(quint64 winId)
 {
-    QWidget* w = WindowManager::getWindowById(winId);
-    if(!w || w->property("UserSharePwdSettingDialogShown").toBool())
+    QWidget *w = WindowManager::getWindowById(winId);
+    if (!w || w->property("UserSharePwdSettingDialogShown").toBool()) {
         return;
+    }
 
-    UserSharePasswordSettingDialog* dialog = new UserSharePasswordSettingDialog(w);
+    UserSharePasswordSettingDialog *dialog = new UserSharePasswordSettingDialog(w);
     dialog->show();
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     connect(dialog, &UserSharePasswordSettingDialog::finished, dialog, &UserSharePasswordSettingDialog::onButtonClicked);
     w->setProperty("UserSharePwdSettingDialogShown", true);
-    connect(dialog, &UserSharePasswordSettingDialog::closed, [=]{
+    connect(dialog, &UserSharePasswordSettingDialog::closed, [ = ] {
         w->setProperty("UserSharePwdSettingDialogShown", false);
     });
 }
 
 void DialogManager::showGlobalSettingsDialog(quint64 winId)
 {
-    QWidget* w = WindowManager::getWindowById(winId);
-    if(!w)
+    QWidget *w = WindowManager::getWindowById(winId);
+    if (!w) {
         return;
-    if(w->property("isSettingDialogShown").toBool())
+    }
+    if (w->property("isSettingDialogShown").toBool()) {
         return;
+    }
 
     w->setProperty("isSettingDialogShown", true);
 
-    DSettingsDialog* dsd = new DFMSettingDialog(w);
+    DSettingsDialog *dsd = new DFMSettingDialog(w);
     dsd->updateSettings(globalSetting->settings());
     dsd->show();
 
-    connect(dsd, &DSettingsDialog::finished, [=]{
+    connect(dsd, &DSettingsDialog::finished, [ = ] {
         w->setProperty("isSettingDialogShown", false);
     });
 }
 
 void DialogManager::showDiskSpaceOutOfUsedDialog()
 {
-    QTimer::singleShot(200,[=]{
+    QTimer::singleShot(200, [ = ] {
         DDialog d;
         d.setIcon(m_dialogWarningIcon);
         d.setTitle(tr("Target disk doesn't have enough space, unable to copy!"));
@@ -765,7 +774,7 @@ void DialogManager::show4gFat32Dialog()
     d.exec();
 }
 
-void DialogManager::showFailToCreateSymlinkDialog(const QString& errorString)
+void DialogManager::showFailToCreateSymlinkDialog(const QString &errorString)
 {
     DDialog d;
     d.setTitle(tr("Fail to create symlink, cause:") + errorString);
@@ -799,21 +808,23 @@ void DialogManager::showFilePreviewDialog(const DUrlList &selectUrls, const DUrl
     for (const DUrl &url : selectUrls) {
         const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
 
-        if (info && (info->fileUrl().isLocalFile() || info->toQFileInfo().exists()))
+        if (info && (info->fileUrl().isLocalFile() || info->toQFileInfo().exists())) {
             canPreivewlist << info->fileUrl();
+        }
     }
 
-    if (canPreivewlist.isEmpty())
+    if (canPreivewlist.isEmpty()) {
         return;
+    }
 
-    if (!m_filePreviewDialog){
+    if (!m_filePreviewDialog) {
         m_filePreviewDialog = new FilePreviewDialog(canPreivewlist, nullptr);
         DPlatformWindowHandle::enableDXcbForWindow(m_filePreviewDialog, true);
-    }else{
+    } else {
         m_filePreviewDialog->updatePreviewList(canPreivewlist);
     }
 
-    if (canPreivewlist.count() == 1){
+    if (canPreivewlist.count() == 1) {
         m_filePreviewDialog->setEntryUrlList(entryUrls);
     }
 
@@ -825,9 +836,9 @@ void DialogManager::showRestoreFailedDialog(const DUrlList &urlList)
 {
     DDialog d;
     d.setTitle(tr("Operation failed!"));
-    if (urlList.count() == 1){
+    if (urlList.count() == 1) {
         d.setMessage(tr("Target file removed or location changed"));
-    }else if (urlList.count() > 1){
+    } else if (urlList.count() > 1) {
         d.setMessage(tr("%1 files failed to restore, target file removed or location changed").arg(QString::number(urlList.count())));
     }
     d.setIcon(m_dialogWarningIcon);
@@ -850,8 +861,9 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
 {
     DUrlList urls = event.urlList();
     qDebug() << urls << "no perssion";
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
         return;
+    }
 
     int ret = 0;
     QFont f;
@@ -859,12 +871,12 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
     QFontMetrics fm(f);
     int maxWith = qApp->primaryScreen()->size().width() * 3 / 4;
 
-    if (urls.count() == 1){
+    if (urls.count() == 1) {
         DDialog d;
         d.setTitle(tr("You do not have permission to operate file/folder!"));
         QString message = urls.at(0).toLocalFile();
 
-        if (fm.width(message) > maxWith){
+        if (fm.width(message) > maxWith) {
             message = fm.elidedText(message, Qt::ElideMiddle, maxWith - 10);
         }
 
@@ -872,34 +884,34 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
         d.setIcon(m_dialogWarningIcon);
         d.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
         ret = d.exec();
-    }else{
+    } else {
 
         DDialog d;
-        QFrame* contentFrame = new QFrame;
+        QFrame *contentFrame = new QFrame;
 
-        QLabel* iconLabel = new QLabel;
+        QLabel *iconLabel = new QLabel;
         iconLabel->setPixmap(m_dialogWarningIcon.pixmap(64, 64));
 
-        QLabel* titleLabel = new QLabel;
+        QLabel *titleLabel = new QLabel;
         titleLabel->setText(tr("Sorry, you don't have permission to operate the following %1 file/folder(s)!").arg(QString::number(urls.count())));
 
-        QLabel* messageLabel = new QLabel;
+        QLabel *messageLabel = new QLabel;
         messageLabel->setScaledContents(true);
 
         QString message;
-        for(int i=0; i < urls.count(); i++){
-            if (i >= 10){
+        for (int i = 0; i < urls.count(); i++) {
+            if (i >= 10) {
                 break;
             }
-            QString s = QString("%1.%2").arg(QString::number(i+1), urls.at(i).toLocalFile());
-            if (fm.width(s) > maxWith){
+            QString s = QString("%1.%2").arg(QString::number(i + 1), urls.at(i).toLocalFile());
+            if (fm.width(s) > maxWith) {
                 s = fm.elidedText(s, Qt::ElideMiddle, maxWith - 10);
             }
             message += s + "\n";
         }
         messageLabel->setText(message);
 
-        QVBoxLayout* contentLayout = new QVBoxLayout;
+        QVBoxLayout *contentLayout = new QVBoxLayout;
         contentLayout->addWidget(iconLabel, 0, Qt::AlignCenter);
         contentLayout->addWidget(titleLabel, 0, Qt::AlignCenter);
         contentLayout->addWidget(messageLabel, 0, Qt::AlignCenter);
@@ -912,14 +924,14 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
         d.addButton(tr("View"), true, DDialog::ButtonRecommend);
         ret = d.exec();
     }
-    if (ret){
-        QWidget* window = WindowManager::getWindowById(event.windowId());
-        if (window){
-            DFileManagerWindow* w = static_cast<DFileManagerWindow*>(window);
+    if (ret) {
+        QWidget *window = WindowManager::getWindowById(event.windowId());
+        if (window) {
+            DFileManagerWindow *w = static_cast<DFileManagerWindow *>(window);
             DUrl parentUrl = event.urlList().at(0).parentUrl();
             w->cd(parentUrl);
             window->raise();
-            QTimer::singleShot(1000, [=]{ emit fileSignalManager->requestSelectFile(event); });
+            QTimer::singleShot(1000, [ = ] { emit fileSignalManager->requestSelectFile(event); });
         }
     }
 }
@@ -927,34 +939,35 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
 void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
 {
     TIMER_SINGLESHOT(1000, {
-        if (qApp->applicationName() == QMAKE_TARGET && !DFMGlobal::IsFileManagerDiloagProcess){
+        if (qApp->applicationName() == QMAKE_TARGET && !DFMGlobal::IsFileManagerDiloagProcess)
+        {
             QString fstype = PartMan::Partition::getPartitionByDevicePath(diskInfo.unix_device()).fs();
-            if (fstype == "ntfs"){
+            if (fstype == "ntfs") {
                 bool isReadOnly = false;
                 DUrl mountUrl = DUrl(diskInfo.mounted_root_uri());
                 QFileInfo mountFileInfo(mountUrl.toLocalFile());
                 isReadOnly = mountFileInfo.isReadable() && !QFileInfo(DUrl(diskInfo.mounted_root_uri()).toLocalFile()).isWritable();
                 qDebug() << DUrl(diskInfo.mounted_root_uri()).toLocalFile() << fstype << "isReadOnly:" << isReadOnly;
-                if (isReadOnly){
+                if (isReadOnly) {
                     DDialog d;
-                    QFrame* contentFrame = new QFrame;
+                    QFrame *contentFrame = new QFrame;
 
-                    QLabel* iconLabel = new QLabel;
+                    QLabel *iconLabel = new QLabel;
                     iconLabel->setPixmap(m_dialogWarningIcon.pixmap(64, 64));
 
-                    QLabel* titleLabel = new QLabel;
+                    QLabel *titleLabel = new QLabel;
                     titleLabel->setText(tr("Mount partition%1 to be read only").arg(diskInfo.unix_device()));
 
-                    QLabel* discriptionLabel = new QLabel;
+                    QLabel *discriptionLabel = new QLabel;
                     discriptionLabel->setScaledContents(true);
                     discriptionLabel->setText(tr("Disks in Windows will be unable to read and write normally if check \"Turn on fast startup (recommended)\" in Shutdown settings"));
 
-                    QLabel* messageTitleLabel = new QLabel;
+                    QLabel *messageTitleLabel = new QLabel;
                     messageTitleLabel->setScaledContents(true);
                     QString messageTitleMessage = tr("Please restore by the following steps to normally access Windows disk");
                     messageTitleLabel->setText(messageTitleMessage);
 
-                    QLabel* messageLabel = new QLabel;
+                    QLabel *messageLabel = new QLabel;
                     messageLabel->setScaledContents(true);
 
                     QString message1 = tr("1. Reboot to enter Windows");
@@ -963,7 +976,7 @@ void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
 
                     messageLabel->setText(QString("%1\n%2\n%3").arg(message1, message2, message3));
 
-                    QVBoxLayout* contentLayout = new QVBoxLayout;
+                    QVBoxLayout *contentLayout = new QVBoxLayout;
                     contentLayout->addWidget(iconLabel, 0, Qt::AlignCenter);
                     contentLayout->addWidget(titleLabel, 0, Qt::AlignCenter);
                     contentLayout->addWidget(discriptionLabel, 0, Qt::AlignLeft);
@@ -978,13 +991,13 @@ void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
                     d.addButton(tr("Cancel"), false, DDialog::ButtonNormal);
                     d.addButton(tr("Reboot"), true, DDialog::ButtonRecommend);
                     int ret = d.exec();
-                    if (ret == 1){
+                    if (ret == 1) {
                         qDebug() << "===================Reboot system=====================";
                         QDBusInterface sessionManagerIface("com.deepin.SessionManager",
-                                                  "/com/deepin/SessionManager",
-                                                  "com.deepin.SessionManager",
-                                                  QDBusConnection::sessionBus());
-                        sessionManagerIface.asyncCall("Reboot" );
+                        "/com/deepin/SessionManager",
+                        "com.deepin.SessionManager",
+                        QDBusConnection::sessionBus());
+                        sessionManagerIface.asyncCall("Reboot");
                     }
                 }
             }
@@ -1003,24 +1016,24 @@ void DialogManager::showErrorDialog(const QString &title, const QString &message
 
 void DialogManager::removePropertyDialog(const DUrl &url)
 {
-    if (m_propertyDialogs.contains(url)){
+    if (m_propertyDialogs.contains(url)) {
         m_propertyDialogs.remove(url);
     }
-    if (m_propertyDialogs.count() == 0){
+    if (m_propertyDialogs.count() == 0) {
         m_closeIndicatorDialog->hide();
     }
 }
 
 void DialogManager::closeAllPropertyDialog()
 {
-    foreach (const DUrl& url, m_propertyDialogs.keys()) {
+    foreach (const DUrl &url, m_propertyDialogs.keys()) {
         m_propertyDialogs.value(url)->close();
     }
-    if (m_closeIndicatorDialog){
+    if (m_closeIndicatorDialog) {
         m_closeIndicatorTimer->stop();
         m_closeIndicatorDialog->close();
     }
-    if (m_trashDialog){
+    if (m_trashDialog) {
         m_trashDialog->close();
     }
 
@@ -1033,7 +1046,7 @@ void DialogManager::updateCloseIndicator()
 {
     qint64 size = 0;
     int fileCount = 0;
-    foreach (PropertyDialog* d, m_propertyDialogs.values()) {
+    foreach (PropertyDialog *d, m_propertyDialogs.values()) {
         size += d->getFileSize();
         fileCount += d->getFileCount();
     }
@@ -1042,12 +1055,12 @@ void DialogManager::updateCloseIndicator()
 
 void DialogManager::raiseAllPropertyDialog()
 {
-    foreach (PropertyDialog* d, m_propertyDialogs.values()) {
+    foreach (PropertyDialog *d, m_propertyDialogs.values()) {
         qDebug() << d->getUrl() << d->isVisible() << d->windowState();
 //        d->showMinimized();
         d->showNormal();
         QtX11::utils::ShowNormalWindow(d);
-        qobject_cast<QWidget*>(d)->showNormal();
+        qobject_cast<QWidget *>(d)->showNormal();
         d->show();
         d->raise();
         qDebug() << d->getUrl() << d->isVisible() << d->windowState();
@@ -1060,17 +1073,17 @@ void DialogManager::handleFocusChanged(QWidget *old, QWidget *now)
     Q_UNUSED(old)
     Q_UNUSED(now)
 
-    if (m_propertyDialogs.values().contains(qobject_cast<PropertyDialog*>(qApp->activeWindow()))){
+    if (m_propertyDialogs.values().contains(qobject_cast<PropertyDialog *>(qApp->activeWindow()))) {
         raiseAllPropertyDialog();
-    }else if(m_closeIndicatorDialog == qobject_cast<CloseAllDialogIndicator*>(qApp->activeWindow())){
+    } else if (m_closeIndicatorDialog == qobject_cast<CloseAllDialogIndicator *>(qApp->activeWindow())) {
         raiseAllPropertyDialog();
     }
 }
 
 void DialogManager::refreshPropertyDialogs(const DUrl &oldUrl, const DUrl &newUrl)
 {
-    PropertyDialog* d = m_propertyDialogs.value(oldUrl);
-    if (d){
+    PropertyDialog *d = m_propertyDialogs.value(oldUrl);
+    if (d) {
         m_propertyDialogs.remove(oldUrl);
         m_propertyDialogs.insert(newUrl, d);
     }
@@ -1080,15 +1093,13 @@ void DialogManager::refreshPropertyDialogs(const DUrl &oldUrl, const DUrl &newUr
 void DialogManager::handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response)
 {
     QString jobId = jobDetail.value("jobId");
-    FileJob * job = m_jobs.value(jobId);
-    if(job != NULL)
-    {
+    FileJob *job = m_jobs.value(jobId);
+    if (job != NULL) {
         bool applyToAll = response.value("applyToAll").toBool();
         int code = response.value("code").toInt();
         job->setApplyToAll(applyToAll);
         //0 = coexist, 1 = replace, 2 = skip
-        switch(code)
-        {
+        switch (code) {
         case 0:
             job->setIsCoExisted(true);
             job->setIsSkip(false);
@@ -1108,12 +1119,12 @@ void DialogManager::handleConflictRepsonseConfirmed(const QMap<QString, QString>
             job->cancelled();
             break;
         default:
-            qDebug() << "unknown code"<<code;
+            qDebug() << "unknown code" << code;
         }
     }
 }
 
-int DialogManager::showMessageDialog(int messageLevel, const QString& message)
+int DialogManager::showMessageDialog(int messageLevel, const QString &message)
 {
     DDialog d;
     d.moveToCenter();
@@ -1122,13 +1133,13 @@ int DialogManager::showMessageDialog(int messageLevel, const QString& message)
     buttonTexts << tr("Confirm");
     d.addButtons(buttonTexts);
     d.setDefaultButton(0);
-    if (messageLevel == 1){
+    if (messageLevel == 1) {
         d.setIcon(m_dialogInfoIcon);
-    }else if (messageLevel == 2){
+    } else if (messageLevel == 2) {
         d.setIcon(m_dialogWarningIcon);
-    }else if (messageLevel == 3){
+    } else if (messageLevel == 3) {
         d.setIcon(m_dialogErrorIcon);
-    }else{
+    } else {
         d.setIcon(m_dialogInfoIcon);
     }
     int code = d.exec();
@@ -1142,31 +1153,31 @@ void DialogManager::showMultiFilesRenameDialog(const QList<DUrl> &selectedUrls)
     DDesktopRenameDialog renameDialog;
 
     renameDialog.moveToCenter();
-    renameDialog.setDialogTitle(QObject::tr("Rename %1 Files").arg( QString::fromStdString( std::to_string(selectedUrls.size()) )) );
+    renameDialog.setDialogTitle(QObject::tr("Rename %1 Files").arg(QString::fromStdString(std::to_string(selectedUrls.size()))));
 
     std::size_t code{ renameDialog.exec() };
     std::size_t modeIndex{ renameDialog.getCurrentModeIndex() };
 
     AppController::flagForDDesktopRenameBar.store(true, std::memory_order_seq_cst);
 
-    if(static_cast<bool>(code) == true){ //###: yes!
+    if (static_cast<bool>(code) == true) { //###: yes!
 
-        if(modeIndex == 0){
+        if (modeIndex == 0) {
             QPair<QString, QString> replaceModeValue{ renameDialog.getModeOneContent() };
             DFileService::instance()->multiFilesReplaceName(selectedUrls, replaceModeValue);
 
-        }else if(modeIndex == 1){
+        } else if (modeIndex == 1) {
             QPair<QString, DFileService::AddTextFlags> addModeValue{ renameDialog.getModeTwoContent() };
             DFileService::instance()->multiFilesAddStrToName(selectedUrls, addModeValue);
 
-        }else{
+        } else {
             QPair<QString, QString> customModeValue{ renameDialog.getModeThreeContent() };
             DFileService::instance()->multiFilesCustomName(selectedUrls, customModeValue);
         }
 
 
         AppController::multiSelectionFilesCache.second = 1; //###: give a number must be bigger than 0.
-                                                            // We modified files will invoke dfilesystemmodel::selectAndRenameFile() at background.
+        // We modified files will invoke dfilesystemmodel::selectAndRenameFile() at background.
     }
 
 }
@@ -1185,11 +1196,11 @@ void DialogManager::showAddUserShareFailedDialog(const QString &sharePath)
 
 #ifdef SW_LABEL
 
-void DialogManager::onJobFailed_SW( int nRet, const QString &jobType, const QString &srcfilename)
+void DialogManager::onJobFailed_SW(int nRet, const QString &jobType, const QString &srcfilename)
 {
-    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()) {
         int ret = showPrivilegeDialog_SW(nRet, srcfilename);
-        if (ret == 0){
+        if (ret == 0) {
             qDebug() << jobType << nRet << srcfilename;
         }
     }
@@ -1197,22 +1208,22 @@ void DialogManager::onJobFailed_SW( int nRet, const QString &jobType, const QStr
 
 int DialogManager::showPrivilegeDialog_SW(int nRet, const QString &srcfilename)
 {
-    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()) {
         qDebug() << "文件全路径名称" << srcfilename;
-        qDebug() << "错误码；"<< nRet;
+        qDebug() << "错误码；" << nRet;
 
-        std::string serrordst=""; //错误描述
-        int nerrorlevel=0;  //错误级别
+        std::string serrordst = ""; //错误描述
+        int nerrorlevel = 0; //错误级别
 //        nRet =  lls_geterrordesc(nRet, serrordst, nerrorlevel);
         nRet =  LlsDeepinLabelLibrary::instance()->lls_geterrordesc()(nRet, serrordst, nerrorlevel);
-        if (nRet == 0){
+        if (nRet == 0) {
             qDebug() << "错误描述:" << QString::fromStdString(serrordst);
             qDebug() << "错误级别:" << nerrorlevel;
             QString message = QString("%1 %2").arg(QFileInfo(srcfilename).fileName(), QString::fromStdString(serrordst));
             int code = showMessageDialog(nerrorlevel, message);
             return code;
 
-        }else{
+        } else {
             qDebug() << "get error message fail" << nRet;
             return -1;
         }
