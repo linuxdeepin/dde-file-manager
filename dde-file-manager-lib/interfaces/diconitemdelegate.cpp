@@ -742,7 +742,10 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
                          d->textLineHeight, Qt::AlignCenter, 0, 0, label_rect.topLeft(), QColor(), QPointF(0, 0),
                          QBrush(Qt::NoBrush), &text_region);
 
-    geometries << text_region.boundingRect();
+    label_rect = text_region.boundingRect();
+    label_rect.setTop(icon_rect.bottom());
+
+    geometries << label_rect;
 
     return geometries;
 }
