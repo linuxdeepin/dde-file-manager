@@ -530,11 +530,11 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
         option.init(parent()->parent());
         parent()->initStyleOption(&option, index);
         option.rect = parent()->parent()->visualRect(index);
-        const QList<QRect> &geometrys = parent()->itemDelegate()->paintGeomertys(option, index);
+        const QList<QRect> &geometries = parent()->itemDelegate()->paintGeomertys(option, index);
 
         // 从1开始是为了排除掉icon区域
-        for (int i = 1; i < geometrys.length() && i <= column_role_list.length(); ++i) {
-            const QRect &rect = geometrys.at(i);
+        for (int i = 1; i < geometries.length() && i <= column_role_list.length(); ++i) {
+            const QRect &rect = geometries.at(i);
 
             if (rect.left() <= cursor_pos.x() && rect.right() >= cursor_pos.x()) {
                 const QString &tooltip = data(index, columnActiveRole(i - 1)).toString();
