@@ -49,8 +49,9 @@ protected:
     {
         QTextEdit::paintEvent(event);
 
-        if (!borderColor.isValid())
+        if (!borderColor.isValid()) {
             return;
+        }
 
         QPainter pa(viewport());
 
@@ -107,7 +108,7 @@ FileIconItem::FileIconItem(QWidget *parent) :
         int text_length = text.length();
         int text_line_height = fontMetrics().height();
 
-        text = text.trimmed();
+        text.remove(QRegExp("^\\s+"));
         text.remove('/');
         text.remove(QChar(0));
 
@@ -190,7 +191,7 @@ void FileIconItem::setBorderColor(QColor borderColor)
     m_borderColor = borderColor;
     emit borderColorChanged(borderColor);
 
-    static_cast<FileIconItemEdit*>(edit)->borderColor = borderColor;
+    static_cast<FileIconItemEdit *>(edit)->borderColor = borderColor;
     edit->update();
 }
 
