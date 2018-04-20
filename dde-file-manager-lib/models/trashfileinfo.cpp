@@ -263,12 +263,7 @@ void TrashFileInfo::setColumnCompact(bool)
 QList<int> TrashFileInfo::userColumnRoles() const
 {
     static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileUserRole + 1
-                                                     << DFileSystemModel::FileUserRole + 2
-                                                     << DFileSystemModel::FileDisplayNameRole
-                                                     << DFileSystemModel::FileUserRole + 3 /*Source Path*/
-                                                     << DFileSystemModel::FileUserRole + 4 /*Time Deleted*/
-                                                     << DFileSystemModel::FileSizeRole
-                                                     << DFileSystemModel::FileMimeTypeRole;
+                                                     << DFileSystemModel::FileUserRole + 2;
 
     return userColumnRoles;
 }
