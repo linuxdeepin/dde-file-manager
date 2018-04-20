@@ -92,7 +92,7 @@ void DFMSideBarPrivate::initUI()
     mainLayout->setSpacing(0);
     mainLayout->setMargin(0);
     mainLayout->setAlignment(Qt::AlignTop);
-    mainLayout->setSizeConstraint(QLayout::SetMinimumSize);
+    mainLayout->setSizeConstraint(QLayout::SetFixedSize);
     mainLayoutHolder->setLayout(mainLayout);
     //q->setLayout(mainLayout);
 
