@@ -69,34 +69,4 @@ QMenu *DFMSideBarTrashItem::createStandardContextMenu() const
     return menu;
 }
 
-bool DFMSideBarTrashItem::canDropMimeData(const QMimeData *data, Qt::DropAction action) const
-{
-    Q_UNUSED(action);
-
-    if (data->urls().empty()) {
-        return false;
-    }
-
-    for (const DUrl &url : data->urls()) {
-        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, url);
-        if (!fileInfo || !fileInfo->isReadable()) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool DFMSideBarTrashItem::dropMimeData(const QMimeData *data, Qt::DropAction action) const
-{
-    DUrlList oriUrlList = DUrl::fromQUrlList(data->urls());
-
-    if (canDropMimeData(data, action)) {
-        fileService->moveToTrash(this, oriUrlList);
-        return true;
-    }
-
-    return false;
-}
-
 DFM_END_NAMESPACE

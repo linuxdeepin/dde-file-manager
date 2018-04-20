@@ -87,7 +87,7 @@ protected:
     void setGroupName(QString groupName);
 
     virtual QMenu *createStandardContextMenu() const;
-    virtual bool canDropMimeData(const QMimeData *data, Qt::DropAction action) const;
+    virtual Qt::DropAction canDropMimeData(const QMimeData *data, Qt::DropActions actions) const;
     virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action) const;
 
     void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;

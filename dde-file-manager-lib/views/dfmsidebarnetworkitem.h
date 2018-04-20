@@ -18,19 +18,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMSIDEBARTRASHITEM_H
-#define DFMSIDEBARTRASHITEM_H
-
-#include "dfmsidebardefaultitem.h"
+#ifndef DFMSIDEBARNETWORKITEM_H
+#define DFMSIDEBARNETWORKITEM_H
 
 #include <dfmglobal.h>
 
+#include "views/dfmsidebardefaultitem.h"
+
+#include "dfmstandardpaths.h"
+
 DFM_BEGIN_NAMESPACE
 
-class DFMSideBarTrashItem : public DFMSideBarDefaultItem
+class DFMSideBarNetworkItem : public DFMSideBarDefaultItem
 {
+    Q_OBJECT
+
 public:
-    DFMSideBarTrashItem();
+    DFMSideBarNetworkItem(DFMStandardPaths::StandardLocation location, QWidget *parent = nullptr);
 
 protected:
     virtual QMenu *createStandardContextMenu() const Q_DECL_OVERRIDE;
@@ -38,4 +42,4 @@ protected:
 
 DFM_END_NAMESPACE
 
-#endif // DFMSIDEBARTRASHITEM_H
+#endif // DFMSIDEBARNETWORKITEM_H
