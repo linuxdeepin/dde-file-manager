@@ -50,7 +50,8 @@ class TrashFileInfoPrivate : public DAbstractFileInfoPrivate
 {
 public:
     TrashFileInfoPrivate(const DUrl &url, TrashFileInfo *qq)
-        : DAbstractFileInfoPrivate(url, qq, true) {
+        : DAbstractFileInfoPrivate(url, qq, true)
+    {
         columnCompact = true;
     }
 
@@ -298,7 +299,7 @@ QVariant TrashFileInfo::userColumnData(int userColumnRole) const
     }
 
     if (userColumnRole == DFileSystemModel::FileUserRole + 3) {
-        if (d->originalFilePath.isEmpty())
+        if (d->originalFilePath.isEmpty()) {
             return d->originalFilePath;
         }
 
