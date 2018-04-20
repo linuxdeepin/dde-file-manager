@@ -409,22 +409,40 @@ QMenu *DFMSideBarItem::createStandardContextMenu() const
     return menu;
 }
 
-bool DFMSideBarItem::canDropMimeData(const QMimeData *data, Qt::DropAction action) const
+Qt::DropAction DFMSideBarItem::canDropMimeData(const QMimeData *data, Qt::DropActions actions) const
 {
     if (data->urls().empty()) {
-        return false;
+        return Qt::IgnoreAction;
     }
 
     for (const DUrl &url : data->urls()) {
         const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, url);
         if (!fileInfo || !fileInfo->isReadable()) {
-            return false;
+            return Qt::IgnoreAction;
         }
     }
 
     const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, url());
 
-    return info && info->canDrop() && info->supportedDropActions().testFlag(action);
+    if (!info || !info->canDrop()) {
+        return Qt::IgnoreAction;
+    }
+
+    const Qt::DropActions support_actions = info->supportedDropActions() & actions;
+
+    if (support_actions.testFlag(Qt::CopyAction)) {
+        return Qt::CopyAction;
+    }
+
+    if (support_actions.testFlag(Qt::MoveAction)) {
+        return Qt::MoveAction;
+    }
+
+    if (support_actions.testFlag(Qt::LinkAction)) {
+        return Qt::LinkAction;
+    }
+
+    return Qt::IgnoreAction;
 }
 
 bool DFMSideBarItem::dropMimeData(const QMimeData *data, Qt::DropAction action) const
@@ -438,11 +456,6 @@ bool DFMSideBarItem::dropMimeData(const QMimeData *data, Qt::DropAction action) 
     // convert destnation url to real path if it's a symbol link.
     if (destInfo->isSymLink()) {
         destUrl = destInfo->rootSymLinkTarget();
-    }
-
-    // Check?
-    if (DFMGlobal::isComputerDesktopFile(destUrl)) {
-        return true;
     }
 
     switch (action) {
@@ -472,8 +485,15 @@ void DFMSideBarItem::dragEnterEvent(QDragEnterEvent *event)
 {
     Q_D(DFMSideBarItem);
 
-    if (canDropMimeData(event->mimeData(), event->dropAction())) {
-        event->acceptProposedAction();
+    Qt::DropAction action = canDropMimeData(event->mimeData(), event->proposedAction());
+
+    if (action == Qt::IgnoreAction) {
+        action = canDropMimeData(event->mimeData(), event->possibleActions());
+    }
+
+    if (action != Qt::IgnoreAction) {
+        event->setDropAction(action);
+        event->accept();
         d->hovered = true;
         update();
         return;
@@ -512,11 +532,17 @@ void DFMSideBarItem::dropEvent(QDropEvent *event)
     d->hovered = false;
     update();
 
+    Qt::DropAction action = canDropMimeData(event->mimeData(), event->proposedAction());
+
     // for robust, we should filter the drop action and only process *file* drop action here.
     // other drop event like DFMSideBarItem reorder and etc should be handle after `dropMimeData()`
     // so here we should simply check `canDropMimeData()` again.
-    if (canDropMimeData(event->mimeData(), event->dropAction())) {
-        if (dropMimeData(event->mimeData(), event->dropAction())) {
+    if (action == Qt::IgnoreAction) {
+        action = canDropMimeData(event->mimeData(), event->possibleActions());
+    }
+
+    if (action != Qt::IgnoreAction) {
+        if (dropMimeData(event->mimeData(), action)) {
             return;
         }
     }

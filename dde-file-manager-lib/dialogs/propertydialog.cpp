@@ -469,14 +469,11 @@ void PropertyDialog::flickFolderToLeftsidBar()
         return;
     }
 
-    // we are actually using network item's position instead of a user share item's.
-    // since it's used as a animation target position, a fuzzy position is okay.
-    const DFMSideBarItem *networkItem = window->getLeftSideBar()->itemAt(DUrl::fromNetworkFile("/"));
-    if (!networkItem) {
-        return;
-    }
-
-    QPoint targetPos = window->getLeftSideBar()->mapTo(window, networkItem->geometry().center());
+    // we are actually using network group's center position as target position
+    // since it's used as a animation target position, a fuzzy result is okay.
+    QPoint targetPos = window->getLeftSideBar()->groupGeometry(
+                           DFMSideBar::groupName(DFMSideBar::GroupName::Network)
+                       ).center();
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
 
     QLabel *aniLabel = new QLabel(window);

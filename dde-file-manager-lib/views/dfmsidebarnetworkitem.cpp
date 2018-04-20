@@ -18,24 +18,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMSIDEBARTRASHITEM_H
-#define DFMSIDEBARTRASHITEM_H
+#include "dfilemanagerwindow.h"
+#include "dfmsidebarnetworkitem.h"
 
-#include "dfmsidebardefaultitem.h"
+#include "app/define.h"
+#include "views/windowmanager.h"
 
-#include <dfmglobal.h>
+#include <QMenu>
 
 DFM_BEGIN_NAMESPACE
 
-class DFMSideBarTrashItem : public DFMSideBarDefaultItem
+DFMSideBarNetworkItem::DFMSideBarNetworkItem(DFMStandardPaths::StandardLocation location, QWidget *parent)
+    : DFMSideBarDefaultItem(location, parent)
 {
-public:
-    DFMSideBarTrashItem();
 
-protected:
-    virtual QMenu *createStandardContextMenu() const Q_DECL_OVERRIDE;
-};
+}
+
+QMenu *DFMSideBarNetworkItem::createStandardContextMenu() const
+{
+    QMenu *menu = new QMenu(const_cast<DFMSideBarNetworkItem *>(this));
+    DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
+
+    menu->addAction(QObject::tr("Open in new window"), [this]() {
+        WindowManager::instance()->showNewWindow(url(), true);
+    });
+
+    menu->addAction(QObject::tr("Open in new tab"), [wnd, this]() {
+        wnd->openNewTab(url());
+    });
+
+    return menu;
+}
 
 DFM_END_NAMESPACE
-
-#endif // DFMSIDEBARTRASHITEM_H

@@ -27,6 +27,7 @@
 #include "views/dfmsidebartrashitem.h"
 #include "views/dfmsidebardeviceitem.h"
 #include "views/dfilemanagerwindow.h"
+#include "views/dfmsidebarnetworkitem.h"
 #include "controllers/bookmarkmanager.h"
 #include "deviceinfo/udisklistener.h"
 
@@ -175,7 +176,7 @@ void DFMSideBarPrivate::initUserShareItem()
     int count = fileService->getChildren(group, DUrl::fromUserShareFile("/"),
                                          QStringList(), QDir::AllEntries).count();
     if (count) {
-        group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::UserShareRootPath));
+        group->appendItem(new DFMSideBarNetworkItem(DFM_STD_LOCATION::UserShareRootPath));
     }
 
     userShareFileWatcher = fileService->createFileWatcher(q, DUrl::fromUserShareFile("/"), q);
@@ -187,7 +188,7 @@ void DFMSideBarPrivate::initUserShareItem()
                                            QStringList(), QDir::AllEntries).count();
         DFMSideBarItem *item = group->findItem(DUrl::fromUserShareFile("/"));
         if (cnt > 0 && item == nullptr) {
-            item = new DFMSideBarDefaultItem(DFM_STD_LOCATION::UserShareRootPath);
+            item = new DFMSideBarNetworkItem(DFM_STD_LOCATION::UserShareRootPath);
             group->appendItem(item);
         } else if (cnt == 0 && item) {
             q->removeItem(item);
@@ -234,7 +235,7 @@ void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::G
         break;
     }
     case DFMSideBar::GroupName::Network:
-        group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::NetworkRootPath));
+        group->appendItem(new DFMSideBarNetworkItem(DFM_STD_LOCATION::NetworkRootPath));
         break;
     case DFMSideBar::GroupName::Tag:
         // nothing here
@@ -288,9 +289,7 @@ void DFMSideBar::setCurrentUrl(const DUrl &url)
 {
     Q_D(DFMSideBar);
 
-    qDebug() << d->lastCheckedItem;
     if (d->lastCheckedItem) {
-        qDebug() << d->lastCheckedItem;
         d->lastCheckedItem->setChecked(false);
     }
 
