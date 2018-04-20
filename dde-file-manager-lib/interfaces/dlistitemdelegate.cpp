@@ -48,12 +48,13 @@ void DListItemDelegate::paint(QPainter *painter,
     Q_D(const DListItemDelegate);
 
     /// judgment way of the whether drag model(another way is: painter.devType() != 1)
-    bool isDragMode = ((QPaintDevice*)parent()->parent()->viewport() != painter->device());
+    bool isDragMode = ((QPaintDevice *)parent()->parent()->viewport() != painter->device());
     bool isDropTarget = parent()->isDropTarget(index);
     bool isEnabled = option.state & QStyle::State_Enabled;
 
-    if (parent()->isCut(index))
+    if (parent()->isCut(index)) {
         painter->setOpacity(0.3);
+    }
 
     const QList<int> &columnRoleList = parent()->columnRoleList();
 
@@ -68,10 +69,11 @@ void DListItemDelegate::paint(QPainter *painter,
     if (old_font != opt.font) {
         QWidget *editing_widget = editingIndexWidget();
 
-        if (editing_widget)
+        if (editing_widget) {
             editing_widget->setFont(opt.font);
+        }
 
-        const_cast<DListItemDelegate*>(this)->updateItemSizeHint();
+        const_cast<DListItemDelegate *>(this)->updateItemSizeHint();
     }
 
     old_font = opt.font;
@@ -92,7 +94,7 @@ void DListItemDelegate::paint(QPainter *painter,
         painter->fillPath(path, opt.backgroundBrush);
         painter->restore();
     } else {
-        if (!isDragMode){
+        if (!isDragMode) {
             if (index.row() % 2 == 0) {
                 painter->fillRect(opt.rect, ThemeConfig::instace()->color("FileView", "overlap"));
             } else if (ThemeConfig::instace()->hasValue("FileView", "non-overlap")) {
@@ -180,9 +182,9 @@ void DListItemDelegate::paint(QPainter *painter,
         painter->setPen(opt.palette.color(drawBackground ? QPalette::BrightText : QPalette::Text));
         if (data.canConvert<QString>()) {
             const QString &file_name = DFMGlobal::elideText(index.data(role).toString().remove('\n'),
-                                                            rect.size(), QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                            opt.font, Qt::ElideRight,
-                                                            d->textLineHeight);
+                                       rect.size(), QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                       opt.font, Qt::ElideRight,
+                                       d->textLineHeight);
 
             painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()), file_name);
         } else {
@@ -190,24 +192,27 @@ void DListItemDelegate::paint(QPainter *painter,
         }
     }
 
-    if (isDragMode)
+    if (isDragMode) {
         return;
+    }
 
-    const DFileSystemModel *model = qobject_cast<const DFileSystemModel*>(index.model());
+    const DFileSystemModel *model = qobject_cast<const DFileSystemModel *>(index.model());
     painter->setPen(opt.palette.color(QPalette::Inactive, QPalette::Text));
 
-    for(int i = 1; i < columnRoleList.count(); ++i) {
+    for (int i = 1; i < columnRoleList.count(); ++i) {
         int column_width = parent()->columnWidth(i);
 
-        if (column_width <= 0)
+        if (column_width <= 0) {
             continue;
+        }
 
         QRect rect = opt.rect;
 
         rect.setLeft(column_x + COLUMU_PADDING);
 
-        if (rect.left() >= rect.right())
+        if (rect.left() >= rect.right()) {
             break;
+        }
 
         column_x += column_width;
 
@@ -221,8 +226,8 @@ void DListItemDelegate::paint(QPainter *painter,
 
         if (data.canConvert<QString>()) {
             const QString &text = DFMGlobal::elideText(index.data(role).toString(), rect.size(),
-                                                       QTextOption::NoWrap, opt.font,
-                                                       Qt::ElideRight, d->textLineHeight);
+                                  QTextOption::NoWrap, opt.font,
+                                  Qt::ElideRight, d->textLineHeight);
 
             painter->drawText(rect, Qt::Alignment(tmp_index.data(Qt::TextAlignmentRole).toInt()), text);
         } else {
@@ -250,7 +255,7 @@ void DListItemDelegate::paint(QPainter *painter,
 
 
 void DListItemDelegate::drawNotStringData(const QStyleOptionViewItem &opt, int lineHeight, const QRect &rect, const QVariant &data,
-                                          bool drawBackground, QPainter *painter, const int &column) const
+        bool drawBackground, QPainter *painter, const int &column) const
 {
     Q_D(const DListItemDelegate);
 
@@ -267,16 +272,16 @@ void DListItemDelegate::drawNotStringData(const QStyleOptionViewItem &opt, int l
         QPair<QString, QString> name_path = qvariant_cast<QPair<QString, QString>>(data);
 
         const QString &file_name = DFMGlobal::elideText(name_path.first.remove('\n'),
-                                                        QSize(rect.width(), rect.height() / 2), QTextOption::NoWrap,
-                                                        opt.font, Qt::ElideRight,
-                                                        lineHeight);
+                                   QSize(rect.width(), rect.height() / 2), QTextOption::NoWrap,
+                                   opt.font, Qt::ElideRight,
+                                   lineHeight);
         painter->setPen(sortRoleIndexByColumnChildren == 0 ? active_color : normal_color);
         painter->drawText(rect.adjusted(0, 0, 0, -rect.height() / 2), Qt::AlignBottom, file_name);
 
         const QString &file_path = DFMGlobal::elideText(name_path.second.remove('\n'),
-                                                        QSize(rect.width(), rect.height() / 2), QTextOption::NoWrap,
-                                                        opt.font, Qt::ElideRight,
-                                                        lineHeight);
+                                   QSize(rect.width(), rect.height() / 2), QTextOption::NoWrap,
+                                   opt.font, Qt::ElideRight,
+                                   lineHeight);
 
         painter->setPen(sortRoleIndexByColumnChildren == 1 ? active_color : normal_color);
         painter->drawText(rect.adjusted(0, rect.height() / 2, 0, 0), Qt::AlignTop, file_path);
@@ -286,8 +291,8 @@ void DListItemDelegate::drawNotStringData(const QStyleOptionViewItem &opt, int l
         const QPair<QString, QPair<QString, QString>> &dst = qvariant_cast<QPair<QString, QPair<QString, QString>>>(data);
 
         const QString &date = DFMGlobal::elideText(dst.first, QSize(rect.width(), rect.height() / 2),
-                                                   QTextOption::NoWrap, opt.font,
-                                                   Qt::ElideRight, lineHeight);
+                              QTextOption::NoWrap, opt.font,
+                              Qt::ElideRight, lineHeight);
 
         painter->setPen(sortRoleIndexByColumnChildren == 0 ? active_color : normal_color);
         painter->drawText(new_rect.adjusted(0, 0, 0, -new_rect.height() / 2), Qt::AlignBottom, date, &new_rect);
@@ -295,15 +300,15 @@ void DListItemDelegate::drawNotStringData(const QStyleOptionViewItem &opt, int l
         new_rect = QRect(rect.left(), rect.top(), new_rect.width(), rect.height());
 
         const QString &size = DFMGlobal::elideText(dst.second.first, QSize(new_rect.width() / 2, new_rect.height() / 2),
-                                                   QTextOption::NoWrap, opt.font,
-                                                   Qt::ElideRight, lineHeight);
+                              QTextOption::NoWrap, opt.font,
+                              Qt::ElideRight, lineHeight);
 
         painter->setPen(sortRoleIndexByColumnChildren == 1 ? active_color : normal_color);
         painter->drawText(new_rect.adjusted(0, new_rect.height() / 2, 0, 0), Qt::AlignTop | Qt::AlignLeft, size);
 
         const QString &type = DFMGlobal::elideText(dst.second.second, QSize(new_rect.width() / 2, new_rect.height() / 2),
-                                                   QTextOption::NoWrap, opt.font,
-                                                   Qt::ElideLeft, lineHeight);
+                              QTextOption::NoWrap, opt.font,
+                              Qt::ElideLeft, lineHeight);
         painter->setPen(sortRoleIndexByColumnChildren == 2 ? active_color : normal_color);
         painter->drawText(new_rect.adjusted(0, new_rect.height() / 2, 0, 0), Qt::AlignTop | Qt::AlignRight, type);
     }
@@ -314,8 +319,9 @@ QSize DListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMod
 {
     const DAbstractFileInfoPointer &file_info = parent()->fileInfo(index);
 
-    if (!file_info)
+    if (!file_info) {
         return DStyledItemDelegate::sizeHint(option, index);
+    }
 
     Q_D(const DListItemDelegate);
 
@@ -331,9 +337,9 @@ QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
     QLineEdit *edit = new QLineEdit(parent);
 
     const DAbstractFileInfoPointer &file_info = this->parent()->fileInfo(index);
-    if (file_info->fileUrl().isSearchFile()){
+    if (file_info->fileUrl().isSearchFile()) {
         edit->setFixedHeight(LIST_EDITER_HEIGHT * 2 - 10);
-    }else{
+    } else {
         edit->setFixedHeight(LIST_EDITER_HEIGHT);
     }
     edit->setObjectName("DListItemDelegate_Editor");
@@ -351,20 +357,22 @@ QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
 
         int text_length = text.length();
 
-        text = text.trimmed();
+        text.remove(QRegExp("^\\s+"));
         text.remove('/');
         text.remove(QChar(0));
 
         QVector<uint> list = text.toUcs4();
         int cursor_pos = edit->cursorPosition() - text_length + text.length();
 
-        while (text.toUtf8().size() > MAX_FILE_NAME_CHAR_COUNT) {
+        while (text.toUtf8().size() > MAX_FILE_NAME_CHAR_COUNT)
+        {
             list.removeAt(--cursor_pos);
 
             text = QString::fromUcs4(list.data(), list.size());
         }
 
-        if (text.count() != old_text.count()) {
+        if (text.count() != old_text.count())
+        {
             edit->setText(text);
             edit->setCursorPosition(cursor_pos);
         }
@@ -406,23 +414,25 @@ void DListItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
 void DListItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-    QLineEdit *edit = qobject_cast<QLineEdit*>(editor);
+    QLineEdit *edit = qobject_cast<QLineEdit *>(editor);
 
-    if(!edit)
+    if (!edit) {
         return;
+    }
 
     const QString &text = index.data(DFileSystemModel::FileNameRole).toString();
 
     edit->setText(text);
 }
 
-static int dataWidth(const QStyleOptionViewItem &option ,const QModelIndex &index, int role)
+static int dataWidth(const QStyleOptionViewItem &option, const QModelIndex &index, int role)
 {
     const QVariant &data = index.data(role);
     Qt::Alignment alignment = Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt());
 
-    if (data.canConvert<QString>())
+    if (data.canConvert<QString>()) {
         return option.fontMetrics.width(data.toString(), -1, alignment);
+    }
 
     if (data.canConvert<QPair<QString, QString>>()) {
         const QPair<QString, QString> &string_string = qvariant_cast<QPair<QString, QString>>(data);
@@ -472,13 +482,14 @@ QList<QRect> DListItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     rect.setWidth(qMin(rect.width(), dataWidth(option, index, role)));
     geomertys << rect;
 
-    for(int i = 1; i < columnRoleList.count(); ++i) {
+    for (int i = 1; i < columnRoleList.count(); ++i) {
         QRect rect = opt_rect;
 
         rect.setLeft(column_x + COLUMU_PADDING);
 
-        if (rect.left() >= rect.right())
+        if (rect.left() >= rect.right()) {
             return geomertys;
+        }
 
         column_x += parent()->columnWidth(i) - 1;
 
@@ -507,25 +518,26 @@ bool DListItemDelegate::eventFilter(QObject *object, QEvent *event)
 {
     Q_D(DListItemDelegate);
 
-    if(event->type() == QEvent::Show) {
-        QLineEdit *edit = qobject_cast<QLineEdit*>(object);
+    if (event->type() == QEvent::Show) {
+        QLineEdit *edit = qobject_cast<QLineEdit *>(object);
 
-        if(edit) {
+        if (edit) {
             const QString &selectionWhenEditing = parent()->baseName(d->editingIndex);
             int endPos = selectionWhenEditing.isEmpty() ? -1 : selectionWhenEditing.length();
 
-            if(endPos == -1)
+            if (endPos == -1) {
                 edit->selectAll();
-            else
+            } else {
                 edit->setSelection(0, endPos);
+            }
         }
     } else if (event->type() == QEvent::KeyPress) {
-        QKeyEvent *e = static_cast<QKeyEvent*>(event);
+        QKeyEvent *e = static_cast<QKeyEvent *>(event);
 
         if (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) {
             e->accept();
 
-            QLineEdit *edit = qobject_cast<QLineEdit*>(object);
+            QLineEdit *edit = qobject_cast<QLineEdit *>(object);
 
             if (edit) {
                 edit->close();

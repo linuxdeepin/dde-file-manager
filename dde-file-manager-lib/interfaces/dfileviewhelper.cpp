@@ -72,16 +72,18 @@ void DFileViewHelperPrivate::init()
 
     // init connects
     QObject::connect(&keyboardSearchTimer, &QTimer::timeout,
-                    q , [this] {
+    q, [this] {
         keyboardSearchKeys.clear();
     });
     QObject::connect(qApp, &DApplication::iconThemeChanged, q->parent(), static_cast<void (QWidget::*)()>(&QWidget::update));
     QObject::connect(DFMGlobal::instance(), &DFMGlobal::clipboardDataChanged, q, [q] {
-        for (const QModelIndex &index : q->itemDelegate()->hasWidgetIndexs()) {
-            FileIconItem *item = qobject_cast<FileIconItem*>(q->indexWidget(index));
+        for (const QModelIndex &index : q->itemDelegate()->hasWidgetIndexs())
+        {
+            FileIconItem *item = qobject_cast<FileIconItem *>(q->indexWidget(index));
 
-            if (item)
+            if (item) {
                 item->setOpacity(q->isCut(index) ? 0.3 : 1);
+            }
         }
 
         q->parent()->update();
@@ -94,7 +96,7 @@ void DFileViewHelperPrivate::init()
     copy_action->setShortcut(QKeySequence::Copy);
 
     QObject::connect(copy_action, &QAction::triggered,
-            q, [q] {
+    q, [q] {
         fileService->writeFilesToClipboard(q, DFMGlobal::CopyAction, q->selectedUrls());
     });
 
@@ -104,7 +106,7 @@ void DFileViewHelperPrivate::init()
     cut_action->setShortcut(QKeySequence::Cut);
 
     QObject::connect(cut_action, &QAction::triggered,
-            q, [q] {
+    q, [q] {
         fileService->writeFilesToClipboard(q, DFMGlobal::CutAction, q->selectedUrls());
     });
 
@@ -113,7 +115,7 @@ void DFileViewHelperPrivate::init()
     paste_action->setShortcut(QKeySequence::Paste);
 
     QObject::connect(paste_action, &QAction::triggered,
-            q, [q] {
+    q, [q] {
         fileService->pasteFileByClipboard(q->parent(), q->currentUrl());
     });
 
@@ -122,7 +124,7 @@ void DFileViewHelperPrivate::init()
     revocation_action->setShortcut(QKeySequence::Undo);
 
     QObject::connect(revocation_action, &QAction::triggered,
-                     q, [q] {
+    q, [q] {
         DFMEventDispatcher::instance()->processEvent<DFMRevocationEvent>(q);
     });
 
@@ -136,8 +138,8 @@ void DFileViewHelperPrivate::init()
     q->connect(gvfsMountManager, &GvfsMountManager::mount_added, q, &DFileViewHelper::mount_added);
     // call later
     TIMER_SINGLESHOT(0, {
-                         q->connect(fileSignalManager, SIGNAL(trashStateChanged()), q->model(), SLOT(update()));
-                     }, q);
+        q->connect(fileSignalManager, SIGNAL(trashStateChanged()), q->model(), SLOT(update()));
+    }, q);
 
     // init plugin objects
     static bool initialized = false;
@@ -153,18 +155,21 @@ void DFileViewHelperPrivate::_q_edit(const DFMUrlBaseEvent &event)
 {
     Q_Q(DFileViewHelper);
 
-    if (event.windowId() != q->windowId())
+    if (event.windowId() != q->windowId()) {
         return;
+    }
 
     DUrl fileUrl = event.url();
 
-    if (!fileUrl.isValid())
+    if (!fileUrl.isValid()) {
         return;
+    }
 
     const QModelIndex &index = q->model()->index(fileUrl);
 
-    if (q->parent()->isVisible())
+    if (q->parent()->isVisible()) {
         q->parent()->edit(index, QAbstractItemView::EditKeyPressed, 0);
+    }
 }
 
 void DFileViewHelperPrivate::_q_selectAndRename(const DFMUrlBaseEvent &event)
@@ -187,13 +192,14 @@ QList<QIcon> DFileViewHelperPrivate::getAdditionalIconByPlugins(const DAbstractF
         QList<QIcon> plugin_list;
 
         bool ok = object->metaObject()->invokeMethod(object, "fileAdditionalIcon",
-                                                     Q_RETURN_ARG(QList<QIcon>, plugin_list),
-                                                     Q_ARG(const DAbstractFileInfoPointer&, fileInfo));
+                  Q_RETURN_ARG(QList<QIcon>, plugin_list),
+                  Q_ARG(const DAbstractFileInfoPointer &, fileInfo));
 
-        if (ok)
+        if (ok) {
             list << plugin_list;
-        else
+        } else {
             qWarning() << "call the fileAdditionalIcon slot failed";
+        }
     }
 
     return list;
@@ -215,7 +221,7 @@ DFileViewHelper::~DFileViewHelper()
 
 QAbstractItemView *DFileViewHelper::parent() const
 {
-    return qobject_cast<QAbstractItemView*>(QObject::parent());
+    return qobject_cast<QAbstractItemView *>(QObject::parent());
 }
 
 /*!
@@ -236,15 +242,16 @@ bool DFileViewHelper::isCut(const QModelIndex &index) const
 {
     const DAbstractFileInfoPointer &fileInfo = this->fileInfo(index);
 
-    if (!fileInfo)
+    if (!fileInfo) {
         return false;
+    }
     DUrl fileUrl = fileInfo->fileUrl();
-    if (fileInfo->fileUrl().isSearchFile()){
+    if (fileInfo->fileUrl().isSearchFile()) {
         fileUrl = fileInfo->fileUrl().searchedFileUrl();
     }
 
     return DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction
-            && DFMGlobal::instance()->clipboardFileUrlList().contains(fileUrl);
+           && DFMGlobal::instance()->clipboardFileUrlList().contains(fileUrl);
 }
 
 /*!
@@ -309,8 +316,9 @@ QList<QIcon> DFileViewHelper::additionalIcon(const QModelIndex &index) const
     QList<QIcon> list;
     const DAbstractFileInfoPointer &fileInfo = this->fileInfo(index);
 
-    if (!fileInfo || !fileInfo->exists())
+    if (!fileInfo || !fileInfo->exists()) {
         return list;
+    }
 
     list << fileInfo->additionalIcon();
     list << DFileViewHelperPrivate::getAdditionalIconByPlugins(fileInfo);
@@ -328,8 +336,9 @@ QString DFileViewHelper::baseName(const QModelIndex &index) const
 {
     const DAbstractFileInfoPointer &fileInfo = this->fileInfo(index);
 
-    if (!fileInfo)
+    if (!fileInfo) {
         return QString();
+    }
 
     return fileInfo->baseName();
 }
@@ -359,25 +368,28 @@ DUrl DFileViewHelper::currentUrl() const
 {
     const DAbstractFileInfoPointer &fileInfo = this->fileInfo(parent()->rootIndex());
 
-    if (!fileInfo)
+    if (!fileInfo) {
         return DUrl();
+    }
 
     return fileInfo->fileUrl();
 }
 
 void DFileViewHelper::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const
 {
-    if (isSelected(index))
+    if (isSelected(index)) {
         option->state |= QStyle::State_Selected;
-    else
+    } else {
         option->state &= QStyle::StateFlag(~QStyle::State_Selected);
+    }
 
     option->palette.setColor(QPalette::Text, ThemeConfig::instace()->color("FileView", "color"));
     option->palette.setColor(QPalette::Disabled, QPalette::Text, ThemeConfig::instace()->color("FileView", "color", ThemeConfig::Dislable));
-    if ((option->state & QStyle::State_Selected) && option->showDecorationSelected)
+    if ((option->state & QStyle::State_Selected) && option->showDecorationSelected) {
         option->palette.setColor(QPalette::Inactive, QPalette::Text, ThemeConfig::instace()->color("FileView", "color", ThemeConfig::Checked | ThemeConfig::Inactive));
-    else
+    } else {
         option->palette.setColor(QPalette::Inactive, QPalette::Text, ThemeConfig::instace()->color("FileView", "color", ThemeConfig::Inactive));
+    }
     option->palette.setColor(QPalette::BrightText, Qt::white);
     option->palette.setBrush(QPalette::Shadow, ThemeConfig::instace()->color("FileView", "shadow"));
 
@@ -450,8 +462,9 @@ void DFileViewHelper::keyboardSearch(char key)
 
         const QModelIndex &index = parent()->model()->index(row, 0, parent()->rootIndex());
 
-        if (index == current_index)
+        if (index == current_index) {
             continue;
+        }
 
         const QString &pinyin_name = parent()->model()->data(index, DFileSystemModel::FilePinyinName).toString();
 
@@ -478,8 +491,9 @@ bool DFileViewHelper::isEmptyArea(const QPoint &pos) const
     } else {
         const QRect &rect = parent()->visualRect(index);
 
-        if(!rect.contains(pos))
+        if (!rect.contains(pos)) {
             return true;
+        }
 
         QStyleOptionViewItem option = parent()->viewOptions();
 
@@ -487,8 +501,8 @@ bool DFileViewHelper::isEmptyArea(const QPoint &pos) const
 
         const QList<QRect> &geometry_list = itemDelegate()->paintGeomertys(option, index);
 
-        for(const QRect &rect : geometry_list) {
-            if(rect.contains(pos)) {
+        for (const QRect &rect : geometry_list) {
+            if (rect.contains(pos)) {
                 return false;
             }
         }
@@ -538,16 +552,18 @@ void DFileViewHelper::showPreviewFileDialog()
 
 void DFileViewHelper::handleCommitData(QWidget *editor) const
 {
-    if (!editor)
+    if (!editor) {
         return;
+    }
 
     const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(itemDelegate()->editingIndex());
 
-    if (!fileInfo)
+    if (!fileInfo) {
         return;
+    }
 
-    QLineEdit *lineEdit = qobject_cast<QLineEdit*>(editor);
-    FileIconItem *item = qobject_cast<FileIconItem*>(editor);
+    QLineEdit *lineEdit = qobject_cast<QLineEdit *>(editor);
+    FileIconItem *item = qobject_cast<FileIconItem *>(editor);
 
     DFMEvent event(this);
     event.setData(fileInfo->fileUrl());
@@ -555,6 +571,7 @@ void DFileViewHelper::handleCommitData(QWidget *editor) const
 
     QString new_file_name = lineEdit ? lineEdit->text() : item ? item->edit->toPlainText() : "";
 
+    new_file_name = new_file_name.trimmed();
     new_file_name.remove('/');
     new_file_name.remove(QChar(0));
 
@@ -574,8 +591,8 @@ void DFileViewHelper::handleCommitData(QWidget *editor) const
     if (lineEdit) {
         /// later rename file.
         TIMER_SINGLESHOT(0, {
-                             fileService->renameFile(this, old_url, new_url);
-                         }, old_url, new_url, this)
+            fileService->renameFile(this, old_url, new_url);
+        }, old_url, new_url, this)
     } else {
         fileService->renameFile(this, old_url, new_url);
     }
