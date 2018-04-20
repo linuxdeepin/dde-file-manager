@@ -200,7 +200,7 @@ DBookmarkItem* DBookmarkScene::createTagBookmark(const QString& tagName, const Q
         item->setText(*pos);
     }
 
-    item->setUrl( DUrl::fromUserTagedFile( QString{"/"} + tagName) );
+    item->setUrl( DUrl::fromUserTaggedFile(QString{"/"} + tagName, QString{}) );
     item->setDefaultItem(false);
     return item;
 }

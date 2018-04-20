@@ -93,9 +93,11 @@ static constexpr const char* const USERNAME{"username"};
 static constexpr const char* const PASSWORD{"password"};
 
 
-class TagManager
+class TagManager final : public QObject
 {
+    Q_OBJECT
 public:
+
     enum class SqlType : std::size_t
     {
         GetAllTags = 1,
@@ -196,6 +198,12 @@ public:
 
         return tagManager;
     }
+
+
+signals:
+    void taggedFileAdded(const QList<DUrl>& url);
+    void taggedFileDeleted(const QList<DUrl>& url);
+    void taggedFileMoved(const QList<QPair<DUrl, DUrl>>& url);
 
 private:
     static QString getMainDBLocation();

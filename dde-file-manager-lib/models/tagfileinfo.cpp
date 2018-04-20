@@ -12,11 +12,8 @@ TagFileInfo::TagFileInfo(const DUrl &url)
             :DAbstractFileInfo{ url, false } //###: Do not cache.
 {
     ///###: if the true url of file is put into fragment field of Uri. Then setup proxy.
-    if(url.tagedFileUrl().isValid() == true){
-        DUrl uri{ url.fragment() };
-        uri.setTagedFileUrl( DUrl{} ); //###: In fact, invoke QUrl::setFragment();
-
-        DAbstractFileInfoPointer infoPointer{ DFileService::instance()->createFileInfo(nullptr, url.tagedFileUrl()) };
+    if(!url.taggedLocalFilePath().isEmpty()){
+        DAbstractFileInfoPointer infoPointer{ DFileService::instance()->createFileInfo(nullptr, DUrl::fromLocalFile(url.fragment())) };
         this->DAbstractFileInfo::setProxy(infoPointer);
     }
 }
@@ -32,7 +29,6 @@ bool TagFileInfo::makeAbsolute()
 {
     return true;
 }
-
 
 bool TagFileInfo::exists() const
 {
@@ -71,11 +67,6 @@ DUrl TagFileInfo::redirectedFileUrl() const
     return d->proxy->fileUrl();
 }
 
-QString TagFileInfo::fileDisplayName() const
-{
-    return (this->DAbstractFileInfo::baseName());
-}
-
 Qt::ItemFlags TagFileInfo::fileItemDisableFlags() const
 {
     return Qt::ItemIsDragEnabled;
@@ -89,33 +80,67 @@ QSet<MenuAction> TagFileInfo::disableMenuActionList() const
 
 QVector<MenuAction> TagFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
-    QVector<MenuAction> actions;
+    const DAbstractFileInfoPrivate* d{ d_func() };
 
-    if(type == SpaceArea){
-        actions.push_back(MenuAction::DisplayAs);
-        actions.push_back(MenuAction::SortBy);
+    QVector<MenuAction> actions{};
+    DUrl current_url{ this->fileUrl() };
+    QString parent_url{ current_url.parentUrl().path()};
 
-    }else if(type == SingleFile){
-        if(this->isDir() == true){
-            actions.push_back(MenuAction::Open);
-            actions.push_back(MenuAction::OpenInNewWindow);
-            actions.push_back(MenuAction::OpenInNewTab);
-            actions.push_back(MenuAction::Separator);
-            actions.push_back(MenuAction::Rename);
-//            actions.push_back(MenuAction::UnTaged);
-        }
-
-        actions.push_back(MenuAction::Separator);
-        actions.push_back(MenuAction::Property);
-
-    }else if(type == MultiFiles){
+    ///###: if there current file-info do not have a proxy!
+    ///###: it shows that current item is a tag-dir(tag:///tag-name).
+    if(current_url.isTaggedFile() && parent_url == QString{"/"} && !d->proxy){
         actions.push_back(MenuAction::Open);
-        actions.push_back(MenuAction::Separator);
-        actions.push_back(MenuAction::Property);
+        actions.push_back(MenuAction::OpenInNewWindow);
+        actions.push_back(MenuAction::OpenInNewTab);
+
+    }else{
+        actions = DAbstractFileInfo::menuActionList(type);
     }
 
     return actions;
 }
+
+
+
+
+DUrl TagFileInfo::parentUrl() const
+{
+    DUrl url = fileUrl();
+
+    if(url.taggedLocalFilePath().isEmpty()){
+        return DAbstractFileInfo::parentUrl();
+    }
+
+    return DUrl::fromUserTaggedFile(url.path(), QString{});
+}
+
+QString TagFileInfo::iconName() const
+{
+    DUrl current_url{ this->fileUrl() };
+
+    if(current_url.isTaggedFile()){
+        return QString{"folder"};
+    }
+
+    return DAbstractFileInfo::iconName();
+}
+
+DUrl TagFileInfo::goToUrlWhenDeleted() const
+{
+    const DAbstractFileInfoPrivate* d{ d_func() };
+
+    DUrl current_url{ this->fileUrl() };
+    QString parent_url{ current_url.parentUrl().path()};
+
+    ///###: if there current file-info do not have a proxy!
+    ///###: it shows that current item is a tag-dir(tag:///tag-name).
+    if(current_url.isTaggedFile() && parent_url == QString{"/"} && !d->proxy){
+        return DUrl::fromLocalFile(QDir::homePath());
+    }
+
+    return DAbstractFileInfo::goToUrlWhenDeleted();
+}
+
 
 
 //bool TagFileInfo::columnDefaultVisibleForRole(int role) const
@@ -126,34 +151,6 @@ QVector<MenuAction> TagFileInfo::menuActionList(DAbstractFileInfo::MenuType type
 
 //    return DAbstractFileInfo::columnDefaultVisibleForRole(role);
 //}
-
-
-//DUrl TagFileInfo::parentUrl() const
-//{
-//    const DAbstractFileInfoPrivate* const d{ d_func() };
-
-//    if(static_cast<bool>(d->proxy) == true){
-//        QString path{ d->proxy->path() };
-//        std::size_t index{ path.lastIndexOf(QString{"/"}) };
-//        path.remove(index, path.size() - index);
-
-//        return DUrl::fromUserTagedFile(path);
-//    }
-//    return DUrl{};
-//}
-
-//DUrl TagFileInfo::mimeDataUrl() const
-//{
-//    return DUrl::fromLocalFile(this->DAbstractFileInfo::absoluteFilePath());
-//}
-
-
-///###: this will be invoked by DAbstractFileInfo::fileIcon;
-QString TagFileInfo::iconName() const
-{
-    return QString{"folder"};
-}
-
 
 
 

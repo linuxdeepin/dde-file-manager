@@ -92,19 +92,6 @@ template<typename Ty>
 using citerator = typename QList<Ty>::const_iterator;
 
 
-
-static const QMap<QString, QString> ColorsWithNames{
-                                                        { "#ffa503", "Orange"},
-                                                        { "#ff1c49", "Red"},
-                                                        { "#9023fc", "Purple"},
-                                                        { "#3468ff", "Navy-blue"},
-                                                        { "#00b5ff", "Azure"},
-                                                        { "#58df0a", "Grass-green"},
-                                                        { "#fef144", "Yellow"} ,
-                                                        { "#cccccc", "Gray" }
-                                                   };
-
-
 QPair<DUrl, quint64> AppController::selectionAndRenameFile;
 QPair<DUrl, quint64> AppController::selectionFile;
 QPair<QSharedPointer<QList<DUrl>>, quint64> AppController::multiSelectionFilesCache;

@@ -2,6 +2,8 @@
 
 #include <QDebug>
 
+
+#include "dfileservices.h"
 #include "tagcontroller.h"
 #include "tag/tagmanager.h"
 #include "../tag/tagmanager.h"
@@ -9,6 +11,7 @@
 #include "../interfaces/dfileinfo.h"
 #include "interfaces/dfileservices.h"
 #include "controllers/appcontroller.h"
+#include "private/dabstractfilewatcher_p.h"
 #include "controllers/tagmanagerdaemoncontroller.h"
 
 
@@ -26,9 +29,9 @@ TagController::TagController(QObject* const parent)
 
 const DAbstractFileInfoPointer TagController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet>& event) const
 {
-    DAbstractFileInfoPointer tagedFilesInfo{ new TagFileInfo{ event->url() } };
+    DAbstractFileInfoPointer TaggedFilesInfo{ new TagFileInfo{ event->url() } };
 
-    return tagedFilesInfo;
+    return TaggedFilesInfo;
 }
 
 const QList<DAbstractFileInfoPointer> TagController::getChildren(const QSharedPointer<DFMGetChildrensEvent>& event) const
@@ -48,7 +51,7 @@ const QList<DAbstractFileInfoPointer> TagController::getChildren(const QSharedPo
             for(; tagBeg != tagEnd; ++tagBeg){
                 DAbstractFileInfoPointer tagInfoPtr{
                                                        DFileService::instance()->createFileInfo(this,
-                                                                                 DUrl::fromUserTagedFile(QString{"/"} + tagBeg.key() ))
+                                                                                                DUrl::fromUserTaggedFile(QString{"/"} + tagBeg.key(), QString{}))
                                                     };
                 infoList.push_back(tagInfoPtr);
             }
@@ -60,9 +63,11 @@ const QList<DAbstractFileInfoPointer> TagController::getChildren(const QSharedPo
             QVariant var{ AppController::instance()->actionGetFilesThroughTag(event) };
             QList<QString> files{ var.toStringList() };
 
-            for(const QString& str : files){
-                DUrl url{ DUrl::fromLocalFile(str) };
-                DAbstractFileInfoPointer fileInfo{ DFileService::instance()->createFileInfo(this, url) };
+            for(const QString& localFilePath : files){
+                DUrl url{ currentUrl };
+                url.setTaggedFileUrl(localFilePath);
+                DAbstractFileInfoPointer fileInfo{ new TagFileInfo(url) };
+
                 infoList.push_back(fileInfo);
             }
         }
@@ -71,14 +76,207 @@ const QList<DAbstractFileInfoPointer> TagController::getChildren(const QSharedPo
     return infoList;
 }
 
-bool TagController::makeFilesTags(const QSharedPointer<DFMMakeFilesTagsEvent> &event) const
+//bool TagController::makeFilesTags(const QSharedPointer<DFMMakeFilesTagsEvent> &event) const
+//{
+//    (void)event;
+//    return true;
+//}
+
+//bool TagController::removeTagsOfFiles(const QSharedPointer<DFMRemoveTagsOfFilesEvent>& event) const
+//{
+//    (void)event;
+//    return true;
+//}
+
+class TaggedFileWatcherPrivate;
+class TaggedFileWatcher final : public DAbstractFileWatcher
 {
-    (void)event;
-    return true;
+public:
+    explicit TaggedFileWatcher(const DUrl& url, QObject* const parent = nullptr);
+
+    void setEnabledSubfileWatcher(const DUrl &subfileUrl, bool enabled = true);
+
+private slots:
+    void onTaggedSubfileCreated(const QList<DUrl>& filePath);
+    void onTaggedFileDeleted(const QList<DUrl>& filesPath);
+    void onTaggedFileMoved(const QList<QPair<DUrl, DUrl>>& filePath);
+    void onTaggedFileAttributeChanged(const DUrl& filePath);
+    void onTaggedFileModified(const DUrl& filePath);
+
+
+private:
+    Q_DECLARE_PRIVATE(TaggedFileWatcher)
+
+    void addWatcher(const DUrl& url) noexcept;
+    void removeWatcher(const DUrl& url) noexcept;
+};
+
+
+class TaggedFileWatcherPrivate final : public DAbstractFileWatcherPrivate
+{
+public:
+    TaggedFileWatcherPrivate(TaggedFileWatcher* qq)
+        :DAbstractFileWatcherPrivate{qq}{}
+
+    virtual bool start() override;
+    virtual bool stop() override;
+
+    Q_DECLARE_PUBLIC(TaggedFileWatcher)
+
+    DUrl m_urlBak{};
+    QString m_beWatchedPath{};
+    QMap<DUrl, DAbstractFileWatcher*> m_watchers{};
+};
+
+
+TaggedFileWatcher::TaggedFileWatcher(const DUrl& url, QObject* const parent)
+    :DAbstractFileWatcher{*(new TaggedFileWatcherPrivate{this}), url, parent}
+{
+    TaggedFileWatcherPrivate* d{ d_func() };
+    d->m_beWatchedPath =  url.path();
+
+//    qDebug()<< "watched url: " << url;
+//    qDebug()<< "watched path: " << url.path();
 }
 
-bool TagController::removeTagsOfFiles(const QSharedPointer<DFMRemoveTagsOfFilesEvent>& event) const
+void TaggedFileWatcher::setEnabledSubfileWatcher(const DUrl& subfileUrl, bool enabled)
 {
-    (void)event;
-    return true;
+    DUrl currentWatchedDir{ this->fileUrl() };
+//    qDebug()<< "subfileUrl: " << subfileUrl << "=============" << "fileUrl: " << this->fileUrl();
+
+    if(subfileUrl == currentWatchedDir){
+        return;
+    }
+
+    if(enabled){
+        this->addWatcher(subfileUrl);
+
+    }else{
+        this->removeWatcher(subfileUrl);
+    }
 }
+
+
+void TaggedFileWatcher::onTaggedSubfileCreated(const QList<DUrl>& filesPath)
+{
+    TaggedFileWatcherPrivate* d{ d_func() };
+
+    for(const DUrl& path : filesPath){
+        DUrl newFileUrl{ DUrl::fromUserTaggedFile(d->m_beWatchedPath, path.toLocalFile()) };
+
+        emit subfileCreated(newFileUrl);
+    }
+}
+
+void TaggedFileWatcher::onTaggedFileDeleted(const QList<DUrl>& filesPath)
+{
+    TaggedFileWatcherPrivate* d{ d_func() };
+
+    for(const DUrl& path : filesPath){
+        DUrl newFileUrl{ DUrl::fromUserTaggedFile(d->m_beWatchedPath, path.toLocalFile()) };
+
+        emit fileDeleted(newFileUrl);
+    }
+}
+
+void TaggedFileWatcher::onTaggedFileMoved(const QList<QPair<DUrl, DUrl>>& filePath)
+{
+    TaggedFileWatcherPrivate* d{ d_func() };
+
+    for(const QPair<DUrl, DUrl>& oldAndNew : filePath){
+        DUrl old{ DUrl::fromUserTaggedFile(d->m_beWatchedPath, oldAndNew.first.toLocalFile()) };
+        DUrl theNew{ DUrl::fromUserTaggedFile(d->m_beWatchedPath, oldAndNew.second.toLocalFile())};
+
+        emit fileMoved(old, theNew);
+    }
+
+
+}
+
+void TaggedFileWatcher::onTaggedFileAttributeChanged(const DUrl& filePath)
+{
+    TaggedFileWatcherPrivate* d{ d_func() };
+    DUrl newFileUrl{ DUrl::fromUserTaggedFile(d->m_beWatchedPath, filePath.toLocalFile()) };
+
+    emit fileAttributeChanged(newFileUrl);
+}
+
+void TaggedFileWatcher::onTaggedFileModified(const DUrl& filePath)
+{
+    TaggedFileWatcherPrivate* d{ d_func() };
+    DUrl new_file_url{ DUrl::fromUserTaggedFile(d->m_beWatchedPath, filePath.toLocalFile()) };
+
+    emit fileModified(new_file_url);
+}
+
+void TaggedFileWatcher::addWatcher(const DUrl& url)noexcept
+{
+    TaggedFileWatcherPrivate* d{ d_func() };
+    DUrl local_file_url{ DUrl::fromLocalFile(url.taggedLocalFilePath()) };
+
+    if(!local_file_url.isValid() || d->m_watchers.contains(local_file_url)){
+        return;
+    }
+
+    DAbstractFileWatcher* watcher{ DFileService::instance()->createFileWatcher(this, local_file_url) };
+
+    if(!watcher){
+        return;
+    }
+
+    watcher->setParent(this);
+    watcher->moveToThread(this->thread());
+    d->m_watchers[url] = watcher;
+
+    QObject::connect(watcher, &DAbstractFileWatcher::fileAttributeChanged, this, &TaggedFileWatcher::onTaggedFileAttributeChanged);
+    QObject::connect(watcher, &DAbstractFileWatcher::fileDeleted, [this](const DUrl& fileForDeleting){
+        this->onTaggedFileDeleted(QList<DUrl>{fileForDeleting});
+    });
+    QObject::connect(watcher, &DAbstractFileWatcher::fileModified, this, &TaggedFileWatcher::onTaggedFileModified);
+
+    if(d->started){
+        watcher->startWatcher();
+    }
+
+}
+
+void TaggedFileWatcher::removeWatcher(const DUrl& url)noexcept
+{
+    TaggedFileWatcherPrivate* d{ d_func() };
+    DAbstractFileWatcher *watcher = d->m_watchers.take(url);
+
+    if (!watcher){
+        return;
+    }
+
+    watcher->deleteLater();
+}
+
+
+bool TaggedFileWatcherPrivate::start()
+{
+    TaggedFileWatcher* q{q_func()};
+
+    QMetaObject::Connection connection1{ QObject::connect(TagManager::instance(), &TagManager::taggedFileAdded, q, &TaggedFileWatcher::onTaggedSubfileCreated) };
+    QMetaObject::Connection connection2{ QObject::connect(TagManager::instance(), &TagManager::taggedFileDeleted, q, &TaggedFileWatcher::onTaggedFileDeleted) };
+    QMetaObject::Connection connection3{ QObject::connect(TagManager::instance(), &TagManager::taggedFileMoved, q, &TaggedFileWatcher::onTaggedFileMoved) };
+
+    return (connection1 && connection2 && connection3);
+}
+
+bool TaggedFileWatcherPrivate::stop()
+{
+    TaggedFileWatcher* q{q_func()};
+    bool value{ QObject::disconnect(TagManager::instance(), 0, q, 0) };
+
+    return value;
+}
+
+
+DAbstractFileWatcher* TagController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent>& event) const
+{
+//    qDebug()<< "be watched url: " << event->url();
+    return (new TaggedFileWatcher{event->url()});
+}
+
+
