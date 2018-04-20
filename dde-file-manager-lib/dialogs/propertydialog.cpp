@@ -50,6 +50,7 @@
 #include "views/dfileview.h"
 #include "interfaces/dfilesystemmodel.h"
 #include "interfaces/dfmsidebar.h"
+#include "interfaces/dfmsidebaritem.h"
 
 #include "plugins/pluginmanager.h"
 #include "../plugininterfaces/menu/menuinterface.h"
@@ -468,9 +469,14 @@ void PropertyDialog::flickFolderToLeftsidBar()
         return;
     }
 
-    QPoint targetPos = window->mapFrom(window->getLeftSideBar(), window->getLeftSideBar()->groupGeometry(DFMSideBar::groupName(DFMSideBar::Network)).center());
-//    QPoint targetPos = window->mapFromGlobal(window->getLeftSideBar()->getMyShareItemCenterPos());
+    // we are actually using network item's position instead of a user share item's.
+    // since it's used as a animation target position, a fuzzy position is okay.
+    const DFMSideBarItem *networkItem = window->getLeftSideBar()->itemAt(DUrl::fromNetworkFile("/"));
+    if (!networkItem) {
+        return;
+    }
 
+    QPoint targetPos = window->getLeftSideBar()->mapTo(window, networkItem->geometry().center());
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
 
     QLabel *aniLabel = new QLabel(window);

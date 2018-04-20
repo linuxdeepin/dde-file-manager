@@ -35,6 +35,7 @@
 #include <QTimer>
 #include <QScrollBar>
 
+#include "dabstractfilewatcher.h"
 #include "singleton.h"
 
 
@@ -58,7 +59,10 @@ public:
 private:
     void initUI();
     void initMountedVolumes();
+    void initUserShareItem();
     void addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::GroupName groupType);
+
+    DAbstractFileWatcher *userShareFileWatcher = nullptr; //< managed by initUserShareItem()
 };
 
 DFMSideBarPrivate::DFMSideBarPrivate(DFMSideBar *qq)
@@ -66,6 +70,7 @@ DFMSideBarPrivate::DFMSideBarPrivate(DFMSideBar *qq)
 {
     initUI();
     initMountedVolumes();
+    initUserShareItem();
 }
 
 void DFMSideBarPrivate::initUI()
@@ -156,7 +161,48 @@ void DFMSideBarPrivate::initMountedVolumes()
     [ = ](const UDiskDeviceInfoPointer & info) {
         DFMSideBarItem *item = group->findItem(info);
         Q_CHECK_PTR(item); // should always find one
-        group->removeItem(item);
+        q->removeItem(item);
+    });
+}
+
+void DFMSideBarPrivate::initUserShareItem()
+{
+    Q_Q(DFMSideBar);
+
+    using DFM_STD_LOCATION = DFMStandardPaths::StandardLocation;
+    DFMSideBarItemGroup *group = groupNameMap[q->groupName(DFMSideBar::GroupName::Network)];
+
+    int count = fileService->getChildren(group, DUrl::fromUserShareFile("/"),
+                                         QStringList(), QDir::AllEntries).count();
+    if (count) {
+        group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::UserShareRootPath));
+    }
+
+    userShareFileWatcher = fileService->createFileWatcher(q, DUrl::fromUserShareFile("/"), q);
+    Q_CHECK_PTR(userShareFileWatcher);
+    userShareFileWatcher->startWatcher();
+
+    auto userShareLambda = [ = ]() {
+        int cnt = fileService->getChildren(group, DUrl::fromUserShareFile("/"),
+                                           QStringList(), QDir::AllEntries).count();
+        DFMSideBarItem *item = group->findItem(DUrl::fromUserShareFile("/"));
+        if (cnt > 0 && item == nullptr) {
+            item = new DFMSideBarDefaultItem(DFM_STD_LOCATION::UserShareRootPath);
+            group->appendItem(item);
+        } else if (cnt == 0 && item) {
+            q->removeItem(item);
+            item = nullptr;
+        }
+
+        return item;
+    };
+
+    q->connect(userShareFileWatcher, &DAbstractFileWatcher::fileDeleted, q, userShareLambda);
+    q->connect(userShareFileWatcher, &DAbstractFileWatcher::subfileCreated, q, [ = ]() {
+        DFMSideBarItem *item = userShareLambda();
+        if (item) {
+            item->playAnimation();
+        }
     });
 }
 
@@ -242,18 +288,17 @@ void DFMSideBar::setCurrentUrl(const DUrl &url)
 {
     Q_D(DFMSideBar);
 
+    qDebug() << d->lastCheckedItem;
     if (d->lastCheckedItem) {
+        qDebug() << d->lastCheckedItem;
         d->lastCheckedItem->setChecked(false);
     }
 
-    for (QString &key : d->groupNameMap.keys()) {
-        DFMSideBarItemGroup *groupPointer = d->groupNameMap.value(key);
-        DFMSideBarItem *item = groupPointer->findItem(url);
-        if (item) {
-            item->setChecked(true);
-            d->lastCheckedItem = item;
-            return;
-        }
+    DFMSideBarItem *item = itemAt(url);
+
+    if (item) {
+        d->lastCheckedItem = item;
+        d->lastCheckedItem->setChecked(true);
     }
 }
 
@@ -369,6 +414,22 @@ DFMSideBarItem *DFMSideBar::itemAt(int index, const QString &group) const
     if (d->groupNameMap.contains(group)) {
         DFMSideBarItemGroup *groupPointer = d->groupNameMap[group];
         return (*groupPointer)[index];
+    }
+
+    return nullptr;
+}
+
+DFMSideBarItem *DFMSideBar::itemAt(const DUrl &url) const
+{
+    Q_D(const DFMSideBar);
+
+    for (QString &key : d->groupNameMap.keys()) {
+        DFMSideBarItemGroup *groupPointer = d->groupNameMap.value(key);
+        DFMSideBarItem *item = groupPointer->findItem(url);
+
+        if (item) {
+            return item;
+        }
     }
 
     return nullptr;

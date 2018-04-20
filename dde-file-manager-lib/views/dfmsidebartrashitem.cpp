@@ -21,6 +21,7 @@
 #include "dfmsidebartrashitem.h"
 
 #include <QMenu>
+#include <QAction>
 
 #include "dfilemanagerwindow.h"
 #include "singleton.h"
@@ -28,6 +29,8 @@
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "views/windowmanager.h"
+#include "controllers/appcontroller.h"
+#include "controllers/trashmanager.h"
 
 DFM_BEGIN_NAMESPACE
 
@@ -50,7 +53,12 @@ QMenu *DFMSideBarTrashItem::createStandardContextMenu() const
         wnd->openNewTab(url());
     });
 
-    menu->addAction(QObject::tr("Empty Trash"));
+    QAction *emptyTrash = new QAction(QObject::tr("Empty Trash"), menu);
+    connect(emptyTrash, &QAction::triggered, this, [this]() {
+        appController->actionClearTrash(this);
+    });
+    emptyTrash->setDisabled(TrashManager::isEmpty());
+    menu->addAction(emptyTrash);
 
     menu->addAction(QObject::tr("Properties"), [this]() {
         DUrlList list;
@@ -59,6 +67,36 @@ QMenu *DFMSideBarTrashItem::createStandardContextMenu() const
     });
 
     return menu;
+}
+
+bool DFMSideBarTrashItem::canDropMimeData(const QMimeData *data, Qt::DropAction action) const
+{
+    Q_UNUSED(action);
+
+    if (data->urls().empty()) {
+        return false;
+    }
+
+    for (const DUrl &url : data->urls()) {
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, url);
+        if (!fileInfo || !fileInfo->isReadable()) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool DFMSideBarTrashItem::dropMimeData(const QMimeData *data, Qt::DropAction action) const
+{
+    DUrlList oriUrlList = DUrl::fromQUrlList(data->urls());
+
+    if (canDropMimeData(data, action)) {
+        fileService->moveToTrash(this, oriUrlList);
+        return true;
+    }
+
+    return false;
 }
 
 DFM_END_NAMESPACE
