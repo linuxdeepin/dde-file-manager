@@ -331,6 +331,11 @@ QString SearchFileInfo::fileDisplayName() const
 
 DUrl SearchFileInfo::mimeDataUrl() const
 {
+    Q_D(const DAbstractFileInfo);
+
+    if (d->proxy)
+        return d->proxy->mimeDataUrl();
+
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(Q_NULLPTR, fileUrl().searchedFileUrl());
 
     if (info)
@@ -341,6 +346,11 @@ DUrl SearchFileInfo::mimeDataUrl() const
 
 QString SearchFileInfo::toLocalFile() const
 {
+    Q_D(const DAbstractFileInfo);
+
+    if (d->proxy)
+        return d->proxy->toLocalFile();
+
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(Q_NULLPTR, fileUrl().searchedFileUrl());
 
     if (info)

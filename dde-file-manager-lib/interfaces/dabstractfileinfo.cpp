@@ -1149,7 +1149,10 @@ QString DAbstractFileInfo::completeSuffix() const
 
 void DAbstractFileInfo::makeToInactive()
 {
-    CALL_PROXY(makeToInactive());
+    Q_D(DAbstractFileInfo);
+
+    if (d->proxy)
+        d->proxy->makeToInactive();
 
     if (!d->active)
         return;
@@ -1182,7 +1185,9 @@ DUrl DAbstractFileInfo::goToUrlWhenDeleted() const
 
 QString DAbstractFileInfo::toLocalFile() const
 {
-    return fileUrl().isLocalFile() ? fileUrl().toLocalFile() : QString();
+    CALL_PROXY(toLocalFile());
+
+    return fileUrl().isLocalFile() ? fileUrl().toLocalFile() : toQFileInfo().absoluteFilePath();
 }
 
 bool DAbstractFileInfo::canDrop() const
@@ -1215,22 +1220,31 @@ bool DAbstractFileInfo::canDrop() const
 
 QFileInfo DAbstractFileInfo::toQFileInfo() const
 {
+    CALL_PROXY(toQFileInfo());
+
     return QFileInfo();
 }
 
 QIODevice *DAbstractFileInfo::createIODevice() const
 {
+    CALL_PROXY(createIODevice());
+
     return 0;
 }
 
 QVariantHash DAbstractFileInfo::extensionPropertys() const
 {
+    CALL_PROXY(extensionPropertys());
+
     return QVariantHash();
 }
 
 void DAbstractFileInfo::makeToActive()
 {
-    CALL_PROXY(makeToActive());
+    Q_D(DAbstractFileInfo);
+
+    if (d->proxy)
+        d->proxy->makeToActive();
 
     if (d->active)
         return;
