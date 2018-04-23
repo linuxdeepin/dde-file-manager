@@ -465,7 +465,7 @@ void ComputerView::initUI()
     m_statusBar->setFixedHeight(22);
     m_statusBar->scalingSlider()->setMaximum(m_iconSizes.count()-1);
     m_statusBar->scalingSlider()->setMinimum(0);
-    m_statusBar->scalingSlider()->setValue(m_currentIconSizeIndex);
+    setIconSizeBySizeIndex(m_currentIconSizeIndex);
     m_statusBar->scalingSlider()->setTickInterval(1);
     m_statusBar->scalingSlider()->setPageStep(1);
 
@@ -830,14 +830,14 @@ void ComputerView::enlargeIcon()
 
     if(m_currentIconSizeIndex < m_iconSizes.count() - 1)
         ++m_currentIconSizeIndex;
-    m_statusBar->scalingSlider()->setValue(m_currentIconSizeIndex);
+    setIconSizeBySizeIndex(m_currentIconSizeIndex);
 }
 
 void ComputerView::shrinkIcon()
 {
     if(m_currentIconSizeIndex > 0)
         --m_currentIconSizeIndex;
-    m_statusBar->scalingSlider()->setValue(m_currentIconSizeIndex);
+    setIconSizeBySizeIndex(m_currentIconSizeIndex);
 }
 
 void ComputerView::resizeAllItemsBySizeIndex(int index)
@@ -853,7 +853,7 @@ void ComputerView::resizeAllItemsBySizeIndex(int index)
     }
 
     m_currentIconSizeIndex = index;
-    m_statusBar->scalingSlider()->setValue(index);
+    setIconSizeBySizeIndex(index);
 }
 
 void ComputerView::updateItemBySizeIndex(const int &index, ComputerViewItem *item)
@@ -1022,6 +1022,13 @@ void ComputerView::keyPressEvent(QKeyEvent *event)
     }
 
     QFrame::keyPressEvent(event);
+}
+
+void ComputerView::setIconSizeBySizeIndex(int index)
+{
+    QSignalBlocker blocker(m_statusBar->scalingSlider());
+    Q_UNUSED(blocker)
+    m_statusBar->scalingSlider()->setValue(index);
 }
 
 DScrollArea::DScrollArea(QWidget *parent):

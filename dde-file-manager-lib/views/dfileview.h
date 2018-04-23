@@ -102,9 +102,6 @@ public:
     ViewMode getDefaultViewMode() const;
     ViewMode viewMode() const;
 
-    QPair<int, Qt::SortOrder> getSortRoles() const;
-    void setSortRoles(const int& role, const Qt::SortOrder& order);
-
     bool testViewMode(ViewModes modes, ViewMode mode) const;
 
     int horizontalOffset() const Q_DECL_OVERRIDE;

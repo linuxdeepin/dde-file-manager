@@ -172,7 +172,7 @@ DFileView::DFileView(QWidget *parent)
     initDelegate();
     initConnects();
 
-    d->statusBar->scalingSlider()->setValue(globalSetting->iconSizeIndex());
+    setIconSizeBySizeIndex(globalSetting->iconSizeIndex());
     d->updateStatusBarTimer = new QTimer;
     d->updateStatusBarTimer->setInterval(100);
     d->updateStatusBarTimer->setSingleShot(true);
@@ -329,16 +329,6 @@ DFileView::ViewMode DFileView::viewMode() const
     D_DC(DFileView);
 
     return d->currentViewMode;
-}
-
-QPair<int, Qt::SortOrder> DFileView::getSortRoles() const
-{
-    return QPair<int, Qt::SortOrder>(model()->sortRole(), model()->sortOrder());
-}
-
-void DFileView::setSortRoles(const int &role, const Qt::SortOrder &order)
-{
-    model()->setSortRole(role, order);
 }
 
 bool DFileView::testViewMode(ViewModes modes, DFileView::ViewMode mode) const
@@ -652,6 +642,28 @@ void DFileView::setDefaultViewMode(DFileView::ViewMode mode)
 {
     Q_D(DFileView);
     d->defaultViewMode = mode;
+
+    const DUrl &root_url = rootUrl();
+
+    if (!root_url.isValid())
+        return;
+
+    ViewState viewState = viewStatesManager->viewstate(root_url);
+
+    if (viewState.isValid())
+        return;
+
+    DAbstractFileInfoPointer info = model()->fileInfo(rootIndex());
+
+    if (!info)
+        return;
+
+    ViewModes modes = (ViewModes)info->supportViewMode();
+
+    //view mode support handler
+    if (modes & mode) {
+        switchViewMode(mode);
+    }
 }
 
 void DFileView::setViewMode(DFileView::ViewMode mode)
@@ -675,7 +687,6 @@ void DFileView::sort(int column, Qt::SortOrder order)
 
     clearSelection();
     model()->sort();
-    emit viewStateChanged();
 }
 
 void DFileView::sortByRole(int role, Qt::SortOrder order)
@@ -697,8 +708,6 @@ void DFileView::sortByRole(int role, Qt::SortOrder order)
         Q_UNUSED(blocker)
         d->headerView->setSortIndicator(model()->sortColumn(), model()->sortOrder());
     }
-
-    emit viewStateChanged();
 }
 
 QStringList DFileView::nameFilters() const
@@ -1176,7 +1185,10 @@ void DFileView::openIndexByOpenAction(const int& action, const QModelIndex &inde
 
 void DFileView::setIconSizeBySizeIndex(const int &sizeIndex)
 {
+    QSignalBlocker blocker(statusBar()->scalingSlider());
+    Q_UNUSED(blocker)
     statusBar()->scalingSlider()->setValue(sizeIndex);
+    itemDelegate()->setIconSizeByIconSizeLevel(sizeIndex);
 }
 
 
@@ -1217,11 +1229,14 @@ void DFileView::loadViewState(const DUrl& url)
 
     if(viewState.isValid()){
         switchViewMode(viewState.viewMode);
-        setSortRoles(viewState.sortRole, viewState.sortOrder);
-        if(viewState.viewMode != ListMode)
-            d->statusBar->scalingSlider()->setValue(viewState.iconSize);
+        //TODO(zccrs) see: FMStateManager::cacheSortState
+//        model()->setSortRole(viewState.sortRole, viewState.sortOrder);
+
+        if (viewState.viewMode != ListMode) {
+            setIconSizeBySizeIndex(viewState.iconSize);
+        }
     } else{
-        statusBar()->scalingSlider()->setValue(globalSetting->iconSizeIndex());
+        setIconSizeBySizeIndex(globalSetting->iconSizeIndex());
         switchViewMode(d->defaultViewMode);
     }
 
@@ -1241,11 +1256,12 @@ void DFileView::saveViewState()
     }
 
     ViewState viewState;
-    QPair<int, Qt::SortOrder> roles = getSortRoles();
+//    QPair<int, Qt::SortOrder> roles = qMakePair(model()->sortRole(), model()->sortOrder());
     viewState.viewMode = viewMode();
     viewState.iconSize = statusBar()->scalingSlider()->value();
-    viewState.sortRole = roles.first;
-    viewState.sortOrder = roles.second;
+    //TODO(zccrs) see: FMStateManager::cacheSortState
+//    viewState.sortRole = roles.first;
+//    viewState.sortOrder = roles.second;
 
     viewStatesManager->saveViewState(url, viewState);
 }
@@ -1665,7 +1681,7 @@ void DFileView::initDelegate()
     D_D(DFileView);
 
     setItemDelegate(new DIconItemDelegate(d->fileViewHelper));
-    d->statusBar->scalingSlider()->setValue(itemDelegate()->iconSizeLevel());
+    setIconSizeBySizeIndex(itemDelegate()->iconSizeLevel());
 }
 
 void DFileView::initUI()
@@ -1779,10 +1795,7 @@ void DFileView::increaseIcon()
     int iconSizeLevel = itemDelegate()->increaseIcon();
 
     if (iconSizeLevel >= 0) {
-        QSignalBlocker blocker(d->statusBar->scalingSlider());
-
-        Q_UNUSED(blocker)
-        d->statusBar->scalingSlider()->setValue(iconSizeLevel);
+        setIconSizeBySizeIndex(iconSizeLevel);
     }
 }
 
@@ -1793,10 +1806,7 @@ void DFileView::decreaseIcon()
     int iconSizeLevel = itemDelegate()->decreaseIcon();
 
     if (iconSizeLevel >= 0) {
-        QSignalBlocker blocker(d->statusBar->scalingSlider());
-
-        Q_UNUSED(blocker)
-        d->statusBar->scalingSlider()->setValue(iconSizeLevel);
+        setIconSizeBySizeIndex(iconSizeLevel);
     }
 }
 
