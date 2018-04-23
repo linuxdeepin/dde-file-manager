@@ -190,6 +190,8 @@ protected:
     void showEvent(QShowEvent* event);
     void keyPressEvent(QKeyEvent* event);
 
+    void setIconSizeBySizeIndex(int index);
+
 private:
     QString m_viewId;
     TitleLine* m_systemTitleLine=NULL;
