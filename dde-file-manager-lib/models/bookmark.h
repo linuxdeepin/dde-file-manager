@@ -38,19 +38,23 @@ class BookMark : public DFileInfo
 {
 public:
     BookMark(const DUrl &url);
-    BookMark(QDateTime time, const QString &name, const DUrl &url);
+    BookMark(QDateTime time, const QString &name, const DUrl &sourceUrl);
     ~BookMark();
     QDateTime getDateTime();
-    inline DUrl getUrl()
-    {return fileUrl();}
+    DUrl sourceUrl() const;
     void setDateTime(QDateTime time);
     void setName(const QString &name);
-    QString getName();
+    QString getName() const;
     QString getDevcieId() const;
     void setDevcieId(const QString &devcieId);
 
     QString getUuid() const;
     void setUuid(const QString &uuid);
+
+    QString fileDisplayName() const Q_DECL_OVERRIDE;
+
+    bool canRedirectionFileUrl() const Q_DECL_OVERRIDE;
+    DUrl redirectedFileUrl() const Q_DECL_OVERRIDE;
 
 private:
     QDateTime m_time;

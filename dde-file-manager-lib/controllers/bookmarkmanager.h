@@ -45,10 +45,16 @@ public:
     ~BookMarkManager();
 
     void load();
-    void save();
+    void save() const;
     QList<BookMarkPointer> getBookmarks();
 
+    bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const Q_DECL_OVERRIDE;
+    bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const Q_DECL_OVERRIDE;
+    bool touch(const QSharedPointer<DFMTouchFileEvent> &event) const Q_DECL_OVERRIDE;
 
+    const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const Q_DECL_OVERRIDE;
+    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const Q_DECL_OVERRIDE;
+    DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
 
     ///###: tag protocol. Maybe will be used later.
 //    void appendBookmark(QExplicitlySharedDataPointer<BookMark> bookmarkPointer)noexcept;
@@ -59,23 +65,19 @@ public:
     static QString cachePath();
 private:
     void loadJson(const QJsonObject &json);
-    void writeJson(QJsonObject &json);
+    void writeJson(QJsonObject &json) const;
+    BookMarkPointer findBookmark(const DUrl &url) const;
     QList<BookMarkPointer> m_bookmarks;
 
 //    std::deque<QExplicitlySharedDataPointer<BookMark>> m_tagBookmarks{};
 
 public slots:
-    BookMarkPointer writeIntoBookmark(int index, const QString &name, const DUrl &url);
-    void removeBookmark(BookMarkPointer bookmark);
-    void renameBookmark(BookMarkPointer bookmark, const QString &newname);
+    Q_DECL_DEPRECATED void removeBookmark(BookMarkPointer bookmark);
+    Q_DECL_DEPRECATED void renameBookmark(BookMarkPointer bookmark, const QString &newname);
     void moveBookmark(int from, int to);
     // AbstractFileController interface
 
     void reLoad();
-
-public:
-    const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const Q_DECL_OVERRIDE;
-    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const Q_DECL_OVERRIDE;
 };
 
 #endif // BOOKMARKMANAGER_H

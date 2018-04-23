@@ -31,10 +31,9 @@
 
 DFM_BEGIN_NAMESPACE
 
-DFMSideBarBookmarkItem::DFMSideBarBookmarkItem(BookMarkPointer bookmark)
-    : DFMSideBarItem(bookmark->getUrl())
+DFMSideBarBookmarkItem::DFMSideBarBookmarkItem(const DUrl &url)
+    : DFMSideBarItem(url)
 {
-    setText(bookmark->getName());
     setIconFromThemeConfig("BookmarkItem.BookMarks", "icon");
     setReorderable(true);
 }
@@ -44,7 +43,7 @@ QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
     // this part could be duplicate since it seems every sidebar item should got
     // a new window/tab option and a properties option. maybe we need a menu manager
     // or other workaround?
-    QMenu *menu = new QMenu(const_cast<DFMSideBarBookmarkItem *>(this));
+    QMenu *menu = new QMenu();
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
 
     menu->addAction(QObject::tr("Open in new window"), [this]() {
@@ -61,12 +60,15 @@ QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
     });
 
     menu->addAction(QObject::tr("Remove"), [ = ]() {
-        qDebug() << url();
+        fileService->deleteFiles(this, DUrlList{url()}, true);
     });
 
     menu->addAction(QObject::tr("Properties"), [this]() {
         DUrlList list;
-        list.append(url());
+
+        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url());
+
+        list.append(info->redirectedFileUrl());
         fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(this, list));
     });
 

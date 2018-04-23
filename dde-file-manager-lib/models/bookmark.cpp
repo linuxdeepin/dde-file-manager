@@ -26,15 +26,13 @@
 #include <QIcon>
 
 BookMark::BookMark(const DUrl &url)
-    : DFileInfo(({DUrl tmp_url = DUrl::fromBookMarkFile("/");
-                          tmp_url.setFragment(url.toLocalFile());
-                          tmp_url;}))
+    : DFileInfo(url)
 {
-
+    m_name = url.fragment();
 }
 
-BookMark::BookMark(QDateTime time, const QString &name, const DUrl &url)
-    :DFileInfo(url)
+BookMark::BookMark(QDateTime time, const QString &name, const DUrl &sourceUrl)
+    : DFileInfo(DUrl::fromBookMarkFile(sourceUrl.toString(), name))
 {
     m_time = time;
     m_name = name;
@@ -50,6 +48,11 @@ QDateTime BookMark::getDateTime()
     return m_time;
 }
 
+DUrl BookMark::sourceUrl() const
+{
+    return DUrl(fileUrl().path());
+}
+
 void BookMark::setDateTime(QDateTime time)
 {
     m_time = time;
@@ -60,7 +63,7 @@ void BookMark::setName(const QString &name)
     m_name = name;
 }
 
-QString BookMark::getName()
+QString BookMark::getName() const
 {
     return m_name;
 }
@@ -83,4 +86,19 @@ QString BookMark::getUuid() const
 void BookMark::setUuid(const QString &uuid)
 {
     m_uuid = uuid;
+}
+
+QString BookMark::fileDisplayName() const
+{
+    return getName();
+}
+
+bool BookMark::canRedirectionFileUrl() const
+{
+    return true;
+}
+
+DUrl BookMark::redirectedFileUrl() const
+{
+    return sourceUrl();
 }

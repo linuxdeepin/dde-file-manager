@@ -99,6 +99,8 @@ void DFMSideBarItemGroup::removeItem(int index)
         itemConnectionUnregister(item);
         item->deleteLater();
     }
+
+    bottomSeparator->setVisible(itemList.count() != 0);
 }
 
 /*!
@@ -114,6 +116,8 @@ void DFMSideBarItemGroup::removeItem(DFMSideBarItem *item)
     itemHolder->removeWidget(item);
     itemConnectionUnregister(item);
     item->deleteLater();
+
+    bottomSeparator->setVisible(itemList.count() != 0);
 }
 
 /*!
@@ -183,6 +187,8 @@ DFMSideBarItem *DFMSideBarItemGroup::takeItem(int index)
         item->setGroupName(QString());
     }
 
+    bottomSeparator->setVisible(itemList.count() != 0);
+
     return item;
 }
 
@@ -192,6 +198,8 @@ DFMSideBarItem *DFMSideBarItemGroup::takeItem(DFMSideBarItem *item)
     itemHolder->removeWidget(item);
     itemConnectionUnregister(item);
     item->setGroupName(QString());
+
+    bottomSeparator->setVisible(itemList.count() != 0);
 
     return item;
 }

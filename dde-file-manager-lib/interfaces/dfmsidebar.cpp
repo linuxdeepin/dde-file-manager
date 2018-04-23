@@ -228,10 +228,43 @@ void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::G
         group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::Root)); // TODO: check dfmPlatformManager->isRoot_hidden()
         break;
     case DFMSideBar::GroupName::Bookmark: {
-        const QList<BookMarkPointer> &m_list = bookmarkManager->getBookmarks();
-        for (const BookMarkPointer &bm : m_list) {
-            group->appendItem(new DFMSideBarBookmarkItem(bm));
+        auto bookmark_infos = DFileService::instance()->getChildren(q_func(), DUrl(BOOKMARK_ROOT),
+                              QStringList(), QDir::AllEntries);
+
+        for (const DAbstractFileInfoPointer &info : bookmark_infos) {
+            group->appendItem(new DFMSideBarBookmarkItem(info->fileUrl()));
         }
+
+        DAbstractFileWatcher *bookmark_watcher = DFileService::instance()->createFileWatcher(q_func(), DUrl(BOOKMARK_ROOT), group);
+
+        QObject::connect(bookmark_watcher, &DAbstractFileWatcher::subfileCreated, group, [group](const DUrl & url) {
+            qDebug() << url << "--------------------";
+
+            group->appendItem(new DFMSideBarBookmarkItem(url));
+        });
+
+        QObject::connect(bookmark_watcher, &DAbstractFileWatcher::fileDeleted, group, [this](const DUrl & url) {
+            Q_Q(DFMSideBar);
+
+            DFMSideBarItem *item = q->itemAt(url);
+
+            if (item) {
+                q->removeItem(item);
+            }
+        });
+
+        QObject::connect(bookmark_watcher, &DAbstractFileWatcher::fileMoved, group, [this, group](const DUrl & source, const DUrl & target) {
+            Q_Q(DFMSideBar);
+
+            DFMSideBarItem *item = q->itemAt(source);
+
+            if (item) {
+                item->setUrl(target);
+            }
+        });
+
+        bookmark_watcher->startWatcher();
+
         break;
     }
     case DFMSideBar::GroupName::Network:
@@ -303,7 +336,7 @@ void DFMSideBar::setCurrentUrl(const DUrl &url)
 
 void DFMSideBar::setDisableUrlSchemes(const QStringList &schemes)
 {
-
+    Q_UNUSED(schemes);
 }
 
 /*!
@@ -428,6 +461,22 @@ DFMSideBarItem *DFMSideBar::itemAt(const DUrl &url) const
 
         if (item) {
             return item;
+        }
+    }
+
+    // fallback
+    for (QString &key : d->groupNameMap.keys()) {
+        DFMSideBarItemGroup *groupPointer = d->groupNameMap.value(key);
+
+        for (int i = 0; i < groupPointer->itemCount(); ++i) {
+            DFMSideBarItem *item = (*groupPointer)[i];
+            const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, item->url());
+
+            if (info && info->canRedirectionFileUrl()) {
+                if (info->redirectedFileUrl() == url) {
+                    return item;
+                }
+            }
         }
     }
 
