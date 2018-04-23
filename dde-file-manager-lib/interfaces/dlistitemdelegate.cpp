@@ -90,6 +90,7 @@ void DListItemDelegate::paint(QPainter *painter,
         path.addRoundedRect(opt.rect, LIST_MODE_RECT_RADIUS, LIST_MODE_RECT_RADIUS);
 
         painter->save();
+        painter->setOpacity(1);
         painter->setRenderHint(QPainter::Antialiasing);
         painter->fillPath(path, opt.backgroundBrush);
         painter->restore();

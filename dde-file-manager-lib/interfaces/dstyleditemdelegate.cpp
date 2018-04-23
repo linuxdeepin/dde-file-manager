@@ -161,25 +161,25 @@ QRect DStyledItemDelegate::drawText(const QModelIndex &index, QPainter *painter,
     QRegion boundingRegion;
     DFMGlobal::elideText(layout, boundingRect.size(), wordWrap, mode, lineHeight, flags, 0,
                          painter, boundingRect.topLeft(), shadowColor, QPointF(0, 1),
-                         background, &boundingRegion);
+                         background, radius, &boundingRegion);
 
-    if (background != Qt::NoBrush && painter) {
-        QPainterPath background_path;
-        QPainterPath text_path;
+//    if (background != Qt::NoBrush && painter) {
+//        QPainterPath background_path;
+//        QPainterPath text_path;
 
-        const QMargins text_margin(backgroundMargins, backgroundMargins, backgroundMargins, backgroundMargins);
+//        const QMargins text_margin(backgroundMargins, backgroundMargins, backgroundMargins, backgroundMargins);
 
-        background_path.addRoundedRect(boundingRegion.boundingRect() + text_margin, radius, radius);
-        text_path.addRegion(boundingRegion);
+//        background_path.addRoundedRect(boundingRegion.boundingRect() + text_margin, radius, radius);
+//        text_path.addRegion(boundingRegion);
 
-        // save
-        const QPainter::RenderHints hs = painter->renderHints();
+//        // save
+//        const QPainter::RenderHints hs = painter->renderHints();
 
-        painter->setRenderHints(QPainter::Antialiasing);
-        painter->fillPath(background_path - text_path, background);
-        // restore
-        painter->setRenderHints(hs);
-    }
+//        painter->setRenderHints(QPainter::Antialiasing);
+//        painter->fillPath(background_path - text_path, background);
+//        // restore
+//        painter->setRenderHints(hs);
+//    }
 
     return boundingRegion.boundingRect();
 }

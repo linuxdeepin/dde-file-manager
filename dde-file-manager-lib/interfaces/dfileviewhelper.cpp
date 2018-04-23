@@ -393,7 +393,9 @@ void DFileViewHelper::initStyleOption(QStyleOptionViewItem *option, const QModel
     option->palette.setColor(QPalette::BrightText, Qt::white);
     option->palette.setBrush(QPalette::Shadow, ThemeConfig::instace()->color("FileView", "shadow"));
 
-    if ((option->state & QStyle::State_HasFocus) && option->showDecorationSelected && selectedIndexsCount() > 1) {
+    if (isCut(index)) {
+        option->backgroundBrush = ThemeConfig::instace()->color("FileView", "background", ThemeConfig::Inactive);
+    } else if ((option->state & QStyle::State_HasFocus) && option->showDecorationSelected && selectedIndexsCount() > 1) {
         option->backgroundBrush = ThemeConfig::instace()->color("FileView", "background", ThemeConfig::Focus);
     } else {
         option->backgroundBrush = ThemeConfig::instace()->color("FileView", "background");
