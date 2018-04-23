@@ -486,7 +486,8 @@ void DIconItemDelegate::paint(QPainter *painter,
 
     if (isSelected || !d->enabledTextShadow) {
         const QRect &boundingRect = drawText(index, painter, str, label_rect, TEXT_PADDING, ICON_MODE_RECT_RADIUS,
-                                             isSelected ? opt.backgroundBrush : QBrush(Qt::NoBrush), d->textLineHeight);
+                                             isSelected ? opt.backgroundBrush : QBrush(Qt::NoBrush), d->textLineHeight,
+                                             QTextOption::WrapAtWordBoundaryOrAnywhere, opt.textElideMode, Qt::AlignCenter);
 
         const QColor &border_color = focusTextBackgroundBorderColor();
 
@@ -505,7 +506,8 @@ void DIconItemDelegate::paint(QPainter *painter,
         p.setPen(painter->pen());
         p.setFont(painter->font());
         drawText(index, &p, str, QRect(QPoint(0, 0), text_image.size()), TEXT_PADDING,
-                 ICON_MODE_RECT_RADIUS, QBrush(Qt::NoBrush), d->textLineHeight);
+                 ICON_MODE_RECT_RADIUS, QBrush(Qt::NoBrush), d->textLineHeight,
+                 QTextOption::WrapAtWordBoundaryOrAnywhere, opt.textElideMode, Qt::AlignCenter);
         p.end();
 
         QPixmap text_pixmap = QPixmap::fromImage(text_image);
@@ -685,6 +687,8 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 
     QRect label_rect = option.rect;
 
+    label_rect.setWidth(label_rect.width() - 2 * TEXT_PADDING);
+    label_rect.moveLeft(label_rect.left() + TEXT_PADDING);
     label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
 
     QStyleOptionViewItem opt = option;
@@ -730,19 +734,17 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 //    label_rect = option.fontMetrics.boundingRect(label_rect, Qt::AlignHCenter, str);
 
     QTextLayout text_layout;
-    QRegion text_region;
 
     text_layout.setFont(option.font);
     text_layout.setText(str);
 
     bool elide = (!isSelected || !singleSelected);
 
-    DFMGlobal::elideText(&text_layout, QSize(label_rect.width(), elide ? label_rect.height() : INT_MAX),
-                         QTextOption::WrapAtWordBoundaryOrAnywhere, elide ? Qt::ElideMiddle : Qt::ElideNone,
-                         d->textLineHeight, Qt::AlignCenter, 0, 0, label_rect.topLeft(), QColor(), QPointF(0, 0),
-                         QBrush(Qt::NoBrush), &text_region);
+    label_rect = drawText(index, nullptr, str, QRect(label_rect.topLeft(), QSize(label_rect.width(), INT_MAX)),
+                          TEXT_PADDING, ICON_MODE_RECT_RADIUS, isSelected ? opt.backgroundBrush : QBrush(Qt::NoBrush),
+                          d->textLineHeight, QTextOption::WrapAtWordBoundaryOrAnywhere, elide ? opt.textElideMode : Qt::ElideNone,
+                          Qt::AlignCenter);
 
-    label_rect = text_region.boundingRect();
     label_rect.setTop(icon_rect.bottom());
 
     geometries << label_rect;
