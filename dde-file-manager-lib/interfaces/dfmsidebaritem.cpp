@@ -108,10 +108,12 @@ void DFMSideBarItemPrivate::init()
     contentLayout->setAlignment(Qt::AlignRight);
     contentLayout->setContentsMargins(0, 0, SIDEBAR_ITEM_PADDING, 0);
 
-    // this approach seems bad, maybe manually set the name is a better idea.
-    // and seems DUrl should add a method to generate standard urls directly by a name or enum.
+    // leave url a default display name.
     DAbstractFileInfoPointer file_info = DFileService::instance()->createFileInfo(q, url);
+
     if (file_info) {
+        qDebug() << file_info->fileDisplayName() << url;
+
         displayText = file_info->fileDisplayName();
     }
 
@@ -384,7 +386,18 @@ void DFMSideBarItem::setUrl(DUrl url)
 {
     Q_D(DFMSideBarItem);
 
+    if (d->url == url) {
+        return;
+    }
+
     d->url = url;
+
+    DAbstractFileInfoPointer file_info = DFileService::instance()->createFileInfo(this, url);
+
+    if (file_info) {
+        d->displayText = file_info->fileDisplayName();
+        update();
+    }
 }
 
 QMenu *DFMSideBarItem::createStandardContextMenu() const

@@ -101,7 +101,7 @@ DBookmarkItem::DBookmarkItem(BookMark *bookmark)
     : DBookmarkItem("BookMarks")
 {
     m_isDefault = false;
-    m_url = bookmark->getUrl();
+    m_url = bookmark->sourceUrl();
     m_textContent = bookmark->getName();
 }
 

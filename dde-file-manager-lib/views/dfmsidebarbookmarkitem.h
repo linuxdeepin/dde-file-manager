@@ -24,8 +24,6 @@
 #include <dfmglobal.h>
 #include <dfmsidebaritem.h>
 
-#include "controllers/bookmarkmanager.h"
-
 DFM_BEGIN_NAMESPACE
 
 class DFMSideBarBookmarkItem : public DFMSideBarItem
@@ -33,7 +31,7 @@ class DFMSideBarBookmarkItem : public DFMSideBarItem
     Q_OBJECT
 
 public:
-    DFMSideBarBookmarkItem(BookMarkPointer bookmark);
+    DFMSideBarBookmarkItem(const DUrl &url);
 
 protected:
     virtual QMenu *createStandardContextMenu() const Q_DECL_OVERRIDE;

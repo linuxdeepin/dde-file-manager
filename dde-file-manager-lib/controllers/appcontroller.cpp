@@ -126,25 +126,27 @@ void AppController::registerUrlHandle()
 
 void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
-    const DUrlList& urls = event->urlList();
+    const DUrlList &urls = event->urlList();
 
-    if (urls.isEmpty())
+    if (urls.isEmpty()) {
         return;
+    }
 
-    if (urls.size() > 1 || globalSetting->isAllwayOpenOnNewWindow())
+    if (urls.size() > 1 || globalSetting->isAllwayOpenOnNewWindow()) {
         DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::ForceOpenNewWindow);
-     else
+    } else {
         DFMEventDispatcher::instance()->processEventAsync<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::OpenInCurrentWindow);
+    }
 }
 
 void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    const DUrl& fileUrl = event->url();
+    const DUrl &fileUrl = event->url();
     QString id = fileUrl.query();
 
-    if (!id.isEmpty()){
-        const QDiskInfo& diskInfo = gvfsMountManager->getDiskInfo(id);
-        if (diskInfo.can_mount()){
+    if (!id.isEmpty()) {
+        const QDiskInfo &diskInfo = gvfsMountManager->getDiskInfo(id);
+        if (diskInfo.can_mount()) {
             m_fmEvent = event;
             setEventKey(Open);
             actionMount(event);
@@ -180,19 +182,19 @@ void AppController::actionOpenInNewTab(const QSharedPointer<DFMUrlBaseEvent> &ev
 
 void AppController::actionOpenDiskInNewTab(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    const DUrl& fileUrl = event->url();
-    if (!QStorageInfo(fileUrl.toLocalFile()).isValid()){
+    const DUrl &fileUrl = event->url();
+    if (!QStorageInfo(fileUrl.toLocalFile()).isValid()) {
         m_fmEvent = event;
         actionMount(event);
         setEventKey(OpenNewTab);
         deviceListener->addSubscriber(this);
-    }else{
+    } else {
         //FIXME(zccrs): 为了菜单中能卸载/挂载U盘，url中被设置了query字段，今后应该将此字段移动到继承的FMEvent中
         DUrl newUrl = fileUrl;
 
         newUrl.setQuery(QString());
 
-       actionOpenInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), newUrl));
+        actionOpenInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), newUrl));
     }
 }
 
@@ -204,13 +206,13 @@ void AppController::asycOpenDiskInNewTab(const QString &path)
 
 void AppController::actionOpenDiskInNewWindow(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    const DUrl& fileUrl = event->url();
-    if (!QStorageInfo(fileUrl.toLocalFile()).isValid()){
+    const DUrl &fileUrl = event->url();
+    if (!QStorageInfo(fileUrl.toLocalFile()).isValid()) {
         m_fmEvent = event;
         actionMount(event);
         setEventKey(OpenNewWindow);
         deviceListener->addSubscriber(this);
-    }else{
+    } else {
         //FIXME(zccrs): 为了菜单中能卸载/挂载U盘，url中被设置了query字段，今后应该将此字段移动到继承的FMEvent中
         DUrl newUrl = fileUrl;
 
@@ -246,7 +248,7 @@ void AppController::actionOpenWithCustom(const QSharedPointer<DFMUrlBaseEvent> &
 
 void AppController::actionOpenFileLocation(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
-    const DUrlList& urls = event->urlList();
+    const DUrlList &urls = event->urlList();
     foreach (const DUrl &url, urls) {
         fileService->openFileLocation(event->sender(), url);
     }
@@ -286,11 +288,11 @@ void AppController::actionPaste(const QSharedPointer<DFMUrlBaseEvent> &event)
 void AppController::actionRename(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
     DUrlList urlList{ event->urlList() };
-    if(urlList.size() == 1){ //###: for one file.
+    if (urlList.size() == 1) { //###: for one file.
         QSharedPointer<DFMUrlBaseEvent> singleFileEvent{ dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), urlList.first()) };
         emit fileSignalManager->requestRename(*singleFileEvent);
 
-    }else{ //###: for more than one file.
+    } else { //###: for more than one file.
         emit fileSignalManager->requestMultiFilesRename(*event);
     }
 }
@@ -328,20 +330,20 @@ void AppController::actionSendToDesktop(const QSharedPointer<DFMUrlListBaseEvent
 void AppController::actionAddToBookMark(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     DUrl fileUrl = event->url();
-    const DAbstractFileInfoPointer& p = fileService->createFileInfo(NULL, fileUrl);
-    if (p->canRedirectionFileUrl()){
-        fileUrl = p->redirectedFileUrl();
-    }
+    const DAbstractFileInfoPointer &p = fileService->createFileInfo(NULL, fileUrl);
+//    if (p->canRedirectionFileUrl()) {
+//        fileUrl = p->redirectedFileUrl();
+//    }
 
-    QString dirName = QDir(fileUrl.path()).dirName();
-    bookmarkManager->writeIntoBookmark(0, dirName, fileUrl);
-    emit fileSignalManager->requestBookmarkAdd(dirName, DFMUrlBaseEvent(event->sender(), fileUrl));
+//    bookmarkManager->writeIntoBookmark(0, dirName, fileUrl);
+//    emit fileSignalManager->requestBookmarkAdd(dirName, DFMUrlBaseEvent(event->sender(), fileUrl));
+    DFileService::instance()->touchFile(event->sender(), DUrl::fromBookMarkFile(fileUrl.toString(), p->fileDisplayName()));
 }
 
 void AppController::actionNewFolder(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const QString targetDir = event->url().toLocalFile();
-    const QString name = FileUtils::newDocmentName(targetDir, tr("New Folder") , QString());
+    const QString name = FileUtils::newDocmentName(targetDir, tr("New Folder"), QString());
 
     fileService->mkdir(event->sender(), DUrl::fromLocalFile(name));
 }
@@ -363,14 +365,14 @@ void AppController::actionClearTrash(const QObject *sender)
 
     bool ret = fileService->deleteFiles(sender, list);
 
-    if(ret){
+    if (ret) {
         DFMGlobal::playSound(QUrl::fromLocalFile("/usr/share/sounds/deepin/stereo/trash-empty.ogg"));
     }
 }
 
 void AppController::actionNewWord(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    const DUrl& fileUrl = event->url();
+    const DUrl &fileUrl = event->url();
     int windowId = event->windowId();
 //    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("Document"), "doc");
 //    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
@@ -379,7 +381,7 @@ void AppController::actionNewWord(const QSharedPointer<DFMUrlBaseEvent> &event)
 
 void AppController::actionNewExcel(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    const DUrl& fileUrl = event->url();
+    const DUrl &fileUrl = event->url();
     int windowId = event->windowId();
 //    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("Spreadsheet"), "xls");
 //    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
@@ -388,7 +390,7 @@ void AppController::actionNewExcel(const QSharedPointer<DFMUrlBaseEvent> &event)
 
 void AppController::actionNewPowerpoint(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    const DUrl& fileUrl = event->url();
+    const DUrl &fileUrl = event->url();
     int windowId = event->windowId();
 //    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("Presentation"), "ppt");
 //    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
@@ -397,7 +399,7 @@ void AppController::actionNewPowerpoint(const QSharedPointer<DFMUrlBaseEvent> &e
 
 void AppController::actionNewText(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    const DUrl& fileUrl = event->url();
+    const DUrl &fileUrl = event->url();
     int windowId = event->windowId();
 //    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("Text"), "txt");
 //    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
@@ -406,13 +408,13 @@ void AppController::actionNewText(const QSharedPointer<DFMUrlBaseEvent> &event)
 
 void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    const DUrl& fileUrl = event->url();
+    const DUrl &fileUrl = event->url();
     deviceListener->mount(fileUrl.query());
 }
 
 void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    const DUrl& fileUrl = event->url();
+    const DUrl &fileUrl = event->url();
     deviceListener->unmount(fileUrl.query(DUrl::FullyEncoded));
 }
 
@@ -428,23 +430,23 @@ void AppController::actionRestoreAll(const QSharedPointer<DFMUrlBaseEvent> &even
 
 void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    const DUrl& fileUrl = event->url();
+    const DUrl &fileUrl = event->url();
     deviceListener->eject(fileUrl.query(DUrl::FullyEncoded));
 }
 
 void AppController::actionSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    const DUrl& fileUrl = event->url();
+    const DUrl &fileUrl = event->url();
     QString unix_device = fileUrl.query(DUrl::FullyEncoded);
     QString drive_unix_device = gvfsMountManager->getDriveUnixDevice(unix_device);
-    if (!drive_unix_device.isEmpty()){
+    if (!drive_unix_device.isEmpty()) {
         gvfsMountManager->stop_device(drive_unix_device);
     }
 }
 
 void AppController::actionOpenInTerminal(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
-    for (const DUrl &url: event->urlList()) {
+    for (const DUrl &url : event->urlList()) {
         fileService->openInTerminal(event->sender(), url);
     }
 }
@@ -453,36 +455,36 @@ void AppController::actionProperty(const QSharedPointer<DFMUrlListBaseEvent> &ev
 {
     DUrlList urlList = event->urlList();
 
-    foreach (const DUrl& url, urlList) {
+    foreach (const DUrl &url, urlList) {
         DUrl realTargetUrl = url;
 
         //consider symlink file that links to trash/computer desktop files
-        const DAbstractFileInfoPointer& info = fileService->createFileInfo(event->sender(), url);
-        if(info && info->isSymLink()){
+        const DAbstractFileInfoPointer &info = fileService->createFileInfo(event->sender(), url);
+        if (info && info->isSymLink()) {
             realTargetUrl = info->rootSymLinkTarget();
         }
 
-        if(realTargetUrl.toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX)){
+        if (realTargetUrl.toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX)) {
             DesktopFile df(realTargetUrl.toLocalFile());
-            if(df.getDeepinId() == "dde-trash"){
+            if (df.getDeepinId() == "dde-trash") {
                 dialogManager->showTrashPropertyDialog(DFMUrlBaseEvent(event->sender(), realTargetUrl));
                 urlList.removeOne(url);
-            } else if(df.getDeepinId() == "dde-computer"){
+            } else if (df.getDeepinId() == "dde-computer") {
                 dialogManager->showComputerPropertyDialog();
                 urlList.removeOne(url);
             }
         }
     }
 
-    if(urlList.isEmpty())
+    if (urlList.isEmpty()) {
         return;
+    }
 
     if (urlList.first() == DUrl::fromTrashFile("/")) {
         emit fileSignalManager->requestShowTrashPropertyDialog(DFMUrlBaseEvent(event->sender(), urlList.first()));
-    }else if (urlList.first() == DUrl::fromComputerFile("/")) {
+    } else if (urlList.first() == DUrl::fromComputerFile("/")) {
         emit fileSignalManager->requestShowComputerPropertyDialog(DFMUrlBaseEvent(event->sender(), urlList.first()));
-    }
-    else {
+    } else {
         emit fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(event->sender(), urlList));
     }
 }
@@ -512,7 +514,7 @@ void AppController::actionExit(quint64 winId)
 
 void AppController::actionSetAsWallpaper(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    const DUrl& fileUrl = event->url();
+    const DUrl &fileUrl = event->url();
 
     if (fileUrl.isLocalFile()) {
         FileUtils::setBackground(fileUrl.toLocalFile());
@@ -551,19 +553,21 @@ void AppController::actionSettings(quint64 winId)
 
 void AppController::actionFormatDevice(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    QWidget* w = WindowManager::getWindowById(event->windowId());
-    if(!w)
+    QWidget *w = WindowManager::getWindowById(event->windowId());
+    if (!w) {
         return;
+    }
 
     UDiskDeviceInfoPointer info = deviceListener->getDeviceByDeviceID(event->url().query());
-    if(!info)
+    if (!info) {
         return;
+    }
 
     QString devicePath = info->getPath();
 
     QString cmd = "usb-device-formatter-pkexec";
     QStringList args;
-    args << "-m="+QString::number(event->windowId()) <<devicePath;
+    args << "-m=" + QString::number(event->windowId()) << devicePath;
 
     QProcess *process = new QProcess(this);
 
@@ -576,9 +580,9 @@ void AppController::actionFormatDevice(const QSharedPointer<DFMUrlBaseEvent> &ev
         tmpWidget->show();
 
         connect(process, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
-                tmpWidget, &QWidget::deleteLater);
+        tmpWidget, &QWidget::deleteLater);
         connect(process, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error),
-                tmpWidget, &QWidget::deleteLater);
+        tmpWidget, &QWidget::deleteLater);
     });
 
     connect(process, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
@@ -605,24 +609,24 @@ void AppController::actionExitCurrentWindow(quint64 winId)
 
 void AppController::actionShowHotkeyHelp(quint64 winId)
 {
-    QRect rect=WindowManager::getWindowById(winId)->geometry();
-    QPoint pos(rect.x() + rect.width()/2 , rect.y() + rect.height()/2);
+    QRect rect = WindowManager::getWindowById(winId)->geometry();
+    QPoint pos(rect.x() + rect.width() / 2, rect.y() + rect.height() / 2);
     Shortcut sc;
     QStringList args;
-    QString param1 = "-j="+sc.toStr();
+    QString param1 = "-j=" + sc.toStr();
     QString param2 = "-p=" + QString::number(pos.x()) + "," + QString::number(pos.y());
-    args<<param1<<param2;
-    QProcess::startDetached("deepin-shortcut-viewer",args);
+    args << param1 << param2;
+    QProcess::startDetached("deepin-shortcut-viewer", args);
 }
 
 void AppController::actionBack(quint64 winId)
 {
-    DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMBackEvent>(this), qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(winId)));
+    DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMBackEvent>(this), qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(winId)));
 }
 
 void AppController::actionForward(quint64 winId)
 {
-    DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMForwardEvent>(this), qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(winId)));
+    DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMForwardEvent>(this), qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(winId)));
 }
 
 void AppController::actionForgetPassword(const QSharedPointer<DFMUrlBaseEvent> &event)
@@ -630,21 +634,21 @@ void AppController::actionForgetPassword(const QSharedPointer<DFMUrlBaseEvent> &
     QString path = event->url().query();
 
     QJsonObject smbObj = secretManager->getLoginData(path);
-    if (smbObj.empty()){
-        if (path.endsWith("/")){
+    if (smbObj.empty()) {
+        if (path.endsWith("/")) {
             path = path.left(path.length() - 1);
             smbObj = secretManager->getLoginData(path);
 
-            if (smbObj.isEmpty()){
+            if (smbObj.isEmpty()) {
                 QString share = path.split("/").last();
                 path = path.left(path.length() - share.length());
                 path += share.toUpper();
                 smbObj = secretManager->getLoginData(path);
             }
-        }else{
+        } else {
             path += "/";
             smbObj = secretManager->getLoginData(path);
-            if (smbObj.isEmpty()){
+            if (smbObj.isEmpty()) {
                 QStringList _pl = path.split("/");
                 QString share = _pl.at(_pl.length() - 2);
                 path = path.left(path.length() - share.length() - 1);
@@ -657,24 +661,24 @@ void AppController::actionForgetPassword(const QSharedPointer<DFMUrlBaseEvent> &
 
     qDebug() << path << smbObj;
 
-    if (!smbObj.empty()){
+    if (!smbObj.empty()) {
         QStringList ids = path.split("/");
         QString domain;
         QString user;
         QString server;
-        if (ids.at(2).contains(";")){
+        if (ids.at(2).contains(";")) {
             domain = ids.at(2).split(";").at(0);
             QString userIps = ids.at(2).split(";").at(1);
-            if (userIps.contains("@")){
+            if (userIps.contains("@")) {
                 user = userIps.split("@").at(0);
                 server = userIps.split("@").at(1);
             }
-        }else{
+        } else {
             QString userIps = ids.at(2);
-            if (userIps.contains("@")){
+            if (userIps.contains("@")) {
                 user = userIps.split("@").at(0);
                 server = userIps.split("@").at(1);
-            }else{
+            } else {
                 server = userIps;
             }
         }
@@ -691,10 +695,11 @@ void AppController::actionForgetPassword(const QSharedPointer<DFMUrlBaseEvent> &
 
 void AppController::actionOpenFileByApp()
 {
-    const QAction *action = qobject_cast<QAction*>(sender());
+    const QAction *action = qobject_cast<QAction *>(sender());
 
-    if (!action)
+    if (!action) {
         return;
+    }
 
     QString app = action->property("app").toString();
     DUrl fileUrl = qvariant_cast<DUrl>(action->property("url"));
@@ -703,10 +708,11 @@ void AppController::actionOpenFileByApp()
 
 void AppController::actionSendToRemovableDisk()
 {
-    const QAction *action = qobject_cast<QAction*>(sender());
+    const QAction *action = qobject_cast<QAction *>(sender());
 
-    if (!action)
+    if (!action) {
         return;
+    }
 
     DUrl targetUrl = DUrl(action->property("mounted_root_uri").toString());
     DUrlList urlList = DUrl::fromStringList(action->property("urlList").toStringList());
@@ -714,7 +720,7 @@ void AppController::actionSendToRemovableDisk()
     fileService->pasteFile(action, DFMGlobal::CopyAction, targetUrl, urlList);
 }
 
-QList<QString> AppController::actionGetTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent>& event)
+QList<QString> AppController::actionGetTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event)
 {
     QList<QString> tags{};
 
@@ -737,12 +743,12 @@ bool AppController::actionRemoveTagsOfFile(const QSharedPointer<DFMRemoveTagsOfF
     return value;
 }
 
-void AppController::actionChangeTagColor(const QSharedPointer<DFMChangeTagColorEvent>& event)
+void AppController::actionChangeTagColor(const QSharedPointer<DFMChangeTagColorEvent> &event)
 {
-    DBookmarkItem* item{ DBookmarkItem::ClickedItem.load(std::memory_order_consume) };
+    DBookmarkItem *item{ DBookmarkItem::ClickedItem.load(std::memory_order_consume) };
 
-    if( item != nullptr ){
-        item->changeIconThroughColor( event->m_newColorForTag );
+    if (item != nullptr) {
+        item->changeIconThroughColor(event->m_newColorForTag);
     }
 
     item = nullptr;
@@ -772,50 +778,50 @@ void AppController::showTagEdit(const QPoint &globalPos, const DUrlList &fileLis
 #ifdef SW_LABEL
 void AppController::actionSetLabel(const DFMEvent &event)
 {
-    if (FileManagerLibrary::instance()->isCompletion()){
+    if (FileManagerLibrary::instance()->isCompletion()) {
         std::string path = event.fileUrl().toLocalFile().toStdString();
 //        auto_operation(const_cast<char*>(path.c_str()), "020100");
-        FileManagerLibrary::instance()->auto_operation()(const_cast<char*>(path.c_str()), "020100");
+        FileManagerLibrary::instance()->auto_operation()(const_cast<char *>(path.c_str()), "020100");
         qDebug() << "020100" << "set label";
     }
 }
 
 void AppController::actionViewLabel(const DFMEvent &event)
 {
-    if (FileManagerLibrary::instance()->isCompletion()){
+    if (FileManagerLibrary::instance()->isCompletion()) {
         std::string path = event.fileUrl().toLocalFile().toStdString();
 //        auto_operation(const_cast<char*>(path.c_str()), "010101");
-        FileManagerLibrary::instance()->auto_operation()(const_cast<char*>(path.c_str()), "010101");
+        FileManagerLibrary::instance()->auto_operation()(const_cast<char *>(path.c_str()), "010101");
         qDebug() << "010101" << "view label";
     }
 }
 
 void AppController::actionEditLabel(const DFMEvent &event)
 {
-    if (FileManagerLibrary::instance()->isCompletion()){
+    if (FileManagerLibrary::instance()->isCompletion()) {
         std::string path = event.fileUrl().toLocalFile().toStdString();
 //        auto_operation(const_cast<char*>(path.c_str()), "010201");
-        FileManagerLibrary::instance()->auto_operation()(const_cast<char*>(path.c_str()), "010201");
+        FileManagerLibrary::instance()->auto_operation()(const_cast<char *>(path.c_str()), "010201");
         qDebug() << "010201" << "edit label";
     }
 }
 
 void AppController::actionPrivateFileToPublic(const DFMEvent &event)
 {
-    if (FileManagerLibrary::instance()->isCompletion()){
+    if (FileManagerLibrary::instance()->isCompletion()) {
         std::string path = event.fileUrl().toLocalFile().toStdString();
 //        auto_operation(const_cast<char*>(path.c_str()), "010501");
-        FileManagerLibrary::instance()->auto_operation()(const_cast<char*>(path.c_str()), "010501");
+        FileManagerLibrary::instance()->auto_operation()(const_cast<char *>(path.c_str()), "010501");
         qDebug() << "010501" << "private file to public";
     }
 }
 
 void AppController::actionByIds(const DFMEvent &event, QString actionId)
 {
-    if (FileManagerLibrary::instance()->isCompletion()){
+    if (FileManagerLibrary::instance()->isCompletion()) {
         std::string path = event.fileUrl().toLocalFile().toStdString();
         std::string _actionId = actionId.toStdString();
-        FileManagerLibrary::instance()->auto_operation()(const_cast<char*>(path.c_str()), const_cast<char*>(_actionId.c_str()));
+        FileManagerLibrary::instance()->auto_operation()(const_cast<char *>(path.c_str()), const_cast<char *>(_actionId.c_str()));
         qDebug() << "action by" << actionId;
     }
 }
@@ -845,8 +851,9 @@ QString AppController::createFile(const QString &sourceFile, const QString &targ
 {
     QFileInfo info(sourceFile);
 
-    if (!info.exists())
+    if (!info.exists()) {
         return QString();
+    }
 
     const QString &targetFile = FileUtils::newDocmentName(targetDir, baseFileName, info.suffix());
 //    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
@@ -860,8 +867,9 @@ QString AppController::createFile(const QString &sourceFile, const QString &targ
 
         QFile source(sourceFile);
 
-        if (!source.open(QIODevice::ReadOnly))
+        if (!source.open(QIODevice::ReadOnly)) {
             return QString();
+        }
 
         target.write(source.readAll());
 
@@ -901,23 +909,24 @@ void AppController::createUserShareManager()
 void AppController::createDBusInterface()
 {
     m_startManagerInterface = new StartManagerInterface("com.deepin.SessionManager",
-                                                                                "/com/deepin/StartManager",
-                                                                                QDBusConnection::sessionBus(),
-                                                                                this);
+            "/com/deepin/StartManager",
+            QDBusConnection::sessionBus(),
+            this);
     m_introspectableInterface = new IntrospectableInterface("com.deepin.SessionManager",
-                                                                                "/com/deepin/StartManager",
-                                                                                QDBusConnection::sessionBus(),
-                                                                                this);
+            "/com/deepin/StartManager",
+            QDBusConnection::sessionBus(),
+            this);
 
     QtConcurrent::run(QThreadPool::globalInstance(), [&] {
         QDBusPendingReply<QString> reply = m_introspectableInterface->Introspect();
         reply.waitForFinished();
-        if (reply.isFinished()){
+        if (reply.isFinished())
+        {
             QString xmlCode = reply.argumentAt(0).toString();
-            if (xmlCode.contains("LaunchApp")){
+            if (xmlCode.contains("LaunchApp")) {
                 qDebug() << "com.deepin.SessionManager : StartManager has LaunchApp interface";
                 setHasLaunchAppInterface(true);
-            }else{
+            } else {
                 qDebug() << "com.deepin.SessionManager : StartManager doesn't have LaunchApp interface";
             }
         }

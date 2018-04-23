@@ -103,6 +103,7 @@ protected:
 
     //friend DFMSideBarItem *DFMSideBarItemGroup::takeItem(int index);
     friend class DFMSideBarItemGroup;
+    friend class DFMSideBarPrivate;
 
 private:
     QScopedPointer<DFMSideBarItemPrivate> d_ptr;
