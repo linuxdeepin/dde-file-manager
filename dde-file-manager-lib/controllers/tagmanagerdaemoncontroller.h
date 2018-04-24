@@ -19,15 +19,11 @@ public:
     TagManagerDaemonController(const TagManagerDaemonController& other)=delete;
     TagManagerDaemonController& operator=(const TagManagerDaemonController& other)=delete;
 
-    void lockBackend();
-    bool isLocked()const noexcept;
-    void unlockBackend();
-    QVariant disposeClientData(const QVariantMap& filesAndTags, const QString& userName, Tag::ActionType type);
+    QVariant disposeClientData(const QVariantMap& filesAndTags, Tag::ActionType type);
 
-    static QSharedPointer<TagManagerDaemonController> instance();
+    static TagManagerDaemonController* instance();
 private:
-    std::unique_ptr<com::deepin::filemanager::
-                    daemon::TagManagerDaemon> m_daemonInterface{ nullptr };
+    std::unique_ptr<TagManagerDaemonInterface> m_daemonInterface{ nullptr };
 };
 
 

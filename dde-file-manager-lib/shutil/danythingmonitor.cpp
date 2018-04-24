@@ -87,7 +87,6 @@ void DAnythingMonitor::doWork()
 
     std::unique_lock<std::mutex> raiiLock{ m_mutex };
     m_conditionVar.wait(raiiLock, [this]{ return m_readyFlag.load(std::memory_order_consume); });
-    m_readyFlag.store(false, std::memory_order_release);
 
     if(!m_changedFiles.empty()){
         std::deque<std::pair<QString, QString>>::const_iterator cbeg{ m_changedFiles.cbegin() };
@@ -96,21 +95,31 @@ void DAnythingMonitor::doWork()
         for(; cbeg != cend; ++cbeg){
 
             if(cbeg->first.isEmpty()){
-                TagManager::instance()->deleteFiles({cbeg->second});
+
+#ifdef QT_DEBUG
+                qDebug()<< cbeg->second;
+#endif
+                TagManager::instance()->deleteFiles({DUrl::fromLocalFile(cbeg->second)});
                 continue;
             }
 
             QPair<DUrl, DUrl> oldAndNewFileName{ DUrl::fromLocalFile(cbeg->first), DUrl::fromLocalFile(cbeg->second) };
+#ifdef QT_DEBUG
+            qDebug()<< oldAndNewFileName;
+#endif
+
             TagManager::instance()->changeFilesName( { oldAndNewFileName } );
-            std::this_thread::sleep_for( std::chrono::duration<std::size_t, std::ratio<1, 1000>>{50} );
         }
+
+        m_changedFiles.clear();
     }
+    m_readyFlag.store(false, std::memory_order_release);
 }
 
 void DAnythingMonitor::workSignal()
 {
     int fd = open(PROCFS_PATH, O_RDONLY);
-    if (fd < 0){
+    if (fd < 0) {
         m_readyFlag.store(true, std::memory_order_release);
         m_conditionVar.notify_one();
         return;
@@ -166,8 +175,10 @@ void DAnythingMonitor::workSignal()
                 case ACT_DEL_FILE:
                 case ACT_DEL_FOLDER:
                 {
-                    m_changedFiles.emplace_back(QString{}, QString{PROTOCOL_HEAD} + QString{src});
+                    m_changedFiles.emplace_back(QString{}, QString{src});
+//#ifdef QT_DEBUG
 //                    qDebug()<< act_names[action] << "--------->" << src;
+//#endif
                     break;
                 }
                 case ACT_RENAME_FILE:
@@ -175,9 +186,11 @@ void DAnythingMonitor::workSignal()
                 {
                     dst = ira.data + off;
                     off += strlen(dst) + 1;
-                    m_changedFiles.emplace_back(QString{PROTOCOL_HEAD} + QString{src},
-                                                QString{PROTOCOL_HEAD} + QString{dst});
+                    m_changedFiles.emplace_back(QString{src},
+                                                QString{dst});
+//#ifdef QT_DEBUG
 //                    qDebug()<< act_names[action] << src << "--------->" << dst;
+//#endif
                     break;
                 }
                 default:

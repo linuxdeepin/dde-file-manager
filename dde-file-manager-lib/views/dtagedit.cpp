@@ -140,6 +140,7 @@ void DTagEdit::processTags()
     ///###: then tag files through these tag(s).
     if (!tagList.isEmpty() && !m_files.isEmpty()) {
         for (auto oneFile : m_files) {
+
             QSharedPointer<DFMMakeFileTagsEvent> event{ new DFMMakeFileTagsEvent{this, oneFile, tagList} };
             bool value{ AppController::instance()->actionMakeFileTags(event) };
 
@@ -188,5 +189,4 @@ void DTagEdit::processTags()
             AppController::instance()->actionRemoveTagsOfFile(event);
         }
     }
-
 }

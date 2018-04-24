@@ -16,32 +16,18 @@ TagManagerDaemon::TagManagerDaemon(QObject* const parent)
                  :QObject{parent}
 {
     adaptor = new TagManagerDaemonAdaptor{ this };
-    QObject::connect( DSqliteHandle::instance(), &DSqliteHandle::backendIsBlocked,
-                      adaptor, &TagManagerDaemonAdaptor::backendIsBlocked);
 
     if(!QDBusConnection::systemBus().registerObject(ObjectPath, this)){
         qFatal("Failed to register object."); //###: log!
     }
 }
 
-void TagManagerDaemon::lockBackend()
-{
-    std::function<void(DSqliteHandle* handle)> handle{ &DSqliteHandle::lockBackend };
-    std::thread threadForLock{ handle, DSqliteHandle::instance() };
-    threadForLock.detach();
-}
-
-void TagManagerDaemon::unlockBackend()
-{
-    DSqliteHandle::instance()->unlockBackend();
-}
-
-QDBusVariant TagManagerDaemon::disposeClientData(const QMap<QString, QVariant>& filesAndTags, const QString& userName, const std::size_t& type)
+QDBusVariant TagManagerDaemon::disposeClientData(const QMap<QString, QVariant>& filesAndTags, const unsigned long long& type)
 {
 
     QDBusVariant dbusVar{};
 
-    if(!filesAndTags.isEmpty() && !userName.isEmpty()){
+    if(!filesAndTags.isEmpty()){
         QMap<QString, QVariant>::const_iterator cbeg{ filesAndTags.cbegin() };
         QMap<QString, QVariant>::const_iterator cend{ filesAndTags.cend() };
         QMap<QString, QList<QString>> filesAndTagsName{};
@@ -50,9 +36,7 @@ QDBusVariant TagManagerDaemon::disposeClientData(const QMap<QString, QVariant>& 
             filesAndTagsName[cbeg.key()] = cbeg.value().toStringList();
         }
 
-//        qDebug()<< filesAndTagsName;
-
-        QVariant var{ DSqliteHandle::instance()->disposeClientData(filesAndTagsName, userName, type) };
+        QVariant var{ DSqliteHandle::instance()->disposeClientData(filesAndTagsName, type) };
         dbusVar.setVariant(var);
     }
 

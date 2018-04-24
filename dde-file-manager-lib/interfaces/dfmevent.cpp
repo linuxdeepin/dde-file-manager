@@ -879,7 +879,7 @@ DFMCleanSaveOperatorEvent::DFMCleanSaveOperatorEvent(const QObject *sender)
 }
 
 DFMMakeFileTagsEvent::DFMMakeFileTagsEvent(const QObject *sender, const DUrl &url, const QList<QString> &tags)
-    : DFMUrlBaseEvent{ sender, url }
+    : DFMUrlBaseEvent{Tag, sender, url }
 {
     setProperty(QT_STRINGIFY(DFMMakeFileTagsEvent::tags), tags);
 }
@@ -892,13 +892,16 @@ QSharedPointer<DFMMakeFileTagsEvent> DFMMakeFileTagsEvent::fromJson(const QJsonO
 
 QList<QString> DFMMakeFileTagsEvent::tags() const
 {
-    return property(QT_STRINGIFY(DFMMakeFileTagsEvent::tags), {QString()}).toStringList();
+    QVariant var{ property(QT_STRINGIFY(DFMMakeFileTagsEvent::tags), {QString()}) };
+    QList<QString> tag_name{ var.value<QList<QString>>() };
+
+    return tag_name;
 }
 
 DFMRemoveTagsOfFileEvent::DFMRemoveTagsOfFileEvent(const QObject *sender, const DUrl &url, const QList<QString> &tags)
-    : DFMUrlBaseEvent{ sender, url }
+    : DFMUrlBaseEvent{DFMEvent::Untag, sender, url}
 {
-    setProperty(QT_STRINGIFY(DFMRemoveTagsOfFileEvent::tags), tags);
+    setProperty(QT_STRINGIFY(DFMRemoveTagsOfFileEvent::tags), QVariant{tags});
 }
 
 QSharedPointer<DFMRemoveTagsOfFileEvent> DFMRemoveTagsOfFileEvent::fromJson(const QJsonObject &json)
@@ -909,7 +912,10 @@ QSharedPointer<DFMRemoveTagsOfFileEvent> DFMRemoveTagsOfFileEvent::fromJson(cons
 
 QList<QString> DFMRemoveTagsOfFileEvent::tags() const
 {
-    return property(QT_STRINGIFY(DFMRemoveTagsOfFileEvent::tags), {QString()}).toStringList();
+    QVariant var{ property(QT_STRINGIFY(DFMRemoveTagsOfFileEvent::tags), {QString()}) };
+    QList<QString> tag_name{ var.toStringList() };
+
+    return tag_name;
 }
 
 

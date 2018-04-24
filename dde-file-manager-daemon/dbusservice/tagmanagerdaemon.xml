@@ -4,12 +4,8 @@
         <method name="disposeClientData">
             <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
             <arg type="a{sv}" name="filesAndTags" direction="in"/>
-            <arg type="s" name="userName" direction="in"/>
             <arg type="t" name="type" direction="in"/>
             <arg type="v" name="result" direction="out"/>
         </method>
-        <signal name="backendIsBlocked"/>
-        <method name="lockBackend"/>
-        <method name="unlockBackend"/>
     </interface>
 </node>

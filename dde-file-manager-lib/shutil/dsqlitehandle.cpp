@@ -1,6 +1,5 @@
 
 
-#include <mutex>
 #include <string>
 #include <fstream>
 #include <algorithm>
@@ -12,6 +11,7 @@
 #include <sys/stat.h>
 
 #include "singleton.h"
+#include "tag/tagutil.h"
 #include "dsqlitehandle.h"
 
 #include <QDir>
@@ -69,6 +69,9 @@ static std::atomic<int> counter{ 0 };
 static constexpr const char* const MOUNTTABLE{"/proc/mounts"};
 static constexpr const char* const ROOTPATH{"/"};
 static constexpr const std::size_t MAXTHREAD{ 3 };
+static constexpr const char* const CONNECTIONNAME{ "deep" };
+static constexpr const char* const USERNAME{"username"};
+static constexpr const char* const PASSWORD{"password"};
 
 
 static const std::map<QString, QString> StrTableOfEscapeChar{
@@ -87,6 +90,11 @@ static const std::map<QString, QString> StrTableOfEscapeChar{
 
 
 static const std::multimap<DSqliteHandle::SqlType, QString> SqlTypeWithStrs {
+                                                          {DSqliteHandle::SqlType::BeforeTagFiles, "SELECT COUNT(tag_property.tag_name) AS counter "
+                                                                                                   "FROM tag_property WHERE tag_property.tag_name = \'%1\'"},
+                                                          {DSqliteHandle::SqlType::BeforeTagFiles, "INSERT INTO tag_property (tag_name, tag_color) "
+                                                                                                                    "VALUES(\'%1\', \'%2\')"},
+
                                                           {DSqliteHandle::SqlType::TagFiles, "SELECT COUNT (tag_with_file.file_name) AS counter "
                                                                                                                         "FROM tag_with_file WHERE tag_with_file.file_name = \'%1\' "
                                                                                                                         "AND tag_with_file.tag_name = \'%2\'"},
@@ -116,6 +124,8 @@ static const std::multimap<DSqliteHandle::SqlType, QString> SqlTypeWithStrs {
                                                                                                                                          "WHERE file_property.tag_3 = \'%2\'"},
                                                           {DSqliteHandle::SqlType::ChangeTagsName, "UPDATE tag_with_file SET tag_name = \'%1\' "
                                                                                                                                            "WHERE tag_with_file.tag_name = \'%2\'"},
+                                                          {DSqliteHandle::SqlType::ChangeTagsName2, "UPDATE tag_with_file SET tag_name = \'%1\' "
+                                                                                                                                           "WHERE tag_property.tag_name = \'%2\'"},
 
                                                           {DSqliteHandle::SqlType::DeleteFiles, "DELETE FROM tag_with_file WHERE tag_with_file.tag_name = \'%1\'"},
                                                           {DSqliteHandle::SqlType::DeleteFiles, "DELETE FROM file_property WHERE file_property.file_name = \'%1\'"},
@@ -128,6 +138,7 @@ static const std::multimap<DSqliteHandle::SqlType, QString> SqlTypeWithStrs {
                                                           {DSqliteHandle::SqlType::DeleteTags2, "SELECT tag_with_file.tag_name FROM tag_with_file WHERE tag_with_file.file_name = \'%1\'"},
                                                           {DSqliteHandle::SqlType::DeleteTags2, "UPDATE file_property SET tag_1 = \'%1\', tag_2 =\'%2\', tag_3=\'%3\' "
                                                                                                                                         "WHERE file_name = \'%4\'"},
+                                                          {DSqliteHandle::SqlType::DeleteTags3, "DELETE FROM tag_property WHERE tag_property.tag_name = \'%1\'"},
 
                                                           {DSqliteHandle::SqlType::UntagSamePartionFiles, "DELETE FROM tag_with_file WHERE tag_with_file.file_name = \'%1\' "
                                                                                                           "AND tag_with_file.tag_name = \'%2\'"},
@@ -163,6 +174,17 @@ static const std::multimap<DSqliteHandle::SqlType, QString> SqlTypeWithStrs {
                                                                                                           "WHERE file_name = \'%1\'"},
                                                           {DSqliteHandle::SqlType::TagFilesThroughColor2, "UPDATE file_property SET tag_1 = \'%1\', tag_2 = \'%2\', tag_3 = \'%3' "
                                                                                                           "WHERE file_property.file_name = \'%4\'"},
+                                                          {DSqliteHandle::SqlType::TagFilesThroughColor3, "SELECT COUNT(tag_property.tag_name) AS counter FROM tag_property "
+                                                                                                          "WHERE tag_name = \'%1\'"},
+                                                          {DSqliteHandle::SqlType::TagFilesThroughColor3, "INSERT INTO tag_property(tag_name, tag_color) VALUES(\'%1\', \'%2\')"},
+
+
+                                                          {DSqliteHandle::SqlType::GetAllTags, "SELECT * FROM tag_property"},
+
+                                                          {DSqliteHandle::SqlType::GetTagColor, "SELECT * FROM tag_property WHERE tag_property.tag_name = \'%1\'" },
+
+                                                          {DSqliteHandle::SqlType::ChangeTagColor, "UPDATE tag_property SET tag_color = \'%1\' "
+                                                                                                   "WHERE tag_property.tag_name = \'%2\' AND tag_property.tag_color = \'%3\'" }
                                                       };
 
 
@@ -287,7 +309,6 @@ std::map<QString, std::multimap<QString, QString>>  DSqliteHandle::queryPartions
                     partionsAndMountpoints[deviceName].emplace(std::move(partionName), mountpoint);
                 }
             }
-
         }
     }
 
@@ -346,24 +367,6 @@ void DSqliteHandle::onMountRemoved(UDiskDeviceInfoPointer infoPointer)
 }
 
 
-
-QString DSqliteHandle::getConnectionNameFromPartion(const QString& partion) noexcept
-{
-    if(partion == ROOTPATH){
-        return QString{"root"};
-
-    }else{
-
-        if(!partion.isNull() && !partion.isEmpty()){
-            std::size_t hashValue{ (std::hash<std::string>{}(partion.toStdString())) };
-            QString connection{ QString::fromStdString( std::to_string(hashValue) ) };
-            return connection;
-        }
-    }
-
-    return QString{};
-}
-
 QString DSqliteHandle::restoreEscapedChar(const QString& value)
 {
     QString tempValue{ value };
@@ -393,7 +396,7 @@ QString DSqliteHandle::restoreEscapedChar(const QString& value)
 
 
 ///#:-----------------------------------------> <tagName, <tagColor, <files>>>.
-QVariant DSqliteHandle::disposeClientData(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName, const std::size_t& type)
+QVariant DSqliteHandle::disposeClientData(const QMap<QString, QList<QString>>& filesAndTags, const unsigned long long& type)
 {
     QVariant var{};
 
@@ -403,14 +406,14 @@ QVariant DSqliteHandle::disposeClientData(const QMap<QString, QList<QString>>& f
 
     std::size_t numberOfType{ static_cast<std::size_t>(type) };
 
-    if(!filesAndTags.isEmpty() && !userName.isEmpty() && type != 0){
+    if(!filesAndTags.isEmpty() && type != 0){
 
         switch(numberOfType)
         {
             case 1: ///###: tag files!!!!
             {
                 std::lock_guard<std::mutex> raiiLock{ m_mutex };
-                bool value{ this->execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(filesAndTags, userName) };
+                bool value{ this->execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(filesAndTags) };
                 var.setValue(value);
 
                 break;
@@ -418,23 +421,23 @@ QVariant DSqliteHandle::disposeClientData(const QMap<QString, QList<QString>>& f
             case 2:
             {
                 std::lock_guard<std::mutex> raiiLock{ m_mutex };
-                QStringList filesName{ this->execSqlstr<DSqliteHandle::SqlType::GetFilesThroughTag, QList<QString>>(filesAndTags, userName) };
-                var.setValue(filesName);
+                QStringList files{ this->execSqlstr<DSqliteHandle::SqlType::GetFilesThroughTag, QList<QString>>(filesAndTags) };
+                var.setValue(files);
 
                 break;
             }
             case 3:
             {
                 std::lock_guard<std::mutex> raiiLock{ m_mutex };
-                QStringList tags{ this->execSqlstr<DSqliteHandle::SqlType::GetSameTagsOfDiffFiles, QList<QString>>(filesAndTags, userName) };
+                QStringList tags{ this->execSqlstr<DSqliteHandle::SqlType::GetSameTagsOfDiffFiles, QList<QString>>(filesAndTags) };
                 var.setValue(tags);
 
                 break;
             }
-            case 4: ///###: untag files(diff partion).
+            case 4: ///###: untag files(support different partion).
             {
                 std::lock_guard<std::mutex> raiiLock{ m_mutex };
-                bool value{ this->execSqlstr<DSqliteHandle::SqlType::UntagDiffPartionFiles, bool>(filesAndTags, userName) };
+                bool value{ this->execSqlstr<DSqliteHandle::SqlType::UntagDiffPartionFiles, bool>(filesAndTags) };
                 var.setValue(value);
 
                 break;
@@ -442,7 +445,7 @@ QVariant DSqliteHandle::disposeClientData(const QMap<QString, QList<QString>>& f
             case 5:
             {
                 std::lock_guard<std::mutex> raiiLock{ m_mutex };
-                bool value{ this->execSqlstr<DSqliteHandle::SqlType::DeleteTags, bool>(filesAndTags, userName) };//###: do not be confused by the name of variant.
+                bool value{ this->execSqlstr<DSqliteHandle::SqlType::DeleteTags, bool>(filesAndTags) };//###: do not be confused by the name of variant.
                 var.setValue(value);
 
                 break;
@@ -450,33 +453,65 @@ QVariant DSqliteHandle::disposeClientData(const QMap<QString, QList<QString>>& f
             case 6:
             {
                 std::lock_guard<std::mutex> raiiLock{ m_mutex };
-                bool value{ this->execSqlstr<DSqliteHandle::SqlType::ChangeTagsName, bool>(filesAndTags, userName) };
-
+                bool value{ this->execSqlstr<DSqliteHandle::SqlType::ChangeTagsName, bool>(filesAndTags) };
                 var.setValue(value);
+
                 break;
             }
             case 7:
             {
                 std::lock_guard<std::mutex> raiiLock{ m_mutex };
-                bool value{ this->execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(filesAndTags, userName) };
-
+                bool value{ this->execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(filesAndTags) };
                 var.setValue(value);
+
                 break;
             }
             case 8:
             {
                 std::lock_guard<std::mutex> raiiLock{ m_mutex };
-                bool value{ this->execSqlstr<DSqliteHandle::SqlType::TagFilesThroughColor, bool>(filesAndTags, userName) };
-
+                bool value{ this->execSqlstr<DSqliteHandle::SqlType::TagFilesThroughColor, bool>(filesAndTags) };
                 var.setValue(value);
+
                 break;
             }
             case 9:
             {
                 std::lock_guard<std::mutex> raillLock{ m_mutex };
-                bool value{ this->execSqlstr<DSqliteHandle::SqlType::ChangeFilesName, bool>(filesAndTags, userName) };
-
+                bool value{ this->execSqlstr<DSqliteHandle::SqlType::ChangeFilesName, bool>(filesAndTags) };
                 var.setValue(value);
+
+                break;
+            }
+            case 10:
+            {
+                std::lock_guard<std::mutex> raillLock{ m_mutex };
+                QMap<QString, QVariant> tag_and_color{ this->execSqlstr<DSqliteHandle::SqlType::GetAllTags, QMap<QString, QVariant>>(filesAndTags) };
+                var.setValue(tag_and_color);
+
+                break;
+            }
+            case 11:
+            {
+                std::lock_guard<std::mutex> raii_lock{ m_mutex };
+                bool result{ this->execSqlstr<DSqliteHandle::SqlType::BeforeTagFiles, bool>(filesAndTags) };
+                var.setValue(result);
+
+                break;
+            }
+            case 12:
+            {
+                std::lock_guard<std::mutex> raii_lock{ m_mutex };
+                QMap<QString, QVariant> tag_and_color{ this->execSqlstr<DSqliteHandle::SqlType::GetTagColor, QMap<QString, QVariant>>(filesAndTags) };
+                var.setValue(tag_and_color);
+
+                break;
+            }
+            case 13:
+            {
+                std::lock_guard<std::mutex> raii_lock{ m_mutex };
+                QMap<QString, QVariant> var_map{ this->execSqlstr<DSqliteHandle::SqlType::GetTagColor, QMap<QString, QVariant>>(filesAndTags) };
+                var.setValue(var_map);
+
                 break;
             }
             default:
@@ -487,36 +522,17 @@ QVariant DSqliteHandle::disposeClientData(const QMap<QString, QList<QString>>& f
     return var;
 }
 
-void DSqliteHandle::lockBackend()noexcept
-{
-    if(counter.load(std::memory_order_consume) == 0){
-        ++counter;
-        std::unique_lock<std::mutex> uniqueLock{ m_mutex, std::defer_lock};
 
-        while(!uniqueLock.try_lock()){
-            std::this_thread::yield();
-        }
-        emit backendIsBlocked();
-    }
-}
-
-void DSqliteHandle::unlockBackend()noexcept
-{
-    counter.store(0, std::memory_order_release);
-}
-
-
-DSqliteHandle::ReturnCode DSqliteHandle::checkWhetherHasSqliteInPartion(const QString& mountPoint, const QString& userName)
+DSqliteHandle::ReturnCode DSqliteHandle::checkWhetherHasSqliteInPartion(const QString& mountPoint, const QString& db_name)
 {
     QDir dir{ mountPoint };
-    QString DBName{ QString{".__"} + userName + QString{".db"} };
 
-    if(dir.exists()){
+    if(dir.exists() && !db_name.isEmpty()){
         QList<QString> files{ dir.entryList() };
 
         if(!files.isEmpty()){
             QList<QString>::const_iterator pos{ std::find(files.cbegin(),
-                                                          files.cend(), DBName) };
+                                                          files.cend(), db_name) };
             if(pos != files.cend()){
                 return DSqliteHandle::ReturnCode::Exist;
             }
@@ -532,37 +548,27 @@ void DSqliteHandle::initializeConnect()
     QObject::connect(deviceListener, &UDiskListener::mountRemoved, this, &DSqliteHandle::onMountRemoved);
 }
 
-void DSqliteHandle::connectToSqlite(const QString& mountPoint, const QString& userName)
+void DSqliteHandle::connectToSqlite(const QString& mountPoint, const QString& db_name)
 {
-    DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint, userName) };
+    DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint, db_name) };
     std::function<void()> initDatabasePtr{ [&]{
-            QString connectionName{ DSqliteHandle::getConnectionNameFromPartion(mountPoint) };
 
-            if(!connectionName.isNull() && !connectionName.isEmpty()){
-
-                if(m_sqlDatabasePtr && m_sqlDatabasePtr->isOpen()){
-                    m_sqlDatabasePtr->close();
-                }
-
-                if(!QSqlDatabase::contains(connectionName)){
-                    m_sqlDatabasePtr = std::unique_ptr<QSqlDatabase>{new QSqlDatabase{ QSqlDatabase::addDatabase(R"foo(QSQLITE)foo", connectionName)} };
-                }
-
-                QString DBName{mountPoint + QString{"/.__"} + userName + QString{".db"} };
-//                qDebug() << DBName;
-
-                m_sqlDatabasePtr->setDatabaseName(DBName);
-                m_sqlDatabasePtr->setUserName(USERNAME);
-                m_sqlDatabasePtr->setPassword(PASSWORD);
-
-            }else{
-                m_sqlDatabasePtr = std::unique_ptr<QSqlDatabase>{ nullptr };
+            if(m_sqlDatabasePtr->isOpen()){
+                m_sqlDatabasePtr->close();
             }
-                                           } };
 
-    if(!m_sqlDatabasePtr){
-        m_sqlDatabasePtr = std::unique_ptr<QSqlDatabase>{ new QSqlDatabase };
-    }
+            if(QSqlDatabase::contains(CONNECTIONNAME)){
+                QSqlDatabase::removeDatabase(CONNECTIONNAME);
+            }
+
+            m_sqlDatabasePtr = std::unique_ptr<QSqlDatabase>{new QSqlDatabase{ QSqlDatabase::addDatabase(R"foo(QSQLITE)foo", CONNECTIONNAME)} };
+            QString DBName{mountPoint + QString{"/"} + db_name};
+            qDebug() << DBName;
+
+            m_sqlDatabasePtr->setDatabaseName(DBName);
+            m_sqlDatabasePtr->setUserName(USERNAME);
+            m_sqlDatabasePtr->setPassword(PASSWORD);
+                                           } };
 
     if(code == DSqliteHandle::ReturnCode::NoExist){
         initDatabasePtr();
@@ -571,51 +577,87 @@ void DSqliteHandle::connectToSqlite(const QString& mountPoint, const QString& us
 
             if(m_sqlDatabasePtr->transaction()){
                 QSqlQuery sqlQuery{ *m_sqlDatabasePtr };
-                QString createFileProperty{
-                    "CREATE TABLE IF NOT EXISTS \"file_property\" "
-                    "  ("
-                    " `file_name` TEXT NOT NULL UNIQUE,"
-                    " `tag_1` TEXT NOT NULL,"
-                    " `tag_2` TEXT,"
-                    " `tag_3` TEXT"
-                    " )"
-                };
 
-                QString createTagWithFile{
-                    "CREATE TABLE IF NOT EXISTS \"tag_with_file\" "
-                    " ("
-                    " `tag_name` TEXT NOT NULL,"
-                    " `file_name` TEXT NOT NULL "
-                    " )"
-                };
+                if(db_name != QString{".__main.db"}){
+                    QString createFileProperty{
+                        "CREATE TABLE IF NOT EXISTS \"file_property\" "
+                        "  ("
+                        " `file_name` TEXT NOT NULL UNIQUE,"
+                        " `tag_1` TEXT NOT NULL,"
+                        " `tag_2` TEXT,"
+                        " `tag_3` TEXT"
+                        " )"
+                    };
 
-                if(!m_flag.load(std::memory_order_consume)){
+                    QString createTagWithFile{
+                        "CREATE TABLE IF NOT EXISTS \"tag_with_file\" "
+                        " ("
+                        " `tag_name` TEXT NOT NULL,"
+                        " `file_name` TEXT NOT NULL "
+                        " )"
+                    };
 
-                    if(!sqlQuery.exec(createFileProperty)){
-                        qWarning(sqlQuery.lastError().text().toStdString().c_str());
+                    if(!m_flag.load(std::memory_order_consume)){
+
+                        if(!sqlQuery.exec(createFileProperty)){
+                            qWarning(sqlQuery.lastError().text().toStdString().c_str());
+                        }
+
+                        if(!sqlQuery.exec(createTagWithFile)){
+                            qWarning(sqlQuery.lastError().text().toStdString().c_str());
+                        }
+
+                    }else{
+                        DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint) };
+
+                        if(code != DSqliteHandle::ReturnCode::NoThisDir){
+
+                            if(!sqlQuery.exec(createFileProperty)){
+                                qWarning(sqlQuery.lastError().text().toStdString().c_str());
+                            }
+
+                            if(!sqlQuery.exec(createTagWithFile)){
+                                qWarning(sqlQuery.lastError().text().toStdString().c_str());
+                            }
+                        }
                     }
-
-                    if(!sqlQuery.exec(createTagWithFile)){
-                        qWarning(sqlQuery.lastError().text().toStdString().c_str());
-                    }
-
-                    if(!m_sqlDatabasePtr->commit()){
-                        m_sqlDatabasePtr->rollback();
-                    }
-                    m_sqlDatabasePtr->close();
 
                 }else{
-                    DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint, userName) };
 
-                    if(code == DSqliteHandle::ReturnCode::NoThisDir){
-                        m_sqlDatabasePtr->close();
-                        return;
+                    QString createTagProperty{
+                        "CREATE TABLE IF NOT EXISTS \"tag_property\" "
+                        " ("
+                        "`tag_index` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,"
+                        "`tag_name`  TEXT NOT NULL UNIQUE,"
+                        "`tag_color` TEXT NOT NULL"
+                        ")"
+                    };
+
+                    if(!m_flag.load(std::memory_order_consume)){
+
+                        if(!sqlQuery.exec(createTagProperty)){
+                            qWarning() << sqlQuery.lastError().text();
+                        }
+
+                    }else{
+                        DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint) };
+
+                        if(code != DSqliteHandle::ReturnCode::NoThisDir){
+
+                            if(!sqlQuery.exec(createTagProperty)){
+                                qWarning() << sqlQuery.lastError().text();
+                            }
+                        }
                     }
                 }
 
+                if(!m_sqlDatabasePtr->commit()){
+                    m_sqlDatabasePtr->rollback();
+                }
+
             }else{
-                m_sqlDatabasePtr->close();
                 qWarning("failed to open transaction!!!!!!");
+                m_sqlDatabasePtr->close();
             }
 
         }else{
@@ -624,17 +666,18 @@ void DSqliteHandle::connectToSqlite(const QString& mountPoint, const QString& us
 
     }else if(code == DSqliteHandle::ReturnCode::Exist){
         initDatabasePtr();
-        m_sqlDatabasePtr->close();
     }
+
+    this->closeSqlDatabase();
 }
 
 
 ///###:this is also a auxiliary function. do not need a mutex.
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles, QMap<QString,
-                               QList<QString>>, bool>(const QMap<QString, QList<QString>>& forDecreasing, const QString& mountPoint, const QString& userName)
+                               QList<QString>>, bool>(const QMap<QString, QList<QString>>& forDecreasing, const QString& mountPoint)
 {
-    if(!forDecreasing.isEmpty() && !mountPoint.isEmpty() && !userName.isEmpty()){
+    if(!forDecreasing.isEmpty() && !mountPoint.isEmpty()){
         QMap<QString, QList<QString>>::const_iterator cbeg{ forDecreasing.cbegin() };
         QMap<QString, QList<QString>>::const_iterator cend{ forDecreasing.cend() };
         std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
@@ -660,7 +703,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles, QMap<QString,
 
                 }else{
 
-                    DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint, userName) };
+                    DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint) };
 
                     if(code == DSqliteHandle::ReturnCode::Exist){
 
@@ -686,9 +729,9 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles, QMap<QString,
 ///###:this is also a auxiliary function. do not need a mutex.
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles2, QMap<QString, QList<QString>>, bool>(
-                                                      const QMap<QString, QList<QString>>& forIncreasing, const QString& mountPoint, const QString& userName)
+                                                      const QMap<QString, QList<QString>>& forIncreasing, const QString& mountPoint)
 {
-    if(!forIncreasing.isEmpty() && !mountPoint.isEmpty() && !userName.isEmpty()){
+    if(!forIncreasing.isEmpty() && !mountPoint.isEmpty()){
         QMap<QString, QList<QString>>::const_iterator cbeg{ forIncreasing.cbegin() };
         QMap<QString, QList<QString>>::const_iterator cend{ forIncreasing.cend() };
         std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
@@ -713,7 +756,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles2, QMap<QString,
 
                 }else{
 
-                    DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint, userName) };
+                    DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint) };
 
                     if(code == DSqliteHandle::ReturnCode::Exist){
 
@@ -740,9 +783,9 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles2, QMap<QString,
 
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles3, QList<QString>, bool>(const QList<QString>& forUpdating,
-                                                                                                        const QString& mountPoint, const QString& userName)
+                                                                                                        const QString& mountPoint)
 {
-    if(!forUpdating.isEmpty() && !mountPoint.isEmpty() && !userName.isEmpty()){
+    if(!forUpdating.isEmpty() && !mountPoint.isEmpty()){
         QList<QString>::const_iterator cbeg{ forUpdating.cbegin() };
         QList<QString>::const_iterator cend{ forUpdating.cend() };
         std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
@@ -767,7 +810,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles3, QList<QString
 
             }else{
 
-                DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint, userName) };
+                DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint) };
 
                 if(code == DSqliteHandle::ReturnCode::Exist){
 
@@ -799,7 +842,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles3, QList<QString
 
                 }else{
 
-                    DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint, userName) };
+                    DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint) };
 
                     if(code == DSqliteHandle::ReturnCode::Exist){
 
@@ -831,7 +874,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles3, QList<QString
                     }
 
                 }else{
-                    DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint, userName) };
+                    DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint) };
 
                     if(code == DSqliteHandle::ReturnCode::Exist){
 
@@ -875,7 +918,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles3, QList<QString
 
                     }else{
 
-                        DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint, userName) };
+                        DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint) };
 
                         if(code == DSqliteHandle::ReturnCode::Exist){
 
@@ -912,7 +955,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles3, QList<QString
 
                     }else{
 
-                        DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint, userName) };
+                        DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint) };
 
                         if(code == DSqliteHandle::ReturnCode::Exist){
 
@@ -936,16 +979,13 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles3, QList<QString
 }
 
 
-
-
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFilesThroughColor,
                     std::list<std::tuple<QString, QString, QString, QString, QString, QString>>,
                     bool>(const std::list<std::tuple<QString, QString, QString, QString, QString, QString>>& sqlStrs,
-                                                                                     const QString& mountPoint, const QString& userName)
+                                                                                     const QString& mountPoint)
 {
-    if(!m_flag.load(std::memory_order_consume) && !sqlStrs.empty() &&
-            !mountPoint.isEmpty() && !userName.isEmpty()){
+    if(!m_flag.load(std::memory_order_consume) && !sqlStrs.empty() && !mountPoint.isEmpty()){
         std::list<std::tuple<QString, QString, QString, QString, QString, QString>>::const_iterator cbeg{ sqlStrs.cbegin() };
         std::list<std::tuple<QString, QString, QString, QString, QString, QString>>::const_iterator cend{ sqlStrs.cend() };
         std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
@@ -1055,7 +1095,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFilesThroughColor,
 
             }else{
 
-                DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint, userName) };
+                DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint) };
 
                 if(code == DSqliteHandle::ReturnCode::Exist){
 
@@ -1155,12 +1195,46 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFilesThroughColor,
 }
 
 
+template<>
+bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFilesThroughColor3, QString, bool>(const QString& tag_name, const QString& mountPoint)
+{
+    if(!tag_name.isEmpty() && mountPoint == QString{"/home"}){
+        std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
+                  std::multimap<DSqliteHandle::SqlType, QString>::const_iterator> range{ SqlTypeWithStrs.equal_range(DSqliteHandle::SqlType::TagFilesThroughColor3) };
+        QSqlQuery sql_query{ *m_sqlDatabasePtr };
+        QString sql_counting{ range.first->second.arg(tag_name) };
+        QString sql_inserting{ (++range.first)->second.arg(tag_name) };
+
+        if(sql_query.exec(sql_counting)){
+
+            if(sql_query.next()){
+                int number{ sql_query.value("counter").toInt() };
+
+                if(number == 0){
+                    sql_query.clear();
+
+                    if(!sql_query.exec(sql_inserting)){
+                        qWarning()<< sql_query.lastError().text();
+
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+
 
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::UntagSamePartionFiles,
-                                                        std::list<QString>>( const std::list<QString>& sqlStrs, const QString& mountPoint, const QString& userName)
+                                                        std::list<QString>>( const std::list<QString>& sqlStrs, const QString& mountPoint)
 {
-    if(!m_flag.load(std::memory_order_consume) && !sqlStrs.empty() && !mountPoint.isEmpty() && !userName.isEmpty()){
+    if(!m_flag.load(std::memory_order_consume) && !sqlStrs.empty() && !mountPoint.isEmpty()){
         std::list<QString>::const_iterator cbeg{ sqlStrs.cbegin() };
         std::list<QString>::const_iterator cend{ sqlStrs.cend() };
         QSqlQuery sqlQuery{*m_sqlDatabasePtr};
@@ -1175,7 +1249,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::UntagSamePartionFiles,
 
             }else{
 
-                DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint, userName) };
+                DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint) };
 
                 if(code == DSqliteHandle::ReturnCode::Exist){
 
@@ -1198,10 +1272,9 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::UntagSamePartionFiles,
 
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::UntagSamePartionFiles2, QMap<QString, QList<QString>>>(const QMap<QString, QList<QString>>& fileNameAndTagNames,
-                                                                                                              const QString& mountPoint, const QString& userName)
+                                                                                                              const QString& mountPoint)
 {
-    if(!fileNameAndTagNames.isEmpty() && !mountPoint.isEmpty() &&
-       !userName.isEmpty() && static_cast<bool>(m_sqlDatabasePtr)){
+    if(!fileNameAndTagNames.isEmpty() && !mountPoint.isEmpty() && static_cast<bool>(m_sqlDatabasePtr)){
         QMap<QString, QList<QString>>::const_iterator cbeg{ fileNameAndTagNames.cbegin() };
         QMap<QString, QList<QString>>::const_iterator cend{ fileNameAndTagNames.cend() };
         std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
@@ -1236,7 +1309,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::UntagSamePartionFiles2, 
 
                         }else{
 
-                            DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint, userName) };
+                            DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint) };
 
                             if(code == DSqliteHandle::ReturnCode::Exist){
 
@@ -1297,7 +1370,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::UntagSamePartionFiles2, 
 
                             }else{
 
-                                DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint, userName) };
+                                DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint) };
 
                                 if(code == DSqliteHandle::ReturnCode::Exist){
 
@@ -1317,7 +1390,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::UntagSamePartionFiles2, 
 
             }else{
 
-                DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint, userName) };
+                DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint) };
 
                 if(code == DSqliteHandle::ReturnCode::Exist){
 
@@ -1343,7 +1416,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::UntagSamePartionFiles2, 
 
                             }else{
 
-                                DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint, userName) };
+                                DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint) };
 
                                 if(code == DSqliteHandle::ReturnCode::Exist){
 
@@ -1405,7 +1478,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::UntagSamePartionFiles2, 
 
                                 }else{
 
-                                    DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint, userName) };
+                                    DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint) };
 
                                     if(code == DSqliteHandle::ReturnCode::Exist){
 
@@ -1436,9 +1509,9 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::UntagSamePartionFiles2, 
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteFiles,
                                 std::map<QString, std::pair<QString, QString>>>(const std::map<QString, std::pair<QString, QString>>& sqlStrs,
-                                                                                       const QString& mountPoint, const QString& userName)
+                                                                                       const QString& mountPoint)
 {
-    if(!sqlStrs.empty() && !mountPoint.isEmpty() && !userName.isEmpty()){
+    if(!sqlStrs.empty() && !mountPoint.isEmpty()){
         std::map<QString, std::pair<QString, QString>>::const_iterator cbeg{ sqlStrs.cbegin() };
         std::map<QString, std::pair<QString, QString>>::const_iterator cend{ sqlStrs.cend() };
         QSqlQuery sqlQuery{*m_sqlDatabasePtr};
@@ -1453,7 +1526,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteFiles,
                 }
 
             }else{
-                DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint, userName) };
+                DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint) };
 
                 if(code == DSqliteHandle::ReturnCode::Exist){
 
@@ -1481,7 +1554,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteFiles,
                 }
 
             }else{
-                DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint, userName) };
+                DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint) };
 
                 if(code == DSqliteHandle::ReturnCode::Exist){
 
@@ -1503,9 +1576,9 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteFiles,
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags,
                                 std::list<QString>>(const std::list<QString>& sqlStrs,
-                                                                                  const QString& mountPoint, const QString& userName)
+                                                                                  const QString& mountPoint)
 {
-    if(!sqlStrs.empty() && !mountPoint.isEmpty() && !userName.isEmpty()){
+    if(!sqlStrs.empty() && !mountPoint.isEmpty()){
         std::list<QString>::const_iterator sqlCBeg{ sqlStrs.cbegin() };
         std::list<QString>::const_iterator sqlCEnd{ sqlStrs.cend() };
         QSqlQuery sqlQuery{ *m_sqlDatabasePtr };
@@ -1519,7 +1592,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags,
                 }
 
             }else{
-                DSqliteHandle::ReturnCode code{this->checkWhetherHasSqliteInPartion(mountPoint, userName)};
+                DSqliteHandle::ReturnCode code{this->checkWhetherHasSqliteInPartion(mountPoint)};
 
                 if(code == DSqliteHandle::ReturnCode::Exist){
 
@@ -1539,10 +1612,10 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags,
 
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags2,
-                                QMap<QString, QList<QString>>>(const QMap<QString, QList<QString>>& fileNameAndTagNames, const QString& mountPoint, const QString& userName)
+                                QMap<QString, QList<QString>>>(const QMap<QString, QList<QString>>& fileNameAndTagNames, const QString& mountPoint)
 {
 
-    if(!fileNameAndTagNames.isEmpty() && !mountPoint.isEmpty() && !userName.isEmpty()){
+    if(!fileNameAndTagNames.isEmpty() && !mountPoint.isEmpty()){
         QMap<QString, QList<QString>>::const_iterator cbeg{ fileNameAndTagNames.cbegin() };
         QMap<QString, QList<QString>>::const_iterator cend{ fileNameAndTagNames.cend() };
         std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
@@ -1578,7 +1651,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags2,
 
                 }else{
 
-                    DSqliteHandle::ReturnCode code{this->checkWhetherHasSqliteInPartion(mountPoint, userName)};
+                    DSqliteHandle::ReturnCode code{this->checkWhetherHasSqliteInPartion(mountPoint)};
 
                     if(code == DSqliteHandle::ReturnCode::Exist){
 
@@ -1620,7 +1693,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags2,
                     }
 
                 }else{
-                    DSqliteHandle::ReturnCode code{this->checkWhetherHasSqliteInPartion(mountPoint, userName)};
+                    DSqliteHandle::ReturnCode code{this->checkWhetherHasSqliteInPartion(mountPoint)};
 
                     if(code == DSqliteHandle::ReturnCode::Exist){
                         std::multimap<DSqliteHandle::SqlType, QString>::const_iterator rangeBeg{ range.first };
@@ -1692,7 +1765,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags2,
                     }
 
                 }else if(m_flag.load(std::memory_order_consume) && !sqlForUpdatingOrDeleting.isEmpty()){
-                    DSqliteHandle::ReturnCode code{this->checkWhetherHasSqliteInPartion(mountPoint, userName)};
+                    DSqliteHandle::ReturnCode code{this->checkWhetherHasSqliteInPartion(mountPoint)};
 
                     if(code == DSqliteHandle::ReturnCode::Exist){
 
@@ -1713,11 +1786,38 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags2,
 }
 
 
+template<>
+bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags3, QList<QString>, bool>(const QList<QString>& tag_name, const QString& mountPoint)
+{
+    if(!tag_name.isEmpty() && mountPoint == QString{"/home"} && QFileInfo::exists("/home")){
+        QList<QString>::const_iterator c_beg{ tag_name.cbegin() };
+        QList<QString>::const_iterator c_end{ tag_name.cend() };
+        QSqlQuery sql_query{ *m_sqlDatabasePtr };
+        std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
+                  std::multimap<DSqliteHandle::SqlType, QString>::const_iterator> range{ SqlTypeWithStrs.equal_range(DSqliteHandle::SqlType::DeleteTags3) };
+
+        for(; c_beg != c_end; ++c_beg){
+            QString sql_str{ range.first->second };
+            sql_str = sql_str.arg(*c_beg);
+
+            if(!sql_query.exec()){
+                qWarning()<< sql_query.lastError().text();
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+
 
 template<>
-bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::ChangeFilesName, std::map<QString, QString>>(const std::map<QString, QString>& sqlStrs, const QString& mountPoint, const QString& userName)
+bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::ChangeFilesName, std::map<QString, QString>>(const std::map<QString, QString>& sqlStrs, const QString& mountPoint)
 {
-    if(!sqlStrs.empty() && !mountPoint.isEmpty() && !userName.isEmpty()){
+    if(!sqlStrs.empty() && !mountPoint.isEmpty()){
         std::map<QString, QString>::const_iterator sqlCBeg{ sqlStrs.cbegin() };
         std::map<QString, QString>::const_iterator sqlCEnd{ sqlStrs.cend() };
         QSqlQuery sqlQuery{ *m_sqlDatabasePtr };
@@ -1735,7 +1835,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::ChangeFilesName, std::ma
                 }
 
             }else{
-                DSqliteHandle::ReturnCode code{this->checkWhetherHasSqliteInPartion(mountPoint, userName)};
+                DSqliteHandle::ReturnCode code{this->checkWhetherHasSqliteInPartion(mountPoint)};
 
                 if(code == DSqliteHandle::ReturnCode::Exist){
 
@@ -1761,9 +1861,9 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::ChangeFilesName, std::ma
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::ChangeTagsName,
                                 std::list<std::tuple<QString, QString, QString, QString>>>(const std::list<std::tuple<QString, QString, QString, QString>>& sqlStrs,
-                                                                                           const QString& mountPoint, const QString& userName)
+                                                                                           const QString& mountPoint)
 {
-    if(!sqlStrs.empty() && !mountPoint.isEmpty() && !userName.isEmpty()){
+    if(!sqlStrs.empty() && !mountPoint.isEmpty()){
         std::list<std::tuple<QString, QString, QString, QString>>::const_iterator sqlCBeg{ sqlStrs.cbegin() };
         std::list<std::tuple<QString, QString, QString, QString>>::const_iterator sqlCEnd{ sqlStrs.cend() };
         QSqlQuery sqlQuery{ *m_sqlDatabasePtr };
@@ -1792,7 +1892,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::ChangeTagsName,
                 }
 
             }else{
-                DSqliteHandle::ReturnCode code{this->checkWhetherHasSqliteInPartion(mountPoint, userName)};
+                DSqliteHandle::ReturnCode code{this->checkWhetherHasSqliteInPartion(mountPoint)};
 
                 if(code == DSqliteHandle::ReturnCode::Exist){
 
@@ -1824,12 +1924,43 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::ChangeTagsName,
 
 
 template<>
-QList<QString> DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::GetTagsThroughFile, QString,
-                                          QList<QString>>(const QString& sqlStr, const QString& mountPoint, const QString& userName)
+bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::ChangeTagsName2, QMap<QString, QList<QString>>, bool>(const QMap<QString, QList<QString>>& old_and_new,
+                                                                                                                     const QString& mountPoint)
 {
-    QList<QString> tagsNames{};
+    if(!old_and_new.empty() && mountPoint == QString{"/home"} && QFileInfo::exists("/home")){
+        QMap<QString, QList<QString>>::const_iterator c_beg{ old_and_new.cbegin() };
+        QMap<QString, QList<QString>>::const_iterator c_end{ old_and_new.cend() };
+        std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
+                  std::multimap<DSqliteHandle::SqlType, QString>::const_iterator> range{ SqlTypeWithStrs.equal_range(SqlType::ChangeTagsName2) };
+        QSqlQuery sql_query{ *m_sqlDatabasePtr };
 
-    if(!sqlStr.isEmpty() && !mountPoint.isEmpty() && !userName.isEmpty()){
+        for(; c_beg != c_end; ++c_beg){
+            QString sql_str{ range.first->second.arg(c_beg.value().first()) };
+            sql_str = sql_str.arg(c_beg.key());
+
+            if(!sql_query.exec(sql_str)){
+                qWarning()<< sql_query.lastError().text();
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+
+
+
+
+template<>
+QList<QString> DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::GetTagsThroughFile, QString,
+                                          QList<QString>>(const QString& sqlStr, const QString& mountPoint)
+{
+    QList<QString> tagNames{};
+
+    if(!sqlStr.isEmpty() && !mountPoint.isEmpty()){
         QSqlQuery sqlQuery{ *m_sqlDatabasePtr };
 
         if(!m_flag.load(std::memory_order_consume)){
@@ -1840,48 +1971,48 @@ QList<QString> DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::GetTagsThrough
 
             while(sqlQuery.next()){
                 QString tagName{ sqlQuery.value("tag_name").toString() };
-                tagsNames.push_back(tagName);
+                tagNames.push_back(tagName);
             }
 
         }else{
 
-            DSqliteHandle::ReturnCode code{this->checkWhetherHasSqliteInPartion(mountPoint, userName)};
+            DSqliteHandle::ReturnCode code{this->checkWhetherHasSqliteInPartion(mountPoint)};
 
             if(code == DSqliteHandle::ReturnCode::Exist){
+
                 if(!sqlQuery.exec(sqlStr)){
                     qWarning(sqlQuery.lastError().text().toStdString().c_str());
                 }
 
                 while(sqlQuery.next()){
                     QString tagName{ sqlQuery.value("tag_name").toString() };
-                    tagsNames.push_back(tagName);
+                    tagNames.push_back(tagName);
                 }
             }
         }
     }
 
-    return tagsNames;
+    return tagNames;
 }
 
 
 template<>
 QList<QString> DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::GetFilesThroughTag,
-                                          QString, QList<QString>>(const QString& sqlStr, const QString& mountPoint, const QString& userName)
+                                          QString, QList<QString>>(const QString& sqlStr, const QString& mountPoint)
 {
     QList<QString> files{};
 
-    if(!sqlStr.isEmpty() && !mountPoint.isEmpty() && !userName.isEmpty()){
+    if(!sqlStr.isEmpty() && !mountPoint.isEmpty()){
         QSqlQuery sqlQuery{ *m_sqlDatabasePtr };
 
         if(!m_flag.load(std::memory_order_consume)){
 
-            if(!sqlQuery.exec(sqlStr)){
-                qWarning(sqlQuery.lastError().text().toStdString().c_str());
-            }
+            if(sqlQuery.exec(sqlStr)){
 
-            while(sqlQuery.next()){
-                QString fileName{ sqlQuery.value("file_name").toString() };
-                files.push_back(fileName);
+                while(sqlQuery.next()){
+                    QString fileName{ sqlQuery.value("file_name").toString() };
+                    files.push_back(fileName);
+                }
             }
         }
     }
@@ -1892,23 +2023,20 @@ QList<QString> DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::GetFilesThroug
 
 
 template<>                                           ///###:<file, [tagsName]>
-bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName)
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags)
 {
-    if(!filesAndTags.isEmpty() && !userName.isEmpty()){
+    if(!filesAndTags.isEmpty()){
        int size{ filesAndTags.size() };
        QList<QString> mutualTags{};
        QList<QString> currentTags{ filesAndTags.cbegin().value() };
 
-//       qDebug()<< "filesAndTags: " << filesAndTags;
-
        if(size == 1){
-           mutualTags = this->execSqlstr<DSqliteHandle::SqlType::GetTagsThroughFile, QList<QString>>(filesAndTags, userName);
+           mutualTags = this->execSqlstr<DSqliteHandle::SqlType::GetTagsThroughFile, QList<QString>>(filesAndTags);
        }
 
        if(size > 1){
-           mutualTags = this->execSqlstr<DSqliteHandle::SqlType::GetSameTagsOfDiffFiles, QList<QString>>(filesAndTags, userName);
-       }
-
+           mutualTags = this->execSqlstr<DSqliteHandle::SqlType::GetSameTagsOfDiffFiles, QList<QString>>(filesAndTags);
+       } 
 
        QPair<QString, QString> unixDeviceAndMountPoint{ DSqliteHandle::getMountPointOfFile(
                                                         DUrl::fromLocalFile(filesAndTags.cbegin().key()), m_partionsOfDevices) };
@@ -1917,7 +2045,7 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(const QMa
            return false;
        }
 
-       DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(unixDeviceAndMountPoint.second, userName) };
+       DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(unixDeviceAndMountPoint.second) };
 
        ///###: for testing.
 //       qDebug()<< "mountpoint: " << unixDeviceAndMountPoint.second;
@@ -1929,7 +2057,7 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(const QMa
        if(!mutualTags.isEmpty()){
 
            if(code == DSqliteHandle::ReturnCode::Exist || code == DSqliteHandle::ReturnCode::NoExist){
-               this->connectToSqlite(unixDeviceAndMountPoint.second, userName);
+               this->connectToSqlite(unixDeviceAndMountPoint.second);
                QList<QString> newTags{};
                QList<QString> existingTags{};
                QList<QString> decreased{};
@@ -1984,7 +2112,7 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(const QMa
                        }
 
                        valueOfDelRedundant = this->helpExecSql<DSqliteHandle::SqlType::TagFiles, QMap<QString, QList<QString>>,
-                                                               bool>(mapForDelRedundant, unixDeviceAndMountPoint.second, userName);
+                                                               bool>(mapForDelRedundant, unixDeviceAndMountPoint.second);
                    }
 
                    bool valueOfInsertNew{ true };
@@ -2000,14 +2128,14 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(const QMa
                        }
 
                        valueOfInsertNew = this->helpExecSql<DSqliteHandle::SqlType::TagFiles2, QMap<QString, QList<QString>>,
-                                                                                               bool>(mapForInsertingNew, unixDeviceAndMountPoint.second, userName);
+                                                                                               bool>(mapForInsertingNew, unixDeviceAndMountPoint.second);
                    }
 
 
                    bool valueOfUpdating{ true };
                    QList<QString> files{ filesAndTags.keys() };
                    valueOfUpdating = this->helpExecSql<DSqliteHandle::SqlType::TagFiles3, QList<QString>,
-                                                                                          bool>(files, unixDeviceAndMountPoint.second, userName);
+                                                                                          bool>(files, unixDeviceAndMountPoint.second);
 
                    if(!(valueOfDelRedundant && valueOfInsertNew && valueOfUpdating && m_sqlDatabasePtr->commit())){
                        m_sqlDatabasePtr->rollback();
@@ -2026,18 +2154,18 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(const QMa
        }else{
 
            if(code == DSqliteHandle::ReturnCode::Exist || code == DSqliteHandle::ReturnCode::NoExist){
-               this->connectToSqlite(unixDeviceAndMountPoint.second, userName);
+               this->connectToSqlite(unixDeviceAndMountPoint.second);
 
                if(m_sqlDatabasePtr && m_sqlDatabasePtr->open() && m_sqlDatabasePtr->transaction()){
 
                    bool valueOfInsertNew{ true };
                    valueOfInsertNew = this->helpExecSql<DSqliteHandle::SqlType::TagFiles2, QMap<QString, QList<QString>>,
-                                                           bool>(filesAndTags, unixDeviceAndMountPoint.second, userName);
+                                                           bool>(filesAndTags, unixDeviceAndMountPoint.second);
 
                    bool valueOfUpdating{ true };
                    QList<QString> files{ filesAndTags.keys() };
                    valueOfUpdating = this->helpExecSql<DSqliteHandle::SqlType::TagFiles3, QList<QString>,
-                                                                                          bool>(files, unixDeviceAndMountPoint.second, userName);
+                                                                                          bool>(files, unixDeviceAndMountPoint.second);
 
                    if(!(valueOfInsertNew && valueOfUpdating && m_sqlDatabasePtr->commit())){
                        m_sqlDatabasePtr->rollback();
@@ -2063,12 +2191,31 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(const QMa
 
 
 template<>
-bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFilesThroughColor, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName)
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFilesThroughColor, bool>(const QMap<QString, QList<QString>>& filesAndTags)
 {
     ///##: log! but you need specify the path of file.
 //    std::basic_ofstream<char> outStream{ "", std::ios_base::out | std::ios_base::app };
 
-    if(!filesAndTags.isEmpty() && !userName.isEmpty()){
+    if(!filesAndTags.isEmpty()){
+
+        DSqliteHandle::ReturnCode return_code{ this->checkWhetherHasSqliteInPartion("/home", ".__main.db") };
+
+        if(return_code != DSqliteHandle::ReturnCode::Exist){
+            return false;
+        }
+
+        this->connectToSqlite("/home", ".__main.db");
+        bool the_result{ true };
+
+        if(m_sqlDatabasePtr && m_sqlDatabasePtr->open() && m_sqlDatabasePtr->transaction()){
+            the_result = this->helpExecSql<DSqliteHandle::SqlType::TagFilesThroughColor3, QString, bool>(filesAndTags.cbegin().key(), "/home");
+        }
+
+        if(!(the_result && m_sqlDatabasePtr->commit())){
+            m_sqlDatabasePtr->rollback();
+            return false;
+        }
+
         QMap<QString, QList<QString>>::const_iterator cbeg{ filesAndTags.cbegin() };
         QMap<QString, QList<QString>>::const_iterator cend{ filesAndTags.cend() };
         std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
@@ -2084,10 +2231,10 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFilesThroughColor, boo
             return false;
         }
 
-        DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(unixDeviceAndMountPoint.second, userName) };
+        DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(unixDeviceAndMountPoint.second) };
 
         if(code == DSqliteHandle::ReturnCode::Exist || code == DSqliteHandle::ReturnCode::NoExist){
-            this->connectToSqlite(unixDeviceAndMountPoint.second, userName);
+            this->connectToSqlite(unixDeviceAndMountPoint.second);
 
             if(static_cast<bool>(m_sqlDatabasePtr)){
 
@@ -2120,7 +2267,7 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFilesThroughColor, boo
                     if(m_sqlDatabasePtr->open() && m_sqlDatabasePtr->transaction()){
                         value = this->helpExecSql<DSqliteHandle::SqlType::TagFilesThroughColor,
                                                   std::list<std::tuple<QString, QString, QString, QString, QString, QString>>,
-                                                                                                                    bool>(sqlStrs, unixDeviceAndMountPoint.second, userName);
+                                                                                                                    bool>(sqlStrs, unixDeviceAndMountPoint.second);
 
                         if(value){
 
@@ -2151,17 +2298,17 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFilesThroughColor, boo
 
 
 template<>
-bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::UntagSamePartionFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName)
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::UntagSamePartionFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags)
 {
-    if(!filesAndTags.isEmpty() && !userName.isEmpty()){
+    if(!filesAndTags.isEmpty()){
         QMap<QString, QList<QString>>::const_iterator cbeg{ filesAndTags.cbegin() };
         QMap<QString, QList<QString>>::const_iterator cend{ filesAndTags.cend() };
         QPair<QString, QString> unixDeviceAndMountPoint{ DSqliteHandle::getMountPointOfFile(DUrl::fromLocalFile(cbeg.key()), m_partionsOfDevices) };
         DSqliteHandle::ReturnCode code{
-                        this->checkWhetherHasSqliteInPartion(unixDeviceAndMountPoint.second, userName) };
+                        this->checkWhetherHasSqliteInPartion(unixDeviceAndMountPoint.second) };
 
         if(code == DSqliteHandle::ReturnCode::Exist || code == DSqliteHandle::ReturnCode::NoExist){
-            this->connectToSqlite(unixDeviceAndMountPoint.second, userName);
+            this->connectToSqlite(unixDeviceAndMountPoint.second);
 
             if(static_cast<bool>(m_sqlDatabasePtr)){
                 std::pair<std::multimap<SqlType, QString>::const_iterator,
@@ -2187,12 +2334,12 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::UntagSamePartionFiles, bo
                     if(!sqlForDeletingRowOfTagWithFile.empty() && m_sqlDatabasePtr->open()
                                                                && m_sqlDatabasePtr->transaction()){
                         bool resultOfDeleteRowInTagWithFile{ this->helpExecSql<DSqliteHandle::SqlType::UntagSamePartionFiles,
-                                                                               std::list<QString>, bool>(sqlForDeletingRowOfTagWithFile, unixDeviceAndMountPoint.second, userName) };
+                                                                               std::list<QString>, bool>(sqlForDeletingRowOfTagWithFile, unixDeviceAndMountPoint.second) };
                         bool resultOfUpdateFileProperty{ false };
 
                         if(resultOfDeleteRowInTagWithFile){
                             resultOfUpdateFileProperty = this->helpExecSql<DSqliteHandle::SqlType::UntagSamePartionFiles2,
-                                                                               QMap<QString, QList<QString>>, bool>(filesAndTags, unixDeviceAndMountPoint.second, userName);
+                                                                               QMap<QString, QList<QString>>, bool>(filesAndTags, unixDeviceAndMountPoint.second);
                         }
 
                         if(!(resultOfDeleteRowInTagWithFile && resultOfUpdateFileProperty
@@ -2226,9 +2373,10 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::UntagSamePartionFiles, bo
 
 
 template<>
-bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::UntagDiffPartionFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName)
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::UntagDiffPartionFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags)
 {
-    if(!filesAndTags.isEmpty() && !userName.isEmpty()){
+
+    if(!filesAndTags.isEmpty()){
         QMap<QString, QList<QString>>::const_iterator cbeg{ filesAndTags.cbegin() };
         QMap<QString, QList<QString>>::const_iterator cend{ filesAndTags.cend() };
 
@@ -2244,14 +2392,13 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::UntagDiffPartionFiles, bo
             }
         }
 
-
         if(!untagFilesInSpecifyPartion.empty()){
             std::unordered_map<QString, QMap<QString, QList<QString>>>::const_iterator partionItrBeg{ untagFilesInSpecifyPartion.cbegin() };
             std::unordered_map<QString, QMap<QString, QList<QString>>>::const_iterator partionItrEnd{ untagFilesInSpecifyPartion.cend() };
             bool result{ true };
 
             for(; partionItrBeg != partionItrEnd; ++partionItrBeg){
-                bool val{ this->execSqlstr<DSqliteHandle::SqlType::UntagSamePartionFiles, bool>(partionItrBeg->second, userName) };
+                bool val{ this->execSqlstr<DSqliteHandle::SqlType::UntagSamePartionFiles, bool>(partionItrBeg->second) };
                 result = (val && result);
             }
 
@@ -2268,9 +2415,10 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::UntagDiffPartionFiles, bo
 
 
 template<>
-bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName)
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags)
 {
-    if(!filesAndTags.isEmpty() && !userName.isEmpty()){
+
+    if(!filesAndTags.isEmpty()){
         QMap<QString, QList<QString>>::const_iterator cbeg{ filesAndTags.cbegin() };
         QMap<QString, QList<QString>>::const_iterator cend{ filesAndTags.cend() };
         std::pair<std::map<DSqliteHandle::SqlType, QString>::const_iterator,
@@ -2288,6 +2436,8 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(const 
                 filesOfPartions[unixDeviceAndMountPoint.second].push_back(cbeg.key());
             }
         }
+
+
 
         ///###: splice sql.
         ///###: <mount-point, [<file, <sql, sql>>]>
@@ -2310,15 +2460,15 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(const 
                 bool value{ true };
 
                 for(const std::pair<QString, std::map<QString, std::pair<QString, QString>>>& partion : sqlForDeletingFiles){
-                    DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(partion.first, userName) };
+                    DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(partion.first) };
 
                     if(code == DSqliteHandle::ReturnCode::NoExist || code == DSqliteHandle::ReturnCode::Exist){
-                        this->connectToSqlite(partion.first, userName);
+                        this->connectToSqlite(partion.first);
 
                         if(static_cast<bool>(m_sqlDatabasePtr) && m_sqlDatabasePtr->open()){
 
                             bool result{ this->helpExecSql<DSqliteHandle::SqlType::DeleteFiles,
-                                               std::map<QString, std::pair<QString, QString>>, bool>(partion.second, partion.first, userName) };
+                                               std::map<QString, std::pair<QString, QString>>, bool>(partion.second, partion.first) };
                             value = (value && result);
                         }
                     }
@@ -2338,9 +2488,28 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(const 
 
 
 template<>
-bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteTags, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName)
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteTags, bool>(const QMap<QString, QList<QString>>& filesAndTags)
 {
-    if(!filesAndTags.isEmpty() && !userName.isEmpty()){
+    if(!filesAndTags.isEmpty()){
+
+        DSqliteHandle::ReturnCode return_code{ this->checkWhetherHasSqliteInPartion("/home", "__main.db") };
+
+        if(return_code != DSqliteHandle::ReturnCode::Exist){
+            return false;
+        }
+
+        this->connectToSqlite("/home", ".__main.db");
+        bool the_result{ true };
+
+        if(m_sqlDatabasePtr && m_sqlDatabasePtr->open() && m_sqlDatabasePtr->transaction()){
+            the_result = this->helpExecSql<DSqliteHandle::SqlType::DeleteTags3, QList<QString>, bool>(filesAndTags.keys(), "/home");
+        }
+
+        if(!(the_result && m_sqlDatabasePtr->commit())){
+            m_sqlDatabasePtr->rollback();
+            return false;
+        }
+
         std::list<QString> sqlStrs{};
         QMap<QString, QList<QString>>::const_iterator cbeg{ filesAndTags.cbegin() };
         QMap<QString, QList<QString>>::const_iterator cend{ filesAndTags.cend() };
@@ -2367,25 +2536,24 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteTags, bool>(const Q
                 for(; mountPointItr != mountPointItrEnd; ++mountPointItr){
 
                     if(!mountPointItr->second.isEmpty() && !mountPointItr->second.isNull()){
-                        DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPointItr->second, userName) };
+                        DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPointItr->second) };
 
                         if(code == DSqliteHandle::ReturnCode::NoExist || code == DSqliteHandle::ReturnCode::Exist){
-                            this->connectToSqlite(mountPointItr->second, userName);
+                            this->connectToSqlite(mountPointItr->second);
                             bool flagForDeleteInTagWithFile{ false };
                             bool flagForUpdatingFileProperty{ false };
 
                             if(m_sqlDatabasePtr && m_sqlDatabasePtr->open() && m_sqlDatabasePtr->transaction()){
                                 flagForDeleteInTagWithFile = this->helpExecSql<DSqliteHandle::SqlType::DeleteTags,
-                                                                               std::list<QString>, bool>(sqlStrs, mountPointItr->second, userName);
+                                                                               std::list<QString>, bool>(sqlStrs, mountPointItr->second);
 
                                 if(flagForDeleteInTagWithFile){
                                     flagForUpdatingFileProperty = this->helpExecSql<DSqliteHandle::SqlType::DeleteTags2,
-                                                                                    QMap<QString, QList<QString>>, bool>(filesAndTags, mountPointItr->second, userName);
+                                                                                    QMap<QString, QList<QString>>, bool>(filesAndTags, mountPointItr->second);
                                 }
                             }
 
-                            if(!(flagForDeleteInTagWithFile && flagForUpdatingFileProperty &&
-                                                               m_sqlDatabasePtr && m_sqlDatabasePtr->commit())){
+                            if(!(flagForDeleteInTagWithFile && flagForUpdatingFileProperty && m_sqlDatabasePtr && m_sqlDatabasePtr->commit())){
                                 m_sqlDatabasePtr->rollback();
                                 result = false && result;
                             }
@@ -2409,9 +2577,9 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteTags, bool>(const Q
 
 
 template<>
-bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeFilesName, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName)
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeFilesName, bool>(const QMap<QString, QList<QString>>& filesAndTags)
 {
-    if(!filesAndTags.isEmpty() && !userName.isEmpty()){
+    if(!filesAndTags.isEmpty()){
         QMap<QString, QList<QString>>::const_iterator cbeg{ filesAndTags.cbegin() };
         QMap<QString, QList<QString>>::const_iterator cend{ filesAndTags.cend() };
         std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
@@ -2453,14 +2621,14 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeFilesName, bool>(co
                 bool result{ true };
 
                 for(const std::pair<QString, std::map<QString, QString>>& mountPointAndSqls : sqlForChangingFilesName){
-                    DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPointAndSqls.first, userName) };
+                    DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPointAndSqls.first) };
 
                     if(code == DSqliteHandle::ReturnCode::NoExist || code == DSqliteHandle::ReturnCode::Exist){
-                        this->connectToSqlite(mountPointAndSqls.first, userName);
+                        this->connectToSqlite(mountPointAndSqls.first);
 
                         if(m_sqlDatabasePtr && m_sqlDatabasePtr->open() && m_sqlDatabasePtr->transaction()){
                             bool resultOfExecSql{ this->helpExecSql<DSqliteHandle::SqlType::ChangeFilesName,
-                                                                    std::map<QString, QString>, bool>(mountPointAndSqls.second, mountPointAndSqls.first, userName) };
+                                                                    std::map<QString, QString>, bool>(mountPointAndSqls.second, mountPointAndSqls.first) };
 
                             if(!(resultOfExecSql && m_sqlDatabasePtr->commit())){
                                 m_sqlDatabasePtr->rollback();
@@ -2484,15 +2652,32 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeFilesName, bool>(co
 
 
 template<>
-bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagsName, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName)
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagsName, bool>(const QMap<QString, QList<QString>>& filesAndTags)
 {
-    if(!filesAndTags.isEmpty() && !userName.isEmpty()){
+    if(!filesAndTags.isEmpty()){
+        DSqliteHandle::ReturnCode return_code{ this->checkWhetherHasSqliteInPartion("/home", ".__main.db") };
+
+        if(return_code != DSqliteHandle::ReturnCode::Exist){
+            return false;
+        }
+
+        this->connectToSqlite("/home", ".__main.db");
+        bool the_result{ true };
+
+        if(m_sqlDatabasePtr && m_sqlDatabasePtr->open() && m_sqlDatabasePtr->transaction()){
+            the_result = this->helpExecSql<DSqliteHandle::SqlType::ChangeTagsName2, QMap<QString, QList<QString>>, bool>(filesAndTags, "/home");
+        }
+
+        if(!(the_result && m_sqlDatabasePtr->commit())){
+            m_sqlDatabasePtr->rollback();
+            return false;
+        }
+
         QMap<QString, QList<QString>>::const_iterator tagNameBeg{ filesAndTags.cbegin() };
         QMap<QString, QList<QString>>::const_iterator tagNameCend{ filesAndTags.cend() };
         std::list<std::tuple<QString, QString, QString, QString>> sqlStrs{};
         std::pair<std::map<DSqliteHandle::SqlType, QString>::const_iterator,
                   std::map<DSqliteHandle::SqlType, QString>::const_iterator> range{ SqlTypeWithStrs.equal_range(DSqliteHandle::SqlType::ChangeTagsName) };
-
 
         for(; tagNameBeg != tagNameCend; ++tagNameBeg){
             std::map<DSqliteHandle::SqlType, QString>::const_iterator rangeBeg{ range.first };
@@ -2523,10 +2708,10 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagsName, bool>(con
                 for(; mountPointItr != mountPointItrEnd; ++mountPointItr){
 
                     if(!mountPointItr->second.isEmpty() && !mountPointItr->second.isNull()){
-                        DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPointItr->second, userName) };
+                        DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPointItr->second) };
 
                         if(code == DSqliteHandle::ReturnCode::NoExist || code == DSqliteHandle::ReturnCode::Exist){
-                            this->connectToSqlite(mountPointItr->second, userName);
+                            this->connectToSqlite(mountPointItr->second);
                             bool resultOfChangeNameOfTag{ true };
                             bool flagOfTransaction{ true };
 
@@ -2536,7 +2721,7 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagsName, bool>(con
                                 if(flagOfTransaction){
                                     resultOfChangeNameOfTag = this->helpExecSql<DSqliteHandle::SqlType::ChangeTagsName,
                                                                                 std::list<std::tuple<QString, QString,
-                                                                                QString, QString>>, bool>(sqlStrs, mountPointItr->second, userName);
+                                                                                QString, QString>>, bool>(sqlStrs, mountPointItr->second);
                                 }
                             }
 
@@ -2564,11 +2749,11 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagsName, bool>(con
 
 
 template<>
-QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetTagsThroughFile, QList<QString>>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName)
+QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetTagsThroughFile, QList<QString>>(const QMap<QString, QList<QString>>& filesAndTags)
 {
     QList<QString> tags{};
 
-    if(!filesAndTags.isEmpty() && !userName.isEmpty()){
+    if(!filesAndTags.isEmpty()){
         QMap<QString, QList<QString>>::const_iterator cbeg{ filesAndTags.cbegin() };
         QPair<QString, QString> partionAndMountPoint{ DSqliteHandle::getMountPointOfFile( DUrl::fromLocalFile(cbeg.key()), m_partionsOfDevices ) };
         std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
@@ -2580,15 +2765,15 @@ QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetTagsThroughF
             return tags;
         }
 
-        DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(partionAndMountPoint.second, userName) };
+        DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(partionAndMountPoint.second) };
 
         if(code == DSqliteHandle::ReturnCode::NoExist || code == DSqliteHandle::ReturnCode::Exist){
-            this->connectToSqlite(partionAndMountPoint.second, userName);
+            this->connectToSqlite(partionAndMountPoint.second);
 
             ///###: no transaction.
             if(m_sqlDatabasePtr->open()){
                 tags = this->helpExecSql<DSqliteHandle::SqlType::GetTagsThroughFile,
-                                             QString, QList<QString>>(sqlForGetTagsThroughFile, partionAndMountPoint.second, userName);
+                                             QString, QList<QString>>(sqlForGetTagsThroughFile, partionAndMountPoint.second);
             }
         }
     }
@@ -2599,11 +2784,11 @@ QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetTagsThroughF
 }
 
 template<>
-QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetFilesThroughTag, QList<QString>>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName)
+QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetFilesThroughTag, QList<QString>>(const QMap<QString, QList<QString>>& filesAndTags)
 {
     QList<QString> files{};
 
-    if(!filesAndTags.isEmpty() && !userName.isEmpty()){
+    if(!filesAndTags.isEmpty()){
         QMap<QString, QList<QString>>::const_iterator cbeg{ filesAndTags.cbegin() };
         std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
                   std::multimap<DSqliteHandle::SqlType, QString>::const_iterator> range{ SqlTypeWithStrs.equal_range(DSqliteHandle::SqlType::GetFilesThroughTag) };
@@ -2620,15 +2805,16 @@ QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetFilesThrough
                 for(; mountPointItr != mountPointItrEnd; ++mountPointItr){
 
                     if(!mountPointItr->second.isEmpty() && !mountPointItr->second.isNull()){
-                        DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPointItr->second, userName) };
+
+                        DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPointItr->second) };
 
                         if(code == DSqliteHandle::ReturnCode::NoExist || code == DSqliteHandle::ReturnCode::Exist){
-                            this->connectToSqlite(mountPointItr->second, userName);
+                            this->connectToSqlite(mountPointItr->second);
 
-                            if(m_sqlDatabasePtr->open()){
+                            if(m_sqlDatabasePtr && m_sqlDatabasePtr->open()){
 
                                 QList<QString> filesOfPartion{ this->helpExecSql<DSqliteHandle::SqlType::GetFilesThroughTag,
-                                                                     QString, QList<QString>>(sqlForGetFilesThroughTag, mountPointItr->second, userName) };
+                                                                     QString, QList<QString>>(sqlForGetFilesThroughTag, mountPointItr->second) };
 
                                 if(!filesOfPartion.isEmpty()){
                                     files += filesOfPartion;
@@ -2642,18 +2828,17 @@ QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetFilesThrough
     }
 
     this->closeSqlDatabase();
-
     return files;
 }
 
 
 template<>
-QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetSameTagsOfDiffFiles, QList<QString>>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName)
+QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetSameTagsOfDiffFiles, QList<QString>>(const QMap<QString, QList<QString>>& filesAndTags)
 {
     QList<QString> totalTagsNames{};
     std::map<QString, std::size_t> countForTags{};
 
-    if(!filesAndTags.isEmpty() && !userName.isEmpty()){
+    if(!filesAndTags.isEmpty()){
         QMap<QString, QList<QString>>::const_iterator cbeg{ filesAndTags.cbegin() };
         QMap<QString, QList<QString>>::const_iterator cend{ filesAndTags.cend() };
 
@@ -2661,10 +2846,7 @@ QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetSameTagsOfDi
             QMap<QString, QList<QString>> file{};
             file.insert(cbeg.key(), cbeg.value());
 
-            QList<QString> tagsNames{ this->execSqlstr<DSqliteHandle::SqlType::GetTagsThroughFile, QList<QString>>( file, userName) };
-
-//            qDebug()<< "tagsName: " << tagsNames;
-
+            QList<QString> tagsNames{ this->execSqlstr<DSqliteHandle::SqlType::GetTagsThroughFile, QList<QString>>(file) };
             for(const QString& tagName : tagsNames){
                 ++countForTags[tagName];
             }
@@ -2686,3 +2868,161 @@ QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetSameTagsOfDi
     return totalTagsNames;
 }
 
+
+template<>
+QMap<QString, QVariant> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetAllTags, QMap<QString, QVariant>>(const QMap<QString, QList<QString>>& filesAndTags)
+{
+    (void)filesAndTags;
+    QMap<QString, QVariant> tag_and_color{};
+
+    if(QFileInfo::exists("/home")){
+        std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
+                  std::multimap<DSqliteHandle::SqlType, QString>::const_iterator> range{ SqlTypeWithStrs.equal_range(DSqliteHandle::SqlType::GetAllTags) };
+        this->connectToSqlite("/home", ".__main.db");
+
+        if(m_sqlDatabasePtr && m_sqlDatabasePtr->open()){
+            QSqlQuery sql_query{ *m_sqlDatabasePtr };
+
+            if(sql_query.exec(range.first->second)){
+
+                while(sql_query.next()){
+                    QString tag_name{ sql_query.value("tag_name").toString() };
+                    QString tag_color{ sql_query.value("tag_color").toString() };
+                    tag_and_color[tag_name] = QVariant{ tag_color };
+                }
+            }
+        }
+    }
+
+    return tag_and_color;
+}
+
+
+template<>
+QMap<QString, QVariant> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetTagColor, QMap<QString, QVariant>>(const QMap<QString, QList<QString>>& fileAndTags)
+{
+    QMap<QString, QVariant> tag_and_color{};
+
+    if(QFileInfo::exists("/home") && !fileAndTags.isEmpty()){
+        std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
+                  std::multimap<DSqliteHandle::SqlType, QString>::const_iterator> range{ SqlTypeWithStrs.equal_range(DSqliteHandle::SqlType::GetTagColor) };
+        this->connectToSqlite("/home", ".__main.db");
+
+        if(m_sqlDatabasePtr && m_sqlDatabasePtr->open()){
+            QMap<QString, QList<QString>>::const_iterator c_beg{ fileAndTags.cbegin() };
+            QMap<QString, QList<QString>>::const_iterator c_end{ fileAndTags.cend() };
+            QString sql_str{ range.first->second };
+            QSqlQuery sql_query{ *m_sqlDatabasePtr };
+
+            for(; c_beg != c_end; ++c_beg){
+
+                if(sql_query.exec(sql_str.arg(c_beg.key()))){
+
+                    if(sql_query.next()){
+                        QString tag_color{ sql_query.value("tag_color").toString() };
+                        tag_and_color[c_beg.key()] = tag_color;
+                    }
+                }
+            }
+        }
+    }
+
+    return tag_and_color;
+}
+
+template<>
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagColor, bool>(const QMap<QString, QList<QString>>& filesAndTags)
+{
+    bool result{ true };
+
+    if(QFileInfo::exists("/home") && !filesAndTags.isEmpty()){
+        std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
+                  std::multimap<DSqliteHandle::SqlType, QString>::const_iterator> range{ SqlTypeWithStrs.equal_range(DSqliteHandle::SqlType::ChangeTagColor) };
+        this->connectToSqlite("/home", ".__main.db");
+
+        if(m_sqlDatabasePtr && m_sqlDatabasePtr->open() && m_sqlDatabasePtr->transaction()){
+            QMap<QString, QList<QString>>::const_iterator c_beg{ filesAndTags.cbegin() };
+            QMap<QString, QList<QString>>::const_iterator c_end{ filesAndTags.cend() };
+            QSqlQuery sql_query{ *m_sqlDatabasePtr };
+
+            for(; c_beg != c_end; ++c_beg){
+                QString sql_str{ range.first->second };
+                sql_str = sql_str.arg(c_beg.value()[1]);
+                sql_str = sql_str.arg(c_beg.key());
+                sql_str = sql_str.arg(c_beg.value()[0]);
+
+                if(!sql_query.exec(sql_str)){
+                    qWarning()<< sql_query.lastError().text();
+                    result = false;
+
+                    break;
+                }
+            }
+
+            if(!(result && m_sqlDatabasePtr->commit())){
+                m_sqlDatabasePtr->rollback();
+                result = false;
+            }
+        }
+    }
+
+    return result;
+}
+
+template<>
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::BeforeTagFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags)
+{
+    if(QFileInfo::exists("/home") && !filesAndTags.isEmpty()){
+        std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
+                  std::multimap<DSqliteHandle::SqlType, QString>::const_iterator> range{ SqlTypeWithStrs.equal_range(DSqliteHandle::SqlType::BeforeTagFiles) };
+        this->connectToSqlite("/home", ".__main.db");
+
+
+        if(m_sqlDatabasePtr && m_sqlDatabasePtr->open() && m_sqlDatabasePtr->transaction()){
+
+            QMap<QString, QList<QString>>::const_iterator c_beg{ filesAndTags.cbegin() };
+            QMap<QString, QList<QString>>::const_iterator c_end{ filesAndTags.cend() };
+            QSqlQuery sql_query{ *m_sqlDatabasePtr };
+            QString sql_counting{ range.first->second };
+            QString sql_inserting{ (++(range.first))->second };
+
+            for(; c_beg != c_end; ++c_beg){
+                QString counting{ sql_counting.arg(c_beg.key()) };
+
+                if(sql_query.exec(counting)){
+
+                    if(sql_query.next()){
+                        int number{ sql_query.value("counter").toInt() };
+
+                        if(number == 0){
+                            sql_query.clear();
+                            QString inserting{ sql_inserting.arg(c_beg.key()) };
+                            inserting = inserting.arg(c_beg.value().first());
+
+                            if(!sql_query.exec(inserting)){
+                                qWarning()<< sql_query.lastError().text();
+                                m_sqlDatabasePtr->rollback();
+
+                                this->closeSqlDatabase();
+
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if(!m_sqlDatabasePtr->commit()){
+                m_sqlDatabasePtr->rollback();
+            }
+
+            this->closeSqlDatabase();
+
+            return true;
+        }
+    }
+
+    this->closeSqlDatabase();
+
+    return false;
+}
