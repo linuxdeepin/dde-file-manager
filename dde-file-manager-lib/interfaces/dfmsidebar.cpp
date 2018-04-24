@@ -54,6 +54,7 @@ public:
     DFMSideBar *q_ptr = nullptr;
     QVBoxLayout *mainLayout;
     QWidget *mainLayoutHolder;
+    QSet<QString> disabledSchemes;
     QMap<QString, DFMSideBarItemGroup *> groupNameMap;
     DFMSideBarItem *lastCheckedItem = nullptr; //< managed by setCurrentUrl()
 
@@ -335,9 +336,25 @@ void DFMSideBar::setCurrentUrl(const DUrl &url)
     }
 }
 
-void DFMSideBar::setDisableUrlSchemes(const QStringList &schemes)
+/*!
+ * \brief Hide sidebar items by given url \a schemes .
+ *
+ * Notice that this is for *HIDE* the items, NOT for display a *DISABLED* state.
+ */
+void DFMSideBar::setDisableUrlSchemes(const QSet<QString> &schemes)
 {
-    Q_UNUSED(schemes);
+    Q_D(DFMSideBar);
+
+    d->disabledSchemes = schemes;
+
+    for (QString &key : d->groupNameMap.keys()) {
+        DFMSideBarItemGroup *groupPointer = d->groupNameMap.value(key);
+
+        for (int i = 0; i < groupPointer->itemCount(); ++i) {
+            DFMSideBarItem *item = (*groupPointer)[i];
+            item->setVisible(!schemes.contains(item->url().scheme()));
+        }
+    }
 }
 
 /*!
@@ -363,6 +380,10 @@ int DFMSideBar::addItem(DFMSideBarItem *item, const QString &group)
         d->mainLayout->addLayout(group);
     }
 
+    if (d->disabledSchemes.contains(item->url().scheme())) {
+        item->hide();
+    }
+
     return index;
 }
 
@@ -380,6 +401,10 @@ void DFMSideBar::insertItem(int index, DFMSideBarItem *item, const QString &grou
     if (d->groupNameMap.contains(group)) {
         DFMSideBarItemGroup *groupPointer = d->groupNameMap[group];
         groupPointer->insertItem(index, item);
+    }
+
+    if (d->disabledSchemes.contains(item->url().scheme())) {
+        item->hide();
     }
 }
 

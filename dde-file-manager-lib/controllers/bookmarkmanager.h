@@ -74,7 +74,7 @@ private:
 public slots:
     Q_DECL_DEPRECATED void removeBookmark(BookMarkPointer bookmark);
     Q_DECL_DEPRECATED void renameBookmark(BookMarkPointer bookmark, const QString &newname);
-    void moveBookmark(int from, int to);
+    Q_DECL_DEPRECATED void moveBookmark(int from, int to);
     // AbstractFileController interface
 
     void reLoad();
