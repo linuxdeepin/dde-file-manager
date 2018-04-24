@@ -45,6 +45,7 @@
 #define FTP_SCHEME "ftp"
 #define SFTP_SCHEME "sftp"
 #define TAG_SCHEME "tag"
+#define DEVICE_SCHEME "device"
 
 #define TRASH_ROOT "trash:///"
 #define RECENT_ROOT "recent:///"
@@ -56,6 +57,7 @@
 #define USERSHARE_ROOT "usershare:///"
 #define AVFS_ROOT "avfs:///"
 #define TAG_ROOT "tag:///"
+#define DEVICE_ROOT "device:///"
 
 class DUrl;
 

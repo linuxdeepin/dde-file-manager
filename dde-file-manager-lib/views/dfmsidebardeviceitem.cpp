@@ -43,7 +43,7 @@ DFMSideBarDeviceItem::DFMSideBarDeviceItem(UDiskDeviceInfoPointer infoPointer, Q
             this, &DFMSideBarDeviceItem::itemOnClick);
 
     unmountButton = new DImageButton(this);
-    unmountButton->show(); // FIXME: use layout
+    unmountButton->show();
     this->setContentWidget(unmountButton);
     if (url().isEmpty()) {
         unmountButton->hide();

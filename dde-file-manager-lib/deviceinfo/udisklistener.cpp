@@ -35,16 +35,49 @@
 
 #include "gvfs/gvfsmountmanager.h"
 #include "shutil/fileutils.h"
+#include "private/dabstractfilewatcher_p.h"
 
 #include <QSettings>
 #include <QProcess>
 #include <QStorageInfo>
+
+class UDiskFileWatcher;
+class UDiskFileWatcherPrivate : public DAbstractFileWatcherPrivate
+{
+public:
+    UDiskFileWatcherPrivate(DAbstractFileWatcher *qq)
+        : DAbstractFileWatcherPrivate(qq) {}
+
+    bool start() override
+    {
+        started = true;
+        return true;
+    }
+
+    bool stop() override
+    {
+        started = false;
+        return true;
+    }
+};
+
+class UDiskFileWatcher : public DAbstractFileWatcher
+{
+public:
+    explicit UDiskFileWatcher(const DUrl &url, QObject *parent = nullptr)
+        : DAbstractFileWatcher(*new UDiskFileWatcherPrivate(this), url, parent)
+    {
+
+    }
+};
 
 UDiskListener::UDiskListener(QObject *parent):
     DAbstractFileController(parent)
 {
     initConnect();
     loadCustomVolumeLetters();
+
+    fileService->setFileUrlHandler(DEVICE_SCHEME, "", this);
 }
 
 void UDiskListener::initConnect()
@@ -581,4 +614,9 @@ const DAbstractFileInfoPointer UDiskListener::createFileInfo(const QSharedPointe
     }
 
     return DAbstractFileInfoPointer();
+}
+
+DAbstractFileWatcher *UDiskListener::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
+{
+    return new UDiskFileWatcher(event->url());
 }
