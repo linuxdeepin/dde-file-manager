@@ -52,7 +52,7 @@ public:
     QStringList groupList() const;
 
     void setCurrentUrl(const DUrl &url);
-    void setDisableUrlSchemes(const QStringList &schemes);
+    void setDisableUrlSchemes(const QSet<QString> &schemes);
 
     int addItem(DFMSideBarItem *item, const QString &group = QString());
     void insertItem(int index, DFMSideBarItem *item, const QString &group = QString());
