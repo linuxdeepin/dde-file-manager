@@ -34,7 +34,7 @@
 class BookMark;
 typedef QExplicitlySharedDataPointer<BookMark> BookMarkPointer;
 
-class BookMark : public DFileInfo
+class BookMark : public DAbstractFileInfo
 {
 public:
     BookMark(const DUrl &url);
@@ -55,6 +55,8 @@ public:
 
     bool canRedirectionFileUrl() const Q_DECL_OVERRIDE;
     DUrl redirectedFileUrl() const Q_DECL_OVERRIDE;
+
+    DUrl parentUrl() const Q_DECL_OVERRIDE;
 
 private:
     QDateTime m_time;
