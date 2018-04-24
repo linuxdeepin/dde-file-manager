@@ -46,6 +46,8 @@ public:
 
     void load();
     void save() const;
+    void moveBookmark(int from, int to);
+    int getBookmarkIndex(const DUrl &url);
     QList<BookMarkPointer> getBookmarks();
 
     bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const Q_DECL_OVERRIDE;
@@ -74,8 +76,6 @@ private:
 public slots:
     Q_DECL_DEPRECATED void removeBookmark(BookMarkPointer bookmark);
     Q_DECL_DEPRECATED void renameBookmark(BookMarkPointer bookmark, const QString &newname);
-    Q_DECL_DEPRECATED void moveBookmark(int from, int to);
-    // AbstractFileController interface
 
     void reLoad();
 };

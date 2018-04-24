@@ -123,6 +123,17 @@ void BookMarkManager::save() const
     file.close();
 }
 
+int BookMarkManager::getBookmarkIndex(const DUrl &url)
+{
+    for (int i = 0; i <= m_bookmarks.count(); i++) {
+        if (m_bookmarks[i]->fileUrl() == url) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 QList<BookMarkPointer> BookMarkManager::getBookmarks()
 {
     return m_bookmarks;
