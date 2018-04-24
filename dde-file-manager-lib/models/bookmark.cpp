@@ -60,6 +60,9 @@ void BookMark::setDateTime(QDateTime time)
 
 void BookMark::setName(const QString &name)
 {
+    DUrl tmpUrl = fileUrl();
+    tmpUrl.setFragment(name);
+    setUrl(tmpUrl);
     m_name = name;
 }
 

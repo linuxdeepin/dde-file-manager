@@ -130,14 +130,13 @@ QList<BookMarkPointer> BookMarkManager::getBookmarks()
 
 bool BookMarkManager::renameFile(const QSharedPointer<DFMRenameEvent> &event) const
 {
-    BookMarkPointer item = findBookmark(event->fileUrl());
+    BookMarkPointer item = findBookmark(event->fromUrl());
     if (!item) {
         return false;
     }
-    item->setName(event->toUrl().fileName());
+    item->setName(event->toUrl().fragment());
+    DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::fileMoved, event->fromUrl(), event->toUrl());
     save();
-
-    DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::fileMoved, event->fileUrl(), item->fileUrl());
 
     return true;
 }
