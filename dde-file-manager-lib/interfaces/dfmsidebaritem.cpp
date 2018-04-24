@@ -112,8 +112,6 @@ void DFMSideBarItemPrivate::init()
     DAbstractFileInfoPointer file_info = DFileService::instance()->createFileInfo(q, url);
 
     if (file_info) {
-        qDebug() << file_info->fileDisplayName() << url;
-
         displayText = file_info->fileDisplayName();
     }
 
@@ -368,9 +366,20 @@ void DFMSideBarItem::hideRenameEditor()
 
     Q_CHECK_PTR(d->renameLineEdit);
     QString text = d->renameLineEdit->text();
+
+    QSignalBlocker blocker(d->renameLineEdit);
+    Q_UNUSED(blocker)
     d->renameLineEdit->hide();
     d->renameLineEdit->deleteLater();
     d->renameLineEdit = nullptr;
+
+    if (text == d->displayText) {
+        return;
+    }
+
+    DUrl tmpUrl = url();
+    tmpUrl.setFragment(text);
+    fileService->renameFile(this, url(), tmpUrl);
 
     emit renameFinished(text);
 }
@@ -679,11 +688,13 @@ void DFMSideBarItem::paintEvent(QPaintEvent *event)
     // Draw Icon
     painter.drawPixmap(iconRect, curState == ThemeConfig::Pressed ? d->icon(ThemeConfig::Checked) : d->icon());
 
-    // Draw Text
-    painter.setPen(textPenColor);
-    QFontMetrics metrics(d->font);
-    QString elidedText = metrics.elidedText(d->displayText, Qt::ElideMiddle, width() - textPaddingLeft - 60);
-    painter.drawText(textRect, Qt::TextWordWrap | Qt::AlignLeft | Qt::AlignVCenter, elidedText);
+    // Draw Text (if no renameLineEdit is shown)
+    if (!d->renameLineEdit) {
+        painter.setPen(textPenColor);
+        QFontMetrics metrics(d->font);
+        QString elidedText = metrics.elidedText(d->displayText, Qt::ElideMiddle, width() - textPaddingLeft - 60);
+        painter.drawText(textRect, Qt::TextWordWrap | Qt::AlignLeft | Qt::AlignVCenter, elidedText);
+    }
 
     // End: Icon and text will be scaled when scale animation is playing
     painter.scale(1, 1);

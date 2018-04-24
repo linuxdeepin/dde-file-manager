@@ -59,6 +59,7 @@ public:
 
 private:
     void initUI();
+    void initBookmarkConnection();
     void initMountedVolumes();
     void initUserShareItem();
     void addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::GroupName groupType);
@@ -70,6 +71,7 @@ DFMSideBarPrivate::DFMSideBarPrivate(DFMSideBar *qq)
     : q_ptr(qq)
 {
     initUI();
+    initBookmarkConnection();
     initMountedVolumes();
     initUserShareItem();
 }
@@ -94,7 +96,6 @@ void DFMSideBarPrivate::initUI()
     mainLayout->setAlignment(Qt::AlignTop);
     mainLayout->setSizeConstraint(QLayout::SetFixedSize);
     mainLayoutHolder->setLayout(mainLayout);
-    //q->setLayout(mainLayout);
 
     static QList<DFMSideBar::GroupName> groups = {
         DFMSideBar::GroupName::Common,
@@ -110,6 +111,38 @@ void DFMSideBarPrivate::initUI()
         groupNameMap[q->groupName(groupType)] = group;
         mainLayout->addLayout(group);
     }
+}
+
+void DFMSideBarPrivate::initBookmarkConnection()
+{
+    Q_Q(DFMSideBar);
+
+    DFMSideBarItemGroup *group = groupNameMap[q->groupName(DFMSideBar::GroupName::Bookmark)];
+    Q_CHECK_PTR(group);
+
+    DAbstractFileWatcher *bookmark_watcher = fileService->createFileWatcher(q_func(), DUrl(BOOKMARK_ROOT), group);
+
+    q->connect(bookmark_watcher, &DAbstractFileWatcher::subfileCreated, group, [group](const DUrl & url) {
+        group->appendItem(new DFMSideBarBookmarkItem(url));
+    });
+
+    q->connect(bookmark_watcher, &DAbstractFileWatcher::fileDeleted, group,
+    [this, q](const DUrl & url) {
+        DFMSideBarItem *item = q->itemAt(url);
+        if (item) {
+            q->removeItem(item);
+        }
+    });
+
+    q->connect(bookmark_watcher, &DAbstractFileWatcher::fileMoved, group,
+    [this, group, q](const DUrl & source, const DUrl & target) {
+        DFMSideBarItem *item = q->itemAt(source);
+        if (item) {
+            item->setUrl(target);
+        }
+    });
+
+    bookmark_watcher->startWatcher();
 }
 
 void DFMSideBarPrivate::initMountedVolumes()
@@ -230,41 +263,9 @@ void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::G
     case DFMSideBar::GroupName::Bookmark: {
         auto bookmark_infos = DFileService::instance()->getChildren(q_func(), DUrl(BOOKMARK_ROOT),
                               QStringList(), QDir::AllEntries);
-
         for (const DAbstractFileInfoPointer &info : bookmark_infos) {
             group->appendItem(new DFMSideBarBookmarkItem(info->fileUrl()));
         }
-
-        DAbstractFileWatcher *bookmark_watcher = DFileService::instance()->createFileWatcher(q_func(), DUrl(BOOKMARK_ROOT), group);
-
-        QObject::connect(bookmark_watcher, &DAbstractFileWatcher::subfileCreated, group, [group](const DUrl & url) {
-            qDebug() << url << "--------------------";
-
-            group->appendItem(new DFMSideBarBookmarkItem(url));
-        });
-
-        QObject::connect(bookmark_watcher, &DAbstractFileWatcher::fileDeleted, group, [this](const DUrl & url) {
-            Q_Q(DFMSideBar);
-
-            DFMSideBarItem *item = q->itemAt(url);
-
-            if (item) {
-                q->removeItem(item);
-            }
-        });
-
-        QObject::connect(bookmark_watcher, &DAbstractFileWatcher::fileMoved, group, [this, group](const DUrl & source, const DUrl & target) {
-            Q_Q(DFMSideBar);
-
-            DFMSideBarItem *item = q->itemAt(source);
-
-            if (item) {
-                item->setUrl(target);
-            }
-        });
-
-        bookmark_watcher->startWatcher();
-
         break;
     }
     case DFMSideBar::GroupName::Network:
