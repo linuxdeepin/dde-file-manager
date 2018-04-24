@@ -124,6 +124,18 @@ void RequestEP::run()
 
 void RequestEP::requestEP(const DUrl &url, DFileInfoPrivate *info)
 {
+    requestEPFilesLock.lockForRead();
+
+    for (int i = 0; i < requestEPFiles.count(); ++i) {
+        auto file_info = requestEPFiles.at(i);
+
+        if (file_info.second == info) {
+            requestEPFilesLock.unlock();
+            return;
+        }
+    }
+
+    requestEPFilesLock.unlock();
     requestEPFilesLock.lockForWrite();
     requestEPFiles << qMakePair(url, info);
     requestEPFilesLock.unlock();
