@@ -23,16 +23,24 @@
  */
 
 #include "bookmark.h"
+#include "dfileservices.h"
+
 #include <QIcon>
 
 BookMark::BookMark(const DUrl &url)
-    : DFileInfo(url)
+    : DAbstractFileInfo(url)
 {
     m_name = url.fragment();
+
+    DUrl target(url.path());
+
+    if (target.isValid()) {
+        setProxy(DFileService::instance()->createFileInfo(nullptr, target));
+    }
 }
 
 BookMark::BookMark(QDateTime time, const QString &name, const DUrl &sourceUrl)
-    : DFileInfo(DUrl::fromBookMarkFile(sourceUrl.toString(), name))
+    : BookMark(DUrl::fromBookMarkFile(sourceUrl.toString(), name))
 {
     m_time = time;
     m_name = name;
@@ -98,10 +106,15 @@ QString BookMark::fileDisplayName() const
 
 bool BookMark::canRedirectionFileUrl() const
 {
-    return true;
+    return fileUrl() != DUrl(BOOKMARK_ROOT);
 }
 
 DUrl BookMark::redirectedFileUrl() const
 {
     return sourceUrl();
+}
+
+DUrl BookMark::parentUrl() const
+{
+    return DUrl(BOOKMARK_ROOT);
 }
