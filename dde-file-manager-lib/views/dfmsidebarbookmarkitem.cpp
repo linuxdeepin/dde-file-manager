@@ -26,6 +26,7 @@
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "views/windowmanager.h"
+#include "controllers/bookmarkmanager.h"
 
 #include <QMenu>
 
@@ -36,6 +37,26 @@ DFMSideBarBookmarkItem::DFMSideBarBookmarkItem(const DUrl &url)
 {
     setIconFromThemeConfig("BookmarkItem.BookMarks", "icon");
     setReorderable(true);
+
+    connect(this, &DFMSideBarBookmarkItem::reorder, this,
+    [](DFMSideBarItem * ori, DFMSideBarItem * dst, bool insertBefore) {
+        int oriIdx = bookmarkManager->getBookmarkIndex(ori->url());
+        int dstIdx = bookmarkManager->getBookmarkIndex(dst->url());
+        if (oriIdx == dstIdx) {
+            return;
+        }
+        int newIdx = dstIdx;
+        if (insertBefore) {
+            if (dstIdx > oriIdx) {
+                newIdx = dstIdx - 1;
+            }
+        } else {
+            if (dstIdx < oriIdx) {
+                newIdx = dstIdx + 1;
+            }
+        }
+        bookmarkManager->moveBookmark(oriIdx, newIdx);
+    });
 }
 
 QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
