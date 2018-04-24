@@ -153,8 +153,11 @@ void DFMSideBarPrivate::initMountedVolumes()
     DFMSideBarItemGroup *group = groupNameMap[q->groupName(DFMSideBar::GroupName::Device)];
     Q_CHECK_PTR(group);
 
-    for (const UDiskDeviceInfoPointer &device : deviceListener->getDeviceList()) {
-        group->appendItem(new DFMSideBarDeviceItem(device));
+    auto devices_info = fileService->getChildren(q_func(), DUrl(DEVICE_ROOT),
+                        QStringList(), QDir::AllEntries);
+    for (const DAbstractFileInfoPointer &info : devices_info) {
+        UDiskDeviceInfoPointer pointer(dynamic_cast<UDiskDeviceInfo *>(info.data()));
+        group->appendItem(new DFMSideBarDeviceItem(pointer));
     }
 
     // During DFM's init once it found a new device, this signal got triggered.
