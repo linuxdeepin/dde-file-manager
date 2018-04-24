@@ -15,42 +15,33 @@ TagManagerDaemonController::TagManagerDaemonController(QObject * const parent)
                            :QObject{ parent },
                             m_daemonInterface{ nullptr}
 {
-    m_daemonInterface = std::unique_ptr<com::deepin::filemanager::daemon::TagManagerDaemon>{
-                                                                            new com::deepin::filemanager::daemon::TagManagerDaemon {
-                                                                            service,
-                                                                            path,
-                                                                             QDBusConnection::systemBus()
+    m_daemonInterface = std::unique_ptr<TagManagerDaemonInterface>{ new TagManagerDaemonInterface {
+                                                                    service,
+                                                                    path,
+                                                                    QDBusConnection::systemBus()
                                                                                                                                      }
                                                                                             };
-    QObject::connect(m_daemonInterface.get(), &com::deepin::filemanager::daemon::TagManagerDaemon::backendIsBlocked,
-                     [&]{ flagForLockingBackend.store(true, std::memory_order_release);});
 }
 
-QSharedPointer<TagManagerDaemonController> TagManagerDaemonController::instance()
+TagManagerDaemonController* TagManagerDaemonController::instance()
 {
-    static QSharedPointer<TagManagerDaemonController> theInstance{ nullptr };
-    std::call_once(flag, [&]{theInstance.reset(new TagManagerDaemonController); });
-    return theInstance;
+    static TagManagerDaemonController* the_instance{ new TagManagerDaemonController };
+    return the_instance;
 }
 
-void TagManagerDaemonController::lockBackend()
+QVariant TagManagerDaemonController::disposeClientData(const QVariantMap& filesAndTags, Tag::ActionType type)
 {
-    m_daemonInterface->lockBackend();
-}
+    QDBusVariant var{ m_daemonInterface->disposeClientData(filesAndTags, static_cast<unsigned long long>(type)) };
+    QVariant variant{ var.variant() };
 
-bool TagManagerDaemonController::isLocked()const noexcept
-{
-    return flagForLockingBackend.load(std::memory_order_consume);
-}
+    QDBusArgument argument{ variant.value<QDBusArgument>() };
+    QDBusArgument::ElementType current_type{ argument.currentType() };
+    QMap<QString, QVariant> var_map{};
 
-void TagManagerDaemonController::unlockBackend()
-{
-    m_daemonInterface->unlockBackend();
-    flagForLockingBackend.store(false, std::memory_order_release);
-}
+    if(current_type == QDBusArgument::ElementType::MapType){
+        argument >> var_map;
+        variant.setValue(var_map);
+    }
 
-QVariant TagManagerDaemonController::disposeClientData(const QVariantMap& filesAndTags, const QString& userName, Tag::ActionType type)
-{
-    QDBusVariant var{ m_daemonInterface->disposeClientData(filesAndTags, userName, static_cast<unsigned long long>(type)) };
-    return var.variant();
+    return variant;
 }

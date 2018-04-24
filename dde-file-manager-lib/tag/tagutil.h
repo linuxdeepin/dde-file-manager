@@ -23,7 +23,11 @@ namespace Tag
         ChangeTagName,
         DeleteFiles,
         MakeFilesTagThroughColor,
-        ChangeFilesName
+        ChangeFilesName,
+        GetAllTags = 10,
+        BeforeMakeFilesTags,
+        GetTagsColor,
+        ChangeTagColor
     };
 
 extern const QMap<QString, QString> ColorsWithNames;

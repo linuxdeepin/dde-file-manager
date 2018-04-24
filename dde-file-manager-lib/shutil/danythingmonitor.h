@@ -41,9 +41,7 @@ public:
     DAnythingMonitor& operator=(const DAnythingMonitor& other)=delete;
     virtual ~DAnythingMonitor()=default;
 
-    const QString& getVfsChangePath()const noexcept;
-    void setVfsChangePath(const QString& path)const=delete;
-    void setVfsChangePath(const QString& path);
+
     void workSignal();
     void doWork();
 
@@ -59,7 +57,6 @@ private:
     std::condition_variable m_conditionVar{};
 
     std::atomic<bool> m_readyFlag{ false };
-    std::thread m_workThread{};
 };
 
 #endif // FILEMONITOR_H

@@ -23,13 +23,8 @@ public:
     TagManagerDaemon(const TagManagerDaemon& other)=delete;
     TagManagerDaemon& operator=(const TagManagerDaemon& other)=delete;
 
-signals:
-    void backendIsBlocked();
-
 public slots:
-    void lockBackend();
-    void unlockBackend();
-    QDBusVariant disposeClientData(const QMap<QString, QVariant>& filesAndTags, const QString& userName, const std::size_t& type);
+    QDBusVariant disposeClientData(const QMap<QString, QVariant>& filesAndTags, const unsigned long long& type);
 
 private:
     TagManagerDaemonAdaptor* adaptor{ nullptr };

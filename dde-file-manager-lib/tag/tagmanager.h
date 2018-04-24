@@ -14,41 +14,11 @@
 
 #include <interfaces/durl.h>
 
-
-
-#include <QtSql/QSqlDatabase>
-#include <QtSql/QSqlQuery>
-#include <QtSql/QSqlError>
-#include <QReadWriteLock>
+#include <QMap>
+#include <QList>
 #include <QDebug>
 
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif /*__cplusplus*/
-
-#include <pwd.h>
-#include <unistd.h>
-
-#ifdef __cplusplus
-}
-#endif /*__cplusplus*/
-
-
-namespace std
-{
-
-template<>
-struct hash<QString>
-{
-    inline std::size_t operator()(const QString& str)const noexcept
-    {
-        return (std::hash<std::string>{}(str.toStdString()));
-    }
-};
-
-}
 
 
 namespace impl {
@@ -89,9 +59,6 @@ private:
 }
 
 
-static constexpr const char* const USERNAME{"username"};
-static constexpr const char* const PASSWORD{"password"};
-
 
 class TagManager final : public QObject
 {
@@ -108,57 +75,11 @@ public:
     };
 
 
-    TagManager()
-    {
-        QString mainDBLocation{ TagManager::getMainDBLocation() };
-        impl::shared_mutex<QReadWriteLock> sharedLck{ mutex,
-                                                      impl::shared_mutex<QReadWriteLock>::Options::Write};
-                if(QSqlDatabase::contains(R"foo(deep)foo")){
-                    sqlDataBase = QSqlDatabase::database(R"foo(deep)foo");
-
-                }else{
-                    sqlDataBase = QSqlDatabase::addDatabase(R"foo(QSQLITE)foo", R"foo(deep)foo");
-                    sqlDataBase.setDatabaseName(mainDBLocation);
-                    sqlDataBase.setUserName(USERNAME);
-                    sqlDataBase.setPassword(PASSWORD);
-                }
-
-
-                if(sqlDataBase.open()){
-                    QSqlQuery sqlQuery{ sqlDataBase };
-
-
-                        QString createTagProperty{
-                            "CREATE TABLE IF NOT EXISTS \"tag_property\" "
-                            " ("
-                            "`tag_index` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,"
-                            "`tag_name`  TEXT NOT NULL UNIQUE,"
-                            "`tag_color` TEXT NOT NULL"
-                            ")"
-                        };
-
-                        if(!sqlQuery.exec(createTagProperty)){
-                            qDebug() << sqlQuery.lastError();
-                        }
-                }
-    }
-
-    ~TagManager()
-    {
-        ///###: close database connection.
-        if(sqlDataBase.isOpen()){
-            sqlDataBase.close();
-        }
-    }
+    TagManager()=default;
+    virtual ~TagManager()=default;
 
     TagManager(const TagManager& other)=delete;
     TagManager& operator=(const TagManager& other)=delete;
-
-    inline static QString getCurrentUserName()
-    {
-        passwd* pwd = getpwuid(getuid());
-        return QString::fromStdString(pwd->pw_name);
-    }
 
     ///###: query
     QMap<QString, QString> getAllTags();
@@ -187,41 +108,23 @@ public:
 
     ///###:delete
     bool deleteTags(const QList<QString>& tags);
-
-    bool deleteFiles(const QList<QString>& fileList);
     bool deleteFiles(const QList<DUrl>& urlList);
 
 
     static TagManager* instance()
     {
         static TagManager* tagManager{ new TagManager };
-
         return tagManager;
     }
 
 
 signals:
-    void taggedFileAdded(const QList<DUrl>& url);
+    void taggedFileAdded(const QMap<QString, QList<DUrl>>& tag_and_url);
     void taggedFileDeleted(const QList<DUrl>& url);
     void taggedFileMoved(const QList<QPair<DUrl, DUrl>>& url);
-
-private:
-    static QString getMainDBLocation();
-
-    inline void closeSqlDatabase()noexcept
-    {
-        if(m_counter.load(std::memory_order_consume) == 0){
-
-            if(sqlDataBase.isOpen()){
-                sqlDataBase.close();
-            }
-        }
-    }
-
-    QSqlDatabase sqlDataBase{};
-    QReadWriteLock mutex{};
-    std::atomic<std::size_t> m_counter{ 0 };
-    static std::once_flag onceFlag;
+    void tagAdded(const QList<QString>& tagNames);
+    void tagDeleted(const QList<QString>& tagNames);
+    void tagRenamed(const QPair<QString, QString>& oldAndNew);
 };
 
 #endif // TAGMANAGER_H

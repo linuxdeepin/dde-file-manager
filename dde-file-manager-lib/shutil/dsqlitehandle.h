@@ -3,10 +3,10 @@
 
 #include "durl.h"
 #include "app/define.h"
-#include "tag/tagmanager.h"
 #include "deviceinfo/udisklistener.h"
 #include "deviceinfo/udiskdeviceinfo.h"
 
+#include <mutex>
 #include <regex>
 #include <memory>
 #include <unordered_map>
@@ -16,7 +16,25 @@
 #include <QObject>
 #include <QDBusMetaType>
 #include <QScopedPointer>
-#include <QReadWriteLock>
+#include <QtSql/QSqlError>
+#include <QtSql/QSqlQuery>
+#include <QtSql/QSqlDatabase>
+
+
+
+namespace std
+{
+
+template<>
+struct hash<QString>
+{
+    inline std::size_t operator()(const QString& str)const noexcept
+    {
+        return (std::hash<std::string>{}(str.toStdString()));
+    }
+};
+
+}
 
 
 
@@ -32,19 +50,25 @@ public:
     {
         None = 0,
 
-        TagFiles = 1,
+        BeforeTagFiles,
+        TagFiles,
         TagFiles2,
         TagFiles3,
 
         DeleteTags,
         DeleteTags2,
+        DeleteTags3,
 
         DeleteFiles,
+
         ChangeTagsName,
+        ChangeTagsName2,
+
         ChangeFilesName,
 
         TagFilesThroughColor,
         TagFilesThroughColor2,
+        TagFilesThroughColor3,
 
         GetFilesThroughTag,
 
@@ -53,9 +77,12 @@ public:
 
         UntagDiffPartionFiles,
 
-
         UntagSamePartionFiles,
-        UntagSamePartionFiles2
+        UntagSamePartionFiles2,
+
+        GetAllTags,
+        GetTagColor,
+        ChangeTagColor
     };
 
     enum class ReturnCode : std::size_t
@@ -67,31 +94,23 @@ public:
         FailedExecSql
     };
 
-    DSqliteHandle(QObject* const parent = nullptr);
+    explicit DSqliteHandle(QObject* const parent = nullptr);
     virtual ~DSqliteHandle()=default;
     DSqliteHandle(const DSqliteHandle& other)=delete;
     DSqliteHandle& operator=(const DSqliteHandle& other)=delete;
 
     ///####:---------------------->  <url(with protocal header), <tagName>>
-    QVariant disposeClientData(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName, const std::size_t& type);
-
-    void lockBackend()noexcept;
-    void unlockBackend()noexcept;
+    QVariant disposeClientData(const QMap<QString, QList<QString>>& filesAndTags, const unsigned long long& type);
 
     static DSqliteHandle* instance();
     static std::map<QString, std::multimap<QString, QString>> queryPartionsInfoOfDevices();
     static QPair<QString, QString> getMountPointOfFile(const DUrl& url, std::unique_ptr<std::map<QString, std::multimap<QString, QString>>>& partionsAndMountPoints);
-
-
-signals:
-    void backendIsBlocked();
 
 private slots:
     void onMountAdded(UDiskDeviceInfoPointer infoPointer);
     void onMountRemoved(UDiskDeviceInfoPointer infoPointer);
 
 private:
-    static QString getConnectionNameFromPartion(const QString& partion)noexcept;
     static QString restoreEscapedChar(const QString& value);
 
     inline void closeSqlDatabase()noexcept
@@ -103,26 +122,24 @@ private:
 
 
     template<SqlType Ty = SqlType::None, typename T = void>
-    inline T execSqlstr(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName)
+    inline T execSqlstr(const QMap<QString, QList<QString>>& filesAndTags)
     {
         (void)filesAndTags;
-        (void)userName;
         return;
     }
 
 
     template<DSqliteHandle::SqlType type, typename Ty, typename T = void>
-    inline T helpExecSql(const Ty& sqlStrs, const QString& mountPoint, const QString& userName)
+    inline T helpExecSql(const Ty& sqlStrs, const QString& mountPoint)
     {
         (void)sqlStrs;
         (void)mountPoint;
-        (void)userName;
         return;
     }
 
-    ReturnCode checkWhetherHasSqliteInPartion(const QString& mountPoint, const QString& userName);
+    ReturnCode checkWhetherHasSqliteInPartion(const QString& mountPoint, const QString& db_name = QString{".__deepin.db"});
     void initializeConnect();
-    void connectToSqlite(const QString& mountPoint, const QString& userName);
+    void connectToSqlite(const QString& mountPoint, const QString& db_name = QString{".__deepin.db"});
 
     std::unique_ptr<std::map<QString, std::multimap<QString, QString>>> m_partionsOfDevices{ nullptr };
     std::unique_ptr<QSqlDatabase> m_sqlDatabasePtr{ nullptr };
@@ -132,109 +149,131 @@ private:
 };
 
 ///###: increase
-template<> ///###:-----------------------------------------------------------><file, [tagsName]>
-bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName);
+template<>
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::BeforeTagFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags);
 
 template<>
-bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFilesThroughColor, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName);
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags);
+
+template<>
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFilesThroughColor, bool>(const QMap<QString, QList<QString>>& filesAndTags);
 
 ///###: query
 template<>
-QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetTagsThroughFile, QList<QString>>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName);
+QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetTagsThroughFile, QList<QString>>(const QMap<QString, QList<QString>>& filesAndTags);
 
 template<>
-QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetSameTagsOfDiffFiles, QList<QString>>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName);
+QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetSameTagsOfDiffFiles, QList<QString>>(const QMap<QString, QList<QString>>& filesAndTags);
 
 template<>
-QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetFilesThroughTag, QList<QString>>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName);
+QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetFilesThroughTag, QList<QString>>(const QMap<QString, QList<QString>>& filesAndTags);
+
+template<>
+QMap<QString, QVariant> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetAllTags, QMap<QString, QVariant>>(const QMap<QString, QList<QString>>& filesAndTags);
+
+template<>
+QMap<QString, QVariant> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetTagColor, QMap<QString, QVariant>>(const QMap<QString, QList<QString>>& fileAndTags);
 
 ///###: modify
 template<> ///###: -------------------------------------------------------------> <OldFileName, NewFileName>
-bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeFilesName, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName);
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeFilesName, bool>(const QMap<QString, QList<QString>>& filesAndTags);
 
 template<>///###: --------------------------------------------------------------><OldTagName, NewTagName>
-bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagsName, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName);
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagsName, bool>(const QMap<QString, QList<QString>>& filesAndTags);
+
+template<>
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagColor, bool>(const QMap<QString, QList<QString>>& filesAndTags);
 
 
 ///###: delete
 template<>
-bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::UntagSamePartionFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName);
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::UntagSamePartionFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags);
 
 template<>
-bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::UntagDiffPartionFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName);
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::UntagDiffPartionFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags);
 
 template<>
-bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName);
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags);
 
 template<>
-bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteTags, bool>(const QMap<QString, QList<QString>>& filesAndTags, const QString& userName);
+bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteTags, bool>(const QMap<QString, QList<QString>>& filesAndTags);
 
 
 ///###:auxiliary function.
 ///###: tag files
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles, QMap<QString, QList<QString>>, bool>(const QMap<QString, QList<QString>>& forDecreasing,
-                                                                                                       const QString& mountPoint, const QString& userName);
+                                                                                                       const QString& mountPoint);
 
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles2, QMap<QString, QList<QString>>, bool>(
-                                                               const QMap<QString, QList<QString>>&  forIncreasing, const QString& mountPoint, const QString& userName);
+                                                               const QMap<QString, QList<QString>>&  forIncreasing, const QString& mountPoint);
 
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFiles3, QList<QString>, bool>(const QList<QString>& forUpdating,
-                                                                                                        const QString& mountPoint, const QString& userName);
+                                                                                                        const QString& mountPoint);
+
 
 
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFilesThroughColor,
                     std::list<std::tuple<QString, QString, QString, QString, QString, QString>>, bool>(const std::list<std::tuple<QString, QString, QString, QString, QString, QString>>& sqlStrs,
-                                                                                                       const QString& mountPoint, const QString& userName);
+                                                                                                       const QString& mountPoint);
+template<>
+bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFilesThroughColor3, QString, bool>(const QString& tag_name, const QString& mountPoint);
 
 
 ///###: untag files in same/diff partion.
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::UntagSamePartionFiles, std::list<QString>, bool>(
-                                                    const std::list<QString>& sqlStrs, const QString& mountPoint, const QString& userName);
+                                                    const std::list<QString>& sqlStrs, const QString& mountPoint);
 template<>
-bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::UntagSamePartionFiles2, QMap<QString, QList<QString>>, bool>(const QMap<QString, QList<QString>>& fileNameAndTagNames, const QString& mountPoint,
-                                                                                                               const QString& userName);
+bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::UntagSamePartionFiles2, QMap<QString, QList<QString>>, bool>(const QMap<QString, QList<QString>>& fileNameAndTagNames,
+                                                                                                                     const QString& mountPoint);
 
 
 ///### delete files and delete row(s) in tag_with_file and file_property.
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteFiles, std::map<QString, std::pair<QString, QString>>, bool>(const std::map<QString, std::pair<QString, QString>>& sqlStrs,
-                                                                                                                            const QString& mountPoint, const QString& userName);
+                                                                                                                            const QString& mountPoint);
 
 ///###: delete tag(s)
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags,
-                                std::list<QString>, bool>(const std::list<QString>& sqlStrs,
-                                                                                  const QString& mountPoint, const QString& userName);
+                                std::list<QString>, bool>(const std::list<QString>& sqlStrs, const QString& mountPoint);
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags2,
-                                QMap<QString, QList<QString>>, bool>(const QMap<QString, QList<QString>>& fileNameAndTagNames, const QString& mountPoint, const QString& userNamke);
+                                QMap<QString, QList<QString>>, bool>(const QMap<QString, QList<QString>>& fileNameAndTagNames, const QString& mountPoint);
+
+template<>
+bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags3, QList<QString>, bool>(const QList<QString>& tag_name, const QString& mountPoint);
 
 ///###: change file(s) name.
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::ChangeFilesName,
-                                std::map<QString, QString>, bool>(const std::map<QString, QString>& sqlStrs, const QString& mountPoint, const QString& userName);
+                                std::map<QString, QString>, bool>(const std::map<QString, QString>& sqlStrs, const QString& mountPoint);
 
 ///###: change tag(s) name.
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::ChangeTagsName,
                                 std::list<std::tuple<QString, QString, QString, QString>>, bool>(const std::list<std::tuple<QString, QString, QString, QString>>& sqlStrs,
-                                                                                           const QString& mountPoint, const QString& userName);
+                                                                                           const QString& mountPoint);
+template<>
+bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::ChangeTagsName2, QMap<QString, QList<QString>>, bool>(const QMap<QString, QList<QString>>& old_and_new,
+                                                                                                                     const QString &mountPoint);
+
 
 ///###: get tags through file.
 template<>
 QList<QString> DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::GetTagsThroughFile,
-                                QString, QList<QString>>(const QString& sqlStr, const QString& mountPoint, const QString& userName);
+                                QString, QList<QString>>(const QString& sqlStr, const QString& mountPoint);
 
 
 ///###: get files which was tagged by appointed tag.
 template<>
 QList<QString> DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::GetFilesThroughTag,
-                                          QString, QList<QString>>(const QString& sqlStr, const QString& mountPoint, const QString& userName);
+                                          QString, QList<QString>>(const QString& sqlStr, const QString& mountPoint);
+
 
 
 #endif // DSQLITEHANDLE_H

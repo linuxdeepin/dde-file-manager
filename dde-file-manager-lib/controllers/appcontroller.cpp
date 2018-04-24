@@ -720,6 +720,7 @@ QList<QString> AppController::actionGetTagsThroughFiles(const QSharedPointer<DFM
     if(static_cast<bool>(event) && (!event->urlList().isEmpty())){
         tags = DFileService::instance()->getTagsThroughFiles(nullptr, event->urlList());
     }
+
     return tags;
 }
 
@@ -738,7 +739,7 @@ bool AppController::actionMakeFileTags(const QSharedPointer<DFMMakeFileTagsEvent
 {   
     bool value{ false };
 
-     if( static_cast<bool>(event) && (!event->url().isEmpty()) && (!event->tags().isEmpty()) ){
+     if( static_cast<bool>(event) && (event->url().isValid()) && !(event->tags().isEmpty()) ){
          QList<QString> tags = event->tags();
          value = DFileService::instance()->makeFileTags(this, event->url(), tags);
      }
@@ -750,9 +751,9 @@ bool AppController::actionRemoveTagsOfFile(const QSharedPointer<DFMRemoveTagsOfF
 {
     bool value{ false };
 
-    if(event && (!event->url().isEmpty()) && (!event->tags().isEmpty())){
+    if(event && (event->url().isValid()) && !(event->tags().isEmpty())){
         QList<QString> tags = event->tags();
-        value = DFileService::instance()->makeFileTags(this, event->url(), tags);
+        value = DFileService::instance()->removeTagsOfFile(this, event->url(), tags);
     }
 
     return value;
