@@ -142,25 +142,6 @@ DFMSideBarItem *DFMSideBarItemGroup::findItem(const DUrl &url)
 }
 
 /*!
- * \brief Find item by the given device \a info
- * \param info Disk device info pointer
- * \return the first match item, will return nullptr if not found.
- *
- * The matching rule is the deviceId provided by `UDiskDeviceInfo`.
- */
-DFMSideBarItem *DFMSideBarItemGroup::findItem(const UDiskDeviceInfoPointer &info)
-{
-    for (int idx = 0, cnt = itemCount(); idx < cnt; idx++) {
-        DFMSideBarDeviceItem *item = qobject_cast<DFMSideBarDeviceItem *>((*this)[idx]);
-        if (item && info->getId() == item->getExtensionPropertys().value("deviceId").toString()) {
-            return item;
-        }
-    }
-
-    return nullptr;
-}
-
-/*!
  * \fn DFMSideBarItem *DFMSideBarItemGroup::takeItem(int index)
  *
  * \brief Take an item's reference (pointer) from this group and remove it.
