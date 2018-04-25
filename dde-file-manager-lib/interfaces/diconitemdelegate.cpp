@@ -372,8 +372,10 @@ public:
 
     QRectF iconGeometry() const
     {
-        const QRect &content_rect = rect().marginsRemoved(contentsMargins());
-        QRectF icon_rect(QPointF((content_rect.width() - iconPixmap.width()) / 2.0, (iconHeight - iconPixmap.height()) / 2.0 + content_rect.top()), iconPixmap.size());
+        const QRect &content_rect = contentsRect();
+        QRectF icon_rect(QPointF((content_rect.width() - iconPixmap.width() / iconPixmap.devicePixelRatio()) / 2.0,
+                                 (iconHeight - iconPixmap.height() / iconPixmap.devicePixelRatio()) / 2.0 + content_rect.top()),
+                         iconPixmap.size() / iconPixmap.devicePixelRatio());
 
         return icon_rect;
     }
@@ -561,10 +563,6 @@ void DIconItemDelegate::paint(QPainter *painter,
     if (index == d->expandedIndex && !parent()->isSelected(index))
         const_cast<DIconItemDelegate*>(this)->hideNotEditingIndexWidget();
 
-    if ((index == d->expandedIndex || index == d->editingIndex) && !isDragMode) {
-        return;
-    }
-
     if (parent()->isCut(index))
         painter->setOpacity(0.3);
 
@@ -613,6 +611,59 @@ void DIconItemDelegate::paint(QPainter *painter,
     icon_rect.setSize(parent()->parent()->iconSize());
     icon_rect.moveLeft(opt.rect.left() + (opt.rect.width() - icon_rect.width()) / 2.0);
     icon_rect.moveTop(opt.rect.top());
+
+    /// draw icon
+
+    if (isSelected) {
+        paintIcon(painter, opt.icon, icon_rect, Qt::AlignCenter, QIcon::Selected);
+    } else if (isDropTarget) {
+        QPixmap pixmap = opt.icon.pixmap(icon_rect.size().toSize());
+        QPainter p(&pixmap);
+
+        p.setCompositionMode(QPainter::CompositionMode_SourceAtop);
+        p.fillRect(QRect(QPoint(0, 0), icon_rect.size().toSize()), QColor(0, 0, 0, 255 * 0.1));
+        p.end();
+
+        painter->drawPixmap(icon_rect.toRect(), pixmap);
+    } else {
+        paintIcon(painter, opt.icon, icon_rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
+    }
+
+    /// draw file additional icon
+
+    QList<QRectF> cornerGeometryList = getCornerGeometryList(icon_rect, icon_rect.size() / 3);
+    const QList<QIcon> &cornerIconList = parent()->additionalIcon(index);
+
+    for (int i = 0; i < cornerIconList.count(); ++i) {
+        cornerIconList.at(i).paint(painter, cornerGeometryList.at(i).toRect());
+    }
+
+//    /// draw file name label
+//    if (isSelected) {
+//        QPainterPath path;
+
+//        QRect label_background_rect = label_rect;
+
+//        label_background_rect.setSize(d->textSize(str, painter->fontMetrics(), d->textLineHeight));
+//        label_background_rect.moveLeft(label_rect.left() + (label_rect.width() - label_background_rect.width()) / 2);
+//        label_background_rect += QMargins(TEXT_PADDING, TEXT_PADDING, TEXT_PADDING, TEXT_PADDING);
+
+//        path.addRoundedRect(label_background_rect, ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
+//        painter->save();
+//        painter->setRenderHint(QPainter::Antialiasing);
+//        painter->fillPath(path, opt.backgroundBrush);
+//        if (hasFocus && !singleSelected) {
+//            painter->setPen(QPen(focusTextBackgroundBorderColor(), 2));
+//            painter->drawPath(path);
+//        }
+//        painter->restore();
+//    } else {
+//        painter->fillRect(label_rect, Qt::transparent);
+//    }
+
+    if ((index == d->expandedIndex || index == d->editingIndex) && !isDragMode) {
+        return;
+    }
 
     QString str = opt.text;
 
@@ -697,55 +748,6 @@ void DIconItemDelegate::paint(QPainter *painter,
         }
     }
 
-    /// draw icon
-
-    if (isSelected) {
-        paintIcon(painter, opt.icon, icon_rect, Qt::AlignCenter, QIcon::Selected);
-    } else if (isDropTarget) {
-        QPixmap pixmap = opt.icon.pixmap(icon_rect.size().toSize());
-        QPainter p(&pixmap);
-
-        p.setCompositionMode(QPainter::CompositionMode_SourceAtop);
-        p.fillRect(QRect(QPoint(0, 0), icon_rect.size().toSize()), QColor(0, 0, 0, 255 * 0.1));
-        p.end();
-
-        painter->drawPixmap(icon_rect.toRect(), pixmap);
-    } else {
-        paintIcon(painter, opt.icon, icon_rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
-    }
-
-    /// draw file additional icon
-
-    QList<QRectF> cornerGeometryList = getCornerGeometryList(icon_rect, icon_rect.size() / 3);
-    const QList<QIcon> &cornerIconList = parent()->additionalIcon(index);
-
-    for (int i = 0; i < cornerIconList.count(); ++i) {
-        cornerIconList.at(i).paint(painter, cornerGeometryList.at(i).toRect());
-    }
-
-//    /// draw file name label
-//    if (isSelected) {
-//        QPainterPath path;
-
-//        QRect label_background_rect = label_rect;
-
-//        label_background_rect.setSize(d->textSize(str, painter->fontMetrics(), d->textLineHeight));
-//        label_background_rect.moveLeft(label_rect.left() + (label_rect.width() - label_background_rect.width()) / 2);
-//        label_background_rect += QMargins(TEXT_PADDING, TEXT_PADDING, TEXT_PADDING, TEXT_PADDING);
-
-//        path.addRoundedRect(label_background_rect, ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
-//        painter->save();
-//        painter->setRenderHint(QPainter::Antialiasing);
-//        painter->fillPath(path, opt.backgroundBrush);
-//        if (hasFocus && !singleSelected) {
-//            painter->setPen(QPen(focusTextBackgroundBorderColor(), 2));
-//            painter->drawPath(path);
-//        }
-//        painter->restore();
-//    } else {
-//        painter->fillRect(label_rect, Qt::transparent);
-//    }
-
     if (isSelected || !d->enabledTextShadow) {
         const QList<QRectF> &lines = drawText(index, painter, str, label_rect, ICON_MODE_RECT_RADIUS,
                                               isSelected ? opt.backgroundBrush : QBrush(Qt::NoBrush),
@@ -768,7 +770,7 @@ void DIconItemDelegate::paint(QPainter *painter,
         QPainter p(&text_image);
         p.setPen(painter->pen());
         p.setFont(painter->font());
-        drawText(index, &p, str, QRect(QPoint(0, 0), text_image.size()),
+        drawText(index, &p, str, QRectF(QPoint(0, 0), QSizeF(text_image.size()) / pixel_ratio),
                  ICON_MODE_RECT_RADIUS, QBrush(Qt::NoBrush),
                  QTextOption::WrapAtWordBoundaryOrAnywhere, opt.textElideMode, Qt::AlignCenter);
         p.end();
@@ -835,7 +837,7 @@ void DIconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
     if (editor == d->expandedItem) {
         if (editor->width() != option.rect.width()) {
             editor->setFixedWidth(option.rect.width());
-            d->expandedItem->setIconPixmap(d->getFileIconPixmap(index, opt.icon, icon_size, QIcon::Selected, d->expandedItem->devicePixelRatioF()), icon_size.height());
+            d->expandedItem->iconHeight = icon_size.height();
             editor->adjustSize();
         }
 
@@ -853,7 +855,6 @@ void DIconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
     if (icon_size.height() != icon->size().height()) {
         icon->setFixedHeight(icon_size.height());
-        icon->setPixmap(d->getFileIconPixmap(index, opt.icon, icon_size, QIcon::Selected, editor->devicePixelRatioF()));
     }
 }
 
@@ -866,10 +867,9 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     initStyleOption(&opt, index);
 
     const QSize &icon_size = parent()->parent()->iconSize();
-    QPixmap pixmap = d->getFileIconPixmap(index, opt.icon, icon_size, QIcon::Selected, editor->devicePixelRatioF());
 
     if (ExpandedItem *item = qobject_cast<ExpandedItem*>(editor)) {
-        item->setIconPixmap(pixmap, icon_size.height());
+        item->iconHeight = icon_size.height();
         item->setOpacity(parent()->isCut(index) ? 0.3 : 1);
 
         return;
@@ -880,7 +880,6 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     if (!item)
         return;
 
-    item->icon->setPixmap(pixmap);
     item->edit->setPlainText(index.data(item->edit->isReadOnly()
                                         ? DFileSystemModel::FileDisplayNameRole
                                         : DFileSystemModel::FileNameRole).toString());
