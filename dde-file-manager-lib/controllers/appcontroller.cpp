@@ -71,6 +71,8 @@
 #include <qprocess.h>
 #include <QtConcurrent>
 
+#include <DApplication>
+
 #include "tag/tagutil.h"
 #include "tag/tagmanager.h"
 #include "shutil/shortcut.h"
@@ -491,9 +493,10 @@ void AppController::actionNewWindow(const QSharedPointer<DFMUrlListBaseEvent> &e
 
 void AppController::actionHelp()
 {
-    QStringList args;
-    args << qApp->applicationName();
-    QProcess::startDetached("dman", args);
+    class PublicApplication : public DWIDGET_NAMESPACE::DApplication {
+        public: using  DApplication::handleHelpAction;
+    };
+    reinterpret_cast<PublicApplication*>(DApplication::instance())->handleHelpAction();
 }
 
 void AppController::actionAbout(quint64 winId)

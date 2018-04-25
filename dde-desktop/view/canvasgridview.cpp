@@ -34,6 +34,7 @@
 #include <dslider.h>
 #include <anchors.h>
 #include <DUtil>
+#include <DApplication>
 
 #include <durl.h>
 #include <dfmglobal.h>
@@ -520,9 +521,20 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
     switch (event->modifiers()) {
     case Qt::NoModifier:
         switch (event->key()) {
-        case Qt::Key_F1:
-            startProcessDetached("dman", QStringList() << "dde");
+        case Qt::Key_F1: {
+            class PublicApplication : public DWIDGET_NAMESPACE::DApplication {
+                public:
+                    void showHelp()
+                    {
+                        QString app_name = applicationName();
+                        setApplicationName("dde");
+                        handleHelpAction();
+                        setApplicationName(app_name);
+                    }
+            };
+            reinterpret_cast<PublicApplication*>(DApplication::instance())->showHelp();
             break;
+        }
         }
     case Qt::KeypadModifier:
         switch (event->key()) {
