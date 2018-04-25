@@ -152,7 +152,7 @@ DFMSideBarItem *DFMSideBarItemGroup::findItem(const UDiskDeviceInfoPointer &info
 {
     for (int idx = 0, cnt = itemCount(); idx < cnt; idx++) {
         DFMSideBarDeviceItem *item = qobject_cast<DFMSideBarDeviceItem *>((*this)[idx]);
-        if (item && info->getId() == item->deviceInfo->getId()) {
+        if (item && info->getId() == item->deviceInfo()->getId()) {
             return item;
         }
     }

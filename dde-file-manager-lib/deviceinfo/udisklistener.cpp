@@ -478,6 +478,7 @@ void UDiskListener::addVolumeDiskInfo(const QDiskInfo &diskInfo)
         addDevice(device);
     }
 
+    //DAbstractFileWatcher::ghostSignal(DUrl(DEVICE_ROOT), &DAbstractFileWatcher::subfileCreated, device->getId());
     emit volumeAdded(device);
 }
 
@@ -597,17 +598,17 @@ const QList<DAbstractFileInfoPointer> UDiskListener::getChildren(const QSharedPo
 
 const DAbstractFileInfoPointer UDiskListener::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
 {
-    const QString &path = event->url().fragment();
+    const QString &deviceId = event->url().path();
 
-    if (path.isEmpty()) {
-        return DAbstractFileInfoPointer(new UDiskDeviceInfo(event->url()));
+    if (deviceId.isEmpty()) {
+        return DAbstractFileInfoPointer();
     }
 
 
     for (int i = 0; i < m_list.size(); i++) {
         UDiskDeviceInfoPointer info = m_list.at(i);
 
-        if (info->getMountPointUrl().toLocalFile() == path) {
+        if (info->getId() == deviceId) {
             DAbstractFileInfoPointer fileInfo(new UDiskDeviceInfo(info));
             return fileInfo;
         }

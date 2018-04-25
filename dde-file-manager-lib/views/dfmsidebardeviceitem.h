@@ -36,13 +36,10 @@ class DFMSideBarDeviceItem : public DFMSideBarItem
     Q_OBJECT
 
 public:
-    DFMSideBarDeviceItem(UDiskDeviceInfoPointer infoPointer, QWidget *parent = nullptr);
-
-    void postMount(UDiskDeviceInfoPointer infoPointer);
-    void postUnmount(UDiskDeviceInfoPointer infoPointer);
+    DFMSideBarDeviceItem(DUrl url, QWidget *parent = nullptr);
+    UDiskDeviceInfoPointer deviceInfo() const;
 
     DImageButton *unmountButton;
-    UDiskDeviceInfoPointer deviceInfo;
 
 protected:
     virtual QMenu *createStandardContextMenu() const Q_DECL_OVERRIDE;

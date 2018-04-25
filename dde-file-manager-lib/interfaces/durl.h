@@ -134,6 +134,7 @@ public:
     static DUrl fromUserShareFile(const QString &filePath);
     static DUrl fromAVFSFile(const QString& filePath);
     static DUrl fromUserTaggedFile(const QString& tag_name, const QString& localFilePath) noexcept;
+    static DUrl fromDeviceId(const QString &deviceId);
 
     static DUrlList fromStringList(const QStringList &urls, ParsingMode mode = TolerantMode);
     static DUrlList fromQUrlList(const QList<QUrl> &urls);

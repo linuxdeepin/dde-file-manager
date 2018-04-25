@@ -484,6 +484,15 @@ DUrl DUrl::fromUserTaggedFile(const QString& tag_name, const QString& localFileP
     return uri;
 }
 
+DUrl DUrl::fromDeviceId(const QString &deviceId)
+{
+    DUrl url;
+    url.setScheme(DEVICE_SCHEME);
+    url.setPath(deviceId);
+
+    return url;
+}
+
 DUrlList DUrl::fromStringList(const QStringList &urls, QUrl::ParsingMode mode)
 {
     QList<DUrl> urlList;

@@ -461,6 +461,20 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl, bool canFetchNetwork)
         return true;
     }
 
+    // FIXME: this is a polyfill, don't use scheme sepcific code here.
+    if (fileUrl.scheme() == DEVICE_SCHEME) {
+        const QDiskInfo &diskInfo = dynamic_cast<UDiskDeviceInfo *>(fileService->createFileInfo(this, fileUrl).data())->getDiskInfo();
+        if (diskInfo.can_mount() && diskInfo.mounted_root_uri().isEmpty()) {
+            DUrl newUrl;
+            newUrl.setQuery(fileUrl.path());
+            appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, newUrl));
+        }
+        if (!diskInfo.mounted_root_uri().isEmpty()) {
+            cd(DUrl(diskInfo.mounted_root_uri()));
+        }
+        return true;
+    }
+
     if (!d->currentView || !DFMViewManager::instance()->isSuited(fileUrl, d->currentView)) {
         DFMBaseView *view = DFMViewManager::instance()->createViewByUrl(fileUrl);
 
