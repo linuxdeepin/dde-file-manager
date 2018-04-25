@@ -385,8 +385,8 @@ QIcon DFMGlobal::standardIcon(DFMGlobal::Icon iconType) const
     return QIcon();
 }
 
-QString DFMGlobal::wordWrapText(const QString &text, int width, QTextOption::WrapMode wrapMode,
-                                const QFont &font, int lineHeight, int *height)
+QString DFMGlobal::wordWrapText(const QString &text, qreal width, QTextOption::WrapMode wrapMode,
+                                const QFont &font, qreal lineHeight, qreal *height)
 {
     QTextLayout layout(text);
 
@@ -420,18 +420,18 @@ void DFMGlobal::refreshPlugins()
     PluginManager::instance()->loadPlugin();
 }
 
-void DFMGlobal::wordWrapText(QTextLayout *layout, int width, QTextOption::WrapMode wrapMode,
-                             int lineHeight, QStringList *lines)
+void DFMGlobal::wordWrapText(QTextLayout *layout, qreal width, QTextOption::WrapMode wrapMode,
+                             qreal lineHeight, QStringList *lines)
 {
     elideText(layout, QSize(width, INT_MAX), wrapMode, Qt::ElideNone, lineHeight, 0, lines);
 }
 
-void DFMGlobal::elideText(QTextLayout *layout, const QSize &size, QTextOption::WrapMode wordWrap,
-                          Qt::TextElideMode mode, int lineHeight, int flags, QStringList *lines,
+void DFMGlobal::elideText(QTextLayout *layout, const QSizeF &size, QTextOption::WrapMode wordWrap,
+                          Qt::TextElideMode mode, qreal lineHeight, int flags, QStringList *lines,
                           QPainter *painter, QPointF offset, const QColor &shadowColor, const QPointF &shadowOffset,
-                          const QBrush &background, qreal backgroundRadius, QRegion *boundingRegion)
+                          const QBrush &background, qreal backgroundRadius, QList<QRectF> *boundingRegion)
 {
-    int height = 0;
+    qreal height = 0;
     bool drawBackground = background.style() != Qt::NoBrush;
     bool drawShadow = shadowColor.isValid();
 
@@ -485,8 +485,8 @@ void DFMGlobal::elideText(QTextLayout *layout, const QSize &size, QTextOption::W
     while (line.isValid()) {
         height += lineHeight;
 
-        if (height + lineHeight >= size.height()) {
-            const QString &end_str = layout->engine()->elidedText(mode, size.width(), flags, line.textStart() + line.textLength() + 1);
+        if (height + lineHeight > size.height()) {
+            const QString &end_str = layout->engine()->elidedText(mode, qRound(size.width() - 1), flags, line.textStart());
 
             layout->endLayout();
             layout->setText(end_str);
@@ -497,11 +497,13 @@ void DFMGlobal::elideText(QTextLayout *layout, const QSize &size, QTextOption::W
 
             layout->beginLayout();
             line = layout->createLine();
+            line.setLineWidth(size.width() - 1);
             text = end_str;
+        } else {
+            line.setLineWidth(size.width());
         }
 
         line.setPosition(offset);
-        line.setLineWidth(size.width());
 
         const QRectF rect = naturalTextRect(line.naturalTextRect());
 
@@ -512,7 +514,7 @@ void DFMGlobal::elideText(QTextLayout *layout, const QSize &size, QTextOption::W
                 QPainterPath path;
 
                 if (lastLineRect.isValid()) {
-                    if (qAbs(rect.width() - lastLineRect.width()) <= backgroundRadius) {
+                    if (qAbs(rect.width() - lastLineRect.width()) < backgroundRadius * 2) {
                         backBounding.setWidth(lastLineRect.width());
                         backBounding.moveCenter(rect.center());
                         path.moveTo(lastLineRect.x() - backgroundRadius, lastLineRect.bottom() - backgroundRadius);
@@ -578,7 +580,7 @@ void DFMGlobal::elideText(QTextLayout *layout, const QSize &size, QTextOption::W
         }
 
         if (boundingRegion) {
-            boundingRegion->operator +=(rect.toRect());
+            boundingRegion->append(rect);
         }
 
         offset.setY(offset.y() + lineHeight);
@@ -594,15 +596,18 @@ void DFMGlobal::elideText(QTextLayout *layout, const QSize &size, QTextOption::W
             lines->append(text.mid(line.textStart(), line.textLength()));
         }
 
+        if (height + lineHeight > size.height())
+            break;
+
         line = layout->createLine();
     }
 
     layout->endLayout();
 }
 
-QString DFMGlobal::elideText(const QString &text, const QSize &size,
+QString DFMGlobal::elideText(const QString &text, const QSizeF &size,
                              QTextOption::WrapMode wordWrap, const QFont &font,
-                             Qt::TextElideMode mode, int lineHeight, int flags)
+                             Qt::TextElideMode mode, qreal lineHeight, qreal flags)
 {
     QTextLayout textLayout(text);
 

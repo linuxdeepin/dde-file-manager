@@ -79,10 +79,10 @@ void DFileViewHelperPrivate::init()
     QObject::connect(DFMGlobal::instance(), &DFMGlobal::clipboardDataChanged, q, [q] {
         for (const QModelIndex &index : q->itemDelegate()->hasWidgetIndexs())
         {
-            FileIconItem *item = qobject_cast<FileIconItem *>(q->indexWidget(index));
+            QWidget *item = q->indexWidget(index);
 
             if (item) {
-                item->setOpacity(q->isCut(index) ? 0.3 : 1);
+                item->setProperty("opacity", q->isCut(index) ? 0.3 : 1);
             }
         }
 
@@ -393,12 +393,22 @@ void DFileViewHelper::initStyleOption(QStyleOptionViewItem *option, const QModel
     option->palette.setColor(QPalette::BrightText, Qt::white);
     option->palette.setBrush(QPalette::Shadow, ThemeConfig::instace()->color("FileView", "shadow"));
 
-    if (isCut(index)) {
+    bool cuted = isCut(index);
+
+    if (cuted) {
         option->backgroundBrush = ThemeConfig::instace()->color("FileView", "background", ThemeConfig::Inactive);
-    } else if ((option->state & QStyle::State_HasFocus) && option->showDecorationSelected && selectedIndexsCount() > 1) {
-        option->backgroundBrush = ThemeConfig::instace()->color("FileView", "background", ThemeConfig::Focus);
+    }
+
+    if ((option->state & QStyle::State_HasFocus) && option->showDecorationSelected && selectedIndexsCount() > 1) {
+        option->palette.setColor(QPalette::Background, ThemeConfig::instace()->color("FileView", "background", ThemeConfig::Focus));
+
+        if (!cuted)
+            option->backgroundBrush = ThemeConfig::instace()->color("FileView", "background", ThemeConfig::Focus);
     } else {
-        option->backgroundBrush = ThemeConfig::instace()->color("FileView", "background");
+        option->palette.setColor(QPalette::Background, ThemeConfig::instace()->color("FileView", "background"));
+
+        if (!cuted)
+            option->backgroundBrush = ThemeConfig::instace()->color("FileView", "background");
     }
 }
 

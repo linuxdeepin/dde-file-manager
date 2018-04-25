@@ -152,41 +152,23 @@ int DStyledItemDelegate::setIconSizeByIconSizeLevel(int level)
     return -1;
 }
 
-QRect DStyledItemDelegate::drawText(const QModelIndex &index, QPainter *painter, QTextLayout *layout, const QRect &boundingRect,
-                                    int backgroundMargins, qreal radius, const QBrush &background, int lineHeight,
-                                    QTextOption::WrapMode wordWrap, Qt::TextElideMode mode, int flags, const QColor &shadowColor) const
+QList<QRectF> DStyledItemDelegate::drawText(const QModelIndex &index, QPainter *painter, QTextLayout *layout, const QRectF &boundingRect,
+                                            qreal radius, const QBrush &background, QTextOption::WrapMode wordWrap,
+                                            Qt::TextElideMode mode, int flags, const QColor &shadowColor) const
 {
     initTextLayout(index, layout);
 
-    QRegion boundingRegion;
-    DFMGlobal::elideText(layout, boundingRect.size(), wordWrap, mode, lineHeight, flags, 0,
+    QList<QRectF> boundingRegion;
+    DFMGlobal::elideText(layout, boundingRect.size(), wordWrap, mode, d_func()->textLineHeight, flags, 0,
                          painter, boundingRect.topLeft(), shadowColor, QPointF(0, 1),
                          background, radius, &boundingRegion);
 
-//    if (background != Qt::NoBrush && painter) {
-//        QPainterPath background_path;
-//        QPainterPath text_path;
-
-//        const QMargins text_margin(backgroundMargins, backgroundMargins, backgroundMargins, backgroundMargins);
-
-//        background_path.addRoundedRect(boundingRegion.boundingRect() + text_margin, radius, radius);
-//        text_path.addRegion(boundingRegion);
-
-//        // save
-//        const QPainter::RenderHints hs = painter->renderHints();
-
-//        painter->setRenderHints(QPainter::Antialiasing);
-//        painter->fillPath(background_path - text_path, background);
-//        // restore
-//        painter->setRenderHints(hs);
-//    }
-
-    return boundingRegion.boundingRect();
+    return boundingRegion;
 }
 
-QRect DStyledItemDelegate::drawText(const QModelIndex &index, QPainter *painter, const QString &text, const QRect &boundingRect,
-                                    int backgroundMargins, qreal radius, const QBrush &background, int lineHeight,
-                                    QTextOption::WrapMode wordWrap, Qt::TextElideMode mode, int flags, const QColor &shadowColor) const
+QList<QRectF> DStyledItemDelegate::drawText(const QModelIndex &index, QPainter *painter, const QString &text, const QRectF &boundingRect,
+                                            qreal radius, const QBrush &background, QTextOption::WrapMode wordWrap,
+                                            Qt::TextElideMode mode, int flags, const QColor &shadowColor) const
 {
     QTextLayout layout;
 
@@ -195,8 +177,7 @@ QRect DStyledItemDelegate::drawText(const QModelIndex &index, QPainter *painter,
     if (painter)
         layout.setFont(painter->font());
 
-    return drawText(index, painter, &layout, boundingRect, backgroundMargins,
-                    radius, background, lineHeight, wordWrap, mode, flags, shadowColor);
+    return drawText(index, painter, &layout, boundingRect, radius, background, wordWrap, mode, flags, shadowColor);
 }
 
 DStyledItemDelegate::DStyledItemDelegate(DStyledItemDelegatePrivate &dd, DFileViewHelper *parent)
@@ -218,17 +199,17 @@ void DStyledItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QM
     parent()->initStyleOption(option, index);
 }
 
-QList<QRect> DStyledItemDelegate::getCornerGeometryList(const QRect &baseRect, const QSize &cornerSize) const
+QList<QRectF> DStyledItemDelegate::getCornerGeometryList(const QRectF &baseRect, const QSizeF &cornerSize) const
 {
-    QList<QRect> list;
+    QList<QRectF> list;
     int offset = baseRect.width() / 8;
-    const QSize &offset_size = cornerSize / 2;
+    const QSizeF &offset_size = cornerSize / 2;
 
-    list << QRect(QPoint(baseRect.right() - offset - offset_size.width(),
-                         baseRect.bottom() - offset - offset_size.height()), cornerSize);
-    list << QRect(QPoint(baseRect.left() + offset - offset_size.width(), list.first().top()), cornerSize);
-    list << QRect(QPoint(list.at(1).left(), baseRect.top() + offset - offset_size.height()), cornerSize);
-    list << QRect(QPoint(list.first().left(), list.at(2).top()), cornerSize);
+    list << QRectF(QPointF(baseRect.right() - offset - offset_size.width(),
+                           baseRect.bottom() - offset - offset_size.height()), cornerSize);
+    list << QRectF(QPointF(baseRect.left() + offset - offset_size.width(), list.first().top()), cornerSize);
+    list << QRectF(QPointF(list.at(1).left(), baseRect.top() + offset - offset_size.height()), cornerSize);
+    list << QRectF(QPointF(list.first().left(), list.at(2).top()), cornerSize);
 
     return list;
 }
@@ -263,28 +244,26 @@ static inline Qt::Alignment visualAlignment(Qt::LayoutDirection direction, Qt::A
     return alignment;
 }
 
-void DStyledItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const QRect &rect, Qt::Alignment alignment, QIcon::Mode mode, QIcon::State state)
+void DStyledItemDelegate::paintIcon(QPainter *painter, const QIcon &icon, const QRectF &rect, Qt::Alignment alignment, QIcon::Mode mode, QIcon::State state)
 {
     // Copy of QStyle::alignedRect
     alignment = visualAlignment(painter->layoutDirection(), alignment);
     const qreal pixel_ratio = painter->device()->devicePixelRatioF();
-    const QPixmap &px = getIconPixmap(icon, rect.size(), pixel_ratio, mode, state);
-    int x = rect.x();
-    int y = rect.y();
-    int w = px.width() / px.devicePixelRatio();
-    int h = px.height() / px.devicePixelRatio();
+    const QPixmap &px = getIconPixmap(icon, rect.size().toSize(), pixel_ratio, mode, state);
+    qreal x = rect.x();
+    qreal y = rect.y();
+    qreal w = px.width() / px.devicePixelRatio();
+    qreal h = px.height() / px.devicePixelRatio();
     if ((alignment & Qt::AlignVCenter) == Qt::AlignVCenter)
-        y += qRound((rect.size().height() - h) / 2.0);
+        y += (rect.size().height() - h) / 2.0;
     else if ((alignment & Qt::AlignBottom) == Qt::AlignBottom)
         y += rect.size().height() - h;
     if ((alignment & Qt::AlignRight) == Qt::AlignRight)
         x += rect.size().width() - w;
     else if ((alignment & Qt::AlignHCenter) == Qt::AlignHCenter)
-        x += qRound((rect.size().width() - w) / 2.0);
+        x += (rect.size().width() - w) / 2.0;
 
-    QRect alignedRect(x, y, w, h);
-
-    painter->drawPixmap(alignedRect.topLeft(), px);
+    painter->drawPixmap(qRound(x), qRound(y), px);
 }
 
 void DStyledItemDelegate::paintCircleList(QPainter *painter, QRectF boundingRect, qreal diameter, const QList<QColor> &colors, const QColor &borderColor)

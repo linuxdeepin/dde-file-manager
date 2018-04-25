@@ -143,11 +143,11 @@ void DListItemDelegate::paint(QPainter *painter,
 
     /// draw file additional icon
 
-    QList<QRect> cornerGeometryList = getCornerGeometryList(icon_rect, icon_rect.size() / 2);
+    QList<QRectF> cornerGeometryList = getCornerGeometryList(icon_rect, icon_rect.size() / 2);
     const QList<QIcon> &cornerIconList = parent()->additionalIcon(index);
 
     for (int i = 0; i < cornerIconList.count(); ++i) {
-        cornerIconList.at(i).paint(painter, cornerGeometryList.at(i));
+        cornerIconList.at(i).paint(painter, cornerGeometryList.at(i).toRect());
     }
 
     column_x = icon_rect.right() + ICON_SPACING;
