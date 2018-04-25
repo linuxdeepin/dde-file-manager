@@ -178,7 +178,7 @@
                             "key": "auto_mount",
                             "text": "Auto mount",
                             "type": "mountCheckBox",
-                            "default": false
+                            "default": true
                         },
                         {
                             "key": "auto_mount_and_open",
