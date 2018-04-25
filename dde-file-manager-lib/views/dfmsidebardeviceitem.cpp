@@ -29,13 +29,14 @@
 #include "gvfs/gvfsmountmanager.h"
 
 #include <QMenu>
+#include <QAction>
 
 DFM_BEGIN_NAMESPACE
 
-DFMSideBarDeviceItem::DFMSideBarDeviceItem(UDiskDeviceInfoPointer infoPointer, QWidget *parent)
-    : DFMSideBarItem(infoPointer->getMountPointUrl(), parent)
+DFMSideBarDeviceItem::DFMSideBarDeviceItem(DUrl url, QWidget *parent)
+    : DFMSideBarItem(url, parent)
 {
-    deviceInfo = infoPointer;
+    UDiskDeviceInfoPointer deviceInfo = this->deviceInfo();
     setText(deviceInfo->getName());
     setAutoOpenUrlOnClick(false);
 
@@ -43,11 +44,8 @@ DFMSideBarDeviceItem::DFMSideBarDeviceItem(UDiskDeviceInfoPointer infoPointer, Q
             this, &DFMSideBarDeviceItem::itemOnClick);
 
     unmountButton = new DImageButton(this);
-    unmountButton->show();
+    unmountButton->setVisible(deviceInfo->canUnmount());
     this->setContentWidget(unmountButton);
-    if (url().isEmpty()) {
-        unmountButton->hide();
-    }
 
     connect(unmountButton, &DImageButton::clicked,
             this, &DFMSideBarDeviceItem::doUnmount);
@@ -73,22 +71,17 @@ DFMSideBarDeviceItem::DFMSideBarDeviceItem(UDiskDeviceInfoPointer infoPointer, Q
     }
 }
 
-void DFMSideBarDeviceItem::postMount(UDiskDeviceInfoPointer infoPointer)
+UDiskDeviceInfoPointer DFMSideBarDeviceItem::deviceInfo() const
 {
-    setUrl(infoPointer->getMountPointUrl());
-    unmountButton->show();
-}
-
-void DFMSideBarDeviceItem::postUnmount(UDiskDeviceInfoPointer infoPointer)
-{
-    setUrl(infoPointer->getMountPointUrl()); // url then should be empty.
-    unmountButton->hide();
+    const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, url());
+    return UDiskDeviceInfoPointer(dynamic_cast<UDiskDeviceInfo *>(info.data()));
 }
 
 QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
 {
     QMenu *menu = new QMenu(const_cast<DFMSideBarDeviceItem *>(this));
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
+    UDiskDeviceInfoPointer deviceInfo = this->deviceInfo();
 
     menu->addAction(QObject::tr("Open in new window"), [this]() {
         WindowManager::instance()->showNewWindow(url(), true);
@@ -98,8 +91,8 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
         wnd->openNewTab(url());
     });
 
-    if (url().isEmpty() && deviceInfo->getDiskInfo().can_mount()) {
-        menu->addAction(QObject::tr("Mount"), [this]() {
+    if (deviceInfo->getDiskInfo().can_mount()) {
+        menu->addAction(QObject::tr("Mount"), [this, deviceInfo]() {
             gvfsMountManager->mount(deviceInfo->getDiskInfo());
         });
     }
@@ -108,29 +101,32 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
         menu->addAction(QObject::tr("Unmount"), this, SLOT(doUnmount()));
     }
 
-    menu->addAction(QObject::tr("Properties"), [this]() {
+    QAction *propertyAction = new QAction(QObject::tr("Properties"), menu);
+    connect(propertyAction, &QAction::triggered, this, [this]() {
         DUrlList list;
         list.append(url());
         fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(this, list));
     });
+    propertyAction->setDisabled(deviceInfo->getMountPointUrl().isEmpty());
+    menu->addAction(propertyAction);
 
     return menu;
 }
 
 void DFMSideBarDeviceItem::itemOnClick()
 {
-    if (url().isEmpty() && deviceInfo->getDiskInfo().can_mount()) {
-        gvfsMountManager->mount(this->deviceInfo->getDiskInfo());
-    }
+    UDiskDeviceInfoPointer deviceInfo = this->deviceInfo();
 
-    if (!url().isEmpty()) {
+    if (deviceInfo->getDiskInfo().can_mount() || !deviceInfo->getMountPointUrl().isEmpty()) {
         DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
         wnd->cd(url());
+        //gvfsMountManager->mount(this->deviceInfo->getDiskInfo());
     }
 }
 
 void DFMSideBarDeviceItem::doUnmount()
 {
+    UDiskDeviceInfoPointer deviceInfo = this->deviceInfo();
     if (deviceInfo->getDiskInfo().can_unmount()) {
         gvfsMountManager->unmount(deviceInfo->getId());
     }

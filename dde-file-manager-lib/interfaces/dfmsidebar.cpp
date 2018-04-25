@@ -153,12 +153,18 @@ void DFMSideBarPrivate::initMountedVolumes()
     DFMSideBarItemGroup *group = groupNameMap[q->groupName(DFMSideBar::GroupName::Device)];
     Q_CHECK_PTR(group);
 
+    DAbstractFileWatcher *devices_watcher = fileService->createFileWatcher(q_func(), DUrl(DEVICE_ROOT), group);
+
     auto devices_info = fileService->getChildren(q_func(), DUrl(DEVICE_ROOT),
                         QStringList(), QDir::AllEntries);
     for (const DAbstractFileInfoPointer &info : devices_info) {
         UDiskDeviceInfoPointer pointer(dynamic_cast<UDiskDeviceInfo *>(info.data()));
-        group->appendItem(new DFMSideBarDeviceItem(pointer));
+        group->appendItem(new DFMSideBarDeviceItem(DUrl::fromDeviceId(pointer->getId())));
     }
+
+    q->connect(devices_watcher, &DAbstractFileWatcher::subfileCreated, group, [group](const DUrl & url) {
+        qDebug() << url;//fileService->createFileInfo(group, url).data();
+    });
 
     // During DFM's init once it found a new device, this signal got triggered.
     // Once new volume mounted, this signal IS ALSO TRIGGERED so we should check item exist.
@@ -166,15 +172,16 @@ void DFMSideBarPrivate::initMountedVolumes()
     [ = ](const UDiskDeviceInfoPointer & info) {
         DFMSideBarItem *item = group->findItem(info);
         if (!item) {
-            group->appendItem(new DFMSideBarDeviceItem(info));
+            //    static DUrl fromDevice(const QString &deviceId);
+            group->appendItem(new DFMSideBarDeviceItem(DUrl::fromDeviceId(info->getId())));
         } else {
             DFMSideBarDeviceItem *casted = qobject_cast<DFMSideBarDeviceItem *>(item);
             // when a new item got mounted, it's url should be changed.
-            casted->postMount(info);
+            casted->unmountButton->show();
             // and this will only got happend when item is clicked, so we do `cd` here
             DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(q->parent()->parent()->parent());
             Q_CHECK_PTR(wnd);
-            wnd->cd(item->url());
+            //wnd->cd(item->url());
         }
     });
 
@@ -184,14 +191,14 @@ void DFMSideBarPrivate::initMountedVolumes()
         DFMSideBarItem *item = group->findItem(info);
         if (item) {
             DFMSideBarDeviceItem *casted = qobject_cast<DFMSideBarDeviceItem *>(item);
-            casted->postUnmount(info);
+            casted->unmountButton->hide();
         }
     });
 
     // Once NEW volume MOUNTED, this signal got triggered.
     q->connect(deviceListener, &UDiskListener::volumeAdded, group,
     [ = ](const UDiskDeviceInfoPointer & info) {
-        group->appendItem(new DFMSideBarDeviceItem(info));
+        group->appendItem(new DFMSideBarDeviceItem(DUrl::fromDeviceId(info->getId())));
     });
 
     // Once volume got REMOVED, this signal got triggered.
@@ -499,7 +506,7 @@ DFMSideBarItem *DFMSideBar::itemAt(const DUrl &url) const
 
         for (int i = 0; i < groupPointer->itemCount(); ++i) {
             DFMSideBarItem *item = (*groupPointer)[i];
-            const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, item->url());
+            const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, item->url());
 
             if (info && info->canRedirectionFileUrl()) {
                 if (info->redirectedFileUrl() == url) {
