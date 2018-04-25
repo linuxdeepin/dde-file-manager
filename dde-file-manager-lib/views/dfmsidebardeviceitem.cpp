@@ -36,21 +36,21 @@ DFM_BEGIN_NAMESPACE
 DFMSideBarDeviceItem::DFMSideBarDeviceItem(DUrl url, QWidget *parent)
     : DFMSideBarItem(url, parent)
 {
-    UDiskDeviceInfoPointer deviceInfo = this->deviceInfo();
-    setText(deviceInfo->getName());
+    QVariantHash info = getExtensionPropertys();
+    setText(info.value("name", "BUG++").toString());
     setAutoOpenUrlOnClick(false);
 
     connect(this, &DFMSideBarDeviceItem::clicked,
             this, &DFMSideBarDeviceItem::itemOnClick);
 
     unmountButton = new DImageButton(this);
-    unmountButton->setVisible(deviceInfo->canUnmount());
+    unmountButton->setVisible(info.value("canUnmount", false).toBool());
     this->setContentWidget(unmountButton);
 
     connect(unmountButton, &DImageButton::clicked,
             this, &DFMSideBarDeviceItem::doUnmount);
 
-    switch (deviceInfo->getMediaType()) {
+    switch (info.value("mediaType", 0).toInt()) {
     case UDiskDeviceInfo::MediaType::native:
         setIconFromThemeConfig("BookmarkItem.Disk");
         break;
@@ -71,17 +71,16 @@ DFMSideBarDeviceItem::DFMSideBarDeviceItem(DUrl url, QWidget *parent)
     }
 }
 
-UDiskDeviceInfoPointer DFMSideBarDeviceItem::deviceInfo() const
+QVariantHash DFMSideBarDeviceItem::getExtensionPropertys() const
 {
-    const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, url());
-    return UDiskDeviceInfoPointer(dynamic_cast<UDiskDeviceInfo *>(info.data()));
+    return fileService->createFileInfo(this, url())->extensionPropertys();
 }
 
 QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
 {
     QMenu *menu = new QMenu(const_cast<DFMSideBarDeviceItem *>(this));
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
-    UDiskDeviceInfoPointer deviceInfo = this->deviceInfo();
+    QVariantHash info = getExtensionPropertys();
 
     menu->addAction(QObject::tr("Open in new window"), [this]() {
         WindowManager::instance()->showNewWindow(url(), true);
@@ -91,13 +90,13 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
         wnd->openNewTab(url());
     });
 
-    if (deviceInfo->getDiskInfo().can_mount()) {
-        menu->addAction(QObject::tr("Mount"), [this, deviceInfo]() {
-            gvfsMountManager->mount(deviceInfo->getDiskInfo());
+    if (info.value("canMount", false).toBool() && !info.value("isMounted", false).toBool()) {
+        menu->addAction(QObject::tr("Mount"), [this, info]() {
+            gvfsMountManager->mount(info.value("deviceId").toString());
         });
     }
 
-    if (deviceInfo->getDiskInfo().can_unmount()) {
+    if (info.value("canUnmount", false).toBool()) {
         menu->addAction(QObject::tr("Unmount"), this, SLOT(doUnmount()));
     }
 
@@ -107,7 +106,7 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
         list.append(url());
         fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(this, list));
     });
-    propertyAction->setDisabled(deviceInfo->getMountPointUrl().isEmpty());
+    propertyAction->setDisabled(info.value("isMounted").toBool());
     menu->addAction(propertyAction);
 
     return menu;
@@ -115,9 +114,9 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
 
 void DFMSideBarDeviceItem::itemOnClick()
 {
-    UDiskDeviceInfoPointer deviceInfo = this->deviceInfo();
+    QVariantHash info = getExtensionPropertys();
 
-    if (deviceInfo->getDiskInfo().can_mount() || !deviceInfo->getMountPointUrl().isEmpty()) {
+    if (info.value("canMount", false).toBool() || info.value("isMounted", false).toBool()) {
         DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
         wnd->cd(url());
         //gvfsMountManager->mount(this->deviceInfo->getDiskInfo());
@@ -126,9 +125,9 @@ void DFMSideBarDeviceItem::itemOnClick()
 
 void DFMSideBarDeviceItem::doUnmount()
 {
-    UDiskDeviceInfoPointer deviceInfo = this->deviceInfo();
-    if (deviceInfo->getDiskInfo().can_unmount()) {
-        gvfsMountManager->unmount(deviceInfo->getId());
+    QVariantHash info = getExtensionPropertys();
+    if (info.value("canUnmount", false).toBool()) {
+        gvfsMountManager->unmount(info.value("deviceId").toString());
     }
 }
 
