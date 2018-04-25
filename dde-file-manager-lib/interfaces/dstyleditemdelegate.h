@@ -53,17 +53,17 @@ public:
 
     virtual void updateItemSizeHint() = 0;
 
-    virtual QRect drawText(const QModelIndex &index, QPainter *painter, QTextLayout *layout,
-                           const QRect &boundingRect, int backgroundMargins, qreal radius, const QBrush &background,
-                           int lineHeight, QTextOption::WrapMode wordWrap = QTextOption::WrapAtWordBoundaryOrAnywhere,
+    virtual QList<QRectF> drawText(const QModelIndex &index, QPainter *painter, QTextLayout *layout,
+                                   const QRectF &boundingRect, qreal radius, const QBrush &background,
+                                   QTextOption::WrapMode wordWrap = QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                   Qt::TextElideMode mode = Qt::ElideMiddle, int flags = Qt::AlignCenter,
+                                   const QColor &shadowColor = QColor()) const;
+
+    QList<QRectF> drawText(const QModelIndex &index, QPainter *painter, const QString &text,
+                           const QRectF &boundingRect, qreal radius, const QBrush &background,
+                           QTextOption::WrapMode wordWrap = QTextOption::WrapAtWordBoundaryOrAnywhere,
                            Qt::TextElideMode mode = Qt::ElideMiddle, int flags = Qt::AlignCenter,
                            const QColor &shadowColor = QColor()) const;
-
-    QRect drawText(const QModelIndex &index, QPainter *painter, const QString &text, const QRect &boundingRect,
-                   int backgroundMargins, qreal radius, const QBrush &background,
-                   int lineHeight, QTextOption::WrapMode wordWrap = QTextOption::WrapAtWordBoundaryOrAnywhere,
-                   Qt::TextElideMode mode = Qt::ElideMiddle, int flags = Qt::AlignCenter,
-                   const QColor &shadowColor = QColor()) const;
 
     static void paintCircleList(QPainter *painter, QRectF boundingRect, qreal diameter, const QList<QColor> &colors, const QColor &borderColor);
 
@@ -72,10 +72,10 @@ protected:
 
     virtual void initTextLayout(const QModelIndex &index, QTextLayout *layout) const;
     void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const Q_DECL_OVERRIDE;
-    QList<QRect> getCornerGeometryList(const QRect &baseRect, const QSize &cornerSize) const;
+    QList<QRectF> getCornerGeometryList(const QRectF &baseRect, const QSizeF &cornerSize) const;
 
     static QPixmap getIconPixmap(const QIcon &icon, const QSize &size, qreal pixelRatio, QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);
-    static void paintIcon(QPainter *painter, const QIcon &icon, const QRect &rect, Qt::Alignment alignment = Qt::AlignCenter,
+    static void paintIcon(QPainter *painter, const QIcon &icon, const QRectF &rect, Qt::Alignment alignment = Qt::AlignCenter,
                           QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);
 
     QScopedPointer<DStyledItemDelegatePrivate> d_ptr;

@@ -155,6 +155,14 @@ FileIconItem::FileIconItem(QWidget *parent) :
     connect(edit, &QTextEdit::customContextMenuRequested, this, &FileIconItem::popupEditContentMenu);
 }
 
+qreal FileIconItem::opacity() const
+{
+    if (opacityEffect)
+        return opacityEffect->opacity();
+
+    return 1;
+}
+
 void FileIconItem::setOpacity(qreal opacity)
 {
     if (opacity - 1.0 >= 0) {

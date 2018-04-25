@@ -49,7 +49,6 @@ DFileSystemModel *CanvasViewHelper::model() const
 
 const DUrlList CanvasViewHelper::selectedUrls() const
 {
-    qDebug() << parent()->selectedUrls();
     return parent()->selectedUrls();
 }
 
@@ -100,10 +99,22 @@ void CanvasViewHelper::initStyleOption(QStyleOptionViewItem *option, const QMode
     option->palette.setColor(QPalette::BrightText, Qt::white);
     option->palette.setBrush(QPalette::Shadow, QColor(0, 0, 0, 178));
 
+    bool cuted = isCut(index);
+
+    if (cuted) {
+        option->backgroundBrush = QColor("#BFE4FC");
+    }
+
     if ((option->state & QStyle::State_HasFocus) && option->showDecorationSelected && selectedIndexsCount() > 1) {
-        option->backgroundBrush = QColor("#0076F9");
+        option->palette.setColor(QPalette::Background, QColor("#0076F9"));
+
+        if (!cuted)
+            option->backgroundBrush = QColor("#0076F9");
     } else {
-        option->backgroundBrush = QColor("#2da6f7");
+        option->palette.setColor(QPalette::Background, QColor("#2da6f7"));
+
+        if (!cuted)
+            option->backgroundBrush = QColor("#2da6f7");
     }
 }
 

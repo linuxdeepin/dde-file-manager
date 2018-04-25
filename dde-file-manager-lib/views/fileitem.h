@@ -39,10 +39,12 @@ class FileIconItem : public QFrame
     Q_OBJECT
 
     Q_PROPERTY(QColor borderColor READ borderColor WRITE setBorderColor NOTIFY borderColorChanged)
+    Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
 
 public:
     explicit FileIconItem(QWidget *parent = 0);
 
+    qreal opacity() const;
     void setOpacity(qreal opacity);
 
     QSize sizeHint() const Q_DECL_OVERRIDE;

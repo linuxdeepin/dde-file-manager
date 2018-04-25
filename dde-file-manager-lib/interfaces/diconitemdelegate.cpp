@@ -39,10 +39,164 @@
 #include <QAbstractTextDocumentLayout>
 #include <QApplication>
 #include <QAbstractItemView>
+#include <QVBoxLayout>
 #include <private/qtextengine_p.h>
 
 #define ICON_SPACING 16
 #define ICON_MODE_RECT_RADIUS 4
+
+QString trimmedEnd(QString str)
+{
+    while (!str.isEmpty()) {
+        switch (str.at(str.count() - 1).toLatin1()) {
+        case '\t':
+        case '\n':
+        case '\r':
+        case '\v':
+        case '\f':
+        case ' ':
+            str.chop(1);
+            break;
+        default:
+            return str;
+        }
+    }
+
+    return str;
+}
+
+QRectF boundingRect(const QList<QRectF> rects)
+{
+    QRectF bounding;
+
+    if (rects.isEmpty())
+        return bounding;
+
+    bounding = rects.first();
+
+    for (const QRectF &r : rects) {
+        if (r.top() < bounding.top()) {
+            bounding.setTop(r.top());
+        }
+
+        if (r.left() < bounding.left()) {
+            bounding.setLeft(r.left());
+        }
+
+        if (r.right() > bounding.right()) {
+            bounding.setRight(r.right());
+        }
+
+        if (r.bottom() > bounding.bottom()) {
+            bounding.setBottom(r.bottom());
+        }
+    }
+
+    return bounding;
+}
+
+QPainterPath boundingPath(QList<QRectF> rects, qreal radius, qreal padding)
+{
+    QPainterPath path;
+    const QMarginsF margins(radius + padding, 0, radius + padding, 0);
+
+    if (rects.count() == 1) {
+        path.addRoundedRect(rects.first().marginsAdded(margins).adjusted(0, -padding, 0, padding), radius, radius);
+
+        return path;
+    }
+
+    auto joinRightCorner = [&] (const QRectF &rect, const QRectF &prevRect, const QRectF &nextRect) {
+        if (Q_LIKELY(prevRect.isValid())) {
+            qreal new_radius = qMin(radius, qAbs(prevRect.right() - rect.right()) / 2);
+
+            if (rect.right() > prevRect.right()) {
+                path.arcTo(rect.right() - new_radius * 2, rect.y() - padding, new_radius * 2, new_radius * 2, 90, -90);
+            } else if (rect.right() < prevRect.right()) {
+                path.arcTo(rect.right(), rect.y() + padding, new_radius * 2, new_radius * 2, 90, 90);
+            }
+        } else {
+            path.arcTo(rect.right() - radius * 2, rect.y() - padding, radius * 2, radius * 2, 90, -90);
+        }
+
+        if (Q_LIKELY(nextRect.isValid())) {
+            qreal new_radius = qMin(radius, qAbs(nextRect.right() - rect.right()) / 2);
+
+            if (rect.right() > nextRect.right()) {
+                path.arcTo(rect.right() - new_radius * 2, rect.bottom() - new_radius * 2 + padding, new_radius * 2, new_radius * 2, 0, -90);
+            } else if (rect.right() < nextRect.right()) {
+                path.arcTo(rect.right(), rect.bottom() - new_radius * 2 - padding, new_radius * 2, new_radius * 2, 180, 90);
+            }
+        } else {
+            path.arcTo(rect.right() - radius * 2, rect.bottom() - radius * 2 + padding, radius * 2, radius * 2, 0, -90);
+        }
+    };
+
+    auto joinLeftCorner = [&] (const QRectF &rect, const QRectF &prevRect, const QRectF &nextRect) {
+        if (Q_LIKELY(nextRect.isValid())) {
+            qreal new_radius = qMin(radius, qAbs(nextRect.x() - rect.x()) / 2);
+
+            if (rect.x() > nextRect.x()) {
+                path.arcTo(rect.x() - new_radius * 2, rect.bottom() - new_radius * 2 - padding, new_radius * 2, new_radius * 2, 270, 90);
+            } else if (rect.x() < nextRect.x()) {
+                path.arcTo(rect.x(), rect.bottom() - new_radius * 2 + padding, new_radius * 2, new_radius * 2, 270, -90);
+            }
+        } else {
+            path.arcTo(rect.x(), rect.bottom() - radius * 2 + padding, radius * 2, radius * 2, 270, -90);
+        }
+
+        if (Q_LIKELY(prevRect.isValid())) {
+            qreal new_radius = qMin(radius, qAbs(prevRect.x() - rect.x()) / 2);
+
+            if (rect.x() > prevRect.x()) {
+                path.arcTo(rect.x() - new_radius * 2, rect.y() + padding, new_radius * 2, new_radius * 2, 0, 90);
+            } else if (rect.x() < prevRect.x()) {
+                path.arcTo(rect.x(), rect.y() - padding, new_radius * 2, new_radius * 2, 180, -90);
+            }
+        } else {
+            path.arcTo(rect.x(), rect.y() - padding, radius * 2, radius * 2, 180, -90);
+        }
+    };
+
+    auto preproccess = [&] (QRectF &rect, const QRectF &prev) {
+        if (qAbs(rect.x() - prev.x()) < radius) {
+            rect.setLeft(prev.x());
+        }
+
+        if (qAbs(rect.right() - prev.right()) < radius) {
+            rect.setRight(prev.right());
+        }
+    };
+
+    for (int i = 1; i < rects.count(); ++i) {
+        preproccess(rects[i], rects.at(i - 1));
+    }
+
+    const QRectF &first = rects.first().marginsAdded(margins);
+
+    path.arcMoveTo(first.right() - radius * 2, first.y() - padding, radius * 2, radius * 2, 90);
+    joinRightCorner(first, QRectF(), rects.at(1).marginsAdded(margins));
+
+    for (int i = 1; i < rects.count() - 1; ++i) {
+        joinRightCorner(rects.at(i) + margins, rects.at(i - 1).marginsAdded(margins), rects.at(i + 1).marginsAdded(margins));
+    }
+
+    QRectF last = rects.last();
+    const QRectF &prevRect = rects.at(rects.count() - 2);
+
+    joinRightCorner(last.marginsAdded(margins), prevRect.marginsAdded(margins), QRectF());
+    joinLeftCorner(last.marginsAdded(margins), prevRect.marginsAdded(margins), QRectF());
+
+    for (int i = rects.count() - 2; i > 0; --i) {
+        joinLeftCorner(rects.at(i) + margins, rects.at(i - 1).marginsAdded(margins), rects.at(i + 1).marginsAdded(margins));
+    }
+
+    joinLeftCorner(first, QRectF(), rects.at(1).marginsAdded(margins));
+
+    path.closeSubpath();
+
+    return path;
+}
 
 class TagTextFormat : public QTextCharFormat
 {
@@ -127,6 +281,133 @@ void FileTagObjectInterface::drawObject(QPainter *painter, const QRectF &rect, Q
     DStyledItemDelegate::paintCircleList(painter, boundingRect, diameter, colors, borderColor);
 }
 
+class ExpandedItem : public QWidget
+{
+    Q_OBJECT
+
+    Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
+
+public:
+    explicit ExpandedItem(DIconItemDelegate *d, QWidget *parent = 0)
+        : QWidget(parent)
+        , delegate(d)
+    {
+
+    }
+
+    bool event(QEvent *ee) override
+    {
+        if (ee->type() == QEvent::DeferredDelete) {
+            if (!canDeferredDelete) {
+                ee->accept();
+
+                return true;
+            }
+        }
+
+        return QWidget::event(ee);
+    }
+
+    qreal opacity() const
+    {
+        return m_opactity;
+    }
+
+    void setOpacity(qreal opacity)
+    {
+        if (qFuzzyCompare(opacity, m_opactity))
+            return;
+
+        m_opactity = opacity;
+
+        update();
+    }
+
+    void paintEvent(QPaintEvent *) override
+    {
+        QPainter pa(this);
+
+        pa.setOpacity(m_opactity);
+        pa.setPen(option.palette.color(QPalette::BrightText));
+        pa.setFont(option.font);
+
+        if (!iconPixmap.isNull()) {
+            pa.drawPixmap(iconGeometry().topLeft().toPoint(), iconPixmap);
+        }
+
+        if (option.text.isEmpty())
+            return;
+
+        const QMargins &margins = contentsMargins();
+        QRect label_rect(TEXT_PADDING + margins.left(), margins.top() + iconHeight + TEXT_PADDING + ICON_MODE_ICON_SPACING,
+                         width() - TEXT_PADDING * 2 - margins.left() - margins.right(), INT_MAX);
+        const QList<QRectF> &lines = delegate->drawText(index, &pa, option.text, label_rect, ICON_MODE_RECT_RADIUS,
+                                                        option.backgroundBrush,
+                                                        QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                        option.textElideMode, Qt::AlignCenter);
+
+        textBounding = boundingRect(lines).toRect();
+    }
+
+    QSize sizeHint() const override
+    {
+        return QSize(width(), textGeometry().bottom() + contentsMargins().bottom());
+    }
+
+    int heightForWidth(int width) const override
+    {
+        if (width != this->width()) {
+            textBounding = QRect();
+        }
+
+        return textGeometry(width).bottom() + contentsMargins().bottom();
+    }
+
+    void setIconPixmap(const QPixmap &pixmap, int height)
+    {
+        iconPixmap = pixmap;
+        iconHeight = height;
+        update();
+    }
+
+    QRectF iconGeometry() const
+    {
+        const QRect &content_rect = rect().marginsRemoved(contentsMargins());
+        QRectF icon_rect(QPointF((content_rect.width() - iconPixmap.width()) / 2.0, (iconHeight - iconPixmap.height()) / 2.0 + content_rect.top()), iconPixmap.size());
+
+        return icon_rect;
+    }
+
+    QRectF textGeometry(int width = -1) const
+    {
+        if (textBounding.isEmpty() && !option.text.isEmpty()) {
+            const QMargins &margins = contentsMargins();
+
+            if (width < 0)
+                width = this->width();
+
+            width -= (margins.left() + margins.right());
+
+            QRect label_rect(TEXT_PADDING + margins.left(), iconHeight + TEXT_PADDING + ICON_MODE_ICON_SPACING + margins.top(), width - TEXT_PADDING * 2, INT_MAX);
+            const QList<QRectF> &lines = delegate->drawText(index, nullptr, option.text, label_rect, ICON_MODE_RECT_RADIUS, Qt::NoBrush,
+                                                            QTextOption::WrapAtWordBoundaryOrAnywhere, option.textElideMode, Qt::AlignCenter);
+
+            textBounding = boundingRect(lines);
+        }
+
+        return textBounding;;
+    }
+
+    QPixmap iconPixmap;
+    int iconHeight = 0;
+    mutable QRectF textBounding;
+    QModelIndex index;
+    QStyleOptionViewItem option;
+    qreal m_opactity = 1;
+    bool canDeferredDelete = true;
+    DIconItemDelegate *delegate;
+};
+
 class DIconItemDelegatePrivate : public DStyledItemDelegatePrivate
 {
 public:
@@ -137,12 +418,13 @@ public:
     QSize textSize(const QString &text, const QFontMetrics &metrics, int lineHeight = -1) const;
     void drawText(QPainter *painter, const QRect &r, const QString &text,
                   int lineHeight = -1, QRect *br = Q_NULLPTR) const;
+    QPixmap getFileIconPixmap(const QModelIndex &index, const QIcon &icon, const QSize &icon_size, QIcon::Mode mode, qreal devicePixelRatio) const;
 
-    QPointer<FileIconItem> expandedItem;
+    QPointer<ExpandedItem> expandedItem;
 
 //    mutable QHash<QString, QString> elideMap;
 //    mutable QHash<QString, QString> wordWrapMap;
-    mutable QHash<QString, int> textHeightMap;
+//    mutable QHash<QString, int> textHeightMap;
     mutable QModelIndex expandedIndex;
     mutable QModelIndex lastAndExpandedInde;
 
@@ -159,6 +441,8 @@ public:
 
     static int textObjectType;
     static FileTagObjectInterface *textObjectInterface;
+
+    Q_DECLARE_PUBLIC(DIconItemDelegate)
 };
 
 int DIconItemDelegatePrivate::textObjectType = QTextFormat::UserObject + 1;
@@ -210,21 +494,36 @@ void DIconItemDelegatePrivate::drawText(QPainter *painter, const QRect &r, const
         *br = textRect;
 }
 
+QPixmap DIconItemDelegatePrivate::getFileIconPixmap(const QModelIndex &index, const QIcon &icon, const QSize &icon_size, QIcon::Mode mode, qreal devicePixelRatio) const
+{
+    Q_Q(const DIconItemDelegate);
+
+    QPixmap pixmap = q->getIconPixmap(icon, icon_size, devicePixelRatio, mode);
+    QPainter painter(&pixmap);
+
+    /// draw file additional icon
+
+    QList<QRectF> cornerGeometryList = q->getCornerGeometryList(QRect(QPoint(0, 0), icon_size), icon_size / 3);
+    const QList<QIcon> &cornerIconList = q->parent()->additionalIcon(index);
+
+    for (int i = 0; i < cornerIconList.count(); ++i) {
+        cornerIconList.at(i).paint(&painter, cornerGeometryList.at(i).toRect());
+    }
+
+    return pixmap;
+}
 
 DIconItemDelegate::DIconItemDelegate(DFileViewHelper *parent) :
     DStyledItemDelegate(*new DIconItemDelegatePrivate(this), parent)
 {
     Q_D(DIconItemDelegate);
 
-    d->expandedItem = new FileIconItem(parent->parent()->viewport());
+    d->expandedItem = new ExpandedItem(this, parent->parent()->viewport());
     d->expandedItem->setAttribute(Qt::WA_TransparentForMouseEvents);
-    d->expandedItem->setProperty("showBackground", true);
-    d->expandedItem->edit->setReadOnly(true);
     d->expandedItem->canDeferredDelete = false;
-    d->expandedItem->icon->setFixedSize(parent->parent()->iconSize());
+    d->expandedItem->setContentsMargins(0, 0, 0, 0);
     /// prevent flash when first call show()
     d->expandedItem->setFixedWidth(0);
-    d->expandedItem->setBorderColor(Qt::transparent);
 
     d->iconSizes << 48 << 64 << 96 << 128 << 256;
 
@@ -242,26 +541,6 @@ DIconItemDelegate::~DIconItemDelegate()
         d->expandedItem->canDeferredDelete = true;
         d->expandedItem->deleteLater();
     }
-}
-
-QString trimmedEnd(QString str)
-{
-    while (!str.isEmpty()) {
-        switch (str.at(str.count() - 1).toLatin1()) {
-        case '\t':
-        case '\n':
-        case '\r':
-        case '\v':
-        case '\f':
-        case ' ':
-            str.chop(1);
-            break;
-        default:
-            return str;
-        }
-    }
-
-    return str;
 }
 
 QT_BEGIN_NAMESPACE
@@ -329,7 +608,7 @@ void DIconItemDelegate::paint(QPainter *painter,
 
     /// init icon geomerty
 
-    QRect icon_rect = opt.rect;
+    QRectF icon_rect = opt.rect;
 
     icon_rect.setSize(parent()->parent()->iconSize());
     icon_rect.moveLeft(opt.rect.left() + (opt.rect.width() - icon_rect.width()) / 2.0);
@@ -339,11 +618,17 @@ void DIconItemDelegate::paint(QPainter *painter,
 
     /// init file name geometry
 
-    QRect label_rect = opt.rect;
+    QRectF label_rect = opt.rect;
 
     label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
     label_rect.setWidth(opt.rect.width() - 2 * TEXT_PADDING);
     label_rect.moveLeft(label_rect.left() + TEXT_PADDING);
+
+    if (isSelected) {
+        painter->setPen(opt.palette.color(QPalette::BrightText));
+    } else {
+        painter->setPen(opt.palette.color(QPalette::Text));
+    }
 
     /// if has selected show all file name else show elide file name.
     bool singleSelected = parent()->selectedIndexsCount() < 2;
@@ -355,18 +640,18 @@ void DIconItemDelegate::paint(QPainter *painter,
 
         /// init file name text
 
-        if (d->textHeightMap.contains(str)) {
+//        if (d->textHeightMap.contains(str)) {
 //            str = d->wordWrapMap.value(str);
-            height = d->textHeightMap.value(str);
-        } else {
-            const QRect &boundingRect = drawText(index, 0, str, label_rect.adjusted(0, 0, 0, 99999), 0, 0, QBrush(Qt::NoBrush), d->textLineHeight);
+//            height = d->textHeightMap.value(str);
+//        } else {
+            const QList<QRectF> &lines = drawText(index, 0, str, label_rect.adjusted(0, 0, 0, 99999), 0, QBrush(Qt::NoBrush));
 //            wordWrap_str = trimmedEnd(wordWrap_str);
 
 //            d->wordWrapMap[str] = wordWrap_str;
-            height = boundingRect.height();
-            d->textHeightMap[str] = height;
+            height = boundingRect(lines).height();
+//            d->textHeightMap[str] = height;
 //            str = wordWrap_str;
-        }
+//        }
 
         if (height > label_rect.height()) {
             /// use widget(FileIconItem) show file icon and file name label.
@@ -376,25 +661,11 @@ void DIconItemDelegate::paint(QPainter *painter,
             setEditorData(d->expandedItem, index);
             parent()->setIndexWidget(index, d->expandedItem);
 
-            const QVariantHash &ep = index.data(DFileSystemModel::ExtensionPropertys).toHash();
-            const QList<QColor> &colors = qvariant_cast<QList<QColor>>(ep.value("colored"));
-
-            if (!colors.isEmpty()) {
-                d->expandedItem->edit->document()->documentLayout()->registerHandler(d->textObjectType, d->textObjectInterface);
-                QTextCursor cursor(d->expandedItem->edit->document());
-                TagTextFormat format(d->textObjectType, colors, Qt::white);
-
-                cursor.setPosition(0);
-                cursor.insertText(QString(QChar::ObjectReplacementCharacter), format);
-            }
-
-            QPalette palette = d->expandedItem->palette();
-
-            palette.setColor(QPalette::Text, opt.palette.color(QPalette::Text));
-            palette.setColor(QPalette::BrightText, opt.palette.color(QPalette::BrightText));
-            palette.setColor(QPalette::Background, opt.backgroundBrush.color());
-            d->expandedItem->setPalette(palette);
-            d->expandedItem->updateStyleSheet();
+            // 重设item状态
+            d->expandedItem->index = index;
+            d->expandedItem->option = opt;
+            d->expandedItem->textBounding = QRectF();
+            d->expandedItem->setFixedWidth(0);
 
             if (parent()->indexOfRow(index) == parent()->rowCount() - 1) {
                 d->lastAndExpandedInde = index;
@@ -431,26 +702,25 @@ void DIconItemDelegate::paint(QPainter *painter,
     if (isSelected) {
         paintIcon(painter, opt.icon, icon_rect, Qt::AlignCenter, QIcon::Selected);
     } else if (isDropTarget) {
-        QPixmap pixmap = opt.icon.pixmap(icon_rect.size());
-
+        QPixmap pixmap = opt.icon.pixmap(icon_rect.size().toSize());
         QPainter p(&pixmap);
 
         p.setCompositionMode(QPainter::CompositionMode_SourceAtop);
-        p.fillRect(QRect(QPoint(0, 0), icon_rect.size()), QColor(0, 0, 0, 255 * 0.1));
+        p.fillRect(QRect(QPoint(0, 0), icon_rect.size().toSize()), QColor(0, 0, 0, 255 * 0.1));
         p.end();
 
-        painter->drawPixmap(icon_rect, pixmap);
+        painter->drawPixmap(icon_rect.toRect(), pixmap);
     } else {
         paintIcon(painter, opt.icon, icon_rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
     }
 
     /// draw file additional icon
 
-    QList<QRect> cornerGeometryList = getCornerGeometryList(icon_rect, icon_rect.size() / 3);
+    QList<QRectF> cornerGeometryList = getCornerGeometryList(icon_rect, icon_rect.size() / 3);
     const QList<QIcon> &cornerIconList = parent()->additionalIcon(index);
 
     for (int i = 0; i < cornerIconList.count(); ++i) {
-        cornerIconList.at(i).paint(painter, cornerGeometryList.at(i));
+        cornerIconList.at(i).paint(painter, cornerGeometryList.at(i).toRect());
     }
 
 //    /// draw file name label
@@ -476,37 +746,30 @@ void DIconItemDelegate::paint(QPainter *painter,
 //        painter->fillRect(label_rect, Qt::transparent);
 //    }
 
-    if (isSelected) {
-        painter->setPen(opt.palette.color(QPalette::BrightText));
-    } else {
-        painter->setPen(opt.palette.color(QPalette::Text));
-    }
-
-    d->drawTextBackgroundOnLast = isSelected;
-
     if (isSelected || !d->enabledTextShadow) {
-        const QRect &boundingRect = drawText(index, painter, str, label_rect, TEXT_PADDING, ICON_MODE_RECT_RADIUS,
-                                             isSelected ? opt.backgroundBrush : QBrush(Qt::NoBrush), d->textLineHeight,
-                                             QTextOption::WrapAtWordBoundaryOrAnywhere, opt.textElideMode, Qt::AlignCenter);
+        const QList<QRectF> &lines = drawText(index, painter, str, label_rect, ICON_MODE_RECT_RADIUS,
+                                              isSelected ? opt.backgroundBrush : QBrush(Qt::NoBrush),
+                                              QTextOption::WrapAtWordBoundaryOrAnywhere, opt.textElideMode, Qt::AlignCenter);
 
         const QColor &border_color = focusTextBackgroundBorderColor();
 
-        if (hasFocus && border_color.isValid()) {
-            painter->setPen(QPen(border_color, 2));
-            painter->drawRoundedRect(boundingRect.adjusted(-TEXT_PADDING, -TEXT_PADDING, TEXT_PADDING, TEXT_PADDING),
-                                     ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
+        if (hasFocus && !singleSelected && border_color.isValid()) {
+            QPainterPath line_path = boundingPath(lines, ICON_MODE_RECT_RADIUS, 1);
+
+            painter->setPen(QPen(border_color, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            painter->drawPath(line_path);
         }
     } else {
         qreal pixel_ratio = painter->device()->devicePixelRatioF();
-        QImage text_image(label_rect.size() * pixel_ratio, QImage::Format_ARGB32_Premultiplied);
+        QImage text_image((label_rect.size() * pixel_ratio).toSize(), QImage::Format_ARGB32_Premultiplied);
         text_image.fill(Qt::transparent);
         text_image.setDevicePixelRatio(pixel_ratio);
 
         QPainter p(&text_image);
         p.setPen(painter->pen());
         p.setFont(painter->font());
-        drawText(index, &p, str, QRect(QPoint(0, 0), text_image.size()), TEXT_PADDING,
-                 ICON_MODE_RECT_RADIUS, QBrush(Qt::NoBrush), d->textLineHeight,
+        drawText(index, &p, str, QRect(QPoint(0, 0), text_image.size()),
+                 ICON_MODE_RECT_RADIUS, QBrush(Qt::NoBrush),
                  QTextOption::WrapAtWordBoundaryOrAnywhere, opt.textElideMode, Qt::AlignCenter);
         p.end();
 
@@ -520,7 +783,7 @@ void DIconItemDelegate::paint(QPainter *painter,
         p.end();
 
         painter->drawImage(label_rect.translated(0, 1), text_image);
-        painter->drawPixmap(label_rect, text_pixmap);
+        painter->drawPixmap(label_rect.topLeft(), text_pixmap);
     }
 
     painter->setOpacity(1);
@@ -533,10 +796,9 @@ QSize DIconItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelInde
     const QSize &size = d->itemSizeHint;
 
     if (index.isValid() && index == d->lastAndExpandedInde) {
-        d->expandedItem->setFixedWidth(size.width());
-        d->expandedItem->icon->setFixedSize(parent()->parent()->iconSize());
+        d->expandedItem->iconHeight = parent()->parent()->iconSize().height();
 
-        return d->expandedItem->size();
+        return QSize(size.width(), d->expandedItem->heightForWidth(size.width()));
     }
 
     return size;
@@ -560,36 +822,38 @@ QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
 
 void DIconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    Q_D(const DIconItemDelegate);
+
     const QSize &icon_size = parent()->parent()->iconSize();
 
     editor->move(option.rect.topLeft());
-    editor->setFixedWidth(option.rect.width());
     editor->setMinimumHeight(option.rect.height());
+
+    QStyleOptionViewItem opt = option;
+    initStyleOption(&opt, index);
+
+    if (editor == d->expandedItem) {
+        if (editor->width() != option.rect.width()) {
+            editor->setFixedWidth(option.rect.width());
+            d->expandedItem->setIconPixmap(d->getFileIconPixmap(index, opt.icon, icon_size, QIcon::Selected, d->expandedItem->devicePixelRatioF()), icon_size.height());
+            editor->adjustSize();
+        }
+
+        return;
+    }
+
+    editor->setFixedWidth(option.rect.width());
 
     FileIconItem *item = qobject_cast<FileIconItem*>(editor);
 
-    if(!item)
+    if (!item)
         return;
 
-    if(icon_size.width() != item->icon->size().width()) {
-        QStyleOptionViewItem opt;
+    QLabel *icon = item->icon;
 
-        initStyleOption(&opt, index);
-
-        QPixmap pixmap = getIconPixmap(opt.icon, icon_size, editor->devicePixelRatioF(), QIcon::Selected);
-        QPainter painter(&pixmap);
-
-        /// draw file additional icon
-
-        QList<QRect> cornerGeometryList = getCornerGeometryList(QRect(QPoint(0, 0), icon_size), icon_size / 3);
-        const QList<QIcon> &cornerIconList = parent()->additionalIcon(index);
-
-        for (int i = 0; i < cornerIconList.count(); ++i) {
-            cornerIconList.at(i).paint(&painter, cornerGeometryList.at(i));
-        }
-
-        item->icon->setFixedSize(icon_size);
-        item->icon->setPixmap(pixmap);
+    if (icon_size.height() != icon->size().height()) {
+        icon->setFixedHeight(icon_size.height());
+        icon->setPixmap(d->getFileIconPixmap(index, opt.icon, icon_size, QIcon::Selected, editor->devicePixelRatioF()));
     }
 }
 
@@ -597,27 +861,24 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
 {
     Q_D(const DIconItemDelegate);
 
-    FileIconItem *item = qobject_cast<FileIconItem*>(editor);
-
-    if(!item)
-        return;
-
     QStyleOptionViewItem opt;
 
     initStyleOption(&opt, index);
 
     const QSize &icon_size = parent()->parent()->iconSize();
-    QPixmap pixmap = getIconPixmap(opt.icon, icon_size, editor->devicePixelRatioF(), QIcon::Selected);
-    QPainter painter(&pixmap);
+    QPixmap pixmap = d->getFileIconPixmap(index, opt.icon, icon_size, QIcon::Selected, editor->devicePixelRatioF());
 
-    /// draw file additional icon
+    if (ExpandedItem *item = qobject_cast<ExpandedItem*>(editor)) {
+        item->setIconPixmap(pixmap, icon_size.height());
+        item->setOpacity(parent()->isCut(index) ? 0.3 : 1);
 
-    QList<QRect> cornerGeometryList = getCornerGeometryList(QRect(QPoint(0, 0), icon_size), icon_size / 3);
-    const QList<QIcon> &cornerIconList = parent()->additionalIcon(index);
-
-    for (int i = 0; i < cornerIconList.count(); ++i) {
-        cornerIconList.at(i).paint(&painter, cornerGeometryList.at(i));
+        return;
     }
+
+    FileIconItem *item = qobject_cast<FileIconItem*>(editor);
+
+    if (!item)
+        return;
 
     item->icon->setPixmap(pixmap);
     item->edit->setPlainText(index.data(item->edit->isReadOnly()
@@ -652,15 +913,15 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     QList<QRect> geometries;
 
     if (index == d->expandedIndex) {
-        QRect geometry = d->expandedItem->icon->geometry();
+        QRect geometry = d->expandedItem->iconGeometry().toRect();
 
         geometry.moveTopLeft(geometry.topLeft() + d->expandedItem->pos());
 
         geometries << geometry;
 
-        geometry = d->expandedItem->edit->geometry();
+        geometry = d->expandedItem->textGeometry().toRect();
         geometry.moveTopLeft(geometry.topLeft() + d->expandedItem->pos());
-        geometry.setTop(d->expandedItem->icon->y() + d->expandedItem->icon->height() + d->expandedItem->y());
+        geometry.setTop(geometries.first().bottom());
 
         geometries << geometry;
 
@@ -740,11 +1001,12 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 
     bool elide = (!isSelected || !singleSelected);
 
-    label_rect = drawText(index, nullptr, str, QRect(label_rect.topLeft(), QSize(label_rect.width(), INT_MAX)),
-                          TEXT_PADDING, ICON_MODE_RECT_RADIUS, isSelected ? opt.backgroundBrush : QBrush(Qt::NoBrush),
-                          d->textLineHeight, QTextOption::WrapAtWordBoundaryOrAnywhere, elide ? opt.textElideMode : Qt::ElideNone,
+    auto lines = drawText(index, nullptr, str, QRect(label_rect.topLeft(), QSize(label_rect.width(), INT_MAX)),
+                          ICON_MODE_RECT_RADIUS, isSelected ? opt.backgroundBrush : QBrush(Qt::NoBrush),
+                          QTextOption::WrapAtWordBoundaryOrAnywhere, elide ? opt.textElideMode : Qt::ElideNone,
                           Qt::AlignCenter);
 
+    label_rect = boundingRect(lines).toRect();
     label_rect.setTop(icon_rect.bottom());
 
     geometries << label_rect;
@@ -781,7 +1043,7 @@ QModelIndex DIconItemDelegate::expandedIndex() const
     return d->expandedIndex;
 }
 
-FileIconItem *DIconItemDelegate::expandedIndexWidget() const
+QWidget *DIconItemDelegate::expandedIndexWidget() const
 {
     Q_D(const DIconItemDelegate);
 
@@ -858,7 +1120,7 @@ void DIconItemDelegate::updateItemSizeHint()
 
 //    d->elideMap.clear();
 //    d->wordWrapMap.clear();
-    d->textHeightMap.clear();
+//    d->textHeightMap.clear();
     d->textLineHeight = parent()->parent()->fontMetrics().height();
 
     int width = parent()->parent()->iconSize().width() * 1.8;
@@ -939,6 +1201,18 @@ bool DIconItemDelegate::eventFilter(QObject *object, QEvent *event)
     }*/
 
     return QStyledItemDelegate::eventFilter(object, event);
+}
+
+QList<QRectF> DIconItemDelegate::drawText(const QModelIndex &index, QPainter *painter, QTextLayout *layout,
+                                          const QRectF &boundingRect, qreal radius, const QBrush &background,
+                                          QTextOption::WrapMode wordWrap, Qt::TextElideMode mode,
+                                          int flags, const QColor &shadowColor) const
+{
+    Q_D(const DIconItemDelegate);
+
+    const_cast<DIconItemDelegatePrivate*>(d)->drawTextBackgroundOnLast = background != Qt::NoBrush;
+
+    return DStyledItemDelegate::drawText(index, painter, layout, boundingRect, radius, background, wordWrap, mode, flags, shadowColor);
 }
 
 void DIconItemDelegate::onEditWidgetFocusOut()

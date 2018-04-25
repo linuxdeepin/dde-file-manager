@@ -298,33 +298,34 @@ public:
     ClipboardAction clipboardAction() const;
     QIcon standardIcon(Icon iconType) const;
 
-    static QString wordWrapText(const QString &text, int width,
+    static QString wordWrapText(const QString &text, qreal width,
                                 QTextOption::WrapMode wrapMode,
                                 const QFont &font,
-                                int lineHeight,
-                                int *height = 0);
+                                qreal lineHeight,
+                                qreal *height = 0);
 
-    static QString elideText(const QString &text, const QSize &size,
+    static QString elideText(const QString &text, const QSizeF &size,
                              QTextOption::WrapMode wordWrap,
                              const QFont &font,
                              Qt::TextElideMode mode,
-                             int lineHeight,
-                             int flags = 0);
+                             qreal lineHeight,
+                             qreal flags = 0);
 
-    static void wordWrapText(QTextLayout *layout, int width,
+    static void wordWrapText(QTextLayout *layout, qreal width,
                              QTextOption::WrapMode wrapMode,
-                             int lineHeight,
+                             qreal lineHeight,
                              QStringList *lines = 0);
 
-    static void elideText(QTextLayout *layout, const QSize &size,
+    static void elideText(QTextLayout *layout, const QSizeF &size,
                           QTextOption::WrapMode wordWrap,
-                          Qt::TextElideMode mode, int lineHeight,
+                          Qt::TextElideMode mode, qreal lineHeight,
                           int flags = 0, QStringList *lines = 0,
                           QPainter *painter = 0, QPointF offset = QPoint(0, 0),
                           const QColor &shadowColor = QColor(),
                           const QPointF &shadowOffset = QPointF(0, 1),
-                          const QBrush &background = QBrush(Qt::NoBrush), qreal backgroundReaius = 4,
-                          QRegion *boundingRegion = 0);
+                          const QBrush &background = QBrush(Qt::NoBrush),
+                          qreal backgroundReaius = 4,
+                          QList<QRectF> *boundingRegion = 0);
 
     static QString toPinyin(const QString &text);
     static bool startWithHanzi(const QString &text);

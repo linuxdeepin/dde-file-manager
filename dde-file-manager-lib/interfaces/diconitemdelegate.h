@@ -62,7 +62,7 @@ public:
     void hideNotEditingIndexWidget() Q_DECL_OVERRIDE;
 
     QModelIndex expandedIndex() const;
-    FileIconItem *expandedIndexWidget() const;
+    QWidget *expandedIndexWidget() const;
 
     int iconSizeLevel() const Q_DECL_OVERRIDE;
     int minimumIconSizeLevel() const Q_DECL_OVERRIDE;
@@ -86,12 +86,22 @@ protected:
 
     bool eventFilter(QObject *object, QEvent *event) Q_DECL_OVERRIDE;
 
+    QList<QRectF> drawText(const QModelIndex &index, QPainter *painter, QTextLayout *layout,
+                           const QRectF &boundingRect, qreal radius, const QBrush &background,
+                           QTextOption::WrapMode wordWrap = QTextOption::WrapAtWordBoundaryOrAnywhere,
+                           Qt::TextElideMode mode = Qt::ElideMiddle, int flags = Qt::AlignCenter,
+                           const QColor &shadowColor = QColor()) const override;
+
+    using DStyledItemDelegate::drawText;
+
 private:
     void onEditWidgetFocusOut();
     void onTriggerEdit(const QModelIndex &index);
     QSize iconSizeByIconSizeLevel() const;
 
     Q_DECLARE_PRIVATE(DIconItemDelegate)
+
+    friend class ExpandedItem;
 };
 
 #endif // DFILEITEMDELEGATE_H
