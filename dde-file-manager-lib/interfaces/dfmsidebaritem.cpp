@@ -379,7 +379,7 @@ void DFMSideBarItem::hideRenameEditor()
 
     DUrl tmpUrl = url();
     tmpUrl.setFragment(text);
-    fileService->renameFile(this, url(), tmpUrl);
+    fileService->renameFile(this, url(), tmpUrl, true);
 
     emit renameFinished(text);
 }
