@@ -46,7 +46,6 @@ public:
     void removeItem(int index);
     void removeItem(DFMSideBarItem *item);
     DFMSideBarItem *findItem(const DUrl &url);
-    DFMSideBarItem *findItem(const UDiskDeviceInfoPointer &info);
     DFMSideBarItem *takeItem(int index);
     DFMSideBarItem *takeItem(DFMSideBarItem *item);
     int itemCount() const;
