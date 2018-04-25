@@ -103,6 +103,11 @@ void UDiskListener::addDevice(UDiskDeviceInfoPointer device)
 {
     m_map.insert(device->getDiskInfo().id(), device);
     m_list.append(device);
+
+    DAbstractFileWatcher::ghostSignal(DUrl(DEVICE_ROOT),
+                                      &DAbstractFileWatcher::subfileCreated,
+                                      DUrl::fromDeviceId(device->getId()));
+    emit volumeAdded(device);
 }
 
 void UDiskListener::removeDevice(UDiskDeviceInfoPointer device)
@@ -431,7 +436,12 @@ void UDiskListener::addMountDiskInfo(const QDiskInfo &diskInfo)
         addDevice(device);
     }
 
-    emit mountAdded(device);
+    if (!diskInfo.mounted_root_uri().isEmpty()) {
+        DAbstractFileWatcher::ghostSignal(DUrl(DEVICE_ROOT),
+                                          &DAbstractFileWatcher::fileAttributeChanged,
+                                          DUrl::fromDeviceId(device->getId()));
+        emit mountAdded(device);
+    }
 
     qDebug() << m_subscribers;
     foreach (Subscriber *sub, m_subscribers) {
@@ -457,6 +467,9 @@ void UDiskListener::removeMountDiskInfo(const QDiskInfo &diskInfo)
             removeDevice(device);
         }
 
+        DAbstractFileWatcher::ghostSignal(DUrl(DEVICE_ROOT),
+                                          &DAbstractFileWatcher::fileAttributeChanged,
+                                          DUrl::fromDeviceId(device->getId()));
         emit mountRemoved(device);
     }
 }
@@ -472,14 +485,13 @@ void UDiskListener::addVolumeDiskInfo(const QDiskInfo &diskInfo)
     if (m_map.contains(diskInfo.id())) {
         device = m_map.value(diskInfo.id());
         device->setDiskInfo(diskInfo);
+
+        emit volumeChanged(device);
     } else {
         device = new UDiskDeviceInfo();
         device->setDiskInfo(diskInfo);
         addDevice(device);
     }
-
-    //DAbstractFileWatcher::ghostSignal(DUrl(DEVICE_ROOT), &DAbstractFileWatcher::subfileCreated, device->getId());
-    emit volumeAdded(device);
 }
 
 void UDiskListener::removeVolumeDiskInfo(const QDiskInfo &diskInfo)
@@ -505,6 +517,9 @@ void UDiskListener::removeVolumeDiskInfo(const QDiskInfo &diskInfo)
     if (device) {
         qDebug() << device->getDiskInfo();
         removeDevice(device);
+        DAbstractFileWatcher::ghostSignal(DUrl(DEVICE_ROOT),
+                                          &DAbstractFileWatcher::fileDeleted,
+                                          DUrl::fromDeviceId(device->getId()));
         emit volumeRemoved(device);
     }
 }
