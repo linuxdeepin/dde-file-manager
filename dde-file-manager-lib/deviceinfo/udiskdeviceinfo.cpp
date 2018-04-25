@@ -368,7 +368,6 @@ QVariantHash UDiskDeviceInfo::extensionPropertys() const
 {
     QVariantHash attrMap;
 
-    attrMap.insert("name", getName());
     attrMap.insert("deviceId", getId());
     attrMap.insert("mediaType", static_cast<int>(getMediaType()));
     attrMap.insert("canMount", getDiskInfo().can_mount());

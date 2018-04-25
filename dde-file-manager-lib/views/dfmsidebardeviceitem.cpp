@@ -36,8 +36,9 @@ DFM_BEGIN_NAMESPACE
 DFMSideBarDeviceItem::DFMSideBarDeviceItem(DUrl url, QWidget *parent)
     : DFMSideBarItem(url, parent)
 {
-    QVariantHash info = getExtensionPropertys();
-    setText(info.value("name", "BUG++").toString());
+    const DAbstractFileInfoPointer infoPointer = fileService->createFileInfo(this, url);
+    QVariantHash info = infoPointer->extensionPropertys();
+    setText(infoPointer->fileDisplayName());
     setAutoOpenUrlOnClick(false);
 
     connect(this, &DFMSideBarDeviceItem::clicked,
@@ -106,7 +107,7 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
         list.append(url());
         fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(this, list));
     });
-    propertyAction->setDisabled(info.value("isMounted").toBool());
+    propertyAction->setDisabled(!info.value("isMounted", false).toBool());
     menu->addAction(propertyAction);
 
     return menu;
@@ -116,10 +117,15 @@ void DFMSideBarDeviceItem::itemOnClick()
 {
     QVariantHash info = getExtensionPropertys();
 
-    if (info.value("canMount", false).toBool() || info.value("isMounted", false).toBool()) {
-        DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
-        wnd->cd(url());
-        //gvfsMountManager->mount(this->deviceInfo->getDiskInfo());
+    if (info.value("canMount", false).toBool()) {
+        if (info.value("isMounted", false).toBool()) {
+            DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
+            wnd->cd(url());
+        } else {
+            DUrl newUrl;
+            newUrl.setQuery(info.value("deviceId").toString());
+            appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, newUrl));
+        }
     }
 }
 
