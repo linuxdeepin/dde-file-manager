@@ -366,7 +366,16 @@ DUrl UDiskDeviceInfo::redirectedFileUrl() const
 
 QVariantHash UDiskDeviceInfo::extensionPropertys() const
 {
-    return QVariantHash();
+    QVariantHash attrMap;
+
+    attrMap.insert("name", getName());
+    attrMap.insert("deviceId", getId());
+    attrMap.insert("mediaType", static_cast<int>(getMediaType()));
+    attrMap.insert("canMount", getDiskInfo().can_mount());
+    attrMap.insert("canUnmount", canUnmount());
+    attrMap.insert("isMounted", !getMountPointUrl().isEmpty());
+
+    return attrMap;
 }
 
 bool UDiskDeviceInfo::exists() const
