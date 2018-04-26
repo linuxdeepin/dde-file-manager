@@ -699,24 +699,17 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
     };
 
     if (hoverIndex.isValid()) {
-        auto checkRect = itemIconGeomerty(hoverIndex);
-        if (!checkRect.contains(event->pos())) {
-            startDodgeAnimation();
-        } else {
-            const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(hoverIndex);
-            if (fileInfo) {
-                if (!fileInfo->canDrop()) {
-                }
+        const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(hoverIndex);
 
-                if (!fileInfo->supportedDropActions().testFlag(event->dropAction())) {
-                    event->ignore();
-                }
+        if (fileInfo) {
+            if (fileInfo->canDrop() && fileInfo->supportedDropActions().testFlag(event->dropAction())) {
+                event->acceptProposedAction();
+                return;
             }
         }
-    } else {
-        startDodgeAnimation();
     }
 
+    startDodgeAnimation();
     update();
 }
 
