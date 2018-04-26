@@ -60,7 +60,9 @@ class RequestEP : public QThread
     Q_OBJECT
 
 public:
-    explicit RequestEP(QObject *parent = 0);
+    static RequestEP *instance();
+
+    ~RequestEP();
 
     // Request get the file extension propertys
     QQueue<QPair<DUrl, DFileInfoPrivate*>> requestEPFiles;
@@ -76,6 +78,9 @@ Q_SIGNALS:
 
  private Q_SLOTS:
     void processEPChanged(const DUrl &url, DFileInfoPrivate *info, const QVariantHash &ep);
+
+private:
+    explicit RequestEP(QObject *parent = 0);
 };
 
 RequestEP::RequestEP(QObject *parent)
@@ -87,6 +92,22 @@ RequestEP::RequestEP(QObject *parent)
     connect(this, &RequestEP::finished, this, [this] {
         dirtyFileInfos.clear();
     });
+}
+
+RequestEP *RequestEP::instance()
+{
+    // RequestEP对象必须和线程相关，不然线程销毁后，QObject::thread()为nullptr
+    // 导致使用QCoreApplication::postEvent给此对象发送事件无效
+    // 间接导致 run 中调用  QMetaObject::invokeMethod(this, "processEPChanged", Qt::QueuedConnection, Q_ARG(DUrl, url), Q_ARG(DFileInfoPrivate*, file_info.second), Q_ARG(QVariantHash, ep));
+    // 时无效，因为Qt::QueueConnection参数会将此调用交给事件循环处理
+    thread_local static RequestEP eq;
+
+    return &eq;
+}
+
+RequestEP::~RequestEP()
+{
+
 }
 
 void RequestEP::run()
@@ -157,6 +178,7 @@ void RequestEP::cancelRequestEP(DFileInfoPrivate *info)
             requestEPFilesLock.lockForWrite();
             requestEPFiles.removeAt(i);
             requestEPFilesLock.unlock();
+            info->requestEP = nullptr;
             return;
         }
     }
@@ -180,6 +202,8 @@ void RequestEP::processEPChanged(const DUrl &url, DFileInfoPrivate *info, const 
         info = nullptr;
     }
 
+    info->requestEP = nullptr;
+
     if (!ep.isEmpty() && oldEP != ep) {
         DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url);
 
@@ -189,8 +213,6 @@ void RequestEP::processEPChanged(const DUrl &url, DFileInfoPrivate *info, const 
         }
     }
 }
-
-Q_GLOBAL_STATIC(RequestEP, requestEP)
 
 DFileInfoPrivate::DFileInfoPrivate(const DUrl &url, DFileInfo *qq, bool hasCache)
     : DAbstractFileInfoPrivate (url, qq, hasCache)
@@ -642,6 +664,8 @@ void DFileInfo::makeToInactive()
     if (d->getEPTimer) {
         d->getEPTimer->stop();
         d->getEPTimer->deleteLater();
+        d->requestEP = nullptr;
+        d->epInitialized = false;
     }
 }
 
@@ -759,8 +783,9 @@ QVariantHash DFileInfo::extensionPropertys() const
             d->getEPTimer->setInterval(REQUEST_THUMBNAIL_DEALY);
         }
 
-        QObject::connect(d->getEPTimer, &QTimer::timeout, requestEP, [d, url, this] {
-            requestEP->requestEP(url, const_cast<DFileInfoPrivate*>(d));
+        QObject::connect(d->getEPTimer, &QTimer::timeout, d->getEPTimer, [d, url, this] {
+            d->requestEP = RequestEP::instance();
+            d->requestEP->requestEP(url, const_cast<DFileInfoPrivate*>(d));
             d->getEPTimer->deleteLater();
         });
 
