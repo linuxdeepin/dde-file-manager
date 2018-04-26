@@ -142,7 +142,7 @@ UnknowFilePreview::UnknowFilePreview(QObject *parent)
     hlayout->addStretch();
 
     m_sizeWorker = new FilesSizeWorker;
-    m_sizeThread = new QThread;
+    m_sizeThread = new QThread(m_sizeWorker);
     m_sizeWorker->moveToThread(m_sizeThread);
     connect(this, &UnknowFilePreview::requestStartFolderSize, m_sizeWorker, &FilesSizeWorker::coumpueteSize);
     connect(m_sizeWorker, &FilesSizeWorker::sizeUpdated, this, &UnknowFilePreview::updateFolderSize);
@@ -152,11 +152,18 @@ UnknowFilePreview::UnknowFilePreview(QObject *parent)
 UnknowFilePreview::~UnknowFilePreview()
 {
     if (m_contentWidget){
-        m_sizeWorker->stop();
-        m_sizeWorker->deleteLater();
-        m_sizeThread->quit();
-        m_sizeThread->deleteLater();
         m_contentWidget->deleteLater();
+    }
+
+    if (m_sizeWorker) {
+        m_sizeWorker->stop();
+
+        if (m_sizeThread->isRunning()) {
+            m_sizeThread->quit();
+            m_sizeThread->wait();
+        }
+
+        m_sizeWorker->deleteLater();
     }
 }
 
