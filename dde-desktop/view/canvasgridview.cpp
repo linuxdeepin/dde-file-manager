@@ -1587,6 +1587,7 @@ void CanvasGridView::initUI()
     setAcceptDrops(true);
     setDragDropMode(QAbstractItemView::DragDrop);
     setEditTriggers(QAbstractItemView::EditKeyPressed | QAbstractItemView::SelectedClicked);
+    setDefaultDropAction(Qt::MoveAction);
 
     d->selectFrame = new QFrame(this);
     d->selectFrame->setVisible(false);
