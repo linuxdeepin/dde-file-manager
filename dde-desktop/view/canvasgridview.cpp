@@ -523,16 +523,13 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
         switch (event->key()) {
         case Qt::Key_F1: {
             class PublicApplication : public DWIDGET_NAMESPACE::DApplication {
-                public:
-                    void showHelp()
-                    {
-                        QString app_name = applicationName();
-                        setApplicationName("dde");
-                        handleHelpAction();
-                        setApplicationName(app_name);
-                    }
+                public: using  DApplication::handleHelpAction;
             };
-            reinterpret_cast<PublicApplication*>(DApplication::instance())->showHelp();
+
+            QString app_name = qApp->applicationName();
+            qApp->setApplicationName("dde");
+            reinterpret_cast<PublicApplication*>(DApplication::instance())->handleHelpAction();
+            qApp->setApplicationName(app_name);
             break;
         }
         }
