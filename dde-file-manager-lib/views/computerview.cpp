@@ -71,7 +71,7 @@ void TitleLine::initUI()
     m_lineLable->setFixedHeight(1);
     m_lineLable->setStyleSheet("background-color:rgba(0, 0, 0, 0.1)");
 
-    QHBoxLayout* contentLayout = new QHBoxLayout;
+    QHBoxLayout *contentLayout = new QHBoxLayout;
     contentLayout->addWidget(m_titleLable);
     contentLayout->addSpacing(20);
     contentLayout->addWidget(m_lineLable, 100, Qt::AlignCenter);
@@ -109,9 +109,9 @@ ComputerViewItem::ComputerViewItem(QWidget *parent):
 
 QIcon ComputerViewItem::getIcon(int size)
 {
-    if (m_info){
+    if (m_info) {
         return m_info->fileIcon();
-    }else if (m_deviceInfo){
+    } else if (m_deviceInfo) {
         return m_deviceInfo->fileIcon(size, size);
     }
     return QIcon();
@@ -140,7 +140,7 @@ void ComputerViewItem::setDeviceInfo(UDiskDeviceInfoPointer deviceInfo)
 
     QString fstype = PartMan::Partition::getPartitionByDevicePath(m_deviceInfo->getDiskInfo().unix_device()).fs();
 
-    if (fstype == "crypto_LUKS" ){
+    if (fstype == "crypto_LUKS") {
         m_isLocked = true;
     }
 }
@@ -157,25 +157,25 @@ void ComputerViewItem::contextMenuEvent(QContextMenuEvent *event)
     DFileMenu *menu;
     DUrl url;
     QSet<MenuAction> disableList;
-    const bool& tabAddable = WindowManager::tabAddableByWinId(windowId());
-    if(!tabAddable)
+    const bool &tabAddable = WindowManager::tabAddableByWinId(windowId());
+    if (!tabAddable) {
         disableList << MenuAction::OpenInNewTab;
-    if (m_info){
+    }
+    if (m_info) {
         menu = DFileMenuManager::createDefaultBookMarkMenu(disableList);
         url = m_info->fileUrl();
-    }else if (m_deviceInfo){
-        if (m_deviceInfo->getMountPoint() == "/" && m_deviceInfo->getDiskInfo().isNativeCustom()){
+    } else if (m_deviceInfo) {
+        if (m_deviceInfo->getMountPoint() == "/" && m_deviceInfo->getDiskInfo().isNativeCustom()) {
             menu = DFileMenuManager::createDefaultBookMarkMenu(disableList);
             url =  m_deviceInfo->getMountPointUrl();
-        }else if (m_deviceInfo->getDiskInfo().isNativeCustom()){
+        } else if (m_deviceInfo->getDiskInfo().isNativeCustom()) {
             menu = DFileMenuManager::createDefaultBookMarkMenu(disableList);
             url = m_deviceInfo->getMountPointUrl();
-        }
-        else{
+        } else {
             disableList |= m_deviceInfo->disableMenuActionList();
             menu = DFileMenuManager::genereteMenuByKeys(
-                        m_deviceInfo->menuActionList(DAbstractFileInfo::SingleFile),
-                        disableList);
+                       m_deviceInfo->menuActionList(DAbstractFileInfo::SingleFile),
+                       disableList);
             url = m_deviceInfo->getMountPointUrl();
             url.setQuery(m_deviceInfo->getId());
         }
@@ -192,8 +192,9 @@ void ComputerViewItem::mousePressEvent(QMouseEvent *event)
     setChecked(true);
 
     if (event->button() == Qt::LeftButton) {
-        if (globalSetting->openFileAction() == 0)
+        if (globalSetting->openFileAction() == 0) {
             openUrl();
+        }
     }
 
     FileIconItem::mousePressEvent(event);
@@ -202,8 +203,9 @@ void ComputerViewItem::mousePressEvent(QMouseEvent *event)
 void ComputerViewItem::mouseDoubleClickEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
-        if (globalSetting->openFileAction() == 1)
+        if (globalSetting->openFileAction() == 1) {
             openUrl();
+        }
     }
 
     FileIconItem::mouseDoubleClickEvent(event);
@@ -211,8 +213,7 @@ void ComputerViewItem::mouseDoubleClickEvent(QMouseEvent *event)
 
 bool ComputerViewItem::event(QEvent *event)
 {
-    if(event->type() == QEvent::Resize) {
-        updateEditorGeometry();
+    if (event->type() == QEvent::Resize) {
         resize(width(), getIconLabel()->height() + getTextEdit()->height() + ICON_MODE_ICON_SPACING + 50);
         adjustPosition();
         return true;
@@ -225,7 +226,7 @@ void ComputerViewItem::adjustPosition()
     m_sizeLabel->setFixedWidth(this->width());
     m_sizeLabel->setAlignment(Qt::AlignCenter);
     m_sizeLabel->move(0, getTextEdit()->y() + getTextEdit()->height());
-    m_progressLine->move((this->width() - m_progressLine->width())/2, m_sizeLabel->y() + m_sizeLabel->height() + 3);
+    m_progressLine->move((this->width() - m_progressLine->width()) / 2, m_sizeLabel->y() + m_sizeLabel->height() + 3);
 }
 
 bool ComputerViewItem::checked() const
@@ -235,7 +236,7 @@ bool ComputerViewItem::checked() const
 
 void ComputerViewItem::setChecked(bool checked)
 {
-    if (checked != m_checked){
+    if (checked != m_checked) {
         m_checked = checked;
         updateStatus();
         emit checkChanged(checked);
@@ -244,43 +245,45 @@ void ComputerViewItem::setChecked(bool checked)
 
 void ComputerViewItem::updateStatus()
 {
-    if (m_checked){
+    if (m_checked) {
         setIconSizeState(m_iconSize, QIcon::Selected);
         setDisplayName(m_name);
-        if (fontMetrics().width(m_name) < width()){
+        if (fontMetrics().width(m_name) < width()) {
             getTextEdit()->setFixedWidth(fontMetrics().width(m_name) + 10);
         }
         getTextEdit()->setStyleSheet("border-radius:4px;background-color: #2da6f7; color:white");
-    }else{
+    } else {
         setIconSizeState(m_iconSize, QIcon::Normal);
         QString ds = DFMGlobal::elideText(m_name,
-                          QSize(width(), 40),
-                          QTextOption::WrapAtWordBoundaryOrAnywhere,
-                          font(),
-                          Qt::ElideMiddle, TEXT_LINE_HEIGHT);
+                                          QSize(width(), 40),
+                                          QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                          font(),
+                                          Qt::ElideMiddle, TEXT_LINE_HEIGHT);
         getTextEdit()->setStyleSheet("background-color: transparent");
         setDisplayName(ds.remove('\n'));
     }
 
-    if(getHasMemoryInfo()){
+    if (getHasMemoryInfo()) {
         updateIconPixelWidth();
         m_progressLine->setFixedSize(getPixelWidth(), 2);
         const qlonglong total = m_deviceInfo->getTotal();
         const qlonglong used = total - m_deviceInfo->getFree();
         m_progressLine->setMax(total);
         m_progressLine->setValue(used);
-        if(m_progressLine->isHidden())
+        if (m_progressLine->isHidden()) {
             m_progressLine->show();
+        }
 
         m_sizeLabel->setText(QString("%1/%2").arg(FileUtils::formatSizeToGB(used), FileUtils::formatSizeToGB(total, true)));
 
         m_sizeLabel->show();
         adjustPosition();
-    } else
+    } else {
         m_progressLine->setFixedHeight(0);
+    }
 
-    if (m_isLocked){
-        if (m_lockedLabel){
+    if (m_isLocked) {
+        if (m_lockedLabel) {
             m_lockedLabel->deleteLater();
         }
         m_lockedLabel = new QLabel(getIconLabel());
@@ -309,9 +312,9 @@ void ComputerViewItem::setIconIndex(int index)
 void ComputerViewItem::setIconSizeState(int iconSize, QIcon::Mode mode)
 {
     getIconLabel()->setFixedSize(QSize(iconSize, iconSize));
-    if (m_info){
+    if (m_info) {
         getIconLabel()->setPixmap(getIcon(iconSize).pixmap(iconSize, iconSize, mode));
-    }else if (m_deviceInfo){
+    } else if (m_deviceInfo) {
         getIconLabel()->setPixmap(getIcon(iconSize).pixmap(iconSize, iconSize, mode));
     }
 }
@@ -348,10 +351,11 @@ void ComputerViewItem::updateIconPixelWidth()
 {
     const QImage img = getIconLabel()->pixmap()->toImage();
     int pixelWidth = 0;
-    for(int i = 0; i < img.width(); i++){
-        QColor color = img.pixelColor(i, (int)img.height()/2);
-        if(color.alpha() > 0)
+    for (int i = 0; i < img.width(); i++) {
+        QColor color = img.pixelColor(i, (int)img.height() / 2);
+        if (color.alpha() > 0) {
             pixelWidth ++;
+        }
     }
     setPixelWidth(pixelWidth);
 }
@@ -454,13 +458,13 @@ void ComputerView::initUI()
     m_contentArea->setWidgetResizable(true);
     m_statusBar = new DStatusBar(this);
     m_statusBar->setFixedHeight(22);
-    m_statusBar->scalingSlider()->setMaximum(m_iconSizes.count()-1);
+    m_statusBar->scalingSlider()->setMaximum(m_iconSizes.count() - 1);
     m_statusBar->scalingSlider()->setMinimum(0);
     setIconSizeBySizeIndex(m_currentIconSizeIndex);
     m_statusBar->scalingSlider()->setTickInterval(1);
     m_statusBar->scalingSlider()->setPageStep(1);
 
-    QFrame* contentFrame = new QFrame(this);
+    QFrame *contentFrame = new QFrame(this);
 
     m_systemTitleLine = new TitleLine(tr("My Directories"));
     m_systemFlowLayout = new FlowLayout();
@@ -480,7 +484,7 @@ void ComputerView::initUI()
     m_removableFlowLayout->setHorizontalSpacing(40);
     m_removableFlowLayout->setVorizontalSpacing(40);
 
-    QVBoxLayout* contentLayout = new QVBoxLayout;
+    QVBoxLayout *contentLayout = new QVBoxLayout;
     contentLayout->addWidget(m_systemTitleLine);
     contentLayout->addLayout(m_systemFlowLayout);
     contentLayout->addSpacing(20);
@@ -494,9 +498,9 @@ void ComputerView::initUI()
     contentLayout->setContentsMargins(20, 20, 20, 20);
     contentFrame->setLayout(contentLayout);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout;
+    QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(0,0,0,0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addWidget(m_contentArea);
     mainLayout->addWidget(m_statusBar);
     setLayout(mainLayout);
@@ -505,13 +509,13 @@ void ComputerView::initUI()
 
     loadSystemItems();
 
-    if (isDiskConfExisted()){
+    if (isDiskConfExisted()) {
         loadCustomItems();
     }
 
     loadNativeItems();
 
-    if (m_removableItems.count() == 0){
+    if (m_removableItems.count() == 0) {
         m_removableTitleLine->hide();
     }
 
@@ -552,7 +556,7 @@ void ComputerView::loadSystemItems()
         QString path = systemPathManager->getSystemPath(key);
         DUrl url = DUrl::fromLocalFile(path);
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
-        ComputerViewItem* item = new ComputerViewItem;
+        ComputerViewItem *item = new ComputerViewItem;
         item->setInfo(fileInfo);
         item->setName(fileInfo->fileDisplayName());
         m_systemFlowLayout->addWidget(item);
@@ -576,13 +580,13 @@ void ComputerView::loadNativeItems()
     diskInfo.setUsed(diskInfo.total() - diskInfo.free());
 //    diskInfo.setMounted_url(DUrl::fromLocalFile("/"));
 
-    UDiskDeviceInfo* deviceInfo = new UDiskDeviceInfo;
+    UDiskDeviceInfo *deviceInfo = new UDiskDeviceInfo;
     deviceInfo->setDiskInfo(diskInfo);
     UDiskDeviceInfoPointer device(deviceInfo);
 
-    if (dfmPlatformManager->isRoot_hidden()){
+    if (dfmPlatformManager->isRoot_hidden()) {
         qDebug() << "hide root sytem";
-    }else{
+    } else {
         volumeAdded(device);
     }
 
@@ -613,7 +617,7 @@ void ComputerView::loadCustomItemsByNameUrl(const QString &id, const QString &ur
 //    diskInfo.setMounted_url(DUrl::fromLocalFile(url));
     diskInfo.setIsNativeCustom(true);
 
-    UDiskDeviceInfo* deviceInfo = new UDiskDeviceInfo;
+    UDiskDeviceInfo *deviceInfo = new UDiskDeviceInfo;
     deviceInfo->setDiskInfo(diskInfo);
     UDiskDeviceInfoPointer device(deviceInfo);
     volumeAdded(device);
@@ -622,28 +626,32 @@ void ComputerView::loadCustomItemsByNameUrl(const QString &id, const QString &ur
 void ComputerView::updateStatusBar()
 {
     ComputerViewItem *checkedItem = NULL;
-    foreach (ComputerViewItem* item, m_systemItems) {
-        if (item->checked())
+    foreach (ComputerViewItem *item, m_systemItems) {
+        if (item->checked()) {
             checkedItem = item;
+        }
     }
-    foreach (ComputerViewItem* item, m_nativeItems) {
-        if (item->checked())
+    foreach (ComputerViewItem *item, m_nativeItems) {
+        if (item->checked()) {
             checkedItem = item;
+        }
     }
-    foreach (ComputerViewItem* item, m_removableItems) {
-        if (item->checked())
+    foreach (ComputerViewItem *item, m_removableItems) {
+        if (item->checked()) {
             checkedItem = item;
+        }
     }
 
-    if(checkedItem){
+    if (checkedItem) {
         DFMEvent event(this);
         DUrlList urlList;
-        if(checkedItem->info())
+        if (checkedItem->info()) {
             urlList << checkedItem->info()->fileUrl();
+        }
         event.setWindowId(window()->internalWinId());
         event.setData(urlList);
         m_statusBar->itemSelected(event, 1);
-    }else{
+    } else {
         DFMEvent event(this);
         event.setWindowId(window()->internalWinId());
         const int number = m_systemItems.count() + m_nativeItems.count() + m_removableItems.count();
@@ -653,7 +661,7 @@ void ComputerView::updateStatusBar()
 
 bool ComputerView::isDiskConfExisted()
 {
-    if (QFile(getDiskConfPath()).exists()){
+    if (QFile(getDiskConfPath()).exists()) {
         return true;
     }
     return false;
@@ -668,8 +676,9 @@ void ComputerView::loadViewState()
 {
     ViewState state = viewStatesManager->viewstate(DUrl::fromComputerFile("/"));
 
-    if(!state.isValid())
+    if (!state.isValid()) {
         return;
+    }
 
     resizeAllItemsBySizeIndex(state.iconSize);
 }
@@ -688,7 +697,7 @@ void ComputerView::saveViewState()
 
 QWidget *ComputerView::widget() const
 {
-    return const_cast<ComputerView*>(this );
+    return const_cast<ComputerView *>(this);
 }
 
 DUrl ComputerView::rootUrl() const
@@ -705,26 +714,26 @@ void ComputerView::volumeAdded(UDiskDeviceInfoPointer device)
 {
     qDebug() << "===========volumeAdded=============" << device->getId() << m_nativeItems.contains(device->getId()) << m_removableItems.contains(device->getId());
     qDebug() << device->getDiskInfo();
-    ComputerViewItem* item = NULL;
+    ComputerViewItem *item = NULL;
     QString id = device->getId();
-    if (m_nativeItems.contains(id)){
+    if (m_nativeItems.contains(id)) {
         item = m_nativeItems.value(id);
-    }else if (m_removableItems.contains(id)){
-        item = m_nativeItems.value(id);
-    }else{
+    } else if (m_removableItems.contains(id)) {
+        item = m_removableItems.value(id);
+    } else {
         item = new ComputerViewItem;
     }
     item->setHasMemoryInfo(true);
     item->setDeviceInfo(device);
     item->setName(device->fileDisplayName());
 
-    if (device->getMediaType() == UDiskDeviceInfo::native){
+    if (device->getMediaType() == UDiskDeviceInfo::native) {
         m_nativeFlowLayout->addWidget(item);
         m_nativeItems.insert(device->getId(), item);
-    }else{
+    } else {
         m_removableFlowLayout->addWidget(item);
         m_removableItems.insert(device->getId(), item);
-        if (m_removableItems.count() > 0){
+        if (m_removableItems.count() > 0) {
             m_removableTitleLine->show();
         }
     }
@@ -740,25 +749,25 @@ void ComputerView::volumeRemoved(UDiskDeviceInfoPointer device)
 //    qDebug() << device->getDiskInfo();
     foreach (UDiskDeviceInfoPointer d, deviceListener->getDeviceList()) {
 //        qDebug() << d->getDiskInfo().id() << id << d->getDiskInfo().uuid() << device->getDiskInfo().uuid();
-        if (d->getDiskInfo().id() != id && d->getDiskInfo().uuid() == device->getDiskInfo().uuid()){
+        if (d->getDiskInfo().id() != id && d->getDiskInfo().uuid() == device->getDiskInfo().uuid()) {
             id = d->getDiskInfo().id();
         }
     }
 
 
-    if (m_nativeItems.contains(id)){
-        ComputerViewItem* item = m_nativeItems.value(id);
+    if (m_nativeItems.contains(id)) {
+        ComputerViewItem *item = m_nativeItems.value(id);
         m_nativeFlowLayout->removeWidget(item);
         m_nativeItems.remove(id);
         item->setParent(NULL);
         delete item;
-    }else if (m_removableItems.contains(id)){
-        ComputerViewItem* item = m_removableItems.value(id);
+    } else if (m_removableItems.contains(id)) {
+        ComputerViewItem *item = m_removableItems.value(id);
         m_removableFlowLayout->removeWidget(item);
         m_removableItems.remove(id);
         item->setParent(NULL);
         delete item;
-        if (m_removableItems.count() == 0){
+        if (m_removableItems.count() == 0) {
             m_removableTitleLine->hide();
         }
     }
@@ -769,15 +778,14 @@ void ComputerView::volumeRemoved(UDiskDeviceInfoPointer device)
 void ComputerView::mountAdded(UDiskDeviceInfoPointer device)
 {
     qDebug() << "===========mountAdded=============" << device->getId() << m_nativeItems.contains(device->getId()) << m_removableItems.contains(device->getId());
-    if (m_nativeItems.contains(device->getId())){
+    if (m_nativeItems.contains(device->getId())) {
         m_nativeItems.value(device->getId())->setDeviceInfo(device);
         m_nativeItems.value(device->getId())->updateStatus();
         return;
-    }else if (m_removableItems.contains(device->getId())){
+    } else if (m_removableItems.contains(device->getId())) {
         m_removableItems.value(device->getId())->setDeviceInfo(device);
         return;
-    }
-    else{
+    } else {
         volumeAdded(device);
         return;
     }
@@ -789,20 +797,20 @@ void ComputerView::mountRemoved(UDiskDeviceInfoPointer device)
     qDebug() << "===========mountRemoved=============" << device->getId() << m_nativeItems.contains(device->getId()) << m_removableItems.contains(device->getId());
     qDebug() << device->getDiskInfo();
 
-    if (m_nativeItems.contains(device->getId())){
+    if (m_nativeItems.contains(device->getId())) {
         m_nativeItems.value(device->getId())->setDeviceInfo(device);
         return;
-    }else if (m_removableItems.contains(device->getId())){
+    } else if (m_removableItems.contains(device->getId())) {
 
-        if (device->getDiskInfo().has_volume()){
+        if (device->getDiskInfo().has_volume()) {
             m_removableItems.value(device->getId())->setDeviceInfo(device);
-        }else{
-            ComputerViewItem* item = m_removableItems.value(device->getId());
+        } else {
+            ComputerViewItem *item = m_removableItems.value(device->getId());
             m_removableFlowLayout->removeWidget(item);
             m_removableItems.remove(device->getId());
             item->setParent(NULL);
             delete item;
-            if (m_removableItems.count() == 0){
+            if (m_removableItems.count() == 0) {
                 m_removableTitleLine->hide();
             }
         }
@@ -812,14 +820,14 @@ void ComputerView::mountRemoved(UDiskDeviceInfoPointer device)
 
 void ComputerView::updateComputerItemByDevice(UDiskDeviceInfoPointer device)
 {
-    foreach (ComputerViewItem* item, m_nativeItems) {
-        if (item->deviceInfo() == device){
+    foreach (ComputerViewItem *item, m_nativeItems) {
+        if (item->deviceInfo() == device) {
             item->updateStatus();
             return;
         }
     }
-    foreach (ComputerViewItem* item, m_removableItems) {
-        if (item->deviceInfo() == device){
+    foreach (ComputerViewItem *item, m_removableItems) {
+        if (item->deviceInfo() == device) {
             item->updateStatus();
             return;
         }
@@ -829,27 +837,29 @@ void ComputerView::updateComputerItemByDevice(UDiskDeviceInfoPointer device)
 void ComputerView::enlargeIcon()
 {
 
-    if(m_currentIconSizeIndex < m_iconSizes.count() - 1)
+    if (m_currentIconSizeIndex < m_iconSizes.count() - 1) {
         ++m_currentIconSizeIndex;
+    }
     setIconSizeBySizeIndex(m_currentIconSizeIndex);
 }
 
 void ComputerView::shrinkIcon()
 {
-    if(m_currentIconSizeIndex > 0)
+    if (m_currentIconSizeIndex > 0) {
         --m_currentIconSizeIndex;
+    }
     setIconSizeBySizeIndex(m_currentIconSizeIndex);
 }
 
 void ComputerView::resizeAllItemsBySizeIndex(int index)
 {
-    foreach (ComputerViewItem* item, m_systemItems) {
+    foreach (ComputerViewItem *item, m_systemItems) {
         updateItemBySizeIndex(index, item);
     }
-    foreach (ComputerViewItem* item, m_nativeItems) {
+    foreach (ComputerViewItem *item, m_nativeItems) {
         updateItemBySizeIndex(index, item);
     }
-    foreach (ComputerViewItem* item, m_removableItems) {
+    foreach (ComputerViewItem *item, m_removableItems) {
         updateItemBySizeIndex(index, item);
     }
 
@@ -860,7 +870,7 @@ void ComputerView::resizeAllItemsBySizeIndex(int index)
 void ComputerView::updateItemBySizeIndex(const int &index, ComputerViewItem *item)
 {
     int size = m_iconSizes.at(index);
-    item->setFixedWidth(size+30);
+    item->setFixedWidth(size + 30);
     item->setIconIndex(index);
     item->setIconSize(size);
     item->updateStatus();
@@ -874,8 +884,8 @@ void ComputerView::resizeEvent(QResizeEvent *event)
 
 void ComputerView::wheelEvent(QWheelEvent *event)
 {
-    if(DFMGlobal::keyCtrlIsPressed()) {
-        if(event->angleDelta().y() > 0) {
+    if (DFMGlobal::keyCtrlIsPressed()) {
+        if (event->angleDelta().y() > 0) {
             enlargeIcon();
         } else {
             shrinkIcon();
@@ -888,26 +898,29 @@ void ComputerView::mousePressEvent(QMouseEvent *event)
 {
     QPoint pos = m_contentArea->widget()->mapFromParent(event->pos());
 
-    foreach (ComputerViewItem* item, m_systemItems) {
+    foreach (ComputerViewItem *item, m_systemItems) {
 
-        if (item->geometry().contains(pos))
+        if (item->geometry().contains(pos)) {
             item->setChecked(true);
-        else
+        } else {
             item->setChecked(false);
+        }
     }
-    foreach (ComputerViewItem* item, m_nativeItems) {
+    foreach (ComputerViewItem *item, m_nativeItems) {
 
-        if (item->geometry().contains(pos))
+        if (item->geometry().contains(pos)) {
             item->setChecked(true);
-        else
+        } else {
             item->setChecked(false);
+        }
     }
-    foreach (ComputerViewItem* item, m_removableItems) {
+    foreach (ComputerViewItem *item, m_removableItems) {
 
-        if (item->geometry().contains(pos))
+        if (item->geometry().contains(pos)) {
             item->setChecked(true);
-        else
+        } else {
             item->setChecked(false);
+        }
     }
 
     updateStatusBar();
@@ -917,13 +930,13 @@ void ComputerView::showEvent(QShowEvent *event)
 {
 //    deviceListener->refreshAsycGetAllDeviceUsage();
 
-    foreach (ComputerViewItem* item, m_systemItems) {
+    foreach (ComputerViewItem *item, m_systemItems) {
         item->setChecked(false);
     }
-    foreach (ComputerViewItem* item, m_nativeItems) {
+    foreach (ComputerViewItem *item, m_nativeItems) {
         item->setChecked(false);
     }
-    foreach (ComputerViewItem* item, m_removableItems) {
+    foreach (ComputerViewItem *item, m_removableItems) {
         item->setChecked(false);
     }
 
@@ -936,17 +949,20 @@ void ComputerView::keyPressEvent(QKeyEvent *event)
 {
     DUrlList urls;
 
-    foreach (const ComputerViewItem* item, m_systemItems) {
-        if (item->checked())
+    foreach (const ComputerViewItem *item, m_systemItems) {
+        if (item->checked()) {
             urls << item->getUrl();
+        }
     }
-    foreach (const ComputerViewItem* item, m_nativeItems) {
-        if (item->checked())
+    foreach (const ComputerViewItem *item, m_nativeItems) {
+        if (item->checked()) {
             urls << item->getUrl();
+        }
     }
-    foreach (const ComputerViewItem* item, m_removableItems) {
-        if (item->checked())
+    foreach (const ComputerViewItem *item, m_removableItems) {
+        if (item->checked()) {
             urls << item->getUrl();
+        }
     }
 
     switch (event->modifiers()) {
@@ -964,37 +980,39 @@ void ComputerView::keyPressEvent(QKeyEvent *event)
         break;
     case Qt::ControlModifier:
         switch (event->key()) {
-        case Qt::Key_N:{
+        case Qt::Key_N: {
             appController->actionNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls.isEmpty() ? DUrlList() << DUrl() : urls));
             return;
-        case Qt::Key_I:
-            appController->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
+            case Qt::Key_I:
+                appController->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
 
-            return;
-        case Qt::Key_Down:
-            appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
-
-            return;
-        case Qt::Key_T:{
-            //do not handle key press event of autoRepeat type
-            if (event->isAutoRepeat())
                 return;
+            case Qt::Key_Down:
+                appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
 
-            DUrl url;
-            const QString& path = globalSetting->newTabPath();
-            if (urls.count() == 1) {
-                url = urls.first();
-            } else {
-                if(path != "Current Path")
-                    url = DUrl::fromUserInput(path);
-                else
-                    url = rootUrl();
+                return;
+            case Qt::Key_T: {
+                //do not handle key press event of autoRepeat type
+                if (event->isAutoRepeat()) {
+                    return;
+                }
+
+                DUrl url;
+                const QString &path = globalSetting->newTabPath();
+                if (urls.count() == 1) {
+                    url = urls.first();
+                } else {
+                    if (path != "Current Path") {
+                        url = DUrl::fromUserInput(path);
+                    } else {
+                        url = rootUrl();
+                    }
+                }
+                DFMEventDispatcher::instance()->processEvent<DFMOpenNewTabEvent>(this, url);
+                return;
             }
-            DFMEventDispatcher::instance()->processEvent<DFMOpenNewTabEvent>(this, url);
-            return;
-        }
-        default: break;
-        }
+            default: break;
+            }
         }
 
         break;
@@ -1040,7 +1058,8 @@ DScrollArea::DScrollArea(QWidget *parent):
 
 void DScrollArea::wheelEvent(QWheelEvent *event)
 {
-    if(DFMGlobal::keyCtrlIsPressed())
+    if (DFMGlobal::keyCtrlIsPressed()) {
         return;
+    }
     QScrollArea::wheelEvent(event);
 }
