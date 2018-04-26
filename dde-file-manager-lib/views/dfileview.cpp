@@ -1703,6 +1703,7 @@ void DFileView::initUI()
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setDefaultDropAction(Qt::MoveAction);
 
     DListView::setSelectionRectVisible(true);
 
