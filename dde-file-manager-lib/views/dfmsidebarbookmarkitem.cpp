@@ -49,14 +49,11 @@ DFMSideBarBookmarkItem::DFMSideBarBookmarkItem(const DUrl &url)
             return;
         }
         int newIdx = dstIdx;
-        if (insertBefore) {
-            if (dstIdx > oriIdx) {
-                newIdx = dstIdx - 1;
-            }
-        } else {
-            if (dstIdx < oriIdx) {
-                newIdx = dstIdx + 1;
-            }
+        if (dstIdx > oriIdx) {
+            newIdx--;
+        }
+        if (!insertBefore) {
+            newIdx++;
         }
         bookmarkManager->moveBookmark(oriIdx, newIdx);
     });
