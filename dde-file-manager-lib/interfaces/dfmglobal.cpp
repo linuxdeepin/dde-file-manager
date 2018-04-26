@@ -935,19 +935,9 @@ QString DFMGlobal::toUnicode(const QByteArray &ba)
 }
 
 namespace DThreadUtil {
-class FunctionCallProxy_ : public FunctionCallProxy {};
-Q_GLOBAL_STATIC(FunctionCallProxy_, fcpGlobal)
-FunctionCallProxy *DThreadUtil::FunctionCallProxy::instance()
-{
-    return fcpGlobal;
-}
-
 FunctionCallProxy::FunctionCallProxy()
 {
-    // move to main thread
-    moveToThread(qApp->thread());
-
-    connect(this, &FunctionCallProxy::callInMainThread, this, [] (FunctionType *func) {
+    connect(this, &FunctionCallProxy::callInLiveThread, this, [] (FunctionType *func) {
         (*func)();
     }, Qt::QueuedConnection);
 }

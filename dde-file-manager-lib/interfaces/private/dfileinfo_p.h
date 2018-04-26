@@ -19,6 +19,7 @@
 #include <QQueue>
 
 class DFileInfo;
+class RequestEP;
 class DFileInfoPrivate : public DAbstractFileInfoPrivate
 {
 public:
@@ -36,6 +37,7 @@ public:
     mutable QVariantHash extensionPropertys;
     mutable bool epInitialized = false;
     mutable QPointer<QTimer> getEPTimer;
+    mutable QPointer<RequestEP> requestEP;
 };
 
 Q_DECLARE_METATYPE(DFileInfoPrivate*)

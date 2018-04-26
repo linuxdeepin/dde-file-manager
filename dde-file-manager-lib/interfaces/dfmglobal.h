@@ -381,15 +381,11 @@ typedef std::function<void()> FunctionType;
 class FunctionCallProxy : public QObject
 {
     Q_OBJECT
-
 public:
-    static FunctionCallProxy *instance();
+    explicit FunctionCallProxy();
 
 signals:
-    void callInMainThread(FunctionType *func);
-
-protected:
-    explicit FunctionCallProxy();
+    void callInLiveThread(FunctionType *func);
 };
 
 template <typename ReturnType>
@@ -397,9 +393,9 @@ class _TMP
 {
 public:
     template <typename Fun, typename... Args>
-    static ReturnType runInMainThread(Fun fun, Args&&... args)
+    static ReturnType runInThread(QThread *thread, Fun fun, Args&&... args)
     {
-        if (!QCoreApplication::instance() || QThread::currentThread() == QCoreApplication::instance()->thread())
+        if (QThread::currentThread() == thread)
             return fun(std::forward<Args>(args)...);
 
         ReturnType result;
@@ -409,7 +405,9 @@ public:
             semaphore.release();
         };
 
-        FunctionCallProxy::instance()->callInMainThread(&proxyFun);
+        FunctionCallProxy proxy;
+        proxy.moveToThread(thread);
+        proxy.callInLiveThread(&proxyFun);
         semaphore.acquire();
 
         return result;
@@ -420,9 +418,9 @@ class _TMP<void>
 {
 public:
     template <typename Fun, typename... Args>
-    static void runInMainThread(Fun fun, Args&&... args)
+    static void runInThread(QThread *thread, Fun fun, Args&&... args)
     {
-        if (!QCoreApplication::instance() || QThread::currentThread() == QCoreApplication::instance()->thread())
+        if (QThread::currentThread() == thread)
             return fun(std::forward<Args>(args)...);
 
         QSemaphore semaphore;
@@ -431,24 +429,44 @@ public:
             semaphore.release();
         };
 
-        FunctionCallProxy::instance()->callInMainThread(&proxyFun);
+        FunctionCallProxy proxy;
+        proxy.moveToThread(thread);
+        proxy.callInLiveThread(&proxyFun);
         semaphore.acquire();
     }
 };
 
 template <typename Fun, typename... Args>
-auto runInMainThread(Fun fun, Args&&... args) -> decltype(fun(args...))
+auto runInThread(QThread *thread, Fun fun, Args&&... args) -> decltype(fun(args...))
 {
-    return _TMP<decltype(fun(args...))>::runInMainThread(fun, std::forward<Args>(args)...);
+    return _TMP<decltype(fun(args...))>::runInThread(thread, fun, std::forward<Args>(args)...);
 }
 template <typename Fun, typename... Args>
-typename QtPrivate::FunctionPointer<Fun>::ReturnType runInMainThread(typename QtPrivate::FunctionPointer<Fun>::Object *obj, Fun fun, Args&&... args)
+typename QtPrivate::FunctionPointer<Fun>::ReturnType runInThread(QThread *thread, typename QtPrivate::FunctionPointer<Fun>::Object *obj, Fun fun, Args&&... args)
 {
-    return _TMP<typename QtPrivate::FunctionPointer<Fun>::ReturnType>::runInMainThread([&] {
+    return _TMP<typename QtPrivate::FunctionPointer<Fun>::ReturnType>::runInThread(thread, [&] {
         return (obj->*fun)(std::forward<Args>(args)...);
     });
 }
 
+template <typename Fun, typename... Args>
+auto runInMainThread(Fun fun, Args&&... args) -> decltype(fun(args...))
+{
+    if (!QCoreApplication::instance()) {
+        return fun(std::forward<Args>(args)...);
+    }
+
+    return runInThread(QCoreApplication::instance()->thread(), fun, std::forward<Args>(args)...);
+}
+template <typename Fun, typename... Args>
+typename QtPrivate::FunctionPointer<Fun>::ReturnType runInMainThread(typename QtPrivate::FunctionPointer<Fun>::Object *obj, Fun fun, Args&&... args)
+{
+    if (!QCoreApplication::instance()) {
+        return (obj->*fun)(std::forward<Args>(args)...);
+    }
+
+    return runInThread(QCoreApplication::instance()->thread(), obj, fun, std::forward<Args>(args)...);
+}
 }
 
 #endif // DFMGLOBAL_H
