@@ -121,7 +121,7 @@ void Frame::showEvent(QShowEvent * event)
 {
     activateWindow();
 
-    refreshList();
+    QTimer::singleShot(1, this, &Frame::refreshList);
 
     DBlurEffectWidget::showEvent(event);
 }
