@@ -567,15 +567,14 @@ public:
     explicit DFMRevocationEvent(const QObject *sender);
 };
 
-class DFMMakeFileTagsEvent : public DFMEvent
+class DFMMakeFileTagsEvent : public DFMUrlBaseEvent
 {
 public:
     explicit DFMMakeFileTagsEvent(const QObject *sender, const DUrl &url, const QList<QString> &tags);
 
     static QSharedPointer<DFMMakeFileTagsEvent> fromJson(const QJsonObject &json);
 
-    QList<QString> m_tags{};
-    DUrl m_file;
+    QList<QString> tags() const;
 };
 
 
@@ -593,15 +592,14 @@ public:
 };
 
 
-class DFMRemoveTagsOfFileEvent : public DFMEvent
+class DFMRemoveTagsOfFileEvent : public DFMUrlBaseEvent
 {
 public:
     explicit DFMRemoveTagsOfFileEvent(const QObject *sender, const DUrl &url, const QList<QString> &tags);
 
     static QSharedPointer<DFMRemoveTagsOfFileEvent> fromJson(const QJsonObject &json);
 
-    DUrl m_file;
-    QList<QString> m_tags;
+    QList<QString> tags() const;
 };
 
 

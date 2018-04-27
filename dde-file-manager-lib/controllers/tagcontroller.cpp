@@ -269,11 +269,13 @@ DAbstractFileWatcher* TagController::createFileWatcher(const QSharedPointer<DFMC
 
 bool TagController::makeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event) const
 {
-    return DFileService::instance()->makeFileTags(this, DUrl::fromLocalFile(event->m_file.taggedLocalFilePath()), event->m_tags);
+    QList<QString> tags = event->tags();
+    return DFileService::instance()->makeFileTags(this, DUrl::fromLocalFile(event->url().taggedLocalFilePath()), tags);
 }
 
 bool TagController::removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const
 {
-    return DFileService::instance()->removeTagsOfFile(this, DUrl::fromLocalFile(event->m_file.taggedLocalFilePath()), event->m_tags);
+    QList<QString> tags = event->tags();
+    return DFileService::instance()->removeTagsOfFile(this, DUrl::fromLocalFile(event->url().taggedLocalFilePath()), tags);
 }
 
