@@ -304,7 +304,7 @@ bool TagManager::changeTagColor(const QString& tagName, const QPair<QString, QSt
     return false;
 }
 
-bool TagManager::remveTagsOfFiles(const QList<QString>& tags, const QList<DUrl>& files)
+bool TagManager::removeTagsOfFiles(const QList<QString>& tags, const QList<DUrl>& files)
 {
     impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Write };
     ++m_counter;

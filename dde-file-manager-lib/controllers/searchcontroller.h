@@ -62,6 +62,9 @@ public:
 
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
 
+    bool makeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event) const Q_DECL_OVERRIDE;
+    bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const Q_DECL_OVERRIDE;
+
 private:
     static DUrl realUrl(const DUrl &searchUrl);
     static DUrlList realUrlList(const DUrlList &searchUrls);

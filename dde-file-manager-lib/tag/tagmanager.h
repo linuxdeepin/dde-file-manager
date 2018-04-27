@@ -176,7 +176,7 @@ public:
 
     bool changeTagColor(const QString& tagName, const QPair<QString, QString>& oldAndNewTagColor);
 
-    bool remveTagsOfFiles(const QList<QString>& tags, const QList<DUrl>& files);
+    bool removeTagsOfFiles(const QList<QString>& tags, const QList<DUrl>& files);
 
     bool changeTagName(const QPair<QString, QString>& oldAndNewName);
 

@@ -69,6 +69,9 @@ public:
     static bool customHiddenFileMatch(const QString &absolutePath, const QString &fileName);
     static bool privateFileMatch(const QString &absolutePath, const QString &fileName);
 
+    bool makeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event) const Q_DECL_OVERRIDE;
+    bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const Q_DECL_OVERRIDE;
+
 private:
     QString checkDuplicateName(const QString &name) const;
 };

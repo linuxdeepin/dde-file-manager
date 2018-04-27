@@ -35,6 +35,7 @@
 #include "app/define.h"
 #include "dfmevent.h"
 #include "app/filesignalmanager.h"
+#include "tag/tagmanager.h"
 
 #include "shutil/fileutils.h"
 
@@ -568,6 +569,16 @@ bool FileController::privateFileMatch(const QString &absolutePath, const QString
     static Match match("Private Files");
 
     return match.match(absolutePath, fileName);
+}
+
+bool FileController::makeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event) const
+{
+    return TagManager::instance()->makeFilesTags(event->m_tags, {event->m_file});
+}
+
+bool FileController::removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const
+{
+    return TagManager::instance()->removeTagsOfFiles(event->m_tags, {event->m_file});
 }
 
 QString FileController::checkDuplicateName(const QString &name) const

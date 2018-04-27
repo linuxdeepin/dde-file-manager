@@ -128,8 +128,8 @@ public slots:
     QList<QString> actionGetTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event);
     bool actionMakeFilesTagsThroughColor(const QSharedPointer<DFMMakeFilesTagThroughColorEvent>& event);
     QList<QString> actionGetFilesThroughTag(const QSharedPointer<DFMGetFilesThroughTag>& event);
-    bool actionMakeFilesTags(const QSharedPointer<DFMMakeFilesTagsEvent> &event);
-    bool actionRemoveTagsOfFiles(const QSharedPointer<DFMRemoveTagsOfFilesEvent>& event);
+    bool actionMakeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event);
+    bool actionRemoveTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent>& event);
     void actionChangeTagColor(const QSharedPointer<DFMChangeTagColorEvent>& event);
     bool actionDeleteTags(const QSharedPointer<DFMDeleteTagsEvent>& event);
     bool actionRenameTag(const QSharedPointer<DFMRenameTagEvent> &event);

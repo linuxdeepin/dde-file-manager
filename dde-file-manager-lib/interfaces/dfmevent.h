@@ -567,17 +567,15 @@ public:
     explicit DFMRevocationEvent(const QObject *sender);
 };
 
-class DFMMakeFilesTagsEvent : public DFMEvent
+class DFMMakeFileTagsEvent : public DFMEvent
 {
 public:
-    explicit DFMMakeFilesTagsEvent(const QObject* sender, const QList<QString>& tags, const QList<DUrl>& files);
-    DFMMakeFilesTagsEvent(const DFMMakeFilesTagsEvent& other)=delete;
-    DFMMakeFilesTagsEvent& operator=(const DFMMakeFilesTagsEvent& other)=delete;
+    explicit DFMMakeFileTagsEvent(const QObject *sender, const DUrl &url, const QList<QString> &tags);
 
-    static QSharedPointer<DFMMakeFilesTagsEvent> fromJson(const QJsonObject& json);
+    static QSharedPointer<DFMMakeFileTagsEvent> fromJson(const QJsonObject &json);
 
     QList<QString> m_tags{};
-    QList<DUrl> m_files{};
+    DUrl m_file;
 };
 
 
@@ -595,16 +593,14 @@ public:
 };
 
 
-class DFMRemoveTagsOfFilesEvent : public DFMEvent
+class DFMRemoveTagsOfFileEvent : public DFMEvent
 {
 public:
-    explicit DFMRemoveTagsOfFilesEvent(const QObject* sender, const QList<QString>& tags, const QList<DUrl>& files);
-    DFMRemoveTagsOfFilesEvent(const DFMRemoveTagsOfFilesEvent& other)=delete;
-    DFMRemoveTagsOfFilesEvent& operator=(const DFMRemoveTagsOfFilesEvent& other)=delete;
+    explicit DFMRemoveTagsOfFileEvent(const QObject *sender, const DUrl &url, const QList<QString> &tags);
 
-    static QSharedPointer<DFMRemoveTagsOfFilesEvent> fromJson(const QJsonObject& json);
+    static QSharedPointer<DFMRemoveTagsOfFileEvent> fromJson(const QJsonObject &json);
 
-    QList<DUrl> m_files;
+    DUrl m_file;
     QList<QString> m_tags;
 };
 

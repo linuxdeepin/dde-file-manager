@@ -18,8 +18,8 @@ public:
     virtual DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
 
 
-//    virtual bool makeFilesTags(const QSharedPointer<DFMMakeFilesTagsEvent>& event) const override;
-//    virtual bool removeTagsOfFiles(const QSharedPointer<DFMRemoveTagsOfFilesEvent>& event) const override;
+    virtual bool makeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event) const override;
+    virtual bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const override;
 };
 
 

@@ -190,13 +190,13 @@ bool DAbstractFileController::openInTerminal(const QSharedPointer<DFMOpenInTermi
     return false;
 }
 
-bool DAbstractFileController::makeFilesTags(const QSharedPointer<DFMMakeFilesTagsEvent>& event) const
+bool DAbstractFileController::makeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event) const
 {
     event->ignore();
     return false;
 }
 
-bool DAbstractFileController::removeTagsOfFiles(const QSharedPointer<DFMRemoveTagsOfFilesEvent>& event) const
+bool DAbstractFileController::removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent>& event) const
 {
     event->ignore();
     return false;

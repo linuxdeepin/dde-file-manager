@@ -315,7 +315,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         break;
     case DFMEvent::Tag:
     {
-        CALL_CONTROLLER(makeFilesTags);
+        CALL_CONTROLLER(makeFileTags);
         break;
     }
     default:
@@ -550,16 +550,16 @@ bool DFileService::openInTerminal(const QObject *sender, const DUrl &fileUrl) co
 }
 
 
-///###: make file(s) tag(s).
-bool DFileService::makeFilesTags(const QObject* sender, QList<QString>& tags, const QList<DUrl>& files) const
+///###: make file tag(s).
+bool DFileService::makeFileTags(const QObject *sender, const DUrl &url, QList<QString> &tags) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMMakeFilesTagsEvent>(sender, tags, files)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMMakeFileTagsEvent>(sender, url, tags)).toBool();
 }
 
 ///###: remove tag(s) of file.
-bool DFileService::removeTagsOfFiles(const QObject* sender, const QList<QString>& tags, const QList<DUrl>& files) const
+bool DFileService::removeTagsOfFile(const QObject *sender, const DUrl &url, const QList<QString> &tags) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMRemoveTagsOfFilesEvent>(sender, tags, files)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMRemoveTagsOfFileEvent>(sender, url, tags)).toBool();
 }
 
 const DAbstractFileInfoPointer DFileService::createFileInfo(const QObject *sender, const DUrl &fileUrl) const
