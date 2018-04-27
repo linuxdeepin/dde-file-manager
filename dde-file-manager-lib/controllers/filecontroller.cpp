@@ -573,12 +573,12 @@ bool FileController::privateFileMatch(const QString &absolutePath, const QString
 
 bool FileController::makeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event) const
 {
-    return TagManager::instance()->makeFilesTags(event->m_tags, {event->m_file});
+    return TagManager::instance()->makeFilesTags(event->tags(), {event->url()});
 }
 
 bool FileController::removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const
 {
-    return TagManager::instance()->removeTagsOfFiles(event->m_tags, {event->m_file});
+    return TagManager::instance()->removeTagsOfFiles(event->tags(), {event->url()});
 }
 
 QString FileController::checkDuplicateName(const QString &name) const
