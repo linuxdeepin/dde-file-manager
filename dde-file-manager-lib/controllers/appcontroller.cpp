@@ -745,23 +745,23 @@ QList<QString> AppController::actionGetFilesThroughTag(const QSharedPointer<DFMG
     return files;
 }
 
-bool AppController::actionMakeFilesTags(const QSharedPointer<DFMMakeFilesTagsEvent> &event)
+bool AppController::actionMakeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event)
 {   
     bool value{ false };
 
-     if( static_cast<bool>(event) && (!event->m_files.isEmpty()) && (!event->m_tags.isEmpty()) ){
-         value = TagManager::instance()->makeFilesTags(event->m_tags, event->m_files);
+     if( static_cast<bool>(event) && (!event->m_file.isEmpty()) && (!event->m_tags.isEmpty()) ){
+         value = TagManager::instance()->makeFilesTags(event->m_tags, {event->m_file});
      }
 
      return value;
 }
 
-bool AppController::actionRemoveTagsOfFiles(const QSharedPointer<DFMRemoveTagsOfFilesEvent>& event)
+bool AppController::actionRemoveTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent>& event)
 {
     bool value{ false };
 
-    if(event && (!event->m_files.isEmpty()) && (!event->m_tags.isEmpty())){
-        value = TagManager::instance()->remveTagsOfFiles(event->m_tags, event->m_files);
+    if(event && (!event->m_file.isEmpty()) && (!event->m_tags.isEmpty())){
+        value = TagManager::instance()->removeTagsOfFiles(event->m_tags, {event->m_file});
     }
 
     return value;

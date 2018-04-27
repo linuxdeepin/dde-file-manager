@@ -76,18 +76,6 @@ const QList<DAbstractFileInfoPointer> TagController::getChildren(const QSharedPo
     return infoList;
 }
 
-//bool TagController::makeFilesTags(const QSharedPointer<DFMMakeFilesTagsEvent> &event) const
-//{
-//    (void)event;
-//    return true;
-//}
-
-//bool TagController::removeTagsOfFiles(const QSharedPointer<DFMRemoveTagsOfFilesEvent>& event) const
-//{
-//    (void)event;
-//    return true;
-//}
-
 class TaggedFileWatcherPrivate;
 class TaggedFileWatcher final : public DAbstractFileWatcher
 {
@@ -279,4 +267,13 @@ DAbstractFileWatcher* TagController::createFileWatcher(const QSharedPointer<DFMC
     return (new TaggedFileWatcher{event->url()});
 }
 
+bool TagController::makeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event) const
+{
+    return DFileService::instance()->makeFileTags(this, DUrl::fromLocalFile(event->m_file.taggedLocalFilePath()), event->m_tags);
+}
+
+bool TagController::removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const
+{
+    return DFileService::instance()->removeTagsOfFile(this, DUrl::fromLocalFile(event->m_file.taggedLocalFilePath()), event->m_tags);
+}
 
