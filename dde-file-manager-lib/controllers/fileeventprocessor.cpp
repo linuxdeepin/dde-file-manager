@@ -179,23 +179,8 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent>& event)
     }
     case DFMGlobal::DeleteTags:
     {
-        QList<DUrl> selectedUrls{ event->selectedUrls() };
-        QList<QString> tagNames{};
-
-        for(const DUrl& url : selectedUrls){
-            QString path{ url.path()};
-            path = path.remove(0, 1);
-            tagNames.push_back(path);
-        }
-
-        QSharedPointer<DFMDeleteTagsEvent> event{ new DFMDeleteTagsEvent{ nullptr, tagNames } };
-        bool result{ AppController::instance()->actionDeleteTags(event) };
-
-        if(result){
-            QPair<QList<QString>, QList<QString>> increasedAndDecreased{QList<QString>{}, tagNames };
-            emit fileSignalManager->requestAddOrDecreaseBookmarkOfTag(increasedAndDecreased);
-        }
-
+        return DFileService::instance()->deleteFiles(nullptr, event->selectedUrls(), true);
+        // this break seems no sense.. anyway leave it here.
         break;
     }
     case DFMGlobal::Open:

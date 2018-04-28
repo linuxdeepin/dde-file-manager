@@ -59,9 +59,7 @@ const QList<DAbstractFileInfoPointer> TagController::getChildren(const QSharedPo
         }else if(currentUrl.parentUrl().path() == QString{"/"}){
             path = currentUrl.path();
             QString tagName{ path.remove(0, 1) };
-            QSharedPointer<DFMGetFilesThroughTag> event{ new DFMGetFilesThroughTag{this, tagName} };
-            QVariant var{ AppController::instance()->actionGetFilesThroughTag(event) };
-            QList<QString> files{ var.toStringList() };
+            QList<QString> files{ TagManager::instance()->getFilesThroughTag(tagName) };
 
             for(const QString& localFilePath : files){
                 DUrl url{ currentUrl };
@@ -265,6 +263,23 @@ DAbstractFileWatcher* TagController::createFileWatcher(const QSharedPointer<DFMC
 {
 //    qDebug()<< "be watched url: " << event->url();
     return (new TaggedFileWatcher{event->url()});
+}
+
+bool TagController::renameFile(const QSharedPointer<DFMRenameEvent> &event) const
+{
+    return TagManager::instance()->changeTagName(QPair<QString, QString>(event->fromUrl().fileName(), event->toUrl().fileName()));
+}
+
+bool TagController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
+{
+    QStringList tagNames;
+
+    for(auto oneUrl : event->urlList()) {
+        QString oneName = oneUrl.fileName();
+        tagNames.append(oneName);
+    }
+
+    return TagManager::instance()->deleteTags(tagNames);
 }
 
 bool TagController::makeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event) const

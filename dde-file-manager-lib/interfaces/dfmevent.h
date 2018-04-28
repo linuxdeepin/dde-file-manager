@@ -617,19 +617,6 @@ public:
 };
 
 
-class DFMGetFilesThroughTag final : public DFMEvent
-{
-public:
-    explicit DFMGetFilesThroughTag(const QObject* sender, const QString& tagName);
-    DFMGetFilesThroughTag(const DFMGetFilesThroughTag& other)=delete;
-    DFMGetFilesThroughTag& operator=(const DFMGetFilesThroughTag& other)=delete;
-
-    static QSharedPointer<DFMGetFilesThroughTag> fromJson(const QJsonObject& json);
-
-    QString m_tagName{};
-};
-
-
 class DFMGetTagsThroughFilesEvent final : public DFMEvent
 {
 public:
@@ -642,37 +629,5 @@ public:
 
     QList<DUrl> m_files{};
 };
-
-
-class DFMDeleteTagsEvent final : public DFMEvent
-{
-public:
-public:
-    explicit DFMDeleteTagsEvent(const QObject* sender, const QList<QString>& tags);
-    DFMDeleteTagsEvent(const DFMDeleteTagsEvent& other)=delete;
-    DFMDeleteTagsEvent& operator=(const DFMDeleteTagsEvent& other)=delete;
-
-    static QSharedPointer<DFMDeleteTagsEvent> fromJson(const QJsonObject& json);
-
-    QList<QString> m_tagsForDeleting{};
-};
-
-
-class DFMRenameTagEvent final : public DFMEvent
-{
-public:
-public:
-    explicit DFMRenameTagEvent(const QObject* sender, const QPair<QString, QString>& oldAndNewName);
-    DFMRenameTagEvent(const DFMRenameTagEvent& other)=delete;
-    DFMRenameTagEvent& operator=(const DFMRenameTagEvent& other)=delete;
-
-    static QSharedPointer<DFMRenameTagEvent> fromJson(const QJsonObject& json);
-
-    QPair<QString, QString> m_oldAndNewName{};
-};
-
-
-
-
 
 #endif // FMEVENT_H

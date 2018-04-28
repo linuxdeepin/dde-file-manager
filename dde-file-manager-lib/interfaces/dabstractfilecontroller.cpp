@@ -202,6 +202,12 @@ bool DAbstractFileController::removeTagsOfFile(const QSharedPointer<DFMRemoveTag
     return false;
 }
 
+QList<QString> DAbstractFileController::getFilesTags(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const
+{
+    event->ignore();
+    return {QString()};
+}
+
 DAbstractFileWatcher *DAbstractFileController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
     event->ignore();

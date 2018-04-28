@@ -31,6 +31,7 @@
 #include "dfmeventdispatcher.h"
 #include "dbusinterface/dbustype.h"
 #include "dfilemenu.h"
+#include "dfileservices.h"
 
 #include "controllers/bookmarkmanager.h"
 #include "controllers/pathmanager.h"
@@ -546,8 +547,7 @@ void DBookmarkScene::doBookmarkRemoved(const DFMEvent &event)
         thePath = thePath.remove(0, 1);
 
         if(!thePath.isEmpty()){
-            QSharedPointer<DFMDeleteTagsEvent> event{ new DFMDeleteTagsEvent{ nullptr, QList<QString>{ thePath } } };
-            AppController::instance()->actionDeleteTags( event );
+            DFileService::instance()->deleteFiles(nullptr, {url}, true);
         }
 
         DBookmarkItem * item = hasBookmarkItem(url);
