@@ -34,7 +34,11 @@ bool TagFileInfo::exists() const
 {
     const DAbstractFileInfoPrivate* const d{ d_func() };
 
-    return ((!static_cast<bool>(d->proxy)) || d->proxy->exists());
+    if (d->proxy) {
+        return d->proxy->exists();
+    }
+
+    return fileUrl() == DUrl(TAG_ROOT);
 }
 
 bool TagFileInfo::isTaged() const

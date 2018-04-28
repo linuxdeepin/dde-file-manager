@@ -210,24 +210,29 @@ void DBookmarkItem::editFinished()
         return;
     }
 
+    QSignalBlocker block_lineEdit(m_lineEdit);
+    Q_UNUSED(block_lineEdit)
+
     DFMUrlBaseEvent event(this, m_url);
     event.setWindowId(windowId());
     DUrl oldTag;
     oldTag.setScheme(TAG_SCHEME);
     oldTag.setPath(m_textContent);
 
-    if (!m_lineEdit->text().isEmpty() && m_lineEdit->text() != m_textContent) {
-        bookmarkManager->renameBookmark(getBookmarkModel(), m_lineEdit->text());
-        emit fileSignalManager->bookmarkRenamed(m_lineEdit->text(), event);
-        m_textContent = m_lineEdit->text();
-    }
+    if (m_url.isTaggedFile()) {
+        DUrl newTag;
+        newTag.setScheme(TAG_SCHEME);
+        newTag.setPath(m_lineEdit->text());
 
-    DUrl newTag;
-    newTag.setScheme(TAG_SCHEME);
-    newTag.setPath(m_textContent);
-
-    if (DFileService::instance()->renameFile(nullptr, oldTag, newTag)) {
-        this->setUrl(newTag);
+        if (DFileService::instance()->renameFile(nullptr, oldTag, newTag)) {
+            this->setUrl(newTag);
+        }
+    } else {
+        if (!m_lineEdit->text().isEmpty() && m_lineEdit->text() != m_textContent) {
+            bookmarkManager->renameBookmark(getBookmarkModel(), m_lineEdit->text());
+            emit fileSignalManager->bookmarkRenamed(m_lineEdit->text(), event);
+            m_textContent = m_lineEdit->text();
+        }
     }
 
     m_widget->deleteLater();
@@ -868,11 +873,7 @@ void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 bool DBookmarkItem::eventFilter(QObject *obj, QEvent *event)
 {
     if (obj == m_lineEdit) {
-        if (event->type() == QEvent::FocusOut) {
-            editFinished();
-
-            return false;
-        } else if (event->type() == QEvent::KeyPress) {
+        if (event->type() == QEvent::KeyPress) {
             QKeyEvent *key_event = static_cast<QKeyEvent *>(event);
 
             switch (key_event->key()) {
