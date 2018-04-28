@@ -773,7 +773,6 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::DeleteTags] = QObject::tr("Delete Tags");
     actionKeys[MenuAction::ChangeTagColor] = QString{"Change color of present tag"};
     actionKeys[MenuAction::RenameTag] = QObject::tr("Rename");
-
 }
 
 void DFileMenuData::initActions()
@@ -922,6 +921,24 @@ QSet<MenuAction> DFileMenuManager::actionBlacklist()
 
 bool DFileMenuManager::isAvailableAction(MenuAction action)
 {
+    // init menu action black list
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(),
+                       "dde-file-manager/" + qApp->applicationName());
+
+    settings.setIniCodec("utf-8");
+    settings.beginGroup("Menu Actions");
+    const QMetaEnum &action_enum = QMetaEnum::fromType<MenuAction>();
+
+    for (const QString &action_name : settings.value("disable").toStringList()) {
+        bool ok = false;
+        int key = action_enum.keyToValue(action_name.toUtf8(), &ok);
+
+        if (ok && key == action)
+            return false;
+    }
+
+    settings.endGroup();
+
     if (DFileMenuData::whitelist.isEmpty())
         return !DFileMenuData::blacklist.contains(action);
 
