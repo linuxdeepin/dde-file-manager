@@ -734,17 +734,6 @@ bool AppController::actionMakeFilesTagsThroughColor(const QSharedPointer<DFMMake
     return false;
 }
 
-QList<QString> AppController::actionGetFilesThroughTag(const QSharedPointer<DFMGetFilesThroughTag>& event)
-{
-    QList<QString> files{};
-
-    if( static_cast<bool>(event) && (!event->m_tagName.isEmpty()) ){
-        files = TagManager::instance()->getFilesThroughTag(event->m_tagName);
-    }
-
-    return files;
-}
-
 bool AppController::actionMakeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event)
 {   
     bool value{ false };
@@ -779,29 +768,6 @@ void AppController::actionChangeTagColor(const QSharedPointer<DFMChangeTagColorE
 
     item = nullptr;
     DBookmarkItem::ClickedItem.store(nullptr, std::memory_order_release);
-}
-
-bool AppController::actionDeleteTags(const QSharedPointer<DFMDeleteTagsEvent>& event)
-{
-    bool value{ false };
-
-    if(event && !event->m_tagsForDeleting.isEmpty()){
-        value = TagManager::instance()->deleteTags(event->m_tagsForDeleting);
-    }
-
-    return value;
-}
-
-bool AppController::actionRenameTag(const QSharedPointer<DFMRenameTagEvent>& event)
-{
-    bool result{ false };
-    if(event && !event->m_oldAndNewName.first.isEmpty() &&
-                !event->m_oldAndNewName.second.isEmpty()){
-
-        result = TagManager::instance()->changeTagName(event->m_oldAndNewName);
-    }
-
-    return result;
 }
 
 #ifdef SW_LABEL

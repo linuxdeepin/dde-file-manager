@@ -58,6 +58,7 @@ class DUrl;
 class DAbstractFileWatcher;
 class DFMMakeFileTagsEvent;
 class DFMRemoveTagsOfFileEvent;
+class DFMGetTagsThroughFilesEvent;
 
 typedef QList<DUrl> DUrlList;
 class DAbstractFileController : public QObject
@@ -94,6 +95,7 @@ public:
 
     virtual bool makeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event) const;
     virtual bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const;
+    virtual QList<QString> getFilesTags(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const;
 
     virtual DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const;
 };

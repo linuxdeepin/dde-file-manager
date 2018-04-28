@@ -926,22 +926,6 @@ QSharedPointer<DFMChangeTagColorEvent> DFMChangeTagColorEvent::fromJson(const QJ
     return QSharedPointer<DFMChangeTagColorEvent>{ nullptr };
 }
 
-
-
-
-
-DFMGetFilesThroughTag::DFMGetFilesThroughTag(const QObject* sender, const QString& tagName)
-                      :DFMEvent{ sender },
-                       m_tagName{ tagName }
-{
-}
-
-QSharedPointer<DFMGetFilesThroughTag> DFMGetFilesThroughTag::fromJson(const QJsonObject &json)
-{
-    (void)json;
-    return QSharedPointer<DFMGetFilesThroughTag>{ nullptr };
-}
-
 DFMGetTagsThroughFilesEvent::DFMGetTagsThroughFilesEvent(const QObject* sender, const QList<DUrl>& files)
                            :DFMEvent{ sender },
                             m_files{ files }
@@ -952,30 +936,6 @@ QSharedPointer<DFMGetTagsThroughFilesEvent> DFMGetTagsThroughFilesEvent::fromJso
 {
     (void)json;
     return QSharedPointer<DFMGetTagsThroughFilesEvent>{ nullptr };
-}
-
-DFMDeleteTagsEvent::DFMDeleteTagsEvent(const QObject* sender, const QList<QString>& tags)
-                  :DFMEvent{ sender },
-                   m_tagsForDeleting{ tags }
-{
-}
-
-QSharedPointer<DFMDeleteTagsEvent> DFMDeleteTagsEvent::fromJson(const QJsonObject& json)
-{
-    (void)json;
-    return QSharedPointer<DFMDeleteTagsEvent>{ nullptr };
-}
-
-DFMRenameTagEvent::DFMRenameTagEvent(const QObject* sender, const QPair<QString, QString>& oldAndNewName)
-                   :DFMEvent{ sender },
-                    m_oldAndNewName{ oldAndNewName }
-{
-}
-
-QSharedPointer<DFMRenameTagEvent> DFMRenameTagEvent::fromJson(const QJsonObject& json)
-{
-    (void)json;
-    return QSharedPointer<DFMRenameTagEvent>{ nullptr };
 }
 
 DFMMakeFilesTagThroughColorEvent::DFMMakeFilesTagThroughColorEvent(const QObject* sender, const QString& color, const QList<DUrl>& files)

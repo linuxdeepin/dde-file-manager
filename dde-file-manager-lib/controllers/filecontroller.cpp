@@ -581,6 +581,11 @@ bool FileController::removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEv
     return TagManager::instance()->removeTagsOfFiles(event->tags(), {event->url()});
 }
 
+QList<QString> FileController::getFilesTags(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const
+{
+    return TagManager::instance()->getSameTagsOfDiffFiles(event->m_files);
+}
+
 QString FileController::checkDuplicateName(const QString &name) const
 {
     QString destUrl = name;

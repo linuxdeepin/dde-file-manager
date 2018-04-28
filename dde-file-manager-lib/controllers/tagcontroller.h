@@ -17,6 +17,8 @@ public:
 
     virtual DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
 
+    virtual bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const;
+    virtual bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const;
 
     virtual bool makeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event) const override;
     virtual bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const override;

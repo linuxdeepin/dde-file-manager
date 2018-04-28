@@ -212,7 +212,9 @@ void DBookmarkItem::editFinished()
 
     DFMUrlBaseEvent event(this, m_url);
     event.setWindowId(windowId());
-    QString oldTagName{ m_textContent };
+    DUrl oldTag;
+    oldTag.setScheme(TAG_SCHEME);
+    oldTag.setPath(m_textContent);
 
     if (!m_lineEdit->text().isEmpty() && m_lineEdit->text() != m_textContent) {
         bookmarkManager->renameBookmark(getBookmarkModel(), m_lineEdit->text());
@@ -220,11 +222,12 @@ void DBookmarkItem::editFinished()
         m_textContent = m_lineEdit->text();
     }
 
-    QString newTagName{ m_textContent };
-    QSharedPointer<DFMRenameTagEvent> renameTagEvent{ new DFMRenameTagEvent{ nullptr, { oldTagName, newTagName } } };
+    DUrl newTag;
+    newTag.setScheme(TAG_SCHEME);
+    newTag.setPath(m_textContent);
 
-    if (AppController::instance()->actionRenameTag(renameTagEvent)) {
-        this->setUrl(DUrl::fromUserTaggedFile(QString{"/"} + newTagName, QString{}));
+    if (DFileService::instance()->renameFile(nullptr, oldTag, newTag)) {
+        this->setUrl(newTag);
     }
 
     m_widget->deleteLater();
