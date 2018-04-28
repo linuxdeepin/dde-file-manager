@@ -294,3 +294,8 @@ bool TagController::removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEve
     return DFileService::instance()->removeTagsOfFile(this, DUrl::fromLocalFile(event->url().taggedLocalFilePath()), tags);
 }
 
+QList<QString> TagController::getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const
+{
+    return DFileService::instance()->getTagsThroughFiles(this, event->urlList());
+}
+

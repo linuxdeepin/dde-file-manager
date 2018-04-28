@@ -83,7 +83,7 @@ QMap<QString, QString> TagManager::getAllTags()
     return tagNameAndColor;
 }
 
-QList<QString> TagManager::getSameTagsOfDiffFiles(const QList<DUrl>& files)
+QList<QString> TagManager::getTagsThroughFiles(const QList<DUrl>& files)
 {
     impl::shared_mutex<QReadWriteLock> sharedLck{ mutex, impl::shared_mutex<QReadWriteLock>::Options::Read};
     ++m_counter;

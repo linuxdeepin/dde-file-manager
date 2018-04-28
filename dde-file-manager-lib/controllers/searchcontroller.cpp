@@ -503,6 +503,15 @@ bool SearchController::removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFile
     return fileService->removeTagsOfFile(this, event->url().searchedFileUrl(), event->tags());
 }
 
+QList<QString> SearchController::getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const
+{
+    QList<DUrl> list = event->urlList();
+    for (DUrl &item : list) {
+        item = item.searchedFileUrl();
+    }
+    return fileService->getTagsThroughFiles(this, list);
+}
+
 DUrl SearchController::realUrl(const DUrl &searchUrl)
 {
     return searchUrl.searchedFileUrl();

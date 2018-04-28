@@ -717,8 +717,8 @@ QList<QString> AppController::actionGetTagsThroughFiles(const QSharedPointer<DFM
 {
     QList<QString> tags{};
 
-    if(static_cast<bool>(event) && (!event->m_files.isEmpty())){
-        tags = TagManager::instance()->getSameTagsOfDiffFiles(event->m_files);
+    if(static_cast<bool>(event) && (!event->urlList().isEmpty())){
+        tags = DFileService::instance()->getTagsThroughFiles(nullptr, event->urlList());
     }
     return tags;
 }

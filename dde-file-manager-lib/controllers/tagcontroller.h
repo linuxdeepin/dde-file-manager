@@ -22,6 +22,7 @@ public:
 
     virtual bool makeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event) const override;
     virtual bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const override;
+    virtual QList<QString> getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const override;
 };
 
 

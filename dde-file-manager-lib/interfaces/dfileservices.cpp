@@ -315,9 +315,15 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         break;
     case DFMEvent::Tag:
     {
-        CALL_CONTROLLER(makeFileTags);
+        result = CALL_CONTROLLER(makeFileTags);
         break;
     }
+    case DFMEvent::Untag:
+        result = CALL_CONTROLLER(removeTagsOfFile);
+        break;
+    case DFMEvent::GetTagsThroughFiles:
+        result = CALL_CONTROLLER(getTagsThroughFiles);
+        break;
     default:
         return false;
     }
@@ -560,6 +566,11 @@ bool DFileService::makeFileTags(const QObject *sender, const DUrl &url, QList<QS
 bool DFileService::removeTagsOfFile(const QObject *sender, const DUrl &url, const QList<QString> &tags) const
 {
     return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMRemoveTagsOfFileEvent>(sender, url, tags)).toBool();
+}
+
+QList<QString> DFileService::getTagsThroughFiles(const QObject *sender, const QList<DUrl> &urls) const
+{
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMGetTagsThroughFilesEvent>(sender, urls)).value<QList<QString>>();
 }
 
 const DAbstractFileInfoPointer DFileService::createFileInfo(const QObject *sender, const DUrl &fileUrl) const

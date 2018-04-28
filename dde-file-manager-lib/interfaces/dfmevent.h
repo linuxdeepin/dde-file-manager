@@ -87,6 +87,7 @@ public:
         Tag,
         Untag,
         ChangeTagColor,
+        GetTagsThroughFiles,
 
         // user custom
         CustomBase = 1000                            // first user event id
@@ -617,7 +618,7 @@ public:
 };
 
 
-class DFMGetTagsThroughFilesEvent final : public DFMEvent
+class DFMGetTagsThroughFilesEvent final : public DFMUrlListBaseEvent
 {
 public:
 public:
@@ -626,8 +627,6 @@ public:
     DFMGetTagsThroughFilesEvent& operator=(const DFMGetTagsThroughFilesEvent& other)=delete;
 
     static QSharedPointer<DFMGetTagsThroughFilesEvent> fromJson(const QJsonObject& json);
-
-    QList<DUrl> m_files{};
 };
 
 #endif // FMEVENT_H

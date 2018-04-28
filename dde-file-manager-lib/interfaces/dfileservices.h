@@ -121,6 +121,7 @@ public:
     ///###: for tag protocol.
     bool makeFileTags(const QObject *sender, const DUrl &url, QList<QString> &tags)const;
     bool removeTagsOfFile(const QObject *sender, const DUrl &url, const QList<QString> &tags)const;
+    QList<QString> getTagsThroughFiles(const QObject *sender, const QList<DUrl> &urls) const;
 
     const DAbstractFileInfoPointer createFileInfo(const QObject *sender, const DUrl &fileUrl) const;
     const DDirIteratorPointer createDirIterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,

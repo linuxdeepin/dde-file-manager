@@ -95,7 +95,7 @@ public:
 
     virtual bool makeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event) const;
     virtual bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const;
-    virtual QList<QString> getFilesTags(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const;
+    virtual QList<QString> getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const;
 
     virtual DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const;
 };

@@ -124,7 +124,7 @@ void RequestEP::run()
         requestEPFilesLock.unlock();
 
         const DUrl &url = file_info.first;
-        const QStringList &tag_list = TagManager::instance()->getSameTagsOfDiffFiles({url});
+        const QStringList &tag_list = DFileService::instance()->getTagsThroughFiles(nullptr, {url});
 
         QList<QColor> colors;
 
