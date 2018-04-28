@@ -163,7 +163,7 @@ public:
     ///###: query
     QMap<QString, QString> getAllTags();
 
-    QList<QString> getSameTagsOfDiffFiles(const QList<DUrl>& files);
+    QList<QString> getTagsThroughFiles(const QList<DUrl>& files);
 
     QMap<QString, QColor> getTagColor(const QList<QString>& tags);
 

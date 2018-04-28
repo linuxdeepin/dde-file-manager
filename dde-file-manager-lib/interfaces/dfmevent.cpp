@@ -98,6 +98,8 @@ static QString fmeventType2String(DFMEvent::Type type)
         return QStringLiteral(QT_STRINGIFY(Revocation));
     case DFMEvent::CleanSaveOperator:
         return QStringLiteral(QT_STRINGIFY(CleanSaveOperator));
+    case DFMEvent::GetTagsThroughFiles:
+        return QStringLiteral(QT_STRINGIFY(GetTagsThroughFiles));
     default:
         return QStringLiteral("Custom: %1").arg(type);
     }
@@ -927,8 +929,7 @@ QSharedPointer<DFMChangeTagColorEvent> DFMChangeTagColorEvent::fromJson(const QJ
 }
 
 DFMGetTagsThroughFilesEvent::DFMGetTagsThroughFilesEvent(const QObject* sender, const QList<DUrl>& files)
-                           :DFMEvent{ sender },
-                            m_files{ files }
+                           :DFMUrlListBaseEvent{ Type::GetTagsThroughFiles, sender, files }
 {
 }
 

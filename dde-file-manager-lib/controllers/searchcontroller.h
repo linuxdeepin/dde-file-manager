@@ -64,6 +64,7 @@ public:
 
     bool makeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event) const Q_DECL_OVERRIDE;
     bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const Q_DECL_OVERRIDE;
+    QList<QString> getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const Q_DECL_OVERRIDE;
 
 private:
     static DUrl realUrl(const DUrl &searchUrl);
