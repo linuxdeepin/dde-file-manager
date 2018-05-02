@@ -1091,14 +1091,20 @@ void DialogManager::handleConflictRepsonseConfirmed(const QMap<QString, QString>
         {
         case 0:
             job->setIsCoExisted(true);
+            job->setIsSkip(false);
+            job->setReplace(false);
             job->started();
             break;
         case 1:
             job->setReplace(true);
+            job->setIsCoExisted(false);
+            job->setIsSkip(false);
             job->started();
             break;
         case 2:
             job->setIsSkip(true);
+            job->setIsCoExisted(false);
+            job->setReplace(false);
             job->cancelled();
             break;
         default:
