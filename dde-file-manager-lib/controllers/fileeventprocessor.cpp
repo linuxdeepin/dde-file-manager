@@ -39,20 +39,6 @@
 
 DFM_BEGIN_NAMESPACE
 
-
-
-
-static const QMap<QString, QString> ColorsWithNames{
-                                                        { "#ffa503", "Orange"},
-                                                        { "#ff1c49", "Red"},
-                                                        { "#9023fc", "Purple"},
-                                                        { "#3468ff", "Navy-blue"},
-                                                        { "#00b5ff", "Azure"},
-                                                        { "#58df0a", "Grass-green"},
-                                                        { "#fef144", "Yellow"} ,
-                                                        { "#cccccc", "Gray" }
-                                                   };
-
 static FileEventProcessor *eventProcessor = new FileEventProcessor();
 
 FileEventProcessor::FileEventProcessor()
@@ -131,25 +117,23 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent>& event)
     {
         QAction* action{ event->menu()->actionAt("Add color tags") };
 
-        if(QWidgetAction* widgetAction = dynamic_cast<QWidgetAction*>(action)){
-
-            if(DTagActionWidget* tagWidget = dynamic_cast<DTagActionWidget*>(widgetAction->defaultWidget())){
+        if (QWidgetAction* widgetAction = dynamic_cast<QWidgetAction*>(action)) {
+            if (DTagActionWidget* tagWidget = dynamic_cast<DTagActionWidget*>(widgetAction->defaultWidget())) {
                 QString colorName{ tagWidget->selectedColor().name() };
 
-                if(!colorName.isEmpty()){
-                    QSharedPointer<DFMMakeFilesTagThroughColorEvent> tagEvent{
-                                                                            dMakeEventPointer<DFMMakeFilesTagThroughColorEvent>(event->sender(),
-                                                                                              tagWidget->selectedColor().name(), event->selectedUrls())
-                                                                              };
-                    bool result{ AppController::instance()->actionMakeFilesTagsThroughColor(tagEvent) };
+                const QString &tag_name = TagManager::instance()->getTagNameThroughColor(colorName);
 
-                    if(result){
-                        QPair<QList<QString>, QList<QString>> increasedAndDecreased{ QList<QString>{ ColorsWithNames[colorName] }, {} };
-                        emit fileSignalManager->requestAddOrDecreaseBookmarkOfTag(increasedAndDecreased);
-                    }
+                if (tag_name.isEmpty())
+                    return false;
 
-                    break;
+                for (const DUrl &url : event->selectedUrls()) {
+                    auto tagEvent{ dMakeEventPointer<DFMMakeFileTagsEvent>(event->sender(), url, QStringList{tag_name}) };
+
+                    if (!AppController::instance()->actionMakeFileTags(tagEvent))
+                        return false;
                 }
+
+                break;
             }
         }
 

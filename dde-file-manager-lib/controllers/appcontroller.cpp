@@ -725,17 +725,6 @@ QList<QString> AppController::actionGetTagsThroughFiles(const QSharedPointer<DFM
     return tags;
 }
 
-bool AppController::actionMakeFilesTagsThroughColor(const QSharedPointer<DFMMakeFilesTagThroughColorEvent>& event)
-{
-    if( static_cast<bool>(event) && (!event->m_files.isEmpty()) && (!event->m_color.isEmpty()) ){
-        bool value{ false };
-        value = TagManager::instance()->makeFilesTagThroughColor(event->m_color, event->m_files);
-
-        return value;
-    }
-    return false;
-}
-
 bool AppController::actionMakeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event)
 {   
     bool value{ false };

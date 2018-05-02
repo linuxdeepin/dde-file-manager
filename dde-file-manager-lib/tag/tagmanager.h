@@ -90,7 +90,7 @@ public:
 
     QList<QString> getFilesThroughTag(const QString& tagName);
 
-
+    QString getTagNameThroughColor(const QString &colorName) const;
 
     ///###:modify
     bool makeFilesTags(const QList<QString>& tags, const QList<DUrl>& files);
