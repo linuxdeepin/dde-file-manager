@@ -77,21 +77,12 @@ void ViewStatesManager::loadDefaultViewStates(const QJsonObject& viewStateObj)
 
 void ViewStatesManager::saveViewState(const DUrl &url, const ViewState &viewState)
 {
-    if(m_viewStatesMap.contains(url)){
-        m_viewStatesMap.take(url);
-        m_viewStatesMap.insert(url, viewState);
-    } else{
-        m_viewStatesMap.insert(url, viewState);
-    }
+    m_viewStatesMap[url] = viewState;
 
     //store viewState to obj
     QJsonObject stateObj = viewStateToObject(viewState);
 
-    if(m_viewStatesJsonObject.contains(url.toString())){
-        m_viewStatesJsonObject[url.toString()] = stateObj;
-    } else{
-        m_viewStatesJsonObject.insert(url.toString(), stateObj);
-    }
+    m_viewStatesJsonObject[url.toString()] = stateObj;
 
     //write datas
     bool ret = FileUtils::writeJsonObjectFile(getViewStateFilePath(), m_viewStatesJsonObject);
@@ -126,11 +117,11 @@ ViewState ViewStatesManager::objectToViewState(const QJsonObject &obj)
 {
     ViewState viewState;
     QMetaEnum vieModeEnum = QMetaEnum::fromType<DFileView::ViewMode>();
-    QMetaEnum sortEnum = QMetaEnum::fromType<Qt::SortOrder>();
+//    QMetaEnum sortEnum = QMetaEnum::fromType<Qt::SortOrder>();
 
     viewState.iconSize = obj["iconSize"].toInt();
-    viewState.sortRole = obj["sortRole"].toInt();
-    viewState.sortOrder = (Qt::SortOrder)sortEnum.keyToValue(obj["sortOrder"].toString().toLocal8Bit().constData());
+//    viewState.sortRole = obj["sortRole"].toInt();
+//    viewState.sortOrder = (Qt::SortOrder)sortEnum.keyToValue(obj["sortOrder"].toString().toLocal8Bit().constData());
     viewState.viewMode = (DFileView::ViewMode)vieModeEnum.keysToValue(obj["viewMode"].toString().toLocal8Bit().constData());
     return viewState;
 }
@@ -138,13 +129,13 @@ ViewState ViewStatesManager::objectToViewState(const QJsonObject &obj)
 QJsonObject ViewStatesManager::viewStateToObject(const ViewState &viewState)
 {
     QMetaEnum vieModeEnum = QMetaEnum::fromType<DFileView::ViewMode>();
-    QMetaEnum sortEnum = QMetaEnum::fromType<Qt::SortOrder>();
+//    QMetaEnum sortEnum = QMetaEnum::fromType<Qt::SortOrder>();
     QJsonObject obj;
 
     obj.insert("iconSize", viewState.iconSize);
-    obj.insert("sortRole", viewState.sortRole);
+//    obj.insert("sortRole", viewState.sortRole);
     obj.insert("viewMode", vieModeEnum.valueToKey(viewState.viewMode));
-    obj.insert("sortOrder", sortEnum.valueToKey(viewState.sortOrder));
+//    obj.insert("sortOrder", sortEnum.valueToKey(viewState.sortOrder));
 
     return obj;
 }
@@ -158,8 +149,8 @@ QString ViewStatesManager::getDefaultViewStateConfigFile()
 
 bool ViewStatesManager::isValidViewStateObj(const QJsonObject &obj)
 {
-    return (obj.contains("iconSize") && obj.contains("viewMode") &&
-            obj.contains("sortRole") && obj.contains("sortOrder"));
+    return (obj.contains("iconSize") && obj.contains("viewMode")/* &&
+            obj.contains("sortRole") && obj.contains("sortOrder")*/);
 }
 
 bool ViewStatesManager::isValidViewState(const ViewState &state)
@@ -175,16 +166,16 @@ bool ViewStatesManager::isValidViewState(const ViewState &state)
         return false;
 
     //sortOrder
-    QMetaEnum sortOrderMeta = QMetaEnum::fromType<Qt::SortOrder>();
+//    QMetaEnum sortOrderMeta = QMetaEnum::fromType<Qt::SortOrder>();
 
-    if (QString(sortOrderMeta.valueToKey(state.sortOrder)).isEmpty())
-        return false;
+//    if (QString(sortOrderMeta.valueToKey(state.sortOrder)).isEmpty())
+//        return false;
 
     //sortRole
-    QMetaEnum rolesMeta = QMetaEnum::fromType<DFileSystemModel::Roles>();
+//    QMetaEnum rolesMeta = QMetaEnum::fromType<DFileSystemModel::Roles>();
 
-    if (QString(rolesMeta.valueToKey((DFileSystemModel::Roles)state.sortRole)).isEmpty())
-        return false;
+//    if (QString(rolesMeta.valueToKey((DFileSystemModel::Roles)state.sortRole)).isEmpty())
+//        return false;
 
     return true;
 }

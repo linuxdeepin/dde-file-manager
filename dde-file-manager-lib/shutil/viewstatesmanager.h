@@ -33,8 +33,8 @@
 
 struct ViewState{
     int iconSize = -1;
-    int sortRole = -1;
-    Qt::SortOrder sortOrder;
+//    int sortRole = -1;
+//    Qt::SortOrder sortOrder;
     DFileView::ViewMode viewMode;
     bool isValid() const;
 };
