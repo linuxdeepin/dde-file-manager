@@ -137,6 +137,7 @@ public:
 
 signals:
     void fileOpened(const DUrl &fileUrl) const;
+    void fileCopied(const DUrl &source, const DUrl &target) const;
 
 private slots:
     void laterRequestSelectFiles(const DFMUrlListBaseEvent &event) const;
