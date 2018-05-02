@@ -197,12 +197,11 @@ void RequestEP::processEPChanged(const DUrl &url, DFileInfoPrivate *info, const 
         oldEP = info->extensionPropertys;
         info->extensionPropertys = ep;
         info->epInitialized = true;
+        info->requestEP = nullptr;
     } else {
         dirtyFileInfos.remove(info);
         info = nullptr;
     }
-
-    info->requestEP = nullptr;
 
     if (!ep.isEmpty() && oldEP != ep) {
         DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url);
