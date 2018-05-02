@@ -16,9 +16,10 @@ QObject *DFMAbstractEventHandler::object() const
     return Q_NULLPTR;
 }
 
-DFMAbstractEventHandler::DFMAbstractEventHandler()
+DFMAbstractEventHandler::DFMAbstractEventHandler(bool autoInstallHandler)
 {
-    DFMEventDispatcher::instance()->installEventHandler(this);
+    if (autoInstallHandler)
+        DFMEventDispatcher::instance()->installEventHandler(this);
 }
 
 DFMAbstractEventHandler::~DFMAbstractEventHandler()

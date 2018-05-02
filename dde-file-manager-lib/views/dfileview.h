@@ -242,9 +242,6 @@ private:
     QScopedPointer<DFileViewPrivate> d_ptr;
 
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DFileView)
-
-public:
-    static QPoint ClickedPosition;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(DFileView::ViewModes)

@@ -130,6 +130,7 @@ public slots:
     bool actionMakeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event);
     bool actionRemoveTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent>& event);
     void actionChangeTagColor(const QSharedPointer<DFMChangeTagColorEvent>& event);
+    void showTagEdit(const QPoint &globalPos, const DUrlList &fileList);
 
 #ifdef SW_LABEL
     void actionSetLabel(const DFMEvent& event);

@@ -21,6 +21,8 @@ DTagEdit::DTagEdit(QWidget * const parent)
     this->initializeConnect();
 
     this->installEventFilter(this);
+
+    setWindowFlags(Qt::Tool);
 }
 
 void DTagEdit::setFocusOutSelfClosing(bool value)noexcept
@@ -97,7 +99,6 @@ void DTagEdit::initializeParameters()
     m_crumbEdit->setFixedSize(140, 40);
     m_crumbEdit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_crumbEdit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_crumbEdit->setStyleSheet(QString{"border: 1px solid rgba(0, 0, 0, 0.1);"});
     m_crumbEdit->setCrumbReadOnly(true);
     m_crumbEdit->setCrumbRadius(2);
 
