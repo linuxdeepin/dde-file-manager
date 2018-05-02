@@ -115,6 +115,7 @@ public slots:
     void showAddUserShareFailedDialog(const QString& sharePath);
     void showNoPermissionDialog(const DFMUrlListBaseEvent &event);
     void showNtfsWarningDialog(const QDiskInfo& diskInfo);
+    void showErrorDialog(const QString &title, const QString &message);
     void removePropertyDialog(const DUrl& url);
     void closeAllPropertyDialog();
     void updateCloseIndicator();

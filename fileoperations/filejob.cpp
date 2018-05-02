@@ -1241,6 +1241,8 @@ bool FileJob::copyFileByGio(const QString &srcFile, const QString &tarDir, bool 
                         qDebug() << error->message << g_file_error_from_errno(error->domain);
                         if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_PERMISSION_DENIED)){
                             m_noPermissonUrls << DUrl::fromLocalFile(srcFile);
+                        } else {
+                            emit fileSignalManager->requestShowErrorDialog(QString::fromUtf8(error->message), QString(" "));
                         }
                         g_error_free (error);
                         cancelled();

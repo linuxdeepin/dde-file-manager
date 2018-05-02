@@ -219,6 +219,8 @@ signals:
     /*show add user share failed dialog for share name same as system uername*/
     void requestShowAddUserShareFailedDialog(const QString& sharePath);
 
+    void requestShowErrorDialog(const QString &title, const QString &message);
+
     /*default view mode changed*/
     void defaultViewModeChanged(const int& viewMode);
 

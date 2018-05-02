@@ -180,6 +180,7 @@ void DialogManager::initConnect()
             this, &DialogManager::showAddUserShareFailedDialog);
 
     connect(fileSignalManager, &FileSignalManager::requestShowFilePreviewDialog, this, &DialogManager::showFilePreviewDialog);
+    connect(fileSignalManager, &FileSignalManager::requestShowErrorDialog, this, &DialogManager::showErrorDialog);
     connect(gvfsMountManager, &GvfsMountManager::mount_added, this, &DialogManager::showNtfsWarningDialog);
 
 #ifdef SW_LABEL
@@ -988,7 +989,16 @@ void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
                 }
             }
         }
-    }, this, diskInfo);
+                     }, this, diskInfo);
+}
+
+void DialogManager::showErrorDialog(const QString &title, const QString &message)
+{
+    DDialog d(title, message);
+
+    d.setIcon(QIcon::fromTheme("dialog-error"));
+    d.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
+    d.exec();
 }
 
 void DialogManager::removePropertyDialog(const DUrl &url)
