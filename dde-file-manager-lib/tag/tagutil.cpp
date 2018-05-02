@@ -47,7 +47,7 @@ const QMap<QString, QString> ActualAndFakerName{
     {"Purple", QObject::tr("Purple")},
     {"Navy-blue", QObject::tr("Navy-blue")},
     {"Azure", QObject::tr("Azure")},
-    {"Grass-green", QObject::tr("Grass green")},
+    {"Grass-green", QObject::tr("Green")},
     {"Yellow", QObject::tr("Yellow")},
     {"Gray", QObject::tr("Gray")}
 };
