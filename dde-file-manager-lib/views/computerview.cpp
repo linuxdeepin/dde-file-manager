@@ -687,8 +687,8 @@ void ComputerView::saveViewState()
 {
     m_currentIconSizeIndex = m_statusBar->scalingSlider()->value();
     ViewState state;
-    state.sortOrder = Qt::AscendingOrder;
-    state.sortRole = DFileSystemModel::FileDisplayNameRole;
+//    state.sortOrder = Qt::AscendingOrder;
+//    state.sortRole = DFileSystemModel::FileDisplayNameRole;
     state.viewMode = DFileView::IconMode;
     state.iconSize = m_currentIconSizeIndex;
 
