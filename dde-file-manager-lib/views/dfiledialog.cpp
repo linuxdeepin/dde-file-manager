@@ -908,9 +908,9 @@ void DFileDialog::onAcceptButtonClicked()
                     }
 
                     dialog.setIcon(QIcon::fromTheme("dialog-warning"));
-                    dialog.setTitle(tr("%1 already exists, do you want to replace?").arg(file_name));
+                    dialog.setTitle(tr("%1 already exists, do you want to replace it?").arg(file_name));
                     dialog.addButton(tr("Cancel"), true);
-                    dialog.addButton(tr("Overwrite"), false, DDialog::ButtonWarning);
+                    dialog.addButton(tr("Replace"), false, DDialog::ButtonWarning);
 
                     if (dialog.exec() != DDialog::Accepted) {
                         return;

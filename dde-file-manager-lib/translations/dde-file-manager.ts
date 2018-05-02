@@ -97,7 +97,7 @@
     <name>DFileDialog</name>
     <message>
         <location filename="../views/dfiledialog.cpp" line="911"/>
-        <source>%1 already exists, do you want to replace?</source>
+        <source>%1 already exists, do you want to replace it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -107,7 +107,7 @@
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="913"/>
-        <source>Overwrite</source>
+        <source>Replace</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -252,7 +252,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="791"/>
         <location filename="../dialogs/dialogmanager.cpp" line="834"/>
         <location filename="../dialogs/dialogmanager.cpp" line="845"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1175"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1181"/>
         <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
@@ -310,7 +310,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="667"/>
         <location filename="../dialogs/dialogmanager.cpp" line="873"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1000"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1116"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1122"/>
         <source>Confirm</source>
         <translation type="unfinished"></translation>
     </message>
@@ -436,7 +436,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1173"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1179"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1651,12 +1651,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="640"/>
+        <location filename="../interfaces/dfileservices.cpp" line="663"/>
         <source>Shortcut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="505"/>
+        <location filename="../interfaces/dfileservices.cpp" line="522"/>
         <source>Create symlink</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1868,7 +1868,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1139"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1145"/>
         <source>Rename %1 Files</source>
         <translation type="unfinished"></translation>
     </message>
