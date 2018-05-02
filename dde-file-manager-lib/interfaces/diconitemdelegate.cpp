@@ -373,6 +373,15 @@ public:
     QRectF iconGeometry() const
     {
         const QRect &content_rect = contentsRect();
+
+        if (iconPixmap.isNull()) {
+            QRectF rect(content_rect);
+
+            rect.setHeight(iconHeight);
+
+            return rect;
+        }
+
         QRectF icon_rect(QPointF((content_rect.width() - iconPixmap.width() / iconPixmap.devicePixelRatio()) / 2.0,
                                  (iconHeight - iconPixmap.height() / iconPixmap.devicePixelRatio()) / 2.0 + content_rect.top()),
                          iconPixmap.size() / iconPixmap.devicePixelRatio());

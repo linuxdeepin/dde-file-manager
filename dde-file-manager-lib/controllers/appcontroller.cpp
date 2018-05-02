@@ -48,6 +48,7 @@
 #include "shutil/fileutils.h"
 #include "views/windowmanager.h"
 #include "views/dfilemanagerwindow.h"
+#include "views/dtagedit.h"
 #include "dbusinterface/commandmanager_interface.h"
 
 #include "gvfs/networkmanager.h"
@@ -769,6 +770,26 @@ void AppController::actionChangeTagColor(const QSharedPointer<DFMChangeTagColorE
 
     item = nullptr;
     DBookmarkItem::ClickedItem.store(nullptr, std::memory_order_release);
+}
+
+void AppController::showTagEdit(const QPoint &globalPos, const DUrlList &fileList)
+{
+    DTagEdit *tagEdit = new DTagEdit();
+
+    tagEdit->setBaseSize(160, 98);
+    tagEdit->setFilesForTagging(fileList);
+    tagEdit->setAttribute(Qt::WA_DeleteOnClose);
+
+    ///###: Here, Used the position which was stored in DFileView.
+    tagEdit->setFocusOutSelfClosing(true);
+
+    QList<QString> sameTagsInDiffFiles{ DFileService::instance()->getTagsThroughFiles(nullptr, fileList) };
+
+    for(const QString& tag : sameTagsInDiffFiles){
+        tagEdit->appendCrumb(tag);
+    }
+
+    tagEdit->show(globalPos.x(), globalPos.y());
 }
 
 #ifdef SW_LABEL

@@ -22,7 +22,6 @@
 #include "tag/tagmanager.h"
 #include "interfaces/dfilemenu.h"
 #include "views/dtagactionwidget.h"
-#include "views/dtagedit.h"
 #include "views/dfileview.h"
 #include "shutil/danythingmonitor.h"
 #include "shutil/dsqlitehandle.h"
@@ -55,7 +54,6 @@ static const QMap<QString, QString> ColorsWithNames{
                                                    };
 
 static FileEventProcessor *eventProcessor = new FileEventProcessor();
-static std::unique_ptr<DTagEdit> tagEdit{ nullptr };
 
 FileEventProcessor::FileEventProcessor()
 {
@@ -125,25 +123,6 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent>& event)
 
                 AppController::instance()->actionChangeTagColor(tagEvent);
             }
-        }
-
-        break;
-    }
-    case DFMGlobal::TagInfo:
-    {
-        tagEdit = std::unique_ptr<DTagEdit>{ new DTagEdit };
-        tagEdit->setBaseSize(160, 98);
-        tagEdit->setFilesForTagging(event->fileUrlList());
-
-        ///###: Here, Used the position which was stored in DFileView.
-        tagEdit->setFocusOutSelfClosing(true);
-
-        QSharedPointer<DFMGetTagsThroughFilesEvent> getTagEvent{ new DFMGetTagsThroughFilesEvent{ nullptr, event->selectedUrls() } };
-        QList<QString> sameTagsInDiffFiles{ AppController::instance()->actionGetTagsThroughFiles(getTagEvent) };
-        tagEdit->show(DFileView::ClickedPosition.x(), DFileView::ClickedPosition.y());
-
-        for(const QString& tag : sameTagsInDiffFiles){
-            tagEdit->appendCrumb(tag);
         }
 
         break;
