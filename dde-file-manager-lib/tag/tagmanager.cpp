@@ -101,6 +101,11 @@ QList<QString> TagManager::getFilesThroughTag(const QString& tagName)
     return file_list;
 }
 
+QString TagManager::getTagNameThroughColor(const QString &colorName) const
+{
+    return Tag::ColorsWithNames.value(colorName);
+}
+
 bool TagManager::makeFilesTags(const QList<QString>& tags, const QList<DUrl>& files)
 {
     bool result{ true };
