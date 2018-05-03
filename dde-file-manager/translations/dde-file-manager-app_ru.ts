@@ -2,12 +2,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../main.cpp" line="113"/>
+        <location filename="../main.cpp" line="142"/>
         <source>Deepin File Manager</source>
         <translation>Файловый Менеджер Deepin</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="118"/>
+        <location filename="../main.cpp" line="147"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
         <translation>Файловый Менеджер представляет собой инструмент для самостоятельного управления файлами, разработанный Deepin Technology, с функциями поиска, копирования, удаления, компрессии / декомпрессии, свойств файла и другими функциями управления файлами.</translation>
     </message>

@@ -2,33 +2,32 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1825"/>
+        <location filename="../view/canvasgridview.cpp" line="2235"/>
         <source>Icon size</source>
         <translation>Tamaño da icona</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1831"/>
+        <location filename="../view/canvasgridview.cpp" line="2241"/>
         <source>Auto arrange</source>
         <translation>Disposición automática</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1839"/>
-        <location filename="../view/canvasgridview.cpp" line="1952"/>
+        <location filename="../view/canvasgridview.cpp" line="2371"/>
         <source>Properties</source>
         <translation>Propiedades</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1870"/>
+        <location filename="../view/canvasgridview.cpp" line="2280"/>
         <source>Display Settings</source>
         <translation>Axustes da pantalla</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1875"/>
+        <location filename="../view/canvasgridview.cpp" line="2287"/>
         <source>Corner Settings</source>
         <translation>Axustes das esquinas</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1880"/>
+        <location filename="../view/canvasgridview.cpp" line="2293"/>
         <source>Set Wallpaper</source>
         <translation>Definir o fondo de pantalla</translation>
     </message>
@@ -36,27 +35,27 @@
 <context>
     <name>DesktopItemDelegate</name>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="12"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="38"/>
         <source>Tiny</source>
         <translation>Moi pequeno</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="13"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="39"/>
         <source>Small</source>
         <translation>Pequeno</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="14"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="40"/>
         <source>Medium</source>
         <translation>Normal</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="15"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="41"/>
         <source>Large</source>
         <translation>Grande</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="16"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="42"/>
         <source>Super large</source>
         <translation>Moi Grande</translation>
     </message>
@@ -64,12 +63,12 @@
 <context>
     <name>WallpaperItem</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="90"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="124"/>
         <source>Only desktop</source>
         <translation>Só no escritorio</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="93"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="127"/>
         <source>Only lock screen</source>
         <translation>Só na pantalla de bloqueo</translation>
     </message>
@@ -77,37 +76,37 @@
 <context>
     <name>ZoneMainWindow</name>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Fast Screen Off</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Control Center</source>
         <translation>Centro de Control</translation>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>All Windows</source>
         <translation>Tódalas xanelas</translation>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Launcher</source>
         <translation>Lanzador</translation>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Desktop</source>
         <translation>Escritorio</translation>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>None</source>
         <translation>Ningún</translation>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="57"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="59"/>
         <source>Close Window</source>
         <translation>Pechar xanela</translation>
     </message>

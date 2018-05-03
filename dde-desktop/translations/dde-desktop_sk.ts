@@ -2,33 +2,32 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1825"/>
+        <location filename="../view/canvasgridview.cpp" line="2235"/>
         <source>Icon size</source>
         <translation>Veľkosť ikony</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1831"/>
+        <location filename="../view/canvasgridview.cpp" line="2241"/>
         <source>Auto arrange</source>
         <translation>Automaticky usporiadať</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1839"/>
-        <location filename="../view/canvasgridview.cpp" line="1952"/>
+        <location filename="../view/canvasgridview.cpp" line="2371"/>
         <source>Properties</source>
         <translation>Vlastnosti</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1870"/>
+        <location filename="../view/canvasgridview.cpp" line="2280"/>
         <source>Display Settings</source>
         <translation>Nastavenie zobrazenia</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1875"/>
+        <location filename="../view/canvasgridview.cpp" line="2287"/>
         <source>Corner Settings</source>
         <translation>Nastavenia rohov</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1880"/>
+        <location filename="../view/canvasgridview.cpp" line="2293"/>
         <source>Set Wallpaper</source>
         <translation>Nastaviť pozadie</translation>
     </message>
@@ -36,27 +35,27 @@
 <context>
     <name>DesktopItemDelegate</name>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="12"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="38"/>
         <source>Tiny</source>
         <translation>Maličké</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="13"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="39"/>
         <source>Small</source>
         <translation>Malé</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="14"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="40"/>
         <source>Medium</source>
         <translation>Stredné</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="15"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="41"/>
         <source>Large</source>
         <translation>Veľké</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="16"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="42"/>
         <source>Super large</source>
         <translation>Veľmi veľké</translation>
     </message>
@@ -64,12 +63,12 @@
 <context>
     <name>WallpaperItem</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="90"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="124"/>
         <source>Only desktop</source>
         <translation>Iba pracovná plocha</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="93"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="127"/>
         <source>Only lock screen</source>
         <translation>Iba obrazovka zamknutia</translation>
     </message>
@@ -77,37 +76,37 @@
 <context>
     <name>ZoneMainWindow</name>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Fast Screen Off</source>
         <translation>Rýchle vypnutie obrazovky</translation>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Control Center</source>
         <translation>Ovládacie centrum</translation>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>All Windows</source>
         <translation>Všetky okná</translation>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Launcher</source>
         <translation>Spúšťač</translation>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Desktop</source>
         <translation>Plocha</translation>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>None</source>
         <translation>Nič</translation>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="57"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="59"/>
         <source>Close Window</source>
         <translation>Zatvoriť okno</translation>
     </message>

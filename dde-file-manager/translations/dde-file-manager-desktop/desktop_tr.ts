@@ -9,7 +9,7 @@
         <message>
             <location filename="Desktop Entry]Name" line="0"/>
             <source>Deepin File Manager</source>
-            <translation>Deepin Dosya Yönetici</translation>
+            <translation>Deepin Dosya Yöneticisi</translation>
         </message>
         <message>
             <location filename="Desktop Action new-window]Name" line="0"/>

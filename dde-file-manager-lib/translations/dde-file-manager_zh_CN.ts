@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -96,10 +94,6 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <source>%1 already exists, do you want to replace?</source>
-        <translation type="vanished">“%1”已经存在，您是否要替换？</translation>
-    </message>
-    <message>
         <location filename="../views/dfiledialog.cpp" line="911"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>“%1”已经存在，您是否要替换？</translation>
@@ -113,10 +107,6 @@
         <location filename="../views/dfiledialog.cpp" line="913"/>
         <source>Replace</source>
         <translation>替换</translation>
-    </message>
-    <message>
-        <source>Overwrite</source>
-        <translation type="vanished">替换</translation>
     </message>
 </context>
 <context>
@@ -312,10 +302,6 @@
         <translation>显示</translation>
     </message>
     <message>
-        <source>Do you sure to run %1?</source>
-        <translation type="vanished">您确定要运行%1?</translation>
-    </message>
-    <message>
         <location filename="../dialogs/dialogmanager.cpp" line="403"/>
         <source>It is an executable file.</source>
         <translation>它是一个可执行文件.</translation>
@@ -468,7 +454,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="402"/>
         <source>Do you want to run %1?</source>
-        <translation>您是要运行“%1”？</translation>
+        <translation>您是否要运行“%1”？</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="946"/>
@@ -504,17 +490,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="979"/>
         <source>Reboot</source>
         <translation>重启</translation>
-    </message>
-</context>
-<context>
-    <name>FileController</name>
-    <message>
-        <source>New Folder</source>
-        <translation type="vanished">新建文件夹</translation>
-    </message>
-    <message>
-        <source>New File</source>
-        <translation type="vanished">新建文本</translation>
     </message>
 </context>
 <context>
@@ -593,7 +568,7 @@
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1291"/>
         <source>Confirm</source>
-        <translation>确定</translation>
+        <translation>确认</translation>
     </message>
 </context>
 <context>
@@ -901,29 +876,6 @@
         <location filename="../dialogs/openwithdialog.cpp" line="237"/>
         <source>Other Applications</source>
         <translation>其它应用</translation>
-    </message>
-</context>
-<context>
-    <name>OpenWithOtherDialog</name>
-    <message>
-        <source>All Programs</source>
-        <translation type="vanished">所有程序</translation>
-    </message>
-    <message>
-        <source>Search</source>
-        <translation type="vanished">搜索</translation>
-    </message>
-    <message>
-        <source>No results</source>
-        <translation type="vanished">无搜索结果</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">取消</translation>
-    </message>
-    <message>
-        <source>Choose</source>
-        <translation type="vanished">选择</translation>
     </message>
 </context>
 <context>
@@ -1322,10 +1274,6 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="771"/>
         <source>Tag information</source>
         <translation>标记信息</translation>
-    </message>
-    <message>
-        <source>Delete Tags</source>
-        <translation type="vanished">删除标记</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="708"/>
@@ -1992,10 +1940,6 @@
         <translation>绿色</translation>
     </message>
     <message>
-        <source>Grass green</source>
-        <translation type="vanished">绿色</translation>
-    </message>
-    <message>
         <location filename="../tag/tagutil.cpp" line="51"/>
         <source>Yellow</source>
         <translation>黄色</translation>
@@ -2008,7 +1952,7 @@
     <message>
         <location filename="../views/dtagedit.cpp" line="91"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
-        <translation>输入标记信息，如“工作”、“家人”等，多个tag信息之间用逗号分隔</translation>
+        <translation>输入标记信息，如“工作”、“家人”等。多个标记信息之间用逗号分隔。</translation>
     </message>
 </context>
 <context>
