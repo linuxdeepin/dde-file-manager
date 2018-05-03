@@ -44,6 +44,12 @@ public Q_SLOTS: // METHODS
     }
 
 Q_SIGNALS: // SIGNALS
+    void addNewTags(const QDBusVariant &new_tags);
+    void changeTagColor(const QVariantMap &old_and_new_color);
+    void changeTagName(const QVariantMap &old_and_new_name);
+    void deleteTags(const QDBusVariant &be_deleted_tags);
+    void filesWereTagged(const QVariantMap &tagged_files);
+    void untagFiles(const QVariantMap &file_be_removed_tags);
 };
 
 namespace com {

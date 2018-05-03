@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 {
 
     ///###: why?
-    ///###: when dbus invoke a daemon the variants in the environment of daemon are empty.
+    ///###: when dbus invoke a daemon the variants in the environment of daemon(s) are empty.
     ///###: So we need to set them.
     qputenv("LANG", "en_US.UTF8");
     qputenv("LANGUAGE", "en_US");

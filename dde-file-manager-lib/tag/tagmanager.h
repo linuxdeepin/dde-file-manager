@@ -113,21 +113,23 @@ public:
     bool deleteTags(const QList<QString>& tags);
     bool deleteFiles(const QList<DUrl>& urlList);
 
-
     static TagManager* instance()
     {
         static TagManager* tagManager{ new TagManager };
         return tagManager;
     }
 
-
 signals:
-    void taggedFileAdded(const QMap<QString, QList<DUrl>>& tag_and_url);
-    void taggedFileDeleted(const QList<DUrl>& url);
-    void taggedFileMoved(const QList<QPair<DUrl, DUrl>>& url);
-    void tagAdded(const QList<QString>& tagNames);
-    void tagDeleted(const QList<QString>& tagNames);
-    void tagRenamed(const QPair<QString, QString>& oldAndNew);
+    void addNewTag(const QList<QString>& new_tags);
+    void changeTagColor(const QMap<QString, QString>& old_and_new_color);
+    void changeTagName(const QMap<QString, QString>& old_and_new_name);
+    void deleteTag(const QList<QString>& be_deleted_tags);
+    void filesWereTagged(const QMap<QString, QList<QString>>& files_were_tagged);
+    void untagFiles(const QMap<QString, QList<QString>>& tag_be_removed_files);
+
+
+private:
+    void init_connect()noexcept;
 };
 
 #endif // TAGMANAGER_H
