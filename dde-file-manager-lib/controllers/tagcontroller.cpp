@@ -325,7 +325,10 @@ DAbstractFileWatcher* TagController::createFileWatcher(const QSharedPointer<DFMC
 
 bool TagController::renameFile(const QSharedPointer<DFMRenameEvent> &event) const
 {
-    return TagManager::instance()->changeTagName(qMakePair(event->fromUrl().fileName(), event->toUrl().fileName()));
+    const QString &old_name = event->fromUrl().fileName();
+    const QString &new_name = event->toUrl().fileName();;
+
+    return TagManager::instance()->changeTagName(qMakePair(old_name, new_name));
 }
 
 bool TagController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
