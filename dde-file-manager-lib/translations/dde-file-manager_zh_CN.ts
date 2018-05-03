@@ -4,7 +4,7 @@
 <context>
     <name>AppController</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="343"/>
+        <location filename="../controllers/appcontroller.cpp" line="344"/>
         <source>New Folder</source>
         <translation>新建文件夹</translation>
     </message>
@@ -162,9 +162,17 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2329"/>
+        <location filename="../views/dfileview.cpp" line="2327"/>
         <source>(Reverse)</source>
         <translation>（反序）</translation>
+    </message>
+</context>
+<context>
+    <name>DFileViewHelper</name>
+    <message>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="515"/>
+        <source>Add tag &quot;%1&quot;</source>
+        <translation>添加标记“%1”</translation>
     </message>
 </context>
 <context>
@@ -1316,9 +1324,8 @@
         <translation>标记信息</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="773"/>
         <source>Delete Tags</source>
-        <translation>删除标记</translation>
+        <translation type="vanished">删除标记</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="708"/>
@@ -1338,6 +1345,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="725"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="726"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="773"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
@@ -1761,22 +1769,22 @@
         <translation>原始路径</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="376"/>
+        <location filename="../controllers/appcontroller.cpp" line="377"/>
         <source>Document</source>
         <translation>新建word文档</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="385"/>
+        <location filename="../controllers/appcontroller.cpp" line="386"/>
         <source>Spreadsheet</source>
         <translation>新建Excel文档</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="394"/>
+        <location filename="../controllers/appcontroller.cpp" line="395"/>
         <source>Presentation</source>
         <translation>新建PowerPoint文档</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="403"/>
+        <location filename="../controllers/appcontroller.cpp" line="404"/>
         <source>Text</source>
         <translation>新建文本</translation>
     </message>
@@ -1998,7 +2006,7 @@
         <translation>灰色</translation>
     </message>
     <message>
-        <location filename="../views/dtagedit.cpp" line="89"/>
+        <location filename="../views/dtagedit.cpp" line="91"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
         <translation>输入标记信息，如“工作”、“家人”等，多个tag信息之间用逗号分隔</translation>
     </message>
