@@ -606,10 +606,7 @@ public:
 class DFMGetTagsThroughFilesEvent final : public DFMUrlListBaseEvent
 {
 public:
-public:
     explicit DFMGetTagsThroughFilesEvent(const QObject* sender, const QList<DUrl>& files);
-    DFMGetTagsThroughFilesEvent(const DFMGetTagsThroughFilesEvent& other)=delete;
-    DFMGetTagsThroughFilesEvent& operator=(const DFMGetTagsThroughFilesEvent& other)=delete;
 
     static QSharedPointer<DFMGetTagsThroughFilesEvent> fromJson(const QJsonObject& json);
 };
