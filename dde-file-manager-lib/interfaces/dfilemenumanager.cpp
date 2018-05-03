@@ -770,7 +770,7 @@ void DFileMenuData::initData()
     ///###: tag protocol.
     actionKeys[MenuAction::TagInfo] = QObject::tr("Tag information");
     actionKeys[MenuAction::TagFilesUseColor] = QString{"Add color tags"};
-    actionKeys[MenuAction::DeleteTags] = QObject::tr("Delete Tags");
+    actionKeys[MenuAction::DeleteTags] = QObject::tr("Delete");
     actionKeys[MenuAction::ChangeTagColor] = QString{"Change color of present tag"};
     actionKeys[MenuAction::RenameTag] = QObject::tr("Rename");
 }

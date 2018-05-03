@@ -14,7 +14,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2369"/>
+        <location filename="../view/canvasgridview.cpp" line="2371"/>
         <source>Properties</source>
         <translation type="unfinished"></translation>
     </message>

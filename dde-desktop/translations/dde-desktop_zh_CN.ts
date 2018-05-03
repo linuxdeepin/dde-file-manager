@@ -14,7 +14,7 @@
         <translation>自动排列</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2369"/>
+        <location filename="../view/canvasgridview.cpp" line="2371"/>
         <source>Properties</source>
         <translation>属性</translation>
     </message>

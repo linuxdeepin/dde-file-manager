@@ -4,7 +4,7 @@
 <context>
     <name>AppController</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="343"/>
+        <location filename="../controllers/appcontroller.cpp" line="344"/>
         <source>New Folder</source>
         <translation type="unfinished"></translation>
     </message>
@@ -154,8 +154,16 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2329"/>
+        <location filename="../views/dfileview.cpp" line="2327"/>
         <source>(Reverse)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DFileViewHelper</name>
+    <message>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="515"/>
+        <source>Add tag &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1270,11 +1278,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="773"/>
-        <source>Delete Tags</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="708"/>
         <source>Open in new window as admin</source>
         <translation type="unfinished"></translation>
@@ -1292,6 +1295,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="725"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="726"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="773"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1715,22 +1719,22 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="376"/>
+        <location filename="../controllers/appcontroller.cpp" line="377"/>
         <source>Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="385"/>
+        <location filename="../controllers/appcontroller.cpp" line="386"/>
         <source>Spreadsheet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="394"/>
+        <location filename="../controllers/appcontroller.cpp" line="395"/>
         <source>Presentation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="403"/>
+        <location filename="../controllers/appcontroller.cpp" line="404"/>
         <source>Text</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1948,7 +1952,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dtagedit.cpp" line="89"/>
+        <location filename="../views/dtagedit.cpp" line="91"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
         <translation type="unfinished"></translation>
     </message>
