@@ -803,6 +803,8 @@ void DFileMenuData::initActions()
             case MenuAction::ChangeTagColor:
             {
                 tagAction->setText("Change color of present tag");
+                tagWidget->setExclusive(true);
+                tagWidget->setToolTipVisible(false);
                 break;
             }
             default:

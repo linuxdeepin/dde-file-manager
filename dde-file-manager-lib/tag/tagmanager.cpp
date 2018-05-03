@@ -115,9 +115,16 @@ QList<QString> TagManager::getFilesThroughTag(const QString& tagName)
     return file_list;
 }
 
-QString TagManager::getTagNameThroughColor(const QString &colorName) const
+QString TagManager::getTagNameThroughColor(const QColor &color) const
 {
-    return Tag::ColorsWithNames.value(colorName);
+    QString tag_name = Tag::ColorsWithNames.value(color.name());
+
+    return Tag::ActualAndFakerName.value(tag_name);
+}
+
+QColor TagManager::getColorByColorName(const QString &colorName) const
+{
+    return QColor(Tag::NamesWithColors.value(colorName));
 }
 
 bool TagManager::makeFilesTags(const QList<QString>& tags, const QList<DUrl>& files)
@@ -128,7 +135,20 @@ bool TagManager::makeFilesTags(const QList<QString>& tags, const QList<DUrl>& fi
         QMap<QString, QVariant> tag_and_file{};
 
         for(const QString& tag_name : tags){
-            tag_and_file[tag_name] = QVariant{QList<QString>{ randomColor() }};
+            QString color_name;
+
+            // for default tags
+            for (const QString &color : Tag::ColorName) {
+                if (tag_name == Tag::ActualAndFakerName.value(color)) {
+                    color_name = color;
+                    break;
+                }
+            }
+
+            if (color_name.isEmpty())
+                color_name = randomColor();
+
+            tag_and_file[tag_name] = QVariant{QList<QString>{ color_name }};
         }
 
         QVariant insert_tags_var{ TagManagerDaemonController::instance()->disposeClientData(tag_and_file, Tag::ActionType::BeforeMakeFilesTags) };

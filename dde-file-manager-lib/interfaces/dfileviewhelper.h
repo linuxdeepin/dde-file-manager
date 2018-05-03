@@ -19,6 +19,7 @@
 QT_BEGIN_NAMESPACE
 class QAbstractItemView;
 class QStyleOptionViewItem;
+class QMenu;
 QT_END_NAMESPACE
 class DAbstractFileInfo;
 class DStyledItemDelegate;
@@ -55,6 +56,7 @@ public:
     virtual void select(const QList<DUrl> &list) = 0;
 
     virtual void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const;
+    virtual void handleMenu(QMenu *menu);
 
     void setIndexWidget(const QModelIndex &index, QWidget *widget);
     QWidget *indexWidget(const QModelIndex &index) const;

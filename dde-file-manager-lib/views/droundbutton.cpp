@@ -29,57 +29,76 @@ void DRoundButton::setRadius(const std::size_t& radius)noexcept
 void DRoundButton::setCheckable(bool checkable)noexcept
 {
     m_checkable = checkable;
-    if(checkable == true){
-        m_paintStatus = PaintStatus::checked;
+}
 
-    }else{
-        m_paintStatus = PaintStatus::normal;
+void DRoundButton::setChecked(bool checked)
+{
+    if (!m_checkable)
+        return;
+
+    if (checked) {
+        if (m_paintStatus == PaintStatus::checked)
+            return;
+
+        setPaintStatus(PaintStatus::checked);
+    } else if (m_paintStatus == PaintStatus::checked) {
+        setPaintStatus(PaintStatus::normal);
+    } else {
+        return;
     }
+
+    emit checkedChanged();
+}
+
+bool DRoundButton::isChecked() const
+{
+    return m_paintStatus == PaintStatus::checked;
+}
+
+bool DRoundButton::isHovered() const
+{
+    return testAttribute(Qt::WA_UnderMouse);
+}
+
+QColor DRoundButton::color() const
+{
+    return m_allStatusColors.first().second;
 }
 
 void DRoundButton::enterEvent(QEvent* event)
 {
-    m_paintStatus = PaintStatus::hover;
-    repaint();
+    if (!isChecked()) {
+        setPaintStatus(PaintStatus::hover);
+    }
+
     event->accept();
 
-    if(m_checkable == true){
-        m_paintStatus = PaintStatus::checked;
-
-    }else{
-        m_paintStatus = PaintStatus::normal;
-    }
+    emit enter();
 }
 
 void DRoundButton::leaveEvent(QEvent* event)
 {
-    if(m_checkable == true){
-        m_paintStatus = PaintStatus::checked;
-
-    }else{
-        m_paintStatus = PaintStatus::normal;
+    if (!isChecked()) {
+        setPaintStatus(PaintStatus::normal);
     }
 
-    repaint();
     event->accept();
+
+    emit leave();
 }
 
 void DRoundButton::mousePressEvent(QMouseEvent* event)
 {
-    m_paintStatus = PaintStatus::pressed;
-    repaint();
+    if (!isChecked()) {
+        setPaintStatus(PaintStatus::pressed);
+    }
 
     QFrame::mousePressEvent(event);
 }
 
 void DRoundButton::mouseReleaseEvent(QMouseEvent* event)
 {
-    if(m_checkable == true){
-        m_paintStatus = PaintStatus::checked;
-
-    }else{
-        m_paintStatus = PaintStatus::normal;
-    }
+    setChecked(!isChecked());
 
     emit click(m_allStatusColors[0].second);
     QFrame::mouseReleaseEvent(event);
@@ -180,5 +199,15 @@ void DRoundButton::paintEvent(QPaintEvent* paintEvent)
     }
     }
 
+}
+
+void DRoundButton::setPaintStatus(DRoundButton::PaintStatus status)
+{
+    if (m_paintStatus == status)
+        return;
+
+    m_paintStatus = status;
+
+    update();
 }
 

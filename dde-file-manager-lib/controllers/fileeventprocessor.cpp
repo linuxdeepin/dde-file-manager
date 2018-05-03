@@ -99,12 +99,17 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent>& event)
     {
         QAction* action{ event->menu()->actionAt("Change color of present tag") };
 
-        if(QWidgetAction* widgetAction = dynamic_cast<QWidgetAction*>(action)){
+        if(QWidgetAction* widgetAction = qobject_cast<QWidgetAction*>(action)){
 
-            if(DTagActionWidget* tagWidget = dynamic_cast<DTagActionWidget*>(widgetAction->defaultWidget())){
+            if(DTagActionWidget* tagWidget = qobject_cast<DTagActionWidget*>(widgetAction->defaultWidget())){
+                const QList<QColor> &checked_colors = tagWidget->checkedColorList();
+
+                if (checked_colors.isEmpty())
+                    break;
+
                 QSharedPointer<DFMChangeTagColorEvent> tagEvent{
                                                                     dMakeEventPointer<DFMChangeTagColorEvent>(event->sender(),
-                                                                                                               tagWidget->selectedColor(), event->selectedUrls()[0])
+                                                                                                              checked_colors.last(), event->selectedUrls()[0])
                                                                 };
 
                 AppController::instance()->actionChangeTagColor(tagEvent);
@@ -117,19 +122,34 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent>& event)
     {
         QAction* action{ event->menu()->actionAt("Add color tags") };
 
-        if (QWidgetAction* widgetAction = dynamic_cast<QWidgetAction*>(action)) {
-            if (DTagActionWidget* tagWidget = dynamic_cast<DTagActionWidget*>(widgetAction->defaultWidget())) {
-                QString colorName{ tagWidget->selectedColor().name() };
+        if (QWidgetAction* widgetAction = qobject_cast<QWidgetAction*>(action)) {
+            if (DTagActionWidget* tagWidget = qobject_cast<DTagActionWidget*>(widgetAction->defaultWidget())) {
+                QList<QColor> colors{ tagWidget->checkedColorList() };
+                QStringList new_tagNames;
 
-                const QString &tag_name = TagManager::instance()->getTagNameThroughColor(colorName);
+                for (const QColor &color : colors) {
+                    const QString &tag_name = TagManager::instance()->getTagNameThroughColor(color);
 
-                if (tag_name.isEmpty())
-                    return false;
+                    if (tag_name.isEmpty())
+                        continue;
+
+                    new_tagNames << tag_name;
+                }
+
+                QStringList old_tagNames = DFileService::instance()->getTagsThroughFiles(nullptr, event->selectedUrls());
+                QStringList dirty_tagNames;
+
+                for (const QString &tag : old_tagNames) {
+                    if (!new_tagNames.contains(tag)) {
+                        dirty_tagNames << tag;
+                    }
+                }
 
                 for (const DUrl &url : event->selectedUrls()) {
-                    auto tagEvent{ dMakeEventPointer<DFMMakeFileTagsEvent>(event->sender(), url, QStringList{tag_name}) };
+                    // clear old tags
+                    DFileService::instance()->removeTagsOfFile(nullptr, url, dirty_tagNames);
 
-                    if (!AppController::instance()->actionMakeFileTags(tagEvent))
+                    if (!DFileService::instance()->makeFileTags(nullptr, url, new_tagNames))
                         return false;
                 }
 

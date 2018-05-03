@@ -18,6 +18,7 @@
 #include "dfilesystemmodel.h"
 #include "views/fileitem.h"
 #include "views/themeconfig.h"
+#include "views/dtagactionwidget.h"
 #include "singleton.h"
 #include "dfileservices.h"
 #include "dfmgenericfactory.h"
@@ -26,6 +27,8 @@
 #include "gvfs/qdiskinfo.h"
 #include "gvfs/gvfsmountmanager.h"
 #include "dfmeventdispatcher.h"
+#include "dfilemenu.h"
+#include "tag/tagmanager.h"
 
 #include <QTimer>
 #include <QAction>
@@ -34,6 +37,8 @@
 #undef protected
 #include <QLineEdit>
 #include <QTextEdit>
+#include <QMenu>
+#include <QWidgetAction>
 
 #include <DApplication>
 
@@ -467,6 +472,51 @@ void DFileViewHelper::initStyleOption(QStyleOptionViewItem *option, const QModel
         if (!cuted)
             option->backgroundBrush = ThemeConfig::instace()->color("FileView", "background");
     }
+}
+
+void DFileViewHelper::handleMenu(QMenu *menu)
+{
+    DFileMenu *file_menu = qobject_cast<DFileMenu*>(menu);
+
+    if (Q_UNLIKELY(!file_menu))
+        return;
+
+    QAction *tag_action = file_menu->actionAt("Add color tags");
+
+    if (!tag_action)
+        return;
+
+    QWidgetAction *widget_action = qobject_cast<QWidgetAction*>(tag_action);
+
+    if (Q_UNLIKELY(!widget_action))
+        return;
+
+    DTagActionWidget* tag_widget = qobject_cast<DTagActionWidget*>(widget_action->defaultWidget());
+
+    if (Q_UNLIKELY(!tag_widget))
+        return;
+
+    const QStringList &tag_names = DFileService::instance()->getTagsThroughFiles(parent(), file_menu->selectedUrls());
+    QList<QColor> colors;
+
+    for (const QString &tag : tag_names) {
+        const QColor &color = TagManager::instance()->getColorByColorName(tag);
+
+        if (Q_LIKELY(color.isValid()))
+            colors << color;
+    }
+
+    tag_widget->setCheckedColorList(colors);
+
+    connect(tag_widget, &DTagActionWidget::hoverColorChanged, menu, [tag_widget] (const QColor &color) {
+        if (color.isValid()) {
+            const QString &tag_name = TagManager::instance()->getTagNameThroughColor(color);
+
+            tag_widget->setToolTipText(tr("Add tag \"%1\"").arg(tag_name));
+        } else {
+            tag_widget->clearToolTipText();
+        }
+    });
 }
 
 /*!

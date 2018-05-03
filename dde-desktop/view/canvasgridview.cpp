@@ -2305,6 +2305,8 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
         handleContextMenuAction(action->data().toInt());
     });
 
+    d->fileViewHelper->handleMenu(menu);
+
     menu->exec();
     menu->deleteLater();
 }
@@ -2406,6 +2408,8 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
             break;
         }
     });
+
+    d->fileViewHelper->handleMenu(menu);
 
     menu->exec();
     menu->deleteLater();

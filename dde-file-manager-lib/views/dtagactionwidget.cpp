@@ -6,16 +6,12 @@
 #include "dtagactionwidget.h"
 #include "views/droundbutton.h"
 
-
 #include <QColor>
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-
-
-using namespace Dtk::Widget;
-
+DWIDGET_USE_NAMESPACE
 
 class DTagActionWidgetPrivate
 {
@@ -28,8 +24,12 @@ public:
 
 
     std::array<DRoundButton*, 8> m_roundButtons{ nullptr };
+    QVBoxLayout *mainLayout{ nullptr };
     QHBoxLayout* m_HBoxLayout{ nullptr };
     DTagActionWidget* q_ptr{ nullptr };
+    QStringList checkedColorList;
+    QLabel *toolTip{ nullptr };
+    bool exclusive = false;
 };
 
 
@@ -100,6 +100,16 @@ void DTagActionWidgetPrivate::initUiElement()
     m_HBoxLayout->addSpacing(21);
     m_HBoxLayout->setMargin(0);
     m_HBoxLayout->setSpacing(0);
+
+    mainLayout = new QVBoxLayout();
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->addLayout(m_HBoxLayout);
+
+    toolTip = new QLabel();
+    toolTip->setText(QStringLiteral(" "));
+    toolTip->setStyleSheet("color: #707070; font-size: 11px");
+
+    mainLayout->addWidget(toolTip, 0, Qt::AlignHCenter);
 }
 
 
@@ -112,23 +122,84 @@ DTagActionWidget::DTagActionWidget(QWidget * const parent)
     this->initConnect();
 }
 
-void DTagActionWidget::onButtonClicked(QColor color) noexcept
+QList<QColor> DTagActionWidget::checkedColorList() const
 {
-    m_selectedColor = color;
+    Q_D(const DTagActionWidget);
+
+    QList<QColor> list;
+
+    for (const DRoundButton *button : d->m_roundButtons) {
+        if (button->isChecked())
+            list << button->color();
+    }
+
+    return list;
 }
 
+void DTagActionWidget::setCheckedColorList(const QList<QColor> &colorNames)
+{
+    Q_D(DTagActionWidget);
+
+    for (DRoundButton *button : d->m_roundButtons) {
+        button->setChecked(colorNames.contains(button->color()));
+    }
+}
+
+bool DTagActionWidget::exclusive() const
+{
+    Q_D(const DTagActionWidget);
+
+    return d->exclusive;
+}
+
+void DTagActionWidget::setExclusive(bool exclusive)
+{
+    Q_D(DTagActionWidget);
+
+    d->exclusive = exclusive;
+}
+
+void DTagActionWidget::setToolTipVisible(bool visible)
+{
+    Q_D(DTagActionWidget);
+
+    d->toolTip->setVisible(visible);
+}
+
+void DTagActionWidget::setToolTipText(const QString &text)
+{
+    Q_D(DTagActionWidget);
+
+    d->toolTip->setText(text);
+}
+
+void DTagActionWidget::clearToolTipText()
+{
+    setToolTipText(QStringLiteral(" "));
+}
 
 void DTagActionWidget::setCentralLayout()noexcept
 {
     DTagActionWidgetPrivate* const d{ d_func() };
-    this->setLayout(d->m_HBoxLayout);
+    this->setLayout(d->mainLayout);
 }
 
 void DTagActionWidget::initConnect()
 {
-    DTagActionWidgetPrivate* const d{ d_func() };
+    Q_D(const DTagActionWidget);
 
-    for(const DRoundButton* const button : d->m_roundButtons){
-        QObject::connect(button, &DRoundButton::click, this, &DTagActionWidget::onButtonClicked);
+    for (DRoundButton *button : d->m_roundButtons) {
+        connect(button, &DRoundButton::enter, this, [this, button] {
+            emit hoverColorChanged(button->color());
+        });
+        connect(button, &DRoundButton::leave, this, [this] {
+            emit hoverColorChanged(QColor());
+        });
+        connect(button, &DRoundButton::checkedChanged, this, [this, button, d] {
+             if (button->isChecked() && exclusive()) {
+                 for (DRoundButton *button : d->m_roundButtons)
+                     button->setChecked(false);
+             }
+        });
     }
 }

@@ -83,3 +83,8 @@ void DFileMenu::setIgnoreMenuActions(const QSet<DFMGlobal::MenuAction> &ignoreMe
 {
     m_ignoreMenuActions = ignoreMenuActions;
 }
+
+DUrlList DFileMenu::selectedUrls() const
+{
+    return m_selectedUrls;
+}

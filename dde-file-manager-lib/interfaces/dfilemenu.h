@@ -52,6 +52,8 @@ public:
     QSet<DFMGlobal::MenuAction> ignoreMenuActions() const;
     void setIgnoreMenuActions(const QSet<DFMGlobal::MenuAction> &ignoreMenuActions);
 
+    DUrlList selectedUrls() const;
+
 private:
     DUrl m_currentUrl;
     DUrlList m_selectedUrls;
