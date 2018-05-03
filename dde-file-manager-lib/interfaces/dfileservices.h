@@ -119,7 +119,7 @@ public:
     bool openInTerminal(const QObject *sender, const DUrl &fileUrl) const;
 
     ///###: for tag protocol.
-    bool makeFileTags(const QObject *sender, const DUrl &url, QList<QString> &tags)const;
+    bool makeFileTags(const QObject *sender, const DUrl &url, const QList<QString> &tags)const;
     bool removeTagsOfFile(const QObject *sender, const DUrl &url, const QList<QString> &tags)const;
     QList<QString> getTagsThroughFiles(const QObject *sender, const QList<DUrl> &urls) const;
 

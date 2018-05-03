@@ -568,7 +568,7 @@ bool DFileService::openInTerminal(const QObject *sender, const DUrl &fileUrl) co
 
 
 ///###: make file tag(s).
-bool DFileService::makeFileTags(const QObject *sender, const DUrl &url, QList<QString> &tags) const
+bool DFileService::makeFileTags(const QObject *sender, const DUrl &url, const QList<QString> &tags) const
 {
     QSharedPointer<DFMMakeFileTagsEvent> event(new DFMMakeFileTagsEvent(sender, url, tags));
     return DFMEventDispatcher::instance()->processEvent(event).toBool();
