@@ -209,12 +209,49 @@ void FileManagerApp::initConnect()
         for (auto i = files_were_tagged.constBegin(); i != files_were_tagged.constEnd(); ++i) {
             DUrl url = DUrl::fromLocalFile(i.key());
             DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url);
+
+            // for tag watcher
+            for (const QString &tag : i.value()) {
+                const DUrl &parent_url = DUrl::fromUserTaggedFile("/" + tag, QString());
+                const DUrl &file_url = DUrl::fromUserTaggedFile("/" + tag, i.key());
+
+                DAbstractFileWatcher::ghostSignal(parent_url, &DAbstractFileWatcher::subfileCreated, file_url);
+            }
         }
     });
     connect(TagManager::instance(), &TagManager::untagFiles, this, [this] (const QMap<QString, QList<QString>>& tag_be_removed_files) {
         for (auto i = tag_be_removed_files.constBegin(); i != tag_be_removed_files.constEnd(); ++i) {
             DUrl url = DUrl::fromLocalFile(i.key());
             DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url);
+
+            // for tag watcher
+            for (const QString &tag : i.value()) {
+                const DUrl &parent_url = DUrl::fromUserTaggedFile("/" + tag, QString());
+                const DUrl &file_url = DUrl::fromUserTaggedFile("/" + tag, i.key());
+
+                DAbstractFileWatcher::ghostSignal(parent_url, &DAbstractFileWatcher::fileDeleted, file_url);
+            }
+        }
+    });
+
+    // for tag watcher
+    connect(TagManager::instance(), &TagManager::addNewTag, this, [this] (const QList<QString>& new_tags) {
+        for (const QString &tag : new_tags) {
+            DAbstractFileWatcher::ghostSignal(DUrl(TAG_ROOT), &DAbstractFileWatcher::subfileCreated, DUrl::fromUserTaggedFile(tag, QString()));
+        }
+    });
+    connect(TagManager::instance(), &TagManager::deleteTag, this, [this] (const QList<QString>& new_tags) {
+        for (const QString &tag : new_tags) {
+            DAbstractFileWatcher::ghostSignal(DUrl(TAG_ROOT), &DAbstractFileWatcher::fileDeleted, DUrl::fromUserTaggedFile(tag, QString()));
+        }
+    });
+    connect(TagManager::instance(), static_cast<void(TagManager::*)(const QMap<QString, QString>&)>(&TagManager::changeTagName),
+            this, [this] (const QMap<QString, QString>& old_and_new_name) {
+        for (auto i = old_and_new_name.constBegin(); i != old_and_new_name.constEnd(); ++i) {
+            const DUrl &old_url = DUrl::fromUserTaggedFile("/" + i.key(), QString());
+            const DUrl &new_url = DUrl::fromUserTaggedFile("/" + i.value(), QString());
+
+            DAbstractFileWatcher::ghostSignal(DUrl(TAG_ROOT), &DAbstractFileWatcher::fileMoved, old_url, new_url);
         }
     });
 }
