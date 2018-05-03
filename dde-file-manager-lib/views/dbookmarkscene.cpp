@@ -193,14 +193,7 @@ DBookmarkItem* DBookmarkScene::createTagBookmark(const QString& tagName, const Q
     DBookmarkItem* item{ new DBookmarkItem{ key.isEmpty() ? QString{"BookMarks"} : key } };
     item->setDefaultItem(false);
 
-    QMap<QString, QString>::const_iterator pos{ Tag::ActualAndFakerName.find(tagName) };
-
-    if(pos == Tag::ActualAndFakerName.cend()){
-        item->setText(tagName);
-    }else{
-        item->setText(*pos);
-    }
-
+    item->setText(tagName);
     item->setUrl( DUrl::fromUserTaggedFile(QString{"/"} + tagName, QString{}) );
     item->setDefaultItem(false);
     return item;
@@ -814,8 +807,7 @@ void DBookmarkScene::onAddOrDecreaseBookmarkOfTags(const QPair<QList<QString>, Q
 
             for(; cbeg != tagAndColor.cend(); ++cbeg){
                 QString colorName{ Tag::ColorsWithNames[cbeg.value().name()] };
-                QString fakerName{ Tag::ActualAndFakerName[colorName] };
-                DBookmarkItem* item{ this->createTagBookmark(cbeg.key(), fakerName) };
+                DBookmarkItem* item{ this->createTagBookmark(cbeg.key(), colorName) };
                 this->addItem(item);
             }
         }

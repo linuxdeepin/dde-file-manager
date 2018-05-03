@@ -34,23 +34,27 @@ std::vector<QString> ColorName{
                                     "Azure",
                                     "Grass-green",
                                     "Yellow",
-                                    "Gray"
-                                  };
-
-
-///###: Why has a faker name?
-///###: pair.second represent the faker name,
-///###: and them are used in translation.
-const QMap<QString, QString> ActualAndFakerName{
-    {"Orange", QObject::tr("Orange")},
-    {"Red", QObject::tr("Red")},
-    {"Purple", QObject::tr("Purple")},
-    {"Navy-blue", QObject::tr("Navy-blue")},
-    {"Azure", QObject::tr("Azure")},
-    {"Grass-green", QObject::tr("Green")},
-    {"Yellow", QObject::tr("Yellow")},
-    {"Gray", QObject::tr("Gray")}
+    "Gray"
 };
+
+const QMap<QString, QString> &ActualAndFakerName()
+{
+    ///###: Why has a faker name?
+    ///###: pair.second represent the faker name,
+    ///###: and them are used in translation.
+    const static QMap<QString, QString> ActualAndFakerName{
+        {"Orange", QObject::tr("Orange")},
+        {"Red", QObject::tr("Red")},
+        {"Purple", QObject::tr("Purple")},
+        {"Navy-blue", QObject::tr("Navy-blue")},
+        {"Azure", QObject::tr("Azure")},
+        {"Grass-green", QObject::tr("Green")},
+        {"Yellow", QObject::tr("Yellow")},
+        {"Gray", QObject::tr("Gray")}
+    };
+
+    return ActualAndFakerName;
+}
 
 }
 
