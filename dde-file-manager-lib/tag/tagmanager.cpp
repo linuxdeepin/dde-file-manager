@@ -135,6 +135,11 @@ QColor TagManager::getColorByColorName(const QString &colorName) const
     return QColor();
 }
 
+QString TagManager::getColorNameByColor(const QColor &color) const
+{
+    return Tag::ColorsWithNames.value(color.name());
+}
+
 QSet<QString> TagManager::allTagOfDefaultColors() const
 {
     QSet<QString> tags;

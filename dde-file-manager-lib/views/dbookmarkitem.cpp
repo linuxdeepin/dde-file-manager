@@ -171,7 +171,7 @@ void DBookmarkItem::changeIconThroughColor(const QColor &color)noexcept
 {
     if (color.isValid()) {
         QString oldColor{ this->m_key };
-        QString newColor{ Tag::ColorsWithNames[color.name()] };
+        QString newColor{ TagManager::instance()->getColorNameByColor(color) };
         QString tagName{ this->text() };
         QPair<QString, QString> oldAndNewColor{ oldColor, newColor };
 

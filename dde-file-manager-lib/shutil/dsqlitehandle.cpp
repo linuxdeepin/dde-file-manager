@@ -124,7 +124,7 @@ static const std::multimap<DSqliteHandle::SqlType, QString> SqlTypeWithStrs {
                                                                                                                                          "WHERE file_property.tag_3 = \'%2\'"},
                                                           {DSqliteHandle::SqlType::ChangeTagsName, "UPDATE tag_with_file SET tag_name = \'%1\' "
                                                                                                                                            "WHERE tag_with_file.tag_name = \'%2\'"},
-                                                          {DSqliteHandle::SqlType::ChangeTagsName2, "UPDATE tag_with_file SET tag_name = \'%1\' "
+                                                          {DSqliteHandle::SqlType::ChangeTagsName2, "UPDATE tag_property SET tag_name = \'%1\' "
                                                                                                                                            "WHERE tag_property.tag_name = \'%2\'"},
 
                                                           {DSqliteHandle::SqlType::DeleteFiles, "DELETE FROM tag_with_file WHERE tag_with_file.tag_name = \'%1\'"},
@@ -138,7 +138,7 @@ static const std::multimap<DSqliteHandle::SqlType, QString> SqlTypeWithStrs {
                                                           {DSqliteHandle::SqlType::DeleteTags2, "SELECT tag_with_file.tag_name FROM tag_with_file WHERE tag_with_file.file_name = \'%1\'"},
                                                           {DSqliteHandle::SqlType::DeleteTags2, "UPDATE file_property SET tag_1 = \'%1\', tag_2 =\'%2\', tag_3=\'%3\' "
                                                                                                                                         "WHERE file_name = \'%4\'"},
-                                                          {DSqliteHandle::SqlType::DeleteTags3, "DELETE FROM tag_property WHERE tag_property.tag_name = \'%1\'"},
+                                                          {DSqliteHandle::SqlType::DeleteTags3, "DELETE FROM tag_property WHERE tag_name = \'%1\'"},
 
                                                           {DSqliteHandle::SqlType::UntagSamePartionFiles, "DELETE FROM tag_with_file WHERE tag_with_file.file_name = \'%1\' "
                                                                                                           "AND tag_with_file.tag_name = \'%2\'"},
@@ -509,8 +509,8 @@ QVariant DSqliteHandle::disposeClientData(const QMap<QString, QList<QString>>& f
             case 13:
             {
                 std::lock_guard<std::mutex> raii_lock{ m_mutex };
-                QMap<QString, QVariant> var_map{ this->execSqlstr<DSqliteHandle::SqlType::GetTagColor, QMap<QString, QVariant>>(filesAndTags) };
-                var.setValue(var_map);
+                bool result{ this->execSqlstr<DSqliteHandle::SqlType::ChangeTagColor, bool>(filesAndTags) };
+                var.setValue(result);
 
                 break;
             }
@@ -527,19 +527,13 @@ DSqliteHandle::ReturnCode DSqliteHandle::checkWhetherHasSqliteInPartion(const QS
 {
     QDir dir{ mountPoint };
 
-    if(dir.exists() && !db_name.isEmpty()){
-        QList<QString> files{ dir.entryList() };
+    if (!dir.exists())
+        return ReturnCode::NoThisDir;
 
-        if(!files.isEmpty()){
-            QList<QString>::const_iterator pos{ std::find(files.cbegin(),
-                                                          files.cend(), db_name) };
-            if(pos != files.cend()){
-                return DSqliteHandle::ReturnCode::Exist;
-            }
-        }
-        return DSqliteHandle::ReturnCode::NoExist;
-    }
-    return DSqliteHandle::ReturnCode::NoThisDir;
+    if (dir.exists(db_name))
+        return ReturnCode::Exist;
+
+    return ReturnCode::NoExist;
 }
 
 void DSqliteHandle::initializeConnect()
@@ -1800,7 +1794,7 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags3, QList<QStri
             QString sql_str{ range.first->second };
             sql_str = sql_str.arg(*c_beg);
 
-            if(!sql_query.exec()){
+            if (!sql_query.exec(sql_str)) {
                 qWarning()<< sql_query.lastError().text();
                 return false;
             }
@@ -2470,7 +2464,7 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteTags, bool>(const Q
 {
     if(!filesAndTags.isEmpty()){
 
-        DSqliteHandle::ReturnCode return_code{ this->checkWhetherHasSqliteInPartion("/home", "__main.db") };
+        DSqliteHandle::ReturnCode return_code{ this->checkWhetherHasSqliteInPartion("/home", ".__main.db") };
 
         if(return_code != DSqliteHandle::ReturnCode::Exist){
             return false;

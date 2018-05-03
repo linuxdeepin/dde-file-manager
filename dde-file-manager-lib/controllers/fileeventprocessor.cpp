@@ -104,6 +104,9 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent>& event)
             if(DTagActionWidget* tagWidget = qobject_cast<DTagActionWidget*>(widgetAction->defaultWidget())){
                 const QList<QColor> &checked_colors = tagWidget->checkedColorList();
 
+                // reset the color item checked state
+                tagWidget->setCheckedColorList(QList<QColor>());
+
                 if (checked_colors.isEmpty())
                     break;
 

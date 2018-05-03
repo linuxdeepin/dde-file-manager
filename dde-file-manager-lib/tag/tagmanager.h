@@ -92,6 +92,7 @@ public:
 
     QString getTagNameThroughColor(const QColor &color) const;
     QColor getColorByColorName(const QString &colorName) const;
+    QString getColorNameByColor(const QColor &color) const;
     QSet<QString> allTagOfDefaultColors() const;
 
     ///###:modify

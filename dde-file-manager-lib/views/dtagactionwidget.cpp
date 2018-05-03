@@ -197,8 +197,10 @@ void DTagActionWidget::initConnect()
         });
         connect(button, &DRoundButton::checkedChanged, this, [this, button, d] {
              if (button->isChecked() && exclusive()) {
-                 for (DRoundButton *button : d->m_roundButtons)
-                     button->setChecked(false);
+                 for (DRoundButton *b : d->m_roundButtons) {
+                     if (b != button)
+                         b->setChecked(false);
+                 }
              }
         });
     }
