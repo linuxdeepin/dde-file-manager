@@ -878,21 +878,21 @@ DFMCleanSaveOperatorEvent::DFMCleanSaveOperatorEvent(const QObject *sender)
 
 }
 
-DFMMakeFileTagsEvent::DFMMakeFileTagsEvent(const QObject *sender, const DUrl &url, const QList<QString> &tags)
+DFMSetFileTagsEvent::DFMSetFileTagsEvent(const QObject *sender, const DUrl &url, const QList<QString> &tags)
     : DFMUrlBaseEvent{Tag, sender, url }
 {
-    setProperty(QT_STRINGIFY(DFMMakeFileTagsEvent::tags), tags);
+    setProperty(QT_STRINGIFY(DFMSetFileTagsEvent::tags), tags);
 }
 
-QSharedPointer<DFMMakeFileTagsEvent> DFMMakeFileTagsEvent::fromJson(const QJsonObject &json)
+QSharedPointer<DFMSetFileTagsEvent> DFMSetFileTagsEvent::fromJson(const QJsonObject &json)
 {
     (void)json;
-    return QSharedPointer<DFMMakeFileTagsEvent> { nullptr };
+    return QSharedPointer<DFMSetFileTagsEvent> { nullptr };
 }
 
-QList<QString> DFMMakeFileTagsEvent::tags() const
+QList<QString> DFMSetFileTagsEvent::tags() const
 {
-    QVariant var{ property(QT_STRINGIFY(DFMMakeFileTagsEvent::tags), {QString()}) };
+    QVariant var{ property(QT_STRINGIFY(DFMSetFileTagsEvent::tags), {QString()}) };
     QList<QString> tag_name{ var.value<QList<QString>>() };
 
     return tag_name;

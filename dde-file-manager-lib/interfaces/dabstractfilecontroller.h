@@ -56,7 +56,7 @@ class DFMFileShareEvnet;
 class DFMCancelFileShareEvent;
 class DUrl;
 class DAbstractFileWatcher;
-class DFMMakeFileTagsEvent;
+class DFMSetFileTagsEvent;
 class DFMRemoveTagsOfFileEvent;
 class DFMGetTagsThroughFilesEvent;
 
@@ -93,7 +93,7 @@ public:
     virtual bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const;
     virtual bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const;
 
-    virtual bool makeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event) const;
+    virtual bool setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const;
     virtual bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const;
     virtual QList<QString> getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const;
 

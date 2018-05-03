@@ -568,12 +568,12 @@ public:
     explicit DFMRevocationEvent(const QObject *sender);
 };
 
-class DFMMakeFileTagsEvent : public DFMUrlBaseEvent
+class DFMSetFileTagsEvent : public DFMUrlBaseEvent
 {
 public:
-    explicit DFMMakeFileTagsEvent(const QObject *sender, const DUrl &url, const QList<QString> &tags);
+    explicit DFMSetFileTagsEvent(const QObject *sender, const DUrl &url, const QList<QString> &tags);
 
-    static QSharedPointer<DFMMakeFileTagsEvent> fromJson(const QJsonObject &json);
+    static QSharedPointer<DFMSetFileTagsEvent> fromJson(const QJsonObject &json);
 
     QList<QString> tags() const;
 };

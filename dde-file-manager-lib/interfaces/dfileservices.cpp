@@ -315,7 +315,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         break;
     case DFMEvent::Tag:
     {
-        result = CALL_CONTROLLER(makeFileTags);
+        result = CALL_CONTROLLER(setFileTags);
         break;
     }
     case DFMEvent::Untag:
@@ -568,10 +568,39 @@ bool DFileService::openInTerminal(const QObject *sender, const DUrl &fileUrl) co
 
 
 ///###: make file tag(s).
-bool DFileService::makeFileTags(const QObject *sender, const DUrl &url, const QList<QString> &tags) const
+bool DFileService::setFileTags(const QObject *sender, const DUrl &url, const QList<QString> &tags) const
 {
-    QSharedPointer<DFMMakeFileTagsEvent> event(new DFMMakeFileTagsEvent(sender, url, tags));
+    QSharedPointer<DFMSetFileTagsEvent> event(new DFMSetFileTagsEvent(sender, url, tags));
     return DFMEventDispatcher::instance()->processEvent(event).toBool();
+}
+
+bool DFileService::makeTagsOfFiles(const QObject *sender, const DUrlList &urlList, const QStringList &tags, const QSet<QString> dirtyTagFilter) const
+{
+    QStringList old_tagNames = getTagsThroughFiles(sender, urlList);
+    QStringList dirty_tagNames;
+    const QSet<QString> tags_set = QSet<QString>::fromList(tags);
+
+    for (const QString &tag : old_tagNames) {
+        if (!tags_set.contains(tag) && (dirtyTagFilter.isEmpty() || dirtyTagFilter.contains(tag))) {
+            dirty_tagNames << tag;
+        }
+    }
+
+    for (const DUrl &url : urlList) {
+        QStringList tags_of_file = getTagsThroughFiles(sender, {url});
+        QSet<QString> tags_of_file_set = tags_set;
+
+        tags_of_file_set += QSet<QString>::fromList(tags_of_file);
+
+        for (const QString &dirty_tag : dirty_tagNames) {
+            tags_of_file_set.remove(dirty_tag);
+        }
+
+        if (!setFileTags(sender, url, tags_of_file_set.toList()))
+            return false;
+    }
+
+    return true;
 }
 
 ///###: remove tag(s) of file.

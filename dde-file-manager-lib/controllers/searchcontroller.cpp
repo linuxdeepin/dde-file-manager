@@ -484,14 +484,14 @@ DAbstractFileWatcher *SearchController::createFileWatcher(const QSharedPointer<D
     return new SearchFileWatcher(event->url());
 }
 
-bool SearchController::makeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event) const
+bool SearchController::setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const
 {
     if (!event->url().searchedFileUrl().isValid()) {
         return false;
     }
 
     QList<QString> tags = event->tags();
-    return fileService->makeFileTags(this, event->url().searchedFileUrl(), tags);
+    return fileService->setFileTags(this, event->url().searchedFileUrl(), tags);
 }
 
 bool SearchController::removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const

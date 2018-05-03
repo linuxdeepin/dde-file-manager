@@ -92,6 +92,7 @@ public:
 
     QString getTagNameThroughColor(const QColor &color) const;
     QColor getColorByColorName(const QString &colorName) const;
+    QSet<QString> allTagOfDefaultColors() const;
 
     ///###:modify
     bool makeFilesTags(const QList<QString>& tags, const QList<DUrl>& files);

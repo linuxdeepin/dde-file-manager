@@ -190,7 +190,7 @@ bool DAbstractFileController::openInTerminal(const QSharedPointer<DFMOpenInTermi
     return false;
 }
 
-bool DAbstractFileController::makeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event) const
+bool DAbstractFileController::setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const
 {
     event->ignore();
     return false;

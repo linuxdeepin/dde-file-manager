@@ -571,8 +571,14 @@ bool FileController::privateFileMatch(const QString &absolutePath, const QString
     return match.match(absolutePath, fileName);
 }
 
-bool FileController::makeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event) const
+bool FileController::setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const
 {
+    if (event->tags().isEmpty()) {
+        const QStringList &tags = TagManager::instance()->getTagsThroughFiles({event->url()});
+
+        return tags.isEmpty() || TagManager::instance()->removeTagsOfFiles(tags, {event->url()});
+    }
+
     return TagManager::instance()->makeFilesTags(event->tags(), {event->url()});
 }
 

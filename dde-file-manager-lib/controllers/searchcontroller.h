@@ -62,7 +62,7 @@ public:
 
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
 
-    bool makeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event) const Q_DECL_OVERRIDE;
+    bool setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const Q_DECL_OVERRIDE;
     bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const Q_DECL_OVERRIDE;
     QList<QString> getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const Q_DECL_OVERRIDE;
 

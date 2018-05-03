@@ -56,8 +56,6 @@ private:
     QList<DUrl> m_files{};
 
     std::atomic<bool> m_flagForShown{ false };
-
-    mutable std::set<QString> m_initialTags{};
 };
 
 

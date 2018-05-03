@@ -2061,41 +2061,19 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(const QMa
                QList<QString> newTags{};
                QList<QString> existingTags{};
                QList<QString> decreased{};
-               QList<QString>::const_iterator begOfMutual{ mutualTags.cbegin() };
-               QList<QString>::const_iterator endOfMutual{ mutualTags.cend() };
 
-               for(const QString& tagName : currentTags){
-
-                   QList<QString>::const_iterator itr{ std::find_if(begOfMutual, endOfMutual, [&](const QString& nameOfTag){
-
-                       if(tagName == nameOfTag){
-                           return true;
-                       }
-
-                       return false;
-                   }) };
-
-                   if(itr == endOfMutual){
-                       newTags.push_back(tagName);
-
-                   }else{
+               for (const QString& tagName : currentTags) {
+                   if (mutualTags.contains(tagName)) {
                        existingTags.push_back(tagName);
+                   } else {
+                       newTags.push_back(tagName);
                    }
                }
 
-               if(existingTags.size() < mutualTags.size()){
-                   QList<QString>::const_iterator begOfMutual{ mutualTags.cbegin() };
-                   QList<QString>::const_iterator endOfMutual{ mutualTags.cend() };
-
-                   for(const QString& tagName : existingTags){
-                       std::find_if(begOfMutual, endOfMutual, [&](const QString& nameOfTag){
-                           if(tagName != nameOfTag){
-                               decreased.push_back(nameOfTag);
-                               return true;
-                           }
-
-                           return false;
-                       });
+               if (existingTags.size() < mutualTags.size()) {
+                   for (const QString& tagName : mutualTags) {
+                       if (!existingTags.contains(tagName))
+                           decreased << tagName;
                    }
                }
 
