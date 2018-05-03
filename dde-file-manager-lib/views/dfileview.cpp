@@ -2150,6 +2150,9 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     }
 
     menu->setEventData(rootUrl(), selectedUrls(), windowId(), this);
+
+    fileViewHelper()->handleMenu(menu);
+
     menu->exec();
     menu->deleteLater();
 }
@@ -2194,6 +2197,9 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
     }
 
     menu->setEventData(rootUrl(), selectedUrls(), windowId(), this);
+
+    fileViewHelper()->handleMenu(menu);
+
     menu->exec();
     menu->deleteLater();
 }

@@ -38,10 +38,17 @@ public:
 
 
     void setCheckable(bool checkable)noexcept;
+    void setChecked(bool checked);
+    bool isChecked() const;
+    bool isHovered() const;
 
+    QColor color() const;
 
 signals:
     void click(QColor color);
+    void enter();
+    void leave();
+    void checkedChanged();
 
 protected:
     virtual void enterEvent(QEvent* event)override;
@@ -61,8 +68,9 @@ private:
 
 
     void setParameters();
+    void setPaintStatus(PaintStatus status);
 
-    bool m_checkable{ false };
+    bool m_checkable{ true };
 
     QColor m_selectedColor{};
     QPair<double, std::size_t> m_radius{0.0, 0};

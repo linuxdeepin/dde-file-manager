@@ -14,6 +14,9 @@ class DTagActionWidget final : public QFrame
 {
     Q_OBJECT
 
+    Q_PROPERTY(QList<QColor> checkedColorList READ checkedColorList WRITE setCheckedColorList)
+    Q_PROPERTY(bool exclusive READ exclusive WRITE setExclusive)
+
 public:
     DTagActionWidget(QWidget* const parent = nullptr);
     virtual ~DTagActionWidget()=default;
@@ -21,20 +24,22 @@ public:
     DTagActionWidget(const DTagActionWidget& other)=delete;
     DTagActionWidget& operator=(const DTagActionWidget &other)=delete;
 
-    inline const QColor& selectedColor()const
-    {
-        return m_selectedColor;
-    }
+    QList<QColor> checkedColorList() const;
+    void setCheckedColorList(const QList<QColor> &colorNames);
 
-private slots:
-    void onButtonClicked(QColor color)noexcept;
+    bool exclusive() const;
+    void setExclusive(bool exclusive);
+
+    void setToolTipVisible(bool visible);
+    void setToolTipText(const QString &text);
+    void clearToolTipText();
+
+signals:
+    void hoverColorChanged(const QColor &color);
 
 private:
-
     void setCentralLayout()noexcept;
     void initConnect();
-
-    QColor m_selectedColor{};
 
     QSharedPointer<DTagActionWidgetPrivate> d_ptr{ nullptr };
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DTagActionWidget)
