@@ -247,24 +247,172 @@ DAbstractFileWatcher* TagController::createFileWatcher(const QSharedPointer<DFMC
     return (new TaggedFileWatcher{event->url()});
 }
 
+static DUrl toLocalFile(const DUrl &url)
+{
+    const QString &local_file = url.taggedLocalFilePath();
+
+    if (local_file.isEmpty())
+        return DUrl();
+
+    return DUrl::fromLocalFile(local_file);
+}
+
+static DUrlList toLocalFileList(const DUrlList &tagFiles)
+{
+    DUrlList list;
+
+    for (const DUrl &url : tagFiles) {
+        const DUrl &new_url = toLocalFile(url);
+
+        if (new_url.isValid())
+            list << new_url;
+    }
+
+    return list;
+}
+
+bool TagController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
+{
+    const DUrl &local_file = toLocalFile(event->url());
+
+    if (!local_file.isValid())
+        return false;
+
+    return DFileService::instance()->openFile(event->sender(), local_file);
+}
+
+bool TagController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const
+{
+    const DUrl &local_file = toLocalFile(event->url());
+
+    if (!local_file.isValid())
+        return false;
+
+    return DFileService::instance()->openFileByApp(event->sender(), event->appName(), local_file);
+}
+
+bool TagController::compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const
+{
+    const DUrlList &list = toLocalFileList(event->fileUrlList());
+
+    if (list.isEmpty())
+        return false;
+
+    return DFileService::instance()->compressFiles(event->sender(), list);
+}
+
+bool TagController::decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const
+{
+    const DUrlList &list = toLocalFileList(event->fileUrlList());
+
+    if (list.isEmpty())
+        return false;
+
+    return DFileService::instance()->decompressFile(event->sender(), list);
+}
+
+bool TagController::decompressFileHere(const QSharedPointer<DFMDecompressEvnet> &event) const
+{
+    const DUrlList &list = toLocalFileList(event->fileUrlList());
+
+    if (list.isEmpty())
+        return false;
+
+    return DFileService::instance()->decompressFileHere(event->sender(), list);
+}
+
+bool TagController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
+{
+    const DUrlList &list = toLocalFileList(event->fileUrlList());
+
+    if (list.isEmpty())
+        return false;
+
+    return DFileService::instance()->writeFilesToClipboard(event->sender(), event->action(), list);
+}
+
 bool TagController::renameFile(const QSharedPointer<DFMRenameEvent> &event) const
 {
-    const QString &old_name = event->fromUrl().fileName();
-    const QString &new_name = event->toUrl().fileName();;
+    const QString &local_file = event->fromUrl().taggedLocalFilePath();
 
-    return TagManager::instance()->changeTagName(qMakePair(old_name, new_name));
+    if (local_file.isEmpty()) {
+        const QString &old_name = event->fromUrl().fileName();
+        const QString &new_name = event->toUrl().fileName();;
+
+        return TagManager::instance()->changeTagName(qMakePair(old_name, new_name));
+    }
+
+    return DFileService::instance()->renameFile(event->sender(), DUrl::fromLocalFile(local_file), DUrl::fromLocalFile(event->toUrl().taggedLocalFilePath()));
 }
 
 bool TagController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
     QStringList tagNames;
+    DUrlList localFiles;
 
-    for(auto oneUrl : event->urlList()) {
-        QString oneName = oneUrl.fileName();
-        tagNames.append(oneName);
+    for (auto oneUrl : event->urlList()) {
+        if (!oneUrl.taggedLocalFilePath().isEmpty()) {
+            localFiles << DUrl::fromLocalFile(oneUrl.taggedLocalFilePath());
+        } else {
+            tagNames.append(oneUrl.fileName());
+        }
+    }
+
+    if (!localFiles.isEmpty()) {
+        return DFileService::instance()->deleteFiles(event->sender(), localFiles, true);
     }
 
     return TagManager::instance()->deleteTags(tagNames);
+}
+
+DUrlList TagController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
+{
+    const DUrlList &list = toLocalFileList(event->fileUrlList());
+
+    if (list.isEmpty())
+        return list;
+
+    return DFileService::instance()->moveToTrash(event->sender(), list);
+}
+
+bool TagController::openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const
+{
+    const DUrl &local_file = toLocalFile(event->url());
+
+    if (!local_file.isValid())
+        return false;
+
+    return DFileService::instance()->openFileLocation(event->sender(), local_file);
+}
+
+bool TagController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const
+{
+    const DUrl &local_file = toLocalFile(event->fileUrl());
+
+    if (!local_file.isValid())
+        return false;
+
+    return DFileService::instance()->createSymlink(event->sender(), local_file, event->toUrl());
+}
+
+bool TagController::shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const
+{
+    const DUrl &local_file = toLocalFile(event->url());
+
+    if (!local_file.isValid())
+        return false;
+
+    return DFileService::instance()->shareFolder(event->sender(), local_file, event->name(), event->isWritable(), event->allowGuest());
+}
+
+bool TagController::unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const
+{
+    const DUrl &local_file = toLocalFile(event->url());
+
+    if (!local_file.isValid())
+        return false;
+
+    return DFileService::instance()->unShareFolder(event->sender(), local_file);
 }
 
 bool TagController::setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const

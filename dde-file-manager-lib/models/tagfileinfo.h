@@ -34,6 +34,8 @@ public:
     virtual Qt::ItemFlags fileItemDisableFlags() const override;
     virtual QSet<MenuAction> disableMenuActionList() const override;
     virtual QVector<MenuAction> menuActionList(MenuType type) const override;
+
+    DUrl getUrlByNewFileName(const QString &name) const override;
 };
 
 
