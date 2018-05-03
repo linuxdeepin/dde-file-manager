@@ -119,12 +119,20 @@ QString TagManager::getTagNameThroughColor(const QColor &color) const
 {
     QString tag_name = Tag::ColorsWithNames.value(color.name());
 
-    return Tag::ActualAndFakerName.value(tag_name);
+    return Tag::ActualAndFakerName().value(tag_name);
 }
 
 QColor TagManager::getColorByColorName(const QString &colorName) const
 {
-    return QColor(Tag::NamesWithColors.value(colorName));
+    auto color_map = Tag::ActualAndFakerName();
+
+    for (auto i = color_map.constBegin(); i != color_map.constEnd(); ++i) {
+        if (i.value() == colorName) {
+            return Tag::NamesWithColors.value(i.key());
+        }
+    }
+
+    return QColor();
 }
 
 QSet<QString> TagManager::allTagOfDefaultColors() const
@@ -132,7 +140,7 @@ QSet<QString> TagManager::allTagOfDefaultColors() const
     QSet<QString> tags;
 
     for (const QString &color : Tag::ColorName) {
-        tags << Tag::ActualAndFakerName.value(color);
+        tags << Tag::ActualAndFakerName().value(color);
     }
 
     return tags;
@@ -150,7 +158,7 @@ bool TagManager::makeFilesTags(const QList<QString>& tags, const QList<DUrl>& fi
 
             // for default tags
             for (const QString &color : Tag::ColorName) {
-                if (tag_name == Tag::ActualAndFakerName.value(color)) {
+                if (tag_name == Tag::ActualAndFakerName().value(color)) {
                     color_name = color;
                     break;
                 }
