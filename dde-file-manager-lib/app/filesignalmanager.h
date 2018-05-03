@@ -231,8 +231,6 @@ signals:
     /*rename a tag*/
     void requestRenameTag(const DUrl& oldTagUrl);
 
-    void fileTagInfoChanged(const DUrlList &files);
-
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */
     void jobFailed(int nRet, const QString &jobType, const QString& srcFileName);

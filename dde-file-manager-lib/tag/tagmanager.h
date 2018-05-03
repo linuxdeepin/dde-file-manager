@@ -127,7 +127,6 @@ signals:
     void filesWereTagged(const QMap<QString, QList<QString>>& files_were_tagged);
     void untagFiles(const QMap<QString, QList<QString>>& tag_be_removed_files);
 
-
 private:
     void init_connect()noexcept;
 };

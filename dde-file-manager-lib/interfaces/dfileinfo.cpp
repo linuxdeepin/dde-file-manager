@@ -203,7 +203,7 @@ void RequestEP::processEPChanged(const DUrl &url, DFileInfoPrivate *info, const 
         info = nullptr;
     }
 
-    if (!ep.isEmpty() && oldEP != ep) {
+    if (!ep.isEmpty() || oldEP != ep) {
         DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url);
 
         if (info) {
