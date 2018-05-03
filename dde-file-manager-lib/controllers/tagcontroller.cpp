@@ -340,10 +340,10 @@ bool TagController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) con
     return TagManager::instance()->deleteTags(tagNames);
 }
 
-bool TagController::makeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event) const
+bool TagController::setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const
 {
     QList<QString> tags = event->tags();
-    return DFileService::instance()->makeFileTags(this, DUrl::fromLocalFile(event->url().taggedLocalFilePath()), tags);
+    return DFileService::instance()->setFileTags(this, DUrl::fromLocalFile(event->url().taggedLocalFilePath()), tags);
 }
 
 bool TagController::removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const

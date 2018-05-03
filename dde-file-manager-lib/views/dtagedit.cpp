@@ -7,6 +7,7 @@
 #include "../controllers/appcontroller.h"
 #include "../interfaces/dfmeventdispatcher.h"
 
+#include "dfileservices.h"
 
 #include <QObject>
 #include <QKeyEvent>
@@ -42,9 +43,6 @@ void DTagEdit::appendCrumb(const QString& crumbText)noexcept
     DCrumbTextFormat format{ m_crumbEdit->makeTextFormat() };
     format.setText(crumbText);
     m_crumbEdit->appendCrumb(format);
-
-    ///###: this 'set' backups initial tag(s) of file(s) which are selected.
-    m_initialTags.insert(crumbText);
 }
 
 
@@ -137,57 +135,5 @@ void DTagEdit::processTags()
 {
     QList<QString> tagList{ m_crumbEdit->crumbList() };
 
-    ///###: Get tag(s) from the user input.
-    ///###: then tag files through these tag(s).
-    if (!tagList.isEmpty() && !m_files.isEmpty()) {
-        for (auto oneFile : m_files) {
-
-            QSharedPointer<DFMMakeFileTagsEvent> event{ new DFMMakeFileTagsEvent{this, oneFile, tagList} };
-            bool value{ AppController::instance()->actionMakeFileTags(event) };
-
-            ///###: m_initialTags record the tag(s) in the DLeftSideBar.
-            ///###: if there are new tags, they will insert to DLeftSideBar.
-            if (value && !m_initialTags.empty()) {
-                std::set<QString>::const_iterator cbeg{ m_initialTags.cbegin() };
-                std::set<QString>::const_iterator cend{ m_initialTags.cend() };
-                QList<QString> increased{};
-
-                for (const QString tag : tagList) {
-                    std::set<QString>::const_iterator itr{ std::find_if(cbeg, cend, [&tag](const QString & theTag)
-                    {
-                        if (theTag == tag) {
-                            return true;
-                        }
-                        return false;
-                    }) };
-
-                    if (itr == cend) {
-                        increased.push_back(tag);
-                    }
-                }
-
-                QPair<QList<QString>, QList<QString>> increasedAndDecreased{ std::move(increased), QList<QString>{} };
-                emit fileSignalManager->requestAddOrDecreaseBookmarkOfTag(increasedAndDecreased);
-
-            } else {
-
-                QPair<QList<QString>, QList<QString>> increasedAndDecreased{ std::move(tagList), QList<QString>{} };
-                emit fileSignalManager->requestAddOrDecreaseBookmarkOfTag(increasedAndDecreased);
-            }
-        }
-    }
-
-
-    if (!m_initialTags.empty() && tagList.isEmpty() && !m_files.isEmpty()) {
-        QList<QString> initialTags{};
-
-        for (const QString &tagName : m_initialTags) {
-            initialTags.push_back(tagName);
-        }
-
-        for (auto oneFile : m_files) {
-            QSharedPointer<DFMRemoveTagsOfFileEvent> event{ new DFMRemoveTagsOfFileEvent{nullptr, oneFile, initialTags} };
-            AppController::instance()->actionRemoveTagsOfFile(event);
-        }
-    }
+    DFileService::instance()->makeTagsOfFiles(this, m_files, tagList);
 }

@@ -126,7 +126,6 @@ public slots:
 
     ///###: tag protocol
     QList<QString> actionGetTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event);
-    bool actionMakeFileTags(const QSharedPointer<DFMMakeFileTagsEvent> &event);
     bool actionRemoveTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent>& event);
     void actionChangeTagColor(const QSharedPointer<DFMChangeTagColorEvent>& event);
     void showTagEdit(const QPoint &globalPos, const DUrlList &fileList);

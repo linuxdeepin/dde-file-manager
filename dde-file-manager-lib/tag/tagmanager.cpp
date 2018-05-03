@@ -40,7 +40,7 @@ TagManager::TagManager()
         if (tags.isEmpty())
             return;
 
-        DFileService::instance()->makeFileTags(this, target, tags);
+        DFileService::instance()->setFileTags(this, target, tags);
     });
 }
 
@@ -125,6 +125,17 @@ QString TagManager::getTagNameThroughColor(const QColor &color) const
 QColor TagManager::getColorByColorName(const QString &colorName) const
 {
     return QColor(Tag::NamesWithColors.value(colorName));
+}
+
+QSet<QString> TagManager::allTagOfDefaultColors() const
+{
+    QSet<QString> tags;
+
+    for (const QString &color : Tag::ColorName) {
+        tags << Tag::ActualAndFakerName.value(color);
+    }
+
+    return tags;
 }
 
 bool TagManager::makeFilesTags(const QList<QString>& tags, const QList<DUrl>& files)

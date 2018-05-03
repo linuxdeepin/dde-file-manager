@@ -136,22 +136,7 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent>& event)
                     new_tagNames << tag_name;
                 }
 
-                QStringList old_tagNames = DFileService::instance()->getTagsThroughFiles(nullptr, event->selectedUrls());
-                QStringList dirty_tagNames;
-
-                for (const QString &tag : old_tagNames) {
-                    if (!new_tagNames.contains(tag)) {
-                        dirty_tagNames << tag;
-                    }
-                }
-
-                for (const DUrl &url : event->selectedUrls()) {
-                    // clear old tags
-                    DFileService::instance()->removeTagsOfFile(nullptr, url, dirty_tagNames);
-
-                    if (!DFileService::instance()->makeFileTags(nullptr, url, new_tagNames))
-                        return false;
-                }
+                DFileService::instance()->makeTagsOfFiles(nullptr, event->selectedUrls(), new_tagNames, TagManager::instance()->allTagOfDefaultColors());
 
                 break;
             }
