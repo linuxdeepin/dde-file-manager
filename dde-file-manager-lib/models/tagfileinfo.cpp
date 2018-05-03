@@ -104,8 +104,20 @@ QVector<MenuAction> TagFileInfo::menuActionList(DAbstractFileInfo::MenuType type
     return actions;
 }
 
+DUrl TagFileInfo::getUrlByNewFileName(const QString &name) const
+{
+    DUrl new_url = fileUrl();
+    const QString &local_file = new_url.taggedLocalFilePath();
 
+    if (local_file.isEmpty())
+        return DAbstractFileInfo::getUrlByNewFileName(name);
 
+    QFileInfo file_info(local_file);
+
+    new_url.setTaggedFileUrl(file_info.absoluteDir().absoluteFilePath(name));
+
+    return new_url;
+}
 
 DUrl TagFileInfo::parentUrl() const
 {
