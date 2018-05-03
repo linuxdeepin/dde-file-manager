@@ -447,12 +447,25 @@ bool DFileService::writeFilesToClipboard(const QObject *sender, DFMGlobal::Clipb
 
 bool DFileService::renameFile(const QObject *sender, const DUrl &from, const DUrl &to) const
 {
-    return DFMEventDispatcher::instance()->processEvent<DFMRenameEvent>(sender, from, to).toBool();
+    bool ok = DFMEventDispatcher::instance()->processEvent<DFMRenameEvent>(sender, from, to).toBool();
+
+    if (ok)
+        emit fileRenamed(from, to);
+
+    return ok;
 }
 
 bool DFileService::deleteFiles(const QObject *sender, const DUrlList &list, bool slient) const
 {
-    return DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMDeleteEvent>(sender, list, slient)).toBool();
+    bool ok = DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMDeleteEvent>(sender, list, slient)).toBool();
+
+    if (ok) {
+        for (const DUrl &url : list) {
+            emit fileDeleted(url);
+        }
+    }
+
+    return ok;
 }
 
 DUrlList DFileService::moveToTrash(const QObject *sender, const DUrlList &list) const
@@ -465,7 +478,13 @@ DUrlList DFileService::moveToTrash(const QObject *sender, const DUrlList &list) 
         return list;
     }
 
-    return qvariant_cast<DUrlList>(DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMMoveToTrashEvent>(sender, list)));
+    const DUrlList &result = qvariant_cast<DUrlList>(DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMMoveToTrashEvent>(sender, list)));
+
+    for (const DUrl &file : result) {
+        emit fileMovedToTrash(file);
+    }
+
+    return result;
 }
 
 void DFileService::pasteFileByClipboard(const QObject *sender, const DUrl &targetUrl) const

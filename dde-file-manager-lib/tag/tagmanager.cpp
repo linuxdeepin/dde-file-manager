@@ -272,6 +272,31 @@ void TagManager::init_connect()noexcept
         DFileService::instance()->setFileTags(this, target, tags);
     });
 
+    connect(DFileService::instance(), &DFileService::fileDeleted, this, [this] (const DUrl &file) {
+        if (file.isLocalFile()) {
+            deleteFiles({file});
+        }
+    });
+
+    connect(DFileService::instance(), &DFileService::fileMovedToTrash, this, [this] (const DUrl &file) {
+        if (file.isLocalFile()) {
+            deleteFiles({file});
+        }
+    });
+
+    connect(DFileService::instance(), &DFileService::fileRenamed, this, [this] (const DUrl &from, const DUrl &to) {
+        const QStringList &tags = DFileService::instance()->getTagsThroughFiles(this, {from});
+
+        if (from.isLocalFile()) {
+            deleteFiles({from});
+        }
+
+        if (tags.isEmpty())
+            return;
+
+        DFileService::instance()->setFileTags(this, to, tags);
+    });
+
     QObject::connect(TagManagerDaemonController::instance(), &TagManagerDaemonController::addNewTags,[this](const QVariant& new_tags){
 
         emit this->addNewTag(new_tags.toStringList());

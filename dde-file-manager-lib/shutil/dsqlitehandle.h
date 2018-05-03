@@ -104,7 +104,7 @@ public:
 
     static DSqliteHandle* instance();
     static std::map<QString, std::multimap<QString, QString>> queryPartionsInfoOfDevices();
-    static QPair<QString, QString> getMountPointOfFile(const DUrl& url, std::unique_ptr<std::map<QString, std::multimap<QString, QString>>>& partionsAndMountPoints);
+    static QPair<QString, QString> getMountPointOfFile(DUrl url, std::unique_ptr<std::map<QString, std::multimap<QString, QString>>>& partionsAndMountPoints);
 
 signals:
     void addNewTags(const QVariant& new_tags);

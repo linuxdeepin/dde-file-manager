@@ -204,9 +204,18 @@ DSqliteHandle::DSqliteHandle(QObject * const parent)
 
 
 ///###: this is a auxiliary function. so do nont need a mutex.
-QPair<QString, QString> DSqliteHandle::getMountPointOfFile(const DUrl& url,
+QPair<QString, QString> DSqliteHandle::getMountPointOfFile(DUrl url,
                                                            std::unique_ptr<std::map<QString, std::multimap<QString, QString>>>& partionsAndMountPoints)
 {
+    while (!DFileInfo::exists(url)) {
+        const DUrl &parent_url = url.parentUrl();
+
+        if (!parent_url.isValid() || parent_url == url)
+            break;
+
+        url = parent_url;
+    }
+
     QPair<QString, QString> partionAndMountPoint{};
 
     if(DFileInfo::exists(url) && partionsAndMountPoints

@@ -139,6 +139,9 @@ public:
 signals:
     void fileOpened(const DUrl &fileUrl) const;
     void fileCopied(const DUrl &source, const DUrl &target) const;
+    void fileDeleted(const DUrl &fileUrl) const;
+    void fileMovedToTrash(const DUrl &fileUrl) const;
+    void fileRenamed(const DUrl &from, const DUrl &to) const;
 
 private slots:
     void laterRequestSelectFiles(const DFMUrlListBaseEvent &event) const;
