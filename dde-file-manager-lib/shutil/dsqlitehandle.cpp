@@ -1212,6 +1212,8 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::TagFilesThroughColor3, Q
 
                         return false;
                     }
+
+                    emit addNewTags(QVariant{QList<QString>{tag_name}});
                 }
 
                 return true;
@@ -1595,12 +1597,17 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags,
                     }
 
                 }else{
+
                     return false;
                 }
             }
         }
+
+
+
         return true;
     }
+
     return false;
 }
 
@@ -2117,6 +2124,15 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(const QMa
                    }
 
                    this->closeSqlDatabase();
+                   QMap<QString, QVariant> var_map{};
+                   QMap<QString, QList<QString>>::const_iterator the_beg{ filesAndTags.cbegin() };
+                   QMap<QString, QList<QString>>::const_iterator the_end{ filesAndTags.cend() };
+
+                   for(; the_beg != the_end; ++the_beg){
+                       var_map[the_beg.key()] = QVariant{ the_beg.value() };
+                   }
+
+                   emit filesWereTagged(var_map);
 
                    return true;
                }
@@ -2147,6 +2163,15 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFiles, bool>(const QMa
                    }
 
                    this->closeSqlDatabase();
+                   QMap<QString, QVariant> var_map{};
+                   QMap<QString, QList<QString>>::const_iterator the_beg{ filesAndTags.cbegin() };
+                   QMap<QString, QList<QString>>::const_iterator the_end{ filesAndTags.cend() };
+
+                   for(; the_beg != the_end; ++the_beg){
+                       var_map[the_beg.key()] = QVariant{ the_beg.value() };
+                   }
+
+                   emit filesWereTagged(var_map);
 
                    return true;
                }
@@ -2185,6 +2210,8 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFilesThroughColor, boo
 
         if(!(the_result && m_sqlDatabasePtr->commit())){
             m_sqlDatabasePtr->rollback();
+            this->closeSqlDatabase();
+
             return false;
         }
 
@@ -2251,6 +2278,15 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFilesThroughColor, boo
                             }
 
                             this->closeSqlDatabase();
+                            QMap<QString, QVariant> var_map{};
+                            QMap<QString, QList<QString>>::const_iterator the_beg{ filesAndTags.cbegin() };
+                            QMap<QString, QList<QString>>::const_iterator the_end{ filesAndTags.cend() };
+
+                            for(; the_beg != the_end; ++the_beg){
+                                var_map[the_beg.key()] = QVariant{ the_beg.value() };
+                            }
+
+                            emit filesWereTagged(var_map);
 
                             return true;
                         }
@@ -2375,6 +2411,15 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::UntagDiffPartionFiles, bo
             }
 
             this->closeSqlDatabase();
+            QMap<QString, QVariant> var_map{};
+            QMap<QString, QList<QString>>::const_iterator the_beg{ filesAndTags.cbegin() };
+            QMap<QString, QList<QString>>::const_iterator the_end{ filesAndTags.cend() };
+
+            for(; the_beg != the_end; ++the_beg){
+                var_map[the_beg.key()] = QVariant{ the_beg.value() };
+            }
+
+            emit untagFiles(var_map);
 
             return true;
         }
@@ -2472,13 +2517,16 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteTags, bool>(const Q
 
         this->connectToSqlite("/home", ".__main.db");
         bool the_result{ true };
+        QList<QString> the_tags_for_deleting{ filesAndTags.keys() };
 
         if(m_sqlDatabasePtr && m_sqlDatabasePtr->open() && m_sqlDatabasePtr->transaction()){
-            the_result = this->helpExecSql<DSqliteHandle::SqlType::DeleteTags3, QList<QString>, bool>(filesAndTags.keys(), "/home");
+            the_result = this->helpExecSql<DSqliteHandle::SqlType::DeleteTags3, QList<QString>, bool>(the_tags_for_deleting, "/home");
         }
 
         if(!(the_result && m_sqlDatabasePtr->commit())){
             m_sqlDatabasePtr->rollback();
+            this->closeSqlDatabase();
+
             return false;
         }
 
@@ -2527,16 +2575,18 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteTags, bool>(const Q
 
                             if(!(flagForDeleteInTagWithFile && flagForUpdatingFileProperty && m_sqlDatabasePtr && m_sqlDatabasePtr->commit())){
                                 m_sqlDatabasePtr->rollback();
-                                result = false && result;
+                                result = false;
                             }
-
-                            result = true && result;
                         }
                     }
                 }
             }
 
             this->closeSqlDatabase();
+
+            if(result){
+                emit deleteTags(QVariant{the_tags_for_deleting});
+            }
 
             return result;
         }
@@ -2707,6 +2757,18 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagsName, bool>(con
             }
 
             this->closeSqlDatabase();
+
+            if(result){
+                QMap<QString, QList<QString>>::const_iterator c_beg{ filesAndTags.cbegin() };
+                QMap<QString, QList<QString>>::const_iterator c_end{ filesAndTags.cend() };
+                QMap<QString, QVariant> old_and_new_name{};
+
+                for(; c_beg != c_end; ++c_beg){
+                    old_and_new_name[c_beg.key()] = QVariant{c_beg.value().first()};
+                }
+
+                emit changeTagName(old_and_new_name);
+            }
 
             return result;
         }
@@ -2906,6 +2968,7 @@ template<>
 bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagColor, bool>(const QMap<QString, QList<QString>>& filesAndTags)
 {
     bool result{ true };
+    QMap<QString, QVariant> tag_and_new_color{};
 
     if(QFileInfo::exists("/home") && !filesAndTags.isEmpty()){
         std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
@@ -2922,6 +2985,7 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagColor, bool>(con
                 sql_str = sql_str.arg(c_beg.value()[1]);
                 sql_str = sql_str.arg(c_beg.key());
                 sql_str = sql_str.arg(c_beg.value()[0]);
+                tag_and_new_color[c_beg.key()] = QVariant{c_beg.value()[1]};
 
                 if(!sql_query.exec(sql_str)){
                     qWarning()<< sql_query.lastError().text();
@@ -2933,9 +2997,12 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagColor, bool>(con
 
             if(!(result && m_sqlDatabasePtr->commit())){
                 m_sqlDatabasePtr->rollback();
-                result = false;
             }
         }
+    }
+
+    if(result){
+        emit changeTagColor(tag_and_new_color);
     }
 
     return result;
@@ -2979,6 +3046,8 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::BeforeTagFiles, bool>(con
 
                                 return false;
                             }
+
+                            m_newAddedTags.push_back(c_beg.key());
                         }
                     }
                 }
@@ -2989,6 +3058,12 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::BeforeTagFiles, bool>(con
             }
 
             this->closeSqlDatabase();
+
+            ///###: emit signal when new tag was added.
+            if(!m_newAddedTags.isEmpty()){
+                emit addNewTags(QVariant{m_newAddedTags});
+                m_newAddedTags.clear();
+            }
 
             return true;
         }

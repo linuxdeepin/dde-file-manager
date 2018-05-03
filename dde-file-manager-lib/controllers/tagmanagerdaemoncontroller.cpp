@@ -21,12 +21,56 @@ TagManagerDaemonController::TagManagerDaemonController(QObject * const parent)
                                                                     QDBusConnection::systemBus()
                                                                                                                                      }
                                                                                             };
+
+    this->init_connect();
 }
 
 TagManagerDaemonController* TagManagerDaemonController::instance()
 {
     static TagManagerDaemonController* the_instance{ new TagManagerDaemonController };
     return the_instance;
+}
+
+void TagManagerDaemonController::onAddNewTags(const QDBusVariant& new_tags)
+{
+    emit addNewTags(new_tags.variant());
+}
+
+void TagManagerDaemonController::onChangeTagColor(const QVariantMap& old_and_new_color)
+{
+    emit changeTagColor(old_and_new_color);
+}
+
+void TagManagerDaemonController::onChangeTagName(const QVariantMap& old_and_new_name)
+{
+    emit changeTagName(old_and_new_name);
+}
+
+void TagManagerDaemonController::onDeleteTags(const QDBusVariant& be_deleted_tags)
+{
+    emit deleteTags(be_deleted_tags.variant());
+}
+
+void TagManagerDaemonController::onFilesWereTagged(const QVariantMap& files_were_tagged)
+{
+    emit filesWereTagged(files_were_tagged);
+}
+
+void TagManagerDaemonController::onUntagFiles(const QVariantMap& tag_be_removed_files)
+{
+    emit untagFiles(tag_be_removed_files);
+}
+
+void TagManagerDaemonController::init_connect()noexcept
+{
+    if(m_daemonInterface){
+        QObject::connect(m_daemonInterface.get(), &TagManagerDaemonInterface::addNewTags, this, &TagManagerDaemonController::onAddNewTags);
+        QObject::connect(m_daemonInterface.get(), &TagManagerDaemonInterface::deleteTags, this, &TagManagerDaemonController::onDeleteTags);
+        QObject::connect(m_daemonInterface.get(), &TagManagerDaemonInterface::changeTagColor, this, &TagManagerDaemonController::onChangeTagColor);
+        QObject::connect(m_daemonInterface.get(), &TagManagerDaemonInterface::changeTagName, this, &TagManagerDaemonController::onChangeTagName);
+        QObject::connect(m_daemonInterface.get(), &TagManagerDaemonInterface::filesWereTagged, this, &TagManagerDaemonController::onFilesWereTagged);
+        QObject::connect(m_daemonInterface.get(), &TagManagerDaemonInterface::untagFiles, this, &TagManagerDaemonController::onUntagFiles);
+    }
 }
 
 QVariant TagManagerDaemonController::disposeClientData(const QVariantMap& filesAndTags, Tag::ActionType type)

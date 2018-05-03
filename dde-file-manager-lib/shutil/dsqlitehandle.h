@@ -106,6 +106,14 @@ public:
     static std::map<QString, std::multimap<QString, QString>> queryPartionsInfoOfDevices();
     static QPair<QString, QString> getMountPointOfFile(const DUrl& url, std::unique_ptr<std::map<QString, std::multimap<QString, QString>>>& partionsAndMountPoints);
 
+signals:
+    void addNewTags(const QVariant& new_tags);
+    void deleteTags(const QVariant& be_deleted_tags);
+    void changeTagColor(const QVariantMap& old_and_new_color);
+    void changeTagName(const QVariantMap& old_and_new_name);
+    void filesWereTagged(const QVariantMap& files_were_tagged);
+    void untagFiles(const QVariantMap& tag_be_removed_files);
+
 private slots:
     void onMountAdded(UDiskDeviceInfoPointer infoPointer);
     void onMountRemoved(UDiskDeviceInfoPointer infoPointer);
@@ -146,9 +154,13 @@ private:
     std::atomic<bool> m_flag{ false };
     std::mutex m_mutex{};
 
+
+    QList<QString> m_newAddedTags{};
 };
 
 ///###: increase
+///
+///###: there function will be invoked by TagFiles/TagFilesThroughColor in CLIENT only.
 template<>
 bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::BeforeTagFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags);
 
