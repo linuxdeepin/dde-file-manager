@@ -58,6 +58,7 @@ public:
         DeleteTags,
         DeleteTags2,
         DeleteTags3,
+        DeleteTags4,
 
         DeleteFiles,
 
@@ -137,7 +138,7 @@ private:
     }
 
 
-    template<DSqliteHandle::SqlType type, typename Ty, typename T = void>
+    template<SqlType type = SqlType::None, typename Ty, typename T = void>
     inline T helpExecSql(const Ty& sqlStrs, const QString& mountPoint)
     {
         (void)sqlStrs;
@@ -251,6 +252,10 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteFiles, std::map<QS
 
 ///###: delete tag(s)
 template<>
+QMap<QString, QList<QString>> DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags4,
+                                            QList<QString>, QMap<QString, QList<QString>>>(const QList<QString>& tag_names, const QString& mount_point);
+
+template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags,
                                 std::list<QString>, bool>(const std::list<QString>& sqlStrs, const QString& mountPoint);
 template<>
@@ -259,6 +264,8 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags2,
 
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags3, QList<QString>, bool>(const QList<QString>& tag_name, const QString& mountPoint);
+
+
 
 ///###: change file(s) name.
 template<>
