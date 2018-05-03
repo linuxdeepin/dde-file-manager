@@ -75,7 +75,7 @@ public:
     };
 
 
-    TagManager()=default;
+    TagManager();
     virtual ~TagManager()=default;
 
     TagManager(const TagManager& other)=delete;

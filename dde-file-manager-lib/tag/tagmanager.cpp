@@ -13,6 +13,8 @@
 #include "controllers/appcontroller.h"
 #include "controllers/tagmanagerdaemoncontroller.h"
 
+#include "dfileservices.h"
+
 #include <QMap>
 #include <QList>
 #include <QDebug>
@@ -29,6 +31,18 @@ static QString randomColor() noexcept
     return  Tag::ColorName[uniform_dist(engine)];
 }
 
+
+TagManager::TagManager()
+{
+    connect(DFileService::instance(), &DFileService::fileCopied, this, [this] (const DUrl &source, const DUrl &target) {
+        const QStringList &tags = DFileService::instance()->getTagsThroughFiles(this, {source});
+
+        if (tags.isEmpty())
+            return;
+
+        DFileService::instance()->makeFileTags(this, target, tags);
+    });
+}
 
 QMap<QString, QString> TagManager::getAllTags()
 {
