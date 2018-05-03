@@ -54,6 +54,8 @@
 #include "app/filesignalmanager.h"
 #include "dabstractfilewatcher.h"
 
+#include "tag/tagmanager.h"
+
 #include <QDataStream>
 #include <QGuiApplication>
 #include <QTimer>
@@ -191,9 +193,28 @@ void FileManagerApp::initConnect()
 {
     connect(m_sysPathWatcher, &QFileSystemWatcher::directoryChanged, systemPathManager, &PathManager::loadSystemPaths);
 
-    connect(fileSignalManager, &FileSignalManager::fileTagInfoChanged, this, [] (const DUrlList &files) {
-        for (const DUrl &file : files) {
-            DAbstractFileWatcher::ghostSignal(file.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, file);
+    connect(TagManager::instance(), static_cast<void(TagManager::*)(const QMap<QString, QString>&)>(&TagManager::changeTagColor),
+            this, [this] (const QMap<QString, QString>& tag_and_new_color) {
+        for (auto i = tag_and_new_color.constBegin(); i != tag_and_new_color.constEnd(); ++i) {
+            const QString &tag_name = i.key();
+            const QStringList &files = TagManager::instance()->getFilesThroughTag(tag_name);
+
+            for (const QString &file : files) {
+                DUrl url = DUrl::fromLocalFile(file);
+                DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url);
+            }
+        }
+    });
+    connect(TagManager::instance(), &TagManager::filesWereTagged, this, [this] (const QMap<QString, QList<QString>>& files_were_tagged) {
+        for (auto i = files_were_tagged.constBegin(); i != files_were_tagged.constEnd(); ++i) {
+            DUrl url = DUrl::fromLocalFile(i.key());
+            DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url);
+        }
+    });
+    connect(TagManager::instance(), &TagManager::untagFiles, this, [this] (const QMap<QString, QList<QString>>& tag_be_removed_files) {
+        for (auto i = tag_be_removed_files.constBegin(); i != tag_be_removed_files.constEnd(); ++i) {
+            DUrl url = DUrl::fromLocalFile(i.key());
+            DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url);
         }
     });
 }
