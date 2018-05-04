@@ -34,8 +34,8 @@
 
 DFM_BEGIN_NAMESPACE
 
-DFMSideBarBookmarkItem::DFMSideBarBookmarkItem(const DUrl &url)
-    : DFMSideBarItem(url)
+DFMSideBarBookmarkItem::DFMSideBarBookmarkItem(const DUrl &url, QWidget *parent)
+    : DFMSideBarItem(url, parent)
 {
     setIconFromThemeConfig("BookmarkItem.BookMarks", "icon");
     setReorderable(true);

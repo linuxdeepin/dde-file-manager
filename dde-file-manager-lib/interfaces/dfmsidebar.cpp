@@ -25,6 +25,7 @@
 #include "views/dfmsidebarbookmarkitem.h"
 #include "views/dfmsidebardefaultitem.h"
 #include "views/dfmsidebartrashitem.h"
+#include "views/dfmsidebartagitem.h"
 #include "views/dfmsidebardeviceitem.h"
 #include "views/dfilemanagerwindow.h"
 #include "views/dfmsidebarnetworkitem.h"
@@ -63,6 +64,7 @@ private:
     void initBookmarkConnection();
     void initMountedVolumes();
     void initUserShareItem();
+    void initTagsConnection();
     void addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::GroupName groupType);
 
     DAbstractFileWatcher *userShareFileWatcher = nullptr; //< managed by initUserShareItem()
@@ -75,6 +77,7 @@ DFMSideBarPrivate::DFMSideBarPrivate(DFMSideBar *qq)
     initBookmarkConnection();
     initMountedVolumes();
     initUserShareItem();
+    initTagsConnection();
 }
 
 void DFMSideBarPrivate::initUI()
@@ -154,6 +157,8 @@ void DFMSideBarPrivate::initMountedVolumes()
     Q_CHECK_PTR(group);
 
     DAbstractFileWatcher *devices_watcher = fileService->createFileWatcher(q_func(), DUrl(DEVICE_ROOT), group);
+    Q_CHECK_PTR(devices_watcher);
+    devices_watcher->startWatcher();
 
     auto devices_info = fileService->getChildren(q_func(), DUrl(DEVICE_ROOT),
                         QStringList(), QDir::AllEntries);
@@ -226,6 +231,33 @@ void DFMSideBarPrivate::initUserShareItem()
     });
 }
 
+void DFMSideBarPrivate::initTagsConnection()
+{
+    Q_Q(DFMSideBar);
+
+    DFMSideBarItemGroup *group = groupNameMap[q->groupName(DFMSideBar::GroupName::Tag)];
+    Q_CHECK_PTR(group);
+
+    DAbstractFileWatcher *tags_watcher = fileService->createFileWatcher(q_func(), DUrl(TAG_ROOT), group);
+    Q_CHECK_PTR(tags_watcher);
+    tags_watcher->startWatcher();
+
+    // New tag added.
+    q->connect(tags_watcher, &DAbstractFileWatcher::subfileCreated, group, [group](const DUrl & url) {
+        group->appendItem(new DFMSideBarTagItem(url));
+    });
+
+    // Tag get removed.
+    q->connect(tags_watcher, &DAbstractFileWatcher::fileDeleted, group, [group, q](const DUrl & url) {
+        DFMSideBarItem *item = group->findItem(url);
+        Q_CHECK_PTR(item); // should always find one
+        q->removeItem(item);
+    });
+
+    // move
+    // fileAttributeChanged
+}
+
 void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::GroupName groupType)
 {
     // to make group touch less DFM internal implement, we add item here.
@@ -257,9 +289,14 @@ void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::G
     case DFMSideBar::GroupName::Network:
         group->appendItem(new DFMSideBarNetworkItem(DFM_STD_LOCATION::NetworkRootPath));
         break;
-    case DFMSideBar::GroupName::Tag:
-        // nothing here
+    case DFMSideBar::GroupName::Tag: {
+        auto tag_infos = DFileService::instance()->getChildren(q_func(), DUrl(TAG_ROOT),
+                              QStringList(), QDir::AllEntries);
+        for (const DAbstractFileInfoPointer &info : tag_infos) {
+            group->appendItem(new DFMSideBarTagItem(info->fileUrl()));
+        }
         break;
+    }
     default: // make compiler happy
         break;
     }
