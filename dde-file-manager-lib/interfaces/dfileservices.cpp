@@ -485,7 +485,7 @@ DUrlList DFileService::moveToTrash(const QObject *sender, const DUrlList &list) 
             continue;
 
         emit fileMovedToTrash(list.at(i), result.at(i));
-        emit fileRenamed(list.at(i), result.at(i));
+//        emit fileRenamed(list.at(i), result.at(i));
     }
 
     return result;
@@ -512,7 +512,12 @@ DUrlList DFileService::pasteFile(const QObject *sender, DFMGlobal::ClipboardActi
         if (url.isEmpty())
             continue;
 
-        emit fileCopied(list.at(i), url);
+        if (action == DFMGlobal::ClipboardAction::CopyAction) {
+            emit fileCopied(list.at(i), url);
+
+        } else if (action == DFMGlobal::ClipboardAction::CutAction) {
+            emit fileRenamed(list.at(i), url);
+        }
     }
 
     return new_list;
