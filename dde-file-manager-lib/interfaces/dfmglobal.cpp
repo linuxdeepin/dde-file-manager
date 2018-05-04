@@ -353,8 +353,8 @@ void DFMGlobal::initTagManagerConnect()
 
             // for tag watcher
             for (const QString &tag : i.value()) {
-                const DUrl &parent_url = DUrl::fromUserTaggedFile("/" + tag, QString());
-                const DUrl &file_url = DUrl::fromUserTaggedFile("/" + tag, i.key());
+                const DUrl &parent_url = DUrl::fromUserTaggedFile(tag, QString());
+                const DUrl &file_url = DUrl::fromUserTaggedFile(tag, i.key());
 
                 DAbstractFileWatcher::ghostSignal(parent_url, &DAbstractFileWatcher::subfileCreated, file_url);
             }
@@ -367,8 +367,8 @@ void DFMGlobal::initTagManagerConnect()
 
             // for tag watcher
             for (const QString &tag : i.value()) {
-                const DUrl &parent_url = DUrl::fromUserTaggedFile("/" + tag, QString());
-                const DUrl &file_url = DUrl::fromUserTaggedFile("/" + tag, i.key());
+                const DUrl &parent_url = DUrl::fromUserTaggedFile(tag, QString());
+                const DUrl &file_url = DUrl::fromUserTaggedFile(tag, i.key());
 
                 DAbstractFileWatcher::ghostSignal(parent_url, &DAbstractFileWatcher::fileDeleted, file_url);
             }
@@ -389,8 +389,8 @@ void DFMGlobal::initTagManagerConnect()
     connect(TagManager::instance(), static_cast<void(TagManager::*)(const QMap<QString, QString>&)>(&TagManager::changeTagName),
             [] (const QMap<QString, QString>& old_and_new_name) {
         for (auto i = old_and_new_name.constBegin(); i != old_and_new_name.constEnd(); ++i) {
-            const DUrl &old_url = DUrl::fromUserTaggedFile("/" + i.key(), QString());
-            const DUrl &new_url = DUrl::fromUserTaggedFile("/" + i.value(), QString());
+            const DUrl &old_url = DUrl::fromUserTaggedFile(i.key(), QString());
+            const DUrl &new_url = DUrl::fromUserTaggedFile(i.value(), QString());
 
             DAbstractFileWatcher::ghostSignal(DUrl(TAG_ROOT), &DAbstractFileWatcher::fileMoved, old_url, new_url);
         }

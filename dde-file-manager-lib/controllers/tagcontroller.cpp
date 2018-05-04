@@ -51,7 +51,7 @@ const QList<DAbstractFileInfoPointer> TagController::getChildren(const QSharedPo
             for(; tagBeg != tagEnd; ++tagBeg){
                 DAbstractFileInfoPointer tagInfoPtr{
                                                        DFileService::instance()->createFileInfo(this,
-                                                                                                DUrl::fromUserTaggedFile(QString{"/"} + tagBeg.key(), QString{}))
+                                                                                                DUrl::fromUserTaggedFile(tagBeg.key(), QString{}))
                                                     };
                 infoList.push_back(tagInfoPtr);
             }
