@@ -311,6 +311,14 @@ void TagManager::init_connect()noexcept
         DFileService::instance()->setFileTags(this, to, tags);
     });
 
+    QObject::connect(DFileService::instance(), &DFileService::fileMovedToTrash, [this](const DUrl& from, const DUrl& to){
+        (void)to;
+
+        if(from.isValid()){
+            deleteFiles({from});
+        }
+    });
+
     QObject::connect(TagManagerDaemonController::instance(), &TagManagerDaemonController::addNewTags,[this](const QVariant& new_tags){
 
         emit this->addNewTag(new_tags.toStringList());
