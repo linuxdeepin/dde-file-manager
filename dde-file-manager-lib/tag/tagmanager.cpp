@@ -35,6 +35,15 @@ static QString randomColor() noexcept
 TagManager::TagManager()
     :QObject{ nullptr }
 {
+    if (qApp) {
+        // to main thread
+        if (thread() != qApp->thread()) {
+            moveToThread(qApp->thread());
+            DThreadUtil::runInMainThread(this, &TagManager::init_connect);
+            return;
+        }
+    }
+
     this->init_connect();
 }
 
