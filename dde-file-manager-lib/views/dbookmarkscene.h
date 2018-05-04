@@ -120,8 +120,11 @@ public slots:
     void chooseMountedItem(const DFMEvent &event);
 
     ///###: tag protocol.
-    void onAddOrDecreaseBookmarkOfTags(const QPair<QList<QString>, QList<QString>>& increasedAndDecreased);
     void onRequestRenameTag(const DUrl& url);
+    void onTagAdded(const QList<QString>& new_tags);
+    void onTagDeleted(const QList<QString>& be_deleted_tags);
+    void onTagRenamed(const QMap<QString, QString>& old_and_new_name);
+    void onTagColorChanged(const QMap<QString, QString>& old_and_new_color);
 
 private:
     bool isBelowLastItem(const QPointF &point);

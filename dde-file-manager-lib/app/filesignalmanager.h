@@ -224,10 +224,6 @@ signals:
     /*default view mode changed*/
     void defaultViewModeChanged(const int& viewMode);
 
-    ///###: tag protocol.
-    /*add new tags*/
-    void requestAddOrDecreaseBookmarkOfTag(const QPair<QList<QString>, QList<QString>>& tags);
-
     /*rename a tag*/
     void requestRenameTag(const DUrl& oldTagUrl);
 

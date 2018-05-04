@@ -72,7 +72,7 @@ QList<QString> TagManager::getTagsThroughFiles(const QList<DUrl>& files)
     return QList<QString>{};
 }
 
-QMap<QString, QColor> TagManager::getTagColor(const QList<QString>& tags)
+QMap<QString, QColor> TagManager::getTagColor(const QList<QString>& tags) const
 {
     QMap<QString, QColor> tag_and_color{};
 
@@ -94,6 +94,17 @@ QMap<QString, QColor> TagManager::getTagColor(const QList<QString>& tags)
     }
 
     return tag_and_color;
+}
+
+QString TagManager::getTagColorName(const QString &tag) const
+{
+    const QMap<QString, QColor> &map = getTagColor({tag});
+    const QColor &color = map.value(tag);
+
+    if (!color.isValid())
+        return QString();
+
+    return getColorNameByColor(color);
 }
 
 QList<QString> TagManager::getFilesThroughTag(const QString& tagName)
