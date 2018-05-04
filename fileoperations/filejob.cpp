@@ -257,7 +257,10 @@ DUrlList FileJob::doMove(const DUrlList &files, const DUrl &destination)
             m_noPermissonUrls << url;
     }
 
-    DUrlList result = doMoveCopyJob(new_list, destination);
+    DUrlList result;
+
+    if (!new_list.isEmpty())
+        result = doMoveCopyJob(new_list, destination);
 
     if (!m_noPermissonUrls.isEmpty()){
         DFMUrlListBaseEvent noPermissionEvent(nullptr, m_noPermissonUrls);
