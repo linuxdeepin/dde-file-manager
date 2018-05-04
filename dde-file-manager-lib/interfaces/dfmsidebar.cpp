@@ -125,6 +125,7 @@ void DFMSideBarPrivate::initBookmarkConnection()
     Q_CHECK_PTR(group);
 
     DAbstractFileWatcher *bookmark_watcher = fileService->createFileWatcher(q_func(), DUrl(BOOKMARK_ROOT), group);
+    bookmark_watcher->startWatcher();
 
     q->connect(bookmark_watcher, &DAbstractFileWatcher::subfileCreated, group, [group](const DUrl & url) {
         group->appendItem(new DFMSideBarBookmarkItem(url));
@@ -145,8 +146,6 @@ void DFMSideBarPrivate::initBookmarkConnection()
             item->setUrl(target);
         }
     });
-
-    bookmark_watcher->startWatcher();
 }
 
 void DFMSideBarPrivate::initMountedVolumes()
@@ -244,18 +243,32 @@ void DFMSideBarPrivate::initTagsConnection()
 
     // New tag added.
     q->connect(tags_watcher, &DAbstractFileWatcher::subfileCreated, group, [group](const DUrl & url) {
+        qDebug() << "new tag added 1111111111 "<< url;
         group->appendItem(new DFMSideBarTagItem(url));
     });
 
     // Tag get removed.
     q->connect(tags_watcher, &DAbstractFileWatcher::fileDeleted, group, [group, q](const DUrl & url) {
+        qDebug() << url;
         DFMSideBarItem *item = group->findItem(url);
         Q_CHECK_PTR(item); // should always find one
         q->removeItem(item);
     });
 
-    // move
-    // fileAttributeChanged
+    // Tag got rename
+    q->connect(tags_watcher, &DAbstractFileWatcher::fileMoved, group,
+    [this, group, q](const DUrl & source, const DUrl & target) {
+        DFMSideBarItem *item = q->itemAt(source);
+        if (item) {
+            item->setUrl(target);
+        }
+    });
+
+    // Tag changed color
+    q->connect(tags_watcher, &DAbstractFileWatcher::fileAttributeChanged, group, [group](const DUrl & url) {
+        DFMSideBarItem *item = group->findItem(url);
+        item->setIconFromThemeConfig("BookmarkItem." + url.fileName());
+    });
 }
 
 void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::GroupName groupType)

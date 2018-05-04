@@ -18,9 +18,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "dfilemanagerwindow.h"
 #include "dfmsidebartagitem.h"
+#include "dtagactionwidget.h"
+#include "dfilemenu.h"
 
 #include "tag/tagmanager.h"
+#include "views/windowmanager.h"
+
+#include <QWidgetAction>
 
 DFM_BEGIN_NAMESPACE
 
@@ -29,6 +35,42 @@ DFMSideBarTagItem::DFMSideBarTagItem(const DUrl &url, QWidget *parent)
 {
     QString colorName = TagManager::instance()->getTagColorName(url.fileName());
     setIconFromThemeConfig("BookmarkItem." + colorName);
+}
+
+QMenu *DFMSideBarTagItem::createStandardContextMenu() const
+{
+    DFileMenu *menu = new DFileMenu();
+    DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
+    DTagActionWidget* tagWidget{ new DTagActionWidget };
+    QWidgetAction* tagAction{ new QWidgetAction{ nullptr } };
+
+    menu->addAction(QObject::tr("Open in new window"), [this]() {
+        WindowManager::instance()->showNewWindow(url(), true);
+    });
+
+    menu->addAction(QObject::tr("Open in new tab"), [wnd, this]() {
+        wnd->openNewTab(url());
+    });
+
+    menu->addAction(QObject::tr("Rename"), [this]() {
+        DFMSideBarTagItem *ccItem = const_cast<DFMSideBarTagItem *>(this);
+        ccItem->showRenameEditor();
+    });
+
+    menu->addAction(QObject::tr("Remove"), [ = ]() {
+        DFileService::instance()->deleteFiles(this, DUrlList{url()}, true);
+    });
+
+    tagAction->setDefaultWidget(tagWidget);
+    tagAction->setText("Change color of present tag");
+    tagWidget->setExclusive(true);
+    tagWidget->setToolTipVisible(false);
+
+    menu->addAction(tagAction);
+
+    menu->setEventData(DUrl(TAG_ROOT), {this->url()});
+
+    return menu;
 }
 
 // dtagactionwidget
