@@ -278,12 +278,6 @@ void TagManager::init_connect()noexcept
         }
     });
 
-    connect(DFileService::instance(), &DFileService::fileMovedToTrash, this, [this] (const DUrl &file) {
-        if (file.isLocalFile()) {
-            deleteFiles({file});
-        }
-    });
-
     connect(DFileService::instance(), &DFileService::fileRenamed, this, [this] (const DUrl &from, const DUrl &to) {
         const QStringList &tags = DFileService::instance()->getTagsThroughFiles(this, {from});
 

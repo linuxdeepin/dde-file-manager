@@ -127,7 +127,7 @@ static const std::multimap<DSqliteHandle::SqlType, QString> SqlTypeWithStrs {
                                                           {DSqliteHandle::SqlType::ChangeTagsName2, "UPDATE tag_property SET tag_name = \'%1\' "
                                                                                                                                            "WHERE tag_property.tag_name = \'%2\'"},
 
-                                                          {DSqliteHandle::SqlType::DeleteFiles, "DELETE FROM tag_with_file WHERE tag_with_file.tag_name = \'%1\'"},
+                                                          {DSqliteHandle::SqlType::DeleteFiles, "DELETE FROM tag_with_file WHERE tag_with_file.file_name = \'%1\'"},
                                                           {DSqliteHandle::SqlType::DeleteFiles, "DELETE FROM file_property WHERE file_property.file_name = \'%1\'"},
 
                                                           {DSqliteHandle::SqlType::DeleteTags, "DELETE FROM tag_with_file WHERE tag_with_file.tag_name = \'%1\'"},
@@ -2552,8 +2552,6 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(const 
                 filesOfPartions[unixDeviceAndMountPoint.second].push_back(cbeg.key());
             }
         }
-
-
 
         ///###: splice sql.
         ///###: <mount-point, [<file, <sql, sql>>]>

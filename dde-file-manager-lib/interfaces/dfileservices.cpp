@@ -480,8 +480,12 @@ DUrlList DFileService::moveToTrash(const QObject *sender, const DUrlList &list) 
 
     const DUrlList &result = qvariant_cast<DUrlList>(DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMMoveToTrashEvent>(sender, list)));
 
-    for (const DUrl &file : result) {
-        emit fileMovedToTrash(file);
+    for (int i = 0; i < result.count(); ++i) {
+        if (!result.at(i).isValid())
+            continue;
+
+        emit fileMovedToTrash(list.at(i), result.at(i));
+        emit fileRenamed(list.at(i), result.at(i));
     }
 
     return result;
