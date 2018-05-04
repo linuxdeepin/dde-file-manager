@@ -201,10 +201,33 @@ void TaggedFileWatcher::addWatcher(const DUrl& url)noexcept
     watcher->moveToThread(this->thread());
     d->m_watchers[url] = watcher;
 
+    auto urlConvert = [this] (const DUrl &localUrl) {
+        DUrl new_url = this->fileUrl();
+
+        new_url.setTaggedFileUrl(localUrl.toLocalFile());
+
+        return new_url;
+    };
+
+    connect(watcher, &DAbstractFileWatcher::fileAttributeChanged, this, [this, urlConvert] (const DUrl &url) {
+        emit fileAttributeChanged(urlConvert(url));
+    });
+
+    connect(watcher, &DAbstractFileWatcher::fileModified, this, [this, urlConvert] (const DUrl &url) {
+        emit fileModified(urlConvert(url));
+    });
+
+    connect(watcher, &DAbstractFileWatcher::fileDeleted, this, [this, urlConvert] (const DUrl &url) {
+        emit fileDeleted(urlConvert(url));
+    });
+
+    connect(watcher, &DAbstractFileWatcher::fileMoved, this, [this, urlConvert] (const DUrl &from, const DUrl &to) {
+        emit fileMoved(urlConvert(from), urlConvert(to));
+    });
+
     if(d->started){
         watcher->startWatcher();
     }
-
 }
 
 void TaggedFileWatcher::removeWatcher(const DUrl& url)noexcept
@@ -226,13 +249,23 @@ bool TaggedFileWatcherPrivate::start()
 //    QObject::connect(TagManager::instance(), &TagManager::addNewTag, q, &TaggedFileWatcher::onTagAdded);
 //    QObject::connect(TagManager::instance(), &TagManager::deleteTag, q, &TaggedFileWatcher::onTagDeleted);
 
-    return false;
+    bool ok = true;
+
+    for (DAbstractFileWatcher *watcher : m_watchers) {
+        ok = ok && watcher->startWatcher();
+    }
+
+    return ok;
 }
 
 bool TaggedFileWatcherPrivate::stop()
 {
     TaggedFileWatcher* q{q_func()};
     bool value{ QObject::disconnect(TagManager::instance(), 0, q, 0) };
+
+    for (DAbstractFileWatcher *watcher : m_watchers) {
+        value = value && watcher->stopWatcher();
+    }
 
     return value;
 }
