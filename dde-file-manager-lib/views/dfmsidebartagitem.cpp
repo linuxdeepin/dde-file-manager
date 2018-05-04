@@ -18,25 +18,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMSIDEBARBOOKMARKITEM_H
-#define DFMSIDEBARBOOKMARKITEM_H
+#include "dfmsidebartagitem.h"
 
-#include <dfmglobal.h>
-#include <dfmsidebaritem.h>
+#include "tag/tagmanager.h"
 
 DFM_BEGIN_NAMESPACE
 
-class DFMSideBarBookmarkItem : public DFMSideBarItem
+DFMSideBarTagItem::DFMSideBarTagItem(const DUrl &url, QWidget *parent)
+    : DFMSideBarItem(url, parent)
 {
-    Q_OBJECT
+    QString colorName = TagManager::instance()->getTagColorName(url.fileName());
+    setIconFromThemeConfig("BookmarkItem." + colorName);
+}
 
-public:
-    DFMSideBarBookmarkItem(const DUrl &url, QWidget *parent = nullptr);
-
-protected:
-    virtual QMenu *createStandardContextMenu() const Q_DECL_OVERRIDE;
-};
+// dtagactionwidget
 
 DFM_END_NAMESPACE
-
-#endif // DFMSIDEBARBOOKMARKITEM_H

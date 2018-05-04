@@ -18,25 +18,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMSIDEBARBOOKMARKITEM_H
-#define DFMSIDEBARBOOKMARKITEM_H
+#ifndef DFMSIDEBARTAGITEM_H
+#define DFMSIDEBARTAGITEM_H
 
 #include <dfmglobal.h>
 #include <dfmsidebaritem.h>
 
 DFM_BEGIN_NAMESPACE
 
-class DFMSideBarBookmarkItem : public DFMSideBarItem
+class DFMSideBarTagItem : public DFMSideBarItem
 {
     Q_OBJECT
-
 public:
-    DFMSideBarBookmarkItem(const DUrl &url, QWidget *parent = nullptr);
-
-protected:
-    virtual QMenu *createStandardContextMenu() const Q_DECL_OVERRIDE;
+    DFMSideBarTagItem(const DUrl &url, QWidget* parent = nullptr);
 };
 
 DFM_END_NAMESPACE
 
-#endif // DFMSIDEBARBOOKMARKITEM_H
+#endif // DFMSIDEBARTAGITEM_H
