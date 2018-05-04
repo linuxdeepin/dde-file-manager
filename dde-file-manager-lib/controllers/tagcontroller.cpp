@@ -79,17 +79,7 @@ class TaggedFileWatcher final : public DAbstractFileWatcher
 {
 public:
     explicit TaggedFileWatcher(const DUrl& url, QObject* const parent = nullptr);
-
     void setEnabledSubfileWatcher(const DUrl &subfileUrl, bool enabled = true);
-
-private slots:
-    void onFilesWereTagged();
-    void onUntagFiles();
-
-    void onTagAdded(const QList<QString>& tagNames);
-    void onTagDeleted(const QList<QString>& tagNames);
-    void onTagRenamed(const QPair<QString, QString>& oldAndNewName);
-
 
 private:
     Q_DECLARE_PRIVATE(TaggedFileWatcher)
@@ -147,39 +137,6 @@ void TaggedFileWatcher::setEnabledSubfileWatcher(const DUrl& subfileUrl, bool en
     }else{
         this->removeWatcher(subfileUrl);
     }
-}
-
-void TaggedFileWatcher::onFilesWereTagged()
-{
-
-}
-
-
-void TaggedFileWatcher::onTagAdded(const QList<QString>& tagNames)
-{
-    for(const QString& tag_name : tagNames){
-        DUrl new_file_url{ DUrl::fromUserTaggedFile(QString{"/"} + tag_name, QString{}) };
-
-        emit subfileCreated(new_file_url);
-    }
-}
-
-
-void TaggedFileWatcher::onTagDeleted(const QList<QString>& tagNames)
-{
-    for(const QString& tag_name : tagNames){
-        DUrl new_file_url{ DUrl::fromUserTaggedFile(QString{"/"}+tag_name, QString{}) };
-
-        emit fileDeleted(new_file_url);
-    }
-}
-
-void TaggedFileWatcher::onTagRenamed(const QPair<QString, QString>& oldAndNewName)
-{
-    DUrl old_name{ DUrl::fromUserTaggedFile(QString{"/"} + oldAndNewName.first, QString{}) };
-    DUrl new_name{ DUrl::fromUserTaggedFile(QString{"/"} + oldAndNewName.second, QString{}) };
-
-    emit fileMoved(old_name, new_name);
 }
 
 void TaggedFileWatcher::addWatcher(const DUrl& url)noexcept
@@ -245,9 +202,7 @@ void TaggedFileWatcher::removeWatcher(const DUrl& url)noexcept
 
 bool TaggedFileWatcherPrivate::start()
 {
-    TaggedFileWatcher* q{q_func()};
-//    QObject::connect(TagManager::instance(), &TagManager::addNewTag, q, &TaggedFileWatcher::onTagAdded);
-//    QObject::connect(TagManager::instance(), &TagManager::deleteTag, q, &TaggedFileWatcher::onTagDeleted);
+//    TaggedFileWatcher* q{q_func()};
 
     bool ok = true;
 
