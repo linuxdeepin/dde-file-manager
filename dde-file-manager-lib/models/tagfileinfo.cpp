@@ -127,7 +127,7 @@ DUrl TagFileInfo::parentUrl() const
         return DAbstractFileInfo::parentUrl();
     }
 
-    return DUrl::fromUserTaggedFile(url.path(), QString{});
+    return DUrl::fromUserTaggedFile(url.tagName(), QString{});
 }
 
 QString TagFileInfo::iconName() const

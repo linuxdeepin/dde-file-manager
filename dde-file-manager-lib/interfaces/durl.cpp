@@ -268,6 +268,15 @@ QString DUrl::taggedLocalFilePath() const noexcept
     return QString{};
 }
 
+QString DUrl::tagName() const noexcept
+{
+    if(this->isTaggedFile()){
+        return this->fileName();
+    }
+
+    return QString{};
+}
+
 DUrl DUrl::parentUrl() const
 {
     return parentUrl(*this);
@@ -449,11 +458,11 @@ DUrl DUrl::fromAVFSFile(const QString &filePath)
 }
 
 
-DUrl DUrl::fromUserTaggedFile(const QString& path, const QString& localFilePath)noexcept
+DUrl DUrl::fromUserTaggedFile(const QString& tag_name, const QString& localFilePath)noexcept
 {
     DUrl uri{};
     uri.setScheme(TAG_SCHEME);
-    uri.setPath(path);
+    uri.setPath(QString{"/"} + tag_name);
 
     if(!localFilePath.isEmpty()){
         uri.setFragment(localFilePath);

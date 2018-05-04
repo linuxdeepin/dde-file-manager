@@ -199,7 +199,7 @@ DBookmarkItem* DBookmarkScene::createTagBookmark(const QString& tagName, const Q
     item->setDefaultItem(false);
 
     item->setText(tagName);
-    item->setUrl( DUrl::fromUserTaggedFile(QString{"/"} + tagName, QString{}) );
+    item->setUrl( DUrl::fromUserTaggedFile(tagName, QString{}) );
     item->setDefaultItem(false);
     return item;
 }
@@ -857,7 +857,7 @@ void DBookmarkScene::onTagRenamed(const QMap<QString, QString> &old_and_new_name
             const QString &new_name = old_and_new_name.value(tag_name);
 
             item->setText(new_name);
-            item->setUrl(DUrl::fromUserTaggedFile("/" + new_name, QString()));
+            item->setUrl(DUrl::fromUserTaggedFile(new_name, QString()));
         }
     }
 }
