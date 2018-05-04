@@ -457,7 +457,7 @@ bool DFileService::writeFilesToClipboard(const QObject *sender, DFMGlobal::Clipb
 
 bool DFileService::renameFile(const QObject *sender, const DUrl &from, const DUrl &to, const bool silent) const
 {
-    bool ok = DFMEventDispatcher::instance()->processEvent<DFMRenameEvent>(sender, from, to).toBool();
+    bool ok = DFMEventDispatcher::instance()->processEvent<DFMRenameEvent>(sender, from, to, silent).toBool();
 
     if (ok)
         emit fileRenamed(from, to);

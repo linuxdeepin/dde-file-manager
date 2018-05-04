@@ -58,6 +58,8 @@ public:
 
     DUrl parentUrl() const Q_DECL_OVERRIDE;
 
+    DUrl getUrlByNewFileName(const QString &name) const override;
+
 private:
     QDateTime m_time;
     QString m_name;
