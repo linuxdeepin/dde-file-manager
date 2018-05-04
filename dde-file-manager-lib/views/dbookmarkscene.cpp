@@ -160,8 +160,13 @@ void DBookmarkScene::initConnect()
 
 
     ///###: tag protocol.
-    QObject::connect(fileSignalManager, &FileSignalManager::requestAddOrDecreaseBookmarkOfTag, this, &DBookmarkScene::onAddOrDecreaseBookmarkOfTags);
     QObject::connect(fileSignalManager, &FileSignalManager::requestRenameTag, this, &DBookmarkScene::onRequestRenameTag);
+    connect(TagManager::instance(), &TagManager::addNewTag, this, &DBookmarkScene::onTagAdded);
+    connect(TagManager::instance(), &TagManager::deleteTag, this, &DBookmarkScene::onTagDeleted);
+    connect(TagManager::instance(), static_cast<void(TagManager::*)(const QMap<QString, QString>&)>(&TagManager::changeTagName),
+            this, &DBookmarkScene::onTagRenamed);
+    connect(TagManager::instance(), static_cast<void(TagManager::*)(const QMap<QString, QString>&)>(&TagManager::changeTagColor),
+            this, &DBookmarkScene::onTagColorChanged);
 }
 
 DBookmarkItem *DBookmarkScene::createBookmarkByKey(const QString &key)
@@ -772,74 +777,6 @@ void DBookmarkScene::chooseMountedItem(const DFMEvent &event)
     }
 }
 
-
-void DBookmarkScene::onAddOrDecreaseBookmarkOfTags(const QPair<QList<QString>, QList<QString>>& increasedAndDecreased)
-{
-    if(!increasedAndDecreased.first.isEmpty() && increasedAndDecreased.second.isEmpty()){
-        QMap<QString, QColor> tagAndColor{ TagManager::instance()->getTagColor(increasedAndDecreased.first) };
-
-        if(!tagAndColor.isEmpty()){
-            QMap<QString, QColor>::const_iterator cbeg{ tagAndColor.cbegin() };
-            QMap<QString, QColor>::const_iterator cend{ tagAndColor.cend() };
-            DBookmarkItemGroup* group{ this->getGroup() };
-            QList<DBookmarkItem*> allItem{ group->items() };
-            std::list<QString> backupForDeleting{};
-
-            for(DBookmarkItem* const item : allItem){
-                DUrl url{ item->getUrl() };
-                QString path{ url.path() };
-                path = path.remove(0, 1);
-                QMap<QString, QColor>::const_iterator pos{ tagAndColor.find(path) };
-
-                if(pos != cend){
-                    backupForDeleting.emplace_back(std::move(path));
-                }
-            }
-
-            for(const QString& tag : backupForDeleting){
-                QMap<QString, QColor>::iterator position{ tagAndColor.find(tag) };
-                tagAndColor.erase(position);
-            }
-
-            if(tagAndColor.isEmpty()){
-                return;
-            }
-
-            for(; cbeg != tagAndColor.cend(); ++cbeg){
-                QString colorName{ Tag::ColorsWithNames[cbeg.value().name()] };
-                DBookmarkItem* item{ this->createTagBookmark(cbeg.key(), colorName) };
-                this->addItem(item);
-            }
-        }
-        return;
-    }
-
-    if(increasedAndDecreased.first.isEmpty() && !increasedAndDecreased.second.isEmpty()){
-        DBookmarkItemGroup* group{ this->getGroup() };
-        QList<DBookmarkItem*> allItem{ group->items() };
-        std::list<DBookmarkItem*> backUpList{};
-
-
-        for(DBookmarkItem* const item : allItem){
-            DUrl url{ item->getUrl() };
-            QString path{ url.path() };
-            path = path.remove(0, 1);
-            QList<QString>::const_iterator pos{ std::find(increasedAndDecreased.second.cbegin(),
-                                                          increasedAndDecreased.second.cend(), path) };
-
-            if(pos != increasedAndDecreased.second.cend()){
-                backUpList.push_back(item);
-            }
-        }
-
-        for(DBookmarkItem* const item : backUpList){
-            this->remove(item);
-        }
-        return;
-    }
-
-}
-
 void DBookmarkScene::onRequestRenameTag(const DUrl& url)
 {
     QString path{ url.path() };
@@ -870,6 +807,77 @@ void DBookmarkScene::onRequestRenameTag(const DUrl& url)
             if(pos != allItem.cend()){
                 (*pos)->editMode();
             }
+        }
+    }
+}
+
+void DBookmarkScene::onTagAdded(const QList<QString> &new_tags)
+{
+    for (const QString &tag_name : new_tags) {
+        QString colorName{ TagManager::instance()->getTagColorName(tag_name) };
+        DBookmarkItem* item{ this->createTagBookmark(tag_name, colorName) };
+        this->addItem(item);
+        getGroup()->addItem(item);
+    }
+}
+
+void DBookmarkScene::onTagDeleted(const QList<QString> &be_deleted_tags)
+{
+    DBookmarkItemGroup* group{ this->getGroup() };
+
+    for (DBookmarkItem* const item : group->items()) {
+        DUrl url{ item->getUrl() };
+
+        if (!url.isTaggedFile())
+            continue;
+
+        QString tag_name{ url.fileName() };
+
+        if (be_deleted_tags.contains(tag_name)) {
+            removeItem(item);
+            group->removeItem(item);
+            item->deleteLater();
+        }
+    }
+}
+
+void DBookmarkScene::onTagRenamed(const QMap<QString, QString> &old_and_new_name)
+{
+    DBookmarkItemGroup* group{ this->getGroup() };
+
+    for (DBookmarkItem* const item : group->items()) {
+        DUrl url{ item->getUrl() };
+
+        if (!url.isTaggedFile())
+            continue;
+
+        QString tag_name{ url.fileName() };
+
+        if (old_and_new_name.contains(tag_name)) {
+            const QString &new_name = old_and_new_name.value(tag_name);
+
+            item->setText(new_name);
+            item->setUrl(DUrl::fromUserTaggedFile("/" + new_name, QString()));
+        }
+    }
+}
+
+void DBookmarkScene::onTagColorChanged(const QMap<QString, QString> &old_and_new_color)
+{
+    DBookmarkItemGroup* group{ this->getGroup() };
+
+    for (DBookmarkItem* const item : group->items()) {
+        DUrl url{ item->getUrl() };
+
+        if (!url.isTaggedFile())
+            continue;
+
+        QString tag_name{ url.fileName() };
+
+        if (old_and_new_color.contains(tag_name)) {
+            const QString &new_color = old_and_new_color.value(tag_name);
+
+            item->changeIconThroughColor(TagManager::instance()->getColorByColorName(new_color));
         }
     }
 }

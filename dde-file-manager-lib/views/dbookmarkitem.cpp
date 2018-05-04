@@ -224,9 +224,7 @@ void DBookmarkItem::editFinished()
         newTag.setScheme(TAG_SCHEME);
         newTag.setPath(m_lineEdit->text());
 
-        if (DFileService::instance()->renameFile(nullptr, oldTag, newTag)) {
-            this->setUrl(newTag);
-        }
+        DFileService::instance()->renameFile(nullptr, oldTag, newTag);
     } else {
         if (!m_lineEdit->text().isEmpty() && m_lineEdit->text() != m_textContent) {
             bookmarkManager->renameBookmark(getBookmarkModel(), m_lineEdit->text());

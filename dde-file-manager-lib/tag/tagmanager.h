@@ -86,7 +86,8 @@ public:
 
     QList<QString> getTagsThroughFiles(const QList<DUrl>& files);
 
-    QMap<QString, QColor> getTagColor(const QList<QString>& tags);
+    QMap<QString, QColor> getTagColor(const QList<QString>& tags) const;
+    QString getTagColorName(const QString &tag) const;
 
     QList<QString> getFilesThroughTag(const QString& tagName);
 
