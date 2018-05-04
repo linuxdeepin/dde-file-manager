@@ -89,6 +89,7 @@ int main(int argc, char *argv[])
     DFMGlobal::initDeviceListener();
     DFMGlobal::autoMountAllDisks();
     DFMGlobal::initOperatorRevocation();
+    DFMGlobal::initTagManagerConnect();
 
     // Notify dde-desktop start up
     Dde::Session::RegisterDdeSession();

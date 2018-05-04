@@ -275,6 +275,7 @@ public:
     static void initGlobalSettings();
     static void initViewStatesManager();
     static void initOperatorRevocation();
+    static void initTagManagerConnect();
 
     static void autoMountAllDisks();
 
