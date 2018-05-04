@@ -377,8 +377,9 @@ void DFMSideBarItem::hideRenameEditor()
         return;
     }
 
-    DUrl tmpUrl = url();
-    tmpUrl.setFragment(text);
+    DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(nullptr, url());
+    DUrl tmpUrl = infoPointer->getUrlByNewFileName(text);
+
     fileService->renameFile(this, url(), tmpUrl, true);
 
     emit renameFinished(text);

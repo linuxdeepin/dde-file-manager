@@ -118,3 +118,11 @@ DUrl BookMark::parentUrl() const
 {
     return DUrl(BOOKMARK_ROOT);
 }
+
+DUrl BookMark::getUrlByNewFileName(const QString &name) const
+{
+    DUrl new_url = fileUrl();
+    new_url.setFragment(name);
+
+    return new_url;
+}
