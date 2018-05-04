@@ -31,6 +31,9 @@ class DFMSideBarTagItem : public DFMSideBarItem
     Q_OBJECT
 public:
     DFMSideBarTagItem(const DUrl &url, QWidget* parent = nullptr);
+
+protected:
+    virtual QMenu *createStandardContextMenu() const Q_DECL_OVERRIDE;
 };
 
 DFM_END_NAMESPACE
