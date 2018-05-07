@@ -36,6 +36,8 @@ public:
     virtual QVector<MenuAction> menuActionList(MenuType type) const override;
 
     DUrl getUrlByNewFileName(const QString &name) const override;
+
+    bool canIteratorDir() const override;
 };
 
 

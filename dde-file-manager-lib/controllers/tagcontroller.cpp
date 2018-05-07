@@ -13,7 +13,7 @@
 #include "controllers/appcontroller.h"
 #include "private/dabstractfilewatcher_p.h"
 #include "controllers/tagmanagerdaemoncontroller.h"
-
+#include "dfileproxywatcher.h"
 
 template<typename Ty>
 using citerator = typename QList<Ty>::const_iterator;
@@ -56,9 +56,8 @@ const QList<DAbstractFileInfoPointer> TagController::getChildren(const QSharedPo
                 infoList.push_back(tagInfoPtr);
             }
 
-        }else if(currentUrl.parentUrl().path() == QString{"/"}){
-            path = currentUrl.path();
-            QString tagName{ path.remove(0, 1) };
+        } else if (currentUrl.taggedLocalFilePath().isEmpty()) {
+            QString tagName{ currentUrl.tagName() };
             QList<QString> files{ TagManager::instance()->getFilesThroughTag(tagName) };
 
             for(const QString& localFilePath : files){
@@ -231,6 +230,17 @@ DAbstractFileWatcher* TagController::createFileWatcher(const QSharedPointer<DFMC
 #ifdef QT_DEBUG
     qDebug()<< "be watched url: " << event->url();
 #endif
+
+    if (!event->url().taggedLocalFilePath().isEmpty()) {
+        DAbstractFileWatcher *base_watcher = DFileService::instance()->createFileWatcher(event->sender(), DUrl::fromLocalFile(event->url().taggedLocalFilePath()));
+        const QString &tag_name = event->url().tagName();
+
+        auto urlConvertFun = [tag_name] (const DUrl &baseUrl) {
+            return DUrl::fromUserTaggedFile(tag_name, baseUrl.toLocalFile());
+        };
+
+        return new DFileProxyWatcher(event->url(), base_watcher, urlConvertFun);
+    }
 
     return (new TaggedFileWatcher{event->url()});
 }

@@ -29,6 +29,60 @@
 
 DWIDGET_USE_NAMESPACE
 
+class DefaultDiriterator : public DDirIterator
+{
+public:
+    DefaultDiriterator(const QList<DAbstractFileInfoPointer> &children);
+
+    DUrl next() override;
+    bool hasNext() const override;
+
+    QString fileName() const override;
+    QString filePath() const override;
+    const DAbstractFileInfoPointer fileInfo() const override;
+    QString path() const override;
+
+private:
+    QList<DAbstractFileInfoPointer> m_children;
+    int m_current = -1;
+};
+
+DefaultDiriterator::DefaultDiriterator(const QList<DAbstractFileInfoPointer> &children)
+    : m_children(children)
+{
+
+}
+
+DUrl DefaultDiriterator::next()
+{
+    return m_children.at(++m_current)->fileUrl();
+}
+
+bool DefaultDiriterator::hasNext() const
+{
+    return m_current + 1 < m_children.count();
+}
+
+QString DefaultDiriterator::fileName() const
+{
+    return m_children.at(m_current)->fileName();
+}
+
+QString DefaultDiriterator::filePath() const
+{
+    return m_children.at(m_current)->filePath();
+}
+
+const DAbstractFileInfoPointer DefaultDiriterator::fileInfo() const
+{
+    return m_children.at(m_current);
+}
+
+QString DefaultDiriterator::path() const
+{
+    return m_children.at(m_current)->path();
+}
+
 DAbstractFileController::DAbstractFileController(QObject *parent)
     : QObject(parent)
 {
@@ -133,8 +187,12 @@ bool DAbstractFileController::openFileLocation(const QSharedPointer<DFMOpenFileL
 
 const QList<DAbstractFileInfoPointer> DAbstractFileController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
+    const_cast<DAbstractFileController*>(this)->setProperty("_d_call_createDirIterator_in_DAbstractFileController::getChildren", true);
+
     const DDirIteratorPointer &iterator = createDirIterator(dMakeEventPointer<DFMCreateDiriterator>(event->sender(), event->url(), event->nameFilters(),
                                                                                                     event->filters(), event->flags()));
+
+    const_cast<DAbstractFileController*>(this)->setProperty("_d_call_createDirIterator_in_DAbstractFileController::getChildren", false);
 
     QList<DAbstractFileInfoPointer> list;
 
@@ -157,9 +215,15 @@ const DAbstractFileInfoPointer DAbstractFileController::createFileInfo(const QSh
 
 const DDirIteratorPointer DAbstractFileController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
-    event->ignore();
+    if (property("_d_call_createDirIterator_in_DAbstractFileController::getChildren").toBool()) {
+        event->ignore();
 
-    return DDirIteratorPointer();
+        return DDirIteratorPointer();
+    }
+
+    const QList<DAbstractFileInfoPointer> &children = getChildren(event);
+
+    return DDirIteratorPointer(new DefaultDiriterator(children));
 }
 
 bool DAbstractFileController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const

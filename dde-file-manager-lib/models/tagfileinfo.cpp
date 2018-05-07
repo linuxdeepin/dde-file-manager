@@ -119,11 +119,21 @@ DUrl TagFileInfo::getUrlByNewFileName(const QString &name) const
     return new_url;
 }
 
+bool TagFileInfo::canIteratorDir() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    if (!d->proxy)
+        return true;
+
+    return d->proxy->canIteratorDir();
+}
+
 DUrl TagFileInfo::parentUrl() const
 {
     DUrl url = fileUrl();
 
-    if(url.taggedLocalFilePath().isEmpty()){
+    if (url.taggedLocalFilePath().isEmpty()) {
         return DAbstractFileInfo::parentUrl();
     }
 
