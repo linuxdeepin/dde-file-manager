@@ -170,12 +170,10 @@ void DBookmarkItem::setIsCustomBookmark(bool isCustomBookmark)
 void DBookmarkItem::changeIconThroughColor(const QColor &color)noexcept
 {
     if (color.isValid()) {
-        QString oldColor{ this->m_key };
         QString newColor{ TagManager::instance()->getColorNameByColor(color) };
         QString tagName{ this->text() };
-        QPair<QString, QString> oldAndNewColor{ oldColor, newColor };
 
-        bool result{ TagManager::instance()->changeTagColor(tagName, oldAndNewColor) };
+        bool result{ TagManager::instance()->changeTagColor(tagName, newColor) };
 
         if (result) {
             this->m_key = newColor;

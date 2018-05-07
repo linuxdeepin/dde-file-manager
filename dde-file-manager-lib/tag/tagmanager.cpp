@@ -214,12 +214,12 @@ bool TagManager::makeFilesTags(const QList<QString>& tags, const QList<DUrl>& fi
     return result;
 }
 
-bool TagManager::changeTagColor(const QString& tagName, const QPair<QString, QString>& oldAndNewTagColor)
+bool TagManager::changeTagColor(const QString& tagName, const QString& new_tag_color)
 {
     bool result{ true };
 
-    if(!tagName.isEmpty() && !oldAndNewTagColor.first.isEmpty() && !oldAndNewTagColor.second.isEmpty()){
-        QMap<QString, QVariant> string_var{ { tagName, QVariant{ QList<QString>{oldAndNewTagColor.first, oldAndNewTagColor.second} } } };
+    if(!tagName.isEmpty() && !new_tag_color.isEmpty()){
+        QMap<QString, QVariant> string_var{ { tagName, QVariant{ QList<QString>{ new_tag_color } } } };
         QVariant var{ TagManagerDaemonController::instance()->disposeClientData(string_var, Tag::ActionType::ChangeTagColor) };
         result = var.toBool();
     }
