@@ -61,6 +61,7 @@ public:
         DeleteTags4,
 
         DeleteFiles,
+        DeleteFiles2,
 
         ChangeTagsName,
         ChangeTagsName2,
@@ -247,8 +248,12 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::UntagSamePartionFiles2, 
 
 ///### delete files and delete row(s) in tag_with_file and file_property.
 template<>
-bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteFiles, std::map<QString, std::pair<QString, QString>>, bool>(const std::map<QString, std::pair<QString, QString>>& sqlStrs,
-                                                                                                                            const QString& mountPoint);
+bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteFiles,
+                                    std::list<QString>, bool>(const std::list<QString>& files, const QString& mount_point);
+
+template<>
+QMap<QString, QList<QString>> DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteFiles2, std::list<QString>,
+                                             QMap<QString, QList<QString>>>(const std::list<QString>& files, const QString& mount_point);
 
 ///###: delete tag(s)
 template<>

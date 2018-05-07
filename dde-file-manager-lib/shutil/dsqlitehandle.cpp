@@ -1,4 +1,4 @@
-
+﻿
 
 #include <string>
 #include <fstream>
@@ -129,6 +129,9 @@ static const std::multimap<DSqliteHandle::SqlType, QString> SqlTypeWithStrs {
 
                                                           {DSqliteHandle::SqlType::DeleteFiles, "DELETE FROM tag_with_file WHERE tag_with_file.file_name = \'%1\'"},
                                                           {DSqliteHandle::SqlType::DeleteFiles, "DELETE FROM file_property WHERE file_property.file_name = \'%1\'"},
+
+                                                          {DSqliteHandle::SqlType::DeleteFiles2, "SELECT tag_with_file.tag_name FROM tag_with_file "
+                                                                                                                                "WHERE tag_with_file.file_name = \'%1\'"},
 
                                                           {DSqliteHandle::SqlType::DeleteTags, "DELETE FROM tag_with_file WHERE tag_with_file.tag_name = \'%1\'"},
 
@@ -1516,68 +1519,119 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::UntagSamePartionFiles2, 
 
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteFiles,
-                                std::map<QString, std::pair<QString, QString>>>(const std::map<QString, std::pair<QString, QString>>& sqlStrs,
-                                                                                       const QString& mountPoint)
+                                std::list<QString>, bool>(const std::list<QString>& files, const QString& mount_point)
 {
-    if(!sqlStrs.empty() && !mountPoint.isEmpty()){
-        std::map<QString, std::pair<QString, QString>>::const_iterator cbeg{ sqlStrs.cbegin() };
-        std::map<QString, std::pair<QString, QString>>::const_iterator cend{ sqlStrs.cend() };
-        QSqlQuery sqlQuery{*m_sqlDatabasePtr};
 
+    if(!files.empty() && !mount_point.isEmpty()){
+        std::list<QString>::const_iterator file_itr_beg{ files.cbegin() };
+        std::list<QString>::const_iterator file_itr_end{ files.cend() };
+        std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
+                  std::multimap<DSqliteHandle::SqlType, QString>::const_iterator> range{ SqlTypeWithStrs.equal_range(DSqliteHandle::SqlType::DeleteFiles) };
+        QSqlQuery sql_query{ *m_sqlDatabasePtr };
 
-        for(; cbeg != cend; ++cbeg){
+        if(!m_flag.load(std::memory_order_acquire)){
 
-            if(!m_flag.load(std::memory_order_acquire)){
+            for(; file_itr_beg != file_itr_end; ++file_itr_beg){
+                std::multimap<DSqliteHandle::SqlType, QString>::const_iterator range_beg{ range.first };
+                QString clear_tag_with_file_table{ range_beg->second.arg(*file_itr_beg) };
+                QString clear_file_property_table{ (++range_beg)->second.arg(*file_itr_beg) };
 
-                if(!sqlQuery.exec(cbeg->second.first)){
-                    qWarning(sqlQuery.lastError().text().toStdString().c_str());
-                }
+                if(!sql_query.exec(clear_file_property_table)){
+                    qWarning()<< sql_query.lastError().text();
 
-            }else{
-                DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint) };
-
-                if(code == DSqliteHandle::ReturnCode::Exist){
-
-                    if(!sqlQuery.exec(cbeg->second.first)){
-                        qWarning(sqlQuery.lastError().text().toStdString().c_str());
-                    }
-
-                }else{
                     return false;
                 }
 
-            }
-        }
+                if(!sql_query.exec(clear_tag_with_file_table)){
+                    qWarning()<< sql_query.lastError().text();
 
-
-        cbeg = sqlStrs.cbegin();
-        cend = sqlStrs.cend();
-
-        for(; cbeg != cend; ++cbeg){
-
-            if(!m_flag.load(std::memory_order_acquire)){
-
-                if(!sqlQuery.exec(cbeg->second.second)){
-                    qWarning(sqlQuery.lastError().text().toStdString().c_str());
-                }
-
-            }else{
-                DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mountPoint) };
-
-                if(code == DSqliteHandle::ReturnCode::Exist){
-
-                    if(!sqlQuery.exec(cbeg->second.second)){
-                        qWarning(sqlQuery.lastError().text().toStdString().c_str());
-                    }
-
-                }else{
                     return false;
                 }
             }
+
+            return true;
+
+        }else{
+
+            DSqliteHandle::ReturnCode code{this->checkWhetherHasSqliteInPartion(mount_point)};
+
+            if(code == DSqliteHandle::ReturnCode::Exist){
+
+                for(; file_itr_beg != file_itr_end; ++file_itr_beg){
+                    std::multimap<DSqliteHandle::SqlType, QString>::const_iterator range_beg{ range.first };
+                    QString clear_tag_with_file_table{ range_beg->second.arg(*file_itr_beg) };
+                    QString clear_file_property_table{ (++range_beg)->second.arg(*file_itr_beg) };
+
+                    if(sql_query.exec(clear_file_property_table)){
+                        qWarning()<< sql_query.lastError().text();
+
+                        return false;
+                    }
+
+                    if(sql_query.exec(clear_tag_with_file_table)){
+                        qWarning()<< sql_query.lastError().text();
+
+                        return false;
+                    }
+                }
+
+                return true;
+            }
         }
-        return true;
     }
+
     return false;
+}
+
+template<>
+QMap<QString, QList<QString>> DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteFiles2,
+                                            std::list<QString>, QMap<QString, QList<QString>>>(const std::list<QString>& files, const QString& mount_point)
+{
+    QMap<QString, QList<QString>> file_and_tags{};
+
+    if(!files.empty() && !mount_point.isEmpty()){
+        std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
+                  std::multimap<DSqliteHandle::SqlType, QString>::const_iterator> range{ SqlTypeWithStrs.equal_range(DSqliteHandle::SqlType::DeleteFiles2) };
+        QSqlQuery sql_query{ *m_sqlDatabasePtr };
+
+
+        if(!m_flag.load(std::memory_order_acquire)){
+
+            for(const QString& file : files){
+                QString sql_for_getting_tags{ range.first->second.arg(file) };
+
+                if(sql_query.exec(sql_for_getting_tags)){
+
+                    while(sql_query.next()){
+                        QString tag_name{ sql_query.value("tag_name").toString() };
+                        file_and_tags[file].push_back(tag_name);
+                    }
+                }
+            }
+
+        }else{
+
+            DSqliteHandle::ReturnCode code{this->checkWhetherHasSqliteInPartion(mount_point)};
+
+            if(code == DSqliteHandle::ReturnCode::Exist){
+
+                for(const QString& file : files){
+                    QString sql_for_getting_tags{ range.first->second.arg(file) };
+
+                    if(sql_query.exec(sql_for_getting_tags)){
+
+                        while(sql_query.next()){
+                            QString tag_name{ sql_query.value("tag_name").toString() };
+                            file_and_tags[file].push_back(tag_name);
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
+    return file_and_tags;
 }
 
 
@@ -1614,8 +1668,6 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags,
                 }
             }
         }
-
-
 
         return true;
     }
@@ -2548,6 +2600,7 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(const 
 
         ///###: <mount-point, [files]>
         std::map<QString, std::list<QString>> filesOfPartions{};
+        QMap<QString, QList<QString>> file_and_tags{};
 
         ///###: classify files through the mount-point of every file.
         for(; cbeg != cend; ++cbeg){
@@ -2559,46 +2612,77 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(const 
             }
         }
 
-        ///###: splice sql.
-        ///###: <mount-point, [<file, <sql, sql>>]>
-        std::map<QString, std::map<QString, std::pair<QString, QString>>> sqlForDeletingFiles{};
+        std::map<QString, std::list<QString>>::const_iterator itr_partion_and_files{ filesOfPartions.cbegin() };
+        std::map<QString, std::list<QString>>::const_iterator itr_partion_and_files_end{ filesOfPartions.cend() };
 
-        if(!filesOfPartions.empty()){
-            std::map<QString, std::list<QString>>::const_iterator partionBeg{ filesOfPartions.cbegin() };
-            std::map<QString, std::list<QString>>::const_iterator partionEnd{ filesOfPartions.cend() };
+        for(; itr_partion_and_files != itr_partion_and_files_end; ++itr_partion_and_files){
+            DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(itr_partion_and_files->first) };
 
-            for(; partionBeg != partionEnd; ++partionBeg){
+            if(code == DSqliteHandle::ReturnCode::NoExist || code == DSqliteHandle::ReturnCode::Exist){
+                this->connectToSqlite(itr_partion_and_files->first);
 
-                for(const QString& file : partionBeg->second){
-                    std::map<DSqliteHandle::SqlType, QString>::const_iterator rangeBeg{ range.first };
-                    std::pair<QString, QString> sqls{ rangeBeg->second.arg(file), (++rangeBeg)->second.arg(file) };
-                    sqlForDeletingFiles[partionBeg->first][file] = sqls;
-                }
-            }
+                if(m_sqlDatabasePtr && m_sqlDatabasePtr->open()){
+                    QMap<QString, QList<QString>> file_and_tags_partion{
+                        this->helpExecSql<DSqliteHandle::SqlType::DeleteFiles2,
+                                          std::list<QString>, QMap<QString, QList<QString>>>(itr_partion_and_files->second, itr_partion_and_files->first)
+                    };
 
-            if(!sqlForDeletingFiles.empty()){
-                bool value{ true };
+                    if(!file_and_tags_partion.isEmpty()){
+                        QMap<QString, QList<QString>>::const_iterator itr_beg{ file_and_tags_partion.cbegin() };
+                        QMap<QString, QList<QString>>::const_iterator itr_end{ file_and_tags_partion.cend() };
 
-                for(const std::pair<QString, std::map<QString, std::pair<QString, QString>>>& partion : sqlForDeletingFiles){
-                    DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(partion.first) };
-
-                    if(code == DSqliteHandle::ReturnCode::NoExist || code == DSqliteHandle::ReturnCode::Exist){
-                        this->connectToSqlite(partion.first);
-
-                        if(static_cast<bool>(m_sqlDatabasePtr) && m_sqlDatabasePtr->open()){
-
-                            bool result{ this->helpExecSql<DSqliteHandle::SqlType::DeleteFiles,
-                                               std::map<QString, std::pair<QString, QString>>, bool>(partion.second, partion.first) };
-                            value = (value && result);
+                        for(; itr_beg != itr_end; ++itr_beg){
+                            file_and_tags[itr_beg.key()] = itr_beg.value();
                         }
                     }
                 }
-
-                this->closeSqlDatabase();
-
-                return value;
             }
         }
+
+        this->closeSqlDatabase();
+
+        if(file_and_tags.isEmpty()){
+            return false;
+        }
+
+        QMap<QString, QVariant> result_of_emit{};
+        itr_partion_and_files = filesOfPartions.cbegin();
+        itr_partion_and_files_end = filesOfPartions.cend();
+        bool result_of_return{ true };
+
+        for(; itr_partion_and_files != itr_partion_and_files_end; ++itr_partion_and_files){
+            DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(itr_partion_and_files->first) };
+
+            if(code == DSqliteHandle::ReturnCode::NoExist || code == DSqliteHandle::ReturnCode::Exist){
+                this->connectToSqlite(itr_partion_and_files->first);
+
+                if(m_sqlDatabasePtr && m_sqlDatabasePtr->open() && m_sqlDatabasePtr->transaction()){
+
+                    bool result{ this->helpExecSql<DSqliteHandle::SqlType::DeleteFiles,
+                                                   std::list<QString>, bool>(itr_partion_and_files->second, itr_partion_and_files->first) };
+
+                    if(!(result && m_sqlDatabasePtr->commit())){
+                        m_sqlDatabasePtr->rollback();
+                        result_of_return = false;
+
+                        qWarning()<< "Failed to delete files. So there some dirty data in sqlite.";
+                    }
+
+                    if(result){
+
+                        for(const QString& file : itr_partion_and_files->second){
+                            result_of_emit[file] = QVariant{ file_and_tags[file] };
+                        }
+
+                        emit untagFiles(result_of_emit);
+                    }
+                }
+            }
+        }
+
+        this->closeSqlDatabase();
+
+        return result_of_return;
     }
 
     this->closeSqlDatabase();
