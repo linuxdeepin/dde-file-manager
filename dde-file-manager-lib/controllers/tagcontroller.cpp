@@ -177,10 +177,6 @@ void TaggedFileWatcher::addWatcher(const DUrl& url)noexcept
         emit fileDeleted(urlConvert(url));
     });
 
-    connect(watcher, &DAbstractFileWatcher::fileMoved, this, [this, urlConvert] (const DUrl &from, const DUrl &to) {
-        emit fileMoved(urlConvert(from), urlConvert(to));
-    });
-
     if(d->started){
         watcher->startWatcher();
     }
