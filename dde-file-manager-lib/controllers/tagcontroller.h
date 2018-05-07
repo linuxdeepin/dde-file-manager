@@ -30,7 +30,8 @@ public:
     bool openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const override;
     bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const override;
     bool shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const override;
-    bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const;
+    bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const override;
+    bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const override;
 
     bool setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const override;
     bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const override;
