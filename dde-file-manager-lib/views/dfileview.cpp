@@ -41,7 +41,7 @@
 #include "interfaces/diconitemdelegate.h"
 #include "interfaces/dlistitemdelegate.h"
 #include "interfaces/dfmsetting.h"
-#include "dcrumbwidget.h"
+#include "interfaces/dfmcrumbbar.h"
 #include "controllers/fmstatemanager.h"
 
 #include "controllers/appcontroller.h"
@@ -876,12 +876,8 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             break;
         case Qt::Key_Backspace:{
             DFileManagerWindow* w = qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(windowId()));
-            if(!w){
-                cdUp();
-            } else{
-                const DUrl& url = w->getToolBar()->getCrumWidget()->backUrl();
-                cd(url);
-            }
+            // blmark: revert commit vbfdf8e575447249ba284402bfac8a512bae2d10e
+            cdUp();
 
             w->hideRenameBar();
         }

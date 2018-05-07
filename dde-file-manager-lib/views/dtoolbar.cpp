@@ -26,7 +26,7 @@
 #include "dicontextbutton.h"
 #include "dcheckablebutton.h"
 #include "dsearchbar.h"
-#include "dcrumbwidget.h"
+#include "dfmcrumbbar.h"
 #include "historystack.h"
 #include "dhoverbutton.h"
 #include "historystack.h"
@@ -135,7 +135,7 @@ void DToolBar::initAddressToolBar()
     m_searchBar = new DSearchBar(this);
     m_searchBar->hide();
     m_searchBar->setAlignment(Qt::AlignHCenter);
-    m_crumbWidget = new DCrumbWidget(this);
+    m_crumbWidget = new DFMCrumbBar(this);
     crumbAndSearch->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
     QHBoxLayout * comboLayout = new QHBoxLayout;
@@ -185,8 +185,10 @@ void DToolBar::initConnect()
     connect(m_backButton, &DStateButton::clicked,this, &DToolBar::onBackButtonClicked);
     connect(m_forwardButton, &DStateButton::clicked,this, &DToolBar::onForwardButtonClicked);
     connect(m_searchBar, &DSearchBar::returnPressed, this, &DToolBar::searchBarTextEntered);
-    connect(m_crumbWidget, &DCrumbWidget::crumbSelected, this, &DToolBar::crumbSelected);
-    connect(m_crumbWidget, &DCrumbWidget::searchBarActivated, this, &DToolBar::searchBarActivated);
+    qWarning("DFMCrumbBar::crumbSelected may need implement!!!");
+    qWarning("DFMCrumbBar::searchBarActivated may need implement!!!");
+    //connect(m_crumbWidget, &DFMCrumbBar::crumbSelected, this, &DToolBar::crumbSelected);
+    //connect(m_crumbWidget, &DFMCrumbBar::searchBarActivated, this, &DToolBar::searchBarActivated);
     connect(m_searchButton, &DStateButton::clicked, this, &DToolBar::searchBarClicked);
     connect(m_searchBar, &DSearchBar::focusedOut, this,  &DToolBar::searchBarDeactivated);
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DToolBar::crumbChanged);
@@ -199,7 +201,7 @@ DSearchBar *DToolBar::getSearchBar()
     return m_searchBar;
 }
 
-DCrumbWidget *DToolBar::getCrumWidget()
+DFMCrumbBar *DToolBar::getCrumbWidget()
 {
     return m_crumbWidget;
 }
@@ -224,7 +226,7 @@ void DToolBar::searchBarActivated()
     m_searchBar->clear();
     m_searchBar->setActive(true);
     m_searchBar->setFocus();
-    m_searchBar->setCurrentUrl(m_crumbWidget->getCurrentUrl());
+    m_searchBar->setCurrentUrl(qobject_cast<DFileManagerWindow*>(topLevelWidget())->currentUrl());
     m_searchButton->hide();
 }
 
@@ -267,7 +269,7 @@ void DToolBar::searchBarTextEntered()
     }
 
     const QString &currentDir = QDir::currentPath();
-    const DUrl &currentUrl = m_crumbWidget->getCurrentUrl();
+    const DUrl &currentUrl = qobject_cast<DFileManagerWindow*>(topLevelWidget())->currentUrl();
 
     if (currentUrl.isLocalFile())
         QDir::setCurrent(currentUrl.toLocalFile());
@@ -421,7 +423,7 @@ int DToolBar::navStackCount() const{
 
 void DToolBar::setCrumb(const DUrl &url)
 {
-    m_crumbWidget->setCrumb(url);
+    m_crumbWidget->updateCrumbs(url);
 }
 
 void DToolBar::updateBackForwardButtonsState()

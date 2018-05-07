@@ -35,7 +35,6 @@ class DCheckableButton;
 class DStateButton;
 class DSearchBar;
 class DTabBar;
-class DCrumbWidget;
 class DFMEvent;
 class HistoryStack;
 class DHoverButton;
@@ -47,6 +46,10 @@ QT_END_NAMESPACE
 DWIDGET_BEGIN_NAMESPACE
 class DGraphicsClipEffect;
 DWIDGET_END_NAMESPACE
+
+DFM_BEGIN_NAMESPACE
+class DFMCrumbBar;
+DFM_END_NAMESPACE
 
 class DToolBar : public QFrame
 {
@@ -62,7 +65,7 @@ public:
     void initContollerToolBar();
     void initConnect();
     DSearchBar * getSearchBar();
-    DCrumbWidget* getCrumWidget();
+    DFMCrumbBar *getCrumbWidget();
     QPushButton* getSettingsButton();
     void addHistoryStack();
 
@@ -121,7 +124,7 @@ private:
     DHoverButton* m_sortingButton=NULL;
 
     bool m_switchState = false;
-    DCrumbWidget * m_crumbWidget = NULL;
+    DFMCrumbBar * m_crumbWidget = nullptr;
     HistoryStack * m_navStack = NULL;
     QList<HistoryStack*> m_navStacks;
 
