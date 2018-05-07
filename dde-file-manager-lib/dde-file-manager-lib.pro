@@ -246,7 +246,12 @@ HEADERS += \
     views/dfmsidebartrashitem.h \
     views/dfmsidebardeviceitem.h \
     views/dfmsidebarnetworkitem.h \
-    views/dfmsidebartagitem.h
+    views/dfmsidebartagitem.h \
+    interfaces/dfmcrumbbar.h \
+    interfaces/dfmcrumbitem.h \
+    interfaces/dfmcrumbinterface.h \
+    interfaces/plugins/dfmcrumbplugin.h \
+    interfaces/plugins/dfmcrumbfactory.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -408,7 +413,12 @@ SOURCES += \
     views/dfmsidebartrashitem.cpp \
     views/dfmsidebardeviceitem.cpp \
     views/dfmsidebarnetworkitem.cpp \
-    views/dfmsidebartagitem.cpp
+    views/dfmsidebartagitem.cpp \
+    interfaces/dfmcrumbbar.cpp \
+    interfaces/dfmcrumbitem.cpp \
+    interfaces/dfmcrumbinterface.cpp \
+    interfaces/plugins/dfmcrumbplugin.cpp \
+    interfaces/plugins/dfmcrumbfactory.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET
