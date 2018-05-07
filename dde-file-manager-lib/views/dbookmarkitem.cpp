@@ -518,17 +518,20 @@ void DBookmarkItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void DBookmarkItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (m_pressed && m_isDraggable) {
-        m_xOffset = event->pos().x() - m_xPress;
-        m_xPos += m_xOffset;
-        m_xPress = event->pos().x();
+    if (!m_isDraggable)
+        return;
 
-        m_yOffset = event->pos().y() - m_yPress;
-        m_yPos += m_yOffset;
-        m_yPress = event->pos().y();
-        moveBy(m_xPos, m_yPos);
-        update();
-    }
+//    if (m_pressed && m_isDraggable) {
+//        m_xOffset = event->pos().x() - m_xPress;
+//        m_xPos += m_xOffset;
+//        m_xPress = event->pos().x();
+
+//        m_yOffset = event->pos().y() - m_yPress;
+//        m_yPos += m_yOffset;
+//        m_yPress = event->pos().y();
+//        moveBy(m_xPos, m_yPos);
+//        update();
+//    }
 
     if (m_pressed && !m_isDefault && scene()->views().first()->window()->windowType() == Qt::Window) {
         if (QLineF(event->screenPos(), event->buttonDownScreenPos(Qt::LeftButton))
