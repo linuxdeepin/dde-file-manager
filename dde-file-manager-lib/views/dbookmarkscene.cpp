@@ -190,17 +190,20 @@ DBookmarkItem *DBookmarkScene::createCustomBookmark(const QString &name, const D
     item->setText(name);
     item->setUrl(url);
     item->setDefaultItem(false);
+    item->setDraggable(true);
+
     return item;
 }
 
 DBookmarkItem* DBookmarkScene::createTagBookmark(const QString& tagName, const QString& key)
 {
     DBookmarkItem* item{ new DBookmarkItem{ key.isEmpty() ? QString{"BookMarks"} : key } };
-    item->setDefaultItem(false);
 
     item->setText(tagName);
     item->setUrl( DUrl::fromUserTaggedFile(tagName, QString{}) );
     item->setDefaultItem(false);
+    item->setDraggable(false);
+
     return item;
 }
 
