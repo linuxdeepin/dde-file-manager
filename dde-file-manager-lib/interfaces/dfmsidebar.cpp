@@ -38,6 +38,7 @@
 #include <QScrollBar>
 
 #include "dabstractfilewatcher.h"
+#include "tag/tagmanager.h"
 #include "singleton.h"
 
 
@@ -243,7 +244,6 @@ void DFMSideBarPrivate::initTagsConnection()
 
     // New tag added.
     q->connect(tags_watcher, &DAbstractFileWatcher::subfileCreated, group, [group](const DUrl & url) {
-        qDebug() << "new tag added 1111111111 "<< url;
         group->appendItem(new DFMSideBarTagItem(url));
     });
 
@@ -267,7 +267,7 @@ void DFMSideBarPrivate::initTagsConnection()
     // Tag changed color
     q->connect(tags_watcher, &DAbstractFileWatcher::fileAttributeChanged, group, [group](const DUrl & url) {
         DFMSideBarItem *item = group->findItem(url);
-        item->setIconFromThemeConfig("BookmarkItem." + url.fileName());
+        item->setIconFromThemeConfig("BookmarkItem." + TagManager::instance()->getTagColorName(url.tagName()));
     });
 }
 

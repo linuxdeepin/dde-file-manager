@@ -22,6 +22,8 @@
 #include "dfmsidebartagitem.h"
 #include "dtagactionwidget.h"
 #include "dfilemenu.h"
+#include "dfmeventdispatcher.h"
+#include "dfmevent.h"
 
 #include "tag/tagmanager.h"
 #include "views/windowmanager.h"
@@ -67,8 +69,10 @@ QMenu *DFMSideBarTagItem::createStandardContextMenu() const
     tagWidget->setToolTipVisible(false);
 
     menu->addAction(tagAction);
-
-    menu->setEventData(DUrl(TAG_ROOT), {this->url()});
+    connect(tagAction, &QWidgetAction::triggered, this, [this, menu]() {
+        DFMEventDispatcher::instance()->processEvent<DFMMenuActionEvent>(this, menu, DUrl(TAG_ROOT),
+        DUrlList{this->url()}, DFMGlobal::ChangeTagColor);
+    });
 
     return menu;
 }
