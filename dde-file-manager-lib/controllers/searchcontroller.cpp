@@ -34,6 +34,8 @@
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 
+#include <DDesktopServices>
+
 #include <QDebug>
 #include <QRegularExpression>
 #include <QQueue>
@@ -398,7 +400,7 @@ const DAbstractFileInfoPointer SearchController::createFileInfo(const QSharedPoi
 
 bool SearchController::openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const
 {
-    return DFileService::instance()->openFileLocation(event->sender(), realUrl(event->url()));
+    return DTK_WIDGET_NAMESPACE::DDesktopServices::showFileItem(realUrl(event->url()));
 }
 
 bool SearchController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const

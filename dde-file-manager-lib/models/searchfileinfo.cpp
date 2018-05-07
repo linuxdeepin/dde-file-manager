@@ -142,11 +142,7 @@ QVariant SearchFileInfo::userColumnData(int userColumnRole) const
     if (fileUrl.isLocalFile()) {
         file_path = absolutePath();
     } else {
-        DUrl newUrl = fileUrl;
-
-        newUrl.setPath(QFileInfo(newUrl.path()).path());
-
-        file_path = newUrl.toString();
+        file_path = d->proxy->parentUrl().toString();
     }
 
     return QVariant::fromValue(QPair<QString, QString>(fileDisplayName(), file_path));
@@ -220,7 +216,7 @@ DUrl SearchFileInfo::redirectedFileUrl() const
     Q_D(const DAbstractFileInfo);
 
     if (d->proxy)
-        return d->proxy->fileUrl();
+        return d->proxy->redirectedFileUrl();
 
     return fileUrl().searchTargetUrl();
 }
