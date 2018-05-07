@@ -187,7 +187,7 @@ static const std::multimap<DSqliteHandle::SqlType, QString> SqlTypeWithStrs {
                                                           {DSqliteHandle::SqlType::GetTagColor, "SELECT * FROM tag_property WHERE tag_property.tag_name = \'%1\'" },
 
                                                           {DSqliteHandle::SqlType::ChangeTagColor, "UPDATE tag_property SET tag_color = \'%1\' "
-                                                                                                   "WHERE tag_property.tag_name = \'%2\' AND tag_property.tag_color = \'%3\'" }
+                                                                                                                            "WHERE tag_property.tag_name = \'%2\'" }
                                                       };
 
 
@@ -3100,10 +3100,8 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagColor, bool>(con
 
             for(; c_beg != c_end; ++c_beg){
                 QString sql_str{ range.first->second };
-                sql_str = sql_str.arg(c_beg.value()[1]);
+                sql_str = sql_str.arg(c_beg.value().first());
                 sql_str = sql_str.arg(c_beg.key());
-                sql_str = sql_str.arg(c_beg.value()[0]);
-                tag_and_new_color[c_beg.key()] = QVariant{c_beg.value()[1]};
 
                 if(!sql_query.exec(sql_str)){
                     qWarning()<< sql_query.lastError().text();
@@ -3111,6 +3109,8 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeTagColor, bool>(con
 
                     break;
                 }
+
+                tag_and_new_color[c_beg.key()] = QVariant{c_beg.value().first()};
             }
 
             if(!(result && m_sqlDatabasePtr->commit())){
