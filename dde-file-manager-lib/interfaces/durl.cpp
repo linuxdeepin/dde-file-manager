@@ -654,6 +654,8 @@ QString DUrl::toLocalFile() const
         return searchedFileUrl().toLocalFile();
     } else if(isAVFSFile()) {
         return path();
+    } else if (isTaggedFile()) {
+        return taggedLocalFilePath();
     } else {
         return QUrl::toLocalFile();
     }
