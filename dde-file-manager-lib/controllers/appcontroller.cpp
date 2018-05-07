@@ -747,6 +747,9 @@ void AppController::actionChangeTagColor(const QSharedPointer<DFMChangeTagColorE
 
     item = nullptr;
     DBookmarkItem::ClickedItem.store(nullptr, std::memory_order_release);
+    QString tagName = event->m_tagUrl.fileName();
+    QString newColor = TagManager::instance()->getColorNameByColor(event->m_newColorForTag);
+    TagManager::instance()->changeTagColor(tagName, newColor);
 }
 
 void AppController::showTagEdit(const QPoint &globalPos, const DUrlList &fileList)
