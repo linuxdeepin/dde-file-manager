@@ -746,9 +746,8 @@ bool AppController::actionRemoveTagsOfFile(const QSharedPointer<DFMRemoveTagsOfF
 void AppController::actionChangeTagColor(const QSharedPointer<DFMChangeTagColorEvent> &event)
 {
     QString tagName = event->m_tagUrl.fileName();
-    QString oldColor = TagManager::instance()->getTagColorName(tagName);
     QString newColor = TagManager::instance()->getColorNameByColor(event->m_newColorForTag);
-    TagManager::instance()->changeTagColor(tagName, QPair<QString, QString>(oldColor, newColor));
+    TagManager::instance()->changeTagColor(tagName, newColor);
 }
 
 void AppController::showTagEdit(const QPoint &globalPos, const DUrlList &fileList)
