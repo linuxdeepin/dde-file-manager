@@ -403,6 +403,16 @@ bool TagController::unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> 
     return DFileService::instance()->unShareFolder(event->sender(), local_file);
 }
 
+bool TagController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const
+{
+    const DUrl &local_file = toLocalFile(event->url());
+
+    if (!local_file.isValid())
+        return false;
+
+    return DFileService::instance()->openInTerminal(event->sender(), local_file);
+}
+
 bool TagController::setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const
 {
     QList<QString> tags = event->tags();
