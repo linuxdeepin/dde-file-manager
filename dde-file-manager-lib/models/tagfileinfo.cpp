@@ -4,9 +4,9 @@
 #include "dfileservices.h"
 #include "dfilesystemmodel.h"
 #include "dabstractfileinfo.h"
-#include "../interfaces/durl.h"
-#include "../private/dfileinfo_p.h"
-
+#include "durl.h"
+#include "private/dfileinfo_p.h"
+#include "tag/tagmanager.h"
 
 TagFileInfo::TagFileInfo(const DUrl &url)
             :DAbstractFileInfo{ url, false } //###: Do not cache.
@@ -38,7 +38,13 @@ bool TagFileInfo::exists() const
         return d->proxy->exists();
     }
 
-    return fileUrl() == DUrl(TAG_ROOT);
+    if (fileUrl() == DUrl(TAG_ROOT)) {
+        return true;
+    }
+
+    const QMap<QString, QString> &tag_map = TagManager::instance()->getAllTags();
+
+    return tag_map.contains(fileUrl().tagName());
 }
 
 bool TagFileInfo::isTaged() const
