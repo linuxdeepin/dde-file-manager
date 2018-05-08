@@ -188,7 +188,7 @@ void DToolBar::initConnect()
     qWarning("DFMCrumbBar::crumbSelected may need implement!!!");
     qWarning("DFMCrumbBar::searchBarActivated may need implement!!!");
     //connect(m_crumbWidget, &DFMCrumbBar::crumbSelected, this, &DToolBar::crumbSelected);
-    //connect(m_crumbWidget, &DFMCrumbBar::searchBarActivated, this, &DToolBar::searchBarActivated);
+    connect(m_crumbWidget, &DFMCrumbBar::toggleSearchBar, this, &DToolBar::searchBarActivated);
     connect(m_searchButton, &DStateButton::clicked, this, &DToolBar::searchBarClicked);
     connect(m_searchBar, &DSearchBar::focusedOut, this,  &DToolBar::searchBarDeactivated);
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DToolBar::crumbChanged);
