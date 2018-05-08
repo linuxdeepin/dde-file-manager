@@ -660,3 +660,10 @@ dde_file_manager--DFMSideBarDeviceItem > Dtk--Widget--DImageButton {
 }
 
 /*================ Sidebar End =================*/
+
+/*============== Crumb Bar Begin ===============*/
+QWidget#DCrumbListScrollArea {
+    border: none;
+    padding: 0;
+}
+/*=============== Crumb Bar End ================*/

@@ -27,6 +27,7 @@ DFM_BEGIN_NAMESPACE
 
 class CrumbData
 {
+public:
     DUrl url = DUrl();
     QString iconName = QString();
     QString displayText = "Default";
