@@ -58,6 +58,7 @@ public:
     QString originalFilePath;
     QString displayDeletionDate;
     QDateTime deletionDate;
+    QStringList tagNameList;
 
     void updateInfo();
     void inheritParentTrashInfo();
@@ -84,6 +85,12 @@ void TrashFileInfoPrivate::updateInfo()
 
         if (displayDeletionDate.isEmpty())
             displayDeletionDate = setting.value("DeletionDate").toString();
+
+        const QString &tag_name_list = setting.value("TagNameList").toString();
+
+        if (!tag_name_list.isEmpty()) {
+            tagNameList = tag_name_list.split(",");
+        }
     } else {
         //inherits from parent trash info
         inheritParentTrashInfo();
@@ -454,10 +461,15 @@ bool TrashFileInfo::restore() const
 
     dialogManager->addJob(&job);
 
-    job.doTrashRestore(absoluteFilePath(), d->originalFilePath);
+    bool ok = job.doTrashRestore(absoluteFilePath(), d->originalFilePath);
     dialogManager->removeJob(job.getJobId());
 
-    return true;
+    // restore the file tag infos
+    if (ok && !d->tagNameList.isEmpty()) {
+        DFileService::instance()->setFileTags(nullptr, DUrl::fromLocalFile(d->originalFilePath), d->tagNameList);
+    }
+
+    return ok;
 }
 
 QDateTime TrashFileInfo::deletionDate() const

@@ -324,6 +324,9 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     case DFMEvent::GetTagsThroughFiles:
         result = CALL_CONTROLLER(getTagsThroughFiles);
         break;
+    case DFMEvent::SetFileExtensionPropertys:
+        result = CALL_CONTROLLER(setExtensionPropertys);
+        break;
     default:
         return false;
     }
@@ -665,7 +668,7 @@ const DDirIteratorPointer DFileService::createDirIterator(const QObject *sender,
 }
 
 const QList<DAbstractFileInfoPointer> DFileService::getChildren(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-                                                               QDir::Filters filters, QDirIterator::IteratorFlags flags)
+                                                               QDir::Filters filters, QDirIterator::IteratorFlags flags) const
 {
     const auto&& event = dMakeEventPointer<DFMGetChildrensEvent>(sender, fileUrl, nameFilters, filters, flags);
 
@@ -688,6 +691,13 @@ DAbstractFileWatcher *DFileService::createFileWatcher(const QObject *sender, con
         w->setParent(parent);
 
     return w;
+}
+
+bool DFileService::setExtensionPropertys(const QObject *sender, const DUrl &fileUrl, const QVariantHash &ep) const
+{
+    const auto&& event = dMakeEventPointer<DFMSetFileExtensionPropertys>(sender, fileUrl, ep);
+
+    return DFMEventDispatcher::instance()->processEvent(event).toBool();
 }
 
 QList<DAbstractFileController*> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl, bool ignoreHost, bool ignoreScheme)

@@ -38,6 +38,8 @@
 #include "dfmeventdispatcher.h"
 #include "dabstractfilewatcher.h"
 
+#include "tag/tagmanager.h"
+
 #ifdef SW_LABEL
 #include "sw_label/llsdeepinlabellibrary.h"
 #endif
@@ -538,7 +540,7 @@ DUrlList FileJob::doMoveToTrash(const DUrlList &files)
     return list;
 }
 
-void FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFilePath)
+bool FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFilePath)
 {
 //    qDebug() << srcFile << tarFile;
     qDebug() << "Do restore trash file is started";
@@ -554,8 +556,10 @@ void FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
         m_isInSameDisk = false;
     }
 
+    bool ok = false;
+
     if (m_isInSameDisk){
-        restoreTrashFile(srcFilePath, tarFilePath);
+        ok = restoreTrashFile(srcFilePath, tarFilePath);
     }else{
 
         QString _tarFilePath = tarFilePath;
@@ -566,25 +570,32 @@ void FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
             DUrl url =DUrl::fromLocalFile(srcFilePath);
             urls << url;
 //            qDebug() << srcInfo.symLinkTarget() << DUrl::fromLocalFile(srcInfo.symLinkTarget()).parentUrl() << tarFilePath;
-            doMove(urls, DUrl::fromLocalFile(_tarFilePath).parentUrl());
+            const DUrlList &result = doMove(urls, DUrl::fromLocalFile(_tarFilePath).parentUrl());
 
+            ok = !result.isEmpty();
         }else if (srcInfo.isDir()){
             if (copyDir(srcFilePath, tarDir, true, &_tarFilePath)) {
                 deleteDir(srcFilePath);
-                QFile::rename(_tarFilePath, tarFilePath);
+                ok = QFile::rename(_tarFilePath, tarFilePath);
             }
         }else if (srcInfo.isFile() || srcInfo.isSymLink()){
             if (copyFile(srcFilePath, tarDir, true, &_tarFilePath)) {
                 deleteFile(srcFilePath);
-                QFile::rename(_tarFilePath, tarFilePath);
+                ok = QFile::rename(_tarFilePath, tarFilePath);
             }
         }
+    }
+
+    if (ok) {
+        QFile::remove(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) + QDir::separator() + QFileInfo(srcFilePath).fileName() + ".trashinfo");
     }
 
     if(m_isJobAdded)
         jobRemoved();
     emit finished();
     qDebug() << "Do restore trash file is done!";
+
+    return ok;
 }
 
 void FileJob::paused()
@@ -2228,6 +2239,12 @@ bool FileJob::writeTrashInfo(const QString &fileBaseName, const QString &path, c
     data.append("[Trash Info]\n");
     data.append("Path=").append(path.toUtf8().toPercentEncoding("/")).append("\n");
     data.append("DeletionDate=").append(time).append("\n");
+
+    // save the file tag info
+    const QStringList tag_name_list = TagManager::instance()->getTagsThroughFiles({DUrl::fromLocalFile(path)});
+
+    if (!tag_name_list.isEmpty())
+        data.append("TagNameList=").append(tag_name_list.join(",")).append("\n");
 
     qint64 size = metadata.write(data);
 

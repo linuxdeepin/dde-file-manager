@@ -59,6 +59,7 @@ class DAbstractFileWatcher;
 class DFMSetFileTagsEvent;
 class DFMRemoveTagsOfFileEvent;
 class DFMGetTagsThroughFilesEvent;
+class DFMSetFileExtensionPropertys;
 
 typedef QList<DUrl> DUrlList;
 class DAbstractFileController : public QObject
@@ -98,6 +99,8 @@ public:
     virtual QList<QString> getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const;
 
     virtual DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const;
+
+    virtual bool setExtensionPropertys(const QSharedPointer<DFMSetFileExtensionPropertys> &event) const;
 };
 
 #endif // ABSTRACTFILECONTROLLER_H

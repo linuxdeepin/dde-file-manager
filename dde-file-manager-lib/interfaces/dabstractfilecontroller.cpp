@@ -278,3 +278,11 @@ DAbstractFileWatcher *DAbstractFileController::createFileWatcher(const QSharedPo
 
     return 0;
 }
+
+bool DAbstractFileController::setExtensionPropertys(const QSharedPointer<DFMSetFileExtensionPropertys> &event) const
+{
+    const auto && ep = event->extensionPropertys();
+    const QStringList &tag_name_list = ep.value("tag_name_list").toStringList();
+
+    return setFileTags(dMakeEventPointer<DFMSetFileTagsEvent>(event->sender(), event->url(), tag_name_list));
+}

@@ -69,6 +69,8 @@ public:
         CreateDiriterator,
         CreateGetChildrensJob,
         CreateFileWatcher,
+        SetFileExtensionPropertys,
+
         // other
         ChangeCurrentUrl,
         OpenNewWindow,
@@ -609,6 +611,14 @@ public:
     explicit DFMGetTagsThroughFilesEvent(const QObject* sender, const QList<DUrl>& files);
 
     static QSharedPointer<DFMGetTagsThroughFilesEvent> fromJson(const QJsonObject& json);
+};
+
+class DFMSetFileExtensionPropertys : public DFMUrlBaseEvent
+{
+public:
+    explicit DFMSetFileExtensionPropertys(const QObject *sender, const DUrl &url, const QVariantHash &ep);
+
+    QVariantHash extensionPropertys() const;
 };
 
 #endif // FMEVENT_H
