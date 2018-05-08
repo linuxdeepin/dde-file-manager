@@ -946,3 +946,14 @@ QSharedPointer<DFMGetTagsThroughFilesEvent> DFMGetTagsThroughFilesEvent::fromJso
 }
 
 
+
+DFMSetFileExtensionPropertys::DFMSetFileExtensionPropertys(const QObject *sender, const DUrl &url, const QVariantHash &ep)
+    : DFMUrlBaseEvent(SetFileExtensionPropertys, sender, url)
+{
+    setProperty(QT_STRINGIFY(DFMSetFileExtensionPropertys::extensionPropertys), ep);
+}
+
+QVariantHash DFMSetFileExtensionPropertys::extensionPropertys() const
+{
+    return property(QT_STRINGIFY(DFMSetFileExtensionPropertys::extensionPropertys)).toHash();
+}

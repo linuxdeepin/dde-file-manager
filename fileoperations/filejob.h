@@ -152,7 +152,7 @@ public slots:
     void doDelete(const DUrlList &files);
     DUrlList doMoveToTrash(const DUrlList &files);
 
-    void doTrashRestore(const QString &srcFilePath, const QString& tarFilePath);
+    bool doTrashRestore(const QString &srcFilePath, const QString& tarFilePath);
 
     void paused();
     void started();

@@ -126,13 +126,17 @@ void RequestEP::run()
         const DUrl &url = file_info.first;
         const QStringList &tag_list = DFileService::instance()->getTagsThroughFiles(nullptr, {url});
 
+        QVariantHash ep;
+
+        if (!tag_list.isEmpty()) {
+            ep["tag_name_list"] = tag_list;
+        }
+
         QList<QColor> colors;
 
         for (const QColor &color : TagManager::instance()->getTagColor(tag_list)) {
             colors << color;
         }
-
-        QVariantHash ep;
 
         if (!colors.isEmpty()) {
             ep["colored"] = QVariant::fromValue(colors);

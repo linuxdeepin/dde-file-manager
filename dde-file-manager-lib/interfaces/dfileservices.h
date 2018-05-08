@@ -129,12 +129,13 @@ public:
                                                 QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags) const;
 
     const QList<DAbstractFileInfoPointer> getChildren(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
-                                                      QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
+                                                      QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags) const;
 
     JobController *getChildrenJob(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
                                   QDir::Filters filters, QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags) const;
 
     DAbstractFileWatcher *createFileWatcher(const QObject *sender, const DUrl &fileUrl, QObject *parent = 0) const;
+    bool setExtensionPropertys(const QObject *sender, const DUrl &fileUrl, const QVariantHash &ep) const;
 
 signals:
     void fileOpened(const DUrl &fileUrl) const;
