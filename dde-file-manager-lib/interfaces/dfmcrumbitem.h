@@ -27,12 +27,14 @@
 
 DFM_BEGIN_NAMESPACE
 
+class CrumbData;
 class DFMCrumbItemPrivate;
 class DFMCrumbItem : public QPushButton
 {
     Q_OBJECT
 public:
-    explicit DFMCrumbItem(QWidget *parent = nullptr);
+    explicit DFMCrumbItem(DUrl url, QWidget *parent = nullptr);
+    DFMCrumbItem(CrumbData data, QWidget *parent = nullptr);
     ~DFMCrumbItem();
 
 private:

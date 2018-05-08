@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dfmcrumbitem.h"
+#include "dfmcrumbinterface.h"
 
 DFM_BEGIN_NAMESPACE
 
@@ -35,10 +36,34 @@ private:
 
 };
 
-DFMCrumbItem::DFMCrumbItem(QWidget *parent)
-    : QPushButton(parent)
+DFMCrumbItemPrivate::DFMCrumbItemPrivate(DFMCrumbItem *qq)
+    : q_ptr(qq)
 {
+    qq->setObjectName("DCrumbButton");
+    qq->setFixedHeight(24);
+}
 
+
+DFMCrumbItem::DFMCrumbItem(DUrl url, QWidget* parent)
+    : QPushButton(parent)
+    , d_ptr(new DFMCrumbItemPrivate(this))
+{
+    Q_UNUSED(url);
+    //this->setStyleSheet("background: red");
+    this->setText("test");
+}
+
+DFMCrumbItem::DFMCrumbItem(CrumbData data, QWidget* parent)
+    : QPushButton(parent)
+    , d_ptr(new DFMCrumbItemPrivate(this))
+{
+    if (!data.displayText.isEmpty()) {
+        this->setText(data.displayText);
+    }
+
+    if (!data.iconName.isEmpty()) {
+        //set icon
+    }
 }
 
 DFMCrumbItem::~DFMCrumbItem()
