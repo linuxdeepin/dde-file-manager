@@ -21,6 +21,8 @@
 #include "dfmcrumbitem.h"
 #include "dfmcrumbinterface.h"
 
+#include <QPainter>
+
 DFM_BEGIN_NAMESPACE
 
 class DFMCrumbItemPrivate
@@ -39,8 +41,8 @@ private:
 DFMCrumbItemPrivate::DFMCrumbItemPrivate(DFMCrumbItem *qq)
     : q_ptr(qq)
 {
+    qq->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     qq->setObjectName("DCrumbButton");
-    qq->setFixedHeight(24);
 }
 
 
@@ -69,6 +71,15 @@ DFMCrumbItem::DFMCrumbItem(CrumbData data, QWidget* parent)
 DFMCrumbItem::~DFMCrumbItem()
 {
 
+}
+
+void DFMCrumbItem::paintEvent(QPaintEvent *event)
+{
+    QPainter pa(this);
+
+    //pa.fillRect(rect(), Qt::blue);
+
+    QPushButton::paintEvent(event);
 }
 
 DFM_END_NAMESPACE

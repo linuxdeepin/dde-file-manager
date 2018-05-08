@@ -22,7 +22,7 @@
 #include "dfmcrumbitem.h"
 
 #include <QHBoxLayout>
-#include <QPushButton>
+#include <QPainter>
 #include <QScrollArea>
 
 #include <QDebug>
@@ -42,6 +42,7 @@ public:
     QWidget *crumbListHolder;
     QHBoxLayout *crumbListLayout;
     QHBoxLayout *crumbBarLayout;
+    QPoint clickedPos;
 
     DFMCrumbBar *q_ptr = nullptr;
 
@@ -69,9 +70,8 @@ void DFMCrumbBarPrivate::clearCrumbs()
 
 void DFMCrumbBarPrivate::addCrumb(DFMCrumbItem *item)
 {
-    Q_UNUSED(item);
-
     crumbListLayout->addWidget(item);
+    crumbListHolder->adjustSize();
 }
 
 void DFMCrumbBarPrivate::initUI()
@@ -92,6 +92,8 @@ void DFMCrumbBarPrivate::initUI()
     rightArrow.setFixedWidth(26);
     rightArrow.setFixedHeight(24);
     rightArrow.setFocusPolicy(Qt::NoFocus);
+    leftArrow.hide();
+    rightArrow.hide();
 
     // Crumb List Layout
     crumbListScrollArea.setObjectName("DCrumbListScrollArea");
@@ -102,14 +104,16 @@ void DFMCrumbBarPrivate::initUI()
 
     crumbListHolder = new QWidget();
     //crumbListHolder->setStyleSheet("background: blue");
-    crumbListHolder->setContentsMargins(0,0,0,0);
+    crumbListHolder->setContentsMargins(0,0,30,0); // right 30 for easier click
+    crumbListHolder->setFixedHeight(q->height());
     crumbListScrollArea.setWidget(crumbListHolder);
 
     crumbListLayout = new QHBoxLayout;
     crumbListLayout->setMargin(0);
     crumbListLayout->setSpacing(0);
     crumbListLayout->setAlignment(Qt::AlignLeft);
-    crumbListLayout->setSizeConstraint(QLayout::SetFixedSize);
+//    crumbListLayout->setSizeConstraint(QLayout::SetMaximumSize);
+    crumbListLayout->setContentsMargins(0, 0, 0, 0);
     crumbListHolder->setLayout(crumbListLayout);
 
     // Crumb Bar Layout
@@ -121,7 +125,6 @@ void DFMCrumbBarPrivate::initUI()
     crumbBarLayout->setSpacing(0);
     q->setLayout(crumbBarLayout);
 }
-
 
 DFMCrumbBar::DFMCrumbBar(QWidget *parent)
     : QWidget(parent)
@@ -138,6 +141,27 @@ DFMCrumbBar::~DFMCrumbBar()
 void DFMCrumbBar::updateCrumbs(const DUrl &url)
 {
     Q_UNUSED(url);
+}
+
+void DFMCrumbBar::mousePressEvent(QMouseEvent *event)
+{
+    Q_D(DFMCrumbBar);
+    d->clickedPos = event->globalPos();
+
+    QWidget::mousePressEvent(event);
+}
+
+void DFMCrumbBar::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_D(DFMCrumbBar);
+
+    //blumia: no need to check if it's clicked on other widgets
+    //        since this will only happend when clicking empty.
+    if (d->clickedPos == event->globalPos()) {
+        emit toggleSearchBar();
+    }
+
+    QWidget::mouseReleaseEvent(event);
 }
 
 DFM_END_NAMESPACE

@@ -40,6 +40,13 @@ public:
 private:
     QScopedPointer<DFMCrumbBarPrivate> d_ptr;
 
+Q_SIGNALS:
+    void toggleSearchBar();
+
+protected:
+    void mousePressEvent(QMouseEvent * event) Q_DECL_OVERRIDE;
+    void mouseReleaseEvent(QMouseEvent * event) Q_DECL_OVERRIDE;
+
     Q_DECLARE_PRIVATE(DFMCrumbBar)
 };
 

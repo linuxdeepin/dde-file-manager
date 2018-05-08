@@ -37,6 +37,9 @@ public:
     DFMCrumbItem(CrumbData data, QWidget *parent = nullptr);
     ~DFMCrumbItem();
 
+protected:
+    void paintEvent(QPaintEvent *event);
+
 private:
     QScopedPointer<DFMCrumbItemPrivate> d_ptr;
 
