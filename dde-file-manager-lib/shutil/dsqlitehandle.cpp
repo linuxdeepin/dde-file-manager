@@ -2084,7 +2084,10 @@ QMap<QString, QList<QString>> DSqliteHandle::helpExecSql<DSqliteHandle::SqlType:
 
                                         while(sql_query.next()){
                                             QString fileName{ sql_query.value("file_name").toString() };
-                                            file_and_tags[fileName].push_back(tag_name);
+
+                                            if(!fileName.isEmpty()){
+                                                file_and_tags[fileName].push_back(tag_name);
+                                            }
                                         }
                                     }
 
@@ -2098,7 +2101,10 @@ QMap<QString, QList<QString>> DSqliteHandle::helpExecSql<DSqliteHandle::SqlType:
 
                                             while(sql_query.next()){
                                                 QString fileName{ sql_query.value("file_name").toString() };
-                                                file_and_tags[fileName].push_back(tag_name);
+
+                                                if(!fileName.isEmpty()){
+                                                    file_and_tags[fileName].push_back(tag_name);
+                                                }
                                             }
                                         }
 
@@ -2628,15 +2634,10 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteTags, bool>(const Q
         }
 
         ///###: the second parameter is a placeholder.
-        ///###: you can transmit anything string.
+        ///###: you can transmit any string.
         ///###: do not affect function.
         QMap<QString, QList<QString>> file_and_tags{ this->helpExecSql<DSqliteHandle::SqlType::DeleteTags4,
                                                           QList<QString>, QMap<QString, QList<QString>>>(the_tags_for_deleting, QString{"placeholder_str"}) };
-
-        if(file_and_tags.isEmpty()){
-            return false;
-        }
-
 
         std::list<QString> sqlStrs{};
         QMap<QString, QList<QString>>::const_iterator cbeg{ filesAndTags.cbegin() };
@@ -2695,15 +2696,17 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteTags, bool>(const Q
             if(result){
                 emit deleteTags(QVariant{the_tags_for_deleting});
 
-                QMap<QString, QList<QString>>::const_iterator the_beg{ file_and_tags.cbegin() };
-                QMap<QString, QList<QString>>::const_iterator the_end{ file_and_tags.cend() };
-                QMap<QString, QVariant> tag_with_files{};
+                if(!file_and_tags.isEmpty()){
+                    QMap<QString, QList<QString>>::const_iterator the_beg{ file_and_tags.cbegin() };
+                    QMap<QString, QList<QString>>::const_iterator the_end{ file_and_tags.cend() };
+                    QMap<QString, QVariant> tag_with_files{};
 
-                for(; the_beg != the_end; ++the_beg){
-                    tag_with_files[the_beg.key()] = QVariant{ the_beg.value() };
+                    for(; the_beg != the_end; ++the_beg){
+                        tag_with_files[the_beg.key()] = QVariant{ the_beg.value() };
+                    }
+
+                    emit untagFiles(tag_with_files);
                 }
-
-                emit untagFiles(tag_with_files);
             }
 
             return result;
