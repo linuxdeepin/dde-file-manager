@@ -103,11 +103,12 @@ void DTagActionWidgetPrivate::initUiElement()
 
     mainLayout = new QVBoxLayout();
     mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setSpacing(0);
     mainLayout->addLayout(m_HBoxLayout);
 
     toolTip = new QLabel();
     toolTip->setText(QStringLiteral(" "));
-    toolTip->setStyleSheet("color: #707070; font-size: 11px");
+    toolTip->setStyleSheet("color: #707070; font-size: 10px");
 
     mainLayout->addWidget(toolTip, 0, Qt::AlignHCenter);
 }
