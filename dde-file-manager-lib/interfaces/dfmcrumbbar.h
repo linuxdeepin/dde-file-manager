@@ -25,8 +25,11 @@
 
 #include <dfmglobal.h>
 
+class DFMEvent;
+
 DFM_BEGIN_NAMESPACE
 
+class DFMCrumbItem;
 class DFMCrumbBarPrivate;
 class DFMCrumbBar : public QWidget
 {
@@ -42,6 +45,7 @@ private:
 
 Q_SIGNALS:
     void toggleSearchBar();
+    void crumbItemClicked(DFMCrumbItem *item);
 
 protected:
     void mousePressEvent(QMouseEvent * event) Q_DECL_OVERRIDE;
