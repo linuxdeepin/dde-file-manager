@@ -25,6 +25,7 @@
 #include <QPainter>
 #include <QScrollArea>
 #include <DClipEffectWidget>
+#include <QScrollBar>
 
 #include "views/dfilemanagerwindow.h"
 #include "dfmevent.h"
@@ -54,6 +55,7 @@ public:
     DFMCrumbBar *q_ptr = nullptr;
 
     void clearCrumbs();
+    void checkArrowVisiable();
     void addCrumb(DFMCrumbItem* item);
 
 private:
@@ -78,12 +80,26 @@ DFMCrumbBarPrivate::DFMCrumbBarPrivate(DFMCrumbBar *qq)
  */
 void DFMCrumbBarPrivate::clearCrumbs()
 {
+    leftArrow.hide();
+    rightArrow.hide();
+
     if (crumbListLayout != nullptr) {
         QLayoutItem* item;
         while ((item = crumbListLayout->takeAt(0)) != nullptr ) {
             delete item->widget();
             delete item;
         }
+    }
+}
+
+void DFMCrumbBarPrivate::checkArrowVisiable()
+{
+    if (crumbListHolder->width() >= crumbListScrollArea.width()) {
+        leftArrow.show();
+        rightArrow.show();
+    } else {
+        leftArrow.hide();
+        rightArrow.hide();
     }
 }
 
@@ -100,6 +116,12 @@ void DFMCrumbBarPrivate::addCrumb(DFMCrumbItem *item)
     crumbListLayout->addWidget(item);
     crumbListHolder->adjustSize();
 
+    crumbListScrollArea.horizontalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
+
+    checkArrowVisiable();
+
+    crumbListScrollArea.horizontalScrollBar()->setPageStep(crumbListHolder->width());
+    crumbListScrollArea.horizontalScrollBar()->setSliderPosition(crumbListScrollArea.horizontalScrollBar()->maximum());
     q->connect(item, &DFMCrumbItem::crumbItemClicked, q, [this, q](DFMCrumbItem* item) {
         // change directory.
         emit q->crumbItemClicked(item);
@@ -207,7 +229,9 @@ void DFMCrumbBar::mouseReleaseEvent(QMouseEvent *event)
 
 void DFMCrumbBar::resizeEvent(QResizeEvent *event)
 {
-    Q_D(const DFMCrumbBar);
+    Q_D(DFMCrumbBar);
+
+    d->checkArrowVisiable();
 
     QPainterPath path;
     path.addRoundedRect(QRectF(QPointF(0, 0), event->size()), 4, 4);
@@ -215,6 +239,15 @@ void DFMCrumbBar::resizeEvent(QResizeEvent *event)
     d->roundCorner->raise();
 
     return QWidget::resizeEvent(event);
+}
+
+void DFMCrumbBar::showEvent(QShowEvent *e)
+{
+    Q_D(const DFMCrumbBar);
+
+    d->crumbListScrollArea.horizontalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
+
+    return QWidget::showEvent(e);
 }
 
 DFM_END_NAMESPACE

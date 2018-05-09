@@ -91,7 +91,7 @@ DFMCrumbItem::DFMCrumbItem(DUrl url, QWidget* parent)
 {
     Q_UNUSED(url);
     //this->setStyleSheet("background: red");
-    this->setText("test");
+    this->setText("test test test aaaaaaaaaaaaaaa");
     d_ptr->data.url = DUrl::fromTrashFile("/");
     this->setIconFromThemeConfig("CrumbIconButton.Home");
 }
@@ -118,6 +118,13 @@ DUrl DFMCrumbItem::url() const
 {
     Q_D(const DFMCrumbItem);
     return d->data.url;
+}
+
+void DFMCrumbItem::setText(const QString &text)
+{
+    Q_D(DFMCrumbItem);
+    d->data.displayText = text;
+    QPushButton::setText(text);
 }
 
 void DFMCrumbItem::setIconFromThemeConfig(const QString &group, const QString &key)

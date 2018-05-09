@@ -51,6 +51,7 @@ protected:
     void mousePressEvent(QMouseEvent * event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QMouseEvent * event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) override;
+    void showEvent(QShowEvent *e) override;
 
     Q_DECLARE_PRIVATE(DFMCrumbBar)
 };
