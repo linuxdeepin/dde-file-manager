@@ -38,6 +38,7 @@ public:
     ~DFMCrumbItem();
 
     DUrl url() const;
+    void setText(const QString &text);
     void setIconFromThemeConfig(const QString &group, const QString &key = "icon");
 
 protected:
