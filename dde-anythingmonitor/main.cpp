@@ -2,19 +2,19 @@
 #include <QDebug>
 #include <QFileInfo>
 #include <QCoreApplication>
+#include <QtConcurrent>
 
-
+#include <interfaces/dfmglobal.h>
 #include <shutil/danythingmonitor.h>
 
 constexpr const char* const PATH{ "/proc/vfs_changes" };
 
-
-int main(int argc, char *argv[])
+void do_work()
 {
-    QCoreApplication app(argc, argv);
-    std::shared_ptr<DAnythingMonitor> anything_monitor_ptr{ std::make_shared<DAnythingMonitor>() };
-    std::function<void(const std::shared_ptr<DAnythingMonitor>& ptr)> signal_func{ &DAnythingMonitor::workSignal };
-    std::function<void(const std::shared_ptr<DAnythingMonitor>& ptr)> work_func{ &DAnythingMonitor::doWork };
+    QScopedPointer<DAnythingMonitor> anything_monitor_ptr{ new DAnythingMonitor{} };
+    QScopedPointer<QThreadPool> thread_pool_ptr{ new QThreadPool };
+
+    thread_pool_ptr->setMaxThreadCount(2);
 
     while(true){
 
@@ -22,14 +22,19 @@ int main(int argc, char *argv[])
             std::this_thread::yield();
         }
 
-        std::thread work_thread{work_func, anything_monitor_ptr};
-        std::thread signal_thread{signal_func, anything_monitor_ptr};
+        QFuture<void> work_future{ QtConcurrent::run(thread_pool_ptr.data() ,anything_monitor_ptr.data(), &DAnythingMonitor::doWork) };
+        QFuture<void> signal_future{ QtConcurrent::run(thread_pool_ptr.data(), anything_monitor_ptr.data(), &DAnythingMonitor::workSignal) };
 
-        std::this_thread::sleep_for(std::chrono::duration<std::size_t, std::ratio<1, 1000>>{60});
 
-        signal_thread.join();
-        work_thread.join();
+        work_future.waitForFinished();
+        signal_future.waitForFinished();
     }
+}
+
+int main(int argc, char *argv[])
+{
+    QCoreApplication app{argc, argv};
+    QtConcurrent::run(&do_work);
 
     return app.exec();
 }

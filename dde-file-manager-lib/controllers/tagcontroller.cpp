@@ -180,6 +180,7 @@ void TaggedFileWatcher::addWatcher(const DUrl& url)noexcept
     if(d->started){
         watcher->startWatcher();
     }
+
 }
 
 void TaggedFileWatcher::removeWatcher(const DUrl& url)noexcept

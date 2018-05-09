@@ -1,6 +1,6 @@
 
-#include "tag/tagmanager.h"
 #include "danythingmonitor.h"
+#include "tag/tagmanager.h"
 #include "dfileinfo.h"
 
 
@@ -76,7 +76,8 @@ constexpr static const char* const act_names[]{"file_created", "link_created",
 
 static QString StartPoint{};
 
-DAnythingMonitor::DAnythingMonitor()
+DAnythingMonitor::DAnythingMonitor(QObject * const parent)
+                 :QObject{ parent }
 {
     ///###: constructor.
 }
@@ -84,13 +85,17 @@ DAnythingMonitor::DAnythingMonitor()
 
 void DAnythingMonitor::doWork()
 {
-
     std::unique_lock<std::mutex> raiiLock{ m_mutex };
-    m_conditionVar.wait(raiiLock, [this]{ return m_readyFlag.load(std::memory_order_consume); });
+
+    m_conditionVar.wait(raiiLock, [this]{
+        bool expected{ true };
+        return this->m_readyFlag.compare_exchange_strong(expected, false, std::memory_order_seq_cst);
+                                        });
 
     if(!m_changedFiles.empty()){
         std::deque<std::pair<QString, QString>>::const_iterator cbeg{ m_changedFiles.cbegin() };
         std::deque<std::pair<QString, QString>>::const_iterator cend{ m_changedFiles.cend() };
+
 
         for(; cbeg != cend; ++cbeg){
 
@@ -100,10 +105,12 @@ void DAnythingMonitor::doWork()
                 qDebug()<< cbeg->second;
 #endif
                 TagManager::instance()->deleteFiles({DUrl::fromLocalFile(cbeg->second)});
+
                 continue;
             }
 
             QPair<DUrl, DUrl> oldAndNewFileName{ DUrl::fromLocalFile(cbeg->first), DUrl::fromLocalFile(cbeg->second) };
+
 #ifdef QT_DEBUG
             qDebug()<< oldAndNewFileName;
 #endif
@@ -113,30 +120,40 @@ void DAnythingMonitor::doWork()
 
         m_changedFiles.clear();
     }
-    m_readyFlag.store(false, std::memory_order_release);
+}
+
+void DAnythingMonitor::notify() noexcept
+{
+    bool excepted{ false };
+    if(this->m_readyFlag.compare_exchange_strong(excepted, true, std::memory_order_seq_cst)){
+        this->m_conditionVar.notify_one();
+    }
 }
 
 void DAnythingMonitor::workSignal()
 {
+
+    std::lock_guard<std::mutex> raiiLock{ m_mutex };
+
     int fd = open(PROCFS_PATH, O_RDONLY);
     if (fd < 0) {
-        m_readyFlag.store(true, std::memory_order_release);
-        m_conditionVar.notify_one();
+        notify();
+
         return;
     }
 
     ioctl_rs_args irsa;
     if (ioctl(fd, VC_IOCTL_READSTAT, &irsa) != 0) {
         close(fd);
-        m_readyFlag.store(true, std::memory_order_release);
-        m_conditionVar.notify_one();
+        notify();
+
         return;
     }
 
     if (irsa.cur_changes == 0) {
         close(fd);
-        m_readyFlag.store(true, std::memory_order_release);
-        m_conditionVar.notify_one();
+        notify();
+
         return;
     }
 
@@ -144,65 +161,63 @@ void DAnythingMonitor::workSignal()
     ioctl_rd_args ira ;
     ira.data = buf;
 
-    {
-        std::lock_guard<std::mutex> raiiLock{ m_mutex };
-        while(true){
-            ira.size = sizeof(buf);
-            if (ioctl(fd, VC_IOCTL_READDATA, &ira) != 0)
+
+    while(true){
+        ira.size = sizeof(buf);
+        if (ioctl(fd, VC_IOCTL_READDATA, &ira) != 0)
+            break;
+
+        // no more changes
+        if (ira.size == 0)
+            break;
+
+        int off = 0;
+        for (int i = 0; i < ira.size; i++) {
+            unsigned char action = *(ira.data + off);
+            off++;
+            char* src = ira.data + off, *dst = 0;
+            off += strlen(src) + 1;
+
+            switch(action)
+            {
+            ///###: do not delete this.
+            //                case ACT_NEW_FILE:
+            //                case ACT_NEW_SYMLINK:
+            //                case ACT_NEW_LINK:
+            //                case ACT_NEW_FOLDER:
+            //                {
+            //                    qDebug()<< act_names[action] << "-------->" << src;
+            //                }
+            case ACT_DEL_FILE:
+            case ACT_DEL_FOLDER:
+            {
+                m_changedFiles.emplace_back(QString{}, QString{src});
+                //#ifdef QT_DEBUG
+                //                    qDebug()<< act_names[action] << "--------->" << src;
+                //#endif
                 break;
-
-            // no more changes
-            if (ira.size == 0)
+            }
+            case ACT_RENAME_FILE:
+            case ACT_RENAME_FOLDER:
+            {
+                dst = ira.data + off;
+                off += strlen(dst) + 1;
+                m_changedFiles.emplace_back(QString{src},
+                                            QString{dst});
+                //#ifdef QT_DEBUG
+                //                    qDebug()<< act_names[action] << src << "--------->" << dst;
+                //#endif
                 break;
-
-            int off = 0;
-            for (int i = 0; i < ira.size; i++) {
-                unsigned char action = *(ira.data + off);
-                off++;
-                char* src = ira.data + off, *dst = 0;
-                off += strlen(src) + 1;
-
-                switch(action)
-                {
-                ///###: do not delete this.
-//                case ACT_NEW_FILE:
-//                case ACT_NEW_SYMLINK:
-//                case ACT_NEW_LINK:
-//                case ACT_NEW_FOLDER:
-//                {
-//                    qDebug()<< act_names[action] << "-------->" << src;
-//                }
-                case ACT_DEL_FILE:
-                case ACT_DEL_FOLDER:
-                {
-                    m_changedFiles.emplace_back(QString{}, QString{src});
-//#ifdef QT_DEBUG
-//                    qDebug()<< act_names[action] << "--------->" << src;
-//#endif
-                    break;
-                }
-                case ACT_RENAME_FILE:
-                case ACT_RENAME_FOLDER:
-                {
-                    dst = ira.data + off;
-                    off += strlen(dst) + 1;
-                    m_changedFiles.emplace_back(QString{src},
-                                                QString{dst});
-//#ifdef QT_DEBUG
-//                    qDebug()<< act_names[action] << src << "--------->" << dst;
-//#endif
-                    break;
-                }
-                default:
-                    break;
-                }
+            }
+            default:
+                break;
             }
         }
-        close(fd);
     }
+    close(fd);
 
-    m_readyFlag.store(true, std::memory_order_release);
-    m_conditionVar.notify_one();
+
+    notify();
 }
 
 

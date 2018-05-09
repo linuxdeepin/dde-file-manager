@@ -16,9 +16,9 @@
 #include <iterator>
 #include <unordered_map>
 
+
+#include <QObject>
 #include <QString>
-
-
 
 #ifdef __cplusplus
 extern "C"
@@ -33,10 +33,11 @@ extern "C"
 
 
 
-class DAnythingMonitor : public std::enable_shared_from_this<DAnythingMonitor>
+class DAnythingMonitor final : public QObject
 {
+    Q_OBJECT
 public:
-    explicit DAnythingMonitor();
+    explicit DAnythingMonitor(QObject* const parent = nullptr);
     DAnythingMonitor(const DAnythingMonitor& other)=delete;
     DAnythingMonitor& operator=(const DAnythingMonitor& other)=delete;
     virtual ~DAnythingMonitor()=default;
@@ -46,6 +47,8 @@ public:
     void doWork();
 
 private:
+
+    void notify() noexcept;
 
     ///###: why delete and rename operation use the same data structure.
     ///###: if use different data structure. Maybe the deleting was previous of renaming.

@@ -67,6 +67,7 @@ public:
         ChangeTagsName2,
 
         ChangeFilesName,
+        ChangeFilesName2,
 
         TagFilesThroughColor,
         TagFilesThroughColor2,
@@ -276,6 +277,10 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags3, QList<QStri
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::ChangeFilesName,
                                 std::map<QString, QString>, bool>(const std::map<QString, QString>& sqlStrs, const QString& mountPoint);
+
+template<>
+QMap<QString, QList<QString>> DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::ChangeFilesName2, std::map<QString, QString>,
+                                             QMap<QString, QList<QString>>>(const std::map<QString, QString>& files, const QString& mount_point);
 
 ///###: change tag(s) name.
 template<>
