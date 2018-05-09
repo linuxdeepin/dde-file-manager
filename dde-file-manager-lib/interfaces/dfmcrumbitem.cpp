@@ -21,12 +21,18 @@
 #include "dfmcrumbitem.h"
 #include "dfmcrumbinterface.h"
 
+#include "dfileservices.h"
+
 #include "views/themeconfig.h"
+#include "deviceinfo/udisklistener.h"
 
 #include <QPainter>
 #include <DThemeManager>
+#include <QMimeData>
 
 #include <QDebug>
+
+#include "singleton.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -86,6 +92,7 @@ DFMCrumbItem::DFMCrumbItem(DUrl url, QWidget* parent)
     Q_UNUSED(url);
     //this->setStyleSheet("background: red");
     this->setText("test");
+    d_ptr->data.url = DUrl::fromTrashFile("/");
     this->setIconFromThemeConfig("CrumbIconButton.Home");
 }
 
@@ -107,6 +114,12 @@ DFMCrumbItem::~DFMCrumbItem()
 
 }
 
+DUrl DFMCrumbItem::url() const
+{
+    Q_D(const DFMCrumbItem);
+    return d->data.url;
+}
+
 void DFMCrumbItem::setIconFromThemeConfig(const QString &group, const QString &key)
 {
     Q_D(DFMCrumbItem);
@@ -116,6 +129,80 @@ void DFMCrumbItem::setIconFromThemeConfig(const QString &group, const QString &k
 
     // Do widget UI update.
     this->setIcon(d->icon());
+}
+
+Qt::DropAction DFMCrumbItem::canDropMimeData(const QMimeData *data, Qt::DropActions actions) const
+{
+    Q_D(const DFMCrumbItem);
+
+    if (data->urls().empty()) {
+        return Qt::IgnoreAction;
+    }
+
+    for (const DUrl &url : data->urls()) {
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
+        if (!fileInfo || !fileInfo->isReadable()) {
+            return Qt::IgnoreAction;
+        }
+    }
+
+    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, d->data.url);
+
+    if (!info || !info->canDrop()) {
+        return Qt::IgnoreAction;
+    }
+
+    const Qt::DropActions support_actions = info->supportedDropActions() & actions;
+
+    if (support_actions.testFlag(Qt::CopyAction)) {
+        return Qt::CopyAction;
+    }
+
+    if (support_actions.testFlag(Qt::MoveAction)) {
+        return Qt::MoveAction;
+    }
+
+    if (support_actions.testFlag(Qt::LinkAction)) {
+        return Qt::LinkAction;
+    }
+
+    return Qt::IgnoreAction;
+}
+
+bool DFMCrumbItem::dropMimeData(const QMimeData *data, Qt::DropAction action) const
+{
+    Q_D(const DFMCrumbItem);
+
+    DUrl destUrl = d->data.url;
+    DUrlList oriUrlList = DUrl::fromQUrlList(data->urls());
+    const DAbstractFileInfoPointer &destInfo = DFileService::instance()->createFileInfo(this, destUrl);
+
+    // convert destnation url to real path if it's a symbol link.
+    if (destInfo->isSymLink()) {
+        destUrl = destInfo->rootSymLinkTarget();
+    }
+
+    switch (action) {
+    case Qt::CopyAction:
+        if (oriUrlList.count() > 0) {
+            bool isInSameDevice = Singleton<UDiskListener>::instance()->isInSameDevice(oriUrlList.at(0).toLocalFile(), destUrl.toLocalFile());
+            if (isInSameDevice && !DFMGlobal::keyCtrlIsPressed()) {
+                DFileService::instance()->pasteFile(this, DFMGlobal::CutAction, destUrl, oriUrlList);
+            } else {
+                DFileService::instance()->pasteFile(this, DFMGlobal::CopyAction, destUrl, oriUrlList);
+            }
+        }
+        break;
+    case Qt::LinkAction:
+        break;
+    case Qt::MoveAction:
+        DFileService::instance()->pasteFile(this, DFMGlobal::CutAction, destUrl, oriUrlList);
+        break;
+    default:
+        return false;
+    }
+
+    return true;
 }
 
 void DFMCrumbItem::mousePressEvent(QMouseEvent *event)
@@ -131,7 +218,7 @@ void DFMCrumbItem::mouseReleaseEvent(QMouseEvent *event)
     Q_D(DFMCrumbItem);
 
     if (d->clickedPos == event->globalPos() && !d->data.url.isEmpty()) {
-        emit crumbItemClicked(d->data.url);
+        emit crumbItemClicked(this);
     }
 
     QWidget::mouseReleaseEvent(event);

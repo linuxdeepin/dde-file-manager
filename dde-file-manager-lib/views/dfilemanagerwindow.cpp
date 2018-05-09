@@ -373,7 +373,7 @@ void DFileManagerWindow::onCurrentTabChanged(int tabIndex)
             return;
         }
 
-        d->toolbar->setCrumb(tab->fileView()->rootUrl());
+        d->toolbar->setCrumbBar(tab->fileView()->rootUrl());
         switchToView(tab->fileView());
 
         if (currentUrl().isSearchFile()) {

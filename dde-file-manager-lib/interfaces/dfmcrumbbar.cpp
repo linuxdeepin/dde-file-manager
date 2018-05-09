@@ -26,6 +26,9 @@
 #include <QScrollArea>
 #include <DClipEffectWidget>
 
+#include "views/dfilemanagerwindow.h"
+#include "dfmevent.h"
+
 #include <QDebug>
 
 DWIDGET_USE_NAMESPACE
@@ -55,27 +58,52 @@ public:
 
 private:
     void initUI();
+    void initConnections();
 };
 
 DFMCrumbBarPrivate::DFMCrumbBarPrivate(DFMCrumbBar *qq)
     : q_ptr(qq)
 {
     initUI();
+    initConnections();
     // test
     addCrumb(new DFMCrumbItem(DUrl::fromComputerFile("/")));
     addCrumb(new DFMCrumbItem(DUrl::fromComputerFile("/")));
     addCrumb(new DFMCrumbItem(DUrl::fromComputerFile("/")));
+    //clearCrumbs();
 }
 
+/*!
+ * \brief Remove all crumbs inside crumb bar.
+ */
 void DFMCrumbBarPrivate::clearCrumbs()
 {
-    qWarning("DFMCrumbBarPrivate::clearCrumbs() may need implement!!!");
+    if (crumbListLayout != nullptr) {
+        QLayoutItem* item;
+        while ((item = crumbListLayout->takeAt(0)) != nullptr ) {
+            delete item->widget();
+            delete item;
+        }
+    }
 }
 
+/*!
+ * \brief Add crumb item into crumb bar.
+ * \param item The item to be added into the crumb bar
+ *
+ * Notice: This shouldn't be called outside `updateCrumbs`.
+ */
 void DFMCrumbBarPrivate::addCrumb(DFMCrumbItem *item)
 {
+    Q_Q(DFMCrumbBar);
+
     crumbListLayout->addWidget(item);
     crumbListHolder->adjustSize();
+
+    q->connect(item, &DFMCrumbItem::crumbItemClicked, q, [this, q](DFMCrumbItem* item) {
+        // change directory.
+        emit q->crumbItemClicked(item);
+    });
 }
 
 void DFMCrumbBarPrivate::initUI()
@@ -133,6 +161,11 @@ void DFMCrumbBarPrivate::initUI()
     roundCorner = new DClipEffectWidget(q);
 }
 
+void DFMCrumbBarPrivate::initConnections()
+{
+    Q_Q(DFMCrumbBar);
+}
+
 DFMCrumbBar::DFMCrumbBar(QWidget *parent)
     : QWidget(parent)
     , d_ptr(new DFMCrumbBarPrivate(this))
@@ -148,6 +181,7 @@ DFMCrumbBar::~DFMCrumbBar()
 void DFMCrumbBar::updateCrumbs(const DUrl &url)
 {
     Q_UNUSED(url);
+    qWarning("`DFMCrumbBar::updateCrumbs` need implement !!!");
 }
 
 void DFMCrumbBar::mousePressEvent(QMouseEvent *event)

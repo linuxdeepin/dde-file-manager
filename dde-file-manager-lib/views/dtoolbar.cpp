@@ -34,6 +34,7 @@
 #include "windowmanager.h"
 #include "dfileservices.h"
 #include "dfmeventdispatcher.h"
+#include "dfmcrumbitem.h"
 
 #include "dfmevent.h"
 #include "app/define.h"
@@ -185,9 +186,7 @@ void DToolBar::initConnect()
     connect(m_backButton, &DStateButton::clicked,this, &DToolBar::onBackButtonClicked);
     connect(m_forwardButton, &DStateButton::clicked,this, &DToolBar::onForwardButtonClicked);
     connect(m_searchBar, &DSearchBar::returnPressed, this, &DToolBar::searchBarTextEntered);
-    qWarning("DFMCrumbBar::crumbSelected may need implement!!!");
-    qWarning("DFMCrumbBar::searchBarActivated may need implement!!!");
-    //connect(m_crumbWidget, &DFMCrumbBar::crumbSelected, this, &DToolBar::crumbSelected);
+    connect(m_crumbWidget, &DFMCrumbBar::crumbItemClicked, this, &DToolBar::crumbSelected);
     connect(m_crumbWidget, &DFMCrumbBar::toggleSearchBar, this, &DToolBar::searchBarActivated);
     connect(m_searchButton, &DStateButton::clicked, this, &DToolBar::searchBarClicked);
     connect(m_searchBar, &DSearchBar::focusedOut, this,  &DToolBar::searchBarDeactivated);
@@ -281,12 +280,9 @@ void DToolBar::searchBarTextEntered()
     DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, inputUrl, window());
 }
 
-void DToolBar::crumbSelected(const DFMEvent &e)
+void DToolBar::crumbSelected(const DFMCrumbItem* item)
 {
-    if (e.windowId() != WindowManager::getWindowId(this))
-        return;
-
-    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(m_crumbWidget, e.fileUrl(), window());
+    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(m_crumbWidget, item->url(), window());
 }
 
 void DToolBar::crumbChanged(const DFMEvent &event)
@@ -313,7 +309,7 @@ void DToolBar::crumbChanged(const DFMEvent &event)
         m_searchBar->hide();
         m_crumbWidget->show();
         m_searchButton->show();
-        setCrumb(event.fileUrl());
+        setCrumbBar(event.fileUrl());
     }
 
     if (event.sender() == this)
@@ -421,7 +417,7 @@ int DToolBar::navStackCount() const{
     return m_navStacks.count();
 }
 
-void DToolBar::setCrumb(const DUrl &url)
+void DToolBar::setCrumbBar(const DUrl &url)
 {
     m_crumbWidget->updateCrumbs(url);
 }

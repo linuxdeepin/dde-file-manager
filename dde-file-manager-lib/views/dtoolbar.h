@@ -49,6 +49,7 @@ DWIDGET_END_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
 class DFMCrumbBar;
+class DFMCrumbItem;
 DFM_END_NAMESPACE
 
 class DToolBar : public QFrame
@@ -70,7 +71,7 @@ public:
     void addHistoryStack();
 
     int navStackCount() const;
-    void setCrumb(const DUrl& url);
+    void setCrumbBar(const DUrl& url);
     void updateBackForwardButtonsState();
 
     void setCustomActionList(const QList<QAction*> &list);
@@ -84,7 +85,7 @@ public slots:
     void searchBarActivated();
     void searchBarDeactivated();
     void searchBarTextEntered();
-    void crumbSelected(const DFMEvent &e);
+    void crumbSelected(const DFMCrumbItem* item);
     void crumbChanged(const DFMEvent &event);
     void searchBarChanged(QString path);
 

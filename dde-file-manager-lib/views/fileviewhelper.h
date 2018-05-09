@@ -51,8 +51,6 @@ public slots:
     void refreshFileView(quint64 winId);
 
 private:
-    void onCurrentUrlChanged(const DUrl &url);
-
     DFMUrlBaseEvent lastEvent;
 };
 

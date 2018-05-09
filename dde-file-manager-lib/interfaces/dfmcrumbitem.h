@@ -37,15 +37,19 @@ public:
     DFMCrumbItem(CrumbData data, QWidget *parent = nullptr);
     ~DFMCrumbItem();
 
+    DUrl url() const;
     void setIconFromThemeConfig(const QString &group, const QString &key = "icon");
 
 protected:
+    virtual Qt::DropAction canDropMimeData(const QMimeData *data, Qt::DropActions actions) const;
+    virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action) const;
+
     void mousePressEvent(QMouseEvent * event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QMouseEvent * event) Q_DECL_OVERRIDE;
     void paintEvent(QPaintEvent *event);
 
 Q_SIGNALS:
-    void crumbItemClicked(DUrl url);
+    void crumbItemClicked(DFMCrumbItem* item);
 
 private:
     QScopedPointer<DFMCrumbItemPrivate> d_ptr;
