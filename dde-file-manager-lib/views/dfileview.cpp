@@ -1123,17 +1123,21 @@ void DFileView::updateModelActiveIndex()
         }
     }
 
+    d->visibleIndexRande = rande;
+
     for (int i = rande.first; i <= rande.second; ++i) {
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(model()->index(i, 0));
 
         if (fileInfo) {
             fileInfo->makeToActive();
-            if (fileWatcher)
+
+            if (!fileInfo->exists()) {
+                model()->removeRow(i, rootIndex());
+            } else if (fileWatcher) {
                 fileWatcher->setEnabledSubfileWatcher(fileInfo->fileUrl());
+            }
         }
     }
-
-    d->visibleIndexRande = rande;
 }
 
 void DFileView::handleDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
@@ -1609,6 +1613,21 @@ void DFileView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int e
         if (index.row() >= start && index.row() <= end) {
             selectionModel()->select(index, QItemSelectionModel::Clear);
         }
+    }
+
+    Q_D(DFileView);
+
+    if (start < d->visibleIndexRande.second) {
+        if (end <= d->visibleIndexRande.first) {
+            d->visibleIndexRande.first -= (end - start + 1);
+            d->visibleIndexRande.second -= (end - start + 1);
+        } else if (end <= d->visibleIndexRande.second) {
+            d->visibleIndexRande.first = start;
+            d->visibleIndexRande.second -= (end - start + 1);
+        } else {
+            d->visibleIndexRande.first = d->visibleIndexRande.second = -1;
+        }
+
     }
 
     DListView::rowsAboutToBeRemoved(parent, start, end);

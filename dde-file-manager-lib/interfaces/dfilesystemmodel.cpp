@@ -277,21 +277,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
             q->addFile(info);
             q->selectAndRenameFile(fileUrl);
         } else {// rm file event
-            qDebug() << "file deleted:" << fileUrl;
-
-            const FileSystemNodePointer &parentNode = rootNode;
-
-            if (parentNode && parentNode->populatedChildren) {
-                int index = parentNode->visibleChildren.indexOf(fileUrl);
-
-                if (index < 0)
-                    continue;
-
-                q->beginRemoveRows(q->createIndex(parentNode, 0), index, index);
-                parentNode->visibleChildren.removeAt(index);
-                parentNode->children.remove(fileUrl);
-                q->endRemoveRows();
-            }
+            q->remove(fileUrl);
         }
     }
 
@@ -1415,6 +1401,49 @@ void DFileSystemModel::setEnabledSort(bool enabledSort)
 
     d->enabledSort = enabledSort;
     emit enabledSortChanged(enabledSort);
+}
+
+bool DFileSystemModel::removeRows(int row, int count, const QModelIndex &parent)
+{
+    Q_D(DFileSystemModel);
+
+    const FileSystemNodePointer &parentNode = parent.isValid() ? getNodeByIndex(parent) : d->rootNode;
+
+    if (parentNode && parentNode->populatedChildren) {
+        beginRemoveRows(createIndex(parentNode, 0), row, row + count - 1);
+
+        for (int i = 0; i < count; ++i) {
+            const DUrl url = parentNode->visibleChildren.takeAt(row + i);
+            parentNode->children.remove(url);
+        }
+
+        endRemoveRows();
+    }
+
+    return true;
+}
+
+bool DFileSystemModel::remove(const DUrl &url)
+{
+    Q_D(DFileSystemModel);
+
+    const FileSystemNodePointer &parentNode = d->rootNode;
+
+    if (parentNode && parentNode->populatedChildren) {
+        int index = parentNode->visibleChildren.indexOf(url);
+
+        if (index < 0)
+            return false;
+
+        beginRemoveRows(createIndex(parentNode, 0), index, index);
+        parentNode->visibleChildren.removeAt(index);
+        parentNode->children.remove(url);
+        endRemoveRows();
+
+        return true;
+    }
+
+    return false;
 }
 
 const FileSystemNodePointer DFileSystemModel::getNodeByIndex(const QModelIndex &index) const

@@ -164,6 +164,7 @@ public:
     void setColumnActiveRole(int column, int role);
     int columnActiveRole(int column) const;
 
+
 public slots:
     void updateChildren(QList<DAbstractFileInfoPointer> list);
     void updateChildrenOnNewThread(QList<DAbstractFileInfoPointer> list);
@@ -180,6 +181,10 @@ signals:
     void enabledSortChanged(bool enabledSort);
     void newFileByInternal(const DUrl &url);
     void requestSelectFiles(const QList<DUrl>& urls);
+
+protected:
+    bool remove(const DUrl &url);
+    bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
 private:
     inline const FileSystemNodePointer getNodeByIndex(const QModelIndex &index) const;
@@ -204,6 +209,7 @@ private:
     void selectAndRenameFile(const DUrl &fileUrl);
 
     friend class FileSystemNode;
+    friend class DFileView;
 
     QScopedPointer<DFileSystemModelPrivate> d_ptr;
 

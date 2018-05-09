@@ -647,6 +647,9 @@ DUrl DFileInfo::goToUrlWhenDeleted() const
 
 void DFileInfo::makeToActive()
 {
+    Q_D(DFileInfo);
+
+    d->fileInfo.refresh();
     DAbstractFileInfo::makeToActive();
 }
 
