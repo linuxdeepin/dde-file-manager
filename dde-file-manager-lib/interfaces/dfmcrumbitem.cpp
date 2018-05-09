@@ -21,7 +21,14 @@
 #include "dfmcrumbitem.h"
 #include "dfmcrumbinterface.h"
 
+#include "views/themeconfig.h"
+
 #include <QPainter>
+#include <DThemeManager>
+
+#include <QDebug>
+
+DWIDGET_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
 
@@ -31,6 +38,12 @@ class DFMCrumbItemPrivate
 
 public:
     DFMCrumbItemPrivate(DFMCrumbItem *qq);
+
+    QPixmap icon() const;
+    ThemeConfig::State getState() const;
+
+    QPoint clickedPos;
+    CrumbData data;
 
     DFMCrumbItem *q_ptr = nullptr;
 
@@ -43,6 +56,26 @@ DFMCrumbItemPrivate::DFMCrumbItemPrivate(DFMCrumbItem *qq)
 {
     qq->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     qq->setObjectName("DCrumbButton");
+
+    qq->connect(DThemeManager::instance(), &DThemeManager::widgetThemeChanged, qq, [this, qq](){
+        qq->setIcon(icon());
+    });
+}
+
+QPixmap DFMCrumbItemPrivate::icon() const
+{
+    return ThemeConfig::instace()->pixmap(data.iconName, data.iconKey, getState());
+}
+
+ThemeConfig::State DFMCrumbItemPrivate::getState() const
+{
+    Q_Q(const DFMCrumbItem);
+
+    if (q->isChecked()) {
+        return ThemeConfig::Checked;
+    }
+
+    return ThemeConfig::Normal;
 }
 
 
@@ -53,6 +86,7 @@ DFMCrumbItem::DFMCrumbItem(DUrl url, QWidget* parent)
     Q_UNUSED(url);
     //this->setStyleSheet("background: red");
     this->setText("test");
+    this->setIconFromThemeConfig("CrumbIconButton.Home");
 }
 
 DFMCrumbItem::DFMCrumbItem(CrumbData data, QWidget* parent)
@@ -64,13 +98,43 @@ DFMCrumbItem::DFMCrumbItem(CrumbData data, QWidget* parent)
     }
 
     if (!data.iconName.isEmpty()) {
-        //set icon
+        this->setIconFromThemeConfig(data.iconName, data.iconKey);
     }
 }
 
 DFMCrumbItem::~DFMCrumbItem()
 {
 
+}
+
+void DFMCrumbItem::setIconFromThemeConfig(const QString &group, const QString &key)
+{
+    Q_D(DFMCrumbItem);
+
+    d->data.iconName = group;
+    d->data.iconKey = key;
+
+    // Do widget UI update.
+    this->setIcon(d->icon());
+}
+
+void DFMCrumbItem::mousePressEvent(QMouseEvent *event)
+{
+    Q_D(DFMCrumbItem);
+    d->clickedPos = event->globalPos();
+
+    return;
+}
+
+void DFMCrumbItem::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_D(DFMCrumbItem);
+
+    if (d->clickedPos == event->globalPos() && !d->data.url.isEmpty()) {
+        emit crumbItemClicked(d->data.url);
+    }
+
+    QWidget::mouseReleaseEvent(event);
 }
 
 void DFMCrumbItem::paintEvent(QPaintEvent *event)

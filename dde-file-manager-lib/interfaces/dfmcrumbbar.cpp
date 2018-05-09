@@ -24,8 +24,11 @@
 #include <QHBoxLayout>
 #include <QPainter>
 #include <QScrollArea>
+#include <DClipEffectWidget>
 
 #include <QDebug>
+
+DWIDGET_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
 
@@ -43,6 +46,7 @@ public:
     QHBoxLayout *crumbListLayout;
     QHBoxLayout *crumbBarLayout;
     QPoint clickedPos;
+    DClipEffectWidget *roundCorner;
 
     DFMCrumbBar *q_ptr = nullptr;
 
@@ -124,6 +128,9 @@ void DFMCrumbBarPrivate::initUI()
     crumbBarLayout->setContentsMargins(0,0,0,0);
     crumbBarLayout->setSpacing(0);
     q->setLayout(crumbBarLayout);
+
+    // Round Corner
+    roundCorner = new DClipEffectWidget(q);
 }
 
 DFMCrumbBar::DFMCrumbBar(QWidget *parent)
@@ -162,6 +169,18 @@ void DFMCrumbBar::mouseReleaseEvent(QMouseEvent *event)
     }
 
     QWidget::mouseReleaseEvent(event);
+}
+
+void DFMCrumbBar::resizeEvent(QResizeEvent *event)
+{
+    Q_D(const DFMCrumbBar);
+
+    QPainterPath path;
+    path.addRoundedRect(QRectF(QPointF(0, 0), event->size()), 4, 4);
+    d->roundCorner->setClipPath(path);
+    d->roundCorner->raise();
+
+    return QWidget::resizeEvent(event);
 }
 
 DFM_END_NAMESPACE

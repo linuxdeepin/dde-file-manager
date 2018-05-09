@@ -29,7 +29,8 @@ class CrumbData
 {
 public:
     DUrl url = DUrl();
-    QString iconName = QString();
+    QString iconName = QString(); // icon group name
+    QString iconKey = "icon"; // icon key
     QString displayText = "Default";
 };
 
