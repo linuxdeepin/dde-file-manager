@@ -408,6 +408,11 @@ public:
 
         FunctionCallProxy proxy;
         proxy.moveToThread(thread);
+
+        if (!thread->isRunning()) {
+            thread->start();
+        }
+
         proxy.callInLiveThread(&proxyFun);
         semaphore.acquire();
 
@@ -432,6 +437,11 @@ public:
 
         FunctionCallProxy proxy;
         proxy.moveToThread(thread);
+
+        if (!thread->isRunning()) {
+            thread->start();
+        }
+
         proxy.callInLiveThread(&proxyFun);
         semaphore.acquire();
     }
