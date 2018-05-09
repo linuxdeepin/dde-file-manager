@@ -63,6 +63,39 @@ struct less<QString>
 }
 
 
+namespace impl
+{
+    template<typename __Ty, typename __TR, typename = typename std::enable_if<
+                 std::is_same<QMap<QString, QList<QString>>,
+                 typename std::remove_reference<
+                 typename std::remove_cv<__TR>::type
+                                             >::type>::value &&
+                 std::is_same<QMap<QString, QList<QString>>,
+                 typename std::remove_reference<
+                 typename std::remove_cv<__Ty>::type
+                                             >::type>::value &&
+                 !(std::is_same<const QMap<QString, QList<QString>>&, __Ty>::value &&
+                   std::is_same<QMap<QString, QList<QString>>, __Ty>::value), void
+                 >::type>
+    __Ty& operator+=(__Ty&& lh, const __TR& rh)noexcept
+    {
+        if(rh.isEmpty()){
+            return lh;
+        }
+
+        QMap<QString, QList<QString>>::const_iterator itr_beg{ rh.cbegin() };
+        QMap<QString, QList<QString>>::const_iterator itr_end{ rh.cend() };
+
+        for(; itr_beg != itr_end; ++itr_beg){
+            lh.insert(itr_beg.key(), itr_beg.value());
+        }
+
+        return lh;
+    }
+
+}
+
+
 static std::once_flag flag{};//###: flag for instance.
 static std::atomic<int> counter{ 0 };
 
@@ -115,6 +148,9 @@ static const std::multimap<DSqliteHandle::SqlType, QString> SqlTypeWithStrs {
                                                                                                                                             "WHERE file_property.file_name = \'%2\'"},
                                                           {DSqliteHandle::SqlType::ChangeFilesName, "UPDATE tag_with_file SET file_name = \'%1\' "
                                                                                                                                         "WHERE tag_with_file.file_name = \'%2\'"},
+
+                                                          {DSqliteHandle::SqlType::ChangeFilesName2, "SELECT tag_with_file.tag_name FROM tag_with_file "
+                                                                                                                                        "WHERE tag_with_file.file_name = \'%1\'"},
 
                                                           {DSqliteHandle::SqlType::ChangeTagsName, "UPDATE file_property SET tag_1 = \'%1\' "
                                                                                                                                         "WHERE file_property.tag_1 = \'%2\'"},
@@ -1635,6 +1671,8 @@ QMap<QString, QList<QString>> DSqliteHandle::helpExecSql<DSqliteHandle::SqlType:
 }
 
 
+
+
 template<>
 bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::DeleteTags,
                                 std::list<QString>>(const std::list<QString>& sqlStrs,
@@ -1920,6 +1958,56 @@ bool DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::ChangeFilesName, std::ma
         return true;
     }
     return false;
+}
+
+template<>
+QMap<QString, QList<QString>> DSqliteHandle::helpExecSql<DSqliteHandle::SqlType::ChangeFilesName2, std::map<QString, QString>,
+                                             QMap<QString, QList<QString>>>(const std::map<QString, QString>& files, const QString& mount_point)
+{
+    QMap<QString, QList<QString>> file_with_tags{};
+
+    if(!files.empty()){
+        std::pair<std::multimap<DSqliteHandle::SqlType, QString>::const_iterator,
+                  std::multimap<DSqliteHandle::SqlType, QString>::const_iterator> range{ SqlTypeWithStrs.equal_range(SqlType::ChangeFilesName2) };
+        std::map<QString, QString>::const_iterator file_beg{ files.cbegin() };
+        std::map<QString, QString>::const_iterator file_end{ files.cend() };
+        QSqlQuery sql_query{ *m_sqlDatabasePtr };
+
+
+        if(!m_flag.load(std::memory_order_consume)){
+
+            for(; file_beg != file_end; ++file_beg){
+
+                if(sql_query.exec(range.first->second.arg(file_beg->first))){
+
+                    while(sql_query.next()){
+                        QString tag_name{ sql_query.value("tag_name").toString() };
+                        file_with_tags[file_beg->first].push_back(tag_name);
+                    }
+                }
+            }
+
+        }else{
+
+            DSqliteHandle::ReturnCode code{this->checkWhetherHasSqliteInPartion(mount_point)};
+
+            if(code == DSqliteHandle::ReturnCode::Exist){
+
+                for(; file_beg != file_end; ++file_beg){
+
+                    if(sql_query.exec(range.first->second.arg(file_beg->first))){
+
+                        while(sql_query.next()){
+                            QString tag_name{ sql_query.value("tag_name").toString() };
+                            file_with_tags[file_beg->first].push_back(tag_name);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return file_with_tags;
 }
 
 
@@ -2591,7 +2679,6 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::UntagDiffPartionFiles, bo
 template<>
 bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(const QMap<QString, QList<QString>>& filesAndTags)
 {
-
     if(!filesAndTags.isEmpty()){
         QMap<QString, QList<QString>>::const_iterator cbeg{ filesAndTags.cbegin() };
         QMap<QString, QList<QString>>::const_iterator cend{ filesAndTags.cend() };
@@ -2823,7 +2910,36 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeFilesName, bool>(co
             }
         }
 
+        QMap<QString, QMap<QString, QList<QString>>> file_with_tags_in_partion{};
+
+        for(const std::pair<QString, std::map<QString, QString>>& partion_and_file_names : partionsAndFileNames){
+            DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(partion_and_file_names.first) };
+
+            if(code == DSqliteHandle::ReturnCode::NoExist || code == DSqliteHandle::ReturnCode::Exist){
+                this->connectToSqlite(partion_and_file_names.first);
+
+                if(m_sqlDatabasePtr && m_sqlDatabasePtr->open()){
+                    QMap<QString, QList<QString>> file_with_tags{
+                      this->helpExecSql<DSqliteHandle::SqlType::ChangeFilesName2, std::map<QString, QString>,
+                                        QMap<QString, QList<QString>>>(partion_and_file_names.second, partion_and_file_names.first)
+                    };
+
+                    if(!file_with_tags.isEmpty()){
+                        file_with_tags_in_partion[partion_and_file_names.first] = file_with_tags;
+                    }
+                }
+            }
+        }
+
+        this->closeSqlDatabase();
+
+        if(file_with_tags_in_partion.isEmpty()){
+            return false;
+        }
+
+
         std::map<QString, std::map<QString, QString>> sqlForChangingFilesName{};
+        std::map<QString, std::map<QString, QString>> partionsAndFileNames_backup{ partionsAndFileNames };
 
         if(!partionsAndFileNames.empty()){
             std::map<QString, std::map<QString, QString>>::const_iterator partionBeg{ partionsAndFileNames.cbegin() };
@@ -2860,11 +2976,71 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeFilesName, bool>(co
                             if(!(resultOfExecSql && m_sqlDatabasePtr->commit())){
                                 m_sqlDatabasePtr->rollback();
                                 result = false;
+
+                                partionsAndFileNames_backup.erase(mountPointAndSqls.first);
+                                file_with_tags_in_partion.remove(mountPointAndSqls.first);
                             }
                         }
                     }
                 }
 
+                this->closeSqlDatabase();
+
+                QMap<QString, QList<QString>> file_with_tags_new{};
+
+                for(const std::pair<QString, std::map<QString, QString>>& mount_point_and_file_names : partionsAndFileNames_backup){
+                    std::map<QString, QString> new_and_old_names{};
+
+                    for(const std::pair<QString, QString>& old_and_new_name : mount_point_and_file_names.second){
+                        new_and_old_names[old_and_new_name.second] = old_and_new_name.first;
+                    }
+
+                    DSqliteHandle::ReturnCode code{ this->checkWhetherHasSqliteInPartion(mount_point_and_file_names.first) };
+
+                    if(code == DSqliteHandle::ReturnCode::NoExist || code == DSqliteHandle::ReturnCode::Exist){
+                        this->connectToSqlite(mount_point_and_file_names.first);
+
+                        if(m_sqlDatabasePtr && m_sqlDatabasePtr->open()){
+                            QMap<QString, QList<QString>> file_with_tags{
+                                this->helpExecSql<DSqliteHandle::SqlType::ChangeFilesName2, std::map<QString, QString>,
+                                        QMap<QString, QList<QString>>>(new_and_old_names, mount_point_and_file_names.first)
+                            };
+
+                            using namespace impl;
+                            file_with_tags_new += file_with_tags;
+                        }
+                    }
+                }
+
+                QMap<QString, QList<QString>> file_with_tags_old{};
+                QMap<QString, QMap<QString, QList<QString>>>::const_iterator itr_beg{ file_with_tags_in_partion.cbegin() };
+                QMap<QString, QMap<QString, QList<QString>>>::const_iterator itr_end{ file_with_tags_in_partion.cend() };
+
+                for(; itr_beg != itr_end; ++itr_beg){
+                    using namespace impl;
+                    file_with_tags_old += itr_beg.value();
+                }
+
+                QMap<QString, QVariant> file_with_tags_var{};
+                QMap<QString, QList<QString>>::iterator file_with_tags_beg{ file_with_tags_old.begin() };
+                QMap<QString, QList<QString>>::iterator file_with_tags_end{ file_with_tags_old.end() };
+
+                for(; file_with_tags_beg != file_with_tags_end; ++file_with_tags_beg){
+                    file_with_tags_var[file_with_tags_beg.key()] = QVariant{ file_with_tags_beg.value() };
+                }
+
+
+                emit untagFiles(file_with_tags_var);
+
+                file_with_tags_var.clear();
+                file_with_tags_beg = file_with_tags_new.begin();
+                file_with_tags_end = file_with_tags_new.end();
+
+                for(; file_with_tags_beg != file_with_tags_end; ++file_with_tags_beg){
+                    file_with_tags_var[file_with_tags_beg.key()] = QVariant{ file_with_tags_beg.value() };
+                }
+
+                emit filesWereTagged(file_with_tags_var);
                 this->closeSqlDatabase();
 
                 return result;

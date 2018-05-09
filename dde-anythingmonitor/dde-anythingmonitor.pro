@@ -1,8 +1,7 @@
 
 
-QT -= gui
-
-QT += core \
+QT += gui \
+      core \
       dbus \
       concurrent
 
@@ -19,12 +18,12 @@ CONFIG -= app_bundle \
 
 TEMPLATE = app
 
-LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager
-
 CONFIG(debug, debug|release){
     DEPENDPATH += $$PWD/../dde-file-manager-lib
+    unix:QMAKE_RPATHDIR += $$OUT_PWD/../dde-file-manager-lib
 }
 
+LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager
 
 INCLUDEPATH += $$PWD/../dde-file-manager-lib \
                $$PWD/../dde-file-manager-lib/interfaces \
