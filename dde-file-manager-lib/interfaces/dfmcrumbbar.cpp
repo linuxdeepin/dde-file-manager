@@ -24,16 +24,14 @@
 #include <QHBoxLayout>
 #include <QPainter>
 #include <QScrollArea>
-#include <DClipEffectWidget>
 #include <QScrollBar>
 #include <QApplication>
 
 #include "views/dfilemanagerwindow.h"
+#include "dfmcrumbinterface.h"
 #include "dfmevent.h"
 
 #include <QDebug>
-
-DWIDGET_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
 
@@ -51,7 +49,6 @@ public:
     QHBoxLayout *crumbListLayout;
     QHBoxLayout *crumbBarLayout;
     QPoint clickedPos;
-    DClipEffectWidget *roundCorner;
 
     DFMCrumbBar *q_ptr = nullptr;
 
@@ -70,15 +67,10 @@ DFMCrumbBarPrivate::DFMCrumbBarPrivate(DFMCrumbBar *qq)
     initUI();
     initConnections();
     // test
-    addCrumb(new DFMCrumbItem(DUrl::fromComputerFile("/")));
-    addCrumb(new DFMCrumbItem(DUrl::fromComputerFile("/")));
-    addCrumb(new DFMCrumbItem(DUrl::fromComputerFile("/")));
-    addCrumb(new DFMCrumbItem(DUrl::fromComputerFile("/")));
-    addCrumb(new DFMCrumbItem(DUrl::fromComputerFile("/")));
-    addCrumb(new DFMCrumbItem(DUrl::fromComputerFile("/")));
-    addCrumb(new DFMCrumbItem(DUrl::fromComputerFile("/")));
-    addCrumb(new DFMCrumbItem(DUrl::fromComputerFile("/")));
-    addCrumb(new DFMCrumbItem(DUrl::fromComputerFile("/")));
+    addCrumb(new DFMCrumbItem(CrumbData(DUrl(), "Home", "CrumbIconButton.Home")));
+    addCrumb(new DFMCrumbItem(CrumbData(DUrl(), "DFMCrumbItem 1")));
+    addCrumb(new DFMCrumbItem(CrumbData(DUrl(), "DFMCrumbItem 2")));
+    addCrumb(new DFMCrumbItem(CrumbData(DUrl(), "DFMCrumbItem 3")));
     //clearCrumbs();
 }
 
@@ -128,7 +120,7 @@ void DFMCrumbBarPrivate::addCrumb(DFMCrumbItem *item)
     crumbListHolder->adjustSize();
 
     crumbListScrollArea.horizontalScrollBar()->setPageStep(crumbListHolder->width());
-    crumbListScrollArea.horizontalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
+    crumbListScrollArea.horizontalScrollBar()->triggerAction(QScrollBar::SliderToMaximum); // todo: move it to updateCrumbs()
 
     checkArrowVisiable();
 
@@ -192,8 +184,7 @@ void DFMCrumbBarPrivate::initUI()
     crumbBarLayout->setSpacing(0);
     q->setLayout(crumbBarLayout);
 
-    // Round Corner
-    roundCorner = new DClipEffectWidget(q);
+    return;
 }
 
 void DFMCrumbBarPrivate::initConnections()
@@ -202,11 +193,13 @@ void DFMCrumbBarPrivate::initConnections()
 
     q->connect(&leftArrow, &QPushButton::clicked, q, [this]() {
         crumbListScrollArea.horizontalScrollBar()->triggerAction(QAbstractSlider::SliderPageStepSub);
-        checkArrowVisiable();
     });
 
     q->connect(&rightArrow, &QPushButton::clicked, q, [this](){
         crumbListScrollArea.horizontalScrollBar()->triggerAction(QAbstractSlider::SliderPageStepAdd);
+    });
+
+    q->connect(crumbListScrollArea.horizontalScrollBar(), &QScrollBar::valueChanged, q, [this]() {
         checkArrowVisiable();
     });
 }
@@ -255,11 +248,6 @@ void DFMCrumbBar::resizeEvent(QResizeEvent *event)
     Q_D(DFMCrumbBar);
 
     d->checkArrowVisiable();
-
-    QPainterPath path;
-    path.addRoundedRect(QRectF(QPointF(0, 0), event->size()), 4, 4);
-    d->roundCorner->setClipPath(path);
-    d->roundCorner->raise();
 
     return QWidget::resizeEvent(event);
 }

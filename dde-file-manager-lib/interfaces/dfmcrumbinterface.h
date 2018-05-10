@@ -28,9 +28,13 @@ DFM_BEGIN_NAMESPACE
 class CrumbData
 {
 public:
+    CrumbData(DUrl url = DUrl(), QString displayText = QString(), QString iconName = QString(), QString iconKey = "icon");
+
+    void setIconFromThemeConfig(QString iconName, QString iconKey = "icon");
+
     DUrl url = DUrl();
     QString iconName = QString(); // icon group name
-    QString displayText = "Default";
+    QString displayText = QString();
     QString iconKey = "icon"; // icon key
 };
 

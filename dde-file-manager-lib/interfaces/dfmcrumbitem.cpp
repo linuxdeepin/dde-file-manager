@@ -84,24 +84,7 @@ ThemeConfig::State DFMCrumbItemPrivate::getState() const
     return ThemeConfig::Normal;
 }
 
-
-// blumia: We may need remove this and only keep the construct function
-//         with `CrumbData` as argument.
-//         We can not always get a proper display name through a url,
-//         so that's what
-//         DAbstractFileInfoPointer::fileDisplayName()
-DFMCrumbItem::DFMCrumbItem(DUrl url, QWidget* parent)
-    : QPushButton(parent)
-    , d_ptr(new DFMCrumbItemPrivate(this))
-{
-    Q_UNUSED(url);
-    //this->setStyleSheet("background: red");
-    setText("Mamacat Placeholder Long Text");
-    setUrl(DUrl::fromTrashFile("/"));
-    this->setIconFromThemeConfig("CrumbIconButton.Home");
-}
-
-DFMCrumbItem::DFMCrumbItem(CrumbData data, QWidget* parent)
+DFMCrumbItem::DFMCrumbItem(const CrumbData &data, QWidget* parent)
     : QPushButton(parent)
     , d_ptr(new DFMCrumbItemPrivate(this))
 {
