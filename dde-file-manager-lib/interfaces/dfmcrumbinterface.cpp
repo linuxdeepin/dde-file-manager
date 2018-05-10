@@ -22,6 +22,20 @@
 
 DFM_BEGIN_NAMESPACE
 
+CrumbData::CrumbData(DUrl url, QString displayText, QString iconName, QString iconKey)
+{
+    this->url = url;
+    this->displayText = displayText;
+    this->iconName = iconName;
+    this->iconKey = iconKey;
+}
+
+void CrumbData::setIconFromThemeConfig(QString iconName, QString iconKey)
+{
+    this->iconName = iconName;
+    this->iconKey = iconKey;
+}
+
 DFMCrumbInterface::DFMCrumbInterface(QObject *parent)
     : QObject(parent)
 {

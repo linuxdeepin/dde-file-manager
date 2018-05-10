@@ -33,8 +33,7 @@ class DFMCrumbItem : public QPushButton
 {
     Q_OBJECT
 public:
-    explicit DFMCrumbItem(DUrl url, QWidget *parent = nullptr);
-    DFMCrumbItem(CrumbData data, QWidget *parent = nullptr);
+    explicit DFMCrumbItem(const CrumbData &data, QWidget *parent = nullptr);
     ~DFMCrumbItem();
 
     DUrl url() const;
