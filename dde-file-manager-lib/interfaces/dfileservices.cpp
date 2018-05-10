@@ -170,9 +170,19 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     switch (event->type()) {
     case DFMEvent::OpenFile:
         result = CALL_CONTROLLER(openFile);
+
+        if (result.toBool()) {
+            emit fileOpened(event->fileUrl());
+        }
+
         break;
     case DFMEvent::OpenFileByApp:
         result = CALL_CONTROLLER(openFileByApp);
+
+        if (result.toBool()) {
+            emit fileOpened(event->fileUrl());
+        }
+
         break;
     case DFMEvent::CompressFiles:
         result = CALL_CONTROLLER(compressFiles);
@@ -195,6 +205,10 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
             result = false;
         } else {
             result = CALL_CONTROLLER(renameFile);
+
+            if (result.toBool()) {
+                emit fileRenamed(e->fromUrl(), e->toUrl());
+            }
         }
 
         break;
@@ -213,6 +227,12 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
 
         if (slient || DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteFilesClearTrashDialog, DFMUrlListBaseEvent(event->sender(), event->fileUrlList())) == 1) {
             result = CALL_CONTROLLER(deleteFiles);
+
+            if (result.toBool()) {
+                for (const DUrl &url : event->fileUrlList()) {
+                    emit fileDeleted(url);
+                }
+            }
         } else {
             result = false;
         }
@@ -249,6 +269,17 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
 //        event->setData(enableList);
         result = CALL_CONTROLLER(moveToTrash);
 
+        const DUrlList &list = event->fileUrlList();
+        const DUrlList new_list = qvariant_cast<DUrlList>(result);
+
+        for (int i = 0; i < new_list.count(); ++i) {
+            if (!new_list.at(i).isValid())
+                continue;
+
+            emit fileMovedToTrash(list.at(i), new_list.at(i));
+    //        emit fileRenamed(list.at(i), result.at(i));
+        }
+
         break;
     }
     case DFMEvent::RestoreFromTrash: {
@@ -263,6 +294,24 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
 
             e.setWindowId(event->windowId());
             laterRequestSelectFiles(e);
+        }
+
+        const DUrlList &list = event->fileUrlList();
+        const DUrlList new_list = qvariant_cast<DUrlList>(result);
+
+        for (int i = 0; i < new_list.count(); ++i) {
+            const DUrl &url = new_list.at(i);
+
+            if (url.isEmpty())
+                continue;
+
+            DFMGlobal::ClipboardAction action = event.staticCast<DFMPasteEvent>()->action();
+
+            if (action == DFMGlobal::ClipboardAction::CopyAction) {
+                emit fileCopied(list.at(i), url);
+            } else if (action == DFMGlobal::ClipboardAction::CutAction) {
+                emit fileRenamed(list.at(i), url);
+            }
         }
 
         break;
@@ -452,21 +501,12 @@ bool DFileService::renameFile(const QObject *sender, const DUrl &from, const DUr
 {
     bool ok = DFMEventDispatcher::instance()->processEvent<DFMRenameEvent>(sender, from, to).toBool();
 
-    if (ok)
-        emit fileRenamed(from, to);
-
     return ok;
 }
 
 bool DFileService::deleteFiles(const QObject *sender, const DUrlList &list, bool slient) const
 {
     bool ok = DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMDeleteEvent>(sender, list, slient)).toBool();
-
-    if (ok) {
-        for (const DUrl &url : list) {
-            emit fileDeleted(url);
-        }
-    }
 
     return ok;
 }
@@ -482,14 +522,6 @@ DUrlList DFileService::moveToTrash(const QObject *sender, const DUrlList &list) 
     }
 
     const DUrlList &result = qvariant_cast<DUrlList>(DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMMoveToTrashEvent>(sender, list)));
-
-    for (int i = 0; i < result.count(); ++i) {
-        if (!result.at(i).isValid())
-            continue;
-
-        emit fileMovedToTrash(list.at(i), result.at(i));
-//        emit fileRenamed(list.at(i), result.at(i));
-    }
 
     return result;
 }
@@ -508,20 +540,6 @@ DUrlList DFileService::pasteFile(const QObject *sender, DFMGlobal::ClipboardActi
 {
     const QSharedPointer<DFMPasteEvent> &event = dMakeEventPointer<DFMPasteEvent>(sender, action, targetUrl, list);
     const DUrlList &new_list = qvariant_cast<DUrlList>(DFMEventDispatcher::instance()->processEventWithEventLoop(event));
-
-    for (int i = 0; i < new_list.count(); ++i) {
-        const DUrl &url = new_list.at(i);
-
-        if (url.isEmpty())
-            continue;
-
-        if (action == DFMGlobal::ClipboardAction::CopyAction) {
-            emit fileCopied(list.at(i), url);
-
-        } else if (action == DFMGlobal::ClipboardAction::CutAction) {
-            emit fileRenamed(list.at(i), url);
-        }
-    }
 
     return new_list;
 }
