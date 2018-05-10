@@ -25,8 +25,6 @@
 
 #include <dfmglobal.h>
 
-class DFMEvent;
-
 DFM_BEGIN_NAMESPACE
 
 class DFMCrumbItem;
@@ -48,10 +46,11 @@ Q_SIGNALS:
     void crumbItemClicked(DFMCrumbItem *item);
 
 protected:
-    void mousePressEvent(QMouseEvent * event) Q_DECL_OVERRIDE;
-    void mouseReleaseEvent(QMouseEvent * event) Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent * event) override;
+    void mouseReleaseEvent(QMouseEvent * event) override;
     void resizeEvent(QResizeEvent *event) override;
     void showEvent(QShowEvent *e) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
     Q_DECLARE_PRIVATE(DFMCrumbBar)
 };

@@ -39,6 +39,7 @@ public:
 
     DUrl url() const;
     void setText(const QString &text);
+    void setUrl(const DUrl &url);
     void setIconFromThemeConfig(const QString &group, const QString &key = "icon");
 
 protected:
@@ -50,7 +51,7 @@ protected:
     void paintEvent(QPaintEvent *event);
 
 Q_SIGNALS:
-    void crumbItemClicked(DFMCrumbItem* item);
+    void crumbClicked();
 
 private:
     QScopedPointer<DFMCrumbItemPrivate> d_ptr;

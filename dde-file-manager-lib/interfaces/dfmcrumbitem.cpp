@@ -85,14 +85,19 @@ ThemeConfig::State DFMCrumbItemPrivate::getState() const
 }
 
 
+// blumia: We may need remove this and only keep the construct function
+//         with `CrumbData` as argument.
+//         We can not always get a proper display name through a url,
+//         so that's what
+//         DAbstractFileInfoPointer::fileDisplayName()
 DFMCrumbItem::DFMCrumbItem(DUrl url, QWidget* parent)
     : QPushButton(parent)
     , d_ptr(new DFMCrumbItemPrivate(this))
 {
     Q_UNUSED(url);
     //this->setStyleSheet("background: red");
-    this->setText("test test test aaaaaaaaaaaaaaa");
-    d_ptr->data.url = DUrl::fromTrashFile("/");
+    setText("Mamacat Placeholder Long Text");
+    setUrl(DUrl::fromTrashFile("/"));
     this->setIconFromThemeConfig("CrumbIconButton.Home");
 }
 
@@ -100,6 +105,8 @@ DFMCrumbItem::DFMCrumbItem(CrumbData data, QWidget* parent)
     : QPushButton(parent)
     , d_ptr(new DFMCrumbItemPrivate(this))
 {
+    d_ptr->data = data;
+
     if (!data.displayText.isEmpty()) {
         this->setText(data.displayText);
     }
@@ -125,6 +132,12 @@ void DFMCrumbItem::setText(const QString &text)
     Q_D(DFMCrumbItem);
     d->data.displayText = text;
     QPushButton::setText(text);
+}
+
+void DFMCrumbItem::setUrl(const DUrl &url)
+{
+    Q_D(DFMCrumbItem);
+    d->data.url = url;
 }
 
 void DFMCrumbItem::setIconFromThemeConfig(const QString &group, const QString &key)
@@ -225,7 +238,7 @@ void DFMCrumbItem::mouseReleaseEvent(QMouseEvent *event)
     Q_D(DFMCrumbItem);
 
     if (d->clickedPos == event->globalPos() && !d->data.url.isEmpty()) {
-        emit crumbItemClicked(this);
+        emit crumbClicked();
     }
 
     QWidget::mouseReleaseEvent(event);
