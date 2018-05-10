@@ -26,6 +26,7 @@
 #include <QScrollArea>
 #include <DClipEffectWidget>
 #include <QScrollBar>
+#include <QApplication>
 
 #include "views/dfilemanagerwindow.h"
 #include "dfmevent.h"
@@ -72,6 +73,12 @@ DFMCrumbBarPrivate::DFMCrumbBarPrivate(DFMCrumbBar *qq)
     addCrumb(new DFMCrumbItem(DUrl::fromComputerFile("/")));
     addCrumb(new DFMCrumbItem(DUrl::fromComputerFile("/")));
     addCrumb(new DFMCrumbItem(DUrl::fromComputerFile("/")));
+    addCrumb(new DFMCrumbItem(DUrl::fromComputerFile("/")));
+    addCrumb(new DFMCrumbItem(DUrl::fromComputerFile("/")));
+    addCrumb(new DFMCrumbItem(DUrl::fromComputerFile("/")));
+    addCrumb(new DFMCrumbItem(DUrl::fromComputerFile("/")));
+    addCrumb(new DFMCrumbItem(DUrl::fromComputerFile("/")));
+    addCrumb(new DFMCrumbItem(DUrl::fromComputerFile("/")));
     //clearCrumbs();
 }
 
@@ -97,6 +104,10 @@ void DFMCrumbBarPrivate::checkArrowVisiable()
     if (crumbListHolder->width() >= crumbListScrollArea.width()) {
         leftArrow.show();
         rightArrow.show();
+
+        QScrollBar* sb = crumbListScrollArea.horizontalScrollBar();
+        leftArrow.setEnabled(sb->value() != sb->minimum());
+        rightArrow.setEnabled(sb->value() != sb->maximum());
     } else {
         leftArrow.hide();
         rightArrow.hide();
@@ -116,14 +127,15 @@ void DFMCrumbBarPrivate::addCrumb(DFMCrumbItem *item)
     crumbListLayout->addWidget(item);
     crumbListHolder->adjustSize();
 
+    crumbListScrollArea.horizontalScrollBar()->setPageStep(crumbListHolder->width());
     crumbListScrollArea.horizontalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
 
     checkArrowVisiable();
 
-    crumbListScrollArea.horizontalScrollBar()->setPageStep(crumbListHolder->width());
-    crumbListScrollArea.horizontalScrollBar()->setSliderPosition(crumbListScrollArea.horizontalScrollBar()->maximum());
-    q->connect(item, &DFMCrumbItem::crumbItemClicked, q, [this, q](DFMCrumbItem* item) {
+    q->connect(item, &DFMCrumbItem::crumbClicked, q, [this, q]() {
         // change directory.
+        DFMCrumbItem * item = qobject_cast<DFMCrumbItem*>(q->sender());
+        Q_CHECK_PTR(item);
         emit q->crumbItemClicked(item);
     });
 }
@@ -160,6 +172,7 @@ void DFMCrumbBarPrivate::initUI()
     //crumbListHolder->setStyleSheet("background: blue");
     crumbListHolder->setContentsMargins(0,0,30,0); // right 30 for easier click
     crumbListHolder->setFixedHeight(q->height());
+    crumbListHolder->installEventFilter(q);
     crumbListScrollArea.setWidget(crumbListHolder);
 
     crumbListLayout = new QHBoxLayout;
@@ -186,6 +199,16 @@ void DFMCrumbBarPrivate::initUI()
 void DFMCrumbBarPrivate::initConnections()
 {
     Q_Q(DFMCrumbBar);
+
+    q->connect(&leftArrow, &QPushButton::clicked, q, [this]() {
+        crumbListScrollArea.horizontalScrollBar()->triggerAction(QAbstractSlider::SliderPageStepSub);
+        checkArrowVisiable();
+    });
+
+    q->connect(&rightArrow, &QPushButton::clicked, q, [this](){
+        crumbListScrollArea.horizontalScrollBar()->triggerAction(QAbstractSlider::SliderPageStepAdd);
+        checkArrowVisiable();
+    });
 }
 
 DFMCrumbBar::DFMCrumbBar(QWidget *parent)
@@ -243,11 +266,34 @@ void DFMCrumbBar::resizeEvent(QResizeEvent *event)
 
 void DFMCrumbBar::showEvent(QShowEvent *e)
 {
-    Q_D(const DFMCrumbBar);
+    Q_D(DFMCrumbBar);
 
+    d->crumbListScrollArea.horizontalScrollBar()->setPageStep(d->crumbListHolder->width());
     d->crumbListScrollArea.horizontalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
 
+    d->checkArrowVisiable();
+
     return QWidget::showEvent(e);
+}
+
+bool DFMCrumbBar::eventFilter(QObject *watched, QEvent *event)
+{
+    Q_D(DFMCrumbBar);
+
+    if (event->type() == QEvent::Wheel && d && watched == d->crumbListHolder) {
+        class PublicQWheelEvent : public QWheelEvent
+        {
+        public:
+            friend class dde_file_manager::DFMCrumbBar;
+        };
+
+        PublicQWheelEvent *e = static_cast<PublicQWheelEvent*>(event);
+
+        e->modState = Qt::AltModifier;
+        e->qt4O = Qt::Horizontal;
+    }
+
+    return QWidget::eventFilter(watched, event);
 }
 
 DFM_END_NAMESPACE
