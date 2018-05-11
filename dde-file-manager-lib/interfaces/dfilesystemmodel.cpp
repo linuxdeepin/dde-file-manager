@@ -815,7 +815,9 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
     case Qt::LinkAction:
         break;
     case Qt::MoveAction:
-        fileService->pasteFile(this, DFMGlobal::CutAction, toUrl, urlList);
+        // NOTE(zccrs): 为MoveAction时，如果执行成功，QAbstractItemView会调用clearOrRemove移除此item
+        //              所以此处必须判断是否粘贴完成，不然会导致此item消失
+        success = !fileService->pasteFile(this, DFMGlobal::CutAction, toUrl, urlList).isEmpty();
         break;
     default:
         return false;

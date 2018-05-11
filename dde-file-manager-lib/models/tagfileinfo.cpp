@@ -216,7 +216,7 @@ Qt::DropActions TagFileInfo::supportedDragActions() const
     if (d->proxy)
         return d->proxy->supportedDragActions();
 
-    return Qt::IgnoreAction;
+    return DAbstractFileInfo::supportedDragActions();
 }
 
 Qt::DropActions TagFileInfo::supportedDropActions() const
