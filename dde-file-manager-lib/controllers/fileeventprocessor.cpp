@@ -29,6 +29,8 @@
 
 #include "dcrumbedit.h"
 #include "../app/filesignalmanager.h"
+#include "views/dleftsidebar.h"
+#include "views/dbookmarkscene.h"
 
 #include <memory>
 
@@ -91,7 +93,11 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent>& event)
 
         if(!selectedUrl.isEmpty()){
             DUrl url{ selectedUrl.first() };
-            emit fileSignalManager->requestRenameTag(url);
+            DFileManagerWindow *window = qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(event->windowId()));
+
+            if (window) {
+                window->getLeftSideBar()->scene()->onRequestRenameTag(url);
+            }
         }
         break;
     }
