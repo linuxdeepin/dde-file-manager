@@ -370,6 +370,32 @@ DUrlList TagController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &e
     return DFileService::instance()->moveToTrash(event->sender(), list);
 }
 
+DUrlList TagController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
+{
+    DUrlList list;
+
+    const DUrl &to_url = event->targetUrl();
+
+    if (!to_url.taggedLocalFilePath().isEmpty()) {
+        return DFileService::instance()->pasteFile(event->sender(), event->action(), DUrl::fromLocalFile(to_url.taggedLocalFilePath()), event->urlList());
+    }
+
+    if (to_url.tagName().isEmpty())
+        return list;
+
+    if (event->action() != DFMGlobal::CopyAction) {
+        return list;
+    }
+
+    for (const DUrl &url : event->urlList()) {
+        if (DFileService::instance()->makeTagsOfFiles(event->sender(), {url}, {to_url.tagName()}))  {
+            list << url;
+        }
+    }
+
+    return list;
+}
+
 bool TagController::openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const
 {
     const DUrl &local_file = toLocalFile(event->url());

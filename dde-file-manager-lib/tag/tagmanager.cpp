@@ -138,15 +138,20 @@ QString TagManager::getTagNameThroughColor(const QColor &color) const
 
 QColor TagManager::getColorByColorName(const QString &colorName) const
 {
+    return Tag::NamesWithColors.value(colorName);
+}
+
+QString TagManager::getColorByDisplayName(const QString &colorDisplayName) const
+{
     auto color_map = Tag::ActualAndFakerName();
 
     for (auto i = color_map.constBegin(); i != color_map.constEnd(); ++i) {
-        if (i.value() == colorName) {
-            return Tag::NamesWithColors.value(i.key());
+        if (i.value() == colorDisplayName) {
+            return i.key();
         }
     }
 
-    return QColor();
+    return QString();
 }
 
 QString TagManager::getColorNameByColor(const QColor &color) const

@@ -739,14 +739,6 @@ bool AppController::actionRemoveTagsOfFile(const QSharedPointer<DFMRemoveTagsOfF
 
 void AppController::actionChangeTagColor(const QSharedPointer<DFMChangeTagColorEvent>& event)
 {
-    DBookmarkItem* item{ DBookmarkItem::ClickedItem.load(std::memory_order_consume) };
-
-    if( item != nullptr ){
-        item->changeIconThroughColor( event->m_newColorForTag );
-    }
-
-    item = nullptr;
-    DBookmarkItem::ClickedItem.store(nullptr, std::memory_order_release);
     QString tagName = event->m_tagUrl.fileName();
     QString newColor = TagManager::instance()->getColorNameByColor(event->m_newColorForTag);
     TagManager::instance()->changeTagColor(tagName, newColor);
@@ -765,10 +757,7 @@ void AppController::showTagEdit(const QPoint &globalPos, const DUrlList &fileLis
 
     QList<QString> sameTagsInDiffFiles{ DFileService::instance()->getTagsThroughFiles(nullptr, fileList) };
 
-    for(const QString& tag : sameTagsInDiffFiles){
-        tagEdit->appendCrumb(tag);
-    }
-
+    tagEdit->setDefaultCrumbs(sameTagsInDiffFiles);
     tagEdit->show(globalPos.x(), globalPos.y());
 }
 

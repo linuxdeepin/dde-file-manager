@@ -500,7 +500,12 @@ void DFileViewHelper::handleMenu(QMenu *menu)
     QList<QColor> colors;
 
     for (const QString &tag : tag_names) {
-        const QColor &color = TagManager::instance()->getColorByColorName(tag);
+        const QString &color_display_name = TagManager::instance()->getColorByDisplayName(tag);
+
+        if (color_display_name.isEmpty())
+            continue;
+
+        const QColor &color = TagManager::instance()->getColorByColorName(color_display_name);
 
         if (Q_LIKELY(color.isValid()))
             colors << color;

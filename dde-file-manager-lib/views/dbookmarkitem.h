@@ -240,9 +240,6 @@ private:
     /*bookmark model map */
     BookMarkPointer m_bookmarkModel;
 
-public:
-    static std::atomic<DBookmarkItem*> ClickedItem;
-
 public slots:
     void editFinished();
     void checkMountedItem(const DFMEvent& event);

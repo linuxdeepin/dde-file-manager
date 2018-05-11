@@ -29,7 +29,7 @@ public:
 
     void setFocusOutSelfClosing(bool value)noexcept;
     void setFilesForTagging(const QList<DUrl>& files);
-    void appendCrumb(const QString& crumbText)noexcept;
+    void setDefaultCrumbs(const QStringList &list);
 
 public slots:
     void onFocusOut();

@@ -79,7 +79,6 @@ DWIDGET_USE_NAMESPACE
 
 
 int DBookmarkItem::DEFAULT_ICON_SIZE = 16;
-std::atomic<DBookmarkItem*> DBookmarkItem::ClickedItem{ nullptr };
 
 DBookmarkItem::DBookmarkItem(const QString &key)
     : m_key(key)
@@ -171,14 +170,9 @@ void DBookmarkItem::changeIconThroughColor(const QColor &color)noexcept
 {
     if (color.isValid()) {
         QString newColor{ TagManager::instance()->getColorNameByColor(color) };
-        QString tagName{ this->text() };
 
-        bool result{ TagManager::instance()->changeTagColor(tagName, newColor) };
-
-        if (result) {
-            this->m_key = newColor;
-            this->update();
-        }
+        this->m_key = newColor;
+        this->update();
     }
 }
 
@@ -962,7 +956,6 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         ///###: tag protocol.
     } else if (m_url.isTaggedFile()) {
         menu = DFileMenuManager::createTagMarkMenu(disableList);
-        DBookmarkItem::ClickedItem = this;
 
     } else {
         menu = DFileMenuManager::createCustomBookMarkMenu(m_url, disableList);
