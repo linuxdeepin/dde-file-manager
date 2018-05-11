@@ -46,13 +46,27 @@ bool OperatorRevocation::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
             return true;
 
         operatorStack.push(*event.data());
-        break;
+        return true;
     }
     case DFMEvent::Revocation: {
+        bool batch_mode = false;
+
+        batch_revocation:
+
         if (operatorStack.isEmpty())
             return true;
 
-        const DFMSaveOperatorEvent &e = dfmevent_cast<DFMSaveOperatorEvent>(operatorStack.pop());
+        DFMSaveOperatorEvent e = dfmevent_cast<DFMSaveOperatorEvent>(operatorStack.pop());
+
+        if (e.split()) {
+            if (batch_mode) {
+                return true;
+            } else {
+                batch_mode = true;
+                goto batch_revocation;
+            }
+        }
+
         const QSharedPointer<DFMEvent> new_event = e.event();
 
         new_event->setProperty("_dfm_is_revocaion_event", true);
@@ -61,7 +75,11 @@ bool OperatorRevocation::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
             DFMEventDispatcher::instance()->processEventAsync(new_event);
         else
             DFMEventDispatcher::instance()->processEvent(new_event);
-        break;
+
+        if (batch_mode)
+            goto batch_revocation;
+
+        return true;
     }
     case DFMEvent::CleanSaveOperator:
         operatorStack.clear();

@@ -1001,6 +1001,51 @@ QString DFMGlobal::toUnicode(const QByteArray &ba)
     return QString::fromLocal8Bit(ba);
 }
 
+QString DFMGlobal::cutString(const QString &text, int dataByteSize, const QTextCodec *codec)
+{
+    QString new_text;
+    int bytes = 0;
+
+    for (int i = 0; i < text.size(); ++i) {
+        const QChar &ch = text.at(i);
+        QByteArray data;
+        QString full_char;
+
+        if (ch.isSurrogate()) {
+            if ((++i) >= text.size())
+                break;
+
+            const QChar &next_ch = text.at(i);
+
+            if (!ch.isHighSurrogate() || !next_ch.isLowSurrogate())
+                break;
+
+            data = codec->fromUnicode(text.data() + i - 1, 2);
+            full_char.setUnicode(text.data() + i - 1, 2);
+        } else {
+            data = codec->fromUnicode(text.data() + i, 1);
+            full_char.setUnicode(text.data() + i, 1);
+        }
+
+        if (codec->toUnicode(data) != full_char) {
+            qWarning() << "Failed convert" << full_char << "to" << codec->name() << "coding";
+            continue;
+        }
+
+        bytes += data.size();
+
+        if (bytes > dataByteSize)
+            break;
+
+        new_text.append(ch);
+
+        if (ch.isSurrogate())
+            new_text.append(text.at(i));
+    }
+
+    return new_text;
+}
+
 namespace DThreadUtil {
 FunctionCallProxy::FunctionCallProxy()
 {

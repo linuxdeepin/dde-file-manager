@@ -807,7 +807,7 @@ void DFileService::laterRequestSelectFiles(const DFMUrlListBaseEvent &event) con
 bool DFileService::multiFilesReplaceName(const QList<DUrl>& urls, const QPair<QString, QString>& pair)const
 {
     auto alteredAndUnAlteredUrls = FileBatchProcess::instance()->replaceText(urls, pair);
-    AppController::multiSelectionFilesCache.first = FileBatchProcess::batchProcessFile(alteredAndUnAlteredUrls);
+    AppController::multiSelectionFilesCache.first = FileBatchProcess::batchProcessFile(alteredAndUnAlteredUrls).values();
 
     return DFileService::checkMultiSelectionFilesCache();
 }
@@ -817,7 +817,7 @@ bool DFileService::multiFilesReplaceName(const QList<DUrl>& urls, const QPair<QS
 bool DFileService::multiFilesAddStrToName(const QList<DUrl>& urls, const QPair<QString, DFileService::AddTextFlags>& pair)const
 {
     auto alteredAndUnAlteredUrls = FileBatchProcess::instance()->addText(urls, pair);
-    AppController::multiSelectionFilesCache.first = FileBatchProcess::batchProcessFile(alteredAndUnAlteredUrls);
+    AppController::multiSelectionFilesCache.first = FileBatchProcess::batchProcessFile(alteredAndUnAlteredUrls).values();
 
     return DFileService::checkMultiSelectionFilesCache();
 }
@@ -826,7 +826,7 @@ bool DFileService::multiFilesAddStrToName(const QList<DUrl>& urls, const QPair<Q
 bool DFileService::multiFilesCustomName(const QList<DUrl>& urls, const QPair<QString, QString>& pair)const
 {
     auto alteredAndUnAlteredUrls = FileBatchProcess::instance()->customText(urls, pair);
-    AppController::multiSelectionFilesCache.first = FileBatchProcess::batchProcessFile(alteredAndUnAlteredUrls);
+    AppController::multiSelectionFilesCache.first = FileBatchProcess::batchProcessFile(alteredAndUnAlteredUrls).values();
 
     return DFileService::checkMultiSelectionFilesCache();
 }
@@ -834,16 +834,11 @@ bool DFileService::multiFilesCustomName(const QList<DUrl>& urls, const QPair<QSt
 ///###: helper function.
 bool DFileService::checkMultiSelectionFilesCache()
 {
-    if(static_cast<bool>(AppController::multiSelectionFilesCache.first)){
+    if (AppController::multiSelectionFilesCache.first.isEmpty()) {
 
-        if(AppController::multiSelectionFilesCache.first->isEmpty()){
-
-            return false;
-        }
-
-        return true;
+        return false;
     }
 
-    return false;
+    return true;
 }
 
