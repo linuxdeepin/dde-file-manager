@@ -56,6 +56,8 @@ public:
         return isRegisted(scheme, typeid(T));
     }
 
+    DFMCrumbInterface *createControllerByUrl(const DUrl &fileUrl) const;
+
 private:
     explicit DFMCrumbManager(QObject *parent = nullptr);
     ~DFMCrumbManager();

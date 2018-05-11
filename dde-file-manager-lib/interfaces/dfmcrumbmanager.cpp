@@ -61,6 +61,21 @@ bool DFMCrumbManager::isRegisted(const QString &scheme, const std::type_info &in
     return false;
 }
 
+DFMCrumbInterface *DFMCrumbManager::createControllerByUrl(const DUrl &fileUrl) const
+{
+    Q_D(const DFMCrumbManager);
+
+    KeyType theType = fileUrl.scheme();
+
+    const QList<CrumbCreaterType> creatorList = d->controllerCreatorHash.values(theType);
+
+    if (!creatorList.isEmpty()){
+        return (creatorList.first().second)();
+    }
+
+    return DFMCrumbFactory::create(theType);
+}
+
 DFMCrumbManager::DFMCrumbManager(QObject *parent)
     : QObject(parent)
     , d_ptr(new DFMCrumbManagerPrivate(this))
