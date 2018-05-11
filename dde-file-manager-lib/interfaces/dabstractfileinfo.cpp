@@ -617,6 +617,8 @@ QIcon DAbstractFileInfo::fileIcon() const
 
 QList<QIcon> DAbstractFileInfo::additionalIcon() const
 {
+    CALL_PROXY(additionalIcon());
+
     QList<QIcon> icons;
 
     if (isSymLink()) {
@@ -1060,6 +1062,8 @@ bool DAbstractFileInfo::isEmptyFloder(const QDir::Filters &filters) const
 
 Qt::ItemFlags DAbstractFileInfo::fileItemDisableFlags() const
 {
+    CALL_PROXY(fileItemDisableFlags());
+
     return Qt::ItemFlags();
 }
 
@@ -1166,8 +1170,6 @@ void DAbstractFileInfo::makeToInactive()
 
 DUrl DAbstractFileInfo::goToUrlWhenDeleted() const
 {
-    CALL_PROXY(goToUrlWhenDeleted());
-
     DUrl extistParentUrl;
 
     foreach (const DUrl &url, parentUrlList()) {

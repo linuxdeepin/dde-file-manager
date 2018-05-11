@@ -47,18 +47,29 @@ bool TagFileInfo::exists() const
     return tag_map.contains(fileUrl().tagName());
 }
 
-bool TagFileInfo::isTaged() const
+bool TagFileInfo::canRename() const
 {
-    return true;
+    Q_D(const DAbstractFileInfo);
+
+    if (d->proxy) {
+        return d->proxy->canRename();
+    }
+
+    return fileUrl() != DUrl(TAG_ROOT);
 }
 
-bool TagFileInfo::isReadable() const
+bool TagFileInfo::isTaged() const
 {
     return true;
 }
 
 bool TagFileInfo::isWritable() const
 {
+    Q_D(const DAbstractFileInfo);
+
+    if (d->proxy)
+        return d->proxy->isWritable();
+
     return true;
 }
 
@@ -67,6 +78,17 @@ bool TagFileInfo::canRedirectionFileUrl() const
     const DAbstractFileInfoPrivate* const d{ d_func() };
 
     return static_cast<bool>(d->proxy);
+}
+
+QFileDevice::Permissions TagFileInfo::permissions() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    if (d->proxy)
+        return d->proxy->permissions();
+
+    return QFile::ReadGroup | QFile::ReadOwner | QFile::ReadUser | QFile::ReadOther
+            | QFile::WriteGroup | QFile::WriteOwner | QFile::WriteUser | QFile::WriteOther;
 }
 
 
@@ -79,33 +101,37 @@ DUrl TagFileInfo::redirectedFileUrl() const
 
 Qt::ItemFlags TagFileInfo::fileItemDisableFlags() const
 {
-    return Qt::ItemIsDragEnabled;
-}
+    Q_D(const DAbstractFileInfo);
 
-QSet<MenuAction> TagFileInfo::disableMenuActionList() const
-{
-    QSet<MenuAction> list;
-    return list;
+    if (d->proxy)
+        return d->proxy->fileItemDisableFlags();
+
+    return fileUrl() != DUrl(TAG_ROOT) ? Qt::ItemIsDragEnabled : Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
 }
 
 QVector<MenuAction> TagFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
-    const DAbstractFileInfoPrivate* d{ d_func() };
+    Q_D(const DAbstractFileInfo);
 
-    QVector<MenuAction> actions{};
-    DUrl current_url{ this->fileUrl() };
-    QString parent_url{ current_url.parentUrl().path()};
+    QVector<MenuAction> actions;
 
-    ///###: if there current file-info do not have a proxy!
-    ///###: it shows that current item is a tag-dir(tag:///tag-name).
-    if(current_url.isTaggedFile() && parent_url == QString{"/"} && !d->proxy){
-        actions.push_back(MenuAction::Open);
-        actions.push_back(MenuAction::OpenInNewWindow);
-        actions.push_back(MenuAction::OpenInNewTab);
+    if (!d->proxy) {
+        if (type == SpaceArea) {
+            actions << MenuAction::DisplayAs;
+            actions << MenuAction::SortBy;
+        } else {
+            actions << MenuAction::Open;
+            actions << MenuAction::OpenInNewWindow;
+            actions << MenuAction::OpenInNewTab;
+            actions << MenuAction::Rename;
+            actions << MenuAction::ChangeTagColor;
+        }
 
-    }else{
-        actions = DAbstractFileInfo::menuActionList(type);
+        return actions;
     }
+
+    actions = d->proxy->menuActionList(type);
+    actions.insert(1, MenuAction::OpenFileLocation);
 
     return actions;
 }
@@ -133,6 +159,87 @@ bool TagFileInfo::canIteratorDir() const
         return true;
 
     return d->proxy->canIteratorDir();
+}
+
+QVariantHash TagFileInfo::extensionPropertys() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    if (d->proxy)
+        return d->proxy->extensionPropertys();
+
+    QVariantHash hash;
+
+    if (fileUrl() == DUrl(TAG_ROOT))
+        return hash;
+
+    const QString &tag_name = fileUrl().tagName();
+    const QColor &tag_color = TagManager::instance()->getTagColor({tag_name}).value(tag_name);
+
+    hash["tag_name_list"] = QStringList{tag_name};
+    hash["colored"] = QVariant::fromValue(QList<QColor>{tag_color});
+
+    return hash;
+}
+
+QList<int> TagFileInfo::userColumnRoles() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    if (d->proxy)
+        return d->proxy->userColumnRoles();
+
+    if (fileUrl() == DUrl(TAG_ROOT)) {
+        return QList<int> {
+              DFileSystemModel::FileDisplayNameRole,
+              DFileSystemModel::FileSizeRole
+        };
+    }
+
+    return DAbstractFileInfo::userColumnRoles();
+}
+
+DUrl TagFileInfo::mimeDataUrl() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    if (d->proxy)
+        return d->proxy->mimeDataUrl();
+
+    return DUrl();
+}
+
+Qt::DropActions TagFileInfo::supportedDragActions() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    if (d->proxy)
+        return d->proxy->supportedDragActions();
+
+    return Qt::IgnoreAction;
+}
+
+Qt::DropActions TagFileInfo::supportedDropActions() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    if (d->proxy)
+        return d->proxy->supportedDropActions();
+
+    if (fileUrl().tagName().isEmpty())
+        return Qt::IgnoreAction;
+
+    return Qt::CopyAction;
+}
+
+bool TagFileInfo::canDrop() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    if (d->proxy)
+        return d->proxy->canDrop();
+
+    return !fileUrl().tagName().isEmpty();
 }
 
 DUrl TagFileInfo::parentUrl() const

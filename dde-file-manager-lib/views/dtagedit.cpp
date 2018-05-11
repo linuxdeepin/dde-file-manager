@@ -38,13 +38,11 @@ void DTagEdit::setFilesForTagging(const QList<DUrl>& files)
     m_files = files;
 }
 
-void DTagEdit::appendCrumb(const QString& crumbText)noexcept
+void DTagEdit::setDefaultCrumbs(const QStringList &list)
 {
-    DCrumbTextFormat format{ m_crumbEdit->makeTextFormat() };
-    format.setText(crumbText);
-    m_crumbEdit->appendCrumb(format);
+    for (const QString &crumb : list)
+        m_crumbEdit->appendCrumb(crumb);
 }
-
 
 void DTagEdit::onFocusOut()
 {
