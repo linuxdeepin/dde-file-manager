@@ -691,8 +691,22 @@ dde_file_manager--DFMSideBarDeviceItem > Dtk--Widget--DImageButton {
 /*================ Sidebar End =================*/
 
 /*============== Crumb Bar Begin ===============*/
+dde_file_manager--DFMCrumbBar {
+    background: white;
+    border-radius: 4px;
+}
+
+dde_file_manager--DFMCrumbBarItem:checked {
+    background: #27acf8;
+}
+
+QWidget#crumbListHolder {
+    background: transparent;
+}
+
 QWidget#DCrumbListScrollArea {
     border: none;
-    padding: 0px;
+    padding: 0;
+    background: transparent;
 }
 /*=============== Crumb Bar End ================*/

@@ -61,7 +61,7 @@ DFMCrumbItemPrivate::DFMCrumbItemPrivate(DFMCrumbItem *qq)
     : q_ptr(qq)
 {
     qq->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-    qq->setObjectName("DCrumbButton");
+    qq->setObjectName("DCrumbButton"); // init value, will be changed when setting icon.
 
     qq->connect(DThemeManager::instance(), &DThemeManager::widgetThemeChanged, qq, [this, qq](){
         qq->setIcon(icon());
@@ -123,12 +123,22 @@ void DFMCrumbItem::setUrl(const DUrl &url)
     d->data.url = url;
 }
 
+/*!
+ * \brief Set icon from theme config.
+ * \param group Item group name in theme config file
+ * \param key Icon key in theme config file
+ *
+ * When \a group is empty, item will display as non-icon crumb button.
+ */
 void DFMCrumbItem::setIconFromThemeConfig(const QString &group, const QString &key)
 {
     Q_D(DFMCrumbItem);
 
     d->data.iconName = group;
     d->data.iconKey = key;
+
+    // Object name and styling should ask design to confirm details
+    setObjectName(d->data.iconName.isEmpty() ? "DCrumbButton" : "DCrumbIconButton");
 
     // Do widget UI update.
     this->setIcon(d->icon());
@@ -229,9 +239,15 @@ void DFMCrumbItem::mouseReleaseEvent(QMouseEvent *event)
 
 void DFMCrumbItem::paintEvent(QPaintEvent *event)
 {
-    QPainter pa(this);
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
 
-    //pa.fillRect(rect(), Qt::blue);
+    if (!isChecked()) {
+        double w = width();
+        double h = height();
+        painter.setPen(QPen(QColor(0, 0, 0, 24), 1));
+        painter.drawLine(QPoint(w, 2), QPoint(w, h - 2));
+    }
 
     QPushButton::paintEvent(event);
 }

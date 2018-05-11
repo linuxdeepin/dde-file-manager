@@ -21,7 +21,7 @@
 #ifndef DFMCRUMBBAR_H
 #define DFMCRUMBBAR_H
 
-#include <QWidget>
+#include <QFrame>
 
 #include <dfmglobal.h>
 
@@ -29,7 +29,7 @@ DFM_BEGIN_NAMESPACE
 
 class DFMCrumbItem;
 class DFMCrumbBarPrivate;
-class DFMCrumbBar : public QWidget
+class DFMCrumbBar : public QFrame
 {
     Q_OBJECT
 public:
@@ -49,8 +49,9 @@ protected:
     void mousePressEvent(QMouseEvent * event) override;
     void mouseReleaseEvent(QMouseEvent * event) override;
     void resizeEvent(QResizeEvent *event) override;
-    void showEvent(QShowEvent *e) override;
+    void showEvent(QShowEvent *event) override;
     bool eventFilter(QObject *watched, QEvent *event) override;
+    void paintEvent(QPaintEvent * event) override;
 
     Q_DECLARE_PRIVATE(DFMCrumbBar)
 };

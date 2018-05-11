@@ -28,10 +28,13 @@
 #include <QApplication>
 
 #include "views/dfilemanagerwindow.h"
+#include "views/themeconfig.h"
 #include "dfmcrumbinterface.h"
 #include "dfmevent.h"
 
 #include <QDebug>
+
+DWIDGET_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
 
@@ -68,7 +71,7 @@ DFMCrumbBarPrivate::DFMCrumbBarPrivate(DFMCrumbBar *qq)
     initConnections();
     // test
     addCrumb(new DFMCrumbItem(CrumbData(DUrl(), "Home", "CrumbIconButton.Home")));
-    addCrumb(new DFMCrumbItem(CrumbData(DUrl(), "DFMCrumbItem 1")));
+    addCrumb(new DFMCrumbItem(CrumbData(DUrl::fromTrashFile("/"), "Trash")));
     addCrumb(new DFMCrumbItem(CrumbData(DUrl(), "DFMCrumbItem 2")));
     addCrumb(new DFMCrumbItem(CrumbData(DUrl(), "DFMCrumbItem 3")));
     //clearCrumbs();
@@ -139,7 +142,7 @@ void DFMCrumbBarPrivate::initUI()
     // Crumbbar Widget
     //q->setObjectName("DCrumbWidget");
     q->setFixedHeight(24);
-    q->setObjectName("DCrumbBackgroundWidget");
+    //q->setObjectName("DCrumbBackgroundWidget");
 
     // Arrows
     leftArrow.setObjectName("backButton");
@@ -159,9 +162,10 @@ void DFMCrumbBarPrivate::initUI()
     crumbListScrollArea.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     crumbListScrollArea.setFocusPolicy(Qt::NoFocus);
     crumbListScrollArea.setContentsMargins(0,0,0,0);
+//    crumbListScrollArea.setStyleSheet("background: blue");
 
     crumbListHolder = new QWidget();
-    //crumbListHolder->setStyleSheet("background: blue");
+    crumbListHolder->setObjectName("crumbListHolder");
     crumbListHolder->setContentsMargins(0,0,30,0); // right 30 for easier click
     crumbListHolder->setFixedHeight(q->height());
     crumbListHolder->installEventFilter(q);
@@ -205,10 +209,10 @@ void DFMCrumbBarPrivate::initConnections()
 }
 
 DFMCrumbBar::DFMCrumbBar(QWidget *parent)
-    : QWidget(parent)
+    : QFrame(parent)
     , d_ptr(new DFMCrumbBarPrivate(this))
 {
-
+    setFrameShape(QFrame::NoFrame);
 }
 
 DFMCrumbBar::~DFMCrumbBar()
@@ -227,7 +231,7 @@ void DFMCrumbBar::mousePressEvent(QMouseEvent *event)
     Q_D(DFMCrumbBar);
     d->clickedPos = event->globalPos();
 
-    QWidget::mousePressEvent(event);
+    QFrame::mousePressEvent(event);
 }
 
 void DFMCrumbBar::mouseReleaseEvent(QMouseEvent *event)
@@ -240,7 +244,7 @@ void DFMCrumbBar::mouseReleaseEvent(QMouseEvent *event)
         emit toggleSearchBar();
     }
 
-    QWidget::mouseReleaseEvent(event);
+    QFrame::mouseReleaseEvent(event);
 }
 
 void DFMCrumbBar::resizeEvent(QResizeEvent *event)
@@ -249,10 +253,10 @@ void DFMCrumbBar::resizeEvent(QResizeEvent *event)
 
     d->checkArrowVisiable();
 
-    return QWidget::resizeEvent(event);
+    return QFrame::resizeEvent(event);
 }
 
-void DFMCrumbBar::showEvent(QShowEvent *e)
+void DFMCrumbBar::showEvent(QShowEvent *event)
 {
     Q_D(DFMCrumbBar);
 
@@ -261,7 +265,7 @@ void DFMCrumbBar::showEvent(QShowEvent *e)
 
     d->checkArrowVisiable();
 
-    return QWidget::showEvent(e);
+    return QFrame::showEvent(event);
 }
 
 bool DFMCrumbBar::eventFilter(QObject *watched, QEvent *event)
@@ -281,7 +285,22 @@ bool DFMCrumbBar::eventFilter(QObject *watched, QEvent *event)
         e->qt4O = Qt::Horizontal;
     }
 
-    return QWidget::eventFilter(watched, event);
+    return QFrame::eventFilter(watched, event);
+}
+
+void DFMCrumbBar::paintEvent(QPaintEvent *event)
+{
+    QPainter painter(this);
+    QColor borderColor = ThemeConfig::instace()->color("CrumbBar.BorderLine", "border-color");
+    QPainterPath path;
+
+    painter.setRenderHint(QPainter::Antialiasing);
+    path.addRoundedRect(QRectF(rect()).adjusted(0.5, 0.5, -0.5, -0.5), 4, 4);
+    QPen pen(borderColor, 1);
+    painter.setPen(pen);
+    painter.drawPath(path);
+
+    QFrame::paintEvent(event);
 }
 
 DFM_END_NAMESPACE
