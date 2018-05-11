@@ -772,6 +772,11 @@ QFileInfo DFileInfo::toQFileInfo() const
     return d->fileInfo;
 }
 
+QIODevice *DFileInfo::createIODevice() const
+{
+    return new QFile(absoluteFilePath());
+}
+
 QVariantHash DFileInfo::extensionPropertys() const
 {
     Q_D(const DFileInfo);
