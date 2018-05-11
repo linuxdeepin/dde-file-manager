@@ -25,6 +25,7 @@ void do_work()
         QFuture<void> work_future{ QtConcurrent::run(thread_pool_ptr.data() ,anything_monitor_ptr.data(), &DAnythingMonitor::doWork) };
         QFuture<void> signal_future{ QtConcurrent::run(thread_pool_ptr.data(), anything_monitor_ptr.data(), &DAnythingMonitor::workSignal) };
 
+        QThread::msleep(200);
 
         work_future.waitForFinished();
         signal_future.waitForFinished();
