@@ -20,12 +20,14 @@
  */
 #include "dfmcrumbbar.h"
 #include "dfmcrumbitem.h"
+#include "dfmcrumbmanager.h"
 
 #include <QHBoxLayout>
 #include <QPainter>
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QApplication>
+#include <dfmcrumbfactory.h>
 
 #include "views/dfilemanagerwindow.h"
 #include "views/themeconfig.h"
@@ -45,6 +47,7 @@ class DFMCrumbBarPrivate
 public:
     DFMCrumbBarPrivate(DFMCrumbBar *qq);
 
+    // UI
     QPushButton leftArrow;
     QPushButton rightArrow;
     QScrollArea crumbListScrollArea;
@@ -52,6 +55,9 @@ public:
     QHBoxLayout *crumbListLayout;
     QHBoxLayout *crumbBarLayout;
     QPoint clickedPos;
+
+    // Scheme support
+    DFMCrumbInterface* crumbController;
 
     DFMCrumbBar *q_ptr = nullptr;
 
@@ -69,12 +75,11 @@ DFMCrumbBarPrivate::DFMCrumbBarPrivate(DFMCrumbBar *qq)
 {
     initUI();
     initConnections();
-    // test
-    addCrumb(new DFMCrumbItem(CrumbData(DUrl(), "Home", "CrumbIconButton.Home")));
-    addCrumb(new DFMCrumbItem(CrumbData(DUrl::fromTrashFile("/"), "Trash")));
-    addCrumb(new DFMCrumbItem(CrumbData(DUrl(), "DFMCrumbItem 2")));
-    addCrumb(new DFMCrumbItem(CrumbData(DUrl(), "DFMCrumbItem 3")));
-    //clearCrumbs();
+//    QTimer::singleShot(1000, qq, [=](){
+//        DFileManagerWindow* w = static_cast<DFileManagerWindow*>(qq->topLevelWidget());
+//        Q_CHECK_PTR(w);
+//        qq->updateCrumbs(w->currentUrl());
+//    });
 }
 
 /*!
@@ -140,9 +145,7 @@ void DFMCrumbBarPrivate::initUI()
     Q_Q(DFMCrumbBar);
 
     // Crumbbar Widget
-    //q->setObjectName("DCrumbWidget");
     q->setFixedHeight(24);
-    //q->setObjectName("DCrumbBackgroundWidget");
 
     // Arrows
     leftArrow.setObjectName("backButton");
@@ -162,7 +165,6 @@ void DFMCrumbBarPrivate::initUI()
     crumbListScrollArea.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     crumbListScrollArea.setFocusPolicy(Qt::NoFocus);
     crumbListScrollArea.setContentsMargins(0,0,0,0);
-//    crumbListScrollArea.setStyleSheet("background: blue");
 
     crumbListHolder = new QWidget();
     crumbListHolder->setObjectName("crumbListHolder");
@@ -222,8 +224,31 @@ DFMCrumbBar::~DFMCrumbBar()
 
 void DFMCrumbBar::updateCrumbs(const DUrl &url)
 {
-    Q_UNUSED(url);
+    Q_D(DFMCrumbBar);
+
     qWarning("`DFMCrumbBar::updateCrumbs` need implement !!!");
+
+    d->clearCrumbs();
+
+    if (!d->crumbController || !d->crumbController->supportedUrl(url)) {
+        d->crumbController = DFMCrumbManager::instance()->createControllerByUrl(url);
+        // Not found? Search for plugins
+        if (!d->crumbController) {
+            d->crumbController = DFMCrumbFactory::create(url.scheme());
+        }
+        // Still not found? Then nothing here...
+        if (!d->crumbController) {
+            qDebug() << "Unsupported url / scheme: " << url;
+            return;
+        }
+    }
+
+    Q_CHECK_PTR(d->crumbController);
+    QList<CrumbData> crumbDataList = d->crumbController->seprateUrl(url);
+    for (const CrumbData& c : crumbDataList) {
+        d->addCrumb(d->crumbController->createCrumbItem(c));
+    }
+
 }
 
 void DFMCrumbBar::mousePressEvent(QMouseEvent *event)

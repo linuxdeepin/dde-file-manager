@@ -190,7 +190,7 @@ void DToolBar::initConnect()
     connect(m_crumbWidget, &DFMCrumbBar::toggleSearchBar, this, &DToolBar::searchBarActivated);
     connect(m_searchButton, &DStateButton::clicked, this, &DToolBar::searchBarClicked);
     connect(m_searchBar, &DSearchBar::focusedOut, this,  &DToolBar::searchBarDeactivated);
-    connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DToolBar::crumbChanged);
+    connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DToolBar::currentUrlChanged);
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlF, this, &DToolBar::handleHotkeyCtrlF);
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlL, this, &DToolBar::handleHotkeyCtrlL);
 }
@@ -285,18 +285,18 @@ void DToolBar::crumbSelected(const DFMCrumbItem* item)
     DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(m_crumbWidget, item->url(), window());
 }
 
-void DToolBar::crumbChanged(const DFMEvent &event)
+void DToolBar::currentUrlChanged(const DFMEvent &event)
 {
-    if (event.windowId() != WindowManager::getWindowId(this))
-        return;
-
-    if (event.sender() == m_crumbWidget)
-    {
-        checkNavHistory(event.fileUrl());
+    if (event.windowId() != WindowManager::getWindowId(this)) {
         return;
     }
 
-    if (event.fileUrl().isSearchFile()){
+    if (event.sender() == m_crumbWidget) {
+        pushUrlToHistoryStack(event.fileUrl());
+        return;
+    }
+
+    if (event.fileUrl().isSearchFile()) {
         m_searchBar->show();
         m_crumbWidget->hide();
         m_searchBar->setAlignment(Qt::AlignLeft);
@@ -305,17 +305,18 @@ void DToolBar::crumbChanged(const DFMEvent &event)
         m_searchBar->setFocus();
         m_searchBar->setText(event.fileUrl().searchKeyword());
         m_searchBar->getPopupList()->hide();
-    }else{
+    } else {
         m_searchBar->hide();
         m_crumbWidget->show();
         m_searchButton->show();
         setCrumbBar(event.fileUrl());
     }
 
-    if (event.sender() == this)
+    if (event.sender() == this) {
         return;
+    }
 
-    checkNavHistory(event.fileUrl());
+    pushUrlToHistoryStack(event.fileUrl());
 }
 
 /**
@@ -367,11 +368,11 @@ void DToolBar::handleHotkeyCtrlL(quint64 winId)
     }
 }
 
-void DToolBar::checkNavHistory(DUrl url)
+void DToolBar::pushUrlToHistoryStack(DUrl url)
 {
-
-    if (!m_navStack)
+    if (!m_navStack) {
         return;
+    }
 
     m_navStack->append(url);
     updateBackForwardButtonsState();

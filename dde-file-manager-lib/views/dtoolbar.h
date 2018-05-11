@@ -86,7 +86,7 @@ public slots:
     void searchBarDeactivated();
     void searchBarTextEntered();
     void crumbSelected(const DFMCrumbItem* item);
-    void crumbChanged(const DFMEvent &event);
+    void currentUrlChanged(const DFMEvent &event);
     void searchBarChanged(QString path);
 
     void back();
@@ -100,7 +100,7 @@ public slots:
     void switchHistoryStack(const int index );
 
 private:
-    void checkNavHistory(DUrl url);
+    void pushUrlToHistoryStack(DUrl url);
     void onBackButtonClicked();
     void onForwardButtonClicked();
 
