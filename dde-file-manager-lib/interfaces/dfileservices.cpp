@@ -645,7 +645,10 @@ bool DFileService::makeTagsOfFiles(const QObject *sender, const DUrlList &urlLis
             tags_of_file_set.remove(dirty_tag);
         }
 
-        if (!setFileTags(sender, url, tags_of_file_set.toList()))
+        QSharedPointer<DFMSetFileTagsEvent> event(new DFMSetFileTagsEvent(sender, url, tags_of_file_set.toList()));
+        bool result = DFMEventDispatcher::instance()->processEventWithEventLoop(event).toBool();
+
+        if (!result)
             return false;
     }
 
@@ -660,7 +663,7 @@ bool DFileService::removeTagsOfFile(const QObject *sender, const DUrl &url, cons
 
 QList<QString> DFileService::getTagsThroughFiles(const QObject *sender, const QList<DUrl> &urls) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMGetTagsThroughFilesEvent>(sender, urls)).value<QList<QString>>();
+    return DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMGetTagsThroughFilesEvent>(sender, urls)).value<QList<QString>>();
 }
 
 const DAbstractFileInfoPointer DFileService::createFileInfo(const QObject *sender, const DUrl &fileUrl) const
