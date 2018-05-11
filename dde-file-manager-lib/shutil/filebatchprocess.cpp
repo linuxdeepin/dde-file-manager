@@ -24,36 +24,12 @@
 
 #include "dfmglobal.h"
 #include "filebatchprocess.h"
-
-#include <regex>
-#include <string>
-#include <locale>
-#include <bitset>
-#include <iostream>
-#include <type_traits>
+#include "dfmeventdispatcher.h"
 
 #include <QDebug>
-#include <QFileInfo>
 #include <QByteArray>
 
-
-
 std::once_flag FileBatchProcess::flag;
-
-
-
-union EndianTest
-{
-    std::int16_t number;
-    char array[2];
-};
-
-///###: here, We can jundge wheather the CPU is big-endian or little-endian in compile-time.
-static constexpr EndianTest test{ 0x1001 };
-inline constexpr bool isBigEndian()noexcept{ return (test.array[0] == 0x10);}
-inline constexpr bool isLittleEndian()noexcept{ return (test.array[0] == 0x01); }
-
-
 
 QSharedMap<DUrl, DUrl> FileBatchProcess::replaceText(const QList<DUrl>& originUrls, const QPair<QString, QString> &pair) const
 {
@@ -64,45 +40,25 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::replaceText(const QList<DUrl>& originUr
     QSharedMap<DUrl, DUrl> result{ new QMap<DUrl, DUrl>{}};
 
     for(auto url : originUrls){
+        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(nullptr, url);
 
-        QFileInfo info{ url.toLocalFile() };
+        if (!info)
+            continue;
 
         ///###: symlink is also processed here.
-        if(info.isFile()){
-            QString fileName{ info.baseName() + QString{"."} + info.completeSuffix() };
-            fileName.replace(pair.first, pair.second);
+        QString fileBaseName{ info->baseName() };
+        const QString &suffix = info->completeSuffix().isEmpty() ? QString() : QString(".") + info->completeSuffix();
+        fileBaseName.replace(pair.first, pair.second);
+        int max_length = MAX_FILE_NAME_CHAR_COUNT - suffix.toLocal8Bit().size();
 
-            QByteArray u8FileName{ fileName.toUtf8() };
-            std::size_t sizeOfName{ u8FileName.size() };
-
-            if( sizeOfName > MAX_FILE_NAME_CHAR_COUNT ){
-                u8FileName.resize(MAX_FILE_NAME_CHAR_COUNT);
-                u8FileName = FileBatchProcess::cutString(u8FileName);
-
-            }
-
-            DUrl changedUrl{ DUrl::fromLocalFile(info.path() + QString{"/"} + QString::fromUtf8(u8FileName)) };
-            result->insert(url, changedUrl);
-            continue;
-
+        if (fileBaseName.toLocal8Bit().size() > max_length) {
+            fileBaseName = DFMGlobal::cutString(fileBaseName, max_length, QTextCodec::codecForLocale());
         }
 
-        if(info.isDir()){
-            QString dirName{ info.baseName() };
-            dirName.replace(pair.first, pair.second);
+        DUrl changedUrl{ info->getUrlByNewFileName(fileBaseName + suffix) };
 
-            QByteArray u8DirName{ dirName.toUtf8() };
-            std::size_t sizeOfName{ u8DirName.size() };
-
-            if(sizeOfName > MAX_FILE_NAME_CHAR_COUNT){
-                u8DirName.resize(MAX_FILE_NAME_CHAR_COUNT);
-                u8DirName = FileBatchProcess::cutString(u8DirName);
-            }
-
-            DUrl changedUrl{ DUrl::fromLocalFile(info.path() + QString{"/"} + QString::fromUtf8(u8DirName)) };
+        if (changedUrl != url)
             result->insert(url, changedUrl);
-            continue;
-        }
     }
 
     return result;
@@ -116,189 +72,32 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::addText(const QList<DUrl> &originUrls, 
 
     QSharedMap<DUrl, DUrl> result{ new QMap<DUrl, DUrl>{} };
 
-    for(auto url : originUrls){
-        QFileInfo info(url.toLocalFile());
+    for (auto url : originUrls) {
+        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(nullptr, url);
 
-        if(pair.second == DFileService::AddTextFlags::Before){ //###: insert string in the front of filename.
+        if (!info)
+            continue;
 
-            if(info.isFile()){  //aim at files.
+        QString fileBaseName{ info->baseName() };
+        QString add_text = pair.first;
+        const QString &suffix = info->completeSuffix().isEmpty() ? QString() : QString(".") + info->completeSuffix();
+        int max_length = MAX_FILE_NAME_CHAR_COUNT - info->fileName().toLocal8Bit().size();
 
-                QByteArray fileBaseName{ info.baseName().toUtf8() };
-                QByteArray addedStr{ pair.first.toUtf8() };
-                QByteArray suffixStr{ info.completeSuffix().toUtf8() };
-                std::size_t sizeOfSuffix{ suffixStr.size() + 1 }; //plus 1 because dot(.)
-                std::size_t sizeOfBaseName{ fileBaseName.size() };
-                std::size_t sizeOfAddedStr{ pair.first.toUtf8().size() };
-
-
-                if(sizeOfAddedStr >= MAX_FILE_NAME_CHAR_COUNT){
-                    addedStr.resize(MAX_FILE_NAME_CHAR_COUNT - sizeOfSuffix);
-
-                    QString fileName{ FileBatchProcess::cutString( addedStr ) };
-                    fileName += QString{ "." };
-                    fileName += QString::fromUtf8(suffixStr);
-
-                    DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() + QString{"/"} + fileName ) };
-                    result->insert(url, beModifiedUrl);
-                    continue;
-
-                }else{
-
-                    if( sizeOfAddedStr + sizeOfBaseName + sizeOfSuffix <= MAX_FILE_NAME_CHAR_COUNT){
-                        QByteArray fileName{ addedStr + fileBaseName + QByteArray{"."} + suffixStr };
-
-                        DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() + QString{ "/" } + QString::fromUtf8(fileName) ) };
-                        result->insert(url, beModifiedUrl);
-                        continue;
-
-                    }else{ //###: >MAX_FILE_NAME_CHAR_COUNT
-
-                        QByteArray fileName{ addedStr + fileBaseName };
-                        fileName.resize(MAX_FILE_NAME_CHAR_COUNT - sizeOfSuffix);
-                        fileName = FileBatchProcess::cutString(fileName);
-
-                        fileName += QByteArray{"."};
-                        fileName += suffixStr;
-
-                        DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() + QString{"/"} + QString::fromUtf8(fileName) ) };
-                        result->insert(url, beModifiedUrl);
-                        continue;
-                    }
-
-                }
-            }
-
-            if(info.isDir()){ //aim at dirs.
-
-                QByteArray fileBaseName{ info.baseName().toUtf8() };
-                QByteArray addedStr{ pair.first.toUtf8() };
-                std::size_t sizeOfBaseName{ fileBaseName.size() };
-                std::size_t sizeOfAddedStr{ addedStr.size() };
-
-                if(sizeOfAddedStr >= MAX_FILE_NAME_CHAR_COUNT){
-                    addedStr.resize(MAX_FILE_NAME_CHAR_COUNT);
-                    addedStr = FileBatchProcess::cutString(addedStr);
-
-                    QString fileName{ QString::fromUtf8(addedStr ) };
-                    DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() + QString{"/"} + fileName ) };
-                    result->insert(url, beModifiedUrl);
-                    continue;
-
-                }else{
-
-                    if( sizeOfAddedStr + sizeOfBaseName <= MAX_FILE_NAME_CHAR_COUNT){
-                        QByteArray fileName{ addedStr + fileBaseName };
-
-                        DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() + QString{"/"} + QString::fromUtf8(fileName) ) };
-                        result->insert(url, beModifiedUrl);
-                        continue;
-
-                    }else{ //###: >MAX_FILE_NAME_CHAR_COUNT
-                        QByteArray fileName{ addedStr + fileBaseName };
-                        fileName.resize(MAX_FILE_NAME_CHAR_COUNT);
-                        fileName = FileBatchProcess::cutString(fileName);
-
-                        DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() +  QString{"/"} + QString::fromUtf8(fileName) ) };
-                        result->insert(url, beModifiedUrl);
-                        continue;
-                    }
-
-                }
-
-
-            }
-
-
-        }else if(pair.second == DFileService::AddTextFlags::After){ //###: append string to filename.
-
-            if(info.isFile()){
-                QByteArray fileBaseName{ info.baseName().toUtf8() };
-                QByteArray addedStr{ pair.first.toUtf8() };
-                std::size_t sizeOfSuffix{ info.completeSuffix().toUtf8().size() + 1 }; //plus 1 because dot(.)
-                std::size_t sizeOfBaseName{ fileBaseName.size() };
-                std::size_t sizeOfAddedStr{ addedStr.size() };
-
-                if(sizeOfAddedStr >= MAX_FILE_NAME_CHAR_COUNT){
-                    QByteArray fileName{ fileBaseName + addedStr };
-                    fileName.resize(MAX_FILE_NAME_CHAR_COUNT - sizeOfSuffix);
-                    fileName = FileBatchProcess::cutString(fileName);
-
-                    fileName += QByteArray{ "." };
-                    fileName += info.completeSuffix().toUtf8();
-
-                    DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() + QString{"/"} + QString::fromUtf8(fileName) ) };
-                    result->insert(url, beModifiedUrl);
-                    continue;
-
-                }else{
-
-                    if( sizeOfBaseName + sizeOfAddedStr + sizeOfSuffix <= MAX_FILE_NAME_CHAR_COUNT){
-                        QByteArray fileName{ fileBaseName + addedStr + QByteArray{"."} + info.completeSuffix().toUtf8() };
-
-                        DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() + QString{ "/" } + QString::fromUtf8(fileName) ) };
-                        result->insert(url, beModifiedUrl);
-                        continue;
-
-                    }else{ //###: >MAX_FILE_NAME_CHAR_COUNT
-
-                        QByteArray fileName{ fileBaseName + addedStr};
-                        fileName.resize(MAX_FILE_NAME_CHAR_COUNT - sizeOfSuffix);
-                        fileName += QByteArray{ "." };
-                        fileName += info.completeSuffix().toUtf8();
-
-                        DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() + QByteArray{"/"} + QString::fromUtf8(fileName) ) };
-                        result->insert(url, beModifiedUrl);
-                        continue;
-                    }
-
-                }
-
-            }
-
-            if(info.isDir()){
-                QByteArray fileBaseName{ info.baseName().toUtf8() };
-                QByteArray addedStr{ pair.first.toUtf8() };
-                std::size_t sizeOfBaseName{ fileBaseName.size() };
-                std::size_t sizeOfAddedStr{ addedStr.size() };
-
-                if(sizeOfAddedStr >= MAX_FILE_NAME_CHAR_COUNT){
-                    addedStr.resize(MAX_FILE_NAME_CHAR_COUNT);
-                    QByteArray fileName{ fileBaseName + addedStr };
-                    fileName.resize(MAX_FILE_NAME_CHAR_COUNT);
-
-                    fileName = FileBatchProcess::cutString(fileName);
-
-                    DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() + QString{"/"} + QString::fromUtf8(fileName) ) };
-                    result->insert(url, beModifiedUrl);
-                    continue;
-
-                }else{
-
-                    if( sizeOfBaseName + sizeOfAddedStr <= MAX_FILE_NAME_CHAR_COUNT){ //###: +1 stand for '/'
-                        QByteArray fileName{ addedStr + fileBaseName };
-
-                        DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() + QString{"/"} + QString::fromUtf8(fileName) ) };
-                        result->insert(url, beModifiedUrl);
-                        continue;
-
-                    }else{ //###: >MAX_FILE_NAME_CHAR_COUNT
-                        QByteArray fileName{ addedStr + fileBaseName};
-                        fileName.resize(MAX_FILE_NAME_CHAR_COUNT); //###: Why minus 1? because '/'
-
-                        fileName == FileBatchProcess::cutString(fileName);
-
-                        DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() +  QString{"/"} + QString::fromUtf8(fileName) ) };
-                        result->insert(url, beModifiedUrl);
-                        continue;
-
-                    }
-
-                }
-            }
-
+        if (add_text.toLocal8Bit().size() > max_length) {
+            add_text = DFMGlobal::cutString(add_text, max_length, QTextCodec::codecForLocale());
         }
-    }
 
+        if (pair.second == DFileService::AddTextFlags::Before) {
+            fileBaseName.insert(0, add_text);
+        } else {
+            fileBaseName.append(add_text);
+        }
+
+        DUrl changedUrl{ info->getUrlByNewFileName(fileBaseName + suffix) };
+
+        if (changedUrl != url)
+            result->insert(url, changedUrl);
+    }
 
     return result;
 }
@@ -309,110 +108,36 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::customText(const QList<DUrl> &originUrl
         return QSharedMap<DUrl, DUrl>{ nullptr };
     }
 
-    unsigned long long SNNumber{ std::stoull(pair.second.toStdString()) };
+    unsigned long long SNNumber{ pair.second.toULongLong() };
     unsigned long long index{ 0 };
-    if(SNNumber == 0xffffffffffffffff){  //##: Maybe, this value will be equal to the max value of the type of unsigned long long
+
+    if (SNNumber == ULONG_LONG_MAX) {  //##: Maybe, this value will be equal to the max value of the type of unsigned long long
         index = SNNumber - originUrls.size();
+    } else {
+        index = SNNumber;
     }
 
-    index = SNNumber;
     QSharedMap<DUrl, DUrl> result{new QMap<DUrl, DUrl>{}};
-    for(auto url : originUrls){
-        QFileInfo info{url.toLocalFile()};
 
-        if(info.isFile()){ //###:aim at file.
+    for (auto url : originUrls) {
+        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(nullptr, url);
 
-            QByteArray fileBaseName{ pair.first.toUtf8() };
-            QByteArray indexStr{ QByteArray::fromStdString( std::to_string( index ) ) };
-            std::size_t sizeOfSuffixStr{ info.completeSuffix().toUtf8().size() + 1 };
-            std::size_t sizeOfBaseName{ pair.first.toUtf8().size() };
-            std::size_t sizeOfIndexStr{ indexStr.size() };
-
-
-
-            if( sizeOfBaseName >= MAX_FILE_NAME_CHAR_COUNT){
-                std::size_t n{MAX_FILE_NAME_CHAR_COUNT - sizeOfIndexStr - sizeOfSuffixStr };
-                fileBaseName.resize(n);
-
-                QByteArray fileName{ FileBatchProcess::cutString(fileBaseName) };
-                fileName += indexStr;
-                fileName += QByteArray{"."};
-                fileName += info.completeSuffix().toUtf8();
-
-                DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() + QString{"/"} + QString::fromUtf8(fileName) ) };
-                result->insert(url, beModifiedUrl);
-
-            }else{
-
-                if(sizeOfBaseName + sizeOfIndexStr + sizeOfSuffixStr <= MAX_FILE_NAME_CHAR_COUNT){
-
-                    QByteArray fileName{ fileBaseName + indexStr + QByteArray{"."} + info.completeSuffix().toUtf8() };
-
-                    DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() + QString{"/"} + QString::fromUtf8(fileName)) };
-                    result->insert(url, beModifiedUrl);
-
-                }else{
-
-                    std::size_t n{ sizeOfIndexStr + sizeOfSuffixStr - MAX_FILE_NAME_CHAR_COUNT };
-                    fileBaseName.resize(fileBaseName.size() - n);
-
-                    QByteArray fileName{ FileBatchProcess::cutString(fileBaseName) };
-                    fileName += indexStr;
-                    fileName += QByteArray{"."};
-                    fileName += info.completeSuffix().toUtf8();
-
-                    DUrl beModifieddUrl{ DUrl::fromLocalFile( info.path() + QString{"/"} + QString::fromUtf8(fileName)) };
-                    result->insert(url, beModifieddUrl);
-
-                }
-
-
-            }
-
-            ++index;
+        if (!info)
             continue;
+
+        QString fileBaseName{ pair.first };
+        const QString &index_string = QString::number(index);
+        const QString &suffix = info->completeSuffix().isEmpty() ? QString() : QString(".") + info->completeSuffix();
+        int max_length = MAX_FILE_NAME_CHAR_COUNT - index_string.toLocal8Bit().size() - suffix.toLocal8Bit().size();
+
+        if (fileBaseName.toLocal8Bit().size() > max_length) {
+            fileBaseName = DFMGlobal::cutString(fileBaseName, max_length, QTextCodec::codecForLocale());
         }
 
-        if(info.isDir()){  //###: aim at dir
-            QByteArray indexStr{ QByteArray::fromStdString( std::to_string(index) ) };
-            QByteArray basenameOfFile{ pair.first.toUtf8() };
-            std::size_t sizeOfIndexStr{ indexStr.size() };
-            std::size_t sizeOfBaseName{ basenameOfFile.size() };
+        DUrl beModifieddUrl{ info->getUrlByNewFileName(fileBaseName + index_string + suffix) };
+        result->insert(url, beModifieddUrl);
 
-
-            if(sizeOfBaseName >= MAX_FILE_NAME_CHAR_COUNT){
-
-                basenameOfFile.resize(MAX_FILE_NAME_CHAR_COUNT - sizeOfIndexStr);
-                QByteArray fileBaseName{ FileBatchProcess::cutString(basenameOfFile) };
-                fileBaseName += indexStr;
-
-                DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() + QString{"/"} + QString::fromUtf8(fileBaseName) ) };
-                result->insert(url, beModifiedUrl);
-
-            }else{
-
-                if(sizeOfBaseName + sizeOfIndexStr <= MAX_FILE_NAME_CHAR_COUNT){
-
-                    QByteArray newFileBaseName{ basenameOfFile + indexStr };
-
-                    DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() + QString{"/"} + QString::fromUtf8(newFileBaseName)) };
-                    result->insert(url, beModifiedUrl);
-
-                }else{
-
-                    std::size_t n{ sizeOfBaseName + sizeOfIndexStr - MAX_FILE_NAME_CHAR_COUNT };
-                    basenameOfFile.resize(basenameOfFile.size() - n);
-                    QByteArray fileBaseName{ FileBatchProcess::cutString(basenameOfFile) };
-                    fileBaseName += indexStr;
-
-                    DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() + QString{"/"} + QString::fromUtf8(fileBaseName) ) };
-                    result->insert(url, beModifiedUrl);
-                }
-            }
-
-            ++index;
-            continue;
-        }
+        ++index;
     }
 
     return result;
@@ -421,118 +146,36 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::customText(const QList<DUrl> &originUrl
 
 
 ////###: use the value of map to rename the file who name is the key of map.
-QSharedPointer<QList<DUrl>> FileBatchProcess::batchProcessFile(const QSharedMap<DUrl, DUrl> &map)
+QMap<DUrl, DUrl> FileBatchProcess::batchProcessFile(const QSharedMap<DUrl, DUrl> &map)
 {
-    if(static_cast<bool>(map) == false){  //###: here, jundge whether there are fileUrls in map.
-        return QSharedPointer<QList<DUrl>>{ nullptr };
-    }
+    QMap<DUrl, DUrl> cache;
 
+    if (static_cast<bool>(map) == false) {  //###: here, jundge whether there are fileUrls in map.
+        return cache;
+    }
 
     QMap<DUrl, DUrl>::const_iterator beg = map->constBegin();
     QMap<DUrl, DUrl>::const_iterator end = map->constEnd();
 
-    QSharedPointer<QList<DUrl>> cache{ new QList<DUrl>{} };
+    // 实现批量回退
+    DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>();
 
-    for(; beg != end; ++beg){
+    for (; beg != end; ++beg) {
+        DUrl currentName{ beg.key() };
+        DUrl hopedName{ beg.value() };
 
-        QString originName{ beg.key().toLocalFile() };
-        QString changedName{ beg.value().toLocalFile() };
-
-        if(originName == changedName){
+        if (currentName == hopedName) {
             continue;
         }
 
-       QString currentName{ beg.key().toLocalFile() };
-       QString hopedName{ beg.value().toLocalFile() };
-
        ///###: just cache files that rename successfully.
-       if( QFile::rename(currentName, hopedName) == true ){
-           cache->push_back( DUrl::fromLocalFile(hopedName) );
+       if (DFileService::instance()->renameFile(nullptr, currentName, hopedName) == true ) {
+           cache[currentName] = hopedName;
        }
     }
+
+    // 实现批量回退
+    DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>();
 
     return cache;
 }
-
-
-QByteArray FileBatchProcess::cutString(const QByteArray &text)
-{
-    if(text.isEmpty() == true){
-        return QByteArray{};
-    }
-
-    std::basic_string<char> u8Str{ text.toStdString() };
-    std::basic_string<char>::const_reverse_iterator crbegin{ u8Str.crbegin() };
-    std::basic_string<char>::const_reverse_iterator crend{ u8Str.crend() };
-
-    std::size_t counter{ 0 };
-
-    if(isLittleEndian() == true){
-        std::bitset<8> bits{ static_cast<unsigned long>(*crbegin) };
-        if(bits.test(7) == false){ //###: I jundge the last byte of u8Str. If it is 0xxx xxxx means it is a ASCII, so we return text directly.
-            return text;
-        }
-
-        for(; crbegin != crend; ++crbegin, ++counter){  //###: 0xc0(11000000), I find the byte of flag of utf8 through 0xc0.
-            if((static_cast<unsigned char>(*crbegin) & 0xc0) == 0xc0){
-                ++counter;
-                break;
-            }
-        }
-
-       std::bitset<8> firstByteOfWard{ static_cast<unsigned long>(*crbegin) };
-       std::string bitsStr{ firstByteOfWard.to_string() };
-
-       std::basic_regex<char> regex{ "([1]+)([0]{1,1})" }; //###: here, Use regex to find how many bytes the last word in u8Str.
-       std::match_results<std::basic_string<char>::const_iterator> result;
-
-       if( std::regex_search(bitsStr, result, regex) == true ){
-           std::size_t bitsNumber{ result.str(1).size() };
-           if(bitsNumber == counter){ //###: I jundge that whether the last word of u8Str is complete.
-               return text;
-
-           }else{ //###: incomplete! I cut the last word of u8Str.
-               std::basic_string<char> beCutedString{ u8Str.erase(u8Str.size()-counter, counter) };
-               return QByteArray::fromStdString(beCutedString);
-           }
-       }
-
-    }else{
-        std::bitset<8> bits{ static_cast<unsigned long>(*crbegin) };
-        if(bits.test(0) == false){
-            return text;
-        }
-
-        for(; crbegin != crend; ++crbegin, ++counter){
-            if((*crbegin & 0x03) == 0x03){
-                ++counter;
-                break;
-            }
-        }
-
-        std::bitset<8> firstByteOfWord{ static_cast<unsigned long>(*crbegin) };
-        std::string bitsStr{ firstByteOfWord.to_string() };
-
-        std::basic_regex<char> regex{ "([0]{1,1})([1]+)" };
-        std::match_results<std::basic_string<char>::const_iterator> result;
-
-        if( std::regex_search(bitsStr, result, regex) == true ){
-
-            std::size_t bitsNumber{ result.str(2).size() };
-            if(bitsNumber == counter){
-                return text;
-
-            }else{
-
-                std::basic_string<char> beCutedString{ u8Str.erase(u8Str.size()-counter, counter) };
-                return QByteArray::fromStdString(beCutedString);
-            }
-        }
-    }
-
-
-}
-
-
-
-

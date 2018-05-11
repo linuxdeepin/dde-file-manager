@@ -255,6 +255,10 @@ const QSharedPointer<DFMEvent> DFMEvent::fromJson(DFMEvent::Type type, const QJs
         return DFMOpenUrlEvent::fromJson(json);
     case MenuAction:
         return DFMMenuActionEvent::fromJson(json);
+    case Back:
+        return DFMBackEvent::fromJson(json);
+    case Forward:
+        return DFMForwardEvent::fromJson(json);
     default: break;
     }
 
@@ -851,6 +855,12 @@ DFMSaveOperatorEvent::DFMSaveOperatorEvent(const QSharedPointer<DFMEvent> &iniai
     setProperty(QT_STRINGIFY(DFMSaveOperatorEvent::async), async);
 }
 
+DFMSaveOperatorEvent::DFMSaveOperatorEvent()
+    : DFMEvent(SaveOperator, 0)
+{
+    setProperty(QT_STRINGIFY(DFMSaveOperatorEvent::split), true);
+}
+
 QSharedPointer<DFMEvent> DFMSaveOperatorEvent::iniaiator() const
 {
     return qvariant_cast<QSharedPointer<DFMEvent>>(property(QT_STRINGIFY(DFMSaveOperatorEvent::iniaiator)));
@@ -864,6 +874,11 @@ QSharedPointer<DFMEvent> DFMSaveOperatorEvent::event() const
 bool DFMSaveOperatorEvent::async() const
 {
     return property(QT_STRINGIFY(DFMSaveOperatorEvent::async)).toBool();
+}
+
+bool DFMSaveOperatorEvent::split() const
+{
+    return property(QT_STRINGIFY(DFMSaveOperatorEvent::split)).toBool();
 }
 
 DFMRevocationEvent::DFMRevocationEvent(const QObject *sender)

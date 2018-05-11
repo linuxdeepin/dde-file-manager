@@ -1767,19 +1767,19 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
         quint64 winId{ AppController::multiSelectionFilesCache.second };
         if(winId == parent()->windowId() || AppController::flagForDDesktopRenameBar){ //###: flagForDDesktopRenameBar is false usually.
 
-            if(AppController::multiSelectionFilesCache.first){
+            if(!AppController::multiSelectionFilesCache.first.isEmpty()){
 
-                if(AppController::multiSelectionFilesCache.first->contains(fileUrl) == true){
+                if(AppController::multiSelectionFilesCache.first.contains(fileUrl) == true){
 
                     ++AppController::multiSelectionFilesCacheCounter;
                     if(AppController::multiSelectionFilesCacheCounter.load(std::memory_order_seq_cst) ==
-                                                    AppController::multiSelectionFilesCache.first->size()){
+                                                    AppController::multiSelectionFilesCache.first.size()){
 
-                        DFMUrlListBaseEvent event{ this,  *(AppController::multiSelectionFilesCache.first)};
+                        DFMUrlListBaseEvent event{ this,  AppController::multiSelectionFilesCache.first};
                         event.setWindowId(winId);
 
                         ////###: clean cache!
-                        AppController::multiSelectionFilesCache.first.reset(nullptr);
+                        AppController::multiSelectionFilesCache.first.clear();
                         AppController::multiSelectionFilesCache.second = 0;
 
                         ///###: make ref-counter be 0(zero).

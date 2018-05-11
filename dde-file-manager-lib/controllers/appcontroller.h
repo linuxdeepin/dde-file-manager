@@ -168,7 +168,7 @@ private:
     friend class FileBatchProcess;
 
 public:
-    static QPair<QSharedPointer<QList<DUrl>>, quint64> multiSelectionFilesCache;  //###: for multi selection.
+    static QPair<QList<DUrl>, quint64> multiSelectionFilesCache;  //###: for multi selection.
     static std::atomic<quint64> multiSelectionFilesCacheCounter;
     static std::atomic<bool> flagForDDesktopRenameBar;
 

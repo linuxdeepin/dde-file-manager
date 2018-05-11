@@ -71,8 +71,7 @@ public:
 
 
 
-    static QSharedPointer<QList<DUrl>> batchProcessFile(const QSharedMap<DUrl, DUrl> &map);
-    static QByteArray cutString(const QByteArray& text);
+    static QMap<DUrl, DUrl> batchProcessFile(const QSharedMap<DUrl, DUrl> &map);
 
     ////###: this is thread safe.
     inline static QSharedPointer<FileBatchProcess> instance()

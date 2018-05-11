@@ -552,10 +552,14 @@ class DFMSaveOperatorEvent : public DFMEvent
 {
 public:
     explicit DFMSaveOperatorEvent(const QSharedPointer<DFMEvent> &iniaiator, const QSharedPointer<DFMEvent> &event, bool async = false);
+    // is split type
+    explicit DFMSaveOperatorEvent();
 
     QSharedPointer<DFMEvent> iniaiator() const;
     QSharedPointer<DFMEvent> event() const;
     bool async() const;
+    // 用于实现可回退一系列操作的分隔符, 遇到此类事件时，会一直重复执行撤销动作，直到再次遇到此分隔符或事件栈为空
+    bool split() const;
 };
 
 class DFMCleanSaveOperatorEvent : public DFMEvent
