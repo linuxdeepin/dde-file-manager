@@ -324,7 +324,9 @@ void TagManager::init_connect()noexcept
 //        }
 
         // clean the "to" file tag info
-        DFileService::instance()->setFileTags(this, to, {});
+        QTimer::singleShot(1000, this, [to, this] {
+            DFileService::instance()->setFileTags(this, to, {});
+        });
     });
 
     QObject::connect(TagManagerDaemonController::instance(), &TagManagerDaemonController::addNewTags,[this](const QVariant& new_tags){
