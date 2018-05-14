@@ -18,45 +18,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "dfmfilecrumbcontroller.h"
+#ifndef DFMCOMPUTERCRUMBCONTROLLER_H
+#define DFMCOMPUTERCRUMBCONTROLLER_H
+
+#include "interfaces/dfmcrumbinterface.h"
+
+#include "dfmglobal.h"
 
 DFM_BEGIN_NAMESPACE
 
-DFMFileCrumbController::DFMFileCrumbController(QObject *parent)
-    : DFMCrumbInterface(parent)
+class DFMComputerCrumbController : public DFMCrumbInterface
 {
+public:
+    explicit DFMComputerCrumbController(QObject *parent = 0);
+    ~DFMComputerCrumbController();
 
-}
-
-DFMFileCrumbController::~DFMFileCrumbController()
-{
-
-}
-
-bool DFMFileCrumbController::supportedUrl(DUrl url)
-{
-    qWarning("DFMFileCrumbController::supportedUrl() should be implemented!!!");
-    return false;
-}
-
-QList<CrumbData> DFMFileCrumbController::seprateUrl(const DUrl &url)
-{
-
-}
-
-DFMCrumbItem *DFMFileCrumbController::createCrumbItem(const CrumbData &data)
-{
-
-}
-
-DFMCrumbItem *DFMFileCrumbController::createCrumbItem(const DUrl &url)
-{
-
-}
-
-QStringList DFMFileCrumbController::getSuggestList(const QString &text)
-{
-
-}
+    bool supportedUrl(DUrl url) override;
+    QList<CrumbData> seprateUrl(const DUrl &url) override;
+    DFMCrumbItem* createCrumbItem(const CrumbData &data) override;
+    DFMCrumbItem* createCrumbItem(const DUrl &url) override;
+    QStringList getSuggestList(const QString &text) override;
+};
 
 DFM_END_NAMESPACE
+
+#endif // DFMCOMPUTERCRUMBCONTROLLER_H

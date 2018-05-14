@@ -273,7 +273,7 @@ void DToolBar::searchBarTextEntered()
     if (currentUrl.isLocalFile())
         QDir::setCurrent(currentUrl.toLocalFile());
 
-    DUrl inputUrl = DUrl::fromUserInput(text, false); ///###: here, jundge whether the text is a local file path.
+    DUrl inputUrl = DUrl::fromUserInput(text, false); ///###: here, judge whether the text is a local file path.
 
     QDir::setCurrent(currentDir);
 
