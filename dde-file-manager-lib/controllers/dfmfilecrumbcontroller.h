@@ -41,6 +41,8 @@ public:
 
 private:
     QString homePath = QString();
+
+    QString getDisplayName(const QString& name) const;
 };
 
 DFM_END_NAMESPACE

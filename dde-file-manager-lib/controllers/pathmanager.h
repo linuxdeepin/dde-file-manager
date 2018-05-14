@@ -43,7 +43,7 @@ public:
     void initPaths();
 
     QString getSystemPath(QString key);
-    QString getSystemPathDisplayName(QString key);
+    QString getSystemPathDisplayName(QString key) const;
     QString getSystemPathDisplayNameByPath(QString path);
     QString getSystemPathIconName(QString key);
     QString getSystemPathIconNameByPath(QString path);

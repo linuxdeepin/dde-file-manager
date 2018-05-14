@@ -21,8 +21,9 @@
 #include "dfmfilecrumbcontroller.h"
 #include "dfmcrumbitem.h"
 
-#include "dfileinfo.h"
+#include "controllers/pathmanager.h"
 
+#include "dfileinfo.h"
 #include "singleton.h"
 
 #include <QStandardPaths>
@@ -45,9 +46,8 @@ DFMFileCrumbController::~DFMFileCrumbController()
 
 bool DFMFileCrumbController::supportedUrl(DUrl url)
 {
-    Q_UNUSED(url);
     qWarning("DFMFileCrumbController::supportedUrl() should be implemented!!!");  
-    return true;
+    return url.scheme() == FILE_SCHEME;
 }
 
 QList<CrumbData> DFMFileCrumbController::seprateUrl(const DUrl &url)
@@ -62,14 +62,14 @@ QList<CrumbData> DFMFileCrumbController::seprateUrl(const DUrl &url)
 
     if (path.startsWith(homePath)) {
         prefixPath = homePath;
-        CrumbData data(DUrl::fromLocalFile(homePath), "Home", "CrumbIconButton.Home");
+        CrumbData data(DUrl::fromLocalFile(homePath), getDisplayName("Home"), "CrumbIconButton.Home");
         list.append(data);
     } else {
         QStorageInfo storageInfo(path);
         prefixPath = storageInfo.rootPath();
 
         if (prefixPath == "/") {
-            CrumbData data(DUrl(FILE_ROOT), "Root", "CrumbIconButton.Disk");
+            CrumbData data(DUrl(FILE_ROOT), getDisplayName("System Disk"), "CrumbIconButton.Disk");
             list.append(data);
         } else {
             CrumbData data(DUrl::fromLocalFile(prefixPath), QString(), "CrumbIconButton.Disk");
@@ -79,17 +79,15 @@ QList<CrumbData> DFMFileCrumbController::seprateUrl(const DUrl &url)
 
     DFileInfo info(url);
     DUrlList urlList = info.parentUrlList();
+    urlList.append(url);
 
-    // Push parent urls into crumb list (without prefix url)
+    // Push urls into crumb list (without prefix url)
     for (const DUrl & oneUrl : urlList) {
-        if (oneUrl.path().startsWith(prefixPath) && oneUrl.path() != prefixPath) {
+        if (!prefixPath.startsWith(oneUrl.toLocalFile())) {
             CrumbData data(oneUrl, oneUrl.fileName());
             list.append(data);
         }
     }
-    // Then itself..
-    CrumbData data(url, url.fileName());
-    list.append(data);
 
     return list;
 }
@@ -107,6 +105,12 @@ DFMCrumbItem *DFMFileCrumbController::createCrumbItem(const DUrl &url)
 QStringList DFMFileCrumbController::getSuggestList(const QString &text)
 {
 
+}
+
+QString DFMFileCrumbController::getDisplayName(const QString &name) const
+{
+    QString text = Singleton<PathManager>::instance()->getSystemPathDisplayName(name);
+    return text.isEmpty() ? name : text;
 }
 
 DFM_END_NAMESPACE

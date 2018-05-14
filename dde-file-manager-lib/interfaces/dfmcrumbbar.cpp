@@ -34,6 +34,7 @@
 #include "dfmcrumbinterface.h"
 #include "dfmevent.h"
 
+#include <QButtonGroup>
 #include <QDebug>
 
 DWIDGET_USE_NAMESPACE
@@ -54,6 +55,7 @@ public:
     QWidget *crumbListHolder;
     QHBoxLayout *crumbListLayout;
     QHBoxLayout *crumbBarLayout;
+    QButtonGroup buttonGroup;
     QPoint clickedPos;
 
     // Scheme support
@@ -90,12 +92,14 @@ void DFMCrumbBarPrivate::clearCrumbs()
     leftArrow.hide();
     rightArrow.hide();
 
-    if (crumbListLayout != nullptr) {
-        QLayoutItem* item;
-        while ((item = crumbListLayout->takeAt(0)) != nullptr ) {
-            delete item->widget();
-            delete item;
-        }
+    if (crumbListLayout == nullptr) return;
+
+    QList<QAbstractButton *> btns = buttonGroup.buttons();
+
+    for (QAbstractButton* btn : btns) {
+        crumbListLayout->removeWidget(btn);
+        buttonGroup.removeButton(btn);
+        btn->deleteLater();
     }
 }
 
@@ -125,7 +129,8 @@ void DFMCrumbBarPrivate::addCrumb(DFMCrumbItem *item)
     Q_Q(DFMCrumbBar);
 
     crumbListLayout->addWidget(item);
-    crumbListHolder->adjustSize();
+    item->show();
+//    crumbListHolder->adjustSize();
 
     crumbListScrollArea.horizontalScrollBar()->setPageStep(crumbListHolder->width());
     crumbListScrollArea.horizontalScrollBar()->triggerAction(QScrollBar::SliderToMaximum); // todo: move it to updateCrumbs()
@@ -164,11 +169,12 @@ void DFMCrumbBarPrivate::initUI()
     crumbListScrollArea.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     crumbListScrollArea.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     crumbListScrollArea.setFocusPolicy(Qt::NoFocus);
-    crumbListScrollArea.setContentsMargins(0,0,0,0);
+    crumbListScrollArea.setContentsMargins(0, 0, 0, 0);
+    crumbListScrollArea.setSizeAdjustPolicy(QAbstractScrollArea::AdjustIgnored);
 
     crumbListHolder = new QWidget();
     crumbListHolder->setObjectName("crumbListHolder");
-    crumbListHolder->setContentsMargins(0,0,30,0); // right 30 for easier click
+    crumbListHolder->setContentsMargins(0, 0, 30, 0); // right 30 for easier click
     crumbListHolder->setFixedHeight(q->height());
     crumbListHolder->installEventFilter(q);
     crumbListScrollArea.setWidget(crumbListHolder);
@@ -177,7 +183,7 @@ void DFMCrumbBarPrivate::initUI()
     crumbListLayout->setMargin(0);
     crumbListLayout->setSpacing(0);
     crumbListLayout->setAlignment(Qt::AlignLeft);
-//    crumbListLayout->setSizeConstraint(QLayout::SetMaximumSize);
+//    crumbListLayout->setSizeConstraint(QLayout::SetMinimumSize);
     crumbListLayout->setContentsMargins(0, 0, 0, 0);
     crumbListHolder->setLayout(crumbListLayout);
 
@@ -226,8 +232,7 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
 {
     Q_D(DFMCrumbBar);
 
-    // TODO: use button group or other ways to clear crumbs.
-    //d->clearCrumbs();
+    d->clearCrumbs();
 
     if (!d->crumbController || !d->crumbController->supportedUrl(url)) {
         d->crumbController = DFMCrumbManager::instance()->createControllerByUrl(url);
@@ -244,19 +249,18 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
 
     Q_CHECK_PTR(d->crumbController);
     QList<CrumbData> crumbDataList = d->crumbController->seprateUrl(url);
-    int count = crumbDataList.count();
-    int i = 0;
     for (const CrumbData& c : crumbDataList) {
-        i++;
         DFMCrumbItem* item = d->crumbController->createCrumbItem(c);
         item->setParent(this);
-        if (i == count) {
+        d->buttonGroup.addButton(item);
+        if (item->url() == url) {
             item->setCheckable(true);
             item->setChecked(true);
         }
         d->addCrumb(item);
     }
 
+    d->crumbListHolder->adjustSize();
     d->checkArrowVisiable();
 }
 
