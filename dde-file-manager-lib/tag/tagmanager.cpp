@@ -19,6 +19,7 @@
 #include <QList>
 #include <QDebug>
 #include <QVariant>
+#include <QStorageInfo>
 
 
 static QString randomColor() noexcept
@@ -303,18 +304,39 @@ void TagManager::init_connect()noexcept
 //        }
 //    });
 
-//    connect(DFileService::instance(), &DFileService::fileRenamed, this, [this] (const DUrl &from, const DUrl &to) {
-//        const QStringList &tags = DFileService::instance()->getTagsThroughFiles(this, {from});
+    connect(DFileService::instance(), &DFileService::fileRenamed, this, [this] (const DUrl &from, const DUrl &to) {
+        QFileInfo from_info{ from.toLocalFile() };
+        QFileInfo to_info{ to.toLocalFile() };
+        DUrl from_backup{ from };
+        DUrl to_backup{ to };
 
-//        if (from.isLocalFile()) {
-//            deleteFiles({from});
-//        }
+        if(from_info.isSymLink()){
+            from_backup = from.parentUrl();
+        }
 
-//        if (tags.isEmpty())
-//            return;
+        if(to_info.isSymLink()){
+            to_backup = to.parentUrl();
+        }
 
-//        DFileService::instance()->setFileTags(this, to, tags);
-//    });
+        QStorageInfo from_storage_info{ from_backup.toLocalFile() };
+        QStorageInfo to_storage_info{ to_backup.toLocalFile() };
+
+        if(from_storage_info.rootPath() == to_storage_info.rootPath()){
+            return;
+        }
+
+
+        const QStringList &tags = DFileService::instance()->getTagsThroughFiles(this, {from});
+
+        if (from.isLocalFile()) {
+            deleteFiles({from});
+        }
+
+        if (tags.isEmpty())
+            return;
+
+        DFileService::instance()->setFileTags(this, to, tags);
+    });
 
     QObject::connect(DFileService::instance(), &DFileService::fileMovedToTrash, [this](const DUrl& from, const DUrl& to) {
         (void)from;
