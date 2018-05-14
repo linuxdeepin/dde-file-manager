@@ -38,6 +38,9 @@ public:
     DFMCrumbItem* createCrumbItem(const CrumbData &data) override;
     DFMCrumbItem* createCrumbItem(const DUrl &url) override;
     QStringList getSuggestList(const QString &text) override;
+
+private:
+    QString homePath = QString();
 };
 
 DFM_END_NAMESPACE

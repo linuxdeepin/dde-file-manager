@@ -23,6 +23,7 @@
 #include "plugins/dfmcrumbfactory.h"
 
 #include "controllers/dfmcomputercrumbcontroller.h"
+#include "controllers/dfmfilecrumbcontroller.h"
 
 DFM_BEGIN_NAMESPACE
 
@@ -86,6 +87,7 @@ DFMCrumbManager::DFMCrumbManager(QObject *parent)
     , d_ptr(new DFMCrumbManagerPrivate(this))
 {
     // register built-in
+    dRegisterCrumbCreator<DFMFileCrumbController>(QStringLiteral(FILE_SCHEME));
     dRegisterCrumbCreator<DFMComputerCrumbController>(QStringLiteral(COMPUTER_SCHEME));
 
     // register plugins
