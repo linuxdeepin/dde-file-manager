@@ -97,6 +97,8 @@ DFMCrumbItem::DFMCrumbItem(const CrumbData &data, QWidget* parent)
     if (!data.iconName.isEmpty()) {
         this->setIconFromThemeConfig(data.iconName, data.iconKey);
     }
+
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 }
 
 DFMCrumbItem::~DFMCrumbItem()
