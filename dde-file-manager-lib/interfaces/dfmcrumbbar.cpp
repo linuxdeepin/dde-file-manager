@@ -226,9 +226,8 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
 {
     Q_D(DFMCrumbBar);
 
-    qWarning("`DFMCrumbBar::updateCrumbs` need implement !!!");
-
-    d->clearCrumbs();
+    // TODO: use button group or other ways to clear crumbs.
+    //d->clearCrumbs();
 
     if (!d->crumbController || !d->crumbController->supportedUrl(url)) {
         d->crumbController = DFMCrumbManager::instance()->createControllerByUrl(url);
@@ -258,6 +257,7 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
         d->addCrumb(item);
     }
 
+    d->checkArrowVisiable();
 }
 
 void DFMCrumbBar::mousePressEvent(QMouseEvent *event)
