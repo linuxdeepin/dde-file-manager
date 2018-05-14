@@ -18,43 +18,49 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "dfmfilecrumbcontroller.h"
+#include "dfmcomputercrumbcontroller.h"
+
+#include "dfmcrumbitem.h"
+
+#include "controllers/pathmanager.h"
+
+#include "singleton.h"
 
 DFM_BEGIN_NAMESPACE
 
-DFMFileCrumbController::DFMFileCrumbController(QObject *parent)
+DFMComputerCrumbController::DFMComputerCrumbController(QObject *parent)
     : DFMCrumbInterface(parent)
 {
 
 }
 
-DFMFileCrumbController::~DFMFileCrumbController()
+DFMComputerCrumbController::~DFMComputerCrumbController()
 {
 
 }
 
-bool DFMFileCrumbController::supportedUrl(DUrl url)
+bool DFMComputerCrumbController::supportedUrl(DUrl url)
 {
-    qWarning("DFMFileCrumbController::supportedUrl() should be implemented!!!");
-    return false;
+    return (url.scheme() == COMPUTER_SCHEME);
 }
 
-QList<CrumbData> DFMFileCrumbController::seprateUrl(const DUrl &url)
+QList<CrumbData> DFMComputerCrumbController::seprateUrl(const DUrl &url)
+{
+    Q_UNUSED(url);
+    return { CrumbData(DUrl::fromComputerFile("/"), Singleton<PathManager>::instance()->getSystemPathDisplayName("Computer"), "CrumbIconButton.Computer") };
+}
+
+DFMCrumbItem *DFMComputerCrumbController::createCrumbItem(const CrumbData &data)
+{
+    return new DFMCrumbItem(data);
+}
+
+DFMCrumbItem *DFMComputerCrumbController::createCrumbItem(const DUrl &url)
 {
 
 }
 
-DFMCrumbItem *DFMFileCrumbController::createCrumbItem(const CrumbData &data)
-{
-
-}
-
-DFMCrumbItem *DFMFileCrumbController::createCrumbItem(const DUrl &url)
-{
-
-}
-
-QStringList DFMFileCrumbController::getSuggestList(const QString &text)
+QStringList DFMComputerCrumbController::getSuggestList(const QString &text)
 {
 
 }

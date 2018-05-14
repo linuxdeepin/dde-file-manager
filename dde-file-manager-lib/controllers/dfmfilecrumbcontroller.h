@@ -33,6 +33,7 @@ public:
     explicit DFMFileCrumbController(QObject *parent = 0);
     ~DFMFileCrumbController();
 
+    bool supportedUrl(DUrl url) override;
     QList<CrumbData> seprateUrl(const DUrl &url) override;
     DFMCrumbItem* createCrumbItem(const CrumbData &data) override;
     DFMCrumbItem* createCrumbItem(const DUrl &url) override;

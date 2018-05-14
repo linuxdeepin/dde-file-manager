@@ -57,7 +57,7 @@ public:
     QPoint clickedPos;
 
     // Scheme support
-    DFMCrumbInterface* crumbController;
+    DFMCrumbInterface* crumbController = nullptr;
 
     DFMCrumbBar *q_ptr = nullptr;
 
@@ -245,8 +245,17 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
 
     Q_CHECK_PTR(d->crumbController);
     QList<CrumbData> crumbDataList = d->crumbController->seprateUrl(url);
+    int count = crumbDataList.count();
+    int i = 0;
     for (const CrumbData& c : crumbDataList) {
-        d->addCrumb(d->crumbController->createCrumbItem(c));
+        i++;
+        DFMCrumbItem* item = d->crumbController->createCrumbItem(c);
+        item->setParent(this);
+        if (i == count) {
+            item->setCheckable(true);
+            item->setChecked(true);
+        }
+        d->addCrumb(item);
     }
 
 }

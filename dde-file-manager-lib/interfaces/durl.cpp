@@ -209,7 +209,7 @@ bool DUrl::isSFTPFile() const
 }
 
 
-///###: Jundge whether current the scheme of current url is equal to TAG_SCHEME.
+///###: Judge whether current the scheme of current url is equal to TAG_SCHEME.
 bool DUrl::isTaggedFile() const
 {
     return (this->scheme() == QString{TAG_SCHEME});

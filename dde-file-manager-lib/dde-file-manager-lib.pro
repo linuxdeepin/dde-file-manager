@@ -253,7 +253,8 @@ HEADERS += \
     interfaces/plugins/dfmcrumbplugin.h \
     interfaces/plugins/dfmcrumbfactory.h \
     interfaces/dfmcrumbmanager.h \
-    controllers/dfmfilecrumbcontroller.h
+    controllers/dfmfilecrumbcontroller.h \
+    controllers/dfmcomputercrumbcontroller.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -422,7 +423,8 @@ SOURCES += \
     interfaces/plugins/dfmcrumbplugin.cpp \
     interfaces/plugins/dfmcrumbfactory.cpp \
     interfaces/dfmcrumbmanager.cpp \
-    controllers/dfmfilecrumbcontroller.cpp
+    controllers/dfmfilecrumbcontroller.cpp \
+    controllers/dfmcomputercrumbcontroller.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET
