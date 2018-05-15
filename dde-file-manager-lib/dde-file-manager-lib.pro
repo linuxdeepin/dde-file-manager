@@ -257,7 +257,8 @@ HEADERS += \
     controllers/dfmcomputercrumbcontroller.h \
     controllers/dfmbookmarkcrumbcontroller.h \
     controllers/dfmtagcrumbcontroller.h \
-    controllers/dfmnetworkcrumbcontroller.h
+    controllers/dfmnetworkcrumbcontroller.h \
+    controllers/dfmtrashcrumbcontroller.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -430,7 +431,8 @@ SOURCES += \
     controllers/dfmcomputercrumbcontroller.cpp \
     controllers/dfmbookmarkcrumbcontroller.cpp \
     controllers/dfmtagcrumbcontroller.cpp \
-    controllers/dfmnetworkcrumbcontroller.cpp
+    controllers/dfmnetworkcrumbcontroller.cpp \
+    controllers/dfmtrashcrumbcontroller.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET
