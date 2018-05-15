@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMBOOKMARKCRUMBCONTROLLER_H
-#define DFMBOOKMARKCRUMBCONTROLLER_H
+#ifndef DFMNETWORKCRUMBCONTROLLER_H
+#define DFMNETWORKCRUMBCONTROLLER_H
 
 #include "interfaces/dfmcrumbinterface.h"
 
@@ -27,11 +27,11 @@
 
 DFM_BEGIN_NAMESPACE
 
-class DFMBookmarkCrumbController : public DFMCrumbInterface
+class DFMNetworkCrumbController : public DFMCrumbInterface
 {
 public:
-    explicit DFMBookmarkCrumbController(QObject *parent = 0);
-    ~DFMBookmarkCrumbController();
+    explicit DFMNetworkCrumbController(QObject *parent = 0);
+    ~DFMNetworkCrumbController();
 
     bool supportedUrl(DUrl url) override;
     QList<CrumbData> seprateUrl(const DUrl &url) override;
@@ -41,4 +41,4 @@ public:
 
 DFM_END_NAMESPACE
 
-#endif // DFMBOOKMARKCRUMBCONTROLLER_H
+#endif // DFMNETWORKCRUMBCONTROLLER_H

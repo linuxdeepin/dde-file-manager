@@ -54,11 +54,6 @@ DFMCrumbItem *DFMTagCrumbController::createCrumbItem(const CrumbData &data)
     return new DFMCrumbItem(data);
 }
 
-DFMCrumbItem *DFMTagCrumbController::createCrumbItem(const DUrl &url)
-{
-
-}
-
 QStringList DFMTagCrumbController::getSuggestList(const QString &text)
 {
 
