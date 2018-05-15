@@ -640,7 +640,8 @@ void DIconItemDelegate::paint(QPainter *painter,
 
     /// draw file additional icon
 
-    QList<QRectF> cornerGeometryList = getCornerGeometryList(icon_rect, icon_rect.size() / 3);
+    const QSizeF &cornerBaseSize = icon_rect.size() / 3;
+    QList<QRectF> cornerGeometryList = getCornerGeometryList(icon_rect, QSizeF(qMin(24.0, cornerBaseSize.width()), qMin(24.0, cornerBaseSize.height())));
     const QList<QIcon> &cornerIconList = parent()->additionalIcon(index);
 
     for (int i = 0; i < cornerIconList.count(); ++i) {
@@ -1131,7 +1132,7 @@ void DIconItemDelegate::updateItemSizeHint()
 //    d->textHeightMap.clear();
     d->textLineHeight = parent()->parent()->fontMetrics().height();
 
-    int width = parent()->parent()->iconSize().width() * 1.8;
+    int width = parent()->parent()->iconSize().width() + 20;
 
     d->itemSizeHint = QSize(width, parent()->parent()->iconSize().height() + 2 * TEXT_PADDING  + ICON_MODE_ICON_SPACING + 3 * d->textLineHeight);
 }
