@@ -22,7 +22,10 @@
 #include "dfmcrumbitem.h"
 
 #include "controllers/pathmanager.h"
+#include "deviceinfo/udiskdeviceinfo.h"
+#include "deviceinfo/udisklistener.h"
 
+#include "dfileservices.h"
 #include "dfileinfo.h"
 #include "singleton.h"
 
@@ -46,7 +49,6 @@ DFMFileCrumbController::~DFMFileCrumbController()
 
 bool DFMFileCrumbController::supportedUrl(DUrl url)
 {
-    qWarning("DFMFileCrumbController::supportedUrl() should be implemented!!!");  
     return url.scheme() == FILE_SCHEME;
 }
 
@@ -66,27 +68,52 @@ QList<CrumbData> DFMFileCrumbController::seprateUrl(const DUrl &url)
         list.append(data);
     } else {
         QStorageInfo storageInfo(path);
+        UDiskDeviceInfoPointer deviceInfo = Singleton<UDiskListener>::instance()->getDeviceByPath(path);
+        QString iconName = QStringLiteral("CrumbIconButton.Disk");
         prefixPath = storageInfo.rootPath();
+
+        if (deviceInfo) {
+            switch (deviceInfo->getMediaType()) {
+            case UDiskDeviceInfo::MediaType::removable:
+                iconName = QStringLiteral("CrumbIconButton.Usb");
+                break;
+            case UDiskDeviceInfo::MediaType::dvd:
+                iconName = QStringLiteral("CrumbIconButton.Dvd");
+                break;
+            default:
+                break;
+            }
+        }
 
         if (prefixPath == "/") {
             CrumbData data(DUrl(FILE_ROOT), getDisplayName("System Disk"), "CrumbIconButton.Disk");
             list.append(data);
         } else {
-            CrumbData data(DUrl::fromLocalFile(prefixPath), QString(), "CrumbIconButton.Disk");
+            CrumbData data(DUrl::fromLocalFile(prefixPath), QString(), iconName);
             list.append(data);
         }
     }
 
-    DFileInfo info(url);
-    DUrlList urlList = info.parentUrlList();
-    urlList.append(url);
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
+    DUrlList urlList = info->parentUrlList();
+    urlList.insert(0, url);
 
+    DAbstractFileInfoPointer infoPointer;
     // Push urls into crumb list (without prefix url)
-    for (const DUrl & oneUrl : urlList) {
+    DUrlList::const_reverse_iterator iter = urlList.crbegin();
+    while (iter != urlList.crend()) {
+        const DUrl & oneUrl = *iter;
         if (!prefixPath.startsWith(oneUrl.toLocalFile())) {
-            CrumbData data(oneUrl, oneUrl.fileName());
+            QString displayText = oneUrl.fileName();
+            // Check for possible display text.
+            infoPointer = DFileService::instance()->createFileInfo(nullptr, oneUrl);
+            if (infoPointer) {
+                displayText = infoPointer->fileDisplayName();
+            }
+            CrumbData data(oneUrl, displayText);
             list.append(data);
         }
+        iter++;
     }
 
     return list;
@@ -107,6 +134,11 @@ QStringList DFMFileCrumbController::getSuggestList(const QString &text)
 
 }
 
+// blumia: avoid using this, recommand using the following way:
+//         DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, oneUrl);
+//         then you can get a proper display name via `info->fileDisplayName()`.
+//         We are using this since not all path can got a proper display name yet.
+// TODO: When backend is ready, switch to DAbstractFileInfo::fileDisplayName().
 QString DFMFileCrumbController::getDisplayName(const QString &name) const
 {
     QString text = Singleton<PathManager>::instance()->getSystemPathDisplayName(name);

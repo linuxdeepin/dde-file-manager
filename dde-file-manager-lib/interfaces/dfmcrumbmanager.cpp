@@ -70,9 +70,6 @@ DFMCrumbInterface *DFMCrumbManager::createControllerByUrl(const DUrl &fileUrl) c
 
     KeyType theType = fileUrl.scheme();
 
-    // TODO: check if is purely a file path, set type to "file" if is.
-    qWarning("DO NOT FORGET TO CHECK IF IT IS A PURELY FILE PATH!");
-
     const QList<CrumbCreaterType> creatorList = d->controllerCreatorHash.values(theType);
 
     if (!creatorList.isEmpty()){
