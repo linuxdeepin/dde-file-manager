@@ -47,8 +47,8 @@ public:
     ~DFMCrumbInterface();
 
     virtual bool supportedUrl(DUrl) = 0;
-    virtual QList<CrumbData> seprateUrl(const DUrl &url) = 0;
-    virtual DFMCrumbItem* createCrumbItem(const CrumbData &data) = 0;
+    virtual QList<CrumbData> seprateUrl(const DUrl &url);
+    virtual DFMCrumbItem* createCrumbItem(const CrumbData &data);
     virtual QStringList getSuggestList(const QString &text) = 0;
 };
 

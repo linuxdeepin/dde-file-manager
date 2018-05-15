@@ -43,40 +43,13 @@ bool DFMTrashCrumbController::supportedUrl(DUrl url)
     return (url.scheme() == TRASH_SCHEME);
 }
 
-QList<CrumbData> DFMTrashCrumbController::seprateUrl(const DUrl &url)
-{
-    QList<CrumbData> list;
-
-    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
-    DUrlList urlList = info->parentUrlList();
-    urlList.insert(0, url);
-
-    DAbstractFileInfoPointer infoPointer;
-    // Push urls into crumb list
-    DUrlList::const_reverse_iterator iter = urlList.crbegin();
-    while (iter != urlList.crend()) {
-        const DUrl & oneUrl = *iter;
-
-        QString displayText = oneUrl.fileName();
-        // Check for possible display text.
-        infoPointer = DFileService::instance()->createFileInfo(nullptr, oneUrl);
-        if (infoPointer) {
-            displayText = infoPointer->fileDisplayName();
-        }
-        CrumbData data(oneUrl, displayText);
-        list.append(data);
-
-        iter++;
-    }
-
-    list[0].setIconFromThemeConfig(QStringLiteral("CrumbIconButton.Trash"));
-
-    return list;
-}
-
 DFMCrumbItem *DFMTrashCrumbController::createCrumbItem(const CrumbData &data)
 {
-    return new DFMCrumbItem(data);
+    DFMCrumbItem* item = new DFMCrumbItem(data);
+    if (data.url == DUrl(TRASH_ROOT)) {
+        item->setIconFromThemeConfig(QStringLiteral("CrumbIconButton.Trash"));
+    }
+    return item;
 }
 
 QStringList DFMTrashCrumbController::getSuggestList(const QString &text)
