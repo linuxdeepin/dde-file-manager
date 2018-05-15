@@ -735,6 +735,10 @@ void CanvasGridView::dropEvent(QDropEvent *event)
     bool canMove = true;
     for (auto index : selects) {
         auto info = model()->fileInfo(index);
+
+        if (!info)
+            continue;
+
         if (isPersistFile(info->fileUrl())) {
             canMove = false;
         }

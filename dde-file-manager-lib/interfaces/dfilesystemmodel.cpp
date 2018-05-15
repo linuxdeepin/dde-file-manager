@@ -1457,15 +1457,20 @@ const FileSystemNodePointer DFileSystemModel::getNodeByIndex(const QModelIndex &
 
     FileSystemNode *indexNode = static_cast<FileSystemNode*>(index.internalPointer());
 
+    if (!indexNode) {
+        return FileSystemNodePointer();
+    }
+
     if (indexNode == d->rootNode.constData()) {
         return d->rootNode;
     }
 
     if (enabledSort()) {
-        if (d->rootNode->children.value(d->rootNode->visibleChildren.value(index.row())).constData() != indexNode) {
+        if (d->rootNode->children.value(d->rootNode->visibleChildren.value(index.row())).constData() != indexNode
+                || indexNode->ref <= 0) {
             return FileSystemNodePointer();
         }
-    } else if (!d->rootNode->children.key(FileSystemNodePointer(indexNode)).isValid()) {
+    } else if (indexNode->ref <= 0 || !d->rootNode->children.key(FileSystemNodePointer(indexNode)).isValid()) {
         return FileSystemNodePointer();
     }
 
