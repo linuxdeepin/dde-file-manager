@@ -796,8 +796,8 @@ bool DFileDialog::fmEventFilter(const QSharedPointer<DFMEvent> &event, DFMAbstra
     case DFMEvent::CompressFiles:
     case DFMEvent::DecompressFile:
     case DFMEvent::DecompressFileHere:
-    case DFMEvent::DeleteFiles:
-    case DFMEvent::RestoreFromTrash:
+//    case DFMEvent::DeleteFiles:
+//    case DFMEvent::RestoreFromTrash:
     case DFMEvent::OpenFileLocation:
     case DFMEvent::CreateSymlink:
     case DFMEvent::FileShare:
