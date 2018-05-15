@@ -104,11 +104,11 @@ QList<int> SearchFileInfo::userColumnRoles() const
 {
     static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileUserRole + 1
                                                      << DFileSystemModel::FileUserRole + 2
-                                                     << DFileSystemModel::FileDisplayNameRole
+                                                     /*<< DFileSystemModel::FileDisplayNameRole
                                                      << DFileSystemModel::FilePathRole
                                                      << DFileSystemModel::FileLastModifiedRole
                                                      << DFileSystemModel::FileSizeRole
-                                                     << DFileSystemModel::FileMimeTypeRole;
+                                                     << DFileSystemModel::FileMimeTypeRole*/;
 
     return userColumnRoles;
 }
