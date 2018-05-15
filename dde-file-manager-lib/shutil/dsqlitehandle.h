@@ -115,7 +115,7 @@ signals:
     void changeTagColor(const QVariantMap& old_and_new_color);
     void changeTagName(const QVariantMap& old_and_new_name);
     void filesWereTagged(const QVariantMap& files_were_tagged);
-    void untagFiles(const QVariantMap& tag_be_removed_files);
+    void untagFiles(const QVariantMap& del_tags_of_file);
 
 private slots:
     void onMountAdded(UDiskDeviceInfoPointer infoPointer);
@@ -129,6 +129,19 @@ private:
         if(m_sqlDatabasePtr && m_sqlDatabasePtr->isOpen()){
             m_sqlDatabasePtr->close();
         }
+    }
+
+    inline QString remove_mount_point(const QString& file, const QString& mount_point) noexcept
+    {
+        int index{ file.indexOf(mount_point) };
+        QString file_be_removed_mount_point{file};
+
+        if(index == 0){
+            int size{ mount_point.size() };
+            file_be_removed_mount_point = file_be_removed_mount_point.remove(0, size);
+        }
+
+        return file_be_removed_mount_point;
     }
 
 
@@ -158,6 +171,7 @@ private:
     std::mutex m_mutex{};
 
 
+    QString m_current_mount_point{};
     QList<QString> m_newAddedTags{};
 };
 
