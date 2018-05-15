@@ -99,7 +99,11 @@ void DFMCrumbBarPrivate::clearCrumbs()
     for (QAbstractButton* btn : btns) {
         crumbListLayout->removeWidget(btn);
         buttonGroup.removeButton(btn);
-        btn->deleteLater();
+        btn->setParent(0);
+        btn->close();
+        // blumia: calling btn->deleteLater() wont send the delete event to eventloop
+        //         don't know why... so we directly delete it here.
+        delete btn;
     }
 }
 
@@ -133,7 +137,6 @@ void DFMCrumbBarPrivate::addCrumb(DFMCrumbItem *item)
 //    crumbListHolder->adjustSize();
 
     crumbListScrollArea.horizontalScrollBar()->setPageStep(crumbListHolder->width());
-    crumbListScrollArea.horizontalScrollBar()->triggerAction(QScrollBar::SliderToMaximum); // todo: move it to updateCrumbs()
 
     checkArrowVisiable();
 
@@ -262,6 +265,7 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
 
     d->crumbListHolder->adjustSize();
     d->checkArrowVisiable();
+    d->crumbListScrollArea.horizontalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
 }
 
 void DFMCrumbBar::mousePressEvent(QMouseEvent *event)
