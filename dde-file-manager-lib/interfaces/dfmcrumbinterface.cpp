@@ -20,6 +20,11 @@
  */
 #include "dfmcrumbinterface.h"
 
+#include "dfmcrumbitem.h"
+
+#include "dfileservices.h"
+#include "dfileinfo.h"
+
 DFM_BEGIN_NAMESPACE
 
 CrumbData::CrumbData(DUrl url, QString displayText, QString iconName, QString iconKey)
@@ -45,6 +50,41 @@ DFMCrumbInterface::DFMCrumbInterface(QObject *parent)
 DFMCrumbInterface::~DFMCrumbInterface()
 {
 
+}
+
+QList<CrumbData> DFMCrumbInterface::seprateUrl(const DUrl &url)
+{
+    QList<CrumbData> list;
+
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
+    DUrlList urlList;
+    urlList.append(url);
+    urlList.append(info->parentUrlList());
+
+    DAbstractFileInfoPointer infoPointer;
+    // Push urls into crumb list
+    DUrlList::const_reverse_iterator iter = urlList.crbegin();
+    while (iter != urlList.crend()) {
+        const DUrl & oneUrl = *iter;
+
+        QString displayText = oneUrl.fileName();
+        // Check for possible display text.
+        infoPointer = DFileService::instance()->createFileInfo(nullptr, oneUrl);
+        if (infoPointer) {
+            displayText = infoPointer->fileDisplayName();
+        }
+        CrumbData data(oneUrl, displayText);
+        list.append(data);
+
+        iter++;
+    }
+
+    return list;
+}
+
+DFMCrumbItem *DFMCrumbInterface::createCrumbItem(const CrumbData &data)
+{
+    return new DFMCrumbItem(data);
 }
 
 DFM_END_NAMESPACE

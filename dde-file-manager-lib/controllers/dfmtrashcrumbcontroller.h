@@ -34,7 +34,6 @@ public:
     ~DFMTrashCrumbController();
 
     bool supportedUrl(DUrl url) override;
-    QList<CrumbData> seprateUrl(const DUrl &url) override;
     DFMCrumbItem* createCrumbItem(const CrumbData &data) override;
     QStringList getSuggestList(const QString &text) override;
 };

@@ -50,11 +50,6 @@ QList<CrumbData> DFMComputerCrumbController::seprateUrl(const DUrl &url)
     return { CrumbData(DUrl::fromComputerFile("/"), Singleton<PathManager>::instance()->getSystemPathDisplayName("Computer"), "CrumbIconButton.Computer") };
 }
 
-DFMCrumbItem *DFMComputerCrumbController::createCrumbItem(const CrumbData &data)
-{
-    return new DFMCrumbItem(data);
-}
-
 QStringList DFMComputerCrumbController::getSuggestList(const QString &text)
 {
 

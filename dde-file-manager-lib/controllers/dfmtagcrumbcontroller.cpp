@@ -49,11 +49,6 @@ QList<CrumbData> DFMTagCrumbController::seprateUrl(const DUrl &url)
     return { CrumbData(url, url.fileName(), colorName) };
 }
 
-DFMCrumbItem *DFMTagCrumbController::createCrumbItem(const CrumbData &data)
-{
-    return new DFMCrumbItem(data);
-}
-
 QStringList DFMTagCrumbController::getSuggestList(const QString &text)
 {
 

@@ -46,11 +46,6 @@ QList<CrumbData> DFMBookmarkCrumbController::seprateUrl(const DUrl &url)
     return { CrumbData(DUrl(BOOKMARK_ROOT), "Bookmark", "CrumbIconButton.UserShare") };
 }
 
-DFMCrumbItem *DFMBookmarkCrumbController::createCrumbItem(const CrumbData &data)
-{
-    return new DFMCrumbItem(data);
-}
-
 QStringList DFMBookmarkCrumbController::getSuggestList(const QString &text)
 {
 
