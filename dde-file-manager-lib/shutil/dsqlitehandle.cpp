@@ -65,29 +65,63 @@ struct less<QString>
 
 namespace impl
 {
+
+#define has_member_function(member)\
+template<typename __Ty>\
+struct has_member_##member\
+{\
+   private:\
+   template<typename __TR>\
+   static auto check(int)->decltype((std::declval<__TR>().member(), std::true_type{}));\
+   template<typename __TR>\
+   static std::false_type check(...);\
+   public:\
+   enum { value = std::is_same<decltype(check<__Ty>(0)), std::true_type>::value };\
+};
+
+
+has_member_function(insert)
+has_member_function(cbegin)
+has_member_function(cend)
+has_member_function(push_back)
+
+
+
+
     template<typename __Ty, typename __TR, typename = typename std::enable_if<
-                 std::is_same<QMap<QString, QList<QString>>,
-                 typename std::remove_reference<
-                 typename std::remove_cv<__TR>::type
-                                             >::type>::value &&
-                 std::is_same<QMap<QString, QList<QString>>,
-                 typename std::remove_reference<
-                 typename std::remove_cv<__Ty>::type
-                                             >::type>::value &&
-                 !(std::is_same<const QMap<QString, QList<QString>>&, __Ty>::value &&
-                   std::is_same<QMap<QString, QList<QString>>, __Ty>::value), void
-                 >::type>
+                                                               std::is_same<__Ty, __Ty&>::value &&
+                                                               std::is_same<typename std::remove_reference<typename std::remove_cv<__Ty>::type>::type, QMap<QString, QList<QString>>>::value
+                                                               >::type>
     __Ty& operator+=(__Ty&& lh, const __TR& rh)noexcept
     {
         if(rh.isEmpty()){
             return lh;
         }
 
-        QMap<QString, QList<QString>>::const_iterator itr_beg{ rh.cbegin() };
-        QMap<QString, QList<QString>>::const_iterator itr_end{ rh.cend() };
+        auto itr_beg{ rh.cbegin() };
+        auto itr_end{ rh.cend() };
 
         for(; itr_beg != itr_end; ++itr_beg){
             lh.insert(itr_beg.key(), itr_beg.value());
+        }
+
+        return lh;
+    }
+
+
+    template<typename __Ty, typename __TR, typename std::enable_if<
+                                                    std::is_same<__Ty, __Ty&>::value &&
+                                                    has_member_cbegin<typename std::remove_reference<typename std::remove_cv<__Ty>::type>::type>::value &&
+                                                    has_member_cend<typename std::remove_reference<typename std::remove_cv<__Ty>::type>::type>::value &&
+                                                    has_member_push_back<typename std::remove_reference<typename std::remove_cv<__Ty>::type>::type>::value
+                                                    >::type>
+    __Ty& operator+=(__Ty&& lh, const __TR& rh)noexcept
+    {
+        auto itr_beg{ rh.cbegin() };
+        auto itr_end{ rh.cend() };
+
+        for(; itr_beg != itr_end; ++itr_beg){
+            lh.push_back(*itr_beg);
         }
 
         return lh;
