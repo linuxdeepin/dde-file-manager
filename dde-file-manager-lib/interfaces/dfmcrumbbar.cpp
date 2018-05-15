@@ -101,6 +101,7 @@ void DFMCrumbBarPrivate::clearCrumbs()
         buttonGroup.removeButton(btn);
         btn->setParent(0);
         btn->close();
+        btn->disconnect();
         // blumia: calling btn->deleteLater() wont send the delete event to eventloop
         //         don't know why... so we directly delete it here.
         delete btn;
@@ -140,7 +141,7 @@ void DFMCrumbBarPrivate::addCrumb(DFMCrumbItem *item)
 
     checkArrowVisiable();
 
-    q->connect(item, &DFMCrumbItem::crumbClicked, q, [this, q]() {
+    q->connect(item, &DFMCrumbItem::clicked, q, [this, q]() {
         // change directory.
         DFMCrumbItem * item = qobject_cast<DFMCrumbItem*>(q->sender());
         Q_CHECK_PTR(item);
