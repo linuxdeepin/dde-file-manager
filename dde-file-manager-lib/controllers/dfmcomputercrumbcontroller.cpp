@@ -55,11 +55,6 @@ DFMCrumbItem *DFMComputerCrumbController::createCrumbItem(const CrumbData &data)
     return new DFMCrumbItem(data);
 }
 
-DFMCrumbItem *DFMComputerCrumbController::createCrumbItem(const DUrl &url)
-{
-
-}
-
 QStringList DFMComputerCrumbController::getSuggestList(const QString &text)
 {
 

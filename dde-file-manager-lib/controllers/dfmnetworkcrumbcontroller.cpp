@@ -18,40 +18,45 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "dfmbookmarkcrumbcontroller.h"
+#include "dfmnetworkcrumbcontroller.h"
 
 #include "dfmcrumbitem.h"
 
+#include "pathmanager.h"
+
+#include "singleton.h"
+
 DFM_BEGIN_NAMESPACE
 
-DFMBookmarkCrumbController::DFMBookmarkCrumbController(QObject *parent)
+DFMNetworkCrumbController::DFMNetworkCrumbController(QObject *parent)
     : DFMCrumbInterface(parent)
 {
 
 }
 
-DFMBookmarkCrumbController::~DFMBookmarkCrumbController()
+DFMNetworkCrumbController::~DFMNetworkCrumbController()
 {
 
 }
 
-bool DFMBookmarkCrumbController::supportedUrl(DUrl url)
+bool DFMNetworkCrumbController::supportedUrl(DUrl url)
 {
-    return (url.scheme() == BOOKMARK_SCHEME);
+    return (url.scheme() == NETWORK_SCHEME);
 }
 
-QList<CrumbData> DFMBookmarkCrumbController::seprateUrl(const DUrl &url)
+QList<CrumbData> DFMNetworkCrumbController::seprateUrl(const DUrl &url)
 {
     Q_UNUSED(url);
-    return { CrumbData(DUrl(BOOKMARK_ROOT), "Bookmark", "CrumbIconButton.UserShare") };
+    QString displayText = Singleton<PathManager>::instance()->getSystemPathDisplayName("Network");
+    return { CrumbData(DUrl(NETWORK_ROOT), displayText, "CrumbIconButton.Network") };
 }
 
-DFMCrumbItem *DFMBookmarkCrumbController::createCrumbItem(const CrumbData &data)
+DFMCrumbItem *DFMNetworkCrumbController::createCrumbItem(const CrumbData &data)
 {
     return new DFMCrumbItem(data);
 }
 
-QStringList DFMBookmarkCrumbController::getSuggestList(const QString &text)
+QStringList DFMNetworkCrumbController::getSuggestList(const QString &text)
 {
 
 }

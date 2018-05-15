@@ -49,7 +49,6 @@ public:
     virtual bool supportedUrl(DUrl) = 0;
     virtual QList<CrumbData> seprateUrl(const DUrl &url) = 0;
     virtual DFMCrumbItem* createCrumbItem(const CrumbData &data) = 0;
-    virtual DFMCrumbItem* createCrumbItem(const DUrl &url) = 0;
     virtual QStringList getSuggestList(const QString &text) = 0;
 };
 

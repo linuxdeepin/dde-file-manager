@@ -36,7 +36,6 @@ public:
     bool supportedUrl(DUrl url) override;
     QList<CrumbData> seprateUrl(const DUrl &url) override;
     DFMCrumbItem* createCrumbItem(const CrumbData &data) override;
-    DFMCrumbItem* createCrumbItem(const DUrl &url) override;
     QStringList getSuggestList(const QString &text) override;
 
 private:

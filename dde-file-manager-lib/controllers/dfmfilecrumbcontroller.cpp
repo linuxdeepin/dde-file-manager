@@ -124,11 +124,6 @@ DFMCrumbItem *DFMFileCrumbController::createCrumbItem(const CrumbData &data)
     return new DFMCrumbItem(data);
 }
 
-DFMCrumbItem *DFMFileCrumbController::createCrumbItem(const DUrl &url)
-{
-
-}
-
 QStringList DFMFileCrumbController::getSuggestList(const QString &text)
 {
 
