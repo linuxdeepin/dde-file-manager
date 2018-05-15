@@ -1249,17 +1249,17 @@ bool FileJob::copyFileByGio(const QString &srcFile, const QString &tarDir, bool 
 
                 // 需要模拟通知文件创建的信号
                 m_needGhostFileCreateSignal = true;
+                g_cancellable_reset(m_abortGCancellable);
 
                 if (!g_file_copy (source, target, flags, m_abortGCancellable, progress_callback, this, &error)){
                     if (error){
                         qDebug() << error->message << g_file_error_from_errno(error->domain);
                         if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_PERMISSION_DENIED)){
                             m_noPermissonUrls << DUrl::fromLocalFile(srcFile);
-                        } else {
+                        } else if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
                             emit fileSignalManager->requestShowErrorDialog(QString::fromUtf8(error->message), QString(" "));
                         }
                         g_error_free (error);
-                        cancelled();
                     }
                     result = false;
                     continue;
@@ -1609,11 +1609,17 @@ bool FileJob::moveFileByGio(const QString &srcFile, const QString &tarDir, QStri
             case FileJob::Run:
             {
                 GFileProgressCallback progress_callback = FileJob::showProgress;
+                g_cancellable_reset(m_abortGCancellable);
+
                 if (!g_file_move (source, target, flags, m_abortGCancellable, progress_callback, this, &error)){
                     if (error){
-                        qDebug() << error->message;
+                        qDebug() << error->message << g_file_error_from_errno(error->domain);
+                        if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_PERMISSION_DENIED)){
+                            m_noPermissonUrls << DUrl::fromLocalFile(srcFile);
+                        } else if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
+                            emit fileSignalManager->requestShowErrorDialog(QString::fromUtf8(error->message), QString(" "));
+                        }
                         g_error_free (error);
-                        cancelled();
                     }
                     result = true;
                 }else{
