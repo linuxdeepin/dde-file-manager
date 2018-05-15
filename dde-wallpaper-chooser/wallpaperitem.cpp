@@ -259,7 +259,10 @@ void WallpaperItem::onThumbnailFounded(const QString &key, const QPixmap &pixmap
     if (key != QUrl::toPercentEncoding(m_path))
         return;
 
+    const qreal ratio = devicePixelRatioF();
+
     m_wrapper->m_pixmap = pixmap;
+    m_wrapper->m_pixmap.setDevicePixelRatio(ratio);
     m_wrapper->update();
 }
 
