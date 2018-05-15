@@ -233,10 +233,10 @@ void DFMCrumbItem::mouseReleaseEvent(QMouseEvent *event)
     Q_D(DFMCrumbItem);
 
     if (d->clickedPos == event->globalPos() && !d->data.url.isEmpty()) {
-        emit crumbClicked();
+        click();
+    } else {
+        QWidget::mouseReleaseEvent(event);
     }
-
-    QWidget::mouseReleaseEvent(event);
 }
 
 void DFMCrumbItem::paintEvent(QPaintEvent *event)

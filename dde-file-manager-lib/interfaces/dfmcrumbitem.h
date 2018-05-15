@@ -49,9 +49,6 @@ protected:
     void mouseReleaseEvent(QMouseEvent * event) Q_DECL_OVERRIDE;
     void paintEvent(QPaintEvent *event);
 
-Q_SIGNALS:
-    void crumbClicked();
-
 private:
     QScopedPointer<DFMCrumbItemPrivate> d_ptr;
 
