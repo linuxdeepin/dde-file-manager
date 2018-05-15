@@ -43,7 +43,7 @@
 #include <private/qtextengine_p.h>
 
 #define ICON_SPACING 16
-#define ICON_MODE_RECT_RADIUS 4
+#define ICON_MODE_RECT_RADIUS TEXT_PADDING
 
 QString trimmedEnd(QString str)
 {
@@ -572,8 +572,7 @@ void DIconItemDelegate::paint(QPainter *painter,
     if (index == d->expandedIndex && !parent()->isSelected(index))
         const_cast<DIconItemDelegate*>(this)->hideNotEditingIndexWidget();
 
-    if (parent()->isCut(index))
-        painter->setOpacity(0.3);
+    painter->setOpacity(parent()->isCut(index) ? 0.3 : 1.0);
 
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
@@ -1132,7 +1131,7 @@ void DIconItemDelegate::updateItemSizeHint()
 //    d->textHeightMap.clear();
     d->textLineHeight = parent()->parent()->fontMetrics().height();
 
-    int width = parent()->parent()->iconSize().width() + 20;
+    int width = parent()->parent()->iconSize().width() + 30;
 
     d->itemSizeHint = QSize(width, parent()->parent()->iconSize().height() + 2 * TEXT_PADDING  + ICON_MODE_ICON_SPACING + 3 * d->textLineHeight);
 }

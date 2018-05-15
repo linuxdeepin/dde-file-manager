@@ -562,6 +562,7 @@ void DFMGlobal::elideText(QTextLayout *layout, const QSizeF &size, QTextOption::
                 const_cast<QTextDocument*>(layout->engine()->block.document())->setPlainText(end_str);
             }
 
+            text_option.setWrapMode(QTextOption::NoWrap);
             layout->beginLayout();
             line = layout->createLine();
             line.setLineWidth(size.width() - 1);

@@ -50,7 +50,7 @@
 #define defaut_trashIcon ":/images/images/user-trash-full.png"
 
 // begin file item global define
-#define TEXT_PADDING 5
+#define TEXT_PADDING 4
 #define ICON_MODE_ICON_SPACING 5
 #define COLUMU_PADDING 10
 #define LEFT_PADDING 10
