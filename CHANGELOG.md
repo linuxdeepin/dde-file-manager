@@ -1,3 +1,47 @@
+<a name="4.5.1"></a>
+## 4.5.1 (2018-05-16)
+
+
+#### Bug Fixes
+
+*   setting "Always to open in new window" does not work in computer view ([aced802f](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/aced802f8050e7cc91458c1a30e1eb2ce0799bb9))
+*   crash when access bookmark:/// ([731cb483](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/731cb4834d29cb0b42756c8c79a362eed922e504))
+*   ignore G_IO_ERROR_CANCELLED error on copy/move file by gio ([1455d618](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/1455d6187ec670105c2a946e4164a3faecff22b9))
+*   the last line of the file name in the icon mode is incomplete ([f532cd78](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/f532cd784249ed0b6365c04959a26283e8999851))
+*   cannot revocaion same operator on file chooser dialog ([c6c89c47](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/c6c89c478da6bda7c9c914ffbf558a82b0e70d2a))
+*   remove extra columns of the search view ([532b9aeb](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/532b9aeb33e417fafec7aaaf48689a6ba9220419))
+*   distinguish cutting-operation of files in different partion through dde-file-manager. ([6f4e8fde](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/6f4e8fde6d80c2783aca79a11263e1825882e27c))
+*   preview plain text files on search/tag file view ([5e90d796](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/5e90d796c235b03f1092e5040e0143a170ab17b6))
+*   the file item will be removed when move the file in current directory ([b292dec3](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/b292dec348a84879377679e2f159971710820a6c))
+*   show multiple text edit widget on multiple window when rename the tag file on left sidebar ([82da0142](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/82da01428ac591808cddd6709f8765d52774fb73))
+*   change std::thread to QThread in dde-anythingmonitor      and after renaming files will emit untagFiles and filesWereTagged. ([bcdfc47a](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/bcdfc47add78b10b8c3f59a42aed118623d848cc))
+*   cannot revocation the batch rename operator of file ([f35b5103](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/f35b51030bb7995889eea7d7f6567b802f4d00db))
+*   not sync tag info when reversal file operator by "Ctrl+Z" ([ff92b949](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/ff92b9493ff7911c5410923981334e023f987eda))
+*   change the tag name to determine if the old and new names are equal ([57fa131f](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/57fa131f1d75f2c14995fef5dd6e8c35441d3019))
+*   search file view not update when delete the searched file ([5a0bc120](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/5a0bc12042b82e399be59f6e42ba676f8d96eb13))
+*   add inspection for checking whether the thread is running if call DThreadUtil::runInThread. ([b36e513b](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/b36e513b9063f7ef94155ac9525d8e1410429ac3))
+*   in dark theme, the deep-blue was shown light-blue. ([c3756c8f](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/c3756c8f04d20571b9f2d559b03d57df7cb4e529))
+*   the tag file view not update when the local file deleted. ([0b8494e0](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/0b8494e009c44ac39030f02ee1835e703873e5cf))
+*   Change tag color backend api changed ([991fedd8](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/991fedd8abdac7f864809c76efed2d7c4ed54046))
+*   after deleting a empty tag can not get signal from daemon. ([bd69e2e4](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/bd69e2e4441b94897661a440c36408d8385be5bc))
+*   the file non-exists if it url format is "tag:///{Tag Name}" format ([15a8adea](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/15a8adeab76d0712ffe763a87bfd2ecf9a84e980))
+*   the "OpenInTerminal" menu action is invalid in tag file view ([8e86a571](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/8e86a571b0822f338acbf113281fda3c03a0b3da))
+*   cannot preview file on tag file view ([ef48435f](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/ef48435fc4d4b9d62ba69ffbd47eef9587696540))
+* **dde-anythingmonitor:**  cpu occupancy rate is high ([2bc85248](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/2bc8524823fe5f335d993b83fb2aa3081bc32a4b))
+* **dde-desktop:**  crash when drag/drop files ([b640c0ea](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/b640c0ea1a82ed8d829568d6f0fffd7973cd8370))
+* **video preview plugin:**  pause button not visible ([cbc04090](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/cbc04090b72a30ce1ae7571b58965c6d2a7b5167))
+
+#### Features
+
+*   support operator+= for usual container in Qt. ([366b4490](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/366b449019197bc79d9d432f17989c232e45bd13))
+*   use asynchronous operator for tagging files ([0b314716](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/0b314716947f70bd71350a037d70bdf95221404d))
+*   change the api of TagManager for changing the color of tag. ([f50c71a1](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/f50c71a1a438f1ce13281de3a00f7bb3a26f9f3a))
+*   save the file tag name list in trashinfo ([3130bcb2](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/3130bcb2f9b7c633b906f4a3cfe838c335479bdf))
+*   support search on tag file view ([f5c00011](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/f5c00011bb3b819f3796ff292cabb87936105126))
+*   add a new api for DUrl and adjust DUrl::fromUserTaggedFile make it easy. ([4d195392](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/4d195392499cb29b4cf50770b144d0eb7deae639))
+
+
+
 <a name="4.5.0"></a>
 ## 4.5.0 (2018-05-04)
 
