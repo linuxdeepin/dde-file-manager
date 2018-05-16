@@ -608,24 +608,19 @@ QString DFileInfo::subtitleForEmptyFloder() const
 
 QString DFileInfo::fileDisplayName() const
 {
-    if (systemPathManager->isSystemPath(filePath())) {
-        QString displayName = systemPathManager->getSystemPathDisplayNameByPath(filePath());
+    if (systemPathManager->isSystemPath(toLocalFile())) {
+        const QString &displayName = systemPathManager->getSystemPathDisplayNameByPath(filePath());
 
-        if (displayName.isEmpty())
-            return fileName();
-        else
+        if (!displayName.isEmpty())
             return displayName;
+    } else if (deviceListener->isDeviceFolder(toLocalFile())) {
+        const UDiskDeviceInfoPointer &deviceInfo = deviceListener->getDeviceByPath(filePath());
 
-    }else if (deviceListener->isDeviceFolder(filePath())){
-        UDiskDeviceInfoPointer deviceInfo = deviceListener->getDeviceByPath(filePath());
-        if (!deviceInfo->fileDisplayName().isEmpty())
+        if (deviceInfo && !deviceInfo->fileDisplayName().isEmpty())
             return deviceInfo->fileDisplayName();
-        else
-            return fileName();
     }
-    else {
-        return fileName();
-    }
+
+    return fileName();
 }
 
 void DFileInfo::refresh()

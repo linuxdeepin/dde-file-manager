@@ -99,7 +99,7 @@ DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFil
     , fileUrl(url)
 {
     //###(zccrs): 只在主线程中开启缓存，防止不同线程中持有同一对象时的竞争问题
-    if (hasCache && QThread::currentThread() == qApp->thread()) {
+    if (hasCache && url.isValid() && QThread::currentThread() == qApp->thread()) {
         QWriteLocker locker(urlToFileInfoMapLock);
         Q_UNUSED(locker)
 
@@ -144,6 +144,9 @@ DAbstractFileInfo *DAbstractFileInfoPrivate::getFileInfo(const DUrl &fileUrl)
     //###(zccrs): 只在主线程中开启缓存，防止不同线程中持有同一对象时的竞争问题
     if (QThread::currentThread() != qApp->thread())
         return 0;
+
+    if (!fileUrl.isValid())
+        return nullptr;
 
     return urlToFileInfoMap.value(fileUrl);
 }
@@ -1189,7 +1192,15 @@ QString DAbstractFileInfo::toLocalFile() const
 {
     CALL_PROXY(toLocalFile());
 
-    return fileUrl().isLocalFile() ? fileUrl().toLocalFile() : toQFileInfo().absoluteFilePath();
+    if (fileUrl().isLocalFile())
+        return fileUrl().toLocalFile();
+
+    const QFileInfo &info = toQFileInfo();
+
+    if (!info.fileName().isEmpty())
+        return info.absoluteFilePath();
+
+    return QString();
 }
 
 bool DAbstractFileInfo::canDrop() const
