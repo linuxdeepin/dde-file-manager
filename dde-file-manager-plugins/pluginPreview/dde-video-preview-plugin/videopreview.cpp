@@ -88,14 +88,14 @@ public:
         setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
         DImageButton *control_button = new DImageButton(this);
-        QWidget *button_mask = new QWidget(control_button);
+//        QWidget *button_mask = new QWidget(control_button);
 
         control_button->setNormalPic(":/icons/icons/start_normal.png");
         control_button->setPressPic(":/icons/icons/start_pressed.png");
         control_button->setHoverPic(":/icons/icons/start_hover.png");
-        button_mask->setAutoFillBackground(true);
+//        button_mask->setAutoFillBackground(true);
 
-        DAnchorsBase(button_mask).setFill(control_button);
+//        DAnchorsBase(button_mask).setFill(control_button);
 
         QPalette pa_label;
 
@@ -113,7 +113,7 @@ public:
         layout->addWidget(slider);
         layout->addWidget(timeLabel);
 
-        connect(control_button, &DImageButton::clicked, this, [this, button_mask] {
+        connect(control_button, &DImageButton::clicked, this, [this] {
             // 由于调用了setBackendProperty("keep-open", "yes")
             // 导致视频播放状态不对（要暂停到最后一帧，所以视频播放完毕后状态还是暂停）
             // 如果是暂停状态，调用pause一定会播放，之后再调用play也没有影响
@@ -121,13 +121,20 @@ public:
             p->pause();
             p->playerWidget->engine().play();
 
-            button_mask->show();
+//            button_mask->show();
         });
-        connect(&p->playerWidget->engine(), &dmr::PlayerEngine::stateChanged, this, [this, button_mask] {
-            if (p->playerWidget->engine().state() == dmr::PlayerEngine::Playing)
-                button_mask->show();
-            else
-                button_mask->hide();
+        connect(&p->playerWidget->engine(), &dmr::PlayerEngine::stateChanged, this, [this, control_button] {
+            if (p->playerWidget->engine().state() == dmr::PlayerEngine::Playing) {
+//                button_mask->show();
+                control_button->setNormalPic(":/icons/icons/pause_normal.png");
+                control_button->setPressPic(":/icons/icons/pause_pressed.png");
+                control_button->setHoverPic(":/icons/icons/pause_hover.png");
+            } else {
+                control_button->setNormalPic(":/icons/icons/start_normal.png");
+                control_button->setPressPic(":/icons/icons/start_pressed.png");
+                control_button->setHoverPic(":/icons/icons/start_hover.png");
+//                button_mask->hide();
+            }
         });
         connect(slider, &QSlider::valueChanged, this, [this] {
             p->playerWidget->engine().seekAbsolute(slider->value());
