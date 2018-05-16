@@ -822,6 +822,11 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             }
             actionKeys << MenuAction::Separator;
 #endif
+            int size{ actionKeys.size() };
+
+            if(actionKeys[size-1] != MenuAction::Separator){
+                actionKeys << MenuAction::Separator;
+            }
 
             ///###: tag protocol
             actionKeys << MenuAction::TagInfo;
