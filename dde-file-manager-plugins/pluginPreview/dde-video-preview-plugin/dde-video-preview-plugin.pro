@@ -42,3 +42,6 @@ unix {
     target.path = $$PLUGIN_INSTALL_DIR
     INSTALLS += target
 }
+
+RESOURCES += \
+    dde-video-preview-plugin.qrc
