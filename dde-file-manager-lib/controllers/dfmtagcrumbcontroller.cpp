@@ -44,9 +44,20 @@ bool DFMTagCrumbController::supportedUrl(DUrl url)
 
 QList<CrumbData> DFMTagCrumbController::seprateUrl(const DUrl &url)
 {
-    QString colorName = TagManager::instance()->getTagColorName(url.fileName());
-    colorName = ("BookmarkItem." + colorName);
-    return { CrumbData(url, url.fileName(), colorName) };
+    QString colorName;
+    QString displayText;
+
+    // blumia: crumb bar behavior should ask PM and / or designer...
+    if (url != DUrl(TAG_ROOT)) {
+        displayText = url.fileName();
+        colorName = TagManager::instance()->getTagColorName(url.fileName());
+        colorName = ("BookmarkItem." + colorName);
+    } else {
+        displayText = "Tags";
+        colorName = "CrumbIconButton.UserShare";
+    }
+
+    return { CrumbData(url, displayText, colorName) };
 }
 
 QStringList DFMTagCrumbController::getSuggestList(const QString &text)

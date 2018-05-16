@@ -18,42 +18,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "dfmnetworkcrumbcontroller.h"
+#ifndef DFMAVFSCRUMBCONTROLLER_H
+#define DFMAVFSCRUMBCONTROLLER_H
 
-#include "dfmcrumbitem.h"
+#include "controllers/dfmfilecrumbcontroller.h"
 
-#include "pathmanager.h"
-
-#include "singleton.h"
+#include "dfmglobal.h"
 
 DFM_BEGIN_NAMESPACE
 
-DFMNetworkCrumbController::DFMNetworkCrumbController(QObject *parent)
-    : DFMCrumbInterface(parent)
+class DFMAvfsCrumbController : public DFMFileCrumbController
 {
+public:
+    explicit DFMAvfsCrumbController(QObject *parent = 0);
+    ~DFMAvfsCrumbController();
 
-}
-
-DFMNetworkCrumbController::~DFMNetworkCrumbController()
-{
-
-}
-
-bool DFMNetworkCrumbController::supportedUrl(DUrl url)
-{
-    return (url.scheme() == NETWORK_SCHEME);
-}
-
-QList<CrumbData> DFMNetworkCrumbController::seprateUrl(const DUrl &url)
-{
-    Q_UNUSED(url);
-    QString displayText = Singleton<PathManager>::instance()->getSystemPathDisplayName("Network");
-    return { CrumbData(DUrl(NETWORK_ROOT), displayText, "CrumbIconButton.Network") };
-}
-
-QStringList DFMNetworkCrumbController::getSuggestList(const QString &text)
-{
-
-}
+    bool supportedUrl(DUrl url) override;
+    DFMCrumbItem* createCrumbItem(const CrumbData &data) override;
+    QStringList getSuggestList(const QString &text) override;
+};
 
 DFM_END_NAMESPACE
+
+#endif // DFMAVFSCRUMBCONTROLLER_H

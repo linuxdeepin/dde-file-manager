@@ -49,14 +49,15 @@ DFMFileCrumbController::~DFMFileCrumbController()
 
 bool DFMFileCrumbController::supportedUrl(DUrl url)
 {
-    return url.scheme() == FILE_SCHEME;
+    return (url.scheme() == FILE_SCHEME);
 }
 
 QList<CrumbData> DFMFileCrumbController::seprateUrl(const DUrl &url)
 {
     QList<CrumbData> list;
     QString prefixPath = "/";
-    const QString &path = url.isLocalFile() ? url.toLocalFile() : QString();
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
+    const QString &path = info->toLocalFile();
 
     if (path.isEmpty()) {
         return list;
@@ -94,7 +95,6 @@ QList<CrumbData> DFMFileCrumbController::seprateUrl(const DUrl &url)
         }
     }
 
-    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
     DUrlList urlList = info->parentUrlList();
     urlList.insert(0, url);
 

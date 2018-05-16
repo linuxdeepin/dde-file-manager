@@ -107,6 +107,11 @@ bool AVFSFileInfo::isDir() const
     return d->proxy->isDir();
 }
 
+QString AVFSFileInfo::toLocalFile() const
+{
+    return fileUrl().path();
+}
+
 AVFSFileInfo::AVFSFileInfo(AVFSFileInfoPrivate &dd):
     DAbstractFileInfo(dd)
 {
