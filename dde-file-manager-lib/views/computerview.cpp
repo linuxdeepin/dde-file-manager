@@ -331,20 +331,28 @@ void ComputerViewItem::setIconSizeState(int iconSize, QIcon::Mode mode)
 
 void ComputerViewItem::openUrl()
 {
+    DUrl url;
+
     if (m_info) {
-        DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, m_info->fileUrl(), window());
+        url = m_info->fileUrl();
     } else if (m_deviceInfo) {
-        DUrl url = m_deviceInfo->getMountPointUrl();
+        url = m_deviceInfo->getMountPointUrl();
 
         QDiskInfo diskInfo = m_deviceInfo->getDiskInfo();
 
         if (diskInfo.can_mount() && !diskInfo.can_unmount()) {
             url.setQuery(m_deviceInfo->getId());
             appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, url));
-        } else {
-            DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, url, window());
+            return;
         }
     }
+
+    DFMOpenUrlEvent::DirOpenMode mode = globalSetting->isAllwayOpenOnNewWindow() ? DFMOpenUrlEvent::ForceOpenNewWindow : DFMOpenUrlEvent::OpenInCurrentWindow;
+
+    if (mode == DFMOpenUrlEvent::OpenInCurrentWindow)
+        DFMEventDispatcher::instance()->processEventAsync<DFMOpenUrlEvent>(this, DUrlList() << url, mode);
+    else
+        DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(this, DUrlList() << url, mode);
 }
 
 int ComputerViewItem::getPixelWidth() const
