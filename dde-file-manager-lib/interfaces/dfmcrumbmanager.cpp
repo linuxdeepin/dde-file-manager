@@ -28,6 +28,7 @@
 #include "controllers/dfmbookmarkcrumbcontroller.h"
 #include "controllers/dfmtagcrumbcontroller.h"
 #include "controllers/dfmnetworkcrumbcontroller.h"
+#include "controllers/dfmusersharecrumbcontroller.h"
 
 DFM_BEGIN_NAMESPACE
 
@@ -94,6 +95,7 @@ DFMCrumbManager::DFMCrumbManager(QObject *parent)
     dRegisterCrumbCreator<DFMBookmarkCrumbController>(QStringLiteral(BOOKMARK_SCHEME));
     dRegisterCrumbCreator<DFMTagCrumbController>(QStringLiteral(TAG_SCHEME));
     dRegisterCrumbCreator<DFMNetworkCrumbController>(QStringLiteral(NETWORK_SCHEME));
+    dRegisterCrumbCreator<DFMUserShareCrumbController>(QStringLiteral(USERSHARE_SCHEME));
 
     // register plugins
     for (const QString &key : DFMCrumbFactory::keys()) {
