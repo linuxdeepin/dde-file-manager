@@ -29,6 +29,7 @@
 #include "controllers/dfmtagcrumbcontroller.h"
 #include "controllers/dfmnetworkcrumbcontroller.h"
 #include "controllers/dfmusersharecrumbcontroller.h"
+#include "controllers/dfmavfscrumbcontroller.h"
 
 DFM_BEGIN_NAMESPACE
 
@@ -96,6 +97,7 @@ DFMCrumbManager::DFMCrumbManager(QObject *parent)
     dRegisterCrumbCreator<DFMTagCrumbController>(QStringLiteral(TAG_SCHEME));
     dRegisterCrumbCreator<DFMNetworkCrumbController>(QStringLiteral(NETWORK_SCHEME));
     dRegisterCrumbCreator<DFMUserShareCrumbController>(QStringLiteral(USERSHARE_SCHEME));
+    dRegisterCrumbCreator<DFMAvfsCrumbController>(QStringLiteral(AVFS_SCHEME));
 
     // register plugins
     for (const QString &key : DFMCrumbFactory::keys()) {

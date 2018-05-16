@@ -18,40 +18,46 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "dfmnetworkcrumbcontroller.h"
+#include "dfmavfscrumbcontroller.h"
+
+#include "dfileservices.h"
+#include "dfileinfo.h"
 
 #include "dfmcrumbitem.h"
 
-#include "pathmanager.h"
-
-#include "singleton.h"
-
 DFM_BEGIN_NAMESPACE
 
-DFMNetworkCrumbController::DFMNetworkCrumbController(QObject *parent)
-    : DFMCrumbInterface(parent)
+DFMAvfsCrumbController::DFMAvfsCrumbController(QObject *parent)
+    : DFMFileCrumbController(parent)
 {
 
 }
 
-DFMNetworkCrumbController::~DFMNetworkCrumbController()
+DFMAvfsCrumbController::~DFMAvfsCrumbController()
 {
 
 }
 
-bool DFMNetworkCrumbController::supportedUrl(DUrl url)
+bool DFMAvfsCrumbController::supportedUrl(DUrl url)
 {
-    return (url.scheme() == NETWORK_SCHEME);
+    return (url.scheme() == AVFS_SCHEME);
 }
 
-QList<CrumbData> DFMNetworkCrumbController::seprateUrl(const DUrl &url)
+DFMCrumbItem *DFMAvfsCrumbController::createCrumbItem(const CrumbData &data)
 {
-    Q_UNUSED(url);
-    QString displayText = Singleton<PathManager>::instance()->getSystemPathDisplayName("Network");
-    return { CrumbData(DUrl(NETWORK_ROOT), displayText, "CrumbIconButton.Network") };
+    DFMCrumbItem* item = new DFMCrumbItem(data);
+    DUrl urlCopy(data.url);
+    urlCopy.setScheme(FILE_SCHEME);
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, urlCopy);
+
+    if (info->exists() && info->isDir()) {
+        item->setUrl(urlCopy);
+    }
+
+    return item;
 }
 
-QStringList DFMNetworkCrumbController::getSuggestList(const QString &text)
+QStringList DFMAvfsCrumbController::getSuggestList(const QString &text)
 {
 
 }
