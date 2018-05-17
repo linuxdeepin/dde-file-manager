@@ -1,3 +1,16 @@
+<a name="4.5.2"></a>
+## 4.5.2 (2018-05-17)
+
+
+#### Bug Fixes
+
+*   crash in DStyledItemDelegate::commitDataAndCloseActiveEditor ([d7373f08](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/d7373f08f4f1087d96688a7fa24d77db7845b862))
+*   remove the mount-point of files when storing file into sqlite. ([3eec6a61](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/3eec6a61e8f009c06120a82f0d894e2f67e87995))
+* **menu:**  be out of a Sperator befor tag-info(menu action). ([e290cc55](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/e290cc55750a1d119ee7ad8dc05d1faeb722c836))
+* **wallpaper:**  thumbnail support HiDPI. ([ab202327](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/ab202327168d6b9485718b232487958c8d24dc57))
+
+
+
 <a name="4.5.1"></a>
 ## 4.5.1 (2018-05-16)
 
