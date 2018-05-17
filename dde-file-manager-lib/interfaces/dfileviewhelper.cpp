@@ -712,14 +712,13 @@ void DFileViewHelper::handleCommitData(QWidget *editor) const
         return;
     }
     AppController::selectionFile = qMakePair(new_url, windowId());
-    if (lineEdit) {
-        /// later rename file.
-        TIMER_SINGLESHOT(0, {
-            fileService->renameFile(this, old_url, new_url);
-        }, old_url, new_url, this)
-    } else {
+
+    // 重命名文件完成后会删除view中的文件所在行，此时会触发销毁文件名编辑控件的动作。
+    // 但是QAbstractItemView再调用commitEditorData之后紧接着还会调用closeEditor
+    // 此时又会尝试销毁编辑控件，导致应用程序崩溃
+    TIMER_SINGLESHOT(0, {
         fileService->renameFile(this, old_url, new_url);
-    }
+    }, old_url, new_url, this)
 }
 
 #include "moc_dfileviewhelper.cpp"
