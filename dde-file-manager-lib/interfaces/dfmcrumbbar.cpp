@@ -77,11 +77,6 @@ DFMCrumbBarPrivate::DFMCrumbBarPrivate(DFMCrumbBar *qq)
 {
     initUI();
     initConnections();
-//    QTimer::singleShot(1000, qq, [=](){
-//        DFileManagerWindow* w = static_cast<DFileManagerWindow*>(qq->topLevelWidget());
-//        Q_CHECK_PTR(w);
-//        qq->updateCrumbs(w->currentUrl());
-//    });
 }
 
 /*!
