@@ -674,7 +674,7 @@ QIcon DFileInfo::fileIcon() const
 {
     Q_D(const DFileInfo);
 
-    if (!d->icon.isNull() && !d->iconFromTheme && !d->icon.name().isEmpty()) {
+    if (!d->icon.isNull() && (!d->iconFromTheme || !d->icon.name().isEmpty())) {
         return d->icon;
     }
 
@@ -717,8 +717,10 @@ QIcon DFileInfo::fileIcon() const
                 DThumbnailProvider::instance()->appendToProduceQueue(me->d_func()->fileInfo, DThumbnailProvider::Large,
                                                                      [me] (const QString &path) {
                     if (path.isEmpty()) {
-                        me->d_func()->icon = DFileIconProvider::globalProvider()->icon(*me.constData());
                         me->d_func()->iconFromTheme = true;
+                    } else {
+                        // clean old icon
+                        me->d_func()->icon = QIcon();
                     }
                 });
                 me->d_func()->requestingThumbnail = true;
@@ -728,7 +730,9 @@ QIcon DFileInfo::fileIcon() const
             QMetaObject::invokeMethod(timer, "start", Qt::QueuedConnection);
         }
 
-        return DFileIconProvider::globalProvider()->icon(*this);
+        d->icon = DFileIconProvider::globalProvider()->icon(*this);
+
+        return d->icon;
     }
 
     if (isSymLink()) {
