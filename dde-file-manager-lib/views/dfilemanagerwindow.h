@@ -71,6 +71,7 @@ class DFMUrlListBaseEvent;
 DFM_BEGIN_NAMESPACE
 class DFMBaseView;
 class DFMSideBar;
+class DFMAddressBar;
 DFM_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
