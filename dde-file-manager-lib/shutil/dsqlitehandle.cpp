@@ -2266,7 +2266,8 @@ QMap<QString, QList<QString>> DSqliteHandle::helpExecSql<DSqliteHandle::SqlType:
                                             QString fileName{ sql_query.value("file_name").toString() };
 
                                             if(!fileName.isEmpty()){
-                                                file_and_tags[fileName].push_back(tag_name);
+                                                QString complete_file_name{ partion_itr_beg->second + fileName };
+                                                file_and_tags[complete_file_name].push_back(tag_name);
                                             }
                                         }
                                     }
@@ -2283,7 +2284,8 @@ QMap<QString, QList<QString>> DSqliteHandle::helpExecSql<DSqliteHandle::SqlType:
                                                 QString fileName{ sql_query.value("file_name").toString() };
 
                                                 if(!fileName.isEmpty()){
-                                                    file_and_tags[fileName].push_back(tag_name);
+                                                    QString complete_file_name{ partion_itr_beg->second + fileName };
+                                                    file_and_tags[complete_file_name].push_back(tag_name);
                                                 }
                                             }
                                         }
