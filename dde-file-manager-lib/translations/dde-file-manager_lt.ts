@@ -154,7 +154,7 @@
     <message>
         <location filename="../views/dfileview.cpp" line="2327"/>
         <source>(Reverse)</source>
-        <translation type="unfinished"/>
+        <translation>(Atvirkščiai)</translation>
     </message>
 </context>
 <context>
@@ -162,7 +162,7 @@
     <message>
         <location filename="../interfaces/dfileviewhelper.cpp" line="515"/>
         <source>Add tag &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Pridėti žymę &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -388,7 +388,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="665"/>
         <source>Do you want to delete this shortcut？</source>
-        <translation type="unfinished"/>
+        <translation>Ar norite ištrinti šį šaukinį?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="694"/>
@@ -444,17 +444,17 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1179"/>
         <source>Share folder can&apos;t be named after the current username</source>
-        <translation type="unfinished"/>
+        <translation>Bendrinamas aplankas negali būti pavadintas esamo naudotojo vardu</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="912"/>
         <source>View</source>
-        <translation type="unfinished"/>
+        <translation>Rodinys</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="402"/>
         <source>Do you want to run %1?</source>
-        <translation type="unfinished"/>
+        <translation>Ar norite vykdyti %1?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="946"/>
@@ -563,12 +563,12 @@
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1288"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
-        <translation type="unfinished"/>
+        <translation>Diską prijungė naudotojas &quot;%1&quot;, jūs negalite jo atjungti.</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1291"/>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>Patvirtinti</translation>
     </message>
 </context>
 <context>
@@ -1248,7 +1248,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="763"/>
         <source>Source path</source>
-        <translation type="unfinished"/>
+        <translation>Šaltinio kelias</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="765"/>
@@ -1273,7 +1273,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="771"/>
         <source>Tag information</source>
-        <translation type="unfinished"/>
+        <translation>Žymės informacija</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="708"/>

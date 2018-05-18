@@ -4,7 +4,7 @@
     <message>
         <location filename="../controllers/appcontroller.cpp" line="344"/>
         <source>New Folder</source>
-        <translation type="unfinished"/>
+        <translation>Nowy katalog</translation>
     </message>
 </context>
 <context>
@@ -96,17 +96,17 @@
     <message>
         <location filename="../views/dfiledialog.cpp" line="911"/>
         <source>%1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"/>
+        <translation>%1 już istnieje, czy chcesz go zastąpić?</translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="912"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Anuluj</translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="913"/>
         <source>Replace</source>
-        <translation type="unfinished"/>
+        <translation>Zastąp</translation>
     </message>
 </context>
 <context>
@@ -114,7 +114,7 @@
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="740"/>
         <source>Dark Theme</source>
-        <translation type="unfinished"/>
+        <translation>Motyw ciemny</translation>
     </message>
 </context>
 <context>
@@ -162,7 +162,7 @@
     <message>
         <location filename="../interfaces/dfileviewhelper.cpp" line="515"/>
         <source>Add tag &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj znacznik &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -454,7 +454,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="402"/>
         <source>Do you want to run %1?</source>
-        <translation type="unfinished"/>
+        <translation>Czy chcesz uruchomić %1?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="946"/>
@@ -563,12 +563,12 @@
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1288"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
-        <translation type="unfinished"/>
+        <translation>Dysk został zamontowany przez użytkownika &quot;%1&quot;, nie możesz go odmontować.</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1291"/>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>Potwierdź</translation>
     </message>
 </context>
 <context>
@@ -1273,7 +1273,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="771"/>
         <source>Tag information</source>
-        <translation type="unfinished"/>
+        <translation>informacje znacznika</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="708"/>
@@ -1912,47 +1912,47 @@
     <message>
         <location filename="../tag/tagutil.cpp" line="45"/>
         <source>Orange</source>
-        <translation type="unfinished"/>
+        <translation>Pomarańczowy</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="46"/>
         <source>Red</source>
-        <translation type="unfinished"/>
+        <translation>Czerwony</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="47"/>
         <source>Purple</source>
-        <translation type="unfinished"/>
+        <translation>Purpurowy</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="48"/>
         <source>Navy-blue</source>
-        <translation type="unfinished"/>
+        <translation>Granatowy</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="49"/>
         <source>Azure</source>
-        <translation type="unfinished"/>
+        <translation>Błękitny</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="50"/>
         <source>Green</source>
-        <translation type="unfinished"/>
+        <translation>Zielony</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="51"/>
         <source>Yellow</source>
-        <translation type="unfinished"/>
+        <translation>Żółty</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="52"/>
         <source>Gray</source>
-        <translation type="unfinished"/>
+        <translation>Szary</translation>
     </message>
     <message>
         <location filename="../views/dtagedit.cpp" line="91"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
-        <translation type="unfinished"/>
+        <translation>Wpisz informacje o znaczniku, takie jak praca, rodzina. Między nazwami znaczników użyj przecinka.</translation>
     </message>
 </context>
 <context>

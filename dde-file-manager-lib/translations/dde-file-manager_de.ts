@@ -4,7 +4,7 @@
     <message>
         <location filename="../controllers/appcontroller.cpp" line="344"/>
         <source>New Folder</source>
-        <translation type="unfinished"/>
+        <translation>Neuer Ordner</translation>
     </message>
 </context>
 <context>
@@ -96,17 +96,17 @@
     <message>
         <location filename="../views/dfiledialog.cpp" line="911"/>
         <source>%1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"/>
+        <translation>%1 existiert bereits, möchten Sie es ersetzen?</translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="912"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="913"/>
         <source>Replace</source>
-        <translation type="unfinished"/>
+        <translation>Ersetzen</translation>
     </message>
 </context>
 <context>
@@ -114,7 +114,7 @@
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="740"/>
         <source>Dark Theme</source>
-        <translation type="unfinished"/>
+        <translation>Dunkles Thema</translation>
     </message>
 </context>
 <context>
@@ -162,7 +162,7 @@
     <message>
         <location filename="../interfaces/dfileviewhelper.cpp" line="515"/>
         <source>Add tag &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Tag &quot;%1&quot; hinzufügen</translation>
     </message>
 </context>
 <context>
@@ -225,7 +225,7 @@
     <message>
         <location filename="../views/dstatusbar.cpp" line="443"/>
         <source>Loading...</source>
-        <translation>Ladevorgang...</translation>
+        <translation>Laden...</translation>
     </message>
 </context>
 <context>
@@ -353,7 +353,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="481"/>
         <source>This action cannot be restored</source>
-        <translation>Diese Aktion kann nicht Rückgängig gemacht werden</translation>
+        <translation>Diese Aktion kann nicht rückgängig gemacht werden</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="494"/>
@@ -428,7 +428,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="831"/>
         <source>%1 files failed to restore, target file removed or location changed</source>
-        <translation>%1 Datei(en) konnten nicht wiederhergestellt werden, da Zielordner entfernt oder verschoben</translation>
+        <translation>%1 Datei(en) konnten nicht wiederhergestellt werden, da Zieldatei entfernt oder Speicherort geändert</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="843"/>
@@ -454,7 +454,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="402"/>
         <source>Do you want to run %1?</source>
-        <translation type="unfinished"/>
+        <translation>Möchten Sie %1 ausführen?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="946"/>
@@ -563,12 +563,12 @@
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1288"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
-        <translation type="unfinished"/>
+        <translation>Das Laufwerk ist bereits vom Benutzer &quot;%1&quot; eingehängt, Sie können es nicht aushängen.</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1291"/>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>Bestätigen</translation>
     </message>
 </context>
 <context>
@@ -1273,7 +1273,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="771"/>
         <source>Tag information</source>
-        <translation type="unfinished"/>
+        <translation>Tag Informationen</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="708"/>
@@ -1912,47 +1912,47 @@
     <message>
         <location filename="../tag/tagutil.cpp" line="45"/>
         <source>Orange</source>
-        <translation type="unfinished"/>
+        <translation>Orange</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="46"/>
         <source>Red</source>
-        <translation type="unfinished"/>
+        <translation>Rot</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="47"/>
         <source>Purple</source>
-        <translation type="unfinished"/>
+        <translation>Lila</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="48"/>
         <source>Navy-blue</source>
-        <translation type="unfinished"/>
+        <translation>Dunkelblau</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="49"/>
         <source>Azure</source>
-        <translation type="unfinished"/>
+        <translation>Blau</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="50"/>
         <source>Green</source>
-        <translation type="unfinished"/>
+        <translation>Grün</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="51"/>
         <source>Yellow</source>
-        <translation type="unfinished"/>
+        <translation>Gelb</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="52"/>
         <source>Gray</source>
-        <translation type="unfinished"/>
+        <translation>Grau</translation>
     </message>
     <message>
         <location filename="../views/dtagedit.cpp" line="91"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
-        <translation type="unfinished"/>
+        <translation>Tag-Informationen eingeben, wie etwa &apos;Arbeit&apos;, &apos;Familie&apos;. Ein Komma wird zwischen zwei Tags benutzt.</translation>
     </message>
 </context>
 <context>
