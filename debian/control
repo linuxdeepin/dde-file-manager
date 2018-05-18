@@ -10,7 +10,7 @@ Build-Depends: debhelper (>=9), pkg-config, qt5-qmake, qtbase5-dev,
  libdtkwidget-dev, libxcb1-dev, x11proto-core-dev, libx11-dev,
  qttools5-dev-tools, libglib2.0-dev, dde-dock-dev(>=4.0.5),
  libxcb-ewmh-dev, libdframeworkdbus-dev, libxcb-util0-dev,
- qtdeclarative5-dev, deepin-gettext-tools, libuchardet-dev,
+ qtdeclarative5-dev, deepin-gettext-tools, libkf5codecs-dev,
  deepin-qt5config, libdmr-dev, dh-systemd, deepin-anything-dev
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
@@ -47,7 +47,7 @@ Description: plugin of dde-dock
 Package: libdde-file-manager
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, libpoppler-cpp0v5 (>= 0.48.0),
- gvfs-backends(>=1.27.3), cryptsetup, deepin-anything-libs
+ gvfs-backends(>=1.27.3), cryptsetup, deepin-anything-libs, libkf5codecs5
 Breaks: dde-file-manager(<=1.2.3-3)
 Multi-Arch: same
 Description: DDE File Manager library

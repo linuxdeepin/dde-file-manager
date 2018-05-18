@@ -77,12 +77,24 @@
 #include <locale>
 #include <sstream>
 #include <fstream>
-#include <uchardet/uchardet.h>
 
+#include <KCodecs>
+#include <KEncodingProber>
+
+#include <QMimeType>
+#include <QMimeDatabase>
+
+
+#ifdef __cplusplus
 extern "C"
 {
+#endif //__cplusplus
+
 #include <iconv.h>
+
+#ifdef __cplusplus
 }
+#endif //__cplusplus
 
 namespace GlobalData {
 static QList<QUrl> clipboardFileUrls;
@@ -708,116 +720,155 @@ static QString textDecoder(const QByteArray &ba, const QByteArray &codecName)
     return decoder.hasFailure() ? QString() : text;
 }
 
+///###: forward-declare.
+static float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, const QLocale::Country &country);
 
-QSharedPointer<QString> DFMGlobal::convertFileToUtf8(const DUrl& url)
+QByteArray DFMGlobal::detectCharset(const QByteArray &data, const QString &fileName)
 {
-    QSharedPointer<QString> convertedStr{ nullptr };
-    QFileInfo info{ url.toLocalFile() };
-    std::basic_ostringstream<char> fileContentStream;
+    // Return local encoding if nothing in file.
+    if (data.isEmpty()) {
+        return QTextCodec::codecForLocale()->name();
+    }
 
-    if(info.isFile() == true){
+    if (QTextCodec *c = QTextCodec::codecForUtfText(data, nullptr)) {
+        return c->name();
+    }
 
-        std::string fileName{ url.toLocalFile().toStdString() };
-        std::basic_ifstream<char> fstream{ fileName, std::ios_base::in | std::ios_base::out };
+    QMimeDatabase mime_database;
+    const QMimeType &mime_type = fileName.isEmpty() ? mime_database.mimeTypeForData(data) : mime_database.mimeTypeForFileNameAndData(fileName, data);
+    const QString &mimetype_name = mime_type.name();
+    KEncodingProber::ProberType proberType = KEncodingProber::Universal;
 
-        if(fstream.is_open() == true){
+    if (mimetype_name == QStringLiteral("application/xml")
+            || mimetype_name == QStringLiteral("text/html")
+            || mimetype_name == QStringLiteral("application/xhtml+xml")) {
+        const QString &_data = QString::fromLatin1(data);
+        QRegularExpression pattern("<\\bmeta.+\\bcharset=(?'charset'\\S+?)\\s*['\"/>]");
 
-            std::istream_iterator<char> istream_itr{ fstream };
-            std::copy(istream_itr, std::istream_iterator<char>{},
-                      std::ostream_iterator<char>{fileContentStream});
+        pattern.setPatternOptions(QRegularExpression::DontCaptureOption | QRegularExpression::CaseInsensitiveOption);
+        const QString &charset = pattern.match(_data, 0, QRegularExpression::PartialPreferFirstMatch,
+                                               QRegularExpression::DontCheckSubjectStringMatchOption).captured("charset");
 
-            std::string fileContent{ fileContentStream.str() };
-            QByteArray qFileContent{ QByteArray::fromStdString(fileContent) };
+        if (!charset.isEmpty()) {
+            return charset.toLatin1();
+        }
 
-            if(fileContent.empty() == false){
-                QByteArray charsetName{ DFMGlobal::detectCharset(qFileContent) };
+        pattern.setPattern("<\\bmeta\\s+http-equiv=\"Content-Language\"\\s+content=\"(?'language'[a-zA-Z-]+)\"");
 
-                if(charsetName.isEmpty() == false){
+        const QString &language = pattern.match(_data, 0, QRegularExpression::PartialPreferFirstMatch,
+                                                QRegularExpression::DontCheckSubjectStringMatchOption).captured("language");
 
-                    convertedStr = DFMGlobal::convertAnyCharsetToUtf8(charsetName, qFileContent);
-                }
+        if (!language.isEmpty()) {
+            QLocale l(language);
+
+            switch (l.script()) {
+            case QLocale::ArabicScript:
+                proberType = KEncodingProber::Arabic;
+                break;
+            case QLocale::SimplifiedChineseScript:
+                proberType = KEncodingProber::ChineseSimplified;
+                break;
+            case QLocale::TraditionalChineseScript:
+                proberType = KEncodingProber::ChineseTraditional;
+                break;
+            case QLocale::CyrillicScript:
+                proberType = KEncodingProber::Cyrillic;
+                break;
+            case QLocale::GreekScript:
+                proberType = KEncodingProber::Greek;
+                break;
+            case QLocale::HebrewScript:
+                proberType = KEncodingProber::Hebrew;
+                break;
+            case QLocale::JapaneseScript:
+                proberType = KEncodingProber::Japanese;
+                break;
+            case QLocale::KoreanScript:
+                proberType = KEncodingProber::Korean;
+                break;
+            case QLocale::ThaiScript:
+                proberType = KEncodingProber::Thai;
+                break;
+            default:
+                break;
+            }
+        }
+    } else if (mimetype_name == "text/x-python") {
+        QRegularExpression pattern("^#coding\\s*:\\s*(?'coding'\\S+)$");
+        QTextStream stream(data);
+
+        pattern.setPatternOptions(QRegularExpression::DontCaptureOption | QRegularExpression::CaseInsensitiveOption);
+        stream.setCodec("latin1");
+
+        while (!stream.atEnd()) {
+            const QString &_data = stream.readLine();
+            const QString &coding = pattern.match(_data, 0).captured("coding");
+
+            if (!coding.isEmpty()) {
+                return coding.toLatin1();
+            }
+        }
+    }
+
+    // for CJK
+    const QList<QPair<KEncodingProber::ProberType, QLocale::Country>> fallback_list {
+        {KEncodingProber::ChineseSimplified, QLocale::China},
+        {KEncodingProber::ChineseTraditional, QLocale::China},
+        {KEncodingProber::Japanese, QLocale::Japan},
+        {KEncodingProber::Korean, QLocale::NorthKorea},
+        {proberType, QLocale::system().country()}
+    };
+
+    KEncodingProber prober(proberType);
+    QTextCodec *def_codec = QTextCodec::codecForLocale();
+    QByteArray encoding;
+    float confidence = 0;
+
+    for (const auto i : fallback_list) {
+        prober.setProberType(i.first);
+        prober.feed(data);
+
+        if (prober.confidence() == 0)
+            continue;
+
+        if (QTextCodec *codec = QTextCodec::codecForName(prober.encoding())) {
+            if (def_codec == codec)
+                def_codec = nullptr;
+
+            float c = codecConfidenceForData(codec, data, i.second);
+
+            if (prober.confidence() > 0.5) {
+                c = c / 2 + prober.confidence() / 2;
+            } else {
+                c = c / 3 * 2 + prober.confidence() / 3;
             }
 
+            if (c > confidence) {
+                confidence = c;
+                encoding = prober.encoding();
+            }
+
+            if (i.first == KEncodingProber::ChineseTraditional && c < 0.5) {
+                // test Big5
+                c = codecConfidenceForData(QTextCodec::codecForName("Big5"), data, QLocale::China);
+
+                if (c > 0.5 && c > confidence) {
+                    confidence = c;
+                    encoding = "Big5";
+                }
+            }
         }
     }
 
-    return convertedStr;
-}
-
-
-QSharedPointer<QString> DFMGlobal::convertStrToUtf8(const QByteArray &str)
-{
-    QByteArray charsetName;
-    QSharedPointer<QString> convertedStr{ nullptr };
-
-    if(str.isEmpty() == false){
-        charsetName = DFMGlobal::detectCharset(str);
-
-        if(charsetName.isEmpty() == false){
-            convertedStr = DFMGlobal::convertAnyCharsetToUtf8(charsetName, str);
-        }
+    if (def_codec && codecConfidenceForData(def_codec, data, QLocale::system().country()) > confidence) {
+        return def_codec->name();
     }
 
-    return convertedStr;
+    return encoding;
 }
 
 
-QSharedPointer<QString> DFMGlobal::convertAnyCharsetToUtf8(const QByteArray& charsetName, QByteArray content)
-{
-    QSharedPointer<QString> convertedStr{ nullptr };
 
-
-    if(charsetName != QByteArray{"utf-8"}){
-
-        std::size_t inputBufSize{ content.size() };
-        std::size_t outputBufSize{ inputBufSize * 4 };
-        char* inputBuff{ content.data() };
-        char* outputBuff{ new char[outputBufSize] };
-        char* backupPtr{ outputBuff };
-        std::string toCode{ "utf-8" };
-
-        iconv_t code{ iconv_open(toCode.c_str(), charsetName.constData())};
-        std::size_t retVal{ iconv(code, &inputBuff, &inputBufSize, &outputBuff, &outputBufSize) };//###: do conversion by code.
-
-        std::size_t actuallyUsed{ outputBuff - backupPtr };
-
-        convertedStr = QSharedPointer<QString>{ new QString{ QString::fromUtf8(QByteArray{backupPtr, actuallyUsed}) } };
-        iconv_close(code);
-
-
-        delete[] backupPtr;
-        return convertedStr;
-    }
-
-    return QSharedPointer<QString>{ new QString{ QString::fromUtf8(content) } };
-
-}
-
-
-QByteArray DFMGlobal::detectCharset(const QByteArray& str)
-{
-    uchardet_t handle{ uchardet_new() };
-    std::string charsetName;
-    int returnedVal{ 0 };
-
-    returnedVal = uchardet_handle_data(handle, str.constData(), str.size()); //start detecting.
-    if(returnedVal != 0){ //if less than 0, it show the recognization failed.
-        uchardet_data_end(handle);
-        uchardet_delete(handle);
-
-        return QByteArray::fromStdString(charsetName);
-    }
-
-    uchardet_data_end(handle);
-    charsetName = std::string{ uchardet_get_charset(handle) };
-    uchardet_delete(handle);
-
-    //This function promise that When is converting the target charset is ASCII.
-    const auto& facet = std::use_facet<std::ctype<char>>(std::locale{"C"});
-    facet.tolower(&charsetName[0], &charsetName[charsetName.size()]);
-
-    return QByteArray::fromStdString(charsetName);
-}
 
 bool DFMGlobal::keyShiftIsPressed()
 {
@@ -840,11 +891,7 @@ bool DFMGlobal::fileNameCorrection(const QString &filePath)
     const QByteArray &request = ls.readAllStandardOutput();
 
     for (const QByteArray &name : request.split('\n')) {
-        QSharedPointer<QString> str_fileName{ DFMGlobal::convertStrToUtf8(name) };
-        QString strFileName{ "" };
-        if(static_cast<bool>(str_fileName) == true){
-            strFileName = *str_fileName;
-        }
+        QString strFileName{ DFMGlobal::toUnicode(name) };
 
         if (strFileName == info.fileName() && strFileName.toLocal8Bit() != name) {
             const QByteArray &path = info.absolutePath().toLocal8Bit() + QDir::separator().toLatin1() + name;
@@ -964,40 +1011,18 @@ void DFMGlobal::playSound(const QUrl &soundUrl)
 
 
 
-QString DFMGlobal::toUnicode(const QByteArray &ba)
+QString DFMGlobal::toUnicode(const QByteArray &data, const QString &fileName)
 {
-    if (ba.isEmpty())
+    if (data.isEmpty())
         return QString();
 
-    QList<QByteArray> codecList;
+    const QByteArray &encoding = detectCharset(data, fileName);
 
-    codecList << "utf-8" << "utf-16";
-
-    switch (QLocale::system().script()) {
-    case QLocale::SimplifiedChineseScript:
-        codecList << "gbk";
-        break;
-    case QLocale::TraditionalChineseScript:
-        codecList << "big5" << "gbk";
-        break;
-    case QLocale::JapaneseScript:
-        codecList << "shift_jis" << "euc_jp" << "gbk";
-        break;
-    case QLocale::KoreanScript:
-        codecList << "euc_kr";
-        break;
-    default:
-        break;
+    if (QTextCodec *codec = QTextCodec::codecForName(encoding)) {
+        return codec->toUnicode(data);
     }
 
-    for (const QByteArray &codec : codecList) {
-        const QString &text = textDecoder(ba, codec);
-
-        if (!text.isEmpty())
-            return text;
-    }
-
-    return QString::fromLocal8Bit(ba);
+    return QString::fromLocal8Bit(data);
 }
 
 QString DFMGlobal::cutString(const QString &text, int dataByteSize, const QTextCodec *codec)
@@ -1053,3 +1078,90 @@ FunctionCallProxy::FunctionCallProxy()
     }, Qt::QueuedConnection);
 }
 } // end namespace DThreadUtil
+
+
+///###: Do not modify it.
+///###: it's auxiliary.
+float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, const QLocale::Country &country)
+{
+    qreal hep_count = 0;
+    int non_base_latin_count = 0;
+    qreal unidentification_count = 0;
+    int replacement_count = 0;
+
+    QTextDecoder decoder(codec);
+    const QString &unicode_data = decoder.toUnicode(data);
+
+    for (int i = 0; i < unicode_data.size(); ++i) {
+        const QChar &ch = unicode_data.at(i);
+
+        if (ch.unicode() > 0x7f)
+            ++non_base_latin_count;
+
+        switch (ch.script()) {
+        case QChar::Script_Hiragana:
+        case QChar::Script_Katakana:
+            hep_count += country == QLocale::Japan ? 1.2 : 0.5;
+            unidentification_count += country == QLocale::Japan ? 0 : 0.3;
+            break;
+        case QChar::Script_Han:
+            hep_count += country == QLocale::China ? 1.2 : 0.5;
+            unidentification_count += country == QLocale::China ? 0 : 0.3;
+            break;
+        case QChar::Script_Hangul:
+            hep_count += (country == QLocale::NorthKorea) || (country == QLocale::SouthKorea) ? 1.2 : 0.5;
+            unidentification_count += (country == QLocale::NorthKorea) || (country == QLocale::SouthKorea) ? 0 : 0.3;
+            break;
+        default:
+            // full-width character, emoji, 常用标点, 拉丁文补充1
+            if ((ch.unicode() >= 0xff00 && ch <= 0xffef)
+                    || (ch.unicode() >= 0x2600 && ch.unicode() <= 0x27ff)
+                    || (ch.unicode() >= 0x2000 && ch.unicode() <= 0x206f)
+                    || (ch.unicode() >= 0x80 && ch.unicode() <= 0xff)) {
+                ++hep_count;
+            } else if (ch.isSurrogate() && ch.isHighSurrogate()) {
+                ++i;
+
+                if (i < unicode_data.size()) {
+                    const QChar &next_ch = unicode_data.at(i);
+
+                    if (!next_ch.isLowSurrogate()) {
+                        --i;
+                        break;
+                    }
+
+                    uint unicode = QChar::surrogateToUcs4(ch, next_ch);
+
+                    // emoji
+                    if (unicode >= 0x1f000 && unicode <= 0x1f6ff) {
+                        hep_count += 2;
+                    }
+                }
+            } else if (ch.unicode() == QChar::ReplacementCharacter) {
+                ++replacement_count;
+            } else if (ch.unicode() > 0x7f) {
+                // 因为UTF-8编码的容错性很低，所以未识别的编码只需要判断是否为 QChar::ReplacementCharacter 就能排除
+                if (codec->name() != "UTF-8")
+                    ++unidentification_count;
+            }
+            break;
+        }
+    }
+
+    float c = qreal(hep_count) / non_base_latin_count / 1.2;
+
+    c -= qreal(replacement_count) / non_base_latin_count;
+    c -= qreal(unidentification_count) / non_base_latin_count;
+
+    return qMax(0.0f, c);
+}
+
+
+
+
+
+
+
+
+
+

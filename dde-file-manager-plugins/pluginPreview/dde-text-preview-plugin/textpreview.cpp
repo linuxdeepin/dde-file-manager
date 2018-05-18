@@ -92,14 +92,9 @@ bool TextPreview::setFileUrl(const DUrl &url)
     }
 
 
-    QSharedPointer<QString> convertedStr{ DFMGlobal::convertStrToUtf8(text) };
+    QString convertedStr{ DFMGlobal::toUnicode(text, url.toLocalFile()) };
 
-    if (static_cast<bool>(convertedStr) == true) {
-        m_textBrowser->setPlainText(*convertedStr);
-    } else {
-        m_textBrowser->setPlainText(QString{" "});
-    }
-
+    m_textBrowser->setPlainText(convertedStr);
     m_title = QFileInfo(url.toLocalFile()).fileName();
 
     Q_EMIT titleChanged();

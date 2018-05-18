@@ -347,15 +347,13 @@ public:
     ///###: this function is special, if select files is more than 16 show a dialog for multiple files.
     static void showPropertyDialog(QObject* const sender, const QList<DUrl>& selectedFiles);
 
-    ///###: convert the charset of given file or str to utf8.
-    static QSharedPointer<QString> convertFileToUtf8(const DUrl &url);
-    static QSharedPointer<QString> convertStrToUtf8(const QByteArray& str);
-
-    static QString toUnicode(const QByteArray &ba);
+    static QString toUnicode(const QByteArray &data, const QString &fileName = QString());
     static QString cutString(const QString &text, int dataByteSize, const QTextCodec *codec);
 
     static void playSound(const QUrl& soundUrl);
 
+    ///###: this function detect what the charset of str is.
+    static QByteArray detectCharset(const QByteArray& data, const QString& fileName = QString{});
 
 signals:
     void clipboardDataChanged();
@@ -366,12 +364,6 @@ protected:
 private:
     void onClipboardDataChanged();
     static void refreshPlugins();
-
-    ///###: this function is a help function. It do conversion.
-    static QSharedPointer<QString> convertAnyCharsetToUtf8(const QByteArray& charsetName, QByteArray content);
-    ///###: this function detect what the charset of str is.
-    static QByteArray detectCharset(const QByteArray& str);
-
 };
 
 Q_DECLARE_METATYPE(DFMGlobal::ClipboardAction)
