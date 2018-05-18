@@ -529,12 +529,6 @@ void DFMGlobal::elideText(QTextLayout *layout, const QSizeF &size, QTextOption::
 
         new_rect.setHeight(lineHeight);
 
-        if (flags & Qt::AlignVCenter) {
-            new_rect.moveCenter(rect.center());
-        } else if (flags & Qt::AlignBottom) {
-            new_rect.moveBottom(rect.bottom());
-        }
-
         return new_rect;
     };
 
