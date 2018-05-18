@@ -23,6 +23,8 @@
 #include "themeconfig.h"
 
 #include <QAction>
+#include <QCompleter>
+#include <QAbstractItemView>
 #include <DThemeManager>
 
 #include <QDebug>
@@ -36,6 +38,16 @@ DFMAddressBar::DFMAddressBar(QWidget *parent)
 {
     initUI();
     initConnections();
+
+    // Test
+    urlCompleter = new QCompleter(this);
+    this->setCompleter(urlCompleter);
+    completerModel.setStringList({"macat", "mamacat", "mamamamacat", "teji", "tejilang"});
+}
+
+QCompleter *DFMAddressBar::completer() const
+{
+    return urlCompleter;
 }
 
 void DFMAddressBar::setCurrentUrl(const DUrl &path)
@@ -48,11 +60,73 @@ void DFMAddressBar::setCurrentUrl(const DUrl &path)
     this->setSelection(0, text.length());
 }
 
+void DFMAddressBar::setCompleter(QCompleter *c)
+{
+    if (urlCompleter) {
+        urlCompleter->disconnect();
+    }
+
+    urlCompleter = c;
+
+    if (!urlCompleter) {
+        return;
+    }
+
+    urlCompleter->setModel(&completerModel);
+    //urlCompleter->setPopup();
+    urlCompleter->setCompletionMode(QCompleter::PopupCompletion);
+    urlCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+    connect(urlCompleter, SIGNAL(activated(QString)), this, SLOT(insertCompletion(QString)));
+}
+
+void DFMAddressBar::focusInEvent(QFocusEvent *e)
+{
+    if (urlCompleter) {
+        urlCompleter->setWidget(this);
+    }
+
+    return QLineEdit::focusInEvent(e);
+}
+
 void DFMAddressBar::focusOutEvent(QFocusEvent *e)
 {
     emit focusOut();
 
     return QLineEdit::focusOutEvent(e);
+}
+
+void DFMAddressBar::keyPressEvent(QKeyEvent *e)
+{
+    if (urlCompleter && urlCompleter->popup()->isVisible()) {
+        // The following keys are forwarded by the completer to the widget
+        switch (e->key()) {
+        case Qt::Key_Enter:
+        case Qt::Key_Return:
+        case Qt::Key_Escape:
+        case Qt::Key_Tab:
+        case Qt::Key_Backtab:
+            e->ignore();
+            return; // let the completer do default behavior
+        default:
+           break;
+        }
+    }
+
+    if (!urlCompleter || !false/*isShortcut*/) {
+        QLineEdit::keyPressEvent(e);
+    }
+
+    if (!urlCompleter) {
+        return;
+    }
+
+    if (text().isEmpty()) {
+        urlCompleter->popup()->hide();
+        return;
+    }
+
+    urlCompleter->setCompletionPrefix(this->text());
+    urlCompleter->complete(rect());
 }
 
 void DFMAddressBar::initUI()
@@ -102,6 +176,16 @@ void DFMAddressBar::updateIndicatorIcon()
     QString scope = indicatorType == IndicatorType::Search ? "DSearchBar.searchAction" : "DSearchBar.jumpToAction";
     indicatorIcon.addFile(ThemeConfig::instace()->value(scope, "icon").toString());
     indicator->setIcon(indicatorIcon);
+}
+
+void DFMAddressBar::insertCompletion(const QString &completion)
+{
+    if (urlCompleter->widget() != this) {
+        return;
+    }
+
+    // test
+    this->setText(text().append(completion));
 }
 
 
