@@ -1,3 +1,13 @@
+<a name="4.5.3"></a>
+## 4.5.3 (2018-05-18)
+
+
+#### Bug Fixes
+
+*   crash in remove files on tag file view ([51f247ea](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/51f247ea4a33fc3069e4815a89bdf0a5c0d0769e))
+
+
+
 <a name="4.5.2"></a>
 ## 4.5.2 (2018-05-17)
 
