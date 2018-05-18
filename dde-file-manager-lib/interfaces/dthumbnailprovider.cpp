@@ -329,9 +329,8 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
             goto _return;
         }
 
-        QSharedPointer<QString> text{ DFMGlobal::convertStrToUtf8(file.readAll()) };
+        QString text{ DFMGlobal::toUnicode(file.readAll(), file.fileName()) };
         file.close();
-
 
         QFont font;
         font.setPixelSize(12);
@@ -346,14 +345,8 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
         painter.setFont(font);
         painter.setPen(pen);
 
-        if(static_cast<bool>(text) == true){
-            painter.drawText(image->rect(), DFMGlobal::wordWrapText(*text, image->width(), QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                                    font, painter.fontMetrics().height()));
-        }else{
-            painter.drawText(image->rect(), DFMGlobal::wordWrapText(QString{" "}, image->width(), QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                                    font, painter.fontMetrics().height()));
-        }
-
+        painter.drawText(image->rect(), DFMGlobal::wordWrapText(text, image->width(), QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                                font, painter.fontMetrics().height()));
     } else if (mime.name() == "application/pdf") {
         //FIXME(zccrs): This should be done using the image plugin?
         QScopedPointer<poppler::document> doc(poppler::document::load_from_file(absoluteFilePath.toStdString()));

@@ -8,7 +8,7 @@
 
 include(../common/common.pri)
 
-QT       += core gui svg dbus x11extras concurrent multimedia dbus
+QT       += core gui svg dbus x11extras concurrent multimedia dbus KCodecs
 #private
 QT       += gui-private
 
@@ -30,7 +30,7 @@ isEmpty(PREFIX){
     PREFIX = /usr
 }
 
-PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 gio-unix-2.0 poppler-cpp uchardet
+PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 gio-unix-2.0 poppler-cpp
 CONFIG(release, release|debug) {
     PKGCONFIG += dtkwidget
 } else {
