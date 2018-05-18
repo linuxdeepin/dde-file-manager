@@ -162,7 +162,7 @@
     <message>
         <location filename="../interfaces/dfileviewhelper.cpp" line="515"/>
         <source>Add tag &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Añadir etiqueta &quot;%1&quot;</translation>
     </message>
 </context>
 <context>

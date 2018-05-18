@@ -4,7 +4,7 @@
     <message>
         <location filename="../controllers/appcontroller.cpp" line="344"/>
         <source>New Folder</source>
-        <translation type="unfinished"/>
+        <translation>Yeni Klasör</translation>
     </message>
 </context>
 <context>
@@ -96,17 +96,17 @@
     <message>
         <location filename="../views/dfiledialog.cpp" line="911"/>
         <source>%1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"/>
+        <translation>%1 zaten mevcut, bu değiştirilsin mi?</translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="912"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>İptal et</translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="913"/>
         <source>Replace</source>
-        <translation type="unfinished"/>
+        <translation>Değiştir</translation>
     </message>
 </context>
 <context>
@@ -114,7 +114,7 @@
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="740"/>
         <source>Dark Theme</source>
-        <translation type="unfinished"/>
+        <translation>Koyu Tema</translation>
     </message>
 </context>
 <context>
@@ -162,7 +162,7 @@
     <message>
         <location filename="../interfaces/dfileviewhelper.cpp" line="515"/>
         <source>Add tag &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Etiket ekle&quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -454,7 +454,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="402"/>
         <source>Do you want to run %1?</source>
-        <translation type="unfinished"/>
+        <translation>%1 &apos;i çalıştırmak istiyor musunuz?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="946"/>
@@ -563,12 +563,12 @@
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1288"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
-        <translation type="unfinished"/>
+        <translation>&quot;%1&quot; diski kullanıcı tarafından bağlandı, bunu ayıramazsınız.</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1291"/>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>Onayla</translation>
     </message>
 </context>
 <context>
@@ -1273,7 +1273,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="771"/>
         <source>Tag information</source>
-        <translation type="unfinished"/>
+        <translation>Etiket bilgisi</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="708"/>
@@ -1912,47 +1912,47 @@
     <message>
         <location filename="../tag/tagutil.cpp" line="45"/>
         <source>Orange</source>
-        <translation type="unfinished"/>
+        <translation>Turuncu</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="46"/>
         <source>Red</source>
-        <translation type="unfinished"/>
+        <translation>Kırmızı</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="47"/>
         <source>Purple</source>
-        <translation type="unfinished"/>
+        <translation>Mor</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="48"/>
         <source>Navy-blue</source>
-        <translation type="unfinished"/>
+        <translation>Lacivert</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="49"/>
         <source>Azure</source>
-        <translation type="unfinished"/>
+        <translation>Masmavi</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="50"/>
         <source>Green</source>
-        <translation type="unfinished"/>
+        <translation>Yeşil</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="51"/>
         <source>Yellow</source>
-        <translation type="unfinished"/>
+        <translation>Sarı</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="52"/>
         <source>Gray</source>
-        <translation type="unfinished"/>
+        <translation>Gri</translation>
     </message>
     <message>
         <location filename="../views/dtagedit.cpp" line="91"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
-        <translation type="unfinished"/>
+        <translation>Aile, iş gibi giriş etiketi bilgileri. İki etiket arasında bir virgül kullanılır.</translation>
     </message>
 </context>
 <context>

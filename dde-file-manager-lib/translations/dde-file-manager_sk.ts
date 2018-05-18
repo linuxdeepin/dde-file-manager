@@ -4,7 +4,7 @@
     <message>
         <location filename="../controllers/appcontroller.cpp" line="344"/>
         <source>New Folder</source>
-        <translation type="unfinished"/>
+        <translation>Nový priečinok</translation>
     </message>
 </context>
 <context>
@@ -96,17 +96,17 @@
     <message>
         <location filename="../views/dfiledialog.cpp" line="911"/>
         <source>%1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"/>
+        <translation>%1 už existuje, chcete ho nahradiť?</translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="912"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Zrušiť</translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="913"/>
         <source>Replace</source>
-        <translation type="unfinished"/>
+        <translation>Nahradiť</translation>
     </message>
 </context>
 <context>
@@ -114,7 +114,7 @@
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="740"/>
         <source>Dark Theme</source>
-        <translation type="unfinished"/>
+        <translation>Tmavé téma</translation>
     </message>
 </context>
 <context>
@@ -162,7 +162,7 @@
     <message>
         <location filename="../interfaces/dfileviewhelper.cpp" line="515"/>
         <source>Add tag &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Pridať štítok &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -454,7 +454,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="402"/>
         <source>Do you want to run %1?</source>
-        <translation type="unfinished"/>
+        <translation>Chcete spustiť %1?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="946"/>
@@ -563,12 +563,12 @@
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1288"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
-        <translation type="unfinished"/>
+        <translation>Disk je pripojený používateľom &quot;%1&quot;, nemôžete ho odpojiť.</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1291"/>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>Potvrdiť</translation>
     </message>
 </context>
 <context>
@@ -1273,7 +1273,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="771"/>
         <source>Tag information</source>
-        <translation type="unfinished"/>
+        <translation>Informácie štítku</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="708"/>
@@ -1912,47 +1912,47 @@
     <message>
         <location filename="../tag/tagutil.cpp" line="45"/>
         <source>Orange</source>
-        <translation type="unfinished"/>
+        <translation>Oranžová</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="46"/>
         <source>Red</source>
-        <translation type="unfinished"/>
+        <translation>Červená</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="47"/>
         <source>Purple</source>
-        <translation type="unfinished"/>
+        <translation>Fialová</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="48"/>
         <source>Navy-blue</source>
-        <translation type="unfinished"/>
+        <translation>Námornícka modrá</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="49"/>
         <source>Azure</source>
-        <translation type="unfinished"/>
+        <translation>Azurová</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="50"/>
         <source>Green</source>
-        <translation type="unfinished"/>
+        <translation>Zelená</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="51"/>
         <source>Yellow</source>
-        <translation type="unfinished"/>
+        <translation>Žltá</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="52"/>
         <source>Gray</source>
-        <translation type="unfinished"/>
+        <translation>Sivá</translation>
     </message>
     <message>
         <location filename="../views/dtagedit.cpp" line="91"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
-        <translation type="unfinished"/>
+        <translation>Vstupné informácie o štítkoch, napríklad práca, rodina. Medzi dve štítky sa používa čiarka.</translation>
     </message>
 </context>
 <context>

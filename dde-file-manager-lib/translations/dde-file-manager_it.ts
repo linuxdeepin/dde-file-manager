@@ -96,7 +96,7 @@
     <message>
         <location filename="../views/dfiledialog.cpp" line="911"/>
         <source>%1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"/>
+        <translation>%1 esiste già desideri sostituirlo?</translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="912"/>
@@ -106,7 +106,7 @@
     <message>
         <location filename="../views/dfiledialog.cpp" line="913"/>
         <source>Replace</source>
-        <translation type="unfinished"/>
+        <translation>Sostituisci</translation>
     </message>
 </context>
 <context>
@@ -162,7 +162,7 @@
     <message>
         <location filename="../interfaces/dfileviewhelper.cpp" line="515"/>
         <source>Add tag &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Aggiungi il tag &quot;%1&quot;</translation>
     </message>
 </context>
 <context>

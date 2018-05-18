@@ -162,7 +162,7 @@
     <message>
         <location filename="../interfaces/dfileviewhelper.cpp" line="515"/>
         <source>Add tag &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Добавить метку &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -1511,7 +1511,7 @@
         <location filename="../configure/dfmconfigdict.cpp" line="74"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="744"/>
         <source>Mount</source>
-        <translation>Подключить</translation>
+        <translation>Подключение</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="75"/>
