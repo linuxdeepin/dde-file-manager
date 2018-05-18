@@ -25,6 +25,7 @@
 
 //#include <QAction>
 #include <QLineEdit>
+#include <QStringListModel>
 
 DFM_BEGIN_NAMESPACE
 
@@ -39,13 +40,18 @@ public:
 
     explicit DFMAddressBar(QWidget *parent = 0);
 
+    QCompleter *completer() const;
+
     void setCurrentUrl(const DUrl &path);
+    void setCompleter(QCompleter *c);
 
 signals:
     void focusOut();
 
 protected:
+    void focusInEvent(QFocusEvent *e) override;
     void focusOutEvent(QFocusEvent *e) override;
+    void keyPressEvent(QKeyEvent *e) override;
 
 private:
     void initUI();
@@ -56,8 +62,13 @@ private:
 
     bool isSearchStarted = false;
     DUrl currentUrl = DUrl();
+    QStringListModel completerModel;
     QAction * indicator = nullptr;
+    QCompleter *urlCompleter = nullptr;
     enum IndicatorType indicatorType = IndicatorType::Search;
+
+private slots:
+    void insertCompletion(const QString &completion);
 };
 
 DFM_END_NAMESPACE
