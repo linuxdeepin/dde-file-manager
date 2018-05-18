@@ -20,15 +20,22 @@
  */
 #include "dfmaddressbar.h"
 
+#include "themeconfig.h"
+
 #include <QAction>
+#include <DThemeManager>
+
+#include <QDebug>
+
+DWIDGET_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
-
 
 DFMAddressBar::DFMAddressBar(QWidget *parent)
     : QLineEdit(parent)
 {
     initUI();
+    initConnections();
 }
 
 void DFMAddressBar::setCurrentUrl(const DUrl &path)
@@ -51,8 +58,8 @@ void DFMAddressBar::focusOutEvent(QFocusEvent *e)
 void DFMAddressBar::initUI()
 {
     // Left indicator (clickable! did u know that?)
-    actionJumpTo = new QAction(this);
-    actionSearch = new QAction(this);
+    indicator = new QAction(this);
+    addAction(indicator, QLineEdit::LeadingPosition);
 
     // Clear text button
     setClearButtonEnabled(true);
@@ -61,8 +68,40 @@ void DFMAddressBar::initUI()
     setFixedHeight(24);
     setObjectName("DSearchBar");
     setMinimumWidth(1);
+    setAlignment(Qt::AlignHCenter);
 
     setFocusPolicy(Qt::ClickFocus);
+}
+
+void DFMAddressBar::initConnections()
+{
+    connect(DThemeManager::instance(), &DThemeManager::widgetThemeChanged, this, &DFMAddressBar::onWidgetThemeChanged);
+    connect(indicator, &QAction::triggered, this, [this](){
+        emit returnPressed();
+    });
+}
+
+void DFMAddressBar::setIndicator(DFMAddressBar::IndicatorType type)
+{
+    indicatorType = type;
+    updateIndicatorIcon();
+}
+
+void DFMAddressBar::onWidgetThemeChanged(QWidget *widget, QString theme)
+{
+    Q_UNUSED(theme);
+
+    if (widget == this) {
+        updateIndicatorIcon();
+    }
+}
+
+void DFMAddressBar::updateIndicatorIcon()
+{
+    QIcon indicatorIcon;
+    QString scope = indicatorType == IndicatorType::Search ? "DSearchBar.searchAction" : "DSearchBar.jumpToAction";
+    indicatorIcon.addFile(ThemeConfig::instace()->value(scope, "icon").toString());
+    indicator->setIcon(indicatorIcon);
 }
 
 

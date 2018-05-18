@@ -32,6 +32,11 @@ class DFMAddressBar : public QLineEdit
 {
     Q_OBJECT
 public:
+    enum IndicatorType {
+        Search,
+        JumpTo
+    };
+
     explicit DFMAddressBar(QWidget *parent = 0);
 
     void setCurrentUrl(const DUrl &path);
@@ -44,11 +49,15 @@ protected:
 
 private:
     void initUI();
+    void initConnections();
+    void setIndicator(enum IndicatorType type);
+    void onWidgetThemeChanged(QWidget *widget, QString theme);
+    void updateIndicatorIcon();
 
     bool isSearchStarted = false;
     DUrl currentUrl = DUrl();
-    QAction * actionSearch = nullptr;
-    QAction * actionJumpTo = nullptr;
+    QAction * indicator = nullptr;
+    enum IndicatorType indicatorType = IndicatorType::Search;
 };
 
 DFM_END_NAMESPACE

@@ -136,7 +136,6 @@ void DToolBar::initAddressToolBar()
     QFrame * crumbAndSearch = new QFrame;
     m_searchBar = new DFMAddressBar(this);//DSearchBar(this);
     m_searchBar->hide();
-    m_searchBar->setAlignment(Qt::AlignHCenter);
     m_crumbWidget = new DFMCrumbBar(this);
     crumbAndSearch->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
@@ -184,8 +183,8 @@ void DToolBar::initContollerToolBar()
 
 void DToolBar::initConnect()
 {
-    connect(m_backButton, &DStateButton::clicked,this, &DToolBar::onBackButtonClicked);
-    connect(m_forwardButton, &DStateButton::clicked,this, &DToolBar::onForwardButtonClicked);
+    connect(m_backButton, &DStateButton::clicked, this, &DToolBar::onBackButtonClicked);
+    connect(m_forwardButton, &DStateButton::clicked, this, &DToolBar::onForwardButtonClicked);
     connect(m_searchBar, &DFMAddressBar::returnPressed, this, &DToolBar::searchBarTextEntered);
     connect(m_searchBar, &DFMAddressBar::focusOut, this,  &DToolBar::searchBarDeactivated);
     connect(m_crumbWidget, &DFMCrumbBar::crumbItemClicked, this, &DToolBar::crumbSelected);
