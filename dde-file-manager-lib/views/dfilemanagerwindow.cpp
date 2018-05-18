@@ -895,7 +895,8 @@ void DFileManagerWindow::initConnect()
     QObject::connect(d->tabBar, &TabBar::tabBarHidden, this, &DFileManagerWindow::hideNewTabButton);
     QObject::connect(d->newTabButton, &QPushButton::clicked, this, &DFileManagerWindow::onNewTabButtonClicked);
 
-    QObject::connect(d->emptyTrashButton, &QPushButton::clicked, this, &DFileManagerWindow::requestEmptyTrashFiles);
+    QObject::connect(d->emptyTrashButton, &QPushButton::clicked,
+                     this, &DFileManagerWindow::requestEmptyTrashFiles, Qt::QueuedConnection);
 
     QObject::connect(fileSignalManager, &FileSignalManager::trashStateChanged, this, &DFileManagerWindow::onTrashStateChanged);
     QObject::connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DFileManagerWindow::onTrashStateChanged);

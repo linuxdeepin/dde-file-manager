@@ -348,6 +348,10 @@ void DFMGlobal::initTagManagerConnect()
     });
     connect(TagManager::instance(), &TagManager::filesWereTagged, [] (const QMap<QString, QList<QString>>& files_were_tagged) {
         for (auto i = files_were_tagged.constBegin(); i != files_were_tagged.constEnd(); ++i) {
+            // is trash files
+            if (i.key().startsWith(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath)))
+                return;
+
             DUrl url = DUrl::fromLocalFile(i.key());
             DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url);
 
