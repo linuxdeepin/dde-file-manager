@@ -50,7 +50,10 @@ DWIDGET_END_NAMESPACE
 DFM_BEGIN_NAMESPACE
 class DFMCrumbBar;
 class DFMCrumbItem;
+class DFMAddressBar;
 DFM_END_NAMESPACE
+
+DFM_USE_NAMESPACE
 
 class DToolBar : public QFrame
 {
@@ -65,7 +68,7 @@ public:
     void initAddressToolBar();
     void initContollerToolBar();
     void initConnect();
-    DSearchBar * getSearchBar();
+    DFMAddressBar *getSearchBar();
     DFMCrumbBar *getCrumbWidget();
     QPushButton* getSettingsButton();
     void addHistoryStack();
@@ -111,7 +114,7 @@ private:
     DStateButton* m_upButton=NULL;
     QPushButton* m_searchButton = NULL;
     DStateButton* m_refreshButton = NULL;
-    DSearchBar * m_searchBar = NULL;
+    DFMAddressBar * m_searchBar = NULL;
     QFrame* m_contollerToolBar;
     DGraphicsClipEffect *m_contollerToolBarClipMask;
     QHBoxLayout *m_contollerToolBarContentLayout;

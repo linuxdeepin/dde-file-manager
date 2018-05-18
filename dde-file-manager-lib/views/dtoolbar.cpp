@@ -25,7 +25,7 @@
 #include "dtoolbar.h"
 #include "dicontextbutton.h"
 #include "dcheckablebutton.h"
-#include "dsearchbar.h"
+//#include "dsearchbar.h"
 #include "dfmcrumbbar.h"
 #include "historystack.h"
 #include "dhoverbutton.h"
@@ -35,6 +35,7 @@
 #include "dfileservices.h"
 #include "dfmeventdispatcher.h"
 #include "dfmcrumbitem.h"
+#include "dfmaddressbar.h"
 
 #include "dfmevent.h"
 #include "app/define.h"
@@ -133,7 +134,7 @@ void DToolBar::initAddressToolBar()
 
 
     QFrame * crumbAndSearch = new QFrame;
-    m_searchBar = new DSearchBar(this);
+    m_searchBar = new DFMAddressBar(this);//DSearchBar(this);
     m_searchBar->hide();
     m_searchBar->setAlignment(Qt::AlignHCenter);
     m_crumbWidget = new DFMCrumbBar(this);
@@ -185,17 +186,17 @@ void DToolBar::initConnect()
 {
     connect(m_backButton, &DStateButton::clicked,this, &DToolBar::onBackButtonClicked);
     connect(m_forwardButton, &DStateButton::clicked,this, &DToolBar::onForwardButtonClicked);
-    connect(m_searchBar, &DSearchBar::returnPressed, this, &DToolBar::searchBarTextEntered);
+    connect(m_searchBar, &DFMAddressBar::returnPressed, this, &DToolBar::searchBarTextEntered);
+    connect(m_searchBar, &DFMAddressBar::focusOut, this,  &DToolBar::searchBarDeactivated);
     connect(m_crumbWidget, &DFMCrumbBar::crumbItemClicked, this, &DToolBar::crumbSelected);
     connect(m_crumbWidget, &DFMCrumbBar::toggleSearchBar, this, &DToolBar::searchBarActivated);
     connect(m_searchButton, &DStateButton::clicked, this, &DToolBar::searchBarClicked);
-    connect(m_searchBar, &DSearchBar::focusedOut, this,  &DToolBar::searchBarDeactivated);
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DToolBar::currentUrlChanged);
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlF, this, &DToolBar::handleHotkeyCtrlF);
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlL, this, &DToolBar::handleHotkeyCtrlL);
 }
 
-DSearchBar *DToolBar::getSearchBar()
+DFMAddressBar *DToolBar::getSearchBar()
 {
     return m_searchBar;
 }
@@ -223,7 +224,7 @@ void DToolBar::searchBarActivated()
     m_crumbWidget->hide();
     m_searchBar->setAlignment(Qt::AlignLeft);
     m_searchBar->clear();
-    m_searchBar->setActive(true);
+    //m_searchBar->setActive(true);
     m_searchBar->setFocus();
     m_searchBar->setCurrentUrl(qobject_cast<DFileManagerWindow*>(topLevelWidget())->currentUrl());
     m_searchButton->hide();
@@ -236,14 +237,13 @@ void DToolBar::searchBarDeactivated()
     if (window){
         if (window->currentUrl().isSearchFile()){
 
-        }
-        else{
+        } else {
             m_searchBar->setPlaceholderText("");
             m_searchBar->hide();
             m_crumbWidget->show();
             m_searchBar->clear();
             m_searchBar->setAlignment(Qt::AlignHCenter);
-            m_searchBar->setActive(false);
+            //m_searchBar->setActive(false);
             m_searchBar->window()->setFocus();
             m_searchButton->show();
         }
@@ -263,7 +263,7 @@ void DToolBar::searchBarTextEntered()
     QString text = m_searchBar->text();
 
     if (text.isEmpty()) {
-        m_searchBar->clearText();
+        //m_searchBar->clearText();
         return;
     }
 
@@ -301,10 +301,10 @@ void DToolBar::currentUrlChanged(const DFMEvent &event)
         m_crumbWidget->hide();
         m_searchBar->setAlignment(Qt::AlignLeft);
         m_searchBar->clear();
-        m_searchBar->setActive(true);
+        //m_searchBar->setActive(true);
         m_searchBar->setFocus();
         m_searchBar->setText(event.fileUrl().searchKeyword());
-        m_searchBar->getPopupList()->hide();
+        //m_searchBar->getPopupList()->hide();
     } else {
         m_searchBar->hide();
         m_crumbWidget->show();

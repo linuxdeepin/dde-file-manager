@@ -29,7 +29,7 @@
 #include "fileviewhelper.h"
 #include "ddetailview.h"
 #include "dfilemenu.h"
-#include "dsearchbar.h"
+//#include "dsearchbar.h"
 #include "dsplitter.h"
 #include "extendview.h"
 #include "dstatusbar.h"
@@ -42,6 +42,7 @@
 #include "dfilesystemmodel.h"
 #include "dfmviewmanager.h"
 #include "dfmsidebar.h"
+#include "dfmaddressbar.h"
 
 #include "app/define.h"
 #include "dfmevent.h"

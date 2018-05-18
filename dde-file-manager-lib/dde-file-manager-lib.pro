@@ -262,7 +262,8 @@ HEADERS += \
     controllers/dfmusersharecrumbcontroller.h \
     controllers/dfmavfscrumbcontroller.h \
     controllers/dfmsmbcrumbcontroller.h \
-    controllers/dfmmtpcrumbcontroller.h
+    controllers/dfmmtpcrumbcontroller.h \
+    views/dfmaddressbar.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -440,7 +441,8 @@ SOURCES += \
     controllers/dfmusersharecrumbcontroller.cpp \
     controllers/dfmavfscrumbcontroller.cpp \
     controllers/dfmsmbcrumbcontroller.cpp \
-    controllers/dfmmtpcrumbcontroller.cpp
+    controllers/dfmmtpcrumbcontroller.cpp \
+    views/dfmaddressbar.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET
