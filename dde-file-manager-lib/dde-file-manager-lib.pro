@@ -263,7 +263,8 @@ HEADERS += \
     controllers/dfmavfscrumbcontroller.h \
     controllers/dfmsmbcrumbcontroller.h \
     controllers/dfmmtpcrumbcontroller.h \
-    views/dfmaddressbar.h
+    views/dfmaddressbar.h \
+    views/dcompleterlistview.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -442,7 +443,8 @@ SOURCES += \
     controllers/dfmavfscrumbcontroller.cpp \
     controllers/dfmsmbcrumbcontroller.cpp \
     controllers/dfmmtpcrumbcontroller.cpp \
-    views/dfmaddressbar.cpp
+    views/dfmaddressbar.cpp \
+    views/dcompleterlistview.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET
@@ -546,8 +548,4 @@ INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations
 
 DISTFILES += \
     mimetypeassociations/mimetypeassociations.json \
-    configure/default-view-states.json \
-    skin/qss/filemanageradmin.qss \
-    themes/light/DFileViewRoot.theme \
-    themes/light/PreviewDialogDefault \
-    themes/light/MusicPreviewDialog.theme
+    configure/default-view-states.json

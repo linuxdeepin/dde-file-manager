@@ -20,18 +20,60 @@
  */
 #include "dfmaddressbar.h"
 
+#include "views/dcompleterlistview.h"
+
 #include "themeconfig.h"
 
 #include <QAction>
 #include <QCompleter>
 #include <QAbstractItemView>
-#include <DThemeManager>
-
+#include <QTimer>
+#include <QPainter>
 #include <QDebug>
+
+#include <DThemeManager>
 
 DWIDGET_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
+
+DCompleterStyledItemDelegate::DCompleterStyledItemDelegate(QObject *parent)
+    : QStyledItemDelegate(parent)
+{
+
+}
+
+void DCompleterStyledItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    // prepare;
+    QPalette::ColorGroup cg = option.state & QStyle::State_Enabled
+            ? QPalette::Normal : QPalette::Disabled;
+    if (cg == QPalette::Normal && !(option.state & QStyle::State_Active))
+        cg = QPalette::Inactive;
+
+    // draw background
+    if (option.showDecorationSelected && (option.state & QStyle::State_Selected)) {
+        painter->fillRect(option.rect, option.palette.brush(cg, QPalette::Highlight));
+    }
+
+    // draw text
+    if (option.state & QStyle::State_Selected) {
+        painter->setPen(option.palette.color(cg, QPalette::HighlightedText));
+    } else {
+        painter->setPen(option.palette.color(cg, QPalette::Text));
+    }
+
+    painter->setFont(option.font);
+    painter->drawText(option.rect.adjusted(31, 0, 0, 0), Qt::AlignVCenter, index.data(Qt::DisplayRole).toString());
+}
+
+QSize DCompleterStyledItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    QSize s = QStyledItemDelegate::sizeHint(option, index);
+    s.setHeight(24);
+
+    return s;
+}
 
 DFMAddressBar::DFMAddressBar(QWidget *parent)
     : QLineEdit(parent)
@@ -72,11 +114,16 @@ void DFMAddressBar::setCompleter(QCompleter *c)
         return;
     }
 
+    //QAbstractItemDelegate *old_delegate = completerView->itemDelegate();
+
     urlCompleter->setModel(&completerModel);
-    //urlCompleter->setPopup();
+    urlCompleter->setPopup(completerView);
     urlCompleter->setCompletionMode(QCompleter::PopupCompletion);
     urlCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     connect(urlCompleter, SIGNAL(activated(QString)), this, SLOT(insertCompletion(QString)));
+
+    completerView->setItemDelegate(&styledItemDelegate);
+
 }
 
 void DFMAddressBar::focusInEvent(QFocusEvent *e)
@@ -138,6 +185,12 @@ void DFMAddressBar::initUI()
     // Clear text button
     setClearButtonEnabled(true);
 
+    // Completer List
+    completerView = new DCompleterListView(this);
+    completerView->setFocusPolicy(Qt::NoFocus);
+    completerView->setWindowFlags(Qt::ToolTip);
+    completerView->viewport()->setContentsMargins(4, 4, 4, 4);
+
     // Other misc..
     setFixedHeight(24);
     setObjectName("DSearchBar");
@@ -153,6 +206,7 @@ void DFMAddressBar::initConnections()
     connect(indicator, &QAction::triggered, this, [this](){
         emit returnPressed();
     });
+    connect(completerView, &DCompleterListView::listCurrentChanged, this, &DFMAddressBar::onCompleterViewCurrentChanged);
 }
 
 void DFMAddressBar::setIndicator(DFMAddressBar::IndicatorType type)
@@ -163,7 +217,7 @@ void DFMAddressBar::setIndicator(DFMAddressBar::IndicatorType type)
 
 void DFMAddressBar::onWidgetThemeChanged(QWidget *widget, QString theme)
 {
-    Q_UNUSED(theme);
+    DThemeManager::instance()->setTheme(completerView, theme);
 
     if (widget == this) {
         updateIndicatorIcon();
@@ -188,5 +242,9 @@ void DFMAddressBar::insertCompletion(const QString &completion)
     this->setText(text().append(completion));
 }
 
+void DFMAddressBar::onCompleterViewCurrentChanged(const QModelIndex &current)
+{
+    qDebug() << current;
+}
 
 DFM_END_NAMESPACE
