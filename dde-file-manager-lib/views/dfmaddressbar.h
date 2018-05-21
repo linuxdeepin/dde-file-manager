@@ -72,6 +72,7 @@ private:
 
     bool isSearchStarted = false;
     DUrl currentUrl = DUrl();
+    QString completerBaseString = QString();
     QStringListModel completerModel;
     DCompleterListView * completerView;
     QAction * indicator = nullptr;

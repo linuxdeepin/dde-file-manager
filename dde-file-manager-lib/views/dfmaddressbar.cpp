@@ -48,8 +48,9 @@ void DCompleterStyledItemDelegate::paint(QPainter *painter, const QStyleOptionVi
     // prepare;
     QPalette::ColorGroup cg = option.state & QStyle::State_Enabled
             ? QPalette::Normal : QPalette::Disabled;
-    if (cg == QPalette::Normal && !(option.state & QStyle::State_Active))
+    if (cg == QPalette::Normal && !(option.state & QStyle::State_Active)) {
         cg = QPalette::Inactive;
+    }
 
     // draw background
     if (option.showDecorationSelected && (option.state & QStyle::State_Selected)) {
@@ -114,8 +115,6 @@ void DFMAddressBar::setCompleter(QCompleter *c)
         return;
     }
 
-    //QAbstractItemDelegate *old_delegate = completerView->itemDelegate();
-
     urlCompleter->setModel(&completerModel);
     urlCompleter->setPopup(completerView);
     urlCompleter->setCompletionMode(QCompleter::PopupCompletion);
@@ -172,7 +171,10 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
         return;
     }
 
+    // blumia: Assume address is: /aa/bbbb/cc , completion prefix should be "cc",
+    //         completerBaseString should be "/aa/bbbb/"
     urlCompleter->setCompletionPrefix(this->text());
+    this->completerBaseString = "";
     urlCompleter->complete(rect());
 }
 
@@ -238,13 +240,16 @@ void DFMAddressBar::insertCompletion(const QString &completion)
         return;
     }
 
-    // test
-    this->setText(text().append(completion));
+    this->setText(completerBaseString + completion);
 }
 
 void DFMAddressBar::onCompleterViewCurrentChanged(const QModelIndex &current)
 {
-    qDebug() << current;
+    int completionPrefixLen = urlCompleter->completionPrefix().length();
+    QString selected = current.data(Qt::DisplayRole).toString();
+    QString shouldAppend = selected.right(selected.length() - completionPrefixLen);
+    setText(completerBaseString + urlCompleter->completionPrefix() + shouldAppend);
+    setSelection(text().length() - shouldAppend.length(), text().length());
 }
 
 DFM_END_NAMESPACE
