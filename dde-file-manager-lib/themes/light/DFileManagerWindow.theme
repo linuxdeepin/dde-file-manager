@@ -389,35 +389,6 @@ QPushButton#DCrumbIconButton:checked{
 }
 /* ******************End of DCrumbButton****************** */
 
-/* ******************DSearchBar****************** */
-QLineEdit#DSearchBar{
-    background-color: #ffffff;
-    border: 1px solid rgba(43, 167, 248, 1);
-    padding-left:0px;
-    selection-background-color: #61B5F8;
-    border-radius: 4px;
-}
-
-QListWidget#SearchList{
-    background-color: white;
-    border:1px solid rgba(0, 0, 0, 50);
-    padding-top: 4px;
-    border-radius: 4px;
-    padding: 0px;
-}
-QListWidget#SearchList::item{
-    height: 24px;
-    padding: 0px;
-}
-QListWidget#SearchList::item:selected{
-    background: #2ca7f8;
-}
-QListWidget#SearchList::item:hover{
-    color: white;
-    background-color: #2ca7f8
-}
-/*******************End of DSearchBar****************** */
-
 /******************Menu********************************/
 
 /******************End of Menu*************************/

@@ -23,12 +23,22 @@
 
 #include "dfmglobal.h"
 
-//#include <QAction>
+#include <QItemSelection>
 #include <QLineEdit>
 #include <QStringListModel>
+#include <QStyledItemDelegate>
 
 DFM_BEGIN_NAMESPACE
 
+class DCompleterStyledItemDelegate : public QStyledItemDelegate {
+    Q_OBJECT
+public:
+    explicit DCompleterStyledItemDelegate(QObject *parent = nullptr);
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+};
+
+class DCompleterListView;
 class DFMAddressBar : public QLineEdit
 {
     Q_OBJECT
@@ -63,12 +73,15 @@ private:
     bool isSearchStarted = false;
     DUrl currentUrl = DUrl();
     QStringListModel completerModel;
+    DCompleterListView * completerView;
     QAction * indicator = nullptr;
     QCompleter *urlCompleter = nullptr;
+    DCompleterStyledItemDelegate styledItemDelegate;
     enum IndicatorType indicatorType = IndicatorType::Search;
 
 private slots:
     void insertCompletion(const QString &completion);
+    void onCompleterViewCurrentChanged(const QModelIndex &current);
 };
 
 DFM_END_NAMESPACE
