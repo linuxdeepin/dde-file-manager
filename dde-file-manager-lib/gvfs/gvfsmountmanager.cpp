@@ -36,6 +36,7 @@
 #include "../interfaces/dfmevent.h"
 #include "partman/command.h"
 #include "mountsecretdiskaskpassworddialog.h"
+#include "app/filesignalmanager.h"
 
 #include <QThread>
 #include <QApplication>
@@ -1214,6 +1215,7 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
     if (!succeeded)
     {
           qDebug() << "Error mounting :" << g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE) << error->message;
+        fileSignalManager->requestShowErrorDialog(QString::fromLocal8Bit(error->message), QString(" "));
     }else{
           GMount *mount;
           GFile *root;
