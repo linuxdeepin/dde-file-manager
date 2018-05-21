@@ -46,6 +46,7 @@ public:
 
     static QString cacheFilePath();
     static QString sortCacheFilePath();
+    static QPair<int, int> getRoleAndSortOrderByUrl(const DUrl& url);
 
     FMState *fmState() const;
     void setFmState(FMState *fmState);
@@ -60,6 +61,10 @@ public slots:
     static void cacheSortState(const DUrl& url, int role, Qt::SortOrder order);
 
 private:
+
+    ///###:
+    static QMap<DUrl, QPair<int, int>> getUrlsForFilttering()noexcept;
+
     FMState *m_fmState = NULL;
 };
 

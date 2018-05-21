@@ -1912,7 +1912,8 @@ bool DFileView::setRootUrl(const DUrl &url)
         updateContentLabel();
     }
 
-    const QPair<int, int> &sort_config = FMStateManager::SortStates.value(fileUrl, QPair<int, int>(DFileSystemModel::FileDisplayNameRole, Qt::AscendingOrder));
+//    const QPair<int, int> &sort_config = FMStateManager::SortStates.value(fileUrl, QPair<int, int>(DFileSystemModel::FileDisplayNameRole, Qt::AscendingOrder));
+    const QPair<int, int>& sort_config{ FMStateManager::getRoleAndSortOrderByUrl(url) };
 
     model()->setSortRole(sort_config.first, (Qt::SortOrder)sort_config.second);
 
