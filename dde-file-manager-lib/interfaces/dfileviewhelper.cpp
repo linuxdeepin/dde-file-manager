@@ -699,6 +699,13 @@ void DFileViewHelper::handleCommitData(QWidget *editor) const
     new_file_name.remove('/');
     new_file_name.remove(QChar(0));
 
+    QString suffix_str_as_var{ editor->property("_d_whether_show_suffix").toString() };
+
+    if (!suffix_str_as_var.isEmpty()) {
+        new_file_name += QString{"."};
+        new_file_name += suffix_str_as_var;
+    }
+
     if (fileInfo->fileName() == new_file_name || new_file_name.isEmpty()) {
         return;
     }

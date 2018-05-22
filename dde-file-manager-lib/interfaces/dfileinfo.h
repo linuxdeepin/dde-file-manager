@@ -107,9 +107,6 @@ public:
 
     QVariantHash extensionPropertys() const Q_DECL_OVERRIDE;
 
-    QString suffix() const override;
-    QString completeSuffix() const override;
-
 protected:
     explicit DFileInfo(DFileInfoPrivate &dd);
 

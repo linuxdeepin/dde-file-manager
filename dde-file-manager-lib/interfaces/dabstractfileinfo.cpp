@@ -1136,7 +1136,7 @@ QString DAbstractFileInfo::suffix() const
 {
     CALL_PROXY(suffix());
 
-    if (!isFile())
+    if (isDir())
         return QString();
 
     return d->mimeDatabase.suffixForFileName(this->fileName());
@@ -1146,7 +1146,7 @@ QString DAbstractFileInfo::completeSuffix() const
 {
     CALL_PROXY(completeSuffix());
 
-    if (!isFile())
+    if (isDir())
         return QString();
 
     const QString &fileName = this->fileName();

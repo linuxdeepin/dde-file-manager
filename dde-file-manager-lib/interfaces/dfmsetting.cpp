@@ -76,8 +76,8 @@ DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
 
     //load conf value
     auto backen = new DTK_CORE_NAMESPACE::QSettingBackend(getConfigFilePath());
-    m_settings->setBackend(backen);
 
+    m_settings->setBackend(backen);
     m_fileSystemWathcer = fileService->createFileWatcher(this, DUrl::fromLocalFile(getConfigFilePath()).parentUrl(), this);
     m_fileSystemWathcer->startWatcher();
 
@@ -239,3 +239,10 @@ bool DFMSetting::isShowedHiddenOnView()
 {
     return getValueByKey("base.hidden_files.show_hidden").toBool();
 }
+
+bool DFMSetting::isShowedFileSuffix() noexcept
+{
+    return getValueByKey("base.hidden_files.hide_suffix").toBool();
+}
+
+
