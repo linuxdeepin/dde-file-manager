@@ -491,6 +491,10 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
         return indexNode->fileInfo->fileDisplayName();
     case FileNameRole:
         return indexNode->fileInfo->fileName();
+    case FileBaseNameRole:
+        return indexNode->fileInfo->baseName();
+    case FileSuffixRole:
+        return indexNode->fileInfo->suffix();
     case FileIconRole:
         if (index.column() == 0) {
             return indexNode->fileInfo->fileIcon();

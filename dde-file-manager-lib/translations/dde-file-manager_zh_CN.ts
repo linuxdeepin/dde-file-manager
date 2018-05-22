@@ -1411,8 +1411,13 @@
         <translation>恢复默认</translation>
     </message>
     <message>
-        <location filename="../configure/dfmconfigdict.cpp" line="27"/>
-        <location filename="../configure/dfmconfigdict.cpp" line="37"/>
+        <location filename="../configure/dfmconfigdict.cpp" line="82"/>
+        <source>Hide file extension when rename</source>
+        <translation>重命名时隐藏文件扩展名</translation>
+    </message>
+    <message>
+        <location filename="../configure/dfmconfigdict.cpp" line="51"/>
+        <location filename="../configure/dfmconfigdict.cpp" line="61"/>
         <source>Home</source>
         <translation>主目录</translation>
     </message>

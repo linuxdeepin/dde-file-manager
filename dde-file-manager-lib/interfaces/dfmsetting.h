@@ -61,6 +61,7 @@ public:
     bool isDefaultChooserDialog();
     bool isShowedHiddenOnSearch();
     bool isShowedHiddenOnView();
+    bool isShowedFileSuffix() noexcept;
 
     QPointer<DTK_CORE_NAMESPACE::DSettings> settings();
 

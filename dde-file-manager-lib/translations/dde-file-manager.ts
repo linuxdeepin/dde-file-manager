@@ -1388,8 +1388,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../configure/dfmconfigdict.cpp" line="27"/>
-        <location filename="../configure/dfmconfigdict.cpp" line="37"/>
+        <location filename="../configure/dfmconfigdict.cpp" line="82"/>
+        <source>Hide file extension when rename</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../configure/dfmconfigdict.cpp" line="51"/>
+        <location filename="../configure/dfmconfigdict.cpp" line="61"/>
         <source>Home</source>
         <translation type="unfinished"></translation>
     </message>

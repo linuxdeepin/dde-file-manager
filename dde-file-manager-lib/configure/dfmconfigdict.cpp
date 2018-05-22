@@ -55,4 +55,5 @@ void GenerateSettingTranslate()
     auto group_base_new_tab_windowsName = QObject::tr("New window and tab");
     auto group_base_open_actionName = QObject::tr("Open behavior");
     auto reset_button_name = QObject::tr("Restore Defaults");
+    auto hide_file_suffix = QObject::tr("Hide file extension when rename");
 }

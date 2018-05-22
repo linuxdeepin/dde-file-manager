@@ -12,6 +12,7 @@
 #include "app/define.h"
 #include "dfilesystemmodel.h"
 #include "private/dstyleditemdelegate_p.h"
+#include "dfmsetting.h"
 
 #include <QLabel>
 #include <QPainter>
@@ -393,7 +394,15 @@ void DListItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     if(!edit)
         return;
 
-    const QString &text = index.data(DFileSystemModel::FileNameRole).toString();
+    bool donot_show_suffix{ DFMSetting::instance()->isShowedFileSuffix() };
+    QString text{};
+
+    if (donot_show_suffix) {
+        edit->setProperty("_d_whether_show_suffix", index.data(DFileSystemModel::FileSuffixRole));
+        text = index.data(DFileSystemModel::FileBaseNameRole).toString();
+    } else {
+        text = index.data(DFileSystemModel::FileNameRole).toString();
+    }
 
     edit->setText(text);
 }
