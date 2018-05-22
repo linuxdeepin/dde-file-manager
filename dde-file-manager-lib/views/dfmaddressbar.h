@@ -82,7 +82,7 @@ private:
 
 private slots:
     void insertCompletion(const QString &completion);
-    void onCompleterViewCurrentChanged(const QModelIndex &current);
+    void onCompletionHighlighted(const QString &highlightedCompletion);
 };
 
 DFM_END_NAMESPACE

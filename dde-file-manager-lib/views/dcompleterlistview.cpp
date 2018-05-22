@@ -21,6 +21,7 @@
 #include "dcompleterlistview.h"
 
 #include <QDebug>
+#include <QScrollBar>
 
 #include <DThemeManager>
 
@@ -31,7 +32,12 @@ DFM_BEGIN_NAMESPACE
 DCompleterListView::DCompleterListView(QWidget *parent)
     : QListView(parent)
 {
-
+    setFocusPolicy(Qt::NoFocus);
+    setWindowFlags(Qt::ToolTip);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    setViewportMargins(0, 0, -verticalScrollBar()->sizeHint().width(), 0);
+    setMouseTracking(true);
 }
 
 void DCompleterListView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
