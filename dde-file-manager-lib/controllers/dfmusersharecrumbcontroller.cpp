@@ -50,9 +50,4 @@ QList<CrumbData> DFMUserShareCrumbController::seprateUrl(const DUrl &url)
     return { CrumbData(DUrl(USERSHARE_ROOT), Singleton<PathManager>::instance()->getSystemPathDisplayName("UserShare"), "CrumbIconButton.UserShare") };
 }
 
-QStringList DFMUserShareCrumbController::getSuggestList(const QString &text)
-{
-
-}
-
 DFM_END_NAMESPACE

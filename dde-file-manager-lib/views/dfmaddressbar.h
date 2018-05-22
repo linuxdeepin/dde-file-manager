@@ -38,6 +38,7 @@ public:
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 };
 
+class DFMCrumbInterface;
 class DCompleterListView;
 class DFMAddressBar : public QLineEdit
 {
@@ -69,6 +70,7 @@ private:
     void setIndicator(enum IndicatorType type);
     void onWidgetThemeChanged(QWidget *widget, QString theme);
     void updateIndicatorIcon();
+    void startCompletionTransmission(const QString &text);
 
     bool isSearchStarted = false;
     DUrl currentUrl = DUrl();
@@ -77,6 +79,7 @@ private:
     DCompleterListView * completerView;
     QAction * indicator = nullptr;
     QCompleter *urlCompleter = nullptr;
+    DFMCrumbInterface* crumbController = nullptr; // Scheme completion support
     DCompleterStyledItemDelegate styledItemDelegate;
     enum IndicatorType indicatorType = IndicatorType::Search;
 

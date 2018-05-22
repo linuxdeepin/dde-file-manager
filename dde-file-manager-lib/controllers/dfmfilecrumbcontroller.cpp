@@ -119,11 +119,6 @@ QList<CrumbData> DFMFileCrumbController::seprateUrl(const DUrl &url)
     return list;
 }
 
-QStringList DFMFileCrumbController::getSuggestList(const QString &text)
-{
-
-}
-
 // blumia: avoid using this, recommand using the following way:
 //         DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, oneUrl);
 //         then you can get a proper display name via `info->fileDisplayName()`.

@@ -52,9 +52,4 @@ DFMCrumbItem *DFMTrashCrumbController::createCrumbItem(const CrumbData &data)
     return item;
 }
 
-QStringList DFMTrashCrumbController::getSuggestList(const QString &text)
-{
-
-}
-
 DFM_END_NAMESPACE
