@@ -29,6 +29,7 @@
 #include <QAbstractItemView>
 #include <QTimer>
 #include <QPainter>
+#include <QScrollBar>
 #include <QDebug>
 
 #include <DThemeManager>
@@ -53,12 +54,12 @@ void DCompleterStyledItemDelegate::paint(QPainter *painter, const QStyleOptionVi
     }
 
     // draw background
-    if (option.showDecorationSelected && (option.state & QStyle::State_Selected)) {
+    if (option.showDecorationSelected && (option.state & (QStyle::State_Selected | QStyle::State_MouseOver))) {
         painter->fillRect(option.rect, option.palette.brush(cg, QPalette::Highlight));
     }
 
     // draw text
-    if (option.state & QStyle::State_Selected) {
+    if (option.state & (QStyle::State_Selected | QStyle::State_MouseOver)) {
         painter->setPen(option.palette.color(cg, QPalette::HighlightedText));
     } else {
         painter->setPen(option.palette.color(cg, QPalette::Text));
@@ -85,7 +86,9 @@ DFMAddressBar::DFMAddressBar(QWidget *parent)
     // Test
     urlCompleter = new QCompleter(this);
     this->setCompleter(urlCompleter);
-    completerModel.setStringList({"macat", "mamacat", "mamamamacat", "teji", "tejilang"});
+    completerModel.setStringList({"macat", "mamacat", "mamamacat", "mamamamacat", "mamamamamacat",
+                                  "makat", "mamakat", "mamamakat", "mamamamakat", "mamamamamakat",
+                                  "mafox", "teji", "tejilang", "jjy", "jjjjy"});
 }
 
 QCompleter *DFMAddressBar::completer() const
@@ -119,7 +122,9 @@ void DFMAddressBar::setCompleter(QCompleter *c)
     urlCompleter->setPopup(completerView);
     urlCompleter->setCompletionMode(QCompleter::PopupCompletion);
     urlCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+    urlCompleter->setMaxVisibleItems(10);
     connect(urlCompleter, SIGNAL(activated(QString)), this, SLOT(insertCompletion(QString)));
+    connect(urlCompleter, SIGNAL(highlighted(QString)), this, SLOT(onCompletionHighlighted(QString)));
 
     completerView->setItemDelegate(&styledItemDelegate);
 
@@ -175,7 +180,7 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
     //         completerBaseString should be "/aa/bbbb/"
     urlCompleter->setCompletionPrefix(this->text());
     this->completerBaseString = "";
-    urlCompleter->complete(rect());
+    urlCompleter->complete(rect().adjusted(0, 5, 0, 5));
 }
 
 void DFMAddressBar::initUI()
@@ -189,9 +194,6 @@ void DFMAddressBar::initUI()
 
     // Completer List
     completerView = new DCompleterListView(this);
-    completerView->setFocusPolicy(Qt::NoFocus);
-    completerView->setWindowFlags(Qt::ToolTip);
-    completerView->viewport()->setContentsMargins(4, 4, 4, 4);
 
     // Other misc..
     setFixedHeight(24);
@@ -208,7 +210,6 @@ void DFMAddressBar::initConnections()
     connect(indicator, &QAction::triggered, this, [this](){
         emit returnPressed();
     });
-    connect(completerView, &DCompleterListView::listCurrentChanged, this, &DFMAddressBar::onCompleterViewCurrentChanged);
 }
 
 void DFMAddressBar::setIndicator(DFMAddressBar::IndicatorType type)
@@ -243,11 +244,10 @@ void DFMAddressBar::insertCompletion(const QString &completion)
     this->setText(completerBaseString + completion);
 }
 
-void DFMAddressBar::onCompleterViewCurrentChanged(const QModelIndex &current)
+void DFMAddressBar::onCompletionHighlighted(const QString &highlightedCompletion)
 {
     int completionPrefixLen = urlCompleter->completionPrefix().length();
-    QString selected = current.data(Qt::DisplayRole).toString();
-    QString shouldAppend = selected.right(selected.length() - completionPrefixLen);
+    QString shouldAppend = highlightedCompletion.right(highlightedCompletion.length() - completionPrefixLen);
     setText(completerBaseString + urlCompleter->completionPrefix() + shouldAppend);
     setSelection(text().length() - shouldAppend.length(), text().length());
 }
