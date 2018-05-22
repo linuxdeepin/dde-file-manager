@@ -49,7 +49,11 @@ public:
     virtual bool supportedUrl(DUrl) = 0;
     virtual QList<CrumbData> seprateUrl(const DUrl &url);
     virtual DFMCrumbItem* createCrumbItem(const CrumbData &data);
-    virtual QStringList getSuggestList(const QString &text) = 0;
+    virtual void requestCompletionList(const DUrl &url);
+
+signals:
+    void completionFound(const QStringList &completions); //< emit multiple times with less or equials to 10 items in a group.
+    void completionListTransmissionCompleted(); //< emit when all avaliable completions has been sent.
 };
 
 DFM_END_NAMESPACE

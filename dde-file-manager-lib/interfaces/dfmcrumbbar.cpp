@@ -27,10 +27,10 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QApplication>
-#include <dfmcrumbfactory.h>
 
 #include "views/dfilemanagerwindow.h"
 #include "views/themeconfig.h"
+#include "dfmcrumbfactory.h"
 #include "dfmcrumbinterface.h"
 #include "dfmevent.h"
 

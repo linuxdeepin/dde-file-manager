@@ -87,4 +87,25 @@ DFMCrumbItem *DFMCrumbInterface::createCrumbItem(const CrumbData &data)
     return new DFMCrumbItem(data);
 }
 
+void DFMCrumbInterface::requestCompletionList(const DUrl &url)
+{
+    DDirIteratorPointer it = DFileService::instance()->createDirIterator(this, url, QStringList(), QDir::Dirs | QDir::NoDotAndDotDot);
+    QStringList list;
+
+    while (it->hasNext()) {
+        list.append(it->fileName());
+        if (list.length() >= 10) {
+            emit completionFound(list);
+            list.clear();
+        }
+        it->next();
+    }
+
+    if (!list.isEmpty()) {
+        emit completionFound(list);
+    }
+
+    emit completionListTransmissionCompleted();
+}
+
 DFM_END_NAMESPACE

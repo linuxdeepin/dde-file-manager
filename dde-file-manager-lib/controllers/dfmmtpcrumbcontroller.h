@@ -35,7 +35,6 @@ public:
 
     bool supportedUrl(DUrl url) override;
     DFMCrumbItem *createCrumbItem(const CrumbData &data) override;
-    QStringList getSuggestList(const QString &text) override;
 };
 
 DFM_END_NAMESPACE

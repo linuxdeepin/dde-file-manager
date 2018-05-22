@@ -35,7 +35,6 @@ public:
 
     bool supportedUrl(DUrl url) override;
     QList<CrumbData> seprateUrl(const DUrl &url) override;
-    QStringList getSuggestList(const QString &text) override;
 };
 
 DFM_END_NAMESPACE

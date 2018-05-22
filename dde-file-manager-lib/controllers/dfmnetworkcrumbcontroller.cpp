@@ -51,9 +51,4 @@ QList<CrumbData> DFMNetworkCrumbController::seprateUrl(const DUrl &url)
     return { CrumbData(DUrl(NETWORK_ROOT), displayText, "CrumbIconButton.Network") };
 }
 
-QStringList DFMNetworkCrumbController::getSuggestList(const QString &text)
-{
-
-}
-
 DFM_END_NAMESPACE

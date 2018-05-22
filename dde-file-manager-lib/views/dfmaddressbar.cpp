@@ -19,10 +19,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dfmaddressbar.h"
+#include "dfmcrumbmanager.h"
 
 #include "views/dcompleterlistview.h"
+#include "interfaces/dfmcrumbinterface.h"
 
 #include "themeconfig.h"
+
+#include "dfmcrumbfactory.h"
 
 #include <QAction>
 #include <QCompleter>
@@ -179,7 +183,7 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
     // blumia: Assume address is: /aa/bbbb/cc , completion prefix should be "cc",
     //         completerBaseString should be "/aa/bbbb/"
     urlCompleter->setCompletionPrefix(this->text());
-    this->completerBaseString = "";
+    startCompletionTransmission(this->text());
     urlCompleter->complete(rect().adjusted(0, 5, 0, 5));
 }
 
@@ -233,6 +237,64 @@ void DFMAddressBar::updateIndicatorIcon()
     QString scope = indicatorType == IndicatorType::Search ? "DSearchBar.searchAction" : "DSearchBar.jumpToAction";
     indicatorIcon.addFile(ThemeConfig::instace()->value(scope, "icon").toString());
     indicator->setIcon(indicatorIcon);
+}
+
+void DFMAddressBar::startCompletionTransmission(const QString &text)
+{
+    DUrl url(text);
+
+    // TODO: don't reset the model if `completerBaseString` not changed.
+
+    if (url.isValid() && text.at(0) == '/') {
+        url.setScheme(FILE_SCHEME);
+    }
+
+    if (url.isValid() && text.at(text.length() - 1) != '/') {
+        url = url.parentUrl();
+    }
+
+    // Check if the entered text is a string to search or a url to complete.
+    if (url.isValid() && !url.scheme().isEmpty()) {
+        // URL completion.
+        if (!crumbController || !crumbController->supportedUrl(url)) {
+            if (crumbController) {
+                //crumbController->cancelCompletionListTransmission();?
+                crumbController->disconnect();
+            }
+            crumbController = DFMCrumbManager::instance()->createControllerByUrl(url);
+            // Not found? Search for plugins
+            if (!crumbController) {
+                crumbController = DFMCrumbFactory::create(url.scheme());
+            }
+            // Still not found? Then nothing here...
+            if (!crumbController) {
+                qDebug() << "Unsupported url / scheme for completion: " << url;
+                return;
+            }
+        }
+        Q_CHECK_PTR(crumbController);
+        // connections
+        connect(crumbController, &DFMCrumbInterface::completionFound, this, [](const QStringList &list){
+            // append list to completion list.
+            qDebug() << list;
+        });
+        connect(crumbController, &DFMCrumbInterface::completionListTransmissionCompleted, this, [this](){
+            // check if we can do inline complete.
+            qDebug() << "completion done.";
+            crumbController->disconnect();
+        });
+        // set base url
+        this->completerBaseString = url.scheme() == FILE_SCHEME ? url.path() : url.toString();
+        crumbController->requestCompletionList(url);
+    } else {
+        // History completion.
+        qWarning("DFMAddressBar::startCompletionTransmission() may need implemented!!!");
+        // Set history to string list model here.
+        // TODO: Set history to string list model here.
+        this->completerBaseString = "";
+    }
+
+    return;
 }
 
 void DFMAddressBar::insertCompletion(const QString &completion)

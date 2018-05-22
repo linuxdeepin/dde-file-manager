@@ -60,9 +60,4 @@ QList<CrumbData> DFMTagCrumbController::seprateUrl(const DUrl &url)
     return { CrumbData(url, displayText, colorName) };
 }
 
-QStringList DFMTagCrumbController::getSuggestList(const QString &text)
-{
-
-}
-
 DFM_END_NAMESPACE

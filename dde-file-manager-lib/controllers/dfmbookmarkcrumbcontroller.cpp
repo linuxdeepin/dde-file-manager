@@ -46,9 +46,4 @@ QList<CrumbData> DFMBookmarkCrumbController::seprateUrl(const DUrl &url)
     return { CrumbData(DUrl(BOOKMARK_ROOT), "Bookmark", "CrumbIconButton.UserShare") };
 }
 
-QStringList DFMBookmarkCrumbController::getSuggestList(const QString &text)
-{
-
-}
-
 DFM_END_NAMESPACE
