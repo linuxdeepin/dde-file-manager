@@ -22,8 +22,12 @@
 
 #include "dfmcrumbitem.h"
 
+#include "controllers/jobcontroller.h"
+
 #include "dfileservices.h"
 #include "dfileinfo.h"
+
+#include <QPointer>
 
 DFM_BEGIN_NAMESPACE
 
@@ -41,8 +45,28 @@ void CrumbData::setIconFromThemeConfig(QString iconName, QString iconKey)
     this->iconKey = iconKey;
 }
 
+class DFMCrumbInterfacePrivate {
+
+public:
+    DFMCrumbInterfacePrivate(DFMCrumbInterface *qq);
+
+    QPointer<JobController> folderCompleterJobPointer;
+
+    DFMCrumbInterface *q_ptr;
+
+    Q_DECLARE_PUBLIC(DFMCrumbInterface)
+};
+
+DFMCrumbInterfacePrivate::DFMCrumbInterfacePrivate(DFMCrumbInterface *qq)
+    : q_ptr(qq)
+{
+
+}
+
+
 DFMCrumbInterface::DFMCrumbInterface(QObject *parent)
     : QObject(parent)
+    , d_ptr(new DFMCrumbInterfacePrivate(this))
 {
 
 }
@@ -89,23 +113,31 @@ DFMCrumbItem *DFMCrumbInterface::createCrumbItem(const CrumbData &data)
 
 void DFMCrumbInterface::requestCompletionList(const DUrl &url)
 {
-    DDirIteratorPointer it = DFileService::instance()->createDirIterator(this, url, QStringList(), QDir::Dirs | QDir::NoDotAndDotDot);
-    QStringList list;
+    Q_D(DFMCrumbInterface);
 
-    while (it->hasNext()) {
-        list.append(it->fileName());
-        if (list.length() >= 10) {
-            emit completionFound(list);
-            list.clear();
+    if (d->folderCompleterJobPointer) {
+        d->folderCompleterJobPointer->disconnect();
+        d->folderCompleterJobPointer->stopAndDeleteLater();
+    }
+
+    d->folderCompleterJobPointer = DFileService::instance()->getChildrenJob(this, url, QStringList(), QDir::Dirs | QDir::NoDotAndDotDot);
+    if (!d->folderCompleterJobPointer) {
+        return;
+    }
+
+    connect(d->folderCompleterJobPointer, &JobController::addChildrenList, this, [this](const QList<DAbstractFileInfoPointer> &infoList){
+        QStringList list;
+        for (const DAbstractFileInfoPointer &infoPointer : infoList) {
+            list.append(infoPointer->fileName());
         }
-        it->next();
-    }
-
-    if (!list.isEmpty()) {
         emit completionFound(list);
-    }
+    }, Qt::DirectConnection);
 
-    emit completionListTransmissionCompleted();
+    connect(d->folderCompleterJobPointer, &JobController::finished, this, [this](){
+        emit completionListTransmissionCompleted();
+    }, Qt::QueuedConnection);
+
+    d->folderCompleterJobPointer->start();
 }
 
 DFM_END_NAMESPACE

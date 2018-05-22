@@ -39,6 +39,7 @@ public:
 };
 
 class DFMCrumbItem;
+class DFMCrumbInterfacePrivate;
 class DFMCrumbInterface : public QObject
 {
     Q_OBJECT
@@ -54,6 +55,11 @@ public:
 signals:
     void completionFound(const QStringList &completions); //< emit multiple times with less or equials to 10 items in a group.
     void completionListTransmissionCompleted(); //< emit when all avaliable completions has been sent.
+
+private:
+    QScopedPointer<DFMCrumbInterfacePrivate> d_ptr;
+
+    Q_DECLARE_PRIVATE(DFMCrumbInterface)
 };
 
 DFM_END_NAMESPACE

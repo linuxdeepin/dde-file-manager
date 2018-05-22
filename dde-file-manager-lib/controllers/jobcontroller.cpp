@@ -60,6 +60,16 @@ JobController::State JobController::state() const
     return m_state;
 }
 
+int JobController::timeCeiling() const
+{
+    return m_timeCeiling;
+}
+
+int JobController::countCeiling() const
+{
+    return m_countCeiling;
+}
+
 void JobController::start()
 {
     if (m_state == Started) {
@@ -110,10 +120,29 @@ void JobController::stopAndDeleteLater()
     stop();
 }
 
+void JobController::setTimeCeiling(int timeCeiling)
+{
+    if (isRunning())
+        return;
+
+    m_timeCeiling = timeCeiling;
+}
+
+void JobController::setCountCeiling(int countCeiling)
+{
+    if (isRunning())
+        return;
+
+    m_countCeiling = countCeiling;
+}
+
 void JobController::run()
 {
     if (!m_iterator) {
-        emit childrenUpdated(DFileService::instance()->getChildren(this, m_fileUrl, m_nameFilters, m_filters));
+        const auto &&list = DFileService::instance()->getChildren(this, m_fileUrl, m_nameFilters, m_filters);
+
+        emit childrenUpdated(list);
+        emit addChildrenList(list);
 
         setState(Stoped);
 
@@ -134,6 +163,7 @@ void JobController::run()
     if (rootInfo && !rootInfo->hasOrderly() && fileInfoQueue.count() > 0) {
         update_children = false;
         emit childrenUpdated(fileInfoQueue);
+        emit addChildrenList(fileInfoQueue);
     }
 
     while (m_iterator->hasNext()) {
@@ -152,26 +182,42 @@ void JobController::run()
         if (update_children) {
             fileInfoQueue.enqueue(m_iterator->fileInfo());
 
-            if (timer->elapsed() > 5000 || fileInfoQueue.count() > 10000) {
+            if (timer->elapsed() > m_timeCeiling || fileInfoQueue.count() > m_countCeiling) {
                 update_children = false;
 
                 emit childrenUpdated(fileInfoQueue);
+                emit addChildrenList(fileInfoQueue);
 
                 fileInfoQueue.clear();
 
-                delete timer;
-                timer = Q_NULLPTR;
+//                delete timer;
+//                timer = Q_NULLPTR;
             }
         } else {
+            fileInfoQueue.enqueue(m_iterator->fileInfo());
+
+            if (timer->elapsed() > m_timeCeiling || fileInfoQueue.count() > m_countCeiling) {
+                timer->restart();
+
+                emit addChildrenList(fileInfoQueue);
+
+                fileInfoQueue.clear();
+            }
+
             emit addChildren(m_iterator->fileInfo());
 
             QThread::msleep(LOAD_FILE_INTERVAL);
         }
     }
 
+    if (timer) {
+        delete timer;
+        timer = Q_NULLPTR;
+    }
 
     if (update_children) {
         emit childrenUpdated(fileInfoQueue);
+        emit addChildrenList(fileInfoQueue);
     }
 
     setState(Stoped);
