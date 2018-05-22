@@ -805,26 +805,6 @@ QVariantHash DFileInfo::extensionPropertys() const
     return d->extensionPropertys;
 }
 
-QString DFileInfo::suffix() const
-{
-    Q_D(const DFileInfo);
-
-    if (d->fileInfo.isDir())
-        return QString();
-
-    return d->fileInfo.suffix();
-}
-
-QString DFileInfo::completeSuffix() const
-{
-    Q_D(const DFileInfo);
-
-    if (d->fileInfo.isDir())
-        return QString();
-
-    return d->fileInfo.completeSuffix();
-}
-
 DFileInfo::DFileInfo(DFileInfoPrivate &dd)
     : DAbstractFileInfo(dd)
 {

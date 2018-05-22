@@ -26,6 +26,7 @@
 #include "dfileviewhelper.h"
 #include "views/fileitem.h"
 #include "private/dstyleditemdelegate_p.h"
+#include "dfmsetting.h"
 
 #include "dfilesystemmodel.h"
 #include "tag/tagmanager.h"
@@ -889,9 +890,21 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     if (!item)
         return;
 
-    item->edit->setPlainText(index.data(item->edit->isReadOnly()
-                                        ? DFileSystemModel::FileDisplayNameRole
-                                        : DFileSystemModel::FileNameRole).toString());
+    bool donot_show_suffix{ DFMSetting::instance()->isShowedFileSuffix() };
+
+    if (item->edit->isReadOnly()) {
+        item->edit->setPlainText(index.data(DFileSystemModel::FileDisplayNameRole).toString());
+    } else {
+        if (donot_show_suffix) {
+            editor->setProperty("_d_whether_show_suffix", index.data(DFileSystemModel::FileSuffixRole));
+            item->edit->setPlainText(index.data(DFileSystemModel::FileBaseNameRole).toString());
+        } else {
+            item->edit->setPlainText(index.data(DFileSystemModel::FileNameRole).toString());
+        }
+    }
+
+
+
     item->edit->setAlignment(Qt::AlignHCenter);
     item->edit->document()->setTextWidth(d->itemSizeHint.width());
     item->setOpacity(parent()->isCut(index) ? 0.3 : 1);
@@ -902,7 +915,7 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     const QString &selectionWhenEditing = parent()->baseName(index);
     int endPos = selectionWhenEditing.isEmpty() ? -1 : selectionWhenEditing.length();
 
-    if (endPos == -1) {
+    if (endPos == -1 || donot_show_suffix) {
         item->edit->selectAll();
     } else {
         QTextCursor cursor = item->edit->textCursor();

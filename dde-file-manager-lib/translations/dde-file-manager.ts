@@ -73,22 +73,22 @@
 <context>
     <name>ComputerView</name>
     <message>
-        <location filename="../views/computerview.cpp" line="479"/>
+        <location filename="../views/computerview.cpp" line="487"/>
         <source>My Directories</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="485"/>
+        <location filename="../views/computerview.cpp" line="493"/>
         <source>Internal Disk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="491"/>
+        <location filename="../views/computerview.cpp" line="499"/>
         <source>External Disk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="573"/>
+        <location filename="../views/computerview.cpp" line="581"/>
         <source>System Disk</source>
         <translation type="unfinished"></translation>
     </message>
@@ -122,31 +122,31 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="604"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="594"/>
         <location filename="../models/searchfileinfo.cpp" line="119"/>
-        <location filename="../models/trashfileinfo.cpp" line="301"/>
+        <location filename="../models/trashfileinfo.cpp" line="308"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="920"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="606"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="930"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="596"/>
         <location filename="../models/searchfileinfo.cpp" line="121"/>
         <source>Time modified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="608"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="598"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="610"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="600"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="612"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="602"/>
         <source>Time created</source>
         <translation type="unfinished"></translation>
     </message>
@@ -154,7 +154,7 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2327"/>
+        <location filename="../views/dfileview.cpp" line="2347"/>
         <source>(Reverse)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -162,7 +162,7 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="515"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="520"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -535,27 +535,27 @@
 <context>
     <name>FileJob</name>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="156"/>
+        <location filename="../../fileoperations/filejob.cpp" line="158"/>
         <source>copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="667"/>
+        <location filename="../../fileoperations/filejob.cpp" line="681"/>
         <source>%1 s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="671"/>
+        <location filename="../../fileoperations/filejob.cpp" line="685"/>
         <source>%1 m %2 s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="677"/>
+        <location filename="../../fileoperations/filejob.cpp" line="691"/>
         <source>%1 h %2 m %3 s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="686"/>
+        <location filename="../../fileoperations/filejob.cpp" line="700"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation type="unfinished"></translation>
     </message>
@@ -563,12 +563,12 @@
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1288"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1290"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1291"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1293"/>
         <source>Confirm</source>
         <translation type="unfinished"></translation>
     </message>
@@ -919,7 +919,7 @@
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="55"/>
-        <location filename="../models/trashfileinfo.cpp" line="93"/>
+        <location filename="../models/trashfileinfo.cpp" line="100"/>
         <source>Trash</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1422,6 +1422,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../configure/dfmconfigdict.cpp" line="82"/>
+        <source>Hide file extension when rename</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../configure/dfmconfigdict.cpp" line="51"/>
         <location filename="../configure/dfmconfigdict.cpp" line="61"/>
         <source>Home</source>
@@ -1644,23 +1649,23 @@
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="225"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="576"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="579"/>
         <source>%1 item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="227"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="578"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="581"/>
         <source>%1 items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="663"/>
+        <location filename="../interfaces/dfileservices.cpp" line="751"/>
         <source>Shortcut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="522"/>
+        <location filename="../interfaces/dfileservices.cpp" line="571"/>
         <source>Create symlink</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1671,28 +1676,28 @@
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="762"/>
-        <location filename="../models/trashfileinfo.cpp" line="304"/>
-        <location filename="../models/trashfileinfo.cpp" line="310"/>
+        <location filename="../models/trashfileinfo.cpp" line="311"/>
+        <location filename="../models/trashfileinfo.cpp" line="317"/>
         <source>Time deleted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1115"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1127"/>
         <source>Loading...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="597"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="601"/>
         <source>File has been moved or deleted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="599"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="603"/>
         <source>You do not have permission to access this folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="602"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="606"/>
         <source>Folder is empty</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1703,17 +1708,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="309"/>
+        <location filename="../models/searchfileinfo.cpp" line="305"/>
         <source>Searching...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="314"/>
+        <location filename="../models/searchfileinfo.cpp" line="310"/>
         <source>No results</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../models/trashfileinfo.cpp" line="307"/>
+        <location filename="../models/trashfileinfo.cpp" line="314"/>
         <source>Source Path</source>
         <comment>TrashFileInfo</comment>
         <translation type="unfinished"></translation>
@@ -1912,47 +1917,47 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tag/tagutil.cpp" line="45"/>
+        <location filename="../tag/tagutil.cpp" line="46"/>
         <source>Orange</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tag/tagutil.cpp" line="46"/>
+        <location filename="../tag/tagutil.cpp" line="47"/>
         <source>Red</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tag/tagutil.cpp" line="47"/>
+        <location filename="../tag/tagutil.cpp" line="48"/>
         <source>Purple</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tag/tagutil.cpp" line="48"/>
+        <location filename="../tag/tagutil.cpp" line="49"/>
         <source>Navy-blue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tag/tagutil.cpp" line="49"/>
+        <location filename="../tag/tagutil.cpp" line="50"/>
         <source>Azure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tag/tagutil.cpp" line="50"/>
+        <location filename="../tag/tagutil.cpp" line="51"/>
         <source>Green</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tag/tagutil.cpp" line="51"/>
+        <location filename="../tag/tagutil.cpp" line="52"/>
         <source>Yellow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tag/tagutil.cpp" line="52"/>
+        <location filename="../tag/tagutil.cpp" line="53"/>
         <source>Gray</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dtagedit.cpp" line="91"/>
+        <location filename="../views/dtagedit.cpp" line="87"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
         <translation type="unfinished"></translation>
     </message>

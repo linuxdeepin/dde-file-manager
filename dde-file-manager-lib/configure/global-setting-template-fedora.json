@@ -103,6 +103,12 @@
                             "text": "Show hidden files",
                             "type": "checkbox",
                             "default": false
+                        },
+                        {
+                            "key": "hide_suffix",
+                            "text": "Hide file extension when rename",
+                            "type": "checkbox",
+                            "default": true
                         }
 
                     ]

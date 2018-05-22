@@ -66,6 +66,8 @@ public:
         FileDisplayNameRole = Qt::UserRole + 9,
         FilePinyinName = Qt::UserRole + 10,
         ExtensionPropertys = Qt::UserRole + 11,
+        FileBaseNameRole = Qt::UserRole + 12,
+        FileSuffixRole = Qt::UserRole + 13,
         FileUserRole = Qt::UserRole + 99,
         UnknowRole = Qt::UserRole + 999
     };
