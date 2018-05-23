@@ -18,7 +18,6 @@ Deepin File Manager is a file management tool independently  developed by Deepin
 * libffmpegthumbnailer-dev
 * libpolkit-agent-1-dev
 * libpolkit-qt5-1-dev
-* libuchardet-dev
 * Qt5(>= 5.6) with modules:
   - qt5-default
   - qt5-qmake
