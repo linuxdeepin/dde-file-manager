@@ -87,8 +87,9 @@ QString UDiskDeviceInfo::getId() const
 QString UDiskDeviceInfo::getName() const
 {
     QString letter = deviceListener->getVolumeLetters().value(m_diskInfo.uuid());
-    if (!letter.isEmpty())
+    if (!letter.isEmpty()) {
         return QString("%1 (%2:)").arg(m_diskInfo.name(), letter);
+    }
     return m_diskInfo.name();
 }
 
@@ -107,12 +108,13 @@ QString UDiskDeviceInfo::getMountPoint() const
     return m_diskInfo.mounted_root_uri();
 }
 
-DUrl UDiskDeviceInfo::getMountPointUrl()
+DUrl UDiskDeviceInfo::getMountPointUrl() const
 {
-    if (!getId().isEmpty())
+    if (!getId().isEmpty()) {
         return GvfsMountManager::getRealMountUrl(m_diskInfo);
-    else
+    } else {
         return DUrl();
+    }
 }
 
 QString UDiskDeviceInfo::getIcon() const
@@ -128,9 +130,9 @@ bool UDiskDeviceInfo::canEject() const
 bool UDiskDeviceInfo::canStop() const
 {
     qDebug() << gvfsMountManager->Drives.contains(getDiskInfo().drive_unix_device()) << getDiskInfo().drive_unix_device();
-    if (gvfsMountManager->Drives.contains(getDiskInfo().drive_unix_device())){
-        const QDrive& drive = gvfsMountManager->Drives.value(getDiskInfo().drive_unix_device());
-        if (drive.start_stop_type() == G_DRIVE_START_STOP_TYPE_SHUTDOWN && drive.is_removable() &&  drive.can_stop()){
+    if (gvfsMountManager->Drives.contains(getDiskInfo().drive_unix_device())) {
+        const QDrive &drive = gvfsMountManager->Drives.value(getDiskInfo().drive_unix_device());
+        if (drive.start_stop_type() == G_DRIVE_START_STOP_TYPE_SHUTDOWN && drive.is_removable() &&  drive.can_stop()) {
             return true;
         }
     }
@@ -145,8 +147,8 @@ bool UDiskDeviceInfo::canUnmount() const
 qulonglong UDiskDeviceInfo::getFree()
 {
     //when device is mounted, use QStorageInfo to get datas
-    if(canUnmount()){
-        if (getMediaType() == dvd || getMediaType() == native || getMediaType() == removable){
+    if (canUnmount()) {
+        if (getMediaType() == dvd || getMediaType() == native || getMediaType() == removable) {
             return QStorageInfo(getMountPointUrl().toLocalFile()).bytesFree();
         }
     }
@@ -155,8 +157,8 @@ qulonglong UDiskDeviceInfo::getFree()
 
 qulonglong UDiskDeviceInfo::getTotal()
 {
-    if(canUnmount()){
-        if (getMediaType() == dvd || getMediaType() == native || getMediaType() == removable){
+    if (canUnmount()) {
+        if (getMediaType() == dvd || getMediaType() == native || getMediaType() == removable) {
             return QStorageInfo(getMountPointUrl().toLocalFile()).bytesTotal();
         }
     }
@@ -171,7 +173,7 @@ qint64 UDiskDeviceInfo::size() const
 QString UDiskDeviceInfo::fileDisplayName() const
 {
     QString displayName = getName();
-    if (!displayName.isEmpty()){
+    if (!displayName.isEmpty()) {
         return displayName;
     }
     return FileUtils::formatSize(size());
@@ -179,58 +181,60 @@ QString UDiskDeviceInfo::fileDisplayName() const
 
 UDiskDeviceInfo::MediaType UDiskDeviceInfo::getMediaType() const
 {
-    if(getType() == "native")
+    if (getType() == "native") {
         return native;
-    else if(getType() == "removable")
+    } else if (getType() == "removable") {
         return removable;
-    else if(getType() == "network")
+    } else if (getType() == "network") {
         return network;
-    else if(getType() == "smb")
+    } else if (getType() == "smb") {
         return network;
-    else if(getType() == "phone")
+    } else if (getType() == "phone") {
         return phone;
-    else if(getType() == "iphone")
+    } else if (getType() == "iphone") {
         return iphone;
-    else if(getType() == "camera")
+    } else if (getType() == "camera") {
         return camera;
-    else if(getType() == "dvd")
+    } else if (getType() == "dvd") {
         return dvd;
-    else
+    } else {
         return unknown;
+    }
 }
 
 QString UDiskDeviceInfo::deviceTypeDisplayName() const
 {
-    if(getType() == "native")
+    if (getType() == "native") {
         return QObject::tr("Local disk");
-    else if(getType() == "removable")
+    } else if (getType() == "removable") {
         return QObject::tr("Removable disk");
-    else if(getType() == "network")
+    } else if (getType() == "network") {
         return QObject::tr("Network shared directory");
-    else if(getType() == "phone")
+    } else if (getType() == "phone") {
         return QObject::tr("Android mobile device");
-    else if(getType() == "iphone")
+    } else if (getType() == "iphone") {
         return QObject::tr("Apple mobile device");
-    else if(getType() == "camera")
+    } else if (getType() == "camera") {
         return QObject::tr("Camera");
-    else if(getType() == "dvd")
+    } else if (getType() == "dvd") {
         return QObject::tr("Dvd");
-    else
+    } else {
         return QObject::tr("Unknown device");
+    }
 }
 
 QString UDiskDeviceInfo::sizeDisplayName() const
 {
-    if (filesCount() <= 1){
+    if (filesCount() <= 1) {
         return QObject::tr("%1 item").arg(filesCount());
-    }else{
+    } else {
         return QObject::tr("%1 items").arg(filesCount());
     }
 }
 
 int UDiskDeviceInfo::filesCount() const
 {
-    return FileUtils::filesCount(const_cast<UDiskDeviceInfo*>(this)->getMountPointUrl().toLocalFile());
+    return FileUtils::filesCount(const_cast<UDiskDeviceInfo *>(this)->getMountPointUrl().toLocalFile());
 }
 
 bool UDiskDeviceInfo::isReadable() const
@@ -255,22 +259,23 @@ QIcon UDiskDeviceInfo::fileIcon() const
 
 QIcon UDiskDeviceInfo::fileIcon(int width, int height) const
 {
-    if(getType() == "native")
+    if (getType() == "native") {
         return QIcon(svgToHDPIPixmap(":/devices/images/device/drive-harddisk-256px.svg", width, height));
-    else if(getType() == "removable")
+    } else if (getType() == "removable") {
         return QIcon(svgToHDPIPixmap(":/devices/images/device/drive-removable-media-usb-256px.svg", width, height));
-    else if(getType() == "network")
+    } else if (getType() == "network") {
         return QIcon(svgToHDPIPixmap(":/devices/images/device/drive-network-256px.svg", width, height));
-    else if(getType() == "phone")
+    } else if (getType() == "phone") {
         return QIcon(svgToHDPIPixmap(":/devices/images/device/android-device-256px.svg", width, height));
-    else if(getType() == "iphone")
+    } else if (getType() == "iphone") {
         return QIcon(svgToHDPIPixmap(":/devices/images/device/ios-device-256px.svg", width, height));
-    else if(getType() == "camera")
+    } else if (getType() == "camera") {
         return QIcon(svgToHDPIPixmap(":/devices/images/device/camera-256px.svg", width, height));
-    else if(getType() == "dvd")
+    } else if (getType() == "dvd") {
         return QIcon(svgToHDPIPixmap(":/devices/images/device/media-dvd-256px.svg", width, height));
-    else
+    } else {
         return QIcon(svgToHDPIPixmap(":/devices/images/device/drive-harddisk-256px.svg", width, height));
+    }
 }
 
 bool UDiskDeviceInfo::isDir() const
@@ -287,10 +292,11 @@ QVector<MenuAction> UDiskDeviceInfo::menuActionList(DAbstractFileInfo::MenuType 
 {
     QVector<MenuAction> actionKeys;
 
-    if (type == SpaceArea)
+    if (type == SpaceArea) {
         return actionKeys;
+    }
 
-    qDebug() << const_cast<UDiskDeviceInfo*>(this)->getMountPointUrl();
+    qDebug() << const_cast<UDiskDeviceInfo *>(this)->getMountPointUrl();
 
     actionKeys.reserve(6);
 
@@ -299,27 +305,29 @@ QVector<MenuAction> UDiskDeviceInfo::menuActionList(DAbstractFileInfo::MenuType 
                << MenuAction::OpenDiskInNewTab
                << MenuAction::Separator;
 
-    if(canEject()){
+    if (canEject()) {
         actionKeys << MenuAction::Eject;
     }
 
-    if (canStop()){
+    if (canStop()) {
         actionKeys << MenuAction::SafelyRemoveDrive;
     }
 
-    if (canUnmount()){
+    if (canUnmount()) {
         actionKeys << MenuAction::Unmount;
-    }else{
+    } else {
         actionKeys << MenuAction::Mount;
     }
 
-    if(getMediaType() == removable)
+    if (getMediaType() == removable) {
         actionKeys << MenuAction::FormatDevice;
+    }
 
     if (getId().startsWith("smb://")
             || getId().startsWith("ftp://")
-            || getId().startsWith("sftp://"))
+            || getId().startsWith("sftp://")) {
         actionKeys << MenuAction::ForgetPassword;
+    }
     actionKeys << MenuAction::Separator << MenuAction::Property;
 
     return actionKeys;
@@ -329,16 +337,16 @@ QSet<MenuAction> UDiskDeviceInfo::disableMenuActionList() const
 {
     QSet<MenuAction> actionKeys = DAbstractFileInfo::disableMenuActionList();
 
-    if(DFMGlobal::isRootUser()){
+    if (DFMGlobal::isRootUser()) {
         actionKeys << MenuAction::Unmount;
     }
 
     /*Disable unmount of native disk in x86 pro*/
-    if (DFMGlobal::isDisableUnmount(getDiskInfo())){
-            actionKeys << MenuAction::Unmount;
+    if (DFMGlobal::isDisableUnmount(getDiskInfo())) {
+        actionKeys << MenuAction::Unmount;
     }
 
-    if (!canUnmount()){
+    if (!canUnmount()) {
         actionKeys << MenuAction::Property;
     }
 
@@ -346,10 +354,34 @@ QSet<MenuAction> UDiskDeviceInfo::disableMenuActionList() const
     return actionKeys;
 }
 
+bool UDiskDeviceInfo::canRedirectionFileUrl() const
+{
+    return !getMountPointUrl().isEmpty();
+}
+
+DUrl UDiskDeviceInfo::redirectedFileUrl() const
+{
+    return getMountPointUrl();
+}
+
+QVariantHash UDiskDeviceInfo::extensionPropertys() const
+{
+    QVariantHash attrMap;
+
+    attrMap.insert("deviceId", getId());
+    attrMap.insert("mediaType", static_cast<int>(getMediaType()));
+    attrMap.insert("canMount", getDiskInfo().can_mount());
+    attrMap.insert("canUnmount", canUnmount());
+    attrMap.insert("isMounted", !getMountPointUrl().isEmpty());
+
+    return attrMap;
+}
+
 bool UDiskDeviceInfo::exists() const
 {
-    if (fileUrl().isComputerFile())
+    if (fileUrl().isComputerFile()) {
         return true;
+    }
 
     return true;
 }

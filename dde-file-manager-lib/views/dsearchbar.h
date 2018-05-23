@@ -74,8 +74,6 @@ private:
     void complete(const QString & str);
     QStringList splitPath(const QString &path);
     QListWidget * m_list;
-    QCompleter * m_completer;
-    QCompleter * m_historyCompleter;
     QAction * m_clearAction;
     QAction * m_searchAction;
     QAction * m_jumpToAction;

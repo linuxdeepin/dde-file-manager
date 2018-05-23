@@ -356,6 +356,11 @@ void DFMGlobal::initTagManagerConnect()
                 DUrl url = DUrl::fromLocalFile(file);
                 DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url);
             }
+
+            // for tag watcher
+            const DUrl &file_url = DUrl::fromUserTaggedFile(tag_name, QString());
+
+            DAbstractFileWatcher::ghostSignal(DUrl(TAG_ROOT), &DAbstractFileWatcher::fileAttributeChanged, file_url);
         }
     });
     connect(TagManager::instance(), &TagManager::filesWereTagged, [] (const QMap<QString, QList<QString>>& files_were_tagged) {

@@ -39,6 +39,7 @@ public:
     bool isReadable() const Q_DECL_OVERRIDE;
     bool isWritable() const Q_DECL_OVERRIDE;
     bool canShare() const Q_DECL_OVERRIDE;
+    bool isDir() const Q_DECL_OVERRIDE;
 
     QString fileDisplayName() const Q_DECL_OVERRIDE;
     QFile::Permissions permissions() const Q_DECL_OVERRIDE;

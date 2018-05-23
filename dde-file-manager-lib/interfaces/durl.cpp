@@ -39,20 +39,20 @@ static inline QString parseDecodedComponent(const QString &data)
 }
 
 QSet<QString> schemeList = QSet<QString>() << QString(TRASH_SCHEME)
-                                           << QString(RECENT_SCHEME)
-                                           << QString(BOOKMARK_SCHEME)
-                                           << QString(FILE_SCHEME)
-                                           << QString(COMPUTER_SCHEME )
-                                           << QString(SEARCH_SCHEME)
-                                           << QString(NETWORK_SCHEME)
-                                           << QString(SMB_SCHEME)
-                                           << QString(AFC_SCHEME)
-                                           << QString(MTP_SCHEME)
-                                           << QString(USERSHARE_SCHEME)
-                                           << QString(AVFS_SCHEME)
-                                           << QString(FTP_SCHEME)
-                                           << QString(SFTP_SCHEME)
-                                           << QString{ TAG_SCHEME };
+                           << QString(RECENT_SCHEME)
+                           << QString(BOOKMARK_SCHEME)
+                           << QString(FILE_SCHEME)
+                           << QString(COMPUTER_SCHEME)
+                           << QString(SEARCH_SCHEME)
+                           << QString(NETWORK_SCHEME)
+                           << QString(SMB_SCHEME)
+                           << QString(AFC_SCHEME)
+                           << QString(MTP_SCHEME)
+                           << QString(USERSHARE_SCHEME)
+                           << QString(AVFS_SCHEME)
+                           << QString(FTP_SCHEME)
+                           << QString(SFTP_SCHEME)
+                           << QString{ TAG_SCHEME };
 
 DUrl::DUrl()
     : QUrl()
@@ -68,8 +68,8 @@ DUrl::DUrl(const QUrl &copy)
 
 
 DUrl::DUrl(const DUrl &other)
-    :QUrl{other},
-     m_virtualPath{other.m_virtualPath}
+    : QUrl{other},
+      m_virtualPath{other.m_virtualPath}
 
 {
     //###copy constructor
@@ -77,15 +77,15 @@ DUrl::DUrl(const DUrl &other)
 
 
 DUrl::DUrl(DUrl &&other)
-    :QUrl{ std::move(other) },
-     m_virtualPath{ std::move(other.m_virtualPath) }
+    : QUrl{ std::move(other) },
+      m_virtualPath{ std::move(other.m_virtualPath) }
 {
     //###move constructor
 }
 
 
 //###copy operator=
-DUrl& DUrl::operator=(const DUrl& other)
+DUrl &DUrl::operator=(const DUrl &other)
 {
     QUrl::operator=(other);
     m_virtualPath = other.m_virtualPath;
@@ -95,7 +95,7 @@ DUrl& DUrl::operator=(const DUrl& other)
 
 
 //###move operator=
-DUrl& DUrl::operator=(DUrl&& other)
+DUrl &DUrl::operator=(DUrl &&other)
 {
     QUrl::operator=(std::move(other));
     m_virtualPath = std::move(other.m_virtualPath);
@@ -114,8 +114,9 @@ void DUrl::setPath(const QString &path, QUrl::ParsingMode mode, bool makeAbsolut
 {
     QUrl::setPath(path, mode);
 
-    if(makeAbsolute)
+    if (makeAbsolute) {
         this->makeAbsolutePath();
+    }
 
     updateVirtualPath();
 }
@@ -124,8 +125,9 @@ void DUrl::setScheme(const QString &scheme, bool makeAbsolute)
 {
     QUrl::setScheme(scheme);
 
-    if(makeAbsolute)
+    if (makeAbsolute) {
         this->makeAbsolutePath();
+    }
 
     updateVirtualPath();
 }
@@ -134,8 +136,9 @@ void DUrl::setUrl(const QString &url, QUrl::ParsingMode parsingMode, bool makeAb
 {
     QUrl::setUrl(url, parsingMode);
 
-    if(makeAbsolute)
+    if (makeAbsolute) {
         this->makeAbsolutePath();
+    }
 
     updateVirtualPath();
 }
@@ -206,7 +209,7 @@ bool DUrl::isSFTPFile() const
 }
 
 
-///###: Jundge whether current the scheme of current url is equal to TAG_SCHEME.
+///###: Judge whether current the scheme of current url is equal to TAG_SCHEME.
 bool DUrl::isTaggedFile() const
 {
     return (this->scheme() == QString{TAG_SCHEME});
@@ -214,11 +217,13 @@ bool DUrl::isTaggedFile() const
 
 QString DUrl::toString(QUrl::FormattingOptions options) const
 {
-    if (!isValid())
+    if (!isValid()) {
         return m_virtualPath;
+    }
 
-    if (isLocalFile() || !schemeList.contains(scheme()))
+    if (isLocalFile() || !schemeList.contains(scheme())) {
         return QUrl::toString(options);
+    }
 
     QUrl url(*this);
 
@@ -229,8 +234,9 @@ QString DUrl::toString(QUrl::FormattingOptions options) const
 
 QString DUrl::searchKeyword() const
 {
-    if(!isSearchFile())
+    if (!isSearchFile()) {
         return QString();
+    }
 
     QUrlQuery query(this->query());
 
@@ -239,8 +245,9 @@ QString DUrl::searchKeyword() const
 
 DUrl DUrl::searchTargetUrl() const
 {
-    if (!isSearchFile())
+    if (!isSearchFile()) {
         return DUrl();
+    }
 
     QUrlQuery query(this->query());
 
@@ -249,8 +256,9 @@ DUrl DUrl::searchTargetUrl() const
 
 DUrl DUrl::searchedFileUrl() const
 {
-    if (!isSearchFile())
+    if (!isSearchFile()) {
         return DUrl();
+    }
 
     return DUrl(fragment(FullyDecoded));
 }
@@ -284,8 +292,9 @@ DUrl DUrl::parentUrl() const
 
 void DUrl::setSearchKeyword(const QString &keyword)
 {
-    if(!isSearchFile())
+    if (!isSearchFile()) {
         return;
+    }
 
     QUrlQuery query(this->query());
 
@@ -297,8 +306,9 @@ void DUrl::setSearchKeyword(const QString &keyword)
 
 void DUrl::setSearchTargetUrl(const DUrl &url)
 {
-    if(!isSearchFile())
+    if (!isSearchFile()) {
         return;
+    }
 
     QUrlQuery query(this->query());
 
@@ -310,8 +320,9 @@ void DUrl::setSearchTargetUrl(const DUrl &url)
 
 void DUrl::setSearchedFileUrl(const DUrl &url)
 {
-    if (!isSearchFile())
+    if (!isSearchFile()) {
         return;
+    }
 
     setFragment(url.toString(), QUrl::DecodedMode);
 }
@@ -350,12 +361,13 @@ DUrl DUrl::fromRecentFile(const QString &filePath)
     return url;
 }
 
-DUrl DUrl::fromBookMarkFile(const QString &filePath)
+DUrl DUrl::fromBookMarkFile(const QString &filePath, const QString &name)
 {
     DUrl url;
 
     url.setScheme(BOOKMARK_SCHEME, false);
     url.setPath(filePath);
+    url.setFragment(name);
 
     return url;
 }
@@ -381,8 +393,9 @@ DUrl DUrl::fromSearchFile(const DUrl &targetUrl, const QString &keyword, const D
 
     url.setQuery(query);
 
-    if (searchedFileUrl.isValid())
+    if (searchedFileUrl.isValid()) {
         url.setFragment(searchedFileUrl.toString(), DecodedMode);
+    }
 
     return url;
 }
@@ -471,11 +484,20 @@ DUrl DUrl::fromUserTaggedFile(const QString& tag_name, const QString& localFileP
     return uri;
 }
 
+DUrl DUrl::fromDeviceId(const QString &deviceId)
+{
+    DUrl url;
+    url.setScheme(DEVICE_SCHEME);
+    url.setPath(deviceId);
+
+    return url;
+}
+
 DUrlList DUrl::fromStringList(const QStringList &urls, QUrl::ParsingMode mode)
 {
     QList<DUrl> urlList;
 
-    for(const QString &string : urls) {
+    for (const QString &string : urls) {
         urlList << DUrl(string, mode);
     }
 
@@ -486,7 +508,7 @@ DUrlList DUrl::fromQUrlList(const QList<QUrl> &urls)
 {
     QList<DUrl> urlList;
 
-    for(const QUrl &url : urls) {
+    for (const QUrl &url : urls) {
         urlList << url;
     }
 
@@ -501,8 +523,9 @@ DUrl DUrl::fromUserInput(const QString &userInput, bool preferredLocalPath)
 DUrl DUrl::fromUserInput(const QString &userInput, QString workingDirectory,
                          bool preferredLocalPath, QUrl::UserInputResolutionOptions options)
 {
-    if (options != AssumeLocalFile)
+    if (options != AssumeLocalFile) {
         return QUrl::fromUserInput(userInput, workingDirectory, options);
+    }
 
     if ((userInput.startsWith("~") && preferredLocalPath) || userInput.startsWith("~/")) {
         return DUrl::fromLocalFile(QDir::homePath() + userInput.mid(1));
@@ -531,7 +554,7 @@ QStringList DUrl::toStringList(const DUrlList &urls, QUrl::FormattingOptions opt
 {
     QStringList urlList;
 
-    for(const DUrl &url : urls) {
+    for (const DUrl &url : urls) {
         urlList << url.toString(options);
     }
 
@@ -542,7 +565,7 @@ QList<QUrl> DUrl::toQUrlList(const DUrlList &urls)
 {
     QList<QUrl> urlList;
 
-    for(const DUrl &url : urls) {
+    for (const DUrl &url : urls) {
         urlList << url;
     }
 
@@ -571,21 +594,24 @@ DUrl DUrl::parentUrl(const DUrl &url)
     DUrl _url;
     const QString &path = url.path();
 
-    if (path == "/")
+    if (path == "/") {
         return DUrl();
+    }
 
     _url.setScheme(url.scheme());
     QStringList paths = path.split("/");
     paths.removeAt(0);
-    if (!paths.isEmpty() && paths.last().isEmpty())
+    if (!paths.isEmpty() && paths.last().isEmpty()) {
         paths.removeLast();
-    if (!paths.isEmpty())
+    }
+    if (!paths.isEmpty()) {
         paths.removeLast();
+    }
     QString _path;
     foreach (QString p, paths) {
         _path += "/" + p;
     }
-    if (_path.isEmpty()){
+    if (_path.isEmpty()) {
         _path += "/";
     }
     _url.setPath(_path);
@@ -600,8 +626,9 @@ bool DUrl::hasScheme(const QString &scheme)
 
 bool DUrl::operator ==(const DUrl &url) const
 {
-    if (!hasScheme(url.scheme()))
+    if (!hasScheme(url.scheme())) {
         return QUrl::operator ==(url);
+    }
 
     QString path1 = m_virtualPath;
     QString path2 = url.m_virtualPath;
@@ -618,16 +645,18 @@ bool DUrl::operator ==(const DUrl &url) const
 
 void DUrl::makeAbsolutePath()
 {
-    if (!hasScheme(this->scheme()))
+    if (!hasScheme(this->scheme())) {
         return;
+    }
 
     if (isLocalFile()) {
         const QString &path = toLocalFile();
 
-        if (path.startsWith("~"))
+        if (path.startsWith("~")) {
             QUrl::setPath(QDir::homePath() + path.mid(1));
-        else
+        } else {
             QUrl::setPath(QFileInfo(path).absoluteFilePath());
+        }
     } else {
         const QString &path = this->path();
 
@@ -652,7 +681,7 @@ QString DUrl::toLocalFile() const
         return DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + path();
     } else if (isSearchFile()) {
         return searchedFileUrl().toLocalFile();
-    } else if(isAVFSFile()) {
+    } else if (isAVFSFile()) {
         return path();
     } else if (isTaggedFile()) {
         return taggedLocalFilePath();
@@ -682,16 +711,15 @@ QDebug operator<<(QDebug deg, const DUrl &url)
     return deg;
 }
 
-uint qHash(const DUrl &url, uint seed) Q_DECL_NOTHROW
-{
+uint qHash(const DUrl &url, uint seed) Q_DECL_NOTHROW {
     return qHash(url.scheme()) ^
-            qHash(url.userName()) ^
-            qHash(url.password()) ^
-            qHash(url.host()) ^
-            qHash(url.port(), seed) ^
-            qHash(url.m_virtualPath) ^
-            qHash(url.query()) ^
-            qHash(url.fragment());
+    qHash(url.userName()) ^
+    qHash(url.password()) ^
+    qHash(url.host()) ^
+    qHash(url.port(), seed) ^
+    qHash(url.m_virtualPath) ^
+    qHash(url.query()) ^
+    qHash(url.fragment());
 }
 QT_END_NAMESPACE
 

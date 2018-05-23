@@ -30,7 +30,7 @@
 
 #undef signals
 extern "C" {
-    #include <gio/gio.h>
+#include <gio/gio.h>
 }
 #define signals public
 
@@ -190,8 +190,8 @@ void QDiskInfo::setCan_mount(bool can_mount)
 }
 
 void QDiskInfo::updateGvfsFileSystemInfo()
-{   
-    if (m_mounted_root_uri.isEmpty()){
+{
+    if (m_mounted_root_uri.isEmpty()) {
         return;
     }
     std::string file_uri = m_mounted_root_uri.toStdString();
@@ -200,18 +200,19 @@ void QDiskInfo::updateGvfsFileSystemInfo()
     GFileInfo *info;
     GError *error;
     file = g_file_new_for_uri(file_uri.data());
-    if (file == NULL)
+    if (file == NULL) {
         return;
+    }
     error = NULL;
-    systemInfo = g_file_query_filesystem_info (file, "*", NULL, &error);
-    info = g_file_query_info (file, "*", G_FILE_QUERY_INFO_NONE, NULL, &error);
-    if (info == NULL){
+    systemInfo = g_file_query_filesystem_info(file, "*", NULL, &error);
+    info = g_file_query_info(file, "*", G_FILE_QUERY_INFO_NONE, NULL, &error);
+    if (info == NULL) {
         qWarning() << "g_file_query_filesystem_info" << error->message << error->code;
-        if (error->code == 0){
+        if (error->code == 0) {
             updateGvfsFileSystemInfo();
             return;
         }
-        g_error_free (error);
+        g_error_free(error);
         return;
     }
 
@@ -221,13 +222,13 @@ void QDiskInfo::updateGvfsFileSystemInfo()
     m_read_only = g_file_info_get_attribute_boolean(systemInfo, G_FILE_ATTRIBUTE_FILESYSTEM_READONLY);
     m_id_filesystem = QString(g_file_info_get_attribute_as_string(info, G_FILE_ATTRIBUTE_ID_FILESYSTEM));
 
-    if (m_used == 0){
+    if (m_used == 0) {
         m_used = m_total - m_free;
     }
 
-    g_object_unref (systemInfo);
-    g_object_unref (info);
-    g_object_unref (file);
+    g_object_unref(systemInfo);
+    g_object_unref(info);
+    g_object_unref(file);
 
 }
 
@@ -253,7 +254,7 @@ void QDiskInfo::setActivation_root_uri(const QString &activation_root_uri)
 
 bool QDiskInfo::isValid()
 {
-    if (id().isEmpty()){
+    if (id().isEmpty()) {
         return false;
     }
     return true;
@@ -309,15 +310,15 @@ void QDiskInfo::setDrive_unix_device(const QString &drive_unix_device)
     m_drive_unix_device = drive_unix_device;
 }
 
-QDiskInfo QDiskInfo::getDiskInfo(const DFileInfo &fileInfo)
+QDiskInfo QDiskInfo::getDiskInfo(const DAbstractFileInfo &fileInfo)
 {
     QDiskInfo info;
     qDebug() << fileInfo.filePath();
     UDiskDeviceInfoPointer uDiskDeviceInfoPointer = deviceListener->getDeviceByPath(fileInfo.filePath());
-    if(!uDiskDeviceInfoPointer){
+    if (!uDiskDeviceInfoPointer) {
         uDiskDeviceInfoPointer = deviceListener->getDeviceByFilePath(fileInfo.filePath());
     }
-    if (uDiskDeviceInfoPointer){
+    if (uDiskDeviceInfoPointer) {
         info = uDiskDeviceInfoPointer->getDiskInfo();
     }
     return info;

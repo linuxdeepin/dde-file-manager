@@ -96,7 +96,7 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent>& event)
             DFileManagerWindow *window = qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(event->windowId()));
 
             if (window) {
-                window->getLeftSideBar()->scene()->onRequestRenameTag(url);
+//                window->getLeftSideBar()->scene()->onRequestRenameTag(url);
             }
         }
         break;

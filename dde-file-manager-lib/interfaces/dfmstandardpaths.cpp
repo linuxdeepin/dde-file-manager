@@ -38,37 +38,37 @@ QString DFMStandardPaths::standardLocation(DFMStandardPaths::StandardLocation ty
         return QDir::homePath() + "/.local/share/Trash/files";
     case TrashInfosPath:
         return QDir::homePath() + "/.local/share/Trash/info";
-    case TranslationPath:{
+    case TranslationPath: {
         QString path = APPSHAREDIR"/translations";
-        if (!QDir(path).exists()){
+        if (!QDir(path).exists()) {
             path = qApp->applicationDirPath() + "/translations";
         }
         return path;
     }
-    case TemplatesPath:{
+    case TemplatesPath: {
         QString path = APPSHAREDIR"/templates";
-        if (!QDir(path).exists()){
+        if (!QDir(path).exists()) {
             path = qApp->applicationDirPath() + "/templates";
         }
         return path;
     }
-    case MimeTypePath:{
+    case MimeTypePath: {
         QString path = APPSHAREDIR"/mimetypes";
-        if (!QDir(path).exists()){
+        if (!QDir(path).exists()) {
             path = qApp->applicationDirPath() + "/mimetypes";
         }
         return path;
     }
-    case PluginsPath:{
+    case PluginsPath: {
         QString path = PLUGINDIR;
-        if (!QDir(path).exists()){
+        if (!QDir(path).exists()) {
             path = QString::fromLocal8Bit(PLUGINDIR).split(':').last();
         }
         return path;
     }
-    case DbusFileDialogConfPath:{
+    case DbusFileDialogConfPath: {
         QString path = APPSHAREDIR"/dbusfiledialog/dbus_filedialog_blacklist.conf";
-        if (!QDir(path).exists()){
+        if (!QDir(path).exists()) {
             path = QDir::currentPath() + "/dbusfiledialog/dbus_filedialog_blacklist.conf";
         }
         return path;
@@ -111,6 +111,8 @@ QString DFMStandardPaths::standardLocation(DFMStandardPaths::StandardLocation ty
         return USERSHARE_ROOT;
     case ComputerRootPath:
         return COMPUTER_ROOT;
+    case Root:
+        return "/";
     }
 
     return QString();

@@ -23,13 +23,13 @@
  */
 
 #include "dfilemanagerwindow.h"
-#include "dleftsidebar.h"
+//#include "dleftsidebar.h"
 #include "dtoolbar.h"
 #include "dfileview.h"
 #include "fileviewhelper.h"
 #include "ddetailview.h"
 #include "dfilemenu.h"
-#include "dsearchbar.h"
+//#include "dsearchbar.h"
 #include "dsplitter.h"
 #include "extendview.h"
 #include "dstatusbar.h"
@@ -41,6 +41,8 @@
 #include "dfileservices.h"
 #include "dfilesystemmodel.h"
 #include "dfmviewmanager.h"
+#include "dfmsidebar.h"
+#include "dfmaddressbar.h"
 
 #include "app/define.h"
 #include "dfmevent.h"
@@ -100,7 +102,8 @@ public:
 
     QPushButton *logoButton{ nullptr };
     QFrame *centralWidget{ nullptr };
-    DLeftSideBar *leftSideBar{ nullptr };
+//    DLeftSideBar *leftSideBar{ nullptr };
+    DFMSideBar *leftSideBar{ nullptr };
     QFrame *rightView { nullptr };
     DToolBar *toolbar{ nullptr };
     TabBar *tabBar { nullptr };
@@ -371,7 +374,7 @@ void DFileManagerWindow::onCurrentTabChanged(int tabIndex)
             return;
         }
 
-        d->toolbar->setCrumb(tab->fileView()->rootUrl());
+        d->toolbar->setCrumbBar(tab->fileView()->rootUrl());
         switchToView(tab->fileView());
 
         if (currentUrl().isSearchFile()) {
@@ -418,7 +421,7 @@ DFMBaseView *DFileManagerWindow::getFileView() const
     return d->currentView;
 }
 
-DLeftSideBar *DFileManagerWindow::getLeftSideBar() const
+DFMSideBar *DFileManagerWindow::getLeftSideBar() const
 {
     D_DC(DFileManagerWindow);
 
@@ -776,16 +779,21 @@ void DFileManagerWindow::initSplitter()
     d->splitter->addWidget(d->rightView);
     d->splitter->setChildrenCollapsible(false);
 
-    QObject::connect(d->leftSideBar, &DLeftSideBar::moveSplitter, d->splitter, &DSplitter::moveSplitter);
+//    QObject::connect(d->leftSideBar, &DLeftSideBar::moveSplitter, d->splitter, &DSplitter::moveSplitter);
 }
 
 void DFileManagerWindow::initLeftSideBar()
 {
     D_D(DFileManagerWindow);
 
-    d->leftSideBar = new DLeftSideBar(this);
+//    d->leftSideBar = new DLeftSideBar(this);
+    d->leftSideBar = new DFMSideBar(this);
     d->leftSideBar->setObjectName("LeftSideBar");
     d->leftSideBar->setFixedWidth(LEFTSIDEBAR_MAX_WIDTH);
+    // connections
+    connect(this, &DFileManagerWindow::currentUrlChanged, this, [this, d]() {
+        d->leftSideBar->setCurrentUrl(currentUrl());
+    });
 }
 
 void DFileManagerWindow::initRightView()
@@ -1008,7 +1016,7 @@ void DFileManagerWindow::initRenameBarState()
     DFileManagerWindowPrivate *const d{ d_func() };
 
     bool expected{ true };
-    ///###: CAS, after we draged a tab to leave TabBar for creating a new window.
+    ///###: CAS, when we draged a tab to leave TabBar for creating a new window.
     if (DFileManagerWindow::flagForNewWindowFromTab.compare_exchange_strong(expected, false, std::memory_order_seq_cst)) {
 
         if (static_cast<bool>(DFileManagerWindow::renameBarState) == true) { //###: when we drag a tab to create a new window, but the RenameBar is showing in last window.

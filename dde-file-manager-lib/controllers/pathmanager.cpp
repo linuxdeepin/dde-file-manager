@@ -86,7 +86,7 @@ QString PathManager::getSystemPath(QString key)
     return path;
 }
 
-QString PathManager::getSystemPathDisplayName(QString key)
+QString PathManager::getSystemPathDisplayName(QString key) const
 {
     if (m_systemPathDisplayNamesMap.contains(key))
         return m_systemPathDisplayNamesMap.value(key);

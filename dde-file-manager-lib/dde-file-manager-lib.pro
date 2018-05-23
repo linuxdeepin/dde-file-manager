@@ -114,6 +114,7 @@ HEADERS += \
     views/dbookmarkscene.h \
     views/dbookmarkitem.h \
     views/dbookmarkitemgroup.h \
+    views/dfmsidebaritemgroup.h \
     views/dbookmarkrootitem.h \
     views/dbookmarkview.h \
     controllers/trashmanager.h \
@@ -237,7 +238,34 @@ HEADERS += \
     controllers/tagmanagerdaemoncontroller.h \
     controllers/interface/tagmanagerdaemon_interface.h \
     shutil/danythingmonitor.h \
-    interfaces/dfmsettings.h
+    interfaces/dfmsettings.h \
+    interfaces/dfmsidebar.h \
+    interfaces/dfmsidebaritem.h \
+    views/dfmsidebaritemseparator.h \
+    views/dfmsidebardefaultitem.h \
+    views/dfmsidebarbookmarkitem.h \
+    views/dfmsidebartrashitem.h \
+    views/dfmsidebardeviceitem.h \
+    views/dfmsidebarnetworkitem.h \
+    views/dfmsidebartagitem.h \
+    interfaces/dfmcrumbbar.h \
+    interfaces/dfmcrumbitem.h \
+    interfaces/dfmcrumbinterface.h \
+    interfaces/plugins/dfmcrumbplugin.h \
+    interfaces/plugins/dfmcrumbfactory.h \
+    interfaces/dfmcrumbmanager.h \
+    controllers/dfmfilecrumbcontroller.h \
+    controllers/dfmcomputercrumbcontroller.h \
+    controllers/dfmbookmarkcrumbcontroller.h \
+    controllers/dfmtagcrumbcontroller.h \
+    controllers/dfmnetworkcrumbcontroller.h \
+    controllers/dfmtrashcrumbcontroller.h \
+    controllers/dfmusersharecrumbcontroller.h \
+    controllers/dfmavfscrumbcontroller.h \
+    controllers/dfmsmbcrumbcontroller.h \
+    controllers/dfmmtpcrumbcontroller.h \
+    views/dfmaddressbar.h \
+    views/dcompleterlistview.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -274,6 +302,7 @@ SOURCES += \
     views/dbookmarkscene.cpp \
     views/dbookmarkitem.cpp \
     views/dbookmarkitemgroup.cpp \
+    views/dfmsidebaritemgroup.cpp \
     views/dbookmarkrootitem.cpp \
     views/dbookmarkview.cpp \
     controllers/trashmanager.cpp \
@@ -390,7 +419,34 @@ SOURCES += \
     controllers/tagmanagerdaemoncontroller.cpp \
     controllers/interface/tagmanagerdaemon_interface.cpp \
     shutil/danythingmonitor.cpp \
-    interfaces/dfmsettings.cpp
+    interfaces/dfmsettings.cpp \
+    interfaces/dfmsidebar.cpp \
+    interfaces/dfmsidebaritem.cpp \
+    views/dfmsidebaritemseparator.cpp \
+    views/dfmsidebardefaultitem.cpp \
+    views/dfmsidebarbookmarkitem.cpp \
+    views/dfmsidebartrashitem.cpp \
+    views/dfmsidebardeviceitem.cpp \
+    views/dfmsidebarnetworkitem.cpp \
+    views/dfmsidebartagitem.cpp \
+    interfaces/dfmcrumbbar.cpp \
+    interfaces/dfmcrumbitem.cpp \
+    interfaces/dfmcrumbinterface.cpp \
+    interfaces/plugins/dfmcrumbplugin.cpp \
+    interfaces/plugins/dfmcrumbfactory.cpp \
+    interfaces/dfmcrumbmanager.cpp \
+    controllers/dfmfilecrumbcontroller.cpp \
+    controllers/dfmcomputercrumbcontroller.cpp \
+    controllers/dfmbookmarkcrumbcontroller.cpp \
+    controllers/dfmtagcrumbcontroller.cpp \
+    controllers/dfmnetworkcrumbcontroller.cpp \
+    controllers/dfmtrashcrumbcontroller.cpp \
+    controllers/dfmusersharecrumbcontroller.cpp \
+    controllers/dfmavfscrumbcontroller.cpp \
+    controllers/dfmsmbcrumbcontroller.cpp \
+    controllers/dfmmtpcrumbcontroller.cpp \
+    views/dfmaddressbar.cpp \
+    views/dcompleterlistview.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET
@@ -494,8 +550,4 @@ INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations
 
 DISTFILES += \
     mimetypeassociations/mimetypeassociations.json \
-    configure/default-view-states.json \
-    skin/qss/filemanageradmin.qss \
-    themes/light/DFileViewRoot.theme \
-    themes/light/PreviewDialogDefault \
-    themes/light/MusicPreviewDialog.theme
+    configure/default-view-states.json

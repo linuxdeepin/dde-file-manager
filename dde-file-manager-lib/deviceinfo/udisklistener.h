@@ -63,8 +63,8 @@ public:
     QString lastPart(const QString &path);
     UDiskDeviceInfoPointer hasDeviceInfo(const QString &id);
 
-    void addSubscriber(Subscriber* sub);
-    void removeSubscriber(Subscriber* sub);
+    void addSubscriber(Subscriber *sub);
+    void removeSubscriber(Subscriber *sub);
 
     QMap<QString, UDiskDeviceInfoPointer> getAllDeviceInfos();
     QList<UDiskDeviceInfoPointer> getDeviceList();
@@ -72,6 +72,11 @@ public:
     bool isDeviceFolder(const QString &path) const;
     bool isInDeviceFolder(const QString &path) const;
     bool isInRemovableDeviceFolder(const QString &path) const;
+
+    const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const Q_DECL_OVERRIDE;
+    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const Q_DECL_OVERRIDE;
+    DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
+
     UDiskDeviceInfoPointer getDeviceByDevicePath(const QString &deveicePath);
     UDiskDeviceInfoPointer getDeviceByMountPoint(const QString &mountPoint);
     UDiskDeviceInfoPointer getDeviceByMountPointFilePath(const QString &filePath);
@@ -92,7 +97,7 @@ public:
 
     bool isMountedRemovableDiskExits();
 
-    bool isInSameDevice(const QString& srcPath, const QString &targetPath);
+    bool isInSameDevice(const QString &srcPath, const QString &targetPath);
 
 signals:
     void volumeAdded(UDiskDeviceInfoPointer device);
@@ -103,11 +108,11 @@ signals:
 
 public slots:
     void update();
-    void addMountDiskInfo(const QDiskInfo& diskInfo);
-    void removeMountDiskInfo(const QDiskInfo& diskInfo);
-    void addVolumeDiskInfo(const QDiskInfo& diskInfo);
-    void removeVolumeDiskInfo(const QDiskInfo& diskInfo);
-    void changeVolumeDiskInfo(const QDiskInfo& diskInfo);
+    void addMountDiskInfo(const QDiskInfo &diskInfo);
+    void removeMountDiskInfo(const QDiskInfo &diskInfo);
+    void addVolumeDiskInfo(const QDiskInfo &diskInfo);
+    void removeVolumeDiskInfo(const QDiskInfo &diskInfo);
+    void changeVolumeDiskInfo(const QDiskInfo &diskInfo);
     void mount(const QString &path);
     void unmount(const QString &path);
     void eject(const QString &path);
@@ -119,11 +124,8 @@ private:
     QMap<QString, UDiskDeviceInfoPointer> m_map;
     QMap<QString, QString> m_volumeLetters;
 
-    QList<Subscriber*> m_subscribers;
+    QList<Subscriber *> m_subscribers;
 
-public:
-    const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const Q_DECL_OVERRIDE;
-    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const Q_DECL_OVERRIDE;
 };
 
 #endif // UDISKLISTENER_H

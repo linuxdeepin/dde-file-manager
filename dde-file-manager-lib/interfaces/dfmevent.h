@@ -106,33 +106,64 @@ public:
 
     static Type nameToType(const QString &name);
     static QString typeToName(Type type);
-    inline Type type() const { return static_cast<Type>(m_type);}
-    inline void setType(Type type) {m_type = type;}
-    inline QPointer<const QObject> sender() const {return m_sender;}
-    inline void setSender(const QObject *sender) {m_sender = sender;}
+    inline Type type() const
+    {
+        return static_cast<Type>(m_type);
+    }
+    inline void setType(Type type)
+    {
+        m_type = type;
+    }
+    inline QPointer<const QObject> sender() const
+    {
+        return m_sender;
+    }
+    inline void setSender(const QObject *sender)
+    {
+        m_sender = sender;
+    }
 
-    inline void setAccepted(bool accepted) { m_accept = accepted; }
-    inline bool isAccepted() const { return m_accept; }
+    inline void setAccepted(bool accepted)
+    {
+        m_accept = accepted;
+    }
+    inline bool isAccepted() const
+    {
+        return m_accept;
+    }
 
-    inline void accept() { m_accept = true; }
-    inline void ignore() { m_accept = false; }
+    inline void accept()
+    {
+        m_accept = true;
+    }
+    inline void ignore()
+    {
+        m_accept = false;
+    }
 
     quint64 windowId() const;
     void setWindowId(quint64 id);
 
     //! 在DFileServices中通过此url列表来获取处理此事件的Controller
     virtual DUrlList handleUrlList() const;
-    inline void setData(const QVariant &data) { m_data = data;}
+    inline void setData(const QVariant &data)
+    {
+        m_data = data;
+    }
     template<typename T>
-    void setData(T&& data)
+    void setData(T &&data)
     {
         m_data = QVariant::fromValue(std::forward<T>(data));
     }
     inline QVariant data() const
-    { return m_data;}
+    {
+        return m_data;
+    }
     template<typename T>
     inline T data() const
-    { return qvariant_cast<T>(m_data);}
+    {
+        return qvariant_cast<T>(m_data);
+    }
 
 //    template<typename T>
 //    inline T data()const
@@ -141,24 +172,38 @@ public:
 //    }
 
     inline DUrl fileUrl() const
-    { return data<DUrl>();}
+    {
+        return data<DUrl>();
+    }
     inline DUrlList fileUrlList() const
-    { return data<DUrlList>();}
+    {
+        return data<DUrlList>();
+    }
 
     inline QVariantMap propertys() const
-    { return m_propertys;}
+    {
+        return m_propertys;
+    }
     inline QVariant property(const QString &name, const QVariant &defaultValue = QVariant()) const
-    { return m_propertys.value(name, defaultValue);}
+    {
+        return m_propertys.value(name, defaultValue);
+    }
     template<typename T>
-    T property(const QString &name, T&& defaultValue) const
-    { return qvariant_cast<T>(m_propertys.value(name, QVariant::fromValue(std::forward<T>(defaultValue))));}
+    T property(const QString &name, T &&defaultValue) const
+    {
+        return qvariant_cast<T>(m_propertys.value(name, QVariant::fromValue(std::forward<T>(defaultValue))));
+    }
     template<typename T>
     T property(const QString &name) const
-    { return qvariant_cast<T>(property(name));}
+    {
+        return qvariant_cast<T>(property(name));
+    }
     inline void setProperty(const QString &name, const QVariant &value)
-    { m_propertys[name] = value;}
+    {
+        m_propertys[name] = value;
+    }
     template<typename T>
-    void setProperty(const QString &name, T&& value)
+    void setProperty(const QString &name, T &&value)
     {
         m_propertys[name] = QVariant::fromValue(std::forward<T>(value));
     }
@@ -186,10 +231,10 @@ const T dfmevent_cast(const DFMEvent &event)
     if (!QString(typeid(T).name()).contains(DFMEvent::typeToName(event.type()))) {
         DFMEvent e;
 
-        return *reinterpret_cast<T*>(&e);
+        return *reinterpret_cast<T *>(&e);
     }
 
-    return *reinterpret_cast<const T*>(&event);
+    return *reinterpret_cast<const T *>(&event);
 }
 
 template<typename T>
@@ -198,10 +243,10 @@ T dfmevent_cast(DFMEvent &event)
     if (!QString(typeid(T).name()).contains(DFMEvent::typeToName(event.type()))) {
         DFMEvent e;
 
-        return *reinterpret_cast<T*>(&e);
+        return *reinterpret_cast<T *>(&e);
     }
 
-    return *reinterpret_cast<T*>(&event);
+    return *reinterpret_cast<T *>(&event);
 }
 
 QT_BEGIN_NAMESPACE
@@ -214,7 +259,10 @@ public:
     explicit DFMUrlBaseEvent(const QObject *sender, const DUrl &url);
     explicit DFMUrlBaseEvent(Type type, const QObject *sender, const DUrl &url);
 
-    inline DUrl url() const { return qvariant_cast<DUrl>(m_data);}
+    inline DUrl url() const
+    {
+        return qvariant_cast<DUrl>(m_data);
+    }
 
     static QSharedPointer<DFMUrlBaseEvent> fromJson(Type type, const QJsonObject &json);
 };
@@ -226,14 +274,17 @@ public:
     explicit DFMUrlListBaseEvent(const QObject *sender, const DUrlList &list);
     explicit DFMUrlListBaseEvent(Type type, const QObject *sender, const DUrlList &list);
 
-    inline DUrlList urlList() const { return qvariant_cast<DUrlList>(m_data);}
+    inline DUrlList urlList() const
+    {
+        return qvariant_cast<DUrlList>(m_data);
+    }
 
     static QSharedPointer<DFMUrlListBaseEvent> fromJson(Type type, const QJsonObject &json);
 };
 Q_DECLARE_METATYPE(DFMUrlListBaseEvent)
 
 template<class T, typename... Args>
-QSharedPointer<T> dMakeEventPointer(Args&&... args)
+QSharedPointer<T> dMakeEventPointer(Args &&... args)
 {
     return QSharedPointer<T>(new T(std::forward<Args>(args)...));
 }
@@ -293,15 +344,25 @@ public:
 class DFMRenameEvent : public DFMEvent
 {
 public:
-    explicit DFMRenameEvent(const QObject *sender, const DUrl &from, const DUrl &to);
+    explicit DFMRenameEvent(const QObject *sender, const DUrl &from, const DUrl &to, const bool silent = false);
 
-    inline DUrl fromUrl() const { return qvariant_cast<QPair<DUrl, DUrl>>(m_data).first;}
-    inline DUrl toUrl() const { return qvariant_cast<QPair<DUrl, DUrl>>(m_data).second;}
+    inline DUrl fromUrl() const
+    {
+        return qvariant_cast<QPair<DUrl, DUrl>>(m_data).first;
+    }
+    inline DUrl toUrl() const
+    {
+        return qvariant_cast<QPair<DUrl, DUrl>>(m_data).second;
+    }
 
     DUrlList handleUrlList() const Q_DECL_OVERRIDE;
 
+    bool silent() const;
+
     inline static QVariant makeData(const DUrl &from, const DUrl &to)
-    { return QVariant::fromValue(QPair<DUrl, DUrl>(from, to));}
+    {
+        return QVariant::fromValue(QPair<DUrl, DUrl>(from, to));
+    }
 
     static QSharedPointer<DFMRenameEvent> fromJson(const QJsonObject &json);
 };
@@ -375,13 +436,21 @@ class DFMCreateSymlinkEvent : public DFMEvent
 public:
     explicit DFMCreateSymlinkEvent(const QObject *sender, const DUrl &fileUrl, const DUrl &toUrl);
 
-    inline DUrl fileUrl() const { return qvariant_cast<QPair<DUrl, DUrl>>(m_data).first;}
-    inline DUrl toUrl() const { return qvariant_cast<QPair<DUrl, DUrl>>(m_data).second;}
+    inline DUrl fileUrl() const
+    {
+        return qvariant_cast<QPair<DUrl, DUrl>>(m_data).first;
+    }
+    inline DUrl toUrl() const
+    {
+        return qvariant_cast<QPair<DUrl, DUrl>>(m_data).second;
+    }
 
     DUrlList handleUrlList() const Q_DECL_OVERRIDE;
 
     inline static QVariant makeData(const DUrl &url, const DUrl &to)
-    { return QVariant::fromValue(QPair<DUrl, DUrl>(url, to));}
+    {
+        return QVariant::fromValue(QPair<DUrl, DUrl>(url, to));
+    }
 
     static QSharedPointer<DFMCreateSymlinkEvent> fromJson(const QJsonObject &json);
 };
@@ -598,11 +667,11 @@ public:
 class DFMChangeTagColorEvent : public DFMEvent
 {
 public:
-    explicit DFMChangeTagColorEvent(const QObject* sender, const QColor& color, const DUrl& tagUrl);
-    DFMChangeTagColorEvent(const DFMChangeTagColorEvent& other)=delete;
-    DFMChangeTagColorEvent& operator=(const DFMChangeTagColorEvent& other)=delete;
+    explicit DFMChangeTagColorEvent(const QObject *sender, const QColor &color, const DUrl &tagUrl);
+    DFMChangeTagColorEvent(const DFMChangeTagColorEvent &other) = delete;
+    DFMChangeTagColorEvent &operator=(const DFMChangeTagColorEvent &other) = delete;
 
-    static QSharedPointer<DFMChangeTagColorEvent> fromJson(const QJsonObject& json);
+    static QSharedPointer<DFMChangeTagColorEvent> fromJson(const QJsonObject &json);
 
     QColor m_newColorForTag{};
     DUrl m_tagUrl{};

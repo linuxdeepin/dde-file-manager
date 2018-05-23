@@ -45,6 +45,7 @@
 #define FTP_SCHEME "ftp"
 #define SFTP_SCHEME "sftp"
 #define TAG_SCHEME "tag"
+#define DEVICE_SCHEME "device"
 
 #define TRASH_ROOT "trash:///"
 #define RECENT_ROOT "recent:///"
@@ -56,6 +57,7 @@
 #define USERSHARE_ROOT "usershare:///"
 #define AVFS_ROOT "avfs:///"
 #define TAG_ROOT "tag:///"
+#define DEVICE_ROOT "device:///"
 
 class DUrl;
 
@@ -71,11 +73,11 @@ public:
     DUrl();
     DUrl(const QUrl &copy);
 
-    virtual ~DUrl()=default;
-    DUrl(const DUrl& other);
-    DUrl(DUrl&& other);
-    DUrl& operator=(const DUrl& other);
-    DUrl& operator=(DUrl&& other);
+    virtual ~DUrl() = default;
+    DUrl(const DUrl &other);
+    DUrl(DUrl &&other);
+    DUrl &operator=(const DUrl &other);
+    DUrl &operator=(DUrl &&other);
 
 
 #ifdef QT_NO_URL_CAST_FROM_STRING
@@ -103,7 +105,7 @@ public:
     bool isSFTPFile() const;
     bool isTaggedFile() const;
 
-    QString toString(FormattingOptions options = FormattingOptions( PrettyDecoded )) const;
+    QString toString(FormattingOptions options = FormattingOptions(PrettyDecoded)) const;
 
     QString searchKeyword() const;
     DUrl searchTargetUrl() const;
@@ -121,7 +123,7 @@ public:
     static DUrl fromLocalFile(const QString &filePath);
     static DUrl fromTrashFile(const QString &filePath);
     static DUrl fromRecentFile(const QString &filePath);
-    static DUrl fromBookMarkFile(const QString &filePath);
+    static DUrl fromBookMarkFile(const QString &filePath, const QString &name);
     static DUrl fromSearchFile(const QString &filePath);
     static DUrl fromSearchFile(const DUrl &targetUrl, const QString &keyword, const DUrl &searchedFileUrl = DUrl());
     static DUrl fromComputerFile(const QString &filePath);
@@ -132,6 +134,7 @@ public:
     static DUrl fromUserShareFile(const QString &filePath);
     static DUrl fromAVFSFile(const QString& filePath);
     static DUrl fromUserTaggedFile(const QString& tag_name, const QString& localFilePath) noexcept;
+    static DUrl fromDeviceId(const QString &deviceId);
 
     static DUrlList fromStringList(const QStringList &urls, ParsingMode mode = TolerantMode);
     static DUrlList fromQUrlList(const QList<QUrl> &urls);
@@ -141,7 +144,7 @@ public:
     static DUrl fromUserInput(const QString &userInput, QString workingDirectory,
                               bool preferredLocalPath = true, UserInputResolutionOptions options = AssumeLocalFile);
     static QStringList toStringList(const DUrlList &urls,
-                                    FormattingOptions options = FormattingOptions( PrettyDecoded ));
+                                    FormattingOptions options = FormattingOptions(PrettyDecoded));
     static QList<QUrl> toQUrlList(const DUrlList &urls);
 
     static DUrlList childrenList(const DUrl &url);
@@ -150,7 +153,9 @@ public:
 
     bool operator ==(const DUrl &url) const;
     inline bool operator !=(const DUrl &url) const
-    { return !operator ==(url);}
+    {
+        return !operator ==(url);
+    }
     friend Q_CORE_EXPORT uint qHash(const DUrl &url, uint seed) Q_DECL_NOTHROW;
 
     void makeAbsolutePath();

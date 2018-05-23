@@ -149,8 +149,9 @@ DFMEvent &DFMEvent::operator =(const DFMEvent &other)
 DFMEvent::Type DFMEvent::nameToType(const QString &name)
 {
     for (int i = UnknowType; i <= CustomBase; ++i) {
-        if (fmeventType2String((DFMEvent::Type)i) == name)
+        if (fmeventType2String((DFMEvent::Type)i) == name) {
             return DFMEvent::Type(i);
+        }
     }
 
     return UnknowType;
@@ -163,18 +164,21 @@ QString DFMEvent::typeToName(DFMEvent::Type type)
 
 quint64 DFMEvent::windowId() const
 {
-    if (m_id > 0)
+    if (m_id > 0) {
         return m_id;
+    }
 
-    if (!m_sender)
+    if (!m_sender) {
         return 0;
+    }
 
-    const QWidget *w = qobject_cast<const QWidget*>(m_sender.data());
+    const QWidget *w = qobject_cast<const QWidget *>(m_sender.data());
 
-    if (w)
+    if (w) {
         return WindowManager::getWindowId(w);
+    }
 
-    const QGraphicsWidget *gw = qobject_cast<const QGraphicsWidget*>(m_sender.data());
+    const QGraphicsWidget *gw = qobject_cast<const QGraphicsWidget *>(m_sender.data());
 
     return (gw && !gw->scene()->views().isEmpty()) ? WindowManager::getWindowId(gw->scene()->views().first()) : 0;
 }
@@ -191,8 +195,9 @@ DUrlList DFMEvent::handleUrlList() const
     if (list.isEmpty()) {
         const DUrl &url = qvariant_cast<DUrl>(m_data);
 
-        if (url.isValid())
+        if (url.isValid()) {
             list << url;
+        }
     }
 
     return list;
@@ -389,8 +394,8 @@ QSharedPointer<DFMDecompressHereEvnet> DFMDecompressHereEvnet::fromJson(const QJ
 }
 
 DFMWriteUrlsToClipboardEvent::DFMWriteUrlsToClipboardEvent(const QObject *sender,
-                                                           DFMGlobal::ClipboardAction action,
-                                                           const DUrlList &list)
+        DFMGlobal::ClipboardAction action,
+        const DUrlList &list)
     : DFMUrlListBaseEvent(WriteUrlsToClipboard, sender, list)
 {
     setProperty(QT_STRINGIFY(DFMWriteUrlsToClipboardEvent::action), action);
@@ -410,17 +415,23 @@ QSharedPointer<DFMWriteUrlsToClipboardEvent> DFMWriteUrlsToClipboardEvent::fromJ
     return event;
 }
 
-DFMRenameEvent::DFMRenameEvent(const QObject *sender, const DUrl &from, const DUrl &to)
+DFMRenameEvent::DFMRenameEvent(const QObject *sender, const DUrl &from, const DUrl &to, const bool silent)
     : DFMEvent(RenameFile, sender)
 {
     setData(QPair<DUrl, DUrl>(from, to));
+    setProperty(QT_STRINGIFY(DFMRenameEvent::silent), silent);
 }
 
 DUrlList DFMRenameEvent::handleUrlList() const
 {
-    const auto&& d = qvariant_cast<QPair<DUrl, DUrl>>(m_data);
+    const auto &&d = qvariant_cast<QPair<DUrl, DUrl>>(m_data);
 
     return DUrlList() << d.first << d.second;
+}
+
+bool DFMRenameEvent::silent() const
+{
+    return property(QT_STRINGIFY(DFMRenameEvent::silent), false);
 }
 
 QSharedPointer<DFMRenameEvent> DFMRenameEvent::fromJson(const QJsonObject &json)
@@ -549,7 +560,7 @@ DUrlList DFMCreateSymlinkEvent::handleUrlList() const
 QSharedPointer<DFMCreateSymlinkEvent> DFMCreateSymlinkEvent::fromJson(const QJsonObject &json)
 {
     return dMakeEventPointer<DFMCreateSymlinkEvent>(Q_NULLPTR, DUrl::fromUserInput(json["fileUrl"].toString()),
-                                                    DUrl::fromUserInput(json["toUrl"].toString()));
+            DUrl::fromUserInput(json["toUrl"].toString()));
 }
 
 DFMFileShareEvnet::DFMFileShareEvnet(const QObject *sender, const DUrl &url,
@@ -579,7 +590,7 @@ bool DFMFileShareEvnet::allowGuest() const
 QSharedPointer<DFMFileShareEvnet> DFMFileShareEvnet::fromJson(const QJsonObject &json)
 {
     return dMakeEventPointer<DFMFileShareEvnet>(Q_NULLPTR, DUrl::fromUserInput(json["url"].toString()), json["name"].toString(),
-                                                json["isWritable"].toBool(), json["allowGuest"].toBool());
+            json["isWritable"].toBool(), json["allowGuest"].toBool());
 }
 
 DFMCancelFileShareEvent::DFMCancelFileShareEvent(const QObject *sender, const DUrl &url)
@@ -605,7 +616,7 @@ QSharedPointer<DFMOpenInTerminalEvent> DFMOpenInTerminalEvent::fromJson(const QJ
 }
 
 DFMGetChildrensEvent::DFMGetChildrensEvent(const QObject *sender, const DUrl &url, const QStringList &nameFilters,
-                                           QDir::Filters filters, QDirIterator::IteratorFlags flags)
+        QDir::Filters filters, QDirIterator::IteratorFlags flags)
     : DFMUrlBaseEvent(GetChildrens, sender, url)
 {
     setProperty(QT_STRINGIFY(DFMGetChildrensEvent::nameFilters), nameFilters);
@@ -614,7 +625,7 @@ DFMGetChildrensEvent::DFMGetChildrensEvent(const QObject *sender, const DUrl &ur
 }
 
 DFMGetChildrensEvent::DFMGetChildrensEvent(const QObject *sender, const DUrl &url, const QStringList &nameFilters,
-                                           QDir::Filters filters)
+        QDir::Filters filters)
     : DFMGetChildrensEvent(sender, url, nameFilters, filters, QDirIterator::NoIteratorFlags)
 {
 
@@ -639,22 +650,23 @@ QSharedPointer<DFMGetChildrensEvent> DFMGetChildrensEvent::fromJson(const QJsonO
 {
     QStringList nameFilters;
 
-    for (const QJsonValue &value : json["nameFilters"].toArray())
+    for (const QJsonValue &value : json["nameFilters"].toArray()) {
         nameFilters << value.toString();
+    }
 
     return dMakeEventPointer<DFMGetChildrensEvent>(Q_NULLPTR, DUrl::fromUserInput(json["url"].toString()),
-                                                   nameFilters, (QDir::Filters)json["filters"].toInt());
+            nameFilters, (QDir::Filters)json["filters"].toInt());
 }
 
 DFMCreateDiriterator::DFMCreateDiriterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-                                           QDir::Filters filters, QDirIterator::IteratorFlags flags)
+        QDir::Filters filters, QDirIterator::IteratorFlags flags)
     : DFMGetChildrensEvent(sender, fileUrl, nameFilters, filters, flags)
 {
     m_type = CreateDiriterator;
 }
 
 DFMCreateDiriterator::DFMCreateDiriterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-                                           QDir::Filters filters)
+        QDir::Filters filters)
     : DFMGetChildrensEvent(sender, fileUrl, nameFilters, filters)
 {
     m_type = CreateDiriterator;
@@ -670,14 +682,14 @@ QSharedPointer<DFMCreateDiriterator> DFMCreateDiriterator::fromJson(const QJsonO
 }
 
 DFMCreateGetChildrensJob::DFMCreateGetChildrensJob(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-                                                   QDir::Filters filters, QDirIterator::IteratorFlags flags)
+        QDir::Filters filters, QDirIterator::IteratorFlags flags)
     : DFMCreateDiriterator(sender, fileUrl, nameFilters, filters, flags)
 {
     m_type = CreateGetChildrensJob;
 }
 
 DFMCreateGetChildrensJob::DFMCreateGetChildrensJob(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-                                                   QDir::Filters filters)
+        QDir::Filters filters)
     : DFMCreateDiriterator(sender, fileUrl, nameFilters, filters)
 {
     m_type = CreateGetChildrensJob;
@@ -722,7 +734,7 @@ DFMChangeCurrentUrlEvent::DFMChangeCurrentUrlEvent(const QObject *sender, const 
 
 const QWidget *DFMChangeCurrentUrlEvent::window() const
 {
-    return (const QWidget*)(property<quintptr>(QT_STRINGIFY(DFMChangeCurrentUrlEvent::window)));
+    return (const QWidget *)(property<quintptr>(QT_STRINGIFY(DFMChangeCurrentUrlEvent::window)));
 }
 
 QSharedPointer<DFMChangeCurrentUrlEvent> DFMChangeCurrentUrlEvent::fromJson(const QJsonObject &json)
@@ -792,7 +804,7 @@ DFMMenuActionEvent::DFMMenuActionEvent(const QObject *sender, const DFileMenu *m
 
 const DFileMenu *DFMMenuActionEvent::menu() const
 {
-    return (const DFileMenu*)property<quintptr>(QT_STRINGIFY(DFMMenuActionEvent::menu), 0);
+    return (const DFileMenu *)property<quintptr>(QT_STRINGIFY(DFMMenuActionEvent::menu), 0);
 }
 
 const DUrl DFMMenuActionEvent::currentUrl() const
