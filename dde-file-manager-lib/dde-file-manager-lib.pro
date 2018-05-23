@@ -236,7 +236,8 @@ HEADERS += \
     shutil/dsqlitehandle.h \
     controllers/tagmanagerdaemoncontroller.h \
     controllers/interface/tagmanagerdaemon_interface.h \
-    shutil/danythingmonitor.h
+    shutil/danythingmonitor.h \
+    interfaces/dfmsettings.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -388,7 +389,8 @@ SOURCES += \
     shutil/dsqlitehandle.cpp \
     controllers/tagmanagerdaemoncontroller.cpp \
     controllers/interface/tagmanagerdaemon_interface.cpp \
-    shutil/danythingmonitor.cpp
+    shutil/danythingmonitor.cpp \
+    interfaces/dfmsettings.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET
