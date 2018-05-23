@@ -1,3 +1,16 @@
+<a name="4.4.8.7"></a>
+## 4.4.8.7 (2018-05-23)
+
+
+#### Bug Fixes
+
+*   now you can choose to hide the suffix of file, when you are renaming a file. ([be2f4e99](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/be2f4e99d4bd97b2c08b6635dece7eeda1b41f84))
+* **wallpaper:**
+  *  thumbnail support HiDPI. ([62600ed7](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/62600ed71d35644b07e68c265e84a98a9578c3eb))
+  *  delayed loading wallpaper ([ac97bb3c](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/ac97bb3c9da2bc5d4d31c7f273bddb9fad9c50f0))
+
+
+
 <a name="4.4.8.6"></a>
 ## 4.4.8.6 (2018-05-04)
 
