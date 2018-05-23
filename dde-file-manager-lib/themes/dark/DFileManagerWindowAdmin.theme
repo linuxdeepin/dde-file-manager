@@ -632,3 +632,33 @@ QPushButton#NewTabButton:disabled {
     image: url(:/icons/images/icons/new_tab_disabled.png);
 }
 
+/*=============== Sidebar Begin ================*/
+
+dde_file_manager--DFMSideBarDeviceItem > Dtk--Widget--DImageButton {
+    qproperty-normalPic: ":/dark/icons/unmount_normal.svg";
+    qproperty-hoverPic: ":/dark/icons/unmount_hover.svg";
+    qproperty-pressPic: ":/dark/icons/unmount_press.svg";
+}
+
+/*================ Sidebar End =================*/
+
+/*============== Crumb Bar Begin ===============*/
+dde_file_manager--DFMCrumbBar {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+}
+
+dde_file_manager--DFMCrumbBarItem:checked {
+    background: #27acf8;
+}
+
+QWidget#crumbListHolder {
+    background: transparent;
+}
+
+QWidget#DCrumbListScrollArea {
+    border: none;
+    padding: 0;
+    background: transparent;
+}
+/*=============== Crumb Bar End ================*/

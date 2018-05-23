@@ -39,8 +39,7 @@ typedef QExplicitlySharedDataPointer<UDiskDeviceInfo> UDiskDeviceInfoPointer;
 class UDiskDeviceInfo : public DFileInfo
 {
 public:
-    enum MediaType
-    {
+    enum MediaType {
         unknown,
         native,
         phone,
@@ -64,7 +63,7 @@ public:
     QString getType() const;
     QString getPath() const;
     QString getMountPoint() const;
-    DUrl getMountPointUrl();
+    DUrl getMountPointUrl() const;
     QString getIcon() const;
     bool canEject() const;
     bool canStop() const;
@@ -89,6 +88,11 @@ public:
 
     QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
     QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
+
+    bool canRedirectionFileUrl() const Q_DECL_OVERRIDE;
+    DUrl redirectedFileUrl() const Q_DECL_OVERRIDE;
+
+    QVariantHash extensionPropertys() const Q_DECL_OVERRIDE;
 
     bool exists() const Q_DECL_OVERRIDE;
 

@@ -23,18 +23,24 @@
  */
 
 #include "bookmark.h"
+#include "dfileservices.h"
+
 #include <QIcon>
 
 BookMark::BookMark(const DUrl &url)
-    : DFileInfo(({DUrl tmp_url = DUrl::fromBookMarkFile("/");
-                          tmp_url.setFragment(url.toLocalFile());
-                          tmp_url;}))
+    : DAbstractFileInfo(url)
 {
+    m_name = url.fragment();
 
+    DUrl target(url.path());
+
+    if (target.isValid()) {
+        setProxy(DFileService::instance()->createFileInfo(nullptr, target));
+    }
 }
 
-BookMark::BookMark(QDateTime time, const QString &name, const DUrl &url)
-    :DFileInfo(url)
+BookMark::BookMark(QDateTime time, const QString &name, const DUrl &sourceUrl)
+    : BookMark(DUrl::fromBookMarkFile(sourceUrl.toString(), name))
 {
     m_time = time;
     m_name = name;
@@ -50,6 +56,11 @@ QDateTime BookMark::getDateTime()
     return m_time;
 }
 
+DUrl BookMark::sourceUrl() const
+{
+    return DUrl(fileUrl().path());
+}
+
 void BookMark::setDateTime(QDateTime time)
 {
     m_time = time;
@@ -57,10 +68,13 @@ void BookMark::setDateTime(QDateTime time)
 
 void BookMark::setName(const QString &name)
 {
+    DUrl tmpUrl = fileUrl();
+    tmpUrl.setFragment(name);
+    setUrl(tmpUrl);
     m_name = name;
 }
 
-QString BookMark::getName()
+QString BookMark::getName() const
 {
     return m_name;
 }
@@ -83,4 +97,32 @@ QString BookMark::getUuid() const
 void BookMark::setUuid(const QString &uuid)
 {
     m_uuid = uuid;
+}
+
+QString BookMark::fileDisplayName() const
+{
+    return getName();
+}
+
+bool BookMark::canRedirectionFileUrl() const
+{
+    return fileUrl() != DUrl(BOOKMARK_ROOT);
+}
+
+DUrl BookMark::redirectedFileUrl() const
+{
+    return sourceUrl();
+}
+
+DUrl BookMark::parentUrl() const
+{
+    return DUrl(BOOKMARK_ROOT);
+}
+
+DUrl BookMark::getUrlByNewFileName(const QString &name) const
+{
+    DUrl new_url = fileUrl();
+    new_url.setFragment(name);
+
+    return new_url;
 }

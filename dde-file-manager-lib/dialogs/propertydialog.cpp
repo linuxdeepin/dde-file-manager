@@ -49,6 +49,8 @@
 #include "views/windowmanager.h"
 #include "views/dfileview.h"
 #include "interfaces/dfilesystemmodel.h"
+#include "interfaces/dfmsidebar.h"
+#include "interfaces/dfmsidebaritem.h"
 
 #include "plugins/pluginmanager.h"
 #include "../plugininterfaces/menu/menuinterface.h"
@@ -102,13 +104,15 @@ NameTextEdit::NameTextEdit(const QString &text, QWidget *parent):
         qDebug() << this->textCursor().position() << "  " << text_length << " " << text.length();
         int cursor_pos = this->textCursor().position() - text_length + text.length();
 
-        while (text.toUtf8().size() > MAX_FILE_NAME_CHAR_COUNT) {
+        while (text.toUtf8().size() > MAX_FILE_NAME_CHAR_COUNT)
+        {
             list.removeAt(--cursor_pos);
 
             text = QString::fromUcs4(list.data(), list.size());
         }
 
-        if (text.count() != old_text.count()) {
+        if (text.count() != old_text.count())
+        {
             this->setText(text);
         }
 
@@ -116,7 +120,8 @@ NameTextEdit::NameTextEdit(const QString &text, QWidget *parent):
 
         cursor.movePosition(QTextCursor::Start);
 
-        do {
+        do
+        {
             QTextBlockFormat format = cursor.blockFormat();
 
             format.setLineHeight(TEXT_LINE_HEIGHT, QTextBlockFormat::FixedHeight);
@@ -148,12 +153,12 @@ void NameTextEdit::focusOutEvent(QFocusEvent *event)
 
 void NameTextEdit::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Escape){
+    if (event->key() == Qt::Key_Escape) {
         setIsCanceled(true);
         emit editFinished();
         return;
     }
-    if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter){
+    if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
         setIsCanceled(false);
         emit editFinished();
     }
@@ -222,7 +227,7 @@ void LinkSectionValueLabel::setLinkTargetUrl(const DUrl &linkTargetUrl)
 }
 
 
-PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* parent)
+PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *parent)
     : DDialog(parent)
     , m_fmevent(event)
     , m_url(url)
@@ -233,19 +238,19 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
 
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowFlags(windowFlags()
-                           &~ Qt::WindowMaximizeButtonHint
-                           &~ Qt::WindowMinimizeButtonHint
-                           &~ Qt::WindowSystemMenuHint);
+                   & ~ Qt::WindowMaximizeButtonHint
+                   & ~ Qt::WindowMinimizeButtonHint
+                   & ~ Qt::WindowSystemMenuHint);
     QString basicInfo = tr("Basic info");
     QString openWith = tr("Open with");
     QString shareManager = tr("Share Management");
     initUI();
     QString query = m_url.query();
     UDiskDeviceInfoPointer diskInfo = deviceListener->getDevice(query);
-    if (!diskInfo){
+    if (!diskInfo) {
         diskInfo = deviceListener->getDeviceByPath(m_url.path());
     }
-    if (diskInfo){
+    if (diskInfo) {
         QString name = diskInfo->getName();
         m_icon->setPixmap(diskInfo->fileIcon().pixmap(128, 128));
         m_edit->setPlainText(name);
@@ -258,7 +263,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
         m_expandGroup->expand(0)->setContent(m_deviceInfoFrame);
         m_expandGroup->expand(0)->setExpand(true);
 
-    }else if (m_url == DUrl::fromLocalFile("/")){
+    } else if (m_url == DUrl::fromLocalFile("/")) {
         m_icon->setPixmap(svgToPixmap(":/devices/images/device/drive-harddisk-256px.svg", 128, 128));
         m_edit->setPlainText(tr("System Disk"));
         m_editDisbaled = true;
@@ -268,9 +273,9 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
         titleList << basicInfo;
         m_expandGroup = addExpandWidget(titleList);
         m_expandGroup->expand(0)->setContent(m_localDeviceInfoFrame);
-    }else{
+    } else {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
-        if(!fileInfo){
+        if (!fileInfo) {
             close();
             return;
         }
@@ -278,26 +283,26 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
         m_edit->setPlainText(fileInfo->fileDisplayName());
         m_edit->setAlignment(Qt::AlignHCenter);
 
-        if (!fileInfo->canRename()){
+        if (!fileInfo->canRename()) {
             m_editDisbaled = true;
         }
 
         m_basicInfoFrame = createBasicInfoWidget(fileInfo);
 
         QStringList titleList;
-        if (fileInfo->isFile()){
+        if (fileInfo->isFile()) {
             titleList << basicInfo;
             titleList << openWith;
-        }else{
+        } else {
             titleList << basicInfo;
-            if (fileInfo->canShare()){
+            if (fileInfo->canShare()) {
                 titleList << shareManager;
             }
         }
         m_expandGroup = addExpandWidget(titleList);
         m_expandGroup->expand(0)->setContent(m_basicInfoFrame);
 
-        if (fileInfo->isFile()){
+        if (fileInfo->isFile()) {
             m_fileCount = 1;
             m_size = fileInfo->size();
 
@@ -305,8 +310,8 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
             m_expandGroup->expand(1)->setContent(m_OpenWithListWidget);
             m_expandGroup->expand(1)->setExpand(false);
 
-        }else if (fileInfo->isDir()){
-            if (fileInfo->canShare()){
+        } else if (fileInfo->isDir()) {
+            if (fileInfo->canShare()) {
                 m_shareinfoFrame = createShareInfoFrame(fileInfo);
                 m_expandGroup->expand(1)->setContent(m_shareinfoFrame);
                 m_expandGroup->expand(1)->setExpand(false);
@@ -316,7 +321,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
         }
     }
     initTextShowFrame(m_edit->toPlainText());
-    if (m_editDisbaled){
+    if (m_editDisbaled) {
         m_editButton->hide();
     }
 
@@ -332,9 +337,9 @@ void PropertyDialog::initUI()
 {
     m_icon->setFixedHeight(150);
     m_icon->setParent(this);
-    QFrame* m_editFrame = new QFrame;
+    QFrame *m_editFrame = new QFrame;
 
-    QHBoxLayout* editLayout = new QHBoxLayout;
+    QHBoxLayout *editLayout = new QHBoxLayout;
     editLayout->addStretch();
     editLayout->addWidget(m_edit);
     editLayout->addStretch();
@@ -354,7 +359,7 @@ void PropertyDialog::initUI()
     m_mainLayout->addWidget(m_icon, 0, Qt::AlignHCenter | Qt::AlignTop);
     m_mainLayout->addWidget(m_editStackWidget, 0, Qt::AlignHCenter | Qt::AlignTop);
 
-    QFrame* frame = new QFrame(this);
+    QFrame *frame = new QFrame(this);
     frame->setLayout(m_mainLayout);
     addContent(frame);
 }
@@ -366,7 +371,7 @@ void PropertyDialog::initConnect()
     DAbstractFileWatcher *fileWatcher = DFileService::instance()->createFileWatcher(this, m_url);
 
     connect(fileWatcher, &DAbstractFileWatcher::fileDeleted, this, &PropertyDialog::onChildrenRemoved);
-    connect(fileWatcher, &DAbstractFileWatcher::fileMoved, this, [this](const DUrl &from, const DUrl &to) {
+    connect(fileWatcher, &DAbstractFileWatcher::fileMoved, this, [this](const DUrl & from, const DUrl & to) {
         Q_UNUSED(to)
 
         onChildrenRemoved(from);
@@ -389,18 +394,18 @@ void PropertyDialog::renameFile()
 
     const DAbstractFileInfoPointer pfile = fileService->createFileInfo(this, m_url);
     int endPos = -1;
-    if(pfile->isFile()){
+    if (pfile->isFile()) {
 
         QString suffixStr{ pfile->suffix() };
-        if(suffixStr.isEmpty() == true){
+        if (suffixStr.isEmpty() == true) {
             endPos = m_edit->toPlainText().length() - pfile->suffix().length();
 
-        }else{
-            endPos = m_edit->toPlainText().length() - pfile->suffix().length()-1;
+        } else {
+            endPos = m_edit->toPlainText().length() - pfile->suffix().length() - 1;
         }
 
     }
-    if(endPos == -1) {
+    if (endPos == -1) {
         m_edit->selectAll();
         endPos = m_edit->toPlainText().length();
     }
@@ -421,7 +426,7 @@ void PropertyDialog::showTextShowFrame()
         DUrl oldUrl = m_url;
         DUrl newUrl = fileInfo->getUrlByNewFileName(m_edit->toPlainText());
 
-        if(oldUrl == newUrl){
+        if (oldUrl == newUrl) {
             m_editStackWidget->setCurrentIndex(1);
             return;
         }
@@ -432,8 +437,9 @@ void PropertyDialog::showTextShowFrame()
 
             initTextShowFrame(fileInfo->fileDisplayName());
             dialogManager->refreshPropertyDialogs(oldUrl, newUrl);
-            if (m_shareinfoFrame)
+            if (m_shareinfoFrame) {
                 m_shareinfoFrame->setFileinfo(fileInfo);
+            }
         } else {
             m_editStackWidget->setCurrentIndex(1);
         }
@@ -442,10 +448,10 @@ void PropertyDialog::showTextShowFrame()
 
 void PropertyDialog::onChildrenRemoved(const DUrl &fileUrl)
 {
-    if (m_url.isUserShareFile()){
+    if (m_url.isUserShareFile()) {
         return;
     }
-    if (fileUrl == m_url){
+    if (fileUrl == m_url) {
         close();
     }
 }
@@ -453,19 +459,24 @@ void PropertyDialog::onChildrenRemoved(const DUrl &fileUrl)
 void PropertyDialog::flickFolderToLeftsidBar()
 {
 
-    DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(m_fmevent.windowId()));
-    if(!window)
+    DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(m_fmevent.windowId()));
+    if (!window) {
         return;
+    }
 
     //when current window is minimized,cancle animation
-    if(window->windowState() == Qt::WindowMinimized)
+    if (window->windowState() == Qt::WindowMinimized) {
         return;
+    }
 
-    QPoint targetPos = window->mapFromGlobal(window->getLeftSideBar()->getMyShareItemCenterPos());
-
+    // we are actually using network group's center position as target position
+    // since it's used as a animation target position, a fuzzy result is okay.
+    QPoint targetPos = window->getLeftSideBar()->groupGeometry(
+                           DFMSideBar::groupName(DFMSideBar::GroupName::Network)
+                       ).center();
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
 
-    QLabel* aniLabel = new QLabel(window);
+    QLabel *aniLabel = new QLabel(window);
     aniLabel->raise();
     aniLabel->setFixedSize(m_icon->size());
     aniLabel->setAttribute(Qt::WA_TranslucentBackground);
@@ -473,68 +484,70 @@ void PropertyDialog::flickFolderToLeftsidBar()
     aniLabel->move(window->mapFromGlobal(m_icon->mapToGlobal(m_icon->pos())));
 
     int angle;
-    if(targetPos.x() > aniLabel->x())
+    if (targetPos.x() > aniLabel->x()) {
         angle = 45;
-    else
+    } else {
         angle = -45;
+    }
 
-    QVariantAnimation* xani = new QVariantAnimation(this);
+    QVariantAnimation *xani = new QVariantAnimation(this);
     xani->setStartValue(aniLabel->pos());
     xani->setEndValue(QPoint(targetPos.x(), angle));
     xani->setDuration(440);
 
-    QVariantAnimation* gani = new QVariantAnimation(this);
+    QVariantAnimation *gani = new QVariantAnimation(this);
     gani->setStartValue(aniLabel->geometry());
     gani->setEndValue(QRect(targetPos.x(), targetPos.y(), 20, 20));
     gani->setEasingCurve(QEasingCurve::InBack);
     gani->setDuration(440);
 
-    connect(xani, &QVariantAnimation::valueChanged, [=](const QVariant& val){
-        if(aniLabel){
-            aniLabel->move(QPoint(val.toPoint().x() - aniLabel->width()/2,aniLabel->y()));
+    connect(xani, &QVariantAnimation::valueChanged, [ = ](const QVariant & val) {
+        if (aniLabel) {
+            aniLabel->move(QPoint(val.toPoint().x() - aniLabel->width() / 2, aniLabel->y()));
             QImage img = fileInfo->fileIcon().pixmap(aniLabel->size()).toImage();
             QMatrix ma;
             ma.rotate(val.toPoint().y());
             img = img.transformed(ma, Qt::SmoothTransformation);
-            img = img.scaled(aniLabel->width()/2, aniLabel->height()/2, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            img = img.scaled(aniLabel->width() / 2, aniLabel->height() / 2, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             aniLabel->setPixmap(QPixmap::fromImage(img));
-            if(aniLabel->isHidden())
+            if (aniLabel->isHidden()) {
                 aniLabel->show();
+            }
         }
     });
-    connect(xani, &QVariantAnimation::finished, [=]{
+    connect(xani, &QVariantAnimation::finished, [ = ] {
         xani->deleteLater();
     });
 
-    connect(gani, &QVariantAnimation::valueChanged, [=](const QVariant& val){
+    connect(gani, &QVariantAnimation::valueChanged, [ = ](const QVariant & val) {
         aniLabel->move(QPoint(aniLabel->x(),
-                              val.toRect().y() - val.toRect().width()/2));
-        aniLabel->setFixedSize(val.toRect().size()* 2);
+                              val.toRect().y() - val.toRect().width() / 2));
+        aniLabel->setFixedSize(val.toRect().size() * 2);
     });
-    connect(gani, &QVariantAnimation::finished, [=]{
+    connect(gani, &QVariantAnimation::finished, [ = ] {
         gani->deleteLater();
         aniLabel->deleteLater();
-        window->getLeftSideBar()->playtShareAddedAnimation();
+//        window->getLeftSideBar()->playtShareAddedAnimation();
     });
     xani->start();
     gani->start();
 }
 void PropertyDialog::onOpenWithBntsChecked(QAbstractButton *w)
 {
-    if(w){
+    if (w) {
         MimesAppsManager::setDefautlAppForTypeByGio(w->property("mimeTypeName").toString(),
-                                                 w->property("appPath").toString());
+                w->property("appPath").toString());
     }
 }
 
 void PropertyDialog::onExpandChanged(const bool &e)
 {
-    DArrowLineExpand* expand = qobject_cast<DArrowLineExpand*>(sender());
-    if(expand){
-        if(e)
+    DArrowLineExpand *expand = qobject_cast<DArrowLineExpand *>(sender());
+    if (expand) {
+        if (e) {
             expand->setSeparatorVisible(false);
-        else{
-            QTimer::singleShot(200, expand, [=] {
+        } else {
+            QTimer::singleShot(200, expand, [ = ] {
                 expand->setSeparatorVisible(true);
             });
         }
@@ -543,8 +556,8 @@ void PropertyDialog::onExpandChanged(const bool &e)
 
 void PropertyDialog::mousePressEvent(QMouseEvent *event)
 {
-    if (m_edit->isVisible()){
-        if (event->button() != Qt::RightButton){
+    if (m_edit->isVisible()) {
+        if (event->button() != Qt::RightButton) {
             m_edit->setIsCanceled(false);
             emit m_edit->editFinished();
         }
@@ -555,13 +568,13 @@ void PropertyDialog::mousePressEvent(QMouseEvent *event)
 void PropertyDialog::startComputerFolderSize(const DUrl &url)
 {
     DUrl validUrl = url;
-    if (url.isUserShareFile()){
+    if (url.isUserShareFile()) {
         validUrl.setScheme(FILE_SCHEME);
     }
     DUrlList urls;
     urls << validUrl;
     m_sizeWorker = new FilesSizeWorker(urls);
-    QThread*  workerThread = new QThread;
+    QThread  *workerThread = new QThread;
     m_sizeWorker->moveToThread(workerThread);
 
     connect(workerThread, &QThread::finished, m_sizeWorker, &FilesSizeWorker::deleteLater);
@@ -578,9 +591,9 @@ void PropertyDialog::startComputerFolderSize(const DUrl &url)
 void PropertyDialog::toggleFileExecutable(bool isChecked)
 {
     QFile f(m_url.toLocalFile());
-    if (isChecked){
-        f.setPermissions(f.permissions() | QFile::ExeOwner |QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther);
-    }else{
+    if (isChecked) {
+        f.setPermissions(f.permissions() | QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther);
+    } else {
         f.setPermissions(f.permissions() & ~(QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther));
     }
 }
@@ -611,7 +624,7 @@ void PropertyDialog::hideEvent(QHideEvent *event)
     emit aboutToClosed(m_url);
     DDialog::hideEvent(event);
     emit closed(m_url);
-    if (m_sizeWorker){
+    if (m_sizeWorker) {
         m_sizeWorker->stop();
     }
 }
@@ -627,24 +640,25 @@ DExpandGroup *PropertyDialog::expandGroup() const
 
 int PropertyDialog::contentHeight() const
 {
-    return  (m_icon->height()+
-            m_editStackWidget->height()+
-            expandGroup()->expands().first()->getContent()->height()+
-            expandGroup()->expands().size()*30 +
-            contentsMargins().top()+
-            contentsMargins().bottom()+
+    return (m_icon->height() +
+            m_editStackWidget->height() +
+            expandGroup()->expands().first()->getContent()->height() +
+            expandGroup()->expands().size() * 30 +
+            contentsMargins().top() +
+            contentsMargins().bottom() +
             40);
 }
 
 void PropertyDialog::loadPluginExpandWidgets()
 {
-    QVBoxLayout* layout = qobject_cast<QVBoxLayout*>(this->layout());
-    QList<PropertyDialogExpandInfoInterface*> plugins = PluginManager::instance()->getExpandInfoInterfaces();
+    QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(this->layout());
+    QList<PropertyDialogExpandInfoInterface *> plugins = PluginManager::instance()->getExpandInfoInterfaces();
     foreach (PropertyDialogExpandInfoInterface *plugin, plugins) {
         DArrowLineExpand *expand = new DArrowLineExpand;
-        QWidget* frame = plugin->expandWidget(m_url.toString());
-        if(!frame)
+        QWidget *frame = plugin->expandWidget(m_url.toString());
+        if (!frame) {
             continue;
+        }
         frame->setMaximumHeight(EXTEND_FRAME_MAXHEIGHT);
         frame->setParent(this);
         expand->setTitle(plugin->expandWidgetTitle(m_url.toString()));
@@ -661,14 +675,14 @@ void PropertyDialog::loadPluginExpandWidgets()
 
 DExpandGroup *PropertyDialog::addExpandWidget(const QStringList &titleList)
 {
-    QVBoxLayout* layout = qobject_cast<QVBoxLayout*>(this->layout());
+    QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(this->layout());
     DExpandGroup *group = new DExpandGroup;
-    QLabel* line = new QLabel(this);
+    QLabel *line = new QLabel(this);
     line->setObjectName("Line");
     line->setFixedHeight(1);
     layout->addWidget(line);
 
-    for(const QString &title : titleList) {
+    for (const QString &title : titleList) {
         DArrowLineExpand *expand = new DArrowLineExpand;
 
         expand->setTitle(title);
@@ -698,27 +712,27 @@ void PropertyDialog::initTextShowFrame(const QString &text)
 
 
     int textLineCount = 1;
-    QVBoxLayout* textShowLayout = new QVBoxLayout;
+    QVBoxLayout *textShowLayout = new QVBoxLayout;
 
-    for(int i=0; i< labelTexts.length(); i++){
-        if(i > (maxLineCount-1)){
+    for (int i = 0; i < labelTexts.length(); i++) {
+        if (i > (maxLineCount - 1)) {
             textLineCount = i + 1;
             break;
         }
         QString labelText = labelTexts.at(i);
-        QLabel* label = new QLabel(labelText, m_textShowFrame);
+        QLabel *label = new QLabel(labelText, m_textShowFrame);
         label->setAlignment(Qt::AlignHCenter);
-        QHBoxLayout* hLayout = new QHBoxLayout;
+        QHBoxLayout *hLayout = new QHBoxLayout;
 
         hLayout->addStretch(1);
         hLayout->addWidget(label);
-        if (i < (labelTexts.length() - 1 ) && i != (maxLineCount-1)){
-            if (label->fontMetrics().width(labelText) > (m_edit->width() - 10) ){
+        if (i < (labelTexts.length() - 1) && i != (maxLineCount - 1)) {
+            if (label->fontMetrics().width(labelText) > (m_edit->width() - 10)) {
                 label->setFixedWidth(m_edit->width());
             }
-        } else{
-            if (label->fontMetrics().width(labelText) > (m_edit->width() - 2*m_editButton->width()) && labelTexts.length() >=3){
-                labelText = label->fontMetrics().elidedText(labelText, Qt::ElideMiddle, m_edit->width() - 2*m_editButton->width());
+        } else {
+            if (label->fontMetrics().width(labelText) > (m_edit->width() - 2 * m_editButton->width()) && labelTexts.length() >= 3) {
+                labelText = label->fontMetrics().elidedText(labelText, Qt::ElideMiddle, m_edit->width() - 2 * m_editButton->width());
             }
             label->setText(labelText);
             hLayout->addSpacing(2);
@@ -736,9 +750,9 @@ void PropertyDialog::initTextShowFrame(const QString &text)
 
     m_textShowFrame->setFixedHeight(textLineCount * 14 + 15);
 
-    if (m_editStackWidget->count() == 1){
+    if (m_editStackWidget->count() == 1) {
         m_editStackWidget->addWidget(m_textShowFrame);
-    }else{
+    } else {
         m_editStackWidget->insertWidget(1, m_textShowFrame);
     }
     m_editStackWidget->setCurrentIndex(1);
@@ -748,34 +762,34 @@ void PropertyDialog::initTextShowFrame(const QString &text)
 QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &info)
 {
     QFrame *widget = new QFrame(this);
-    SectionKeyLabel* sizeSectionLabel = new SectionKeyLabel(QObject::tr("Size"));
-    SectionKeyLabel* typeSectionLabel = new SectionKeyLabel(QObject::tr("Type"));
-    SectionKeyLabel* TimeCreatedSectionLabel = new SectionKeyLabel(QObject::tr("Time read"));
-    SectionKeyLabel* TimeModifiedSectionLabel = new SectionKeyLabel(QObject::tr("Time modified"));
+    SectionKeyLabel *sizeSectionLabel = new SectionKeyLabel(QObject::tr("Size"));
+    SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Type"));
+    SectionKeyLabel *TimeCreatedSectionLabel = new SectionKeyLabel(QObject::tr("Time read"));
+    SectionKeyLabel *TimeModifiedSectionLabel = new SectionKeyLabel(QObject::tr("Time modified"));
 
-    SectionValueLabel* sizeLabel = new SectionValueLabel(info->sizeDisplayName());
+    SectionValueLabel *sizeLabel = new SectionValueLabel(info->sizeDisplayName());
     m_folderSizeLabel = new SectionValueLabel;
-    SectionValueLabel* typeLabel = new SectionValueLabel(info->mimeTypeDisplayName());
-    SectionValueLabel* timeCreatedLabel = new SectionValueLabel(info->lastReadDisplayName());
-    SectionValueLabel* timeModifiedLabel = new SectionValueLabel(info->lastModifiedDisplayName());
+    SectionValueLabel *typeLabel = new SectionValueLabel(info->mimeTypeDisplayName());
+    SectionValueLabel *timeCreatedLabel = new SectionValueLabel(info->lastReadDisplayName());
+    SectionValueLabel *timeModifiedLabel = new SectionValueLabel(info->lastModifiedDisplayName());
 
 
     QFormLayout *layout = new QFormLayout;
     layout->setHorizontalSpacing(12);
     layout->setVerticalSpacing(16);
     layout->setLabelAlignment(Qt::AlignRight);
-    if (info->isFile()){
+    if (info->isFile()) {
         layout->addRow(sizeSectionLabel, sizeLabel);
-    }else{
-        SectionKeyLabel* fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
+    } else {
+        SectionKeyLabel *fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
         layout->addRow(sizeSectionLabel, m_folderSizeLabel);
         layout->addRow(fileAmountSectionLabel, sizeLabel);
     }
     layout->addRow(typeSectionLabel, typeLabel);
-    if (info->isSymLink()){
-        SectionKeyLabel* linkPathSectionLabel = new SectionKeyLabel(QObject::tr("Link path"));
+    if (info->isSymLink()) {
+        SectionKeyLabel *linkPathSectionLabel = new SectionKeyLabel(QObject::tr("Link path"));
 
-        LinkSectionValueLabel* linkPathLabel = new LinkSectionValueLabel(info->redirectedFileUrl().toLocalFile());
+        LinkSectionValueLabel *linkPathLabel = new LinkSectionValueLabel(info->redirectedFileUrl().toLocalFile());
         linkPathLabel->setToolTip(info->redirectedFileUrl().toLocalFile());
         linkPathLabel->setLinkTargetUrl(info->redirectedFileUrl());
         linkPathLabel->setOpenExternalLinks(true);
@@ -787,23 +801,23 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     layout->addRow(TimeCreatedSectionLabel, timeCreatedLabel);
     layout->addRow(TimeModifiedSectionLabel, timeModifiedLabel);
 
-    if (info->isFile()){
+    if (info->isFile()) {
         m_executableCheckBox = new QCheckBox;
         m_executableCheckBox->setFixedHeight(20);
         connect(m_executableCheckBox, &QCheckBox::toggled, this, &PropertyDialog::toggleFileExecutable);
-        if (!info->isWritable()){
+        if (!info->isWritable()) {
             m_executableCheckBox->setDisabled(true);
         }
-        if(info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther)){
+        if (info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther)) {
             m_executableCheckBox->setChecked(true);
         }
-        SectionValueLabel* executableLabel = new SectionValueLabel(tr("Allow to execute as program"));
+        SectionValueLabel *executableLabel = new SectionValueLabel(tr("Allow to execute as program"));
         layout->addRow(m_executableCheckBox, executableLabel);
     }
     layout->setContentsMargins(0, 0, 40, 0);
     widget->setLayout(layout);
     widget->setFixedSize(width(), EXTEND_FRAME_MAXHEIGHT);
-    if (info->isSymLink()){
+    if (info->isSymLink()) {
         widget->setFixedSize(width(), EXTEND_FRAME_MAXHEIGHT + 30);
     }
 
@@ -812,7 +826,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
 
 ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPointer &info)
 {
-    ShareInfoFrame* frame = new ShareInfoFrame(info, this);
+    ShareInfoFrame *frame = new ShareInfoFrame(info, this);
     //play animation after a folder is shared
     connect(frame, &ShareInfoFrame::folderShared, this, &PropertyDialog::flickFolderToLeftsidBar);
 
@@ -824,15 +838,15 @@ QFrame *PropertyDialog::createLocalDeviceInfoWidget(const DUrl &url)
     QStorageInfo info(url.path());
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
     QFrame *widget = new QFrame(this);
-    SectionKeyLabel* typeSectionLabel = new SectionKeyLabel(QObject::tr("Device type"));
-    SectionKeyLabel* fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
-    SectionKeyLabel* freeSectionLabel = new SectionKeyLabel(QObject::tr("Free space"));
-    SectionKeyLabel* totalSectionLabel = new SectionKeyLabel(QObject::tr("Total space"));
+    SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Device type"));
+    SectionKeyLabel *fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
+    SectionKeyLabel *freeSectionLabel = new SectionKeyLabel(QObject::tr("Free space"));
+    SectionKeyLabel *totalSectionLabel = new SectionKeyLabel(QObject::tr("Total space"));
 
-    SectionValueLabel* typeLabel = new SectionValueLabel(tr("Local disk"));
-    SectionValueLabel* fileAmountLabel = new SectionValueLabel(fileInfo->sizeDisplayName());
-    SectionValueLabel* freeLabel = new SectionValueLabel(FileUtils::formatSize(info.bytesFree()));
-    SectionValueLabel* totalLabel = new SectionValueLabel(FileUtils::formatSize(info.bytesTotal()));
+    SectionValueLabel *typeLabel = new SectionValueLabel(tr("Local disk"));
+    SectionValueLabel *fileAmountLabel = new SectionValueLabel(fileInfo->sizeDisplayName());
+    SectionValueLabel *freeLabel = new SectionValueLabel(FileUtils::formatSize(info.bytesFree()));
+    SectionValueLabel *totalLabel = new SectionValueLabel(FileUtils::formatSize(info.bytesTotal()));
 
     QFormLayout *layout = new QFormLayout;
     layout->setHorizontalSpacing(12);
@@ -852,15 +866,15 @@ QFrame *PropertyDialog::createLocalDeviceInfoWidget(const DUrl &url)
 QFrame *PropertyDialog::createDeviceInfoWidget(UDiskDeviceInfoPointer info)
 {
     QFrame *widget = new QFrame(this);
-    SectionKeyLabel* typeSectionLabel = new SectionKeyLabel(QObject::tr("Device type"));
-    SectionKeyLabel* fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
-    SectionKeyLabel* freeSectionLabel = new SectionKeyLabel(QObject::tr("Free space"));
-    SectionKeyLabel* totalSectionLabel = new SectionKeyLabel(QObject::tr("Total space"));
+    SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Device type"));
+    SectionKeyLabel *fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
+    SectionKeyLabel *freeSectionLabel = new SectionKeyLabel(QObject::tr("Free space"));
+    SectionKeyLabel *totalSectionLabel = new SectionKeyLabel(QObject::tr("Total space"));
 
-    SectionValueLabel* typeLabel = new SectionValueLabel(info->deviceTypeDisplayName());
-    SectionValueLabel* fileAmountLabel = new SectionValueLabel(info->sizeDisplayName());
-    SectionValueLabel* freeLabel = new SectionValueLabel(FileUtils::formatSize(info->getFree()));
-    SectionValueLabel* totalLabel = new SectionValueLabel(FileUtils::formatSize(info->getTotal()));
+    SectionValueLabel *typeLabel = new SectionValueLabel(info->deviceTypeDisplayName());
+    SectionValueLabel *fileAmountLabel = new SectionValueLabel(info->sizeDisplayName());
+    SectionValueLabel *freeLabel = new SectionValueLabel(FileUtils::formatSize(info->getFree()));
+    SectionValueLabel *totalLabel = new SectionValueLabel(FileUtils::formatSize(info->getTotal()));
 
     QFormLayout *layout = new QFormLayout;
     layout->setHorizontalSpacing(12);
@@ -879,7 +893,7 @@ QFrame *PropertyDialog::createDeviceInfoWidget(UDiskDeviceInfoPointer info)
 
 QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPointer &info)
 {
-    QListWidget* listWidget = new QListWidget(this);
+    QListWidget *listWidget = new QListWidget(this);
     listWidget->setSpacing(8);
     listWidget->setObjectName("OpenWithListWidget");
     m_OpenWithButtonGroup = new QButtonGroup(listWidget);
@@ -890,14 +904,15 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
     QString gio_mimeType = FileUtils::getMimeTypeByGIO(info->fileUrl().toString());
     QString defaultApp = mimeAppsManager->getDefaultAppDisplayNameByGio(gio_mimeType);
 
-    foreach (const QString& appFile, recommendApps){
-        if(!QFile::exists(appFile))
+    foreach (const QString &appFile, recommendApps) {
+        if (!QFile::exists(appFile)) {
             continue;
-        DesktopFile df (appFile);
+        }
+        DesktopFile df(appFile);
 
-        QListWidgetItem* item = new QListWidgetItem;
+        QListWidgetItem *item = new QListWidgetItem;
 
-        QCheckBox* itemBox = new QCheckBox(df.getLocalName());
+        QCheckBox *itemBox = new QCheckBox(df.getLocalName());
         itemBox->setObjectName("OpenWithItem");
         itemBox->setIcon(QIcon::fromTheme(df.getIcon()));
         itemBox->setIconSize(QSize(16, 16));
@@ -910,15 +925,15 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
         listWidget->addItem(item);
         listWidget->setItemWidget(item, itemBox);
 
-        if (df.getLocalName() == defaultApp){
+        if (df.getLocalName() == defaultApp) {
             itemBox->setChecked(true);
         }
 
     }
 
     int listHeight = 2;
-    for(int i=0; i < listWidget->count(); i++){
-        QListWidgetItem* item = listWidget->item(i);
+    for (int i = 0; i < listWidget->count(); i++) {
+        QListWidgetItem *item = listWidget->item(i);
         item->setFlags(Qt::NoItemFlags);
         int h = listWidget->itemWidget(item)->height();
         item->setSizeHint(QSize(item->sizeHint().width(), h));
@@ -928,8 +943,8 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
     listWidget->setFixedHeight(EXTEND_FRAME_MAXHEIGHT);
     listWidget->setFixedWidth(300);
 
-    connect(m_OpenWithButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)),
-            this, SLOT(onOpenWithBntsChecked(QAbstractButton*)));
+    connect(m_OpenWithButtonGroup, SIGNAL(buttonClicked(QAbstractButton *)),
+            this, SLOT(onOpenWithBntsChecked(QAbstractButton *)));
 
     return listWidget;
 }
@@ -951,26 +966,29 @@ QFrame *PropertyDialog::createAuthorityManagermentWidget(const DAbstractFileInfo
     groupBox->addItems(authorityList);
     otherBox->addItems(authorityList);
 
-    if(info->permission(QFile::WriteOwner | QFile::ReadOwner))
+    if (info->permission(QFile::WriteOwner | QFile::ReadOwner)) {
         ownerBox->setCurrentIndex(0);
-    else if(info->permission(QFile::ReadOwner))
+    } else if (info->permission(QFile::ReadOwner)) {
         ownerBox->setCurrentIndex(1);
-    else
+    } else {
         ownerBox->setCurrentIndex(2);
+    }
 
-    if(info->permission(QFile::WriteGroup | QFile::ReadGroup))
+    if (info->permission(QFile::WriteGroup | QFile::ReadGroup)) {
         groupBox->setCurrentIndex(0);
-    else if(info->permission(QFile::ReadGroup))
+    } else if (info->permission(QFile::ReadGroup)) {
         groupBox->setCurrentIndex(1);
-    else
+    } else {
         groupBox->setCurrentIndex(2);
+    }
 
-    if(info->permission(QFile::WriteOther | QFile::ReadOther))
+    if (info->permission(QFile::WriteOther | QFile::ReadOther)) {
         otherBox->setCurrentIndex(0);
-    else if(info->permission(QFile::ReadOther))
+    } else if (info->permission(QFile::ReadOther)) {
         otherBox->setCurrentIndex(1);
-    else
+    } else {
         otherBox->setCurrentIndex(2);
+    }
 
     layout->setLabelAlignment(Qt::AlignRight);
     layout->addRow(QObject::tr("Owner"), ownerBox);

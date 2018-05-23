@@ -41,6 +41,9 @@ class JobController : public QThread
 {
     Q_OBJECT
 
+    Q_PROPERTY(int timeCeiling READ timeCeiling WRITE setTimeCeiling)
+    Q_PROPERTY(int countCeiling READ countCeiling WRITE setCountCeiling)
+
 public:
     enum State {
         Started,
@@ -56,15 +59,22 @@ public:
 
     State state() const;
 
+    int timeCeiling() const;
+    int countCeiling() const;
+
 public slots:
     void start();
     void pause();
     void stop();
     void stopAndDeleteLater();
 
+    void setTimeCeiling(int timeCeiling);
+    void setCountCeiling(int countCeiling);
+
 signals:
     void stateChanged(State state);
     void addChildren(const DAbstractFileInfoPointer &info);
+    void addChildrenList(const QList<DAbstractFileInfoPointer> &infoList);
     void childrenUpdated(const QList<DAbstractFileInfoPointer> &list);
 
 private:
@@ -78,6 +88,9 @@ private:
     QMutex mutex;
 
     QElapsedTimer *timer = Q_NULLPTR;
+
+    int m_timeCeiling = 5000;
+    int m_countCeiling = 10000;
 
     void run() Q_DECL_OVERRIDE;
     void setState(State state);

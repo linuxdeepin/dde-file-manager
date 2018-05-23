@@ -22,7 +22,6 @@ FileViewHelper::FileViewHelper(DFileView *parent)
     , lastEvent(this, DUrl())
 {
     connect(parent, &DFileView::triggerEdit, this, &DFileViewHelper::triggerEdit);
-    connect(parent, &DFileView::rootUrlChanged, this, &FileViewHelper::onCurrentUrlChanged);
 
     connect(fileSignalManager, &FileSignalManager::requestViewSelectAll,
             this, &FileViewHelper::selectAll);
@@ -178,12 +177,4 @@ void FileViewHelper::refreshFileView(quint64 winId)
     }
 
     model()->refresh();
-}
-
-void FileViewHelper::onCurrentUrlChanged(const DUrl &url)
-{
-    DFMUrlBaseEvent e(lastEvent);
-    e.setWindowId(windowId());
-    e.setData(url);
-    emit fileSignalManager->currentUrlChanged(e);
 }

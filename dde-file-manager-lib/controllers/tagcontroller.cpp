@@ -49,6 +49,7 @@ const QList<DAbstractFileInfoPointer> TagController::getChildren(const QSharedPo
             QMap<QString, QString>::const_iterator tagEnd{ tags.cend() };
 
             for(; tagBeg != tagEnd; ++tagBeg){
+                DUrl url = DUrl::fromUserTaggedFile(QString{"/"} + tagBeg.key(), QString{});
                 DAbstractFileInfoPointer tagInfoPtr{
                                                        DFileService::instance()->createFileInfo(this,
                                                                                                 DUrl::fromUserTaggedFile(tagBeg.key(), QString{}))
@@ -331,8 +332,8 @@ bool TagController::renameFile(const QSharedPointer<DFMRenameEvent> &event) cons
     const QString &local_file = event->fromUrl().taggedLocalFilePath();
 
     if (local_file.isEmpty()) {
-        const QString &old_name = event->fromUrl().fileName();
-        const QString &new_name = event->toUrl().fileName();;
+        const QString &old_name = event->fromUrl().tagName();
+        const QString &new_name = event->toUrl().tagName();;
 
         return TagManager::instance()->changeTagName(qMakePair(old_name, new_name));
     }

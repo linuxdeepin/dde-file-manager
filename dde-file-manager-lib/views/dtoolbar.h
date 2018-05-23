@@ -35,7 +35,6 @@ class DCheckableButton;
 class DStateButton;
 class DSearchBar;
 class DTabBar;
-class DCrumbWidget;
 class DFMEvent;
 class HistoryStack;
 class DHoverButton;
@@ -47,6 +46,14 @@ QT_END_NAMESPACE
 DWIDGET_BEGIN_NAMESPACE
 class DGraphicsClipEffect;
 DWIDGET_END_NAMESPACE
+
+DFM_BEGIN_NAMESPACE
+class DFMCrumbBar;
+class DFMCrumbItem;
+class DFMAddressBar;
+DFM_END_NAMESPACE
+
+DFM_USE_NAMESPACE
 
 class DToolBar : public QFrame
 {
@@ -61,13 +68,13 @@ public:
     void initAddressToolBar();
     void initContollerToolBar();
     void initConnect();
-    DSearchBar * getSearchBar();
-    DCrumbWidget* getCrumWidget();
+    DFMAddressBar *getSearchBar();
+    DFMCrumbBar *getCrumbWidget();
     QPushButton* getSettingsButton();
     void addHistoryStack();
 
     int navStackCount() const;
-    void setCrumb(const DUrl& url);
+    void setCrumbBar(const DUrl& url);
     void updateBackForwardButtonsState();
 
     void setCustomActionList(const QList<QAction*> &list);
@@ -81,8 +88,8 @@ public slots:
     void searchBarActivated();
     void searchBarDeactivated();
     void searchBarTextEntered();
-    void crumbSelected(const DFMEvent &e);
-    void crumbChanged(const DFMEvent &event);
+    void crumbSelected(const DFMCrumbItem* item);
+    void currentUrlChanged(const DFMEvent &event);
     void searchBarChanged(QString path);
 
     void back();
@@ -96,7 +103,7 @@ public slots:
     void switchHistoryStack(const int index );
 
 private:
-    void checkNavHistory(DUrl url);
+    void pushUrlToHistoryStack(DUrl url);
     void onBackButtonClicked();
     void onForwardButtonClicked();
 
@@ -107,7 +114,7 @@ private:
     DStateButton* m_upButton=NULL;
     QPushButton* m_searchButton = NULL;
     DStateButton* m_refreshButton = NULL;
-    DSearchBar * m_searchBar = NULL;
+    DFMAddressBar * m_searchBar = NULL;
     QFrame* m_contollerToolBar;
     DGraphicsClipEffect *m_contollerToolBarClipMask;
     QHBoxLayout *m_contollerToolBarContentLayout;
@@ -121,7 +128,7 @@ private:
     DHoverButton* m_sortingButton=NULL;
 
     bool m_switchState = false;
-    DCrumbWidget * m_crumbWidget = NULL;
+    DFMCrumbBar * m_crumbWidget = nullptr;
     HistoryStack * m_navStack = NULL;
     QList<HistoryStack*> m_navStacks;
 

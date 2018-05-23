@@ -40,7 +40,7 @@
 
 DFM_USE_NAMESPACE
 
-typedef QPair<QString,QString> HandlerType;
+typedef QPair<QString, QString> HandlerType;
 typedef QPair<QString, std::function<DAbstractFileController*()>> HandlerCreatorType;
 
 class DFMUrlListBaseEvent;
@@ -53,8 +53,7 @@ class DFileService : public QObject, public DFMAbstractEventHandler
     Q_OBJECT
 
 public:
-    enum class AddTextFlags : std::size_t
-    {
+    enum class AddTextFlags : std::size_t {
         Before = 0,
         After  = 1
     };
@@ -62,11 +61,12 @@ public:
     template <class T>
     static void dRegisterUrlHandler(const QString &scheme, const QString &host)
     {
-        if (isRegisted<T>(scheme, host))
+        if (isRegisted<T>(scheme, host)) {
             return;
+        }
 
-        insertToCreatorHash(HandlerType(scheme, host), HandlerCreatorType(typeid(T).name(), [=] {
-            return (DAbstractFileController*)new T(instance());
+        insertToCreatorHash(HandlerType(scheme, host), HandlerCreatorType(typeid(T).name(), [ = ] {
+            return (DAbstractFileController *)new T(instance());
         }));
     }
     static bool isRegisted(const QString &scheme, const QString &host, const std::type_info &info);
@@ -86,9 +86,9 @@ public:
     static void unsetFileUrlHandler(DAbstractFileController *controller);
     static void clearFileUrlHandler(const QString &scheme, const QString &host);
 
-    static QList<DAbstractFileController*> getHandlerTypeByUrl(const DUrl &fileUrl,
-                                                               bool ignoreHost = false,
-                                                               bool ignoreScheme = false);
+    static QList<DAbstractFileController *> getHandlerTypeByUrl(const DUrl &fileUrl,
+            bool ignoreHost = false,
+            bool ignoreScheme = false);
 
     bool openFile(const QObject *sender, const DUrl &url) const;
     bool openFileByApp(const QObject *sender, const QString &appName, const DUrl &url) const;
@@ -96,10 +96,10 @@ public:
     bool decompressFile(const QObject *sender, const DUrlList &list) const;
     bool decompressFileHere(const QObject *sender, const DUrlList &list) const;
     bool writeFilesToClipboard(const QObject *sender, DFMGlobal::ClipboardAction action, const DUrlList &list) const;
-    bool renameFile(const QObject *sender, const DUrl &from, const DUrl &to) const;
-    bool multiFilesReplaceName(const QList<DUrl>& urls, const QPair<QString, QString>& pair)const;
-    bool multiFilesAddStrToName(const QList<DUrl>& urls, const QPair<QString, DFileService::AddTextFlags>& pair)const;
-    bool multiFilesCustomName(const QList<DUrl>& urls, const QPair<QString, QString> &pair)const;
+    bool renameFile(const QObject *sender, const DUrl &from, const DUrl &to, const bool silent = false) const;
+    bool multiFilesReplaceName(const QList<DUrl> &urls, const QPair<QString, QString> &pair)const;
+    bool multiFilesAddStrToName(const QList<DUrl> &urls, const QPair<QString, DFileService::AddTextFlags> &pair)const;
+    bool multiFilesCustomName(const QList<DUrl> &urls, const QPair<QString, QString> &pair)const;
     bool deleteFiles(const QObject *sender, const DUrlList &list, bool slient = false) const;
     DUrlList moveToTrash(const QObject *sender, const DUrlList &list) const;
     void pasteFileByClipboard(const QObject *sender, const DUrl &targetUrl) const;
@@ -126,7 +126,7 @@ public:
 
     const DAbstractFileInfoPointer createFileInfo(const QObject *sender, const DUrl &fileUrl) const;
     const DDirIteratorPointer createDirIterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
-                                                QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags) const;
+            QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags) const;
 
     const QList<DAbstractFileInfoPointer> getChildren(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
                                                       QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags) const;
