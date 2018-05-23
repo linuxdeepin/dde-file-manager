@@ -70,7 +70,7 @@ private:
     void setIndicator(enum IndicatorType type);
     void onWidgetThemeChanged(QWidget *widget, QString theme);
     void updateIndicatorIcon();
-    void startCompletionTransmission(const QString &text);
+    void updateCompletionState(const QString &text);
 
     bool isSearchStarted = false;
     DUrl currentUrl = DUrl();

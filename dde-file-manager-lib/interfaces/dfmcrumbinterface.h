@@ -51,6 +51,7 @@ public:
     virtual QList<CrumbData> seprateUrl(const DUrl &url);
     virtual DFMCrumbItem* createCrumbItem(const CrumbData &data);
     virtual void requestCompletionList(const DUrl &url);
+    virtual void cancelCompletionListTransmission();
 
 signals:
     void completionFound(const QStringList &completions); //< emit multiple times with less or equials to 10 items in a group.

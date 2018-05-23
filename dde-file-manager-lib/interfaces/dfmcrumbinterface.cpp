@@ -137,7 +137,20 @@ void DFMCrumbInterface::requestCompletionList(const DUrl &url)
         emit completionListTransmissionCompleted();
     }, Qt::QueuedConnection);
 
+    d->folderCompleterJobPointer->setTimeCeiling(1000);
+    d->folderCompleterJobPointer->setCountCeiling(100);
     d->folderCompleterJobPointer->start();
+}
+
+void DFMCrumbInterface::cancelCompletionListTransmission()
+{
+    Q_D(DFMCrumbInterface);
+
+    using State = JobController::State;
+
+    if (d->folderCompleterJobPointer && d->folderCompleterJobPointer) {
+        d->folderCompleterJobPointer->stopAndDeleteLater();
+    }
 }
 
 DFM_END_NAMESPACE

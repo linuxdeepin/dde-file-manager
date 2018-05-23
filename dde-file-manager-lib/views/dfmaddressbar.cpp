@@ -25,6 +25,7 @@
 #include "interfaces/dfmcrumbinterface.h"
 
 #include "themeconfig.h"
+#include "dfileservices.h"
 
 #include "dfmcrumbfactory.h"
 
@@ -177,13 +178,13 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
 
     if (text().isEmpty()) {
         urlCompleter->popup()->hide();
+        setIndicator(IndicatorType::Search);
         return;
     }
 
     // blumia: Assume address is: /aa/bbbb/cc , completion prefix should be "cc",
     //         completerBaseString should be "/aa/bbbb/"
-    urlCompleter->setCompletionPrefix(this->text());
-    startCompletionTransmission(this->text());
+    updateCompletionState(this->text());
     urlCompleter->complete(rect().adjusted(0, 5, 0, 5));
 }
 
@@ -239,26 +240,51 @@ void DFMAddressBar::updateIndicatorIcon()
     indicator->setIcon(indicatorIcon);
 }
 
-void DFMAddressBar::startCompletionTransmission(const QString &text)
+/*!
+ * \brief Update completion prefix and start completion transmission.
+ * \param text User entered text in the address bar.
+ *
+ * Will analysis and set the completion prefix,
+ * Will also start a new completion when we should.
+ */
+void DFMAddressBar::updateCompletionState(const QString &text)
 {
-    DUrl url(text);
+    int slashIndex = text.lastIndexOf('/');
+    bool isSearchText = (slashIndex == -1);
 
-    // TODO: don't reset the model if `completerBaseString` not changed.
+    // set completion prefix.
+    urlCompleter->setCompletionPrefix(isSearchText ? text : text.mid(slashIndex + 1));
 
-    if (url.isValid() && text.at(0) == '/') {
-        url.setScheme(FILE_SCHEME);
-    }
+    DUrl url = DUrl::fromUserInput(text, false);
+    const DAbstractFileInfoPointer& info = DFileService::instance()->createFileInfo(this, url);
 
-    if (url.isValid() && text.at(text.length() - 1) != '/') {
-        url = url.parentUrl();
+    if (url.isValid() && info && !info->exists()) {
+        url = info->parentUrl();
     }
 
     // Check if the entered text is a string to search or a url to complete.
-    if (url.isValid() && !url.scheme().isEmpty()) {
+    if (!isSearchText && url.isValid() && !url.scheme().isEmpty()) {
+        // Update Icon
+        setIndicator(IndicatorType::JumpTo);
+
+        // Check again if (now is parent) url exists.
+        const DAbstractFileInfoPointer& anotherInfo = DFileService::instance()->createFileInfo(this, url);
+        if (url.isValid() || anotherInfo || !anotherInfo->exists()) {
+            return;
+        }
+
+        // check if we should start a new completion transmission.
+        if (this->completerBaseString == text.left(slashIndex + 1)) {
+            return;
+        }
+
+        // Set Base String
+        this->completerBaseString = text.left(slashIndex + 1);
+
         // URL completion.
         if (!crumbController || !crumbController->supportedUrl(url)) {
             if (crumbController) {
-                //crumbController->cancelCompletionListTransmission();?
+                crumbController->cancelCompletionListTransmission();
                 crumbController->disconnect();
             }
             crumbController = DFMCrumbManager::instance()->createControllerByUrl(url);
@@ -284,14 +310,18 @@ void DFMAddressBar::startCompletionTransmission(const QString &text)
             crumbController->disconnect();
         });
         // set base url
-        this->completerBaseString = url.scheme() == FILE_SCHEME ? url.path() : url.toString();
         crumbController->requestCompletionList(url);
     } else {
+        // Update Icon
+        setIndicator(IndicatorType::Search);
+
+        // Set Base String
+        this->completerBaseString = "";
+
         // History completion.
-        qWarning("DFMAddressBar::startCompletionTransmission() may need implemented!!!");
+        qWarning("DFMAddressBar::updateCompletionState() may need implemented!!!");
         // Set history to string list model here.
         // TODO: Set history to string list model here.
-        this->completerBaseString = "";
     }
 
     return;
