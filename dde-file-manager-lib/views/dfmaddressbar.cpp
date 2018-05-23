@@ -182,7 +182,8 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
     // blumia: Assume address is: /aa/bbbb/cc , completion prefix should be "cc",
     //         completerBaseString should be "/aa/bbbb/"
     updateCompletionState(this->text());
-    doComplete();
+    bool isDeletingCharacter = (e->key() == Qt::Key_Backspace || e->key() == Qt::Key_Delete);
+    doComplete(!isDeletingCharacter);
 }
 
 void DFMAddressBar::initUI()
@@ -214,6 +215,13 @@ void DFMAddressBar::initConnections()
     });
 }
 
+/*!
+ * \brief Set the indicator type of address bar.
+ * \param type Indicator type
+ *
+ * This will also update the indicator icon's pixmap.
+ * \sa updateIndicatorIcon
+ */
 void DFMAddressBar::setIndicator(DFMAddressBar::IndicatorType type)
 {
     indicatorType = type;
@@ -229,6 +237,11 @@ void DFMAddressBar::onWidgetThemeChanged(QWidget *widget, QString theme)
     }
 }
 
+/*!
+ * \brief Update the indicator icon via the indicatorType value.
+ *
+ * \sa setIndicator
+ */
 void DFMAddressBar::updateIndicatorIcon()
 {
     QIcon indicatorIcon;
@@ -237,10 +250,17 @@ void DFMAddressBar::updateIndicatorIcon()
     indicator->setIcon(indicatorIcon);
 }
 
-void DFMAddressBar::doComplete()
+/*!
+ * \brief Do complete by calling QCompleter::complete()
+ * \param fakeInlineCompletion do a fake inline completion.
+ *
+ * Fake inline completion means auto select the only matched completion when
+ * there are only one matched item avaliable.
+ */
+void DFMAddressBar::doComplete(bool fakeInlineCompletion)
 {
     urlCompleter->complete(rect().adjusted(0, 5, 0, 5));
-    if (urlCompleter->completionCount() == 1) {
+    if (urlCompleter->completionCount() == 1 && fakeInlineCompletion) {
         completerView->setCurrentIndex(urlCompleter->completionModel()->index(0, 0));
     }
     return;

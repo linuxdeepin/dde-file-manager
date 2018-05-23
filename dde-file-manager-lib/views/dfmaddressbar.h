@@ -70,7 +70,7 @@ private:
     void setIndicator(enum IndicatorType type);
     void onWidgetThemeChanged(QWidget *widget, QString theme);
     void updateIndicatorIcon();
-    void doComplete();
+    void doComplete(bool fakeInlineCompletion = true);
     void updateCompletionState(const QString &text);
     void appendToCompleterModel(const QStringList &stringList);
 
