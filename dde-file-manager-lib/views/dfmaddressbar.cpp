@@ -88,12 +88,8 @@ DFMAddressBar::DFMAddressBar(QWidget *parent)
     initUI();
     initConnections();
 
-    // Test
     urlCompleter = new QCompleter(this);
     this->setCompleter(urlCompleter);
-    completerModel.setStringList({"macat", "mamacat", "mamamacat", "mamamamacat", "mamamamamacat",
-                                  "makat", "mamakat", "mamamakat", "mamamamakat", "mamamamamakat",
-                                  "mafox", "teji", "tejilang", "jjy", "jjjjy"});
 }
 
 QCompleter *DFMAddressBar::completer() const
@@ -178,6 +174,7 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
 
     if (text().isEmpty()) {
         urlCompleter->popup()->hide();
+        completerBaseString = "";
         setIndicator(IndicatorType::Search);
         return;
     }
@@ -185,7 +182,7 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
     // blumia: Assume address is: /aa/bbbb/cc , completion prefix should be "cc",
     //         completerBaseString should be "/aa/bbbb/"
     updateCompletionState(this->text());
-    urlCompleter->complete(rect().adjusted(0, 5, 0, 5));
+    doComplete();
 }
 
 void DFMAddressBar::initUI()
@@ -240,6 +237,15 @@ void DFMAddressBar::updateIndicatorIcon()
     indicator->setIcon(indicatorIcon);
 }
 
+void DFMAddressBar::doComplete()
+{
+    urlCompleter->complete(rect().adjusted(0, 5, 0, 5));
+    if (urlCompleter->completionCount() == 1) {
+        completerView->setCurrentIndex(urlCompleter->completionModel()->index(0, 0));
+    }
+    return;
+}
+
 /*!
  * \brief Update completion prefix and start completion transmission.
  * \param text User entered text in the address bar.
@@ -255,25 +261,20 @@ void DFMAddressBar::updateCompletionState(const QString &text)
     // set completion prefix.
     urlCompleter->setCompletionPrefix(isSearchText ? text : text.mid(slashIndex + 1));
 
-    DUrl url = DUrl::fromUserInput(text, false);
+    DUrl url = DUrl::fromUserInput(isSearchText ? text : text.left(slashIndex + 1), false);
     const DAbstractFileInfoPointer& info = DFileService::instance()->createFileInfo(this, url);
-
-    if (url.isValid() && info && !info->exists()) {
-        url = info->parentUrl();
-    }
 
     // Check if the entered text is a string to search or a url to complete.
     if (!isSearchText && url.isValid() && !url.scheme().isEmpty()) {
         // Update Icon
         setIndicator(IndicatorType::JumpTo);
 
-        // Check again if (now is parent) url exists.
-        const DAbstractFileInfoPointer& anotherInfo = DFileService::instance()->createFileInfo(this, url);
-        if (url.isValid() || anotherInfo || !anotherInfo->exists()) {
-            return;
+        // Check if (now is parent) url exist.
+        if (url.isValid() && info && !info->exists()) {
+            url = info->parentUrl();
         }
 
-        // check if we should start a new completion transmission.
+        // Check if we should start a new completion transmission.
         if (this->completerBaseString == text.left(slashIndex + 1)) {
             return;
         }
@@ -300,16 +301,19 @@ void DFMAddressBar::updateCompletionState(const QString &text)
         }
         Q_CHECK_PTR(crumbController);
         // connections
-        connect(crumbController, &DFMCrumbInterface::completionFound, this, [](const QStringList &list){
+        connect(crumbController, &DFMCrumbInterface::completionFound, this, [this](const QStringList &list){
             // append list to completion list.
-            qDebug() << list;
+            appendToCompleterModel(list);
         });
         connect(crumbController, &DFMCrumbInterface::completionListTransmissionCompleted, this, [this](){
             // check if we can do inline complete.
-            qDebug() << "completion done.";
+            if (urlCompleter->completionCount() > 0 && urlCompleter->popup()->isHidden()) {
+                doComplete();
+            }
             crumbController->disconnect();
         });
-        // set base url
+        // start request
+        completerModel.setStringList(QStringList());
         crumbController->requestCompletionList(url);
     } else {
         // Update Icon
@@ -325,6 +329,18 @@ void DFMAddressBar::updateCompletionState(const QString &text)
     }
 
     return;
+}
+
+void DFMAddressBar::appendToCompleterModel(const QStringList &stringList)
+{
+    for (const QString &str: stringList) {
+        if (completerModel.insertRow(completerModel.rowCount())) {
+            QModelIndex index = completerModel.index(completerModel.rowCount() - 1, 0);
+            completerModel.setData(index, str);
+        } else {
+            qWarning("Failed to append some data to completerModel.");
+        }
+    }
 }
 
 void DFMAddressBar::insertCompletion(const QString &completion)
