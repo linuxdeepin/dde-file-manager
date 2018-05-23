@@ -15,10 +15,6 @@
 
 #include "private/dfilesystemwatcher_p.h"
 
-#include "app/define.h"
-#include "singleton.h"
-#include "usershare/usersharemanager.h"
-
 #include <QDir>
 #include <QDebug>
 
