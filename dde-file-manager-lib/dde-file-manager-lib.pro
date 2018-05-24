@@ -378,7 +378,6 @@ SOURCES += \
     gvfs/gvfsmountmanager.cpp \
     gvfs/qdiskinfo.cpp \
     interfaces/dfmsetting.cpp \
-    configure/dfmconfigdict.cpp \
     shutil/viewstatesmanager.cpp \
     interfaces/dfmeventdispatcher.cpp \
     interfaces/dfmabstracteventhandler.cpp \
@@ -551,3 +550,5 @@ INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations
 DISTFILES += \
     mimetypeassociations/mimetypeassociations.json \
     configure/default-view-states.json
+
+include($$PWD/settings_dialog_json.pri)
