@@ -79,16 +79,28 @@ QVariantHash DFMSideBarDeviceItem::getExtensionPropertys() const
 
 QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
 {
-    QMenu *menu = new QMenu(const_cast<DFMSideBarDeviceItem *>(this));
+    QMenu *menu = new QMenu();
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
     QVariantHash info = getExtensionPropertys();
 
-    menu->addAction(QObject::tr("Open in new window"), [this]() {
-        WindowManager::instance()->showNewWindow(url(), true);
+    menu->addAction(QObject::tr("Open in new window"), [this, info]() {
+        if (info.value("isMounted", false).toBool()) {
+            WindowManager::instance()->showNewWindow(url(), true);
+        } else {
+            DUrl newUrl;
+            newUrl.setQuery(info.value("deviceId").toString());
+            appController->actionOpenDiskInNewWindow(dMakeEventPointer<DFMUrlBaseEvent>(this, newUrl));
+        }
     });
 
-    menu->addAction(QObject::tr("Open in new tab"), [wnd, this]() {
-        wnd->openNewTab(url());
+    menu->addAction(QObject::tr("Open in new tab"), [wnd, this, info]() {
+        if (info.value("isMounted", false).toBool()) {
+            wnd->openNewTab(url());
+        } else {
+            DUrl newUrl;
+            newUrl.setQuery(info.value("deviceId").toString());
+            appController->actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(this, newUrl));
+        }
     });
 
     if (info.value("canMount", false).toBool() && !info.value("isMounted", false).toBool()) {

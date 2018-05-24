@@ -42,7 +42,7 @@ DFMSideBarTrashItem::DFMSideBarTrashItem()
 
 QMenu *DFMSideBarTrashItem::createStandardContextMenu() const
 {
-    QMenu *menu = new QMenu(const_cast<DFMSideBarTrashItem *>(this));
+    QMenu *menu = new QMenu();
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
 
     menu->addAction(QObject::tr("Open in new window"), [this]() {
