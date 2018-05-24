@@ -82,26 +82,39 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
     QMenu *menu = new QMenu();
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
     QVariantHash info = getExtensionPropertys();
+    DUrl deviceIdUrl;
 
-    menu->addAction(QObject::tr("Open in new window"), [this, info]() {
+    deviceIdUrl.setQuery(info.value("deviceId").toString());
+
+    menu->addAction(QObject::tr("Open in new window"), [this, info, deviceIdUrl]() {
         if (info.value("isMounted", false).toBool()) {
             WindowManager::instance()->showNewWindow(url(), true);
         } else {
-            DUrl newUrl;
-            newUrl.setQuery(info.value("deviceId").toString());
-            appController->actionOpenDiskInNewWindow(dMakeEventPointer<DFMUrlBaseEvent>(this, newUrl));
+            appController->actionOpenDiskInNewWindow(dMakeEventPointer<DFMUrlBaseEvent>(this, deviceIdUrl));
         }
     });
 
-    menu->addAction(QObject::tr("Open in new tab"), [wnd, this, info]() {
+    menu->addAction(QObject::tr("Open in new tab"), [wnd, this, info, deviceIdUrl]() {
         if (info.value("isMounted", false).toBool()) {
             wnd->openNewTab(url());
         } else {
-            DUrl newUrl;
-            newUrl.setQuery(info.value("deviceId").toString());
-            appController->actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(this, newUrl));
+            appController->actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(this, deviceIdUrl));
         }
     });
+
+    menu->addSeparator();
+
+    if (info.value("canEject", false).toBool()) {
+        menu->addAction(QObject::tr("Eject"), [this, info]() {
+            gvfsMountManager->eject(info.value("deviceId").toString());
+        });
+    }
+
+    if (info.value("canStop", false).toBool()) {
+        menu->addAction(QObject::tr("Safely Remove"), [this, info, deviceIdUrl]() {
+            AppController::instance()->actionSafelyRemoveDrive(dMakeEventPointer<DFMUrlBaseEvent>(this, deviceIdUrl));
+        });
+    }
 
     if (info.value("canMount", false).toBool() && !info.value("isMounted", false).toBool()) {
         menu->addAction(QObject::tr("Mount"), [this, info]() {
@@ -112,6 +125,14 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
     if (info.value("canUnmount", false).toBool()) {
         menu->addAction(QObject::tr("Unmount"), this, SLOT(doUnmount()));
     }
+
+    if (info.value("mediaType", 0).toInt() == UDiskDeviceInfo::MediaType::removable) {
+        menu->addAction(QObject::tr("Format"), [this, info, deviceIdUrl]() {
+            AppController::instance()->actionFormatDevice(dMakeEventPointer<DFMUrlBaseEvent>(this, deviceIdUrl));
+        });
+    }
+
+    menu->addSeparator();
 
     QAction *propertyAction = new QAction(QObject::tr("Properties"), menu);
     connect(propertyAction, &QAction::triggered, this, [this]() {

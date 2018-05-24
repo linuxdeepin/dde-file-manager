@@ -36,7 +36,7 @@ DFMSideBarNetworkItem::DFMSideBarNetworkItem(DFMStandardPaths::StandardLocation 
 
 QMenu *DFMSideBarNetworkItem::createStandardContextMenu() const
 {
-    QMenu *menu = new QMenu(const_cast<DFMSideBarNetworkItem *>(this));
+    QMenu *menu = new QMenu();
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
 
     menu->addAction(QObject::tr("Open in new window"), [this]() {
