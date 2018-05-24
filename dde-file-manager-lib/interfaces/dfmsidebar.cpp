@@ -92,6 +92,7 @@ void DFMSideBarPrivate::initUI()
 
     // to make QScrollArea scroallable, we need a widget.
     mainLayoutHolder = new QWidget();
+    mainLayoutHolder->setStyleSheet("background: transparent");
     q->setWidget(mainLayoutHolder);
 
     // our main QVBoxLayout, which hold our `DFMSideBarItemGroup`s

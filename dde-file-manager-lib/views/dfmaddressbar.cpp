@@ -209,16 +209,16 @@ void DFMAddressBar::initUI()
 void DFMAddressBar::initConnections()
 {
     connect(DThemeManager::instance(), &DThemeManager::widgetThemeChanged, this, &DFMAddressBar::onWidgetThemeChanged);
-    connect(indicator, &QAction::triggered, this, [this](){
+    connect(indicator, &QAction::triggered, this, [this]() {
         emit returnPressed();
     });
-    connect(this, &DFMAddressBar::returnPressed, this, [this](){
+    connect(this, &DFMAddressBar::returnPressed, this, [this]() {
         if (text().isEmpty()) {
             return;
         }
         QString str = text();
         if (!DUrl::fromUserInput(str).isLocalFile()) {
-            if(!historyList.contains(str)) {
+            if (!historyList.contains(str)) {
                 historyList.append(str);
                 Singleton<SearchHistroyManager>::instance()->writeIntoSearchHistory(str);
             }
