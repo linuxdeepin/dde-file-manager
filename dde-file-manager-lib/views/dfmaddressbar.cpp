@@ -148,22 +148,45 @@ void DFMAddressBar::focusOutEvent(QFocusEvent *e)
 
 void DFMAddressBar::keyPressEvent(QKeyEvent *e)
 {
+    // pre-process some key event.
+    bool isShortcut = false;
+
+    switch (e->key()) {
+    case Qt::Key_Tab:
+        isShortcut = true;
+        e->accept();
+        break;
+    case Qt::Key_Escape:
+        emit focusOut();
+        e->accept();
+        return;
+    default:
+        break;
+    }
+
     if (urlCompleter && urlCompleter->popup()->isVisible()) {
         // The following keys are forwarded by the completer to the widget
         switch (e->key()) {
         case Qt::Key_Enter:
         case Qt::Key_Return:
-        case Qt::Key_Escape:
-        case Qt::Key_Tab:
         case Qt::Key_Backtab:
             e->ignore();
-            return; // let the completer do default behavior
+            return;
+        case Qt::Key_Tab:
+            if (urlCompleter->completionCount() == 1) {
+                QString completeResult = urlCompleter->completionModel()->index(0, 0).data().toString();
+                insertCompletion(completeResult);
+                if (DUrl::fromUserInput(text()).isLocalFile()) {
+                    setText(text() + '/');
+                }
+            }
+            return;
         default:
            break;
         }
     }
 
-    if (!urlCompleter || !false/*isShortcut*/) {
+    if (!urlCompleter || !isShortcut) {
         QLineEdit::keyPressEvent(e);
     }
 
@@ -405,6 +428,16 @@ void DFMAddressBar::onCompletionHighlighted(const QString &highlightedCompletion
     QString shouldAppend = highlightedCompletion.right(highlightedCompletion.length() - completionPrefixLen);
     setText(completerBaseString + urlCompleter->completionPrefix() + shouldAppend);
     setSelection(text().length() - shouldAppend.length(), text().length());
+}
+
+bool DFMAddressBar::event(QEvent *e)
+{
+    if (e->type() == QEvent::KeyPress) {
+        keyPressEvent(static_cast<QKeyEvent*>(e));
+        return true;
+    }
+
+    return QLineEdit::event(e);
 }
 
 DFM_END_NAMESPACE
