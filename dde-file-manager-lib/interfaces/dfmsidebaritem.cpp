@@ -66,6 +66,8 @@ public:
     QPixmap reorderLine() const;
     ThemeConfig::State getState() const;
 
+    void hideRenameEditor();
+
     bool reorderable = false;
     bool readOnly = true;
 
@@ -185,6 +187,15 @@ ThemeConfig::State DFMSideBarItemPrivate::getState() const
     return ThemeConfig::Normal;
 }
 
+void DFMSideBarItemPrivate::hideRenameEditor()
+{
+    if (renameLineEdit) {
+        renameLineEdit->hide();
+        renameLineEdit->deleteLater();
+        renameLineEdit = nullptr;
+    }
+}
+
 DFMSideBarItem::DFMSideBarItem(const DUrl &url, QWidget *parent)
     : QWidget(parent)
     , d_ptr(new DFMSideBarItemPrivate(this))
@@ -265,7 +276,7 @@ void DFMSideBarItem::showRenameEditor()
     d->renameLineEdit->show();
     d->renameLineEdit->setFocus(Qt::MouseFocusReason);
     connect(d->renameLineEdit, &QLineEdit::editingFinished,
-            this, &DFMSideBarItem::hideRenameEditor);
+            this, &DFMSideBarItem::onEditingFinished);
 }
 
 void DFMSideBarItem::setContentWidget(QWidget *widget)
@@ -360,7 +371,7 @@ void DFMSideBarItem::setAutoOpenUrlOnClick(bool autoCd)
     d->autoOpenUrlOnClick = autoCd;
 }
 
-void DFMSideBarItem::hideRenameEditor()
+void DFMSideBarItem::onEditingFinished()
 {
     Q_D(DFMSideBarItem);
 
@@ -369,9 +380,8 @@ void DFMSideBarItem::hideRenameEditor()
 
     QSignalBlocker blocker(d->renameLineEdit);
     Q_UNUSED(blocker)
-    d->renameLineEdit->hide();
-    d->renameLineEdit->deleteLater();
-    d->renameLineEdit = nullptr;
+
+    d->hideRenameEditor();
 
     if (text == d->displayText) {
         return;
@@ -706,6 +716,22 @@ void DFMSideBarItem::paintEvent(QPaintEvent *event)
         painter.setBrush(iconBrushColor);
         painter.drawRect(width() - SIDEBAR_CHECK_BORDER_SIZE, 0, SIDEBAR_CHECK_BORDER_SIZE, height());
     }
+}
+
+bool DFMSideBarItem::event(QEvent *event)
+{
+    Q_D(DFMSideBarItem);
+
+    if (event->type() == QEvent::KeyPress) {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+        if (keyEvent->key() == Qt::Key_Escape) {
+            keyEvent->accept();
+            d->hideRenameEditor();
+            return true;
+        }
+    }
+
+    return QWidget::event(event);
 }
 
 DFM_END_NAMESPACE
