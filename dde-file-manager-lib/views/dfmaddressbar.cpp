@@ -20,14 +20,15 @@
  */
 #include "dfmaddressbar.h"
 #include "dfmcrumbmanager.h"
+#include "dfmcrumbfactory.h"
 
 #include "views/dcompleterlistview.h"
 #include "interfaces/dfmcrumbinterface.h"
+#include "controllers/searchhistroymanager.h"
 
+#include "singleton.h"
 #include "themeconfig.h"
 #include "dfileservices.h"
-
-#include "dfmcrumbfactory.h"
 
 #include <QAction>
 #include <QCompleter>
@@ -51,7 +52,7 @@ DCompleterStyledItemDelegate::DCompleterStyledItemDelegate(QObject *parent)
 
 void DCompleterStyledItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    // prepare;
+    // prepare
     QPalette::ColorGroup cg = option.state & QStyle::State_Enabled
             ? QPalette::Normal : QPalette::Disabled;
     if (cg == QPalette::Normal && !(option.state & QStyle::State_Active)) {
@@ -87,9 +88,7 @@ DFMAddressBar::DFMAddressBar(QWidget *parent)
 {
     initUI();
     initConnections();
-
-    urlCompleter = new QCompleter(this);
-    this->setCompleter(urlCompleter);
+    initData();
 }
 
 QCompleter *DFMAddressBar::completer() const
@@ -213,6 +212,29 @@ void DFMAddressBar::initConnections()
     connect(indicator, &QAction::triggered, this, [this](){
         emit returnPressed();
     });
+    connect(this, &DFMAddressBar::returnPressed, this, [this](){
+        if (text().isEmpty()) {
+            return;
+        }
+        QString str = text();
+        if (!DUrl::fromUserInput(str).isLocalFile()) {
+            if(!historyList.contains(str)) {
+                historyList.append(str);
+                Singleton<SearchHistroyManager>::instance()->writeIntoSearchHistory(str);
+            }
+        }
+    });
+}
+
+void DFMAddressBar::initData()
+{
+    // Completer
+    urlCompleter = new QCompleter(this);
+    this->setCompleter(urlCompleter);
+
+    // History
+    historyList.clear();
+    historyList.append(Singleton<SearchHistroyManager>::instance()->toStringList());
 }
 
 /*!
@@ -333,19 +355,24 @@ void DFMAddressBar::updateCompletionState(const QString &text)
             crumbController->disconnect();
         });
         // start request
+        isHistoryInCompleterModel = false;
         completerModel.setStringList(QStringList());
         crumbController->requestCompletionList(url);
     } else {
         // Update Icon
         setIndicator(IndicatorType::Search);
 
+        // Check if we already loaded history list in model
+        if (isHistoryInCompleterModel) {
+            return;
+        }
+
         // Set Base String
         this->completerBaseString = "";
 
         // History completion.
-        qWarning("DFMAddressBar::updateCompletionState() may need implemented!!!");
-        // Set history to string list model here.
-        // TODO: Set history to string list model here.
+        isHistoryInCompleterModel = true;
+        completerModel.setStringList(historyList);
     }
 
     return;
