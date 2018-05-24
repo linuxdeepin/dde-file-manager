@@ -74,7 +74,7 @@ public Q_SLOTS:
     void setText(QString text);
     void setAutoOpenUrlOnClick(bool autoCd);
 
-    void hideRenameEditor();
+    void onEditingFinished();
     void playAnimation();
 
 Q_SIGNALS:
@@ -100,6 +100,7 @@ protected:
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
+    bool event(QEvent *event) override;
 
     //friend DFMSideBarItem *DFMSideBarItemGroup::takeItem(int index);
     friend class DFMSideBarItemGroup;
