@@ -67,6 +67,7 @@ protected:
 private:
     void initUI();
     void initConnections();
+    void initData();
     void setIndicator(enum IndicatorType type);
     void onWidgetThemeChanged(QWidget *widget, QString theme);
     void updateIndicatorIcon();
@@ -74,11 +75,12 @@ private:
     void updateCompletionState(const QString &text);
     void appendToCompleterModel(const QStringList &stringList);
 
-    bool isSearchStarted = false;
+    bool isHistoryInCompleterModel = false;
     DUrl currentUrl = DUrl();
     QString completerBaseString = QString();
     QStringListModel completerModel;
     DCompleterListView * completerView;
+    QStringList historyList;
     QAction * indicator = nullptr;
     QCompleter *urlCompleter = nullptr;
     DFMCrumbInterface* crumbController = nullptr; // Scheme completion support
