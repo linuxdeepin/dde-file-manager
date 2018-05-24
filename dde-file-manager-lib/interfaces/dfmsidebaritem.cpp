@@ -412,7 +412,8 @@ void DFMSideBarItem::setUrl(DUrl url)
 
 QMenu *DFMSideBarItem::createStandardContextMenu() const
 {
-    QMenu *menu = new QMenu(const_cast<DFMSideBarItem *>(this));
+    QMenu *menu = new QMenu();
+
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
 
     menu->addAction(QObject::tr("Open in new window"), [this]() {
