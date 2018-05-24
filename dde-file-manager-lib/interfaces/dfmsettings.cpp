@@ -90,10 +90,14 @@ public:
 
         Q_ASSERT(syncTimer);
 
-        if (dirty) {
-            syncTimer->start();
+        if (QThread::currentThread() == syncTimer->thread()) {
+            if (dirty) {
+                syncTimer->start();
+            } else {
+                syncTimer->stop();
+            }
         } else {
-            syncTimer->stop();
+            syncTimer->metaObject()->invokeMethod(syncTimer, dirty ? "start" : "stop", Qt::QueuedConnection);
         }
     }
 
@@ -507,8 +511,11 @@ void DFMSettings::setAutoSync(bool autoSync)
 
         if (!d->syncTimer) {
             d->syncTimer = new QTimer(this);
+            d->syncTimer->moveToThread(thread());
             d->syncTimer->setSingleShot(true);
             d->syncTimer->setInterval(1000);
+
+            qDebug() << thread() << d->syncTimer->thread();
 
             connect(d->syncTimer, &QTimer::timeout, this, &DFMSettings::sync);
         }
@@ -544,6 +551,7 @@ void DFMSettings::setWatchChanges(bool watchChanges)
         }
 
         d->settingFileWatcher = new DFileWatcher(d->settingFile, this);
+        d->settingFileWatcher->moveToThread(thread());
 
         connect(d->settingFileWatcher, SIGNAL(fileModified(DUrl)), this, SLOT(_q_onFileChanged(DUrl)));
 

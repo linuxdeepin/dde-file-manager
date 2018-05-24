@@ -28,7 +28,7 @@
 #include "filedialog_adaptor.h"
 #include "app/define.h"
 #include "singleton.h"
-#include "interfaces/dfmsetting.h"
+#include "app/dfmsetting.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "dfilewatcher.h"
 

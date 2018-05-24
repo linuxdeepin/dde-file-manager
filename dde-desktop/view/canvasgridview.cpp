@@ -46,8 +46,9 @@
 #include <dfileinfo.h>
 #include <dfilemenu.h>
 #include <dfilemenumanager.h>
-#include <dfmsetting.h>
 #include <dfilewatcher.h>
+
+#include "app/dfmsetting.h"
 
 #include <QGSettings>
 
@@ -522,7 +523,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
     case Qt::NoModifier:
         switch (event->key()) {
         case Qt::Key_F1: {
-            class PublicApplication : public DWIDGET_NAMESPACE::DApplication {
+            class PublicApplication : public DApplication {
                 public: using  DApplication::handleHelpAction;
             };
 

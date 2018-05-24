@@ -40,7 +40,7 @@
 #include "interfaces/dfmglobal.h"
 #include "interfaces/diconitemdelegate.h"
 #include "interfaces/dlistitemdelegate.h"
-#include "interfaces/dfmsetting.h"
+#include "app/dfmsetting.h"
 #include "interfaces/dfmcrumbbar.h"
 #include "controllers/fmstatemanager.h"
 

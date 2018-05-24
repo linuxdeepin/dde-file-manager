@@ -112,6 +112,9 @@ bool DFileWatcherPrivate::stop()
 {
     Q_Q(DFileWatcher);
 
+    if (watcher_file_private.isDestroyed())
+        return true;
+
     q->disconnect(watcher_file_private, 0, q, 0);
 
     bool ok = true;

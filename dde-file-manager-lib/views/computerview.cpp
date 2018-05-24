@@ -41,7 +41,7 @@
 #include "gvfs/gvfsmountmanager.h"
 #include "singleton.h"
 #include "../shutil/fileutils.h"
-#include "dfmsetting.h"
+#include "app/dfmsetting.h"
 #include "shutil/viewstatesmanager.h"
 #include "partman/partition.h"
 #include "interfaces/dfmplaformmanager.h"

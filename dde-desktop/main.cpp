@@ -16,6 +16,7 @@
 #include <DApplication>
 
 #include <dfmglobal.h>
+#include <dfmapplication.h>
 
 #include "util/dde/ddesession.h"
 
@@ -25,6 +26,8 @@
 
 using namespace Dtk::Core;
 using namespace Dtk::Widget;
+
+DFM_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
@@ -69,6 +72,10 @@ int main(int argc, char *argv[])
         qDebug() << "registerObject Failed" << conn.lastError();
         exit(0x0003);
     }
+
+    // init application object
+    DFMApplication fmApp;
+    Q_UNUSED(fmApp)
 
     Desktop::instance()->initDebugDBus(conn);
 

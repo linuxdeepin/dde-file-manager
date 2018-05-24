@@ -31,7 +31,7 @@
 #include "../app/define.h"
 #include "../partman/partition.h"
 #include "../partman/readusagemanager.h"
-#include "../interfaces/dfmsetting.h"
+#include "../app/dfmsetting.h"
 #include "../interfaces/dfileservices.h"
 #include "../interfaces/dfmevent.h"
 #include "partman/command.h"

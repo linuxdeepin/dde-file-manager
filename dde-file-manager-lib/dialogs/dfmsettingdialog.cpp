@@ -34,7 +34,7 @@
 #include "dfmglobal.h"
 #include "app/define.h"
 #include "singleton.h"
-#include "dfmsetting.h"
+#include "app/dfmsetting.h"
 
 
 DWIDGET_USE_NAMESPACE

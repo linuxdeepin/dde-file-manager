@@ -26,7 +26,7 @@
 #include "dfileviewhelper.h"
 #include "views/fileitem.h"
 #include "private/dstyleditemdelegate_p.h"
-#include "dfmsetting.h"
+#include "app/dfmsetting.h"
 
 #include "dfilesystemmodel.h"
 #include "tag/tagmanager.h"

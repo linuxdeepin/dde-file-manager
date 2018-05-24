@@ -42,7 +42,7 @@
 #include "controllers/pathmanager.h"
 #include "dfmstandardpaths.h"
 #include "views/windowmanager.h"
-#include "dfmsetting.h"
+#include "app/dfmsetting.h"
 #include "models/avfsfileinfo.h"
 
 #include "shutil/fileutils.h"
