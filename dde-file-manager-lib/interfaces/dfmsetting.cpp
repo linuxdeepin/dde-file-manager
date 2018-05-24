@@ -41,9 +41,114 @@
 #include "app/define.h"
 #include "shutil/fileutils.h"
 
+DCORE_USE_NAMESPACE
+
 DFMSetting *DFMSetting::instance()
 {
     return globalSetting;
+}
+
+
+
+static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(QByteArray()))
+{
+    QFile file(fileName);
+
+    if (!file.open(QFile::ReadOnly)) {
+        return nullptr;
+    }
+
+    QByteArray data = file.readAll();
+
+    file.close();
+
+    auto indexOfChar = [] (const QByteArray &data, char ch, int from) {
+        for (; from < data.size(); ++from) {
+            if (data.at(from) == '\\')
+                continue;
+
+            if (data.at(from) == ch)
+                return from;
+        }
+
+        return from;
+    };
+
+    auto clean_qsTr = [indexOfChar] (QByteArray &data, int &from) {
+        const QByteArray &qsTr = QByteArrayLiteral("qsTr");
+        const QByteArray &qsTranslate = QByteArrayLiteral("anslate(");
+
+        if (qsTr != QByteArray(data.data() + from, qsTr.size()))
+            return;
+
+        int index = from + qsTr.size();
+
+        if (data.at(index) == '(') {
+            data.remove(from, index - from + 1);
+        } else if (qsTranslate == QByteArray(data.data() + index, qsTranslate.size())) {
+            index += qsTranslate.size();
+
+            // 寻找qsTranslate的第一个参数
+            if (data.at(index) == '"' || data.at(index) == '\'') {
+                index = indexOfChar(data, data.at(index), index + 1);
+
+                if (index >= data.size())
+                    return;
+            } else {
+                return;
+            }
+
+            int quote1_index = data.indexOf('"', index + 1);
+            int quote2_index = data.indexOf('\'', index + 1);
+
+            if (quote1_index > 0)
+                index = quote1_index;
+
+            if (quote2_index > 0 && quote2_index < index)
+                index = quote2_index;
+
+            data.remove(from, index - from);
+        } else {
+            return;
+        }
+
+        // 保留需要翻译的字符串
+        if (data.at(from) == '"' || data.at(from) == '\'') {
+            from = indexOfChar(data, data.at(from), from + 1);
+
+            if (from >= data.size())
+                return;
+        } else {
+            return;
+        }
+
+        from = indexOfChar(data, ')', from + 1);
+
+        if (from < data.size()) {
+            data.remove(from, 1);
+            from -= 1;
+        }
+    };
+
+    for (int i = 0; i < data.size(); ++i) {
+        char ch = data.at(i);
+
+        switch (ch) {
+        case '\\':
+            break;
+        case '\'':
+        case '"':
+            i = indexOfChar(data, ch, i + 1);
+            break;
+        case 'q':
+            clean_qsTr(data, i);
+            break;
+        default:
+            break;
+        }
+    }
+
+    return DSettings::fromJson(data);
 }
 
 DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
@@ -65,12 +170,12 @@ DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
 
 #ifdef DISABLE_COMPRESS_PREIVEW
     //load temlate
-    m_settings = Dtk::Core::DSettings::fromJsonFile(":/configure/global-setting-template-pro.json").data();
+    m_settings = fromJsJson(":/configure/global-setting-template-pro.js").data();
 #else
 #ifndef SUPPORT_FFMEPG
-    m_settings = Dtk::Core::DSettings::fromJsonFile(":/configure/global-setting-template-fedora.json").data();
+    m_settings = fromJsJson(":/configure/global-setting-template-fedora.js").data();
 #else
-    m_settings = Dtk::Core::DSettings::fromJsonFile(":/configure/global-setting-template.json").data();
+    m_settings = fromJsJson(":/configure/global-setting-template.js").data();
 #endif
 #endif
 

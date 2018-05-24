@@ -2,25 +2,25 @@
     "groups": [
         {
             "key": "base",
-            "name": "Basic",
+            "name": qsTranslate("GenerateSettingTranslate", "Basic"),
             "groups": [
                 {
                     "key": "open_action",
-                    "name": "Open behavior",
+                    "name": qsTranslate("GenerateSettingTranslate", "Open behavior"),
                     "options": [
                         {
                             "key": "allways_open_on_new_window",
                             "type": "checkbox",
-                            "text": "Always open folder in new window",
+                            "text": qsTranslate("GenerateSettingTranslate", "Always open folder in new window"),
                             "default": false
                         },
                         {
                             "key": "open_file_action",
-                            "name": "Open file:",
+                            "name": qsTranslate("GenerateSettingTranslate", "Open file:"),
                             "type": "combobox",
                             "items": [
-                                "Click",
-                                "Double click"
+                                qsTranslate("GenerateSettingTranslate", "Click"),
+                                qsTranslate("GenerateSettingTranslate", "Double click")
                                 ],
                             "default": 1
                         }
@@ -28,38 +28,38 @@
                 },
                 {
                     "key": "new_tab_windows",
-                    "name": "New window and tab",
+                    "name": qsTranslate("GenerateSettingTranslate", "New window and tab"),
                     "options": [
                         {
                             "key": "default_window_path",
-                            "name": "Open from default window:",
+                            "name": qsTranslate("GenerateSettingTranslate", "Open from default window:"),
                             "type": "combobox",
                             "items": [
-                                "Computer",
-                                "Home",
-                                "Desktop",
-                                "Videos",
-                                "Music",
-                                "Pictures",
-                                "Documents",
-                                "Downloads"
+                                qsTranslate("GenerateSettingTranslate", "Computer"),
+                                qsTranslate("GenerateSettingTranslate", "Home"),
+                                qsTranslate("GenerateSettingTranslate", "Desktop"),
+                                qsTranslate("GenerateSettingTranslate", "Videos"),
+                                qsTranslate("GenerateSettingTranslate", "Music"),
+                                qsTranslate("GenerateSettingTranslate", "Pictures"),
+                                qsTranslate("GenerateSettingTranslate", "Documents"),
+                                qsTranslate("GenerateSettingTranslate", "Downloads")
                             ],
                             "default": 0
                         },
                         {
                             "key": "new_tab_path",
-                            "name": "Open in new tab:",
+                            "name": qsTranslate("GenerateSettingTranslate", "Open in new tab:"),
                             "type": "combobox",
                             "items": [
-                                "Current Directory",
-                                "Computer",
-                                "Home",
-                                "Desktop",
-                                "Videos",
-                                "Music",
-                                "Pictures",
-                                "Documents",
-                                "Downloads"
+                                qsTranslate("GenerateSettingTranslate", "Current Directory"),
+                                qsTranslate("GenerateSettingTranslate", "Computer"),
+                                qsTranslate("GenerateSettingTranslate", "Home"),
+                                qsTranslate("GenerateSettingTranslate", "Desktop"),
+                                qsTranslate("GenerateSettingTranslate", "Videos"),
+                                qsTranslate("GenerateSettingTranslate", "Music"),
+                                qsTranslate("GenerateSettingTranslate", "Pictures"),
+                                qsTranslate("GenerateSettingTranslate", "Documents"),
+                                qsTranslate("GenerateSettingTranslate", "Downloads")
                                 ],
                             "default": 0
                         }
@@ -67,28 +67,28 @@
                 },
                 {
                     "key": "default_view",
-                    "name": "View",
+                    "name": qsTranslate("GenerateSettingTranslate", "View"),
                     "options": [
                         {
                             "key": "icon_size",
-                            "name": "Default size:",
+                            "name": qsTranslate("GenerateSettingTranslate", "Default size:"),
                             "type": "combobox",
                             "items": [
-                                "Extra small",
-                                "Small",
-                                "Medium",
-                                "Large",
-                                "Extra large"
+                                qsTranslate("GenerateSettingTranslate", "Extra small"),
+                                qsTranslate("GenerateSettingTranslate", "Small"),
+                                qsTranslate("GenerateSettingTranslate", "Medium"),
+                                qsTranslate("GenerateSettingTranslate", "Large"),
+                                qsTranslate("GenerateSettingTranslate", "Extra large")
                             ],
                             "default": 1
                         },
                         {
                             "key": "view_mode",
-                            "name": "Default view:",
+                            "name": qsTranslate("GenerateSettingTranslate", "Default view:"),
                             "type": "combobox",
                             "items": [
-                                "Icon",
-                                "List"
+                                qsTranslate("GenerateSettingTranslate", "Icon"),
+                                qsTranslate("GenerateSettingTranslate", "List")
                             ],
                             "default": 0
                         }
@@ -96,17 +96,17 @@
                 },
                 {
                     "key": "hidden_files",
-                    "name": "Hidden files",
+                    "name": qsTranslate("GenerateSettingTranslate", "Hidden files"),
                     "options": [
                         {
                             "key": "show_hidden",
-                            "text": "Show hidden files",
+                            "text": qsTranslate("GenerateSettingTranslate", "Show hidden files"),
                             "type": "checkbox",
                             "default": false
                         },
                         {
                             "key": "hide_suffix",
-                            "text": "Hide file extension when rename",
+                            "text": qsTranslate("GenerateSettingTranslate", "Hide file extension when rename"),
                             "type": "checkbox",
                             "default": true
                         }
@@ -118,7 +118,7 @@
         },
         {
             "key": "advance",
-            "name": "Advanced",
+            "name": qsTranslate("GenerateSettingTranslate", "Advanced"),
             "groups": [
                 {
                     "key": "search",
@@ -126,14 +126,14 @@
                     "options": [
                         {
                             "key": "quick_search",
-                            "text": "Quick search",
+                            "text": qsTranslate("GenerateSettingTranslate", "Quick search"),
                             "type": "checkbox",
                             "default": false,
                             "hide": true
                         },
                         {
                             "key": "show_hidden",
-                            "text": "Show hidden files in search results",
+                            "text": qsTranslate("GenerateSettingTranslate", "Show hidden files in search results"),
                             "type": "checkbox",
                             "default": false,
                             "hide": true
@@ -142,54 +142,54 @@
                 },
                 {
                     "key": "preview",
-                    "name": "Preview",
+                    "name": qsTranslate("GenerateSettingTranslate", "Preview"),
                     "options": [
                         {
                             "key": "compress_file_preview",
-                            "text": "Compress file preview",
+                            "text": qsTranslate("GenerateSettingTranslate", "Compress file preview"),
                             "type": "checkbox",
                             "default": false,
                             "hide": true
                         },
                         {
                             "key": "text_file_preview",
-                            "text": "Text preview",
+                            "text": qsTranslate("GenerateSettingTranslate", "Text preview"),
                             "type": "checkbox",
                             "default": true
                         },
                         {
                             "key": "document_file_preview",
-                            "text": "Document preview",
+                            "text": qsTranslate("GenerateSettingTranslate", "Document preview"),
                             "type": "checkbox",
                             "default": true
                         },
                         {
                             "key": "image_file_preview",
-                            "text": "Image preview",
+                            "text": qsTranslate("GenerateSettingTranslate", "Image preview"),
                             "type": "checkbox",
                             "default": true
                         },
                         {
                             "key": "video_file_preview",
-                            "text": "Video preview",
+                            "text": qsTranslate("GenerateSettingTranslate", "Video preview"),
                             "type": "checkbox",
-                            "default": true
+                            "default": true,
                         }
                     ]
                 },
                 {
                     "key": "mount",
-                    "name": "Mount",
+                    "name": qsTranslate("GenerateSettingTranslate", "Mount"),
                     "options": [
                         {
                             "key": "auto_mount",
-                            "text": "Auto mount",
+                            "text": qsTranslate("GenerateSettingTranslate", "Auto mount"),
                             "type": "mountCheckBox",
                             "default": true
                         },
                         {
                             "key": "auto_mount_and_open",
-                            "text": "Open after auto mount",
+                            "text": qsTranslate("GenerateSettingTranslate", "Open after auto mount"),
                             "type": "openCheckBox",
                             "default": false
                         }
@@ -197,11 +197,11 @@
                 },
                 {
                     "key": "dialog",
-                    "name": "Dialog",
+                    "name": qsTranslate("GenerateSettingTranslate", "Dialog"),
                     "options": [
                         {
                             "key": "default_chooser_dialog",
-                            "text": "Use the file chooser dialog of Deepin File Manager",
+                            "text": qsTranslate("GenerateSettingTranslate", "Use the file chooser dialog of Deepin File Manager"),
                             "type": "checkbox",
                             "default": true
                         }

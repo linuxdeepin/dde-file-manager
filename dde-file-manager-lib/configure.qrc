@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/">
-        <file>configure/global-setting-template.json</file>
-        <file>configure/global-setting-template-pro.json</file>
-        <file>configure/global-setting-template-fedora.json</file>
+        <file>configure/global-setting-template.js</file>
+        <file>configure/global-setting-template-pro.js</file>
+        <file>configure/global-setting-template-fedora.js</file>
     </qresource>
 </RCC>
