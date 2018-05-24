@@ -90,6 +90,8 @@ private:
 private slots:
     void insertCompletion(const QString &completion);
     void onCompletionHighlighted(const QString &highlightedCompletion);
+
+    bool event(QEvent *e) override;
 };
 
 DFM_END_NAMESPACE
