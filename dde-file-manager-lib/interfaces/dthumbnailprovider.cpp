@@ -26,7 +26,7 @@
 #include "dfmstandardpaths.h"
 #include "dmimedatabase.h"
 #include "shutil/fileutils.h"
-#include "interfaces/dfmsetting.h"
+#include "app/dfmsetting.h"
 #include "app/define.h"
 #include "singleton.h"
 #include "shutil/mimetypedisplaymanager.h"

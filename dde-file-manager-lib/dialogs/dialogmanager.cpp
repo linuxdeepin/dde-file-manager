@@ -55,7 +55,7 @@
 #include "dialogs/propertydialog.h"
 #include "dialogs/openwithdialog.h"
 #include "dialogs/dmultifilepropertydialog.h"
-#include "interfaces/dfmsetting.h"
+#include "app/dfmsetting.h"
 #include "plugins/pluginmanager.h"
 #include "preview/previewinterface.h"
 

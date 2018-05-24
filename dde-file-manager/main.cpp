@@ -51,6 +51,7 @@
 #include "filemanager1_adaptor.h"
 #include "dbusfilemanager1.h"
 #include "views/themeconfig.h"
+#include "dfmapplication.h"
 
 #include <dthememanager.h>
 #include <dwindow.h>
@@ -157,6 +158,10 @@ int main(int argc, char *argv[])
     DFMGlobal::installTranslator();
 
     LogUtil::registerLogger();
+
+    // init application object
+    DFMApplication fmApp;
+    Q_UNUSED(fmApp)
 
     CommandLineManager::instance()->process();
 

@@ -197,7 +197,7 @@ HEADERS += \
     gvfs/qmount.h \
     gvfs/gvfsmountmanager.h \
     gvfs/qdiskinfo.h \
-    interfaces/dfmsetting.h \
+    app/dfmsetting.h \
     shutil/viewstatesmanager.h \
     interfaces/dfmeventdispatcher.h \
     interfaces/dfmabstracteventhandler.h \
@@ -265,7 +265,9 @@ HEADERS += \
     controllers/dfmsmbcrumbcontroller.h \
     controllers/dfmmtpcrumbcontroller.h \
     views/dfmaddressbar.h \
-    views/dcompleterlistview.h
+    views/dcompleterlistview.h \
+    interfaces/dfmapplication.h \
+    interfaces/private/dfmapplication_p.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -377,7 +379,7 @@ SOURCES += \
     gvfs/qmount.cpp \
     gvfs/gvfsmountmanager.cpp \
     gvfs/qdiskinfo.cpp \
-    interfaces/dfmsetting.cpp \
+    app/dfmsetting.cpp \
     shutil/viewstatesmanager.cpp \
     interfaces/dfmeventdispatcher.cpp \
     interfaces/dfmabstracteventhandler.cpp \
@@ -445,7 +447,8 @@ SOURCES += \
     controllers/dfmsmbcrumbcontroller.cpp \
     controllers/dfmmtpcrumbcontroller.cpp \
     views/dfmaddressbar.cpp \
-    views/dcompleterlistview.cpp
+    views/dcompleterlistview.cpp \
+    interfaces/dfmapplication.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET

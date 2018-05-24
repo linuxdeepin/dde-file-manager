@@ -13,7 +13,7 @@
 #include "dfilesystemmodel.h"
 #include "private/dstyleditemdelegate_p.h"
 #include "views/themeconfig.h"
-#include "dfmsetting.h"
+#include "app/dfmsetting.h"
 
 #include <QLabel>
 #include <QPainter>

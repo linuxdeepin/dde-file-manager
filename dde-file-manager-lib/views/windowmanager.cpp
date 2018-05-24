@@ -42,7 +42,7 @@
 #include "dialogs/dialogmanager.h"
 
 #include "qobjecthelper.h"
-#include "dfmsetting.h"
+#include "app/dfmsetting.h"
 
 #include "singleton.h"
 

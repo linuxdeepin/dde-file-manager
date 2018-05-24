@@ -26,7 +26,7 @@
 #include "diskcontrolitem.h"
 #include "gvfsmountmanager.h"
 #include "qdrive.h"
-#include "dfmsetting.h"
+#include "app/dfmsetting.h"
 #include "dfmglobal.h"
 #include <QDebug>
 #include <QProcess>

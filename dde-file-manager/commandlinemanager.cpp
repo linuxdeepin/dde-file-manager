@@ -27,7 +27,7 @@
 #include "filemanagerapp.h"
 #include "dabstractfileinfo.h"
 #include "dfileservices.h"
-#include "dfmsetting.h"
+#include "app/dfmsetting.h"
 
 #include <QCommandLineParser>
 #include <QCommandLineOption>

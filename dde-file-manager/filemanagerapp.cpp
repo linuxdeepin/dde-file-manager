@@ -48,7 +48,7 @@
 #include "interfaces/dfmstandardpaths.h"
 #include "models/desktopfileinfo.h"
 #include "interfaces/dfileservices.h"
-#include "interfaces/dfmsetting.h"
+#include "app/dfmsetting.h"
 #include "shutil/fileutils.h"
 #include "utils/utils.h"
 #include "app/filesignalmanager.h"

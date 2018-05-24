@@ -43,7 +43,7 @@
 #include "controllers/appcontroller.h"
 #include "../deviceinfo/udisklistener.h"
 #include "../usershare/usersharemanager.h"
-#include "dfmsetting.h"
+#include "app/dfmsetting.h"
 #include "models/desktopfileinfo.h"
 #include "shutil/viewstatesmanager.h"
 #include "dfmplaformmanager.h"

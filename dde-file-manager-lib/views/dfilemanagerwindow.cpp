@@ -51,7 +51,7 @@
 #include "usershare/usersharemanager.h"
 #include "controllers/pathmanager.h"
 #include "shutil/fileutils.h"
-#include "interfaces/dfmsetting.h"
+#include "app/dfmsetting.h"
 #include "gvfs/networkmanager.h"
 #include "dde-file-manager/singleapplication.h"
 #include "shutil/viewstatesmanager.h"

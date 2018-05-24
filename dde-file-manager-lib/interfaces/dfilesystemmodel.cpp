@@ -40,7 +40,7 @@
 
 #include "interfaces/durl.h"
 #include "interfaces/dfileviewhelper.h"
-#include "interfaces/dfmsetting.h"
+#include "app/dfmsetting.h"
 #include "shutil/fileutils.h"
 #include "deviceinfo/udisklistener.h"
 

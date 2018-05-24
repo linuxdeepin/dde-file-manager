@@ -48,7 +48,7 @@
 
 #include "models/sharefileinfo.h"
 #include "usershare/usersharemanager.h"
-#include "dfmsetting.h"
+#include "app/dfmsetting.h"
 
 #include <QDesktopServices>
 #include <QDirIterator>

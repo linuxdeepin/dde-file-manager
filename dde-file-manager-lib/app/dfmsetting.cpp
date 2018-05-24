@@ -22,7 +22,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "dfmsetting.h"
+#include "app/dfmsetting.h"
 
 #include <QJsonDocument>
 #include <QFile>
@@ -40,15 +40,68 @@
 #include "interfaces/dabstractfilewatcher.h"
 #include "app/define.h"
 #include "shutil/fileutils.h"
+#include "dfmapplication.h"
+#include "dfmsettings.h"
 
 DCORE_USE_NAMESPACE
+
+class SettingBackend : public DSettingsBackend
+{
+public:
+    explicit SettingBackend(DFMSettings *fms);
+
+    QStringList keys() const;
+    QVariant getOption(const QString &key) const;
+
+    void doSync();
+
+protected:
+    void doSetOption(const QString &key, const QVariant &value);
+
+private:
+    QString group = QStringLiteral("settings dialog");
+
+    DFMSettings *m_setting;
+};
+
+SettingBackend::SettingBackend(DFMSettings *fms)
+    : m_setting(fms)
+{
+    connect(m_setting, &DFMSettings::valueChanged, this, [this] (const QString &group, const QString &key, const QVariant &value) {
+        if (group != this->group)
+            return;
+
+        emit optionChanged(key, value);
+    });
+
+    m_setting->setAutoSync(true);
+    m_setting->setWatchChanges(true);
+}
+
+QStringList SettingBackend::keys() const
+{
+    return m_setting->keys(group).toList();
+}
+
+QVariant SettingBackend::getOption(const QString &key) const
+{
+    return m_setting->value(group, key);
+}
+
+void SettingBackend::doSync()
+{
+    m_setting->sync();
+}
+
+void SettingBackend::doSetOption(const QString &key, const QVariant &value)
+{
+    m_setting->setValue(group, key, value);
+}
 
 DFMSetting *DFMSetting::instance()
 {
     return globalSetting;
 }
-
-
 
 static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(QByteArray()))
 {
@@ -180,11 +233,9 @@ DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
 #endif
 
     //load conf value
-    auto backen = new DTK_CORE_NAMESPACE::QSettingBackend(getConfigFilePath());
+    auto backen = new SettingBackend(DFMApplication::genericSetting());
 
     m_settings->setBackend(backen);
-    m_fileSystemWathcer = fileService->createFileWatcher(this, DUrl::fromLocalFile(getConfigFilePath()).parentUrl(), this);
-    m_fileSystemWathcer->startWatcher();
 
     initConnections();
 }
@@ -192,7 +243,6 @@ DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
 void DFMSetting::initConnections()
 {
     connect(m_settings, &Dtk::Core::DSettings::valueChanged, this, &DFMSetting::onValueChanged);
-    connect(m_fileSystemWathcer, &DAbstractFileWatcher::fileMoved, this, &DFMSetting::onConfigFileChanged);
 }
 
 QVariant DFMSetting::getValueByKey(const QString &key)
@@ -276,17 +326,6 @@ void DFMSetting::onValueChanged(const QString &key, const QVariant &value)
         }
     }else if (key == "base.default_view.view_mode"){
         emit fileSignalManager->defaultViewModeChanged(viewMode());
-    }
-}
-
-void DFMSetting::onConfigFileChanged(const DUrl &fromUrl, const DUrl &toUrl)
-{
-    Q_UNUSED(fromUrl)
-    if (toUrl == DUrl::fromLocalFile(getConfigFilePath())){
-        auto backen = new DTK_CORE_NAMESPACE::QSettingBackend(getConfigFilePath());
-        m_settings->setBackend(backen);
-        qDebug() << toUrl;
-        emit showHiddenChanged(isShowedHiddenOnView());
     }
 }
 

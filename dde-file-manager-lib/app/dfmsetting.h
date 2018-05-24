@@ -78,13 +78,11 @@ signals:
     void showHiddenChanged(bool isShowedHiddenFile);
 public slots:
     void onValueChanged(const QString& key, const QVariant& value);
-    void onConfigFileChanged(const DUrl &fromUrl, const DUrl &toUrl);
 
 private:
     DTK_CORE_NAMESPACE::DSettings* m_settings;
     QStringList m_newTabOptionPaths;
     QStringList m_defaultWindowOptionPaths;
-    DAbstractFileWatcher* m_fileSystemWathcer;
 };
 
 #endif // DFMSETTING_H

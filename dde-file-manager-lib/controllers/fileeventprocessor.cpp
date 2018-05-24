@@ -17,7 +17,7 @@
 #include "views/dfilemanagerwindow.h"
 #include "shutil/fileutils.h"
 #include "singleton.h"
-#include "dfmsetting.h"
+#include "app/dfmsetting.h"
 #include "app/define.h"
 #include "tag/tagmanager.h"
 #include "interfaces/dfilemenu.h"
