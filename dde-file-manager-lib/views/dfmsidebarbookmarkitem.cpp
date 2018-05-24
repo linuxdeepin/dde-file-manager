@@ -84,19 +84,21 @@ QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
 
     QMenu *menu = new QMenu();
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
+    const DAbstractFileInfoPointer& info = DFileService::instance()->createFileInfo(this, url());
+    bool fileExist = info->exists();
 
     menu->addAction(QObject::tr("Open in new window"), [this]() {
         WindowManager::instance()->showNewWindow(url(), true);
-    });
+    })->setEnabled(fileExist);
 
     menu->addAction(QObject::tr("Open in new tab"), [wnd, this]() {
         wnd->openNewTab(url());
-    });
+    })->setEnabled(fileExist);
 
     menu->addAction(QObject::tr("Rename"), [this]() {
         DFMSideBarBookmarkItem *ccItem = const_cast<DFMSideBarBookmarkItem *>(this);
         ccItem->showRenameEditor();
-    });
+    })->setEnabled(fileExist);
 
     menu->addAction(QObject::tr("Remove"), [ = ]() {
         fileService->deleteFiles(this, DUrlList{url()}, true);
@@ -109,7 +111,7 @@ QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
 
         list.append(info->redirectedFileUrl());
         fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(this, list));
-    });
+    })->setEnabled(fileExist);
 
     return menu;
 }
