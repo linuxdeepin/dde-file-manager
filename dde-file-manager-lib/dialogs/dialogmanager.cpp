@@ -1155,7 +1155,7 @@ void DialogManager::showMultiFilesRenameDialog(const QList<DUrl> &selectedUrls)
     renameDialog.moveToCenter();
     renameDialog.setDialogTitle(QObject::tr("Rename %1 Files").arg(QString::fromStdString(std::to_string(selectedUrls.size()))));
 
-    std::size_t code{ renameDialog.exec() };
+    std::size_t code{ static_cast<size_t>(renameDialog.exec()) };
     std::size_t modeIndex{ renameDialog.getCurrentModeIndex() };
 
     AppController::flagForDDesktopRenameBar.store(true, std::memory_order_seq_cst);
