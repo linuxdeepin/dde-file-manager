@@ -150,15 +150,13 @@ void DFMSideBarDeviceItem::itemOnClick()
 {
     QVariantHash info = getExtensionPropertys();
 
-    if (info.value("canMount", false).toBool()) {
-        if (info.value("isMounted", false).toBool()) {
-            DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
-            wnd->cd(url());
-        } else {
-            DUrl newUrl;
-            newUrl.setQuery(info.value("deviceId").toString());
-            appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, newUrl));
-        }
+    if (info.value("isMounted", false).toBool()) {
+        DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
+        wnd->cd(url());
+    } else if (info.value("canMount", false).toBool()) {
+        DUrl newUrl;
+        newUrl.setQuery(info.value("deviceId").toString());
+        appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, newUrl));
     }
 }
 

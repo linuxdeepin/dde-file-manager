@@ -111,7 +111,8 @@ public:
     DUrl searchTargetUrl() const;
     DUrl searchedFileUrl() const;
     QString taggedLocalFilePath() const noexcept;
-    QString tagName()const noexcept;
+    QString tagName() const noexcept;
+    QString deviceId() const;
 
     DUrl parentUrl() const;
 

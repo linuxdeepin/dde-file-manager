@@ -285,6 +285,14 @@ QString DUrl::tagName() const noexcept
     return QString{};
 }
 
+QString DUrl::deviceId() const
+{
+    if (scheme() != DEVICE_SCHEME)
+        return QString();
+
+    return path();
+}
+
 DUrl DUrl::parentUrl() const
 {
     return parentUrl(*this);
