@@ -21,7 +21,7 @@
 #ifndef DFMCRUMBINTERFACE_H
 #define DFMCRUMBINTERFACE_H
 
-#include <dfmglobal.h>
+#include "dfmglobal.h"
 
 DFM_BEGIN_NAMESPACE
 
@@ -29,6 +29,8 @@ class CrumbData
 {
 public:
     CrumbData(DUrl url = DUrl(), QString displayText = QString(), QString iconName = QString(), QString iconKey = "icon");
+
+    operator QString() const;
 
     void setIconFromThemeConfig(QString iconName, QString iconKey = "icon");
 
