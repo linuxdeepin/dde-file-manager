@@ -164,8 +164,7 @@ void DFMSideBarPrivate::initMountedVolumes()
     auto devices_info = fileService->getChildren(q_func(), DUrl(DEVICE_ROOT),
                         QStringList(), QDir::AllEntries);
     for (const DAbstractFileInfoPointer &info : devices_info) {
-        UDiskDeviceInfoPointer pointer(dynamic_cast<UDiskDeviceInfo *>(info.data()));
-        group->appendItem(new DFMSideBarDeviceItem(DUrl::fromDeviceId(pointer->getId())));
+        group->appendItem(new DFMSideBarDeviceItem(info->fileUrl()));
     }
 
     // New device/volume added.
@@ -179,7 +178,8 @@ void DFMSideBarPrivate::initMountedVolumes()
         DAbstractFileInfoPointer pointer = fileService->createFileInfo(item, url);
         if (item) {
             DFMSideBarDeviceItem *casted = qobject_cast<DFMSideBarDeviceItem *>(item);
-            casted->unmountButton->setVisible(pointer->extensionPropertys().value("isMounted", false).toBool());
+            bool isMounted = pointer->extensionPropertys().value("isMounted", false).toBool();
+            casted->unmountButton->setVisible(isMounted);
         }
     });
 

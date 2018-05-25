@@ -114,6 +114,10 @@ void UDiskListener::removeDevice(UDiskDeviceInfoPointer device)
 {
     m_list.removeOne(device);
     m_map.remove(device->getDiskInfo().id());
+
+    DAbstractFileWatcher::ghostSignal(DUrl(DEVICE_ROOT),
+                                      &DAbstractFileWatcher::fileDeleted,
+                                      DUrl::fromDeviceId(device->getId()));
 }
 
 void UDiskListener::update()
@@ -604,7 +608,7 @@ const QList<DAbstractFileInfoPointer> UDiskListener::getChildren(const QSharedPo
     QList<DAbstractFileInfoPointer> infolist;
 
     for (int i = 0; i < m_list.size(); i++) {
-        DAbstractFileInfoPointer fileInfo(new UDiskDeviceInfo(m_list.at(i)));
+        DAbstractFileInfoPointer fileInfo(new UDiskDeviceInfo(DUrl::fromDeviceId(m_list.at(i)->getId())));
         infolist.append(fileInfo);
     }
 
