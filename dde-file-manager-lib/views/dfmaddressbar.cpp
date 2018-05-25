@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2017 ~ 2018 Deepin Technology Co., Ltd.
  *
  * Author:     Gary Wang <wzc782970009@gmail.com>
@@ -125,6 +125,8 @@ void DFMAddressBar::setCompleter(QCompleter *c)
     urlCompleter->setMaxVisibleItems(10);
     connect(urlCompleter, SIGNAL(activated(QString)), this, SLOT(insertCompletion(QString)));
     connect(urlCompleter, SIGNAL(highlighted(QString)), this, SLOT(onCompletionHighlighted(QString)));
+    connect(urlCompleter->completionModel(), &QAbstractItemModel::modelReset,
+            this, &DFMAddressBar::onCompletionModelCountChanged);
 
     completerView->setItemDelegate(&styledItemDelegate);
 
@@ -141,6 +143,12 @@ void DFMAddressBar::focusInEvent(QFocusEvent *e)
 
 void DFMAddressBar::focusOutEvent(QFocusEvent *e)
 {
+    // blumia: Sometimes completion will trigger weird Qt::ActiveWindowFocusReason event
+    //         and cause focusOutEvent. So we simply ignore it here.
+    if (e->reason() == Qt::ActiveWindowFocusReason) {
+        return;
+    }
+
     emit focusOut();
 
     return QLineEdit::focusOutEvent(e);
@@ -148,14 +156,8 @@ void DFMAddressBar::focusOutEvent(QFocusEvent *e)
 
 void DFMAddressBar::keyPressEvent(QKeyEvent *e)
 {
-    // pre-process some key event.
-    bool isShortcut = false;
-
+    lastPressedKey = e->key();
     switch (e->key()) {
-    case Qt::Key_Tab:
-        isShortcut = true;
-        e->accept();
-        break;
     case Qt::Key_Escape:
         emit focusOut();
         e->accept();
@@ -173,7 +175,7 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
             e->ignore();
             return;
         case Qt::Key_Tab:
-            if (urlCompleter->completionCount() == 1) {
+            if (completer()->completionCount() > 0) {
                 QString completeResult = urlCompleter->completionModel()->index(0, 0).data().toString();
                 insertCompletion(completeResult);
                 if (DUrl::fromUserInput(text()).isLocalFile()) {
@@ -186,26 +188,7 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
         }
     }
 
-    if (!urlCompleter || !isShortcut) {
-        QLineEdit::keyPressEvent(e);
-    }
-
-    if (!urlCompleter) {
-        return;
-    }
-
-    if (text().isEmpty()) {
-        urlCompleter->popup()->hide();
-        completerBaseString = "";
-        setIndicator(IndicatorType::Search);
-        return;
-    }
-
-    // blumia: Assume address is: /aa/bbbb/cc , completion prefix should be "cc",
-    //         completerBaseString should be "/aa/bbbb/"
-    updateCompletionState(this->text());
-    bool isDeletingCharacter = (e->key() == Qt::Key_Backspace || e->key() == Qt::Key_Delete);
-    doComplete(!isDeletingCharacter);
+    return QLineEdit::keyPressEvent(e);
 }
 
 void DFMAddressBar::initUI()
@@ -247,6 +230,7 @@ void DFMAddressBar::initConnections()
             }
         }
     });
+    connect(this, &DFMAddressBar::textEdited, this, &DFMAddressBar::onTextEdited);
 }
 
 void DFMAddressBar::initData()
@@ -297,17 +281,22 @@ void DFMAddressBar::updateIndicatorIcon()
 
 /*!
  * \brief Do complete by calling QCompleter::complete()
- * \param fakeInlineCompletion do a fake inline completion.
  *
  * Fake inline completion means auto select the only matched completion when
  * there are only one matched item avaliable.
  */
-void DFMAddressBar::doComplete(bool fakeInlineCompletion)
+void DFMAddressBar::doComplete()
 {
-    urlCompleter->complete(rect().adjusted(0, 5, 0, 5));
-    if (urlCompleter->completionCount() == 1 && fakeInlineCompletion) {
+    if (completerView->isHidden()) {
+        completer()->complete(rect().adjusted(0, 5, 0, 5));
+    } else {
+        urlCompleter->metaObject()->invokeMethod(urlCompleter, "_q_autoResizePopup");
+    }
+
+    if (completer()->completionCount() == 1 && lastPressedKey != Qt::Key_Backspace && lastPressedKey != Qt::Key_Delete) {
         completerView->setCurrentIndex(urlCompleter->completionModel()->index(0, 0));
     }
+
     return;
 }
 
@@ -340,7 +329,9 @@ void DFMAddressBar::updateCompletionState(const QString &text)
         }
 
         // Check if we should start a new completion transmission.
-        if (this->completerBaseString == text.left(slashIndex + 1)) {
+        if (this->completerBaseString == text.left(slashIndex + 1)
+                || DUrl::fromUserInput(this->completerBaseString) == DUrl::fromUserInput(text.left(slashIndex + 1))) {
+            onCompletionModelCountChanged(); // will call complete()
             return;
         }
 
@@ -352,6 +343,7 @@ void DFMAddressBar::updateCompletionState(const QString &text)
             if (crumbController) {
                 crumbController->cancelCompletionListTransmission();
                 crumbController->disconnect();
+                crumbController->deleteLater();
             }
             crumbController = DFMCrumbManager::instance()->createControllerByUrl(url);
             // Not found? Search for plugins
@@ -363,20 +355,21 @@ void DFMAddressBar::updateCompletionState(const QString &text)
                 qDebug() << "Unsupported url / scheme for completion: " << url;
                 return;
             }
+            // connections
+            connect(crumbController, &DFMCrumbInterface::completionFound, this, [this](const QStringList &list){
+                // append list to completion list.
+                appendToCompleterModel(list);
+            });
+            connect(crumbController, &DFMCrumbInterface::completionListTransmissionCompleted, this, [this](){
+                if (urlCompleter->completionCount() > 0) {
+                    if (urlCompleter->popup()->isHidden())
+                        doComplete();
+                } else {
+                    completerView->hide();
+                    setFocus(); // Hide will cause lost focus (weird..), so setFocus() here.
+                }
+            });
         }
-        Q_CHECK_PTR(crumbController);
-        // connections
-        connect(crumbController, &DFMCrumbInterface::completionFound, this, [this](const QStringList &list){
-            // append list to completion list.
-            appendToCompleterModel(list);
-        });
-        connect(crumbController, &DFMCrumbInterface::completionListTransmissionCompleted, this, [this](){
-            // check if we can do inline complete.
-            if (urlCompleter->completionCount() > 0 && urlCompleter->popup()->isHidden()) {
-                doComplete();
-            }
-            crumbController->disconnect();
-        });
         // start request
         isHistoryInCompleterModel = false;
         completerModel.setStringList(QStringList());
@@ -430,8 +423,41 @@ void DFMAddressBar::onCompletionHighlighted(const QString &highlightedCompletion
     setSelection(text().length() - shouldAppend.length(), text().length());
 }
 
+void DFMAddressBar::onCompletionModelCountChanged()
+{
+    if (completer()->completionCount() <= 0) {
+        completerView->hide();
+        setFocus();
+        return;
+    }
+
+    doComplete();
+}
+
+void DFMAddressBar::onTextEdited(const QString &text)
+{
+    if (text.isEmpty()) {
+        urlCompleter->popup()->hide();
+        completerBaseString = "";
+        setIndicator(IndicatorType::Search);
+        return;
+    }
+
+    // blumia: Assume address is: /aa/bbbb/cc , completion prefix should be "cc",
+    //         completerBaseString should be "/aa/bbbb/"
+    updateCompletionState(text);
+}
+
 bool DFMAddressBar::event(QEvent *e)
 {
+    // blumia: When window lost focus and then get activated, we should hide
+    //         addressbar if it's visiable.
+    if (e->type() == QEvent::WindowActivate) {
+        if (!hasFocus() && isVisible()) {
+            Q_EMIT focusOut();
+        }
+    }
+
     if (e->type() == QEvent::KeyPress) {
         keyPressEvent(static_cast<QKeyEvent*>(e));
         return true;

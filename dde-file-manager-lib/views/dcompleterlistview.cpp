@@ -33,7 +33,7 @@ DCompleterListView::DCompleterListView(QWidget *parent)
     : QListView(parent)
 {
     setFocusPolicy(Qt::NoFocus);
-    setWindowFlags(Qt::ToolTip);
+    overrideWindowFlags(Qt::Tool | Qt::WindowDoesNotAcceptFocus);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     setViewportMargins(0, 0, -verticalScrollBar()->sizeHint().width(), 0);

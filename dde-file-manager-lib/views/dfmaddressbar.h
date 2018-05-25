@@ -71,13 +71,15 @@ private:
     void setIndicator(enum IndicatorType type);
     void onWidgetThemeChanged(QWidget *widget, QString theme);
     void updateIndicatorIcon();
-    void doComplete(bool fakeInlineCompletion = true);
+    void doComplete();
     void updateCompletionState(const QString &text);
     void appendToCompleterModel(const QStringList &stringList);
 
+    int lastPressedKey = Qt::Key_D; // just an init value
     bool isHistoryInCompleterModel = false;
     DUrl currentUrl = DUrl();
     QString completerBaseString = QString();
+    QString lastEditedString = QString();
     QStringListModel completerModel;
     DCompleterListView * completerView;
     QStringList historyList;
@@ -90,6 +92,8 @@ private:
 private slots:
     void insertCompletion(const QString &completion);
     void onCompletionHighlighted(const QString &highlightedCompletion);
+    void onCompletionModelCountChanged();
+    void onTextEdited(const QString &text);
 
     bool event(QEvent *e) override;
 };
