@@ -555,7 +555,9 @@ bool DFileView::isDropTarget(const QModelIndex &index) const
 
 bool DFileView::cd(const DUrl &url)
 {
-    return setRootUrl(url);
+    DFileManagerWindow* w = qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(windowId()));
+
+    return w && w->cd(url);
 }
 
 bool DFileView::cdUp()
@@ -565,7 +567,7 @@ bool DFileView::cdUp()
     const DUrl &oldCurrentUrl = rootUrl();
     const DUrl& parentUrl = fileInfo ? fileInfo->parentUrl() : DUrl::parentUrl(oldCurrentUrl);
 
-    return cd(parentUrl);
+    return parentUrl.isValid() && cd(parentUrl);
 }
 
 bool DFileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
@@ -875,11 +877,8 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             break;
         case Qt::Key_Backspace:{
-            DFileManagerWindow* w = qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(windowId()));
             // blmark: revert commit vbfdf8e575447249ba284402bfac8a512bae2d10e
             cdUp();
-
-            w->hideRenameBar();
         }
             return;
         case Qt::Key_Delete:{

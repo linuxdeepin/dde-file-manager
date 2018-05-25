@@ -67,7 +67,8 @@ signals:
     void requestChooseSmbMountedFile(const DFMUrlBaseEvent &event);
 
     /* current display url changed*/
-    void currentUrlChanged(const DFMUrlBaseEvent &event);
+    // DEPRECATED: use DFileManagerWindow::currentUrlChanged() instead
+    void Q_DECL_DEPRECATED currentUrlChanged(const DFMUrlBaseEvent &event);
 
     /* file icon*/
     void requestIcon(const DUrl &url) const;
