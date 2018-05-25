@@ -22,6 +22,10 @@
 
 #include "dfmcrumbitem.h"
 
+#include "dfileservices.h"
+
+#include <QDebug>
+
 DFM_BEGIN_NAMESPACE
 
 DFMSmbCrumbController::DFMSmbCrumbController(QObject *parent)
@@ -43,7 +47,10 @@ bool DFMSmbCrumbController::supportedUrl(DUrl url)
 DFMCrumbItem *DFMSmbCrumbController::createCrumbItem(const CrumbData &data)
 {
     DFMCrumbItem *item = new DFMCrumbItem(data);
-    if (!data.url.parentUrl().isValid()) {
+
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, data.url);
+
+    if (!info->parentUrl().isValid()) {
         item->setIconFromThemeConfig("CrumbIconButton.Network");
         item->setText(data.url.toString());
     }

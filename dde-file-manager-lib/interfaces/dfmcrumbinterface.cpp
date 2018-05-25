@@ -39,6 +39,25 @@ CrumbData::CrumbData(DUrl url, QString displayText, QString iconName, QString ic
     this->iconKey = iconKey;
 }
 
+CrumbData::operator QString() const
+{
+     QString ret = "url='" + url.toString();
+
+     if (!displayText.isEmpty()) {
+        ret += "' displayText='" + displayText;
+     }
+
+     if (!iconName.isEmpty()) {
+        ret += "' iconName='" + iconName;
+     }
+
+     if (!iconName.isEmpty() && !iconKey.isEmpty()) {
+        ret += "' iconKey='" + iconKey;
+     }
+
+     return QStringLiteral("CrumbData(") + ret + QStringLiteral(")");
+}
+
 void CrumbData::setIconFromThemeConfig(QString iconName, QString iconKey)
 {
     this->iconName = iconName;
@@ -145,8 +164,6 @@ void DFMCrumbInterface::requestCompletionList(const DUrl &url)
 void DFMCrumbInterface::cancelCompletionListTransmission()
 {
     Q_D(DFMCrumbInterface);
-
-    using State = JobController::State;
 
     if (d->folderCompleterJobPointer && d->folderCompleterJobPointer) {
         d->folderCompleterJobPointer->stopAndDeleteLater();
