@@ -637,6 +637,10 @@ dde_file_manager--DFMSideBarDeviceItem > Dtk--Widget--DImageButton {
     qproperty-pressPic: ":/dark/icons/unmount_press.svg";
 }
 
+QWidget#SidebarMainLayoutHolder {
+    background: transparent;
+}
+
 /*================ Sidebar End =================*/
 
 /*============== Crumb Bar Begin ===============*/

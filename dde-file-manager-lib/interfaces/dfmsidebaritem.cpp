@@ -53,6 +53,7 @@ DFM_BEGIN_NAMESPACE
 #define SIDEBAR_ICON_SIZE 16
 #define SIDEBAR_ICON_TEXT_GAP_SIZE 8
 #define SIDEBAR_CHECK_BORDER_SIZE 3
+#define SIDEBAR_RENAMEEDIT_MARGIN 2
 
 class DFMSideBarItemPrivate
 {
@@ -270,8 +271,9 @@ void DFMSideBarItem::showRenameEditor()
     int paddingLeft = SIDEBAR_ITEM_PADDING + SIDEBAR_ICON_SIZE + SIDEBAR_ICON_TEXT_GAP_SIZE;
 
     d->renameLineEdit = new QLineEdit(this);
-    d->renameLineEdit->resize(SIDEBAR_ITEM_WIDTH - paddingLeft, SIDEBAR_ITEM_HEIGHT);
-    d->renameLineEdit->move(paddingLeft, 0);
+    d->renameLineEdit->resize(SIDEBAR_ITEM_WIDTH - paddingLeft - SIDEBAR_RENAMEEDIT_MARGIN,
+                              SIDEBAR_ITEM_HEIGHT - SIDEBAR_RENAMEEDIT_MARGIN * 2);
+    d->renameLineEdit->move(paddingLeft, SIDEBAR_RENAMEEDIT_MARGIN);
     d->renameLineEdit->setText(d->displayText);
     d->renameLineEdit->show();
     d->renameLineEdit->setFocus(Qt::MouseFocusReason);
