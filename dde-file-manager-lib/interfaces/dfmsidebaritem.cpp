@@ -276,6 +276,7 @@ void DFMSideBarItem::showRenameEditor()
     d->renameLineEdit->move(paddingLeft, SIDEBAR_RENAMEEDIT_MARGIN);
     d->renameLineEdit->setText(d->displayText);
     d->renameLineEdit->show();
+    d->renameLineEdit->selectAll();
     d->renameLineEdit->setFocus(Qt::MouseFocusReason);
     connect(d->renameLineEdit, &QLineEdit::editingFinished,
             this, &DFMSideBarItem::onEditingFinished);
