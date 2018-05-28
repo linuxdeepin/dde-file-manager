@@ -33,7 +33,7 @@ extern "C"
 
 
 
-class DAnythingMonitor final : public QObject
+QT_DEPRECATED class DAnythingMonitor final : public QObject
 {
     Q_OBJECT
 public:

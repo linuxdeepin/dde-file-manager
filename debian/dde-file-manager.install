@@ -5,7 +5,8 @@ usr/bin/dde-property-dialog
 usr/bin/dde-xdg-user-dirs-update
 usr/bin/usb-device-formatter
 usr/bin/usb-device-formatter-pkexec
-usr/bin/dde-anythingmonitor
+
+usr/lib/*/deepin-anything-server-lib/plugins/handlers/libdde-anythingmonitor.so*
 
 usr/share/applications/dde-file-manager.desktop
 
@@ -22,6 +23,5 @@ usr/share/dbus-1/interfaces/com.deepin.filemanager.filedialogmanager.xml
 usr/share/dbus-1/services/com.deepin.filemanager.filedialog.service
 usr/share/dbus-1/services/org.freedesktop.FileManager.service
 usr/share/dbus-1/system-services/com.deepin.filemanager.daemon.service
-lib/systemd/system/dde-anythingmonitor.service
 
 usr/share/usb-device-formatter/translations/*.qm

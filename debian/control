@@ -11,14 +11,16 @@ Build-Depends: debhelper (>=9), pkg-config, qt5-qmake, qtbase5-dev,
  qttools5-dev-tools, libglib2.0-dev, dde-dock-dev(>=4.0.5),
  libxcb-ewmh-dev, libdframeworkdbus-dev, libxcb-util0-dev,
  qtdeclarative5-dev, deepin-gettext-tools, libkf5codecs-dev,
- deepin-qt5config, libdmr-dev, dh-systemd, deepin-anything-dev
+ deepin-qt5config, libdmr-dev, dh-systemd, deepin-anything-dev,
+ deepin-anything-server-dev
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 
 Package: dde-file-manager
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
- libdde-file-manager( =${binary:Version}), socat, deepin-anything-dkms
+ libdde-file-manager( =${binary:Version}), socat,
+ deepin-anything-dkms, deepin-anything-server
 Recommends: dde-qt5integration, avfs, samba
 Description: File manager front end
  File manager front end of Deepin OS

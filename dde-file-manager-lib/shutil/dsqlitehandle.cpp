@@ -648,7 +648,9 @@ void DSqliteHandle::connectToSqlite(const QString& mountPoint, const QString& db
 
             m_sqlDatabasePtr = std::unique_ptr<QSqlDatabase>{new QSqlDatabase{ QSqlDatabase::addDatabase(R"foo(QSQLITE)foo", CONNECTIONNAME)} };
             QString DBName{mountPoint + QString{"/"} + db_name};
-            qDebug() << DBName;
+
+            ///###: for debugging.
+//            qDebug() << DBName;
 
             m_sqlDatabasePtr->setDatabaseName(DBName);
             m_sqlDatabasePtr->setUserName(USERNAME);
@@ -2898,7 +2900,7 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::DeleteFiles, bool>(const 
                     if(result){
 
                         for(const QString& file : itr_partion_and_files->second){
-                            result_of_emit[file] = QVariant{ file_and_tags[file] };
+                            result_of_emit[itr_partion_and_files->first + file] = QVariant{ file_and_tags[file] };
                         }
 
                         emit untagFiles(result_of_emit);
@@ -3047,6 +3049,7 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeFilesName, bool>(co
             if(!unixDeviceAndMountPoint.second.isEmpty() && !unixDeviceAndMountPoint.second.isNull()){
                 QString old_name_removed_mount_point{ this->remove_mount_point(cbeg.key(), unixDeviceAndMountPoint.second) };
                 QString new_name_removed_mount_point{ this->remove_mount_point(cbeg.value().first(), unixDeviceAndMountPoint.second) };
+
                 partionsAndFileNames[unixDeviceAndMountPoint.second][old_name_removed_mount_point] = new_name_removed_mount_point;
             }
         }
@@ -3095,11 +3098,9 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeFilesName, bool>(co
 
                     QString updateTagWithFile{ (++rangeBeg)->second.arg(oldAndNewName.second) };
                     updateTagWithFile = updateTagWithFile.arg(oldAndNewName.first);
-
                     sqlForChangingFilesName[partionBeg->first].emplace(updateFileProperty, updateTagWithFile);
                 }
             }
-
 
             if(!sqlForChangingFilesName.empty()){
                 bool result{ true };
@@ -3169,7 +3170,6 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::ChangeFilesName, bool>(co
                 for(; file_with_tags_beg != file_with_tags_end; ++file_with_tags_beg){
                     file_with_tags_var[file_with_tags_beg.key()] = QVariant{ file_with_tags_beg.value() };
                 }
-
 
                 emit untagFiles(file_with_tags_var);
 
