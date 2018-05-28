@@ -448,13 +448,13 @@ bool TagManager::changeFilesName(const QList<QPair<DUrl, DUrl>>& oldAndNewFilesN
     bool result{ true };
 
     if(!oldAndNewFilesName.isEmpty()){
-        QMap<QString, QVariant> new_and_old_name{};
+        QMap<QString, QVariant> old_and_new_name{};
 
         for(const QPair<DUrl, DUrl>& old_new : oldAndNewFilesName){
-            new_and_old_name[old_new.first.toLocalFile()] = QVariant{ old_new.second.toLocalFile() };
+            old_and_new_name[old_new.first.toLocalFile()] = QVariant{ old_new.second.toLocalFile() };
         }
 
-        QVariant var{ TagManagerDaemonController::instance()->disposeClientData(new_and_old_name, Tag::ActionType::ChangeFilesName) };
+        QVariant var{ TagManagerDaemonController::instance()->disposeClientData(old_and_new_name, Tag::ActionType::ChangeFilesName) };
         result = var.toBool();
     }
 

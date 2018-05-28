@@ -1,41 +1,28 @@
-#include <QUrl>
-#include <QDebug>
-#include <QFileInfo>
-#include <QCoreApplication>
-#include <QtConcurrent>
+#include <dasplugin.h>
 
-#include <interfaces/dfmglobal.h>
-#include <shutil/danythingmonitor.h>
+#include "taghandle.h"
 
-constexpr const char* const PATH{ "/proc/vfs_changes" };
+using namespace DAS_NAMESPACE;
 
-void do_work()
+class TagHandlePlugin : public DASPlugin
 {
-    QScopedPointer<DAnythingMonitor> anything_monitor_ptr{ new DAnythingMonitor{} };
-    QScopedPointer<QThreadPool> thread_pool_ptr{ new QThreadPool };
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID DASFactoryInterface_iid FILE "taghandle_as_plugin.json")
 
-    thread_pool_ptr->setMaxThreadCount(2);
+public:
+    TagHandlePlugin(QObject* const parent = nullptr)
+        :DASPlugin{ parent }{}
+    virtual ~TagHandlePlugin()=default;
 
-    while(true){
+    TagHandlePlugin(const TagHandlePlugin& other)=delete;
+    TagHandlePlugin& operator=(const TagHandlePlugin& other)=delete;
 
-        if(!QFileInfo::exists(PATH)){
-            std::this_thread::yield();
-        }
-
-        QFuture<void> work_future{ QtConcurrent::run(thread_pool_ptr.data() ,anything_monitor_ptr.data(), &DAnythingMonitor::doWork) };
-        QFuture<void> signal_future{ QtConcurrent::run(thread_pool_ptr.data(), anything_monitor_ptr.data(), &DAnythingMonitor::workSignal) };
-
-        QThread::msleep(200);
-
-        work_future.waitForFinished();
-        signal_future.waitForFinished();
+    DASInterface* create(const QString& key)
+    {
+        (void)key;
+        return (new TagHandle{});
     }
-}
 
-int main(int argc, char *argv[])
-{
-    QCoreApplication app{argc, argv};
-    QtConcurrent::run(&do_work);
+};
 
-    return app.exec();
-}
+#include "main.moc"
