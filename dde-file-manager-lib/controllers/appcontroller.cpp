@@ -331,12 +331,15 @@ void AppController::actionAddToBookMark(const QSharedPointer<DFMUrlBaseEvent> &e
 {
     DUrl fileUrl = event->url();
     const DAbstractFileInfoPointer &p = fileService->createFileInfo(NULL, fileUrl);
-//    if (p->canRedirectionFileUrl()) {
-//        fileUrl = p->redirectedFileUrl();
-//    }
 
-//    bookmarkManager->writeIntoBookmark(0, dirName, fileUrl);
-//    emit fileSignalManager->requestBookmarkAdd(dirName, DFMUrlBaseEvent(event->sender(), fileUrl));
+    if (fileUrl.isTaggedFile()) {
+        fileUrl = DUrl::fromLocalFile(fileUrl.taggedLocalFilePath());
+
+    } else if (fileUrl.isSearchFile()) {
+        fileUrl = fileUrl.searchedFileUrl();
+
+    }
+
     DFileService::instance()->touchFile(event->sender(), DUrl::fromBookMarkFile(fileUrl.toString(), p->fileDisplayName()));
 }
 
