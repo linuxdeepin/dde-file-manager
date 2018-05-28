@@ -9,8 +9,7 @@ usr/bin/dde-computer.sh
 usr/bin/dde-trash.sh
 usr/bin/file-manager.sh
 
-
-usr/lib/*/deepin-anything-server-lib/plugins/handlers/libdde-anythingmonitor.so*
+usr/lib/*/deepin-anything-server-lib/plugins/handlers/libdde-anythingmonitor.so
 
 usr/share/applications/dde-file-manager.desktop
 

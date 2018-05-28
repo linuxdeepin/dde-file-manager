@@ -6,8 +6,8 @@ QT += core \
 
 CONFIG += c++11 \
           console \
-          link_pkgconfig
-
+          link_pkgconfig \
+          plugin
 
 TARGET = dde-anythingmonitor
 
@@ -43,8 +43,8 @@ SOURCES += main.cpp \
 
 
 unix{
-
-target.path = $$system($$pkgConfigExecutable() --variable libdir deepin-anything-server-lib)/deepin-anything-server-lib/plugins/handlers
+PKG_CONFIG = $$pkgConfigExecutable()
+target.path = $$system($$PKG_CONFIG --variable libdir deepin-anything-server-lib)/deepin-anything-server-lib/plugins/handlers
 INSTALLS += target
 
 }
