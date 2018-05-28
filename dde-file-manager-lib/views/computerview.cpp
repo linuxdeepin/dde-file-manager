@@ -28,6 +28,7 @@
 #include "dfilemenumanager.h"
 #include "windowmanager.h"
 #include "dfmeventdispatcher.h"
+#include "dfmapplication.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -41,7 +42,6 @@
 #include "gvfs/gvfsmountmanager.h"
 #include "singleton.h"
 #include "../shutil/fileutils.h"
-#include "app/dfmsetting.h"
 #include "shutil/viewstatesmanager.h"
 #include "partman/partition.h"
 #include "interfaces/dfmplaformmanager.h"
@@ -202,7 +202,7 @@ void ComputerViewItem::mousePressEvent(QMouseEvent *event)
     setChecked(true);
 
     if (event->button() == Qt::LeftButton) {
-        if (globalSetting->openFileAction() == 0) {
+        if (DFMApplication::instance()->appAttribute(DFMApplication::AA_OpenFileMode).toInt() == 0) {
             openUrl();
         }
     }
@@ -213,7 +213,7 @@ void ComputerViewItem::mousePressEvent(QMouseEvent *event)
 void ComputerViewItem::mouseDoubleClickEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
-        if (globalSetting->openFileAction() == 1) {
+        if (DFMApplication::instance()->appAttribute(DFMApplication::AA_OpenFileMode).toInt() == 1) {
             openUrl();
         }
     }
@@ -347,7 +347,9 @@ void ComputerViewItem::openUrl()
         }
     }
 
-    DFMOpenUrlEvent::DirOpenMode mode = globalSetting->isAllwayOpenOnNewWindow() ? DFMOpenUrlEvent::ForceOpenNewWindow : DFMOpenUrlEvent::OpenInCurrentWindow;
+    DFMOpenUrlEvent::DirOpenMode mode = DFMApplication::instance()->appAttribute(DFMApplication::AA_AllwayOpenOnNewWindow).toBool()
+                                        ? DFMOpenUrlEvent::ForceOpenNewWindow
+                                        : DFMOpenUrlEvent::OpenInCurrentWindow;
 
     if (mode == DFMOpenUrlEvent::OpenInCurrentWindow)
         DFMEventDispatcher::instance()->processEventAsync<DFMOpenUrlEvent>(this, DUrlList() << url, mode);
@@ -543,7 +545,7 @@ void ComputerView::initUI()
     m_statusBar->itemCounted(event, number);
 
     //icon size
-    resizeAllItemsBySizeIndex(globalSetting->iconSizeIndex());
+    resizeAllItemsBySizeIndex(DFMApplication::instance()->appAttribute(DFMApplication::AA_IconSizeLevel).toInt());
     loadViewState();
 }
 
@@ -555,7 +557,7 @@ void ComputerView::initConnect()
     connect(deviceListener, &UDiskListener::volumeRemoved, this, &ComputerView::volumeRemoved);
     connect(m_statusBar->scalingSlider(), &DSlider::valueChanged, this, &ComputerView::resizeAllItemsBySizeIndex);
     connect(m_statusBar->scalingSlider(), &DSlider::valueChanged, this, &ComputerView::saveViewState);
-    connect(fileSignalManager, &FileSignalManager::requestChangeIconSizeBySizeIndex, this, &ComputerView::resizeAllItemsBySizeIndex);
+    connect(DFMApplication::instance(), &DFMApplication::iconSizeLevelChanged, this, &ComputerView::resizeAllItemsBySizeIndex);
 }
 
 void ComputerView::loadSystemItems()
@@ -1006,14 +1008,14 @@ void ComputerView::keyPressEvent(QKeyEvent *event)
                 }
 
                 DUrl url;
-                const QString &path = globalSetting->newTabPath();
+                const QString &path = DFMApplication::instance()->appAttribute(DFMApplication::AA_UrlOfNewTab).toString();
                 if (urls.count() == 1) {
                     url = urls.first();
                 } else {
-                    if (path != "Current Path") {
-                        url = DUrl::fromUserInput(path);
-                    } else {
+                    if (path.isEmpty()) {
                         url = rootUrl();
+                    } else {
+                        url = DUrl::fromUserInput(path);
                     }
                 }
                 DFMEventDispatcher::instance()->processEvent<DFMOpenNewTabEvent>(this, url);

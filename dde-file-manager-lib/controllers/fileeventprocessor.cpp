@@ -11,13 +11,13 @@
 #include "dabstractfileinfo.h"
 #include "dfileservices.h"
 #include "dfmeventdispatcher.h"
+#include "dfmapplication.h"
 
 #include "appcontroller.h"
 #include "views/windowmanager.h"
 #include "views/dfilemanagerwindow.h"
 #include "shutil/fileutils.h"
 #include "singleton.h"
-#include "app/dfmsetting.h"
 #include "app/define.h"
 #include "tag/tagmanager.h"
 #include "interfaces/dfilemenu.h"
@@ -354,7 +354,7 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
         foreach (DUrl url, e->urlList()) {
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
 
-            if (globalSetting->isCompressFilePreview()
+            if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewCompressFile).toBool()
                     && isAvfsMounted()
                     && FileUtils::isArchive(url.toLocalFile())
                     && fileInfo->mimeType().name() != "application/vnd.debian.binary-package") {

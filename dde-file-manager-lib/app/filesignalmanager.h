@@ -196,9 +196,6 @@ signals:
     /*icon size changed by setting dialog*/
     void requestChangeIconSizeBySizeIndex(const int& sizeIndex);
 
-    /*show hidden by setting dialog changed*/
-    void showHiddenOnViewChanged();
-
     /*trash state changed when trash is empty or is filled*/
     void trashStateChanged();
 
@@ -221,9 +218,6 @@ signals:
     void requestShowAddUserShareFailedDialog(const QString& sharePath);
 
     void requestShowErrorDialog(const QString &title, const QString &message);
-
-    /*default view mode changed*/
-    void defaultViewModeChanged(const int& viewMode);
 
     /*rename a tag*/
     void requestRenameTag(const DUrl& oldTagUrl);

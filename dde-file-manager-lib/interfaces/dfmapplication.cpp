@@ -24,6 +24,7 @@
 #include "dfmsettings.h"
 
 #include <QCoreApplication>
+#include <QMetaEnum>
 
 DFM_BEGIN_NAMESPACE
 
@@ -38,15 +39,101 @@ DFMApplicationPrivate::DFMApplicationPrivate(DFMApplication *qq)
     self = qq;
 }
 
+void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, const QString &key, const QVariant &value)
+{
+    if (group == QT_STRINGIFY(ApplicationAttribute)) {
+        const QMetaEnum &me = QMetaEnum::fromType<DFMApplication::ApplicationAttribute>();
+
+        DFMApplication::ApplicationAttribute aa = (DFMApplication::ApplicationAttribute)me.keyToValue(QByteArray("AA_" + key.toLatin1()).constData());
+
+        Q_EMIT self->appAttributeChanged(aa, value);
+
+        if (aa == DFMApplication::AA_IconSizeLevel) {
+            Q_EMIT self->iconSizeLevelChanged(value.toInt());
+        } else if (aa == DFMApplication::AA_ViewMode) {
+            Q_EMIT self->viewModeChanged(value.toInt());
+        }
+    } else if (group == QT_STRINGIFY(GenericAttribute)) {
+        const QMetaEnum &me = QMetaEnum::fromType<DFMApplication::GenericAttribute>();
+
+        DFMApplication::GenericAttribute ga = (DFMApplication::GenericAttribute)me.keyToValue(QByteArray("GA_" + key.toLatin1()).constData());
+
+        Q_EMIT self->genericAttributeChanged(ga, value);
+
+        switch (ga) {
+        case DFMApplication::GA_PreviewDocumentFile:
+        case DFMApplication::GA_PreviewImage:
+        case DFMApplication::GA_PreviewTextFile:
+        case DFMApplication::GA_PreviewVideo:
+            Q_EMIT self->previewAttributeChanged(ga, value.toBool());
+            break;
+        case DFMApplication::GA_ShowedHiddenFiles:
+            Q_EMIT self->showedHiddenFilesChanged(value.toBool());
+            break;
+        case DFMApplication::GA_PreviewCompressFile:
+            Q_EMIT self->previewCompressFileChanged(value.toBool());
+        default:
+            break;
+        }
+    }
+}
+
 DFMApplication::DFMApplication(QObject *parent)
     : DFMApplication(new DFMApplicationPrivate(this), parent)
 {
-
+    qRegisterMetaType<ApplicationAttribute>();
+    qRegisterMetaType<GenericAttribute>();
 }
 
 DFMApplication::~DFMApplication()
 {
 
+}
+
+QVariant DFMApplication::appAttribute(DFMApplication::ApplicationAttribute aa) const
+{
+    const QString group(QT_STRINGIFY(ApplicationAttribute));
+    const QMetaEnum &me = QMetaEnum::fromType<ApplicationAttribute>();
+    const QString key = QString::fromLatin1(me.valueToKey(aa)).split("_").last();
+
+    return appSetting()->value(group, key);
+}
+
+void DFMApplication::setAppAttribute(DFMApplication::ApplicationAttribute aa, const QVariant &value)
+{
+    const QString group(QT_STRINGIFY(ApplicationAttribute));
+    const QMetaEnum &me = QMetaEnum::fromType<ApplicationAttribute>();
+    const QString key = QString::fromLatin1(me.valueToKey(aa)).split("_").last();
+
+    appSetting()->setValue(group, key, value);
+}
+
+bool DFMApplication::syncAppAttribute()
+{
+    return appSetting()->sync();
+}
+
+QVariant DFMApplication::genericAttribute(DFMApplication::GenericAttribute ga) const
+{
+    const QString group(QT_STRINGIFY(GenericAttribute));
+    const QMetaEnum &me = QMetaEnum::fromType<GenericAttribute>();
+    const QString key = QString::fromLatin1(me.valueToKey(ga)).split("_").last();
+
+    return genericSetting()->value(group, key);
+}
+
+void DFMApplication::setGenericAttribute(DFMApplication::GenericAttribute ga, const QVariant &value)
+{
+    const QString group(QT_STRINGIFY(GenericAttribute));
+    const QMetaEnum &me = QMetaEnum::fromType<GenericAttribute>();
+    const QString key = QString::fromLatin1(me.valueToKey(ga)).split("_").last();
+
+    genericSetting()->setValue(group, key, value);
+}
+
+bool DFMApplication::syncGenericAttribute()
+{
+    return genericSetting()->sync();
 }
 
 DFMApplication *DFMApplication::instance()
@@ -56,8 +143,17 @@ DFMApplication *DFMApplication::instance()
 
 DFMSettings *DFMApplication::genericSetting()
 {
-    if (!gsGlobal.exists() && instance()) {
-        gsGlobal->moveToThread(instance()->thread());
+    if (!gsGlobal.exists()) {
+        if (instance()) {
+            gsGlobal->moveToThread(instance()->thread());
+            connect(gsGlobal, SIGNAL(valueChanged(QString, QString, QVariant)),
+                    instance(), SLOT(_q_onSettingsValueChanged(QString, QString, QVariant)));
+        }
+
+        gsGlobal->setAutoSync(true);
+        gsGlobal->setWatchChanges(true);
+
+        Q_EMIT instance()->genericSettingCreated(gsGlobal);
     }
 
     return gsGlobal;
@@ -65,8 +161,17 @@ DFMSettings *DFMApplication::genericSetting()
 
 DFMSettings *DFMApplication::appSetting()
 {
-    if (!asGlobal.exists() && instance()) {
-        asGlobal->moveToThread(instance()->thread());
+    if (!asGlobal.exists()) {
+        if (instance()) {
+            asGlobal->moveToThread(instance()->thread());
+            connect(asGlobal, SIGNAL(valueChanged(QString, QString, QVariant)),
+                    instance(), SLOT(_q_onSettingsValueChanged(QString, QString, QVariant)));
+        }
+
+        asGlobal->setAutoSync(true);
+        asGlobal->setWatchChanges(true);
+
+        Q_EMIT instance()->appSettingCreated(asGlobal);
     }
 
     return asGlobal;
@@ -76,7 +181,19 @@ DFMApplication::DFMApplication(DFMApplicationPrivate *dd, QObject *parent)
     : QObject(parent)
     , d_ptr(dd)
 {
+    if (gsGlobal.exists()) {
+        gsGlobal->moveToThread(thread());
+        connect(gsGlobal, SIGNAL(valueChanged(QString, QString, QVariant)),
+                this, SLOT(_q_onSettingsValueChanged(QString, QString, QVariant)));
+    }
 
+    if (asGlobal.exists()) {
+        asGlobal->moveToThread(thread());
+        connect(asGlobal, SIGNAL(valueChanged(QString, QString, QVariant)),
+                this, SLOT(_q_onSettingsValueChanged(QString, QString, QVariant)));
+    }
 }
 
 DFM_END_NAMESPACE
+
+#include "moc_dfmapplication.cpp"

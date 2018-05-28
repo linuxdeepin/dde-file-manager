@@ -55,7 +55,6 @@
 #include "dialogs/propertydialog.h"
 #include "dialogs/openwithdialog.h"
 #include "dialogs/dmultifilepropertydialog.h"
-#include "app/dfmsetting.h"
 #include "plugins/pluginmanager.h"
 #include "preview/previewinterface.h"
 
@@ -742,7 +741,6 @@ void DialogManager::showGlobalSettingsDialog(quint64 winId)
     w->setProperty("isSettingDialogShown", true);
 
     DSettingsDialog *dsd = new DFMSettingDialog(w);
-    dsd->updateSettings(globalSetting->settings());
     dsd->show();
 
     connect(dsd, &DSettingsDialog::finished, [ = ] {

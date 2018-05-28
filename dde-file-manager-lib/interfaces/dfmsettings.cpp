@@ -465,6 +465,9 @@ bool DFMSettings::sync()
 {
     Q_D(DFMSettings);
 
+    if (!d->settingFileIsDirty)
+        return true;
+
     const QByteArray &json = d->toJson(d->writableData);
 
     QFile file(d->settingFile);

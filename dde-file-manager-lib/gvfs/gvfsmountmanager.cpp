@@ -31,12 +31,12 @@
 #include "../app/define.h"
 #include "../partman/partition.h"
 #include "../partman/readusagemanager.h"
-#include "../app/dfmsetting.h"
 #include "../interfaces/dfileservices.h"
 #include "../interfaces/dfmevent.h"
 #include "partman/command.h"
 #include "mountsecretdiskaskpassworddialog.h"
 #include "app/filesignalmanager.h"
+#include "dfmapplication.h"
 
 #include <QThread>
 #include <QApplication>
@@ -1100,7 +1100,7 @@ DUrl GvfsMountManager::getRealMountUrl(const QDiskInfo &info)
 
 void GvfsMountManager::autoMountAllDisks()
 {
-    if (DFMSetting::instance()->isAutoMount()){
+    if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_AutoMount).toBool()) {
         foreach (const QDiskInfo& diskInfo, DiskInfos.values()) {
             if (diskInfo.can_mount()){
                 if (isDeviceCrypto_LUKS(diskInfo))

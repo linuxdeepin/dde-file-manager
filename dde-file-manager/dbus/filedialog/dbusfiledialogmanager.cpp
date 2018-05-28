@@ -28,11 +28,13 @@
 #include "filedialog_adaptor.h"
 #include "app/define.h"
 #include "singleton.h"
-#include "app/dfmsetting.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "dfilewatcher.h"
+#include "dfmapplication.h"
 
 #include <QDBusConnection>
+
+DFM_USE_NAMESPACE
 
 DBusFileDialogManager::DBusFileDialogManager(QObject *parent)
     : QObject(parent)
@@ -87,7 +89,7 @@ QString DBusFileDialogManager::errorString() const
 
 bool DBusFileDialogManager::isUseFileChooserDialog() const
 {
-    return globalSetting->isDefaultChooserDialog();
+    return DFMApplication::instance()->genericAttribute(DFMApplication::GA_OverrideFileChooserDialog).toBool();
 }
 
 bool DBusFileDialogManager::canUseFileChooserDialog(const QString &group, const QString &executableFileName) const

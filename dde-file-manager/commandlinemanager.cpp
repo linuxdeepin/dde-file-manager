@@ -27,7 +27,7 @@
 #include "filemanagerapp.h"
 #include "dabstractfileinfo.h"
 #include "dfileservices.h"
-#include "app/dfmsetting.h"
+#include "dfmapplication.h"
 
 #include <QCommandLineParser>
 #include <QCommandLineOption>
@@ -140,7 +140,7 @@ void CommandLineManager::processCommand()
     }
 
     if (argumentUrls.isEmpty())
-        argumentUrls.append(DUrl::fromUserInput(DFMSetting::instance()->defaultWindowPath()));
+        argumentUrls.append(DUrl::fromUserInput(DFMApplication::instance()->appAttribute(DFMApplication::AA_UrlOfNewWindow).toString()));
 
     DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(Q_NULLPTR, argumentUrls, isSet("n") ? DFMOpenUrlEvent::ForceOpenNewWindow : DFMOpenUrlEvent::OpenNewWindow);
 }

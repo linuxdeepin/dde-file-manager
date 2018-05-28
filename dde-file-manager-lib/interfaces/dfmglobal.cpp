@@ -43,7 +43,6 @@
 #include "controllers/appcontroller.h"
 #include "../deviceinfo/udisklistener.h"
 #include "../usershare/usersharemanager.h"
-#include "app/dfmsetting.h"
 #include "models/desktopfileinfo.h"
 #include "shutil/viewstatesmanager.h"
 #include "dfmplaformmanager.h"
@@ -327,11 +326,6 @@ void DFMGlobal::initDeviceListener()
 void DFMGlobal::initUserShareManager()
 {
     userShareManager;
-}
-
-void DFMGlobal::initGlobalSettings()
-{
-    globalSetting;
 }
 
 void DFMGlobal::initViewStatesManager()

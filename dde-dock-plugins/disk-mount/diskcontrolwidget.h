@@ -62,7 +62,6 @@ private slots:
 private:
     QVBoxLayout *m_centralLayout;
     QWidget *m_centralWidget;
-    DFMSetting* m_dfmsettings;
     GvfsMountManager *m_gvfsMountManager;
 };
 

@@ -25,7 +25,6 @@
 #ifndef DFILEVIEW_H
 #define DFILEVIEW_H
 
-#include "app/dfmsetting.h"
 #include "dfmglobal.h"
 #include "durl.h"
 #include "dfmbaseview.h"

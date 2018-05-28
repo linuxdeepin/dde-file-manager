@@ -93,7 +93,6 @@ HEADERS += \
     models/desktopfileinfo.h \
     models/bookmark.h \
     models/searchhistory.h \
-    models/fmsetting.h \
     models/fmstate.h \
     controllers/bookmarkmanager.h \
     controllers/fmstatemanager.h \
@@ -197,7 +196,6 @@ HEADERS += \
     gvfs/qmount.h \
     gvfs/gvfsmountmanager.h \
     gvfs/qdiskinfo.h \
-    app/dfmsetting.h \
     shutil/viewstatesmanager.h \
     interfaces/dfmeventdispatcher.h \
     interfaces/dfmabstracteventhandler.h \
@@ -283,7 +281,6 @@ SOURCES += \
     models/desktopfileinfo.cpp \
     models/bookmark.cpp \
     models/searchhistory.cpp \
-    models/fmsetting.cpp \
     models/fmstate.cpp \
     controllers/bookmarkmanager.cpp \
     controllers/fmstatemanager.cpp \
@@ -379,7 +376,6 @@ SOURCES += \
     gvfs/qmount.cpp \
     gvfs/gvfsmountmanager.cpp \
     gvfs/qdiskinfo.cpp \
-    app/dfmsetting.cpp \
     shutil/viewstatesmanager.cpp \
     interfaces/dfmeventdispatcher.cpp \
     interfaces/dfmabstracteventhandler.cpp \

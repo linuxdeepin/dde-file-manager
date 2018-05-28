@@ -34,34 +34,59 @@
                             "key": "default_window_path",
                             "name": qsTranslate("GenerateSettingTranslate", "Open from default window:"),
                             "type": "combobox",
-                            "items": [
-                                qsTranslate("GenerateSettingTranslate", "Computer"),
-                                qsTranslate("GenerateSettingTranslate", "Home"),
-                                qsTranslate("GenerateSettingTranslate", "Desktop"),
-                                qsTranslate("GenerateSettingTranslate", "Videos"),
-                                qsTranslate("GenerateSettingTranslate", "Music"),
-                                qsTranslate("GenerateSettingTranslate", "Pictures"),
-                                qsTranslate("GenerateSettingTranslate", "Documents"),
-                                qsTranslate("GenerateSettingTranslate", "Downloads")
-                            ],
-                            "default": 0
+                            "items": {
+                                "values": [
+                                    qsTranslate("GenerateSettingTranslate", "Computer"),
+                                    qsTranslate("GenerateSettingTranslate", "Home"),
+                                    qsTranslate("GenerateSettingTranslate", "Desktop"),
+                                    qsTranslate("GenerateSettingTranslate", "Videos"),
+                                    qsTranslate("GenerateSettingTranslate", "Music"),
+                                    qsTranslate("GenerateSettingTranslate", "Pictures"),
+                                    qsTranslate("GenerateSettingTranslate", "Documents"),
+                                    qsTranslate("GenerateSettingTranslate", "Downloads")
+                                ],
+                                "keys": [
+                                    "computer:///",
+                                    "standard:///Home",
+                                    "standard:///Desktop",
+                                    "standard:///Videos",
+                                    "standard:///Music",
+                                    "standard:///Pictures",
+                                    "standard:///Documents",
+                                    "standard:///Downloads"
+                                ]
+                            },
+                            "default": "computer:///"
                         },
                         {
                             "key": "new_tab_path",
                             "name": qsTranslate("GenerateSettingTranslate", "Open in new tab:"),
                             "type": "combobox",
-                            "items": [
-                                qsTranslate("GenerateSettingTranslate", "Current Directory"),
-                                qsTranslate("GenerateSettingTranslate", "Computer"),
-                                qsTranslate("GenerateSettingTranslate", "Home"),
-                                qsTranslate("GenerateSettingTranslate", "Desktop"),
-                                qsTranslate("GenerateSettingTranslate", "Videos"),
-                                qsTranslate("GenerateSettingTranslate", "Music"),
-                                qsTranslate("GenerateSettingTranslate", "Pictures"),
-                                qsTranslate("GenerateSettingTranslate", "Documents"),
-                                qsTranslate("GenerateSettingTranslate", "Downloads")
+                            "items": {
+                                "values": [
+                                    qsTranslate("GenerateSettingTranslate", "Current Directory"),
+                                    qsTranslate("GenerateSettingTranslate", "Computer"),
+                                    qsTranslate("GenerateSettingTranslate", "Home"),
+                                    qsTranslate("GenerateSettingTranslate", "Desktop"),
+                                    qsTranslate("GenerateSettingTranslate", "Videos"),
+                                    qsTranslate("GenerateSettingTranslate", "Music"),
+                                    qsTranslate("GenerateSettingTranslate", "Pictures"),
+                                    qsTranslate("GenerateSettingTranslate", "Documents"),
+                                    qsTranslate("GenerateSettingTranslate", "Downloads")
                                 ],
-                            "default": 0
+                                "keys": [
+                                    "",
+                                    "computer:///",
+                                    "standard:///Home",
+                                    "standard:///Desktop",
+                                    "standard:///Videos",
+                                    "standard:///Music",
+                                    "standard:///Pictures",
+                                    "standard:///Documents",
+                                    "standard:///Downloads"
+                                ]
+                            },
+                            "default": ""
                         }
                     ]
                 },
