@@ -293,7 +293,10 @@ void DFMAddressBar::doComplete()
         urlCompleter->metaObject()->invokeMethod(urlCompleter, "_q_autoResizePopup");
     }
 
-    if (completer()->completionCount() == 1 && lastPressedKey != Qt::Key_Backspace && lastPressedKey != Qt::Key_Delete) {
+    if (completer()->completionCount() == 1
+            && lastPressedKey != Qt::Key_Backspace
+            && lastPressedKey != Qt::Key_Delete
+            && cursorPosition() == text().length()) {
         completerView->setCurrentIndex(urlCompleter->completionModel()->index(0, 0));
     }
 
