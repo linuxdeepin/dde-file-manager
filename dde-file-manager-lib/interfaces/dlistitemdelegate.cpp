@@ -13,7 +13,7 @@
 #include "dfilesystemmodel.h"
 #include "private/dstyleditemdelegate_p.h"
 #include "views/themeconfig.h"
-#include "app/dfmsetting.h"
+#include "dfmapplication.h"
 
 #include <QLabel>
 #include <QPainter>
@@ -422,7 +422,7 @@ void DListItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
         return;
     }
 
-    bool donot_show_suffix{ DFMSetting::instance()->isShowedFileSuffix() };
+    bool donot_show_suffix{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffixOnRename).toBool() };
     QString text{};
 
     if (donot_show_suffix) {

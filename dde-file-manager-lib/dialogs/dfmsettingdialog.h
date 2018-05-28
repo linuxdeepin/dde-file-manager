@@ -31,6 +31,12 @@
 
 DWIDGET_USE_NAMESPACE
 
+DCORE_BEGIN_NAMESPACE
+class DSettings;
+DCORE_END_NAMESPACE
+
+DCORE_USE_NAMESPACE
+
 class DFMSettingDialog : public DSettingsDialog
 {
 public:
@@ -41,6 +47,9 @@ public:
 
     static QCheckBox* AutoMountCheckBox;
     static QCheckBox* AutoMountOpenCheckBox;
+
+private:
+    QPointer<DSettings> m_settings;
 };
 
 #endif // DFMSETTINGDIALOG_H

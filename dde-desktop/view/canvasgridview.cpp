@@ -47,8 +47,7 @@
 #include <dfilemenu.h>
 #include <dfilemenumanager.h>
 #include <dfilewatcher.h>
-
-#include "app/dfmsetting.h"
+#include <dfmapplication.h>
 
 #include <QGSettings>
 
@@ -1872,7 +1871,7 @@ void CanvasGridView::initConnection()
         }
     });
 
-    connect(DFMSetting::instance(), &DFMSetting::showHiddenChanged, [ = ](bool isShowedHiddenFile) {
+    connect(DFMApplication::instance(), &DFMApplication::showedHiddenFilesChanged, [ = ](bool isShowedHiddenFile) {
         QDir::Filters filters;
         if (isShowedHiddenFile) {
             filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;

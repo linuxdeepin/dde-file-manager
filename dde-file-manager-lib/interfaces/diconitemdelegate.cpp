@@ -26,7 +26,7 @@
 #include "dfileviewhelper.h"
 #include "views/fileitem.h"
 #include "private/dstyleditemdelegate_p.h"
-#include "app/dfmsetting.h"
+#include "dfmapplication.h"
 
 #include "dfilesystemmodel.h"
 #include "tag/tagmanager.h"
@@ -42,6 +42,8 @@
 #include <QAbstractItemView>
 #include <QVBoxLayout>
 #include <private/qtextengine_p.h>
+
+DFM_USE_NAMESPACE
 
 #define ICON_SPACING 16
 #define ICON_MODE_RECT_RADIUS TEXT_PADDING
@@ -890,7 +892,7 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     if (!item)
         return;
 
-    bool donot_show_suffix{ DFMSetting::instance()->isShowedFileSuffix() };
+    bool donot_show_suffix{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffixOnRename).toBool() };
 
     if (item->edit->isReadOnly()) {
         item->edit->setPlainText(index.data(DFileSystemModel::FileDisplayNameRole).toString());

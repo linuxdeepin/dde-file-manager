@@ -26,8 +26,9 @@
 #include "diskcontrolitem.h"
 #include "gvfsmountmanager.h"
 #include "qdrive.h"
-#include "app/dfmsetting.h"
 #include "dfmglobal.h"
+#include "dfmapplication.h"
+
 #include <QDebug>
 #include <QProcess>
 #include <QThreadPool>
@@ -35,6 +36,8 @@
 #include <QDebug>
 
 #define WIDTH           300
+
+DFM_USE_NAMESPACE
 
 DiskControlWidget::DiskControlWidget(QWidget *parent)
     : QScrollArea(parent),
@@ -51,7 +54,6 @@ DiskControlWidget::DiskControlWidget(QWidget *parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setStyleSheet("background-color:transparent;");
-    m_dfmsettings = DFMSetting::instance();
     m_gvfsMountManager = GvfsMountManager::instance();
     m_gvfsMountManager->setAutoMountSwitch(true);
     initConnect();
@@ -154,19 +156,17 @@ void DiskControlWidget::onVolume_added(const QDiskInfo &diskInfo)
         return;
 
     GvfsMountManager* gvfsMountManager = GvfsMountManager::instance();
-    DFMSetting* globalSetting = DFMSetting::instance();
+
     qDebug() << "AutoMountSwitch:" << m_gvfsMountManager->getAutoMountSwitch();
-    qDebug() << "isAutoMount:" << globalSetting->isAutoMount();
-    qDebug() << "isAutoMountAndOpen:" << globalSetting->isAutoMountAndOpen();
     if (m_gvfsMountManager->getAutoMountSwitch()){
         if (diskInfo.is_removable()) {
-            if (globalSetting->isAutoMountAndOpen()) {
+            if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_AutoMountAndOpen).toBool()) {
                 gvfsMountManager->mount(diskInfo, true);
                 QProcess::startDetached("dde-file-manager", {"computer:///"});
-            } else if (globalSetting->isAutoMount()) {
+            } else if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_AutoMount).toBool()) {
                 gvfsMountManager->mount(diskInfo, true);
             }
-        } else if (globalSetting->isAutoMount()) {
+        } else if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_AutoMount).toBool()) {
             gvfsMountManager->mount(diskInfo, true);
         }
     }

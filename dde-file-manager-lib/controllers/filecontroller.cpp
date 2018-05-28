@@ -29,6 +29,8 @@
 #include "dfileinfo.h"
 #include "trashmanager.h"
 #include "dfmeventdispatcher.h"
+#include "dfmapplication.h"
+
 #include "models/desktopfileinfo.h"
 #include "models/trashfileinfo.h"
 
@@ -48,7 +50,6 @@
 
 #include "models/sharefileinfo.h"
 #include "usershare/usersharemanager.h"
-#include "app/dfmsetting.h"
 
 #include <QDesktopServices>
 #include <QDirIterator>
@@ -733,7 +734,7 @@ QString FileDirIterator::path() const
 
 bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
 {
-    if (!globalSetting->isQuickSearch()){
+    if (!DFMApplication::instance()->genericAttribute(DFMApplication::GA_QuickSearch).toBool()) {
         return false;
     }
 

@@ -41,7 +41,6 @@
 #define gvfsMountManager Singleton<GvfsMountManager>::instance()
 #define secretManager Singleton<SecretManager>::instance()
 #define userShareManager Singleton<UserShareManager>::instance()
-#define globalSetting Singleton<DFMSetting>::instance()
 #define dfmPlatformManager Singleton<DFMPlaformManager>::instance()
 #define viewStatesManager Singleton<ViewStatesManager>::instance()
 

@@ -40,7 +40,7 @@
 #include "interfaces/dfmglobal.h"
 #include "interfaces/diconitemdelegate.h"
 #include "interfaces/dlistitemdelegate.h"
-#include "app/dfmsetting.h"
+#include "dfmapplication.h"
 #include "interfaces/dfmcrumbbar.h"
 #include "controllers/fmstatemanager.h"
 
@@ -163,14 +163,14 @@ DFileView::DFileView(QWidget *parent)
                                  << MultiSelection << ExtendedSelection
                                  << ContiguousSelection;
 
-    d_ptr->defaultViewMode = static_cast<ViewMode>(DFMSetting::instance()->viewMode());
+    d_ptr->defaultViewMode = static_cast<ViewMode>(DFMApplication::instance()->appAttribute(DFMApplication::AA_ViewMode).toInt());
 
     initUI();
     initModel();
     initDelegate();
     initConnects();
 
-    setIconSizeBySizeIndex(globalSetting->iconSizeIndex());
+    setIconSizeBySizeIndex(DFMApplication::instance()->appAttribute(DFMApplication::AA_IconSizeLevel).toInt());
     d->updateStatusBarTimer = new QTimer;
     d->updateStatusBarTimer->setInterval(100);
     d->updateStatusBarTimer->setSingleShot(true);
@@ -943,14 +943,16 @@ void DFileView::keyPressEvent(QKeyEvent *event)
                 return;
 
             DUrl url;
-            const QString& path = globalSetting->newTabPath();
-            if(selectedIndexCount() == 1 && model()->fileInfo(selectedIndexes().first())->isDir()){
+
+            if (selectedIndexCount() == 1 && model()->fileInfo(selectedIndexes().first())->canFetch()) {
                 url = model()->fileInfo(selectedIndexes().first())->fileUrl();
             } else{
-                if(path != "Current Path")
-                    url = DUrl::fromUserInput(path);
-                else
+                const QString& path = DFMApplication::instance()->appAttribute(DFMApplication::AA_UrlOfNewTab).toString();
+
+                if (path.isEmpty())
                     url = rootUrl();
+                else
+                    url = DUrl::fromUserInput(path);
             }
             DFMEventDispatcher::instance()->processEvent<DFMOpenNewTabEvent>(this, url);
             return;
@@ -1175,8 +1177,8 @@ void DFileView::updateStatusBar()
 
 void DFileView::openIndexByOpenAction(const int& action, const QModelIndex &index)
 {
-    if(action == globalSetting->openFileAction())
-        if(!DFMGlobal::keyCtrlIsPressed() && !DFMGlobal::keyShiftIsPressed())
+    if (action == DFMApplication::instance()->appAttribute(DFMApplication::AA_OpenFileMode).toInt())
+        if (!DFMGlobal::keyCtrlIsPressed() && !DFMGlobal::keyShiftIsPressed())
             openIndex(index);
 }
 
@@ -1222,7 +1224,7 @@ void DFileView::loadViewState(const DUrl& url)
     Q_D(DFileView);
     ViewState viewState = viewStatesManager->viewstate(url);
 
-    if(viewState.isValid()){
+    if (viewState.isValid()) {
         switchViewMode(viewState.viewMode);
         //TODO(zccrs) see: FMStateManager::cacheSortState
 //        model()->setSortRole(viewState.sortRole, viewState.sortOrder);
@@ -1230,8 +1232,8 @@ void DFileView::loadViewState(const DUrl& url)
         if (viewState.viewMode != ListMode) {
             setIconSizeBySizeIndex(viewState.iconSize);
         }
-    } else{
-        setIconSizeBySizeIndex(globalSetting->iconSizeIndex());
+    } else {
+        setIconSizeBySizeIndex(DFMApplication::instance()->appAttribute(DFMApplication::AA_IconSizeLevel).toInt());
         switchViewMode(d->defaultViewMode);
     }
 
@@ -1673,10 +1675,12 @@ bool DFileView::event(QEvent *e)
 void DFileView::onShowHiddenFileChanged()
 {
     QDir::Filters filters;
-    if (globalSetting->isShowedHiddenOnView())
+
+    if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedHiddenFiles).toBool())
         filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
     else
         filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
+
     model()->setFilters(filters);
 }
 
@@ -1769,10 +1773,10 @@ void DFileView::initConnects()
     connect(this, &DFileView::iconSizeChanged, this, &DFileView::updateHorizontalOffset, Qt::QueuedConnection);
     connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &DFileView::updateModelActiveIndex);
 
-    connect(fileSignalManager, &FileSignalManager::requestChangeIconSizeBySizeIndex, this, &DFileView::setIconSizeBySizeIndex);
-    connect(fileSignalManager, &FileSignalManager::showHiddenOnViewChanged, this, &DFileView::onShowHiddenFileChanged);
+    connect(DFMApplication::instance(), &DFMApplication::iconSizeLevelChanged, this, &DFileView::setIconSizeBySizeIndex);
+    connect(DFMApplication::instance(), &DFMApplication::showedHiddenFilesChanged, this, &DFileView::onShowHiddenFileChanged);
     connect(fileSignalManager, &FileSignalManager::requestFreshAllFileView, this, &DFileView::freshView);
-    connect(fileSignalManager, &FileSignalManager::defaultViewModeChanged, this, [this](const int& viewMode){
+    connect(DFMApplication::instance(), &DFMApplication::viewModeChanged, this, [this](const int& viewMode){
         Q_D(const DFileView);
         setDefaultViewMode(static_cast<ViewMode>(viewMode));
     });
@@ -1821,7 +1825,9 @@ void DFileView::openIndex(const QModelIndex &index)
 
     const DUrl &url = model()->getUrlByIndex(index);
 
-    DFMOpenUrlEvent::DirOpenMode mode = globalSetting->isAllwayOpenOnNewWindow() ? DFMOpenUrlEvent::ForceOpenNewWindow : DFMOpenUrlEvent::OpenInCurrentWindow;
+    DFMOpenUrlEvent::DirOpenMode mode = DFMApplication::instance()->appAttribute(DFMApplication::AA_AllwayOpenOnNewWindow).toBool()
+                                        ? DFMOpenUrlEvent::ForceOpenNewWindow
+                                        : DFMOpenUrlEvent::OpenInCurrentWindow;
 
     if (mode == DFMOpenUrlEvent::OpenInCurrentWindow)
         DFMEventDispatcher::instance()->processEventAsync<DFMOpenUrlEvent>(this, DUrlList() << url, mode);

@@ -23,14 +23,16 @@
  */
 
 #include "filemanagerapp.h"
-#include "app/filesignalmanager.h"
 #include "dfmglobal.h"
+#include "dfmapplication.h"
+
 #include "views/windowmanager.h"
 #include "views/dfilemanagerwindow.h"
 
 #include "controllers/appcontroller.h"
 #include "controllers/pathmanager.h"
 #include "app/define.h"
+#include "app/filesignalmanager.h"
 
 #include "dialogs/dialogmanager.h"
 
@@ -48,7 +50,6 @@
 #include "interfaces/dfmstandardpaths.h"
 #include "models/desktopfileinfo.h"
 #include "interfaces/dfileservices.h"
-#include "app/dfmsetting.h"
 #include "shutil/fileutils.h"
 #include "utils/utils.h"
 #include "app/filesignalmanager.h"
@@ -87,9 +88,6 @@ FileManagerApp::~FileManagerApp()
 
 void FileManagerApp::initApp()
 {
-    /*init configure*/
-    DFMGlobal::initGlobalSettings();
-
     /*add menuextensions path*/
     DFMGlobal::autoLoadDefaultMenuExtensions();
 
@@ -193,11 +191,17 @@ void FileManagerApp::initSysPathWatcher()
 void FileManagerApp::initConnect()
 {
     connect(m_sysPathWatcher, &QFileSystemWatcher::directoryChanged, systemPathManager, &PathManager::loadSystemPaths);
+    connect(DFMApplication::instance(), &DFMApplication::previewCompressFileChanged, this, [this] (bool enable) {
+        if (enable)
+            FileUtils::mountAVFS();
+        else
+            FileUtils::umountAVFS();
+    });
 }
 
 void FileManagerApp::initService()
 {
-    if (globalSetting->isCompressFilePreview()){
+    if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewCompressFile).toBool()) {
         FileUtils::mountAVFS();
     }
 }

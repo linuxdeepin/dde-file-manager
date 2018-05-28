@@ -29,6 +29,7 @@
 #include "dabstractfileinfo.h"
 #include "dfileservices.h"
 #include "dfmeventdispatcher.h"
+#include "dfmapplication.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -42,7 +43,6 @@
 #include "dialogs/dialogmanager.h"
 
 #include "qobjecthelper.h"
-#include "app/dfmsetting.h"
 
 #include "singleton.h"
 
@@ -196,7 +196,7 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
     }
 
     QX11Info::setAppTime(QX11Info::appUserTime());
-    DFileManagerWindow *window = new DFileManagerWindow(url.isEmpty() ? DUrl::fromUserInput(globalSetting->defaultWindowPath()) : url);
+    DFileManagerWindow *window = new DFileManagerWindow(url.isEmpty() ? DUrl::fromUserInput(DFMApplication::instance()->appAttribute(DFMApplication::AA_UrlOfNewWindow).toString()) : url);
     loadWindowState(window);
     window->setAttribute(Qt::WA_DeleteOnClose);
     window->show();

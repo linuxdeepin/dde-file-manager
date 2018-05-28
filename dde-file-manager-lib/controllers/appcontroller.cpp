@@ -38,13 +38,13 @@
 #include "dfileservices.h"
 #include "fileoperations/filejob.h"
 #include "dfmeventdispatcher.h"
+#include "dfmapplication.h"
 
 #include "app/filesignalmanager.h"
 #include "dfmevent.h"
 #include "app/define.h"
 
 #include "interfaces/dfmstandardpaths.h"
-#include "app/dfmsetting.h"
 #include "shutil/fileutils.h"
 #include "views/windowmanager.h"
 #include "views/dfilemanagerwindow.h"
@@ -132,7 +132,7 @@ void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
         return;
     }
 
-    if (urls.size() > 1 || globalSetting->isAllwayOpenOnNewWindow()) {
+    if (urls.size() > 1 || DFMApplication::instance()->appAttribute(DFMApplication::AA_AllwayOpenOnNewWindow).toBool()) {
         DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::ForceOpenNewWindow);
     } else {
         DFMEventDispatcher::instance()->processEventAsync<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::OpenInCurrentWindow);
@@ -496,7 +496,7 @@ void AppController::actionNewWindow(const QSharedPointer<DFMUrlListBaseEvent> &e
 
 void AppController::actionHelp()
 {
-    class PublicApplication : public DWIDGET_NAMESPACE::DApplication {
+    class PublicApplication : public DApplication {
         public: using  DApplication::handleHelpAction;
     };
     reinterpret_cast<PublicApplication*>(DApplication::instance())->handleHelpAction();

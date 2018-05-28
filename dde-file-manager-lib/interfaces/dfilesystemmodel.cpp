@@ -29,6 +29,7 @@
 #include "dabstractfilewatcher.h"
 #include "dstyleditemdelegate.h"
 #include "dfmplaformmanager.h"
+#include "dfmapplication.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -40,7 +41,6 @@
 
 #include "interfaces/durl.h"
 #include "interfaces/dfileviewhelper.h"
-#include "app/dfmsetting.h"
 #include "shutil/fileutils.h"
 #include "deviceinfo/udisklistener.h"
 
@@ -85,7 +85,7 @@ public:
         : q_ptr(qq)
         , needQuitUpdateChildren(1)
     {
-        if (globalSetting->isShowedHiddenOnView())
+        if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedHiddenFiles).toBool())
             filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
         else
             filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;

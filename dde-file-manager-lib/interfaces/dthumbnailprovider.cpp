@@ -26,12 +26,11 @@
 #include "dfmstandardpaths.h"
 #include "dmimedatabase.h"
 #include "shutil/fileutils.h"
-#include "app/dfmsetting.h"
 #include "app/define.h"
 #include "singleton.h"
 #include "shutil/mimetypedisplaymanager.h"
 #include "fileoperations/filejob.h"
-
+#include "dfmapplication.h"
 
 #include <QCryptographicHash>
 #include <QDir>
@@ -181,19 +180,22 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
 {
     const QString &mime = mimeType.name();
 
-    if(mime.startsWith("image") && !globalSetting->isImageFilePreview())
+    if (mime.startsWith("image") && !DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewImage).toBool())
         return false;
 
-    if((mime.startsWith("video") || mimeTypeDisplayManager->supportVideoMimeTypes().contains(mime)) && !globalSetting->isVideoFilePreview())
+    if ((mime.startsWith("video") || mimeTypeDisplayManager->supportVideoMimeTypes().contains(mime))
+            && !DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewVideo).toBool())
         return false;
 
-    if(mime == "text/plain" && !globalSetting->isTextFilePreview())
+    if (mime == "text/plain" && !DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewTextFile).toBool())
         return false;
 
-    if(Q_LIKELY(mime == "application/pdf"
-                || mime == "application/cnd.rn-realmedia"
-                || mime == "application/mxf") &&!globalSetting->isDocumentFilePreview())
+    if (Q_LIKELY(mime == "application/pdf"
+                 || mime == "application/cnd.rn-realmedia"
+                 || mime == "application/mxf")
+            && !DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewDocumentFile).toBool()) {
         return false;
+    }
 
     if (DThumbnailProviderPrivate::hasThumbnailMimeHash.contains(mime))
         return true;

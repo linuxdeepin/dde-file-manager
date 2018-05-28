@@ -43,6 +43,7 @@
 #include "dfmviewmanager.h"
 #include "dfmsidebar.h"
 #include "dfmaddressbar.h"
+#include "dfmapplication.h"
 
 #include "app/define.h"
 #include "dfmevent.h"
@@ -51,7 +52,6 @@
 #include "usershare/usersharemanager.h"
 #include "controllers/pathmanager.h"
 #include "shutil/fileutils.h"
-#include "app/dfmsetting.h"
 #include "gvfs/networkmanager.h"
 #include "dde-file-manager/singleapplication.h"
 #include "shutil/viewstatesmanager.h"
@@ -329,8 +329,8 @@ void DFileManagerWindow::hideEmptyTrashButton()
 void DFileManagerWindow::onNewTabButtonClicked()
 {
     DUrl url;
-    const QString &path = globalSetting->newTabPath();
-    if (path == "Current Path") {
+    const QString &path = DFMApplication::instance()->appAttribute(DFMApplication::AA_UrlOfNewTab).toString();
+    if (path.isEmpty()) {
         url = currentUrl();
     } else {
         url = DUrl::fromUserInput(path);

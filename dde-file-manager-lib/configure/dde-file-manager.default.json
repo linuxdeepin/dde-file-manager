@@ -1,0 +1,24 @@
+{
+    "ApplicationAttribute": {
+        "AllwayOpenOnNewWindow": false,
+        "IconSizeLevel": 1,
+        "ViewMode": 0,
+        "OpenFileMode": 1,
+        "UrlOfNewWindow": "computer:///",
+        "UrlOfNewTab": ""
+    },
+    "GenericAttribute": {
+        "QuickSearch": false,
+        "PreviewCompressFile": false,
+        "PreviewTextFile": true,
+        "PreviewDocumentFile": true,
+        "PreviewImage": true,
+        "PreviewVideo": true,
+        "AutoMount": true,
+        "AutoMountAndOpen": false,
+        "OverrideFileChooserDialog": true,
+        "ShowedHiddenOnSearch": true,
+        "ShowedHiddenFiles": false,
+        "ShowedFileSuffixOnRename": true
+    }
+}

@@ -4,4 +4,7 @@
         <file>configure/global-setting-template-pro.js</file>
         <file>configure/global-setting-template-fedora.js</file>
     </qresource>
+    <qresource prefix="/config">
+        <file alias="dde-file-manager.json">configure/dde-file-manager.default.json</file>
+    </qresource>
 </RCC>
