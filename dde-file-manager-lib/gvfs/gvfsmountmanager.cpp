@@ -1105,30 +1105,30 @@ void GvfsMountManager::autoMountAllDisks()
             if (diskInfo.can_mount()){
                 if (isDeviceCrypto_LUKS(diskInfo))
                     continue;
-                mount(diskInfo);
+                mount(diskInfo, true);
             }
         }
     }
 }
 
-void GvfsMountManager::mount(const QString &path)
+void GvfsMountManager::mount(const QString &path, bool silent)
 {
     QDiskInfo diskInfo = getDiskInfo(path);
-    mount(diskInfo);
+    mount(diskInfo, silent);
 }
 
-void GvfsMountManager::mount(const QDiskInfo &diskInfo)
+void GvfsMountManager::mount(const QDiskInfo &diskInfo, bool silent)
 {
     if (!diskInfo.mounted_root_uri().isEmpty()){
-        mount_mounted(diskInfo.mounted_root_uri());
+        mount_mounted(diskInfo.mounted_root_uri(), silent);
     }else if(!diskInfo.activation_root_uri().isEmpty()) {
-        mount_mounted(diskInfo.activation_root_uri());
+        mount_mounted(diskInfo.activation_root_uri(), silent);
     }else{
-        mount_device(diskInfo.unix_device());
+        mount_device(diskInfo.unix_device(), silent);
     }
 }
 
-void GvfsMountManager::mount_mounted(const QString &mounted_root_uri)
+void GvfsMountManager::mount_mounted(const QString &mounted_root_uri, bool silent)
 {
     std::string file_uri = mounted_root_uri.toStdString();
     const char *f = file_uri.data();
@@ -1138,13 +1138,12 @@ void GvfsMountManager::mount_mounted(const QString &mounted_root_uri)
         return;
     GMountOperation* op;
     op = new_mount_op ();
-    g_file_mount_enclosing_volume (file, G_MOUNT_MOUNT_NONE, op, NULL, &GvfsMountManager::mount_with_mounted_uri_done, op);
+    g_file_mount_enclosing_volume (file, G_MOUNT_MOUNT_NONE, op, NULL, &GvfsMountManager::mount_with_mounted_uri_done, silent ? &silent : nullptr);
     g_object_unref (file);
 }
 
-void GvfsMountManager::mount_with_mounted_uri_done(GObject *object, GAsyncResult *res, gpointer user_data)
+void GvfsMountManager::mount_with_mounted_uri_done(GObject *object, GAsyncResult *res, gpointer silent)
 {
-    Q_UNUSED(user_data)
     gboolean succeeded;
     GError *error = NULL;
 
@@ -1153,10 +1152,12 @@ void GvfsMountManager::mount_with_mounted_uri_done(GObject *object, GAsyncResult
     if (!succeeded)
     {
         qDebug() << "Error mounting location: "<< error->message;
+        if (!silent)
+            fileSignalManager->requestShowErrorDialog(QString::fromLocal8Bit(error->message), QString(" "));
     }
 }
 
-void GvfsMountManager::mount_device(const QString &unix_device)
+void GvfsMountManager::mount_device(const QString &unix_device, bool silent)
 {
     if (unix_device.isEmpty())
         return;
@@ -1186,7 +1187,7 @@ void GvfsMountManager::mount_device(const QString &unix_device)
                           op,
                           NULL,
                           &GvfsMountManager::mount_with_device_file_cb,
-                          op);
+                          silent ? &silent : nullptr);
 
             outstanding_mounts++;
         }
@@ -1201,9 +1202,8 @@ void GvfsMountManager::mount_device(const QString &unix_device)
     g_object_unref (volume_monitor);
 }
 
-void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *res, gpointer user_data)
+void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *res, gpointer silent)
 {
-    Q_UNUSED(user_data)
     GVolume *volume;
     gboolean succeeded;
     GError *error = NULL;
@@ -1214,8 +1214,9 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
 
     if (!succeeded)
     {
-          qDebug() << "Error mounting :" << g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE) << error->message;
-        fileSignalManager->requestShowErrorDialog(QString::fromLocal8Bit(error->message), QString(" "));
+          qDebug() << "Error mounting :" << g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE) << error->message << silent;
+          if (!silent)
+              fileSignalManager->requestShowErrorDialog(QString::fromLocal8Bit(error->message), QString(" "));
     }else{
           GMount *mount;
           GFile *root;

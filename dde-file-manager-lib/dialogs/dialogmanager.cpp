@@ -1011,6 +1011,7 @@ void DialogManager::showErrorDialog(const QString &title, const QString &message
 
     d.setIcon(QIcon::fromTheme("dialog-error"));
     d.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
+    d.setMaximumWidth(640);
     d.exec();
 }
 

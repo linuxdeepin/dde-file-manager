@@ -96,10 +96,10 @@ public:
                                 const char      *default_domain,
                                 GAskPasswordFlags flags);
 
-    static void mount(const QString& path);
-    static void mount(const QDiskInfo& diskInfo);
-    static void mount_device(const QString& unix_device);
-    static void mount_mounted(const QString& mounted_root_uri);
+    static void mount(const QString& path, bool silent = false);
+    static void mount(const QDiskInfo& diskInfo, bool silent = false);
+    static void mount_device(const QString& unix_device, bool silent = false);
+    static void mount_mounted(const QString& mounted_root_uri, bool silent = false);
     static void unmount(const QDiskInfo& diskInfo);
     static void unmount(const QString&  id);
     static void unmount_mounted(const QString& mounted_root_uri);
