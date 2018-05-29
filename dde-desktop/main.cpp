@@ -65,6 +65,10 @@ int main(int argc, char *argv[])
         exit(0x0002);
     }
 
+    // init application object
+    DFMApplication fmApp;
+    Q_UNUSED(fmApp)
+
     if (!conn.registerObject(DesktopServicePath, Desktop::instance(),
                              QDBusConnection::ExportAllSlots |
                              QDBusConnection::ExportAllSignals |
@@ -72,10 +76,6 @@ int main(int argc, char *argv[])
         qDebug() << "registerObject Failed" << conn.lastError();
         exit(0x0003);
     }
-
-    // init application object
-    DFMApplication fmApp;
-    Q_UNUSED(fmApp)
 
     Desktop::instance()->initDebugDBus(conn);
 
