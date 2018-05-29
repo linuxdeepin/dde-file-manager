@@ -31,6 +31,25 @@
 
 DFM_BEGIN_NAMESPACE
 
+/*!
+ * \class CrumbData
+ * \inmodule dde-file-manager-lib
+ *
+ * \brief CrumbData is a class which providing data for DFMCrumbInterface
+ *
+ * \sa DFMCrumbInterface
+ */
+
+/*!
+ * \fn CrumbData::CrumbData(DUrl url, QString displayText, QString iconName, QString iconKey)
+ *
+ * \brief Construct function of CrumbData
+ *
+ * \param url url of a crumb item
+ * \param displayText display text of a crumb item
+ * \param iconName the icon name of a crumb item (if it have)
+ * \param iconKey the icon key of a crumb item
+ */
 CrumbData::CrumbData(DUrl url, QString displayText, QString iconName, QString iconKey)
 {
     this->url = url;
@@ -83,6 +102,22 @@ DFMCrumbInterfacePrivate::DFMCrumbInterfacePrivate(DFMCrumbInterface *qq)
 }
 
 
+/*!
+ * \class DFMCrumbInterface
+ * \inmodule dde-file-manager-lib
+ *
+ * \brief DFMCrumbInterface is the interface for crumb item management for DFMCrumbBar
+ *
+ * DFMCrumbInterface is the interface for crumb item management for DFMCrumbBar, and should
+ * be implemented as a controller. Each different URL schema got a corresponding controller
+ * for creating crumb items. DFMCrumbManager holds all avaliable crumb controllers.
+ *
+ * DFMCrumbInterface provides all neccessary interfaces for crumb management and some URL
+ * processing utils functions.
+ *
+ * \sa DFMCrumbBar, DFMCrumbManager
+ */
+
 DFMCrumbInterface::DFMCrumbInterface(QObject *parent)
     : QObject(parent)
     , d_ptr(new DFMCrumbInterfacePrivate(this))
@@ -95,6 +130,13 @@ DFMCrumbInterface::~DFMCrumbInterface()
 
 }
 
+/*!
+ * \brief Seprate Url into a list of CrumbData for creating crumb items.
+ *
+ * \param url The url to be seprated.
+ *
+ * \return a list of CrumbData for creating crumb items.
+ */
 QList<CrumbData> DFMCrumbInterface::seprateUrl(const DUrl &url)
 {
     QList<CrumbData> list;
@@ -125,11 +167,31 @@ QList<CrumbData> DFMCrumbInterface::seprateUrl(const DUrl &url)
     return list;
 }
 
+/*!
+ * \brief Creating crumb item by the given crumb data
+ *
+ * \param data The crunb data used to create a crumb item.
+ *
+ * \return Pointer of the created DFMCrumbItem
+ */
 DFMCrumbItem *DFMCrumbInterface::createCrumbItem(const CrumbData &data)
 {
     return new DFMCrumbItem(data);
 }
 
+/*!
+ * \brief Start request a completion list for address bar auto-completion.
+ *
+ * \param url The base url need to be completed.
+ *
+ * Since completion list can be long, so we need do async completion. Calling this
+ * function will start a completion request and the completion list item will be sent
+ * via signal completionFound. When user no longer need current completion list and
+ * the transmission isn't completed, you should call cancelCompletionListTransmission.
+ * When transmission completed, it will send completionListTransmissionCompleted signal.
+ *
+ * \sa completionFound, completionListTransmissionCompleted, cancelCompletionListTransmission
+ */
 void DFMCrumbInterface::requestCompletionList(const DUrl &url)
 {
     Q_D(DFMCrumbInterface);
@@ -161,6 +223,11 @@ void DFMCrumbInterface::requestCompletionList(const DUrl &url)
     d->folderCompleterJobPointer->start();
 }
 
+/*!
+ * \brief Cancel the started completion list transmission.
+ *
+ * \sa completionFound, completionListTransmissionCompleted, requestCompletionList
+ */
 void DFMCrumbInterface::cancelCompletionListTransmission()
 {
     Q_D(DFMCrumbInterface);
@@ -169,5 +236,11 @@ void DFMCrumbInterface::cancelCompletionListTransmission()
         d->folderCompleterJobPointer->stopAndDeleteLater();
     }
 }
+
+/*!
+ * \fn virtual bool DFMCrumbInterface::supportedUrl(DUrl url)
+ *
+ * \brief Check if the given \a url is supported in this controller.
+ */
 
 DFM_END_NAMESPACE

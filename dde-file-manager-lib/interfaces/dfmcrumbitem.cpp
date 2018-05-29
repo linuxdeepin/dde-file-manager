@@ -84,6 +84,19 @@ ThemeConfig::State DFMCrumbItemPrivate::getState() const
     return ThemeConfig::Normal;
 }
 
+/*!
+ * \class DFMCrumbItem
+ * \inmodule dde-file-manager-lib
+ *
+ * \brief DFMCrumbItem is the crumb item inside the crumb bar.
+ *
+ * DFMCrumbItem is the crumb item which managed by the DFMCrumbBar widget, it holds CrumbData
+ * which includes the url of the crumb item, the displaying text, and the icon of the item
+ * (if have)
+ *
+ * \sa DFMCrumbInterface, DFMCrumbManager, DFMCrumbBar
+ */
+
 DFMCrumbItem::DFMCrumbItem(const CrumbData &data, QWidget* parent)
     : QPushButton(parent)
     , d_ptr(new DFMCrumbItemPrivate(this))
@@ -106,12 +119,22 @@ DFMCrumbItem::~DFMCrumbItem()
 
 }
 
+/*!
+ * \brief Get the url of the crumb item.
+ *
+ * \return url of the crumb item.
+ */
 DUrl DFMCrumbItem::url() const
 {
     Q_D(const DFMCrumbItem);
     return d->data.url;
 }
 
+/*!
+ * \brief Set the display text of the crumb item.
+ *
+ * \param text The display text which should be set.
+ */
 void DFMCrumbItem::setText(const QString &text)
 {
     Q_D(DFMCrumbItem);
@@ -119,6 +142,11 @@ void DFMCrumbItem::setText(const QString &text)
     QPushButton::setText(text);
 }
 
+/*!
+ * \brief Set the url of the crumb item.
+ *
+ * \param url The url to be set as.
+ */
 void DFMCrumbItem::setUrl(const DUrl &url)
 {
     Q_D(DFMCrumbItem);
@@ -127,6 +155,7 @@ void DFMCrumbItem::setUrl(const DUrl &url)
 
 /*!
  * \brief Set icon from theme config.
+ *
  * \param group Item group name in theme config file
  * \param key Icon key in theme config file
  *

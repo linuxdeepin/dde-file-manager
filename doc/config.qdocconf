@@ -6,6 +6,9 @@ description = A file management tool for Deepin Desktop Enviroment.
 sourcedirs += ../
 headerdirs += ../
 
+macro.param             = "\\e"
+macro.return            = "Returns"
+
 sources.fileextensions = "*.cpp *.qdoc *.mm *.qml"
 headers.fileextensions = "*.h *.ch *.h++ *.hh *.hpp *.hxx"
 
