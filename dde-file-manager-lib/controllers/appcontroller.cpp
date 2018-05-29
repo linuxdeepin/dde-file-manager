@@ -340,7 +340,7 @@ void AppController::actionAddToBookMark(const QSharedPointer<DFMUrlBaseEvent> &e
 
     }
 
-    DFileService::instance()->touchFile(event->sender(), DUrl::fromBookMarkFile(fileUrl.toString(), p->fileDisplayName()));
+    DFileService::instance()->touchFile(event->sender(), DUrl::fromBookMarkFile(fileUrl, p->fileDisplayName()));
 }
 
 void AppController::actionNewFolder(const QSharedPointer<DFMUrlBaseEvent> &event)

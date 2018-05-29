@@ -113,18 +113,21 @@ public:
     QString taggedLocalFilePath() const noexcept;
     QString tagName() const noexcept;
     QString deviceId() const;
+    DUrl bookmarkTargetUrl() const;
+    QString bookmarkName() const;
 
     DUrl parentUrl() const;
 
     void setSearchKeyword(const QString &keyword);
     void setSearchTargetUrl(const DUrl &url);
     void setSearchedFileUrl(const DUrl &url);
-    void setTaggedFileUrl(const QString& localFilePath)noexcept;
+    void setTaggedFileUrl(const QString& localFilePath) noexcept;
+    void setBookmarkName(const QString &name);
 
     static DUrl fromLocalFile(const QString &filePath);
     static DUrl fromTrashFile(const QString &filePath);
     static DUrl fromRecentFile(const QString &filePath);
-    static DUrl fromBookMarkFile(const QString &filePath, const QString &name);
+    static DUrl fromBookMarkFile(const DUrl &targetUrl, const QString &name);
     static DUrl fromSearchFile(const QString &filePath);
     static DUrl fromSearchFile(const DUrl &targetUrl, const QString &keyword, const DUrl &searchedFileUrl = DUrl());
     static DUrl fromComputerFile(const QString &filePath);

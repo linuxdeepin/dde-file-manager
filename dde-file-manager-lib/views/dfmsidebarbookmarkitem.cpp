@@ -63,7 +63,7 @@ DFMSideBarBookmarkItem::DFMSideBarBookmarkItem(const DUrl &url, QWidget *parent)
         DAbstractFileInfoPointer info = fileService->createFileInfo(this, this->url());
         if (info->exists()) {
             DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
-            wnd->cd(this->url());
+            wnd->cd(this->url().bookmarkTargetUrl());
         } else {
             int ret = dialogManager->showRemoveBookMarkDialog(DFMEvent(this));
             if (ret == QDialog::Accepted) {

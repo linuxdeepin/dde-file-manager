@@ -535,11 +535,20 @@ DFMSideBarItem *DFMSideBar::itemAt(const DUrl &url) const
 
         for (int i = 0; i < groupPointer->itemCount(); ++i) {
             DFMSideBarItem *item = (*groupPointer)[i];
-            const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, item->url());
 
-            if (info && info->canRedirectionFileUrl()) {
-                if (info->redirectedFileUrl() == url) {
+            DUrl redirectedFileUrl = item->url();
+
+            forever {
+                if (redirectedFileUrl == url) {
                     return item;
+                }
+
+                const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, redirectedFileUrl);
+
+                if (info && info->canRedirectionFileUrl()) {
+                    redirectedFileUrl = info->redirectedFileUrl();
+                } else {
+                    break;
                 }
             }
         }
