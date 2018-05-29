@@ -44,6 +44,7 @@
 #include "dfmsidebar.h"
 #include "dfmaddressbar.h"
 #include "dfmapplication.h"
+#include "dfmstandardpaths.h"
 
 #include "app/define.h"
 #include "dfmevent.h"
@@ -99,6 +100,7 @@ public:
 
     void setCurrentView(DFMBaseView *view);
     bool processKeyPressEvent(QKeyEvent *event);
+    bool handleStandardPath(const DUrl &url);
 
     QPushButton *logoButton{ nullptr };
     QFrame *centralWidget{ nullptr };
@@ -225,6 +227,24 @@ bool DFileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
     }
 
     return false;
+}
+
+bool DFileManagerWindowPrivate::handleStandardPath(const DUrl &url)
+{
+    QMap<DUrl, DUrl> url_convert {
+        {DUrl("standard:///Home"), DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::HomePath))},
+        {DUrl("standard:///Desktop"), DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::DesktopPath))},
+        {DUrl("standard:///Videos"), DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::VideosPath))},
+        {DUrl("standard:///Music"), DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::MusicPath))},
+        {DUrl("standard:///Pictures"), DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::PicturesPath))},
+        {DUrl("standard:///Documents"), DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::DocumentsPath))},
+        {DUrl("standard:///Downloads"), DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::DownloadsPath))}
+    };
+
+    if (!url_convert.contains(url))
+        return false;
+
+    return q_ptr->cd(url_convert.value(url), false);
 }
 
 DFileManagerWindow::DFileManagerWindow(QWidget *parent)
@@ -445,6 +465,12 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl, bool canFetchNetwork)
 
     if (currentUrl() == fileUrl) {
         return true;
+    }
+
+    if (fileUrl.scheme() == "standard") {
+        // TODO(zccrs): 待将UI相关的逻辑从DAbatractFileInfo/DAbstractFileController中分离后
+        //              将此处url跳转的实现放到新的逻辑中
+        return d->handleStandardPath(fileUrl);
     }
 
     if (canFetchNetwork && NetworkManager::SupportScheme.contains(fileUrl.scheme())) {
