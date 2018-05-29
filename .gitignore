@@ -41,3 +41,6 @@ dde-sharefiles/tmp/*
 dde-sharefiles/log/*
 
 NUL
+
+# Documents
+doc/html/*

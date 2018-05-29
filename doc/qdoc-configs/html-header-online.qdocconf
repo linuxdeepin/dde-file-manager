@@ -1,0 +1,55 @@
+# HTML Header with qt.io branding and online links
+
+HTML.stylesheets = template/style/online.css \
+                   template/style/gsc.css \
+                   template/style/list_arrow.png \
+                   template/style/list_expand.png \
+                   template/style/icomoon.eot \
+                   template/style/icomoon.svg \
+                   template/style/icomoon.ttf \
+                   template/style/icomoon.woff \
+                   template/style/cookiebar-x.png \
+                   template/style/doc_search.png \
+                   template/style/theqtcompany.png
+
+#for including files into the qch file. Relative to the outputdir of a QDoc build.
+qhp.extraFiles += style/online.css \
+                  style/gsc.css \
+                  style/list_arrow.png \
+                  style/list_expand.png \
+                  style/icomoon.eot \
+                  style/icomoon.svg \
+                  style/icomoon.ttf \
+                  style/icomoon.woff \
+                  style/cookiebar-x.png \
+                  style/doc_search.png \
+                  style/theqtcompany.png
+
+HTML.headerstyles = \
+    "  <link rel=\"stylesheet\" type=\"text/css\" href=\"style/online.css\" />\n"
+
+HTML.scripts = template/scripts/extras.js \
+               template/scripts/main.js
+
+HTML.endheader = \
+    "</head>\n"
+
+# minimal header
+HTML.postheader = \
+    "<body>\n" \
+    "<div class=\"header\" id=\"qtdocheader\">\n"\
+    "    <div class=\"main\">\n" \
+    "    <div class=\"main-rounded\">\n" \
+    "        <div class=\"navigationbar\">\n"\
+    "        <ul>\n"\
+
+HTML.postpostheader = \
+    "    </ul>\n"\
+    "    </div>\n" \
+    "</div>\n" \
+    "<div class=\"content\">\n" \
+    "<div class=\"line\">\n" \
+    "<div class=\"content mainContent\">\n" \
+
+HTML.prologue = \
+    "<div class=\"context\">\n"
