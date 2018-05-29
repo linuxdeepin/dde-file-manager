@@ -83,6 +83,15 @@ QSize DCompleterStyledItemDelegate::sizeHint(const QStyleOptionViewItem &option,
     return s;
 }
 
+/*!
+    \class DFMAddressBar
+    \inmodule dde-file-manager-lib
+
+    \brief DFMAddressBar is the address bar of the file manager
+
+    \sa DFMCrumbBar
+*/
+
 DFMAddressBar::DFMAddressBar(QWidget *parent)
     : QLineEdit(parent)
 {

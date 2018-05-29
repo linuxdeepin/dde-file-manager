@@ -215,6 +215,19 @@ void DFMCrumbBarPrivate::initConnections()
     });
 }
 
+/*!
+ * \class DFMCrumbBar
+ * \inmodule dde-file-manager-lib
+ *
+ * \brief DFMCrumbBar is the crumb bar widget of Deepin File Manager
+ *
+ * DFMCrumbBar is the crumb bar widget of Deepin File Manager, provide the interface to manage
+ * crumb bar state. Crumb bar holds a group of DFMCrumbItem s, and crumb bar will be switch to
+ * DFMAddressBar when clicking empty space at crumb bar.
+ *
+ * \sa DFMCrumbInterface, DFMCrumbManager, DFMCrumbItem
+ */
+
 DFMCrumbBar::DFMCrumbBar(QWidget *parent)
     : QFrame(parent)
     , d_ptr(new DFMCrumbBarPrivate(this))
@@ -227,6 +240,18 @@ DFMCrumbBar::~DFMCrumbBar()
 
 }
 
+/*!
+ * \brief Update crumbs in crumb bar by the given \a url
+ *
+ * \param url The newly switched url.
+ *
+ * DFMCrumbBar holds an instance of crumb controller (derived from DFMCrumbInterface), and when
+ * calling updateCrumb, it will check the current used crumb controller is supporting the given
+ * \a url. if isn't, we will create a new crumb controller form the registed controllers or the
+ * plugin list. Then we will call DFMCrumbInterface::seprateUrl to seprate the url and call
+ * DFMCrumbInterface::createCrumbItem to create the crumb item. Finally, we added the created
+ * items to the crumb bar.
+ */
 void DFMCrumbBar::updateCrumbs(const DUrl &url)
 {
     Q_D(DFMCrumbBar);
@@ -234,6 +259,7 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
     d->clearCrumbs();
 
     if (!d->crumbController || !d->crumbController->supportedUrl(url)) {
+        // TODO: old one, delete later?
         d->crumbController = DFMCrumbManager::instance()->createControllerByUrl(url);
         // Not found? Search for plugins
         if (!d->crumbController) {
@@ -340,5 +366,20 @@ void DFMCrumbBar::paintEvent(QPaintEvent *event)
 
     QFrame::paintEvent(event);
 }
+
+/*!
+ * \fn DFMCrumbBar::toggleSearchBar()
+ *
+ * \brief Toggle (show) the address bar.
+ *
+ * The address bar can also do the search job, and it will fill the address bar with
+ * an empty string instead of the string of current url.
+ */
+
+/*!
+ * \fn DFMCrumbBar::crumbItemClicked(DFMCrumbItem *item);
+ *
+ * \brief User clicked the crumb \a item.
+ */
 
 DFM_END_NAMESPACE
