@@ -142,7 +142,7 @@ void CommandLineManager::processCommand()
     if (argumentUrls.isEmpty())
         argumentUrls.append(DUrl::fromUserInput(DFMApplication::instance()->appAttribute(DFMApplication::AA_UrlOfNewWindow).toString()));
 
-    DFMEventDispatcher::instance()->processEvent<DFMOpenNewWindowEvent>(Q_NULLPTR, argumentUrls, isSet("n") ? DFMOpenUrlEvent::ForceOpenNewWindow : DFMOpenUrlEvent::OpenNewWindow);
+    DFMEventDispatcher::instance()->processEvent<DFMOpenNewWindowEvent>(Q_NULLPTR, argumentUrls, isSet("n"));
 }
 
 CommandLineManager *CommandLineManager::instance()
