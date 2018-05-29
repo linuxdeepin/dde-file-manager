@@ -205,6 +205,7 @@ void DFMSettingsPrivate::_q_onFileChanged(const DUrl &url)
                     continue;
             }
 
+            Q_EMIT q_ptr->valueEdited(begin.key(), i.key(), i.value());
             Q_EMIT q_ptr->valueChanged(begin.key(), i.key(), i.value());
         }
     }
@@ -216,8 +217,10 @@ void DFMSettingsPrivate::_q_onFileChanged(const DUrl &url)
 
             const QVariant &new_value = q_ptr->value(begin.key(), i.key());
 
-            if (new_value != old_values.value(begin.key()).value(i.key()))
+            if (new_value != old_values.value(begin.key()).value(i.key())) {
+                Q_EMIT q_ptr->valueEdited(begin.key(), i.key(), new_value);
                 Q_EMIT q_ptr->valueChanged(begin.key(), i.key(), new_value);
+            }
         }
     }
 }
@@ -372,24 +375,29 @@ QVariant DFMSettings::value(const QString &group, const QString &key, const QVar
 
 void DFMSettings::setValue(const QString &group, const QString &key, const QVariant &value)
 {
+    if (setValueNoNotify(group, key, value))
+        Q_EMIT valueChanged(group, key, value);
+}
+
+bool DFMSettings::setValueNoNotify(const QString &group, const QString &key, const QVariant &value)
+{
     Q_D(DFMSettings);
 
-    bool emit_signal = false;
+    bool changed = false;
 
     if (isRemovable(group, key)) {
         if (d->writableData.value(group, key) == value)
-            return;
+            return false;
 
-        emit_signal  = true;
+        changed  = true;
     } else {
-        emit_signal = this->value(group, key, value) == value;
+        changed = this->value(group, key, value) == value;
     }
 
     d->writableData.setValue(group, key, value);
     d->makeSettingFileToDirty(true);
 
-    if (emit_signal)
-        Q_EMIT valueChanged(group, key, value);
+    return changed;
 }
 
 void DFMSettings::removeGroup(const QString &group)

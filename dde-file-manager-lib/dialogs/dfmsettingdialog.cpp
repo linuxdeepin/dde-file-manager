@@ -129,8 +129,8 @@ SettingBackend::SettingBackend(QObject *parent)
 {
     Q_ASSERT(DFMApplication::instance());
 
-    connect(DFMApplication::instance(), &DFMApplication::appAttributeChanged, this, &SettingBackend::onValueChanged);
-    connect(DFMApplication::instance(), &DFMApplication::genericAttributeChanged, this, &SettingBackend::onValueChanged);
+    connect(DFMApplication::instance(), &DFMApplication::appAttributeEdited, this, &SettingBackend::onValueChanged);
+    connect(DFMApplication::instance(), &DFMApplication::genericAttributeEdited, this, &SettingBackend::onValueChanged);
 }
 
 QStringList SettingBackend::keys() const
@@ -160,6 +160,9 @@ void SettingBackend::doSync()
 
 void SettingBackend::doSetOption(const QString &key, const QVariant &value)
 {
+    QSignalBlocker blocker(this);
+    Q_UNUSED(blocker)
+
     int attribute = keyToAA.value(key, static_cast<DFMApplication::ApplicationAttribute>(-1));
 
     if (attribute >= 0) {

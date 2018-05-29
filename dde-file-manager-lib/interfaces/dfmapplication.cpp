@@ -39,12 +39,15 @@ DFMApplicationPrivate::DFMApplicationPrivate(DFMApplication *qq)
     self = qq;
 }
 
-void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, const QString &key, const QVariant &value)
+void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, const QString &key, const QVariant &value, bool edited)
 {
     if (group == QT_STRINGIFY(ApplicationAttribute)) {
         const QMetaEnum &me = QMetaEnum::fromType<DFMApplication::ApplicationAttribute>();
 
         DFMApplication::ApplicationAttribute aa = (DFMApplication::ApplicationAttribute)me.keyToValue(QByteArray("AA_" + key.toLatin1()).constData());
+
+        if (edited)
+            Q_EMIT self->appAttributeEdited(aa, value);
 
         Q_EMIT self->appAttributeChanged(aa, value);
 
@@ -57,6 +60,9 @@ void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, cons
         const QMetaEnum &me = QMetaEnum::fromType<DFMApplication::GenericAttribute>();
 
         DFMApplication::GenericAttribute ga = (DFMApplication::GenericAttribute)me.keyToValue(QByteArray("GA_" + key.toLatin1()).constData());
+
+        if (edited)
+            Q_EMIT self->genericAttributeEdited(ga, value);
 
         Q_EMIT self->genericAttributeChanged(ga, value);
 
@@ -76,6 +82,11 @@ void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, cons
             break;
         }
     }
+}
+
+void DFMApplicationPrivate::_q_onSettingsValueEdited(const QString &group, const QString &key, const QVariant &value)
+{
+    _q_onSettingsValueChanged(group, key, value, true);
 }
 
 DFMApplication::DFMApplication(QObject *parent)
@@ -148,6 +159,8 @@ DFMSettings *DFMApplication::genericSetting()
             gsGlobal->moveToThread(instance()->thread());
             connect(gsGlobal, SIGNAL(valueChanged(QString, QString, QVariant)),
                     instance(), SLOT(_q_onSettingsValueChanged(QString, QString, QVariant)));
+            connect(gsGlobal, SIGNAL(valueEdited(QString, QString, QVariant)),
+                    instance(), SLOT(_q_onSettingsValueEdited(QString, QString, QVariant)));
         }
 
         gsGlobal->setAutoSync(true);
@@ -166,6 +179,8 @@ DFMSettings *DFMApplication::appSetting()
             asGlobal->moveToThread(instance()->thread());
             connect(asGlobal, SIGNAL(valueChanged(QString, QString, QVariant)),
                     instance(), SLOT(_q_onSettingsValueChanged(QString, QString, QVariant)));
+            connect(asGlobal, SIGNAL(valueEdited(QString, QString, QVariant)),
+                    instance(), SLOT(_q_onSettingsValueEdited(QString, QString, QVariant)));
         }
 
         asGlobal->setAutoSync(true);
