@@ -30,7 +30,7 @@
 BookMark::BookMark(const DUrl &url)
     : DAbstractFileInfo(url)
 {
-    m_name = url.fragment();
+    m_name = url.bookmarkName();
 
     DUrl target(url.path());
 
@@ -40,7 +40,7 @@ BookMark::BookMark(const DUrl &url)
 }
 
 BookMark::BookMark(QDateTime time, const QString &name, const DUrl &sourceUrl)
-    : BookMark(DUrl::fromBookMarkFile(sourceUrl.toString(), name))
+    : BookMark(DUrl::fromBookMarkFile(sourceUrl, name))
 {
     m_time = time;
     m_name = name;
@@ -69,7 +69,7 @@ void BookMark::setDateTime(QDateTime time)
 void BookMark::setName(const QString &name)
 {
     DUrl tmpUrl = fileUrl();
-    tmpUrl.setFragment(name);
+    tmpUrl.setBookmarkName(name);
     setUrl(tmpUrl);
     m_name = name;
 }

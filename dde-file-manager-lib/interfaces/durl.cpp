@@ -293,6 +293,22 @@ QString DUrl::deviceId() const
     return path();
 }
 
+DUrl DUrl::bookmarkTargetUrl() const
+{
+    if (scheme() != BOOKMARK_SCHEME)
+        return DUrl();
+
+    return DUrl(path());
+}
+
+QString DUrl::bookmarkName() const
+{
+    if (scheme() != BOOKMARK_SCHEME)
+        return QString();
+
+    return fragment(FullyDecoded);
+}
+
 DUrl DUrl::parentUrl() const
 {
     return parentUrl(*this);
@@ -339,9 +355,17 @@ void DUrl::setSearchedFileUrl(const DUrl &url)
 ///###: the real path of file was puted in fragment field of Uri.
 void DUrl::setTaggedFileUrl(const QString& localFilePath) noexcept
 {
-    if(this->isTaggedFile()){
+    if (this->isTaggedFile()) {
         this->QUrl::setFragment(localFilePath, QUrl::DecodedMode);
     }
+}
+
+void DUrl::setBookmarkName(const QString &name)
+{
+    if (this->scheme() != BOOKMARK_SCHEME)
+        return;
+
+    setFragment(name, DecodedMode);
 }
 
 DUrl DUrl::fromLocalFile(const QString &filePath)
@@ -369,13 +393,13 @@ DUrl DUrl::fromRecentFile(const QString &filePath)
     return url;
 }
 
-DUrl DUrl::fromBookMarkFile(const QString &filePath, const QString &name)
+DUrl DUrl::fromBookMarkFile(const DUrl &targetUrl, const QString &name)
 {
     DUrl url;
 
     url.setScheme(BOOKMARK_SCHEME, false);
-    url.setPath(filePath);
-    url.setFragment(name);
+    url.setPath(targetUrl.toString());
+    url.setBookmarkName(name);
 
     return url;
 }

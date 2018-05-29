@@ -145,7 +145,7 @@ bool BookMarkManager::renameFile(const QSharedPointer<DFMRenameEvent> &event) co
     if (!item) {
         return false;
     }
-    item->setName(event->toUrl().fragment());
+    item->setName(event->toUrl().bookmarkName());
     DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::fileMoved, event->fromUrl(), event->toUrl());
     save();
 
