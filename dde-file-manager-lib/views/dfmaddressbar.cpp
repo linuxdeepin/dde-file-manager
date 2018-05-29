@@ -152,11 +152,13 @@ void DFMAddressBar::focusInEvent(QFocusEvent *e)
 
 void DFMAddressBar::focusOutEvent(QFocusEvent *e)
 {
-    // blumia: Sometimes completion will trigger weird Qt::ActiveWindowFocusReason event
-    //         and cause focusOutEvent. So we simply ignore it here.
-    if (e->reason() == Qt::ActiveWindowFocusReason) {
+    // blumia: Sometimes completion will trigger weird Qt::ActiveWindowFocusReason event,
+    //         right click context menu will trigger Qt::PopupFocusReason event. It will
+    //         cause focusOutEvent. So we simply ignore it here.
+    if (e->reason() == Qt::ActiveWindowFocusReason || e->reason() == Qt::PopupFocusReason) {
         return;
     }
+
 
     emit focusOut();
 
