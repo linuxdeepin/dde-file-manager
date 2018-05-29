@@ -235,7 +235,8 @@ void DToolBar::searchBarDeactivated()
     DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(winId));
     if (window){
         if (window->currentUrl().isSearchFile()){
-
+            if (m_navStack)
+                onBackButtonClicked();
         } else {
             m_searchBar->setPlaceholderText("");
             m_searchBar->hide();

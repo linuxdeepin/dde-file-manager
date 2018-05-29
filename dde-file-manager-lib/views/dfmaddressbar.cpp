@@ -242,6 +242,12 @@ void DFMAddressBar::initConnections()
         }
     });
     connect(this, &DFMAddressBar::textEdited, this, &DFMAddressBar::onTextEdited);
+
+    QAction *clear_action = findChild<QAction*>("_q_qlineeditclearaction");
+
+    if (clear_action) {
+        connect(clear_action, &QAction::triggered, this, &DFMAddressBar::focusOut);
+    }
 }
 
 void DFMAddressBar::initData()
