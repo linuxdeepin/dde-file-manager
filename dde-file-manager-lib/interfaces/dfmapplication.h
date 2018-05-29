@@ -84,6 +84,8 @@ public:
 Q_SIGNALS:
     void appAttributeChanged(ApplicationAttribute aa, const QVariant &value);
     void genericAttributeChanged(GenericAttribute ga, const QVariant &value);
+    void appAttributeEdited(ApplicationAttribute aa, const QVariant &value);
+    void genericAttributeEdited(GenericAttribute ga, const QVariant &value);
     void iconSizeLevelChanged(int level);
     void viewModeChanged(int mode);
     void previewCompressFileChanged(bool enable);
@@ -100,6 +102,7 @@ private:
     QScopedPointer<DFMApplicationPrivate> d_ptr;
 
     Q_PRIVATE_SLOT(d_ptr, void _q_onSettingsValueChanged(const QString&, const QString &, const QVariant &))
+    Q_PRIVATE_SLOT(d_ptr, void _q_onSettingsValueEdited(const QString&, const QString &, const QVariant &))
 };
 
 DFM_END_NAMESPACE
