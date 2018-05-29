@@ -1,0 +1,13 @@
+include(./qdoc-configs/qt-html-templates-online.qdocconf)
+
+project = Deepin File Manager
+description = A file management tool for Deepin Desktop Enviroment.
+
+sourcedirs += ../
+headerdirs += ../
+
+sources.fileextensions = "*.cpp *.qdoc *.mm *.qml"
+headers.fileextensions = "*.h *.ch *.h++ *.hh *.hpp *.hxx"
+
+outputformats = HTML
+outputdir = ./html/
