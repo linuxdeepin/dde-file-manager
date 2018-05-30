@@ -26,6 +26,7 @@
 #define FILEMENUMANAGER_H
 
 #include "dfmglobal.h"
+#include "shutil/danythingmonitorfilter.h"
 
 #include <QAction>
 
@@ -50,7 +51,7 @@ public:
     static DFileMenu *createNetworkMarkMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
     static DFileMenu *createPluginBookMarkMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
     static DFileMenu *createUserShareMarkMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
-    static DFileMenu *createCustomBookMarkMenu(const DUrl& url, QSet<MenuAction> disableList = QSet<MenuAction>());
+    static DFileMenu *createCustomBookMarkMenu(const DUrl &url, QSet<MenuAction> disableList = QSet<MenuAction>());
     static DFileMenu *createTrashLeftBarMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
     static DFileMenu *createComputerLeftBarMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
     static DFileMenu *createDiskLeftBarMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
@@ -58,18 +59,18 @@ public:
     static DFileMenu *createToolBarSettingsMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
     static DFileMenu *createToolBarSortMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
     static DFileMenu *createListViewHeaderMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
-    static DFileMenu* createTagMarkMenu(const QSet<MenuAction>& disableList = QSet<MenuAction>{});
+    static DFileMenu *createTagMarkMenu(const QSet<MenuAction> &disableList = QSet<MenuAction> {});
 
     static DFileMenu *createNormalMenu(const DUrl &currentUrl, const DUrlList &urlList, QSet<MenuAction> disableList, QSet<MenuAction> unusedList, int windowId);
 
-    static QList<QAction*> loadNormalPluginMenu(DFileMenu* menu, const DUrlList &urlList, const DUrl& currentUrl);
-    static QList<QAction*> loadNormalExtensionMenu(DFileMenu* menu, const DUrlList &urlList, const DUrl& currentUrl);
+    static QList<QAction *> loadNormalPluginMenu(DFileMenu *menu, const DUrlList &urlList, const DUrl &currentUrl);
+    static QList<QAction *> loadNormalExtensionMenu(DFileMenu *menu, const DUrlList &urlList, const DUrl &currentUrl);
 
-    static QList<QAction*> loadEmptyAreaPluginMenu(DFileMenu* menu, const DUrl& currentUrl);
-    static QList<QAction*> loadEmptyAreaExtensionMenu(DFileMenu* menu, const DUrl& currentUrl);
+    static QList<QAction *> loadEmptyAreaPluginMenu(DFileMenu *menu, const DUrl &currentUrl);
+    static QList<QAction *> loadEmptyAreaExtensionMenu(DFileMenu *menu, const DUrl &currentUrl);
 
-    static QList<QAction*> loadMenuExtemsionActions(const DUrlList &urlList, const DUrl& currentUrl);
-    static QList<QAction*> jsonToActions(const QJsonArray& data, const DUrlList &urlList, const DUrl& currentUrl, const QString& menuExtensionType);
+    static QList<QAction *> loadMenuExtemsionActions(const DUrlList &urlList, const DUrl &currentUrl);
+    static QList<QAction *> jsonToActions(const QJsonArray &data, const DUrlList &urlList, const DUrl &currentUrl, const QString &menuExtensionType);
 
     static QAction *getAction(MenuAction action);
 
@@ -102,8 +103,10 @@ public:
 
     static MenuAction registerMenuActionType(QAction *action);
 
+    static bool whetherShowTagActions(const QList<DUrl> &urls);
+
 public slots:
-    void actionTriggered(QAction * action);
+    void actionTriggered(QAction *action);
 };
 
 #endif // FILEMENUMANAGER_H

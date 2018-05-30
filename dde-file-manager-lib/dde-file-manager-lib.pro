@@ -260,7 +260,8 @@ HEADERS += \
     views/dcompleterlistview.h \
     interfaces/dfmapplication.h \
     interfaces/private/dfmapplication_p.h \
-    controllers/dfmsearchcrumbcontroller.h
+    controllers/dfmsearchcrumbcontroller.h \
+    shutil/danythingmonitorfilter.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -435,7 +436,8 @@ SOURCES += \
     views/dfmaddressbar.cpp \
     views/dcompleterlistview.cpp \
     interfaces/dfmapplication.cpp \
-    controllers/dfmsearchcrumbcontroller.cpp
+    controllers/dfmsearchcrumbcontroller.cpp\
+    shutil/danythingmonitorfilter.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET

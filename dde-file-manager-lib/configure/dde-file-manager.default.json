@@ -25,5 +25,14 @@
         "ShowedFileSuffixOnRename": true,
         "DisableNonRemovableDeviceUnmount": false,
         "HiddenSystemPartition": false
+    },
+    "AnythingMonitorFilterPath": {
+        "WhiteList":[
+            "/media",
+            "/home"
+        ],
+        "BlackList": [
+            "~/.local/share/Trash"
+        ]
     }
 }
