@@ -91,13 +91,15 @@ public:
 
     void makeSettingFileToDirty(bool dirty)
     {
-        if (settingFileIsDirty == dirty)
+        if (settingFileIsDirty == dirty) {
             return;
+        }
 
         settingFileIsDirty = dirty;
 
-        if (!autoSync)
+        if (!autoSync) {
             return;
+        }
 
         Q_ASSERT(syncTimer);
 
@@ -117,8 +119,9 @@ public:
         if (url.isLocalFile()) {
             const DUrl &new_url = DFMStandardPaths::toStandardUrl(url.toLocalFile());
 
-            if (new_url.isValid())
+            if (new_url.isValid()) {
                 return new_url.toString();
+            }
         }
 
         return url.toString();
@@ -137,8 +140,9 @@ void DFMSettingsPrivate::fromJsonFile(const QString &fileName, Data *data)
 {
     QFile file(fileName);
 
-    if (!file.exists())
+    if (!file.exists()) {
         return;
+    }
 
     if (!file.open(QFile::ReadOnly)) {
         qWarning() << file.errorString();
@@ -148,8 +152,9 @@ void DFMSettingsPrivate::fromJsonFile(const QString &fileName, Data *data)
 
     const QByteArray &json = file.readAll();
 
-    if (json.isEmpty())
+    if (json.isEmpty()) {
         return;
+    }
 
     fromJson(json, data);
 }
@@ -220,16 +225,19 @@ void DFMSettingsPrivate::_q_onFileChanged(const DUrl &url)
     for (auto begin = writableData.values.constBegin(); begin != writableData.values.constEnd(); ++begin) {
         for (auto i = begin.value().constBegin(); i != begin.value().constEnd(); ++i) {
             if (old_values.value(begin.key()).contains(i.key())) {
-                if (old_values.value(begin.key()).value(i.key()) == i.value())
+                if (old_values.value(begin.key()).value(i.key()) == i.value()) {
                     continue;
+                }
             } else {
                 if (fallbackData.values.value(begin.key()).contains(i.key())) {
-                    if (fallbackData.values.value(begin.key()).value(i.key()) == i.value())
+                    if (fallbackData.values.value(begin.key()).value(i.key()) == i.value()) {
                         continue;
+                    }
                 }
 
-                if (defaultData.values.value(begin.key()).value(i.key()) == i.value())
+                if (defaultData.values.value(begin.key()).value(i.key()) == i.value()) {
                     continue;
+                }
             }
 
             Q_EMIT q_ptr->valueEdited(begin.key(), i.key(), i.value());
@@ -239,8 +247,9 @@ void DFMSettingsPrivate::_q_onFileChanged(const DUrl &url)
 
     for (auto begin = old_values.constBegin(); begin != old_values.constEnd(); ++begin) {
         for (auto i = begin.value().constBegin(); i != begin.value().constEnd(); ++i) {
-            if (writableData.values.value(begin.key()).contains(i.key()))
+            if (writableData.values.value(begin.key()).contains(i.key())) {
                 continue;
+            }
 
             const QVariant &new_value = q_ptr->value(begin.key(), i.key());
 
@@ -284,7 +293,7 @@ static QString getConfigFilePath(QStandardPaths::StandardLocation type, const QS
 }
 
 DFMSettings::DFMSettings(const QString &name, ConfigType type, QObject *parent)
-    : DFMSettings(QString(":/config/%2.json").arg(name),
+    : DFMSettings(QString(":/config/%1.json").arg(name),
                   getConfigFilePath(type == AppConfig
                                     ? QStandardPaths::AppConfigLocation
                                     : QStandardPaths::GenericConfigLocation,
@@ -306,8 +315,9 @@ DFMSettings::~DFMSettings()
         d->syncTimer->stop();
     }
 
-    if (d->settingFileIsDirty)
+    if (d->settingFileIsDirty) {
         sync();
+    }
 }
 
 bool DFMSettings::contains(const QString &group, const QString &key) const
@@ -315,20 +325,24 @@ bool DFMSettings::contains(const QString &group, const QString &key) const
     Q_D(const DFMSettings);
 
     if (key.isEmpty()) {
-        if (d->writableData.values.contains(group))
+        if (d->writableData.values.contains(group)) {
             return true;
+        }
 
-        if (d->fallbackData.values.contains(group))
+        if (d->fallbackData.values.contains(group)) {
             return true;
+        }
 
         return d->defaultData.values.contains(group);
     }
 
-    if (d->writableData.values.value(group).contains(key))
+    if (d->writableData.values.value(group).contains(key)) {
         return true;
+    }
 
-    if (d->fallbackData.values.value(group).contains(key))
+    if (d->fallbackData.values.value(group).contains(key)) {
         return true;
+    }
 
     return d->defaultData.values.value(group).contains(key);
 }
@@ -425,13 +439,15 @@ DUrl DFMSettings::toUrlValue(const QVariant &url)
 {
     const QString &url_string = url.toString();
 
-    if (url_string.isEmpty())
+    if (url_string.isEmpty()) {
         return DUrl();
+    }
 
     const QString &path = DFMStandardPaths::fromStandardUrl(DUrl(url_string));
 
-    if (!path.isEmpty())
+    if (!path.isEmpty()) {
         return DUrl::fromLocalFile(path);
+    }
 
     return DUrl::fromUserInput(url_string);
 }
@@ -442,13 +458,15 @@ QVariant DFMSettings::value(const QString &group, const QString &key, const QVar
 
     QVariant value = d->writableData.values.value(group).value(key, QVariant::Invalid);
 
-    if (value.isValid())
+    if (value.isValid()) {
         return value;
+    }
 
     value = d->fallbackData.values.value(group).value(key, QVariant::Invalid);
 
-    if (value.isValid())
+    if (value.isValid()) {
         return value;
+    }
 
     return d->defaultData.values.value(group).value(key, defaultValue);
 }
@@ -474,8 +492,9 @@ DUrl DFMSettings::urlValue(const QString &group, const DUrl &key, const DUrl &de
 
 void DFMSettings::setValue(const QString &group, const QString &key, const QVariant &value)
 {
-    if (setValueNoNotify(group, key, value))
+    if (setValueNoNotify(group, key, value)) {
         Q_EMIT valueChanged(group, key, value);
+    }
 }
 
 void DFMSettings::setValue(const QString &group, const DUrl &key, const QVariant &value)
@@ -492,8 +511,9 @@ bool DFMSettings::setValueNoNotify(const QString &group, const QString &key, con
     bool changed = false;
 
     if (isRemovable(group, key)) {
-        if (d->writableData.value(group, key) == value)
+        if (d->writableData.value(group, key) == value) {
             return false;
+        }
 
         changed  = true;
     } else {
@@ -517,8 +537,9 @@ void DFMSettings::removeGroup(const QString &group)
 {
     Q_D(DFMSettings);
 
-    if (!d->writableData.values.contains(group))
+    if (!d->writableData.values.contains(group)) {
         return;
+    }
 
     const QVariantHash &group_values = d->writableData.values.take(group);
 
@@ -527,8 +548,9 @@ void DFMSettings::removeGroup(const QString &group)
     for (auto begin = group_values.constBegin(); begin != group_values.constEnd(); ++begin) {
         const QVariant &new_value = value(group, begin.key());
 
-        if (new_value != begin.value())
+        if (new_value != begin.value()) {
             Q_EMIT valueChanged(group, begin.key(), new_value);
+        }
     }
 }
 
@@ -550,16 +572,18 @@ void DFMSettings::remove(const QString &group, const QString &key)
 {
     Q_D(DFMSettings);
 
-    if (!d->writableData.values.value(group).contains(key))
+    if (!d->writableData.values.value(group).contains(key)) {
         return;
+    }
 
     const QVariant &old_value = d->writableData.values[group].take(key);
     d->makeSettingFileToDirty(true);
 
     const QVariant &new_value = value(group, key);
 
-    if (old_value == new_value)
+    if (old_value == new_value) {
         return;
+    }
 
     Q_EMIT valueChanged(group, key, new_value);
 }
@@ -575,8 +599,9 @@ void DFMSettings::clear()
 {
     Q_D(DFMSettings);
 
-    if (d->writableData.values.isEmpty())
+    if (d->writableData.values.isEmpty()) {
         return;
+    }
 
     const QHash<QString, QVariantHash> old_values = d->writableData.values;
 
@@ -600,8 +625,9 @@ bool DFMSettings::sync()
 {
     Q_D(DFMSettings);
 
-    if (!d->settingFileIsDirty)
+    if (!d->settingFileIsDirty) {
         return true;
+    }
 
     const QByteArray &json = d->toJson(d->writableData);
 
@@ -638,14 +664,16 @@ void DFMSettings::setAutoSync(bool autoSync)
 {
     Q_D(DFMSettings);
 
-    if (d->autoSync == autoSync)
+    if (d->autoSync == autoSync) {
         return;
+    }
 
     d->autoSync = autoSync;
 
     if (autoSync) {
-        if (d->settingFileIsDirty)
+        if (d->settingFileIsDirty) {
             sync();
+        }
 
         if (!d->syncTimer) {
             d->syncTimer = new QTimer(this);
@@ -668,8 +696,9 @@ void DFMSettings::setWatchChanges(bool watchChanges)
 {
     Q_D(DFMSettings);
 
-    if (d->watchChanges == watchChanges)
+    if (d->watchChanges == watchChanges) {
         return;
+    }
 
     d->watchChanges = watchChanges;
 

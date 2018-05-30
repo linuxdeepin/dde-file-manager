@@ -45,6 +45,7 @@
 #include "dde-file-manager-plugins/plugininterfaces/menu/menuinterface.h"
 
 #include "deviceinfo/udisklistener.h"
+#include "shutil/danythingmonitorfilter.h"
 
 #include <QDateTime>
 #include <QDebug>
@@ -64,14 +65,16 @@
 #endif
 
 
-namespace FileSortFunction {
+namespace FileSortFunction
+{
 QCollator sortCollator;
 
 bool compareByString(const QString &str1, const QString &str2, Qt::SortOrder order)
 {
     if (DFMGlobal::startWithHanzi(str1)) {
-        if (!DFMGlobal::startWithHanzi(str2))
+        if (!DFMGlobal::startWithHanzi(str2)) {
             return order == Qt::DescendingOrder;
+        }
     } else if (DFMGlobal::startWithHanzi(str2)) {
         return order != Qt::DescendingOrder;
     }
@@ -90,7 +93,7 @@ COMPARE_FUN_DEFINE(created, Created, DAbstractFileInfo)
     Q_D(const DAbstractFileInfo);\
     if (d->proxy) return d->proxy->Fun;
 
-QMap<DUrl, DAbstractFileInfo*> DAbstractFileInfoPrivate::urlToFileInfoMap;
+QMap<DUrl, DAbstractFileInfo *> DAbstractFileInfoPrivate::urlToFileInfoMap;
 QReadWriteLock *DAbstractFileInfoPrivate::urlToFileInfoMapLock = new QReadWriteLock();
 DMimeDatabase DAbstractFileInfoPrivate::mimeDatabase;
 
@@ -121,8 +124,9 @@ DAbstractFileInfoPrivate::~DAbstractFileInfoPrivate()
 
 void DAbstractFileInfoPrivate::setUrl(const DUrl &url, bool hasCache)
 {
-    if (url == fileUrl)
+    if (url == fileUrl) {
         return;
+    }
 
     if (urlToFileInfoMap.value(fileUrl) == q_ptr) {
         QWriteLocker locker(urlToFileInfoMapLock);
@@ -142,11 +146,13 @@ void DAbstractFileInfoPrivate::setUrl(const DUrl &url, bool hasCache)
 DAbstractFileInfo *DAbstractFileInfoPrivate::getFileInfo(const DUrl &fileUrl)
 {
     //###(zccrs): 只在主线程中开启缓存，防止不同线程中持有同一对象时的竞争问题
-    if (QThread::currentThread() != qApp->thread())
+    if (QThread::currentThread() != qApp->thread()) {
         return 0;
+    }
 
-    if (!fileUrl.isValid())
+    if (!fileUrl.isValid()) {
         return nullptr;
+    }
 
     return urlToFileInfoMap.value(fileUrl);
 }
@@ -187,8 +193,9 @@ QString DAbstractFileInfo::path() const
 
     int index = filePath.lastIndexOf(QDir::separator());
 
-    if (index >= 0)
+    if (index >= 0) {
         return filePath.left(index);
+    }
 
     return filePath;
 }
@@ -204,8 +211,9 @@ QString DAbstractFileInfo::absolutePath() const
 {
     CALL_PROXY(absolutePath());
 
-    if (isAbsolute())
+    if (isAbsolute()) {
         return path();
+    }
 
     QFileInfo info(filePath());
 
@@ -216,8 +224,9 @@ QString DAbstractFileInfo::absoluteFilePath() const
 {
     CALL_PROXY(absoluteFilePath());
 
-    if (isAbsolute())
+    if (isAbsolute()) {
         return filePath();
+    }
 
     QFileInfo info(filePath());
 
@@ -231,8 +240,9 @@ QString DAbstractFileInfo::baseName() const
     const QString &fileName = this->fileName();
     const QString &suffix = this->suffix();
 
-    if (suffix.isEmpty())
+    if (suffix.isEmpty()) {
         return fileName;
+    }
 
     return fileName.left(fileName.length() - suffix.length() - 1);
 }
@@ -243,13 +253,15 @@ QString DAbstractFileInfo::fileName() const
 
     QString filePath = this->filePath();
 
-    if (filePath.endsWith(QDir::separator()))
+    if (filePath.endsWith(QDir::separator())) {
         filePath.chop(1);
+    }
 
     int index = filePath.lastIndexOf(QDir::separator());
 
-    if (index >= 0)
+    if (index >= 0) {
         return filePath.mid(index + 1);
+    }
 
     return filePath;
 }
@@ -274,8 +286,9 @@ QString DAbstractFileInfo::fileDisplayPinyinName() const
 
     const QString &diaplayName = this->fileDisplayName();
 
-    if (d->pinyinName.isEmpty())
+    if (d->pinyinName.isEmpty()) {
         d->pinyinName = DFMGlobal::toPinyin(diaplayName);
+    }
 
     return d->pinyinName;
 }
@@ -418,11 +431,11 @@ DUrl DAbstractFileInfo::rootSymLinkTarget() const
     DAbstractFileInfoPointer info = fileService->createFileInfo(Q_NULLPTR, fileUrl());
     while (info->isSymLink()) {
         DUrl targetUrl = info->symLinkTarget();
-        if (targetUrl == fileUrl()){
+        if (targetUrl == fileUrl()) {
             break;
         }
         info = fileService->createFileInfo(Q_NULLPTR, targetUrl);
-        if (!info){
+        if (!info) {
             return fileUrl();
         }
     }
@@ -483,14 +496,15 @@ int DAbstractFileInfo::filesCount() const
     CALL_PROXY(filesCount());
 
     const DDirIteratorPointer &iterator = fileService->createDirIterator(Q_NULLPTR, fileUrl(), QStringList(),
-                                                                         QDir::AllEntries | QDir::System
-                                                                         | QDir::NoDotAndDotDot | QDir::Hidden,
-                                                                         QDirIterator::NoIteratorFlags);
+                                          QDir::AllEntries | QDir::System
+                                          | QDir::NoDotAndDotDot | QDir::Hidden,
+                                          QDirIterator::NoIteratorFlags);
 
     int count = 0;
 
-    if (!iterator)
+    if (!iterator) {
         return -1;
+    }
 
     while (iterator->hasNext()) {
         iterator->next();
@@ -503,8 +517,9 @@ int DAbstractFileInfo::filesCount() const
 
 qint64 DAbstractFileInfo::fileSize() const
 {
-    if (isDir())
+    if (isDir()) {
         return filesCount();
+    }
 
     return size();
 }
@@ -575,9 +590,9 @@ QString DAbstractFileInfo::sizeDisplayName() const
     if (isDir()) {
         int size = filesCount();
 
-        if (size <= 1){
+        if (size <= 1) {
             return QObject::tr("%1 item").arg(size);
-        }else{
+        } else {
             return QObject::tr("%1 items").arg(size);
         }
     } else {
@@ -612,7 +627,7 @@ QIcon DAbstractFileInfo::fileIcon() const
 
     QIcon icon = QIcon::fromTheme(iconName());
 
-    if (icon.isNull()){
+    if (icon.isNull()) {
         icon = QIcon::fromTheme("application-default-icon");
     }
     return icon;
@@ -628,16 +643,19 @@ QList<QIcon> DAbstractFileInfo::additionalIcon() const
         icons << QIcon::fromTheme("emblem-symbolic-link", DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon));
     }
 
-    if (!isWritable())
+    if (!isWritable()) {
         icons << QIcon::fromTheme("emblem-readonly", DFMGlobal::instance()->standardIcon(DFMGlobal::LockIcon));
+    }
 
-    if (!isReadable())
+    if (!isReadable()) {
         icons << QIcon::fromTheme("emblem-unreadable", DFMGlobal::instance()->standardIcon(DFMGlobal::UnreadableIcon));
+    }
 
-    if (isShared())
+    if (isShared()) {
         icons << QIcon::fromTheme("emblem-shared", DFMGlobal::instance()->standardIcon(DFMGlobal::ShareIcon));
+    }
 
-    foreach (MenuInterface* menuInterface, PluginManager::instance()->getMenuInterfaces()) {
+    foreach (MenuInterface *menuInterface, PluginManager::instance()->getMenuInterfaces()) {
         QList<QIcon> pluginIcons = menuInterface->additionalIcons(filePath());
         foreach (const QIcon &icon, pluginIcons) {
             icons << icon;
@@ -646,7 +664,7 @@ QList<QIcon> DAbstractFileInfo::additionalIcon() const
 
 #ifdef SW_LABEL
     QString labelIconPath = getLabelIcon();
-    if (!labelIconPath.isEmpty()){
+    if (!labelIconPath.isEmpty()) {
         icons << QIcon(labelIconPath);
     }
 #endif
@@ -673,21 +691,25 @@ bool DAbstractFileInfo::isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors) 
     DUrl parentUrl = this->parentUrl();
 
     forever {
-        if (ancestors && parentUrl.isValid())
+        if (ancestors && parentUrl.isValid()) {
             ancestors->append(parentUrl);
+        }
 
-        if (parentUrl == url)
+        if (parentUrl == url) {
             return true;
+        }
 
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, parentUrl);
 
-        if (!fileInfo)
+        if (!fileInfo) {
             break;
+        }
 
         const DUrl &pu = fileInfo->parentUrl();
 
-        if (pu == parentUrl)
+        if (pu == parentUrl) {
             break;
+        }
 
         parentUrl = pu;
     }
@@ -726,10 +748,10 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                        << MenuAction::Compress
                        << MenuAction::Separator;
 
-            if (canShare() && !isShared()){
+            if (canShare() && !isShared()) {
                 actionKeys << MenuAction::Share
                            << MenuAction::Separator;
-            }else if(isShared()){
+            } else if (isShared()) {
                 actionKeys << MenuAction::UnShare
                            << MenuAction::Separator;
             }
@@ -745,10 +767,10 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
         } else {
             actionKeys << MenuAction::Open;
 
-            if (isDir()){
+            if (isDir()) {
                 actionKeys << MenuAction::OpenInNewWindow
                            << MenuAction::OpenInNewTab;
-            }else{
+            } else {
                 actionKeys << MenuAction::OpenWith;
             }
             actionKeys << MenuAction::Separator
@@ -756,9 +778,9 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                        << MenuAction::Copy
                        << MenuAction::Rename;
 
-            if (FileUtils::isGvfsMountFile(absoluteFilePath()) || deviceListener->isInRemovableDeviceFolder(absoluteFilePath())){
+            if (FileUtils::isGvfsMountFile(absoluteFilePath()) || deviceListener->isInRemovableDeviceFolder(absoluteFilePath())) {
                 actionKeys << MenuAction::CompleteDeletion;
-            }else{
+            } else {
                 actionKeys << MenuAction::Delete;
             }
             actionKeys << MenuAction::Separator;
@@ -768,23 +790,23 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
 
                 actionKeys << MenuAction::Separator;
 
-                if (canShare() && !isShared()){
+                if (canShare() && !isShared()) {
                     actionKeys << MenuAction::Share
                                << MenuAction::Separator;
-                }else if(isShared()){
+                } else if (isShared()) {
                     actionKeys << MenuAction::UnShare
                                << MenuAction::Separator;
                 }
 
-            }else if(isFile()) {
-                if (!FileUtils::isArchive(absoluteFilePath())){
+            } else if (isFile()) {
+                if (!FileUtils::isArchive(absoluteFilePath())) {
                     actionKeys << MenuAction::Compress
                                << MenuAction::Separator;
                 }
             }
 
-            if (isFile()){
-                if (FileUtils::isArchive(absoluteFilePath())){
+            if (isFile()) {
+                if (FileUtils::isArchive(absoluteFilePath())) {
                     actionKeys << MenuAction::Decompress
                                << MenuAction::DecompressHere
                                << MenuAction::Separator;
@@ -794,7 +816,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             actionKeys << MenuAction::CreateSymlink
                        << MenuAction::SendToDesktop;
 
-            if (deviceListener->getCanSendDisksByUrl(absoluteFilePath()).count() > 0){
+            if (deviceListener->getCanSendDisksByUrl(absoluteFilePath()).count() > 0) {
                 actionKeys << MenuAction::SendToRemovableDisk;
             }
 
@@ -804,7 +826,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                            << MenuAction::OpenAsAdmin
                            << MenuAction::OpenInTerminal
                            << MenuAction::Separator;
-            } else if(isFile()) {
+            } else if (isFile()) {
                 if (mimeTypeName().startsWith("image") && isReadable()) {
                     actionKeys << MenuAction::SetAsWallpaper
                                << MenuAction::Separator;
@@ -815,24 +837,24 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             qDebug() << LabelMenuItemIds;
             foreach (QString id, LabelMenuItemIds) {
                 int index = LabelMenuItemIds.indexOf(id);
-                MenuAction actionType = MenuAction (MenuAction::Unknow + index + 1);
+                MenuAction actionType = MenuAction(MenuAction::Unknow + index + 1);
                 actionKeys << actionType;
                 fileMenuManger->setActionString(actionType, LabelMenuItemDatas[id].label);
                 fileMenuManger->setActionID(actionType, id);
             }
             actionKeys << MenuAction::Separator;
 #endif
-            int size{ actionKeys.size() };
+            int size { actionKeys.size() };
 
-            if(actionKeys[size-1] != MenuAction::Separator){
+            if (actionKeys[size - 1] != MenuAction::Separator) {
                 actionKeys << MenuAction::Separator;
             }
 
             ///###: tag protocol
             actionKeys << MenuAction::TagInfo;
             actionKeys << MenuAction::TagFilesUseColor;
-            actionKeys  << MenuAction::Property;
 
+            actionKeys  << MenuAction::Property;
         }
 
     } else if (type == MultiFiles) {
@@ -844,7 +866,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                    << MenuAction::Compress
                    << MenuAction::SendToDesktop;
 
-        if (deviceListener->getCanSendDisksByUrl(absoluteFilePath()).count() > 0){
+        if (deviceListener->getCanSendDisksByUrl(absoluteFilePath()).count() > 0) {
             actionKeys << MenuAction::SendToRemovableDisk;
         }
 
@@ -855,6 +877,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
         ///###: tag protocol.
         actionKeys << MenuAction::TagInfo;
         actionKeys << MenuAction::TagFilesUseColor;
+
         actionKeys  << MenuAction::Property;
 
     } else if (type == MultiFilesSystemPathIncluded) {
@@ -863,13 +886,13 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                    << MenuAction::Copy
                    << MenuAction::Compress
                    << MenuAction::SendToDesktop
-                   << MenuAction::Separator
-                   << MenuAction::Property;
+                   << MenuAction::Separator;
 
-        ///###: tag protocol
+        ///###: tag protocol.
         actionKeys << MenuAction::TagInfo;
         actionKeys << MenuAction::TagFilesUseColor;
-        actionKeys  << MenuAction::Property;
+
+        actionKeys << MenuAction::Property;
     }
 
     return actionKeys;
@@ -884,7 +907,7 @@ quint8 DAbstractFileInfo::supportViewMode() const
 QList<DAbstractFileInfo::SelectionMode> DAbstractFileInfo::supportSelectionModes() const
 {
     return QList<SelectionMode>() << ExtendedSelection << SingleSelection << MultiSelection
-                                  << ContiguousSelection << NoSelection;
+           << ContiguousSelection << NoSelection;
 }
 
 void DAbstractFileInfo::setColumnCompact(bool compact)
@@ -915,9 +938,9 @@ QList<int> DAbstractFileInfo::userColumnRoles() const
     }
 
     static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileDisplayNameRole
-                                                     << DFileSystemModel::FileLastModifiedRole
-                                                     << DFileSystemModel::FileSizeRole
-                                                     << DFileSystemModel::FileMimeTypeRole;
+                                        << DFileSystemModel::FileLastModifiedRole
+                                        << DFileSystemModel::FileSizeRole
+                                        << DFileSystemModel::FileMimeTypeRole;
 
     return userColumnRoles;
 }
@@ -926,8 +949,9 @@ QVariant DAbstractFileInfo::userColumnDisplayName(int userColumnRole) const
 {
     Q_D(const DAbstractFileInfo);
 
-    if (d->columnCompact && userColumnRole == DFileSystemModel::FileUserRole + 1)
+    if (d->columnCompact && userColumnRole == DFileSystemModel::FileUserRole + 1) {
         return qApp->translate("DFileSystemModel",  "Time modified");
+    }
 
     return DFileSystemModel::roleName(userColumnRole);
 }
@@ -1002,8 +1026,9 @@ int DAbstractFileInfo::userRowHeight(const QFontMetrics &fontMetrics) const
 {
     Q_D(const DAbstractFileInfo);
 
-    if (d->columnCompact)
+    if (d->columnCompact) {
         return fontMetrics.height() * 2 + 10;
+    }
 
     return fontMetrics.height();
 }
@@ -1012,8 +1037,9 @@ bool DAbstractFileInfo::columnDefaultVisibleForRole(int role) const
 {
     Q_D(const DAbstractFileInfo);
 
-    if (d->columnCompact && role == DFileSystemModel::FileUserRole + 1)
+    if (d->columnCompact && role == DFileSystemModel::FileUserRole + 1) {
         return true;
+    }
 
     return !(role == DFileSystemModel::FileCreatedRole);
 }
@@ -1048,8 +1074,9 @@ bool DAbstractFileInfo::canRedirectionFileUrl() const
 
 DUrl DAbstractFileInfo::redirectedFileUrl() const
 {
-    if (isSymLink())
+    if (isSymLink()) {
         return symLinkTarget();
+    }
 
     return fileUrl();
 }
@@ -1058,12 +1085,13 @@ bool DAbstractFileInfo::isEmptyFloder(const QDir::Filters &filters) const
 {
     CALL_PROXY(isEmptyFloder(filters));
 
-    if (!isDir())
+    if (!isDir()) {
         return false;
+    }
 
     DDirIteratorPointer it = DFileService::instance()->createDirIterator(Q_NULLPTR, fileUrl(), QStringList(),
-                                                                         filters,
-                                                                         QDirIterator::NoIteratorFlags);
+                             filters,
+                             QDirIterator::NoIteratorFlags);
 
     return it && !it->hasNext();
 }
@@ -1091,8 +1119,9 @@ DUrl DAbstractFileInfo::getUrlByNewFileName(const QString &fileName) const
 
 DUrl DAbstractFileInfo::getUrlByChildFileName(const QString &fileName) const
 {
-    if (!isDir())
+    if (!isDir()) {
         return DUrl();
+    }
 
     DUrl url = fileUrl();
 
@@ -1113,11 +1142,13 @@ Qt::DropActions DAbstractFileInfo::supportedDragActions() const
 
 Qt::DropActions DAbstractFileInfo::supportedDropActions() const
 {
-    if (isWritable())
+    if (isWritable()) {
         return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
+    }
 
-    if (canDrop())
+    if (canDrop()) {
         return Qt::CopyAction | Qt::MoveAction;
+    }
 
     return Qt::IgnoreAction;
 }
@@ -1136,8 +1167,9 @@ QString DAbstractFileInfo::suffix() const
 {
     CALL_PROXY(suffix());
 
-    if (isDir())
+    if (isDir()) {
         return QString();
+    }
 
     return d->mimeDatabase.suffixForFileName(this->fileName());
 }
@@ -1146,15 +1178,17 @@ QString DAbstractFileInfo::completeSuffix() const
 {
     CALL_PROXY(completeSuffix());
 
-    if (isDir())
+    if (isDir()) {
         return QString();
+    }
 
     const QString &fileName = this->fileName();
 
     int index = fileName.indexOf('.');
 
-    if (index >= 0)
+    if (index >= 0) {
         return fileName.mid(index);
+    }
 
     return QString();
 }
@@ -1163,11 +1197,13 @@ void DAbstractFileInfo::makeToInactive()
 {
     Q_D(DAbstractFileInfo);
 
-    if (d->proxy)
+    if (d->proxy) {
         d->proxy->makeToInactive();
+    }
 
-    if (!d->active)
+    if (!d->active) {
         return;
+    }
 
     {
         Q_D(DAbstractFileInfo);
@@ -1197,27 +1233,30 @@ QString DAbstractFileInfo::toLocalFile() const
 {
     CALL_PROXY(toLocalFile());
 
-    if (fileUrl().isLocalFile())
+    if (fileUrl().isLocalFile()) {
         return fileUrl().toLocalFile();
+    }
 
     const QFileInfo &info = toQFileInfo();
 
-    if (!info.fileName().isEmpty())
+    if (!info.fileName().isEmpty()) {
         return info.absoluteFilePath();
+    }
 
     return QString();
 }
 
 bool DAbstractFileInfo::canDrop() const
 {
-    if (isPrivate())
+    if (isPrivate()) {
         return false;
+    }
 
     if (isDir()) {
         return true;
     }
 
-    DAbstractFileInfoPointer info(const_cast<DAbstractFileInfo*>(this));
+    DAbstractFileInfoPointer info(const_cast<DAbstractFileInfo *>(this));
 
     while (info->isSymLink()) {
         const DUrl &targetUrl = info->symLinkTarget();
@@ -1261,11 +1300,13 @@ void DAbstractFileInfo::makeToActive()
 {
     Q_D(DAbstractFileInfo);
 
-    if (d->proxy)
+    if (d->proxy) {
         d->proxy->makeToActive();
+    }
 
-    if (d->active)
+    if (d->active) {
         return;
+    }
 
     {
         Q_D(DAbstractFileInfo);
@@ -1299,25 +1340,27 @@ static void onActionTriggered(QAction *action)
 {
     const QString &target_dir = action->property("_fileinfo_path").toString();
 
-    if (target_dir.isEmpty())
+    if (target_dir.isEmpty()) {
         return;
+    }
 
-    const DFileMenu *menu = qvariant_cast<DFileMenu*>(action->property("_dfm_menu"));
+    const DFileMenu *menu = qvariant_cast<DFileMenu *>(action->property("_dfm_menu"));
     const QPair<QString, QString> &data = qvariant_cast<QPair<QString, QString>>(action->data());
 
     const QWidget *w = menu;
 
-    while (w->parentWidget())
+    while (w->parentWidget()) {
         w = w->parentWidget();
+    }
 
-    menu = qobject_cast<const DFileMenu*>(w);
+    menu = qobject_cast<const DFileMenu *>(w);
 
     AppController::createFile(data.first, target_dir, data.second, menu ? menu->eventId() : -1);
 }
 
-static QList<QAction*> getTemplateFileList()
+static QList<QAction *> getTemplateFileList()
 {
-    QList<QAction*> result;
+    QList<QAction *> result;
 
     const QStringList &list = QStandardPaths::standardLocations(QStandardPaths::AppConfigLocation);
     const QString &old_current_path = QDir::currentPath();
@@ -1327,7 +1370,7 @@ static QList<QAction*> getTemplateFileList()
         // set current path
         QDir::setCurrent(template_dir.absolutePath());
 
-        const QStringList & config_list = template_dir.entryList(QStringList(QStringLiteral("*.template")), QDir::Files | QDir::Readable | QDir::NoSymLinks);
+        const QStringList &config_list = template_dir.entryList(QStringList(QStringLiteral("*.template")), QDir::Files | QDir::Readable | QDir::NoSymLinks);
 
         result.reserve(config_list.size());
 
@@ -1378,11 +1421,13 @@ static QList<QAction*> getTemplateFileList()
             if (!icon_name.isEmpty()) {
                 QIcon icon = QIcon::fromTheme(icon_name);
 
-                if (icon.isNull())
+                if (icon.isNull()) {
                     icon = QIcon(icon_name);
+                }
 
-                if (!icon.isNull())
+                if (!icon.isNull()) {
                     action->setIcon(icon);
+                }
             }
 
             action->setData(QVariant::fromValue(qMakePair(source, new_file_base_name)));
@@ -1400,7 +1445,7 @@ static QList<QAction*> getTemplateFileList()
     return result;
 }
 
-static QVector<MenuAction> getMenuActionTypeListByAction(const QList<QAction*> &list)
+static QVector<MenuAction> getMenuActionTypeListByAction(const QList<QAction *> &list)
 {
     QVector<MenuAction> type_list;
 
@@ -1431,7 +1476,7 @@ QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList() co
                           << MenuAction::NewText;
 #endif
 
-    static const QList<QAction*> template_file_list = getTemplateFileList();
+    static const QList<QAction *> template_file_list = getTemplateFileList();
     static const QVector<MenuAction> action_type_list = getMenuActionTypeListByAction(template_file_list);
 
     for (QAction *action : template_file_list) {
@@ -1445,11 +1490,13 @@ QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList() co
 
     int support_view_mode = supportViewMode();
 
-    if ((support_view_mode & DListView::IconMode) == DListView::IconMode)
+    if ((support_view_mode & DListView::IconMode) == DListView::IconMode) {
         displayAsMenuActionKeys << MenuAction::IconView;
+    }
 
-    if ((support_view_mode & DListView::ListMode) == DListView::ListMode)
+    if ((support_view_mode & DListView::ListMode) == DListView::ListMode) {
         displayAsMenuActionKeys << MenuAction::ListView;
+    }
 
     actions.insert(MenuAction::DisplayAs, displayAsMenuActionKeys);
 
@@ -1462,7 +1509,7 @@ QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList() co
 
     actions.insert(MenuAction::SortBy, sortByMenuActionKeys);
 
-    if (deviceListener->isMountedRemovableDiskExits()){
+    if (deviceListener->isMountedRemovableDiskExits()) {
         QVector<MenuAction> diskMenuActionKeys;
         actions.insert(MenuAction::SendToRemovableDisk, diskMenuActionKeys);
     }
@@ -1510,8 +1557,9 @@ QList<int> DAbstractFileInfo::sortSubMenuActionUserColumnRoles() const
 {
     Q_D(const DAbstractFileInfo);
 
-    if (!d->columnCompact)
+    if (!d->columnCompact) {
         return userColumnRoles();
+    }
 
     QList<int> roles;
 
@@ -1520,10 +1568,11 @@ QList<int> DAbstractFileInfo::sortSubMenuActionUserColumnRoles() const
     for (int role : userColumnRoles()) {
         const QList<int> child_roles = userColumnChildRoles(column++);
 
-        if (child_roles.isEmpty())
+        if (child_roles.isEmpty()) {
             roles << role;
-        else
+        } else {
             roles << child_roles;
+        }
     }
 
     return roles;
@@ -1556,13 +1605,13 @@ void DAbstractFileInfo::setUrl(const DUrl &url)
 #ifdef SW_LABEL
 QString DAbstractFileInfo::getLabelIcon() const
 {
-    if (FileManagerLibrary::instance()->isCompletion()){
+    if (FileManagerLibrary::instance()->isCompletion()) {
         std::string path = fileUrl().toLocalFile().toStdString();
 //        char* icon = auto_add_emblem(const_cast<char*>(path.c_str()));
-        char* icon = FileManagerLibrary::instance()->auto_add_emblem()(const_cast<char*>(path.c_str()));
-        if (QString::fromLocal8Bit(icon) == "No"){
+        char *icon = FileManagerLibrary::instance()->auto_add_emblem()(const_cast<char *>(path.c_str()));
+        if (QString::fromLocal8Bit(icon) == "No") {
             return "";
-        }else{
+        } else {
             return QString::fromLocal8Bit(icon);
         }
     }
@@ -1571,25 +1620,25 @@ QString DAbstractFileInfo::getLabelIcon() const
 
 void DAbstractFileInfo::updateLabelMenuItems()
 {
-    if (FileManagerLibrary::instance()->isCompletion()){
+    if (FileManagerLibrary::instance()->isCompletion()) {
         LabelMenuItemIds.clear();
         LabelMenuItemDatas.clear();
-    //    QString menu = "{\"id\":[\"010101\",\"010201\",\"010501\"],\"label\":[\"查看标签\",\"编辑标签\",\"转换为公有\"],\"tip\":[\"\",\"\",\"\"],\"icon\":[\"viewlabel.svg\",\"editlabel.svg\",\"editlabel.svg\"],\"sub0\":\"\",\"sub1\":\"\",\"sub2\":\"\"}";
-    //    QString menu = "{\"id\":[\"020100\"],\"label\":[\"设置标签\"],\"tip\":[\"\"],\"icon\":[\"setlabel.svg\"],\"sub0\":\"\"}";
+        //    QString menu = "{\"id\":[\"010101\",\"010201\",\"010501\"],\"label\":[\"查看标签\",\"编辑标签\",\"转换为公有\"],\"tip\":[\"\",\"\",\"\"],\"icon\":[\"viewlabel.svg\",\"editlabel.svg\",\"editlabel.svg\"],\"sub0\":\"\",\"sub1\":\"\",\"sub2\":\"\"}";
+        //    QString menu = "{\"id\":[\"020100\"],\"label\":[\"设置标签\"],\"tip\":[\"\"],\"icon\":[\"setlabel.svg\"],\"sub0\":\"\"}";
         std::string path = fileUrl().toLocalFile().toStdString();
 //        QString menu = auto_add_rightmenu(const_cast<char*>(path.c_str()));
-        QString menu = FileManagerLibrary::instance()->auto_add_rightmenu()(const_cast<char*>(path.c_str()));
+        QString menu = FileManagerLibrary::instance()->auto_add_rightmenu()(const_cast<char *>(path.c_str()));
         qDebug() << menu;
         QJsonParseError error;
-        QJsonDocument doc=QJsonDocument::fromJson(menu.toLocal8Bit(),&error);
-        if (error.error == QJsonParseError::NoError){
+        QJsonDocument doc = QJsonDocument::fromJson(menu.toLocal8Bit(), &error);
+        if (error.error == QJsonParseError::NoError) {
             QJsonObject obj = doc.object();
             QJsonArray ids =  obj.value("id").toArray();
             QJsonArray labels =  obj.value("label").toArray();
             QJsonArray tips =  obj.value("tip").toArray();
             QJsonArray icons =  obj.value("icon").toArray();
 
-            for(int i=0; i< ids.count(); i++){
+            for (int i = 0; i < ids.count(); i++) {
                 LabelMenuItemData item;
                 item.id = ids.at(i).toString();
                 item.label = labels.at(i).toString();
@@ -1599,7 +1648,7 @@ void DAbstractFileInfo::updateLabelMenuItems()
                 LabelMenuItemDatas.insert(item.id, item);
                 qDebug() << item.id << item.icon << item.label;
             }
-        }else{
+        } else {
             qDebug() << "load menu fail: " << error.errorString();
         }
     }

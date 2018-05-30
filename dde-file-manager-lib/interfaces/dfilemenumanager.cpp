@@ -62,10 +62,11 @@
 #include <QWidgetAction>
 
 
-namespace DFileMenuData {
+namespace DFileMenuData
+{
 static QMap<MenuAction, QString> actionKeys;
-static QMap<MenuAction, QAction*> actions;
-static QMap<const QAction*, MenuAction> actionToMenuAction;
+static QMap<MenuAction, QAction *> actions;
+static QMap<const QAction *, MenuAction> actionToMenuAction;
 static QMap<MenuAction, QString> actionIDs;
 static QVector<MenuAction> sortActionTypes;
 static QSet<MenuAction> whitelist;
@@ -85,8 +86,9 @@ MenuAction takeAvailableUserActionType()
 
     MenuAction type = availableUserActionQueue.dequeue();
 
-    if (availableUserActionQueue.isEmpty())
+    if (availableUserActionQueue.isEmpty()) {
         availableUserActionQueue.append(MenuAction(type + 1));
+    }
 
     return type;
 }
@@ -95,10 +97,12 @@ void recycleUserActionType(MenuAction type)
     availableUserActionQueue.prepend(type);
     QAction *action = actions.take(type);
 
-    if (action)
+    if (action) {
         actionToMenuAction.remove(action);
+    }
 }
 }
+
 
 DFileMenu *DFileMenuManager::createRecentLeftBarMenu(const QSet<MenuAction> &disableList)
 {
@@ -176,9 +180,9 @@ DFileMenu *DFileMenuManager::createCustomBookMarkMenu(const DUrl &url, QSet<Menu
                << MenuAction::BookmarkRemove
                << MenuAction::Property;
 
-    const DAbstractFileInfoPointer& info = fileService->createFileInfo(Q_NULLPTR, url);
+    const DAbstractFileInfoPointer &info = fileService->createFileInfo(Q_NULLPTR, url);
     info->refresh();
-    if (!info->exists()){
+    if (!info->exists()) {
         disableList << MenuAction::OpenInNewWindow
                     << MenuAction::OpenInNewTab
                     << MenuAction::BookmarkRename
@@ -197,9 +201,9 @@ DFileMenu *DFileMenuManager::createTrashLeftBarMenu(const QSet<MenuAction> &disa
     actionKeys << MenuAction::OpenInNewWindow;
     actionKeys << MenuAction::OpenInNewTab;
     actionKeys << MenuAction::ClearTrash;
-    actionKeys<< MenuAction::Property;
+    actionKeys << MenuAction::Property;
 
-    if (TrashManager::isEmpty()){
+    if (TrashManager::isEmpty()) {
         QSet<MenuAction> tmp_disableList = disableList;
 
         tmp_disableList << MenuAction::ClearTrash;
@@ -298,7 +302,7 @@ DFileMenu *DFileMenuManager::createListViewHeaderMenu(const QSet<MenuAction> &di
     return menu;
 }
 
-DFileMenu *DFileMenuManager::createTagMarkMenu(const QSet<MenuAction>& disableList)
+DFileMenu *DFileMenuManager::createTagMarkMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
     actionKeys.push_back(MenuAction::OpenInNewWindow);
@@ -308,7 +312,7 @@ DFileMenu *DFileMenuManager::createTagMarkMenu(const QSet<MenuAction>& disableLi
     actionKeys.push_back(MenuAction::Separator);
     actionKeys.push_back(MenuAction::ChangeTagColor);
 
-    DFileMenu* menu{ genereteMenuByKeys(actionKeys, disableList, false) };
+    DFileMenu *menu{ genereteMenuByKeys(actionKeys, disableList, false) };
     return menu;
 }
 
@@ -316,32 +320,41 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
 {
     DAbstractFileInfoPointer info = fileService->createFileInfo(Q_NULLPTR, currentUrl);
     DFileMenu *menu = Q_NULLPTR;
-    if (!info)
+    if (!info) {
         return menu;
+    }
 
     if (urlList.length() == 1) {
         QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SingleFile);
 
         foreach (MenuAction action, unusedList) {
-            if (actions.contains(action)){
+            if (actions.contains(action)) {
                 actions.remove(actions.indexOf(action));
             }
         }
 
-        if (actions.isEmpty())
+        if (actions.isEmpty()) {
             return menu;
+        }
 
         const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
         disableList += DFileMenuManager::getDisableActionList(urlList);
-        const bool& tabAddable = WindowManager::tabAddableByWinId(windowId);
-        if(!tabAddable)
+        const bool &tabAddable = WindowManager::tabAddableByWinId(windowId);
+        if (!tabAddable) {
             disableList << MenuAction::OpenInNewTab;
+        }
+
+        ///###: tag protocol.
+        if (!DFileMenuManager::whetherShowTagActions(urlList)) {
+            actions.removeAll(MenuAction::TagInfo);
+            actions.removeAll(MenuAction::TagFilesUseColor);
+        }
 
         menu = DFileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
 
 
         QAction *openWithAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::OpenWith));
-        DFileMenu* openWithMenu = openWithAction ? qobject_cast<DFileMenu*>(openWithAction->menu()) : Q_NULLPTR;
+        DFileMenu *openWithMenu = openWithAction ? qobject_cast<DFileMenu *>(openWithAction->menu()) : Q_NULLPTR;
 
         if (openWithMenu) {
             QStringList recommendApps = mimeAppsManager->getRecommendedApps(info->redirectedFileUrl());
@@ -352,7 +365,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
 //                if(df.getNoShow())
 //                    continue;
                 DesktopFile desktopFile(app);
-                QAction* action = new QAction(desktopFile.getLocalName(), openWithMenu);
+                QAction *action = new QAction(desktopFile.getLocalName(), openWithMenu);
                 action->setIcon(FileUtils::searchAppIcon(desktopFile));
                 action->setProperty("app", app);
                 action->setProperty("url", QVariant::fromValue(info->redirectedFileUrl()));
@@ -360,7 +373,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
                 connect(action, &QAction::triggered, appController, &AppController::actionOpenFileByApp);
             }
 
-            QAction* action = new QAction(fileMenuManger->getActionString(MenuAction::OpenWithCustom), openWithMenu);
+            QAction *action = new QAction(fileMenuManger->getActionString(MenuAction::OpenWithCustom), openWithMenu);
             action->setData((int)MenuAction::OpenWithCustom);
             openWithMenu->addAction(action);
             DFileMenuData::actions[MenuAction::OpenWithCustom] = action;
@@ -373,8 +386,9 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         foreach (DUrl url, urlList) {
             const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(Q_NULLPTR, url);
 
-            if(!FileUtils::isArchive(url.path()))
+            if (!FileUtils::isArchive(url.path())) {
                 isAllCompressedFiles = false;
+            }
 
             if (systemPathManager->isSystemPath(fileInfo->fileUrl().toLocalFile())) {
                 isSystemPathIncluded = true;
@@ -383,41 +397,51 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
 
         QVector<MenuAction> actions;
 
-        if (isSystemPathIncluded)
+        if (isSystemPathIncluded) {
             actions = info->menuActionList(DAbstractFileInfo::MultiFilesSystemPathIncluded);
-        else
+        } else {
             actions = info->menuActionList(DAbstractFileInfo::MultiFiles);
+        }
 
-        if (actions.isEmpty())
+        if (actions.isEmpty()) {
             return menu;
+        }
 
-        if(isAllCompressedFiles){
+        if (isAllCompressedFiles) {
             int index = actions.indexOf(MenuAction::Compress);
             actions.insert(index + 1, MenuAction::Decompress);
             actions.insert(index + 2, MenuAction::DecompressHere);
         }
 
-        const QMap<MenuAction, QVector<MenuAction> >& subActions  = info->subMenuActionList();
+        const QMap<MenuAction, QVector<MenuAction> > &subActions  = info->subMenuActionList();
         disableList += DFileMenuManager::getDisableActionList(urlList);
-        const bool& tabAddable = WindowManager::tabAddableByWinId(windowId);
-        if(!tabAddable)
+        const bool &tabAddable = WindowManager::tabAddableByWinId(windowId);
+        if (!tabAddable) {
             disableList << MenuAction::OpenInNewTab;
+        }
 
         foreach (MenuAction action, unusedList) {
-            if (actions.contains(action)){
+            if (actions.contains(action)) {
                 actions.remove(actions.indexOf(action));
             }
         }
+
+        ///###: tag protocol.
+        if (!DFileMenuManager::whetherShowTagActions(urlList)) {
+            actions.removeAll(MenuAction::TagInfo);
+            actions.removeAll(MenuAction::TagFilesUseColor);
+        }
+
         menu = DFileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
     }
 
-    if (deviceListener->isMountedRemovableDiskExits()){
+    if (deviceListener->isMountedRemovableDiskExits()) {
         QAction *sendToMountedRemovableDiskAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::SendToRemovableDisk));
 
-        DFileMenu* sendToMountedRemovableDiskMenu = sendToMountedRemovableDiskAction ? qobject_cast<DFileMenu*>(sendToMountedRemovableDiskAction->menu()) : Q_NULLPTR;
-        if (sendToMountedRemovableDiskMenu){
+        DFileMenu *sendToMountedRemovableDiskMenu = sendToMountedRemovableDiskAction ? qobject_cast<DFileMenu *>(sendToMountedRemovableDiskAction->menu()) : Q_NULLPTR;
+        if (sendToMountedRemovableDiskMenu) {
             foreach (UDiskDeviceInfoPointer pDeviceinfo, deviceListener->getCanSendDisksByUrl(currentUrl.toLocalFile()).values()) {
-                QAction* action = new QAction(pDeviceinfo->getDiskInfo().name(), sendToMountedRemovableDiskMenu);
+                QAction *action = new QAction(pDeviceinfo->getDiskInfo().name(), sendToMountedRemovableDiskMenu);
                 action->setProperty("mounted_root_uri", pDeviceinfo->getDiskInfo().mounted_root_uri());
                 action->setProperty("urlList", DUrl::toStringList(urlList));
                 sendToMountedRemovableDiskMenu->addAction(action);
@@ -427,9 +451,10 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
     }
 
 
-    if(currentUrl == DesktopFileInfo::computerDesktopFileUrl() ||
-            currentUrl == DesktopFileInfo::trashDesktopFileUrl())
+    if (currentUrl == DesktopFileInfo::computerDesktopFileUrl() ||
+            currentUrl == DesktopFileInfo::trashDesktopFileUrl()) {
         return menu;
+    }
 
     loadNormalPluginMenu(menu, urlList, currentUrl);
     loadNormalExtensionMenu(menu, urlList, currentUrl);
@@ -437,7 +462,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
     return menu;
 }
 
-QList<QAction*> DFileMenuManager::loadNormalPluginMenu(DFileMenu *menu, const DUrlList &urlList, const DUrl &currentUrl)
+QList<QAction *> DFileMenuManager::loadNormalPluginMenu(DFileMenu *menu, const DUrlList &urlList, const DUrl &currentUrl)
 {
     qDebug() << "load normal plugin menu";
     QStringList files;
@@ -445,15 +470,15 @@ QList<QAction*> DFileMenuManager::loadNormalPluginMenu(DFileMenu *menu, const DU
         files << url.toString();
     }
 
-    QAction* lastAction = menu->actions().last();
-    if (lastAction->isSeparator()){
+    QAction *lastAction = menu->actions().last();
+    if (lastAction->isSeparator()) {
         lastAction = menu->actionAt(menu->actions().count() - 2);
     }
 
     QList<QAction *> actions;
-    foreach (MenuInterface* menuInterface, PluginManager::instance()->getMenuInterfaces()) {
+    foreach (MenuInterface *menuInterface, PluginManager::instance()->getMenuInterfaces()) {
         actions = menuInterface->additionalMenu(files, currentUrl.toString());
-        foreach (QAction* action, actions) {
+        foreach (QAction *action, actions) {
             menu->insertAction(lastAction, action);
         }
     }
@@ -461,16 +486,16 @@ QList<QAction*> DFileMenuManager::loadNormalPluginMenu(DFileMenu *menu, const DU
     return actions;
 }
 
-QList<QAction*> DFileMenuManager::loadNormalExtensionMenu(DFileMenu *menu, const DUrlList &urlList, const DUrl &currentUrl)
+QList<QAction *> DFileMenuManager::loadNormalExtensionMenu(DFileMenu *menu, const DUrlList &urlList, const DUrl &currentUrl)
 {
     qDebug() << "load normal extension menu";
-    QAction* lastAction = menu->actions().last();
-    if (lastAction->isSeparator()){
+    QAction *lastAction = menu->actions().last();
+    if (lastAction->isSeparator()) {
         lastAction = menu->actionAt(menu->actions().count() - 2);
     }
 
     QList<QAction *> actions = loadMenuExtemsionActions(urlList, currentUrl);
-    foreach (QAction* action, actions) {
+    foreach (QAction *action, actions) {
         menu->insertAction(lastAction, action);
     }
 
@@ -478,18 +503,18 @@ QList<QAction*> DFileMenuManager::loadNormalExtensionMenu(DFileMenu *menu, const
     return actions;
 }
 
-QList<QAction*> DFileMenuManager::loadEmptyAreaPluginMenu(DFileMenu *menu, const DUrl &currentUrl)
+QList<QAction *> DFileMenuManager::loadEmptyAreaPluginMenu(DFileMenu *menu, const DUrl &currentUrl)
 {
     qDebug() << "load empty area plugin menu";
-    QAction* lastAction = menu->actions().last();
-    if (lastAction->isSeparator()){
+    QAction *lastAction = menu->actions().last();
+    if (lastAction->isSeparator()) {
         lastAction = menu->actionAt(menu->actions().count() - 2);
     }
 
     QList<QAction *> actions;
-    foreach (MenuInterface* menuInterface, PluginManager::instance()->getMenuInterfaces()) {
+    foreach (MenuInterface *menuInterface, PluginManager::instance()->getMenuInterfaces()) {
         actions = menuInterface->additionalEmptyMenu(currentUrl.toString());
-        foreach (QAction* action, actions) {
+        foreach (QAction *action, actions) {
             menu->insertAction(lastAction, action);
         }
     }
@@ -500,15 +525,15 @@ QList<QAction*> DFileMenuManager::loadEmptyAreaPluginMenu(DFileMenu *menu, const
 QList<QAction *> DFileMenuManager::loadEmptyAreaExtensionMenu(DFileMenu *menu, const DUrl &currentUrl)
 {
     qDebug() << "load empty area extension menu";
-    QAction* lastAction = menu->actions().last();
+    QAction *lastAction = menu->actions().last();
 
-    if (lastAction->isSeparator()){
+    if (lastAction->isSeparator()) {
         lastAction = menu->actionAt(menu->actions().count() - 2);
     }
 
     DUrlList urlList;
     QList<QAction *> actions = loadMenuExtemsionActions(urlList, currentUrl);
-    foreach (QAction* action, actions) {
+    foreach (QAction *action, actions) {
         menu->insertAction(lastAction, action);
     }
     menu->insertSeparator(lastAction);
@@ -516,7 +541,7 @@ QList<QAction *> DFileMenuManager::loadEmptyAreaExtensionMenu(DFileMenu *menu, c
     return actions;
 }
 
-QList<QAction *> DFileMenuManager::loadMenuExtemsionActions(const DUrlList &urlList, const DUrl& currentUrl)
+QList<QAction *> DFileMenuManager::loadMenuExtemsionActions(const DUrlList &urlList, const DUrl &currentUrl)
 {
     QList<QAction *>  actions;
 
@@ -535,12 +560,11 @@ QList<QAction *> DFileMenuManager::loadMenuExtemsionActions(const DUrlList &urlL
         QMetaEnum metaEnum = QMetaEnum::fromType<DFMGlobal::MenuExtension>();
         QString menuType = metaEnum.valueToKey(menuExtensionType);
 
-        foreach (QFileInfo fileInfo, menuExtensionDir.entryInfoList(QDir::Files)){
-            if (fileInfo.fileName().endsWith(".json")){
+        foreach (QFileInfo fileInfo, menuExtensionDir.entryInfoList(QDir::Files)) {
+            if (fileInfo.fileName().endsWith(".json")) {
                 qDebug() << fileInfo.absoluteFilePath();
                 QFile file(fileInfo.absoluteFilePath());
-                if (!file.open(QIODevice::ReadOnly))
-                {
+                if (!file.open(QIODevice::ReadOnly)) {
                     qDebug() << "Couldn't open" << fileInfo.absoluteFilePath();
                     return actions;
                 }
@@ -555,11 +579,11 @@ QList<QAction *> DFileMenuManager::loadMenuExtemsionActions(const DUrlList &urlL
     return actions;
 }
 
-QList<QAction *> DFileMenuManager::jsonToActions(const QJsonArray& data, const DUrlList &urlList, const DUrl &currentUrl, const QString& menuExtensionType)
+QList<QAction *> DFileMenuManager::jsonToActions(const QJsonArray &data, const DUrlList &urlList, const DUrl &currentUrl, const QString &menuExtensionType)
 {
     QList<QAction *> actions;
 
-    foreach (const QJsonValue& value, data) {
+    foreach (const QJsonValue &value, data) {
         QJsonObject v = value.toObject();
         QString menuType = v.toVariantMap().value("MenuType").toString();
         QString mimeType = v.toVariantMap().value("MimeType").toString();
@@ -576,56 +600,56 @@ QList<QAction *> DFileMenuManager::jsonToActions(const QJsonArray& data, const D
 
         bool isCanCreateAction = false;
 
-        if (menuType == menuExtensionType){
+        if (menuType == menuExtensionType) {
             isCanCreateAction = true;
         }
 
-        if (isCanCreateAction){
+        if (isCanCreateAction) {
             if (menuExtensionType == "SingleFile" ||
-                    menuExtensionType== "MultiFiles"){
+                    menuExtensionType == "MultiFiles") {
 
-                if (mimeType.isEmpty() && suffix.isEmpty()){
+                if (mimeType.isEmpty() && suffix.isEmpty()) {
                     isCanCreateAction = true;
                 }
-                if (!mimeType.isEmpty()){
+                if (!mimeType.isEmpty()) {
                     QStringList supportMimeTypes = mimeType.split(";");
                     int count = 0;
                     foreach (DUrl url, urlList) {
                         QString mimeType = FileUtils::getFileMimetype(url.toLocalFile());
 
-                        if (supportMimeTypes.isEmpty() || supportMimeTypes.contains(mimeType)){
+                        if (supportMimeTypes.isEmpty() || supportMimeTypes.contains(mimeType)) {
                             count += 1;
                         }
                     }
-                    if (count == urlList.count()){
+                    if (count == urlList.count()) {
                         isCanCreateAction = true;
-                    }else{
+                    } else {
                         isCanCreateAction = false;
                     }
                 }
-                if (!suffix.isEmpty()){
+                if (!suffix.isEmpty()) {
                     QStringList supportsuffixs = suffix.split(";");
                     int count = 0;
                     foreach (DUrl url, urlList) {
                         QString _suxffix = QFileInfo(url.toLocalFile()).suffix();
 
-                        if (supportsuffixs.isEmpty() || supportsuffixs.contains(_suxffix)){
+                        if (supportsuffixs.isEmpty() || supportsuffixs.contains(_suxffix)) {
                             count += 1;
                         }
                     }
-                    if (count == urlList.count()){
+                    if (count == urlList.count()) {
                         isCanCreateAction = true;
-                    }else{
+                    } else {
                         isCanCreateAction = false;
                     }
                 }
             }
         }
 
-        if (isCanCreateAction){
-            QAction* action = new QAction(QIcon(icon), text, NULL);
+        if (isCanCreateAction) {
+            QAction *action = new QAction(QIcon(icon), text, NULL);
 
-            if (subMenuDataList.count() > 1){
+            if (subMenuDataList.count() > 1) {
                 QJsonArray subActionsArray;
                 QJsonArray _subActionsArray = QJsonArray::fromVariantList(subMenuDataList);
                 foreach (QJsonValue v, _subActionsArray) {
@@ -634,11 +658,11 @@ QList<QAction *> DFileMenuManager::jsonToActions(const QJsonArray& data, const D
                     subActionsArray.append(QJsonValue(obj));
                 }
                 QList<QAction *> subActions = jsonToActions(subActionsArray, urlList, currentUrl, menuExtensionType);
-                QMenu* menu = new QMenu;
+                QMenu *menu = new QMenu;
                 menu->addActions(subActions);
                 action->setMenu(menu);
-            }else{
-                connect(action, &QAction::triggered, [=](){
+            } else {
+                connect(action, &QAction::triggered, [ = ]() {
 
                     QProcess p;
                     QStringList args;
@@ -646,7 +670,7 @@ QList<QAction *> DFileMenuManager::jsonToActions(const QJsonArray& data, const D
                         args << url.toString();
                     }
 
-                    if (urlList.isEmpty()){
+                    if (urlList.isEmpty()) {
                         args << currentUrl.toString();
                     }
 
@@ -686,7 +710,7 @@ QSet<MenuAction> DFileMenuManager::getDisableActionList(const DUrlList &urlList)
         }
     }
 
-    if (DFMGlobal::instance()->clipboardAction() == DFMGlobal::UnknowAction){
+    if (DFMGlobal::instance()->clipboardAction() == DFMGlobal::UnknowAction) {
         disableList << MenuAction::Paste;
     }
 
@@ -744,9 +768,9 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::Restore] = QObject::tr("Restore");
     actionKeys[MenuAction::RestoreAll] = QObject::tr("Restore all");
     actionKeys[MenuAction::Mount] = QObject::tr("Mount");
-    actionKeys[MenuAction::Unmount]= QObject::tr("Unmount");
-    actionKeys[MenuAction::Eject]= QObject::tr("Eject");
-    actionKeys[MenuAction::SafelyRemoveDrive]= QObject::tr("Safely Remove");
+    actionKeys[MenuAction::Unmount] = QObject::tr("Unmount");
+    actionKeys[MenuAction::Eject] = QObject::tr("Eject");
+    actionKeys[MenuAction::SafelyRemoveDrive] = QObject::tr("Safely Remove");
     actionKeys[MenuAction::Name] = QObject::tr("Name");
     actionKeys[MenuAction::Size] = QObject::tr("Size");
     actionKeys[MenuAction::Type] = QObject::tr("Type");
@@ -782,28 +806,25 @@ void DFileMenuData::initActions()
     QList<MenuAction> unCachedActions;
     unCachedActions << MenuAction::NewWindow;
     foreach (MenuAction key, actionKeys.keys()) {
-        if (unCachedActions.contains(key)){
+        if (unCachedActions.contains(key)) {
             continue;
         }
 
-        ///###: MenuAction::TagFilesUseColor represents the button for tag files.
+        ///###: MenuAction::TagFilesUseColor represents the button for tagging files.
         ///###: MenuAction::ChangeTagColor represents that you change the color of a present tag.
         ///###: They are different event.
-        if(key == MenuAction::TagFilesUseColor || key == MenuAction::ChangeTagColor){
-            DTagActionWidget* tagWidget{ new DTagActionWidget };
-            QWidgetAction* tagAction{ new QWidgetAction{ nullptr } };
+        if (key == MenuAction::TagFilesUseColor || key == MenuAction::ChangeTagColor) {
+            DTagActionWidget *tagWidget{ new DTagActionWidget };
+            QWidgetAction *tagAction{ new QWidgetAction{ nullptr } };
 
             tagAction->setDefaultWidget(tagWidget);
 
-            switch(key)
-            {
-            case MenuAction::TagFilesUseColor:
-            {
+            switch (key) {
+            case MenuAction::TagFilesUseColor: {
                 tagAction->setText("Add color tags");
                 break;
             }
-            case MenuAction::ChangeTagColor:
-            {
+            case MenuAction::ChangeTagColor: {
                 tagAction->setText("Change color of present tag");
                 tagWidget->setExclusive(true);
                 tagWidget->setToolTipVisible(false);
@@ -819,7 +840,7 @@ void DFileMenuData::initActions()
             continue;
         }
 
-        QAction* action = new QAction(actionKeys.value(key), 0);
+        QAction *action = new QAction(actionKeys.value(key), 0);
         action->setData(key);
         actions.insert(key, action);
         actionToMenuAction.insert(action, key);
@@ -827,9 +848,9 @@ void DFileMenuData::initActions()
 }
 
 DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
-                                               const QSet<MenuAction> &disableList,
-                                               bool checkable,
-                                               const QMap<MenuAction, QVector<MenuAction> > &subMenuList, bool isUseCachedAction, bool isRecursiveCall)
+        const QSet<MenuAction> &disableList,
+        bool checkable,
+        const QMap<MenuAction, QVector<MenuAction> > &subMenuList, bool isUseCachedAction, bool isRecursiveCall)
 {
     static bool actions_initialized = false;
 
@@ -839,31 +860,33 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
         DFileMenuData::initActions();
     }
 
-    if (!isUseCachedAction){
+    if (!isUseCachedAction) {
         foreach (MenuAction actionKey, keys) {
             QAction *action = DFileMenuData::actions.take(actionKey);
 
-            if (action)
+            if (action) {
                 DFileMenuData::actionToMenuAction.remove(action);
+            }
         }
     }
 
-    DFileMenu* menu = new DFileMenu;
+    DFileMenu *menu = new DFileMenu;
 
-    if (!isRecursiveCall){
+    if (!isRecursiveCall) {
         connect(menu, &DFileMenu::triggered, fileMenuManger, &DFileMenuManager::actionTriggered);
     }
 
     foreach (MenuAction key, keys) {
-        if (!isAvailableAction(key))
+        if (!isAvailableAction(key)) {
             continue;
+        }
 
-        if (key == MenuAction::Separator){
+        if (key == MenuAction::Separator) {
             menu->addSeparator();
-        }else{
+        } else {
             QAction *action = DFileMenuData::actions.value(key);
 
-            if(!action){
+            if (!action) {
                 action = new QAction(DFileMenuData::actionKeys.value(key), 0);
                 action->setData(key);
                 DFileMenuData::actions[key] = action;
@@ -875,8 +898,9 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
 
             menu->addAction(action);
 
-            if(!subMenuList.contains(key))
+            if (!subMenuList.contains(key)) {
                 continue;
+            }
 
             DFileMenu *subMenu = genereteMenuByKeys(subMenuList.value(key), disableList, checkable, QMap<MenuAction, QVector<MenuAction> >(), true, true);
 
@@ -934,12 +958,14 @@ bool DFileMenuManager::isAvailableAction(MenuAction action)
         bool ok = false;
         int key = action_enum.keyToValue(action_name.toUtf8(), &ok);
 
-        if (ok && key == action)
+        if (ok && key == action) {
             return false;
+        }
     }
 
-    if (DFileMenuData::whitelist.isEmpty())
+    if (DFileMenuData::whitelist.isEmpty()) {
         return !DFileMenuData::blacklist.contains(action);
+    }
 
     return DFileMenuData::whitelist.contains(action) && !DFileMenuData::blacklist.contains(action);
 }
@@ -948,7 +974,7 @@ void DFileMenuManager::setActionString(MenuAction type, QString actionString)
 {
     DFileMenuData::actionKeys.insert(type, actionString);
 
-    QAction* action = new QAction(actionString, 0);
+    QAction *action = new QAction(actionString, 0);
     action->setData(type);
     DFileMenuData::actions.insert(type, action);
     DFileMenuData::actionToMenuAction[action] = type;
@@ -965,8 +991,9 @@ MenuAction DFileMenuManager::registerMenuActionType(QAction *action)
 
     MenuAction type = DFileMenuData::actionToMenuAction.value(action, MenuAction::Unknow);
 
-    if (type >= MenuAction::UserMenuAction)
+    if (type >= MenuAction::UserMenuAction) {
         return type;
+    }
 
     type = DFileMenuData::takeAvailableUserActionType();
     DFileMenuData::actions[type] = action;
@@ -979,33 +1006,51 @@ MenuAction DFileMenuManager::registerMenuActionType(QAction *action)
     return type;
 }
 
+bool DFileMenuManager::whetherShowTagActions(const QList<DUrl> &urls)
+{
+    bool result{ true };
+
+    for (const DUrl &path : urls) {
+        bool temp{ DAnythingMonitorFilter::instance()->whetherFilterCurrentPath(path) };
+        result = result && temp;
+
+        if (!result) {
+            return false;
+        }
+    }
+
+    return result;
+}
+
 void DFileMenuManager::actionTriggered(QAction *action)
 {
     qDebug() << action << action->data().isValid();
     DFileMenu *menu = qobject_cast<DFileMenu *>(sender());
-    if (!(menu->property("ToolBarSettingsMenu").isValid() && menu->property("ToolBarSettingsMenu").toBool()))
+    if (!(menu->property("ToolBarSettingsMenu").isValid() && menu->property("ToolBarSettingsMenu").toBool())) {
         disconnect(menu, &DFileMenu::triggered, fileMenuManger, &DFileMenuManager::actionTriggered);
+    }
     if (action->data().isValid()) {
         bool flag = false;
         int _type = action->data().toInt(&flag);
         MenuAction type;
-        if (flag){
+        if (flag) {
             type = (MenuAction)_type;
-        }else{
+        } else {
             qDebug() << action->data().toString();;
             return;
         }
 
-        if (type >= MenuAction::UserMenuAction)
-            return;
-
-        if (menu->ignoreMenuActions().contains(type)){
+        if (type >= MenuAction::UserMenuAction) {
             return;
         }
 
-        QAction* typeAction = DFileMenuData::actions.value(type);
+        if (menu->ignoreMenuActions().contains(type)) {
+            return;
+        }
+
+        QAction *typeAction = DFileMenuData::actions.value(type);
         qDebug() << typeAction << action;
-        if (typeAction){
+        if (typeAction) {
             qDebug() << typeAction->text() << action->text();
             if (typeAction->text() == action->text()) {
                 const QSharedPointer<DFMMenuActionEvent> &event = menu->makeEvent(type);
@@ -1014,7 +1059,7 @@ void DFileMenuManager::actionTriggered(QAction *action)
         }
 
 #ifdef SW_LABEL
-        if (DFileMenuData::actionIDs.contains(type)){
+        if (DFileMenuData::actionIDs.contains(type)) {
             const QSharedPointer<DFMMenuActionEvent> &menuActionEvent = menu->makeEvent(type);
             DFMEvent event;
             event.setWindowId(menuActionEvent->windowId());
@@ -1024,6 +1069,6 @@ void DFileMenuManager::actionTriggered(QAction *action)
                                       Qt::DirectConnection,
                                       Q_ARG(DFMEvent, event), Q_ARG(QString, DFileMenuData::actionIDs.value(type)));
         }
- #endif
+#endif
     }
 }
