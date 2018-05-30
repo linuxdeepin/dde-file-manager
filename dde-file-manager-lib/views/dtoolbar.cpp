@@ -274,7 +274,7 @@ void DToolBar::currentUrlChanged(const DFMEvent &event)
 
     if (event.fileUrl().isSearchFile()) {
 //        m_searchBar->show();
-        m_crumbWidget->hide();
+        m_crumbWidget->showAddressBar(event.fileUrl().searchKeyword());
 //        m_searchBar->setAlignment(Qt::AlignLeft);
 //        m_searchBar->clear();
 //        //m_searchBar->setActive(true);
@@ -283,7 +283,7 @@ void DToolBar::currentUrlChanged(const DFMEvent &event)
         //m_searchBar->getPopupList()->hide();
     } else {
 //        m_searchBar->hide();
-        m_crumbWidget->show();
+        m_crumbWidget->hideAddressBar();
         m_searchButton->show();
         setCrumbBar(event.fileUrl());
     }

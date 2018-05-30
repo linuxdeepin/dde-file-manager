@@ -163,8 +163,7 @@ void DFMAddressBar::focusOutEvent(QFocusEvent *e)
         return;
     }
 
-
-    emit focusOut();
+    emit lostFocus();
 
     return QLineEdit::focusOutEvent(e);
 }
@@ -174,7 +173,8 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
     lastPressedKey = e->key();
     switch (e->key()) {
     case Qt::Key_Escape:
-        emit focusOut();
+//        emit focusOut();
+        emit escKeyPressed();
         e->accept();
         return;
     default:
@@ -252,7 +252,7 @@ void DFMAddressBar::initConnections()
     QAction *clear_action = findChild<QAction*>("_q_qlineeditclearaction");
 
     if (clear_action) {
-        connect(clear_action, &QAction::triggered, this, &DFMAddressBar::focusOut);
+        connect(clear_action, &QAction::triggered, this, &DFMAddressBar::clearButtonPressed);
     }
 }
 
@@ -478,7 +478,7 @@ bool DFMAddressBar::event(QEvent *e)
     //         addressbar if it's visiable.
     if (e->type() == QEvent::WindowActivate) {
         if (!hasFocus() && isVisible()) {
-            Q_EMIT focusOut();
+            Q_EMIT lostFocus();
         }
     }
 

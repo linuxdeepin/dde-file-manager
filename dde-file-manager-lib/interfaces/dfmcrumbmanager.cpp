@@ -33,6 +33,7 @@
 #include "controllers/dfmavfscrumbcontroller.h"
 #include "controllers/dfmsmbcrumbcontroller.h"
 #include "controllers/dfmmtpcrumbcontroller.h"
+#include "controllers/dfmsearchcrumbcontroller.h"
 
 DFM_BEGIN_NAMESPACE
 
@@ -134,6 +135,7 @@ DFMCrumbManager::DFMCrumbManager(QObject *parent)
     dRegisterCrumbCreator<DFMAvfsCrumbController>(QStringLiteral(AVFS_SCHEME));
     dRegisterCrumbCreator<DFMSmbCrumbController>(QStringLiteral(SMB_SCHEME));
     dRegisterCrumbCreator<DFMMtpCrumbController>(QStringLiteral(MTP_SCHEME));
+    dRegisterCrumbCreator<DFMSearchCrumbController>(QStringLiteral(SEARCH_SCHEME));
 
     // register plugins
     for (const QString &key : DFMCrumbFactory::keys()) {
