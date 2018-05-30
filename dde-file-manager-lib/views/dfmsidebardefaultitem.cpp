@@ -43,7 +43,7 @@ DUrl DFMSideBarDefaultItem::getDUrlFromStandardLocation(DFMStandardPaths::Standa
         path = DUrl::fromTrashFile("/");
         break;
     default:
-        path = DUrl::fromUserInput(DFMStandardPaths::standardLocation(location));
+        path = DUrl::fromUserInput(DFMStandardPaths::location(location));
         break;
     }
 

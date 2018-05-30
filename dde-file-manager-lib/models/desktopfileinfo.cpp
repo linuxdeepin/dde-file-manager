@@ -260,7 +260,7 @@ QSet<MenuAction> DesktopFileInfo::disableMenuActionList() const
     Q_D(const DesktopFileInfo);
     if(d->deepinID == "dde-trash"){
         QSet<MenuAction> actions;
-        if(FileUtils::filesCount(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath)) <= 0)
+        if(FileUtils::filesCount(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)) <= 0)
             actions << MenuAction::ClearTrash;
         return actions;
     }
@@ -294,12 +294,12 @@ bool DesktopFileInfo::canDrop() const
 
 DUrl DesktopFileInfo::trashDesktopFileUrl()
 {
-    return DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::DesktopPath) + "/dde-trash.desktop");
+    return DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::DesktopPath) + "/dde-trash.desktop");
 }
 
 DUrl DesktopFileInfo::computerDesktopFileUrl()
 {
-    return DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::DesktopPath) + "/dde-computer.desktop");
+    return DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::DesktopPath) + "/dde-computer.desktop");
 }
 
 void DesktopFileInfoPrivate::updateInfo(const DUrl &fileUrl)

@@ -55,7 +55,6 @@
 #include "shutil/fileutils.h"
 #include "gvfs/networkmanager.h"
 #include "dde-file-manager/singleapplication.h"
-#include "shutil/viewstatesmanager.h"
 
 #include "xutil.h"
 #include "utils.h"
@@ -68,7 +67,6 @@
 #include "plugins/pluginmanager.h"
 #include "controllers/trashmanager.h"
 #include "themeconfig.h"
-#include "controllers/fmstatemanager.h"
 
 #include <dplatformwindowhandle.h>
 #include <DThemeManager>
@@ -100,7 +98,6 @@ public:
 
     void setCurrentView(DFMBaseView *view);
     bool processKeyPressEvent(QKeyEvent *event);
-    bool handleStandardPath(const DUrl &url);
 
     QPushButton *logoButton{ nullptr };
     QFrame *centralWidget{ nullptr };
@@ -229,24 +226,6 @@ bool DFileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
     return false;
 }
 
-bool DFileManagerWindowPrivate::handleStandardPath(const DUrl &url)
-{
-    QMap<DUrl, DUrl> url_convert {
-        {DUrl("standard:///Home"), DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::HomePath))},
-        {DUrl("standard:///Desktop"), DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::DesktopPath))},
-        {DUrl("standard:///Videos"), DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::VideosPath))},
-        {DUrl("standard:///Music"), DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::MusicPath))},
-        {DUrl("standard:///Pictures"), DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::PicturesPath))},
-        {DUrl("standard:///Documents"), DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::DocumentsPath))},
-        {DUrl("standard:///Downloads"), DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::DownloadsPath))}
-    };
-
-    if (!url_convert.contains(url))
-        return false;
-
-    return q_ptr->cd(url_convert.value(url), false);
-}
-
 DFileManagerWindow::DFileManagerWindow(QWidget *parent)
     : DFileManagerWindow(DUrl(), parent)
 {
@@ -257,7 +236,7 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     , d_ptr(new DFileManagerWindowPrivate(this))
 {
     if (!DFMGlobal::IsFileManagerDiloagProcess) {
-        QString currentTheme = WindowManager::instance()->getFmStateManager()->fmState()->theme();
+        const QString &currentTheme = DFMApplication::appAttribute(DFMApplication::AA_ThemeName).toString();
         DThemeManager::instance()->setTheme(this, currentTheme);
         ThemeConfig::instace()->update(currentTheme);
     }
@@ -348,12 +327,10 @@ void DFileManagerWindow::hideEmptyTrashButton()
 
 void DFileManagerWindow::onNewTabButtonClicked()
 {
-    DUrl url;
-    const QString &path = DFMApplication::instance()->appAttribute(DFMApplication::AA_UrlOfNewTab).toString();
-    if (path.isEmpty()) {
+    DUrl url = DFMApplication::instance()->appUrlAttribute(DFMApplication::AA_UrlOfNewTab);
+
+    if (!url.isValid()) {
         url = currentUrl();
-    } else {
-        url = DUrl::fromUserInput(path);
     }
 
     openNewTab(url);
@@ -465,12 +442,6 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl, bool canFetchNetwork)
 
     if (currentUrl() == fileUrl) {
         return true;
-    }
-
-    if (fileUrl.scheme() == "standard") {
-        // TODO(zccrs): 待将UI相关的逻辑从DAbatractFileInfo/DAbstractFileController中分离后
-        //              将此处url跳转的实现放到新的逻辑中
-        return d->handleStandardPath(fileUrl);
     }
 
     if (canFetchNetwork && NetworkManager::SupportScheme.contains(fileUrl.scheme())) {
@@ -1011,9 +982,11 @@ void DFileManagerWindow::onReuqestCacheRenameBarState()const
 void DFileManagerWindow::setTheme(const QString &theme)
 {
     DThemeManager::instance()->setTheme(this, theme);
+    DFMApplication::setAppAttribute(DFMApplication::AA_ThemeName, theme);
 
     DFileMenu *dfmenu = static_cast<DFileMenu *>(titlebar()->menu());
     QAction *theme_action = dfmenu->actionAt(1);
+
     if (theme_action) {
         if (theme == "dark") {
             theme_action->setChecked(true);

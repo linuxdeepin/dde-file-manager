@@ -28,6 +28,7 @@
 #include <QString>
 #include <QStandardPaths>
 
+class DUrl;
 class DFMStandardPaths
 {
 public:
@@ -62,7 +63,9 @@ public:
         Root
     };
 
-    static QString standardLocation(StandardLocation type);
+    static QString location(StandardLocation type);
+    static QString fromStandardUrl(const DUrl &standardUrl);
+    static DUrl toStandardUrl(const QString &localPath);
 
     static QString getConfigPath();
     static QString getCachePath();

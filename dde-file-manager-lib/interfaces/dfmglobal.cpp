@@ -44,7 +44,6 @@
 #include "../deviceinfo/udisklistener.h"
 #include "../usershare/usersharemanager.h"
 #include "models/desktopfileinfo.h"
-#include "shutil/viewstatesmanager.h"
 #include "controllers/operatorrevocation.h"
 #include "tag/tagmanager.h"
 
@@ -151,7 +150,7 @@ bool DFMGlobal::installTranslator()
 {
     QTranslator *translator = new QTranslator(QGuiApplication::instance());
 
-    QString transLatorPath = DFMStandardPaths::standardLocation(DFMStandardPaths::TranslationPath) +
+    QString transLatorPath = DFMStandardPaths::location(DFMStandardPaths::TranslationPath) +
             QDir::separator() + DFMGlobal::applicationName() + "_" + QLocale::system().name();
 
     if (translator->load(transLatorPath)) {
@@ -232,7 +231,7 @@ void DFMGlobal::autoLoadDefaultPlugins()
 
 void DFMGlobal::autoLoadDefaultMenuExtensions()
 {
-    QString configPath = DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationConfigPath);
+    QString configPath = DFMStandardPaths::location(DFMStandardPaths::ApplicationConfigPath);
     QString menuExtensionPath = QString("%1/%2").arg(configPath, "menuextensions");
     DFMGlobal::addMenuExtensionPath(menuExtensionPath);
 }
@@ -327,11 +326,6 @@ void DFMGlobal::initUserShareManager()
     userShareManager;
 }
 
-void DFMGlobal::initViewStatesManager()
-{
-    viewStatesManager;
-}
-
 void DFMGlobal::initOperatorRevocation()
 {
     Q_UNUSED(OperatorRevocation::instance())
@@ -359,7 +353,7 @@ void DFMGlobal::initTagManagerConnect()
     connect(TagManager::instance(), &TagManager::filesWereTagged, [] (const QMap<QString, QList<QString>>& files_were_tagged) {
         for (auto i = files_were_tagged.constBegin(); i != files_were_tagged.constEnd(); ++i) {
             // is trash files
-            if (i.key().startsWith(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath)))
+            if (i.key().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)))
                 return;
 
             DUrl url = DUrl::fromLocalFile(i.key());

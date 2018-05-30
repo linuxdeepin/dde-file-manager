@@ -30,6 +30,7 @@
 #include "dfileservices.h"
 #include "dfmeventdispatcher.h"
 #include "dfmapplication.h"
+#include "dfmsettings.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -38,7 +39,6 @@
 #include "models/fmstate.h"
 
 #include "fileoperations/filejob.h"
-#include "controllers/fmstatemanager.h"
 
 #include "dialogs/dialogmanager.h"
 
@@ -81,9 +81,6 @@ int WindowManager::m_count = 0;
 
 WindowManager::WindowManager(QObject *parent) : QObject(parent)
 {
-    m_fmStateManager = new FMStateManager(this);
-    m_fmStateManager->loadCache();
-
     qApp->setApplicationDisplayName(tr("Deepin File Manager"));
 #ifdef AUTO_RESTART_DEAMON
     m_restartProcessTimer = new QTimer(this);
@@ -91,11 +88,6 @@ WindowManager::WindowManager(QObject *parent) : QObject(parent)
     m_restartProcessTimer->start();
 #endif
     initConnect();
-}
-
-FMStateManager *WindowManager::getFmStateManager() const
-{
-    return m_fmStateManager;
 }
 
 class WindowManager_ : public WindowManager {};
@@ -135,11 +127,11 @@ void WindowManager::initConnect()
 
 void WindowManager::loadWindowState(DFileManagerWindow *window)
 {
-    FMState* state = m_fmStateManager->fmState();
+    const QVariantMap &state = DFMApplication::appObtuselySetting()->value("WindowManager", "WindowState").toMap();
 
-    int width = state->width();
-    int height = state->height();
-    int windowState = state->windowState();
+    int width = state.value("width").toInt();
+    int height = state.value("height").toInt();
+    int windowState = state.value("state").toInt();
     window->resize(width, height);
     window->setWindowState(static_cast<Qt::WindowState>(windowState));
 }
@@ -152,15 +144,14 @@ void WindowManager::saveWindowState(DFileManagerWindow *window)
     /// The power by dxcb platform plugin
     NetWmStates states = (NetWmStates)window->window()->windowHandle()->property("_d_netWmStates").toInt();
 
+    QVariantMap state;
+
     if ((states & (NetWmStateMaximizedHorz | NetWmStateMaximizedVert)) == 0) {
-        m_fmStateManager->fmState()->setX(window->x());
-        m_fmStateManager->fmState()->setY(window->y());
-        m_fmStateManager->fmState()->setWidth(window->size().width());
-        m_fmStateManager->fmState()->setHeight(window->size().height());
+        state["width"] = window->size().width();
+        state["height"] = window->size().height();
     }
-    m_fmStateManager->fmState()->setWindowState(window->windowState());
-    m_fmStateManager->fmState()->setTheme(DThemeManager::instance()->theme(window));
-    m_fmStateManager->saveCache();
+
+    DFMApplication::appObtuselySetting()->setValue("WindowManager", "WindowState", state);
 }
 
 DUrl WindowManager::getUrlByWindowId(quint64 windowId)
@@ -196,7 +187,7 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
     }
 
     QX11Info::setAppTime(QX11Info::appUserTime());
-    DFileManagerWindow *window = new DFileManagerWindow(url.isEmpty() ? DUrl::fromUserInput(DFMApplication::instance()->appAttribute(DFMApplication::AA_UrlOfNewWindow).toString()) : url);
+    DFileManagerWindow *window = new DFileManagerWindow(url.isEmpty() ? DFMApplication::instance()->appUrlAttribute(DFMApplication::AA_UrlOfNewWindow) : url);
     loadWindowState(window);
     window->setAttribute(Qt::WA_DeleteOnClose);
     window->show();

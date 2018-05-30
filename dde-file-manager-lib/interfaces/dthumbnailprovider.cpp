@@ -132,11 +132,11 @@ QString DThumbnailProviderPrivate::sizeToFilePath(DThumbnailProvider::Size size)
 {
     switch (size) {
     case DThumbnailProvider::Small:
-        return DFMStandardPaths::standardLocation(DFMStandardPaths::ThumbnailSmallPath);
+        return DFMStandardPaths::location(DFMStandardPaths::ThumbnailSmallPath);
     case DThumbnailProvider::Normal:
-        return DFMStandardPaths::standardLocation(DFMStandardPaths::ThumbnailNormalPath);
+        return DFMStandardPaths::location(DFMStandardPaths::ThumbnailNormalPath);
     case DThumbnailProvider::Large:
-        return DFMStandardPaths::standardLocation(DFMStandardPaths::ThumbnailLargePath);
+        return DFMStandardPaths::location(DFMStandardPaths::ThumbnailLargePath);
     }
 
     return QString();
@@ -232,7 +232,7 @@ QString DThumbnailProvider::thumbnailFilePath(const QFileInfo &info, Size size) 
     if (absolutePath == d->sizeToFilePath(Small)
             || absolutePath == d->sizeToFilePath(Normal)
             || absolutePath == d->sizeToFilePath(Large)
-            || absolutePath == DFMStandardPaths::standardLocation(DFMStandardPaths::ThumbnailFailPath)) {
+            || absolutePath == DFMStandardPaths::location(DFMStandardPaths::ThumbnailFailPath)) {
         return absoluteFilePath;
     }
 
@@ -268,7 +268,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
     if (absolutePath == d->sizeToFilePath(Small)
             || absolutePath == d->sizeToFilePath(Normal)
             || absolutePath == d->sizeToFilePath(Large)
-            || absolutePath == DFMStandardPaths::standardLocation(DFMStandardPaths::ThumbnailFailPath)) {
+            || absolutePath == DFMStandardPaths::location(DFMStandardPaths::ThumbnailFailPath)) {
         return absoluteFilePath;
     }
 
@@ -283,7 +283,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
     const QString thumbnailName = dataToMd5Hex(fileUrl.toLocal8Bit()) + FORMAT;
 
     // the file is in fail path
-    QString thumbnail = DFMStandardPaths::standardLocation(DFMStandardPaths::ThumbnailFailPath) + QDir::separator() + thumbnailName;
+    QString thumbnail = DFMStandardPaths::location(DFMStandardPaths::ThumbnailFailPath) + QDir::separator() + thumbnailName;
 
 //    if (QFile::exists(thumbnail)) {
 //        QImage image(thumbnail);

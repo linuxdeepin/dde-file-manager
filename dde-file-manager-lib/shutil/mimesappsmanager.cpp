@@ -504,7 +504,7 @@ QStringList MimesAppsManager::getrecommendedAppsFromMimeWhiteList(const DUrl &ur
     const DAbstractFileInfoPointer& info = fileService->createFileInfo(Q_NULLPTR, url);
     QString aliasMimeType = info->mimeTypeName();
     QStringList recommendedApps;
-    QString mimeAssociationsFile = QString("%1/%2/%3").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationSharePath),
+    QString mimeAssociationsFile = QString("%1/%2/%3").arg(DFMStandardPaths::location(DFMStandardPaths::ApplicationSharePath),
                                                            "mimetypeassociations",
                                                            "mimetypeassociations.json");
     QFile file(mimeAssociationsFile);
@@ -550,7 +550,7 @@ QStringList MimesAppsManager::getApplicationsFolders()
 
 QString MimesAppsManager::getMimeAppsCacheFile()
 {
-    return QString("%1/%2").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::CachePath), "MimeApps.json");
+    return QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::CachePath), "MimeApps.json");
 }
 
 QString MimesAppsManager::getMimeInfoCacheFilePath()
@@ -565,12 +565,12 @@ QString MimesAppsManager::getMimeInfoCacheFileRootPath()
 
 QString MimesAppsManager::getDesktopFilesCacheFile()
 {
-    return QString("%1/%2").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::CachePath), "DesktopFiles.json");
+    return QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::CachePath), "DesktopFiles.json");
 }
 
 QString MimesAppsManager::getDesktopIconsCacheFile()
 {
-    return QString("%1/%2").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::CachePath), "DesktopIcons.json");
+    return QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::CachePath), "DesktopIcons.json");
 }
 
 QStringList MimesAppsManager::getDesktopFiles()

@@ -272,7 +272,6 @@ public:
     static void initGvfsMountManager();
     static void initSecretManager();
     static void initUserShareManager();
-    static void initViewStatesManager();
     static void initOperatorRevocation();
     static void initTagManagerConnect();
 

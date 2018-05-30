@@ -19,8 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dfmsettings.h"
-
 #include "dfilewatcher.h"
+#include "dfmstandardpaths.h"
 
 #include <QCoreApplication>
 #include <QStandardPaths>
@@ -99,6 +99,18 @@ public:
         } else {
             syncTimer->metaObject()->invokeMethod(syncTimer, dirty ? "start" : "stop", Qt::QueuedConnection);
         }
+    }
+
+    QString urlToKey(const DUrl &url) const
+    {
+        if (url.isLocalFile()) {
+            const DUrl &new_url = DFMStandardPaths::toStandardUrl(url.toLocalFile());
+
+            if (new_url.isValid())
+                return new_url.toString();
+        }
+
+        return url.toString();
     }
 
     void _q_onFileChanged(const DUrl &url);
@@ -373,10 +385,42 @@ QVariant DFMSettings::value(const QString &group, const QString &key, const QVar
     return d->defaultData.values.value(group).value(key, defaultValue);
 }
 
+QVariant DFMSettings::value(const QString &group, const DUrl &key, const QVariant &defaultValue) const
+{
+    Q_D(const DFMSettings);
+
+    return value(group, d->urlToKey(key), defaultValue);
+}
+
+DUrl DFMSettings::urlValue(const QString &group, const QString &key, const DUrl &defaultValue) const
+{
+    const QString &url_string = value(group, key, defaultValue).toString();
+    const QString &path = DFMStandardPaths::fromStandardUrl(DUrl(url_string));
+
+    if (!path.isEmpty())
+        return DUrl::fromLocalFile(path);
+
+    return DUrl::fromUserInput(url_string);
+}
+
+DUrl DFMSettings::urlValue(const QString &group, const DUrl &key, const DUrl &defaultValue) const
+{
+    Q_D(const DFMSettings);
+
+    return urlValue(group, d->urlToKey(key), defaultValue);
+}
+
 void DFMSettings::setValue(const QString &group, const QString &key, const QVariant &value)
 {
     if (setValueNoNotify(group, key, value))
         Q_EMIT valueChanged(group, key, value);
+}
+
+void DFMSettings::setValue(const QString &group, const DUrl &key, const QVariant &value)
+{
+    Q_D(DFMSettings);
+
+    setValue(group, d->urlToKey(key), value);
 }
 
 bool DFMSettings::setValueNoNotify(const QString &group, const QString &key, const QVariant &value)
@@ -400,6 +444,13 @@ bool DFMSettings::setValueNoNotify(const QString &group, const QString &key, con
     return changed;
 }
 
+bool DFMSettings::setValueNoNotify(const QString &group, const DUrl &key, const QVariant &value)
+{
+    Q_D(DFMSettings);
+
+    return setValueNoNotify(group, d->urlToKey(key), value);
+}
+
 void DFMSettings::removeGroup(const QString &group)
 {
     Q_D(DFMSettings);
@@ -419,11 +470,18 @@ void DFMSettings::removeGroup(const QString &group)
     }
 }
 
-bool DFMSettings::isRemovable(const QString &group, const QString &key)
+bool DFMSettings::isRemovable(const QString &group, const QString &key) const
 {
-    Q_D(DFMSettings);
+    Q_D(const DFMSettings);
 
     return d->writableData.values.value(group).contains(key);
+}
+
+bool DFMSettings::isRemovable(const QString &group, const DUrl &key) const
+{
+    Q_D(const DFMSettings);
+
+    return isRemovable(group, d->urlToKey(key));
 }
 
 void DFMSettings::remove(const QString &group, const QString &key)
@@ -442,6 +500,13 @@ void DFMSettings::remove(const QString &group, const QString &key)
         return;
 
     Q_EMIT valueChanged(group, key, new_value);
+}
+
+void DFMSettings::remove(const QString &group, const DUrl &key)
+{
+    Q_D(DFMSettings);
+
+    remove(group, d->urlToKey(key));
 }
 
 void DFMSettings::clear()

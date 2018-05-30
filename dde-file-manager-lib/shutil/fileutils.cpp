@@ -456,7 +456,7 @@ QString FileUtils::newDocmentName(QString targetdir, const QString &baseName, co
 bool FileUtils::cpTemplateFileToTargetDir(const QString& targetdir, const QString& baseName, const QString& suffix, WId windowId)
 {
     QString templateFile;
-    QDirIterator it(DFMStandardPaths::standardLocation(DFMStandardPaths::TemplatesPath), QDir::Files);
+    QDirIterator it(DFMStandardPaths::location(DFMStandardPaths::TemplatesPath), QDir::Files);
     while (it.hasNext()) {
       it.next();
       if (it.fileInfo().suffix() == suffix){
@@ -874,7 +874,7 @@ void FileUtils::migrateConfigFileFromCache(const QString& key)
 {
     bool ret = false;
     QString oldPath = QString("%1/%2/%3.%4").arg(QDir().homePath(), ".cache/dde-file-manager",key,"json");
-    QString newPath = QString("%1/%2.%3").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationConfigPath),key.toLower(), "json");
+    QString newPath = QString("%1/%2.%3").arg(DFMStandardPaths::location(DFMStandardPaths::ApplicationConfigPath),key.toLower(), "json");
     QFile srcFile(oldPath);
     ret = srcFile.open(QIODevice::ReadOnly);
     if(ret){

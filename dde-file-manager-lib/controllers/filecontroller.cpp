@@ -552,14 +552,14 @@ public:
 
 bool FileController::customHiddenFileMatch(const QString &absolutePath, const QString &fileName)
 {
-    static Match match("Hidden Files");
+    static Match match("HiddenFiles");
 
     return match.match(absolutePath, fileName);
 }
 
 bool FileController::privateFileMatch(const QString &absolutePath, const QString &fileName)
 {
-    static Match match("Private Files");
+    static Match match("PrivateFiles");
 
     return match.match(absolutePath, fileName);
 }

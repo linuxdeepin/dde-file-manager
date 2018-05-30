@@ -710,7 +710,7 @@ DUrl DUrl::toAbsolutePathUrl() const
 QString DUrl::toLocalFile() const
 {
     if (isTrashFile()) {
-        return DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + path();
+        return DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + path();
     } else if (isSearchFile()) {
         return searchedFileUrl().toLocalFile();
     } else if (isAVFSFile()) {

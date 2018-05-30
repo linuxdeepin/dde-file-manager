@@ -484,15 +484,15 @@ DUrlList FileJob::doMoveToTrash(const DUrlList &files)
     QDir trashDir;
     DUrlList list;
 
-    if(!trashDir.mkpath(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath))) {
-        qDebug() << "mk" << DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) << "failed!";
+    if(!trashDir.mkpath(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
+        qDebug() << "mk" << DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath) << "failed!";
         /// TODO
 
         return list;
     }
 
-    if(!trashDir.mkpath(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath))) {
-        qDebug() << "mk" << DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) << "failed!";
+    if(!trashDir.mkpath(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath))) {
+        qDebug() << "mk" << DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath) << "failed!";
         /// TODO
 
         return list;
@@ -500,7 +500,7 @@ DUrlList FileJob::doMoveToTrash(const DUrlList &files)
 
     if (files.count() > 0){
         QStorageInfo storageInfo = getStorageInfo(files.at(0).toLocalFile());
-        QStorageInfo trashStorageInfo = getStorageInfo(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
+        QStorageInfo trashStorageInfo = getStorageInfo(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath));
         if(storageInfo.rootPath() != trashStorageInfo.rootPath()){
             m_isInSameDisk = false;
         }
@@ -527,7 +527,7 @@ DUrlList FileJob::doMoveToTrash(const DUrlList &files)
     if(canNotMoveToTrashList.size() > 0){
         emit requestCanNotMoveToTrashDialogShowed(canNotMoveToTrashList);
     }else{
-        list = doMove(files, DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath)));
+        list = doMove(files, DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
     }
 
     if(m_isJobAdded)
@@ -587,7 +587,7 @@ bool FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
     }
 
     if (ok) {
-        QFile::remove(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) + QDir::separator() + QFileInfo(srcFilePath).fileName() + ".trashinfo");
+        QFile::remove(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath) + QDir::separator() + QFileInfo(srcFilePath).fileName() + ".trashinfo");
     }
 
     if(m_isJobAdded)
@@ -2186,7 +2186,7 @@ QString FileJob::getNotExistsTrashFileName(const QString &fileName)
     name.chop(suffix.size());
     name = name.left(200 - suffix.size());
 
-    while (QFile::exists(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + "/" + name + suffix)) {
+    while (QFile::exists(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + "/" + name + suffix)) {
         name = QCryptographicHash::hash(name, QCryptographicHash::Md5).toHex();
     }
 

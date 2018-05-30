@@ -44,7 +44,8 @@ public:
         AA_ViewAutoCompace,
         AA_OpenFileMode, // 点击/双击[0/1]
         AA_UrlOfNewWindow, // 新窗口默认路径
-        AA_UrlOfNewTab // 新标签页默认路径
+        AA_UrlOfNewTab, // 新标签页默认路径
+        AA_ThemeName
     };
 
     Q_ENUM(ApplicationAttribute)
@@ -73,6 +74,7 @@ public:
     ~DFMApplication();
 
     static QVariant appAttribute(ApplicationAttribute aa);
+    static DUrl appUrlAttribute(ApplicationAttribute aa);
     static void setAppAttribute(ApplicationAttribute aa, const QVariant &value);
     static bool syncAppAttribute();
 

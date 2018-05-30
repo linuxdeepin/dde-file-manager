@@ -31,7 +31,6 @@
 class DFileManagerWindow;
 class DUrl;
 class DFMEvent;
-class FMStateManager;
 class FMState;
 class QTimer;
 
@@ -54,8 +53,6 @@ public:
 
     static bool tabAddableByWinId(const quint64& winId);
 
-    FMStateManager *getFmStateManager() const;
-
 signals:
     void start(const QString &src);
 
@@ -76,8 +73,6 @@ protected:
 private:
     static QHash<const QWidget*, quint64> m_windows;
     static int m_count;
-
-     FMStateManager *m_fmStateManager = NULL;
 
      QTimer* m_restartProcessTimer = NULL;
      bool m_isAppInDaemonStatus = true;

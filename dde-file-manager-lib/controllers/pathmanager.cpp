@@ -147,18 +147,18 @@ QString PathManager::getSystemCachePath()
 
 void PathManager::loadSystemPaths()
 {
-    m_systemPathsMap["Home"] = DFMStandardPaths::standardLocation(DFMStandardPaths::HomePath);
-    m_systemPathsMap["Desktop"] = DFMStandardPaths::standardLocation(DFMStandardPaths::DesktopPath);
-    m_systemPathsMap["Videos"] = DFMStandardPaths::standardLocation(DFMStandardPaths::VideosPath);
-    m_systemPathsMap["Music"] = DFMStandardPaths::standardLocation(DFMStandardPaths::MusicPath);
-    m_systemPathsMap["Pictures"] = DFMStandardPaths::standardLocation(DFMStandardPaths::PicturesPath);
-    m_systemPathsMap["Documents"] = DFMStandardPaths::standardLocation(DFMStandardPaths::DocumentsPath);
-    m_systemPathsMap["Downloads"] = DFMStandardPaths::standardLocation(DFMStandardPaths::DownloadsPath);
-    m_systemPathsMap["Trash"] = DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath);
-    m_systemPathsMap["System Disk"] = DFMStandardPaths::standardLocation(DFMStandardPaths::DiskPath);
-    m_systemPathsMap["Network"] = DFMStandardPaths::standardLocation(DFMStandardPaths::NetworkRootPath);
-    m_systemPathsMap["UserShare"] = DFMStandardPaths::standardLocation(DFMStandardPaths::UserShareRootPath);
-    m_systemPathsMap["Computer"] = DFMStandardPaths::standardLocation(DFMStandardPaths::ComputerRootPath);
+    m_systemPathsMap["Home"] = DFMStandardPaths::location(DFMStandardPaths::HomePath);
+    m_systemPathsMap["Desktop"] = DFMStandardPaths::location(DFMStandardPaths::DesktopPath);
+    m_systemPathsMap["Videos"] = DFMStandardPaths::location(DFMStandardPaths::VideosPath);
+    m_systemPathsMap["Music"] = DFMStandardPaths::location(DFMStandardPaths::MusicPath);
+    m_systemPathsMap["Pictures"] = DFMStandardPaths::location(DFMStandardPaths::PicturesPath);
+    m_systemPathsMap["Documents"] = DFMStandardPaths::location(DFMStandardPaths::DocumentsPath);
+    m_systemPathsMap["Downloads"] = DFMStandardPaths::location(DFMStandardPaths::DownloadsPath);
+    m_systemPathsMap["Trash"] = DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath);
+    m_systemPathsMap["System Disk"] = DFMStandardPaths::location(DFMStandardPaths::DiskPath);
+    m_systemPathsMap["Network"] = DFMStandardPaths::location(DFMStandardPaths::NetworkRootPath);
+    m_systemPathsMap["UserShare"] = DFMStandardPaths::location(DFMStandardPaths::UserShareRootPath);
+    m_systemPathsMap["Computer"] = DFMStandardPaths::location(DFMStandardPaths::ComputerRootPath);
 
     m_systemPathsSet.reserve(m_systemPathsMap.size());
 
