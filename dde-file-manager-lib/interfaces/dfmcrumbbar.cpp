@@ -230,9 +230,16 @@ void DFMCrumbBarPrivate::initConnections()
         emit q->addressBarContentEntered(addressBar->text());
     });
 
-    q->connect(addressBar, &DFMAddressBar::focusOut, q, [q]() {
-        // check?
-        q->hideAddressBar();
+    q->connect(addressBar, &DFMAddressBar::escKeyPressed, q, [q, this]() {
+        if (crumbController) {
+            crumbController->processAction(DFMCrumbInterface::EscKeyPressed);
+        }
+    });
+
+    q->connect(addressBar, &DFMAddressBar::lostFocus, q, [q, this]() {
+        if (crumbController) {
+            crumbController->processAction(DFMCrumbInterface::AddressBarLostFocus);
+        }
     });
 }
 

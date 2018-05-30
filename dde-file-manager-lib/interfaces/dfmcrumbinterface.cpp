@@ -21,6 +21,7 @@
 #include "dfmcrumbinterface.h"
 
 #include "dfmcrumbitem.h"
+#include "dfmcrumbbar.h"
 
 #include "controllers/jobcontroller.h"
 
@@ -110,7 +111,7 @@ DFMCrumbInterfacePrivate::DFMCrumbInterfacePrivate(DFMCrumbInterface *qq)
  * \brief DFMCrumbInterface is the interface for crumb item management for DFMCrumbBar
  *
  * DFMCrumbInterface is the interface for crumb item management for DFMCrumbBar, and should
- * be implemented as a controller. Each different URL schema got a corresponding controller
+ * be implemented as a controller. Each different URL scheme got a corresponding controller
  * for creating crumb items. DFMCrumbManager holds all avaliable crumb controllers.
  *
  * DFMCrumbInterface provides all neccessary interfaces for crumb management and some URL
@@ -129,6 +130,19 @@ DFMCrumbInterface::DFMCrumbInterface(QObject *parent)
 DFMCrumbInterface::~DFMCrumbInterface()
 {
 
+}
+
+void DFMCrumbInterface::processAction(DFMCrumbInterface::ActionType type)
+{
+    switch (type) {
+    case EscKeyPressed:
+    case ClearButtonPressed:
+    case AddressBarLostFocus:
+        crumbBar()->hideAddressBar();
+        break;
+    default:
+        break;
+    }
 }
 
 DFMCrumbBar *DFMCrumbInterface::crumbBar()

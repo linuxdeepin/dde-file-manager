@@ -50,6 +50,14 @@ public:
     explicit DFMCrumbInterface(QObject *parent = 0);
     ~DFMCrumbInterface();
 
+    // Actions may cause DFMAddressBar focusOut
+    enum ActionType {
+        EscKeyPressed,
+        ClearButtonPressed,
+        AddressBarLostFocus
+    };
+
+    virtual void processAction(ActionType type);
     virtual DFMCrumbBar* crumbBar() final;
     virtual void setCrumbBar(DFMCrumbBar *crumbBar) final;
     virtual bool supportedUrl(DUrl) = 0;

@@ -58,7 +58,9 @@ public:
     void setCompleter(QCompleter *c);
 
 signals:
-    void focusOut();
+    void lostFocus();
+    void clearButtonPressed();
+    void escKeyPressed();
 
 protected:
     void focusInEvent(QFocusEvent *e) override;
