@@ -2,7 +2,7 @@
     "ApplicationAttribute": {
         "AllwayOpenOnNewWindow": false,
         "IconSizeLevel": 1,
-        "ViewMode": 0,
+        "ViewMode": 1,
         "ViewComppactMode": false,
         "ViewAutoCompace": false,
         "OpenFileMode": 1,
