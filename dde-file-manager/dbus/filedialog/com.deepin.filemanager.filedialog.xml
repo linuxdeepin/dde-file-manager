@@ -13,6 +13,7 @@
     <property name="windowActive" type="b" access="read"></property>
     <property name="heartbeatInterval" type="i" access="readwrite"></property>
     <property name="windowFlags" type="u" access="readwrite"></property>
+    <property name="hideOnAccept" type="b" access="readwrite"></property>
     <method name="selectFile">
         <arg name="filename" type="s" direction="in"/>
     </method>
@@ -97,6 +98,9 @@
     </method>
     <method name="beginAddCustomWidget"></method>
     <method name="endAddCustomWidget"></method>
+    <method name="addDisableUrlScheme">
+        <arg name="type" type="s" direction="in"/>
+    </method>
     <signal name="finished">
       <arg name="result" type="i" direction="out"/>
     </signal>
