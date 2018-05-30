@@ -21,6 +21,7 @@
 #include "dfmaddressbar.h"
 #include "dfmcrumbmanager.h"
 #include "dfmcrumbfactory.h"
+#include "dfmcrumbbar.h"
 
 #include "views/dcompleterlistview.h"
 #include "interfaces/dfmcrumbinterface.h"
@@ -84,15 +85,18 @@ QSize DCompleterStyledItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 }
 
 /*!
-    \class DFMAddressBar
-    \inmodule dde-file-manager-lib
+ * \class DFMAddressBar
+ * \inmodule dde-file-manager-lib
+ *
+ * \brief DFMAddressBar is the address bar of the file manager
+ *
+ * The address bar is also the search bar, it can also handle search job. The address
+ * bar is managed by the crumb bar.
+ *
+ * \sa DFMCrumbBar, DFMCrumbInterface
+ */
 
-    \brief DFMAddressBar is the address bar of the file manager
-
-    \sa DFMCrumbBar
-*/
-
-DFMAddressBar::DFMAddressBar(QWidget *parent)
+DFMAddressBar::DFMAddressBar(DFMCrumbBar *parent)
     : QLineEdit(parent)
 {
     initUI();
@@ -219,6 +223,8 @@ void DFMAddressBar::initUI()
     setObjectName("DSearchBar");
     setMinimumWidth(1);
     setAlignment(Qt::AlignHCenter);
+    setAlignment(Qt::AlignLeft);
+    setPlaceholderText(tr("Search or enter address"));
 
     setFocusPolicy(Qt::ClickFocus);
 }
@@ -365,11 +371,9 @@ void DFMAddressBar::updateCompletionState(const QString &text)
                 crumbController->disconnect();
                 crumbController->deleteLater();
             }
-            crumbController = DFMCrumbManager::instance()->createControllerByUrl(url);
-            // Not found? Search for plugins
-            if (!crumbController) {
-                crumbController = DFMCrumbFactory::create(url.scheme());
-            }
+            DFMCrumbBar* crumbBar = qobject_cast<DFMCrumbBar*>(this->parent());
+            Q_CHECK_PTR(crumbBar);
+            crumbController = DFMCrumbManager::instance()->createControllerByUrl(url, crumbBar);
             // Still not found? Then nothing here...
             if (!crumbController) {
                 qDebug() << "Unsupported url / scheme for completion: " << url;

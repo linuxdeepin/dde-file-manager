@@ -38,6 +38,7 @@ public:
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 };
 
+class DFMCrumbBar;
 class DFMCrumbInterface;
 class DCompleterListView;
 class DFMAddressBar : public QLineEdit
@@ -49,7 +50,7 @@ public:
         JumpTo
     };
 
-    explicit DFMAddressBar(QWidget *parent = 0);
+    explicit DFMAddressBar(DFMCrumbBar *parent = 0);
 
     QCompleter *completer() const;
 

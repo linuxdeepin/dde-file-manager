@@ -89,6 +89,7 @@ public:
     DFMCrumbInterfacePrivate(DFMCrumbInterface *qq);
 
     QPointer<JobController> folderCompleterJobPointer;
+    DFMCrumbBar* crumbBar = nullptr;
 
     DFMCrumbInterface *q_ptr;
 
@@ -128,6 +129,20 @@ DFMCrumbInterface::DFMCrumbInterface(QObject *parent)
 DFMCrumbInterface::~DFMCrumbInterface()
 {
 
+}
+
+DFMCrumbBar *DFMCrumbInterface::crumbBar()
+{
+    Q_D(DFMCrumbInterface);
+
+    return d->crumbBar;
+}
+
+void DFMCrumbInterface::setCrumbBar(DFMCrumbBar *crumbBar)
+{
+    Q_D(DFMCrumbInterface);
+
+    d->crumbBar = crumbBar;
 }
 
 /*!
