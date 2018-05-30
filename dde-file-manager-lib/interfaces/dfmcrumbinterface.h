@@ -40,6 +40,7 @@ public:
     QString iconKey = "icon"; // icon key
 };
 
+class DFMCrumbBar;
 class DFMCrumbItem;
 class DFMCrumbInterfacePrivate;
 class DFMCrumbInterface : public QObject
@@ -49,6 +50,8 @@ public:
     explicit DFMCrumbInterface(QObject *parent = 0);
     ~DFMCrumbInterface();
 
+    virtual DFMCrumbBar* crumbBar() final;
+    virtual void setCrumbBar(DFMCrumbBar *crumbBar) final;
     virtual bool supportedUrl(DUrl) = 0;
     virtual QList<CrumbData> seprateUrl(const DUrl &url);
     virtual DFMCrumbItem* createCrumbItem(const CrumbData &data);

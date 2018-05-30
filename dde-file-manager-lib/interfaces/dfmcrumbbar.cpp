@@ -29,6 +29,7 @@
 #include <QApplication>
 
 #include "views/dfilemanagerwindow.h"
+#include "views/dfmaddressbar.h"
 #include "views/themeconfig.h"
 #include "dfmcrumbfactory.h"
 #include "dfmcrumbinterface.h"
@@ -57,6 +58,7 @@ public:
     QHBoxLayout *crumbBarLayout;
     QButtonGroup buttonGroup;
     QPoint clickedPos;
+    DFMAddressBar *addressBar = nullptr;
 
     // Scheme support
     DFMCrumbInterface* crumbController = nullptr;
@@ -69,12 +71,14 @@ public:
 
 private:
     void initUI();
+    void initData();
     void initConnections();
 };
 
 DFMCrumbBarPrivate::DFMCrumbBarPrivate(DFMCrumbBar *qq)
     : q_ptr(qq)
 {
+    initData();
     initUI();
     initConnections();
 }
@@ -130,7 +134,6 @@ void DFMCrumbBarPrivate::addCrumb(DFMCrumbItem *item)
 
     crumbListLayout->addWidget(item);
     item->show();
-//    crumbListHolder->adjustSize();
 
     crumbListScrollArea.horizontalScrollBar()->setPageStep(crumbListHolder->width());
 
@@ -147,6 +150,9 @@ void DFMCrumbBarPrivate::addCrumb(DFMCrumbItem *item)
 void DFMCrumbBarPrivate::initUI()
 {
     Q_Q(DFMCrumbBar);
+
+    // Address Bar
+    addressBar->hide();
 
     // Crumbbar Widget
     q->setFixedHeight(24);
@@ -198,6 +204,12 @@ void DFMCrumbBarPrivate::initUI()
     return;
 }
 
+void DFMCrumbBarPrivate::initData()
+{
+    Q_Q(DFMCrumbBar);
+    addressBar = new DFMAddressBar(q);
+}
+
 void DFMCrumbBarPrivate::initConnections()
 {
     Q_Q(DFMCrumbBar);
@@ -206,12 +218,21 @@ void DFMCrumbBarPrivate::initConnections()
         crumbListScrollArea.horizontalScrollBar()->triggerAction(QAbstractSlider::SliderPageStepSub);
     });
 
-    q->connect(&rightArrow, &QPushButton::clicked, q, [this](){
+    q->connect(&rightArrow, &QPushButton::clicked, q, [this]() {
         crumbListScrollArea.horizontalScrollBar()->triggerAction(QAbstractSlider::SliderPageStepAdd);
     });
 
     q->connect(crumbListScrollArea.horizontalScrollBar(), &QScrollBar::valueChanged, q, [this]() {
         checkArrowVisiable();
+    });
+
+    q->connect(addressBar, &DFMAddressBar::returnPressed, q, [q, this]() {
+        emit q->addressBarContentEntered(addressBar->text());
+    });
+
+    q->connect(addressBar, &DFMAddressBar::focusOut, q, [q]() {
+        // check?
+        q->hideAddressBar();
     });
 }
 
@@ -241,6 +262,68 @@ DFMCrumbBar::~DFMCrumbBar()
 }
 
 /*!
+ * \brief Toggle and show the address bar.
+ *
+ * \param text The text in the address bar.
+ */
+void DFMCrumbBar::showAddressBar(const QString &text)
+{
+    Q_D(DFMCrumbBar);
+
+    d->leftArrow.hide();
+    d->rightArrow.hide();
+    d->crumbListScrollArea.hide();
+
+    d->addressBar->show();
+    d->addressBar->setText(text);
+    //d->addressBar->setSelection(0, text.length());
+    d->addressBar->setFocus();
+
+    emit addressBarShown();
+
+    return;
+}
+
+/*!
+ * \brief Toggle and show the address bar.
+ *
+ * \param url The url in the address bar.
+ */
+void DFMCrumbBar::showAddressBar(const DUrl &url)
+{
+    Q_D(DFMCrumbBar);
+
+    d->leftArrow.hide();
+    d->rightArrow.hide();
+    d->crumbListScrollArea.hide();
+
+    d->addressBar->show();
+    d->addressBar->setCurrentUrl(url);
+    d->addressBar->setFocus();
+
+    emit addressBarShown();
+
+    return;
+}
+
+/*!
+ * \brief Hide the address bar.
+ */
+void DFMCrumbBar::hideAddressBar()
+{
+    Q_D(DFMCrumbBar);
+
+    d->addressBar->hide();
+
+    d->crumbListScrollArea.show();
+    d->checkArrowVisiable();
+
+    emit addressBarHidden();
+
+    return;
+}
+
+/*!
  * \brief Update crumbs in crumb bar by the given \a url
  *
  * \param url The newly switched url.
@@ -259,13 +342,9 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
     d->clearCrumbs();
 
     if (!d->crumbController || !d->crumbController->supportedUrl(url)) {
-        // TODO: old one, delete later?
-        d->crumbController = DFMCrumbManager::instance()->createControllerByUrl(url);
-        // Not found? Search for plugins
-        if (!d->crumbController) {
-            d->crumbController = DFMCrumbFactory::create(url.scheme());
-        }
-        // Still not found? Then nothing here...
+        d->crumbController->deleteLater();
+        d->crumbController = DFMCrumbManager::instance()->createControllerByUrl(url, this);
+        // Not found? Then nothing here...
         if (!d->crumbController) {
             qDebug() << "Unsupported url / scheme: " << url;
             return;
@@ -305,7 +384,7 @@ void DFMCrumbBar::mouseReleaseEvent(QMouseEvent *event)
     //blumia: no need to check if it's clicked on other widgets
     //        since this will only happend when clicking empty.
     if (d->clickedPos == event->globalPos()) {
-        emit toggleSearchBar();
+        showAddressBar(qobject_cast<DFileManagerWindow*>(topLevelWidget())->currentUrl());
     }
 
     QFrame::mouseReleaseEvent(event);
@@ -316,6 +395,7 @@ void DFMCrumbBar::resizeEvent(QResizeEvent *event)
     Q_D(DFMCrumbBar);
 
     d->checkArrowVisiable();
+    d->addressBar->resize(event->size());
 
     return QFrame::resizeEvent(event);
 }
@@ -354,26 +434,44 @@ bool DFMCrumbBar::eventFilter(QObject *watched, QEvent *event)
 
 void DFMCrumbBar::paintEvent(QPaintEvent *event)
 {
+    Q_D(DFMCrumbBar);
+
     QPainter painter(this);
     QColor borderColor = ThemeConfig::instace()->color("CrumbBar.BorderLine", "border-color");
+    QColor crumbBarBgColor = ThemeConfig::instace()->color("DFMCrumbBar", "background");
     QPainterPath path;
 
     painter.setRenderHint(QPainter::Antialiasing);
     path.addRoundedRect(QRectF(rect()).adjusted(0.5, 0.5, -0.5, -0.5), 4, 4);
     QPen pen(borderColor, 1);
     painter.setPen(pen);
+
+    if (d->addressBar->isHidden()) {
+        QPainterPath path;
+
+        path.addRoundedRect(QRectF(rect()), 4, 4);
+        painter.fillPath(path, crumbBarBgColor);
+    }
+
     painter.drawPath(path);
 
     QFrame::paintEvent(event);
 }
 
 /*!
- * \fn DFMCrumbBar::toggleSearchBar()
+ * \fn DFMCrumbBar::addressBarShown()
  *
- * \brief Toggle (show) the address bar.
+ * \brief Emit when the address bar got shown.
  *
- * The address bar can also do the search job, and it will fill the address bar with
- * an empty string instead of the string of current url.
+ * \sa DFMAddressBar
+ */
+
+/*!
+ * \fn DFMCrumbBar::addressBarHidden()
+ *
+ * \brief Emit when the address bar got hidden.
+ *
+ * \sa DFMAddressBar
  */
 
 /*!

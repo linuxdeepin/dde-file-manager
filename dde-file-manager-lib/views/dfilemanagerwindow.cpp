@@ -374,16 +374,16 @@ void DFileManagerWindow::onCurrentTabChanged(int tabIndex)
         d->toolbar->setCrumbBar(tab->fileView()->rootUrl());
         switchToView(tab->fileView());
 
-        if (currentUrl().isSearchFile()) {
-            if (!d->toolbar->getSearchBar()->isVisible()) {
-                d->toolbar->searchBarActivated();
-                d->toolbar->getSearchBar()->setText(tab->fileView()->rootUrl().searchKeyword());
-            }
-        } else {
-            if (d->toolbar->getSearchBar()->isVisible()) {
-                d->toolbar->searchBarDeactivated();
-            }
-        }
+//        if (currentUrl().isSearchFile()) {
+//            if (!d->toolbar->getSearchBar()->isVisible()) {
+//                d->toolbar->searchBarActivated();
+//                d->toolbar->getSearchBar()->setText(tab->fileView()->rootUrl().searchKeyword());
+//            }
+//        } else {
+//            if (d->toolbar->getSearchBar()->isVisible()) {
+//                d->toolbar->searchBarDeactivated();
+//            }
+//        }
     }
 }
 

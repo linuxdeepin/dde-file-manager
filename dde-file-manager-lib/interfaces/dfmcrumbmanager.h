@@ -27,6 +27,7 @@
 
 DFM_BEGIN_NAMESPACE
 
+class DFMCrumbBar;
 class DFMCrumbInterface;
 class DFMCrumbManagerPrivate;
 class DFMCrumbManager : public QObject
@@ -56,7 +57,7 @@ public:
         return isRegisted(scheme, typeid(T));
     }
 
-    DFMCrumbInterface *createControllerByUrl(const DUrl &fileUrl) const;
+    DFMCrumbInterface *createControllerByUrl(const DUrl &fileUrl, DFMCrumbBar *crumbBar) const;
 
 private:
     explicit DFMCrumbManager(QObject *parent = nullptr);

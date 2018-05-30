@@ -68,7 +68,6 @@ public:
     void initAddressToolBar();
     void initContollerToolBar();
     void initConnect();
-    DFMAddressBar *getSearchBar();
     DFMCrumbBar *getCrumbWidget();
     QPushButton* getSettingsButton();
     void addHistoryStack();
@@ -84,10 +83,10 @@ signals:
     void refreshButtonClicked();
 
 public slots:
-    void searchBarClicked();
     void searchBarActivated();
     void searchBarDeactivated();
-    void searchBarTextEntered();
+    void searchBarTextEntered(const QString textEntered);
+    void onSearchButtonClicked();
     void crumbSelected(const DFMCrumbItem* item);
     void currentUrlChanged(const DFMEvent &event);
     void searchBarChanged(QString path);
@@ -114,7 +113,6 @@ private:
     DStateButton* m_upButton=NULL;
     QPushButton* m_searchButton = NULL;
     DStateButton* m_refreshButton = NULL;
-    DFMAddressBar * m_searchBar = NULL;
     QFrame* m_contollerToolBar;
     DGraphicsClipEffect *m_contollerToolBarClipMask;
     QHBoxLayout *m_contollerToolBarContentLayout;

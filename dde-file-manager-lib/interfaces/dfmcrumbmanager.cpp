@@ -20,6 +20,7 @@
  */
 #include "dfmcrumbmanager.h"
 #include "dfmcrumbinterface.h"
+#include "dfmcrumbbar.h"
 #include "plugins/dfmcrumbfactory.h"
 
 #include "controllers/dfmcomputercrumbcontroller.h"
@@ -51,6 +52,21 @@ DFMCrumbManagerPrivate::DFMCrumbManagerPrivate(DFMCrumbManager *qq)
 
 }
 
+/*!
+ * \class DFMCrumbManager
+ * \inmodule dde-file-manager-lib
+ *
+ * \brief DFMCrumbManager is the manager of crumb controllers
+ *
+ * DFMCrumbManager is the manager of crumb controllers, it holds all avaliable crumb
+ * controllers to do crumb bar reletive stuff.
+ *
+ * User can also write plugins to extend crumb bar functionality (by derive the DFMCrumbInterface
+ * class) and DFMCrumbManager do the job about load and manage the plugins.
+ *
+ * \sa DFMCrumbBar, DFMCrumbInterface
+ */
+
 DFMCrumbManager *DFMCrumbManager::instance()
 {
     static DFMCrumbManager manager;
@@ -72,7 +88,19 @@ bool DFMCrumbManager::isRegisted(const QString &scheme, const std::type_info &in
     return false;
 }
 
-DFMCrumbInterface *DFMCrumbManager::createControllerByUrl(const DUrl &fileUrl) const
+/*!
+ * \brief Create a crumb controller by the given \a fileUrl
+ *
+ * \param fileUrl The url for creating controller
+ * \param crumbBar The DFMCrumbBar pointer.
+ *
+ * \return Pointer of the created crumb controller.
+ *
+ * The DFMCrumbBar reference(pointer) is required in order to make sure the crumb controller will always
+ * hold a instance of DFMCrumbBar. Thus the controller can invoke method provided by the crumb bar when
+ * neccessary.
+ */
+DFMCrumbInterface *DFMCrumbManager::createControllerByUrl(const DUrl &fileUrl, DFMCrumbBar *crumbBar) const
 {
     Q_D(const DFMCrumbManager);
 
@@ -80,11 +108,15 @@ DFMCrumbInterface *DFMCrumbManager::createControllerByUrl(const DUrl &fileUrl) c
 
     const QList<CrumbCreaterType> creatorList = d->controllerCreatorHash.values(theType);
 
+    Q_CHECK_PTR(crumbBar);
+
     if (!creatorList.isEmpty()){
-        return (creatorList.first().second)();
+        DFMCrumbInterface* i = (creatorList.first().second)();
+        i->setCrumbBar(crumbBar);
+        return i;
     }
 
-    return DFMCrumbFactory::create(theType);
+    return nullptr;
 }
 
 DFMCrumbManager::DFMCrumbManager(QObject *parent)

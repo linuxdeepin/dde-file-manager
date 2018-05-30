@@ -680,11 +680,6 @@ QWidget#SidebarMainLayoutHolder {
 /*================ Sidebar End =================*/
 
 /*============== Crumb Bar Begin ===============*/
-dde_file_manager--DFMCrumbBar {
-    background: white;
-    border-radius: 4px;
-}
-
 dde_file_manager--DFMCrumbBarItem:checked {
     background: #27acf8;
 }

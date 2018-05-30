@@ -36,13 +36,18 @@ public:
     explicit DFMCrumbBar(QWidget *parent = nullptr);
     ~DFMCrumbBar();
 
+    void showAddressBar(const QString &text);
+    void showAddressBar(const DUrl &url);
+    void hideAddressBar();
     void updateCrumbs(const DUrl &url);
 
 private:
     QScopedPointer<DFMCrumbBarPrivate> d_ptr;
 
 Q_SIGNALS:
-    void toggleSearchBar();
+    void addressBarShown();
+    void addressBarHidden();
+    void addressBarContentEntered(QString content);
     void crumbItemClicked(DFMCrumbItem *item);
 
 protected:
