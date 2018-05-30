@@ -148,6 +148,13 @@ QList<QUrl> DFileDialogHandle::selectedUrls() const
     return d->dialog->selectedUrls();
 }
 
+void DFileDialogHandle::addDisableUrlScheme(const QString &scheme)
+{
+    D_D(DFileDialogHandle);
+
+    d->dialog->addDisableUrlScheme(scheme);
+}
+
 void DFileDialogHandle::setNameFilters(const QStringList &filters)
 {
     D_D(DFileDialogHandle);
@@ -292,6 +299,20 @@ void DFileDialogHandle::setCurrentInputName(const QString &name)
     D_DC(DFileDialogHandle);
 
     d->dialog->setCurrentInputName(name);
+}
+
+void DFileDialogHandle::setHideOnAccept(bool enable)
+{
+    D_D(DFileDialogHandle);
+
+    d->dialog->setHideOnAccept(enable);
+}
+
+bool DFileDialogHandle::hideOnAccept() const
+{
+    D_DC(DFileDialogHandle);
+
+    return d->dialog->hideOnAccept();
 }
 
 void DFileDialogHandle::show()

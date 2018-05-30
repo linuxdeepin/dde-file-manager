@@ -47,6 +47,8 @@ public:
     void selectUrl(const QUrl &url);
     QList<QUrl> selectedUrls() const;
 
+    void addDisableUrlScheme(const QString &scheme);
+
     void setNameFilters(const QStringList &filters);
     QStringList nameFilters() const;
     void selectNameFilter(const QString &filter);
@@ -75,6 +77,9 @@ public:
     QFileDialog::Options options() const;
 
     void setCurrentInputName(const QString &name);
+
+    void setHideOnAccept(bool enable);
+    bool hideOnAccept() const;
 
     DFileView *getFileView() const;
 

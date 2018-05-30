@@ -182,6 +182,11 @@ void DLeftSideBar::setDisableUrlSchemes(const QList<QString> &schemes)
     m_scene->setDisableUrlSchemes(schemes);
 }
 
+QStringList DLeftSideBar::disableUrlSchemes() const
+{
+    return m_scene->disableUrlSchemes();
+}
+
 void DLeftSideBar::resizeEvent(QResizeEvent *e)
 {
     QRect rect = geometry();

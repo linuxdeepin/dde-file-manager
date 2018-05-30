@@ -838,3 +838,8 @@ void DBookmarkScene::setDisableUrlSchemes(const QList<QString> &schemes)
     }
     m_disableUrlSchemeList = schemes;
 }
+
+QStringList DBookmarkScene::disableUrlSchemes() const
+{
+    return m_disableUrlSchemeList;
+}

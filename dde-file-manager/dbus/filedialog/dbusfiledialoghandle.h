@@ -33,6 +33,7 @@ class DBusFileDialogHandle : public DFileDialogHandle
     Q_PROPERTY(bool windowActive READ windowActive NOTIFY windowActiveChanged)
     Q_PROPERTY(int heartbeatInterval READ heartbeatInterval WRITE setHeartbeatInterval)
     Q_PROPERTY(quint32 windowFlags READ windowFlags WRITE setWindowFlags)
+    Q_PROPERTY(bool hideOnAccept READ hideOnAccept WRITE setHideOnAccept)
 
 public:
     explicit DBusFileDialogHandle(QWidget *parent = 0);

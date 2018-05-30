@@ -60,6 +60,7 @@ public:
     void setToolbar(DToolBar *toolbar);
 
     void setDisableUrlSchemes(const QList<QString> &schemes);
+    QStringList disableUrlSchemes() const;
 
 protected:
     void resizeEvent(QResizeEvent *e);

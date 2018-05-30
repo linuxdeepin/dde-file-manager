@@ -72,6 +72,7 @@ public:
     void setTightMode(bool v);
 
     void setDisableUrlSchemes(const QList<QString> &schemes);
+    QStringList disableUrlSchemes() const;
 
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
