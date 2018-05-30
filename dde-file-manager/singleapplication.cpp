@@ -90,10 +90,11 @@ QLocalSocket *SingleApplication::newClientProcess(const QString &key, const QByt
 QString SingleApplication::userServerName(const QString &key)
 {
     QString userKey;
-    if (getUserID() == "0"){
-        userKey = QString("%1/%2").arg("/tmp", key);
-    }else{
-        userKey = QString("%1/%2").arg(getenv("XDG_RUNTIME_DIR"), key);
+
+    if (DFMGlobal::isRootUser()) {
+        userKey = QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::TempLocation), key);
+    } else {
+        userKey = QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation), key);
     }
 
     return userKey;
