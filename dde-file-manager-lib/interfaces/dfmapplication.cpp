@@ -104,7 +104,7 @@ DFMApplication::~DFMApplication()
 
 }
 
-QVariant DFMApplication::appAttribute(DFMApplication::ApplicationAttribute aa) const
+QVariant DFMApplication::appAttribute(DFMApplication::ApplicationAttribute aa)
 {
     const QString group(QT_STRINGIFY(ApplicationAttribute));
     const QMetaEnum &me = QMetaEnum::fromType<ApplicationAttribute>();
@@ -127,7 +127,7 @@ bool DFMApplication::syncAppAttribute()
     return appSetting()->sync();
 }
 
-QVariant DFMApplication::genericAttribute(DFMApplication::GenericAttribute ga) const
+QVariant DFMApplication::genericAttribute(DFMApplication::GenericAttribute ga)
 {
     const QString group(QT_STRINGIFY(GenericAttribute));
     const QMetaEnum &me = QMetaEnum::fromType<GenericAttribute>();
@@ -169,7 +169,8 @@ DFMSettings *DFMApplication::genericSetting()
         gsGlobal->setAutoSync(true);
         gsGlobal->setWatchChanges(true);
 
-        Q_EMIT instance()->genericSettingCreated(gsGlobal);
+        if (instance())
+            Q_EMIT instance()->genericSettingCreated(gsGlobal);
     }
 
     return gsGlobal;
@@ -189,7 +190,8 @@ DFMSettings *DFMApplication::appSetting()
         asGlobal->setAutoSync(true);
         asGlobal->setWatchChanges(true);
 
-        Q_EMIT instance()->appSettingCreated(asGlobal);
+        if (instance())
+            Q_EMIT instance()->appSettingCreated(asGlobal);
     }
 
     return asGlobal;
