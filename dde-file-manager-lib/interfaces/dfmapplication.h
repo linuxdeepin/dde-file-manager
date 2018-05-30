@@ -72,13 +72,13 @@ public:
     explicit DFMApplication(QObject *parent = nullptr);
     ~DFMApplication();
 
-    QVariant appAttribute(ApplicationAttribute aa) const;
-    void setAppAttribute(ApplicationAttribute aa, const QVariant &value);
-    bool syncAppAttribute();
+    static QVariant appAttribute(ApplicationAttribute aa);
+    static void setAppAttribute(ApplicationAttribute aa, const QVariant &value);
+    static bool syncAppAttribute();
 
-    QVariant genericAttribute(GenericAttribute ga) const;
-    void setGenericAttribute(GenericAttribute ga, const QVariant &value);
-    bool syncGenericAttribute();
+    static QVariant genericAttribute(GenericAttribute ga);
+    static void setGenericAttribute(GenericAttribute ga, const QVariant &value);
+    static bool syncGenericAttribute();
 
     static DFMApplication *instance();
 
