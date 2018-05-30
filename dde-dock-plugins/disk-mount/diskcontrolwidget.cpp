@@ -81,8 +81,7 @@ void DiskControlWidget::startMonitor()
 void DiskControlWidget::unmountAll()
 {
     foreach (const QDiskInfo& info, GvfsMountManager::DiskInfos) {
-        qDebug() << "unmount " << info.id() << "DFMGlobal::isDisableUnmount" << DFMGlobal::isDisableUnmount(info);
-        if (DFMGlobal::isDisableUnmount(info)){
+        if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_DisableNonRemovableDeviceUnmount).toBool() && !info.is_removable()) {
             qDebug() << "disable unmount native disk" << info;
             continue;
         }

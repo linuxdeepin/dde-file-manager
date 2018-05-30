@@ -1,0 +1,7 @@
+{
+    "DBus File Dialog": {
+        "disable": {
+            "gtk2": ["xarchiver", "gpick"]
+        }
+    }
+}

@@ -28,6 +28,7 @@
 #include "dfileservices.h"
 #include "gvfsmountmanager.h"
 #include "dfmglobal.h"
+#include "dfmapplication.h"
 
 #include <QVBoxLayout>
 #include <QIcon>
@@ -102,7 +103,7 @@ DiskControlItem::DiskControlItem(const QDiskInfo &info, QWidget *parent)
 
     connect(m_unmountButton, &DImageButton::clicked, this, [this] { emit requestUnmount(m_info.id()); });
 
-    if (DFMGlobal::isDisableUnmount(info)){
+    if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_DisableNonRemovableDeviceUnmount).toBool() && !info.is_removable()) {
         m_unmountButton->hide();
     }
 

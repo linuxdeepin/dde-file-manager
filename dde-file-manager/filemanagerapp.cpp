@@ -60,7 +60,6 @@
 #include <QGuiApplication>
 #include <QTimer>
 #include <QThreadPool>
-#include <QSettings>
 #include <QFileSystemWatcher>
 #include <QProcess>
 

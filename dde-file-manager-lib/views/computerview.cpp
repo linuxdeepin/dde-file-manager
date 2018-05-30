@@ -29,6 +29,7 @@
 #include "windowmanager.h"
 #include "dfmeventdispatcher.h"
 #include "dfmapplication.h"
+#include "dfmsettings.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -44,7 +45,6 @@
 #include "../shutil/fileutils.h"
 #include "shutil/viewstatesmanager.h"
 #include "partman/partition.h"
-#include "interfaces/dfmplaformmanager.h"
 
 #include <dslider.h>
 
@@ -594,7 +594,7 @@ void ComputerView::loadNativeItems()
     deviceInfo->setDiskInfo(diskInfo);
     UDiskDeviceInfoPointer device(deviceInfo);
 
-    if (dfmPlatformManager->isRoot_hidden()) {
+    if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool()) {
         qDebug() << "hide root sytem";
     } else {
         volumeAdded(device);

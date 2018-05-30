@@ -31,6 +31,7 @@
 #include "interfaces/dfmstandardpaths.h"
 #include "dfilewatcher.h"
 #include "dfmapplication.h"
+#include "dfmsettings.h"
 
 #include <QDBusConnection>
 
@@ -94,15 +95,10 @@ bool DBusFileDialogManager::isUseFileChooserDialog() const
 
 bool DBusFileDialogManager::canUseFileChooserDialog(const QString &group, const QString &executableFileName) const
 {
-#ifdef QT_NO_DEBUG
-    QSettings blackList(DFMStandardPaths::standardLocation(DFMStandardPaths::DbusFileDialogConfPath), QSettings::NativeFormat);
-#else
-    QSettings blackList(QString("%1/dbus/filedialog/%2").arg(PRO_FILE_PWD).arg("dbus_filedialog_blacklist.conf"), QSettings::NativeFormat);
-#endif
+    const QString &group_name = QStringLiteral("DBus File Dialog");
+    const QVariantMap &black_map = DFMApplication::appObtuselySetting()->value(group_name, "disable").toMap();
 
-    blackList.beginGroup(group);
-
-    return !blackList.value(executableFileName, false).toBool();
+    return !black_map.value(group).toStringList().contains(executableFileName);
 }
 
 QStringList DBusFileDialogManager::globPatternsForMime(const QString &mimeType) const

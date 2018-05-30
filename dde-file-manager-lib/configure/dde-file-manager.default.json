@@ -3,6 +3,8 @@
         "AllwayOpenOnNewWindow": false,
         "IconSizeLevel": 1,
         "ViewMode": 0,
+        "ViewComppactMode": false,
+        "ViewAutoCompace": false,
         "OpenFileMode": 1,
         "UrlOfNewWindow": "computer:///",
         "UrlOfNewTab": ""
@@ -19,6 +21,8 @@
         "OverrideFileChooserDialog": true,
         "ShowedHiddenOnSearch": true,
         "ShowedHiddenFiles": false,
-        "ShowedFileSuffixOnRename": true
+        "ShowedFileSuffixOnRename": true,
+        "DisableNonRemovableDeviceUnmount": false,
+        "HiddenSystemPartition": false
     }
 }

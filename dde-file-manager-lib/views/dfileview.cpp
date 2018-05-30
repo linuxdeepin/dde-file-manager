@@ -60,7 +60,6 @@
 
 #include "singleton.h"
 #include "interfaces/dfilemenumanager.h"
-#include "dfmplaformmanager.h"
 
 #include <dthememanager.h>
 #include <danchors.h>
@@ -1290,7 +1289,8 @@ void DFileView::resizeEvent(QResizeEvent *event)
     DListView::resizeEvent(event);
 
     // auto switch list mode
-    if (d->currentViewMode == ListMode && dfmPlatformManager->isAutoCompactList()) {
+    if (d->currentViewMode == ListMode
+            && DFMApplication::instance()->appAttribute(DFMApplication::AA_ViewAutoCompace).toBool()) {
         if (model()->setColumnCompact(event->size().width() < 600)) {
             updateListHeaderViewProperty();
             doItemsLayout();

@@ -45,7 +45,6 @@
 #include "../usershare/usersharemanager.h"
 #include "models/desktopfileinfo.h"
 #include "shutil/viewstatesmanager.h"
-#include "dfmplaformmanager.h"
 #include "controllers/operatorrevocation.h"
 #include "tag/tagmanager.h"
 
@@ -946,16 +945,6 @@ bool DFMGlobal::isComputerDesktopFileUrl(const DUrl &url)
 {
     if (DesktopFileInfo::computerDesktopFileUrl() == url)
         return isComputerDesktopFile(url);
-    return false;
-}
-
-bool DFMGlobal::isDisableUnmount(const QDiskInfo &diskInfo)
-{
-    if (diskInfo.type() == "native"){
-        if (dfmPlatformManager->isDisableUnMount()){
-            return true;
-        }
-    }
     return false;
 }
 

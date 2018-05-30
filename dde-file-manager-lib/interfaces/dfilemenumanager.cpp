@@ -29,6 +29,9 @@
 #include "dfilemenu.h"
 #include "dfileservices.h"
 #include "dfmeventdispatcher.h"
+#include "dfmapplication.h"
+#include "dfmsettings.h"
+
 #include "controllers/appcontroller.h"
 #include "controllers/trashmanager.h"
 #include "models/desktopfileinfo.h"
@@ -48,7 +51,6 @@
 #include <QMetaObject>
 #include <QMetaEnum>
 #include <QMenu>
-#include <QSettings>
 #include <QTextCodec>
 #include <QProcess>
 #include <QJsonDocument>
@@ -923,23 +925,18 @@ QSet<MenuAction> DFileMenuManager::actionBlacklist()
 
 bool DFileMenuManager::isAvailableAction(MenuAction action)
 {
-    // init menu action black list
-    QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(),
-                       "dde-file-manager/" + qApp->applicationName());
+    const QString &group_name = QStringLiteral("Menu Actions");
 
-    settings.setIniCodec("utf-8");
-    settings.beginGroup("Menu Actions");
+    // init menu action black list
     const QMetaEnum &action_enum = QMetaEnum::fromType<MenuAction>();
 
-    for (const QString &action_name : settings.value("disable").toStringList()) {
+    for (const QString &action_name : DFMApplication::genericObtuselySetting()->value(group_name, "disable").toStringList()) {
         bool ok = false;
         int key = action_enum.keyToValue(action_name.toUtf8(), &ok);
 
         if (ok && key == action)
             return false;
     }
-
-    settings.endGroup();
 
     if (DFileMenuData::whitelist.isEmpty())
         return !DFileMenuData::blacklist.contains(action);
