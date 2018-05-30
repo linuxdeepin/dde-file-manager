@@ -397,6 +397,17 @@ void DFMSideBar::setDisableUrlSchemes(const QSet<QString> &schemes)
 }
 
 /*!
+ * \brief Return a url scheme list of the hidden sidebar items
+ * \return
+ */
+QSet<QString> DFMSideBar::disableUrlSchemes() const
+{
+    Q_D(const DFMSideBar);
+
+    return d->disabledSchemes;
+}
+
+/*!
  * \brief Add a sidebar item into a sidebar group.
  * \param item The item which is going to be added.
  * \param group The name (in `QString`, all lower case) of the sidebar group.

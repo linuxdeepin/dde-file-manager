@@ -53,6 +53,7 @@ public:
 
     void setCurrentUrl(const DUrl &url);
     void setDisableUrlSchemes(const QSet<QString> &schemes);
+    QSet<QString> disableUrlSchemes() const;
 
     int addItem(DFMSideBarItem *item, const QString &group = QString());
     void insertItem(int index, DFMSideBarItem *item, const QString &group = QString());

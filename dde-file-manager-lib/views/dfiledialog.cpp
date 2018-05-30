@@ -59,6 +59,7 @@ class DFileDialogPrivate
 {
 public:
     int result = 0;
+    bool hideOnAccept = true;
 
     QFileDialog::FileMode fileMode = QFileDialog::AnyFile;
     QFileDialog::AcceptMode acceptMode = QFileDialog::AcceptOpen;
@@ -196,13 +197,15 @@ QList<QUrl> DFileDialog::selectedUrls() const
     }
 
     if (d->acceptMode == QFileDialog::AcceptSave) {
-        const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(list.isEmpty() ? getFileView()->rootUrl() : list.first());
-        DUrl fileUrl;
+        DUrl fileUrl = list.isEmpty() ? getFileView()->rootUrl() : list.first();
+        const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(fileUrl);
 
-        if (list.isEmpty()) {
-            fileUrl = fileInfo->getUrlByChildFileName(statusBar()->lineEdit()->text());
-        } else {
-            fileUrl = fileInfo->getUrlByNewFileName(statusBar()->lineEdit()->text());
+        if (fileInfo) {
+            if (list.isEmpty()) {
+                fileUrl = fileInfo->getUrlByChildFileName(statusBar()->lineEdit()->text());
+            } else {
+                fileUrl = fileInfo->getUrlByNewFileName(statusBar()->lineEdit()->text());
+            }
         }
 
         return QList<QUrl>() << fileUrl;
@@ -210,10 +213,20 @@ QList<QUrl> DFileDialog::selectedUrls() const
 
     if (list.isEmpty() && (d->fileMode == QFileDialog::Directory
                            || d->fileMode == QFileDialog::DirectoryOnly)) {
-        list << getFileView()->rootUrl();
+        if (directoryUrl().isLocalFile())
+            list << directoryUrl();
     }
 
     return DUrl::toQUrlList(list);
+}
+
+void DFileDialog::addDisableUrlScheme(const QString &scheme)
+{
+    QSet<QString> schemes = getLeftSideBar()->disableUrlSchemes();
+
+    schemes << scheme;
+
+    getLeftSideBar()->setDisableUrlSchemes(schemes);
 }
 
 /*
@@ -589,6 +602,20 @@ QVariantMap DFileDialog::allCustomWidgetsValue(DFileDialog::CustomWidgetType typ
     return QVariantMap();
 }
 
+void DFileDialog::setHideOnAccept(bool enable)
+{
+    D_D(DFileDialog);
+
+    d->hideOnAccept = enable;
+}
+
+bool DFileDialog::hideOnAccept() const
+{
+    D_DC(DFileDialog);
+
+    return d->hideOnAccept;
+}
+
 DFileView *DFileDialog::getFileView() const
 {
     Q_D(const DFileDialog);
@@ -609,7 +636,8 @@ void DFileDialog::done(int r)
         d->eventLoop->exit(r);
     }
 
-    hide();
+    if (r != QDialog::Accepted || d->hideOnAccept)
+        hide();
 
     emit finished(r);
     if (r == QDialog::Accepted) {
@@ -931,6 +959,14 @@ void DFileDialog::onAcceptButtonClicked()
     D_DC(DFileDialog);
 
     if (d->acceptMode == QFileDialog::AcceptSave) {
+        if (!directoryUrl().isLocalFile()) {
+            return;
+        }
+
+        if (!directory().exists()) {
+            return;
+        }
+
         const QString &file_name = statusBar()->lineEdit()->text();
 
         if (!file_name.isEmpty()) {

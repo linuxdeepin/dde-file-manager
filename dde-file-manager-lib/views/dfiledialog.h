@@ -61,6 +61,8 @@ public:
     void selectUrl(const QUrl &url);
     QList<QUrl> selectedUrls() const;
 
+    void addDisableUrlScheme(const QString &scheme);
+
     void setNameFilters(const QStringList &filters);
     QStringList nameFilters() const;
     void selectNameFilter(const QString &filter);
@@ -94,6 +96,9 @@ public:
     void endAddCustomWidget();
     QVariant getCustomWidgetValue(CustomWidgetType type, const QString &text) const;
     QVariantMap allCustomWidgetsValue(CustomWidgetType type) const;
+
+    void setHideOnAccept(bool enable);
+    bool hideOnAccept() const;
 
     DFileView *getFileView() const;
 
