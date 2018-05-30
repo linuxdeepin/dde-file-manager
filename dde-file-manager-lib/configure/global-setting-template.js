@@ -47,13 +47,13 @@
                                 ],
                                 "keys": [
                                     "computer:///",
-                                    "standard:///Home",
-                                    "standard:///Desktop",
-                                    "standard:///Videos",
-                                    "standard:///Music",
-                                    "standard:///Pictures",
-                                    "standard:///Documents",
-                                    "standard:///Downloads"
+                                    "standard://home",
+                                    "standard://desktop",
+                                    "standard://videos",
+                                    "standard://music",
+                                    "standard://pictures",
+                                    "standard://documents",
+                                    "standard://downloads"
                                 ]
                             },
                             "default": "computer:///"
@@ -77,13 +77,13 @@
                                 "keys": [
                                     "",
                                     "computer:///",
-                                    "standard:///Home",
-                                    "standard:///Desktop",
-                                    "standard:///Videos",
-                                    "standard:///Music",
-                                    "standard:///Pictures",
-                                    "standard:///Documents",
-                                    "standard:///Downloads"
+                                    "standard://home",
+                                    "standard://desktop",
+                                    "standard://videos",
+                                    "standard://music",
+                                    "standard://pictures",
+                                    "standard://documents",
+                                    "standard://downloads"
                                 ]
                             },
                             "default": ""

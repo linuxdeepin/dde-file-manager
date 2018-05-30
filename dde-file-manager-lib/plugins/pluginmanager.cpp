@@ -54,7 +54,7 @@ PluginManager::~PluginManager()
 
 QString PluginManager::PluginDir()
 {
-    return DFMStandardPaths::standardLocation(DFMStandardPaths::PluginsPath);
+    return DFMStandardPaths::location(DFMStandardPaths::PluginsPath);
 }
 
 void PluginManager::loadPlugin()

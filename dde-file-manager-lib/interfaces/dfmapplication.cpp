@@ -113,6 +113,15 @@ QVariant DFMApplication::appAttribute(DFMApplication::ApplicationAttribute aa)
     return appSetting()->value(group, key);
 }
 
+DUrl DFMApplication::appUrlAttribute(DFMApplication::ApplicationAttribute aa)
+{
+    const QString group(QT_STRINGIFY(ApplicationAttribute));
+    const QMetaEnum &me = QMetaEnum::fromType<ApplicationAttribute>();
+    const QString key = QString::fromLatin1(me.valueToKey(aa)).split("_").last();
+
+    return appSetting()->urlValue(group, key);
+}
+
 void DFMApplication::setAppAttribute(DFMApplication::ApplicationAttribute aa, const QVariant &value)
 {
     const QString group(QT_STRINGIFY(ApplicationAttribute));

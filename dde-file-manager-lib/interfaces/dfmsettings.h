@@ -52,13 +52,20 @@ public:
     QSet<QString> groups() const;
     QSet<QString> keys(const QString &group) const;
     QVariant value(const QString &group, const QString &key, const QVariant &defaultValue = QVariant()) const;
+    QVariant value(const QString &group, const DUrl &key, const QVariant &defaultValue = QVariant()) const;
+    DUrl urlValue(const QString &group, const QString &key, const DUrl &defaultValue = DUrl()) const;
+    DUrl urlValue(const QString &group, const DUrl &key, const DUrl &defaultValue = DUrl()) const;
     void setValue(const QString &group, const QString &key, const QVariant &value);
+    void setValue(const QString &group, const DUrl &key, const QVariant &value);
     // if changed return true
     bool setValueNoNotify(const QString &group, const QString &key, const QVariant &value);
+    bool setValueNoNotify(const QString &group, const DUrl &key, const QVariant &value);
 
     void removeGroup(const QString &group);
-    bool isRemovable(const QString &group, const QString &key);
+    bool isRemovable(const QString &group, const QString &key) const;
+    bool isRemovable(const QString &group, const DUrl &key) const;
     void remove(const QString &group, const QString &key);
+    void remove(const QString &group, const DUrl &key);
     void clear();
 
     bool sync();

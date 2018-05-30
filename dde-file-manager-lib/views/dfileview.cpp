@@ -34,6 +34,8 @@
 #include "dabstractfilewatcher.h"
 #include "dfmeventdispatcher.h"
 #include "themeconfig.h"
+#include "dfmsettings.h"
+
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 
@@ -42,11 +44,9 @@
 #include "interfaces/dlistitemdelegate.h"
 #include "dfmapplication.h"
 #include "interfaces/dfmcrumbbar.h"
-#include "controllers/fmstatemanager.h"
 
 #include "controllers/appcontroller.h"
 #include "dfileservices.h"
-#include "controllers/fmstatemanager.h"
 #include "controllers/pathmanager.h"
 
 #include "models/dfileselectionmodel.h"
@@ -54,7 +54,6 @@
 
 #include "shutil/fileutils.h"
 #include "shutil/mimesappsmanager.h"
-#include "shutil/viewstatesmanager.h"
 #include "fileoperations/filejob.h"
 #include "deviceinfo/udisklistener.h"
 
@@ -87,6 +86,8 @@ public:
         : q_ptr(qq) {}
 
     int iconModeColumnCount(int itemWidth = 0) const;
+    QVariant fileViewStateValue(const DUrl &url, const QString &key, const QVariant &defalutValue);
+    void setFileViewStateValue(const DUrl &url, const QString &key, const QVariant &value);
 
     DFileView *q_ptr;
 
@@ -647,9 +648,7 @@ void DFileView::setDefaultViewMode(DFileView::ViewMode mode)
     if (!root_url.isValid())
         return;
 
-    ViewState viewState = viewStatesManager->viewstate(root_url);
-
-    if (viewState.isValid())
+    if (d->fileViewStateValue(root_url, "viewMode", QVariant()).isValid())
         return;
 
     DAbstractFileInfoPointer info = model()->fileInfo(rootIndex());
@@ -793,7 +792,7 @@ void DFileView::dislpayAsActionTriggered(QAction *action)
 
 void DFileView::sortByActionTriggered(QAction *action)
 {
-    D_DC(DFileView);
+    Q_D(DFileView);
 
     QAction* dAction = static_cast<QAction*>(action);
     const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(rootIndex());
@@ -812,7 +811,10 @@ void DFileView::sortByActionTriggered(QAction *action)
 
     sortByRole(sort_role, order);
 
-    FMStateManager::cacheSortState(rootUrl(), model()->sortRole(), order);
+    const DUrl &root_url = rootUrl();
+
+    d->setFileViewStateValue(root_url, "sortRole", model()->sortRole());
+    d->setFileViewStateValue(root_url, "sortOrder", (int)order);
 }
 
 void DFileView::openWithActionTriggered(QAction *action)
@@ -946,12 +948,10 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             if (selectedIndexCount() == 1 && model()->fileInfo(selectedIndexes().first())->canFetch()) {
                 url = model()->fileInfo(selectedIndexes().first())->fileUrl();
             } else{
-                const QString& path = DFMApplication::instance()->appAttribute(DFMApplication::AA_UrlOfNewTab).toString();
+                url = DFMApplication::instance()->appUrlAttribute(DFMApplication::AA_UrlOfNewTab);
 
-                if (path.isEmpty())
+                if (!url.isValid())
                     url = rootUrl();
-                else
-                    url = DUrl::fromUserInput(path);
             }
             DFMEventDispatcher::instance()->processEvent<DFMOpenNewTabEvent>(this, url);
             return;
@@ -1221,45 +1221,24 @@ void DFileView::freshView()
 void DFileView::loadViewState(const DUrl& url)
 {
     Q_D(DFileView);
-    ViewState viewState = viewStatesManager->viewstate(url);
 
-    if (viewState.isValid()) {
-        switchViewMode(viewState.viewMode);
-        //TODO(zccrs) see: FMStateManager::cacheSortState
-//        model()->setSortRole(viewState.sortRole, viewState.sortOrder);
-
-        if (viewState.viewMode != ListMode) {
-            setIconSizeBySizeIndex(viewState.iconSize);
-        }
-    } else {
-        setIconSizeBySizeIndex(DFMApplication::instance()->appAttribute(DFMApplication::AA_IconSizeLevel).toInt());
-        switchViewMode(d->defaultViewMode);
-    }
-
-    //update list header view property when current view mode is list mode
-    if(d->currentViewMode == ListMode){
-        updateListHeaderViewProperty();
-    }
+    setIconSizeBySizeIndex(d->fileViewStateValue(url, "iconSizeLevel", DFMApplication::instance()->appAttribute(DFMApplication::AA_IconSizeLevel)).toInt());
+    switchViewMode((ViewMode)d->fileViewStateValue(url, "viewMode", (int)d->defaultViewMode).toInt());
 }
 
 void DFileView::saveViewState()
 {
     //filter url that we are not interesting on
     const DUrl& url = rootUrl();
-    if(url.isSearchFile() || url.isEmpty()
-            || !url.isValid() || url.isComputerFile()){
+
+    if (url.isSearchFile() || !url.isValid() || url.isComputerFile()) {
         return;
     }
 
-    ViewState viewState;
-//    QPair<int, Qt::SortOrder> roles = qMakePair(model()->sortRole(), model()->sortOrder());
-    viewState.viewMode = viewMode();
-    viewState.iconSize = statusBar()->scalingSlider()->value();
-    //TODO(zccrs) see: FMStateManager::cacheSortState
-//    viewState.sortRole = roles.first;
-//    viewState.sortOrder = roles.second;
+    Q_D(DFileView);
 
-    viewStatesManager->saveViewState(url, viewState);
+    d->setFileViewStateValue(url, "iconSizeLevel", statusBar()->scalingSlider()->value());
+    d->setFileViewStateValue(url, "viewMode", (int)viewMode());
 }
 
 void DFileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
@@ -1911,10 +1890,8 @@ bool DFileView::setRootUrl(const DUrl &url)
         updateContentLabel();
     }
 
-//    const QPair<int, int> &sort_config = FMStateManager::SortStates.value(fileUrl, QPair<int, int>(DFileSystemModel::FileDisplayNameRole, Qt::AscendingOrder));
-    const QPair<int, int>& sort_config{ FMStateManager::getRoleAndSortOrderByUrl(url) };
-
-    model()->setSortRole(sort_config.first, (Qt::SortOrder)sort_config.second);
+    model()->setSortRole(d->fileViewStateValue(url, "sortRole", DFileSystemModel::FileDisplayNameRole).toInt(),
+                         (Qt::SortOrder)d->fileViewStateValue(url, "sortOrder", Qt::AscendingOrder).toInt());
 
     if (info) {
         ViewModes modes = (ViewModes)info->supportViewMode();
@@ -1938,6 +1915,7 @@ bool DFileView::setRootUrl(const DUrl &url)
             break;
         }
     }
+
     return true;
 }
 
@@ -2552,4 +2530,18 @@ int DFileViewPrivate::iconModeColumnCount(int itemWidth) const
         itemWidth = q->itemSizeHint().width() + q->spacing() * 2;
 
     return (contentWidth - horizontalMargin - 1) / itemWidth;
+}
+
+QVariant DFileViewPrivate::fileViewStateValue(const DUrl &url, const QString &key, const QVariant &defalutValue)
+{
+    return DFMApplication::appObtuselySetting()->value("FileViewState", url).toMap().value(key, defalutValue);
+}
+
+void DFileViewPrivate::setFileViewStateValue(const DUrl &url, const QString &key, const QVariant &value)
+{
+    QVariantMap map = DFMApplication::appObtuselySetting()->value("FileViewState", url).toMap();
+
+    map[key] = value;
+
+    DFMApplication::appObtuselySetting()->setValue("FileViewState", url, value);
 }

@@ -41,7 +41,6 @@
 #define gvfsMountManager Singleton<GvfsMountManager>::instance()
 #define secretManager Singleton<SecretManager>::instance()
 #define userShareManager Singleton<UserShareManager>::instance()
-#define viewStatesManager Singleton<ViewStatesManager>::instance()
 
 #define defaut_icon ":/images/images/default.png"
 #define defaut_computerIcon ":/images/images/computer.png"

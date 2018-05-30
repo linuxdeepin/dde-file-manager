@@ -141,7 +141,7 @@ QJsonObject SecretManager::getLoginDatas()
 
 QString SecretManager::cachePath()
 {
-    return QString("%1/samba.json").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationConfigPath));
+    return QString("%1/samba.json").arg(DFMStandardPaths::location(DFMStandardPaths::ApplicationConfigPath));
 }
 
 void SecretManager::cacheSambaLoginData(const QJsonObject &obj)

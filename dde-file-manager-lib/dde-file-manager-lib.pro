@@ -95,7 +95,6 @@ HEADERS += \
     models/searchhistory.h \
     models/fmstate.h \
     controllers/bookmarkmanager.h \
-    controllers/fmstatemanager.h \
     controllers/basemanager.h \
     dialogs/dialogmanager.h \
     controllers/searchhistroymanager.h \
@@ -196,7 +195,6 @@ HEADERS += \
     gvfs/qmount.h \
     gvfs/gvfsmountmanager.h \
     gvfs/qdiskinfo.h \
-    shutil/viewstatesmanager.h \
     interfaces/dfmeventdispatcher.h \
     interfaces/dfmabstracteventhandler.h \
     controllers/fileeventprocessor.h \
@@ -281,7 +279,6 @@ SOURCES += \
     models/searchhistory.cpp \
     models/fmstate.cpp \
     controllers/bookmarkmanager.cpp \
-    controllers/fmstatemanager.cpp \
     controllers/basemanager.cpp \
     dialogs/dialogmanager.cpp \
     controllers/searchhistroymanager.cpp \
@@ -374,7 +371,6 @@ SOURCES += \
     gvfs/qmount.cpp \
     gvfs/gvfsmountmanager.cpp \
     gvfs/qdiskinfo.cpp \
-    shutil/viewstatesmanager.cpp \
     interfaces/dfmeventdispatcher.cpp \
     interfaces/dfmabstracteventhandler.cpp \
     controllers/fileeventprocessor.cpp \
@@ -544,7 +540,6 @@ defaultConfig.files = configure/default-view-states.json
 INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations help icon includes includes_private gvfs_includes plugin_includes defaultConfig
 
 DISTFILES += \
-    mimetypeassociations/mimetypeassociations.json \
-    configure/default-view-states.json
+    mimetypeassociations/mimetypeassociations.json
 
 include($$PWD/settings_dialog_json.pri)

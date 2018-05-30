@@ -23,13 +23,13 @@
  */
 
 #include "dfmstandardpaths.h"
+#include "durl.h"
 
 #include <QDir>
 #include <QApplication>
 #include <QStandardPaths>
-#include "durl.h"
 
-QString DFMStandardPaths::standardLocation(DFMStandardPaths::StandardLocation type)
+QString DFMStandardPaths::location(DFMStandardPaths::StandardLocation type)
 {
     switch (type) {
     case TrashPath:
@@ -78,13 +78,13 @@ QString DFMStandardPaths::standardLocation(DFMStandardPaths::StandardLocation ty
     case ThumbnailPath:
         return QDir::homePath() + "/.cache/thumbnails";
     case ThumbnailFailPath:
-        return standardLocation(ThumbnailPath) + "/fail";
+        return location(ThumbnailPath) + "/fail";
     case ThumbnailLargePath:
-        return standardLocation(ThumbnailPath) + "/large";
+        return location(ThumbnailPath) + "/large";
     case ThumbnailNormalPath:
-        return standardLocation(ThumbnailPath) + "/normal";
+        return location(ThumbnailPath) + "/normal";
     case ThumbnailSmallPath:
-        return standardLocation(ThumbnailPath) + "/small";
+        return location(ThumbnailPath) + "/small";
     case ApplicationSharePath:
         return APPSHAREDIR;
     case HomePath:
@@ -116,6 +116,68 @@ QString DFMStandardPaths::standardLocation(DFMStandardPaths::StandardLocation ty
     }
 
     return QString();
+}
+
+QString DFMStandardPaths::fromStandardUrl(const DUrl &standardUrl)
+{
+    if (standardUrl.scheme() != "standard")
+        return QString();
+
+    static QMap<QString, QString> path_convert {
+        {"home", location(HomePath)},
+        {"desktop", location(DesktopPath)},
+        {"videos", location(VideosPath)},
+        {"music", location(MusicPath)},
+        {"pictures", location(PicturesPath)},
+        {"documents", location(DocumentsPath)},
+        {"downloads", location(DownloadsPath)}
+    };
+
+    const QString &path = path_convert.value(standardUrl.host());
+
+    if (path.isEmpty())
+        return path;
+
+    const QString &url_path = standardUrl.path();
+
+    if (url_path.isEmpty() || url_path == "/")
+        return path;
+
+    return path + standardUrl.path();
+}
+
+DUrl DFMStandardPaths::toStandardUrl(const QString &localPath)
+{
+    static QList<QPair<QString, QString>> path_convert {
+        {location(DesktopPath), "desktop"},
+        {location(VideosPath), "videos"},
+        {location(MusicPath), "music"},
+        {location(PicturesPath), "pictures"},
+        {location(DocumentsPath), "documents"},
+        {location(DownloadsPath), "downloads"},
+        {location(HomePath), "home"}
+    };
+
+    for (auto begin : path_convert) {
+        if (localPath.startsWith(begin.first)) {
+            const QString &path = localPath.mid(begin.first.size());
+
+            if (!path.isEmpty() && !path.startsWith("/"))
+                continue;
+
+            DUrl url;
+
+            url.setScheme("standard");
+            url.setHost(begin.second);
+
+            if (!path.isEmpty() && path != "/")
+                url.setPath(path);
+
+            return url;
+        }
+    }
+
+    return DUrl();
 }
 
 QString DFMStandardPaths::getConfigPath()

@@ -150,9 +150,6 @@ void FileManagerApp::initApp()
     /*init controllers for different scheme*/
     fileService->initHandlersByCreators();
 
-    /*init viewStatesManager*/
-    DFMGlobal::initViewStatesManager();
-
     /*init operator revocation*/
     DFMGlobal::initOperatorRevocation();
 

@@ -69,11 +69,11 @@ public:
 void TrashFileInfoPrivate::updateInfo()
 {
     const QString &filePath = proxy->absoluteFilePath();
-    const QString &basePath = DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath);
+    const QString &basePath = DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath);
     const QString &fileBaseName = QDir::separator() + proxy->fileName();
 
-    if (QFile::exists(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) + fileBaseName + ".trashinfo")) {
-        QSettings setting(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) + fileBaseName + ".trashinfo", QSettings::NativeFormat);
+    if (QFile::exists(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath) + fileBaseName + ".trashinfo")) {
+        QSettings setting(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath) + fileBaseName + ".trashinfo", QSettings::NativeFormat);
 
         setting.beginGroup("Trash Info");
         setting.setIniCodec("utf-8");
@@ -116,7 +116,7 @@ void TrashFileInfoPrivate::updateInfo()
 void TrashFileInfoPrivate::inheritParentTrashInfo()
 {
     const QString &filePath = proxy->absoluteFilePath();
-    QString nameLayer = filePath.right(filePath.length() - DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath).length() - 1);
+    QString nameLayer = filePath.right(filePath.length() - DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath).length() - 1);
     QStringList names = nameLayer.split("/");
 
     QString name = names.takeFirst();
@@ -125,8 +125,8 @@ void TrashFileInfoPrivate::inheritParentTrashInfo()
         restPath += "/" + str;
     }
 
-    if (QFile::exists(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) + QDir::separator() + name + ".trashinfo")) {
-        QSettings setting(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) + QDir::separator() + name + ".trashinfo", QSettings::NativeFormat);
+    if (QFile::exists(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath) + QDir::separator() + name + ".trashinfo")) {
+        QSettings setting(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath) + QDir::separator() + name + ".trashinfo", QSettings::NativeFormat);
 
         setting.beginGroup("Trash Info");
         setting.setIniCodec("utf-8");
@@ -147,7 +147,7 @@ TrashFileInfo::TrashFileInfo(const DUrl &url)
 {
     Q_D(TrashFileInfo);
 
-    const QString &trashFilesPath = DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath);
+    const QString &trashFilesPath = DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath);
 
     if (!QDir().mkpath(trashFilesPath)) {
         qWarning() << "mkpath trash files path failed, path =" << trashFilesPath;

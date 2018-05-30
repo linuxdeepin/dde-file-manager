@@ -95,7 +95,7 @@ bool DBusFileDialogManager::isUseFileChooserDialog() const
 
 bool DBusFileDialogManager::canUseFileChooserDialog(const QString &group, const QString &executableFileName) const
 {
-    const QString &group_name = QStringLiteral("DBus File Dialog");
+    const QString &group_name = QStringLiteral("DBusFileDialog");
     const QVariantMap &black_map = DFMApplication::appObtuselySetting()->value(group_name, "disable").toMap();
 
     return !black_map.value(group).toStringList().contains(executableFileName);

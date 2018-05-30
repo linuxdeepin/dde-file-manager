@@ -68,12 +68,12 @@ TrashDirIterator::TrashDirIterator(const DUrl &url, const QStringList &nameFilte
                                    QDir::Filters filter, QDirIterator::IteratorFlags flags)
     : DDirIterator()
 {
-    iterator = new QDirIterator(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + url.path(), nameFilters, filter, flags);
+    iterator = new QDirIterator(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + url.path(), nameFilters, filter, flags);
 }
 
 DUrl TrashDirIterator::next()
 {
-    return DUrl::fromTrashFile(DUrl::fromLocalFile(iterator->next()).path().remove(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath)));
+    return DUrl::fromTrashFile(DUrl::fromLocalFile(iterator->next()).path().remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
 }
 
 bool TrashDirIterator::hasNext() const
@@ -88,7 +88,7 @@ QString TrashDirIterator::fileName() const
 
 QString TrashDirIterator::filePath() const
 {
-    return iterator->filePath().remove(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
+    return iterator->filePath().remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath));
 }
 
 const DAbstractFileInfoPointer TrashDirIterator::fileInfo() const
@@ -98,15 +98,15 @@ const DAbstractFileInfoPointer TrashDirIterator::fileInfo() const
 
 QString TrashDirIterator::path() const
 {
-    return iterator->path().remove(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
+    return iterator->path().remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath));
 }
 
 TrashManager::TrashManager(QObject *parent)
     : DAbstractFileController(parent),
-      m_trashFileWatcher(new DFileWatcher(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath),this))
+      m_trashFileWatcher(new DFileWatcher(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath),this))
 {
     m_isTrashEmpty = isEmpty();
-    QString trashFilePath = DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath);
+    QString trashFilePath = DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath);
     //make sure trash file exists
     if(!QFile::exists(trashFilePath))
         QDir().mkdir(trashFilePath);
@@ -162,10 +162,10 @@ bool TrashManager::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClip
     for(const DUrl &url : event->urlList()) {
         const QString &path = url.path();
 
-        localList << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + path);
+        localList << DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + path);
 
         if(path.lastIndexOf('/') > 0) {
-            localList << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) + path);
+            localList << DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath) + path);
         }
     }
 
@@ -199,10 +199,10 @@ bool TrashManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) cons
 
         const QString &path = url.path();
 
-        localList << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + path);
+        localList << DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + path);
 
         if (path.lastIndexOf('/') == 0) {
-            localList << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) + path + ".trashinfo");
+            localList << DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath) + path + ".trashinfo");
         }
     }
 
@@ -220,7 +220,7 @@ namespace TrashManagerPrivate {
 DUrl localToTrash(const DUrl &url)
 {
     const QString &localPath = url.toLocalFile();
-    const QString &trashPath = DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath);
+    const QString &trashPath = DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath);
 
     if (!localPath.startsWith(trashPath))
         return DUrl();
@@ -234,7 +234,7 @@ DUrl localToTrash(const DUrl &url)
 }
 QString trashToLocal(const DUrl &url)
 {
-    return DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + url.path();
+    return DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + url.path();
 }
 }
 
@@ -295,15 +295,15 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
 void TrashManager::cleanTrash(const QObject *sender) const
 {
     DUrlList list;
-    list << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath))
-         << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
+    list << DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath))
+         << DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath));
 
     fileService->deleteFiles(sender, list, true);
 }
 
 bool TrashManager::isEmpty()
 {
-    QDir dir(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
+    QDir dir(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath));
     QStringList entryList = dir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden);
     if (dir.exists() && entryList.count() == 0){
         return true;

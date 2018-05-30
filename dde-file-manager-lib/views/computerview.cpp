@@ -43,7 +43,6 @@
 #include "gvfs/gvfsmountmanager.h"
 #include "singleton.h"
 #include "../shutil/fileutils.h"
-#include "shutil/viewstatesmanager.h"
 #include "partman/partition.h"
 
 #include <dslider.h>
@@ -679,30 +678,27 @@ bool ComputerView::isDiskConfExisted()
 
 QString ComputerView::getDiskConfPath()
 {
-    return QString("%1/%2").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationConfigPath), "disk.conf");
+    return QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::ApplicationConfigPath), "disk.conf");
 }
 
 void ComputerView::loadViewState()
 {
-    ViewState state = viewStatesManager->viewstate(DUrl::fromComputerFile("/"));
+    const QVariantMap &value = DFMApplication::appObtuselySetting()->value("FileViewState", COMPUTER_ROOT).toMap();
 
-    if (!state.isValid()) {
+    if (!value.contains("iconSizeLevel")) {
         return;
     }
 
-    resizeAllItemsBySizeIndex(state.iconSize);
+    resizeAllItemsBySizeIndex(value.value("iconSizeLevel").toInt());
 }
 
 void ComputerView::saveViewState()
 {
     m_currentIconSizeIndex = m_statusBar->scalingSlider()->value();
-    ViewState state;
-//    state.sortOrder = Qt::AscendingOrder;
-//    state.sortRole = DFileSystemModel::FileDisplayNameRole;
-    state.viewMode = DFileView::IconMode;
-    state.iconSize = m_currentIconSizeIndex;
 
-    viewStatesManager->saveViewState(DUrl::fromComputerFile("/"), state);
+    DFMApplication::appObtuselySetting()->setValue("FileViewState", COMPUTER_ROOT, QVariantMap {
+                                                       {"iconSizeLevel", m_currentIconSizeIndex}
+                                                   });
 }
 
 QWidget *ComputerView::widget() const
@@ -1008,14 +1004,14 @@ void ComputerView::keyPressEvent(QKeyEvent *event)
                 }
 
                 DUrl url;
-                const QString &path = DFMApplication::instance()->appAttribute(DFMApplication::AA_UrlOfNewTab).toString();
+
                 if (urls.count() == 1) {
                     url = urls.first();
                 } else {
-                    if (path.isEmpty()) {
+                    url = DFMApplication::instance()->appUrlAttribute(DFMApplication::AA_UrlOfNewTab);
+
+                    if (!url.isValid()) {
                         url = rootUrl();
-                    } else {
-                        url = DUrl::fromUserInput(path);
                     }
                 }
                 DFMEventDispatcher::instance()->processEvent<DFMOpenNewTabEvent>(this, url);
