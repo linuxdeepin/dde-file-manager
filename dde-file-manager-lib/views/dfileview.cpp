@@ -2543,5 +2543,5 @@ void DFileViewPrivate::setFileViewStateValue(const DUrl &url, const QString &key
 
     map[key] = value;
 
-    DFMApplication::appObtuselySetting()->setValue("FileViewState", url, value);
+    DFMApplication::appObtuselySetting()->setValue("FileViewState", url, map);
 }
