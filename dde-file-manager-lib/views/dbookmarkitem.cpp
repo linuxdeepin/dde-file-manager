@@ -31,6 +31,7 @@
 #include "ddragwidget.h"
 #include "ddialog.h"
 #include "dbookmarkmountedindicatoritem.h"
+#include "dfmapplication.h"
 
 #include <QDebug>
 #include <QDrag>
@@ -71,9 +72,6 @@
 
 #include "tag/tagutil.h"
 #include "tag/tagmanager.h"
-#include "interfaces/dfmplaformmanager.h"
-
-
 
 DWIDGET_USE_NAMESPACE
 
@@ -661,7 +659,7 @@ void DBookmarkItem::updateMountIndicator()
         }
 
         /*Disable unmount of native disk in x86 pro*/
-        if (DFMGlobal::isDisableUnmount(m_deviceInfo->getDiskInfo())) {
+        if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_DisableNonRemovableDeviceUnmount).toBool() && !m_deviceInfo->getDiskInfo().is_removable()) {
             m_mountBookmarkItem->setEnabled(false);
             m_mountBookmarkItem->setOpacity(0.3);
         }

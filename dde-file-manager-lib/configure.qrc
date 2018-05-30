@@ -6,5 +6,10 @@
     </qresource>
     <qresource prefix="/config">
         <file alias="dde-file-manager.json">configure/dde-file-manager.default.json</file>
+        <file alias="dde-file-manager.obtusely.json">configure/dde-file-manager.obtusely.default.json</file>
+    </qresource>
+    <qresource prefix="/config/deepin">
+        <file alias="dde-file-manager.json">configure/dde-file-manager.default.json</file>
+        <file alias="dde-file-manager.obtusely.json">configure/dde-file-manager.obtusely.default.json</file>
     </qresource>
 </RCC>

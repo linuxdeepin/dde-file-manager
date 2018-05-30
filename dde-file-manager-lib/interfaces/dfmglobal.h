@@ -291,9 +291,6 @@ public:
     static bool isTrashDesktopFileUrl(const DUrl& url);
     static bool isComputerDesktopFileUrl(const DUrl& url);
 
-    // disbale native disk ummount function
-    static bool isDisableUnmount(const QDiskInfo& diskInfo);
-
     QList<QUrl> clipboardFileUrlList() const;
     ClipboardAction clipboardAction() const;
     QIcon standardIcon(Icon iconType) const;

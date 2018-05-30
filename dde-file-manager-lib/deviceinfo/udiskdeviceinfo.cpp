@@ -23,18 +23,23 @@
  */
 
 #include "udiskdeviceinfo.h"
+#include "dfmapplication.h"
+
 #include "app/define.h"
 #include "shutil/fileutils.h"
-#include <QIcon>
 #include "utils.h"
 #include "durl.h"
 #include "udisklistener.h"
 #include "singleton.h"
 #include "gvfs/gvfsmountmanager.h"
 #include "gvfs/qdrive.h"
-#include "interfaces/dfmplaformmanager.h"
 #include "app/define.h"
+
+#include <QIcon>
+
 #include <unistd.h>
+
+DFM_USE_NAMESPACE
 
 UDiskDeviceInfo::UDiskDeviceInfo()
     : DFileInfo("", false)
@@ -342,7 +347,7 @@ QSet<MenuAction> UDiskDeviceInfo::disableMenuActionList() const
     }
 
     /*Disable unmount of native disk in x86 pro*/
-    if (DFMGlobal::isDisableUnmount(getDiskInfo())) {
+    if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_DisableNonRemovableDeviceUnmount).toBool()) {
         actionKeys << MenuAction::Unmount;
     }
 

@@ -30,6 +30,7 @@
 #include "trashmanager.h"
 #include "dfmeventdispatcher.h"
 #include "dfmapplication.h"
+#include "dfmsettings.h"
 
 #include "models/desktopfileinfo.h"
 #include "models/trashfileinfo.h"
@@ -58,7 +59,6 @@
 #include <QGuiApplication>
 #include <QUrlQuery>
 #include <QRegularExpression>
-#include <QSettings>
 
 #include <unistd.h>
 
@@ -492,14 +492,8 @@ class Match
 public:
     Match(const QString &group)
     {
-        QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(),
-                           "dde-file-manager/" + qApp->applicationName());
-
-        settings.setIniCodec("utf-8");
-        settings.beginGroup(group);
-
-        for (const QString &key : settings.childKeys()) {
-            const QString &value = settings.value(key).toString();
+        for (const QString &key : DFMApplication::genericObtuselySetting()->keys(group)) {
+            const QString &value = DFMApplication::genericObtuselySetting()->value(group, key).toString();
 
             int last_dir_split = value.lastIndexOf(QDir::separator());
 
@@ -515,8 +509,6 @@ public:
                 patternList << qMakePair(QString(), value);
             }
         }
-
-        settings.endGroup();
     }
 
     bool match(const QString &path, const QString &name)

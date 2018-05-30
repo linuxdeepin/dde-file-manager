@@ -31,6 +31,9 @@ DFM_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, gsGlobal, ("deepin/dde-file-manager", DFMSettings::GenericConfig))
 Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, asGlobal, ("dde-file-manager", DFMSettings::AppConfig))
 
+Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, gosGlobal, ("deepin/dde-file-manager.obtusely", DFMSettings::GenericConfig))
+Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, aosGlobal, ("dde-file-manager.obtusely", DFMSettings::AppConfig))
+
 DFMApplication *DFMApplicationPrivate::self = nullptr;
 
 DFMApplicationPrivate::DFMApplicationPrivate(DFMApplication *qq)
@@ -190,6 +193,26 @@ DFMSettings *DFMApplication::appSetting()
     }
 
     return asGlobal;
+}
+
+DFMSettings *DFMApplication::genericObtuselySetting()
+{
+    if (!gosGlobal.exists()) {
+        gosGlobal->setAutoSync(false);
+        gosGlobal->setWatchChanges(false);
+    }
+
+    return gosGlobal;
+}
+
+DFMSettings *DFMApplication::appObtuselySetting()
+{
+    if (!aosGlobal.exists()) {
+        aosGlobal->setAutoSync(false);
+        aosGlobal->setWatchChanges(false);
+    }
+
+    return aosGlobal;
 }
 
 DFMApplication::DFMApplication(DFMApplicationPrivate *dd, QObject *parent)

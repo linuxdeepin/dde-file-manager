@@ -40,6 +40,8 @@ public:
         AA_AllwayOpenOnNewWindow,
         AA_IconSizeLevel,
         AA_ViewMode,
+        AA_ViewComppactMode,
+        AA_ViewAutoCompace,
         AA_OpenFileMode, // 点击/双击[0/1]
         AA_UrlOfNewWindow, // 新窗口默认路径
         AA_UrlOfNewTab // 新标签页默认路径
@@ -60,7 +62,9 @@ public:
         GA_OverrideFileChooserDialog, // 将DDE文件管理器作为应用选择文件时的对话框
         GA_ShowedHiddenOnSearch, // 搜索时显示隐藏文件
         GA_ShowedHiddenFiles, // 显示隐藏文件
-        GA_ShowedFileSuffixOnRename // 重命名文件时显示后缀
+        GA_ShowedFileSuffixOnRename, // 重命名文件时显示后缀
+        GA_DisableNonRemovableDeviceUnmount, // 禁用本地磁盘卸载功能
+        GA_HiddenSystemPartition // 隐藏系统分区
     };
 
     Q_ENUM(GenericAttribute)
@@ -80,6 +84,9 @@ public:
 
     static DFMSettings *genericSetting();
     static DFMSettings *appSetting();
+
+    static DFMSettings *genericObtuselySetting();
+    static DFMSettings *appObtuselySetting();
 
 Q_SIGNALS:
     void appAttributeChanged(ApplicationAttribute aa, const QVariant &value);

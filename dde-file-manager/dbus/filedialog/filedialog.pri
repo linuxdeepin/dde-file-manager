@@ -14,10 +14,7 @@ filedialog_xmls.files = $$dialog.files $$manager.files
 filedialog_service.path = /usr/share/dbus-1/services
 filedialog_service.files = $$PWD/com.deepin.filemanager.filedialog.service
 
-filedialog_blacklist.path = /usr/share/$${TARGET}/dbusfiledialog
-filedialog_blacklist.files = $$PWD/dbus_filedialog_blacklist.conf
-
-INSTALLS += filedialog_service filedialog_xmls filedialog_blacklist
+INSTALLS += filedialog_service filedialog_xmls
 
 HEADERS += \
     $$PWD/dbusfiledialoghandle.h \

@@ -38,6 +38,7 @@
 #include <QScrollBar>
 
 #include "dabstractfilewatcher.h"
+#include "dfmapplication.h"
 #include "tag/tagmanager.h"
 #include "singleton.h"
 
@@ -290,7 +291,9 @@ void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::G
         break;
     case DFMSideBar::GroupName::Device:
         group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::ComputerRootPath));
-        group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::Root)); // TODO: check dfmPlatformManager->isRoot_hidden()
+
+        if (!DFMApplication::instance()->genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool())
+            group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::Root));
         break;
     case DFMSideBar::GroupName::Bookmark: {
         auto bookmark_infos = DFileService::instance()->getChildren(q_func(), DUrl(BOOKMARK_ROOT),

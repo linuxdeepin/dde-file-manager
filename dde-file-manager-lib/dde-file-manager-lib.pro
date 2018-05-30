@@ -223,10 +223,8 @@ HEADERS += \
     dialogs/dmultifilepropertydialog.h \
     dialogs/movetotrashconflictdialog.h \
     dialogs/dfmsettingdialog.h \
-    interfaces/dfmplaformmanager.h \
     controllers/operatorrevocation.h \
     views/themeconfig.h \
-    interfaces/dfmplaformmanager.h\
     controllers/tagcontroller.h \
     models/tagfileinfo.h \
     views/dtagactionwidget.h \
@@ -404,7 +402,6 @@ SOURCES += \
     dialogs/dmultifilepropertydialog.cpp \
     dialogs/movetotrashconflictdialog.cpp \
     dialogs/dfmsettingdialog.cpp \
-    interfaces/dfmplaformmanager.cpp \
     controllers/operatorrevocation.cpp \
     views/themeconfig.cpp \
     controllers/tagcontroller.cpp \

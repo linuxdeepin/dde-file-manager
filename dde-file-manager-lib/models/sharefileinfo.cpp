@@ -23,7 +23,6 @@
 #include "singleton.h"
 
 #include <QMimeType>
-#include <QSettings>
 #include <QIcon>
 
 ShareFileInfo::ShareFileInfo(const DUrl &url):

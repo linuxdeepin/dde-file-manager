@@ -526,8 +526,6 @@ void DFMSettings::setAutoSync(bool autoSync)
             d->syncTimer->setSingleShot(true);
             d->syncTimer->setInterval(1000);
 
-            qDebug() << thread() << d->syncTimer->thread();
-
             connect(d->syncTimer, &QTimer::timeout, this, &DFMSettings::sync);
         }
     } else {

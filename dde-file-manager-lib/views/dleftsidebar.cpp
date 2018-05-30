@@ -28,6 +28,7 @@
 #include "windowmanager.h"
 #include "dfilemanagerwindow.h"
 #include "dfmeventdispatcher.h"
+#include "dfmapplication.h"
 
 #include "controllers/bookmarkmanager.h"
 
@@ -38,7 +39,6 @@
 #include "tag/tagmanager.h"
 
 #include "deviceinfo/udisklistener.h"
-#include "interfaces/dfmplaformmanager.h"
 
 #include "singleton.h"
 
@@ -158,12 +158,7 @@ void DLeftSideBar::initNav()
             if (key == "System Disk"){
                 m_scene->setDefaultDiskItem(item);
 
-                if (dfmPlatformManager->isRoot_hidden()){
-                    item->setVisible(false);
-                }else{
-                    item->setVisible(true);
-                }
-
+                item->setVisible(!DFMApplication::instance()->genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool());
             }
         }
     }

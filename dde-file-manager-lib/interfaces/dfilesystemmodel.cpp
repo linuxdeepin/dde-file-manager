@@ -28,7 +28,6 @@
 #include "dfmevent.h"
 #include "dabstractfilewatcher.h"
 #include "dstyleditemdelegate.h"
-#include "dfmplaformmanager.h"
 #include "dfmapplication.h"
 
 #include "app/define.h"
@@ -90,7 +89,7 @@ public:
         else
             filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
 
-        columnCompact = dfmPlatformManager->isCompactList();
+        columnCompact = DFMApplication::instance()->appAttribute(DFMApplication::AA_ViewComppactMode).toBool();
     }
 
     bool passNameFilters(const FileSystemNodePointer &node) const;
