@@ -23,7 +23,6 @@
  */
 
 #include "dtoolbar.h"
-#include "dicontextbutton.h"
 #include "dcheckablebutton.h"
 //#include "dsearchbar.h"
 #include "dfmcrumbbar.h"
@@ -210,18 +209,7 @@ void DToolBar::searchBarActivated()
 
 void DToolBar::searchBarDeactivated()
 {
-    int winId = WindowManager::getWindowId(this);
-    DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(winId));
-    if (window){
-        if (window->currentUrl().isSearchFile()){
-            if (m_navStack)
-                onBackButtonClicked();
-        } else {
-            m_searchButton->show();
-        }
-    }
-
-    emit fileSignalManager->requestFoucsOnFileView(winId);
+    m_searchButton->show();
 }
 
 /**
@@ -280,11 +268,6 @@ void DToolBar::currentUrlChanged(const DFMEvent &event)
     }
 
     pushUrlToHistoryStack(event.fileUrl());
-}
-
-void DToolBar::searchBarChanged(QString path)
-{
-//    m_searchBar->setText(path);
 }
 
 void DToolBar::back()
