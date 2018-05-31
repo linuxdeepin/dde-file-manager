@@ -10,5 +10,11 @@
             "sortRole": 262,
             "viewMode": 2
         }
+    },
+    "WindowManager": {
+        "WindowState": {
+            "width": 800,
+            "height": 600
+        }
     }
 }
