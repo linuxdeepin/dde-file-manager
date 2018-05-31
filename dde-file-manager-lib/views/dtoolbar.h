@@ -30,7 +30,6 @@
 #include "dfileview.h"
 #include "dstatebutton.h"
 
-class DIconTextButton;
 class DCheckableButton;
 class DStateButton;
 class DSearchBar;
@@ -89,7 +88,6 @@ public slots:
     void onSearchButtonClicked();
     void crumbSelected(const DFMCrumbItem* item);
     void currentUrlChanged(const DFMEvent &event);
-    void searchBarChanged(QString path);
 
     void back();
     void forward();
@@ -116,8 +114,6 @@ private:
     QFrame* m_contollerToolBar;
     DGraphicsClipEffect *m_contollerToolBarClipMask;
     QHBoxLayout *m_contollerToolBarContentLayout;
-    DIconTextButton* m_newFolderButton=NULL;
-    DIconTextButton* m_deleteFileButton=NULL;
 
     QPushButton* m_iconViewButton=NULL;
     QPushButton* m_listViewButton=NULL;
