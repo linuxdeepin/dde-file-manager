@@ -44,11 +44,19 @@ void DFMSearchCrumbController::processAction(DFMCrumbInterface::ActionType type)
 {
     switch (type) {
     case EscKeyPressed:
-    case ClearButtonPressed:
+    case ClearButtonPressed: {
         crumbBar()->hideAddressBar();
-        DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMBackEvent>(crumbBar()),
-                                                     qobject_cast<DFileManagerWindow*>(crumbBar()->window()));
+        DFileManagerWindow *window = qobject_cast<DFileManagerWindow*>(crumbBar()->window());
+
+        if (!window) {
+            break;
+        }
+
+        const DUrl &current_url = window->currentUrl();
+        auto event = dMakeEventPointer<DFMChangeCurrentUrlEvent>(crumbBar(), current_url.searchTargetUrl(), window);
+        DFMEventDispatcher::instance()->processEvent(event);
         break;
+    }
     case AddressBarLostFocus:
         // Do nothing here.
         break;
