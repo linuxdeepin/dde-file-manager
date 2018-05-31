@@ -58,6 +58,7 @@ public:
     };
 
     virtual void processAction(ActionType type);
+    virtual void crumbUrlChangedBehavior(const DUrl url);
     virtual DFMCrumbBar* crumbBar() final;
     virtual void setCrumbBar(DFMCrumbBar *crumbBar) final;
     virtual bool supportedUrl(DUrl) = 0;

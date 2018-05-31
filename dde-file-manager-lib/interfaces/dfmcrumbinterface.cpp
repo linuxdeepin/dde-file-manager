@@ -145,6 +145,19 @@ void DFMCrumbInterface::processAction(DFMCrumbInterface::ActionType type)
     }
 }
 
+/*!
+ * \brief The crumb bar behavior when crumb bar url changed.
+ *
+ * \param url The url which crumb bar changed to.
+ */
+void DFMCrumbInterface::crumbUrlChangedBehavior(const DUrl url)
+{
+    Q_D(DFMCrumbInterface);
+
+    crumbBar()->hideAddressBar();
+    crumbBar()->updateCrumbs(url);
+}
+
 DFMCrumbBar *DFMCrumbInterface::crumbBar()
 {
     Q_D(DFMCrumbInterface);

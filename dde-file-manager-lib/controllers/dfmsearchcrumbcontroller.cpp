@@ -57,6 +57,11 @@ void DFMSearchCrumbController::processAction(DFMCrumbInterface::ActionType type)
     }
 }
 
+void DFMSearchCrumbController::crumbUrlChangedBehavior(const DUrl url)
+{
+    crumbBar()->showAddressBar(url.searchKeyword());
+}
+
 bool DFMSearchCrumbController::supportedUrl(DUrl url)
 {
     return (url.scheme() == SEARCH_SCHEME);

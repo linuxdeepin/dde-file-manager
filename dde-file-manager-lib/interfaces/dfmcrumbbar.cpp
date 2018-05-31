@@ -68,6 +68,7 @@ public:
     void clearCrumbs();
     void checkArrowVisiable();
     void addCrumb(DFMCrumbItem* item);
+    void updateController(const DUrl &url);
 
 private:
     void initUI();
@@ -145,6 +146,27 @@ void DFMCrumbBarPrivate::addCrumb(DFMCrumbItem *item)
         Q_CHECK_PTR(item);
         emit q->crumbItemClicked(item);
     });
+}
+
+/*!
+ * \brief Update the crumb controller hold by the crumb bar.
+ *
+ * \param url The url which controller should supported.
+ */
+void DFMCrumbBarPrivate::updateController(const DUrl &url)
+{
+    Q_Q(DFMCrumbBar);
+
+    if (!crumbController || !crumbController->supportedUrl(url)) {
+        if (crumbController) {
+            crumbController->deleteLater();
+        }
+        crumbController = DFMCrumbManager::instance()->createControllerByUrl(url, q);
+        // Not found? Then nothing here...
+        if (!crumbController) {
+            qDebug() << "Unsupported url / scheme: " << url;
+        }
+    }
 }
 
 void DFMCrumbBarPrivate::initUI()
@@ -239,6 +261,12 @@ void DFMCrumbBarPrivate::initConnections()
     q->connect(addressBar, &DFMAddressBar::lostFocus, q, [q, this]() {
         if (crumbController) {
             crumbController->processAction(DFMCrumbInterface::AddressBarLostFocus);
+        }
+    });
+
+    q->connect(addressBar, &DFMAddressBar::clearButtonPressed, q, [q, this] {
+        if (crumbController) {
+            crumbController->processAction(DFMCrumbInterface::ClearButtonPressed);
         }
     });
 }
@@ -348,17 +376,12 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
 
     d->clearCrumbs();
 
-    if (!d->crumbController || !d->crumbController->supportedUrl(url)) {
-        d->crumbController->deleteLater();
-        d->crumbController = DFMCrumbManager::instance()->createControllerByUrl(url, this);
-        // Not found? Then nothing here...
-        if (!d->crumbController) {
-            qDebug() << "Unsupported url / scheme: " << url;
-            return;
-        }
+    if (!d->crumbController) {
+        qWarning("No controller found when trying to call DFMCrumbBar::updateCrumbs() !!!");
+        qDebug() << "updateCrumbs (no controller) : " << url;
+        return;
     }
 
-    Q_CHECK_PTR(d->crumbController);
     QList<CrumbData> crumbDataList = d->crumbController->seprateUrl(url);
     for (const CrumbData& c : crumbDataList) {
         DFMCrumbItem* item = d->crumbController->createCrumbItem(c);
@@ -374,6 +397,22 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
     d->crumbListHolder->adjustSize();
     d->checkArrowVisiable();
     d->crumbListScrollArea.horizontalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
+}
+
+/*!
+ * \brief Call when toolbar url got changed.
+ *
+ * \param url Current url which we changed to.
+ */
+void DFMCrumbBar::updateCurrentUrl(const DUrl &url)
+{
+    Q_D(DFMCrumbBar);
+
+    d->updateController(url);
+
+    if (d->crumbController) {
+        d->crumbController->crumbUrlChangedBehavior(url);
+    }
 }
 
 void DFMCrumbBar::mousePressEvent(QMouseEvent *event)

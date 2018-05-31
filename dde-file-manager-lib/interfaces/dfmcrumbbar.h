@@ -41,6 +41,9 @@ public:
     void hideAddressBar();
     void updateCrumbs(const DUrl &url);
 
+public Q_SLOTS:
+    void updateCurrentUrl(const DUrl &url);
+
 private:
     QScopedPointer<DFMCrumbBarPrivate> d_ptr;
 

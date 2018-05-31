@@ -73,7 +73,6 @@ public:
     void addHistoryStack();
 
     int navStackCount() const;
-    void setCrumbBar(const DUrl& url);
     void updateBackForwardButtonsState();
 
     void setCustomActionList(const QList<QAction*> &list);
@@ -81,6 +80,7 @@ public:
 signals:
     void requestSwitchLayout();
     void refreshButtonClicked();
+    void toolbarUrlChanged(const DUrl& url);
 
 public slots:
     void searchBarActivated();
