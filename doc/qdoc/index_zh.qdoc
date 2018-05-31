@@ -18,7 +18,7 @@
     \page index-zh.html
     \title Developer Documentation Index (zh)
     \nextpage Componments (zh)
-    
+
     这里是深度文件管理器的开发者文档页面！
 
     文档语言列表:
@@ -31,8 +31,8 @@
     开发者文档的相关页面还在逐渐完善中，如果你有任何问题或建议，你可以通过下面给出的途径反馈给我们：
 
     \list
-        \li 在 \l {https://github.com/linuxdeepin/developer-center} {开发者中心} 中提问 
-        \li 在 \l {https://bbs.deepin.org/} {官方论坛} 中提问 
+        \li 在 \l {https://github.com/linuxdeepin/developer-center} {开发者中心} 中提问
+        \li 在 \l {https://bbs.deepin.org/} {官方论坛} 中提问
         \li 或者在 \l {https://github.com/linuxdeepin/dde-file-manager/issues} {Issue 面板} 中提交 Issue
     \endlist
 */

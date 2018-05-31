@@ -18,23 +18,23 @@
     \page index.html
     \title Developer Documentation Index
     \nextpage Componments
-    
+
     This is the developer documentation page of Deepin File Manager!
 
     Documentation languages index:
 
     \list
         \li \l {Developer Documentation Index} {English} (Current)
-        \li \l {Developer Documentation Index (zh)} {简体中文} 
+        \li \l {Developer Documentation Index (zh)} {简体中文}
     \endlist
-    
+
     The developer documentation of Deepin File Manager is still working in progress,
     If you got any issue and looking for help, please submit your issue via the
     following methods....
 
     \list
-        \li Ask in the \l {https://github.com/linuxdeepin/developer-center} {Developer Center} 
-        \li Ask in our \l {https://bbs.deepin.org/} {Official Forum} 
+        \li Ask in the \l {https://github.com/linuxdeepin/developer-center} {Developer Center}
+        \li Ask in our \l {https://bbs.deepin.org/} {Official Forum}
         \li or submit an issue in \l {https://github.com/linuxdeepin/dde-file-manager/issues} {Issue board}
     \endlist
 */

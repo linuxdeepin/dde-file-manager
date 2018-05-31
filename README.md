@@ -54,18 +54,25 @@ The executable binary file could be found at `/usr/bin/dde-file-manager`
 
 Execute `dde-file-manager`
 
+## Documentations
+
+ - [Development Documentation](https://linuxdeepin.github.io/dde-file-manager/)
+ - [User Documentation](https://wiki.deepin.org/index.php?title=%E6%B7%B1%E5%BA%A6%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86%E5%99%A8) (中文)
+
 ## Getting help
-* [Official Forum](https://bbs.deepin.org/)
-* [Gitter](https://gitter.im/orgs/linuxdeepin/rooms)
-* [IRC Channel](https://webchat.freenode.net/?channels=deepin)
-* [Wiki](https://wiki.deepin.org/)
+
+ - [Official Forum](https://bbs.deepin.org/)
+ - [Developer Center](https://github.com/linuxdeepin/developer-center)
+ - [Gitter](https://gitter.im/orgs/linuxdeepin/rooms)
+ - [IRC Channel](https://webchat.freenode.net/?channels=deepin)
+ - [Wiki](https://wiki.deepin.org/)
 
 ## Getting involved
 
 We encourage you to report issues and contribute changes
 
-* [Contribution guide for developers](https://github.com/linuxdeepin/developer-center/wiki/Contribution-Guidelines-for-Developers-en). (English)
-* [开发者代码贡献指南](https://github.com/linuxdeepin/developer-center/wiki/Contribution-Guidelines-for-Developers) (中文)
+ - [Contribution guide for developers](https://github.com/linuxdeepin/developer-center/wiki/Contribution-Guidelines-for-Developers-en). (English)
+ - [开发者代码贡献指南](https://github.com/linuxdeepin/developer-center/wiki/Contribution-Guidelines-for-Developers) (中文)
 
 ## License
 
