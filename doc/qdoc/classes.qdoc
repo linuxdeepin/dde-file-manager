@@ -1,0 +1,27 @@
+/*
+ * Copyright (C) 2017 ~ 2018 Deepin Technology Co., Ltd.
+ *
+ * Author:     Gary Wang <wzc782970009@gmail.com>
+ *
+ * Maintainer: Gary Wang <wangzichong@deepin.com>
+ *
+ * GNU Free Documentation License Usage
+ * Alternatively, this file may be used under the terms of the GNU Free
+ * Documentation License version 1.3 as published by the Free Software
+ * Foundation and appearing in the file included in the packaging of
+ * this file. Please review the following information to ensure
+ * the GNU Free Documentation License version 1.3 requirements
+ * will be met: https://www.gnu.org/licenses/fdl-1.3.html.
+ */
+
+/*!
+    \page classes.html
+    \title All DFM Classes
+    \ingroup classlists
+
+    \brief Alphabetical list of classes.
+
+    This is a list of all DFM classes.
+
+    \generatelist classes DFM
+*/

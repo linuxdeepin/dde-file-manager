@@ -108,7 +108,7 @@ DFMCrumbInterfacePrivate::DFMCrumbInterfacePrivate(DFMCrumbInterface *qq)
  * \class DFMCrumbInterface
  * \inmodule dde-file-manager-lib
  *
- * \brief DFMCrumbInterface is the interface for crumb item management for DFMCrumbBar
+ * \brief DFMCrumbInterface is the interface for crumb item management of DFMCrumbBar
  *
  * DFMCrumbInterface is the interface for crumb item management for DFMCrumbBar, and should
  * be implemented as a controller. Each different URL scheme got a corresponding controller
@@ -158,6 +158,11 @@ void DFMCrumbInterface::crumbUrlChangedBehavior(const DUrl url)
     crumbBar()->updateCrumbs(url);
 }
 
+/*!
+ * \brief Get the crumb bar instance.
+ *
+ * \return The crumb bar instance
+ */
 DFMCrumbBar *DFMCrumbInterface::crumbBar()
 {
     Q_D(DFMCrumbInterface);
@@ -165,6 +170,11 @@ DFMCrumbBar *DFMCrumbInterface::crumbBar()
     return d->crumbBar;
 }
 
+/*!
+ * \brief Set the crumb bar instance
+ *
+ * \param crumbBar The crumb bar instance pointer
+ */
 void DFMCrumbInterface::setCrumbBar(DFMCrumbBar *crumbBar)
 {
     Q_D(DFMCrumbInterface);

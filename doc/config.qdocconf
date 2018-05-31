@@ -9,6 +9,10 @@ headerdirs += ../
 macro.param             = "\\e"
 macro.return            = "Returns"
 
+naturallanguage         = en
+outputencoding          = UTF-8
+sourceencoding          = UTF-8
+
 sources.fileextensions = "*.cpp *.qdoc *.mm *.qml"
 headers.fileextensions = "*.h *.ch *.h++ *.hh *.hpp *.hxx"
 
