@@ -56,35 +56,35 @@ public:
         Q_UNUSED(target)
         Q_UNUSED(resultData)
 
+        if (event->type() != DFMEvent::MenuAction) {
+            return false;
+        }
+
         if (event->windowId() != viewHelper->windowId()) {
             return false;
         }
 
-        if (event->type() == DFMEvent::MenuAction) {
-            const DFMMenuActionEvent &menu_event = dfmevent_cast<DFMMenuActionEvent>(*event.data());
+        const DFMMenuActionEvent &menu_event = dfmevent_cast<DFMMenuActionEvent>(*event.data());
 
-            if (menu_event.action() != DFMGlobal::TagInfo)
-                return false;
+        if (menu_event.action() != DFMGlobal::TagInfo)
+            return false;
 
-            if (menu_event.selectedUrls().isEmpty())
-                return false;
+        if (menu_event.selectedUrls().isEmpty())
+            return false;
 
-            const QModelIndex &index = viewHelper->model()->index(menu_event.selectedUrls().first());
-            const QRect &rect = viewHelper->parent()->visualRect(index);
-            QStyleOptionViewItem option = viewHelper->parent()->viewOptions();
+        const QModelIndex &index = viewHelper->model()->index(menu_event.selectedUrls().first());
+        const QRect &rect = viewHelper->parent()->visualRect(index);
+        QStyleOptionViewItem option = viewHelper->parent()->viewOptions();
 
-            option.rect = rect;
+        option.rect = rect;
 
-            const QList<QRect> &geometry_list = viewHelper->itemDelegate()->paintGeomertys(option, index);
-            const QRect &icon_rect = geometry_list.first();
-            const QPoint &edit_pos = QPoint(icon_rect.x() + icon_rect.width() / 2, icon_rect.bottom());
+        const QList<QRect> &geometry_list = viewHelper->itemDelegate()->paintGeomertys(option, index);
+        const QRect &icon_rect = geometry_list.first();
+        const QPoint &edit_pos = QPoint(icon_rect.x() + icon_rect.width() / 2, icon_rect.bottom());
 
-            appController->showTagEdit(viewHelper->parent()->viewport()->mapToGlobal(edit_pos), menu_event.selectedUrls());
+        appController->showTagEdit(viewHelper->parent()->viewport()->mapToGlobal(edit_pos), menu_event.selectedUrls());
 
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
 private:
