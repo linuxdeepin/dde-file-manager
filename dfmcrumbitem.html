@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- dfmcrumbitem.cpp -->
+  <title>DFMCrumbItem Class | Deepin File Manager</title>
+  <link rel="stylesheet" type="text/css" href="style/online.css" />
+</head>
+<body>
+<div class="header" id="qtdocheader">
+    <div class="main">
+    <div class="main-rounded">
+        <div class="navigationbar">
+        <ul>
+<li>DFMCrumbItem</li>
+    </ul>
+    </div>
+</div>
+<div class="content">
+<div class="line">
+<div class="content mainContent">
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#protected-functions">Protected Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<div class="context">
+<h1 class="title">DFMCrumbItem Class</h1>
+<!-- $$$DFMCrumbItem-brief -->
+<p><a href="dfmcrumbitem.html">DFMCrumbItem</a> is the crumb item inside the crumb bar. <a href="#details">More...</a></p>
+<!-- @@@DFMCrumbItem -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;DFMCrumbItem&gt;</span>
+</td></tr></table></div><ul>
+<li><a href="dfmcrumbitem-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-functions"></a>
+<h2 id="public-functions">Public Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbitem.html#DFMCrumbItem">DFMCrumbItem</a></b>(const CrumbData &amp;<i>data</i>, QWidget *<i>parent</i> = nullptr)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbitem.html#dtor.DFMCrumbItem">~DFMCrumbItem</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbitem.html#setIconFromThemeConfig">setIconFromThemeConfig</a></b>(const QString &amp;<i>group</i>, const QString &amp;<i>key</i> = &quot;icon&quot;)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbitem.html#setText">setText</a></b>(const QString &amp;<i>text</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbitem.html#setUrl">setUrl</a></b>(const DUrl &amp;<i>url</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> DUrl </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbitem.html#url">url</a></b>() const</td></tr>
+</table></div>
+<a name="protected-functions"></a>
+<h2 id="protected-functions">Protected Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> virtual Qt::DropAction </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbitem.html#canDropMimeData">canDropMimeData</a></b>(const QMimeData *<i>data</i>, Qt::DropActions <i>actions</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbitem.html#dropMimeData">dropMimeData</a></b>(const QMimeData *<i>data</i>, Qt::DropAction <i>action</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbitem.html#paintEvent">paintEvent</a></b>(QPaintEvent *<i>event</i>)</td></tr>
+</table></div>
+<a name="details"></a>
+<!-- $$$DFMCrumbItem-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p><a href="dfmcrumbitem.html">DFMCrumbItem</a> is the crumb item inside the crumb bar.</p>
+<p><a href="dfmcrumbitem.html">DFMCrumbItem</a> is the crumb item which managed by the <a href="dfmcrumbbar.html">DFMCrumbBar</a> widget, it holds CrumbData which includes the url of the crumb item, the displaying text, and the icon of the item (if have)</p>
+</div>
+<p><b>See also </b><a href="dfmcrumbinterface.html">DFMCrumbInterface</a>, <a href="dfmcrumbmanager.html">DFMCrumbManager</a>, and <a href="dfmcrumbbar.html">DFMCrumbBar</a>.</p>
+<!-- @@@DFMCrumbItem -->
+<div class="func">
+<h2>Member Function Documentation</h2>
+<!-- $$$DFMCrumbItem[overload1]$$$DFMCrumbItemconstCrumbData&QWidget* -->
+<h3 class="fn" id="DFMCrumbItem"><a name="DFMCrumbItem"></a>DFMCrumbItem::<span class="name">DFMCrumbItem</span>(const <span class="type">CrumbData</span> &amp;<i>data</i>, <span class="type">QWidget</span> *<i>parent</i> = nullptr)</h3>
+<p>Default constructs an instance of DFMCrumbItem.</p><!-- @@@DFMCrumbItem -->
+<!-- $$$~DFMCrumbItem[overload1]$$$~DFMCrumbItem -->
+<h3 class="fn" id="dtor.DFMCrumbItem"><a name="dtor.DFMCrumbItem"></a>DFMCrumbItem::<span class="name">~DFMCrumbItem</span>()</h3>
+<p>Destroys the instance of DFMCrumbItem.</p><!-- @@@~DFMCrumbItem -->
+<!-- $$$canDropMimeData[overload1]$$$canDropMimeDataconstQMimeData*Qt::DropActions -->
+<h3 class="fn" id="canDropMimeData"><a name="canDropMimeData"></a><code>[virtual protected] </code><span class="type">Qt::DropAction</span> DFMCrumbItem::<span class="name">canDropMimeData</span>(const <span class="type">QMimeData</span> *<i>data</i>, <span class="type">Qt::DropActions</span> <i>actions</i>) const</h3>
+<!-- @@@canDropMimeData -->
+<!-- $$$dropMimeData[overload1]$$$dropMimeDataconstQMimeData*Qt::DropAction -->
+<h3 class="fn" id="dropMimeData"><a name="dropMimeData"></a><code>[virtual protected] </code><span class="type">bool</span> DFMCrumbItem::<span class="name">dropMimeData</span>(const <span class="type">QMimeData</span> *<i>data</i>, <span class="type">Qt::DropAction</span> <i>action</i>) const</h3>
+<!-- @@@dropMimeData -->
+<!-- $$$paintEvent[overload1]$$$paintEventQPaintEvent* -->
+<h3 class="fn" id="paintEvent"><a name="paintEvent"></a><code>[protected] </code><span class="type">void</span> DFMCrumbItem::<span class="name">paintEvent</span>(<span class="type">QPaintEvent</span> *<i>event</i>)</h3>
+<!-- @@@paintEvent -->
+<!-- $$$setIconFromThemeConfig[overload1]$$$setIconFromThemeConfigconstQString&constQString& -->
+<h3 class="fn" id="setIconFromThemeConfig"><a name="setIconFromThemeConfig"></a><span class="type">void</span> DFMCrumbItem::<span class="name">setIconFromThemeConfig</span>(const <span class="type">QString</span> &amp;<i>group</i>, const <span class="type">QString</span> &amp;<i>key</i> = &quot;icon&quot;)</h3>
+<p>Set icon from theme config.</p>
+<p><i>group</i> Item group name in theme config file <i>key</i> Icon key in theme config file</p>
+<p>When <i>group</i> is empty, item will display as non-icon crumb button.</p>
+<!-- @@@setIconFromThemeConfig -->
+<!-- $$$setText[overload1]$$$setTextconstQString& -->
+<h3 class="fn" id="setText"><a name="setText"></a><span class="type">void</span> DFMCrumbItem::<span class="name">setText</span>(const <span class="type">QString</span> &amp;<i>text</i>)</h3>
+<p>Set the display text of the crumb item.</p>
+<p><i>text</i> The display text which should be set.</p>
+<!-- @@@setText -->
+<!-- $$$setUrl[overload1]$$$setUrlconstDUrl& -->
+<h3 class="fn" id="setUrl"><a name="setUrl"></a><span class="type">void</span> DFMCrumbItem::<span class="name">setUrl</span>(const <span class="type">DUrl</span> &amp;<i>url</i>)</h3>
+<p>Set the url of the crumb item.</p>
+<p><i>url</i> The url to be set as.</p>
+<p><b>See also </b><a href="dfmcrumbitem.html#url">url</a>().</p>
+<!-- @@@setUrl -->
+<!-- $$$url[overload1]$$$url -->
+<h3 class="fn" id="url"><a name="url"></a><span class="type">DUrl</span> DFMCrumbItem::<span class="name">url</span>() const</h3>
+<p>Get the url of the crumb item.</p>
+<p>Returns url of the crumb item.</p>
+<p><b>See also </b><a href="dfmcrumbitem.html#setUrl">setUrl</a>().</p>
+<!-- @@@url -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

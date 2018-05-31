@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- dfilesystemwatcher.cpp -->
+  <title>DFileSystemWatcher Class | Deepin File Manager</title>
+  <link rel="stylesheet" type="text/css" href="style/online.css" />
+</head>
+<body>
+<div class="header" id="qtdocheader">
+    <div class="main">
+    <div class="main-rounded">
+        <div class="navigationbar">
+        <ul>
+<li>DFileSystemWatcher</li>
+    </ul>
+    </div>
+</div>
+<div class="content">
+<div class="line">
+<div class="content mainContent">
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<div class="context">
+<h1 class="title">DFileSystemWatcher Class</h1>
+<!-- $$$DFileSystemWatcher-brief -->
+<p>The <a href="dfilesystemwatcher.html">DFileSystemWatcher</a> class provides an interface for monitoring files and directories for modifications. <a href="#details">More...</a></p>
+<!-- @@@DFileSystemWatcher -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;DFileSystemWatcher&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Since:</td><td class="memItemRight bottomAlign">  Qt 4.2</td></tr></table></div><ul>
+<li><a href="dfilesystemwatcher-members.html">List of all members, including inherited members</a></li>
+</ul>
+<p><b>Note:</b> All functions in this class are reentrant.</p>
+<a name="public-functions"></a>
+<h2 id="public-functions">Public Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfilesystemwatcher.html#DFileSystemWatcher">DFileSystemWatcher</a></b>(QObject *<i>parent</i> = Q_NULLPTR)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfilesystemwatcher.html#DFileSystemWatcher-1">DFileSystemWatcher</a></b>(const QStringList &amp;<i>paths</i>, QObject *<i>parent</i> = Q_NULLPTR)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfilesystemwatcher.html#dtor.DFileSystemWatcher">~DFileSystemWatcher</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfilesystemwatcher.html#addPath">addPath</a></b>(const QString &amp;<i>path</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="dfilesystemwatcher.html#addPaths">addPaths</a></b>(const QStringList &amp;<i>paths</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="dfilesystemwatcher.html#directories">directories</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="dfilesystemwatcher.html#files">files</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfilesystemwatcher.html#removePath">removePath</a></b>(const QString &amp;<i>path</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="dfilesystemwatcher.html#removePaths">removePaths</a></b>(const QStringList &amp;<i>paths</i>)</td></tr>
+</table></div>
+<a name="signals"></a>
+<h2 id="signals">Signals</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfilesystemwatcher.html#fileAttributeChanged">fileAttributeChanged</a></b>(const QString &amp;<i>path</i>, const QString &amp;<i>name</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfilesystemwatcher.html#fileClosed">fileClosed</a></b>(const QString &amp;<i>path</i>, const QString &amp;<i>name</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfilesystemwatcher.html#fileCreated">fileCreated</a></b>(const QString &amp;<i>path</i>, const QString &amp;<i>name</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfilesystemwatcher.html#fileDeleted">fileDeleted</a></b>(const QString &amp;<i>path</i>, const QString &amp;<i>name</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfilesystemwatcher.html#fileModified">fileModified</a></b>(const QString &amp;<i>path</i>, const QString &amp;<i>name</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfilesystemwatcher.html#fileMoved">fileMoved</a></b>(const QString &amp;<i>fromPath</i>, const QString &amp;<i>fromName</i>, const QString &amp;<i>toPath</i>, const QString &amp;<i>toName</i>)</td></tr>
+</table></div>
+<a name="details"></a>
+<!-- $$$DFileSystemWatcher-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>The <a href="dfilesystemwatcher.html">DFileSystemWatcher</a> class provides an interface for monitoring files and directories for modifications.</p>
+<p><a href="dfilesystemwatcher.html">DFileSystemWatcher</a> monitors the file system for changes to files and directories by watching a list of specified paths.</p>
+<p>Call <a href="dfilesystemwatcher.html#addPath">addPath</a>() to watch a particular file or directory. Multiple paths can be added using the <a href="dfilesystemwatcher.html#addPaths">addPaths</a>() function. Existing paths can be removed by using the <a href="dfilesystemwatcher.html#removePath">removePath</a>() and <a href="dfilesystemwatcher.html#removePaths">removePaths</a>() functions.</p>
+<p><a href="dfilesystemwatcher.html">DFileSystemWatcher</a> examines each path added to it. Files that have been added to the <a href="dfilesystemwatcher.html">DFileSystemWatcher</a> can be accessed using the <a href="dfilesystemwatcher.html#files">files</a>() function, and directories using the <a href="dfilesystemwatcher.html#directories">directories</a>() function.</p>
+<p>The fileChanged() signal is emitted when a file has been modified, renamed or removed from disk. Similarly, the directoryChanged() signal is emitted when a directory or its contents is modified or removed. Note that <a href="dfilesystemwatcher.html">DFileSystemWatcher</a> stops monitoring files once they have been renamed or removed from disk, and directories once they have been removed from disk.</p>
+<p><b>Note: </b>On systems running a Linux kernel without inotify support, file systems that contain watched paths cannot be unmounted.</p><p><b>Note: </b>Windows CE does not support directory monitoring by default as this depends on the file system driver installed.</p><p><b>Note: </b>The act of monitoring files and directories for modifications consumes system resources. This implies there is a limit to the number of files and directories your process can monitor simultaneously. On all BSD variants, for example, an open file descriptor is required for each monitored file. Some system limits the number of open file descriptors to 256 by default. This means that <a href="dfilesystemwatcher.html#addPath">addPath</a>() and <a href="dfilesystemwatcher.html#addPaths">addPaths</a>() will fail if your process tries to add more than 256 files or directories to the file system monitor. Also note that your process may have other file descriptors open in addition to the ones for files being monitored, and these other open descriptors also count in the total. OS X uses a different backend and does not suffer from this issue.</p></div>
+<p><b>See also </b>QFile and QDir.</p>
+<!-- @@@DFileSystemWatcher -->
+<div class="func">
+<h2>Member Function Documentation</h2>
+<!-- $$$DFileSystemWatcher[overload1]$$$DFileSystemWatcherQObject* -->
+<h3 class="fn" id="DFileSystemWatcher"><a name="DFileSystemWatcher"></a>DFileSystemWatcher::<span class="name">DFileSystemWatcher</span>(<span class="type">QObject</span> *<i>parent</i> = Q_NULLPTR)</h3>
+<p>Constructs a new file system watcher object with the given <i>parent</i>.</p>
+<!-- @@@DFileSystemWatcher -->
+<!-- $$$DFileSystemWatcher$$$DFileSystemWatcherconstQStringList&QObject* -->
+<h3 class="fn" id="DFileSystemWatcher-1"><a name="DFileSystemWatcher-1"></a>DFileSystemWatcher::<span class="name">DFileSystemWatcher</span>(const <span class="type">QStringList</span> &amp;<i>paths</i>, <span class="type">QObject</span> *<i>parent</i> = Q_NULLPTR)</h3>
+<p>Constructs a new file system watcher object with the given <i>parent</i> which monitors the specified <i>paths</i> list.</p>
+<!-- @@@DFileSystemWatcher -->
+<!-- $$$~DFileSystemWatcher[overload1]$$$~DFileSystemWatcher -->
+<h3 class="fn" id="dtor.DFileSystemWatcher"><a name="dtor.DFileSystemWatcher"></a>DFileSystemWatcher::<span class="name">~DFileSystemWatcher</span>()</h3>
+<p>Destroys the file system watcher.</p>
+<!-- @@@~DFileSystemWatcher -->
+<!-- $$$addPath[overload1]$$$addPathconstQString& -->
+<h3 class="fn" id="addPath"><a name="addPath"></a><span class="type">bool</span> DFileSystemWatcher::<span class="name">addPath</span>(const <span class="type">QString</span> &amp;<i>path</i>)</h3>
+<p>Adds <i>path</i> to the file system watcher if <i>path</i> exists. The path is not added if it does not exist, or if it is already being monitored by the file system watcher.</p>
+<p>If <i>path</i> specifies a directory, the directoryChanged() signal will be emitted when <i>path</i> is modified or removed from disk; otherwise the fileChanged() signal is emitted when <i>path</i> is modified, renamed or removed.</p>
+<p>If the watch was successful, true is returned.</p>
+<p>Reasons for a watch failure are generally system-dependent, but may include the resource not existing, access failures, or the total watch count limit, if the platform has one.</p>
+<p><b>Note: </b>There may be a system dependent limit to the number of files and directories that can be monitored simultaneously. If this limit is been reached, <i>path</i> will not be monitored, and false is returned.</p><p><b>See also </b><a href="dfilesystemwatcher.html#addPaths">addPaths</a>() and <a href="dfilesystemwatcher.html#removePath">removePath</a>().</p>
+<!-- @@@addPath -->
+<!-- $$$addPaths[overload1]$$$addPathsconstQStringList& -->
+<h3 class="fn" id="addPaths"><a name="addPaths"></a><span class="type">QStringList</span> DFileSystemWatcher::<span class="name">addPaths</span>(const <span class="type">QStringList</span> &amp;<i>paths</i>)</h3>
+<p>Adds each path in <i>paths</i> to the file system watcher. Paths are not added if they not exist, or if they are already being monitored by the file system watcher.</p>
+<p>If a path specifies a directory, the directoryChanged() signal will be emitted when the path is modified or removed from disk; otherwise the fileChanged() signal is emitted when the path is modified, renamed, or removed.</p>
+<p>The return value is a list of paths that could not be watched.</p>
+<p>Reasons for a watch failure are generally system-dependent, but may include the resource not existing, access failures, or the total watch count limit, if the platform has one.</p>
+<p><b>Note: </b>There may be a system dependent limit to the number of files and directories that can be monitored simultaneously. If this limit has been reached, the excess <i>paths</i> will not be monitored, and they will be added to the returned QStringList.</p><p><b>See also </b><a href="dfilesystemwatcher.html#addPath">addPath</a>() and <a href="dfilesystemwatcher.html#removePaths">removePaths</a>().</p>
+<!-- @@@addPaths -->
+<!-- $$$directories[overload1]$$$directories -->
+<h3 class="fn" id="directories"><a name="directories"></a><span class="type">QStringList</span> DFileSystemWatcher::<span class="name">directories</span>() const</h3>
+<p>Returns a list of paths to directories that are being watched.</p>
+<p><b>See also </b><a href="dfilesystemwatcher.html#files">files</a>().</p>
+<!-- @@@directories -->
+<!-- $$$fileAttributeChanged[overload1]$$$fileAttributeChangedconstQString&constQString& -->
+<h3 class="fn" id="fileAttributeChanged"><a name="fileAttributeChanged"></a><code>[signal] </code><span class="type">void</span> DFileSystemWatcher::<span class="name">fileAttributeChanged</span>(const <span class="type">QString</span> &amp;<i>path</i>, const <span class="type">QString</span> &amp;<i>name</i>)</h3>
+<p><b>Note: </b>This is a private signal. It can be used in signal connections but cannot be emitted by the user.</p>
+<!-- @@@fileAttributeChanged -->
+<!-- $$$fileClosed[overload1]$$$fileClosedconstQString&constQString& -->
+<h3 class="fn" id="fileClosed"><a name="fileClosed"></a><code>[signal] </code><span class="type">void</span> DFileSystemWatcher::<span class="name">fileClosed</span>(const <span class="type">QString</span> &amp;<i>path</i>, const <span class="type">QString</span> &amp;<i>name</i>)</h3>
+<p><b>Note: </b>This is a private signal. It can be used in signal connections but cannot be emitted by the user.</p>
+<!-- @@@fileClosed -->
+<!-- $$$fileCreated[overload1]$$$fileCreatedconstQString&constQString& -->
+<h3 class="fn" id="fileCreated"><a name="fileCreated"></a><code>[signal] </code><span class="type">void</span> DFileSystemWatcher::<span class="name">fileCreated</span>(const <span class="type">QString</span> &amp;<i>path</i>, const <span class="type">QString</span> &amp;<i>name</i>)</h3>
+<p><b>Note: </b>This is a private signal. It can be used in signal connections but cannot be emitted by the user.</p>
+<!-- @@@fileCreated -->
+<!-- $$$fileDeleted[overload1]$$$fileDeletedconstQString&constQString& -->
+<h3 class="fn" id="fileDeleted"><a name="fileDeleted"></a><code>[signal] </code><span class="type">void</span> DFileSystemWatcher::<span class="name">fileDeleted</span>(const <span class="type">QString</span> &amp;<i>path</i>, const <span class="type">QString</span> &amp;<i>name</i>)</h3>
+<p><b>Note: </b>This is a private signal. It can be used in signal connections but cannot be emitted by the user.</p>
+<!-- @@@fileDeleted -->
+<!-- $$$fileModified[overload1]$$$fileModifiedconstQString&constQString& -->
+<h3 class="fn" id="fileModified"><a name="fileModified"></a><code>[signal] </code><span class="type">void</span> DFileSystemWatcher::<span class="name">fileModified</span>(const <span class="type">QString</span> &amp;<i>path</i>, const <span class="type">QString</span> &amp;<i>name</i>)</h3>
+<p><b>Note: </b>This is a private signal. It can be used in signal connections but cannot be emitted by the user.</p>
+<!-- @@@fileModified -->
+<!-- $$$fileMoved[overload1]$$$fileMovedconstQString&constQString&constQString&constQString& -->
+<h3 class="fn" id="fileMoved"><a name="fileMoved"></a><code>[signal] </code><span class="type">void</span> DFileSystemWatcher::<span class="name">fileMoved</span>(const <span class="type">QString</span> &amp;<i>fromPath</i>, const <span class="type">QString</span> &amp;<i>fromName</i>, const <span class="type">QString</span> &amp;<i>toPath</i>, const <span class="type">QString</span> &amp;<i>toName</i>)</h3>
+<p><b>Note: </b>This is a private signal. It can be used in signal connections but cannot be emitted by the user.</p>
+<!-- @@@fileMoved -->
+<!-- $$$files[overload1]$$$files -->
+<h3 class="fn" id="files"><a name="files"></a><span class="type">QStringList</span> DFileSystemWatcher::<span class="name">files</span>() const</h3>
+<p>Returns a list of paths to files that are being watched.</p>
+<p><b>See also </b><a href="dfilesystemwatcher.html#directories">directories</a>().</p>
+<!-- @@@files -->
+<!-- $$$removePath[overload1]$$$removePathconstQString& -->
+<h3 class="fn" id="removePath"><a name="removePath"></a><span class="type">bool</span> DFileSystemWatcher::<span class="name">removePath</span>(const <span class="type">QString</span> &amp;<i>path</i>)</h3>
+<p>Removes the specified <i>path</i> from the file system watcher.</p>
+<p>If the watch is successfully removed, true is returned.</p>
+<p>Reasons for watch removal failing are generally system-dependent, but may be due to the path having already been deleted, for example.</p>
+<p><b>See also </b><a href="dfilesystemwatcher.html#removePaths">removePaths</a>() and <a href="dfilesystemwatcher.html#addPath">addPath</a>().</p>
+<!-- @@@removePath -->
+<!-- $$$removePaths[overload1]$$$removePathsconstQStringList& -->
+<h3 class="fn" id="removePaths"><a name="removePaths"></a><span class="type">QStringList</span> DFileSystemWatcher::<span class="name">removePaths</span>(const <span class="type">QStringList</span> &amp;<i>paths</i>)</h3>
+<p>Removes the specified <i>paths</i> from the file system watcher.</p>
+<p>The return value is a list of paths which were not able to be unwatched successfully.</p>
+<p>Reasons for watch removal failing are generally system-dependent, but may be due to the path having already been deleted, for example.</p>
+<p><b>See also </b><a href="dfilesystemwatcher.html#removePath">removePath</a>() and <a href="dfilesystemwatcher.html#addPaths">addPaths</a>().</p>
+<!-- @@@removePaths -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

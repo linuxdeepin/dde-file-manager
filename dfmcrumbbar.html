@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- dfmcrumbbar.cpp -->
+  <title>DFMCrumbBar Class | Deepin File Manager</title>
+  <link rel="stylesheet" type="text/css" href="style/online.css" />
+</head>
+<body>
+<div class="header" id="qtdocheader">
+    <div class="main">
+    <div class="main-rounded">
+        <div class="navigationbar">
+        <ul>
+<li>DFMCrumbBar</li>
+    </ul>
+    </div>
+</div>
+<div class="content">
+<div class="line">
+<div class="content mainContent">
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#public-slots">Public Slots</a></li>
+<li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<div class="context">
+<h1 class="title">DFMCrumbBar Class</h1>
+<!-- $$$DFMCrumbBar-brief -->
+<p><a href="dfmcrumbbar.html">DFMCrumbBar</a> is the crumb bar widget of Deepin File Manager <a href="#details">More...</a></p>
+<!-- @@@DFMCrumbBar -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;DFMCrumbBar&gt;</span>
+</td></tr></table></div><ul>
+<li><a href="dfmcrumbbar-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-functions"></a>
+<h2 id="public-functions">Public Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbbar.html#DFMCrumbBar">DFMCrumbBar</a></b>(QWidget *<i>parent</i> = nullptr)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbbar.html#dtor.DFMCrumbBar">~DFMCrumbBar</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbbar.html#hideAddressBar">hideAddressBar</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbbar.html#showAddressBar">showAddressBar</a></b>(const QString &amp;<i>text</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbbar.html#showAddressBar-1">showAddressBar</a></b>(const DUrl &amp;<i>url</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbbar.html#updateCrumbs">updateCrumbs</a></b>(const DUrl &amp;<i>url</i>)</td></tr>
+</table></div>
+<a name="public-slots"></a>
+<h2 id="public-slots">Public Slots</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbbar.html#updateCurrentUrl">updateCurrentUrl</a></b>(const DUrl &amp;<i>url</i>)</td></tr>
+</table></div>
+<a name="signals"></a>
+<h2 id="signals">Signals</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbbar.html#addressBarContentEntered">addressBarContentEntered</a></b>(QString <i>content</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbbar.html#addressBarHidden">addressBarHidden</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbbar.html#addressBarShown">addressBarShown</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbbar.html#crumbItemClicked">crumbItemClicked</a></b>(DFMCrumbItem *<i>item</i>)</td></tr>
+</table></div>
+<a name="details"></a>
+<!-- $$$DFMCrumbBar-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p><a href="dfmcrumbbar.html">DFMCrumbBar</a> is the crumb bar widget of Deepin File Manager</p>
+<p><a href="dfmcrumbbar.html">DFMCrumbBar</a> is the crumb bar widget of Deepin File Manager, provide the interface to manage crumb bar state. Crumb bar holds a group of <a href="dfmcrumbitem.html">DFMCrumbItem</a> s, and crumb bar will be switch to <a href="dfmaddressbar.html">DFMAddressBar</a> when clicking empty space at crumb bar.</p>
+</div>
+<p><b>See also </b><a href="dfmcrumbinterface.html">DFMCrumbInterface</a>, <a href="dfmcrumbmanager.html">DFMCrumbManager</a>, and <a href="dfmcrumbitem.html">DFMCrumbItem</a>.</p>
+<!-- @@@DFMCrumbBar -->
+<div class="func">
+<h2>Member Function Documentation</h2>
+<!-- $$$DFMCrumbBar[overload1]$$$DFMCrumbBarQWidget* -->
+<h3 class="fn" id="DFMCrumbBar"><a name="DFMCrumbBar"></a>DFMCrumbBar::<span class="name">DFMCrumbBar</span>(<span class="type">QWidget</span> *<i>parent</i> = nullptr)</h3>
+<p>Default constructs an instance of DFMCrumbBar.</p><!-- @@@DFMCrumbBar -->
+<!-- $$$~DFMCrumbBar[overload1]$$$~DFMCrumbBar -->
+<h3 class="fn" id="dtor.DFMCrumbBar"><a name="dtor.DFMCrumbBar"></a>DFMCrumbBar::<span class="name">~DFMCrumbBar</span>()</h3>
+<p>Destroys the instance of DFMCrumbBar.</p><!-- @@@~DFMCrumbBar -->
+<!-- $$$addressBarContentEntered[overload1]$$$addressBarContentEnteredQString -->
+<h3 class="fn" id="addressBarContentEntered"><a name="addressBarContentEntered"></a><code>[signal] </code><span class="type">void</span> DFMCrumbBar::<span class="name">addressBarContentEntered</span>(<span class="type">QString</span> <i>content</i>)</h3>
+<!-- @@@addressBarContentEntered -->
+<!-- $$$addressBarHidden[overload1]$$$addressBarHidden -->
+<h3 class="fn" id="addressBarHidden"><a name="addressBarHidden"></a><code>[signal] </code><span class="type">void</span> DFMCrumbBar::<span class="name">addressBarHidden</span>()</h3>
+<p>Emit when the address bar got hidden.</p>
+<p><b>See also </b><a href="dfmaddressbar.html">DFMAddressBar</a>.</p>
+<!-- @@@addressBarHidden -->
+<!-- $$$addressBarShown[overload1]$$$addressBarShown -->
+<h3 class="fn" id="addressBarShown"><a name="addressBarShown"></a><code>[signal] </code><span class="type">void</span> DFMCrumbBar::<span class="name">addressBarShown</span>()</h3>
+<p>Emit when the address bar got shown.</p>
+<p><b>See also </b><a href="dfmaddressbar.html">DFMAddressBar</a>.</p>
+<!-- @@@addressBarShown -->
+<!-- $$$crumbItemClicked[overload1]$$$crumbItemClickedDFMCrumbItem* -->
+<h3 class="fn" id="crumbItemClicked"><a name="crumbItemClicked"></a><code>[signal] </code><span class="type">void</span> DFMCrumbBar::<span class="name">crumbItemClicked</span>(<span class="type"><a href="dfmcrumbitem.html">DFMCrumbItem</a></span> *<i>item</i>)</h3>
+<p>User clicked the crumb <i>item</i>.</p>
+<!-- @@@crumbItemClicked -->
+<!-- $$$hideAddressBar[overload1]$$$hideAddressBar -->
+<h3 class="fn" id="hideAddressBar"><a name="hideAddressBar"></a><span class="type">void</span> DFMCrumbBar::<span class="name">hideAddressBar</span>()</h3>
+<p>Hide the address bar.</p>
+<!-- @@@hideAddressBar -->
+<!-- $$$showAddressBar[overload1]$$$showAddressBarconstQString& -->
+<h3 class="fn" id="showAddressBar"><a name="showAddressBar"></a><span class="type">void</span> DFMCrumbBar::<span class="name">showAddressBar</span>(const <span class="type">QString</span> &amp;<i>text</i>)</h3>
+<p>Toggle and show the address bar.</p>
+<p><i>text</i> The text in the address bar.</p>
+<!-- @@@showAddressBar -->
+<!-- $$$showAddressBar$$$showAddressBarconstDUrl& -->
+<h3 class="fn" id="showAddressBar-1"><a name="showAddressBar-1"></a><span class="type">void</span> DFMCrumbBar::<span class="name">showAddressBar</span>(const <span class="type">DUrl</span> &amp;<i>url</i>)</h3>
+<p>Toggle and show the address bar.</p>
+<p><i>url</i> The url in the address bar.</p>
+<!-- @@@showAddressBar -->
+<!-- $$$updateCrumbs[overload1]$$$updateCrumbsconstDUrl& -->
+<h3 class="fn" id="updateCrumbs"><a name="updateCrumbs"></a><span class="type">void</span> DFMCrumbBar::<span class="name">updateCrumbs</span>(const <span class="type">DUrl</span> &amp;<i>url</i>)</h3>
+<p>Update crumbs in crumb bar by the given <i>url</i></p>
+<p><i>url</i> The newly switched url.</p>
+<p><a href="dfmcrumbbar.html">DFMCrumbBar</a> holds an instance of crumb controller (derived from <a href="dfmcrumbinterface.html">DFMCrumbInterface</a>), and when calling updateCrumb, it will check the current used crumb controller is supporting the given <i>url</i>. if isn't, we will create a new crumb controller form the registed controllers or the plugin list. Then we will call <a href="dfmcrumbinterface.html#seprateUrl">DFMCrumbInterface::seprateUrl</a> to seprate the url and call <a href="dfmcrumbinterface.html#createCrumbItem">DFMCrumbInterface::createCrumbItem</a> to create the crumb item. Finally, we added the created items to the crumb bar.</p>
+<!-- @@@updateCrumbs -->
+<!-- $$$updateCurrentUrl[overload1]$$$updateCurrentUrlconstDUrl& -->
+<h3 class="fn" id="updateCurrentUrl"><a name="updateCurrentUrl"></a><code>[slot] </code><span class="type">void</span> DFMCrumbBar::<span class="name">updateCurrentUrl</span>(const <span class="type">DUrl</span> &amp;<i>url</i>)</h3>
+<p>Call when toolbar url got changed.</p>
+<p><i>url</i> Current url which we changed to.</p>
+<!-- @@@updateCurrentUrl -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

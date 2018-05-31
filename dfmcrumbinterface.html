@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- dfmcrumbinterface.cpp -->
+  <title>DFMCrumbInterface Class | Deepin File Manager</title>
+  <link rel="stylesheet" type="text/css" href="style/online.css" />
+</head>
+<body>
+<div class="header" id="qtdocheader">
+    <div class="main">
+    <div class="main-rounded">
+        <div class="navigationbar">
+        <ul>
+<li>DFMCrumbInterface</li>
+    </ul>
+    </div>
+</div>
+<div class="content">
+<div class="line">
+<div class="content mainContent">
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-types">Public Types</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<div class="context">
+<h1 class="title">DFMCrumbInterface Class</h1>
+<!-- $$$DFMCrumbInterface-brief -->
+<p><a href="dfmcrumbinterface.html">DFMCrumbInterface</a> is the interface for crumb item management of <a href="dfmcrumbbar.html">DFMCrumbBar</a> <a href="#details">More...</a></p>
+<!-- @@@DFMCrumbInterface -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;DFMCrumbInterface&gt;</span>
+</td></tr></table></div><ul>
+<li><a href="dfmcrumbinterface-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-types"></a>
+<h2 id="public-types">Public Types</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbinterface.html#ActionType-enum">ActionType</a></b> { EscKeyPressed, ClearButtonPressed, AddressBarLostFocus }</td></tr>
+</table></div>
+<a name="public-functions"></a>
+<h2 id="public-functions">Public Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbinterface.html#DFMCrumbInterface">DFMCrumbInterface</a></b>(QObject *<i>parent</i> = 0)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbinterface.html#dtor.DFMCrumbInterface">~DFMCrumbInterface</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbinterface.html#cancelCompletionListTransmission">cancelCompletionListTransmission</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual DFMCrumbItem *</td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbinterface.html#createCrumbItem">createCrumbItem</a></b>(const CrumbData &amp;<i>data</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual DFMCrumbBar *</td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbinterface.html#crumbBar">crumbBar</a></b>() final</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbinterface.html#crumbUrlChangedBehavior">crumbUrlChangedBehavior</a></b>(const DUrl <i>url</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbinterface.html#processAction">processAction</a></b>(ActionType <i>type</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbinterface.html#requestCompletionList">requestCompletionList</a></b>(const DUrl &amp;<i>url</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual QList&lt;CrumbData&gt; </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbinterface.html#seprateUrl">seprateUrl</a></b>(const DUrl &amp;<i>url</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbinterface.html#setCrumbBar">setCrumbBar</a></b>(DFMCrumbBar *<i>crumbBar</i>) final</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbinterface.html#supportedUrl">supportedUrl</a></b>(DUrl <i>url</i>) = 0</td></tr>
+</table></div>
+<a name="signals"></a>
+<h2 id="signals">Signals</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbinterface.html#completionFound">completionFound</a></b>(const QStringList &amp;<i>completions</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbinterface.html#completionListTransmissionCompleted">completionListTransmissionCompleted</a></b>()</td></tr>
+</table></div>
+<a name="details"></a>
+<!-- $$$DFMCrumbInterface-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p><a href="dfmcrumbinterface.html">DFMCrumbInterface</a> is the interface for crumb item management of <a href="dfmcrumbbar.html">DFMCrumbBar</a></p>
+<p><a href="dfmcrumbinterface.html">DFMCrumbInterface</a> is the interface for crumb item management for <a href="dfmcrumbbar.html">DFMCrumbBar</a>, and should be implemented as a controller. Each different URL scheme got a corresponding controller for creating crumb items. <a href="dfmcrumbmanager.html">DFMCrumbManager</a> holds all avaliable crumb controllers.</p>
+<p><a href="dfmcrumbinterface.html">DFMCrumbInterface</a> provides all neccessary interfaces for crumb management and some URL processing utils functions.</p>
+</div>
+<p><b>See also </b><a href="dfmcrumbbar.html">DFMCrumbBar</a> and <a href="dfmcrumbmanager.html">DFMCrumbManager</a>.</p>
+<!-- @@@DFMCrumbInterface -->
+<div class="types">
+<h2>Member Type Documentation</h2>
+<!-- $$$ActionType$$$EscKeyPressed$$$ClearButtonPressed$$$AddressBarLostFocus -->
+<h3 class="fn" id="ActionType-enum"><a name="ActionType-enum"></a>enum DFMCrumbInterface::<span class="name">ActionType</span></h3>
+<!-- @@@ActionType -->
+</div>
+<div class="func">
+<h2>Member Function Documentation</h2>
+<!-- $$$DFMCrumbInterface[overload1]$$$DFMCrumbInterfaceQObject* -->
+<h3 class="fn" id="DFMCrumbInterface"><a name="DFMCrumbInterface"></a>DFMCrumbInterface::<span class="name">DFMCrumbInterface</span>(<span class="type">QObject</span> *<i>parent</i> = 0)</h3>
+<p>Default constructs an instance of DFMCrumbInterface.</p><!-- @@@DFMCrumbInterface -->
+<!-- $$$~DFMCrumbInterface[overload1]$$$~DFMCrumbInterface -->
+<h3 class="fn" id="dtor.DFMCrumbInterface"><a name="dtor.DFMCrumbInterface"></a>DFMCrumbInterface::<span class="name">~DFMCrumbInterface</span>()</h3>
+<p>Destroys the instance of DFMCrumbInterface.</p><!-- @@@~DFMCrumbInterface -->
+<!-- $$$cancelCompletionListTransmission[overload1]$$$cancelCompletionListTransmission -->
+<h3 class="fn" id="cancelCompletionListTransmission"><a name="cancelCompletionListTransmission"></a><code>[virtual] </code><span class="type">void</span> DFMCrumbInterface::<span class="name">cancelCompletionListTransmission</span>()</h3>
+<p>Cancel the started completion list transmission.</p>
+<p><b>See also </b><a href="dfmcrumbinterface.html#completionFound">completionFound</a>, <a href="dfmcrumbinterface.html#completionListTransmissionCompleted">completionListTransmissionCompleted</a>, and <a href="dfmcrumbinterface.html#requestCompletionList">requestCompletionList</a>.</p>
+<!-- @@@cancelCompletionListTransmission -->
+<!-- $$$completionFound[overload1]$$$completionFoundconstQStringList& -->
+<h3 class="fn" id="completionFound"><a name="completionFound"></a><code>[signal] </code><span class="type">void</span> DFMCrumbInterface::<span class="name">completionFound</span>(const <span class="type">QStringList</span> &amp;<i>completions</i>)</h3>
+<!-- @@@completionFound -->
+<!-- $$$completionListTransmissionCompleted[overload1]$$$completionListTransmissionCompleted -->
+<h3 class="fn" id="completionListTransmissionCompleted"><a name="completionListTransmissionCompleted"></a><code>[signal] </code><span class="type">void</span> DFMCrumbInterface::<span class="name">completionListTransmissionCompleted</span>()</h3>
+<!-- @@@completionListTransmissionCompleted -->
+<!-- $$$createCrumbItem[overload1]$$$createCrumbItemconstCrumbData& -->
+<h3 class="fn" id="createCrumbItem"><a name="createCrumbItem"></a><code>[virtual] </code><span class="type"><a href="dfmcrumbitem.html">DFMCrumbItem</a></span> *DFMCrumbInterface::<span class="name">createCrumbItem</span>(const <span class="type">CrumbData</span> &amp;<i>data</i>)</h3>
+<p>Creating crumb item by the given crumb data</p>
+<p><i>data</i> The crunb data used to create a crumb item.</p>
+<p>Returns Pointer of the created <a href="dfmcrumbitem.html">DFMCrumbItem</a></p>
+<!-- @@@createCrumbItem -->
+<!-- $$$crumbBar[overload1]$$$crumbBar -->
+<h3 class="fn" id="crumbBar"><a name="crumbBar"></a><code>[final virtual] </code><span class="type"><a href="dfmcrumbbar.html">DFMCrumbBar</a></span> *DFMCrumbInterface::<span class="name">crumbBar</span>()</h3>
+<p>Get the crumb bar instance.</p>
+<p>Returns The crumb bar instance</p>
+<p><b>See also </b><a href="dfmcrumbinterface.html#setCrumbBar">setCrumbBar</a>().</p>
+<!-- @@@crumbBar -->
+<!-- $$$crumbUrlChangedBehavior[overload1]$$$crumbUrlChangedBehaviorconstDUrl -->
+<h3 class="fn" id="crumbUrlChangedBehavior"><a name="crumbUrlChangedBehavior"></a><code>[virtual] </code><span class="type">void</span> DFMCrumbInterface::<span class="name">crumbUrlChangedBehavior</span>(const <span class="type">DUrl</span> <i>url</i>)</h3>
+<p>The crumb bar behavior when crumb bar url changed.</p>
+<p><i>url</i> The url which crumb bar changed to.</p>
+<!-- @@@crumbUrlChangedBehavior -->
+<!-- $$$processAction[overload1]$$$processActionActionType -->
+<h3 class="fn" id="processAction"><a name="processAction"></a><code>[virtual] </code><span class="type">void</span> DFMCrumbInterface::<span class="name">processAction</span>(<span class="type"><a href="dfmcrumbinterface.html#ActionType-enum">ActionType</a></span> <i>type</i>)</h3>
+<!-- @@@processAction -->
+<!-- $$$requestCompletionList[overload1]$$$requestCompletionListconstDUrl& -->
+<h3 class="fn" id="requestCompletionList"><a name="requestCompletionList"></a><code>[virtual] </code><span class="type">void</span> DFMCrumbInterface::<span class="name">requestCompletionList</span>(const <span class="type">DUrl</span> &amp;<i>url</i>)</h3>
+<p>Start request a completion list for address bar auto-completion.</p>
+<p><i>url</i> The base url need to be completed.</p>
+<p>Since completion list can be long, so we need do async completion. Calling this function will start a completion request and the completion list item will be sent via signal <a href="dfmcrumbinterface.html#completionFound">completionFound</a>. When user no longer need current completion list and the transmission isn't completed, you should call <a href="dfmcrumbinterface.html#cancelCompletionListTransmission">cancelCompletionListTransmission</a>. When transmission completed, it will send <a href="dfmcrumbinterface.html#completionListTransmissionCompleted">completionListTransmissionCompleted</a> signal.</p>
+<p><b>See also </b><a href="dfmcrumbinterface.html#completionFound">completionFound</a>, <a href="dfmcrumbinterface.html#completionListTransmissionCompleted">completionListTransmissionCompleted</a>, and <a href="dfmcrumbinterface.html#cancelCompletionListTransmission">cancelCompletionListTransmission</a>.</p>
+<!-- @@@requestCompletionList -->
+<!-- $$$seprateUrl[overload1]$$$seprateUrlconstDUrl& -->
+<h3 class="fn" id="seprateUrl"><a name="seprateUrl"></a><code>[virtual] </code><span class="type">QList</span>&lt;<span class="type">CrumbData</span>&gt; DFMCrumbInterface::<span class="name">seprateUrl</span>(const <span class="type">DUrl</span> &amp;<i>url</i>)</h3>
+<p>Seprate Url into a list of CrumbData for creating crumb items.</p>
+<p><i>url</i> The url to be seprated.</p>
+<p>Returns a list of CrumbData for creating crumb items.</p>
+<!-- @@@seprateUrl -->
+<!-- $$$setCrumbBar[overload1]$$$setCrumbBarDFMCrumbBar* -->
+<h3 class="fn" id="setCrumbBar"><a name="setCrumbBar"></a><code>[final virtual] </code><span class="type">void</span> DFMCrumbInterface::<span class="name">setCrumbBar</span>(<span class="type"><a href="dfmcrumbbar.html">DFMCrumbBar</a></span> *<i>crumbBar</i>)</h3>
+<p>Set the crumb bar instance</p>
+<p><i>crumbBar</i> The crumb bar instance pointer</p>
+<p><b>See also </b><a href="dfmcrumbinterface.html#crumbBar">crumbBar</a>().</p>
+<!-- @@@setCrumbBar -->
+<!-- $$$supportedUrl[overload1]$$$supportedUrlDUrl -->
+<h3 class="fn" id="supportedUrl"><a name="supportedUrl"></a><code>[pure virtual] </code><span class="type">bool</span> DFMCrumbInterface::<span class="name">supportedUrl</span>(<span class="type">DUrl</span> <i>url</i>)</h3>
+<p>Check if the given <i>url</i> is supported in this controller.</p>
+<!-- @@@supportedUrl -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

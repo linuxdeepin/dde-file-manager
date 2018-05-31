@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- crumb_zh.qdoc -->
+  <title>Crumb Bar and Address Bar (zh) | Deepin File Manager</title>
+  <link rel="stylesheet" type="text/css" href="style/online.css" />
+</head>
+<body>
+<div class="header" id="qtdocheader">
+    <div class="main">
+    <div class="main-rounded">
+        <div class="navigationbar">
+        <ul>
+<li>Crumb Bar and Address Bar (zh)</li>
+    </ul>
+    </div>
+</div>
+<div class="content">
+<div class="line">
+<div class="content mainContent">
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#">结构关系</a></li>
+<li class="level1"><a href="#">面包屑栏</a></li>
+<li class="level2"><a href="#">控件结构</a></li>
+<li class="level2"><a href="#">相关类</a></li>
+<li class="level1"><a href="#">面包屑项</a></li>
+<li class="level2"><a href="#">控件结构</a></li>
+<li class="level2"><a href="#">相关类</a></li>
+<li class="level1"><a href="#">地址栏</a></li>
+<li class="level2"><a href="#">控件结构</a></li>
+<li class="level2"><a href="#">相关类</a></li>
+<li class="level1"><a href="#">面包屑插件</a></li>
+<li class="level2"><a href="#">相关类</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<div class="context">
+<h1 class="title">Crumb Bar and Address Bar (zh)</h1>
+<span class="subtitle"></span>
+<!-- $$$crumb-zh.html-description -->
+<div class="descr"> <a name="details"></a>
+<p>面包屑栏 和 地址栏</p>
+<a name=""></a>
+<h2 id="">结构关系</h2>
+<p>面包屑新增的类共三个，即 <b>面包屑栏</b> <a href="dfmcrumbbar.html">DFMCrumbBar</a> , <b>面包屑项</b> <a href="dfmcrumbitem.html">DFMCrumbItem</a> 和 <b>地址栏</b> <a href="dfmaddressbar.html">DFMAddressBar</a> 。其中 <b>地址栏</b> 由 <b>面包屑栏</b> 管理， <b>面包屑栏</b> 由 DToolbar 管理，二 者互相独立，而 <b>面包屑项</b> 则由 <b>面包屑栏</b> 管理。</p>
+<p>另外根据需求我们需要提供插件接口并实现预制插件支持现有的协议，新增插件接口类 <a href="dfmcrumbinterface.html">DFMCrumbInterface</a> 和相应实现类（称为<i>面包屑栏控制器</i>，<i>CrumbController</i>）。插件类的注册和加载由 <a href="dfmcrumbmanager.html">DFMCrumbManager</a> 管理，并且 <b>地址栏</b> 和 <b>面包屑栏</b> 分别持有自己独立的面包屑栏控制器。</p>
+<a name=""></a>
+<h2 id="">面包屑栏</h2>
+<a name=""></a>
+<h3 >控件结构</h3>
+<p>使用 `QHBoxLayout` 盛放栏内主要内容，共三项，左箭头、面包屑容器 和 右箭头。箭头默认隐藏，当面包屑容 器宽度不足以完整显示面包屑容器内的项时据情况显示左右箭头。</p>
+<p>面包屑容器使用 QScrollArea 作为容器， QHBoxLayout 做为布局并将 <b>面包屑项</b> <a href="dfmcrumbitem.html">DFMCrumbItem</a> 至于其中。</p>
+<p>由于面包屑栏也负责管理地址栏 <a href="dfmaddressbar.html">DFMAddressBar</a> 的状态，故除了面包屑栏状态外还负责地址栏的显示隐藏和状态的管理。</p>
+<a name=""></a>
+<h3 >相关类</h3>
+<p>详细文档请见 <a href="dfmcrumbbar.html">DFMCrumbBar</a> 。</p>
+<a name=""></a>
+<h2 id="">面包屑项</h2>
+<a name=""></a>
+<h3 >控件结构</h3>
+<p>使用 QPushButton 作为面包屑项，接受点击和 Drop 事件。每个项均可设置文字和/或图标。点击时将跳转到项所指的 Url ， Drop 时复制文件到所指 Url 。</p>
+<a name=""></a>
+<h3 >相关类</h3>
+<p>为了方便新增一个简单的纯数据类（于 <a href="dfmcrumbinterface.html">DFMCrumbInterface</a> ，其构造函数此处省略）：</p>
+<p>class CrumbData { DUrl url; QString iconName; QString displayText; QString iconKey = &quot;icon&quot;; };</p>
+<p>详细文档请见 <a href="dfmcrumbitem.html">DFMCrumbItem</a> 。</p>
+<a name=""></a>
+<h2 id="">地址栏</h2>
+<a name=""></a>
+<h3 >控件结构</h3>
+<p>使用 `QLineEdit` ，状态由面包屑栏管理。</p>
+<p>搜索栏应维护一个候选列表用于其接管的候选词列表控件（使用 `QStringListModel`）。用户输入时应检查候选词 列表并更新候选列表控件状态，补全状态。应响应 Tab 键补全。</p>
+<a name=""></a>
+<h3 >相关类</h3>
+<p>详细文档请见 <a href="dfmaddressbar.html">DFMAddressBar</a> 。</p>
+<a name=""></a>
+<h2 id="">面包屑插件</h2>
+<p>面包屑插件的任务为为（额外的）协议提供分割路径的功能。</p>
+<p>加载面包屑通过如下固定的 IID 识别区分插件：</p>
+<p>``` c++ #define DFMCrumbFactoryInterface_iid &quot;com.deepin.filemanager.DFMCrumbFactoryInterface_iid&quot; ```</p>
+<p>加载插件时通过 Url 的 scheme 作为插件 key ，当存在多个插件注册同一个 key 时，使用最后一个注册的插件。</p>
+<p>- 插件的识别注册： <a href="dfmcrumbmanager.html">DFMCrumbManager</a> (单例) - 插件实例工厂： `DFMCrumbFactory`, 其 `create(key)` 返回新 <a href="dfmcrumbinterface.html">DFMCrumbInterface</a> 实例的指针。</p>
+<p>由于插件应该能够针对不同的 Url 的 scheme 使得面包屑栏做出不同的行为，故插件接口类持有一个 `<a href="dfmcrumbbar.html">DFMCrumbBar</a>` 实例的指针用以访问面包屑栏。</p>
+<a name=""></a>
+<h3 >相关类</h3>
+<p>详细文档请见 <a href="dfmcrumbmanager.html">DFMCrumbManager</a> ， <a href="dfmcrumbinterface.html">DFMCrumbInterface</a> 。</p>
+</div>
+<!-- @@@crumb-zh.html -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

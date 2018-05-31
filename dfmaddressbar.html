@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- dfmaddressbar.cpp -->
+  <title>DFMAddressBar Class | Deepin File Manager</title>
+  <link rel="stylesheet" type="text/css" href="style/online.css" />
+</head>
+<body>
+<div class="header" id="qtdocheader">
+    <div class="main">
+    <div class="main-rounded">
+        <div class="navigationbar">
+        <ul>
+<li>DFMAddressBar</li>
+    </ul>
+    </div>
+</div>
+<div class="content">
+<div class="line">
+<div class="content mainContent">
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-types">Public Types</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<div class="context">
+<h1 class="title">DFMAddressBar Class</h1>
+<!-- $$$DFMAddressBar-brief -->
+<p><a href="dfmaddressbar.html">DFMAddressBar</a> is the address bar of the file manager <a href="#details">More...</a></p>
+<!-- @@@DFMAddressBar -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;DFMAddressBar&gt;</span>
+</td></tr></table></div><ul>
+<li><a href="dfmaddressbar-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-types"></a>
+<h2 id="public-types">Public Types</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#IndicatorType-enum">IndicatorType</a></b> { Search, JumpTo }</td></tr>
+</table></div>
+<a name="public-functions"></a>
+<h2 id="public-functions">Public Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#DFMAddressBar">DFMAddressBar</a></b>(DFMCrumbBar *<i>parent</i> = 0)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QCompleter *</td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#completer">completer</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#setCompleter">setCompleter</a></b>(QCompleter *<i>c</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#setCurrentUrl">setCurrentUrl</a></b>(const DUrl &amp;<i>path</i>)</td></tr>
+</table></div>
+<a name="signals"></a>
+<h2 id="signals">Signals</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#clearButtonPressed">clearButtonPressed</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#escKeyPressed">escKeyPressed</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#lostFocus">lostFocus</a></b>()</td></tr>
+</table></div>
+<a name="details"></a>
+<!-- $$$DFMAddressBar-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p><a href="dfmaddressbar.html">DFMAddressBar</a> is the address bar of the file manager</p>
+<p>The address bar is also the search bar, it can also handle search job. The address bar is managed by the crumb bar.</p>
+</div>
+<p><b>See also </b><a href="dfmcrumbbar.html">DFMCrumbBar</a> and <a href="dfmcrumbinterface.html">DFMCrumbInterface</a>.</p>
+<!-- @@@DFMAddressBar -->
+<div class="types">
+<h2>Member Type Documentation</h2>
+<!-- $$$IndicatorType$$$Search$$$JumpTo -->
+<h3 class="fn" id="IndicatorType-enum"><a name="IndicatorType-enum"></a>enum DFMAddressBar::<span class="name">IndicatorType</span></h3>
+<!-- @@@IndicatorType -->
+</div>
+<div class="func">
+<h2>Member Function Documentation</h2>
+<!-- $$$DFMAddressBar[overload1]$$$DFMAddressBarDFMCrumbBar* -->
+<h3 class="fn" id="DFMAddressBar"><a name="DFMAddressBar"></a>DFMAddressBar::<span class="name">DFMAddressBar</span>(<span class="type"><a href="dfmcrumbbar.html">DFMCrumbBar</a></span> *<i>parent</i> = 0)</h3>
+<p>Default constructs an instance of DFMAddressBar.</p><!-- @@@DFMAddressBar -->
+<!-- $$$clearButtonPressed[overload1]$$$clearButtonPressed -->
+<h3 class="fn" id="clearButtonPressed"><a name="clearButtonPressed"></a><code>[signal] </code><span class="type">void</span> DFMAddressBar::<span class="name">clearButtonPressed</span>()</h3>
+<!-- @@@clearButtonPressed -->
+<!-- $$$completer[overload1]$$$completer -->
+<h3 class="fn" id="completer"><a name="completer"></a><span class="type">QCompleter</span> *DFMAddressBar::<span class="name">completer</span>() const</h3>
+<p><b>See also </b><a href="dfmaddressbar.html#setCompleter">setCompleter</a>().</p>
+<!-- @@@completer -->
+<!-- $$$escKeyPressed[overload1]$$$escKeyPressed -->
+<h3 class="fn" id="escKeyPressed"><a name="escKeyPressed"></a><code>[signal] </code><span class="type">void</span> DFMAddressBar::<span class="name">escKeyPressed</span>()</h3>
+<!-- @@@escKeyPressed -->
+<!-- $$$lostFocus[overload1]$$$lostFocus -->
+<h3 class="fn" id="lostFocus"><a name="lostFocus"></a><code>[signal] </code><span class="type">void</span> DFMAddressBar::<span class="name">lostFocus</span>()</h3>
+<!-- @@@lostFocus -->
+<!-- $$$setCompleter[overload1]$$$setCompleterQCompleter* -->
+<h3 class="fn" id="setCompleter"><a name="setCompleter"></a><span class="type">void</span> DFMAddressBar::<span class="name">setCompleter</span>(<span class="type">QCompleter</span> *<i>c</i>)</h3>
+<p><b>See also </b><a href="dfmaddressbar.html#completer">completer</a>().</p>
+<!-- @@@setCompleter -->
+<!-- $$$setCurrentUrl[overload1]$$$setCurrentUrlconstDUrl& -->
+<h3 class="fn" id="setCurrentUrl"><a name="setCurrentUrl"></a><span class="type">void</span> DFMAddressBar::<span class="name">setCurrentUrl</span>(const <span class="type">DUrl</span> &amp;<i>path</i>)</h3>
+<!-- @@@setCurrentUrl -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
