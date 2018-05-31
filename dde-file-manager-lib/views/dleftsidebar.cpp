@@ -261,7 +261,7 @@ void DLeftSideBar::handdleRequestDiskInfosFinihsed()
     if (currentUrl.isValid()) {
         if (deviceListener->getDeviceMediaType(currentUrl.path()) == UDiskDeviceInfo::removable){
             if (m_toolbar){
-                m_toolbar->setCrumbBar(currentUrl);
+                //m_toolbar->setCrumbBar(currentUrl);
                 DBookmarkItem* item =  m_scene->hasBookmarkItem(currentUrl);
                 if (item){
                     item->setChecked(true);

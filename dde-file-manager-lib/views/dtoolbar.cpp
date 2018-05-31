@@ -190,6 +190,7 @@ void DToolBar::initConnect()
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DToolBar::currentUrlChanged);
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlF, this, &DToolBar::handleHotkeyCtrlF);
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlL, this, &DToolBar::handleHotkeyCtrlL);
+    connect(this, &DToolBar::toolbarUrlChanged, m_crumbWidget, &DFMCrumbBar::updateCurrentUrl);
 }
 
 DFMCrumbBar *DToolBar::getCrumbWidget()
@@ -272,21 +273,7 @@ void DToolBar::currentUrlChanged(const DFMEvent &event)
         return;
     }
 
-    if (event.fileUrl().isSearchFile()) {
-//        m_searchBar->show();
-        m_crumbWidget->showAddressBar(event.fileUrl().searchKeyword());
-//        m_searchBar->setAlignment(Qt::AlignLeft);
-//        m_searchBar->clear();
-//        //m_searchBar->setActive(true);
-//        m_searchBar->setFocus();
-//        m_searchBar->setText(event.fileUrl().searchKeyword());
-        //m_searchBar->getPopupList()->hide();
-    } else {
-//        m_searchBar->hide();
-        m_crumbWidget->hideAddressBar();
-        m_searchButton->show();
-        setCrumbBar(event.fileUrl());
-    }
+    emit toolbarUrlChanged(event.fileUrl());
 
     if (event.sender() == this) {
         return;
@@ -384,11 +371,6 @@ void DToolBar::moveNavStacks(int from, int to){
 
 int DToolBar::navStackCount() const{
     return m_navStacks.count();
-}
-
-void DToolBar::setCrumbBar(const DUrl &url)
-{
-    m_crumbWidget->updateCrumbs(url);
 }
 
 void DToolBar::updateBackForwardButtonsState()

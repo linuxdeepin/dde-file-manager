@@ -34,6 +34,7 @@ public:
     ~DFMSearchCrumbController();
 
     void processAction(ActionType type) override;
+    void crumbUrlChangedBehavior(const DUrl url);
     bool supportedUrl(DUrl url) override;
 };
 
