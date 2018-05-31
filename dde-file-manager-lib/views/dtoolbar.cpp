@@ -57,6 +57,17 @@
 const int DToolBar::ButtonWidth = 24;
 const int DToolBar::ButtonHeight = 24;
 
+/*!
+ * \class DToolBar
+ *
+ * \brief DToolBar is the toolbar (topbar) of the file manager
+ *
+ * This widget is the container of the navigation arrows, switching view buttons, menu button,
+ * search button and the crumb bar (and also the address bar).
+ *
+ * \sa DFMCrumbBar, DFMAddressBar
+ */
+
 DToolBar::DToolBar(QWidget *parent) : QFrame(parent)
 {
     initData();
@@ -213,7 +224,7 @@ void DToolBar::searchBarDeactivated()
 }
 
 /**
- * @brief DToolBar::searchBarTextEntered
+ * \brief DToolBar::searchBarTextEntered
  *
  * Set the tab bar when return press is detected
  * on search bar.
