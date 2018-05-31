@@ -54,13 +54,8 @@ DFileDialogHandle::DFileDialogHandle(QWidget *parent)
     : QObject(parent)
     , d_ptr(new DFileDialogHandlePrivate(this))
 {
-    //bug: https://tower.im/projects/1d2977ef6b194727a97f96409f77038c/todos/f5937609238b46f1b9d1d769d2a08fad/
-    QString oldThemeName = DThemeManager::instance()->theme();
-    QSignalBlocker blocker(DThemeManager::instance());
-    DThemeManager::instance()->setTheme("light");
     d_func()->dialog = new DFileDialog(parent);
-    DThemeManager::instance()->setTheme(oldThemeName);
-    blocker.unblock();
+    DThemeManager::instance()->setTheme(d_func()->dialog, "light");
 
     connect(d_func()->dialog, &DFileDialog::accepted, this, &DFileDialogHandle::accepted);
     connect(d_func()->dialog, &DFileDialog::rejected, this, &DFileDialogHandle::rejected);
