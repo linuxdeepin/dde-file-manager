@@ -22,7 +22,7 @@
 
     \section1 结构关系
 
-    面包屑新增的类共三个，即 \b{面包屑栏} DFMCrumbBar , \b{面包屑项} DFMCrumbItem 和 \b{地址栏} 
+    面包屑新增的类共三个，即 \b{面包屑栏} DFMCrumbBar , \b{面包屑项} DFMCrumbItem 和 \b{地址栏}
     DFMAddressBar 。其中 \b{地址栏} 由 \b{面包屑栏} 管理， \b{面包屑栏} 由 DToolbar 管理，二
     者互相独立，而 \b{面包屑项} 则由 \b{面包屑栏} 管理。
 
