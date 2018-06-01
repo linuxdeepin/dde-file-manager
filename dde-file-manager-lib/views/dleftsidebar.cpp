@@ -341,19 +341,19 @@ void DLeftSideBar::paintEvent(QPaintEvent *event)
 
 void DLeftSideBar::loadBookmark()
 {
-    QList<BookMarkPointer> m_list = bookmarkManager->getBookmarks();
-    if(m_list.size())
-    {
-        m_scene->addSeparator();
-    }
-    for(int i = 0; i < m_list.size(); i++)
-    {
-        BookMarkPointer bm = m_list.at(i);
-        DBookmarkItem * item = m_scene->createCustomBookmark(bm->getName(), bm->sourceUrl());
-        item->setIsCustomBookmark(true);
-        item->setBookmarkModel(bm);
-        m_scene->addItem(item);
-    }
+//    QList<BookMarkPointer> m_list = bookmarkManager->getBookmarks();
+//    if(m_list.size())
+//    {
+//        m_scene->addSeparator();
+//    }
+//    for(int i = 0; i < m_list.size(); i++)
+//    {
+//        BookMarkPointer bm = m_list.at(i);
+//        DBookmarkItem * item = m_scene->createCustomBookmark(bm->getName(), bm->sourceUrl());
+//        item->setIsCustomBookmark(true);
+//        item->setBookmarkModel(bm);
+//        m_scene->addItem(item);
+//    }
 }
 
 void DLeftSideBar::loadTagBookMarkItem()

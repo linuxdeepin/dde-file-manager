@@ -93,9 +93,7 @@ HEADERS += \
     models/desktopfileinfo.h \
     models/bookmark.h \
     models/searchhistory.h \
-    models/fmstate.h \
     controllers/bookmarkmanager.h \
-    controllers/basemanager.h \
     dialogs/dialogmanager.h \
     controllers/searchhistroymanager.h \
     views/windowmanager.h \
@@ -278,9 +276,7 @@ SOURCES += \
     models/desktopfileinfo.cpp \
     models/bookmark.cpp \
     models/searchhistory.cpp \
-    models/fmstate.cpp \
     controllers/bookmarkmanager.cpp \
-    controllers/basemanager.cpp \
     dialogs/dialogmanager.cpp \
     controllers/searchhistroymanager.cpp \
     views/windowmanager.cpp \

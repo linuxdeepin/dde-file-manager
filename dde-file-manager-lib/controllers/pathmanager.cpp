@@ -32,7 +32,8 @@
 #include <QDir>
 #include "interfaces/dfmstandardpaths.h"
 
-PathManager::PathManager(QObject *parent) : QObject(parent)
+PathManager::PathManager(QObject *parent)
+    : QObject(parent)
 {
     initPaths();
 }
@@ -136,14 +137,6 @@ QString PathManager::getSystemPathIconNameByPath(QString path)
     }
     return QString();
 }
-
-
-QString PathManager::getSystemCachePath()
-{
-//    return QString("%1/%2").arg(StandardPath::getCachePath(), "systempath.json");
-    return getConfigPath("systempath");
-}
-
 
 void PathManager::loadSystemPaths()
 {

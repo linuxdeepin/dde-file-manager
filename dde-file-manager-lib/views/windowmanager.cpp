@@ -36,8 +36,6 @@
 #include "app/filesignalmanager.h"
 #include "dfmevent.h"
 
-#include "models/fmstate.h"
-
 #include "fileoperations/filejob.h"
 
 #include "dialogs/dialogmanager.h"

@@ -29,10 +29,9 @@
 #include <QMap>
 #include <QSet>
 
-#include "basemanager.h"
 #include "durl.h"
 
-class PathManager : public QObject, public BaseManager
+class PathManager : public QObject
 {
     Q_OBJECT
 
@@ -47,8 +46,6 @@ public:
     QString getSystemPathDisplayNameByPath(QString path);
     QString getSystemPathIconName(QString key);
     QString getSystemPathIconNameByPath(QString path);
-
-    static QString getSystemCachePath();
 
     QMap<QString, QString> systemPathsMap() const;
     QMap<QString, QString> systemPathDisplayNamesMap() const;

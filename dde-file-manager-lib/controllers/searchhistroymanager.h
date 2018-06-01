@@ -25,29 +25,16 @@
 #ifndef SEARCHHISTROYMANAGER_H
 #define SEARCHHISTROYMANAGER_H
 
-#include <QObject>
+#include <QStringList>
 
-#include "basemanager.h"
-
-class SearchHistory;
-
-class SearchHistroyManager : public QObject, public BaseManager
+class SearchHistroyManager
 {
-    Q_OBJECT
 public:
-    explicit SearchHistroyManager(QObject *parent = 0);
+    explicit SearchHistroyManager();
     ~SearchHistroyManager();
-    void load();
-    void save();
-    QStringList toStringList();
-    static QString getSearchHistroyCachePath();
-private:
-    void loadJson(const QJsonObject &json);
-    void writeJson(QJsonObject &json);
-    QList<SearchHistory *> m_historyList;
-    QStringList m_stringList;
 
-public slots:
+    QStringList toStringList();
+
     void writeIntoSearchHistory(QString keyword);
 };
 

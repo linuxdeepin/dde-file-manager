@@ -30,20 +30,17 @@
 BookMark::BookMark(const DUrl &url)
     : DAbstractFileInfo(url)
 {
-    m_name = url.bookmarkName();
-
-    DUrl target(url.path());
+    DUrl target = url.bookmarkTargetUrl();
 
     if (target.isValid()) {
         setProxy(DFileService::instance()->createFileInfo(nullptr, target));
     }
 }
 
-BookMark::BookMark(QDateTime time, const QString &name, const DUrl &sourceUrl)
+BookMark::BookMark(const QString &name, const DUrl &sourceUrl)
     : BookMark(DUrl::fromBookMarkFile(sourceUrl, name))
 {
-    m_time = time;
-    m_name = name;
+
 }
 
 BookMark::~BookMark()
@@ -51,52 +48,14 @@ BookMark::~BookMark()
 
 }
 
-QDateTime BookMark::getDateTime()
-{
-    return m_time;
-}
-
 DUrl BookMark::sourceUrl() const
 {
-    return DUrl(fileUrl().path());
-}
-
-void BookMark::setDateTime(QDateTime time)
-{
-    m_time = time;
-}
-
-void BookMark::setName(const QString &name)
-{
-    DUrl tmpUrl = fileUrl();
-    tmpUrl.setBookmarkName(name);
-    setUrl(tmpUrl);
-    m_name = name;
+    return fileUrl().bookmarkTargetUrl();
 }
 
 QString BookMark::getName() const
 {
-    return m_name;
-}
-
-QString BookMark::getDevcieId() const
-{
-    return m_devcieId;
-}
-
-void BookMark::setDevcieId(const QString &devcieId)
-{
-    m_devcieId = devcieId;
-}
-
-QString BookMark::getUuid() const
-{
-    return m_uuid;
-}
-
-void BookMark::setUuid(const QString &uuid)
-{
-    m_uuid = uuid;
+    return fileUrl().bookmarkName();
 }
 
 QString BookMark::fileDisplayName() const
@@ -122,7 +81,17 @@ DUrl BookMark::parentUrl() const
 DUrl BookMark::getUrlByNewFileName(const QString &name) const
 {
     DUrl new_url = fileUrl();
-    new_url.setFragment(name);
+    new_url.setBookmarkName(name);
 
     return new_url;
+}
+
+QDateTime BookMark::created() const
+{
+    return m_created;
+}
+
+QDateTime BookMark::lastModified() const
+{
+    return m_lastModified;
 }
