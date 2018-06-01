@@ -218,7 +218,7 @@ void DBookmarkItem::editFinished()
             DFileService::instance()->renameFile(nullptr, oldTag, newTag);
     } else {
         if (!m_lineEdit->text().isEmpty() && m_lineEdit->text() != m_textContent) {
-            bookmarkManager->renameBookmark(getBookmarkModel(), m_lineEdit->text());
+//            bookmarkManager->renameBookmark(getBookmarkModel(), m_lineEdit->text());
             emit fileSignalManager->bookmarkRenamed(m_lineEdit->text(), event);
             m_textContent = m_lineEdit->text();
         }
@@ -717,32 +717,32 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             qDebug() << FileUtils::isFileExists(m_url.path());
 
             if (!dir.exists() && !m_isDefault) {
-                qDebug() << this << m_bookmarkModel->getDevcieId();
+//                qDebug() << this << m_bookmarkModel->getDevcieId();
 
-                DUrl deviceUrl(m_bookmarkModel->getDevcieId());
+//                DUrl deviceUrl(m_bookmarkModel->getDevcieId());
 
-                qDebug() << m_bookmarkModel->getDevcieId() << deviceUrl << NetworkManager::SupportScheme.contains(deviceUrl.scheme());
+//                qDebug() << m_bookmarkModel->getDevcieId() << deviceUrl << NetworkManager::SupportScheme.contains(deviceUrl.scheme());
 
-                if (NetworkManager::SupportScheme.contains(deviceUrl.scheme())) {
-                    setMountBookmark(true);
-                    emit fileSignalManager->requestFetchNetworks(DFMUrlBaseEvent(this, deviceUrl));
-                    return;
-                }
+//                if (NetworkManager::SupportScheme.contains(deviceUrl.scheme())) {
+//                    setMountBookmark(true);
+//                    emit fileSignalManager->requestFetchNetworks(DFMUrlBaseEvent(this, deviceUrl));
+//                    return;
+//                }
 
                 /*handle bookmark of luks device when device is unmounted*/
-                if (m_bookmarkModel->getDevcieId().startsWith("/dev/dm")) {
-                    QString uuid = m_bookmarkModel->getUuid();
-                    UDiskDeviceInfoPointer pDevice = deviceListener->getDeviceByUUID(uuid);
-                    qDebug() << "uuid:" << uuid;
-                    qDebug() << "device" << pDevice;
-                    if (pDevice) {
-                        setMountBookmark(true);
-                        deviceListener->mount(pDevice->getDiskInfo().id());
-                        return;
-                    }
-                }
+//                if (m_bookmarkModel->getDevcieId().startsWith("/dev/dm")) {
+//                    QString uuid = m_bookmarkModel->getUuid();
+//                    UDiskDeviceInfoPointer pDevice = deviceListener->getDeviceByUUID(uuid);
+//                    qDebug() << "uuid:" << uuid;
+//                    qDebug() << "device" << pDevice;
+//                    if (pDevice) {
+//                        setMountBookmark(true);
+//                        deviceListener->mount(pDevice->getDiskInfo().id());
+//                        return;
+//                    }
+//                }
 
-                deviceListener->mount(m_bookmarkModel->getDevcieId());
+//                deviceListener->mount(m_bookmarkModel->getDevcieId());
                 setMountBookmark(true);
 
                 TIMER_SINGLESHOT(0, {

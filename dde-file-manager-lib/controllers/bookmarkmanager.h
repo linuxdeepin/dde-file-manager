@@ -25,7 +25,6 @@
 #ifndef BOOKMARKMANAGER_H
 #define BOOKMARKMANAGER_H
 
-#include "basemanager.h"
 #include "dabstractfilecontroller.h"
 
 #include "models/bookmark.h"
@@ -37,18 +36,15 @@
 class DAbstractFileInfo;
 class DBookmarkItem;
 
-class BookMarkManager : public DAbstractFileController, public BaseManager
+class BookMarkManager : public DAbstractFileController
 {
     Q_OBJECT
 public:
     explicit BookMarkManager(QObject *parent = 0);
     ~BookMarkManager();
 
-    void load();
-    void save() const;
     void moveBookmark(int from, int to);
     int getBookmarkIndex(const DUrl &url);
-    QList<BookMarkPointer> getBookmarks();
 
     bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const Q_DECL_OVERRIDE;
     bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const Q_DECL_OVERRIDE;
@@ -63,21 +59,13 @@ public:
 //    void appendTagBookmark(QExplicitlySharedDataPointer<BookMark> bookmark) noexcept;
 //    void clearTagBookmark();
 
-
-    static QString cachePath();
 private:
-    void loadJson(const QJsonObject &json);
-    void writeJson(QJsonObject &json) const;
     BookMarkPointer findBookmark(const DUrl &url) const;
-    QList<BookMarkPointer> m_bookmarks;
+    mutable QMap<DUrl, BookMarkPointer> m_bookmarks;
 
+    void update(const QVariant &value);
+    void onFileEdited(const QString &group, const QString &key, const QVariant &value);
 //    std::deque<QExplicitlySharedDataPointer<BookMark>> m_tagBookmarks{};
-
-public slots:
-    Q_DECL_DEPRECATED void removeBookmark(BookMarkPointer bookmark);
-    Q_DECL_DEPRECATED void renameBookmark(BookMarkPointer bookmark, const QString &newname);
-
-    void reLoad();
 };
 
 #endif // BOOKMARKMANAGER_H

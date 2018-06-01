@@ -27,6 +27,22 @@
 
 #include <QObject>
 #include <QCoreApplication>
+#include <QDebug>
+
+namespace _Singleton {
+template<typename T>
+static typename QtPrivate::QEnableIf<QtPrivate::AreArgumentsCompatible<T, QObject>::value>::Type
+handleQObject(QObject *object)
+{
+    if (qApp) {
+        object->moveToThread(qApp->thread());
+    }
+}
+
+template<typename T>
+static typename QtPrivate::QEnableIf<!QtPrivate::AreArgumentsCompatible<T, QObject>::value>::Type
+handleQObject(void*) {}
+}
 
 template<typename T>
 class Singleton
@@ -34,14 +50,9 @@ class Singleton
 public:
     static T *instance() {
         static T instance;
-        static bool moveToMainThread = true;
 
-        if (QtPrivate::AreArgumentsCompatible<T, QObject>::value && moveToMainThread) {
-            moveToMainThread = false;
-
-            QObject *object = dynamic_cast<QObject*>(&instance);
-
-            object->moveToThread(qApp->thread());
+        if (QtPrivate::AreArgumentsCompatible<T, QObject>::value) {
+            _Singleton::handleQObject<T>(&instance);
         }
 
         return &instance;

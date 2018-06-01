@@ -36,8 +36,6 @@
 
 #include "dialogs/dialogmanager.h"
 
-#include "models/fmstate.h"
-
 #include "shutil/mimesappsmanager.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "gvfs/gvfsmountmanager.h"

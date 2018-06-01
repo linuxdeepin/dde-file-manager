@@ -38,18 +38,11 @@ class BookMark : public DAbstractFileInfo
 {
 public:
     BookMark(const DUrl &url);
-    BookMark(QDateTime time, const QString &name, const DUrl &sourceUrl);
+    BookMark(const QString &name, const DUrl &sourceUrl);
     ~BookMark();
-    QDateTime getDateTime();
-    DUrl sourceUrl() const;
-    void setDateTime(QDateTime time);
-    void setName(const QString &name);
-    QString getName() const;
-    QString getDevcieId() const;
-    void setDevcieId(const QString &devcieId);
 
-    QString getUuid() const;
-    void setUuid(const QString &uuid);
+    DUrl sourceUrl() const;
+    QString getName() const;
 
     QString fileDisplayName() const Q_DECL_OVERRIDE;
 
@@ -60,12 +53,12 @@ public:
 
     DUrl getUrlByNewFileName(const QString &name) const override;
 
-private:
-    QDateTime m_time;
-    QString m_name;
-    QString m_devcieId;
-    QString m_uuid;
+    QDateTime created() const override;
+    QDateTime lastModified() const override;
 
+public:
+    QDateTime m_created;
+    QDateTime m_lastModified;
     // AbstractFileInfo interface
 };
 

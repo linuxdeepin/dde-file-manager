@@ -27,6 +27,8 @@
 #include "dfmevent.h"
 #include "dabstractfilewatcher.h"
 #include "private/dabstractfilewatcher_p.h"
+#include "dfmapplication.h"
+#include "dfmsettings.h"
 
 #include "app/define.h"
 
@@ -78,10 +80,12 @@ public:
 
 BookMarkManager::BookMarkManager(QObject *parent)
     : DAbstractFileController(parent)
-    , BaseManager()
 {
-    load();
+    update(DFMApplication::genericSetting()->value("BookMark", "Items"));
+
     fileService->setFileUrlHandler(BOOKMARK_SCHEME, "", this);
+
+    connect(DFMApplication::genericSetting(), &DFMSettings::valueEdited, this, &BookMarkManager::onFileEdited);
 }
 
 BookMarkManager::~BookMarkManager()
@@ -89,85 +93,64 @@ BookMarkManager::~BookMarkManager()
 
 }
 
-void BookMarkManager::load()
+int BookMarkManager::getBookmarkIndex(const DUrl &)
 {
-    //Migration for old config files, and rmove that codes for further
-    FileUtils::migrateConfigFileFromCache("bookmark");
-
-    //TODO: check permission and existence of the path
-    QString configPath = cachePath();
-    QFile file(configPath);
-    if (!file.open(QIODevice::ReadOnly)) {
-        qDebug() << "Couldn't open bookmark file!";
-        return;
-    }
-    QByteArray data = file.readAll();
-    QJsonDocument jsonDoc(QJsonDocument::fromJson(data));
-    loadJson(jsonDoc.object());
-    file.close();
-}
-
-void BookMarkManager::save() const
-{
-    //TODO: check permission and existence of the path
-    QString configPath = cachePath();
-    QFile file(configPath);
-    if (!file.open(QIODevice::WriteOnly)) {
-        qDebug() << "Couldn't write bookmark file!";
-        return;
-    }
-    QJsonObject object;
-    writeJson(object);
-    QJsonDocument jsonDoc(object);
-    file.write(jsonDoc.toJson());
-    file.close();
-}
-
-int BookMarkManager::getBookmarkIndex(const DUrl &url)
-{
-    for (int i = 0; i <= m_bookmarks.count(); i++) {
-        if (m_bookmarks[i]->fileUrl() == url) {
-            return i;
-        }
-    }
-
     return -1;
-}
-
-QList<BookMarkPointer> BookMarkManager::getBookmarks()
-{
-    return m_bookmarks;
 }
 
 bool BookMarkManager::renameFile(const QSharedPointer<DFMRenameEvent> &event) const
 {
     BookMarkPointer item = findBookmark(event->fromUrl());
+
     if (!item) {
         return false;
     }
-    item->setName(event->toUrl().bookmarkName());
+
+    QVariantList list = DFMApplication::genericSetting()->value("BookMark", "Items").toList();
+
+    for (int i = 0; i < list.count(); ++i) {
+        QVariantMap map = list.at(i).toMap();
+
+        if (map.value("name").toString() == item->getName()) {
+            map["name"] = event->toUrl().bookmarkName();
+            list[i] = map;
+
+            DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
+            BookMark *new_item = new BookMark(event->toUrl());
+
+            new_item->m_created = item->m_created;
+            new_item->m_lastModified = QDateTime::currentDateTime();
+
+            m_bookmarks[event->toUrl().bookmarkTargetUrl()] = new_item;
+            break;
+        }
+    }
+
     DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::fileMoved, event->fromUrl(), event->toUrl());
-    save();
 
     return true;
 }
 
 bool BookMarkManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
+    QVariantList list = DFMApplication::genericSetting()->value("BookMark", "Items").toList();
+
     for (const DUrl url : event->urlList()) {
-        BookMarkPointer item = findBookmark(url);
+        m_bookmarks.remove(url.bookmarkTargetUrl());
 
-        if (!item) {
-            continue;
+        for (int i = 0; i < list.count(); ++i) {
+            const QVariantMap &map = list.at(i).toMap();
+
+            if (map.value("name").toString() == url.bookmarkName()) {
+                list.removeAt(i);
+                break;
+            }
         }
-
-        const_cast<BookMarkManager *>(this)->m_bookmarks.removeOne(item);
-        item.reset();
 
         DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::fileDeleted, url);
     }
 
-    save();
+    DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
 
     return true;
 }
@@ -175,9 +158,21 @@ bool BookMarkManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) c
 bool BookMarkManager::touch(const QSharedPointer<DFMTouchFileEvent> &event) const
 {
     BookMarkPointer item(new BookMark(event->url()));
-    const_cast<BookMarkManager *>(this)->m_bookmarks.append(item);
-    save();
 
+    item->m_created = QDateTime::currentDateTime();
+    item->m_lastModified = item->m_created;
+    m_bookmarks[item->sourceUrl()] = item;
+
+    QVariantList list = DFMApplication::genericSetting()->value("BookMark", "Items").toList();
+
+    list << QVariantMap {
+        {"name", item->getName()},
+        {"url", item->sourceUrl()},
+        {"created", item->m_created.toString(Qt::ISODate)},
+        {"lastModified", item->m_lastModified.toString(Qt::ISODate)}
+    };
+
+    DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
     DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::subfileCreated, item->fileUrl());
 
     return true;
@@ -200,88 +195,49 @@ bool BookMarkManager::touch(const QSharedPointer<DFMTouchFileEvent> &event) cons
 //    }
 //}
 
-QString BookMarkManager::cachePath()
-{
-    return getConfigPath("bookmark");
-}
-
-void BookMarkManager::loadJson(const QJsonObject &json)
-{
-    QJsonArray jsonArray = json["Bookmark"].toArray();
-    for (int i = 0; i < jsonArray.size(); i++) {
-        QJsonObject object = jsonArray[i].toObject();
-        QString time = object["t"].toString();
-        QString name = object["n"].toString();
-        QString url = object["u"].toString();
-
-        QString deviceID = object["deviceID"].toString();
-        if (deviceID.isEmpty()) {
-            DFileInfo info(url);
-            deviceID = QDiskInfo::getDiskInfo(info).id();
-        }
-        QString uuid = object["uuid"].toString();
-        BookMarkPointer bm(new BookMark(QDateTime::fromString(time), name, DUrl(url)));
-        bm->setDevcieId(deviceID);
-        bm->setUuid(uuid);
-        m_bookmarks.append(bm);
-    }
-}
-
-void BookMarkManager::writeJson(QJsonObject &json) const
-{
-    QJsonArray localArray;
-    for (int i = 0; i < m_bookmarks.size(); i++) {
-        QJsonObject object;
-        object["t"] = m_bookmarks.at(i)->getDateTime().toString();
-        object["n"] = m_bookmarks.at(i)->getName();
-        object["u"] = m_bookmarks.at(i)->sourceUrl().toString();
-
-        QString deviceID = QDiskInfo::getDiskInfo(*m_bookmarks.at(i).data()).id();
-        if (deviceID.isEmpty()) {
-            DFileInfo info(m_bookmarks.at(i)->sourceUrl());
-            deviceID = QDiskInfo::getDiskInfo(info).id();
-        }
-        if (deviceID.isEmpty()) {
-            deviceID = m_bookmarks.at(i)->getDevcieId();
-        }
-
-        m_bookmarks.at(i)->setDevcieId(deviceID);
-        object["deviceID"] = deviceID;
-
-        QString uuid = QDiskInfo::getDiskInfo(*m_bookmarks.at(i).data()).uuid();
-        object["uuid"] = uuid;
-
-        localArray.append(object);
-    }
-    json["Bookmark"] = localArray;
-}
-
 BookMarkPointer BookMarkManager::findBookmark(const DUrl &url) const
 {
-    for (const BookMarkPointer &item : m_bookmarks) {
-        if (item->fileUrl() == url) {
-            return item;
-        }
-    }
-
-    return BookMarkPointer();
+    return m_bookmarks.value(url.bookmarkTargetUrl());
 }
 
-void BookMarkManager::removeBookmark(BookMarkPointer bookmark)
+void BookMarkManager::update(const QVariant &value)
 {
-    foreach (BookMarkPointer p, m_bookmarks) {
-        if (p->getDateTime() == bookmark->getDateTime() && p->getName() == bookmark->getName()) {
-            m_bookmarks.removeOne(p);
-            break;
+    const QVariantList &list = value.toList();
+
+    for (int i = 0; i < list.count(); ++i) {
+        const QVariantMap &item = list.at(i).toMap();
+        const QString &name = item.value("name").toString();
+        const DUrl &url = DUrl::fromUserInput(item.value("url").toString());
+        const QDateTime &create_time = QDateTime::fromString(item.value("created").toString(), Qt::ISODate);
+        const QDateTime &last_modified_time = QDateTime::fromString(item.value("lastModified").toString(), Qt::ISODate);
+
+        BookMark *bm_info = new BookMark(name, url);
+
+        bm_info->m_created = create_time;
+        bm_info->m_lastModified = last_modified_time;
+
+        if (m_bookmarks.contains(url)) {
+            const BookMarkPointer old_info = m_bookmarks.value(url);
+
+            m_bookmarks[url] = BookMarkPointer(bm_info);
+
+            if (old_info->getName() != name) {
+                DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::fileMoved, old_info->fileUrl(), bm_info->fileUrl());
+            }
+        } else {
+            m_bookmarks[url] = BookMarkPointer(bm_info);
+
+            DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::subfileCreated, bm_info->fileUrl());
         }
     }
-    save();
 }
 
-void BookMarkManager::renameBookmark(BookMarkPointer bookmark, const QString &newname)
+void BookMarkManager::onFileEdited(const QString &group, const QString &key, const QVariant &value)
 {
-    bookmark->setName(newname);
-    save();
+    if (group != "BookMark" || key != "Items")
+        return;
+
+    update(value);
 }
 
 void BookMarkManager::moveBookmark(int from, int to)
@@ -290,14 +246,7 @@ void BookMarkManager::moveBookmark(int from, int to)
         return;
     }
 
-    m_bookmarks.move(from, to);
-    save();
-}
-
-void BookMarkManager::reLoad()
-{
-    m_bookmarks.clear();
-    load();
+//    m_bookmarks.move(from, to);
 }
 
 const QList<DAbstractFileInfoPointer> BookMarkManager::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
@@ -305,8 +254,8 @@ const QList<DAbstractFileInfoPointer> BookMarkManager::getChildren(const QShared
     Q_UNUSED(event);
     QList<DAbstractFileInfoPointer> infolist;
 
-    for (int i = 0; i < m_bookmarks.size(); i++) {
-        infolist.append(DAbstractFileInfoPointer(m_bookmarks.at(i)));
+    for (BookMarkPointer bk : m_bookmarks) {
+        infolist.append(DAbstractFileInfoPointer(bk));
     }
 
     return infolist;

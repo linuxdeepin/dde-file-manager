@@ -368,6 +368,21 @@ QSet<QString> DFMSettings::keys(const QString &group) const
     return keys;
 }
 
+DUrl DFMSettings::toUrlValue(const QVariant &url)
+{
+    const QString &url_string = url.toString();
+
+    if (url_string.isEmpty())
+        return DUrl();
+
+    const QString &path = DFMStandardPaths::fromStandardUrl(DUrl(url_string));
+
+    if (!path.isEmpty())
+        return DUrl::fromLocalFile(path);
+
+    return DUrl::fromUserInput(url_string);
+}
+
 QVariant DFMSettings::value(const QString &group, const QString &key, const QVariant &defaultValue) const
 {
     Q_D(const DFMSettings);
@@ -394,13 +409,7 @@ QVariant DFMSettings::value(const QString &group, const DUrl &key, const QVarian
 
 DUrl DFMSettings::urlValue(const QString &group, const QString &key, const DUrl &defaultValue) const
 {
-    const QString &url_string = value(group, key, defaultValue).toString();
-    const QString &path = DFMStandardPaths::fromStandardUrl(DUrl(url_string));
-
-    if (!path.isEmpty())
-        return DUrl::fromLocalFile(path);
-
-    return DUrl::fromUserInput(url_string);
+    return toUrlValue(value(group, key, defaultValue));
 }
 
 DUrl DFMSettings::urlValue(const QString &group, const DUrl &key, const DUrl &defaultValue) const

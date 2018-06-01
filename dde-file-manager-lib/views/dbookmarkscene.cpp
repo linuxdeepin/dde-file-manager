@@ -565,16 +565,16 @@ void DBookmarkScene::doBookmarkRemoved(const DFMEvent &event)
     DBookmarkItem * item = hasBookmarkItem(url);
     if(!item)
         return;
-    int item_index = indexOf(item);
+//    int item_index = indexOf(item);
     remove(item);
-    bookmarkManager->removeBookmark(item->getBookmarkModel());
-    if (bookmarkManager->getBookmarks().count() == 0){
-        DBookmarkLine* lineItem = qobject_cast<DBookmarkLine*>(m_itemGroup->items().value(item_index - 1));
+//    bookmarkManager->removeBookmark(item->getBookmarkModel());
+//    if (bookmarkManager->getBookmarks().count() == 0){
+//        DBookmarkLine* lineItem = qobject_cast<DBookmarkLine*>(m_itemGroup->items().value(item_index - 1));
 
-        if (lineItem && lineItem->objectName() == "DBookmarkLine") {
-            remove(lineItem);
-        }
-    }
+//        if (lineItem && lineItem->objectName() == "DBookmarkLine") {
+//            remove(lineItem);
+//        }
+//    }
 }
 
 void DBookmarkScene::bookmarkRename(const DFMEvent &event)
@@ -597,18 +597,18 @@ void DBookmarkScene::doBookmarkRenamed(const QString &newname,const DFMEvent &ev
 
 void DBookmarkScene::doBookmarkAdded(const QString &name, const DFMEvent &event)
 {
-    DBookmarkItem * item = createCustomBookmark(name, event.fileUrl());
-    item->setIsCustomBookmark(true);
-    item->setBookmarkModel(bookmarkManager->getBookmarks().at(0));
+//    DBookmarkItem * item = createCustomBookmark(name, event.fileUrl());
+//    item->setIsCustomBookmark(true);
+//    item->setBookmarkModel(bookmarkManager->getBookmarks().at(0));
 
-    int insertIndex  = getCustomBookmarkItemInsertIndex();
-    insert(insertIndex, item);
-    item->setTightMode(m_isTightMode);
+//    int insertIndex  = getCustomBookmarkItemInsertIndex();
+//    insert(insertIndex, item);
+//    item->setTightMode(m_isTightMode);
 
-    if (bookmarkManager->getBookmarks().size() == 1){
-        int networkIndex = indexOf(m_networkDiskItem);
-        insertSeparator(networkIndex);
-    }
+//    if (bookmarkManager->getBookmarks().size() == 1){
+//        int networkIndex = indexOf(m_networkDiskItem);
+//        insertSeparator(networkIndex);
+//    }
 
 
 }
