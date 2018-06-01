@@ -26,6 +26,8 @@
 #include "fstab.h"
 #include "dfileservices.h"
 #include "dfmevent.h"
+#include "dfmapplication.h"
+#include "dfmsettings.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -342,29 +344,12 @@ UDiskDeviceInfo::MediaType UDiskListener::getDeviceMediaType(const QString &path
     return UDiskDeviceInfo::unknown;
 }
 
-QString UDiskListener::getVolumeConfPath()
-{
-    return "/etc/deepin/volume_letter.conf";
-}
-
-bool UDiskListener::isVolumeConfExists()
-{
-    if (QFile(getVolumeConfPath()).exists()) {
-        return true;
-    }
-    return false;
-}
-
 void UDiskListener::loadCustomVolumeLetters()
 {
-    if (isVolumeConfExists()) {
-        QSettings VolumeSettings(getVolumeConfPath(), QSettings::IniFormat);
-        VolumeSettings.beginGroup("Volume");
-        foreach (QString key, VolumeSettings.childKeys()) {
-            m_volumeLetters.insert(key, VolumeSettings.value(key).toString());
-        }
-        VolumeSettings.endGroup();
-    }
+    const QSet<QString> &keys = DFMApplication::genericObtuselySetting()->keys("Disk/Volume");
+
+    for (const QString &key : keys)
+        m_volumeLetters.insert(key, DFMApplication::genericObtuselySetting()->value("Disk/Volume", key).toString());
 }
 
 QMap<QString, QString> UDiskListener::getVolumeLetters()

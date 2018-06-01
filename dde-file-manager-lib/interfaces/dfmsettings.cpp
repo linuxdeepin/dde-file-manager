@@ -52,6 +52,7 @@ public:
 
     struct Data {
         QHash<QString, QVariantHash> values;
+        QHash<QString, QVariantHash> privateValues;
 
         QVariant value(const QString &group, const QString &key, const QVariant &dv = QVariant()) const
         {
@@ -67,6 +68,16 @@ public:
             }
 
             values[group][key] = value;
+        }
+
+        QVariantMap groupMetaData(const QString &group) const
+        {
+            return privateValues.value("__metadata__").value(group).toMap();
+        }
+
+        QStringList groupKeyOrderedList(const QString &group) const
+        {
+            return groupMetaData(group).value("keyOrdered").toStringList();
         }
     };
 
@@ -175,7 +186,11 @@ void DFMSettingsPrivate::fromJson(const QByteArray &json, Data *data)
             hash[begin.key()] = begin.value().toVariant();
         }
 
-        data->values[begin.key()] = hash;
+        // private groups
+        if (begin.key().startsWith("__") && begin.key().endsWith("__"))
+            data->privateValues[begin.key()] = hash;
+        else
+            data->values[begin.key()] = hash;
     }
 }
 
@@ -366,6 +381,44 @@ QSet<QString> DFMSettings::keys(const QString &group) const
     }
 
     return keys;
+}
+
+/*!
+ * \brief DFMSettings::keysList
+ * \param group name
+ * \return An ordered key list of the group
+ */
+QStringList DFMSettings::keyList(const QString &group) const
+{
+    Q_D(const DFMSettings);
+
+    QStringList keyList;
+    QSet<QString> keys = this->keys(group);
+
+    for (const QString &ordered_key : d->defaultData.groupKeyOrderedList(group)) {
+        if (keys.contains(ordered_key)) {
+            keyList << ordered_key;
+            keys.remove(ordered_key);
+        }
+    }
+
+    for (const QString &ordered_key : d->fallbackData.groupKeyOrderedList(group)) {
+        if (keys.contains(ordered_key)) {
+            keyList << ordered_key;
+            keys.remove(ordered_key);
+        }
+    }
+
+    for (const QString &ordered_key : d->writableData.groupKeyOrderedList(group)) {
+        if (keys.contains(ordered_key)) {
+            keyList << ordered_key;
+            keys.remove(ordered_key);
+        }
+    }
+
+    keyList << keys.toList();
+
+    return keyList;
 }
 
 DUrl DFMSettings::toUrlValue(const QVariant &url)

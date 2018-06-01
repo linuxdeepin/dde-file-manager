@@ -86,8 +86,6 @@ public:
     UDiskDeviceInfoPointer getDeviceByUUID(const QString &uuid);
     UDiskDeviceInfo::MediaType getDeviceMediaType(const QString &path);
 
-    QString getVolumeConfPath();
-    bool isVolumeConfExists();
     void loadCustomVolumeLetters();
     QMap<QString, QString> getVolumeLetters();
 
