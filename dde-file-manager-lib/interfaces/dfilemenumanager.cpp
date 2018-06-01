@@ -925,7 +925,7 @@ QSet<MenuAction> DFileMenuManager::actionBlacklist()
 
 bool DFileMenuManager::isAvailableAction(MenuAction action)
 {
-    const QString &group_name = QStringLiteral("Menu Actions");
+    const QString &group_name = QStringLiteral("MenuActions");
 
     // init menu action black list
     const QMetaEnum &action_enum = QMetaEnum::fromType<MenuAction>();

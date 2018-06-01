@@ -51,6 +51,7 @@ public:
 
     QSet<QString> groups() const;
     QSet<QString> keys(const QString &group) const;
+    QStringList keyList(const QString &group) const;
 
     static DUrl toUrlValue(const QVariant &url);
 

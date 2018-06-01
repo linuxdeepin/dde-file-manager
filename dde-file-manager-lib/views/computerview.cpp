@@ -527,11 +527,7 @@ void ComputerView::initUI()
     m_contentArea->setWidget(contentFrame);
 
     loadSystemItems();
-
-    if (isDiskConfExisted()) {
-        loadCustomItems();
-    }
-
+    loadCustomItems();
     loadNativeItems();
 
     if (m_removableItems.count() == 0) {
@@ -606,12 +602,11 @@ void ComputerView::loadNativeItems()
 
 void ComputerView::loadCustomItems()
 {
-    QSettings diskSettings(getDiskConfPath(), QSettings::IniFormat);
-    diskSettings.beginGroup("Disk");
-    foreach (QString key, diskSettings.childKeys()) {
-        loadCustomItemsByNameUrl(key, diskSettings.value(key).toString());
+    const QStringList &keys = DFMApplication::genericObtuselySetting()->keyList("Disk/Custom");
+
+    for (const QString &key : keys) {
+        loadCustomItemsByNameUrl(key, DFMApplication::genericObtuselySetting()->urlValue("Disk/Custom", key).toString());
     }
-    diskSettings.endGroup();
 }
 
 void ComputerView::loadCustomItemsByNameUrl(const QString &id, const QString &url)
@@ -666,19 +661,6 @@ void ComputerView::updateStatusBar()
         const int number = m_systemItems.count() + m_nativeItems.count() + m_removableItems.count();
         m_statusBar->itemCounted(event, number);
     }
-}
-
-bool ComputerView::isDiskConfExisted()
-{
-    if (QFile(getDiskConfPath()).exists()) {
-        return true;
-    }
-    return false;
-}
-
-QString ComputerView::getDiskConfPath()
-{
-    return QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::ApplicationConfigPath), "disk.conf");
 }
 
 void ComputerView::loadViewState()

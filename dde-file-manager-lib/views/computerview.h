@@ -171,9 +171,6 @@ public:
     void loadCustomItemsByNameUrl(const QString& id, const QString& rootUrl);
     void updateStatusBar();
 
-    bool isDiskConfExisted();
-    QString getDiskConfPath();
-
     void loadViewState();
     void saveViewState();
 
