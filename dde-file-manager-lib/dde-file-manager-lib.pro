@@ -55,7 +55,6 @@ isEqual(BUILD_MINIMUM, YES){
 include(../dialogs/dialogs.pri)
 include(../utils/utils.pri)
 include(../chinese2pinyin/chinese2pinyin.pri)
-include(../simpleini/simpleini.pri)
 include(../fileoperations/fileoperations.pri)
 include(deviceinfo/deviceinfo.pri)
 include(dbusinterface/dbusinterface.pri)

@@ -31,7 +31,6 @@
 #include "mimetypedisplaymanager.h"
 #include "dfmstandardpaths.h"
 #include "dfileservices.h"
-#include "simpleini/SimpleIni.h"
 #include "dmimedatabase.h"
 #include "mimesappsmanager.h"
 #include "interfaces/dfmstandardpaths.h"
@@ -911,30 +910,7 @@ void FileUtils::migrateConfigFileFromCache(const QString& key)
 
 void FileUtils::setDefaultFileManager()
 {
-    QString configPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).at(0);
-    QString mimeAppsListPath = QString("%1/%2").arg(configPath, "mimeapps.list");
-    QString mimeKey("inode/directory");
-    QString appDesktopFile("dde-file-manager.desktop");
-    const char defaultApplicationsSection[] = "Default Applications";
-
-    CSimpleIniA settings;
-    settings.SetUnicode(true);
-    QString content(getFileContent(mimeAppsListPath));
-    settings.LoadData(content.toStdString().c_str(), content.length());
-
-
-    const char* mime_cstr = mimeKey.toStdString().c_str();
-    if (QString(settings.GetValue(defaultApplicationsSection, mime_cstr)) == appDesktopFile){
-        return;
-    }else{
-        settings.SetValue(defaultApplicationsSection, mime_cstr,
-                          appDesktopFile.toStdString().c_str());
-
-        std::string strData;
-        settings.Save(strData);
-        qDebug() << QString::fromStdString(strData);
-        writeTextFile(mimeAppsListPath, QString::fromStdString(strData));
-    }
+    QProcess::execute("xdg-mime default dde-file-manager.desktop \"inode/directory\"");
 }
 
 DFMGlobal::MenuExtension FileUtils::getMenuExtension(const DUrlList &urlList)
