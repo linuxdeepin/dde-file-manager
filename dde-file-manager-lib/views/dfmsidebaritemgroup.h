@@ -49,6 +49,8 @@ public:
     DFMSideBarItem *takeItem(int index);
     DFMSideBarItem *takeItem(DFMSideBarItem *item);
     int itemCount() const;
+    int visibleItemCount() const;
+    void setDisableUrlSchemes(const QSet<QString> &schemes);
     DFMSideBarItem *operator [](int index);
 
 private:

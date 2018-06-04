@@ -402,11 +402,7 @@ void DFMSideBar::setDisableUrlSchemes(const QSet<QString> &schemes)
 
     for (QString &key : d->groupNameMap.keys()) {
         DFMSideBarItemGroup *groupPointer = d->groupNameMap.value(key);
-
-        for (int i = 0; i < groupPointer->itemCount(); ++i) {
-            DFMSideBarItem *item = (*groupPointer)[i];
-            item->setVisible(!schemes.contains(item->url().scheme()));
-        }
+        groupPointer->setDisableUrlSchemes(schemes);
     }
 }
 
