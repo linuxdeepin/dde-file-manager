@@ -19,7 +19,11 @@
     \title Developer Documentation Index
     \nextpage Componments
 
+    \section1 Welcome!
+
     This is the developer documentation page of Deepin File Manager!
+
+    \section1 Languages
 
     Documentation languages index:
 
@@ -27,6 +31,17 @@
         \li \l {Developer Documentation Index} {English} (Current)
         \li \l {Developer Documentation Index (zh)} {简体中文}
     \endlist
+
+    \section1 Navigation
+
+    Currently there are two main sections of the documentation page.
+
+    \list
+        \li \l {Componments} {Componments of Deepin File Manager}
+        \li \l {All DFM Classes} {All Deepin File Manager C++ Classes}
+    \endlist
+
+    \section1 Feedback and Contribution
 
     The developer documentation of Deepin File Manager is still working in progress,
     If you got any issue and looking for help, please submit your issue via the
@@ -36,5 +51,11 @@
         \li Ask in the \l {https://github.com/linuxdeepin/developer-center} {Developer Center}
         \li Ask in our \l {https://bbs.deepin.org/} {Official Forum}
         \li or submit an issue in \l {https://github.com/linuxdeepin/dde-file-manager/issues} {Issue board}
+    \endlist
+
+    We also encourage you to report issues and contribute changes.
+
+    \list
+        \li \l {https://github.com/linuxdeepin/developer-center/wiki/Contribution-Guidelines-for-Developers-en} {Contribution guide for developers}
     \endlist
 */

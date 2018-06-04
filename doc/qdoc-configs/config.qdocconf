@@ -7,9 +7,10 @@ dita.metadata.default.copyryear = 2018
 dita.metadata.default.copyrholder = Deepin Technology
 dita.metadata.default.audience = programmer
 
-#Set the main Qt index.html
-navigation.homepage = "Qt $QT_VER"
+#Set the main DFM index.html
+navigation.homepage  = index.html
+navigation.hometitle = "DFM $DFM_VER"
 
 sourcedirs += includes
 
-url = http://doc.qt.io/qt-5
+url = https://linuxdeepin.github.io/dde-file-manager/
