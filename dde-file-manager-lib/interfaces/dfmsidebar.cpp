@@ -319,6 +319,20 @@ void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::G
     }
 }
 
+/*!
+ * \class DFMSideBar
+ * \inmodule dde-file-manager-lib
+ *
+ * \brief DFMSideBar is the left sidebar widget of Deepin File Manager
+ *
+ * DFMSideBar is the left sidebar widget of Deepin File Manager, provide the interface to manage
+ * left sidebar state. Sidebar holds some DFMSideBarItemGroup s which hold their DFMSideBarItem s,
+ * and DFMSideBar provide interface to access and manage sidebar items without touching the
+ * DFMSideBarItemGroup internal class.
+ *
+ * \sa DFMSideBarItem
+ */
+
 DFMSideBar::DFMSideBar(QWidget *parent)
     : QScrollArea(parent)
     , d_ptr(new DFMSideBarPrivate(this))

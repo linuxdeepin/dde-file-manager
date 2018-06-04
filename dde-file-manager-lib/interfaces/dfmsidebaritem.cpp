@@ -197,6 +197,19 @@ void DFMSideBarItemPrivate::hideRenameEditor()
     }
 }
 
+/*!
+ * \class DFMSideBarItem
+ * \inmodule dde-file-manager-lib
+ *
+ * \brief DFMSideBarItem is the item inside DFMSideBar
+ *
+ * DFMSideBarItem is the base class for the sidebar items. All type of items inside
+ * the sidebar is derived from DFMSideBarItem. DFMSideBarItem provide the interfaces
+ * to manage the item state.
+ *
+ * \sa DFMSideBar
+ */
+
 DFMSideBarItem::DFMSideBarItem(const DUrl &url, QWidget *parent)
     : QWidget(parent)
     , d_ptr(new DFMSideBarItemPrivate(this))
