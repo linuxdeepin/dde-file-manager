@@ -68,9 +68,8 @@ int getProcIdByName(string procName)
                 }
             }
         }
+        closedir(dp);
     }
-
-    closedir(dp);
 
     return pid;
 }
