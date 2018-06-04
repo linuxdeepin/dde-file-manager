@@ -1,42 +1,52 @@
 
 #include "taghandle.h"
 
-#include <../dde-file-manager-lib/tag/tagmanager.h>
+#include <tag/tagmanager.h>
+#include <shutil/danythingmonitorfilter.h>
 
 
-void TagHandle::onFileCreate(const QByteArrayList& files)
+
+void TagHandle::onFileCreate(const QByteArrayList &files)
 {
     (void)files;
 }
 
 
 
-void TagHandle::onFileDelete(const QByteArrayList& files)
+void TagHandle::onFileDelete(const QByteArrayList &files)
 {
-   if (!files.isEmpty()) {
-       QList<DUrl> url_list{};
+    if (!files.isEmpty()) {
+        QList<DUrl> url_list{};
 
-       for (const QByteArray& array : files) {
-           url_list.push_back(DUrl::fromLocalFile(array));
-       }
+        for (const QByteArray &byte_array : files) {
+            DUrl url{ DUrl::fromLocalFile(byte_array) };
+            bool result{ DAnythingMonitorFilter::instance()->whetherFilterCurrentPath(url) };
 
-       TagManager::instance()->deleteFiles(url_list);
-   }
+            if (result) {
+                url_list.push_back(url);
+            }
+
+        }
+
+        TagManager::instance()->deleteFiles(url_list);
+    }
 }
 
 
-void TagHandle::onFileRename(const QList<QPair<QByteArray, QByteArray>>& files)
+void TagHandle::onFileRename(const QList<QPair<QByteArray, QByteArray>> &files)
 {
     if (!files.isEmpty()) {
         QList<QPair<DUrl, DUrl>> old_and_new_name{};
 
-        for (const QPair<QByteArray, QByteArray>& name : files) {
-            DUrl old_name{ DUrl::fromLocalFile(name.first) };
-            DUrl new_name{ DUrl::fromLocalFile(name.second) };
+        for (const QPair<QByteArray, QByteArray> &name : files) {
+            DUrl old{ DUrl::fromLocalFile(name.first) };
+            bool result{ DAnythingMonitorFilter::instance()->whetherFilterCurrentPath(old) };
 
-            old_and_new_name.push_back(QPair<DUrl, DUrl>{old_name, new_name});
-
-            TagManager::instance()->changeFilesName(old_and_new_name);
+            if (result) {
+                DUrl new_name{ DUrl::fromLocalFile(name.second) };
+                old_and_new_name.push_back(QPair<DUrl, DUrl> {old, new_name});
+                TagManager::instance()->changeFilesName(old_and_new_name);
+            }
         }
     }
 }
