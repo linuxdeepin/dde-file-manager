@@ -34,7 +34,6 @@
 #include <QDir>
 #include <QDebug>
 
-#include <simpleini/SimpleIni.h>
 #include "shareinfo.h"
 #include "../dde-file-manager-daemon/dbusservice/dbusinterface/usershare_interface.h"
 
