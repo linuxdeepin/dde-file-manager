@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- dfmsidebar.cpp -->
+  <title>DFMSideBar Class | Deepin File Manager</title>
+  <link rel="stylesheet" type="text/css" href="style/online.css" />
+</head>
+<body>
+<div class="header" id="qtdocheader">
+    <div class="main">
+    <div class="main-rounded">
+        <div class="navigationbar">
+        <ul>
+<li>DFMSideBar</li>
+    </ul>
+    </div>
+</div>
+<div class="content">
+<div class="line">
+<div class="content mainContent">
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-types">Public Types</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#static-public-members">Static Public Members</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<div class="context">
+<h1 class="title">DFMSideBar Class</h1>
+<!-- $$$DFMSideBar-brief -->
+<p><a href="dfmsidebar.html">DFMSideBar</a> is the left sidebar widget of Deepin File Manager <a href="#details">More...</a></p>
+<!-- @@@DFMSideBar -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;DFMSideBar&gt;</span>
+</td></tr></table></div><ul>
+<li><a href="dfmsidebar-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-types"></a>
+<h2 id="public-types">Public Types</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#GroupName-enum">GroupName</a></b> { Common, Device, Bookmark, Network, ..., Unknow }</td></tr>
+</table></div>
+<a name="public-functions"></a>
+<h2 id="public-functions">Public Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#DFMSideBar">DFMSideBar</a></b>(QWidget *<i>parent</i> = nullptr)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#dtor.DFMSideBar">~DFMSideBar</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#addItem">addItem</a></b>(DFMSideBarItem *<i>item</i>, const QString &amp;<i>group</i> = QString())</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#count">count</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QSet&lt;QString&gt; </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#disableUrlSchemes">disableUrlSchemes</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QRect </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#groupGeometry">groupGeometry</a></b>(const QString &amp;<i>group</i> = QString()) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#groupList">groupList</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#insertItem">insertItem</a></b>(int <i>index</i>, DFMSideBarItem *<i>item</i>, const QString &amp;<i>groupName</i> = QString())</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> DFMSideBarItem *</td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#itemAt">itemAt</a></b>(int <i>index</i>, const QString &amp;<i>groupName</i> = QString()) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> DFMSideBarItem *</td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#itemAt-1">itemAt</a></b>(const DUrl &amp;<i>url</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#itemCount">itemCount</a></b>(const QString &amp;<i>group</i> = QString()) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#itemIndex">itemIndex</a></b>(const DFMSideBarItem *<i>item</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#removeItem">removeItem</a></b>(int <i>index</i>, const QString &amp;<i>group</i> = QString())</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#removeItem-1">removeItem</a></b>(DFMSideBarItem *<i>item</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#setCurrentUrl">setCurrentUrl</a></b>(const DUrl &amp;<i>url</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#setDisableUrlSchemes">setDisableUrlSchemes</a></b>(const QSet&lt;QString&gt; &amp;<i>schemes</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> DFMSideBarItem *</td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#takeItem">takeItem</a></b>(int <i>index</i>, const QString &amp;<i>group</i> = QString())</td></tr>
+</table></div>
+<a name="signals"></a>
+<h2 id="signals">Signals</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#clicked">clicked</a></b>(DFMSideBarItem *<i>item</i>)</td></tr>
+</table></div>
+<a name="static-public-members"></a>
+<h2 id="static-public-members">Static Public Members</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> GroupName </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#groupFromName">groupFromName</a></b>(const QString &amp;<i>name</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#groupName">groupName</a></b>(GroupName <i>group</i>)</td></tr>
+</table></div>
+<a name="details"></a>
+<!-- $$$DFMSideBar-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p><a href="dfmsidebar.html">DFMSideBar</a> is the left sidebar widget of Deepin File Manager</p>
+<p><a href="dfmsidebar.html">DFMSideBar</a> is the left sidebar widget of Deepin File Manager, provide the interface to manage left sidebar state. Sidebar holds some DFMSideBarItemGroup s which hold their <a href="dfmsidebaritem.html">DFMSideBarItem</a> s, and <a href="dfmsidebar.html">DFMSideBar</a> provide interface to access and manage sidebar items without touching the DFMSideBarItemGroup internal class.</p>
+</div>
+<p><b>See also </b><a href="dfmsidebaritem.html">DFMSideBarItem</a>.</p>
+<!-- @@@DFMSideBar -->
+<div class="types">
+<h2>Member Type Documentation</h2>
+<!-- $$$GroupName$$$Common$$$Device$$$Bookmark$$$Network$$$Tag$$$Other$$$Unknow -->
+<h3 class="fn" id="GroupName-enum"><a name="GroupName-enum"></a>enum DFMSideBar::<span class="name">GroupName</span></h3>
+<!-- @@@GroupName -->
+</div>
+<div class="func">
+<h2>Member Function Documentation</h2>
+<!-- $$$DFMSideBar[overload1]$$$DFMSideBarQWidget* -->
+<h3 class="fn" id="DFMSideBar"><a name="DFMSideBar"></a>DFMSideBar::<span class="name">DFMSideBar</span>(<span class="type">QWidget</span> *<i>parent</i> = nullptr)</h3>
+<p>Default constructs an instance of DFMSideBar.</p><!-- @@@DFMSideBar -->
+<!-- $$$~DFMSideBar[overload1]$$$~DFMSideBar -->
+<h3 class="fn" id="dtor.DFMSideBar"><a name="dtor.DFMSideBar"></a>DFMSideBar::<span class="name">~DFMSideBar</span>()</h3>
+<p>Destroys the instance of DFMSideBar.</p><!-- @@@~DFMSideBar -->
+<!-- $$$addItem[overload1]$$$addItemDFMSideBarItem*constQString& -->
+<h3 class="fn" id="addItem"><a name="addItem"></a><span class="type">int</span> DFMSideBar::<span class="name">addItem</span>(<span class="type"><a href="dfmsidebaritem.html">DFMSideBarItem</a></span> *<i>item</i>, const <span class="type">QString</span> &amp;<i>group</i> = QString())</h3>
+<p>Add a sidebar item into a sidebar group. <i>item</i> The item which is going to be added. <i>group</i> The name (in `QString`, all lower case) of the sidebar group. Returns the index of the inserted item in that group.</p>
+<!-- @@@addItem -->
+<!-- $$$clicked[overload1]$$$clickedDFMSideBarItem* -->
+<h3 class="fn" id="clicked"><a name="clicked"></a><code>[signal] </code><span class="type">void</span> DFMSideBar::<span class="name">clicked</span>(<span class="type"><a href="dfmsidebaritem.html">DFMSideBarItem</a></span> *<i>item</i>)</h3>
+<!-- @@@clicked -->
+<!-- $$$count[overload1]$$$count -->
+<h3 class="fn" id="count"><a name="count"></a><span class="type">int</span> DFMSideBar::<span class="name">count</span>() const</h3>
+<!-- @@@count -->
+<!-- $$$disableUrlSchemes[overload1]$$$disableUrlSchemes -->
+<h3 class="fn" id="disableUrlSchemes"><a name="disableUrlSchemes"></a><span class="type">QSet</span>&lt;<span class="type">QString</span>&gt; DFMSideBar::<span class="name">disableUrlSchemes</span>() const</h3>
+<p>Return a url scheme list of the hidden sidebar items Returns</p>
+<p><b>See also </b><a href="dfmsidebar.html#setDisableUrlSchemes">setDisableUrlSchemes</a>().</p>
+<!-- @@@disableUrlSchemes -->
+<!-- $$$groupFromName[overload1]$$$groupFromNameconstQString& -->
+<h3 class="fn" id="groupFromName"><a name="groupFromName"></a><code>[static] </code><span class="type"><a href="dfmsidebar.html#GroupName-enum">GroupName</a></span> DFMSideBar::<span class="name">groupFromName</span>(const <span class="type">QString</span> &amp;<i>name</i>)</h3>
+<!-- @@@groupFromName -->
+<!-- $$$groupGeometry[overload1]$$$groupGeometryconstQString& -->
+<h3 class="fn" id="groupGeometry"><a name="groupGeometry"></a><span class="type">QRect</span> DFMSideBar::<span class="name">groupGeometry</span>(const <span class="type">QString</span> &amp;<i>group</i> = QString()) const</h3>
+<!-- @@@groupGeometry -->
+<!-- $$$groupList[overload1]$$$groupList -->
+<h3 class="fn" id="groupList"><a name="groupList"></a><span class="type">QStringList</span> DFMSideBar::<span class="name">groupList</span>() const</h3>
+<!-- @@@groupList -->
+<!-- $$$groupName[overload1]$$$groupNameGroupName -->
+<h3 class="fn" id="groupName"><a name="groupName"></a><code>[static] </code><span class="type">QString</span> DFMSideBar::<span class="name">groupName</span>(<span class="type"><a href="dfmsidebar.html#GroupName-enum">GroupName</a></span> <i>group</i>)</h3>
+<!-- @@@groupName -->
+<!-- $$$insertItem[overload1]$$$insertItemintDFMSideBarItem*constQString& -->
+<h3 class="fn" id="insertItem"><a name="insertItem"></a><span class="type">void</span> DFMSideBar::<span class="name">insertItem</span>(<span class="type">int</span> <i>index</i>, <span class="type"><a href="dfmsidebaritem.html">DFMSideBarItem</a></span> *<i>item</i>, const <span class="type">QString</span> &amp;<i>groupName</i> = QString())</h3>
+<p>Insert <i>item</i> before <i>index</i> into <i>groupName</i> .</p>
+<p>Insert a `<a href="dfmsidebaritem.html">DFMSideBarItem</a>` <i>item</i> to group before <i>index</i> into the given <i>groupName</i> .</p>
+<!-- @@@insertItem -->
+<!-- $$$itemAt[overload1]$$$itemAtintconstQString& -->
+<h3 class="fn" id="itemAt"><a name="itemAt"></a><span class="type"><a href="dfmsidebaritem.html">DFMSideBarItem</a></span> *DFMSideBar::<span class="name">itemAt</span>(<span class="type">int</span> <i>index</i>, const <span class="type">QString</span> &amp;<i>groupName</i> = QString()) const</h3>
+<p>Get the reference of <a href="dfmsidebaritem.html">DFMSideBarItem</a> at <i>index</i> in the given <i>groupName</i>. <i>index</i> The item index which is wanted. <i>groupName</i> The group name which is wanted. Returns the reference (pointer) of the item.</p>
+<!-- @@@itemAt -->
+<!-- $$$itemAt$$$itemAtconstDUrl& -->
+<h3 class="fn" id="itemAt-1"><a name="itemAt-1"></a><span class="type"><a href="dfmsidebaritem.html">DFMSideBarItem</a></span> *DFMSideBar::<span class="name">itemAt</span>(const <span class="type">DUrl</span> &amp;<i>url</i>) const</h3>
+<!-- @@@itemAt -->
+<!-- $$$itemCount[overload1]$$$itemCountconstQString& -->
+<h3 class="fn" id="itemCount"><a name="itemCount"></a><span class="type">int</span> DFMSideBar::<span class="name">itemCount</span>(const <span class="type">QString</span> &amp;<i>group</i> = QString()) const</h3>
+<!-- @@@itemCount -->
+<!-- $$$itemIndex[overload1]$$$itemIndexconstDFMSideBarItem* -->
+<h3 class="fn" id="itemIndex"><a name="itemIndex"></a><span class="type">int</span> DFMSideBar::<span class="name">itemIndex</span>(const <span class="type"><a href="dfmsidebaritem.html">DFMSideBarItem</a></span> *<i>item</i>) const</h3>
+<p>Get the item index from its group.</p>
+<p>Returns the index from its group. return -1 if not found the item.</p>
+<p>Please notice that this return the index from the item's owner group, not the index of the full sidebar items.</p>
+<!-- @@@itemIndex -->
+<!-- $$$removeItem[overload1]$$$removeItemintconstQString& -->
+<h3 class="fn" id="removeItem"><a name="removeItem"></a><span class="type">void</span> DFMSideBar::<span class="name">removeItem</span>(<span class="type">int</span> <i>index</i>, const <span class="type">QString</span> &amp;<i>group</i> = QString())</h3>
+<!-- @@@removeItem -->
+<!-- $$$removeItem$$$removeItemDFMSideBarItem* -->
+<h3 class="fn" id="removeItem-1"><a name="removeItem-1"></a><span class="type">void</span> DFMSideBar::<span class="name">removeItem</span>(<span class="type"><a href="dfmsidebaritem.html">DFMSideBarItem</a></span> *<i>item</i>)</h3>
+<!-- @@@removeItem -->
+<!-- $$$setCurrentUrl[overload1]$$$setCurrentUrlconstDUrl& -->
+<h3 class="fn" id="setCurrentUrl"><a name="setCurrentUrl"></a><span class="type">void</span> DFMSideBar::<span class="name">setCurrentUrl</span>(const <span class="type">DUrl</span> &amp;<i>url</i>)</h3>
+<!-- @@@setCurrentUrl -->
+<!-- $$$setDisableUrlSchemes[overload1]$$$setDisableUrlSchemesconstQSet<QString>& -->
+<h3 class="fn" id="setDisableUrlSchemes"><a name="setDisableUrlSchemes"></a><span class="type">void</span> DFMSideBar::<span class="name">setDisableUrlSchemes</span>(const <span class="type">QSet</span>&lt;<span class="type">QString</span>&gt; &amp;<i>schemes</i>)</h3>
+<p>Hide sidebar items by given url <i>schemes</i> .</p>
+<p>Notice that this is for *HIDE* the items, NOT for display a *DISABLED* state.</p>
+<p><b>See also </b><a href="dfmsidebar.html#disableUrlSchemes">disableUrlSchemes</a>().</p>
+<!-- @@@setDisableUrlSchemes -->
+<!-- $$$takeItem[overload1]$$$takeItemintconstQString& -->
+<h3 class="fn" id="takeItem"><a name="takeItem"></a><span class="type"><a href="dfmsidebaritem.html">DFMSideBarItem</a></span> *DFMSideBar::<span class="name">takeItem</span>(<span class="type">int</span> <i>index</i>, const <span class="type">QString</span> &amp;<i>group</i> = QString())</h3>
+<!-- @@@takeItem -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

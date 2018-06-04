@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- dfmsidebaritem.cpp -->
+  <title>DFMSideBarItem Class | Deepin File Manager</title>
+  <link rel="stylesheet" type="text/css" href="style/online.css" />
+</head>
+<body>
+<div class="header" id="qtdocheader">
+    <div class="main">
+    <div class="main-rounded">
+        <div class="navigationbar">
+        <ul>
+<li>DFMSideBarItem</li>
+    </ul>
+    </div>
+</div>
+<div class="content">
+<div class="line">
+<div class="content mainContent">
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#properties">Properties</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#public-slots">Public Slots</a></li>
+<li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#protected-functions">Protected Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<div class="context">
+<h1 class="title">DFMSideBarItem Class</h1>
+<!-- $$$DFMSideBarItem-brief -->
+<p><a href="dfmsidebaritem.html">DFMSideBarItem</a> is the item inside <a href="dfmsidebar.html">DFMSideBar</a> <a href="#details">More...</a></p>
+<!-- @@@DFMSideBarItem -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;DFMSideBarItem&gt;</span>
+</td></tr></table></div><ul>
+<li><a href="dfmsidebaritem-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="properties"></a>
+<h2 id="properties">Properties</h2>
+<div class="table"><table class="propsummary">
+<tr><td class="topAlign"><ul>
+<li class="fn"><b><a href="dfmsidebaritem.html#autoOpenUrlOnClick-prop">autoOpenUrlOnClick</a></b> : bool</li>
+<li class="fn"><b><a href="dfmsidebaritem.html#checked-prop">checked</a></b> : bool</li>
+<li class="fn"><b><a href="dfmsidebaritem.html#groupName-prop">groupName</a></b> : const QString</li>
+<li class="fn"><b><a href="dfmsidebaritem.html#readOnly-prop">readOnly</a></b> : bool</li>
+</ul></td><td class="topAlign"><ul>
+<li class="fn"><b><a href="dfmsidebaritem.html#reorderable-prop">reorderable</a></b> : bool</li>
+<li class="fn"><b><a href="dfmsidebaritem.html#text-prop">text</a></b> : QString</li>
+<li class="fn"><b><a href="dfmsidebaritem.html#url-prop">url</a></b> : const DUrl</li>
+</ul>
+</td></tr>
+</table></div>
+<a name="public-functions"></a>
+<h2 id="public-functions">Public Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#DFMSideBarItem">DFMSideBarItem</a></b>(const DUrl &amp;<i>url</i> = DUrl(), QWidget *<i>parent</i> = nullptr)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#dtor.DFMSideBarItem">~DFMSideBarItem</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#autoOpenUrlOnClick-prop">autoOpenUrlOnClick</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#checked-prop">checked</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QWidget *</td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#contentWidget">contentWidget</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#groupName-prop">groupName</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#itemVisible">itemVisible</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#readOnly-prop">readOnly</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#reorderable-prop">reorderable</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#setContentWidget">setContentWidget</a></b>(QWidget *<i>widget</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#setIconFromThemeConfig">setIconFromThemeConfig</a></b>(const QString &amp;<i>group</i>, const QString &amp;<i>key</i> = &quot;icon&quot;)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#showRenameEditor">showRenameEditor</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#text-prop">text</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> const DUrl </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#url-prop">url</a></b>() const</td></tr>
+</table></div>
+<a name="public-slots"></a>
+<h2 id="public-slots">Public Slots</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#onEditingFinished">onEditingFinished</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#playAnimation">playAnimation</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#setAutoOpenUrlOnClick">setAutoOpenUrlOnClick</a></b>(bool <i>autoCd</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#checked-prop">setChecked</a></b>(bool <i>checked</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#readOnly-prop">setReadOnly</a></b>(bool <i>readOnly</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#reorderable-prop">setReorderable</a></b>(bool <i>reorderable</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#text-prop">setText</a></b>(QString <i>text</i>)</td></tr>
+</table></div>
+<a name="signals"></a>
+<h2 id="signals">Signals</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#clicked">clicked</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#renameFinished">renameFinished</a></b>(QString <i>name</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#reorder">reorder</a></b>(DFMSideBarItem *<i>ori</i>, DFMSideBarItem *<i>dst</i>, bool <i>insertBefore</i>)</td></tr>
+</table></div>
+<a name="protected-functions"></a>
+<h2 id="protected-functions">Protected Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> virtual Qt::DropAction </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#canDropMimeData">canDropMimeData</a></b>(const QMimeData *<i>data</i>, Qt::DropActions <i>actions</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual QMenu *</td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#createStandardContextMenu">createStandardContextMenu</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#dropMimeData">dropMimeData</a></b>(const QMimeData *<i>data</i>, Qt::DropAction <i>action</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#setGroupName">setGroupName</a></b>(QString <i>groupName</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#setUrl">setUrl</a></b>(DUrl <i>url</i>)</td></tr>
+</table></div>
+<a name="details"></a>
+<!-- $$$DFMSideBarItem-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p><a href="dfmsidebaritem.html">DFMSideBarItem</a> is the item inside <a href="dfmsidebar.html">DFMSideBar</a></p>
+<p><a href="dfmsidebaritem.html">DFMSideBarItem</a> is the base class for the sidebar items. All type of items inside the sidebar is derived from <a href="dfmsidebaritem.html">DFMSideBarItem</a>. <a href="dfmsidebaritem.html">DFMSideBarItem</a> provide the interfaces to manage the item state.</p>
+</div>
+<p><b>See also </b><a href="dfmsidebar.html">DFMSideBar</a>.</p>
+<!-- @@@DFMSideBarItem -->
+<div class="prop">
+<h2>Property Documentation</h2>
+<!-- $$$autoOpenUrlOnClick-prop$$$autoOpenUrlOnClick$$$setAutoOpenUrlOnClickbool -->
+<h3 class="fn" id="autoOpenUrlOnClick-prop"><a name="autoOpenUrlOnClick-prop"></a><span class="name">autoOpenUrlOnClick</span> : <span class="type">bool</span></h3>
+<p><b>Access functions:</b></p>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> bool </td><td class="memItemRight bottomAlign"><span class="name"><b>autoOpenUrlOnClick</b></span>() const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><span class="name"><b><a href="dfmsidebaritem.html#setAutoOpenUrlOnClick">setAutoOpenUrlOnClick</a></b></span>(bool <i>autoCd</i>)</td></tr>
+</table></div>
+<!-- @@@autoOpenUrlOnClick -->
+<!-- $$$checked-prop$$$checked$$$setCheckedbool -->
+<h3 class="fn" id="checked-prop"><a name="checked-prop"></a><span class="name">checked</span> : <span class="type">bool</span></h3>
+<p><b>Access functions:</b></p>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> bool </td><td class="memItemRight bottomAlign"><span class="name"><b>checked</b></span>() const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><span class="name"><b>setChecked</b></span>(bool <i>checked</i>)</td></tr>
+</table></div>
+<!-- @@@checked -->
+<!-- $$$groupName-prop$$$groupName -->
+<h3 class="fn" id="groupName-prop"><a name="groupName-prop"></a><span class="name">groupName</span> : const <span class="type">QString</span></h3>
+<p><b>Access functions:</b></p>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QString </td><td class="memItemRight bottomAlign"><span class="name"><b>groupName</b></span>() const</td></tr>
+</table></div>
+<!-- @@@groupName -->
+<!-- $$$readOnly-prop$$$readOnly$$$setReadOnlybool -->
+<h3 class="fn" id="readOnly-prop"><a name="readOnly-prop"></a><span class="name">readOnly</span> : <span class="type">bool</span></h3>
+<p><b>Access functions:</b></p>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> bool </td><td class="memItemRight bottomAlign"><span class="name"><b>readOnly</b></span>() const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><span class="name"><b>setReadOnly</b></span>(bool <i>readOnly</i>)</td></tr>
+</table></div>
+<!-- @@@readOnly -->
+<!-- $$$reorderable-prop$$$reorderable$$$setReorderablebool -->
+<h3 class="fn" id="reorderable-prop"><a name="reorderable-prop"></a><span class="name">reorderable</span> : <span class="type">bool</span></h3>
+<p><b>Access functions:</b></p>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> bool </td><td class="memItemRight bottomAlign"><span class="name"><b>reorderable</b></span>() const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><span class="name"><b>setReorderable</b></span>(bool <i>reorderable</i>)</td></tr>
+</table></div>
+<!-- @@@reorderable -->
+<!-- $$$text-prop$$$text$$$setTextQString -->
+<h3 class="fn" id="text-prop"><a name="text-prop"></a><span class="name">text</span> : <span class="type">QString</span></h3>
+<p><b>Access functions:</b></p>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QString </td><td class="memItemRight bottomAlign"><span class="name"><b>text</b></span>() const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><span class="name"><b>setText</b></span>(QString <i>text</i>)</td></tr>
+</table></div>
+<!-- @@@text -->
+<!-- $$$url-prop$$$url -->
+<h3 class="fn" id="url-prop"><a name="url-prop"></a><span class="name">url</span> : const <span class="type">DUrl</span></h3>
+<p><b>Access functions:</b></p>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> const DUrl </td><td class="memItemRight bottomAlign"><span class="name"><b>url</b></span>() const</td></tr>
+</table></div>
+<!-- @@@url -->
+</div>
+<div class="func">
+<h2>Member Function Documentation</h2>
+<!-- $$$DFMSideBarItem[overload1]$$$DFMSideBarItemconstDUrl&QWidget* -->
+<h3 class="fn" id="DFMSideBarItem"><a name="DFMSideBarItem"></a>DFMSideBarItem::<span class="name">DFMSideBarItem</span>(const <span class="type">DUrl</span> &amp;<i>url</i> = DUrl(), <span class="type">QWidget</span> *<i>parent</i> = nullptr)</h3>
+<p>Default constructs an instance of DFMSideBarItem.</p><!-- @@@DFMSideBarItem -->
+<!-- $$$~DFMSideBarItem[overload1]$$$~DFMSideBarItem -->
+<h3 class="fn" id="dtor.DFMSideBarItem"><a name="dtor.DFMSideBarItem"></a>DFMSideBarItem::<span class="name">~DFMSideBarItem</span>()</h3>
+<p>Destroys the instance of DFMSideBarItem.</p><!-- @@@~DFMSideBarItem -->
+<!-- $$$canDropMimeData[overload1]$$$canDropMimeDataconstQMimeData*Qt::DropActions -->
+<h3 class="fn" id="canDropMimeData"><a name="canDropMimeData"></a><code>[virtual protected] </code><span class="type">Qt::DropAction</span> DFMSideBarItem::<span class="name">canDropMimeData</span>(const <span class="type">QMimeData</span> *<i>data</i>, <span class="type">Qt::DropActions</span> <i>actions</i>) const</h3>
+<!-- @@@canDropMimeData -->
+<!-- $$$clicked[overload1]$$$clicked -->
+<h3 class="fn" id="clicked"><a name="clicked"></a><code>[signal] </code><span class="type">void</span> DFMSideBarItem::<span class="name">clicked</span>()</h3>
+<!-- @@@clicked -->
+<!-- $$$contentWidget[overload1]$$$contentWidget -->
+<h3 class="fn" id="contentWidget"><a name="contentWidget"></a><span class="type">QWidget</span> *DFMSideBarItem::<span class="name">contentWidget</span>() const</h3>
+<p><b>See also </b><a href="dfmsidebaritem.html#setContentWidget">setContentWidget</a>().</p>
+<!-- @@@contentWidget -->
+<!-- $$$createStandardContextMenu[overload1]$$$createStandardContextMenu -->
+<h3 class="fn" id="createStandardContextMenu"><a name="createStandardContextMenu"></a><code>[virtual protected] </code><span class="type">QMenu</span> *DFMSideBarItem::<span class="name">createStandardContextMenu</span>() const</h3>
+<!-- @@@createStandardContextMenu -->
+<!-- $$$dropMimeData[overload1]$$$dropMimeDataconstQMimeData*Qt::DropAction -->
+<h3 class="fn" id="dropMimeData"><a name="dropMimeData"></a><code>[virtual protected] </code><span class="type">bool</span> DFMSideBarItem::<span class="name">dropMimeData</span>(const <span class="type">QMimeData</span> *<i>data</i>, <span class="type">Qt::DropAction</span> <i>action</i>) const</h3>
+<!-- @@@dropMimeData -->
+<!-- $$$itemVisible[overload1]$$$itemVisible -->
+<h3 class="fn" id="itemVisible"><a name="itemVisible"></a><span class="type">bool</span> DFMSideBarItem::<span class="name">itemVisible</span>() const</h3>
+<!-- @@@itemVisible -->
+<!-- $$$onEditingFinished[overload1]$$$onEditingFinished -->
+<h3 class="fn" id="onEditingFinished"><a name="onEditingFinished"></a><code>[slot] </code><span class="type">void</span> DFMSideBarItem::<span class="name">onEditingFinished</span>()</h3>
+<!-- @@@onEditingFinished -->
+<!-- $$$playAnimation[overload1]$$$playAnimation -->
+<h3 class="fn" id="playAnimation"><a name="playAnimation"></a><code>[slot] </code><span class="type">void</span> DFMSideBarItem::<span class="name">playAnimation</span>()</h3>
+<!-- @@@playAnimation -->
+<!-- $$$renameFinished[overload1]$$$renameFinishedQString -->
+<h3 class="fn" id="renameFinished"><a name="renameFinished"></a><code>[signal] </code><span class="type">void</span> DFMSideBarItem::<span class="name">renameFinished</span>(<span class="type">QString</span> <i>name</i>)</h3>
+<!-- @@@renameFinished -->
+<!-- $$$reorder[overload1]$$$reorderDFMSideBarItem*DFMSideBarItem*bool -->
+<h3 class="fn" id="reorder"><a name="reorder"></a><code>[signal] </code><span class="type">void</span> DFMSideBarItem::<span class="name">reorder</span>(<span class="type"><a href="dfmsidebaritem.html#DFMSideBarItem">DFMSideBarItem</a></span> *<i>ori</i>, <span class="type"><a href="dfmsidebaritem.html#DFMSideBarItem">DFMSideBarItem</a></span> *<i>dst</i>, <span class="type">bool</span> <i>insertBefore</i>)</h3>
+<!-- @@@reorder -->
+<!-- $$$setAutoOpenUrlOnClick -->
+<h3 class="fn" id="setAutoOpenUrlOnClick"><a name="setAutoOpenUrlOnClick"></a><code>[slot] </code><span class="type">void</span> DFMSideBarItem::<span class="name">setAutoOpenUrlOnClick</span>(<span class="type">bool</span> <i>autoCd</i>)</h3>
+<p>Disable auto change directory (`cd`) on sidebar item is clicked <i>autoCd</i></p>
+<p>The `<a href="dfmsidebaritem.html">DFMSideBarItem</a>`'s default click behavior is change directory to `<a href="dfmsidebaritem.html#url-prop">url</a>()` path. If you are going to write a custom item and don't want the default behavior, then set it to false and handle `<a href="dfmsidebaritem.html#clicked">clicked</a>()` signal by yourself.</p>
+<p><b>Note:</b> Setter function for property <a href="dfmsidebaritem.html#autoOpenUrlOnClick-prop">autoOpenUrlOnClick</a>. </p><p><b>See also </b><a href="dfmsidebaritem.html#autoOpenUrlOnClick-prop">autoOpenUrlOnClick</a>(), <a href="dfmsidebaritem.html#url-prop">url</a>(), and <a href="dfmsidebaritem.html#clicked">clicked</a>().</p>
+<!-- @@@setAutoOpenUrlOnClick -->
+<!-- $$$setContentWidget[overload1]$$$setContentWidgetQWidget* -->
+<h3 class="fn" id="setContentWidget"><a name="setContentWidget"></a><span class="type">void</span> DFMSideBarItem::<span class="name">setContentWidget</span>(<span class="type">QWidget</span> *<i>widget</i>)</h3>
+<p><b>See also </b><a href="dfmsidebaritem.html#contentWidget">contentWidget</a>().</p>
+<!-- @@@setContentWidget -->
+<!-- $$$setGroupName[overload1]$$$setGroupNameQString -->
+<h3 class="fn" id="setGroupName"><a name="setGroupName"></a><code>[protected] </code><span class="type">void</span> DFMSideBarItem::<span class="name">setGroupName</span>(<span class="type">QString</span> <i>groupName</i>)</h3>
+<p>Set the group name which the item is belones to. <i>groupName</i> the group name.</p>
+<p>Notice: Don't manualy set the group name by hand. It should managed by a `DFMSideBarItemGroup`.</p>
+<p><b>See also </b><a href="dfmsidebaritem.html#groupName-prop">groupName</a>().</p>
+<!-- @@@setGroupName -->
+<!-- $$$setIconFromThemeConfig[overload1]$$$setIconFromThemeConfigconstQString&constQString& -->
+<h3 class="fn" id="setIconFromThemeConfig"><a name="setIconFromThemeConfig"></a><span class="type">void</span> DFMSideBarItem::<span class="name">setIconFromThemeConfig</span>(const <span class="type">QString</span> &amp;<i>group</i>, const <span class="type">QString</span> &amp;<i>key</i> = &quot;icon&quot;)</h3>
+<!-- @@@setIconFromThemeConfig -->
+<!-- $$$setUrl[overload1]$$$setUrlDUrl -->
+<h3 class="fn" id="setUrl"><a name="setUrl"></a><code>[protected] </code><span class="type">void</span> DFMSideBarItem::<span class="name">setUrl</span>(<span class="type">DUrl</span> <i>url</i>)</h3>
+<p><b>See also </b><a href="dfmsidebaritem.html#url-prop">url</a>().</p>
+<!-- @@@setUrl -->
+<!-- $$$showRenameEditor[overload1]$$$showRenameEditor -->
+<h3 class="fn" id="showRenameEditor"><a name="showRenameEditor"></a><span class="type">void</span> DFMSideBarItem::<span class="name">showRenameEditor</span>()</h3>
+<!-- @@@showRenameEditor -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
