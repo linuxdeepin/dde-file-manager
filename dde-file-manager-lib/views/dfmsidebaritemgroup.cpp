@@ -31,6 +31,19 @@
 
 DFM_BEGIN_NAMESPACE
 
+/*!
+ * \class DFMSideBarItemGroup
+ * \inmodule dde-file-manager-lib
+ *
+ * \brief DFMSideBarItemGroup is the item group inside DFMSideBar
+ *
+ * DFMSideBarItemGroup is the item group inside DFMSideBar which holds the sidebar items.
+ * all items is managed by DFMSideBarItemGroup. DFMSideBarItem managed all avaliable
+ * DFMSideBarItemGroup s' state.
+ *
+ * \sa DFMSideBar, DFMSideBarItem
+ */
+
 DFMSideBarItemGroup::DFMSideBarItemGroup(QString groupName)
 {
     setSpacing(0);
@@ -40,7 +53,7 @@ DFMSideBarItemGroup::DFMSideBarItemGroup(QString groupName)
     this->groupName = groupName;
     this->addLayout(itemHolder);
     this->addWidget(bottomSeparator);
-    bottomSeparator->setVisible(itemList.count() != 0);
+    bottomSeparator->setVisible(visibleItemCount() != 0);
 }
 
 /*!
@@ -64,7 +77,7 @@ int DFMSideBarItemGroup::appendItem(DFMSideBarItem *item)
     item->setGroupName(groupName);
     itemConnectionRegister(item);
 
-    bottomSeparator->setVisible(itemList.count() != 0);
+    bottomSeparator->setVisible(visibleItemCount() != 0);
 
     return index; // array start at 0, so this is the right index.
 }
@@ -80,6 +93,8 @@ void DFMSideBarItemGroup::insertItem(int index, DFMSideBarItem *item)
     itemHolder->insertWidget(index, item);
     item->setGroupName(groupName);
     itemConnectionRegister(item);
+
+    bottomSeparator->setVisible(visibleItemCount() != 0);
 }
 
 /*!
@@ -98,9 +113,9 @@ void DFMSideBarItemGroup::removeItem(int index)
         itemHolder->removeWidget(item);
         itemConnectionUnregister(item);
         item->deleteLater();
-    }
 
-    bottomSeparator->setVisible(itemList.count() != 0);
+        bottomSeparator->setVisible(visibleItemCount() != 0);
+    }
 }
 
 /*!
@@ -117,7 +132,7 @@ void DFMSideBarItemGroup::removeItem(DFMSideBarItem *item)
     itemConnectionUnregister(item);
     item->deleteLater();
 
-    bottomSeparator->setVisible(itemList.count() != 0);
+    bottomSeparator->setVisible(visibleItemCount() != 0);
 }
 
 /*!
@@ -166,9 +181,8 @@ DFMSideBarItem *DFMSideBarItemGroup::takeItem(int index)
         itemHolder->removeWidget(item);
         itemConnectionUnregister(item);
         item->setGroupName(QString());
+        bottomSeparator->setVisible(visibleItemCount() != 0);
     }
-
-    bottomSeparator->setVisible(itemList.count() != 0);
 
     return item;
 }
@@ -180,7 +194,7 @@ DFMSideBarItem *DFMSideBarItemGroup::takeItem(DFMSideBarItem *item)
     itemConnectionUnregister(item);
     item->setGroupName(QString());
 
-    bottomSeparator->setVisible(itemList.count() != 0);
+    bottomSeparator->setVisible(visibleItemCount() != 0);
 
     return item;
 }
@@ -195,6 +209,42 @@ DFMSideBarItem *DFMSideBarItemGroup::takeItem(DFMSideBarItem *item)
 int DFMSideBarItemGroup::itemCount() const
 {
     return itemList.count();
+}
+
+/*!
+ * \brief Get the visible `DFMSideBarItem` item count of this group.
+ *
+ * Item can be hidden when calling DFMSideBar::setDisableUrlSchemes .
+ *
+ * \sa setDisableUrlSchemes
+ */
+int DFMSideBarItemGroup::visibleItemCount() const
+{
+    int result = 0;
+
+    for (const DFMSideBarItem *item: itemList) {
+        if (item->itemVisible()) {
+            result++;
+        }
+    }
+
+    return result;
+}
+
+/*!
+ * \brief Hide sidebar items by given url \a schemes .
+ *
+ * Notice that this is for *HIDE* the items, NOT for display a *DISABLED* state.
+ *
+ * \sa visibleItemCount, DFMSideBar::setDisableUrlSchemes
+ */
+void DFMSideBarItemGroup::setDisableUrlSchemes(const QSet<QString> &schemes)
+{
+    for (DFMSideBarItem *item : itemList) {
+        item->setVisible(!schemes.contains(item->url().scheme()));
+    }
+
+    bottomSeparator->setVisible(visibleItemCount() != 0);
 }
 
 DFMSideBarItem *DFMSideBarItemGroup::operator [](int index)

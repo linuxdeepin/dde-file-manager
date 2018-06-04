@@ -71,6 +71,7 @@ public:
 
     bool reorderable = false;
     bool readOnly = true;
+    bool itemVisible = true;
 
     DUrl url;
     QFont font;
@@ -257,6 +258,13 @@ bool DFMSideBarItem::autoOpenUrlOnClick() const
     Q_D(const DFMSideBarItem);
 
     return d->autoOpenUrlOnClick;
+}
+
+bool DFMSideBarItem::itemVisible() const
+{
+    Q_D(const DFMSideBarItem);
+
+    return d->itemVisible;
 }
 
 QString DFMSideBarItem::groupName() const
@@ -732,6 +740,14 @@ void DFMSideBarItem::paintEvent(QPaintEvent *event)
         painter.setBrush(iconBrushColor);
         painter.drawRect(width() - SIDEBAR_CHECK_BORDER_SIZE, 0, SIDEBAR_CHECK_BORDER_SIZE, height());
     }
+}
+
+void DFMSideBarItem::setVisible(bool visible)
+{
+    Q_D(DFMSideBarItem);
+
+    d->itemVisible = visible;
+    QWidget::setVisible(visible);
 }
 
 bool DFMSideBarItem::event(QEvent *event)

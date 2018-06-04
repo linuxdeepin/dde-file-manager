@@ -56,6 +56,7 @@ public:
     bool readOnly() const;
     bool checked() const;
     bool autoOpenUrlOnClick() const;
+    bool itemVisible() const;
 
     QString groupName() const;
     QString text() const;
@@ -73,6 +74,7 @@ public Q_SLOTS:
     void setChecked(bool checked);
     void setText(QString text);
     void setAutoOpenUrlOnClick(bool autoCd);
+    void setVisible(bool visible) override;
 
     void onEditingFinished();
     void playAnimation();
@@ -90,16 +92,16 @@ protected:
     virtual Qt::DropAction canDropMimeData(const QMimeData *data, Qt::DropActions actions) const;
     virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action) const;
 
-    void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
-    void dragLeaveEvent(QDragLeaveEvent *event) Q_DECL_OVERRIDE;
-    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
-    void enterEvent(QEvent *event) Q_DECL_OVERRIDE;
-    void leaveEvent(QEvent *event) Q_DECL_OVERRIDE;
-    void contextMenuEvent(QContextMenuEvent *event) Q_DECL_OVERRIDE;
-    void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dragLeaveEvent(QDragLeaveEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
+    void enterEvent(QEvent *event) override;
+    void leaveEvent(QEvent *event) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
     bool event(QEvent *event) override;
 
     //friend DFMSideBarItem *DFMSideBarItemGroup::takeItem(int index);
