@@ -163,7 +163,7 @@ void ComputerViewItem::contextMenuEvent(QContextMenuEvent *event)
 {
     Q_UNUSED(event)
     setChecked(true);
-    DFileMenu *menu;
+    DFileMenu *menu = nullptr;
     DUrl url;
     QSet<MenuAction> disableList;
     const bool &tabAddable = WindowManager::tabAddableByWinId(windowId());
@@ -190,9 +190,11 @@ void ComputerViewItem::contextMenuEvent(QContextMenuEvent *event)
         }
     }
 
-    menu->setEventData(DUrl(), DUrlList() << url, windowId(), this);
-    menu->exec();
-    menu->deleteLater();
+    if (menu) {
+        menu->setEventData(DUrl(), DUrlList() << url, windowId(), this);
+        menu->exec();
+        menu->deleteLater();
+    }
 }
 
 void ComputerViewItem::mousePressEvent(QMouseEvent *event)
