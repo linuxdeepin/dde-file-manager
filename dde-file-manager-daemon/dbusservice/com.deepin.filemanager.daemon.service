@@ -2,3 +2,5 @@
 Name=com.deepin.filemanager.daemon
 Exec=/usr/bin/dde-file-manager-daemon
 User=root
+SystemdService=dde-filemanager-daemon.service
+

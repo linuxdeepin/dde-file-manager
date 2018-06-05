@@ -32,6 +32,8 @@
 #include "app/filemanagerdaemon.h"
 #include "client/filemanagerclient.h"
 
+#include <unistd.h>
+#include <pwd.h>
 
 int main(int argc, char *argv[])
 {
@@ -39,10 +41,22 @@ int main(int argc, char *argv[])
     ///###: why?
     ///###: when dbus invoke a daemon the variants in the environment of daemon(s) are empty.
     ///###: So we need to set them.
-    qputenv("LANG", "en_US.UTF8");
-    qputenv("LANGUAGE", "en_US");
+    if (!qEnvironmentVariableIsSet("LANG")) {
+        qputenv("LANG", "en_US.UTF8");
+    }
+
+    if (!qEnvironmentVariableIsSet("LANGUAGE")) {
+        qputenv("LANGUAGE", "en_US");
+    }
+
+    if (!qEnvironmentVariableIsSet("HOME")) {
+        qputenv("HOME", getpwuid(getuid())->pw_dir);
+    }
 
     QCoreApplication a(argc, argv);
+
+    a.setOrganizationName("deepin");
+
     QDBusConnection connection = QDBusConnection::systemBus();
     DTK_CORE_NAMESPACE::DLogManager::registerConsoleAppender();
     DTK_CORE_NAMESPACE::DLogManager::registerFileAppender();
