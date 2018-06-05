@@ -388,6 +388,8 @@ void DToolBar::updateBackForwardButtonsState()
 
 void DToolBar::setCustomActionList(const QList<QAction *> &list)
 {
+    m_actionList = list;
+
     for (DFMActionButton *button : m_contollerToolBar->findChild<QWidget*>()->findChildren<DFMActionButton*>()) {
         m_contollerToolBarContentLayout->removeWidget(button);
         button->deleteLater();
@@ -409,6 +411,15 @@ void DToolBar::setCustomActionList(const QList<QAction *> &list)
 
     path.addRoundedRect(QRectF(QPointF(0, 0), m_contollerToolBar->sizeHint()).adjusted(0.5, 0.5, -0.5, -0.5), 4, 4);
     m_contollerToolBarClipMask->setClipPath(path);
+}
+
+void DToolBar::triggerActionByIndex(int index)
+{
+    if (QAction *action = m_actionList.value(index)) {
+        if (action->isVisible()) {
+            action->trigger();
+        }
+    }
 }
 
 void DToolBar::onBackButtonClicked()

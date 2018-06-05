@@ -192,6 +192,17 @@ bool DFileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
         case Qt::Key_W:
             emit fileSignalManager->requestCloseCurrentTab(q->windowId());
             return true;
+        case Qt::Key_1:
+        case Qt::Key_2:
+        case Qt::Key_3:
+        case Qt::Key_4:
+        case Qt::Key_5:
+        case Qt::Key_6:
+        case Qt::Key_7:
+        case Qt::Key_8:
+        case Qt::Key_9:
+            toolbar->triggerActionByIndex(event->key() - Qt::Key_1);
+            return true;
         }
         break;
     }
