@@ -68,6 +68,7 @@ isEqual(ARCH, sw_64){
         include(./sw_label/sw_label.pri)
 #    }
 }
+include(io/io.pri)
 
 RESOURCES += \
     skin/skin.qrc \
