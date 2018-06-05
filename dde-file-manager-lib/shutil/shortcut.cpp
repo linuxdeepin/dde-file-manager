@@ -54,12 +54,13 @@ Shortcut::Shortcut(QObject *parent) : QObject(parent)
                       << ShortcutItem(tr("New tab"),tr("Ctrl + t "));
     group3.groupName = tr("View");
     group3.groupItems << ShortcutItem(tr("Item information"),tr("Ctrl + i "))
-                      << ShortcutItem(tr("Switch view"),tr("Ctrl + [1-9] "))
                       << ShortcutItem(tr("Help"),tr("F1 "))
                       << ShortcutItem(tr("Keyboard shortcuts"),tr("Ctrl + Shift + / "));
     group4.groupName = tr("Switch display status");
     group4.groupItems << ShortcutItem(tr("Hide item"),tr("Ctrl + h "))
-                      << ShortcutItem(tr("Input in address bar"),tr("Ctrl + l "));
+                      << ShortcutItem(tr("Input in address bar"),tr("Ctrl + l "))
+                      << ShortcutItem(tr("Switch to icon view"),tr("Ctrl + 1 "))
+                      << ShortcutItem(tr("Switch to list view"),tr("Ctrl + 2 "));
     group5.groupName = tr("Others");
     group5.groupItems << ShortcutItem(tr("Close"),tr("Alt + F4 "))
                       << ShortcutItem(tr("Close current tab"), tr("Ctrl + w"))
