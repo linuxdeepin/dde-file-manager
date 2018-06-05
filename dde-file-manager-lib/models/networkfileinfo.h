@@ -44,6 +44,7 @@ public:
     bool isWritable() const Q_DECL_OVERRIDE;
 
     bool canRename() const Q_DECL_OVERRIDE;
+    bool canIteratorDir() const override;
 //    QIcon fileIcon() const Q_DECL_OVERRIDE;
     bool isDir() const Q_DECL_OVERRIDE;
     DUrl parentUrl() const Q_DECL_OVERRIDE;

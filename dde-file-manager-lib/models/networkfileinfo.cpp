@@ -75,6 +75,11 @@ bool NetworkFileInfo::canRename() const
     return false;
 }
 
+bool NetworkFileInfo::canIteratorDir() const
+{
+    return true;
+}
+
 //QIcon NetworkFileInfo::fileIcon() const
 //{
 //    return QIcon(fileIconProvider->getThemeIconPath(mimeTypeName(), 256));
