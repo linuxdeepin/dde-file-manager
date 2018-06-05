@@ -39,7 +39,16 @@ NetworkController::~NetworkController()
 
 const DAbstractFileInfoPointer NetworkController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
 {
-    return DAbstractFileInfoPointer(new NetworkFileInfo(event->url()));
+    NetworkFileInfo *info = new NetworkFileInfo(event->url());
+
+    for (const NetworkNode &node : NetworkManager::NetworkNodes.value(DUrl(NETWORK_ROOT))) {
+        if (DUrl(node.url()) == event->url()) {
+            info->setNetworkNode(node);
+            break;
+        }
+    }
+
+    return DAbstractFileInfoPointer(info);
 }
 
 const QList<DAbstractFileInfoPointer> NetworkController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
