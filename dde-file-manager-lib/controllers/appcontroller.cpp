@@ -77,7 +77,7 @@
 #include "tag/tagutil.h"
 #include "tag/tagmanager.h"
 #include "shutil/shortcut.h"
-#include "views/dbookmarkitem.h"
+//#include "views/dbookmarkitem.h"
 #include "models/desktopfileinfo.h"
 #include "controllers/tagmanagerdaemoncontroller.h"
 

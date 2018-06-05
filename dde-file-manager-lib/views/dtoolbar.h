@@ -31,12 +31,10 @@
 #include "dstatebutton.h"
 
 class DCheckableButton;
-class DStateButton;
 class DSearchBar;
 class DTabBar;
 class DFMEvent;
 class HistoryStack;
-class DHoverButton;
 
 QT_BEGIN_NAMESPACE
 class QHBoxLayout;
@@ -75,9 +73,9 @@ public:
     void updateBackForwardButtonsState();
 
     void setCustomActionList(const QList<QAction*> &list);
+    void triggerActionByIndex(int index);
 
 signals:
-    void requestSwitchLayout();
     void refreshButtonClicked();
     void toolbarUrlChanged(const DUrl& url);
 
@@ -108,24 +106,17 @@ private:
     QFrame* m_addressToolBar;
     QPushButton* m_backButton=NULL;
     QPushButton* m_forwardButton=NULL;
-    DStateButton* m_upButton=NULL;
     QPushButton* m_searchButton = NULL;
-    DStateButton* m_refreshButton = NULL;
+    QPushButton* m_settingsButton = NULL;
     QFrame* m_contollerToolBar;
     DGraphicsClipEffect *m_contollerToolBarClipMask;
     QHBoxLayout *m_contollerToolBarContentLayout;
-
-    QPushButton* m_iconViewButton=NULL;
-    QPushButton* m_listViewButton=NULL;
-    QPushButton* m_extendButton = NULL;
-    QPushButton* m_settingsButton = NULL;
-    DHoverButton* m_sortingButton=NULL;
+    QList<QAction*> m_actionList;
 
     bool m_switchState = false;
     DFMCrumbBar * m_crumbWidget = nullptr;
     HistoryStack * m_navStack = NULL;
     QList<HistoryStack*> m_navStacks;
-
 };
 
 #endif // DTOOLBAR_H
