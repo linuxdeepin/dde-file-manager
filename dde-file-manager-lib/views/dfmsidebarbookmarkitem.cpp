@@ -41,23 +41,6 @@ DFMSideBarBookmarkItem::DFMSideBarBookmarkItem(const DUrl &url, QWidget *parent)
     setReorderable(true);
     setAutoOpenUrlOnClick(false);
 
-    connect(this, &DFMSideBarBookmarkItem::reorder, this,
-    [](DFMSideBarItem * ori, DFMSideBarItem * dst, bool insertBefore) {
-        int oriIdx = bookmarkManager->getBookmarkIndex(ori->url());
-        int dstIdx = bookmarkManager->getBookmarkIndex(dst->url());
-        if (oriIdx == dstIdx) {
-            return;
-        }
-        int newIdx = dstIdx;
-        if (dstIdx > oriIdx) {
-            newIdx--;
-        }
-        if (!insertBefore) {
-            newIdx++;
-        }
-        bookmarkManager->moveBookmark(oriIdx, newIdx);
-    });
-
     connect(this, &DFMSideBarBookmarkItem::clicked, this,
     [this]() {
         DAbstractFileInfoPointer info = fileService->createFileInfo(this, this->url());

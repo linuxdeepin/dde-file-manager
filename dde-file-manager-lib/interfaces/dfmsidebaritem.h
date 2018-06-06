@@ -81,6 +81,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void clicked();
+    void urlChanged(DUrl url);
     void renameFinished(QString name);
     void reorder(DFMSideBarItem *ori, DFMSideBarItem *dst, bool insertBefore);
 

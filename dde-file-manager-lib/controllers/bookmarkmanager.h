@@ -43,9 +43,6 @@ public:
     explicit BookMarkManager(QObject *parent = 0);
     ~BookMarkManager();
 
-    void moveBookmark(int from, int to);
-    int getBookmarkIndex(const DUrl &url);
-
     bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const Q_DECL_OVERRIDE;
     bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const Q_DECL_OVERRIDE;
     bool touch(const QSharedPointer<DFMTouchFileEvent> &event) const Q_DECL_OVERRIDE;
@@ -53,11 +50,6 @@ public:
     const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const Q_DECL_OVERRIDE;
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const Q_DECL_OVERRIDE;
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
-
-    ///###: tag protocol. Maybe will be used later.
-//    void appendBookmark(QExplicitlySharedDataPointer<BookMark> bookmarkPointer)noexcept;
-//    void appendTagBookmark(QExplicitlySharedDataPointer<BookMark> bookmark) noexcept;
-//    void clearTagBookmark();
 
 private:
     BookMarkPointer findBookmark(const DUrl &url) const;
