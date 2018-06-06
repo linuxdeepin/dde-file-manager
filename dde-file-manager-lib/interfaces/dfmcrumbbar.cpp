@@ -111,8 +111,10 @@ void DFMCrumbBarPrivate::clearCrumbs()
 void DFMCrumbBarPrivate::checkArrowVisiable()
 {
     if (crumbListHolder->width() >= crumbListScrollArea.width()) {
-        leftArrow.show();
-        rightArrow.show();
+        if (!addressBar->isVisible()) {
+            leftArrow.show();
+            rightArrow.show();
+        }
 
         QScrollBar* sb = crumbListScrollArea.horizontalScrollBar();
         leftArrow.setEnabled(sb->value() != sb->minimum());
