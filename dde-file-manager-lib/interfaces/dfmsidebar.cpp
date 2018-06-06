@@ -60,6 +60,7 @@ public:
     QSet<QString> disabledSchemes;
     QMap<QString, DFMSideBarItemGroup *> groupNameMap;
     DFMSideBarItem *lastCheckedItem = nullptr; //< managed by setCurrentUrl()
+    void appendListWithOrder(DUrlList urlList, DFMSideBarItemGroup* groupPointer) const;
 
 private:
     void initUI();
@@ -81,6 +82,27 @@ DFMSideBarPrivate::DFMSideBarPrivate(DFMSideBar *qq)
     initMountedVolumes();
     initUserShareItem();
     initTagsConnection();
+}
+
+void DFMSideBarPrivate::appendListWithOrder(DUrlList urlList, DFMSideBarItemGroup *groupPointer) const
+{
+    if (!groupPointer) {
+        return;
+    }
+
+    DUrlList savedList = groupPointer->itemOrder();;
+
+    for (const DUrl & url: savedList) {
+        int idx = urlList.indexOf(url);
+        if (idx >= 0) {
+            urlList.removeAt(idx);
+            groupPointer->appendItem(new DFMSideBarBookmarkItem(url));
+        }
+    }
+
+    for (const DUrl & url: urlList) {
+        groupPointer->appendItem(new DFMSideBarBookmarkItem(url));
+    }
 }
 
 void DFMSideBarPrivate::initUI()
@@ -293,6 +315,8 @@ void DFMSideBarPrivate::setGroupSaveItemOrder(DFMSideBarItemGroup *group, DFMSid
 
 void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::GroupName groupType)
 {
+    Q_Q(DFMSideBar);
+
     // to make group touch less DFM internal implement, we add item here.
     using DFM_STD_LOCATION = DFMStandardPaths::StandardLocation;
 
@@ -317,23 +341,10 @@ void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::G
         QList<DAbstractFileInfoPointer> bookmark_infos = DFileService::instance()->getChildren(q_func(), DUrl(BOOKMARK_ROOT),
                                                          QStringList(), QDir::AllEntries);
         DUrlList unsortedList;
-        DUrlList savedList = group->itemOrder();
-
         for (const DAbstractFileInfoPointer &info : bookmark_infos) {
             unsortedList << info->fileUrl();
         }
-
-        for (const DUrl & url: savedList) {
-            if (unsortedList.contains(url)) {
-                unsortedList.removeOne(url);
-                group->appendItem(new DFMSideBarBookmarkItem(url));
-            }
-        }
-
-        for (const DUrl & url: unsortedList) {
-            group->appendItem(new DFMSideBarBookmarkItem(url));
-        }
-
+        appendListWithOrder(unsortedList, group);
         break;
     }
     case DFMSideBar::GroupName::Network:
@@ -447,6 +458,28 @@ void DFMSideBar::setDisableUrlSchemes(const QSet<QString> &schemes)
 }
 
 /*!
+ * \brief Let group can save item order to config file
+ *
+ * \param groupName The group name.
+ *
+ * \param saveItemOrder Save or not.
+ *
+ * Notice that it will do nothing if group not exist, and you should also call appendListWithOrder
+ * if you need to use the saved order.
+ *
+ * \sa appendListWithOrder
+ */
+void DFMSideBar::setGroupSaveItemOrder(bool saveItemOrder, const QString &group)
+{
+    Q_D(DFMSideBar);
+
+    if (d->groupNameMap.contains(group)) {
+        DFMSideBarItemGroup *groupPointer = d->groupNameMap[group];
+        groupPointer->setSaveItemOrder(saveItemOrder);
+    }
+}
+
+/*!
  * \brief Return a url scheme list of the hidden sidebar items
  * \return
  */
@@ -555,6 +588,24 @@ int DFMSideBar::itemIndex(const DFMSideBarItem *item) const
     DFMSideBarItemGroup *groupPointer = d->groupNameMap[item->groupName()];
     Q_CHECK_PTR(groupPointer);
     return groupPointer->itemIndex(item);
+}
+
+/*!
+ * \brief Insert a list of url to a group with saved sort order support.
+ *
+ * It ok if a group is not set setGroupSaveItemOrder as true.
+ *
+ * \sa setGroupSaveItemOrder
+ */
+void DFMSideBar::appendListWithOrder(DUrlList urlList, const QString &group) const
+{
+    Q_D(const DFMSideBar);
+
+    DFMSideBarItemGroup *groupPointer = d->groupNameMap[group];
+
+    if (groupPointer) {
+        d->appendListWithOrder(urlList, groupPointer);
+    }
 }
 
 /*!
