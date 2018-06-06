@@ -53,6 +53,7 @@ public:
 
     void setCurrentUrl(const DUrl &url);
     void setDisableUrlSchemes(const QSet<QString> &schemes);
+    void setGroupSaveItemOrder(bool saveItemOrder, const QString &group);
     QSet<QString> disableUrlSchemes() const;
 
     int addItem(DFMSideBarItem *item, const QString &group = QString());
@@ -60,6 +61,7 @@ public:
     void removeItem(int index, const QString &group = QString());
     void removeItem(DFMSideBarItem *item);
     int itemIndex(const DFMSideBarItem *item) const;
+    void appendListWithOrder(DUrlList urlList, const QString &group) const;
     DFMSideBarItem *itemAt(int index, const QString &group = QString()) const;
     DFMSideBarItem *itemAt(const DUrl &url) const;
     DFMSideBarItem *takeItem(int index, const QString &group = QString());
