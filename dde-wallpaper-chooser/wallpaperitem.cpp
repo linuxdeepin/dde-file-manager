@@ -72,6 +72,8 @@ public:
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE
     {
+        if (m_pixmap.isNull()) return;
+
         QPainter pa(this);
 
         pa.setOpacity(m_opacity);
@@ -219,15 +221,6 @@ void WallpaperItem::resizeEvent(QResizeEvent *event)
     m_wrapper->m_pixmapBoxGeometry = QRect(offset * ratio, QSize(ItemWidth * ratio, ItemHeight * ratio));
 
     QFrame::resizeEvent(event);
-}
-
-void WallpaperItem::paintEvent(QPaintEvent *event)
-{
-    QFrame::paintEvent(event);
-
-    if (m_wrapper->m_pixmap.isNull()) {
-        initPixmap();
-    }
 }
 
 bool WallpaperItem::getDeletable() const
