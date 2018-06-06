@@ -60,7 +60,7 @@ public:
     QSet<QString> disabledSchemes;
     QMap<QString, DFMSideBarItemGroup *> groupNameMap;
     DFMSideBarItem *lastCheckedItem = nullptr; //< managed by setCurrentUrl()
-    void appendListWithOrder(DUrlList urlList, DFMSideBarItemGroup* groupPointer) const;
+    void appendListWithOrder(QList<DFMSideBarItem *> itemList, DFMSideBarItemGroup* groupPointer) const;
 
 private:
     void initUI();
@@ -84,24 +84,29 @@ DFMSideBarPrivate::DFMSideBarPrivate(DFMSideBar *qq)
     initTagsConnection();
 }
 
-void DFMSideBarPrivate::appendListWithOrder(DUrlList urlList, DFMSideBarItemGroup *groupPointer) const
+void DFMSideBarPrivate::appendListWithOrder(QList<DFMSideBarItem *> itemList, DFMSideBarItemGroup *groupPointer) const
 {
     if (!groupPointer) {
         return;
     }
 
-    DUrlList savedList = groupPointer->itemOrder();;
+    DUrlList savedList = groupPointer->itemOrder();
+    DUrlList urlList;
+
+    for (const DFMSideBarItem* item : itemList) {
+        urlList << item->url();
+    }
 
     for (const DUrl & url: savedList) {
         int idx = urlList.indexOf(url);
         if (idx >= 0) {
             urlList.removeAt(idx);
-            groupPointer->appendItem(new DFMSideBarBookmarkItem(url));
+            groupPointer->appendItem(itemList.takeAt(idx));
         }
     }
 
-    for (const DUrl & url: urlList) {
-        groupPointer->appendItem(new DFMSideBarBookmarkItem(url));
+    for (DFMSideBarItem * item: itemList) {
+        groupPointer->appendItem(item);
     }
 }
 
@@ -340,9 +345,9 @@ void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::G
     case DFMSideBar::GroupName::Bookmark: {
         QList<DAbstractFileInfoPointer> bookmark_infos = DFileService::instance()->getChildren(q_func(), DUrl(BOOKMARK_ROOT),
                                                          QStringList(), QDir::AllEntries);
-        DUrlList unsortedList;
+        QList<DFMSideBarItem *> unsortedList;
         for (const DAbstractFileInfoPointer &info : bookmark_infos) {
-            unsortedList << info->fileUrl();
+            unsortedList << new DFMSideBarBookmarkItem(info->fileUrl());
         }
         appendListWithOrder(unsortedList, group);
         break;
@@ -353,9 +358,11 @@ void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::G
     case DFMSideBar::GroupName::Tag: {
         auto tag_infos = DFileService::instance()->getChildren(q_func(), DUrl(TAG_ROOT),
                               QStringList(), QDir::AllEntries);
+        QList<DFMSideBarItem *> unsortedList;
         for (const DAbstractFileInfoPointer &info : tag_infos) {
-            group->appendItem(new DFMSideBarTagItem(info->fileUrl()));
+            unsortedList << new DFMSideBarTagItem(info->fileUrl());
         }
+        appendListWithOrder(unsortedList, group);
         break;
     }
     default: // make compiler happy
@@ -597,14 +604,14 @@ int DFMSideBar::itemIndex(const DFMSideBarItem *item) const
  *
  * \sa setGroupSaveItemOrder
  */
-void DFMSideBar::appendListWithOrder(DUrlList urlList, const QString &group) const
+void DFMSideBar::appendListWithOrder(QList<DFMSideBarItem *> itemList, const QString &group) const
 {
     Q_D(const DFMSideBar);
 
     DFMSideBarItemGroup *groupPointer = d->groupNameMap[group];
 
     if (groupPointer) {
-        d->appendListWithOrder(urlList, groupPointer);
+        d->appendListWithOrder(itemList, groupPointer);
     }
 }
 
