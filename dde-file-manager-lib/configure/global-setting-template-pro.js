@@ -111,11 +111,16 @@
                             "key": "view_mode",
                             "name": qsTranslate("GenerateSettingTranslate", "Default view:"),
                             "type": "combobox",
-                            "items": [
-                                qsTranslate("GenerateSettingTranslate", "Icon"),
-                                qsTranslate("GenerateSettingTranslate", "List")
-                            ],
-                            "default": 0
+                            "items": {
+                                "values": [
+                                    qsTranslate("GenerateSettingTranslate", "Icon"),
+                                    qsTranslate("GenerateSettingTranslate", "List")
+                                ],
+                                "keys": [
+                                    1, 2
+                                ]
+                            },
+                            "default": 1
                         }
                     ]
                 },
