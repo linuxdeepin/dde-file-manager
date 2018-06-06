@@ -1759,6 +1759,9 @@ void DFileView::initConnects()
         Q_D(const DFileView);
         setDefaultViewMode(static_cast<ViewMode>(viewMode));
     });
+    connect(DFMApplication::instance(), &DFMApplication::previewAttributeChanged, this, [this] {
+        model()->refresh();
+    });
 
     connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, this, &DFileView::viewStateChanged);
     connect(this, &DFileView::rootUrlChanged, this, &DFileView::loadViewState);
