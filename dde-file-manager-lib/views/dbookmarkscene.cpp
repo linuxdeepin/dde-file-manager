@@ -924,8 +924,8 @@ void DBookmarkScene::moveBefore(DBookmarkItem *from, DBookmarkItem *to)
     ///###: here, get the url which was stored in item.
     ///###: then, jundge whether urls are begging with "tag://" or not.
     if(!from->getUrl().isTaggedFile() && !to->getUrl().isTaggedFile()){
-        bookmarkManager->moveBookmark(indexFrom - getCustomBookmarkItemInsertIndex(),
-                                      indexTo - getCustomBookmarkItemInsertIndex());
+//        bookmarkManager->moveBookmark(indexFrom - getCustomBookmarkItemInsertIndex(),
+//                                      indexTo - getCustomBookmarkItemInsertIndex());
     }
     m_itemGroup->items().move(indexFrom, indexTo);
 
@@ -943,7 +943,7 @@ void DBookmarkScene::moveAfter(DBookmarkItem *from, DBookmarkItem *to)
         return;
 
     m_defaultLayout->insertItem(indexTo, from);
-    bookmarkManager->moveBookmark(indexFrom - getCustomBookmarkItemInsertIndex(), indexTo - getCustomBookmarkItemInsertIndex());
+    //bookmarkManager->moveBookmark(indexFrom - getCustomBookmarkItemInsertIndex(), indexTo - getCustomBookmarkItemInsertIndex());
     m_itemGroup->items().move(indexFrom, indexTo);
 
     DFMEvent event(this);

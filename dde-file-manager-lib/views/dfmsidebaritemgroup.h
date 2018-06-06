@@ -45,17 +45,21 @@ public:
     void insertItem(int index, DFMSideBarItem *item);
     void removeItem(int index);
     void removeItem(DFMSideBarItem *item);
+    void saveItemOrder();
     DFMSideBarItem *findItem(const DUrl &url);
     DFMSideBarItem *takeItem(int index);
     DFMSideBarItem *takeItem(DFMSideBarItem *item);
+    DUrlList itemOrder();
     int itemCount() const;
     int visibleItemCount() const;
+    void setSaveItemOrder(bool saveItemOrder);
     void setDisableUrlSchemes(const QSet<QString> &schemes);
     DFMSideBarItem *operator [](int index);
 
 private:
     QString groupName;
     QVBoxLayout *itemHolder;
+    bool m_saveItemOrder = false;
     QList<DFMSideBarItem *> itemList;
     DFMSideBarItemSeparator *bottomSeparator;
 

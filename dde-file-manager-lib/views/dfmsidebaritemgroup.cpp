@@ -22,12 +22,16 @@
 #include "dfmsidebardeviceitem.h"
 #include "dfmsidebaritem.h"
 #include "dfmsidebaritemgroup.h"
+#include "dfmapplication.h"
+#include "dfmsettings.h"
 
 #include "singleton.h"
 
 #include "deviceinfo/udisklistener.h"
 
 #include <QDebug>
+
+#define SIDEBAR_ITEMORDER_KEY "SideBar/ItemOrder"
 
 DFM_BEGIN_NAMESPACE
 
@@ -135,6 +139,36 @@ void DFMSideBarItemGroup::removeItem(DFMSideBarItem *item)
     bottomSeparator->setVisible(visibleItemCount() != 0);
 }
 
+DUrlList DFMSideBarItemGroup::itemOrder()
+{
+    DUrlList list;
+
+    if (m_saveItemOrder) {
+        QStringList savedList = DFMApplication::genericSetting()->value(SIDEBAR_ITEMORDER_KEY, groupName).toStringList();
+        for (const QString & item : savedList) {
+            list << DUrl(item);
+        }
+    }
+
+    return list;
+}
+
+/*!
+ * \brief Save item order to config file.
+ */
+void DFMSideBarItemGroup::saveItemOrder()
+{
+    if (m_saveItemOrder) {
+        QVariantList list;
+
+        for (const DFMSideBarItem* item : itemList) {
+            list << QVariant(item->url());
+        }
+
+        DFMApplication::genericSetting()->setValue(SIDEBAR_ITEMORDER_KEY, groupName, list);
+    }
+}
+
 /*!
  * \brief Find item by the given \a url
  * \return the first match item, will return nullptr if not found.
@@ -232,6 +266,16 @@ int DFMSideBarItemGroup::visibleItemCount() const
 }
 
 /*!
+ * \brief When item order changed, save the item order or not?
+ *
+ * \param saveItemOrder Save item order or not.
+ */
+void DFMSideBarItemGroup::setSaveItemOrder(bool saveItemOrder)
+{
+    m_saveItemOrder = saveItemOrder;
+}
+
+/*!
  * \brief Hide sidebar items by given url \a schemes .
  *
  * Notice that this is for *HIDE* the items, NOT for display a *DISABLED* state.
@@ -269,6 +313,8 @@ void DFMSideBarItemGroup::reorderItem(DFMSideBarItem *ori, DFMSideBarItem *dst, 
     }
     int newIndex = itemIndex(ori);
 
+    saveItemOrder();
+
     emit itemReordered(oldIndex, newIndex, ori);
 }
 
@@ -276,6 +322,9 @@ void DFMSideBarItemGroup::itemConnectionRegister(DFMSideBarItem *item)
 {
     connect(item, SIGNAL(reorder(DFMSideBarItem *, DFMSideBarItem *, bool)),
             this, SLOT(reorderItem(DFMSideBarItem *, DFMSideBarItem *, bool)));
+    connect(item, &DFMSideBarItem::urlChanged, this, [this]() {
+        saveItemOrder();
+    });
 }
 
 void DFMSideBarItemGroup::itemConnectionUnregister(DFMSideBarItem *item)

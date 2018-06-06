@@ -67,6 +67,7 @@ private:
     void initMountedVolumes();
     void initUserShareItem();
     void initTagsConnection();
+    void setGroupSaveItemOrder(DFMSideBarItemGroup *group, DFMSideBar::GroupName groupType);
     void addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::GroupName groupType);
 
     DAbstractFileWatcher *userShareFileWatcher = nullptr; //< managed by initUserShareItem()
@@ -114,6 +115,7 @@ void DFMSideBarPrivate::initUI()
 
     foreach (const DFMSideBar::GroupName &groupType, groups) {
         DFMSideBarItemGroup *group = new DFMSideBarItemGroup(q->groupName(groupType));
+        setGroupSaveItemOrder(group, groupType);
         addItemToGroup(group, groupType);
         groupNameMap[q->groupName(groupType)] = group;
         mainLayout->addLayout(group);
@@ -132,13 +134,15 @@ void DFMSideBarPrivate::initBookmarkConnection()
 
     q->connect(bookmark_watcher, &DAbstractFileWatcher::subfileCreated, group, [group](const DUrl & url) {
         group->appendItem(new DFMSideBarBookmarkItem(url));
+        group->saveItemOrder();
     });
 
     q->connect(bookmark_watcher, &DAbstractFileWatcher::fileDeleted, group,
-    [this, q](const DUrl & url) {
+    [this, q, group](const DUrl & url) {
         DFMSideBarItem *item = q->itemAt(url);
         if (item) {
             q->removeItem(item);
+            group->saveItemOrder();
         }
     });
 
@@ -147,6 +151,7 @@ void DFMSideBarPrivate::initBookmarkConnection()
         DFMSideBarItem *item = q->itemAt(source);
         if (item) {
             item->setUrl(target);
+            group->saveItemOrder();
         }
     });
 }
@@ -273,6 +278,19 @@ void DFMSideBarPrivate::initTagsConnection()
     });
 }
 
+void DFMSideBarPrivate::setGroupSaveItemOrder(DFMSideBarItemGroup *group, DFMSideBar::GroupName groupType)
+{
+    switch (groupType) {
+    case DFMSideBar::GroupName::Bookmark:
+    case DFMSideBar::GroupName::Tag:
+        group->setSaveItemOrder(true);
+        break;
+    default:
+        group->setSaveItemOrder(false);
+        break;
+    }
+}
+
 void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::GroupName groupType)
 {
     // to make group touch less DFM internal implement, we add item here.
@@ -296,11 +314,26 @@ void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::G
             group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::Root));
         break;
     case DFMSideBar::GroupName::Bookmark: {
-        auto bookmark_infos = DFileService::instance()->getChildren(q_func(), DUrl(BOOKMARK_ROOT),
-                              QStringList(), QDir::AllEntries);
+        QList<DAbstractFileInfoPointer> bookmark_infos = DFileService::instance()->getChildren(q_func(), DUrl(BOOKMARK_ROOT),
+                                                         QStringList(), QDir::AllEntries);
+        DUrlList unsortedList;
+        DUrlList savedList = group->itemOrder();
+
         for (const DAbstractFileInfoPointer &info : bookmark_infos) {
-            group->appendItem(new DFMSideBarBookmarkItem(info->fileUrl()));
+            unsortedList << info->fileUrl();
         }
+
+        for (const DUrl & url: savedList) {
+            if (unsortedList.contains(url)) {
+                unsortedList.removeOne(url);
+                group->appendItem(new DFMSideBarBookmarkItem(url));
+            }
+        }
+
+        for (const DUrl & url: unsortedList) {
+            group->appendItem(new DFMSideBarBookmarkItem(url));
+        }
+
         break;
     }
     case DFMSideBar::GroupName::Network:
@@ -373,6 +406,13 @@ QStringList DFMSideBar::groupList() const
     return groupNameList;
 }
 
+/*!
+ * \brief Set current sidebar state by current \a url.
+ *
+ * \param url Current url
+ *
+ * Will set the checked(highlighted) sidebar item by the given \a url.
+ */
 void DFMSideBar::setCurrentUrl(const DUrl &url)
 {
     Q_D(DFMSideBar);
@@ -451,7 +491,7 @@ int DFMSideBar::addItem(DFMSideBarItem *item, const QString &group)
  * \fn void DFMSideBar::insertItem(int index, DFMSideBarItem *item, const QString &groupName)
  * \brief Insert \a item before \a index into \a groupName .
  *
- * Insert a `DFMSideBarItem` \a item to group before \a index into the
+ * Insert a DFMSideBarItem \a item to group before \a index into the
  * given \a groupName .
  */
 void DFMSideBar::insertItem(int index, DFMSideBarItem *item, const QString &group)

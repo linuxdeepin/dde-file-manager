@@ -442,6 +442,8 @@ void DFMSideBarItem::setUrl(DUrl url)
         d->displayText = file_info->fileDisplayName();
         update();
     }
+
+    emit urlChanged(url);
 }
 
 QMenu *DFMSideBarItem::createStandardContextMenu() const

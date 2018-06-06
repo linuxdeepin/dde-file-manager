@@ -93,11 +93,6 @@ BookMarkManager::~BookMarkManager()
 
 }
 
-int BookMarkManager::getBookmarkIndex(const DUrl &)
-{
-    return -1;
-}
-
 bool BookMarkManager::renameFile(const QSharedPointer<DFMRenameEvent> &event) const
 {
     BookMarkPointer item = findBookmark(event->fromUrl());
@@ -178,28 +173,21 @@ bool BookMarkManager::touch(const QSharedPointer<DFMTouchFileEvent> &event) cons
     return true;
 }
 
-//void BookMarkManager::appendBookmark(QExplicitlySharedDataPointer<BookMark> bookmarkPointer)noexcept
-//{
-//    m_bookmarks.append(bookmarkPointer);
-//}
-
-//void BookMarkManager::appendTagBookmark(QExplicitlySharedDataPointer<BookMark> bookmark) noexcept
-//{
-//    m_tagBookmarks.push_back(bookmark);
-//}
-
-//void BookMarkManager::clearTagBookmark()
-//{
-//    if(!m_tagBookmarks.empty()){
-//        m_tagBookmarks.clear();
-//    }
-//}
-
 BookMarkPointer BookMarkManager::findBookmark(const DUrl &url) const
 {
     return m_bookmarks.value(url.bookmarkTargetUrl());
 }
 
+/*!
+ * \brief Update bookmark items by the given \a value
+ *
+ * \param value QVariant from DFMApplication::genericSetting()
+ *
+ * Please notice that this is NOT updating bookmark list to local saved config file,
+ * instead, this is updating bookmark item list FROM local saved config file.
+ *
+ * \sa DFMSetting::valueEdited(), DFMApplication::genericSetting()
+ */
 void BookMarkManager::update(const QVariant &value)
 {
     const QVariantList &list = value.toList();
@@ -238,15 +226,6 @@ void BookMarkManager::onFileEdited(const QString &group, const QString &key, con
         return;
 
     update(value);
-}
-
-void BookMarkManager::moveBookmark(int from, int to)
-{
-    if (from == to) {
-        return;
-    }
-
-//    m_bookmarks.move(from, to);
 }
 
 const QList<DAbstractFileInfoPointer> BookMarkManager::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
