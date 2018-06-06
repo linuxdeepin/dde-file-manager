@@ -267,6 +267,12 @@ void WallpaperList::updateItemThumb()
 
     showDeleteButtonForItem(static_cast<WallpaperItem*>(itemAt(mapFromGlobal(QCursor::pos()))));
 
+    for (WallpaperItem *item : m_items) {
+        if (rect().intersects(QRect(item->mapTo(this, QPoint()), item->size()))) {
+            item->initPixmap();
+        }
+    }
+
     updateBothEndsItem();
 }
 

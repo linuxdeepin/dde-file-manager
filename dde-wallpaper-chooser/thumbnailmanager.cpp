@@ -42,8 +42,8 @@ static QPixmap ThumbnailImage(const QString &path)
 
     const qreal ratio = qApp->devicePixelRatio();
 
-    QPixmap pix = QPixmap(realPath).scaled(QSize(ItemWidth * ratio, ItemHeight * ratio),
-                                           Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+    QPixmap pix = QPixmap::fromImage(QImage(realPath).scaled(QSize(ItemWidth * ratio, ItemHeight * ratio),
+                                                             Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
 
     const QRect r(0, 0, ItemWidth * ratio, ItemHeight * ratio);
     const QSize size(ItemWidth * ratio, ItemHeight * ratio);
@@ -81,9 +81,10 @@ void ThumbnailManager::clear()
 void ThumbnailManager::find(const QString &key)
 {
     QString file = QDir(m_cacheDir).absoluteFilePath(key);
-    if (QFile::exists(file))
+    const QPixmap pixmap(file);
+    if (!pixmap.isNull())
     {
-        emit thumbnailFounded(key, QPixmap(file));
+        emit thumbnailFounded(key, pixmap);
         return;
     }
 
