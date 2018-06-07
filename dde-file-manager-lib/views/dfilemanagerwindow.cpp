@@ -497,6 +497,10 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl, bool canFetchNetwork)
                     searchUrl = DUrl::fromLocalFile("/");
                 }
 
+                if (searchUrl.isSearchFile()) {
+                    searchUrl = searchUrl.searchTargetUrl();
+                }
+
                 if (!isCurrentUrlSupportSearch(searchUrl)) {
                     return false;
                 }

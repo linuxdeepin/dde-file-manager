@@ -241,8 +241,9 @@ void DToolBar::searchBarTextEntered(const QString textEntered)
     const QString &currentDir = QDir::currentPath();
     const DUrl &currentUrl = qobject_cast<DFileManagerWindow*>(topLevelWidget())->currentUrl();
 
-    if (currentUrl.isLocalFile())
+    if (currentUrl.isLocalFile()) {
         QDir::setCurrent(currentUrl.toLocalFile());
+    }
 
     DUrl inputUrl = DUrl::fromUserInput(text, false); ///###: here, judge whether the text is a local file path.
 
