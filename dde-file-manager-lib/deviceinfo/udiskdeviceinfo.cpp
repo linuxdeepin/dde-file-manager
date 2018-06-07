@@ -347,7 +347,7 @@ QSet<MenuAction> UDiskDeviceInfo::disableMenuActionList() const
     }
 
     /*Disable unmount of native disk in x86 pro*/
-    if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_DisableNonRemovableDeviceUnmount).toBool()) {
+    if (getMediaType() == native && DFMApplication::instance()->genericAttribute(DFMApplication::GA_DisableNonRemovableDeviceUnmount).toBool()) {
         actionKeys << MenuAction::Unmount;
     }
 
@@ -373,11 +373,13 @@ QVariantHash UDiskDeviceInfo::extensionPropertys() const
 {
     QVariantHash attrMap;
 
+    bool can_unmount = getMediaType() == native ? !DFMApplication::instance()->genericAttribute(DFMApplication::GA_DisableNonRemovableDeviceUnmount).toBool() : true;
+
     attrMap.insert("deviceId", getId());
     attrMap.insert("mediaType", static_cast<int>(getMediaType()));
     attrMap.insert("canMount", getDiskInfo().can_mount());
-    attrMap.insert("canUnmount", canUnmount());
-    attrMap.insert("canEject", canEject());
+    attrMap.insert("canUnmount", canUnmount() && can_unmount);
+    attrMap.insert("canEject", canEject() && can_unmount);
     attrMap.insert("canStop", canStop());
     attrMap.insert("isMounted", !getMountPointUrl().isEmpty());
 
