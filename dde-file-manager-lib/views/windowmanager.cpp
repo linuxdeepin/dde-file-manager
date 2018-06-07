@@ -142,14 +142,12 @@ void WindowManager::saveWindowState(DFileManagerWindow *window)
     /// The power by dxcb platform plugin
     NetWmStates states = (NetWmStates)window->window()->windowHandle()->property("_d_netWmStates").toInt();
 
-    QVariantMap state;
-
     if ((states & (NetWmStateMaximizedHorz | NetWmStateMaximizedVert)) == 0) {
+        QVariantMap state;
         state["width"] = window->size().width();
         state["height"] = window->size().height();
+        DFMApplication::appObtuselySetting()->setValue("WindowManager", "WindowState", state);
     }
-
-    DFMApplication::appObtuselySetting()->setValue("WindowManager", "WindowState", state);
 }
 
 DUrl WindowManager::getUrlByWindowId(quint64 windowId)
