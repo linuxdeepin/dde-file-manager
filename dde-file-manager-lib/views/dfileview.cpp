@@ -1844,21 +1844,24 @@ bool DFileView::setRootUrl(const DUrl &url)
 
     DUrl fileUrl = url;
 
-    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, fileUrl);
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(this, fileUrl);
 
-    if (!info) {
-        qDebug() << "This scheme isn't support";
-        return false;
-    }
-
-    fileUrl = info->fileUrl();
-
-    if(info->canRedirectionFileUrl()) {
+    while (info && info->canRedirectionFileUrl()) {
         const DUrl old_url = fileUrl;
 
         fileUrl = info->redirectedFileUrl();
 
+        if (old_url == fileUrl)
+            break;
+
+        info = DFileService::instance()->createFileInfo(this, fileUrl);
+
         qDebug() << "url redirected, from:" << old_url << "to:" << fileUrl;
+    }
+
+    if (!info) {
+        qDebug() << "This scheme isn't support, url" << fileUrl;
+        return false;
     }
 
     const DUrl &rootUrl = this->rootUrl();
@@ -1908,6 +1911,13 @@ bool DFileView::setRootUrl(const DUrl &url)
 
     if (fileUrl.isSearchFile()) {
         setViewMode(ListMode);
+    }
+
+    // NOTE(zccrs): 视图模式切换失败后，被选中的action是一个错误的。此时切换目录，应该在目录改变后再根据当前视图模式重设action的选中状态。
+    if (viewMode() == IconMode) {
+        toolBarActionList().first()->setChecked(true);
+    } else {
+        toolBarActionList().at(1)->setChecked(true);
     }
 
     const QList<DAbstractFileInfo::SelectionMode> &supportSelectionModes = info->supportSelectionModes();
