@@ -821,8 +821,13 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             }
 
             if (isDir()) {
-                actionKeys << MenuAction::AddToBookMark
-                           << MenuAction::Separator
+                if (DFileService::instance()->createFileInfo(nullptr, DUrl::fromBookMarkFile(fileUrl(), QString()))) {
+                    actionKeys << MenuAction::BookmarkRemove;
+                } else {
+                    actionKeys << MenuAction::AddToBookMark;
+                }
+
+                actionKeys << MenuAction::Separator
                            << MenuAction::OpenAsAdmin
                            << MenuAction::OpenInTerminal
                            << MenuAction::Separator;

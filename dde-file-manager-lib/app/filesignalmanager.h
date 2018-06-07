@@ -99,14 +99,14 @@ signals:
     /* view select all */
     void requestViewSelectAll(int windowId);
 
-    /* bookmark remove */
-    void requestBookmarkRemove(const DFMUrlBaseEvent &event);
+    /* bookmark remove: use DFileService::deleteFiles() instead */
+    Q_DECL_DEPRECATED void requestBookmarkRemove(const DFMUrlBaseEvent &event);
 
     /* bookmark add */
-    void requestBookmarkAdd(const QString &name, const DFMUrlBaseEvent &event);
+    Q_DECL_DEPRECATED void requestBookmarkAdd(const QString &name, const DFMUrlBaseEvent &event);
 
     /* bookmark move */
-    void requestBookmarkMove(int from, int to, const DFMEvent &event);
+    Q_DECL_DEPRECATED void requestBookmarkMove(int from, int to, const DFMEvent &event);
 
     /*requst open new window by given url*/
     void requestOpenNewWindowByUrl(const DUrl& url, bool isAlwaysOpen);

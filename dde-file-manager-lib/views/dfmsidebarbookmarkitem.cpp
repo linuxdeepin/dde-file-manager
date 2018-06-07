@@ -83,7 +83,7 @@ QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
         ccItem->showRenameEditor();
     })->setEnabled(fileExist);
 
-    menu->addAction(QObject::tr("Remove"), [ = ]() {
+    menu->addAction(QObject::tr("Remove bookmark"), [ = ]() {
         fileService->deleteFiles(this, DUrlList{url()}, true);
     });
 

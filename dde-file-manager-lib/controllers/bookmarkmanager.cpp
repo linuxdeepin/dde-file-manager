@@ -131,18 +131,21 @@ bool BookMarkManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) c
     QVariantList list = DFMApplication::genericSetting()->value("BookMark", "Items").toList();
 
     for (const DUrl url : event->urlList()) {
-        m_bookmarks.remove(url.bookmarkTargetUrl());
+        const BookMarkPointer &info = m_bookmarks.take(url.bookmarkTargetUrl());
+
+        if (!info)
+            continue;
 
         for (int i = 0; i < list.count(); ++i) {
             const QVariantMap &map = list.at(i).toMap();
 
-            if (map.value("name").toString() == url.bookmarkName()) {
+            if (map.value("name").toString() == info->getName()) {
                 list.removeAt(i);
                 break;
             }
         }
 
-        DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::fileDeleted, url);
+        DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::fileDeleted, info->fileUrl());
     }
 
     DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
@@ -242,7 +245,7 @@ const QList<DAbstractFileInfoPointer> BookMarkManager::getChildren(const QShared
 
 const DAbstractFileInfoPointer BookMarkManager::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
 {
-    return DAbstractFileInfoPointer(new BookMark(event->url()));
+    return findBookmark(event->url());
 }
 
 DAbstractFileWatcher *BookMarkManager::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
