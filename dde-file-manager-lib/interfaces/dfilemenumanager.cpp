@@ -743,7 +743,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::Paste] = QObject::tr("Paste");
     actionKeys[MenuAction::Rename] = QObject::tr("Rename");
     actionKeys[MenuAction::BookmarkRename] = QObject::tr("Rename");
-    actionKeys[MenuAction::BookmarkRemove] = QObject::tr("Remove");
+    actionKeys[MenuAction::BookmarkRemove] = QObject::tr("Remove bookmark");
     actionKeys[MenuAction::CreateSymlink] = QObject::tr("Create link");
     actionKeys[MenuAction::SendToDesktop] = QObject::tr("Send to desktop");
     actionKeys[MenuAction::SendToRemovableDisk] = QObject::tr("Send to");
