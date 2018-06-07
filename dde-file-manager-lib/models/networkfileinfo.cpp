@@ -77,7 +77,7 @@ bool NetworkFileInfo::canRename() const
 
 bool NetworkFileInfo::canIteratorDir() const
 {
-    return true;
+    return fileUrl() == DUrl(NETWORK_ROOT);
 }
 
 //QIcon NetworkFileInfo::fileIcon() const
