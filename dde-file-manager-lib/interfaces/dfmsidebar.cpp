@@ -279,14 +279,15 @@ void DFMSideBarPrivate::initTagsConnection()
     // New tag added.
     q->connect(tags_watcher, &DAbstractFileWatcher::subfileCreated, group, [group](const DUrl & url) {
         group->appendItem(new DFMSideBarTagItem(url));
+        group->saveItemOrder();
     });
 
     // Tag get removed.
     q->connect(tags_watcher, &DAbstractFileWatcher::fileDeleted, group, [group, q](const DUrl & url) {
-        qDebug() << url;
         DFMSideBarItem *item = group->findItem(url);
         Q_CHECK_PTR(item); // should always find one
         q->removeItem(item);
+        group->saveItemOrder();
     });
 
     // Tag got rename
@@ -295,6 +296,7 @@ void DFMSideBarPrivate::initTagsConnection()
         DFMSideBarItem *item = q->itemAt(source);
         if (item) {
             item->setUrl(target);
+            group->saveItemOrder();
         }
     });
 
