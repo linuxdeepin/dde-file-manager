@@ -109,6 +109,11 @@ QCompleter *DFMAddressBar::completer() const
     return urlCompleter;
 }
 
+/*!
+ * \brief Set current url \a path
+ *
+ * \param path Current url
+ */
 void DFMAddressBar::setCurrentUrl(const DUrl &path)
 {
     QString text = path.isLocalFile() ? path.toLocalFile() : path.toString();
