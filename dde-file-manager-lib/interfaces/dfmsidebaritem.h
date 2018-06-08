@@ -37,6 +37,7 @@ class DFMSideBarItem : public QWidget
 {
     Q_OBJECT
 
+    Q_PROPERTY(bool canDeleteViaDrag READ canDeleteViaDrag WRITE setCanDeleteViaDrag)
     Q_PROPERTY(bool reorderable READ reorderable WRITE setReorderable)
     Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly)
     Q_PROPERTY(bool checked READ checked WRITE setChecked)
@@ -53,6 +54,7 @@ public:
     const DUrl url() const;
 
     bool reorderable() const;
+    bool canDeleteViaDrag() const;
     bool readOnly() const;
     bool checked() const;
     bool autoOpenUrlOnClick() const;
@@ -70,6 +72,7 @@ public:
 
 public Q_SLOTS:
     void setReorderable(bool reorderable);
+    void setCanDeleteViaDrag(bool canDeleteViaDrag);
     void setReadOnly(bool readOnly);
     void setChecked(bool checked);
     void setText(QString text);
@@ -83,6 +86,7 @@ Q_SIGNALS:
     void clicked();
     void urlChanged(DUrl url);
     void renameFinished(QString name);
+    void itemDragReleased(QPoint dropPos, Qt::DropAction action);
     void reorder(DFMSideBarItem *ori, DFMSideBarItem *dst, bool insertBefore);
 
 protected:

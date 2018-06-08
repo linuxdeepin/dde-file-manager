@@ -40,6 +40,7 @@ DFMSideBarBookmarkItem::DFMSideBarBookmarkItem(const DUrl &url, QWidget *parent)
     setIconFromThemeConfig("BookmarkItem.BookMarks", "icon");
     setReorderable(true);
     setAutoOpenUrlOnClick(false);
+    setCanDeleteViaDrag(true);
 
     connect(this, &DFMSideBarBookmarkItem::clicked, this,
     [this]() {

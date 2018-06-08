@@ -71,6 +71,7 @@ private slots:
 
 signals:
     void itemReordered(int oldIndex, int newIndex, DFMSideBarItem *item);
+    void itemDragRelease(QPoint cursorPos, Qt::DropAction action, const DFMSideBarItem* item);
 };
 
 DFM_END_NAMESPACE

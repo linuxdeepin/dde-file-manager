@@ -325,6 +325,10 @@ void DFMSideBarItemGroup::itemConnectionRegister(DFMSideBarItem *item)
     connect(item, &DFMSideBarItem::urlChanged, this, [this]() {
         saveItemOrder();
     });
+    connect(item, &DFMSideBarItem::itemDragReleased, this, [this](QPoint dropPos, Qt::DropAction action) {
+        DFMSideBarItem * item = qobject_cast<DFMSideBarItem *>(QObject::sender());
+        emit itemDragRelease(dropPos, action, item);
+    });
 }
 
 void DFMSideBarItemGroup::itemConnectionUnregister(DFMSideBarItem *item)
