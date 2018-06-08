@@ -1,3 +1,13 @@
+<a name="4.5.5"></a>
+## 4.5.5 (2018-06-08)
+
+
+#### Bug Fixes
+
+*   optimize pixmap get of file icon ([983afce0](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/983afce03fa0185a6999c19a7faae1e4e206614d))
+
+
+
 <a name="4.5.4"></a>
 ## 4.5.4 (2018-05-18)
 
