@@ -63,6 +63,7 @@
 #include <QDir>
 #include <QProcess>
 #include <QLocalSocket>
+#include <QPixmapCache>
 
 #ifdef ENABLE_PPROF
 #include <gperftools/profiler.h>
@@ -162,6 +163,9 @@ int main(int argc, char *argv[])
     // init application object
     DFMApplication fmApp;
     Q_UNUSED(fmApp)
+
+    // init pixmap cache size limit, 20MB * devicePixelRatio
+    QPixmapCache::setCacheLimit(20 * 1024 * 1024 * app.devicePixelRatio());
 
     CommandLineManager::instance()->process();
 
