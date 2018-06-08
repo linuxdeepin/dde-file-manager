@@ -35,6 +35,7 @@ DFM_BEGIN_NAMESPACE
 DFMSideBarTagItem::DFMSideBarTagItem(const DUrl &url, QWidget *parent)
     : DFMSideBarItem(url, parent)
 {
+    setCanDeleteViaDrag(true);
     setReorderable(true);
     QString colorName = TagManager::instance()->getTagColorName(url.fileName());
     setIconFromThemeConfig("BookmarkItem." + colorName);

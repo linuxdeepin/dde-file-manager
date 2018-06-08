@@ -78,6 +78,8 @@ Q_SIGNALS:
 private:
     QScopedPointer<DFMSideBarPrivate> d_ptr;
 
+    Q_PRIVATE_SLOT(d_ptr, void _q_onItemDragRelease(QPoint cursorPos, Qt::DropAction action, const DFMSideBarItem* item))
+
     Q_DECLARE_PRIVATE(DFMSideBar)
 };
 

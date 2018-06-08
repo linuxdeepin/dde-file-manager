@@ -69,6 +69,7 @@ public:
 
     void hideRenameEditor();
 
+    bool canDeleteViaDrag = false;
     bool reorderable = false;
     bool readOnly = true;
     bool itemVisible = true;
@@ -239,6 +240,13 @@ bool DFMSideBarItem::reorderable() const
     return d->reorderable;
 }
 
+bool DFMSideBarItem::canDeleteViaDrag() const
+{
+    Q_D(const DFMSideBarItem);
+
+    return d->canDeleteViaDrag;
+}
+
 bool DFMSideBarItem::readOnly() const
 {
     Q_D(const DFMSideBarItem);
@@ -334,6 +342,13 @@ void DFMSideBarItem::setReorderable(bool reorderable)
     Q_D(DFMSideBarItem);
 
     d->reorderable = reorderable;
+}
+
+void DFMSideBarItem::setCanDeleteViaDrag(bool canDeleteViaDrag)
+{
+    Q_D(DFMSideBarItem);
+
+    d->canDeleteViaDrag = canDeleteViaDrag;
 }
 
 void DFMSideBarItem::setReadOnly(bool readOnly)
@@ -647,12 +662,16 @@ void DFMSideBarItem::mouseMoveEvent(QMouseEvent *event)
 
     if (d->pressed && reorderable()) {
         QDrag *drag = new QDrag(this);
+        Qt::DropAction dropAction;
         QMimeData *mimeData = new QMimeData;
+
         drag->setPixmap(d->reorderLine());
         drag->setHotSpot(QPoint(event->x(), 4));
         drag->setMimeData(mimeData);
-        drag->exec();
+        dropAction = drag->exec();
         drag->deleteLater();
+
+        emit itemDragReleased(QCursor::pos(), dropAction);
     }
 
     return;

@@ -60,7 +60,10 @@ public:
     QSet<QString> disabledSchemes;
     QMap<QString, DFMSideBarItemGroup *> groupNameMap;
     DFMSideBarItem *lastCheckedItem = nullptr; //< managed by setCurrentUrl()
+    void groupConnectionRegister(DFMSideBarItemGroup *group);
     void appendListWithOrder(QList<DFMSideBarItem *> itemList, DFMSideBarItemGroup* groupPointer) const;
+
+    void _q_onItemDragRelease(QPoint cursorPos, Qt::DropAction action, const DFMSideBarItem* item);
 
 private:
     void initUI();
@@ -82,6 +85,16 @@ DFMSideBarPrivate::DFMSideBarPrivate(DFMSideBar *qq)
     initMountedVolumes();
     initUserShareItem();
     initTagsConnection();
+}
+
+void DFMSideBarPrivate::groupConnectionRegister(DFMSideBarItemGroup * group)
+{
+    Q_Q(DFMSideBar);
+
+    Q_CHECK_PTR(group);
+
+    q->connect(group, SIGNAL(itemDragRelease(QPoint, Qt::DropAction, const DFMSideBarItem*)),
+               q, SLOT(_q_onItemDragRelease(QPoint, Qt::DropAction, const DFMSideBarItem*)));
 }
 
 void DFMSideBarPrivate::appendListWithOrder(QList<DFMSideBarItem *> itemList, DFMSideBarItemGroup *groupPointer) const
@@ -107,6 +120,21 @@ void DFMSideBarPrivate::appendListWithOrder(QList<DFMSideBarItem *> itemList, DF
 
     for (DFMSideBarItem * item: itemList) {
         groupPointer->appendItem(item);
+    }
+}
+
+void DFMSideBarPrivate::_q_onItemDragRelease(QPoint cursorPos, Qt::DropAction action, const DFMSideBarItem *item)
+{
+    Q_Q(DFMSideBar);
+
+    DFMSideBarItemGroup * group = qobject_cast<DFMSideBarItemGroup *>(q->sender());
+    Q_CHECK_PTR(group);
+
+    QPoint sidebarTopLeftPos = q->mapToGlobal(QPoint(0, 0));
+    QRect sidebarGlobalGeometry(sidebarTopLeftPos, q->geometry().size());
+
+    if (item->canDeleteViaDrag() && !sidebarGlobalGeometry.contains(cursorPos) && action == Qt::IgnoreAction) {
+        DFileService::instance()->deleteFiles(q, {item->url()}, true);
     }
 }
 
@@ -142,6 +170,7 @@ void DFMSideBarPrivate::initUI()
 
     foreach (const DFMSideBar::GroupName &groupType, groups) {
         DFMSideBarItemGroup *group = new DFMSideBarItemGroup(q->groupName(groupType));
+        groupConnectionRegister(group);
         setGroupSaveItemOrder(group, groupType);
         addItemToGroup(group, groupType);
         groupNameMap[q->groupName(groupType)] = group;
@@ -517,6 +546,7 @@ int DFMSideBar::addItem(DFMSideBarItem *item, const QString &group)
     } else {
         QString groupName = group.isEmpty() ? "" : group;
         DFMSideBarItemGroup *group = new DFMSideBarItemGroup(groupName);
+        d->groupConnectionRegister(group);
         d->groupNameMap[groupName] = group;
         index = group->appendItem(item);
         d->mainLayout->addLayout(group);
@@ -787,3 +817,5 @@ QString DFMSideBar::groupName(DFMSideBar::GroupName group)
 }
 
 DFM_END_NAMESPACE
+
+#include "moc_dfmsidebar.cpp"
