@@ -11,6 +11,7 @@
 #include <QDBusError>
 #include <QDBusConnection>
 #include <QThreadPool>
+#include <QPixmapCache>
 
 #include <DLog>
 #include <DApplication>
@@ -78,6 +79,9 @@ int main(int argc, char *argv[])
     }
 
     Desktop::instance()->initDebugDBus(conn);
+
+    // init pixmap cache size limit, 20MB * devicePixelRatio
+    QPixmapCache::setCacheLimit(20 * 1024 * 1024 * app.devicePixelRatio());
 
     QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
     Config::instance();
