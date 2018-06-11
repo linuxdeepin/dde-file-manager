@@ -211,6 +211,30 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
     return QLineEdit::keyPressEvent(e);
 }
 
+void DFMAddressBar::paintEvent(QPaintEvent *e)
+{
+    QLineEdit::paintEvent(e);
+
+    // addressbar animation
+    QPainter painter(this);
+
+    // Draw growing animation
+    if (animation && animation->state() != QAbstractAnimation::Stopped) {
+        QPixmap glowingImg = ThemeConfig::instace()->pixmap("DSearchBar.glowingAnimation", "image");
+        float curValue = animation->currentValue().toFloat();
+        float xPos = (this->width() + glowingImg.width()) * curValue - glowingImg.width();
+
+        painter.drawPixmap(xPos, 0, glowingImg);
+    }
+}
+
+void DFMAddressBar::showEvent(QShowEvent *event)
+{
+    timer.start();
+
+    return QLineEdit::showEvent(event);
+}
+
 void DFMAddressBar::initUI()
 {
     // Left indicator (clickable! did u know that?)
@@ -222,6 +246,18 @@ void DFMAddressBar::initUI()
 
     // Completer List
     completerView = new DCompleterListView(this);
+
+    // Animation
+    timer.setInterval(200); // animation delay
+    timer.setSingleShot(true);
+    animation = new QVariantAnimation();
+    animation->setDuration(616);
+    animation->setEasingCurve(QEasingCurve::OutQuad);
+    animation->setStartValue(QVariant(1.0f));
+    animation->setEndValue(QVariant(0.0f));
+
+    connect(animation, &QVariantAnimation::valueChanged,
+            this, static_cast<void(DFMAddressBar::*)()>(&DFMAddressBar::update));
 
     // Other misc..
     setFixedHeight(24);
@@ -259,6 +295,11 @@ void DFMAddressBar::initConnections()
     if (clear_action) {
         connect(clear_action, &QAction::triggered, this, &DFMAddressBar::clearButtonPressed);
     }
+
+    // animation delay timer
+    connect(&timer, &QTimer::timeout, animation, [this]() {
+        animation->start();
+    });
 }
 
 void DFMAddressBar::initData()
@@ -470,6 +511,11 @@ void DFMAddressBar::onTextEdited(const QString &text)
         completerBaseString = "";
         setIndicator(IndicatorType::Search);
         return;
+    }
+
+    // Stop the animation if user start editing text
+    if (timer.isActive()) {
+        timer.stop();
     }
 
     // blumia: Assume address is: /aa/bbbb/cc , completion prefix should be "cc",
