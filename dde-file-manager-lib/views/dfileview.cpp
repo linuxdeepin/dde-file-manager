@@ -1715,6 +1715,8 @@ void DFileView::initUI()
     setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setDefaultDropAction(Qt::MoveAction);
+    // disable auto remove item when drop of MoveAction finished
+    setDragDropOverwriteMode(true);
 
     DListView::setSelectionRectVisible(true);
 
