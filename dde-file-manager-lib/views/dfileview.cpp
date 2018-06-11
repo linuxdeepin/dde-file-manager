@@ -672,21 +672,6 @@ void DFileView::setViewMode(DFileView::ViewMode mode)
     emit viewStateChanged();
 }
 
-void DFileView::sort(int column, Qt::SortOrder order)
-{
-    D_D(DFileView);
-
-    model()->setSortColumn(column, order);
-
-    d->oldSelectedUrls = this->selectedUrls();
-
-    if (!d->oldSelectedUrls.isEmpty())
-        d->oldCurrentUrl = model()->getUrlByIndex(currentIndex());
-
-    clearSelection();
-    model()->sort();
-}
-
 void DFileView::sortByRole(int role, Qt::SortOrder order)
 {
     D_D(DFileView);
@@ -1243,9 +1228,17 @@ void DFileView::saveViewState()
 
 void DFileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
 {
-    Q_D(const DFileView);
+    Q_D(DFileView);
 
-    sort(logicalIndex, order);
+    model()->setSortColumn(logicalIndex, order);
+
+    d->oldSelectedUrls = this->selectedUrls();
+
+    if (!d->oldSelectedUrls.isEmpty())
+        d->oldCurrentUrl = model()->getUrlByIndex(currentIndex());
+
+    clearSelection();
+    model()->sort();
 }
 
 void DFileView::focusInEvent(QFocusEvent *event)
@@ -1898,6 +1891,13 @@ bool DFileView::setRootUrl(const DUrl &url)
 
     model()->setSortRole(d->fileViewStateValue(url, "sortRole", DFileSystemModel::FileDisplayNameRole).toInt(),
                          (Qt::SortOrder)d->fileViewStateValue(url, "sortOrder", Qt::AscendingOrder).toInt());
+
+    if (d->headerView) {
+        // update header view sort indicator
+        QSignalBlocker blocker(d->headerView);
+        Q_UNUSED(blocker)
+        d->headerView->setSortIndicator(model()->sortColumn(), model()->sortOrder());
+    }
 
     if (info) {
         ViewModes modes = (ViewModes)info->supportViewMode();
