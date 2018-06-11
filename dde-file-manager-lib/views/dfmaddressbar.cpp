@@ -190,7 +190,6 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
     lastPressedKey = e->key();
     switch (e->key()) {
     case Qt::Key_Escape:
-//        emit focusOut();
         emit escKeyPressed();
         e->accept();
         return;
@@ -214,9 +213,23 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
                     setText(text() + '/');
                 }
             }
+            e->accept();
             return;
         default:
            break;
+        }
+    } else {
+        // If no compiler
+        switch (e->key()) {
+        case Qt::Key_Tab:
+            e->accept();
+            return;
+        case Qt::Key_Return:
+            emit returnPressed();
+            e->accept();
+            return;
+        default:
+            break;
         }
     }
 
