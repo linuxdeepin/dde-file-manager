@@ -55,9 +55,11 @@ public:
     explicit DFMAddressBar(DFMCrumbBar *parent = 0);
 
     QCompleter *completer() const;
+    QString placeholderText() const;
 
     void setCurrentUrl(const DUrl &path);
     void setCompleter(QCompleter *c);
+    void setPlaceholderText(const QString &text);
 
 signals:
     void lostFocus();
@@ -86,6 +88,7 @@ private:
     bool isHistoryInCompleterModel = false;
     QTimer timer;
     DUrl currentUrl = DUrl();
+    QString m_placeholderText = QString();
     QString completerBaseString = QString();
     QString lastEditedString = QString();
     QStringListModel completerModel;

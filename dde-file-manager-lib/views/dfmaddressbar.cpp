@@ -109,6 +109,11 @@ QCompleter *DFMAddressBar::completer() const
     return urlCompleter;
 }
 
+QString DFMAddressBar::placeholderText() const
+{
+    return m_placeholderText;
+}
+
 /*!
  * \brief Set current url \a path
  *
@@ -148,6 +153,13 @@ void DFMAddressBar::setCompleter(QCompleter *c)
 
     completerView->setItemDelegate(&styledItemDelegate);
 
+}
+
+void DFMAddressBar::setPlaceholderText(const QString &text)
+{
+    // Since the placeholder text provided by QLineEdit can not have separate alignment
+    // alone with the user entered edit text.
+    m_placeholderText = text;
 }
 
 void DFMAddressBar::focusInEvent(QFocusEvent *e)
@@ -217,6 +229,20 @@ void DFMAddressBar::paintEvent(QPaintEvent *e)
 
     // addressbar animation
     QPainter painter(this);
+
+    // check if we should draw placeholder text
+    if (text().isEmpty()) {
+        QPen oldpen = painter.pen();
+        QColor phColor = palette().text().color();
+        const Qt::Alignment alignPhText = QStyle::visualAlignment(Qt::LeftToRight, QFlag(Qt::AlignCenter));
+
+        phColor.setAlpha(128);
+        painter.setPen(phColor);
+
+        painter.drawText(rect(), alignPhText, placeholderText());
+
+        painter.setPen(oldpen);
+    }
 
     // Draw growing animation
     if (animation && animation->state() != QAbstractAnimation::Stopped) {

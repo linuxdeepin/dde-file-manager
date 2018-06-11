@@ -271,7 +271,7 @@ void DFMCrumbInterface::requestCompletionList(const DUrl &url)
     }, Qt::QueuedConnection);
 
     d->folderCompleterJobPointer->setTimeCeiling(1000);
-    d->folderCompleterJobPointer->setCountCeiling(100);
+    d->folderCompleterJobPointer->setCountCeiling(500);
     d->folderCompleterJobPointer->start();
 }
 
