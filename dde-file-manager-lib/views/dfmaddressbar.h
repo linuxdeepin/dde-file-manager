@@ -61,6 +61,9 @@ public:
     void setCompleter(QCompleter *c);
     void setPlaceholderText(const QString &text);
 
+public slots:
+    void hide();
+
 signals:
     void lostFocus();
     void clearButtonPressed();
