@@ -162,6 +162,12 @@ void DFMAddressBar::setPlaceholderText(const QString &text)
     m_placeholderText = text;
 }
 
+void DFMAddressBar::hide()
+{
+    completerModel.setStringList(QStringList());
+    QLineEdit::hide();
+}
+
 void DFMAddressBar::focusInEvent(QFocusEvent *e)
 {
     if (urlCompleter) {
