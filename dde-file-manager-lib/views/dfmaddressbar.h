@@ -25,8 +25,10 @@
 
 #include <QItemSelection>
 #include <QLineEdit>
+#include <QVariantAnimation>
 #include <QStringListModel>
 #include <QStyledItemDelegate>
+#include <qtimer.h>
 
 DFM_BEGIN_NAMESPACE
 
@@ -66,6 +68,8 @@ protected:
     void focusInEvent(QFocusEvent *e) override;
     void focusOutEvent(QFocusEvent *e) override;
     void keyPressEvent(QKeyEvent *e) override;
+    void paintEvent(QPaintEvent *e) override;
+    void showEvent(QShowEvent *event) override;
 
 private:
     void initUI();
@@ -80,6 +84,7 @@ private:
 
     int lastPressedKey = Qt::Key_D; // just an init value
     bool isHistoryInCompleterModel = false;
+    QTimer timer;
     DUrl currentUrl = DUrl();
     QString completerBaseString = QString();
     QString lastEditedString = QString();
@@ -88,6 +93,7 @@ private:
     QStringList historyList;
     QAction * indicator = nullptr;
     QCompleter *urlCompleter = nullptr;
+    QVariantAnimation *animation = nullptr;
     DFMCrumbInterface* crumbController = nullptr; // Scheme completion support
     DCompleterStyledItemDelegate styledItemDelegate;
     enum IndicatorType indicatorType = IndicatorType::Search;

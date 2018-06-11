@@ -102,5 +102,7 @@
         <file>dark/icons/search.svg</file>
         <file>dark/DTitleBar.theme</file>
         <file>light/DTitleBar.theme</file>
+        <file>dark/icons/glowing.svg</file>
+        <file>light/icons/glowing.svg</file>
     </qresource>
 </RCC>
