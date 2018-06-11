@@ -200,10 +200,13 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
     if (urlCompleter && urlCompleter->popup()->isVisible()) {
         // The following keys are forwarded by the completer to the widget
         switch (e->key()) {
-        case Qt::Key_Enter:
-        case Qt::Key_Return:
         case Qt::Key_Backtab:
             e->ignore();
+            return;
+        case Qt::Key_Enter:
+        case Qt::Key_Return:
+            e->accept();
+            emit returnPressed();
             return;
         case Qt::Key_Tab:
             if (completer()->completionCount() > 0) {
@@ -224,6 +227,7 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
         case Qt::Key_Tab:
             e->accept();
             return;
+        case Qt::Key_Enter:
         case Qt::Key_Return:
             emit returnPressed();
             e->accept();
