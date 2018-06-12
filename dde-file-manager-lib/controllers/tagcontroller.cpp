@@ -397,6 +397,17 @@ DUrlList TagController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) co
     return list;
 }
 
+bool TagController::setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const
+{
+    DUrl url = event->url();
+
+    if (!url.taggedLocalFilePath().isEmpty()) {
+        return DFileService::instance()->setPermissions(event->sender(), DUrl::fromLocalFile(url.taggedLocalFilePath()), event->permissions());
+    }
+
+    return false;
+}
+
 bool TagController::openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const
 {
     const DUrl &local_file = toLocalFile(event->url());

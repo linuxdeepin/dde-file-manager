@@ -109,6 +109,7 @@ public:
     bool mkdir(const QObject *sender, const DUrl &targetUrl) const;
     bool touchFile(const QObject *sender, const DUrl &targetUrl) const;
     bool openFileLocation(const QObject *sender, const DUrl &url) const;
+    bool setPermissions(const QObject *sender, const DUrl &url, const QFileDevice::Permissions permissions) const;
 
     bool createSymlink(const QObject *sender, const DUrl &fileUrl) const;
     bool createSymlink(const QObject *sender, const DUrl &fileUrl, const DUrl &linkToUrl) const;

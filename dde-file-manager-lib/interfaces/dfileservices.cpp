@@ -380,6 +380,9 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     case DFMEvent::SetFileExtensionPropertys:
         result = CALL_CONTROLLER(setExtensionPropertys);
         break;
+    case DFMEvent::SetPermission:
+        result = CALL_CONTROLLER(setPermissions);
+        break;
     default:
         return false;
     }
@@ -573,6 +576,11 @@ bool DFileService::touchFile(const QObject *sender, const DUrl &targetUrl) const
 bool DFileService::openFileLocation(const QObject *sender, const DUrl &url) const
 {
     return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenFileLocation>(sender, url)).toBool();
+}
+
+bool DFileService::setPermissions(const QObject *sender, const DUrl &url, const QFileDevice::Permissions permissions) const
+{
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMSetPermissionEvent>(sender, url, permissions)).toBool();
 }
 
 bool DFileService::createSymlink(const QObject *sender, const DUrl &fileUrl) const

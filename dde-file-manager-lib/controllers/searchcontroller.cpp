@@ -438,6 +438,17 @@ bool SearchController::renameFile(const QSharedPointer<DFMRenameEvent> &event) c
     return DFileService::instance()->renameFile(event->sender(), realUrl(event->fromUrl()), realUrl(event->toUrl()));
 }
 
+bool SearchController::setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const
+{
+    DUrl url = event->url();
+
+    if (!url.searchTargetUrl().isEmpty()) {
+        return DFileService::instance()->setPermissions(event->sender(), url.searchTargetUrl(), event->permissions());
+    }
+
+    return false;
+}
+
 bool SearchController::compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const
 {
     return DFileService::instance()->compressFiles(event->sender(), realUrlList(event->urlList()));

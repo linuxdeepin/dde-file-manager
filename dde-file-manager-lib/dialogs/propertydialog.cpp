@@ -1005,5 +1005,10 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
 
     widget->setLayout(layout);
 
+    // Still WIP
+    ownerBox->setEnabled(false);
+    groupBox->setEnabled(false);
+    otherBox->setEnabled(false);
+
     return widget;
 }
