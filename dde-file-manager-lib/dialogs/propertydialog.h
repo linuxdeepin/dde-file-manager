@@ -181,6 +181,7 @@ private:
     SectionValueLabel* m_folderSizeLabel{ nullptr };
     QFrame *m_basicInfoFrame{ nullptr };
     ShareInfoFrame* m_shareinfoFrame{ nullptr };
+    QFrame* m_authorityManagementFrame{ nullptr };
     QFrame *m_localDeviceInfoFrame{ nullptr };
     QFrame *m_deviceInfoFrame{ nullptr };
     QFrame *m_OpenWithFrame{ nullptr };
@@ -198,7 +199,7 @@ private:
     QFrame *createLocalDeviceInfoWidget(const DUrl& url);
     QFrame *createDeviceInfoWidget(UDiskDeviceInfoPointer info);
     QListWidget *createOpenWithListWidget(const DAbstractFileInfoPointer &info);
-    QFrame *createAuthorityManagermentWidget(const DAbstractFileInfoPointer &info);
+    QFrame *createAuthorityManagementWidget(const DAbstractFileInfoPointer &info);
 };
 
 #endif // PROPERTYDIALOG_H
