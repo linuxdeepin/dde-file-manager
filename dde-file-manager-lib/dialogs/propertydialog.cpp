@@ -244,6 +244,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
     QString basicInfo = tr("Basic info");
     QString openWith = tr("Open with");
     QString shareManager = tr("Share Management");
+    QString authManager = tr("Permission Management");
     initUI();
     QString query = m_url.query();
     UDiskDeviceInfoPointer diskInfo = deviceListener->getDevice(query);
@@ -288,16 +289,19 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         }
 
         m_basicInfoFrame = createBasicInfoWidget(fileInfo);
+        m_authorityManagementFrame = createAuthorityManagementWidget(fileInfo);
 
         QStringList titleList;
         if (fileInfo->isFile()) {
             titleList << basicInfo;
             titleList << openWith;
+            titleList << authManager;
         } else {
             titleList << basicInfo;
             if (fileInfo->canShare()) {
                 titleList << shareManager;
             }
+            titleList << authManager;
         }
         m_expandGroup = addExpandWidget(titleList);
         m_expandGroup->expand(0)->setContent(m_basicInfoFrame);
@@ -319,6 +323,10 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
             startComputerFolderSize(m_url);
             m_fileCount = fileInfo->filesCount();
         }
+
+        int authMgrIndex = titleList.indexOf(authManager);
+        m_expandGroup->expand(authMgrIndex)->setContent(m_authorityManagementFrame);
+        m_expandGroup->expand(authMgrIndex)->setExpand(false);
     }
     initTextShowFrame(m_edit->toPlainText());
     if (m_editDisbaled) {
@@ -949,7 +957,7 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
     return listWidget;
 }
 
-QFrame *PropertyDialog::createAuthorityManagermentWidget(const DAbstractFileInfoPointer &info)
+QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoPointer &info)
 {
     QFrame *widget = new QFrame;
     QFormLayout *layout = new QFormLayout;
