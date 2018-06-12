@@ -58,6 +58,8 @@ public:
     bool mkdir(const QSharedPointer<DFMMkdirEvent> &event) const Q_DECL_OVERRIDE;
     bool touch(const QSharedPointer<DFMTouchFileEvent> &event) const Q_DECL_OVERRIDE;
 
+    bool setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const override;
+
     bool shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const Q_DECL_OVERRIDE;
     bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const Q_DECL_OVERRIDE;
     bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const Q_DECL_OVERRIDE;

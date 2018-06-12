@@ -176,6 +176,17 @@ bool BookMarkManager::touch(const QSharedPointer<DFMTouchFileEvent> &event) cons
     return true;
 }
 
+bool BookMarkManager::setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const
+{
+    DUrl url = event->url();
+
+    if (!url.bookmarkTargetUrl().isEmpty()) {
+        return DFileService::instance()->setPermissions(event->sender(), url.bookmarkTargetUrl(), event->permissions());
+    }
+
+    return false;
+}
+
 BookMarkPointer BookMarkManager::findBookmark(const DUrl &url) const
 {
     return m_bookmarks.value(url.bookmarkTargetUrl());

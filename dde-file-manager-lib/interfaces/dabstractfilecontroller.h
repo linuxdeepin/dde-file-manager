@@ -45,6 +45,7 @@ class DFMRestoreFromTrashEvent;
 class DFMPasteEvent;
 class DFMMkdirEvent;
 class DFMTouchFileEvent;
+class DFMSetPermissionEvent;
 class DFMOpenFileLocation;
 class DFMCreateSymlinkEvent;
 class DFMGetChildrensEvent;
@@ -82,6 +83,7 @@ public:
     virtual bool restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent> &event) const;
     virtual bool mkdir(const QSharedPointer<DFMMkdirEvent> &event) const;
     virtual bool touch(const QSharedPointer<DFMTouchFileEvent> &event) const;
+    virtual bool setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const;
 
     virtual bool openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const;
 

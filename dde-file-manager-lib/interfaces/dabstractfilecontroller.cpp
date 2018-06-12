@@ -180,6 +180,13 @@ bool DAbstractFileController::touch(const QSharedPointer<DFMTouchFileEvent> &eve
     return false;
 }
 
+bool DAbstractFileController::setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const
+{
+    event->ignore();
+
+    return false;
+}
+
 bool DAbstractFileController::openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const
 {
     return DDesktopServices::showFileItem(event->url());

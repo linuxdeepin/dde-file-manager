@@ -43,9 +43,10 @@ public:
     explicit BookMarkManager(QObject *parent = 0);
     ~BookMarkManager();
 
-    bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const Q_DECL_OVERRIDE;
-    bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const Q_DECL_OVERRIDE;
-    bool touch(const QSharedPointer<DFMTouchFileEvent> &event) const Q_DECL_OVERRIDE;
+    bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const override;
+    bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const override;
+    bool touch(const QSharedPointer<DFMTouchFileEvent> &event) const override;
+    bool setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const override;
 
     const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const Q_DECL_OVERRIDE;
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const Q_DECL_OVERRIDE;

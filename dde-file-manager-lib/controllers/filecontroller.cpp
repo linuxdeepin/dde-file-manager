@@ -426,6 +426,15 @@ bool FileController::touch(const QSharedPointer<DFMTouchFileEvent> &event) const
     return true;
 }
 
+bool FileController::setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const
+{
+    QFile file(event->url().toLocalFile());
+
+    event->accept();
+
+    return file.setPermissions(event->permissions());
+}
+
 bool FileController::shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const
 {
     ShareInfo info;

@@ -972,8 +972,6 @@ QSharedPointer<DFMGetTagsThroughFilesEvent> DFMGetTagsThroughFilesEvent::fromJso
     return QSharedPointer<DFMGetTagsThroughFilesEvent>{ nullptr };
 }
 
-
-
 DFMSetFileExtensionPropertys::DFMSetFileExtensionPropertys(const QObject *sender, const DUrl &url, const QVariantHash &ep)
     : DFMUrlBaseEvent(SetFileExtensionPropertys, sender, url)
 {
@@ -983,4 +981,15 @@ DFMSetFileExtensionPropertys::DFMSetFileExtensionPropertys(const QObject *sender
 QVariantHash DFMSetFileExtensionPropertys::extensionPropertys() const
 {
     return property(QT_STRINGIFY(DFMSetFileExtensionPropertys::extensionPropertys)).toHash();
+}
+
+DFMSetPermissionEvent::DFMSetPermissionEvent(const QObject *sender, const DUrl &url, const QFileDevice::Permissions &permissions)
+                    :DFMUrlBaseEvent{ Type::SetPermission, sender, url }
+{
+    setProperty(QT_STRINGIFY(DFMSetPermissionEvent::permissions), static_cast<int>(permissions));
+}
+
+QFileDevice::Permissions DFMSetPermissionEvent::permissions() const
+{
+    return static_cast<QFileDevice::Permissions>(property(QT_STRINGIFY(DFMSetPermissionEvent::permissions)).toInt());
 }

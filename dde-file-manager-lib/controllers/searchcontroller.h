@@ -49,6 +49,8 @@ public:
     bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const Q_DECL_OVERRIDE;
     bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const Q_DECL_OVERRIDE;
 
+    bool setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const override;
+
     bool compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const Q_DECL_OVERRIDE;
     bool decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const Q_DECL_OVERRIDE;
 

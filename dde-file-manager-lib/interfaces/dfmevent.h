@@ -70,6 +70,7 @@ public:
         CreateGetChildrensJob,
         CreateFileWatcher,
         SetFileExtensionPropertys,
+        SetPermission,
 
         // other
         ChangeCurrentUrl,
@@ -641,6 +642,13 @@ class DFMRevocationEvent : public DFMEvent
 {
 public:
     explicit DFMRevocationEvent(const QObject *sender);
+};
+
+class DFMSetPermissionEvent : public DFMUrlBaseEvent
+{
+public:
+    explicit DFMSetPermissionEvent(const QObject *sender, const DUrl &url, const QFileDevice::Permissions &permissions);
+    QFileDevice::Permissions permissions() const;
 };
 
 class DFMSetFileTagsEvent : public DFMUrlBaseEvent
