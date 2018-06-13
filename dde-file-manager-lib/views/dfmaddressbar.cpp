@@ -553,9 +553,9 @@ void DFMAddressBar::insertCompletion(const QString &completion)
 void DFMAddressBar::onCompletionHighlighted(const QString &highlightedCompletion)
 {
     int completionPrefixLen = urlCompleter->completionPrefix().length();
-    QString shouldAppend = highlightedCompletion.right(highlightedCompletion.length() - completionPrefixLen);
-    setText(completerBaseString + urlCompleter->completionPrefix() + shouldAppend);
-    setSelection(text().length() - shouldAppend.length(), text().length());
+    int selectBeginPos = highlightedCompletion.length() - completionPrefixLen;
+    setText(completerBaseString + highlightedCompletion);
+    setSelection(text().length() - selectBeginPos, text().length());
 }
 
 void DFMAddressBar::onCompletionModelCountChanged()
