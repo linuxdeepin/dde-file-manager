@@ -183,9 +183,10 @@ void DFMAddressBar::focusOutEvent(QFocusEvent *e)
     //         right click context menu will trigger Qt::PopupFocusReason event. It will
     //         cause focusOutEvent. So we simply ignore it here.
     if (e->reason() == Qt::ActiveWindowFocusReason || e->reason() == Qt::PopupFocusReason) {
+        e->accept();
+        setFocus();
         return;
     }
-
     emit lostFocus();
 
     return QLineEdit::focusOutEvent(e);
