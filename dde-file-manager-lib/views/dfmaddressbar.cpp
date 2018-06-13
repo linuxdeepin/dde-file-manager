@@ -164,7 +164,7 @@ void DFMAddressBar::setPlaceholderText(const QString &text)
 
 void DFMAddressBar::hide()
 {
-    completerModel.setStringList(QStringList());
+    clearCompleterModel();
     QLineEdit::hide();
 }
 
@@ -375,7 +375,7 @@ void DFMAddressBar::initData()
 void DFMAddressBar::setIndicator(DFMAddressBar::IndicatorType type)
 {
     if (indicatorType != type) {
-        completerModel.setStringList(QStringList());
+        clearCompleterModel();
     }
     indicatorType = type;
     updateIndicatorIcon();
@@ -425,6 +425,12 @@ void DFMAddressBar::doComplete()
     }
 
     return;
+}
+
+void DFMAddressBar::clearCompleterModel()
+{
+    isHistoryInCompleterModel = false;
+    completerModel.setStringList(QStringList());
 }
 
 /*!
@@ -477,6 +483,7 @@ void DFMAddressBar::updateCompletionState(const QString &text)
             crumbController = DFMCrumbManager::instance()->createControllerByUrl(url, crumbBar);
             // Still not found? Then nothing here...
             if (!crumbController) {
+                clearCompleterModel();
                 qDebug() << "Unsupported url / scheme for completion: " << url;
                 return;
             }
@@ -496,8 +503,7 @@ void DFMAddressBar::updateCompletionState(const QString &text)
             });
         }
         // start request
-        isHistoryInCompleterModel = false;
-        completerModel.setStringList(QStringList());
+        clearCompleterModel();
         crumbController->requestCompletionList(url);
     } else {
         // Update Icon
