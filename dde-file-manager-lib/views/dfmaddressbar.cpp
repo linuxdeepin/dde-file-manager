@@ -444,16 +444,16 @@ void DFMAddressBar::clearCompleterModel()
 void DFMAddressBar::updateCompletionState(const QString &text)
 {
     int slashIndex = text.lastIndexOf('/');
-    bool isSearchText = (slashIndex == -1);
+    bool hasSlash = (slashIndex == -1);
 
-    // set completion prefix.
-    urlCompleter->setCompletionPrefix(isSearchText ? text : text.mid(slashIndex + 1));
-
-    DUrl url = DUrl::fromUserInput(isSearchText ? text : text.left(slashIndex + 1), false);
+    DUrl url = DUrl::fromUserInput(hasSlash ? text : text.left(slashIndex + 1), false);
     const DAbstractFileInfoPointer& info = DFileService::instance()->createFileInfo(this, url);
 
     // Check if the entered text is a string to search or a url to complete.
-    if (!isSearchText && url.isValid() && !url.scheme().isEmpty()) {
+    if (!hasSlash && url.isValid() && !url.scheme().isEmpty()) {
+        // set completion prefix.
+        urlCompleter->setCompletionPrefix(text.mid(slashIndex + 1));
+
         // Update Icon
         setIndicator(IndicatorType::JumpTo);
 
@@ -507,6 +507,9 @@ void DFMAddressBar::updateCompletionState(const QString &text)
         clearCompleterModel();
         crumbController->requestCompletionList(url);
     } else {
+        // set completion prefix.
+        urlCompleter->setCompletionPrefix(text);
+
         // Update Icon
         setIndicator(IndicatorType::Search);
 
