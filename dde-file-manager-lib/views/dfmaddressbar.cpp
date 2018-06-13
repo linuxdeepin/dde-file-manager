@@ -216,10 +216,13 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
             return;
         case Qt::Key_Tab:
             if (completer()->completionCount() > 0) {
-                QString completeResult = urlCompleter->completionModel()->index(0, 0).data().toString();
-                insertCompletion(completeResult);
+                if (selectedText().isEmpty()) {
+                    QString completeResult = urlCompleter->completionModel()->index(0, 0).data().toString();
+                    insertCompletion(completeResult);
+                }
                 if (DUrl::fromUserInput(text()).isLocalFile()) {
                     setText(text() + '/');
+                    emit textEdited(text());
                 }
             }
             e->accept();
