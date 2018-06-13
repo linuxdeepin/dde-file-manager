@@ -84,6 +84,7 @@ private:
     void onWidgetThemeChanged(QWidget *widget, QString theme);
     void updateIndicatorIcon();
     void doComplete();
+    void clearCompleterModel();
     void updateCompletionState(const QString &text);
     void appendToCompleterModel(const QStringList &stringList);
 
