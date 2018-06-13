@@ -1,3 +1,13 @@
+<a name="4.5.6"></a>
+## 4.5.6 (2018-06-13)
+
+
+#### Bug Fixes
+
+*   disable auto remove item when drop of MoveAction finished ([4ddd69a0](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/4ddd69a0e55ce5144a379fa500aa7eb28006c050))
+
+
+
 <a name="4.5.5"></a>
 ## 4.5.5 (2018-06-08)
 
