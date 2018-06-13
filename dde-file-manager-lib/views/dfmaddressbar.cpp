@@ -374,6 +374,9 @@ void DFMAddressBar::initData()
  */
 void DFMAddressBar::setIndicator(DFMAddressBar::IndicatorType type)
 {
+    if (indicatorType != type) {
+        completerModel.setStringList(QStringList());
+    }
     indicatorType = type;
     updateIndicatorIcon();
 }
