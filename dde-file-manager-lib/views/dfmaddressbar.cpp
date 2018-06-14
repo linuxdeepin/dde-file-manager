@@ -284,6 +284,7 @@ void DFMAddressBar::paintEvent(QPaintEvent *e)
 void DFMAddressBar::showEvent(QShowEvent *event)
 {
     timer.start();
+    updateIndicatorIcon();
 
     return QLineEdit::showEvent(event);
 }
