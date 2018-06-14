@@ -422,6 +422,11 @@ void DFMCrumbBar::mousePressEvent(QMouseEvent *event)
     Q_D(DFMCrumbBar);
     d->clickedPos = event->globalPos();
 
+    if (event->button() == Qt::RightButton) {
+        event->accept();
+        return;
+    }
+
     QFrame::mousePressEvent(event);
 }
 
