@@ -595,21 +595,22 @@ QList<QAction *> DFileMenuManager::jsonToActions(const QJsonArray &data, const D
         QString text = v.toVariantMap().value(textKey).toString();
 
         QString exec = v.toVariantMap().value("Exec").toString();
+        QStringList args = v.toVariantMap().value("Args", QStringList()).toStringList();
 
         QVariantList subMenuDataList = v.toVariantMap().value("SubMenu").toList();
 
-        bool isCanCreateAction = false;
+        bool canCreateAction = false;
 
         if (menuType == menuExtensionType) {
-            isCanCreateAction = true;
+            canCreateAction = true;
         }
 
-        if (isCanCreateAction) {
+        if (canCreateAction) {
             if (menuExtensionType == "SingleFile" ||
                     menuExtensionType == "MultiFiles") {
 
                 if (mimeType.isEmpty() && suffix.isEmpty()) {
-                    isCanCreateAction = true;
+                    canCreateAction = true;
                 }
                 if (!mimeType.isEmpty()) {
                     QStringList supportMimeTypes = mimeType.split(";");
@@ -622,9 +623,9 @@ QList<QAction *> DFileMenuManager::jsonToActions(const QJsonArray &data, const D
                         }
                     }
                     if (count == urlList.count()) {
-                        isCanCreateAction = true;
+                        canCreateAction = true;
                     } else {
-                        isCanCreateAction = false;
+                        canCreateAction = false;
                     }
                 }
                 if (!suffix.isEmpty()) {
@@ -638,15 +639,15 @@ QList<QAction *> DFileMenuManager::jsonToActions(const QJsonArray &data, const D
                         }
                     }
                     if (count == urlList.count()) {
-                        isCanCreateAction = true;
+                        canCreateAction = true;
                     } else {
-                        isCanCreateAction = false;
+                        canCreateAction = false;
                     }
                 }
             }
         }
 
-        if (isCanCreateAction) {
+        if (canCreateAction) {
             QAction *action = new QAction(QIcon(icon), text, NULL);
 
             if (subMenuDataList.count() > 1) {
@@ -663,19 +664,21 @@ QList<QAction *> DFileMenuManager::jsonToActions(const QJsonArray &data, const D
                 action->setMenu(menu);
             } else {
                 connect(action, &QAction::triggered, [ = ]() {
-
-                    QProcess p;
-                    QStringList args;
-                    foreach (DUrl url, urlList) {
-                        args << url.toString();
+                    QStringList argsList;
+                    // If user doesn't leave a "Args" key, use the file list instead.
+                    if (args.isEmpty()) {
+                        foreach (DUrl url, urlList) {
+                            argsList << url.toString();
+                        }
+                        if (urlList.isEmpty()) {
+                            argsList << currentUrl.toString();
+                        }
+                    } else {
+                        argsList = args;
                     }
 
-                    if (urlList.isEmpty()) {
-                        args << currentUrl.toString();
-                    }
-
-                    p.startDetached(exec, args);
-                    qDebug() << exec << args;
+                    QProcess::startDetached(exec, argsList, currentUrl.isLocalFile() ? currentUrl.toLocalFile() : QDir::currentPath());
+                    qDebug() << exec << argsList;
                 });
             }
             actions << action;
