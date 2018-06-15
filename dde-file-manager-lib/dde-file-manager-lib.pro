@@ -69,6 +69,7 @@ isEqual(ARCH, sw_64){
 #    }
 }
 include(io/io.pri)
+include(interfaces/udisks2/udisks2.pri)
 
 RESOURCES += \
     skin/skin.qrc \
