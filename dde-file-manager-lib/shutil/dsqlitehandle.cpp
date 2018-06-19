@@ -701,6 +701,7 @@ void DSqliteHandle::connectToSqlite(const QString &mountPoint, const QString &db
 
             if (QSqlDatabase::contains(CONNECTIONNAME))
             {
+                m_sqlDatabasePtr.reset(nullptr);
                 QSqlDatabase::removeDatabase(CONNECTIONNAME);
             }
 
