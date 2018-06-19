@@ -202,8 +202,9 @@ static QPixmap pixmapByPath(const QString &path, qreal scaleRatio)
 
     p.setDevicePixelRatio(scaleRatio);
 
-    if (QPixmapCache::insert(pixmap_key, p))
+    if (QPixmapCache::insert(pixmap_key, p)) {
         _ThemeConfig::cachedPixmap.append(pixmap_key);
+    }
 
     return p;
 }

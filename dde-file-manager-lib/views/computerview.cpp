@@ -973,39 +973,38 @@ void ComputerView::keyPressEvent(QKeyEvent *event)
         break;
     case Qt::ControlModifier:
         switch (event->key()) {
-        case Qt::Key_N: {
+        case Qt::Key_N:
             appController->actionNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls.isEmpty() ? DUrlList() << DUrl() : urls));
             return;
-            case Qt::Key_I:
-                appController->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
+        case Qt::Key_I:
+            appController->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
 
-                return;
-            case Qt::Key_Down:
-                appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
+            return;
+        case Qt::Key_Down:
+            appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
 
-                return;
-            case Qt::Key_T: {
-                //do not handle key press event of autoRepeat type
-                if (event->isAutoRepeat()) {
-                    return;
-                }
-
-                DUrl url;
-
-                if (urls.count() == 1) {
-                    url = urls.first();
-                } else {
-                    url = DFMApplication::instance()->appUrlAttribute(DFMApplication::AA_UrlOfNewTab);
-
-                    if (!url.isValid()) {
-                        url = rootUrl();
-                    }
-                }
-                DFMEventDispatcher::instance()->processEvent<DFMOpenNewTabEvent>(this, url);
+            return;
+        case Qt::Key_T: {
+            //do not handle key press event of autoRepeat type
+            if (event->isAutoRepeat()) {
                 return;
             }
-            default: break;
+
+            DUrl url;
+
+            if (urls.count() == 1) {
+                url = urls.first();
+            } else {
+                url = DFMApplication::instance()->appUrlAttribute(DFMApplication::AA_UrlOfNewTab);
+
+                if (!url.isValid()) {
+                    url = rootUrl();
+                }
             }
+            DFMEventDispatcher::instance()->processEvent<DFMOpenNewTabEvent>(this, url);
+            return;
+        }
+        default: break;
         }
 
         break;
@@ -1023,9 +1022,9 @@ void ComputerView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Home:
             urls.clear();
             urls << DUrl::fromLocalFile(QDir::homePath());
+            // fall through
         case Qt::Key_Down:
             appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
-
             return;
         }
         break;
