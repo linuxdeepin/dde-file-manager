@@ -115,7 +115,7 @@ FileIconItem::FileIconItem(QWidget *parent) :
         QVector<uint> list = text.toUcs4();
         int cursor_pos = edit->textCursor().position() - text_length + text.length();
 
-        while (text.toLocal8Bit().size() > MAX_FILE_NAME_CHAR_COUNT)
+        while (text.toLocal8Bit().size() > maxCharSize)
         {
             list.removeAt(--cursor_pos);
 
@@ -178,6 +178,11 @@ void FileIconItem::setOpacity(qreal opacity)
     }
 
     opacityEffect->setOpacity(opacity);
+}
+
+void FileIconItem::setMaxCharSize(int maxSize)
+{
+    maxCharSize = maxSize;
 }
 
 QSize FileIconItem::sizeHint() const
