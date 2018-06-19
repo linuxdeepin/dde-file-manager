@@ -532,7 +532,9 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             qApp->setApplicationName(app_name);
             break;
         }
+        default: break;
         }
+    break;
     case Qt::KeypadModifier:
         switch (event->key()) {
         case Qt::Key_Return:
