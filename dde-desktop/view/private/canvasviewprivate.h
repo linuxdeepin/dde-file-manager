@@ -111,15 +111,6 @@ public:
                && (coord.position().y() >= 0 && coord.position().y() < rowCount);
     }
 
-    void quickSync(int checkInterval = 5000)
-    {
-        if (syncTimer->interval() > checkInterval) {
-            syncTimer->setInterval(100);
-            syncTimer->stop();
-            syncTimer->start();
-        }
-    }
-
 public:
     QRect    dockReserveArea = QRect(0, 0, 80, 80);
     QMargins viewMargins;
@@ -161,7 +152,7 @@ public:
     int                 resortCount;
 
     // secice system up
-    QTimer              *syncTimer          = nullptr;
+//    QTimer              *syncTimer          = nullptr;
 //    qint64              lastRepaintTime     = 0;
     DFileSystemWatcher  *filesystemWatcher  = nullptr;
     WaterMaskFrame *waterMaskFrame          = nullptr;

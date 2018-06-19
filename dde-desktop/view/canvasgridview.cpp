@@ -332,7 +332,6 @@ void CanvasGridView::updateHiddenItems()
     if (GridManager::instance()->autoAlign()) {
         GridManager::instance()->reAlign();
     }
-    d->quickSync(300);
 }
 
 QModelIndex CanvasGridView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
@@ -525,19 +524,20 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
     case Qt::NoModifier:
         switch (event->key()) {
         case Qt::Key_F1: {
-            class PublicApplication : public DApplication {
-                public: using  DApplication::handleHelpAction;
+            class PublicApplication : public DApplication
+            {
+            public: using  DApplication::handleHelpAction;
             };
 
             QString app_name = qApp->applicationName();
             qApp->setApplicationName("dde");
-            reinterpret_cast<PublicApplication*>(DApplication::instance())->handleHelpAction();
+            reinterpret_cast<PublicApplication *>(DApplication::instance())->handleHelpAction();
             qApp->setApplicationName(app_name);
             break;
         }
         default: break;
         }
-    break;
+        break;
     case Qt::KeypadModifier:
         switch (event->key()) {
         case Qt::Key_Return:
@@ -601,7 +601,6 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             clearSelection();
             model()->toggleHiddenFiles(rootUrl);
             updateHiddenItems();
-            d->quickSync();
             return;
         }
         break;
@@ -765,8 +764,9 @@ void CanvasGridView::dropEvent(QDropEvent *event)
     for (auto index : selects) {
         auto info = model()->fileInfo(index);
 
-        if (!info)
+        if (!info) {
             continue;
+        }
 
         if (isPersistFile(info->fileUrl())) {
             canMove = false;
@@ -1296,7 +1296,6 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
             }
         }
 
-        d->quickSync();
         update();
     });
     return true;
@@ -1748,16 +1747,16 @@ void CanvasGridView::initConnection()
         }
     });
 
-    d->syncTimer = new QTimer(this);
-    connect(d->syncTimer, &QTimer::timeout, this, [ = ]() {
-        update();
-        auto interval = d->syncTimer->interval() + 800;
-        if (interval > 10000) {
-            interval = 10000;
-        }
-        d->syncTimer->setInterval(interval);
-    });
-    d->syncTimer->start();
+//    d->syncTimer = new QTimer(this);
+//    connect(d->syncTimer, &QTimer::timeout, this, [ = ]() {
+//        update();
+//        auto interval = d->syncTimer->interval() + 800;
+//        if (interval > 10000) {
+//            interval = 10000;
+//        }
+//        d->syncTimer->setInterval(interval);
+//    });
+//    d->syncTimer->start();
 
     auto connectScreenGeometryChanged = [this](QScreen * screen) {
         connect(screen, &QScreen::availableGeometryChanged,
@@ -1810,8 +1809,6 @@ void CanvasGridView::initConnection()
     connect(this, &CanvasGridView::itemCreated, [ = ](const DUrl & url) {
         d->lastMenuNewFilepath = url.toLocalFile();
         GridManager::instance()->add(url.toLocalFile());
-
-        d->quickSync();
     });
 
     connect(this, &CanvasGridView::itemDeleted, [ = ](const DUrl & url) {
@@ -1828,20 +1825,10 @@ void CanvasGridView::initConnection()
             qDebug() << "reAlign on fileDeleted";
             GridManager::instance()->reAlign();
         }
-        d->quickSync();
     });
 
     connect(this->model(), &DFileSystemModel::requestSelectFiles,
             d->fileViewHelper, &CanvasViewHelper::onRequestSelectFiles);
-
-    connect(this->model(), &QAbstractItemModel::rowsInserted,
-    this, [ = ](const QModelIndex & /*parent*/, int /*first*/, int /*last*/) {
-        d->quickSync();
-    });
-    connect(this->model(), &QAbstractItemModel::rowsRemoved,
-    this, [ = ](const QModelIndex & /*parent*/, int /*first*/, int /*last*/) {
-        d->quickSync();
-    });
 
     connect(this->model(), &QAbstractItemModel::dataChanged,
     this, [ = ](const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> &roles) {
@@ -1863,8 +1850,6 @@ void CanvasGridView::initConnection()
             }
             GridManager::instance()->reAlign();
         }
-
-        d->quickSync();
     });
 
     connect(this, &CanvasGridView::doubleClicked,
