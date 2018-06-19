@@ -341,7 +341,9 @@ QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
         QVector<uint> list = text.toUcs4();
         int cursor_pos = edit->cursorPosition() - text_length + text.length();
 
-        while (text.toUtf8().size() > MAX_FILE_NAME_CHAR_COUNT) {
+        const QString &suffix = edit->property("_d_whether_show_suffix").toString();
+
+        while (text.toUtf8().size() > MAX_FILE_NAME_CHAR_COUNT - suffix.size() - 1) {
             list.removeAt(--cursor_pos);
 
             text = QString::fromUcs4(list.data(), list.size());
