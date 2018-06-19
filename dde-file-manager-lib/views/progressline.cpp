@@ -54,8 +54,14 @@ void ProgressLine::paintEvent(QPaintEvent *event){
     else
         cColor = QColor("#FF4E78");
 
-    p.fillRect(bRect, bColor);
-    p.fillRect(cRect, cColor);
+    QPainterPath bPath, cPath;
+
+    p.setRenderHint(QPainter::Antialiasing);
+    bPath.addRoundedRect(QRectF(bRect), m_roundRadius, m_roundRadius);
+    cPath.addRoundedRect(QRectF(cRect), m_roundRadius, m_roundRadius);
+
+    p.fillPath(bPath, bColor);
+    p.fillPath(cPath, cColor);
 
     QLabel::paintEvent(event);
 }
@@ -68,6 +74,17 @@ qreal ProgressLine::min() const
 void ProgressLine::setMin(const qreal &min)
 {
     m_min = min;
+    update();
+}
+
+int ProgressLine::roundRadius() const
+{
+    return m_roundRadius;
+}
+
+void ProgressLine::setRoundRadius(const int radio)
+{
+    m_roundRadius = radio;
     update();
 }
 

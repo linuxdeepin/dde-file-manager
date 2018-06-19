@@ -42,6 +42,9 @@ public:
     qreal min() const;
     void setMin(const qreal &min);
 
+    int roundRadius() const;
+    void setRoundRadius(const int radio);
+
 signals:
 
 public slots:
@@ -53,6 +56,7 @@ private:
     qreal m_value;
     qreal m_max;
     qreal m_min;
+    int m_roundRadius = 0;
 };
 
 #endif // PROGRESSLINE_H
