@@ -67,6 +67,9 @@
 #include "desktopitemdelegate.h"
 #include "dfmevent.h"
 
+#include "app/define.h"
+#include "deviceinfo/udisklistener.h"
+
 static inline bool isPersistFile(const DUrl &url)
 {
 #ifdef DDE_COMPUTER_TRASH
@@ -649,11 +652,35 @@ void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
         event->setDropAction(Qt::MoveAction);
     } else {
         DAbstractFileInfoPointer info = model()->fileInfo(indexAt(event->pos()));
+
         if (!info) {
             info = model()->fileInfo(rootIndex());
         }
 
-        if (info && !info->supportedDropActions().testFlag(event->dropAction())) {
+        if (!info) {
+            return;
+        }
+
+        if (event->mimeData()->urls().isEmpty()) {
+            return;
+        }
+
+        const DUrl from = event->mimeData()->urls().first();
+        const DUrl to = info->fileUrl();
+        Qt::DropAction default_action = Qt::CopyAction;
+
+        // 如果文件和目标路径在同一个分区下，默认为移动文件，否则默认为复制文件
+        if (from.scheme() == to.scheme() && from.isLocalFile()) {
+            if (deviceListener->isInSameDevice(from.toLocalFile(), to.toLocalFile())) {
+                default_action = Qt::MoveAction;
+            }
+        }
+
+        if (event->possibleActions().testFlag(default_action)) {
+            event->setDropAction(default_action);
+        }
+
+        if (!info->supportedDropActions().testFlag(event->dropAction())) {
             QList<Qt::DropAction> actions;
 
             actions.reserve(3);
@@ -1593,7 +1620,7 @@ void CanvasGridView::initUI()
     setAcceptDrops(true);
     setDragDropMode(QAbstractItemView::DragDrop);
     setEditTriggers(QAbstractItemView::EditKeyPressed | QAbstractItemView::SelectedClicked);
-    setDefaultDropAction(Qt::MoveAction);
+    setDefaultDropAction(Qt::CopyAction);
 
     d->selectFrame = new QFrame(this);
     d->selectFrame->setVisible(false);

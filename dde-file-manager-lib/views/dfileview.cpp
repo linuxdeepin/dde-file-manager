@@ -1422,6 +1422,7 @@ void DFileView::dropEvent(QDropEvent *event)
 
         if (model()->supportedDropActions() & event->dropAction() && model()->flags(index) & Qt::ItemIsDropEnabled) {
             const Qt::DropAction action = dragDropMode() == InternalMove ? Qt::MoveAction : event->dropAction();
+
             if (model()->dropMimeData(event->mimeData(), action, index.row(), index.column(), index)) {
                 if (action != event->dropAction()) {
                     event->setDropAction(action);
@@ -1683,7 +1684,7 @@ void DFileView::initUI()
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setDefaultDropAction(Qt::MoveAction);
+    setDefaultDropAction(Qt::CopyAction);
     // disable auto remove item when drop of MoveAction finished
     setDragDropOverwriteMode(true);
 
@@ -2505,7 +2506,30 @@ void DFileView::preproccessDropEvent(QDropEvent *event) const
         if (!info)
             info = model()->fileInfo(rootIndex());
 
-        if (info && !info->supportedDropActions().testFlag(event->dropAction())) {
+        if (!info) {
+            return;
+        }
+
+        if (event->mimeData()->urls().isEmpty()) {
+            return;
+        }
+
+        const DUrl from = event->mimeData()->urls().first();
+        const DUrl to = info->fileUrl();
+        Qt::DropAction default_action = Qt::CopyAction;
+
+        // 如果文件和目标路径在同一个分区下，默认为移动文件，否则默认为复制文件
+        if (from.scheme() == to.scheme() && from.isLocalFile()) {
+            if (deviceListener->isInSameDevice(from.toLocalFile(), to.toLocalFile())) {
+                default_action = Qt::MoveAction;
+            }
+        }
+
+        if (event->possibleActions().testFlag(default_action)) {
+            event->setDropAction(default_action);
+        }
+
+        if (!info->supportedDropActions().testFlag(event->dropAction())) {
             QList<Qt::DropAction> actions;
 
             actions.reserve(3);
