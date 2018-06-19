@@ -811,12 +811,7 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
     switch (action) {
     case Qt::CopyAction:
         if (urlList.count() > 0){
-            bool isInSameDevice = deviceListener->isInSameDevice(urlList.at(0).toLocalFile(), toUrl.toLocalFile());
-            if (isInSameDevice && !DFMGlobal::keyCtrlIsPressed()){
-                fileService->pasteFile(this, DFMGlobal::CutAction, toUrl, urlList);
-            }else{
-                fileService->pasteFile(this, DFMGlobal::CopyAction, toUrl, urlList);
-            }
+            fileService->pasteFile(this, DFMGlobal::CopyAction, toUrl, urlList);
         }
         break;
     case Qt::LinkAction:
