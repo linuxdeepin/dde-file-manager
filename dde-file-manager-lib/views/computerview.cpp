@@ -63,6 +63,8 @@
 
 DWIDGET_USE_NAMESPACE
 
+#define CVI_PROGRESSLINE_HEIGHT 4
+
 TitleLine::TitleLine(const QString &title, QWidget *parent):
     QFrame(parent),
     m_title(title)
@@ -110,7 +112,8 @@ ComputerViewItem::ComputerViewItem(QWidget *parent):
     m_progressLine = new ProgressLine(this);
     m_progressLine->setAlignment(Qt::AlignHCenter);
     m_progressLine->setFrameShape(QFrame::NoFrame);
-    m_progressLine->setFixedSize(width(), 2);
+    m_progressLine->setFixedSize(width(), CVI_PROGRESSLINE_HEIGHT);
+    m_progressLine->setRoundRadius(CVI_PROGRESSLINE_HEIGHT / 2);
     m_progressLine->hide();
 
     connect(qApp, &DApplication::iconThemeChanged, this, &ComputerViewItem::updateStatus);
@@ -276,7 +279,7 @@ void ComputerViewItem::updateStatus()
 
     if (getHasMemoryInfo()) {
         updateIconPixelWidth();
-        m_progressLine->setFixedSize(getPixelWidth(), 2);
+        m_progressLine->setFixedSize(getPixelWidth(), CVI_PROGRESSLINE_HEIGHT);
         const qlonglong total = m_deviceInfo->getTotal();
         const qlonglong used = total - m_deviceInfo->getFree();
         m_progressLine->setMax(total);
