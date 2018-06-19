@@ -97,22 +97,14 @@ void MountAskPasswordDialog::initUI()
     passwordLable->setFixedWidth(80);
 
     m_passwordLineEdit = new DPasswordEdit;
-    QFont font;
-    font.setLetterSpacing(QFont::AbsoluteSpacing, 2);
-    font.setPixelSize(6);
-    m_passwordLineEdit->setFont(font);
-    m_passwordLineEdit->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
     m_passwordLineEdit->setFixedHeight(24);
-
 
     m_passwordButtonGroup = new QButtonGroup(this);
     m_passwordButtonGroup->setExclusive(true);
 
-
     m_passwordCheckBox = new QCheckBox();
     m_passwordCheckBox->setFixedSize(22, 22);
     QLabel* rememberLabel = new QLabel(tr("Remember password"));
-
 
     QHBoxLayout* anonymousLayout = new QHBoxLayout;
     anonymousLayout->addWidget(anonymousButton);
@@ -120,11 +112,9 @@ void MountAskPasswordDialog::initUI()
     anonymousLayout->setSpacing(0);
     anonymousLayout->setContentsMargins(0, 0, 0, 0);
 
-
     QFormLayout* connectTypeLayout = new  QFormLayout;
     connectTypeLayout->setLabelAlignment(Qt::AlignVCenter | Qt::AlignRight);
     connectTypeLayout->addRow(connectTypeLabel, anonymousLayout);
-
 
     QFormLayout* inputLayout = new  QFormLayout;
     inputLayout->setLabelAlignment(Qt::AlignVCenter | Qt::AlignRight);
@@ -141,7 +131,6 @@ void MountAskPasswordDialog::initUI()
     passwordFrameLayout->setSpacing(0);
     passwordFrameLayout->setContentsMargins(0, 0, 0, 0);
     m_passwordFrame->setLayout(passwordFrameLayout);
-
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addWidget(m_messageLabel, Qt::AlignCenter);
