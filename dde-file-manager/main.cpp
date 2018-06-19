@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
     LogUtil::registerLogger();
 
     // init pixmap cache size limit, 20MB * devicePixelRatio
-    QPixmapCache::setCacheLimit(20 * 1024 * 1024 * app.devicePixelRatio());
+    QPixmapCache::setCacheLimit(20 * 1024 * app.devicePixelRatio());
 
     CommandLineManager::instance()->process();
 
