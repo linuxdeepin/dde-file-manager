@@ -67,6 +67,10 @@ void CommandLineManager::initOptions()
     QCommandLineOption event(QStringList() << "e" << "event", "Process the event by json data");
 
     QCommandLineOption get_monitor_files(QStringList() << "get-monitor-files", "Get all the files that have been monitored");
+    // blumia: about -w and -r: -r will exec `dde-file-manager-pkexec` (it use `pkexec` command) which won't pass the currect
+    //         working dir, so we need to manually set the working dir via -w. that's why we add a -w arg.
+    QCommandLineOption workingDirOption(QStringList() << "w" << "working-dir", "Set the file manager working directory \
+                                                                                    \n(won't work with -r argument)");
 
     addOption(newWindowOption);
     addOption(backendOption);
@@ -76,6 +80,7 @@ void CommandLineManager::initOptions()
     addOption(showFileItem);
     addOption(event);
     addOption(get_monitor_files);
+    addOption(workingDirOption);
 }
 
 void CommandLineManager::addOption(const QCommandLineOption &option)
@@ -124,7 +129,6 @@ void CommandLineManager::processCommand()
 
     foreach (QString path, positionalArguments()) {
         DUrl url = DUrl::fromUserInput(path);
-
         if (CommandLineManager::instance()->isSet("show-item")) {
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
             if (!fileInfo)
@@ -138,7 +142,6 @@ void CommandLineManager::processCommand()
 
         argumentUrls.append(url);
     }
-
     if (argumentUrls.isEmpty())
         argumentUrls.append(DFMApplication::instance()->appUrlAttribute(DFMApplication::AA_UrlOfNewWindow));
 

@@ -130,7 +130,6 @@ int main(int argc, char *argv[])
 #ifdef ENABLE_PPROF
     ProfilerStart("pprof.prof");
 #endif
-
     // Fixed the locale codec to utf-8
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
@@ -169,6 +168,11 @@ int main(int argc, char *argv[])
 
     CommandLineManager::instance()->process();
 
+    // working dir
+    if (CommandLineManager::instance()->isSet("w")) {
+        QDir::setCurrent(CommandLineManager::instance()->value("w"));
+    }
+
     // show file selection dialog
     if (CommandLineManager::instance()->isSet("f")) {
         if (!registerDialogDBus()) {
@@ -192,6 +196,18 @@ int main(int argc, char *argv[])
         w->deleteLater();
 
         return app.exec();
+    }
+
+    // open as root
+    if (CommandLineManager::instance()->isSet("r")) {
+        QStringList args = app.arguments().mid(1);
+        args.removeAll(QStringLiteral("-r"));
+        args.removeAll(QStringLiteral("--root"));
+        args.removeAll(QStringLiteral("-w"));
+        args.removeAll(QStringLiteral("--working-dir"));
+        QProcess::startDetached("dde-file-manager-pkexec", args, QDir::currentPath());
+
+        return 0;
     }
 
     if (CommandLineManager::instance()->isSet("h") || CommandLineManager::instance()->isSet("v")) {
