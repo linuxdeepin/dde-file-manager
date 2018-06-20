@@ -66,13 +66,6 @@ QString DFMStandardPaths::location(DFMStandardPaths::StandardLocation type)
         }
         return path;
     }
-    case DbusFileDialogConfPath: {
-        QString path = APPSHAREDIR"/dbusfiledialog/dbus_filedialog_blacklist.conf";
-        if (!QDir(path).exists()) {
-            path = QDir::currentPath() + "/dbusfiledialog/dbus_filedialog_blacklist.conf";
-        }
-        return path;
-    }
     case ApplicationConfigPath:
         return getConfigPath();
     case ThumbnailPath:
