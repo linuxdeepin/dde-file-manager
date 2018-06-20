@@ -16,5 +16,9 @@
             "width": 800,
             "height": 600
         }
+    },
+    "FileName": {
+        "non-allowableCharacters": "(^\\s+|[/\\\\:*\"?<>|\r\n])",
+        "non-allowableEmptyCharactersOfEnd": true
     }
 }

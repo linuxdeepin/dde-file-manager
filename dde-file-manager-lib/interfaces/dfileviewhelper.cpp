@@ -29,6 +29,8 @@
 #include "dfmeventdispatcher.h"
 #include "dfilemenu.h"
 #include "tag/tagmanager.h"
+#include "dfmapplication.h"
+#include "dfmsettings.h"
 
 #include <QTimer>
 #include <QAction>
@@ -695,10 +697,6 @@ void DFileViewHelper::handleCommitData(QWidget *editor) const
 
     QString new_file_name = lineEdit ? lineEdit->text() : item ? item->edit->toPlainText() : "";
 
-    new_file_name = new_file_name.trimmed();
-    new_file_name.remove('/');
-    new_file_name.remove(QChar(0));
-
     if (new_file_name.isEmpty()) {
         return;
     }
@@ -708,6 +706,12 @@ void DFileViewHelper::handleCommitData(QWidget *editor) const
     if (!suffix_str_as_var.isEmpty()) {
         new_file_name += QString{"."};
         new_file_name += suffix_str_as_var;
+    } else if (DFMApplication::genericObtuselySetting()->value("FileName", "non-allowableEmptyCharactersOfEnd").toBool()) {
+        new_file_name = new_file_name.trimmed();
+
+        if (new_file_name.isEmpty()) {
+            return;
+        }
     }
 
     if (fileInfo->fileName() == new_file_name) {
