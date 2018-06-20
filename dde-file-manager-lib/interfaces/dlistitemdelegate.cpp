@@ -334,7 +334,7 @@ QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
 
         int text_length = text.length();
 
-        text = DFMGlobal::preprocessingFileName(text.trimmed());
+        text = DFMGlobal::preprocessingFileName(text);
 
         QVector<uint> list = text.toUcs4();
         int cursor_pos = edit->cursorPosition() - text_length + text.length();
