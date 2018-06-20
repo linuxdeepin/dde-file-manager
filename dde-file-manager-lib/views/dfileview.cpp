@@ -1025,14 +1025,19 @@ void DFileView::mousePressEvent(QMouseEvent *event)
     case Qt::LeftButton: {
         bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos());
 
-        setDragDropMode(DragDrop);
+        if (dragDropMode() != NoDragDrop) {
+            setDragDropMode(DragDrop);
+        }
 
         if (isEmptyArea) {
             if (!DFMGlobal::keyCtrlIsPressed()) {
                 itemDelegate()->hideNotEditingIndexWidget();
                 clearSelection();
                 update();
-                setDragDropMode(DropOnly);
+
+                if (dragDropMode() != NoDragDrop) {
+                    setDragDropMode(DropOnly);
+                }
             }
         } else if (DFMGlobal::keyCtrlIsPressed()) {
             const QModelIndex &index = indexAt(event->pos());
