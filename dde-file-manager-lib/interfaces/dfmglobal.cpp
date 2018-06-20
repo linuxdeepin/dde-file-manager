@@ -49,6 +49,8 @@
 
 #include "dabstractfilewatcher.h"
 #include <dfmstandardpaths.h>
+#include "dfmapplication.h"
+#include "dfmsettings.h"
 
 #include <QGuiApplication>
 #include <QClipboard>
@@ -67,6 +69,7 @@
 #include <QMediaPlayer>
 #include <QDBusObjectPath>
 #include <QGSettings>
+#include <QRegularExpression>
 
 #include <private/qtextengine_p.h>
 
@@ -991,7 +994,16 @@ void DFMGlobal::playSound(const QUrl &soundUrl)
     });
 }
 
+QString DFMGlobal::preprocessingFileName(QString name)
+{
+    // eg: [\\:*\"?<>|\r\n]
+    const QString &value = DFMApplication::genericObtuselySetting()->value("FileName", "non-allowableCharacters").toString();
 
+    if (value.isEmpty())
+        return name;
+
+    return name.remove(QRegularExpression(value));
+}
 
 QString DFMGlobal::toUnicode(const QByteArray &data, const QString &fileName)
 {

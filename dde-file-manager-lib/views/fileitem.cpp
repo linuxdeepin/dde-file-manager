@@ -108,9 +108,7 @@ FileIconItem::FileIconItem(QWidget *parent) :
         int text_length = text.length();
         int text_line_height = fontMetrics().height();
 
-        text.remove(QRegExp("^\\s+"));
-        text.remove('/');
-        text.remove(QChar(0));
+        text = DFMGlobal::preprocessingFileName(text);
 
         QVector<uint> list = text.toUcs4();
         int cursor_pos = edit->textCursor().position() - text_length + text.length();
