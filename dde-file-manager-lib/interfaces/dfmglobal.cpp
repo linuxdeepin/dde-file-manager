@@ -57,7 +57,7 @@
 #include <QMediaPlayer>
 #include <QDBusObjectPath>
 #include <QGSettings>
-
+#include <QRegularExpression>
 
 #include <cstdio>
 #include <locale>
@@ -754,6 +754,25 @@ void DFMGlobal::playSound(const QUrl &soundUrl)
     });
 }
 
+QString DFMGlobal::preprocessingFileName(QString name)
+{
+    name.remove(QChar(0));
+    name.remove(QChar('/'));
+
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope, qApp->organizationName(),
+                       "dde-file-manager/" + qApp->applicationName());
+
+    settings.setIniCodec("utf-8");
+    settings.beginGroup("File Name");
+
+    // eg: [\\:*\"?<>|\r\n]
+    const QString &value = settings.value("Non-Allowable Characters").toString();
+
+    if (value.isEmpty())
+        return name;
+
+    return name.remove(QRegularExpression(value));
+}
 
 
 QString DFMGlobal::toUnicode(const QByteArray &ba)

@@ -318,7 +318,7 @@ public:
     static QString toUnicode(const QByteArray &ba);
 
     static void playSound(const QUrl& soundUrl);
-
+    static QString preprocessingFileName(QString name);
 
 signals:
     void clipboardDataChanged();
