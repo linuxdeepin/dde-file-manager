@@ -40,7 +40,6 @@ public:
         TemplatesPath,
         MimeTypePath,
         PluginsPath,
-        DbusFileDialogConfPath,
         ThumbnailPath,
         ThumbnailFailPath,
         ThumbnailLargePath,
