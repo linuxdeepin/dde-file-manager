@@ -535,7 +535,6 @@ void PropertyDialog::flickFolderToLeftsidBar()
     connect(gani, &QVariantAnimation::finished, [ = ] {
         gani->deleteLater();
         aniLabel->deleteLater();
-//        window->getLeftSideBar()->playtShareAddedAnimation();
     });
     xani->start();
     gani->start();
@@ -739,7 +738,14 @@ void PropertyDialog::initTextShowFrame(const QString &text)
                 label->setFixedWidth(m_edit->width());
             }
         } else {
-            if (label->fontMetrics().width(labelText) > (m_edit->width() - 2 * m_editButton->width()) && labelTexts.length() >= 3) {
+            // the final line of file name label, with a edit btn.
+            if (labelTexts.length() >= maxLineCount) {
+                for (int idx = i + 1; idx < labelTexts.length(); idx++) {
+                    labelText += labelTexts.at(idx);
+                }
+            }
+
+            if (label->fontMetrics().width(labelText) > (m_edit->width() - 2 * m_editButton->width()) && labelTexts.length() >= maxLineCount) {
                 labelText = label->fontMetrics().elidedText(labelText, Qt::ElideMiddle, m_edit->width() - 2 * m_editButton->width());
             }
             label->setText(labelText);
