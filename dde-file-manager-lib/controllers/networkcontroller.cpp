@@ -26,6 +26,8 @@
 #include "models/networkfileinfo.h"
 #include "gvfs/networkmanager.h"
 
+#include "singleton.h"
+
 NetworkController::NetworkController(QObject *parent):
     DAbstractFileController(parent)
 {
@@ -55,6 +57,10 @@ const QList<DAbstractFileInfoPointer> NetworkController::getChildren(const QShar
 {
     QList<DAbstractFileInfoPointer> infolist;
 
+    if (NetworkManager::NetworkNodes.value(event->url()).isEmpty()) {
+        Singleton<NetworkManager>::instance()->fetchNetworks(DFMUrlBaseEvent(this, event->url()));
+    }
+
     foreach (const NetworkNode& node, NetworkManager::NetworkNodes.value(event->url())) {
         NetworkFileInfo* info = new NetworkFileInfo(DUrl(node.url()));
         info->setNetworkNode(node);
@@ -62,5 +68,11 @@ const QList<DAbstractFileInfoPointer> NetworkController::getChildren(const QShar
     };
 
     return infolist;
+}
+
+const DDirIteratorPointer NetworkController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
+{
+    Q_UNUSED(event);
+    return DDirIteratorPointer();
 }
 

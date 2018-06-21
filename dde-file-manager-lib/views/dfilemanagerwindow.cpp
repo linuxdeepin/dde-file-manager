@@ -454,12 +454,6 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl, bool canFetchNetwork)
         return true;
     }
 
-    if (canFetchNetwork && NetworkManager::SupportScheme.contains(fileUrl.scheme())) {
-//        emit fileSignalManager->requestFetchNetworks(DFMUrlBaseEvent(this, fileUrl));
-        QtConcurrent::run(networkManager, &NetworkManager::fetchNetworks, DFMUrlBaseEvent(this, fileUrl));
-        return true;
-    }
-
     if (fileUrl.scheme() == "mount") {
         DUrl newUrl;
         QUrlQuery query(fileUrl);
