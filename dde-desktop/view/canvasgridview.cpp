@@ -647,53 +647,7 @@ void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
         itemDelegate()->hideNotEditingIndexWidget();
     }
 
-    if (event->source() == this && !DFMGlobal::keyCtrlIsPressed()) {
-        event->setDropAction(Qt::MoveAction);
-    } else {
-        DAbstractFileInfoPointer info = model()->fileInfo(indexAt(event->pos()));
-
-        if (!info) {
-            info = model()->fileInfo(rootIndex());
-        }
-
-        if (!info) {
-            return;
-        }
-
-        if (event->mimeData()->urls().isEmpty()) {
-            return;
-        }
-
-        const DUrl from = event->mimeData()->urls().first();
-        const DUrl to = info->fileUrl();
-        Qt::DropAction default_action = Qt::CopyAction;
-
-        // 如果文件和目标路径在同一个分区下，默认为移动文件，否则默认为复制文件
-        if (from.scheme() == to.scheme() && from.isLocalFile()) {
-            if (deviceListener->isInSameDevice(from.toLocalFile(), to.toLocalFile())) {
-                default_action = Qt::MoveAction;
-            }
-        }
-
-        if (event->possibleActions().testFlag(default_action)) {
-            event->setDropAction(default_action);
-        }
-
-        if (!info->supportedDropActions().testFlag(event->dropAction())) {
-            QList<Qt::DropAction> actions;
-
-            actions.reserve(3);
-            actions << Qt::CopyAction << Qt::MoveAction << Qt::LinkAction;
-
-            for (Qt::DropAction action : actions) {
-                if (event->possibleActions().testFlag(action)
-                        && info->supportedDropActions().testFlag(action)) {
-                    event->setDropAction(action);
-                    break;
-                }
-            }
-        }
-    }
+    d->fileViewHelper->preproccessDropEvent(event);
 
     if (event->mimeData()->hasFormat("XdndDirectSave0")) {
         event->setDropAction(Qt::CopyAction);
@@ -722,16 +676,20 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
             d->dodgeDelayTimer.start();
         }
 
+        d->fileViewHelper->preproccessDropEvent(event);
         event->accept();
-        event->setDropAction(Qt::MoveAction);
     };
 
     if (hoverIndex.isValid()) {
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(hoverIndex);
 
         if (fileInfo) {
+            if (event->source() == this && !DFMGlobal::keyCtrlIsPressed()) {
+                event->setDropAction(Qt::MoveAction);
+            }
+
             if (fileInfo->canDrop() && fileInfo->supportedDropActions().testFlag(event->dropAction())) {
-                event->acceptProposedAction();
+                event->accept();
                 return;
             }
         }
@@ -790,21 +748,7 @@ void CanvasGridView::dropEvent(QDropEvent *event)
         }
 
     } else {
-        if (targetInfo && !targetInfo->supportedDropActions().testFlag(event->dropAction())) {
-            QList<Qt::DropAction> actions;
-
-            actions.reserve(3);
-            actions << Qt::CopyAction << Qt::MoveAction << Qt::LinkAction;
-
-            for (Qt::DropAction action : actions) {
-                if (event->possibleActions().testFlag(action)
-                        && targetInfo->supportedDropActions().testFlag(action)) {
-                    event->setDropAction(action);
-                    break;
-                }
-            }
-        }
-
+        d->fileViewHelper->preproccessDropEvent(event);
     }
 
     if (event->mimeData()->property("IsDirectSaveMode").toBool()) {

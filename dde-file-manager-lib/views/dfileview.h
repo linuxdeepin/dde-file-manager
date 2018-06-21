@@ -233,7 +233,6 @@ private:
 
     using DListView::setOrientation;
 
-    void preproccessDropEvent(QDropEvent *event) const;
     void refresh() Q_DECL_OVERRIDE;
 
 
