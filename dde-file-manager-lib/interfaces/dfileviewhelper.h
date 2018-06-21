@@ -68,6 +68,8 @@ public:
 
     void showPreviewFileDialog();
 
+    void preproccessDropEvent(QDropEvent *event) const;
+
 public slots:
     void handleCommitData(QWidget *editor) const;
 
