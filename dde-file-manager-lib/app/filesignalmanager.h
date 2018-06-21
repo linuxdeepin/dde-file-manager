@@ -60,9 +60,6 @@ signals:
     /*request fetch network nodes successfully*/
     void fetchNetworksSuccessed(const DFMUrlBaseEvent &event);
 
-    /*request mount smb*/
-    void requestSMBMount(const DFMUrlBaseEvent &event);
-
     /*request choose smb mounted file*/
     void requestChooseSmbMountedFile(const DFMUrlBaseEvent &event);
 

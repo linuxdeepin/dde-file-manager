@@ -83,7 +83,7 @@
 #include <QStackedLayout>
 #include <QTabBar>
 #include <QPair>
-
+#include <QtConcurrent>
 
 DWIDGET_USE_NAMESPACE
 
@@ -455,7 +455,8 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl, bool canFetchNetwork)
     }
 
     if (canFetchNetwork && NetworkManager::SupportScheme.contains(fileUrl.scheme())) {
-        emit fileSignalManager->requestFetchNetworks(DFMUrlBaseEvent(this, fileUrl));
+//        emit fileSignalManager->requestFetchNetworks(DFMUrlBaseEvent(this, fileUrl));
+        QtConcurrent::run(networkManager, &NetworkManager::fetchNetworks, DFMUrlBaseEvent(this, fileUrl));
         return true;
     }
 

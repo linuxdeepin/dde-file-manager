@@ -26,6 +26,7 @@
 #define GVFSMOUNTCLIENT_H
 
 #include <QObject>
+#include <QMutex>
 #include "dfmevent.h"
 
 #undef signals
@@ -58,6 +59,7 @@ public:
     static MountAskPasswordDialog* AskPasswordDialog;
 
     static void mount (GFile *file);
+    static void mount_sync(const QString &path);
     static GMountOperation *new_mount_op(void);
     static void mount_done_cb(GObject *object, GAsyncResult *res, gpointer user_data);
     static void ask_password_cb (GMountOperation *op,
@@ -66,12 +68,8 @@ public:
                      const char      *default_domain,
                      GAskPasswordFlags flags);
 
-signals:
-
-public slots:
-    void mountByPath(const QString& path);
-    void mountByEvent(const DFMUrlBaseEvent &event);
-
+private:
+    static QMutex mutex;
 };
 
 #endif // GVFSMOUNTCLIENT_H
