@@ -33,6 +33,8 @@
 
 #include "views/windowmanager.h"
 
+#include "gvfsmountclient.h"
+
 #include <QProcess>
 
 DFM_USE_NAMESPACE
@@ -95,7 +97,7 @@ QStringList NetworkManager::SupportScheme = {
 };
 QMap<DUrl, NetworkNodeList> NetworkManager::NetworkNodes = {};
 GCancellable* NetworkManager::m_networks_fetching_cancellable = NULL;
-
+QMutex NetworkManager::mutex;
 
 NetworkManager::NetworkManager(QObject *parent) : QObject(parent)
 {
@@ -124,23 +126,30 @@ void NetworkManager::initConnect()
 
 void NetworkManager::fetch_networks(gchar* url, DFMEvent* e)
 {
+    if (!mutex.tryLock())
+        return;
+
     GFile *network_file;
     network_file = g_file_new_for_uri (url);
 
-    if (m_networks_fetching_cancellable){
-        g_cancellable_cancel (m_networks_fetching_cancellable);
-        g_clear_object (&m_networks_fetching_cancellable);
+    if (m_networks_fetching_cancellable) {
+        g_cancellable_cancel(m_networks_fetching_cancellable);
+        g_clear_object(&m_networks_fetching_cancellable);
     }
     m_networks_fetching_cancellable = g_cancellable_new ();
 
-    g_file_enumerate_children_async (network_file,
-                                     "standard::type,standard::target-uri,standard::name,standard::display-name,standard::icon,mountable::can-mount",
-                                      G_FILE_QUERY_INFO_NONE,
-                                      G_PRIORITY_DEFAULT,
-                                      m_networks_fetching_cancellable,
-                                      network_enumeration_finished,
-                                      e);
-    g_clear_object (&network_file);
+    DThreadUtil::runInMainThread(&g_file_enumerate_children_async,
+                                 network_file,
+                                 "standard::type,standard::target-uri,standard::name,standard::display-name,standard::icon,mountable::can-mount",
+                                 G_FILE_QUERY_INFO_NONE,
+                                 G_PRIORITY_DEFAULT,
+                                 m_networks_fetching_cancellable,
+                                 network_enumeration_finished,
+                                 e);
+    g_clear_object(&network_file);
+
+    if (QThread::currentThread() != qApp->thread())
+        mutex.lock();
 }
 
 void NetworkManager::network_enumeration_finished(GObject *source_object, GAsyncResult *res, gpointer user_data)
@@ -153,22 +162,21 @@ void NetworkManager::network_enumeration_finished(GObject *source_object, GAsync
 
     qDebug() << "network_enumeration_finished";
 
-    if (error)
-    {
+    if (error) {
         DFMUrlBaseEvent* event = static_cast<DFMUrlBaseEvent*>(user_data);
         if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) &&
             !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED)){
             qWarning ("Failed to fetch network locations: %s", error->message);
-            if (event->fileUrl() == DUrl::fromNetworkFile("/")){
+            if (event->fileUrl() == DUrl::fromNetworkFile("/")) {
                 NetworkManager::restartGVFSD();
             }
         }
         qDebug() << error->message;
-        emit fileSignalManager->requestSMBMount(*event);
+        gvfsMountClient->mount_sync(event->url().toString());
         g_clear_error (&error);
-    }
-    else
-    {
+
+        mutex.unlock();
+    } else {
         g_file_enumerator_next_files_async (enumerator,
                                           G_MAXINT32,
                                           G_PRIORITY_DEFAULT,
@@ -206,6 +214,8 @@ void NetworkManager::network_enumeration_next_files_finished(GObject *source_obj
 
         g_list_free_full (detected_networks, g_object_unref);
     }
+
+    mutex.unlock();
 }
 
 void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detected_networks, gpointer user_data)
@@ -267,10 +277,10 @@ void NetworkManager::restartGVFSD()
     QProcess p;
     p.start("killall", {"gvfsd"});
     bool ret = p.waitForFinished();
-    if (ret){
+    if (ret) {
         bool result = QProcess::startDetached("/usr/lib/gvfs/gvfsd");
         qDebug() << "restart gvfsd" << result;
-    }else{
+    } else {
         qDebug() << "killall gvfsd failed";
     }
 }
@@ -286,15 +296,15 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
 
     qDebug() << path << p1 << p2;
 
-    if (p1){
+    if (p1) {
         e->setData(p1->getMountPointUrl());
         if (DUrl(path) != p1->getMountPointUrl()){
             DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, e->fileUrl(), WindowManager::getWindowById(e->windowId()));
-        }else{
+        } else {
             qWarning() << p1->getMountPointUrl() << "can't get data";
         }
         delete e;
-    }else{
+    } else {
         std::string stdPath = path.toStdString();
         gchar *url = const_cast<gchar*>(stdPath.c_str());
         fetch_networks(url, e);

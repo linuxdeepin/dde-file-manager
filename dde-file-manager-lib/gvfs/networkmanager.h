@@ -34,6 +34,8 @@
 #undef signals
 extern "C" {
     #include <gio/gio.h>
+
+#include <QMutex>
 }
 #define signals public
 
@@ -106,7 +108,7 @@ public slots:
     void fetchNetworks(const DFMUrlBaseEvent &event);
 
 private:
-
+    static QMutex mutex;
 };
 
 #endif // NETWORKMANAGER_H
