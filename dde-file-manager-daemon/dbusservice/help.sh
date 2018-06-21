@@ -49,3 +49,15 @@ qdbusxml2cpp -c CommandManagerInterface -p dbusinterface/commandmanager_interfac
 echo "=====deviceinfomanager====="
 qdbusxml2cpp -i deviceinfo/deviceinfomanager.h -c DeviceInfoManagerAdaptor -l DeviceInfoManager -a dbusadaptor/deviceinfomanager_adaptor deviceinfo.xml
 qdbusxml2cpp -i ../partman/partition.h -c DeviceInfoManagerInterface -p dbusinterface/deviceinfomanager_interface deviceinfo.xml
+
+echo "====tagmanagerdaemon===="
+qdbusxml2cpp -i tag/tagmanagerdaemon.h -c TagManagerDaemonAdaptor -a dbusadaptor/tagmanagerdaemon_adaptor tagmanagerdaemon.xml
+
+#notice that: the xxx_interface.h/cpp files were put into 'dde-file-manager-lib' not 'dde-file-manager-daemon'.
+qdbusxml2cpp -c TagManagerDaemonInterface -p ../../dde-file-manager-lib/controllers/interface/tagmanagerdaemon_interface tagmanagerdaemon.xml
+
+echo "====quicksearchdaemon===="
+qdbusxml2cpp -i quicksearch/quicksearchdaemon.h -c QuickSearchDaemonAdaptor -a dbusadaptor/quicksearchdaemon_adaptor quicksearchdaemon.xml
+
+#notice that: the xxx_interface.h/cpp files were put into 'dde-file-manager-lib' not 'dde-file-manager-daemon'.
+qdbusxml2cpp -c QuickSearchDaemonInterface -p ../../dde-file-manger-lib/interface/quicksearchdaemon_interface quicksearchdaemon.xml

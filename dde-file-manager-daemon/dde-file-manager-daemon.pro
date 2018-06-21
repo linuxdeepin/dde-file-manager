@@ -85,7 +85,9 @@ SOURCES += main.cpp \
     dbusservice/dbusadaptor/deviceinfomanager_adaptor.cpp \
     dbusservice/dbusinterface/deviceinfomanager_interface.cpp \
     tag/tagmanagerdaemon.cpp \
-    dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.cpp
+    dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.cpp \
+    dbusservice/dbusadaptor/quicksearchdaemon_adaptor.cpp \
+    quicksearch/quicksearchdaemon.cpp
 
 HEADERS += \
     app/filemanagerdaemon.h \
@@ -129,7 +131,9 @@ HEADERS += \
     dbusservice/dbusadaptor/deviceinfomanager_adaptor.h \
     dbusservice/dbusinterface/deviceinfomanager_interface.h \
     tag/tagmanagerdaemon.h \
-    dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.h
+    dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.h \
+    dbusservice/dbusadaptor/quicksearchdaemon_adaptor.h \
+    quicksearch/quicksearchdaemon.h
 
 target.path = /usr/bin
 

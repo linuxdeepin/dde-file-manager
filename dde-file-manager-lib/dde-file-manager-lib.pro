@@ -62,6 +62,7 @@ include(../usershare/usershare.pri)
 include(../dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
 include(../partman/partman.pri)
 include(tag/tag.pri)
+include(quick_search/quicksearch.pri)
 isEqual(ARCH, sw_64){
 #    isEqual(ENABLE_SW_LABLE, YES){
         DEFINES += SW_LABEL
@@ -262,7 +263,10 @@ HEADERS += \
     interfaces/dfmapplication.h \
     interfaces/private/dfmapplication_p.h \
     controllers/dfmsearchcrumbcontroller.h \
-    shutil/danythingmonitorfilter.h
+    shutil/danythingmonitorfilter.h \
+    controllers/interface/quicksearchdaemon_interface.h \
+    controllers/quicksearchdaemoncontroller.h \
+    controllers/dquicksearchcontroller.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -438,7 +442,10 @@ SOURCES += \
     views/dcompleterlistview.cpp \
     interfaces/dfmapplication.cpp \
     controllers/dfmsearchcrumbcontroller.cpp\
-    shutil/danythingmonitorfilter.cpp
+    shutil/danythingmonitorfilter.cpp \
+    controllers/interface/quicksearchdaemon_interface.cpp \
+    controllers/quicksearchdaemoncontroller.cpp \
+    controllers/dquicksearchcontroller.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET
