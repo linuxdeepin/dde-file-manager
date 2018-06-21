@@ -126,7 +126,9 @@ void NetworkManager::initConnect()
 
 void NetworkManager::fetch_networks(gchar* url, DFMEvent* e)
 {
-    if (!mutex.tryLock())
+    bool try_lock = mutex.tryLock();
+
+    if (!try_lock)
         return;
 
     GFile *network_file;
@@ -148,8 +150,11 @@ void NetworkManager::fetch_networks(gchar* url, DFMEvent* e)
                                  e);
     g_clear_object(&network_file);
 
-    if (QThread::currentThread() != qApp->thread())
-        mutex.lock();
+    if (QThread::currentThread() != qApp->thread()) {
+        mutex.lock(); // do blocking
+    }
+
+    mutex.unlock();
 }
 
 void NetworkManager::network_enumeration_finished(GObject *source_object, GAsyncResult *res, gpointer user_data)
@@ -174,21 +179,18 @@ void NetworkManager::network_enumeration_finished(GObject *source_object, GAsync
         qDebug() << error->message;
         gvfsMountClient->mount_sync(event->url().toString());
         g_clear_error (&error);
-
-        mutex.unlock();
-    } else {
-        g_file_enumerator_next_files_async (enumerator,
-                                          G_MAXINT32,
-                                          G_PRIORITY_DEFAULT,
-                                          m_networks_fetching_cancellable,
-                                          network_enumeration_next_files_finished,
-                                          user_data);
     }
+
+    g_file_enumerator_next_files_async (enumerator,
+                                        G_MAXINT32,
+                                        G_PRIORITY_DEFAULT,
+                                        m_networks_fetching_cancellable,
+                                        network_enumeration_next_files_finished,
+                                        user_data);
 }
 
 void NetworkManager::network_enumeration_next_files_finished(GObject *source_object, GAsyncResult *res, gpointer user_data)
 {
-
     GList *detected_networks;
     GError *error;
 

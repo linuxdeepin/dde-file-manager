@@ -74,6 +74,10 @@ void GvfsMountClient::mount(GFile *file)
 
 void GvfsMountClient::mount_sync(const QString &path)
 {
+    if (!mutex.tryLock()) {
+        return;
+    }
+
     GFile* file = g_file_new_for_uri(path.toUtf8().constData());
 
     if (file == NULL)
@@ -84,8 +88,11 @@ void GvfsMountClient::mount_sync(const QString &path)
                                  file, static_cast<GMountMountFlags>(0),
                                  op, nullptr, mount_done_cb, op);
 
-    if (QThread::currentThread() != qApp->thread())
+    if (QThread::currentThread() != qApp->thread()) {
         mutex.lock();
+    }
+
+    mutex.unlock();
 }
 
 GMountOperation *GvfsMountClient::new_mount_op()
