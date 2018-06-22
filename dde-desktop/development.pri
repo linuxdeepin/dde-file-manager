@@ -13,7 +13,10 @@ services.files = $$PWD/data/com.deepin.dde.desktop.service
 translations.path = $${PREFIX}/share/$${TARGET}/translations
 translations.files = translations/*.qm
 
-INSTALLS += target desktop_files services translations
+ini.files += $$PWD/$${TARGET}.ini
+ini.path = /etc/xdg/deepin/dde-file-manager
+
+INSTALLS += target desktop_files services translations ini
 
 GitVersion = $$system(git rev-parse HEAD)
 DEFINES += GIT_VERSION=\\\"$$GitVersion\\\"

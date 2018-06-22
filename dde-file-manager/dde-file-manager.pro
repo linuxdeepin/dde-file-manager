@@ -83,7 +83,10 @@ pkexec.files = pkexec/dde-file-manager-pkexec
 propertyDialogShell.path = /usr/bin/
 propertyDialogShell.files = dde-property-dialog
 
-INSTALLS += target desktop dde-xdg-user-dirs-update policy pkexec propertyDialogShell
+ini.files += $$PWD/$${TARGET}.ini
+ini.path = /etc/xdg/deepin/dde-file-manager
+
+INSTALLS += target desktop dde-xdg-user-dirs-update policy pkexec propertyDialogShell ini
 
 isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
     dde-mips-shs.path = $$BINDIR
