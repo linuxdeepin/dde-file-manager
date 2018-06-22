@@ -1,7 +1,8 @@
 {
     "DBusFileDialog": {
         "disable": {
-            "gtk2": ["xarchiver", "gpick"]
+            "gtk2": ["xarchiver", "gpick", "libreoffice"],
+            "gtk3": ["libreoffice"]
         }
     },
     "FileViewState": {
