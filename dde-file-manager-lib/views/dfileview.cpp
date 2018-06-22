@@ -134,6 +134,9 @@ public:
 
     QActionGroup *toolbarActionGroup;
 
+    bool enableSelectionByMouse = false;
+    QPointer<QTimer> updateEnableSelectionByMouseTimer;
+
     Q_DECLARE_PUBLIC(DFileView)
 };
 
@@ -1032,6 +1035,26 @@ void DFileView::mousePressEvent(QMouseEvent *event)
         break;
     }
     case Qt::LeftButton: {
+        // 当事件source为MouseEventSynthesizedByQt，认为此事件为TouchBegin转换而来
+        if (event->source() == Qt::MouseEventSynthesizedByQt) {
+            if (d->updateEnableSelectionByMouseTimer) {
+                d->updateEnableSelectionByMouseTimer->stop();
+            } else {
+                d->updateEnableSelectionByMouseTimer = new QTimer(this);
+                d->updateEnableSelectionByMouseTimer->setSingleShot(true);
+                d->updateEnableSelectionByMouseTimer->setInterval(300);
+
+                connect(d->updateEnableSelectionByMouseTimer, &QTimer::timeout, this, [d] {
+                    d->enableSelectionByMouse = true;
+                    d->updateEnableSelectionByMouseTimer->deleteLater();
+                });
+            }
+
+            d->updateEnableSelectionByMouseTimer->start();
+        } else {
+            d->enableSelectionByMouse = true;
+        }
+
         bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos());
 
         setDragDropMode(DragDrop);
@@ -1039,9 +1062,13 @@ void DFileView::mousePressEvent(QMouseEvent *event)
         if (isEmptyArea) {
             if (!DFMGlobal::keyCtrlIsPressed()) {
                 itemDelegate()->hideNotEditingIndexWidget();
-                clearSelection();
-                update();
                 setDragDropMode(DropOnly);
+
+                // 避免通过触屏拖动视图时当前选中被清除
+                if (event->source() != Qt::MouseEventSynthesizedByQt) {
+                    clearSelection();
+                    update();
+                }
             }
         } else if (DFMGlobal::keyCtrlIsPressed()) {
             const QModelIndex &index = indexAt(event->pos());
@@ -1066,18 +1093,33 @@ void DFileView::mousePressEvent(QMouseEvent *event)
     }
 }
 
+void DFileView::mouseMoveEvent(QMouseEvent *event)
+{
+    Q_D(const DFileView);
+
+    // 避免文件选择和触屏的拖动行为矛盾
+    if (!d->enableSelectionByMouse) {
+        return;
+    }
+
+    return DListView::mouseMoveEvent(event);
+}
+
 void DFileView::mouseReleaseEvent(QMouseEvent *event)
 {
     D_D(DFileView);
 
     d->dragMoveHoverIndex = QModelIndex();
+    d->enableSelectionByMouse = false;
 
     if (d->mouseLastPressedIndex.isValid() && DFMGlobal::keyCtrlIsPressed()) {
         if (d->mouseLastPressedIndex == indexAt(event->pos()))
             selectionModel()->select(d->mouseLastPressedIndex, QItemSelectionModel::Deselect);
     }
 
-    return DListView::mouseReleaseEvent(event);
+    // 避免通过触屏拖动视图松手后当前选中被清除
+    if (state() != NoState)
+        return DListView::mouseReleaseEvent(event);
 }
 
 void DFileView::updateModelActiveIndex()
@@ -1630,20 +1672,40 @@ void DFileView::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
 
 bool DFileView::event(QEvent *e)
 {
-    if(e->type() == QEvent::KeyPress){
-        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(e);
-        if(keyEvent->key() == Qt::Key_Tab || keyEvent->key() == Qt::Key_Backtab){
-            if(keyEvent->modifiers() == Qt::ControlModifier || keyEvent->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
-                return DListView::event(e);
-            e->accept();
+    switch (e->type()) {
+    case QEvent::KeyPress: {
+            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(e);
+            if(keyEvent->key() == Qt::Key_Tab || keyEvent->key() == Qt::Key_Backtab){
+                if(keyEvent->modifiers() == Qt::ControlModifier || keyEvent->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+                    return DListView::event(e);
+                e->accept();
 
-            if(keyEvent->modifiers() == Qt::ShiftModifier)
-                keyPressEvent(new QKeyEvent(keyEvent->type(), Qt::Key_Left, Qt::NoModifier));
-            else
-                keyPressEvent(new QKeyEvent(keyEvent->type(), Qt::Key_Right, Qt::NoModifier));
+                if(keyEvent->modifiers() == Qt::ShiftModifier)
+                    keyPressEvent(new QKeyEvent(keyEvent->type(), Qt::Key_Left, Qt::NoModifier));
+                else
+                    keyPressEvent(new QKeyEvent(keyEvent->type(), Qt::Key_Right, Qt::NoModifier));
 
-            return true;
+                return true;
+            }
         }
+        break;
+    case QEvent::Gesture: {
+        // 避免和视图的文件选择操作冲突
+        if (state() != NoState) {
+            return false;
+        }
+
+        Q_D(DFileView);
+
+        if (d->updateEnableSelectionByMouseTimer) {
+            d->updateEnableSelectionByMouseTimer->stop();
+            d->updateEnableSelectionByMouseTimer->deleteLater();
+        }
+
+        break;
+    }
+    default:
+        break;
     }
 
     return DListView::event(e);
