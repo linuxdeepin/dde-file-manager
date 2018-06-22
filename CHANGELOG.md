@@ -1,3 +1,26 @@
+<a name="4.4.9"></a>
+## 4.4.9 (2018-06-22)
+
+
+#### Features
+
+*   support touch event for DFileView ([fc0254b6](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/fc0254b6749865d3590b75728fcd74b12cc35f7e))
+*   install default config files for dde-desktop&dde-file-manager ([241e5b3c](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/241e5b3cbeb8ee0d18f9c9b52ab73f342c4d8744))
+*   support custom the non allowable characters of file name ([2458c411](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/2458c4112ff42939656559462d21486b28be399c))
+
+#### Bug Fixes
+
+*   Can't type trailing space when editing file name ([76a6f587](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/76a6f587dd9b460c3781faa15e942a18df0de99d))
+*   file name length exceeds limit ([860fc8c6](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/860fc8c6b7b0acfc9761207b2a63bc21c9d4fd02))
+*   optimize pixmap get of file icon ([0a7a455c](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/0a7a455c6a5d02f7207af17ae1ea8af0e1faac83))
+*   do nothing if the new file name is empty ([74bf1923](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/74bf1923a2d794dce0110adf8046272f56ded0b1))
+
+#### Performance
+
+* **cache:**  fix pixmap cache not working ([1ed4f9ff](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/1ed4f9ff59e3619503a811d715e1578e5196ac8a))
+
+
+
 <a name="4.4.8.7"></a>
 ## 4.4.8.7 (2018-05-23)
 
