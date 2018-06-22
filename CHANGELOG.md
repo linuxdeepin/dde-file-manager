@@ -1,3 +1,13 @@
+<a name="4.4.9.1"></a>
+## 4.4.9.1 (2018-06-22)
+
+
+#### Bug Fixes
+
+*   crash in DFileDialog:: selectedUrls ([72051847](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/72051847569aae55a35d27b8cacabdd49f5a57f9))
+
+
+
 <a name="4.4.9"></a>
 ## 4.4.9 (2018-06-22)
 
