@@ -146,7 +146,6 @@ void DFMSideBarPrivate::initUI()
     q->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     q->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     q->setViewportMargins(0, 0, -q->verticalScrollBar()->sizeHint().width(), 0);
-    q->resize(DFMSideBarItem::minimumWidth, q->height());
 
     // to make QScrollArea scroallable, we need a widget.
     mainLayoutHolder = new QWidget();
@@ -172,11 +171,11 @@ void DFMSideBarPrivate::initUI()
 
     foreach (const DFMSideBar::GroupName &groupType, groups) {
         DFMSideBarItemGroup *group = new DFMSideBarItemGroup(q->groupName(groupType));
+        mainLayout->addLayout(group);
         groupConnectionRegister(group);
         setGroupSaveItemOrder(group, groupType);
         addItemToGroup(group, groupType);
         groupNameMap[q->groupName(groupType)] = group;
-        mainLayout->addLayout(group);
     }
 }
 

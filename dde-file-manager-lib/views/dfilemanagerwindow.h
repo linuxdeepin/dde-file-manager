@@ -38,8 +38,6 @@
 
 #define DEFAULT_WINDOWS_WIDTH 960
 #define DEFAULT_WINDOWS_HEIGHT 540
-#define LEFTSIDEBAR_MAX_WIDTH 200
-#define LEFTSIDEBAR_MIN_WIDTH 100
 #define TITLE_FIXED_HEIGHT 40
 
 class DTitleBar;
@@ -92,6 +90,9 @@ public:
     DToolBar *getToolBar() const;
     DFMBaseView *getFileView() const;
     DFMSideBar *getLeftSideBar() const;
+    int getSplitterPosition() const;
+
+    void setSplitterPosition(int pos);
 
     quint64 windowId();
 
@@ -134,6 +135,7 @@ public slots:
     void onThemeChanged();
 
 protected:
+    void showEvent(QShowEvent *event) override;
     void closeEvent(QCloseEvent *event)  Q_DECL_OVERRIDE;
     void mouseDoubleClickEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void moveEvent(QMoveEvent *event) Q_DECL_OVERRIDE;
