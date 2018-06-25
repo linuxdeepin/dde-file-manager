@@ -1,3 +1,13 @@
+<a name="4.5.6.1"></a>
+## 4.5.6.1 (2018-06-25)
+
+
+#### Performance
+
+* **cache:**  fix pixmap cache not working ([756cf039](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/756cf039aa1bbc94e5cbc276c198a43af66f8fa6))
+
+
+
 <a name="4.5.6"></a>
 ## 4.5.6 (2018-06-13)
 
