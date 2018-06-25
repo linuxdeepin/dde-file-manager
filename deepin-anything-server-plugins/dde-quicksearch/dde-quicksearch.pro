@@ -1,13 +1,16 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2018-06-22T11:31:57
+# Project created by QtCreator 2018-06-25T09:04:00
 #
 #-------------------------------------------------
 
+QT       += core gui
 
-TARGET = dde-anythingmonitor
+TARGET = dde-quicksearch
+
 
 TEMPLATE = lib
+
 
 QT += core \
       dbus \
@@ -46,6 +49,7 @@ unix{
 
 #DESTDIR = $$[QT_INSTALL_PLUGINS]/generic
 
+
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -58,12 +62,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    taghandle.cpp \
+    quicksearchhandle.cpp \
     main.cpp
 
 HEADERS += \
-    taghandle.h
+    quicksearchhandle.h
 
-
-
-DISTFILES += dde-anythingmonitor.json 
+DISTFILES += dde-quicksearch.json

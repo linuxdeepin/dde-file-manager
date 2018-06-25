@@ -1,4 +1,5 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-    dde-anythingmonitor
+    dde-anythingmonitor \
+    dde-quicksearch

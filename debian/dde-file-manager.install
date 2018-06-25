@@ -7,6 +7,7 @@ usr/bin/usb-device-formatter
 usr/bin/usb-device-formatter-pkexec
 
 usr/lib/*/deepin-anything-server-lib/plugins/handlers/libdde-anythingmonitor.so
+usr/lib/*/deepin-anything-server-lib/plugins/handlers/libdde-quicksearch.so
 
 usr/share/applications/dde-file-manager.desktop
 
