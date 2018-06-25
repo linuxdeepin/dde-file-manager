@@ -71,6 +71,7 @@ public:
     void setIconFromThemeConfig(const QString &group, const QString &key = "icon");
 
     static const int minimumWidth = 100;
+    static const int maximumWidth = 200;
 
 public Q_SLOTS:
     void setReorderable(bool reorderable);

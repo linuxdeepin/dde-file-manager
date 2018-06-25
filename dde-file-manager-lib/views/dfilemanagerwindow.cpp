@@ -44,6 +44,7 @@
 #include "dfmsidebar.h"
 #include "dfmsidebaritem.h"
 #include "dfmaddressbar.h"
+#include "dfmsettings.h"
 #include "dfmapplication.h"
 #include "dfmstandardpaths.h"
 
@@ -436,6 +437,22 @@ DFMSideBar *DFileManagerWindow::getLeftSideBar() const
     return d->leftSideBar;
 }
 
+int DFileManagerWindow::getSplitterPosition() const
+{
+    D_DC(DFileManagerWindow);
+
+    return d->splitter ? d->splitter->sizes().at(0) : DFMSideBarItem::maximumWidth;
+}
+
+void DFileManagerWindow::setSplitterPosition(int pos)
+{
+    Q_D(DFileManagerWindow);
+
+    if (d->splitter) {
+        d->splitter->setSizes({pos, d->splitter->width() - pos - d->splitter->handleWidth()});
+    }
+}
+
 quint64 DFileManagerWindow::windowId()
 {
     return WindowManager::getWindowId(this);
@@ -598,6 +615,11 @@ void DFileManagerWindow::closeEvent(QCloseEvent *event)
 {
     emit aboutToClose();
     DMainWindow::closeEvent(event);
+
+    QVariantMap state;
+    state["sidebar"] = getSplitterPosition();
+    DFMApplication::appObtuselySetting()->setValue("WindowManager", "SplitterState", state);
+
     emit fileSignalManager->requestQuitApplication();
 }
 
@@ -785,8 +807,6 @@ void DFileManagerWindow::initSplitter()
     d->splitter->addWidget(d->leftSideBar);
     d->splitter->addWidget(d->rightView);
     d->splitter->setChildrenCollapsible(false);
-
-//    QObject::connect(d->leftSideBar, &DLeftSideBar::moveSplitter, d->splitter, &DSplitter::moveSplitter);
 }
 
 void DFileManagerWindow::initLeftSideBar()
@@ -797,7 +817,7 @@ void DFileManagerWindow::initLeftSideBar()
     d->leftSideBar = new DFMSideBar(this);
     d->leftSideBar->setObjectName("LeftSideBar");
 //    d->leftSideBar->setFixedWidth(LEFTSIDEBAR_MAX_WIDTH);
-    d->leftSideBar->setMaximumWidth(LEFTSIDEBAR_MAX_WIDTH);
+    d->leftSideBar->setMaximumWidth(DFMSideBarItem::maximumWidth);
     d->leftSideBar->setMinimumWidth(DFMSideBarItem::minimumWidth);
     // connections
     connect(this, &DFileManagerWindow::currentUrlChanged, this, [this, d]() {
@@ -1020,6 +1040,15 @@ void DFileManagerWindow::onThemeChanged()
     }
 
     WindowManager::instance()->saveWindowState(this);
+}
+
+void DFileManagerWindow::showEvent(QShowEvent *event)
+{
+    DMainWindow::showEvent(event);
+
+    const QVariantMap &state = DFMApplication::appObtuselySetting()->value("WindowManager", "SplitterState").toMap();
+    int splitterPos = state.value("sidebar").toInt();
+    setSplitterPosition(splitterPos);
 }
 
 void DFileManagerWindow::initRenameBarState()

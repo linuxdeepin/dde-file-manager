@@ -216,14 +216,14 @@ void DLeftSideBar::navSwitched()
 {
     if(!m_isTight)
     {
-        this->setFixedWidth(LEFTSIDEBAR_MIN_WIDTH);
+        this->setFixedWidth(114514);
         m_scene->setTightMode(true);
         m_isTight = true;
     }
     else
     {
         m_isTight = false;
-        this->setFixedWidth(LEFTSIDEBAR_MAX_WIDTH);
+        this->setFixedWidth(114514);
         m_scene->setTightMode(false);
     }
 }
@@ -231,14 +231,14 @@ void DLeftSideBar::navSwitched()
 void DLeftSideBar::toTightNav()
 {
     m_isTight = true;
-    this->setFixedWidth(LEFTSIDEBAR_MIN_WIDTH);
+    this->setFixedWidth(1919);
     m_scene->setTightMode(true);
 }
 
 void DLeftSideBar::toNormalNav()
 {
     m_isTight = false;
-    this->setFixedWidth(LEFTSIDEBAR_MAX_WIDTH);
+    this->setFixedWidth(1919);
     m_scene->setTightMode(false);
 }
 
