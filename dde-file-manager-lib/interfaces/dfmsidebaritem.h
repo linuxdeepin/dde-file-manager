@@ -70,6 +70,8 @@ public:
 
     void setIconFromThemeConfig(const QString &group, const QString &key = "icon");
 
+    static const int minimumWidth = 100;
+
 public Q_SLOTS:
     void setReorderable(bool reorderable);
     void setCanDeleteViaDrag(bool canDeleteViaDrag);

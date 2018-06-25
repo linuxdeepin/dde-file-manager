@@ -42,6 +42,7 @@
 #include "dfilesystemmodel.h"
 #include "dfmviewmanager.h"
 #include "dfmsidebar.h"
+#include "dfmsidebaritem.h"
 #include "dfmaddressbar.h"
 #include "dfmapplication.h"
 #include "dfmstandardpaths.h"
@@ -110,7 +111,7 @@ public:
     DFMBaseView *currentView { nullptr };
     DStatusBar *statusBar { nullptr };
     QVBoxLayout *mainLayout { nullptr };
-    DSplitter *splitter { nullptr };
+    QSplitter *splitter { nullptr };
     QFrame *titleFrame { nullptr };
     QStackedLayout *viewStackLayout { nullptr };
     QPushButton *emptyTrashButton { nullptr };
@@ -780,7 +781,7 @@ void DFileManagerWindow::initSplitter()
     initLeftSideBar();
     initRightView();
 
-    d->splitter = new DSplitter(Qt::Horizontal, this);
+    d->splitter = new QSplitter(Qt::Horizontal, this);
     d->splitter->addWidget(d->leftSideBar);
     d->splitter->addWidget(d->rightView);
     d->splitter->setChildrenCollapsible(false);
@@ -795,7 +796,9 @@ void DFileManagerWindow::initLeftSideBar()
 //    d->leftSideBar = new DLeftSideBar(this);
     d->leftSideBar = new DFMSideBar(this);
     d->leftSideBar->setObjectName("LeftSideBar");
-    d->leftSideBar->setFixedWidth(LEFTSIDEBAR_MAX_WIDTH);
+//    d->leftSideBar->setFixedWidth(LEFTSIDEBAR_MAX_WIDTH);
+    d->leftSideBar->setMaximumWidth(LEFTSIDEBAR_MAX_WIDTH);
+    d->leftSideBar->setMinimumWidth(DFMSideBarItem::minimumWidth);
     // connections
     connect(this, &DFileManagerWindow::currentUrlChanged, this, [this, d]() {
         d->leftSideBar->setCurrentUrl(currentUrl());
