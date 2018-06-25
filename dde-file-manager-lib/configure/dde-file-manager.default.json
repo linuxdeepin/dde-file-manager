@@ -35,5 +35,9 @@
         "BlackList": [
             "~/.local/share/Trash"
         ]
+    },
+    "QuickSearchFilter": {
+        "__annotation":"///You can fill it with regex(grep grammar)",
+        "BlackList":[]
     }
 }

@@ -266,7 +266,9 @@ HEADERS += \
     controllers/interface/quicksearchdaemon_interface.h \
     controllers/quicksearchdaemoncontroller.h \
     controllers/dquicksearchcontroller.h \
-    views/dfmheaderview.h
+    views/dfmheaderview.h \
+    shutil/dquicksearchfilter.h
+
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -445,7 +447,8 @@ SOURCES += \
     controllers/interface/quicksearchdaemon_interface.cpp \
     controllers/quicksearchdaemoncontroller.cpp \
     controllers/dquicksearchcontroller.cpp \
-    views/dfmheaderview.cpp
+    views/dfmheaderview.cpp \
+    shutil/dquicksearchfilter.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET
