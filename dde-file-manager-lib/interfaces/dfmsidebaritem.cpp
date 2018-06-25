@@ -47,7 +47,6 @@ DWIDGET_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
 
-#define SIDEBAR_ITEM_WIDTH 201
 #define SIDEBAR_ITEM_HEIGHT 30
 #define SIDEBAR_ITEM_PADDING 13
 #define SIDEBAR_ICON_SIZE 16
@@ -104,7 +103,8 @@ void DFMSideBarItemPrivate::init()
     Q_Q(DFMSideBarItem);
 
     q->setAcceptDrops(true);
-    q->setMinimumSize(SIDEBAR_ITEM_WIDTH, SIDEBAR_ITEM_HEIGHT);
+    q->setMinimumSize(DFMSideBarItem::minimumWidth, SIDEBAR_ITEM_HEIGHT);
+    q->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     q->setIconFromThemeConfig("BookmarkItem.BookMarks", "icon"); // Default icon
 
     // layout for contentWidget
@@ -300,7 +300,7 @@ void DFMSideBarItem::showRenameEditor()
     int paddingLeft = SIDEBAR_ITEM_PADDING + SIDEBAR_ICON_SIZE + SIDEBAR_ICON_TEXT_GAP_SIZE;
 
     d->renameLineEdit = new QLineEdit(this);
-    d->renameLineEdit->resize(SIDEBAR_ITEM_WIDTH - paddingLeft - SIDEBAR_RENAMEEDIT_MARGIN,
+    d->renameLineEdit->resize(width() - paddingLeft - SIDEBAR_RENAMEEDIT_MARGIN,
                               SIDEBAR_ITEM_HEIGHT - SIDEBAR_RENAMEEDIT_MARGIN * 2);
     d->renameLineEdit->move(paddingLeft, SIDEBAR_RENAMEEDIT_MARGIN);
     d->renameLineEdit->setText(d->displayText);
@@ -749,7 +749,8 @@ void DFMSideBarItem::paintEvent(QPaintEvent *event)
     if (!d->renameLineEdit) {
         painter.setPen(textPenColor);
         QFontMetrics metrics(d->font);
-        QString elidedText = metrics.elidedText(d->displayText, Qt::ElideMiddle, width() - textPaddingLeft - 60);
+        int contextWidgetWidth = d->contentWidget ? d->contentWidget->width() + SIDEBAR_ITEM_PADDING : 0;
+        QString elidedText = metrics.elidedText(d->displayText, Qt::ElideRight, textRect.width() - contextWidgetWidth - SIDEBAR_ITEM_PADDING);
         painter.drawText(textRect, Qt::TextWordWrap | Qt::AlignLeft | Qt::AlignVCenter, elidedText);
     }
 

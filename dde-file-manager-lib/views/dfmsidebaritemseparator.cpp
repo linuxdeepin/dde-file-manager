@@ -29,7 +29,7 @@ DFM_BEGIN_NAMESPACE
 DFMSideBarItemSeparator::DFMSideBarItemSeparator(QWidget *parent) : QWidget(parent)
 {
     // not sure
-    setMinimumSize(201, 5);
+    setMinimumHeight(5);
 }
 
 void DFMSideBarItemSeparator::paintEvent(QPaintEvent *event)
