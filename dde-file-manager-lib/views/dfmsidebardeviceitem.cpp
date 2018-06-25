@@ -143,9 +143,10 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
     menu->addSeparator();
 
     QAction *propertyAction = new QAction(QObject::tr("Properties"), menu);
-    connect(propertyAction, &QAction::triggered, this, [this]() {
+    connect(propertyAction, &QAction::triggered, this, [this, info]() {
+        DUrl mountPointUrl(info.value("mountPointUrl", QString()).toString());
         DUrlList list;
-        list.append(url());
+        list.append(mountPointUrl.isEmpty() ? url() : mountPointUrl);
         fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(this, list));
     });
     propertyAction->setDisabled(!info.value("isMounted", false).toBool());
