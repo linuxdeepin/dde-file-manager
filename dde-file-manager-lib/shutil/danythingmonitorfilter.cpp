@@ -25,8 +25,8 @@
 #include <functional>
 
 #include "dfmsettings.h"
-#include "danythingmonitorfilter.h"
 #include "dfmapplication.h"
+#include "danythingmonitorfilter.h"
 
 #include <QDir>
 #include <QList>

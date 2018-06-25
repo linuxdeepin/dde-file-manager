@@ -25,6 +25,8 @@
 
 #include "dfileinfo.h"
 #include "dquicksearch.h"
+#include "shutil/dquicksearchfilter.h"
+
 
 #include <QDebug>
 
@@ -250,8 +252,11 @@ QList<QString> DQuickSearch::search(const QString &local_path, const QString &ke
 
             char path[PATH_MAX];
             for (std::uint32_t i = 0; i < count; i++) {
-                char *file_or_dir_name{ get_path_by_name_off(pos->second, name_offs[i], path, sizeof(path)) };;
-                searched_list.push_back(QString{ file_or_dir_name });
+                char *file_or_dir_name{ get_path_by_name_off(pos->second, name_offs[i], path, sizeof(path)) };
+
+                if (!DQuickSearchFilter::instance()->whetherFilterCurrentFile(QByteArray{ file_or_dir_name })) {
+                    searched_list.push_back(QString{ file_or_dir_name });
+                }
 
 #ifdef QT_DEBUG
                 qDebug() << file_or_dir_name;
@@ -280,7 +285,11 @@ QList<QString> DQuickSearch::search(const QString &local_path, const QString &ke
 
             for (std::uint32_t index = count; index < total; ++index) {
                 char *file_or_dir_name{ get_path_by_name_off(pos->second, *off_beg, path, sizeof(path)) };
-                searched_list.push_back(QString{ file_or_dir_name });
+
+                if (!DQuickSearchFilter::instance()->whetherFilterCurrentFile(QByteArray{ file_or_dir_name })) {
+                    searched_list.push_back(QString{ file_or_dir_name });
+                }
+
                 ++off_beg;
 
 #ifdef QT_DEBUG
@@ -805,6 +814,26 @@ bool DQuickSearch::create_lft(const QString &mount_point)
     }
 
     return false;
+}
+
+QList<QString> DQuickSearch::filter_result(const QList<QString> &searched_result, const QByteArray &regex)
+{
+    QList<QString> result{};
+
+    if (!searched_result.isEmpty() && !regex.isEmpty()) {
+        std::basic_regex<char> regex_temp{ regex.constData(), std::basic_regex<char>::grep }; //###: support grep grammar.
+        std::match_results<QByteArray::const_iterator> matched_result{};
+
+        for (const QString &str : searched_result) {
+            QByteArray u8_str{ str.toLocal8Bit() };
+
+            if (std::regex_search(u8_str.cbegin(), u8_str.cend(), matched_result, regex_temp)) {
+                result.push_back(str);
+            }
+        }
+    }
+
+    return result;
 }
 
 

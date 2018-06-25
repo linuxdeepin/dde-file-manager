@@ -21,11 +21,11 @@
 
 
 
+#include <regex>
 #include <mutex>
 #include <queue>
 #include <memory>
 #include <atomic>
-
 
 
 #ifdef __cplusplus
@@ -119,11 +119,16 @@ private:
     void initialize_connection()noexcept;
     bool create_lft(const QString &mount_point);
 
+    ///###: it is standby.
+    static QList<QString> filter_result(const QList<QString> &searched_result, const QByteArray &regex);
+
 
     std::mutex m_mutex{};
     std::atomic<bool> m_flag{ false };
     std::deque<QString> m_backup{};
     std::map<QString, fs_buf *> m_mount_point_and_lft_buf{};
+
+    std::basic_regex<char> m_wildcard_char{};
 
     std::unique_ptr<dde_file_manager::DFMDiskManager> m_disk_manager{ nullptr };
 };
