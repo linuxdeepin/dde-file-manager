@@ -40,6 +40,7 @@ public:
         AA_AllwayOpenOnNewWindow,
         AA_IconSizeLevel,
         AA_ViewMode,
+        AA_ViewSizeAdjustable, // 可调整列表模式的表头宽度
         AA_ViewComppactMode,
         AA_ViewAutoCompace,
         AA_OpenFileMode, // 点击/双击[0/1]

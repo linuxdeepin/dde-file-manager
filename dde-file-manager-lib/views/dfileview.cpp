@@ -145,6 +145,8 @@ public:
     QActionGroup *toolbarActionGroup;
 
     bool enableSelectionByMouse = false;
+    bool allowdAdjustColumnSize = true;
+
     QPointer<QTimer> updateEnableSelectionByMouseTimer;
 
     Q_DECLARE_PUBLIC(DFileView)
@@ -259,6 +261,8 @@ bool DFileView::isIconViewMode() const
 int DFileView::columnWidth(int column) const
 {
     D_DC(DFileView);
+
+//    qDebug() << column << d->headerView->sectionSize(column);
 
     return d->headerView ? d->headerView->sectionSize(column) : 100;
 }
@@ -446,10 +450,14 @@ QRect DFileView::visualRect(const QModelIndex &index) const
     QSize item_size = itemSizeHint();
 
     if (item_size.width() == -1) {
-        rect.setLeft(LIST_VIEW_SPACING);
+        rect.setLeft(LIST_VIEW_SPACING - horizontalScrollBar()->value());
         rect.setRight(viewport()->width() - LIST_VIEW_SPACING - 1);
         rect.setTop(index.row() * (item_size.height() + LIST_VIEW_SPACING * 2) + LIST_VIEW_SPACING);
         rect.setHeight(item_size.height());
+
+        if (d->allowdAdjustColumnSize) {
+            rect.setWidth(d->headerView->length());
+        }
     } else {
         int item_width = item_size.width() + ICON_VIEW_SPACING * 2;
         int column_count = d->iconModeColumnCount(item_width);
@@ -1307,12 +1315,14 @@ void DFileView::resizeEvent(QResizeEvent *event)
 
     DListView::resizeEvent(event);
 
-    // auto switch list mode
-    if (d->currentViewMode == ListMode
-            && DFMApplication::instance()->appAttribute(DFMApplication::AA_ViewAutoCompace).toBool()) {
-        if (model()->setColumnCompact(event->size().width() < 600)) {
-            updateListHeaderViewProperty();
-            doItemsLayout();
+    if (!d->allowdAdjustColumnSize) {
+        // auto switch list mode
+        if (d->currentViewMode == ListMode
+                && DFMApplication::instance()->appAttribute(DFMApplication::AA_ViewAutoCompace).toBool()) {
+            if (model()->setColumnCompact(event->size().width() < 600)) {
+                updateListHeaderViewProperty();
+                doItemsLayout();
+            }
         }
     }
 
@@ -1716,6 +1726,19 @@ bool DFileView::event(QEvent *e)
     return DListView::event(e);
 }
 
+void DFileView::updateGeometries()
+{
+    Q_D(DFileView);
+
+    if (!d->headerView || !d->allowdAdjustColumnSize) {
+        return DListView::updateGeometries();
+    }
+
+    resizeContents(d->headerView->length(), contentsSize().height());
+
+    DListView::updateGeometries();
+}
+
 void DFileView::onShowHiddenFileChanged()
 {
     QDir::Filters filters;
@@ -1754,7 +1777,7 @@ void DFileView::initUI()
     setSelectionMode(QAbstractItemView::ExtendedSelection);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+//    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setDefaultDropAction(Qt::CopyAction);
     // disable auto remove item when drop of MoveAction finished
     setDragDropOverwriteMode(true);
@@ -1777,6 +1800,10 @@ void DFileView::initUI()
 
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     setViewportMargins(0, 0, -verticalScrollBar()->sizeHint().width(), 0);
+
+    if (d->allowdAdjustColumnSize) {
+        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    }
 
     d->toolbarActionGroup = new QActionGroup(this);
 
@@ -2096,10 +2123,19 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
         d->statusBar->scalingSlider()->show();
         itemDelegate()->setIconSizeByIconSizeLevel(d->statusBar->scalingSlider()->value());
         d->toolbarActionGroup->actions().first()->setChecked(true);
+
+        QListView::setViewMode(QListView::IconMode);
+        setUniformItemSizes(false);
+        setResizeMode(Adjust);
+
         break;
     }
     case ListMode: {
         setItemDelegate(new DListItemDelegate(d->fileViewHelper));
+
+        QListView::setViewMode(QListView::ListMode);
+        setUniformItemSizes(true);
+        setResizeMode(Fixed);
 
         if(!d->headerView) {
             d->headerView = new QHeaderView(Qt::Horizontal);
@@ -2118,11 +2154,19 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
 
             connect(d->headerView, &QHeaderView::sectionResized,
                     this, static_cast<void (DFileView::*)()>(&DFileView::update));
-
             connect(d->headerView, &QHeaderView::sortIndicatorChanged,
                     this, &DFileView::onSortIndicatorChanged);
             connect(d->headerView, &QHeaderView::customContextMenuRequested,
                     this, &DFileView::popupHeaderViewContextMenu);
+            connect(horizontalScrollBar(), &QScrollBar::valueChanged, d->headerView,
+            [d] (int value) {
+                d->headerView->move(-value, d->headerView->y());
+            });
+
+            if (d->allowdAdjustColumnSize) {
+                connect(d->headerView, &QHeaderView::sectionResized,
+                        this, &DFileView::updateGeometries);
+            }
 
             d->headerView->setAttribute(Qt::WA_TransparentForMouseEvents, model()->state() == DFileSystemModel::Busy);
         }
@@ -2297,21 +2341,26 @@ void DFileView::updateListHeaderViewProperty()
 
     d->headerView->setModel(Q_NULLPTR);
     d->headerView->setModel(model());
-    d->headerView->setSectionResizeMode(QHeaderView::Fixed);
     d->headerView->setDefaultSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
-    d->headerView->setMinimumSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
+
+    if (!d->allowdAdjustColumnSize) {
+        d->headerView->setSectionResizeMode(QHeaderView::Fixed);
+        d->headerView->setMinimumSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
+    }
+
     d->headerView->setSortIndicator(model()->sortColumn(), model()->sortOrder());
     d->columnRoles.clear();
 
     for (int i = 0; i < d->headerView->count(); ++i) {
         d->columnRoles << model()->columnToRole(i);
 
-        int column_width = model()->columnWidth(i);
-
-        if (column_width >= 0) {
-            d->headerView->resizeSection(i, column_width + COLUMU_PADDING * 2);
-        } else {
-            d->headerView->setSectionResizeMode(i, QHeaderView::Stretch);
+        if (!d->allowdAdjustColumnSize) {
+            int column_width = model()->columnWidth(i);
+            if (column_width >= 0) {
+                d->headerView->resizeSection(i, column_width + COLUMU_PADDING * 2);
+            } else {
+                d->headerView->setSectionResizeMode(i, QHeaderView::Stretch);
+            }
         }
 
         const QString &column_name = model()->headerData(i, Qt::Horizontal, Qt::DisplayRole).toString();
@@ -2335,10 +2384,13 @@ void DFileView::updateExtendHeaderViewProperty()
 
     d->headerView->setModel(Q_NULLPTR);
     d->headerView->setModel(model());
-    d->headerView->setSectionResizeMode(QHeaderView::Fixed);
-    d->headerView->setSectionResizeMode(0, QHeaderView::Stretch);
     d->headerView->setDefaultSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
-    d->headerView->setMinimumSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
+
+    if (!d->allowdAdjustColumnSize) {
+        d->headerView->setSectionResizeMode(QHeaderView::Fixed);
+        d->headerView->setSectionResizeMode(0, QHeaderView::Stretch);
+        d->headerView->setMinimumSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
+    }
 
     d->columnRoles.clear();
     d->columnRoles << model()->columnToRole(0);
@@ -2348,38 +2400,40 @@ void DFileView::updateColumnWidth()
 {
     D_D(DFileView);
 
-    int column_count = d->headerView->count();
-    int i = 0;
-    int j = column_count - 1;
+    if (!d->allowdAdjustColumnSize) {
+        int column_count = d->headerView->count();
+        int i = 0;
+        int j = column_count - 1;
 
-    for (; i < column_count; ++i) {
-        if (d->headerView->isSectionHidden(i))
-            continue;
+        for (; i < column_count; ++i) {
+            if (d->headerView->isSectionHidden(i))
+                continue;
 
-        d->headerView->resizeSection(i, model()->columnWidth(i) + LEFT_PADDING + LIST_MODE_LEFT_MARGIN + 2 * COLUMU_PADDING);
-        break;
-    }
+            d->headerView->resizeSection(i, model()->columnWidth(i) + LEFT_PADDING + LIST_MODE_LEFT_MARGIN + 2 * COLUMU_PADDING);
+            break;
+        }
 
-    for (; j > 0; --j) {
-        if (d->headerView->isSectionHidden(j))
-            continue;
+        for (; j > 0; --j) {
+            if (d->headerView->isSectionHidden(j))
+                continue;
 
-        d->headerView->resizeSection(j, model()->columnWidth(j) + RIGHT_PADDING + LIST_MODE_RIGHT_MARGIN + 2 * COLUMU_PADDING);
-        break;
-    }
+            d->headerView->resizeSection(j, model()->columnWidth(j) + RIGHT_PADDING + LIST_MODE_RIGHT_MARGIN + 2 * COLUMU_PADDING);
+            break;
+        }
 
-    if (d->firstVisibleColumn != i) {
-        if (d->firstVisibleColumn > 0)
-            d->headerView->resizeSection(d->firstVisibleColumn, model()->columnWidth(d->firstVisibleColumn) + 2 * COLUMU_PADDING);
+        if (d->firstVisibleColumn != i) {
+            if (d->firstVisibleColumn > 0)
+                d->headerView->resizeSection(d->firstVisibleColumn, model()->columnWidth(d->firstVisibleColumn) + 2 * COLUMU_PADDING);
 
-        d->firstVisibleColumn = i;
-    }
+            d->firstVisibleColumn = i;
+        }
 
-    if (d->lastVisibleColumn != j) {
-        if (d->lastVisibleColumn > 0)
-            d->headerView->resizeSection(d->lastVisibleColumn, model()->columnWidth(d->lastVisibleColumn) + 2 * COLUMU_PADDING);
+        if (d->lastVisibleColumn != j) {
+            if (d->lastVisibleColumn > 0)
+                d->headerView->resizeSection(d->lastVisibleColumn, model()->columnWidth(d->lastVisibleColumn) + 2 * COLUMU_PADDING);
 
-        d->lastVisibleColumn = j;
+            d->lastVisibleColumn = j;
+        }
     }
 }
 

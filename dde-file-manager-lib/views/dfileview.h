@@ -208,6 +208,7 @@ protected:
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight,
                      const QVector<int> &roles = QVector<int>()) Q_DECL_OVERRIDE;
     bool event(QEvent *e) Q_DECL_OVERRIDE;
+    void updateGeometries() override;
     void onShowHiddenFileChanged();
 
     void initDelegate();
