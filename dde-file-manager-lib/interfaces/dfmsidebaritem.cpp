@@ -749,8 +749,8 @@ void DFMSideBarItem::paintEvent(QPaintEvent *event)
     if (!d->renameLineEdit) {
         painter.setPen(textPenColor);
         QFontMetrics metrics(d->font);
-        int contextWidgetWidth = d->contentWidget ? d->contentWidget->width() + SIDEBAR_ITEM_PADDING : 0;
-        QString elidedText = metrics.elidedText(d->displayText, Qt::ElideRight, textRect.width() - contextWidgetWidth - SIDEBAR_ITEM_PADDING);
+        int contentWidgetWidth = d->contentWidget && d->contentWidget->isVisible() ? d->contentWidget->width() + SIDEBAR_ITEM_PADDING : 0;
+        QString elidedText = metrics.elidedText(d->displayText, Qt::ElideRight, textRect.width() - contentWidgetWidth - SIDEBAR_ITEM_PADDING);
         painter.drawText(textRect, Qt::TextWordWrap | Qt::AlignLeft | Qt::AlignVCenter, elidedText);
     }
 
