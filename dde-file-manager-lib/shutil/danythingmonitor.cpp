@@ -33,7 +33,7 @@ extern "C"
 
 typedef struct __vc_ioctl_readdata_args__ {
     int size;
-    char* data;
+    char *data;
 } ioctl_rd_args;
 
 typedef struct __vc_ioctl_readstat_args__ {
@@ -52,9 +52,8 @@ typedef struct __vc_ioctl_readstat_args__ {
 #endif
 
 
-enum : int
-{
-    ACT_NEW_FILE =	0,
+enum : int {
+    ACT_NEW_FILE =  0,
     ACT_NEW_LINK,
     ACT_NEW_SYMLINK,
     ACT_NEW_FOLDER,
@@ -65,19 +64,20 @@ enum : int
 
 };
 
-static const char* const PROTOCOL_HEAD{ "file://" };
-static const char* const PROCFS_PATH{ "/proc/vfs_changes" };
-constexpr static const char* const act_names[]{"file_created", "link_created",
-                                               "symlink_created", "dir_created",
-                                               "file_deleted", "dir_deleted",
-                                               "file_renamed", "dir_renamed"};
+static const char *const PROTOCOL_HEAD{ "file://" };
+static const char *const PROCFS_PATH{ "/proc/vfs_changes" };
+constexpr static const char *const act_names[] {"file_created", "link_created",
+    "symlink_created", "dir_created",
+    "file_deleted", "dir_deleted",
+    "file_renamed", "dir_renamed"
+};
 
 
 
 static QString StartPoint{};
 
-DAnythingMonitor::DAnythingMonitor(QObject * const parent)
-                 :QObject{ parent }
+DAnythingMonitor::DAnythingMonitor(QObject *const parent)
+    : QObject{ parent }
 {
     ///###: constructor.
 }
@@ -87,35 +87,35 @@ void DAnythingMonitor::doWork()
 {
     std::unique_lock<std::mutex> raiiLock{ m_mutex };
 
-    m_conditionVar.wait(raiiLock, [this]{
+    m_conditionVar.wait(raiiLock, [this] {
         bool expected{ true };
         return this->m_readyFlag.compare_exchange_strong(expected, false, std::memory_order_seq_cst);
-                                        });
+    });
 
-    if(!m_changedFiles.empty()){
+    if (!m_changedFiles.empty()) {
         std::deque<std::pair<QString, QString>>::const_iterator cbeg{ m_changedFiles.cbegin() };
         std::deque<std::pair<QString, QString>>::const_iterator cend{ m_changedFiles.cend() };
 
 
-        for(; cbeg != cend; ++cbeg){
+        for (; cbeg != cend; ++cbeg) {
 
-            if(cbeg->first.isEmpty()){
+            if (cbeg->first.isEmpty()) {
 
 #ifdef QT_DEBUG
-                qDebug()<< cbeg->second;
+                qDebug() << cbeg->second;
 #endif
                 TagManager::instance()->deleteFiles({DUrl::fromLocalFile(cbeg->second)});
 
                 continue;
             }
 
-            QPair<DUrl, DUrl> oldAndNewFileName{ DUrl::fromLocalFile(cbeg->first), DUrl::fromLocalFile(cbeg->second) };
+            QPair<QByteArray, QByteArray> oldAndNewFileName{ cbeg->first.toLocal8Bit(), cbeg->second.toLocal8Bit() };
 
 #ifdef QT_DEBUG
-            qDebug()<< oldAndNewFileName;
+            qDebug() << oldAndNewFileName;
 #endif
 
-            TagManager::instance()->changeFilesName( { oldAndNewFileName } );
+            TagManager::instance()->changeFilesName({ oldAndNewFileName });
         }
 
         m_changedFiles.clear();
@@ -125,7 +125,7 @@ void DAnythingMonitor::doWork()
 void DAnythingMonitor::notify() noexcept
 {
     bool excepted{ false };
-    if(this->m_readyFlag.compare_exchange_strong(excepted, true, std::memory_order_seq_cst)){
+    if (this->m_readyFlag.compare_exchange_strong(excepted, true, std::memory_order_seq_cst)) {
         this->m_conditionVar.notify_one();
     }
 }
@@ -157,29 +157,30 @@ void DAnythingMonitor::workSignal()
         return;
     }
 
-    char buf[1<<20]{};
+    char buf[1 << 20] {};
     ioctl_rd_args ira ;
     ira.data = buf;
 
 
-    while(true){
+    while (true) {
         ira.size = sizeof(buf);
-        if (ioctl(fd, VC_IOCTL_READDATA, &ira) != 0)
+        if (ioctl(fd, VC_IOCTL_READDATA, &ira) != 0) {
             break;
+        }
 
         // no more changes
-        if (ira.size == 0)
+        if (ira.size == 0) {
             break;
+        }
 
         int off = 0;
         for (int i = 0; i < ira.size; i++) {
             unsigned char action = *(ira.data + off);
             off++;
-            char* src = ira.data + off, *dst = 0;
+            char *src = ira.data + off, *dst = 0;
             off += strlen(src) + 1;
 
-            switch(action)
-            {
+            switch (action) {
             ///###: do not delete this.
             //                case ACT_NEW_FILE:
             //                case ACT_NEW_SYMLINK:
@@ -189,8 +190,7 @@ void DAnythingMonitor::workSignal()
             //                    qDebug()<< act_names[action] << "-------->" << src;
             //                }
             case ACT_DEL_FILE:
-            case ACT_DEL_FOLDER:
-            {
+            case ACT_DEL_FOLDER: {
                 m_changedFiles.emplace_back(QString{}, QString{src});
                 //#ifdef QT_DEBUG
                 //                    qDebug()<< act_names[action] << "--------->" << src;
@@ -198,8 +198,7 @@ void DAnythingMonitor::workSignal()
                 break;
             }
             case ACT_RENAME_FILE:
-            case ACT_RENAME_FOLDER:
-            {
+            case ACT_RENAME_FOLDER: {
                 dst = ira.data + off;
                 off += strlen(dst) + 1;
                 m_changedFiles.emplace_back(QString{src},

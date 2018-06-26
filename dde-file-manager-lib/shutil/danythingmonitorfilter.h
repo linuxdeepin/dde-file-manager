@@ -40,7 +40,7 @@ public:
     DAnythingMonitorFilter(const DAnythingMonitorFilter &) = delete;
     DAnythingMonitorFilter &operator=(const DAnythingMonitorFilter &) = delete;
 
-    bool whetherFilterCurrentPath(const DUrl &path);
+    bool whetherFilterCurrentPath(const QByteArray &local_path);
 
     static inline DAnythingMonitorFilter *instance()
     {

@@ -40,10 +40,10 @@ void TagHandle::onFileDelete(const QByteArrayList &files)
         QList<DUrl> url_list{};
 
         for (const QByteArray &byte_array : files) {
-            DUrl url{ DUrl::fromLocalFile(byte_array) };
-            bool result{ DAnythingMonitorFilter::instance()->whetherFilterCurrentPath(url) };
+            bool result{ DAnythingMonitorFilter::instance()->whetherFilterCurrentPath(byte_array) };
 
             if (result) {
+                DUrl url{ DUrl::fromLocalFile(byte_array) };
                 url_list.push_back(url);
             }
 
@@ -57,16 +57,12 @@ void TagHandle::onFileDelete(const QByteArrayList &files)
 void TagHandle::onFileRename(const QList<QPair<QByteArray, QByteArray>> &files)
 {
     if (!files.isEmpty()) {
-        QList<QPair<DUrl, DUrl>> old_and_new_name{};
 
-        for (const QPair<QByteArray, QByteArray> &name : files) {
-            DUrl old{ DUrl::fromLocalFile(name.first) };
-            bool result{ DAnythingMonitorFilter::instance()->whetherFilterCurrentPath(old) };
+        for (const QPair<QByteArray, QByteArray> &names : files) {
+            bool result{ DAnythingMonitorFilter::instance()->whetherFilterCurrentPath(names.second) };
 
             if (result) {
-                DUrl new_name{ DUrl::fromLocalFile(name.second) };
-                old_and_new_name.push_back(QPair<DUrl, DUrl> {old, new_name});
-                TagManager::instance()->changeFilesName(old_and_new_name);
+                TagManager::instance()->changeFilesName({ names });
             }
         }
     }

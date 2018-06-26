@@ -23,10 +23,13 @@ CONFIG -= app_bundle \
           create_prl \
           no_install_prl
 
-unix:CONFIG(debug, debug|release){
-    DEPENDPATH += $$PWD/../../dde-file-manager-lib
-    unix:QMAKE_RPATHDIR += $$OUT_PWD/../../dde-file-manager-lib
-    LIBS += -L$$OUT_PWD/../../dde-file-manager-lib -ldde-file-manager
+
+isEmpty(DDE_FILE_MANAGER_LIB_DIR){
+    DDE_FILE_MANAGER_LIB_DIR = $$PWD/../../dde-file-manager-lib
+}
+
+isEmpty(DDE_FILE_MANAGER_DIR){
+    DDE_FILE_MANAGER_DIR = $$PWD/../..
 }
 
 
@@ -35,10 +38,11 @@ PKGCONFIG += deepin-anything-server-lib
 
 INCLUDEPATH += $$PWD/../../dde-file-manager-lib \
                $$PWD/../../dde-file-manager-lib/interfaces \
-               $$PWD/../../dde-file-manager-lib/shutil
+               $$PWD/../../dde-file-manager-lib/shutil \
+               $$PWD/../../utils
 
 unix{
-      PKG_CONFIG = $$pkgConfigExecutable()
+      PKG_CONFIG = pkg-config
       target.path = $$system($$PKG_CONFIG --variable libdir deepin-anything-server-lib)/deepin-anything-server-lib/plugins/handlers
       INSTALLS += target
 }
@@ -58,12 +62,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    $$DDE_FILE_MANAGER_LIB_DIR/tag/tagmanager.cpp \
+    $$DDE_FILE_MANAGER_LIB_DIR/shutil/danythingmonitorfilter.cpp \
     taghandle.cpp \
     main.cpp
 
+
 HEADERS += \
+    $$DDE_FILE_MANAGER_DIR/utils/singleton.h \
+    $$DDE_FILE_MANAGER_LIB_DIR/tag/tagmanager.h \
+    $$DDE_FILE_MANAGER_LIB_DIR/shutil/danythingmonitorfilter.h \
     taghandle.h
 
 
 
-DISTFILES += dde-anythingmonitor.json 
+DISTFILES += dde-anythingmonitor.json

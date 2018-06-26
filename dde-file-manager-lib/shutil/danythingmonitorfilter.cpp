@@ -96,7 +96,7 @@ public:
     QList<DUrl> blackList();
 
     ///###: jundge whether the url should be monitored.
-    bool whetherFilterThePath(const DUrl &url);
+    bool whetherFilterThePath(const QByteArray &local_path);
 
     void read_setting();
     void get_home_path_of_all_users();
@@ -118,9 +118,9 @@ m_fm_setting{ dde_file_manager::DFMApplication::genericSetting() }
     this->read_setting();
 }
 
-bool DAnythingMonitorFilterPrivate::whetherFilterThePath(const DUrl &url)
+bool DAnythingMonitorFilterPrivate::whetherFilterThePath(const QByteArray &local_path)
 {
-    QString local_file{ url.toLocalFile() };
+    QString local_file{ QString::fromLocal8Bit(local_path) };
     bool result{ false };
 
     for (const QString &path : *m_white_list) {
@@ -302,9 +302,9 @@ DAnythingMonitorFilter::~DAnythingMonitorFilter()
     //###: if not, QScopedPointer can not use a incomplete type as it's type.
 }
 
-bool DAnythingMonitorFilter::whetherFilterCurrentPath(const DUrl &path)
+bool DAnythingMonitorFilter::whetherFilterCurrentPath(const QByteArray &local_path)
 {
     DAnythingMonitorFilterPrivate *const d{ d_func() };
-    return d->whetherFilterThePath(path);
+    return d->whetherFilterThePath(local_path);
 }
 
