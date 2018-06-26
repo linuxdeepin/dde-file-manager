@@ -834,6 +834,14 @@ void DFileManagerWindow::initRightView()
     d->rightView = new QFrame;
     d->renameBar = new DRenameBar;
 
+    QSizePolicy sp = d->rightView->sizePolicy();
+
+    //NOTE(zccrs): 保证窗口宽度改变时只会调整right view的宽度，侧边栏保持不变
+    //             QSplitter是使用QLayout的策略对widgets进行布局，所以此处
+    //             设置size policy可以生效
+    sp.setHorizontalStretch(1);
+    d->rightView->setSizePolicy(sp);
+
     this->initRenameBarState();
 
     d->emptyTrashButton = new QPushButton{ this };
