@@ -157,7 +157,7 @@ void DListItemDelegate::paint(QPainter *painter,
 
     rect.setLeft(column_x);
 
-    column_x = parent()->columnWidth(0) - 1 - parent()->fileViewViewportMargins().left();
+    column_x = option.rect.x() + parent()->columnWidth(0) - 1 - parent()->fileViewViewportMargins().left();
 
     rect.setRight(qMin(column_x, opt.rect.right()));
 
