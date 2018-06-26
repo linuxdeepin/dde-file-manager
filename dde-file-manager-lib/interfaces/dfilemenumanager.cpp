@@ -1011,18 +1011,15 @@ MenuAction DFileMenuManager::registerMenuActionType(QAction *action)
 
 bool DFileMenuManager::whetherShowTagActions(const QList<DUrl> &urls)
 {
-    bool result{ true };
-
     for (const DUrl &path : urls) {
-        bool temp{ DAnythingMonitorFilter::instance()->whetherFilterCurrentPath(path) };
-        result = result && temp;
+        bool temp{ DAnythingMonitorFilter::instance()->whetherFilterCurrentPath(path.toLocalFile().toLocal8Bit()) };
 
-        if (!result) {
+        if (!temp) {
             return false;
         }
     }
 
-    return result;
+    return true;
 }
 
 void DFileMenuManager::actionTriggered(QAction *action)

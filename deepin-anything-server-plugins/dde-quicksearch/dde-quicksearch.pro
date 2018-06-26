@@ -26,12 +26,9 @@ CONFIG -= app_bundle \
           create_prl \
           no_install_prl
 
-unix:CONFIG(debug, debug|release){
-    DEPENDPATH += $$PWD/../../dde-file-manager-lib
-    unix:QMAKE_RPATHDIR += $$OUT_PWD/../../dde-file-manager-lib
-    LIBS += -L$$OUT_PWD/../../dde-file-manager-lib -ldde-file-manager
+isEmpty(DEPENDENCE_DIR){
+    DEPENDENCE_DIR = $$PWD/../../dde-file-manager-lib
 }
-
 
 PKGCONFIG += deepin-anything-server-lib
 
@@ -41,7 +38,7 @@ INCLUDEPATH += $$PWD/../../dde-file-manager-lib \
                $$PWD/../../dde-file-manager-lib/shutil
 
 unix{
-      PKG_CONFIG = $$pkgConfigExecutable()
+      PKG_CONFIG = pkg-config
       target.path = $$system($$PKG_CONFIG --variable libdir deepin-anything-server-lib)/deepin-anything-server-lib/plugins/handlers
       INSTALLS += target
 }
@@ -62,10 +59,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    quicksearchhandle.cpp \
-    main.cpp
+    $$DEPENDENCE_DIR/quick_search/dquicksearch.cpp \
+    main.cpp \
+    quicksearchhandle.cpp
 
 HEADERS += \
+    $$DEPENDENCE_DIR/quick_search/dquicksearch.h \
     quicksearchhandle.h
 
 DISTFILES += dde-quicksearch.json
