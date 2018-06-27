@@ -32,6 +32,7 @@
 #include "dfilemanagerwindow.h"
 #include "dtoolbar.h"
 #include "dabstractfilewatcher.h"
+#include "dfmheaderview.h"
 #include "dfmeventdispatcher.h"
 #include "themeconfig.h"
 #include "dfmsettings.h"
@@ -92,7 +93,7 @@ public:
     DFileView *q_ptr;
 
     DFileMenuManager* fileMenuManager;
-    QHeaderView *headerView = Q_NULLPTR;
+    DFMHeaderView *headerView = Q_NULLPTR;
     DStatusBar* statusBar=NULL;
 
     QActionGroup* displayAsActionGroup;
@@ -145,7 +146,7 @@ public:
     QActionGroup *toolbarActionGroup;
 
     bool enableSelectionByMouse = false;
-    bool allowdAdjustColumnSize = true;
+    bool allowedAdjustColumnSize = true;
 
     QPointer<QTimer> updateEnableSelectionByMouseTimer;
 
@@ -455,7 +456,7 @@ QRect DFileView::visualRect(const QModelIndex &index) const
         rect.setTop(index.row() * (item_size.height() + LIST_VIEW_SPACING * 2) + LIST_VIEW_SPACING);
         rect.setHeight(item_size.height());
 
-        if (d->allowdAdjustColumnSize) {
+        if (d->allowedAdjustColumnSize) {
             rect.setWidth(d->headerView->length());
         }
     } else {
@@ -1315,7 +1316,7 @@ void DFileView::resizeEvent(QResizeEvent *event)
 
     DListView::resizeEvent(event);
 
-    if (!d->allowdAdjustColumnSize) {
+    if (!d->allowedAdjustColumnSize) {
         // auto switch list mode
         if (d->currentViewMode == ListMode
                 && DFMApplication::instance()->appAttribute(DFMApplication::AA_ViewAutoCompace).toBool()) {
@@ -1730,7 +1731,7 @@ void DFileView::updateGeometries()
 {
     Q_D(DFileView);
 
-    if (!d->headerView || !d->allowdAdjustColumnSize) {
+    if (!d->headerView || !d->allowedAdjustColumnSize) {
         return DListView::updateGeometries();
     }
 
@@ -1801,13 +1802,16 @@ void DFileView::initUI()
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     setViewportMargins(0, 0, -verticalScrollBar()->sizeHint().width(), 0);
 
-    if (d->allowdAdjustColumnSize) {
+    if (d->allowedAdjustColumnSize) {
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     }
 
     d->toolbarActionGroup = new QActionGroup(this);
 
     updateToolBarActions(this);
+
+    // context width adjustable:
+    d->allowedAdjustColumnSize = DFMApplication::instance()->appAttribute(DFMApplication::AA_ViewSizeAdjustable).toBool();
 }
 
 void DFileView::initModel()
@@ -2138,9 +2142,21 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
         setResizeMode(Fixed);
 
         if(!d->headerView) {
-            d->headerView = new QHeaderView(Qt::Horizontal);
+            d->headerView = new DFMHeaderView(Qt::Horizontal);
 
             updateListHeaderViewProperty();
+
+            // load from config if allowed adjust column size
+            if (d->allowedAdjustColumnSize) {
+                const QVariantMap &state = DFMApplication::appObtuselySetting()->value("WindowManager", "ViewColumnState").toMap();
+                for (const int role : d->columnRoles) {
+                    int colWidth = state.value(QString::number(role), -1).toInt();
+                    if (colWidth == -1) {
+                        continue;
+                    }
+                    d->headerView->resizeSection(model()->roleToColumn(role), colWidth);
+                }
+            }
 
             d->headerView->setHighlightSections(false);
             d->headerView->setSectionsClickable(true);
@@ -2158,12 +2174,21 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
                     this, &DFileView::onSortIndicatorChanged);
             connect(d->headerView, &QHeaderView::customContextMenuRequested,
                     this, &DFileView::popupHeaderViewContextMenu);
+            connect(d->headerView, &DFMHeaderView::mouseReleased, this, [this] {
+                QList<int> roleList = columnRoleList();
+                QVariantMap state;
+                for (const int role : roleList) {
+                    int colWidth = columnWidth(model()->roleToColumn(role));
+                    state[QString::number(role)] = colWidth;
+                }
+                DFMApplication::appObtuselySetting()->setValue("WindowManager", "ViewColumnState", state);
+            });
             connect(horizontalScrollBar(), &QScrollBar::valueChanged, d->headerView,
             [d] (int value) {
                 d->headerView->move(-value, d->headerView->y());
             });
 
-            if (d->allowdAdjustColumnSize) {
+            if (d->allowedAdjustColumnSize) {
                 connect(d->headerView, &QHeaderView::sectionResized,
                         this, &DFileView::updateGeometries);
             }
@@ -2343,7 +2368,7 @@ void DFileView::updateListHeaderViewProperty()
     d->headerView->setModel(model());
     d->headerView->setDefaultSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
 
-    if (!d->allowdAdjustColumnSize) {
+    if (!d->allowedAdjustColumnSize) {
         d->headerView->setSectionResizeMode(QHeaderView::Fixed);
         d->headerView->setMinimumSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
     }
@@ -2354,7 +2379,7 @@ void DFileView::updateListHeaderViewProperty()
     for (int i = 0; i < d->headerView->count(); ++i) {
         d->columnRoles << model()->columnToRole(i);
 
-        if (!d->allowdAdjustColumnSize) {
+        if (!d->allowedAdjustColumnSize) {
             int column_width = model()->columnWidth(i);
             if (column_width >= 0) {
                 d->headerView->resizeSection(i, column_width + COLUMU_PADDING * 2);
@@ -2386,7 +2411,7 @@ void DFileView::updateExtendHeaderViewProperty()
     d->headerView->setModel(model());
     d->headerView->setDefaultSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
 
-    if (!d->allowdAdjustColumnSize) {
+    if (!d->allowedAdjustColumnSize) {
         d->headerView->setSectionResizeMode(QHeaderView::Fixed);
         d->headerView->setSectionResizeMode(0, QHeaderView::Stretch);
         d->headerView->setMinimumSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
@@ -2400,7 +2425,7 @@ void DFileView::updateColumnWidth()
 {
     D_D(DFileView);
 
-    if (!d->allowdAdjustColumnSize) {
+    if (!d->allowedAdjustColumnSize) {
         int column_count = d->headerView->count();
         int i = 0;
         int j = column_count - 1;
