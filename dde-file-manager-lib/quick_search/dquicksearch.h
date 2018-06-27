@@ -86,6 +86,7 @@ public:
         return quick_search;
     }
 
+    ///###: These APIs are temporarily useless, under.
     static bool is_usb_device(const QString &dev_path);
     static bool is_filtered(const DUrl &path)
     {
@@ -102,12 +103,12 @@ public:
     {
         return true;
     }
+    ///###
 
 
 public slots:
     void onMountAdded(const QString &blockDevicePath, const QByteArray &mountPoint);
     void onMountRemoved(const QString &blockDevicePath, const QByteArray &mountPoint);
-
 
     void onAutoInnerIndexesOpened();
     void onAutoInnerIndexesClosed();

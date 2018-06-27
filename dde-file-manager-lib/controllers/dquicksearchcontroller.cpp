@@ -38,7 +38,10 @@ DQuickSearchController::DQuickSearchController(QObject *const parent)
 
 QList<QString> DQuickSearchController::search(const QString &local_path, const QString &key_words)
 {
-    QDBusVariant searched_list{ m_interface->search(QDBusVariant{local_path}, QDBusVariant{key_words}) };
+    QDBusVariant path_var{ QVariant{ local_path } };
+    QDBusVariant words_var{ QVariant{ key_words } };
+
+    QDBusVariant searched_list{ m_interface->search(path_var, words_var) };
     QVariant list_var{ searched_list.variant() };
 
     return list_var.toStringList();

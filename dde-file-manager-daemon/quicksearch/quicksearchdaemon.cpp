@@ -28,18 +28,25 @@ static constexpr const char *ObjectPath{"/com/deepin/filemanager/daemon/QuickSea
 
 
 QuickSearchDaemon::QuickSearchDaemon(QObject *const parent)
-    : QObject{ parent },
-      adaptor{ new QuickSearchDaemonAdaptor{ this } }
+    : QObject{parent},
+      adaptor{new QuickSearchDaemonAdaptor{ this }}
 {
     if (!QDBusConnection::systemBus().registerObject(ObjectPath, this)) {
         qFatal("Failed to register object."); //###: log!
     }
 }
 
-QDBusVariant QuickSearchDaemon::search(const QDBusVariant &path, const QDBusVariant &key_words)
+QDBusVariant QuickSearchDaemon::search(const QDBusVariant &current_dir, const QDBusVariant &key_words)
 {
-    QVariant path_var{ path.variant() };
+    QVariant path_var{ current_dir.variant() };
     QVariant key_words_var{ key_words.variant() };
+
+#ifdef QT_DEBUG
+    qDebug() << path_var.toString();
+    qDebug() << key_words_var.toString();
+#endif //QT_DEBUG
+
+
     QVariant searched_result{ DQuickSearch::instance()->search(path_var.toString(), key_words_var.toString()) };
     QDBusVariant dbus_var{ searched_result };
 

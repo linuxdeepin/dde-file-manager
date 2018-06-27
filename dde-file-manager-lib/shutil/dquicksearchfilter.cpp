@@ -30,7 +30,9 @@
 
 
 
-struct DQuickSearchFilterPrivate {
+class DQuickSearchFilterPrivate
+{
+public:
     DQuickSearchFilterPrivate(DQuickSearchFilter *const q);
     ~DQuickSearchFilterPrivate() = default;
     DQuickSearchFilterPrivate(const DQuickSearchFilterPrivate &) = delete;
@@ -84,7 +86,7 @@ bool DQuickSearchFilterPrivate::whetherFilterCurrentFile(const QByteArray &file)
 
 
 DQuickSearchFilter::DQuickSearchFilter()
-    : d_ptr{ new DQuickSearchFilterPrivate{ this } }
+    : d_ptr{new DQuickSearchFilterPrivate{ this }}
 {
 }
 
