@@ -16,6 +16,9 @@
         "WindowState": {
             "width": 800,
             "height": 600
+        },
+        "ViewColumnState": {
+            "265": 300
         }
     },
     "FileName": {
