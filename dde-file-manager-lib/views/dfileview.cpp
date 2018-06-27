@@ -77,6 +77,7 @@ DWIDGET_USE_NAMESPACE
 
 #define ICON_VIEW_SPACING 5
 #define LIST_VIEW_SPACING 1
+#define LIST_VIEW_MINIMUM_WIDTH 80
 
 #define DEFAULT_HEADER_SECTION_WIDTH 140
 
@@ -93,8 +94,8 @@ public:
     DFileView *q_ptr;
 
     DFileMenuManager* fileMenuManager;
-    DFMHeaderView *headerView = Q_NULLPTR;
-    DStatusBar* statusBar=NULL;
+    DFMHeaderView *headerView = nullptr;
+    DStatusBar* statusBar = nullptr;
 
     QActionGroup* displayAsActionGroup;
     QActionGroup* sortByActionGroup;
@@ -1295,6 +1296,11 @@ void DFileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
 
     clearSelection();
     model()->sort();
+
+    const DUrl &root_url = rootUrl();
+
+    d->setFileViewStateValue(root_url, "sortRole", model()->sortRole());
+    d->setFileViewStateValue(root_url, "sortOrder", (int)order);
 }
 
 void DFileView::focusInEvent(QFocusEvent *event)
@@ -2124,30 +2130,32 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
         setOrientation(QListView::LeftToRight, true);
         setSpacing(ICON_VIEW_SPACING);
         setItemDelegate(new DIconItemDelegate(d->fileViewHelper));
+        setUniformItemSizes(false);
+        setResizeMode(Adjust);
+
         d->statusBar->scalingSlider()->show();
         itemDelegate()->setIconSizeByIconSizeLevel(d->statusBar->scalingSlider()->value());
         d->toolbarActionGroup->actions().first()->setChecked(true);
-
-        QListView::setViewMode(QListView::IconMode);
-        setUniformItemSizes(false);
-        setResizeMode(Adjust);
 
         break;
     }
     case ListMode: {
         setItemDelegate(new DListItemDelegate(d->fileViewHelper));
-
-        QListView::setViewMode(QListView::ListMode);
         setUniformItemSizes(true);
         setResizeMode(Fixed);
 
         if(!d->headerView) {
             d->headerView = new DFMHeaderView(Qt::Horizontal);
+            // TODO: holder hold headerView
 
             updateListHeaderViewProperty();
 
             // load from config if allowed adjust column size
             if (d->allowedAdjustColumnSize) {
+                // some default values
+                d->headerView->setMinimumSectionSize(LIST_VIEW_MINIMUM_WIDTH);
+
+                // set value from config file.
                 const QVariantMap &state = DFMApplication::appObtuselySetting()->value("WindowManager", "ViewColumnState").toMap();
                 for (const int role : d->columnRoles) {
                     int colWidth = state.value(QString::number(role), -1).toInt();
