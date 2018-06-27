@@ -95,6 +95,7 @@ public:
 
     DFileMenuManager* fileMenuManager;
     DFMHeaderView *headerView = nullptr;
+    QWidget *headerViewHolder = nullptr;
     DStatusBar* statusBar = nullptr;
 
     QActionGroup* displayAsActionGroup;
@@ -2050,7 +2051,8 @@ void DFileView::clearHeardView()
     if (d->headerView) {
         removeHeaderWidget(0);
 
-        d->headerView = Q_NULLPTR;
+        d->headerView = nullptr;
+        d->headerViewHolder = nullptr;
     }
 }
 
@@ -2144,9 +2146,19 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
         setUniformItemSizes(true);
         setResizeMode(Fixed);
 
-        if(!d->headerView) {
-            d->headerView = new DFMHeaderView(Qt::Horizontal);
-            // TODO: holder hold headerView
+        if (!d->headerView) {
+            if (d->allowedAdjustColumnSize) {
+                d->headerViewHolder = new QWidget(this);
+                d->headerView = new DFMHeaderView(Qt::Horizontal, d->headerViewHolder);
+
+                connect(d->headerView, &DFMHeaderView::viewResized, this, [this, d] {
+                    d->headerViewHolder->setFixedHeight(d->headerView->height());
+                });
+                connect(d->headerView, &DFMHeaderView::sectionResized, d->headerView, &DFMHeaderView::adjustSize);
+            } else {
+                d->headerView = new DFMHeaderView(Qt::Horizontal, this);
+                d->headerViewHolder = d->headerView;
+            }
 
             updateListHeaderViewProperty();
 
@@ -2204,7 +2216,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
             d->headerView->setAttribute(Qt::WA_TransparentForMouseEvents, model()->state() == DFileSystemModel::Busy);
         }
 
-        addHeaderWidget(d->headerView);
+        addHeaderWidget(d->headerViewHolder);
 
         setOrientation(QListView::TopToBottom, false);
         setSpacing(LIST_VIEW_SPACING);

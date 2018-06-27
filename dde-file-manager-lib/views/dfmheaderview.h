@@ -29,11 +29,15 @@ class DFMHeaderView : public QHeaderView
 public:
     explicit DFMHeaderView(Qt::Orientation orientation, QWidget *parent = nullptr);
 
+    QSize sizeHint() const;
+
 protected:
-    void mouseReleaseEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e) override;
+    void resizeEvent(QResizeEvent *e) override;
 
 signals:
     void mouseReleased();
+    void viewResized();
 };
 
 #endif // DFMHEADERVIEW_H

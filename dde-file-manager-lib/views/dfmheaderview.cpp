@@ -26,9 +26,25 @@ DFMHeaderView::DFMHeaderView(Qt::Orientation orientation, QWidget *parent)
 
 }
 
+QSize DFMHeaderView::sizeHint() const
+{
+    QSize size = QHeaderView::sizeHint();
+
+    size.setWidth(length());
+
+    return size;
+}
+
 void DFMHeaderView::mouseReleaseEvent(QMouseEvent *e)
 {
     emit mouseReleased();
 
     return QHeaderView::mouseReleaseEvent(e);
+}
+
+void DFMHeaderView::resizeEvent(QResizeEvent *e)
+{
+    emit viewResized();
+
+    return QHeaderView::resizeEvent(e);
 }
