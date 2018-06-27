@@ -26,16 +26,24 @@
 
 
 class QuickSearchDaemonAdaptor;
-class QuickSearchDaemon final : public QObject
+class QuickSearchDaemon : public QObject
 {
     Q_OBJECT
-
 public:
-    explicit QuickSearchDaemon(QObject *const parent = nullptr);
+    explicit QuickSearchDaemon(QObject *const parent);
     virtual ~QuickSearchDaemon() = default;
 
-    QDBusVariant search(const QDBusVariant &path, const QDBusVariant &key_words);
+    QuickSearchDaemon(const QuickSearchDaemon &) = delete;
+    QuickSearchDaemon &operator=(const QuickSearchDaemon &) = delete;
 
+
+    Q_INVOKABLE QDBusVariant search(const QDBusVariant &current_dir, const QDBusVariant &key_words);
+
+
+Q_SIGNALS: // SIGNALS
+    void filesWereCreated(const QDBusVariant &files_path);
+    void filesWereDeleted(const QDBusVariant &files_path);
+    void filesWereRenamed(const QVariantMap &old_and_new);
 
 private:
     QuickSearchDaemonAdaptor *adaptor{ nullptr };

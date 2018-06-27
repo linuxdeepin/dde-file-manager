@@ -51,13 +51,12 @@ public:
 
     inline static DQuickSearchFilter *instance()
     {
-        static DQuickSearchFilter *filter{ nullptr };
+        static DQuickSearchFilter *filter{ new DQuickSearchFilter };
 
         return filter;
     }
 
 private:
-
     QScopedPointer<DQuickSearchFilterPrivate> d_ptr;
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DQuickSearchFilter)
 };

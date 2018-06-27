@@ -38,15 +38,15 @@ QuickSearchDaemonController::QuickSearchDaemonController(QObject *const parent)
     };
 }
 
-QList<QString> QuickSearchDaemonController::search(const DUrl &path_for_searching, const QString &key)
+QList<QString> QuickSearchDaemonController::search(const QString &path_for_searching, const QString &key)
 {
     QList<QString> result_list{};
+    QFileInfo file_info{ path_for_searching };
 
-    if (DFileInfo::exists(path_for_searching)) {
-        QString local_file{ path_for_searching.toLocalFile() };
-        QDBusVariant var_local_file{ QVariant{local_file} };
-        QDBusVariant var_key{ QVariant{key} };
-        QDBusVariant result{ interface_ptr->search(var_local_file, var_key) };
+    if (QFileInfo::exists(path_for_searching) && file_info.isDir()) {
+        QDBusVariant var_local_file{ QVariant{path_for_searching} };
+        QDBusVariant var_key{QVariant{ key }};
+        QDBusVariant result{interface_ptr->search(var_local_file, var_key)};
 
         result_list = result.variant().toStringList();
     }

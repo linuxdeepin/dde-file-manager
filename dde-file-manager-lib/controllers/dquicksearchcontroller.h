@@ -42,6 +42,13 @@ public:
 
     QList<QString> search(const QString &local_path, const QString &key_words);
 
+
+    static inline DQuickSearchController *instance()
+    {
+        static DQuickSearchController *const controllter{ new DQuickSearchController };
+        return controllter;
+    }
+
 private:
     std::unique_ptr<QuickSearchDaemonInterface> m_interface{ nullptr };
 };

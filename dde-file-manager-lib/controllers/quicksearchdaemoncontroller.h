@@ -41,7 +41,7 @@ public:
     QuickSearchDaemonController(const QuickSearchDaemonController &) = delete;
     QuickSearchDaemonController &operator=(const QuickSearchDaemonController &) = delete;
 
-    QList<QString> search(const DUrl &path_for_searching, const QString &key);
+    QList<QString> search(const QString &path_for_searching, const QString &key);
 
 private:
     std::unique_ptr<QuickSearchDaemonInterface> interface_ptr{ nullptr };

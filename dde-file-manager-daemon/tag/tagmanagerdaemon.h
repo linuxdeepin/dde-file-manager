@@ -44,6 +44,7 @@ public:
     TagManagerDaemon(const TagManagerDaemon &other) = delete;
     TagManagerDaemon &operator=(const TagManagerDaemon &other) = delete;
 
+    Q_INVOKABLE QDBusVariant disposeClientData(const QMap<QString, QVariant> &filesAndTags, const unsigned long long &type);
 
 signals:
     void addNewTags(const QDBusVariant &new_tags);
@@ -53,8 +54,7 @@ signals:
     void filesWereTagged(const QVariantMap &files_were_tagged);
     void untagFiles(const QVariantMap &tag_beg_removed_files);
 
-public slots:
-    QDBusVariant disposeClientData(const QMap<QString, QVariant> &filesAndTags, const unsigned long long &type);
+
 
 private slots:
     void onAddNewTags(const QVariant &new_tags)noexcept;
