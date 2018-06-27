@@ -116,7 +116,6 @@ HEADERS += \
     views/dbookmarkrootitem.h \
     views/dbookmarkview.h \
     controllers/trashmanager.h \
-    views/dsplitter.h \
     models/trashfileinfo.h \
     shutil/mimesappsmanager.h \
     views/dbookmarkline.h \
@@ -266,7 +265,8 @@ HEADERS += \
     shutil/danythingmonitorfilter.h \
     controllers/interface/quicksearchdaemon_interface.h \
     controllers/quicksearchdaemoncontroller.h \
-    controllers/dquicksearchcontroller.h
+    controllers/dquicksearchcontroller.h \
+    views/dfmheaderview.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -303,7 +303,6 @@ SOURCES += \
     views/dbookmarkrootitem.cpp \
     views/dbookmarkview.cpp \
     controllers/trashmanager.cpp \
-    views/dsplitter.cpp \
     models/trashfileinfo.cpp \
     shutil/mimesappsmanager.cpp \
     views/dbookmarkline.cpp \
@@ -445,7 +444,8 @@ SOURCES += \
     shutil/danythingmonitorfilter.cpp \
     controllers/interface/quicksearchdaemon_interface.cpp \
     controllers/quicksearchdaemoncontroller.cpp \
-    controllers/dquicksearchcontroller.cpp
+    controllers/dquicksearchcontroller.cpp \
+    views/dfmheaderview.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET

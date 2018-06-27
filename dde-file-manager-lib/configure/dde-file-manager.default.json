@@ -3,6 +3,7 @@
         "AllwayOpenOnNewWindow": false,
         "IconSizeLevel": 1,
         "ViewMode": 1,
+        "ViewSizeAdjustable": true,
         "ViewComppactMode": false,
         "ViewAutoCompace": false,
         "OpenFileMode": 1,

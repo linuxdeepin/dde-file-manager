@@ -107,6 +107,7 @@ private:
         {"base.new_tab_windows.new_tab_path", DFMApplication::AA_UrlOfNewTab},
         {"base.default_view.icon_size", DFMApplication::AA_IconSizeLevel},
         {"base.default_view.view_mode", DFMApplication::AA_ViewMode},
+        {"base.default_view.view_size_adjustable", DFMApplication::AA_ViewSizeAdjustable},
     };
     BidirectionHash<QString, DFMApplication::GenericAttribute> keyToGA {
         {"base.hidden_files.show_hidden", DFMApplication::GA_ShowedHiddenFiles},

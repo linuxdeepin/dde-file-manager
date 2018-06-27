@@ -30,7 +30,6 @@
 #include "ddetailview.h"
 #include "dfilemenu.h"
 //#include "dsearchbar.h"
-#include "dsplitter.h"
 #include "extendview.h"
 #include "dstatusbar.h"
 #include "dfilemenumanager.h"
@@ -1055,7 +1054,7 @@ void DFileManagerWindow::showEvent(QShowEvent *event)
     DMainWindow::showEvent(event);
 
     const QVariantMap &state = DFMApplication::appObtuselySetting()->value("WindowManager", "SplitterState").toMap();
-    int splitterPos = state.value("sidebar").toInt();
+    int splitterPos = state.value("sidebar", DFMSideBarItem::maximumWidth).toInt();
     setSplitterPosition(splitterPos);
 }
 
