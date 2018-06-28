@@ -451,7 +451,6 @@ SOURCES += \
     shutil/dquicksearchfilter.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
-HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET
 ICONDIR = $$PREFIX/share/icons/hicolor/scalable/apps
 DEFINES += APPSHAREDIR=\\\"$$APPSHAREDIR\\\"
 
@@ -539,16 +538,13 @@ CONFIG(release, debug|release) {
 translations.path = $$APPSHAREDIR/translations
 translations.files = translations/*.qm
 
-help.path = $$HELPSHAREDIR
-help.files = help/*
-
 icon.path = $$ICONDIR
 icon.files = skin/images/$${TARGET}.svg
 
 defaultConfig.path = $$APPSHAREDIR/config
 defaultConfig.files = configure/default-view-states.json
 
-INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations help icon includes includes_private gvfs_includes plugin_includes defaultConfig
+INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations icon includes includes_private gvfs_includes plugin_includes defaultConfig
 
 DISTFILES += \
     mimetypeassociations/mimetypeassociations.json
