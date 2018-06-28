@@ -33,7 +33,6 @@
 class QuickSearchDaemonController final : public QObject
 {
     Q_OBJECT
-
 public:
     QuickSearchDaemonController(QObject *const parent = nullptr);
     virtual ~QuickSearchDaemonController() = default;
@@ -41,8 +40,15 @@ public:
     QuickSearchDaemonController(const QuickSearchDaemonController &) = delete;
     QuickSearchDaemonController &operator=(const QuickSearchDaemonController &) = delete;
 
-    QList<QString> search(const QString &path_for_searching, const QString &key);
+    static inline QuickSearchDaemonController *instance()
+    {
+        static QuickSearchDaemonController *controller{ new QuickSearchDaemonController };
 
+        return controller;
+    }
+
+
+    QList<QString> search(const QString &path_for_searching, const QString &key);
 private:
     std::unique_ptr<QuickSearchDaemonInterface> interface_ptr{ nullptr };
 };

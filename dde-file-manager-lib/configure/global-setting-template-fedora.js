@@ -151,16 +151,27 @@
             "name": qsTranslate("GenerateSettingTranslate", "Advanced"),
             "groups": [
                 {
+                  "key": "index",
+                  "name": qsTranslate("GenerateSettingTranslate", "Index"),
+                  "options": [
+                    {
+                            "key": "index_internal",
+                            "text": qsTranslate("GenerateSettingTranslate", "Auto index internal disk"),
+                            "type": "checkbox",
+                            "default": true
+                    },
+                    {
+                            "key": "index_external",
+                            "text": qsTranslate("GenerateSettingTranslate", "Index external storage device after connected to computer"),
+                            "type": "checkbox",
+                            "default": false
+                    }
+                    ]
+                },
+                {
                     "key": "search",
                     "name": "",
                     "options": [
-                        {
-                            "key": "quick_search",
-                            "text": qsTranslate("GenerateSettingTranslate", "Quick search"),
-                            "type": "checkbox",
-                            "default": false,
-                            "hide": true
-                        },
                         {
                             "key": "show_hidden",
                             "text": qsTranslate("GenerateSettingTranslate", "Show hidden files in search results"),

@@ -62,6 +62,13 @@
 
 #include <unistd.h>
 
+#include <QQueue>
+
+#include "dfmsettings.h"
+#include "dfmapplication.h"
+#include "quick_search/dquicksearch.h"
+#include "controllers/quicksearchdaemoncontroller.h"
+
 class FileDirIterator : public DDirIterator
 {
 public:
@@ -82,6 +89,9 @@ public:
     bool enableIteratorByKeyword(const QString &keyword) Q_DECL_OVERRIDE;
 
 private:
+    QList<QString> m_searchedResult{};
+    QString m_pathForSearching{};
+
     QDirIterator iterator;
     QProcess *processRlocate = Q_NULLPTR;
     QFileInfo currentFileInfo;
@@ -91,7 +101,7 @@ private:
 FileController::FileController(QObject *parent)
     : DAbstractFileController(parent)
 {
-    qRegisterMetaType<QList<DFileInfo*>>(QT_STRINGIFY(QList<DFileInfo*>));
+    qRegisterMetaType<QList<DFileInfo *>>(QT_STRINGIFY(QList<DFileInfo *>));
 }
 
 bool FileController::findExecutable(const QString &executableName, const QStringList &paths)
@@ -101,7 +111,7 @@ bool FileController::findExecutable(const QString &executableName, const QString
 
 const DAbstractFileInfoPointer FileController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
 {
-    if (event->url().toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX)){
+    if (event->url().toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX)) {
 
         return DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
     }
@@ -112,7 +122,7 @@ const DAbstractFileInfoPointer FileController::createFileInfo(const QSharedPoint
 const DDirIteratorPointer FileController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
     return DDirIteratorPointer(new FileDirIterator(event->url().toLocalFile(), event->nameFilters(),
-                                                   event->filters(), event->flags()));
+                               event->filters(), event->flags()));
 }
 
 bool FileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
@@ -128,7 +138,7 @@ bool FileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) con
             dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
             return false;
         }
-        const_cast<DUrl&>(fileUrl) = linkInfo->redirectedFileUrl();
+        const_cast<DUrl &>(fileUrl) = linkInfo->redirectedFileUrl();
     }
 
     if (FileUtils::isExecutableScript(fileUrl.toLocalFile())) {
@@ -136,12 +146,12 @@ bool FileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) con
         return FileUtils::openExcutableScriptFile(fileUrl.toLocalFile(), code);
     }
 
-    if(FileUtils::isFileRunnable(fileUrl.toLocalFile()) && !pfile->isDesktopFile()){
+    if (FileUtils::isFileRunnable(fileUrl.toLocalFile()) && !pfile->isDesktopFile()) {
         int code = dialogManager->showRunExcutableFileDialog(fileUrl, event->windowId());
         return FileUtils::openExcutableFile(fileUrl.toLocalFile(), code);
     }
 
-    if (FileUtils::isFileWindowsUrlShortcut(fileUrl.toLocalFile())){
+    if (FileUtils::isFileWindowsUrlShortcut(fileUrl.toLocalFile())) {
         QString url = FileUtils::getInternetShortcutUrl(fileUrl.toLocalFile());
         return FileUtils::openFile(url);
     }
@@ -178,13 +188,13 @@ bool FileController::decompressFile(const QSharedPointer<DFMDecompressEvnet> &ev
     if (findExecutable("file-roller")) {
         QStringList args;
         args << "-f";
-        for(auto it : event->urlList()) {
+        for (auto it : event->urlList()) {
             args << it.toLocalFile();
         }
         qDebug() << args;
         bool result = QProcess::startDetached("file-roller", args);
         return result;
-    }else{
+    } else {
         qDebug() << "file-roller is not installed";
     }
 
@@ -196,13 +206,13 @@ bool FileController::decompressFileHere(const QSharedPointer<DFMDecompressEvnet>
     if (findExecutable("file-roller")) {
         QStringList args;
         args << "-h";
-        for(auto it : event->urlList()) {
+        for (auto it : event->urlList()) {
             args << it.toLocalFile();
         }
         qDebug() << args;
         bool result = QProcess::startDetached("file-roller", args);
         return result;
-    }else{
+    } else {
         qDebug() << "file-roller is not installed";
     }
 
@@ -229,14 +239,14 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
 
     bool result(false);
 
-    if (oldfilePointer->isDesktopFile() && !oldfilePointer->isSymLink()){
+    if (oldfilePointer->isDesktopFile() && !oldfilePointer->isSymLink()) {
         QString filePath = oldUrl.toLocalFile();
         Properties desktop(filePath, "Desktop Entry");
         QString key;
         QString localKey = QString("Name[%1]").arg(QLocale::system().name());
-        if (desktop.contains(localKey)){
+        if (desktop.contains(localKey)) {
             key = localKey;
-        }else{
+        } else {
             key = "Name";
         }
 
@@ -250,7 +260,7 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
 
             DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMRenameEvent>(nullptr, oldUrl, DUrl::fromLocalFile(path)));
         }
-    }else{
+    } else {
         result = file.rename(newFilePath);
 
         if (!result) {
@@ -300,26 +310,28 @@ DUrlList FileController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &
 
     // save event
     const QVariant &result = DFMEventDispatcher::instance()->processEvent<DFMGetChildrensEvent>(event->sender(), DUrl::fromTrashFile("/"),
-                                                                                                QStringList(), QDir::AllEntries);
+                             QStringList(), QDir::AllEntries);
     const QList<DAbstractFileInfoPointer> &infos = qvariant_cast<QList<DAbstractFileInfoPointer>>(result);
 
-    if (infos.isEmpty())
+    if (infos.isEmpty()) {
         return list;
+    }
 
     const QSet<DUrl> &source_files_set = event->urlList().toSet();
     const QSet<DUrl> &target_files_set = list.toSet();
     DUrlList has_restore_files;
 
     for (const DAbstractFileInfoPointer &info : infos) {
-        const DUrl &source_file = DUrl::fromLocalFile(static_cast<const TrashFileInfo*>(info.constData())->sourceFilePath());
+        const DUrl &source_file = DUrl::fromLocalFile(static_cast<const TrashFileInfo *>(info.constData())->sourceFilePath());
 
         if (source_files_set.contains(source_file) && target_files_set.contains(info->mimeDataUrl())) {
             has_restore_files << info->fileUrl();
         }
     }
 
-    if (has_restore_files.isEmpty())
+    if (has_restore_files.isEmpty()) {
         return list;
+    }
 
     DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMRestoreFromTrashEvent>(nullptr, has_restore_files), true);
 
@@ -330,16 +342,18 @@ DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) c
 {
     const DUrlList &urlList = event->urlList();
 
-    if (urlList.isEmpty())
+    if (urlList.isEmpty()) {
         return DUrlList();
+    }
 
     DUrlList list;
     QDir dir(event->targetUrl().toLocalFile());
     //Make sure the target directory exists.
-    if(!dir.exists())
+    if (!dir.exists()) {
         return list;
+    }
 
-    if (!QFileInfo(event->targetUrl().toLocalFile()).isWritable()){
+    if (!QFileInfo(event->targetUrl().toLocalFile()).isWritable()) {
         qDebug() << event->targetUrl() << "is not writable";
         DUrlList urls;
         urls << event->targetUrl();
@@ -378,16 +392,18 @@ DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) c
 
     valid_files.removeAll(DUrl());
 
-    if (valid_files.isEmpty())
+    if (valid_files.isEmpty()) {
         return list;
+    }
 
     if (event->action() == DFMGlobal::CopyAction) {
         DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMDeleteEvent>(nullptr, valid_files, true), true);
     } else {
         const QString targetDir(QFileInfo(urlList.first().toLocalFile()).absolutePath());
 
-        if (targetDir.isEmpty())
+        if (targetDir.isEmpty()) {
             return list;
+        }
 
         DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMPasteEvent>(nullptr, DFMGlobal::CutAction, DUrl::fromLocalFile(targetDir), valid_files), true);
     }
@@ -402,8 +418,9 @@ bool FileController::mkdir(const QSharedPointer<DFMMkdirEvent> &event) const
 
     bool ok = QDir::current().mkdir(event->url().toLocalFile());
 
-    if (ok)
+    if (ok) {
         DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << event->url(), true));
+    }
 
     return ok;
 }
@@ -421,7 +438,7 @@ bool FileController::touch(const QSharedPointer<DFMTouchFileEvent> &event) const
         return false;
     }
 
-    DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event , dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << event->url(), true));
+    DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMDeleteEvent>(nullptr, DUrlList() << event->url(), true));
 
     return true;
 }
@@ -475,8 +492,9 @@ bool FileController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &
 
     bool ok = file.link(event->toUrl().toLocalFile());
 
-    if (ok)
+    if (ok) {
         return true;
+    }
 
     int code = ::symlink(event->fileUrl().toLocalFile().toLocal8Bit().constData(),
                          event->toUrl().toLocalFile().toLocal8Bit().constData());
@@ -533,8 +551,9 @@ public:
                     continue;
                 }
 
-                if (!re.match(path).hasMatch())
+                if (!re.match(path).hasMatch()) {
                     continue;
+                }
             }
 
             if (pattern.second.isEmpty()) {
@@ -605,7 +624,7 @@ QString FileController::checkDuplicateName(const QString &name) const
     while (file.exists()) {
         num++;
         destUrl = QString("%1/%2 %3").arg(startInfo.absolutePath()).
-                arg(startInfo.fileName()).arg(num);
+                  arg(startInfo.fileName()).arg(num);
         file.setFileName(destUrl);
     }
 
@@ -615,10 +634,10 @@ QString FileController::checkDuplicateName(const QString &name) const
 FileDirIterator::FileDirIterator(const QString &path, const QStringList &nameFilters,
                                  QDir::Filters filter, QDirIterator::IteratorFlags flags)
     : DDirIterator()
+    , m_pathForSearching{ path }
     , iterator(path, nameFilters, filter, flags)
     , filters(filter)
 {
-
 }
 
 FileDirIterator::~FileDirIterator()
@@ -633,6 +652,13 @@ FileDirIterator::~FileDirIterator()
 
 DUrl FileDirIterator::next()
 {
+    if (!m_searchedResult.isEmpty()) {
+        QString searched_result{ m_searchedResult.front() };
+        m_searchedResult.removeFirst();
+        return (currentFileInfo.setFile(searched_result), DUrl::fromLocalFile(searched_result));
+    }
+
+
     if (!processRlocate) {
         if (currentFileInfo.exists() || currentFileInfo.isSymLink()) {
             DUrl url = DUrl::fromLocalFile(currentFileInfo.absoluteFilePath());
@@ -661,20 +687,26 @@ DUrl FileDirIterator::next()
 
 bool FileDirIterator::hasNext() const
 {
+    if (!m_searchedResult.isEmpty()) {
+        return true;
+    }
+
     if (!processRlocate) {
-        if (currentFileInfo.exists() || currentFileInfo.isSymLink())
+        if (currentFileInfo.exists() || currentFileInfo.isSymLink()) {
             return true;
+        }
 
         bool hasNext = iterator.hasNext();
         bool showHidden = filters.testFlag(QDir::Hidden);
 
-        if (!hasNext)
+        if (!hasNext) {
             return false;
+        }
 
         DFileInfo *info = nullptr;
 
         while (iterator.hasNext()) {
-            const_cast<FileDirIterator*>(this)->iterator.next();
+            const_cast<FileDirIterator *>(this)->iterator.next();
             info = new DFileInfo(iterator.fileInfo(), false);
 
             if (!info->isPrivate() && (showHidden || !info->isHidden())) {
@@ -687,7 +719,7 @@ bool FileDirIterator::hasNext() const
 
         // file is exists
         if (info) {
-            const_cast<FileDirIterator*>(this)->currentFileInfo = info->toQFileInfo();
+            const_cast<FileDirIterator *>(this)->currentFileInfo = info->toQFileInfo();
             delete info;
 
             return true;
@@ -701,16 +733,18 @@ bool FileDirIterator::hasNext() const
 
 QString FileDirIterator::fileName() const
 {
-    if (!processRlocate)
+    if (!processRlocate) {
         return iterator.fileName();
+    }
 
     return currentFileInfo.fileName();
 }
 
 QString FileDirIterator::filePath() const
 {
-    if (!processRlocate)
+    if (!processRlocate) {
         return iterator.filePath();
+    }
 
     return currentFileInfo.filePath();
 }
@@ -721,7 +755,7 @@ const DAbstractFileInfoPointer FileDirIterator::fileInfo() const
         DFMGlobal::fileNameCorrection(filePath());
     }
 
-    if (fileName().endsWith(QString(".") + DESKTOP_SURRIX)){
+    if (fileName().endsWith(QString(".") + DESKTOP_SURRIX)) {
 
         return DAbstractFileInfoPointer(new DesktopFileInfo(processRlocate ? currentFileInfo : iterator.fileInfo()));
     }
@@ -735,28 +769,53 @@ QString FileDirIterator::path() const
 
 bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
 {
-    if (!DFMApplication::instance()->genericAttribute(DFMApplication::GA_QuickSearch).toBool()) {
-        return false;
+    if (QFileInfo::exists(iterator.path())) {
+        QPair<QString, QString> dev_and_mount_point{ DQuickSearch::getDevAndMountPoint(m_pathForSearching) };
+        bool is_usb_dev{ DQuickSearch::isUsbDevice(dev_and_mount_point.first) };
+        bool whether_index_internal{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_IndexInternal).toBool() };
+        bool whether_index_external{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_IndexExternal).toBool() };
+
+#ifdef QT_DEBUG
+        qDebug() << m_pathForSearching;
+#endif //QT_DEBUG
+
+        if (whether_index_external && whether_index_internal) {
+            m_searchedResult = QuickSearchDaemonController::instance()->search(m_pathForSearching, keyword);
+
+            return true;
+        } else if (!is_usb_dev && whether_index_internal) {
+            m_searchedResult = QuickSearchDaemonController::instance()->search(m_pathForSearching, keyword);
+
+            return true;
+        } else if (is_usb_dev && whether_index_external) {
+            m_searchedResult = QuickSearchDaemonController::instance()->search(m_pathForSearching, keyword);
+
+            return true;
+        }
+
+
+        if (processRlocate) {
+            return true;
+        }
+
+        QProcess process;
+
+        process.closeReadChannel(QProcess::StandardError);
+        process.closeReadChannel(QProcess::StandardOutput);
+        process.start("which rlocate");
+        process.waitForFinished();
+
+        if (process.exitCode() == 0 && !keyword.isEmpty()) {
+            QString arg = path() + QString(".*%1[^/]*$").arg(keyword);
+
+            processRlocate = new QProcess();
+            processRlocate->start("rlocate", QStringList() << "-r" << arg << "-i", QIODevice::ReadOnly);
+
+            return true;
+        }
     }
 
-    if (processRlocate)
-        return true;
 
-    QProcess process;
-
-    process.closeReadChannel(QProcess::StandardError);
-    process.closeReadChannel(QProcess::StandardOutput);
-    process.start("which rlocate");
-    process.waitForFinished();
-
-    if (process.exitCode() == 0 && !keyword.isEmpty()) {
-        QString arg = path() + QString(".*%1[^/]*$").arg(keyword);
-
-        processRlocate = new QProcess();
-        processRlocate->start("rlocate", QStringList() << "-r" << arg << "-i", QIODevice::ReadOnly);
-
-        return true;
-    }
 
     return false;
 }

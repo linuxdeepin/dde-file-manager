@@ -41,7 +41,8 @@
 #include <QQueue>
 #include <QRegExp>
 
-QString searchKeywordPattern(const QString& keyword){
+QString searchKeywordPattern(const QString &keyword)
+{
     QString keywordPattern = keyword;
     if (!keyword.contains('*') && !keyword.contains('?')) {
         keywordPattern.prepend('*');
@@ -81,7 +82,7 @@ public:
     bool start() Q_DECL_OVERRIDE;
     bool stop() Q_DECL_OVERRIDE;
 
-    QMap<DUrl, DAbstractFileWatcher*> urlToWatcherMap;
+    QMap<DUrl, DAbstractFileWatcher *> urlToWatcherMap;
 
     Q_DECLARE_PUBLIC(SearchFileWatcher)
 };
@@ -104,26 +105,30 @@ void SearchFileWatcher::setEnabledSubfileWatcher(const DUrl &subfileUrl, bool en
 
     url.setSearchedFileUrl(DUrl());
 
-    if (url != fileUrl())
+    if (url != fileUrl()) {
         return;
+    }
 
-    if (enabled)
+    if (enabled) {
         addWatcher(subfileUrl.searchedFileUrl());
-    else
+    } else {
         removeWatcher(subfileUrl.searchedFileUrl());
+    }
 }
 
 void SearchFileWatcher::addWatcher(const DUrl &url)
 {
     Q_D(SearchFileWatcher);
 
-    if (!url.isValid() || d->urlToWatcherMap.contains(url))
+    if (!url.isValid() || d->urlToWatcherMap.contains(url)) {
         return;
+    }
 
     DAbstractFileWatcher *watcher = DFileService::instance()->createFileWatcher(this, url);
 
-    if (!watcher)
+    if (!watcher) {
         return;
+    }
 
     watcher->moveToThread(this->thread());
     watcher->setParent(this);
@@ -135,8 +140,9 @@ void SearchFileWatcher::addWatcher(const DUrl &url)
     connect(watcher, &DAbstractFileWatcher::fileModified, this, &SearchFileWatcher::onFileModified);
     connect(watcher, &DAbstractFileWatcher::fileMoved, this, &SearchFileWatcher::onFileMoved);
 
-    if (d->started)
+    if (d->started) {
         watcher->startWatcher();
+    }
 }
 
 void SearchFileWatcher::removeWatcher(const DUrl &url)
@@ -145,8 +151,9 @@ void SearchFileWatcher::removeWatcher(const DUrl &url)
 
     DAbstractFileWatcher *watcher = d->urlToWatcherMap.take(url);
 
-    if (!watcher)
+    if (!watcher) {
         return;
+    }
 
     watcher->deleteLater();
 }
@@ -177,16 +184,16 @@ void SearchFileWatcher::onFileMoved(const DUrl &fromUrl, const DUrl &toUrl)
     newFromUrl.setSearchedFileUrl(fromUrl);
 
     DUrl newToUrl = toUrl;
-    if (fileUrl().searchTargetUrl().scheme() == toUrl.scheme() && toUrl.path().startsWith(fileUrl().searchTargetUrl().path())){
-         QString keywordPattern = searchKeywordPattern(fileUrl().searchKeyword());
-         const DAbstractFileInfoPointer& info = DFileService::instance()->createFileInfo(this, toUrl);
-         QRegExp regular = QRegExp(keywordPattern, Qt::CaseInsensitive, QRegExp::Wildcard);
-         if (regular.exactMatch(info->fileDisplayName())){
-             newToUrl = fileUrl();
-             newToUrl.setSearchedFileUrl(toUrl);
+    if (fileUrl().searchTargetUrl().scheme() == toUrl.scheme() && toUrl.path().startsWith(fileUrl().searchTargetUrl().path())) {
+        QString keywordPattern = searchKeywordPattern(fileUrl().searchKeyword());
+        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, toUrl);
+        QRegExp regular = QRegExp(keywordPattern, Qt::CaseInsensitive, QRegExp::Wildcard);
+        if (regular.exactMatch(info->fileDisplayName())) {
+            newToUrl = fileUrl();
+            newToUrl.setSearchedFileUrl(toUrl);
 
-             addWatcher(toUrl);
-         }
+            addWatcher(toUrl);
+        }
     }
 
     removeWatcher(fromUrl);
@@ -206,8 +213,9 @@ bool SearchFileWatcherPrivate::start()
 {
     bool ok = true;
 
-    for (DAbstractFileWatcher *watcher : urlToWatcherMap)
+    for (DAbstractFileWatcher *watcher : urlToWatcherMap) {
         ok = ok && watcher->startWatcher();
+    }
 
     started = ok;
 
@@ -218,8 +226,9 @@ bool SearchFileWatcherPrivate::stop()
 {
     bool ok = true;
 
-    for (DAbstractFileWatcher *watcher : urlToWatcherMap)
+    for (DAbstractFileWatcher *watcher : urlToWatcherMap) {
         ok = ok && watcher->stopWatcher();
+    }
 
     started = !ok;
 
@@ -297,16 +306,19 @@ DUrl SearchDiriterator::next()
 
 bool SearchDiriterator::hasNext() const
 {
-    if (!childrens.isEmpty())
+    if (!childrens.isEmpty()) {
         return true;
+    }
 
     forever {
-        if (closed)
+        if (closed) {
             return false;
+        }
 
         if (!it) {
-            if (searchPathList.isEmpty())
+            if (searchPathList.isEmpty()) {
                 break;
+            }
 
             const DUrl &url = searchPathList.takeAt(0);
 
@@ -316,12 +328,13 @@ bool SearchDiriterator::hasNext() const
                 continue;
             }
 
-            m_hasIteratorByKeywordOfCurrentIt = it->enableIteratorByKeyword(keyword);
+            m_hasIteratorByKeywordOfCurrentIt = it->enableIteratorByKeyword(fileUrl.searchKeyword());
         }
 
         while (it->hasNext()) {
-            if (closed)
+            if (closed) {
                 return false;
+            }
 
             it->next();
 
@@ -332,8 +345,9 @@ bool SearchDiriterator::hasNext() const
             if (!m_hasIteratorByKeywordOfCurrentIt && fileInfo->isDir() && !fileInfo->isSymLink()) {
                 const DUrl &url = fileInfo->fileUrl();
 
-                if (!searchPathList.contains(url))
+                if (!searchPathList.contains(url)) {
                     searchPathList << url;
+                }
             }
 
             if (regular.exactMatch(fileInfo->fileDisplayName())) {
@@ -467,7 +481,7 @@ bool SearchController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent>
 bool SearchController::shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const
 {
     return DFileService::instance()->shareFolder(event->sender(), realUrl(event->url()),
-                                                 event->name(), event->isWritable(), event->allowGuest());
+            event->name(), event->isWritable(), event->allowGuest());
 }
 
 bool SearchController::unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const
@@ -483,16 +497,17 @@ bool SearchController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEven
 const DDirIteratorPointer SearchController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
     SearchDiriterator *diriterator = new SearchDiriterator(event->url(), event->nameFilters(),
-                                                           event->filters(), event->flags(),
-                                                           const_cast<SearchController*>(this));
+            event->filters(), event->flags(),
+            const_cast<SearchController *>(this));
 
     return DDirIteratorPointer(diriterator);
 }
 
 DAbstractFileWatcher *SearchController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
-    if (event->url().searchedFileUrl().isValid())
+    if (event->url().searchedFileUrl().isValid()) {
         return 0;
+    }
 
     return new SearchFileWatcher(event->url());
 }
