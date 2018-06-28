@@ -55,7 +55,7 @@ public:
     QList<int> userColumnChildRoles(int column) const Q_DECL_OVERRIDE;
 
     int userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const Q_DECL_OVERRIDE;
-    int userRowHeight(const QFontMetrics &fontMetrics) const Q_DECL_OVERRIDE;
+//    int userRowHeight(const QFontMetrics &fontMetrics) const Q_DECL_OVERRIDE;
 
     CompareFunction compareFunByColumn(int columnRole) const Q_DECL_OVERRIDE;
     bool columnDefaultVisibleForRole(int userColumnRole) const Q_DECL_OVERRIDE;

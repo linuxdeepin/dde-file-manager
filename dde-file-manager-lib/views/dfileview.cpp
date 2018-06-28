@@ -265,8 +265,6 @@ int DFileView::columnWidth(int column) const
 {
     D_DC(DFileView);
 
-//    qDebug() << column << d->headerView->sectionSize(column);
-
     return d->headerView ? d->headerView->sectionSize(column) : 100;
 }
 
@@ -2005,6 +2003,7 @@ bool DFileView::setRootUrl(const DUrl &url)
                          (Qt::SortOrder)d->fileViewStateValue(url, "sortOrder", Qt::AscendingOrder).toInt());
 
     if (d->headerView) {
+        updateListHeaderViewProperty();
         // update header view sort indicator
         QSignalBlocker blocker(d->headerView);
         Q_UNUSED(blocker)
@@ -2162,22 +2161,6 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
 
             updateListHeaderViewProperty();
 
-            // load from config if allowed adjust column size
-            if (d->allowedAdjustColumnSize) {
-                // some default values
-                d->headerView->setMinimumSectionSize(LIST_VIEW_MINIMUM_WIDTH);
-
-                // set value from config file.
-                const QVariantMap &state = DFMApplication::appObtuselySetting()->value("WindowManager", "ViewColumnState").toMap();
-                for (const int role : d->columnRoles) {
-                    int colWidth = state.value(QString::number(role), -1).toInt();
-                    if (colWidth == -1) {
-                        continue;
-                    }
-                    d->headerView->resizeSection(model()->roleToColumn(role), colWidth);
-                }
-            }
-
             d->headerView->setHighlightSections(false);
             d->headerView->setSectionsClickable(true);
             d->headerView->setSortIndicatorShown(true);
@@ -2199,7 +2182,9 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
                 QVariantMap state;
                 for (const int role : roleList) {
                     int colWidth = columnWidth(model()->roleToColumn(role));
-                    state[QString::number(role)] = colWidth;
+
+                    if (colWidth > 0)
+                        state[QString::number(role)] = colWidth;
                 }
                 DFMApplication::appObtuselySetting()->setValue("WindowManager", "ViewColumnState", state);
             });
@@ -2386,9 +2371,13 @@ void DFileView::updateListHeaderViewProperty()
 
     d->headerView->setModel(Q_NULLPTR);
     d->headerView->setModel(model());
+
     d->headerView->setDefaultSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
 
-    if (!d->allowedAdjustColumnSize) {
+    if (d->allowedAdjustColumnSize) {
+        d->headerView->setSectionResizeMode(QHeaderView::Interactive);
+        d->headerView->setMinimumSectionSize(LIST_VIEW_MINIMUM_WIDTH);
+    } else {
         d->headerView->setSectionResizeMode(QHeaderView::Fixed);
         d->headerView->setMinimumSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
     }
@@ -2396,10 +2385,18 @@ void DFileView::updateListHeaderViewProperty()
     d->headerView->setSortIndicator(model()->sortColumn(), model()->sortOrder());
     d->columnRoles.clear();
 
+    // set value from config file.
+    const QVariantMap &state = DFMApplication::appObtuselySetting()->value("WindowManager", "ViewColumnState").toMap();
+
     for (int i = 0; i < d->headerView->count(); ++i) {
         d->columnRoles << model()->columnToRole(i);
 
-        if (!d->allowedAdjustColumnSize) {
+        if (d->allowedAdjustColumnSize) {
+            int colWidth = state.value(QString::number(d->columnRoles.last()), -1).toInt();
+            if (colWidth > 0) {
+                d->headerView->resizeSection(model()->roleToColumn(d->columnRoles.last()), colWidth);
+            }
+        } else {
             int column_width = model()->columnWidth(i);
             if (column_width >= 0) {
                 d->headerView->resizeSection(i, column_width + COLUMU_PADDING * 2);
