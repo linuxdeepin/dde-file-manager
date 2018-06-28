@@ -388,6 +388,12 @@ void DFileDialog::setFileMode(QFileDialog::FileMode mode)
 {
     D_D(DFileDialog);
 
+    if (d->fileMode == QFileDialog::DirectoryOnly
+            || d->fileMode == QFileDialog::Directory) {
+        // 清理只显示目录时对文件名添加的过滤条件
+        getFileView()->setNameFilters(QStringList());
+    }
+
     d->fileMode = mode;
 
     switch (static_cast<int>(mode)) {
@@ -396,7 +402,9 @@ void DFileDialog::setFileMode(QFileDialog::FileMode mode)
         break;
     case QFileDialog::DirectoryOnly:
     case QFileDialog::Directory:
+        // 文件名中不可能包含 '/', 此处目的是过滤掉所有文件
         getFileView()->setNameFilters(QStringList("/"));
+        // 无 break 语句
     default:
         getFileView()->setEnabledSelectionModes(QSet<DFileView::SelectionMode>() << QAbstractItemView::SingleSelection);
         break;
