@@ -711,6 +711,8 @@ void DFileDialog::showEvent(QShowEvent *event)
     if (windowFlags().testFlag(Qt::WindowSystemMenuHint)) {
         overrideWindowFlags(windowFlags() & ~Qt::WindowSystemMenuHint);
     }
+
+    return DFileManagerWindow::showEvent(event);
 }
 
 void DFileDialog::closeEvent(QCloseEvent *event)
@@ -729,6 +731,8 @@ void DFileDialog::closeEvent(QCloseEvent *event)
     } else {
         event->accept();
     }
+
+    return DFileManagerWindow::closeEvent(event);
 }
 
 bool DFileDialog::eventFilter(QObject *watched, QEvent *event)
