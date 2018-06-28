@@ -31,6 +31,8 @@ public:
 
     QSize sizeHint() const;
 
+    using QHeaderView::updateGeometries;
+
 protected:
     void mouseReleaseEvent(QMouseEvent *e) override;
     void resizeEvent(QResizeEvent *e) override;

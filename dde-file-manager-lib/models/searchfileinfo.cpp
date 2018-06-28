@@ -43,7 +43,7 @@ COMPARE_FUN_DEFINE(absoluteFilePath, FilePath, SearchFileInfo)
 SearchFileInfo::SearchFileInfo(const DUrl &url)
     : DAbstractFileInfo(url)
 {
-    d_func()->columnCompact = true;
+    d_func()->columnCompact = false;
 
     if (url.searchedFileUrl().isValid()) {
         m_parentUrl = url;
@@ -102,13 +102,13 @@ void SearchFileInfo::setColumnCompact(bool)
 
 QList<int> SearchFileInfo::userColumnRoles() const
 {
-    static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileUserRole + 1
-                                                     << DFileSystemModel::FileUserRole + 2
-                                                     /*<< DFileSystemModel::FileDisplayNameRole
-                                                     << DFileSystemModel::FilePathRole
+    static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileDisplayNameRole
+                                                     << DFileSystemModel::FileUserRole + 1
+//                                                     << DFileSystemModel::FileUserRole + 2
+//                                                     << DFileSystemModel::FilePathRole
                                                      << DFileSystemModel::FileLastModifiedRole
                                                      << DFileSystemModel::FileSizeRole
-                                                     << DFileSystemModel::FileMimeTypeRole*/;
+                                                     << DFileSystemModel::FileMimeTypeRole;
 
     return userColumnRoles;
 }
@@ -116,7 +116,7 @@ QList<int> SearchFileInfo::userColumnRoles() const
 QVariant SearchFileInfo::userColumnDisplayName(int userColumnRole) const
 {
     if (userColumnRole == DFileSystemModel::FileUserRole + 1)
-        return qApp->translate("DFileSystemModel",  "Name");
+        return qApp->translate("DFileSystemModel",  "Path");
     if (userColumnRole == DFileSystemModel::FileUserRole + 2)
         return qApp->translate("DFileSystemModel",  "Time modified");
 
@@ -133,38 +133,46 @@ QVariant SearchFileInfo::userColumnData(int userColumnRole) const
 
     if (userColumnRole == DFileSystemModel::FileUserRole + 2) {
         return QVariant::fromValue(qMakePair(lastModifiedDisplayName(), qMakePair(sizeDisplayName(), mimeTypeDisplayName())));
+    } else if (userColumnRole == DFileSystemModel::FileUserRole + 1) {
+        QString file_path;
+
+        const DUrl &fileUrl = d->proxy->fileUrl();
+
+        if (fileUrl.isLocalFile()) {
+            file_path = absolutePath();
+        } else {
+            file_path = d->proxy->parentUrl().toString();
+        }
+
+        return file_path;
+//        return QVariant::fromValue(QPair<QString, QString>(fileDisplayName(), file_path));
     }
 
-    QString file_path;
-
-    const DUrl &fileUrl = d->proxy->fileUrl();
-
-    if (fileUrl.isLocalFile()) {
-        file_path = absolutePath();
-    } else {
-        file_path = d->proxy->parentUrl().toString();
-    }
-
-    return QVariant::fromValue(QPair<QString, QString>(fileDisplayName(), file_path));
+    return DAbstractFileInfo::userColumnData(userColumnRole);
 }
 
 QList<int> SearchFileInfo::userColumnChildRoles(int column) const
 {
+    Q_UNUSED(column)
+
     QList<int> userColumnRoles{};
-    if (column == 0){
-        userColumnRoles << DFileSystemModel::FileDisplayNameRole
-                        << DFileSystemModel::FilePathRole;
-    }else if (column == 1){
-        userColumnRoles << DFileSystemModel::FileLastModifiedRole
-                        << DFileSystemModel::FileSizeRole
-                        << DFileSystemModel::FileMimeTypeRole;
-    }
+//    if (column == 0){
+//        userColumnRoles << DFileSystemModel::FileDisplayNameRole
+//                        << DFileSystemModel::FilePathRole;
+//    }else if (column == 1){
+//        userColumnRoles << DFileSystemModel::FileLastModifiedRole
+//                        << DFileSystemModel::FileSizeRole
+//                        << DFileSystemModel::FileMimeTypeRole;
+//    }
     return userColumnRoles;
 }
 
 bool SearchFileInfo::columnDefaultVisibleForRole(int role) const
 {
-    return (role == DFileSystemModel::FileUserRole + 1 || role == DFileSystemModel::FileUserRole + 2);
+    Q_UNUSED(role)
+
+    return true;
+//    return (role == DFileSystemModel::FileUserRole + 1 || role == DFileSystemModel::FileUserRole + 2);
 }
 
 int SearchFileInfo::userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const
@@ -175,10 +183,10 @@ int SearchFileInfo::userColumnWidth(int userColumnRole, const QFontMetrics &font
     return fontMetrics.width("0000/00/00 00:00:00");;
 }
 
-int SearchFileInfo::userRowHeight(const QFontMetrics &fontMetrics) const
-{
-    return fontMetrics.height() * 2 + 10;
-}
+//int SearchFileInfo::userRowHeight(const QFontMetrics &fontMetrics) const
+//{
+//    return fontMetrics.height() * 2 + 10;
+//}
 
 MenuAction SearchFileInfo::menuActionByColumnRole(int userColumnRole) const
 {

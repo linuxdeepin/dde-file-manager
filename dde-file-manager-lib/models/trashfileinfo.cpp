@@ -52,7 +52,7 @@ public:
     TrashFileInfoPrivate(const DUrl &url, TrashFileInfo *qq)
         : DAbstractFileInfoPrivate(url, qq, true)
     {
-        columnCompact = true;
+        columnCompact = false;
     }
 
     QString desktopIconName;
@@ -283,8 +283,13 @@ void TrashFileInfo::setColumnCompact(bool)
 
 QList<int> TrashFileInfo::userColumnRoles() const
 {
-    static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileUserRole + 1
-                                                     << DFileSystemModel::FileUserRole + 2;
+    static QList<int> userColumnRoles = QList<int>() /*<< DFileSystemModel::FileUserRole + 1
+                                                     << DFileSystemModel::FileUserRole + 2*/
+                                                     << DFileSystemModel::FileDisplayNameRole
+                                                     << DFileSystemModel::FileUserRole + 3
+                                                     << DFileSystemModel::FileUserRole + 4
+                                                     << DFileSystemModel::FileSizeRole
+                                                     << DFileSystemModel::FileMimeTypeRole;
 
     return userColumnRoles;
 }
@@ -343,15 +348,17 @@ QVariant TrashFileInfo::userColumnDisplayName(int userColumnRole) const
 
 QList<int> TrashFileInfo::userColumnChildRoles(int column) const
 {
+    Q_UNUSED(column)
+
     QList<int> userColumnRoles{};
-    if (column == 0) {
-        userColumnRoles << DFileSystemModel::FileDisplayNameRole
-                        << DFileSystemModel::FileUserRole + 3;
-    } else if (column == 1) {
-        userColumnRoles << DFileSystemModel::FileUserRole + 4
-                        << DFileSystemModel::FileSizeRole
-                        << DFileSystemModel::FileMimeTypeRole;
-    }
+//    if (column == 0) {
+//        userColumnRoles << DFileSystemModel::FileDisplayNameRole
+//                        << DFileSystemModel::FileUserRole + 3;
+//    } else if (column == 1) {
+//        userColumnRoles << DFileSystemModel::FileUserRole + 4
+//                        << DFileSystemModel::FileSizeRole
+//                        << DFileSystemModel::FileMimeTypeRole;
+//    }
     return userColumnRoles;
 }
 
@@ -364,15 +371,18 @@ int TrashFileInfo::userColumnWidth(int userColumnRole, const QFontMetrics &fontM
     return DAbstractFileInfo::userColumnWidth(userColumnRole, fontMetrics);
 }
 
-int TrashFileInfo::userRowHeight(const QFontMetrics &fontMetrics) const
-{
-    return fontMetrics.height() * 2 + 10;
-}
+//int TrashFileInfo::userRowHeight(const QFontMetrics &fontMetrics) const
+//{
+//    return fontMetrics.height() * 2 + 10;
+//}
 
 bool TrashFileInfo::columnDefaultVisibleForRole(int userColumnRole) const
 {
-    return (userColumnRole == DFileSystemModel::FileUserRole + 1 ||
-            userColumnRole == DFileSystemModel::FileUserRole + 2);
+    Q_UNUSED(userColumnRole);
+
+    return true;
+//    return (userColumnRole == DFileSystemModel::FileUserRole + 1 ||
+//            userColumnRole == DFileSystemModel::FileUserRole + 2);
 }
 
 MenuAction TrashFileInfo::menuActionByColumnRole(int userColumnRole) const
