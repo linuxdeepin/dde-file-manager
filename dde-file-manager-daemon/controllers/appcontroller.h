@@ -35,6 +35,7 @@ class UsbFormatter;
 class CommandManager;
 class DeviceInfoManager;
 class TagManagerDaemon;
+class QuickSearchDaemon;
 
 class AppController : public QObject
 {
@@ -51,12 +52,13 @@ signals:
 public slots:
 
 private:
-    FileOperation* m_fileOperationController = NULL;
-    UserShareManager* m_userShareManager = NULL;
-    UsbFormatter* m_usbFormatter = NULL;
-    CommandManager* m_commandManager = NULL;
-    DeviceInfoManager* m_deviceInfoManager = NULL;
-    TagManagerDaemon* m_tagManagerDaemon{ nullptr };
+    FileOperation *m_fileOperationController = NULL;
+    UserShareManager *m_userShareManager = NULL;
+    UsbFormatter *m_usbFormatter = NULL;
+    CommandManager *m_commandManager = NULL;
+    DeviceInfoManager *m_deviceInfoManager = NULL;
+    TagManagerDaemon *m_tagManagerDaemon{ nullptr };
+    QuickSearchDaemon *m_quick_search_daemon{ nullptr };
 };
 
 #endif // APPCONTROLLER_H

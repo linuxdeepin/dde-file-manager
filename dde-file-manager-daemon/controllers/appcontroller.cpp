@@ -22,14 +22,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "app/global.h"
 #include "appcontroller.h"
 #include "fileoperation.h"
-#include "usershare/usersharemanager.h"
-#include "usbformatter/usbformatter.h"
-#include "commandmanager/commandmanager.h"
-#include "deviceinfo/deviceinfomanager.h"
 #include "tag/tagmanagerdaemon.h"
-#include "app/global.h"
+#include "usbformatter/usbformatter.h"
+#include "usershare/usersharemanager.h"
+#include "deviceinfo/deviceinfomanager.h"
+#include "commandmanager/commandmanager.h"
+#include "quicksearch/quicksearchdaemon.h"
 
 
 AppController::AppController(QObject *parent) : QObject(parent)
@@ -50,7 +51,8 @@ void AppController::initControllers()
     m_usbFormatter = new UsbFormatter(this);
 //    m_commandManager = new CommandManager(this);
     m_deviceInfoManager = new DeviceInfoManager(this);
-    m_tagManagerDaemon = new TagManagerDaemon{this};
+    m_tagManagerDaemon = new TagManagerDaemon{ this };
+    m_quick_search_daemon = new QuickSearchDaemon{ this };
 }
 
 void AppController::initConnect()
