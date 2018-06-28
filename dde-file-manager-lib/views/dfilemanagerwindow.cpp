@@ -615,11 +615,16 @@ void DFileManagerWindow::closeEvent(QCloseEvent *event)
     emit aboutToClose();
     DMainWindow::closeEvent(event);
 
+    emit fileSignalManager->requestQuitApplication();
+}
+
+void DFileManagerWindow::hideEvent(QHideEvent *event)
+{
     QVariantMap state;
     state["sidebar"] = getSplitterPosition();
     DFMApplication::appObtuselySetting()->setValue("WindowManager", "SplitterState", state);
 
-    emit fileSignalManager->requestQuitApplication();
+    return DMainWindow::hideEvent(event);
 }
 
 void DFileManagerWindow::mouseDoubleClickEvent(QMouseEvent *event)

@@ -136,7 +136,8 @@ public slots:
 
 protected:
     void showEvent(QShowEvent *event) override;
-    void closeEvent(QCloseEvent *event)  Q_DECL_OVERRIDE;
+    void closeEvent(QCloseEvent *event) override;
+    void hideEvent(QHideEvent *event) override;
     void mouseDoubleClickEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void moveEvent(QMoveEvent *event) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
