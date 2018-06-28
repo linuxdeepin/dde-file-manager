@@ -46,7 +46,7 @@ class BidirectionHash
 {
 public:
 #ifdef Q_COMPILER_INITIALIZER_LISTS
-    inline BidirectionHash(std::initializer_list<std::pair<Key,T> > list)
+    inline BidirectionHash(std::initializer_list<std::pair<Key, T> > list)
     {
         k2v.reserve(int(list.size()));
         v2k.reserve(int(list.size()));
@@ -58,25 +58,32 @@ public:
     }
 #endif
 
-    bool containsKey(const Key &key) const {
+    bool containsKey(const Key &key) const
+    {
         return k2v.contains(key);
     }
-    bool containsValue(const T &value) const {
+    bool containsValue(const T &value) const
+    {
         return v2k.contains(value);
     }
-    const Key key(const T &value) const {
+    const Key key(const T &value) const
+    {
         return v2k.value(value);
     }
-    const Key key(const T &value, const Key &defaultKey) const {
+    const Key key(const T &value, const Key &defaultKey) const
+    {
         return v2k.value(value, defaultKey);
     }
-    const T value(const Key &key) const {
+    const T value(const Key &key) const
+    {
         return k2v.value(key);
     }
-    const T value(const Key &key, const T &defaultValue) const {
+    const T value(const Key &key, const T &defaultValue) const
+    {
         return k2v.value(key, defaultValue);
     }
-    QList<Key> keys() const {
+    QList<Key> keys() const
+    {
         return k2v.keys();
     }
 
@@ -112,7 +119,8 @@ private:
     BidirectionHash<QString, DFMApplication::GenericAttribute> keyToGA {
         {"base.hidden_files.show_hidden", DFMApplication::GA_ShowedHiddenFiles},
         {"base.hidden_files.hide_suffix", DFMApplication::GA_ShowedFileSuffixOnRename},
-        {"advance.search.quick_search", DFMApplication::GA_QuickSearch},
+        {"advance.index.index_internal", DFMApplication::GA_IndexInternal},
+        {"advance.index.index_external", DFMApplication::GA_IndexExternal},
         {"advance.search.show_hidden", DFMApplication::GA_ShowedHiddenOnSearch},
         {"advance.preview.compress_file_preview", DFMApplication::GA_PreviewCompressFile},
         {"advance.preview.text_file_preview", DFMApplication::GA_PreviewTextFile},
@@ -202,24 +210,27 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
 
     file.close();
 
-    auto indexOfChar = [] (const QByteArray &data, char ch, int from) {
+    auto indexOfChar = [](const QByteArray & data, char ch, int from) {
         for (; from < data.size(); ++from) {
-            if (data.at(from) == '\\')
+            if (data.at(from) == '\\') {
                 continue;
+            }
 
-            if (data.at(from) == ch)
+            if (data.at(from) == ch) {
                 return from;
+            }
         }
 
         return from;
     };
 
-    auto clean_qsTr = [indexOfChar] (QByteArray &data, int &from) {
+    auto clean_qsTr = [indexOfChar](QByteArray & data, int &from) {
         const QByteArray &qsTr = QByteArrayLiteral("qsTr");
         const QByteArray &qsTranslate = QByteArrayLiteral("anslate(");
 
-        if (qsTr != QByteArray(data.data() + from, qsTr.size()))
+        if (qsTr != QByteArray(data.data() + from, qsTr.size())) {
             return;
+        }
 
         int index = from + qsTr.size();
 
@@ -232,8 +243,9 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
             if (data.at(index) == '"' || data.at(index) == '\'') {
                 index = indexOfChar(data, data.at(index), index + 1);
 
-                if (index >= data.size())
+                if (index >= data.size()) {
                     return;
+                }
             } else {
                 return;
             }
@@ -241,11 +253,13 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
             int quote1_index = data.indexOf('"', index + 1);
             int quote2_index = data.indexOf('\'', index + 1);
 
-            if (quote1_index > 0)
+            if (quote1_index > 0) {
                 index = quote1_index;
+            }
 
-            if (quote2_index > 0 && quote2_index < index)
+            if (quote2_index > 0 && quote2_index < index) {
                 index = quote2_index;
+            }
 
             data.remove(from, index - from);
         } else {
@@ -256,8 +270,9 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
         if (data.at(from) == '"' || data.at(from) == '\'') {
             from = indexOfChar(data, data.at(from), from + 1);
 
-            if (from >= data.size())
+            if (from >= data.size()) {
                 return;
+            }
         } else {
             return;
         }
@@ -291,8 +306,8 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
     return DSettings::fromJson(data);
 }
 
-QCheckBox* DFMSettingDialog::AutoMountCheckBox = nullptr;
-QCheckBox* DFMSettingDialog::AutoMountOpenCheckBox = nullptr;
+QCheckBox *DFMSettingDialog::AutoMountCheckBox = nullptr;
+QCheckBox *DFMSettingDialog::AutoMountOpenCheckBox = nullptr;
 
 DFMSettingDialog::DFMSettingDialog(QWidget *parent):
     DSettingsDialog(parent)
@@ -321,8 +336,8 @@ DFMSettingDialog::DFMSettingDialog(QWidget *parent):
 
 QWidget *DFMSettingDialog::createAutoMountCheckBox(QObject *opt)
 {
-    auto option = qobject_cast<Dtk::Core::DSettingsOption*>(opt);
-    QCheckBox* mountCheckBox = new QCheckBox(QObject::tr("Auto mount"));
+    auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
+    QCheckBox *mountCheckBox = new QCheckBox(QObject::tr("Auto mount"));
     DFMSettingDialog::AutoMountCheckBox = mountCheckBox;
 
     if (option->value().toBool()) {
@@ -334,15 +349,15 @@ QWidget *DFMSettingDialog::createAutoMountCheckBox(QObject *opt)
     QObject::connect(mountCheckBox,
                      &QCheckBox::stateChanged,
                      option,
-                     [=](int state){
-        if (state == 0){
-            if (DFMSettingDialog::AutoMountOpenCheckBox){
+    [ = ](int state) {
+        if (state == 0) {
+            if (DFMSettingDialog::AutoMountOpenCheckBox) {
                 DFMSettingDialog::AutoMountOpenCheckBox->setDisabled(true);
                 DFMSettingDialog::AutoMountOpenCheckBox->setChecked(false);
             }
             option->setValue(false);
-        }else if (state == 2){
-            if (DFMSettingDialog::AutoMountOpenCheckBox){
+        } else if (state == 2) {
+            if (DFMSettingDialog::AutoMountOpenCheckBox) {
                 DFMSettingDialog::AutoMountOpenCheckBox->setDisabled(false);
             }
 
@@ -350,7 +365,7 @@ QWidget *DFMSettingDialog::createAutoMountCheckBox(QObject *opt)
         }
     });
 
-    QObject::connect(option, &DSettingsOption::valueChanged, mountCheckBox, [=](QVariant value){
+    QObject::connect(option, &DSettingsOption::valueChanged, mountCheckBox, [ = ](QVariant value) {
         mountCheckBox->setChecked(value.toBool());
     });
 
@@ -359,30 +374,31 @@ QWidget *DFMSettingDialog::createAutoMountCheckBox(QObject *opt)
 
 QWidget *DFMSettingDialog::createAutoMountOpenCheckBox(QObject *opt)
 {
-    auto option = qobject_cast<Dtk::Core::DSettingsOption*>(opt);
-    QCheckBox* openCheckBox = new QCheckBox(QObject::tr("Open after auto mount"));
+    auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
+    QCheckBox *openCheckBox = new QCheckBox(QObject::tr("Open after auto mount"));
     DFMSettingDialog::AutoMountOpenCheckBox = openCheckBox;
 
     if (option->value().toBool()) {
         openCheckBox->setChecked(true);
         openCheckBox->setDisabled(false);
     } else {
-        if (AutoMountCheckBox && !AutoMountCheckBox->isChecked())
+        if (AutoMountCheckBox && !AutoMountCheckBox->isChecked()) {
             openCheckBox->setDisabled(true);
+        }
     }
 
     QObject::connect(openCheckBox,
                      &QCheckBox::stateChanged,
                      option,
-                     [=](int state){
-        if (state == 0){
+    [ = ](int state) {
+        if (state == 0) {
             option->setValue(false);
-        }else if (state == 2){
+        } else if (state == 2) {
             option->setValue(true);
         }
     });
 
-    QObject::connect(option, &DSettingsOption::valueChanged, openCheckBox, [=](QVariant value){
+    QObject::connect(option, &DSettingsOption::valueChanged, openCheckBox, [ = ](QVariant value) {
         openCheckBox->setChecked(value.toBool());
     });
 

@@ -53,7 +53,8 @@ public:
 
     // 通用型配置，默认存储于 ~/.config/deepin/dde-file-manager.json
     enum GenericAttribute {
-        GA_QuickSearch, // 基于索引的文件快速搜索
+        GA_IndexInternal,
+        GA_IndexExternal,
         GA_PreviewCompressFile, // 把压缩包当做目录打开
         GA_PreviewTextFile, // 纯文本生成缩略图
         GA_PreviewDocumentFile, // 文档生成缩略图（pdf）
@@ -111,8 +112,8 @@ protected:
 private:
     QScopedPointer<DFMApplicationPrivate> d_ptr;
 
-    Q_PRIVATE_SLOT(d_ptr, void _q_onSettingsValueChanged(const QString&, const QString &, const QVariant &))
-    Q_PRIVATE_SLOT(d_ptr, void _q_onSettingsValueEdited(const QString&, const QString &, const QVariant &))
+    Q_PRIVATE_SLOT(d_ptr, void _q_onSettingsValueChanged(const QString &, const QString &, const QVariant &))
+    Q_PRIVATE_SLOT(d_ptr, void _q_onSettingsValueEdited(const QString &, const QString &, const QVariant &))
 };
 
 DFM_END_NAMESPACE

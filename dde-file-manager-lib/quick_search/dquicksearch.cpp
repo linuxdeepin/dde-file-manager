@@ -31,6 +31,9 @@
 #include <QDebug>
 
 
+
+#define MAX_RESULTS 100
+
 #define ACT_NEW_FILE    0
 #define ACT_NEW_LINK    1
 #define ACT_NEW_SYMLINK 2
@@ -201,7 +204,7 @@ static std::shared_ptr<std::pair<std::queue<partition>, std::queue<partition>>> 
 
         if (!dev_path.isEmpty()) {
 
-            if (DQuickSearch::is_usb_device(partions[index].dev)) {
+            if (DQuickSearch::isUsbDevice(partions[index].dev)) {
                 usb_partions.push(partions[index]);
                 continue;
             }
@@ -240,61 +243,76 @@ QList<QString> DQuickSearch::search(const QString &local_path, const QString &ke
     if (QFileInfo::exists(local_path) && !key_words.isEmpty()) {
         std::multimap<QString, QString> devices_and_mount_points{ detail::query_partions_of_devices() };
         QPair<QString, QString> device_and_mount_point{ detail::get_mount_point_of_file(local_path, devices_and_mount_points) };
-        std::map<QString, fs_buf *>::const_iterator pos{ m_mount_point_and_lft_buf.find(device_and_mount_point.second) };
+        std::map<QString, QString>::const_iterator pos{ m_mount_point_and_lft_buf.find(device_and_mount_point.second) };
 
         if (pos != m_mount_point_and_lft_buf.cend()) {
-            std::basic_string<char> query_str{ key_words.toStdString() };
-            std::uint32_t name_offs[100] {};
-            std::uint32_t end_off{ get_tail(pos->second) };
-            std::uint32_t count{ 100 };
-            std::uint32_t start_off{ first_name(pos->second) };
-            search_files(pos->second, &start_off, end_off, query_str.c_str(), name_offs, &count);
+            fs_buf *buf{ nullptr };
+            load_fs_buf(&buf, pos->second.toLocal8Bit().constData());
 
-            char path[PATH_MAX];
-            for (std::uint32_t i = 0; i < count; i++) {
-                char *file_or_dir_name{ get_path_by_name_off(pos->second, name_offs[i], path, sizeof(path)) };
-
-                if (!DQuickSearchFilter::instance()->whetherFilterCurrentFile(QByteArray{ file_or_dir_name })) {
-                    searched_list.push_back(QString{ file_or_dir_name });
-                }
+            if (buf) {
+                QByteArray query_str{ key_words.toLocal8Bit() };
+                QByteArray local_path_8bit{ local_path.toLocal8Bit() };
+                std::uint32_t path_off{ 0 };
+                std::uint32_t end_off{ 0 };
+                std::uint32_t start_off{ 0 };
 
 #ifdef QT_DEBUG
-                qDebug() << file_or_dir_name;
+                qDebug() << local_path_8bit;
 #endif //QT_DEBUG
-            }
 
-            std::vector<std::uint32_t> vec_names_off{};
-            std::uint32_t total = count;
+                get_path_range(buf, local_path_8bit.data(), &path_off,  &start_off, &end_off);
+
+                end_off = end_off == 0 ? get_tail(buf) : end_off;
+                start_off = start_off == 0 ? first_name(buf) : start_off;
+                std::uint32_t name_offs[MAX_RESULTS] {};
+                std::uint32_t count{ MAX_RESULTS };
 
 #ifdef QT_DEBUG
-            qDebug() << "total: " << total;
+                qDebug() << start_off << end_off << path_off;
 #endif //QT_DEBUG
 
-            while (count == 100) {
-                std::uint32_t names_off[100] {};
-                search_files(pos->second, &start_off, end_off, query_str.c_str(), names_off, &count);
+                search_files(buf, &start_off, end_off, query_str.constData(), name_offs, &count);
 
-                for (std::size_t index = 0; index < 100; ++index) {
-                    vec_names_off.push_back(names_off[index]);
+                char path[PATH_MAX];
+                for (std::uint32_t i = 0; i < count; i++) {
+                    char *file_or_dir_name{ get_path_by_name_off(buf, name_offs[i], path, sizeof(path)) };
+
+                    if (!DQuickSearchFilter::instance()->whetherFilterCurrentFile(QByteArray{ file_or_dir_name })) {
+                        searched_list.push_back(QString{ file_or_dir_name });
+                    }
                 }
 
-                total += count;
-            }
+                std::vector<std::uint32_t> vec_names_off{};
+                std::uint32_t total = count;
 
-            std::vector<std::uint32_t>::const_iterator off_beg{ vec_names_off.cbegin() };
+                while (count == 100) {
+                    std::uint32_t names_off[100] {};
+                    search_files(buf, &start_off, end_off, query_str.constData(), names_off, &count);
 
-            for (std::uint32_t index = count; index < total; ++index) {
-                char *file_or_dir_name{ get_path_by_name_off(pos->second, *off_beg, path, sizeof(path)) };
+                    for (std::size_t index = 0; index < 100; ++index) {
+                        vec_names_off.push_back(names_off[index]);
+                    }
 
-                if (!DQuickSearchFilter::instance()->whetherFilterCurrentFile(QByteArray{ file_or_dir_name })) {
-                    searched_list.push_back(QString{ file_or_dir_name });
+                    total += count;
                 }
 
-                ++off_beg;
+                std::vector<std::uint32_t>::const_iterator off_beg{ vec_names_off.cbegin() };
+
+                for (std::uint32_t index = count; index < total; ++index) {
+                    char *file_or_dir_name{ get_path_by_name_off(buf, *off_beg, path, sizeof(path)) };
+
+                    if (!DQuickSearchFilter::instance()->whetherFilterCurrentFile(QByteArray{ file_or_dir_name })) {
+                        searched_list.push_back(QString{ file_or_dir_name });
+                    }
+
+                    ++off_beg;
 
 #ifdef QT_DEBUG
-                qDebug() << file_or_dir_name;
+                    qDebug() << file_or_dir_name;
 #endif //QT_DEBUG
+                }
+
+                free_fs_buf(buf);
             }
         }
     }
@@ -320,27 +338,34 @@ void DQuickSearch::filesWereCreated(const QList<QByteArray> &files_path)
             }
 
             QPair<QString, QString> device_and_mount_point{ detail::get_mount_point_of_file(path, devices_and_mount_points) };
-            std::map<QString, fs_buf *>::const_iterator pos{ m_mount_point_and_lft_buf.find(device_and_mount_point.second) };
+            std::map<QString, QString>::const_iterator pos{ m_mount_point_and_lft_buf.find(device_and_mount_point.second) };
 
             if (pos == m_mount_point_and_lft_buf.cend()) {
                 continue;
             }
 
+            fs_buf *buf{ nullptr };
             std::basic_string<char> local_8bit{ path.toStdString() };
+            load_fs_buf(&buf, pos->second.toLocal8Bit().constData());
 
-            if (file_info.isSymLink()) {
-                insert_path(pos->second, const_cast<char *>(local_8bit.data()), ACT_NEW_SYMLINK, changes);
-                continue;
-            }
+            if (buf) {
 
-            if (file_info.isFile()) {
-                insert_path(pos->second, const_cast<char *>(local_8bit.data()), ACT_NEW_FILE, changes);
-                continue;
-            }
+                if (file_info.isSymLink()) {
+                    insert_path(buf, const_cast<char *>(local_8bit.data()), ACT_NEW_SYMLINK, changes);
+                    continue;
+                }
 
-            if (file_info.isDir()) {
-                insert_path(pos->second, const_cast<char *>(local_8bit.data()), ACT_NEW_FOLDER, changes);
-                continue;
+                if (file_info.isFile()) {
+                    insert_path(buf, const_cast<char *>(local_8bit.data()), ACT_NEW_FILE, changes);
+                    continue;
+                }
+
+                if (file_info.isDir()) {
+                    insert_path(buf, const_cast<char *>(local_8bit.data()), ACT_NEW_FOLDER, changes);
+                    continue;
+                }
+
+                free_fs_buf(buf);
             }
         }
     }
@@ -365,15 +390,21 @@ void DQuickSearch::filesWereDeleted(const QList<QByteArray> &files_path)
             }
 
             QPair<QString, QString> device_and_mount_point{ detail::get_mount_point_of_file(path, devices_and_mount_points) };
-            std::map<QString, fs_buf *>::const_iterator pos{ m_mount_point_and_lft_buf.find(device_and_mount_point.second) };
+            std::map<QString, QString>::const_iterator pos{ m_mount_point_and_lft_buf.find(device_and_mount_point.second) };
 
 
             if (pos == m_mount_point_and_lft_buf.cend()) {
                 continue;
             }
 
+            fs_buf *buf{ nullptr };
             std::basic_string<char> local_8bit{ path.toStdString() };
-            remove_path(pos->second, const_cast<char *>(local_8bit.data()), changes, &change_count);
+            load_fs_buf(&buf, pos->second.toLocal8Bit().constData());
+
+            if (buf) {
+                remove_path(buf, const_cast<char *>(local_8bit.data()), changes, &change_count);
+                free_fs_buf(buf);
+            }
         }
     }
 }
@@ -396,7 +427,7 @@ void DQuickSearch::filesWereRenamed(const QList<QPair<QByteArray, QByteArray> > 
             }
 
             QPair<QString, QString> device_and_mount_point{ detail::get_mount_point_of_file(path_str, devices_and_mount_points) };
-            std::map<QString, fs_buf *>::const_iterator pos{ m_mount_point_and_lft_buf.find(device_and_mount_point.second) };
+            std::map<QString, QString>::const_iterator pos{ m_mount_point_and_lft_buf.find(device_and_mount_point.second) };
 
             if (pos == m_mount_point_and_lft_buf.cend()) {
                 continue;
@@ -404,9 +435,24 @@ void DQuickSearch::filesWereRenamed(const QList<QPair<QByteArray, QByteArray> > 
 
             std::basic_string<char> old_name{ old_and_new_name.first.toStdString() };
             std::basic_string<char> new_name{ old_and_new_name.second.toStdString() };
-            rename_path(pos->second, const_cast<char *>(old_name.data()), const_cast<char *>(new_name.data()), changes, &change_count);
+
+            fs_buf *buf{ nullptr };
+            load_fs_buf(&buf, pos->second.toLocal8Bit().constData());
+
+            if (buf) {
+                rename_path(buf, const_cast<char *>(old_name.data()), const_cast<char *>(new_name.data()), changes, &change_count);
+                free_fs_buf(buf);
+            }
         }
     }
+}
+
+QPair<QString, QString> DQuickSearch::getDevAndMountPoint(const QString &local_path)
+{
+    std::multimap<QString, QString> devices_and_mount_points{ detail::query_partions_of_devices() };
+    QPair<QString, QString> device_and_mount_point{ detail::get_mount_point_of_file(local_path, devices_and_mount_points) };
+
+    return device_and_mount_point;
 }
 
 
@@ -419,7 +465,7 @@ void DQuickSearch::onMountAdded(const QString &blockDevicePath, const QByteArray
 
     std::lock_guard<std::mutex> raii_lock{ m_mutex };
 
-    if (is_filtered(mount_url)) {
+    if (isFiltered(mount_url)) {
         return;
     }
 
@@ -434,7 +480,7 @@ void DQuickSearch::onMountAdded(const QString &blockDevicePath, const QByteArray
             return;
         }
 
-        if (DQuickSearch::is_usb_device(blockDevicePath)) {
+        if (DQuickSearch::isUsbDevice(blockDevicePath)) {
 
             if (DQuickSearch::is_auto_indexes_removable()) {
 
@@ -446,7 +492,7 @@ void DQuickSearch::onMountAdded(const QString &blockDevicePath, const QByteArray
             return;
         }
 
-        if (!DQuickSearch::is_usb_device(blockDevicePath)) {
+        if (!DQuickSearch::isUsbDevice(blockDevicePath)) {
 
             if (DQuickSearch::is_auto_indexes_removable()) {
 
@@ -466,9 +512,6 @@ void DQuickSearch::onMountRemoved(const QString &blockDevicePath, const QByteArr
     QString mount_point{ detail::restore_escaped_char(mountPoint) };
 
     std::lock_guard<std::mutex> raii_lock{ m_mutex };
-
-    fs_buf *bufffer{ m_mount_point_and_lft_buf[mount_point] };
-    free_fs_buf(bufffer);
 
     m_mount_point_and_lft_buf.erase(mount_point);
 }
@@ -499,19 +542,20 @@ void DQuickSearch::onAutoInnerIndexesOpened()
 
             if (mount_point_pos != m_backup.cend()) {
                 fs_buf *buf{ nullptr };
-                std::basic_string<char> mount_point_str{ mount_point.toStdString() };
+                QByteArray lft_file{ mount_point.toLocal8Bit() };
 
-                if (mount_point_str == std::basic_string<char> {"/"}) {
-                    mount_point_str += std::basic_string<char> { ".__deepin.lft" };
+                if (lft_file == QByteArray{"/"}) {
+                    lft_file += QByteArray{ ".__deepin.lft" };
 
                 } else {
-                    mount_point_str += std::basic_string<char> { "/.__deepin.lft" };
+                    lft_file += QByteArray{ "/.__deepin.lft" };
                 }
 
-                int code{ load_fs_buf(&buf, mount_point_str.c_str()) };
+                int code{ load_fs_buf(&buf, lft_file.constData()) };
 
                 if (code == 0 && buf != nullptr) {
-                    m_mount_point_and_lft_buf.emplace(mount_point, buf);
+                    m_mount_point_and_lft_buf.emplace(mount_point, QString::fromLocal8Bit(lft_file));
+                    free_fs_buf(buf);
                 }
 
             } else {
@@ -546,18 +590,12 @@ void DQuickSearch::onAutoInnerIndexesClosed()
         QString mount_point{ top_element.mount_point };
 
         if (QFileInfo::exists(mount_point)) {
-            std::map<QString, fs_buf *>::iterator pos{ m_mount_point_and_lft_buf.find(mount_point) };
+            std::map<QString, QString>::iterator pos{ m_mount_point_and_lft_buf.find(mount_point) };
 
             if (pos != m_mount_point_and_lft_buf.cend()) {
-//                QString file_name{ pos->first + QString{ "/.__deepin.lft" } };
                 m_backup.push_back(pos->first);
-                free_fs_buf(pos->second);
                 m_mount_point_and_lft_buf.erase(pos->first);
                 m_backup.push_back(pos->first);
-
-//                if (!QFile::remove(file_name)) {
-//                    qWarning() << "failed to delete " << file_name;
-//                }
             }
         }
 
@@ -591,19 +629,20 @@ void DQuickSearch::onAutoRemovableIndexesOpened()
 
             if (mount_point_pos != m_backup.cend()) {
                 fs_buf *buf{ nullptr };
-                std::basic_string<char> mount_point_str{ mount_point.toStdString() };
+                QByteArray lft_file{ mount_point.toLocal8Bit() };
 
-                if (mount_point_str == std::basic_string<char> {"/"}) {
-                    mount_point_str += std::basic_string<char> { ".__deepin.lft" };
+                if (lft_file == QByteArray{"/"}) {
+                    lft_file += QByteArray{ ".__deepin.lft" };
 
                 } else {
-                    mount_point_str += std::basic_string<char> { "/.__deepin.lft" };
+                    lft_file += QByteArray{ "/.__deepin.lft" };
                 }
 
-                int code{ load_fs_buf(&buf, mount_point_str.c_str()) };
+                int code{ load_fs_buf(&buf, lft_file.constData()) };
 
                 if (code == 0 && buf != nullptr) {
-                    m_mount_point_and_lft_buf.emplace(mount_point, buf);
+                    m_mount_point_and_lft_buf.emplace(mount_point, QString::fromLocal8Bit(lft_file));
+                    free_fs_buf(buf);
                 }
 
             } else {
@@ -638,17 +677,11 @@ void DQuickSearch::onAutoRemovableIndexesClosed()
         QString mount_point{ top_element.mount_point };
 
         if (QFileInfo::exists(mount_point)) {
-            std::map<QString, fs_buf *>::iterator pos{ m_mount_point_and_lft_buf.find(mount_point) };
+            std::map<QString, QString>::iterator pos{ m_mount_point_and_lft_buf.find(mount_point) };
 
             if (pos != m_mount_point_and_lft_buf.cend()) {
-//                QString file_name{ pos->first + QString{ "/.__deepin.lft" } };
                 m_backup.push_back(pos->first);
-                free_fs_buf(pos->second);
                 m_mount_point_and_lft_buf.erase(pos->first);
-
-//                if (!QFile::remove(file_name)) {
-//                    qWarning() << "failed to delete " << file_name;
-//                }
             }
         }
 
@@ -684,12 +717,12 @@ void DQuickSearch::cache_every_partion()
             for (int index = 0; index < partion_count; ++index) {
                 QString mount_point{ detail::restore_escaped_char(partitions[index].mount_point) };
 
-                if (DFileInfo::exists(DUrl::fromLocalFile(partitions[index].mount_point))) {
+                if (QFileInfo::exists(mount_point)) {
 
-                    if (!is_filtered(DUrl::fromLocalFile(partitions[index].mount_point))) {
+                    if (!isFiltered(DUrl::fromLocalFile(mount_point))) {
 
-                        if (!create_lft(partitions[index].mount_point)) {
-                            qWarning() << "A error occured, when creating lft in: " << partitions[index].mount_point;
+                        if (!create_lft(mount_point)) {
+                            qWarning() << "A error occured, when creating lft in: " << mount_point;
                         }
                     }
                 }
@@ -709,7 +742,7 @@ void DQuickSearch::cache_every_partion()
 
                 if (DFileInfo::exists(DUrl::fromLocalFile(partion.mount_point))) {
 
-                    if (!is_filtered(DUrl::fromLocalFile(partion.mount_point))) {
+                    if (!isFiltered(DUrl::fromLocalFile(partion.mount_point))) {
 
                         if (!create_lft(partion.mount_point)) {
                             qWarning() << "A error occured, when creating lft in: " << partion.mount_point;
@@ -730,7 +763,7 @@ void DQuickSearch::cache_every_partion()
 
                 if (DFileInfo::exists(DUrl::fromLocalFile(partion.mount_point))) {
 
-                    if (is_filtered(DUrl::fromLocalFile(partion.mount_point))) {
+                    if (isFiltered(DUrl::fromLocalFile(partion.mount_point))) {
 
                         if (!create_lft(partion.mount_point)) {
                             qWarning() << "A error occured, when creating lft in: " << partion.mount_point;
@@ -750,7 +783,7 @@ void DQuickSearch::cache_every_partion()
 
 
 ///###: jundge whether the specify partition is a usb device.
-bool DQuickSearch::is_usb_device(const QString &dev_path)
+bool DQuickSearch::isUsbDevice(const QString &dev_path)
 {
     struct stat buf;
     char link[512] {};
@@ -788,6 +821,14 @@ bool DQuickSearch::is_usb_device(const QString &dev_path)
     return false;
 }
 
+bool DQuickSearch::isFiltered(const DUrl &path)
+{
+    QByteArray local8bit_str{ path.toLocalFile().toLocal8Bit() };
+    bool result{ DQuickSearchFilter::instance()->whetherFilterCurrentFile(local8bit_str) };
+
+    return result;
+}
+
 bool DQuickSearch::create_lft(const QString &mount_point)
 {
     if (!mount_point.isEmpty()) {
@@ -807,7 +848,8 @@ bool DQuickSearch::create_lft(const QString &mount_point)
             build_fstree(buffer, 0, NULL, NULL);
 
             if (save_fs_buf(buffer, file_located.c_str()) == 0) {
-                m_mount_point_and_lft_buf[mount_point] = buffer;
+                m_mount_point_and_lft_buf[mount_point] = QString::fromStdString(file_located);
+
                 return true;
             }
         }

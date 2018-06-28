@@ -86,14 +86,12 @@ public:
         return quick_search;
     }
 
-    ///###: These APIs are temporarily useless, under.
-    static bool is_usb_device(const QString &dev_path);
-    static bool is_filtered(const DUrl &path)
-    {
-        (void)path;
-        return false;
-    }
+    static QPair<QString, QString> getDevAndMountPoint(const QString &local_path);
+    static bool isUsbDevice(const QString &dev_path);
+    static bool isFiltered(const DUrl &path);
 
+
+    ///###: These APIs are temporarily useless, under.
     static bool is_auto_indexes_inner()
     {
         return true;
@@ -110,10 +108,12 @@ public slots:
     void onMountAdded(const QString &blockDevicePath, const QByteArray &mountPoint);
     void onMountRemoved(const QString &blockDevicePath, const QByteArray &mountPoint);
 
+    ///###: These APIs are temporarily useless, under.
     void onAutoInnerIndexesOpened();
     void onAutoInnerIndexesClosed();
     void onAutoRemovableIndexesOpened();
     void onAutoRemovableIndexesClosed();
+    ///###
 
 private:
     void cache_every_partion();
@@ -127,7 +127,7 @@ private:
     std::mutex m_mutex{};
     std::atomic<bool> m_flag{ false };
     std::deque<QString> m_backup{};
-    std::map<QString, fs_buf *> m_mount_point_and_lft_buf{};
+    std::map<QString, QString> m_mount_point_and_lft_buf{};
 
     std::basic_regex<char> m_wildcard_char{};
 

@@ -12,7 +12,8 @@
         "ThemeName": "light"
     },
     "GenericAttribute": {
-        "QuickSearch": false,
+        "IndexInternal": true,
+        "IndexExternal": false,
         "PreviewCompressFile": false,
         "PreviewTextFile": true,
         "PreviewDocumentFile": true,

@@ -24,6 +24,7 @@
 
 #include <QList>
 #include <QDebug>
+#include <QFileInfo>
 
 #include "dfmapplication.h"
 #include "dquicksearchfilter.h"
@@ -69,12 +70,17 @@ DQuickSearchFilterPrivate::DQuickSearchFilterPrivate(DQuickSearchFilter *const q
 
 bool DQuickSearchFilterPrivate::whetherFilterCurrentFile(const QByteArray &file) const
 {
-    if (file.isEmpty()) {
+    if (m_black_list.isEmpty()) {
+        return false;
+    }
+
+    if (file.isEmpty() && QFileInfo::exists(QString::fromLocal8Bit(file))) {
 
         for (const std::basic_regex<char> &regex : m_black_list) {
+
             std::match_results<QByteArray::const_iterator> matched_result{};
 
-            if (std::regex_search(file.constData(), matched_result, regex)) {
+            if (std::regex_match(file.constData(), matched_result, regex)) {
                 return false;
             }
         }
