@@ -371,6 +371,11 @@ int TrashFileInfo::userColumnWidth(int userColumnRole, const QFontMetrics &fontM
     return DAbstractFileInfo::userColumnWidth(userColumnRole, fontMetrics);
 }
 
+QString TrashFileInfo::subtitleForEmptyFloder() const
+{
+    return QObject::tr("Folder is empty");
+}
+
 //int TrashFileInfo::userRowHeight(const QFontMetrics &fontMetrics) const
 //{
 //    return fontMetrics.height() * 2 + 10;
