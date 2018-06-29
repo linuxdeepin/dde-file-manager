@@ -117,8 +117,30 @@ void TrashWidget::dragEnterEvent(QDragEnterEvent *e)
         return;
     }
 
-    if (e->mimeData()->hasFormat("text/uri-list"))
-        return e->accept();
+    if (!e->mimeData()->hasUrls())
+        e->ignore();
+
+    e->setDropAction(Qt::MoveAction);
+
+    if (e->dropAction() != Qt::MoveAction) {
+        e->ignore();
+    } else {
+        e->accept();
+    }
+}
+
+void TrashWidget::dragMoveEvent(QDragMoveEvent *e)
+{
+    if (!e->mimeData()->hasUrls())
+        return;
+
+    e->setDropAction(Qt::MoveAction);
+
+    if (e->dropAction() != Qt::MoveAction) {
+        e->ignore();
+    } else {
+        e->accept();
+    }
 }
 
 void TrashWidget::dropEvent(QDropEvent *e)
@@ -126,12 +148,19 @@ void TrashWidget::dropEvent(QDropEvent *e)
     if (e->mimeData()->hasFormat("RequestDock"))
         return removeApp(e->mimeData()->data("AppKey"));
 
-    if (e->mimeData()->hasFormat("text/uri-list"))
-    {
-        const QMimeData *mime = e->mimeData();
-        for (auto url : mime->urls())
-            moveToTrash(url);
+    if (!e->mimeData()->hasUrls()) {
+        return e->ignore();
     }
+
+    e->setDropAction(Qt::MoveAction);
+
+    if (e->dropAction() != Qt::MoveAction) {
+        return e->ignore();
+    }
+
+    const QMimeData *mime = e->mimeData();
+    for (auto url : mime->urls())
+        moveToTrash(url);
 }
 
 void TrashWidget::paintEvent(QPaintEvent *e)
