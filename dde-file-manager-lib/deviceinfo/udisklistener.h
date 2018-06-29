@@ -59,6 +59,7 @@ public:
     UDiskDeviceInfoPointer getDevice(const QString &id);
     void addDevice(UDiskDeviceInfoPointer device);
     void removeDevice(UDiskDeviceInfoPointer device);
+    bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const override;
 
     QString lastPart(const QString &path);
     UDiskDeviceInfoPointer hasDeviceInfo(const QString &id);

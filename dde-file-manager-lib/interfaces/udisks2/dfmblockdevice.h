@@ -176,7 +176,8 @@ public Q_SLOTS:
     // of Filesystem
     QString mount(const QVariantMap &options);
     void unmount(const QVariantMap &options);
-    void setLabel(const QString &label, const QVariant &options);
+    bool canSetLabel() const;
+    void setLabel(const QString &label, const QVariantMap &options);
 
     // of Encrypted
     void changePassphrase(const QString &passphrase, const QString &new_passphrase, const QVariantMap &options);

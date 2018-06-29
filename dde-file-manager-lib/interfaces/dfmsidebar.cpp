@@ -255,6 +255,24 @@ void DFMSideBarPrivate::initMountedVolumes()
         Q_CHECK_PTR(item); // should always find one
         q->removeItem(item);
     });
+
+    // Device/volume get renamed.
+    q->connect(devices_watcher, &DAbstractFileWatcher::fileMoved, group, [group, q](const DUrl & fromUrl, const DUrl & toUrl) {
+        Q_UNUSED(fromUrl);
+        QUrlQuery query(toUrl);
+        QString newName = query.queryItemValue("new_name");
+        DUrl url = toUrl.adjusted(DUrl::RemoveQuery);
+        DFMSideBarItem *item = group->findItem(url);
+        Q_CHECK_PTR(item); // should always find one
+        DAbstractFileInfoPointer fileInfo = DFileService::instance()->createFileInfo(q, url);
+        if (fileInfo) {
+            if (!newName.isEmpty()) {
+                item->setText(newName);
+            } else {
+                item->setText(fileInfo->fileDisplayName());
+            }
+        }
+    });
 }
 
 void DFMSideBarPrivate::initUserShareItem()

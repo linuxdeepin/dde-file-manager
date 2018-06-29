@@ -202,8 +202,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     case DFMEvent::RenameFile: {
         const QSharedPointer<DFMRenameEvent> &e = event.staticCast<DFMRenameEvent>();
         const DAbstractFileInfoPointer &f = createFileInfo(this, e->toUrl());
-
-        if (f->exists() && !e->silent()) {
+        if (f && f->exists() && !e->silent()) {
             DThreadUtil::runInMainThread(dialogManager, &DialogManager::showRenameNameSameErrorDialog, f->fileDisplayName(), *event.data());
             result = false;
         } else {

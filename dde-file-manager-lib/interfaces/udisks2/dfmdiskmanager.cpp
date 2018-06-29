@@ -147,6 +147,15 @@ void DFMDiskManagerPrivate::_q_onPropertiesChanged(const QString &interface, con
     }
 }
 
+/*!
+ * \class DFMDiskManager
+ * \inmodule dde-file-manager-lib
+ *
+ * \brief DFMDiskManager provide severial ways to manage devices and partitions.
+ *
+ * \sa DFMBlockPartition, DFMBlockDevice, UDiskDeviceInfo
+ */
+
 DFMDiskManager::DFMDiskManager(QObject *parent)
     : QObject(parent)
     , d_ptr(new DFMDiskManagerPrivate(this))
@@ -235,6 +244,11 @@ DFMBlockPartition *DFMDiskManager::createBlockPartition(const QString &path, QOb
 DFMDiskDevice *DFMDiskManager::createDiskDevice(const QString &path, QObject *parent)
 {
     return new DFMDiskDevice(path, parent);
+}
+
+QDBusError DFMDiskManager::lastError()
+{
+    return QDBusConnection::systemBus().lastError();
 }
 
 void DFMDiskManager::setWatchChanges(bool watchChanges)
