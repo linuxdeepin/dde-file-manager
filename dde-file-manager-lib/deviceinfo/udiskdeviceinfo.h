@@ -80,7 +80,7 @@ public:
     bool isReadable() const Q_DECL_OVERRIDE;
     bool isWritable() const Q_DECL_OVERRIDE;
 
-    bool canRename() const Q_DECL_OVERRIDE;
+    bool canRename() const override;
     QIcon fileIcon() const Q_DECL_OVERRIDE;
     QIcon fileIcon(int width, int height) const;
     bool isDir() const Q_DECL_OVERRIDE;
@@ -88,6 +88,8 @@ public:
 
     QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
     QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
+
+    DUrl getUrlByNewFileName(const QString &fileName) const override;
 
     bool canRedirectionFileUrl() const Q_DECL_OVERRIDE;
     DUrl redirectedFileUrl() const Q_DECL_OVERRIDE;

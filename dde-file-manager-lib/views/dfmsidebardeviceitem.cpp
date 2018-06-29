@@ -80,6 +80,7 @@ QVariantHash DFMSideBarDeviceItem::getExtensionPropertys() const
 QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
 {
     QMenu *menu = new QMenu();
+    const DAbstractFileInfoPointer infoPointer = fileService->createFileInfo(this, url());
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
     QVariantHash info = getExtensionPropertys();
     DUrl deviceIdUrl;
@@ -103,6 +104,13 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
     });
 
     menu->addSeparator();
+
+    if (infoPointer->canRename()) {
+        menu->addAction(QObject::tr("Rename"), [this]() {
+            DFMSideBarDeviceItem *ccItem = const_cast<DFMSideBarDeviceItem *>(this);
+            ccItem->showRenameEditor();
+        });
+    }
 
     if (info.value("canEject", false).toBool()) {
         menu->addAction(QObject::tr("Eject"), [this, info]() {

@@ -36,12 +36,18 @@
 #include "singleton.h"
 
 #include "gvfs/gvfsmountmanager.h"
+#include "udiskdeviceinfo.h"
+#include "dfmblockdevice.h"
+#include "dfmdiskmanager.h"
 #include "shutil/fileutils.h"
+#include "dialogs/dialogmanager.h"
 #include "private/dabstractfilewatcher_p.h"
 
 #include <QSettings>
 #include <QProcess>
 #include <QStorageInfo>
+#include <QUrlQuery>
+
 
 class UDiskFileWatcher;
 class UDiskFileWatcherPrivate : public DAbstractFileWatcherPrivate
@@ -120,6 +126,54 @@ void UDiskListener::removeDevice(UDiskDeviceInfoPointer device)
     DAbstractFileWatcher::ghostSignal(DUrl(DEVICE_ROOT),
                                       &DAbstractFileWatcher::fileDeleted,
                                       DUrl::fromDeviceId(device->getId()));
+}
+
+bool UDiskListener::renameFile(const QSharedPointer<DFMRenameEvent> &event) const
+{
+    const DUrl &oldUrl = event->fromUrl();
+    const DUrl &newUrl = event->toUrl();
+
+    const QSharedPointer<DFMCreateFileInfoEvnet> e(new DFMCreateFileInfoEvnet(nullptr, oldUrl));
+    const DAbstractFileInfoPointer &oldDevicePointer = UDiskListener::createFileInfo(e);
+
+    DAbstractFileInfo* info = oldDevicePointer.data();
+    UDiskDeviceInfo* udiskInfo = dynamic_cast<UDiskDeviceInfo*>(info);
+    QString devicePath = udiskInfo->getPath();
+    QUrlQuery query(newUrl);
+    devicePath.replace("dev", "org/freedesktop/UDisks2/block_devices");
+    QString newName = query.queryItemValue("new_name");
+    DFMBlockDevice *partition = DFMDiskManager::createBlockDevice(devicePath, nullptr);
+
+    if (!partition) {
+        return false;
+    }
+
+    // set new label name
+    partition->setLabel(newName, {});
+
+    // check if we got error
+    QDBusError err = DFMDiskManager::lastError();
+    qDebug() << err.type();
+    switch (err.type()) {
+    case QDBusError::NoReply:
+        // blumia: user doesn't do action and caused a dbus message reply timeout error (org.freedesktop.DBus.Error.NoReply).
+        //         just return it and don't show any error message dialog.
+        //         notice that don't be confused with another timeout-releated error type (org.freedesktop.DBus.Error.Timeout
+        //         and org.freedesktop.DBus.Error.TimedOut), the `Timeout` one *possibly* means a socket ETIMEDOUT error
+        //         and the `Timedout` one means certain timeout errors.
+        // see also: https://dbus.freedesktop.org/doc/api/html/group__DBusProtocol.html
+        //           https://www.freedesktop.org/wiki/Software/DBusBindingErrors/ (¯\_(ツ)_/¯)
+        return false;
+    case QDBusError::NoError:
+        // TODO: create and manage a device list and use `idLabelChanged` signal instead.
+        DAbstractFileWatcher::ghostSignal(DUrl(DEVICE_ROOT), &DAbstractFileWatcher::fileMoved, oldUrl, newUrl);
+        return true;
+    default:
+        dialogManager->showErrorDialog("Placeholder Title", err.message());
+        return false;
+    }
+
+    return false;
 }
 
 void UDiskListener::update()

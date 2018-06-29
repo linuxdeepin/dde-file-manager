@@ -742,6 +742,15 @@ void DFMBlockPartition::setType(DFMBlockPartition::Type type, const QVariantMap 
     setType(type_string, options);
 }
 
+/*!
+ * \class DFMBlockPartition
+ * \inmodule dde-file-manager-lib
+ *
+ * \brief DFMBlockPartition class comment goes here
+ *
+ * \sa DFMDiskManager::createBlockPartition
+ */
+
 DFMBlockPartition::DFMBlockPartition(const QString &path, QObject *parent)
     : DFMBlockDevice(*new DFMBlockPartitionPrivate(this), path, parent)
 {

@@ -552,7 +552,30 @@ void DFMBlockDevice::unmount(const QVariantMap &options)
     Q_UNUSED(reply)
 }
 
-void DFMBlockDevice::setLabel(const QString &label, const QVariant &options)
+/*!
+ * \brief Check if we can set the filesystem label.
+ *
+ * \return
+ */
+bool DFMBlockDevice::canSetLabel() const
+{
+    if (!hasFileSystem()) {
+        return false;
+    }
+
+    if (fsType() == ntfs && !mountPoints().isEmpty()) {
+        return false;
+    }
+
+    return true;
+}
+
+/*!
+ * \brief Sets the filesystem label.
+ *
+ * \param options Options (currently unused except for standard options).
+ */
+void DFMBlockDevice::setLabel(const QString &label, const QVariantMap &options)
 {
     Q_D(const DFMBlockDevice);
 

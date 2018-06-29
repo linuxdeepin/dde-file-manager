@@ -34,6 +34,8 @@
 #include "gvfs/gvfsmountmanager.h"
 #include "gvfs/qdrive.h"
 #include "app/define.h"
+#include "dfmdiskmanager.h"
+#include "dfmblockdevice.h"
 
 #include <QIcon>
 
@@ -254,7 +256,17 @@ bool UDiskDeviceInfo::isWritable() const
 
 bool UDiskDeviceInfo::canRename() const
 {
-    return false;
+    // blumia: since we now both use the old gvfs interface and the new udisks2 interface
+    //         we should convert the path from local volumn path to the dbus path which is
+    //         used by our udisks2 wrapper classes.
+    QString devicePath = this->getPath();
+    devicePath.replace("dev", "org/freedesktop/UDisks2/block_devices");
+
+    DFMBlockDevice *partition = DFMDiskManager::createBlockDevice(devicePath, nullptr);
+    bool result = partition->canSetLabel();
+    partition->deleteLater();
+
+    return result;
 }
 
 QIcon UDiskDeviceInfo::fileIcon() const
@@ -357,6 +369,16 @@ QSet<MenuAction> UDiskDeviceInfo::disableMenuActionList() const
 
 
     return actionKeys;
+}
+
+DUrl UDiskDeviceInfo::getUrlByNewFileName(const QString &fileName) const
+{
+    DUrl url = DUrl::fromDeviceId(getId());
+    QUrlQuery query;
+    query.addQueryItem("new_name", fileName);
+    url.setQuery(query);
+
+    return url;
 }
 
 bool UDiskDeviceInfo::canRedirectionFileUrl() const

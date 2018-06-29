@@ -25,6 +25,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QDBusError>
 
 DFM_BEGIN_NAMESPACE
 
@@ -52,6 +53,8 @@ public:
     static DFMBlockDevice *createBlockDevice(const QString &path, QObject *parent = nullptr);
     static DFMBlockPartition *createBlockPartition(const QString &path, QObject *parent = nullptr);
     static DFMDiskDevice *createDiskDevice(const QString &path, QObject *parent = nullptr);
+
+    static QDBusError lastError();
 
 public Q_SLOTS:
     void setWatchChanges(bool watchChanges);
