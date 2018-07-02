@@ -295,12 +295,12 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
 //        }
 //    }// end
 
-    const QMimeType &mime = d->mimeDatabase.mimeTypeForFile(info);
+    const QMimeType &mime = d->mimeDatabase.mimeTypeForFile(info, QMimeDatabase::MatchContent);
 
     QScopedPointer<QImage> image(new QImage());
 
     if (mime.name().startsWith("image/")) {
-        QImageReader reader(absoluteFilePath);
+        QImageReader reader(absoluteFilePath, mime.preferredSuffix().toLatin1());
 
         if (!reader.canRead()) {
             d->errorString = reader.errorString();
