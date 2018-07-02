@@ -32,7 +32,7 @@
 #include <QLabel>
 #include <QFileInfo>
 
-#include <anchors.h>
+#include <danchors.h>
 
 #include "imageview.h"
 
@@ -54,11 +54,31 @@ ImagePreview::~ImagePreview()
         m_messageStatusBar->deleteLater();
 }
 
-bool ImagePreview::canPreview(const QUrl &url) const
+bool ImagePreview::canPreview(const QUrl &url, QByteArray *format) const
 {
-    const QByteArray &format = QImageReader::imageFormat(url.toLocalFile());
+    QByteArray f = QImageReader::imageFormat(url.toLocalFile());
 
-    return QImageReader::supportedImageFormats().contains(format);
+    if (f.isEmpty()) {
+        QMimeDatabase mimeDatabase;
+
+        const QMimeType &mt = mimeDatabase.mimeTypeForFile(url.toLocalFile(), QMimeDatabase::MatchContent);
+
+        f = mt.preferredSuffix().toLatin1();
+
+        if (f.isEmpty()) {
+            if (format) {
+                *format = f;
+            }
+
+            return false;
+        }
+    }
+
+    if (format) {
+        *format = f;
+    }
+
+    return QImageReader::supportedImageFormats().contains(f);
 }
 
 void ImagePreview::initialize(QWidget *window, QWidget *statusBar)
@@ -71,7 +91,7 @@ void ImagePreview::initialize(QWidget *window, QWidget *statusBar)
                                    font-weight: 300;\
                                    color: #545454;}");
 
-    AnchorsBase(m_messageStatusBar).setCenterIn(statusBar);
+    DAnchorsBase(m_messageStatusBar).setCenterIn(statusBar);
 }
 
 bool ImagePreview::setFileUrl(const DUrl &url)
@@ -82,15 +102,17 @@ bool ImagePreview::setFileUrl(const DUrl &url)
     if (!url.isLocalFile())
         return false;
 
-    if (!canPreview(url))
+    QByteArray format;
+
+    if (!canPreview(url, &format))
         return false;
 
     m_url = url;
 
     if (!m_imageView)
-        m_imageView = new ImageView(url.toLocalFile());
+        m_imageView = new ImageView(url.toLocalFile(), format);
     else
-        m_imageView->setFile(url.toLocalFile());
+        m_imageView->setFile(url.toLocalFile(), format);
 
     const QSize &image_size = m_imageView->sourceSize();
 

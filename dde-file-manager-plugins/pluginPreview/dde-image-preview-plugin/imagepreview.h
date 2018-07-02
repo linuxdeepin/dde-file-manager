@@ -48,7 +48,7 @@ public:
     explicit ImagePreview(QObject *parent = 0);
     ~ImagePreview();
 
-    bool canPreview(const QUrl &url) const;
+    bool canPreview(const QUrl &url, QByteArray *format = nullptr) const;
 
     void initialize(QWidget *window, QWidget *statusBar) Q_DECL_OVERRIDE;
 

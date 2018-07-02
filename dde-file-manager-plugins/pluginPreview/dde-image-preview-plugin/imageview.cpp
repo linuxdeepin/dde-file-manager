@@ -37,17 +37,17 @@
 
 #define MIN_SIZE QSize(400, 300)
 
-ImageView::ImageView(const QString &fileName, QWidget *parent)
+ImageView::ImageView(const QString &fileName, const QByteArray &format, QWidget *parent)
     : QLabel(parent)
 {
-    setFile(fileName);
+    setFile(fileName, format);
     setMinimumSize(MIN_SIZE);
     setAlignment(Qt::AlignCenter);
 }
 
-void ImageView::setFile(const QString &fileName)
+void ImageView::setFile(const QString &fileName, const QByteArray &format)
 {
-    QImageReader reader(fileName);
+    QImageReader reader(fileName, format);
 
     m_sourceSize = reader.size();
 
