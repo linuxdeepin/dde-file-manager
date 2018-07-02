@@ -563,7 +563,10 @@ bool DFMBlockDevice::canSetLabel() const
         return false;
     }
 
-    if (fsType() == ntfs && !mountPoints().isEmpty()) {
+    // blumia: Since gvfs can't correctly mount a label-renamed patition
+    //         we simply disable rename support if we don't unmount the
+    //         patition. Will be add back when we switch to udisks2.
+    if (/*fsType() == ntfs && */!mountPoints().isEmpty()) {
         return false;
     }
 
