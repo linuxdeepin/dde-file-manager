@@ -1,3 +1,13 @@
+<a name="4.5.6.2"></a>
+## 4.5.6.2 (2018-07-02)
+
+
+#### Bug Fixes
+
+*   can not drag files to trash on dde-dock ([e531e981](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/e531e98171288b0aaf94284a2a52e3163e4b28e3))
+
+
+
 <a name="4.5.6.1"></a>
 ## 4.5.6.1 (2018-06-25)
 
