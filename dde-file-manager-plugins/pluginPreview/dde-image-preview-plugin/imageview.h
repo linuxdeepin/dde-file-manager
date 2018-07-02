@@ -31,9 +31,9 @@ class ImageView : public QLabel
 {
     Q_OBJECT
 public:
-    explicit ImageView(const QString &fileName, QWidget *parent = 0);
+    explicit ImageView(const QString &fileName, const QByteArray &format, QWidget *parent = 0);
 
-    void setFile(const QString &fileName);
+    void setFile(const QString &fileName, const QByteArray &format);
     QSize sourceSize() const;
 
 private:
