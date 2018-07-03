@@ -71,8 +71,8 @@ private:
 
     QButtonGroup* m_anonymousButtonGroup;
 
-    DLineEdit* m_usernameLineEdit;
-    DLineEdit* m_domainLineEdit;
+    QLineEdit* m_usernameLineEdit;
+    QLineEdit* m_domainLineEdit;
     DPasswordEdit* m_passwordLineEdit;
 
     QCheckBox* m_passwordCheckBox;
