@@ -322,6 +322,10 @@ QVector<MenuAction> UDiskDeviceInfo::menuActionList(DAbstractFileInfo::MenuType 
                << MenuAction::OpenDiskInNewTab
                << MenuAction::Separator;
 
+    if (canRename()) {
+        actionKeys << MenuAction::Rename;
+    }
+
     if (canEject()) {
         actionKeys << MenuAction::Eject;
     }

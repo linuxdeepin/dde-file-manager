@@ -42,6 +42,7 @@
 #include "dstatusbar.h"
 #include "dfmbaseview.h"
 
+
 DFM_USE_NAMESPACE
 
 class FlowLayout;
@@ -73,6 +74,7 @@ protected:
     void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE;
 };
 
+class DFMUrlBaseEvent;
 class ComputerViewItem: public FileIconItem
 {
     Q_OBJECT
@@ -125,6 +127,7 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event);
     void mousePressEvent(QMouseEvent* event);
     void mouseDoubleClickEvent(QMouseEvent* event);
+    bool eventFilter(QObject *obj, QEvent *event) override;
     bool event(QEvent *event);
 
 private:
@@ -174,6 +177,7 @@ public:
     void loadViewState();
     void saveViewState();
 
+    ComputerViewItem* findDeviceViewItemByUrl(const DUrl& url);
     QWidget *widget() const Q_DECL_OVERRIDE;
     DUrl rootUrl() const Q_DECL_OVERRIDE;
     bool setRootUrl(const DUrl &url) Q_DECL_OVERRIDE;
@@ -188,6 +192,7 @@ public slots:
     void shrinkIcon();
     void resizeAllItemsBySizeIndex(int index);
     void updateItemBySizeIndex(const int& index, ComputerViewItem* item);
+    void onRequestEdit(const DFMUrlBaseEvent &event);
 
 protected:
     void resizeEvent(QResizeEvent* event);
