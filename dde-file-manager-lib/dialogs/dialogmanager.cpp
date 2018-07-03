@@ -527,7 +527,7 @@ void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
             int index = urlList.indexOf(url);
             if (DFMGlobal::isComputerDesktopFile(url) || url == DUrl::fromComputerFile("/")) {
                 showComputerPropertyDialog();
-            } else if (DFMGlobal::isTrashDesktopFile(url)) {
+            } else if (DFMGlobal::isTrashDesktopFile(url) || url == DUrl::fromTrashFile("/")) {
                 DFMEvent event(this);
                 event.setData(url);
                 showTrashPropertyDialog(event);
@@ -580,6 +580,7 @@ void DialogManager::showShareOptionsInPropertyDialog(const DFMUrlListBaseEvent &
 
 void DialogManager::showTrashPropertyDialog(const DFMEvent &event)
 {
+    Q_UNUSED(event);
     if (m_trashDialog) {
         m_trashDialog->close();
     }
