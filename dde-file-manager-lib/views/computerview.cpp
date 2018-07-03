@@ -27,13 +27,13 @@
 #include "dfilemenu.h"
 #include "dfilemenumanager.h"
 #include "windowmanager.h"
+#include "dfmevent.h"
 #include "dfmeventdispatcher.h"
 #include "dfmapplication.h"
 #include "dfmsettings.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
-#include "dfmevent.h"
 #include "dfileservices.h"
 #include "controllers/pathmanager.h"
 #include "controllers/appcontroller.h"
@@ -44,6 +44,7 @@
 #include "singleton.h"
 #include "../shutil/fileutils.h"
 #include "partman/partition.h"
+#include "dabstractfilewatcher.h"
 
 #include <dslider.h>
 
@@ -103,7 +104,8 @@ ComputerViewItem::ComputerViewItem(QWidget *parent):
     getTextEdit()->setAttribute(Qt::WA_TransparentForMouseEvents);
     getTextEdit()->setTextInteractionFlags(Qt::NoTextInteraction);
     getTextEdit()->setStyleSheet("border:1px solid red");
-
+    getTextEdit()->setObjectName("CVI_TextEdit");
+    getTextEdit()->installEventFilter(this);
 
     m_sizeLabel = new QLabel(this);
     m_sizeLabel->setObjectName("DiskSize");
@@ -117,6 +119,11 @@ ComputerViewItem::ComputerViewItem(QWidget *parent):
     m_progressLine->hide();
 
     connect(qApp, &DApplication::iconThemeChanged, this, &ComputerViewItem::updateStatus);
+    connect(this, &ComputerViewItem::inputFocusOut, this, [ = ]{
+//        QString newName = getTextEdit()->toPlainText();
+        getTextEdit()->setReadOnly(true);
+        updateStatus();
+    });
 }
 
 QIcon ComputerViewItem::getIcon(int size)
@@ -225,6 +232,38 @@ void ComputerViewItem::mouseDoubleClickEvent(QMouseEvent *event)
     FileIconItem::mouseDoubleClickEvent(event);
 }
 
+bool ComputerViewItem::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::KeyPress) {
+        QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+        switch (keyEvent->key()) {
+        case Qt::Key_Enter:
+        case Qt::Key_Return:
+            event->accept();
+            // do rename here
+            {
+                DUrl url;
+                url.setScheme(DEVICE_SCHEME);
+                url.setPath(m_deviceInfo->getId());
+                DUrl urlWithNewName = url;
+                QUrlQuery query;
+                query.addQueryItem("new_name", getTextEdit()->toPlainText());
+                urlWithNewName.setQuery(query);
+                fileService->renameFile(this, url, urlWithNewName, true);
+            }
+            // done
+            emit inputFocusOut();
+            return true;
+        case Qt::Key_Escape:
+            emit inputFocusOut();
+            return true;
+        default:
+            break;
+        }
+    }
+    return FileIconItem::eventFilter(obj, event);
+}
+
 bool ComputerViewItem::event(QEvent *event)
 {
     if (event->type() == QEvent::Resize) {
@@ -265,7 +304,11 @@ void ComputerViewItem::updateStatus()
         if (fontMetrics().width(m_name) < width()) {
             getTextEdit()->setFixedWidth(fontMetrics().width(m_name) + 10);
         }
-        getTextEdit()->setStyleSheet("border-radius:4px;background-color: #2da6f7; color:white");
+        if (getTextEdit()->isReadOnly()) {
+            getTextEdit()->setStyleSheet("border-radius:4px; background-color:#2da6f7; color:white");
+        } else {
+            getTextEdit()->setStyleSheet("");
+        }
     } else {
         setIconSizeState(m_iconSize, QIcon::Normal);
         QString ds = DFMGlobal::elideText(m_name,
@@ -305,6 +348,17 @@ void ComputerViewItem::updateStatus()
         m_lockedLabel->move(m_iconSize * 2 / 3, m_iconSize * 2 / 3);
         m_lockedLabel->raise();
         m_lockedLabel->show();
+    }
+
+    if (!getTextEdit()->isReadOnly()) {
+        // Editing name
+        this->setBorderColor(QColor("#2da6f7"));
+        getTextEdit()->setFixedWidth(width());
+        getTextEdit()->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+        getTextEdit()->setFocus();
+    } else {
+        this->setBorderColor(QColor("#002da6f7")); // argb
+        getTextEdit()->setAttribute(Qt::WA_TransparentForMouseEvents);
     }
 }
 
@@ -551,6 +605,43 @@ void ComputerView::initUI()
 
 void ComputerView::initConnect()
 {
+    DAbstractFileWatcher *devices_watcher = fileService->createFileWatcher(this, DUrl(DEVICE_ROOT), this);
+    Q_CHECK_PTR(devices_watcher);
+    devices_watcher->startWatcher();
+
+    // Patition get renamed.
+    connect(devices_watcher, &DAbstractFileWatcher::fileMoved, this, [ = ](const DUrl & fromUrl, const DUrl & toUrl) {
+
+        const DAbstractFileInfoPointer &deviceInfoPointer = DFileService::instance()->createFileInfo(nullptr, fromUrl);
+        const UDiskDeviceInfo* info = dynamic_cast<UDiskDeviceInfo*>(deviceInfoPointer.data());
+        if (!deviceInfoPointer) {
+            return;
+        }
+
+        DUrl url;
+        if (info->getDiskInfo().isNativeCustom()) {
+            url = info->getMountPointUrl();
+        } else {
+            url = info->getMountPointUrl();
+            url.setQuery(info->getId());
+        }
+
+        ComputerViewItem *cvi = findDeviceViewItemByUrl(url);
+
+        if (!cvi) {
+            return;
+        }
+
+        QUrlQuery query(toUrl);
+        QString newName = query.queryItemValue("new_name");
+        if (!newName.isEmpty()) {
+            cvi->setName(newName);
+        } else {
+            cvi->setName(deviceInfoPointer->fileDisplayName());
+        }
+        cvi->updateStatus();
+    });
+
     connect(deviceListener, &UDiskListener::mountAdded, this, &ComputerView::mountAdded);
     connect(deviceListener, &UDiskListener::mountRemoved, this, &ComputerView::mountRemoved);
     connect(deviceListener, &UDiskListener::volumeAdded, this, &ComputerView::volumeAdded);
@@ -558,6 +649,8 @@ void ComputerView::initConnect()
     connect(m_statusBar->scalingSlider(), &DSlider::valueChanged, this, &ComputerView::resizeAllItemsBySizeIndex);
     connect(m_statusBar->scalingSlider(), &DSlider::valueChanged, this, &ComputerView::saveViewState);
     connect(DFMApplication::instance(), &DFMApplication::iconSizeLevelChanged, this, &ComputerView::resizeAllItemsBySizeIndex);
+    connect(fileSignalManager, &FileSignalManager::requestRename, this, &ComputerView::onRequestEdit);
+
 }
 
 void ComputerView::loadSystemItems()
@@ -686,6 +779,38 @@ void ComputerView::saveViewState()
     DFMApplication::appObtuselySetting()->setValue("FileViewState", COMPUTER_ROOT, QVariantMap {
                                                        {"iconSizeLevel", m_currentIconSizeIndex}
                                                    });
+}
+
+ComputerViewItem *ComputerView::findDeviceViewItemByUrl(const DUrl &url)
+{
+    auto getContextMenuUrl = [](ComputerViewItem *oneItem) {
+        DUrl url;
+        UDiskDeviceInfoPointer m_deviceInfo = oneItem->deviceInfo();
+        if (m_deviceInfo->getDiskInfo().isNativeCustom()) {
+            url = m_deviceInfo->getMountPointUrl();
+        } else {
+            url = m_deviceInfo->getMountPointUrl();
+            url.setQuery(m_deviceInfo->getId());
+        }
+        return url;
+    };
+    // Find the item we want to rename in the `Internam devices` section
+    foreach (ComputerViewItem *oneItem, m_nativeItems) {
+        qDebug() << oneItem->getUrl() << url;
+        if (getContextMenuUrl(oneItem) == url) {
+            return oneItem;
+        }
+    }
+
+    // not found? try `removeable devices` section
+    foreach (ComputerViewItem *oneItem, m_removableItems) {
+        if (getContextMenuUrl(oneItem) == url) {
+            return oneItem;
+        }
+    }
+
+    // return if still not found
+    return nullptr;
 }
 
 QWidget *ComputerView::widget() const
@@ -867,6 +992,26 @@ void ComputerView::updateItemBySizeIndex(const int &index, ComputerViewItem *ite
     item->setIconIndex(index);
     item->setIconSize(size);
     item->updateStatus();
+}
+
+void ComputerView::onRequestEdit(const DFMUrlBaseEvent &event)
+{
+    // find item and toggle rename
+    DUrl url = event.url();
+    ComputerViewItem *item = findDeviceViewItemByUrl(url);
+
+    // return if still not found
+    if (!item) {
+        return;
+    }
+
+    if (event.windowId() != item->windowId()) {
+        return;
+    }
+
+    item->getTextEdit()->setReadOnly(false);
+    item->updateStatus();
+    item->getTextEdit()->selectAll();
 }
 
 void ComputerView::resizeEvent(QResizeEvent *event)
