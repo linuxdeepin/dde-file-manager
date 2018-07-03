@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- dfmblockpartition.cpp -->
+  <title>DFMBlockPartition Class | Deepin File Manager</title>
+  <link rel="stylesheet" type="text/css" href="style/online.css" />
+</head>
+<body>
+<div class="header" id="qtdocheader">
+    <div class="main">
+    <div class="main-rounded">
+        <div class="navigationbar">
+        <ul>
+<li>DFMBlockPartition</li>
+    </ul>
+    </div>
+</div>
+<div class="content">
+<div class="line">
+<div class="content mainContent">
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-types">Public Types</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#public-slots">Public Slots</a></li>
+<li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#static-public-members">Static Public Members</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<div class="context">
+<h1 class="title">DFMBlockPartition Class</h1>
+<!-- $$$DFMBlockPartition-brief -->
+<p><a href="dfmblockpartition.html">DFMBlockPartition</a> class comment goes here <a href="#details">More...</a></p>
+<!-- @@@DFMBlockPartition -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;DFMBlockPartition&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> DFMBlockDevice</td></tr></table></div><ul>
+<li><a href="dfmblockpartition-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-types"></a>
+<h2 id="public-types">Public Types</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#Type-enum">Type</a></b> { Empty, FAT12Type, XENIX_root, XENIX_usr, ..., Unknow }</td></tr>
+</table></div>
+<a name="public-functions"></a>
+<h2 id="public-functions">Public Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#UUID">UUID</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> Type </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#eType">eType</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> GUIDType </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#guidType">guidType</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#isContained">isContained</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#isContainer">isContainer</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#name">name</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> uint </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#number">number</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> qulonglong </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#offset">offset</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> qulonglong </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#size">size</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#table">table</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#type">type</a></b>() const</td></tr>
+</table></div>
+<ul>
+<li class="fn">2 public functions inherited from <a href="dfmblockdevice.html#public-functions">DFMBlockDevice</a></li>
+</ul>
+<a name="public-slots"></a>
+<h2 id="public-slots">Public Slots</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#deletePartition">deletePartition</a></b>(const QVariantMap &amp;<i>options</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#resize">resize</a></b>(qulonglong <i>size</i>, const QVariantMap &amp;<i>options</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#setFlags">setFlags</a></b>(qulonglong <i>flags</i>, const QVariantMap &amp;<i>options</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#setName">setName</a></b>(const QString &amp;<i>name</i>, const QVariantMap &amp;<i>options</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#setType">setType</a></b>(const QString &amp;<i>type</i>, const QVariantMap &amp;<i>options</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#setType-1">setType</a></b>(Type <i>type</i>, const QVariantMap &amp;<i>options</i>)</td></tr>
+</table></div>
+<a name="signals"></a>
+<h2 id="signals">Signals</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#UUIDChanged">UUIDChanged</a></b>(const QString &amp;<i>UUID</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#eTypeChanged">eTypeChanged</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#flagsChanged">flagsChanged</a></b>(qulonglong <i>flags</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#guidTypeChanged">guidTypeChanged</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#isContainedChanged">isContainedChanged</a></b>(bool <i>isContained</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#isContainerChanged">isContainerChanged</a></b>(bool <i>isContainer</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#nameChanged">nameChanged</a></b>(const QString &amp;<i>name</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#numberChanged">numberChanged</a></b>(uint <i>number</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#offsetChanged">offsetChanged</a></b>(qulonglong <i>offset</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#sizeChanged">sizeChanged</a></b>(qulonglong <i>size</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#typeChanged">typeChanged</a></b>(const QString &amp;<i>type</i>)</td></tr>
+</table></div>
+<a name="static-public-members"></a>
+<h2 id="static-public-members">Static Public Members</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#guidTypeDescription">guidTypeDescription</a></b>(GUIDType <i>type</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="dfmblockpartition.html#typeDescription">typeDescription</a></b>(Type <i>type</i>)</td></tr>
+</table></div>
+<a name="details"></a>
+<!-- $$$DFMBlockPartition-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p><a href="dfmblockpartition.html">DFMBlockPartition</a> class comment goes here</p>
+</div>
+<p><b>See also </b><a href="dfmdiskmanager.html#createBlockPartition">DFMDiskManager::createBlockPartition</a>.</p>
+<!-- @@@DFMBlockPartition -->
+<div class="types">
+<h2>Member Type Documentation</h2>
+<!-- $$$Type$$$Empty$$$FAT12Type$$$XENIX_root$$$XENIX_usr$$$FAT16_Less_32M$$$Extended$$$FAT16Type$$$HPFS_NTFS$$$AIX$$$AIX_bootable$$$OS2_Boot_Manager$$$Win95_FAT32$$$Win95_FAT32_LBA$$$Win95_FAT16_LBA$$$Win95_Extended_LBA$$$OPUS$$$Hidden_FAT12$$$Compaq_diagnostics$$$Hidden_FAT16_Less_32M$$$Hidden_FAT16$$$Hidden_HPFS_or_NTFS$$$AST_SmartSleep$$$Hidden_Win95_FAT32$$$Hidden_Win95_FAT32_LBA$$$Hidden_Win95_FAT16_LBA$$$NEC_DOS$$$Plan9$$$PartitionMagic_recovery$$$Venix_80286$$$PPC_PReP_Boot$$$SFS$$$QNX4_dot_x$$$QNX4_dot_x_2nd_part$$$QNX4_dot_x_3rd_part$$$OnTrack_DM$$$OnTrack_DM6_Aux1$$$CP_M$$$OnTrack_DM6_Aux3$$$OnTrackDM6$$$EZ_Drive$$$Golden_Bow$$$Priam_Edisk$$$SpeedStor$$$GNU_HURD_or_SysV$$$Novell_Netware_286$$$Novell_Netware_386$$$DiskSecure_Multi_Boot$$$PC_IX$$$Old_Minix$$$Minix_old_Linux$$$Linux_swap$$$Linux$$$OS2_hidden_C_drive$$$Linux_extended$$$NTFS_volume_set_1$$$NTFS_volume_set_2$$$Linux_LVM$$$Amoeba$$$Amoeba_BBT$$$BSD_OS$$$IBM_Thinkpad_hibernation$$$FreeBSD$$$OpenBSD$$$NeXTSTEP$$$NetBSD$$$BSDI_fs$$$BSDI_swap$$$Boot_Wizard_hidden$$$DRDOS_sec_FAT12$$$DRDOS_sec_FAT16_Less_32M$$$DRDOS_sec_FAT16$$$Syrinx$$$Non_FS_data$$$CP_M_CTOS_dot_dot_dot$$$Dell_Utility$$$BootIt$$$DOS_access$$$DOS_R_O$$$SpeedStor_1$$$BeOS_fs$$$EFI_GPT$$$EFI_FAT12_16_32$$$Linux_PA_RISC_boot$$$SpeedStor_2$$$SeppdStor_3$$$DOS_secondary$$$Linux_raid_autodetect$$$LANstep$$$BBT$$$Unknow -->
+<h3 class="fn" id="Type-enum"><a name="Type-enum"></a>enum DFMBlockPartition::<span class="name">Type</span></h3>
+<!-- @@@Type -->
+</div>
+<div class="func">
+<h2>Member Function Documentation</h2>
+<!-- $$$UUID[overload1]$$$UUID -->
+<h3 class="fn" id="UUID"><a name="UUID"></a><span class="type">QString</span> DFMBlockPartition::<span class="name">UUID</span>() const</h3>
+<!-- @@@UUID -->
+<!-- $$$UUIDChanged[overload1]$$$UUIDChangedconstQString& -->
+<h3 class="fn" id="UUIDChanged"><a name="UUIDChanged"></a><code>[signal] </code><span class="type">void</span> DFMBlockPartition::<span class="name">UUIDChanged</span>(const <span class="type">QString</span> &amp;<i>UUID</i>)</h3>
+<!-- @@@UUIDChanged -->
+<!-- $$$deletePartition[overload1]$$$deletePartitionconstQVariantMap& -->
+<h3 class="fn" id="deletePartition"><a name="deletePartition"></a><code>[slot] </code><span class="type">void</span> DFMBlockPartition::<span class="name">deletePartition</span>(const <span class="type">QVariantMap</span> &amp;<i>options</i>)</h3>
+<!-- @@@deletePartition -->
+<!-- $$$eType[overload1]$$$eType -->
+<h3 class="fn" id="eType"><a name="eType"></a><span class="type"><a href="dfmblockpartition.html#Type-enum">Type</a></span> DFMBlockPartition::<span class="name">eType</span>() const</h3>
+<!-- @@@eType -->
+<!-- $$$eTypeChanged[overload1]$$$eTypeChanged -->
+<h3 class="fn" id="eTypeChanged"><a name="eTypeChanged"></a><code>[signal] </code><span class="type">void</span> DFMBlockPartition::<span class="name">eTypeChanged</span>()</h3>
+<!-- @@@eTypeChanged -->
+<!-- $$$flagsChanged[overload1]$$$flagsChangedqulonglong -->
+<h3 class="fn" id="flagsChanged"><a name="flagsChanged"></a><code>[signal] </code><span class="type">void</span> DFMBlockPartition::<span class="name">flagsChanged</span>(<span class="type">qulonglong</span> <i>flags</i>)</h3>
+<!-- @@@flagsChanged -->
+<!-- $$$guidType[overload1]$$$guidType -->
+<h3 class="fn" id="guidType"><a name="guidType"></a><span class="type">GUIDType</span> DFMBlockPartition::<span class="name">guidType</span>() const</h3>
+<!-- @@@guidType -->
+<!-- $$$guidTypeChanged[overload1]$$$guidTypeChanged -->
+<h3 class="fn" id="guidTypeChanged"><a name="guidTypeChanged"></a><code>[signal] </code><span class="type">void</span> DFMBlockPartition::<span class="name">guidTypeChanged</span>()</h3>
+<!-- @@@guidTypeChanged -->
+<!-- $$$guidTypeDescription[overload1]$$$guidTypeDescriptionGUIDType -->
+<h3 class="fn" id="guidTypeDescription"><a name="guidTypeDescription"></a><code>[static] </code><span class="type">QString</span> DFMBlockPartition::<span class="name">guidTypeDescription</span>(<span class="type">GUIDType</span> <i>type</i>)</h3>
+<!-- @@@guidTypeDescription -->
+<!-- $$$isContained[overload1]$$$isContained -->
+<h3 class="fn" id="isContained"><a name="isContained"></a><span class="type">bool</span> DFMBlockPartition::<span class="name">isContained</span>() const</h3>
+<!-- @@@isContained -->
+<!-- $$$isContainedChanged[overload1]$$$isContainedChangedbool -->
+<h3 class="fn" id="isContainedChanged"><a name="isContainedChanged"></a><code>[signal] </code><span class="type">void</span> DFMBlockPartition::<span class="name">isContainedChanged</span>(<span class="type">bool</span> <i>isContained</i>)</h3>
+<!-- @@@isContainedChanged -->
+<!-- $$$isContainer[overload1]$$$isContainer -->
+<h3 class="fn" id="isContainer"><a name="isContainer"></a><span class="type">bool</span> DFMBlockPartition::<span class="name">isContainer</span>() const</h3>
+<!-- @@@isContainer -->
+<!-- $$$isContainerChanged[overload1]$$$isContainerChangedbool -->
+<h3 class="fn" id="isContainerChanged"><a name="isContainerChanged"></a><code>[signal] </code><span class="type">void</span> DFMBlockPartition::<span class="name">isContainerChanged</span>(<span class="type">bool</span> <i>isContainer</i>)</h3>
+<!-- @@@isContainerChanged -->
+<!-- $$$name[overload1]$$$name -->
+<h3 class="fn" id="name"><a name="name"></a><span class="type">QString</span> DFMBlockPartition::<span class="name">name</span>() const</h3>
+<p><b>See also </b><a href="dfmblockpartition.html#setName">setName</a>().</p>
+<!-- @@@name -->
+<!-- $$$nameChanged[overload1]$$$nameChangedconstQString& -->
+<h3 class="fn" id="nameChanged"><a name="nameChanged"></a><code>[signal] </code><span class="type">void</span> DFMBlockPartition::<span class="name">nameChanged</span>(const <span class="type">QString</span> &amp;<i>name</i>)</h3>
+<!-- @@@nameChanged -->
+<!-- $$$number[overload1]$$$number -->
+<h3 class="fn" id="number"><a name="number"></a><span class="type">uint</span> DFMBlockPartition::<span class="name">number</span>() const</h3>
+<!-- @@@number -->
+<!-- $$$numberChanged[overload1]$$$numberChangeduint -->
+<h3 class="fn" id="numberChanged"><a name="numberChanged"></a><code>[signal] </code><span class="type">void</span> DFMBlockPartition::<span class="name">numberChanged</span>(<span class="type">uint</span> <i>number</i>)</h3>
+<!-- @@@numberChanged -->
+<!-- $$$offset[overload1]$$$offset -->
+<h3 class="fn" id="offset"><a name="offset"></a><span class="type">qulonglong</span> DFMBlockPartition::<span class="name">offset</span>() const</h3>
+<!-- @@@offset -->
+<!-- $$$offsetChanged[overload1]$$$offsetChangedqulonglong -->
+<h3 class="fn" id="offsetChanged"><a name="offsetChanged"></a><code>[signal] </code><span class="type">void</span> DFMBlockPartition::<span class="name">offsetChanged</span>(<span class="type">qulonglong</span> <i>offset</i>)</h3>
+<!-- @@@offsetChanged -->
+<!-- $$$resize[overload1]$$$resizequlonglongconstQVariantMap& -->
+<h3 class="fn" id="resize"><a name="resize"></a><code>[slot] </code><span class="type">void</span> DFMBlockPartition::<span class="name">resize</span>(<span class="type">qulonglong</span> <i>size</i>, const <span class="type">QVariantMap</span> &amp;<i>options</i>)</h3>
+<!-- @@@resize -->
+<!-- $$$setFlags[overload1]$$$setFlagsqulonglongconstQVariantMap& -->
+<h3 class="fn" id="setFlags"><a name="setFlags"></a><code>[slot] </code><span class="type">void</span> DFMBlockPartition::<span class="name">setFlags</span>(<span class="type">qulonglong</span> <i>flags</i>, const <span class="type">QVariantMap</span> &amp;<i>options</i>)</h3>
+<!-- @@@setFlags -->
+<!-- $$$setName[overload1]$$$setNameconstQString&constQVariantMap& -->
+<h3 class="fn" id="setName"><a name="setName"></a><code>[slot] </code><span class="type">void</span> DFMBlockPartition::<span class="name">setName</span>(const <span class="type">QString</span> &amp;<i>name</i>, const <span class="type">QVariantMap</span> &amp;<i>options</i>)</h3>
+<p><b>See also </b><a href="dfmblockpartition.html#name">name</a>().</p>
+<!-- @@@setName -->
+<!-- $$$setType[overload1]$$$setTypeconstQString&constQVariantMap& -->
+<h3 class="fn" id="setType"><a name="setType"></a><code>[slot] </code><span class="type">void</span> DFMBlockPartition::<span class="name">setType</span>(const <span class="type">QString</span> &amp;<i>type</i>, const <span class="type">QVariantMap</span> &amp;<i>options</i>)</h3>
+<p><b>See also </b><a href="dfmblockpartition.html#type">type</a>().</p>
+<!-- @@@setType -->
+<!-- $$$setType$$$setTypeTypeconstQVariantMap& -->
+<h3 class="fn" id="setType-1"><a name="setType-1"></a><code>[slot] </code><span class="type">void</span> DFMBlockPartition::<span class="name">setType</span>(<span class="type"><a href="dfmblockpartition.html#Type-enum">Type</a></span> <i>type</i>, const <span class="type">QVariantMap</span> &amp;<i>options</i>)</h3>
+<!-- @@@setType -->
+<!-- $$$size[overload1]$$$size -->
+<h3 class="fn" id="size"><a name="size"></a><span class="type">qulonglong</span> DFMBlockPartition::<span class="name">size</span>() const</h3>
+<!-- @@@size -->
+<!-- $$$sizeChanged[overload1]$$$sizeChangedqulonglong -->
+<h3 class="fn" id="sizeChanged"><a name="sizeChanged"></a><code>[signal] </code><span class="type">void</span> DFMBlockPartition::<span class="name">sizeChanged</span>(<span class="type">qulonglong</span> <i>size</i>)</h3>
+<!-- @@@sizeChanged -->
+<!-- $$$table[overload1]$$$table -->
+<h3 class="fn" id="table"><a name="table"></a><span class="type">QString</span> DFMBlockPartition::<span class="name">table</span>() const</h3>
+<!-- @@@table -->
+<!-- $$$type[overload1]$$$type -->
+<h3 class="fn" id="type"><a name="type"></a><span class="type">QString</span> DFMBlockPartition::<span class="name">type</span>() const</h3>
+<p><b>See also </b><a href="dfmblockpartition.html#setType">setType</a>().</p>
+<!-- @@@type -->
+<!-- $$$typeChanged[overload1]$$$typeChangedconstQString& -->
+<h3 class="fn" id="typeChanged"><a name="typeChanged"></a><code>[signal] </code><span class="type">void</span> DFMBlockPartition::<span class="name">typeChanged</span>(const <span class="type">QString</span> &amp;<i>type</i>)</h3>
+<!-- @@@typeChanged -->
+<!-- $$$typeDescription[overload1]$$$typeDescriptionType -->
+<h3 class="fn" id="typeDescription"><a name="typeDescription"></a><code>[static] </code><span class="type">QString</span> DFMBlockPartition::<span class="name">typeDescription</span>(<span class="type"><a href="dfmblockpartition.html#Type-enum">Type</a></span> <i>type</i>)</h3>
+<!-- @@@typeDescription -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

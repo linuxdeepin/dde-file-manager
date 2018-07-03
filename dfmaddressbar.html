@@ -26,6 +26,7 @@
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#public-slots">Public Slots</a></li>
 <li class="level1"><a href="#signals">Signals</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
 </ul>
@@ -51,8 +52,15 @@
 <div class="table"><table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#DFMAddressBar">DFMAddressBar</a></b>(DFMCrumbBar *<i>parent</i> = 0)</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QCompleter *</td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#completer">completer</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#placeholderText">placeholderText</a></b>() const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#setCompleter">setCompleter</a></b>(QCompleter *<i>c</i>)</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#setCurrentUrl">setCurrentUrl</a></b>(const DUrl &amp;<i>path</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#setPlaceholderText">setPlaceholderText</a></b>(const QString &amp;<i>text</i>)</td></tr>
+</table></div>
+<a name="public-slots"></a>
+<h2 id="public-slots">Public Slots</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#hide">hide</a></b>()</td></tr>
 </table></div>
 <a name="signals"></a>
 <h2 id="signals">Signals</h2>
@@ -91,16 +99,29 @@
 <!-- $$$escKeyPressed[overload1]$$$escKeyPressed -->
 <h3 class="fn" id="escKeyPressed"><a name="escKeyPressed"></a><code>[signal] </code><span class="type">void</span> DFMAddressBar::<span class="name">escKeyPressed</span>()</h3>
 <!-- @@@escKeyPressed -->
+<!-- $$$hide[overload1]$$$hide -->
+<h3 class="fn" id="hide"><a name="hide"></a><code>[slot] </code><span class="type">void</span> DFMAddressBar::<span class="name">hide</span>()</h3>
+<!-- @@@hide -->
 <!-- $$$lostFocus[overload1]$$$lostFocus -->
 <h3 class="fn" id="lostFocus"><a name="lostFocus"></a><code>[signal] </code><span class="type">void</span> DFMAddressBar::<span class="name">lostFocus</span>()</h3>
 <!-- @@@lostFocus -->
+<!-- $$$placeholderText[overload1]$$$placeholderText -->
+<h3 class="fn" id="placeholderText"><a name="placeholderText"></a><span class="type">QString</span> DFMAddressBar::<span class="name">placeholderText</span>() const</h3>
+<p><b>See also </b><a href="dfmaddressbar.html#setPlaceholderText">setPlaceholderText</a>().</p>
+<!-- @@@placeholderText -->
 <!-- $$$setCompleter[overload1]$$$setCompleterQCompleter* -->
 <h3 class="fn" id="setCompleter"><a name="setCompleter"></a><span class="type">void</span> DFMAddressBar::<span class="name">setCompleter</span>(<span class="type">QCompleter</span> *<i>c</i>)</h3>
 <p><b>See also </b><a href="dfmaddressbar.html#completer">completer</a>().</p>
 <!-- @@@setCompleter -->
 <!-- $$$setCurrentUrl[overload1]$$$setCurrentUrlconstDUrl& -->
 <h3 class="fn" id="setCurrentUrl"><a name="setCurrentUrl"></a><span class="type">void</span> DFMAddressBar::<span class="name">setCurrentUrl</span>(const <span class="type">DUrl</span> &amp;<i>path</i>)</h3>
+<p>Set current url <i>path</i></p>
+<p><i>path</i> Current url</p>
 <!-- @@@setCurrentUrl -->
+<!-- $$$setPlaceholderText[overload1]$$$setPlaceholderTextconstQString& -->
+<h3 class="fn" id="setPlaceholderText"><a name="setPlaceholderText"></a><span class="type">void</span> DFMAddressBar::<span class="name">setPlaceholderText</span>(const <span class="type">QString</span> &amp;<i>text</i>)</h3>
+<p><b>See also </b><a href="dfmaddressbar.html#placeholderText">placeholderText</a>().</p>
+<!-- @@@setPlaceholderText -->
 </div>
 </div>
 </div>

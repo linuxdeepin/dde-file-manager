@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- dfmdiskmanager.cpp -->
+  <title>DFMDiskManager Class | Deepin File Manager</title>
+  <link rel="stylesheet" type="text/css" href="style/online.css" />
+</head>
+<body>
+<div class="header" id="qtdocheader">
+    <div class="main">
+    <div class="main-rounded">
+        <div class="navigationbar">
+        <ul>
+<li>DFMDiskManager</li>
+    </ul>
+    </div>
+</div>
+<div class="content">
+<div class="line">
+<div class="content mainContent">
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#public-slots">Public Slots</a></li>
+<li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#static-public-members">Static Public Members</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<div class="context">
+<h1 class="title">DFMDiskManager Class</h1>
+<!-- $$$DFMDiskManager-brief -->
+<p><a href="dfmdiskmanager.html">DFMDiskManager</a> provide severial ways to manage devices and partitions. <a href="#details">More...</a></p>
+<!-- @@@DFMDiskManager -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;DFMDiskManager&gt;</span>
+</td></tr></table></div><ul>
+<li><a href="dfmdiskmanager-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-functions"></a>
+<h2 id="public-functions">Public Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmdiskmanager.html#DFMDiskManager">DFMDiskManager</a></b>(QObject *<i>parent</i> = nullptr)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmdiskmanager.html#dtor.DFMDiskManager">~DFMDiskManager</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="dfmdiskmanager.html#blockDevices">blockDevices</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="dfmdiskmanager.html#diskDevices">diskDevices</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmdiskmanager.html#watchChanges">watchChanges</a></b>() const</td></tr>
+</table></div>
+<a name="public-slots"></a>
+<h2 id="public-slots">Public Slots</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmdiskmanager.html#setWatchChanges">setWatchChanges</a></b>(bool <i>watchChanges</i>)</td></tr>
+</table></div>
+<a name="signals"></a>
+<h2 id="signals">Signals</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmdiskmanager.html#blockDeviceAdded">blockDeviceAdded</a></b>(const QString &amp;<i>path</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmdiskmanager.html#blockDeviceRemoved">blockDeviceRemoved</a></b>(const QString &amp;<i>path</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmdiskmanager.html#diskDeviceAdded">diskDeviceAdded</a></b>(const QString &amp;<i>path</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmdiskmanager.html#diskDeviceRemoved">diskDeviceRemoved</a></b>(const QString &amp;<i>path</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmdiskmanager.html#fileSystemAdded">fileSystemAdded</a></b>(const QString &amp;<i>blockDevicePath</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmdiskmanager.html#fileSystemRemoved">fileSystemRemoved</a></b>(const QString &amp;<i>blockDevicePath</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmdiskmanager.html#mountAdded">mountAdded</a></b>(const QString &amp;<i>blockDevicePath</i>, const QByteArray &amp;<i>mountPoint</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmdiskmanager.html#mountPointsChanged">mountPointsChanged</a></b>(const QString &amp;<i>blockDevicePath</i>, const QByteArrayList &amp;<i>oldMountPoints</i>, const QByteArrayList &amp;<i>newMountPoints</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmdiskmanager.html#mountRemoved">mountRemoved</a></b>(const QString &amp;<i>blockDevicePath</i>, const QByteArray &amp;<i>mountPoint</i>)</td></tr>
+</table></div>
+<a name="static-public-members"></a>
+<h2 id="static-public-members">Static Public Members</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> DFMBlockDevice *</td><td class="memItemRight bottomAlign"><b><a href="dfmdiskmanager.html#createBlockDevice">createBlockDevice</a></b>(const QString &amp;<i>path</i>, QObject *<i>parent</i> = nullptr)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> DFMBlockPartition *</td><td class="memItemRight bottomAlign"><b><a href="dfmdiskmanager.html#createBlockPartition">createBlockPartition</a></b>(const QString &amp;<i>path</i>, QObject *<i>parent</i> = nullptr)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> DFMDiskDevice *</td><td class="memItemRight bottomAlign"><b><a href="dfmdiskmanager.html#createDiskDevice">createDiskDevice</a></b>(const QString &amp;<i>path</i>, QObject *<i>parent</i> = nullptr)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QDBusError </td><td class="memItemRight bottomAlign"><b><a href="dfmdiskmanager.html#lastError">lastError</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="dfmdiskmanager.html#objectPrintable">objectPrintable</a></b>(const QObject *<i>object</i>)</td></tr>
+</table></div>
+<a name="details"></a>
+<!-- $$$DFMDiskManager-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p><a href="dfmdiskmanager.html">DFMDiskManager</a> provide severial ways to manage devices and partitions.</p>
+</div>
+<p><b>See also </b><a href="dfmblockpartition.html">DFMBlockPartition</a>, DFMBlockDevice, and UDiskDeviceInfo.</p>
+<!-- @@@DFMDiskManager -->
+<div class="func">
+<h2>Member Function Documentation</h2>
+<!-- $$$DFMDiskManager[overload1]$$$DFMDiskManagerQObject* -->
+<h3 class="fn" id="DFMDiskManager"><a name="DFMDiskManager"></a>DFMDiskManager::<span class="name">DFMDiskManager</span>(<span class="type">QObject</span> *<i>parent</i> = nullptr)</h3>
+<p>Default constructs an instance of DFMDiskManager.</p><!-- @@@DFMDiskManager -->
+<!-- $$$~DFMDiskManager[overload1]$$$~DFMDiskManager -->
+<h3 class="fn" id="dtor.DFMDiskManager"><a name="dtor.DFMDiskManager"></a>DFMDiskManager::<span class="name">~DFMDiskManager</span>()</h3>
+<p>Destroys the instance of DFMDiskManager.</p><!-- @@@~DFMDiskManager -->
+<!-- $$$blockDeviceAdded[overload1]$$$blockDeviceAddedconstQString& -->
+<h3 class="fn" id="blockDeviceAdded"><a name="blockDeviceAdded"></a><code>[signal] </code><span class="type">void</span> DFMDiskManager::<span class="name">blockDeviceAdded</span>(const <span class="type">QString</span> &amp;<i>path</i>)</h3>
+<!-- @@@blockDeviceAdded -->
+<!-- $$$blockDeviceRemoved[overload1]$$$blockDeviceRemovedconstQString& -->
+<h3 class="fn" id="blockDeviceRemoved"><a name="blockDeviceRemoved"></a><code>[signal] </code><span class="type">void</span> DFMDiskManager::<span class="name">blockDeviceRemoved</span>(const <span class="type">QString</span> &amp;<i>path</i>)</h3>
+<!-- @@@blockDeviceRemoved -->
+<!-- $$$blockDevices[overload1]$$$blockDevices -->
+<h3 class="fn" id="blockDevices"><a name="blockDevices"></a><span class="type">QStringList</span> DFMDiskManager::<span class="name">blockDevices</span>() const</h3>
+<!-- @@@blockDevices -->
+<!-- $$$createBlockDevice[overload1]$$$createBlockDeviceconstQString&QObject* -->
+<h3 class="fn" id="createBlockDevice"><a name="createBlockDevice"></a><code>[static] </code><span class="type">DFMBlockDevice</span> *DFMDiskManager::<span class="name">createBlockDevice</span>(const <span class="type">QString</span> &amp;<i>path</i>, <span class="type">QObject</span> *<i>parent</i> = nullptr)</h3>
+<!-- @@@createBlockDevice -->
+<!-- $$$createBlockPartition[overload1]$$$createBlockPartitionconstQString&QObject* -->
+<h3 class="fn" id="createBlockPartition"><a name="createBlockPartition"></a><code>[static] </code><span class="type"><a href="dfmblockpartition.html">DFMBlockPartition</a></span> *DFMDiskManager::<span class="name">createBlockPartition</span>(const <span class="type">QString</span> &amp;<i>path</i>, <span class="type">QObject</span> *<i>parent</i> = nullptr)</h3>
+<!-- @@@createBlockPartition -->
+<!-- $$$createDiskDevice[overload1]$$$createDiskDeviceconstQString&QObject* -->
+<h3 class="fn" id="createDiskDevice"><a name="createDiskDevice"></a><code>[static] </code><span class="type">DFMDiskDevice</span> *DFMDiskManager::<span class="name">createDiskDevice</span>(const <span class="type">QString</span> &amp;<i>path</i>, <span class="type">QObject</span> *<i>parent</i> = nullptr)</h3>
+<!-- @@@createDiskDevice -->
+<!-- $$$diskDeviceAdded[overload1]$$$diskDeviceAddedconstQString& -->
+<h3 class="fn" id="diskDeviceAdded"><a name="diskDeviceAdded"></a><code>[signal] </code><span class="type">void</span> DFMDiskManager::<span class="name">diskDeviceAdded</span>(const <span class="type">QString</span> &amp;<i>path</i>)</h3>
+<!-- @@@diskDeviceAdded -->
+<!-- $$$diskDeviceRemoved[overload1]$$$diskDeviceRemovedconstQString& -->
+<h3 class="fn" id="diskDeviceRemoved"><a name="diskDeviceRemoved"></a><code>[signal] </code><span class="type">void</span> DFMDiskManager::<span class="name">diskDeviceRemoved</span>(const <span class="type">QString</span> &amp;<i>path</i>)</h3>
+<!-- @@@diskDeviceRemoved -->
+<!-- $$$diskDevices[overload1]$$$diskDevices -->
+<h3 class="fn" id="diskDevices"><a name="diskDevices"></a><span class="type">QStringList</span> DFMDiskManager::<span class="name">diskDevices</span>() const</h3>
+<!-- @@@diskDevices -->
+<!-- $$$fileSystemAdded[overload1]$$$fileSystemAddedconstQString& -->
+<h3 class="fn" id="fileSystemAdded"><a name="fileSystemAdded"></a><code>[signal] </code><span class="type">void</span> DFMDiskManager::<span class="name">fileSystemAdded</span>(const <span class="type">QString</span> &amp;<i>blockDevicePath</i>)</h3>
+<!-- @@@fileSystemAdded -->
+<!-- $$$fileSystemRemoved[overload1]$$$fileSystemRemovedconstQString& -->
+<h3 class="fn" id="fileSystemRemoved"><a name="fileSystemRemoved"></a><code>[signal] </code><span class="type">void</span> DFMDiskManager::<span class="name">fileSystemRemoved</span>(const <span class="type">QString</span> &amp;<i>blockDevicePath</i>)</h3>
+<!-- @@@fileSystemRemoved -->
+<!-- $$$lastError[overload1]$$$lastError -->
+<h3 class="fn" id="lastError"><a name="lastError"></a><code>[static] </code><span class="type">QDBusError</span> DFMDiskManager::<span class="name">lastError</span>()</h3>
+<!-- @@@lastError -->
+<!-- $$$mountAdded[overload1]$$$mountAddedconstQString&constQByteArray& -->
+<h3 class="fn" id="mountAdded"><a name="mountAdded"></a><code>[signal] </code><span class="type">void</span> DFMDiskManager::<span class="name">mountAdded</span>(const <span class="type">QString</span> &amp;<i>blockDevicePath</i>, const <span class="type">QByteArray</span> &amp;<i>mountPoint</i>)</h3>
+<!-- @@@mountAdded -->
+<!-- $$$mountPointsChanged[overload1]$$$mountPointsChangedconstQString&constQByteArrayList&constQByteArrayList& -->
+<h3 class="fn" id="mountPointsChanged"><a name="mountPointsChanged"></a><code>[signal] </code><span class="type">void</span> DFMDiskManager::<span class="name">mountPointsChanged</span>(const <span class="type">QString</span> &amp;<i>blockDevicePath</i>, const <span class="type">QByteArrayList</span> &amp;<i>oldMountPoints</i>, const <span class="type">QByteArrayList</span> &amp;<i>newMountPoints</i>)</h3>
+<!-- @@@mountPointsChanged -->
+<!-- $$$mountRemoved[overload1]$$$mountRemovedconstQString&constQByteArray& -->
+<h3 class="fn" id="mountRemoved"><a name="mountRemoved"></a><code>[signal] </code><span class="type">void</span> DFMDiskManager::<span class="name">mountRemoved</span>(const <span class="type">QString</span> &amp;<i>blockDevicePath</i>, const <span class="type">QByteArray</span> &amp;<i>mountPoint</i>)</h3>
+<!-- @@@mountRemoved -->
+<!-- $$$objectPrintable[overload1]$$$objectPrintableconstQObject* -->
+<h3 class="fn" id="objectPrintable"><a name="objectPrintable"></a><code>[static] </code><span class="type">QString</span> DFMDiskManager::<span class="name">objectPrintable</span>(const <span class="type">QObject</span> *<i>object</i>)</h3>
+<!-- @@@objectPrintable -->
+<!-- $$$setWatchChanges[overload1]$$$setWatchChangesbool -->
+<h3 class="fn" id="setWatchChanges"><a name="setWatchChanges"></a><code>[slot] </code><span class="type">void</span> DFMDiskManager::<span class="name">setWatchChanges</span>(<span class="type">bool</span> <i>watchChanges</i>)</h3>
+<p><b>See also </b><a href="dfmdiskmanager.html#watchChanges">watchChanges</a>().</p>
+<!-- @@@setWatchChanges -->
+<!-- $$$watchChanges[overload1]$$$watchChanges -->
+<h3 class="fn" id="watchChanges"><a name="watchChanges"></a><span class="type">bool</span> DFMDiskManager::<span class="name">watchChanges</span>() const</h3>
+<p><b>See also </b><a href="dfmdiskmanager.html#setWatchChanges">setWatchChanges</a>().</p>
+<!-- @@@watchChanges -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

@@ -53,6 +53,7 @@
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#DFMSideBar">DFMSideBar</a></b>(QWidget *<i>parent</i> = nullptr)</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#dtor.DFMSideBar">~DFMSideBar</a></b>()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#addItem">addItem</a></b>(DFMSideBarItem *<i>item</i>, const QString &amp;<i>group</i> = QString())</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#appendListWithOrder">appendListWithOrder</a></b>(QList&lt;DFMSideBarItem *&gt; <i>itemList</i>, const QString &amp;<i>group</i>) const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#count">count</a></b>() const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QSet&lt;QString&gt; </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#disableUrlSchemes">disableUrlSchemes</a></b>() const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QRect </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#groupGeometry">groupGeometry</a></b>(const QString &amp;<i>group</i> = QString()) const</td></tr>
@@ -66,6 +67,7 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#removeItem-1">removeItem</a></b>(DFMSideBarItem *<i>item</i>)</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#setCurrentUrl">setCurrentUrl</a></b>(const DUrl &amp;<i>url</i>)</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#setDisableUrlSchemes">setDisableUrlSchemes</a></b>(const QSet&lt;QString&gt; &amp;<i>schemes</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#setGroupSaveItemOrder">setGroupSaveItemOrder</a></b>(bool <i>saveItemOrder</i>, const QString &amp;<i>group</i>)</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> DFMSideBarItem *</td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#takeItem">takeItem</a></b>(int <i>index</i>, const QString &amp;<i>group</i> = QString())</td></tr>
 </table></div>
 <a name="signals"></a>
@@ -106,6 +108,12 @@
 <h3 class="fn" id="addItem"><a name="addItem"></a><span class="type">int</span> DFMSideBar::<span class="name">addItem</span>(<span class="type"><a href="dfmsidebaritem.html">DFMSideBarItem</a></span> *<i>item</i>, const <span class="type">QString</span> &amp;<i>group</i> = QString())</h3>
 <p>Add a sidebar item into a sidebar group. <i>item</i> The item which is going to be added. <i>group</i> The name (in `QString`, all lower case) of the sidebar group. Returns the index of the inserted item in that group.</p>
 <!-- @@@addItem -->
+<!-- $$$appendListWithOrder[overload1]$$$appendListWithOrderQList<DFMSideBarItem*>constQString& -->
+<h3 class="fn" id="appendListWithOrder"><a name="appendListWithOrder"></a><span class="type">void</span> DFMSideBar::<span class="name">appendListWithOrder</span>(<span class="type">QList</span>&lt;<span class="type"><a href="dfmsidebaritem.html">DFMSideBarItem</a></span> *&gt; <i>itemList</i>, const <span class="type">QString</span> &amp;<i>group</i>) const</h3>
+<p>Insert a list of url to a group with saved sort order support.</p>
+<p>It ok if a group is not set <a href="dfmsidebar.html#setGroupSaveItemOrder">setGroupSaveItemOrder</a> as true.</p>
+<p><b>See also </b><a href="dfmsidebar.html#setGroupSaveItemOrder">setGroupSaveItemOrder</a>.</p>
+<!-- @@@appendListWithOrder -->
 <!-- $$$clicked[overload1]$$$clickedDFMSideBarItem* -->
 <h3 class="fn" id="clicked"><a name="clicked"></a><code>[signal] </code><span class="type">void</span> DFMSideBar::<span class="name">clicked</span>(<span class="type"><a href="dfmsidebaritem.html">DFMSideBarItem</a></span> *<i>item</i>)</h3>
 <!-- @@@clicked -->
@@ -132,7 +140,7 @@
 <!-- $$$insertItem[overload1]$$$insertItemintDFMSideBarItem*constQString& -->
 <h3 class="fn" id="insertItem"><a name="insertItem"></a><span class="type">void</span> DFMSideBar::<span class="name">insertItem</span>(<span class="type">int</span> <i>index</i>, <span class="type"><a href="dfmsidebaritem.html">DFMSideBarItem</a></span> *<i>item</i>, const <span class="type">QString</span> &amp;<i>groupName</i> = QString())</h3>
 <p>Insert <i>item</i> before <i>index</i> into <i>groupName</i> .</p>
-<p>Insert a `<a href="dfmsidebaritem.html">DFMSideBarItem</a>` <i>item</i> to group before <i>index</i> into the given <i>groupName</i> .</p>
+<p>Insert a <a href="dfmsidebaritem.html">DFMSideBarItem</a> <i>item</i> to group before <i>index</i> into the given <i>groupName</i> .</p>
 <!-- @@@insertItem -->
 <!-- $$$itemAt[overload1]$$$itemAtintconstQString& -->
 <h3 class="fn" id="itemAt"><a name="itemAt"></a><span class="type"><a href="dfmsidebaritem.html">DFMSideBarItem</a></span> *DFMSideBar::<span class="name">itemAt</span>(<span class="type">int</span> <i>index</i>, const <span class="type">QString</span> &amp;<i>groupName</i> = QString()) const</h3>
@@ -158,6 +166,9 @@
 <!-- @@@removeItem -->
 <!-- $$$setCurrentUrl[overload1]$$$setCurrentUrlconstDUrl& -->
 <h3 class="fn" id="setCurrentUrl"><a name="setCurrentUrl"></a><span class="type">void</span> DFMSideBar::<span class="name">setCurrentUrl</span>(const <span class="type">DUrl</span> &amp;<i>url</i>)</h3>
+<p>Set current sidebar state by current <i>url</i>.</p>
+<p><i>url</i> Current url</p>
+<p>Will set the checked(highlighted) sidebar item by the given <i>url</i>.</p>
 <!-- @@@setCurrentUrl -->
 <!-- $$$setDisableUrlSchemes[overload1]$$$setDisableUrlSchemesconstQSet<QString>& -->
 <h3 class="fn" id="setDisableUrlSchemes"><a name="setDisableUrlSchemes"></a><span class="type">void</span> DFMSideBar::<span class="name">setDisableUrlSchemes</span>(const <span class="type">QSet</span>&lt;<span class="type">QString</span>&gt; &amp;<i>schemes</i>)</h3>
@@ -165,6 +176,14 @@
 <p>Notice that this is for *HIDE* the items, NOT for display a *DISABLED* state.</p>
 <p><b>See also </b><a href="dfmsidebar.html#disableUrlSchemes">disableUrlSchemes</a>().</p>
 <!-- @@@setDisableUrlSchemes -->
+<!-- $$$setGroupSaveItemOrder[overload1]$$$setGroupSaveItemOrderboolconstQString& -->
+<h3 class="fn" id="setGroupSaveItemOrder"><a name="setGroupSaveItemOrder"></a><span class="type">void</span> DFMSideBar::<span class="name">setGroupSaveItemOrder</span>(<span class="type">bool</span> <i>saveItemOrder</i>, const <span class="type">QString</span> &amp;<i>group</i>)</h3>
+<p>Let group can save item order to config file</p>
+<p><i>groupName</i> The group name.</p>
+<p><i>saveItemOrder</i> Save or not.</p>
+<p>Notice that it will do nothing if group not exist, and you should also call <a href="dfmsidebar.html#appendListWithOrder">appendListWithOrder</a> if you need to use the saved order.</p>
+<p><b>See also </b><a href="dfmsidebar.html#appendListWithOrder">appendListWithOrder</a>.</p>
+<!-- @@@setGroupSaveItemOrder -->
 <!-- $$$takeItem[overload1]$$$takeItemintconstQString& -->
 <h3 class="fn" id="takeItem"><a name="takeItem"></a><span class="type"><a href="dfmsidebaritem.html">DFMSideBarItem</a></span> *DFMSideBar::<span class="name">takeItem</span>(<span class="type">int</span> <i>index</i>, const <span class="type">QString</span> &amp;<i>group</i> = QString())</h3>
 <!-- @@@takeItem -->

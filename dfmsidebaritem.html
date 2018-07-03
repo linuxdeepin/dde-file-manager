@@ -48,10 +48,11 @@
 <div class="table"><table class="propsummary">
 <tr><td class="topAlign"><ul>
 <li class="fn"><b><a href="dfmsidebaritem.html#autoOpenUrlOnClick-prop">autoOpenUrlOnClick</a></b> : bool</li>
+<li class="fn"><b><a href="dfmsidebaritem.html#canDeleteViaDrag-prop">canDeleteViaDrag</a></b> : bool</li>
 <li class="fn"><b><a href="dfmsidebaritem.html#checked-prop">checked</a></b> : bool</li>
 <li class="fn"><b><a href="dfmsidebaritem.html#groupName-prop">groupName</a></b> : const QString</li>
-<li class="fn"><b><a href="dfmsidebaritem.html#readOnly-prop">readOnly</a></b> : bool</li>
 </ul></td><td class="topAlign"><ul>
+<li class="fn"><b><a href="dfmsidebaritem.html#readOnly-prop">readOnly</a></b> : bool</li>
 <li class="fn"><b><a href="dfmsidebaritem.html#reorderable-prop">reorderable</a></b> : bool</li>
 <li class="fn"><b><a href="dfmsidebaritem.html#text-prop">text</a></b> : QString</li>
 <li class="fn"><b><a href="dfmsidebaritem.html#url-prop">url</a></b> : const DUrl</li>
@@ -64,6 +65,7 @@
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#DFMSideBarItem">DFMSideBarItem</a></b>(const DUrl &amp;<i>url</i> = DUrl(), QWidget *<i>parent</i> = nullptr)</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#dtor.DFMSideBarItem">~DFMSideBarItem</a></b>()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#autoOpenUrlOnClick-prop">autoOpenUrlOnClick</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#canDeleteViaDrag-prop">canDeleteViaDrag</a></b>() const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#checked-prop">checked</a></b>() const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QWidget *</td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#contentWidget">contentWidget</a></b>() const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#groupName-prop">groupName</a></b>() const</td></tr>
@@ -82,6 +84,7 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#onEditingFinished">onEditingFinished</a></b>()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#playAnimation">playAnimation</a></b>()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#setAutoOpenUrlOnClick">setAutoOpenUrlOnClick</a></b>(bool <i>autoCd</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#canDeleteViaDrag-prop">setCanDeleteViaDrag</a></b>(bool <i>canDeleteViaDrag</i>)</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#checked-prop">setChecked</a></b>(bool <i>checked</i>)</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#readOnly-prop">setReadOnly</a></b>(bool <i>readOnly</i>)</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#reorderable-prop">setReorderable</a></b>(bool <i>reorderable</i>)</td></tr>
@@ -91,8 +94,10 @@
 <h2 id="signals">Signals</h2>
 <div class="table"><table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#clicked">clicked</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#itemDragReleased">itemDragReleased</a></b>(QPoint <i>dropPos</i>, Qt::DropAction <i>action</i>)</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#renameFinished">renameFinished</a></b>(QString <i>name</i>)</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#reorder">reorder</a></b>(DFMSideBarItem *<i>ori</i>, DFMSideBarItem *<i>dst</i>, bool <i>insertBefore</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#urlChanged">urlChanged</a></b>(DUrl <i>url</i>)</td></tr>
 </table></div>
 <a name="protected-functions"></a>
 <h2 id="protected-functions">Protected Functions</h2>
@@ -122,6 +127,14 @@
 <tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><span class="name"><b><a href="dfmsidebaritem.html#setAutoOpenUrlOnClick">setAutoOpenUrlOnClick</a></b></span>(bool <i>autoCd</i>)</td></tr>
 </table></div>
 <!-- @@@autoOpenUrlOnClick -->
+<!-- $$$canDeleteViaDrag-prop$$$canDeleteViaDrag$$$setCanDeleteViaDragbool -->
+<h3 class="fn" id="canDeleteViaDrag-prop"><a name="canDeleteViaDrag-prop"></a><span class="name">canDeleteViaDrag</span> : <span class="type">bool</span></h3>
+<p><b>Access functions:</b></p>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> bool </td><td class="memItemRight bottomAlign"><span class="name"><b>canDeleteViaDrag</b></span>() const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><span class="name"><b>setCanDeleteViaDrag</b></span>(bool <i>canDeleteViaDrag</i>)</td></tr>
+</table></div>
+<!-- @@@canDeleteViaDrag -->
 <!-- $$$checked-prop$$$checked$$$setCheckedbool -->
 <h3 class="fn" id="checked-prop"><a name="checked-prop"></a><span class="name">checked</span> : <span class="type">bool</span></h3>
 <p><b>Access functions:</b></p>
@@ -193,6 +206,9 @@
 <!-- $$$dropMimeData[overload1]$$$dropMimeDataconstQMimeData*Qt::DropAction -->
 <h3 class="fn" id="dropMimeData"><a name="dropMimeData"></a><code>[virtual protected] </code><span class="type">bool</span> DFMSideBarItem::<span class="name">dropMimeData</span>(const <span class="type">QMimeData</span> *<i>data</i>, <span class="type">Qt::DropAction</span> <i>action</i>) const</h3>
 <!-- @@@dropMimeData -->
+<!-- $$$itemDragReleased[overload1]$$$itemDragReleasedQPointQt::DropAction -->
+<h3 class="fn" id="itemDragReleased"><a name="itemDragReleased"></a><code>[signal] </code><span class="type">void</span> DFMSideBarItem::<span class="name">itemDragReleased</span>(<span class="type">QPoint</span> <i>dropPos</i>, <span class="type">Qt::DropAction</span> <i>action</i>)</h3>
+<!-- @@@itemDragReleased -->
 <!-- $$$itemVisible[overload1]$$$itemVisible -->
 <h3 class="fn" id="itemVisible"><a name="itemVisible"></a><span class="type">bool</span> DFMSideBarItem::<span class="name">itemVisible</span>() const</h3>
 <!-- @@@itemVisible -->
@@ -234,6 +250,9 @@
 <!-- $$$showRenameEditor[overload1]$$$showRenameEditor -->
 <h3 class="fn" id="showRenameEditor"><a name="showRenameEditor"></a><span class="type">void</span> DFMSideBarItem::<span class="name">showRenameEditor</span>()</h3>
 <!-- @@@showRenameEditor -->
+<!-- $$$urlChanged[overload1]$$$urlChangedDUrl -->
+<h3 class="fn" id="urlChanged"><a name="urlChanged"></a><code>[signal] </code><span class="type">void</span> DFMSideBarItem::<span class="name">urlChanged</span>(<span class="type">DUrl</span> <i>url</i>)</h3>
+<!-- @@@urlChanged -->
 </div>
 </div>
 </div>
