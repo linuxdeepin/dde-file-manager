@@ -76,7 +76,7 @@ Q_SIGNALS:
     void clicked(DFMSideBarItem *item);
 
 protected:
-    void resizeEvent(QResizeEvent *) override;
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
     QScopedPointer<DFMSideBarPrivate> d_ptr;

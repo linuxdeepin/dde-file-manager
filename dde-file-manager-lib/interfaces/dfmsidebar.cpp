@@ -33,6 +33,8 @@
 #include "deviceinfo/udisklistener.h"
 
 #include <DThemeManager>
+#include <dboxwidget.h>
+
 #include <QVBoxLayout>
 #include <QTimer>
 #include <QScrollBar>
@@ -55,8 +57,8 @@ public:
     DFMSideBarPrivate(DFMSideBar *qq);
 
     DFMSideBar *q_ptr = nullptr;
-    QVBoxLayout *mainLayout;
-    QWidget *mainLayoutHolder;
+    QBoxLayout *mainLayout;
+    DBoxWidget *mainLayoutHolder;
     QSet<QString> disabledSchemes;
     QMap<QString, DFMSideBarItemGroup *> groupNameMap;
     DFMSideBarItem *lastCheckedItem = nullptr; //< managed by setCurrentUrl()
@@ -148,18 +150,18 @@ void DFMSideBarPrivate::initUI()
     q->setViewportMargins(0, 0, -q->verticalScrollBar()->sizeHint().width(), 0);
 
     // to make QScrollArea scroallable, we need a widget.
-    mainLayoutHolder = new QWidget();
+    mainLayoutHolder = new DBoxWidget(QBoxLayout::TopToBottom);
     mainLayoutHolder->setObjectName("SidebarMainLayoutHolder");
     mainLayoutHolder->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     q->setWidget(mainLayoutHolder);
 
     // our main QVBoxLayout, which hold our `DFMSideBarItemGroup`s
-    mainLayout = new QVBoxLayout();
+    mainLayout = mainLayoutHolder->layout();
     mainLayout->setSpacing(0);
     mainLayout->setMargin(0);
     mainLayout->setAlignment(Qt::AlignTop);
     mainLayout->setSizeConstraint(QLayout::SetMinAndMaxSize); //SetFixedSize
-    mainLayoutHolder->setLayout(mainLayout);
+//    mainLayoutHolder->setLayout(mainLayout);
 
     static QList<DFMSideBar::GroupName> groups = {
         DFMSideBar::GroupName::Common,
@@ -631,7 +633,6 @@ void DFMSideBar::removeItem(DFMSideBarItem *item)
         groupPointer->removeItem(index);
         return;
     }
-
 }
 
 /*!
@@ -838,11 +839,13 @@ QString DFMSideBar::groupName(DFMSideBar::GroupName group)
     return QString();
 }
 
-void DFMSideBar::resizeEvent(QResizeEvent *)
+void DFMSideBar::resizeEvent(QResizeEvent *event)
 {
     Q_D(DFMSideBar);
 
     d->mainLayoutHolder->resize(width(), d->mainLayoutHolder->height());
+
+    return QScrollArea::resizeEvent(event);
 }
 
 DFM_END_NAMESPACE
