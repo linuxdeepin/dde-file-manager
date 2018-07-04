@@ -44,6 +44,7 @@
 #include "utils/singleton.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
+#include "dialogs/dialogmanager.h"
 
 
 QString UserShareManager::CurrentUser = "";
@@ -409,13 +410,22 @@ void UserShareManager::restartSambaService()
 
 bool UserShareManager::addUserShare(const ShareInfo &info)
 {
-    //handle old info
+    // check if we got `net` (in `samba-common-bin` package) installed
+    QString samba_common_bin_path = QStandardPaths::findExecutable("net");
+    if (samba_common_bin_path.isEmpty()) {
+        Singleton<DialogManager>::instance()->showErrorDialog(tr("Kindly Reminder"), tr("Please firstly Install samba to continue"));
+        return false;
+    }
+
+    // handle old info
     ShareInfo oldInfo = getOldShareInfoByNewInfo(info);
     qDebug() << oldInfo << info;
     if(oldInfo.isValid()){
         deleteUserShareByPath(oldInfo.path());
     }
     if (!info.shareName().isEmpty() && QFile(info.path()).exists()){
+
+
         QString cmd = "net";
         QStringList args;
         ShareInfo _info = info;
@@ -439,14 +449,14 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
 
         QString err = process.readAllStandardError();
 
-        if (!err.isEmpty() && err.contains("is already a valid system user name")){
+        if (err.contains("is already a valid system user name")) {
             emit fileSignalManager->requestShowAddUserShareFailedDialog(_info.path());
             return false;
         }
 
         if (process.exitCode() != 0) {
+            Singleton<DialogManager>::instance()->showErrorDialog(QString(), err);
             qWarning() << err;
-
             return false;
         }
 
