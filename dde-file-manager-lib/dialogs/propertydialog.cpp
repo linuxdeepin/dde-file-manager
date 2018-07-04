@@ -464,7 +464,7 @@ void PropertyDialog::onChildrenRemoved(const DUrl &fileUrl)
     }
 }
 
-void PropertyDialog::flickFolderToLeftsidBar()
+void PropertyDialog::flickFolderToSidebar()
 {
 
     DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(m_fmevent.windowId()));
@@ -842,7 +842,7 @@ ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPoin
 {
     ShareInfoFrame *frame = new ShareInfoFrame(info, this);
     //play animation after a folder is shared
-    connect(frame, &ShareInfoFrame::folderShared, this, &PropertyDialog::flickFolderToLeftsidBar);
+    connect(frame, &ShareInfoFrame::folderShared, this, &PropertyDialog::flickFolderToSidebar);
 
     return frame;
 }
