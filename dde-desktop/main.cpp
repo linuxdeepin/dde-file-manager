@@ -96,9 +96,9 @@ int main(int argc, char *argv[])
     DFMGlobal::initPluginManager();
     DFMGlobal::initMimesAppsManager();
     DFMGlobal::initDialogManager();
-    DFMGlobal::initGvfsMountManager();
-    DFMGlobal::initDeviceListener();
-    DFMGlobal::autoMountAllDisks();
+//    DFMGlobal::initGvfsMountManager();
+//    DFMGlobal::initDeviceListener();
+//    DFMGlobal::autoMountAllDisks();
     DFMGlobal::initOperatorRevocation();
     DFMGlobal::initTagManagerConnect();
 
