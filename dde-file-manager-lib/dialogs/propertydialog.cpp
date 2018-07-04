@@ -815,19 +815,6 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     layout->addRow(TimeCreatedSectionLabel, timeCreatedLabel);
     layout->addRow(TimeModifiedSectionLabel, timeModifiedLabel);
 
-    if (info->isFile()) {
-        m_executableCheckBox = new QCheckBox;
-        m_executableCheckBox->setFixedHeight(20);
-        connect(m_executableCheckBox, &QCheckBox::toggled, this, &PropertyDialog::toggleFileExecutable);
-        if (!info->isWritable()) {
-            m_executableCheckBox->setDisabled(true);
-        }
-        if (info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther)) {
-            m_executableCheckBox->setChecked(true);
-        }
-        SectionValueLabel *executableLabel = new SectionValueLabel(tr("Allow to execute as program"));
-        layout->addRow(m_executableCheckBox, executableLabel);
-    }
     layout->setContentsMargins(0, 0, 40, 0);
     widget->setLayout(layout);
     widget->setFixedSize(width(), EXTEND_FRAME_MAXHEIGHT);
@@ -974,17 +961,38 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
 
     QStringList authorityList;
 
-    authorityList << QObject::tr("WriteRead") << QObject::tr("ReadOnly") << QObject::tr("WriteOnly");
+    authorityList << QObject::tr("Access denied") // 0
+                  << QObject::tr("Executable") // 1
+                  << QObject::tr("WriteOnly") // 2
+                  << QObject::tr("WriteOnly") + QStringLiteral(" , ") + QObject::tr("Executable") // 3
+                  << QObject::tr("ReadOnly")  // 4
+                  << QObject::tr("ReadOnly") + QStringLiteral(" , ") + QObject::tr("Executable") // 5
+                  << QObject::tr("WriteRead") // 6
+                  << QObject::tr("WriteRead") + QStringLiteral(" , ") + QObject::tr("Executable"); // 7
 
-    ownerBox->addItems(authorityList);
-    groupBox->addItems(authorityList);
-    otherBox->addItems(authorityList);
+    // enumFlag should be 0~7, this is just a check to avoid runtime error
+    auto getPermissionString = [ &authorityList ](int enumFlag) {
+        if (enumFlag < 0 || enumFlag > 7) {
+            return QStringLiteral("..what?");
+        } else {
+            return authorityList[enumFlag];
+        }
+    };
+
+    ownerBox->addItem(getPermissionString(6), QVariant(QFile::WriteOwner | QFile::ReadOwner));
+    ownerBox->addItem(getPermissionString(4), QVariant(QFile::ReadOwner));
+    groupBox->addItem(getPermissionString(6), QVariant(QFile::WriteGroup | QFile::ReadGroup));
+    groupBox->addItem(getPermissionString(4), QVariant(QFile::ReadGroup));
+    otherBox->addItem(getPermissionString(6), QVariant(QFile::WriteOther | QFile::ReadOther));
+    otherBox->addItem(getPermissionString(4), QVariant(QFile::ReadOther));
 
     if (info->permission(QFile::WriteOwner | QFile::ReadOwner)) {
         ownerBox->setCurrentIndex(0);
     } else if (info->permission(QFile::ReadOwner)) {
         ownerBox->setCurrentIndex(1);
     } else {
+        int permission = info->permissions() & 0x1000;
+        ownerBox->addItem(getPermissionString(permission >> 9), QVariant(permission));
         ownerBox->setCurrentIndex(2);
     }
 
@@ -993,6 +1001,8 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     } else if (info->permission(QFile::ReadGroup)) {
         groupBox->setCurrentIndex(1);
     } else {
+        int permission = info->permissions() & 0x0010;
+        groupBox->addItem(getPermissionString(permission >> 3), QVariant(permission));
         groupBox->setCurrentIndex(2);
     }
 
@@ -1001,6 +1011,8 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     } else if (info->permission(QFile::ReadOther)) {
         otherBox->setCurrentIndex(1);
     } else {
+        int permission = info->permissions() & 0x0010;
+        otherBox->addItem(getPermissionString(permission), QVariant(permission));
         otherBox->setCurrentIndex(2);
     }
 
@@ -1009,6 +1021,21 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     layout->addRow(QObject::tr("Group"), groupBox);
     layout->addRow(QObject::tr("Other"), otherBox);
 
+    if (info->isFile()) {
+        m_executableCheckBox = new QCheckBox;
+        m_executableCheckBox->setFixedHeight(20);
+        connect(m_executableCheckBox, &QCheckBox::toggled, this, &PropertyDialog::toggleFileExecutable);
+        if (!info->isWritable()) {
+            m_executableCheckBox->setDisabled(true);
+        }
+        if (info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther)) {
+            m_executableCheckBox->setChecked(true);
+        }
+        SectionValueLabel *executableLabel = new SectionValueLabel(tr("Allow to execute as program"));
+        layout->addRow(m_executableCheckBox, executableLabel);
+    }
+
+    layout->setContentsMargins(45, 0, 15, 0);
     widget->setLayout(layout);
 
     // Still WIP
