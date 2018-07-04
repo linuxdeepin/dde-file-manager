@@ -964,14 +964,22 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     authorityList << QObject::tr("Access denied") // 0
                   << QObject::tr("Executable") // 1
                   << QObject::tr("WriteOnly") // 2
-                  << QObject::tr("WriteOnly") + QStringLiteral(" , ") + QObject::tr("Executable") // 3
+                  << QObject::tr("WriteOnly") // 3 with x
                   << QObject::tr("ReadOnly")  // 4
-                  << QObject::tr("ReadOnly") + QStringLiteral(" , ") + QObject::tr("Executable") // 5
+                  << QObject::tr("ReadOnly")  // 5 with x
                   << QObject::tr("WriteRead") // 6
-                  << QObject::tr("WriteRead") + QStringLiteral(" , ") + QObject::tr("Executable"); // 7
+                  << QObject::tr("WriteRead"); // 7 with x
+
+    if (info->isFile()) {
+        QString append = QStringLiteral(" , ") + QObject::tr("Executable");
+        authorityList[3] += append;
+        authorityList[5] += append;
+        authorityList[7] += append;
+    }
 
     // enumFlag should be 0~7, this is just a check to avoid runtime error
     auto getPermissionString = [ &authorityList ](int enumFlag) {
+        enumFlag &= 0x0007;
         if (enumFlag < 0 || enumFlag > 7) {
             return QStringLiteral("..what?");
         } else {
@@ -979,42 +987,36 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
         }
     };
 
-    ownerBox->addItem(getPermissionString(6), QVariant(QFile::WriteOwner | QFile::ReadOwner));
-    ownerBox->addItem(getPermissionString(4), QVariant(QFile::ReadOwner));
-    groupBox->addItem(getPermissionString(6), QVariant(QFile::WriteGroup | QFile::ReadGroup));
-    groupBox->addItem(getPermissionString(4), QVariant(QFile::ReadGroup));
-    otherBox->addItem(getPermissionString(6), QVariant(QFile::WriteOther | QFile::ReadOther));
-    otherBox->addItem(getPermissionString(4), QVariant(QFile::ReadOther));
+    // set QComboBox, notice this permission number is not just 0~7
+    auto setComboBoxByPermission = [ = ](QComboBox * cb, int permission, int offset) {
+        int index = permission >> offset;
+        if (index == 6) {
+            cb->setCurrentIndex(0);
+        } else if (index == 4) {
+            cb->setCurrentIndex(1);
+        } else {
+            cb->addItem(getPermissionString(index), QVariant(permission));
+            cb->setCurrentIndex(2);
+        }
+    };
 
-    if (info->permission(QFile::WriteOwner | QFile::ReadOwner)) {
-        ownerBox->setCurrentIndex(0);
-    } else if (info->permission(QFile::ReadOwner)) {
-        ownerBox->setCurrentIndex(1);
-    } else {
-        int permission = info->permissions() & 0x1000;
-        ownerBox->addItem(getPermissionString(permission >> 9), QVariant(permission));
-        ownerBox->setCurrentIndex(2);
-    }
+    // when change the index...
+    auto onComboBoxChanged = [ = ]() {
+        QFile f(m_url.toLocalFile());
+        f.setPermissions(QFileDevice::Permissions(ownerBox->currentData().toInt()) | (info->permissions() & 0x0700) |
+                         QFileDevice::Permissions(groupBox->currentData().toInt()) | QFileDevice::Permissions((otherBox->currentData().toInt())));
+    };
 
-    if (info->permission(QFile::WriteGroup | QFile::ReadGroup)) {
-        groupBox->setCurrentIndex(0);
-    } else if (info->permission(QFile::ReadGroup)) {
-        groupBox->setCurrentIndex(1);
-    } else {
-        int permission = info->permissions() & 0x0010;
-        groupBox->addItem(getPermissionString(permission >> 3), QVariant(permission));
-        groupBox->setCurrentIndex(2);
-    }
+    ownerBox->addItem(authorityList[6], QVariant(QFile::WriteOwner | QFile::ReadOwner));
+    ownerBox->addItem(authorityList[4], QVariant(QFile::ReadOwner));
+    groupBox->addItem(authorityList[6], QVariant(QFile::WriteGroup | QFile::ReadGroup));
+    groupBox->addItem(authorityList[4], QVariant(QFile::ReadGroup));
+    otherBox->addItem(authorityList[6], QVariant(QFile::WriteOther | QFile::ReadOther));
+    otherBox->addItem(authorityList[4], QVariant(QFile::ReadOther));
 
-    if (info->permission(QFile::WriteOther | QFile::ReadOther)) {
-        otherBox->setCurrentIndex(0);
-    } else if (info->permission(QFile::ReadOther)) {
-        otherBox->setCurrentIndex(1);
-    } else {
-        int permission = info->permissions() & 0x0010;
-        otherBox->addItem(getPermissionString(permission), QVariant(permission));
-        otherBox->setCurrentIndex(2);
-    }
+    setComboBoxByPermission(ownerBox, info->permissions() & 0x7000, 12);
+    setComboBoxByPermission(groupBox, info->permissions() & 0x0070, 4);
+    setComboBoxByPermission(otherBox, info->permissions() & 0x0007, 0);
 
     layout->setLabelAlignment(Qt::AlignRight);
     layout->addRow(QObject::tr("Owner"), ownerBox);
@@ -1038,10 +1040,9 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     layout->setContentsMargins(45, 0, 15, 0);
     widget->setLayout(layout);
 
-    // Still WIP
-    ownerBox->setEnabled(false);
-    groupBox->setEnabled(false);
-    otherBox->setEnabled(false);
+    connect(ownerBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), widget, onComboBoxChanged);
+    connect(groupBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), widget, onComboBoxChanged);
+    connect(otherBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), widget, onComboBoxChanged);
 
     return widget;
 }
