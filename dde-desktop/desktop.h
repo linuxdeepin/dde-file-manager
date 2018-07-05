@@ -36,6 +36,8 @@ public:
 
     void initDebugDBus(QDBusConnection &conn);
 
+    CanvasGridView *getView();
+
 public slots:
     void Show();
 

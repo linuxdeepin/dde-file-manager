@@ -29,8 +29,11 @@ class CanvasGridView: public QAbstractItemView
 
     Q_PROPERTY(double dodgeDuration READ dodgeDuration WRITE setDodgeDuration NOTIFY dodgeDurationChanged)
 public:
+    static std::atomic<bool> m_flag;
+
     explicit CanvasGridView(QWidget *parent = Q_NULLPTR);
     ~CanvasGridView() Q_DECL_OVERRIDE;
+
 
     enum ContextMenuAction {
         DisplaySettings = MenuAction::Unknow + 1,
@@ -81,6 +84,8 @@ public:
     void focusOutEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
     void contextMenuEvent(QContextMenuEvent *event) Q_DECL_OVERRIDE;
 
+    void fakeDropEvent()noexcept;
+
     // list view function
     QRect rectForIndex(const QModelIndex &index) const;
     DUrl currentUrl() const;
@@ -103,6 +108,9 @@ public:
 
     QMargins cellMargins() const;
     QSize cellSize() const;
+
+protected:
+    virtual bool eventFilter(QObject *obj, QEvent *event) override;
 
 signals:
     void sortRoleChanged(int role, Qt::SortOrder order);
@@ -128,6 +136,8 @@ public Q_SLOTS:
 
 private:
     Q_DISABLE_COPY(CanvasGridView)
+
+    friend class DEventFilter;
 
     void initUI();
     void initConnection();
@@ -161,6 +171,7 @@ private:
 
     QScopedPointer<CanvasViewPrivate> d;
     double m_dragMoveTime;
+
 };
 
 

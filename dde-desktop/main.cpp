@@ -25,6 +25,10 @@
 #include "desktop.h"
 #include "view/canvasgridview.h"
 
+#include "deventfilter.h"
+
+#include <QApplication>
+
 using namespace Dtk::Core;
 using namespace Dtk::Widget;
 
@@ -44,6 +48,7 @@ int main(int argc, char *argv[])
 
     DApplication app(argc, argv);
 
+
     app.setOrganizationName("deepin");
     app.setApplicationName("dde-desktop");
     app.setApplicationVersion((GIT_VERSION));
@@ -58,7 +63,6 @@ int main(int argc, char *argv[])
     app.loadTranslator();
 
     qDebug() << "start " << app.applicationName() << app.applicationVersion();
-
     QDBusConnection conn = QDBusConnection::sessionBus();
 
     if (!conn.registerService(DesktopServiceName)) {
@@ -69,6 +73,7 @@ int main(int argc, char *argv[])
     // init application object
     DFMApplication fmApp;
     Q_UNUSED(fmApp)
+
 
     if (!conn.registerObject(DesktopServicePath, Desktop::instance(),
                              QDBusConnection::ExportAllSlots |
@@ -104,6 +109,9 @@ int main(int argc, char *argv[])
 
     // Notify dde-desktop start up
     Dde::Session::RegisterDdeSession();
+
+    DEventFilter *event_filter{ new DEventFilter{&app} };
+    app.installEventFilter(event_filter);
 
     return app.exec();
 }

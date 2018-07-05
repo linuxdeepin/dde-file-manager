@@ -70,6 +70,9 @@
 #include "app/define.h"
 #include "deviceinfo/udisklistener.h"
 
+
+std::atomic<bool> CanvasGridView::m_flag{ false };
+
 static inline bool isPersistFile(const DUrl &url)
 {
 #ifdef DDE_COMPUTER_TRASH
@@ -102,6 +105,8 @@ CanvasGridView::CanvasGridView(QWidget *parent)
     : QAbstractItemView(parent), d(new CanvasViewPrivate)
 {
     D_THEME_INIT_WIDGET(CanvasGridView);
+
+    installEventFilter(this);
 
     initUI();
     initConnection();
@@ -447,6 +452,7 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
     QAbstractItemView::mousePressEvent(event);
 
     if (leftButtonPressed) {
+        qDebug() << model()->getUrlByIndex(index);
         d->currentCursorIndex = index;
     }
     update();
@@ -454,6 +460,8 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
 
 void CanvasGridView::mouseReleaseEvent(QMouseEvent *event)
 {
+    qDebug() << event->type() << "zzzzzzzzzzzzzzz";
+
     QAbstractItemView::mouseReleaseEvent(event);
     d->mousePressed = false;
     if (d->showSelectRect && d->selectRect.isValid()) {
@@ -468,6 +476,8 @@ void CanvasGridView::mouseReleaseEvent(QMouseEvent *event)
 
 void CanvasGridView::mouseDoubleClickEvent(QMouseEvent *event)
 {
+    qDebug() << "jjjjjjjjjjjjjjjjjjjjjjjjjjjjjj" << event->type();
+
     QModelIndex index = indexAt(event->pos());
     QPersistentModelIndex persistent = index;
     emit doubleClicked(persistent);
@@ -537,7 +547,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
         }
         default: break;
         }
-        // fall through
+    // fall through
     case Qt::KeypadModifier:
         switch (event->key()) {
         case Qt::Key_Return:
@@ -698,6 +708,8 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
 
 void CanvasGridView::dragLeaveEvent(QDragLeaveEvent *event)
 {
+    CanvasGridView::m_flag.store(false, std::memory_order_release);
+
     d->dodgeDelayTimer.stop();
     d->startDodge = false;
     d->dragTargetGrid = QPoint(-1, -1);
@@ -707,6 +719,8 @@ void CanvasGridView::dragLeaveEvent(QDragLeaveEvent *event)
 
 void CanvasGridView::dropEvent(QDropEvent *event)
 {
+    CanvasGridView::m_flag.store(false, std::memory_order_release);
+
     d->dodgeDelayTimer.stop();
     d->startDodge = false;
     d->dragTargetGrid = QPoint(-1, -1);
@@ -805,15 +819,15 @@ void CanvasGridView::dropEvent(QDropEvent *event)
 
 void CanvasGridView::paintEvent(QPaintEvent *event)
 {
-    if (d->_debug_profiler) {
+//    if (d->_debug_profiler) {
 //        qDebug() << "start repaint" << event->rect()  << event->region().rectCount();
 //        auto currentTime = QTime::currentTime().msecsSinceStartOfDay();
 //        auto deta = currentTime - d->lastRepaintTime;
 //        if (deta < 500) {
-////        return;
+//        return;
 //        }
 //        d->lastRepaintTime = currentTime;
-    }
+//    }
 
     QPainter painter(viewport());
     auto repaintRect = event->rect();
@@ -905,12 +919,13 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
         auto url = DUrl::fromLocalFile(localFile);
         // hide selected if draw animation
         if ((d->dodgeAnimationing || d->startDodge) && selecteds.contains(url)) {
-//            qDebug() << "skip drag select";
+//            qDebug() << "skip drag select" << url;
             continue;
         }
 
+
         if (d->dodgeAnimationing && d->dodgeItems.contains(localFile)) {
-            //            qDebug() << "skip  dragMoveItems";
+//            qDebug() << "skip  dragMoveItems" << localFile;
             continue;
         }
 
@@ -974,7 +989,7 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
         painter.restore();
     }
 
-    // draw dragMove animation
+// draw dragMove animation
     if (d->dodgeAnimationing) {
         for (auto animatingItem : d->dodgeItems) {
             auto localFile = animatingItem;
@@ -1060,6 +1075,13 @@ void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
     }
 }
 
+void CanvasGridView::fakeDropEvent() noexcept
+{
+    d->dodgeDelayTimer.stop();
+    d->startDodge = false;
+    d->dragTargetGrid = QPoint(-1, -1);
+}
+
 
 QRect CanvasGridView::rectForIndex(const QModelIndex &index) const
 {
@@ -1110,6 +1132,22 @@ QMargins CanvasGridView::cellMargins() const
 QSize CanvasGridView::cellSize() const
 {
     return QSize(d->cellWidth, d->cellHeight);
+}
+
+bool CanvasGridView::eventFilter(QObject *obj, QEvent *event)
+{
+    (void)obj;
+
+    if (event->type() == QEvent::DragEnter) {
+        qDebug() << "drag enter 11111111111111111111111111111";
+    }
+
+    if (event->type() == QEvent::Drop) {
+        qDebug() << "drop 22222222222222222222222222222222222";
+    }
+
+
+    return false;
 }
 
 void CanvasGridView::openUrl(const DUrl &url)

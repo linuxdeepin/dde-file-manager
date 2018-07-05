@@ -70,7 +70,8 @@ HEADERS += \
     dbus/dbusdock.h \
     config/profile.h \
     view/desktopitemdelegate.h \
-    presenter/gridcore.h
+    presenter/gridcore.h \
+    deventfilter.h
 
 RESOURCES += \
     resource/theme/theme.qrc
