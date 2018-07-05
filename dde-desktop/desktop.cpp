@@ -40,7 +40,7 @@ public:
     WallpaperSettings *wallpaperSettings{ nullptr };
 
 #ifndef DISABLE_ZONE
-    ZoneSettings *zoneSettings{ nullptr };
+    ZoneSettings *zoneSettings { nullptr };
 #endif
 };
 
@@ -115,6 +115,11 @@ void Desktop::initDebugDBus(QDBusConnection &conn)
         qDebug() << "registerObject Failed" << conn.lastError();
         exit(0x0004);
     }
+}
+
+CanvasGridView *Desktop::getView()
+{
+    return (&(d->screenFrame));
 }
 
 void Desktop::Show()
