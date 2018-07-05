@@ -144,7 +144,7 @@ void DFMAddressBar::setCompleter(QCompleter *c)
     urlCompleter->setModel(&completerModel);
     urlCompleter->setPopup(completerView);
     urlCompleter->setCompletionMode(QCompleter::PopupCompletion);
-    urlCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+    urlCompleter->setCaseSensitivity(Qt::CaseSensitive);
     urlCompleter->setMaxVisibleItems(10);
     connect(urlCompleter, SIGNAL(activated(QString)), this, SLOT(insertCompletion(QString)));
     connect(urlCompleter, SIGNAL(highlighted(QString)), this, SLOT(onCompletionHighlighted(QString)));
