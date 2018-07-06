@@ -61,6 +61,12 @@ class DFMSetFileTagsEvent;
 class DFMRemoveTagsOfFileEvent;
 class DFMGetTagsThroughFilesEvent;
 class DFMSetFileExtensionPropertys;
+class DFMUrlBaseEvent;
+
+DFM_BEGIN_NAMESPACE
+class DFileHandler;
+class DFileDevice;
+DFM_END_NAMESPACE
 
 typedef QList<DUrl> DUrlList;
 class DAbstractFileController : public QObject
@@ -101,6 +107,8 @@ public:
     virtual QList<QString> getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const;
 
     virtual DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const;
+    virtual DFM_NAMESPACE::DFileDevice *createFileDevice(const QSharedPointer<DFMUrlBaseEvent> &event) const;
+    virtual DFM_NAMESPACE::DFileHandler *createFileHandler(const QSharedPointer<DFMUrlBaseEvent> &event) const;
 
     virtual bool setExtensionPropertys(const QSharedPointer<DFMSetFileExtensionPropertys> &event) const;
 };

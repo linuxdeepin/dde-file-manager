@@ -366,7 +366,7 @@ QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
 
         const QString &suffix = edit->property("_d_whether_show_suffix").toString();
 
-        while (text.toLocal8Bit().size() > MAX_FILE_NAME_CHAR_COUNT - suffix.size() - 1) {
+        while (text.toLocal8Bit().size() > MAX_FILE_NAME_CHAR_COUNT - suffix.size() - suffix.isEmpty() ? 0 : 1) {
             list.removeAt(--cursor_pos);
 
             text = QString::fromUcs4(list.data(), list.size());
@@ -425,10 +425,10 @@ void DListItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     QString text{};
 
     if (donot_show_suffix) {
-        edit->setProperty("_d_whether_show_suffix", index.data(DFileSystemModel::FileSuffixRole));
-        text = index.data(DFileSystemModel::FileBaseNameRole).toString();
+        edit->setProperty("_d_whether_show_suffix", index.data(DFileSystemModel::FileSuffixOfRenameRole));
+        text = index.data(DFileSystemModel::FileBaseNameOfRenameRole).toString();
     } else {
-        text = index.data(DFileSystemModel::FileNameRole).toString();
+        text = index.data(DFileSystemModel::FileNameOfRenameRole).toString();
     }
 
     edit->setText(text);

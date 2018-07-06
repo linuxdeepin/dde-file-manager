@@ -21,6 +21,8 @@
 #include "dlocalfiledevice.h"
 #include "private/dlocalfiledevice_p.h"
 
+#include <unistd.h>
+
 DFM_BEGIN_NAMESPACE
 
 DLocalFileDevicePrivate::DLocalFileDevicePrivate(DLocalFileDevice *qq)
@@ -44,7 +46,12 @@ bool DLocalFileDevice::setFileUrl(const DUrl &url)
 
     d->file.setFileName(url.toLocalFile());
 
-    return DAbstractFileDevice::setFileUrl(url);
+    return DFileDevice::setFileUrl(url);
+}
+
+bool DLocalFileDevice::setFileName(const QString &absoluteFilePath)
+{
+    return setFileUrl(DUrl::fromLocalFile(absoluteFilePath));
 }
 
 int DLocalFileDevice::handle() const
@@ -66,6 +73,21 @@ bool DLocalFileDevice::flush()
     Q_D(DLocalFileDevice);
 
     return d->file.flush();
+}
+
+bool DLocalFileDevice::syncToDisk()
+{
+    Q_D(DLocalFileDevice);
+
+    int ret = fdatasync(d->file.handle());
+
+    if (ret != 0) {
+        setErrorString(QString::fromLocal8Bit(strerror(errno)));
+
+        return false;
+    }
+
+    return true;
 }
 
 DFM_END_NAMESPACE

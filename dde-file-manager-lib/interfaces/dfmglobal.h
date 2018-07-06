@@ -33,6 +33,7 @@
 #include <QSemaphore>
 #include <QThread>
 #include <QUrl>
+#include <QDebug>
 
 #include <functional>
 
@@ -104,9 +105,10 @@
 #endif
 #define QT_STRINGIFY(x...) #x
 
-#define DFM_BEGIN_NAMESPACE namespace dde_file_manager {
+#define DFM_NAMESPACE dde_file_manager
+#define DFM_BEGIN_NAMESPACE namespace DFM_NAMESPACE {
 #define DFM_END_NAMESPACE }
-#define DFM_USE_NAMESPACE using namespace dde_file_manager;
+#define DFM_USE_NAMESPACE using namespace DFM_NAMESPACE;
 
 
 class QDiskInfo;
@@ -398,8 +400,8 @@ public:
         FunctionCallProxy proxy;
         proxy.moveToThread(thread);
 
-        if (!thread->isRunning()) {
-            thread->start();
+        if (thread->loopLevel() <= 0) {
+            qWarning() << thread << ", the thread no event loop";
         }
 
         proxy.callInLiveThread(&proxyFun);
@@ -427,8 +429,8 @@ public:
         FunctionCallProxy proxy;
         proxy.moveToThread(thread);
 
-        if (!thread->isRunning()) {
-            thread->start();
+        if (thread->loopLevel() <= 0) {
+            qWarning() << thread << ", the thread no event loop";
         }
 
         proxy.callInLiveThread(&proxyFun);

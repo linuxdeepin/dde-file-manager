@@ -50,6 +50,7 @@
 #include <QtConcurrent>
 
 #include <sys/stat.h>
+#include <unistd.h>
 
 DFM_USE_NAMESPACE
 
@@ -475,6 +476,20 @@ bool DFileInfo::isSymLink() const
     Q_D(const DFileInfo);
 
     return d->fileInfo.isSymLink();
+}
+
+QString DFileInfo::symlinkTargetPath() const
+{
+    Q_D(const DFileInfo);
+
+    if (d->fileInfo.isSymLink()) {
+        char s[PATH_MAX+1];
+        int len = readlink(d->fileInfo.absoluteFilePath().toLocal8Bit().constData(), s, PATH_MAX);
+
+        return QString::fromLocal8Bit(s, len);
+    }
+
+    return QString();
 }
 
 DUrl DFileInfo::symLinkTarget() const

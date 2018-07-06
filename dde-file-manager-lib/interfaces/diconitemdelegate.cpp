@@ -898,15 +898,15 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
         item->edit->setPlainText(index.data(DFileSystemModel::FileDisplayNameRole).toString());
     } else {
         if (donot_show_suffix) {
-            const QString &suffix = index.data(DFileSystemModel::FileSuffixRole).toString();
+            const QString &suffix = index.data(DFileSystemModel::FileSuffixOfRenameRole).toString();
 
             editor->setProperty("_d_whether_show_suffix", suffix);
 
-            item->setMaxCharSize(MAX_FILE_NAME_CHAR_COUNT - suffix.toLocal8Bit().size() - 1);
-            item->edit->setPlainText(index.data(DFileSystemModel::FileBaseNameRole).toString());
+            item->setMaxCharSize(MAX_FILE_NAME_CHAR_COUNT - suffix.toLocal8Bit().size() - suffix.isEmpty() ? 0 : 1);
+            item->edit->setPlainText(index.data(DFileSystemModel::FileBaseNameOfRenameRole).toString());
         } else {
             item->setMaxCharSize(MAX_FILE_NAME_CHAR_COUNT);
-            item->edit->setPlainText(index.data(DFileSystemModel::FileNameRole).toString());
+            item->edit->setPlainText(index.data(DFileSystemModel::FileNameOfRenameRole).toString());
         }
     }
 

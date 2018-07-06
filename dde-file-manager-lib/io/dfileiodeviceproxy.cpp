@@ -24,7 +24,7 @@
 DFM_BEGIN_NAMESPACE
 
 DFileIODeviceProxyPrivate::DFileIODeviceProxyPrivate(DFileIODeviceProxy *qq)
-    : DAbstractFileDevicePrivate(qq)
+    : DFileDevicePrivate(qq)
 {
 
 }
@@ -33,6 +33,11 @@ DFileIODeviceProxy::DFileIODeviceProxy(QIODevice *device, QObject *parent)
     : DFileIODeviceProxy(*new  DFileIODeviceProxyPrivate(this), parent)
 {
     d_func()->device = device;
+}
+
+DFileIODeviceProxy::~DFileIODeviceProxy()
+{
+    close();
 }
 
 void DFileIODeviceProxy::setDevice(QIODevice *device)
@@ -51,7 +56,7 @@ QIODevice *DFileIODeviceProxy::device() const
 
 #define CALL_PROXY(fun, ...)\
     if (d_func()->device) return d_func()->device->fun(__VA_ARGS__);\
-    return DAbstractFileDevice::fun(__VA_ARGS__);
+    return DFileDevice::fun(__VA_ARGS__);
 
 bool DFileIODeviceProxy::isSequential() const
 {
@@ -60,11 +65,21 @@ bool DFileIODeviceProxy::isSequential() const
 
 bool DFileIODeviceProxy::open(QIODevice::OpenMode mode)
 {
-    CALL_PROXY(open, mode)
+    Q_D(DFileIODeviceProxy);
+
+    if (d->device)
+        DFileDevice::open(mode);
+
+    CALL_PROXY(open, mode);
 }
 
 void DFileIODeviceProxy::close()
 {
+    Q_D(DFileIODeviceProxy);
+
+    if (d->device)
+        DFileDevice::close();
+
     CALL_PROXY(close)
 }
 
@@ -114,7 +129,7 @@ bool DFileIODeviceProxy::waitForBytesWritten(int msecs)
 }
 
 DFileIODeviceProxy::DFileIODeviceProxy(DFileIODeviceProxyPrivate &dd, QObject *parent)
-    : DAbstractFileDevice(dd, parent)
+    : DFileDevice(dd, parent)
 {
 
 }

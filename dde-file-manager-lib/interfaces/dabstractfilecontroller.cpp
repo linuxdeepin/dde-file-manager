@@ -292,6 +292,20 @@ DAbstractFileWatcher *DAbstractFileController::createFileWatcher(const QSharedPo
     return 0;
 }
 
+DFM_NAMESPACE::DFileDevice *DAbstractFileController::createFileDevice(const QSharedPointer<DFMUrlBaseEvent> &event) const
+{
+    event->ignore();
+
+    return nullptr;
+}
+
+DFM_NAMESPACE::DFileHandler *DAbstractFileController::createFileHandler(const QSharedPointer<DFMUrlBaseEvent> &event) const
+{
+    event->ignore();
+
+    return nullptr;
+}
+
 bool DAbstractFileController::setExtensionPropertys(const QSharedPointer<DFMSetFileExtensionPropertys> &event) const
 {
     const auto && ep = event->extensionPropertys();

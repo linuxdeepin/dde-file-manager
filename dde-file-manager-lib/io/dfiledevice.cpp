@@ -18,77 +18,82 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "dabstractfiledevice.h"
-#include "private/dabstractfiledevice_p.h"
+#include "dfiledevice.h"
+#include "private/dfiledevice_p.h"
 
 DFM_BEGIN_NAMESPACE
 
-DAbstractFileDevice::~DAbstractFileDevice()
+DFileDevice::~DFileDevice()
 {
 
 }
 
-DAbstractFileDevice::FileError DAbstractFileDevice::error() const
+DFileDevice::FileError DFileDevice::error() const
 {
-    Q_D(const DAbstractFileDevice);
+    Q_D(const DFileDevice);
 
     return d->error;
 }
 
-DUrl DAbstractFileDevice::fileUrl() const
+DUrl DFileDevice::fileUrl() const
 {
-    Q_D(const DAbstractFileDevice);
+    Q_D(const DFileDevice);
 
     return d->url;
 }
 
-bool DAbstractFileDevice::setFileUrl(const DUrl &url)
+bool DFileDevice::setFileUrl(const DUrl &url)
 {
-    Q_D(DAbstractFileDevice);
+    Q_D(DFileDevice);
 
     d->url = url;
 
     return true;
 }
 
-int DAbstractFileDevice::handle() const
+int DFileDevice::handle() const
 {
     return -1;
 }
 
-bool DAbstractFileDevice::resize(qint64 size)
+bool DFileDevice::resize(qint64 size)
 {
     Q_UNUSED(size)
 
     return false;
 }
 
-bool DAbstractFileDevice::flush()
+bool DFileDevice::flush()
 {
     return false;
 }
 
-DAbstractFileDevice::DAbstractFileDevice(QObject *parent)
-    : DAbstractFileDevice(*new DAbstractFileDevicePrivate(this), parent)
+bool DFileDevice::syncToDisk()
+{
+    return false;
+}
+
+DFileDevice::DFileDevice(QObject *parent)
+    : DFileDevice(*new DFileDevicePrivate(this), parent)
 {
 
 }
 
-DAbstractFileDevice::DAbstractFileDevice(DAbstractFileDevicePrivate &dd, QObject *parent)
+DFileDevice::DFileDevice(DFileDevicePrivate &dd, QObject *parent)
     : QIODevice(parent)
     , d_ptr(&dd)
 {
 
 }
 
-void DAbstractFileDevice::setError(DAbstractFileDevice::FileError error)
+void DFileDevice::setError(DFileDevice::FileError error)
 {
-    Q_D(DAbstractFileDevice);
+    Q_D(DFileDevice);
 
     d->error = error;
 }
 
-DAbstractFileDevicePrivate::DAbstractFileDevicePrivate(DAbstractFileDevice *qq)
+DFileDevicePrivate::DFileDevicePrivate(DFileDevice *qq)
     : q_ptr(qq)
 {
 

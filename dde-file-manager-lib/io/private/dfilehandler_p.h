@@ -18,33 +18,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DLOCALFILEDEVICE_H
-#define DLOCALFILEDEVICE_H
+#ifndef DFILEHANDLER_P_H
+#define DFILEHANDLER_P_H
 
-#include <dfileiodeviceproxy.h>
+#include "dfilehandler.h"
 
 DFM_BEGIN_NAMESPACE
 
-class DLocalFileDevicePrivate;
-class DLocalFileDevice : public DFileIODeviceProxy
+class DFileHandlerPrivate
 {
-    Q_DECLARE_PRIVATE(DLocalFileDevice)
-
 public:
-    explicit DLocalFileDevice(QObject *parent = nullptr);
+    DFileHandlerPrivate(DFileHandler *qq);
 
-    bool setFileUrl(const DUrl &url) override;
-    bool setFileName(const QString &absoluteFilePath);
+    void setErrorString(const QString &es);
 
-    int handle() const override;
-    bool resize(qint64 size) override;
-    bool flush() override;
-    bool syncToDisk() override;
+    DFileHandler::Error error;
+    QString errorString;
 
-private:
-    using DFileIODeviceProxy::setDevice;
+    DFileHandler *q_ptr;
 };
 
 DFM_END_NAMESPACE
 
-#endif // DLOCALFILEDEVICE_H
+#endif // DFILEHANDLER_P_H

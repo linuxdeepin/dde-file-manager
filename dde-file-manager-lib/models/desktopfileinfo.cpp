@@ -176,11 +176,6 @@ QIcon DesktopFileInfo::fileIcon() const
     return d->icon;
 }
 
-QString DesktopFileInfo::fileName() const
-{
-    return fileDisplayName();
-}
-
 void DesktopFileInfo::refresh()
 {
     Q_D(DesktopFileInfo);
@@ -202,6 +197,21 @@ QString DesktopFileInfo::genericIconName() const
 QString DesktopFileInfo::fileDisplayName() const
 {
     return getName();
+}
+
+QString DesktopFileInfo::fileNameOfRename() const
+{
+    return fileDisplayName();
+}
+
+QString DesktopFileInfo::baseNameOfRename() const
+{
+    return fileDisplayName();
+}
+
+QString DesktopFileInfo::suffixOfRename() const
+{
+    return QString();
 }
 
 QMap<QString, QVariant> DesktopFileInfo::getDesktopFileInfo(const DUrl &fileUrl)

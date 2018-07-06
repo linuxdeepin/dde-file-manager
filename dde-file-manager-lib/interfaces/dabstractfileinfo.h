@@ -146,7 +146,9 @@ public:
     virtual QString absolutePath() const;
     virtual QString absoluteFilePath() const;
     virtual QString baseName() const;
+    virtual QString baseNameOfRename() const;
     virtual QString fileName() const;
+    virtual QString fileNameOfRename() const;
     virtual QString fileDisplayName() const;
     virtual QString fileSharedName() const;
     QString fileDisplayPinyinName() const;
@@ -171,6 +173,7 @@ public:
     virtual bool isSymLink() const;
     virtual bool isDesktopFile() const;
 
+    virtual QString symlinkTargetPath() const;
     virtual DUrl symLinkTarget() const;
     virtual DUrl rootSymLinkTarget() const;
 
@@ -271,6 +274,7 @@ public:
     virtual QString subtitleForEmptyFloder() const;
 
     virtual QString suffix() const;
+    virtual QString suffixOfRename() const;
     virtual QString completeSuffix() const;
 
     /// Make to inactive. stop get icon; stop watcher file

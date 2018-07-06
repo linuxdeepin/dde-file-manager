@@ -27,8 +27,9 @@
 #include "dabstractfileinfo.h"
 #include "dabstractfilewatcher.h"
 #include "dfmeventdispatcher.h"
-
 #include "dfmfilecontrollerfactory.h"
+#include "dfiledevice.h"
+#include "dfilehandler.h"
 
 #include "app/filesignalmanager.h"
 #include "dfmevent.h"
@@ -364,6 +365,12 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     }
     case DFMEvent::CreateFileWatcher:
         result = CALL_CONTROLLER(createFileWatcher);
+        break;
+    case DFMEvent::CreateFileDevice:
+        result = CALL_CONTROLLER(createFileDevice);
+        break;
+    case DFMEvent::CreateFileHandler:
+        result = CALL_CONTROLLER(createFileHandler);
         break;
     case DFMEvent::Tag:
     {
@@ -740,6 +747,20 @@ bool DFileService::setExtensionPropertys(const QObject *sender, const DUrl &file
     const auto&& event = dMakeEventPointer<DFMSetFileExtensionPropertys>(sender, fileUrl, ep);
 
     return DFMEventDispatcher::instance()->processEvent(event).toBool();
+}
+
+DFileDevice *DFileService::createFileDevice(const QObject *sender, const DUrl &url)
+{
+    const auto &&event = dMakeEventPointer<DFMUrlBaseEvent>(DFMEvent::CreateFileDevice, sender, url);
+
+    return qvariant_cast<DFileDevice*>(DFMEventDispatcher::instance()->processEvent(event));
+}
+
+DFileHandler *DFileService::createFileHandler(const QObject *sender, const DUrl &url)
+{
+    const auto &&event = dMakeEventPointer<DFMUrlBaseEvent>(DFMEvent::CreateFileHandler, sender, url);
+
+    return qvariant_cast<DFileHandler*>(DFMEventDispatcher::instance()->processEvent(event));
 }
 
 QList<DAbstractFileController*> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl, bool ignoreHost, bool ignoreScheme)

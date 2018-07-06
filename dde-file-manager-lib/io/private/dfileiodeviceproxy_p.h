@@ -22,12 +22,12 @@
 #define DFILEIODEVICEPROXY_P_H
 
 #include "dfileiodeviceproxy.h"
-#include "dabstractfiledevice_p.h"
+#include "dfiledevice_p.h"
 
 #include <QPointer>
 
 DFM_BEGIN_NAMESPACE
-class DFileIODeviceProxyPrivate : public DAbstractFileDevicePrivate
+class DFileIODeviceProxyPrivate : public DFileDevicePrivate
 {
 public:
     DFileIODeviceProxyPrivate(DFileIODeviceProxy *qq);

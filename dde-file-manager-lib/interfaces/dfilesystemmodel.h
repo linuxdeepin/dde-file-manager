@@ -68,6 +68,9 @@ public:
         ExtensionPropertys = Qt::UserRole + 11,
         FileBaseNameRole = Qt::UserRole + 12,
         FileSuffixRole = Qt::UserRole + 13,
+        FileNameOfRenameRole = Qt::UserRole + 14,
+        FileBaseNameOfRenameRole = Qt::UserRole + 15,
+        FileSuffixOfRenameRole = Qt::UserRole + 16,
         FileUserRole = Qt::UserRole + 99,
         UnknowRole = Qt::UserRole + 999
     };
