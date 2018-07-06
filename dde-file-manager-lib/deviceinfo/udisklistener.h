@@ -48,6 +48,10 @@ class UDiskDeviceInfo;
 class Subscriber;
 class DeviceInfoManagerInterface;
 
+DFM_BEGIN_NAMESPACE
+class DFMDiskManager;
+class DFMBlockDevice;
+DFM_END_NAMESPACE
 
 class UDiskListener : public DAbstractFileController
 {
@@ -55,6 +59,7 @@ class UDiskListener : public DAbstractFileController
 
 public:
     explicit UDiskListener(QObject *parent = 0);
+    void initDiskManager();
     void initConnect();
     UDiskDeviceInfoPointer getDevice(const QString &id);
     void addDevice(UDiskDeviceInfoPointer device);
@@ -118,7 +123,15 @@ public slots:
     void stopDrive(const QString &path);
     void forceUnmount(const QString &id);
 
+private slots:
+    void fileSystemDeviceIdLabelChanged(const QString &path);
+    void insertFileSystemDevice(const QString dbusPath);
+
 private:
+    dde_file_manager::DFMDiskManager* m_diskMgr = nullptr;
+//    QScopedPointer<dde_file_manager::DFMDiskManager> m_diskMgr;
+    QMap<QString, dde_file_manager::DFMBlockDevice*> m_fsDevMap;
+
     QList<UDiskDeviceInfoPointer> m_list;
     QMap<QString, UDiskDeviceInfoPointer> m_map;
     QMap<QString, QString> m_volumeLetters;
