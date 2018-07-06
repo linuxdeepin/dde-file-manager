@@ -82,14 +82,29 @@ public:
 UDiskListener::UDiskListener(QObject *parent):
     DAbstractFileController(parent)
 {
+    initDiskManager();
     initConnect();
     loadCustomVolumeLetters();
 
     fileService->setFileUrlHandler(DEVICE_SCHEME, "", this);
 }
 
+void UDiskListener::initDiskManager()
+{
+    m_diskMgr = new DFMDiskManager(this);
+//    m_diskMgr.reset(new DFMDiskManager);
+    QStringList blDevList = m_diskMgr->blockDevices();
+    for (const QString &str : blDevList) {
+        insertFileSystemDevice(str);
+    }
+}
+
 void UDiskListener::initConnect()
 {
+    connect(m_diskMgr, &DFMDiskManager::fileSystemAdded, this, &UDiskListener::insertFileSystemDevice);
+    connect(m_diskMgr, &DFMDiskManager::fileSystemRemoved, this, [this](const QString& path) {
+        delete m_fsDevMap.take(path);
+    });
     connect(gvfsMountManager, &GvfsMountManager::loadDiskInfoFinished, this, &UDiskListener::update);
     connect(gvfsMountManager, &GvfsMountManager::mount_added, this, &UDiskListener::addMountDiskInfo);
     connect(gvfsMountManager, &GvfsMountManager::mount_removed, this, &UDiskListener::removeMountDiskInfo);
@@ -165,8 +180,8 @@ bool UDiskListener::renameFile(const QSharedPointer<DFMRenameEvent> &event) cons
         //           https://www.freedesktop.org/wiki/Software/DBusBindingErrors/ (¯\_(ツ)_/¯)
         return false;
     case QDBusError::NoError:
-        // TODO: create and manage a device list and use `idLabelChanged` signal instead.
-        DAbstractFileWatcher::ghostSignal(DUrl(DEVICE_ROOT), &DAbstractFileWatcher::fileMoved, oldUrl, newUrl);
+        // blumia: when renamed, a DBus signal will be sent by udisks2, and it will trigger `fileSystemDeviceIdLabelChanged()`
+        //         we don't need do rename here so just return true.
         return true;
     default:
         dialogManager->showErrorDialog("Placeholder Title", err.message());
@@ -627,6 +642,38 @@ void UDiskListener::forceUnmount(const QString &id)
         }
         bool reslut = QProcess::startDetached("gvfs-mount", args);
         qDebug() << "gvfs-mount" << args << reslut;
+    }
+}
+
+void UDiskListener::fileSystemDeviceIdLabelChanged(const QString & labelName)
+{
+    DFMBlockDevice* blDev = qobject_cast<DFMBlockDevice*>(QObject::sender());
+    DUrl oldUrl, newUrl;
+    oldUrl.setScheme(DEVICE_SCHEME);
+    oldUrl.setPath(QString::fromLatin1(blDev->device()));
+    newUrl = oldUrl;
+    QUrlQuery query;
+    query.addQueryItem("new_name", labelName);
+    newUrl.setQuery(query);
+    DAbstractFileWatcher::ghostSignal(DUrl(DEVICE_ROOT), &DAbstractFileWatcher::fileMoved, oldUrl, newUrl);
+}
+
+/*!
+ * \brief Insert a block device to filesysem device map.
+ *
+ * Won't insert if a block device ( \a dbusPath ) is not a filesystem patition
+ *
+ * \param dbusPath
+ */
+void UDiskListener::insertFileSystemDevice(const QString dbusPath)
+{
+    DFMBlockDevice* blDev = DFMDiskManager::createBlockDevice(dbusPath);
+    if (blDev->hasFileSystem()) {
+        blDev->setWatchChanges(true);
+        connect(blDev, &DFMBlockDevice::idLabelChanged, this, &UDiskListener::fileSystemDeviceIdLabelChanged);
+        m_fsDevMap.insert(dbusPath, blDev);
+    } else {
+        delete blDev;
     }
 }
 

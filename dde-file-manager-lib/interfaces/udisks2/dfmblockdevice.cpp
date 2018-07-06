@@ -121,6 +121,11 @@ bool DFMBlockDevice::watchChanges() const
     return d->watchChanges;
 }
 
+/*!
+ * \brief Get the DBus path.
+ *
+ * \return the DBus path
+ */
 QString DFMBlockDevice::path() const
 {
     Q_D(const DFMBlockDevice);
@@ -142,6 +147,11 @@ QString DFMBlockDevice::cryptoBackingDevice() const
     return d->dbus->cryptoBackingDevice().path();
 }
 
+/*!
+ * \brief Get the device path, like `/dev/sda1`
+ *
+ * \return Device path in QByteArray.
+ */
 QByteArray DFMBlockDevice::device() const
 {
     Q_D(const DFMBlockDevice);
