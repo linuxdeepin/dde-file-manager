@@ -69,6 +69,8 @@ public:
         CreateDiriterator,
         CreateGetChildrensJob,
         CreateFileWatcher,
+        CreateFileDevice,
+        CreateFileHandler,
         SetFileExtensionPropertys,
         SetPermission,
 

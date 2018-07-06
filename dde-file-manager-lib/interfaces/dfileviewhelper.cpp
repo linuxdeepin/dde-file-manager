@@ -777,7 +777,7 @@ void DFileViewHelper::handleCommitData(QWidget *editor) const
 
     const DAbstractFileInfoPointer &newFileInfo = DFileService::instance()->createFileInfo(this, new_url);
 
-    if (newFileInfo && newFileInfo->baseName().isEmpty() && newFileInfo->suffix() == fileInfo->suffix()) {
+    if (newFileInfo && newFileInfo->baseNameOfRename().isEmpty() && newFileInfo->suffixOfRename() == fileInfo->suffixOfRename()) {
         return;
     }
     AppController::selectionFile = qMakePair(new_url, windowId());

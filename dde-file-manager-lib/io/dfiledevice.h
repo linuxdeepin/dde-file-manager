@@ -18,33 +18,48 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DLOCALFILEDEVICE_H
-#define DLOCALFILEDEVICE_H
+#ifndef DFILEDEVICE_H
+#define DFILEDEVICE_H
 
-#include <dfileiodeviceproxy.h>
+#include <dfmglobal.h>
+
+#include <QIODevice>
 
 DFM_BEGIN_NAMESPACE
 
-class DLocalFileDevicePrivate;
-class DLocalFileDevice : public DFileIODeviceProxy
+class DFileDevicePrivate;
+class DFileDevice : public QIODevice
 {
-    Q_DECLARE_PRIVATE(DLocalFileDevice)
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(DFileDevice)
 
 public:
-    explicit DLocalFileDevice(QObject *parent = nullptr);
+    ~DFileDevice();
 
-    bool setFileUrl(const DUrl &url) override;
-    bool setFileName(const QString &absoluteFilePath);
+    enum FileError {
+        NoError
+    };
 
-    int handle() const override;
-    bool resize(qint64 size) override;
-    bool flush() override;
-    bool syncToDisk() override;
+    FileError error() const;
 
-private:
-    using DFileIODeviceProxy::setDevice;
+    DUrl fileUrl() const;
+
+    virtual int handle() const;
+    virtual bool resize(qint64 size);
+    virtual bool flush();
+    virtual bool syncToDisk();
+
+protected:
+    virtual bool setFileUrl(const DUrl &url);
+
+    explicit DFileDevice(QObject *parent = nullptr);
+    DFileDevice(DFileDevicePrivate &dd, QObject *parent = nullptr);
+
+    void setError(FileError error);
+
+    QScopedPointer<DFileDevicePrivate> d_ptr;
 };
 
 DFM_END_NAMESPACE
 
-#endif // DLOCALFILEDEVICE_H
+#endif // DFILEDEVICE_H

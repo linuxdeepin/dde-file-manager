@@ -18,27 +18,51 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DABSTRACTFILEDEVICE_P_H
-#define DABSTRACTFILEDEVICE_P_H
-
-#include "dfmglobal.h"
-#include "dabstractfiledevice.h"
+#include "dfilehandler.h"
+#include "private/dfilehandler_p.h"
 
 DFM_BEGIN_NAMESPACE
 
-class DAbstractFileDevicePrivate
+DFileHandlerPrivate::DFileHandlerPrivate(DFileHandler *qq)
+    : q_ptr(qq)
 {
-public:
-    DAbstractFileDevicePrivate(DAbstractFileDevice *qq);
 
-    DUrl url;
+}
 
-    DAbstractFileDevice::FileError error = DAbstractFileDevice::NoError;
-    DAbstractFileDevice *q_ptr;
+void DFileHandlerPrivate::setErrorString(const QString &es)
+{
+    errorString = es;
+}
 
-    Q_DECLARE_PUBLIC(DAbstractFileDevice)
-};
+DFileHandler::~DFileHandler()
+{
+
+}
+
+DFileHandler::Error DFileHandler::error() const
+{
+    Q_D(const DFileHandler);
+
+    return d->error;
+}
+
+QString DFileHandler::errorString() const
+{
+    Q_D(const DFileHandler);
+
+    return d->errorString;
+}
+
+DFileHandler::DFileHandler()
+    : DFileHandler(*new DFileHandlerPrivate(this))
+{
+
+}
+
+DFileHandler::DFileHandler(DFileHandlerPrivate &dd)
+    : d_ptr(&dd)
+{
+
+}
 
 DFM_END_NAMESPACE
-
-#endif // DABSTRACTFILEDEVICE_P_H

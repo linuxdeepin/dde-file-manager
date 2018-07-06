@@ -21,17 +21,18 @@
 #ifndef DFILEIODEVICEPROXY_H
 #define DFILEIODEVICEPROXY_H
 
-#include <dabstractfiledevice.h>
+#include <dfiledevice.h>
 
 DFM_BEGIN_NAMESPACE
 
 class DFileIODeviceProxyPrivate;
-class DFileIODeviceProxy : public DAbstractFileDevice
+class DFileIODeviceProxy : public DFileDevice
 {
     Q_DECLARE_PRIVATE(DFileIODeviceProxy)
 
 public:
     explicit DFileIODeviceProxy(QIODevice *device = nullptr, QObject *parent = nullptr);
+    ~DFileIODeviceProxy();
 
     void setDevice(QIODevice *device);
     QIODevice *device() const;

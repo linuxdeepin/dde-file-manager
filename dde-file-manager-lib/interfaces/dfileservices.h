@@ -48,6 +48,12 @@ class DAbstractFileInfo;
 class JobController;
 class DFMCreateGetChildrensJob;
 class DFileServicePrivate;
+
+DFM_BEGIN_NAMESPACE
+class DFileHandler;
+class DFileDevice;
+DFM_END_NAMESPACE
+
 class DFileService : public QObject, public DFMAbstractEventHandler
 {
     Q_OBJECT
@@ -66,7 +72,16 @@ public:
         }
 
         insertToCreatorHash(HandlerType(scheme, host), HandlerCreatorType(typeid(T).name(), [ = ] {
-            return (DAbstractFileController *)new T(instance());
+            DAbstractFileController *handler = new T();
+            DFileService *that = instance();
+
+            if (handler->thread() != that->thread()) {
+                handler->moveToThread(that->thread());
+            }
+
+            handler->setParent(that);
+
+            return handler;
         }));
     }
     static bool isRegisted(const QString &scheme, const QString &host, const std::type_info &info);
@@ -137,6 +152,9 @@ public:
 
     DAbstractFileWatcher *createFileWatcher(const QObject *sender, const DUrl &fileUrl, QObject *parent = 0) const;
     bool setExtensionPropertys(const QObject *sender, const DUrl &fileUrl, const QVariantHash &ep) const;
+
+    DFileDevice *createFileDevice(const QObject *sender, const DUrl &url);
+    DFileHandler *createFileHandler(const QObject *sender, const DUrl &url);
 
 signals:
     void fileOpened(const DUrl &fileUrl) const;

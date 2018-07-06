@@ -31,6 +31,8 @@
 #include "dfmeventdispatcher.h"
 #include "dfmapplication.h"
 #include "dfmsettings.h"
+#include "dlocalfiledevice.h"
+#include "dlocalfilehandler.h"
 
 #include "models/desktopfileinfo.h"
 #include "models/trashfileinfo.h"
@@ -512,6 +514,22 @@ bool FileController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &
 DAbstractFileWatcher *FileController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
     return new DFileWatcher(event->url().toLocalFile());
+}
+
+DFileDevice *FileController::createFileDevice(const QSharedPointer<DFMUrlBaseEvent> &event) const
+{
+    DLocalFileDevice *device = new DLocalFileDevice();
+
+    device->setFileUrl(event->fileUrl());
+
+    return device;
+}
+
+DFileHandler *FileController::createFileHandler(const QSharedPointer<DFMUrlBaseEvent> &event) const
+{
+    Q_UNUSED(event)
+
+    return new DLocalFileHandler();
 }
 
 class Match

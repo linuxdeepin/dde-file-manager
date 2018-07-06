@@ -47,8 +47,10 @@ public:
     QStringList getCategories() const;
 
     QIcon fileIcon() const Q_DECL_OVERRIDE;
-    QString fileName() const Q_DECL_OVERRIDE;
     QString fileDisplayName() const Q_DECL_OVERRIDE;
+    QString fileNameOfRename() const override;
+    QString baseNameOfRename() const override;
+    QString suffixOfRename() const override;
 
     void refresh() Q_DECL_OVERRIDE;
 

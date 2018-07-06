@@ -68,6 +68,7 @@ public:
     bool isDir() const Q_DECL_OVERRIDE;
     bool isSymLink() const Q_DECL_OVERRIDE;
 
+    QString symlinkTargetPath() const override;
     DUrl symLinkTarget() const Q_DECL_OVERRIDE;
 
     QString owner() const Q_DECL_OVERRIDE;

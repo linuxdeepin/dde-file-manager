@@ -1,0 +1,220 @@
+/*
+ * Copyright (C) 2017 ~ 2018 Deepin Technology Co., Ltd.
+ *
+ * Author:     zccrs <zccrs@live.com>
+ *
+ * Maintainer: zccrs <zhangjide@deepin.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+#include "dlocalfilehandler.h"
+#include "private/dfilehandler_p.h"
+
+#include <QDir>
+#include <QDateTime>
+#include <QTemporaryFile>
+
+#include <unistd.h>
+#include <utime.h>
+#include <cstdio>
+
+DFM_BEGIN_NAMESPACE
+
+DLocalFileHandler::DLocalFileHandler()
+{
+
+}
+
+bool DLocalFileHandler::exists(const DUrl &url)
+{
+    Q_ASSERT(url.isLocalFile());
+
+    QFileInfo info(url.toLocalFile());
+
+    return info.exists() || info.isSymLink();
+}
+
+bool DLocalFileHandler::touch(const DUrl &url)
+{
+    Q_ASSERT(url.isLocalFile());
+
+    QFile file(url.toLocalFile());
+
+    if (file.exists())
+        return false;
+
+    if (file.open(QIODevice::WriteOnly)) {
+        return true;
+    }
+
+    Q_D(DFileHandler);
+
+    d->setErrorString(file.errorString());
+
+    return false;
+}
+
+bool DLocalFileHandler::mkdir(const DUrl &url)
+{
+    Q_ASSERT(url.isLocalFile());
+
+    if (QDir::current().mkdir(url.toLocalFile())) {
+        return true;
+    }
+
+    Q_D(DFileHandler);
+
+    d->setErrorString(QString::fromLocal8Bit(strerror(errno)));
+
+    return false;
+}
+
+bool DLocalFileHandler::mkpath(const DUrl &url)
+{
+    Q_ASSERT(url.isLocalFile());
+
+    if (QDir::current().mkpath(url.toLocalFile())) {
+        return true;
+    }
+
+    Q_D(DFileHandler);
+
+    d->setErrorString(QString::fromLocal8Bit(strerror(errno)));
+
+    return false;
+}
+
+bool DLocalFileHandler::link(const QString &path, const DUrl &linkUrl)
+{
+    Q_ASSERT(linkUrl.isLocalFile());
+
+    if (::symlink(path.toLocal8Bit().constData(), linkUrl.toLocalFile().toLocal8Bit().constData()) == 0)
+        return true;
+
+    Q_D(DFileHandler);
+
+    d->setErrorString(QString::fromLocal8Bit(strerror(errno)));
+
+    return false;
+}
+
+bool DLocalFileHandler::remove(const DUrl &url)
+{
+    Q_ASSERT(url.isLocalFile());
+
+    if (::remove(url.toLocalFile().toLocal8Bit()) == 0)
+        return true;
+
+    Q_D(DFileHandler);
+
+    d->setErrorString(QString::fromLocal8Bit(strerror(errno)));
+
+    return false;
+}
+
+bool DLocalFileHandler::rmdir(const DUrl &url)
+{
+    Q_ASSERT(url.isLocalFile());
+
+    if (::rmdir(url.toLocalFile().toLocal8Bit()) == 0)
+        return true;
+
+    Q_D(DFileHandler);
+
+    d->setErrorString(QString::fromLocal8Bit(strerror(errno)));
+
+    return false;
+}
+
+bool DLocalFileHandler::rename(const DUrl &url, const DUrl &newUrl, bool overwrite)
+{
+    Q_ASSERT(url.isLocalFile());
+    Q_ASSERT(newUrl.isLocalFile());
+    Q_D(DFileHandler);
+
+    const QByteArray &source_file = url.toLocalFile().toLocal8Bit();
+    const QByteArray &target_file = newUrl.toLocalFile().toLocal8Bit();
+
+    if (overwrite && QFile::exists(newUrl.toLocalFile())) {
+        // rename() on Linux simply does nothing when renaming "foo" to "Foo" on a case-insensitive
+        // FS, such as FAT32. Move the file away and rename in 2 steps to work around.
+        QTemporaryFile tempFile(newUrl.toLocalFile() + QStringLiteral(".XXXXXX"));
+        tempFile.setAutoRemove(false);
+        if (!tempFile.open()) {
+            d->setErrorString(tempFile.errorString());
+            return false;
+        }
+        tempFile.close();
+        if (::rename(source_file.constData(), tempFile.fileName().toLocal8Bit().constData()) != 0) {
+            d->setErrorString(QString::fromLocal8Bit(strerror(errno)));
+            return false;
+        }
+        if (::rename(tempFile.fileName().toLocal8Bit().constData(), target_file.constData()) == 0) {
+            return true;
+        }
+        d->setErrorString(QString::fromLocal8Bit(strerror(errno)));
+        // We need to restore the original file.
+        if (!tempFile.rename(url.toLocalFile())) {
+            d->setErrorString(errorString() + QString("\nUnable to restore from %1: %2")
+                              .arg(QDir::toNativeSeparators(tempFile.fileName()), tempFile.errorString()));
+        }
+
+        return false;
+    }
+
+    if (::rename(source_file.constData(), target_file.constData()) == 0)
+        return true;
+
+    d->setErrorString(QString::fromLocal8Bit(strerror(errno)));
+
+    return false;
+}
+
+bool DLocalFileHandler::setPermissions(const DUrl &url, QFileDevice::Permissions permissions)
+{
+    Q_ASSERT(url.isLocalFile());
+
+    QFile file(url.toLocalFile());
+
+    if (file.setPermissions(permissions))
+        return true;
+
+    Q_D(DFileHandler);
+
+    d->setErrorString(file.errorString());
+
+    return false;
+}
+
+bool DLocalFileHandler::setFileTime(const DUrl &url, const QDateTime &accessDateTime, const QDateTime &lastModifiedTime)
+{
+    Q_ASSERT(url.isLocalFile());
+
+    utimbuf buf = {
+        .actime = accessDateTime.toTime_t(),
+        .modtime = lastModifiedTime.toTime_t()
+    };
+
+    if (::utime(url.toLocalFile().toLocal8Bit(), &buf) == 0) {
+        return true;
+    }
+
+    Q_D(DFileHandler);
+
+    d->setErrorString(QString::fromLocal8Bit(strerror(errno)));
+
+    return false;
+}
+
+DFM_END_NAMESPACE

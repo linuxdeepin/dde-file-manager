@@ -247,6 +247,11 @@ QString DAbstractFileInfo::baseName() const
     return fileName.left(fileName.length() - suffix.length() - 1);
 }
 
+QString DAbstractFileInfo::baseNameOfRename() const
+{
+    return baseName();
+}
+
 QString DAbstractFileInfo::fileName() const
 {
     CALL_PROXY(fileName());
@@ -264,6 +269,11 @@ QString DAbstractFileInfo::fileName() const
     }
 
     return filePath;
+}
+
+QString DAbstractFileInfo::fileNameOfRename() const
+{
+    return fileName();
 }
 
 QString DAbstractFileInfo::fileDisplayName() const
@@ -417,6 +427,13 @@ bool DAbstractFileInfo::isDesktopFile() const
     CALL_PROXY(isDesktopFile());
 
     return mimeTypeName() == "application/x-desktop";
+}
+
+QString DAbstractFileInfo::symlinkTargetPath() const
+{
+    CALL_PROXY(symlinkTargetPath());
+
+    return QString();
 }
 
 DUrl DAbstractFileInfo::symLinkTarget() const
@@ -1177,6 +1194,11 @@ QString DAbstractFileInfo::suffix() const
     }
 
     return d->mimeDatabase.suffixForFileName(this->fileName());
+}
+
+QString DAbstractFileInfo::suffixOfRename() const
+{
+    return suffix();
 }
 
 QString DAbstractFileInfo::completeSuffix() const

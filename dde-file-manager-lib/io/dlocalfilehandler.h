@@ -18,45 +18,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DABSTRACTFILEDEVICE_H
-#define DABSTRACTFILEDEVICE_H
+#ifndef DLOCALFILEHANDLER_H
+#define DLOCALFILEHANDLER_H
 
-#include <dfmglobal.h>
-
-#include <QIODevice>
+#include <dfilehandler.h>
 
 DFM_BEGIN_NAMESPACE
 
-class DAbstractFileDevicePrivate;
-class DAbstractFileDevice : public QIODevice
+class DLocalFileHandler : public DFileHandler
 {
-    Q_DECLARE_PRIVATE(DAbstractFileDevice)
-
 public:
-    ~DAbstractFileDevice();
+    DLocalFileHandler();
 
-    enum FileError {
-        NoError
-    };
-
-    FileError error() const;
-
-    DUrl fileUrl() const;
-    virtual bool setFileUrl(const DUrl &url);
-
-    virtual int handle() const;
-    virtual bool resize(qint64 size);
-    virtual bool flush();
-
-protected:
-    explicit DAbstractFileDevice(QObject *parent = nullptr);
-    DAbstractFileDevice(DAbstractFileDevicePrivate &dd, QObject *parent = nullptr);
-
-    void setError(FileError error);
-
-    QScopedPointer<DAbstractFileDevicePrivate> d_ptr;
+    bool exists(const DUrl &url) override;
+    bool touch(const DUrl &url) override;
+    bool mkdir(const DUrl &url) override;
+    bool mkpath(const DUrl &url) override;
+    bool link(const QString &path, const DUrl &linkUrl) override;
+    bool remove(const DUrl &url) override;
+    bool rmdir(const DUrl &url) override;
+    bool rename(const DUrl &url, const DUrl &newUrl, bool overwrite = false) override;
+    bool setPermissions(const DUrl &url, QFileDevice::Permissions permissions) override;
+    bool setFileTime(const DUrl &url, const QDateTime &accessDateTime, const QDateTime &lastModifiedTime) override;
 };
 
 DFM_END_NAMESPACE
 
-#endif // DABSTRACTFILEDEVICE_H
+#endif // DLOCALFILEHANDLER_H
