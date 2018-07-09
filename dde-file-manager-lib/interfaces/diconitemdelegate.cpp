@@ -902,7 +902,7 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
 
             editor->setProperty("_d_whether_show_suffix", suffix);
 
-            item->setMaxCharSize(MAX_FILE_NAME_CHAR_COUNT - suffix.toLocal8Bit().size() - suffix.isEmpty() ? 0 : 1);
+            item->setMaxCharSize(MAX_FILE_NAME_CHAR_COUNT - suffix.toLocal8Bit().size() - (suffix.isEmpty() ? 0 : 1));
             item->edit->setPlainText(index.data(DFileSystemModel::FileBaseNameOfRenameRole).toString());
         } else {
             item->setMaxCharSize(MAX_FILE_NAME_CHAR_COUNT);
