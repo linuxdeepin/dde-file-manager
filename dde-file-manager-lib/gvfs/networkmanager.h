@@ -34,10 +34,11 @@
 #undef signals
 extern "C" {
     #include <gio/gio.h>
-
-#include <QMutex>
 }
 #define signals public
+
+#include <QMutex>
+#include <QWaitCondition>
 
 class NetworkNode
 {
@@ -106,9 +107,10 @@ signals:
 
 public slots:
     void fetchNetworks(const DFMUrlBaseEvent &event);
+    static void cancelFeatchNetworks();
 
 private:
-    static QMutex mutex;
+    static QPointer<QEventLoop> eventLoop;
 };
 
 #endif // NETWORKMANAGER_H

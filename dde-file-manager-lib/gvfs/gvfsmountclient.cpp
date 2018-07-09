@@ -41,8 +41,7 @@ bool GvfsMountClient::AskingPassword = false;
 QJsonObject GvfsMountClient::SMBLoginObj = {};
 DFMUrlBaseEvent GvfsMountClient::MountEvent = DFMUrlBaseEvent(Q_NULLPTR, DUrl());
 
-MountAskPasswordDialog* GvfsMountClient::AskPasswordDialog = nullptr;
-QMutex GvfsMountClient::mutex;
+QPointer<QEventLoop> GvfsMountClient::eventLoop;
 
 GvfsMountClient::GvfsMountClient(QObject *parent) : QObject(parent)
 {
@@ -72,27 +71,30 @@ void GvfsMountClient::mount(GFile *file)
     g_file_mount_enclosing_volume (file, static_cast<GMountMountFlags>(0), op, NULL, mount_done_cb, op);
 }
 
-void GvfsMountClient::mount_sync(const QString &path)
+int GvfsMountClient::mount_sync(const DFMUrlBaseEvent &event)
 {
-    if (!mutex.tryLock()) {
-        return;
-    }
+    MountEvent = event;
+    QPointer<QEventLoop> oldEventLoop = eventLoop;
+    QEventLoop event_loop;
 
-    GFile* file = g_file_new_for_uri(path.toUtf8().constData());
+    eventLoop = &event_loop;
+
+    GFile* file = g_file_new_for_uri(event.fileUrl().toString().toUtf8().constData());
 
     if (file == NULL)
-        return;
+        return -1;
 
     GMountOperation *op = new_mount_op();
-    DThreadUtil::runInMainThread(&g_file_mount_enclosing_volume,
-                                 file, static_cast<GMountMountFlags>(0),
-                                 op, nullptr, mount_done_cb, op);
+    g_file_mount_enclosing_volume(file, static_cast<GMountMountFlags>(0),
+                                  op, nullptr, mount_done_cb, op);
 
-    if (QThread::currentThread() != qApp->thread()) {
-        mutex.lock();
+    int ret = eventLoop->exec();
+
+    if (oldEventLoop) {
+        oldEventLoop->exit(ret);
     }
 
-    mutex.unlock();
+    return ret;
 }
 
 GMountOperation *GvfsMountClient::new_mount_op()
@@ -140,17 +142,31 @@ void GvfsMountClient::mount_done_cb(GObject *object, GAsyncResult *res, gpointer
         }
     }
 
-    mutex.unlock();
+    if (eventLoop) {
+        eventLoop->exit(succeeded ? 0 : -1);
+    }
 
     emit fileSignalManager->requestChooseSmbMountedFile(MountEvent);
 }
 
-void GvfsMountClient::ask_password_cb(GMountOperation *op, const char *message, const char *default_user, const char *default_domain, GAskPasswordFlags flags)
+static QJsonObject requestPasswordDialog(WId parentWindowId, bool showDomainLine, const QJsonObject &data)
 {
-    if (AskPasswordDialog){
-        return;
+    MountAskPasswordDialog askPasswordDialog(WindowManager::getWindowById(parentWindowId));
+
+    askPasswordDialog.setLoginData(data);
+    askPasswordDialog.setDomainLineVisible(showDomainLine);
+
+    int ret = askPasswordDialog.exec();
+
+    if (ret) {
+        return askPasswordDialog.getLoginData();
     }
 
+    return QJsonObject();
+}
+
+void GvfsMountClient::ask_password_cb(GMountOperation *op, const char *message, const char *default_user, const char *default_domain, GAskPasswordFlags flags)
+{
     bool anonymous = g_mount_operation_get_anonymous(op);
     GPasswordSave passwordSave = g_mount_operation_get_password_save(op);
 
@@ -173,20 +189,9 @@ void GvfsMountClient::ask_password_cb(GMountOperation *op, const char *message, 
     obj.insert("GAskPasswordFlags", flags);
     obj.insert("passwordSave", passwordSave);
 
+    QJsonObject loginObj = DThreadUtil::runInMainThread(requestPasswordDialog, MountEvent.windowId(), MountEvent.fileUrl().isSMBFile(), obj);
 
-    AskPasswordDialog = new MountAskPasswordDialog(WindowManager::getWindowById(MountEvent.windowId()));
-    AskPasswordDialog->setLoginData(obj);
-
-    if (MountEvent.url().isSMBFile()){
-        AskPasswordDialog->setDomainLineVisible(true);
-    }else{
-        AskPasswordDialog->setDomainLineVisible(false);
-    }
-
-    int code = AskPasswordDialog->exec();
-
-    if (code){
-        QJsonObject loginObj = AskPasswordDialog->getLoginData();
+    if (!loginObj.isEmpty()){
         anonymous = loginObj.value("anonymous").toBool();
         QString username = loginObj.value("username").toString();
         QString domain = loginObj.value("domain").toString();
@@ -243,6 +248,4 @@ void GvfsMountClient::ask_password_cb(GMountOperation *op, const char *message, 
         g_object_set_data (G_OBJECT (op), "state", GINT_TO_POINTER (MOUNT_OP_ABORTED));
         g_mount_operation_reply (op, G_MOUNT_OPERATION_ABORTED);
     }
-    AskPasswordDialog->deleteLater();
-    AskPasswordDialog = NULL;
 }

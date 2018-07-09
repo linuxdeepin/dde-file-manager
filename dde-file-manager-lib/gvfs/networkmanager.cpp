@@ -39,6 +39,12 @@
 
 DFM_USE_NAMESPACE
 
+enum EventLoopCode {
+    FetchFinished = 0,
+    MountFinished = 1,
+    FetchFailed = -1
+};
+
 NetworkNode::NetworkNode()
 {
 
@@ -97,7 +103,7 @@ QStringList NetworkManager::SupportScheme = {
 };
 QMap<DUrl, NetworkNodeList> NetworkManager::NetworkNodes = {};
 GCancellable* NetworkManager::m_networks_fetching_cancellable = NULL;
-QMutex NetworkManager::mutex;
+QPointer<QEventLoop> NetworkManager::eventLoop;
 
 NetworkManager::NetworkManager(QObject *parent) : QObject(parent)
 {
@@ -123,13 +129,12 @@ void NetworkManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestFetchNetworks, this, &NetworkManager::fetchNetworks);
 }
 
-
 void NetworkManager::fetch_networks(gchar* url, DFMEvent* e)
 {
-    bool try_lock = mutex.tryLock();
+    QPointer<QEventLoop> oldEventLoop = eventLoop;
+    QEventLoop event_loop;
 
-    if (!try_lock)
-        return;
+    eventLoop = &event_loop;
 
     GFile *network_file;
     network_file = g_file_new_for_uri (url);
@@ -140,21 +145,24 @@ void NetworkManager::fetch_networks(gchar* url, DFMEvent* e)
     }
     m_networks_fetching_cancellable = g_cancellable_new ();
 
-    DThreadUtil::runInMainThread(&g_file_enumerate_children_async,
-                                 network_file,
-                                 "standard::type,standard::target-uri,standard::name,standard::display-name,standard::icon,mountable::can-mount",
-                                 G_FILE_QUERY_INFO_NONE,
-                                 G_PRIORITY_DEFAULT,
-                                 m_networks_fetching_cancellable,
-                                 network_enumeration_finished,
-                                 e);
+    int ret = EventLoopCode::FetchFailed;
+
+    do {
+        g_file_enumerate_children_async(network_file,
+                                        "standard::type,standard::target-uri,standard::name,standard::display-name,standard::icon,mountable::can-mount",
+                                        G_FILE_QUERY_INFO_NONE,
+                                        G_PRIORITY_DEFAULT,
+                                        m_networks_fetching_cancellable,
+                                        network_enumeration_finished,
+                                        e);
+        ret = eventLoop->exec();
+    } while (ret == EventLoopCode::MountFinished); // 需要重新执行 g_file_enumerate_children_async
+
     g_clear_object(&network_file);
 
-    if (QThread::currentThread() != qApp->thread()) {
-        mutex.lock(); // do blocking
+    if (oldEventLoop) {
+        oldEventLoop->exit(ret);
     }
-
-    mutex.unlock();
 }
 
 void NetworkManager::network_enumeration_finished(GObject *source_object, GAsyncResult *res, gpointer user_data)
@@ -177,16 +185,29 @@ void NetworkManager::network_enumeration_finished(GObject *source_object, GAsync
             }
         }
         qDebug() << error->message;
-        gvfsMountClient->mount_sync(event->url().toString());
+        int ret = gvfsMountClient->mount_sync(*event);
         g_clear_error (&error);
-    }
 
-    g_file_enumerator_next_files_async (enumerator,
-                                        G_MAXINT32,
-                                        G_PRIORITY_DEFAULT,
-                                        m_networks_fetching_cancellable,
-                                        network_enumeration_next_files_finished,
-                                        user_data);
+        if (eventLoop) {
+            // 挂载完成时, 返回 1, 在fetch_networks中再次调用g_file_enumerate_children_async获取列表
+            eventLoop->exit(ret == 0 ? EventLoopCode::MountFinished : EventLoopCode::FetchFailed);
+        }
+    } else {
+        if (!enumerator) {
+            if (eventLoop) {
+                eventLoop->exit(EventLoopCode::FetchFailed);
+            }
+
+            return;
+        }
+
+        g_file_enumerator_next_files_async (enumerator,
+                                            G_MAXINT32,
+                                            G_PRIORITY_DEFAULT,
+                                            m_networks_fetching_cancellable,
+                                            network_enumeration_next_files_finished,
+                                            user_data);
+    }
 }
 
 void NetworkManager::network_enumeration_next_files_finished(GObject *source_object, GAsyncResult *res, gpointer user_data)
@@ -217,7 +238,9 @@ void NetworkManager::network_enumeration_next_files_finished(GObject *source_obj
         g_list_free_full (detected_networks, g_object_unref);
     }
 
-    mutex.unlock();
+    if (eventLoop) {
+        eventLoop->exit(error ? EventLoopCode::FetchFailed : EventLoopCode::FetchFinished);
+    }
 }
 
 void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detected_networks, gpointer user_data)
@@ -271,7 +294,6 @@ void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detec
     NetworkNodes.remove(event->fileUrl());
     NetworkNodes.insert(event->fileUrl(), nodeList);
     qDebug() << "request NetworkNodeList successfully";
-    emit fileSignalManager->fetchNetworksSuccessed(*event);
 }
 
 void NetworkManager::restartGVFSD()
@@ -311,4 +333,10 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
         gchar *url = const_cast<gchar*>(stdPath.c_str());
         fetch_networks(url, e);
     }
+}
+
+void NetworkManager::cancelFeatchNetworks()
+{
+    if (eventLoop)
+        eventLoop->exit(EventLoopCode::FetchFailed);
 }

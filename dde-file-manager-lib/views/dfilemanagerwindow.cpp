@@ -926,13 +926,6 @@ void DFileManagerWindow::initConnect()
         QObject::connect(titlebar(), SIGNAL(closeClicked()), parentWidget(), SLOT(close()));
     }
 
-    QObject::connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed, this, [this](const DFMUrlBaseEvent & event) {
-        if (event.windowId() != windowId()) {
-            return;
-        }
-
-        cd(event.fileUrl(), false);
-    });
     QObject::connect(fileSignalManager, &FileSignalManager::requestCloseCurrentTab, this, &DFileManagerWindow::closeCurrentTab);
 
     QObject::connect(d->tabBar, &TabBar::tabMoved, d->toolbar, &DToolBar::moveNavStacks);
