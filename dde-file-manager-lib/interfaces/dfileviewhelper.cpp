@@ -31,6 +31,7 @@
 #include "tag/tagmanager.h"
 #include "dfmapplication.h"
 #include "dfmsettings.h"
+#include "dstorageinfo.h"
 
 #include "deviceinfo/udisklistener.h"
 
@@ -703,10 +704,8 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event) const
         Qt::DropAction default_action = Qt::CopyAction;
 
         // 如果文件和目标路径在同一个分区下，默认为移动文件，否则默认为复制文件
-        if (from.scheme() == to.scheme() && from.isLocalFile()) {
-            if (deviceListener->isInSameDevice(from.toLocalFile(), to.toLocalFile())) {
-                default_action = Qt::MoveAction;
-            }
+        if (DStorageInfo::inSameDevice(from, to)) {
+            default_action = Qt::MoveAction;
         }
 
         if (event->possibleActions().testFlag(default_action)) {

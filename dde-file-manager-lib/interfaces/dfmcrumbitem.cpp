@@ -22,6 +22,7 @@
 #include "dfmcrumbinterface.h"
 
 #include "dfileservices.h"
+#include "dstorageinfo.h"
 
 #include "views/themeconfig.h"
 #include "deviceinfo/udisklistener.h"
@@ -198,6 +199,12 @@ Qt::DropAction DFMCrumbItem::canDropMimeData(const QMimeData *data, Qt::DropActi
 
     const Qt::DropActions support_actions = info->supportedDropActions() & actions;
 
+    if (DStorageInfo::inSameDevice(data->urls().first(), d->data.url)) {
+        if (support_actions.testFlag(Qt::MoveAction)) {
+            return Qt::MoveAction;
+        }
+    }
+
     if (support_actions.testFlag(Qt::CopyAction)) {
         return Qt::CopyAction;
     }
@@ -228,14 +235,7 @@ bool DFMCrumbItem::dropMimeData(const QMimeData *data, Qt::DropAction action) co
 
     switch (action) {
     case Qt::CopyAction:
-        if (oriUrlList.count() > 0) {
-            bool isInSameDevice = Singleton<UDiskListener>::instance()->isInSameDevice(oriUrlList.at(0).toLocalFile(), destUrl.toLocalFile());
-            if (isInSameDevice && !DFMGlobal::keyCtrlIsPressed()) {
-                DFileService::instance()->pasteFile(this, DFMGlobal::CutAction, destUrl, oriUrlList);
-            } else {
-                DFileService::instance()->pasteFile(this, DFMGlobal::CopyAction, destUrl, oriUrlList);
-            }
-        }
+        DFileService::instance()->pasteFile(this, DFMGlobal::CopyAction, destUrl, oriUrlList);
         break;
     case Qt::LinkAction:
         break;
