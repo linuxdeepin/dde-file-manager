@@ -73,6 +73,7 @@
 #include <QtConcurrent>
 
 #include <DApplication>
+#include <DDesktopServices>
 
 #include "tag/tagutil.h"
 #include "tag/tagmanager.h"
@@ -372,7 +373,7 @@ void AppController::actionClearTrash(const QObject *sender)
     bool ret = fileService->deleteFiles(sender, list);
 
     if (ret) {
-        DFMGlobal::playSound(QUrl::fromLocalFile("/usr/share/sounds/deepin/stereo/trash-empty.ogg"));
+        DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_EmptyTrash);
     }
 }
 

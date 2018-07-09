@@ -10,9 +10,9 @@ CONFIG          += plugin c++11 link_pkgconfig
 PKGCONFIG       += dtkwidget
 
 INCLUDEPATH += /usr/include/dde-dock
-INCLUDEPATH += $$PWD/../../dde-file-manager-lib/interfaces
+#INCLUDEPATH += $$PWD/../../dde-file-manager-lib/interfaces
 
-unix: LIBS += -L$$OUT_PWD/../../dde-file-manager-lib -ldde-file-manager
+#unix: LIBS += -L$$OUT_PWD/../../dde-file-manager-lib -ldde-file-manager
 
 TARGET          = $$qtLibraryTarget(dde-trash-plugin)
 DESTDIR          = $$_PRO_FILE_PWD_/../
