@@ -206,6 +206,8 @@ void BookMarkManager::update(const QVariant &value)
 {
     const QVariantList &list = value.toList();
 
+    DUrlList bookmarkUrlList = m_bookmarks.keys();
+
     for (int i = 0; i < list.count(); ++i) {
         const QVariantMap &item = list.at(i).toMap();
         const QString &name = item.value("name").toString();
@@ -231,6 +233,14 @@ void BookMarkManager::update(const QVariant &value)
 
             DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::subfileCreated, bm_info->fileUrl());
         }
+
+        bookmarkUrlList.removeOne(url);
+    }
+
+    for (const DUrl &url : bookmarkUrlList) {
+        const BookMarkPointer &info = m_bookmarks.take(url);
+
+        DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::fileDeleted, info->fileUrl());
     }
 }
 
