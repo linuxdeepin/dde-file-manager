@@ -56,10 +56,9 @@ public:
     static bool AskingPassword;
     static QJsonObject SMBLoginObj;
     static DFMUrlBaseEvent MountEvent;
-    static MountAskPasswordDialog* AskPasswordDialog;
 
-    static void mount (GFile *file);
-    static void mount_sync(const QString &path);
+    static void mount(GFile *file);
+    static int mount_sync(const DFMUrlBaseEvent &event);
     static GMountOperation *new_mount_op(void);
     static void mount_done_cb(GObject *object, GAsyncResult *res, gpointer user_data);
     static void ask_password_cb (GMountOperation *op,
@@ -69,7 +68,7 @@ public:
                      GAskPasswordFlags flags);
 
 private:
-    static QMutex mutex;
+    static QPointer<QEventLoop> eventLoop;
 };
 
 #endif // GVFSMOUNTCLIENT_H

@@ -28,6 +28,70 @@
 
 #include "singleton.h"
 
+class NetworkFileDDirIterator : public DDirIterator
+{
+public:
+    NetworkFileDDirIterator(const DUrl &url)
+        : m_url(url)
+    {
+
+    }
+
+    DUrl next() override {
+        m_currentInfo = m_infoList.takeFirst();
+
+        return m_currentInfo->fileUrl();
+    }
+
+    bool hasNext() const {
+        if (initialized) {
+            return !m_infoList.isEmpty();
+        }
+
+        initialized = true;
+
+        if (NetworkManager::NetworkNodes.value(m_url).isEmpty()) {
+            Singleton<NetworkManager>::instance()->fetchNetworks(DFMUrlBaseEvent(nullptr, m_url));
+        }
+
+        foreach (const NetworkNode& node, NetworkManager::NetworkNodes.value(m_url)) {
+            NetworkFileInfo* info = new NetworkFileInfo(DUrl(node.url()));
+            info->setNetworkNode(node);
+            m_infoList.append(DAbstractFileInfoPointer(info));
+        };
+
+        return !m_infoList.isEmpty();
+    }
+
+    void close() override {
+        if (initialized) {
+            NetworkManager::cancelFeatchNetworks();
+        }
+    }
+
+    QString fileName() const override {
+        return m_currentInfo->fileName();
+    }
+
+    QString filePath() const override {
+        return m_currentInfo->filePath();
+    }
+
+    const DAbstractFileInfoPointer fileInfo() const override {
+        return m_currentInfo;
+    }
+
+    QString path() const override {
+        return m_currentInfo->path();
+    }
+
+private:
+    mutable bool initialized = false;
+    DUrl m_url;
+    DAbstractFileInfoPointer m_currentInfo;
+    mutable QList<DAbstractFileInfoPointer> m_infoList;
+};
+
 NetworkController::NetworkController(QObject *parent):
     DAbstractFileController(parent)
 {
@@ -72,7 +136,6 @@ const QList<DAbstractFileInfoPointer> NetworkController::getChildren(const QShar
 
 const DDirIteratorPointer NetworkController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
-    Q_UNUSED(event);
-    return DDirIteratorPointer();
+    return DDirIteratorPointer(new NetworkFileDDirIterator(event->fileUrl()));
 }
 
