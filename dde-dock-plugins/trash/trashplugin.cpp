@@ -23,7 +23,6 @@
  */
 
 #include "trashplugin.h"
-#include "dfmglobal.h"
 
 TrashPlugin::TrashPlugin(QObject *parent)
     : QObject(parent),
@@ -46,7 +45,7 @@ const QString TrashPlugin::pluginName() const
 void TrashPlugin::init(PluginProxyInterface *proxyInter)
 {
     m_proxyInter = proxyInter;
-    DFMGlobal::instance()->installTranslator();
+//    DFMGlobal::instance()->installTranslator();
     displayModeChanged(displayMode());
 }
 

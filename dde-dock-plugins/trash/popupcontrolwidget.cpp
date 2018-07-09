@@ -30,8 +30,8 @@
 #include <QDir>
 
 #include <ddialog.h>
-#include "dfmglobal.h"
-
+#include <DTrashManager>
+#include <DDesktopServices>
 
 DWIDGET_USE_NAMESPACE
 
@@ -86,7 +86,13 @@ void PopupControlWidget::clearTrashFloder()
 {
     // show confrim dialog
     qDebug() << "clear trash empty";
-    DFMGlobal::instance()->clearTrash();
+
+    if (DTrashManager::instance()->cleanTrash()) {
+        DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_EmptyTrash);
+    } else {
+        qWarning() << "Clear trash failed";
+    }
+//    DFMGlobal::instance()->clearTrash();
 }
 
 int PopupControlWidget::trashItemCount() const
