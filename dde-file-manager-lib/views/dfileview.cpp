@@ -1484,7 +1484,8 @@ void DFileView::dropEvent(QDropEvent *event)
         if (!index.isValid())
             return;
 
-        if (isSelected(index))
+        // 防止把目录拖动到自己里边
+        if (isSelected(index) && event->source() == this)
             return;
 
         if (model()->supportedDropActions() & event->dropAction() && model()->flags(index) & Qt::ItemIsDropEnabled) {
