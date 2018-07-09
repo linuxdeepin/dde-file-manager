@@ -537,7 +537,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
         }
         default: break;
         }
-        break;
+        // fall through
     case Qt::KeypadModifier:
         switch (event->key()) {
         case Qt::Key_Return:
@@ -549,9 +549,6 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
                 return;
             }
             break;
-        case Qt::Key_F1:
-//TODO:            appController->actionHelp(fmevent);
-            return;
         case Qt::Key_F5:
             model()->update();
             update();
