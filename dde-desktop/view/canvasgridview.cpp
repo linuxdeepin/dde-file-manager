@@ -106,8 +106,6 @@ CanvasGridView::CanvasGridView(QWidget *parent)
 {
     D_THEME_INIT_WIDGET(CanvasGridView);
 
-    installEventFilter(this);
-
     initUI();
     initConnection();
 }
@@ -460,8 +458,6 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
 
 void CanvasGridView::mouseReleaseEvent(QMouseEvent *event)
 {
-    qDebug() << event->type() << "zzzzzzzzzzzzzzz";
-
     QAbstractItemView::mouseReleaseEvent(event);
     d->mousePressed = false;
     if (d->showSelectRect && d->selectRect.isValid()) {
@@ -476,8 +472,6 @@ void CanvasGridView::mouseReleaseEvent(QMouseEvent *event)
 
 void CanvasGridView::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    qDebug() << "jjjjjjjjjjjjjjjjjjjjjjjjjjjjjj" << event->type();
-
     QModelIndex index = indexAt(event->pos());
     QPersistentModelIndex persistent = index;
     emit doubleClicked(persistent);
@@ -1132,22 +1126,6 @@ QMargins CanvasGridView::cellMargins() const
 QSize CanvasGridView::cellSize() const
 {
     return QSize(d->cellWidth, d->cellHeight);
-}
-
-bool CanvasGridView::eventFilter(QObject *obj, QEvent *event)
-{
-    (void)obj;
-
-    if (event->type() == QEvent::DragEnter) {
-        qDebug() << "drag enter 11111111111111111111111111111";
-    }
-
-    if (event->type() == QEvent::Drop) {
-        qDebug() << "drop 22222222222222222222222222222222222";
-    }
-
-
-    return false;
 }
 
 void CanvasGridView::openUrl(const DUrl &url)
