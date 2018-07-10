@@ -109,9 +109,6 @@ public:
     QMargins cellMargins() const;
     QSize cellSize() const;
 
-protected:
-    virtual bool eventFilter(QObject *obj, QEvent *event) override;
-
 signals:
     void sortRoleChanged(int role, Qt::SortOrder order);
     void autoAlignToggled();
