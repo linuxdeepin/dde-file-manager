@@ -1,12 +1,12 @@
 PREFIX = /usr
-QT              += core widgets concurrent
+QT              += core widgets concurrent dbus
 TEMPLATE         = lib
 CONFIG          += plugin c++11 link_pkgconfig
-PKGCONFIG       += dtkwidget gio-unix-2.0
+PKGCONFIG       += dtkwidget
 
 INCLUDEPATH += /usr/include/dde-dock
 INCLUDEPATH += $$PWD/../../dde-file-manager-lib/interfaces \
-               $$PWD/../../dde-file-manager-lib/gvfs \
+#               $$PWD/../../dde-file-manager-lib/gvfs \
                $$PWD/../../dde-file-manager-lib
 
 TARGET          = $$qtLibraryTarget(dde-disk-mount-plugin)
@@ -15,7 +15,7 @@ DISTFILES       += disk-mount.json
 
 DEFINES += QT_MESSAGELOGCONTEXT
 
-unix: LIBS += -L$$OUT_PWD/../../dde-file-manager-lib -ldde-file-manager
+#unix: LIBS += -L$$OUT_PWD/../../dde-file-manager-lib -ldde-file-manager
 
 HEADERS += \
     diskmountplugin.h \
@@ -31,6 +31,8 @@ SOURCES += \
 
 target.path = $${PREFIX}/lib/dde-dock/plugins/
 INSTALLS += target
+
+include($$PWD/udisks2/udisks2.pri)
 
 RESOURCES += \
     resources.qrc

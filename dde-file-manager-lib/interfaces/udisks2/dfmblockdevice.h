@@ -27,6 +27,8 @@
 #include <QVariantMap>
 #include <QDBusUnixFileDescriptor>
 
+class QDBusObjectPath;
+
 DFM_BEGIN_NAMESPACE
 
 class DFMBlockDevicePrivate;
@@ -219,10 +221,11 @@ protected:
 
     QScopedPointer<DFMBlockDevicePrivate> d_ptr;
 
-private:
-    Q_PRIVATE_SLOT(d_ptr, void _q_onInterfacesAdded(const QDBusObjectPath &, const QMap<QString, QVariantMap> &))
-    Q_PRIVATE_SLOT(d_ptr, void _q_onInterfacesRemoved(const QDBusObjectPath &, const QStringList &))
-    Q_PRIVATE_SLOT(d_ptr, void _q_onPropertiesChanged(const QString &, const QVariantMap &))
+private Q_SLOTS:
+    void onInterfacesAdded(const QDBusObjectPath &object_path, const QMap<QString, QVariantMap> &interfaces_and_properties);
+    void onInterfacesRemoved(const QDBusObjectPath &object_path, const QStringList &interfaces);
+    void onPropertiesChanged(const QString &interface, const QVariantMap &changed_properties);
+//    Q_PRIVATE_SLOT(d_ptr, void _q_onPropertiesChanged(const QString &, const QVariantMap &))
 
     friend class DFMDiskManager;
 };

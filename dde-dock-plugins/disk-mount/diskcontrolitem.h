@@ -31,21 +31,24 @@
 #include <QLabel>
 #include <QProgressBar>
 #include <QIcon>
-#include "qdiskinfo.h"
+#include <dfmglobal.h>
+
+DFM_BEGIN_NAMESPACE
+class DFMBlockDevice;
+DFM_END_NAMESPACE
 
 class DiskControlItem : public QFrame
 {
     Q_OBJECT
 
 public:
-    explicit DiskControlItem(const QDiskInfo &info, QWidget *parent = 0);
+    explicit DiskControlItem(const DFM_NAMESPACE::DFMBlockDevice* blockDevicePointer, QWidget *parent = 0);
+    ~DiskControlItem();
 
 signals:
     void requestUnmount(const QString &diskId) const;
-//    void requestOpenDrive(const QString &uri) const;
 
 private slots:
-    void updateInfo(const QDiskInfo &info);
     static QString sizeString(const QString &str);
     static qreal dRound64(qreal num, int count = 1);
     const QString formatDiskSize(const quint64 num) const;
@@ -55,7 +58,8 @@ private:
     void showEvent(QShowEvent *e) override;
 
 private:
-    QDiskInfo m_info;
+    QString deviceDBusId;
+    QString mountPoint;
     QIcon m_unknowIcon;
 
     QLabel *m_diskIcon;

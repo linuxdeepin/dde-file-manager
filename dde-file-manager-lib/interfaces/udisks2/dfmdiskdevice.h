@@ -66,6 +66,7 @@ class DFMDiskDevice : public QObject
     Q_PROPERTY(QString WWN READ WWN CONSTANT FINAL)
 
 public:
+    ~DFMDiskDevice();
     QString path() const;
     bool canPowerOff() const;
     QVariantMap configuration() const;
@@ -104,7 +105,6 @@ public Q_SLOTS: // METHODS
 
 private:
     explicit DFMDiskDevice(const QString &path, QObject *parent = nullptr);
-    ~DFMDiskDevice();
 
     QScopedPointer<DFMDiskDevicePrivate> d_ptr;
 
