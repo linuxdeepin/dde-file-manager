@@ -174,6 +174,7 @@ void RequestEP::requestEP(const DUrl &url, DFileInfoPrivate *info)
 
 void RequestEP::cancelRequestEP(DFileInfoPrivate *info)
 {
+    dirtyFileInfos << info;
     requestEPFilesLock.lockForRead();
 
     for (int i = 0; i < requestEPFiles.count(); ++i) {
@@ -185,12 +186,12 @@ void RequestEP::cancelRequestEP(DFileInfoPrivate *info)
             requestEPFiles.removeAt(i);
             requestEPFilesLock.unlock();
             info->requestEP = nullptr;
+            dirtyFileInfos.remove(info);
             return;
         }
     }
 
     requestEPFilesLock.unlock();
-    dirtyFileInfos << info;
 }
 
 void RequestEP::processEPChanged(const DUrl &url, DFileInfoPrivate *info, const QVariantHash &ep)
@@ -228,11 +229,13 @@ DFileInfoPrivate::DFileInfoPrivate(const DUrl &url, DFileInfo *qq, bool hasCache
 DFileInfoPrivate::~DFileInfoPrivate()
 {
     if (getIconTimer) {
+        getIconTimer->disconnect(SIGNAL(timeout()));
         getIconTimer->stop();
         getIconTimer->deleteLater();
     }
 
     if (getEPTimer) {
+        getEPTimer->disconnect(SIGNAL(timeout()));
         getEPTimer->stop();
         getEPTimer->deleteLater();
     }
