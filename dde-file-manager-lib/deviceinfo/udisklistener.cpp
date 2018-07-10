@@ -92,7 +92,7 @@ UDiskListener::UDiskListener(QObject *parent):
 void UDiskListener::initDiskManager()
 {
     m_diskMgr = new DFMDiskManager(this);
-//    m_diskMgr.reset(new DFMDiskManager);
+    m_diskMgr->setWatchChanges(true);
     QStringList blDevList = m_diskMgr->blockDevices();
     for (const QString &str : blDevList) {
         insertFileSystemDevice(str);
