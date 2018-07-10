@@ -1859,6 +1859,8 @@ void CanvasGridView::initConnection()
         model()->update();
         update();
     });
+
+    connect(DFMApplication::instance(), &DFMApplication::previewAttributeChanged, this->model(), &DFileSystemModel::update);
 }
 
 void CanvasGridView::updateCanvas()
