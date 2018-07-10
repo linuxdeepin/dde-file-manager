@@ -13,7 +13,6 @@
 #include "durl.h"
 #include "dfmfilepreview.h"
 #include "dabstractfileinfo.h"
-#include "shutil/filessizeworker.h"
 #include <dabstractdialog.h>
 #include <dseparatorhorizontal.h>
 #include <QPointer>
@@ -27,7 +26,7 @@ DWIDGET_USE_NAMESPACE
 DFM_BEGIN_NAMESPACE
 
 class FilePreviewDialogStatusBar;
-
+class DFileStatisticsJob;
 
 class UnknowFilePreview : public DFMFilePreview
 {
@@ -45,7 +44,6 @@ signals:
     void requestStartFolderSize();
 
 public slots:
-    void startFolderSize(const DUrl& url);
     void updateFolderSize(qint64 size);
 
 private:
@@ -54,8 +52,7 @@ private:
     QLabel *m_nameLabel;
     QLabel *m_sizeLabel;
     QLabel *m_typeLabel;
-    FilesSizeWorker* m_sizeWorker;
-    QThread* m_sizeThread;
+    DFileStatisticsJob* m_sizeWorker = nullptr;
 };
 
 

@@ -49,7 +49,13 @@ public:
     Q_ENUM(State)
 
     enum FileHint {
-        FollowSymlink = 0x01
+        FollowSymlink = 0x01,
+        DontSkipAVFSDStorage = 0x02,
+        DontSkipPROCStorage = 0x04,
+        DontSkipCharDeviceFile = 0x08,
+        DontSkipBlockDeviceFile = 0x10,
+        DontSkipFIFOFile = 0x20,
+        DontSkipSocketFile = 0x40
     };
 
     Q_ENUM(FileHint)
@@ -74,6 +80,7 @@ Q_SIGNALS:
     void sizeChanged(qint64 size);
     void fileFound(const DUrl &url);
     void directoryFound(const DUrl &url);
+    void dataNotify(qint64 size, int filesCount, int directoryCount);
 
 private:
     void run() override;

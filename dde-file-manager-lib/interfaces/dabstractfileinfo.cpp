@@ -401,6 +401,13 @@ bool DAbstractFileInfo::makeAbsolute()
     return false;
 }
 
+DAbstractFileInfo::FileType DAbstractFileInfo::fileType() const
+{
+    CALL_PROXY(fileType());
+
+    return Unknown;
+}
+
 bool DAbstractFileInfo::isFile() const
 {
     CALL_PROXY(isFile());
@@ -446,16 +453,17 @@ DUrl DAbstractFileInfo::symLinkTarget() const
 DUrl DAbstractFileInfo::rootSymLinkTarget() const
 {
     DAbstractFileInfoPointer info = fileService->createFileInfo(Q_NULLPTR, fileUrl());
+
     while (info->isSymLink()) {
         DUrl targetUrl = info->symLinkTarget();
-        if (targetUrl == fileUrl()) {
+
+        if (targetUrl == info->fileUrl()) {
             break;
         }
+
         info = fileService->createFileInfo(Q_NULLPTR, targetUrl);
-        if (!info) {
-            return fileUrl();
-        }
     }
+
     return info->fileUrl();
 }
 
@@ -624,9 +632,9 @@ QString DAbstractFileInfo::mimeTypeDisplayName() const
     return mimeTypeDisplayManager->displayName(mimeTypeName());
 }
 
-QString DAbstractFileInfo::fileType() const
+QString DAbstractFileInfo::fileTypeDisplayName() const
 {
-    CALL_PROXY(fileType());
+    CALL_PROXY(fileTypeDisplayName());
 
     return QString::number(mimeTypeDisplayManager->displayNameToEnum(mimeTypeName())).append(suffix());
 }
@@ -1279,17 +1287,17 @@ bool DAbstractFileInfo::canDrop() const
         return false;
     }
 
-    if (isDir()) {
-        return true;
+    if (!isSymLink()) {
+        return isDir() || isDesktopFile();
     }
 
     DAbstractFileInfoPointer info(const_cast<DAbstractFileInfo *>(this));
 
-    while (info->isSymLink()) {
+    do {
         const DUrl &targetUrl = info->symLinkTarget();
 
-        if (targetUrl == fileUrl()) {
-            break;
+        if (targetUrl == info->fileUrl()) {
+            return false;
         }
 
         info = fileService->createFileInfo(Q_NULLPTR, targetUrl);
@@ -1297,9 +1305,9 @@ bool DAbstractFileInfo::canDrop() const
         if (!info) {
             return false;
         }
-    }
+    } while (info->isSymLink());
 
-    return isDesktopFile();
+    return info->canDrop();
 }
 
 QFileInfo DAbstractFileInfo::toQFileInfo() const

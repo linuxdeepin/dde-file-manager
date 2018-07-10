@@ -118,14 +118,21 @@ public:
     };
 
     enum FileType {
+        // base type
         Directory,
+        CharDevice,
+        BlockDevice,
+        FIFOFile,
+        SocketFile,
+        RegularFile,
+        //
+        Executable,
         Documents,
         Images,
         Videos,
         Audios,
         Archives,
         DesktopApplication,
-        Executable,
         Unknown
     };
 
@@ -168,6 +175,8 @@ public:
     virtual bool isAllowGuestShared() const;
     virtual bool makeAbsolute();
 
+    // only for base file type
+    virtual FileType fileType() const;
     virtual bool isFile() const;
     virtual bool isDir() const;
     virtual bool isSymLink() const;
@@ -206,7 +215,7 @@ public:
     virtual QString sizeDisplayName() const;
     virtual QString mimeTypeDisplayName() const;
     /// Used for sorting
-    virtual QString fileType() const;
+    virtual QString fileTypeDisplayName() const;
 
     virtual DUrl fileUrl() const;
     inline QString scheme() const

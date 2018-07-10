@@ -141,7 +141,6 @@ HEADERS += \
     dialogs/trashpropertydialog.h \
     views/dbookmarkmountedindicatoritem.h \
     controllers/jobcontroller.h \
-    shutil/filessizeworker.h \
     views/computerview.h \
     views/flowlayout.h \
     shutil/shortcut.h \
@@ -330,7 +329,6 @@ SOURCES += \
     dialogs/trashpropertydialog.cpp \
     views/dbookmarkmountedindicatoritem.cpp \
     controllers/jobcontroller.cpp \
-    shutil/filessizeworker.cpp \
     views/computerview.cpp \
     views/flowlayout.cpp \
     shutil/shortcut.cpp \

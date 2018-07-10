@@ -29,6 +29,7 @@
 #include "dabstractfileinfo.h"
 #include "deviceinfo/udiskdeviceinfo.h"
 #include "dfmevent.h"
+
 #include <QLabel>
 #include <QCloseEvent>
 #include <QTextEdit>
@@ -52,7 +53,10 @@ class DAbstractFileInfo;
 class UDiskDeviceInfo;
 class DUrl;
 class ShareInfoFrame;
-class FilesSizeWorker;
+
+DFM_BEGIN_NAMESPACE
+class DFileStatisticsJob;
+DFM_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
 
@@ -155,7 +159,6 @@ public slots:
     void onExpandChanged(const bool& e);
 
 signals:
-    void requestStartComputerFolderSize();
     void closed(const DUrl& url);
     void aboutToClosed(const DUrl& url);
     void raised();
@@ -179,6 +182,7 @@ private:
     QPushButton* m_editButton{ nullptr };
     QCheckBox * m_executableCheckBox{ nullptr };
     SectionValueLabel* m_folderSizeLabel{ nullptr };
+    SectionValueLabel* m_containSizeLabel{ nullptr };
     QFrame *m_basicInfoFrame{ nullptr };
     ShareInfoFrame* m_shareinfoFrame{ nullptr };
     QFrame* m_authorityManagementFrame{ nullptr };
@@ -188,7 +192,7 @@ private:
     QListWidget* m_OpenWithListWidget{ nullptr };
     QButtonGroup* m_OpenWithButtonGroup{ nullptr };
     DExpandGroup* m_expandGroup{ nullptr };
-    FilesSizeWorker* m_sizeWorker{ nullptr };
+    DFM_NAMESPACE::DFileStatisticsJob* m_sizeWorker{ nullptr };
     QVBoxLayout* m_mainLayout{ nullptr };
 
     DExpandGroup *addExpandWidget(const QStringList &titleList);

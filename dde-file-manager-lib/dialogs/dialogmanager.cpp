@@ -138,7 +138,7 @@ void DialogManager::initCloseIndicatorDialog()
     m_closeIndicatorDialog->setWindowIcon(QIcon(":/images/images/dde-file-manager.svg"));
     m_closeIndicatorDialog->setStyleSheet(getQssFromFile(":/qss/dialogs/qss/light.qss"));
     m_closeIndicatorTimer = new QTimer;
-    m_closeIndicatorTimer->setInterval(100);
+    m_closeIndicatorTimer->setInterval(1000);
     connect(m_closeIndicatorTimer, &QTimer::timeout, this, &DialogManager::updateCloseIndicator);
 }
 

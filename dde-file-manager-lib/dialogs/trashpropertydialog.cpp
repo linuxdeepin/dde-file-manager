@@ -26,13 +26,14 @@
 #include "dseparatorhorizontal.h"
 #include "shutil/fileutils.h"
 #include "dfileservices.h"
-#include "shutil/filessizeworker.h"
+#include "dfilestatisticsjob.h"
+
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QThread>
-#include <QSvgRenderer>
 #include <QPainter>
+
 DWIDGET_USE_NAMESPACE
+DFM_USE_NAMESPACE
 
 TrashPropertyDialog::TrashPropertyDialog(const DUrl& url, QWidget *parent) : DDialog(parent)
 {
@@ -99,21 +100,12 @@ void TrashPropertyDialog::initUI()
 
 void TrashPropertyDialog::startComputerFolderSize(const DUrl &url)
 {
-    DUrlList urls;
-    urls << url;
-    FilesSizeWorker* worker = new FilesSizeWorker(urls);
-    QThread*  workerThread = new QThread;
-    worker->moveToThread(workerThread);
+    DFileStatisticsJob* worker = new DFileStatisticsJob(this);
 
-    connect(workerThread, &QThread::finished, worker, &FilesSizeWorker::deleteLater);
-    connect(workerThread, &QThread::finished, workerThread, &QThread::deleteLater);
+    connect(worker, &DFileStatisticsJob::finished, worker, &DFileStatisticsJob::deleteLater);
+    connect(worker, &DFileStatisticsJob::dataNotify, this, &TrashPropertyDialog::updateFolderSize);
 
-    connect(this, &TrashPropertyDialog::requestStartComputerFolderSize, worker, &FilesSizeWorker::coumpueteSize);
-    connect(worker, &FilesSizeWorker::sizeUpdated, this, &TrashPropertyDialog::updateFolderSize);
-
-    workerThread->start();
-
-    emit requestStartComputerFolderSize();
+    worker->start({url});
 }
 
 void TrashPropertyDialog::updateFolderSize(qint64 size)

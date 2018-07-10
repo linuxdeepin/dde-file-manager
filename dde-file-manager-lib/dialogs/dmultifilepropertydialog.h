@@ -27,7 +27,7 @@
 
 #include "durl.h"
 #include "ddialog.h"
-
+#include "dfmglobal.h"
 
 #include <tuple>
 #include <memory>
@@ -44,6 +44,10 @@ class QVBoxLayout;
 class QGridLayout;
 
 class DMultiFilePropertyDialogPrivate;
+
+DFM_BEGIN_NAMESPACE
+class DFileStatisticsJob;
+DFM_END_NAMESPACE
 
 using namespace  Dtk::Widget;
 
@@ -64,12 +68,8 @@ public:
 
     static std::size_t getRandomNumber(const std::pair<std::size_t, std::size_t>& scope);
 
-
-signals:
-    void requestToComputeFlodersSize();
-
 private slots:
-   void updateFolderSizeLabel(const quint64& size)noexcept;
+   void updateFolderSizeLabel(const qint64 size)noexcept;
 
 private:
 
