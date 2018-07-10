@@ -42,9 +42,6 @@ public:
     void initUI();
     void startComputerFolderSize(const DUrl& url);
 
-signals:
-    void requestStartComputerFolderSize();
-
 public slots:
     void updateFolderSize(qint64 size);
 

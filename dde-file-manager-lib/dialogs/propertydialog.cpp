@@ -29,10 +29,10 @@
 #include "app/define.h"
 
 #include "dfileservices.h"
+#include "dfilestatisticsjob.h"
 
 #include "shutil/fileutils.h"
 #include "shutil/mimesappsmanager.h"
-#include "shutil/filessizeworker.h"
 #include "shutil/fileutils.h"
 
 #include "dialogs/dialogmanager.h"
@@ -101,7 +101,6 @@ NameTextEdit::NameTextEdit(const QString &text, QWidget *parent):
         text.remove(QChar(0));
 
         QVector<uint> list = text.toUcs4();
-        qDebug() << this->textCursor().position() << "  " << text_length << " " << text.length();
         int cursor_pos = this->textCursor().position() - text_length + text.length();
 
         while (text.toUtf8().size() > MAX_FILE_NAME_CHAR_COUNT)
@@ -390,7 +389,9 @@ void PropertyDialog::initConnect()
 void PropertyDialog::updateFolderSize(qint64 size)
 {
     m_size = size;
+    m_fileCount = m_sizeWorker->filesCount() + m_sizeWorker->directorysCount();
     m_folderSizeLabel->setText(FileUtils::formatSize(size));
+    m_containSizeLabel->setText(QString::number(m_fileCount));
 }
 
 void PropertyDialog::renameFile()
@@ -580,19 +581,13 @@ void PropertyDialog::startComputerFolderSize(const DUrl &url)
     }
     DUrlList urls;
     urls << validUrl;
-    m_sizeWorker = new FilesSizeWorker(urls);
-    QThread  *workerThread = new QThread;
-    m_sizeWorker->moveToThread(workerThread);
 
-    connect(workerThread, &QThread::finished, m_sizeWorker, &FilesSizeWorker::deleteLater);
-    connect(workerThread, &QThread::finished, workerThread, &QThread::deleteLater);
+    if (!m_sizeWorker)
+        m_sizeWorker = new DFileStatisticsJob(this);
 
-    connect(this, &PropertyDialog::requestStartComputerFolderSize, m_sizeWorker, &FilesSizeWorker::coumpueteSize);
-    connect(m_sizeWorker, &FilesSizeWorker::sizeUpdated, this, &PropertyDialog::updateFolderSize);
+    connect(m_sizeWorker, &DFileStatisticsJob::dataNotify, this, &PropertyDialog::updateFolderSize);
 
-    workerThread->start();
-
-    emit requestStartComputerFolderSize();
+    m_sizeWorker->start(urls);
 }
 
 void PropertyDialog::toggleFileExecutable(bool isChecked)
@@ -781,7 +776,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     SectionKeyLabel *TimeCreatedSectionLabel = new SectionKeyLabel(QObject::tr("Time read"));
     SectionKeyLabel *TimeModifiedSectionLabel = new SectionKeyLabel(QObject::tr("Time modified"));
 
-    SectionValueLabel *sizeLabel = new SectionValueLabel(info->sizeDisplayName());
+    m_containSizeLabel = new SectionValueLabel(info->sizeDisplayName());
     m_folderSizeLabel = new SectionValueLabel;
     SectionValueLabel *typeLabel = new SectionValueLabel(info->mimeTypeDisplayName());
     SectionValueLabel *timeCreatedLabel = new SectionValueLabel(info->lastReadDisplayName());
@@ -793,11 +788,11 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     layout->setVerticalSpacing(16);
     layout->setLabelAlignment(Qt::AlignRight);
     if (info->isFile()) {
-        layout->addRow(sizeSectionLabel, sizeLabel);
+        layout->addRow(sizeSectionLabel, m_containSizeLabel);
     } else {
         SectionKeyLabel *fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
         layout->addRow(sizeSectionLabel, m_folderSizeLabel);
-        layout->addRow(fileAmountSectionLabel, sizeLabel);
+        layout->addRow(fileAmountSectionLabel, m_containSizeLabel);
     }
     layout->addRow(typeSectionLabel, typeLabel);
     if (info->isSymLink()) {

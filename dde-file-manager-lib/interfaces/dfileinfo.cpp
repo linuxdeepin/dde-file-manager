@@ -48,6 +48,7 @@
 #include <QPainter>
 #include <QApplication>
 #include <QtConcurrent>
+#include <qplatformdefs.h>
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -455,6 +456,37 @@ bool DFileInfo::makeAbsolute()
     Q_D(DFileInfo);
 
     return d->fileInfo.makeAbsolute();
+}
+
+DAbstractFileInfo::FileType DFileInfo::fileType() const
+{
+    Q_D(const DFileInfo);
+
+    // Cannot access statBuf.st_mode from the filesystem engine, so we have to stat again.
+    // In addition we want to follow symlinks.
+    const QByteArray &nativeFilePath = QFile::encodeName(d->fileInfo.absoluteFilePath());
+    QT_STATBUF statBuffer;
+    if (QT_STAT(nativeFilePath.constData(), &statBuffer) == 0) {
+        if (S_ISDIR(statBuffer.st_mode))
+            return Directory;
+
+        if (S_ISCHR(statBuffer.st_mode))
+            return CharDevice;
+
+        if (S_ISBLK(statBuffer.st_mode))
+            return BlockDevice;
+
+        if (S_ISFIFO(statBuffer.st_mode))
+            return FIFOFile;
+
+        if (S_ISSOCK(statBuffer.st_mode))
+            return SocketFile;
+
+        if (S_ISREG(statBuffer.st_mode))
+            return RegularFile;
+    }
+
+    return Unknown;
 }
 
 bool DFileInfo::isFile() const

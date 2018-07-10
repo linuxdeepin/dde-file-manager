@@ -64,6 +64,7 @@ public:
     bool isAllowGuestShared() const Q_DECL_OVERRIDE;
     bool makeAbsolute() Q_DECL_OVERRIDE;
 
+    FileType fileType() const override;
     bool isFile() const Q_DECL_OVERRIDE;
     bool isDir() const Q_DECL_OVERRIDE;
     bool isSymLink() const Q_DECL_OVERRIDE;

@@ -21,9 +21,11 @@
 #include "dfilestatisticsjob.h"
 #include "dfileservices.h"
 #include "dabstractfileinfo.h"
+#include "dstorageinfo.h"
 
 #include <QMutex>
 #include <QQueue>
+#include <QTimer>
 #include <QWaitCondition>
 
 DFM_BEGIN_NAMESPACE
@@ -41,6 +43,7 @@ public:
     void processFile(const DUrl &url, QQueue<DUrl> &directoryQueue);
 
     DFileStatisticsJob *q_ptr;
+    QTimer *notifyDataTimer;
 
     QAtomicInt state = DFileStatisticsJob::StoppedState;
     DFileStatisticsJob::FileHints fileHints;
@@ -65,6 +68,16 @@ void DFileStatisticsJobPrivate::setState(DFileStatisticsJob::State s)
         return;
 
     state = s;
+
+    if (s == DFileStatisticsJob::RunningState) {
+        QMetaObject::invokeMethod(notifyDataTimer, "start", Q_ARG(int, 1000));
+    } else {
+        QMetaObject::invokeMethod(notifyDataTimer, "stop");
+
+        if (s == DFileStatisticsJob::StoppedState) {
+            Q_EMIT q_ptr->dataNotify(totalSize, filesCount, directoryCount);
+        }
+    }
 
     Q_EMIT q_ptr->stateChanged(s);
 }
@@ -98,35 +111,102 @@ bool DFileStatisticsJobPrivate::stateCheck()
 
 void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &directoryQueue)
 {
-    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(q_ptr, url);
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
 
-    totalSize += info->size();
+    if (info->isSymLink()) {
+        if (!fileHints.testFlag(DFileStatisticsJob::FollowSymlink)) {
+            ++filesCount;
+            Q_EMIT q_ptr->fileFound(url);
+            return;
+        }
 
-    if (info->isFile() || info->isSymLink()) {
-        ++filesCount;
+        info = DFileService::instance()->createFileInfo(nullptr, info->rootSymLinkTarget());
 
-        Q_EMIT q_ptr->fileFound(info->fileUrl());
-    } else {
-        ++directoryCount;
-        directoryQueue << url;
-
-        Q_EMIT q_ptr->directoryFound(info->fileUrl());
+        if (info->isSymLink()) {
+            ++filesCount;
+            Q_EMIT q_ptr->fileFound(url);
+            return;
+        }
     }
 
-    Q_EMIT q_ptr->sizeChanged(totalSize);
+    qint64 size = 0;
+
+    if (info->isFile()) {
+        do {
+            // ###(zccrs): skip the file
+            if (info->fileUrl() == DUrl::fromLocalFile("/proc/kcore"))
+                break;
+
+            const DAbstractFileInfo::FileType type = info->fileType();
+
+            if (type == DAbstractFileInfo::CharDevice && !fileHints.testFlag(DFileStatisticsJob::DontSkipCharDeviceFile))
+                break;
+
+            if (type == DAbstractFileInfo::BlockDevice && !fileHints.testFlag(DFileStatisticsJob::DontSkipBlockDeviceFile))
+                break;
+
+            if (type == DAbstractFileInfo::FIFOFile && !fileHints.testFlag(DFileStatisticsJob::DontSkipFIFOFile))
+                break;
+
+            if (type == DAbstractFileInfo::SocketFile && !fileHints.testFlag(DFileStatisticsJob::DontSkipSocketFile))
+                break;
+
+            size = info->size();
+        } while (false);
+
+        ++filesCount;
+
+        Q_EMIT q_ptr->fileFound(url);
+    } else {
+        size = info->size();
+        ++directoryCount;
+
+        if (!(fileHints & (DFileStatisticsJob::DontSkipAVFSDStorage | DFileStatisticsJob::DontSkipPROCStorage)) && url.isLocalFile()) {
+            do {
+                DStorageInfo si(url.toLocalFile());
+
+                if (si.rootPath() == url.toLocalFile()) {
+                    if (!fileHints.testFlag(DFileStatisticsJob::DontSkipPROCStorage)
+                            && si.fileSystemType() == "proc") {
+                        break;
+                    }
+
+                    if (!fileHints.testFlag(DFileStatisticsJob::DontSkipAVFSDStorage)
+                            && si.fileSystemType() == "avfsd") {
+                        break;
+                    }
+                }
+
+                directoryQueue << url;
+            } while (false);
+        } else {
+            directoryQueue << url;
+        }
+
+        Q_EMIT q_ptr->directoryFound(url);
+    }
+
+    if (size > 0) {
+        totalSize += size;
+        Q_EMIT q_ptr->sizeChanged(totalSize);
+    }
 }
 
 DFileStatisticsJob::DFileStatisticsJob(QObject *parent)
     : QThread(parent)
     , d_ptr(new DFileStatisticsJobPrivate(this))
 {
+    d_ptr->notifyDataTimer = new QTimer(this);
 
+    connect(d_ptr->notifyDataTimer, &QTimer::timeout, this, [this] {
+        Q_EMIT dataNotify(d_ptr->totalSize, d_ptr->filesCount, d_ptr->directoryCount);
+    });
 }
 
 DFileStatisticsJob::~DFileStatisticsJob()
 {
     stop();
-    // ###(zccrs): wait() ?
+    wait();
 }
 
 DFileStatisticsJob::State DFileStatisticsJob::state() const
@@ -213,10 +293,16 @@ void DFileStatisticsJob::run()
 
     d->setState(RunningState);
 
+    Q_EMIT dataNotify(0, 0, 0);
+
     QQueue<DUrl> directory_queue;
 
     for (const DUrl &url : d->sourceUrlList) {
+        // 选择的列表中包含avfsd/proc挂载路径时禁用过滤
+        FileHints save_file_hints = d->fileHints;
+        d->fileHints = d->fileHints | DontSkipAVFSDStorage | DontSkipPROCStorage;
         d->processFile(url, directory_queue);
+        d->fileHints = save_file_hints;
 
         if (!d->stateCheck()) {
             d->setState(StoppedState);
@@ -227,7 +313,8 @@ void DFileStatisticsJob::run()
 
     while (!directory_queue.isEmpty()) {
         const DUrl &directory_url = directory_queue.dequeue();
-        const DDirIteratorPointer &iterator = DFileService::instance()->createDirIterator(this, directory_url, QStringList(), QDir::AllEntries | QDir::Hidden | QDir::NoDotAndDotDot);
+        const DDirIteratorPointer &iterator = DFileService::instance()->createDirIterator(nullptr, directory_url, QStringList(),
+                                                                                          QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
 
         if (!iterator) {
             qWarning() << "Failed on create dir iterator, for url:" << directory_url;
@@ -244,6 +331,8 @@ void DFileStatisticsJob::run()
             }
         }
     }
+
+    d->setState(StoppedState);
 }
 
 DFM_END_NAMESPACE

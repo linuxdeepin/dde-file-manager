@@ -10,7 +10,8 @@
 #include "dfileservices.h"
 #include "dabstractfileinfo.h"
 #include "dfmfilepreviewfactory.h"
-#include "shutil/filessizeworker.h"
+#include "dfilestatisticsjob.h"
+
 #include "shutil/fileutils.h"
 
 #include <anchors.h>
@@ -140,13 +141,6 @@ UnknowFilePreview::UnknowFilePreview(QObject *parent)
     hlayout->addSpacing(30);
     hlayout->addLayout(vlayout);
     hlayout->addStretch();
-
-    m_sizeWorker = new FilesSizeWorker;
-    m_sizeThread = new QThread(m_sizeWorker);
-    m_sizeWorker->moveToThread(m_sizeThread);
-    connect(this, &UnknowFilePreview::requestStartFolderSize, m_sizeWorker, &FilesSizeWorker::coumpueteSize);
-    connect(m_sizeWorker, &FilesSizeWorker::sizeUpdated, this, &UnknowFilePreview::updateFolderSize);
-    m_sizeThread->start();
 }
 
 UnknowFilePreview::~UnknowFilePreview()
@@ -157,12 +151,6 @@ UnknowFilePreview::~UnknowFilePreview()
 
     if (m_sizeWorker) {
         m_sizeWorker->stop();
-
-        if (m_sizeThread->isRunning()) {
-            m_sizeThread->quit();
-            m_sizeThread->wait();
-        }
-
         m_sizeWorker->deleteLater();
     }
 }
@@ -189,33 +177,27 @@ void UnknowFilePreview::setFileInfo(const DAbstractFileInfoPointer &info)
 
     m_nameLabel->setText(elidedText);
 
-    if (info->isFile() || info->isSymLink()){
+    if (info->isFile() || info->isSymLink()) {
         m_sizeLabel->setText(QObject::tr("Size: %1").arg(info->sizeDisplayName()));
         m_typeLabel->setText(QObject::tr("Type: %1").arg(info->mimeTypeDisplayName()));
-    }else if (info->isDir()){
-        m_sizeWorker->stop();
-        startFolderSize(info->fileUrl());
+    } else if (info->isDir()) {
+        if (!m_sizeWorker) {
+            m_sizeWorker = new DFileStatisticsJob(this);
+
+            connect(m_sizeWorker, &DFileStatisticsJob::dataNotify, this, &UnknowFilePreview::updateFolderSize);
+        } else if (m_sizeWorker->isRunning()) {
+            m_sizeWorker->stop();
+            m_sizeWorker->wait();
+        }
+
+        m_sizeWorker->start({info->fileUrl()});
         m_sizeLabel->setText(QObject::tr("Size: 0"));
-        m_typeLabel->setText(QObject::tr("Items: %1").arg(info->sizeDisplayName()));
     }
-}
-
-
-void UnknowFilePreview::startFolderSize(const DUrl &url)
-{
-    DUrl validUrl = url;
-    if (url.isUserShareFile()){
-        validUrl.setScheme(FILE_SCHEME);
-    }
-    DUrlList urls;
-    urls << validUrl;
-    m_sizeWorker->setUrls(urls);
-    m_sizeWorker->setStopped(false);
-    emit requestStartFolderSize();
 }
 
 void UnknowFilePreview::updateFolderSize(qint64 size)
 {
+    m_typeLabel->setText(QObject::tr("Items: %1").arg(m_sizeWorker->filesCount() + m_sizeWorker->directorysCount()));
     m_sizeLabel->setText(QObject::tr("Size: %1").arg(FileUtils::formatSize(size)));
 }
 

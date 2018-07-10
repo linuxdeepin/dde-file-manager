@@ -23,7 +23,7 @@
  */
 
 #include "dmultifilepropertydialog.h"
-#include "shutil/filessizeworker.h"
+#include "dfilestatisticsjob.h"
 #include "dabstractfileinfo.h"
 #include "shutil/fileutils.h"
 #include "dfileservices.h"
@@ -86,7 +86,7 @@ public:
     QFrame* m_mainFrame{ nullptr };
 
 
-    std::shared_ptr<FilesSizeWorker> m_filesSizeWorker{ nullptr };
+    std::shared_ptr<DFileStatisticsJob> m_filesSizeWorker{ nullptr };
     DMultiFilePropertyDialog* q_ptr{ nullptr };
 
 };
@@ -207,20 +207,10 @@ void DMultiFilePropertyDialogPrivate::initUiParameter()noexcept
         ++row;
     }
 
-
-    for(auto& refUrl : m_urlList){
-
-        if(refUrl.isUserShareFile() == true){
-            refUrl.setScheme(FILE_SCHEME);
-        }
-    }
-
-    m_filesSizeWorker =  std::shared_ptr<FilesSizeWorker>{ new FilesSizeWorker{ m_urlList } };
-
+    m_filesSizeWorker =  std::shared_ptr<DFileStatisticsJob>{ new DFileStatisticsJob(q_ptr) };
 
     nameLabel = nullptr;
     lineLabel = nullptr;
-
 }
 
 void DMultiFilePropertyDialogPrivate::layoutItems()noexcept
@@ -276,7 +266,7 @@ std::size_t DMultiFilePropertyDialog::getRandomNumber(const std::pair<std::size_
 }
 
 
-void DMultiFilePropertyDialog::updateFolderSizeLabel(const quint64& foldersSize)noexcept
+void DMultiFilePropertyDialog::updateFolderSizeLabel(const qint64 foldersSize)noexcept
 {
     DMultiFilePropertyDialogPrivate* const d{ d_func() };
     d->m_folderSizeLabel->setText(FileUtils::formatSize(foldersSize));
@@ -286,16 +276,14 @@ void DMultiFilePropertyDialog::initConnect()
 {
     DMultiFilePropertyDialogPrivate* const d{ d_func() };
 
-    QObject::connect(d->m_filesSizeWorker.get(), &FilesSizeWorker::sizeUpdated, this, &DMultiFilePropertyDialog::updateFolderSizeLabel);
+    QObject::connect(d->m_filesSizeWorker.get(), &DFileStatisticsJob::dataNotify, this, &DMultiFilePropertyDialog::updateFolderSizeLabel);
 }
 
 void DMultiFilePropertyDialog::startComputingFolderSize()
 {
     DMultiFilePropertyDialogPrivate* const d{ d_func() };
 
-    std::function<void(std::shared_ptr<FilesSizeWorker> worker)> func{ &FilesSizeWorker::coumpueteSize }; //###: here! creat a pointer point to FilesSizeWork::compueteSize.
-    std::thread treadForComputing{func, d->m_filesSizeWorker};  //###: I invoke func which points to FilesSizeWork::compueteSize
-    treadForComputing.detach(); //##: I detach the thread from main thread.
+    d->m_filesSizeWorker->start(d->m_urlList);
 }
 
 
