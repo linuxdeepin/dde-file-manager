@@ -24,10 +24,11 @@
 
 #include "diskcontrolwidget.h"
 #include "diskcontrolitem.h"
-#include "gvfsmountmanager.h"
-#include "qdrive.h"
-#include "dfmglobal.h"
-#include "dfmapplication.h"
+
+#include <dfmdiskmanager.h>
+#include <dfmblockdevice.h>
+#include <dfmdiskdevice.h>
+#include <DDesktopServices>
 
 #include <QDebug>
 #include <QProcess>
@@ -37,11 +38,12 @@
 
 #define WIDTH           300
 
+DWIDGET_USE_NAMESPACE
+
 DFM_USE_NAMESPACE
 
 DiskControlWidget::DiskControlWidget(QWidget *parent)
     : QScrollArea(parent),
-
       m_centralLayout(new QVBoxLayout),
       m_centralWidget(new QWidget)
 {
@@ -54,64 +56,63 @@ DiskControlWidget::DiskControlWidget(QWidget *parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setStyleSheet("background-color:transparent;");
-    m_gvfsMountManager = GvfsMountManager::instance();
-    m_gvfsMountManager->setAutoMountSwitch(true);
+    m_diskManager = new DFMDiskManager(this);
     initConnect();
 }
 
 void DiskControlWidget::initConnect()
 {
-    connect(m_gvfsMountManager, &GvfsMountManager::loadDiskInfoFinished, this, &DiskControlWidget::onDiskListChanged);
-    connect(m_gvfsMountManager, &GvfsMountManager::drive_connected, this,  &DiskControlWidget::onDrive_connected);
-    connect(m_gvfsMountManager, &GvfsMountManager::drive_disconnected, this,  &DiskControlWidget::onDrive_disconnected);
-    connect(m_gvfsMountManager, &GvfsMountManager::mount_added, this,  &DiskControlWidget::onMount_added);
-    connect(m_gvfsMountManager, &GvfsMountManager::mount_removed, this, &DiskControlWidget::onMount_removed);
-    connect(m_gvfsMountManager, &GvfsMountManager::volume_added, this, &DiskControlWidget::onVolume_added);
-    connect(m_gvfsMountManager, &GvfsMountManager::volume_removed, this, &DiskControlWidget::onVolume_removed);
-    connect(m_gvfsMountManager, &GvfsMountManager::volume_changed, this, &DiskControlWidget::onVolume_changed);
+    connect(m_diskManager, &DFMDiskManager::diskDeviceAdded, this, &DiskControlWidget::onDriveConnected);
+    connect(m_diskManager, &DFMDiskManager::diskDeviceRemoved, this, &DiskControlWidget::onDriveDisconnected);
+    connect(m_diskManager, &DFMDiskManager::mountAdded, this, &DiskControlWidget::onMountAdded);
+    connect(m_diskManager, &DFMDiskManager::mountRemoved, this, &DiskControlWidget::onMountRemoved);
+    connect(m_diskManager, &DFMDiskManager::fileSystemAdded, this, &DiskControlWidget::onVolumeAdded);
+    connect(m_diskManager, &DFMDiskManager::fileSystemRemoved, this, &DiskControlWidget::onVolumeRemoved);
 }
 
 void DiskControlWidget::startMonitor()
 {
-
-    QtConcurrent::run(QThreadPool::globalInstance(), m_gvfsMountManager,
-                                             &GvfsMountManager::startMonitor);
+    m_diskManager->setWatchChanges(true);
+    onDiskListChanged();
 }
 
 void DiskControlWidget::unmountAll()
 {
-    foreach (const QDiskInfo& info, GvfsMountManager::DiskInfos) {
-        if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_DisableNonRemovableDeviceUnmount).toBool() && !info.is_removable()) {
-            qDebug() << "disable unmount native disk" << info;
-            continue;
+    QStringList blockDevices = m_diskManager->blockDevices();
+
+    for (const QString & blDevStr : blockDevices) {
+        QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(blDevStr));
+        if (blDev->hasFileSystem() /* && DFMSetting*/ && !blDev->mountPoints().isEmpty()) {
+            QByteArray mountPoint = blDev->mountPoints().first();
+            if (mountPoint != QStringLiteral("/") && mountPoint != QStringLiteral("/home")) {
+                blDev->unmount({});
+            }
         }
-        unmountDisk(info.id());
     }
 }
 
 void DiskControlWidget::onDiskListChanged()
 {
-    qDebug() << "===============" << GvfsMountManager::DiskInfos;
-    while (QLayoutItem *item = m_centralLayout->takeAt(0))
-    {
+    while (QLayoutItem *item = m_centralLayout->takeAt(0)) {
         delete item->widget();
         delete item;
     }
 
     int mountedCount = 0;
-    for (auto info : GvfsMountManager::DiskInfos)
-    {
-        if (info.mounted_root_uri().isEmpty())
-            continue;
-        else
-            ++mountedCount;
-
-        DiskControlItem *item = new DiskControlItem(info, this);
-
-        connect(item, &DiskControlItem::requestUnmount, this, &DiskControlWidget::unmountDisk);
-
-        m_centralLayout->addWidget(item);
+    QStringList blDevList = m_diskManager->blockDevices();
+    for (const QString& blDevStr : blDevList) {
+        QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(blDevStr));
+        if (blDev->hasFileSystem() && !blDev->mountPoints().isEmpty()) {
+            QByteArray mountPoint = blDev->mountPoints().first();
+            if (mountPoint != QStringLiteral("/") && mountPoint != QStringLiteral("/home")) {
+                mountedCount++;
+                DiskControlItem *item = new DiskControlItem(blDev.data(), this);
+                connect(item, &DiskControlItem::requestUnmount, this, &DiskControlWidget::unmountDisk);
+                m_centralLayout->addWidget(item);
+            }
+        }
     }
+
     emit diskCountChanged(mountedCount);
 
     const int contentHeight = mountedCount * 70;
@@ -121,59 +122,55 @@ void DiskControlWidget::onDiskListChanged()
     setFixedHeight(maxHeight);
 }
 
-void DiskControlWidget::onDrive_connected(const QDrive &drive)
+void DiskControlWidget::onDriveConnected(const QString &deviceId)
 {
-    qDebug() << drive;
-    if (drive.is_removable())
-        DFMGlobal::playSound(QUrl::fromLocalFile("/usr/share/sounds/deepin/stereo/device-added.ogg"));
-}
-
-void DiskControlWidget::onDrive_disconnected(const QDrive &drive)
-{
-    qDebug() << drive;
-    if (drive.is_removable())
-        DFMGlobal::playSound(QUrl::fromLocalFile("/usr/share/sounds/deepin/stereo/device-removed.ogg"));
-}
-
-void DiskControlWidget::onMount_added(const QDiskInfo &diskInfo)
-{
-    Q_UNUSED(diskInfo)
-    onDiskListChanged();
-}
-
-void DiskControlWidget::onMount_removed(const QDiskInfo &diskInfo)
-{
-    Q_UNUSED(diskInfo)
-    onDiskListChanged();
-}
-
-void DiskControlWidget::onVolume_added(const QDiskInfo &diskInfo)
-{
-    onDiskListChanged();
-
-    if (GvfsMountManager::isDeviceCrypto_LUKS(diskInfo))
-        return;
-
-    GvfsMountManager* gvfsMountManager = GvfsMountManager::instance();
-
-    qDebug() << "AutoMountSwitch:" << m_gvfsMountManager->getAutoMountSwitch();
-    if (m_gvfsMountManager->getAutoMountSwitch()){
-        if (diskInfo.is_removable()) {
-            if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_AutoMountAndOpen).toBool()) {
-                gvfsMountManager->mount(diskInfo, true);
-                QProcess::startDetached("dde-file-manager", {"computer:///"});
-            } else if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_AutoMount).toBool()) {
-                gvfsMountManager->mount(diskInfo, true);
-            }
-        } else if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_AutoMount).toBool()) {
-            gvfsMountManager->mount(diskInfo, true);
-        }
+    QScopedPointer<DFMDiskDevice> diskDevice(DFMDiskManager::createDiskDevice(deviceId));
+    if (diskDevice->removable()) {
+        DDesktopServices::playSystemSoundEffect("device-added");
     }
+
+    //    if (GvfsMountManager::isDeviceCrypto_LUKS(diskInfo))
+    //        return;
+
+    //    GvfsMountManager* gvfsMountManager = GvfsMountManager::instance();
+
+    //    qDebug() << "AutoMountSwitch:" << m_gvfsMountManager->getAutoMountSwitch();
+    //    if (m_gvfsMountManager->getAutoMountSwitch()){
+    //        if (diskInfo.is_removable()) {
+    //            if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_AutoMountAndOpen).toBool()) {
+    //                gvfsMountManager->mount(diskInfo, true);
+    //                QProcess::startDetached("dde-file-manager", {"computer:///"});
+    //            } else if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_AutoMount).toBool()) {
+    //                gvfsMountManager->mount(diskInfo, true);
+    //            }
+    //        } else if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_AutoMount).toBool()) {
+    //            gvfsMountManager->mount(diskInfo, true);
+    //        }
+    //    }
 }
 
-void DiskControlWidget::onVolume_removed(const QDiskInfo &diskInfo)
+void DiskControlWidget::onDriveDisconnected()
 {
-    Q_UNUSED(diskInfo)
+    DDesktopServices::playSystemSoundEffect("device-removed");
+}
+
+void DiskControlWidget::onMountAdded()
+{
+    onDiskListChanged();
+}
+
+void DiskControlWidget::onMountRemoved()
+{
+    onDiskListChanged();
+}
+
+void DiskControlWidget::onVolumeAdded()
+{
+    onDiskListChanged();
+}
+
+void DiskControlWidget::onVolumeRemoved()
+{
     onDiskListChanged();
 }
 
@@ -185,5 +182,6 @@ void DiskControlWidget::onVolume_changed(const QDiskInfo &diskInfo)
 
 void DiskControlWidget::unmountDisk(const QString &diskId) const
 {
-    m_gvfsMountManager->unmount(diskId);
+    QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(diskId));
+    blDev->unmount({});
 }

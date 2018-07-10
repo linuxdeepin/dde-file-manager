@@ -35,7 +35,6 @@ DiskPluginItem::DiskPluginItem(QWidget *parent)
     : QWidget(parent),
       m_displayMode(Dock::Efficient)
 {
-//    QIcon::setThemeName("deepin");
 }
 
 void DiskPluginItem::setDockDisplayMode(const Dock::DisplayMode mode)
@@ -66,8 +65,7 @@ void DiskPluginItem::mousePressEvent(QMouseEvent *e)
         return QWidget::mousePressEvent(e);
 
     const QPoint p(e->pos() - rect().center());
-    if (p.manhattanLength() < std::min(width(), height()) * 0.8 * 0.5)
-    {
+    if (p.manhattanLength() < std::min(width(), height()) * 0.8 * 0.5) {
         emit requestContextMenu();
         return;
     }
@@ -83,10 +81,8 @@ QSize DiskPluginItem::sizeHint() const
 void DiskPluginItem::updateIcon()
 {
     if (m_displayMode == Dock::Efficient)
-//        m_icon = ImageUtil::loadSvg(":/icons/resources/icon-small.svg", 16);
         m_icon = QIcon::fromTheme("drive-removable-dock-symbolic").pixmap(16 * qApp->devicePixelRatio(), 16 * qApp->devicePixelRatio());
     else
-//        m_icon = ImageUtil::loadSvg(":/icons/resources/icon.svg", std::min(width(), height()) * 0.8);
         m_icon = QIcon::fromTheme("drive-removable-dock").pixmap(std::min(width(), height()) * 0.8 * qApp->devicePixelRatio(), std::min(width(), height()) * 0.8 * qApp->devicePixelRatio());
     m_icon.setDevicePixelRatio(qApp->devicePixelRatio());
     update();

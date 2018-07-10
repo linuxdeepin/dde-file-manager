@@ -31,52 +31,56 @@ DFMBlockDevicePrivate::DFMBlockDevicePrivate(DFMBlockDevice *qq)
 
 }
 
-void DFMBlockDevicePrivate::_q_onInterfacesAdded(const QDBusObjectPath &object_path, const QMap<QString, QVariantMap> &interfaces_and_properties)
+void DFMBlockDevice::onInterfacesAdded(const QDBusObjectPath &object_path, const QMap<QString, QVariantMap> &interfaces_and_properties)
 {
+    Q_D(DFMBlockDevice);
+
     const QString &path = object_path.path();
 
-    if (path != dbus->path())
+    if (path != d->dbus->path())
         return;
 
     if (interfaces_and_properties.contains(QStringLiteral(UDISKS2_SERVICE ".Filesystem"))) {
-        Q_EMIT q_ptr->hasFileSystemChanged(true);
+        Q_EMIT hasFileSystemChanged(true);
     }
 
     if (interfaces_and_properties.contains(QStringLiteral(UDISKS2_SERVICE ".Partition"))) {
-        Q_EMIT q_ptr->hasPartitionChanged(true);
+        Q_EMIT hasPartitionChanged(true);
     }
 
     if (interfaces_and_properties.contains(QStringLiteral(UDISKS2_SERVICE ".Encrypted"))) {
-        Q_EMIT q_ptr->isEncryptedChanged(true);
+        Q_EMIT isEncryptedChanged(true);
     }
 }
 
-void DFMBlockDevicePrivate::_q_onInterfacesRemoved(const QDBusObjectPath &object_path, const QStringList &interfaces)
+void DFMBlockDevice::onInterfacesRemoved(const QDBusObjectPath &object_path, const QStringList &interfaces)
 {
+    Q_D(DFMBlockDevice);
+
     const QString &path = object_path.path();
 
-    if (path != dbus->path())
+    if (path != d->dbus->path())
         return;
 
     for (const QString &i : interfaces) {
         if (i == QStringLiteral(UDISKS2_SERVICE ".Filesystem")) {
-            Q_EMIT q_ptr->hasFileSystemChanged(false);
+            Q_EMIT hasFileSystemChanged(false);
         } else if (i == QStringLiteral(UDISKS2_SERVICE ".Partition")) {
-            Q_EMIT q_ptr->hasPartitionChanged(false);
+            Q_EMIT hasPartitionChanged(false);
         } else if (i == QStringLiteral(UDISKS2_SERVICE ".Encrypted")) {
-            Q_EMIT q_ptr->isEncryptedChanged(false);
+            Q_EMIT isEncryptedChanged(false);
         }
     }
 }
 
-void DFMBlockDevicePrivate::_q_onPropertiesChanged(const QString &interface, const QVariantMap &changed_properties)
+void DFMBlockDevice::onPropertiesChanged(const QString &interface, const QVariantMap &changed_properties)
 {
     if (interface.endsWith(".PartitionTable")) {
         auto begin = changed_properties.begin();
 
         while (begin != changed_properties.constEnd()) {
             if (begin.key() == "Type") {
-                Q_EMIT q_ptr->ptTypeChanged();
+                Q_EMIT ptTypeChanged();
                 break;
             }
         }
@@ -86,23 +90,23 @@ void DFMBlockDevicePrivate::_q_onPropertiesChanged(const QString &interface, con
         while (begin != changed_properties.constEnd()) {
             QString property_name = begin.key();
 
-            int pindex = q_ptr->metaObject()->indexOfProperty(property_name.toLatin1().constData());
+            int pindex = this->metaObject()->indexOfProperty(property_name.toLatin1().constData());
 
             if (pindex < 0) {
                 property_name[0] = property_name.at(0).toLower();
 
-                pindex = q_ptr->metaObject()->indexOfProperty(property_name.toLatin1().constData());
+                pindex = this->metaObject()->indexOfProperty(property_name.toLatin1().constData());
             }
 
             if (pindex < 0)
                 continue;
 
-            const QMetaProperty &mp = q_ptr->metaObject()->property(pindex);
+            const QMetaProperty &mp = this->metaObject()->property(pindex);
 
             if (!mp.hasNotifySignal())
                 continue;
 
-            mp.notifySignal().invoke(q_ptr, QGenericArgument(begin.value().typeName(), begin.value().constData()));
+            mp.notifySignal().invoke(this, QGenericArgument(begin.value().typeName(), begin.value().constData()));
 
             ++begin;
         }
@@ -446,21 +450,21 @@ void DFMBlockDevice::setWatchChanges(bool watchChanges)
     auto sb = QDBusConnection::systemBus();
 
     if (watchChanges) {
-        connect(object_manager, SIGNAL(InterfacesAdded(QDBusObjectPath,QMap<QString,QVariantMap>)),
-                this, SLOT(_q_onInterfacesAdded(QDBusObjectPath, QMap<QString, QVariantMap>)));
-        connect(object_manager, SIGNAL(InterfacesRemoved(QDBusObjectPath,QStringList)),
-                this, SLOT(_q_onInterfacesRemoved(QDBusObjectPath, QStringList)));
+        connect(object_manager, &OrgFreedesktopDBusObjectManagerInterface::InterfacesAdded,
+                this, &DFMBlockDevice::onInterfacesAdded);
+        connect(object_manager, &OrgFreedesktopDBusObjectManagerInterface::InterfacesRemoved,
+                this, &DFMBlockDevice::onInterfacesRemoved);
 
         sb.connect(UDISKS2_SERVICE, d->dbus->path(), "org.freedesktop.DBus.Properties",
-                   "PropertiesChanged", this, SLOT(_q_onPropertiesChanged(const QString &, const QVariantMap &)));
+                   "PropertiesChanged", this, SLOT(onPropertiesChanged(const QString &, const QVariantMap &)));
     } else {
-        disconnect(object_manager, SIGNAL(InterfacesAdded(QDBusObjectPath,QMap<QString,QVariantMap>)),
-                   this, SLOT(_q_onInterfacesAdded(QDBusObjectPath, QMap<QString, QVariantMap>)));
-        disconnect(object_manager, SIGNAL(InterfacesRemoved(QDBusObjectPath,QStringList)),
-                   this, SLOT(_q_onInterfacesRemoved(QDBusObjectPath, QStringList)));
+        disconnect(object_manager, &OrgFreedesktopDBusObjectManagerInterface::InterfacesAdded,
+                   this, &DFMBlockDevice::onInterfacesAdded);
+        disconnect(object_manager, &OrgFreedesktopDBusObjectManagerInterface::InterfacesRemoved,
+                   this, &DFMBlockDevice::onInterfacesRemoved);
 
         sb.disconnect(UDISKS2_SERVICE, d->dbus->path(), "org.freedesktop.DBus.Properties",
-                      "PropertiesChanged", this, SLOT(_q_onPropertiesChanged(const QString &, const QVariantMap &)));
+                      "PropertiesChanged", this, SLOT(onPropertiesChanged(const QString &, const QVariantMap &)));
     }
 }
 
@@ -644,5 +648,3 @@ DFMBlockDevice::DFMBlockDevice(DFMBlockDevicePrivate &dd, const QString &path, Q
 }
 
 DFM_END_NAMESPACE
-
-#include "moc_dfmblockdevice.cpp"

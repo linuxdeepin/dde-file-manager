@@ -40,10 +40,6 @@ public:
 
     void updateBlockDeviceMountPointsMap();
 
-    void _q_onInterfacesAdded(const QDBusObjectPath &object_path, const QMap<QString, QVariantMap> &interfaces_and_properties);
-    void _q_onInterfacesRemoved(const QDBusObjectPath &object_path, const QStringList &interfaces);
-    void _q_onPropertiesChanged(const QString &interface, const QVariantMap &changed_properties, const QDBusMessage &message);
-
     bool watchChanges = false;
     QMap<QString, QByteArrayList> blockDeviceMountPointsMap;
 
@@ -84,7 +80,7 @@ void DFMDiskManagerPrivate::updateBlockDeviceMountPointsMap()
     }
 }
 
-void DFMDiskManagerPrivate::_q_onInterfacesAdded(const QDBusObjectPath &object_path, const QMap<QString, QVariantMap> &interfaces_and_properties)
+void DFMDiskManager::onInterfacesAdded(const QDBusObjectPath &object_path, const QMap<QString, QVariantMap> &interfaces_and_properties)
 {
     const QString &path = object_path.path();
     const QString &path_drive = QStringLiteral("/org/freedesktop/UDisks2/drives/");
@@ -92,36 +88,38 @@ void DFMDiskManagerPrivate::_q_onInterfacesAdded(const QDBusObjectPath &object_p
 
     if (path.startsWith(path_drive)) {
         if (interfaces_and_properties.contains(QStringLiteral(UDISKS2_SERVICE ".Drive"))) {
-            Q_EMIT q_ptr->diskDeviceAdded(path);
+            Q_EMIT diskDeviceAdded(path);
         }
     } else if (path.startsWith(path_device)) {
         if (interfaces_and_properties.contains(QStringLiteral(UDISKS2_SERVICE ".Block"))) {
-            Q_EMIT q_ptr->blockDeviceAdded(path);
+            Q_EMIT blockDeviceAdded(path);
         }
 
         if (interfaces_and_properties.contains(QStringLiteral(UDISKS2_SERVICE ".Filesystem"))) {
-            Q_EMIT q_ptr->fileSystemAdded(path);
+            Q_EMIT fileSystemAdded(path);
         }
     }
 }
 
-void DFMDiskManagerPrivate::_q_onInterfacesRemoved(const QDBusObjectPath &object_path, const QStringList &interfaces)
+void DFMDiskManager::onInterfacesRemoved(const QDBusObjectPath &object_path, const QStringList &interfaces)
 {
     const QString &path = object_path.path();
 
     for (const QString &i : interfaces) {
         if (i == QStringLiteral(UDISKS2_SERVICE ".Drive")) {
-            Q_EMIT q_ptr->diskDeviceRemoved(path);
+            Q_EMIT diskDeviceRemoved(path);
         } else if (i == QStringLiteral(UDISKS2_SERVICE ".Filesystem")) {
-            Q_EMIT q_ptr->fileSystemRemoved(path);
+            Q_EMIT fileSystemRemoved(path);
         } else if (i == QStringLiteral(UDISKS2_SERVICE ".Block")) {
-            Q_EMIT q_ptr->blockDeviceRemoved(path);
+            Q_EMIT blockDeviceRemoved(path);
         }
     }
 }
 
-void DFMDiskManagerPrivate::_q_onPropertiesChanged(const QString &interface, const QVariantMap &changed_properties, const QDBusMessage &message)
+void DFMDiskManager::onPropertiesChanged(const QString &interface, const QVariantMap &changed_properties, const QDBusMessage &message)
 {
+    Q_D(DFMDiskManager);
+
     if (interface != UDISKS2_SERVICE ".Filesystem") {
         return;
     }
@@ -131,19 +129,19 @@ void DFMDiskManagerPrivate::_q_onPropertiesChanged(const QString &interface, con
     }
 
     const QString &path = message.path();
-    const QByteArrayList old_mount_points = blockDeviceMountPointsMap.value(path);
+    const QByteArrayList old_mount_points = d->blockDeviceMountPointsMap.value(path);
     const QByteArrayList &new_mount_points = qdbus_cast<QByteArrayList>(changed_properties.value("MountPoints"));
 
-    blockDeviceMountPointsMap[path] = new_mount_points;
+    d->blockDeviceMountPointsMap[path] = new_mount_points;
 
-    Q_EMIT q_ptr->mountPointsChanged(path, old_mount_points, new_mount_points);
+    Q_EMIT mountPointsChanged(path, old_mount_points, new_mount_points);
 
     if (old_mount_points.isEmpty()) {
         if (!new_mount_points.isEmpty()) {
-            Q_EMIT q_ptr->mountAdded(path, new_mount_points.first());
+            Q_EMIT mountAdded(path, new_mount_points.first());
         }
     } else if (new_mount_points.isEmpty()) {
-        Q_EMIT q_ptr->mountRemoved(path, old_mount_points.first());
+        Q_EMIT mountRemoved(path, old_mount_points.first());
     }
 }
 
@@ -262,28 +260,26 @@ void DFMDiskManager::setWatchChanges(bool watchChanges)
     auto sc = QDBusConnection::systemBus();
 
     if (watchChanges) {
-        connect(object_manager, SIGNAL(InterfacesAdded(QDBusObjectPath,QMap<QString,QVariantMap>)),
-                this, SLOT(_q_onInterfacesAdded(QDBusObjectPath, QMap<QString, QVariantMap>)));
-        connect(object_manager, SIGNAL(InterfacesRemoved(QDBusObjectPath,QStringList)),
-                this, SLOT(_q_onInterfacesRemoved(QDBusObjectPath, QStringList)));
+        connect(object_manager, &OrgFreedesktopDBusObjectManagerInterface::InterfacesAdded,
+                this, &DFMDiskManager::onInterfacesAdded);
+        connect(object_manager, &OrgFreedesktopDBusObjectManagerInterface::InterfacesRemoved,
+                this, &DFMDiskManager::onInterfacesRemoved);
 
         d->updateBlockDeviceMountPointsMap();
 
         sc.connect(UDISKS2_SERVICE, QString(), "org.freedesktop.DBus.Properties", "PropertiesChanged",
-                   this, SLOT(_q_onPropertiesChanged(const QString &, const QVariantMap &, const QDBusMessage&)));
+                   this, SLOT(onPropertiesChanged(const QString &, const QVariantMap &, const QDBusMessage&)));
     } else {
-        disconnect(object_manager, SIGNAL(InterfacesAdded(QDBusObjectPath,QMap<QString,QVariantMap>)),
-                   this, SLOT(_q_onInterfacesAdded(QDBusObjectPath, QMap<QString, QVariantMap>)));
-        disconnect(object_manager, SIGNAL(InterfacesRemoved(QDBusObjectPath,QStringList)),
-                   this, SLOT(_q_onInterfacesRemoved(QDBusObjectPath, QStringList)));
+        disconnect(object_manager, &OrgFreedesktopDBusObjectManagerInterface::InterfacesAdded,
+                   this, &DFMDiskManager::onInterfacesAdded);
+        disconnect(object_manager, &OrgFreedesktopDBusObjectManagerInterface::InterfacesRemoved,
+                   this, &DFMDiskManager::onInterfacesRemoved);
 
         d->blockDeviceMountPointsMap.clear();
 
         sc.disconnect(UDISKS2_SERVICE, QString(), "org.freedesktop.DBus.Properties", "PropertiesChanged",
-                      this, SLOT(_q_onPropertiesChanged(const QString &, const QVariantMap &, const QDBusMessage&)));
+                      this, SLOT(onPropertiesChanged(const QString &, const QVariantMap &, const QDBusMessage&)));
     }
 }
 
 DFM_END_NAMESPACE
-
-#include "moc_dfmdiskmanager.cpp"

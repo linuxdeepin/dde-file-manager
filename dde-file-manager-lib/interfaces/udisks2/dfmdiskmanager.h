@@ -27,6 +27,8 @@
 #include <QMap>
 #include <QDBusError>
 
+class QDBusObjectPath;
+
 DFM_BEGIN_NAMESPACE
 
 class DFMBlockDevice;
@@ -73,9 +75,10 @@ Q_SIGNALS:
 private:
     QScopedPointer<DFMDiskManagerPrivate> d_ptr;
 
-    Q_PRIVATE_SLOT(d_ptr, void _q_onInterfacesAdded(const QDBusObjectPath &, const QMap<QString, QVariantMap> &))
-    Q_PRIVATE_SLOT(d_ptr, void _q_onInterfacesRemoved(const QDBusObjectPath &, const QStringList &))
-    Q_PRIVATE_SLOT(d_ptr, void _q_onPropertiesChanged(const QString &, const QVariantMap &, const QDBusMessage &))
+private Q_SLOTS:
+    void onInterfacesAdded(const QDBusObjectPath &, const QMap<QString, QVariantMap> &);
+    void onInterfacesRemoved(const QDBusObjectPath &object_path, const QStringList &interfaces);
+    void onPropertiesChanged(const QString &interface, const QVariantMap &changed_properties, const QDBusMessage &message);
 };
 
 DFM_END_NAMESPACE

@@ -23,12 +23,9 @@
  */
 
 #include "diskcontrolitem.h"
-#include "qdiskinfo.h"
 
 #include "dfileservices.h"
-#include "gvfsmountmanager.h"
 #include "dfmglobal.h"
-#include "dfmapplication.h"
 
 #include <QVBoxLayout>
 #include <QIcon>
@@ -37,9 +34,14 @@
 #include <QDebug>
 #include <QStorageInfo>
 
+#include <dfmblockdevice.h>
+#include <DDesktopServices>
+
 DWIDGET_USE_NAMESPACE
 
-DiskControlItem::DiskControlItem(const QDiskInfo &info, QWidget *parent)
+DFM_USE_NAMESPACE
+
+DiskControlItem::DiskControlItem(const DFMBlockDevice *blockDevicePointer, QWidget *parent)
     : QFrame(parent),
 
       m_unknowIcon(":/icons/resources/unknown.svg"),
@@ -50,6 +52,9 @@ DiskControlItem::DiskControlItem(const QDiskInfo &info, QWidget *parent)
       m_capacityValueBar(new QProgressBar),
       m_unmountButton(new DImageButton)
 {
+    mountPoint = blockDevicePointer->mountPoints().first();
+    deviceDBusId = blockDevicePointer->path();
+
     m_diskName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     m_diskName->setStyleSheet("color:white;");
 
@@ -101,36 +106,27 @@ DiskControlItem::DiskControlItem(const QDiskInfo &info, QWidget *parent)
                   "border-radius:4px;"
                   "}");
 
-    connect(m_unmountButton, &DImageButton::clicked, this, [this] { emit requestUnmount(m_info.id()); });
+    connect(m_unmountButton, &DImageButton::clicked, this, [this] { emit requestUnmount(deviceDBusId); });
 
-    if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_DisableNonRemovableDeviceUnmount).toBool() && !info.is_removable()) {
-        m_unmountButton->hide();
-    }
+//    if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_DisableNonRemovableDeviceUnmount).toBool() && !info.is_removable()) {
+//        m_unmountButton->hide();
+//    }
+    bool isDvd = blockDevicePointer->device().startsWith("/dev/sr");
+    //bool isRemovable = blockDevicePointer->id() // "drive-removable-media"
 
-    updateInfo(info);
-}
+    QIcon icon = QIcon::fromTheme(isDvd ? "drive-optical" : "drive-harddisk", m_unknowIcon);
 
-void DiskControlItem::updateInfo(const QDiskInfo &info)
-{
-    m_info = info;
     qreal devicePixelRatio = qApp->devicePixelRatio();
-    QPixmap diskIconPixmap = QIcon::fromTheme(info.iconName(), m_unknowIcon).pixmap(48 * devicePixelRatio , 48 * devicePixelRatio);
+    QPixmap diskIconPixmap = icon.pixmap(48 * devicePixelRatio , 48 * devicePixelRatio);
     diskIconPixmap.setDevicePixelRatio(devicePixelRatio);
     m_diskIcon->setPixmap(diskIconPixmap);
-    if (!info.name().isEmpty())
-        m_diskName->setText(info.name());
-    else
-        m_diskName->setText(tr("Unknown device"));
-    if (info.total())
-        m_diskCapacity->setText(QString("%1/%2").arg(formatDiskSize(info.used())).arg(formatDiskSize(info.total())));
-    else if (info.name().isEmpty())
-        m_diskCapacity->clear();
-    else
-        m_diskCapacity->setText(tr("Unknown volume"));
+    m_diskName->setText(QStringLiteral("OwO")); // blumia: correct text should be set in DiskControlItem::showEvent()
     m_capacityValueBar->setMinimum(0);
     m_capacityValueBar->setMaximum(100);
-    if (info.total() > 0)
-        m_capacityValueBar->setValue(100 * info.used() / info.total());
+}
+
+DiskControlItem::~DiskControlItem()
+{
 }
 
 QString DiskControlItem::sizeString(const QString &str)
@@ -190,19 +186,20 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
 {
     QWidget::mouseReleaseEvent(e);
 
-//    emit requestOpenDrive(m_info.id());
-    DFileService::instance()->openFile(this, GvfsMountManager::getRealMountUrl(m_info));
+    DDesktopServices::showFolder(QUrl::fromLocalFile(mountPoint));
 }
 
 void DiskControlItem::showEvent(QShowEvent *e)
 {
-    QUrl url(m_info.mounted_root_uri());
-
-    if (url.isLocalFile()) {
-        QStorageInfo storage_info(url.toLocalFile());
-
-        if (storage_info.isValid())
-            m_diskCapacity->setText(QString("%1/%2").arg(formatDiskSize(storage_info.bytesTotal() - storage_info.bytesFree())).arg(formatDiskSize(storage_info.bytesTotal())));
+    QStorageInfo storage_info(mountPoint);
+    qint64 bytesTotal = storage_info.bytesTotal();
+    qint64 bytesFree = storage_info.bytesFree();
+    if (storage_info.isValid()) {
+        m_diskName->setText(storage_info.name().isEmpty() ? tr("Unknown device") : storage_info.name());
+        m_diskCapacity->setText(QString("%1/%2")
+                                .arg(formatDiskSize(bytesTotal - bytesFree))
+                                .arg(formatDiskSize(bytesTotal)));
+        m_capacityValueBar->setValue(100 * (bytesTotal - bytesFree) / bytesTotal);
     }
 
     QFrame::showEvent(e);

@@ -27,12 +27,15 @@
 
 #include <QScrollArea>
 #include <QVBoxLayout>
+#include <dfmglobal.h>
 
 class DFMSetting;
-class GvfsMountManager;
 class QDiskInfo;
 class QDrive;
 
+DFM_BEGIN_NAMESPACE
+class DFMDiskManager;
+DFM_END_NAMESPACE
 
 class DiskControlWidget : public QScrollArea
 {
@@ -50,19 +53,19 @@ signals:
 
 private slots:
     void onDiskListChanged();
-    void onDrive_connected(const QDrive& drive);
-    void onDrive_disconnected(const QDrive& drive);
-    void onMount_added(const QDiskInfo &diskInfo);
-    void onMount_removed(const QDiskInfo &diskInfo);
-    void onVolume_added(const QDiskInfo &diskInfo);
-    void onVolume_removed(const QDiskInfo &diskInfo);
+    void onDriveConnected(const QString &deviceId);
+    void onDriveDisconnected();
+    void onMountAdded();
+    void onMountRemoved();
+    void onVolumeAdded();
+    void onVolumeRemoved();
     void onVolume_changed(const QDiskInfo &diskInfo);
     void unmountDisk(const QString &diskId) const;
 
 private:
     QVBoxLayout *m_centralLayout;
     QWidget *m_centralWidget;
-    GvfsMountManager *m_gvfsMountManager;
+    DFM_NAMESPACE::DFMDiskManager *m_diskManager;
 };
 
 #endif // DISKCONTROLWIDGET_H

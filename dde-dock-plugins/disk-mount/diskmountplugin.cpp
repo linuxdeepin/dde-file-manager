@@ -23,7 +23,6 @@
  */
 
 #include "diskmountplugin.h"
-#include "dfmglobal.h"
 
 #define OPEN        "open"
 #define UNMOUNT_ALL "unmount_all"
@@ -62,8 +61,6 @@ void DiskMountPlugin::init(PluginProxyInterface *proxyInter)
 
     initCompoments();
     m_diskPluginItem->setDockDisplayMode(displayMode());
-
-    DFMGlobal::installTranslator();
 }
 
 QWidget *DiskMountPlugin::itemWidget(const QString &itemKey)
