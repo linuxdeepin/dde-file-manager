@@ -20,6 +20,7 @@
  */
 
 #include <regex>
+#include <thread>
 #include <string>
 #include <fstream>
 
@@ -450,15 +451,17 @@ void DQuickSearch::filesWereRenamed(const QList<QPair<QByteArray, QByteArray> > 
     }
 }
 
-void DQuickSearch::createCache()
+bool DQuickSearch::createCache()
 {
     if (!m_readyFlag.load(std::memory_order_consume)) {
-        std::lock_guard<std::mutex> raii_lock{ m_mutex };
-        cache_every_partion();
+        std::function<void(DQuickSearch *)> func_for_creating_cache{ &DQuickSearch::cache_every_partion };
+        std::thread thread_for_creating_cache{ func_for_creating_cache, DQuickSearch::instance() };
+        thread_for_creating_cache.detach();
 
-        bool flag{ false };
-        m_readyFlag.compare_exchange_strong(flag, true, std::memory_order_release);
+        return false;
     }
+
+    return true;
 }
 
 QPair<QString, QString> DQuickSearch::getDevAndMountPoint(const QString &local_path)
@@ -724,7 +727,15 @@ void DQuickSearch::cache_every_partion()
 //                 << partitions[index].major << partitions[index].minor;
 //    }
 
+    std::function<void()> change_status_flag{
+        [this]{
+            bool flag{ false };
+            m_readyFlag.compare_exchange_strong(flag, true, std::memory_order_release);
+        }
+    };
+
     if (partion_count > 0) {
+        std::lock_guard<std::mutex> raii_lock{ m_mutex }; //###: locked!
 
         if (is_auto_indexes_inner() && is_auto_indexes_removable()) {
 
@@ -741,6 +752,8 @@ void DQuickSearch::cache_every_partion()
                     }
                 }
             }
+
+            change_status_flag();
 
             return;
         }
@@ -767,6 +780,8 @@ void DQuickSearch::cache_every_partion()
                 }
             }
 
+            change_status_flag();
+
             return;
         }
 
@@ -788,9 +803,10 @@ void DQuickSearch::cache_every_partion()
                 }
             }
 
+            change_status_flag();
+
             return;
         }
-
     }
 
 }

@@ -683,7 +683,6 @@ DUrl FileDirIterator::next()
         currentFileInfo.setFile(searched_result);
         return DUrl::fromLocalFile(searched_result);
     } else {
-        currentFileInfo.setFile(QString{});
         m_quickSearchFlag.store(false, std::memory_order_release);
     }
 
@@ -815,31 +814,42 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
         qDebug() << m_pathForSearching;
 #endif //QT_DEBUG
 
-        std::function<void()> func{
-            [this, &keyword]()
+        std::function<bool()> invoke_quick_search{
+            [this, &keyword]()->bool
             {
-                m_searchedResult = QuickSearchDaemonController::instance()->search(m_pathForSearching, keyword);
-                m_quickSearchFlag.store(true, std::memory_order_release);
+                bool whether_cached_completely{ QuickSearchDaemonController::instance()->createCache() };
 
 #ifdef QT_DEBUG
-                qDebug() << m_searchedResult;
+                qDebug() << whether_cached_completely;
 #endif //QT_DEBUG
+
+                if (whether_cached_completely)
+                {
+                    m_searchedResult = QuickSearchDaemonController::instance()->search(m_pathForSearching, keyword);
+                    m_quickSearchFlag.store(true, std::memory_order_release);
+
+#ifdef QT_DEBUG
+                    qDebug() << m_searchedResult;
+#endif //QT_DEBUG
+                    return true;
+                }
+
+                return false;
             }
         };
 
+        bool whether_use_quick_search{ false };
         if (whether_index_external && whether_index_internal) {
-            func();
+            whether_use_quick_search = invoke_quick_search();
 
-            return true;
         } else if (!is_usb_dev && whether_index_internal) {
-            func();
+            whether_use_quick_search = invoke_quick_search();
 
-            return true;
         } else if (is_usb_dev && whether_index_external) {
-            func();
-
-            return true;
+            whether_use_quick_search = invoke_quick_search();
         }
+
+        return whether_use_quick_search;
 
 
         if (processRlocate) {

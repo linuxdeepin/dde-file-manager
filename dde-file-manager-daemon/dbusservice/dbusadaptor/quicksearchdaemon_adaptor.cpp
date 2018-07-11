@@ -33,10 +33,12 @@ QuickSearchDaemonAdaptor::~QuickSearchDaemonAdaptor()
     // destructor
 }
 
-void QuickSearchDaemonAdaptor::createCache()
+QDBusVariant QuickSearchDaemonAdaptor::createCache()
 {
     // handle method call com.deepin.filemanager.daemon.QuickSearchDaemon.createCache
-    QMetaObject::invokeMethod(parent(), "createCache");
+    QDBusVariant result;
+    QMetaObject::invokeMethod(parent(), "createCache", Q_RETURN_ARG(QDBusVariant, result));
+    return result;
 }
 
 QDBusVariant QuickSearchDaemonAdaptor::search(const QDBusVariant &current_dir, const QDBusVariant &key_words)

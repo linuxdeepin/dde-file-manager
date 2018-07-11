@@ -47,6 +47,9 @@ public:
         return controller;
     }
 
+    bool whetherCacheCompletely()const noexcept;
+
+    bool createCache()const noexcept;
 
     QList<QString> search(const QString &path_for_searching, const QString &key);
 private:

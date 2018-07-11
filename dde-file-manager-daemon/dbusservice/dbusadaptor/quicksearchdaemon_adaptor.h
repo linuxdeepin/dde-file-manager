@@ -38,7 +38,9 @@ class QuickSearchDaemonAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"in\" type=\"v\" name=\"key_words\"/>\n"
 "      <arg direction=\"out\" type=\"v\" name=\"result\"/>\n"
 "    </method>\n"
-"    <method name=\"createCache\"/>\n"
+"    <method name=\"createCache\">\n"
+"      <arg direction=\"out\" type=\"v\" name=\"result\"/>\n"
+"    </method>\n"
 "    <method name=\"whetherCacheCompletely\">\n"
 "      <arg direction=\"out\" type=\"v\" name=\"result\"/>\n"
 "    </method>\n"
@@ -50,7 +52,7 @@ public:
 
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
-    void createCache();
+    QDBusVariant createCache();
     QDBusVariant search(const QDBusVariant &current_dir, const QDBusVariant &key_words);
     QDBusVariant whetherCacheCompletely();
 Q_SIGNALS: // SIGNALS

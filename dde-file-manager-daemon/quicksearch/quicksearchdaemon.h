@@ -36,7 +36,7 @@ public:
     QuickSearchDaemon(const QuickSearchDaemon &) = delete;
     QuickSearchDaemon &operator=(const QuickSearchDaemon &) = delete;
 
-    Q_INVOKABLE void createCache();
+    Q_INVOKABLE QDBusVariant createCache();
     Q_INVOKABLE QDBusVariant whetherCacheCompletely();
     Q_INVOKABLE QDBusVariant search(const QDBusVariant &current_dir, const QDBusVariant &key_words);
 
