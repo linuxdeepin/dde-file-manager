@@ -317,6 +317,11 @@ QList<QString> DQuickSearch::search(const QString &local_path, const QString &ke
         }
     }
 
+
+#ifdef QT_DEBUG
+    qDebug() << searched_list;
+#endif //QT_DEBUG
+
     return searched_list;
 }
 
