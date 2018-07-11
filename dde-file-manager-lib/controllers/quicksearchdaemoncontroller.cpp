@@ -38,6 +38,22 @@ QuickSearchDaemonController::QuickSearchDaemonController(QObject *const parent)
     };
 }
 
+bool QuickSearchDaemonController::whetherCacheCompletely() const noexcept
+{
+    QDBusVariant dbus_var{ interface_ptr->whetherCacheCompletely() };
+    QVariant result_var{ dbus_var.variant() };
+
+    return result_var.toBool();
+}
+
+bool QuickSearchDaemonController::createCache() const noexcept
+{
+    QDBusVariant dbus_var{ interface_ptr->createCache() };
+    QVariant result_var{ dbus_var.variant() };
+
+    return result_var.toBool();
+}
+
 QList<QString> QuickSearchDaemonController::search(const QString &path_for_searching, const QString &key)
 {
     QList<QString> result_list{};

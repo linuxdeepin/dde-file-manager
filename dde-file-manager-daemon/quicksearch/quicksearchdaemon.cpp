@@ -36,9 +36,12 @@ QuickSearchDaemon::QuickSearchDaemon(QObject *const parent)
     }
 }
 
-void QuickSearchDaemon::createCache()
+QDBusVariant QuickSearchDaemon::createCache()
 {
-    DQuickSearch::instance()->createCache();
+    bool flag{ DQuickSearch::instance()->createCache() };
+    QDBusVariant dbus_var{ flag };
+
+    return dbus_var;
 }
 
 QDBusVariant QuickSearchDaemon::whetherCacheCompletely()

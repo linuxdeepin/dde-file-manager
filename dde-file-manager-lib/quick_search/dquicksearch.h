@@ -79,7 +79,7 @@ public:
     void filesWereDeleted(const QList<QByteArray> &files_path);
     void filesWereRenamed(const QList<QPair<QByteArray, QByteArray>> &files_path);
 
-    void createCache();
+    bool createCache();
     inline bool whetherCacheCompletely()const noexcept
     {
         return m_readyFlag.load(std::memory_order_consume);

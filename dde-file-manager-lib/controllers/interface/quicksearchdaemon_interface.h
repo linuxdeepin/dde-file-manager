@@ -36,7 +36,7 @@ public:
     ~QuickSearchDaemonInterface();
 
 public Q_SLOTS: // METHODS
-    inline QDBusPendingReply<> createCache()
+    inline QDBusPendingReply<QDBusVariant> createCache()
     {
         QList<QVariant> argumentList;
         return asyncCallWithArgumentList(QStringLiteral("createCache"), argumentList);

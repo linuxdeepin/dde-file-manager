@@ -7,7 +7,9 @@
             <arg type="v" name="key_words" direction="in"/>
             <arg type="v" name="result" direction="out"/>
         </method>
-        <method name="createCache"></method>
+        <method name="createCache">
+            <arg type="v" name="result" direction="out"/>
+        </method>
         <method name="whetherCacheCompletely">
             <arg type="v" name="result" direction="out"/>
         </method>
