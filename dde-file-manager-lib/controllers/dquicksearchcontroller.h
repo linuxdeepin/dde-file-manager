@@ -40,8 +40,9 @@ public:
     DQuickSearchController(const DQuickSearchController &) = delete;
     DQuickSearchController &operator=(const DQuickSearchController &) = delete;
 
+    void createCache();
+    bool whetherCacheCompletely()const noexcept;
     QList<QString> search(const QString &local_path, const QString &key_words);
-
 
     static inline DQuickSearchController *instance()
     {

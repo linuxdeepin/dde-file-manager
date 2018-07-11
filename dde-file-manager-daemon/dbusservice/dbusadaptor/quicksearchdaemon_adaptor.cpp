@@ -33,11 +33,25 @@ QuickSearchDaemonAdaptor::~QuickSearchDaemonAdaptor()
     // destructor
 }
 
+void QuickSearchDaemonAdaptor::createCache()
+{
+    // handle method call com.deepin.filemanager.daemon.QuickSearchDaemon.createCache
+    QMetaObject::invokeMethod(parent(), "createCache");
+}
+
 QDBusVariant QuickSearchDaemonAdaptor::search(const QDBusVariant &current_dir, const QDBusVariant &key_words)
 {
     // handle method call com.deepin.filemanager.daemon.QuickSearchDaemon.search
     QDBusVariant result;
     QMetaObject::invokeMethod(parent(), "search", Q_RETURN_ARG(QDBusVariant, result), Q_ARG(QDBusVariant, current_dir), Q_ARG(QDBusVariant, key_words));
+    return result;
+}
+
+QDBusVariant QuickSearchDaemonAdaptor::whetherCacheCompletely()
+{
+    // handle method call com.deepin.filemanager.daemon.QuickSearchDaemon.whetherCacheCompletely
+    QDBusVariant result;
+    QMetaObject::invokeMethod(parent(), "whetherCacheCompletely", Q_RETURN_ARG(QDBusVariant, result));
     return result;
 }
 

@@ -36,6 +36,20 @@ DQuickSearchController::DQuickSearchController(QObject *const parent)
     };
 }
 
+void DQuickSearchController::createCache()
+{
+    QDBusPendingReply<> reply{ m_interface->createCache() };
+    reply.waitForFinished();
+}
+
+bool DQuickSearchController::whetherCacheCompletely() const noexcept
+{
+    QDBusVariant result{ m_interface->whetherCacheCompletely() };
+    QVariant var{ result.variant() };
+
+    return var.value<bool>();
+}
+
 QList<QString> DQuickSearchController::search(const QString &local_path, const QString &key_words)
 {
     QDBusVariant path_var{ QVariant{ local_path } };

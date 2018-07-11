@@ -38,16 +38,10 @@ class QuickSearchDaemonAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"in\" type=\"v\" name=\"key_words\"/>\n"
 "      <arg direction=\"out\" type=\"v\" name=\"result\"/>\n"
 "    </method>\n"
-"    <signal name=\"filesWereDeleted\">\n"
-"      <arg direction=\"out\" type=\"v\" name=\"files_path\"/>\n"
-"    </signal>\n"
-"    <signal name=\"filesWereRenamed\">\n"
-"      <annotation value=\"QVariantMap\" name=\"org.qtproject.QtDBus.QtTypeName.In0\"/>\n"
-"      <arg direction=\"out\" type=\"a{sv}\" name=\"old_and_new\"/>\n"
-"    </signal>\n"
-"    <signal name=\"filesWereCreated\">\n"
-"      <arg direction=\"out\" type=\"v\" name=\"files_path\"/>\n"
-"    </signal>\n"
+"    <method name=\"createCache\"/>\n"
+"    <method name=\"whetherCacheCompletely\">\n"
+"      <arg direction=\"out\" type=\"v\" name=\"result\"/>\n"
+"    </method>\n"
 "  </interface>\n"
         "")
 public:
@@ -56,11 +50,10 @@ public:
 
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
+    void createCache();
     QDBusVariant search(const QDBusVariant &current_dir, const QDBusVariant &key_words);
+    QDBusVariant whetherCacheCompletely();
 Q_SIGNALS: // SIGNALS
-    void filesWereCreated(const QDBusVariant &files_path);
-    void filesWereDeleted(const QDBusVariant &files_path);
-    void filesWereRenamed(const QVariantMap &old_and_new);
 };
 
 #endif
