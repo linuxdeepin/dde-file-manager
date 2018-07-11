@@ -227,8 +227,6 @@ static std::shared_ptr<std::pair<std::queue<partition>, std::queue<partition>>> 
 DQuickSearch::DQuickSearch(QObject *const parent)
     : QObject{ parent }
 {
-    std::lock_guard<std::mutex> raii_lock{ m_mutex };
-    this->cache_every_partion();
 }
 
 
@@ -449,6 +447,17 @@ void DQuickSearch::filesWereRenamed(const QList<QPair<QByteArray, QByteArray> > 
                 free_fs_buf(buf);
             }
         }
+    }
+}
+
+void DQuickSearch::createCache()
+{
+    if (!m_readyFlag.load(std::memory_order_consume)) {
+        std::lock_guard<std::mutex> raii_lock{ m_mutex };
+        cache_every_partion();
+
+        bool flag{ false };
+        m_readyFlag.compare_exchange_strong(flag, true, std::memory_order_release);
     }
 }
 

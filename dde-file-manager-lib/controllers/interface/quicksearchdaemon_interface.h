@@ -36,6 +36,12 @@ public:
     ~QuickSearchDaemonInterface();
 
 public Q_SLOTS: // METHODS
+    inline QDBusPendingReply<> createCache()
+    {
+        QList<QVariant> argumentList;
+        return asyncCallWithArgumentList(QStringLiteral("createCache"), argumentList);
+    }
+
     inline QDBusPendingReply<QDBusVariant> search(const QDBusVariant &current_dir, const QDBusVariant &key_words)
     {
         QList<QVariant> argumentList;
@@ -43,10 +49,13 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("search"), argumentList);
     }
 
+    inline QDBusPendingReply<QDBusVariant> whetherCacheCompletely()
+    {
+        QList<QVariant> argumentList;
+        return asyncCallWithArgumentList(QStringLiteral("whetherCacheCompletely"), argumentList);
+    }
+
 Q_SIGNALS: // SIGNALS
-    void filesWereCreated(const QDBusVariant &files_path);
-    void filesWereDeleted(const QDBusVariant &files_path);
-    void filesWereRenamed(const QVariantMap &old_and_new);
 };
 
 namespace com {

@@ -36,14 +36,9 @@ public:
     QuickSearchDaemon(const QuickSearchDaemon &) = delete;
     QuickSearchDaemon &operator=(const QuickSearchDaemon &) = delete;
 
-
+    Q_INVOKABLE void createCache();
+    Q_INVOKABLE QDBusVariant whetherCacheCompletely();
     Q_INVOKABLE QDBusVariant search(const QDBusVariant &current_dir, const QDBusVariant &key_words);
-
-
-Q_SIGNALS: // SIGNALS
-    void filesWereCreated(const QDBusVariant &files_path);
-    void filesWereDeleted(const QDBusVariant &files_path);
-    void filesWereRenamed(const QVariantMap &old_and_new);
 
 private:
     QuickSearchDaemonAdaptor *adaptor{ nullptr };

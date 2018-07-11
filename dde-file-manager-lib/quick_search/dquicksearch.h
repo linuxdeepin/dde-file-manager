@@ -79,6 +79,11 @@ public:
     void filesWereDeleted(const QList<QByteArray> &files_path);
     void filesWereRenamed(const QList<QPair<QByteArray, QByteArray>> &files_path);
 
+    void createCache();
+    inline bool whetherCacheCompletely()const noexcept
+    {
+        return m_readyFlag.load(std::memory_order_consume);
+    }
 
     static DQuickSearch *instance()noexcept
     {
@@ -124,6 +129,7 @@ private:
     static QList<QString> filter_result(const QList<QString> &searched_result, const QByteArray &regex);
 
 
+    std::atomic<bool> m_readyFlag{ false };
     std::mutex m_mutex{};
     std::atomic<bool> m_flag{ false };
     std::deque<QString> m_backup{};

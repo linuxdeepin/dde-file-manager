@@ -36,6 +36,19 @@ QuickSearchDaemon::QuickSearchDaemon(QObject *const parent)
     }
 }
 
+void QuickSearchDaemon::createCache()
+{
+    DQuickSearch::instance()->createCache();
+}
+
+QDBusVariant QuickSearchDaemon::whetherCacheCompletely()
+{
+    bool flag{ DQuickSearch::instance()->whetherCacheCompletely() };
+    QDBusVariant dbus_var{ flag };
+
+    return dbus_var;
+}
+
 QDBusVariant QuickSearchDaemon::search(const QDBusVariant &current_dir, const QDBusVariant &key_words)
 {
     QVariant path_var{ current_dir.variant() };
