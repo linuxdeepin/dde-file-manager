@@ -93,6 +93,7 @@ public:
 private:
     QList<QString> m_searchedResult{};
     QString m_pathForSearching{};
+    std::atomic<bool> m_quickSearchFlag{ false };
 
     QDirIterator iterator;
     QProcess *processRlocate = Q_NULLPTR;
@@ -670,10 +671,20 @@ FileDirIterator::~FileDirIterator()
 
 DUrl FileDirIterator::next()
 {
-    if (!m_searchedResult.isEmpty()) {
+    if (m_quickSearchFlag.load(std::memory_order_consume)) {
+
+        if (m_searchedResult.isEmpty()) {
+            return DUrl{};
+        }
+
         QString searched_result{ m_searchedResult.front() };
         m_searchedResult.removeFirst();
-        return (currentFileInfo.setFile(searched_result), DUrl::fromLocalFile(searched_result));
+
+        currentFileInfo.setFile(searched_result);
+        return DUrl::fromLocalFile(searched_result);
+    } else {
+        currentFileInfo.setFile(QString{});
+        m_quickSearchFlag.store(false, std::memory_order_release);
     }
 
 
@@ -705,9 +716,10 @@ DUrl FileDirIterator::next()
 
 bool FileDirIterator::hasNext() const
 {
-    if (!m_searchedResult.isEmpty()) {
-        return true;
+    if (m_quickSearchFlag.load(std::memory_order_consume)) {
+        return (!m_searchedResult.isEmpty());
     }
+
 
     if (!processRlocate) {
         if (currentFileInfo.exists() || currentFileInfo.isSymLink()) {
@@ -769,6 +781,12 @@ QString FileDirIterator::filePath() const
 
 const DAbstractFileInfoPointer FileDirIterator::fileInfo() const
 {
+    if (m_quickSearchFlag.load(std::memory_order_consume)) {
+        DAbstractFileInfoPointer info_pointer{ new DFileInfo{currentFileInfo} };
+
+        return info_pointer;
+    }
+
     if (fileName().contains(QChar(0xfffd))) {
         DFMGlobal::fileNameCorrection(filePath());
     }
@@ -797,16 +815,28 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
         qDebug() << m_pathForSearching;
 #endif //QT_DEBUG
 
+        std::function<void()> func{
+            [this, &keyword]()
+            {
+                m_searchedResult = QuickSearchDaemonController::instance()->search(m_pathForSearching, keyword);
+                m_quickSearchFlag.store(true, std::memory_order_release);
+
+#ifdef QT_DEBUG
+                qDebug() << m_searchedResult;
+#endif //QT_DEBUG
+            }
+        };
+
         if (whether_index_external && whether_index_internal) {
-            m_searchedResult = QuickSearchDaemonController::instance()->search(m_pathForSearching, keyword);
+            func();
 
             return true;
         } else if (!is_usb_dev && whether_index_internal) {
-            m_searchedResult = QuickSearchDaemonController::instance()->search(m_pathForSearching, keyword);
+            func();
 
             return true;
         } else if (is_usb_dev && whether_index_external) {
-            m_searchedResult = QuickSearchDaemonController::instance()->search(m_pathForSearching, keyword);
+            func();
 
             return true;
         }
