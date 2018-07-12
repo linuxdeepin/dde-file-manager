@@ -137,7 +137,7 @@ bool DLocalFileHandler::rmdir(const DUrl &url)
     return false;
 }
 
-bool DLocalFileHandler::rename(const DUrl &url, const DUrl &newUrl, bool overwrite)
+bool DLocalFileHandler::rename(const DUrl &url, const DUrl &newUrl)
 {
     Q_ASSERT(url.isLocalFile());
     Q_ASSERT(newUrl.isLocalFile());
@@ -145,33 +145,6 @@ bool DLocalFileHandler::rename(const DUrl &url, const DUrl &newUrl, bool overwri
 
     const QByteArray &source_file = url.toLocalFile().toLocal8Bit();
     const QByteArray &target_file = newUrl.toLocalFile().toLocal8Bit();
-
-    if (overwrite && QFile::exists(newUrl.toLocalFile())) {
-        // rename() on Linux simply does nothing when renaming "foo" to "Foo" on a case-insensitive
-        // FS, such as FAT32. Move the file away and rename in 2 steps to work around.
-        QTemporaryFile tempFile(newUrl.toLocalFile() + QStringLiteral(".XXXXXX"));
-        tempFile.setAutoRemove(false);
-        if (!tempFile.open()) {
-            d->setErrorString(tempFile.errorString());
-            return false;
-        }
-        tempFile.close();
-        if (::rename(source_file.constData(), tempFile.fileName().toLocal8Bit().constData()) != 0) {
-            d->setErrorString(QString::fromLocal8Bit(strerror(errno)));
-            return false;
-        }
-        if (::rename(tempFile.fileName().toLocal8Bit().constData(), target_file.constData()) == 0) {
-            return true;
-        }
-        d->setErrorString(QString::fromLocal8Bit(strerror(errno)));
-        // We need to restore the original file.
-        if (!tempFile.rename(url.toLocalFile())) {
-            d->setErrorString(errorString() + QString("\nUnable to restore from %1: %2")
-                              .arg(QDir::toNativeSeparators(tempFile.fileName()), tempFile.errorString()));
-        }
-
-        return false;
-    }
 
     if (::rename(source_file.constData(), target_file.constData()) == 0)
         return true;

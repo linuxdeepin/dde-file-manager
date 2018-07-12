@@ -45,7 +45,7 @@ public:
     virtual bool link(const QString &path, const DUrl &linkUrl) = 0;
     virtual bool remove(const DUrl &url) = 0;
     virtual bool rmdir(const DUrl &url) = 0;
-    virtual bool rename(const DUrl &url, const DUrl &newUrl, bool overwrite = false) = 0;
+    virtual bool rename(const DUrl &url, const DUrl &newUrl) = 0;
     virtual bool setPermissions(const DUrl &url, QFileDevice::Permissions permissions) = 0;
     virtual bool setFileTime(const DUrl &url, const QDateTime &accessDateTime, const QDateTime &lastModifiedTime) = 0;
 

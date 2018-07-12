@@ -263,7 +263,7 @@ void DialogManager::addJob(FileJob *job)
     connect(job, &FileJob::requestAbortTask, m_taskDialog, &DTaskDialog::handleTaskClose);
     connect(job, &FileJob::requestConflictDialogShowed, m_taskDialog, &DTaskDialog::showConflictDiloagByJob);
     connect(job, &FileJob::requestCopyMoveToSelfDialogShowed, this, &DialogManager::showCopyMoveToSelfDialog);
-    connect(job, &FileJob::requestNoEnoughSpaceDialogShowed, this, &DialogManager::showDiskSpaceOutOfUsedDialog);
+    connect(job, &FileJob::requestNoEnoughSpaceDialogShowed, this, &DialogManager::showDiskSpaceOutOfUsedDialogLater);
     connect(job, &FileJob::requestCanNotMoveToTrashDialogShowed, this, &DialogManager::showMoveToTrashConflictDialog);
 }
 
@@ -754,19 +754,24 @@ void DialogManager::showGlobalSettingsDialog(quint64 winId)
     });
 }
 
-void DialogManager::showDiskSpaceOutOfUsedDialog()
+void DialogManager::showDiskSpaceOutOfUsedDialogLater()
 {
     QTimer::singleShot(200, [ = ] {
-        DDialog d;
-        d.setIcon(m_dialogWarningIcon);
-        d.setTitle(tr("Target disk doesn't have enough space, unable to copy!"));
-        d.addButton(tr("OK"));
-
-        QRect rect = d.geometry();
-        rect.moveCenter(qApp->desktop()->geometry().center());
-        d.move(rect.x(), rect.y());
-        d.exec();
+        showDiskSpaceOutOfUsedDialog();
     });
+}
+
+void DialogManager::showDiskSpaceOutOfUsedDialog()
+{
+    DDialog d;
+    d.setIcon(m_dialogWarningIcon);
+    d.setTitle(tr("Target disk doesn't have enough space, unable to copy!"));
+    d.addButton(tr("OK"));
+
+    QRect rect = d.geometry();
+    rect.moveCenter(qApp->desktop()->geometry().center());
+    d.move(rect.x(), rect.y());
+    d.exec();
 }
 
 void DialogManager::show4gFat32Dialog()
