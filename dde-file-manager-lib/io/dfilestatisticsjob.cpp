@@ -69,8 +69,12 @@ void DFileStatisticsJobPrivate::setState(DFileStatisticsJob::State s)
 
     state = s;
 
+    if (notifyDataTimer->thread()->loopLevel() <= 0) {
+        qWarning() << "The thread of notify data timer no event loop" << notifyDataTimer->thread();
+    }
+
     if (s == DFileStatisticsJob::RunningState) {
-        QMetaObject::invokeMethod(notifyDataTimer, "start", Q_ARG(int, 1000));
+        QMetaObject::invokeMethod(notifyDataTimer, "start", Q_ARG(int, 500));
     } else {
         QMetaObject::invokeMethod(notifyDataTimer, "stop");
 
@@ -88,6 +92,7 @@ bool DFileStatisticsJobPrivate::jobWait()
 
     lock.lock();
     waitCondition.wait(&lock);
+    lock.unlock();
 
     return state == DFileStatisticsJob::RunningState;
 }
@@ -161,18 +166,18 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
         size = info->size();
         ++directoryCount;
 
-        if (!(fileHints & (DFileStatisticsJob::DontSkipAVFSDStorage | DFileStatisticsJob::DontSkipPROCStorage)) && url.isLocalFile()) {
+        if (!(fileHints & (DFileStatisticsJob::DontSkipAVFSDStorage | DFileStatisticsJob::DontSkipPROCStorage)) && info->fileUrl().isLocalFile()) {
             do {
-                DStorageInfo si(url.toLocalFile());
+                DStorageInfo si(info->fileUrl().toLocalFile());
 
-                if (si.rootPath() == url.toLocalFile()) {
+                if (si.rootPath() == info->fileUrl().toLocalFile()) {
                     if (!fileHints.testFlag(DFileStatisticsJob::DontSkipPROCStorage)
                             && si.fileSystemType() == "proc") {
                         break;
                     }
 
                     if (!fileHints.testFlag(DFileStatisticsJob::DontSkipAVFSDStorage)
-                            && si.fileSystemType() == "avfsd") {
+                            && si.fileSystemType() == "fuse.avfsd") {
                         break;
                     }
                 }
@@ -200,7 +205,7 @@ DFileStatisticsJob::DFileStatisticsJob(QObject *parent)
 
     connect(d_ptr->notifyDataTimer, &QTimer::timeout, this, [this] {
         Q_EMIT dataNotify(d_ptr->totalSize, d_ptr->filesCount, d_ptr->directoryCount);
-    });
+    }, Qt::DirectConnection);
 }
 
 DFileStatisticsJob::~DFileStatisticsJob()

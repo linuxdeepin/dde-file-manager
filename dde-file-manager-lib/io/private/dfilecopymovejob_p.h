@@ -55,6 +55,7 @@ public:
 
     void setState(DFileCopyMoveJob::State s);
     void setError(DFileCopyMoveJob::Error e, const QString &es = QString());
+    void unsetError();
     DFileCopyMoveJob::Action handleError(const DAbstractFileInfo *sourceInfo, const DAbstractFileInfo *targetInfo);
     bool jobWait();
     bool stateCheck();
@@ -63,12 +64,12 @@ public:
 
     bool process(const DUrl &from, const DAbstractFileInfo *target_info);
     bool mergeDirectory(DFileHandler *handler, const DAbstractFileInfo *fromInfo, const DAbstractFileInfo *toInfo);
-    bool doCopyFile(const DAbstractFileInfo *fromInfo, const DAbstractFileInfo *toInfo, int blockSize = 4096);
+    bool doCopyFile(const DAbstractFileInfo *fromInfo, const DAbstractFileInfo *toInfo, int blockSize = 1048576);
     bool doRemoveFile(DFileHandler *handler, const DAbstractFileInfo *fileInfo);
     bool doRenameFile(DFileHandler *handler, const DAbstractFileInfo *oldInfo, const DAbstractFileInfo *newInfo);
     bool doLinkFile(DFileHandler *handler, const DAbstractFileInfo *fileInfo, const QString &linkPath);
 
-    bool copyFile(const DAbstractFileInfo *fromInfo, const DAbstractFileInfo *toInfo, int blockSize = 4096);
+    bool copyFile(const DAbstractFileInfo *fromInfo, const DAbstractFileInfo *toInfo, int blockSize = 1048576);
     bool removeFile(DFileHandler *handler, const DAbstractFileInfo *fileInfo);
     bool renameFile(DFileHandler *handler, const DAbstractFileInfo *oldInfo, const DAbstractFileInfo *newInfo);
     bool linkFile(DFileHandler *handler, const DAbstractFileInfo *fileInfo, const QString &linkPath);
@@ -94,6 +95,7 @@ public:
     DFileCopyMoveJob::Action lastErrorHandleAction = DFileCopyMoveJob::NoAction;
 
     DUrlList sourceUrlList;
+    DUrlList targetUrlList;
     DUrl targetUrl;
     QPointer<QThread> threadAtStart;
     DFileCopyMoveJob::Action actionOfError[DFileCopyMoveJob::UnknowError] = {DFileCopyMoveJob::NoAction};

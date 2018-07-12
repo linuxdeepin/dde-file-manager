@@ -247,6 +247,11 @@ bool DialogManager::isTaskDialogEmpty()
     return false;
 }
 
+DTaskDialog *DialogManager::taskDialog() const
+{
+    return m_taskDialog;
+}
+
 void DialogManager::addJob(FileJob *job)
 {
     m_jobs.insert(job->getJobId(), job);

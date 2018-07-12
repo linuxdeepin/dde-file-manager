@@ -30,6 +30,7 @@
 #include "dfmfilecontrollerfactory.h"
 #include "dfiledevice.h"
 #include "dfilehandler.h"
+#include "dfilecopymovejob.h"
 
 #include "app/filesignalmanager.h"
 #include "dfmevent.h"
@@ -49,6 +50,7 @@
 #include "shutil/filebatchprocess.h"
 
 #include "dialogs/dialogmanager.h"
+#include "dialogs/dtaskdialog.h"
 
 #include "deviceinfo/udisklistener.h"
 #include "interfaces/dfmglobal.h"
@@ -134,6 +136,87 @@ QVariant eventProcess(DFileService *service, const QSharedPointer<DFMEvent> &eve
     }
 
     return QVariant();
+}
+
+static DUrlList pasteFiles(DFMGlobal::ClipboardAction action, const DUrlList &list, const DUrl &target)
+{
+    DFileCopyMoveJob *job = new DFileCopyMoveJob();
+    QTimer *popup_dialog_timer = new QTimer();
+    QPair<DUrl, DUrl> currentJob;
+
+    if (QThread::currentThread()->loopLevel() <= 0) {
+        // 确保对象所在线程有事件循环
+        job->moveToThread(qApp->thread());
+    }
+
+    // 定时器触发后要执行UI相关代码, 此处确保在UI线程执行
+    popup_dialog_timer->moveToThread(qApp->thread());
+    popup_dialog_timer->setSingleShot(true);
+    popup_dialog_timer->setInterval(2000);
+
+    QObject::connect(popup_dialog_timer, &QTimer::timeout, job, [&] {
+        dialogManager->taskDialog()->addTaskJob(job)->onJobCurrentJobChanged(currentJob.first, currentJob.second);
+    }, Qt::DirectConnection);
+    QObject::connect(job, &DFileCopyMoveJob::finished, popup_dialog_timer, &QTimer::stop);
+    QObject::connect(job, SIGNAL(started()), popup_dialog_timer, SLOT(start()));
+    QObject::connect(job, &DFileCopyMoveJob::currentJobChanged, job, [&] (const DUrl &from, const DUrl &to) {
+        currentJob.first = from;
+        currentJob.second = to;
+    }, Qt::DirectConnection);
+
+    class ErrorHandle : public DFileCopyMoveJob::Handle
+    {
+    public:
+        ErrorHandle(QTimer *timer, QPair<DUrl, DUrl> *jobInfo)
+            : popup_dialog_timer(timer)
+            , currentJob(jobInfo)
+        {
+
+        }
+
+        // 处理任务对话框显示之前的错误, 无法处理的错误将立即弹出对话框处理
+        DFileCopyMoveJob::Action handleError(DFileCopyMoveJob *job, DFileCopyMoveJob::Error error,
+                                             const DAbstractFileInfo *sourceInfo,
+                                             const DAbstractFileInfo *targetInfo) override
+        {
+            if (error == DFileCopyMoveJob::DirectoryExistsError || error == DFileCopyMoveJob::FileExistsError) {
+                if (sourceInfo->fileUrl() == targetInfo->fileUrl())
+                    return DFileCopyMoveJob::CoexistAction;
+            }
+
+            if (popup_dialog_timer->isActive()) {
+                popup_dialog_timer->stop();
+            }
+
+            MoveCopyTaskWidget *taskWidget = dialogManager->taskDialog()->addTaskJob(job);
+
+            taskWidget->onJobCurrentJobChanged(currentJob->first, currentJob->second);
+
+            return taskWidget->errorHandle()->handleError(job, error, sourceInfo, targetInfo);
+        }
+
+        QTimer *popup_dialog_timer;
+        QPair<DUrl, DUrl> *currentJob;
+    };
+
+    ErrorHandle error_handle(popup_dialog_timer, &currentJob);
+
+    job->setErrorHandle(&error_handle);
+    job->setMode(action == DFMGlobal::CopyAction ? DFileCopyMoveJob::CopyMode : DFileCopyMoveJob::MoveMode);
+    job->start(list, target);
+    job->wait();
+
+    if (popup_dialog_timer->isActive()) {
+        QMetaObject::invokeMethod(popup_dialog_timer, "stop");
+    }
+
+    QMetaObject::invokeMethod(popup_dialog_timer, "deleteLater");
+    QTimer::singleShot(500, dialogManager->taskDialog(), [job] {
+        dialogManager->taskDialog()->removeTaskJob(job);
+    });
+    QMetaObject::invokeMethod(job, "deleteLater");
+
+    return job->targetUrlList();
 }
 
 bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData)
@@ -291,9 +374,12 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         break;
     }
     case DFMEvent::PasteFile: {
-        result = CALL_CONTROLLER(pasteFile);
+//        result = CALL_CONTROLLER(pasteFile);
+        const auto &&ev = event.staticCast<DFMPasteEvent>();
 
-        if (event->isAccepted()) {
+        result = QVariant::fromValue(pasteFiles(ev->action(), ev->fileUrlList(), ev->targetUrl()));
+
+        /*if (event->isAccepted())*/ {
             DFMUrlListBaseEvent e(event->sender(), qvariant_cast<DUrlList>(result));
 
             e.setWindowId(event->windowId());
@@ -309,7 +395,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
             if (url.isEmpty())
                 continue;
 
-            DFMGlobal::ClipboardAction action = event.staticCast<DFMPasteEvent>()->action();
+            DFMGlobal::ClipboardAction action = ev->action();
 
             if (action == DFMGlobal::ClipboardAction::CopyAction) {
                 emit fileCopied(list.at(i), url);

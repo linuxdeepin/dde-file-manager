@@ -62,6 +62,7 @@ public:
         NoError,
         CancelError,
         PermissionError,
+        SpecialFileError,
         FileExistsError,
         DirectoryExistsError,
         OpenError,
@@ -106,6 +107,7 @@ public:
 
     class Handle {
     public:
+        virtual ~Handle() {}
         virtual Action handleError(DFileCopyMoveJob *job, Error error,
                                    const DAbstractFileInfo *sourceInfo,
                                    const DAbstractFileInfo *targetInfo) = 0;
@@ -127,6 +129,10 @@ public:
     FileHints fileHints() const;
     QString errorString() const;
 
+    DUrlList sourceUrlList() const;
+    DUrlList targetUrlList() const;
+    DUrl targetUrl() const;
+
     qint64 totalDataSize() const;
     int totalFilesCount() const;
     QList<QPair<DUrl, DUrl> > completedFiles() const;
@@ -143,12 +149,13 @@ public Q_SLOTS:
 Q_SIGNALS:
     void stateChanged(State state);
     void errorChanged(Error error);
+    void currentJobChanged(const DUrl &from, const DUrl &to);
     void finished(const DUrl &from, const DUrl &to);
     void completedFilesCountChanged(int count);
     void fileStatisticsFinished();
     void progressChanged(qreal progress, qint64 writeData);
     void currentFileProgressChanged(qreal progress, qint64 writeData);
-    void speedUpdated(qreal speed);
+    void speedUpdated(qint64 speed);
 
 protected:
     DFileCopyMoveJob(DFileCopyMoveJobPrivate &dd, QObject *parent);

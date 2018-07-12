@@ -70,7 +70,7 @@ public:
     void initConnect();
     QPoint getPerportyPos(int dialogWidth, int dialogHeight, int count, int index);
     bool isTaskDialogEmpty();
-signals:
+    DTaskDialog *taskDialog() const;
 
 public slots:
     void handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response);
