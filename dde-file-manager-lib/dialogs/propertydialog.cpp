@@ -1032,12 +1032,19 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
         layout->addRow(m_executableCheckBox, executableLabel);
     }
 
+
     layout->setContentsMargins(45, 0, 15, 0);
     widget->setLayout(layout);
 
     connect(ownerBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), widget, onComboBoxChanged);
     connect(groupBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), widget, onComboBoxChanged);
     connect(otherBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), widget, onComboBoxChanged);
+
+    if (!info->isWritable()) {
+        ownerBox->setDisabled(true);
+        groupBox->setDisabled(true);
+        otherBox->setDisabled(true);
+    }
 
     return widget;
 }
