@@ -103,6 +103,7 @@ public slots:
     void showAboutDialog(quint64 winId);
     void showUserSharePasswordSettingDialog(quint64 winId);
     void showGlobalSettingsDialog(quint64 winId);
+    void showDiskSpaceOutOfUsedDialogLater();
     void showDiskSpaceOutOfUsedDialog();
     void show4gFat32Dialog();
     void showFailToCreateSymlinkDialog(const QString &errorString);

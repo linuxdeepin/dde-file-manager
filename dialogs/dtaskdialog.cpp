@@ -34,11 +34,13 @@
 
 #include "dfmglobal.h"
 #include "dfileservices.h"
+#include "dabstractfileinfo.h"
 
 #include "xutil.h"
 #include "app/define.h"
-#include "dabstractfileinfo.h"
 #include "shutil/fileutils.h"
+#include "dialogs/dialogmanager.h"
+#include "singleton.h"
 
 class ErrorHandle : public DFileCopyMoveJob::Handle
 {
@@ -69,10 +71,19 @@ public:
             m_taskWidget->showConflict();
 
             return DFileCopyMoveJob::NoAction;
+        case DFileCopyMoveJob::FileSizeTooBigError:
+            dialogManager->show4gFat32Dialog();
+            return DFileCopyMoveJob::CancelAction;
+        case DFileCopyMoveJob::NotEnoughSpaceError:
+            dialogManager->showDiskSpaceOutOfUsedDialog();
+            return DFileCopyMoveJob::CancelAction;
+        case DFileCopyMoveJob::SymlinkError:
+            dialogManager->showFailToCreateSymlinkDialog(job->errorString());
+            return DFileCopyMoveJob::CancelAction;
         default:
             qWarning() << job->errorString();
 
-            return DFileCopyMoveJob::SkipAction;
+            return DFileCopyMoveJob::CancelAction;
         }
 
         return DFileCopyMoveJob::CancelAction;
@@ -162,6 +173,7 @@ void MoveCopyTaskWidget::initUI(){
     m_animatePad->setChunkColor(QColor("#3cadff"));
     m_animatePad->setLineWidth(3);
     m_animatePad->setFontSize(14);
+    m_animatePad->setCurrentValue(0);
 
     m_closeButton->hide();
     setMouseTracking(true);

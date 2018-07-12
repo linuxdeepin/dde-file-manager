@@ -37,7 +37,7 @@ public:
     bool link(const QString &path, const DUrl &linkUrl) override;
     bool remove(const DUrl &url) override;
     bool rmdir(const DUrl &url) override;
-    bool rename(const DUrl &url, const DUrl &newUrl, bool overwrite = false) override;
+    bool rename(const DUrl &url, const DUrl &newUrl) override;
     bool setPermissions(const DUrl &url, QFileDevice::Permissions permissions) override;
     bool setFileTime(const DUrl &url, const QDateTime &accessDateTime, const QDateTime &lastModifiedTime) override;
 };

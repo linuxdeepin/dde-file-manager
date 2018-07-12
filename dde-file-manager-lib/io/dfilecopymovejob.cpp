@@ -279,6 +279,54 @@ bool DFileCopyMoveJobPrivate::stateCheck()
     return true;
 }
 
+bool DFileCopyMoveJobPrivate::checkFileSize(qint64 size)
+{
+    if (!targetStorageInfo.isValid())
+        return true;
+
+    const QString &fs_type = targetStorageInfo.fileSystemType();
+
+    // for vfat file system
+    if (fs_type == "vfat") {
+        // 4GB
+        if (size > 4294967295) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool DFileCopyMoveJobPrivate::checkFreeSpace(qint64 needSize)
+{
+    if (!targetStorageInfo.isValid())
+        return true;
+
+    targetStorageInfo.refresh();
+
+    return targetStorageInfo.bytesAvailable() >= needSize;
+}
+
+QString DFileCopyMoveJobPrivate::formatFileName(const QString &name)
+{
+    if (fileHints.testFlag(DFileCopyMoveJob::DontFormatFileName)) {
+        return name;
+    }
+
+    if (!targetStorageInfo.isValid())
+        return name;
+
+    const QString &fs_type = targetStorageInfo.fileSystemType();
+
+    if (fs_type == "vfat") {
+        QString new_name = name;
+
+        return new_name.replace(QRegExp("[\"*:<>?\\|]"), "_");
+    }
+
+    return name;
+}
+
 QString DFileCopyMoveJobPrivate::getNewFileName(const DAbstractFileInfo *sourceFileInfo, const DAbstractFileInfo *targetDirectory)
 {
     const QString &copy_text = QCoreApplication::translate(QT_STRINGIFY(DFileCopyMoveJob), "copy",
@@ -443,6 +491,34 @@ process_file:
     if (source_info->isFile()) {
         bool ok = false;
         qint64 size = source_info->size();
+
+        while (!checkFreeSpace(size)) {
+            setError(DFileCopyMoveJob::NotEnoughSpaceError, "Insufficient target device space");
+            DFileCopyMoveJob::Action action = handleError(source_info.constData(), new_file_info.constData());
+
+            if (action == DFileCopyMoveJob::SkipAction)
+                return true;
+
+            if (action == DFileCopyMoveJob::RetryAction)
+                continue;
+
+            if (action == DFileCopyMoveJob::EnforceAction)
+                break;
+
+            return false;
+        }
+
+        if (!checkFileSize(size)) {
+            setError(DFileCopyMoveJob::FileSizeTooBigError, "File size must be less than 4GB");
+            DFileCopyMoveJob::Action action = handleError(source_info.constData(), new_file_info.constData());
+
+            if (action == DFileCopyMoveJob::SkipAction)
+                return true;
+
+            if (action != DFileCopyMoveJob::EnforceAction) {
+                return false;
+            }
+        }
 
         if (mode == DFileCopyMoveJob::CopyMode) {
             if (new_file_info->isSymLink() || fileHints.testFlag(DFileCopyMoveJob::RemoveDestination)) {
@@ -768,7 +844,7 @@ bool DFileCopyMoveJobPrivate::doRemoveFile(DFileHandler *handler, const DAbstrac
 bool DFileCopyMoveJobPrivate::doRenameFile(DFileHandler *handler, const DAbstractFileInfo *oldInfo, const DAbstractFileInfo *newInfo)
 {
     // 先尝试直接rename
-    if (handler->rename(oldInfo->fileUrl(), newInfo->fileUrl(), true)) {
+    if (handler->rename(oldInfo->fileUrl(), newInfo->fileUrl())) {
         return true;
     }
 
@@ -779,7 +855,7 @@ bool DFileCopyMoveJobPrivate::doRenameFile(DFileHandler *handler, const DAbstrac
         return false;
     }
 
-    if (!handler->exists(newInfo->fileUrl())) {
+    if (lastErrorHandleAction == DFileCopyMoveJob::SkipAction) {
         // 说明复制文件过程被跳过
         return true;
     }
@@ -1192,6 +1268,13 @@ void DFileCopyMoveJob::run()
         qCDebug(fileJob(), "remove mode");
     }
 
+    // for locale file
+    if (d->targetUrl.isLocalFile()) {
+        d->targetStorageInfo.setPath(d->targetUrl.toLocalFile());
+    } else {
+        d->targetStorageInfo = QStorageInfo();
+    }
+
     for (DUrl &source : d->sourceUrlList) {
         if (!d->stateCheck()) {
             goto end;
@@ -1235,7 +1318,7 @@ QString DFileCopyMoveJob::Handle::getNewFileName(DFileCopyMoveJob *job, const DA
 {
     Q_UNUSED(job)
 
-    return sourceInfo->fileName();
+    return job->d_func()->formatFileName(sourceInfo->fileName());
 }
 
 QString DFileCopyMoveJob::Handle::getNonExistsFileName(DFileCopyMoveJob *job, const DAbstractFileInfo *sourceInfo, const DAbstractFileInfo *targetDirectory)

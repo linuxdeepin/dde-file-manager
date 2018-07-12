@@ -27,6 +27,7 @@
 #include <QPointer>
 #include <QStack>
 #include <QElapsedTimer>
+#include <QStorageInfo>
 
 DFM_BEGIN_NAMESPACE
 
@@ -59,6 +60,9 @@ public:
     DFileCopyMoveJob::Action handleError(const DAbstractFileInfo *sourceInfo, const DAbstractFileInfo *targetInfo);
     bool jobWait();
     bool stateCheck();
+    bool checkFileSize(qint64 size);
+    bool checkFreeSpace(qint64 needSize);
+    QString formatFileName(const QString &name);
 
     static QString getNewFileName(const DAbstractFileInfo *sourceFileInfo, const DAbstractFileInfo *targetDirectory);
 
@@ -97,6 +101,7 @@ public:
     DUrlList sourceUrlList;
     DUrlList targetUrlList;
     DUrl targetUrl;
+    QStorageInfo targetStorageInfo;
     QPointer<QThread> threadAtStart;
     DFileCopyMoveJob::Action actionOfError[DFileCopyMoveJob::UnknowError] = {DFileCopyMoveJob::NoAction};
     DFileStatisticsJob *fileStatistics = nullptr;
