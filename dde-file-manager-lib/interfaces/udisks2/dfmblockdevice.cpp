@@ -83,11 +83,13 @@ void DFMBlockDevice::onPropertiesChanged(const QString &interface, const QVarian
                 Q_EMIT ptTypeChanged();
                 break;
             }
+
+            ++begin;
         }
     } else {
         auto begin = changed_properties.begin();
 
-        while (begin != changed_properties.constEnd()) {
+        for (; begin != changed_properties.constEnd(); ++begin) {
             QString property_name = begin.key();
 
             int pindex = this->metaObject()->indexOfProperty(property_name.toLatin1().constData());
@@ -107,8 +109,6 @@ void DFMBlockDevice::onPropertiesChanged(const QString &interface, const QVarian
                 continue;
 
             mp.notifySignal().invoke(this, QGenericArgument(begin.value().typeName(), begin.value().constData()));
-
-            ++begin;
         }
     }
 }
