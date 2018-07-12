@@ -141,6 +141,7 @@ void DiskMountPlugin::initCompoments()
     m_diskControlApplet->setVisible(false);
 
     connect(m_diskControlApplet, &DiskControlWidget::diskCountChanged, this, &DiskMountPlugin::diskCountChanged);
+    m_diskControlApplet->doStartupAutoMount();
     m_diskControlApplet->startMonitor();
 }
 

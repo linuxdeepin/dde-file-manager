@@ -29,11 +29,11 @@
 #include <QVBoxLayout>
 #include <dfmglobal.h>
 
-class DFMSetting;
 class QDiskInfo;
 class QDrive;
 
 DFM_BEGIN_NAMESPACE
+class DFMSettings;
 class DFMDiskManager;
 DFM_END_NAMESPACE
 
@@ -46,6 +46,7 @@ public:
     void initConnect();
 
     void startMonitor();
+    void doStartupAutoMount();
     void unmountAll();
 
 signals:
@@ -65,6 +66,7 @@ private slots:
 private:
     QVBoxLayout *m_centralLayout;
     QWidget *m_centralWidget;
+
     DFM_NAMESPACE::DFMDiskManager *m_diskManager;
 };
 

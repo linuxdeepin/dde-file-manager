@@ -34,6 +34,7 @@
 #include <dfmglobal.h>
 
 DFM_BEGIN_NAMESPACE
+class DFMSettings;
 class DFMBlockDevice;
 DFM_END_NAMESPACE
 
@@ -68,5 +69,7 @@ private:
     QProgressBar *m_capacityValueBar;
     Dtk::Widget::DImageButton *m_unmountButton;
 };
+
+DFM_NAMESPACE::DFMSettings* getGsGlobal();
 
 #endif // DISKCONTROLITEM_H

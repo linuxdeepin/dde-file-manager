@@ -35,7 +35,9 @@ class DFMSettings : public QObject
     Q_DECLARE_PRIVATE(DFMSettings)
 
     Q_PROPERTY(bool autoSync READ autoSync WRITE setAutoSync)
+#ifndef DFM_NO_FILE_WATCHER
     Q_PROPERTY(bool watchChanges READ watchChanges WRITE setWatchChanges)
+#endif
 
 public:
     enum ConfigType {
@@ -75,11 +77,15 @@ public:
     bool sync();
 
     bool autoSync() const;
+#ifndef DFM_NO_FILE_WATCHER
     bool watchChanges() const;
+#endif
 
 public Q_SLOTS:
     void setAutoSync(bool autoSync);
+#ifndef DFM_NO_FILE_WATCHER
     void setWatchChanges(bool watchChanges);
+#endif
 
 Q_SIGNALS:
     void valueChanged(const QString &group, const QString &key, const QVariant &value);
@@ -88,7 +94,9 @@ Q_SIGNALS:
 private:
     QScopedPointer<DFMSettingsPrivate> d_ptr;
 
-    Q_PRIVATE_SLOT(d_ptr, void _q_onFileChanged(const DUrl &))
+#ifndef DFM_NO_FILE_WATCHER
+    void onFileChanged(const DUrl &);
+#endif
 };
 
 DFM_END_NAMESPACE

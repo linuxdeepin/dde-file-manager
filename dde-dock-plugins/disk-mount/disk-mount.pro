@@ -13,7 +13,7 @@ TARGET          = $$qtLibraryTarget(dde-disk-mount-plugin)
 DESTDIR          = $$_PRO_FILE_PWD_/../
 DISTFILES       += disk-mount.json
 
-DEFINES += QT_MESSAGELOGCONTEXT
+DEFINES += QT_MESSAGELOGCONTEXT DFM_NO_FILE_WATCHER
 
 #unix: LIBS += -L$$OUT_PWD/../../dde-file-manager-lib -ldde-file-manager
 
@@ -21,13 +21,15 @@ HEADERS += \
     diskmountplugin.h \
     diskcontrolwidget.h \
     diskpluginitem.h \
-    diskcontrolitem.h
+    diskcontrolitem.h \
+    $$PWD/../../dde-file-manager-lib/interfaces/dfmsettings.h
 
 SOURCES += \
     diskmountplugin.cpp \
     diskcontrolwidget.cpp \
     diskpluginitem.cpp \
-    diskcontrolitem.cpp
+    diskcontrolitem.cpp \
+    $$PWD/../../dde-file-manager-lib/interfaces/dfmsettings.cpp
 
 target.path = $${PREFIX}/lib/dde-dock/plugins/
 INSTALLS += target
