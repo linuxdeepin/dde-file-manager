@@ -19,7 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dfmsettings.h"
+#ifndef DFM_NO_FILE_WATCHER
 #include "dfilewatcher.h"
+#endif
 #include "dfmstandardpaths.h"
 
 #include <QCoreApplication>
@@ -46,7 +48,9 @@ public:
 
     QString fallbackFile;
     QString settingFile;
+#ifndef DFM_NO_FILE_WATCHER
     DFileWatcher *settingFileWatcher = nullptr;
+#endif
 
     DFMSettings *q_ptr;
 
@@ -653,12 +657,14 @@ bool DFMSettings::autoSync() const
     return d->autoSync;
 }
 
+#ifndef DFM_NO_FILE_WATCHER
 bool DFMSettings::watchChanges() const
 {
     Q_D(const DFMSettings);
 
     return d->watchChanges;
 }
+#endif
 
 void DFMSettings::setAutoSync(bool autoSync)
 {
@@ -692,6 +698,14 @@ void DFMSettings::setAutoSync(bool autoSync)
     }
 }
 
+#ifndef DFM_NO_FILE_WATCHER
+void DFMSettings::onFileChanged(const DUrl &url)
+{
+    Q_D(DFMSettings);
+
+    d->_q_onFileChanged(url);
+}
+
 void DFMSettings::setWatchChanges(bool watchChanges)
 {
     Q_D(DFMSettings);
@@ -718,7 +732,7 @@ void DFMSettings::setWatchChanges(bool watchChanges)
         d->settingFileWatcher = new DFileWatcher(d->settingFile, this);
         d->settingFileWatcher->moveToThread(thread());
 
-        connect(d->settingFileWatcher, SIGNAL(fileModified(DUrl)), this, SLOT(_q_onFileChanged(DUrl)));
+        connect(d->settingFileWatcher, &DFileWatcher::fileModified, this, &DFMSettings::onFileChanged);
 
         d->settingFileWatcher->startWatcher();
     } else {
@@ -728,7 +742,6 @@ void DFMSettings::setWatchChanges(bool watchChanges)
         }
     }
 }
+#endif
 
 DFM_END_NAMESPACE
-
-#include "moc_dfmsettings.cpp"

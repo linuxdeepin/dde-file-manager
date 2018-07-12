@@ -28,6 +28,7 @@
 #include <dfmdiskmanager.h>
 #include <dfmblockdevice.h>
 #include <dfmdiskdevice.h>
+#include <dfmsettings.h>
 #include <DDesktopServices>
 
 #include <QDebug>
@@ -62,7 +63,12 @@ DiskControlWidget::DiskControlWidget(QWidget *parent)
 
 void DiskControlWidget::initConnect()
 {
-    connect(m_diskManager, &DFMDiskManager::diskDeviceAdded, this, &DiskControlWidget::onDriveConnected);
+    connect(m_diskManager, &DFMDiskManager::diskDeviceAdded, this, [this](const QString &path) {
+        // blumia: Workaround. Wait for udisks2 add new device to device list.
+        QTimer::singleShot(500, this, [=](){
+            onDriveConnected(path);
+        });
+    });
     connect(m_diskManager, &DFMDiskManager::diskDeviceRemoved, this, &DiskControlWidget::onDriveDisconnected);
     connect(m_diskManager, &DFMDiskManager::mountAdded, this, &DiskControlWidget::onMountAdded);
     connect(m_diskManager, &DFMDiskManager::mountRemoved, this, &DiskControlWidget::onMountRemoved);
@@ -74,6 +80,24 @@ void DiskControlWidget::startMonitor()
 {
     m_diskManager->setWatchChanges(true);
     onDiskListChanged();
+}
+
+void DiskControlWidget::doStartupAutoMount()
+{
+    if (getGsGlobal()->value("GenericAttribute", "AutoMount", false).toBool() == false) {
+        return;
+    }
+
+    QStringList blDevList = m_diskManager->blockDevices();
+    for (const QString& blDevStr : blDevList) {
+        QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(blDevStr));
+
+        if (blDev->isEncrypted()) continue;
+
+        if (blDev->hasFileSystem() && blDev->mountPoints().isEmpty()) {
+            blDev->mount({{"auth.no_user_interaction", true}});
+        }
+    }
 }
 
 void DiskControlWidget::unmountAll()
@@ -127,26 +151,37 @@ void DiskControlWidget::onDriveConnected(const QString &deviceId)
     QScopedPointer<DFMDiskDevice> diskDevice(DFMDiskManager::createDiskDevice(deviceId));
     if (diskDevice->removable()) {
         DDesktopServices::playSystemSoundEffect("device-added");
+
+        bool mountAndOpen = false;
+
+        // Check if we need do auto mount..
+        if (getGsGlobal()->value("GenericAttribute", "AutoMountAndOpen", false).toBool()) {
+            // mount and open
+            mountAndOpen = true;
+        } else if (getGsGlobal()->value("GenericAttribute", "AutoMount", false).toBool()) {
+            // mount
+            // no flag there..
+        } else {
+            // no need to do auto mount, return.
+            return;
+        }
+
+        // Do auto mount stuff..
+        QStringList blDevList = m_diskManager->blockDevices();
+        for (const QString& blDevStr : blDevList) {
+            QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(blDevStr));
+
+            if (blDev->drive() != deviceId) continue;
+            if (blDev->isEncrypted()) continue;
+
+            if (blDev->hasFileSystem() && blDev->mountPoints().isEmpty()) {
+                QString mountPoint = blDev->mount({});
+                if (mountAndOpen && !mountPoint.isEmpty()) {
+                    DDesktopServices::showFolder(QUrl::fromLocalFile(mountPoint));
+                }
+            }
+        }
     }
-
-    //    if (GvfsMountManager::isDeviceCrypto_LUKS(diskInfo))
-    //        return;
-
-    //    GvfsMountManager* gvfsMountManager = GvfsMountManager::instance();
-
-    //    qDebug() << "AutoMountSwitch:" << m_gvfsMountManager->getAutoMountSwitch();
-    //    if (m_gvfsMountManager->getAutoMountSwitch()){
-    //        if (diskInfo.is_removable()) {
-    //            if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_AutoMountAndOpen).toBool()) {
-    //                gvfsMountManager->mount(diskInfo, true);
-    //                QProcess::startDetached("dde-file-manager", {"computer:///"});
-    //            } else if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_AutoMount).toBool()) {
-    //                gvfsMountManager->mount(diskInfo, true);
-    //            }
-    //        } else if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_AutoMount).toBool()) {
-    //            gvfsMountManager->mount(diskInfo, true);
-    //        }
-    //    }
 }
 
 void DiskControlWidget::onDriveDisconnected()

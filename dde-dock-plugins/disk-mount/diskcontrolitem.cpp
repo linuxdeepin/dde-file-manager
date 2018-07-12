@@ -35,11 +35,14 @@
 #include <QStorageInfo>
 
 #include <dfmblockdevice.h>
+#include <dfmsettings.h>
 #include <DDesktopServices>
 
 DWIDGET_USE_NAMESPACE
 
 DFM_USE_NAMESPACE
+
+Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, gsGlobal, ("deepin/dde-file-manager", DFMSettings::GenericConfig))
 
 DiskControlItem::DiskControlItem(const DFMBlockDevice *blockDevicePointer, QWidget *parent)
     : QFrame(parent),
@@ -108,9 +111,10 @@ DiskControlItem::DiskControlItem(const DFMBlockDevice *blockDevicePointer, QWidg
 
     connect(m_unmountButton, &DImageButton::clicked, this, [this] { emit requestUnmount(deviceDBusId); });
 
-//    if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_DisableNonRemovableDeviceUnmount).toBool() && !info.is_removable()) {
-//        m_unmountButton->hide();
-//    }
+    if (gsGlobal->value("GenericAttribute", "DisableNonRemovableDeviceUnmount", false).toBool()) {
+        m_unmountButton->hide();
+    }
+
     bool isDvd = blockDevicePointer->device().startsWith("/dev/sr");
     //bool isRemovable = blockDevicePointer->id() // "drive-removable-media"
 
@@ -203,4 +207,9 @@ void DiskControlItem::showEvent(QShowEvent *e)
     }
 
     QFrame::showEvent(e);
+}
+
+DFMSettings *getGsGlobal()
+{
+    return gsGlobal;
 }
