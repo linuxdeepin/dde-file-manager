@@ -44,4 +44,5 @@ void LogUtil::registerLogger()
     DLogManager::registerConsoleAppender();
 //#endif
     DLogManager::registerFileAppender();
+    Logger::globalInstance()->logToGlobalInstance("file.job", true);
 }

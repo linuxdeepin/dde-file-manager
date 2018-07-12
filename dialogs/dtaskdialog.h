@@ -25,8 +25,10 @@
 #ifndef DTASKDIALOG_H
 #define DTASKDIALOG_H
 
-#include "dmoveablewidget.h"
 #include "circleprogressanimatepad.h"
+#include "dfmgenericplugin.h"
+#include "dfilecopymovejob.h"
+
 #include <dcircleprogress.h>
 #include <QLabel>
 #include <QListWidget>
@@ -38,13 +40,18 @@
 #include <dplatformwindowhandle.h>
 #include <DTitlebar>
 
+DFM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
+class ErrorHandle;
 class MoveCopyTaskWidget : public QFrame
 {
     Q_OBJECT
 public:
     explicit MoveCopyTaskWidget(const QMap<QString, QString>& jobDetail, QWidget *parent = 0);
+    explicit MoveCopyTaskWidget(DFileCopyMoveJob *job, QWidget *parent = 0);
+    ~MoveCopyTaskWidget();
+
     void initUI();
     void initConnect();
     QString getTargetObj();
@@ -57,6 +64,8 @@ public:
 
     void initConflictDetailFrame();
     void initButtonFrame();
+
+    DFileCopyMoveJob::Handle *errorHandle() const;
 
 signals:
     void closed(const QMap<QString, QString>& jobDetail);
@@ -77,6 +86,7 @@ public slots:
     void setTipMessage(const QString &speedStr, const QString &remainStr);
     void handleClose();
     void handleResponse();
+    void updateMessageByJob();
     void updateMessage(const QMap<QString, QString>& data);
     void updateTipMessage();
     void handleLineDisplay(const int& row, const bool &hover, const int &taskNum);
@@ -84,7 +94,12 @@ public slots:
     void showConflict();
     void hideConflict();
 
-    void updateConflictDetailFrame(const QString& originFilePath, const QString& targetFilePath);
+    void updateConflictDetailFrame(const DUrl &originFilePath, const DUrl &targetFilePath);
+
+    void onJobCurrentJobChanged(const DUrl &from, const DUrl &to);
+    void onJobSpeedChanged(qint64 speed);
+    void onJobProgressChanged(qreal progress);
+    void disposeJobError(DFileCopyMoveJob::Action action);
 protected:
     bool event(QEvent *e) Q_DECL_OVERRIDE;
 
@@ -130,6 +145,18 @@ private:
     CircleProgressAnimatePad* m_animatePad;
     QLabel* m_bgLabel;
     QFrame* m_lineLabel = NULL;
+
+    DFileCopyMoveJob *m_fileJob = nullptr;
+    ErrorHandle *m_errorHandle = nullptr;
+
+    struct JobInfo {
+        QPair<DUrl, DUrl> currentJob;
+        qint64 speed;
+        qreal progress;
+        qint64 totalDataSize = -1;
+    };
+
+    JobInfo *m_jobInfo = nullptr;
 };
 
 
@@ -155,9 +182,11 @@ public slots:
     void setTitle(QString title);
     void setTitle(int taskCount);
     void addTask(const QMap<QString, QString>& jobDetail);
+    MoveCopyTaskWidget *addTaskJob(DFileCopyMoveJob *job);
     void addConflictTask(const QMap<QString, QString>& jobDetail);
     void handleTaskClose(const QMap<QString, QString>& jobDetail);
     void removeTask(const QMap<QString, QString>& jobDetail, bool adjustSize = true);
+    void removeTaskJob(void *job);
     void removeTaskImmediately(const QMap<QString, QString>& jobDetail);
     void delayRemoveTask(const QMap<QString, QString>& jobDetail);
     void removeTaskByPath(QString jobId);
