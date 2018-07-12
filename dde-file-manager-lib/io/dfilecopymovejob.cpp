@@ -33,6 +33,7 @@
 #include <QLoggingCategory>
 
 #include <unistd.h>
+#include <zlib.h>
 
 DFM_BEGIN_NAMESPACE
 
@@ -536,7 +537,7 @@ bool DFileCopyMoveJobPrivate::doCopyFile(const DAbstractFileInfo *fromInfo, cons
 
         return false;
     }
-
+open_file:
     {
         DFileCopyMoveJob::Action action = DFileCopyMoveJob::NoAction;
 
@@ -545,7 +546,7 @@ bool DFileCopyMoveJobPrivate::doCopyFile(const DAbstractFileInfo *fromInfo, cons
                 action = DFileCopyMoveJob::NoAction;
             } else {
                 setError(DFileCopyMoveJob::OpenError, fromDevice->errorString());
-                action = handleError(fromInfo, toInfo);
+                action = handleError(fromInfo, nullptr);
             }
         } while (action == DFileCopyMoveJob::RetryAction);
 
@@ -560,7 +561,7 @@ bool DFileCopyMoveJobPrivate::doCopyFile(const DAbstractFileInfo *fromInfo, cons
                 action = DFileCopyMoveJob::NoAction;
             } else {
                 setError(DFileCopyMoveJob::OpenError, fromDevice->errorString());
-                action = handleError(fromInfo, toInfo);
+                action = handleError(toInfo, nullptr);
             }
         } while (action == DFileCopyMoveJob::RetryAction);
 
@@ -592,18 +593,19 @@ bool DFileCopyMoveJobPrivate::doCopyFile(const DAbstractFileInfo *fromInfo, cons
     currentJobFileHandle = toDevice->handle();
 
     int writtenDataSize = 0;
+    uLong source_checksum = adler32(0L, Z_NULL, 0);
 
     Q_FOREVER {
         qint64 current_pos = fromDevice->pos();
 read_data:
-        if (!stateCheck()) {
+        if (Q_UNLIKELY(!stateCheck())) {
             return false;
         }
 
         char data[blockSize + 1];
         qint64 size_read = fromDevice->read(data, blockSize);
 
-        if (size_read <= 0) {
+        if (Q_UNLIKELY(size_read <= 0)) {
             if (fromDevice->atEnd()) {
                 break;
             }
@@ -629,14 +631,14 @@ read_data:
 
         current_pos = toDevice->pos();
 write_data:
-        if (!stateCheck()) {
+        if (Q_UNLIKELY(!stateCheck())) {
             return false;
         }
 
         qint64 size_write = toDevice->write(data, size_read);
 
-        if (size_write != size_read) {
-            setError(DFileCopyMoveJob::ReadError, toDevice->errorString());
+        if (Q_UNLIKELY(size_write != size_read)) {
+            setError(DFileCopyMoveJob::WriteError, toDevice->errorString());
 
             switch (handleError(fromInfo, toInfo)) {
             case DFileCopyMoveJob::RetryAction: {
@@ -659,7 +661,11 @@ write_data:
         completedDataSize += size_write;
         writtenDataSize += size_write;
 
-        if (writtenDataSize > 20000000) {
+        if (Q_LIKELY(!fileHints.testFlag(DFileCopyMoveJob::DontIntegrityChecking))) {
+            source_checksum = adler32(source_checksum, reinterpret_cast<Bytef*>(data), size_read);
+        }
+
+        if (Q_UNLIKELY(writtenDataSize > 20000000)) {
             writtenDataSize = 0;
             toDevice->syncToDisk();
         }
@@ -667,6 +673,75 @@ write_data:
 
     fromDevice->close();
     toDevice->close();
+
+    if (fileHints.testFlag(DFileCopyMoveJob::DontIntegrityChecking)) {
+        return true;
+    }
+
+    DFileCopyMoveJob::Action action = DFileCopyMoveJob::NoAction;
+
+    do {
+        if (toDevice->open(QIODevice::ReadOnly)) {
+            break;
+        } else {
+            setError(DFileCopyMoveJob::OpenError, "Unable to open file for integrity check, error message: " + toDevice->errorString());
+            action = handleError(toInfo, nullptr);
+        }
+    } while (action == DFileCopyMoveJob::RetryAction);
+
+    char data[blockSize + 1];
+    ulong target_checksum = adler32(0L, Z_NULL, 0);
+
+    qint64 elapsed_time_checksum = 0;
+
+    if (fileJob().isDebugEnabled()) {
+        elapsed_time_checksum = updateSpeedElapsedTimer->elapsed();
+    }
+
+    Q_FOREVER {
+        qint64 size = toDevice->read(data, blockSize);
+
+        if (Q_UNLIKELY(size <= 0)) {
+            if (toDevice->atEnd()) {
+                break;
+            }
+
+            setError(DFileCopyMoveJob::IntegrityCheckingError, toDevice->errorString());
+
+            switch (handleError(fromInfo, toInfo)) {
+            case DFileCopyMoveJob::RetryAction: {
+                continue;
+            }
+            case DFileCopyMoveJob::SkipAction:
+                return true;
+            default:
+                return false;
+            }
+        }
+
+        target_checksum = adler32(target_checksum, reinterpret_cast<Bytef*>(data), size);
+    }
+
+    qCDebug(fileJob(), "Time spent of integrity check of the file: %lld", updateSpeedElapsedTimer->elapsed() - elapsed_time_checksum);
+
+    if (source_checksum != target_checksum) {
+        const QString &errorString = QString("Failed on file integrity checking, source file: 0x%x, target file: 0x%x").arg(source_checksum, target_checksum);
+
+        setError(DFileCopyMoveJob::IntegrityCheckingError, errorString);
+        DFileCopyMoveJob::Action action = handleError(fromInfo, toInfo);
+
+        if (action == DFileCopyMoveJob::SkipAction) {
+            return true;
+        }
+
+        if (action == DFileCopyMoveJob::RetryAction) {
+            goto open_file;
+        }
+
+        return false;
+    }
+
+    qCDebug(fileJob(), "adler value: 0x%x", source_checksum);
 
     return true;
 }
@@ -749,9 +824,7 @@ bool DFileCopyMoveJobPrivate::copyFile(const DAbstractFileInfo *fromInfo, const 
     bool ok = doCopyFile(fromInfo, toInfo, blockSize);
     endJob();
 
-    if (fileJob().isDebugEnabled()) {
-        qCDebug(fileJob(), "Time spent of copy the file: %lld", updateSpeedElapsedTimer->elapsed() - elapsed);
-    }
+    qCDebug(fileJob(), "Time spent of copy the file: %lld", updateSpeedElapsedTimer->elapsed() - elapsed);
 
     return ok;
 }

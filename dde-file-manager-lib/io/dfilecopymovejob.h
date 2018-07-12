@@ -76,6 +76,7 @@ public:
         OutOfSpaceError,
         UnknowUrlError,
         NonexistenceError,
+        IntegrityCheckingError,
         UnknowError
     };
 
@@ -87,7 +88,8 @@ public:
         AttributesOnly = 0x04, // 只复制文件的扩展属性
 //        CreateParents = 0x08, // 复制前在目标文件夹创建来源文件路径中的所有目录
         RemoveDestination = 0x10, // 复制文件前先删除已存在的
-        ResizeDestinationFile = 0x20 // 复制文件前对目标文件执行resize操作
+        ResizeDestinationFile = 0x20, // 复制文件前对目标文件执行resize操作
+        DontIntegrityChecking = 0x40 // 复制文件时不进行完整性校验
     };
 
     Q_ENUM(FileHint)
