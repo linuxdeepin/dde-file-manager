@@ -77,8 +77,13 @@ void MainWindow::initUI()
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->setContentsMargins(0, 2, 0, 0);
 
+    QPixmap pixmap(24, 24);
+    pixmap.fill(QColor(Qt::transparent));
+    QIcon transparentIcon(pixmap);
+
     QString title = tr("Format");
     DTitlebar* titlebar = new DTitlebar(this);
+    titlebar->setIcon(transparentIcon);
     titlebar->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::FramelessWindowHint);
     titlebar->setTitle(title);
     titlebar->setFixedHeight(20);
