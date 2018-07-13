@@ -34,7 +34,9 @@
 #include <QDebug>
 #include <QStorageInfo>
 
+#include <dfmdiskmanager.h>
 #include <dfmblockdevice.h>
+#include <dfmdiskdevice.h>
 #include <dfmsettings.h>
 #include <DDesktopServices>
 
@@ -111,14 +113,26 @@ DiskControlItem::DiskControlItem(const DFMBlockDevice *blockDevicePointer, QWidg
 
     connect(m_unmountButton, &DImageButton::clicked, this, [this] { emit requestUnmount(deviceDBusId); });
 
-    if (gsGlobal->value("GenericAttribute", "DisableNonRemovableDeviceUnmount", false).toBool()) {
+    QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blockDevicePointer->drive()));
+
+    bool isDvd = blockDevicePointer->device().startsWith("/dev/sr");
+    bool isRemovable = diskDev->removable();
+
+    if (gsGlobal->value("GenericAttribute", "DisableNonRemovableDeviceUnmount", false).toBool() && isRemovable) {
         m_unmountButton->hide();
     }
 
-    bool isDvd = blockDevicePointer->device().startsWith("/dev/sr");
-    //bool isRemovable = blockDevicePointer->id() // "drive-removable-media"
+    QString iconName = QStringLiteral("drive-harddisk");
 
-    QIcon icon = QIcon::fromTheme(isDvd ? "drive-optical" : "drive-harddisk", m_unknowIcon);
+    if (isRemovable) {
+        iconName = QStringLiteral("drive-removable-media");
+    }
+
+    if (isDvd) {
+        iconName = QStringLiteral("drive-optical");
+    }
+
+    QIcon icon = QIcon::fromTheme(iconName, m_unknowIcon);
 
     qreal devicePixelRatio = qApp->devicePixelRatio();
     QPixmap diskIconPixmap = icon.pixmap(48 * devicePixelRatio , 48 * devicePixelRatio);
@@ -199,8 +213,13 @@ void DiskControlItem::showEvent(QShowEvent *e)
     qint64 bytesTotal = storage_info.bytesTotal();
     qint64 bytesFree = storage_info.bytesFree();
     if (storage_info.isValid()) {
-        m_diskName->setText(storage_info.name().isEmpty() ? tr("Unknown device") : storage_info.name());
-        m_diskCapacity->setText(QString("%1/%2")
+        QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(deviceDBusId));
+        QString devName = blDev->idLabel();
+        if (devName.isEmpty()) {
+            devName = QString(tr("%1 Volume")).arg(formatDiskSize(bytesTotal));
+        }
+        m_diskName->setText(devName);
+        m_diskCapacity->setText(QString("%1 / %2")
                                 .arg(formatDiskSize(bytesTotal - bytesFree))
                                 .arg(formatDiskSize(bytesTotal)));
         m_capacityValueBar->setValue(100 * (bytesTotal - bytesFree) / bytesTotal);

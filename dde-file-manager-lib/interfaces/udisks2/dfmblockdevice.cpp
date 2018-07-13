@@ -126,7 +126,7 @@ bool DFMBlockDevice::watchChanges() const
 }
 
 /*!
- * \brief Get the DBus path.
+ * \brief Get the block device (patition) DBus path.
  *
  * \return the DBus path
  */
@@ -170,6 +170,11 @@ qulonglong DFMBlockDevice::deviceNumber() const
     return d->dbus->deviceNumber();
 }
 
+/*!
+ * \brief Get the disk device dbus path
+ *
+ * \return a dbus path in QString
+ */
 QString DFMBlockDevice::drive() const
 {
     Q_D(const DFMBlockDevice);
