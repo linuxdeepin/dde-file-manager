@@ -96,6 +96,10 @@ void DFMDiskManager::onInterfacesAdded(const QDBusObjectPath &object_path, const
         }
 
         if (interfaces_and_properties.contains(QStringLiteral(UDISKS2_SERVICE ".Filesystem"))) {
+            Q_D(DFMDiskManager);
+
+            d->blockDeviceMountPointsMap.remove(object_path.path());
+
             Q_EMIT fileSystemAdded(path);
         }
     }
@@ -109,6 +113,10 @@ void DFMDiskManager::onInterfacesRemoved(const QDBusObjectPath &object_path, con
         if (i == QStringLiteral(UDISKS2_SERVICE ".Drive")) {
             Q_EMIT diskDeviceRemoved(path);
         } else if (i == QStringLiteral(UDISKS2_SERVICE ".Filesystem")) {
+            Q_D(DFMDiskManager);
+
+            d->blockDeviceMountPointsMap.remove(object_path.path());
+
             Q_EMIT fileSystemRemoved(path);
         } else if (i == QStringLiteral(UDISKS2_SERVICE ".Block")) {
             Q_EMIT blockDeviceRemoved(path);
