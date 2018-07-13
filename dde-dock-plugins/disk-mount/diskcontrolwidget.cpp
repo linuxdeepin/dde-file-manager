@@ -219,4 +219,10 @@ void DiskControlWidget::unmountDisk(const QString &diskId) const
 {
     QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(diskId));
     blDev->unmount({});
+    if (blDev->device().startsWith("/dev/sr")) { // is a DVD driver
+        QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blDev->drive()));
+        if (diskDev->ejectable()) {
+            diskDev->eject({});
+        }
+    }
 }

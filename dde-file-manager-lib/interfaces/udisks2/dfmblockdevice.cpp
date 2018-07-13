@@ -551,6 +551,15 @@ void DFMBlockDevice::updateConfigurationItem(const QPair<QString, QVariantMap> &
     d->dbus->UpdateConfigurationItem(old_item, new_item, options);
 }
 
+/*!
+ * \brief Mount the block device.
+ *
+ * \param options please refer to \l {http://storaged.org/doc/udisks2-api/latest/gdbus-org.freedesktop.UDisks2.Filesystem.html#gdbus-method-org-freedesktop-UDisks2-Filesystem.Mount} {UDisks2.Filesystem Mount()}
+ *
+ * \return the mount point path.
+ *
+ * \sa unmount()
+ */
 QString DFMBlockDevice::mount(const QVariantMap &options)
 {
     Q_D(const DFMBlockDevice);
