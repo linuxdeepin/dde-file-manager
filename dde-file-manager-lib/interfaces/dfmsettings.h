@@ -73,6 +73,7 @@ public:
     void remove(const QString &group, const QString &key);
     void remove(const QString &group, const DUrl &key);
     void clear();
+    void reload();
 
     bool sync();
 

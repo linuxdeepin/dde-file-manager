@@ -265,6 +265,12 @@ void DFMSettingsPrivate::_q_onFileChanged(const DUrl &url)
     }
 }
 
+/*!
+ * \class DFMSettings
+ * \inmodule dde-file-manager-lib
+ *
+ * \brief DFMSettings provide interfaces to access and modify the file manager setting options.
+ */
 DFMSettings::DFMSettings(const QString &defaultFile, const QString &fallbackFile, const QString &settingFile, QObject *parent)
     : QObject(parent)
     , d_ptr(new DFMSettingsPrivate(this))
@@ -623,6 +629,25 @@ void DFMSettings::clear()
             }
         }
     }
+}
+
+/*!
+ * \brief Reload config file.
+ *
+ * This will be needed if file watcher is disabled, or say, you defined the
+ * DFM_NO_FILE_WATCHER marco.
+ */
+void DFMSettings::reload()
+{
+    Q_D(DFMSettings);
+
+    d->fallbackData.privateValues.clear();
+    d->fallbackData.values.clear();
+    d->fromJsonFile(d->fallbackFile, &d_ptr->fallbackData);
+
+    d->writableData.privateValues.clear();
+    d->writableData.values.clear();
+    d->fromJsonFile(d->settingFile, &d_ptr->writableData);
 }
 
 bool DFMSettings::sync()
