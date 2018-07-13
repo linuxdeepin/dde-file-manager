@@ -147,7 +147,8 @@ void DiskControlWidget::onDiskListChanged()
     m_centralWidget->setFixedHeight(contentHeight);
     setFixedHeight(maxHeight);
 
-    verticalScrollBar()->setMaximum(contentHeight);
+    verticalScrollBar()->setPageStep(maxHeight);
+    verticalScrollBar()->setMaximum(contentHeight - maxHeight);
 }
 
 void DiskControlWidget::onDriveConnected(const QString &deviceId)
