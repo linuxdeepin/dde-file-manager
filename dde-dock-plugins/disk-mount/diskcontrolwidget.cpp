@@ -35,6 +35,7 @@
 #include <QProcess>
 #include <QThreadPool>
 #include <QtConcurrent>
+#include <QScrollBar>
 #include <QDebug>
 
 #define WIDTH           300
@@ -56,6 +57,7 @@ DiskControlWidget::DiskControlWidget(QWidget *parent)
     setFrameStyle(QFrame::NoFrame);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    verticalScrollBar()->setSingleStep(7);
     setStyleSheet("background-color:transparent;");
     m_diskManager = new DFMDiskManager(this);
     initConnect();
@@ -144,6 +146,8 @@ void DiskControlWidget::onDiskListChanged()
 
     m_centralWidget->setFixedHeight(contentHeight);
     setFixedHeight(maxHeight);
+
+    verticalScrollBar()->setMaximum(contentHeight);
 }
 
 void DiskControlWidget::onDriveConnected(const QString &deviceId)
@@ -155,6 +159,7 @@ void DiskControlWidget::onDriveConnected(const QString &deviceId)
         bool mountAndOpen = false;
 
         // Check if we need do auto mount..
+        getGsGlobal()->reload();
         if (getGsGlobal()->value("GenericAttribute", "AutoMountAndOpen", false).toBool()) {
             // mount and open
             mountAndOpen = true;
