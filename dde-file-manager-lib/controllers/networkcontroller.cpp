@@ -73,16 +73,16 @@ public:
         return m_currentInfo->fileName();
     }
 
-    QString filePath() const override {
-        return m_currentInfo->filePath();
+    DUrl fileUrl() const override {
+        return m_currentInfo->fileUrl();
     }
 
     const DAbstractFileInfoPointer fileInfo() const override {
         return m_currentInfo;
     }
 
-    QString path() const override {
-        return m_currentInfo->path();
+    DUrl url() const override {
+        return m_url;
     }
 
 private:

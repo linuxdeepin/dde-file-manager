@@ -54,6 +54,8 @@
 #include "models/sharefileinfo.h"
 #include "usershare/usersharemanager.h"
 
+#include "fileoperations/sort.h"
+
 #include <QDesktopServices>
 #include <QDirIterator>
 #include <QFileInfo>
@@ -71,10 +73,175 @@
 #include "quick_search/dquicksearch.h"
 #include "controllers/quicksearchdaemoncontroller.h"
 
+class DFMQDirIterator : public DDirIterator
+{
+public:
+    DFMQDirIterator(const QString &path,
+                    const QStringList &nameFilters,
+                    QDir::Filters filter,
+                    QDirIterator::IteratorFlags flags)
+        : iterator(path, nameFilters, filter, flags)
+    {
+
+    }
+
+    DUrl next() override {
+        return DUrl::fromLocalFile(iterator.next());
+    }
+
+    bool hasNext() const override {
+        return iterator.hasNext();
+    }
+
+    QString fileName() const override {
+        return iterator.fileName();
+    }
+
+    DUrl fileUrl() const override {
+        return DUrl::fromLocalFile(iterator.filePath());
+    }
+
+    const DAbstractFileInfoPointer fileInfo() const override {
+        const QFileInfo &info = iterator.fileInfo();
+
+        if (info.suffix() == DESKTOP_SURRIX) {
+            return DAbstractFileInfoPointer(new DesktopFileInfo(info));
+        }
+
+        return DAbstractFileInfoPointer(new DFileInfo(info));
+    }
+
+    DUrl url() const override {
+        return DUrl::fromLocalFile(iterator.path());
+    }
+
+private:
+    QDirIterator iterator;
+};
+
+class DFMSortInodeDirIterator : public DDirIterator
+{
+public:
+    DFMSortInodeDirIterator(const QString &path)
+        : dir(path)
+    {
+
+    }
+
+    ~DFMSortInodeDirIterator() {
+        if (sortFiles) {
+            free(sortFiles);
+        } else if (sortFilesIndex) {
+            free(sortFilesIndex);
+        }
+    }
+
+    DUrl next() override {
+        const QByteArray name(sortFilesIndex);
+
+        currentFileInfo.setFile(dir.absoluteFilePath(QFile::decodeName(name)));
+        sortFilesIndex += name.length() + 1;
+
+        return DUrl::fromLocalFile(currentFileInfo.absoluteFilePath());
+    }
+
+    bool hasNext() const override {
+        if (!sortFilesIndex) {
+            sortFiles = savedir(QFile::encodeName(dir.absolutePath()).constData());
+
+            if (sortFiles) {
+                sortFilesIndex = sortFiles;
+            } else {
+                sortFilesIndex = reinterpret_cast<char*>(malloc(sizeof(char)));
+                *sortFilesIndex = '0';
+            }
+        }
+
+        return *sortFilesIndex;
+    }
+
+    QString fileName() const override {
+        return currentFileInfo.fileName();
+    }
+
+    DUrl fileUrl() const override {
+        return DUrl::fromLocalFile(currentFileInfo.filePath());
+    }
+
+    const DAbstractFileInfoPointer fileInfo() const override {
+        return DAbstractFileInfoPointer(new DFileInfo(currentFileInfo));
+    }
+
+    DUrl url() const override {
+        return DUrl::fromLocalFile(dir.absolutePath());
+    }
+
+private:
+    QDir dir;
+    mutable char *sortFiles = nullptr;
+    mutable char *sortFilesIndex = nullptr;
+    QFileInfo currentFileInfo;
+};
+
+class DFMQuickSearchDirIterator : public DDirIterator
+{
+public:
+    DFMQuickSearchDirIterator(const QString &path, const QString &keyword)
+        : m_pathForSearching(path)
+        , m_keyword(keyword)
+    {
+
+    }
+
+    DUrl next() override {
+        QString searched_result{ m_searchedResult.takeFirst() };
+
+        currentFileInfo.setFile(searched_result);
+
+        return DUrl::fromLocalFile(currentFileInfo.absoluteFilePath());
+    }
+
+    bool hasNext() const override {
+        if (!m_quickSearchFlag.load(std::memory_order_consume)) {
+            m_quickSearchFlag.store(true, std::memory_order_release);
+            m_searchedResult = QuickSearchDaemonController::instance()->search(m_pathForSearching, m_keyword);
+        }
+
+        return !m_searchedResult.isEmpty();
+    }
+
+    QString fileName() const override {
+        return currentFileInfo.fileName();
+    }
+
+    DUrl fileUrl() const override {
+        return DUrl::fromLocalFile(currentFileInfo.filePath());
+    }
+
+    const DAbstractFileInfoPointer fileInfo() const override {
+        if (currentFileInfo.suffix() == DESKTOP_SURRIX) {
+            return DAbstractFileInfoPointer(new DesktopFileInfo(currentFileInfo));
+        }
+
+        return DAbstractFileInfoPointer(new DFileInfo(currentFileInfo));
+    }
+
+    DUrl url() const override {
+        return DUrl::fromLocalFile(m_pathForSearching);
+    }
+
+private:
+    mutable std::atomic<bool> m_quickSearchFlag{ false };
+    mutable QList<QString> m_searchedResult{};
+    QString m_pathForSearching{};
+    QString m_keyword;
+    QFileInfo currentFileInfo;
+};
+
 class FileDirIterator : public DDirIterator
 {
 public:
-    FileDirIterator(const QString &path,
+    FileDirIterator(const QString &url,
                     const QStringList &nameFilters,
                     QDir::Filters filter,
                     QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
@@ -84,20 +251,15 @@ public:
     bool hasNext() const Q_DECL_OVERRIDE;
 
     QString fileName() const Q_DECL_OVERRIDE;
-    QString filePath() const Q_DECL_OVERRIDE;
+    DUrl fileUrl() const override;
     const DAbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
-    QString path() const Q_DECL_OVERRIDE;
+    DUrl url() const Q_DECL_OVERRIDE;
 
     bool enableIteratorByKeyword(const QString &keyword) Q_DECL_OVERRIDE;
 
 private:
-    QList<QString> m_searchedResult{};
-    QString m_pathForSearching{};
-    std::atomic<bool> m_quickSearchFlag{ false };
-
-    QDirIterator iterator;
-    QProcess *processRlocate = Q_NULLPTR;
-    QFileInfo currentFileInfo;
+    DDirIterator *iterator = nullptr;
+    bool nextIsCached = false;
     QDir::Filters filters;
 };
 
@@ -653,169 +815,105 @@ QString FileController::checkDuplicateName(const QString &name) const
 FileDirIterator::FileDirIterator(const QString &path, const QStringList &nameFilters,
                                  QDir::Filters filter, QDirIterator::IteratorFlags flags)
     : DDirIterator()
-    , m_pathForSearching{ path }
-    , iterator(path, nameFilters, filter, flags)
     , filters(filter)
 {
+    if (flags.testFlag(static_cast<QDirIterator::IteratorFlag>(DDirIterator::SortINode))) {
+        iterator = new DFMSortInodeDirIterator(path);
+    } else {
+        iterator = new DFMQDirIterator(path, nameFilters, filter, flags);
+    }
 }
 
 FileDirIterator::~FileDirIterator()
 {
-    if (processRlocate) {
-        processRlocate->kill();
-        processRlocate->terminate();
-        processRlocate->waitForFinished();
-        processRlocate->deleteLater();
+    if (iterator) {
+        delete iterator;
     }
 }
 
 DUrl FileDirIterator::next()
 {
-    if (m_quickSearchFlag.load(std::memory_order_consume)) {
+    if (nextIsCached) {
+        nextIsCached = false;
 
-        if (m_searchedResult.isEmpty()) {
-            return DUrl{};
-        }
-
-        QString searched_result{ m_searchedResult.front() };
-        m_searchedResult.removeFirst();
-
-        currentFileInfo.setFile(searched_result);
-        return DUrl::fromLocalFile(searched_result);
-    } else {
-        m_quickSearchFlag.store(false, std::memory_order_release);
+        return iterator->fileUrl();
     }
 
-
-    if (!processRlocate) {
-        if (currentFileInfo.exists() || currentFileInfo.isSymLink()) {
-            DUrl url = DUrl::fromLocalFile(currentFileInfo.absoluteFilePath());
-
-            currentFileInfo.setFile(QString());
-
-            return url;
-        }
-
-        return DUrl::fromLocalFile(iterator.next());
-    }
-
-    processRlocate->waitForReadyRead();
-    QString filePath = processRlocate->readLine();
-
-    if (filePath.isEmpty()) {
-        return DUrl();
-    }
-
-    filePath.chop(1);
-
-    currentFileInfo.setFile(filePath);
-
-    return DUrl::fromLocalFile(filePath);
+    return iterator->next();
 }
 
 bool FileDirIterator::hasNext() const
 {
-    if (m_quickSearchFlag.load(std::memory_order_consume)) {
-        return (!m_searchedResult.isEmpty());
+    if (nextIsCached) {
+        return true;
     }
 
+    bool hasNext = iterator->hasNext();
 
-    if (!processRlocate) {
-        if (currentFileInfo.exists() || currentFileInfo.isSymLink()) {
-            return true;
-        }
-
-        bool hasNext = iterator.hasNext();
-        bool showHidden = filters.testFlag(QDir::Hidden);
-
-        if (!hasNext) {
-            return false;
-        }
-
-        DFileInfo *info = nullptr;
-
-        while (iterator.hasNext()) {
-            const_cast<FileDirIterator *>(this)->iterator.next();
-            info = new DFileInfo(iterator.fileInfo(), false);
-
-            if (!info->isPrivate() && (showHidden || !info->isHidden())) {
-                break;
-            }
-
-            delete info;
-            info = nullptr;
-        }
-
-        // file is exists
-        if (info) {
-            const_cast<FileDirIterator *>(this)->currentFileInfo = info->toQFileInfo();
-            delete info;
-
-            return true;
-        }
-
+    if (!hasNext) {
         return false;
     }
 
-    return processRlocate->state() != QProcess::NotRunning || processRlocate->canReadLine();
+    bool showHidden = filters.testFlag(QDir::Hidden);
+    DAbstractFileInfoPointer info;
+
+    do {
+        const_cast<FileDirIterator *>(this)->iterator->next();
+        info = iterator->fileInfo();
+
+        if (!info->isPrivate() && (showHidden || !info->isHidden())) {
+            break;
+        }
+
+        info.reset();
+    } while (iterator->hasNext());
+
+    // file is exists
+    if (info) {
+        const_cast<FileDirIterator *>(this)->nextIsCached = true;
+
+        return true;
+    }
+
+    return false;
 }
 
 QString FileDirIterator::fileName() const
 {
-    if (!processRlocate) {
-        return iterator.fileName();
-    }
-
-    return currentFileInfo.fileName();
+    return iterator->fileName();
 }
 
-QString FileDirIterator::filePath() const
+DUrl FileDirIterator::fileUrl() const
 {
-    if (!processRlocate) {
-        return iterator.filePath();
-    }
-
-    return currentFileInfo.filePath();
+    return iterator->fileUrl();
 }
 
 const DAbstractFileInfoPointer FileDirIterator::fileInfo() const
 {
-    if (m_quickSearchFlag.load(std::memory_order_consume)) {
-        DAbstractFileInfoPointer info_pointer{ new DFileInfo{currentFileInfo} };
-
-        return info_pointer;
-    }
-
-    if (fileName().contains(QChar(0xfffd))) {
-        DFMGlobal::fileNameCorrection(filePath());
-    }
-
-    if (fileName().endsWith(QString(".") + DESKTOP_SURRIX)) {
-
-        return DAbstractFileInfoPointer(new DesktopFileInfo(processRlocate ? currentFileInfo : iterator.fileInfo()));
-    }
-    return DAbstractFileInfoPointer(new DFileInfo(processRlocate ? currentFileInfo : iterator.fileInfo()));
+    return iterator->fileInfo();
 }
 
-QString FileDirIterator::path() const
+DUrl FileDirIterator::url() const
 {
-    return iterator.path();
+    return iterator->url();
 }
 
 bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
 {
-    if (QFileInfo::exists(iterator.path())) {
-        QPair<QString, QString> dev_and_mount_point{ DQuickSearch::getDevAndMountPoint(m_pathForSearching) };
+    const QString pathForSearching = iterator->url().toLocalFile();
+
+    if (QFileInfo::exists(pathForSearching)) {
+        QPair<QString, QString> dev_and_mount_point{ DQuickSearch::getDevAndMountPoint(pathForSearching) };
         bool is_usb_dev{ DQuickSearch::isUsbDevice(dev_and_mount_point.first) };
         bool whether_index_internal{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_IndexInternal).toBool() };
         bool whether_index_external{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_IndexExternal).toBool() };
 
 #ifdef QT_DEBUG
-        qDebug() << m_pathForSearching;
+        qDebug() << pathForSearching;
 #endif //QT_DEBUG
 
         std::function<bool()> invoke_quick_search{
-            [this, &keyword]()->bool
+            [this, &keyword, &pathForSearching]()->bool
             {
                 bool whether_cached_completely{ QuickSearchDaemonController::instance()->createCache() };
 
@@ -825,11 +923,14 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
 
                 if (whether_cached_completely)
                 {
-                    m_searchedResult = QuickSearchDaemonController::instance()->search(m_pathForSearching, keyword);
-                    m_quickSearchFlag.store(true, std::memory_order_release);
+                    if (iterator) {
+                        delete iterator;
+                    }
+
+                    iterator = new DFMQuickSearchDirIterator(pathForSearching, keyword);
 
 #ifdef QT_DEBUG
-                    qDebug() << m_searchedResult;
+                    qDebug() << pathForSearching;
 #endif //QT_DEBUG
                     return true;
                 }
@@ -850,30 +951,7 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
         }
 
         return whether_use_quick_search;
-
-
-        if (processRlocate) {
-            return true;
-        }
-
-        QProcess process;
-
-        process.closeReadChannel(QProcess::StandardError);
-        process.closeReadChannel(QProcess::StandardOutput);
-        process.start("which rlocate");
-        process.waitForFinished();
-
-        if (process.exitCode() == 0 && !keyword.isEmpty()) {
-            QString arg = path() + QString(".*%1[^/]*$").arg(keyword);
-
-            processRlocate = new QProcess();
-            processRlocate->start("rlocate", QStringList() << "-r" << arg << "-i", QIODevice::ReadOnly);
-
-            return true;
-        }
     }
-
-
 
     return false;
 }

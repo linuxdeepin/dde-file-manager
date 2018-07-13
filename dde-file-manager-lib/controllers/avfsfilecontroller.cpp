@@ -43,13 +43,15 @@ public:
                      QDir::Filters filter,
                      QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
 
+    ~AVFSIterator();
+
     DUrl next() Q_DECL_OVERRIDE;
     bool hasNext() const Q_DECL_OVERRIDE;
 
     QString fileName() const Q_DECL_OVERRIDE;
-    QString filePath() const Q_DECL_OVERRIDE;
+    DUrl fileUrl() const Q_DECL_OVERRIDE;
     const DAbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
-    QString path() const Q_DECL_OVERRIDE;
+    DUrl url() const Q_DECL_OVERRIDE;
 
 private:
     QDirIterator *iterator;
@@ -62,6 +64,11 @@ AVFSIterator::AVFSIterator(const DUrl &url, const QStringList &nameFilters, QDir
     QString realPath = AVFSFileInfo::realDirUrl(url).toLocalFile();
     iterator = new QDirIterator(realPath, nameFilters, filter, flags);
     currentUrl = url;
+}
+
+AVFSIterator::~AVFSIterator()
+{
+    delete iterator;
 }
 
 DUrl AVFSIterator::next()
@@ -82,9 +89,9 @@ QString AVFSIterator::fileName() const
     return fileInfo()->fileName();
 }
 
-QString AVFSIterator::filePath() const
+DUrl AVFSIterator::fileUrl() const
 {
-    return fileInfo()->filePath();
+    return fileInfo()->fileUrl();
 }
 
 const DAbstractFileInfoPointer AVFSIterator::fileInfo() const
@@ -93,9 +100,9 @@ const DAbstractFileInfoPointer AVFSIterator::fileInfo() const
     return DAbstractFileInfoPointer(new AVFSFileInfo(url));
 }
 
-QString AVFSIterator::path() const
+DUrl AVFSIterator::url() const
 {
-    return fileInfo()->filePath();
+    return currentUrl;
 }
 
 AVFSFileController::AVFSFileController(QObject *parent):

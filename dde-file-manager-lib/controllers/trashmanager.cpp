@@ -56,9 +56,9 @@ public:
     bool hasNext() const Q_DECL_OVERRIDE;
 
     QString fileName() const Q_DECL_OVERRIDE;
-    QString filePath() const Q_DECL_OVERRIDE;
+    DUrl fileUrl() const Q_DECL_OVERRIDE;
     const DAbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
-    QString path() const Q_DECL_OVERRIDE;
+    DUrl url() const Q_DECL_OVERRIDE;
 
 private:
     QDirIterator *iterator;
@@ -86,19 +86,19 @@ QString TrashDirIterator::fileName() const
     return iterator->fileName();
 }
 
-QString TrashDirIterator::filePath() const
+DUrl TrashDirIterator::fileUrl() const
 {
-    return iterator->filePath().remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath));
+    return DUrl::fromTrashFile(iterator->filePath().remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
 }
 
 const DAbstractFileInfoPointer TrashDirIterator::fileInfo() const
 {
-    return DFileService::instance()->createFileInfo(Q_NULLPTR, DUrl::fromTrashFile(filePath()));
+    return DFileService::instance()->createFileInfo(Q_NULLPTR, fileUrl());
 }
 
-QString TrashDirIterator::path() const
+DUrl TrashDirIterator::url() const
 {
-    return iterator->path().remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath));
+    return DUrl::fromTrashFile(iterator->path().remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
 }
 
 TrashManager::TrashManager(QObject *parent)

@@ -570,8 +570,11 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
         }
     }
 
-    const DDirIteratorPointer &iterator = DFileService::instance()->createDirIterator(nullptr, fromInfo->fileUrl(),
-                                                                                      QStringList(), QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden);
+    bool sortInode = toInfo && !fileHints.testFlag(DFileCopyMoveJob::DontSortInode);
+    const DDirIteratorPointer &iterator = DFileService::instance()->createDirIterator(nullptr, fromInfo->fileUrl(), QStringList(),
+                                                                                      QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden,
+                                                                                      sortInode ? static_cast<QDirIterator::IteratorFlag>(DDirIterator::SortINode)
+                                                                                                : QDirIterator::NoIteratorFlags);
 
     if (!iterator) {
         setError(DFileCopyMoveJob::UnknowUrlError, "Failed on create dir iterator");
