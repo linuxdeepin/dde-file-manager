@@ -100,17 +100,18 @@ public:
     Q_DECLARE_FLAGS(FileHints, FileHint)
 
     enum Action {
-        NoAction,
-        RetryAction,
-        ReplaceAction,
-        MergeAction,
-        SkipAction,
-        CoexistAction,
-        CancelAction,
-        EnforceAction
+        NoAction = 0x00,
+        RetryAction = 0x01,
+        ReplaceAction = 0x02,
+        MergeAction = 0x04,
+        SkipAction = 0x08,
+        CoexistAction = 0x10,
+        CancelAction = 0x20,
+        EnforceAction = 0x40
     };
 
     Q_ENUM(Action)
+    Q_DECLARE_FLAGS(Actions, Action)
 
     class Handle {
     public:
@@ -144,6 +145,8 @@ public:
     int totalFilesCount() const;
     QList<QPair<DUrl, DUrl> > completedFiles() const;
     QList<QPair<DUrl, DUrl> > completedDirectorys() const;
+
+    static Actions supportActions(Error error);
 
 public Q_SLOTS:
     void start(const DUrlList &sourceUrls, const DUrl &targetUrl);
@@ -181,5 +184,7 @@ private:
 };
 
 DFM_END_NAMESPACE
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(DFM_NAMESPACE::DFileCopyMoveJob::Actions)
 
 #endif // DFILECOPYMOVEJOB_H

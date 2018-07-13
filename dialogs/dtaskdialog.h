@@ -94,6 +94,9 @@ public slots:
     void showConflict();
     void hideConflict();
 
+    void showButtonFrame();
+    void hideButtonFrame();
+
     void updateConflictDetailFrame(const DUrl &originFilePath, const DUrl &targetFilePath);
 
     void onJobCurrentJobChanged(const DUrl &from, const DUrl &to);

@@ -39,6 +39,7 @@ class DFileCopyMoveJobPrivate
 public:
     struct JobInfo {
         enum Type {
+            Preprocess,
             Copy,
             Move,
             Remove,
@@ -66,13 +67,14 @@ public:
 
     static QString getNewFileName(const DAbstractFileInfo *sourceFileInfo, const DAbstractFileInfo *targetDirectory);
 
-    bool process(const DUrl &from, const DAbstractFileInfo *target_info);
+    bool doProcess(const DUrl &from, const DAbstractFileInfo *target_info);
     bool mergeDirectory(DFileHandler *handler, const DAbstractFileInfo *fromInfo, const DAbstractFileInfo *toInfo);
     bool doCopyFile(const DAbstractFileInfo *fromInfo, const DAbstractFileInfo *toInfo, int blockSize = 1048576);
     bool doRemoveFile(DFileHandler *handler, const DAbstractFileInfo *fileInfo);
     bool doRenameFile(DFileHandler *handler, const DAbstractFileInfo *oldInfo, const DAbstractFileInfo *newInfo);
     bool doLinkFile(DFileHandler *handler, const DAbstractFileInfo *fileInfo, const QString &linkPath);
 
+    bool process(const DUrl &from, const DAbstractFileInfo *target_info);
     bool copyFile(const DAbstractFileInfo *fromInfo, const DAbstractFileInfo *toInfo, int blockSize = 1048576);
     bool removeFile(DFileHandler *handler, const DAbstractFileInfo *fileInfo);
     bool renameFile(DFileHandler *handler, const DAbstractFileInfo *oldInfo, const DAbstractFileInfo *newInfo);
