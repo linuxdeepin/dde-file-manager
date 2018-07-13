@@ -210,20 +210,23 @@ void FileIconItem::popupEditContentMenu()
 {
     QMenu *menu = edit->createStandardContextMenu();
 
-    if (!menu) {
+    if (!menu || edit->isReadOnly()) {
         return;
     }
 
     QAction *undo_action = menu->findChild<QAction *>(QStringLiteral("edit-undo"));
     QAction *redo_action = menu->findChild<QAction *>(QStringLiteral("edit-redo"));
 
-    undo_action->setEnabled(editTextStackCurrentIndex > 0);
-    redo_action->setEnabled(editTextStackCurrentIndex < editTextStack.count() - 1);
-
-    disconnect(undo_action, SIGNAL(triggered(bool)));
-    disconnect(redo_action, SIGNAL(triggered(bool)));
-    connect(undo_action, &QAction::triggered, this, &FileIconItem::editUndo);
-    connect(redo_action, &QAction::triggered, this, &FileIconItem::editRedo);
+    if (undo_action) {
+        undo_action->setEnabled(editTextStackCurrentIndex > 0);
+        disconnect(undo_action, SIGNAL(triggered(bool)));
+        connect(undo_action, &QAction::triggered, this, &FileIconItem::editUndo);
+    }
+    if (redo_action) {
+        redo_action->setEnabled(editTextStackCurrentIndex < editTextStack.count() - 1);
+        disconnect(redo_action, SIGNAL(triggered(bool)));
+        connect(redo_action, &QAction::triggered, this, &FileIconItem::editRedo);
+    }
 
     menu->exec(QCursor::pos());
     menu->deleteLater();
