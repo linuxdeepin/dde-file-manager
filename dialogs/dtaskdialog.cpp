@@ -55,38 +55,34 @@ public:
                                          const DAbstractFileInfo *sourceInfo,
                                          const DAbstractFileInfo *targetInfo) override
     {
+        Q_UNUSED(sourceInfo)
+        Q_UNUSED(targetInfo)
+
+        if (m_actionOfError != DFileCopyMoveJob::NoAction) {
+            DFileCopyMoveJob::Action action = m_actionOfError;
+            m_actionOfError = DFileCopyMoveJob::NoAction;
+
+            return action;
+        }
+
+        job->togglePause();
+        m_taskWidget->updateMessageByJob();
+
         switch (error) {
         case DFileCopyMoveJob::FileExistsError:
         case DFileCopyMoveJob::DirectoryExistsError:
-            if (m_actionOfError != DFileCopyMoveJob::NoAction) {
-                DFileCopyMoveJob::Action action = m_actionOfError;
-
-                m_actionOfError = DFileCopyMoveJob::NoAction;
-
-                return action;
-            }
-
-            job->togglePause();
-            m_taskWidget->onJobCurrentJobChanged(sourceInfo->fileUrl(), targetInfo->fileUrl());
             m_taskWidget->showConflict();
-
-            return DFileCopyMoveJob::NoAction;
-        case DFileCopyMoveJob::FileSizeTooBigError:
-            dialogManager->show4gFat32Dialog();
-            return DFileCopyMoveJob::CancelAction;
-        case DFileCopyMoveJob::NotEnoughSpaceError:
-            dialogManager->showDiskSpaceOutOfUsedDialog();
-            return DFileCopyMoveJob::CancelAction;
-        case DFileCopyMoveJob::SymlinkError:
-            dialogManager->showFailToCreateSymlinkDialog(job->errorString());
+            break;
+        case DFileCopyMoveJob::UnknowUrlError:
+        case DFileCopyMoveJob::NonexistenceError:
+        case DFileCopyMoveJob::UnknowError:
             return DFileCopyMoveJob::CancelAction;
         default:
-            qWarning() << job->errorString();
-
-            return DFileCopyMoveJob::CancelAction;
+            m_taskWidget->showButtonFrame();
+            break;
         }
 
-        return DFileCopyMoveJob::CancelAction;
+        return DFileCopyMoveJob::NoAction;
     }
 
     MoveCopyTaskWidget *m_taskWidget;
@@ -135,10 +131,13 @@ MoveCopyTaskWidget::MoveCopyTaskWidget(DFileCopyMoveJob *job, QWidget *parent)
         disposeJobError(DFileCopyMoveJob::CoexistAction);
     });
     connect(m_replaceButton, &QPushButton::clicked, this, [this] {
-        if (m_fileJob->error() == DFileCopyMoveJob::DirectoryExistsError)
+        if (m_fileJob->error() == DFileCopyMoveJob::DirectoryExistsError) {
             disposeJobError(DFileCopyMoveJob::MergeAction);
-        else
+        } else if (m_fileJob->error() == DFileCopyMoveJob::FileExistsError) {
             disposeJobError(DFileCopyMoveJob::ReplaceAction);
+        } else {
+            disposeJobError(DFileCopyMoveJob::RetryAction);
+        }
     });
 
     m_jobInfo->totalDataSize = job->totalDataSize();
@@ -423,10 +422,28 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
             msg2 = tr("Calculating space, please wait");
             m_animatePad->startAnimation();
         } else if(status == "conflict"){
-            m_animatePad->stopAnimation();
             msg1 = QString(tr("File named %1 already exists in target folder")).arg(file);
             msg2 = QString(tr("Original path %1 target path %2")).arg(QFileInfo(srcPath).absolutePath(), QFileInfo(targetPath).absolutePath());
             updateConflictDetailFrame(DUrl::fromLocalFile(srcPath), DUrl::fromLocalFile(targetPath));
+
+            m_replaceButton->show();
+            m_keepBothButton->show();
+        } else if (status == "error") {
+            if (m_fileJob) {
+                m_replaceButton->setVisible(m_fileJob->supportActions(m_fileJob->error()).testFlag(DFileCopyMoveJob::RetryAction));
+                m_replaceButton->setText(tr("Retry"));
+                m_keepBothButton->hide();
+
+                if (m_fileJob->mode() == DFileCopyMoveJob::CopyMode) {
+                    msg1 = tr("Failed on copy %1").arg(file);
+                } else if (m_fileJob->targetUrl().isValid()) {
+                    msg1 = tr("Failed on move %1").arg(file);
+                } else {
+                    msg1 = tr("Failed on delete %1").arg(file);
+                }
+
+                msg2 = m_fileJob->errorString();
+            }
         } else if (!status.isEmpty()) {
             m_animatePad->stopAnimation();
         }
@@ -483,6 +500,20 @@ void MoveCopyTaskWidget::hideConflict(){
     m_buttonFrame->hide();
     emit heightChanged();
     emit conflictHided(m_jobDetail);
+}
+
+void MoveCopyTaskWidget::showButtonFrame()
+{
+    setFixedHeight(100 + m_buttonFrame->height());
+    m_buttonFrame->show();
+    emit heightChanged();
+}
+
+void MoveCopyTaskWidget::hideButtonFrame()
+{
+    setFixedHeight(100);
+    m_buttonFrame->hide();
+    emit heightChanged();
 }
 
 void MoveCopyTaskWidget::updateConflictDetailFrame(const DUrl &originFilePath, const DUrl &targetFilePath)
@@ -650,7 +681,7 @@ void MoveCopyTaskWidget::updateMessageByJob()
     datas["sourcePath"] = m_jobInfo->currentJob.first.path();
     datas["file"] = m_jobInfo->currentJob.first.fileName();
     datas["targetPath"] = m_jobInfo->currentJob.second.path();
-    datas["destination"] = QFileInfo(m_jobInfo->currentJob.second.path()).absolutePath();
+    datas["destination"] = m_jobInfo->currentJob.second.isValid() ? QFileInfo(m_jobInfo->currentJob.second.path()).absolutePath() : QString();
     datas["speed"] = FileUtils::formatSize(m_jobInfo->speed) + "/s";
 
     if (m_jobInfo->totalDataSize >= 0) {
@@ -660,6 +691,8 @@ void MoveCopyTaskWidget::updateMessageByJob()
     if (m_fileJob->error() == DFileCopyMoveJob::FileExistsError
             || m_fileJob->error() == DFileCopyMoveJob::DirectoryExistsError) {
         datas["status"] = "conflict";
+    } else if (m_fileJob->error() != DFileCopyMoveJob::NoError) {
+        datas["status"] = "error";
     }
 
     updateMessage(datas);
@@ -976,6 +1009,7 @@ void DTaskDialog::removeTask(const QMap<QString, QString> &jobDetail, bool adjus
 void DTaskDialog::removeTaskJob(void *job)
 {
     removeTaskByPath(QString::number(quintptr(job), 16));
+    adjustSize();
 }
 
 void DTaskDialog::removeTaskImmediately(const QMap<QString, QString> &jobDetail)

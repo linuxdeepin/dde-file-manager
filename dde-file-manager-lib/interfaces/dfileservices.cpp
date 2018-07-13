@@ -138,7 +138,7 @@ QVariant eventProcess(DFileService *service, const QSharedPointer<DFMEvent> &eve
     return QVariant();
 }
 
-static DUrlList pasteFiles(DFMGlobal::ClipboardAction action, const DUrlList &list, const DUrl &target)
+static DUrlList pasteFiles(DFMGlobal::ClipboardAction action, const DUrlList &list, const DUrl &target, bool slient = false)
 {
     DFileCopyMoveJob *job = new DFileCopyMoveJob();
     QTimer *popup_dialog_timer = new QTimer();
@@ -158,7 +158,11 @@ static DUrlList pasteFiles(DFMGlobal::ClipboardAction action, const DUrlList &li
         dialogManager->taskDialog()->addTaskJob(job)->onJobCurrentJobChanged(currentJob.first, currentJob.second);
     }, Qt::DirectConnection);
     QObject::connect(job, &DFileCopyMoveJob::finished, popup_dialog_timer, &QTimer::stop);
-    QObject::connect(job, SIGNAL(started()), popup_dialog_timer, SLOT(start()));
+
+    if (!slient) {
+        QObject::connect(job, SIGNAL(started()), popup_dialog_timer, SLOT(start()));
+    }
+
     QObject::connect(job, &DFileCopyMoveJob::currentJobChanged, job, [&] (const DUrl &from, const DUrl &to) {
         currentJob.first = from;
         currentJob.second = to;
@@ -167,9 +171,10 @@ static DUrlList pasteFiles(DFMGlobal::ClipboardAction action, const DUrlList &li
     class ErrorHandle : public DFileCopyMoveJob::Handle
     {
     public:
-        ErrorHandle(QTimer *timer, QPair<DUrl, DUrl> *jobInfo)
+        ErrorHandle(QTimer *timer, QPair<DUrl, DUrl> *jobInfo, bool s)
             : popup_dialog_timer(timer)
             , currentJob(jobInfo)
+            , slient(s)
         {
 
         }
@@ -179,6 +184,10 @@ static DUrlList pasteFiles(DFMGlobal::ClipboardAction action, const DUrlList &li
                                              const DAbstractFileInfo *sourceInfo,
                                              const DAbstractFileInfo *targetInfo) override
         {
+            if (slient) {
+                return DFileCopyMoveJob::SkipAction;
+            }
+
             if (error == DFileCopyMoveJob::DirectoryExistsError || error == DFileCopyMoveJob::FileExistsError) {
                 if (sourceInfo->fileUrl() == targetInfo->fileUrl())
                     return DFileCopyMoveJob::CoexistAction;
@@ -197,9 +206,10 @@ static DUrlList pasteFiles(DFMGlobal::ClipboardAction action, const DUrlList &li
 
         QTimer *popup_dialog_timer;
         QPair<DUrl, DUrl> *currentJob;
+        bool slient;
     };
 
-    ErrorHandle error_handle(popup_dialog_timer, &currentJob);
+    ErrorHandle error_handle(popup_dialog_timer, &currentJob, slient);
 
     job->setErrorHandle(&error_handle);
     job->setMode(action == DFMGlobal::CopyAction ? DFileCopyMoveJob::CopyMode : DFileCopyMoveJob::MoveMode);
@@ -313,7 +323,8 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         }
 
         if (slient || DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteFilesClearTrashDialog, DFMUrlListBaseEvent(event->sender(), event->fileUrlList())) == 1) {
-            result = CALL_CONTROLLER(deleteFiles);
+//            result = CALL_CONTROLLER(deleteFiles);
+            result = !pasteFiles(DFMGlobal::CutAction, event->fileUrlList(), DUrl(), slient).isEmpty();
 
             if (result.toBool()) {
                 for (const DUrl &url : event->fileUrlList()) {
@@ -374,12 +385,30 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         break;
     }
     case DFMEvent::PasteFile: {
-//        result = CALL_CONTROLLER(pasteFile);
         const auto &&ev = event.staticCast<DFMPasteEvent>();
+        bool use_old_filejob = false;
 
-        result = QVariant::fromValue(pasteFiles(ev->action(), ev->fileUrlList(), ev->targetUrl()));
+#ifdef SW_LABEL
+        use_old_filejob = true;
+#else
+        if (ev->targetUrl().isLocalFile() && FileUtils::isGvfsMountFile(ev->targetUrl().toLocalFile())){
+            use_old_filejob = true;
+        } else {
+            foreach (const DUrl url, ev->fileUrlList()) {
+                if (url.isLocalFile() && FileUtils::isGvfsMountFile(url.toLocalFile())){
+                    use_old_filejob = true;
+                    break;
+                }
+            }
+        }
+#endif
+        if (use_old_filejob) {
+            result = CALL_CONTROLLER(pasteFile);
+        } else {
+            result = QVariant::fromValue(pasteFiles(ev->action(), ev->fileUrlList(), ev->targetUrl()));
+        }
 
-        /*if (event->isAccepted())*/ {
+        if (!use_old_filejob || event->isAccepted()) {
             DFMUrlListBaseEvent e(event->sender(), qvariant_cast<DUrlList>(result));
 
             e.setWindowId(event->windowId());

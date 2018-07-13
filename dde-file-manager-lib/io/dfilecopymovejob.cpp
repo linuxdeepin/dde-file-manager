@@ -169,7 +169,7 @@ DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::handleError(const DAbstractFil
         unsetError();
         qCDebug(fileJob()) << "from actionOfError list," << "action:" << lastErrorHandleAction
                            << "source url:" << sourceInfo->fileUrl()
-                           << "target url:" << (targetInfo ? DUrl() : targetInfo->fileUrl());
+                           << "target url:" << (targetInfo ? targetInfo->fileUrl() : DUrl());
 
         return lastErrorHandleAction;
     }
@@ -194,7 +194,7 @@ DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::handleError(const DAbstractFil
 
         qCDebug(fileJob()) << "no handle," << "default action:" << lastErrorHandleAction
                            << "source url:" << sourceInfo->fileUrl()
-                           << "target url:" << (targetInfo ? DUrl() : targetInfo->fileUrl());
+                           << "target url:" << (targetInfo ? targetInfo->fileUrl() : DUrl());
 
         return lastErrorHandleAction;
     }
@@ -353,13 +353,9 @@ QString DFileCopyMoveJobPrivate::getNewFileName(const DAbstractFileInfo *sourceF
     return new_file_name;
 }
 
-bool DFileCopyMoveJobPrivate::process(const DUrl &from, const DAbstractFileInfo *target_info)
+bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInfo *target_info)
 {
     Q_Q(DFileCopyMoveJob);
-
-    // reset error and action
-    unsetError();
-    lastErrorHandleAction = DFileCopyMoveJob::NoAction;
 
     DAbstractFileInfoPointer source_info = DFileService::instance()->createFileInfo(nullptr, from);
 
@@ -561,12 +557,17 @@ process_file:
 bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstractFileInfo *fromInfo, const DAbstractFileInfo *toInfo)
 {
     if (toInfo && !toInfo->exists()) {
-        bool ok = handler->mkdir(toInfo->fileUrl());
+        DFileCopyMoveJob::Action action = DFileCopyMoveJob::NoAction;
 
-        if (!ok) {
-            setError(DFileCopyMoveJob::MkdirError, handler->errorString());
+        do {
+            if (!handler->mkdir(toInfo->fileUrl())) {
+                setError(DFileCopyMoveJob::MkdirError, handler->errorString());
+                action = handleError(fromInfo, toInfo);
+            }
+        } while (action == DFileCopyMoveJob::RetryAction);
 
-            return handleError(fromInfo, toInfo) == DFileCopyMoveJob::SkipAction;
+        if (action != DFileCopyMoveJob::NoAction) {
+            return action == DFileCopyMoveJob::SkipAction;
         }
     }
 
@@ -891,6 +892,19 @@ bool DFileCopyMoveJobPrivate::doLinkFile(DFileHandler *handler, const DAbstractF
     return action == DFileCopyMoveJob::SkipAction;
 }
 
+bool DFileCopyMoveJobPrivate::process(const DUrl &from, const DAbstractFileInfo *target_info)
+{
+    // reset error and action
+    unsetError();
+    lastErrorHandleAction = DFileCopyMoveJob::NoAction;
+
+    beginJob(JobInfo::Preprocess, from, target_info ? target_info->fileUrl() : DUrl());
+    bool ok = doProcess(from, target_info);
+    endJob();
+
+    return ok;
+}
+
 bool DFileCopyMoveJobPrivate::copyFile(const DAbstractFileInfo *fromInfo, const DAbstractFileInfo *toInfo, int blockSize)
 {
     qint64 elapsed = 0;
@@ -955,7 +969,7 @@ void DFileCopyMoveJobPrivate::endJob()
 
 void DFileCopyMoveJobPrivate::joinToCompletedFileList(const DUrl &from, const DUrl &target, qint64 dataSize)
 {
-    qCDebug(fileJob(), "file. from: %s, target: %s, data size: %lld", qPrintable(from.toString()), qPrintable(from.toString()), dataSize);
+    qCDebug(fileJob(), "file. from: %s, target: %s, data size: %lld", qPrintable(from.toString()), qPrintable(target.toString()), dataSize);
 
     if (currentJobDataSizeInfo.first < 0)
         completedDataSize += dataSize;
@@ -973,7 +987,7 @@ void DFileCopyMoveJobPrivate::joinToCompletedFileList(const DUrl &from, const DU
 
 void DFileCopyMoveJobPrivate::joinToCompletedDirectoryList(const DUrl &from, const DUrl &target, qint64 dataSize)
 {
-    qCDebug(fileJob(), "directory. from: %s, target: %s, data size: %lld", qPrintable(from.toString()), qPrintable(from.toString()), dataSize);
+    qCDebug(fileJob(), "directory. from: %s, target: %s, data size: %lld", qPrintable(from.toString()), qPrintable(target.toString()), dataSize);
 
     completedDataSize += dataSize;
     ++completedFilesCount;
@@ -1048,7 +1062,7 @@ void DFileCopyMoveJob::setErrorHandle(DFileCopyMoveJob::Handle *handle)
 void DFileCopyMoveJob::setActionOfErrorType(DFileCopyMoveJob::Error error, DFileCopyMoveJob::Action action)
 {
     Q_D(DFileCopyMoveJob);
-    Q_ASSERT(d->state == SleepState);
+    Q_ASSERT(d->state != RunningState);
 
     d->actionOfError[error] = action;
 }
@@ -1134,7 +1148,7 @@ int DFileCopyMoveJob::totalFilesCount() const
 QList<QPair<DUrl, DUrl>> DFileCopyMoveJob::completedFiles() const
 {
     Q_D(const DFileCopyMoveJob);
-    Q_ASSERT(isRunning());
+    Q_ASSERT(d->state != RunningState);
 
     return d->completedFileList;
 }
@@ -1142,9 +1156,40 @@ QList<QPair<DUrl, DUrl>> DFileCopyMoveJob::completedFiles() const
 QList<QPair<DUrl, DUrl>> DFileCopyMoveJob::completedDirectorys() const
 {
     Q_D(const DFileCopyMoveJob);
-    Q_ASSERT(isRunning());
+    Q_ASSERT(d->state != RunningState);
 
     return d->completedDirectoryList;
+}
+
+DFileCopyMoveJob::Actions DFileCopyMoveJob::supportActions(DFileCopyMoveJob::Error error)
+{
+    switch (error) {
+    case PermissionError:
+    case OpenError:
+    case ReadError:
+    case WriteError:
+    case SymlinkError:
+    case MkdirError:
+    case ResizeError:
+    case RemoveError:
+    case RenameError:
+    case IntegrityCheckingError:
+        return SkipAction | RetryAction | CancelAction;
+    case SpecialFileError:
+        return SkipAction | CancelAction;
+    case FileSizeTooBigError:
+        return SkipAction | CancelAction | EnforceAction;
+    case NotEnoughSpaceError:
+        return SkipAction | RetryAction | CancelAction | EnforceAction;
+    case FileExistsError:
+        return SkipAction | ReplaceAction | CoexistAction | CancelAction;
+    case DirectoryExistsError:
+        return SkipAction | MergeAction | CoexistAction | CancelAction;
+    default:
+        break;
+    }
+
+    return CancelAction;
 }
 
 void DFileCopyMoveJob::start(const DUrlList &sourceUrls, const DUrl &targetUrl)
