@@ -342,7 +342,17 @@ bool SearchDiriterator::hasNext() const
 
             fileInfo->makeAbsolute();
 
-            if (!m_hasIteratorByKeywordOfCurrentIt && fileInfo->isDir() && !fileInfo->isSymLink()) {
+            if (m_hasIteratorByKeywordOfCurrentIt) {
+                DUrl url = m_fileUrl;
+                const DUrl &realUrl = fileInfo->fileUrl();
+
+                url.setSearchedFileUrl(realUrl);
+                childrens << url;
+
+                return true;
+            }
+
+            if (fileInfo->isDir() && !fileInfo->isSymLink()) {
                 const DUrl &url = fileInfo->fileUrl();
 
                 if (!searchPathList.contains(url)) {
