@@ -92,7 +92,8 @@ public:
         RemoveDestination = 0x10, // 复制文件前先删除已存在的
         ResizeDestinationFile = 0x20, // 复制文件前对目标文件执行resize操作
         DontIntegrityChecking = 0x40, // 复制文件时不进行完整性校验
-        DontFormatFileName = 0x80 // 不要自动处理文件名中的非法字符
+        DontFormatFileName = 0x80, // 不要自动处理文件名中的非法字符
+        DontSortInode = 0x100 // 不要对目录中的文件按inode排序
     };
 
     Q_ENUM(FileHint)

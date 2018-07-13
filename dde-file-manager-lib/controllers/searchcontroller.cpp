@@ -246,16 +246,16 @@ public:
     bool hasNext() const Q_DECL_OVERRIDE;
 
     QString fileName() const Q_DECL_OVERRIDE;
-    QString filePath() const Q_DECL_OVERRIDE;
+    DUrl fileUrl() const Q_DECL_OVERRIDE;
     const DAbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
-    QString path() const Q_DECL_OVERRIDE;
+    DUrl url() const Q_DECL_OVERRIDE;
     void close() Q_DECL_OVERRIDE;
 
     SearchController *parent;
     DAbstractFileInfoPointer currentFileInfo;
     mutable QQueue<DUrl> childrens;
 
-    DUrl fileUrl;
+    DUrl m_fileUrl;
     DUrl targetUrl;
     QString keyword;
     QRegExp regular;
@@ -274,7 +274,7 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
                                      SearchController *parent)
     : DDirIterator()
     , parent(parent)
-    , fileUrl(url)
+    , m_fileUrl(url)
     , m_nameFilters(nameFilters)
     , m_filter(filter)
     , m_flags(flags)
@@ -328,7 +328,7 @@ bool SearchDiriterator::hasNext() const
                 continue;
             }
 
-            m_hasIteratorByKeywordOfCurrentIt = it->enableIteratorByKeyword(fileUrl.searchKeyword());
+            m_hasIteratorByKeywordOfCurrentIt = it->enableIteratorByKeyword(m_fileUrl.searchKeyword());
         }
 
         while (it->hasNext()) {
@@ -351,7 +351,7 @@ bool SearchDiriterator::hasNext() const
             }
 
             if (regular.exactMatch(fileInfo->fileDisplayName())) {
-                DUrl url = fileUrl;
+                DUrl url = m_fileUrl;
                 const DUrl &realUrl = fileInfo->fileUrl();
 
                 url.setSearchedFileUrl(realUrl);
@@ -373,9 +373,9 @@ QString SearchDiriterator::fileName() const
     return currentFileInfo ? currentFileInfo->fileName() : QString();
 }
 
-QString SearchDiriterator::filePath() const
+DUrl SearchDiriterator::fileUrl() const
 {
-    return currentFileInfo ? currentFileInfo->filePath() : QString();
+    return currentFileInfo ? currentFileInfo->fileUrl() : DUrl();
 }
 
 const DAbstractFileInfoPointer SearchDiriterator::fileInfo() const
@@ -383,9 +383,9 @@ const DAbstractFileInfoPointer SearchDiriterator::fileInfo() const
     return currentFileInfo;
 }
 
-QString SearchDiriterator::path() const
+DUrl SearchDiriterator::url() const
 {
-    return it ? it->path() : QString();
+    return m_fileUrl;
 }
 
 void SearchDiriterator::close()

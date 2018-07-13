@@ -38,9 +38,9 @@ public:
     bool hasNext() const override;
 
     QString fileName() const override;
-    QString filePath() const override;
+    DUrl fileUrl() const override;
     const DAbstractFileInfoPointer fileInfo() const override;
-    QString path() const override;
+    DUrl url() const override;
 
 private:
     mutable QList<DAbstractFileInfoPointer> m_children;
@@ -74,9 +74,9 @@ QString DefaultDiriterator::fileName() const
     return m_children.at(m_current)->fileName();
 }
 
-QString DefaultDiriterator::filePath() const
+DUrl DefaultDiriterator::fileUrl() const
 {
-    return m_children.at(m_current)->filePath();
+    return m_children.at(m_current)->fileUrl();
 }
 
 const DAbstractFileInfoPointer DefaultDiriterator::fileInfo() const
@@ -84,9 +84,9 @@ const DAbstractFileInfoPointer DefaultDiriterator::fileInfo() const
     return m_children.at(m_current);
 }
 
-QString DefaultDiriterator::path() const
+DUrl DefaultDiriterator::url() const
 {
-    return m_children.at(m_current)->path();
+    return m_event->fileUrl();
 }
 
 DAbstractFileController::DAbstractFileController(QObject *parent)
