@@ -681,8 +681,10 @@ void DFileInfo::refresh()
 
 DUrl DFileInfo::goToUrlWhenDeleted() const
 {
-    if (deviceListener->isInDeviceFolder(absoluteFilePath()))
+    if (deviceListener->isInDeviceFolder(absoluteFilePath())
+            || absoluteFilePath().startsWith("/run/user" /*for gvfs mount point*/)) {
         return DUrl::fromLocalFile(QDir::homePath());
+    }
 
     return DAbstractFileInfo::goToUrlWhenDeleted();
 }
