@@ -37,6 +37,7 @@
 #include "mountsecretdiskaskpassworddialog.h"
 #include "app/filesignalmanager.h"
 #include "dfmapplication.h"
+#include "dabstractfilewatcher.h"
 
 #include <QThread>
 #include <QApplication>
@@ -1249,9 +1250,8 @@ void GvfsMountManager::unmount_mounted(const QString &mounted_root_uri)
     if (mounted_root_uri.isEmpty())
         return;
 
-    std::string file_uri = mounted_root_uri.toStdString();
     GFile *file;
-    file = g_file_new_for_uri(file_uri.data());
+    file = g_file_new_for_uri(QFile::encodeName(mounted_root_uri));
     if (file == NULL)
         return;
 
@@ -1301,8 +1301,10 @@ void GvfsMountManager::unmount_mounted(const QString &mounted_root_uri)
         return;
     }
 
+    char *local_mount_point = mounted_root_uri.startsWith("smb://") ? g_file_get_path(file) : nullptr;
+
     mount_op = new_mount_op ();
-    g_mount_unmount_with_operation (mount, G_MOUNT_UNMOUNT_NONE, mount_op, NULL, &GvfsMountManager::unmount_done_cb, NULL);
+    g_mount_unmount_with_operation (mount, G_MOUNT_UNMOUNT_NONE, mount_op, NULL, &GvfsMountManager::unmount_done_cb, local_mount_point);
     g_object_unref (mount_op);
 
     g_object_unref (file);
@@ -1311,7 +1313,6 @@ void GvfsMountManager::unmount_mounted(const QString &mounted_root_uri)
 
 void GvfsMountManager::unmount_done_cb(GObject *object, GAsyncResult *res, gpointer user_data)
 {
-    Q_UNUSED(user_data)
     gboolean succeeded;
     GError *error = NULL;
 
@@ -1319,9 +1320,18 @@ void GvfsMountManager::unmount_done_cb(GObject *object, GAsyncResult *res, gpoin
 
     g_object_unref (G_MOUNT (object));
 
-    if (!succeeded)
-    {
+    if (!succeeded) {
         qDebug() << "Error unmounting mount: " << error->message;
+    } else {
+        char *local_mount_point = reinterpret_cast<char*>(user_data);
+
+        if (local_mount_point) {
+            // 由于卸载gvfs设备时不会触发文件系统的inotify, 所以此处手动模拟文件夹被移除的信号
+            const DUrl url = DUrl::fromLocalFile(local_mount_point);
+            DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileDeleted, url);
+
+            g_free(local_mount_point);
+        }
     }
 }
 
