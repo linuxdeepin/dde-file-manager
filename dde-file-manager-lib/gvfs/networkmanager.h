@@ -91,7 +91,7 @@ public:
     static QStringList SupportScheme;
     static QMap<DUrl, NetworkNodeList> NetworkNodes;
     static GCancellable * m_networks_fetching_cancellable;
-    static void fetch_networks(gchar* url, DFMEvent* e);
+    static bool fetch_networks(gchar* url, DFMEvent* e);
     static void network_enumeration_finished (GObject      *source_object,
                                   GAsyncResult *res,
                                   gpointer      user_data);

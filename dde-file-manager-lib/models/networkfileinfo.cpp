@@ -154,3 +154,39 @@ QString NetworkFileInfo::iconName() const
 {
     return m_networkNode.iconType();
 }
+
+bool NetworkFileInfo::canRedirectionFileUrl() const
+{
+    if (!mountPoint.isEmpty()) {
+        return true;
+    }
+
+    const DUrl &url = fileUrl();
+
+    if (!url.isSMBFile()) {
+        return false;
+    }
+
+    // for samba file
+    GFile *gio_file = g_file_new_for_uri(QFile::encodeName(url.toString()));
+
+    if (!gio_file)
+        return false;
+
+    char *local_path = g_file_get_path(gio_file);
+
+    mountPoint = QFile::decodeName(local_path);
+
+    g_free(local_path);
+    g_object_unref(gio_file);
+
+    return !mountPoint.isEmpty();
+}
+
+DUrl NetworkFileInfo::redirectedFileUrl() const
+{
+    if  (mountPoint.isEmpty())
+        return DUrl();
+
+    return DUrl::fromLocalFile(mountPoint);
+}

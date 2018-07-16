@@ -24,6 +24,7 @@
 
 #include "networkmanager.h"
 #include "dfmeventdispatcher.h"
+#include "dfileservices.h"
 
 #include "app/filesignalmanager.h"
 #include "app/define.h"
@@ -36,6 +37,7 @@
 #include "gvfsmountclient.h"
 
 #include <QProcess>
+#include <QTimer>
 
 DFM_USE_NAMESPACE
 
@@ -129,7 +131,7 @@ void NetworkManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestFetchNetworks, this, &NetworkManager::fetchNetworks);
 }
 
-void NetworkManager::fetch_networks(gchar* url, DFMEvent* e)
+bool NetworkManager::fetch_networks(gchar* url, DFMEvent* e)
 {
     QPointer<QEventLoop> oldEventLoop = eventLoop;
     QEventLoop event_loop;
@@ -163,6 +165,8 @@ void NetworkManager::fetch_networks(gchar* url, DFMEvent* e)
     if (oldEventLoop) {
         oldEventLoop->exit(ret);
     }
+
+    return ret == EventLoopCode::FetchFinished;
 }
 
 void NetworkManager::network_enumeration_finished(GObject *source_object, GAsyncResult *res, gpointer user_data)
@@ -331,7 +335,21 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
     } else {
         std::string stdPath = path.toStdString();
         gchar *url = const_cast<gchar*>(stdPath.c_str());
-        fetch_networks(url, e);
+
+        if (fetch_networks(url, e)) {
+            QWidget *main_window = WindowManager::getWindowById(e->windowId());
+
+            // call later
+            QTimer::singleShot(0, this, [path, main_window] {
+                const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(nullptr, DUrl(path));
+
+                if (!info->canRedirectionFileUrl()) {
+                    return;
+                }
+
+                DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(nullptr, info->redirectedFileUrl(), main_window);
+            });
+        }
     }
 }
 

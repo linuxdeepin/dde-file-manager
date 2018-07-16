@@ -31,8 +31,9 @@
 class NetworkFileDDirIterator : public DDirIterator
 {
 public:
-    NetworkFileDDirIterator(const DUrl &url)
+    NetworkFileDDirIterator(const DUrl &url, const QObject *event_sender)
         : m_url(url)
+        , m_sender(event_sender)
     {
 
     }
@@ -51,7 +52,7 @@ public:
         initialized = true;
 
         if (NetworkManager::NetworkNodes.value(m_url).isEmpty()) {
-            Singleton<NetworkManager>::instance()->fetchNetworks(DFMUrlBaseEvent(nullptr, m_url));
+            Singleton<NetworkManager>::instance()->fetchNetworks(DFMUrlBaseEvent(m_sender.data(), m_url));
         }
 
         foreach (const NetworkNode& node, NetworkManager::NetworkNodes.value(m_url)) {
@@ -88,6 +89,7 @@ public:
 private:
     mutable bool initialized = false;
     DUrl m_url;
+    QPointer<const QObject> m_sender;
     DAbstractFileInfoPointer m_currentInfo;
     mutable QList<DAbstractFileInfoPointer> m_infoList;
 };
@@ -136,6 +138,6 @@ const QList<DAbstractFileInfoPointer> NetworkController::getChildren(const QShar
 
 const DDirIteratorPointer NetworkController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
-    return DDirIteratorPointer(new NetworkFileDDirIterator(event->fileUrl()));
+    return DDirIteratorPointer(new NetworkFileDDirIterator(event->fileUrl(), event->sender().data()));
 }
 

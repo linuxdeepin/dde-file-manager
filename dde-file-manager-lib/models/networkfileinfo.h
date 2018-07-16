@@ -64,8 +64,12 @@ public:
 
     QString iconName() const Q_DECL_OVERRIDE;
 
+    bool canRedirectionFileUrl() const override;
+    DUrl redirectedFileUrl() const override;
+
 private:
     NetworkNode m_networkNode;
+    mutable QString mountPoint;
 };
 
 #endif // NETWORKFILEINFO_H
