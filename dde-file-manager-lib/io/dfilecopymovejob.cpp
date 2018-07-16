@@ -396,7 +396,7 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInf
     if (!target_info) {
         bool ok = false;
 
-        qint64 size = source_info->size();
+        qint64 size = source_info->isSymLink() ? 0 : source_info->size();
 
         if (source_info->isFile() || source_info->isSymLink()) {
             ok = removeFile(handler, source_info.constData());
@@ -453,7 +453,6 @@ create_new_file_info:
 
     if (source_info->isSymLink()) {
         bool ok = false;
-        qint64 size = source_info->size();
 
         if (mode == DFileCopyMoveJob::CopyMode) {
             if (fileHints.testFlag(DFileCopyMoveJob::FollowSymlink)) {
@@ -477,7 +476,7 @@ create_new_file_info:
         }
 
         if (ok) {
-            joinToCompletedFileList(from, new_file_info->fileUrl(), size);
+            joinToCompletedFileList(from, new_file_info->fileUrl(), 0);
         }
 
         return ok;
