@@ -524,6 +524,10 @@ process_file:
             }
 
             ok = copyFile(source_info.constData(), new_file_info.constData());
+
+            if (ok) {
+                handler->setFileTime(new_file_info->fileUrl(), source_info->lastRead(), source_info->lastModified());
+            }
         } else {
             ok = renameFile(handler, source_info.constData(), new_file_info.constData());
         }
@@ -863,6 +867,8 @@ bool DFileCopyMoveJobPrivate::doRenameFile(DFileHandler *handler, const DAbstrac
         // 说明复制文件过程被跳过
         return true;
     }
+
+    handler->setFileTime(newInfo->fileUrl(), oldInfo->lastRead(), oldInfo->lastModified());
 
     if (!doRemoveFile(handler, oldInfo)) {
         return false;
