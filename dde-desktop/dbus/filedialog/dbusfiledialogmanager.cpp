@@ -32,6 +32,8 @@
 #include "dfilewatcher.h"
 #include "dfmapplication.h"
 #include "dfmsettings.h"
+#include "views/windowmanager.h"
+#include "dfileservices.h"
 
 #include <QDBusConnection>
 
@@ -47,6 +49,54 @@ QDBusObjectPath DBusFileDialogManager::createDialog(QString key)
 {
     if (key.isEmpty())
         key = QUuid::createUuid().toRfc4122().toHex();
+
+    if (!initJobDone) {
+        DFMGlobal::initGvfsMountManager();
+        DFMGlobal::initDeviceListener();
+
+        /*init searchHistoryManager */
+        DFMGlobal::initSearchHistoryManager();
+
+        /*init bookmarkManager */
+        DFMGlobal::initBookmarkManager();
+
+        /*init fileMenuManager */
+        DFMGlobal::initFileMenuManager();
+
+        /*init fileSignalManger */
+        DFMGlobal::initFileSiganlManager();
+
+        /*init appController */
+        DFMGlobal::initAppcontroller();
+
+        /*init fileService */
+        DFMGlobal::initFileService();
+
+        /*init systemPathMnager */
+        DFMGlobal::initSystemPathManager();
+
+        /*init mimeTypeDisplayManager */
+        DFMGlobal::initMimeTypeDisplayManager();
+
+        /*init networkManager */
+        DFMGlobal::initNetworkManager();
+
+        /*init gvfsMountClient */
+        DFMGlobal::initGvfsMountClient();
+
+        /*init secretManger */
+        DFMGlobal::initSecretManager();
+
+        /*init userShareManager */
+        DFMGlobal::initUserShareManager();
+
+        /*init controllers for different scheme*/
+        fileService->initHandlersByCreators();
+
+        WindowManager::instance();
+
+        initJobDone = true;
+    }
 
     DBusFileDialogHandle *handle = new DBusFileDialogHandle();
     Q_UNUSED(new FiledialogAdaptor(handle));
