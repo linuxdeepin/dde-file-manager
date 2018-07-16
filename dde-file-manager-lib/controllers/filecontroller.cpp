@@ -88,23 +88,28 @@ public:
 
     }
 
-    DUrl next() override {
+    DUrl next() override
+    {
         return DUrl::fromLocalFile(iterator.next());
     }
 
-    bool hasNext() const override {
+    bool hasNext() const override
+    {
         return iterator.hasNext();
     }
 
-    QString fileName() const override {
+    QString fileName() const override
+    {
         return iterator.fileName();
     }
 
-    DUrl fileUrl() const override {
+    DUrl fileUrl() const override
+    {
         return DUrl::fromLocalFile(iterator.filePath());
     }
 
-    const DAbstractFileInfoPointer fileInfo() const override {
+    const DAbstractFileInfoPointer fileInfo() const override
+    {
         const QFileInfo &info = iterator.fileInfo();
 
         if (info.suffix() == DESKTOP_SURRIX) {
@@ -114,7 +119,8 @@ public:
         return DAbstractFileInfoPointer(new DFileInfo(info));
     }
 
-    DUrl url() const override {
+    DUrl url() const override
+    {
         return DUrl::fromLocalFile(iterator.path());
     }
 
@@ -131,7 +137,8 @@ public:
 
     }
 
-    ~DFMSortInodeDirIterator() {
+    ~DFMSortInodeDirIterator()
+    {
         if (sortFiles) {
             free(sortFiles);
         } else if (sortFilesIndex) {
@@ -139,7 +146,8 @@ public:
         }
     }
 
-    DUrl next() override {
+    DUrl next() override
+    {
         const QByteArray name(sortFilesIndex);
 
         currentFileInfo.setFile(dir.absoluteFilePath(QFile::decodeName(name)));
@@ -148,14 +156,15 @@ public:
         return DUrl::fromLocalFile(currentFileInfo.absoluteFilePath());
     }
 
-    bool hasNext() const override {
+    bool hasNext() const override
+    {
         if (!sortFilesIndex) {
             sortFiles = savedir(QFile::encodeName(dir.absolutePath()).constData());
 
             if (sortFiles) {
                 sortFilesIndex = sortFiles;
             } else {
-                sortFilesIndex = reinterpret_cast<char*>(malloc(sizeof(char)));
+                sortFilesIndex = reinterpret_cast<char *>(malloc(sizeof(char)));
                 *sortFilesIndex = '0';
             }
         }
@@ -163,19 +172,23 @@ public:
         return *sortFilesIndex;
     }
 
-    QString fileName() const override {
+    QString fileName() const override
+    {
         return currentFileInfo.fileName();
     }
 
-    DUrl fileUrl() const override {
+    DUrl fileUrl() const override
+    {
         return DUrl::fromLocalFile(currentFileInfo.filePath());
     }
 
-    const DAbstractFileInfoPointer fileInfo() const override {
+    const DAbstractFileInfoPointer fileInfo() const override
+    {
         return DAbstractFileInfoPointer(new DFileInfo(currentFileInfo));
     }
 
-    DUrl url() const override {
+    DUrl url() const override
+    {
         return DUrl::fromLocalFile(dir.absolutePath());
     }
 
@@ -196,32 +209,47 @@ public:
 
     }
 
-    DUrl next() override {
+    DUrl next() override
+    {
         QString searched_result{ m_searchedResult.takeFirst() };
-
         currentFileInfo.setFile(searched_result);
 
         return DUrl::fromLocalFile(currentFileInfo.absoluteFilePath());
     }
 
-    bool hasNext() const override {
-        if (!m_quickSearchFlag.load(std::memory_order_consume)) {
-            m_quickSearchFlag.store(true, std::memory_order_release);
-            m_searchedResult = QuickSearchDaemonController::instance()->search(m_pathForSearching, m_keyword);
+    bool hasNext() const override
+    {
+        ///###: jundge whether had invoked quick-search and cached results or not.
+        ///###: the result is not empty.
+        if (m_cachedFlag.load(std::memory_order_consume) && !m_searchedResult.isEmpty()) {
+            return true;
         }
 
-        return !m_searchedResult.isEmpty();
+        ///###: if quick-search-daemon is not ready last time.
+        ///###: check out the status of quick-searh-daemon again here.
+        ///###: if ready, invoke quick-search-daemon to search files.
+        bool whether_cached_completely{ QuickSearchDaemonController::instance()->whetherCacheCompletely() };
+
+        if (whether_cached_completely && !m_cachedFlag.load(std::memory_order_consume)) {
+            m_searchedResult = QuickSearchDaemonController::instance()->search(m_pathForSearching, m_keyword);
+            m_cachedFlag.store(true, std::memory_order_release);
+        }
+
+        return (m_cachedFlag.load(std::memory_order_consume) && !m_searchedResult.isEmpty());
     }
 
-    QString fileName() const override {
+    QString fileName() const override
+    {
         return currentFileInfo.fileName();
     }
 
-    DUrl fileUrl() const override {
+    DUrl fileUrl() const override
+    {
         return DUrl::fromLocalFile(currentFileInfo.filePath());
     }
 
-    const DAbstractFileInfoPointer fileInfo() const override {
+    const DAbstractFileInfoPointer fileInfo() const override
+    {
         if (currentFileInfo.suffix() == DESKTOP_SURRIX) {
             return DAbstractFileInfoPointer(new DesktopFileInfo(currentFileInfo));
         }
@@ -229,12 +257,13 @@ public:
         return DAbstractFileInfoPointer(new DFileInfo(currentFileInfo));
     }
 
-    DUrl url() const override {
+    DUrl url() const override
+    {
         return DUrl::fromLocalFile(m_pathForSearching);
     }
 
 private:
-    mutable std::atomic<bool> m_quickSearchFlag{ false };
+    mutable std::atomic<bool> m_cachedFlag{ false };
     mutable QList<QString> m_searchedResult{};
     QString m_pathForSearching{};
     QString m_keyword;
@@ -468,7 +497,7 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
         QObject::connect(job, SIGNAL(started()), popup_dialog_timer, SLOT(start()));
     }
 
-    QObject::connect(job, &DFileCopyMoveJob::currentJobChanged, job, [&] (const DUrl &from, const DUrl &to) {
+    QObject::connect(job, &DFileCopyMoveJob::currentJobChanged, job, [&](const DUrl & from, const DUrl & to) {
         currentJob.first = from;
         currentJob.second = to;
     }, Qt::DirectConnection);
@@ -494,8 +523,9 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
             }
 
             if (error == DFileCopyMoveJob::DirectoryExistsError || error == DFileCopyMoveJob::FileExistsError) {
-                if (sourceInfo->fileUrl() == targetInfo->fileUrl())
+                if (sourceInfo->fileUrl() == targetInfo->fileUrl()) {
                     return DFileCopyMoveJob::CoexistAction;
+                }
             }
 
             if (popup_dialog_timer->isActive()) {
@@ -659,11 +689,11 @@ DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) c
 #ifdef SW_LABEL
     use_old_filejob = true;
 #else
-    if (FileUtils::isGvfsMountFile(event->targetUrl().toLocalFile())){
+    if (FileUtils::isGvfsMountFile(event->targetUrl().toLocalFile())) {
         use_old_filejob = true;
     } else {
         foreach (const DUrl url, event->fileUrlList()) {
-            if (FileUtils::isGvfsMountFile(url.toLocalFile())){
+            if (FileUtils::isGvfsMountFile(url.toLocalFile())) {
                 use_old_filejob = true;
                 break;
             }
@@ -1042,13 +1072,13 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
         std::function<bool()> invoke_quick_search{
             [this, &keyword, &pathForSearching]()->bool
             {
-                bool whether_cached_completely{ QuickSearchDaemonController::instance()->createCache() };
+                bool whether_cached{ QuickSearchDaemonController::instance()->createCache() };
 
 #ifdef QT_DEBUG
-                qDebug() << whether_cached_completely;
+                qDebug() << whether_cached;
 #endif //QT_DEBUG
 
-                if (whether_cached_completely)
+                if (whether_cached)
                 {
                     if (iterator) {
                         delete iterator;

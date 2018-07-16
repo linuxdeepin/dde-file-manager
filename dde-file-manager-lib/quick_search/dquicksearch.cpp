@@ -82,6 +82,7 @@ int match_regex(const char *name, void *query)
 
 static constexpr const std::size_t buffer_size{ (1 << 24) };
 static constexpr const std::size_t MAXPARTIONSIZE{ 99 };
+static std::once_flag once{};
 
 namespace detail
 {
@@ -271,6 +272,10 @@ QList<QString> DQuickSearch::search(const QString &local_path, const QString &ke
 {
     QList<QString> searched_list{};
 
+    if (!m_readyFlag.load(std::memory_order_consume)) {
+        return searched_list;
+    }
+
 #ifdef QT_DEBUG
     qDebug() << local_path << key_words;
 #endif //QT_DEBUG
@@ -281,7 +286,8 @@ QList<QString> DQuickSearch::search(const QString &local_path, const QString &ke
         std::map<QString, QString>::const_iterator pos{ m_mount_point_and_lft_buf.find(device_and_mount_point.second) };
 
         if (pos != m_mount_point_and_lft_buf.cend()) {
-            fs_buf *buf{ nullptr };
+            std::lock_guard<std::mutex> raii_lock{ m_mutex };
+            fs_buf *buf =  NULL;
             load_fs_buf(&buf, pos->second.toLocal8Bit().constData());
 
             if (buf) {
@@ -290,8 +296,8 @@ QList<QString> DQuickSearch::search(const QString &local_path, const QString &ke
                 std::uint32_t path_off{ 0 };
                 std::uint32_t end_off{ 0 };
                 std::uint32_t start_off{ 0 };
-                regex_t *compiled;
-                int err = regcomp(compiled, query_str.constData(), REG_ICASE | REG_EXTENDED);
+                regex_t compiled;
+                int err = regcomp(&compiled, query_str.constData(), REG_ICASE | REG_EXTENDED);
 
 #ifdef QT_DEBUG
                 qDebug() << local_path_8bit;
@@ -310,13 +316,13 @@ QList<QString> DQuickSearch::search(const QString &local_path, const QString &ke
 
                 if (!err) {
 
-                    search_files(buf, &start_off, end_off, compiled, match_regex, name_offs, &count);
+                    search_files(buf, &start_off, end_off, &compiled, match_regex, name_offs, &count);
 
                     char path[PATH_MAX];
                     for (std::uint32_t i = 0; i < count; i++) {
                         char *file_or_dir_name{ get_path_by_name_off(buf, name_offs[i], path, sizeof(path)) };
 
-                        if (!DQuickSearchFilter::instance()->whetherFilterCurrentFile(QByteArray{ file_or_dir_name })) {
+                        if (file_or_dir_name && !DQuickSearchFilter::instance()->whetherFilterCurrentFile(QByteArray{ file_or_dir_name })) {
                             searched_list.push_back(QString{ file_or_dir_name });
                         }
                     }
@@ -326,7 +332,7 @@ QList<QString> DQuickSearch::search(const QString &local_path, const QString &ke
 
                     while (count == 100) {
                         std::uint32_t names_off[100] {};
-                        search_files(buf, &start_off, end_off, compiled, match_regex, name_offs, &count);
+                        search_files(buf, &start_off, end_off, &compiled, match_regex, name_offs, &count);
 
                         for (std::size_t index = 0; index < 100; ++index) {
                             vec_names_off.push_back(names_off[index]);
@@ -340,7 +346,7 @@ QList<QString> DQuickSearch::search(const QString &local_path, const QString &ke
                     for (std::uint32_t index = count; index < total; ++index) {
                         char *file_or_dir_name{ get_path_by_name_off(buf, *off_beg, path, sizeof(path)) };
 
-                        if (!DQuickSearchFilter::instance()->whetherFilterCurrentFile(QByteArray{ file_or_dir_name })) {
+                        if (file_or_dir_name && !DQuickSearchFilter::instance()->whetherFilterCurrentFile(QByteArray{ file_or_dir_name })) {
                             searched_list.push_back(QString{ file_or_dir_name });
                         }
 
@@ -350,6 +356,11 @@ QList<QString> DQuickSearch::search(const QString &local_path, const QString &ke
                         qDebug() << file_or_dir_name;
 #endif //QT_DEBUG
                     }
+
+
+#ifdef QT_DEBUG
+                    qDebug() << searched_list;
+#endif //QT_DEBUG
 
                     return searched_list;
                 }
@@ -365,7 +376,7 @@ QList<QString> DQuickSearch::search(const QString &local_path, const QString &ke
 
 void DQuickSearch::filesWereCreated(const QList<QByteArray> &files_path)
 {
-    if (m_readyFlag.load(std::memory_order_consume)) {
+    if (!m_readyFlag.load(std::memory_order_consume)) {
         return;
     }
 
@@ -421,7 +432,7 @@ void DQuickSearch::filesWereCreated(const QList<QByteArray> &files_path)
 
 void DQuickSearch::filesWereDeleted(const QList<QByteArray> &files_path)
 {
-    if (m_readyFlag.load(std::memory_order_consume)) {
+    if (!m_readyFlag.load(std::memory_order_consume)) {
         return;
     }
 
@@ -462,7 +473,7 @@ void DQuickSearch::filesWereDeleted(const QList<QByteArray> &files_path)
 
 void DQuickSearch::filesWereRenamed(const QList<QPair<QByteArray, QByteArray> > &files_path)
 {
-    if (m_readyFlag.load(std::memory_order_consume)) {
+    if (!m_readyFlag.load(std::memory_order_consume)) {
         return;
     }
 
@@ -505,9 +516,14 @@ void DQuickSearch::filesWereRenamed(const QList<QPair<QByteArray, QByteArray> > 
 bool DQuickSearch::createCache()
 {
     if (!m_readyFlag.load(std::memory_order_consume)) {
-        std::function<void(DQuickSearch *)> func_for_creating_cache{ &DQuickSearch::cache_every_partion };
-        std::thread thread_for_creating_cache{ func_for_creating_cache, DQuickSearch::instance() };
-        thread_for_creating_cache.detach();
+        std::function<void()> once_func{
+            [this]{
+                std::function<void(DQuickSearch *)> func_for_creating_cache{ &DQuickSearch::cache_every_partion };
+                std::thread thread_for_creating_cache{ func_for_creating_cache, DQuickSearch::instance() };
+                thread_for_creating_cache.detach();
+            }
+        };
+        std::call_once(once, once_func);
 
         return false;
     }
