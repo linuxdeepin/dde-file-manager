@@ -67,8 +67,9 @@ void CommandLineManager::initOptions()
     QCommandLineOption get_monitor_files(QStringList() << "get-monitor-files", "Get all the files that have been monitored");
     // blumia: about -w and -r: -r will exec `dde-file-manager-pkexec` (it use `pkexec` command) which won't pass the currect
     //         working dir, so we need to manually set the working dir via -w. that's why we add a -w arg.
-    QCommandLineOption workingDirOption(QStringList() << "w" << "working-dir", "Set the file manager working directory \
-                                                                                    \n(won't work with -r argument)");
+    QCommandLineOption workingDirOption(QStringList() << "w" << "working-dir",
+                                        "Set the file manager working directory (won't work with -r argument)",
+                                        "directory");
 
     addOption(newWindowOption);
     addOption(backendOption);
