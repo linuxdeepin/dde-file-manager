@@ -235,91 +235,91 @@ QList<QString> DQuickSearch::search(const QString &local_path, const QString &ke
 {
     QList<QString> searched_list{};
 
-#ifdef QT_DEBUG
-    qDebug() << local_path << key_words;
-#endif //QT_DEBUG
+//#ifdef QT_DEBUG
+//    qDebug() << local_path << key_words;
+//#endif //QT_DEBUG
 
-    if (QFileInfo::exists(local_path) && !key_words.isEmpty()) {
-        std::multimap<QString, QString> devices_and_mount_points{ detail::query_partions_of_devices() };
-        QPair<QString, QString> device_and_mount_point{ detail::get_mount_point_of_file(local_path, devices_and_mount_points) };
-        std::map<QString, QString>::const_iterator pos{ m_mount_point_and_lft_buf.find(device_and_mount_point.second) };
+//    if (QFileInfo::exists(local_path) && !key_words.isEmpty()) {
+//        std::multimap<QString, QString> devices_and_mount_points{ detail::query_partions_of_devices() };
+//        QPair<QString, QString> device_and_mount_point{ detail::get_mount_point_of_file(local_path, devices_and_mount_points) };
+//        std::map<QString, QString>::const_iterator pos{ m_mount_point_and_lft_buf.find(device_and_mount_point.second) };
 
-        if (pos != m_mount_point_and_lft_buf.cend()) {
-            fs_buf *buf{ nullptr };
-            load_fs_buf(&buf, pos->second.toLocal8Bit().constData());
+//        if (pos != m_mount_point_and_lft_buf.cend()) {
+//            fs_buf *buf{ nullptr };
+//            load_fs_buf(&buf, pos->second.toLocal8Bit().constData());
 
-            if (buf) {
-                QByteArray query_str{ key_words.toLocal8Bit() };
-                QByteArray local_path_8bit{ local_path.toLocal8Bit() };
-                std::uint32_t path_off{ 0 };
-                std::uint32_t end_off{ 0 };
-                std::uint32_t start_off{ 0 };
+//            if (buf) {
+//                QByteArray query_str{ key_words.toLocal8Bit() };
+//                QByteArray local_path_8bit{ local_path.toLocal8Bit() };
+//                std::uint32_t path_off{ 0 };
+//                std::uint32_t end_off{ 0 };
+//                std::uint32_t start_off{ 0 };
 
-#ifdef QT_DEBUG
-                qDebug() << local_path_8bit;
-#endif //QT_DEBUG
+//#ifdef QT_DEBUG
+//                qDebug() << local_path_8bit;
+//#endif //QT_DEBUG
 
-                get_path_range(buf, local_path_8bit.data(), &path_off,  &start_off, &end_off);
+//                get_path_range(buf, local_path_8bit.data(), &path_off,  &start_off, &end_off);
 
-                end_off = end_off == 0 ? get_tail(buf) : end_off;
-                start_off = start_off == 0 ? first_name(buf) : start_off;
-                std::uint32_t name_offs[MAX_RESULTS] {};
-                std::uint32_t count{ MAX_RESULTS };
+//                end_off = end_off == 0 ? get_tail(buf) : end_off;
+//                start_off = start_off == 0 ? first_name(buf) : start_off;
+//                std::uint32_t name_offs[MAX_RESULTS] {};
+//                std::uint32_t count{ MAX_RESULTS };
 
-#ifdef QT_DEBUG
-                qDebug() << start_off << end_off << path_off;
-#endif //QT_DEBUG
+//#ifdef QT_DEBUG
+//                qDebug() << start_off << end_off << path_off;
+//#endif //QT_DEBUG
 
-                search_files(buf, &start_off, end_off, query_str.constData(), name_offs, &count);
+//                search_files(buf, &start_off, end_off, query_str.constData(), name_offs, &count);
 
-                char path[PATH_MAX];
-                for (std::uint32_t i = 0; i < count; i++) {
-                    char *file_or_dir_name{ get_path_by_name_off(buf, name_offs[i], path, sizeof(path)) };
+//                char path[PATH_MAX];
+//                for (std::uint32_t i = 0; i < count; i++) {
+//                    char *file_or_dir_name{ get_path_by_name_off(buf, name_offs[i], path, sizeof(path)) };
 
-                    if (!DQuickSearchFilter::instance()->whetherFilterCurrentFile(QByteArray{ file_or_dir_name })) {
-                        searched_list.push_back(QString{ file_or_dir_name });
-                    }
-                }
+//                    if (!DQuickSearchFilter::instance()->whetherFilterCurrentFile(QByteArray{ file_or_dir_name })) {
+//                        searched_list.push_back(QString{ file_or_dir_name });
+//                    }
+//                }
 
-                std::vector<std::uint32_t> vec_names_off{};
-                std::uint32_t total = count;
+//                std::vector<std::uint32_t> vec_names_off{};
+//                std::uint32_t total = count;
 
-                while (count == 100) {
-                    std::uint32_t names_off[100] {};
-                    search_files(buf, &start_off, end_off, query_str.constData(), names_off, &count);
+//                while (count == 100) {
+//                    std::uint32_t names_off[100] {};
+//                    search_files(buf, &start_off, end_off, query_str.constData(), names_off, &count);
 
-                    for (std::size_t index = 0; index < 100; ++index) {
-                        vec_names_off.push_back(names_off[index]);
-                    }
+//                    for (std::size_t index = 0; index < 100; ++index) {
+//                        vec_names_off.push_back(names_off[index]);
+//                    }
 
-                    total += count;
-                }
+//                    total += count;
+//                }
 
-                std::vector<std::uint32_t>::const_iterator off_beg{ vec_names_off.cbegin() };
+//                std::vector<std::uint32_t>::const_iterator off_beg{ vec_names_off.cbegin() };
 
-                for (std::uint32_t index = count; index < total; ++index) {
-                    char *file_or_dir_name{ get_path_by_name_off(buf, *off_beg, path, sizeof(path)) };
+//                for (std::uint32_t index = count; index < total; ++index) {
+//                    char *file_or_dir_name{ get_path_by_name_off(buf, *off_beg, path, sizeof(path)) };
 
-                    if (!DQuickSearchFilter::instance()->whetherFilterCurrentFile(QByteArray{ file_or_dir_name })) {
-                        searched_list.push_back(QString{ file_or_dir_name });
-                    }
+//                    if (!DQuickSearchFilter::instance()->whetherFilterCurrentFile(QByteArray{ file_or_dir_name })) {
+//                        searched_list.push_back(QString{ file_or_dir_name });
+//                    }
 
-                    ++off_beg;
+//                    ++off_beg;
 
-#ifdef QT_DEBUG
-                    qDebug() << file_or_dir_name;
-#endif //QT_DEBUG
-                }
+//#ifdef QT_DEBUG
+//                    qDebug() << file_or_dir_name;
+//#endif //QT_DEBUG
+//                }
 
-                free_fs_buf(buf);
-            }
-        }
-    }
+//                free_fs_buf(buf);
+//            }
+//        }
+//    }
 
 
-#ifdef QT_DEBUG
-    qDebug() << searched_list;
-#endif //QT_DEBUG
+//#ifdef QT_DEBUG
+//    qDebug() << searched_list;
+//#endif //QT_DEBUG
 
     return searched_list;
 }
