@@ -172,10 +172,16 @@ quint64 DFMEvent::windowId() const
         return 0;
     }
 
-    const QWidget *w = qobject_cast<const QWidget *>(m_sender.data());
+    const QObject *obj = m_sender.data();
 
-    if (w) {
-        return WindowManager::getWindowId(w);
+    while (obj) {
+        const QWidget *w = qobject_cast<const QWidget *>(obj);
+
+        if (w) {
+            return WindowManager::getWindowId(w);
+        }
+
+        obj = obj->parent();
     }
 
     const QGraphicsWidget *gw = qobject_cast<const QGraphicsWidget *>(m_sender.data());
