@@ -129,7 +129,7 @@ DiskControlItem::DiskControlItem(const DFMBlockDevice *blockDevicePointer, QWidg
     }
 
     if (isDvd) {
-        iconName = QStringLiteral("drive-optical");
+        iconName = QStringLiteral("media-optical");
     }
 
     QIcon icon = QIcon::fromTheme(iconName, m_unknowIcon);
