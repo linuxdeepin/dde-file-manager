@@ -29,10 +29,15 @@
 DFM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, gsGlobal, ("deepin/dde-file-manager", DFMSettings::GenericConfig))
-Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, asGlobal, ("dde-file-manager", DFMSettings::AppConfig))
+Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, asGlobal, ("deepin/dde-file-manager/dde-file-manager", DFMSettings::GenericConfig))
+//Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, asGlobal, ("dde-file-manager", DFMSettings::AppConfig))
 
 Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, gosGlobal, ("deepin/dde-file-manager.obtusely", DFMSettings::GenericConfig))
-Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, aosGlobal, ("dde-file-manager.obtusely", DFMSettings::AppConfig))
+Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, aosGlobal, ("deepin/dde-file-manager/dde-file-manager.obtusely", DFMSettings::GenericConfig))
+//Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, aosGlobal, ("dde-file-manager.obtusely", DFMSettings::AppConfig))
+
+// blumia: since dde-desktop now also do show file selection dialog job, thus dde-desktop should share the same config file
+//         with dde-file-manager, so we use GenericConfig with specify path to simulate AppConfig.
 
 DFMApplication *DFMApplicationPrivate::self = nullptr;
 

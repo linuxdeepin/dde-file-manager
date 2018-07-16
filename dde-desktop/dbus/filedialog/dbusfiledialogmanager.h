@@ -47,6 +47,8 @@ public:
 private:
     void onDialogDestroy();
 
+    bool initJobDone = false;
+
     QString m_errorString;
     QMap<QDBusObjectPath, QObject*> m_dialogObjectMap;
 };

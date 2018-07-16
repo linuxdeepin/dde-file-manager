@@ -6,6 +6,7 @@
 
 include($$PWD/dde-desktop-build.pri)
 include($$PWD/util/util.pri)
+include($$PWD/dbus/dbus.pri)
 
 include($$PWD/../dde-wallpaper-chooser/dde-wallpaper-chooser.pri)
 include($$PWD/../dde-zone/dde-zone.pri)
@@ -20,6 +21,7 @@ CONFIG      += c++11 link_pkgconfig
 PKGCONFIG   += xcb xcb-ewmh gsettings-qt dframeworkdbus 
 
 INCLUDEPATH += $$PWD/../dde-file-manager-lib\
+               $$PWD/../utils \
               $$PWD/../dde-file-manager-lib/interfaces
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/release -ldde-file-manager
