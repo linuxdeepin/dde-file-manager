@@ -115,10 +115,14 @@ DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFil
 
 DAbstractFileInfoPrivate::~DAbstractFileInfoPrivate()
 {
+    QReadLocker locker(urlToFileInfoMapLock);
     if (urlToFileInfoMap.value(fileUrl) == q_ptr) {
+        locker.unlock();
         QWriteLocker locker(urlToFileInfoMapLock);
         Q_UNUSED(locker)
         urlToFileInfoMap.remove(fileUrl);
+    } else {
+        locker.unlock();
     }
 }
 

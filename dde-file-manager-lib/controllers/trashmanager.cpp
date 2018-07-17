@@ -304,14 +304,15 @@ void TrashManager::cleanTrash(const QObject *sender) const
 bool TrashManager::isEmpty()
 {
     QDir dir(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath));
-    QStringList entryList = dir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden);
-    if (dir.exists() && entryList.count() == 0){
+
+    if (!dir.exists())
         return true;
-    }
-    if (!dir.exists()){
-        return true;
-    }
-    return false;
+
+    dir.setFilter(QDir::AllEntries | QDir::Hidden | QDir::System);
+
+    QDirIterator iterator(dir);
+
+    return !iterator.hasNext();
 }
 
 void TrashManager::trashFilesChanged(const DUrl& url)
