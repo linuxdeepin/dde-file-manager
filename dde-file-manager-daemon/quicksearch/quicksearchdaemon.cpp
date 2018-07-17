@@ -62,11 +62,39 @@ QDBusVariant QuickSearchDaemon::search(const QDBusVariant &current_dir, const QD
     qDebug() << key_words_var.toString();
 #endif //QT_DEBUG
 
-
     QVariant searched_result{ DQuickSearch::instance()->search(path_var.toString(), key_words_var.toString()) };
     QDBusVariant dbus_var{ searched_result };
-
     return dbus_var;
+}
+
+void QuickSearchDaemon::fileWereCreated(const QDBusVariant &file_list)
+{
+    QList<QByteArray> created_files{ file_list.variant().value<QList<QByteArray>>() };
+    DQuickSearch::instance()->filesWereCreated(created_files);
+}
+
+void QuickSearchDaemon::fileWereDeleted(const QDBusVariant &file_list)
+{
+    QList<QByteArray> deleted_files{ file_list.variant().value<QList<QByteArray>>() };
+    DQuickSearch::instance()->filesWereDeleted(deleted_files);
+}
+
+void QuickSearchDaemon::fileWereRenamed(const QVariantMap &file_list)
+{
+    if (!file_list.isEmpty()) {
+        QMap<QString, QVariant>::const_iterator c_beg{ file_list.cbegin() };
+        QMap<QString, QVariant>::const_iterator c_end{ file_list.cend() };
+        QList<QPair<QByteArray, QByteArray>> renamed_files{};
+
+        for (; c_beg != c_end; ++c_beg) {
+            QByteArray old_name{ c_beg.key().toLocal8Bit() };
+            QByteArray new_name{ c_beg.value().toByteArray() };
+
+            renamed_files.push_back({old_name, new_name});
+        }
+
+        DQuickSearch::instance()->filesWereRenamed(renamed_files);
+    }
 }
 
 

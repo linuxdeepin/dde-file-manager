@@ -69,3 +69,26 @@ QList<QString> QuickSearchDaemonController::search(const QString &path_for_searc
 
     return result_list;
 }
+
+void QuickSearchDaemonController::fileWereDeleted(const QVariant &file_list)
+{
+    if (file_list.isValid()) {
+        QDBusVariant dbus_var{ file_list };
+        interface_ptr->fileWereDeleted(dbus_var);
+    }
+}
+
+void QuickSearchDaemonController::fileWereCreated(const QVariant &file_list)
+{
+    if (file_list.isValid()) {
+        QDBusVariant dbus_var{ file_list };
+        interface_ptr->fileWereCreated(dbus_var);
+    }
+}
+
+void QuickSearchDaemonController::fileWereRenamed(const QVariantMap &file_list)
+{
+    if (!file_list.isEmpty()) {
+        interface_ptr->fileWereRenamed(file_list);
+    }
+}
