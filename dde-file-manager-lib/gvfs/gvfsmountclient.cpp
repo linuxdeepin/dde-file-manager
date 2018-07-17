@@ -30,11 +30,13 @@
 #include "app/define.h"
 
 #include "views/windowmanager.h"
+#include "dialogs/dialogmanager.h"
 
 #include "singleton.h"
 
 #include <QDebug>
 #include <QTimer>
+#include <QLoggingCategory>
 
 
 bool GvfsMountClient::AskingPassword = false;
@@ -43,9 +45,15 @@ DFMUrlBaseEvent GvfsMountClient::MountEvent = DFMUrlBaseEvent(Q_NULLPTR, DUrl())
 
 QPointer<QEventLoop> GvfsMountClient::eventLoop;
 
+Q_LOGGING_CATEGORY(mountClient, "gvfs.mountCli")
+
 GvfsMountClient::GvfsMountClient(QObject *parent) : QObject(parent)
 {
-    qDebug() << "Create GvfsMountClient";
+#ifdef QT_NO_DEBUG
+    QLoggingCategory::setFilterRules("gvfs.mountMgr.debug=false");
+#endif
+
+    qCDebug(mountClient()) << "Create GvfsMountClient";
     initConnect();
 }
 
@@ -123,22 +131,38 @@ void GvfsMountClient::mount_done_cb(GObject *object, GAsyncResult *res, gpointer
 
     succeeded = g_file_mount_enclosing_volume_finish (G_FILE (object), res, &error);
 
-    if (!succeeded)
-    {
-        qDebug() << "g_file_mount_enclosing_volume_finish" << succeeded << error;
-        qDebug() << "username" << g_mount_operation_get_username(op) << error->message;
-    }else{
-        qDebug() << "g_file_mount_enclosing_volume_finish" << succeeded << AskingPassword;
-        if (AskingPassword){
+    if (!succeeded) {
+        Q_ASSERT(error->domain == G_IO_ERROR);
+
+        bool showWarnDlg = false;
+
+        switch (error->code) {
+        case G_IO_ERROR_FAILED_HANDLED: // Operation failed and a helper program has already interacted with the user. Do not display any error dialog.
+            break;
+        default:
+            showWarnDlg = true;
+            break;
+        }
+
+        if (showWarnDlg) {
+            DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
+                                         tr("Error mounting device"), QString(error->message));
+        }
+
+        qCDebug(mountClient()) << "g_file_mount_enclosing_volume_finish" << succeeded << error;
+        qCDebug(mountClient()) << "username" << g_mount_operation_get_username(op) << error->message;
+    } else {
+        qCDebug(mountClient()) << "g_file_mount_enclosing_volume_finish" << succeeded << AskingPassword;
+        if (AskingPassword) {
             SMBLoginObj.insert("id", MountEvent.url().toString());
-            if (SMBLoginObj.value("passwordSave").toInt() == 2){
+            if (SMBLoginObj.value("passwordSave").toInt() == 2) {
                 SMBLoginObj.remove("password");
                 emit fileSignalManager->requsetCacheLoginData(SMBLoginObj);
             }
             SMBLoginObj = {};
             AskingPassword = false;
-        }else{
-            qDebug() << "username" << g_mount_operation_get_username(op);
+        } else {
+            qCDebug(mountClient()) << "username" << g_mount_operation_get_username(op);
         }
     }
 
@@ -172,13 +196,13 @@ void GvfsMountClient::ask_password_cb(GMountOperation *op, const char *message, 
 
     const char* default_password = g_mount_operation_get_password(op);
 
-    qDebug() << "anonymous" << anonymous;
-    qDebug() << "message" << message;
-    qDebug() << "username" << default_user;
-    qDebug() << "domain" << default_domain;
-    qDebug() << "password" << default_password;
-    qDebug() << "GAskPasswordFlags" << flags;
-    qDebug() << "passwordSave" << passwordSave;
+    qCDebug(mountClient()) << "anonymous" << anonymous;
+    qCDebug(mountClient()) << "message" << message;
+    qCDebug(mountClient()) << "username" << default_user;
+    qCDebug(mountClient()) << "domain" << default_domain;
+    qCDebug(mountClient()) << "password" << default_password;
+    qCDebug(mountClient()) << "GAskPasswordFlags" << flags;
+    qCDebug(mountClient()) << "passwordSave" << passwordSave;
 
     QJsonObject obj;
     obj.insert("message", message);
@@ -191,7 +215,7 @@ void GvfsMountClient::ask_password_cb(GMountOperation *op, const char *message, 
 
     QJsonObject loginObj = DThreadUtil::runInMainThread(requestPasswordDialog, MountEvent.windowId(), MountEvent.fileUrl().isSMBFile(), obj);
 
-    if (!loginObj.isEmpty()){
+    if (!loginObj.isEmpty()) {
         anonymous = loginObj.value("anonymous").toBool();
         QString username = loginObj.value("username").toString();
         QString domain = loginObj.value("domain").toString();
@@ -200,28 +224,22 @@ void GvfsMountClient::ask_password_cb(GMountOperation *op, const char *message, 
 
         SMBLoginObj = loginObj;
 
-        if ((flags & G_ASK_PASSWORD_ANONYMOUS_SUPPORTED) && anonymous)
-        {
+        if ((flags & G_ASK_PASSWORD_ANONYMOUS_SUPPORTED) && anonymous) {
             g_mount_operation_set_anonymous (op, TRUE);
-        }
-        else
-        {
-            if (flags & G_ASK_PASSWORD_NEED_USERNAME)
-            {
+        } else {
+            if (flags & G_ASK_PASSWORD_NEED_USERNAME) {
                 g_mount_operation_set_username (op, username.toStdString().c_str());
             }
 
-            if (flags & G_ASK_PASSWORD_NEED_DOMAIN)
-            {
+            if (flags & G_ASK_PASSWORD_NEED_DOMAIN) {
                 g_mount_operation_set_domain (op, domain.toStdString().c_str());
             }
 
-            if (flags & G_ASK_PASSWORD_NEED_PASSWORD)
-            {
+            if (flags & G_ASK_PASSWORD_NEED_PASSWORD) {
                 g_mount_operation_set_password (op, password.toStdString().c_str());
             }
 
-            if (flags & G_ASK_PASSWORD_SAVING_SUPPORTED){
+            if (flags & G_ASK_PASSWORD_SAVING_SUPPORTED) {
                 g_mount_operation_set_password_save(op, passwordsaveFlag);
             }
         }
@@ -235,16 +253,16 @@ void GvfsMountClient::ask_password_cb(GMountOperation *op, const char *message, 
         }
         else
         {
-            qDebug() << "g_mount_operation_reply before";
+            qCDebug(mountClient()) << "g_mount_operation_reply before";
 //            g_object_set_data (G_OBJECT (op), "state", GINT_TO_POINTER (MOUNT_OP_ASKED));
             g_mount_operation_reply (op, G_MOUNT_OPERATION_HANDLED);
-            qDebug() << "g_mount_operation_reply end";
+            qCDebug(mountClient()) << "g_mount_operation_reply end";
         }
         AskingPassword = true;
-        qDebug() << "AskingPassword" << AskingPassword;
+        qCDebug(mountClient()) << "AskingPassword" << AskingPassword;
 
-    }else{
-        qDebug() << "cancel connect";
+    } else {
+        qCDebug(mountClient()) << "cancel connect";
         g_object_set_data (G_OBJECT (op), "state", GINT_TO_POINTER (MOUNT_OP_ABORTED));
         g_mount_operation_reply (op, G_MOUNT_OPERATION_ABORTED);
     }

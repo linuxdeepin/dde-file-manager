@@ -277,7 +277,6 @@ DFMSettings::DFMSettings(const QString &defaultFile, const QString &fallbackFile
 {
     d_ptr->fallbackFile = fallbackFile;
     d_ptr->settingFile = settingFile;
-    qDebug() << "cccccccccccccc" << defaultFile << fallbackFile << settingFile;
 
     d_ptr->fromJsonFile(defaultFile, &d_ptr->defaultData);
     d_ptr->fromJsonFile(fallbackFile, &d_ptr->fallbackData);
