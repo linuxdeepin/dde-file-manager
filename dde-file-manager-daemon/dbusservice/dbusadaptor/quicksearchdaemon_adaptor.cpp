@@ -41,6 +41,24 @@ QDBusVariant QuickSearchDaemonAdaptor::createCache()
     return result;
 }
 
+void QuickSearchDaemonAdaptor::fileWereCreated(const QDBusVariant &file_list)
+{
+    // handle method call com.deepin.filemanager.daemon.QuickSearchDaemon.fileWereCreated
+    QMetaObject::invokeMethod(parent(), "fileWereCreated", Q_ARG(QDBusVariant, file_list));
+}
+
+void QuickSearchDaemonAdaptor::fileWereDeleted(const QVariantMap &old_and_new)
+{
+    // handle method call com.deepin.filemanager.daemon.QuickSearchDaemon.fileWereDeleted
+    QMetaObject::invokeMethod(parent(), "fileWereDeleted", Q_ARG(QVariantMap, old_and_new));
+}
+
+void QuickSearchDaemonAdaptor::fileWereRenamed(const QDBusVariant &file_list)
+{
+    // handle method call com.deepin.filemanager.daemon.QuickSearchDaemon.fileWereRenamed
+    QMetaObject::invokeMethod(parent(), "fileWereRenamed", Q_ARG(QDBusVariant, file_list));
+}
+
 QDBusVariant QuickSearchDaemonAdaptor::search(const QDBusVariant &current_dir, const QDBusVariant &key_words)
 {
     // handle method call com.deepin.filemanager.daemon.QuickSearchDaemon.search

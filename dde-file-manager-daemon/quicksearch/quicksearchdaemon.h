@@ -39,6 +39,9 @@ public:
     Q_INVOKABLE QDBusVariant createCache();
     Q_INVOKABLE QDBusVariant whetherCacheCompletely();
     Q_INVOKABLE QDBusVariant search(const QDBusVariant &current_dir, const QDBusVariant &key_words);
+    Q_INVOKABLE void fileWereCreated(const QDBusVariant &file_list);
+    Q_INVOKABLE void fileWereDeleted(const QDBusVariant &file_list);
+    Q_INVOKABLE void fileWereRenamed(const QVariantMap &file_list);
 
 private:
     QuickSearchDaemonAdaptor *adaptor{ nullptr };

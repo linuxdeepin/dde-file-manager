@@ -43,15 +43,16 @@ public:
     static inline QuickSearchDaemonController *instance()
     {
         static QuickSearchDaemonController *controller{ new QuickSearchDaemonController };
-
         return controller;
     }
 
-    bool whetherCacheCompletely()const noexcept;
-
     bool createCache()const noexcept;
-
+    bool whetherCacheCompletely()const noexcept;
     QList<QString> search(const QString &path_for_searching, const QString &key);
+
+    void fileWereRenamed(const QVariantMap &file_list);
+    void fileWereCreated(const QVariant &file_list);
+    void fileWereDeleted(const QVariant &file_list);
 private:
     std::unique_ptr<QuickSearchDaemonInterface> interface_ptr{ nullptr };
 };

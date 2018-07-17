@@ -42,6 +42,27 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("createCache"), argumentList);
     }
 
+    inline QDBusPendingReply<> fileWereCreated(const QDBusVariant &file_list)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(file_list);
+        return asyncCallWithArgumentList(QStringLiteral("fileWereCreated"), argumentList);
+    }
+
+    inline QDBusPendingReply<> fileWereDeleted(const QDBusVariant &file_list)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(file_list);
+        return asyncCallWithArgumentList(QStringLiteral("fileWereDeleted"), argumentList);
+    }
+
+    inline QDBusPendingReply<> fileWereRenamed(const QVariantMap &old_and_new)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(old_and_new);
+        return asyncCallWithArgumentList(QStringLiteral("fileWereRenamed"), argumentList);
+    }
+
     inline QDBusPendingReply<QDBusVariant> search(const QDBusVariant &current_dir, const QDBusVariant &key_words)
     {
         QList<QVariant> argumentList;
