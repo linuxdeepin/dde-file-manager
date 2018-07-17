@@ -92,6 +92,8 @@ public:
         columnCompact = DFMApplication::instance()->appAttribute(DFMApplication::AA_ViewComppactMode).toBool();
     }
 
+    ~DFileSystemModelPrivate();
+
     bool passNameFilters(const FileSystemNodePointer &node) const;
     bool passFileFilters(const DAbstractFileInfoPointer &info) const;
 
@@ -139,6 +141,13 @@ public:
 
     Q_DECLARE_PUBLIC(DFileSystemModel)
 };
+
+DFileSystemModelPrivate::~DFileSystemModelPrivate()
+{
+    if (_q_processFileEvent_runing) {
+        fileEventQueue.clear();
+    }
+}
 
 bool DFileSystemModelPrivate::passNameFilters(const FileSystemNodePointer &node) const
 {

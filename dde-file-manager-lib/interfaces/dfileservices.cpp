@@ -690,7 +690,10 @@ bool DFileService::removeTagsOfFile(const QObject *sender, const DUrl &url, cons
 
 QList<QString> DFileService::getTagsThroughFiles(const QObject *sender, const QList<DUrl> &urls) const
 {
-    return DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMGetTagsThroughFilesEvent>(sender, urls)).value<QList<QString>>();
+    if (urls.count() > 10)
+        return DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMGetTagsThroughFilesEvent>(sender, urls)).value<QList<QString>>();
+
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMGetTagsThroughFilesEvent>(sender, urls)).value<QList<QString>>();
 }
 
 const DAbstractFileInfoPointer DFileService::createFileInfo(const QObject *sender, const DUrl &fileUrl) const

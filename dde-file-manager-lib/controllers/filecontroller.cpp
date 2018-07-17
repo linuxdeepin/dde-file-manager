@@ -475,7 +475,6 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
 static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &list, const DUrl &target, bool slient = false)
 {
     DFileCopyMoveJob *job = new DFileCopyMoveJob();
-    QTimer *popup_dialog_timer = new QTimer();
     QPair<DUrl, DUrl> currentJob;
 
     if (QThread::currentThread()->loopLevel() <= 0) {
@@ -483,34 +482,30 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
         job->moveToThread(qApp->thread());
     }
 
-    // 定时器触发后要执行UI相关代码, 此处确保在UI线程执行
-    popup_dialog_timer->moveToThread(qApp->thread());
-    popup_dialog_timer->setSingleShot(true);
-    popup_dialog_timer->setInterval(2000);
-
-    QObject::connect(popup_dialog_timer, &QTimer::timeout, job, [&] {
-        dialogManager->taskDialog()->addTaskJob(job)->onJobCurrentJobChanged(currentJob.first, currentJob.second);
-    }, Qt::DirectConnection);
-    QObject::connect(job, &DFileCopyMoveJob::finished, popup_dialog_timer, &QTimer::stop);
-
-    if (!slient) {
-        QObject::connect(job, SIGNAL(started()), popup_dialog_timer, SLOT(start()));
-    }
-
     QObject::connect(job, &DFileCopyMoveJob::currentJobChanged, job, [&](const DUrl & from, const DUrl & to) {
         currentJob.first = from;
         currentJob.second = to;
     }, Qt::DirectConnection);
 
-    class ErrorHandle : public DFileCopyMoveJob::Handle
+    class ErrorHandle : public QObject, public DFileCopyMoveJob::Handle
     {
     public:
-        ErrorHandle(QTimer *timer, QPair<DUrl, DUrl> *jobInfo, bool s)
-            : popup_dialog_timer(timer)
-            , currentJob(jobInfo)
+        ErrorHandle(DFileCopyMoveJob *job, QPair<DUrl, DUrl> *jobInfo, bool s)
+            : QObject(nullptr)
             , slient(s)
+            , fileJob(job)
+            , currentJob(jobInfo)
         {
+            if (!slient) {
+                timer_id = startTimer(1000);
+            }
+        }
 
+        ~ErrorHandle()
+        {
+            if (timer_id > 0) {
+                killTimer(timer_id);
+            }
         }
 
         // 处理任务对话框显示之前的错误, 无法处理的错误将立即弹出对话框处理
@@ -528,8 +523,9 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
                 }
             }
 
-            if (popup_dialog_timer->isActive()) {
-                popup_dialog_timer->stop();
+            if (timer_id > 0) {
+                killTimer(timer_id);
+                timer_id = 0;
             }
 
             MoveCopyTaskWidget *taskWidget = dialogManager->taskDialog()->addTaskJob(job);
@@ -539,26 +535,39 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
             return taskWidget->errorHandle()->handleError(job, error, sourceInfo, targetInfo);
         }
 
-        QTimer *popup_dialog_timer;
-        QPair<DUrl, DUrl> *currentJob;
+        void timerEvent(QTimerEvent *e) override
+        {
+            if (e->timerId() != timer_id) {
+                return QObject::timerEvent(e);
+            }
+
+            killTimer(timer_id);
+            timer_id = 0;
+
+            MoveCopyTaskWidget *taskWidget = dialogManager->taskDialog()->addTaskJob(fileJob);
+
+            taskWidget->onJobCurrentJobChanged(currentJob->first, currentJob->second);
+        }
+
+        int timer_id = 0;
         bool slient;
+        DFileCopyMoveJob *fileJob;
+        QPair<DUrl, DUrl> *currentJob;
     };
 
-    ErrorHandle error_handle(popup_dialog_timer, &currentJob, slient);
+    ErrorHandle *error_handle = new ErrorHandle(job, &currentJob, slient);
 
-    job->setErrorHandle(&error_handle);
+    error_handle->moveToThread(qApp->thread());
+
+    job->setErrorHandle(error_handle);
     job->setMode(action == DFMGlobal::CopyAction ? DFileCopyMoveJob::CopyMode : DFileCopyMoveJob::MoveMode);
     job->start(list, target);
     job->wait();
 
-    if (popup_dialog_timer->isActive()) {
-        QMetaObject::invokeMethod(popup_dialog_timer, "stop");
-    }
-
-    QMetaObject::invokeMethod(popup_dialog_timer, "deleteLater");
     QTimer::singleShot(500, dialogManager->taskDialog(), [job] {
         dialogManager->taskDialog()->removeTaskJob(job);
     });
+    QMetaObject::invokeMethod(error_handle, "deleteLater");
     QMetaObject::invokeMethod(job, "deleteLater");
 
     return job->targetUrlList();
