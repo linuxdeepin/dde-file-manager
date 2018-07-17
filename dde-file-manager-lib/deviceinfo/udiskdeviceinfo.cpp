@@ -276,23 +276,27 @@ QIcon UDiskDeviceInfo::fileIcon() const
 
 QIcon UDiskDeviceInfo::fileIcon(int width, int height) const
 {
+#define QResIcon( freedesktop_icon_name, res_icon_name ) \
+    QIcon::fromTheme( freedesktop_icon_name , QIcon(svgToHDPIPixmap(":/devices/images/device/" res_icon_name "-256px.svg", width, height)))
+
     if (getType() == "native") {
-        return QIcon(svgToHDPIPixmap(":/devices/images/device/drive-harddisk-256px.svg", width, height));
+        return QResIcon("drive-harddisk", "drive-harddisk");
     } else if (getType() == "removable") {
-        return QIcon(svgToHDPIPixmap(":/devices/images/device/drive-removable-media-usb-256px.svg", width, height));
+        return QResIcon("drive-removable-media-usb", "drive-removable-media-usb");
     } else if (getType() == "network") {
-        return QIcon(svgToHDPIPixmap(":/devices/images/device/drive-network-256px.svg", width, height));
+        return QResIcon("drive-network", "drive-network");
     } else if (getType() == "phone") {
-        return QIcon(svgToHDPIPixmap(":/devices/images/device/android-device-256px.svg", width, height));
+        return QResIcon("phone-android", "android-device");
     } else if (getType() == "iphone") {
-        return QIcon(svgToHDPIPixmap(":/devices/images/device/ios-device-256px.svg", width, height));
+        return QResIcon("phone-ios", "ios-device");
     } else if (getType() == "camera") {
-        return QIcon(svgToHDPIPixmap(":/devices/images/device/camera-256px.svg", width, height));
+        return QResIcon("camera-photo", "camera");
     } else if (getType() == "dvd") {
-        return QIcon(svgToHDPIPixmap(":/devices/images/device/media-dvd-256px.svg", width, height));
+        return QResIcon("drive-optical", "media-dvd");
     } else {
-        return QIcon(svgToHDPIPixmap(":/devices/images/device/drive-harddisk-256px.svg", width, height));
+        return QResIcon("drive-harddisk", "drive-harddisk");
     }
+#undef QResIcon
 }
 
 bool UDiskDeviceInfo::isDir() const

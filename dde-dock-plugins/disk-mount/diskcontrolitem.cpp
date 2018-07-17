@@ -125,7 +125,7 @@ DiskControlItem::DiskControlItem(const DFMBlockDevice *blockDevicePointer, QWidg
     QString iconName = QStringLiteral("drive-harddisk");
 
     if (isRemovable) {
-        iconName = QStringLiteral("drive-removable-media");
+        iconName = QStringLiteral("drive-removable-media-usb");
     }
 
     if (isDvd) {
