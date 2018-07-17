@@ -1251,7 +1251,7 @@ void DFileView::onRootUrlDeleted(const DUrl &rootUrl)
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, rootUrl);
     DUrl new_url = fileInfo ? fileInfo->goToUrlWhenDeleted() : DUrl::fromLocalFile(QDir::homePath());
 
-    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, new_url, window());
+    requestCdTo(new_url);
 }
 
 void DFileView::freshView()
