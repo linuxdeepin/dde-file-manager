@@ -99,6 +99,7 @@ public:
 
     void setCurrentView(DFMBaseView *view);
     bool processKeyPressEvent(QKeyEvent *event);
+    bool cdForTab(Tab *tab, const DUrl &fileUrl);
 
     QPushButton *logoButton{ nullptr };
     QFrame *centralWidget{ nullptr };
@@ -236,6 +237,103 @@ bool DFileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
     }
 
     return false;
+}
+
+bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
+{
+    Q_Q(DFileManagerWindow);
+
+    DFMBaseView *current_view = tab->fileView();
+
+    if (current_view && current_view->rootUrl() == fileUrl) {
+        return false;
+    }
+
+    if (fileUrl.scheme() == "mount") {
+        DUrl newUrl;
+        QUrlQuery query(fileUrl);
+
+        newUrl.setQuery(query.queryItemValue("id"));
+
+        appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(q_ptr, newUrl));
+        return true;
+    }
+
+    if (!current_view || !DFMViewManager::instance()->isSuited(fileUrl, current_view)) {
+        DFMBaseView *view = DFMViewManager::instance()->createViewByUrl(fileUrl);
+
+        if (view) {
+            viewStackLayout->addWidget(view->widget());
+
+            if (tab == tabBar->currentTab())
+                viewStackLayout->setCurrentWidget(view->widget());
+
+            q_ptr->handleNewView(view);
+        } else {
+            qWarning() << "Not support url: " << fileUrl;
+
+            //###(zccrs):
+            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(q_ptr, fileUrl);
+
+            if (fileInfo) {
+                /* Call fileInfo->exists() twice. First result is false and the second one is true;
+                           Maybe this is a bug of fuse when smb://10.0.10.30/people is mounted and cd to mounted folder immediately.
+                        */
+                qDebug() << fileInfo->exists() << fileUrl;
+                qDebug() << fileInfo->exists() << fileUrl;
+            }
+
+            if (!fileInfo || !fileInfo->exists()) {
+                DUrl searchUrl = current_view->rootUrl();
+
+                if (searchUrl.isComputerFile()) {
+                    searchUrl = DUrl::fromLocalFile("/");
+                }
+
+                if (searchUrl.isSearchFile()) {
+                    searchUrl = searchUrl.searchTargetUrl();
+                }
+
+                if (!q_ptr->isCurrentUrlSupportSearch(searchUrl)) {
+                    return false;
+                }
+
+                const DUrl &newUrl = DUrl::fromSearchFile(searchUrl, fileUrl.toString());
+                const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(q_ptr, newUrl);
+
+                if (!fileInfo || !fileInfo->exists()) {
+                    return false;
+                }
+
+                return cdForTab(tab, newUrl);
+            }
+
+            return false;
+        }
+
+        if (current_view) {
+            current_view->deleteLater();
+        }
+
+        tab->setFileView(view);
+
+        if (tab == tabBar->currentTab())
+            setCurrentView(view);
+
+        current_view = view;
+    }
+
+    bool ok = false;
+
+    if (current_view) {
+        ok = current_view->setRootUrl(fileUrl);
+
+        if (ok) {
+            tab->onFileRootUrlChanged(fileUrl);
+        }
+    }
+
+    return ok;
 }
 
 DFileManagerWindow::DFileManagerWindow(QWidget *parent)
@@ -463,90 +561,45 @@ bool DFileManagerWindow::tabAddable() const
     return d->tabBar->tabAddable();
 }
 
-bool DFileManagerWindow::cd(const DUrl &fileUrl, bool canFetchNetwork)
+bool DFileManagerWindow::cd(const DUrl &fileUrl)
 {
     D_D(DFileManagerWindow);
 
-    if (currentUrl() == fileUrl) {
-        return true;
+    if (!d->tabBar->currentTab()) {
+        d->toolbar->addHistoryStack();
+        d->tabBar->createTab(nullptr);
     }
 
-    if (fileUrl.scheme() == "mount") {
-        DUrl newUrl;
-        QUrlQuery query(fileUrl);
-
-        newUrl.setQuery(query.queryItemValue("id"));
-
-        appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, newUrl));
-        return true;
-    }
-
-    if (!d->currentView || !DFMViewManager::instance()->isSuited(fileUrl, d->currentView)) {
-        DFMBaseView *view = DFMViewManager::instance()->createViewByUrl(fileUrl);
-
-        if (view) {
-            d->viewStackLayout->addWidget(view->widget());
-            d->viewStackLayout->setCurrentWidget(view->widget());
-
-            handleNewView(view);
-        } else {
-            qWarning() << "Not support url: " << fileUrl;
-
-            //###(zccrs):
-            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, fileUrl);
-
-            if (fileInfo) {
-                /* Call fileInfo->exists() twice. First result is false and the second one is true;
-                           Maybe this is a bug of fuse when smb://10.0.10.30/people is mounted and cd to mounted folder immediately.
-                        */
-                qDebug() << fileInfo->exists() << fileUrl;
-                qDebug() << fileInfo->exists() << fileUrl;
-            }
-
-            if (!fileInfo || !fileInfo->exists()) {
-                DUrl searchUrl = currentUrl();
-                if (searchUrl.isComputerFile()) {
-                    searchUrl = DUrl::fromLocalFile("/");
-                }
-
-                if (searchUrl.isSearchFile()) {
-                    searchUrl = searchUrl.searchTargetUrl();
-                }
-
-                if (!isCurrentUrlSupportSearch(searchUrl)) {
-                    return false;
-                }
-
-                const DUrl &newUrl = DUrl::fromSearchFile(searchUrl, fileUrl.toString());
-                const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, newUrl);
-
-                if (!fileInfo || !fileInfo->exists()) {
-                    return false;
-                }
-
-                return cd(newUrl, canFetchNetwork);
-            }
-
-            return false;
-        }
-
-        if (d->currentView) {
-            d->currentView->deleteLater();
-        }
-
-        d->setCurrentView(view);
-    }
-
-    bool ok = false;
-
-    if (d->currentView) {
-        ok = d->currentView->setRootUrl(fileUrl);
+    if (!d->cdForTab(d->tabBar->currentTab(), fileUrl)) {
+        return false;
     }
 
     emit currentUrlChanged();
     this->hideRenameBar();
 
-    return ok;
+    return true;
+}
+
+bool DFileManagerWindow::cdForTab(int tabIndex, const DUrl &fileUrl)
+{
+    Q_D(DFileManagerWindow);
+
+    return d->cdForTab(d->tabBar->tabAt(tabIndex), fileUrl);
+}
+
+bool DFileManagerWindow::cdForTabByView(DFMBaseView *view, const DUrl &fileUrl)
+{
+    Q_D(DFileManagerWindow);
+
+    for (int i = 0; i < d->tabBar->count(); ++i) {
+        Tab *tab =d->tabBar->tabAt(i);
+
+        if (tab->fileView() == view) {
+            return d->cdForTab(tab, fileUrl);
+        }
+    }
+
+    return false;
 }
 
 bool DFileManagerWindow::openNewTab(DUrl fileUrl)

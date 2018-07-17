@@ -111,7 +111,9 @@ public slots:
     void moveCenterByRect(QRect rect);
     void moveTopRightByRect(QRect rect);
 
-    bool cd(const DUrl &fileUrl, bool canFetchNetwork = true);
+    bool cd(const DUrl &fileUrl);
+    bool cdForTab(int tabIndex, const DUrl &fileUrl);
+    bool cdForTabByView(DFMBaseView *view , const DUrl &fileUrl);
 
     bool openNewTab(DUrl fileUrl);
     void switchToView(DFMBaseView *view);

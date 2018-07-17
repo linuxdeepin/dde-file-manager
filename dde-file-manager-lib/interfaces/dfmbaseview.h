@@ -34,6 +34,7 @@ public:
 
 protected:
     void notifyUrlChanged();
+    void requestCdTo(const DUrl &url);
 };
 
 DFM_END_NAMESPACE

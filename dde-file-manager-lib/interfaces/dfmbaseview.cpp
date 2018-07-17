@@ -48,4 +48,11 @@ void DFMBaseView::notifyUrlChanged()
     }
 }
 
+void DFMBaseView::requestCdTo(const DUrl &url)
+{
+    if (DFileManagerWindow *w = qobject_cast<DFileManagerWindow*>(widget()->window())) {
+        w->cdForTabByView(this, url);
+    }
+}
+
 DFM_END_NAMESPACE
