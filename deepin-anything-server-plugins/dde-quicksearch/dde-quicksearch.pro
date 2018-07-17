@@ -58,13 +58,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+#message($$DEPENDENCE_DIR)
+
 SOURCES += \
-    $$DEPENDENCE_DIR/quick_search/dquicksearch.cpp \
+    $$DEPENDENCE_DIR/controllers/quicksearchdaemoncontroller.cpp \
+    $$DEPENDENCE_DIR/controllers/interface/quicksearchdaemon_interface.cpp \
     main.cpp \
     quicksearchhandle.cpp
 
 HEADERS += \
-    $$DEPENDENCE_DIR/quick_search/dquicksearch.h \
+    $$DEPENDENCE_DIR/controllers/quicksearchdaemoncontroller.h \
+    $$DEPENDENCE_DIR/controllers/interface/quicksearchdaemon_interface.h \
     quicksearchhandle.h
 
 DISTFILES += dde-quicksearch.json
