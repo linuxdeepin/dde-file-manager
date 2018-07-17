@@ -24,6 +24,10 @@
 #include "dbusadaptor/quicksearchdaemon_adaptor.h"
 
 
+#include <QDBusMetaType>
+#include <QByteArrayList>
+
+
 static constexpr const char *ObjectPath{"/com/deepin/filemanager/daemon/QuickSearchDaemon"};
 
 
@@ -31,6 +35,11 @@ QuickSearchDaemon::QuickSearchDaemon(QObject *const parent)
     : QObject{parent},
       adaptor{new QuickSearchDaemonAdaptor{ this }}
 {
+    qDBusRegisterMetaType<QByteArrayList>();
+    qDBusRegisterMetaType<QPair<QByteArray, QByteArray>>();
+    qDBusRegisterMetaType<QList<QPair<QByteArray, QByteArray>>>();
+
+
     if (!QDBusConnection::systemBus().registerObject(ObjectPath, this)) {
         qFatal("Failed to register object."); //###: log!
     }
@@ -69,32 +78,44 @@ QDBusVariant QuickSearchDaemon::search(const QDBusVariant &current_dir, const QD
 
 void QuickSearchDaemon::fileWereCreated(const QDBusVariant &file_list)
 {
-    QList<QByteArray> created_files{ file_list.variant().value<QList<QByteArray>>() };
-    DQuickSearch::instance()->filesWereCreated(created_files);
+    QVariant variant{ file_list.variant() };
+    QDBusArgument argument{ variant.value<QDBusArgument>() };
+    QDBusArgument::ElementType current_type{ argument.currentType() };
+    QList<QByteArray> list_byte_arrays{};
+
+    if (current_type == QDBusArgument::ElementType::ArrayType) {
+        argument >> list_byte_arrays;
+    }
+
+    DQuickSearch::instance()->filesWereCreated(list_byte_arrays);
 }
 
 void QuickSearchDaemon::fileWereDeleted(const QDBusVariant &file_list)
 {
-    QList<QByteArray> deleted_files{ file_list.variant().value<QList<QByteArray>>() };
-    DQuickSearch::instance()->filesWereDeleted(deleted_files);
+    QVariant variant{ file_list.variant() };
+    QDBusArgument argument{ variant.value<QDBusArgument>() };
+    QDBusArgument::ElementType current_type{ argument.currentType() };
+    QList<QByteArray> list_byte_arrays{};
+
+    if (current_type == QDBusArgument::ElementType::ArrayType) {
+        argument >> list_byte_arrays;
+    }
+
+    DQuickSearch::instance()->filesWereDeleted(list_byte_arrays);
 }
 
-void QuickSearchDaemon::fileWereRenamed(const QVariantMap &file_list)
+void QuickSearchDaemon::fileWereRenamed(const QDBusVariant &file_list)
 {
-    if (!file_list.isEmpty()) {
-        QMap<QString, QVariant>::const_iterator c_beg{ file_list.cbegin() };
-        QMap<QString, QVariant>::const_iterator c_end{ file_list.cend() };
-        QList<QPair<QByteArray, QByteArray>> renamed_files{};
+    QVariant variant{ file_list.variant() };
+    QDBusArgument argument{ variant.value<QDBusArgument>() };
+    QDBusArgument::ElementType current_type{ argument.currentType() };
+    QList<QPair<QByteArray, QByteArray>> list_byte_arrays{};
 
-        for (; c_beg != c_end; ++c_beg) {
-            QByteArray old_name{ c_beg.key().toLocal8Bit() };
-            QByteArray new_name{ c_beg.value().toByteArray() };
-
-            renamed_files.push_back({old_name, new_name});
-        }
-
-        DQuickSearch::instance()->filesWereRenamed(renamed_files);
+    if (current_type == QDBusArgument::ElementType::ArrayType) {
+        argument >> list_byte_arrays;
     }
+
+    DQuickSearch::instance()->filesWereRenamed(list_byte_arrays);
 }
 
 

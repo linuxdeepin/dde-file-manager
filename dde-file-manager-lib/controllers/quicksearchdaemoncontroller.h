@@ -50,9 +50,9 @@ public:
     bool whetherCacheCompletely()const noexcept;
     QList<QString> search(const QString &path_for_searching, const QString &key);
 
-    void fileWereRenamed(const QVariantMap &file_list);
-    void fileWereCreated(const QVariant &file_list);
-    void fileWereDeleted(const QVariant &file_list);
+    void fileWereRenamed(const QList<QPair<QByteArray, QByteArray> > &file_list);
+    void fileWereCreated(const QList<QByteArray> &file_list);
+    void fileWereDeleted(const QList<QByteArray> &file_list);
 private:
     std::unique_ptr<QuickSearchDaemonInterface> interface_ptr{ nullptr };
 };

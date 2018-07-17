@@ -14,19 +14,15 @@
             <arg type="v" name="result" direction="out"/>
         </method>
         <method name="fileWereCreated">
+            <!-- <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QByteArrayList"/> -->
             <arg type="v" name="file_list" direction="in"/>
         </method>
         <method name="fileWereDeleted">
-            <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
-            <arg type="a{sv}" name="old_and_new" direction="in"/>
+            <!-- <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QByteArrayList"/> -->
+            <arg type="v" name="file_list" direction="in"/>
         </method>
         <method name="fileWereRenamed">
-            <arg type="v" name="file_list" direction="in"/>
-            <!-- <signal name="filesWereDeleted"><arg type="v" name="files_path" direction="out"/></signal> -->
-            <!-- <signal name="filesWereRenamed"><annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/><arg type="a{sv}" name="old_and_new" direction="out"/></signal> -->
-            <!-- <signal name="filesWereCreated"> -->
-            <!-- <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/> -->
-            <!-- <arg type="v" name="files_path" direction="out"/> -->
-            <!-- </signal> -->
-        </interface>
-    </node>
+            <arg type="v" name="old_and_new" direction="in"/>
+        </method>
+    </interface>
+</node>

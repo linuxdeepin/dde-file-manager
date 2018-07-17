@@ -20,31 +20,24 @@
  */
 
 #include "quicksearchhandle.h"
-
-#include "quick_search/dquicksearch.h"
+#include "controllers/quicksearchdaemoncontroller.h"
 
 //filter
 
 void QuickSearchHandle::onFileCreate(const QByteArrayList &files)
 {
-    if (!files.isEmpty()) {
-        DQuickSearch::instance()->filesWereCreated(files);
-    }
+    QuickSearchDaemonController::instance()->fileWereCreated(files);
 }
 
 
 
 void QuickSearchHandle::onFileDelete(const QByteArrayList &files)
 {
-    if (!files.isEmpty()) {
-        DQuickSearch::instance()->filesWereDeleted(files);
-    }
+    QuickSearchDaemonController::instance()->fileWereDeleted(files);
 }
 
 
 void QuickSearchHandle::onFileRename(const QList<QPair<QByteArray, QByteArray>> &files)
 {
-    if (!files.isEmpty()) {
-        DQuickSearch::instance()->filesWereRenamed(files);
-    }
+    QuickSearchDaemonController::instance()->fileWereRenamed(files);
 }

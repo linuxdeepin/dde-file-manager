@@ -264,7 +264,6 @@ HEADERS += \
     shutil/danythingmonitorfilter.h \
     controllers/interface/quicksearchdaemon_interface.h \
     controllers/quicksearchdaemoncontroller.h \
-    controllers/dquicksearchcontroller.h \
     views/dfmheaderview.h \
     shutil/dquicksearchfilter.h
 
@@ -444,7 +443,6 @@ SOURCES += \
     shutil/danythingmonitorfilter.cpp \
     controllers/interface/quicksearchdaemon_interface.cpp \
     controllers/quicksearchdaemoncontroller.cpp \
-    controllers/dquicksearchcontroller.cpp \
     views/dfmheaderview.cpp \
     shutil/dquicksearchfilter.cpp
 

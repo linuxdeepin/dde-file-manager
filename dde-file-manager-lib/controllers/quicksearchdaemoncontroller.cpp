@@ -21,9 +21,10 @@
 
 
 #include <dfileinfo.h>
-
-
 #include "quicksearchdaemoncontroller.h"
+
+#include <QDBusMetaType>
+
 
 static constexpr const  char *const service{ "com.deepin.filemanager.daemon" };
 static constexpr const char *const path{ "/com/deepin/filemanager/daemon/QuickSearchDaemon" };
@@ -33,6 +34,11 @@ QuickSearchDaemonController::QuickSearchDaemonController(QObject *const parent)
     : QObject{ parent },
       interface_ptr{ nullptr }
 {
+    qDBusRegisterMetaType<QByteArrayList>();
+    qDBusRegisterMetaType<QPair<QByteArray, QByteArray>>();
+    qDBusRegisterMetaType<QList<QPair<QByteArray, QByteArray>>>();
+
+
     interface_ptr = std::unique_ptr<QuickSearchDaemonInterface> { new QuickSearchDaemonInterface{ service, path,
                 QDBusConnection::systemBus(), nullptr }
     };
@@ -70,25 +76,26 @@ QList<QString> QuickSearchDaemonController::search(const QString &path_for_searc
     return result_list;
 }
 
-void QuickSearchDaemonController::fileWereDeleted(const QVariant &file_list)
+void QuickSearchDaemonController::fileWereDeleted(const QList<QByteArray> &file_list)
 {
-    if (file_list.isValid()) {
-        QDBusVariant dbus_var{ file_list };
+    if (!file_list.isEmpty()) {
+        QDBusVariant dbus_var{ QVariant::fromValue(file_list) };
         interface_ptr->fileWereDeleted(dbus_var);
     }
 }
 
-void QuickSearchDaemonController::fileWereCreated(const QVariant &file_list)
+void QuickSearchDaemonController::fileWereCreated(const QList<QByteArray> &file_list)
 {
-    if (file_list.isValid()) {
-        QDBusVariant dbus_var{ file_list };
+    if (!file_list.isEmpty()) {
+        QDBusVariant dbus_var{ QVariant::fromValue(file_list) };
         interface_ptr->fileWereCreated(dbus_var);
     }
 }
 
-void QuickSearchDaemonController::fileWereRenamed(const QVariantMap &file_list)
+void QuickSearchDaemonController::fileWereRenamed(const QList<QPair<QByteArray, QByteArray>> &file_list)
 {
     if (!file_list.isEmpty()) {
-        interface_ptr->fileWereRenamed(file_list);
+        QDBusVariant dbus_var{ QVariant::fromValue(file_list) };
+        interface_ptr->fileWereRenamed(dbus_var);
     }
 }
