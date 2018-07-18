@@ -40,7 +40,10 @@ public:
     bool open(OpenMode mode) override;
     void close() override;
     int handle() const override;
+    qint64 size() const override;
     bool resize(qint64 size) override;
+    bool isSequential() const override;
+    qint64 pos() const override;
     bool seek(qint64 pos) override;
     bool flush() override;
     bool syncToDisk() override;

@@ -144,6 +144,7 @@ public:
         m_accept = false;
     }
 
+    static quint64 windowIdByQObject(const QObject *object);
     quint64 windowId() const;
     void setWindowId(quint64 id);
 

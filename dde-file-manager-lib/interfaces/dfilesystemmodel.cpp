@@ -1443,9 +1443,25 @@ bool DFileSystemModel::remove(const DUrl &url)
     Q_D(DFileSystemModel);
 
     const FileSystemNodePointer &parentNode = d->rootNode;
+    QPointer<QObject> that = this;
 
     if (parentNode && parentNode->populatedChildren) {
-        int index = parentNode->visibleChildren.indexOf(url);
+        int index = -1;
+
+        for (int i = 0; i < parentNode->visibleChildren.count(); ++i) {
+            if (parentNode->visibleChildren.at(i) == url) {
+                index = i;
+                break;
+            }
+
+            if (i % 10 == 0) {
+                qApp->processEvents();
+
+                if (!that) {
+                    return false;
+                }
+            }
+        }
 
         if (index < 0)
             return false;
@@ -1619,7 +1635,7 @@ void DFileSystemModel::onJobAddChildren(const DAbstractFileInfoPointer &fileInfo
         addFile(fileInfo);
         timer = Q_NULLPTR;
         condition.wakeAll();
-    });
+    }, Qt::DirectConnection);
     mutex.lock();
     timer->metaObject()->invokeMethod(timer, "start", Q_ARG(int, 0));
 

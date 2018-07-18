@@ -136,7 +136,7 @@ void DFMSideBarPrivate::_q_onItemDragRelease(QPoint cursorPos, Qt::DropAction ac
     QRect sidebarGlobalGeometry(sidebarTopLeftPos, q->geometry().size());
 
     if (item->canDeleteViaDrag() && !sidebarGlobalGeometry.contains(cursorPos) && action == Qt::IgnoreAction) {
-        DFileService::instance()->deleteFiles(q, {item->url()}, true);
+        DFileService::instance()->deleteFiles(q, {item->url()}, false);
     }
 }
 
