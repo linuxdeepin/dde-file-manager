@@ -452,9 +452,6 @@ void DFMAddressBar::updateCompletionState(const QString &text)
 
     // Check if the entered text is a string to search or a url to complete.
     if (!hasSlash && url.isValid() && !url.scheme().isEmpty()) {
-        // set completion prefix.
-        urlCompleter->setCompletionPrefix(text.mid(slashIndex + 1));
-
         // Update Icon
         setIndicator(IndicatorType::JumpTo);
 
@@ -464,14 +461,18 @@ void DFMAddressBar::updateCompletionState(const QString &text)
         }
 
         // Check if we should start a new completion transmission.
-        if (this->completerBaseString == text.left(slashIndex + 1)
-                || DUrl::fromUserInput(this->completerBaseString) == DUrl::fromUserInput(text.left(slashIndex + 1))) {
+        if (!isHistoryInCompleterModel && (this->completerBaseString == text.left(slashIndex + 1)
+                || DUrl::fromUserInput(this->completerBaseString) == DUrl::fromUserInput(text.left(slashIndex + 1)))) {
+            urlCompleter->setCompletionPrefix(text.mid(slashIndex + 1)); // set completion prefix first
             onCompletionModelCountChanged(); // will call complete()
             return;
         }
 
         // Set Base String
         this->completerBaseString = text.left(slashIndex + 1);
+
+        // set completion prefix.
+        urlCompleter->setCompletionPrefix(text.mid(slashIndex + 1));
 
         // URL completion.
         if (!crumbController || !crumbController->supportedUrl(url)) {
