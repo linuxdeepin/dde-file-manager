@@ -342,7 +342,8 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
                 const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, url);
 
                 //check network folder at first
-                if(event.fileUrlList().first().isSMBFile()){
+                QStringList networkSchemeList = {SMB_SCHEME, FTP_SCHEME, SFTP_SCHEME};
+                if (networkSchemeList.contains(event.fileUrlList().first().scheme())){
                     m_label->setText(m_selectedNetworkOnlyOneFolder.arg(QString::number(number)));
                 } else{
                     if (!fileInfo)

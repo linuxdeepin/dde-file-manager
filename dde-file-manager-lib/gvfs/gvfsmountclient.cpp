@@ -182,7 +182,7 @@ static QJsonObject requestPasswordDialog(WId parentWindowId, bool showDomainLine
 
     int ret = askPasswordDialog.exec();
 
-    if (ret) {
+    if (ret == DDialog::Accepted) {
         return askPasswordDialog.getLoginData();
     }
 
