@@ -143,7 +143,7 @@ public:
         if (sortFiles) {
             free(sortFiles);
         } else if (sortFilesIndex) {
-            free(sortFilesIndex);
+            delete sortFilesIndex;
         }
     }
 
@@ -165,8 +165,7 @@ public:
             if (sortFiles) {
                 sortFilesIndex = sortFiles;
             } else {
-                sortFilesIndex = reinterpret_cast<char *>(malloc(sizeof(char)));
-                *sortFilesIndex = '0';
+                sortFilesIndex = new char(0);
             }
         }
 
@@ -977,7 +976,9 @@ FileDirIterator::FileDirIterator(const QString &path, const QStringList &nameFil
     : DDirIterator()
     , filters(filter)
 {
-    if (flags.testFlag(static_cast<QDirIterator::IteratorFlag>(DDirIterator::SortINode))) {
+    bool sort_inode = flags.testFlag(static_cast<QDirIterator::IteratorFlag>(DDirIterator::SortINode));
+
+    if (sort_inode) {
         iterator = new DFMSortInodeDirIterator(path);
     } else {
         iterator = new DFMQDirIterator(path, nameFilters, filter, flags);
