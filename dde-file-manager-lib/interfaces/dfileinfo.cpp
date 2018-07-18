@@ -723,7 +723,7 @@ QIcon DFileInfo::fileIcon() const
 {
     Q_D(const DFileInfo);
 
-    if (!d->icon.isNull() && (!d->iconFromTheme || !d->icon.name().isEmpty())) {
+    if (!d->icon.isNull() && !d->needThumbnail && (!d->iconFromTheme || !d->icon.name().isEmpty())) {
         return d->icon;
     }
 
@@ -734,9 +734,11 @@ QIcon DFileInfo::fileIcon() const
 #ifdef DFM_MINIMUM
     bool has_thumbnail = false;
 #else
-    bool has_thumbnail = FileUtils::isGvfsMountFile(absoluteFilePath()) || DThumbnailProvider::instance()->hasThumbnail(d->fileInfo);
+    bool has_thumbnail = d->needThumbnail || FileUtils::isGvfsMountFile(absoluteFilePath()) || DThumbnailProvider::instance()->hasThumbnail(d->fileInfo);
 #endif
     if (has_thumbnail) {
+        d->needThumbnail = true;
+
         const QIcon icon(DThumbnailProvider::instance()->thumbnailFilePath(d->fileInfo, DThumbnailProvider::Large));
 
         if (!icon.isNull()) {
@@ -747,6 +749,7 @@ QIcon DFileInfo::fileIcon() const
             pa.drawRect(pixmap.rect().adjusted(0, 0, -1, -1));
             d->icon.addPixmap(pixmap);
             d->iconFromTheme = false;
+            d->needThumbnail = false;
 
             return d->icon;
         }
@@ -771,6 +774,8 @@ QIcon DFileInfo::fileIcon() const
                         // clean old icon
                         me->d_func()->icon = QIcon();
                     }
+
+                    me->d_func()->needThumbnail = false;
                 });
                 me->d_func()->requestingThumbnail = true;
                 timer->deleteLater();
@@ -779,9 +784,12 @@ QIcon DFileInfo::fileIcon() const
             QMetaObject::invokeMethod(timer, "start", Qt::QueuedConnection);
         }
 
-        d->icon = DFileIconProvider::globalProvider()->icon(*this);
+        if (d->icon.isNull())
+            d->icon = DFileIconProvider::globalProvider()->icon(*this);
 
         return d->icon;
+    } else {
+        d->needThumbnail = false;
     }
 
     if (isSymLink()) {
