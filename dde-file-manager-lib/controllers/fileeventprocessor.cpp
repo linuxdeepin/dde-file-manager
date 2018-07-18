@@ -156,7 +156,7 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
         break;
     }
     case DFMGlobal::DeleteTags: {
-        return DFileService::instance()->deleteFiles(nullptr, event->selectedUrls(), true);
+        return DFileService::instance()->deleteFiles(nullptr, event->selectedUrls(), false);
         // this break seems no sense.. anyway leave it here.
         break;
     }

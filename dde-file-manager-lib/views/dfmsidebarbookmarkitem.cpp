@@ -51,7 +51,7 @@ DFMSideBarBookmarkItem::DFMSideBarBookmarkItem(const DUrl &url, QWidget *parent)
         } else {
             int ret = dialogManager->showRemoveBookMarkDialog(DFMEvent(this));
             if (ret == QDialog::Accepted) {
-                fileService->deleteFiles(this, {this->url()}, true);
+                fileService->deleteFiles(this, {this->url()}, false);
             }
         }
     }, Qt::QueuedConnection);
@@ -85,7 +85,7 @@ QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
     })->setEnabled(fileExist);
 
     menu->addAction(QObject::tr("Remove bookmark"), [ = ]() {
-        fileService->deleteFiles(this, DUrlList{url()}, true);
+        fileService->deleteFiles(this, DUrlList{url()}, false);
     });
 
     menu->addAction(QObject::tr("Properties"), [this]() {

@@ -498,6 +498,7 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
         {
             if (!slient) {
                 timer_id = startTimer(1000);
+                moveToThread(qApp->thread());
             }
         }
 
@@ -557,17 +558,21 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
 
     ErrorHandle *error_handle = new ErrorHandle(job, &currentJob, slient);
 
-    error_handle->moveToThread(qApp->thread());
-
     job->setErrorHandle(error_handle);
     job->setMode(action == DFMGlobal::CopyAction ? DFileCopyMoveJob::CopyMode : DFileCopyMoveJob::MoveMode);
     job->start(list, target);
     job->wait();
 
-    QTimer::singleShot(500, dialogManager->taskDialog(), [job] {
+    QTimer::singleShot(200, dialogManager->taskDialog(), [job] {
         dialogManager->taskDialog()->removeTaskJob(job);
     });
-    QMetaObject::invokeMethod(error_handle, "deleteLater");
+
+    if (slient) {
+        error_handle->deleteLater();
+    } else {
+        QMetaObject::invokeMethod(error_handle, "deleteLater");
+    }
+
     QMetaObject::invokeMethod(job, "deleteLater");
 
     return job->targetUrlList();

@@ -62,7 +62,7 @@ QMenu *DFMSideBarTagItem::createStandardContextMenu() const
     });
 
     menu->addAction(QObject::tr("Remove"), [ = ]() {
-        DFileService::instance()->deleteFiles(this, DUrlList{url()}, true);
+        DFileService::instance()->deleteFiles(this, DUrlList{url()}, false);
     });
 
     tagAction->setDefaultWidget(tagWidget);

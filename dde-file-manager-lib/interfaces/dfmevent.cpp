@@ -162,6 +162,25 @@ QString DFMEvent::typeToName(DFMEvent::Type type)
     return fmeventType2String(type);
 }
 
+quint64 DFMEvent::windowIdByQObject(const QObject *object)
+{
+    const QObject *obj = object;
+
+    while (obj) {
+        const QWidget *w = qobject_cast<const QWidget *>(obj);
+
+        if (w) {
+            return WindowManager::getWindowId(w);
+        }
+
+        obj = obj->parent();
+    }
+
+    const QGraphicsWidget *gw = qobject_cast<const QGraphicsWidget *>(object);
+
+    return (gw && !gw->scene()->views().isEmpty()) ? WindowManager::getWindowId(gw->scene()->views().first()) : 0;
+}
+
 quint64 DFMEvent::windowId() const
 {
     if (m_id > 0) {
@@ -174,19 +193,7 @@ quint64 DFMEvent::windowId() const
 
     const QObject *obj = m_sender.data();
 
-    while (obj) {
-        const QWidget *w = qobject_cast<const QWidget *>(obj);
-
-        if (w) {
-            return WindowManager::getWindowId(w);
-        }
-
-        obj = obj->parent();
-    }
-
-    const QGraphicsWidget *gw = qobject_cast<const QGraphicsWidget *>(m_sender.data());
-
-    return (gw && !gw->scene()->views().isEmpty()) ? WindowManager::getWindowId(gw->scene()->views().first()) : 0;
+    return windowIdByQObject(obj);
 }
 
 void DFMEvent::setWindowId(quint64 id)

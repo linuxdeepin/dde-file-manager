@@ -217,28 +217,12 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         break;
     }
     case DFMEvent::DeleteFiles: {
-        bool slient = event.staticCast<DFMDeleteEvent>()->silent();
+        result = CALL_CONTROLLER(deleteFiles);
 
-        foreach (const DUrl &url, event->fileUrlList()) {
-            if (systemPathManager->isSystemPath(url.toLocalFile())) {
-                if (!slient) {
-                    DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteSystemPathWarnDialog, event->windowId());
-                }
-                result = false;
-                goto end;
+        if (result.toBool()) {
+            for (const DUrl &url : event->fileUrlList()) {
+                emit fileDeleted(url);
             }
-        }
-
-        if (slient || DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteFilesClearTrashDialog, DFMUrlListBaseEvent(event->sender(), event->fileUrlList())) == 1) {
-            result = CALL_CONTROLLER(deleteFiles);
-
-            if (result.toBool()) {
-                for (const DUrl &url : event->fileUrlList()) {
-                    emit fileDeleted(url);
-                }
-            }
-        } else {
-            result = false;
         }
 
         break;
@@ -522,11 +506,23 @@ bool DFileService::renameFile(const QObject *sender, const DUrl &from, const DUr
     return ok;
 }
 
-bool DFileService::deleteFiles(const QObject *sender, const DUrlList &list, bool slient) const
+bool DFileService::deleteFiles(const QObject *sender, const DUrlList &list, bool confirmationDialog, bool slient) const
 {
-    bool ok = DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMDeleteEvent>(sender, list, slient)).toBool();
+    foreach (const DUrl &url, list) {
+        if (systemPathManager->isSystemPath(url.toLocalFile())) {
+            if (!slient) {
+                DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteSystemPathWarnDialog, DFMEvent::windowIdByQObject(sender));
+            }
 
-    return ok;
+            return false;
+        }
+    }
+
+    if (!confirmationDialog || DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteFilesClearTrashDialog, DFMUrlListBaseEvent(sender, list)) == DDialog::Accepted) {
+        return DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMDeleteEvent>(sender, list, slient)).toBool();
+    }
+
+    return false;
 }
 
 DUrlList DFileService::moveToTrash(const QObject *sender, const DUrlList &list) const

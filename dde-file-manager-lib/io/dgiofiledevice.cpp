@@ -176,11 +176,61 @@ int DGIOFileDevice::handle() const
     return -1;
 }
 
+qint64 DGIOFileDevice::size() const
+{
+    Q_D(const DGIOFileDevice);
+
+    GFileInfo *info = g_file_query_info(d->file, nullptr, G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
+
+    if (!info) {
+        return -1;
+    }
+
+    qint64 size = g_file_info_get_size(info);
+
+    g_object_unref(info);
+
+    return size;
+}
+
 bool DGIOFileDevice::resize(qint64 size)
 {
-    Q_UNUSED(size)
+    Q_D(DGIOFileDevice);
 
-    return false;
+    GError *error = nullptr;
+
+    if (!g_seekable_truncate(G_SEEKABLE(d->output_stream), size, nullptr, &error)) {
+        if (error) {
+            setErrorString(QString::fromLocal8Bit(error->message));
+            g_error_free(error);
+        } else {
+            setErrorString("Failed on resize");
+        }
+
+        return false;
+    }
+
+    return true;
+}
+
+bool DGIOFileDevice::isSequential() const
+{
+    Q_D(const DGIOFileDevice);
+
+    if (d->input_stream)
+        return !g_seekable_can_seek(G_SEEKABLE(d->input_stream));
+
+    return !g_seekable_can_seek(G_SEEKABLE(d->output_stream));
+}
+
+qint64 DGIOFileDevice::pos() const
+{
+    Q_D(const DGIOFileDevice);
+
+    if (d->input_stream)
+        return g_seekable_tell(G_SEEKABLE(d->input_stream));
+
+    return g_seekable_tell(G_SEEKABLE(d->output_stream));
 }
 
 bool DGIOFileDevice::seek(qint64 pos)

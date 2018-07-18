@@ -308,9 +308,9 @@ void AppController::actionBookmarkRename(const QSharedPointer<DFMUrlBaseEvent> &
 void AppController::actionBookmarkRemove(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     if (event->url().isBookMarkFile())
-        DFileService::instance()->deleteFiles(nullptr, {event->url()}, true);
+        DFileService::instance()->deleteFiles(nullptr, {event->url()}, false);
     else
-        DFileService::instance()->deleteFiles(nullptr, {DUrl::fromBookMarkFile(event->url(), QString())}, true);
+        DFileService::instance()->deleteFiles(nullptr, {DUrl::fromBookMarkFile(event->url(), QString())}, false);
 }
 
 void AppController::actionDelete(const QSharedPointer<DFMUrlListBaseEvent> &event)

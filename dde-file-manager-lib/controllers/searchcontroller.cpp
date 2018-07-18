@@ -454,7 +454,7 @@ bool SearchController::restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent
 
 bool SearchController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
-    return DFileService::instance()->deleteFiles(event->sender(), realUrlList(event->urlList()), true);
+    return DFileService::instance()->deleteFiles(event->sender(), realUrlList(event->urlList()), false, event->silent());
 }
 
 bool SearchController::renameFile(const QSharedPointer<DFMRenameEvent> &event) const
