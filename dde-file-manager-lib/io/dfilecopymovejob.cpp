@@ -353,11 +353,9 @@ QString DFileCopyMoveJobPrivate::getNewFileName(const DAbstractFileInfo *sourceF
     return new_file_name;
 }
 
-bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, const DAbstractFileInfo *target_info)
+bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, DAbstractFileInfoPointer source_info, const DAbstractFileInfo *target_info)
 {
     Q_Q(DFileCopyMoveJob);
-
-    DAbstractFileInfoPointer source_info = DFileService::instance()->createFileInfo(nullptr, from);
 
     if (!source_info) {
         setError(DFileCopyMoveJob::UnknowUrlError, "Failed create file info");
@@ -675,7 +673,7 @@ open_file:
     currentJobDataSizeInfo.first = fromDevice->size();
     currentJobFileHandle = toDevice->handle();
 
-    int writtenDataSize = 0;
+//    int writtenDataSize = 0;
     uLong source_checksum = adler32(0L, Z_NULL, 0);
 
     Q_FOREVER {
@@ -742,16 +740,16 @@ write_data:
 
         currentJobDataSizeInfo.second += size_write;
         completedDataSize += size_write;
-        writtenDataSize += size_write;
+//        writtenDataSize += size_write;
 
         if (Q_LIKELY(!fileHints.testFlag(DFileCopyMoveJob::DontIntegrityChecking))) {
             source_checksum = adler32(source_checksum, reinterpret_cast<Bytef*>(data), size_read);
         }
 
-        if (Q_UNLIKELY(writtenDataSize > 20000000)) {
-            writtenDataSize = 0;
-            toDevice->syncToDisk();
-        }
+//        if (Q_UNLIKELY(writtenDataSize > 20000000)) {
+//            writtenDataSize = 0;
+//            toDevice->syncToDisk();
+//        }
     }
 
     fromDevice->close();
@@ -808,7 +806,7 @@ write_data:
     qCDebug(fileJob(), "Time spent of integrity check of the file: %lld", updateSpeedElapsedTimer->elapsed() - elapsed_time_checksum);
 
     if (source_checksum != target_checksum) {
-        const QString &errorString = QString("Failed on file integrity checking, source file: 0x%x, target file: 0x%x").arg(source_checksum, target_checksum);
+        const QString &errorString = QString::asprintf("Failed on file integrity checking, source file: 0x%lx, target file: 0x%lx", source_checksum, target_checksum);
 
         setError(DFileCopyMoveJob::IntegrityCheckingError, errorString);
         DFileCopyMoveJob::Action action = handleError(fromInfo, toInfo);
@@ -903,8 +901,10 @@ bool DFileCopyMoveJobPrivate::process(const DUrl &from, const DAbstractFileInfo 
     unsetError();
     lastErrorHandleAction = DFileCopyMoveJob::NoAction;
 
-    beginJob(JobInfo::Preprocess, from, target_info ? target_info->fileUrl() : DUrl());
-    bool ok = doProcess(from, target_info);
+    DAbstractFileInfoPointer source_info = DFileService::instance()->createFileInfo(nullptr, from);
+
+    beginJob(JobInfo::Preprocess, from, (source_info && target_info) ? target_info->getUrlByChildFileName(source_info->fileName()) : DUrl());
+    bool ok = doProcess(from, source_info, target_info);
     endJob();
 
     return ok;
