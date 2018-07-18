@@ -37,6 +37,7 @@
 #include "gvfsmountclient.h"
 
 #include <QProcess>
+#include <QRegularExpression>
 #include <QTimer>
 
 DFM_USE_NAMESPACE
@@ -224,8 +225,7 @@ void NetworkManager::network_enumeration_next_files_finished(GObject *source_obj
     detected_networks = g_file_enumerator_next_files_finish (G_FILE_ENUMERATOR (source_object),
                                                            res, &error);
 
-    if (error)
-    {
+    if (error) {
         if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)){
             qWarning ("Failed to fetch network locations: %s", error->message);
             DFMEvent* event = static_cast<DFMEvent*>(user_data);
@@ -234,9 +234,7 @@ void NetworkManager::network_enumeration_next_files_finished(GObject *source_obj
             }
         }
         g_clear_error (&error);
-    }
-    else
-    {
+    } else {
         populate_networks (G_FILE_ENUMERATOR (source_object), detected_networks, user_data);
 
         g_list_free_full (detected_networks, g_object_unref);
@@ -277,9 +275,19 @@ void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detec
         icon = g_file_info_get_icon (fileInfo);
         iconPath = g_icon_to_string(icon);
 
+        // URL Cleanup:
+        // blumia: sometimes it will happend in weird Mac mini device with a url format like: `smb://[10.0.61.210]:445/`
+        //         Wikipedia said (haven't take a look at releated RFCs) brackets should only be used with IPv6 addresses.
+        //         Not sure it's a bug of gvfs or Apple, so do a workaround cleanup here.
+        QString uriStr = QString(uri);
+        QRegularExpression re(R"reg((\[)(?:\d+\.){3}\d+(\]))reg");
+        if (re.match(uriStr).hasMatch()) {
+            uriStr.remove('[');
+            uriStr.remove(']');
+        }
 
         NetworkNode node;
-        node.setUrl(QString(uri));
+        node.setUrl(uriStr);
         node.setDisplayName(QString(display_name));
         node.setIconType(QString(iconPath));
 
