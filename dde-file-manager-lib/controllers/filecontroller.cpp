@@ -32,6 +32,7 @@
 #include "dfmapplication.h"
 #include "dfmsettings.h"
 #include "dlocalfiledevice.h"
+#include "dgiofiledevice.h"
 #include "dlocalfilehandler.h"
 #include "dfilecopymovejob.h"
 
@@ -697,17 +698,6 @@ DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) c
 
 #ifdef SW_LABEL
     use_old_filejob = true;
-#else
-    if (FileUtils::isGvfsMountFile(event->targetUrl().toLocalFile())) {
-        use_old_filejob = true;
-    } else {
-        foreach (const DUrl url, event->fileUrlList()) {
-            if (FileUtils::isGvfsMountFile(url.toLocalFile())) {
-                use_old_filejob = true;
-                break;
-            }
-        }
-    }
 #endif
 
     const DUrlList &urlList = event->urlList();
@@ -847,6 +837,10 @@ DAbstractFileWatcher *FileController::createFileWatcher(const QSharedPointer<DFM
 
 DFileDevice *FileController::createFileDevice(const QSharedPointer<DFMUrlBaseEvent> &event) const
 {
+    if (FileUtils::isGvfsMountFile(event->fileUrl().toLocalFile())) {
+        return new DGIOFileDevice(event->fileUrl());
+    }
+
     DLocalFileDevice *device = new DLocalFileDevice();
 
     device->setFileUrl(event->fileUrl());

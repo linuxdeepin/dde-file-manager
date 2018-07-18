@@ -29,6 +29,8 @@
 #include <QElapsedTimer>
 #include <QStorageInfo>
 
+typedef QExplicitlySharedDataPointer<DAbstractFileInfo> DAbstractFileInfoPointer;
+
 DFM_BEGIN_NAMESPACE
 
 class DFileHandler;
@@ -67,7 +69,7 @@ public:
 
     static QString getNewFileName(const DAbstractFileInfo *sourceFileInfo, const DAbstractFileInfo *targetDirectory);
 
-    bool doProcess(const DUrl &from, const DAbstractFileInfo *target_info);
+    bool doProcess(const DUrl &from, DAbstractFileInfoPointer source_info, const DAbstractFileInfo *target_info);
     bool mergeDirectory(DFileHandler *handler, const DAbstractFileInfo *fromInfo, const DAbstractFileInfo *toInfo);
     bool doCopyFile(const DAbstractFileInfo *fromInfo, const DAbstractFileInfo *toInfo, int blockSize = 1048576);
     bool doRemoveFile(DFileHandler *handler, const DAbstractFileInfo *fileInfo);

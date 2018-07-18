@@ -387,13 +387,6 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
     if(data.contains("status"))
         status = data.value("status");
 
-    if (QFileInfo(srcPath).isDir() &&
-            QFileInfo(targetPath).isDir()){
-        m_replaceButton->setText(tr("merge"));
-    }else{
-        m_replaceButton->setText(tr("Replace"));
-    }
-
     QString speedStr = "%1";
     QString remainStr = "%1";
 
@@ -425,6 +418,13 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
             msg1 = QString(tr("File named %1 already exists in target folder")).arg(file);
             msg2 = QString(tr("Original path %1 target path %2")).arg(QFileInfo(srcPath).absolutePath(), QFileInfo(targetPath).absolutePath());
             updateConflictDetailFrame(DUrl::fromLocalFile(srcPath), DUrl::fromLocalFile(targetPath));
+
+            if (QFileInfo(srcPath).isDir() &&
+                    QFileInfo(targetPath).isDir()){
+                m_replaceButton->setText(tr("merge"));
+            }else{
+                m_replaceButton->setText(tr("Replace"));
+            }
 
             m_replaceButton->show();
             m_keepBothButton->show();
@@ -681,7 +681,7 @@ void MoveCopyTaskWidget::updateMessageByJob()
     datas["sourcePath"] = m_jobInfo->currentJob.first.path();
     datas["file"] = m_jobInfo->currentJob.first.fileName();
     datas["targetPath"] = m_jobInfo->currentJob.second.path();
-    datas["destination"] = m_jobInfo->currentJob.second.isValid() ? QFileInfo(m_jobInfo->currentJob.second.path()).absolutePath() : QString();
+    datas["destination"] = m_jobInfo->currentJob.second.isValid() ? m_jobInfo->currentJob.second.parentUrl().path() : QString();
     datas["speed"] = FileUtils::formatSize(m_jobInfo->speed) + "/s";
 
     if (m_jobInfo->totalDataSize >= 0) {
