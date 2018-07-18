@@ -150,6 +150,11 @@ quint8 NetworkFileInfo::supportViewMode() const
     return DFileView::IconMode;
 }
 
+int NetworkFileInfo::filesCount() const
+{
+    return -1;
+}
+
 QString NetworkFileInfo::iconName() const
 {
     return m_networkNode.iconType();

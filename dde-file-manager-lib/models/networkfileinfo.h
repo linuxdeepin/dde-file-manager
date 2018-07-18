@@ -62,6 +62,8 @@ public:
 
     quint8 supportViewMode() const Q_DECL_OVERRIDE;
 
+    int filesCount() const override;
+
     QString iconName() const Q_DECL_OVERRIDE;
 
     bool canRedirectionFileUrl() const override;

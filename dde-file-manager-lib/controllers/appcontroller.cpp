@@ -119,6 +119,8 @@ void AppController::registerUrlHandle()
     DFileService::dRegisterUrlHandler<SearchController>(SEARCH_SCHEME, "");
     DFileService::dRegisterUrlHandler<NetworkController>(NETWORK_SCHEME, "");
     DFileService::dRegisterUrlHandler<NetworkController>(SMB_SCHEME, "");
+    DFileService::dRegisterUrlHandler<NetworkController>(SFTP_SCHEME, "");
+    DFileService::dRegisterUrlHandler<NetworkController>(FTP_SCHEME, "");
     DFileService::dRegisterUrlHandler<ShareControler>(USERSHARE_SCHEME, "");
     DFileService::dRegisterUrlHandler<AVFSFileController>(AVFS_SCHEME, "");
 
