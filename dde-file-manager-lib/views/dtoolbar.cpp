@@ -403,7 +403,10 @@ void DToolBar::setCustomActionList(const QList<QAction *> &list)
         button->setAction(list.at(i));
 
         m_contollerToolBarContentLayout->addWidget(button);
-        button->show();
+
+        if (list.at(i)->isVisible()) {
+            button->show();
+        }
     }
 
     m_contollerToolBar->setHidden(list.isEmpty());
