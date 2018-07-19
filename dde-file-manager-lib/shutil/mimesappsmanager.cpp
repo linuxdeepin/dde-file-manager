@@ -406,7 +406,7 @@ QStringList MimesAppsManager::getRecommendedApps(const DUrl &url)
     custom_app = custom_app.arg(QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation)).arg(qApp->applicationName()).arg(gio_mimeType.replace("/", "-"));
 
     if (QFile::exists(custom_app)) {
-        recommendedApps.removeOne(custom_app);
+        MimesAppsManager::removeOneDupFromList(recommendedApps, custom_app);
         recommendedApps.append(custom_app);
     }
 
@@ -415,7 +415,7 @@ QStringList MimesAppsManager::getRecommendedApps(const DUrl &url)
     if (desktopAppInfo) {
         default_app = QString::fromLocal8Bit(g_desktop_app_info_get_filename(desktopAppInfo));
         g_object_unref(desktopAppInfo);
-        recommendedApps.removeOne(default_app);
+        MimesAppsManager::removeOneDupFromList(recommendedApps, default_app);
         recommendedApps.prepend(default_app);
     }
 
@@ -787,6 +787,27 @@ void MimesAppsManager::loadDDEMimeTypes()
 bool MimesAppsManager::lessByDateTime(const QFileInfo &f1, const QFileInfo &f2)
 {
     return f1.created() < f2.created();
+}
+
+bool MimesAppsManager::removeOneDupFromList(QStringList &list, const QString desktopFilePath)
+{
+    if (list.removeOne(desktopFilePath)) {
+        return true;
+    }
+
+    const DesktopFile target(desktopFilePath);
+
+    QMutableStringListIterator iter(list);
+    while (iter.hasNext()) {
+        const DesktopFile source(iter.next());
+
+        if (source.getExec() == target.getExec() && source.getLocalName() == target.getLocalName()) {
+            iter.remove();
+            return true;
+        }
+    }
+
+    return false;
 }
 
 

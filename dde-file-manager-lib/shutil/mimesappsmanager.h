@@ -47,6 +47,7 @@ public:
     ~MimeAppsWorker();
 
     void initConnect();
+
 public slots:
     void startWatch();
     void handleDirectoryChanged(const QString& filePath);
@@ -110,6 +111,7 @@ public:
     static void initMimeTypeApps();
     static void loadDDEMimeTypes();
     static bool lessByDateTime(const QFileInfo& f1,  const QFileInfo& f2);
+    static bool removeOneDupFromList(QStringList& list, const QString desktopFilePath);
 
 signals:
     void requestUpdateCache();
