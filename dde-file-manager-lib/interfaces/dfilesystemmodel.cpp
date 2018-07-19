@@ -1443,25 +1443,9 @@ bool DFileSystemModel::remove(const DUrl &url)
     Q_D(DFileSystemModel);
 
     const FileSystemNodePointer &parentNode = d->rootNode;
-    QPointer<QObject> that = this;
 
     if (parentNode && parentNode->populatedChildren) {
-        int index = -1;
-
-        for (int i = 0; i < parentNode->visibleChildren.count(); ++i) {
-            if (parentNode->visibleChildren.at(i) == url) {
-                index = i;
-                break;
-            }
-
-            if (i % 10 == 0) {
-                qApp->processEvents();
-
-                if (!that) {
-                    return false;
-                }
-            }
-        }
+        int index = parentNode->visibleChildren.indexOf(url);
 
         if (index < 0)
             return false;
