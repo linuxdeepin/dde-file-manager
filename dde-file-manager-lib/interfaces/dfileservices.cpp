@@ -549,7 +549,12 @@ void DFileService::pasteFileByClipboard(const QObject *sender, const DUrl &targe
         return;
     }
 
-    pasteFile(sender, action, targetUrl, DUrl::fromQUrlList(DFMGlobal::instance()->clipboardFileUrlList()));
+    const DUrlList &list = DUrl::fromQUrlList(DFMGlobal::instance()->clipboardFileUrlList());
+
+    if (action == DFMGlobal::CutAction)
+        DFMGlobal::instance()->clearClipboard();
+
+    pasteFile(sender, action, targetUrl, list);
 }
 
 DUrlList DFileService::pasteFile(const QObject *sender, DFMGlobal::ClipboardAction action, const DUrl &targetUrl, const DUrlList &list) const
