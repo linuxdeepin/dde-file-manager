@@ -29,8 +29,6 @@
 #include "dfmeventdispatcher.h"
 #include "dfmsidebar.h"
 #include "views/dstatusbar.h"
-#include "views/dleftsidebar.h"
-#include "views/dsearchbar.h"
 #include "views/filedialogstatusbar.h"
 
 #include <DTitlebar>
@@ -763,8 +761,6 @@ bool DFileDialog::eventFilter(QObject *watched, QEvent *event)
                     }
                 }
                 close();
-            } else if (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) {
-                handleEnterPressed();
             }
         }
     }
@@ -1066,19 +1062,4 @@ void DFileDialog::onCurrentInputNameChanged()
 
     d->currentInputName = statusBar()->lineEdit()->text();
     statusBar()->acceptButton()->setDisabled(d->currentInputName.isEmpty());
-}
-
-void DFileDialog::handleEnterPressed()
-{
-    if (!qobject_cast<DSearchBar *>(qApp->focusWidget())) {
-        for (const QModelIndex &index : getFileView()->selectedIndexes()) {
-            const DAbstractFileInfoPointer &info = getFileView()->model()->fileInfo(index);
-
-            if (info->isDir()) {
-                return;
-            }
-        }
-
-        statusBar()->acceptButton()->animateClick();
-    }
 }

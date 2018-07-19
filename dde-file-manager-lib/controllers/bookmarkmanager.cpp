@@ -43,7 +43,6 @@
 #include <stdlib.h>
 
 #include "shutil/fileutils.h"
-#include "views/dbookmarkitem.h"
 #include "deviceinfo/udisklistener.h"
 
 class BookMarkFileWatcher;

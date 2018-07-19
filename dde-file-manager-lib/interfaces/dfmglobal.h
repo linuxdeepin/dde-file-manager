@@ -347,8 +347,6 @@ public:
     static QString toUnicode(const QByteArray &data, const QString &fileName = QString());
     static QString cutString(const QString &text, int dataByteSize, const QTextCodec *codec);
 
-    static void playSound(const QUrl& soundUrl);
-
     ///###: this function detect what the charset of str is.
     static QByteArray detectCharset(const QByteArray& data, const QString& fileName = QString{});
     static QString preprocessingFileName(QString name);

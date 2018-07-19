@@ -29,8 +29,6 @@
 
 #include "dcrumbedit.h"
 #include "../app/filesignalmanager.h"
-#include "views/dleftsidebar.h"
-#include "views/dbookmarkscene.h"
 
 #include <memory>
 

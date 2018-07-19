@@ -960,40 +960,6 @@ void DFMGlobal::showPropertyDialog(QObject * const sender, const QList<DUrl>& se
     dialogManager->showPropertyDialog(DFMUrlListBaseEvent{sender, selectedFiles});
 }
 
-void DFMGlobal::playSound(const QUrl &soundUrl)
-{
-    QGSettings settings("com.deepin.dde.sound-effect", "/com/deepin/dde/sound-effect/");
-    if(!settings.get("enabled").toBool())
-        return;
-
-    //check if is global sound off
-    QDBusInterface audioIface("com.deepin.daemon.Audio",
-                              "/com/deepin/daemon/Audio",
-                              "com.deepin.daemon.Audio",
-                              QDBusConnection::sessionBus());
-
-    QString defaultSink = qvariant_cast<QDBusObjectPath>(audioIface.property("DefaultSink")).path();
-
-    QDBusInterface audioSinkIface("com.deepin.daemon.Audio",
-                                  defaultSink,
-                                  "com.deepin.daemon.Audio.Sink",
-                                  QDBusConnection::sessionBus());
-    bool isGlobalSoundDisabled = audioSinkIface.property("Mute").toBool();
-
-    if(isGlobalSoundDisabled)
-        return;
-
-    QMediaPlayer* player = new QMediaPlayer;
-    player->setMedia(soundUrl);
-    player->setVolume(100);
-    player->play();
-    connect(player, &QMediaPlayer::positionChanged, [=](const qint64& position){
-        if(position >= player->duration()){
-            player->deleteLater();
-        }
-    });
-}
-
 QString DFMGlobal::preprocessingFileName(QString name)
 {
     // eg: [\\:*\"?<>|\r\n]

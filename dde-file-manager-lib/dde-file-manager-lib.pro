@@ -81,7 +81,6 @@ RESOURCES += \
 
 HEADERS += \
     controllers/appcontroller.h \
-    views/dleftsidebar.h \
     views/dtoolbar.h \
     views/dfileview.h \
     views/ddetailview.h \
@@ -91,7 +90,6 @@ HEADERS += \
     controllers/filecontroller.h \
     app/filesignalmanager.h \
     views/fileitem.h \
-    views/dsearchbar.h \
     models/desktopfileinfo.h \
     models/bookmark.h \
     models/searchhistory.h \
@@ -109,16 +107,11 @@ HEADERS += \
     views/historystack.h\
     dialogs/propertydialog.h \
     views/dhoverbutton.h \
-    views/dbookmarkscene.h \
-    views/dbookmarkitem.h \
-    views/dbookmarkitemgroup.h \
     views/dfmsidebaritemgroup.h \
-    views/dbookmarkrootitem.h \
     views/dbookmarkview.h \
     controllers/trashmanager.h \
     models/trashfileinfo.h \
     shutil/mimesappsmanager.h \
-    views/dbookmarkline.h \
     views/dsplitterhandle.h \
     dialogs/openwithdialog.h \
     controllers/searchcontroller.h \
@@ -139,7 +132,6 @@ HEADERS += \
     models/networkfileinfo.h \
     controllers/networkcontroller.h \
     dialogs/trashpropertydialog.h \
-    views/dbookmarkmountedindicatoritem.h \
     controllers/jobcontroller.h \
     views/computerview.h \
     views/flowlayout.h \
@@ -269,7 +261,6 @@ HEADERS += \
 
 SOURCES += \
     controllers/appcontroller.cpp \
-    views/dleftsidebar.cpp \
     views/dtoolbar.cpp \
     views/dfileview.cpp \
     views/ddetailview.cpp \
@@ -278,7 +269,6 @@ SOURCES += \
     views/dcheckablebutton.cpp \
     controllers/filecontroller.cpp \
     views/fileitem.cpp \
-    views/dsearchbar.cpp \
     models/desktopfileinfo.cpp \
     models/bookmark.cpp \
     models/searchhistory.cpp \
@@ -296,16 +286,11 @@ SOURCES += \
     views/historystack.cpp\
     dialogs/propertydialog.cpp \
     views/dhoverbutton.cpp \
-    views/dbookmarkscene.cpp \
-    views/dbookmarkitem.cpp \
-    views/dbookmarkitemgroup.cpp \
     views/dfmsidebaritemgroup.cpp \
-    views/dbookmarkrootitem.cpp \
     views/dbookmarkview.cpp \
     controllers/trashmanager.cpp \
     models/trashfileinfo.cpp \
     shutil/mimesappsmanager.cpp \
-    views/dbookmarkline.cpp \
     views/dsplitterhandle.cpp \
     dialogs/openwithdialog.cpp \
     controllers/searchcontroller.cpp \
@@ -326,7 +311,6 @@ SOURCES += \
     models/networkfileinfo.cpp \
     controllers/networkcontroller.cpp \
     dialogs/trashpropertydialog.cpp \
-    views/dbookmarkmountedindicatoritem.cpp \
     controllers/jobcontroller.cpp \
     views/computerview.cpp \
     views/flowlayout.cpp \

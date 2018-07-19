@@ -23,7 +23,6 @@
  */
 
 #include "dfilemanagerwindow.h"
-//#include "dleftsidebar.h"
 #include "dtoolbar.h"
 #include "dfileview.h"
 #include "fileviewhelper.h"
@@ -35,7 +34,6 @@
 #include "dfilemenumanager.h"
 #include "computerview.h"
 #include "dtabbar.h"
-#include "dbookmarkscene.h"
 #include "windowmanager.h"
 #include "dfileservices.h"
 #include "dfilesystemmodel.h"
@@ -103,7 +101,6 @@ public:
 
     QPushButton *logoButton{ nullptr };
     QFrame *centralWidget{ nullptr };
-//    DLeftSideBar *leftSideBar{ nullptr };
     DFMSideBar *leftSideBar{ nullptr };
     QFrame *rightView { nullptr };
     DToolBar *toolbar{ nullptr };
