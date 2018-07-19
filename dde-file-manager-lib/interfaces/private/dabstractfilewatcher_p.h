@@ -20,6 +20,8 @@ public:
 
     virtual bool start() = 0;
     virtual bool stop() = 0;
+    virtual bool handleGhostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType1 signal, const DUrl &arg1);
+    virtual bool handleGhostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType2 signal, const DUrl &arg1, const DUrl &arg2);
 
     DAbstractFileWatcher *q_ptr;
 
