@@ -91,14 +91,15 @@ public slots:
     void preHandleTaskFinished(const bool& result);
 
 private:
-    QPushButton* m_comfirmButton = NULL;
-    QStackedWidget* m_pageStack = NULL;
+    QPushButton* m_comfirmButton = nullptr;
+    QStackedWidget* m_pageStack = nullptr;
     FormatStep m_currentStep = Normal;
-    MainPage* m_mainPage = NULL;
-    WarnPage* m_warnPage = NULL;
-    FormatingPage* m_formatingPage = NULL;
-    FinishPage* m_finishPage = NULL;
-    ErrorPage* m_errorPage = NULL;
+    MainPage* m_mainPage = nullptr;
+    WarnPage* m_warnPage = nullptr;
+    FormatingPage* m_formatingPage = nullptr;
+    FinishPage* m_finishPage = nullptr;
+    ErrorPage* m_errorPage = nullptr;
+    DTitlebar* m_titleBar = nullptr;
     QString m_formatPath;
     QString m_formatType;
 
