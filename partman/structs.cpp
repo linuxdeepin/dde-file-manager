@@ -66,6 +66,7 @@ QDebug& operator<<(QDebug& debug, const PartitionTableType& table_type) {
     }
     case PartitionTableType::Others: {
       table = "Others";
+      break;
     }
     case PartitionTableType::Unknown: {
       table = "Unknown";

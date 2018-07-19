@@ -74,7 +74,6 @@
 #include <QStackedWidget>
 #include <QStorageInfo>
 #include <QVariantAnimation>
-#include "views/dleftsidebar.h"
 #include <QScrollArea>
 
 NameTextEdit::NameTextEdit(const QString &text, QWidget *parent):
@@ -175,15 +174,11 @@ void NameTextEdit::setIsCanceled(bool isCanceled)
 }
 
 
-
-
-
 GroupTitleLabel::GroupTitleLabel(const QString &text, QWidget *parent, Qt::WindowFlags f):
     QLabel(text, parent, f)
 {
     setObjectName("GroupTitleLabel");
 }
-
 
 SectionKeyLabel::SectionKeyLabel(const QString &text, QWidget *parent, Qt::WindowFlags f):
     QLabel(text, parent, f)
@@ -998,7 +993,7 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     // when change the index...
     auto onComboBoxChanged = [ = ]() {
         QFile f(m_url.toLocalFile());
-        f.setPermissions(QFileDevice::Permissions(ownerBox->currentData().toInt()) | (info->permissions() & 0x0700) |
+        f.setPermissions(QFileDevice::Permissions(ownerBox->currentData().toInt()) | /*(info->permissions() & 0x0700) |*/
                          QFileDevice::Permissions(groupBox->currentData().toInt()) | QFileDevice::Permissions((otherBox->currentData().toInt())));
     };
 
