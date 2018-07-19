@@ -42,6 +42,7 @@
 #include <QMouseEvent>
 #include <QApplication>
 #include <QtConcurrent>
+#include <DWindowManagerHelper>
 #include "../partman/partition.h"
 #include "dialogs/messagedialog.h"
 
@@ -82,13 +83,13 @@ void MainWindow::initUI()
     QIcon transparentIcon(pixmap);
 
     QString title = tr("Format");
-    DTitlebar* titlebar = new DTitlebar(this);
-    titlebar->setIcon(transparentIcon);
-    titlebar->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::FramelessWindowHint);
-    titlebar->setTitle(title);
-    titlebar->setFixedHeight(20);
-    titlebar->layout()->setContentsMargins(0, 0, 0, 0);
-    titlebar->setBackgroundTransparent(true);
+    m_titleBar = new DTitlebar(this);
+    m_titleBar->setIcon(transparentIcon);
+    m_titleBar->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::FramelessWindowHint);
+    m_titleBar->setTitle(title);
+    m_titleBar->setFixedHeight(20);
+    m_titleBar->layout()->setContentsMargins(0, 0, 0, 0);
+    m_titleBar->setBackgroundTransparent(true);
 
     m_pageStack = new QStackedWidget(this);
     m_pageStack->setFixedSize(width(), 340);
@@ -109,13 +110,13 @@ void MainWindow::initUI()
     m_comfirmButton->setFixedSize(160, 36);
     m_comfirmButton->setObjectName("ComfirmButton");
 
-    mainLayout->addWidget(titlebar);
+    mainLayout->addWidget(m_titleBar);
     mainLayout->addWidget(m_pageStack);
     mainLayout->addSpacing(10);
     mainLayout->addStretch(1);
     mainLayout->addWidget(m_comfirmButton, 0, Qt::AlignHCenter);
     mainLayout->addSpacing(34);
-    setFixedHeight(titlebar->height() + m_pageStack->height() + 10 + m_comfirmButton->height() + 34);
+    setFixedHeight(m_titleBar->height() + m_pageStack->height() + 10 + m_comfirmButton->height() + 34);
     setLayout(mainLayout);
 }
 
@@ -141,6 +142,9 @@ void MainWindow::initConnect()
 
 void MainWindow::formartDevice()
 {
+    DWindowManagerHelper::setMotifFunctions(windowHandle(), DWindowManagerHelper::FUNC_CLOSE, false);
+    m_titleBar->setDisableFlags(Qt::WindowCloseButtonHint);
+
     QtConcurrent::run([=]{
         bool result = false;
         QString format = m_mainPage->selectedFormat();
@@ -209,7 +213,7 @@ void MainWindow::nextStep()
         m_pageStack->setCurrentWidget(m_mainPage);
         m_currentStep = Normal;
         break;
-    case RemovedWhenFormattingError :
+    case RemovedWhenFormattingError:
         qApp->quit();
         break;
     default:
@@ -219,13 +223,15 @@ void MainWindow::nextStep()
 
 void MainWindow::onFormatingFinished(const bool &successful)
 {
-    if(successful){
+    DWindowManagerHelper::setMotifFunctions(windowHandle(), DWindowManagerHelper::FUNC_CLOSE, true);
+    m_titleBar->setDisableFlags({});
+
+    if (successful) {
         m_currentStep = Finished;
         m_comfirmButton->setText(tr("Done"));
         m_comfirmButton->setEnabled(true);
         m_pageStack->setCurrentWidget(m_finishPage);
-    } else{
-
+    } else {
         if(!QFile::exists(m_formatPath)){
             m_currentStep = RemovedWhenFormattingError;
             m_comfirmButton->setText(tr("Quit"));
