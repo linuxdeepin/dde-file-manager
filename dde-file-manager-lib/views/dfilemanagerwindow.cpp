@@ -327,6 +327,10 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
 
         if (ok) {
             tab->onFileRootUrlChanged(fileUrl);
+
+            if (tab == tabBar->currentTab()) {
+                emit q_ptr->currentUrlChanged();
+            }
         }
     }
 
@@ -571,7 +575,6 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl)
         return false;
     }
 
-    emit currentUrlChanged();
     this->hideRenameBar();
 
     return true;

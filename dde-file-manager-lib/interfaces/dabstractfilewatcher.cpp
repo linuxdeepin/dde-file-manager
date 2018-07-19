@@ -20,6 +20,32 @@ DAbstractFileWatcherPrivate::DAbstractFileWatcherPrivate(DAbstractFileWatcher *q
 
 }
 
+bool DAbstractFileWatcherPrivate::handleGhostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType1 signal, const DUrl &arg1)
+{
+    Q_Q(DAbstractFileWatcher);
+
+    if (url == targetUrl || url == arg1) {
+        (q_ptr->*signal)(arg1);
+
+        return true;
+    }
+
+    return false;
+}
+
+bool DAbstractFileWatcherPrivate::handleGhostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType2 signal, const DUrl &arg1, const DUrl &arg2)
+{
+    Q_Q(DAbstractFileWatcher);
+
+    if (url == targetUrl || url == arg1 || url == arg2) {
+        (q_ptr->*signal)(arg1, arg2);
+
+        return true;
+    }
+
+    return false;
+}
+
 DAbstractFileWatcher::~DAbstractFileWatcher()
 {
     stopWatcher();
@@ -85,11 +111,8 @@ bool DAbstractFileWatcher::ghostSignal(const DUrl &targetUrl, DAbstractFileWatch
     bool ok = false;
 
     for (DAbstractFileWatcher *watcher : DAbstractFileWatcherPrivate::watcherList) {
-        if (watcher->fileUrl() == targetUrl
-                || watcher->fileUrl() == arg1) {
+        if (watcher->d_func()->handleGhostSignal(targetUrl, signal, arg1))
             ok = true;
-            (watcher->*signal)(arg1);
-        }
     }
 
     return ok;
@@ -103,12 +126,8 @@ bool DAbstractFileWatcher::ghostSignal(const DUrl &targetUrl, DAbstractFileWatch
     bool ok = false;
 
     for (DAbstractFileWatcher *watcher : DAbstractFileWatcherPrivate::watcherList) {
-        if (watcher->fileUrl() == targetUrl
-                || watcher->fileUrl() == arg1
-                || watcher->fileUrl() == arg2) {
+        if (watcher->d_func()->handleGhostSignal(targetUrl, signal, arg1, arg2))
             ok = true;
-            (watcher->*signal)(arg1, arg2);
-        }
     }
 
     return ok;

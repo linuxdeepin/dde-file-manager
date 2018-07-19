@@ -34,10 +34,12 @@ public:
 
     bool start() Q_DECL_OVERRIDE;
     bool stop() Q_DECL_OVERRIDE;
+    bool handleGhostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType1 signal, const DUrl &arg1) override;
+    bool handleGhostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType2 signal, const DUrl &arg1, const DUrl &arg2) override;
 
     void _q_handleFileDeleted(const QString &path, const QString &parentPath);
     void _q_handleFileAttributeChanged(const QString &path, const QString &parentPath);
-    void _q_handleFileMoved(const QString &from, const QString &fromParent, const QString &to, const QString &toParent);
+    bool _q_handleFileMoved(const QString &from, const QString &fromParent, const QString &to, const QString &toParent);
     void _q_handleFileCreated(const QString &path, const QString &parentPath);
     void _q_handleFileModified(const QString &path, const QString &parentPath);
     void _q_handleFileClose(const QString &path, const QString &parentPath);
@@ -136,6 +138,42 @@ bool DFileWatcherPrivate::stop()
     return ok;
 }
 
+bool DFileWatcherPrivate::handleGhostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType1 signal, const DUrl &arg1)
+{
+    if (!targetUrl.isLocalFile())
+        return false;
+
+    Q_Q(DFileWatcher);
+
+    if (signal == &DAbstractFileWatcher::fileDeleted) {
+        for (const QString &path : watchFileList) {
+            const DUrl &url = DUrl::fromLocalFile(path);
+
+            if (url == arg1) {
+                q_ptr->fileDeleted(this->url);
+
+                return true;
+            }
+        }
+    } else {
+        return DAbstractFileWatcherPrivate::handleGhostSignal(targetUrl, signal, arg1);
+    }
+
+    return false;
+}
+
+bool DFileWatcherPrivate::handleGhostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType2 signal, const DUrl &arg1, const DUrl &arg2)
+{
+    if (!targetUrl.isLocalFile())
+        return false;
+
+    if (signal != &DAbstractFileWatcher::fileMoved) {
+        return DAbstractFileWatcherPrivate::handleGhostSignal(targetUrl, signal, arg1, arg2);
+    }
+
+    return _q_handleFileMoved(arg1.toLocalFile(), arg1.parentUrl().toLocalFile(), arg2.toLocalFile(), arg2.parentUrl().toLocalFile());
+}
+
 void DFileWatcherPrivate::_q_handleFileDeleted(const QString &path, const QString &parentPath)
 {
     if (path != this->path && parentPath != this->path)
@@ -156,7 +194,7 @@ void DFileWatcherPrivate::_q_handleFileAttributeChanged(const QString &path, con
     emit q->fileAttributeChanged(DUrl::fromLocalFile(path));
 }
 
-void DFileWatcherPrivate::_q_handleFileMoved(const QString &from, const QString &fromParent, const QString &to, const QString &toParent)
+bool DFileWatcherPrivate::_q_handleFileMoved(const QString &from, const QString &fromParent, const QString &to, const QString &toParent)
 {
     Q_Q(DFileWatcher);
 
@@ -168,7 +206,11 @@ void DFileWatcherPrivate::_q_handleFileMoved(const QString &from, const QString 
         emit q->fileDeleted(url);
     } else if (toParent == this->path) {
         emit q->subfileCreated(DUrl::fromLocalFile(to));
+    } else {
+        return false;
     }
+
+    return true;
 }
 
 void DFileWatcherPrivate::_q_handleFileCreated(const QString &path, const QString &parentPath)
