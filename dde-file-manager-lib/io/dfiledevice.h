@@ -36,12 +36,6 @@ class DFileDevice : public QIODevice
 public:
     ~DFileDevice();
 
-    enum FileError {
-        NoError
-    };
-
-    FileError error() const;
-
     DUrl fileUrl() const;
 
     virtual int handle() const;
@@ -54,8 +48,6 @@ protected:
 
     explicit DFileDevice(QObject *parent = nullptr);
     DFileDevice(DFileDevicePrivate &dd, QObject *parent = nullptr);
-
-    void setError(FileError error);
 
     QScopedPointer<DFileDevicePrivate> d_ptr;
 };

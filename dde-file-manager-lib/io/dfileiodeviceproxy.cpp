@@ -55,42 +55,50 @@ QIODevice *DFileIODeviceProxy::device() const
 }
 
 #define CALL_PROXY(fun, ...)\
-    if (d_func()->device) return d_func()->device->fun(__VA_ARGS__);\
-    return DFileDevice::fun(__VA_ARGS__);
+    const auto && ret = d_func()->device->fun(__VA_ARGS__);\
+    setErrorString(d_func()->device->errorString());\
+    return ret;
+
+#define CALL_PROXY_CONST(fun, ...)\
+    return d_func()->device->fun(__VA_ARGS__);
 
 bool DFileIODeviceProxy::isSequential() const
 {
-    CALL_PROXY(isSequential)
+    CALL_PROXY_CONST(isSequential)
 }
 
 bool DFileIODeviceProxy::open(QIODevice::OpenMode mode)
 {
     Q_D(DFileIODeviceProxy);
 
-    if (d->device)
-        DFileDevice::open(mode);
+    if (d->device) {
+        if (!d->device->open(mode)) {
+            setErrorString(d->device->errorString());
 
-    CALL_PROXY(open, mode);
+            return false;
+        }
+    }
+
+    return DFileDevice::open(mode);
 }
 
 void DFileIODeviceProxy::close()
 {
     Q_D(DFileIODeviceProxy);
 
-    if (d->device)
-        DFileDevice::close();
-
-    CALL_PROXY(close)
+    DFileDevice::close();
+    d->device->close();
+    setErrorString(d->device->errorString());
 }
 
 qint64 DFileIODeviceProxy::pos() const
 {
-    CALL_PROXY(pos)
+    CALL_PROXY_CONST(pos)
 }
 
 qint64 DFileIODeviceProxy::size() const
 {
-    CALL_PROXY(size)
+    CALL_PROXY_CONST(size)
 }
 
 bool DFileIODeviceProxy::seek(qint64 pos)
@@ -100,7 +108,7 @@ bool DFileIODeviceProxy::seek(qint64 pos)
 
 bool DFileIODeviceProxy::atEnd() const
 {
-    CALL_PROXY(atEnd)
+    CALL_PROXY_CONST(atEnd)
 }
 
 bool DFileIODeviceProxy::reset()
@@ -110,12 +118,12 @@ bool DFileIODeviceProxy::reset()
 
 qint64 DFileIODeviceProxy::bytesAvailable() const
 {
-    CALL_PROXY(bytesAvailable)
+    CALL_PROXY_CONST(bytesAvailable)
 }
 
 qint64 DFileIODeviceProxy::bytesToWrite() const
 {
-    CALL_PROXY(bytesToWrite)
+    CALL_PROXY_CONST(bytesToWrite)
 }
 
 bool DFileIODeviceProxy::waitForReadyRead(int msecs)
@@ -136,32 +144,17 @@ DFileIODeviceProxy::DFileIODeviceProxy(DFileIODeviceProxyPrivate &dd, QObject *p
 
 qint64 DFileIODeviceProxy::readData(char *data, qint64 maxlen)
 {
-    Q_D(DFileIODeviceProxy);
-
-    if (d->device)
-        return d->device->read(data, maxlen);
-
-    return -1;
+    CALL_PROXY(read, data, maxlen)
 }
 
 qint64 DFileIODeviceProxy::readLineData(char *data, qint64 maxlen)
 {
-    Q_D(DFileIODeviceProxy);
-
-    if (d->device)
-        return d->device->readLine(data, maxlen);
-
-    return -1;
+    CALL_PROXY(readLine, data, maxlen)
 }
 
 qint64 DFileIODeviceProxy::writeData(const char *data, qint64 len)
 {
-    Q_D(DFileIODeviceProxy);
-
-    if (d->device)
-        return d->device->write(data, len);
-
-    return -1;
+    CALL_PROXY(write, data, len)
 }
 
 DFM_END_NAMESPACE

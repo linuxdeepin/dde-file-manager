@@ -28,13 +28,6 @@ DFileDevice::~DFileDevice()
 
 }
 
-DFileDevice::FileError DFileDevice::error() const
-{
-    Q_D(const DFileDevice);
-
-    return d->error;
-}
-
 DUrl DFileDevice::fileUrl() const
 {
     Q_D(const DFileDevice);
@@ -84,13 +77,6 @@ DFileDevice::DFileDevice(DFileDevicePrivate &dd, QObject *parent)
     , d_ptr(&dd)
 {
 
-}
-
-void DFileDevice::setError(DFileDevice::FileError error)
-{
-    Q_D(DFileDevice);
-
-    d->error = error;
 }
 
 DFileDevicePrivate::DFileDevicePrivate(DFileDevice *qq)

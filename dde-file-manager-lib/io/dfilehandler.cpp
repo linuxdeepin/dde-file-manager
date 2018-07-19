@@ -39,13 +39,6 @@ DFileHandler::~DFileHandler()
 
 }
 
-DFileHandler::Error DFileHandler::error() const
-{
-    Q_D(const DFileHandler);
-
-    return d->error;
-}
-
 QString DFileHandler::errorString() const
 {
     Q_D(const DFileHandler);

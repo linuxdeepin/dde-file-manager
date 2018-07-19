@@ -123,6 +123,7 @@ private:
     QLabel* m_remainLabel;
     QLabel* m_msg1Label;
     QLabel* m_msg2Label;
+    QLabel *m_errorLabel = nullptr;
 
     QPushButton* m_closeButton;
     QPushButton* m_pauseBuuton;

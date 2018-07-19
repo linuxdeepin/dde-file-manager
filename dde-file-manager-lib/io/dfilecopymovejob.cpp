@@ -102,6 +102,36 @@ DFileCopyMoveJobPrivate::~DFileCopyMoveJobPrivate()
 QString DFileCopyMoveJobPrivate::errorToString(DFileCopyMoveJob::Error error)
 {
     switch (error) {
+    case DFileCopyMoveJob::PermissionError:
+        return qApp->translate(QT_STRINGIFY(DFileCopyMoveJob), "Permission error");
+    case DFileCopyMoveJob::SpecialFileError:
+        return qApp->translate(QT_STRINGIFY(DFileCopyMoveJob), "The action is denied");
+    case DFileCopyMoveJob::FileExistsError:
+        return "Target file is exists";
+    case DFileCopyMoveJob::DirectoryExistsError:
+        return "Target directory is exists";
+    case DFileCopyMoveJob::OpenError:
+        return qApp->translate(QT_STRINGIFY(DFileCopyMoveJob), "Failed to open the file");
+    case DFileCopyMoveJob::ReadError:
+        return qApp->translate(QT_STRINGIFY(DFileCopyMoveJob), "Failed to read the file");
+    case DFileCopyMoveJob::WriteError:
+        return qApp->translate(QT_STRINGIFY(DFileCopyMoveJob), "Failed to write the file");
+    case DFileCopyMoveJob::MkdirError:
+        return qApp->translate(QT_STRINGIFY(DFileCopyMoveJob), "Failed to create the directory");
+    case DFileCopyMoveJob::RemoveError:
+        return qApp->translate(QT_STRINGIFY(DFileCopyMoveJob), "Failed to delete the file");
+    case DFileCopyMoveJob::RenameError:
+        return qApp->translate(QT_STRINGIFY(DFileCopyMoveJob), "Failed to move the file");
+    case DFileCopyMoveJob::NonexistenceError:
+        return qApp->translate(QT_STRINGIFY(DFileCopyMoveJob), "Original file does not exist");
+    case DFileCopyMoveJob::FileSizeTooBigError:
+        return qApp->translate(QT_STRINGIFY(DFileCopyMoveJob), "Failed, file size must be less than 4GB");
+    case DFileCopyMoveJob::NotEnoughSpaceError:
+        return qApp->translate(QT_STRINGIFY(DFileCopyMoveJob), "Target disk doesn't have enough space");
+    case DFileCopyMoveJob::IntegrityCheckingError:
+        return qApp->translate(QT_STRINGIFY(DFileCopyMoveJob), "File integrity was damaged");
+    case DFileCopyMoveJob::TargetReadOnlyError:
+        return qApp->translate(QT_STRINGIFY(DFileCopyMoveJob), "The target device is read only");
     default:
         break;
     }
@@ -230,7 +260,7 @@ DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::handleError(const DAbstractFil
     }
 
     qCDebug(fileJob()) << "from user," << "action:" << lastErrorHandleAction
-                       << "source url:" << sourceInfo->fileUrl()
+                       << "source url:" << (sourceInfo ? sourceInfo->fileUrl() : DUrl())
                        << "target url:" << (targetInfo ? targetInfo->fileUrl() : DUrl());
 
     return lastErrorHandleAction;
@@ -279,7 +309,7 @@ bool DFileCopyMoveJobPrivate::stateCheck()
     return true;
 }
 
-bool DFileCopyMoveJobPrivate::checkFileSize(qint64 size)
+bool DFileCopyMoveJobPrivate::checkFileSize(qint64 size) const
 {
     if (!targetStorageInfo.isValid())
         return true;
@@ -304,10 +334,15 @@ bool DFileCopyMoveJobPrivate::checkFreeSpace(qint64 needSize)
 
     targetStorageInfo.refresh();
 
+    // invalid size info
+    if (targetStorageInfo.bytesTotal() <= 0) {
+        return true;
+    }
+
     return targetStorageInfo.bytesAvailable() >= needSize;
 }
 
-QString DFileCopyMoveJobPrivate::formatFileName(const QString &name)
+QString DFileCopyMoveJobPrivate::formatFileName(const QString &name) const
 {
     if (fileHints.testFlag(DFileCopyMoveJob::DontFormatFileName)) {
         return name;
@@ -364,7 +399,7 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, DAbstractFileInfoPoint
     }
 
     if (!source_info->exists()) {
-        setError(DFileCopyMoveJob::NonexistenceError, QString("\"%1\" non-exists or not permission").arg(from.toString()));
+        setError(DFileCopyMoveJob::NonexistenceError);
 
         return handleError(source_info.constData(), nullptr) == DFileCopyMoveJob::SkipAction;
     }
@@ -374,7 +409,7 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, DAbstractFileInfoPoint
     case DAbstractFileInfo::BlockDevice:
     case DAbstractFileInfo::FIFOFile:
     case DAbstractFileInfo::SocketFile: {
-        setError(DFileCopyMoveJob::SpecialFileError, "Can't copy/move/rm special file");
+        setError(DFileCopyMoveJob::SpecialFileError);
 
         return handleError(source_info.constData(), nullptr) == DFileCopyMoveJob::SkipAction;
     }
@@ -486,7 +521,7 @@ process_file:
         qint64 size = source_info->size();
 
         while (!checkFreeSpace(size)) {
-            setError(DFileCopyMoveJob::NotEnoughSpaceError, "Insufficient target device space");
+            setError(DFileCopyMoveJob::NotEnoughSpaceError);
             DFileCopyMoveJob::Action action = handleError(source_info.constData(), new_file_info.constData());
 
             if (action == DFileCopyMoveJob::SkipAction)
@@ -502,7 +537,7 @@ process_file:
         }
 
         if (!checkFileSize(size)) {
-            setError(DFileCopyMoveJob::FileSizeTooBigError, "File size must be less than 4GB");
+            setError(DFileCopyMoveJob::FileSizeTooBigError);
             DFileCopyMoveJob::Action action = handleError(source_info.constData(), new_file_info.constData());
 
             if (action == DFileCopyMoveJob::SkipAction)
@@ -524,6 +559,7 @@ process_file:
 
             if (ok) {
                 handler->setFileTime(new_file_info->fileUrl(), source_info->lastRead(), source_info->lastModified());
+                handler->setPermissions(new_file_info->fileUrl(), source_info->permissions());
             }
         } else {
             ok = renameFile(handler, source_info.constData(), new_file_info.constData());
@@ -540,7 +576,7 @@ process_file:
 
         if (mode == DFileCopyMoveJob::CopyMode) {
             ok = mergeDirectory(handler, source_info.constData(), new_file_info.constData());
-        } else if (!doRenameFile(handler, source_info.constData(), new_file_info.constData())) { // 尝试直接rename操作
+        } else if (!handler->rename(source_info->fileUrl(), new_file_info->fileUrl())) { // 尝试直接rename操作
             qCDebug(fileJob(), "Failed on rename, Well be copy and delete the directory");
             ok = mergeDirectory(handler, source_info.constData(), new_file_info.constData());
         }
@@ -562,7 +598,12 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
 
         do {
             if (!handler->mkdir(toInfo->fileUrl())) {
-                setError(DFileCopyMoveJob::MkdirError, handler->errorString());
+                if (toInfo->isWritable()) {
+                    setError(DFileCopyMoveJob::MkdirError, qApp->translate(QT_STRINGIFY(DFileCopyMoveJob), "Failed to create the directory, , cause: %1").arg(handler->errorString()));
+                } else {
+                    setError(DFileCopyMoveJob::PermissionError);
+                }
+
                 action = handleError(fromInfo, toInfo);
             }
         } while (action == DFileCopyMoveJob::RetryAction);
@@ -626,7 +667,14 @@ open_file:
             if (fromDevice->open(QIODevice::ReadOnly)) {
                 action = DFileCopyMoveJob::NoAction;
             } else {
-                setError(DFileCopyMoveJob::OpenError, fromDevice->errorString());
+                qCDebug(fileJob()) << "open error:" << fromInfo->fileUrl();
+
+                if (fromInfo->isReadable()) {
+                    setError(DFileCopyMoveJob::OpenError, qApp->translate(QT_STRINGIFY(DFileCopyMoveJob), "Failed to open the file, cause: %1").arg(fromDevice->errorString()));
+                } else {
+                    setError(DFileCopyMoveJob::PermissionError);
+                }
+
                 action = handleError(fromInfo, nullptr);
             }
         } while (action == DFileCopyMoveJob::RetryAction);
@@ -641,7 +689,14 @@ open_file:
             if (toDevice->open(QIODevice::WriteOnly | QIODevice::Truncate)) {
                 action = DFileCopyMoveJob::NoAction;
             } else {
-                setError(DFileCopyMoveJob::OpenError, fromDevice->errorString());
+                qCDebug(fileJob()) << "open error:" << toInfo->fileUrl();
+
+                if (toInfo->isWritable()) {
+                    setError(DFileCopyMoveJob::OpenError, qApp->translate(QT_STRINGIFY(DFileCopyMoveJob), "Failed to open the file, cause: %1").arg(toDevice->errorString()));
+                } else {
+                    setError(DFileCopyMoveJob::PermissionError);
+                }
+
                 action = handleError(toInfo, nullptr);
             }
         } while (action == DFileCopyMoveJob::RetryAction);
@@ -691,7 +746,13 @@ read_data:
                 break;
             }
 
-            setError(DFileCopyMoveJob::ReadError, fromDevice->errorString());
+            const_cast<DAbstractFileInfo*>(fromInfo)->refresh();
+
+            if (fromInfo->exists()) {
+                setError(DFileCopyMoveJob::ReadError, qApp->translate(QT_STRINGIFY(DFileCopyMoveJob), "Failed to read the file, cause: %1").arg(fromDevice->errorString()));
+            } else {
+                setError(DFileCopyMoveJob::NonexistenceError);
+            }
 
             switch (handleError(fromInfo, toInfo)) {
             case DFileCopyMoveJob::RetryAction: {
@@ -719,7 +780,11 @@ write_data:
         qint64 size_write = toDevice->write(data, size_read);
 
         if (Q_UNLIKELY(size_write != size_read)) {
-            setError(DFileCopyMoveJob::WriteError, toDevice->errorString());
+            if (checkFreeSpace(currentJobDataSizeInfo.first - currentJobDataSizeInfo.second)) {
+                setError(DFileCopyMoveJob::WriteError, qApp->translate(QT_STRINGIFY(DFileCopyMoveJob), "Failed to write the file, , cause: %1").arg(toDevice->errorString()));
+            } else {
+                setError(DFileCopyMoveJob::NotEnoughSpaceError);
+            }
 
             switch (handleError(fromInfo, toInfo)) {
             case DFileCopyMoveJob::RetryAction: {
@@ -765,10 +830,14 @@ write_data:
         if (toDevice->open(QIODevice::ReadOnly)) {
             break;
         } else {
-            setError(DFileCopyMoveJob::OpenError, "Unable to open file for integrity check, error message: " + toDevice->errorString());
+            setError(DFileCopyMoveJob::OpenError, "Unable to open file for integrity check, , cause: " + toDevice->errorString());
             action = handleError(toInfo, nullptr);
         }
     } while (action == DFileCopyMoveJob::RetryAction);
+
+    if (action == DFileCopyMoveJob::SkipAction) {
+        return true;
+    }
 
     char data[blockSize + 1];
     ulong target_checksum = adler32(0L, Z_NULL, 0);
@@ -787,7 +856,7 @@ write_data:
                 break;
             }
 
-            setError(DFileCopyMoveJob::IntegrityCheckingError, toDevice->errorString());
+            setError(DFileCopyMoveJob::IntegrityCheckingError, qApp->translate(QT_STRINGIFY(DFileCopyMoveJob), "File integrity was damaged, cause: %1").arg(toDevice->errorString()));
 
             switch (handleError(fromInfo, toInfo)) {
             case DFileCopyMoveJob::RetryAction: {
@@ -806,9 +875,9 @@ write_data:
     qCDebug(fileJob(), "Time spent of integrity check of the file: %lld", updateSpeedElapsedTimer->elapsed() - elapsed_time_checksum);
 
     if (source_checksum != target_checksum) {
-        const QString &errorString = QString::asprintf("Failed on file integrity checking, source file: 0x%lx, target file: 0x%lx", source_checksum, target_checksum);
+        qCWarning(fileJob(), "Failed on file integrity checking, source file: 0x%lx, target file: 0x%lx", source_checksum, target_checksum);
 
-        setError(DFileCopyMoveJob::IntegrityCheckingError, errorString);
+        setError(DFileCopyMoveJob::IntegrityCheckingError);
         DFileCopyMoveJob::Action action = handleError(fromInfo, toInfo);
 
         if (action == DFileCopyMoveJob::SkipAction) {
@@ -839,7 +908,12 @@ bool DFileCopyMoveJobPrivate::doRemoveFile(DFileHandler *handler, const DAbstrac
         if (is_file ? handler->remove(fileInfo->fileUrl()) : handler->rmdir(fileInfo->fileUrl()))
             return true;
 
-        setError(DFileCopyMoveJob::RemoveError, handler->errorString());
+        if (fileInfo->canRename()) {
+            setError(DFileCopyMoveJob::RemoveError, qApp->translate(QT_STRINGIFY(DFileCopyMoveJob), "Failed to delete the file, cause: %1").arg(handler->errorString()));
+        } else {
+            setError(DFileCopyMoveJob::PermissionError);
+        }
+
         action = handleError(fileInfo, nullptr);
     } while (action == DFileCopyMoveJob::RetryAction);
 
@@ -866,6 +940,7 @@ bool DFileCopyMoveJobPrivate::doRenameFile(DFileHandler *handler, const DAbstrac
     }
 
     handler->setFileTime(newInfo->fileUrl(), oldInfo->lastRead(), oldInfo->lastModified());
+    handler->setPermissions(newInfo->fileUrl(), oldInfo->permissions());
 
     if (!doRemoveFile(handler, oldInfo)) {
         return false;
@@ -888,7 +963,7 @@ bool DFileCopyMoveJobPrivate::doLinkFile(DFileHandler *handler, const DAbstractF
             return true;
         }
 
-        setError(DFileCopyMoveJob::SymlinkError, handler->errorString());
+        setError(DFileCopyMoveJob::SymlinkError, qApp->translate(QT_STRINGIFY(DFileCopyMoveJob), "Fail to create symlink, cause: %1").arg(handler->errorString()));
         action = handleError(fileInfo, nullptr);
     } while (action == DFileCopyMoveJob::RetryAction);
 
@@ -1128,6 +1203,13 @@ DUrl DFileCopyMoveJob::targetUrl() const
     return d->targetUrl;
 }
 
+bool DFileCopyMoveJob::fileStatisticsIsFinished() const
+{
+    Q_D(const DFileCopyMoveJob);
+
+    return d->fileStatistics->isFinished();
+}
+
 qint64 DFileCopyMoveJob::totalDataSize() const
 {
     Q_D(const DFileCopyMoveJob);
@@ -1190,6 +1272,8 @@ DFileCopyMoveJob::Actions DFileCopyMoveJob::supportActions(DFileCopyMoveJob::Err
         return SkipAction | ReplaceAction | CoexistAction | CancelAction;
     case DirectoryExistsError:
         return SkipAction | MergeAction | CoexistAction | CancelAction;
+    case TargetReadOnlyError:
+        return SkipAction | EnforceAction;
     default:
         break;
     }
@@ -1323,9 +1407,16 @@ void DFileCopyMoveJob::run()
 
     // for locale file
     if (d->targetUrl.isLocalFile()) {
-        d->targetStorageInfo.setPath(d->targetUrl.toLocalFile());
+        d->targetStorageInfo.setPath(d->targetUrl.toLocalFile(), DStorageInfo::FollowSymlink);
+
+        if (d->targetStorageInfo.isReadOnly()) {
+            d->setError(TargetReadOnlyError);
+
+            if (d->handleError(nullptr, target_info.constData()) != EnforceAction)
+                return;
+        }
     } else {
-        d->targetStorageInfo = QStorageInfo();
+        d->targetStorageInfo = DStorageInfo();
     }
 
     for (DUrl &source : d->sourceUrlList) {

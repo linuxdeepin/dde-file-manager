@@ -110,6 +110,13 @@ void CircleProgressAnimatePad::paintEvent(QPaintEvent *event)
     QLabel::paintEvent(event);
 }
 
+void CircleProgressAnimatePad::mousePressEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event)
+
+    emit clicked();
+}
+
 int CircleProgressAnimatePad::fontSize() const
 {
     return m_fontSize;
@@ -118,6 +125,11 @@ int CircleProgressAnimatePad::fontSize() const
 void CircleProgressAnimatePad::setFontSize(int fontSize)
 {
     m_fontSize = fontSize;
+}
+
+bool CircleProgressAnimatePad::animationRunning() const
+{
+    return isAnimateStarted;
 }
 
 QColor CircleProgressAnimatePad::backgroundColor() const

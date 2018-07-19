@@ -73,12 +73,12 @@ public:
         ResizeError,
         RemoveError,
         RenameError,
-        OutOfSpaceError,
         UnknowUrlError,
         NonexistenceError,
         IntegrityCheckingError,
         FileSizeTooBigError,
         NotEnoughSpaceError,
+        TargetReadOnlyError,
         UnknowError
     };
 
@@ -141,6 +141,7 @@ public:
     DUrlList targetUrlList() const;
     DUrl targetUrl() const;
 
+    bool fileStatisticsIsFinished() const;
     qint64 totalDataSize() const;
     int totalFilesCount() const;
     QList<QPair<DUrl, DUrl> > completedFiles() const;

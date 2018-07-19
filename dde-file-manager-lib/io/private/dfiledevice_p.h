@@ -31,10 +31,8 @@ class DFileDevicePrivate
 public:
     DFileDevicePrivate(DFileDevice *qq);
 
-    DUrl url;
-
-    DFileDevice::FileError error = DFileDevice::NoError;
     DFileDevice *q_ptr;
+    DUrl url;
 
     Q_DECLARE_PUBLIC(DFileDevice)
 };
