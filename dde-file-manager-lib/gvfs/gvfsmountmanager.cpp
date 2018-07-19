@@ -36,6 +36,8 @@
 #include "partman/command.h"
 #include "mountsecretdiskaskpassworddialog.h"
 #include "app/filesignalmanager.h"
+
+#include "networkmanager.h"
 #include "dfmapplication.h"
 #include "dabstractfilewatcher.h"
 
@@ -1332,8 +1334,6 @@ void GvfsMountManager::unmount_done_cb(GObject *object, GAsyncResult *res, gpoin
 
     succeeded = g_mount_unmount_with_operation_finish (G_MOUNT (object), res, &error);
 
-    g_object_unref (G_MOUNT (object));
-
     if (!succeeded) {
         DDialog error_dilaog(tr("Error unmounting mount"), QString(error->message));
 
@@ -1351,7 +1351,30 @@ void GvfsMountManager::unmount_done_cb(GObject *object, GAsyncResult *res, gpoin
 
             g_free(local_mount_point);
         }
+
+        // 从缓存的Network节点中清理数据
+        GFile *root_file = g_mount_get_root(G_MOUNT(object));
+        char *root_uri = g_file_get_uri(root_file);
+        const QString &root_url = QFile::decodeName(root_uri);
+
+        if (root_uri && !root_url.startsWith("file://")) {
+            DUrlList dirty_list;
+
+            for (auto begin = NetworkManager::NetworkNodes.keyBegin(); begin != NetworkManager::NetworkNodes.keyEnd(); ++begin) {
+                if (begin->toString().startsWith(root_url)) {
+                    dirty_list << *begin;
+                }
+            }
+
+            for (const DUrl &url : dirty_list)
+                NetworkManager::NetworkNodes.remove(url);
+        }
+
+        g_free(root_uri);
+        g_object_unref(root_file);
     }
+
+    g_object_unref (G_MOUNT (object));
 }
 
 void GvfsMountManager::eject(const QString &path)
