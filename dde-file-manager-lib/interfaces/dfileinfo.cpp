@@ -340,11 +340,29 @@ bool DFileInfo::canRename() const
     if (systemPathManager->isSystemPath(absoluteFilePath()))
         return false;
 
-    bool canRename = DFileInfo(absolutePath()).isWritable();
+    Q_D(const DFileInfo);
 
-//    canRenameCacheMap[fileUrl()] = canRename;
+    QFileInfo dir_info(d->fileInfo.absolutePath());
 
-    return canRename;
+    if (!dir_info.isWritable())
+        return false;
+
+#ifdef Q_OS_LINUX
+    // 如果是root，则拥有权限
+    if (getuid() == 0) {
+        return true;
+    }
+
+    QT_STATBUF statBuffer;
+    if (QT_LSTAT(QFile::encodeName(dir_info.absoluteFilePath()), &statBuffer) == 0) {
+        // 如果父目录拥有t权限，则判断当前用户是不是文件的owner，不是则无法操作文件
+        if ((statBuffer.st_mode & S_ISVTX) && d->fileInfo.ownerId() != getuid()) {
+            return false;
+        }
+    }
+#endif
+
+    return true;
 }
 
 bool DFileInfo::canShare() const

@@ -60,7 +60,10 @@ public:
     int fontSize() const;
     void setFontSize(int fontSize);
 
+    bool animationRunning() const;
+
 signals:
+    void clicked();
 
 public slots:
     void startAnimation();
@@ -69,6 +72,7 @@ public slots:
 
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent *event) override;
 
 private:
     int m_lineWidth = 3;

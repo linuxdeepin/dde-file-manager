@@ -31,11 +31,6 @@ class DFileHandler
 public:
     virtual ~DFileHandler();
 
-    enum Error {
-        NoError
-    };
-
-    Error error() const;
     QString errorString() const;
 
     virtual bool exists(const DUrl &url) = 0;

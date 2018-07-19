@@ -22,6 +22,7 @@
 
 #include "dgiofiledevice.h"
 #include "private/dfiledevice_p.h"
+#include "dabstractfilewatcher.h"
 
 DFM_BEGIN_NAMESPACE
 
@@ -65,14 +66,14 @@ bool DGIOFileDevice::open(QIODevice::OpenMode mode)
     if (isOpen())
         return false;
 
-    if ((mode & ~(QIODevice::ReadWrite | QIODevice::Append)) != 0)
+    if ((mode & ~(ReadWrite | Append | Truncate)) != 0)
         return false;
 
     Q_D(DGIOFileDevice);
 
     GError *error = nullptr;
 
-    if (mode.testFlag(QIODevice::ReadOnly)) {
+    if (mode.testFlag(ReadOnly)) {
         d->input_stream = G_INPUT_STREAM(g_file_read(d->file, nullptr, &error));
 
         if (error) {
@@ -86,7 +87,8 @@ bool DGIOFileDevice::open(QIODevice::OpenMode mode)
         d->input_stream = nullptr;
     }
 
-    if ((mode | QIODevice::WriteOnly | QIODevice::Append) == mode) {
+    if ((mode & (WriteOnly | Append | Truncate))) {
+        bool exists = g_file_query_exists(d->file, nullptr);
         d->output_stream = G_OUTPUT_STREAM(g_file_append_to(d->file, G_FILE_CREATE_NONE, nullptr, &error));
 
         if (error) {
@@ -99,7 +101,9 @@ bool DGIOFileDevice::open(QIODevice::OpenMode mode)
             return false;
         }
 
-        if (!mode.testFlag(QIODevice::Append)) {
+        if (!exists) {
+            DAbstractFileWatcher::ghostSignal(d->url.parentUrl(), &DAbstractFileWatcher::subfileCreated, d->url);
+        } else if (!mode.testFlag(Append) || mode.testFlag(Truncate)) {
             if (g_seekable_tell(G_SEEKABLE(d->output_stream)) > 0) {
                 if (!g_seekable_can_seek(G_SEEKABLE(d->output_stream))) {
                     setErrorString("Can not seek the file, only append write mode");

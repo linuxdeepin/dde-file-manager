@@ -65,19 +65,19 @@ public:
             return action;
         }
 
-        job->togglePause();
         m_taskWidget->updateMessageByJob();
 
         switch (error) {
         case DFileCopyMoveJob::FileExistsError:
         case DFileCopyMoveJob::DirectoryExistsError:
+            job->togglePause();
             m_taskWidget->showConflict();
             break;
         case DFileCopyMoveJob::UnknowUrlError:
-        case DFileCopyMoveJob::NonexistenceError:
         case DFileCopyMoveJob::UnknowError:
             return DFileCopyMoveJob::CancelAction;
         default:
+            job->togglePause();
             m_taskWidget->showButtonFrame();
             break;
         }
@@ -139,8 +139,13 @@ MoveCopyTaskWidget::MoveCopyTaskWidget(DFileCopyMoveJob *job, QWidget *parent)
             disposeJobError(DFileCopyMoveJob::RetryAction);
         }
     });
+    connect(m_animatePad, &CircleProgressAnimatePad::clicked, job, &DFileCopyMoveJob::togglePause);
 
     m_jobInfo->totalDataSize = job->totalDataSize();
+
+    if (!m_fileJob->fileStatisticsIsFinished()) {
+        m_animatePad->startAnimation();
+    }
 }
 
 MoveCopyTaskWidget::~MoveCopyTaskWidget()
@@ -191,11 +196,21 @@ void MoveCopyTaskWidget::initUI(){
     m_msg1Label->setObjectName("MessageLabel1");
     m_msg2Label->setObjectName("MessageLabel2");
 
+    if (m_fileJob) {
+        m_errorLabel = new QLabel(this);
+        m_errorLabel->setObjectName("ErrorLabel");
+    }
+
     QGridLayout* msgGridLayout = new QGridLayout;
     msgGridLayout->addWidget(m_msg1Label, 0, 0, Qt::AlignVCenter);
 
     msgGridLayout->addWidget(m_speedLabel, 0, 1,Qt::AlignRight|Qt::AlignVCenter);
     msgGridLayout->addWidget(m_msg2Label, 1, 0, Qt::AlignVCenter);
+
+    if (m_errorLabel) {
+        msgGridLayout->addWidget(m_errorLabel, 2, 0, Qt::AlignVCenter);
+    }
+
     msgGridLayout->addWidget(m_remainLabel, 1, 1,Qt::AlignRight|Qt::AlignVCenter);
     msgGridLayout->setColumnMinimumWidth(0, 385);
     msgGridLayout->setColumnStretch(0, 1);
@@ -391,22 +406,24 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
     QString remainStr = "%1";
 
     if (m_jobDetail.contains("type")){
-        if (m_jobDetail.value("type") == "copy"){
-            msg1 = tr("Copying %1").arg(file);
-            msg2 = tr("Copy to %2").arg(destination);
+        if (!file.isEmpty()) {
+            if (m_jobDetail.value("type") == "copy"){
+                msg1 = tr("Copying %1").arg(file);
+                msg2 = tr("Copy to %2").arg(destination);
 
-        }else if (m_jobDetail.value("type") == "move"){
-            msg1 = tr("Moving %1").arg(file);
-            msg2 = tr("Move to %2").arg(destination);
-        }else if (m_jobDetail.value("type") == "restore"){
-            msg1 = tr("Restoring %1").arg(file);
-            msg2 = tr("Restore to %2").arg(destination);
-        }else if (m_jobDetail.value("type") == "delete"){
-            msg1 = tr("Deleting %1").arg(file);
-            msg2 = tr("");
-        }else if (m_jobDetail.value("type") == "trash"){
-            msg1 = tr("Trashing %1").arg(file);
-            msg2 = tr("");
+            }else if (m_jobDetail.value("type") == "move"){
+                msg1 = tr("Moving %1").arg(file);
+                msg2 = tr("Move to %2").arg(destination);
+            }else if (m_jobDetail.value("type") == "restore"){
+                msg1 = tr("Restoring %1").arg(file);
+                msg2 = tr("Restore to %2").arg(destination);
+            }else if (m_jobDetail.value("type") == "delete"){
+                msg1 = tr("Deleting %1").arg(file);
+                msg2 = tr("");
+            }else if (m_jobDetail.value("type") == "trash"){
+                msg1 = tr("Trashing %1").arg(file);
+                msg2 = tr("");
+            }
         }
 
         if (status == "restoring"){
@@ -433,16 +450,7 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
                 m_replaceButton->setVisible(m_fileJob->supportActions(m_fileJob->error()).testFlag(DFileCopyMoveJob::RetryAction));
                 m_replaceButton->setText(tr("Retry"));
                 m_keepBothButton->hide();
-
-                if (m_fileJob->mode() == DFileCopyMoveJob::CopyMode) {
-                    msg1 = tr("Failed on copy %1").arg(file);
-                } else if (m_fileJob->targetUrl().isValid()) {
-                    msg1 = tr("Failed on move %1").arg(file);
-                } else {
-                    msg1 = tr("Failed on delete %1").arg(file);
-                }
-
-                msg2 = m_fileJob->errorString();
+                m_errorLabel->setText(m_fileJob->errorString());
             }
         } else if (!status.isEmpty()) {
             m_animatePad->stopAnimation();
@@ -595,6 +603,10 @@ bool MoveCopyTaskWidget::event(QEvent *e)
 
 void MoveCopyTaskWidget::onJobProgressChanged(qreal progress)
 {
+    if (m_animatePad->animationRunning()) {
+        m_animatePad->stopAnimation();
+    }
+
     m_jobInfo->progress = progress;
     setProgress(progress * 100);
 }
@@ -616,6 +628,10 @@ void MoveCopyTaskWidget::disposeJobError(DFileCopyMoveJob::Action action)
 
 void MoveCopyTaskWidget::handleClose()
 {
+    if (m_fileJob) {
+        m_fileJob->stop();
+    }
+
     emit closed(m_jobDetail);
 }
 

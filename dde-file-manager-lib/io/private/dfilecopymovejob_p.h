@@ -22,12 +22,12 @@
 #define DFILECOPYMOVEJOB_P_H
 
 #include "dfilecopymovejob.h"
+#include "dstorageinfo.h"
 
 #include <QWaitCondition>
 #include <QPointer>
 #include <QStack>
 #include <QElapsedTimer>
-#include <QStorageInfo>
 
 typedef QExplicitlySharedDataPointer<DAbstractFileInfo> DAbstractFileInfoPointer;
 
@@ -63,9 +63,9 @@ public:
     DFileCopyMoveJob::Action handleError(const DAbstractFileInfo *sourceInfo, const DAbstractFileInfo *targetInfo);
     bool jobWait();
     bool stateCheck();
-    bool checkFileSize(qint64 size);
+    bool checkFileSize(qint64 size) const;
     bool checkFreeSpace(qint64 needSize);
-    QString formatFileName(const QString &name);
+    QString formatFileName(const QString &name) const;
 
     static QString getNewFileName(const DAbstractFileInfo *sourceFileInfo, const DAbstractFileInfo *targetDirectory);
 
@@ -105,7 +105,7 @@ public:
     DUrlList sourceUrlList;
     DUrlList targetUrlList;
     DUrl targetUrl;
-    QStorageInfo targetStorageInfo;
+    DStorageInfo targetStorageInfo;
     QPointer<QThread> threadAtStart;
     DFileCopyMoveJob::Action actionOfError[DFileCopyMoveJob::UnknowError] = {DFileCopyMoveJob::NoAction};
     DFileStatisticsJob *fileStatistics = nullptr;

@@ -199,3 +199,8 @@ QLabel#MessageLabel1{
 QLabel#MessageLabel2{
     font-size: 11px;
 }
+
+QLabel#ErrorLabel{
+    font-size: 11px;
+    color: "red";
+}

@@ -27,8 +27,11 @@
 
 DFM_BEGIN_NAMESPACE
 
+class DStorageInfoPrivate;
 class DStorageInfo : public QStorageInfo
 {
+    Q_DECLARE_PRIVATE(DStorageInfo)
+
 public:
     enum PathHint {
         FollowSymlink = 0x01,
@@ -39,11 +42,33 @@ public:
     DStorageInfo();
     explicit DStorageInfo(const QString &path, PathHints hints = 0);
     explicit DStorageInfo(const QDir &dir, PathHints hints = 0);
+    ~DStorageInfo();
+
+    DStorageInfo &operator=(const DStorageInfo &other);
+#ifdef Q_COMPILER_RVALUE_REFS
+    DStorageInfo &operator=(DStorageInfo &&other) Q_DECL_NOTHROW { swap(other); return *this; }
+#endif
+
+    inline void swap(DStorageInfo &other) Q_DECL_NOTHROW
+    { qSwap(d_ptr, other.d_ptr); }
 
     void setPath(const QString &path, PathHints hints = 0);
 
+    QByteArray fileSystemType() const;
+
+    qint64 bytesTotal() const;
+    qint64 bytesFree() const;
+    qint64 bytesAvailable() const;
+
+    bool isReadOnly() const;
+
+    void refresh();
+
     static bool inSameDevice(QString path1, QString path2, PathHints hints = 0);
     static bool inSameDevice(const DUrl &url1, const DUrl &url2, PathHints hints = 0);
+
+private:
+    QScopedPointer<DStorageInfoPrivate> d_ptr;
 };
 
 DFM_END_NAMESPACE

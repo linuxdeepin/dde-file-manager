@@ -32,10 +32,8 @@ public:
 
     void setErrorString(const QString &es);
 
-    DFileHandler::Error error;
-    QString errorString;
-
     DFileHandler *q_ptr;
+    QString errorString;
 };
 
 DFM_END_NAMESPACE
