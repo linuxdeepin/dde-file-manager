@@ -246,6 +246,18 @@
                             "default": true
                         }
                     ]
+                },
+                {
+                    "key": "other",
+                    "name": qsTranslate("GenerateSettingTranslate", "Other"),
+                    "options": [
+                        {
+                            "key": "hide_system_partition",
+                            "text": qsTranslate("GenerateSettingTranslate", "Hide system disk"),
+                            "type": "checkbox",
+                            "default": false
+                        }
+                    ]
                 }
             ]
         }
