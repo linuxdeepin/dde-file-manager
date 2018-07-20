@@ -146,7 +146,7 @@ void GvfsMountClient::mount_done_cb(GObject *object, GAsyncResult *res, gpointer
 
         if (showWarnDlg) {
             DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
-                                         tr("Error mounting device"), QString(error->message));
+                                         tr("Mounting device error"), QString(error->message));
         }
 
         qCDebug(mountClient()) << "g_file_mount_enclosing_volume_finish" << succeeded << error;
