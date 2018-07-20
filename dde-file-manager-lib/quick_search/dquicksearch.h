@@ -108,6 +108,9 @@ public:
     }
     ///###
 
+    static bool store_adler32_value(const QString &mount_point, const std::size_t &value)noexcept;
+    static std::size_t read_adler32_value(const QString &mount_point)noexcept;
+    static std::size_t count_adler32(const QString &mount_point)noexcept;
 
 public slots:
     void onMountAdded(const QString &blockDevicePath, const QByteArray &mountPoint);
@@ -127,6 +130,7 @@ private:
 
     ///###: it is standby.
     static QList<QString> filter_result(const QList<QString> &searched_result, const QByteArray &regex);
+
 
 
     std::atomic<bool> m_readyFlag{ false };

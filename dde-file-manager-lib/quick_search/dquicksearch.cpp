@@ -23,6 +23,9 @@
 #include <thread>
 #include <string>
 #include <fstream>
+#include <iomanip>
+
+#include <zlib.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -79,7 +82,7 @@ int match_regex(const char *name, void *query)
 
 
 
-
+static constexpr const char *const FILE_FOR_STORING_ADLER32{ ".__deepin.num" };
 static constexpr const std::size_t buffer_size{ (1 << 24) };
 static constexpr const std::size_t MAXPARTIONSIZE{ 99 };
 static std::once_flag once{};
@@ -265,6 +268,7 @@ static std::shared_ptr<std::pair<std::queue<partition>, std::queue<partition>>> 
 DQuickSearch::DQuickSearch(QObject *const parent)
     : QObject{ parent }
 {
+    std::ios_base::sync_with_stdio(false);
 }
 
 
@@ -285,9 +289,18 @@ QList<QString> DQuickSearch::search(const QString &local_path, const QString &ke
         QPair<QString, QString> device_and_mount_point{ detail::get_mount_point_of_file(local_path, devices_and_mount_points) };
         std::map<QString, QString>::const_iterator pos{ m_mount_point_and_lft_buf.find(device_and_mount_point.second) };
 
+        ///###: adler32 check.
+        std::size_t adler32_value_backup{ DQuickSearch::read_adler32_value(pos->first) };
+        std::size_t adler32_value_now{ DQuickSearch::count_adler32(pos->first) };
+
+        if (adler32_value_backup != adler32_value_now) {
+            return searched_list;
+        }
+
+
         if (pos != m_mount_point_and_lft_buf.cend()) {
             std::lock_guard<std::mutex> raii_lock{ m_mutex };
-            fs_buf *buf =  NULL;
+            fs_buf *buf{ nullptr };
             load_fs_buf(&buf, pos->second.toLocal8Bit().constData());
 
             if (buf) {
@@ -357,15 +370,12 @@ QList<QString> DQuickSearch::search(const QString &local_path, const QString &ke
 #endif //QT_DEBUG
                     }
 
-
 #ifdef QT_DEBUG
                     qDebug() << searched_list;
 #endif //QT_DEBUG
 
                     return searched_list;
                 }
-
-                free_fs_buf(buf);
             }
         }
     }
@@ -381,8 +391,21 @@ void DQuickSearch::filesWereCreated(const QList<QByteArray> &files_path)
     }
 
     if (files_path.isEmpty()) {
-        fs_change changes[10] {}; //###:temporarily useless. Maybe forever.
+        fs_change changes[10] {};
         std::multimap<QString, QString> devices_and_mount_points{ detail::query_partions_of_devices() };
+        std::function<bool(const QString &)> update_adler32_backup{
+            [](const QString & mount_point)->bool
+            {
+                std::size_t adler32_value{ DQuickSearch::count_adler32(mount_point) };
+                if (adler32_value)
+                {
+                    bool value{ DQuickSearch::store_adler32_value(mount_point, adler32_value) };
+                    return value;
+                }
+
+                return false;
+            }
+        };
 
         std::lock_guard<std::mutex> raii_lock{ m_mutex };
 
@@ -410,20 +433,36 @@ void DQuickSearch::filesWereCreated(const QList<QByteArray> &files_path)
 
                 if (file_info.isSymLink()) {
                     insert_path(buf, const_cast<char *>(local_8bit.data()), ACT_NEW_SYMLINK, changes);
+                    save_fs_buf(buf, pos->second.toLocal8Bit().constData());
+
+                    if (!update_adler32_backup(pos->first)) {
+                        m_mount_point_and_lft_buf.erase(pos);
+                    }
+
                     continue;
                 }
 
                 if (file_info.isFile()) {
                     insert_path(buf, const_cast<char *>(local_8bit.data()), ACT_NEW_FILE, changes);
+                    save_fs_buf(buf, pos->second.toLocal8Bit().constData());
+
+                    if (!update_adler32_backup(pos->first)) {
+                        m_mount_point_and_lft_buf.erase(pos);
+                    }
+
                     continue;
                 }
 
                 if (file_info.isDir()) {
                     insert_path(buf, const_cast<char *>(local_8bit.data()), ACT_NEW_FOLDER, changes);
+                    save_fs_buf(buf, pos->second.toLocal8Bit().constData());
+
+                    if (!update_adler32_backup(pos->first)) {
+                        m_mount_point_and_lft_buf.erase(pos);
+                    }
+
                     continue;
                 }
-
-                free_fs_buf(buf);
             }
         }
     }
@@ -440,11 +479,23 @@ void DQuickSearch::filesWereDeleted(const QList<QByteArray> &files_path)
         fs_change changes[10] {};
         std::uint32_t change_count{  sizeof(changes) / sizeof(fs_change) };
         std::multimap<QString, QString> devices_and_mount_points{ detail::query_partions_of_devices() };
+        std::function<bool(const QString &)> update_adler32_backup{
+            [](const QString & mount_point)->bool
+            {
+                std::size_t adler32_value{ DQuickSearch::count_adler32(mount_point) };
+                if (adler32_value)
+                {
+                    bool value{ DQuickSearch::store_adler32_value(mount_point, adler32_value) };
+                    return value;
+                }
+
+                return false;
+            }
+        };
 
         std::lock_guard<std::mutex> raii_lock{ m_mutex };
 
         for (const QByteArray &path : files_path) {
-            QString path_str{ QString::fromLocal8Bit(path) };
 
             if (m_flag.load(std::memory_order_consume)) {
                 devices_and_mount_points = detail::query_partions_of_devices();
@@ -465,7 +516,11 @@ void DQuickSearch::filesWereDeleted(const QList<QByteArray> &files_path)
 
             if (buf) {
                 remove_path(buf, const_cast<char *>(local_8bit.data()), changes, &change_count);
-                free_fs_buf(buf);
+                save_fs_buf(buf, pos->second.toLocal8Bit().constData());
+
+                if (!update_adler32_backup(pos->first)) {
+                    m_mount_point_and_lft_buf.erase(pos);
+                }
             }
         }
     }
@@ -481,6 +536,19 @@ void DQuickSearch::filesWereRenamed(const QList<QPair<QByteArray, QByteArray> > 
         fs_change changes[10] {};
         std::uint32_t change_count{  sizeof(changes) / sizeof(fs_change) };
         std::multimap<QString, QString> devices_and_mount_points{ detail::query_partions_of_devices() };
+        std::function<bool(const QString &)> update_adler32_backup{
+            [](const QString & mount_point)->bool
+            {
+                std::size_t adler32_value{ DQuickSearch::count_adler32(mount_point) };
+                if (adler32_value)
+                {
+                    bool value{ DQuickSearch::store_adler32_value(mount_point, adler32_value) };
+                    return value;
+                }
+
+                return false;
+            }
+        };
 
         std::lock_guard<std::mutex> raii_lock{ m_mutex };
 
@@ -507,7 +575,11 @@ void DQuickSearch::filesWereRenamed(const QList<QPair<QByteArray, QByteArray> > 
 
             if (buf) {
                 rename_path(buf, const_cast<char *>(old_name.data()), const_cast<char *>(new_name.data()), changes, &change_count);
-                free_fs_buf(buf);
+                save_fs_buf(buf, pos->second.toLocal8Bit().constData());
+
+                if (!update_adler32_backup(pos->first)) {
+                    m_mount_point_and_lft_buf.erase(pos);
+                }
             }
         }
     }
@@ -639,7 +711,6 @@ void DQuickSearch::onAutoInnerIndexesOpened()
 
                 if (code == 0 && buf != nullptr) {
                     m_mount_point_and_lft_buf.emplace(mount_point, QString::fromLocal8Bit(lft_file));
-                    free_fs_buf(buf);
                 }
 
             } else {
@@ -726,7 +797,6 @@ void DQuickSearch::onAutoRemovableIndexesOpened()
 
                 if (code == 0 && buf != nullptr) {
                     m_mount_point_and_lft_buf.emplace(mount_point, QString::fromLocal8Bit(lft_file));
-                    free_fs_buf(buf);
                 }
 
             } else {
@@ -945,9 +1015,15 @@ bool DQuickSearch::create_lft(const QString &mount_point)
             build_fstree(buffer, 0, NULL, NULL);
 
             if (save_fs_buf(buffer, file_located.c_str()) == 0) {
-                m_mount_point_and_lft_buf[mount_point] = QString::fromStdString(file_located);
 
-                return true;
+                ///###: adler32 check.
+                std::size_t adler32_value{ DQuickSearch::count_adler32(mount_point) };
+
+                if (adler32_value) {
+                    DQuickSearch::store_adler32_value(mount_point, adler32_value);
+                    m_mount_point_and_lft_buf[mount_point] = QString::fromStdString(file_located);
+                    return true;
+                }
             }
         }
     }
@@ -974,6 +1050,70 @@ QList<QString> DQuickSearch::filter_result(const QList<QString> &searched_result
 
     return result;
 }
+
+
+bool DQuickSearch::store_adler32_value(const QString &mount_point, const std::size_t &value) noexcept
+{
+    if (mount_point.isEmpty()) {
+        return false;
+    }
+
+    QByteArray local8bit_mount_point{ mount_point.toLocal8Bit() + QByteArray{"/"} + QByteArray{ FILE_FOR_STORING_ADLER32 } };
+    std::basic_ofstream<char> file_stream{ local8bit_mount_point.constData(), std::ios_base::out | std::ios_base::trunc };
+
+    if (file_stream) {
+        file_stream << value;
+        file_stream.close();
+
+        return true;
+    }
+
+    file_stream.close();
+    return false;
+}
+
+std::size_t DQuickSearch::read_adler32_value(const QString &mount_point)noexcept
+{
+    std::size_t adler32_value{ 0 };
+
+    if (mount_point.isEmpty()) {
+        return adler32_value;
+    }
+
+    QByteArray local8bit_mount_point{ mount_point.toLocal8Bit() + QByteArray{"/"} + QByteArray{ FILE_FOR_STORING_ADLER32 } };
+    std::basic_ifstream<char> file_stream{ local8bit_mount_point.constData(), std::ios_base::in };
+
+    if (file_stream) {
+        file_stream >> adler32_value;
+    }
+
+    file_stream.close();
+    return adler32_value;
+}
+
+std::size_t DQuickSearch::count_adler32(const QString &mount_point) noexcept
+{
+    std::size_t adler32_value{ 0 };
+    QByteArray local8bit_mount_point{ mount_point.toLocal8Bit() + QByteArray{ "/.__deepin.lft" } };
+    std::basic_ifstream<char> file_stream{ local8bit_mount_point.constData(), std::ios_base::in | std::ios_base::binary };
+
+    if (file_stream) {
+        std::basic_ostringstream<char> string_stream{ std::ios_base::out | std::ios_base::ate };
+        std::partial_sum(std::istream_iterator<char> { file_stream }, std::istream_iterator<char> {}, std::ostream_iterator<char> {string_stream});
+        adler32_value = adler32(0L, NULL, 0);
+        std::basic_string<char> content{ string_stream.str() };
+
+        adler32_value = adler32(adler32_value, reinterpret_cast<unsigned char *>(const_cast<char *>(content.data())), content.size());
+
+#ifdef QT_DEBUG
+        qDebug() << mount_point << ":  " << adler32_value;
+#endif //QT_DEBUG
+    }
+
+    file_stream.close();
+    return adler32_value;
+}
+
 
 
 
