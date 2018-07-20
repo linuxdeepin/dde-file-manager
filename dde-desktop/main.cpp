@@ -149,11 +149,12 @@ int main(int argc, char *argv[])
     QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
     Config::instance();
 
+    DFMGlobal::installTranslator();
+
     Desktop::instance()->loadData();
     Desktop::instance()->Show();
     Desktop::instance()->loadView();
 
-    DFMGlobal::installTranslator();
     DFMGlobal::autoLoadDefaultPlugins();
     DFMGlobal::autoLoadDefaultMenuExtensions();
     DFMGlobal::initPluginManager();

@@ -84,6 +84,10 @@ public:
     void focusOutEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
     void contextMenuEvent(QContextMenuEvent *event) Q_DECL_OVERRIDE;
 
+
+    virtual void rowsInserted(const QModelIndex &index, int row, int column) override;
+
+
     void fakeDropEvent()noexcept;
 
     // list view function

@@ -1069,6 +1069,13 @@ void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
     }
 }
 
+void CanvasGridView::rowsInserted(const QModelIndex &index, int row, int column)
+{
+    QAbstractItemView::rowsInserted(index, row, column);
+    update();
+}
+
+
 void CanvasGridView::fakeDropEvent() noexcept
 {
     d->dodgeDelayTimer.stop();
