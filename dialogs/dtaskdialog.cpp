@@ -122,6 +122,12 @@ MoveCopyTaskWidget::MoveCopyTaskWidget(DFileCopyMoveJob *job, QWidget *parent)
         m_jobInfo->totalDataSize = job->totalDataSize();
         updateMessageByJob();
     });
+    connect(job, &DFileCopyMoveJob::stateChanged, this, [this] (DFileCopyMoveJob::State state) {
+        m_animatePad->setPauseState(state == DFileCopyMoveJob::PausedState);
+    });
+    connect(job, &DFileCopyMoveJob::errorChanged, this, [this] (DFileCopyMoveJob::Error error) {
+        m_animatePad->setCanPause(error == DFileCopyMoveJob::NoError);
+    }, Qt::QueuedConnection);
     connect(m_closeButton, &QPushButton::clicked, job, &DFileCopyMoveJob::stop);
 //    connect(m_pauseBuuton, &QPushButton::clicked, job, &DFileCopyMoveJob::togglePause);
     connect(m_skipButton, &QPushButton::clicked, this, [this] {
@@ -146,6 +152,8 @@ MoveCopyTaskWidget::MoveCopyTaskWidget(DFileCopyMoveJob *job, QWidget *parent)
     if (!m_fileJob->fileStatisticsIsFinished()) {
         m_animatePad->startAnimation();
     }
+
+    m_animatePad->setCanPause(m_fileJob->error() == DFileCopyMoveJob::NoError);
 }
 
 MoveCopyTaskWidget::~MoveCopyTaskWidget()
