@@ -1307,7 +1307,7 @@ void GvfsMountManager::unmount_mounted(const QString &mounted_root_uri)
             return;
         }
 
-        DDialog error_dilaog(tr("Error finding enclosing mount"), QString(error->message));
+        DDialog error_dilaog(tr("Cannot find the mounting device"), QString(error->message));
 
         error_dilaog.setIcon(QIcon::fromTheme("dialog-error"));
         error_dilaog.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
@@ -1335,7 +1335,7 @@ void GvfsMountManager::unmount_done_cb(GObject *object, GAsyncResult *res, gpoin
     succeeded = g_mount_unmount_with_operation_finish (G_MOUNT (object), res, &error);
 
     if (!succeeded) {
-        DDialog error_dilaog(tr("Error unmounting mount"), QString(error->message));
+        DDialog error_dilaog(tr("Cannot unmount the device"), QString(error->message));
 
         error_dilaog.setIcon(QIcon::fromTheme("dialog-error"));
         error_dilaog.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
@@ -1455,7 +1455,7 @@ void GvfsMountManager::eject_with_device_file_cb(GObject *object, GAsyncResult *
     succeeded = g_volume_eject_with_operation_finish (volume, res, &error);
 
     if (!succeeded) {
-        DDialog error_dilaog(tr("Error eject \"%1\".").arg(g_volume_get_identifier(volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE)),
+        DDialog error_dilaog(tr("Cannot eject the device \"%1\".").arg(g_volume_get_identifier(volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE)),
                              QString(error->message));
 
         error_dilaog.setIcon(QIcon::fromTheme("dialog-error"));
@@ -1487,7 +1487,7 @@ void GvfsMountManager::eject_mounted(const QString &mounted_root_uri)
 
     mount = g_file_find_enclosing_mount (file, NULL, &error);
     if (mount == NULL) {
-        DDialog error_dilaog(tr("Error finding enclosing mount"), QString(error->message));
+        DDialog error_dilaog(tr("Cannot find the mounting device"), QString(error->message));
 
         error_dilaog.setIcon(QIcon::fromTheme("dialog-error"));
         error_dilaog.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);

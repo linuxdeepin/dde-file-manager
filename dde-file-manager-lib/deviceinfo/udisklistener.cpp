@@ -184,7 +184,7 @@ bool UDiskListener::renameFile(const QSharedPointer<DFMRenameEvent> &event) cons
         //         we don't need do rename here so just return true.
         return true;
     default:
-        dialogManager->showErrorDialog("Placeholder Title", err.message());
+        dialogManager->showErrorDialog(tr("Failed to rename the label"), err.message());
         return false;
     }
 
