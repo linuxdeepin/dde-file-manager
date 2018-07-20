@@ -438,6 +438,10 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, DAbstractFileInfoPoint
                 joinToCompletedFileList(from, DUrl(), size);
             }
         } else {
+            // 删除文件夹时先设置其权限
+            if (fileHints.testFlag(DFileCopyMoveJob::ForceDeleteFile))
+                handler->setPermissions(source_info->fileUrl(), QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
+
             ok = mergeDirectory(handler, source_info.constData(), nullptr);
 
             if (ok) {
@@ -625,20 +629,34 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
         return false;
     }
 
+    bool existsSkipFile = false;
+
     while (iterator->hasNext()) {
-        if (!stateCheck())
+        if (!stateCheck()) {
             return false;
+        }
 
         const DUrl &url = iterator->next();
+        const DAbstractFileInfoPointer &info = iterator->fileInfo();
 
-        if (!process(url, toInfo))
+        if (!process(url, info, toInfo)) {
             return false;
+        }
+
+        if (lastErrorHandleAction == DFileCopyMoveJob::SkipAction)
+            existsSkipFile = true;
     }
+
+    if (toInfo)
+        handler->setPermissions(toInfo->fileUrl(), fromInfo->permissions());
 
     if (mode == DFileCopyMoveJob::CopyMode)
         return true;
 
-    // 剪切模式时, 完成操作后删除原目录
+    if (existsSkipFile)
+        return true;
+
+    // 完成操作后删除原目录
     return removeFile(handler, fromInfo);
 }
 
@@ -972,11 +990,16 @@ bool DFileCopyMoveJobPrivate::doLinkFile(DFileHandler *handler, const DAbstractF
 
 bool DFileCopyMoveJobPrivate::process(const DUrl &from, const DAbstractFileInfo *target_info)
 {
+    const DAbstractFileInfoPointer &source_info = DFileService::instance()->createFileInfo(nullptr, from);
+
+    return process(from, source_info, target_info);
+}
+
+bool DFileCopyMoveJobPrivate::process(const DUrl &from, const DAbstractFileInfoPointer &source_info, const DAbstractFileInfo *target_info)
+{
     // reset error and action
     unsetError();
     lastErrorHandleAction = DFileCopyMoveJob::NoAction;
-
-    DAbstractFileInfoPointer source_info = DFileService::instance()->createFileInfo(nullptr, from);
 
     beginJob(JobInfo::Preprocess, from, (source_info && target_info) ? target_info->getUrlByChildFileName(source_info->fileName()) : DUrl());
     bool ok = doProcess(from, source_info, target_info);

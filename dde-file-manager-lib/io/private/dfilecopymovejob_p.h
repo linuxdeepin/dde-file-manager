@@ -77,6 +77,7 @@ public:
     bool doLinkFile(DFileHandler *handler, const DAbstractFileInfo *fileInfo, const QString &linkPath);
 
     bool process(const DUrl &from, const DAbstractFileInfo *target_info);
+    bool process(const DUrl &from, const DAbstractFileInfoPointer &source_info, const DAbstractFileInfo *target_info);
     bool copyFile(const DAbstractFileInfo *fromInfo, const DAbstractFileInfo *toInfo, int blockSize = 1048576);
     bool removeFile(DFileHandler *handler, const DAbstractFileInfo *fileInfo);
     bool renameFile(DFileHandler *handler, const DAbstractFileInfo *oldInfo, const DAbstractFileInfo *newInfo);
