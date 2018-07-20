@@ -132,7 +132,7 @@ bool TrashManager::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
 
 DUrlList TrashManager::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
-    fileService->deleteFiles(event->sender(), event->urlList());
+    fileService->deleteFiles(event->sender(), event->urlList(), false, false, true);
 
     return DUrlList();
 }
@@ -306,7 +306,7 @@ void TrashManager::cleanTrash(const QObject *sender) const
         list << info_url;
     }
 
-    fileService->deleteFiles(sender, list, false);
+    fileService->deleteFiles(sender, list, false, false, true);
 }
 
 bool TrashManager::isEmpty()

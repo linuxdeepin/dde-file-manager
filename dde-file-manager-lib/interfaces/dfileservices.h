@@ -115,7 +115,7 @@ public:
     bool multiFilesReplaceName(const QList<DUrl> &urls, const QPair<QString, QString> &pair)const;
     bool multiFilesAddStrToName(const QList<DUrl> &urls, const QPair<QString, DFileService::AddTextFlags> &pair)const;
     bool multiFilesCustomName(const QList<DUrl> &urls, const QPair<QString, QString> &pair)const;
-    bool deleteFiles(const QObject *sender, const DUrlList &list, bool confirmationDialog = true, bool slient = false) const;
+    bool deleteFiles(const QObject *sender, const DUrlList &list, bool confirmationDialog = true, bool slient = false, bool force = false) const;
     DUrlList moveToTrash(const QObject *sender, const DUrlList &list) const;
     void pasteFileByClipboard(const QObject *sender, const DUrl &targetUrl) const;
     DUrlList pasteFile(const QObject *sender, DFMGlobal::ClipboardAction action,

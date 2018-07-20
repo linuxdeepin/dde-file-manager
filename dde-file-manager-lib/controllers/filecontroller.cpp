@@ -472,10 +472,14 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
     return result;
 }
 
-static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &list, const DUrl &target, bool slient = false)
+static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &list, const DUrl &target, bool slient = false, bool force = false)
 {
     DFileCopyMoveJob *job = new DFileCopyMoveJob();
     QPair<DUrl, DUrl> currentJob;
+
+    if (force) {
+        job->setFileHints(DFileCopyMoveJob::ForceDeleteFile);
+    }
 
     if (QThread::currentThread()->loopLevel() <= 0) {
         // 确保对象所在线程有事件循环
@@ -593,7 +597,7 @@ bool FileController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) co
 //    job.doDelete(event->urlList());
 //    dialogManager->removeJob(job.getJobId());
 
-    bool ok = !pasteFilesV2(DFMGlobal::CutAction, event->fileUrlList(), DUrl(), event->silent()).isEmpty();
+    bool ok = !pasteFilesV2(DFMGlobal::CutAction, event->fileUrlList(), DUrl(), event->silent(), event->force()).isEmpty();
 
     return ok;
 }

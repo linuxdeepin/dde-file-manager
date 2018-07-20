@@ -506,7 +506,7 @@ bool DFileService::renameFile(const QObject *sender, const DUrl &from, const DUr
     return ok;
 }
 
-bool DFileService::deleteFiles(const QObject *sender, const DUrlList &list, bool confirmationDialog, bool slient) const
+bool DFileService::deleteFiles(const QObject *sender, const DUrlList &list, bool confirmationDialog, bool slient, bool force) const
 {
     foreach (const DUrl &url, list) {
         if (systemPathManager->isSystemPath(url.toLocalFile())) {
@@ -519,7 +519,7 @@ bool DFileService::deleteFiles(const QObject *sender, const DUrlList &list, bool
     }
 
     if (!confirmationDialog || DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteFilesClearTrashDialog, DFMUrlListBaseEvent(sender, list)) == DDialog::Accepted) {
-        return DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMDeleteEvent>(sender, list, slient)).toBool();
+        return DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMDeleteEvent>(sender, list, slient, force)).toBool();
     }
 
     return false;
