@@ -29,7 +29,7 @@
 #include <QTimer>
 #include <QColor>
 
-class CircleProgressAnimatePad : public QLabel
+class CircleProgressAnimatePad : public QWidget
 {
     Q_OBJECT
 public:
@@ -62,6 +62,9 @@ public:
 
     bool animationRunning() const;
 
+    void setPauseState(bool on);
+    void setCanPause(bool on);
+
 signals:
     void clicked();
 
@@ -73,13 +76,15 @@ public slots:
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
     void mousePressEvent(QMouseEvent *event) override;
+    void enterEvent(QEvent *event) override;
+    void leaveEvent(QEvent *event) override;
 
 private:
     int m_lineWidth = 3;
     int m_currentValue = 10;
     int m_minmumValue = 0;
     int m_maximumValue = 100;
-    int m_angle = 0;
+    int m_angle = 90 * 16;
     int m_fontSize = 12;
 
     QColor m_chunkColor = Qt::cyan;
@@ -87,6 +92,8 @@ private:
 
     QTimer* m_timer;
     bool isAnimateStarted = false;
+    bool isPauseState = false;
+    bool canPause = true;
 };
 
 #endif // CIRCLEPROGRESSANIMATEPAD_H

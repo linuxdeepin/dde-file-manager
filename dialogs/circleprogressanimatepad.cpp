@@ -25,8 +25,10 @@
 #include "circleprogressanimatepad.h"
 #include <QPainter>
 #include <QPen>
+#include <QStyle>
+#include <QDebug>
 
-CircleProgressAnimatePad::CircleProgressAnimatePad(QWidget *parent) : QLabel(parent)
+CircleProgressAnimatePad::CircleProgressAnimatePad(QWidget *parent) : QWidget(parent)
 {
     m_timer = new QTimer(this);
     m_timer->setInterval(3);
@@ -61,6 +63,7 @@ void CircleProgressAnimatePad::stepAngle()
 
 void CircleProgressAnimatePad::paintEvent(QPaintEvent *event)
 {
+    Q_UNUSED(event)
 
     QPainter painter(this);
     painter.setRenderHints(QPainter::Antialiasing);
@@ -93,8 +96,13 @@ void CircleProgressAnimatePad::paintEvent(QPaintEvent *event)
     painter.setPen(pen);
     painter.drawArc(outerCircleRect, m_angle, offset);
 
-    //draw text
-    if(!isAnimateStarted){
+    bool mouse_hover = testAttribute(Qt::WA_UnderMouse);
+
+    if (mouse_hover && canPause) {
+        const QIcon &icon = style()->standardIcon(isPauseState ? QStyle::SP_MediaPlay :QStyle::SP_MediaPause);
+
+        icon.paint(&painter, rect().adjusted(15, 15, -15, -15));
+    } else if (!isAnimateStarted) {//draw text
         QString text = QString::number(m_currentValue);
         QFont font;
         font.setPixelSize(m_fontSize);
@@ -106,8 +114,6 @@ void CircleProgressAnimatePad::paintEvent(QPaintEvent *event)
         textRect.moveCenter(QRect(0,0,width(), height()).center());
         painter.drawText(textRect, text);
     }
-
-    QLabel::paintEvent(event);
 }
 
 void CircleProgressAnimatePad::mousePressEvent(QMouseEvent *event)
@@ -115,6 +121,20 @@ void CircleProgressAnimatePad::mousePressEvent(QMouseEvent *event)
     Q_UNUSED(event)
 
     emit clicked();
+}
+
+void CircleProgressAnimatePad::enterEvent(QEvent *event)
+{
+    Q_UNUSED(event)
+
+    update();
+}
+
+void CircleProgressAnimatePad::leaveEvent(QEvent *event)
+{
+    Q_UNUSED(event)
+
+    update();
 }
 
 int CircleProgressAnimatePad::fontSize() const
@@ -130,6 +150,26 @@ void CircleProgressAnimatePad::setFontSize(int fontSize)
 bool CircleProgressAnimatePad::animationRunning() const
 {
     return isAnimateStarted;
+}
+
+void CircleProgressAnimatePad::setPauseState(bool on)
+{
+    if (isPauseState == on)
+        return;
+
+    isPauseState = on;
+
+    update();
+}
+
+void CircleProgressAnimatePad::setCanPause(bool on)
+{
+    if (canPause == on)
+        return;
+
+    canPause = on;
+
+    update();
 }
 
 QColor CircleProgressAnimatePad::backgroundColor() const

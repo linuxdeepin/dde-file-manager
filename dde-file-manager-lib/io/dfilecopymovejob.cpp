@@ -187,8 +187,7 @@ void DFileCopyMoveJobPrivate::setError(DFileCopyMoveJob::Error e, const QString 
 
 void DFileCopyMoveJobPrivate::unsetError()
 {
-    error = DFileCopyMoveJob::NoError;
-    errorString.clear();
+    setError(DFileCopyMoveJob::NoError);
 }
 
 DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::handleError(const DAbstractFileInfo *sourceInfo,

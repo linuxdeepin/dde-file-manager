@@ -202,5 +202,5 @@ QLabel#MessageLabel2{
 
 QLabel#ErrorLabel{
     font-size: 11px;
-    color: "red";
+    color: "#F9704F";
 }
