@@ -355,7 +355,7 @@ bool TagController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) con
     }
 
     if (!localFiles.isEmpty()) {
-        return DFileService::instance()->deleteFiles(event->sender(), localFiles, false, event->silent());
+        return DFileService::instance()->deleteFiles(event->sender(), localFiles, false, event->silent(), event->force());
     }
 
     return TagManager::instance()->deleteTags(tagNames);
