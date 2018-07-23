@@ -1226,7 +1226,7 @@ QString DAbstractFileInfo::completeSuffix() const
     int index = fileName.indexOf('.');
 
     if (index >= 0) {
-        return fileName.mid(index);
+        return fileName.mid(index + 1);
     }
 
     return QString();

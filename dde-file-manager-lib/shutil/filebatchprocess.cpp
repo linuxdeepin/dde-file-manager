@@ -33,7 +33,7 @@ std::once_flag FileBatchProcess::flag;
 
 QSharedMap<DUrl, DUrl> FileBatchProcess::replaceText(const QList<DUrl>& originUrls, const QPair<QString, QString> &pair) const
 {
-    if(originUrls.isEmpty() == true){ //###: here, jundge whether there are fileUrls in originUrls.
+    if(originUrls.isEmpty() == true) { //###: here, judge whether there are fileUrls in originUrls.
         return QSharedMap<DUrl, DUrl>{ nullptr };
     }
 
@@ -47,7 +47,7 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::replaceText(const QList<DUrl>& originUr
 
         ///###: symlink is also processed here.
         QString fileBaseName{ info->baseName() };
-        const QString &suffix = info->completeSuffix().isEmpty() ? QString() : QString(".") + info->completeSuffix();
+        const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
         fileBaseName.replace(pair.first, pair.second);
         int max_length = MAX_FILE_NAME_CHAR_COUNT - suffix.toLocal8Bit().size();
 
@@ -66,7 +66,7 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::replaceText(const QList<DUrl>& originUr
 
 QSharedMap<DUrl, DUrl> FileBatchProcess::addText(const QList<DUrl> &originUrls, const QPair<QString, DFileService::AddTextFlags>& pair) const
 {
-    if(originUrls.isEmpty()){  //###: here, jundge whether there are fileUrls in originUrls.
+    if(originUrls.isEmpty()){  //###: here, judge whether there are fileUrls in originUrls.
         return QSharedMap<DUrl, DUrl>{ nullptr };
     }
 
@@ -80,7 +80,7 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::addText(const QList<DUrl> &originUrls, 
 
         QString fileBaseName{ info->baseName() };
         QString add_text = pair.first;
-        const QString &suffix = info->completeSuffix().isEmpty() ? QString() : QString(".") + info->completeSuffix();
+        const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
         int max_length = MAX_FILE_NAME_CHAR_COUNT - info->fileName().toLocal8Bit().size();
 
         if (add_text.toLocal8Bit().size() > max_length) {
@@ -127,7 +127,7 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::customText(const QList<DUrl> &originUrl
 
         QString fileBaseName{ pair.first };
         const QString &index_string = QString::number(index);
-        const QString &suffix = info->completeSuffix().isEmpty() ? QString() : QString(".") + info->completeSuffix();
+        const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
         int max_length = MAX_FILE_NAME_CHAR_COUNT - index_string.toLocal8Bit().size() - suffix.toLocal8Bit().size();
 
         if (fileBaseName.toLocal8Bit().size() > max_length) {
