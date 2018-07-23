@@ -76,6 +76,8 @@
 #include <QVariantAnimation>
 #include <QScrollArea>
 
+#include "unistd.h"
+
 NameTextEdit::NameTextEdit(const QString &text, QWidget *parent):
     QTextEdit(text, parent)
 {
@@ -1022,7 +1024,7 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
         m_executableCheckBox = new QCheckBox;
         m_executableCheckBox->setFixedHeight(20);
         connect(m_executableCheckBox, &QCheckBox::toggled, this, &PropertyDialog::toggleFileExecutable);
-        if (!info->isWritable()) {
+        if (info->ownerId() != getuid()) {
             m_executableCheckBox->setDisabled(true);
         }
         if (info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther)) {
@@ -1040,7 +1042,7 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     connect(groupBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), widget, onComboBoxChanged);
     connect(otherBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), widget, onComboBoxChanged);
 
-    if (!info->isWritable()) {
+    if (info->ownerId() != getuid()) {
         ownerBox->setDisabled(true);
         groupBox->setDisabled(true);
         otherBox->setDisabled(true);
