@@ -413,7 +413,7 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
     // check if we got `net` (in `samba-common-bin` package) installed
     QString samba_common_bin_path = QStandardPaths::findExecutable("net");
     if (samba_common_bin_path.isEmpty()) {
-        Singleton<DialogManager>::instance()->showErrorDialog(tr("Kindly Reminder"), tr("Please firstly Install samba to continue"));
+        Singleton<DialogManager>::instance()->showErrorDialog(tr("Kindly Reminder"), tr("Please firstly install samba to continue"));
         return false;
     }
 

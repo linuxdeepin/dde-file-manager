@@ -1455,7 +1455,7 @@ void GvfsMountManager::eject_with_device_file_cb(GObject *object, GAsyncResult *
     succeeded = g_volume_eject_with_operation_finish (volume, res, &error);
 
     if (!succeeded) {
-        DDialog error_dilaog(tr("Cannot eject the device \"%1\".").arg(g_volume_get_identifier(volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE)),
+        DDialog error_dilaog(tr("Cannot eject the device \"%1\"").arg(g_volume_get_identifier(volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE)),
                              QString(error->message));
 
         error_dilaog.setIcon(QIcon::fromTheme("dialog-error"));
