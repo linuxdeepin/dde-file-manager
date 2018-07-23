@@ -51,9 +51,9 @@ public:
         Stoped
     };
 
-    explicit JobController(const DUrl &fileUrl, const DDirIteratorPointer &iterator, QObject *parent = 0);
+    explicit JobController(const DUrl &fileUrl, const DDirIteratorPointer &iterator, bool silent = false, QObject *parent = 0);
     explicit JobController(const DUrl &fileUrl, const QStringList &nameFilters,
-                           QDir::Filters filters, QObject *parent = 0);
+                           QDir::Filters filters, bool silent = false, QObject *parent = 0);
 
     ~JobController();
 
@@ -89,6 +89,7 @@ private:
 
     QElapsedTimer *timer = Q_NULLPTR;
 
+    bool m_silent;
     int m_timeCeiling = 5000;
     int m_countCeiling = 50000;
 

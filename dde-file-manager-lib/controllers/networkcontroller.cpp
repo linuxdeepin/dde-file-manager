@@ -124,7 +124,10 @@ const QList<DAbstractFileInfoPointer> NetworkController::getChildren(const QShar
     QList<DAbstractFileInfoPointer> infolist;
 
     if (NetworkManager::NetworkNodes.value(event->url()).isEmpty()) {
-        Singleton<NetworkManager>::instance()->fetchNetworks(DFMUrlBaseEvent(this, event->url()));
+        if (event->silent()) {
+            // blumia: if silent is enabled, we'll not invoke fetchNetwork here.
+            Singleton<NetworkManager>::instance()->fetchNetworks(DFMUrlBaseEvent(this, event->url()));
+        }
     }
 
     foreach (const NetworkNode& node, NetworkManager::NetworkNodes.value(event->url())) {
