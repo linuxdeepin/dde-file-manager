@@ -636,17 +636,18 @@ QSharedPointer<DFMOpenInTerminalEvent> DFMOpenInTerminalEvent::fromJson(const QJ
 }
 
 DFMGetChildrensEvent::DFMGetChildrensEvent(const QObject *sender, const DUrl &url, const QStringList &nameFilters,
-        QDir::Filters filters, QDirIterator::IteratorFlags flags)
+        QDir::Filters filters, QDirIterator::IteratorFlags flags, bool slient)
     : DFMUrlBaseEvent(GetChildrens, sender, url)
 {
     setProperty(QT_STRINGIFY(DFMGetChildrensEvent::nameFilters), nameFilters);
     setProperty(QT_STRINGIFY(DFMGetChildrensEvent::filters), filters);
     setProperty(QT_STRINGIFY(DFMGetChildrensEvent::flags), flags);
+    setProperty(QT_STRINGIFY(DFMGetChildrensEvent::slient), slient);
 }
 
 DFMGetChildrensEvent::DFMGetChildrensEvent(const QObject *sender, const DUrl &url, const QStringList &nameFilters,
-        QDir::Filters filters)
-    : DFMGetChildrensEvent(sender, url, nameFilters, filters, QDirIterator::NoIteratorFlags)
+        QDir::Filters filters, bool slient)
+    : DFMGetChildrensEvent(sender, url, nameFilters, filters, QDirIterator::NoIteratorFlags, slient)
 {
 
 }
@@ -666,6 +667,11 @@ QDirIterator::IteratorFlags DFMGetChildrensEvent::flags() const
     return property(QT_STRINGIFY(DFMGetChildrensEvent::flags), QDirIterator::IteratorFlags());
 }
 
+bool DFMGetChildrensEvent::silent() const
+{
+    return property(QT_STRINGIFY(DFMGetChildrensEvent::silent), false);
+}
+
 QSharedPointer<DFMGetChildrensEvent> DFMGetChildrensEvent::fromJson(const QJsonObject &json)
 {
     QStringList nameFilters;
@@ -675,19 +681,20 @@ QSharedPointer<DFMGetChildrensEvent> DFMGetChildrensEvent::fromJson(const QJsonO
     }
 
     return dMakeEventPointer<DFMGetChildrensEvent>(Q_NULLPTR, DUrl::fromUserInput(json["url"].toString()),
-            nameFilters, (QDir::Filters)json["filters"].toInt());
+            nameFilters, (QDir::Filters)json["filters"].toInt(), QDirIterator::NoIteratorFlags,
+            json["silent"].toBool());
 }
 
 DFMCreateDiriterator::DFMCreateDiriterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-        QDir::Filters filters, QDirIterator::IteratorFlags flags)
-    : DFMGetChildrensEvent(sender, fileUrl, nameFilters, filters, flags)
+        QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent)
+    : DFMGetChildrensEvent(sender, fileUrl, nameFilters, filters, flags, silent)
 {
     m_type = CreateDiriterator;
 }
 
 DFMCreateDiriterator::DFMCreateDiriterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-        QDir::Filters filters)
-    : DFMGetChildrensEvent(sender, fileUrl, nameFilters, filters)
+        QDir::Filters filters, bool silent)
+    : DFMGetChildrensEvent(sender, fileUrl, nameFilters, filters, silent)
 {
     m_type = CreateDiriterator;
 }
@@ -702,15 +709,15 @@ QSharedPointer<DFMCreateDiriterator> DFMCreateDiriterator::fromJson(const QJsonO
 }
 
 DFMCreateGetChildrensJob::DFMCreateGetChildrensJob(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-        QDir::Filters filters, QDirIterator::IteratorFlags flags)
-    : DFMCreateDiriterator(sender, fileUrl, nameFilters, filters, flags)
+        QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent)
+    : DFMCreateDiriterator(sender, fileUrl, nameFilters, filters, flags, silent)
 {
     m_type = CreateGetChildrensJob;
 }
 
 DFMCreateGetChildrensJob::DFMCreateGetChildrensJob(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-        QDir::Filters filters)
-    : DFMCreateDiriterator(sender, fileUrl, nameFilters, filters)
+        QDir::Filters filters, bool silent)
+    : DFMCreateDiriterator(sender, fileUrl, nameFilters, filters, silent)
 {
     m_type = CreateGetChildrensJob;
 }

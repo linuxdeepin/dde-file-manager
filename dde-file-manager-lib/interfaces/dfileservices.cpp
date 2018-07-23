@@ -712,25 +712,25 @@ const DAbstractFileInfoPointer DFileService::createFileInfo(const QObject *sende
 }
 
 const DDirIteratorPointer DFileService::createDirIterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-        QDir::Filters filters, QDirIterator::IteratorFlags flags) const
+        QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent) const
 {
-    const auto &&event = dMakeEventPointer<DFMCreateDiriterator>(sender, fileUrl, nameFilters, filters, flags);
+    const auto &&event = dMakeEventPointer<DFMCreateDiriterator>(sender, fileUrl, nameFilters, filters, flags, silent);
 
     return qvariant_cast<DDirIteratorPointer>(DFMEventDispatcher::instance()->processEvent(event));
 }
 
 const QList<DAbstractFileInfoPointer> DFileService::getChildren(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-                                                               QDir::Filters filters, QDirIterator::IteratorFlags flags) const
+                                                               QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent) const
 {
-    const auto &&event = dMakeEventPointer<DFMGetChildrensEvent>(sender, fileUrl, nameFilters, filters, flags);
+    const auto &&event = dMakeEventPointer<DFMGetChildrensEvent>(sender, fileUrl, nameFilters, filters, flags, silent);
 
     return qvariant_cast<QList<DAbstractFileInfoPointer>>(DFMEventDispatcher::instance()->processEvent(event));
 }
 
 JobController *DFileService::getChildrenJob(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-        QDir::Filters filters, QDirIterator::IteratorFlags flags) const
+        QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent) const
 {
-    const auto &&event = dMakeEventPointer<DFMCreateGetChildrensJob>(sender, fileUrl, nameFilters, filters, flags);
+    const auto &&event = dMakeEventPointer<DFMCreateGetChildrensJob>(sender, fileUrl, nameFilters, filters, flags, silent);
 
     return qvariant_cast<JobController *>(DFMEventDispatcher::instance()->processEvent(event));
 }

@@ -402,7 +402,7 @@ void DFileDialog::setFileMode(QFileDialog::FileMode mode)
     case QFileDialog::Directory:
         // 文件名中不可能包含 '/', 此处目的是过滤掉所有文件
         getFileView()->setNameFilters(QStringList("/"));
-        // 无 break 语句
+        // fall through
     default:
         getFileView()->setEnabledSelectionModes(QSet<DFileView::SelectionMode>() << QAbstractItemView::SingleSelection);
         break;

@@ -31,8 +31,9 @@
 #define LOAD_FILE_INTERVAL 50
 #endif
 
-JobController::JobController(const DUrl &fileUrl, const DDirIteratorPointer &iterator, QObject *parent)
+JobController::JobController(const DUrl &fileUrl, const DDirIteratorPointer &iterator, bool silent, QObject *parent)
     : QThread(parent)
+    , m_silent(silent)
     , m_iterator(iterator)
     , m_fileUrl(fileUrl)
 {
@@ -40,8 +41,9 @@ JobController::JobController(const DUrl &fileUrl, const DDirIteratorPointer &ite
 }
 
 JobController::JobController(const DUrl &fileUrl, const QStringList &nameFilters,
-                             QDir::Filters filters, QObject *parent)
+                             QDir::Filters filters, bool silent, QObject *parent)
     : QThread(parent)
+    , m_silent(silent)
     , m_fileUrl(fileUrl)
     , m_nameFilters(nameFilters)
     , m_filters(filters)
@@ -139,7 +141,7 @@ void JobController::setCountCeiling(int countCeiling)
 void JobController::run()
 {
     if (!m_iterator) {
-        const auto &&list = DFileService::instance()->getChildren(this, m_fileUrl, m_nameFilters, m_filters);
+        const auto &&list = DFileService::instance()->getChildren(this, m_fileUrl, m_nameFilters, m_filters, QDirIterator::NoIteratorFlags, m_silent);
 
         emit childrenUpdated(list);
         emit addChildrenList(list);

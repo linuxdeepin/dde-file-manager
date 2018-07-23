@@ -492,13 +492,14 @@ class DFMGetChildrensEvent : public DFMUrlBaseEvent
 {
 public:
     explicit DFMGetChildrensEvent(const QObject *sender, const DUrl &url, const QStringList &nameFilters,
-                                  QDir::Filters filters, QDirIterator::IteratorFlags flags);
+                                  QDir::Filters filters, QDirIterator::IteratorFlags flags, bool slient = false);
     explicit DFMGetChildrensEvent(const QObject *sender, const DUrl &url,
-                                  const QStringList &nameFilters, QDir::Filters filters);
+                                  const QStringList &nameFilters, QDir::Filters filters, bool slient = false);
 
     QStringList nameFilters() const;
     QDir::Filters filters() const;
     QDirIterator::IteratorFlags flags() const;
+    bool silent() const;
 
     static QSharedPointer<DFMGetChildrensEvent> fromJson(const QJsonObject &json);
 };
@@ -510,9 +511,9 @@ class DFMCreateDiriterator : public DFMGetChildrensEvent
 {
 public:
     explicit DFMCreateDiriterator(const QObject *sender, const DUrl &url, const QStringList &nameFilters,
-                                  QDir::Filters filters, QDirIterator::IteratorFlags flags);
+                                  QDir::Filters filters, QDirIterator::IteratorFlags flags, bool slient = false);
     explicit DFMCreateDiriterator(const QObject *sender, const DUrl &url,
-                                  const QStringList &nameFilters, QDir::Filters filters);
+                                  const QStringList &nameFilters, QDir::Filters filters, bool slient = false);
 
     static QSharedPointer<DFMCreateDiriterator> fromJson(const QJsonObject &json);
 };
@@ -521,9 +522,9 @@ class DFMCreateGetChildrensJob : public DFMCreateDiriterator
 {
 public:
     explicit DFMCreateGetChildrensJob(const QObject *sender, const DUrl &url, const QStringList &nameFilters,
-                                      QDir::Filters filters, QDirIterator::IteratorFlags flags);
+                                      QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent = false);
     explicit DFMCreateGetChildrensJob(const QObject *sender, const DUrl &url,
-                                      const QStringList &nameFilters, QDir::Filters filters);
+                                      const QStringList &nameFilters, QDir::Filters filters, bool silent = false);
 
     static QSharedPointer<DFMCreateGetChildrensJob> fromJson(const QJsonObject &json);
 };
