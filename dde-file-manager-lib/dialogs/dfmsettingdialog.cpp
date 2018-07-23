@@ -332,7 +332,7 @@ DFMSettingDialog::DFMSettingDialog(QWidget *parent):
 
     m_settings->setParent(this);
     m_settings->setBackend(backen);
-    updateSettings(m_settings);
+    updateSettings("GenerateSettingTranslate", m_settings);
 }
 
 QWidget *DFMSettingDialog::createAutoMountCheckBox(QObject *opt)
@@ -370,7 +370,7 @@ QWidget *DFMSettingDialog::createAutoMountCheckBox(QObject *opt)
         mountCheckBox->setChecked(value.toBool());
     });
 
-    return DSettingsWidgetFactory::createTwoColumWidget(option, mountCheckBox);
+    return DSettingsWidgetFactory::createTwoColumWidget("GenerateSettingTranslate", option, mountCheckBox);
 }
 
 QWidget *DFMSettingDialog::createAutoMountOpenCheckBox(QObject *opt)
@@ -403,5 +403,5 @@ QWidget *DFMSettingDialog::createAutoMountOpenCheckBox(QObject *opt)
         openCheckBox->setChecked(value.toBool());
     });
 
-    return DSettingsWidgetFactory::createTwoColumWidget(option, openCheckBox);
+    return DSettingsWidgetFactory::createTwoColumWidget("GenerateSettingTranslate", option, openCheckBox);
 }
