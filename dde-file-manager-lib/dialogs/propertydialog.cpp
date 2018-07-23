@@ -884,15 +884,21 @@ QFrame *PropertyDialog::createDeviceInfoWidget(UDiskDeviceInfoPointer info)
 
 QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPointer &info)
 {
+    DUrl fileUrl = info->fileUrl();
+    DAbstractFileInfoPointer infoPtr = info;
+    while (infoPtr->canRedirectionFileUrl()) {
+        fileUrl = infoPtr->redirectedFileUrl();
+        infoPtr = fileService->createFileInfo(nullptr, fileUrl);
+    }
     QListWidget *listWidget = new QListWidget(this);
     listWidget->setSpacing(8);
     listWidget->setObjectName("OpenWithListWidget");
     m_OpenWithButtonGroup = new QButtonGroup(listWidget);
     listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    QStringList recommendApps = mimeAppsManager->getRecommendedApps(info->fileUrl());
+    QStringList recommendApps = mimeAppsManager->getRecommendedApps(fileUrl);
 
-    QString gio_mimeType = FileUtils::getMimeTypeByGIO(info->fileUrl().toString());
+    QString gio_mimeType = FileUtils::getMimeTypeByGIO(fileUrl.toString());
     QString defaultApp = mimeAppsManager->getDefaultAppDisplayNameByGio(gio_mimeType);
 
     foreach (const QString &appFile, recommendApps) {
@@ -909,8 +915,7 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
         itemBox->setIconSize(QSize(16, 16));
         itemBox->setProperty("appPath", appFile);
         //for future we use our api for getting mimeType
-//        itemBox->setProperty("mimeTypeName",info->mimeTypeName());
-        itemBox->setProperty("mimeTypeName", FileUtils::getMimeTypeByGIO(info->fileUrl().toString()));
+        itemBox->setProperty("mimeTypeName", FileUtils::getMimeTypeByGIO(fileUrl.toString()));
         m_OpenWithButtonGroup->addButton(itemBox);
         item->setData(Qt::UserRole, df.getName());
         listWidget->addItem(item);
