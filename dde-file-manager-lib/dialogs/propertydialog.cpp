@@ -960,12 +960,12 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
 
     authorityList << QObject::tr("Access denied") // 0
                   << QObject::tr("Executable") // 1
-                  << QObject::tr("WriteOnly") // 2
-                  << QObject::tr("WriteOnly") // 3 with x
-                  << QObject::tr("ReadOnly")  // 4
-                  << QObject::tr("ReadOnly")  // 5 with x
-                  << QObject::tr("WriteRead") // 6
-                  << QObject::tr("WriteRead"); // 7 with x
+                  << QObject::tr("Write only") // 2
+                  << QObject::tr("Write only") // 3 with x
+                  << QObject::tr("Read only")  // 4
+                  << QObject::tr("Read only")  // 5 with x
+                  << QObject::tr("Read-write") // 6
+                  << QObject::tr("Read-write"); // 7 with x
 
     if (info->isFile()) {
         QString append = QStringLiteral(" , ") + QObject::tr("Executable");
@@ -1018,7 +1018,7 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     layout->setLabelAlignment(Qt::AlignRight);
     layout->addRow(QObject::tr("Owner"), ownerBox);
     layout->addRow(QObject::tr("Group"), groupBox);
-    layout->addRow(QObject::tr("Other"), otherBox);
+    layout->addRow(QObject::tr("Others"), otherBox);
 
     if (info->isFile()) {
         m_executableCheckBox = new QCheckBox;
