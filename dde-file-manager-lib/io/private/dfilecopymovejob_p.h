@@ -114,7 +114,7 @@ public:
     DUrlList sourceUrlList;
     DUrlList targetUrlList;
     DUrl targetUrl;
-    QPointer<QThread> threadAtStart;
+    QPointer<QThread> threadOfErrorHandle;
     DFileCopyMoveJob::Action actionOfError[DFileCopyMoveJob::UnknowError] = {DFileCopyMoveJob::NoAction};
     DFileStatisticsJob *fileStatistics = nullptr;
 

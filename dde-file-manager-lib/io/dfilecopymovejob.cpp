@@ -231,12 +231,11 @@ DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::handleError(const DAbstractFil
     setState(DFileCopyMoveJob::SleepState);
 
     do {
-        if (threadAtStart && threadAtStart->loopLevel() > 0) {
-            lastErrorHandleAction = DThreadUtil::runInThread(threadAtStart, handle, &DFileCopyMoveJob::Handle::handleError,
+        if (threadOfErrorHandle && threadOfErrorHandle->loopLevel() > 0) {
+            lastErrorHandleAction = DThreadUtil::runInThread(threadOfErrorHandle, handle, &DFileCopyMoveJob::Handle::handleError,
                                               q_ptr, error, sourceInfo, targetInfo);
         } else {
-            lastErrorHandleAction = DThreadUtil::runInMainThread(handle, &DFileCopyMoveJob::Handle::handleError,
-                                                  q_ptr, error, sourceInfo, targetInfo);
+            lastErrorHandleAction = handle->handleError(q_ptr, error, sourceInfo, targetInfo);
         }
 
         if (!stateCheck()) {
@@ -1204,11 +1203,12 @@ DFileCopyMoveJob::Handle *DFileCopyMoveJob::errorHandle() const
     return d->handle;
 }
 
-void DFileCopyMoveJob::setErrorHandle(DFileCopyMoveJob::Handle *handle)
+void DFileCopyMoveJob::setErrorHandle(DFileCopyMoveJob::Handle *handle, QThread *threadOfHandle)
 {
     Q_D(DFileCopyMoveJob);
 
     d->handle = handle;
+    d->threadOfErrorHandle = threadOfHandle;
 }
 
 void DFileCopyMoveJob::setActionOfErrorType(DFileCopyMoveJob::Error error, DFileCopyMoveJob::Action action)
@@ -1360,7 +1360,6 @@ void DFileCopyMoveJob::start(const DUrlList &sourceUrls, const DUrl &targetUrl)
 
     d->sourceUrlList = sourceUrls;
     d->targetUrl = targetUrl;
-    d->threadAtStart = QThread::currentThread();
 
     if (d->fileStatistics->isRunning()) {
         d->fileStatistics->stop();

@@ -128,7 +128,7 @@ public:
     ~DFileCopyMoveJob();
 
     Handle *errorHandle() const;
-    void setErrorHandle(Handle *handle);
+    void setErrorHandle(Handle *handle, QThread *threadOfHandle = nullptr);
 
     void setActionOfErrorType(Error error, Action action);
 
