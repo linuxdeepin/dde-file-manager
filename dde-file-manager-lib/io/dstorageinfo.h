@@ -42,6 +42,7 @@ public:
     DStorageInfo();
     explicit DStorageInfo(const QString &path, PathHints hints = 0);
     explicit DStorageInfo(const QDir &dir, PathHints hints = 0);
+    DStorageInfo(const DStorageInfo &other);
     ~DStorageInfo();
 
     DStorageInfo &operator=(const DStorageInfo &other);
@@ -54,6 +55,7 @@ public:
 
     void setPath(const QString &path, PathHints hints = 0);
 
+    QString rootPath() const;
     QByteArray fileSystemType() const;
 
     qint64 bytesTotal() const;
@@ -62,15 +64,39 @@ public:
 
     bool isReadOnly() const;
 
+    bool isValid() const;
     void refresh();
 
     static bool inSameDevice(QString path1, QString path2, PathHints hints = 0);
     static bool inSameDevice(const DUrl &url1, const DUrl &url2, PathHints hints = 0);
 
 private:
-    QScopedPointer<DStorageInfoPrivate> d_ptr;
+    friend bool operator==(const DStorageInfo &first, const DStorageInfo &second);
+
+    QExplicitlySharedDataPointer<DStorageInfoPrivate> d_ptr;
 };
 
+inline bool operator==(const DStorageInfo &first, const DStorageInfo &second)
+{
+    if (first.d_ptr == second.d_ptr)
+        return true;
+
+    return first.device() == second.device() && first.rootPath() == second.rootPath();
+}
+
+inline bool operator!=(const DStorageInfo &first, const DStorageInfo &second)
+{
+    return !(first == second);
+}
+
 DFM_END_NAMESPACE
+
+QT_BEGIN_NAMESPACE
+#ifndef QT_NO_DEBUG_STREAM
+Q_CORE_EXPORT QDebug operator<<(QDebug debug, const DFM_NAMESPACE::DStorageInfo &info);
+#endif
+QT_END_NAMESPACE
+
+Q_DECLARE_SHARED(DFM_NAMESPACE::DStorageInfo)
 
 #endif // DSTORAGEINFO_H
