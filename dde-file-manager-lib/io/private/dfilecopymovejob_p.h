@@ -52,6 +52,12 @@ public:
         QPair<DUrl, DUrl> targetUrl;
     };
 
+    struct DirectoryInfo {
+        DStorageInfo sourceStorageInfo;
+        DStorageInfo targetStorageInfo;
+        QPair<DUrl, DUrl> url;
+    };
+
     DFileCopyMoveJobPrivate(DFileCopyMoveJob *qq);
     ~DFileCopyMoveJobPrivate();
 
@@ -85,6 +91,8 @@ public:
 
     void beginJob(JobInfo::Type type, const DUrl &from, const DUrl &target);
     void endJob();
+    void enterDirectory(const DUrl &from, const DUrl &to);
+    void leaveDirectory();
     void joinToCompletedFileList(const DUrl &from, const DUrl &target, qint64 dataSize);
     void joinToCompletedDirectoryList(const DUrl &from, const DUrl &target, qint64 dataSize);
     void updateProgress();
@@ -106,12 +114,12 @@ public:
     DUrlList sourceUrlList;
     DUrlList targetUrlList;
     DUrl targetUrl;
-    DStorageInfo targetStorageInfo;
     QPointer<QThread> threadAtStart;
     DFileCopyMoveJob::Action actionOfError[DFileCopyMoveJob::UnknowError] = {DFileCopyMoveJob::NoAction};
     DFileStatisticsJob *fileStatistics = nullptr;
 
     QStack<JobInfo> jobStack;
+    QStack<DirectoryInfo> directoryStack;
     QList<QPair<DUrl, DUrl>> completedFileList;
     QList<QPair<DUrl, DUrl>> completedDirectoryList;
     int completedFilesCount = 0;

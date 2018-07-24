@@ -310,6 +310,8 @@ bool DFileCopyMoveJobPrivate::stateCheck()
 
 bool DFileCopyMoveJobPrivate::checkFileSize(qint64 size) const
 {
+    const DStorageInfo &targetStorageInfo = directoryStack.top().targetStorageInfo;
+
     if (!targetStorageInfo.isValid())
         return true;
 
@@ -328,6 +330,8 @@ bool DFileCopyMoveJobPrivate::checkFileSize(qint64 size) const
 
 bool DFileCopyMoveJobPrivate::checkFreeSpace(qint64 needSize)
 {
+    DStorageInfo &targetStorageInfo = directoryStack.top().targetStorageInfo;
+
     if (!targetStorageInfo.isValid())
         return true;
 
@@ -346,6 +350,8 @@ QString DFileCopyMoveJobPrivate::formatFileName(const QString &name) const
     if (fileHints.testFlag(DFileCopyMoveJob::DontFormatFileName)) {
         return name;
     }
+
+    const DStorageInfo &targetStorageInfo = directoryStack.top().targetStorageInfo;
 
     if (!targetStorageInfo.isValid())
         return name;
@@ -629,6 +635,11 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
     }
 
     bool existsSkipFile = false;
+    bool enter_dir = toInfo;
+
+    if (enter_dir) {
+        enterDirectory(fromInfo->fileUrl(), toInfo->fileUrl());
+    }
 
     while (iterator->hasNext()) {
         if (!stateCheck()) {
@@ -644,6 +655,10 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
 
         if (lastErrorHandleAction == DFileCopyMoveJob::SkipAction)
             existsSkipFile = true;
+    }
+
+    if (enter_dir) {
+        leaveDirectory();
     }
 
     if (toInfo)
@@ -939,9 +954,14 @@ bool DFileCopyMoveJobPrivate::doRemoveFile(DFileHandler *handler, const DAbstrac
 
 bool DFileCopyMoveJobPrivate::doRenameFile(DFileHandler *handler, const DAbstractFileInfo *oldInfo, const DAbstractFileInfo *newInfo)
 {
-    // 先尝试直接rename
-    if (handler->rename(oldInfo->fileUrl(), newInfo->fileUrl())) {
-        return true;
+    const DStorageInfo &storage_source = directoryStack.top().sourceStorageInfo;
+    const DStorageInfo &storage_target = directoryStack.top().targetStorageInfo;
+
+    if (storage_target.device() != "gvfsd-fuse" || storage_source == storage_target) {
+        // 先尝试直接rename
+        if (handler->rename(oldInfo->fileUrl(), newInfo->fileUrl())) {
+            return true;
+        }
     }
 
     qCDebug(fileJob(), "Failed on rename, Well be copy and delete the file");
@@ -1067,6 +1087,36 @@ void DFileCopyMoveJobPrivate::endJob()
     currentJobFileHandle = -1;
 
     qCDebug(fileJob()) << "job end, error:" << error << "last error handle action:" << lastErrorHandleAction;
+}
+
+void DFileCopyMoveJobPrivate::enterDirectory(const DUrl &from, const DUrl &to)
+{
+    DirectoryInfo info;
+
+    info.url = qMakePair(from, to);
+
+    if (from.isLocalFile()) {
+        info.sourceStorageInfo.setPath(from.toLocalFile());
+    }
+
+    if (to.isLocalFile()) {
+        if (!directoryStack.isEmpty()) {
+            if (directoryStack.top().url.second == to) {
+                info.targetStorageInfo = directoryStack.top().targetStorageInfo;
+            } else {
+                info.targetStorageInfo.setPath(to.toLocalFile());
+            }
+        } else {
+            info.targetStorageInfo.setPath(to.toLocalFile());
+        }
+    }
+
+    directoryStack.push(info);
+}
+
+void DFileCopyMoveJobPrivate::leaveDirectory()
+{
+    directoryStack.pop();
 }
 
 void DFileCopyMoveJobPrivate::joinToCompletedFileList(const DUrl &from, const DUrl &target, qint64 dataSize)
@@ -1427,27 +1477,25 @@ void DFileCopyMoveJob::run()
         qCDebug(fileJob(), "remove mode");
     }
 
-    // for locale file
-    if (d->targetUrl.isLocalFile()) {
-        d->targetStorageInfo.setPath(d->targetUrl.toLocalFile(), DStorageInfo::FollowSymlink);
-
-        if (d->targetStorageInfo.isReadOnly()) {
-            d->setError(TargetReadOnlyError);
-
-            if (d->handleError(nullptr, target_info.constData()) != EnforceAction)
-                return;
-        }
-    } else {
-        d->targetStorageInfo = DStorageInfo();
-    }
-
     for (DUrl &source : d->sourceUrlList) {
         if (!d->stateCheck()) {
             goto end;
         }
 
-        if (!d->process(source, target_info.constData())) {
+        const DAbstractFileInfoPointer &source_info = DFileService::instance()->createFileInfo(nullptr, source);
+        const DUrl &parent_url = source_info->parentUrl();
+        bool enter_dir = d->targetUrl.isValid() && (d->directoryStack.isEmpty() || d->directoryStack.top().url.first != parent_url);
+
+        if (enter_dir) {
+            d->enterDirectory(source, d->targetUrl);
+        }
+
+        if (!d->process(source, source_info, target_info.constData())) {
             goto end;
+        }
+
+        if (enter_dir) {
+            d->leaveDirectory();
         }
 
         DUrl target_url;

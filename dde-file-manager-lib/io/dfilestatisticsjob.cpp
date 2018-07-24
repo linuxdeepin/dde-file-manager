@@ -172,12 +172,12 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
 
                 if (si.rootPath() == info->fileUrl().toLocalFile()) {
                     if (!fileHints.testFlag(DFileStatisticsJob::DontSkipPROCStorage)
-                            && si.fileSystemType() == "proc") {
+                            && si.device() == "proc") {
                         break;
                     }
 
                     if (!fileHints.testFlag(DFileStatisticsJob::DontSkipAVFSDStorage)
-                            && si.fileSystemType() == "fuse.avfsd") {
+                            && si.device() == "avfsd") {
                         break;
                     }
                 }

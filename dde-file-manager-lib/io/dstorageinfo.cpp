@@ -36,10 +36,11 @@ static QString preprocessPath(const QString &path, DStorageInfo::PathHints hints
     return path;
 }
 
-class DStorageInfoPrivate
+class DStorageInfoPrivate : public QSharedData
 {
 public:
     GFileInfo *gioInfo = nullptr;
+    QString rootPath;
 };
 
 DStorageInfo::DStorageInfo()
@@ -61,6 +62,13 @@ DStorageInfo::DStorageInfo(const QDir &dir, PathHints hints)
     setPath(preprocessPath(dir.path(), hints));
 }
 
+DStorageInfo::DStorageInfo(const DStorageInfo &other)
+    : QStorageInfo(other)
+    , d_ptr(other.d_ptr)
+{
+
+}
+
 DStorageInfo::~DStorageInfo()
 {
     Q_D(DStorageInfo);
@@ -68,6 +76,11 @@ DStorageInfo::~DStorageInfo()
     if (d->gioInfo) {
         g_object_unref(d->gioInfo);
     }
+}
+
+DStorageInfo &DStorageInfo::operator=(const DStorageInfo &other)
+{
+    d_ptr = other.d_ptr;
 }
 
 void DStorageInfo::setPath(const QString &path, PathHints hints)
@@ -91,8 +104,36 @@ void DStorageInfo::setPath(const QString &path, PathHints hints)
             g_error_free(error);
         }
 
+        GMount *mount = g_file_find_enclosing_mount(file, nullptr, &error);
+
+        if (error) {
+            qWarning() << QString::fromLocal8Bit(error->message);
+
+            g_error_free(error);
+        } else {
+            GFile *root_file = g_mount_get_root(mount);
+            char *root_path = g_file_get_path(root_file);
+
+            d->rootPath = QFile::decodeName(root_path);
+
+            g_free(root_path);
+            g_object_unref(root_file);
+            g_object_unref(mount);
+        }
+
         g_object_unref(file);
     }
+}
+
+QString DStorageInfo::rootPath() const
+{
+    Q_D(const DStorageInfo);
+
+    if (d->gioInfo && !d->rootPath.isEmpty()) {
+        return d->rootPath;
+    }
+
+    return QStorageInfo::rootPath();
 }
 
 QByteArray DStorageInfo::fileSystemType() const
@@ -149,6 +190,13 @@ bool DStorageInfo::isReadOnly() const
     }
 
     return QStorageInfo::isReadOnly();
+}
+
+bool DStorageInfo::isValid() const
+{
+    Q_D(const DStorageInfo);
+
+    return QStorageInfo::isValid();
 }
 
 void DStorageInfo::refresh()
@@ -214,3 +262,36 @@ bool DStorageInfo::inSameDevice(const DUrl &url1, const DUrl &url2, PathHints hi
 }
 
 DFM_END_NAMESPACE
+
+QT_BEGIN_NAMESPACE
+QDebug operator<<(QDebug debug, const DFM_NAMESPACE::DStorageInfo &info)
+{
+    QDebugStateSaver saver(debug);
+    Q_UNUSED(saver)
+    debug.nospace();
+    debug.noquote();
+    debug << "DStorageInfo(";
+    if (info.isValid()) {
+        debug << '"' << info.rootPath() << '"';
+        if (!info.fileSystemType().isEmpty())
+            debug << ", type=" << info.fileSystemType();
+        if (!info.name().isEmpty())
+            debug << ", name=\"" << info.name() << '"';
+        if (!info.device().isEmpty())
+            debug << ", device=\"" << info.device() << '"';
+        if (!info.subvolume().isEmpty())
+            debug << ", subvolume=\"" << info.subvolume() << '"';
+        if (info.isReadOnly())
+            debug << " [read only]";
+        debug << (info.isReady() ? " [ready]" : " [not ready]");
+        if (info.bytesTotal() > 0) {
+            debug << ", bytesTotal=" << info.bytesTotal() << ", bytesFree=" << info.bytesFree()
+                << ", bytesAvailable=" << info.bytesAvailable();
+        }
+    } else {
+        debug << "invalid";
+    }
+    debug<< ')';
+    return debug;
+}
+QT_END_NAMESPACE
