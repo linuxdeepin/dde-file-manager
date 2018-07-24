@@ -358,7 +358,7 @@ QModelIndex DFileSystemModel::index(int row, int column, const QModelIndex &pare
     if(!parentNode)
         return QModelIndex();
 
-    const DUrl &childFileUrl = parentNode->visibleChildren.value(row);
+    const DUrl childFileUrl = parentNode->visibleChildren.value(row);
     const FileSystemNodePointer &childNode = parentNode->children.value(childFileUrl);
 
     if(!childNode)
