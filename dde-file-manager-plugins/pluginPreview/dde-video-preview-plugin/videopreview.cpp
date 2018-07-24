@@ -176,13 +176,13 @@ VideoPreview::VideoPreview(QObject *parent)
 VideoPreview::~VideoPreview()
 {
     if (playerWidget) {
-        playerWidget->setParent(0);
+        playerWidget->hide();
         delete playerWidget.data();
     }
 
     if (statusBar) {
-        statusBar->setParent(0);
-        delete statusBar.data();
+        statusBar->hide();
+        statusBar->deleteLater();
     }
 }
 
