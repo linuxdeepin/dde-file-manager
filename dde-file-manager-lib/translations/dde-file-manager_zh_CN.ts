@@ -1096,8 +1096,12 @@
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1458"/>
+        <source>Cannot eject the device &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Cannot eject the device &quot;%1&quot;.</source>
-        <translation>无法弹出设备&quot;%1&quot;</translation>
+        <translation type="vanished">无法弹出设备&quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -1495,37 +1499,37 @@
 <context>
     <name>PropertyDialog</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="238"/>
+        <location filename="../dialogs/propertydialog.cpp" line="240"/>
         <source>Basic info</source>
         <translation>基本信息</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="239"/>
+        <location filename="../dialogs/propertydialog.cpp" line="241"/>
         <source>Open with</source>
         <translation>打开方式</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="240"/>
+        <location filename="../dialogs/propertydialog.cpp" line="242"/>
         <source>Share Management</source>
         <translation>共享管理</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="241"/>
+        <location filename="../dialogs/propertydialog.cpp" line="243"/>
         <source>Permission Management</source>
         <translation>权限管理</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="263"/>
+        <location filename="../dialogs/propertydialog.cpp" line="265"/>
         <source>System Disk</source>
         <translation>系统盘</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1026"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1033"/>
         <source>Allow to execute as program</source>
         <translation>允许以程序执行</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="837"/>
+        <location filename="../dialogs/propertydialog.cpp" line="839"/>
         <source>Local disk</source>
         <translation>本地磁盘</translation>
     </message>
@@ -1533,101 +1537,117 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="769"/>
+        <location filename="../dialogs/propertydialog.cpp" line="771"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="778"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="788"/>
-        <location filename="../dialogs/propertydialog.cpp" line="833"/>
-        <location filename="../dialogs/propertydialog.cpp" line="861"/>
+        <location filename="../dialogs/propertydialog.cpp" line="790"/>
+        <location filename="../dialogs/propertydialog.cpp" line="835"/>
+        <location filename="../dialogs/propertydialog.cpp" line="863"/>
         <source>Contains</source>
         <translation>文件个数</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="770"/>
+        <location filename="../dialogs/propertydialog.cpp" line="772"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="779"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="771"/>
+        <location filename="../dialogs/propertydialog.cpp" line="773"/>
         <source>Time read</source>
         <translation>访问时间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="772"/>
+        <location filename="../dialogs/propertydialog.cpp" line="774"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="781"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="794"/>
+        <location filename="../dialogs/propertydialog.cpp" line="796"/>
         <source>Link path</source>
         <translation>链接路径</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="832"/>
-        <location filename="../dialogs/propertydialog.cpp" line="860"/>
+        <location filename="../dialogs/propertydialog.cpp" line="834"/>
+        <location filename="../dialogs/propertydialog.cpp" line="862"/>
         <source>Device type</source>
         <translation>设备类型</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="834"/>
-        <location filename="../dialogs/propertydialog.cpp" line="862"/>
+        <location filename="../dialogs/propertydialog.cpp" line="836"/>
+        <location filename="../dialogs/propertydialog.cpp" line="864"/>
         <source>Free space</source>
         <translation>可用空间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="835"/>
-        <location filename="../dialogs/propertydialog.cpp" line="863"/>
+        <location filename="../dialogs/propertydialog.cpp" line="837"/>
+        <location filename="../dialogs/propertydialog.cpp" line="865"/>
         <source>Total space</source>
         <translation>总容量</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="954"/>
+        <location filename="../dialogs/propertydialog.cpp" line="961"/>
         <source>Access denied</source>
         <translation>不可写不可读</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="955"/>
-        <location filename="../dialogs/propertydialog.cpp" line="964"/>
+        <location filename="../dialogs/propertydialog.cpp" line="962"/>
+        <location filename="../dialogs/propertydialog.cpp" line="971"/>
         <source>Executable</source>
         <translation>可执行的</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="960"/>
-        <location filename="../dialogs/propertydialog.cpp" line="961"/>
+        <location filename="../dialogs/propertydialog.cpp" line="963"/>
+        <location filename="../dialogs/propertydialog.cpp" line="964"/>
+        <source>Write only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/propertydialog.cpp" line="965"/>
+        <location filename="../dialogs/propertydialog.cpp" line="966"/>
+        <source>Read only</source>
+        <translation type="unfinished">只读</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/propertydialog.cpp" line="967"/>
+        <location filename="../dialogs/propertydialog.cpp" line="968"/>
+        <source>Read-write</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/propertydialog.cpp" line="1021"/>
+        <source>Others</source>
+        <translation type="unfinished">其它</translation>
+    </message>
+    <message>
         <source>WriteRead</source>
-        <translation>可读写</translation>
+        <translation type="vanished">可读写</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="958"/>
-        <location filename="../dialogs/propertydialog.cpp" line="959"/>
         <source>ReadOnly</source>
-        <translation>只读</translation>
+        <translation type="vanished">只读</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="956"/>
-        <location filename="../dialogs/propertydialog.cpp" line="957"/>
         <source>WriteOnly</source>
-        <translation>只写</translation>
+        <translation type="vanished">只写</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1012"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1019"/>
         <source>Owner</source>
         <translation>所有者</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1013"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1020"/>
         <source>Group</source>
         <translation>群组</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1014"/>
         <source>Other</source>
-        <translation>其他</translation>
+        <translation type="vanished">其他</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="75"/>
@@ -2977,8 +2997,12 @@
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="416"/>
+        <source>Please firstly install samba to continue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Please firstly Install samba to continue</source>
-        <translation>请您先安装samba后，再进行共享相关操作！</translation>
+        <translation type="vanished">请您先安装samba后，再进行共享相关操作！</translation>
     </message>
 </context>
 <context>
