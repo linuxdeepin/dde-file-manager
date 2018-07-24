@@ -1,12 +1,9 @@
 /*
- * Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
- *               2016 ~ 2018 dragondjf
+ * Copyright (C) 2017 ~ 2018 Deepin Technology Co., Ltd.
  *
- * Author:     dragondjf<dingjiangfeng@deepin.com>
+ * Author:     Gary Wang <wzc782970009@gmail.com>
  *
- * Maintainer: dragondjf<dingjiangfeng@deepin.com>
- *             zccrs<zhangjide@deepin.com>
- *             Tangtong<tangtong@deepin.com>
+ * Maintainer: Gary Wang <wangzichong@deepin.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,24 +18,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef NETWORKCONTROLLER_H
-#define NETWORKCONTROLLER_H
-
+#ifndef MOUNTCONTROLLER_H
+#define MOUNTCONTROLLER_H
 
 #include "dabstractfilecontroller.h"
 
-class NetworkController: public DAbstractFileController
+class MountController : public DAbstractFileController
 {
     Q_OBJECT
-
 public:
-    explicit NetworkController(QObject *parent = 0);
-    ~NetworkController();
+    explicit MountController(QObject *parent = nullptr);
+    ~MountController();
 
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const override;
     const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const override;
-    const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const override;
 };
 
-#endif // NETWORKCONTROLLER_H
+#endif // MOUNTCONTROLLER_H

@@ -257,7 +257,9 @@ HEADERS += \
     controllers/interface/quicksearchdaemon_interface.h \
     controllers/quicksearchdaemoncontroller.h \
     views/dfmheaderview.h \
-    shutil/dquicksearchfilter.h
+    shutil/dquicksearchfilter.h \
+    controllers/mountcontroller.h \
+    models/mountfileinfo.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -428,7 +430,9 @@ SOURCES += \
     controllers/interface/quicksearchdaemon_interface.cpp \
     controllers/quicksearchdaemoncontroller.cpp \
     views/dfmheaderview.cpp \
-    shutil/dquicksearchfilter.cpp
+    shutil/dquicksearchfilter.cpp \
+    controllers/mountcontroller.cpp \
+    models/mountfileinfo.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 ICONDIR = $$PREFIX/share/icons/hicolor/scalable/apps

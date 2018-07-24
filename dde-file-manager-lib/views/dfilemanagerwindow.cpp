@@ -246,14 +246,17 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
         return false;
     }
 
+    // old mount scheme support... may get removed when no other place use this...
     if (fileUrl.scheme() == "mount") {
         DUrl newUrl;
         QUrlQuery query(fileUrl);
 
-        newUrl.setQuery(query.queryItemValue("id"));
+        if (query.hasQueryItem("id")) {
+            newUrl.setQuery(query.queryItemValue("id"));
+            appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(q_ptr, newUrl));
 
-        appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(q_ptr, newUrl));
-        return true;
+            return true;
+        }
     }
 
     if (!current_view || !DFMViewManager::instance()->isSuited(fileUrl, current_view)) {

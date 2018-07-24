@@ -32,6 +32,7 @@
 #include "searchcontroller.h"
 #include "sharecontroler.h"
 #include "avfsfilecontroller.h"
+#include "mountcontroller.h"
 #include "bookmarkmanager.h"
 #include "networkcontroller.h"
 #include "deviceinfo/udisklistener.h"
@@ -123,6 +124,7 @@ void AppController::registerUrlHandle()
     DFileService::dRegisterUrlHandler<NetworkController>(FTP_SCHEME, "");
     DFileService::dRegisterUrlHandler<ShareControler>(USERSHARE_SCHEME, "");
     DFileService::dRegisterUrlHandler<AVFSFileController>(AVFS_SCHEME, "");
+    DFileService::dRegisterUrlHandler<MountController>(MOUNT_SCHEME, "");
 
     DFileService::dRegisterUrlHandler<TagController>(TAG_SCHEME, "");
 }

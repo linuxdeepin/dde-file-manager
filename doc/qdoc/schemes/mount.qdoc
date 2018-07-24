@@ -1,0 +1,39 @@
+/*
+ * Copyright (C) 2017 ~ 2018 Deepin Technology Co., Ltd.
+ *
+ * Author:     Gary Wang <wzc782970009@gmail.com>
+ *
+ * Maintainer: Gary Wang <wangzichong@deepin.com>
+ *
+ * GNU Free Documentation License Usage
+ * Alternatively, this file may be used under the terms of the GNU Free
+ * Documentation License version 1.3 as published by the Free Software
+ * Foundation and appearing in the file included in the packaging of
+ * this file. Please review the following information to ensure
+ * the GNU Free Documentation License version 1.3 requirements
+ * will be met: https://www.gnu.org/licenses/fdl-1.3.html.
+ */
+
+/*!
+    \page mount-scheme.html
+    \title Mount Scheme
+    
+    Mount scheme `mount://` did the work which mount a device and then
+    change directory to the mount point. 
+    
+    \section1 Scheme Struct
+
+    Mount scheme simply contains a device scheme url in the url fragment:
+
+    mount://#<url to be mounted>
+    
+    the url which is going to be mounted should be a `udisks` scheme url,
+    or a `device` scheme url.
+    
+    \section1 Example Urls
+    
+    mount://test#udisks:///org/freedesktop/UDisks2/block_devices/sda1
+    
+    This will mount /dev/sda1 and then open it.
+
+*/
