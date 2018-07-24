@@ -39,6 +39,12 @@ static QString preprocessPath(const QString &path, DStorageInfo::PathHints hints
 class DStorageInfoPrivate : public QSharedData
 {
 public:
+    ~DStorageInfoPrivate() {
+        if (gioInfo) {
+            g_object_unref(gioInfo);
+        }
+    }
+
     GFileInfo *gioInfo = nullptr;
     QString rootPath;
 };
@@ -71,16 +77,14 @@ DStorageInfo::DStorageInfo(const DStorageInfo &other)
 
 DStorageInfo::~DStorageInfo()
 {
-    Q_D(DStorageInfo);
 
-    if (d->gioInfo) {
-        g_object_unref(d->gioInfo);
-    }
 }
 
 DStorageInfo &DStorageInfo::operator=(const DStorageInfo &other)
 {
     d_ptr = other.d_ptr;
+
+    return *this;
 }
 
 void DStorageInfo::setPath(const QString &path, PathHints hints)
@@ -89,11 +93,9 @@ void DStorageInfo::setPath(const QString &path, PathHints hints)
 
     Q_D(DStorageInfo);
 
-    if (QStorageInfo::bytesTotal() <= 0) {
-        if (d->gioInfo) {
-            g_object_unref(d->gioInfo);
-        }
+    d_ptr.detach();
 
+    if (QStorageInfo::bytesTotal() <= 0) {
         GFile *file = g_file_new_for_path(QFile::encodeName(path).constData());
         GError *error = nullptr;
         d->gioInfo = g_file_query_filesystem_info(file, "filesystem::*", nullptr, &error);

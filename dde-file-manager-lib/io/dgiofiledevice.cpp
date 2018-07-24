@@ -92,13 +92,29 @@ bool DGIOFileDevice::open(QIODevice::OpenMode mode)
         d->output_stream = G_OUTPUT_STREAM(g_file_append_to(d->file, G_FILE_CREATE_NONE, nullptr, &error));
 
         if (error) {
-            setErrorString(QString::fromLocal8Bit(error->message));
+            do {
+                if (error->domain == G_IO_ERROR && error->code == G_IO_ERROR_NOT_FOUND) {
+                    g_error_free(error);
+                    error = nullptr;
+                    // 文件不存在, 尝试创建
+                    d->output_stream = G_OUTPUT_STREAM(g_file_create(d->file, G_FILE_CREATE_NONE, nullptr, &error));
 
-            g_error_free(error);
-            g_input_stream_close(d->input_stream, nullptr, nullptr);
-            g_object_unref(d->input_stream);
+                    if (!error) {
+                        break;
+                    }
+                }
 
-            return false;
+                setErrorString(QString::fromLocal8Bit(error->message));
+
+                g_error_free(error);
+
+                if (d->input_stream) {
+                    g_input_stream_close(d->input_stream, nullptr, nullptr);
+                    g_object_unref(d->input_stream);
+                }
+
+                return false;
+            } while (false);
         }
 
         if (!exists) {
@@ -119,8 +135,10 @@ bool DGIOFileDevice::open(QIODevice::OpenMode mode)
                     return DFileDevice::open(mode);
                 }
 
-                g_input_stream_close(d->input_stream, nullptr, nullptr);
-                g_object_unref(d->input_stream);
+                if (d->input_stream) {
+                    g_input_stream_close(d->input_stream, nullptr, nullptr);
+                    g_object_unref(d->input_stream);
+                }
 
                 g_output_stream_close(d->output_stream, nullptr, nullptr);
                 g_object_unref(d->output_stream);
