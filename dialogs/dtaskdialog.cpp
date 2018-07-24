@@ -113,7 +113,7 @@ MoveCopyTaskWidget::MoveCopyTaskWidget(DFileCopyMoveJob *job, QWidget *parent)
 {
     initUI();
 
-    job->setErrorHandle(m_errorHandle);
+    job->setErrorHandle(m_errorHandle, thread());
 
     connect(job, &DFileCopyMoveJob::progressChanged, this, &MoveCopyTaskWidget::onJobProgressChanged);
     connect(job, &DFileCopyMoveJob::speedUpdated, this, &MoveCopyTaskWidget::onJobSpeedChanged);

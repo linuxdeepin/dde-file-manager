@@ -481,6 +481,11 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
         job->setFileHints(DFileCopyMoveJob::ForceDeleteFile);
     }
 
+    if (action == DFMGlobal::CutAction && !target.isValid()) {
+        // for remove mode
+        job->setActionOfErrorType(DFileCopyMoveJob::NonexistenceError, DFileCopyMoveJob::SkipAction);
+    }
+
     if (QThread::currentThread()->loopLevel() <= 0) {
         // 确保对象所在线程有事件循环
         job->moveToThread(qApp->thread());
@@ -562,7 +567,7 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
 
     ErrorHandle *error_handle = new ErrorHandle(job, &currentJob, slient);
 
-    job->setErrorHandle(error_handle);
+    job->setErrorHandle(error_handle, slient ? nullptr : error_handle->thread());
     job->setMode(action == DFMGlobal::CopyAction ? DFileCopyMoveJob::CopyMode : DFileCopyMoveJob::MoveMode);
     job->start(list, target);
     job->wait();
