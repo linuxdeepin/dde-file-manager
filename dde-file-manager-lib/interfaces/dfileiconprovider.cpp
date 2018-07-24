@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <gio/gio.h>
 
 #include "dfileiconprovider.h"
 #include "dfileinfo.h"
@@ -28,34 +29,7 @@
 #include <QLibrary>
 #include <QDebug>
 
-#undef signals // Collides with GTK symbols
-#include <gtk/gtk.h>
-
 DFM_BEGIN_NAMESPACE
-
-typedef enum {
-  GNOME_ICON_LOOKUP_FLAGS_NONE = 0,
-  GNOME_ICON_LOOKUP_FLAGS_EMBEDDING_TEXT = 1<<0,
-  GNOME_ICON_LOOKUP_FLAGS_SHOW_SMALL_IMAGES_AS_THEMSELVES = 1<<1,
-  GNOME_ICON_LOOKUP_FLAGS_ALLOW_SVG_AS_THEMSELVES = 1<<2
-} GnomeIconLookupFlags;
-
-typedef enum {
-  GNOME_ICON_LOOKUP_RESULT_FLAGS_NONE = 0,
-  GNOME_ICON_LOOKUP_RESULT_FLAGS_THUMBNAIL = 1<<0
-} GnomeIconLookupResultFlags;
-
-struct GnomeThumbnailFactory;
-typedef gboolean (*Ptr_gnome_vfs_init) (void);
-typedef char* (*Ptr_gnome_icon_lookup_sync)  (
-        GtkIconTheme *icon_theme,
-        GnomeThumbnailFactory *,
-        const char *file_uri,
-        const char *custom_icon,
-        GnomeIconLookupFlags flags,
-        GnomeIconLookupResultFlags *result);
-
-typedef GtkIconTheme* (*Ptr_gtk_icon_theme_get_default) (void);
 
 class DFileIconProviderPrivate
 {
@@ -65,16 +39,7 @@ public:
     void init();
     QIcon getFilesystemIcon(const QFileInfo &info) const;
     QIcon fromTheme(QString iconName) const;
-
-    static Ptr_gnome_icon_lookup_sync gnome_icon_lookup_sync;
-    static Ptr_gnome_vfs_init gnome_vfs_init;
-
-    static Ptr_gtk_icon_theme_get_default gtk_icon_theme_get_default;
 };
-
-Ptr_gnome_icon_lookup_sync DFileIconProviderPrivate::gnome_icon_lookup_sync;
-Ptr_gnome_vfs_init DFileIconProviderPrivate::gnome_vfs_init;
-Ptr_gtk_icon_theme_get_default DFileIconProviderPrivate::gtk_icon_theme_get_default;
 
 DFileIconProviderPrivate::DFileIconProviderPrivate()
 {
@@ -83,31 +48,44 @@ DFileIconProviderPrivate::DFileIconProviderPrivate()
 
 void DFileIconProviderPrivate::init()
 {
-    gnome_icon_lookup_sync = (Ptr_gnome_icon_lookup_sync)QLibrary::resolve(QLatin1String("gnomeui-2"), 0, "gnome_icon_lookup_sync");
-    gnome_vfs_init= (Ptr_gnome_vfs_init)QLibrary::resolve(QLatin1String("gnomevfs-2"), 0, "gnome_vfs_init");
 
-    gtk_icon_theme_get_default = (Ptr_gtk_icon_theme_get_default)QLibrary::resolve(QLatin1String("gtk-x11-2.0"), 0, "gtk_icon_theme_get_default");
 }
 
+// fallback to gio
 QIcon DFileIconProviderPrivate::getFilesystemIcon(const QFileInfo &info) const
 {
     QIcon icon;
-    if (gnome_vfs_init && gnome_icon_lookup_sync && gtk_icon_theme_get_default) {
-        gnome_vfs_init();
-        GtkIconTheme *theme = gtk_icon_theme_get_default();
-        QByteArray fileurl = QUrl::fromLocalFile(info.absoluteFilePath()).toEncoded();
-        char * icon_name = gnome_icon_lookup_sync(theme,
-                                                  NULL,
-                                                  fileurl.data(),
-                                                  NULL,
-                                                  GNOME_ICON_LOOKUP_FLAGS_NONE,
-                                                  NULL);
-        QString iconName = QString::fromUtf8(icon_name);
-        g_free(icon_name);
-        if (iconName.startsWith(QLatin1Char('/')))
-            return QIcon(iconName);
-        return QIcon::fromTheme(iconName);
+    const QByteArray &file_path = QFile::encodeName(info.absoluteFilePath());
+
+    GFile *g_file = g_file_new_for_path(file_path);
+    GError *error = nullptr;
+    GFileInfo *g_file_info = g_file_query_info(g_file, G_FILE_ATTRIBUTE_STANDARD_ICON, G_FILE_QUERY_INFO_NONE, nullptr, &error);
+
+    if (error) {
+        qWarning() << error->message;
+
+        g_error_free(error);
+    } else {
+        GIcon *g_icon = g_file_info_get_icon(g_file_info);
+        char *g_icon_name = g_icon_to_string(g_icon);
+
+        if (g_icon_name) {
+            const QByteArray icon_name(g_icon_name);
+
+            if (icon_name.startsWith("/")) {
+                icon = QIcon(QFile::decodeName(icon_name));
+            } else {
+                icon = QIcon::fromTheme(QFile::decodeName(icon_name));
+            }
+
+            g_free(g_icon_name);
+        }
+
+        g_object_unref(g_file_info);
     }
+
+    g_object_unref(g_file);
+
     return icon;
 }
 
