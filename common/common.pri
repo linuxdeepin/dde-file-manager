@@ -48,6 +48,9 @@ unix {
         VERSION = 1.7
     }
 
+    isEmpty(DISABLE_JEMALLOC) {
+        LIBS += -ljemalloc
+    }
 }
 
 INCLUDEPATH += $$top_srcdir \
