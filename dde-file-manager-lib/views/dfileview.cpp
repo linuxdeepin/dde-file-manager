@@ -1123,7 +1123,7 @@ void DFileView::mouseReleaseEvent(QMouseEvent *event)
     }
 
     // 避免通过触屏拖动视图松手后当前选中被清除
-    if (state() != NoState)
+    if (state() != NoState || event->source() != Qt::MouseEventSynthesizedByQt)
         return DListView::mouseReleaseEvent(event);
 }
 
