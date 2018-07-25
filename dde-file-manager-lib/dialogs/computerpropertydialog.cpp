@@ -14,15 +14,19 @@
  */
 
 #include "computerpropertydialog.h"
+#include "shutil/fileutils.h"
+
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <DTitlebar>
 #include <QGridLayout>
 #include <QPixmap>
-#include "dplatformwindowhandle.h"
 #include <QProcess>
+#include <QStorageInfo>
+#include <QDBusInterface>
 #include <QDebug>
+
 DWIDGET_USE_NAMESPACE
 
 ComputerPropertyDialog::ComputerPropertyDialog(QWidget *parent) : DDialog(parent)
@@ -272,13 +276,24 @@ QString ComputerPropertyDialog::getMemory()
 
 QString ComputerPropertyDialog::getDisk()
 {
-    QString cmd = "lsblk";
-    QStringList args;
-    args << "/dev/sda" << "--output=size";
-    QProcess p;
-    p.start(cmd, args);
-    p.waitForFinished(-1);
-    p.readLine();
-    QString result = p.readLine();
-    return result.trimmed();
+    const QStorageInfo &root_info = QStorageInfo::root();
+    const QByteArray &device = root_info.device();
+    const QDBusInterface interface("org.freedesktop.UDisks2",
+                                   "/org/freedesktop/UDisks2/block_devices" + device.mid(4), // remove "/dev"
+                                   "org.freedesktop.UDisks2.Block",
+                                   QDBusConnection::systemBus());
+
+    const QString &drive_path = qvariant_cast<QDBusObjectPath>(interface.property("Drive")).path();
+    const QDBusInterface interface_drive("org.freedesktop.UDisks2",
+                                         drive_path,
+                                         "org.freedesktop.UDisks2.Drive",
+                                         QDBusConnection::systemBus());
+
+    bool ok = false;
+    quint64 size = interface_drive.property("Size").toULongLong(&ok);
+
+    if (ok)
+        return FileUtils::formatSize(size);
+
+    return QString("Unknown");
 }
