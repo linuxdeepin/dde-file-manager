@@ -812,7 +812,7 @@ write_data:
 
         if (Q_UNLIKELY(size_write != size_read)) {
             if (checkFreeSpace(currentJobDataSizeInfo.first - currentJobDataSizeInfo.second)) {
-                setError(DFileCopyMoveJob::WriteError, qApp->translate("DFileCopyMoveJob", "Failed to write the file, , cause: %1").arg(toDevice->errorString()));
+                setError(DFileCopyMoveJob::WriteError, qApp->translate("DFileCopyMoveJob", "Failed to write the file, cause: %1").arg(toDevice->errorString()));
             } else {
                 setError(DFileCopyMoveJob::NotEnoughSpaceError);
             }
