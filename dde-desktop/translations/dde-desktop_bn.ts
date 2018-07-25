@@ -2,32 +2,32 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2235"/>
+        <location filename="../view/canvasgridview.cpp" line="2239"/>
         <source>Icon size</source>
         <translation>আইকনের আকার</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2241"/>
+        <location filename="../view/canvasgridview.cpp" line="2245"/>
         <source>Auto arrange</source>
         <translation>স্বয়ংক্রিয়ভাবে সাজান</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2371"/>
+        <location filename="../view/canvasgridview.cpp" line="2375"/>
         <source>Properties</source>
         <translation>বৈশিষ্ট্যসমূহ </translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2280"/>
+        <location filename="../view/canvasgridview.cpp" line="2284"/>
         <source>Display Settings</source>
         <translation>ডিসপ্লে সেটিংস</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2287"/>
+        <location filename="../view/canvasgridview.cpp" line="2291"/>
         <source>Corner Settings</source>
         <translation>কোনা সেটিংস </translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2293"/>
+        <location filename="../view/canvasgridview.cpp" line="2297"/>
         <source>Set Wallpaper</source>
         <translation>ওয়ালপেপার সেট করুন </translation>
     </message>
@@ -63,12 +63,12 @@
 <context>
     <name>WallpaperItem</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="124"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="123"/>
         <source>Only desktop</source>
         <translation>শুধুমাত্র ডেস্কটপ</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="127"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="126"/>
         <source>Only lock screen</source>
         <translation>শুধুমাত্র লক স্ক্রিন </translation>
     </message>

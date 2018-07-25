@@ -30,7 +30,7 @@
     <message>
         <location filename="../view/mainpage.cpp" line="137"/>
         <source>Fast format</source>
-        <translation>Hızlı biçimlendirme</translation>
+        <translation>Hızlı Biçimlendirme</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="154"/>
@@ -79,7 +79,7 @@
     <message>
         <location filename="../view/mainwindow.cpp" line="231"/>
         <source>Reformat</source>
-        <translation>Yeniden biçimlendir</translation>
+        <translation>Yeniden Biçimlendir</translation>
     </message>
 </context>
 <context>

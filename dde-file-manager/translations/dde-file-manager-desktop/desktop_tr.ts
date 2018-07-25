@@ -4,7 +4,7 @@
         <message>
             <location filename="Desktop Entry]Comment" line="0"/>
             <source>Browse the file system</source>
-            <translation>Dosya sistemine gözat</translation>
+            <translation>Dosya Sistemine Gözat</translation>
         </message>
         <message>
             <location filename="Desktop Entry]Name" line="0"/>
