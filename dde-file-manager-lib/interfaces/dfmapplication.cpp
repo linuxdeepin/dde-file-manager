@@ -174,14 +174,16 @@ DFMSettings *DFMApplication::genericSetting()
     if (!gsGlobal.exists()) {
         if (instance()) {
             gsGlobal->moveToThread(instance()->thread());
-            connect(gsGlobal, SIGNAL(valueChanged(QString, QString, QVariant)),
-                    instance(), SLOT(_q_onSettingsValueChanged(QString, QString, QVariant)));
-            connect(gsGlobal, SIGNAL(valueEdited(QString, QString, QVariant)),
-                    instance(), SLOT(_q_onSettingsValueEdited(QString, QString, QVariant)));
+            connect(gsGlobal, &DFMSettings::valueChanged,
+                    instance(), &DFMApplication::onSettingsValueChanged);
+            connect(gsGlobal, &DFMSettings::valueEdited,
+                    instance(), &DFMApplication::onSettingsValueEdited);
         }
 
         gsGlobal->setAutoSync(true);
+#ifndef DFM_NO_FILE_WATCHER
         gsGlobal->setWatchChanges(true);
+#endif
 
         if (instance())
             Q_EMIT instance()->genericSettingCreated(gsGlobal);
@@ -195,14 +197,16 @@ DFMSettings *DFMApplication::appSetting()
     if (!asGlobal.exists()) {
         if (instance()) {
             asGlobal->moveToThread(instance()->thread());
-            connect(asGlobal, SIGNAL(valueChanged(QString, QString, QVariant)),
-                    instance(), SLOT(_q_onSettingsValueChanged(QString, QString, QVariant)));
-            connect(asGlobal, SIGNAL(valueEdited(QString, QString, QVariant)),
-                    instance(), SLOT(_q_onSettingsValueEdited(QString, QString, QVariant)));
+            connect(asGlobal, &DFMSettings::valueChanged,
+                    instance(), &DFMApplication::onSettingsValueChanged);
+            connect(asGlobal, &DFMSettings::valueEdited,
+                    instance(), &DFMApplication::onSettingsValueEdited);
         }
 
         asGlobal->setAutoSync(true);
+#ifndef DFM_NO_FILE_WATCHER
         asGlobal->setWatchChanges(true);
+#endif
 
         if (instance())
             Q_EMIT instance()->appSettingCreated(asGlobal);
@@ -215,7 +219,9 @@ DFMSettings *DFMApplication::genericObtuselySetting()
 {
     if (!gosGlobal.exists()) {
         gosGlobal->setAutoSync(false);
+#ifndef DFM_NO_FILE_WATCHER
         gosGlobal->setWatchChanges(false);
+#endif
     }
 
     return gosGlobal;
@@ -225,7 +231,9 @@ DFMSettings *DFMApplication::appObtuselySetting()
 {
     if (!aosGlobal.exists()) {
         aosGlobal->setAutoSync(false);
+#ifndef DFM_NO_FILE_WATCHER
         aosGlobal->setWatchChanges(false);
+#endif
     }
 
     return aosGlobal;
@@ -237,17 +245,25 @@ DFMApplication::DFMApplication(DFMApplicationPrivate *dd, QObject *parent)
 {
     if (gsGlobal.exists()) {
         gsGlobal->moveToThread(thread());
-        connect(gsGlobal, SIGNAL(valueChanged(QString, QString, QVariant)),
-                this, SLOT(_q_onSettingsValueChanged(QString, QString, QVariant)));
+        connect(gsGlobal, &DFMSettings::valueChanged,
+                this, &DFMApplication::onSettingsValueChanged);
     }
 
     if (asGlobal.exists()) {
         asGlobal->moveToThread(thread());
-        connect(asGlobal, SIGNAL(valueChanged(QString, QString, QVariant)),
-                this, SLOT(_q_onSettingsValueChanged(QString, QString, QVariant)));
+        connect(asGlobal, &DFMSettings::valueChanged,
+                this, &DFMApplication::onSettingsValueChanged);
     }
 }
 
-DFM_END_NAMESPACE
+void DFMApplication::onSettingsValueChanged(const QString &group, const QString &key, const QVariant &value)
+{
+    d_func()->_q_onSettingsValueChanged(group, key, value);
+}
 
-#include "moc_dfmapplication.cpp"
+void DFMApplication::onSettingsValueEdited(const QString &group, const QString &key, const QVariant &value)
+{
+    d_func()->_q_onSettingsValueEdited(group, key, value);
+}
+
+DFM_END_NAMESPACE

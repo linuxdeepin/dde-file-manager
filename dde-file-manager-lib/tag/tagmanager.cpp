@@ -4,16 +4,19 @@
 #include <chrono>
 #include <random>
 
-
-#include "singleton.h"
 #include "tagmanager.h"
+#ifndef DDE_ANYTHINGMONITOR
+#include "singleton.h"
 #include "tag/tagutil.h"
 #include "shutil/dsqlitehandle.h"
 #include "app/filesignalmanager.h"
 #include "controllers/appcontroller.h"
+#endif
 #include "controllers/tagmanagerdaemoncontroller.h"
 
+#ifndef DDE_ANYTHINGMONITOR
 #include "dfileservices.h"
+#endif
 
 #include <QMap>
 #include <QList>
@@ -21,7 +24,7 @@
 #include <QVariant>
 #include <QStorageInfo>
 
-
+#ifndef DDE_ANYTHINGMONITOR
 static QString randomColor() noexcept
 {
     std::random_device device{};
@@ -31,11 +34,12 @@ static QString randomColor() noexcept
     std::uniform_int_distribution<int> uniform_dist(0, 6);
     return  Tag::ColorName[uniform_dist(engine)];
 }
-
+#endif
 
 TagManager::TagManager()
     : QObject{ nullptr }
 {
+#ifndef DDE_ANYTHINGMONITOR
     if (qApp) {
         // to main thread
         if (thread() != qApp->thread()) {
@@ -46,8 +50,10 @@ TagManager::TagManager()
     }
 
     this->init_connect();
+#endif
 }
 
+#ifndef DDE_ANYTHINGMONITOR
 QMap<QString, QString> TagManager::getAllTags()
 {
     QMap<QString, QVariant> placeholder_container{ { QString{" "}, QVariant{ QList<QString>{ QString{" "} } } } };
@@ -270,6 +276,7 @@ bool TagManager::deleteTags(const QList<QString> &tags)
 
     return result;
 }
+#endif
 
 bool TagManager::deleteFiles(const QList<DUrl> &fileList)
 {
@@ -289,6 +296,7 @@ bool TagManager::deleteFiles(const QList<DUrl> &fileList)
     return result;
 }
 
+#ifndef DDE_ANYTHINGMONITOR
 void TagManager::init_connect()noexcept
 {
     connect(DFileService::instance(), &DFileService::fileCopied, this, [this](const DUrl & source, const DUrl & target) {
@@ -446,6 +454,7 @@ bool TagManager::makeFilesTagThroughColor(const QString &color, const QList<DUrl
 
     return result;
 }
+#endif
 
 bool TagManager::changeFilesName(const QList<QPair<QByteArray, QByteArray>> &oldAndNewFilesName)
 {

@@ -49,7 +49,7 @@ void TagHandle::onFileDelete(const QByteArrayList &files)
 
         }
 
-        TagManager::instance()->deleteFiles(url_list);
+        TagManager::deleteFiles(url_list);
     }
 }
 
@@ -62,7 +62,7 @@ void TagHandle::onFileRename(const QList<QPair<QByteArray, QByteArray>> &files)
             bool result{ DAnythingMonitorFilter::instance()->whetherFilterCurrentPath(names.second) };
 
             if (result) {
-                TagManager::instance()->changeFilesName({ names });
+                TagManager::changeFilesName({ names });
             }
         }
     }

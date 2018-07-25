@@ -64,7 +64,6 @@ class TagManager final : public QObject
 {
     Q_OBJECT
 public:
-
     enum class SqlType : std::size_t
     {
         GetAllTags = 1,
@@ -81,6 +80,7 @@ public:
     TagManager(const TagManager& other)=delete;
     TagManager& operator=(const TagManager& other)=delete;
 
+#ifndef DDE_ANYTHINGMONITOR
     ///###: query
     QMap<QString, QString> getAllTags();
 
@@ -107,14 +107,16 @@ public:
     bool changeTagName(const QPair<QString, QString>& oldAndNewName);
 
     bool makeFilesTagThroughColor(const QString &color, const QList<DUrl>& files);
+#endif
+    static bool changeFilesName(const QList<QPair<QByteArray, QByteArray> > &oldAndNewFilesName);
 
-    bool changeFilesName(const QList<QPair<QByteArray, QByteArray> > &oldAndNewFilesName);
-
-
+#ifndef DDE_ANYTHINGMONITOR
     ///###:delete
     bool deleteTags(const QList<QString>& tags);
-    bool deleteFiles(const QList<DUrl>& urlList);
+#endif
+    static bool deleteFiles(const QList<DUrl>& urlList);
 
+#ifndef DDE_ANYTHINGMONITOR
     static TagManager* instance()
     {
         static TagManager* tagManager{ new TagManager };
@@ -131,6 +133,7 @@ signals:
 
 private:
     void init_connect()noexcept;
+#endif
 };
 
 #endif // TAGMANAGER_H
