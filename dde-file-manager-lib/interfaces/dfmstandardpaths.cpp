@@ -26,8 +26,9 @@
 #include "durl.h"
 
 #include <QDir>
-#include <QApplication>
+#include <QCoreApplication>
 #include <QStandardPaths>
+#include <QMap>
 
 QString DFMStandardPaths::location(DFMStandardPaths::StandardLocation type)
 {
@@ -38,6 +39,7 @@ QString DFMStandardPaths::location(DFMStandardPaths::StandardLocation type)
         return QDir::homePath() + "/.local/share/Trash/files";
     case TrashInfosPath:
         return QDir::homePath() + "/.local/share/Trash/info";
+#ifdef APPSHAREDIR
     case TranslationPath: {
         QString path = APPSHAREDIR"/translations";
         if (!QDir(path).exists()) {
@@ -59,6 +61,8 @@ QString DFMStandardPaths::location(DFMStandardPaths::StandardLocation type)
         }
         return path;
     }
+#endif
+#ifdef PLUGINDIR
     case PluginsPath: {
         QString path = PLUGINDIR;
         if (!QDir(path).exists()) {
@@ -66,8 +70,11 @@ QString DFMStandardPaths::location(DFMStandardPaths::StandardLocation type)
         }
         return path;
     }
+#endif
+#ifdef QMAKE_TARGET
     case ApplicationConfigPath:
         return getConfigPath();
+#endif
     case ThumbnailPath:
         return QDir::homePath() + "/.cache/thumbnails";
     case ThumbnailFailPath:
@@ -78,8 +85,10 @@ QString DFMStandardPaths::location(DFMStandardPaths::StandardLocation type)
         return location(ThumbnailPath) + "/normal";
     case ThumbnailSmallPath:
         return location(ThumbnailPath) + "/small";
+#ifdef APPSHAREDIR
     case ApplicationSharePath:
         return APPSHAREDIR;
+#endif
     case HomePath:
         return QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
     case DesktopPath:
@@ -98,12 +107,18 @@ QString DFMStandardPaths::location(DFMStandardPaths::StandardLocation type)
         return getCachePath();
     case DiskPath:
         return QDir::rootPath();
+#ifdef NETWORK_ROOT
     case NetworkRootPath:
         return NETWORK_ROOT;
+#endif
+#ifdef USERSHARE_ROOT
     case UserShareRootPath:
         return USERSHARE_ROOT;
+#endif
+#ifdef COMPUTER_ROOT
     case ComputerRootPath:
         return COMPUTER_ROOT;
+#endif
     case Root:
         return "/";
     }
@@ -173,6 +188,7 @@ DUrl DFMStandardPaths::toStandardUrl(const QString &localPath)
     return DUrl();
 }
 
+#ifdef QMAKE_TARGET
 QString DFMStandardPaths::getConfigPath()
 {
     QString projectName = QMAKE_TARGET;
@@ -181,6 +197,7 @@ QString DFMStandardPaths::getConfigPath()
     QString defaultPath = QString("%1/%2/deepin/%3").arg(QDir::homePath(), ".config", projectName);
     return defaultPath;
 }
+#endif
 
 QString DFMStandardPaths::getCachePath()
 {

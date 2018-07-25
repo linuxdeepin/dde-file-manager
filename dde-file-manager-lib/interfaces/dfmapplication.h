@@ -110,10 +110,10 @@ protected:
     DFMApplication(DFMApplicationPrivate *dd, QObject *parent = nullptr);
 
 private:
-    QScopedPointer<DFMApplicationPrivate> d_ptr;
+    void onSettingsValueChanged(const QString &, const QString &, const QVariant &);
+    void onSettingsValueEdited(const QString &, const QString &, const QVariant &);
 
-    Q_PRIVATE_SLOT(d_ptr, void _q_onSettingsValueChanged(const QString &, const QString &, const QVariant &))
-    Q_PRIVATE_SLOT(d_ptr, void _q_onSettingsValueEdited(const QString &, const QString &, const QVariant &))
+    QScopedPointer<DFMApplicationPrivate> d_ptr;
 };
 
 DFM_END_NAMESPACE

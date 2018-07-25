@@ -66,7 +66,9 @@ public:
     static QString fromStandardUrl(const DUrl &standardUrl);
     static DUrl toStandardUrl(const QString &localPath);
 
+#ifdef QMAKE_TARGET
     static QString getConfigPath();
+#endif
     static QString getCachePath();
 
 private:
