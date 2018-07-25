@@ -316,7 +316,7 @@ bool TrashManager::isEmpty()
     if (!dir.exists())
         return true;
 
-    dir.setFilter(QDir::AllEntries | QDir::Hidden | QDir::System);
+    dir.setFilter(QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
 
     QDirIterator iterator(dir);
 
