@@ -23,15 +23,24 @@
  */
 
 #include "computerpropertydialog.h"
+#include "dfmdiskmanager.h"
+#include "dfmblockdevice.h"
+#include "dfmdiskdevice.h"
+
+#include "shutil/fileutils.h"
+
+#include <DPlatformWindowHandle>
+
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <DTitlebar>
 #include <QGridLayout>
 #include <QPixmap>
-#include "dplatformwindowhandle.h"
 #include <QProcess>
 #include <QDebug>
+
+DFM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 ComputerPropertyDialog::ComputerPropertyDialog(QWidget *parent) : DDialog(parent)
@@ -281,13 +290,19 @@ QString ComputerPropertyDialog::getMemory()
 
 QString ComputerPropertyDialog::getDisk()
 {
-    QString cmd = "lsblk";
-    QStringList args;
-    args << "/dev/sda" << "--output=size";
-    QProcess p;
-    p.start(cmd, args);
-    p.waitForFinished(-1);
-    p.readLine();
-    QString result = p.readLine();
-    return result.trimmed();
+    DFMDiskManager manager;
+
+    for (const QString &device_path : manager.blockDevices()) {
+        QScopedPointer<DFMBlockDevice> block_device(manager.createBlockDevice(device_path));
+
+        for (const QByteArray &mount_poion : block_device->mountPoints()) {
+            if (QFile::encodeName(mount_poion) == QDir::rootPath()) {
+                QScopedPointer<DFMDiskDevice> disk_device(manager.createDiskDevice(block_device->drive()));
+
+                return FileUtils::formatSize(disk_device->size());
+            }
+        }
+    }
+
+    return QString();
 }
