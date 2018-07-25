@@ -2309,18 +2309,17 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     QSet<MenuAction> disableList;
     QSet<MenuAction> unusedList;
 
-
+    // blumia: when touching this part, do the same change in dfileview.cpp
     if (list.size() == 1) {
-        if (!info->isReadable()) {
+        if (!info->isReadable() && !info->isSymLink()) {
             disableList << MenuAction::Copy;
         }
 
-        if (!info->isWritable() && !info->isFile()) {
+        if (!info->isWritable() && !info->isFile() && !info->isSymLink()) {
             disableList << MenuAction::Delete;
         }
 
         if (!indexFlags.testFlag(Qt::ItemIsEditable)) {
-            qDebug() << "remove rename" ;
             disableList << MenuAction::Rename ;
         }
     }
