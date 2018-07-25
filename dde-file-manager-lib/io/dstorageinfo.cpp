@@ -104,6 +104,7 @@ void DStorageInfo::setPath(const QString &path, PathHints hints)
             qWarning() << QString::fromLocal8Bit(error->message);
 
             g_error_free(error);
+            error = nullptr;
         }
 
         GMount *mount = g_file_find_enclosing_mount(file, nullptr, &error);
