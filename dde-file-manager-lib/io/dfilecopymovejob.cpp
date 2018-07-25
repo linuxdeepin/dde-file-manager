@@ -1519,6 +1519,7 @@ void DFileCopyMoveJob::run()
     d->setError(NoError);
 
 end:
+    d->fileStatistics->stop();
     d->setState(StoppedState);
 
     if (d->error == NoError)
