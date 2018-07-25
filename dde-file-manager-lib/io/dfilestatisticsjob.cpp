@@ -163,7 +163,7 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
 
         Q_EMIT q_ptr->fileFound(url);
     } else {
-        size = info->size();
+//        size = info->size();
         ++directoryCount;
 
         if (!(fileHints & (DFileStatisticsJob::DontSkipAVFSDStorage | DFileStatisticsJob::DontSkipPROCStorage)) && info->fileUrl().isLocalFile()) {

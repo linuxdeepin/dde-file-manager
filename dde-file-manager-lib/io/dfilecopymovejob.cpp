@@ -1140,7 +1140,7 @@ void DFileCopyMoveJobPrivate::joinToCompletedDirectoryList(const DUrl &from, con
 {
     qCDebug(fileJob(), "directory. from: %s, target: %s, data size: %lld", qPrintable(from.toString()), qPrintable(target.toString()), dataSize);
 
-    completedDataSize += dataSize;
+//    completedDataSize += dataSize;
     ++completedFilesCount;
 
     Q_EMIT q_ptr->completedFilesCountChanged(completedFilesCount);
