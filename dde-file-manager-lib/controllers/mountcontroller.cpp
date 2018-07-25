@@ -63,9 +63,9 @@ const QList<DAbstractFileInfoPointer> MountController::getChildren(const QShared
     if (deviceUrl.scheme() == DEVICE_SCHEME) {
         //
     } else if (deviceUrl.scheme() == "udisks") {
-        // for test:  mount:///test#udisks:///org/freedesktop/UDisks2/block_devices/sda1
+        // for test:  mount://test#udisks:///org/freedesktop/UDisks2/block_devices/sda1
         QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(deviceUrl.path()));
-        if (!blDev || !blDev->hasFileSystem()) {
+        if (!blDev || !blDev->hasFileSystem() || blDev->isEncrypted()) {
             return {};
         }
         QString mountPoint;
