@@ -2338,15 +2338,19 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
     QSet<MenuAction> disableList;
     QSet<MenuAction> unusedList;
 
+    // blumia: when touching this part, do the same change in canvasgridview.cpp
     if(list.size() == 1){
-        if (!info->isReadable() && !info->isSymLink())
+        if (!info->isReadable() && !info->isSymLink()) {
             disableList << MenuAction::Copy;
+        }
 
-        if (!info->isWritable() && !info->isFile() && !info->isSymLink())
+        if (!info->isWritable() && !info->isFile() && !info->isSymLink()) {
             disableList << MenuAction::Delete;
+        }
 
-        if (!indexFlags.testFlag(Qt::ItemIsEditable))
-            disableList << MenuAction::Rename ;
+        if (!indexFlags.testFlag(Qt::ItemIsEditable)) {
+            disableList << MenuAction::Rename;
+        }
     }
 
     menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, windowId());
