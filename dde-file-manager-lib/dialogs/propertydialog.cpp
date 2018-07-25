@@ -316,7 +316,13 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
                 m_expandGroup->expand(1)->setContent(m_shareinfoFrame);
                 m_expandGroup->expand(1)->setExpand(false);
             }
-            startComputerFolderSize(m_url);
+
+            if (fileInfo->toLocalFile().isEmpty()) {
+                startComputerFolderSize(m_url);
+            } else {
+                startComputerFolderSize(DUrl::fromLocalFile(fileInfo->toLocalFile()));
+            }
+
             m_fileCount = fileInfo->filesCount();
         }
 
