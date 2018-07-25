@@ -2,32 +2,32 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2235"/>
+        <location filename="../view/canvasgridview.cpp" line="2239"/>
         <source>Icon size</source>
-        <translation>Simge boyutu</translation>
+        <translation>Simge Boyutu</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2241"/>
+        <location filename="../view/canvasgridview.cpp" line="2245"/>
         <source>Auto arrange</source>
-        <translation>Otomatik hizala</translation>
+        <translation>Otomatik Hizala</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2371"/>
+        <location filename="../view/canvasgridview.cpp" line="2375"/>
         <source>Properties</source>
         <translation>Özellikler</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2280"/>
+        <location filename="../view/canvasgridview.cpp" line="2284"/>
         <source>Display Settings</source>
         <translation>Görünüm Ayarları</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2287"/>
+        <location filename="../view/canvasgridview.cpp" line="2291"/>
         <source>Corner Settings</source>
         <translation>Köşe Ayarları</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2293"/>
+        <location filename="../view/canvasgridview.cpp" line="2297"/>
         <source>Set Wallpaper</source>
         <translation>Duvar Kağıdını Ayarla</translation>
     </message>
@@ -37,7 +37,7 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="38"/>
         <source>Tiny</source>
-        <translation>Çok küçük</translation>
+        <translation>Çok Küçük</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="39"/>
@@ -57,20 +57,20 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="42"/>
         <source>Super large</source>
-        <translation>Çok büyük</translation>
+        <translation>Çok Büyük</translation>
     </message>
 </context>
 <context>
     <name>WallpaperItem</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="124"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="123"/>
         <source>Only desktop</source>
         <translation>Yalnız masaüstü</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="127"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="126"/>
         <source>Only lock screen</source>
-        <translation>Yalnız kilit ekranı</translation>
+        <translation>Yalnız Kilit Ekranı</translation>
     </message>
 </context>
 <context>

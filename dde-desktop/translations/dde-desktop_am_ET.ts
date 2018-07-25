@@ -2,32 +2,32 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2235"/>
+        <location filename="../view/canvasgridview.cpp" line="2239"/>
         <source>Icon size</source>
         <translation>የ ምልክት መጠን</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2241"/>
+        <location filename="../view/canvasgridview.cpp" line="2245"/>
         <source>Auto arrange</source>
         <translation>በራሱ ማስተካከያ</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2371"/>
+        <location filename="../view/canvasgridview.cpp" line="2375"/>
         <source>Properties</source>
         <translation>ባህሪዎች</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2280"/>
+        <location filename="../view/canvasgridview.cpp" line="2284"/>
         <source>Display Settings</source>
         <translation>ማሰናጃ ማሳያ</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2287"/>
+        <location filename="../view/canvasgridview.cpp" line="2291"/>
         <source>Corner Settings</source>
         <translation>ጠርዝ ማሰናጃ</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2293"/>
+        <location filename="../view/canvasgridview.cpp" line="2297"/>
         <source>Set Wallpaper</source>
         <translation>የ ግድግዳ ወረቀት ማሰናጃ</translation>
     </message>
@@ -63,12 +63,12 @@
 <context>
     <name>WallpaperItem</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="124"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="123"/>
         <source>Only desktop</source>
         <translation>ዴስክቶፕ ብቻ</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="127"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="126"/>
         <source>Only lock screen</source>
         <translation>መመልከቻ ብቻ መቆለፊያ</translation>
     </message>

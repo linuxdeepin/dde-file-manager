@@ -2,32 +2,32 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2235"/>
+        <location filename="../view/canvasgridview.cpp" line="2239"/>
         <source>Icon size</source>
         <translation>Dimensione icone</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2241"/>
+        <location filename="../view/canvasgridview.cpp" line="2245"/>
         <source>Auto arrange</source>
         <translation>Disponi automaticamente</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2371"/>
+        <location filename="../view/canvasgridview.cpp" line="2375"/>
         <source>Properties</source>
         <translation>Proprietà</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2280"/>
+        <location filename="../view/canvasgridview.cpp" line="2284"/>
         <source>Display Settings</source>
         <translation>Impostazioni visualizzazione</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2287"/>
+        <location filename="../view/canvasgridview.cpp" line="2291"/>
         <source>Corner Settings</source>
         <translation>Impostazioni angoli di navigazione</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2293"/>
+        <location filename="../view/canvasgridview.cpp" line="2297"/>
         <source>Set Wallpaper</source>
         <translation>Imposta sfondo</translation>
     </message>
@@ -63,12 +63,12 @@
 <context>
     <name>WallpaperItem</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="124"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="123"/>
         <source>Only desktop</source>
         <translation>Solo desktop</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="127"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="126"/>
         <source>Only lock screen</source>
         <translation>Solo Lockscreen</translation>
     </message>

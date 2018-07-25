@@ -2,32 +2,32 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2235"/>
+        <location filename="../view/canvasgridview.cpp" line="2239"/>
         <source>Icon size</source>
         <translation>Величина иконице</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2241"/>
+        <location filename="../view/canvasgridview.cpp" line="2245"/>
         <source>Auto arrange</source>
         <translation>Аутоматски сложи</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2371"/>
+        <location filename="../view/canvasgridview.cpp" line="2375"/>
         <source>Properties</source>
         <translation>Својства</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2280"/>
+        <location filename="../view/canvasgridview.cpp" line="2284"/>
         <source>Display Settings</source>
         <translation>Поставке приказа</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2287"/>
+        <location filename="../view/canvasgridview.cpp" line="2291"/>
         <source>Corner Settings</source>
         <translation>Поставке углова</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2293"/>
+        <location filename="../view/canvasgridview.cpp" line="2297"/>
         <source>Set Wallpaper</source>
         <translation>Постави тапет</translation>
     </message>
@@ -63,12 +63,12 @@
 <context>
     <name>WallpaperItem</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="124"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="123"/>
         <source>Only desktop</source>
         <translation>Само радна површ</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="127"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="126"/>
         <source>Only lock screen</source>
         <translation>Само закључани екран</translation>
     </message>

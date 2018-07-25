@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -19,7 +17,7 @@
     <message>
         <location filename="../dialogs/closealldialogindicator.cpp" line="71"/>
         <source>Total size is %1, contains %2 files</source>
-        <translation>总容量%1，总文件数量%2个</translation>
+        <translation>总容量%1，总文件数%2个</translation>
     </message>
 </context>
 <context>
@@ -156,7 +154,7 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="130"/>
         <source>Target disk doesn&apos;t have enough space</source>
-        <translation>目标磁盘剩余空间不足，无法进行复制！</translation>
+        <translation>目标磁盘剩余空间不足</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="132"/>
@@ -177,42 +175,38 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="605"/>
         <source>Failed to create the directory, cause: %1</source>
-        <translation>目录创建失败，失败原因：</translation>
-    </message>
-    <message>
-        <source>Failed to create the directory, , cause: %1</source>
-        <translation type="vanished">目录创建失败，失败原因：</translation>
+        <translation>目录创建失败，原因：%1</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="690"/>
         <location filename="../io/dfilecopymovejob.cpp" line="712"/>
         <source>Failed to open the file, cause: %1</source>
-        <translation>文件打开失败，失败原因：</translation>
+        <translation>文件打开失败，原因：%1</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="769"/>
         <source>Failed to read the file, cause: %1</source>
-        <translation>文件内容读取失败，失败原因：</translation>
+        <translation>文件内容读取失败，原因：%1</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="801"/>
         <source>Failed to write the file, , cause: %1</source>
-        <translation>文件内容写入失败，失败原因：</translation>
+        <translation>文件内容写入失败，原因：%1</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="876"/>
         <source>File integrity was damaged, cause: %1</source>
-        <translation>文件完整性检查失败，失败原因：</translation>
+        <translation>文件完整性检查失败，原因：%1</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="929"/>
         <source>Failed to delete the file, cause: %1</source>
-        <translation>文件删除失败，失败原因：</translation>
+        <translation>文件删除失败，原因：%1</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="983"/>
         <source>Fail to create symlink, cause: %1</source>
-        <translation>创建链接失败，失败原因：</translation>
+        <translation>创建链接失败，原因：%1</translation>
     </message>
 </context>
 <context>
@@ -357,13 +351,6 @@
     </message>
 </context>
 <context>
-    <name>DToolBar</name>
-    <message>
-        <source>Search or enter address</source>
-        <translation type="vanished">搜索或输入地址</translation>
-    </message>
-</context>
-<context>
     <name>DialogManager</name>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="352"/>
@@ -431,7 +418,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="409"/>
         <source>It is an executable file.</source>
-        <translation>它是一个可执行文件.</translation>
+        <translation>它是一个可执行文件。</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="425"/>
@@ -520,7 +507,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="705"/>
         <source>Version:</source>
-        <translation>版本:</translation>
+        <translation>版本：</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="707"/>
@@ -540,7 +527,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="789"/>
         <source>Fail to create symlink, cause:</source>
-        <translation>创建链接失败，失败原因：</translation>
+        <translation>创建链接失败，原因：</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="807"/>
@@ -713,7 +700,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="19"/>
         <location filename="../configure/global-setting-template.js" line="19"/>
         <source>Open file:</source>
-        <translation>打开文件:</translation>
+        <translation>打开文件：</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="22"/>
@@ -741,7 +728,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="35"/>
         <location filename="../configure/global-setting-template.js" line="35"/>
         <source>Open from default window:</source>
-        <translation>从默认窗口打开:</translation>
+        <translation>从默认窗口打开：</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="39"/>
@@ -828,7 +815,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="63"/>
         <location filename="../configure/global-setting-template.js" line="63"/>
         <source>Open in new tab:</source>
-        <translation>从新标签打开:</translation>
+        <translation>从新标签打开：</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="67"/>
@@ -842,14 +829,14 @@
         <location filename="../configure/global-setting-template-pro.js" line="95"/>
         <location filename="../configure/global-setting-template.js" line="95"/>
         <source>View</source>
-        <translation></translation>
+        <translation>视图</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="99"/>
         <location filename="../configure/global-setting-template-pro.js" line="99"/>
         <location filename="../configure/global-setting-template.js" line="99"/>
         <source>Default size:</source>
-        <translation>默认大小:</translation>
+        <translation>默认大小：</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="102"/>
@@ -969,10 +956,6 @@
         <location filename="../configure/global-setting-template.js" line="256"/>
         <source>Hide system disk</source>
         <translation>隐藏系统盘</translation>
-    </message>
-    <message>
-        <source>Quick search</source>
-        <translation type="vanished">快速搜索</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="177"/>
@@ -1097,11 +1080,7 @@
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1458"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cannot eject the device &quot;%1&quot;.</source>
-        <translation type="vanished">无法弹出设备&quot;%1&quot;</translation>
+        <translation>无法弹出设备 &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -1315,7 +1294,7 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="546"/>
         <source>Original folder</source>
-        <translation>原始目录</translation>
+        <translation>原始文件夹</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="549"/>
@@ -1325,16 +1304,12 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="559"/>
         <source>Target folder</source>
-        <translation>目标目录</translation>
+        <translation>目标文件夹</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="562"/>
         <source>Target file</source>
         <translation>目标文件</translation>
-    </message>
-    <message>
-        <source>Original folder:%1</source>
-        <translation type="vanished">原始目录：%1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="547"/>
@@ -1343,22 +1318,10 @@
         <translation>个数：%1</translation>
     </message>
     <message>
-        <source>Original file:%1</source>
-        <translation type="vanished">原始文件：%1</translation>
-    </message>
-    <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="550"/>
         <location filename="../../dialogs/dtaskdialog.cpp" line="563"/>
         <source>Size:%1</source>
         <translation>大小：%1</translation>
-    </message>
-    <message>
-        <source>Target folder:%1</source>
-        <translation type="vanished">目标目录：%1</translation>
-    </message>
-    <message>
-        <source>Target file:%1</source>
-        <translation type="vanished">目标文件：%1</translation>
     </message>
 </context>
 <context>
@@ -1592,48 +1555,36 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="961"/>
         <source>Access denied</source>
-        <translation>不可写不可读</translation>
+        <translation>不可读不可写</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="962"/>
         <location filename="../dialogs/propertydialog.cpp" line="971"/>
         <source>Executable</source>
-        <translation>可执行的</translation>
+        <translation>可执行</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="963"/>
         <location filename="../dialogs/propertydialog.cpp" line="964"/>
         <source>Write only</source>
-        <translation type="unfinished"></translation>
+        <translation>可写不可读</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="965"/>
         <location filename="../dialogs/propertydialog.cpp" line="966"/>
         <source>Read only</source>
-        <translation type="unfinished">只读</translation>
+        <translation>只读</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="967"/>
         <location filename="../dialogs/propertydialog.cpp" line="968"/>
         <source>Read-write</source>
-        <translation type="unfinished"></translation>
+        <translation>读写</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1021"/>
         <source>Others</source>
-        <translation type="unfinished">其它</translation>
-    </message>
-    <message>
-        <source>WriteRead</source>
-        <translation type="vanished">可读写</translation>
-    </message>
-    <message>
-        <source>ReadOnly</source>
-        <translation type="vanished">只读</translation>
-    </message>
-    <message>
-        <source>WriteOnly</source>
-        <translation type="vanished">只写</translation>
+        <translation>其他</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1019"/>
@@ -1644,10 +1595,6 @@
         <location filename="../dialogs/propertydialog.cpp" line="1020"/>
         <source>Group</source>
         <translation>群组</translation>
-    </message>
-    <message>
-        <source>Other</source>
-        <translation type="vanished">其他</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="75"/>
@@ -1930,97 +1877,9 @@
         <translation>全部还原</translation>
     </message>
     <message>
-        <source>Use the file chooser dialog of Deepin File Manager</source>
-        <translation type="vanished">使用深度文件管理器的文件选择对话框</translation>
-    </message>
-    <message>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="341"/>
         <source>Auto mount</source>
         <translation>自动挂载</translation>
-    </message>
-    <message>
-        <source>Compress file preview</source>
-        <translation type="vanished">压缩包预览</translation>
-    </message>
-    <message>
-        <source>Document preview</source>
-        <translation type="vanished">文档预览</translation>
-    </message>
-    <message>
-        <source>Image preview</source>
-        <translation type="vanished">图片预览</translation>
-    </message>
-    <message>
-        <source>Text preview</source>
-        <translation type="vanished">文本预览</translation>
-    </message>
-    <message>
-        <source>Video preview</source>
-        <translation type="vanished">视频预览</translation>
-    </message>
-    <message>
-        <source>Quick search</source>
-        <translation type="vanished">快速搜索</translation>
-    </message>
-    <message>
-        <source>Default size:</source>
-        <translation type="vanished">默认大小:</translation>
-    </message>
-    <message>
-        <source>Extra small</source>
-        <translation type="vanished">特小</translation>
-    </message>
-    <message>
-        <source>Small</source>
-        <translation type="vanished">小</translation>
-    </message>
-    <message>
-        <source>Medium</source>
-        <translation type="vanished">中</translation>
-    </message>
-    <message>
-        <source>Large</source>
-        <translation type="vanished">大</translation>
-    </message>
-    <message>
-        <source>Extra large</source>
-        <translation type="vanished">特大</translation>
-    </message>
-    <message>
-        <source>Default view:</source>
-        <translation type="vanished">默认视图：</translation>
-    </message>
-    <message>
-        <source>Show hidden files</source>
-        <translation type="vanished">显示隐藏文件</translation>
-    </message>
-    <message>
-        <source>Open from default window:</source>
-        <translation type="vanished">从默认窗口打开:</translation>
-    </message>
-    <message>
-        <source>Computer</source>
-        <translation type="vanished">计算机</translation>
-    </message>
-    <message>
-        <source>Open in new tab:</source>
-        <translation type="vanished">从新标签打开:</translation>
-    </message>
-    <message>
-        <source>Current Directory</source>
-        <translation type="vanished">当前目录</translation>
-    </message>
-    <message>
-        <source>Restore Defaults</source>
-        <translation type="vanished">恢复默认</translation>
-    </message>
-    <message>
-        <source>Hide file extension when rename</source>
-        <translation type="vanished">重命名时隐藏文件扩展名</translation>
-    </message>
-    <message>
-        <source>Home</source>
-        <translation type="vanished">主目录</translation>
     </message>
     <message>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="379"/>
@@ -2028,86 +1887,10 @@
         <translation>自动挂载后打开</translation>
     </message>
     <message>
-        <source>Desktop</source>
-        <translation type="vanished">桌面</translation>
-    </message>
-    <message>
-        <source>Videos</source>
-        <translation type="vanished">视频</translation>
-    </message>
-    <message>
-        <source>Music</source>
-        <translation type="vanished">音乐</translation>
-    </message>
-    <message>
-        <source>Pictures</source>
-        <translation type="vanished">图片</translation>
-    </message>
-    <message>
-        <source>Documents</source>
-        <translation type="vanished">文档</translation>
-    </message>
-    <message>
-        <source>Downloads</source>
-        <translation type="vanished">下载</translation>
-    </message>
-    <message>
-        <source>Always open folder in new window</source>
-        <translation type="vanished">总是在新窗口打开文件夹</translation>
-    </message>
-    <message>
-        <source>Open file:</source>
-        <translation type="vanished">打开文件:</translation>
-    </message>
-    <message>
-        <source>Click</source>
-        <translation type="vanished">单击</translation>
-    </message>
-    <message>
-        <source>Double click</source>
-        <translation type="vanished">双击</translation>
-    </message>
-    <message>
-        <source>Advanced</source>
-        <translation type="vanished">高级设置</translation>
-    </message>
-    <message>
-        <source>Basic</source>
-        <translation type="vanished">基本设置</translation>
-    </message>
-    <message>
-        <source>Show hidden files in search results</source>
-        <translation type="vanished">搜索结果显示隐藏文件</translation>
-    </message>
-    <message>
-        <source>Dialog</source>
-        <translation type="vanished">对话框</translation>
-    </message>
-    <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="773"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="128"/>
         <source>Mount</source>
         <translation>挂载</translation>
-    </message>
-    <message>
-        <source>Preview</source>
-        <translation type="vanished">预览</translation>
-    </message>
-    <message>
-        <source>View</source>
-        <translation type="vanished">视图</translation>
-    </message>
-    <message>
-        <source>Hidden files</source>
-        <translation type="vanished">隐藏文件</translation>
-    </message>
-    <message>
-        <source>New window and tab</source>
-        <translation type="vanished">新窗口和新标签</translation>
-    </message>
-    <message>
-        <source>Open behavior</source>
-        <translation type="vanished">打开行为</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="774"/>
@@ -2841,7 +2624,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="62"/>
         <source>Ctrl + 1 </source>
-        <translation>Ctrl + 1</translation>
+        <translation>Ctrl + 1 </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="63"/>
@@ -2851,7 +2634,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="63"/>
         <source>Ctrl + 2 </source>
-        <translation>Ctrl + 2</translation>
+        <translation>Ctrl + 2 </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="64"/>
@@ -2998,11 +2781,7 @@
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="416"/>
         <source>Please firstly install samba to continue</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please firstly Install samba to continue</source>
-        <translation type="vanished">请您先安装samba后，再进行共享相关操作！</translation>
+        <translation>请您先安装samba后，再进行共享相关操作！</translation>
     </message>
 </context>
 <context>
