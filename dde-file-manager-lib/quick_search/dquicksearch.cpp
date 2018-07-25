@@ -426,13 +426,12 @@ void DQuickSearch::filesWereCreated(const QList<QByteArray> &files_path)
             }
 
             fs_buf *buf{ nullptr };
-            std::basic_string<char> local_8bit{ path.toStdString() };
             load_fs_buf(&buf, pos->second.toLocal8Bit().constData());
 
             if (buf) {
 
                 if (file_info.isSymLink()) {
-                    insert_path(buf, const_cast<char *>(local_8bit.data()), ACT_NEW_SYMLINK, changes);
+                    insert_path(buf, const_cast<char *>(path.data()), ACT_NEW_SYMLINK, changes);
                     save_fs_buf(buf, pos->second.toLocal8Bit().constData());
 
                     if (!update_adler32_backup(pos->first)) {
@@ -443,7 +442,7 @@ void DQuickSearch::filesWereCreated(const QList<QByteArray> &files_path)
                 }
 
                 if (file_info.isFile()) {
-                    insert_path(buf, const_cast<char *>(local_8bit.data()), ACT_NEW_FILE, changes);
+                    insert_path(buf, const_cast<char *>(path.data()), ACT_NEW_FILE, changes);
                     save_fs_buf(buf, pos->second.toLocal8Bit().constData());
 
                     if (!update_adler32_backup(pos->first)) {
@@ -454,7 +453,7 @@ void DQuickSearch::filesWereCreated(const QList<QByteArray> &files_path)
                 }
 
                 if (file_info.isDir()) {
-                    insert_path(buf, const_cast<char *>(local_8bit.data()), ACT_NEW_FOLDER, changes);
+                    insert_path(buf, const_cast<char *>(path.data()), ACT_NEW_FOLDER, changes);
                     save_fs_buf(buf, pos->second.toLocal8Bit().constData());
 
                     if (!update_adler32_backup(pos->first)) {
@@ -567,14 +566,11 @@ void DQuickSearch::filesWereRenamed(const QList<QPair<QByteArray, QByteArray> > 
                 continue;
             }
 
-            std::basic_string<char> old_name{ old_and_new_name.first.toStdString() };
-            std::basic_string<char> new_name{ old_and_new_name.second.toStdString() };
-
             fs_buf *buf{ nullptr };
             load_fs_buf(&buf, pos->second.toLocal8Bit().constData());
 
             if (buf) {
-                rename_path(buf, const_cast<char *>(old_name.data()), const_cast<char *>(new_name.data()), changes, &change_count);
+                rename_path(buf, const_cast<char *>(old_and_new_name.first.data()), const_cast<char *>(old_and_new_name.second.data()), changes, &change_count);
                 save_fs_buf(buf, pos->second.toLocal8Bit().constData());
 
                 if (!update_adler32_backup(pos->first)) {
@@ -999,29 +995,29 @@ bool DQuickSearch::isFiltered(const DUrl &path)
 bool DQuickSearch::create_lft(const QString &mount_point)
 {
     if (!mount_point.isEmpty()) {
-        std::basic_string<char> file_located{ mount_point.toStdString() };
-        std::basic_string<char> full_path{ mount_point.toStdString() };
+        QByteArray file_located{ mount_point.toLocal8Bit() };
+        QByteArray full_path{ mount_point.toLocal8Bit() };
 
-        if (file_located != std::basic_string<char> {"/"}) {
-            file_located += std::basic_string<char> { "/.__deepin.lft" };
-            full_path += std::basic_string<char> { "/" };
+        if (file_located != QByteArray {"/"}) {
+            file_located += QByteArray { "/.__deepin.lft" };
+            full_path += QByteArray { "/" };
         } else {
-            file_located = std::basic_string<char> { "/.__deepin.lft" };
+            file_located = QByteArray { "/.__deepin.lft" };
         }
 
-        fs_buf *buffer = new_fs_buf(buffer_size, full_path.c_str());
+        fs_buf *buffer = new_fs_buf(buffer_size, full_path.constData());
 
         if (buffer) {
             build_fstree(buffer, 0, NULL, NULL);
 
-            if (save_fs_buf(buffer, file_located.c_str()) == 0) {
+            if (save_fs_buf(buffer, file_located.constData()) == 0) {
 
                 ///###: adler32 check.
                 std::size_t adler32_value{ DQuickSearch::count_adler32(mount_point) };
 
                 if (adler32_value) {
                     DQuickSearch::store_adler32_value(mount_point, adler32_value);
-                    m_mount_point_and_lft_buf[mount_point] = QString::fromStdString(file_located);
+                    m_mount_point_and_lft_buf[mount_point] = QString::fromLocal8Bit(file_located);
                     return true;
                 }
             }
