@@ -48,10 +48,12 @@ public:
     explicit DFMSideBar(QWidget *parent = nullptr);
     ~DFMSideBar();
 
+    bool contextMenuEnabled() const;
     int count() const;
     QStringList groupList() const;
 
     void setCurrentUrl(const DUrl &url);
+    void setContextMenuEnabled(bool enable);
     void setDisableUrlSchemes(const QSet<QString> &schemes);
     void setGroupSaveItemOrder(bool saveItemOrder, const QString &group);
     QSet<QString> disableUrlSchemes() const;

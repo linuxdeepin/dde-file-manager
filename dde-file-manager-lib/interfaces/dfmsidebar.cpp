@@ -56,6 +56,8 @@ class DFMSideBarPrivate
 public:
     DFMSideBarPrivate(DFMSideBar *qq);
 
+    bool contextMenuEnabled = true;
+
     DFMSideBar *q_ptr = nullptr;
     QBoxLayout *mainLayout;
     DBoxWidget *mainLayoutHolder;
@@ -451,6 +453,13 @@ DFMSideBar::~DFMSideBar()
 
 }
 
+bool DFMSideBar::contextMenuEnabled() const
+{
+    Q_D(const DFMSideBar);
+
+    return d->contextMenuEnabled;
+}
+
 int DFMSideBar::count() const
 {
     Q_D(const DFMSideBar);
@@ -500,6 +509,16 @@ void DFMSideBar::setCurrentUrl(const DUrl &url)
         d->lastCheckedItem = item;
         d->lastCheckedItem->setChecked(true);
     }
+}
+
+/*!
+ * \brief Should we display sidebar items' context menu?
+ */
+void DFMSideBar::setContextMenuEnabled(bool enable)
+{
+    Q_D(DFMSideBar);
+
+    d->contextMenuEnabled = enable;
 }
 
 /*!

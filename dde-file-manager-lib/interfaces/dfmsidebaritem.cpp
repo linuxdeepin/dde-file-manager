@@ -22,6 +22,7 @@
 #include "dfileservices.h"
 #include "dfilemenu.h"
 #include "dfilemenumanager.h"
+#include "dfmsidebar.h"
 #include "dstorageinfo.h"
 
 #include "singleton.h"
@@ -651,6 +652,11 @@ void DFMSideBarItem::leaveEvent(QEvent *event)
 
 void DFMSideBarItem::contextMenuEvent(QContextMenuEvent *event)
 {
+    DFMSideBar *sb = qobject_cast<DFMSideBar*>(this->parentWidget()->parentWidget()->parentWidget());
+    if (!sb || !sb->contextMenuEnabled()) {
+        return;
+    }
+
     QMenu *menu = createStandardContextMenu();
     menu->exec(event->globalPos());
     menu->deleteLater();
