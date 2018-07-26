@@ -294,17 +294,18 @@ static QString formatCap(qulonglong cap, const int size = 1024)
 QString ComputerPropertyDialog::getMemory()
 {
     QFile meminfo("/proc/meminfo");
-    Q_ASSERT(meminfo.open(QIODevice::ReadOnly));
     qulonglong mem_kB = 0;
     char singleLine[161] {};
-    while (meminfo.readLine(singleLine, 160) > 0) {
-        QString line(singleLine);
-        if (line.contains(QStringLiteral("MemTotal"))) {
-            QRegularExpression re("(\\d+)");
-            QRegularExpressionMatch match;
-            match = re.match(line);
-            mem_kB = match.captured(0).toULongLong();
-            break;
+    if (meminfo.open(QIODevice::ReadOnly)) {
+        while (meminfo.readLine(singleLine, 160) > 0) {
+            QString line(singleLine);
+            if (line.contains(QStringLiteral("MemTotal"))) {
+                QRegularExpression re("(\\d+)");
+                QRegularExpressionMatch match;
+                match = re.match(line);
+                mem_kB = match.captured(0).toULongLong();
+                break;
+            }
         }
     }
 
