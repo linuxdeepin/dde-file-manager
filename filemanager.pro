@@ -7,7 +7,8 @@ SUBDIRS  += \
     dde-file-manager-plugins \
     dde-dock-plugins\
     dde-desktop \
-    deepin-anything-server-plugins
+    deepin-anything-server-plugins \
+    dde-file-thumbnail-tool
 
 isEqual(BUILD_MINIMUM, YES){
 

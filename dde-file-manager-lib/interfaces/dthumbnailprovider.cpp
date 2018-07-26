@@ -41,6 +41,11 @@
 #include <QReadWriteLock>
 #include <QWaitCondition>
 #include <QPainter>
+#include <QDirIterator>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QProcess>
 #include <QDebug>
 
 // use original poppler api
@@ -51,7 +56,7 @@
 
 // ffmpeg
 #ifdef SUPPORT_FFMEPG
-#include <libffmpegthumbnailer/videothumbnailer.h>
+//#include <libffmpegthumbnailer/videothumbnailer.h>
 #endif
 
 #include <DThumbnailProvider>
@@ -96,6 +101,8 @@ public:
 
     QWaitCondition waitCondition;
     QReadWriteLock dataReadWriteLock;
+
+    QHash<QString, QString> keyToThumbnailTool;
 
     Q_DECLARE_PUBLIC(DThumbnailProvider)
 };
@@ -256,6 +263,16 @@ QString DThumbnailProvider::thumbnailFilePath(const QFileInfo &info, Size size) 
     return thumbnail;
 }
 
+static QString generalKey(const QString &key)
+{
+    const QStringList &_tmp = key.split('/');
+
+    if (_tmp.size() > 1)
+        return _tmp.first() + "/*";
+
+    return key;
+}
+
 QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailProvider::Size size)
 {
     Q_D(DThumbnailProvider);
@@ -412,21 +429,21 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
         *image = img.scaled(QSize(size, size), Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
 #ifdef SUPPORT_FFMEPG
-    else if (mime.name().startsWith("video/")) {
-        //video
-        //FIXME(zccrs): This should be done using the image plugin?
-        try {
-            std::vector<uint8_t> imageData;
+//    else if (mime.name().startsWith("video/")) {
+//        //video
+//        //FIXME(zccrs): This should be done using the image plugin?
+//        try {
+//            std::vector<uint8_t> imageData;
 
-            ffmpegthumbnailer::VideoThumbnailer vt(size, false, true, 20, false);
-            vt.generateThumbnail(absoluteFilePath.toStdString(), ThumbnailerImageTypeEnum::Png, imageData);
+//            ffmpegthumbnailer::VideoThumbnailer vt(size, false, true, 20, false);
+//            vt.generateThumbnail(absoluteFilePath.toStdString(), ThumbnailerImageTypeEnum::Png, imageData);
 
-            image->loadFromData(imageData.data(), imageData.size(), "png");
-        } catch (std::logic_error e) {
-            d->errorString = e.what();
-            goto _return;
-        }
-    }
+//            image->loadFromData(imageData.data(), imageData.size(), "png");
+//        } catch (std::logic_error e) {
+//            d->errorString = e.what();
+//            goto _return;
+//        }
+//    }
 #endif
     else {
         thumbnail = DTK_WIDGET_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(info, (DTK_WIDGET_NAMESPACE::DThumbnailProvider::Size)size);
@@ -435,11 +452,88 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
         if (d->errorString.isEmpty()) {
             emit createThumbnailFinished(absoluteFilePath, thumbnail);
             emit thumbnailChanged(absoluteFilePath, thumbnail);
-        } else {
-            emit createThumbnailFailed(absoluteFilePath);
-        }
 
-        return thumbnail;
+            return thumbnail;
+        } else { // fallback to thumbnail tool
+            if (d->keyToThumbnailTool.isEmpty()) {
+                d->keyToThumbnailTool["Initialized"] = QString();
+
+                for (const QString &path : QString(TOOLDIR).split(":")) {
+                    const QString &thumbnail_tool_path = path + QDir::separator() + "/thumbnail";
+                    QDirIterator dir(thumbnail_tool_path, {"*.json"}, QDir::NoDotAndDotDot | QDir::Files);
+
+                    while (dir.hasNext()) {
+                        const QString &file_path = dir.next();
+                        const QFileInfo &file_info = dir.fileInfo();
+
+                        QFile file(file_path);
+
+                        if (!file.open(QFile::ReadOnly)) {
+                            continue;
+                        }
+
+                        const QJsonDocument document = QJsonDocument::fromJson(file.readAll());
+                        file.close();
+
+                        const QStringList keys = document.object().toVariantMap().value("Keys").toStringList();
+                        const QString &tool_file_path = file_info.absoluteDir().filePath(file_info.baseName());
+
+                        if (!QFile::exists(tool_file_path)) {
+                            continue;
+                        }
+
+                        for (const QString &key : keys) {
+                            if (d->keyToThumbnailTool.contains(key))
+                                continue;
+
+                            d->keyToThumbnailTool[key] = tool_file_path;
+                        }
+                    }
+                }
+            }
+
+            QString mime_name = mime.name();
+            QString tool = d->keyToThumbnailTool.value(mime_name);
+
+            if (tool.isEmpty()) {
+                mime_name = generalKey(mime_name);
+                tool = d->keyToThumbnailTool.value(mime_name);
+            }
+
+            if (tool.isEmpty()) {
+                return thumbnail;
+            }
+
+            QProcess process;
+            process.start(tool, {QString::number(size), absoluteFilePath}, QIODevice::ReadOnly);
+
+            if (!process.waitForFinished()) {
+                d->errorString = process.errorString();
+
+                goto _return;
+            }
+
+            if (process.exitCode() != 0) {
+                const QString &error = process.readAllStandardError();
+
+                if (error.isEmpty()) {
+                    d->errorString = QString("get thumbnail failed from the \"%1\" application").arg(tool);
+                } else {
+                    d->errorString = error;
+                }
+
+                goto _return;
+            }
+
+            const QByteArray png_data = QByteArray::fromBase64(process.readAllStandardOutput());
+            Q_ASSERT(!png_data.isEmpty());
+
+            if (image->loadFromData(png_data, "png")) {
+                d->errorString.clear();
+            } else {
+                d->errorString = QString("load png image failed from the \"%1\" application").arg(tool);
+            }
+        }
     }
 
 _return:
