@@ -92,6 +92,7 @@ DFileDialog::DFileDialog(QWidget *parent)
     handleNewView(DFileManagerWindow::getFileView());
 
     getLeftSideBar()->setDisableUrlSchemes(QSet<QString>() << "trash" << "network");
+    getLeftSideBar()->setContextMenuEnabled(false);
     getLeftSideBar()->setAcceptDrops(false);
 
     DFMEventDispatcher::instance()->installEventFilter(this);
