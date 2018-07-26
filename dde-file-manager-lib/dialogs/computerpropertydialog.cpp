@@ -39,6 +39,7 @@
 #include <QPixmap>
 #include <QProcess>
 #include <QDebug>
+#include <QRegularExpression>
 
 DFM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -50,59 +51,58 @@ ComputerPropertyDialog::ComputerPropertyDialog(QWidget *parent) : DDialog(parent
 
 void ComputerPropertyDialog::initUI()
 {
-    QLabel* iconLabel = new QLabel(this);
+    QLabel *iconLabel = new QLabel(this);
     QIcon logoIcon;
     logoIcon.addFile(":/images/dialogs/images/deepin_logo.png");
     logoIcon.addFile(":/images/dialogs/images/deepin_logo@2x.png");
 
     iconLabel->setPixmap(logoIcon.pixmap(152, 39));
-    QLabel* nameLabel = new QLabel(tr("Computer"), this);
+    QLabel *nameLabel = new QLabel(tr("Computer"), this);
     nameLabel->setObjectName("NameLabel");
 
-    QLabel* lineLabel = new QLabel(this);
+    QLabel *lineLabel = new QLabel(this);
     lineLabel->setObjectName("Line");
     lineLabel->setFixedSize(300, 2);
     lineLabel->setStyleSheet("QLabel#Line{"
-                                "border: none;"
-                                "background-color: #f0f0f0;"
+                             "border: none;"
+                             "background-color: #f0f0f0;"
                              "}");
 
-    QLabel* messageLabel = new QLabel(tr("Basic Info"), this);
+    QLabel *messageLabel = new QLabel(tr("Basic Info"), this);
     messageLabel->setObjectName("NameLabel");
 
-    QGridLayout* gridLayout = new QGridLayout;
+    QGridLayout *gridLayout = new QGridLayout;
     gridLayout->setColumnMinimumWidth(0, 100);
     gridLayout->setColumnMinimumWidth(1, 200);
     gridLayout->setSpacing(10);
 
     QStringList msgsTitle;
     msgsTitle << tr("Computer Name")
-         << tr("Version")
-         << tr("Type")
-         << tr("Processor")
-         << tr("Memory")
-         << tr("Disk");
+              << tr("Version")
+              << tr("Type")
+              << tr("Processor")
+              << tr("Memory")
+              << tr("Disk");
 
     int row = 0;
     QHash<QString, QString> datas = getMessage(msgsTitle);
 
-    foreach (const QString& key, msgsTitle) {
-        QLabel* keyLabel = new QLabel(key,this);
+    foreach (const QString &key, msgsTitle) {
+        QLabel *keyLabel = new QLabel(key, this);
         keyLabel->setObjectName("KeyLabel");
-        QLabel* valLabel = new QLabel(datas.value(key), this);
+        QLabel *valLabel = new QLabel(datas.value(key), this);
         valLabel->setTextFormat(Qt::PlainText);
         valLabel->setObjectName("ValLabel");
         valLabel->setWordWrap(true);
-        valLabel->setFixedWidth(200);
 
-        gridLayout->addWidget(keyLabel,row, 0, Qt::AlignRight|Qt::AlignTop);
-        gridLayout->addWidget(valLabel,row, 1, Qt::AlignLeft|Qt::AlignTop);
+        gridLayout->addWidget(keyLabel, row, 0, Qt::AlignRight | Qt::AlignTop);
+        gridLayout->addWidget(valLabel, row, 1, Qt::AlignLeft | Qt::AlignTop);
         gridLayout->setRowMinimumHeight(row, 12);
         row ++;
     }
 
-    QFrame* contentFrame = new QFrame;
-    QVBoxLayout* mainLayout = new QVBoxLayout;
+    QFrame *contentFrame = new QFrame;
+    QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addWidget(iconLabel, 0, Qt::AlignHCenter);
@@ -111,7 +111,7 @@ void ComputerPropertyDialog::initUI()
     mainLayout->addSpacing(15);
     mainLayout->addWidget(lineLabel, 0, Qt::AlignHCenter);
     mainLayout->addSpacing(5);
-    QHBoxLayout* messageLayout = new QHBoxLayout;
+    QHBoxLayout *messageLayout = new QHBoxLayout;
     messageLayout->setSpacing(0);
     messageLayout->addSpacing(30);
     messageLayout->addWidget(messageLabel);
@@ -126,26 +126,26 @@ void ComputerPropertyDialog::initUI()
     addContent(contentFrame);
 
     setStyleSheet("QLabel#NameLabel{"
-                    "font-size: 12px;"
+                  "font-size: 12px;"
                   "}"
                   "QLabel#KeyLabel{"
-                    "font-size: 11px;"
-                    "color: #777777;"
+                  "font-size: 11px;"
+                  "color: #777777;"
                   "}"
                   "QLabel#ValLabel{"
-                    "font-size:11px;"
-                   "}");
+                  "font-size:11px;"
+                  "}");
 }
 
-QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList& data)
+QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &data)
 {
     QHash<QString, QString> datas;
-    datas.insert(data.at(0),getComputerName());
-    datas.insert(data.at(1),getVersion());
-    datas.insert(data.at(2),getArch());
-    datas.insert(data.at(3),getProcessor());
-    datas.insert(data.at(4),getMemory());
-    datas.insert(data.at(5),getDisk());
+    datas.insert(data.at(0), getComputerName());
+    datas.insert(data.at(1), getVersion());
+    datas.insert(data.at(2), getArch());
+    datas.insert(data.at(3), getProcessor());
+    datas.insert(data.at(4), getMemory());
+    datas.insert(data.at(5), getDisk());
     return datas;
 }
 
@@ -170,10 +170,11 @@ QString ComputerPropertyDialog::getVersion()
     p.waitForFinished(-1);
 
     QMap<QString, QString> msgMap;
-    while(p.canReadLine()){
+    while (p.canReadLine()) {
         QString str = p.readLine();
-        if(!str.contains("="))
+        if (!str.contains("=")) {
             continue;
+        }
 
         str = str.trimmed();
         QStringList vals = str.split("=");
@@ -188,10 +189,11 @@ QString ComputerPropertyDialog::getVersion()
     QString type;
 
     QString local = QLocale::system().name();
-    if(msgMap.contains(QString("Type[%1]").arg(local)))
+    if (msgMap.contains(QString("Type[%1]").arg(local))) {
         type = msgMap.value(QString("Type[%1]").arg(local));
-    else
+    } else {
         type = msgMap.value("Type");
+    }
 
     result = result + QString("%1 %2 %3").arg(companyName, version, type);
     return result.trimmed();
@@ -222,7 +224,7 @@ QString ComputerPropertyDialog::getProcessor()
     while (p.canReadLine()) {
         QString str = p.readLine();
         QStringList vals = str.split(":");
-        if(vals.first() == "Model name"){
+        if (vals.first() == "Model name") {
             QString val = vals.last();
             msgMap.insert(vals.first(), val.trimmed());
         }
@@ -260,7 +262,7 @@ QString ComputerPropertyDialog::getSWProcessorHZ()
     while (p.canReadLine()) {
         QString str = p.readLine();
         QStringList vals = str.split(":");
-        if (vals.first().startsWith("CPU frequency [MHz]")){
+        if (vals.first().startsWith("CPU frequency [MHz]")) {
             result = vals.last().trimmed();
             break;
         }
@@ -269,8 +271,47 @@ QString ComputerPropertyDialog::getSWProcessorHZ()
     return QString("%1 GHz").arg(QString::number(hz, 'f', 2));
 }
 
+// blumia: it should be GiB...
+static QString formatCap(qulonglong cap, const int size = 1024)
+{
+    static QString type[] = {" B", " KB", " MB", " GB", " TB"};
+
+    if (cap < qulonglong(size)) {
+        return QString::number(cap) + type[0];
+    }
+    if (cap < qulonglong(size) * size) {
+        return QString::number(double(cap) / size, 'f', 2) + type[1];
+    }
+    if (cap < qulonglong(size) * size * size) {
+        return QString::number(double(cap) / size / size, 'f', 2) + type[2];
+    }
+    if (cap < qulonglong(size) * size * size * size) {
+        return QString::number(double(cap) / size / size / size, 'f', 2) + type[3];
+    }
+    return QString::number(double(cap) / size / size / size / size, 'f', 2) + type[4];
+}
+
 QString ComputerPropertyDialog::getMemory()
 {
+    QFile meminfo("/proc/meminfo");
+    Q_ASSERT(meminfo.open(QIODevice::ReadOnly));
+    qulonglong mem_kB = 0;
+    char singleLine[161] {};
+    while (meminfo.readLine(singleLine, 160) > 0) {
+        QString line(singleLine);
+        if (line.contains(QStringLiteral("MemTotal"))) {
+            QRegularExpression re("(\\d+)");
+            QRegularExpressionMatch match;
+            match = re.match(line);
+            mem_kB = match.captured(0).toULongLong();
+            break;
+        }
+    }
+
+    if (mem_kB > 0) {
+        return formatCap(mem_kB * 1024);
+    }
+
     QString cmd = "free";
     QProcess p;
     p.start(cmd, (QStringList() << "-h"));
@@ -278,8 +319,8 @@ QString ComputerPropertyDialog::getMemory()
     p.readLine();
     QString str = p.readLine();
     QStringList datas = str.split(" ");
-    for(int i = 0; i < datas.length(); i++){
-        if(datas.at(i) == ""){
+    for (int i = 0; i < datas.length(); i++) {
+        if (datas.at(i) == "") {
             datas.removeAt(i);
             i--;
         }
