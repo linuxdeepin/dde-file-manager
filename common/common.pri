@@ -2,7 +2,7 @@ unix {
     ProjectName = dde-file-manager
     PREFIX = /usr
     APPSHAREDIR = $$PREFIX/share/$$ProjectName
-	top_srcdir = $$PWD/../
+    top_srcdir = $$PWD/../
 
     CONFIG(release, debug|release) {
         LIB_INSTALL_DIR = $$[QT_INSTALL_LIBS]
@@ -37,12 +37,15 @@ unix {
     }
 
     isEmpty(LIB_INSTALL_DIR) {
-        PLUGINDIR = $$[QT_INSTALL_LIBS]/$$ProjectName/plugins
+        LIB_BASE_DIR = $$[QT_INSTALL_LIBS]/$$ProjectName
     } else {
-        PLUGINDIR = $$LIB_INSTALL_DIR/$$ProjectName/plugins
+        LIB_BASE_DIR = $$LIB_INSTALL_DIR/$$ProjectName
     }
 
-    DEFINES += PLUGINDIR=\\\"$$top_srcdir/plugins:$$PLUGINDIR\\\"
+    PLUGINDIR = $$LIB_BASE_DIR/plugins
+    TOOLDIR = $$LIB_BASE_DIR/tools
+
+    DEFINES += PLUGINDIR=\\\"$$top_srcdir/plugins:$$PLUGINDIR\\\" TOOLDIR=\\\"$$top_srcdir/tools:$$TOOLDIR\\\"
 
     isEmpty(VERSION) {
         VERSION = 1.8

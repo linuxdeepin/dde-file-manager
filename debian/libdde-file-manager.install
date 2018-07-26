@@ -6,3 +6,4 @@ usr/share/dde-file-manager/mimetypeassociations/*
 usr/share/icons/*
 
 usr/lib/*/dde-file-manager/plugins/*
+usr/lib/*/dde-file-manager/tools/*

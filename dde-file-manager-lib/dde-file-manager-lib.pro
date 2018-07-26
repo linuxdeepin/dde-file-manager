@@ -44,7 +44,7 @@ isEqual(IS_PLATFORM_FEDORA, YES) | isEqual(BUILD_MINIMUM, YES) {
 
 }else{
     DEFINES += SUPPORT_FFMEPG
-    LIBS += -lffmpegthumbnailer
+#    LIBS += -lffmpegthumbnailer
 }
 
 # BUILD_MINIMUM for live system
