@@ -282,8 +282,10 @@ QDebug operator<<(QDebug debug, const DFM_NAMESPACE::DStorageInfo &info)
             debug << ", name=\"" << info.name() << '"';
         if (!info.device().isEmpty())
             debug << ", device=\"" << info.device() << '"';
+#if QT_VERSION >= QT_VERSION_CHECK(5, 9, 0)
         if (!info.subvolume().isEmpty())
             debug << ", subvolume=\"" << info.subvolume() << '"';
+#endif
         if (info.isReadOnly())
             debug << " [read only]";
         debug << (info.isReady() ? " [ready]" : " [not ready]");
