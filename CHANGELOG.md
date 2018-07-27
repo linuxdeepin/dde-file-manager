@@ -1,3 +1,20 @@
+<a name="4.6.2"></a>
+## 4.6.2 (2018-07-27)
+
+
+#### Bug Fixes
+
+*   build failed on Qt 5.6.1 ([2f087eec](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/2f087eecbb9e2c65f6a8f5108602050d6c22820a))
+* **propertyDlg:**
+  *  fix crash on readLine() call ([50791e7e](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/50791e7e56d00530512f198d8478e443a19e2cbe))
+  *  memory from /proc/meminfo ([7d962cef](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/7d962cef16f38a703b80523525c88bb9919677ac))
+
+#### Features
+
+*   support get a file thumbnail by a process ([65fd32b2](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/65fd32b2de821db2fcbb80ae5877c4524e7c1322))
+
+
+
 <a name="4.6.0"></a>
 ## 4.6.0 (2018-07-26)
 
