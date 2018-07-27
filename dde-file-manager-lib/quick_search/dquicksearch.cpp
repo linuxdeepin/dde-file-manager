@@ -24,6 +24,7 @@
 #include <string>
 #include <fstream>
 #include <iomanip>
+#include <iterator>
 
 #include <zlib.h>
 
@@ -263,7 +264,75 @@ static std::shared_ptr<std::pair<std::queue<partition>, std::queue<partition>>> 
     return the_partions;
 }
 
+
+///###: this function do not check whether posix_reg_str is empty or not.
+static QByteArray grep_regx_to_posix(const QByteArray &posix_reg_str)
+{
+    QByteArray replaced_result{ posix_reg_str };
+
+
+    ///###: if there * at the front of posix_reg_str.
+    ///###: replace * to .*; etc: "*str"->".*str"
+    if (replaced_result.startsWith("*")) {
+        replaced_result.replace(0, 1, ".*");
+    }
+
+    int index{ replaced_result.indexOf("**") };
+
+    ///###: etc: ".**str" -> ".*str"
+    while (index > 0) {
+
+        if (replaced_result[index - 1] != '>' && replaced_result[index - 1] != ']') {
+            replaced_result.remove(index + 1, 1);
+            index = replaced_result.indexOf("**");
+
+            continue;
+        }
+    }
+
+
+    QByteArray::const_iterator str_cbeg{ replaced_result.cbegin() };
+    QByteArray::const_iterator str_cend{ replaced_result.cend() };
+    QByteArray::const_iterator pos_itr{ std::find(str_cbeg, str_cend, '*') };
+
+    ///###: etc: ".*st*r" -> ".*st.*r"
+    while (pos_itr != QByteArray::const_iterator{} && pos_itr != str_cend) {
+
+        if (pos_itr != replaced_result.cbegin() && (*(pos_itr - 1) != '<' && *(pos_itr - 1) != ']' && *(pos_itr - 1) != '.')) {
+            int distance{ pos_itr - replaced_result.cbegin() };
+            replaced_result.replace(distance, 1, ".*");
+
+            if (pos_itr + 1) {
+                str_cend = replaced_result.cend();
+                pos_itr = std::find(pos_itr + 1, str_cend, '*');
+
+                continue;
+            }
+
+            break;
+        } else {
+
+            if (pos_itr + 1) {
+                str_cend = replaced_result.cend();
+                pos_itr = std::find(pos_itr + 1, str_cend, '*');
+
+                continue;
+            }
+
+            break;
+        }
+    }
+
+
+#ifdef QT_DEBUG
+    qDebug() << replaced_result;
+#endif //QT_DEBUG
+
+    return replaced_result;
 }
+
+
+}// end namespace detail.
 
 DQuickSearch::DQuickSearch(QObject *const parent)
     : QObject{ parent }
@@ -309,11 +378,14 @@ QList<QString> DQuickSearch::search(const QString &local_path, const QString &ke
                 std::uint32_t path_off{ 0 };
                 std::uint32_t end_off{ 0 };
                 std::uint32_t start_off{ 0 };
+                query_str = detail::grep_regx_to_posix(query_str);
                 regex_t compiled;
-                int err = regcomp(&compiled, query_str.constData(), REG_ICASE | REG_EXTENDED);
+
+                int err{ regcomp(&compiled, query_str.constData(), REG_ICASE | REG_EXTENDED) };
 
 #ifdef QT_DEBUG
                 qDebug() << local_path_8bit;
+                qDebug() << err;
 #endif //QT_DEBUG
 
                 get_path_range(buf, local_path_8bit.data(), &path_off,  &start_off, &end_off);
