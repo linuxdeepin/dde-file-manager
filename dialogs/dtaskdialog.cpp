@@ -65,12 +65,11 @@ public:
             return action;
         }
 
-        m_taskWidget->updateMessageByJob();
-
         switch (error) {
         case DFileCopyMoveJob::FileExistsError:
         case DFileCopyMoveJob::DirectoryExistsError:
             job->togglePause();
+            m_taskWidget->updateMessageByJob();
             m_taskWidget->showConflict();
             break;
         case DFileCopyMoveJob::UnknowUrlError:
@@ -78,6 +77,7 @@ public:
             return DFileCopyMoveJob::CancelAction;
         default:
             job->togglePause();
+            m_taskWidget->updateMessageByJob();
             m_taskWidget->showButtonFrame();
             break;
         }
@@ -712,11 +712,13 @@ void MoveCopyTaskWidget::updateMessageByJob()
         datas["remainTime"] = formatTime(int(m_jobInfo->totalDataSize * (1 - m_jobInfo->progress) / m_jobInfo->speed));
     }
 
-    if (m_fileJob->error() == DFileCopyMoveJob::FileExistsError
-            || m_fileJob->error() == DFileCopyMoveJob::DirectoryExistsError) {
-        datas["status"] = "conflict";
-    } else if (m_fileJob->error() != DFileCopyMoveJob::NoError) {
-        datas["status"] = "error";
+    if (m_fileJob->state() != DFileCopyMoveJob::RunningState) {
+        if (m_fileJob->error() == DFileCopyMoveJob::FileExistsError
+                || m_fileJob->error() == DFileCopyMoveJob::DirectoryExistsError) {
+            datas["status"] = "conflict";
+        } else if (m_fileJob->error() != DFileCopyMoveJob::NoError) {
+            datas["status"] = "error";
+        }
     }
 
     updateMessage(datas);
