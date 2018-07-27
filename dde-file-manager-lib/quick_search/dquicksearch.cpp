@@ -24,7 +24,6 @@
 #include <string>
 #include <fstream>
 #include <iomanip>
-#include <iterator>
 
 #include <zlib.h>
 
@@ -452,7 +451,6 @@ QList<QString> DQuickSearch::search(const QString &local_path, const QString &ke
         }
     }
 
-    m_readyFlag.store(false, std::memory_order_release);
     return searched_list;
 }
 
