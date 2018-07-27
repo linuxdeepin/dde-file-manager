@@ -27,6 +27,7 @@
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#public-slots">Public Slots</a></li>
 <li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#protected-functions">Protected Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
 </ul>
 </div>
@@ -64,6 +65,16 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbbar.html#addressBarShown">addressBarShown</a></b>()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbbar.html#crumbItemClicked">crumbItemClicked</a></b>(DFMCrumbItem *<i>item</i>)</td></tr>
 </table></div>
+<a name="protected-functions"></a>
+<h2 id="protected-functions">Protected Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbbar.html#eventFilter">eventFilter</a></b>(QObject *<i>watched</i>, QEvent *<i>event</i>) override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbbar.html#mousePressEvent">mousePressEvent</a></b>(QMouseEvent *<i>event</i>) override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbbar.html#mouseReleaseEvent">mouseReleaseEvent</a></b>(QMouseEvent *<i>event</i>) override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbbar.html#paintEvent">paintEvent</a></b>(QPaintEvent *<i>event</i>) override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbbar.html#resizeEvent">resizeEvent</a></b>(QResizeEvent *<i>event</i>) override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmcrumbbar.html#showEvent">showEvent</a></b>(QShowEvent *<i>event</i>) override</td></tr>
+</table></div>
 <a name="details"></a>
 <!-- $$$DFMCrumbBar-description -->
 <div class="descr">
@@ -98,10 +109,25 @@
 <h3 class="fn" id="crumbItemClicked"><a name="crumbItemClicked"></a><code>[signal] </code><span class="type">void</span> DFMCrumbBar::<span class="name">crumbItemClicked</span>(<span class="type"><a href="dfmcrumbitem.html">DFMCrumbItem</a></span> *<i>item</i>)</h3>
 <p>User clicked the crumb <i>item</i>.</p>
 <!-- @@@crumbItemClicked -->
+<!-- $$$eventFilter[overload1]$$$eventFilterQObject*QEvent* -->
+<h3 class="fn" id="eventFilter"><a name="eventFilter"></a><code>[protected] </code><span class="type">bool</span> DFMCrumbBar::<span class="name">eventFilter</span>(<span class="type">QObject</span> *<i>watched</i>, <span class="type">QEvent</span> *<i>event</i>)</h3>
+<!-- @@@eventFilter -->
 <!-- $$$hideAddressBar[overload1]$$$hideAddressBar -->
 <h3 class="fn" id="hideAddressBar"><a name="hideAddressBar"></a><span class="type">void</span> DFMCrumbBar::<span class="name">hideAddressBar</span>()</h3>
 <p>Hide the address bar.</p>
 <!-- @@@hideAddressBar -->
+<!-- $$$mousePressEvent[overload1]$$$mousePressEventQMouseEvent* -->
+<h3 class="fn" id="mousePressEvent"><a name="mousePressEvent"></a><code>[protected] </code><span class="type">void</span> DFMCrumbBar::<span class="name">mousePressEvent</span>(<span class="type">QMouseEvent</span> *<i>event</i>)</h3>
+<!-- @@@mousePressEvent -->
+<!-- $$$mouseReleaseEvent[overload1]$$$mouseReleaseEventQMouseEvent* -->
+<h3 class="fn" id="mouseReleaseEvent"><a name="mouseReleaseEvent"></a><code>[protected] </code><span class="type">void</span> DFMCrumbBar::<span class="name">mouseReleaseEvent</span>(<span class="type">QMouseEvent</span> *<i>event</i>)</h3>
+<!-- @@@mouseReleaseEvent -->
+<!-- $$$paintEvent[overload1]$$$paintEventQPaintEvent* -->
+<h3 class="fn" id="paintEvent"><a name="paintEvent"></a><code>[protected] </code><span class="type">void</span> DFMCrumbBar::<span class="name">paintEvent</span>(<span class="type">QPaintEvent</span> *<i>event</i>)</h3>
+<!-- @@@paintEvent -->
+<!-- $$$resizeEvent[overload1]$$$resizeEventQResizeEvent* -->
+<h3 class="fn" id="resizeEvent"><a name="resizeEvent"></a><code>[protected] </code><span class="type">void</span> DFMCrumbBar::<span class="name">resizeEvent</span>(<span class="type">QResizeEvent</span> *<i>event</i>)</h3>
+<!-- @@@resizeEvent -->
 <!-- $$$showAddressBar[overload1]$$$showAddressBarconstQString& -->
 <h3 class="fn" id="showAddressBar"><a name="showAddressBar"></a><span class="type">void</span> DFMCrumbBar::<span class="name">showAddressBar</span>(const <span class="type">QString</span> &amp;<i>text</i>)</h3>
 <p>Toggle and show the address bar.</p>
@@ -112,6 +138,9 @@
 <p>Toggle and show the address bar.</p>
 <p><i>url</i> The url in the address bar.</p>
 <!-- @@@showAddressBar -->
+<!-- $$$showEvent[overload1]$$$showEventQShowEvent* -->
+<h3 class="fn" id="showEvent"><a name="showEvent"></a><code>[protected] </code><span class="type">void</span> DFMCrumbBar::<span class="name">showEvent</span>(<span class="type">QShowEvent</span> *<i>event</i>)</h3>
+<!-- @@@showEvent -->
 <!-- $$$updateCrumbs[overload1]$$$updateCrumbsconstDUrl& -->
 <h3 class="fn" id="updateCrumbs"><a name="updateCrumbs"></a><span class="type">void</span> DFMCrumbBar::<span class="name">updateCrumbs</span>(const <span class="type">DUrl</span> &amp;<i>url</i>)</h3>
 <p>Update crumbs in crumb bar by the given <i>url</i></p>

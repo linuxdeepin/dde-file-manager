@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- mount.qdoc -->
+  <title>Mount Scheme | Deepin File Manager</title>
+  <link rel="stylesheet" type="text/css" href="style/online.css" />
+</head>
+<body>
+<div class="header" id="qtdocheader">
+    <div class="main">
+    <div class="main-rounded">
+        <div class="navigationbar">
+        <ul>
+<li>Mount Scheme</li>
+    </ul>
+    </div>
+</div>
+<div class="content">
+<div class="line">
+<div class="content mainContent">
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#scheme-struct">Scheme Struct</a></li>
+<li class="level1"><a href="#example-urls">Example Urls</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<div class="context">
+<h1 class="title">Mount Scheme</h1>
+<span class="subtitle"></span>
+<!-- $$$mount-scheme.html-description -->
+<div class="descr"> <a name="details"></a>
+<p>Mount scheme `mount://` did the work which mount a device and then change directory to the mount point.</p>
+<a name="scheme-struct"></a>
+<h2 id="scheme-struct">Scheme Struct</h2>
+<p>Mount scheme simply contains a device scheme url in the url fragment:</p>
+<p>mount://#&lt;url to be mounted&gt;</p>
+<p>the url which is going to be mounted should be a `udisks` scheme url, or a `device` scheme url.</p>
+<a name="example-urls"></a>
+<h2 id="example-urls">Example Urls</h2>
+<p>mount://test#udisks:///org/freedesktop/UDisks2/block_devices/sda1</p>
+<p>This will mount /dev/sda1 and then open it.</p>
+</div>
+<!-- @@@mount-scheme.html -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

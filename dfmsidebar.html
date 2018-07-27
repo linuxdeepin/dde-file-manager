@@ -28,6 +28,7 @@
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#signals">Signals</a></li>
 <li class="level1"><a href="#static-public-members">Static Public Members</a></li>
+<li class="level1"><a href="#protected-functions">Protected Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
 </ul>
 </div>
@@ -54,6 +55,7 @@
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#dtor.DFMSideBar">~DFMSideBar</a></b>()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#addItem">addItem</a></b>(DFMSideBarItem *<i>item</i>, const QString &amp;<i>group</i> = QString())</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#appendListWithOrder">appendListWithOrder</a></b>(QList&lt;DFMSideBarItem *&gt; <i>itemList</i>, const QString &amp;<i>group</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#contextMenuEnabled">contextMenuEnabled</a></b>() const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#count">count</a></b>() const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QSet&lt;QString&gt; </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#disableUrlSchemes">disableUrlSchemes</a></b>() const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QRect </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#groupGeometry">groupGeometry</a></b>(const QString &amp;<i>group</i> = QString()) const</td></tr>
@@ -65,6 +67,7 @@
 <tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#itemIndex">itemIndex</a></b>(const DFMSideBarItem *<i>item</i>) const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#removeItem">removeItem</a></b>(int <i>index</i>, const QString &amp;<i>group</i> = QString())</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#removeItem-1">removeItem</a></b>(DFMSideBarItem *<i>item</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#setContextMenuEnabled">setContextMenuEnabled</a></b>(bool <i>enable</i>)</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#setCurrentUrl">setCurrentUrl</a></b>(const DUrl &amp;<i>url</i>)</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#setDisableUrlSchemes">setDisableUrlSchemes</a></b>(const QSet&lt;QString&gt; &amp;<i>schemes</i>)</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#setGroupSaveItemOrder">setGroupSaveItemOrder</a></b>(bool <i>saveItemOrder</i>, const QString &amp;<i>group</i>)</td></tr>
@@ -80,6 +83,11 @@
 <div class="table"><table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> GroupName </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#groupFromName">groupFromName</a></b>(const QString &amp;<i>name</i>)</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#groupName">groupName</a></b>(GroupName <i>group</i>)</td></tr>
+</table></div>
+<a name="protected-functions"></a>
+<h2 id="protected-functions">Protected Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebar.html#resizeEvent">resizeEvent</a></b>(QResizeEvent *<i>event</i>) override</td></tr>
 </table></div>
 <a name="details"></a>
 <!-- $$$DFMSideBar-description -->
@@ -117,6 +125,10 @@
 <!-- $$$clicked[overload1]$$$clickedDFMSideBarItem* -->
 <h3 class="fn" id="clicked"><a name="clicked"></a><code>[signal] </code><span class="type">void</span> DFMSideBar::<span class="name">clicked</span>(<span class="type"><a href="dfmsidebaritem.html">DFMSideBarItem</a></span> *<i>item</i>)</h3>
 <!-- @@@clicked -->
+<!-- $$$contextMenuEnabled[overload1]$$$contextMenuEnabled -->
+<h3 class="fn" id="contextMenuEnabled"><a name="contextMenuEnabled"></a><span class="type">bool</span> DFMSideBar::<span class="name">contextMenuEnabled</span>() const</h3>
+<p><b>See also </b><a href="dfmsidebar.html#setContextMenuEnabled">setContextMenuEnabled</a>().</p>
+<!-- @@@contextMenuEnabled -->
 <!-- $$$count[overload1]$$$count -->
 <h3 class="fn" id="count"><a name="count"></a><span class="type">int</span> DFMSideBar::<span class="name">count</span>() const</h3>
 <!-- @@@count -->
@@ -164,6 +176,14 @@
 <!-- $$$removeItem$$$removeItemDFMSideBarItem* -->
 <h3 class="fn" id="removeItem-1"><a name="removeItem-1"></a><span class="type">void</span> DFMSideBar::<span class="name">removeItem</span>(<span class="type"><a href="dfmsidebaritem.html">DFMSideBarItem</a></span> *<i>item</i>)</h3>
 <!-- @@@removeItem -->
+<!-- $$$resizeEvent[overload1]$$$resizeEventQResizeEvent* -->
+<h3 class="fn" id="resizeEvent"><a name="resizeEvent"></a><code>[protected] </code><span class="type">void</span> DFMSideBar::<span class="name">resizeEvent</span>(<span class="type">QResizeEvent</span> *<i>event</i>)</h3>
+<!-- @@@resizeEvent -->
+<!-- $$$setContextMenuEnabled[overload1]$$$setContextMenuEnabledbool -->
+<h3 class="fn" id="setContextMenuEnabled"><a name="setContextMenuEnabled"></a><span class="type">void</span> DFMSideBar::<span class="name">setContextMenuEnabled</span>(<span class="type">bool</span> <i>enable</i>)</h3>
+<p>Should we display sidebar items' context menu?</p>
+<p><b>See also </b><a href="dfmsidebar.html#contextMenuEnabled">contextMenuEnabled</a>().</p>
+<!-- @@@setContextMenuEnabled -->
 <!-- $$$setCurrentUrl[overload1]$$$setCurrentUrlconstDUrl& -->
 <h3 class="fn" id="setCurrentUrl"><a name="setCurrentUrl"></a><span class="type">void</span> DFMSideBar::<span class="name">setCurrentUrl</span>(const <span class="type">DUrl</span> &amp;<i>url</i>)</h3>
 <p>Set current sidebar state by current <i>url</i>.</p>

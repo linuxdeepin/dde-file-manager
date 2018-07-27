@@ -89,6 +89,7 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#readOnly-prop">setReadOnly</a></b>(bool <i>readOnly</i>)</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#reorderable-prop">setReorderable</a></b>(bool <i>reorderable</i>)</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#text-prop">setText</a></b>(QString <i>text</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#setVisible">setVisible</a></b>(bool <i>visible</i>) override</td></tr>
 </table></div>
 <a name="signals"></a>
 <h2 id="signals">Signals</h2>
@@ -103,8 +104,19 @@
 <h2 id="protected-functions">Protected Functions</h2>
 <div class="table"><table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual Qt::DropAction </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#canDropMimeData">canDropMimeData</a></b>(const QMimeData *<i>data</i>, Qt::DropActions <i>actions</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#contextMenuEvent">contextMenuEvent</a></b>(QContextMenuEvent *<i>event</i>) override</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QMenu *</td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#createStandardContextMenu">createStandardContextMenu</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#dragEnterEvent">dragEnterEvent</a></b>(QDragEnterEvent *<i>event</i>) override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#dragLeaveEvent">dragLeaveEvent</a></b>(QDragLeaveEvent *<i>event</i>) override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#dropEvent">dropEvent</a></b>(QDropEvent *<i>event</i>) override</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#dropMimeData">dropMimeData</a></b>(const QMimeData *<i>data</i>, Qt::DropAction <i>action</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#enterEvent">enterEvent</a></b>(QEvent *<i>event</i>) override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#event">event</a></b>(QEvent *<i>event</i>) override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#leaveEvent">leaveEvent</a></b>(QEvent *<i>event</i>) override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#mouseMoveEvent">mouseMoveEvent</a></b>(QMouseEvent *<i>event</i>) override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#mousePressEvent">mousePressEvent</a></b>(QMouseEvent *<i>event</i>) override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#mouseReleaseEvent">mouseReleaseEvent</a></b>(QMouseEvent *<i>event</i>) override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#paintEvent">paintEvent</a></b>(QPaintEvent *<i>event</i>) override</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#setGroupName">setGroupName</a></b>(QString <i>groupName</i>)</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsidebaritem.html#setUrl">setUrl</a></b>(DUrl <i>url</i>)</td></tr>
 </table></div>
@@ -200,21 +212,54 @@
 <h3 class="fn" id="contentWidget"><a name="contentWidget"></a><span class="type">QWidget</span> *DFMSideBarItem::<span class="name">contentWidget</span>() const</h3>
 <p><b>See also </b><a href="dfmsidebaritem.html#setContentWidget">setContentWidget</a>().</p>
 <!-- @@@contentWidget -->
+<!-- $$$contextMenuEvent[overload1]$$$contextMenuEventQContextMenuEvent* -->
+<h3 class="fn" id="contextMenuEvent"><a name="contextMenuEvent"></a><code>[protected] </code><span class="type">void</span> DFMSideBarItem::<span class="name">contextMenuEvent</span>(<span class="type">QContextMenuEvent</span> *<i>event</i>)</h3>
+<!-- @@@contextMenuEvent -->
 <!-- $$$createStandardContextMenu[overload1]$$$createStandardContextMenu -->
 <h3 class="fn" id="createStandardContextMenu"><a name="createStandardContextMenu"></a><code>[virtual protected] </code><span class="type">QMenu</span> *DFMSideBarItem::<span class="name">createStandardContextMenu</span>() const</h3>
 <!-- @@@createStandardContextMenu -->
+<!-- $$$dragEnterEvent[overload1]$$$dragEnterEventQDragEnterEvent* -->
+<h3 class="fn" id="dragEnterEvent"><a name="dragEnterEvent"></a><code>[protected] </code><span class="type">void</span> DFMSideBarItem::<span class="name">dragEnterEvent</span>(<span class="type">QDragEnterEvent</span> *<i>event</i>)</h3>
+<!-- @@@dragEnterEvent -->
+<!-- $$$dragLeaveEvent[overload1]$$$dragLeaveEventQDragLeaveEvent* -->
+<h3 class="fn" id="dragLeaveEvent"><a name="dragLeaveEvent"></a><code>[protected] </code><span class="type">void</span> DFMSideBarItem::<span class="name">dragLeaveEvent</span>(<span class="type">QDragLeaveEvent</span> *<i>event</i>)</h3>
+<!-- @@@dragLeaveEvent -->
+<!-- $$$dropEvent[overload1]$$$dropEventQDropEvent* -->
+<h3 class="fn" id="dropEvent"><a name="dropEvent"></a><code>[protected] </code><span class="type">void</span> DFMSideBarItem::<span class="name">dropEvent</span>(<span class="type">QDropEvent</span> *<i>event</i>)</h3>
+<!-- @@@dropEvent -->
 <!-- $$$dropMimeData[overload1]$$$dropMimeDataconstQMimeData*Qt::DropAction -->
 <h3 class="fn" id="dropMimeData"><a name="dropMimeData"></a><code>[virtual protected] </code><span class="type">bool</span> DFMSideBarItem::<span class="name">dropMimeData</span>(const <span class="type">QMimeData</span> *<i>data</i>, <span class="type">Qt::DropAction</span> <i>action</i>) const</h3>
 <!-- @@@dropMimeData -->
+<!-- $$$enterEvent[overload1]$$$enterEventQEvent* -->
+<h3 class="fn" id="enterEvent"><a name="enterEvent"></a><code>[protected] </code><span class="type">void</span> DFMSideBarItem::<span class="name">enterEvent</span>(<span class="type">QEvent</span> *<i>event</i>)</h3>
+<!-- @@@enterEvent -->
+<!-- $$$event[overload1]$$$eventQEvent* -->
+<h3 class="fn" id="event"><a name="event"></a><code>[protected] </code><span class="type">bool</span> DFMSideBarItem::<span class="name">event</span>(<span class="type">QEvent</span> *<i>event</i>)</h3>
+<!-- @@@event -->
 <!-- $$$itemDragReleased[overload1]$$$itemDragReleasedQPointQt::DropAction -->
 <h3 class="fn" id="itemDragReleased"><a name="itemDragReleased"></a><code>[signal] </code><span class="type">void</span> DFMSideBarItem::<span class="name">itemDragReleased</span>(<span class="type">QPoint</span> <i>dropPos</i>, <span class="type">Qt::DropAction</span> <i>action</i>)</h3>
 <!-- @@@itemDragReleased -->
 <!-- $$$itemVisible[overload1]$$$itemVisible -->
 <h3 class="fn" id="itemVisible"><a name="itemVisible"></a><span class="type">bool</span> DFMSideBarItem::<span class="name">itemVisible</span>() const</h3>
 <!-- @@@itemVisible -->
+<!-- $$$leaveEvent[overload1]$$$leaveEventQEvent* -->
+<h3 class="fn" id="leaveEvent"><a name="leaveEvent"></a><code>[protected] </code><span class="type">void</span> DFMSideBarItem::<span class="name">leaveEvent</span>(<span class="type">QEvent</span> *<i>event</i>)</h3>
+<!-- @@@leaveEvent -->
+<!-- $$$mouseMoveEvent[overload1]$$$mouseMoveEventQMouseEvent* -->
+<h3 class="fn" id="mouseMoveEvent"><a name="mouseMoveEvent"></a><code>[protected] </code><span class="type">void</span> DFMSideBarItem::<span class="name">mouseMoveEvent</span>(<span class="type">QMouseEvent</span> *<i>event</i>)</h3>
+<!-- @@@mouseMoveEvent -->
+<!-- $$$mousePressEvent[overload1]$$$mousePressEventQMouseEvent* -->
+<h3 class="fn" id="mousePressEvent"><a name="mousePressEvent"></a><code>[protected] </code><span class="type">void</span> DFMSideBarItem::<span class="name">mousePressEvent</span>(<span class="type">QMouseEvent</span> *<i>event</i>)</h3>
+<!-- @@@mousePressEvent -->
+<!-- $$$mouseReleaseEvent[overload1]$$$mouseReleaseEventQMouseEvent* -->
+<h3 class="fn" id="mouseReleaseEvent"><a name="mouseReleaseEvent"></a><code>[protected] </code><span class="type">void</span> DFMSideBarItem::<span class="name">mouseReleaseEvent</span>(<span class="type">QMouseEvent</span> *<i>event</i>)</h3>
+<!-- @@@mouseReleaseEvent -->
 <!-- $$$onEditingFinished[overload1]$$$onEditingFinished -->
 <h3 class="fn" id="onEditingFinished"><a name="onEditingFinished"></a><code>[slot] </code><span class="type">void</span> DFMSideBarItem::<span class="name">onEditingFinished</span>()</h3>
 <!-- @@@onEditingFinished -->
+<!-- $$$paintEvent[overload1]$$$paintEventQPaintEvent* -->
+<h3 class="fn" id="paintEvent"><a name="paintEvent"></a><code>[protected] </code><span class="type">void</span> DFMSideBarItem::<span class="name">paintEvent</span>(<span class="type">QPaintEvent</span> *<i>event</i>)</h3>
+<!-- @@@paintEvent -->
 <!-- $$$playAnimation[overload1]$$$playAnimation -->
 <h3 class="fn" id="playAnimation"><a name="playAnimation"></a><code>[slot] </code><span class="type">void</span> DFMSideBarItem::<span class="name">playAnimation</span>()</h3>
 <!-- @@@playAnimation -->
@@ -247,6 +292,9 @@
 <h3 class="fn" id="setUrl"><a name="setUrl"></a><code>[protected] </code><span class="type">void</span> DFMSideBarItem::<span class="name">setUrl</span>(<span class="type">DUrl</span> <i>url</i>)</h3>
 <p><b>See also </b><a href="dfmsidebaritem.html#url-prop">url</a>().</p>
 <!-- @@@setUrl -->
+<!-- $$$setVisible[overload1]$$$setVisiblebool -->
+<h3 class="fn" id="setVisible"><a name="setVisible"></a><code>[slot] </code><span class="type">void</span> DFMSideBarItem::<span class="name">setVisible</span>(<span class="type">bool</span> <i>visible</i>)</h3>
+<!-- @@@setVisible -->
 <!-- $$$showRenameEditor[overload1]$$$showRenameEditor -->
 <h3 class="fn" id="showRenameEditor"><a name="showRenameEditor"></a><span class="type">void</span> DFMSideBarItem::<span class="name">showRenameEditor</span>()</h3>
 <!-- @@@showRenameEditor -->

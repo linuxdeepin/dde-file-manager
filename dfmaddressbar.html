@@ -28,6 +28,7 @@
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#public-slots">Public Slots</a></li>
 <li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#protected-functions">Protected Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
 </ul>
 </div>
@@ -69,6 +70,15 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#escKeyPressed">escKeyPressed</a></b>()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#lostFocus">lostFocus</a></b>()</td></tr>
 </table></div>
+<a name="protected-functions"></a>
+<h2 id="protected-functions">Protected Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#focusInEvent">focusInEvent</a></b>(QFocusEvent *<i>e</i>) override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#focusOutEvent">focusOutEvent</a></b>(QFocusEvent *<i>e</i>) override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#keyPressEvent">keyPressEvent</a></b>(QKeyEvent *<i>e</i>) override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#paintEvent">paintEvent</a></b>(QPaintEvent *<i>e</i>) override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmaddressbar.html#showEvent">showEvent</a></b>(QShowEvent *<i>event</i>) override</td></tr>
+</table></div>
 <a name="details"></a>
 <!-- $$$DFMAddressBar-description -->
 <div class="descr">
@@ -99,12 +109,24 @@
 <!-- $$$escKeyPressed[overload1]$$$escKeyPressed -->
 <h3 class="fn" id="escKeyPressed"><a name="escKeyPressed"></a><code>[signal] </code><span class="type">void</span> DFMAddressBar::<span class="name">escKeyPressed</span>()</h3>
 <!-- @@@escKeyPressed -->
+<!-- $$$focusInEvent[overload1]$$$focusInEventQFocusEvent* -->
+<h3 class="fn" id="focusInEvent"><a name="focusInEvent"></a><code>[protected] </code><span class="type">void</span> DFMAddressBar::<span class="name">focusInEvent</span>(<span class="type">QFocusEvent</span> *<i>e</i>)</h3>
+<!-- @@@focusInEvent -->
+<!-- $$$focusOutEvent[overload1]$$$focusOutEventQFocusEvent* -->
+<h3 class="fn" id="focusOutEvent"><a name="focusOutEvent"></a><code>[protected] </code><span class="type">void</span> DFMAddressBar::<span class="name">focusOutEvent</span>(<span class="type">QFocusEvent</span> *<i>e</i>)</h3>
+<!-- @@@focusOutEvent -->
 <!-- $$$hide[overload1]$$$hide -->
 <h3 class="fn" id="hide"><a name="hide"></a><code>[slot] </code><span class="type">void</span> DFMAddressBar::<span class="name">hide</span>()</h3>
 <!-- @@@hide -->
+<!-- $$$keyPressEvent[overload1]$$$keyPressEventQKeyEvent* -->
+<h3 class="fn" id="keyPressEvent"><a name="keyPressEvent"></a><code>[protected] </code><span class="type">void</span> DFMAddressBar::<span class="name">keyPressEvent</span>(<span class="type">QKeyEvent</span> *<i>e</i>)</h3>
+<!-- @@@keyPressEvent -->
 <!-- $$$lostFocus[overload1]$$$lostFocus -->
 <h3 class="fn" id="lostFocus"><a name="lostFocus"></a><code>[signal] </code><span class="type">void</span> DFMAddressBar::<span class="name">lostFocus</span>()</h3>
 <!-- @@@lostFocus -->
+<!-- $$$paintEvent[overload1]$$$paintEventQPaintEvent* -->
+<h3 class="fn" id="paintEvent"><a name="paintEvent"></a><code>[protected] </code><span class="type">void</span> DFMAddressBar::<span class="name">paintEvent</span>(<span class="type">QPaintEvent</span> *<i>e</i>)</h3>
+<!-- @@@paintEvent -->
 <!-- $$$placeholderText[overload1]$$$placeholderText -->
 <h3 class="fn" id="placeholderText"><a name="placeholderText"></a><span class="type">QString</span> DFMAddressBar::<span class="name">placeholderText</span>() const</h3>
 <p><b>See also </b><a href="dfmaddressbar.html#setPlaceholderText">setPlaceholderText</a>().</p>
@@ -122,6 +144,9 @@
 <h3 class="fn" id="setPlaceholderText"><a name="setPlaceholderText"></a><span class="type">void</span> DFMAddressBar::<span class="name">setPlaceholderText</span>(const <span class="type">QString</span> &amp;<i>text</i>)</h3>
 <p><b>See also </b><a href="dfmaddressbar.html#placeholderText">placeholderText</a>().</p>
 <!-- @@@setPlaceholderText -->
+<!-- $$$showEvent[overload1]$$$showEventQShowEvent* -->
+<h3 class="fn" id="showEvent"><a name="showEvent"></a><code>[protected] </code><span class="type">void</span> DFMAddressBar::<span class="name">showEvent</span>(<span class="type">QShowEvent</span> *<i>event</i>)</h3>
+<!-- @@@showEvent -->
 </div>
 </div>
 </div>

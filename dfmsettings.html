@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- dfmsettings.cpp -->
+  <title>DFMSettings Class | Deepin File Manager</title>
+  <link rel="stylesheet" type="text/css" href="style/online.css" />
+</head>
+<body>
+<div class="header" id="qtdocheader">
+    <div class="main">
+    <div class="main-rounded">
+        <div class="navigationbar">
+        <ul>
+<li>DFMSettings</li>
+    </ul>
+    </div>
+</div>
+<div class="content">
+<div class="line">
+<div class="content mainContent">
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-types">Public Types</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#public-slots">Public Slots</a></li>
+<li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#static-public-members">Static Public Members</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<div class="context">
+<h1 class="title">DFMSettings Class</h1>
+<!-- $$$DFMSettings-brief -->
+<p><a href="dfmsettings.html">DFMSettings</a> provide interfaces to access and modify the file manager setting options. <a href="#details">More...</a></p>
+<!-- @@@DFMSettings -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;DFMSettings&gt;</span>
+</td></tr></table></div><ul>
+<li><a href="dfmsettings-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-types"></a>
+<h2 id="public-types">Public Types</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#ConfigType-enum">ConfigType</a></b> { AppConfig, GenericConfig }</td></tr>
+</table></div>
+<a name="public-functions"></a>
+<h2 id="public-functions">Public Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#DFMSettings">DFMSettings</a></b>(const QString &amp;<i>defaultFile</i>, const QString &amp;<i>fallbackFile</i>, const QString &amp;<i>settingFile</i>, QObject *<i>parent</i> = nullptr)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#DFMSettings-1">DFMSettings</a></b>(const QString &amp;<i>name</i>, ConfigType <i>type</i> = AppConfig, QObject *<i>parent</i> = nullptr)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#dtor.DFMSettings">~DFMSettings</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#autoSync">autoSync</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#clear">clear</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#contains">contains</a></b>(const QString &amp;<i>group</i>, const QString &amp;<i>key</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QSet&lt;QString&gt; </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#groups">groups</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#isRemovable">isRemovable</a></b>(const QString &amp;<i>group</i>, const QString &amp;<i>key</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#isRemovable-1">isRemovable</a></b>(const QString &amp;<i>group</i>, const DUrl &amp;<i>key</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#keyList">keyList</a></b>(const QString &amp;<i>group</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QSet&lt;QString&gt; </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#keys">keys</a></b>(const QString &amp;<i>group</i>) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#reload">reload</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#remove">remove</a></b>(const QString &amp;<i>group</i>, const QString &amp;<i>key</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#remove-1">remove</a></b>(const QString &amp;<i>group</i>, const DUrl &amp;<i>key</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#removeGroup">removeGroup</a></b>(const QString &amp;<i>group</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#setValue">setValue</a></b>(const QString &amp;<i>group</i>, const QString &amp;<i>key</i>, const QVariant &amp;<i>value</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#setValue-1">setValue</a></b>(const QString &amp;<i>group</i>, const DUrl &amp;<i>key</i>, const QVariant &amp;<i>value</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#setValueNoNotify">setValueNoNotify</a></b>(const QString &amp;<i>group</i>, const QString &amp;<i>key</i>, const QVariant &amp;<i>value</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#setValueNoNotify-1">setValueNoNotify</a></b>(const QString &amp;<i>group</i>, const DUrl &amp;<i>key</i>, const QVariant &amp;<i>value</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#sync">sync</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> DUrl </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#urlValue">urlValue</a></b>(const QString &amp;<i>group</i>, const QString &amp;<i>key</i>, const DUrl &amp;<i>defaultValue</i> = DUrl()) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> DUrl </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#urlValue-1">urlValue</a></b>(const QString &amp;<i>group</i>, const DUrl &amp;<i>key</i>, const DUrl &amp;<i>defaultValue</i> = DUrl()) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QVariant </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#value">value</a></b>(const QString &amp;<i>group</i>, const QString &amp;<i>key</i>, const QVariant &amp;<i>defaultValue</i> = QVariant()) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QVariant </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#value-1">value</a></b>(const QString &amp;<i>group</i>, const DUrl &amp;<i>key</i>, const QVariant &amp;<i>defaultValue</i> = QVariant()) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#watchChanges">watchChanges</a></b>() const</td></tr>
+</table></div>
+<a name="public-slots"></a>
+<h2 id="public-slots">Public Slots</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#setAutoSync">setAutoSync</a></b>(bool <i>autoSync</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#setWatchChanges">setWatchChanges</a></b>(bool <i>watchChanges</i>)</td></tr>
+</table></div>
+<a name="signals"></a>
+<h2 id="signals">Signals</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#valueChanged">valueChanged</a></b>(const QString &amp;<i>group</i>, const QString &amp;<i>key</i>, const QVariant &amp;<i>value</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#valueEdited">valueEdited</a></b>(const QString &amp;<i>group</i>, const QString &amp;<i>key</i>, const QVariant &amp;<i>value</i>)</td></tr>
+</table></div>
+<a name="static-public-members"></a>
+<h2 id="static-public-members">Static Public Members</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> DUrl </td><td class="memItemRight bottomAlign"><b><a href="dfmsettings.html#toUrlValue">toUrlValue</a></b>(const QVariant &amp;<i>url</i>)</td></tr>
+</table></div>
+<a name="details"></a>
+<!-- $$$DFMSettings-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p><a href="dfmsettings.html">DFMSettings</a> provide interfaces to access and modify the file manager setting options.</p>
+</div>
+<!-- @@@DFMSettings -->
+<div class="types">
+<h2>Member Type Documentation</h2>
+<!-- $$$ConfigType$$$AppConfig$$$GenericConfig -->
+<h3 class="fn" id="ConfigType-enum"><a name="ConfigType-enum"></a>enum DFMSettings::<span class="name">ConfigType</span></h3>
+<!-- @@@ConfigType -->
+</div>
+<div class="func">
+<h2>Member Function Documentation</h2>
+<!-- $$$DFMSettings[overload1]$$$DFMSettingsconstQString&constQString&constQString&QObject* -->
+<h3 class="fn" id="DFMSettings"><a name="DFMSettings"></a>DFMSettings::<span class="name">DFMSettings</span>(const <span class="type">QString</span> &amp;<i>defaultFile</i>, const <span class="type">QString</span> &amp;<i>fallbackFile</i>, const <span class="type">QString</span> &amp;<i>settingFile</i>, <span class="type">QObject</span> *<i>parent</i> = nullptr)</h3>
+<p>Default constructs an instance of DFMSettings.</p><!-- @@@DFMSettings -->
+<!-- $$$DFMSettings$$$DFMSettingsconstQString&ConfigTypeQObject* -->
+<h3 class="fn" id="DFMSettings-1"><a name="DFMSettings-1"></a>DFMSettings::<span class="name">DFMSettings</span>(const <span class="type">QString</span> &amp;<i>name</i>, <span class="type"><a href="dfmsettings.html#ConfigType-enum">ConfigType</a></span> <i>type</i> = AppConfig, <span class="type">QObject</span> *<i>parent</i> = nullptr)</h3>
+<p>Default constructs an instance of DFMSettings.</p><!-- @@@DFMSettings -->
+<!-- $$$~DFMSettings[overload1]$$$~DFMSettings -->
+<h3 class="fn" id="dtor.DFMSettings"><a name="dtor.DFMSettings"></a>DFMSettings::<span class="name">~DFMSettings</span>()</h3>
+<p>Destroys the instance of DFMSettings.</p><!-- @@@~DFMSettings -->
+<!-- $$$autoSync[overload1]$$$autoSync -->
+<h3 class="fn" id="autoSync"><a name="autoSync"></a><span class="type">bool</span> DFMSettings::<span class="name">autoSync</span>() const</h3>
+<p><b>See also </b><a href="dfmsettings.html#setAutoSync">setAutoSync</a>().</p>
+<!-- @@@autoSync -->
+<!-- $$$clear[overload1]$$$clear -->
+<h3 class="fn" id="clear"><a name="clear"></a><span class="type">void</span> DFMSettings::<span class="name">clear</span>()</h3>
+<!-- @@@clear -->
+<!-- $$$contains[overload1]$$$containsconstQString&constQString& -->
+<h3 class="fn" id="contains"><a name="contains"></a><span class="type">bool</span> DFMSettings::<span class="name">contains</span>(const <span class="type">QString</span> &amp;<i>group</i>, const <span class="type">QString</span> &amp;<i>key</i>) const</h3>
+<!-- @@@contains -->
+<!-- $$$groups[overload1]$$$groups -->
+<h3 class="fn" id="groups"><a name="groups"></a><span class="type">QSet</span>&lt;<span class="type">QString</span>&gt; DFMSettings::<span class="name">groups</span>() const</h3>
+<!-- @@@groups -->
+<!-- $$$isRemovable[overload1]$$$isRemovableconstQString&constQString& -->
+<h3 class="fn" id="isRemovable"><a name="isRemovable"></a><span class="type">bool</span> DFMSettings::<span class="name">isRemovable</span>(const <span class="type">QString</span> &amp;<i>group</i>, const <span class="type">QString</span> &amp;<i>key</i>) const</h3>
+<!-- @@@isRemovable -->
+<!-- $$$isRemovable$$$isRemovableconstQString&constDUrl& -->
+<h3 class="fn" id="isRemovable-1"><a name="isRemovable-1"></a><span class="type">bool</span> DFMSettings::<span class="name">isRemovable</span>(const <span class="type">QString</span> &amp;<i>group</i>, const <span class="type">DUrl</span> &amp;<i>key</i>) const</h3>
+<!-- @@@isRemovable -->
+<!-- $$$keyList[overload1]$$$keyListconstQString& -->
+<h3 class="fn" id="keyList"><a name="keyList"></a><span class="type">QStringList</span> DFMSettings::<span class="name">keyList</span>(const <span class="type">QString</span> &amp;<i>group</i>) const</h3>
+<p>DFMSettings::keysList <i>group</i> name Returns An ordered key list of the group</p>
+<!-- @@@keyList -->
+<!-- $$$keys[overload1]$$$keysconstQString& -->
+<h3 class="fn" id="keys"><a name="keys"></a><span class="type">QSet</span>&lt;<span class="type">QString</span>&gt; DFMSettings::<span class="name">keys</span>(const <span class="type">QString</span> &amp;<i>group</i>) const</h3>
+<!-- @@@keys -->
+<!-- $$$reload[overload1]$$$reload -->
+<h3 class="fn" id="reload"><a name="reload"></a><span class="type">void</span> DFMSettings::<span class="name">reload</span>()</h3>
+<p>Reload config file.</p>
+<p>This will be needed if file watcher is disabled, or say, you defined the DFM_NO_FILE_WATCHER marco.</p>
+<!-- @@@reload -->
+<!-- $$$remove[overload1]$$$removeconstQString&constQString& -->
+<h3 class="fn" id="remove"><a name="remove"></a><span class="type">void</span> DFMSettings::<span class="name">remove</span>(const <span class="type">QString</span> &amp;<i>group</i>, const <span class="type">QString</span> &amp;<i>key</i>)</h3>
+<!-- @@@remove -->
+<!-- $$$remove$$$removeconstQString&constDUrl& -->
+<h3 class="fn" id="remove-1"><a name="remove-1"></a><span class="type">void</span> DFMSettings::<span class="name">remove</span>(const <span class="type">QString</span> &amp;<i>group</i>, const <span class="type">DUrl</span> &amp;<i>key</i>)</h3>
+<!-- @@@remove -->
+<!-- $$$removeGroup[overload1]$$$removeGroupconstQString& -->
+<h3 class="fn" id="removeGroup"><a name="removeGroup"></a><span class="type">void</span> DFMSettings::<span class="name">removeGroup</span>(const <span class="type">QString</span> &amp;<i>group</i>)</h3>
+<!-- @@@removeGroup -->
+<!-- $$$setAutoSync[overload1]$$$setAutoSyncbool -->
+<h3 class="fn" id="setAutoSync"><a name="setAutoSync"></a><code>[slot] </code><span class="type">void</span> DFMSettings::<span class="name">setAutoSync</span>(<span class="type">bool</span> <i>autoSync</i>)</h3>
+<p><b>See also </b><a href="dfmsettings.html#autoSync">autoSync</a>().</p>
+<!-- @@@setAutoSync -->
+<!-- $$$setValue[overload1]$$$setValueconstQString&constQString&constQVariant& -->
+<h3 class="fn" id="setValue"><a name="setValue"></a><span class="type">void</span> DFMSettings::<span class="name">setValue</span>(const <span class="type">QString</span> &amp;<i>group</i>, const <span class="type">QString</span> &amp;<i>key</i>, const <span class="type">QVariant</span> &amp;<i>value</i>)</h3>
+<p><b>See also </b><a href="dfmsettings.html#value">value</a>().</p>
+<!-- @@@setValue -->
+<!-- $$$setValue$$$setValueconstQString&constDUrl&constQVariant& -->
+<h3 class="fn" id="setValue-1"><a name="setValue-1"></a><span class="type">void</span> DFMSettings::<span class="name">setValue</span>(const <span class="type">QString</span> &amp;<i>group</i>, const <span class="type">DUrl</span> &amp;<i>key</i>, const <span class="type">QVariant</span> &amp;<i>value</i>)</h3>
+<!-- @@@setValue -->
+<!-- $$$setValueNoNotify[overload1]$$$setValueNoNotifyconstQString&constQString&constQVariant& -->
+<h3 class="fn" id="setValueNoNotify"><a name="setValueNoNotify"></a><span class="type">bool</span> DFMSettings::<span class="name">setValueNoNotify</span>(const <span class="type">QString</span> &amp;<i>group</i>, const <span class="type">QString</span> &amp;<i>key</i>, const <span class="type">QVariant</span> &amp;<i>value</i>)</h3>
+<!-- @@@setValueNoNotify -->
+<!-- $$$setValueNoNotify$$$setValueNoNotifyconstQString&constDUrl&constQVariant& -->
+<h3 class="fn" id="setValueNoNotify-1"><a name="setValueNoNotify-1"></a><span class="type">bool</span> DFMSettings::<span class="name">setValueNoNotify</span>(const <span class="type">QString</span> &amp;<i>group</i>, const <span class="type">DUrl</span> &amp;<i>key</i>, const <span class="type">QVariant</span> &amp;<i>value</i>)</h3>
+<!-- @@@setValueNoNotify -->
+<!-- $$$setWatchChanges[overload1]$$$setWatchChangesbool -->
+<h3 class="fn" id="setWatchChanges"><a name="setWatchChanges"></a><code>[slot] </code><span class="type">void</span> DFMSettings::<span class="name">setWatchChanges</span>(<span class="type">bool</span> <i>watchChanges</i>)</h3>
+<p><b>See also </b><a href="dfmsettings.html#watchChanges">watchChanges</a>().</p>
+<!-- @@@setWatchChanges -->
+<!-- $$$sync[overload1]$$$sync -->
+<h3 class="fn" id="sync"><a name="sync"></a><span class="type">bool</span> DFMSettings::<span class="name">sync</span>()</h3>
+<!-- @@@sync -->
+<!-- $$$toUrlValue[overload1]$$$toUrlValueconstQVariant& -->
+<h3 class="fn" id="toUrlValue"><a name="toUrlValue"></a><code>[static] </code><span class="type">DUrl</span> DFMSettings::<span class="name">toUrlValue</span>(const <span class="type">QVariant</span> &amp;<i>url</i>)</h3>
+<!-- @@@toUrlValue -->
+<!-- $$$urlValue[overload1]$$$urlValueconstQString&constQString&constDUrl& -->
+<h3 class="fn" id="urlValue"><a name="urlValue"></a><span class="type">DUrl</span> DFMSettings::<span class="name">urlValue</span>(const <span class="type">QString</span> &amp;<i>group</i>, const <span class="type">QString</span> &amp;<i>key</i>, const <span class="type">DUrl</span> &amp;<i>defaultValue</i> = DUrl()) const</h3>
+<!-- @@@urlValue -->
+<!-- $$$urlValue$$$urlValueconstQString&constDUrl&constDUrl& -->
+<h3 class="fn" id="urlValue-1"><a name="urlValue-1"></a><span class="type">DUrl</span> DFMSettings::<span class="name">urlValue</span>(const <span class="type">QString</span> &amp;<i>group</i>, const <span class="type">DUrl</span> &amp;<i>key</i>, const <span class="type">DUrl</span> &amp;<i>defaultValue</i> = DUrl()) const</h3>
+<!-- @@@urlValue -->
+<!-- $$$value[overload1]$$$valueconstQString&constQString&constQVariant& -->
+<h3 class="fn" id="value"><a name="value"></a><span class="type">QVariant</span> DFMSettings::<span class="name">value</span>(const <span class="type">QString</span> &amp;<i>group</i>, const <span class="type">QString</span> &amp;<i>key</i>, const <span class="type">QVariant</span> &amp;<i>defaultValue</i> = QVariant()) const</h3>
+<p><b>See also </b><a href="dfmsettings.html#setValue">setValue</a>().</p>
+<!-- @@@value -->
+<!-- $$$value$$$valueconstQString&constDUrl&constQVariant& -->
+<h3 class="fn" id="value-1"><a name="value-1"></a><span class="type">QVariant</span> DFMSettings::<span class="name">value</span>(const <span class="type">QString</span> &amp;<i>group</i>, const <span class="type">DUrl</span> &amp;<i>key</i>, const <span class="type">QVariant</span> &amp;<i>defaultValue</i> = QVariant()) const</h3>
+<!-- @@@value -->
+<!-- $$$valueChanged[overload1]$$$valueChangedconstQString&constQString&constQVariant& -->
+<h3 class="fn" id="valueChanged"><a name="valueChanged"></a><code>[signal] </code><span class="type">void</span> DFMSettings::<span class="name">valueChanged</span>(const <span class="type">QString</span> &amp;<i>group</i>, const <span class="type">QString</span> &amp;<i>key</i>, const <span class="type">QVariant</span> &amp;<i>value</i>)</h3>
+<!-- @@@valueChanged -->
+<!-- $$$valueEdited[overload1]$$$valueEditedconstQString&constQString&constQVariant& -->
+<h3 class="fn" id="valueEdited"><a name="valueEdited"></a><code>[signal] </code><span class="type">void</span> DFMSettings::<span class="name">valueEdited</span>(const <span class="type">QString</span> &amp;<i>group</i>, const <span class="type">QString</span> &amp;<i>key</i>, const <span class="type">QVariant</span> &amp;<i>value</i>)</h3>
+<!-- @@@valueEdited -->
+<!-- $$$watchChanges[overload1]$$$watchChanges -->
+<h3 class="fn" id="watchChanges"><a name="watchChanges"></a><span class="type">bool</span> DFMSettings::<span class="name">watchChanges</span>() const</h3>
+<p><b>See also </b><a href="dfmsettings.html#setWatchChanges">setWatchChanges</a>().</p>
+<!-- @@@watchChanges -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
