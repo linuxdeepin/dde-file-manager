@@ -60,6 +60,7 @@ public:
         Mkdir,
         TouchFile,
         OpenFileLocation,
+        AddToBookmark,
         CreateSymlink,
         FileShare,
         CancelFileShare,
@@ -434,6 +435,12 @@ public:
     explicit DFMOpenFileLocation(const QObject *sender, const DUrl &url);
 
     static QSharedPointer<DFMOpenFileLocation> fromJson(const QJsonObject &json);
+};
+
+class DFMAddToBookmarkEvent : public DFMUrlBaseEvent
+{
+public:
+    explicit DFMAddToBookmarkEvent(const QObject *sender, const DUrl &url);
 };
 
 class DFMCreateSymlinkEvent : public DFMEvent

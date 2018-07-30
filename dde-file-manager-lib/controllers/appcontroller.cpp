@@ -340,6 +340,9 @@ void AppController::actionAddToBookMark(const QSharedPointer<DFMUrlBaseEvent> &e
     DUrl fileUrl = event->url();
     const DAbstractFileInfoPointer &p = fileService->createFileInfo(NULL, fileUrl);
 
+    // TODO: use vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+    // fileService->addToBookmark(event->sender(), event->url());
+
     while (true) {
         if (fileUrl.isTaggedFile()) {
             fileUrl = DUrl::fromLocalFile(fileUrl.taggedLocalFilePath());

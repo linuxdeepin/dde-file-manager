@@ -1151,6 +1151,7 @@ void FileJob::showProgress(goffset current_num_bytes, goffset total_num_bytes, g
 
 bool FileJob::copyFileByGio(const QString &srcFile, const QString &tarDir, bool isMoved, QString *targetPath)
 {
+    Q_UNUSED(isMoved);
 //    qDebug() << "copy file by gvfs" << srcFile << tarDir;
 
     if (checkFat32FileOutof4G(srcFile, tarDir))
