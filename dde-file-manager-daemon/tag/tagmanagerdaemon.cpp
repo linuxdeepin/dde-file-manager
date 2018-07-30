@@ -20,11 +20,13 @@
  */
 
 #include "app/define.h"
+#include "tag/tagutil.h"
 #include "tagmanagerdaemon.h"
 #include "shutil/dsqlitehandle.h"
 #include "dbusadaptor/tagmanagerdaemon_adaptor.h"
 
 #include <QDebug>
+
 
 static constexpr const char *ObjectPath{"/com/deepin/filemanager/daemon/TagManagerDaemon"};
 
@@ -54,7 +56,14 @@ QDBusVariant TagManagerDaemon::disposeClientData(const QMap<QString, QVariant> &
         QMap<QString, QList<QString>> filesAndTagsName{};
 
         for (; cbeg != cend; ++cbeg) {
-            filesAndTagsName[cbeg.key()] = cbeg.value().toStringList();
+            QString key{ Tag::escaping_en_skim(cbeg.key()) };
+            QList<QString> values{};
+
+            for (const QString &qstr : cbeg.value().toStringList()) {
+                values.push_back(Tag::escaping_en_skim(qstr));
+            }
+
+            filesAndTagsName[key] = values;
         }
 
         QVariant var{ DSqliteHandle::instance()->disposeClientData(filesAndTagsName, type) };
