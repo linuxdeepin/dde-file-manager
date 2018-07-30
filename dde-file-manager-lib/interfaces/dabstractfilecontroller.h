@@ -47,6 +47,7 @@ class DFMMkdirEvent;
 class DFMTouchFileEvent;
 class DFMSetPermissionEvent;
 class DFMOpenFileLocation;
+class DFMAddToBookmarkEvent;
 class DFMCreateSymlinkEvent;
 class DFMGetChildrensEvent;
 class DFMCreateDiriterator;
@@ -96,6 +97,8 @@ public:
     virtual const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const;
     virtual const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const;
     virtual const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const;
+
+    virtual bool addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const;
 
     virtual bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const;
     virtual bool shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const;

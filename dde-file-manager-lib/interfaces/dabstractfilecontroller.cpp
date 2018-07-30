@@ -239,6 +239,13 @@ const DDirIteratorPointer DAbstractFileController::createDirIterator(const QShar
     return DDirIteratorPointer(new DefaultDiriterator(this, event));
 }
 
+bool DAbstractFileController::addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const
+{
+    event->ignore();
+
+    return false;
+}
+
 bool DAbstractFileController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const
 {
     event->ignore();

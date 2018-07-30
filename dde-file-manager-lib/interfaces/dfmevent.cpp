@@ -566,6 +566,12 @@ QSharedPointer<DFMOpenFileLocation> DFMOpenFileLocation::fromJson(const QJsonObj
     return DFMUrlBaseEvent::fromJson(OpenFileLocation, json).staticCast<DFMOpenFileLocation>();
 }
 
+DFMAddToBookmarkEvent::DFMAddToBookmarkEvent(const QObject *sender, const DUrl &url)
+    : DFMUrlBaseEvent(AddToBookmark, sender, url)
+{
+
+}
+
 DFMCreateSymlinkEvent::DFMCreateSymlinkEvent(const QObject *sender, const DUrl &fileUrl, const DUrl &toUrl)
     : DFMEvent(CreateSymlink, sender)
 {
