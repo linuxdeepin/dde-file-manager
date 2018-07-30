@@ -47,14 +47,13 @@ QList<CrumbData> DFMTagCrumbController::seprateUrl(const DUrl &url)
     QString colorName;
     QString displayText;
 
-    // blumia: crumb bar behavior should ask PM and / or designer...
     if (url != DUrl(TAG_ROOT)) {
         displayText = url.fileName();
         colorName = TagManager::instance()->getTagColorName(url.fileName());
         colorName = ("BookmarkItem." + colorName);
     } else {
-        displayText = "Tags";
-        colorName = "CrumbIconButton.UserShare";
+        displayText = QCoreApplication::translate("DFMTagCrumbController", "Tag information");
+        colorName = QStringLiteral("CrumbIconButton.Tags");
     }
 
     return { CrumbData(url, displayText, colorName) };
