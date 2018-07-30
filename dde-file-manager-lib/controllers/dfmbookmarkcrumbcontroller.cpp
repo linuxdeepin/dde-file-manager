@@ -43,7 +43,7 @@ bool DFMBookmarkCrumbController::supportedUrl(DUrl url)
 QList<CrumbData> DFMBookmarkCrumbController::seprateUrl(const DUrl &url)
 {
     Q_UNUSED(url);
-    return { CrumbData(DUrl(BOOKMARK_ROOT), "Bookmark", "CrumbIconButton.UserShare") };
+    return { CrumbData(DUrl(BOOKMARK_ROOT), QObject::tr("Bookmarks"), "CrumbIconButton.Bookmarks") };
 }
 
 DFM_END_NAMESPACE
