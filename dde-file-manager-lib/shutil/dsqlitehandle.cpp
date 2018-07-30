@@ -7,8 +7,8 @@
 #include <unordered_set>
 
 #include <unistd.h>
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 #include "singleton.h"
 #include "tag/tagutil.h"
@@ -2624,11 +2624,6 @@ bool DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::TagFilesThroughColor, boo
             }
         }
 
-
-//        QPair<QString, QString> unixDeviceAndMountPoint{ DSqliteHandle::getMountPointOfFile(DUrl::fromLocalFile(cbeg.key()), m_partionsOfDevices) };
-
-
-
         ///###: log!
 //        outStream << "LANG: " << qgetenv("LANG").toStdString()
 //                 << ", LANGUAGE: " << qgetenv("LANGUAGE").toStdString() << std::endl;
@@ -3396,8 +3391,13 @@ QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetTagsThroughF
     }
 
     this->closeSqlDatabase();
+    QList<QString> tags_backup{};
 
-    return tags;
+    for (const QString &tag : tags) {
+        tags_backup.push_back(Tag::restore_escaped_en_skim(tag));
+    }
+
+    return tags_backup;
 }
 
 template<>
@@ -3445,7 +3445,13 @@ QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetFilesThrough
     }
 
     this->closeSqlDatabase();
-    return files;
+    QList<QString> files_backup{};
+
+    for (const QString &file : files) {
+        files_backup.push_back(Tag::restore_escaped_en_skim(file));
+    }
+
+    return files_backup;
 }
 
 
@@ -3481,9 +3487,15 @@ QList<QString> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetSameTagsOfDi
 
 //#ifdef QT_DEBUG
 //    qDebug()<< totalTagsNames;
-//#endif
+//#endif //QT_DEBUG
 
-    return totalTagsNames;
+    QList<QString> total_tags_names_backup{};
+
+    for (const QString &tag_name : totalTagsNames) {
+        total_tags_names_backup.push_back(Tag::restore_escaped_en_skim(tag_name));
+    }
+
+    return total_tags_names_backup;
 }
 
 
@@ -3506,6 +3518,10 @@ QMap<QString, QVariant> DSqliteHandle::execSqlstr<DSqliteHandle::SqlType::GetAll
                 while (sql_query.next()) {
                     QString tag_name{ sql_query.value("tag_name").toString() };
                     QString tag_color{ sql_query.value("tag_color").toString() };
+
+                    tag_name = Tag::restore_escaped_en_skim(tag_name);
+//                    tag_color = Tag::restore_escaped_en_skim(tag_color); //###: color can not contain skim.
+
                     tag_and_color[tag_name] = QVariant{ tag_color };
                 }
             }

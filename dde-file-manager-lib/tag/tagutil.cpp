@@ -1,18 +1,21 @@
 #include "tagutil.h"
 
 
-namespace Tag {
+#include <QDebug>
+
+namespace Tag
+{
 
 const QMap<QString, QString> ColorsWithNames{
-        { "#ffa503", "Orange"},
-        { "#ff1c49", "Red"},
-        { "#9023fc", "Purple"},
-        { "#3468ff", "Navy-blue"},
-        { "#00b5ff", "Azure"},
-        { "#58df0a", "Grass-green"},
-        { "#fef144", "Yellow"},
-        { "#cccccc", "Gray" }
-    };
+    { "#ffa503", "Orange"},
+    { "#ff1c49", "Red"},
+    { "#9023fc", "Purple"},
+    { "#3468ff", "Navy-blue"},
+    { "#00b5ff", "Azure"},
+    { "#58df0a", "Grass-green"},
+    { "#fef144", "Yellow"},
+    { "#cccccc", "Gray" }
+};
 
 const QMap<QString, QColor> NamesWithColors{
     {"Orange", "#ffa503"},
@@ -27,13 +30,13 @@ const QMap<QString, QColor> NamesWithColors{
 
 
 std::vector<QString> ColorName{
-                                    "Orange",
-                                    "Red",
-                                    "Purple",
-                                    "Navy-blue",
-                                    "Azure",
-                                    "Grass-green",
-                                    "Yellow",
+    "Orange",
+    "Red",
+    "Purple",
+    "Navy-blue",
+    "Azure",
+    "Grass-green",
+    "Yellow",
     "Gray"
 };
 
@@ -54,6 +57,76 @@ const QMap<QString, QString> &ActualAndFakerName()
     };
 
     return ActualAndFakerName;
+}
+
+
+
+
+
+
+static constexpr const char *const escaped_skim_str{ "\\039" };
+static constexpr const char skim_char{'\''};
+
+QString escaping_en_skim(const QString &source) noexcept
+{
+    if (source.isEmpty()) {
+        return source;
+    }
+
+    QByteArray local8bits_str{ source.toLocal8Bit() };
+    QByteArray::const_iterator cbeg{ local8bits_str.cbegin() };
+    QByteArray::const_iterator cend{ local8bits_str.cend() };
+
+    QByteArray::const_iterator pos{ std::find(cbeg, cend, skim_char) };
+
+    while (pos != cend) {
+        int index{ pos - cbeg };
+        local8bits_str.remove(index, 1);
+
+        if (pos == local8bits_str.cbegin()) {
+            local8bits_str.push_front(escaped_skim_str);
+            cbeg = local8bits_str.cbegin();
+            cend = local8bits_str.cend();
+            pos = std::find(cbeg, cend, skim_char);
+        } else {
+            local8bits_str.insert(index, escaped_skim_str);
+            cbeg = local8bits_str.cbegin();
+            cend = local8bits_str.cend();
+            pos = std::find(cbeg, cend, skim_char);
+        }
+    }
+
+#ifdef QT_DEBUG
+    qDebug() << local8bits_str;
+#endif //QT_DEBUG
+
+    return QString::fromLocal8Bit(local8bits_str);
+}
+
+QString restore_escaped_en_skim(const QString &source) noexcept
+{
+    if (source.isEmpty()) {
+        return source;
+    }
+
+    QByteArray local8bits_str{ source.toLocal8Bit() };
+
+    while (local8bits_str.contains(escaped_skim_str)) {
+        int index{ local8bits_str.indexOf(escaped_skim_str) };
+        local8bits_str.remove(index, 4);
+
+        if (index != 0) {
+            local8bits_str.insert(index, skim_char);
+        } else {
+            local8bits_str.push_front(skim_char);
+        }
+    }
+
+#ifdef QT_DEBUG
+    qDebug() << local8bits_str;
+#endif //QT_DEBUG
+
+    return QString::fromLocal8Bit(local8bits_str);
 }
 
 }
