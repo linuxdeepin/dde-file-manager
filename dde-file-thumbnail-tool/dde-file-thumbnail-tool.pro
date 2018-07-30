@@ -1,3 +1,5 @@
 TEMPLATE = subdirs
 
-SUBDIRS += video
+!CONFIG(DISABLE_FFMPEG):!isEqual(BUILD_MINIMUM, YES) {
+    SUBDIRS += video
+}

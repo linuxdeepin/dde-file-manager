@@ -54,11 +54,6 @@
 #include <poppler-page.h>
 #include <poppler-page-renderer.h>
 
-// ffmpeg
-#ifdef SUPPORT_FFMEPG
-//#include <libffmpegthumbnailer/videothumbnailer.h>
-#endif
-
 #include <DThumbnailProvider>
 
 DFM_BEGIN_NAMESPACE
@@ -427,25 +422,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
         }
 
         *image = img.scaled(QSize(size, size), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    }
-#ifdef SUPPORT_FFMEPG
-//    else if (mime.name().startsWith("video/")) {
-//        //video
-//        //FIXME(zccrs): This should be done using the image plugin?
-//        try {
-//            std::vector<uint8_t> imageData;
-
-//            ffmpegthumbnailer::VideoThumbnailer vt(size, false, true, 20, false);
-//            vt.generateThumbnail(absoluteFilePath.toStdString(), ThumbnailerImageTypeEnum::Png, imageData);
-
-//            image->loadFromData(imageData.data(), imageData.size(), "png");
-//        } catch (std::logic_error e) {
-//            d->errorString = e.what();
-//            goto _return;
-//        }
-//    }
-#endif
-    else {
+    } else {
         thumbnail = DTK_WIDGET_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(info, (DTK_WIDGET_NAMESPACE::DThumbnailProvider::Size)size);
         d->errorString = DTK_WIDGET_NAMESPACE::DThumbnailProvider::instance()->errorString();
 

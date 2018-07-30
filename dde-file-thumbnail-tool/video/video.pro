@@ -6,4 +6,6 @@ include(../common.pri)
 SOURCES += \
     main.cpp
 
-LIBS += -lffmpegthumbnailer
+!CONFIG(DISABLE_FFMPEG):!isEqual(BUILD_MINIMUM, YES) {
+    LIBS += -lffmpegthumbnailer
+}
