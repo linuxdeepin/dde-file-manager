@@ -320,7 +320,7 @@ DFMSettingDialog::DFMSettingDialog(QWidget *parent):
     //load temlate
     m_settings = fromJsJson(":/configure/global-setting-template-pro.js").data();
 #else
-#ifndef SUPPORT_FFMEPG
+#ifdef DISABLE_FFMEPG
     m_settings = fromJsJson(":/configure/global-setting-template-fedora.js").data();
 #else
     m_settings = fromJsJson(":/configure/global-setting-template.js").data();

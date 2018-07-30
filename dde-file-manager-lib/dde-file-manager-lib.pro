@@ -40,11 +40,8 @@ CONFIG += c++11 link_pkgconfig
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
 
-isEqual(IS_PLATFORM_FEDORA, YES) | isEqual(BUILD_MINIMUM, YES) {
-
-}else{
-    DEFINES += SUPPORT_FFMEPG
-#    LIBS += -lffmpegthumbnailer
+CONFIG(DISABLE_FFMPEG) | isEqual(BUILD_MINIMUM, YES) {
+    DEFINES += DISABLE_FFMEPG
 }
 
 # BUILD_MINIMUM for live system
