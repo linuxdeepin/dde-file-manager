@@ -246,7 +246,7 @@ bool DAbstractFileController::addToBookmark(const QSharedPointer<DFMAddToBookmar
     return false;
 }
 
-bool DAbstractFileController::removeBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const
+bool DAbstractFileController::removeBookmark(const QSharedPointer<DFMRemoveBookmarkEvent> &event) const
 {
     event->ignore();
 

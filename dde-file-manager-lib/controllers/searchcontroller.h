@@ -55,7 +55,8 @@ public:
     bool decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const Q_DECL_OVERRIDE;
 
     bool addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const override;
-    bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const Q_DECL_OVERRIDE;
+    bool removeBookmark(const QSharedPointer<DFMRemoveBookmarkEvent> &event) const override;
+    bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const override;
 
     bool shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const Q_DECL_OVERRIDE;
     bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const Q_DECL_OVERRIDE;

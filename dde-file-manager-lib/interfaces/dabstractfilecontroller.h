@@ -100,7 +100,7 @@ public:
     virtual const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const;
 
     virtual bool addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const;
-    virtual bool removeBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const;
+    virtual bool removeBookmark(const QSharedPointer<DFMRemoveBookmarkEvent> &event) const;
 
     virtual bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const;
     virtual bool shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const;

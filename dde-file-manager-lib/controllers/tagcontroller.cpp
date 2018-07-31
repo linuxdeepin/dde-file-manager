@@ -421,6 +421,12 @@ bool TagController::addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &e
     return DFileService::instance()->addToBookmark(event->sender(), DUrl::fromLocalFile(event->url().taggedLocalFilePath()));
 }
 
+bool TagController::removeBookmark(const QSharedPointer<DFMRemoveBookmarkEvent> &event) const
+{
+    DUrl destUrl = DUrl::fromLocalFile(event->url().taggedLocalFilePath());
+    return DFileService::instance()->removeBookmark(nullptr, {DUrl::fromBookMarkFile(destUrl, QString())});
+}
+
 bool TagController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const
 {
     const DUrl &local_file = toLocalFile(event->fileUrl());

@@ -65,6 +65,7 @@ public:
     bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const Q_DECL_OVERRIDE;
 
     bool addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const override;
+    bool removeBookmark(const QSharedPointer<DFMRemoveBookmarkEvent> &event) const override;
     bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const Q_DECL_OVERRIDE;
 
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
