@@ -316,6 +316,9 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     case DFMEvent::AddToBookmark:
         result = CALL_CONTROLLER(addToBookmark);
         break;
+    case DFMEvent::RemoveBookmark:
+        result = CALL_CONTROLLER(removeBookmark);
+        break;
     case DFMEvent::CreateSymlink:
         result = CALL_CONTROLLER(createSymlink);
         break;
@@ -596,6 +599,11 @@ bool DFileService::setPermissions(const QObject *sender, const DUrl &url, const 
 bool DFileService::addToBookmark(const QObject *sender, const DUrl &fileUrl) const
 {
     return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMAddToBookmarkEvent>(sender, fileUrl)).toBool();
+}
+
+bool DFileService::removeBookmark(const QObject *sender, const DUrl &fileUrl) const
+{
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMRemoveBookmarkEvent>(sender, fileUrl)).toBool();
 }
 
 bool DFileService::createSymlink(const QObject *sender, const DUrl &fileUrl) const

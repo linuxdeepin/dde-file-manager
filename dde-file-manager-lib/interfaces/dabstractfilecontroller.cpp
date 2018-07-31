@@ -246,6 +246,13 @@ bool DAbstractFileController::addToBookmark(const QSharedPointer<DFMAddToBookmar
     return false;
 }
 
+bool DAbstractFileController::removeBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const
+{
+    event->ignore();
+
+    return false;
+}
+
 bool DAbstractFileController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const
 {
     event->ignore();
