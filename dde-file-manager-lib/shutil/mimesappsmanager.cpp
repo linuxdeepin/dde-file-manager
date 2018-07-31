@@ -164,6 +164,7 @@ void MimeAppsWorker::handleDirectoryChanged(const QString &filePath)
 
 void MimeAppsWorker::handleFileChanged(const QString &filePath)
 {
+    Q_UNUSED(filePath)
 //    updateCache();
     m_updateCacheTimer->start();
     //for 1.4

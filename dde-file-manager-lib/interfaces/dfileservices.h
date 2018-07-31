@@ -127,6 +127,7 @@ public:
     bool setPermissions(const QObject *sender, const DUrl &url, const QFileDevice::Permissions permissions) const;
 
     bool addToBookmark(const QObject *sender, const DUrl &fileUrl) const;
+    bool removeBookmark(const QObject *sender, const DUrl &fileUrl) const;
     bool createSymlink(const QObject *sender, const DUrl &fileUrl) const;
     bool createSymlink(const QObject *sender, const DUrl &fileUrl, const DUrl &linkToUrl) const;
     bool sendToDesktop(const QObject *sender, const DUrlList &urlList) const;

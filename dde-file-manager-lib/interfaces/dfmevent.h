@@ -61,6 +61,7 @@ public:
         TouchFile,
         OpenFileLocation,
         AddToBookmark,
+        RemoveBookmark,
         CreateSymlink,
         FileShare,
         CancelFileShare,
@@ -441,6 +442,12 @@ class DFMAddToBookmarkEvent : public DFMUrlBaseEvent
 {
 public:
     explicit DFMAddToBookmarkEvent(const QObject *sender, const DUrl &url);
+};
+
+class DFMRemoveBookmarkEvent : public DFMUrlBaseEvent
+{
+public:
+    explicit DFMRemoveBookmarkEvent(const QObject *sender, const DUrl &url);
 };
 
 class DFMCreateSymlinkEvent : public DFMEvent

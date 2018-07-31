@@ -572,6 +572,12 @@ DFMAddToBookmarkEvent::DFMAddToBookmarkEvent(const QObject *sender, const DUrl &
 
 }
 
+DFMRemoveBookmarkEvent::DFMRemoveBookmarkEvent(const QObject *sender, const DUrl &url)
+    : DFMUrlBaseEvent(RemoveBookmark, sender, url)
+{
+
+}
+
 DFMCreateSymlinkEvent::DFMCreateSymlinkEvent(const QObject *sender, const DUrl &fileUrl, const DUrl &toUrl)
     : DFMEvent(CreateSymlink, sender)
 {
