@@ -32,6 +32,8 @@
 #include <QDesktopWidget>
 #include <QCloseEvent>
 
+#include <ddialog.h>
+
 #include "dfmglobal.h"
 #include "dfileservices.h"
 #include "dabstractfileinfo.h"
@@ -72,7 +74,11 @@ public:
             m_taskWidget->updateMessageByJob();
             m_taskWidget->showConflict();
             break;
-        case DFileCopyMoveJob::UnknowUrlError:
+        case DFileCopyMoveJob::UnknowUrlError: {
+            DDialog dialog("error", QCoreApplication::translate("DTaskDialog", "This action is not supported"));
+            dialog.setIcon(QIcon::fromTheme("dialog-error"));
+            dialog.exec();
+        }
         case DFileCopyMoveJob::UnknowError:
             return DFileCopyMoveJob::CancelAction;
         default:
@@ -95,11 +101,11 @@ MoveCopyTaskWidget::MoveCopyTaskWidget(const QMap<QString, QString> &jobDetail, 
 {
     initUI();
     initConnect();
-    if (m_jobDetail.contains("target")){
+    if (m_jobDetail.contains("target")) {
         setTargetObj(m_jobDetail.value("target"));
     }
 
-    if (m_jobDetail.contains("destination")){
+    if (m_jobDetail.contains("destination")) {
         setDestinationObj(m_jobDetail.value("destination"));
     }
 //    this->setStyleSheet("border:1px solid green");
@@ -122,10 +128,10 @@ MoveCopyTaskWidget::MoveCopyTaskWidget(DFileCopyMoveJob *job, QWidget *parent)
         m_jobInfo->totalDataSize = job->totalDataSize();
         updateMessageByJob();
     });
-    connect(job, &DFileCopyMoveJob::stateChanged, this, [this] (DFileCopyMoveJob::State state) {
+    connect(job, &DFileCopyMoveJob::stateChanged, this, [this](DFileCopyMoveJob::State state) {
         m_animatePad->setPauseState(state == DFileCopyMoveJob::PausedState);
     });
-    connect(job, &DFileCopyMoveJob::errorChanged, this, [this] (DFileCopyMoveJob::Error error) {
+    connect(job, &DFileCopyMoveJob::errorChanged, this, [this](DFileCopyMoveJob::Error error) {
         m_animatePad->setCanPause(error == DFileCopyMoveJob::NoError);
     }, Qt::QueuedConnection);
     connect(m_closeButton, &QPushButton::clicked, job, &DFileCopyMoveJob::stop);
@@ -137,11 +143,14 @@ MoveCopyTaskWidget::MoveCopyTaskWidget(DFileCopyMoveJob *job, QWidget *parent)
         disposeJobError(DFileCopyMoveJob::CoexistAction);
     });
     connect(m_replaceButton, &QPushButton::clicked, this, [this] {
-        if (m_fileJob->error() == DFileCopyMoveJob::DirectoryExistsError) {
+        if (m_fileJob->error() == DFileCopyMoveJob::DirectoryExistsError)
+        {
             disposeJobError(DFileCopyMoveJob::MergeAction);
-        } else if (m_fileJob->error() == DFileCopyMoveJob::FileExistsError) {
+        } else if (m_fileJob->error() == DFileCopyMoveJob::FileExistsError)
+        {
             disposeJobError(DFileCopyMoveJob::ReplaceAction);
-        } else {
+        } else
+        {
             disposeJobError(DFileCopyMoveJob::RetryAction);
         }
     });
@@ -167,7 +176,8 @@ MoveCopyTaskWidget::~MoveCopyTaskWidget()
     }
 }
 
-void MoveCopyTaskWidget::initUI(){
+void MoveCopyTaskWidget::initUI()
+{
 
     m_bgLabel = new QLabel(this);
     m_bgLabel->setObjectName("Background");
@@ -209,17 +219,17 @@ void MoveCopyTaskWidget::initUI(){
         m_errorLabel->setObjectName("ErrorLabel");
     }
 
-    QGridLayout* msgGridLayout = new QGridLayout;
+    QGridLayout *msgGridLayout = new QGridLayout;
     msgGridLayout->addWidget(m_msg1Label, 0, 0, Qt::AlignVCenter);
 
-    msgGridLayout->addWidget(m_speedLabel, 0, 1,Qt::AlignRight|Qt::AlignVCenter);
+    msgGridLayout->addWidget(m_speedLabel, 0, 1, Qt::AlignRight | Qt::AlignVCenter);
     msgGridLayout->addWidget(m_msg2Label, 1, 0, Qt::AlignVCenter);
 
     if (m_errorLabel) {
         msgGridLayout->addWidget(m_errorLabel, 2, 0, Qt::AlignVCenter);
     }
 
-    msgGridLayout->addWidget(m_remainLabel, 1, 1,Qt::AlignRight|Qt::AlignVCenter);
+    msgGridLayout->addWidget(m_remainLabel, 1, 1, Qt::AlignRight | Qt::AlignVCenter);
     msgGridLayout->setColumnMinimumWidth(0, 385);
     msgGridLayout->setColumnStretch(0, 1);
     msgGridLayout->setHorizontalSpacing(5);
@@ -234,7 +244,7 @@ void MoveCopyTaskWidget::initUI(){
     m_lineLabel->setObjectName("LineLabel");
     m_lineLabel->hide();
 
-    QVBoxLayout* rightLayout = new QVBoxLayout;
+    QVBoxLayout *rightLayout = new QVBoxLayout;
     rightLayout->addStretch(1);
     rightLayout->addLayout(msgGridLayout);
     rightLayout->addWidget(m_conflictFrame);
@@ -247,7 +257,7 @@ void MoveCopyTaskWidget::initUI(){
     rightLayout->setSpacing(0);
     rightLayout->setContentsMargins(0, 0, 0, 0);
 
-    QHBoxLayout* mainLayout = new QHBoxLayout;
+    QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->addSpacing(20);
     mainLayout->addWidget(m_animatePad);
     mainLayout->addSpacing(20);
@@ -304,11 +314,11 @@ void MoveCopyTaskWidget::initConflictDetailFrame()
 //    m_targetSizeLabel->setStyleSheet("background-color: green");
     m_targetSizeLabel->setFixedSize(90, 20);
 
-    QGridLayout* conflictMainLayout = new QGridLayout(this);
+    QGridLayout *conflictMainLayout = new QGridLayout(this);
 
     conflictMainLayout->addWidget(m_originIconLabel, 0, 0, 2, 1, Qt::AlignVCenter);
     conflictMainLayout->addWidget(m_originTitleLabel, 0, 1, 1, 2, Qt::AlignVCenter);
-    conflictMainLayout->addWidget(m_originTimeLabel, 1, 1, 1, 1,Qt::AlignVCenter);
+    conflictMainLayout->addWidget(m_originTimeLabel, 1, 1, 1, 1, Qt::AlignVCenter);
     conflictMainLayout->addWidget(m_originSizeLabel, 1, 2, 1, 1, Qt::AlignVCenter);
 
 
@@ -328,11 +338,12 @@ void MoveCopyTaskWidget::initConflictDetailFrame()
 
 
 
-void MoveCopyTaskWidget::initButtonFrame(){
+void MoveCopyTaskWidget::initButtonFrame()
+{
     m_buttonFrame = new QFrame;
 
     m_buttonGroup = new QButtonGroup;
-    QHBoxLayout* buttonLayout = new QHBoxLayout;
+    QHBoxLayout *buttonLayout = new QHBoxLayout;
     buttonLayout->setSpacing(12);
     m_keepBothButton = new QPushButton(tr("Keep both"));
     m_skipButton = new QPushButton(tr("Skip"));
@@ -358,7 +369,7 @@ void MoveCopyTaskWidget::initButtonFrame(){
     buttonLayout->setContentsMargins(0, 0, 0, 0);
 
     m_checkBox = new QCheckBox(tr("Do not ask again"));
-    QVBoxLayout* mainLayout = new QVBoxLayout;
+    QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addSpacing(0);
     mainLayout->addWidget(m_checkBox);
     mainLayout->addSpacing(0);
@@ -374,80 +385,85 @@ DFileCopyMoveJob::Handle *MoveCopyTaskWidget::errorHandle() const
     return m_errorHandle;
 }
 
-void MoveCopyTaskWidget::initConnect(){
+void MoveCopyTaskWidget::initConnect()
+{
     connect(m_closeButton, SIGNAL(clicked()), this, SLOT(handleClose()));
     connect(m_keepBothButton, &QPushButton::clicked, this, &MoveCopyTaskWidget::handleResponse);
     connect(m_skipButton, &QPushButton::clicked, this, &MoveCopyTaskWidget::handleResponse);
     connect(m_replaceButton, &QPushButton::clicked, this, &MoveCopyTaskWidget::handleResponse);
 }
 
-void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
+void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data)
+{
     QString file, destination, speed, remainTime, progress, status, srcPath, targetPath;
     QString msg1, msg2;
-    if (data.contains("file")){
+    if (data.contains("file")) {
         file = data.value("file");
     }
-    if (data.contains("destination")){
+    if (data.contains("destination")) {
         destination = data.value("destination");
     }
-    if (data.contains("speed")){
+    if (data.contains("speed")) {
         speed = data.value("speed");
     }
-    if (data.contains("remainTime")){
+    if (data.contains("remainTime")) {
         remainTime = data.value("remainTime");
     }
 
-    if (data.contains("progress")){
+    if (data.contains("progress")) {
         progress = data.value("progress");
     }
 
-    if(data.contains("sourcePath"))
+    if (data.contains("sourcePath")) {
         srcPath = data.value("sourcePath");
+    }
 
-    if(data.contains("targetPath"))
+    if (data.contains("targetPath")) {
         targetPath = data.value("targetPath");
+    }
 
-    if(data.contains("status"))
+    if (data.contains("status")) {
         status = data.value("status");
+    }
 
     QString speedStr = "%1";
     QString remainStr = "%1";
 
-    if (m_jobDetail.contains("type")){
+    if (m_jobDetail.contains("type")) {
         if (!file.isEmpty()) {
-            if (m_jobDetail.value("type") == "copy"){
+            if (m_jobDetail.value("type") == "copy") {
                 msg1 = tr("Copying %1").arg(file);
                 msg2 = tr("Copy to %2").arg(destination);
 
-            }else if (m_jobDetail.value("type") == "move"){
+            } else if (m_jobDetail.value("type") == "move") {
                 msg1 = tr("Moving %1").arg(file);
                 msg2 = tr("Move to %2").arg(destination);
-            }else if (m_jobDetail.value("type") == "restore"){
+            } else if (m_jobDetail.value("type") == "restore") {
                 msg1 = tr("Restoring %1").arg(file);
                 msg2 = tr("Restore to %2").arg(destination);
-            }else if (m_jobDetail.value("type") == "delete"){
+            } else if (m_jobDetail.value("type") == "delete") {
                 msg1 = tr("Deleting %1").arg(file);
                 msg2 = tr("");
-            }else if (m_jobDetail.value("type") == "trash"){
+            } else if (m_jobDetail.value("type") == "trash") {
                 msg1 = tr("Trashing %1").arg(file);
                 msg2 = tr("");
             }
         }
 
-        if (status == "restoring"){
+        if (status == "restoring") {
             m_animatePad->startAnimation();
-        }else if(status == "calculating"){
+        } else if (status == "calculating") {
             msg2 = tr("Calculating space, please wait");
             m_animatePad->startAnimation();
-        } else if(status == "conflict"){
+        } else if (status == "conflict") {
             msg1 = QString(tr("File named %1 already exists in target folder")).arg(file);
             msg2 = QString(tr("Original path %1 target path %2")).arg(QFileInfo(srcPath).absolutePath(), QFileInfo(targetPath).absolutePath());
             updateConflictDetailFrame(DUrl::fromLocalFile(srcPath), DUrl::fromLocalFile(targetPath));
 
             if (QFileInfo(srcPath).isDir() &&
-                    QFileInfo(targetPath).isDir()){
+                    QFileInfo(targetPath).isDir()) {
                 m_replaceButton->setText(tr("merge"));
-            }else{
+            } else {
                 m_replaceButton->setText(tr("Replace"));
             }
 
@@ -474,34 +490,40 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
         setTipMessage(speedStr, remainStr);
     }
 
-    if (!progress.isEmpty())
+    if (!progress.isEmpty()) {
         setProgress(progress);
+    }
 }
 
-void MoveCopyTaskWidget::updateTipMessage(){
+void MoveCopyTaskWidget::updateTipMessage()
+{
 //    QString tipMessage = tr("Current speed:%1 time left:%2 ")
 //               .arg(QString::number(m_speed), QString::number(m_timeLeft));
 //    setTipMessage(tipMessage);
     setTipMessage(QString::number(m_speed), QString::number(m_timeLeft));
 }
 
-void MoveCopyTaskWidget::handleLineDisplay(const int &row, const bool& hover, const int& taskNum)
+void MoveCopyTaskWidget::handleLineDisplay(const int &row, const bool &hover, const int &taskNum)
 {
-    if((row -1) == property("row").toInt() || row == property("row").toInt()){
-        if(hover)
+    if ((row - 1) == property("row").toInt() || row == property("row").toInt()) {
+        if (hover) {
             m_lineLabel->hide();
-        else
+        } else {
             m_lineLabel->show();
-    } else{
-        if(m_lineLabel->isHidden())
+        }
+    } else {
+        if (m_lineLabel->isHidden()) {
             m_lineLabel->show();
+        }
     }
 
-    if(property("row").toInt() == taskNum-1)
+    if (property("row").toInt() == taskNum - 1) {
         m_lineLabel->hide();
+    }
 }
 
-void MoveCopyTaskWidget::showConflict(){
+void MoveCopyTaskWidget::showConflict()
+{
     qDebug() << m_buttonFrame->height() << m_conflictFrame->height();
     setFixedHeight(100 + m_buttonFrame->height() + m_conflictFrame->height());
     m_conflictFrame->show();
@@ -510,7 +532,8 @@ void MoveCopyTaskWidget::showConflict(){
     emit conflictShowed(m_jobDetail);
 }
 
-void MoveCopyTaskWidget::hideConflict(){
+void MoveCopyTaskWidget::hideConflict()
+{
     setFixedHeight(100);
     m_conflictFrame->hide();
     m_buttonFrame->hide();
@@ -537,15 +560,15 @@ void MoveCopyTaskWidget::updateConflictDetailFrame(const DUrl &originFilePath, c
     qDebug() << originFilePath << targetFilePath << m_originIconLabel << m_targetIconLabel;
     DAbstractFileInfoPointer originInfo = fileService->createFileInfo(NULL, originFilePath);
     DAbstractFileInfoPointer targetInfo = fileService->createFileInfo(NULL, targetFilePath);
-    if (originInfo && targetInfo){
+    if (originInfo && targetInfo) {
         QFontMetrics fm(m_originTitleLabel->font());
 
         m_originIconLabel->setPixmap(originInfo->fileIcon().pixmap(48, 48));
         m_originTimeLabel->setText(QString(tr("Time modified:%1")).arg(originInfo->lastModifiedDisplayName()));
-        if (originInfo->isDir()){
+        if (originInfo->isDir()) {
             m_originTitleLabel->setText(tr("Original folder"));
             m_originSizeLabel->setText(QString(tr("Contains:%1")).arg(originInfo->sizeDisplayName()));
-        }else{
+        } else {
             m_originTitleLabel->setText(tr("Original file"));
             m_originSizeLabel->setText(QString(tr("Size:%1")).arg(originInfo->sizeDisplayName()));
         }
@@ -555,10 +578,10 @@ void MoveCopyTaskWidget::updateConflictDetailFrame(const DUrl &originFilePath, c
         m_targetIconLabel->setPixmap(targetInfo->fileIcon().pixmap(48, 48));
         m_targetTimeLabel->setText(QString(tr("Time modified:%1")).arg(targetInfo->lastModifiedDisplayName()));
 
-        if (originInfo->isDir()){
+        if (originInfo->isDir()) {
             m_targetTitleLabel->setText(tr("Target folder"));
             m_targetSizeLabel->setText(QString(tr("Contains:%1")).arg(targetInfo->sizeDisplayName()));
-        }else{
+        } else {
             m_targetTitleLabel->setText(tr("Target file"));
             m_targetSizeLabel->setText(QString(tr("Size:%1")).arg(targetInfo->sizeDisplayName()));
         }
@@ -582,27 +605,27 @@ void MoveCopyTaskWidget::onJobSpeedChanged(qint64 speed)
 
 bool MoveCopyTaskWidget::event(QEvent *e)
 {
-    if(e->type() == QEvent::Enter){
+    if (e->type() == QEvent::Enter) {
         m_closeButton->show();
         m_speedLabel->hide();
         m_remainLabel->hide();
         m_bgLabel->setStyleSheet("QLabel#Background{"
-                                    "background-color: #f3f3f3;"
-                                    "border: 1px solid #f3f3f3;"
-                                    "border-radius: 8px;"
+                                 "background-color: #f3f3f3;"
+                                 "border: 1px solid #f3f3f3;"
+                                 "border-radius: 8px;"
                                  "}");
-        m_bgLabel->setFixedSize(size()- QSize(20,0));
-        m_bgLabel->move(10,0);
+        m_bgLabel->setFixedSize(size() - QSize(20, 0));
+        m_bgLabel->move(10, 0);
         emit hovereChanged(true);
-    } else if (e->type() == QEvent::Leave ){
+    } else if (e->type() == QEvent::Leave) {
         hovereChanged(false);
         m_speedLabel->show();
         m_remainLabel->show();
         m_closeButton->hide();
         m_bgLabel->setStyleSheet("QLabel#Background{"
-                                    "background-color: #fff;"
-                                    "border: 1px solid #fff;"
-                                    "border-radius: 8px;"
+                                 "background-color: #fff;"
+                                 "border: 1px solid #fff;"
+                                 "border-radius: 8px;"
                                  "}");
     }
 
@@ -643,9 +666,10 @@ void MoveCopyTaskWidget::handleClose()
     emit closed(m_jobDetail);
 }
 
-void MoveCopyTaskWidget::handleResponse(){
-    QObject* who = sender();
-    const int& code = who->property("code").toInt();
+void MoveCopyTaskWidget::handleResponse()
+{
+    QObject *who = sender();
+    const int &code = who->property("code").toInt();
     m_response.insert("code", code);
     m_response.insert("applyToAll", m_checkBox->isChecked());
     hideConflict();
@@ -669,22 +693,25 @@ static QString formatTime(int second)
     }
 
     if (h > 0) {
-        if (!time_string.isEmpty())
+        if (!time_string.isEmpty()) {
             time_string.append(' ');
+        }
 
         time_string.append(QString::number(h)).append(" h");
     }
 
     if (m > 0) {
-        if (!time_string.isEmpty())
+        if (!time_string.isEmpty()) {
             time_string.append(' ');
+        }
 
         time_string.append(QString::number(m)).append(" m");
     }
 
     if (s > 0 || time_string.isEmpty()) {
-        if (!time_string.isEmpty())
+        if (!time_string.isEmpty()) {
             time_string.append(' ');
+        }
 
         time_string.append(QString::number(s)).append(" s");
     }
@@ -724,60 +751,73 @@ void MoveCopyTaskWidget::updateMessageByJob()
     updateMessage(datas);
 }
 
-QString MoveCopyTaskWidget::getTargetObj(){
+QString MoveCopyTaskWidget::getTargetObj()
+{
     return m_targetObj;
 }
 
-void MoveCopyTaskWidget::setTargetObj(QString targetObj){
+void MoveCopyTaskWidget::setTargetObj(QString targetObj)
+{
     m_targetObj = targetObj;
 }
 
-QString MoveCopyTaskWidget::getDestinationObj(){
+QString MoveCopyTaskWidget::getDestinationObj()
+{
     return m_destinationObj;
 }
 
-void MoveCopyTaskWidget::setDestinationObj(QString destinationObj){
+void MoveCopyTaskWidget::setDestinationObj(QString destinationObj)
+{
     m_destinationObj = destinationObj;
 }
 
-int MoveCopyTaskWidget::getProgress(){
+int MoveCopyTaskWidget::getProgress()
+{
     return m_progress;
 }
 
-void MoveCopyTaskWidget::setProgress(int value){
+void MoveCopyTaskWidget::setProgress(int value)
+{
     m_progress = value;
     m_animatePad->setCurrentValue(value);
 }
 
-void MoveCopyTaskWidget::setProgress(QString value){
+void MoveCopyTaskWidget::setProgress(QString value)
+{
     m_progress = value.toInt();
     m_animatePad->setCurrentValue(value.toInt());
 }
 
-float MoveCopyTaskWidget::getSpeed(){
+float MoveCopyTaskWidget::getSpeed()
+{
     return m_speed;
 }
 
-void MoveCopyTaskWidget::setSpeed(float speed){
+void MoveCopyTaskWidget::setSpeed(float speed)
+{
     m_speed = speed;
 }
 
-int MoveCopyTaskWidget::getTimeLeft(){
+int MoveCopyTaskWidget::getTimeLeft()
+{
     return m_timeLeft;
 }
 
-void MoveCopyTaskWidget::setTimeLeft(int time){
+void MoveCopyTaskWidget::setTimeLeft(int time)
+{
     m_timeLeft = time;
 }
 
-void MoveCopyTaskWidget::setMessage(const QString& operateStr, const QString& destinateStr){
+void MoveCopyTaskWidget::setMessage(const QString &operateStr, const QString &destinateStr)
+{
     m_operateMessage = operateStr;
     m_destinationMessage = destinateStr;
     m_msg1Label->setText(m_operateMessage);
     m_msg2Label->setText(m_destinationMessage);
 }
 
-void MoveCopyTaskWidget::setTipMessage(const QString& speedStr, const QString& remainStr){
+void MoveCopyTaskWidget::setTipMessage(const QString &speedStr, const QString &remainStr)
+{
     m_speedMessage = speedStr;
     m_remainMessage = remainStr;
     m_speedLabel->setText(m_speedMessage);
@@ -794,8 +834,9 @@ DTaskDialog::DTaskDialog(QWidget *parent) :
     initConnect();
 }
 
-void DTaskDialog::initUI(){
-    setWindowFlags((windowFlags() &~ Qt::WindowSystemMenuHint & ~Qt::Dialog) | Qt::Window);
+void DTaskDialog::initUI()
+{
+    setWindowFlags((windowFlags() & ~ Qt::WindowSystemMenuHint & ~Qt::Dialog) | Qt::Window);
     setFixedWidth(m_defaultWidth);
 
     m_titlebar = new DTitlebar(this);
@@ -806,7 +847,7 @@ void DTaskDialog::initUI(){
     m_taskListWidget = new QListWidget;
     m_taskListWidget->setSelectionMode(QListWidget::NoSelection);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout;
+    QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
     mainLayout->addWidget(m_titlebar);
@@ -818,7 +859,8 @@ void DTaskDialog::initUI(){
     moveToCenter();
 }
 
-void DTaskDialog::initConnect(){
+void DTaskDialog::initConnect()
+{
 
 }
 
@@ -827,38 +869,41 @@ QListWidget *DTaskDialog::getTaskListWidget()
     return m_taskListWidget;
 }
 
-void DTaskDialog::setTitle(QString title){
+void DTaskDialog::setTitle(QString title)
+{
     m_titlebar->setTitle(title);
 }
 
-void DTaskDialog::setTitle(int taskCount){
+void DTaskDialog::setTitle(int taskCount)
+{
     QString title;
-    if (taskCount == 1){
+    if (taskCount == 1) {
         title = QObject::tr("1 task in progress");
-    }else{
+    } else {
         title = QObject::tr("%1 tasks in progress").arg(QString::number(taskCount));
     }
     setTitle(title);
 }
 
-void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail){
-    if (jobDetail.contains("jobId")){
-        MoveCopyTaskWidget* moveWidget = new MoveCopyTaskWidget(jobDetail);
+void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail)
+{
+    if (jobDetail.contains("jobId")) {
+        MoveCopyTaskWidget *moveWidget = new MoveCopyTaskWidget(jobDetail);
         moveWidget->setFixedHeight(80);
-        connect(moveWidget, SIGNAL(closed(QMap<QString,QString>)),
-                this, SLOT(handleTaskClose(QMap<QString,QString>)));
-        connect(moveWidget, SIGNAL(conflictResponseConfirmed(QMap<QString,QString>,QMap<QString,QVariant>)),
-                this, SLOT(handleConflictResponse(QMap<QString,QString>,QMap<QString,QVariant>)));
+        connect(moveWidget, SIGNAL(closed(QMap<QString, QString>)),
+                this, SLOT(handleTaskClose(QMap<QString, QString>)));
+        connect(moveWidget, SIGNAL(conflictResponseConfirmed(QMap<QString, QString>, QMap<QString, QVariant>)),
+                this, SLOT(handleConflictResponse(QMap<QString, QString>, QMap<QString, QVariant>)));
         connect(moveWidget, SIGNAL(heightChanged()), this, SLOT(adjustSize()));
-        connect(moveWidget, SIGNAL(conflictShowed(QMap<QString,QString>)),
-                this, SIGNAL(conflictShowed(QMap<QString,QString>)));
-        connect(moveWidget, SIGNAL(conflictHided(QMap<QString,QString>)),
-                this, SIGNAL(conflictHided(QMap<QString,QString>)));
+        connect(moveWidget, SIGNAL(conflictShowed(QMap<QString, QString>)),
+                this, SIGNAL(conflictShowed(QMap<QString, QString>)));
+        connect(moveWidget, SIGNAL(conflictHided(QMap<QString, QString>)),
+                this, SIGNAL(conflictHided(QMap<QString, QString>)));
 
         //handle item line display logic
         connect(moveWidget, &MoveCopyTaskWidget::hovereChanged, this, &DTaskDialog::onItemHovered);
         connect(this, &DTaskDialog::currentHoverRowChanged, moveWidget, &MoveCopyTaskWidget::handleLineDisplay);
-        QListWidgetItem* item = new QListWidgetItem();
+        QListWidgetItem *item = new QListWidgetItem();
         item->setFlags(Qt::NoItemFlags);
         item->setSizeHint(QSize(item->sizeHint().width(), 60));
         m_taskListWidget->addItem(item);
@@ -869,23 +914,23 @@ void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail){
         show();
         QTimer::singleShot(100, this, &DTaskDialog::raise);
 
-        moveWidget->setProperty("row",m_taskListWidget->count() -1);
+        moveWidget->setProperty("row", m_taskListWidget->count() - 1);
         emit currentHoverRowChanged(1, false, m_taskListWidget->count());
     }
 }
 
 MoveCopyTaskWidget *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
 {
-    MoveCopyTaskWidget* moveWidget = new MoveCopyTaskWidget(job);
+    MoveCopyTaskWidget *moveWidget = new MoveCopyTaskWidget(job);
     moveWidget->setFixedHeight(80);
-    connect(moveWidget, SIGNAL(closed(QMap<QString,QString>)),
+    connect(moveWidget, SIGNAL(closed(QMap<QString, QString>)),
             job, SLOT(stop()));
     connect(moveWidget, SIGNAL(heightChanged()), this, SLOT(adjustSize()));
 
     //handle item line display logic
     connect(moveWidget, &MoveCopyTaskWidget::hovereChanged, this, &DTaskDialog::onItemHovered);
     connect(this, &DTaskDialog::currentHoverRowChanged, moveWidget, &MoveCopyTaskWidget::handleLineDisplay);
-    QListWidgetItem* item = new QListWidgetItem();
+    QListWidgetItem *item = new QListWidgetItem();
     item->setFlags(Qt::NoItemFlags);
     item->setSizeHint(QSize(item->sizeHint().width(), 60));
     m_taskListWidget->addItem(item);
@@ -896,26 +941,27 @@ MoveCopyTaskWidget *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
     show();
     QTimer::singleShot(100, this, &DTaskDialog::raise);
 
-    moveWidget->setProperty("row",m_taskListWidget->count() -1);
+    moveWidget->setProperty("row", m_taskListWidget->count() - 1);
     emit currentHoverRowChanged(1, false, m_taskListWidget->count());
 
     return moveWidget;
 }
 
-void DTaskDialog::addConflictTask(const QMap<QString, QString> &jobDetail){
-    if (jobDetail.contains("jobId")){
-        MoveCopyTaskWidget* moveWidget = new MoveCopyTaskWidget(jobDetail);
+void DTaskDialog::addConflictTask(const QMap<QString, QString> &jobDetail)
+{
+    if (jobDetail.contains("jobId")) {
+        MoveCopyTaskWidget *moveWidget = new MoveCopyTaskWidget(jobDetail);
         moveWidget->setFixedHeight(85);
-        connect(moveWidget, SIGNAL(closed(QMap<QString,QString>)),
-                this, SLOT(handleTaskClose(QMap<QString,QString>)));
-        connect(moveWidget, SIGNAL(conflictResponseConfirmed(QMap<QString,QString>,QMap<QString,QVariant>)),
-                this, SLOT(handleConflictResponse(QMap<QString,QString>,QMap<QString,QVariant>)));
+        connect(moveWidget, SIGNAL(closed(QMap<QString, QString>)),
+                this, SLOT(handleTaskClose(QMap<QString, QString>)));
+        connect(moveWidget, SIGNAL(conflictResponseConfirmed(QMap<QString, QString>, QMap<QString, QVariant>)),
+                this, SLOT(handleConflictResponse(QMap<QString, QString>, QMap<QString, QVariant>)));
         connect(moveWidget, SIGNAL(heightChanged()), this, SLOT(adjustSize()));
-        connect(moveWidget, SIGNAL(conflictShowed(QMap<QString,QString>)),
-                this, SIGNAL(conflictShowed(QMap<QString,QString>)));
-        connect(moveWidget, SIGNAL(conflictHided(QMap<QString,QString>)),
-                this, SIGNAL(conflictHided(QMap<QString,QString>)));
-        QListWidgetItem* item = new QListWidgetItem();
+        connect(moveWidget, SIGNAL(conflictShowed(QMap<QString, QString>)),
+                this, SIGNAL(conflictShowed(QMap<QString, QString>)));
+        connect(moveWidget, SIGNAL(conflictHided(QMap<QString, QString>)),
+                this, SIGNAL(conflictHided(QMap<QString, QString>)));
+        QListWidgetItem *item = new QListWidgetItem();
         item->setFlags(Qt::NoItemFlags);
         item->setSizeHint(QSize(item->sizeHint().width(), 85));
         m_taskListWidget->addItem(item);
@@ -928,20 +974,21 @@ void DTaskDialog::addConflictTask(const QMap<QString, QString> &jobDetail){
     }
 }
 
-void DTaskDialog::adjustSize(){
+void DTaskDialog::adjustSize()
+{
     int listHeight = 2;
-    for(int i=0; i < m_taskListWidget->count(); i++){
-        QListWidgetItem* item = m_taskListWidget->item(i);
+    for (int i = 0; i < m_taskListWidget->count(); i++) {
+        QListWidgetItem *item = m_taskListWidget->item(i);
         int h = m_taskListWidget->itemWidget(item)->height();
         item->setSizeHint(QSize(item->sizeHint().width(), h));
         listHeight += h;
     }
 
-    if (listHeight < qApp->desktop()->availableGeometry().height() - 60){
+    if (listHeight < qApp->desktop()->availableGeometry().height() - 60) {
         m_taskListWidget->setFixedHeight(listHeight);
         setFixedHeight(listHeight + 60);
         MaxHeight = height();
-    }else{
+    } else {
         setFixedHeight(MaxHeight);
     }
 
@@ -953,50 +1000,54 @@ void DTaskDialog::moveYCenter()
 {
     QRect qr = frameGeometry();
     QPoint cp;
-    if (parent()){
-        cp = static_cast<QWidget*>(parent())->geometry().center();
-    }else{
+    if (parent()) {
+        cp = static_cast<QWidget *>(parent())->geometry().center();
+    } else {
         cp = qApp->desktop()->availableGeometry().center();
     }
     qr.moveCenter(cp);
     move(x(), qr.y());
 }
 
-void DTaskDialog::removeTaskByPath(QString jobId){
-    if (m_jobIdItems.contains(jobId)){
-        QListWidgetItem* item = m_jobIdItems.value(jobId);
+void DTaskDialog::removeTaskByPath(QString jobId)
+{
+    if (m_jobIdItems.contains(jobId)) {
+        QListWidgetItem *item = m_jobIdItems.value(jobId);
         m_taskListWidget->removeItemWidget(item);
         m_taskListWidget->takeItem(m_taskListWidget->row(item));
         m_jobIdItems.remove(jobId);
         setTitle(m_taskListWidget->count());
-        if (m_taskListWidget->count() == 0){
+        if (m_taskListWidget->count() == 0) {
             close();
         }
 
-        for(int i = 0; i < m_taskListWidget->count(); i++){
-            QListWidgetItem* item = m_taskListWidget->item(i);
-            MoveCopyTaskWidget* w =  qobject_cast<MoveCopyTaskWidget*>(m_taskListWidget->itemWidget(item));
-            if(w)
+        for (int i = 0; i < m_taskListWidget->count(); i++) {
+            QListWidgetItem *item = m_taskListWidget->item(i);
+            MoveCopyTaskWidget *w =  qobject_cast<MoveCopyTaskWidget *>(m_taskListWidget->itemWidget(item));
+            if (w) {
                 w->setProperty("row", i);
+            }
         }
 
         emit currentHoverRowChanged(0, false, m_taskListWidget->count());
     }
 }
 
-void DTaskDialog::showConflictDiloagByJob(const QMap<QString, QString> &jobDetail){
+void DTaskDialog::showConflictDiloagByJob(const QMap<QString, QString> &jobDetail)
+{
     qDebug() << jobDetail;
-    if (jobDetail.contains("jobId")){
+    if (jobDetail.contains("jobId")) {
         QString jobId = jobDetail.value("jobId");
-        if (m_jobIdItems.contains(jobId)){
-            QListWidgetItem* item = m_jobIdItems.value(jobId);
-            MoveCopyTaskWidget* w = static_cast<MoveCopyTaskWidget*>(m_taskListWidget->itemWidget(item));
+        if (m_jobIdItems.contains(jobId)) {
+            QListWidgetItem *item = m_jobIdItems.value(jobId);
+            MoveCopyTaskWidget *w = static_cast<MoveCopyTaskWidget *>(m_taskListWidget->itemWidget(item));
             w->showConflict();
         }
     }
 }
 
-void DTaskDialog::handleConflictResponse(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response){
+void DTaskDialog::handleConflictResponse(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response)
+{
 
     emit conflictRepsonseConfirmed(jobDetail, response);
 }
@@ -1006,29 +1057,33 @@ void DTaskDialog::handleMinimizeButtonClick()
     showMinimized();
 }
 
-void DTaskDialog::onItemHovered(const bool& hover)
+void DTaskDialog::onItemHovered(const bool &hover)
 {
-    MoveCopyTaskWidget* w = qobject_cast<MoveCopyTaskWidget*>(sender());
+    MoveCopyTaskWidget *w = qobject_cast<MoveCopyTaskWidget *>(sender());
     int row = w->property("row").toInt();
-    if(row >= 0)
+    if (row >= 0) {
         emit currentHoverRowChanged(row, hover, m_taskListWidget->count());
+    }
 }
 
-void DTaskDialog::handleTaskClose(const QMap<QString, QString> &jobDetail){
+void DTaskDialog::handleTaskClose(const QMap<QString, QString> &jobDetail)
+{
     qDebug() << jobDetail;
     removeTask(jobDetail, false);
     setTitle(m_taskListWidget->count());
-    if (jobDetail.contains("type")){
+    if (jobDetail.contains("type")) {
         emit abortTask(jobDetail);
     }
 }
 
-void DTaskDialog::removeTask(const QMap<QString, QString> &jobDetail, bool adjustSize){
-    if (jobDetail.contains("jobId")){
+void DTaskDialog::removeTask(const QMap<QString, QString> &jobDetail, bool adjustSize)
+{
+    if (jobDetail.contains("jobId")) {
         removeTaskByPath(jobDetail.value("jobId"));
 
-        if (adjustSize)
+        if (adjustSize) {
             this->adjustSize();
+        }
     }
 }
 
@@ -1040,37 +1095,40 @@ void DTaskDialog::removeTaskJob(void *job)
 
 void DTaskDialog::removeTaskImmediately(const QMap<QString, QString> &jobDetail)
 {
-    if(m_taskListWidget->count() > 1)
+    if (m_taskListWidget->count() > 1) {
         delayRemoveTask(jobDetail);
-    else
+    } else {
         removeTask(jobDetail);
+    }
 }
 
 void DTaskDialog::delayRemoveTask(const QMap<QString, QString> &jobDetail)
 {
-    QTimer::singleShot(2000, this, [=](){
+    QTimer::singleShot(2000, this, [ = ]() {
         removeTask(jobDetail);
     });
 }
 
 void DTaskDialog::handleUpdateTaskWidget(const QMap<QString, QString> &jobDetail,
-                                         const QMap<QString, QString> &data){
-    if (jobDetail.contains("jobId")){
+        const QMap<QString, QString> &data)
+{
+    if (jobDetail.contains("jobId")) {
         QString jobId = jobDetail.value("jobId");
-        if (m_jobIdItems.contains(jobId)){
-            QListWidgetItem* item = m_jobIdItems.value(jobId);
-            MoveCopyTaskWidget* w = static_cast<MoveCopyTaskWidget*>(m_taskListWidget->itemWidget(item));
+        if (m_jobIdItems.contains(jobId)) {
+            QListWidgetItem *item = m_jobIdItems.value(jobId);
+            MoveCopyTaskWidget *w = static_cast<MoveCopyTaskWidget *>(m_taskListWidget->itemWidget(item));
             w->updateMessage(data);
         }
     }
 }
 
 
-void DTaskDialog::closeEvent(QCloseEvent *event){
-    foreach (QListWidgetItem* item, m_jobIdItems.values()) {
-        if (item){
-            if (m_taskListWidget->itemWidget(item)){
-                MoveCopyTaskWidget* w = static_cast<MoveCopyTaskWidget*>(m_taskListWidget->itemWidget(item));
+void DTaskDialog::closeEvent(QCloseEvent *event)
+{
+    foreach (QListWidgetItem *item, m_jobIdItems.values()) {
+        if (item) {
+            if (m_taskListWidget->itemWidget(item)) {
+                MoveCopyTaskWidget *w = static_cast<MoveCopyTaskWidget *>(m_taskListWidget->itemWidget(item));
                 w->handleClose();
             }
         }
@@ -1082,7 +1140,8 @@ void DTaskDialog::closeEvent(QCloseEvent *event){
 void DTaskDialog::keyPressEvent(QKeyEvent *event)
 {
     //handle escape key press event for emitting close event
-    if(event->key() == Qt::Key_Escape)
+    if (event->key() == Qt::Key_Escape) {
         emit close();
+    }
     QDialog::keyPressEvent(event);
 }
