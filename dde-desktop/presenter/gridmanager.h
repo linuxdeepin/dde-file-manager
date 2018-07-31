@@ -57,6 +57,9 @@ public:
 
     GridCore *core();
 
+    void setWhetherShowHiddenFiles(bool value)noexcept;
+    bool getWhetherShowHiddenFiles()noexcept;
+
 public:
     void dump();
 

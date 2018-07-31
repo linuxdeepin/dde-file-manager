@@ -89,16 +89,20 @@ public:
     DFileViewHelper *parent() const;
 
     inline QModelIndex createIndex(int arow, int acolumn, quintptr aid) const
-    { return QAbstractItemModel::createIndex(arow, acolumn, aid);}
+    {
+        return QAbstractItemModel::createIndex(arow, acolumn, aid);
+    }
     QModelIndex index(const DUrl &fileUrl, int column = 0);
     QModelIndex index(int row, int column,
-                              const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+                      const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     QModelIndex parent(const QModelIndex &child) const Q_DECL_OVERRIDE;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     inline int columnWidth(int column) const
-    { return columnWidthByRole(columnToRole(column));}
+    {
+        return columnWidthByRole(columnToRole(column));
+    }
     QVariant columnNameByRole(int role, const QModelIndex &index = QModelIndex()) const;
 
     int columnWidthByRole(int role) const;
@@ -115,8 +119,8 @@ public:
     int columnToRole(int column) const;
     int roleToColumn(int role) const;
 
-    bool canFetchMore(const QModelIndex & parent) const Q_DECL_OVERRIDE;
-    void fetchMore(const QModelIndex & parent) Q_DECL_OVERRIDE;
+    bool canFetchMore(const QModelIndex &parent) const Q_DECL_OVERRIDE;
+    void fetchMore(const QModelIndex &parent) Q_DECL_OVERRIDE;
 
     Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
 
@@ -124,8 +128,8 @@ public:
     Qt::DropActions supportedDropActions() const Q_DECL_OVERRIDE;
 
     QStringList mimeTypes() const Q_DECL_OVERRIDE;
-    bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent) Q_DECL_OVERRIDE;
-    QMimeData *mimeData(const QModelIndexList & indexes) const Q_DECL_OVERRIDE;
+    bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) Q_DECL_OVERRIDE;
+    QMimeData *mimeData(const QModelIndexList &indexes) const Q_DECL_OVERRIDE;
 
     QModelIndex setRootUrl(const DUrl &fileUrl);
     DUrl rootUrl() const;
@@ -140,7 +144,7 @@ public:
     void setFilters(QDir::Filters filters);
 
     Qt::SortOrder sortOrder() const;
-    void setSortOrder(const Qt::SortOrder& order);
+    void setSortOrder(const Qt::SortOrder &order);
     int sortColumn() const;
     int sortRole() const;
     QStringList nameFilters() const;
@@ -169,6 +173,7 @@ public:
     void setColumnActiveRole(int column, int role);
     int columnActiveRole(int column) const;
 
+    bool whetherHideCurrentFile(const QModelIndex &index)const;
 
 public slots:
     void updateChildren(QList<DAbstractFileInfoPointer> list);
@@ -185,7 +190,7 @@ signals:
     void stateChanged(State state);
     void enabledSortChanged(bool enabledSort);
     void newFileByInternal(const DUrl &url);
-    void requestSelectFiles(const QList<DUrl>& urls);
+    void requestSelectFiles(const QList<DUrl> &urls);
 
 protected:
     bool remove(const DUrl &url);
