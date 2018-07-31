@@ -39,6 +39,7 @@
 #include <QByteArray>
 #include <QDateTime>
 #include <QUrl>
+#include <QUrlQuery>
 
 #include <stdlib.h>
 
@@ -160,13 +161,16 @@ bool BookMarkManager::touch(const QSharedPointer<DFMTouchFileEvent> &event) cons
     item->m_lastModified = item->m_created;
     m_bookmarks[item->sourceUrl()] = item;
 
+    QUrlQuery query(event->url());
+
     QVariantList list = DFMApplication::genericSetting()->value("BookMark", "Items").toList();
 
     list << QVariantMap {
         {"name", item->getName()},
         {"url", item->sourceUrl()},
         {"created", item->m_created.toString(Qt::ISODate)},
-        {"lastModified", item->m_lastModified.toString(Qt::ISODate)}
+        {"lastModified", item->m_lastModified.toString(Qt::ISODate)},
+        {"mountPoint", query.queryItemValue("mountPoint")}
     };
 
     DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
