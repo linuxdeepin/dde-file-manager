@@ -823,7 +823,7 @@ bool FileController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent>
 
 bool FileController::addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const
 {
-    DUrl destUrl = event->url(); // fileUrl()?
+    DUrl destUrl = event->url();
 
     const DAbstractFileInfoPointer &p = fileService->createFileInfo(nullptr, destUrl);
     DUrl bookmarkUrl = DUrl::fromBookMarkFile(destUrl, p->fileDisplayName());
@@ -838,7 +838,13 @@ bool FileController::addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &
         query.addQueryItem("mount_point", devStr);
         bookmarkUrl.setQuery(query);
     }
+
     return DFileService::instance()->touchFile(event->sender(), bookmarkUrl);
+}
+
+bool FileController::removeBookmark(const QSharedPointer<DFMRemoveBookmarkEvent> &event) const
+{
+    return DFileService::instance()->deleteFiles(nullptr, {DUrl::fromBookMarkFile(event->url(), QString())}, false);
 }
 
 bool FileController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const

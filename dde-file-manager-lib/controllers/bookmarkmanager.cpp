@@ -186,6 +186,11 @@ bool BookMarkManager::setPermissions(const QSharedPointer<DFMSetPermissionEvent>
     return false;
 }
 
+bool BookMarkManager::removeBookmark(const QSharedPointer<DFMRemoveBookmarkEvent> &event) const
+{
+    return DFileService::instance()->deleteFiles(nullptr, {event->url()}, false);
+}
+
 BookMarkPointer BookMarkManager::findBookmark(const DUrl &url) const
 {
     return m_bookmarks.value(url.bookmarkTargetUrl());
