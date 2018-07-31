@@ -490,7 +490,7 @@ bool SearchController::addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent>
 
 bool SearchController::removeBookmark(const QSharedPointer<DFMRemoveBookmarkEvent> &event) const
 {
-    return DFileService::instance()->removeBookmark(nullptr, {DUrl::fromBookMarkFile(realUrl(event->url()), QString())});
+    return DFileService::instance()->removeBookmark(nullptr, realUrl(event->url()));
 }
 
 bool SearchController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const
