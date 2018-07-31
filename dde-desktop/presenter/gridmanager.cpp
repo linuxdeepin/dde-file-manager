@@ -13,9 +13,9 @@
 #include <QRect>
 #include <QDebug>
 
-#include "../config/config.h"
-
+#include "dfileinfo.h"
 #include "apppresenter.h"
+#include "../config/config.h"
 
 class GridManagerPrivate
 {
@@ -90,7 +90,8 @@ public:
         clear();
 
         for (auto item : sortItems) {
-            add(takeEmptyPos(), item);
+            QPoint empty_pos{ takeEmptyPos() };
+            add(empty_pos, item);
         }
 
         m_overlapItems = overlapItems;
@@ -118,7 +119,8 @@ public:
             auto y = coords.value(1).toInt();
             auto item = settings->value(key).toString();
             if (existItems.contains(item)) {
-                add(QPoint(x, y), item);
+                QPoint pos{x, y};
+                add(pos, item);
                 existItems.remove(item);
             }
         }
@@ -129,7 +131,8 @@ public:
         }
 
         for (auto &item : existItems.keys()) {
-            add(takeEmptyPos(), item);
+            QPoint empty_pos{ takeEmptyPos() };
+            add(empty_pos, item);
         }
     }
 
@@ -189,6 +192,7 @@ public:
                 return false;
             }
         }
+
 
         m_gridItems.insert(pos, itemId);
         m_itemGrids.insert(itemId, pos);
@@ -296,7 +300,8 @@ public:
         for (int i = 0; i < preferNewIndex.length(); ++i) {
             auto index = preferNewIndex.value(i);
             if (m_cellStatus.size() > index && !m_cellStatus.value(index)) {
-                add(gridPosAt(index), itemIds.value(i));
+                QPoint pos{ gridPosAt(index) };
+                add(pos, itemIds.value(i));
             } else {
                 auto freePos = takeEmptyPos();
                 add(freePos, itemIds.value(i));
@@ -388,18 +393,21 @@ public:
             for (int i = 0; i < keepPosIndex.length(); ++i) {
                 auto index = keepPosIndex.value(i);
                 if (m_cellStatus.size() > index && !m_cellStatus.value(index)) {
-                    add(gridPosAt(index), keepItems.value(i));
+                    QPoint pos{ gridPosAt(index) };
+                    add(pos, keepItems.value(i));
                 }
             }
 
             for (int i = 0; i < nokeepItems.length(); ++i) {
-                add(gridPosAt(lastEmptyPosIndex), nokeepItems.value(i));
+                QPoint pos{ gridPosAt(lastEmptyPosIndex) };
+                add(pos, nokeepItems.value(i));
                 lastEmptyPosIndex++;
             }
 
             // TODO
             for (auto &item : overlapItems) {
-                add(takeEmptyPos(), item);
+                QPoint pos{ takeEmptyPos() };
+                add(pos, item);
             }
         }
     }
@@ -436,6 +444,17 @@ public:
         }
     }
 
+
+    inline void setWhetherShowHiddenFiles(bool value)noexcept
+    {
+        m_whetherShowHiddenFiles.store(value, std::memory_order_release);
+    }
+
+    inline bool getWhetherShowHiddenFiles()noexcept
+    {
+        return m_whetherShowHiddenFiles.load(std::memory_order_consume);
+    }
+
 public:
     QStringList             m_overlapItems;
     QMap<QPoint, QString>   m_gridItems;
@@ -448,6 +467,8 @@ public:
 
     bool                    autoArrang;
     bool                    hasInited = false;
+
+    std::atomic<bool>       m_whetherShowHiddenFiles{ false };
 };
 
 GridManager::GridManager(): d(new GridManagerPrivate)
@@ -472,12 +493,25 @@ void GridManager::initProfile(const QStringList &items)
 
 bool GridManager::add(const QString &id)
 {
+#ifdef QT_DEBUG
+    qDebug() << "show hidden files: " << d->getWhetherShowHiddenFiles();
+#endif //QT_DEBUG
+
+    if (!d->getWhetherShowHiddenFiles()) {
+        DFileInfo file_info{ id, false };
+
+        if (file_info.isHidden()) {
+            return false;
+        }
+    }
+
     if (d->m_itemGrids.contains(id)) {
 //        qDebug() << "item exist item" << d->itemGrids.value(id) << id;
         return false;
     }
 
-    return add(d->takeEmptyPos(), id);
+    QPoint pos{ d->takeEmptyPos() };
+    return add(pos, id);
 }
 
 bool GridManager::add(QPoint pos, const QString &id)
@@ -487,6 +521,7 @@ bool GridManager::add(QPoint pos, const QString &id)
     if (ret) {
         d->syncProfile();
     }
+
     return ret;
 }
 
@@ -561,7 +596,8 @@ bool GridManager::move(const QStringList &selecteds, const QString &current, int
         }
     }
     for (int i = 0; i < selecteds.length(); ++i) {
-        add(destPosList.value(i), selecteds.value(i));
+        QPoint point{ destPosList.value(i) };
+        add(point, selecteds.value(i));
     }
 
     if (d->autoArrang) {
@@ -748,6 +784,16 @@ GridCore *GridManager::core()
     core->coordWidth = d->coordWidth;
     core->coordHeight = d->coordHeight;
     return core;
+}
+
+void GridManager::setWhetherShowHiddenFiles(bool value) noexcept
+{
+    d->setWhetherShowHiddenFiles(value);
+}
+
+bool GridManager::getWhetherShowHiddenFiles() noexcept
+{
+    return d->getWhetherShowHiddenFiles();
 }
 
 void GridManager::dump()

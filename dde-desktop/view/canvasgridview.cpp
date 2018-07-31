@@ -598,10 +598,20 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             increaseIcon();
             return;
         } else if (event->key() ==  Qt::Key_H) {
+
+            ///###: record whether show files which were starting with ".";
+            bool whetherShowHiddenFiles{ GridManager::instance()->getWhetherShowHiddenFiles() };
+            GridManager::instance()->setWhetherShowHiddenFiles(!whetherShowHiddenFiles);
+
             itemDelegate()->hideAllIIndexWidget();
             clearSelection();
             model()->toggleHiddenFiles(rootUrl);
             updateHiddenItems();
+
+            if (GridManager::instance()->getWhetherShowHiddenFiles()) {
+                update();
+            }
+
             return;
         }
         break;
@@ -1190,6 +1200,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     this, [ = ](const QString & rootPath, const QString & name) {
         Q_UNUSED(rootPath);
         Q_UNUSED(name);
+
         if (d->_debug_log) {
             qDebug() << "fileCreated" << rootPath << name;
         }
@@ -1203,6 +1214,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     this, [ = ](const QString & path, const QString & name) {
         Q_UNUSED(path);
         Q_UNUSED(name);
+
         auto fileUrl = DUrl::fromLocalFile(QString("%1/%2").arg(path).arg(name));
         auto localFile = fileUrl.toLocalFile();
 
@@ -1223,18 +1235,20 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     const QString & toPath, const QString & toName) {
         Q_UNUSED(fromName);
         Q_UNUSED(toName);
+
         if (d->_debug_log) {
             qDebug() << "fileMoved" << fromPath << fromName << toPath << toName;
         }
 
         auto fromFileUrl = DUrl::fromLocalFile(QString("%1/%2").arg(fromPath).arg(fromName));
         auto oldLocalFile = fromFileUrl.toLocalFile();
-
         bool findOldPos = false;
         QPoint oldPos = QPoint(-1, -1);
+
         if (GridManager::instance()->contains(oldLocalFile) && !fromName.isEmpty()) {
             oldPos = GridManager::instance()->position(oldLocalFile);
             findOldPos = true;
+
             if (d->_debug_log) {
                 qDebug() << "find oldPos" << oldPos << oldLocalFile;
             }
