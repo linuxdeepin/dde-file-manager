@@ -47,6 +47,7 @@ public:
 
     GFileInfo *gioInfo = nullptr;
     QString rootPath;
+    QByteArray device;
 };
 
 DStorageInfo::DStorageInfo()
@@ -118,6 +119,14 @@ void DStorageInfo::setPath(const QString &path, PathHints hints)
             char *root_path = g_file_get_path(root_file);
 
             d->rootPath = QFile::decodeName(root_path);
+            d->device = QStorageInfo::device();
+
+            if (d->device == QByteArrayLiteral("gvfsd-fuse")) {
+                char *uri = g_file_get_uri(root_file);
+
+                d->device = QByteArray(uri);
+                g_free(uri);
+            }
 
             g_free(root_path);
             g_object_unref(root_file);
@@ -137,6 +146,16 @@ QString DStorageInfo::rootPath() const
     }
 
     return QStorageInfo::rootPath();
+}
+
+QByteArray DStorageInfo::device() const
+{
+    Q_D(const DStorageInfo);
+
+    if (d->device.isEmpty())
+        return QStorageInfo::device();
+
+    return d->device;
 }
 
 QByteArray DStorageInfo::fileSystemType() const

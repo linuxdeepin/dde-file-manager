@@ -35,6 +35,7 @@
 #include "dgiofiledevice.h"
 #include "dlocalfilehandler.h"
 #include "dfilecopymovejob.h"
+#include "dstorageinfo.h"
 
 #include "models/desktopfileinfo.h"
 #include "models/trashfileinfo.h"
@@ -818,6 +819,26 @@ bool FileController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent>
     QDir::setCurrent(current_dir);
 
     return ok;
+}
+
+bool FileController::addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const
+{
+    DUrl destUrl = event->url(); // fileUrl()?
+
+    const DAbstractFileInfoPointer &p = fileService->createFileInfo(nullptr, destUrl);
+    DUrl bookmarkUrl = DUrl::fromBookMarkFile(destUrl, p->fileDisplayName());
+    DStorageInfo info(destUrl.path());
+    if (info.rootPath() != QStringLiteral("/") || info.rootPath() != QStringLiteral("/home")) {
+        QString devStr = info.device();
+        if (devStr.startsWith(QStringLiteral("/dev/"))) {
+            devStr = DUrl::fromDeviceId(info.device()).toString();
+        }
+
+        QUrlQuery query;
+        query.addQueryItem("mount_point", devStr);
+        bookmarkUrl.setQuery(query);
+    }
+    return DFileService::instance()->touchFile(event->sender(), bookmarkUrl);
 }
 
 bool FileController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const

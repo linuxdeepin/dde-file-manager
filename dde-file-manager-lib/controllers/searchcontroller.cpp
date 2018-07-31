@@ -483,6 +483,11 @@ bool SearchController::decompressFile(const QSharedPointer<DFMDecompressEvnet> &
     return DFileService::instance()->decompressFile(event->sender(), realUrlList(event->urlList()));
 }
 
+bool SearchController::addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const
+{
+    return DFileService::instance()->addToBookmark(event->sender(), realUrl(event->url()));
+}
+
 bool SearchController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const
 {
     return DFileService::instance()->createSymlink(event->sender(), realUrl(event->fileUrl()), event->toUrl());
