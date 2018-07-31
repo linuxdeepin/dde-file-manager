@@ -64,8 +64,9 @@ DFileStatisticsJobPrivate::DFileStatisticsJobPrivate(DFileStatisticsJob *qq)
 
 void DFileStatisticsJobPrivate::setState(DFileStatisticsJob::State s)
 {
-    if (s == state)
+    if (s == state) {
         return;
+    }
 
     state = s;
 
@@ -139,22 +140,27 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
     if (info->isFile()) {
         do {
             // ###(zccrs): skip the file
-            if (info->fileUrl() == DUrl::fromLocalFile("/proc/kcore"))
+            if (info->fileUrl() == DUrl::fromLocalFile("/proc/kcore")) {
                 break;
+            }
 
             const DAbstractFileInfo::FileType type = info->fileType();
 
-            if (type == DAbstractFileInfo::CharDevice && !fileHints.testFlag(DFileStatisticsJob::DontSkipCharDeviceFile))
+            if (type == DAbstractFileInfo::CharDevice && !fileHints.testFlag(DFileStatisticsJob::DontSkipCharDeviceFile)) {
                 break;
+            }
 
-            if (type == DAbstractFileInfo::BlockDevice && !fileHints.testFlag(DFileStatisticsJob::DontSkipBlockDeviceFile))
+            if (type == DAbstractFileInfo::BlockDevice && !fileHints.testFlag(DFileStatisticsJob::DontSkipBlockDeviceFile)) {
                 break;
+            }
 
-            if (type == DAbstractFileInfo::FIFOFile && !fileHints.testFlag(DFileStatisticsJob::DontSkipFIFOFile))
+            if (type == DAbstractFileInfo::FIFOFile && !fileHints.testFlag(DFileStatisticsJob::DontSkipFIFOFile)) {
                 break;
+            }
 
-            if (type == DAbstractFileInfo::SocketFile && !fileHints.testFlag(DFileStatisticsJob::DontSkipSocketFile))
+            if (type == DAbstractFileInfo::SocketFile && !fileHints.testFlag(DFileStatisticsJob::DontSkipSocketFile)) {
                 break;
+            }
 
             size = info->size();
         } while (false);
@@ -262,8 +268,9 @@ void DFileStatisticsJob::stop()
 {
     Q_D(DFileStatisticsJob);
 
-    if (d->state == StoppedState)
+    if (d->state == StoppedState) {
         return;
+    }
 
     d->setState(StoppedState);
     d->waitCondition.wakeAll();
@@ -273,8 +280,9 @@ void DFileStatisticsJob::togglePause()
 {
     Q_D(DFileStatisticsJob);
 
-    if (d->state == StoppedState)
+    if (d->state == StoppedState) {
         return;
+    }
 
     if (d->state == PausedState) {
         d->setState(RunningState);
@@ -319,7 +327,7 @@ void DFileStatisticsJob::run()
     while (!directory_queue.isEmpty()) {
         const DUrl &directory_url = directory_queue.dequeue();
         const DDirIteratorPointer &iterator = DFileService::instance()->createDirIterator(nullptr, directory_url, QStringList(),
-                                                                                          QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
+                                              QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot, 0, true);
 
         if (!iterator) {
             qWarning() << "Failed on create dir iterator, for url:" << directory_url;
