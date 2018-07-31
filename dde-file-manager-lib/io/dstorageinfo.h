@@ -56,6 +56,7 @@ public:
     void setPath(const QString &path, PathHints hints = 0);
 
     QString rootPath() const;
+    QByteArray device() const;
     QByteArray fileSystemType() const;
 
     qint64 bytesTotal() const;

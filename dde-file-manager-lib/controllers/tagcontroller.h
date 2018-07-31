@@ -31,6 +31,7 @@ public:
     bool setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const override;
 
     bool openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const override;
+    bool addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const override;
     bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const override;
     bool shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const override;
     bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const override;

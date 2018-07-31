@@ -337,23 +337,7 @@ void AppController::actionSendToDesktop(const QSharedPointer<DFMUrlListBaseEvent
 
 void AppController::actionAddToBookMark(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    DUrl fileUrl = event->url();
-    const DAbstractFileInfoPointer &p = fileService->createFileInfo(NULL, fileUrl);
-
-    // TODO: use vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-    // fileService->addToBookmark(event->sender(), event->url());
-
-    while (true) {
-        if (fileUrl.isTaggedFile()) {
-            fileUrl = DUrl::fromLocalFile(fileUrl.taggedLocalFilePath());
-        } else if (fileUrl.isSearchFile()) {
-            fileUrl = fileUrl.searchedFileUrl();
-        } else {
-            break;
-        }
-    }
-
-    DFileService::instance()->touchFile(event->sender(), DUrl::fromBookMarkFile(fileUrl, p->fileDisplayName()));
+    fileService->addToBookmark(event->sender(), event->url());
 }
 
 void AppController::actionNewFolder(const QSharedPointer<DFMUrlBaseEvent> &event)

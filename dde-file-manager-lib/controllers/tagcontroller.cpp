@@ -1,8 +1,6 @@
-
-
 #include <QDebug>
 
-
+#include "app/define.h"
 #include "dfileservices.h"
 #include "tagcontroller.h"
 #include "tag/tagmanager.h"
@@ -14,6 +12,7 @@
 #include "private/dabstractfilewatcher_p.h"
 #include "controllers/tagmanagerdaemoncontroller.h"
 #include "dfileproxywatcher.h"
+#include "dstorageinfo.h"
 
 template<typename Ty>
 using citerator = typename QList<Ty>::const_iterator;
@@ -49,11 +48,10 @@ const QList<DAbstractFileInfoPointer> TagController::getChildren(const QSharedPo
             QMap<QString, QString>::const_iterator tagEnd{ tags.cend() };
 
             for(; tagBeg != tagEnd; ++tagBeg){
-                DUrl url = DUrl::fromUserTaggedFile(QString{"/"} + tagBeg.key(), QString{});
-                DAbstractFileInfoPointer tagInfoPtr{
-                                                       DFileService::instance()->createFileInfo(this,
-                                                                                                DUrl::fromUserTaggedFile(tagBeg.key(), QString{}))
-                                                    };
+                DUrl url = DUrl::fromUserTaggedFile(tagBeg.key(), QString{});
+                DAbstractFileInfoPointer tagInfoPtr {
+                    DFileService::instance()->createFileInfo(this, url)
+                };
                 infoList.push_back(tagInfoPtr);
             }
 
@@ -416,6 +414,11 @@ bool TagController::openFileLocation(const QSharedPointer<DFMOpenFileLocation> &
         return false;
 
     return DFileService::instance()->openFileLocation(event->sender(), local_file);
+}
+
+bool TagController::addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const
+{
+    return DFileService::instance()->addToBookmark(event->sender(), DUrl::fromLocalFile(event->url().taggedLocalFilePath()));
 }
 
 bool TagController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const
