@@ -478,6 +478,8 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data)
             }
         } else if (!status.isEmpty()) {
             m_animatePad->stopAnimation();
+        } else if (m_fileJob) {
+            m_errorLabel->setText(QString());
         }
 
         QFontMetrics fm(m_msg1Label->font());
