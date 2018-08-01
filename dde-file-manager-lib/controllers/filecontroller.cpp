@@ -828,14 +828,23 @@ bool FileController::addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &
     const DAbstractFileInfoPointer &p = fileService->createFileInfo(nullptr, destUrl);
     DUrl bookmarkUrl = DUrl::fromBookMarkFile(destUrl, p->fileDisplayName());
     DStorageInfo info(destUrl.path());
-    if (info.rootPath() != QStringLiteral("/") || info.rootPath() != QStringLiteral("/home")) {
+    QString filePath = destUrl.path();
+    QString rootPath = info.rootPath();
+    if (rootPath != QStringLiteral("/") || rootPath != QStringLiteral("/home")) {
         QString devStr = info.device();
+        QString locateUrl;
+        int endPos = filePath.indexOf(rootPath);
+        if (endPos != -1) {
+            endPos += rootPath.length();
+            locateUrl = filePath.mid(endPos);
+        }
         if (devStr.startsWith(QStringLiteral("/dev/"))) {
             devStr = DUrl::fromDeviceId(info.device()).toString();
         }
 
         QUrlQuery query;
         query.addQueryItem("mount_point", devStr);
+        query.addQueryItem("locate_url", locateUrl);
         bookmarkUrl.setQuery(query);
     }
 
