@@ -298,7 +298,7 @@ static QByteArray grep_regx_to_posix(const QByteArray &posix_reg_str)
     while (pos_itr != QByteArray::const_iterator{} && pos_itr != str_cend) {
 
         if (pos_itr != replaced_result.cbegin() && (*(pos_itr - 1) != '<' && *(pos_itr - 1) != ']' && *(pos_itr - 1) != '.')) {
-            int distance{ pos_itr - replaced_result.cbegin() };
+            QByteArray::difference_type distance{ pos_itr - replaced_result.cbegin() };
             replaced_result.replace(distance, 1, ".*");
 
             if (pos_itr + 1) {
