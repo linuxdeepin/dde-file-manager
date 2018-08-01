@@ -777,7 +777,7 @@ QIcon DFileInfo::fileIcon() const
 
         if (d->getIconTimer) {
             QMetaObject::invokeMethod(d->getIconTimer, "start", Qt::QueuedConnection);
-        } else {
+        } else if (isActive()) {
             QTimer *timer = new QTimer();
             const QExplicitlySharedDataPointer<DFileInfo> me(const_cast<DFileInfo*>(this));
 
