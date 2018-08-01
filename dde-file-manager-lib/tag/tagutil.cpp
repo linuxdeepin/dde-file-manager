@@ -80,7 +80,7 @@ QString escaping_en_skim(const QString &source) noexcept
     QByteArray::const_iterator pos{ std::find(cbeg, cend, skim_char) };
 
     while (pos != cend) {
-        int index{ pos - cbeg };
+        QByteArray::difference_type index{ pos - cbeg };
         local8bits_str.remove(index, 1);
 
         if (pos == local8bits_str.cbegin()) {
