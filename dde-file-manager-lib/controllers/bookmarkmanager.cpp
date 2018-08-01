@@ -170,7 +170,8 @@ bool BookMarkManager::touch(const QSharedPointer<DFMTouchFileEvent> &event) cons
         {"url", item->sourceUrl()},
         {"created", item->m_created.toString(Qt::ISODate)},
         {"lastModified", item->m_lastModified.toString(Qt::ISODate)},
-        {"mountPoint", query.queryItemValue("mountPoint")}
+        {"mountPoint", query.queryItemValue("mount_point")},
+        {"locateUrl", query.queryItemValue("locate_url")}
     };
 
     DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
@@ -203,7 +204,7 @@ BookMarkPointer BookMarkManager::findBookmark(const DUrl &url) const
 /*!
  * \brief Update bookmark items by the given \a value
  *
- * \param value QVariant from DFMApplication::genericSetting()
+ * \param value QVariant from DFMApplication::generfile:///media/wzc/asd/VM?mount_point=device:/dev/sda5&locate_url=/VMicSetting()
  *
  * Please notice that this is NOT updating bookmark list to local saved config file,
  * instead, this is updating bookmark item list FROM local saved config file.
