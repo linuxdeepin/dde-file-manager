@@ -24,8 +24,12 @@
 
 #include "bookmark.h"
 #include "dfileservices.h"
+#include "dfmdiskmanager.h"
+#include "dfmblockdevice.h"
+#include "dstorageinfo.h"
 
 #include <QIcon>
+#include <QUrlQuery>
 
 BookMark::BookMark(const DUrl &url)
     : DAbstractFileInfo(url)
@@ -58,6 +62,30 @@ QString BookMark::getName() const
     return fileUrl().bookmarkName();
 }
 
+bool BookMark::exists() const
+{
+    // Check if it is a local file first
+    if (!mountPoint.isEmpty() && !locateUrl.isEmpty()) {
+        DUrl mountPointUrl(mountPoint);
+        QString mountPointPath = mountPointUrl.path();
+
+        if (mountPointUrl.scheme() == DEVICE_SCHEME && mountPointPath.startsWith("/dev")) {
+            mountPointPath.replace("dev", "org/freedesktop/UDisks2/block_devices");
+            udisksDBusPath = mountPointPath;
+            QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(mountPointPath));
+            udisksMountPoint = blDev->mountPoints().isEmpty() ? QString() : blDev->mountPoints().first();
+        }
+    }
+
+    if (!udisksMountPoint.isEmpty()) {
+        const DAbstractFileInfoPointer &sourceInfo = DFileService::instance()->createFileInfo(nullptr, sourceUrl());
+        return sourceInfo->exists();
+    }
+
+    // not a local file, assume it's exist.
+    return true;
+}
+
 QString BookMark::fileDisplayName() const
 {
     return getName();
@@ -65,11 +93,28 @@ QString BookMark::fileDisplayName() const
 
 bool BookMark::canRedirectionFileUrl() const
 {
+    if (!mountPoint.isEmpty() && !locateUrl.isEmpty() && udisksMountPoint.isEmpty() && !udisksDBusPath.isEmpty()) {
+        QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(udisksDBusPath));
+        udisksMountPoint = blDev->mount({});
+    }
+
     return fileUrl() != DUrl(BOOKMARK_ROOT);
 }
 
 DUrl BookMark::redirectedFileUrl() const
 {
+    if (!mountPoint.isEmpty() && !locateUrl.isEmpty()) {
+        DUrl mountPointUrl(mountPoint);
+
+        if (mountPointUrl.scheme() == SMB_SCHEME) {
+            return DUrl(mountPoint + locateUrl);
+        }
+
+        if (!udisksDBusPath.isEmpty() && !udisksMountPoint.isEmpty()) {
+            return DUrl::fromLocalFile(udisksMountPoint + locateUrl);
+        }
+    }
+
     return sourceUrl();
 }
 

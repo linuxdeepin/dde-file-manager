@@ -44,6 +44,8 @@ public:
     DUrl sourceUrl() const;
     QString getName() const;
 
+    bool exists() const override;
+
     QString fileDisplayName() const Q_DECL_OVERRIDE;
 
     bool canRedirectionFileUrl() const Q_DECL_OVERRIDE;
@@ -59,7 +61,15 @@ public:
 public:
     QDateTime m_created;
     QDateTime m_lastModified;
+    QString mountPoint;
+    QString locateUrl;
     // AbstractFileInfo interface
+
+private:
+    // always care about these two value when using it.
+    // related functions: exists(), canRedirectionFileUrl(), redirectionFileUrl()
+    mutable QString udisksDBusPath;
+    mutable QString udisksMountPoint;
 };
 
 #endif // BOOKMARK_H
