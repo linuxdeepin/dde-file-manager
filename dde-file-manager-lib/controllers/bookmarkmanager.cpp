@@ -156,12 +156,14 @@ bool BookMarkManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) c
 bool BookMarkManager::touch(const QSharedPointer<DFMTouchFileEvent> &event) const
 {
     BookMarkPointer item(new BookMark(event->url()));
+    QUrlQuery query(event->url());
 
     item->m_created = QDateTime::currentDateTime();
     item->m_lastModified = item->m_created;
+    item->mountPoint = query.queryItemValue("mount_point");
+    item->locateUrl = query.queryItemValue("locate_url");
     m_bookmarks[item->sourceUrl()] = item;
 
-    QUrlQuery query(event->url());
 
     QVariantList list = DFMApplication::genericSetting()->value("BookMark", "Items").toList();
 
@@ -170,8 +172,8 @@ bool BookMarkManager::touch(const QSharedPointer<DFMTouchFileEvent> &event) cons
         {"url", item->sourceUrl()},
         {"created", item->m_created.toString(Qt::ISODate)},
         {"lastModified", item->m_lastModified.toString(Qt::ISODate)},
-        {"mountPoint", query.queryItemValue("mount_point")},
-        {"locateUrl", query.queryItemValue("locate_url")}
+        {"mountPoint", item->mountPoint},
+        {"locateUrl", item->locateUrl}
     };
 
     DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
@@ -223,11 +225,15 @@ void BookMarkManager::update(const QVariant &value)
         const DUrl &url = DUrl::fromUserInput(item.value("url").toString());
         const QDateTime &create_time = QDateTime::fromString(item.value("created").toString(), Qt::ISODate);
         const QDateTime &last_modified_time = QDateTime::fromString(item.value("lastModified").toString(), Qt::ISODate);
+        const QString &mount_point = item.value("mountPoint").toString();
+        const QString &locate_url = item.value("locateUrl").toString();
 
         BookMark *bm_info = new BookMark(name, url);
 
         bm_info->m_created = create_time;
         bm_info->m_lastModified = last_modified_time;
+        bm_info->mountPoint = mount_point;
+        bm_info->locateUrl = locate_url;
 
         if (m_bookmarks.contains(url)) {
             const BookMarkPointer old_info = m_bookmarks.value(url);
