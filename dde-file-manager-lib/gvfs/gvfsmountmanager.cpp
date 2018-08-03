@@ -1090,6 +1090,14 @@ DUrl GvfsMountManager::getRealMountUrl(const QDiskInfo &info)
     QString mounted_root_uri = info.mounted_root_uri();
     DUrl MountPointUrl = DUrl(mounted_root_uri);
 
+    // blumia: It's possible that the device is not managed by gvfs so the real mount url won't be under
+    //         gvfs mount path, try `sshfs` mount something...
+    // blumia: We assume `mounted_root_uri()` can get the correct mount path, and only return it directly
+    //         if it is a local file path.
+    if (MountPointUrl.isLocalFile()) {
+        return MountPointUrl;
+    }
+
     if (mounted_root_uri == "/") {
         MountPointUrl = DUrl::fromLocalFile("/");
     } else {

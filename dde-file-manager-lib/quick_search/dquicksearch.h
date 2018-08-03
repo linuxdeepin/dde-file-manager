@@ -113,8 +113,11 @@ public:
     static std::size_t count_adler32(const QString &mount_point)noexcept;
 
 public slots:
+    ///###: These APIs are temporarily useless, under.
     void onMountAdded(const QString &blockDevicePath, const QByteArray &mountPoint);
     void onMountRemoved(const QString &blockDevicePath, const QByteArray &mountPoint);
+    ///###
+
 
     ///###: These APIs are temporarily useless, under.
     void onAutoInnerIndexesOpened();
