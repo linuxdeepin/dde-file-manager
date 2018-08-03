@@ -319,7 +319,7 @@ void DFMAddressBar::initUI()
     setMinimumWidth(1);
     setAlignment(Qt::AlignHCenter);
     setAlignment(Qt::AlignLeft);
-    setPlaceholderText(tr("Search or enter address"));
+    setPlaceholderText(QCoreApplication::translate("DFMAddressBar", "Search or enter address"));
 
     setFocusPolicy(Qt::ClickFocus);
 }
