@@ -110,7 +110,7 @@ void DiskControlWidget::unmountAll()
         QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(blDevStr));
         if (blDev->hasFileSystem() /* && DFMSetting*/ && !blDev->mountPoints().isEmpty()) {
             QByteArray mountPoint = blDev->mountPoints().first();
-            if (mountPoint != QStringLiteral("/") && mountPoint != QStringLiteral("/home")) {
+            if (mountPoint != QStringLiteral("/boot") && mountPoint != QStringLiteral("/") && mountPoint != QStringLiteral("/home")) {
                 blDev->unmount({});
             }
         }
@@ -130,7 +130,7 @@ void DiskControlWidget::onDiskListChanged()
         QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(blDevStr));
         if (blDev->hasFileSystem() && !blDev->mountPoints().isEmpty()) {
             QByteArray mountPoint = blDev->mountPoints().first();
-            if (mountPoint != QStringLiteral("/") && mountPoint != QStringLiteral("/home")) {
+            if (mountPoint != QStringLiteral("/boot") && mountPoint != QStringLiteral("/") && mountPoint != QStringLiteral("/home")) {
                 mountedCount++;
                 DiskControlItem *item = new DiskControlItem(blDev.data(), this);
                 connect(item, &DiskControlItem::requestUnmount, this, &DiskControlWidget::unmountDisk);
