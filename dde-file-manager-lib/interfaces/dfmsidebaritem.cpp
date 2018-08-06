@@ -488,11 +488,14 @@ QMenu *DFMSideBarItem::createStandardContextMenu() const
 
 Qt::DropAction DFMSideBarItem::canDropMimeData(const QMimeData *data, Qt::DropActions actions) const
 {
-    if (data->urls().empty()) {
+    // Got a copy of urls so whatever data was changed, it won't affact the following code.
+    QList<QUrl> urls = data->urls();
+
+    if (urls.empty()) {
         return Qt::IgnoreAction;
     }
 
-    for (const DUrl &url : data->urls()) {
+    for (const DUrl &url : urls) {
         const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, url);
         if (!fileInfo || !fileInfo->isReadable()) {
             return Qt::IgnoreAction;
@@ -507,7 +510,7 @@ Qt::DropAction DFMSideBarItem::canDropMimeData(const QMimeData *data, Qt::DropAc
 
     const Qt::DropActions support_actions = info->supportedDropActions() & actions;
 
-    if (DStorageInfo::inSameDevice(data->urls().first(), url())) {
+    if (DStorageInfo::inSameDevice(urls.first(), url())) {
         if (support_actions.testFlag(Qt::MoveAction)) {
             return Qt::MoveAction;
         }
