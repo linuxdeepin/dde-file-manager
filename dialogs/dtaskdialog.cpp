@@ -737,7 +737,7 @@ void MoveCopyTaskWidget::updateMessageByJob()
     datas["destination"] = m_jobInfo->currentJob.second.isValid() ? m_jobInfo->currentJob.second.parentUrl().path() : QString();
     datas["speed"] = FileUtils::formatSize(m_jobInfo->speed) + "/s";
 
-    if (m_jobInfo->totalDataSize >= 0) {
+    if (m_jobInfo->totalDataSize >= 0 && m_jobInfo->speed) {
         datas["remainTime"] = formatTime(int(m_jobInfo->totalDataSize * (1 - m_jobInfo->progress) / m_jobInfo->speed));
     }
 
