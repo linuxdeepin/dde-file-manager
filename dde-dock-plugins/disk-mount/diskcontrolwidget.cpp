@@ -181,6 +181,15 @@ void DiskControlWidget::onDriveConnected(const QString &deviceId)
             if (blDev->isEncrypted()) continue;
 
             if (blDev->hasFileSystem() && blDev->mountPoints().isEmpty()) {
+
+                // blumia: if mount&open enabled and dde-file-manager also got installed, use dde-file-manager.
+                //         using mount scheme with udisks sub-scheme to give user a *device is mounting* feedback.
+                if (mountAndOpen && !QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
+                    QString mountUrlStr = "mount://fromMountPlugin#udisks://" + blDevStr;
+                    QProcess::startDetached(QStringLiteral("dde-file-manager"), {mountUrlStr});
+                    return;
+                }
+
                 QString mountPoint = blDev->mount({});
                 if (mountAndOpen && !mountPoint.isEmpty()) {
                     DDesktopServices::showFolder(QUrl::fromLocalFile(mountPoint));

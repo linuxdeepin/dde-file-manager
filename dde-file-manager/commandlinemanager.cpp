@@ -58,7 +58,7 @@ void CommandLineManager::process(const QStringList &arguments)
 void CommandLineManager::initOptions()
 {
     QCommandLineOption newWindowOption(QStringList() << "n" << "new-window", "show new window");
-    QCommandLineOption backendOption(QStringList() << "d" << "none window process", "start dde-file-manager in no window mode");
+    QCommandLineOption backendOption(QStringList() << "d" << "none-window-process", "start dde-file-manager in no window mode");
     QCommandLineOption openPropertyDialogOption(QStringList() << "p" << "property", "show property dialog");
     QCommandLineOption rootOption(QStringList() << "r" << "root", "exec dde-file-manager in root mode");
     QCommandLineOption showFileItem(QStringList() << "show-item", "Show a file item in a new window");
