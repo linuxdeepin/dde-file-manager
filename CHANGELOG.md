@@ -1,3 +1,46 @@
+<a name="4.6.3"></a>
+## 4.6.3 (2018-08-06)
+
+
+#### Bug Fixes
+
+*   can not copy file by drag/drop(the 'Ctrl' key is pressed) ([b970fbae](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/b970fbae551536edd124c122bb1e4619fccc3c0c))
+*   ignore the cut operation of the same folder ([7ea543bd](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/7ea543bd74c8b0b72bd9eb80b93bbac764f6d6cb))
+*   the type of error is wrong when copy a file ([45f4f122](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/45f4f122b7d8922d64e4dc1ddf0207ca09712808))
+*   the remaining time of the file copy is error ([84118a28](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/84118a284f10c65fcec5d5d5d6ded266884cbf64))
+*   invalid sort by file type ([8893a90e](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/8893a90e17c685472d9c949dad56e0a01af47613))
+*   use QByteArray::difference_type to replace int. if not will cause compiler error in clang. ([4d822e11](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/4d822e11d964598f26237a6d224d74129c13efee))
+*   if search failure, should not close quick-search. ([4afbab31](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/4afbab31ba5206d9295060705cb409b9f72a5615))
+*   creating a new archive, it shown in a wrong position. ([30713dd9](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/30713dd927e14634914130123c56e07342d6ee76))
+*   crash when call DAbstractFileInfo::fileIcon on copy/move files ([8e973d90](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/8e973d90cd682ce7ebb686ca68bd199dbc34de50))
+*   not update error message of the DTaskDialog ([31535edc](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/31535edce6c62c459769ae4b889bc7127e1f8896))
+*   copy files from nautilus to dde-file-manager cause dde-file-manager segment fault. ([e4b3144a](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/e4b3144aaab3c18baa19bd606867259e33ddd3eb))
+*   compact (\') in sql statement. ([fe3ef80b](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/fe3ef80bc7eaebc6d546ef8c0b1b17a828613b9e))
+*   crash when copy a large number of image file ([9573fe2b](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/9573fe2b923711ea1efbe19ca4123c8c88f3b6d5))
+* **bookmark:**  save mount point state ([d6705ac6](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/d6705ac6d6cc06717f63971c054efa6faf713f80))
+* **desktop:**  add aosGlobal config file to watcher ([02d4273d](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/02d4273d9c732ab4348b6cd1d5ae8d04edb90760))
+* **device:**  return the correct mount point ([8c9612d1](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/8c9612d1ea9e24d50e16e0c9781cc22b98d49440))
+* **i10n:**
+  *  translation fix ([48b3bec9](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/48b3bec97899262e713bf5e2bdbb539e77850b7b))
+  *  Translation fix ([974a6aea](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/974a6aeafe8ca74a53b9d93394fb50b83624ba8f))
+* **license:**  Option to disable ffmpeg, #31 on gh ([b52b8dc9](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/b52b8dc97d9e64053f305233b2df462ad79f90b3))
+* **mount:**  only show items mounted under '/media/' ([319aebeb](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/319aebeb2b053730a8e1f0e9d4a3ccd35fce6626))
+* **sidebar:**  Cache data->urls() to avoid data expired ([775aca85](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/775aca8528b2f124387ae0b53f7328aae0eea085))
+* **trashPlugin:**  show warning dialog ([ce636146](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/ce636146877b7a2eb9f14d98b7b66933dd8d247e))
+
+#### Features
+
+*   support 'Alt' Key and mouse wheel button to scroll view(Horizontal) ([4bba89b3](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/4bba89b3e1c68c6f51ebcfaa6d084849d7387e3e))
+*   set the icon color scheme from the window text color when get a file icon from theme ([d2327505](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/d2327505536d488da38585e081be48dae1d4f2d0))
+*   support wildcard in quick-search. ([da524977](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/da524977e3e6321d9e558c9c63671f215030c2d2))
+* **bookmark:**
+  *  auto mount partition for non-local bookmark ([d229d0b0](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/d229d0b0c8d7b88e1709ee736d22681a86741ee4))
+  *  save mount locate url ([df6405b1](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/df6405b1f30fe895e908a373e7ac7d05db480ecb))
+* **crumb:**  new crumb icons ([884ab321](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/884ab321a4954c3832386460dafbf0dd907b43db))
+* **mount:**  use dde-file-manager with mount scheme if needed ([4bd80a5f](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/4bd80a5fdf056ac8eff8072f7b7e1ca37764d7b4))
+
+
+
 <a name="4.6.2"></a>
 ## 4.6.2 (2018-07-27)
 
