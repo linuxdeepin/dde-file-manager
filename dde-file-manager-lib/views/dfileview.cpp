@@ -836,14 +836,20 @@ void DFileView::onRowCountChanged()
 
 void DFileView::wheelEvent(QWheelEvent *event)
 {
-    if(isIconViewMode() && DFMGlobal::keyCtrlIsPressed()) {
-        if(event->angleDelta().y() > 0) {
-            increaseIcon();
+    if (isIconViewMode()) {
+        if (DFMGlobal::keyCtrlIsPressed()) {
+            if (event->angleDelta().y() > 0) {
+                increaseIcon();
+            } else {
+                decreaseIcon();
+            }
+            emit viewStateChanged();
+            event->accept();
         } else {
-            decreaseIcon();
+            verticalScrollBar()->setSliderPosition(verticalScrollBar()->sliderPosition() - event->angleDelta().y());
         }
-        emit viewStateChanged();
-        event->accept();
+    } else if (event->modifiers() == Qt::AltModifier) {
+        horizontalScrollBar()->setSliderPosition(horizontalScrollBar()->sliderPosition() - event->angleDelta().x());
     } else {
         verticalScrollBar()->setSliderPosition(verticalScrollBar()->sliderPosition() - event->angleDelta().y());
     }
