@@ -475,6 +475,13 @@ create_new_file_info:
     const DAbstractFileInfoPointer &new_file_info = DFileService::instance()->createFileInfo(nullptr, target_info->getUrlByChildFileName(file_name));
 
     if (new_file_info->exists()) {
+        if (mode == DFileCopyMoveJob::MoveMode) {
+            // 不用再进行后面的操作
+            if (new_file_info->fileUrl() == from) {
+                return true;
+            }
+        }
+
         bool source_is_file = source_info->isFile() || source_info->isSymLink();
         bool target_is_file = new_file_info->isFile() || new_file_info->isSymLink();
 
@@ -486,6 +493,11 @@ create_new_file_info:
 
         switch (handleError(source_info.constData(), new_file_info.constData())) {
         case DFileCopyMoveJob::ReplaceAction:
+            if (new_file_info->fileUrl() == from) {
+                // 不用再进行后面的操作
+                return true;
+            }
+
             if (source_is_file && source_is_file == target_is_file) {
                 break;
             } else {
