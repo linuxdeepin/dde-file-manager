@@ -232,7 +232,7 @@ DFMSettings *DFMApplication::appObtuselySetting()
     if (!aosGlobal.exists()) {
         aosGlobal->setAutoSync(false);
 #ifndef DFM_NO_FILE_WATCHER
-        aosGlobal->setWatchChanges(false);
+        aosGlobal->setWatchChanges(true);
 #endif
     }
 
