@@ -209,6 +209,8 @@ protected:
                      const QVector<int> &roles = QVector<int>()) Q_DECL_OVERRIDE;
     bool event(QEvent *e) Q_DECL_OVERRIDE;
     void updateGeometries() override;
+    bool eventFilter(QObject *obj, QEvent *event) override;
+
     void onShowHiddenFileChanged();
 
     void initDelegate();

@@ -90,6 +90,7 @@ public:
     int iconModeColumnCount(int itemWidth = 0) const;
     QVariant fileViewStateValue(const DUrl &url, const QString &key, const QVariant &defalutValue);
     void setFileViewStateValue(const DUrl &url, const QString &key, const QVariant &value);
+    void updateHorizontalScrollBarPosition();
 
     DFileView *q_ptr;
 
@@ -1746,6 +1747,18 @@ void DFileView::updateGeometries()
     DListView::updateGeometries();
 }
 
+bool DFileView::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj != horizontalScrollBar()->parentWidget() || event->type() != QEvent::Move)
+        return DListView::eventFilter(obj, event);
+
+    Q_D(DFileView);
+
+    d->updateHorizontalScrollBarPosition();
+
+    return DListView::eventFilter(obj, event);
+}
+
 void DFileView::onShowHiddenFileChanged()
 {
     QDir::Filters filters;
@@ -1810,6 +1823,9 @@ void DFileView::initUI()
 
     if (d->allowedAdjustColumnSize) {
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+
+        // 给横向滚动条安装事件过滤器，用于将它的位置更新到状态栏上面
+        horizontalScrollBar()->parentWidget()->installEventFilter(this);
     }
 
     d->toolbarActionGroup = new QActionGroup(this);
@@ -2705,4 +2721,14 @@ void DFileViewPrivate::setFileViewStateValue(const DUrl &url, const QString &key
     map[key] = value;
 
     DFMApplication::appObtuselySetting()->setValue("FileViewState", url, map);
+}
+
+void DFileViewPrivate::updateHorizontalScrollBarPosition()
+{
+    Q_Q(DFileView);
+
+    QWidget *widget = static_cast<QWidget*>(q->horizontalScrollBar()->parentWidget());
+
+    // 更新横向滚动条的位置，将它显示在状态栏上面（此处没有加防止陷入死循环的处理）
+    widget->move(widget->x(), q->height() - statusBar->height() - widget->height());
 }
