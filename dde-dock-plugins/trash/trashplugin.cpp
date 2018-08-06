@@ -24,6 +24,10 @@
 
 #include "trashplugin.h"
 
+#include <DApplication>
+
+DWIDGET_USE_NAMESPACE
+
 TrashPlugin::TrashPlugin(QObject *parent)
     : QObject(parent),
       m_trashWidget(new TrashWidget),
@@ -44,6 +48,12 @@ const QString TrashPlugin::pluginName() const
 
 void TrashPlugin::init(PluginProxyInterface *proxyInter)
 {
+    // blumia: we are using i10n translation from DFM so...
+    QString applicationName = qApp->applicationName();
+    qApp->setApplicationName("dde-file-manager");
+    qDebug() << qApp->loadTranslator();
+    qApp->setApplicationName(applicationName);
+
     m_proxyInter = proxyInter;
 //    DFMGlobal::instance()->installTranslator();
     displayModeChanged(displayMode());
