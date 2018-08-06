@@ -33,6 +33,8 @@
 #include <DTrashManager>
 #include <DDesktopServices>
 
+#include <QCoreApplication>
+
 DWIDGET_USE_NAMESPACE
 
 const QString TrashDir = QDir::homePath() + "/.local/share/Trash";
@@ -84,8 +86,35 @@ void PopupControlWidget::openTrashFloder()
 
 void PopupControlWidget::clearTrashFloder()
 {
+    QString ClearTrashMutliple = qApp->translate("DialogManager", "Are you sure to empty %1 items?");
+
     // show confrim dialog
-    qDebug() << "clear trash empty";
+    DDialog d;
+    QStringList buttonTexts;
+    buttonTexts << qApp->translate("DialogManager", "Cancel") << qApp->translate("DialogManager", "Delete");
+
+    if (!d.parentWidget()) {
+        d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
+    }
+
+    QDir dir(QDir::homePath() + "/.local/share/Trash/files");
+    uint count = dir.count();
+    int execCode = -1;
+
+    if (count > 0) {
+        d.setTitle(ClearTrashMutliple.arg(count));
+        d.setMessage(qApp->translate("DialogManager", "This action cannot be restored"));
+        d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
+        d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
+        d.setDefaultButton(1);
+        d.getButton(1)->setFocus();
+        d.moveToCenter();
+        execCode = d.exec();
+    }
+
+    if (execCode != QDialog::Accepted) {
+        return;
+    }
 
     if (DTrashManager::instance()->cleanTrash()) {
         DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_EmptyTrash);
