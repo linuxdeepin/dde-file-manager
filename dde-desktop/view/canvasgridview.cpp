@@ -782,9 +782,10 @@ void CanvasGridView::dropEvent(QDropEvent *event)
 
         event->accept(); // yeah! we've done with XDS so stop Qt from further event propagation.
     } else {
-        QModelIndex dropIndex = indexAt(gridRectAt(event->pos()).center());
-        if (!dropIndex.isValid()) {
-            if (event->source() == this) {
+        if (event->dropAction() == Qt::MoveAction) {
+            QModelIndex dropIndex = indexAt(gridRectAt(event->pos()).center());
+
+            if (event->source() == this && !dropIndex.isValid()) {
                 auto point = event->pos();
                 auto row = (point.x() - d->viewMargins.left()) / d->cellWidth;
                 auto col = (point.y() - d->viewMargins.top()) / d->cellHeight;
@@ -805,7 +806,7 @@ void CanvasGridView::dropEvent(QDropEvent *event)
         }
 
         if (model()->supportedDropActions() & event->dropAction() && model()->flags(targetIndex) & Qt::ItemIsDropEnabled) {
-            const Qt::DropAction action = dragDropMode() == InternalMove ? Qt::MoveAction : event->dropAction();
+            const Qt::DropAction action = event->dropAction();
             if (model()->dropMimeData(event->mimeData(), action, targetIndex.row(), targetIndex.column(), targetIndex)) {
                 if (action != event->dropAction()) {
                     event->setDropAction(action);
