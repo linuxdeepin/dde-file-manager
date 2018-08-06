@@ -200,7 +200,7 @@ qint64 DStorageInfo::bytesAvailable() const
         return g_file_info_get_attribute_uint64(d->gioInfo, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
     }
 
-    return QStorageInfo::bytesFree();
+    return QStorageInfo::bytesAvailable();
 }
 
 bool DStorageInfo::isReadOnly() const
