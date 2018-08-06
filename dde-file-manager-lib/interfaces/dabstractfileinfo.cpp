@@ -85,7 +85,7 @@ bool compareByString(const QString &str1, const QString &str2, Qt::SortOrder ord
 COMPARE_FUN_DEFINE(fileDisplayName, DisplayName, DAbstractFileInfo)
 COMPARE_FUN_DEFINE(fileSize, Size, DAbstractFileInfo)
 COMPARE_FUN_DEFINE(lastModified, Modified, DAbstractFileInfo)
-COMPARE_FUN_DEFINE(fileType, Mime, DAbstractFileInfo)
+COMPARE_FUN_DEFINE(fileTypeDisplayName, Mime, DAbstractFileInfo)
 COMPARE_FUN_DEFINE(created, Created, DAbstractFileInfo)
 } /// end namespace FileSortFunction
 
