@@ -330,7 +330,7 @@ bool DFileCopyMoveJobPrivate::checkFileSize(qint64 size) const
     // for vfat file system
     if (fs_type == "vfat") {
         // 4GB
-        if (size > 4294967295) {
+        if (size >= 4l * 1024 * 1024 * 1024) {
             return false;
         }
     }
@@ -582,6 +582,9 @@ process_file:
                 if (!removeFile(handler, new_file_info.constData())) {
                     return false;
                 }
+            } else if (new_file_info->exists()) {
+                // 复制文件时，如果需要覆盖，必须添加可写入权限
+                handler->setPermissions(new_file_info->fileUrl(), QFileDevice::WriteUser | QFileDevice::ReadUser);
             }
 
             ok = copyFile(source_info.constData(), new_file_info.constData());
@@ -627,7 +630,9 @@ bool DFileCopyMoveJobPrivate::mergeDirectory(DFileHandler *handler, const DAbstr
 
         do {
             if (!handler->mkdir(toInfo->fileUrl())) {
-                if (toInfo->isWritable()) {
+                const DAbstractFileInfoPointer &parent_info = DFileService::instance()->createFileInfo(nullptr, toInfo->parentUrl());
+
+                if (!parent_info->exists() || parent_info->isWritable()) {
                     setError(DFileCopyMoveJob::MkdirError, qApp->translate("DFileCopyMoveJob", "Failed to create the directory, cause: %1").arg(handler->errorString()));
                 } else {
                     setError(DFileCopyMoveJob::PermissionError);
@@ -746,7 +751,7 @@ open_file: {
             } else {
                 qCDebug(fileJob()) << "open error:" << toInfo->fileUrl();
 
-                if (toInfo->isWritable()) {
+                if (!toInfo->exists() || toInfo->isWritable()) {
                     setError(DFileCopyMoveJob::OpenError, qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: %1").arg(toDevice->errorString()));
                 } else {
                     setError(DFileCopyMoveJob::PermissionError);
