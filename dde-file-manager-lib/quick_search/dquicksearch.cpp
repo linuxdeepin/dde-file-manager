@@ -24,6 +24,7 @@
 #include <string>
 #include <fstream>
 #include <iomanip>
+#include <sys/sysmacros.h>
 
 #include <zlib.h>
 
