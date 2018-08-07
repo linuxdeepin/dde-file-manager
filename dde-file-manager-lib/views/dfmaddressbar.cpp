@@ -214,6 +214,7 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
         case Qt::Key_Return:
             e->accept();
             emit returnPressed();
+            completerView->hide();
             return;
         case Qt::Key_Tab:
             if (completer()->completionCount() > 0) {
