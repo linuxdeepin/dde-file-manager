@@ -27,6 +27,10 @@
 #include "app/define.h"
 #include <unistd.h>
 
+#if 0 // storage i10n
+QT_TRANSLATE_NOOP("DeepinStorage", "Data")
+#endif
+
 UDiskDeviceInfo::UDiskDeviceInfo()
     : DFileInfo("", false)
 {
@@ -162,7 +166,13 @@ qint64 UDiskDeviceInfo::size() const
 QString UDiskDeviceInfo::fileDisplayName() const
 {
     QString displayName = getName();
-    if (!displayName.isEmpty()){
+
+    if (!displayName.isEmpty()) {
+        if (displayName.startsWith(ddeI18nSym)) {
+            displayName = displayName.mid(ddeI18nSym.size(), displayName.size() - ddeI18nSym.size());
+            return qApp->translate("DeepinStorage", displayName.toUtf8().constData());
+        }
+
         return displayName;
     }
     return FileUtils::formatSize(size());

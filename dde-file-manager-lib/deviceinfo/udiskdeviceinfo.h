@@ -85,6 +85,7 @@ public:
 
 private:
     QDiskInfo m_diskInfo;
+    QString ddeI18nSym = QStringLiteral("_dde_");
 };
 
 #endif // UDISKDEVICEINFO_H
