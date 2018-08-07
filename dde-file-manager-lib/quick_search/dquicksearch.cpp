@@ -334,6 +334,14 @@ static QByteArray grep_regx_to_posix(const QByteArray &posix_reg_str)
 
 }// end namespace detail.
 
+// this struct calls "myCustomDeallocator" to delete the pointer
+struct ScopedPointerFsbufDeleter
+{
+    static inline void cleanup(fs_buf *pointer) {
+        free_fs_buf(pointer);
+    }
+};
+
 DQuickSearch::DQuickSearch(QObject *const parent)
     : QObject{ parent }
 {
@@ -371,6 +379,8 @@ QList<QString> DQuickSearch::search(const QString &local_path, const QString &ke
             std::lock_guard<std::mutex> raii_lock{ m_mutex };
             fs_buf *buf{ nullptr };
             load_fs_buf(&buf, pos->second.toLocal8Bit().constData());
+            QScopedPointer<fs_buf, ScopedPointerFsbufDeleter> sp(buf);
+            Q_UNUSED(sp); Q_UNUSED(raii_lock);
 
             if (buf) {
                 QByteArray query_str{ key_words.toLocal8Bit() };
@@ -498,6 +508,8 @@ void DQuickSearch::filesWereCreated(const QList<QByteArray> &files_path)
 
             fs_buf *buf{ nullptr };
             load_fs_buf(&buf, pos->second.toLocal8Bit().constData());
+            QScopedPointer<fs_buf, ScopedPointerFsbufDeleter> sp(buf);
+            Q_UNUSED(sp);
 
             if (buf) {
 
@@ -583,6 +595,8 @@ void DQuickSearch::filesWereDeleted(const QList<QByteArray> &files_path)
             fs_buf *buf{ nullptr };
             std::basic_string<char> local_8bit{ path.toStdString() };
             load_fs_buf(&buf, pos->second.toLocal8Bit().constData());
+            QScopedPointer<fs_buf, ScopedPointerFsbufDeleter> sp(buf);
+            Q_UNUSED(sp);
 
             if (buf) {
                 remove_path(buf, const_cast<char *>(local_8bit.data()), changes, &change_count);
@@ -639,6 +653,8 @@ void DQuickSearch::filesWereRenamed(const QList<QPair<QByteArray, QByteArray> > 
 
             fs_buf *buf{ nullptr };
             load_fs_buf(&buf, pos->second.toLocal8Bit().constData());
+            QScopedPointer<fs_buf, ScopedPointerFsbufDeleter> sp(buf);
+            Q_UNUSED(sp); Q_UNUSED(raii_lock);
 
             if (buf) {
                 rename_path(buf, const_cast<char *>(old_and_new_name.first.data()), const_cast<char *>(old_and_new_name.second.data()), changes, &change_count);
@@ -1077,6 +1093,8 @@ bool DQuickSearch::create_lft(const QString &mount_point)
         }
 
         fs_buf *buffer = new_fs_buf(buffer_size, full_path.constData());
+        QScopedPointer<fs_buf, ScopedPointerFsbufDeleter> sp(buffer);
+        Q_UNUSED(sp);
 
         if (buffer) {
             build_fstree(buffer, 0, NULL, NULL);
