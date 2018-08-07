@@ -117,9 +117,11 @@ void DialogManager::initData()
     m_dialogSharePasswordIcon.addFile(":/images/dialogs/images/share_password.png");
     m_dialogSharePasswordIcon.addFile(":/images/dialogs/images/share_password@2x.png");
 
-    m_dialogTrashFullIcon = QIcon();
-    m_dialogTrashFullIcon.addFile(":/images/dialogs/images/user-trash-full-opened.png");
-    m_dialogTrashFullIcon.addFile(":/images/dialogs/images/user-trash-full-opened@2x.png");
+    QIcon trash_full_icon = QIcon::fromTheme("user-trash-full-opened");
+    m_dialogTrashFullIcon.addPixmap(trash_full_icon.pixmap(64));
+    m_dialogTrashFullIcon.addPixmap(trash_full_icon.pixmap(128));
+//    m_dialogTrashFullIcon.addFile(":/images/dialogs/images/user-trash-full-opened.png");
+//    m_dialogTrashFullIcon.addFile(":/images/dialogs/images/user-trash-full-opened@2x.png");
 }
 
 void DialogManager::initTaskDialog()

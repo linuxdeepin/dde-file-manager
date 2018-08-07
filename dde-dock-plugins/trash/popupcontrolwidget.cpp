@@ -103,8 +103,17 @@ void PopupControlWidget::clearTrashFloder()
     int execCode = -1;
 
     if (count > 0) {
+        // blumia: Workaround. There is a bug with DDialog which will let DDialog always use the smallest
+        //         avaliable size of the given icon. So we create a m_dialogTrashFullIcon and leave a minimum
+        //         64*64 pixmap size icon here.
+        QIcon m_dialogTrashFullIcon;
+        QIcon trash_full_icon = QIcon::fromTheme("user-trash-full-opened");
+        m_dialogTrashFullIcon.addPixmap(trash_full_icon.pixmap(64));
+        m_dialogTrashFullIcon.addPixmap(trash_full_icon.pixmap(128));
+
         d.setTitle(ClearTrashMutliple.arg(count));
         d.setMessage(qApp->translate("DialogManager", "This action cannot be restored"));
+        d.setIcon(m_dialogTrashFullIcon);
         d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
         d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
         d.setDefaultButton(1);
