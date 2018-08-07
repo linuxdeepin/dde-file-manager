@@ -43,6 +43,10 @@
 
 DFM_USE_NAMESPACE
 
+#if 0 // storage i10n
+QT_TRANSLATE_NOOP("DeepinStorage", "data")
+#endif
+
 UDiskDeviceInfo::UDiskDeviceInfo()
     : DFileInfo("", false)
 {
@@ -181,6 +185,10 @@ QString UDiskDeviceInfo::fileDisplayName() const
 {
     QString displayName = getName();
     if (!displayName.isEmpty()) {
+        if (displayName.startsWith(ddeI18nSym)) {
+            displayName = displayName.mid(ddeI18nSym.size(), displayName.size() - ddeI18nSym.size());
+            return qApp->translate("DeepinStorage", displayName.toUtf8().constData());
+        }
         return displayName;
     }
     return FileUtils::formatSize(size());
@@ -256,6 +264,12 @@ bool UDiskDeviceInfo::isWritable() const
 
 bool UDiskDeviceInfo::canRename() const
 {
+#ifndef QT_NO_DEBUG
+    // check if it gots a built-in international support.
+    if (fileDisplayName().startsWith(ddeI18nSym)) {
+        return false;
+    }
+#endif
     // blumia: since we now both use the old gvfs interface and the new udisks2 interface
     //         we should convert the path from local volumn path to the dbus path which is
     //         used by our udisks2 wrapper classes.
