@@ -95,6 +95,7 @@ void DiskControlWidget::doStartupAutoMount()
         QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(blDevStr));
 
         if (blDev->isEncrypted()) continue;
+        if (blDev->hintIgnore()) continue;
 
         if (blDev->hasFileSystem() && blDev->mountPoints().isEmpty()) {
             blDev->mount({{"auth.no_user_interaction", true}});
@@ -179,6 +180,7 @@ void DiskControlWidget::onDriveConnected(const QString &deviceId)
 
             if (blDev->drive() != deviceId) continue;
             if (blDev->isEncrypted()) continue;
+            if (blDev->hintIgnore()) continue;
 
             if (blDev->hasFileSystem() && blDev->mountPoints().isEmpty()) {
 
