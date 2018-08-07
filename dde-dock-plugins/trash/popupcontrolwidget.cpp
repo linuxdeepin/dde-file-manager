@@ -98,7 +98,8 @@ void PopupControlWidget::clearTrashFloder()
     }
 
     QDir dir(QDir::homePath() + "/.local/share/Trash/files");
-    uint count = dir.count();
+    uint count = dir.entryList(QDir::AllEntries | QDir::Files
+                               | QDir::NoDotAndDotDot).count();
     int execCode = -1;
 
     if (count > 0) {
