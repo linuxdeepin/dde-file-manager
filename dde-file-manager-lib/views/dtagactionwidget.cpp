@@ -23,7 +23,7 @@ public:
     void initUiElement();
 
 
-    std::array<DRoundButton*, 8> m_roundButtons{ nullptr };
+    std::array<DRoundButton*, 8> m_roundButtons{ {nullptr} };
     QVBoxLayout *mainLayout{ nullptr };
     QHBoxLayout* m_HBoxLayout{ nullptr };
     DTagActionWidget* q_ptr{ nullptr };
