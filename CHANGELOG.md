@@ -1,3 +1,26 @@
+<a name="4.6.4"></a>
+## 4.6.4 (2018-08-08)
+
+
+#### Features
+
+* **disk:**  disk i10n by label name ([f0a91db2](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/f0a91db2df1a989b564b49cc740cb1b5217eaebc))
+
+#### Bug Fixes
+
+*   can not build on gcc 5.4.0 ([848db899](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/848db899607c6fe2ece9c0c95c36a71ee290ea8a))
+* **completer:**  hide completer after press enter ([31417988](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/31417988b2ba82f7b9d39d8856c75e4719965250))
+* **daemon:**  dquicksearch memory leak fix ([cf0598d4](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/cf0598d4c1bb3f333371380965cc3e7b3e95de4f))
+* **mount:**
+  *  Use udisk interface to calc partition size ([4fb42b9b](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/4fb42b9bfff2f387758ef0960bf6a55f1a89a7f9))
+  *  don't mount device if it should be ignore ([e027a912](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/e027a9124c31e220e399238c50bf30264c472317))
+* **quicksearch:**  memory leak caused by missing regfree call ([42be8f8e](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/42be8f8e02737e6fa7a1d20569b08447cbabd441))
+* **trash:**
+  *  the icon from theme ([c00068a4](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/c00068a4ceb1c7d2f490aa0ca35db662b89e2abb))
+  *  dialog file count ([64e55057](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/64e55057996c2a4361164b452d1bd52625b1423f))
+
+
+
 <a name="4.6.3"></a>
 ## 4.6.3 (2018-08-06)
 
