@@ -334,11 +334,19 @@ static QByteArray grep_regx_to_posix(const QByteArray &posix_reg_str)
 
 }// end namespace detail.
 
-// this struct calls "myCustomDeallocator" to delete the pointer
+// this struct calls "ScopedPointerFsbufDeleter" to delete the fs_buf pointer
 struct ScopedPointerFsbufDeleter
 {
     static inline void cleanup(fs_buf *pointer) {
         free_fs_buf(pointer);
+    }
+};
+
+// this struct calls "myCustomDeallocator" to delete the regex_t pointer
+struct ScopedPointerRegextDeleter
+{
+    static inline void cleanup(regex_t *pointer) {
+        regfree(pointer);
     }
 };
 
@@ -390,6 +398,8 @@ QList<QString> DQuickSearch::search(const QString &local_path, const QString &ke
                 std::uint32_t start_off{ 0 };
                 query_str = detail::grep_regx_to_posix(query_str);
                 regex_t compiled;
+                QScopedPointer<regex_t, ScopedPointerRegextDeleter> sp_compiled(&compiled);
+                Q_UNUSED(sp_compiled);
 
                 int err{ regcomp(&compiled, query_str.constData(), REG_ICASE | REG_EXTENDED) };
 
