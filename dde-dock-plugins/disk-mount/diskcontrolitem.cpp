@@ -210,15 +210,25 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
 void DiskControlItem::showEvent(QShowEvent *e)
 {
     QStorageInfo storage_info(mountPoint);
-    qint64 bytesTotal = storage_info.bytesTotal();
-    qint64 bytesFree = storage_info.bytesFree();
-    if (storage_info.isValid()) {
-        QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(deviceDBusId));
+    QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(deviceDBusId));
+    bool hasLabelName = true;
+
+    if (blDev->isValid()) {
         QString devName = blDev->idLabel();
         if (devName.isEmpty()) {
-            devName = QString(tr("%1 Volume")).arg(formatDiskSize(bytesTotal));
+            hasLabelName = false;
+            devName = QString(tr("%1 Volume")).arg(formatDiskSize(blDev->size()));
         }
         m_diskName->setText(devName);
+    }
+
+    if (storage_info.isValid()) {
+        qint64 bytesTotal = storage_info.bytesTotal();
+        qint64 bytesFree = storage_info.bytesFree();
+        if (!hasLabelName) {
+            QString devName = QString(tr("%1 Volume")).arg(formatDiskSize(bytesTotal));
+            m_diskName->setText(devName);
+        }
         m_diskCapacity->setText(QString("%1 / %2")
                                 .arg(formatDiskSize(bytesTotal - bytesFree))
                                 .arg(formatDiskSize(bytesTotal)));

@@ -55,7 +55,7 @@ private slots:
     const QString formatDiskSize(const quint64 num) const;
 
 private:
-    void mouseReleaseEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e) override;
     void showEvent(QShowEvent *e) override;
 
 private:
