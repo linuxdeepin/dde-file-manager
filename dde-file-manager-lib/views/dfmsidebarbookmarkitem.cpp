@@ -29,10 +29,13 @@
 #include "dialogs/dialogmanager.h"
 #include "controllers/bookmarkmanager.h"
 
+#include <ddialog.h>
+
 #include <QMenu>
 #include <QDialog>
 
 DFM_BEGIN_NAMESPACE
+DWIDGET_USE_NAMESPACE
 
 DFMSideBarBookmarkItem::DFMSideBarBookmarkItem(const DUrl &url, QWidget *parent)
     : DFMSideBarItem(url, parent)
@@ -88,14 +91,27 @@ QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
         fileService->deleteFiles(this, DUrlList{url()}, false);
     });
 
-    menu->addAction(QObject::tr("Properties"), [this]() {
+    menu->addAction(QObject::tr("Properties"), [ = ]() {
         DUrlList list;
-
-        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url());
-
         list.append(info->redirectedFileUrl());
         fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(this, list));
     })->setEnabled(fileExist);
+
+#ifndef QT_NO_DEBUG
+    menu->addAction(QStringLiteral("Debug Info"), [ = ]() {
+        const DAbstractFileInfo * infoData = info.constData();
+        const BookMark * bookmarkInfo = static_cast<const BookMark*>(infoData);
+        DDialog d;
+        QString messageLines;
+        messageLines.append("Bookmark Url: " + url().toString() + "\n");
+        messageLines.append(QStringLiteral("(i) Bookmark Exist: ") + (info->exists() ? "Y" : "N") + "\n");
+        messageLines.append("(i) Bookmark Mount Point: " + bookmarkInfo->mountPoint + "\n");
+        messageLines.append("(i) Bookmark Locate Url: " + bookmarkInfo->locateUrl + "\n");
+        d.setMessage(messageLines);
+        d.addButton("Gotcha", true, DDialog::ButtonNormal);
+        d.exec();
+    });
+#endif
 
     return menu;
 }

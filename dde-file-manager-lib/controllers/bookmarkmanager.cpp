@@ -112,9 +112,12 @@ bool BookMarkManager::renameFile(const QSharedPointer<DFMRenameEvent> &event) co
 
             DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
             BookMark *new_item = new BookMark(event->toUrl());
+            QUrlQuery query(event->toUrl());
 
             new_item->m_created = item->m_created;
             new_item->m_lastModified = QDateTime::currentDateTime();
+            new_item->mountPoint = query.queryItemValue("mount_point");
+            new_item->locateUrl = query.queryItemValue("locate_url");
 
             m_bookmarks[event->toUrl().bookmarkTargetUrl()] = new_item;
             break;
