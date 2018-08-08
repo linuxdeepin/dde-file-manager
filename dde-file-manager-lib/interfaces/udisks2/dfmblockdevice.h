@@ -116,6 +116,7 @@ public:
 
     ~DFMBlockDevice();
 
+    bool isValid() const;
     bool watchChanges() const;
 
     QString path() const;

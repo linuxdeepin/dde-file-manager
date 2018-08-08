@@ -118,6 +118,13 @@ DFMBlockDevice::~DFMBlockDevice()
 
 }
 
+bool DFMBlockDevice::isValid() const
+{
+    Q_D(const DFMBlockDevice);
+
+    return d->dbus->isValid();
+}
+
 bool DFMBlockDevice::watchChanges() const
 {
     Q_D(const DFMBlockDevice);
