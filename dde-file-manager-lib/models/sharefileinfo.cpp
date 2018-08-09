@@ -104,11 +104,17 @@ QVector<MenuAction> ShareFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
                    << MenuAction::SortBy;
     } else if (type == SingleFile){
         if(isDir()){
+            bool useRemoveBookmarkAction = false;
+            DUrl schemeAlteredUrl = fileUrl();
+            schemeAlteredUrl.setScheme(FILE_SCHEME);
+            if (DFileService::instance()->createFileInfo(nullptr, DUrl::fromBookMarkFile(schemeAlteredUrl, QString()))) {
+                useRemoveBookmarkAction = true;
+            }
             actionKeys << MenuAction::Open
                        << MenuAction::OpenInNewWindow
                        << MenuAction::OpenInNewTab
                        << MenuAction::Separator
-                       << MenuAction::AddToBookMark
+                       << (useRemoveBookmarkAction ? MenuAction::BookmarkRemove : MenuAction::AddToBookMark)
                        << MenuAction::UnShare;
         }
         actionKeys << MenuAction::Separator
