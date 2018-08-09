@@ -116,6 +116,16 @@ bool ShareControler::unShareFolder(const QSharedPointer<DFMCancelFileShareEvent>
     return DFileService::instance()->unShareFolder(event->sender(), realUrl(event->url()));
 }
 
+bool ShareControler::addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const
+{
+    return DFileService::instance()->addToBookmark(event->sender(), realUrl(event->url()));
+}
+
+bool ShareControler::removeBookmark(const QSharedPointer<DFMRemoveBookmarkEvent> &event) const
+{
+    return DFileService::instance()->removeBookmark(nullptr, realUrl(event->url()));
+}
+
 DUrl ShareControler::realUrl(const DUrl &shareUrl)
 {
     DUrl ret = shareUrl;

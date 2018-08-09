@@ -24,6 +24,9 @@ public:
 
     bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const Q_DECL_OVERRIDE;
 
+    bool addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const override;
+    bool removeBookmark(const QSharedPointer<DFMRemoveBookmarkEvent> &event) const override;
+
 private:
     static DUrl realUrl(const DUrl &shareUrl);
 };
