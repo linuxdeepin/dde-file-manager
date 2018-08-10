@@ -589,6 +589,10 @@ void ComputerView::initUI()
     loadCustomItems();
     loadNativeItems();
 
+    if (m_nativeItems.count() == 0) {
+        m_nativeTitleLine->hide();
+    }
+
     if (m_removableItems.count() == 0) {
         m_removableTitleLine->hide();
     }
@@ -848,6 +852,9 @@ void ComputerView::volumeAdded(UDiskDeviceInfoPointer device)
     if (device->getMediaType() == UDiskDeviceInfo::native) {
         m_nativeFlowLayout->addWidget(item);
         m_nativeItems.insert(device->getId(), item);
+        if (m_nativeItems.count() > 0) {
+            m_nativeTitleLine->show();
+        }
     } else {
         m_removableFlowLayout->addWidget(item);
         m_removableItems.insert(device->getId(), item);
@@ -879,6 +886,9 @@ void ComputerView::volumeRemoved(UDiskDeviceInfoPointer device)
         m_nativeItems.remove(id);
         item->setParent(NULL);
         delete item;
+        if (m_nativeItems.count() == 0) {
+            m_nativeTitleLine->hide();
+        }
     } else if (m_removableItems.contains(id)) {
         ComputerViewItem *item = m_removableItems.value(id);
         m_removableFlowLayout->removeWidget(item);
