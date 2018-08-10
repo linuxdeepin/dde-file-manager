@@ -138,6 +138,8 @@ QString DFileCopyMoveJobPrivate::errorToString(DFileCopyMoveJob::Error error)
         return qApp->translate("DFileCopyMoveJob", "File integrity was damaged");
     case DFileCopyMoveJob::TargetReadOnlyError:
         return qApp->translate("DFileCopyMoveJob", "The target device is read only");
+    case DFileCopyMoveJob::TargetIsSelfError:
+        return qApp->translate("DFileCopyMoveJob", "Target folder is inside the source folder");
     default:
         break;
     }
@@ -216,6 +218,7 @@ DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::handleError(const DAbstractFil
         switch (error) {
         case DFileCopyMoveJob::PermissionError:
         case DFileCopyMoveJob::UnknowUrlError:
+        case DFileCopyMoveJob::TargetIsSelfError:
             lastErrorHandleAction = DFileCopyMoveJob::SkipAction;
             unsetError();
             break;
@@ -482,6 +485,21 @@ create_new_file_info:
             }
         }
 
+        // 禁止目录复制/移动到自己里面
+        if (new_file_info->isAncestorsUrl(source_info->fileUrl())) {
+            setError(DFileCopyMoveJob::TargetIsSelfError);
+
+            DFileCopyMoveJob::Action action = handleError(source_info.constData(), new_file_info.constData());
+
+            if (action == DFileCopyMoveJob::SkipAction) {
+                return true;
+            }
+
+            if (action != DFileCopyMoveJob::EnforceAction) {
+                return false;
+            }
+        }
+
         bool source_is_file = source_info->isFile() || source_info->isSymLink();
         bool target_is_file = new_file_info->isFile() || new_file_info->isSymLink();
 
@@ -615,6 +633,21 @@ process_file:
 
         return ok;
     } else if (source_info->isDir()) {
+        // 禁止目录复制/移动到自己里面
+        if (new_file_info->isAncestorsUrl(source_info->fileUrl())) {
+            setError(DFileCopyMoveJob::TargetIsSelfError);
+
+            DFileCopyMoveJob::Action action = handleError(source_info.constData(), new_file_info.constData());
+
+            if (action == DFileCopyMoveJob::SkipAction) {
+                return true;
+            }
+
+            if (action != DFileCopyMoveJob::EnforceAction) {
+                return false;
+            }
+        }
+
         bool ok = true;
         qint64 size = source_info->size();
 
@@ -1390,6 +1423,8 @@ DFileCopyMoveJob::Actions DFileCopyMoveJob::supportActions(DFileCopyMoveJob::Err
     case DirectoryExistsError:
         return SkipAction | MergeAction | CoexistAction | CancelAction;
     case TargetReadOnlyError:
+        return SkipAction | EnforceAction;
+    case TargetIsSelfError:
         return SkipAction | EnforceAction;
     default:
         break;

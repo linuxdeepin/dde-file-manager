@@ -79,6 +79,7 @@ public:
         FileSizeTooBigError,
         NotEnoughSpaceError,
         TargetReadOnlyError,
+        TargetIsSelfError,
         UnknowError
     };
 
