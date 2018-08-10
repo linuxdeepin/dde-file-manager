@@ -693,9 +693,13 @@ bool FileUtils::isFileRunnable(const QString &path)
         mimetype = getFileMimetype(path);
     }
 
-    if (mimetype == "application/x-executable" \
-        || mimetype == "application/x-sharedlib" \
-        || mimetype == "application/x-iso9660-appimage") {
+    // blumia: about AppImage mime type, please refer to:
+    //         https://cgit.freedesktop.org/xdg/shared-mime-info/tree/freedesktop.org.xml.in
+    //         btw, consider using MimeTypeDisplayManager::ExecutableMimeTypes(private) ?
+    if (mimetype == "application/x-executable"
+        || mimetype == "application/x-sharedlib"
+        || mimetype == "application/x-iso9660-appimage"
+        || mimetype == "application/vnd.appimage") {
         return isFileExecutable(_path);
     }
 
