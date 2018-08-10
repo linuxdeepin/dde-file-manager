@@ -934,40 +934,39 @@ QSize TabBar::tabSizeHint(const int &index)
         return (QSize(averageWidth,24));
 }
 
-void TabBar:: updateScreen()
+void TabBar::updateScreen()
 {
     int counter = 0;
     int lastX = 0;
-    for(auto tab:m_tabs){
-        QRect rect(lastX,0,tabSizeHint(counter).width(),tabSizeHint(counter).height());
+    for (Tab* tab : m_tabs) {
+        QRect rect(lastX,0,tabSizeHint(counter).width(), tabSizeHint(counter).height());
         lastX = rect.x() + rect.width();
-        if(tab->isDragging()){
+        if (tab->isDragging()) {
             counter ++ ;
             continue;
         }
-        if(!m_lastAddTabState){
+        if (!m_lastAddTabState) {
             QPropertyAnimation *animation = new QPropertyAnimation(tab,"geometry");
             animation->setDuration(100);
             animation->setStartValue(tab->geometry());
             animation->setEndValue(rect);
             animation->start();
 
-            connect(animation,&QPropertyAnimation::finished,[=]{
+            connect(animation, &QPropertyAnimation::finished, tab, [=] {
                 animation->deleteLater();
 
-                if(m_TabCloseButton->closingIndex() == counter){
+                if (m_TabCloseButton->closingIndex() == counter) {
                     m_TabCloseButton->setPos(tab->x()+tab->width()-26,0);
                 }
-                if((m_TabCloseButton->closingIndex()>=count()||m_TabCloseButton->closingIndex()<0)
-                        &&m_lastDeleteState){
+                if ((m_TabCloseButton->closingIndex()>=count() || m_TabCloseButton->closingIndex()<0) && m_lastDeleteState) {
                     m_lastDeleteState = false;
                 }
-
             });
-        }
-        else
+        } else {
             tab->setGeometry(rect);
-        counter ++;
+        }
+
+        counter++;
     }
 
     updateSceneRect(m_scene->sceneRect());
