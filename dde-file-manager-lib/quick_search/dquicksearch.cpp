@@ -42,11 +42,11 @@ extern "C"
 #include "dfileinfo.h"
 #include "dquicksearch.h"
 #include "shutil/dquicksearchfilter.h"
-
+#include "dstorageinfo.h"
 
 #include <QDebug>
 
-
+DFM_USE_NAMESPACE
 
 #define MAX_RESULTS 100
 
@@ -174,60 +174,12 @@ static std::multimap<QString, QString>  query_partions_of_devices()
 
 
 ///###: get the specify url's partion and device.
-static QPair<QString, QString> get_mount_point_of_file(const QString &local_path, std::multimap<QString, QString> &partionsAndMountPoints)
+static QPair<QString, QString> get_mount_point_of_file(const QString &local_path)
 {
     QPair<QString, QString> partionAndMountPoint{};
+    DStorageInfo info(local_path);
 
-    if (QFileInfo::exists(local_path) && !partionsAndMountPoints.empty()) {
-        QString parent_path{};
-
-        if (local_path == QString{"/"} || local_path == QString{"//"}) {
-            parent_path = QString{"/"};
-
-        } else {
-            int index{ local_path.lastIndexOf("/") };
-            parent_path = local_path.left(index);
-        }
-
-#ifdef QT_DEBUG
-        qDebug() << parent_path;
-#endif //QT_DEBUG
-
-        std::multimap<QString, QString>::const_iterator partionAndMounpointItr{};
-        std::multimap<QString, QString>::const_iterator rootPathPartionAndMountpointItr{};
-
-        std::multimap<QString, QString>::const_iterator itrOfPartionAndMountpoint{ partionsAndMountPoints.cbegin() };
-        std::multimap<QString, QString>::const_iterator itrOfPartionAndMountpointEnd{ partionsAndMountPoints.cend() };
-
-        for (; itrOfPartionAndMountpoint != itrOfPartionAndMountpointEnd; ++itrOfPartionAndMountpoint) {
-
-            if (itrOfPartionAndMountpoint->second == QString{ "/" }) {
-                rootPathPartionAndMountpointItr = itrOfPartionAndMountpoint;
-            }
-        }
-
-        itrOfPartionAndMountpoint = partionsAndMountPoints.cbegin();
-        itrOfPartionAndMountpointEnd = partionsAndMountPoints.cend();
-
-        for (; itrOfPartionAndMountpoint != itrOfPartionAndMountpointEnd; ++itrOfPartionAndMountpoint) {
-
-            if (itrOfPartionAndMountpoint->second != QString{ "/" } && parent_path.startsWith(itrOfPartionAndMountpoint->second)) {
-                partionAndMounpointItr = itrOfPartionAndMountpoint;
-                break;
-            }
-        }
-
-        if (partionAndMounpointItr != std::multimap<QString, QString>::const_iterator{}) {
-            partionAndMountPoint.first = partionAndMounpointItr->first;
-            partionAndMountPoint.second = partionAndMounpointItr->second;
-        }
-
-
-        if (partionAndMounpointItr == std::multimap<QString, QString>::const_iterator{} && parent_path.startsWith("/")) {
-            partionAndMountPoint.first = rootPathPartionAndMountpointItr->first;
-            partionAndMountPoint.second = rootPathPartionAndMountpointItr->second;
-        }
-    }
+    partionAndMountPoint = qMakePair(QString::fromLatin1(info.device()), info.rootPath());
 
     return partionAndMountPoint;
 }
@@ -370,8 +322,7 @@ QList<QString> DQuickSearch::search(const QString &local_path, const QString &ke
 #endif //QT_DEBUG
 
     if (QFileInfo::exists(local_path) && !key_words.isEmpty()) {
-        std::multimap<QString, QString> devices_and_mount_points{ detail::query_partions_of_devices() };
-        QPair<QString, QString> device_and_mount_point{ detail::get_mount_point_of_file(local_path, devices_and_mount_points) };
+        QPair<QString, QString> device_and_mount_point{ detail::get_mount_point_of_file(local_path) };
         std::map<QString, QString>::const_iterator pos{ m_mount_point_and_lft_buf.find(device_and_mount_point.second) };
 
         ///###: adler32 check.
@@ -433,30 +384,21 @@ QList<QString> DQuickSearch::search(const QString &local_path, const QString &ke
                     }
 
                     std::vector<std::uint32_t> vec_names_off{};
-                    std::uint32_t total = count;
 
-                    while (count == 100) {
-                        std::uint32_t names_off[100] {};
+                    while (count == MAX_RESULTS) {
                         search_files(buf, &start_off, end_off, &compiled, match_regex, name_offs, &count);
 
-                        for (std::size_t index = 0; index < 100; ++index) {
-                            vec_names_off.push_back(names_off[index]);
+                        for (std::size_t index = 0; index < count; ++index) {
+                            vec_names_off.push_back(name_offs[index]);
                         }
-
-                        total += count;
                     }
 
-                    std::vector<std::uint32_t>::const_iterator off_beg{ vec_names_off.cbegin() };
-
-                    for (std::uint32_t index = count; index < total; ++index) {
-                        char *file_or_dir_name{ get_path_by_name_off(buf, *off_beg, path, sizeof(path)) };
+                    for (std::uint32_t off_beg : vec_names_off) {
+                        char *file_or_dir_name{ get_path_by_name_off(buf, off_beg, path, sizeof(path)) };
 
                         if (file_or_dir_name && !DQuickSearchFilter::instance()->whetherFilterCurrentFile(QByteArray{ file_or_dir_name })) {
                             searched_list.push_back(QString{ file_or_dir_name });
                         }
-
-                        ++off_beg;
-
 #ifdef QT_DEBUG
                         qDebug() << file_or_dir_name;
 #endif //QT_DEBUG
@@ -483,7 +425,6 @@ void DQuickSearch::filesWereCreated(const QList<QByteArray> &files_path)
 
     if (files_path.isEmpty()) {
         fs_change changes[10] {};
-        std::multimap<QString, QString> devices_and_mount_points{ detail::query_partions_of_devices() };
         std::function<bool(const QString &)> update_adler32_backup{
             [](const QString & mount_point)->bool
             {
@@ -505,11 +446,10 @@ void DQuickSearch::filesWereCreated(const QList<QByteArray> &files_path)
             QFileInfo file_info{ path_str };
 
             if (m_flag.load(std::memory_order_consume)) {
-                devices_and_mount_points = detail::query_partions_of_devices();
                 m_flag.store(false, std::memory_order_release);
             }
 
-            QPair<QString, QString> device_and_mount_point{ detail::get_mount_point_of_file(path, devices_and_mount_points) };
+            QPair<QString, QString> device_and_mount_point{ detail::get_mount_point_of_file(path) };
             std::map<QString, QString>::const_iterator pos{ m_mount_point_and_lft_buf.find(device_and_mount_point.second) };
 
             if (pos == m_mount_point_and_lft_buf.cend()) {
@@ -570,7 +510,6 @@ void DQuickSearch::filesWereDeleted(const QList<QByteArray> &files_path)
     if (files_path.isEmpty()) {
         fs_change changes[10] {};
         std::uint32_t change_count{  sizeof(changes) / sizeof(fs_change) };
-        std::multimap<QString, QString> devices_and_mount_points{ detail::query_partions_of_devices() };
         std::function<bool(const QString &)> update_adler32_backup{
             [](const QString & mount_point)->bool
             {
@@ -590,11 +529,10 @@ void DQuickSearch::filesWereDeleted(const QList<QByteArray> &files_path)
         for (const QByteArray &path : files_path) {
 
             if (m_flag.load(std::memory_order_consume)) {
-                devices_and_mount_points = detail::query_partions_of_devices();
                 m_flag.store(false, std::memory_order_release);
             }
 
-            QPair<QString, QString> device_and_mount_point{ detail::get_mount_point_of_file(path, devices_and_mount_points) };
+            QPair<QString, QString> device_and_mount_point{ detail::get_mount_point_of_file(path) };
             std::map<QString, QString>::const_iterator pos{ m_mount_point_and_lft_buf.find(device_and_mount_point.second) };
 
 
@@ -629,7 +567,6 @@ void DQuickSearch::filesWereRenamed(const QList<QPair<QByteArray, QByteArray> > 
     if (files_path.isEmpty()) {
         fs_change changes[10] {};
         std::uint32_t change_count{  sizeof(changes) / sizeof(fs_change) };
-        std::multimap<QString, QString> devices_and_mount_points{ detail::query_partions_of_devices() };
         std::function<bool(const QString &)> update_adler32_backup{
             [](const QString & mount_point)->bool
             {
@@ -650,11 +587,10 @@ void DQuickSearch::filesWereRenamed(const QList<QPair<QByteArray, QByteArray> > 
             QString path_str{ QString::fromLocal8Bit(old_and_new_name.second) };
 
             if (m_flag.load(std::memory_order_consume)) {
-                devices_and_mount_points = detail::query_partions_of_devices();
                 m_flag.store(false, std::memory_order_release);
             }
 
-            QPair<QString, QString> device_and_mount_point{ detail::get_mount_point_of_file(path_str, devices_and_mount_points) };
+            QPair<QString, QString> device_and_mount_point{ detail::get_mount_point_of_file(path_str) };
             std::map<QString, QString>::const_iterator pos{ m_mount_point_and_lft_buf.find(device_and_mount_point.second) };
 
             if (pos == m_mount_point_and_lft_buf.cend()) {
@@ -698,10 +634,7 @@ bool DQuickSearch::createCache()
 
 QPair<QString, QString> DQuickSearch::getDevAndMountPoint(const QString &local_path)
 {
-    std::multimap<QString, QString> devices_and_mount_points{ detail::query_partions_of_devices() };
-    QPair<QString, QString> device_and_mount_point{ detail::get_mount_point_of_file(local_path, devices_and_mount_points) };
-
-    return device_and_mount_point;
+    return detail::get_mount_point_of_file(local_path);
 }
 
 
