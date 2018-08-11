@@ -109,7 +109,13 @@ RequestEP *RequestEP::instance()
 
 RequestEP::~RequestEP()
 {
+    requestEPFilesLock.lockForWrite();
+    requestEPFiles.clear();
+    requestEPFilesLock.unlock();
 
+    if (!wait(1000)) {
+        terminate();
+    }
 }
 
 void RequestEP::run()
