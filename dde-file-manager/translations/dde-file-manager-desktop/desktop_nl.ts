@@ -14,7 +14,7 @@
         <message>
             <location filename="Desktop Action new-window]Name" line="0"/>
             <source>New Window</source>
-            <translation>Nieuw Venster</translation>
+            <translation>Nieuw venster</translation>
         </message>
     </context>
 </TS>

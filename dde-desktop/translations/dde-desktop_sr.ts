@@ -29,7 +29,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="2297"/>
         <source>Set Wallpaper</source>
-        <translation>Постави тапет</translation>
+        <translation>Постави позадину</translation>
     </message>
 </context>
 <context>
@@ -93,7 +93,7 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Launcher</source>
-        <translation>Покретач</translation>
+        <translation>Полетник</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>

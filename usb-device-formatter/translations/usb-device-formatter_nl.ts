@@ -4,7 +4,7 @@
     <message>
         <location filename="../view/finishpage.cpp" line="42"/>
         <source>Format successfully</source>
-        <translation>Formatteren is gelukt</translation>
+        <translation>Geformatteerd</translation>
     </message>
 </context>
 <context>
@@ -12,7 +12,7 @@
     <message>
         <location filename="../view/formatingpage.cpp" line="43"/>
         <source>Formating, please wait for a minute...</source>
-        <translation>Aan het formatteren, even geduld a.u.b...</translation>
+        <translation>Bezig met formatteren; even geduld...</translation>
     </message>
 </context>
 <context>
@@ -35,7 +35,7 @@
     <message>
         <location filename="../view/mainpage.cpp" line="154"/>
         <source>This operation will clear all data from your device.</source>
-        <translation>Deze actie verwijdert alle data van uw usb-apparaat.</translation>
+        <translation>Deze actie verwijdert alle gegevens van je USB-apparaat.</translation>
     </message>
 </context>
 <context>
@@ -49,12 +49,12 @@
     <message>
         <location filename="../view/mainwindow.cpp" line="190"/>
         <source>Continue</source>
-        <translation>Verdergaan</translation>
+        <translation>Doorgaan</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="195"/>
         <source>Formatting...</source>
-        <translation>Aan het formatteren...</translation>
+        <translation>Bezig met formatteren...</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="219"/>
@@ -87,7 +87,7 @@
     <message>
         <location filename="../dialogs/messagedialog.cpp" line="43"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>Oké</translation>
     </message>
 </context>
 <context>
@@ -108,7 +108,7 @@
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
         <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
-        <translation>Met de actie &apos;Formatteren&apos; wist u alle gegevens van uw usb-apparaat, bent u zeker dat u verder wil gaan? Deze actie kan niet ongedaan gemaakt worden.</translation>
+        <translation>Met de actie &apos;Formatteren&apos; wis je alle gegevens van je USB-apparaat. Weet je zeker dat je verder wilt gaan? Deze actie kan niet ongedaan worden gemaakt.</translation>
     </message>
 </context>
 </TS>
