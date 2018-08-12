@@ -1,3 +1,27 @@
+<a name="4.6.5"></a>
+## 4.6.5 (2018-08-12)
+
+
+#### Bug Fixes
+
+*   crash at ErrorHandle::timerEvent, because the pasteFilesV2 function is exit ([4780ecd6](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/4780ecd615203b4e6512ed2fa5da6147328e535a))
+*   the search result is incomplete on quick search ([c147323b](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/c147323bb4292d5d52d67f8818bd639f6ddd7008))
+* **bookmark:**  Bookmark rename fix ([9416dd71](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/9416dd71eea834d3a5c9fb59755e9f2ea0648fbe))
+* **desktop:**  set desktop item active ([37c127c3](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/37c127c33e338a45732f8ad847e4b0a7ed9514cb))
+* **mime:**  support another appimage mime type ([6f72016f](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/6f72016fc1f437ceff83617509af295aa68a3cf7))
+* **preview:**  preview dlg always at center ([78a5a6a2](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/78a5a6a26abfaa660a8a9e247ffeb83441e6acb0))
+* **share:**  Now can add bookmark ([e1ae9a8b](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/e1ae9a8b832029e10cb2cbfb992c616cc5314453))
+* **tab:**  do not exec lambda if tab no longer valid ([a499cdf7](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/a499cdf78341420ddc5f63afb73f840709993b03))
+* **trash:**  Press delete key will ask for comfirm ([77aa2352](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/77aa23525a8feb1c677ce9fe45c922773f8cbf63))
+* **view:**  fast switching view may lead crash ([64069332](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/640693327a0585da4f7691e9c48b1e00571014e2))
+
+#### Features
+
+*   add the "TargetIsSelfError" error type(DFileCopyMoveJob) ([dadaeb85](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/dadaeb850b7aa35ae548f31c2d9cef5939e76900))
+* **computerView:**  hide internal disk header if no item avaliable ([2419cce3](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/2419cce3b50333582b24764363ffe7eef107c6cd))
+
+
+
 <a name="4.6.4"></a>
 ## 4.6.4 (2018-08-08)
 
