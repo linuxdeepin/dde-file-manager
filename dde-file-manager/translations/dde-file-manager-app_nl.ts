@@ -4,12 +4,12 @@
     <message>
         <location filename="../main.cpp" line="142"/>
         <source>Deepin File Manager</source>
-        <translation>Deepin File Manager</translation>
+        <translation>Deepin Bestandsbeheer</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="147"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
-        <translation>Bestandsbeheer is een hulpmiddel, onafhankelijk ontwikkeld door Deepin Technology, voor het beheren van bestanden. Het bevat vele bestandsbeheer functies zoals zoeken, kopiëren, verwijderen, compressie / decompressie en mogelijkheden m.b.t. bestandseigenschappen.</translation>
+        <translation>Bestandsbeheer is een hulpmiddel voor het beheren van bestanden, onafhankelijk ontwikkeld door Deepin Technology. Het bevat vele bestandsbeheerfuncties, zoals zoeken, kopiëren, verwijderen, compressie/decompressie en overige bestandsbeheerfuncties.</translation>
     </message>
 </context>
 </TS>

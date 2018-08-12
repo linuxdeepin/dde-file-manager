@@ -47,7 +47,7 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="40"/>
         <source>Medium</source>
-        <translation>Medium</translation>
+        <translation>Normaal</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="41"/>
@@ -78,12 +78,12 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Fast Screen Off</source>
-        <translation>Snel scherm uit</translation>
+        <translation>Scherm snel uitschakelen</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Control Center</source>
-        <translation>Controle Centrum</translation>
+        <translation>Configuratiecentrum</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>

@@ -2,9 +2,9 @@
 <context>
     <name>AppController</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="355"/>
+        <location filename="../controllers/appcontroller.cpp" line="343"/>
         <source>New Folder</source>
-        <translation type="unfinished"/>
+        <translation>Nieuwe map</translation>
     </message>
 </context>
 <context>
@@ -17,53 +17,53 @@
     <message>
         <location filename="../dialogs/closealldialogindicator.cpp" line="71"/>
         <source>Total size is %1, contains %2 files</source>
-        <translation>Totale grootte is %1, bevat %2 bestanden</translation>
+        <translation>Totale grootte is %1 - bevat %2 bestanden</translation>
     </message>
 </context>
 <context>
     <name>ComputerPropertyDialog</name>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="50"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="60"/>
         <source>Computer</source>
         <translation>Computer</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="61"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="71"/>
         <source>Basic Info</source>
-        <translation>Basisinfo</translation>
+        <translation>Basisinformatie</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="70"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="80"/>
         <source>Computer Name</source>
         <translation>Computernaam</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="71"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="81"/>
         <source>Version</source>
         <translation>Versie</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="72"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="82"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="73"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="83"/>
         <source>Processor</source>
         <translation>Processor</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="74"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="84"/>
         <source>Memory</source>
         <translation>Geheugen</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="75"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="85"/>
         <source>Disk</source>
         <translation>Schijf</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="200"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="211"/>
         <source>Bit</source>
         <translation>Bit</translation>
     </message>
@@ -73,17 +73,17 @@
     <message>
         <location filename="../views/computerview.cpp" line="547"/>
         <source>My Directories</source>
-        <translation>Mijn Mappen</translation>
+        <translation>Mijn mappen</translation>
     </message>
     <message>
         <location filename="../views/computerview.cpp" line="553"/>
         <source>Internal Disk</source>
-        <translation>Interne Schijf</translation>
+        <translation>Interne schijf</translation>
     </message>
     <message>
         <location filename="../views/computerview.cpp" line="559"/>
         <source>External Disk</source>
-        <translation>Externe Schijf</translation>
+        <translation>Externe schijf</translation>
     </message>
     <message>
         <location filename="../views/computerview.cpp" line="676"/>
@@ -94,187 +94,200 @@
 <context>
     <name>DFMAddressBar</name>
     <message>
-        <location filename="../views/dfmaddressbar.cpp" line="322"/>
+        <location filename="../views/dfmaddressbar.cpp" line="323"/>
         <source>Search or enter address</source>
-        <translation type="unfinished"/>
+        <translation>Zoek of voer een adres in</translation>
+    </message>
+</context>
+<context>
+    <name>DFMTagCrumbController</name>
+    <message>
+        <location filename="../controllers/dfmtagcrumbcontroller.cpp" line="55"/>
+        <source>Tag information</source>
+        <translation>Labelinformatie</translation>
     </message>
 </context>
 <context>
     <name>DFileCopyMoveJob</name>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="106"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="112"/>
         <source>Permission error</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="108"/>
-        <source>The action is denied</source>
-        <translation type="unfinished"/>
+        <translation>Machtigingsfout</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="114"/>
-        <source>Failed to open the file</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="116"/>
-        <source>Failed to read the file</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="118"/>
-        <source>Failed to write the file</source>
-        <translation type="unfinished"/>
+        <source>The action is denied</source>
+        <translation>De actie is niet toegestaan</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="120"/>
-        <source>Failed to create the directory</source>
-        <translation type="unfinished"/>
+        <source>Failed to open the file</source>
+        <translation>Openen van bestand mislukt</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="122"/>
-        <source>Failed to delete the file</source>
-        <translation type="unfinished"/>
+        <source>Failed to read the file</source>
+        <translation>Lezen van bestand mislukt</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="124"/>
-        <source>Failed to move the file</source>
-        <translation type="unfinished"/>
+        <source>Failed to write the file</source>
+        <translation>Schrijven naar bestand mislukt</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="126"/>
-        <source>Original file does not exist</source>
-        <translation type="unfinished"/>
+        <source>Failed to create the directory</source>
+        <translation>Creëren van map mislukt</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="128"/>
-        <source>Failed, file size must be less than 4GB</source>
-        <translation type="unfinished"/>
+        <source>Failed to delete the file</source>
+        <translation>Verwijderen van bestand mislukt</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="130"/>
-        <source>Target disk doesn&apos;t have enough space</source>
-        <translation type="unfinished"/>
+        <source>Failed to move the file</source>
+        <translation>Verplaatsen van bestand mislukt</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="132"/>
-        <source>File integrity was damaged</source>
-        <translation type="unfinished"/>
+        <source>Original file does not exist</source>
+        <translation>Origineel bestand bestaat niet</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="134"/>
-        <source>The target device is read only</source>
-        <translation type="unfinished"/>
+        <source>Failed, file size must be less than 4GB</source>
+        <translation>Mislukt; de bestandsgrootte moet kleiner dan 4 GB zijn</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="366"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="136"/>
+        <source>Target disk doesn&apos;t have enough space</source>
+        <translation>De doelschijf heeft niet genoeg vrije ruimte</translation>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="138"/>
+        <source>File integrity was damaged</source>
+        <translation>De bestandsintegriteit is beschadigd</translation>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="140"/>
+        <source>The target device is read only</source>
+        <translation>Het doelapparaat is alleen-lezen</translation>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="142"/>
+        <source>Target folder is inside the source folder</source>
+        <translation>De doelmap bevindt zich in de hoofdmap!</translation>
+    </message>
+    <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="387"/>
         <source>copy</source>
         <comment>Extra name added to new file name when used for file name.</comment>
-        <translation type="unfinished"/>
+        <translation>kopiëren</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="605"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="681"/>
         <source>Failed to create the directory, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>Creëren van map mislukt. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="690"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="712"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="778"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="800"/>
         <source>Failed to open the file, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>Openen van bestand mislukt. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="769"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="857"/>
         <source>Failed to read the file, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>Lezen van bestand mislukt. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="801"/>
-        <source>Failed to write the file, , cause: %1</source>
-        <translation type="unfinished"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="889"/>
+        <source>Failed to write the file, cause: %1</source>
+        <translation>Schrijven naar bestand mislukt. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="876"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="964"/>
         <source>File integrity was damaged, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>Bestandsintegriteit is beschadigd. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="929"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1019"/>
         <source>Failed to delete the file, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>Verwijderen van bestand mislukt. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="983"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1079"/>
         <source>Fail to create symlink, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>Creëren van zachte koppeling mislukt. Oorzaak: %1</translation>
     </message>
 </context>
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="997"/>
-        <source>%1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <location filename="../views/dfiledialog.cpp" line="998"/>
-        <source>Cancel</source>
-        <translation type="unfinished"/>
+        <source>%1 already exists, do you want to replace it?</source>
+        <translation>%1 bestaat al. Wil je het vervangen?</translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="999"/>
+        <source>Cancel</source>
+        <translation>Annuleren</translation>
+    </message>
+    <message>
+        <location filename="../views/dfiledialog.cpp" line="1000"/>
         <source>Replace</source>
-        <translation type="unfinished"/>
+        <translation>Vervangen</translation>
     </message>
 </context>
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="829"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="832"/>
         <source>Dark Theme</source>
-        <translation type="unfinished"/>
+        <translation>Donker thema</translation>
     </message>
 </context>
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="608"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="641"/>
         <location filename="../models/trashfileinfo.cpp" line="331"/>
         <source>Name</source>
         <translation>Naam</translation>
     </message>
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="987"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="610"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="643"/>
         <location filename="../models/searchfileinfo.cpp" line="121"/>
         <source>Time modified</source>
         <translation>Tijdstip wijziging</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="612"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="645"/>
         <source>Size</source>
         <translation>Grootte</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="614"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="647"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="616"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="649"/>
         <source>Time created</source>
-        <translation>Tijdstip aangemaakt</translation>
+        <translation>Tijdstip gecreëerd</translation>
     </message>
     <message>
         <location filename="../models/searchfileinfo.cpp" line="119"/>
         <source>Path</source>
-        <translation type="unfinished"/>
+        <translation>Pad</translation>
     </message>
 </context>
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2508"/>
+        <location filename="../views/dfileview.cpp" line="2534"/>
         <source>(Reverse)</source>
         <translation>(Omkeren)</translation>
     </message>
@@ -284,7 +297,7 @@
     <message>
         <location filename="../interfaces/dfileviewhelper.cpp" line="525"/>
         <source>Add tag &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Label &quot;%1&quot; toevoegen</translation>
     </message>
 </context>
 <context>
@@ -292,22 +305,22 @@
     <message>
         <location filename="../views/dstatusbar.cpp" line="65"/>
         <source>%1 item</source>
-        <translation>%1 object</translation>
+        <translation>%1 item</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="66"/>
         <source>%1 items</source>
-        <translation>%1 objecten</translation>
+        <translation>%1 items</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="67"/>
         <source>%1 item selected</source>
-        <translation>%1 object geselecteerd</translation>
+        <translation>%1 item geselecteerd</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="68"/>
         <source>%1 items selected</source>
-        <translation>%1 objecten geselecteerd</translation>
+        <translation>%1 items geselecteerd</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="69"/>
@@ -347,261 +360,277 @@
     <message>
         <location filename="../views/dstatusbar.cpp" line="444"/>
         <source>Loading...</source>
-        <translation>Laden...</translation>
+        <translation>Bezig met laden...</translation>
+    </message>
+</context>
+<context>
+    <name>DTaskDialog</name>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="78"/>
+        <source>This action is not supported</source>
+        <translation>Deze actie wordt niet ondersteund</translation>
+    </message>
+</context>
+<context>
+    <name>DeepinStorage</name>
+    <message>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="47"/>
+        <source>data</source>
+        <translation>gegevens</translation>
     </message>
 </context>
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="352"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="847"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="862"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="354"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="849"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="864"/>
         <source>Operation failed!</source>
         <translation>Operatie mislukt!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="353"/>
-        <source>Target folder is inside the source folder!</source>
-        <translation>Doelmap is in hoofdmap!</translation>
-    </message>
-    <message>
         <location filename="../dialogs/dialogmanager.cpp" line="355"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="769"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="782"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="791"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="809"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="854"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="865"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1202"/>
+        <source>Target folder is inside the source folder!</source>
+        <translation>De doelmap bevindt zich in de hoofdmap!</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="357"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="771"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="784"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="793"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="811"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="856"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="867"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1204"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>Oké</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="378"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="380"/>
         <source>Do you want to run %1 or display its content?</source>
-        <translation>Wil u %1 uitvoeren of de inhoud weergeven?</translation>
+        <translation>Wil je %1 uitvoeren of de inhoud ervan tonen?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="379"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="381"/>
         <source>It is an executable text file.</source>
         <translation>Dit is een uitvoerbaar tekstbestand.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="382"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="410"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="447"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="505"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="648"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="677"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="932"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1000"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="384"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="412"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="449"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="507"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="650"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="679"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="934"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1002"/>
         <source>Cancel</source>
         <translation>Annuleren</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="382"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="412"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="384"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="414"/>
         <source>Run</source>
         <translation>Uitvoeren</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="382"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="411"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="384"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="413"/>
         <source>Run in terminal</source>
-        <translation>Uitvoeren in terminal</translation>
+        <translation>Uitvoeren in terminalvenster</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="382"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="384"/>
         <source>Display</source>
-        <translation>Beeldscherm</translation>
+        <translation>Tonen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="409"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="411"/>
         <source>It is an executable file.</source>
         <translation>Dit is een uitvoerbaar bestand.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="425"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="427"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
-        <translation>&quot;%1&quot; bestaat al, gebruik astublieft een andere naam.</translation>
+        <translation>&quot;%1&quot; bestaat al. Kies een andere naam.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="427"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="677"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="894"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1022"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1143"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="429"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="679"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="896"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1024"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1145"/>
         <source>Confirm</source>
         <translation>Bevestigen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="438"/>
-        <source>Are you sure to empty %1 item?</source>
-        <translation>Weet u zeker dat u %1 object wilt legen?</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="439"/>
-        <source>Are you sure to empty %1 items?</source>
-        <translation>Weet u zeker dat u %1 objecten wilt legen?</translation>
-    </message>
-    <message>
         <location filename="../dialogs/dialogmanager.cpp" line="440"/>
-        <source>Permanently delete %1?</source>
-        <translation>%1 Permanent verwijderen?</translation>
+        <source>Are you sure to empty %1 item?</source>
+        <translation>Weet je zeker dat u %1 item wilt legen?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="441"/>
-        <source>Permanently delete %1 items?</source>
-        <translation>%1 Objecten permanent verwijderen?</translation>
+        <source>Are you sure to empty %1 items?</source>
+        <translation>Weet je zeker dat je %1 items wilt legen?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="447"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="442"/>
+        <source>Permanently delete %1?</source>
+        <translation>%1 permanent verwijderen?</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="443"/>
+        <source>Permanently delete %1 items?</source>
+        <translation>%1 items permanent verwijderen?</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="449"/>
         <source>Delete</source>
         <translation>Verwijderen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="458"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="460"/>
         <source>Empty</source>
         <translation>Leeg</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="489"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="491"/>
         <source>This action cannot be restored</source>
-        <translation>Deze actie kan niet worden hersteld</translation>
+        <translation>Deze actie kan niet ongedaan worden gemaakt</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="502"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="504"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
-        <translation>Sorry, het is niet gelukt om uw bladwijzer map te lokaliseren, wilt u het verwijderen?</translation>
+        <translation>Sorry, het is niet gelukt om je bladwijzermap te lokaliseren. Wil je het verwijderen?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="505"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="507"/>
         <source>Remove</source>
         <translation>Verwijderen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="645"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="647"/>
         <source>Disk file is being used, can not unmount now</source>
-        <translation>Schijfbestand is in gebruik, u kunt nu niet ontkoppelen</translation>
+        <translation>Schijfbestand is in gebruik; je kunt nu niet afkoppelen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="646"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="648"/>
         <source>Name: </source>
         <translation>Naam:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="648"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="650"/>
         <source>Force unmount</source>
-        <translation>Ontkoppelen forceren</translation>
+        <translation>Afkoppelen forceren</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="671"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="673"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
-        <translation>%1 dat deze snelkoppeling naar verwijst is veranderd of verplaatst</translation>
+        <translation>%1, dat naar deze snelkoppeling verwijst, is gewijzigd of verplaatst</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="675"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="677"/>
         <source>Do you want to delete this shortcut？</source>
-        <translation>Wilt u deze snelkoppeling verwijderen?</translation>
+        <translation>Wil je deze snelkoppeling verwijderen?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="705"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="707"/>
         <source>Version:</source>
         <translation>Versie:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="707"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="709"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
-        <translation>Bestandsbeheer is een hulpmiddel, onafhankelijk ontwikkeld door Deepin Technology, voor het beheren van bestanden. Het bevat vele bestandsbeheer functies zoals zoeken, kopiëren, verwijderen, compressie / decompressie en mogelijkheden m.b.t. bestandseigenschappen.</translation>
+        <translation>Bestandsbeheer is een hulpmiddel voor het beheren van bestanden, onafhankelijk ontwikkeld door Deepin Technology. Het bevat vele bestandsbeheerfuncties zoals zoeken, kopiëren, verwijderen, compressie/decompressie en andere bestandsbeheerfuncties.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="768"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="770"/>
         <source>Target disk doesn&apos;t have enough space, unable to copy!</source>
-        <translation>Doelschijf heeft niet voldoende vrije ruimte, kopiëren lukt niet!</translation>
+        <translation>Doelschijf heeft niet voldoende vrije ruimte; kopiëren niet mogelijk!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="780"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="782"/>
         <source>Failed, file size must be less than 4GB.</source>
-        <translation>Mislukt, bestandsgrootte moet minder dan 4 GB zijn.</translation>
+        <translation>Mislukt. De bestandsgrootte moet kleiner dan 4 GB zijn.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="789"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="791"/>
         <source>Fail to create symlink, cause:</source>
-        <translation>Symlink aanmaken mislukt, oorzaak:</translation>
+        <translation>Creëren van zachte koppeling mislukt. Oorzaak:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="807"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="809"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>De geselecteerde items bevatten systeembestanden of -mappen, en kunnen niet worden verwijderd</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="849"/>
-        <source>Target file removed or location changed</source>
-        <translation>Doelbestand verwijderd of locatie is gewijzigd</translation>
-    </message>
-    <message>
         <location filename="../dialogs/dialogmanager.cpp" line="851"/>
+        <source>Target file removed or location changed</source>
+        <translation>Doelbestand verwijderd of gewijzigde locatie</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="853"/>
         <source>%1 files failed to restore, target file removed or location changed</source>
-        <translation>%1 bestanden kunnen niet worden hersteld, doelbestand verwijderd of locatie is gewijzigd</translation>
+        <translation>%1 bestanden kunnen niet worden hersteld. Het doelbestand is verwijderd of de locatie ervan is gewijzigd</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="863"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="885"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="865"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="887"/>
         <source>You do not have permission to operate file/folder!</source>
-        <translation>U hebt geen toestemming om het bestand of map te kunnen gebruiken!</translation>
+        <translation>Je bent niet gemachtigd om deze map/dit bestand te gebruiken!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="905"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="907"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
-        <translation>Sorry, u heeft geen toestemming om het/de volgende %1 bestand(en)/map(pen) te gebruiken!</translation>
+        <translation>Sorry, je bent niet gemachtigd om het/de volgende %1 bestand(en)/map(pen) te gebruiken!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1200"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1202"/>
         <source>Share folder can&apos;t be named after the current username</source>
-        <translation>Gedeelde mappen kunnen niet vernoemd worden naar de huidige gebruikersnaam</translation>
+        <translation>Gedeelde mappen mogen niet dezelfde naam dragen als de huidige gebruikersnaam</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="933"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="935"/>
         <source>View</source>
-        <translation>Weergeven</translation>
+        <translation>Tonen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="408"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="410"/>
         <source>Do you want to run %1?</source>
-        <translation type="unfinished"/>
+        <translation>Weet je zeker dat je %1 wilt uitvoeren?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="968"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="970"/>
         <source>Mount partition%1 to be read only</source>
-        <translation>Koppel partitie %1 om alleen-lezen te zijn</translation>
+        <translation>Koppel partitie %1 aan als alleen-lezen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="972"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="974"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
-        <translation>In Windows zullen schijven niet meer kunnen lezen en schrijven als u de optie &quot;Zet snel opstarten aan (aanbevolen)&quot; in de afsluit-instellingen inschakelt</translation>
+        <translation>In Windows zullen schijven niet meer kunnen lezen en schrijven als je de optie &quot;Snel opstarten inschakelen (aanbevolen)&quot; inschakelt in de afsluitinstellingen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="976"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="978"/>
         <source>Please restore by the following steps to normally access Windows disk</source>
-        <translation>Herstel door de volgende stappen te nemen om normaal toegang te krijgen tot de Windows-schijf</translation>
+        <translation>Herstel door de volgende stappen te ondernemen om normaal toegang te krijgen tot de Windows-schijf</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="982"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="984"/>
         <source>1. Reboot to enter Windows</source>
         <translation>1. Start opnieuw op om Windows te betreden</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="983"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="985"/>
         <source>2. Select Reboot</source>
         <translation>2. Selecteer Opnieuw opstarten</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="984"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="986"/>
         <source>3. Reboot and enter deepin</source>
         <translation>3. Start opnieuw op en selecteer deepin</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1001"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1003"/>
         <source>Reboot</source>
         <translation>Opnieuw opstarten</translation>
     </message>
@@ -679,56 +708,56 @@
         <location filename="../configure/global-setting-template-pro.js" line="5"/>
         <location filename="../configure/global-setting-template.js" line="5"/>
         <source>Basic</source>
-        <translation type="unfinished"/>
+        <translation>Basis</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="9"/>
         <location filename="../configure/global-setting-template-pro.js" line="9"/>
         <location filename="../configure/global-setting-template.js" line="9"/>
         <source>Open behavior</source>
-        <translation type="unfinished"/>
+        <translation>Open-gedrag</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="14"/>
         <location filename="../configure/global-setting-template-pro.js" line="14"/>
         <location filename="../configure/global-setting-template.js" line="14"/>
         <source>Always open folder in new window</source>
-        <translation type="unfinished"/>
+        <translation>Map altijd openen in nieuw venster</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="19"/>
         <location filename="../configure/global-setting-template-pro.js" line="19"/>
         <location filename="../configure/global-setting-template.js" line="19"/>
         <source>Open file:</source>
-        <translation type="unfinished"/>
+        <translation>Bestand openen:</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="22"/>
         <location filename="../configure/global-setting-template-pro.js" line="22"/>
         <location filename="../configure/global-setting-template.js" line="22"/>
         <source>Click</source>
-        <translation type="unfinished"/>
+        <translation>Klikken</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="23"/>
         <location filename="../configure/global-setting-template-pro.js" line="23"/>
         <location filename="../configure/global-setting-template.js" line="23"/>
         <source>Double click</source>
-        <translation type="unfinished"/>
+        <translation>Dubbelklikken</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="31"/>
         <location filename="../configure/global-setting-template-pro.js" line="31"/>
         <location filename="../configure/global-setting-template.js" line="31"/>
         <source>New window and tab</source>
-        <translation type="unfinished"/>
+        <translation>Nieuw venster en tabblad</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="35"/>
         <location filename="../configure/global-setting-template-pro.js" line="35"/>
         <location filename="../configure/global-setting-template.js" line="35"/>
         <source>Open from default window:</source>
-        <translation type="unfinished"/>
+        <translation>Openen in standaardvenster:</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="39"/>
@@ -738,7 +767,7 @@
         <location filename="../configure/global-setting-template.js" line="39"/>
         <location filename="../configure/global-setting-template.js" line="68"/>
         <source>Computer</source>
-        <translation type="unfinished"/>
+        <translation>Computer</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="40"/>
@@ -748,7 +777,7 @@
         <location filename="../configure/global-setting-template.js" line="40"/>
         <location filename="../configure/global-setting-template.js" line="69"/>
         <source>Home</source>
-        <translation type="unfinished"/>
+        <translation>Persoonlijke map</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="41"/>
@@ -758,7 +787,7 @@
         <location filename="../configure/global-setting-template.js" line="41"/>
         <location filename="../configure/global-setting-template.js" line="70"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation>Bureaublad</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="42"/>
@@ -768,7 +797,7 @@
         <location filename="../configure/global-setting-template.js" line="42"/>
         <location filename="../configure/global-setting-template.js" line="71"/>
         <source>Videos</source>
-        <translation type="unfinished"/>
+        <translation>Video&apos;s</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="43"/>
@@ -778,7 +807,7 @@
         <location filename="../configure/global-setting-template.js" line="43"/>
         <location filename="../configure/global-setting-template.js" line="72"/>
         <source>Music</source>
-        <translation type="unfinished"/>
+        <translation>Muziek</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="44"/>
@@ -788,7 +817,7 @@
         <location filename="../configure/global-setting-template.js" line="44"/>
         <location filename="../configure/global-setting-template.js" line="73"/>
         <source>Pictures</source>
-        <translation type="unfinished"/>
+        <translation>Afbeeldingen</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="45"/>
@@ -798,7 +827,7 @@
         <location filename="../configure/global-setting-template.js" line="45"/>
         <location filename="../configure/global-setting-template.js" line="74"/>
         <source>Documents</source>
-        <translation type="unfinished"/>
+        <translation>Documenten</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="46"/>
@@ -808,238 +837,238 @@
         <location filename="../configure/global-setting-template.js" line="46"/>
         <location filename="../configure/global-setting-template.js" line="75"/>
         <source>Downloads</source>
-        <translation type="unfinished"/>
+        <translation>Downloads</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="63"/>
         <location filename="../configure/global-setting-template-pro.js" line="63"/>
         <location filename="../configure/global-setting-template.js" line="63"/>
         <source>Open in new tab:</source>
-        <translation type="unfinished"/>
+        <translation>Openen op nieuw tabblad:</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="67"/>
         <location filename="../configure/global-setting-template-pro.js" line="67"/>
         <location filename="../configure/global-setting-template.js" line="67"/>
         <source>Current Directory</source>
-        <translation type="unfinished"/>
+        <translation>Huidige map</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="95"/>
         <location filename="../configure/global-setting-template-pro.js" line="95"/>
         <location filename="../configure/global-setting-template.js" line="95"/>
         <source>View</source>
-        <translation type="unfinished"/>
+        <translation>Weergave</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="99"/>
         <location filename="../configure/global-setting-template-pro.js" line="99"/>
         <location filename="../configure/global-setting-template.js" line="99"/>
         <source>Default size:</source>
-        <translation type="unfinished"/>
+        <translation>Standaardgrootte:</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="102"/>
         <location filename="../configure/global-setting-template-pro.js" line="102"/>
         <location filename="../configure/global-setting-template.js" line="102"/>
         <source>Extra small</source>
-        <translation type="unfinished"/>
+        <translation>Extra klein</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="103"/>
         <location filename="../configure/global-setting-template-pro.js" line="103"/>
         <location filename="../configure/global-setting-template.js" line="103"/>
         <source>Small</source>
-        <translation type="unfinished"/>
+        <translation>Klein</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="104"/>
         <location filename="../configure/global-setting-template-pro.js" line="104"/>
         <location filename="../configure/global-setting-template.js" line="104"/>
         <source>Medium</source>
-        <translation type="unfinished"/>
+        <translation>Normaal</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="105"/>
         <location filename="../configure/global-setting-template-pro.js" line="105"/>
         <location filename="../configure/global-setting-template.js" line="105"/>
         <source>Large</source>
-        <translation type="unfinished"/>
+        <translation>Groot</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="106"/>
         <location filename="../configure/global-setting-template-pro.js" line="106"/>
         <location filename="../configure/global-setting-template.js" line="106"/>
         <source>Extra large</source>
-        <translation type="unfinished"/>
+        <translation>Extra groot</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="112"/>
         <location filename="../configure/global-setting-template-pro.js" line="112"/>
         <location filename="../configure/global-setting-template.js" line="112"/>
         <source>Default view:</source>
-        <translation type="unfinished"/>
+        <translation>Standaardweergave:</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="116"/>
         <location filename="../configure/global-setting-template-pro.js" line="116"/>
         <location filename="../configure/global-setting-template.js" line="116"/>
         <source>Icon</source>
-        <translation type="unfinished"/>
+        <translation>Pictogrammen</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="117"/>
         <location filename="../configure/global-setting-template-pro.js" line="117"/>
         <location filename="../configure/global-setting-template.js" line="117"/>
         <source>List</source>
-        <translation type="unfinished"/>
+        <translation>Lijst</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="129"/>
         <location filename="../configure/global-setting-template-pro.js" line="129"/>
         <location filename="../configure/global-setting-template.js" line="129"/>
         <source>Hidden files</source>
-        <translation type="unfinished"/>
+        <translation>Verborgen bestanden</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="133"/>
         <location filename="../configure/global-setting-template-pro.js" line="133"/>
         <location filename="../configure/global-setting-template.js" line="133"/>
         <source>Show hidden files</source>
-        <translation type="unfinished"/>
+        <translation>Verborgen bestanden tonen</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="139"/>
         <location filename="../configure/global-setting-template-pro.js" line="139"/>
         <location filename="../configure/global-setting-template.js" line="139"/>
         <source>Hide file extension when rename</source>
-        <translation type="unfinished"/>
+        <translation>Bestandextensie verbergen tijdens naamswijzigingen</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="151"/>
         <location filename="../configure/global-setting-template-pro.js" line="151"/>
         <location filename="../configure/global-setting-template.js" line="151"/>
         <source>Advanced</source>
-        <translation type="unfinished"/>
+        <translation>Geavanceerd</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="155"/>
         <location filename="../configure/global-setting-template-pro.js" line="155"/>
         <location filename="../configure/global-setting-template.js" line="155"/>
         <source>Index</source>
-        <translation type="unfinished"/>
+        <translation>Indexeren</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="159"/>
         <location filename="../configure/global-setting-template-pro.js" line="159"/>
         <location filename="../configure/global-setting-template.js" line="159"/>
         <source>Auto index internal disk</source>
-        <translation type="unfinished"/>
+        <translation>Interne schijf automatisch indexeren</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="165"/>
         <location filename="../configure/global-setting-template-pro.js" line="165"/>
         <location filename="../configure/global-setting-template.js" line="165"/>
         <source>Index external storage device after connected to computer</source>
-        <translation type="unfinished"/>
+        <translation>Externe schijf indexeren na aankoppelen</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="254"/>
         <location filename="../configure/global-setting-template-pro.js" line="253"/>
         <location filename="../configure/global-setting-template.js" line="252"/>
         <source>Other</source>
-        <translation type="unfinished"/>
+        <translation>Overig</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="258"/>
         <location filename="../configure/global-setting-template-pro.js" line="257"/>
         <location filename="../configure/global-setting-template.js" line="256"/>
         <source>Hide system disk</source>
-        <translation type="unfinished"/>
+        <translation>Systeemschijf verbergen</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="177"/>
         <location filename="../configure/global-setting-template-pro.js" line="177"/>
         <location filename="../configure/global-setting-template.js" line="177"/>
         <source>Show hidden files in search results</source>
-        <translation type="unfinished"/>
+        <translation>Verborgen bestanden tonen in zoekresultaten</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="186"/>
         <location filename="../configure/global-setting-template-pro.js" line="186"/>
         <location filename="../configure/global-setting-template.js" line="186"/>
         <source>Preview</source>
-        <translation type="unfinished"/>
+        <translation>Voorbeeld</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="190"/>
         <location filename="../configure/global-setting-template-pro.js" line="190"/>
         <location filename="../configure/global-setting-template.js" line="190"/>
         <source>Compress file preview</source>
-        <translation type="unfinished"/>
+        <translation>Compressie toepassen op bestandsvoorbeeld</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="197"/>
         <location filename="../configure/global-setting-template-pro.js" line="197"/>
         <location filename="../configure/global-setting-template.js" line="196"/>
         <source>Text preview</source>
-        <translation type="unfinished"/>
+        <translation>Tekstvoorbeeld</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="203"/>
         <location filename="../configure/global-setting-template-pro.js" line="203"/>
         <location filename="../configure/global-setting-template.js" line="202"/>
         <source>Document preview</source>
-        <translation type="unfinished"/>
+        <translation>Documentvoorbeeld</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="209"/>
         <location filename="../configure/global-setting-template-pro.js" line="209"/>
         <location filename="../configure/global-setting-template.js" line="208"/>
         <source>Image preview</source>
-        <translation type="unfinished"/>
+        <translation>Afbeeldingsvoorbeeld</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="215"/>
         <location filename="../configure/global-setting-template-pro.js" line="215"/>
         <location filename="../configure/global-setting-template.js" line="214"/>
         <source>Video preview</source>
-        <translation type="unfinished"/>
+        <translation>Videovoorbeeld</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="224"/>
         <location filename="../configure/global-setting-template-pro.js" line="223"/>
         <location filename="../configure/global-setting-template.js" line="222"/>
         <source>Mount</source>
-        <translation type="unfinished"/>
+        <translation>Aankoppelen</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="228"/>
         <location filename="../configure/global-setting-template-pro.js" line="227"/>
         <location filename="../configure/global-setting-template.js" line="226"/>
         <source>Auto mount</source>
-        <translation type="unfinished"/>
+        <translation>Automatisch aankoppelen</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="234"/>
         <location filename="../configure/global-setting-template-pro.js" line="233"/>
         <location filename="../configure/global-setting-template.js" line="232"/>
         <source>Open after auto mount</source>
-        <translation type="unfinished"/>
+        <translation>Openen na automatisch aankoppelen</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="242"/>
         <location filename="../configure/global-setting-template-pro.js" line="241"/>
         <location filename="../configure/global-setting-template.js" line="240"/>
         <source>Dialog</source>
-        <translation type="unfinished"/>
+        <translation>Dialoogvenster</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="246"/>
         <location filename="../configure/global-setting-template-pro.js" line="245"/>
         <location filename="../configure/global-setting-template.js" line="244"/>
         <source>Use the file chooser dialog of Deepin File Manager</source>
-        <translation type="unfinished"/>
+        <translation>Deepin Bestandsbeheer&apos;s bestandskiezer gebruiken</translation>
     </message>
 </context>
 <context>
@@ -1047,40 +1076,40 @@
     <message>
         <location filename="../gvfs/gvfsmountclient.cpp" line="149"/>
         <source>Mounting device error</source>
-        <translation type="unfinished"/>
+        <translation>Fout bij aankoppelen van apparaat</translation>
     </message>
 </context>
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1300"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1308"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
-        <translation type="unfinished"/>
+        <translation>De schijf is aangekoppeld door gebruiker &quot;%1&quot;. Je kunt deze daarom niet afkoppelen.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1303"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1313"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1341"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1462"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1493"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1311"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1321"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1349"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1470"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1501"/>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>Bevestigen</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1310"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1490"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1318"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1498"/>
         <source>Cannot find the mounting device</source>
-        <translation type="unfinished"/>
+        <translation>Kan aan te koppelen apparaat niet vinden</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1338"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1346"/>
         <source>Cannot unmount the device</source>
-        <translation type="unfinished"/>
+        <translation>Kan apparaat niet afkoppelen</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1458"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1466"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Kan apparaat &quot;%1&quot; niet uitwerpen</translation>
     </message>
 </context>
 <context>
@@ -1088,12 +1117,12 @@
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="52"/>
         <source>directory</source>
-        <translation>directory</translation>
+        <translation>map</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="53"/>
         <source>application</source>
-        <translation>programma</translation>
+        <translation>applicatie</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="54"/>
@@ -1108,7 +1137,7 @@
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="56"/>
         <source>image</source>
-        <translation>Afbeelding</translation>
+        <translation>afbeelding</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="57"/>
@@ -1118,17 +1147,17 @@
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="58"/>
         <source>text</source>
-        <translation>text</translation>
+        <translation>tekst</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="59"/>
         <source>executable</source>
-        <translation>Uitvoerbaar</translation>
+        <translation>uitvoerbaar bestand</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="60"/>
         <source>unknown</source>
-        <translation>Onbekend</translation>
+        <translation>onbekend</translation>
     </message>
 </context>
 <context>
@@ -1189,137 +1218,137 @@
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="48"/>
         <source>UnLock</source>
-        <translation>OntSluiten</translation>
+        <translation>Ontgrendelen</translation>
     </message>
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="52"/>
         <source>Please input password to decrypt the disk</source>
-        <translation>Voer alstublieft uw wachtwoord in om de schijf te ontsleutelen</translation>
+        <translation>Voer je wachtwoord in om de schijf te ontgrendelen</translation>
     </message>
 </context>
 <context>
     <name>MoveCopyTaskWidget</name>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="338"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="349"/>
         <source>Skip</source>
         <translation>Overslaan</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="337"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="348"/>
         <source>Keep both</source>
-        <translation>Beide houden</translation>
+        <translation>Beide behouden</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="339"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="451"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="350"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="467"/>
         <source>Replace</source>
         <translation>Vervangen</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="360"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="371"/>
         <source>Do not ask again</source>
-        <translation>Niet opnieuw vragen</translation>
+        <translation>Niet meer vragen</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="449"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="465"/>
         <source>merge</source>
         <translation>samenvoegen</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="419"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="435"/>
         <source>Copying %1</source>
-        <translation>%1 aan het kopiëren</translation>
+        <translation>Bezig met kopiëren van %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="420"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="436"/>
         <source>Copy to %2</source>
-        <translation>Kopieëren naar %2</translation>
+        <translation>Kopiëren naar %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="423"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="439"/>
         <source>Moving %1</source>
-        <translation>%1 aan het verplaatsen</translation>
+        <translation>Bezig met verplaatsen van %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="424"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="440"/>
         <source>Move to %2</source>
         <translation>Verplaatsen naar %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="426"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="442"/>
         <source>Restoring %1</source>
-        <translation>%1 aan het herstellen</translation>
+        <translation>Bezig met herstellen van %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="427"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="443"/>
         <source>Restore to %2</source>
         <translation>Herstellen naar %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="429"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="445"/>
         <source>Deleting %1</source>
-        <translation>%1 aan het verwijderen</translation>
+        <translation>Bezig met verwijderen van %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="432"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="448"/>
         <source>Trashing %1</source>
-        <translation>%1 naar de prullenbak</translation>
+        <translation>Bezig met verplaatsen van %1 naar de prullenbak</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="440"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="456"/>
         <source>Calculating space, please wait</source>
-        <translation>Ruimte aan het berekenen, wacht even a.u.b.</translation>
-    </message>
-    <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="443"/>
-        <source>File named %1 already exists in target folder</source>
-        <translation>Bestand met de naam %1 bestaat al in doelmap</translation>
-    </message>
-    <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="444"/>
-        <source>Original path %1 target path %2</source>
-        <translation>Origineel pad %1 doelpad %2</translation>
+        <translation>Bezig met berekenen van ruimte; even geduld</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="459"/>
-        <source>Retry</source>
-        <translation type="unfinished"/>
+        <source>File named %1 already exists in target folder</source>
+        <translation>Bestand genaamd %1 bestaat al in doelmap</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="544"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="556"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="460"/>
+        <source>Original path %1 target path %2</source>
+        <translation>Oorspronkelijk pad %1 - doelpad %2</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="475"/>
+        <source>Retry</source>
+        <translation>Opnieuw</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="569"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="581"/>
         <source>Time modified:%1</source>
         <translation>Tijdstip wijziging:%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="546"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="571"/>
         <source>Original folder</source>
-        <translation type="unfinished"/>
+        <translation>Oorspronkelijke map</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="549"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="574"/>
         <source>Original file</source>
-        <translation type="unfinished"/>
+        <translation>Oorspronkelijk bestand</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="559"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="584"/>
         <source>Target folder</source>
-        <translation type="unfinished"/>
+        <translation>Doelmap</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="562"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="587"/>
         <source>Target file</source>
-        <translation type="unfinished"/>
+        <translation>Doelbestand</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="547"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="560"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="572"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="585"/>
         <source>Contains:%1</source>
         <translation>Bevat:%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="550"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="563"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="575"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="588"/>
         <source>Size:%1</source>
         <translation>Grootte:%1</translation>
     </message>
@@ -1334,7 +1363,7 @@
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="38"/>
         <source>Are you sure to completely delete %1</source>
-        <translation>Bent u zeker dat u %1 volledig wil verwijderen?</translation>
+        <translation>Weet je zeker dat je %1 permanent wilt verwijderen?</translation>
     </message>
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="41"/>
@@ -1344,7 +1373,7 @@
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="42"/>
         <source>Are you sure to completely delete %1 files</source>
-        <translation>Bent u zeker dat u %1 bestanden wil verwijderen?</translation>
+        <translation>Weet je zeker dat je %1 bestanden permanent wilt verwijderen?</translation>
     </message>
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="66"/>
@@ -1367,7 +1396,7 @@
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="227"/>
         <source>Add other programs</source>
-        <translation>Voeg andere toepassingen toe</translation>
+        <translation>Andere applicaties toevoegen</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="228"/>
@@ -1387,12 +1416,12 @@
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="235"/>
         <source>Recommended Applications</source>
-        <translation>Aanbevolen toepassingen</translation>
+        <translation>Aanbevolen applicaties</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="237"/>
         <source>Other Applications</source>
-        <translation>Andere toepassingen</translation>
+        <translation>Andere applicaties</translation>
     </message>
 </context>
 <context>
@@ -1400,7 +1429,7 @@
     <message>
         <location filename="../controllers/pathmanager.cpp" line="49"/>
         <source>Home</source>
-        <translation>Start</translation>
+        <translation>Persoonlijke map</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="50"/>
@@ -1410,7 +1439,7 @@
     <message>
         <location filename="../controllers/pathmanager.cpp" line="51"/>
         <source>Videos</source>
-        <translation>Videos</translation>
+        <translation>Video&apos;s</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="52"/>
@@ -1430,7 +1459,7 @@
     <message>
         <location filename="../controllers/pathmanager.cpp" line="55"/>
         <source>Downloads</source>
-        <translation>Gedownload</translation>
+        <translation>Downloads</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="56"/>
@@ -1446,12 +1475,12 @@
     <message>
         <location filename="../controllers/pathmanager.cpp" line="58"/>
         <source>Computers in LAN</source>
-        <translation>Computers in LAN</translation>
+        <translation>Computers op LAN-netwerk</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="59"/>
         <source>My Shares</source>
-        <translation>Mijn gedeelden</translation>
+        <translation>Mijn delingen</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="60"/>
@@ -1464,7 +1493,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="240"/>
         <source>Basic info</source>
-        <translation>Basisinfo</translation>
+        <translation>Basisinformatie</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="241"/>
@@ -1474,12 +1503,12 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="242"/>
         <source>Share Management</source>
-        <translation>Gedeelde mappenbeheer</translation>
+        <translation>Deelbeheer</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="243"/>
         <source>Permission Management</source>
-        <translation type="unfinished"/>
+        <translation>Machtigingsbeheer</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="265"/>
@@ -1487,12 +1516,12 @@
         <translation>Systeemschijf</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1033"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1039"/>
         <source>Allow to execute as program</source>
-        <translation>Toestaan om uit te voeren als programma</translation>
+        <translation>Machtigen om uit te voeren als programma</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="839"/>
+        <location filename="../dialogs/propertydialog.cpp" line="845"/>
         <source>Local disk</source>
         <translation>Lokale schijf</translation>
     </message>
@@ -1500,99 +1529,99 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="771"/>
+        <location filename="../dialogs/propertydialog.cpp" line="777"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="778"/>
         <source>Size</source>
         <translation>Grootte</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="790"/>
-        <location filename="../dialogs/propertydialog.cpp" line="835"/>
-        <location filename="../dialogs/propertydialog.cpp" line="863"/>
+        <location filename="../dialogs/propertydialog.cpp" line="796"/>
+        <location filename="../dialogs/propertydialog.cpp" line="841"/>
+        <location filename="../dialogs/propertydialog.cpp" line="869"/>
         <source>Contains</source>
         <translation>Bevat</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="772"/>
+        <location filename="../dialogs/propertydialog.cpp" line="778"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="779"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="773"/>
+        <location filename="../dialogs/propertydialog.cpp" line="779"/>
         <source>Time read</source>
         <translation>Tijdstip gelezen</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="774"/>
+        <location filename="../dialogs/propertydialog.cpp" line="780"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="781"/>
         <source>Time modified</source>
         <translation>Tijdstip wijziging</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="796"/>
+        <location filename="../dialogs/propertydialog.cpp" line="802"/>
         <source>Link path</source>
-        <translation>Pad link</translation>
+        <translation>Linkpad</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="834"/>
-        <location filename="../dialogs/propertydialog.cpp" line="862"/>
+        <location filename="../dialogs/propertydialog.cpp" line="840"/>
+        <location filename="../dialogs/propertydialog.cpp" line="868"/>
         <source>Device type</source>
-        <translation>Apparaat type</translation>
+        <translation>Apparaattype</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="836"/>
-        <location filename="../dialogs/propertydialog.cpp" line="864"/>
+        <location filename="../dialogs/propertydialog.cpp" line="842"/>
+        <location filename="../dialogs/propertydialog.cpp" line="870"/>
         <source>Free space</source>
         <translation>Vrije ruimte</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="837"/>
-        <location filename="../dialogs/propertydialog.cpp" line="865"/>
+        <location filename="../dialogs/propertydialog.cpp" line="843"/>
+        <location filename="../dialogs/propertydialog.cpp" line="871"/>
         <source>Total space</source>
         <translation>Totale ruimte</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="961"/>
-        <source>Access denied</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../dialogs/propertydialog.cpp" line="962"/>
-        <location filename="../dialogs/propertydialog.cpp" line="971"/>
-        <source>Executable</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../dialogs/propertydialog.cpp" line="963"/>
-        <location filename="../dialogs/propertydialog.cpp" line="964"/>
-        <source>Write only</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../dialogs/propertydialog.cpp" line="965"/>
-        <location filename="../dialogs/propertydialog.cpp" line="966"/>
-        <source>Read only</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <location filename="../dialogs/propertydialog.cpp" line="967"/>
+        <source>Access denied</source>
+        <translation>Toegang geweigerd</translation>
+    </message>
+    <message>
         <location filename="../dialogs/propertydialog.cpp" line="968"/>
+        <location filename="../dialogs/propertydialog.cpp" line="977"/>
+        <source>Executable</source>
+        <translation>Uitvoerbaar</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/propertydialog.cpp" line="969"/>
+        <location filename="../dialogs/propertydialog.cpp" line="970"/>
+        <source>Write only</source>
+        <translation>Alleen-schrijven</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/propertydialog.cpp" line="971"/>
+        <location filename="../dialogs/propertydialog.cpp" line="972"/>
+        <source>Read only</source>
+        <translation>Alleen-lezen</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/propertydialog.cpp" line="973"/>
+        <location filename="../dialogs/propertydialog.cpp" line="974"/>
         <source>Read-write</source>
-        <translation type="unfinished"/>
+        <translation>Lezen-schrijven</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1021"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1027"/>
         <source>Others</source>
-        <translation type="unfinished"/>
+        <translation>Overige</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1019"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1025"/>
         <source>Owner</source>
         <translation>Eigenaar</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1020"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1026"/>
         <source>Group</source>
         <translation>Groep</translation>
     </message>
@@ -1623,13 +1652,13 @@
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="200"/>
         <source>Items: %1</source>
-        <translation>Objecten: %1</translation>
+        <translation>Items: %1</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="732"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="735"/>
-        <location filename="../interfaces/dfmsidebaritem.cpp" line="471"/>
-        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="74"/>
+        <location filename="../interfaces/dfmsidebaritem.cpp" line="472"/>
+        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="77"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="90"/>
         <location filename="../views/dfmsidebarnetworkitem.cpp" line="42"/>
         <location filename="../views/dfmsidebartagitem.cpp" line="51"/>
@@ -1640,14 +1669,14 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="733"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="736"/>
-        <location filename="../interfaces/dfmsidebaritem.cpp" line="475"/>
-        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="78"/>
+        <location filename="../interfaces/dfmsidebaritem.cpp" line="476"/>
+        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="81"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="98"/>
         <location filename="../views/dfmsidebarnetworkitem.cpp" line="46"/>
         <location filename="../views/dfmsidebartagitem.cpp" line="55"/>
         <location filename="../views/dfmsidebartrashitem.cpp" line="52"/>
         <source>Open in new tab</source>
-        <translation>Openen in nieuw tabblad</translation>
+        <translation>Openen op nieuw tabblad</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="738"/>
@@ -1689,14 +1718,15 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="747"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="748"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="804"/>
-        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="82"/>
+        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="85"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="109"/>
         <location filename="../views/dfmsidebartagitem.cpp" line="59"/>
         <location filename="../views/drenamebar.cpp" line="301"/>
         <source>Rename</source>
-        <translation>Hernoemen</translation>
+        <translation>Naam wijzigen</translation>
     </message>
     <message>
+        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="90"/>
         <location filename="../views/dfmsidebartagitem.cpp" line="64"/>
         <source>Remove</source>
         <translation>Verwijderen</translation>
@@ -1709,7 +1739,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="751"/>
         <source>Send to desktop</source>
-        <translation>Stuur naar bureaublad</translation>
+        <translation>Versturen naar bureaublad</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="752"/>
@@ -1719,12 +1749,12 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="753"/>
         <source>Add to bookmark</source>
-        <translation>Aan bladwijzer toevoegen</translation>
+        <translation>Toevoegen aan bladwijzers</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="756"/>
-        <location filename="../interfaces/dfmsidebaritem.cpp" line="479"/>
-        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="91"/>
+        <location filename="../interfaces/dfmsidebaritem.cpp" line="480"/>
+        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="94"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="153"/>
         <location filename="../views/dfmsidebartrashitem.cpp" line="63"/>
         <source>Properties</source>
@@ -1743,7 +1773,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="760"/>
         <source>Select all</source>
-        <translation>Selecteer alles</translation>
+        <translation>Alles selecteren</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="761"/>
@@ -1754,17 +1784,17 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="762"/>
         <location filename="../views/dfmsidebartrashitem.cpp" line="56"/>
         <source>Empty Trash</source>
-        <translation>Prullenbak legen</translation>
+        <translation>Prullenbak leegmaken</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="763"/>
         <source>Display as</source>
-        <translation>Weergeven als</translation>
+        <translation>Tonen als</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="764"/>
         <source>Sort by</source>
-        <translation>Sorteren als</translation>
+        <translation>Sorteren op</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="765"/>
@@ -1794,23 +1824,23 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="780"/>
         <source>Time created</source>
-        <translation>Tijdstip aangemaakt</translation>
+        <translation>Tijdstip gecreëerd</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="790"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="146"/>
         <source>Log out and unmount</source>
-        <translation>Uitloggen en ontkoppelen</translation>
+        <translation>Uitloggen en afkoppelen</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="792"/>
         <source>Source path</source>
-        <translation>Bron pad</translation>
+        <translation>Bronpad</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="794"/>
         <source>Share folder</source>
-        <translation>Deelmap</translation>
+        <translation>Map delen</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="795"/>
@@ -1820,7 +1850,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
         <source>Set share password</source>
-        <translation>Stel gedeeld wachtwoord in</translation>
+        <translation>Gedeeld wachtwoord instellen</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="797"/>
@@ -1831,28 +1861,27 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="800"/>
         <source>Tag information</source>
-        <translation type="unfinished"/>
+        <translation>Labelinformatie</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="737"/>
         <source>Open in new window as admin</source>
-        <translation>Open nieuw venster als admin</translation>
+        <translation>Openen in nieuw venster als administrator</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="739"/>
         <source>Select default program</source>
-        <translation>Selecteer standaard programma</translation>
+        <translation>Selecteer standaardprogramma</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="740"/>
         <source>Open file location</source>
-        <translation>Open bestandslocatie</translation>
+        <translation>Bestandslocatie openen</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="749"/>
-        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="87"/>
         <source>Remove bookmark</source>
-        <translation type="unfinished"/>
+        <translation>Bladwijzer verwijderen</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="754"/>
@@ -1864,7 +1893,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="770"/>
         <source>Open in terminal</source>
-        <translation>Openen in terminal</translation>
+        <translation>Openen in terminalvenster</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="771"/>
@@ -1879,24 +1908,24 @@
     <message>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="341"/>
         <source>Auto mount</source>
-        <translation>Auto mount</translation>
+        <translation>Automatisch aankoppelen</translation>
     </message>
     <message>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="379"/>
         <source>Open after auto mount</source>
-        <translation>Openen na automatische koppelen</translation>
+        <translation>Openen na automatisch aankoppelen</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="773"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="128"/>
         <source>Mount</source>
-        <translation>Koppelen</translation>
+        <translation>Aankoppelen</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="774"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="134"/>
         <source>Unmount</source>
-        <translation>Ontkoppelen</translation>
+        <translation>Afkoppelen</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="775"/>
@@ -1923,7 +1952,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="783"/>
         <source>Help</source>
-        <translation>Help</translation>
+        <translation>Hulp</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="784"/>
@@ -1933,12 +1962,12 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="785"/>
         <source>Exit</source>
-        <translation>Beëindigen</translation>
+        <translation>Afsluiten</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="786"/>
         <source>Icon</source>
-        <translation>Icoon</translation>
+        <translation>Pictogram</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="787"/>
@@ -1948,74 +1977,74 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="788"/>
         <source>Extend</source>
-        <translation>Uitbreiden</translation>
+        <translation>Uitklappen</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="789"/>
         <source>Set as wallpaper</source>
-        <translation>Als schermafbeelding instellen</translation>
+        <translation>Instellen als bureaubladachtergrond</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="215"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="223"/>
         <source>Local disk</source>
         <translation>Lokale schijf</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="217"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="225"/>
         <source>Removable disk</source>
         <translation>Verwijderbare schijf</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="219"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="227"/>
         <source>Network shared directory</source>
-        <translation>Netwerk gedeelde map</translation>
+        <translation>Gedeelde netwerkmap</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="221"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="229"/>
         <source>Android mobile device</source>
-        <translation>Android mobielapparaat</translation>
+        <translation>Mobiel Android-apparaat</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="223"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="231"/>
         <source>Apple mobile device</source>
-        <translation>Apple mobielapparaat</translation>
+        <translation>Mobiel Apple-apparaat</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="225"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="233"/>
         <source>Camera</source>
         <translation>Camera</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="227"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="235"/>
         <source>Dvd</source>
         <translation>Dvd</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="229"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="237"/>
         <source>Unknown device</source>
         <translation>Onbekend apparaat</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="236"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="244"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="623"/>
         <source>%1 item</source>
-        <translation>%1 object</translation>
+        <translation>%1 item</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="238"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="246"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="625"/>
         <source>%1 items</source>
-        <translation>%1 objecten</translation>
+        <translation>%1 items</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="797"/>
+        <location filename="../interfaces/dfileservices.cpp" line="813"/>
         <source>Shortcut</source>
         <translation>Snelkoppeling</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="597"/>
+        <location filename="../interfaces/dfileservices.cpp" line="613"/>
         <source>Create symlink</source>
-        <translation>Systeemlink creëren</translation>
+        <translation>Zachte koppeling creëren</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="793"/>
@@ -2032,20 +2061,20 @@
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1192"/>
         <source>Loading...</source>
-        <translation>Laden...</translation>
+        <translation>Bezig met laden...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="666"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="669"/>
         <source>File has been moved or deleted</source>
         <translation>Bestand is verplaatst of verwijderd</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="668"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="671"/>
         <source>You do not have permission to access this folder</source>
-        <translation>U heeft geen toestemming tot deze map</translation>
+        <translation>Je bent niet gemachtigd om deze map te openen</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="671"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="674"/>
         <location filename="../models/trashfileinfo.cpp" line="376"/>
         <source>Folder is empty</source>
         <translation>Map is leeg</translation>
@@ -2059,7 +2088,7 @@
     <message>
         <location filename="../models/searchfileinfo.cpp" line="313"/>
         <source>Searching...</source>
-        <translation>Zoeken...</translation>
+        <translation>Bezig met zoeken...</translation>
     </message>
     <message>
         <location filename="../models/searchfileinfo.cpp" line="318"/>
@@ -2070,35 +2099,35 @@
         <location filename="../models/trashfileinfo.cpp" line="339"/>
         <source>Source Path</source>
         <comment>TrashFileInfo</comment>
-        <translation>Bron Pad</translation>
+        <translation>Bronpad</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="388"/>
+        <location filename="../controllers/appcontroller.cpp" line="376"/>
         <source>Document</source>
         <translation>Document</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="397"/>
+        <location filename="../controllers/appcontroller.cpp" line="385"/>
         <source>Spreadsheet</source>
         <translation>Rekenblad</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="406"/>
+        <location filename="../controllers/appcontroller.cpp" line="394"/>
         <source>Presentation</source>
         <translation>Presentatie</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="415"/>
+        <location filename="../controllers/appcontroller.cpp" line="403"/>
         <source>Text</source>
         <translation>Tekst</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="835"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="883"/>
         <source>1 task in progress</source>
         <translation>1 taak wordt uitgevoerd</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="837"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="885"/>
         <source>%1 tasks in progress</source>
         <translation>1% taken worden uitgevoerd</translation>
     </message>
@@ -2128,7 +2157,7 @@
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="149"/>
         <source>Find:</source>
-        <translation>Vinden:</translation>
+        <translation>Zoeken:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="170"/>
@@ -2176,18 +2205,18 @@
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="210"/>
         <location filename="../views/drenamebar.cpp" line="270"/>
         <source>Before file name</source>
-        <translation>Voor het bestandsnaam</translation>
+        <translation>Vóór de bestandsnaam</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="210"/>
         <location filename="../views/drenamebar.cpp" line="270"/>
         <source>After file name</source>
-        <translation>Na het bestandsnaam</translation>
+        <translation>Achter de bestandsnaam</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="242"/>
         <source>Find</source>
-        <translation>Vinden</translation>
+        <translation>Zoeken</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="251"/>
@@ -2217,7 +2246,7 @@
     <message>
         <location filename="../views/drenamebar.cpp" line="293"/>
         <source>Tips: Sort by selected file order</source>
-        <translation>Hints: Sorteren op geselecteerde bestandsvolgorde</translation>
+        <translation>Tip: sorteren op geselecteerde bestandsvolgorde</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="381"/>
@@ -2226,9 +2255,9 @@
         <translation>Annuleren</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1166"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1168"/>
         <source>Rename %1 Files</source>
-        <translation>Hernoem %1 bestanden</translation>
+        <translation>%1 bestandsnamen wijzigen</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="150"/>
@@ -2238,7 +2267,7 @@
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="159"/>
         <source>Basic info</source>
-        <translation>Basisinfo</translation>
+        <translation>Basisinformatie</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="167"/>
@@ -2248,7 +2277,7 @@
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="168"/>
         <source>Number of files</source>
-        <translation>Het aantal bestanden</translation>
+        <translation>Aantal bestanden</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="168"/>
@@ -2266,49 +2295,54 @@
         <translation>Tijd wijzigen</translation>
     </message>
     <message>
-        <location filename="../tag/tagutil.cpp" line="46"/>
-        <source>Orange</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../tag/tagutil.cpp" line="47"/>
-        <source>Red</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../tag/tagutil.cpp" line="48"/>
-        <source>Purple</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <location filename="../tag/tagutil.cpp" line="49"/>
-        <source>Navy-blue</source>
-        <translation type="unfinished"/>
+        <source>Orange</source>
+        <translation>Oranje</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="50"/>
-        <source>Azure</source>
-        <translation type="unfinished"/>
+        <source>Red</source>
+        <translation>Rood</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="51"/>
-        <source>Green</source>
-        <translation type="unfinished"/>
+        <source>Purple</source>
+        <translation>Paars</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="52"/>
-        <source>Yellow</source>
-        <translation type="unfinished"/>
+        <source>Navy-blue</source>
+        <translation>Marineblauw</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="53"/>
+        <source>Azure</source>
+        <translation>Groenblauw</translation>
+    </message>
+    <message>
+        <location filename="../tag/tagutil.cpp" line="54"/>
+        <source>Green</source>
+        <translation>Groen</translation>
+    </message>
+    <message>
+        <location filename="../tag/tagutil.cpp" line="55"/>
+        <source>Yellow</source>
+        <translation>Geel</translation>
+    </message>
+    <message>
+        <location filename="../tag/tagutil.cpp" line="56"/>
         <source>Gray</source>
-        <translation type="unfinished"/>
+        <translation>Grijs</translation>
     </message>
     <message>
         <location filename="../views/dtagedit.cpp" line="87"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
-        <translation type="unfinished"/>
+        <translation>Voer labelinformatie in, zoals bijv. werk of familie. Labels zijn kommagescheiden.</translation>
+    </message>
+    <message>
+        <location filename="../controllers/dfmbookmarkcrumbcontroller.cpp" line="46"/>
+        <source>Bookmarks</source>
+        <translation>Bladwijzers</translation>
     </message>
 </context>
 <context>
@@ -2321,12 +2355,12 @@
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="61"/>
         <source>Share name:</source>
-        <translation>Naam delen:</translation>
+        <translation>Deelnaam:</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="68"/>
         <source>Permission:</source>
-        <translation>Toestemming:</translation>
+        <translation>Machtiging:</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="74"/>
@@ -2336,7 +2370,7 @@
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="74"/>
         <source>Read only</source>
-        <translation>Alleen lezen</translation>
+        <translation>Alleen-lezen</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="77"/>
@@ -2346,12 +2380,12 @@
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="83"/>
         <source>Not allow</source>
-        <translation>Niet toestaan</translation>
+        <translation>Niet machtigen</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="83"/>
         <source>Allow</source>
-        <translation>Toestaan</translation>
+        <translation>Machtigen</translation>
     </message>
 </context>
 <context>
@@ -2359,12 +2393,12 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="34"/>
         <source>Item</source>
-        <translation>Object</translation>
+        <translation>Item</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="35"/>
         <source>Select to the first item</source>
-        <translation>Selecteren tot het eerste object</translation>
+        <translation>Selecteren tot eerste item</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="35"/>
@@ -2374,7 +2408,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="36"/>
         <source>Select to the last item</source>
-        <translation>Selecteer tot het laatste object</translation>
+        <translation>Selecteren tot laatste item</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="36"/>
@@ -2384,42 +2418,42 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="37"/>
         <source>Select leftwards</source>
-        <translation>Selecteer naar links</translation>
+        <translation>Naar links selecteren</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="37"/>
         <source>Shift + Left </source>
-        <translation>Shift + Left</translation>
+        <translation>Shift + Pijltje links</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="38"/>
         <source>Select rightwards</source>
-        <translation>Selecteer naar rechts</translation>
+        <translation>Naar rechts selecteren</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="38"/>
         <source>Shift + Right </source>
-        <translation>Shift + Right</translation>
+        <translation>Shift + Pijltje rechts</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="39"/>
         <source>Select to upper row</source>
-        <translation>Selecteer naar bovenste rij</translation>
+        <translation>Naar boven selecteren</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="39"/>
         <source>Shift + Up </source>
-        <translation>Shift + Up</translation>
+        <translation>Shift + Pijltje omhoog</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="40"/>
         <source>Select to lower row</source>
-        <translation>Selecteer naar onderste rij</translation>
+        <translation>Naar onder selecteren</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="40"/>
         <source>Shift + Down </source>
-        <translation>Shift + Down</translation>
+        <translation>Shift + Pijltje omlaag</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="41"/>
@@ -2429,7 +2463,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="41"/>
         <source>Ctrl + Down </source>
-        <translation>Ctrl + Down</translation>
+        <translation>Ctrl + Pijltje omlaag</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="42"/>
@@ -2439,17 +2473,17 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="42"/>
         <source>Ctrl + Up </source>
-        <translation>Ctrl + Up</translation>
+        <translation>Ctrl + Pijltje omhoog</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="43"/>
         <source>Permanently delete</source>
-        <translation>Permanently delete</translation>
+        <translation>Permanent verwijderen</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="43"/>
         <source>Shift + Delete </source>
-        <translation>Shift + Delete </translation>
+        <translation>Shift + Delete</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="44"/>
@@ -2464,12 +2498,12 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="45"/>
         <source>Select all</source>
-        <translation>Selecteer alles</translation>
+        <translation>Alles selecteren</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="45"/>
         <source>Ctrl + a </source>
-        <translation>Ctrl + a</translation>
+        <translation>Ctrl + A</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="46"/>
@@ -2479,7 +2513,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="46"/>
         <source>Ctrl + c </source>
-        <translation>Ctrl + c</translation>
+        <translation>Ctrl + C</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="47"/>
@@ -2489,7 +2523,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="47"/>
         <source>Ctrl + x </source>
-        <translation>Ctrl + x</translation>
+        <translation>Ctrl + X</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="48"/>
@@ -2499,12 +2533,12 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="48"/>
         <source>Ctrl + v </source>
-        <translation>Ctrl + v</translation>
+        <translation>Ctrl + V</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="49"/>
         <source>Rename</source>
-        <translation>Hernoemen</translation>
+        <translation>Naam wijzigen</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="49"/>
@@ -2514,7 +2548,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="50"/>
         <source>New/Search</source>
-        <translation>Nieuw/Zoek</translation>
+        <translation>Nieuw/Zoeken</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="51"/>
@@ -2524,7 +2558,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="51"/>
         <source>Ctrl + n </source>
-        <translation>Ctrl + n</translation>
+        <translation>Ctrl + N</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="52"/>
@@ -2534,7 +2568,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="52"/>
         <source>Ctrl + Shift + n </source>
-        <translation>Ctrl + Shift + n </translation>
+        <translation>Ctrl + Shift + N</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="53"/>
@@ -2544,7 +2578,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="53"/>
         <source>Ctrl + f</source>
-        <translation>Ctrl + f</translation>
+        <translation>Ctrl + F</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="54"/>
@@ -2554,92 +2588,92 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="54"/>
         <source>Ctrl + t </source>
-        <translation>Ctrl + t</translation>
+        <translation>Ctrl + T</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="55"/>
         <source>View</source>
-        <translation>Bekijken</translation>
+        <translation>Tonen</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="56"/>
         <source>Item information</source>
-        <translation>Object informatie</translation>
+        <translation>Iteminformatie</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="56"/>
         <source>Ctrl + i </source>
-        <translation>Ctrl + i </translation>
+        <translation>Ctrl + I</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="57"/>
         <source>Help</source>
-        <translation>Help</translation>
+        <translation>Hulp</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="57"/>
         <source>F1 </source>
-        <translation>F1 </translation>
+        <translation>F1</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="58"/>
         <source>Keyboard shortcuts</source>
-        <translation>Toetsenbord sneltoetsen</translation>
+        <translation>Sneltoetsen</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="58"/>
         <source>Ctrl + Shift + / </source>
-        <translation>Ctrl + Shift + / </translation>
+        <translation>Ctrl + Shift + /</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="59"/>
         <source>Switch display status</source>
-        <translation>Scherm-status omschakelen</translation>
+        <translation>Weergavestatus omschakelen</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="60"/>
         <source>Hide item</source>
-        <translation>Object verbergen</translation>
+        <translation>Item verbergen</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="60"/>
         <source>Ctrl + h </source>
-        <translation>Ctrl + h </translation>
+        <translation>Ctrl + H</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="61"/>
         <source>Input in address bar</source>
-        <translation>invoeren in adresbalk</translation>
+        <translation>Invoeren in adresbalk</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="61"/>
         <source>Ctrl + l </source>
-        <translation>Ctrl + l </translation>
+        <translation>Ctrl + L</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="62"/>
         <source>Switch to icon view</source>
-        <translation type="unfinished"/>
+        <translation>Overschakelen naar pictogramweergave</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="62"/>
         <source>Ctrl + 1 </source>
-        <translation type="unfinished"/>
+        <translation>Ctrl + 1</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="63"/>
         <source>Switch to list view</source>
-        <translation type="unfinished"/>
+        <translation>Overschakelen naar lijstweergave</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="63"/>
         <source>Ctrl + 2 </source>
-        <translation type="unfinished"/>
+        <translation>Ctrl + 2 </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="64"/>
         <source>Others</source>
-        <translation>Anderen</translation>
+        <translation>Overig</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="65"/>
@@ -2659,7 +2693,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="66"/>
         <source>Ctrl + w</source>
-        <translation>Ctrl + w</translation>
+        <translation>Ctrl + W</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="67"/>
@@ -2669,17 +2703,17 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="67"/>
         <source>Alt + Left </source>
-        <translation>Alt + Links</translation>
+        <translation>Alt + Pijltje links</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="68"/>
         <source>Alt + Right </source>
-        <translation>Alt + Rechts</translation>
+        <translation>Alt + Pijltje rechts</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="69"/>
         <source>Switch to next tab</source>
-        <translation>Overschakelen naar volgende tabblad</translation>
+        <translation>Overschakelen naar volgend tabblad</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="69"/>
@@ -2694,7 +2728,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="70"/>
         <source>Switch to previous tab</source>
-        <translation>Overschakelen naar vorige tabblad</translation>
+        <translation>Overschakelen naar vorig tabblad</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="71"/>
@@ -2719,7 +2753,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="73"/>
         <source>Switch tab by specified number between 1 to 8</source>
-        <translation>Wissel tabbladen met cijfertoetsen van 1 tot 8</translation>
+        <translation>Schakelen tussen tabbladen met cijfertoetsen 1-8</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="73"/>
@@ -2729,7 +2763,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="68"/>
         <source>Forward</source>
-        <translation>Voorwaarts</translation>
+        <translation>Vooruit</translation>
     </message>
 </context>
 <context>
@@ -2742,12 +2776,12 @@
     <message>
         <location filename="../dialogs/trashpropertydialog.cpp" line="72"/>
         <source>item</source>
-        <translation>object</translation>
+        <translation>item</translation>
     </message>
     <message>
         <location filename="../dialogs/trashpropertydialog.cpp" line="74"/>
         <source>items</source>
-        <translation>objecten</translation>
+        <translation>items</translation>
     </message>
     <message>
         <location filename="../dialogs/trashpropertydialog.cpp" line="77"/>
@@ -2760,7 +2794,7 @@
     <message>
         <location filename="../deviceinfo/udisklistener.cpp" line="187"/>
         <source>Failed to rename the label</source>
-        <translation type="unfinished"/>
+        <translation>Labelnaam wijzigen mislukt</translation>
     </message>
 </context>
 <context>
@@ -2776,12 +2810,12 @@
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="416"/>
         <source>Kindly Reminder</source>
-        <translation type="unfinished"/>
+        <translation>Vriendelijke herinnering</translation>
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="416"/>
         <source>Please firstly install samba to continue</source>
-        <translation type="unfinished"/>
+        <translation>Installeer samba om door te gaan</translation>
     </message>
 </context>
 <context>
@@ -2789,7 +2823,7 @@
     <message>
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="37"/>
         <source>Please enter share password</source>
-        <translation>Vul astublieft uw deel wachtwoord in</translation>
+        <translation>Voer het gedeelde wachtwoord in</translation>
     </message>
     <message>
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="48"/>
