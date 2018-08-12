@@ -85,7 +85,7 @@ public:
     void contextMenuEvent(QContextMenuEvent *event) Q_DECL_OVERRIDE;
 
 
-    virtual void rowsInserted(const QModelIndex &index, int row, int column) override;
+    virtual void rowsInserted(const QModelIndex &index, int first, int last) override;
 
 
     void fakeDropEvent()noexcept;

@@ -26,6 +26,7 @@
 #include "chinese2pinyin.h"
 #include "dfmstandardpaths.h"
 #include "dfileservices.h"
+#include "dthumbnailprovider.h"
 #include "singleton.h"
 #include "dialogs/dialogmanager.h"
 #include "app/define.h"
@@ -405,6 +406,20 @@ void DFMGlobal::initTagManagerConnect()
 
             DAbstractFileWatcher::ghostSignal(DUrl(TAG_ROOT), &DAbstractFileWatcher::fileMoved, old_url, new_url);
         }
+    });
+}
+
+void DFMGlobal::initThumbnailConnection()
+{
+    connect(DThumbnailProvider::instance(), &DThumbnailProvider::createThumbnailFinished, [ = ] (const QString &filePath) {
+        const DUrl &fileUrl = DUrl::fromLocalFile(filePath);
+
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, fileUrl);
+
+        if (!fileInfo)
+            return;
+
+        DAbstractFileWatcher::ghostSignal(fileInfo->parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, fileUrl);
     });
 }
 

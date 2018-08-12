@@ -1080,9 +1080,16 @@ void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
     }
 }
 
-void CanvasGridView::rowsInserted(const QModelIndex &index, int row, int column)
+void CanvasGridView::rowsInserted(const QModelIndex &parent, int first, int last)
 {
-    QAbstractItemView::rowsInserted(index, row, column);
+    QAbstractItemView::rowsInserted(parent, first, last);
+
+    for (int index = first; index <= last; ++index) {
+        const QModelIndex &child = parent.child(index, 0);
+
+        model()->fileInfo(child)->makeToActive();
+    }
+
     update();
 }
 

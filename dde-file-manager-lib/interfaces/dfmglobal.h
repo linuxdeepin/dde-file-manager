@@ -276,6 +276,7 @@ public:
     static void initUserShareManager();
     static void initOperatorRevocation();
     static void initTagManagerConnect();
+    static void initThumbnailConnection();
 
     static void autoMountAllDisks();
 

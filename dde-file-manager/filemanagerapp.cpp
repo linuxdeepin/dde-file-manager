@@ -153,6 +153,9 @@ void FileManagerApp::initApp()
 
     DFMGlobal::initTagManagerConnect();
 
+    /*init thumbnail connection*/
+    DFMGlobal::initThumbnailConnection();
+
     QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
 }
 
