@@ -204,9 +204,9 @@ void DFileViewHelperPrivate::init()
     q->connect(fileSignalManager, SIGNAL(requestSelectRenameFile(DFMUrlBaseEvent)), q, SLOT(_q_selectAndRename(DFMUrlBaseEvent)));
     q->connect(gvfsMountManager, &GvfsMountManager::mount_added, q, &DFileViewHelper::mount_added);
     // call later
-    TIMER_SINGLESHOT(0, {
+    QTimer::singleShot(0, q, [q] {
         q->connect(fileSignalManager, SIGNAL(trashStateChanged()), q->model(), SLOT(update()));
-    }, q);
+    });
 
     // init plugin objects
     static bool initialized = false;
