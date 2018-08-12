@@ -162,6 +162,7 @@ int main(int argc, char *argv[])
     DFMGlobal::initDialogManager();
     DFMGlobal::initOperatorRevocation();
     DFMGlobal::initTagManagerConnect();
+    DFMGlobal::initThumbnailConnection();
 
     // Notify dde-desktop start up
     Dde::Session::RegisterDdeSession();

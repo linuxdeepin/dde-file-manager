@@ -24,7 +24,6 @@
 
 #include "windowmanager.h"
 #include "dfilemanagerwindow.h"
-#include "dthumbnailprovider.h"
 #include "dabstractfilewatcher.h"
 #include "dabstractfileinfo.h"
 #include "dfileservices.h"
@@ -107,17 +106,6 @@ void WindowManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::aboutToCloseLastActivedWindow, this, &WindowManager::onLastActivedWindowClosed);
     connect(fileSignalManager, &FileSignalManager::requestQuitApplication, this, &WindowManager::quit);
 
-    connect(DThumbnailProvider::instance(), &DThumbnailProvider::createThumbnailFinished,
-                     this, [this] (const QString &filePath) {
-        const DUrl &fileUrl = DUrl::fromLocalFile(filePath);
-
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, fileUrl);
-
-        if (!fileInfo)
-            return;
-
-        DAbstractFileWatcher::ghostSignal(fileInfo->parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, fileUrl);
-    });
 #ifdef AUTO_RESTART_DEAMON
     connect(m_restartProcessTimer, &QTimer::timeout, this, &WindowManager::reastartAppProcess);
 #endif
