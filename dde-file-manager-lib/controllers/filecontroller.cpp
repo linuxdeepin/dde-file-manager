@@ -555,6 +555,10 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
             killTimer(timer_id);
             timer_id = 0;
 
+            // 此时说明pasteFilesV2函数已经结束
+            if (!fileJob || !currentJob)
+                return;
+
             MoveCopyTaskWidget *taskWidget = dialogManager->taskDialog()->addTaskJob(fileJob);
 
             taskWidget->onJobCurrentJobChanged(currentJob->first, currentJob->second);
@@ -576,6 +580,9 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
     QTimer::singleShot(200, dialogManager->taskDialog(), [job] {
         dialogManager->taskDialog()->removeTaskJob(job);
     });
+
+    error_handle->currentJob = nullptr;
+    error_handle->fileJob = nullptr;
 
     if (slient) {
         error_handle->deleteLater();
