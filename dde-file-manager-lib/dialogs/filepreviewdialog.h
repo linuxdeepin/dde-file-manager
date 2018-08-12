@@ -65,8 +65,6 @@ public:
 
     void updatePreviewList(const DUrlList &previewUrllist);
 
-    void adjsutPostion();
-
     void setEntryUrlList(const DUrlList &entryUrlList);
 
     void done(int r) override;
@@ -75,11 +73,10 @@ public slots:
     void playCurrentPreviewFile();
 
 private:
-    void childEvent(QChildEvent *event) Q_DECL_OVERRIDE;
-    void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
-    void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
-    void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    bool eventFilter(QObject *obj, QEvent *event) Q_DECL_OVERRIDE;
+    void childEvent(QChildEvent *event) override;
+    void showEvent(QShowEvent *event) override;
+    void closeEvent(QCloseEvent *event) override;
+    bool eventFilter(QObject *obj, QEvent *event) override;
 
     void initUI();
     void switchToPage(int index);
@@ -97,9 +94,6 @@ private:
 
     int m_currentPageIndex = -1;
     DFMFilePreview *m_preview = 0;
-
-    int m_lastPosX = -1;
-    int m_lastPosY = -1;
 
 };
 

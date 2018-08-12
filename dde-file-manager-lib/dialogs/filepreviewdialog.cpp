@@ -285,13 +285,6 @@ void FilePreviewDialog::closeEvent(QCloseEvent *event)
     return DAbstractDialog::closeEvent(event);
 }
 
-void FilePreviewDialog::mouseReleaseEvent(QMouseEvent *event)
-{
-    m_lastPosX = geometry().bottomLeft().x();
-    m_lastPosY = geometry().bottomLeft().y();
-    return DAbstractDialog::mouseReleaseEvent(event);
-}
-
 bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::KeyPress) {
@@ -408,7 +401,6 @@ void FilePreviewDialog::switchToPage(int index)
                 adjustSize();
                 updateTitle();
                 m_statusBar->openButton()->setFocus();
-                adjsutPostion();
                 playCurrentPreviewFile();
                 return;
             }
@@ -469,29 +461,8 @@ void FilePreviewDialog::switchToPage(int index)
         resize(sizeHint());
         updateTitle();
         m_statusBar->openButton()->setFocus();
-        adjsutPostion();
         playCurrentPreviewFile();
     });
-}
-
-void FilePreviewDialog::adjsutPostion()
-{
-    if (m_lastPosX != -1 && m_lastPosY != -1){
-        move(m_lastPosX, m_lastPosY - height());
-    }
-    QDesktopWidget w;
-    int screenWidth = w.screenGeometry().width();
-    if (x() + width() >= screenWidth){
-        m_lastPosX = screenWidth - width();
-    }else{
-        m_lastPosX = x();
-    }
-
-    if (y() <= 0){
-        m_lastPosY = height();
-    }else{
-        m_lastPosY = y() + height();
-    }
 }
 
 void FilePreviewDialog::setEntryUrlList(const DUrlList &entryUrlList)
