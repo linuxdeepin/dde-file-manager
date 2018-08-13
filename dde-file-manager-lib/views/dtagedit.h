@@ -21,22 +21,23 @@ using namespace Dtk::Widget;
 class DTagEdit final : public DArrowRectangle
 {
     Q_OBJECT
+
 public:
     explicit DTagEdit(QWidget* const parent = nullptr);
-    virtual ~DTagEdit()=default;
-    DTagEdit(const DTagEdit& other)=delete;
-    DTagEdit& operator=(const DTagEdit& other)=delete;
+    virtual ~DTagEdit() = default;
+    DTagEdit(const DTagEdit& other) = delete;
+    DTagEdit& operator=(const DTagEdit& other) = delete;
 
-    void setFocusOutSelfClosing(bool value)noexcept;
+    void setFocusOutSelfClosing(bool value) noexcept;
     void setFilesForTagging(const QList<DUrl>& files);
     void setDefaultCrumbs(const QStringList &list);
 
 public slots:
     void onFocusOut();
 
-
 protected:
-    virtual void keyPressEvent(QKeyEvent* event) Q_DECL_OVERRIDE;
+    void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
+    void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 
 private:
     void initializeWidgets();
@@ -46,7 +47,7 @@ private:
 
     void processTags();
 
-    void onPressESC()noexcept;
+    void onPressESC() noexcept;
 
     DCrumbEdit* m_crumbEdit{ nullptr };
     QLabel* m_promptLabel{ nullptr };
