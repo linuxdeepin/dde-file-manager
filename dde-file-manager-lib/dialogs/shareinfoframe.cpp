@@ -56,7 +56,13 @@ void ShareInfoFrame::initUI()
     m_shareCheckBox = new QCheckBox(this);
     m_shareCheckBox->setFixedHeight(20);
     m_shareCheckBox->setText(tr("Share this folder"));
-    m_shareCheckBox->setStyleSheet("margin-left: 80;");
+
+    QWidget *centerAlignContainer = new QWidget();
+    QHBoxLayout *centerAlignLayout = new QHBoxLayout(centerAlignContainer);
+    centerAlignLayout->addWidget(m_shareCheckBox);
+    centerAlignLayout->setAlignment(Qt::AlignCenter);
+    centerAlignLayout->setContentsMargins(0,0,0,0);
+    centerAlignContainer->setLayout(centerAlignLayout);
 
     SectionKeyLabel* shareNameLabel = new SectionKeyLabel(tr("Share name:"));
     shareNameLabel->setFixedWidth(labelWidth);
@@ -85,11 +91,13 @@ void ShareInfoFrame::initUI()
 
     QFormLayout* mainLayoyt = new QFormLayout(this);
 
-    mainLayoyt->addRow(m_shareCheckBox);
+    mainLayoyt->addRow(centerAlignContainer);
     mainLayoyt->addRow(shareNameLabel, m_shareNamelineEdit);
     mainLayoyt->addRow(permissionLabel, m_permissoComBox);
     mainLayoyt->addRow(anonymityLabel, m_anonymityCombox);
     mainLayoyt->setLabelAlignment(Qt::AlignVCenter | Qt::AlignRight);
+    mainLayoyt->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
+    mainLayoyt->setFormAlignment(Qt::AlignVCenter | Qt::AlignCenter);
     mainLayoyt->setContentsMargins(10, 10, 10, 10);
     setLayout(mainLayoyt);
 }

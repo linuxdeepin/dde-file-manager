@@ -106,8 +106,9 @@ void MountAskPasswordDialog::initUI()
     m_passwordButtonGroup->setExclusive(true);
 
     m_passwordCheckBox = new QCheckBox();
-    m_passwordCheckBox->setFixedSize(22, 22);
-    QLabel* rememberLabel = new QLabel(tr("Remember password"));
+    QWidget *empty = new QWidget();
+    m_passwordCheckBox->setFixedHeight(22);
+    m_passwordCheckBox->setText(tr("Remember password"));
 
     QHBoxLayout* anonymousLayout = new QHBoxLayout;
     anonymousLayout->addWidget(anonymousButton);
@@ -125,7 +126,7 @@ void MountAskPasswordDialog::initUI()
     inputLayout->addRow(usernameLable, m_usernameLineEdit);
     inputLayout->addRow(m_domainLabel, m_domainLineEdit);
     inputLayout->addRow(passwordLable, m_passwordLineEdit);
-    inputLayout->addRow(m_passwordCheckBox, rememberLabel);
+    inputLayout->addRow(empty, m_passwordCheckBox);
     inputLayout->setSpacing(10);
 
     QVBoxLayout* passwordFrameLayout = new QVBoxLayout;
