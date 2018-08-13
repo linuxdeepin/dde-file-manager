@@ -14,7 +14,7 @@
 #include <QApplication>
 
 DTagEdit::DTagEdit(QWidget * const parent)
-         :DArrowRectangle{DArrowRectangle::ArrowTop,  parent}
+    : DArrowRectangle{ DArrowRectangle::ArrowTop,  parent }
 {
     this->initializeWidgets();
     this->initializeParameters();
@@ -79,6 +79,9 @@ void DTagEdit::keyPressEvent(QKeyEvent* event)
     DArrowRectangle::keyPressEvent(event);
 }
 
+void DTagEdit::mouseMoveEvent(QMouseEvent *event)
+{
+}
 
 void DTagEdit::initializeWidgets()
 {
@@ -97,8 +100,6 @@ void DTagEdit::initializeParameters()
     m_crumbEdit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_crumbEdit->setCrumbReadOnly(true);
     m_crumbEdit->setCrumbRadius(2);
-
-
 
     m_promptLabel->setFixedWidth(140);
     m_promptLabel->setWordWrap(true);
