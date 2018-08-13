@@ -44,7 +44,7 @@
 DFM_USE_NAMESPACE
 
 #if 0 // storage i10n
-QT_TRANSLATE_NOOP("DeepinStorage", "data")
+QT_TRANSLATE_NOOP3("DeepinStorage", "data", "Data Partition")
 #endif
 
 UDiskDeviceInfo::UDiskDeviceInfo()
