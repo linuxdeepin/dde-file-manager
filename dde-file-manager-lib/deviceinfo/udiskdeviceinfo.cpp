@@ -264,12 +264,6 @@ bool UDiskDeviceInfo::isWritable() const
 
 bool UDiskDeviceInfo::canRename() const
 {
-#ifndef QT_NO_DEBUG
-    // check if it gots a built-in international support.
-    if (fileDisplayName().startsWith(ddeI18nSym)) {
-        return false;
-    }
-#endif
     // blumia: since we now both use the old gvfs interface and the new udisks2 interface
     //         we should convert the path from local volumn path to the dbus path which is
     //         used by our udisks2 wrapper classes.
