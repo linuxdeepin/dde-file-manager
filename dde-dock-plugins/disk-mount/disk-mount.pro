@@ -37,4 +37,5 @@ INSTALLS += target
 include($$PWD/udisks2/udisks2.pri)
 
 RESOURCES += \
-    resources.qrc
+    resources.qrc \
+    $$PWD/../../dde-file-manager-lib/configure.qrc
