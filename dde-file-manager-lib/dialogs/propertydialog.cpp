@@ -248,7 +248,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         diskInfo = deviceListener->getDeviceByPath(m_url.path());
     }
     if (diskInfo) {
-        QString name = diskInfo->getName();
+        QString name = diskInfo->fileDisplayName();
         m_icon->setPixmap(diskInfo->fileIcon().pixmap(128, 128));
         m_edit->setPlainText(name);
         m_editDisbaled = true;
@@ -302,15 +302,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         m_expandGroup = addExpandWidget(titleList);
         m_expandGroup->expand(0)->setContent(m_basicInfoFrame);
 
-        if (fileInfo->isFile()) {
-            m_fileCount = 1;
-            m_size = fileInfo->size();
-
-            m_OpenWithListWidget = createOpenWithListWidget(fileInfo);
-            m_expandGroup->expand(1)->setContent(m_OpenWithListWidget);
-            m_expandGroup->expand(1)->setExpand(false);
-
-        } else if (fileInfo->isDir()) {
+        if (fileInfo->isDir()) {
             if (fileInfo->canShare()) {
                 m_shareinfoFrame = createShareInfoFrame(fileInfo);
                 m_expandGroup->expand(1)->setContent(m_shareinfoFrame);
@@ -319,11 +311,20 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
 
             if (fileInfo->toLocalFile().isEmpty()) {
                 startComputerFolderSize(m_url);
+            } else if (fileInfo->isSymLink()) {
+                startComputerFolderSize(fileInfo->redirectedFileUrl());
             } else {
                 startComputerFolderSize(DUrl::fromLocalFile(fileInfo->toLocalFile()));
             }
 
             m_fileCount = fileInfo->filesCount();
+        } else {
+            m_fileCount = 1;
+            m_size = fileInfo->size();
+
+            m_OpenWithListWidget = createOpenWithListWidget(fileInfo);
+            m_expandGroup->expand(1)->setContent(m_OpenWithListWidget);
+            m_expandGroup->expand(1)->setExpand(false);
         }
 
         int authMgrIndex = titleList.indexOf(authManager);
@@ -790,23 +791,23 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     layout->setHorizontalSpacing(12);
     layout->setVerticalSpacing(16);
     layout->setLabelAlignment(Qt::AlignRight);
-    if (info->isFile()) {
-        layout->addRow(sizeSectionLabel, m_containSizeLabel);
-    } else {
+    if (info->isDir()) {
         SectionKeyLabel *fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
         layout->addRow(sizeSectionLabel, m_folderSizeLabel);
         layout->addRow(fileAmountSectionLabel, m_containSizeLabel);
+    } else {
+        layout->addRow(sizeSectionLabel, m_containSizeLabel);
     }
     layout->addRow(typeSectionLabel, typeLabel);
     if (info->isSymLink()) {
         SectionKeyLabel *linkPathSectionLabel = new SectionKeyLabel(QObject::tr("Link path"));
 
-        LinkSectionValueLabel *linkPathLabel = new LinkSectionValueLabel(info->redirectedFileUrl().toLocalFile());
-        linkPathLabel->setToolTip(info->redirectedFileUrl().toLocalFile());
+        LinkSectionValueLabel *linkPathLabel = new LinkSectionValueLabel(info->symlinkTargetPath());
+        linkPathLabel->setToolTip(info->symlinkTargetPath());
         linkPathLabel->setLinkTargetUrl(info->redirectedFileUrl());
         linkPathLabel->setOpenExternalLinks(true);
         linkPathLabel->setWordWrap(false);
-        QString t = linkPathLabel->fontMetrics().elidedText(info->redirectedFileUrl().toLocalFile(), Qt::ElideMiddle, 150);
+        QString t = linkPathLabel->fontMetrics().elidedText(info->symlinkTargetPath(), Qt::ElideMiddle, 150);
         linkPathLabel->setText(t);
         layout->addRow(linkPathSectionLabel, linkPathLabel);
     }

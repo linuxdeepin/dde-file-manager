@@ -635,7 +635,7 @@ QDateTime DFileInfo::lastModified() const
 {
     Q_D(const DFileInfo);
 
-    if (isSymLink() && !exists()) {
+    if (isSymLink() && !d->fileInfo.exists()) {
         struct stat attrib;
 
         if (lstat(d->fileInfo.filePath().toLocal8Bit().constData(), &attrib) >= 0)
@@ -648,6 +648,13 @@ QDateTime DFileInfo::lastModified() const
 QDateTime DFileInfo::lastRead() const
 {
     Q_D(const DFileInfo);
+
+    if (isSymLink() && !d->fileInfo.exists()) {
+        struct stat attrib;
+
+        if (lstat(d->fileInfo.filePath().toLocal8Bit().constData(), &attrib) >= 0)
+            return QDateTime::fromTime_t(attrib.st_atime);
+    }
 
     return d->fileInfo.lastRead();
 }
