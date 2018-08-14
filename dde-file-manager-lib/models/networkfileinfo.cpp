@@ -168,7 +168,7 @@ bool NetworkFileInfo::canRedirectionFileUrl() const
 
     const DUrl &url = fileUrl();
 
-    if (!url.isSMBFile()) {
+    if (url.isNetWorkFile()) {
         return false;
     }
 
