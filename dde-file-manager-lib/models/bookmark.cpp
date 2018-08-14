@@ -105,13 +105,15 @@ DUrl BookMark::redirectedFileUrl() const
 {
     if (!mountPoint.isEmpty() && !locateUrl.isEmpty()) {
         DUrl mountPointUrl(mountPoint);
-
-        if (mountPointUrl.scheme() == SMB_SCHEME) {
-            return DUrl(mountPoint + locateUrl);
-        }
+        QString schemeStr = mountPointUrl.scheme();
 
         if (!udisksDBusPath.isEmpty() && !udisksMountPoint.isEmpty()) {
             return DUrl::fromLocalFile(udisksMountPoint + locateUrl);
+        }
+
+        if (schemeStr == SMB_SCHEME || schemeStr == FTP_SCHEME || schemeStr == SFTP_SCHEME) {
+            mountPointUrl.setPath(mountPointUrl.path() + locateUrl);
+            return mountPointUrl;
         }
     }
 
