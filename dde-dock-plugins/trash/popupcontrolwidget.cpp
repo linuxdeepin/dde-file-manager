@@ -38,6 +38,7 @@
 DWIDGET_USE_NAMESPACE
 
 const QString TrashDir = QDir::homePath() + "/.local/share/Trash";
+const QDir::Filters ItemsShouldCount = QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot;
 
 
 PopupControlWidget::PopupControlWidget(QWidget *parent)
@@ -97,9 +98,8 @@ void PopupControlWidget::clearTrashFloder()
         d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
     }
 
-    QDir dir(QDir::homePath() + "/.local/share/Trash/files");
-    uint count = dir.entryList(QDir::AllEntries | QDir::Files
-                               | QDir::NoDotAndDotDot).count();
+    QDir dir(TrashDir + "/files");//QDir::homePath() + "/.local/share/Trash/files");
+    uint count = dir.entryList(ItemsShouldCount).count();
     int execCode = -1;
 
     if (count > 0) {
@@ -146,20 +146,23 @@ void PopupControlWidget::trashStatusChanged()
 
     // add monitor paths
     m_fsWatcher->addPath(TrashDir);
-    if (files)
+    if (files) {
         m_fsWatcher->addPath(TrashDir + "/files");
+    }
 //    if (info)
 //        m_fsWatcher->addPath(TrashDir + "/info");
 
     // check empty
-    if (!files)
+    if (!files) {
         m_trashItemsCount = 0;
-    else
-        m_trashItemsCount = QDir(TrashDir + "/files").entryList().count() - 2;
+    } else {
+        m_trashItemsCount = QDir(TrashDir + "/files").entryList(ItemsShouldCount).count();
+    }
 
     const bool empty = m_trashItemsCount == 0;
-    if (m_empty == empty)
+    if (m_empty == empty) {
         return;
+    }
 
 //    m_clearBtn->setVisible(!empty);
     m_empty = empty;
