@@ -17,47 +17,47 @@
 <context>
     <name>ComputerPropertyDialog</name>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="41"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="45"/>
         <source>Computer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="52"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="56"/>
         <source>Basic Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="61"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="65"/>
         <source>Computer Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="62"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="66"/>
         <source>Version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="63"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="67"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="64"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="68"/>
         <source>Processor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="65"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="69"/>
         <source>Memory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="66"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="70"/>
         <source>Disk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="191"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="195"/>
         <source>Bit</source>
         <translation type="unfinished"></translation>
     </message>
@@ -217,7 +217,7 @@
 <context>
     <name>DeepinStorage</name>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="33"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="31"/>
         <source>Data</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1230,53 +1230,53 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="208"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="206"/>
         <source>Local disk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="210"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="208"/>
         <source>Removable disk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="212"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="210"/>
         <source>Network shared directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="214"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="212"/>
         <source>Android mobile device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="216"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="214"/>
         <source>Apple mobile device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="218"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="216"/>
         <source>Camera</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="220"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="218"/>
         <source>Dvd</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="222"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="220"/>
         <source>Unknown device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="228"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="226"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="560"/>
         <source>%1 item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="230"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="228"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="562"/>
         <source>%1 items</source>
         <translation type="unfinished"></translation>
