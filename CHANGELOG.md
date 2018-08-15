@@ -1,3 +1,17 @@
+<a name="4.4.9.2"></a>
+## 4.4.9.2 (2018-08-15)
+
+
+#### Bug Fixes
+
+*   can not get the system disk size ([bad7b1e0](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/bad7b1e02c2b2caebeac7834b1839eca69b010d3))
+
+#### Features
+
+* **disk:**  disk i10n by label name ([b715d6f3](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/b715d6f35a64909f8de89ecf3a10d4a8e4ad91ef))
+
+
+
 <a name="4.4.9.1"></a>
 ## 4.4.9.1 (2018-06-22)
 
