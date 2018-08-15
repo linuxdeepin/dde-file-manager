@@ -129,7 +129,7 @@ void DiskControlWidget::onDiskListChanged()
     QStringList blDevList = m_diskManager->blockDevices();
     for (const QString& blDevStr : blDevList) {
         QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(blDevStr));
-        if (blDev->hasFileSystem() && !blDev->mountPoints().isEmpty()) {
+        if (blDev->hasFileSystem() && !blDev->mountPoints().isEmpty() && !blDev->hintIgnore()) {
             QByteArray mountPoint = blDev->mountPoints().first();
             if (mountPoint != QStringLiteral("/boot") && mountPoint != QStringLiteral("/") && mountPoint != QStringLiteral("/home")) {
                 mountedCount++;

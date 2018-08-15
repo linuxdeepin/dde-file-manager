@@ -24,8 +24,12 @@
 
 #include "diskmountplugin.h"
 
+#include <DApplication>
+
 #define OPEN        "open"
 #define UNMOUNT_ALL "unmount_all"
+
+DWIDGET_USE_NAMESPACE
 
 DiskMountPlugin::DiskMountPlugin(QObject *parent)
     : QObject(parent),
@@ -56,7 +60,12 @@ const QString DiskMountPlugin::pluginName() const
 
 void DiskMountPlugin::init(PluginProxyInterface *proxyInter)
 {
-    qDebug() << "===============init== proxyInter===========";
+    // blumia: we are using i10n translation from DFM so...
+    QString applicationName = qApp->applicationName();
+    qApp->setApplicationName("dde-file-manager");
+    qDebug() << qApp->loadTranslator();
+    qApp->setApplicationName(applicationName);
+    qDebug() << "===============init==proxyInter===========";
     m_proxyInter = proxyInter;
 
     initCompoments();

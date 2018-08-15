@@ -219,6 +219,13 @@ void DiskControlItem::showEvent(QShowEvent *e)
             hasLabelName = false;
             devName = QString(tr("%1 Volume")).arg(formatDiskSize(blDev->size()));
         }
+
+        // Deepin i10n Label text (_dde_text):
+        if (devName.startsWith(ddeI18nSym)) {
+            devName = devName.mid(ddeI18nSym.size(), devName.size() - ddeI18nSym.size());
+            devName = qApp->translate("DeepinStorage", devName.toUtf8().constData());
+        }
+
         m_diskName->setText(devName);
     }
 
