@@ -68,6 +68,7 @@ private:
     QLabel *m_diskCapacity;
     QProgressBar *m_capacityValueBar;
     Dtk::Widget::DImageButton *m_unmountButton;
+    const QString ddeI18nSym = QStringLiteral("_dde_");
 };
 
 DFM_NAMESPACE::DFMSettings* getGsGlobal();
