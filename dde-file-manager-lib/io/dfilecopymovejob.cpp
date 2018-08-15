@@ -885,27 +885,52 @@ open_file: {
         qint64 size_write = toDevice->write(data, size_read);
 
         if (Q_UNLIKELY(size_write != size_read)) {
-            if (checkFreeSpace(currentJobDataSizeInfo.first - currentJobDataSizeInfo.second)) {
-                setError(DFileCopyMoveJob::WriteError, qApp->translate("DFileCopyMoveJob", "Failed to write the file, cause: %1").arg(toDevice->errorString()));
-            } else {
-                setError(DFileCopyMoveJob::NotEnoughSpaceError);
-            }
+            do {
+                // 在某些情况下（往sftp挂载目录写入），可能一次未能写入那么多数据
+                // 但不代表写入失败，应该继续尝试，直到所有数据全部写入
+                if (size_write > 0) {
+                    const char *surplus_data = data;
+                    qint64 surplus_size = size_read;
 
-            switch (handleError(fromInfo, toInfo)) {
-            case DFileCopyMoveJob::RetryAction: {
-                if (!toDevice->seek(current_pos)) {
-                    setError(DFileCopyMoveJob::UnknowError, toDevice->errorString());
+                    do {
+                        currentJobDataSizeInfo.second += size_write;
+                        completedDataSize += size_write;
+                        //        writtenDataSize += size_write;
 
-                    return false;
+                        surplus_data += size_write;
+                        surplus_size -= size_write;
+
+                        size_write = toDevice->write(surplus_data, surplus_size);
+                    } while (size_write > 0 && size_write != surplus_size);
+
+                    // 表示全部数据写入完成
+                    if (size_write > 0) {
+                        break;
+                    }
                 }
 
-                goto write_data;
-            }
-            case DFileCopyMoveJob::SkipAction:
-                return true;
-            default:
-                return false;
-            }
+                if (checkFreeSpace(currentJobDataSizeInfo.first - currentJobDataSizeInfo.second)) {
+                    setError(DFileCopyMoveJob::WriteError, qApp->translate("DFileCopyMoveJob", "Failed to write the file, cause: %1").arg(toDevice->errorString()));
+                } else {
+                    setError(DFileCopyMoveJob::NotEnoughSpaceError);
+                }
+
+                switch (handleError(fromInfo, toInfo)) {
+                case DFileCopyMoveJob::RetryAction: {
+                    if (!toDevice->seek(current_pos)) {
+                        setError(DFileCopyMoveJob::UnknowError, toDevice->errorString());
+
+                        return false;
+                    }
+
+                    goto write_data;
+                }
+                case DFileCopyMoveJob::SkipAction:
+                    return true;
+                default:
+                    return false;
+                }
+            } while (false);
         }
 
         currentJobDataSizeInfo.second += size_write;
