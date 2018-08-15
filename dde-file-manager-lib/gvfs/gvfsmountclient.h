@@ -61,11 +61,12 @@ public:
     static int mount_sync(const DFMUrlBaseEvent &event);
     static GMountOperation *new_mount_op(void);
     static void mount_done_cb(GObject *object, GAsyncResult *res, gpointer user_data);
-    static void ask_password_cb (GMountOperation *op,
+    static void ask_password_cb(GMountOperation *op,
                      const char      *message,
                      const char      *default_user,
                      const char      *default_domain,
                      GAskPasswordFlags flags);
+    static void ask_question_cb(GMountOperation *op, const char *message, const GStrv choices);
 
 private:
     static QPointer<QEventLoop> eventLoop;

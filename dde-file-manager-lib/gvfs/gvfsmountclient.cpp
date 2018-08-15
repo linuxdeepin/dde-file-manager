@@ -114,7 +114,7 @@ GMountOperation *GvfsMountClient::new_mount_op()
     g_object_set_data (G_OBJECT (op), "state", GINT_TO_POINTER (MOUNT_OP_NONE));
 
     g_signal_connect (op, "ask_password", G_CALLBACK (ask_password_cb), NULL);
-//  g_signal_connect (op, "ask_question", G_CALLBACK (ask_question_cb), NULL);
+    g_signal_connect (op, "ask_question", G_CALLBACK (ask_question_cb), NULL);
 
   /* TODO: we *should* also connect to the "aborted" signal but since the
    *       main thread is blocked handling input we won't get that signal
@@ -266,4 +266,46 @@ void GvfsMountClient::ask_password_cb(GMountOperation *op, const char *message, 
         g_object_set_data (G_OBJECT (op), "state", GINT_TO_POINTER (MOUNT_OP_ABORTED));
         g_mount_operation_reply (op, G_MOUNT_OPERATION_ABORTED);
     }
+}
+
+static int requestAnswerDialog(WId parentWindowId, const QString& message, QStringList choices)
+{
+    DDialog askQuestionDialog(WindowManager::getWindowById(parentWindowId));
+
+    askQuestionDialog.setMessage(message);
+    askQuestionDialog.addButtons(choices);
+
+    return askQuestionDialog.exec();
+}
+
+// blumia: This callback is mainly for sftp fingerprint identity dialog, but should works on any ask-question signal.
+//         ref: https://www.freedesktop.org/software/gstreamer-sdk/data/docs/latest/gio/GMountOperation.html#GMountOperation-ask-question
+void GvfsMountClient::ask_question_cb(GMountOperation *op, const char *message, const GStrv choices)
+{
+    char **ptr = choices;
+    int choice;
+    QStringList choiceList;
+
+    QString oneMessage(message);
+    qCDebug(mountClient()) << "ask_question_cb() message: " << message;
+
+    while (*ptr) {
+        QString oneOption = QString::asprintf("%s", *ptr++);
+        qCDebug(mountClient()) << "ask_question_cb()  - option(s): " << oneOption;
+        choiceList << oneOption;
+    }
+
+    choice = DThreadUtil::runInMainThread(requestAnswerDialog, MountEvent.windowId(), oneMessage, choiceList);
+    qCDebug(mountClient()) << "ask_question_cb() user choice(start at 0): " << choice;
+
+    // check if choose is invalid
+    if (choice < 0 && choice >= choiceList.count()) {
+        g_mount_operation_reply(op, G_MOUNT_OPERATION_ABORTED);
+        return;
+    }
+
+    g_mount_operation_set_choice(op, choice);
+    g_mount_operation_reply(op, G_MOUNT_OPERATION_HANDLED);
+
+    return;
 }
