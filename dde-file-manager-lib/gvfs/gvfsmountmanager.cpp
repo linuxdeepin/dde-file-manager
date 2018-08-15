@@ -1325,7 +1325,8 @@ void GvfsMountManager::unmount_mounted(const QString &mounted_root_uri)
         return;
     }
 
-    char *local_mount_point = mounted_root_uri.startsWith("smb://") ? g_file_get_path(file) : nullptr;
+    bool is_netwrok_url = mounted_root_uri.startsWith("smb://") || mounted_root_uri.startsWith("sftp://") || mounted_root_uri.startsWith("ftp://");
+    char *local_mount_point = is_netwrok_url ? g_file_get_path(file) : nullptr;
 
     mount_op = new_mount_op ();
     g_mount_unmount_with_operation (mount, G_MOUNT_UNMOUNT_NONE, mount_op, NULL, &GvfsMountManager::unmount_done_cb, local_mount_point);
@@ -1369,7 +1370,7 @@ void GvfsMountManager::unmount_done_cb(GObject *object, GAsyncResult *res, gpoin
             DUrlList dirty_list;
 
             for (auto begin = NetworkManager::NetworkNodes.keyBegin(); begin != NetworkManager::NetworkNodes.keyEnd(); ++begin) {
-                if (begin->toString().startsWith(root_url)) {
+                if (begin->toString().startsWith(root_url.endsWith("/") ? root_url.left(root_url.size() - 1) : root_url)) {
                     dirty_list << *begin;
                 }
             }
