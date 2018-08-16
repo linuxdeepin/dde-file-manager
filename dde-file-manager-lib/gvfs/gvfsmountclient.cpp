@@ -274,6 +274,7 @@ static int requestAnswerDialog(WId parentWindowId, const QString& message, QStri
 
     askQuestionDialog.setMessage(message);
     askQuestionDialog.addButtons(choices);
+    askQuestionDialog.setMaximumWidth(480);
 
     return askQuestionDialog.exec();
 }
