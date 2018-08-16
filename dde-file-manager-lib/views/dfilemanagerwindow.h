@@ -47,9 +47,7 @@ class QStatusBar;
 class QFrame;
 class QHBoxLayout;
 class QVBoxLayout;
-class QSplitter;
 class QResizeEvent;
-class DSplitter;
 
 class ExtendView;
 class QStackedLayout;
