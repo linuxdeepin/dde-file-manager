@@ -21,6 +21,7 @@
 #include "dfmsplitter.h"
 
 #include <QDebug>
+#include <QGuiApplication>
 #include <QSizePolicy>
 
 DFMSplitterHandle::DFMSplitterHandle(Qt::Orientation orientation, QSplitter *parent):
@@ -29,10 +30,14 @@ DFMSplitterHandle::DFMSplitterHandle(Qt::Orientation orientation, QSplitter *par
 
 }
 
-void DFMSplitterHandle::enterEvent(QEvent *e)
+void DFMSplitterHandle::enterEvent(QEvent *)
 {
-    Q_UNUSED(e)
-    setCursor(orientation() == Qt::Horizontal ? Qt::SizeHorCursor : Qt::SizeVerCursor);
+    QGuiApplication::setOverrideCursor(orientation() == Qt::Horizontal ? Qt::SizeHorCursor : Qt::SizeVerCursor);
+}
+
+void DFMSplitterHandle::leaveEvent(QEvent *)
+{
+    QGuiApplication::restoreOverrideCursor();
 }
 
 // ---------- Item Get Border Line ----------

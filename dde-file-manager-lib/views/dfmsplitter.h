@@ -32,7 +32,8 @@ public:
     explicit DFMSplitterHandle(Qt::Orientation orientation, QSplitter* parent);
 
 protected:
-    void enterEvent(QEvent* e) override;
+    void enterEvent(QEvent*) override;
+    void leaveEvent(QEvent*) override;
 };
 
 // ---------- Item Get Border Line ----------
