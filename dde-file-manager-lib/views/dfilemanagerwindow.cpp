@@ -28,7 +28,7 @@
 #include "fileviewhelper.h"
 #include "ddetailview.h"
 #include "dfilemenu.h"
-//#include "dsearchbar.h"
+#include "dfmsplitter.h"
 #include "extendview.h"
 #include "dstatusbar.h"
 #include "dfilemenumanager.h"
@@ -109,7 +109,7 @@ public:
     DFMBaseView *currentView { nullptr };
     DStatusBar *statusBar { nullptr };
     QVBoxLayout *mainLayout { nullptr };
-    QSplitter *splitter { nullptr };
+    DFMSplitter *splitter { nullptr };
     QFrame *titleFrame { nullptr };
     QStackedLayout *viewStackLayout { nullptr };
     QPushButton *emptyTrashButton { nullptr };
@@ -863,7 +863,7 @@ void DFileManagerWindow::initSplitter()
     initLeftSideBar();
     initRightView();
 
-    d->splitter = new QSplitter(Qt::Horizontal, this);
+    d->splitter = new DFMSplitter(Qt::Horizontal, this);
     d->splitter->addWidget(d->leftSideBar);
     d->splitter->addWidget(d->rightView);
     d->splitter->setChildrenCollapsible(false);

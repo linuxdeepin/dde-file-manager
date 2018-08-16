@@ -109,7 +109,6 @@ HEADERS += \
     controllers/trashmanager.h \
     models/trashfileinfo.h \
     shutil/mimesappsmanager.h \
-    views/dsplitterhandle.h \
     dialogs/openwithdialog.h \
     controllers/searchcontroller.h \
     models/searchfileinfo.h\
@@ -256,7 +255,8 @@ HEADERS += \
     views/dfmheaderview.h \
     shutil/dquicksearchfilter.h \
     controllers/mountcontroller.h \
-    models/mountfileinfo.h
+    models/mountfileinfo.h \
+    views/dfmsplitter.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -290,7 +290,6 @@ SOURCES += \
     controllers/trashmanager.cpp \
     models/trashfileinfo.cpp \
     shutil/mimesappsmanager.cpp \
-    views/dsplitterhandle.cpp \
     dialogs/openwithdialog.cpp \
     controllers/searchcontroller.cpp \
     models/searchfileinfo.cpp\
@@ -429,7 +428,8 @@ SOURCES += \
     views/dfmheaderview.cpp \
     shutil/dquicksearchfilter.cpp \
     controllers/mountcontroller.cpp \
-    models/mountfileinfo.cpp
+    models/mountfileinfo.cpp \
+    views/dfmsplitter.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 ICONDIR = $$PREFIX/share/icons/hicolor/scalable/apps
