@@ -896,6 +896,9 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
     DUrl fileUrl = info->fileUrl();
     DAbstractFileInfoPointer infoPtr = info;
     while (infoPtr->canRedirectionFileUrl()) {
+        if (fileUrl == infoPtr->redirectedFileUrl()) {
+            break;
+        }
         fileUrl = infoPtr->redirectedFileUrl();
         infoPtr = fileService->createFileInfo(nullptr, fileUrl);
     }
