@@ -52,10 +52,15 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
     m_sourceSize = reader.size();
 
     const QSize &dsize = qApp->desktop()->size();
+    qreal device_pixel_ratio = this->devicePixelRatioF();
 
-    setPixmap(QPixmap::fromImageReader(&reader).scaled(QSize(qMin((int)(dsize.width() * 0.7), m_sourceSize.width()),
-                                                             qMin((int)(dsize.height() * 0.8), m_sourceSize.height())),
-                                                       Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    QPixmap pixmap = QPixmap::fromImageReader(&reader).scaled(QSize(qMin((int)(dsize.width() * 0.7 * device_pixel_ratio), m_sourceSize.width()),
+                                                                    qMin((int)(dsize.height() * 0.8 * device_pixel_ratio), m_sourceSize.height())),
+                                                              Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+    pixmap.setDevicePixelRatio(device_pixel_ratio);
+
+    setPixmap(pixmap);
 }
 
 QSize ImageView::sourceSize() const
