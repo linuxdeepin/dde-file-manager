@@ -288,7 +288,16 @@ const DAbstractFileInfoPointer BookMarkManager::createFileInfo(const QSharedPoin
         return DAbstractFileInfoPointer(new BookMark(DUrl(BOOKMARK_ROOT)));
     }
 
-    return findBookmark(event->url());
+    BookMarkPointer bp = findBookmark(event->url());
+    if (!bp) {
+        DUrl targetUrl = event->url().bookmarkTargetUrl();
+        if (targetUrl.scheme().isEmpty()) {
+            targetUrl.setScheme(FILE_SCHEME);
+        }
+        return DFileService::instance()->createFileInfo(event->sender(), targetUrl);
+    }
+
+    return bp;
 }
 
 DAbstractFileWatcher *BookMarkManager::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
