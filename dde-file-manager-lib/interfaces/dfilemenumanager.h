@@ -26,7 +26,6 @@
 #define FILEMENUMANAGER_H
 
 #include "dfmglobal.h"
-#include "shutil/danythingmonitorfilter.h"
 
 #include <QAction>
 

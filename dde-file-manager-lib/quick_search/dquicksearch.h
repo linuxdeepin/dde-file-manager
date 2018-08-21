@@ -44,7 +44,6 @@ extern "C"
 #include <sys/stat.h>
 #include <sys/types.h>
 
-
 #include "deepin-anything/fs_buf.h"
 #include "deepin-anything/walkdir.h"
 #include "deepin-anything/index/index.h"

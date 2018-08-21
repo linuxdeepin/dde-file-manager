@@ -49,6 +49,10 @@ isEqual(BUILD_MINIMUM, YES){
     DEFINES += DFM_MINIMUM
 }
 
+CONFIG(DISABLE_ANYTHING) {
+    DEFINES += DISABLE_QUICK_SEARCH
+}
+
 include(../dialogs/dialogs.pri)
 include(../utils/utils.pri)
 include(../chinese2pinyin/chinese2pinyin.pri)
@@ -59,7 +63,11 @@ include(../usershare/usershare.pri)
 include(../dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
 include(../partman/partman.pri)
 include(tag/tag.pri)
-include(quick_search/quicksearch.pri)
+
+!CONFIG(DISABLE_ANYTHING) {
+    include(quick_search/quicksearch.pri)
+}
+
 isEqual(ARCH, sw_64){
 #    isEqual(ENABLE_SW_LABLE, YES){
         DEFINES += SW_LABEL
@@ -215,9 +223,9 @@ HEADERS += \
     views/droundbutton.h \
     views/dtagedit.h \
     shutil/dsqlitehandle.h \
+    shutil/danythingmonitorfilter.h \
     controllers/tagmanagerdaemoncontroller.h \
     controllers/interface/tagmanagerdaemon_interface.h \
-    shutil/danythingmonitor.h \
     interfaces/dfmsettings.h \
     interfaces/dfmsidebar.h \
     interfaces/dfmsidebaritem.h \
@@ -249,11 +257,7 @@ HEADERS += \
     interfaces/dfmapplication.h \
     interfaces/private/dfmapplication_p.h \
     controllers/dfmsearchcrumbcontroller.h \
-    shutil/danythingmonitorfilter.h \
-    controllers/interface/quicksearchdaemon_interface.h \
-    controllers/quicksearchdaemoncontroller.h \
     views/dfmheaderview.h \
-    shutil/dquicksearchfilter.h \
     controllers/mountcontroller.h \
     models/mountfileinfo.h \
     views/dfmsplitter.h
@@ -389,9 +393,9 @@ SOURCES += \
     views/droundbutton.cpp \
     views/dtagedit.cpp \
     shutil/dsqlitehandle.cpp \
+    shutil/danythingmonitorfilter.cpp \
     controllers/tagmanagerdaemoncontroller.cpp \
     controllers/interface/tagmanagerdaemon_interface.cpp \
-    shutil/danythingmonitor.cpp \
     interfaces/dfmsettings.cpp \
     interfaces/dfmsidebar.cpp \
     interfaces/dfmsidebaritem.cpp \
@@ -422,14 +426,21 @@ SOURCES += \
     views/dcompleterlistview.cpp \
     interfaces/dfmapplication.cpp \
     controllers/dfmsearchcrumbcontroller.cpp\
-    shutil/danythingmonitorfilter.cpp \
-    controllers/interface/quicksearchdaemon_interface.cpp \
-    controllers/quicksearchdaemoncontroller.cpp \
     views/dfmheaderview.cpp \
-    shutil/dquicksearchfilter.cpp \
     controllers/mountcontroller.cpp \
     models/mountfileinfo.cpp \
     views/dfmsplitter.cpp
+
+!CONFIG(DISABLE_ANYTHING) {
+    HEADERS += shutil/danythingmonitor.h \
+               controllers/interface/quicksearchdaemon_interface.h \
+               controllers/quicksearchdaemoncontroller.h \
+               shutil/dquicksearchfilter.h
+    SOURCES += shutil/danythingmonitor.cpp \
+               controllers/interface/quicksearchdaemon_interface.cpp \
+               controllers/quicksearchdaemoncontroller.cpp \
+               shutil/dquicksearchfilter.cpp
+}
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 ICONDIR = $$PREFIX/share/icons/hicolor/scalable/apps

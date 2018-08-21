@@ -45,7 +45,6 @@
 #include "dde-file-manager-plugins/plugininterfaces/menu/menuinterface.h"
 
 #include "deviceinfo/udisklistener.h"
-#include "shutil/danythingmonitorfilter.h"
 
 #include <QDateTime>
 #include <QDebug>

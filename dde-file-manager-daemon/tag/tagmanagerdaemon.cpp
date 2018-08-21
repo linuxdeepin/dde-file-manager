@@ -36,7 +36,7 @@ std::atomic<int> counter{ 0 };
 TagManagerDaemon::TagManagerDaemon(QObject *const parent)
     : QObject{ parent },
       adaptor{ new TagManagerDaemonAdaptor{ this } },
-m_anything_monitor{ new DAnythingMonitorFilter{this} }
+      m_anything_monitor{ new DAnythingMonitorFilter{this} }
 {
 
     this->init_connection();

@@ -23,7 +23,9 @@
 #include "interfaces/dfilemenu.h"
 #include "views/dtagactionwidget.h"
 #include "views/dfileview.h"
+#ifndef DISABLE_QUICK_SEARCH
 #include "shutil/danythingmonitor.h"
+#endif // DISABLE_QUICK_SEARCH
 #include "shutil/dsqlitehandle.h"
 #include "controllers/tagmanagerdaemoncontroller.h"
 

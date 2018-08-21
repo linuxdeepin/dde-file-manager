@@ -7,7 +7,6 @@ SUBDIRS  += \
     dde-file-manager-plugins \
     dde-dock-plugins\
     dde-desktop \
-    deepin-anything-server-plugins \
     dde-file-thumbnail-tool
 
 isEqual(BUILD_MINIMUM, YES){
@@ -18,6 +17,9 @@ isEqual(BUILD_MINIMUM, YES){
 #    dde-sharefiles
 }
 
+!CONFIG(DISABLE_ANYTHING) {
+    SUBDIRS += deepin-anything-server-plugins
+}
 
 dde-file-manager.depends = dde-file-manager-lib
 dde-dock-plugins.depends = dde-file-manager-lib
