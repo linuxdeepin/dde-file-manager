@@ -75,7 +75,9 @@
 
 #include "dfmsettings.h"
 #include "dfmapplication.h"
+#ifndef DISABLE_QUICK_SEARCH
 #include "quick_search/dquicksearch.h"
+#endif
 #include "controllers/quicksearchdaemoncontroller.h"
 
 class DFMQDirIterator : public DDirIterator
@@ -1118,6 +1120,10 @@ DUrl FileDirIterator::url() const
 
 bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
 {
+#ifdef DISABLE_QUICK_SEARCH
+    Q_UNUSED(keyword);
+    return false;
+#else // !DISABLE_QUICK_SEARCH
     const QString pathForSearching = iterator->url().toLocalFile();
 
     if (QFileInfo::exists(pathForSearching)) {
@@ -1172,4 +1178,5 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
     }
 
     return false;
+#endif // DISABLE_QUICK_SEARCH
 }

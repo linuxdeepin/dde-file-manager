@@ -33,7 +33,6 @@
 #include "deviceinfo/udiskdeviceinfo.h"
 #include "shutil/danythingmonitorfilter.h"
 
-
 class TagManagerDaemonAdaptor;
 class TagManagerDaemon : public QObject
 {

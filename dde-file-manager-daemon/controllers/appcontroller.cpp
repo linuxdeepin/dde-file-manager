@@ -30,8 +30,9 @@
 #include "usershare/usersharemanager.h"
 #include "deviceinfo/deviceinfomanager.h"
 #include "commandmanager/commandmanager.h"
+#ifndef DISABLE_QUICK_SEARCH
 #include "quicksearch/quicksearchdaemon.h"
-
+#endif // DISABLE_QUICK_SEARCH
 
 AppController::AppController(QObject *parent) : QObject(parent)
 {
@@ -52,7 +53,9 @@ void AppController::initControllers()
 //    m_commandManager = new CommandManager(this);
     m_deviceInfoManager = new DeviceInfoManager(this);
     m_tagManagerDaemon = new TagManagerDaemon{ this };
+#ifndef DISABLE_QUICK_SEARCH
     m_quick_search_daemon = new QuickSearchDaemon{ this };
+#endif // DISABLE_QUICK_SEARCH
 }
 
 void AppController::initConnect()

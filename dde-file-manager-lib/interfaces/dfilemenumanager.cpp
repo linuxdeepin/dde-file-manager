@@ -41,6 +41,7 @@
 #include "views/windowmanager.h"
 #include "shutil/fileutils.h"
 #include "shutil/mimesappsmanager.h"
+#include "shutil/danythingmonitorfilter.h"
 #include "controllers/pathmanager.h"
 #include "plugins/pluginmanager.h"
 #include "dde-file-manager-plugins/plugininterfaces/menu/menuinterface.h"
@@ -60,7 +61,6 @@
 #include <QDebug>
 #include <QPushButton>
 #include <QWidgetAction>
-
 
 namespace DFileMenuData
 {
