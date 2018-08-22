@@ -62,6 +62,14 @@ QString BookMark::getName() const
     return fileUrl().bookmarkName();
 }
 
+/*!
+ * \brief Check if bookmark target file exist
+ *
+ * This is a known interface misunderstand, it should be implemented as check
+ * if a bookmark is exist. This behavior should be fixed later.
+ *
+ * \return bookmark target file exist or not.
+ */
 bool BookMark::exists() const
 {
     // Check if it is a local file first

@@ -43,6 +43,8 @@ public:
     explicit BookMarkManager(QObject *parent = 0);
     ~BookMarkManager();
 
+    bool checkExist(const DUrl &url);
+
     bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const override;
     bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const override;
     bool touch(const QSharedPointer<DFMTouchFileEvent> &event) const override;

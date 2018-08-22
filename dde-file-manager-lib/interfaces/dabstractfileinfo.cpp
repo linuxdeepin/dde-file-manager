@@ -33,6 +33,7 @@
 #include "shutil/fileutils.h"
 #include "shutil/mimetypedisplaymanager.h"
 
+#include "controllers/bookmarkmanager.h"
 #include "controllers/pathmanager.h"
 #include "dfileservices.h"
 #include "dmimedatabase.h"
@@ -849,7 +850,10 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             }
 
             if (isDir()) {
-                if (DFileService::instance()->createFileInfo(nullptr, DUrl::fromBookMarkFile(fileUrl(), QString()))) {
+                // FIXME: reimplement BookMark::exist() 's behavior and use it for check bookmark existance.
+                //        after doing this, don't forget to remove the "bookmarkmanager.h" header file include.
+                // if (DFileService::instance()->createFileInfo(nullptr, DUrl::fromBookMarkFile(fileUrl(), QString()))) {
+                if (Singleton<BookMarkManager>::instance()->checkExist(DUrl::fromBookMarkFile(fileUrl(), QString()))) {
                     actionKeys << MenuAction::BookmarkRemove;
                 } else {
                     actionKeys << MenuAction::AddToBookMark;
