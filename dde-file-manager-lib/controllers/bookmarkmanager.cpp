@@ -93,6 +93,22 @@ BookMarkManager::~BookMarkManager()
 
 }
 
+/*!
+ * \brief Check if a bookmark is exist.
+ * \param url a bookmark url
+ *
+ * FIXME: A workaround for the worng implement of BookMark::exists().
+ * We should remove this function or make it private once we correct
+ * BookMark::exists() 's behavior.
+ *
+ * \return exist or not
+ */
+bool BookMarkManager::checkExist(const DUrl &url)
+{
+    BookMarkPointer p = m_bookmarks.value(url.bookmarkTargetUrl());
+    return p;
+}
+
 bool BookMarkManager::renameFile(const QSharedPointer<DFMRenameEvent> &event) const
 {
     BookMarkPointer item = findBookmark(event->fromUrl());
