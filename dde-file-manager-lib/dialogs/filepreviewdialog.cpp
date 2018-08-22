@@ -302,7 +302,7 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
             break;
         case Qt::Key_Space:{
             m_preview->stop();
-            hide();
+            close();
             return true;
         }
         default:
