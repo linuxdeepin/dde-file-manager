@@ -305,6 +305,9 @@ void DFileStatisticsJob::run()
     Q_D(DFileStatisticsJob);
 
     d->setState(RunningState);
+    d_ptr->totalSize = 0;
+    d_ptr->filesCount = 0;
+    d_ptr->directoryCount = 0;
 
     Q_EMIT dataNotify(0, 0, 0);
 
