@@ -1,3 +1,42 @@
+<a name="4.6.6"></a>
+## 4.6.6 (2018-08-23)
+
+
+#### Features
+
+*   allowed disable quick search ([1cf9c53f](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/1cf9c53fad25ccdf52bc70d8da274a0003b22819))
+* **mount:**  now support ask-question signal ([cd54c28e](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/cd54c28e4f7449235493d46acda16048af5e7447))
+
+#### Bug Fixes
+
+*   DnD on sidebar ([b28b4ee7](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/b28b4ee78dfc9c4235ea6cdf84ab5efd341580f5))
+*   can not write file to sftp mount path ([ba9d0a92](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/ba9d0a92767b450b8809540056c87acab3b74700))
+* **DTaskDialog:**  the process bar label is not at center ([10601287](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/10601287bf268989e55bee0f8511093469d46fa4))
+* **Image Preview:**  the preview image on the high-DPI screen is stretched ([a3b73c0d](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/a3b73c0d5e824d3e11f74466b01b8c9c250c832a))
+* **authDlg:**  checkbox set text ([054806d7](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/054806d70c6c9edacec36224656f25d46e6d07b3))
+* **bookmark:**  Auto mount for ftp and sftp scheme ([65c51d0f](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/65c51d0fdd33fb963db68211d2332ee3ac3e2d52))
+* **bookmarm:**  always display remove bookmark option in context menu ([9192aecc](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/9192aeccc99910e65def8d10bb22d006f331884c))
+* **fileDlg:**  press enter on save dialog ([e1587089](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/e158708954b41d63a44ec75a2c12c5f2e836b1ec))
+* **i10n:**  comment for partition label i10n ([22d90335](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/22d903350007cdafd4b612ecfbd4f36006facc99))
+* **mount:**  ask question dialog now got a max width ([5709edf8](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/5709edf8e92e91f86ff569c96675e3e418d028f0))
+* **mountPlugin:**
+  *  Do not show partition if hintIgnore is true ([da70b6ed](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/da70b6ed0bb9031b4d1f0cfa29386a0b76b1747a))
+  *  default config in resource file ([684eea1c](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/684eea1c02ebd655db06e852761123e51d05bf30))
+* **previewDlg:**  reset counter when start ([1c681c81](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/1c681c81190ec32662dc8b3b9832b78eb58f747a))
+* **propertyDlg:**
+  *  Single file symlink-chain ([82418bf4](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/82418bf464c695ea5a75d8b2afe55d3d7f65b721))
+  *  File display name and SymLink size ([27f1d13b](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/27f1d13be20278439a2ebc319fd9dfa80d4c4120))
+* **share:**  Use checkbox's setText() ([9d7e6ad5](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/9d7e6ad5bc982eff24a96196e56d805ad3b31424))
+* **shareDlg:**  use checkbox setText() ([f3455233](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/f3455233a57de578cb0eed02faa7ca3b4fe39787))
+* **sidebar:**
+  *  DFMSplitter use QGuiApplication::setOverrideCursor ([bdb4efe6](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/bdb4efe603b10ca9dd48f36c389b7b2996c9114d))
+  *  splitter cursor fix ([668d2346](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/668d234625e0a46780d08fc8f20dd572a6c097b1))
+  *  remove limit for i10n partition label ([4d356caf](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/4d356caf3158325da71ffd6b26e6358603f310b6))
+* **tagedit:**  disable mouse move event. ([103f59e8](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/103f59e86291932ea4c27b3ae73af7b822730005))
+* **trash:**  item count not correct ([3009fc6b](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/3009fc6b5cb472800af3530fca0405cbc2cfafbe))
+
+
+
 <a name="4.6.5"></a>
 ## 4.6.5 (2018-08-12)
 
