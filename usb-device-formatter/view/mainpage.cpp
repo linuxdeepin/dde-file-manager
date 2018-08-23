@@ -108,7 +108,7 @@ void MainPage::initUI()
 
     QLabel* typeLable =new  QLabel(tr("Type"), this);
     typeLable->setObjectName("TagLabel");
-    m_typeCombo = new DComboBox(this);
+    m_typeCombo = new QComboBox(this);
     m_typeCombo->setObjectName("TypeCombo");
 
     QMetaEnum metaEnum = QMetaEnum::fromType<FsType>();

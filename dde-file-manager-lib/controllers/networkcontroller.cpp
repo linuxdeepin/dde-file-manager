@@ -96,9 +96,9 @@ public:
 
 private:
     mutable bool initialized = false;
-    bool m_silence{ false };
     DUrl m_url;
     QPointer<const QObject> m_sender;
+    bool m_silence{ false };
     DAbstractFileInfoPointer m_currentInfo;
     mutable QList<DAbstractFileInfoPointer> m_infoList;
 };

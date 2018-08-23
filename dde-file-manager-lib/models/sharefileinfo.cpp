@@ -16,6 +16,7 @@
 #include "controllers/trashmanager.h"
 #include "dfileservices.h"
 #include "controllers/pathmanager.h"
+#include "controllers/bookmarkmanager.h"
 
 #include "app/define.h"
 #include "interfaces/dfmstandardpaths.h"
@@ -73,10 +74,10 @@ QString ShareFileInfo::fileDisplayName() const
         return systemPathManager->getSystemPathDisplayNameByPath(fileUrl().toString());
     ShareInfo info = userShareManager->getShareInfoByPath(fileUrl().path());
     QString displayName = info.shareName();
-    if (!displayName.isEmpty())
+    if (!displayName.isEmpty()) {
         return displayName;
-    else{
-        if (d->proxy){
+    } else {
+        if (d->proxy) {
             return d->proxy->fileDisplayName();
         }
     }
@@ -107,7 +108,10 @@ QVector<MenuAction> ShareFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
             bool useRemoveBookmarkAction = false;
             DUrl schemeAlteredUrl = fileUrl();
             schemeAlteredUrl.setScheme(FILE_SCHEME);
-            if (DFileService::instance()->createFileInfo(nullptr, DUrl::fromBookMarkFile(schemeAlteredUrl, QString()))) {
+            // FIXME: reimplement BookMark::exist() 's behavior and use it for check bookmark existance.
+            //        after doing this, don't forget to remove the "bookmarkmanager.h" header file include.
+            // if (DFileService::instance()->createFileInfo(nullptr, DUrl::fromBookMarkFile(fileUrl(), QString()))) {
+            if (Singleton<BookMarkManager>::instance()->checkExist(DUrl::fromBookMarkFile(schemeAlteredUrl, QString()))) {
                 useRemoveBookmarkAction = true;
             }
             actionKeys << MenuAction::Open

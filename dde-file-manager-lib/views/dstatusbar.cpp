@@ -37,7 +37,7 @@
 #include <QComboBox>
 #include <dtextbutton.h>
 #include <dlineedit.h>
-#include <anchors.h>
+#include <danchors.h>
 #include <DThemeManager>
 
 #include <QFutureWatcher>
@@ -145,7 +145,7 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
         m_layout->setSpacing(14);
         m_layout->setContentsMargins(0, 0, 4, 0);
 
-        Anchors<QSlider> sliderAnchor(m_scaleSlider);
+        DAnchors<QSlider> sliderAnchor(m_scaleSlider);
 
         sliderAnchor.setAnchor(Qt::AnchorRight, this, Qt::AnchorRight);
         sliderAnchor.setAnchor(Qt::AnchorVerticalCenter, this, Qt::AnchorVerticalCenter);
@@ -475,6 +475,6 @@ void DStatusBar::clearLayoutAndAnchors()
     while (m_layout->count() > 0)
         delete m_layout->takeAt(0);
 
-    AnchorsBase::clearAnchors(this);
-    AnchorsBase::clearAnchors(m_scaleSlider);
+    DAnchorsBase::clearAnchors(this);
+    DAnchorsBase::clearAnchors(m_scaleSlider);
 }
