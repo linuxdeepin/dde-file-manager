@@ -78,6 +78,7 @@ signals:
     void childrenUpdated(const QList<DAbstractFileInfoPointer> &list);
 
 private:
+    bool m_silent;
     DDirIteratorPointer m_iterator;
     DUrl m_fileUrl;
     QStringList m_nameFilters;
@@ -89,7 +90,6 @@ private:
 
     QElapsedTimer *timer = Q_NULLPTR;
 
-    bool m_silent;
     int m_timeCeiling = 5000;
     int m_countCeiling = 50000;
 

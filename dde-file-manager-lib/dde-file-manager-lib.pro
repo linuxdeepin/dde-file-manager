@@ -106,7 +106,6 @@ HEADERS += \
     shutil/fileutils.h \
     shutil/properties.h \
     views/dfilemanagerwindow.h \
-    views/dcrumbwidget.h \
     views/dcrumbbutton.h \
     views/dhorizseparator.h \
     views/historystack.h\
@@ -175,7 +174,6 @@ HEADERS += \
     interfaces/private/dabstractfilewatcher_p.h \
     interfaces/dfileproxywatcher.h \
     plugins/pluginmanager.h \
-    plugins/plugininterfaces/menu/menuinterface.h \
     interfaces/dthumbnailprovider.h \
     views/progressline.h \
     controllers/avfsfilecontroller.h \
@@ -283,7 +281,6 @@ SOURCES += \
     shutil/fileutils.cpp \
     shutil/properties.cpp \
     views/dfilemanagerwindow.cpp \
-    views/dcrumbwidget.cpp \
     views/dcrumbbutton.cpp \
     views/dhorizseparator.cpp \
     views/historystack.cpp\

@@ -81,6 +81,7 @@ void DTagEdit::keyPressEvent(QKeyEvent* event)
 
 void DTagEdit::mouseMoveEvent(QMouseEvent *event)
 {
+    Q_UNUSED(event);
 }
 
 void DTagEdit::initializeWidgets()

@@ -332,6 +332,7 @@ QSize DListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMod
 
 QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    Q_UNUSED(option);
     Q_D(const DListItemDelegate);
 
     d->editingIndex = index;
@@ -388,6 +389,7 @@ QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
 
 void DListItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    Q_UNUSED(index);
     const QSize &icon_size = parent()->parent()->iconSize();
     int column_x = 0;
 

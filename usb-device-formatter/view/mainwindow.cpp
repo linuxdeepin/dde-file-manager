@@ -85,7 +85,6 @@ void MainWindow::initUI()
     QString title = tr("Format");
     m_titleBar = new DTitlebar(this);
     m_titleBar->setIcon(transparentIcon);
-    m_titleBar->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::FramelessWindowHint);
     m_titleBar->setTitle(title);
     m_titleBar->setFixedHeight(20);
     m_titleBar->layout()->setContentsMargins(0, 0, 0, 0);

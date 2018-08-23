@@ -100,8 +100,8 @@ class DFileViewHelperPrivate
 {
 public:
     DFileViewHelperPrivate(DFileViewHelper *qq)
-        : q_ptr(qq)
-        , menuEventHandler(new MenuActionEventHandler(qq))
+        : menuEventHandler(new MenuActionEventHandler(qq))
+        , q_ptr(qq)
     {
         DFMEventDispatcher::instance()->installEventFilter(menuEventHandler);
     }

@@ -121,6 +121,8 @@ QString DFMStandardPaths::location(DFMStandardPaths::StandardLocation type)
 #endif
     case Root:
         return "/";
+    default:
+        return QStringLiteral("bug://dde-file-manager-lib/interface/dfmstandardpaths.cpp#") + QT_STRINGIFY(type);
     }
 
     return QString();

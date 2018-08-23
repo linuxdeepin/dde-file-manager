@@ -79,6 +79,7 @@ public:
             dialog.setIcon(QIcon::fromTheme("dialog-error"));
             dialog.exec();
         }
+        // fall-through
         case DFileCopyMoveJob::UnknowError:
             return DFileCopyMoveJob::CancelAction;
         default:
