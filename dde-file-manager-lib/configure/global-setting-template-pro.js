@@ -214,7 +214,7 @@
                             "key": "video_file_preview",
                             "text": qsTranslate("GenerateSettingTranslate", "Video preview"),
                             "type": "checkbox",
-                            "default": true,
+                            "default": true
                         }
                     ]
                 },
