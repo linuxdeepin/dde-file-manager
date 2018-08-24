@@ -36,6 +36,7 @@ public:
     GFile *file = nullptr;
     GInputStream *input_stream = nullptr;
     GOutputStream *output_stream = nullptr;
+    GIOStream *total_stream = nullptr;
 };
 
 DGIOFileDevicePrivate::DGIOFileDevicePrivate(DGIOFileDevice *qq)
@@ -72,6 +73,27 @@ bool DGIOFileDevice::open(QIODevice::OpenMode mode)
     Q_D(DGIOFileDevice);
 
     GError *error = nullptr;
+
+    if (mode.testFlag(ReadWrite) && !mode.testFlag(Append)) {
+        if (mode.testFlag(Truncate)) {
+            d->total_stream = G_IO_STREAM(g_file_replace_readwrite(d->file, nullptr, false, G_FILE_CREATE_NONE, nullptr, &error));
+        } else {
+            d->total_stream = G_IO_STREAM(g_file_open_readwrite(d->file, nullptr, &error));
+        }
+
+        if (error) {
+            setErrorString(QString::fromLocal8Bit(error->message));
+
+            g_error_free(error);
+
+            return false;
+        }
+
+        d->input_stream = g_io_stream_get_input_stream(d->total_stream);
+        d->output_stream = g_io_stream_get_output_stream(d->total_stream);
+
+        return true;
+    }
 
     if (mode.testFlag(ReadOnly)) {
         d->input_stream = G_INPUT_STREAM(g_file_read(d->file, nullptr, &error));
@@ -166,14 +188,27 @@ void DGIOFileDevice::close()
 
     Q_D(DGIOFileDevice);
 
-    if (d->input_stream) {
-        g_input_stream_close(d->input_stream, nullptr, nullptr);
-        g_object_unref(d->input_stream);
-    }
+    if (d->total_stream) {
+        g_io_stream_close(d->total_stream, nullptr, nullptr);
+        g_object_unref(d->total_stream);
 
-    if (d->output_stream) {
-        g_output_stream_close(d->output_stream, nullptr, nullptr);
-        g_object_unref(d->output_stream);
+        d->total_stream = nullptr;
+        d->input_stream = nullptr;
+        d->output_stream = nullptr;
+    } else {
+        if (d->input_stream) {
+            g_input_stream_close(d->input_stream, nullptr, nullptr);
+            g_object_unref(d->input_stream);
+
+            d->input_stream = nullptr;
+        }
+
+        if (d->output_stream) {
+            g_output_stream_close(d->output_stream, nullptr, nullptr);
+            g_object_unref(d->output_stream);
+
+            d->output_stream = nullptr;
+        }
     }
 }
 
