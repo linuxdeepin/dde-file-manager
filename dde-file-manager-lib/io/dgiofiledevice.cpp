@@ -89,7 +89,11 @@ bool DGIOFileDevice::open(QIODevice::OpenMode mode)
 
     if ((mode & (WriteOnly | Append | Truncate))) {
         bool exists = g_file_query_exists(d->file, nullptr);
-        d->output_stream = G_OUTPUT_STREAM(g_file_append_to(d->file, G_FILE_CREATE_NONE, nullptr, &error));
+        if (mode.testFlag(Append)) {
+            d->output_stream = G_OUTPUT_STREAM(g_file_append_to(d->file, G_FILE_CREATE_NONE, nullptr, &error));
+        } else {
+            d->output_stream = G_OUTPUT_STREAM(g_file_replace(d->file, nullptr, false, G_FILE_CREATE_NONE, nullptr, &error));
+        }
 
         if (error) {
             do {
