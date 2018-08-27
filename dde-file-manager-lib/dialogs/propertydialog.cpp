@@ -285,19 +285,22 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         }
 
         m_basicInfoFrame = createBasicInfoWidget(fileInfo);
-        m_authorityManagementFrame = createAuthorityManagementWidget(fileInfo);
 
         QStringList titleList;
         if (fileInfo->isFile()) {
             titleList << basicInfo;
-            titleList << openWith;
-            titleList << authManager;
+            if (!m_url.isTrashFile()) {
+                titleList << openWith;
+                titleList << authManager;
+            }
         } else {
             titleList << basicInfo;
             if (fileInfo->canShare()) {
                 titleList << shareManager;
             }
-            titleList << authManager;
+            if (!m_url.isTrashFile()) {
+                titleList << authManager;
+            }
         }
         m_expandGroup = addExpandWidget(titleList);
         m_expandGroup->expand(0)->setContent(m_basicInfoFrame);
@@ -322,14 +325,19 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
             m_fileCount = 1;
             m_size = fileInfo->size();
 
-            m_OpenWithListWidget = createOpenWithListWidget(fileInfo);
-            m_expandGroup->expand(1)->setContent(m_OpenWithListWidget);
-            m_expandGroup->expand(1)->setExpand(false);
+            if (!m_url.isTrashFile()) {
+                m_OpenWithListWidget = createOpenWithListWidget(fileInfo);
+                m_expandGroup->expand(1)->setContent(m_OpenWithListWidget);
+                m_expandGroup->expand(1)->setExpand(false);
+            }
         }
 
-        int authMgrIndex = titleList.indexOf(authManager);
-        m_expandGroup->expand(authMgrIndex)->setContent(m_authorityManagementFrame);
-        m_expandGroup->expand(authMgrIndex)->setExpand(false);
+        if (!m_url.isTrashFile()) {
+            int authMgrIndex = titleList.indexOf(authManager);
+            m_authorityManagementFrame = createAuthorityManagementWidget(fileInfo);
+            m_expandGroup->expand(authMgrIndex)->setContent(m_authorityManagementFrame);
+            m_expandGroup->expand(authMgrIndex)->setExpand(false);
+        }
     }
     initTextShowFrame(m_edit->toPlainText());
     if (m_editDisbaled) {
