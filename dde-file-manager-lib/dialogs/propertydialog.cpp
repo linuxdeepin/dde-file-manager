@@ -966,6 +966,9 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     QComboBox *groupBox = new QComboBox;
     QComboBox *otherBox = new QComboBox;
 
+    // these are for file or folder, folder will with executable index.
+    int readWriteIndex, readOnlyIndex;
+
     QStringList authorityList;
 
     authorityList << QObject::tr("Access denied") // 0
@@ -978,10 +981,21 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
                   << QObject::tr("Read-write"); // 7 with x
 
     if (info->isFile()) {
+        // append `Execytable` string
         QString append = QStringLiteral(" , ") + QObject::tr("Executable");
         authorityList[3] += append;
         authorityList[5] += append;
         authorityList[7] += append;
+
+        // file: read is read, read-write is read-write
+        readOnlyIndex = 4;
+        readWriteIndex = 6;
+    }
+
+    if (info->isDir()) {
+        // folder: read is read and executable, read-write is read-write and executable
+        readOnlyIndex = 5;
+        readWriteIndex = 7;
     }
 
     // enumFlag should be 0~7, this is just a check to avoid runtime error
@@ -997,9 +1011,9 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     // set QComboBox, notice this permission number is not just 0~7
     auto setComboBoxByPermission = [ = ](QComboBox * cb, int permission, int offset) {
         int index = permission >> offset;
-        if (index == 6) {
+        if (index == readWriteIndex) {
             cb->setCurrentIndex(0);
-        } else if (index == 4) {
+        } else if (index == readOnlyIndex) {
             cb->setCurrentIndex(1);
         } else {
             cb->addItem(getPermissionString(index), QVariant(permission));
@@ -1014,12 +1028,22 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
                          QFileDevice::Permissions(groupBox->currentData().toInt()) | QFileDevice::Permissions((otherBox->currentData().toInt())));
     };
 
-    ownerBox->addItem(authorityList[6], QVariant(QFile::WriteOwner | QFile::ReadOwner));
-    ownerBox->addItem(authorityList[4], QVariant(QFile::ReadOwner));
-    groupBox->addItem(authorityList[6], QVariant(QFile::WriteGroup | QFile::ReadGroup));
-    groupBox->addItem(authorityList[4], QVariant(QFile::ReadGroup));
-    otherBox->addItem(authorityList[6], QVariant(QFile::WriteOther | QFile::ReadOther));
-    otherBox->addItem(authorityList[4], QVariant(QFile::ReadOther));
+    if (info->isDir()) {
+        ownerBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteOwner | QFile::ReadOwner | QFile::ExeOwner));
+        ownerBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadOwner | QFile::ExeOwner));
+        groupBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteGroup | QFile::ReadGroup | QFile::ExeGroup));
+        groupBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadGroup | QFile::ExeGroup));
+        otherBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteOther | QFile::ReadOther | QFile::ExeOther));
+        otherBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadOther | QFile::ExeOther));
+    } else {
+        ownerBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteOwner | QFile::ReadOwner));
+        ownerBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadOwner));
+        groupBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteGroup | QFile::ReadGroup));
+        groupBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadGroup));
+        otherBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteOther | QFile::ReadOther));
+        otherBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadOther));
+    }
+
 
     setComboBoxByPermission(ownerBox, info->permissions() & 0x7000, 12);
     setComboBoxByPermission(groupBox, info->permissions() & 0x0070, 4);
