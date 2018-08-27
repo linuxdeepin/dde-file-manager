@@ -966,6 +966,24 @@ FileDialogStatusBar *DFileDialog::statusBar() const
     return d->statusBar;
 }
 
+#if DTK_VERSION > DTK_VERSION_CHECK(2, 0, 5, 0)
+static bool pwPluginVersionGreaterThen(const QString &v)
+{
+    const QStringList &version_list = DPlatformWindowHandle::pluginVersion().split(".");
+    const QStringList &v_v_list = v.split(".");
+
+    for (int i = 0; i < version_list.count(); ++i) {
+        if (v.count() <= i)
+            return true;
+
+        if (version_list[i].toInt() > v_v_list[i].toInt())
+            return true;
+    }
+
+    return false;
+}
+#endif
+
 void DFileDialog::onAcceptButtonClicked()
 {
     D_DC(DFileDialog);
@@ -991,7 +1009,7 @@ void DFileDialog::onAcceptButtonClicked()
                     // NOTE(zccrs): dxcb bug
                     if (!DPlatformWindowHandle::isEnabledDXcb(this)
 #if DTK_VERSION > DTK_VERSION_CHECK(2, 0, 5, 0)
-                            || DPlatformWindowHandle::pluginVersion() > "1.1.8.3"
+                            || pwPluginVersionGreaterThen("1.1.8.3")
 #endif
                        ) {
                         dialog.setWindowModality(Qt::WindowModal);
