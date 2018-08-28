@@ -48,7 +48,7 @@ unix {
     DEFINES += PLUGINDIR=\\\"$$top_srcdir/plugins:$$PLUGINDIR\\\" TOOLDIR=\\\"$$top_srcdir/tools:$$TOOLDIR\\\"
 
     isEmpty(VERSION) {
-        VERSION = 1.8.1
+        VERSION = 1.8.2
     }
 
     isEmpty(DISABLE_JEMALLOC) {
