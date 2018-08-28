@@ -1,3 +1,21 @@
+<a name="4.6.7"></a>
+## 4.6.7 (2018-08-28)
+
+
+#### Features
+
+*   support only ReadWrite mode for DGIOFileDevice ([a36d5161](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/a36d51613cae7b3befe50a02bb8201c659b27c72))
+
+#### Bug Fixes
+
+*   the platform plugin version is wrong of judgment ([affb8732](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/affb8732e8c9337a4b45d94e713a2ec22349f68d))
+* **config:**  default config file for pro support not correct ([b40f2ce2](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/b40f2ce21eb9e55c89ba283cfda75fdacb0a1b9d))
+* **fileOp:**  use g_file_replace() ([5a8847a0](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/5a8847a0c7fe1f964a9c2dfa4739de017afdb52a))
+* **permission:**  add executable flag for folder ([dc5b1d72](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/dc5b1d729fb63cb297175fb25e2d9d793c553a1a))
+* **propertyDlg:**  no longer show openWith and auth section for trash file ([b830fe2f](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/b830fe2ff3cf4435970cb3a06f846997afb9bd30))
+
+
+
 <a name="4.6.6"></a>
 ## 4.6.6 (2018-08-23)
 
