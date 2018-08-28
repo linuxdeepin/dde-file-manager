@@ -390,42 +390,60 @@ qreal dRound64(qreal num, int count = 1)
     return qRound64(num * base) / base;
 }
 
-QString FileUtils::formatSize( qint64 num )
+/*!
+ * \brief Display human readable file size.
+ *
+ * by default, will display size unit. like `1.2 GB` or `616 MB`. By using
+ * \a forceUnit argument we can also force to display a unit size with the
+ * required unit. 0 for bytes, 1 for KiB, 2 for MiB, 3 for GiB, etc.
+ *
+ * \param num The file size number.
+ * \param withUnitVisible Size unit visible or not.
+ * \param precision Precision for float number after the dot.
+ * \param forceUnit Force to use a unit.
+ * \return
+ */
+QString FileUtils::formatSize(qint64 num, bool withUnitVisible, int precision, int forceUnit, QStringList unitList)
 {
-    QString ret;
-    const qint64 kb = 1024;
-    const qint64 mb = 1024 * kb;
-    const qint64 gb = 1024 * mb;
-    const qint64 tb = 1024 * gb;
+    bool isForceUnit = (forceUnit >= 0);
+    QStringList list;
+    qreal fileSize(num);
 
-    if ( num >= tb ) {
-        ret = QString( "%1 TB" ).arg( sizeString(QString::number( dRound64(qreal( num ) / tb), 'f', 1 )) );
-    } else if( num >= gb ) {
-        ret = QString( "%1 GB" ).arg( sizeString(QString::number( dRound64(qreal( num ) / gb), 'f', 1 )) );
-    } else if( num >= mb ) {
-        ret = QString( "%1 MB" ).arg( sizeString(QString::number( dRound64(qreal( num ) / mb), 'f', 1 )) );
-    } else if( num >= kb ) {
-        ret = QString( "%1 KB" ).arg( sizeString(QString::number( dRound64(qreal( num ) / kb),'f',1 )) );
+    if (unitList.size() == 0) {
+        list << " B" << " KB" << " MB" << " GB" << " TB"; // should we use KiB since we use 1024 here?
     } else {
-        ret = QString( "%1 B" ).arg( num );
+        list = unitList;
     }
 
-    return ret;
+    QStringListIterator i(list);
+    QString unit = i.hasNext() ? i.next() : QStringLiteral(" B");
+
+    int index = 0;
+    while(i.hasNext()) {
+        if (fileSize < 1024 && !isForceUnit) {
+            break;
+        }
+
+        if (isForceUnit && index == forceUnit) {
+            break;
+        }
+
+        unit = i.next();
+        fileSize /= 1024;
+        index++;
+    }
+    QString unitString = withUnitVisible ? unit : QString();
+    return QString("%1%2").arg(sizeString(QString::number(fileSize, 'f', precision)), unitString);
 }
 
-QString FileUtils::formatSizeToGB(qint64 num, bool isUnitVisible)
+QString FileUtils::diskUsageString(qint64 usedSize, qint64 totalSize)
 {
-    QString ret;
     const qint64 kb = 1024;
     const qint64 mb = 1024 * kb;
     const qint64 gb = 1024 * mb;
-    if (isUnitVisible){
-        ret = QString( "%1G" ).arg( sizeString(QString::number(dRound64(qreal( num ) / gb), 'f', 0 )) );
-    }else{
-        ret = QString( "%1" ).arg( sizeString(QString::number(dRound64(qreal( num ) / gb), 'f', 0 )) );
-    }
+    int forceUnit = (totalSize < gb && totalSize > 0) ? 2 : 3;
 
-    return ret;
+    return QString("%1/%2").arg(FileUtils::formatSize(usedSize, false, 0, forceUnit), FileUtils::formatSize(totalSize, true, 0, forceUnit, {"B", "K", "M", "G"}));
 }
 
 QString FileUtils::newDocmentName(QString targetdir, const QString &baseName, const QString &suffix)

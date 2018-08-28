@@ -331,7 +331,7 @@ void ComputerViewItem::updateStatus()
             m_progressLine->show();
         }
 
-        m_sizeLabel->setText(QString("%1/%2").arg(FileUtils::formatSizeToGB(used), FileUtils::formatSizeToGB(total, true)));
+        m_sizeLabel->setText(FileUtils::diskUsageString(used, total));
 
         m_sizeLabel->show();
         adjustPosition();
