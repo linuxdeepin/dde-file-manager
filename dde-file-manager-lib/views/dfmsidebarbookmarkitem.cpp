@@ -71,6 +71,7 @@ QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
 
     QMenu *menu = new QMenu();
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
+    bool shouldEnable = WindowManager::tabAddableByWinId(wnd->windowId());
     const DAbstractFileInfoPointer& info = DFileService::instance()->createFileInfo(this, url());
     bool fileExist = info->exists();
 
@@ -80,7 +81,7 @@ QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
 
     menu->addAction(QObject::tr("Open in new tab"), [wnd, this]() {
         wnd->openNewTab(url());
-    })->setEnabled(fileExist);
+    })->setEnabled(fileExist && shouldEnable);
 
     menu->addAction(QObject::tr("Rename"), [this]() {
         DFMSideBarBookmarkItem *ccItem = const_cast<DFMSideBarBookmarkItem *>(this);
