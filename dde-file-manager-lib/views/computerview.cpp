@@ -178,7 +178,7 @@ void ComputerViewItem::contextMenuEvent(QContextMenuEvent *event)
     QSet<MenuAction> disableList;
     const bool &tabAddable = WindowManager::tabAddableByWinId(windowId());
     if (!tabAddable) {
-        disableList << MenuAction::OpenInNewTab;
+        disableList << MenuAction::OpenInNewTab << MenuAction::OpenDiskInNewTab;
     }
     if (m_info) {
         menu = DFileMenuManager::createDefaultBookMarkMenu(disableList);
