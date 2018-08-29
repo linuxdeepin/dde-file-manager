@@ -126,7 +126,7 @@ void DiskMountPlugin::invokedMenuItem(const QString &itemKey, const QString &men
     Q_UNUSED(checked)
 
     if (menuId == OPEN)
-        QProcess::startDetached("gvfs-open", QStringList() << "computer:///");
+        QProcess::startDetached("gio", QStringList() << "open" << "computer:///");
     else if (menuId == UNMOUNT_ALL)
         m_diskControlApplet->unmountAll();
 }
@@ -146,7 +146,7 @@ void DiskMountPlugin::setSortKey(const QString &itemKey, const int order)
 void DiskMountPlugin::initCompoments()
 {
     m_diskControlApplet = new DiskControlWidget;
-    m_diskControlApplet->setObjectName("dist-mount");
+    m_diskControlApplet->setObjectName("disk-mount");
     m_diskControlApplet->setVisible(false);
 
     connect(m_diskControlApplet, &DiskControlWidget::diskCountChanged, this, &DiskMountPlugin::diskCountChanged);

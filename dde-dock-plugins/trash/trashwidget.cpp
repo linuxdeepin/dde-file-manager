@@ -219,11 +219,5 @@ void TrashWidget::moveToTrash(const QUrl &url)
 {
     const QFileInfo info = url.toLocalFile();
 
-    QProcess::startDetached("gvfs-trash", QStringList() << "-f" << info.absoluteFilePath());
-
-//    QDir trashDir(m_popupApplet->trashDir() + "/files");
-//    if (!trashDir.exists())
-//        trashDir.mkpath(".");
-
-//    QDir().rename(info.absoluteFilePath(), trashDir.absoluteFilePath(info.fileName()));
+    QProcess::startDetached("gio", QStringList() << "trash" << "-f" << info.absoluteFilePath());
 }
