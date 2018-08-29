@@ -82,6 +82,7 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
     QMenu *menu = new QMenu();
     const DAbstractFileInfoPointer infoPointer = fileService->createFileInfo(this, url());
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
+    bool shouldDisable = !WindowManager::tabAddableByWinId(wnd->windowId());
     QVariantHash info = getExtensionPropertys();
     DUrl deviceIdUrl;
 
@@ -101,7 +102,7 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
         } else {
             appController->actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(this, deviceIdUrl));
         }
-    });
+    })->setDisabled(shouldDisable);
 
     menu->addSeparator();
 

@@ -38,6 +38,7 @@ QMenu *DFMSideBarNetworkItem::createStandardContextMenu() const
 {
     QMenu *menu = new QMenu();
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
+    bool shouldDisable = !WindowManager::tabAddableByWinId(wnd->windowId());
 
     menu->addAction(QObject::tr("Open in new window"), [this]() {
         WindowManager::instance()->showNewWindow(url(), true);
@@ -45,7 +46,7 @@ QMenu *DFMSideBarNetworkItem::createStandardContextMenu() const
 
     menu->addAction(QObject::tr("Open in new tab"), [wnd, this]() {
         wnd->openNewTab(url());
-    });
+    })->setDisabled(shouldDisable);
 
     return menu;
 }

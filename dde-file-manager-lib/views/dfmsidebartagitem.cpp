@@ -45,6 +45,7 @@ QMenu *DFMSideBarTagItem::createStandardContextMenu() const
 {
     DFileMenu *menu = new DFileMenu();
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
+    bool shouldDisable = !WindowManager::tabAddableByWinId(wnd->windowId());
     DTagActionWidget* tagWidget{ new DTagActionWidget };
     QWidgetAction* tagAction{ new QWidgetAction{ nullptr } };
 
@@ -54,7 +55,7 @@ QMenu *DFMSideBarTagItem::createStandardContextMenu() const
 
     menu->addAction(QObject::tr("Open in new tab"), [wnd, this]() {
         wnd->openNewTab(url());
-    });
+    })->setDisabled(shouldDisable);
 
     menu->addAction(QObject::tr("Rename"), [this]() {
         DFMSideBarTagItem *ccItem = const_cast<DFMSideBarTagItem *>(this);
