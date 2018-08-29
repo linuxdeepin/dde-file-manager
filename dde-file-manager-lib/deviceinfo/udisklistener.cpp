@@ -614,14 +614,14 @@ void UDiskListener::forceUnmount(const QString &id)
     if (m_map.contains(id)) {
         UDiskDeviceInfoPointer device = m_map.value(id);
         QStringList args;
-        args << "-f" ;
+        args << "mount" << "-f" ;
         if (device->canEject()) {
             args << "-e" << device->getMountPointUrl().toLocalFile();
         } else {
             args << "-u" << device->getMountPointUrl().toLocalFile();
         }
-        bool reslut = QProcess::startDetached("gvfs-mount", args);
-        qDebug() << "gvfs-mount" << args << reslut;
+        bool reslut = QProcess::startDetached("gio", args);
+        qDebug() << "gio mount" << args << reslut;
     }
 }
 

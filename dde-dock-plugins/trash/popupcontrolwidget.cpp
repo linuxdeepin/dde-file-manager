@@ -78,11 +78,7 @@ const QString PopupControlWidget::trashDir()
 
 void PopupControlWidget::openTrashFloder()
 {
-    QProcess *proc = new QProcess;
-
-    connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished), proc, &QProcess::deleteLater);
-
-    proc->startDetached("gvfs-open trash:///");
+    QProcess::startDetached("gio", QStringList() << "open" << "trash:///");
 }
 
 void PopupControlWidget::clearTrashFloder()

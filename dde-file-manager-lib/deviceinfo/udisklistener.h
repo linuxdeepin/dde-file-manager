@@ -128,7 +128,7 @@ private slots:
 private:
     dde_file_manager::DFMDiskManager* m_diskMgr = nullptr;
 //    QScopedPointer<dde_file_manager::DFMDiskManager> m_diskMgr;
-    QMap<QString, dde_file_manager::DFMBlockDevice*> m_fsDevMap;
+    QMap<QString, DFM_NAMESPACE::DFMBlockDevice*> m_fsDevMap;
 
     QList<UDiskDeviceInfoPointer> m_list;
     QMap<QString, UDiskDeviceInfoPointer> m_map;

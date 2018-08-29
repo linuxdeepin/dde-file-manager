@@ -92,7 +92,7 @@ const QString TrashPlugin::itemCommand(const QString &itemKey)
     Q_UNUSED(itemKey);
 
 //    return QString();
-    return "gvfs-open trash:///";
+    return "gio open trash:///";
 }
 
 const QString TrashPlugin::itemContextMenu(const QString &itemKey)
