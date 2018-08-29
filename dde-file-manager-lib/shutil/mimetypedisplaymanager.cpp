@@ -80,6 +80,9 @@ void MimeTypeDisplayManager::initConnect()
 
 QString MimeTypeDisplayManager::displayName(const QString &mimeType)
 {
+#ifdef QT_DEBUG
+    return m_displayNames.value(displayNameToEnum(mimeType)) + " (" + mimeType + ")";
+#endif // Q_DEBUG
     return m_displayNames.value(displayNameToEnum(mimeType));
 }
 

@@ -3,6 +3,9 @@ application/json
 application/postscript
 application/x-dvi
 application/x-latex
+application/msword
+application/vnd.ms-powerpoint
+application/vnd.ms-excel
 application/wps-office.doc
 application/wps-office.docx
 application/wps-office.dot
