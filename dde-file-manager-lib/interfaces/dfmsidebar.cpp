@@ -174,6 +174,10 @@ void DFMSideBarPrivate::initUI()
     };
 
     foreach (const DFMSideBar::GroupName &groupType, groups) {
+#ifdef DISABLE_TAG_SUPPORT
+        if (groupType == DFMSideBar::GroupName::Tag) continue;
+#endif // DISABLE_TAG_SUPPORT
+
         DFMSideBarItemGroup *group = new DFMSideBarItemGroup(q->groupName(groupType));
         mainLayout->addLayout(group);
         groupConnectionRegister(group);
@@ -323,6 +327,10 @@ void DFMSideBarPrivate::initUserShareItem()
 void DFMSideBarPrivate::initTagsConnection()
 {
     Q_Q(DFMSideBar);
+
+#ifdef DISABLE_TAG_SUPPORT
+    return;
+#endif
 
     DFMSideBarItemGroup *group = groupNameMap[q->groupName(DFMSideBar::GroupName::Tag)];
     Q_CHECK_PTR(group);

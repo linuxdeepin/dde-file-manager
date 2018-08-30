@@ -302,20 +302,6 @@ DFileMenu *DFileMenuManager::createListViewHeaderMenu(const QSet<MenuAction> &di
     return menu;
 }
 
-DFileMenu *DFileMenuManager::createTagMarkMenu(const QSet<MenuAction> &disableList)
-{
-    QVector<MenuAction> actionKeys;
-    actionKeys.push_back(MenuAction::OpenInNewWindow);
-    actionKeys.push_back(MenuAction::OpenInNewTab);
-    actionKeys.push_back(MenuAction::RenameTag);
-    actionKeys.push_back(MenuAction::DeleteTags);
-    actionKeys.push_back(MenuAction::Separator);
-    actionKeys.push_back(MenuAction::ChangeTagColor);
-
-    DFileMenu *menu{ genereteMenuByKeys(actionKeys, disableList, false) };
-    return menu;
-}
-
 DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrlList &urlList, QSet<MenuAction> disableList, QSet<MenuAction> unusedList, int windowId)
 {
     DAbstractFileInfoPointer info = fileService->createFileInfo(Q_NULLPTR, currentUrl);
@@ -1011,6 +997,10 @@ MenuAction DFileMenuManager::registerMenuActionType(QAction *action)
 
 bool DFileMenuManager::whetherShowTagActions(const QList<DUrl> &urls)
 {
+#ifdef DISABLE_TAG_SUPPORT
+    return false;
+#endif // DISABLE_TAG_SUPPORT
+
     for (const DUrl &path : urls) {
         bool temp{ DAnythingMonitorFilter::instance()->whetherFilterCurrentPath(path.toLocalFile().toLocal8Bit()) };
 
