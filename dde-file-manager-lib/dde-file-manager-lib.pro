@@ -51,6 +51,7 @@ isEqual(BUILD_MINIMUM, YES){
 
 CONFIG(DISABLE_ANYTHING) {
     DEFINES += DISABLE_QUICK_SEARCH
+    DEFINES += DISABLE_TAG_SUPPORT
 }
 
 include(../dialogs/dialogs.pri)
