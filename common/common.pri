@@ -29,6 +29,8 @@ unix {
         DEFINES += DISABLE_COMPRESS_PREIVEW
 
         DEFINES += DISABLE_QUIT_ON_LAST_WINDOW_CLOSED
+
+        CONFIG += DISABLE_ANYTHING
     }
 
     isEqual(ARCH, sw_64){
