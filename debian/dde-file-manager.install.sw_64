@@ -9,9 +9,6 @@ usr/bin/dde-computer.sh
 usr/bin/dde-trash.sh
 usr/bin/file-manager.sh
 
-usr/lib/*/deepin-anything-server-lib/plugins/handlers/libdde-anythingmonitor.so
-usr/lib/*/deepin-anything-server-lib/plugins/handlers/libdde-quicksearch.so
-
 usr/share/applications/dde-file-manager.desktop
 
 usr/share/polkit-1/actions/com.deepin.filemanager.daemon.policy
