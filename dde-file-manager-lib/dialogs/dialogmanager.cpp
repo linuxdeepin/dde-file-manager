@@ -382,11 +382,7 @@ int DialogManager::showRunExcutableScriptDialog(const DUrl &url, quint64 winId)
     QStringList buttonKeys, buttonTexts;
     buttonKeys << "OptionCancel" << "OptionRun" << "OptionRunInTerminal" << "OptionDisplay";
     buttonTexts << tr("Cancel") << tr("Run") << tr("Run in terminal") << tr("Display");
-#ifdef ARCH_MIPSEL
-    d.setIcon(QIcon(svgToPixmap(":/images/images/application-x-shellscript.svg", 64, 64)));
-#else
     d.setIconPixmap(QIcon::fromTheme("application-x-shellscript").pixmap(64, 64));
-#endif
     d.setTitle(message);
     d.setMessage(tipMessage);
 //    d.addButtons(buttonTexts);
