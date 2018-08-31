@@ -1,3 +1,22 @@
+<a name="4.6.8"></a>
+## 4.6.8 (2018-08-31)
+
+
+#### Bug Fixes
+
+* **computerView:**  disable new tab option if couldn't add new tab ([e4c61e2c](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/e4c61e2c1d7fcb96484f4dbc82c506cf4c7d18c3))
+* **icon:**  remove mipsel special icon ([420bd78e](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/420bd78e52e5ae76a3fac07f0eed9224a9a07e5f))
+* **mime:**  show msoffice mime file as Document ([8391d2dd](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/8391d2dd96f7b44cc3038a45ec409cfec24d10fc))
+* **sidebar:**
+  *  disable new tab option if couldn't add new tab ([686ba26d](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/686ba26def90e35ac1b4c928ed49ee33a3111618))
+  *  fix dark theme phone icon missing ([69669fa9](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/69669fa9a724e9d318be2c40ef61bd1dd44101fe))
+
+#### Features
+
+* **computerView:**  Friendly file size (#35) ([3445c117](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/3445c11777eb450a1fdd89e9805ed7527149e5d7))
+
+
+
 <a name="4.6.7"></a>
 ## 4.6.7 (2018-08-28)
 
