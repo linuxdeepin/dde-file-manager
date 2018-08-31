@@ -32,7 +32,7 @@
 #include <dthememanager.h>
 #include <dscrollbar.h>
 #include <dslider.h>
-#include <anchors.h>
+#include <danchors.h>
 #include <DUtil>
 #include <DApplication>
 

@@ -59,13 +59,13 @@
 #include <dseparatorhorizontal.h>
 #include <darrowlineexpand.h>
 #include <dthememanager.h>
-#include <dcombobox.h>
 #include <dexpandgroup.h>
 
 #include <QTextEdit>
 #include <QFormLayout>
 #include <QDateTime>
 #include <QCheckBox>
+#include <QComboBox>
 #include <QTimer>
 #include <QThread>
 #include <QListWidget>
