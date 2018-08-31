@@ -14,7 +14,7 @@
 
 #include "shutil/fileutils.h"
 
-#include <anchors.h>
+#include <danchors.h>
 #include <dthememanager.h>
 #include <denhancedwidget.h>
 
@@ -327,7 +327,7 @@ void FilePreviewDialog::initUI()
     m_statusBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_statusBar->openButton()->setFocus();
 
-    AnchorsBase::setAnchor(m_closeButton, Qt::AnchorRight, this, Qt::AnchorRight);
+    DAnchorsBase::setAnchor(m_closeButton, Qt::AnchorRight, this, Qt::AnchorRight);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
 

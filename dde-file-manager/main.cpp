@@ -50,7 +50,6 @@
 #include "dfmapplication.h"
 
 #include <dthememanager.h>
-#include <dwindow.h>
 
 #include <QApplication>
 #include <QDebug>

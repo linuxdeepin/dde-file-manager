@@ -27,7 +27,6 @@
 #include "controllers/appcontroller.h"
 #include "views/dfilemanagerwindow.h"
 #include "interfaces/dfileservices.h"
-#include "dcombobox.h"
 
 #include <QStackedWidget>
 #include <QHBoxLayout>

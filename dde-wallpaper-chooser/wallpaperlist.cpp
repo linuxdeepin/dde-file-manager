@@ -33,7 +33,7 @@
 #include <QGSettings>
 #include <QHBoxLayout>
 
-#include <anchors.h>
+#include <danchors.h>
 #include <dimagebutton.h>
 
 WallpaperList::WallpaperList(QWidget * parent)

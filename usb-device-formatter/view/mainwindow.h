@@ -31,7 +31,6 @@
 #include <QStackedWidget>
 
 #include <DTitlebar>
-#include <dwidget.h>
 #include <QDialog>
 #include <dplatformwindowhandle.h>
 
