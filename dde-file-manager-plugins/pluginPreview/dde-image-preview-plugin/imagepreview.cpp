@@ -23,6 +23,8 @@
  */
 
 #include "imagepreview.h"
+#include "dabstractfileinfo.h"
+#include "dfileservices.h"
 
 #include <QImageReader>
 #include <QProcess>
@@ -99,27 +101,37 @@ bool ImagePreview::setFileUrl(const DUrl &url)
     if (m_url == url)
         return true;
 
-    if (!url.isLocalFile())
+    DUrl tmpUrl = url;
+    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
+
+    if (!info)
+        return false;
+
+    if (info->canRedirectionFileUrl()) {
+        tmpUrl = info->redirectedFileUrl();
+    }
+
+    if (!tmpUrl.isLocalFile())
         return false;
 
     QByteArray format;
 
-    if (!canPreview(url, &format))
+    if (!canPreview(tmpUrl, &format))
         return false;
 
-    m_url = url;
+    m_url = tmpUrl;
 
     if (!m_imageView)
-        m_imageView = new ImageView(url.toLocalFile(), format);
+        m_imageView = new ImageView(tmpUrl.toLocalFile(), format);
     else
-        m_imageView->setFile(url.toLocalFile(), format);
+        m_imageView->setFile(tmpUrl.toLocalFile(), format);
 
     const QSize &image_size = m_imageView->sourceSize();
 
     m_messageStatusBar->setText(QString("%1x%2").arg(image_size.width()).arg(image_size.height()));
     m_messageStatusBar->adjustSize();
 
-    m_title = QFileInfo(url.toLocalFile()).fileName();
+    m_title = QFileInfo(tmpUrl.toLocalFile()).fileName();
 
     Q_EMIT titleChanged();
 
