@@ -2,25 +2,54 @@ Source: dde-file-manager
 Section: libdevel
 Priority: optional
 Maintainer: Deepin Packages Builder <packages@linuxdeepin.com>
-Build-Depends: debhelper (>=9), pkg-config, qt5-qmake, qtbase5-dev,
- qtbase5-private-dev, libqt5x11extras5-dev, libjemalloc-dev,
- libgsettings-qt-dev, libqt5svg5-dev, libmagic-dev, libsecret-1-dev,
- libpoppler-cpp-dev, libpolkit-agent-1-dev, libpolkit-qt5-1-dev,
- qtmultimedia5-dev, libffmpegthumbnailer-dev, libtag1-dev,
- libdtkwidget-dev, libxcb1-dev, x11proto-core-dev, libx11-dev,
- qttools5-dev-tools, libglib2.0-dev, dde-dock-dev(>=4.0.5),
- libxcb-ewmh-dev, libdframeworkdbus-dev, libxcb-util0-dev,
- qtdeclarative5-dev, deepin-gettext-tools, libkf5codecs-dev,
- deepin-qt5config, libdmr-dev, dh-systemd, deepin-anything-dev,
- deepin-anything-server-dev
+Build-Depends:
+ debhelper (>=9),
+ pkg-config,
+ qt5-qmake,
+ qtbase5-dev,
+ qtbase5-private-dev,
+ libqt5x11extras5-dev,
+ libjemalloc-dev,
+ libgsettings-qt-dev,
+ libqt5svg5-dev,
+ libmagic-dev,
+ libsecret-1-dev,
+ libpoppler-cpp-dev,
+ libpolkit-agent-1-dev,
+ libpolkit-qt5-1-dev,
+ qtmultimedia5-dev,
+ libffmpegthumbnailer-dev,
+ libtag1-dev,
+ libdtkwidget-dev,
+ libxcb1-dev,
+ x11proto-core-dev,
+ libx11-dev,
+ qttools5-dev-tools,
+ libglib2.0-dev,
+ dde-dock-dev(>=4.0.5),
+ libxcb-ewmh-dev,
+ libdframeworkdbus-dev,
+ libxcb-util0-dev,
+ qtdeclarative5-dev,
+ deepin-gettext-tools,
+ libkf5codecs-dev,
+ deepin-qt5config,
+ libdmr-dev,
+ dh-systemd,
+ deepin-anything-dev [amd64 i386],
+ deepin-anything-server-dev [amd64 i386]
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 
 Package: dde-file-manager
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends},
- libdde-file-manager( =${binary:Version}), socat,
- deepin-anything-dkms, deepin-anything-server
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+ libdde-file-manager( =${binary:Version}),
+ socat,
+ deepin-anything-dkms [amd64 i386],
+ deepin-anything-server [amd64 i386]
 Recommends: dde-qt5integration, avfs, samba
 Description: File manager front end
  File manager front end of Deepin OS
@@ -48,8 +77,14 @@ Description: plugin of dde-dock
 
 Package: libdde-file-manager
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libpoppler-cpp0v5 (>= 0.48.0),
- gvfs-backends(>=1.27.3), cryptsetup, deepin-anything-libs, libkf5codecs5
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+ libpoppler-cpp0v5 (>= 0.48.0),
+ gvfs-backends(>=1.27.3),
+ cryptsetup,
+ libkf5codecs5,
+ deepin-anything-libs [amd64 i386]
 Breaks: dde-file-manager(<=1.2.3-3)
 Multi-Arch: same
 Description: DDE File Manager library
