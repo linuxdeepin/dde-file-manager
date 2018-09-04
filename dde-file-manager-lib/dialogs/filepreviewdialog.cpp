@@ -214,6 +214,8 @@ FilePreviewDialog::FilePreviewDialog(const DUrlList &previewUrllist, QWidget *pa
     D_THEME_INIT_WIDGET(FilePreviewDialog);
 
 #ifdef Q_OS_LINUX
+#ifndef ARCH_SW     // 申威和龙芯架构已禁用视频预览功能，不会触发此问题
+#ifndef ARCH_MIPSEL //
     // 先触发Qt多媒体库加载gstreamter插件
     // 因为预览视频时会先加载mpv库，如果之后再加载gst库，会导致崩溃在init_plugin
     // 崩溃的原因是libcdio这个demuxer的long_name字段为NULL，gst-libav代码segfault了。
@@ -222,6 +224,8 @@ FilePreviewDialog::FilePreviewDialog(const DUrlList &previewUrllist, QWidget *pa
     // Qt用了gst-libav，这个库加载时也会掉ffmpeg的初始化函数，但是只调用了部分，它编译时显示去掉了libavdevice依赖，所以初始化时不会加载libcdio的demuxer。
     //问题来了：如果先跑gst-libav去初始化ffmpeg，那么没有崩溃问题。因为libcdio demuxer没加载。如果先跑影院库预览视频后，libcdio demuxer被加载了。于是就崩了。
     QMediaPlayer::hasSupport("audio/mpeg");
+#endif
+#endif
 #endif
 
     initUI();
