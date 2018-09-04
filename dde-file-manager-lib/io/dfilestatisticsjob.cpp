@@ -119,6 +119,11 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
 {
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
 
+    if (!info) {
+        qDebug() << "Url not yet supported: " << url;
+        return;
+    }
+
     if (info->isSymLink()) {
         if (!fileHints.testFlag(DFileStatisticsJob::FollowSymlink)) {
             ++filesCount;
