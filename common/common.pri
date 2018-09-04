@@ -16,7 +16,7 @@ unix {
     }
 
     isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
-        DEFINES += ARCH_MIPSEL
+        DEFINES += ARCH_MIPSEL ARCH_SW
 
         #use classical file section mode
         DEFINES += CLASSICAL_SECTION
