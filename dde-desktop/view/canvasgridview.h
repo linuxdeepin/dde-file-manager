@@ -173,6 +173,7 @@ private:
     QScopedPointer<CanvasViewPrivate> d;
     double m_dragMoveTime;
 
+    void onWMHasCompositeChanged();
 };
 
 
