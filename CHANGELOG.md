@@ -1,3 +1,19 @@
+<a name="4.6.8.1"></a>
+##  (2018-09-04)
+
+
+#### Bug Fixes
+
+* **fileinfo:**  check if fileinfo create failed ([2bb3b651](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/2bb3b651dd7054b680ad4c619e793109fcdbfc9f))
+* **mountPlugin:**  internal impl of formatDiskSize ([936c90d9](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/936c90d916595b922f7f10aa657c67eb175eb46e))
+* **preview:**  can't preview svg from search result ([6d9cc3c0](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/6d9cc3c0c51692cd5c69a473eb67fc5f791596a4))
+
+#### Features
+
+*   update depends ([3dc24fb8](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/3dc24fb81d94b6667ed37a0c1e469fb84c3fe5dc))
+
+
+
 <a name="4.6.8"></a>
 ## 4.6.8 (2018-08-31)
 
