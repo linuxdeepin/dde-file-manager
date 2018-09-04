@@ -16,7 +16,6 @@ usr/share/polkit-1/actions/com.deepin.pkexec.dde-file-manager.policy
 usr/share/polkit-1/actions/com.deepin.pkexec.usb-device-formatter.policy
 
 etc/xdg/autostart/dde-file-manager-xdg-autostart.desktop
-etc/xdg/autostart/dde-file-manager-dialog-autostart.desktop
 etc/dbus-1/system.d/com.deepin.filemanager.daemon.conf
 
 usr/share/dbus-1/interfaces/com.deepin.filemanager.filedialog.xml
