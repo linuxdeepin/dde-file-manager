@@ -1589,6 +1589,10 @@ void DFileCopyMoveJob::run()
         }
 
         const DAbstractFileInfoPointer &source_info = DFileService::instance()->createFileInfo(nullptr, source);
+        if (!source_info) {
+            qDebug() << "Url not yet supported: " << source;
+            continue;
+        }
         const DUrl &parent_url = source_info->parentUrl();
         bool enter_dir = d->targetUrl.isValid() && (d->directoryStack.isEmpty() || d->directoryStack.top().url.first != parent_url);
 
