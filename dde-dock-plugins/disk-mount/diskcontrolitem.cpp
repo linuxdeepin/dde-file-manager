@@ -27,8 +27,6 @@
 #include "dfileservices.h"
 #include "dfmglobal.h"
 
-#include "shutil/fileutils.h"
-
 #include <QVBoxLayout>
 #include <QIcon>
 #include <QtMath>
@@ -181,7 +179,23 @@ qreal DiskControlItem::dRound64(qreal num, int count)
 
 const QString DiskControlItem::formatDiskSize(const quint64 num) const
 {
-    return FileUtils::formatSize(num);
+    QStringList list {" B", " KB", " MB", " GB", " TB"};
+    qreal fileSize(num);
+
+    QStringListIterator i(list);
+    QString unit = i.next();
+
+    int index = 0;
+    while(i.hasNext()) {
+        if (fileSize < 1024) {
+            break;
+        }
+
+        unit = i.next();
+        fileSize /= 1024;
+        index++;
+    }
+    return QString("%1%2").arg(sizeString(QString::number(fileSize, 'f', 1)), unit);
 }
 
 void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
