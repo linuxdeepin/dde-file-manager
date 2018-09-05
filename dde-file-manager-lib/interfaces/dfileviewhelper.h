@@ -25,7 +25,6 @@ class DAbstractFileInfo;
 class DStyledItemDelegate;
 class DFileSystemModel;
 class DFileViewHelperPrivate;
-class QDiskInfo;
 class DFileViewHelper : public QObject
 {
     Q_OBJECT
@@ -75,7 +74,6 @@ public slots:
 
 signals:
     void triggerEdit(const QModelIndex &index);
-    void mount_added(const QDiskInfo& diskInfo);
 
 private:
     QScopedPointer<DFileViewHelperPrivate> d_ptr;

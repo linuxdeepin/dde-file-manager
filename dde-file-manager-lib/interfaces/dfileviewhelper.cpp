@@ -24,8 +24,6 @@
 #include "dfmgenericfactory.h"
 #include "dialogs/filepreviewdialog.h"
 #include "controllers/appcontroller.h"
-#include "gvfs/qdiskinfo.h"
-#include "gvfs/gvfsmountmanager.h"
 #include "dfmeventdispatcher.h"
 #include "dfilemenu.h"
 #include "tag/tagmanager.h"
@@ -202,7 +200,6 @@ void DFileViewHelperPrivate::init()
 
     q->connect(fileSignalManager, SIGNAL(requestRename(DFMUrlBaseEvent)), q, SLOT(_q_edit(DFMUrlBaseEvent)));
     q->connect(fileSignalManager, SIGNAL(requestSelectRenameFile(DFMUrlBaseEvent)), q, SLOT(_q_selectAndRename(DFMUrlBaseEvent)));
-    q->connect(gvfsMountManager, &GvfsMountManager::mount_added, q, &DFileViewHelper::mount_added);
     // call later
     QTimer::singleShot(0, q, [q] {
         q->connect(fileSignalManager, SIGNAL(trashStateChanged()), q->model(), SLOT(update()));
