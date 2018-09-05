@@ -278,8 +278,6 @@ public:
     static void initTagManagerConnect();
     static void initThumbnailConnection();
 
-    static void autoMountAllDisks();
-
     static QString getUser();
     static int getUserId();
     static bool isRootUser();
