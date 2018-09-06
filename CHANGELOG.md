@@ -1,16 +1,29 @@
+<a name="4.6.8.2"></a>
+## 4.6.8.2 (2018-09-06)
+
+
+#### Features
+
+*   use QGlobalStatic for some singleton ([c2cde2b4](https://github.com/linuxdeepin/dde-file-manager/tree/master/commit/c2cde2b4b8eef9254482388d9cf8a7009cea0f78))
+* **desktop:**
+  *  draw background ([b2e66431](https://github.com/linuxdeepin/dde-file-manager/tree/master/commit/b2e664310f29f3de055798a7840e8644a9142e76))
+  *  use pure raster surfaces ([1532a522](https://github.com/linuxdeepin/dde-file-manager/tree/master/commit/1532a522899804838fd9146668a51e46d59d674f))
+
+
+
 <a name="4.6.8.1"></a>
-##  (2018-09-04)
+## 4.6.8.1 (2018-09-04)
 
 
 #### Bug Fixes
 
-* **fileinfo:**  check if fileinfo create failed ([2bb3b651](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/2bb3b651dd7054b680ad4c619e793109fcdbfc9f))
-* **mountPlugin:**  internal impl of formatDiskSize ([936c90d9](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/936c90d916595b922f7f10aa657c67eb175eb46e))
-* **preview:**  can't preview svg from search result ([6d9cc3c0](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/6d9cc3c0c51692cd5c69a473eb67fc5f791596a4))
+* **fileinfo:**  check if fileinfo create failed ([2bb3b651](https://github.com/linuxdeepin/dde-file-manager/tree/master/commit/2bb3b651dd7054b680ad4c619e793109fcdbfc9f))
+* **mountPlugin:**  internal impl of formatDiskSize ([936c90d9](https://github.com/linuxdeepin/dde-file-manager/tree/master/commit/936c90d916595b922f7f10aa657c67eb175eb46e))
+* **preview:**  can't preview svg from search result ([6d9cc3c0](https://github.com/linuxdeepin/dde-file-manager/tree/master/commit/6d9cc3c0c51692cd5c69a473eb67fc5f791596a4))
 
 #### Features
 
-*   update depends ([3dc24fb8](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/3dc24fb81d94b6667ed37a0c1e469fb84c3fe5dc))
+*   update depends ([3dc24fb8](https://github.com/linuxdeepin/dde-file-manager/tree/master/commit/3dc24fb81d94b6667ed37a0c1e469fb84c3fe5dc))
 
 
 
@@ -20,16 +33,16 @@
 
 #### Bug Fixes
 
-* **computerView:**  disable new tab option if couldn't add new tab ([e4c61e2c](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/e4c61e2c1d7fcb96484f4dbc82c506cf4c7d18c3))
-* **icon:**  remove mipsel special icon ([420bd78e](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/420bd78e52e5ae76a3fac07f0eed9224a9a07e5f))
-* **mime:**  show msoffice mime file as Document ([8391d2dd](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/8391d2dd96f7b44cc3038a45ec409cfec24d10fc))
+* **computerView:**  disable new tab option if couldn't add new tab ([e4c61e2c](https://github.com/linuxdeepin/dde-file-manager/tree/master/commit/e4c61e2c1d7fcb96484f4dbc82c506cf4c7d18c3))
+* **icon:**  remove mipsel special icon ([420bd78e](https://github.com/linuxdeepin/dde-file-manager/tree/master/commit/420bd78e52e5ae76a3fac07f0eed9224a9a07e5f))
+* **mime:**  show msoffice mime file as Document ([8391d2dd](https://github.com/linuxdeepin/dde-file-manager/tree/master/commit/8391d2dd96f7b44cc3038a45ec409cfec24d10fc))
 * **sidebar:**
-  *  disable new tab option if couldn't add new tab ([686ba26d](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/686ba26def90e35ac1b4c928ed49ee33a3111618))
-  *  fix dark theme phone icon missing ([69669fa9](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/69669fa9a724e9d318be2c40ef61bd1dd44101fe))
+  *  disable new tab option if couldn't add new tab ([686ba26d](https://github.com/linuxdeepin/dde-file-manager/tree/master/commit/686ba26def90e35ac1b4c928ed49ee33a3111618))
+  *  fix dark theme phone icon missing ([69669fa9](https://github.com/linuxdeepin/dde-file-manager/tree/master/commit/69669fa9a724e9d318be2c40ef61bd1dd44101fe))
 
 #### Features
 
-* **computerView:**  Friendly file size (#35) ([3445c117](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/3445c11777eb450a1fdd89e9805ed7527149e5d7))
+* **computerView:**  Friendly file size (#35) ([3445c117](https://github.com/linuxdeepin/dde-file-manager/tree/master/commit/3445c11777eb450a1fdd89e9805ed7527149e5d7))
 
 
 
@@ -39,15 +52,15 @@
 
 #### Features
 
-*   support only ReadWrite mode for DGIOFileDevice ([a36d5161](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/a36d51613cae7b3befe50a02bb8201c659b27c72))
+*   support only ReadWrite mode for DGIOFileDevice ([a36d5161](https://github.com/linuxdeepin/dde-file-manager/tree/master/commit/a36d51613cae7b3befe50a02bb8201c659b27c72))
 
 #### Bug Fixes
 
-*   the platform plugin version is wrong of judgment ([affb8732](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/affb8732e8c9337a4b45d94e713a2ec22349f68d))
-* **config:**  default config file for pro support not correct ([b40f2ce2](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/b40f2ce21eb9e55c89ba283cfda75fdacb0a1b9d))
-* **fileOp:**  use g_file_replace() ([5a8847a0](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/5a8847a0c7fe1f964a9c2dfa4739de017afdb52a))
-* **permission:**  add executable flag for folder ([dc5b1d72](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/dc5b1d729fb63cb297175fb25e2d9d793c553a1a))
-* **propertyDlg:**  no longer show openWith and auth section for trash file ([b830fe2f](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/b830fe2ff3cf4435970cb3a06f846997afb9bd30))
+*   the platform plugin version is wrong of judgment ([affb8732](https://github.com/linuxdeepin/dde-file-manager/tree/master/commit/affb8732e8c9337a4b45d94e713a2ec22349f68d))
+* **config:**  default config file for pro support not correct ([b40f2ce2](https://github.com/linuxdeepin/dde-file-manager/tree/master/commit/b40f2ce21eb9e55c89ba283cfda75fdacb0a1b9d))
+* **fileOp:**  use g_file_replace() ([5a8847a0](https://github.com/linuxdeepin/dde-file-manager/tree/master/commit/5a8847a0c7fe1f964a9c2dfa4739de017afdb52a))
+* **permission:**  add executable flag for folder ([dc5b1d72](https://github.com/linuxdeepin/dde-file-manager/tree/master/commit/dc5b1d729fb63cb297175fb25e2d9d793c553a1a))
+* **propertyDlg:**  no longer show openWith and auth section for trash file ([b830fe2f](https://github.com/linuxdeepin/dde-file-manager/tree/master/commit/b830fe2ff3cf4435970cb3a06f846997afb9bd30))
 
 
 
