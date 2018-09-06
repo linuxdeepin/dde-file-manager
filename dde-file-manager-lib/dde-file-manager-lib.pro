@@ -331,6 +331,7 @@ SOURCES += \
     interfaces/durl.cpp \
     interfaces/dfilemenu.cpp \
     interfaces/dfilesystemmodel.cpp \
+    app/define.cpp \
     interfaces/dabstractfilecontroller.cpp \
     interfaces/dabstractfileinfo.cpp \
     interfaces/dfilemenumanager.cpp \

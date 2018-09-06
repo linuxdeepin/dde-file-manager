@@ -27,6 +27,7 @@
 
 #include "dfileservices.h"
 #include "dfileinfo.h"
+#include "app/define.h"
 #include "singleton.h"
 
 #include <QStandardPaths>
@@ -69,7 +70,7 @@ QList<CrumbData> DFMFileCrumbController::seprateUrl(const DUrl &url)
         list.append(data);
     } else {
         QStorageInfo storageInfo(path);
-        UDiskDeviceInfoPointer deviceInfo = Singleton<UDiskListener>::instance()->getDeviceByPath(path);
+        UDiskDeviceInfoPointer deviceInfo = deviceListener->getDeviceByPath(path);
         QString iconName = QStringLiteral("CrumbIconButton.Disk");
         prefixPath = storageInfo.rootPath();
 
