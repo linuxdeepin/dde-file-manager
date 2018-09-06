@@ -88,7 +88,7 @@ Partition Partition::getPartitionByDevicePath(const QString &devicePath)
                             p.setFreespace(freespace);
                             p.setTotal(total);
                         }
-                        qDebug() << "read usgae of" << p.path() << ret;
+                        qDebug() << "read usage of" << p.path() << ret;
                     }
                 }
             }
