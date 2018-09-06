@@ -1,3 +1,13 @@
+<a name="4.6.8.3"></a>
+## 4.6.8.3 (2018-09-06)
+
+
+#### Bug Fixes
+
+*   can not build on loongson/sw ([e6938029](https://github.com/linuxdeepin/dde-file-manager/tree/master/commit/e6938029f646c50beda9e2caee82ead546e1f490))
+
+
+
 <a name="4.6.8.2"></a>
 ## 4.6.8.2 (2018-09-06)
 
