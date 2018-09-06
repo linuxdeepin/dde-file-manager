@@ -25,20 +25,28 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
+class DialogManager;
+class GvfsMountManager;
+class UDiskListener;
+
+DialogManager *getDialogManager(bool doConstruct = false);
+GvfsMountManager *getGvfsMountManager(bool doConstruct = false);
+UDiskListener *getUDiskListener(bool doConstruct = false);
+
 #define searchHistoryManager  Singleton<SearchHistroyManager>::instance()
 #define bookmarkManager  Singleton<BookMarkManager>::instance()
 #define fileMenuManger  Singleton<DFileMenuManager>::instance()
 #define fileSignalManager Singleton<FileSignalManager>::instance()
-#define dialogManager Singleton<DialogManager>::instance()
+#define dialogManager getDialogManager(true)
 #define appController AppController::instance()
 #define fileService DFileService::instance()
-#define deviceListener Singleton<UDiskListener>::instance()
+#define deviceListener getUDiskListener(true)
 #define mimeAppsManager Singleton<MimesAppsManager>::instance()
 #define systemPathManager Singleton<PathManager>::instance()
 #define mimeTypeDisplayManager Singleton<MimeTypeDisplayManager>::instance()
 #define networkManager Singleton<NetworkManager>::instance()
 #define gvfsMountClient Singleton<GvfsMountClient>::instance()
-#define gvfsMountManager Singleton<GvfsMountManager>::instance()
+#define gvfsMountManager getGvfsMountManager(true)
 #define secretManager Singleton<SecretManager>::instance()
 #define userShareManager Singleton<UserShareManager>::instance()
 

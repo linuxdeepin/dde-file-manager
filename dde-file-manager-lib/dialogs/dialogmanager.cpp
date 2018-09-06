@@ -182,7 +182,11 @@ void DialogManager::initConnect()
 
     connect(fileSignalManager, &FileSignalManager::requestShowFilePreviewDialog, this, &DialogManager::showFilePreviewDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowErrorDialog, this, &DialogManager::showErrorDialog);
-    connect(gvfsMountManager, &GvfsMountManager::mount_added, this, &DialogManager::showNtfsWarningDialog);
+
+    if (getGvfsMountManager(false)) {
+        connect(gvfsMountManager, &GvfsMountManager::mount_added, this, &DialogManager::showNtfsWarningDialog);
+    }
+
 
 #ifdef SW_LABEL
     connect(fileSignalManager, &FileSignalManager::jobFailed, this, &DialogManager::onJobFailed_SW);

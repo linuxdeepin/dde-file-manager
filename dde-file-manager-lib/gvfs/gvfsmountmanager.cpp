@@ -33,6 +33,7 @@
 #include "../partman/readusagemanager.h"
 #include "../interfaces/dfileservices.h"
 #include "../interfaces/dfmevent.h"
+#include "dialogs/dialogmanager.h"
 #include "partman/command.h"
 #include "mountsecretdiskaskpassworddialog.h"
 #include "app/filesignalmanager.h"
@@ -65,6 +66,10 @@ Q_LOGGING_CATEGORY(mountManager, "gvfs.mountMgr")
 
 GvfsMountManager::GvfsMountManager(QObject *parent) : QObject(parent)
 {
+    if (getDialogManager(false)) {
+        connect(this, &GvfsMountManager::mount_added, dialogManager, &DialogManager::showNtfsWarningDialog);
+    }
+
     m_gVolumeMonitor = g_volume_monitor_get();
     qRegisterMetaType<QDrive>("QDrive");
 

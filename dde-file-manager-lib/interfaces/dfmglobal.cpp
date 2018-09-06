@@ -295,7 +295,6 @@ void DFMGlobal::initGvfsMountClient()
 
 void DFMGlobal::initGvfsMountManager()
 {
-    gvfsMountManager;
     QtConcurrent::run(QThreadPool::globalInstance(), gvfsMountManager,
                                              &GvfsMountManager::startMonitor);
 }
