@@ -242,7 +242,7 @@ void WallpaperItem::setOpacity(qreal opacity)
     m_wrapper->update();
 }
 
-QRect WallpaperItem::conentImageGeometry() const
+QRect WallpaperItem::contentImageGeometry() const
 {
     return m_wrapper->m_pixmapBoxGeometry;
 }

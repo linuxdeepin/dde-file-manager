@@ -51,7 +51,7 @@ public:
 
     void setOpacity(qreal opacity);
 
-    QRect conentImageGeometry() const;
+    QRect contentImageGeometry() const;
 
     void initPixmap();
 

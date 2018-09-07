@@ -377,9 +377,13 @@ void WallpaperList::updateBothEndsItem()
 void WallpaperList::showDeleteButtonForItem(WallpaperItem const *item) const
 {
     if (item && item->getDeletable()) {
+        // we can't get a correct item if content image geometry is not available to use.
+        if (item->contentImageGeometry().isNull()) {
+            return;
+        }
         emit needCloseButton(item->getPath(),
                              item->mapTo(parentWidget(),
-                                         item->conentImageGeometry().topRight() / devicePixelRatioF()));
+                                         item->contentImageGeometry().topRight() / devicePixelRatioF()));
     } else {
         emit needCloseButton("", QPoint(0, 0));
     }
