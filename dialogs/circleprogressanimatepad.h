@@ -93,7 +93,7 @@ private:
     QTimer* m_timer;
     bool isAnimateStarted = false;
     bool isPauseState = false;
-    bool canPause = true;
+    bool canPause = false;
 };
 
 #endif // CIRCLEPROGRESSANIMATEPAD_H
