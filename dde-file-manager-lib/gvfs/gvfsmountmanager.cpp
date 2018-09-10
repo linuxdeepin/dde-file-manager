@@ -62,7 +62,11 @@ QStringList GvfsMountManager::Lsblk_Keys = {}; // key is got by lsblk
 
 MountSecretDiskAskPasswordDialog* GvfsMountManager::mountSecretDiskAskPasswordDialog = nullptr;
 
+#ifdef QT_DEBUG
 Q_LOGGING_CATEGORY(mountManager, "gvfs.mountMgr")
+#else
+Q_LOGGING_CATEGORY(mountManager, "gvfs.mountMgr", QtInfoMsg)
+#endif
 
 GvfsMountManager::GvfsMountManager(QObject *parent) : QObject(parent)
 {
@@ -72,10 +76,6 @@ GvfsMountManager::GvfsMountManager(QObject *parent) : QObject(parent)
 
     m_gVolumeMonitor = g_volume_monitor_get();
     qRegisterMetaType<QDrive>("QDrive");
-
-#ifdef QT_NO_DEBUG
-    QLoggingCategory::setFilterRules("gvfs.mountMgr.debug=false");
-#endif
 
 //    mount_mounted("smb://10.0.10.30/people");
 //    unmount("smb://10.0.10.30/people");

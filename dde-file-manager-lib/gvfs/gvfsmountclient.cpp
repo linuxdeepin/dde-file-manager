@@ -45,14 +45,14 @@ DFMUrlBaseEvent GvfsMountClient::MountEvent = DFMUrlBaseEvent(Q_NULLPTR, DUrl())
 
 QPointer<QEventLoop> GvfsMountClient::eventLoop;
 
+#ifdef QT_DEBUG
 Q_LOGGING_CATEGORY(mountClient, "gvfs.mountCli")
+#else
+Q_LOGGING_CATEGORY(mountClient, "gvfs.mountCli", QtInfoMsg)
+#endif
 
 GvfsMountClient::GvfsMountClient(QObject *parent) : QObject(parent)
 {
-#ifdef QT_NO_DEBUG
-    QLoggingCategory::setFilterRules("gvfs.mountMgr.debug=false");
-#endif
-
     qCDebug(mountClient()) << "Create GvfsMountClient";
     initConnect();
 }
