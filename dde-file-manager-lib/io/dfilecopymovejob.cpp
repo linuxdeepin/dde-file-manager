@@ -37,7 +37,11 @@
 
 DFM_BEGIN_NAMESPACE
 
+#ifdef QT_DEBUG
 Q_LOGGING_CATEGORY(fileJob, "file.job")
+#else
+Q_LOGGING_CATEGORY(fileJob, "file.job", QtInfoMsg)
+#endif
 
 class ElapsedTimer
 {
@@ -94,10 +98,7 @@ DFileCopyMoveJobPrivate::DFileCopyMoveJobPrivate(DFileCopyMoveJob *qq)
     : q_ptr(qq)
     , updateSpeedElapsedTimer(new ElapsedTimer())
 {
-    // 非debug模式下默认不开启debug输出
-#ifdef QT_NO_DEBUG
-    QLoggingCategory::setFilterRules("file.job.debug=false");
-#endif
+
 }
 
 DFileCopyMoveJobPrivate::~DFileCopyMoveJobPrivate()
