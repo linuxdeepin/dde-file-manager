@@ -611,8 +611,7 @@ bool DFileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger tr
     if (trigger == EditKeyPressed){
         isCheckRenameAction = true;
     }
-#endif
-#ifdef SW_LABEL
+
     if (isCheckRenameAction){
         bool isCanRename = checkRenamePrivilege_sw(fileUrl);
         if (!isCanRename)

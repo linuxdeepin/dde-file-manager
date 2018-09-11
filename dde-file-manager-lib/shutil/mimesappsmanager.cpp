@@ -389,22 +389,30 @@ bool MimesAppsManager::setDefautlAppForTypeByGio(const QString &mimeType, const 
 QStringList MimesAppsManager::getRecommendedApps(const DUrl &url)
 {
     QStringList recommendedApps;
-    QString gio_mimeType;
+    QString mimeType;
 
-    gio_mimeType = FileUtils::getMimeTypeByGIO(url.isSearchFile() ? url.searchedFileUrl().toString() : url.toString());
+    // blumia: maybe we should always use QMimeDatebase to get file mime type, instead of using gio.
+    //         but since we can't guarantee simply replace the gio one with the qt one can always works,
+    //         so now we only apply this change to avfs file.
+    if (url.isAVFSFile()) {
+        DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, url);
+        mimeType = info->mimeType().name();
+    } else {
+        mimeType = FileUtils::getMimeTypeByGIO(url.isSearchFile() ? url.searchedFileUrl().toString() : url.toString());
+    }
 
     QMimeDatabase db;
 
-    recommendedApps = getRecommendedAppsByQio(db.mimeTypeForName(gio_mimeType));
+    recommendedApps = getRecommendedAppsByQio(db.mimeTypeForName(mimeType));
 
     //use mime white list to find apps first of all
 //    if(recommendedApps.isEmpty() && info) {
 //        recommendedApps = getrecommendedAppsFromMimeWhiteList(info->fileUrl());
 //    }
     QString custom_app("%1/%2-custom-open-%3.desktop");
-    QString default_app = getDefaultAppByMimeType(gio_mimeType);
+    QString default_app = getDefaultAppByMimeType(mimeType);
 
-    custom_app = custom_app.arg(QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation)).arg(qApp->applicationName()).arg(gio_mimeType.replace("/", "-"));
+    custom_app = custom_app.arg(QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation)).arg(qApp->applicationName()).arg(mimeType.replace("/", "-"));
 
     if (QFile::exists(custom_app)) {
         MimesAppsManager::removeOneDupFromList(recommendedApps, custom_app);
