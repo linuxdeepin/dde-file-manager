@@ -106,6 +106,14 @@ int main(int argc, char *argv[])
 
     DApplication app(argc, argv);
 
+    bool preload = false;
+
+    for (const QString &arg : app.arguments()) {
+        if (arg == "--preload") {
+            preload = true;
+            break;
+        }
+    }
 
     app.setOrganizationName("deepin");
     app.setApplicationName("dde-desktop");
@@ -116,32 +124,37 @@ int main(int argc, char *argv[])
     const QString m_format = "%{time}{yyyyMMdd.HH:mm:ss.zzz}[%{type:1}][%{function:-35} %{line:-4} %{threadid} ] %{message}\n";
     DLogManager::setLogFormat(m_format);
     DLogManager::registerConsoleAppender();
-    DLogManager::registerFileAppender();
+
+    if (!preload) {
+        DLogManager::registerFileAppender();
+    }
 
     app.loadTranslator();
 
     qDebug() << "start " << app.applicationName() << app.applicationVersion();
-    QDBusConnection conn = QDBusConnection::sessionBus();
 
-    if (!conn.registerService(DesktopServiceName)) {
-        qDebug() << "registerService Failed, maybe service exist" << conn.lastError();
-        exit(0x0002);
+    if (!preload) {
+        QDBusConnection conn = QDBusConnection::sessionBus();
+
+        if (!conn.registerService(DesktopServiceName)) {
+            qDebug() << "registerService Failed, maybe service exist" << conn.lastError();
+            exit(0x0002);
+        }
+
+        if (!conn.registerObject(DesktopServicePath, Desktop::instance(),
+                                 QDBusConnection::ExportAllSlots |
+                                 QDBusConnection::ExportAllSignals |
+                                 QDBusConnection::ExportAllProperties)) {
+            qDebug() << "registerObject Failed" << conn.lastError();
+            exit(0x0003);
+        }
+
+        Desktop::instance()->initDebugDBus(conn);
     }
 
     // init application object
     DFMApplication fmApp;
     Q_UNUSED(fmApp)
-
-
-    if (!conn.registerObject(DesktopServicePath, Desktop::instance(),
-                             QDBusConnection::ExportAllSlots |
-                             QDBusConnection::ExportAllSignals |
-                             QDBusConnection::ExportAllProperties)) {
-        qDebug() << "registerObject Failed" << conn.lastError();
-        exit(0x0003);
-    }
-
-    Desktop::instance()->initDebugDBus(conn);
 
     // init pixmap cache size limit, 20MB * devicePixelRatio
     QPixmapCache::setCacheLimit(20 * 1024 * app.devicePixelRatio());
@@ -152,8 +165,13 @@ int main(int argc, char *argv[])
     DFMGlobal::installTranslator();
 
     Desktop::instance()->loadData();
-    Desktop::instance()->Show();
-    Desktop::instance()->loadView();
+
+    if (preload) {
+        QTimer::singleShot(1000, &app, &QCoreApplication::quit);
+    } else {
+        Desktop::instance()->Show();
+        Desktop::instance()->loadView();
+    }
 
     DFMGlobal::autoLoadDefaultPlugins();
     DFMGlobal::autoLoadDefaultMenuExtensions();
@@ -164,18 +182,20 @@ int main(int argc, char *argv[])
     DFMGlobal::initTagManagerConnect();
     DFMGlobal::initThumbnailConnection();
 
-    // Notify dde-desktop start up
-    Dde::Session::RegisterDdeSession();
+    if  (!preload) {
+        // Notify dde-desktop start up
+        Dde::Session::RegisterDdeSession();
 
-    // ---------------------------------------------------------------------------
-    // ability to show file selection dialog
-    if (!registerDialogDBus()) {
-        qWarning() << "Register dialog dbus failed.";
-        return 1;
-    }
+        // ---------------------------------------------------------------------------
+        // ability to show file selection dialog
+        if (!registerDialogDBus()) {
+            qWarning() << "Register dialog dbus failed.";
+            return 1;
+        }
 
-    if (!registerFileManager1DBus()) {
-        qWarning() << "Register org.freedesktop.FileManager1 DBus service is failed";
+        if (!registerFileManager1DBus()) {
+            qWarning() << "Register org.freedesktop.FileManager1 DBus service is failed";
+        }
     }
 
     DFMGlobal::IsFileManagerDiloagProcess = true; // for compatibility.

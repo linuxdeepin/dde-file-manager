@@ -267,10 +267,7 @@ void DFMGlobal::initFileSiganlManager()
 
 void DFMGlobal::initMimesAppsManager()
 {
-    mimeAppsManager;
-    QTimer::singleShot(1000, [](){
-        mimeAppsManager->requestUpdateCache();
-    });
+    QTimer::singleShot(100, mimeAppsManager, &MimesAppsManager::requestUpdateCache);
 }
 
 void DFMGlobal::initSystemPathManager()
