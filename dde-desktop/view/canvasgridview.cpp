@@ -345,7 +345,7 @@ void CanvasGridView::onWMHasCompositeChanged()
             d->currentWorkspaceIndex = to;
 
             if (d->backgroundLabel)
-                d->updateBackground();
+                d->updateBackground(devicePixelRatioF());
         };
 
         connect(d->wmInter, &WMInter::WorkspaceSwitched, this, onWorkspaceSwitched);
@@ -355,7 +355,7 @@ void CanvasGridView::onWMHasCompositeChanged()
     if (!d->wmDBusIsValid() || !d->windowManagerHelper->hasComposite()) {
         // 对象已存在时只需要更新壁纸
         if (d->backgroundLabel) {
-            d->updateBackground();
+            d->updateBackground(devicePixelRatioF());
 
             return;
         }
@@ -368,7 +368,7 @@ void CanvasGridView::onWMHasCompositeChanged()
         d->backgroundLabel->lower();
         d->backgroundLabel->resize(size());
 
-        d->updateBackground();
+        d->updateBackground(devicePixelRatioF());
 
         if (isVisible()) {
             d->backgroundLabel->show();
@@ -376,7 +376,7 @@ void CanvasGridView::onWMHasCompositeChanged()
 
         connect(d->gsettings, &QGSettings::changed, this, [this] (const QString &key) {
             if (key == "backgroundUris") {
-                d->updateBackground();
+                d->updateBackground(devicePixelRatioF());
             }
         });
     } else if (d->backgroundLabel) {

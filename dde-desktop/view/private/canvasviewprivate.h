@@ -106,7 +106,7 @@ public:
 //        qDebug() << "------------------------------";
     }
 
-    void updateBackground()
+    void updateBackground(const qreal ratio)
     {
         QString path = wmDBusIsValid() ? wmInter->GetCurrentWorkspaceBackground() : QString();
 
@@ -121,11 +121,19 @@ public:
 
         QPixmap pix(path);
 
-        pix = pix.scaled(backgroundLabel->size() * backgroundLabel->devicePixelRatioF(),
+        QScreen *s = qApp->primaryScreen();
+        const QSize trueSize = s->size() * s->devicePixelRatio();
+
+        pix = pix.scaled(trueSize,
                          Qt::KeepAspectRatioByExpanding,
                          Qt::SmoothTransformation);
 
-        pix.setDevicePixelRatio(backgroundLabel->devicePixelRatioF());
+        pix = pix.copy(QRect((pix.width() - trueSize.width()) / 2.0,
+                             (pix.height() - trueSize.height()) / 2.0,
+                             trueSize.width(),
+                             trueSize.height()));
+
+        pix.setDevicePixelRatio(ratio);
 
         backgroundLabel->setPixmap(pix);
     }
