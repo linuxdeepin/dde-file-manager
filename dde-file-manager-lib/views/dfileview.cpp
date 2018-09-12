@@ -2072,6 +2072,7 @@ void DFileView::clearHeardView()
     if (d->headerView) {
         removeHeaderWidget(0);
 
+        d->headerView->disconnect();
         d->headerView = nullptr;
         d->headerViewHolder = nullptr;
     }
