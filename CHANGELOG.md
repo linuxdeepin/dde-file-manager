@@ -1,3 +1,23 @@
+<a name="4.6.8.4"></a>
+## 4.6.8.4 (2018-09-13)
+
+
+#### Bug Fixes
+
+*   size too big of bmp image thumbnail ([b4b52f43](https://github.com/linuxdeepin/dde-file-manager/commit/b4b52f436936c61ba0893d7873f45c40ee541f3e))
+*   can not monitor disk device added(UDisks2 <= 2.1.7) ([f8077abb](https://github.com/linuxdeepin/dde-file-manager/commit/f8077abbac77c138cce06ed261dcb5a494d964db))
+* **DTaskDlg:**  disable pause btn on sw ([ffb6f3f8](https://github.com/linuxdeepin/dde-file-manager/commit/ffb6f3f850d20135693b31c7bb3cc70891dd2518))
+* **desktop:**  background not align center ([2bf46b98](https://github.com/linuxdeepin/dde-file-manager/commit/2bf46b981ef499b53a5a34d2b212b6703debeb4a))
+* **fileView:**  crash on slow device ([7d75ae65](https://github.com/linuxdeepin/dde-file-manager/commit/7d75ae65c105dc6e80eb1742fc229f4ed58f544b))
+* **mime:**  use mimeType from fileinfo if is avfs file ([83dffe39](https://github.com/linuxdeepin/dde-file-manager/commit/83dffe39da2e1b45fa05cc879b3658142265886e))
+* **wallpaper:**  wrong delete walllpaper widget ([386c7427](https://github.com/linuxdeepin/dde-file-manager/commit/386c742700271d7038237cf970f257c49cd6ca01))
+
+#### Features
+
+* **dde-desktop:**  support preload mode of dde-desktop ([d4061799](https://github.com/linuxdeepin/dde-file-manager/commit/d40617990242e7ad406aeb21f155e0a5199e8fec))
+
+
+
 <a name="4.6.8.3"></a>
 ## 4.6.8.3 (2018-09-06)
 

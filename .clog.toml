@@ -1,4 +1,4 @@
 [clog]
-repository = "https://github.com/linuxdeepin/dde-file-manager/tree/master"
+repository = "https://github.com/linuxdeepin/dde-file-manager"
 changelog = "CHANGELOG.md"
 from-latest-tag = true
