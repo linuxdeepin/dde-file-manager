@@ -21,6 +21,7 @@
 
 #include "udisks2_dbus_common.h"
 #include "objectmanager_interface.h"
+#include "udisks2_interface.h"
 
 #include <QDBusArgument>
 #include <QDBusInterface>
@@ -32,6 +33,7 @@ DFM_BEGIN_NAMESPACE
 
 namespace UDisks2 {
 Q_GLOBAL_STATIC_WITH_ARGS(OrgFreedesktopDBusObjectManagerInterface, omGlobal, (UDISKS2_SERVICE, "/org/freedesktop/UDisks2", QDBusConnection::systemBus()))
+Q_GLOBAL_STATIC_WITH_ARGS(OrgFreedesktopUDisks2ManagerInterface, umGlobal, (UDISKS2_SERVICE, "/org/freedesktop/UDisks2/Manager", QDBusConnection::systemBus()))
 
 bool interfaceIsExistes(const QString &path, const QString &interface)
 {
@@ -69,6 +71,17 @@ OrgFreedesktopDBusObjectManagerInterface *objectManager()
 
     return omGlobal;
 }
+
+QString version()
+{
+    return umGlobal->version();
+}
+
+QStringList supportedFilesystems()
+{
+    return umGlobal->supportedFilesystems();
+}
+
 }
 
 DFM_END_NAMESPACE
