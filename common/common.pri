@@ -31,6 +31,10 @@ unix {
         DEFINES += DISABLE_QUIT_ON_LAST_WINDOW_CLOSED
 
         CONFIG += DISABLE_ANYTHING
+    } else {
+        isEmpty(DISABLE_JEMALLOC) {
+            LIBS += -ljemalloc
+        }
     }
 
     isEqual(ARCH, sw_64){
@@ -51,10 +55,6 @@ unix {
 
     isEmpty(VERSION) {
         VERSION = 1.8.2
-    }
-
-    isEmpty(DISABLE_JEMALLOC) {
-        LIBS += -ljemalloc
     }
 }
 
