@@ -245,9 +245,13 @@ QString DThumbnailProvider::thumbnailFilePath(const QFileInfo &info, Size size) 
         return QString();
     }
 
-    QImage image(thumbnail);
+    QImageReader ir(thumbnail, QByteArray(FORMAT).mid(1));
 
-    if (image.text(QT_STRINGIFY(Thumb::MTime)).toInt() != (int)info.lastModified().toTime_t()) {
+    ir.setAutoDetectImageFormat(false);
+
+    const QImage image = ir.read();
+
+    if (!image.isNull() && image.text(QT_STRINGIFY(Thumb::MTime)).toInt() != (int)info.lastModified().toTime_t()) {
         QFile::remove(thumbnail);
 
         emit thumbnailChanged(absoluteFilePath, QString());
@@ -327,13 +331,17 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
 //            goto _return;
 //        }
 
-        if (imageSize.width() >= size || imageSize.height() >= size || mime.name() == "image/svg+xml") {
+        if (imageSize.width() > size || imageSize.height() > size || mime.name() == "image/svg+xml") {
             reader.setScaledSize(reader.size().scaled(size, size, Qt::KeepAspectRatio));
         }
 
         if (!reader.read(image.data())) {
             d->errorString = reader.errorString();
             goto _return;
+        }
+
+        if (image->width() > size || image->height() > size) {
+            image->operator =(image->scaled(size, size, Qt::KeepAspectRatio));
         }
     } else if (mime.name() == "text/plain") {
         //FIXME(zccrs): This should be done using the image plugin?
