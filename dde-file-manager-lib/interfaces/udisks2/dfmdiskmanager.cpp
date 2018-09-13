@@ -29,9 +29,43 @@
 #include <QDBusReply>
 #include <QXmlStreamReader>
 #include <QDBusMetaType>
+#include <QScopedPointer>
 #include <QDebug>
 
 DFM_BEGIN_NAMESPACE
+
+static int udisks2VersionCompare(const QString &version)
+{
+    const QStringList &version_list = UDisks2::version().split(".");
+    const QStringList &v_v_list = version.split(".");
+
+    for (int i = 0; i < version_list.count(); ++i) {
+        if (v_v_list.count() <= i)
+            return -1;
+
+        int number_v = version_list[i].toInt();
+        int number_v_v = v_v_list[i].toInt();
+
+        if (number_v == number_v_v)
+            continue;
+
+        return number_v_v > number_v ? 1 : -1;
+    }
+
+    return v_v_list.count() > version_list.count() ? 1 : 0;
+}
+
+// 2.1.7版本的UDisks2在U盘插入时没有drive device added的信号
+// 当收到block device added信号后，通过diskDeviceAddSignalFlag
+// 判断此块设备对应的磁盘设备信号是否已发送，未发送时补发信号
+// 风险：如果 diskDeviceAddSignalFlag 的值删除的不及时
+//      会导致设备再插入时不会再有信号发出
+static bool fixUDisks2DiskAddSignal()
+{
+    static bool fix = udisks2VersionCompare("2.1.7.1") > 0;
+
+    return fix;
+}
 
 class DFMDiskManagerPrivate
 {
@@ -42,6 +76,7 @@ public:
 
     bool watchChanges = false;
     QMap<QString, QByteArrayList> blockDeviceMountPointsMap;
+    QSet<QString> diskDeviceAddSignalFlag;
 
     DFMDiskManager *q_ptr;
 };
@@ -86,12 +121,41 @@ void DFMDiskManager::onInterfacesAdded(const QDBusObjectPath &object_path, const
     const QString &path_drive = QStringLiteral("/org/freedesktop/UDisks2/drives/");
     const QString &path_device = QStringLiteral("/org/freedesktop/UDisks2/block_devices/");
 
+    Q_D(DFMDiskManager);
+
     if (path.startsWith(path_drive)) {
         if (interfaces_and_properties.contains(QStringLiteral(UDISKS2_SERVICE ".Drive"))) {
-            Q_EMIT diskDeviceAdded(path);
+            if (fixUDisks2DiskAddSignal()) {
+                if (!d->diskDeviceAddSignalFlag.contains(path)) {
+                    d->diskDeviceAddSignalFlag.insert(path);
+                    // 防止flag未清除导致再也收不到此设备的信号
+                    QTimer::singleShot(1000, this, [d, path] {
+                        d->diskDeviceAddSignalFlag.remove(path);
+                    });
+
+                    Q_EMIT diskDeviceAdded(path);
+                }
+            } else {
+                Q_EMIT diskDeviceAdded(path);
+            }
         }
     } else if (path.startsWith(path_device)) {
         if (interfaces_and_properties.contains(QStringLiteral(UDISKS2_SERVICE ".Block"))) {
+            if (fixUDisks2DiskAddSignal()) {
+                QScopedPointer<DFMBlockDevice> bd(createBlockDevice(path));
+                const QString &drive = bd->drive();
+
+                if (!d->diskDeviceAddSignalFlag.contains(drive)) {
+                    d->diskDeviceAddSignalFlag.insert(drive);
+                    // 防止flag未清除导致再也收不到此设备的信号
+                    QTimer::singleShot(1000, this, [d, drive] {
+                        d->diskDeviceAddSignalFlag.remove(drive);
+                    });
+
+                    Q_EMIT diskDeviceAdded(drive);
+                }
+            }
+
             Q_EMIT blockDeviceAdded(path);
         }
 
@@ -109,12 +173,14 @@ void DFMDiskManager::onInterfacesRemoved(const QDBusObjectPath &object_path, con
 {
     const QString &path = object_path.path();
 
+    Q_D(DFMDiskManager);
+
     for (const QString &i : interfaces) {
         if (i == QStringLiteral(UDISKS2_SERVICE ".Drive")) {
+            d->diskDeviceAddSignalFlag.remove(path);
+
             Q_EMIT diskDeviceRemoved(path);
         } else if (i == QStringLiteral(UDISKS2_SERVICE ".Filesystem")) {
-            Q_D(DFMDiskManager);
-
             d->blockDeviceMountPointsMap.remove(object_path.path());
 
             Q_EMIT fileSystemRemoved(path);

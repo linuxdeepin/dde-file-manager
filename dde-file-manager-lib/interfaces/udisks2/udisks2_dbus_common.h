@@ -68,6 +68,8 @@ struct ActiveDeviceInfo
 
 bool interfaceIsExistes(const QString &path, const QString &interface);
 OrgFreedesktopDBusObjectManagerInterface *objectManager();
+QStringList supportedFilesystems();
+QString version();
 }
 DFM_END_NAMESPACE
 
