@@ -164,9 +164,11 @@ bool TrashManager::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClip
 
         localList << DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + path);
 
-        if(path.lastIndexOf('/') > 0) {
-            localList << DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath) + path);
-        }
+        // blumia: shouldn't do this since we are just copy file out. It's okay if the file name is a hashed name.
+        //         use the restore function provided by right click menu to perform restore behavior, not copy-paste.
+//        if(path.lastIndexOf('/') > 0) {
+//            localList << DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath) + path);
+//        }
     }
 
     fileService->writeFilesToClipboard(event->sender(), event->action(), localList);
