@@ -29,9 +29,6 @@
 #include <QVBoxLayout>
 #include <dfmglobal.h>
 
-class QDiskInfo;
-class QDrive;
-
 DFM_BEGIN_NAMESPACE
 class DFMSettings;
 class DFMDiskManager;
@@ -60,7 +57,6 @@ private slots:
     void onMountRemoved();
     void onVolumeAdded();
     void onVolumeRemoved();
-    void onVolume_changed(const QDiskInfo &diskInfo);
     void unmountDisk(const QString &diskId) const;
 
 private:

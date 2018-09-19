@@ -226,12 +226,6 @@ void DiskControlWidget::onVolumeRemoved()
     onDiskListChanged();
 }
 
-void DiskControlWidget::onVolume_changed(const QDiskInfo &diskInfo)
-{
-    Q_UNUSED(diskInfo)
-    onDiskListChanged();
-}
-
 void DiskControlWidget::unmountDisk(const QString &diskId) const
 {
     QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(diskId));
