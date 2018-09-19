@@ -24,7 +24,6 @@
 
 #include "diskcontrolitem.h"
 
-#include "dfileservices.h"
 #include "dfmglobal.h"
 
 #include <QVBoxLayout>
