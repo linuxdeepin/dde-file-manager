@@ -42,6 +42,7 @@
 #include "dfileiconprovider.h"
 #include "dmimedatabase.h"
 #include "dabstractfilewatcher.h"
+#include "dstorageinfo.h"
 
 #include <QDateTime>
 #include <QDir>
@@ -768,7 +769,7 @@ QIcon DFileInfo::fileIcon() const
 #ifdef DFM_MINIMUM
     bool has_thumbnail = false;
 #else
-    bool has_thumbnail = d->needThumbnail || FileUtils::isGvfsMountFile(absoluteFilePath()) || DThumbnailProvider::instance()->hasThumbnail(d->fileInfo);
+    bool has_thumbnail = d->needThumbnail || (DStorageInfo::isLocalDevice(absoluteFilePath()) && DThumbnailProvider::instance()->hasThumbnail(d->fileInfo));
 #endif
     if (has_thumbnail) {
         d->needThumbnail = true;
