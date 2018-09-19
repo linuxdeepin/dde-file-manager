@@ -14,6 +14,7 @@ X-Deepin-DEComponent=true
 
 # Translations:
 # Do not manually modify!
+Comment[am_ET]=የ ፋይል ስርአት መቃኛ
 Comment[ar]=تصفح ملف النظام
 Comment[ast]=Restola pel sistema de ficheros
 Comment[bg]=Преглед на файловата система
@@ -60,13 +61,14 @@ Comment[sr]=Претражуј систем података
 Comment[sv]=Bläddra i filsystemet
 Comment[te]=దస్త్ర వ్యవస్థను విహరించు
 Comment[th]=ท่องดูระบบแฟ้ม
-Comment[tr]=Dosya sistemine gözat
+Comment[tr]=Dosya Sistemine Gözat
 Comment[ug]=ھۆججەت سىستېمىسىنى كۆرىدۇ
-Comment[uk]=Оглянути файлову систему
+Comment[uk]=Перегляд файлової системи
 Comment[vi]=Duyệt hệ thống tệp tin
 Comment[zh_CN]=浏览文件系统
 Comment[zh_HK]=瀏覽檔案系統
 Comment[zh_TW]=瀏覽與管理檔案系統
+Name[am_ET]=ዲፕኢን የ ፋይል አስተዳዳሪ
 Name[ar]=مدير ملفات ديبين
 Name[ast]=Xestor de Ficheros
 Name[bg]=Файлов мениджър
@@ -104,8 +106,8 @@ Name[nn]=Filhandsamar
 Name[oc]=Gestionari de fichièrs
 Name[pa]=ਫਾਇਲ ਮੈਨੇਜਰ
 Name[pl]=Zarządzanie plikami Deepin
-Name[pt]=Gestor de Ficheiros Deepin
-Name[pt_BR]=Deepin Gerenciador de Arquivos 
+Name[pt]=Deepin File Manager
+Name[pt_BR]=Gerenciador de Arquivos 
 Name[ro]=Manager de fișiere
 Name[ru]=Файловый Менеджер Deepin
 Name[sk]=Deepin Správca súborov
@@ -114,7 +116,7 @@ Name[sr]=Дипин управник података
 Name[sv]=Filhanterare
 Name[te]=దస్త్ర నిర్వాహకం
 Name[th]=โปรแกรมจัดการแฟ้ม
-Name[tr]=Deepin Dosya Yönetici
+Name[tr]=Deepin Dosya Yöneticisi
 Name[ug]=ھۆججەت باشقۇرغۇچ
 Name[uk]=Файловий менеджер
 Name[vi]=Trình quản lý tệp tin
@@ -129,9 +131,11 @@ Name[sr@latin]=Novi prozor
 
 # Translations:
 # Do not manually modify!
+Name[am_ET]=አዲስ መስኮት
 Name[ar]=نافذة جديدة
 Name[ast]=Ventana nueva
 Name[bg]=Нов прозорец
+Name[bn]=নতুন উইন্ডো
 Name[ca]=Finestra nova
 Name[cs]=Nové okno
 Name[da]=Nyt vindue
@@ -159,7 +163,7 @@ Name[lt]=Naujas langas
 Name[lv]=Jauns logs
 Name[ms]=Tetinkap Baharu
 Name[nb]=Nytt vindu
-Name[nl]=Nieuw Venster
+Name[nl]=Nieuw venster
 Name[oc]=Fenèstra novèla
 Name[pl]=Nowe okno
 Name[pt]=Nova Janela

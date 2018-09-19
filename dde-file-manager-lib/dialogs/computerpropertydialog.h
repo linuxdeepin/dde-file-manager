@@ -41,18 +41,6 @@ public:
 
 signals:
     void closed();
-
-public slots:
-protected:
-
-private:
-    QString getComputerName();
-    QString getVersion();
-    QString getArch();
-    QString getProcessor();
-    QString getSWProcessorHZ();
-    QString getMemory();
-    QString getDisk();
 };
 
 #endif // COMPUTERPROPERTYDIALOG_H
