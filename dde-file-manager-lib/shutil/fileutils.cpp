@@ -37,6 +37,8 @@
 #include "controllers/appcontroller.h"
 #include "dbusinterface/startmanager_interface.h"
 
+#include <dstorageinfo.h>
+
 #include <QDirIterator>
 #include <QUrl>
 #include <QProcess>
@@ -966,19 +968,7 @@ DFMGlobal::MenuExtension FileUtils::getMenuExtension(const DUrlList &urlList)
 
 bool FileUtils::isGvfsMountFile(const QString &filePath)
 {
-    if (XDG_RUNTIME_DIR.isEmpty()){
-        QStringList runtimes = QStandardPaths::standardLocations(QStandardPaths::RuntimeLocation);
-        if (runtimes.count() >=1){
-            XDG_RUNTIME_DIR = runtimes.at(0);
-        }
-    }
-
-    QString gvfsDir = QString("%1/gvfs").arg(XDG_RUNTIME_DIR);
-    if (filePath.startsWith(gvfsDir) && DUrl(filePath) != DUrl(gvfsDir)) {
-        return true;
-    }
-
-    return false;
+    return !DStorageInfo::isLocalDevice(filePath);
 }
 
 bool FileUtils::isFileExists(const QString &filePath)

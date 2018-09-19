@@ -22,6 +22,8 @@
 
 #include "dstorageinfo.h"
 
+#include <QRegularExpression>
+
 DFM_BEGIN_NAMESPACE
 
 static QString preprocessPath(const QString &path, DStorageInfo::PathHints hints)
@@ -214,6 +216,20 @@ bool DStorageInfo::isReadOnly() const
     return QStorageInfo::isReadOnly();
 }
 
+bool DStorageInfo::isLocalDevice() const
+{
+    return device().startsWith("/dev/");
+}
+
+bool DStorageInfo::isLowSpeedDevice() const
+{
+    const QString &device = this->device();
+
+    return device.startsWith("mtp://")
+            || device.startsWith("gphoto://")
+            || device.startsWith("gphoto2://");
+}
+
 bool DStorageInfo::isValid() const
 {
     Q_D(const DStorageInfo);
@@ -281,6 +297,39 @@ bool DStorageInfo::inSameDevice(const DUrl &url1, const DUrl &url2, PathHints hi
     }
 
     return url1.host() == url2.host() && url1.port() == url1.port();
+}
+
+bool DStorageInfo::isLocalDevice(const QString &path)
+{
+    static QRegularExpression regExp("^/run/user/\\d+/gvfs/.+$",
+                                     QRegularExpression::DotMatchesEverythingOption
+                                     | QRegularExpression::DontCaptureOption
+                                     | QRegularExpression::OptimizeOnFirstUsageOption);
+
+    if (regExp.match(path, 0, QRegularExpression::NormalMatch, QRegularExpression::DontCheckSubjectStringMatchOption).hasMatch())
+        return false;
+
+    return DStorageInfo(path).isLocalDevice();
+}
+
+bool DStorageInfo::isLowSpeedDevice(const QString &path)
+{
+    static QRegularExpression regExp("^/run/user/\\d+/gvfs/(?'scheme'\\w+):.+/",
+                                     QRegularExpression::DotMatchesEverythingOption
+                                     | QRegularExpression::DontCaptureOption
+                                     | QRegularExpression::OptimizeOnFirstUsageOption);
+
+    const QRegularExpressionMatch &match = regExp.match(path, 0, QRegularExpression::NormalMatch,
+                                                        QRegularExpression::DontCheckSubjectStringMatchOption);
+
+    if (match.hasMatch()) {
+        const QString &scheme = match.captured("scheme");
+
+        if (scheme == "mtp" || scheme == "gphoto" || scheme == "gphoto2")
+            return true;
+    }
+
+    return DStorageInfo(path).isLowSpeedDevice();
 }
 
 DFM_END_NAMESPACE
