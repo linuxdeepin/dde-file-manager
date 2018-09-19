@@ -60,6 +60,8 @@
 #include <QLocalSocket>
 #include <QPixmapCache>
 
+#include <pwd.h>
+
 #ifdef ENABLE_PPROF
 #include <gperftools/profiler.h>
 #endif
@@ -79,6 +81,30 @@ int main(int argc, char *argv[])
     // init Environment
     if (qEnvironmentVariableIsEmpty("QT_PAN_TOUCHPOINTS")) {
         qputenv("QT_PAN_TOUCHPOINTS", "1");
+    }
+
+    if (qEnvironmentVariableIsSet("PKEXEC_UID")) {
+        const quint32 pkexecUID = qgetenv("PKEXEC_UID").toUInt();
+        const QDir userHome(getpwuid(pkexecUID)->pw_dir);
+
+        QFile pamFile(userHome.absoluteFilePath(".pam_environment"));
+
+        if (pamFile.open(QIODevice::ReadOnly)) {
+            while (!pamFile.atEnd()) {
+                const QByteArray &line = pamFile.readLine().simplified();
+
+                if (line.startsWith("QT_SCALE_FACTOR")) {
+                    const QByteArrayList &list = line.split('=');
+
+                    if (list.count() == 2) {
+                        qputenv("QT_SCALE_FACTOR", list.last());
+                        break;
+                    }
+                }
+            }
+
+            pamFile.close();
+        }
     }
 
     SingleApplication::loadDXcbPlugin();
