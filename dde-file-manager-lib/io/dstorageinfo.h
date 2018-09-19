@@ -64,12 +64,16 @@ public:
     qint64 bytesAvailable() const;
 
     bool isReadOnly() const;
+    bool isLocalDevice() const;
+    bool isLowSpeedDevice() const;
 
     bool isValid() const;
     void refresh();
 
     static bool inSameDevice(QString path1, QString path2, PathHints hints = 0);
     static bool inSameDevice(const DUrl &url1, const DUrl &url2, PathHints hints = 0);
+    static bool isLocalDevice(const QString &path);
+    static bool isLowSpeedDevice(const QString &path);
 
 private:
     friend bool operator==(const DStorageInfo &first, const DStorageInfo &second);
