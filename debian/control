@@ -52,7 +52,7 @@ Depends:
  deepin-anything-server [amd64 i386]
 Recommends: dde-qt5integration, avfs, samba
 Description: File manager front end
- File manager front end of Deepin OS
+ File manager front-end of Deepin OS
 
 Package: dde-desktop
 Architecture: any
@@ -60,20 +60,13 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Vers
 Conflicts: dde-workspace (<< 2.90.5)
 Recommends: qt5dxcb-plugin
 Description: deepin desktop-environment - desktop module
- Deepin desktop environment 2015 - desktop module.
+ Deepin Desktop Environment (DDE) - desktop module.
 
 Package: dde-disk-mount-plugin
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Version})
 Description: plugin of dde-dock
  Disk mount plugin of dde-dock which is created by libdde-file-manager
-
-Package: dde-trash-plugin
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Version})
-Description: plugin of dde-dock
- Trash plugin of dde-dock which is created by libdde-file-manager
-
 
 Package: libdde-file-manager
 Architecture: any
