@@ -31,12 +31,14 @@ public:
 
     using SignalType1 = void(DAbstractFileWatcher::*)(const DUrl&);
     using SignalType2 = void(DAbstractFileWatcher::*)(const DUrl&, const DUrl&);
+    using SignalType3 = void(DAbstractFileWatcher::*)(const DUrl&, const int&);
     static bool ghostSignal(const DUrl &targetUrl, SignalType1 signal, const DUrl &arg1);
     static bool ghostSignal(const DUrl &targetUrl, SignalType2 signal, const DUrl &arg1, const DUrl &arg2);
+    static bool ghostSignal(const DUrl &targetUrl, SignalType3 signal, const DUrl &arg1, const int isExternalSource = 1);
 
 signals:
     void fileDeleted(const DUrl &url);
-    void fileAttributeChanged(const DUrl &url);
+    void fileAttributeChanged(const DUrl &url, const int &isExternalSource = 1);
     void fileMoved(const DUrl &fromUrl, const DUrl &toUrl);
     void subfileCreated(const DUrl &url);
     void fileModified(const DUrl &url);
