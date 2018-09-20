@@ -218,7 +218,7 @@ void RequestEP::processEPChanged(const DUrl &url, DFileInfoPrivate *info, const 
     }
 
     if (!ep.isEmpty() || oldEP != ep) {
-        DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url);
+        DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url, 0); // source is internal signal
 
         if (info) {
             // ###(zccrs): DFileSystemModel中收到通知后会调用DAbstractFileInfo::refresh，导致会重新获取扩展属性

@@ -354,7 +354,6 @@ QDiskInfo GvfsMountManager::qVolumeToqDiskInfo(const QVolume &volume)
         diskInfo.setCan_unmount(true);
     }
 
-    PartMan::Partition partion = PartMan::Partition::getPartitionByDevicePath(volume.unix_device());
     if (diskInfo.iconName() == "phone-apple-iphone"){
         diskInfo.setType("iphone");
     }else if (diskInfo.iconName() == "phone"){

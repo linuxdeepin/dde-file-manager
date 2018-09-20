@@ -33,6 +33,19 @@ bool DAbstractFileWatcherPrivate::handleGhostSignal(const DUrl &targetUrl, DAbst
     return false;
 }
 
+bool DAbstractFileWatcherPrivate::handleGhostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType3 signal, const DUrl &arg1, int isExternalSource)
+{
+    Q_Q(DAbstractFileWatcher);
+
+    if (url == targetUrl || url == arg1) {
+        (q_ptr->*signal)(arg1, isExternalSource);
+
+        return true;
+    }
+
+    return false;
+}
+
 bool DAbstractFileWatcherPrivate::handleGhostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType2 signal, const DUrl &arg1, const DUrl &arg2)
 {
     Q_Q(DAbstractFileWatcher);
@@ -112,6 +125,21 @@ bool DAbstractFileWatcher::ghostSignal(const DUrl &targetUrl, DAbstractFileWatch
 
     for (DAbstractFileWatcher *watcher : DAbstractFileWatcherPrivate::watcherList) {
         if (watcher->d_func()->handleGhostSignal(targetUrl, signal, arg1))
+            ok = true;
+    }
+
+    return ok;
+}
+
+bool DAbstractFileWatcher::ghostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType3 signal, const DUrl &arg1, const int isExternalSource)
+{
+    if (!signal)
+        return false;
+
+    bool ok = false;
+
+    for (DAbstractFileWatcher *watcher : DAbstractFileWatcherPrivate::watcherList) {
+        if (watcher->d_func()->handleGhostSignal(targetUrl, signal, arg1, isExternalSource))
             ok = true;
     }
 

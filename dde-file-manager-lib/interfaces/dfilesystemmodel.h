@@ -226,6 +226,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_onFileCreated(const DUrl &fileUrl))
     Q_PRIVATE_SLOT(d_func(), void _q_onFileDeleted(const DUrl &fileUrl))
     Q_PRIVATE_SLOT(d_func(), void _q_onFileUpdated(const DUrl &fileUrl))
+    Q_PRIVATE_SLOT(d_func(), void _q_onFileUpdated(const DUrl &fileUrl, const int isExternalSource))
     Q_PRIVATE_SLOT(d_func(), void _q_onFileRename(const DUrl &from, const DUrl &to))
     Q_PRIVATE_SLOT(d_func(), void _q_processFileEvent())
 
