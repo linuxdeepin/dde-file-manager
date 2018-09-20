@@ -101,6 +101,7 @@ public:
     void _q_onFileCreated(const DUrl &fileUrl);
     void _q_onFileDeleted(const DUrl &fileUrl);
     void _q_onFileUpdated(const DUrl &fileUrl);
+    void _q_onFileUpdated(const DUrl &fileUrl, const int &isExternalSource);
     void _q_onFileRename(const DUrl &from, const DUrl &to);
 
     /// add/rm file event
@@ -247,6 +248,32 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl)
 
     if (const DAbstractFileInfoPointer &fileInfo = q->fileInfo(index)) {
         fileInfo->refresh();
+    }
+
+    q->parent()->parent()->update(index);
+//    emit q->dataChanged(index, index);
+}
+
+void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl, const int &isExternalSource)
+{
+    Q_Q(DFileSystemModel);
+
+    const FileSystemNodePointer &node = rootNode;
+
+    if (!node) {
+        return;
+    }
+
+    const QModelIndex &index = q->index(fileUrl);
+
+    if (!index.isValid()) {
+        return;
+    }
+
+    if (const DAbstractFileInfoPointer &fileInfo = q->fileInfo(index)) {
+        if (isExternalSource) {
+            fileInfo->refresh();
+        }
     }
 
     q->parent()->parent()->update(index);
@@ -969,8 +996,8 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
     d->columnActiveRole.clear();
 
     if (d->watcher && !d->rootNode->fileInfo->isPrivate()) {
-        connect(d->watcher, SIGNAL(fileAttributeChanged(DUrl)),
-                this, SLOT(_q_onFileUpdated(DUrl)));
+        connect(d->watcher, SIGNAL(fileAttributeChanged(DUrl, int)),
+                this, SLOT(_q_onFileUpdated(DUrl, int)));
         connect(d->watcher, SIGNAL(fileDeleted(DUrl)),
                 this, SLOT(_q_onFileDeleted(DUrl)));
         connect(d->watcher, SIGNAL(subfileCreated(DUrl)),
