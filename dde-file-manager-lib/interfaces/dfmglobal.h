@@ -110,9 +110,6 @@
 #define DFM_END_NAMESPACE }
 #define DFM_USE_NAMESPACE using namespace DFM_NAMESPACE;
 
-
-class QDiskInfo;
-
 class DFMGlobal : public QObject
 {
     Q_OBJECT
