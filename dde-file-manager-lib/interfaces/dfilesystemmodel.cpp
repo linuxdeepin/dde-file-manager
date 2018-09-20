@@ -1447,6 +1447,11 @@ void DFileSystemModel::updateChildrenOnNewThread(QList<DAbstractFileInfoPointer>
 void DFileSystemModel::refresh(const DUrl &fileUrl)
 {
     Q_D(const DFileSystemModel);
+
+    if (d->state != Idle) {
+        return;
+    }
+
 //    const FileSystemNodePointer &node = d->urlToNode.value(fileUrl);
     const FileSystemNodePointer &node = d->rootNode;
 
