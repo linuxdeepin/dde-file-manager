@@ -1,7 +1,7 @@
 [Desktop Entry]
 Categories=System;
 Comment=Open trash.
-Exec=gvfs-open trash:///
+Exec=gio open trash:///
 GenericName=Open Trash.
 Icon=user-trash
 Name=Trash

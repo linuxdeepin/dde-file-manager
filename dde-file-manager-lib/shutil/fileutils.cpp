@@ -523,14 +523,14 @@ bool FileUtils::openFile(const QString &filePath)
     }
 
     if (mimeAppsManager->getDefaultAppByFileName(filePath) == "org.gnome.font-viewer.desktop"){
-        QProcess::startDetached("gvfs-open", QStringList() << filePath);
+        QProcess::startDetached("gio", QStringList() << "open" << filePath);
         QTimer::singleShot(200, [=]{
-            QProcess::startDetached("gvfs-open", QStringList() << filePath);
+            QProcess::startDetached("gio", QStringList() << "open" << filePath);
         });
         return true;
     }
 
-    result = QProcess::startDetached("gvfs-open", QStringList() << filePath);
+    result = QProcess::startDetached("gio", QStringList() << "open" << filePath);
 
     if (!result)
         return QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));

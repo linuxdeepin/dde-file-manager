@@ -1,7 +1,7 @@
 [Desktop Entry]
 Categories=System;
 Comment=Show basic info of the computer.
-Exec=gvfs-open computer:///
+Exec=gio open computer:///
 GenericName=Computer
 Icon=computer
 Name=Computer
