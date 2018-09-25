@@ -82,6 +82,7 @@ public:
 
     qint64 size() const Q_DECL_OVERRIDE;
     int filesCount() const Q_DECL_OVERRIDE;
+    QString sizeDisplayName() const override;
 
     QDateTime created() const Q_DECL_OVERRIDE;
     QDateTime lastModified() const Q_DECL_OVERRIDE;

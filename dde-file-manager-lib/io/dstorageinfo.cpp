@@ -309,7 +309,7 @@ bool DStorageInfo::isLocalDevice(const QString &path)
     if (regExp.match(path, 0, QRegularExpression::NormalMatch, QRegularExpression::DontCheckSubjectStringMatchOption).hasMatch())
         return false;
 
-    return DStorageInfo(path).isLocalDevice();
+    return QStorageInfo(path).device().startsWith("/dev/");
 }
 
 bool DStorageInfo::isLowSpeedDevice(const QString &path)
