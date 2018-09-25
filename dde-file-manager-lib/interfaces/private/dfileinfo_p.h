@@ -34,6 +34,9 @@ public:
     mutable QPointer<QTimer> getIconTimer;
     bool requestingThumbnail = false;
     mutable bool needThumbnail = false;
+    // 小于0时表示此值未初始化，0表示不支持，1表示支持
+    mutable qint8 hasThumbnail = -1;
+    mutable qint8 isLowSpeedFile = -1;
 
     mutable QVariantHash extensionPropertys;
     mutable bool epInitialized = false;
