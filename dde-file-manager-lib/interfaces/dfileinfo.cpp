@@ -625,6 +625,27 @@ int DFileInfo::filesCount() const
     return -1;
 }
 
+QString DFileInfo::sizeDisplayName() const
+{
+    Q_D(const DFileInfo);
+
+    if (d->isLowSpeedFile < 0) {
+        d->isLowSpeedFile = DStorageInfo::isLowSpeedDevice(absoluteFilePath());
+    }
+
+    if (d->isLowSpeedFile == 0 && isDir()) {
+        int size = filesCount();
+
+        if (size <= 1) {
+            return QObject::tr("%1 item").arg(size);
+        }
+
+        return QObject::tr("%1 items").arg(size);
+    }
+
+    return FileUtils::formatSize(size());
+}
+
 QDateTime DFileInfo::created() const
 {
     Q_D(const DFileInfo);
@@ -712,6 +733,8 @@ void DFileInfo::refresh()
     d->fileInfo.refresh();
     d->icon = QIcon();
     d->epInitialized = false;
+    d->hasThumbnail = -1;
+    d->isLowSpeedFile = -1;
 }
 
 DUrl DFileInfo::goToUrlWhenDeleted() const
@@ -767,11 +790,12 @@ QIcon DFileInfo::fileIcon() const
     const DUrl &fileUrl = this->fileUrl();
 
 #ifdef DFM_MINIMUM
-    bool has_thumbnail = false;
+    d->hasThumbnail = 0;
 #else
-    bool has_thumbnail = d->needThumbnail || (DStorageInfo::isLocalDevice(absoluteFilePath()) && DThumbnailProvider::instance()->hasThumbnail(d->fileInfo));
+    if (d->hasThumbnail < 0)
+        d->hasThumbnail = DStorageInfo::isLocalDevice(absoluteFilePath()) && DThumbnailProvider::instance()->hasThumbnail(d->fileInfo);
 #endif
-    if (has_thumbnail) {
+    if (d->needThumbnail || d->hasThumbnail > 0) {
         d->needThumbnail = true;
 
         const QIcon icon(DThumbnailProvider::instance()->thumbnailFilePath(d->fileInfo, DThumbnailProvider::Large));

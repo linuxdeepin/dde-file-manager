@@ -46,7 +46,6 @@
 #include "dde-file-manager-plugins/plugininterfaces/menu/menuinterface.h"
 
 #include "deviceinfo/udisklistener.h"
-#include "dstorageinfo.h"
 
 #include <QDateTime>
 #include <QDebug>
@@ -617,7 +616,7 @@ QString DAbstractFileInfo::sizeDisplayName() const
 {
     CALL_PROXY(sizeDisplayName());
 
-    if (!DStorageInfo::isLowSpeedDevice(absoluteFilePath()) && isDir()) {
+    if (isDir()) {
         int size = filesCount();
 
         if (size <= 1) {
