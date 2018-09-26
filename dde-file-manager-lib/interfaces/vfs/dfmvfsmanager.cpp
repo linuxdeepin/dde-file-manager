@@ -1,0 +1,214 @@
+/*
+ * Copyright (C) 2017 ~ 2018 Deepin Technology Co., Ltd.
+ *
+ * Author:     Gary Wang <wzc782970009@gmail.com>
+ *
+ * Maintainer: Gary Wang <wangzichong@deepin.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+#include "dfmvfsmanager.h"
+#include "dfmvfsdevice.h"
+#include "private/dfmgiowrapper_p.h"
+
+#include <QUrl>
+#include <QDebug>
+#include <QThread>
+#include <QPointer>
+#include <QScopedPointer>
+#include <QLoggingCategory>
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(vfsManager, "vfs.manager")
+#else
+Q_LOGGING_CATEGORY(vfsManager, "vfs.manager", QtInfoMsg)
+#endif
+
+DFM_BEGIN_NAMESPACE
+
+class DFMVfsManagerPrivate
+{
+    Q_DECLARE_PUBLIC(DFMVfsManager)
+
+public:
+    explicit DFMVfsManagerPrivate(DFMVfsManager *qq);
+    ~DFMVfsManagerPrivate();
+
+    QScopedPointer<GVolumeMonitor, ScopedPointerGObjectUnrefDeleter> m_GVolumeMonitor;
+
+    static void GVolumeMonitorMountAddedCb(GVolumeMonitor *, GMount *mount, DFMVfsManager* managerPointer);
+    static void GVolumeMonitorMountRemovedCb(GVolumeMonitor *, GMount *mount, DFMVfsManager* managerPointer);
+    static void GVolumeMonitorMountChangedCb(GVolumeMonitor *, GMount *mount, DFMVfsManager* managerPointer);
+
+    DFMVfsAbstractEventHandler *handler = nullptr;
+    QPointer<QThread> threadOfEventHandler;
+
+    DFMVfsManager *q_ptr = nullptr;
+
+private:
+    void initConnect();
+};
+
+DFMVfsManagerPrivate::DFMVfsManagerPrivate(DFMVfsManager *qq)
+    : q_ptr(qq)
+{
+    m_GVolumeMonitor.reset(g_volume_monitor_get());
+    initConnect();
+}
+
+DFMVfsManagerPrivate::~DFMVfsManagerPrivate()
+{
+    if (handler) {
+        delete handler;
+    }
+}
+
+void DFMVfsManagerPrivate::GVolumeMonitorMountAddedCb(GVolumeMonitor *, GMount *mount, DFMVfsManager* managerPointer)
+{
+    DFMGFile rootFile(g_mount_get_root(mount));
+    DFMGCChar rootUriCStr(g_file_get_uri(rootFile.data()));
+    QString rootUrlStr(rootUriCStr.data());
+    QUrl url(rootUrlStr);
+    if (url.scheme() == "file") return;
+
+    emit managerPointer->vfsAttached(url);
+}
+
+void DFMVfsManagerPrivate::GVolumeMonitorMountRemovedCb(GVolumeMonitor *, GMount *mount, DFMVfsManager* managerPointer)
+{
+    DFMGFile rootFile(g_mount_get_root(mount));
+    DFMGCChar rootUriCStr(g_file_get_uri(rootFile.data()));
+    QString rootUrlStr(rootUriCStr.data());
+    QUrl url(rootUrlStr);
+    if (url.scheme() == "file") return;
+
+    emit managerPointer->vfsDetached(url);
+}
+
+void DFMVfsManagerPrivate::GVolumeMonitorMountChangedCb(GVolumeMonitor *, GMount *mount, DFMVfsManager* managerPointer)
+{
+    Q_UNUSED(managerPointer);
+
+    DFMGFile rootFile(g_mount_get_root(mount));
+    DFMGCChar rootUriCStr(g_file_get_uri(rootFile.data()));
+    QString rootUrlStr(rootUriCStr.data());
+    QUrl url(rootUrlStr);
+    if (url.scheme() == "file") return;
+
+    qDebug() << "THAT HAPPENED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+    qDebug() << url << "!!!!!!!!!!!!!";
+}
+
+void DFMVfsManagerPrivate::initConnect()
+{
+    Q_Q(DFMVfsManager);
+
+    if (!DFMGlobal::isRootUser()) {
+        g_signal_connect(m_GVolumeMonitor.data(), "mount-added", (GCallback)&DFMVfsManagerPrivate::GVolumeMonitorMountAddedCb, q);
+        g_signal_connect(m_GVolumeMonitor.data(), "mount-removed", (GCallback)&DFMVfsManagerPrivate::GVolumeMonitorMountRemovedCb, q);
+        g_signal_connect(m_GVolumeMonitor.data(), "mount-changed", (GCallback)&DFMVfsManagerPrivate::GVolumeMonitorMountChangedCb, q);
+    }
+}
+
+/*! \class DFMVfsManager
+
+    \brief DFMVfsManager manage all virtual filesystem.
+
+    Virtual filesystem here means it's not a physical device in local computer, i.e. it's a remote/network
+    device. DFMVfsManager manage the state of already mounted devices and provide signal when a new vfs is
+    mounted(attached) to the computer or a vfs mount point get unmounted(detached).
+
+    We use the word attach and detach rather than mount and unmount because one *network* location will
+    always comes with one available mount point, so a drive / partition / volume mount / unmount event will
+    always consider as a same event.
+
+    We use the URI which is used to mount the device as a identifier, use DFMVfsManager::getVfsList() to
+    get a list of already attached vfs list, and use DFMVfsDevice to manage them when needed.
+
+    \sa DFMVfsDevice, DFMDiskManager
+ */
+
+DFMVfsManager::DFMVfsManager(QObject *parent)
+    : QObject(parent)
+    , d_ptr(new DFMVfsManagerPrivate(this))
+{
+
+}
+
+DFMVfsManager::~DFMVfsManager()
+{
+
+}
+
+/*!
+ * \brief Get a list of all attached virtual filesystem.
+ *
+ * Only virtual filesystems (i.e. remote/network locations) will be returned.
+ *
+ * \return QList of attached virtual filesystem with their root url.
+ */
+const QList<QUrl> DFMVfsManager::getVfsList()
+{
+    Q_D(DFMVfsManager);
+
+    QList<QUrl> result;
+
+    DFMGMountList mountList(g_volume_monitor_get_mounts(d->m_GVolumeMonitor.data()));
+    GMount* mount = nullptr;
+    GList* iter;
+    for (iter = mountList.data(); iter != nullptr; iter = iter->next) {
+        mount = (GMount*)iter->data;
+        DFMGFile rootFile(g_mount_get_root(mount));
+        DFMGCChar rootUriCStr(g_file_get_uri(rootFile.data()));
+        QString rootUrlStr(rootUriCStr.data());
+        QUrl url(rootUrlStr);
+        if (url.scheme() == "file") continue;
+        result << url;
+    }
+
+    return result;
+}
+
+bool DFMVfsManager::attach(const QUrl &url)
+{
+    if (!url.isValid() || url.scheme() == "file" || url.scheme().isEmpty()) {
+        return false;
+    }
+
+    QScopedPointer<DFMVfsDevice> dev(DFMVfsDevice::createUnsafe(url, nullptr));
+
+    if (eventHandler()) {
+        dev->setEventHandler(eventHandler());
+    }
+
+    return dev->attach();
+}
+
+DFMVfsAbstractEventHandler *DFMVfsManager::eventHandler() const
+{
+    Q_D(const DFMVfsManager);
+
+    return d->handler;
+}
+
+void DFMVfsManager::setEventHandler(DFMVfsAbstractEventHandler *handler, QThread *threadOfHandler)
+{
+    Q_D(DFMVfsManager);
+
+    d->handler = handler;
+    d->threadOfEventHandler = threadOfHandler;
+}
+
+
+DFM_END_NAMESPACE
