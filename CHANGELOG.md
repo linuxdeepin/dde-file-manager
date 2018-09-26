@@ -1,3 +1,20 @@
+<a name=""></a>
+## 4.6.8.5 (2018-09-26)
+
+
+#### Bug Fixes
+
+*   replace gvfs-open with gio ([cbfa2297](https://github.com/linuxdeepin/dde-file-manager/commit/cbfa2297d6bf5b163caafe12d26648c32e3a26c2))
+* **DFileSystemModel:**  check idle when do refresh ([7f7d30aa](https://github.com/linuxdeepin/dde-file-manager/commit/7f7d30aaab56700475f14e6f82e55d1711ec95aa))
+* **desktop:**  avoid infinity EP query loop ([4a18b497](https://github.com/linuxdeepin/dde-file-manager/commit/4a18b497d4eabfd7b2acb40cae94d18146fd81bd))
+* **trash:**  not exist warning when copy file out ([b22bf808](https://github.com/linuxdeepin/dde-file-manager/commit/b22bf8088d9f04f2a8bce16181925eb367b71de9))
+
+#### Features
+
+*   root mode supports HiDPI. ([7a3094d5](https://github.com/linuxdeepin/dde-file-manager/commit/7a3094d58dc0b5ca0f3ffa0472f42b74282aa0e6))
+
+
+
 <a name="4.6.8.4"></a>
 ## 4.6.8.4 (2018-09-13)
 
