@@ -1,4 +1,13 @@
 <a name=""></a>
+## 4.6.8.6 (2018-09-26)
+
+
+#### Chore
+
+ * **chore(trash):** remove trash plugin ([e98544fe](https://github.com/linuxdeepin/dde-file-manager/commit/e98544fe7fa756df7b34d3ca2475e4bdee2692a9))
+
+
+<a name=""></a>
 ## 4.6.8.5 (2018-09-26)
 
 
