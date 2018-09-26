@@ -143,6 +143,7 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
                                   .arg(DSysInfo::productVersion());
     }
 
+    datas.insert(data.at(0), DSysInfo::computerName());
     datas.insert(data.at(1), version);
     datas.insert(data.at(2), QString::number(QSysInfo::WordSize) + tr("Bit"));
     datas.insert(data.at(3), QString("%1 x %2").arg(DSysInfo::cpuModelName())
