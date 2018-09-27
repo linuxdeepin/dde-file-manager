@@ -35,6 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 class QEventLoop;
+class QReadWriteLock;
 QT_END_NAMESPACE
 
 class FileSystemNode;
@@ -203,9 +204,9 @@ private:
 
     bool isDir(const FileSystemNodePointer &node) const;
 
-    bool sort(const DAbstractFileInfoPointer &parentInfo, QList<DAbstractFileInfoPointer> &list) const;
+    bool sort(const DAbstractFileInfoPointer &parentInfo, QList<FileSystemNode *> &list) const;
 
-    const FileSystemNodePointer createNode(FileSystemNode *parent, const DAbstractFileInfoPointer &info);
+    const FileSystemNodePointer createNode(FileSystemNode *parent, const DAbstractFileInfoPointer &info, QReadWriteLock *lock = nullptr);
 
     void deleteNode(const FileSystemNodePointer &node);
     void clear();
@@ -220,6 +221,7 @@ private:
 
     friend class FileSystemNode;
     friend class DFileView;
+    friend class FileNodeManagerThread;
 
     QScopedPointer<DFileSystemModelPrivate> d_ptr;
 

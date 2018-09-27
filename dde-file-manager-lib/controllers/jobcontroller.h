@@ -90,8 +90,8 @@ private:
 
     QElapsedTimer *timer = Q_NULLPTR;
 
-    int m_timeCeiling = 5000;
-    int m_countCeiling = 50000;
+    int m_timeCeiling = 2000;
+    int m_countCeiling = 9999999;
 
     void run() Q_DECL_OVERRIDE;
     void setState(State state);
