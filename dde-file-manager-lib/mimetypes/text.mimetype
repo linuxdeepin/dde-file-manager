@@ -27,3 +27,5 @@ application/wps-office.xltx
 application/octet-stream
 application/vnd.ms-htmlhelp
 application/x-zerosize
+application/vnd.openxmlformats-officedocument.wordprocessingml.document
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
