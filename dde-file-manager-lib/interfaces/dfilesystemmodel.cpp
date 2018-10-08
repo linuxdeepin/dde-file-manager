@@ -178,6 +178,8 @@ public:
             list << node->fileInfo->fileUrl();
 
         rwLock->unlock();
+
+        return list;
     }
 
     void setChildrenList(const QList<FileSystemNode*> &list)
