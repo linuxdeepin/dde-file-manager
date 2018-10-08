@@ -18,9 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include "dfmvfsmanager.h"
 #include "dfmvfsdevice.h"
 #include "private/dfmgiowrapper_p.h"
+
+#include <unistd.h>
 
 #include <QUrl>
 #include <QDebug>
@@ -114,7 +117,8 @@ void DFMVfsManagerPrivate::initConnect()
 {
     Q_Q(DFMVfsManager);
 
-    if (!DFMGlobal::isRootUser()) {
+    // check if is not root.
+    if (getuid() != 0) {
         g_signal_connect(m_GVolumeMonitor.data(), "mount-added", (GCallback)&DFMVfsManagerPrivate::GVolumeMonitorMountAddedCb, q);
         g_signal_connect(m_GVolumeMonitor.data(), "mount-removed", (GCallback)&DFMVfsManagerPrivate::GVolumeMonitorMountRemovedCb, q);
         g_signal_connect(m_GVolumeMonitor.data(), "mount-changed", (GCallback)&DFMVfsManagerPrivate::GVolumeMonitorMountChangedCb, q);

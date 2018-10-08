@@ -24,7 +24,8 @@ HEADERS += \
     diskcontrolitem.h \
     $$PWD/../../dde-file-manager-lib/interfaces/dfmsettings.h \
     dattacheddeviceinterface.h \
-    dattachedudisks2device.h
+    dattachedudisks2device.h \
+    dattachedvfsdevice.h
 
 SOURCES += \
     diskmountplugin.cpp \
@@ -32,7 +33,8 @@ SOURCES += \
     diskpluginitem.cpp \
     diskcontrolitem.cpp \
     $$PWD/../../dde-file-manager-lib/interfaces/dfmsettings.cpp \
-    dattachedudisks2device.cpp
+    dattachedudisks2device.cpp \
+    dattachedvfsdevice.cpp
 
 target.path = $${PREFIX}/lib/dde-dock/plugins/
 INSTALLS += target
