@@ -2,7 +2,7 @@ PREFIX = /usr
 QT              += core widgets concurrent dbus
 TEMPLATE         = lib
 CONFIG          += plugin c++11 link_pkgconfig
-PKGCONFIG       += dtkwidget
+PKGCONFIG       += dtkwidget gio-2.0
 
 INCLUDEPATH += /usr/include/dde-dock
 INCLUDEPATH += $$PWD/../../dde-file-manager-lib/interfaces \
@@ -22,19 +22,23 @@ HEADERS += \
     diskcontrolwidget.h \
     diskpluginitem.h \
     diskcontrolitem.h \
-    $$PWD/../../dde-file-manager-lib/interfaces/dfmsettings.h
+    $$PWD/../../dde-file-manager-lib/interfaces/dfmsettings.h \
+    dattacheddeviceinterface.h \
+    dattachedudisks2device.h
 
 SOURCES += \
     diskmountplugin.cpp \
     diskcontrolwidget.cpp \
     diskpluginitem.cpp \
     diskcontrolitem.cpp \
-    $$PWD/../../dde-file-manager-lib/interfaces/dfmsettings.cpp
+    $$PWD/../../dde-file-manager-lib/interfaces/dfmsettings.cpp \
+    dattachedudisks2device.cpp
 
 target.path = $${PREFIX}/lib/dde-dock/plugins/
 INSTALLS += target
 
 include($$PWD/udisks2/udisks2.pri)
+include($$PWD/../../dde-file-manager-lib/interfaces/vfs/vfs.pri)
 
 RESOURCES += \
     resources.qrc \

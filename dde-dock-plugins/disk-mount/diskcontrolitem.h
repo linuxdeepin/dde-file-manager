@@ -32,10 +32,10 @@
 #include <QProgressBar>
 #include <QIcon>
 #include <dfmglobal.h>
+#include "dattacheddeviceinterface.h"
 
 DFM_BEGIN_NAMESPACE
 class DFMSettings;
-class DFMBlockDevice;
 DFM_END_NAMESPACE
 
 class DiskControlItem : public QFrame
@@ -43,8 +43,10 @@ class DiskControlItem : public QFrame
     Q_OBJECT
 
 public:
-    explicit DiskControlItem(const DFM_NAMESPACE::DFMBlockDevice* blockDevicePointer, QWidget *parent = 0);
+    explicit DiskControlItem(DAttachedDeviceInterface *attachedDevicePtr, QWidget *parent = 0);
     ~DiskControlItem();
+
+    static QString formatDiskSize(const quint64 num);
 
 signals:
     void requestUnmount(const QString &diskId) const;
@@ -52,15 +54,12 @@ signals:
 private slots:
     static QString sizeString(const QString &str);
     static qreal dRound64(qreal num, int count = 1);
-    const QString formatDiskSize(const quint64 num) const;
 
 private:
     void mouseReleaseEvent(QMouseEvent *e) override;
     void showEvent(QShowEvent *e) override;
 
 private:
-    QString deviceDBusId;
-    QString mountPoint;
     QIcon m_unknowIcon;
 
     QLabel *m_diskIcon;
@@ -68,7 +67,7 @@ private:
     QLabel *m_diskCapacity;
     QProgressBar *m_capacityValueBar;
     Dtk::Widget::DImageButton *m_unmountButton;
-    const QString ddeI18nSym = QStringLiteral("_dde_");
+    QScopedPointer<DAttachedDeviceInterface> attachedDevice;
 };
 
 DFM_NAMESPACE::DFMSettings* getGsGlobal();
