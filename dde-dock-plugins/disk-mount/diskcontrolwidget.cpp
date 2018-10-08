@@ -24,6 +24,7 @@
 
 #include "diskcontrolwidget.h"
 #include "diskcontrolitem.h"
+#include "dattachedudisks2device.h"
 
 #include <dfmdiskmanager.h>
 #include <dfmblockdevice.h>
@@ -133,7 +134,8 @@ void DiskControlWidget::onDiskListChanged()
             QByteArray mountPoint = blDev->mountPoints().first();
             if (mountPoint != QStringLiteral("/boot") && mountPoint != QStringLiteral("/") && mountPoint != QStringLiteral("/home")) {
                 mountedCount++;
-                DiskControlItem *item = new DiskControlItem(blDev.data(), this);
+                DAttachedUdisks2Device *dad = new DAttachedUdisks2Device(blDev.data());
+                DiskControlItem *item = new DiskControlItem(dad, this);
                 connect(item, &DiskControlItem::requestUnmount, this, &DiskControlWidget::unmountDisk);
                 m_centralLayout->addWidget(item);
             }

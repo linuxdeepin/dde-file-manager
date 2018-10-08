@@ -45,7 +45,8 @@ DFM_USE_NAMESPACE
 
 Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, gsGlobal, ("deepin/dde-file-manager", DFMSettings::GenericConfig))
 
-DiskControlItem::DiskControlItem(const DFMBlockDevice *blockDevicePointer, QWidget *parent)
+// it takes the ownership of \a attachedDevicePtr.
+DiskControlItem::DiskControlItem(DAttachedDeviceInterface *attachedDevicePtr, QWidget *parent)
     : QFrame(parent),
 
       m_unknowIcon(":/icons/resources/unknown.svg"),
@@ -56,8 +57,7 @@ DiskControlItem::DiskControlItem(const DFMBlockDevice *blockDevicePointer, QWidg
       m_capacityValueBar(new QProgressBar),
       m_unmountButton(new DImageButton)
 {
-    mountPoint = blockDevicePointer->mountPoints().first();
-    deviceDBusId = blockDevicePointer->path();
+    attachedDevice.reset(attachedDevicePtr);
 
     m_diskName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     m_diskName->setStyleSheet("color:white;");
@@ -110,28 +110,15 @@ DiskControlItem::DiskControlItem(const DFMBlockDevice *blockDevicePointer, QWidg
                   "border-radius:4px;"
                   "}");
 
-    connect(m_unmountButton, &DImageButton::clicked, this, [this] { emit requestUnmount(deviceDBusId); });
+    connect(m_unmountButton, &DImageButton::clicked, this, [this] {
+        attachedDevice->detach();
+    });
 
-    QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blockDevicePointer->drive()));
-
-    bool isDvd = blockDevicePointer->device().startsWith("/dev/sr");
-    bool isRemovable = diskDev->removable();
-
-    if (gsGlobal->value("GenericAttribute", "DisableNonRemovableDeviceUnmount", false).toBool() && isRemovable) {
+    if (gsGlobal->value("GenericAttribute", "DisableNonRemovableDeviceUnmount", false).toBool() && !attachedDevice->detachable()) {
         m_unmountButton->hide();
     }
 
-    QString iconName = QStringLiteral("drive-harddisk");
-
-    if (isRemovable) {
-        iconName = QStringLiteral("drive-removable-media-usb");
-    }
-
-    if (isDvd) {
-        iconName = QStringLiteral("media-optical");
-    }
-
-    QIcon icon = QIcon::fromTheme(iconName, m_unknowIcon);
+    QIcon icon = QIcon::fromTheme(attachedDevice->iconName(), m_unknowIcon);
 
     qreal devicePixelRatio = qApp->devicePixelRatio();
     QPixmap diskIconPixmap = icon.pixmap(48 * devicePixelRatio , 48 * devicePixelRatio);
@@ -176,7 +163,7 @@ qreal DiskControlItem::dRound64(qreal num, int count)
 }
 
 
-const QString DiskControlItem::formatDiskSize(const quint64 num) const
+QString DiskControlItem::formatDiskSize(const quint64 num)
 {
     QStringList list {" B", " KB", " MB", " GB", " TB"};
     qreal fileSize(num);
@@ -201,38 +188,17 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
 {
     QWidget::mouseReleaseEvent(e);
 
-    DDesktopServices::showFolder(QUrl::fromLocalFile(mountPoint));
+    DDesktopServices::showFolder(attachedDevice->mountpointUrl());
 }
 
 void DiskControlItem::showEvent(QShowEvent *e)
 {
-    QStorageInfo storage_info(mountPoint);
-    QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(deviceDBusId));
-    bool hasLabelName = true;
+    m_diskName->setText(attachedDevice->displayName());
 
-    if (blDev->isValid()) {
-        QString devName = blDev->idLabel();
-        if (devName.isEmpty()) {
-            hasLabelName = false;
-            devName = QString(tr("%1 Volume")).arg(formatDiskSize(blDev->size()));
-        }
-
-        // Deepin i10n Label text (_dde_text):
-        if (devName.startsWith(ddeI18nSym)) {
-            devName = devName.mid(ddeI18nSym.size(), devName.size() - ddeI18nSym.size());
-            devName = qApp->translate("DeepinStorage", devName.toUtf8().constData());
-        }
-
-        m_diskName->setText(devName);
-    }
-
-    if (storage_info.isValid()) {
-        qint64 bytesTotal = storage_info.bytesTotal();
-        qint64 bytesFree = storage_info.bytesFree();
-        if (!hasLabelName) {
-            QString devName = QString(tr("%1 Volume")).arg(formatDiskSize(bytesTotal));
-            m_diskName->setText(devName);
-        }
+    if (attachedDevice->deviceUsageValid()) {
+        QPair<quint64, quint64> freeAndTotal = attachedDevice->deviceUsage();
+        qint64 bytesFree = freeAndTotal.first;
+        qint64 bytesTotal = freeAndTotal.second;
         m_diskCapacity->setText(QString("%1 / %2")
                                 .arg(formatDiskSize(bytesTotal - bytesFree))
                                 .arg(formatDiskSize(bytesTotal)));

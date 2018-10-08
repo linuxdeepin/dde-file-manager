@@ -48,9 +48,9 @@ public:
     GFile* createRootFile() const;
     GFileInfo* createRootFileInfo() const;
 
-    GMount* getGMount() const; // promise will always return a value, or throw a exception
-    GFile* getGFile() const; // promise will always return a value, or throw a exception
-    GFileInfo* getGFileInfo() const; // promise will always return a value, or throw a exception
+    GMount* getGMount() const; // promise will always return a value, or throw an exception
+    GFile* getGFile() const; // promise will always return a value, or throw an exception
+    GFileInfo* getGFileInfo() const; // promise will always return a value, or throw an exception
 
     static QStringList getThemedIconName(GThemedIcon *icon);
 
