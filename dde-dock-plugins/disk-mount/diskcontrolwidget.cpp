@@ -25,11 +25,13 @@
 #include "diskcontrolwidget.h"
 #include "diskcontrolitem.h"
 #include "dattachedudisks2device.h"
+#include "dattachedvfsdevice.h"
 
 #include <dfmdiskmanager.h>
 #include <dfmblockdevice.h>
 #include <dfmdiskdevice.h>
 #include <dfmsettings.h>
+#include <dfmvfsmanager.h>
 #include <DDesktopServices>
 
 #include <QDebug>
@@ -53,6 +55,8 @@ DiskControlWidget::DiskControlWidget(QWidget *parent)
     m_centralWidget->setLayout(m_centralLayout);
     m_centralWidget->setFixedWidth(WIDTH);
 
+    m_vfsManager = new DFMVfsManager;
+
     setWidget(m_centralWidget);
     setFixedWidth(WIDTH);
     setFrameStyle(QFrame::NoFrame);
@@ -62,6 +66,11 @@ DiskControlWidget::DiskControlWidget(QWidget *parent)
     setStyleSheet("background-color:transparent;");
     m_diskManager = new DFMDiskManager(this);
     initConnect();
+}
+
+DiskControlWidget::~DiskControlWidget()
+{
+    delete m_vfsManager;
 }
 
 void DiskControlWidget::initConnect()
@@ -77,6 +86,9 @@ void DiskControlWidget::initConnect()
     connect(m_diskManager, &DFMDiskManager::mountRemoved, this, &DiskControlWidget::onMountRemoved);
     connect(m_diskManager, &DFMDiskManager::fileSystemAdded, this, &DiskControlWidget::onVolumeAdded);
     connect(m_diskManager, &DFMDiskManager::fileSystemRemoved, this, &DiskControlWidget::onVolumeRemoved);
+
+    connect(m_vfsManager, &DFMVfsManager::vfsAttached, this, &DiskControlWidget::onDiskListChanged);
+    connect(m_vfsManager, &DFMVfsManager::vfsDetached, this, &DiskControlWidget::onDiskListChanged);
 }
 
 void DiskControlWidget::startMonitor()
@@ -127,6 +139,7 @@ void DiskControlWidget::onDiskListChanged()
     }
 
     int mountedCount = 0;
+
     QStringList blDevList = m_diskManager->blockDevices();
     for (const QString& blDevStr : blDevList) {
         QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(blDevStr));
@@ -136,10 +149,17 @@ void DiskControlWidget::onDiskListChanged()
                 mountedCount++;
                 DAttachedUdisks2Device *dad = new DAttachedUdisks2Device(blDev.data());
                 DiskControlItem *item = new DiskControlItem(dad, this);
-                connect(item, &DiskControlItem::requestUnmount, this, &DiskControlWidget::unmountDisk);
                 m_centralLayout->addWidget(item);
             }
         }
+    }
+
+    QList<QUrl> urlList = m_vfsManager->getVfsList();
+    for (const QUrl& oneUrl : urlList) {
+        mountedCount++;
+        DAttachedVfsDevice *dad = new DAttachedVfsDevice(oneUrl);
+        DiskControlItem *item = new DiskControlItem(dad, this);
+        m_centralLayout->addWidget(item);
     }
 
     emit diskCountChanged(mountedCount);

@@ -202,7 +202,9 @@ void DiskControlItem::showEvent(QShowEvent *e)
         m_diskCapacity->setText(QString("%1 / %2")
                                 .arg(formatDiskSize(bytesTotal - bytesFree))
                                 .arg(formatDiskSize(bytesTotal)));
-        m_capacityValueBar->setValue(100 * (bytesTotal - bytesFree) / bytesTotal);
+        if (bytesTotal > 0) {
+            m_capacityValueBar->setValue(100 * (bytesTotal - bytesFree) / bytesTotal);
+        }
     }
 
     QFrame::showEvent(e);

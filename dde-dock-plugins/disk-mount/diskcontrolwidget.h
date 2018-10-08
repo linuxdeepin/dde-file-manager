@@ -32,6 +32,7 @@
 DFM_BEGIN_NAMESPACE
 class DFMSettings;
 class DFMDiskManager;
+class DFMVfsManager;
 DFM_END_NAMESPACE
 
 class DiskControlWidget : public QScrollArea
@@ -40,6 +41,7 @@ class DiskControlWidget : public QScrollArea
 
 public:
     explicit DiskControlWidget(QWidget *parent = 0);
+    ~DiskControlWidget() override;
     void initConnect();
 
     void startMonitor();
@@ -64,6 +66,7 @@ private:
     QWidget *m_centralWidget;
 
     DFM_NAMESPACE::DFMDiskManager *m_diskManager;
+    DFM_NAMESPACE::DFMVfsManager *m_vfsManager;
 };
 
 #endif // DISKCONTROLWIDGET_H

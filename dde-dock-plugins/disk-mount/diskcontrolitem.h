@@ -48,9 +48,6 @@ public:
 
     static QString formatDiskSize(const quint64 num);
 
-signals:
-    void requestUnmount(const QString &diskId) const;
-
 private slots:
     static QString sizeString(const QString &str);
     static qreal dRound64(qreal num, int count = 1);
