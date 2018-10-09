@@ -305,10 +305,14 @@ void DFMSideBarItem::showRenameEditor()
     d->renameLineEdit->resize(width() - paddingLeft - SIDEBAR_RENAMEEDIT_MARGIN,
                               SIDEBAR_ITEM_HEIGHT - SIDEBAR_RENAMEEDIT_MARGIN * 2);
     d->renameLineEdit->move(paddingLeft, SIDEBAR_RENAMEEDIT_MARGIN);
-    d->renameLineEdit->setText(d->displayText);
     d->renameLineEdit->show();
     d->renameLineEdit->selectAll();
     d->renameLineEdit->setFocus(Qt::MouseFocusReason);
+
+    const DAbstractFileInfoPointer infoPointer = fileService->createFileInfo(this, url());
+
+    d->renameLineEdit->setText(infoPointer->fileName());
+
     connect(d->renameLineEdit, &QLineEdit::editingFinished,
             this, &DFMSideBarItem::onEditingFinished);
 }

@@ -71,6 +71,7 @@ public:
     qulonglong getFree();
     qulonglong getTotal();
     qint64 size() const Q_DECL_OVERRIDE;
+    QString fileName() const override;
     QString fileDisplayName() const Q_DECL_OVERRIDE;
     MediaType getMediaType() const;
     QString deviceTypeDisplayName() const;
