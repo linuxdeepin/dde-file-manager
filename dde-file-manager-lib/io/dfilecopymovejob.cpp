@@ -651,6 +651,8 @@ process_file:
 
         bool ok = true;
         qint64 size = source_info->size();
+        const QDateTime si_last_read = source_info->lastRead();
+        const QDateTime si_last_modified = source_info->lastModified();
 
         if (mode == DFileCopyMoveJob::CopyMode) {
             ok = mergeDirectory(handler, source_info.constData(), new_file_info.constData());
@@ -660,6 +662,7 @@ process_file:
         }
 
         if (ok) {
+            handler->setFileTime(new_file_info->fileUrl(), si_last_read, si_last_modified);
             joinToCompletedDirectoryList(from, new_file_info->fileUrl(), size);
         }
 
