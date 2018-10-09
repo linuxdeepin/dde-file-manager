@@ -34,6 +34,9 @@
 #include "gvfs/gvfsmountmanager.h"
 #include "gvfs/qdrive.h"
 #include "app/define.h"
+
+#include "dfmapplication.h"
+#include "dfmsettings.h"
 #include "dfmdiskmanager.h"
 #include "dfmblockdevice.h"
 
@@ -105,10 +108,6 @@ QString UDiskDeviceInfo::getIdType() const
 
 QString UDiskDeviceInfo::getName() const
 {
-    QString letter = deviceListener->getVolumeLetters().value(m_diskInfo.uuid());
-    if (!letter.isEmpty()) {
-        return QString("%1 (%2:)").arg(m_diskInfo.name(), letter);
-    }
     return m_diskInfo.name();
 }
 
@@ -199,17 +198,50 @@ qint64 UDiskDeviceInfo::size() const
     return m_diskInfo.total();
 }
 
+QString UDiskDeviceInfo::fileName() const
+{
+    return getName();
+}
+
 QString UDiskDeviceInfo::fileDisplayName() const
 {
     QString displayName = getName();
+
     if (!displayName.isEmpty()) {
         if (displayName.startsWith(ddeI18nSym)) {
             displayName = displayName.mid(ddeI18nSym.size(), displayName.size() - ddeI18nSym.size());
-            return qApp->translate("DeepinStorage", displayName.toUtf8().constData());
+            displayName = qApp->translate("DeepinStorage", displayName.toUtf8().constData());
         }
-        return displayName;
+    } else {
+        displayName = FileUtils::formatSize(size());
     }
-    return FileUtils::formatSize(size());
+
+    QString letter = deviceListener->getVolumeLetters().value(m_diskInfo.uuid());
+
+    if (!letter.isEmpty()) {
+        return QString("%1 (%2:)").arg(displayName, letter);
+    } else if (m_diskInfo.mounted_root_uri() != "/"
+               && m_diskInfo.id().startsWith("/dev/")
+               && DFMApplication::instance()->genericObtuselySetting()->value("Disk/Options", "windowsStyle").toBool()) {
+        // 记录最后一个被分配的盘符，默认为 C（'C' + 0）, C默认被系统盘所占用
+        static quint8 lastPartNumber = 0;
+        quint8 partNumber = DFMApplication::instance()->genericObtuselySetting()->value("Disk/Options", m_diskInfo.id().append("/partNumber")).toUInt();
+
+        if (partNumber > 0) {
+            if (partNumber > lastPartNumber) {
+                lastPartNumber = partNumber;
+            }
+
+            return QString("%1 (%2:)").arg(displayName).arg(QChar('C' + partNumber));
+        }
+
+        ++lastPartNumber;
+        DFMApplication::instance()->genericObtuselySetting()->setValue("Disk/Options", m_diskInfo.id().append("/partNumber"), lastPartNumber);
+
+        return QString("%1 (%2:)").arg(displayName).arg(QChar('C' + lastPartNumber));
+    }
+
+    return displayName;
 }
 
 UDiskDeviceInfo::MediaType UDiskDeviceInfo::getMediaType() const

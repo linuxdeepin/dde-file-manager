@@ -30,7 +30,13 @@
 #include <QVariant>
 #include <QDebug>
 #include <QDir>
+
+#include "dfmapplication.h"
+#include "dfmsettings.h"
+
 #include "interfaces/dfmstandardpaths.h"
+
+DFM_USE_NAMESPACE
 
 PathManager::PathManager(QObject *parent)
     : QObject(parent)
@@ -59,6 +65,9 @@ void PathManager::initPaths()
     m_systemPathDisplayNamesMap["UserShare"] = tr("My Shares");
     m_systemPathDisplayNamesMap["Computer"] = tr("Computer");
 
+    if (DFMApplication::instance()->genericObtuselySetting()->value("Disk/Options", "windowsStyle").toBool()) {
+        m_systemPathDisplayNamesMap["System Disk"] = m_systemPathDisplayNamesMap["System Disk"].append(" (C:)");
+    }
 
     m_systemPathIconNamesMap["Home"] = "folder-home";
     m_systemPathIconNamesMap["Desktop"] = "folder-desktop";

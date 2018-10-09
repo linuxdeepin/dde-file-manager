@@ -252,9 +252,13 @@ bool ComputerViewItem::eventFilter(QObject *obj, QEvent *event)
                 fileService->renameFile(this, url, urlWithNewName, true);
             }
             // done
+            // 重设显示的名字
+            setName(m_deviceInfo->fileDisplayName());
             emit inputFocusOut();
             return true;
         case Qt::Key_Escape:
+            // 重设显示的名字
+            setName(m_deviceInfo->fileDisplayName());
             emit inputFocusOut();
             return true;
         default:
@@ -615,7 +619,7 @@ void ComputerView::initConnect()
 
     // Patition get renamed.
     connect(devices_watcher, &DAbstractFileWatcher::fileMoved, this, [ = ](const DUrl & fromUrl, const DUrl & toUrl) {
-
+        Q_UNUSED(toUrl)
         const DAbstractFileInfoPointer &deviceInfoPointer = DFileService::instance()->createFileInfo(nullptr, fromUrl);
         const UDiskDeviceInfo* info = dynamic_cast<UDiskDeviceInfo*>(deviceInfoPointer.data());
         if (!deviceInfoPointer) {
@@ -677,7 +681,7 @@ void ComputerView::loadNativeItems()
     QDiskInfo diskInfo;
     diskInfo.setId("/");
     diskInfo.setType("native");
-    diskInfo.setName(tr("System Disk"));
+    diskInfo.setName(systemPathManager->getSystemPathDisplayName("System Disk"));
     diskInfo.setMounted_root_uri("/");
     diskInfo.setCan_mount(false);
     diskInfo.setCan_unmount(false);
@@ -1020,6 +1024,7 @@ void ComputerView::onRequestEdit(const DFMUrlBaseEvent &event)
     }
 
     item->getTextEdit()->setReadOnly(false);
+    item->setName(item->deviceInfo()->fileName());
     item->updateStatus();
     item->getTextEdit()->selectAll();
 }
