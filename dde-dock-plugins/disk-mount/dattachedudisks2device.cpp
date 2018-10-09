@@ -29,6 +29,12 @@
 
 DFM_USE_NAMESPACE
 
+/*!
+ * \class DAttachedUdisks2Device
+ *
+ * \brief An attached (mounted) block device (partition)
+ */
+
 DAttachedUdisks2Device::DAttachedUdisks2Device(const DFMBlockDevice *blockDevicePointer)
 {
     mountPoint = blockDevicePointer->mountPoints().first();
