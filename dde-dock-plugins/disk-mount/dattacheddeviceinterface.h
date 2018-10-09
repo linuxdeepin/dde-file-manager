@@ -34,7 +34,7 @@ public:
     virtual bool deviceUsageValid() = 0; // storage valid / available or not.
     virtual QPair<quint64, quint64> deviceUsage() = 0; // used / total, in bytes.
     virtual QString iconName() = 0; // device icon (theme) name.
-    virtual QUrl mountpointUrl() = 0; // as name.
+    virtual QUrl mountpointUrl() = 0;
 };
 
 #endif // DATTACHEDDEVICEINTERFACE_H

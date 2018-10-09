@@ -95,6 +95,14 @@ QString UDiskDeviceInfo::getId() const
     return m_diskInfo.id();
 }
 
+QString UDiskDeviceInfo::getIdType() const
+{
+    // getIdType
+    QString dbusPath = this->getDBusPath();
+    QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(dbusPath));
+    return blDev->idType();
+}
+
 QString UDiskDeviceInfo::getName() const
 {
     QString letter = deviceListener->getVolumeLetters().value(m_diskInfo.uuid());
@@ -112,6 +120,16 @@ QString UDiskDeviceInfo::getType() const
 QString UDiskDeviceInfo::getPath() const
 {
     return m_diskInfo.unix_device();
+}
+
+QString UDiskDeviceInfo::getDBusPath() const
+{
+    QString devicePath = this->getPath();
+    // blumia: since we now both use the old gvfs interface and the new udisks2 interface
+    //         we should convert the path from local volumn path to the dbus path which is
+    //         used by our udisks2 wrapper classes.
+    devicePath.replace("dev", "org/freedesktop/UDisks2/block_devices");
+    return devicePath;
 }
 
 QString UDiskDeviceInfo::getMountPoint() const
@@ -264,11 +282,7 @@ bool UDiskDeviceInfo::isWritable() const
 
 bool UDiskDeviceInfo::canRename() const
 {
-    // blumia: since we now both use the old gvfs interface and the new udisks2 interface
-    //         we should convert the path from local volumn path to the dbus path which is
-    //         used by our udisks2 wrapper classes.
-    QString devicePath = this->getPath();
-    devicePath.replace("dev", "org/freedesktop/UDisks2/block_devices");
+    QString devicePath = this->getDBusPath();
 
     DFMBlockDevice *partition = DFMDiskManager::createBlockDevice(devicePath, nullptr);
     bool result = partition->canSetLabel();

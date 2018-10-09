@@ -59,9 +59,11 @@ public:
     void setDiskInfo(QDiskInfo diskInfo);
     QDiskInfo getDiskInfo() const;
     QString getId() const;
+    QString getIdType() const;
     QString getName() const;
     QString getType() const;
     QString getPath() const;
+    QString getDBusPath() const;
     QString getMountPoint() const;
     DUrl getMountPointUrl() const;
     QString getIcon() const;

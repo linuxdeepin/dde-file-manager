@@ -25,6 +25,13 @@
 
 DFM_USE_NAMESPACE
 
+/*!
+ * \class DAttachedVfsDevice
+ *
+ * \brief An attached (mounted) virtual filesystem device from gio
+ */
+
+
 DAttachedVfsDevice::DAttachedVfsDevice(const QUrl mountpointUrl)
 {
     vfsDevice.reset(DFMVfsDevice::create(mountpointUrl));
