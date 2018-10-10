@@ -1,3 +1,13 @@
+<a name="4.6.8.7"></a>
+## 4.6.8.7 (2018-10-10)
+
+
+#### Features
+
+*   support use windows style display partition name ([801ca849](https://github.com/linuxdeepin/dde-file-manager/commit/801ca849b985d674eb6b52539df1f3a9b536a0a1))
+
+
+
 <a name=""></a>
 ## 4.6.8.6 (2018-09-26)
 
