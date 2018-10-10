@@ -49,10 +49,7 @@ int main(int argc, char *argv[])
     //Logger
     DLogManager::registerConsoleAppender();
 
-    //Load DXcbPlugin
-    DApplication::loadDXcbPlugin();
-    DApplication a(argc, argv);
-
+    //Init Environment
     qputenv("QT_IM_MODULE", "xim");
     qputenv("GTK_IM_MODULE", "xim");
     qputenv("QT4_IM_MODULE", "xim");
@@ -68,11 +65,6 @@ int main(int argc, char *argv[])
     qputenv("DBUS_STARTER_BUS_TYPE", "session");
     qputenv("GDMSESSION", "deepin");
     qputenv("DESKTOP_SESSION", "deepin");
-
-    //Singleton app handle
-    bool isSingletonApp = SingletonApp::instance()->setSingletonApplication("usb-device-formatter");
-    if(!isSingletonApp)
-        return 0;
 
     if (qEnvironmentVariableIsSet("PKEXEC_UID")) {
         const quint32 pkexec_uid = qgetenv("PKEXEC_UID").toUInt();
@@ -97,6 +89,15 @@ int main(int argc, char *argv[])
             pam_file.close();
         }
     }
+
+    //Load DXcbPlugin
+    DApplication::loadDXcbPlugin();
+    DApplication a(argc, argv);
+
+    //Singleton app handle
+    bool isSingletonApp = SingletonApp::instance()->setSingletonApplication("usb-device-formatter");
+    if(!isSingletonApp)
+        return 0;
 
     //Load translation
     QTranslator *translator = new QTranslator(QCoreApplication::instance());
