@@ -1,0 +1,215 @@
+/*
+ * Copyright (C) 2017 ~ 2018 Deepin Technology Co., Ltd.
+ *
+ * Author:     Gary Wang <wzc782970009@gmail.com>
+ *
+ * Maintainer: Gary Wang <wangzichong@deepin.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include "dfmudisks2deviceinfo.h"
+
+#include <dfmdiskmanager.h>
+#include <dfmblockdevice.h>
+#include <dfmdiskdevice.h>
+#include <QStorageInfo>
+
+#include <shutil/fileutils.h>
+
+DFM_BEGIN_NAMESPACE
+
+DFMUdisks2DeviceInfo::DFMUdisks2DeviceInfo(const DFMBlockDevice *blockDevicePointer)
+{
+    mountPoint = blockDevicePointer->mountPoints().first();
+    deviceDBusId = blockDevicePointer->path();
+    c_blockDevice.reset(DFMDiskManager::createBlockDevice(deviceDBusId)); // not take the ownership of the passed pointer.
+}
+
+DFMUdisks2DeviceInfo::DFMUdisks2DeviceInfo(const QString &dbusPath)
+{
+    c_blockDevice.reset(DFMDiskManager::createBlockDevice(dbusPath)); // not take the ownership of the passed pointer.
+}
+
+void DFMUdisks2DeviceInfo::mount()
+{
+    blockDevice()->mount({});
+}
+
+bool DFMUdisks2DeviceInfo::unmountable()
+{
+    QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blockDevice()->drive()));
+    return diskDev->removable();
+}
+
+void DFMUdisks2DeviceInfo::unmount()
+{
+    blockDevice()->unmount({});
+    if (blockDevice()->device().startsWith("/dev/sr")) { // is a DVD driver
+        QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blockDevice()->drive()));
+        if (diskDev->ejectable()) {
+            diskDev->eject({});
+        }
+    }
+}
+
+bool DFMUdisks2DeviceInfo::ejectable()
+{
+    QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blockDevice()->drive()));
+    return diskDev->ejectable();
+}
+
+void DFMUdisks2DeviceInfo::eject()
+{
+    QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blockDevice()->drive()));
+    if (diskDev->ejectable()) {
+        diskDev->eject({});
+    }
+}
+
+bool DFMUdisks2DeviceInfo::isReadOnly() const
+{
+    return blockDeviceConst()->readOnly();
+}
+
+QString DFMUdisks2DeviceInfo::name() const
+{
+    if (blockDeviceConst()->isValid()) {
+        return blockDeviceConst()->idLabel();
+    }
+
+    return QString();
+}
+
+bool DFMUdisks2DeviceInfo::canRename() const
+{
+    return blockDeviceConst()->canSetLabel();
+}
+
+QString DFMUdisks2DeviceInfo::displayName() const
+{
+    QStorageInfo storage_info(mountPoint);
+    bool hasLabelName = true;
+    QString result;
+
+    if (blockDeviceConst()->isValid()) {
+        QString devName = blockDeviceConst()->idLabel();
+        if (devName.isEmpty()) {
+            hasLabelName = false;
+            devName = qApp->translate("DeepinStorage", "%1 Volume").arg(FileUtils::formatSize(blockDeviceConst()->size()));
+        }
+
+        // Deepin i10n Label text (_dde_text):
+        if (devName.startsWith(ddeI18nSym)) {
+            devName = devName.mid(ddeI18nSym.size(), devName.size() - ddeI18nSym.size());
+            devName = qApp->translate("DeepinStorage", devName.toUtf8().constData());
+        }
+
+        result = devName;
+    }
+
+    if (storage_info.isValid()) {
+        if (!hasLabelName) {
+            qint64 bytesTotal = storage_info.bytesTotal();
+            result = qApp->translate("DeepinStorage", "%1 Volume").arg(FileUtils::formatSize(bytesTotal));
+        }
+    }
+
+    return result;
+}
+
+QString DFMUdisks2DeviceInfo::iconName() const
+{
+    QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blockDeviceConst()->drive()));
+
+    bool isDvd = blockDeviceConst()->device().startsWith("/dev/sr");
+    bool isRemovable = diskDev->removable();
+    QString iconName = QStringLiteral("drive-harddisk");
+
+    if (isRemovable) {
+        iconName = QStringLiteral("drive-removable-media-usb");
+    }
+
+    if (isDvd) {
+        iconName = QStringLiteral("media-optical");
+    }
+
+    return iconName;
+}
+
+bool DFMUdisks2DeviceInfo::deviceUsageValid() const
+{
+    QStorageInfo storage_info(mountPoint);
+    return storage_info.isValid();
+}
+
+quint64 DFMUdisks2DeviceInfo::availableBytes() const
+{
+    QStorageInfo storage_info(mountPoint);
+
+    if (storage_info.isValid()) {
+        return storage_info.bytesAvailable();
+    }
+
+    return -1;
+}
+
+quint64 DFMUdisks2DeviceInfo::freeBytes() const
+{
+    QStorageInfo storage_info(mountPoint);
+
+    if (storage_info.isValid()) {
+        return storage_info.bytesFree();
+    }
+
+    return -1;
+}
+
+quint64 DFMUdisks2DeviceInfo::totalBytes() const
+{
+    QStorageInfo storage_info(mountPoint);
+
+    if (storage_info.isValid()) {
+        return storage_info.bytesTotal();
+    }
+
+    return 0;
+}
+
+QString DFMUdisks2DeviceInfo::mountpointPath() const
+{
+    return mountPoint;
+}
+
+DFMAbstractDeviceInterface::DeviceClassType DFMUdisks2DeviceInfo::deviceClassType()
+{
+    return udisks2;
+}
+
+QString DFMUdisks2DeviceInfo::unixPath()
+{
+    return blockDevice()->path();
+}
+
+DFMBlockDevice *DFMUdisks2DeviceInfo::blockDevice()
+{
+    return c_blockDevice.data();
+}
+
+const DFMBlockDevice *DFMUdisks2DeviceInfo::blockDeviceConst() const
+{
+    return c_blockDevice.data();
+}
+
+DFM_END_NAMESPACE

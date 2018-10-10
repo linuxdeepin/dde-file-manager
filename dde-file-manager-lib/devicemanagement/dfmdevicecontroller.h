@@ -1,0 +1,71 @@
+/*
+ * Copyright (C) 2017 ~ 2018 Deepin Technology Co., Ltd.
+ *
+ * Author:     Gary Wang <wzc782970009@gmail.com>
+ *
+ * Maintainer: Gary Wang <wangzichong@deepin.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef DFMDEVICECONTROLLER_H
+#define DFMDEVICECONTROLLER_H
+
+#include <dabstractfilecontroller.h>
+#include <dfmdiskmanager.h>
+#include <dfmvfsmanager.h>
+
+DFM_BEGIN_NAMESPACE
+class DFMVfsDevice;
+DFM_END_NAMESPACE
+
+class DFMDeviceController : public DAbstractFileController
+{
+    Q_OBJECT
+
+public:
+    explicit DFMDeviceController(QObject *parent = 0);
+
+    void initDiskManager();
+    void initVfsManager();
+
+    const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const override;
+    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const override;
+    DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
+
+public slots:
+    void mount(const QString &path);
+    void unmount(const QString &path);
+    void eject(const QString &path);
+    void stopDrive(const QString &path);
+    void forceUnmount(const QString &id);
+
+private slots:
+    // filesystem device managed by udisks2
+    void fileSystemDeviceAdded(const QString dbusPath);
+    void fileSystemDeviceRemoved(const QString dbusPath);
+    void fileSystemDeviceIdLabelChanged(const QString &labelName);
+    // virtual filesystem (from network location) managed by gio
+    void virualFileSystemDeviceAttached(const QUrl &url);
+    void virualFileSystemDeviceDetached(const QUrl &url);
+
+private:
+    QScopedPointer<DFM_NAMESPACE::DFMDiskManager> m_diskMgr;
+    QScopedPointer<DFM_NAMESPACE::DFMVfsManager> m_vfsMgr;
+
+    QMap<QString, DFM_NAMESPACE::DFMBlockDevice*> m_fsDevMap; // key is udisks2 device dbus path
+    QSet<QUrl> m_vfsDevSet;
+};
+
+#endif // DFMDEVICECONTROLLER_H
