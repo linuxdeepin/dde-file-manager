@@ -677,9 +677,9 @@ void DFileSystemModelPrivate::_q_onFileDeleted(const DUrl &fileUrl)
 {
     Q_Q(DFileSystemModel);
 
-    rootNodeManager->removeFile(DFileService::instance()->createFileInfo(q, fileUrl));
-//    fileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
-//    q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
+//    rootNodeManager->removeFile(DFileService::instance()->createFileInfo(q, fileUrl));
+    fileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
+    q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
 }
 
 void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl)
