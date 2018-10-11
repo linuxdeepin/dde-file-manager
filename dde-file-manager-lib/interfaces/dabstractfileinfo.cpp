@@ -797,6 +797,9 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             actionKeys << MenuAction::Open;
 
             if (isDir()) {
+#ifdef QT_DEBUG
+                actionKeys << MenuAction::OpenWith;
+#endif // QT_DEBUG
                 actionKeys << MenuAction::OpenInNewWindow
                            << MenuAction::OpenInNewTab;
             } else {
