@@ -934,8 +934,9 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     }
 }
 
-QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index) const
+QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode) const
 {
+    Q_UNUSED(sizeHintMode)
     Q_D(const DIconItemDelegate);
 
     QList<QRect> geometries;

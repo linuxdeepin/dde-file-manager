@@ -56,7 +56,7 @@ public:
     void updateEditorGeometry(QWidget * editor, const QStyleOptionViewItem & option, const QModelIndex &) const Q_DECL_OVERRIDE;
     void setEditorData(QWidget * editor, const QModelIndex & index) const Q_DECL_OVERRIDE;
 
-    QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index) const Q_DECL_OVERRIDE;
+    QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode = false) const Q_DECL_OVERRIDE;
 
     QModelIndexList hasWidgetIndexs() const Q_DECL_OVERRIDE;
     void hideNotEditingIndexWidget() Q_DECL_OVERRIDE;

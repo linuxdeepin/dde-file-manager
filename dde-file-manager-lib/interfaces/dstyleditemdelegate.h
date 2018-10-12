@@ -41,7 +41,7 @@ public:
     virtual void hideNotEditingIndexWidget();
     virtual void commitDataAndCloseActiveEditor();
     virtual QRect fileNameRect(const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    virtual QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index) const = 0;
+    virtual QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode = false) const = 0;
 
     virtual int iconSizeLevel() const;
     virtual int minimumIconSizeLevel() const;
