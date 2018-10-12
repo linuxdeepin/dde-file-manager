@@ -460,7 +460,8 @@ static int dataWidth(const QStyleOptionViewItem &option, const QModelIndex &inde
     return -1;
 }
 
-QList<QRect> DListItemDelegate::paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index) const
+// sizeHintMode为true时，计算列的宽度时计算的为此列真实需要的宽度，而不受实际列宽所限制
+QList<QRect> DListItemDelegate::paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode) const
 {
     QList<QRect> geomertys;
     const QList<int> &columnRoleList = parent()->columnRoleList();
@@ -482,15 +483,19 @@ QList<QRect> DListItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 
     rect.setLeft(column_x);
 
-    column_x = parent()->columnWidth(0) - 1 - parent()->fileViewViewportMargins().left();
-
-    rect.setRight(qMin(column_x, opt_rect.right()));
-
     int role = columnRoleList.at(0);
 
-    /// draw file name label
+    if (sizeHintMode) {
+        rect.setWidth(dataWidth(option, index, role));
+        column_x = rect.right();
+    } else {
+        column_x = parent()->columnWidth(0) - 1 - parent()->fileViewViewportMargins().left();
 
-    rect.setWidth(qMin(rect.width(), dataWidth(option, index, role)));
+        rect.setRight(qMin(column_x, opt_rect.right()));
+        /// draw file name label
+        rect.setWidth(qMin(rect.width(), dataWidth(option, index, role)));
+    }
+
     geomertys << rect;
 
     for (int i = 1; i < columnRoleList.count(); ++i) {
@@ -498,19 +503,22 @@ QList<QRect> DListItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 
         rect.setLeft(column_x + COLUMU_PADDING);
 
-        if (rect.left() >= rect.right()) {
+        if (rect.left() >= opt_rect.right()) {
             return geomertys;
         }
 
-        column_x += parent()->columnWidth(i) - 1;
-
-        rect.setRight(qMin(column_x, opt_rect.right()));
-
         int role = columnRoleList.at(i);
 
-        /// draw file name label
+        if (sizeHintMode) {
+            rect.setWidth(dataWidth(option, index, role));
+            column_x += rect.width();
+        } else {
+            column_x += parent()->columnWidth(i) - 1;
 
-        rect.setWidth(qMin(rect.width(), dataWidth(option, index, role)));
+            rect.setRight(qMin(column_x, opt_rect.right()));
+            rect.setWidth(qMin(rect.width(), dataWidth(option, index, role)));
+        }
+
         geomertys << rect;
     }
 

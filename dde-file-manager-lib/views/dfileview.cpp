@@ -91,6 +91,7 @@ public:
     QVariant fileViewStateValue(const DUrl &url, const QString &key, const QVariant &defalutValue);
     void setFileViewStateValue(const DUrl &url, const QString &key, const QVariant &value);
     void updateHorizontalScrollBarPosition();
+    void _q_onSectionHandleDoubleClicked(int logicalIndex);
 
     DFileView *q_ptr;
 
@@ -2177,6 +2178,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
                     d->headerViewHolder->setFixedHeight(d->headerView->height());
                 });
                 connect(d->headerView, &DFMHeaderView::sectionResized, d->headerView, &DFMHeaderView::adjustSize);
+                connect(d->headerView, SIGNAL(sectionHandleDoubleClicked(int)), this, SLOT(_q_onSectionHandleDoubleClicked(int)));
             } else {
                 d->headerView = new DFMHeaderView(Qt::Horizontal, this);
                 d->headerViewHolder = d->headerView;
@@ -2738,3 +2740,48 @@ void DFileViewPrivate::updateHorizontalScrollBarPosition()
     // 更新横向滚动条的位置，将它显示在状态栏上面（此处没有加防止陷入死循环的处理）
     widget->move(widget->x(), q->height() - statusBar->height() - widget->height());
 }
+
+void DFileViewPrivate::_q_onSectionHandleDoubleClicked(int logicalIndex)
+{
+    Q_Q(DFileView);
+
+    QStyleOptionViewItem option = q->viewOptions();
+
+    option.rect.setWidth(QWIDGETSIZE_MAX);
+    option.rect.setHeight(q->itemSizeHint().height());
+
+    int column_max_width = 0;
+
+    for (int from = visibleIndexRande.first; from <= visibleIndexRande.second; ++from) {
+        const QModelIndex &index = q->model()->index(from, 0);
+        const QList<QRect> &list = q->itemDelegate()->paintGeomertys(option, index, true);
+
+        // 第0列为文件名列，此列比较特殊，因为前面还有文件图标占用了一部分空间
+        int width = 0;
+
+        if (logicalIndex == 0) {
+            width = list.at(1).right() + COLUMU_PADDING / 2;
+        } else {
+            width = list.at(logicalIndex + 1).width() + COLUMU_PADDING * 2;
+        }
+
+        if (width > column_max_width) {
+            column_max_width = width;
+        }
+    }
+
+    for (int i = headerView->count() - 1; i >= 0; --i) {
+        if (headerView->isSectionHidden(i))
+            continue;
+
+        // 最后一列要多加上视图的右margin
+        if (i == logicalIndex)
+            column_max_width += LIST_MODE_RIGHT_MARGIN;
+
+        break;
+    }
+
+    headerView->resizeSection(logicalIndex, column_max_width);
+}
+
+#include "moc_dfileview.cpp"

@@ -243,6 +243,7 @@ private:
     QScopedPointer<DFileViewPrivate> d_ptr;
 
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DFileView)
+    Q_PRIVATE_SLOT(d_ptr, void _q_onSectionHandleDoubleClicked(int))
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(DFileView::ViewModes)
