@@ -208,7 +208,7 @@ void JobController::run()
 
             emit addChildren(m_iterator->fileInfo());
 
-            QThread::msleep(LOAD_FILE_INTERVAL);
+//            QThread::msleep(LOAD_FILE_INTERVAL);
         }
     }
 

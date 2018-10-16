@@ -1035,11 +1035,14 @@ QString DFMGlobal::cutString(const QString &text, int dataByteSize, const QTextC
 }
 
 namespace DThreadUtil {
-FunctionCallProxy::FunctionCallProxy()
+FunctionCallProxy::FunctionCallProxy(QThread *thread)
 {
-    connect(this, &FunctionCallProxy::callInLiveThread, this, [] (FunctionType *func) {
+    connect(this, &FunctionCallProxy::callInLiveThread, this, [this] (FunctionType *func) {
         (*func)();
     }, Qt::QueuedConnection);
+    connect(thread, &QThread::finished, this, [this] {
+        qWarning() << sender() << "the thread finished";
+    }, Qt::DirectConnection);
 }
 } // end namespace DThreadUtil
 
@@ -1119,13 +1122,3 @@ float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, co
 
     return qMax(0.0f, c);
 }
-
-
-
-
-
-
-
-
-
-

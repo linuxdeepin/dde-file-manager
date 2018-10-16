@@ -368,7 +368,7 @@ class FunctionCallProxy : public QObject
 {
     Q_OBJECT
 public:
-    explicit FunctionCallProxy();
+    explicit FunctionCallProxy(QThread *thread);
 
 signals:
     void callInLiveThread(FunctionType *func);
@@ -379,19 +379,18 @@ class _TMP
 {
 public:
     template <typename Fun, typename... Args>
-    static ReturnType runInThread(QThread *thread, Fun fun, Args&&... args)
+    static ReturnType runInThread(QSemaphore *s, QThread *thread, Fun fun, Args&&... args)
     {
         if (QThread::currentThread() == thread)
             return fun(std::forward<Args>(args)...);
 
         ReturnType result;
-        QSemaphore semaphore;
         FunctionType proxyFun = [&] () {
             result = fun(std::forward<Args>(args)...);
-            semaphore.release();
+            s->release();
         };
 
-        FunctionCallProxy proxy;
+        FunctionCallProxy proxy(thread);
         proxy.moveToThread(thread);
 
         if (thread->loopLevel() <= 0) {
@@ -399,7 +398,7 @@ public:
         }
 
         proxy.callInLiveThread(&proxyFun);
-        semaphore.acquire();
+        s->acquire();
 
         return result;
     }
@@ -409,18 +408,17 @@ class _TMP<void>
 {
 public:
     template <typename Fun, typename... Args>
-    static void runInThread(QThread *thread, Fun fun, Args&&... args)
+    static void runInThread(QSemaphore *s, QThread *thread, Fun fun, Args&&... args)
     {
         if (QThread::currentThread() == thread)
             return fun(std::forward<Args>(args)...);
 
-        QSemaphore semaphore;
         FunctionType proxyFun = [&] () {
             fun(std::forward<Args>(args)...);
-            semaphore.release();
+            s->release();
         };
 
-        FunctionCallProxy proxy;
+        FunctionCallProxy proxy(thread);
         proxy.moveToThread(thread);
 
         if (thread->loopLevel() <= 0) {
@@ -428,21 +426,36 @@ public:
         }
 
         proxy.callInLiveThread(&proxyFun);
-        semaphore.acquire();
+        s->acquire();
     }
 };
 
 template <typename Fun, typename... Args>
+auto runInThread(QSemaphore *s, QThread *thread, Fun fun, Args&&... args) -> decltype(fun(args...))
+{
+    return _TMP<decltype(fun(args...))>::runInThread(s, thread, fun, std::forward<Args>(args)...);
+}
+template <typename Fun, typename... Args>
+typename QtPrivate::FunctionPointer<Fun>::ReturnType runInThread(QSemaphore *s, QThread *thread, typename QtPrivate::FunctionPointer<Fun>::Object *obj, Fun fun, Args&&... args)
+{
+    return _TMP<typename QtPrivate::FunctionPointer<Fun>::ReturnType>::runInThread(s, thread, [&] {
+        return (obj->*fun)(std::forward<Args>(args)...);
+    });
+}
+
+template <typename Fun, typename... Args>
 auto runInThread(QThread *thread, Fun fun, Args&&... args) -> decltype(fun(args...))
 {
-    return _TMP<decltype(fun(args...))>::runInThread(thread, fun, std::forward<Args>(args)...);
+    QSemaphore s;
+
+    return runInThread(&s, thread, fun, std::forward<Args>(args)...);
 }
 template <typename Fun, typename... Args>
 typename QtPrivate::FunctionPointer<Fun>::ReturnType runInThread(QThread *thread, typename QtPrivate::FunctionPointer<Fun>::Object *obj, Fun fun, Args&&... args)
 {
-    return _TMP<typename QtPrivate::FunctionPointer<Fun>::ReturnType>::runInThread(thread, [&] {
-        return (obj->*fun)(std::forward<Args>(args)...);
-    });
+    QSemaphore s;
+
+    return runInThread(&s, thread, obj, fun, std::forward<Args>(args)...);
 }
 
 template <typename Fun, typename... Args>
