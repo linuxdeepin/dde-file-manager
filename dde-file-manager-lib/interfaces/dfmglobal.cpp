@@ -562,7 +562,7 @@ void DFMGlobal::elideText(QTextLayout *layout, const QSizeF &size, QTextOption::
         height += lineHeight;
 
         if (height + lineHeight > size.height()) {
-            const QString &end_str = layout->engine()->elidedText(mode, qRound(size.width() - 1), flags, line.textStart());
+            const QString &end_str = layout->engine()->elidedText(mode, qRound(size.width()), flags, line.textStart());
 
             layout->endLayout();
             layout->setText(end_str);

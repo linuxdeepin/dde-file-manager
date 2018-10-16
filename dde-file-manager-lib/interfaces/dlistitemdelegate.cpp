@@ -20,6 +20,7 @@
 #include <QAbstractItemView>
 #include <QLineEdit>
 #include <QApplication>
+#include <QToolTip>
 
 #define ICON_SPACING 16
 #define LIST_MODE_RECT_RADIUS 2
@@ -568,4 +569,21 @@ bool DListItemDelegate::eventFilter(QObject *object, QEvent *event)
     }
 
     return QStyledItemDelegate::eventFilter(object, event);
+}
+
+bool DListItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    if (event->type() == QEvent::ToolTip) {
+        const QString tooltip = index.data(Qt::ToolTipRole).toString();
+
+        if (tooltip.isEmpty()) {
+            QToolTip::hideText();
+        } else {
+            QToolTip::showText(event->globalPos(), tooltip, view);
+        }
+
+        return true;
+    }
+
+    return DStyledItemDelegate::helpEvent(event, view, option, index);
 }
