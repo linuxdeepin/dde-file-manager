@@ -716,12 +716,12 @@ QString DFileInfo::fileDisplayName() const
 
         if (!displayName.isEmpty())
             return displayName;
-    } else if (getUDiskListener(false) && deviceListener->isDeviceFolder(toLocalFile())) {
+    } /*else if (getUDiskListener(false) && deviceListener->isDeviceFolder(toLocalFile())) {
         const UDiskDeviceInfoPointer &deviceInfo = deviceListener->getDeviceByPath(filePath());
 
         if (deviceInfo && !deviceInfo->fileDisplayName().isEmpty())
             return deviceInfo->fileDisplayName();
-    }
+    }*/
 
     return fileName();
 }
