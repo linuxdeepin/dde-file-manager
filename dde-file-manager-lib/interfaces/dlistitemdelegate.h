@@ -37,6 +37,7 @@ public:
 
 protected:
     bool eventFilter(QObject *object, QEvent *event) Q_DECL_OVERRIDE;
+    bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
 private:
     Q_DECLARE_PRIVATE(DListItemDelegate)
