@@ -147,8 +147,9 @@ FileIconItem::FileIconItem(QWidget *parent) :
         edit->setTextCursor(cursor);
         edit->setAlignment(Qt::AlignHCenter);
 
-        if (edit->isReadOnly() && edit->isVisible())
-            edit->setFixedHeight(edit->document()->size().height());
+        if (edit->isVisible()) {
+            updateEditorGeometry();
+        }
     });
     connect(edit, &QTextEdit::customContextMenuRequested, this, &FileIconItem::popupEditContentMenu);
 }
@@ -330,15 +331,14 @@ bool FileIconItem::eventFilter(QObject *obj, QEvent *ee)
 void FileIconItem::updateEditorGeometry()
 {
     edit->setFixedWidth(width());
+    int text_height = edit->document()->size().height();
 
     if (edit->isReadOnly()) {
-        int text_height = edit->document()->size().height();
-
         if (edit->isVisible()) {
             edit->setFixedHeight(text_height);
         }
     } else {
-        edit->setFixedHeight(fontMetrics().height() * 3 + TEXT_PADDING * 2);
+        edit->setFixedHeight(qMin(fontMetrics().height() * 3 + TEXT_PADDING * 2, text_height));
     }
 }
 
