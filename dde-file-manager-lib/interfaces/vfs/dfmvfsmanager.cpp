@@ -166,7 +166,7 @@ const QList<QUrl> DFMVfsManager::getVfsList()
 {
     Q_D(DFMVfsManager);
 
-    QList<QUrl> result;
+    QSet<QUrl> result;
 
     DFMGMountList mountList(g_volume_monitor_get_mounts(d->m_GVolumeMonitor.data()));
     GMount* mount = nullptr;
@@ -176,12 +176,15 @@ const QList<QUrl> DFMVfsManager::getVfsList()
         DFMGFile rootFile(g_mount_get_root(mount));
         DFMGCChar rootUriCStr(g_file_get_uri(rootFile.data()));
         QString rootUrlStr(rootUriCStr.data());
-        QUrl url(rootUrlStr);
-        if (url.scheme() == "file") continue;
+        QUrl urlForCheck(rootUrlStr);
+        if (urlForCheck.scheme() == "file") continue;
+        QUrl url;
+        url.setScheme("device");
+        url.setPath(rootUrlStr);
         result << url;
     }
 
-    return result;
+    return result.toList();
 }
 
 bool DFMVfsManager::attach(const QUrl &url)

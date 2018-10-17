@@ -61,7 +61,7 @@ public:
     static void GFileMountDoneCb(GObject *object, GAsyncResult *res, gpointer vfsDevicePtr);
     static void GFileUnmountDoneCb(GObject *object, GAsyncResult *res, gpointer vfsDevicePtr);
 
-    QUrl m_setupUrl; // url used to setup this DFMVfsDevice.
+    QString m_setupUrl; // url used to setup this DFMVfsDevice.
     QPointer<QEventLoop> m_eventLoop; // to make async event sync.
 
     DFMVfsAbstractEventHandler *handler = nullptr;
@@ -78,14 +78,14 @@ private:
 DFMVfsDevicePrivate::DFMVfsDevicePrivate(const QUrl &url, void *gmountObjectPtr, DFMVfsDevice *qq)
     : q_ptr(qq)
 {
-    m_setupUrl = url;
+    m_setupUrl = url.scheme() == "device" ? url.path() : url.toString();
     c_GMount.reset((GMount*)gmountObjectPtr);
 }
 
 DFMVfsDevicePrivate::DFMVfsDevicePrivate(const QUrl &url, DFMVfsDevice *qq)
     : q_ptr(qq)
 {
-    m_setupUrl = url;
+    m_setupUrl = url.scheme() == "device" ? url.path() : url.toString();
 }
 
 DFMVfsDevicePrivate::~DFMVfsDevicePrivate()
@@ -97,7 +97,7 @@ DFMVfsDevicePrivate::~DFMVfsDevicePrivate()
 
 GMount *DFMVfsDevicePrivate::createGMount() const
 {
-    QByteArray urlBa = m_setupUrl.toString().toLatin1();
+    QByteArray urlBa = m_setupUrl.toLatin1();
     const char* urlCStr = urlBa.data();
 
     GError *error = nullptr;
@@ -417,7 +417,9 @@ DFMVfsDevice *DFMVfsDevice::create(const QUrl &url, QObject *parent)
         return nullptr;
     }
 
-    QByteArray ba = url.toString().toLatin1();
+    QString deviceId = url.scheme() == "device" ? url.path() : url.toString();
+
+    QByteArray ba = deviceId.toLatin1();
     const char* urlCStr = ba.data();
 
     GError *error = nullptr;
@@ -458,6 +460,13 @@ DFMVfsDevice *DFMVfsDevice::createUnsafe(const QUrl &url, QObject *parent)
         return nullptr;
     }
 
+    if (url.scheme() != "device") {
+        QUrl newUrl;
+        newUrl.setScheme("device");
+        newUrl.setPath(url.toString());
+        return new DFMVfsDevice(newUrl, parent);
+    }
+
     return new DFMVfsDevice(url, parent);
 }
 
@@ -488,7 +497,7 @@ bool DFMVfsDevice::attach()
 
     d->m_eventLoop = &eventLoop;
 
-    DFMGFile file(g_file_new_for_uri(d->m_setupUrl.toString().toUtf8().constData()));
+    DFMGFile file(g_file_new_for_uri(d->m_setupUrl.toUtf8().constData()));
     if (!file) {
         return false;
     }
@@ -658,7 +667,7 @@ QStringList DFMVfsDevice::symbolicIconList() const
 
     DFMGIcon icon(g_mount_get_symbolic_icon(d->getGMount()));
 
-    if (G_IS_THEMED_ICON(icon.data())){
+    if (icon && G_IS_THEMED_ICON(icon.data())){
         return DFMVfsDevicePrivate::getThemedIconName(G_THEMED_ICON(icon.data()));
     }
 
