@@ -31,6 +31,11 @@ void DFMBaseView::deleteLater()
     delete this;
 }
 
+DFMBaseView::ViewState DFMBaseView::viewState() const
+{
+    return ViewIdle;
+}
+
 QList<QAction *> DFMBaseView::toolBarActionList() const
 {
     return QList<QAction*>();
@@ -45,6 +50,13 @@ void DFMBaseView::notifyUrlChanged()
 {
     if (DFileManagerWindow *w = qobject_cast<DFileManagerWindow*>(widget()->window())) {
         w->currentUrlChanged();
+    }
+}
+
+void DFMBaseView::notifyStateChanged()
+{
+    if (DFileManagerWindow *w = qobject_cast<DFileManagerWindow*>(widget()->window())) {
+        w->currentViewStateChanged();
     }
 }
 

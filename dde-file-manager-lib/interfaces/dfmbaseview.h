@@ -21,6 +21,11 @@ DFM_BEGIN_NAMESPACE
 class DFMBaseView
 {
 public:
+    enum ViewState {
+        ViewBusy,
+        ViewIdle
+    };
+
     DFMBaseView();
     virtual ~DFMBaseView();
 
@@ -28,12 +33,14 @@ public:
 
     virtual QWidget *widget() const = 0;
     virtual DUrl rootUrl() const = 0;
+    virtual ViewState viewState() const;
     virtual bool setRootUrl(const DUrl &url) = 0;
     virtual QList<QAction*> toolBarActionList() const;
     virtual void refresh();
 
 protected:
     void notifyUrlChanged();
+    void notifyStateChanged();
     void requestCdTo(const DUrl &url);
 };
 

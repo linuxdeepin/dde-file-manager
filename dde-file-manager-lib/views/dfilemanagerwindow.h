@@ -32,6 +32,9 @@
 
 
 #include <DMainWindow>
+
+#include <dfmbaseview.h>
+
 #include <atomic>
 #include <tuple>
 #include <array>
@@ -64,7 +67,6 @@ class RecordRenameBarState;
 class DFMUrlListBaseEvent;
 
 DFM_BEGIN_NAMESPACE
-class DFMBaseView;
 class DFMSideBar;
 class DFMAddressBar;
 DFM_END_NAMESPACE
@@ -82,6 +84,7 @@ public:
     virtual ~DFileManagerWindow();
 
     DUrl currentUrl() const;
+    DFMBaseView::ViewState currentViewState() const;
     bool isCurrentUrlSupportSearch(const DUrl &currentUrl);
 
     DToolBar *getToolBar() const;
@@ -101,6 +104,7 @@ signals:
     void aboutToClose();
     void positionChanged(const QPoint &pos);
     void currentUrlChanged();
+    void currentViewStateChanged();
 
 public slots:
     void moveCenter(const QPoint &cp);

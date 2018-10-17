@@ -41,6 +41,9 @@ public:
     void hideAddressBar();
     void updateCrumbs(const DUrl &url);
 
+    void playAddressBarAnimation();
+    void stopAddressBarAnimation();
+
 public Q_SLOTS:
     void updateCurrentUrl(const DUrl &url);
 

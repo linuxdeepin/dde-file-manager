@@ -401,6 +401,20 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
     d->crumbListScrollArea.horizontalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
 }
 
+void DFMCrumbBar::playAddressBarAnimation()
+{
+    Q_D(DFMCrumbBar);
+
+    d->addressBar->playAnimation();
+}
+
+void DFMCrumbBar::stopAddressBarAnimation()
+{
+    Q_D(DFMCrumbBar);
+
+    d->addressBar->stopAnimation();
+}
+
 /*!
  * \brief Call when toolbar url got changed.
  *

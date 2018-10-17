@@ -505,6 +505,13 @@ DUrl DFileManagerWindow::currentUrl() const
     return d->currentView ? d->currentView->rootUrl() : DUrl();
 }
 
+DFMBaseView::ViewState DFileManagerWindow::currentViewState() const
+{
+    D_DC(DFileManagerWindow);
+
+    return d->currentView ? d->currentView->viewState() : DFMBaseView::ViewIdle;
+}
+
 bool DFileManagerWindow::isCurrentUrlSupportSearch(const DUrl &currentUrl)
 {
     const DAbstractFileInfoPointer &currentFileInfo = DFileService::instance()->createFileInfo(this, currentUrl);
@@ -632,8 +639,13 @@ void DFileManagerWindow::switchToView(DFMBaseView *view)
 
     const DUrl &old_url = currentUrl();
 
+    DFMBaseView::ViewState old_view_state = currentViewState();
+
     d->setCurrentView(view);
     d->viewStackLayout->setCurrentWidget(view->widget());
+
+    if (old_view_state != view->viewState())
+        emit currentViewStateChanged();
 
     if (view && view->rootUrl() == old_url) {
         return;

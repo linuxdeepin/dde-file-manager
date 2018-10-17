@@ -37,9 +37,12 @@
 #include <QTimer>
 #include <QPainter>
 #include <QScrollBar>
+#include <QWidgetAction>
 #include <QDebug>
 
 #include <DThemeManager>
+#include <DSpinner>
+#include <danchors.h>
 
 DWIDGET_USE_NAMESPACE
 
@@ -160,6 +163,34 @@ void DFMAddressBar::setPlaceholderText(const QString &text)
     // Since the placeholder text provided by QLineEdit can not have separate alignment
     // alone with the user entered edit text.
     m_placeholderText = text;
+}
+
+void DFMAddressBar::playAnimation()
+{
+    if (animationSpinner)
+        return;
+
+    // Right animation widget
+    animationSpinner = new DSpinner(this);
+    animationSpinner->setAttribute(Qt::WA_TransparentForMouseEvents);
+    animationSpinner->setFocusPolicy(Qt::NoFocus);
+    animationSpinner->setFixedSize(height() - 8, height() - 8);
+
+    DAnchorsBase::setAnchor(animationSpinner, Qt::AnchorVerticalCenter, this, Qt::AnchorVerticalCenter);
+    DAnchorsBase::setAnchor(animationSpinner, Qt::AnchorRight, this, Qt::AnchorRight);
+    DAnchorsBase::getAnchorBaseByWidget(animationSpinner)->setRightMargin(height() + 8);
+
+    animationSpinner->show();
+    animationSpinner->start();
+}
+
+void DFMAddressBar::stopAnimation()
+{
+    if (!animationSpinner)
+        return;
+
+    animationSpinner->deleteLater();
+    animationSpinner = nullptr;
 }
 
 void DFMAddressBar::hide()
