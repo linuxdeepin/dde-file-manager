@@ -28,7 +28,15 @@
 #include <QVariantAnimation>
 #include <QStringListModel>
 #include <QStyledItemDelegate>
-#include <qtimer.h>
+#include <QTimer>
+
+#include <dtkwidget_global.h>
+
+DWIDGET_BEGIN_NAMESPACE
+class DSpinner;
+DWIDGET_END_NAMESPACE
+
+DWIDGET_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
 
@@ -60,6 +68,9 @@ public:
     void setCurrentUrl(const DUrl &path);
     void setCompleter(QCompleter *c);
     void setPlaceholderText(const QString &text);
+
+    void playAnimation();
+    void stopAnimation();
 
 public slots:
     void hide();
@@ -104,6 +115,8 @@ private:
     DFMCrumbInterface* crumbController = nullptr; // Scheme completion support
     DCompleterStyledItemDelegate styledItemDelegate;
     enum IndicatorType indicatorType = IndicatorType::Search;
+
+    DSpinner *animationSpinner = nullptr;
 
 private slots:
     void insertCompletion(const QString &completion);

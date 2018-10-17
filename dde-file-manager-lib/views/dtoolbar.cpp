@@ -201,6 +201,17 @@ void DToolBar::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlF, this, &DToolBar::handleHotkeyCtrlF);
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlL, this, &DToolBar::handleHotkeyCtrlL);
     connect(this, &DToolBar::toolbarUrlChanged, m_crumbWidget, &DFMCrumbBar::updateCurrentUrl);
+
+    DFileManagerWindow *window = qobject_cast<DFileManagerWindow*>(parent());
+
+    if (window) {
+        connect(window, &DFileManagerWindow::currentViewStateChanged, this, [this, window] {
+            if (window->currentViewState() == DFMBaseView::ViewBusy)
+                m_crumbWidget->playAddressBarAnimation();
+            else
+                m_crumbWidget->stopAddressBarAnimation();
+        });
+    }
 }
 
 DFMCrumbBar *DToolBar::getCrumbWidget()

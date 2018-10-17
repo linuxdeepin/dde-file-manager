@@ -75,6 +75,7 @@ public:
     FileViewHelper *fileViewHelper() const;
 
     DUrl rootUrl() const Q_DECL_OVERRIDE;
+    ViewState viewState() const override;
     QList<DUrl> selectedUrls() const;
 
     bool isIconViewMode() const;

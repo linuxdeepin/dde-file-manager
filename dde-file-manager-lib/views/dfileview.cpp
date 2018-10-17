@@ -241,6 +241,11 @@ DUrl DFileView::rootUrl() const
     return model()->getUrlByIndex(rootIndex());
 }
 
+DFMBaseView::ViewState DFileView::viewState() const
+{
+    return model()->state() == DFileSystemModel::Busy ? ViewBusy : ViewIdle;
+}
+
 QList<DUrl> DFileView::selectedUrls() const
 {
     QModelIndex rootIndex = this->rootIndex();
@@ -2627,6 +2632,9 @@ void DFileView::onModelStateChanged(int state)
             d->headerView->setAttribute(Qt::WA_TransparentForMouseEvents, false);
         }
     }
+
+    // 通知对应的主窗口
+    notifyStateChanged();
 }
 
 void DFileView::updateContentLabel()
