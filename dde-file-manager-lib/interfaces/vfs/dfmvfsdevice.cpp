@@ -636,7 +636,7 @@ QStringList DFMVfsDevice::iconList() const
 
     DFMGIcon icon(g_mount_get_icon(d->getGMount()));
 
-    if (G_IS_THEMED_ICON(icon.data())){
+    if (icon && G_IS_THEMED_ICON(icon.data())){
         // blumia: QIcon::fromTheme accept the full name and will do the fallback when needed, so
         //         maybe we doesn't need such a list.
         return DFMVfsDevicePrivate::getThemedIconName(G_THEMED_ICON(icon.data()));
