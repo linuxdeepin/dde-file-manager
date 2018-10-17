@@ -64,7 +64,7 @@ QPair<quint64, quint64> DAttachedVfsDevice::deviceUsage()
 
 QString DAttachedVfsDevice::iconName()
 {
-    QList<QString> iconList = vfsDevice->iconList();
+    QStringList iconList = vfsDevice ? vfsDevice->iconList() : QStringList();
 
     if (iconList.empty()) {
         return QStringLiteral("drive-network");
