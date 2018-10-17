@@ -32,6 +32,7 @@
 #include "shutil/fileutils.h"
 
 #include "dfileservices.h"
+#include "dfilestatisticsjob.h"
 
 #include "singleton.h"
 #include <QComboBox>
@@ -290,6 +291,29 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
     if (!m_label || event.windowId() != WindowManager::getWindowId(this))
         return;
 
+    if (!m_fileStatisticsJob) {
+        m_fileStatisticsJob = new DFileStatisticsJob(this);
+
+        auto onFoundFile = [this] {
+            if (!sender())
+                return;
+
+            ++m_folderContains;
+            updateStatusMessage();
+        };
+
+        connect(m_fileStatisticsJob, &DFileStatisticsJob::fileFound, this, onFoundFile);
+        connect(m_fileStatisticsJob, &DFileStatisticsJob::directoryFound, this, onFoundFile);
+    } else if (m_fileStatisticsJob->isRunning()) {
+        m_fileStatisticsJob->stop();
+        m_fileStatisticsJob->wait();
+    }
+
+    m_fileCount = 0;
+    m_fileSize = 0;
+    m_folderCount = 0;
+    m_folderContains = 0;
+
     if (number > 1) {
         DUrl fileUrl;
         if (event.fileUrlList().count() > 0){
@@ -299,11 +323,6 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
         }
 
         bool isInGVFs = FileUtils::isGvfsMountFile(fileUrl.toLocalFile());
-
-        m_fileCount = 0;
-        m_fileSize = 0;
-        m_folderCount = 0;
-        m_folderContains = 0;
 
         foreach (DUrl url, event.fileUrlList()) {
             const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, url);
@@ -315,7 +334,7 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
             } else {
                 m_folderCount += 1;
                 if (!isInGVFs){
-                    m_folderContains += fileInfo->filesCount();
+//                    m_folderContains += fileInfo->filesCount();
                 }
             }
         }
@@ -349,15 +368,18 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
                     if (!fileInfo)
                         return;
                     if (fileInfo->isFile()) {
+                        m_fileCount = 1;
                         m_label->setText(m_selectOnlyOneFile.arg(QString::number(number), FileUtils::formatSize(fileInfo->size())));
                     }else if (fileInfo->isDir()) {
-                        if (fileInfo->filesCount() <= 1) {
-                            m_label->setText(m_selectOnlyOneFolder.arg(QString::number(number),
-                                                                       m_OnlyOneItemCounted.arg(QString::number(fileInfo->filesCount()))));
-                        } else {
-                            m_label->setText(m_selectOnlyOneFolder.arg(QString::number(number),
-                                                                       m_counted.arg(QString::number(fileInfo->filesCount()))));
-                        }
+                        m_folderCount = 1;
+//                        if (fileInfo->filesCount() <= 1) {
+//                            m_label->setText(m_selectOnlyOneFolder.arg(QString::number(number),
+//                                                                       m_OnlyOneItemCounted.arg(QString::number(fileInfo->filesCount()))));
+//                        } else {
+//                            m_label->setText(m_selectOnlyOneFolder.arg(QString::number(number),
+//                                                                       m_counted.arg(QString::number(fileInfo->filesCount()))));
+//                        }
+                        m_label->setText(m_selectOnlyOneFolder.arg(number).arg(m_OnlyOneItemCounted.arg(0)));
                     }
                 }
             } else{
@@ -365,6 +387,8 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
             }
         }
     }
+
+    m_fileStatisticsJob->start(event.fileUrlList());
 }
 
 void DStatusBar::updateStatusMessage()
@@ -420,6 +444,14 @@ void DStatusBar::handdleComputerFileSizeFinished()
 
 void DStatusBar::itemCounted(const DFMEvent &event, int number)
 {
+    if (m_fileStatisticsJob) {
+        m_fileStatisticsJob->stop();
+        m_fileStatisticsJob->wait();
+        m_fileStatisticsJob->disconnect();
+        delete m_fileStatisticsJob;
+        m_fileStatisticsJob = nullptr;
+    }
+
     if (!m_label || event.windowId() != WindowManager::getWindowId(this))
         return;
 
