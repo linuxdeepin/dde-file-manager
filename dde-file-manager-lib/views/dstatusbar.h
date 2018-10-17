@@ -33,7 +33,9 @@
 #include <QLabel>
 #include <QSizeGrip>
 #include <QPair>
+
 #include "durl.h"
+#include "dfmglobal.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -44,6 +46,12 @@ class QComboBox;
 QT_END_NAMESPACE
 
 class DFMEvent;
+
+DFM_BEGIN_NAMESPACE
+class DFileStatisticsJob;
+DFM_END_NAMESPACE
+
+DFM_USE_NAMESPACE
 
 class DStatusBar : public QFrame
 {
@@ -122,6 +130,7 @@ private:
     QComboBox *m_comboBox = Q_NULLPTR;
     QLabel *m_lineEditLabel = Q_NULLPTR;
     QLabel *m_comboBoxLabel = Q_NULLPTR;
+    DFileStatisticsJob *m_fileStatisticsJob = nullptr;
 
     Mode m_mode = Normal;
 };
