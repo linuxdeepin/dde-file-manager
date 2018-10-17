@@ -55,7 +55,9 @@ public:
         DontSkipCharDeviceFile = 0x08,
         DontSkipBlockDeviceFile = 0x10,
         DontSkipFIFOFile = 0x20,
-        DontSkipSocketFile = 0x40
+        DontSkipSocketFile = 0x40,
+        ExcludeSourceFile = 0x80, // 不计算传入的文件列表
+        SingleDepth = 0x100 // 深度为1
     };
 
     Q_ENUM(FileHint)
@@ -94,5 +96,7 @@ private:
 };
 
 DFM_END_NAMESPACE
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(DFM_NAMESPACE::DFileStatisticsJob::FileHints)
 
 #endif // DFILESTATISTICSJOB_H

@@ -293,6 +293,7 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
 
     if (!m_fileStatisticsJob) {
         m_fileStatisticsJob = new DFileStatisticsJob(this);
+        m_fileStatisticsJob->setFileHints(DFileStatisticsJob::ExcludeSourceFile | DFileStatisticsJob::SingleDepth);
 
         auto onFoundFile = [this] {
             if (!sender())
@@ -351,9 +352,11 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
              // Start the computation.
              QFuture<int> folderFuture = QtConcurrent::run(this, &DStatusBar::computerFolderContains, event.fileUrlList());
              folderWatcher->setFuture(folderFuture);
+        } else {
+            m_fileStatisticsJob->start(event.fileUrlList());
         }
-        updateStatusMessage();
 
+        updateStatusMessage();
     } else {
         if (number == 1) {
             if (event.fileUrlList().count() == 1) {
@@ -380,6 +383,7 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
 //                                                                       m_counted.arg(QString::number(fileInfo->filesCount()))));
 //                        }
                         m_label->setText(m_selectOnlyOneFolder.arg(number).arg(m_OnlyOneItemCounted.arg(0)));
+                        m_fileStatisticsJob->start(event.fileUrlList());
                     }
                 }
             } else{
@@ -387,8 +391,6 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
             }
         }
     }
-
-    m_fileStatisticsJob->start(event.fileUrlList());
 }
 
 void DStatusBar::updateStatusMessage()
@@ -445,9 +447,12 @@ void DStatusBar::handdleComputerFileSizeFinished()
 void DStatusBar::itemCounted(const DFMEvent &event, int number)
 {
     if (m_fileStatisticsJob) {
-        m_fileStatisticsJob->stop();
-        m_fileStatisticsJob->wait();
-        m_fileStatisticsJob->disconnect();
+        if (m_fileStatisticsJob->isRunning()) {
+            m_fileStatisticsJob->stop();
+            m_fileStatisticsJob->wait();
+            m_fileStatisticsJob->disconnect();
+        }
+
         delete m_fileStatisticsJob;
         m_fileStatisticsJob = nullptr;
     }

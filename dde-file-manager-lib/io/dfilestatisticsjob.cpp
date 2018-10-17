@@ -193,9 +193,10 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
                     }
                 }
 
-                directoryQueue << url;
+                if (!fileHints.testFlag(DFileStatisticsJob::SingleDepth))
+                    directoryQueue << url;
             } while (false);
-        } else {
+        } else if (!fileHints.testFlag(DFileStatisticsJob::SingleDepth)) {
             directoryQueue << url;
         }
 
@@ -318,17 +319,50 @@ void DFileStatisticsJob::run()
 
     QQueue<DUrl> directory_queue;
 
-    for (const DUrl &url : d->sourceUrlList) {
-        // 选择的列表中包含avfsd/proc挂载路径时禁用过滤
-        FileHints save_file_hints = d->fileHints;
-        d->fileHints = d->fileHints | DontSkipAVFSDStorage | DontSkipPROCStorage;
-        d->processFile(url, directory_queue);
-        d->fileHints = save_file_hints;
+    if (d->fileHints.testFlag(ExcludeSourceFile)) {
+        for (const DUrl &url : d->sourceUrlList) {
+            if (!d->stateCheck()) {
+                d->setState(StoppedState);
 
-        if (!d->stateCheck()) {
-            d->setState(StoppedState);
+                return;
+            }
 
-            return;
+            DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
+
+            if (!info) {
+                qDebug() << "Url not yet supported: " << url;
+                continue;
+            }
+
+            if (info->isSymLink()) {
+                if (!d->fileHints.testFlag(DFileStatisticsJob::FollowSymlink)) {
+                    continue;
+                }
+
+                info = DFileService::instance()->createFileInfo(nullptr, info->rootSymLinkTarget());
+
+                if (info->isSymLink()) {
+                    continue;
+                }
+            }
+
+            if (info->isDir()) {
+                directory_queue << url;
+            }
+        }
+    } else {
+        for (const DUrl &url : d->sourceUrlList) {
+            // 选择的列表中包含avfsd/proc挂载路径时禁用过滤
+            FileHints save_file_hints = d->fileHints;
+            d->fileHints = d->fileHints | DontSkipAVFSDStorage | DontSkipPROCStorage;
+            d->processFile(url, directory_queue);
+            d->fileHints = save_file_hints;
+
+            if (!d->stateCheck()) {
+                d->setState(StoppedState);
+
+                return;
+            }
         }
     }
 
