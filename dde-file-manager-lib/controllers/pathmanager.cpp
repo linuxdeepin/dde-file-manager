@@ -64,6 +64,7 @@ void PathManager::initPaths()
     m_systemPathDisplayNamesMap["Network"] = tr("Computers in LAN");
     m_systemPathDisplayNamesMap["UserShare"] = tr("My Shares");
     m_systemPathDisplayNamesMap["Computer"] = tr("Computer");
+    m_systemPathDisplayNamesMap["Recent"] = tr("Recent");
 
     if (DFMApplication::instance()->genericObtuselySetting()->value("Disk/Options", "windowsStyle").toBool()) {
         m_systemPathDisplayNamesMap["System Disk"] = m_systemPathDisplayNamesMap["System Disk"].append(" (C:)");
@@ -161,6 +162,7 @@ void PathManager::loadSystemPaths()
     m_systemPathsMap["Network"] = DFMStandardPaths::location(DFMStandardPaths::NetworkRootPath);
     m_systemPathsMap["UserShare"] = DFMStandardPaths::location(DFMStandardPaths::UserShareRootPath);
     m_systemPathsMap["Computer"] = DFMStandardPaths::location(DFMStandardPaths::ComputerRootPath);
+    m_systemPathsMap["Recent"] = DFMStandardPaths::location(DFMStandardPaths::RecentPath);
 
     m_systemPathsSet.reserve(m_systemPathsMap.size());
 

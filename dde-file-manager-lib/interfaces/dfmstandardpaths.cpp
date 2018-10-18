@@ -89,6 +89,8 @@ QString DFMStandardPaths::location(DFMStandardPaths::StandardLocation type)
     case ApplicationSharePath:
         return APPSHAREDIR;
 #endif
+    case RecentPath:
+        return "recent:///";
     case HomePath:
         return QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
     case DesktopPath:

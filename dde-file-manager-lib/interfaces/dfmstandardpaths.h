@@ -47,6 +47,7 @@ public:
         ThumbnailSmallPath,
         ApplicationConfigPath,  /* ~/.config */
         ApplicationSharePath,   /* /usr/share/dde-file-manager */
+        RecentPath,
         HomePath,
         DesktopPath,
         VideosPath,

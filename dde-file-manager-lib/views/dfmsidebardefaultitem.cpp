@@ -53,6 +53,10 @@ DUrl DFMSideBarDefaultItem::getDUrlFromStandardLocation(DFMStandardPaths::Standa
 void DFMSideBarDefaultItem::initItemByLocation(DFMStandardPaths::StandardLocation location)
 {
     switch (location) {
+    case DFMStandardPaths::StandardLocation::RecentPath:
+        setIconFromThemeConfig("BookmarkItem.Recent");
+        setText(systemPathManager->getSystemPathDisplayName("Recent"));
+        break;
     case DFMStandardPaths::StandardLocation::HomePath:
         setIconFromThemeConfig("BookmarkItem.Home");
         break;
