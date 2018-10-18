@@ -49,13 +49,13 @@ public:
     ~DFMVfsManagerPrivate();
 
     QScopedPointer<GVolumeMonitor, ScopedPointerGObjectUnrefDeleter> m_GVolumeMonitor;
+    DFMVfsAbstractEventHandler *handler = nullptr;
+    QPointer<QThread> threadOfEventHandler;
 
     static void GVolumeMonitorMountAddedCb(GVolumeMonitor *, GMount *mount, DFMVfsManager* managerPointer);
     static void GVolumeMonitorMountRemovedCb(GVolumeMonitor *, GMount *mount, DFMVfsManager* managerPointer);
     static void GVolumeMonitorMountChangedCb(GVolumeMonitor *, GMount *mount, DFMVfsManager* managerPointer);
 
-    DFMVfsAbstractEventHandler *handler = nullptr;
-    QPointer<QThread> threadOfEventHandler;
 
     DFMVfsManager *q_ptr = nullptr;
 
@@ -91,6 +91,7 @@ void DFMVfsManagerPrivate::GVolumeMonitorMountAddedCb(GVolumeMonitor *, GMount *
     deviceUrl.setPath(rootUrlStr);
 
     emit managerPointer->vfsAttached(deviceUrl);
+    emit managerPointer->vfsDeviceListInfoChanged();
 }
 
 void DFMVfsManagerPrivate::GVolumeMonitorMountRemovedCb(GVolumeMonitor *, GMount *mount, DFMVfsManager* managerPointer)
@@ -107,6 +108,7 @@ void DFMVfsManagerPrivate::GVolumeMonitorMountRemovedCb(GVolumeMonitor *, GMount
     deviceUrl.setPath(rootUrlStr);
 
     emit managerPointer->vfsDetached(deviceUrl);
+    emit managerPointer->vfsDeviceListInfoChanged();
 }
 
 void DFMVfsManagerPrivate::GVolumeMonitorMountChangedCb(GVolumeMonitor *, GMount *mount, DFMVfsManager* managerPointer)
@@ -119,8 +121,7 @@ void DFMVfsManagerPrivate::GVolumeMonitorMountChangedCb(GVolumeMonitor *, GMount
     QUrl url(rootUrlStr);
     if (url.scheme() == "file") return;
 
-    qDebug() << "THAT HAPPENED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
-    qDebug() << url << "!!!!!!!!!!!!!";
+    emit managerPointer->vfsDeviceListInfoChanged();
 }
 
 void DFMVfsManagerPrivate::initConnect()

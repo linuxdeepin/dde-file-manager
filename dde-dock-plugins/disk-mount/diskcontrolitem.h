@@ -50,7 +50,6 @@ public:
 
 private slots:
     static QString sizeString(const QString &str);
-    static qreal dRound64(qreal num, int count = 1);
 
 private:
     void mouseReleaseEvent(QMouseEvent *e) override;

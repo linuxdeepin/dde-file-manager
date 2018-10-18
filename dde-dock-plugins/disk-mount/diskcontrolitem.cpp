@@ -152,17 +152,6 @@ QString DiskControlItem::sizeString(const QString &str)
     return size.left(size.count() - 1);
 }
 
-qreal DiskControlItem::dRound64(qreal num, int count)
-{
-    if (count <= 0)
-        return qRound64(num);
-
-    qreal base = qPow(10, count);
-
-    return qRound64(num * base) / base;
-}
-
-
 QString DiskControlItem::formatDiskSize(const quint64 num)
 {
     QStringList list {" B", " KB", " MB", " GB", " TB"};
