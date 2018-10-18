@@ -87,8 +87,7 @@ void DiskControlWidget::initConnect()
     connect(m_diskManager, &DFMDiskManager::fileSystemAdded, this, &DiskControlWidget::onVolumeAdded);
     connect(m_diskManager, &DFMDiskManager::fileSystemRemoved, this, &DiskControlWidget::onVolumeRemoved);
 
-    connect(m_vfsManager, &DFMVfsManager::vfsAttached, this, &DiskControlWidget::onDiskListChanged);
-    connect(m_vfsManager, &DFMVfsManager::vfsDetached, this, &DiskControlWidget::onDiskListChanged);
+    connect(m_vfsManager, &DFMVfsManager::vfsDeviceListInfoChanged, this, &DiskControlWidget::onDiskListChanged);
 }
 
 void DiskControlWidget::startMonitor()
