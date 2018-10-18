@@ -392,6 +392,7 @@ void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::G
 
     switch (groupType) {
     case DFMSideBar::GroupName::Common:
+        group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::RecentPath));
         group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::HomePath));
         group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::DesktopPath));
         group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::VideosPath));

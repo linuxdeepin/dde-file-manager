@@ -61,6 +61,7 @@
 #include "singleton.h"
 
 #include "tagcontroller.h"
+#include "recentmanager.h"
 #include "views/drenamebar.h"
 #include "shutil/filebatchprocess.h"
 
@@ -127,6 +128,7 @@ void AppController::registerUrlHandle()
     DFileService::dRegisterUrlHandler<MountController>(MOUNT_SCHEME, "");
 
     DFileService::dRegisterUrlHandler<TagController>(TAG_SCHEME, "");
+    DFileService::dRegisterUrlHandler<RecentController>(RECENT_SCHEME, "");
 }
 
 void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
