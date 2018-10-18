@@ -861,9 +861,6 @@ void DFileManagerWindow::initTitleBar()
     } else {
         d->toolbar->getSettingsButton()->setMenu(menu);
     }
-
-    // override the titlebar style
-    DThemeManager::instance()->registerWidget(titlebar(), "DTitleBar");
 }
 
 void DFileManagerWindow::initSplitter()
