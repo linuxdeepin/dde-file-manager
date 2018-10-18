@@ -567,21 +567,45 @@ quint64 DFMVfsDevice::totalBytes() const
 {
     Q_D(const DFMVfsDevice);
 
-    return g_file_info_get_attribute_uint64(d->getGFileInfo(), G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
+    quint64 result;
+
+    try {
+        result = g_file_info_get_attribute_uint64(d->getGFileInfo(), G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
+    } catch (const char*) {
+        result = 0;
+    }
+
+    return result;
 }
 
 quint64 DFMVfsDevice::usedBytes() const
 {
     Q_D(const DFMVfsDevice);
 
-    return g_file_info_get_attribute_uint64(d->getGFileInfo(), G_FILE_ATTRIBUTE_FILESYSTEM_USED);
+    quint64 result;
+
+    try {
+        result = g_file_info_get_attribute_uint64(d->getGFileInfo(), G_FILE_ATTRIBUTE_FILESYSTEM_USED);
+    } catch (const char*) {
+        result = 0;
+    }
+
+    return result;
 }
 
 quint64 DFMVfsDevice::freeBytes() const
 {
     Q_D(const DFMVfsDevice);
 
-    return g_file_info_get_attribute_uint64(d->getGFileInfo(), G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
+    quint64 result;
+
+    try {
+        result = g_file_info_get_attribute_uint64(d->getGFileInfo(), G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
+    } catch (const char*) {
+        result = 0;
+    }
+
+    return result;
 }
 
 /*!

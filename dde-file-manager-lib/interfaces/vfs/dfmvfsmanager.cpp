@@ -84,8 +84,13 @@ void DFMVfsManagerPrivate::GVolumeMonitorMountAddedCb(GVolumeMonitor *, GMount *
     QString rootUrlStr(rootUriCStr.data());
     QUrl url(rootUrlStr);
     if (url.scheme() == "file") return;
+//    if (g_mount_is_shadowed(mount)) return; // is_shadowed
 
-    emit managerPointer->vfsAttached(url);
+    QUrl deviceUrl;
+    deviceUrl.setScheme("device");
+    deviceUrl.setPath(rootUrlStr);
+
+    emit managerPointer->vfsAttached(deviceUrl);
 }
 
 void DFMVfsManagerPrivate::GVolumeMonitorMountRemovedCb(GVolumeMonitor *, GMount *mount, DFMVfsManager* managerPointer)
@@ -95,8 +100,13 @@ void DFMVfsManagerPrivate::GVolumeMonitorMountRemovedCb(GVolumeMonitor *, GMount
     QString rootUrlStr(rootUriCStr.data());
     QUrl url(rootUrlStr);
     if (url.scheme() == "file") return;
+//    if (g_mount_is_shadowed(mount)) return; // is_shadowed
 
-    emit managerPointer->vfsDetached(url);
+    QUrl deviceUrl;
+    deviceUrl.setScheme("device");
+    deviceUrl.setPath(rootUrlStr);
+
+    emit managerPointer->vfsDetached(deviceUrl);
 }
 
 void DFMVfsManagerPrivate::GVolumeMonitorMountChangedCb(GVolumeMonitor *, GMount *mount, DFMVfsManager* managerPointer)
@@ -178,6 +188,7 @@ const QList<QUrl> DFMVfsManager::getVfsList()
         QString rootUrlStr(rootUriCStr.data());
         QUrl urlForCheck(rootUrlStr);
         if (urlForCheck.scheme() == "file") continue;
+        if (g_mount_is_shadowed(mount)) continue;
         QUrl url;
         url.setScheme("device");
         url.setPath(rootUrlStr);
