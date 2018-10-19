@@ -61,7 +61,7 @@
 #include "singleton.h"
 
 #include "tagcontroller.h"
-#include "recentmanager.h"
+#include "recentcontroller.h"
 #include "views/drenamebar.h"
 #include "shutil/filebatchprocess.h"
 

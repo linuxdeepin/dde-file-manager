@@ -262,9 +262,9 @@ HEADERS += \
     controllers/mountcontroller.h \
     models/mountfileinfo.h \
     views/dfmsplitter.h \
-    controllers/dfmrecentcontroller.h \
     models/recentfileinfo.h \
-    controllers/recentmanager.h
+    controllers/recentcontroller.h \
+    controllers/dfmrecentcrumbcontroller.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -434,9 +434,9 @@ SOURCES += \
     controllers/mountcontroller.cpp \
     models/mountfileinfo.cpp \
     views/dfmsplitter.cpp \
-    controllers/dfmrecentcontroller.cpp \
     models/recentfileinfo.cpp \
-    controllers/recentmanager.cpp
+    controllers/recentcontroller.cpp \
+    controllers/dfmrecentcrumbcontroller.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h \

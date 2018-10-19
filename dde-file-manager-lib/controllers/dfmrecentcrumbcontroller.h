@@ -26,12 +26,12 @@
 
 DFM_BEGIN_NAMESPACE
 
-class DFMRecentController : public DFMCrumbInterface
+class DFMRecentCrumbController : public DFMCrumbInterface
 {
     Q_OBJECT
 
 public:
-    explicit DFMRecentController(QObject *parent = nullptr);
+    explicit DFMRecentCrumbController(QObject *parent = nullptr);
 
     bool supportedUrl(DUrl url) override;
     QList<CrumbData> seprateUrl(const DUrl &url) override;

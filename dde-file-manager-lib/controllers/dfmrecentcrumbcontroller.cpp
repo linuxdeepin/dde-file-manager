@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "dfmrecentcontroller.h"
+#include "dfmrecentcrumbcontroller.h"
 #include "dfmcrumbitem.h"
 #include "dfileservices.h"
 #include "pathmanager.h"
@@ -27,18 +27,18 @@
 
 DFM_BEGIN_NAMESPACE
 
-DFMRecentController::DFMRecentController(QObject *parent)
+DFMRecentCrumbController::DFMRecentCrumbController(QObject *parent)
     : DFMCrumbInterface(parent)
 {
 
 }
 
-bool DFMRecentController::supportedUrl(DUrl url)
+bool DFMRecentCrumbController::supportedUrl(DUrl url)
 {
     return (url.scheme() == RECENT_SCHEME);
 }
 
-QList<CrumbData> DFMRecentController::seprateUrl(const DUrl &url)
+QList<CrumbData> DFMRecentCrumbController::seprateUrl(const DUrl &url)
 {
     Q_UNUSED(url);
     QString displayText = Singleton<PathManager>::instance()->getSystemPathDisplayName("Recent");
