@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "recentmanager.h"
+#include "recentcontroller.h"
 #include "dfileservices.h"
 #include "dfilewatcher.h"
 #include "dfmevent.h"
