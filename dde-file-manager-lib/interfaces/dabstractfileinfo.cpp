@@ -1404,6 +1404,17 @@ static void onActionTriggered(QAction *action)
     AppController::createFile(data.first, target_dir, data.second, menu ? menu->eventId() : -1);
 }
 
+// ------------ Temporary gchar* Wrapper Start -------------
+struct CStrDeleter {
+    void operator()(char* ptr) const {
+        g_free(ptr);
+    }
+};
+
+// smart pointer for C string (char*) which should be freed by free()
+typedef std::unique_ptr<char[], CStrDeleter> CStrPtr;
+// ------------- Temporary gchar* Wrapper End --------------
+
 static QList<QAction *> getTemplateFileList()
 {
     QList<QAction *> result;
@@ -1488,7 +1499,7 @@ static QList<QAction *> getTemplateFileList()
     // restore current path
     QDir::setCurrent(old_current_path);
 
-    // blumia: Following is support for xdg-user-dirs Templates folder.
+    // blumia: Following is support for `xdg-user-dir TEMPLATES` Templates folder.
     //         It's suppored by many GNOME Nautilus based file manager. I don't think it's a good idea
     //         since we can't localization the file name text at all.
     // blumia: templateFolderPathCStr owned by glib, should NOT be freeed.
@@ -1496,18 +1507,64 @@ static QList<QAction *> getTemplateFileList()
     if (templateFolderPathCStr != nullptr) {
         QString templateFolderPath(templateFolderPathCStr);
         QDir templateFolder(templateFolderPath);
-        const QFileInfoList &templateFileInfoList = templateFolder.entryInfoList(QDir::Files | QDir::Readable | QDir::NoSymLinks);
-        for (const QFileInfo &fileInfo : templateFileInfoList) {
-            const QString entrySourcePath = fileInfo.absoluteFilePath();
-            const QString entryText = fileInfo.baseName();
-            const QString entryFileBaseName = entryText; // suffix is based on source file, only base name is okay here.
-            QIcon icon = QIcon::fromTheme(MimesAppsManager::getMimeType(entrySourcePath).iconName());
-            QAction *action = new QAction(icon, entryText, Q_NULLPTR);
-            action->setData(QVariant::fromValue(qMakePair(entrySourcePath, entryFileBaseName)));
-            QObject::connect(action, &QAction::triggered, action, [action] {
-                onActionTriggered(action);
-            });
-            result << action;
+        if (templateFolder.exists()) {
+            const QFileInfoList &templateFileInfoList = templateFolder.entryInfoList(QDir::Files | QDir::Readable | QDir::NoSymLinks);
+            for (const QFileInfo &fileInfo : templateFileInfoList) {
+                const QString entrySourcePath = fileInfo.absoluteFilePath();
+                const QString entryText = fileInfo.baseName();
+                const QString entryFileBaseName = entryText; // suffix is based on source file, only base name is okay here.
+                QIcon icon = QIcon::fromTheme(MimesAppsManager::getMimeType(entrySourcePath).iconName());
+                QAction *action = new QAction(icon, entryText, Q_NULLPTR);
+                action->setData(QVariant::fromValue(qMakePair(entrySourcePath, entryFileBaseName)));
+                QObject::connect(action, &QAction::triggered, action, [action] {
+                    onActionTriggered(action);
+                });
+                result << action;
+            }
+        }
+    }
+
+    // blumia: Following is support for `kf5-config --path templates` Templates folder.
+    // blumia: shareFolderPathCStr owned by glib, should NOT be freeed.
+    const gchar * const * shareFolderPathCStr = g_get_system_data_dirs();
+    QStringList templateFolderList;
+    // system-wide template dirs
+    for(auto data_dir = shareFolderPathCStr; *data_dir; ++data_dir) {
+        CStrPtr dir_name{g_build_filename(*data_dir, "templates", nullptr)};
+        templateFolderList << QString(dir_name.get());
+    }
+    // user-specific template dir
+    CStrPtr dir_name{g_build_filename(g_get_user_data_dir(), "templates", nullptr)};
+    templateFolderList << QString(dir_name.get());
+    // start scan..
+    for (const QString & oneTemplateFolder : templateFolderList) {
+        QDir templateFolder(oneTemplateFolder);
+        if (templateFolder.exists()) {
+            // blumia: We use use QSettings with QSettings::IniFormat because .desktop file
+            //         actually IS simple ini file with utf-8 codec encoded.
+            // ref: https://doc.qt.io/archives/qtextended4.4/desktopfiles.html (some old docs..)
+            const QStringList &templateFileList = templateFolder.entryList(QStringList(QStringLiteral("*.desktop")), QDir::Files | QDir::Readable | QDir::NoSymLinks);
+            for (const QString &filePath : templateFileList) {
+                QSettings desktopFile(templateFolder.absoluteFilePath(filePath), QSettings::IniFormat);
+                desktopFile.setIniCodec("UTF-8");
+                const QString entrySourcePath = templateFolder.absoluteFilePath(desktopFile.value("Desktop Entry/URL").toString());
+                const QString entryText = desktopFile.value(
+                                            QString("Desktop Entry/Name[%1]").arg(QLocale::system().name()),
+                                            desktopFile.value("Desktop Entry/Name")
+                                        ).toString();
+                const QString entryFileBaseName = entryText; // suffix is based on source file, only base name is okay here.
+                if (!QFileInfo(entrySourcePath).exists() || entryText.isEmpty()) {
+                    continue; // holy shit!
+                }
+                qDebug() << desktopFile.allKeys() << templateFolder.absoluteFilePath(filePath) << entrySourcePath;
+                QIcon icon = QIcon::fromTheme(desktopFile.value("Desktop Entry/Icon").toString());
+                QAction *action = new QAction(icon, entryText, Q_NULLPTR);
+                action->setData(QVariant::fromValue(qMakePair(entrySourcePath, entryFileBaseName)));
+                QObject::connect(action, &QAction::triggered, action, [action] {
+                    onActionTriggered(action);
+                });
+                result << action;
+            }
         }
     }
 
