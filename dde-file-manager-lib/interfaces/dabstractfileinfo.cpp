@@ -39,6 +39,7 @@
 #include "dmimedatabase.h"
 
 #include "app/define.h"
+#include "shutil/mimesappsmanager.h"
 #include "controllers/appcontroller.h"
 
 #include "singleton.h"
@@ -58,6 +59,8 @@
 #include <QJsonObject>
 #include <QStandardPaths>
 #include <QLocale>
+
+#include <glib.h> // only for g_get_user_special_dir()
 
 #ifdef SW_LABEL
 #include "sw_label/filemanagerlibrary.h"
@@ -1484,6 +1487,29 @@ static QList<QAction *> getTemplateFileList()
 
     // restore current path
     QDir::setCurrent(old_current_path);
+
+    // blumia: Following is support for xdg-user-dirs Templates folder.
+    //         It's suppored by many GNOME Nautilus based file manager. I don't think it's a good idea
+    //         since we can't localization the file name text at all.
+    // blumia: templateFolderPathCStr owned by glib, should NOT be freeed.
+    const gchar * templateFolderPathCStr = g_get_user_special_dir(G_USER_DIRECTORY_TEMPLATES);
+    if (templateFolderPathCStr != nullptr) {
+        QString templateFolderPath(templateFolderPathCStr);
+        QDir templateFolder(templateFolderPath);
+        const QFileInfoList &templateFileInfoList = templateFolder.entryInfoList(QDir::Files | QDir::Readable | QDir::NoSymLinks);
+        for (const QFileInfo &fileInfo : templateFileInfoList) {
+            const QString entrySourcePath = fileInfo.absoluteFilePath();
+            const QString entryText = fileInfo.baseName();
+            const QString entryFileBaseName = entryText; // suffix is based on source file, only base name is okay here.
+            QIcon icon = QIcon::fromTheme(MimesAppsManager::getMimeType(entrySourcePath).iconName());
+            QAction *action = new QAction(icon, entryText, Q_NULLPTR);
+            action->setData(QVariant::fromValue(qMakePair(entrySourcePath, entryFileBaseName)));
+            QObject::connect(action, &QAction::triggered, action, [action] {
+                onActionTriggered(action);
+            });
+            result << action;
+        }
+    }
 
     return result;
 }
