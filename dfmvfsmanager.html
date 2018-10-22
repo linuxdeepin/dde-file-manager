@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- dfmvfsmanager.cpp -->
+  <title>DFMVfsManager Class | Deepin File Manager</title>
+  <link rel="stylesheet" type="text/css" href="style/online.css" />
+</head>
+<body>
+<div class="header" id="qtdocheader">
+    <div class="main">
+    <div class="main-rounded">
+        <div class="navigationbar">
+        <ul>
+<li>DFMVfsManager</li>
+    </ul>
+    </div>
+</div>
+<div class="content">
+<div class="line">
+<div class="content mainContent">
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<div class="context">
+<h1 class="title">DFMVfsManager Class</h1>
+<!-- $$$DFMVfsManager-brief -->
+<p><a href="dfmvfsmanager.html">DFMVfsManager</a> manage all virtual filesystem. <a href="#details">More...</a></p>
+<!-- @@@DFMVfsManager -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;DFMVfsManager&gt;</span>
+</td></tr></table></div><ul>
+<li><a href="dfmvfsmanager-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-functions"></a>
+<h2 id="public-functions">Public Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsmanager.html#DFMVfsManager">DFMVfsManager</a></b>(QObject *<i>parent</i> = nullptr)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsmanager.html#dtor.DFMVfsManager">~DFMVfsManager</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsmanager.html#attach">attach</a></b>(const QUrl &amp;<i>url</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> DFMVfsAbstractEventHandler *</td><td class="memItemRight bottomAlign"><b><a href="dfmvfsmanager.html#eventHandler">eventHandler</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> const QList&lt;QUrl&gt; </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsmanager.html#getVfsList">getVfsList</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsmanager.html#setEventHandler">setEventHandler</a></b>(DFMVfsAbstractEventHandler *<i>handler</i>, QThread *<i>threadOfHandle</i> = nullptr)</td></tr>
+</table></div>
+<a name="signals"></a>
+<h2 id="signals">Signals</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsmanager.html#vfsAttached">vfsAttached</a></b>(const QUrl &amp;<i>url</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsmanager.html#vfsDetached">vfsDetached</a></b>(const QUrl &amp;<i>url</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsmanager.html#vfsDeviceListInfoChanged">vfsDeviceListInfoChanged</a></b>()</td></tr>
+</table></div>
+<a name="details"></a>
+<!-- $$$DFMVfsManager-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p><a href="dfmvfsmanager.html">DFMVfsManager</a> manage all virtual filesystem.</p>
+<p>Virtual filesystem here means it's not a physical device in local computer, i.e&#x2e; it's a remote/network device. <a href="dfmvfsmanager.html">DFMVfsManager</a> manage the state of already mounted devices and provide signal when a new vfs is mounted(attached) to the computer or a vfs mount point get unmounted(detached).</p>
+<p>We use the word attach and detach rather than mount and unmount because one *network* location will always comes with one available mount point, so a drive / partition / volume mount / unmount event will always consider as a same event.</p>
+<p>We use the URI which is used to mount the device as a identifier, use <a href="dfmvfsmanager.html#getVfsList">DFMVfsManager::getVfsList</a>() to get a list of already attached vfs list, and use <a href="dfmvfsdevice.html">DFMVfsDevice</a> to manage them when needed.</p>
+</div>
+<p><b>See also </b><a href="dfmvfsdevice.html">DFMVfsDevice</a> and <a href="dfmdiskmanager.html">DFMDiskManager</a>.</p>
+<!-- @@@DFMVfsManager -->
+<div class="func">
+<h2>Member Function Documentation</h2>
+<!-- $$$DFMVfsManager[overload1]$$$DFMVfsManagerQObject* -->
+<h3 class="fn" id="DFMVfsManager"><a name="DFMVfsManager"></a>DFMVfsManager::<span class="name">DFMVfsManager</span>(<span class="type">QObject</span> *<i>parent</i> = nullptr)</h3>
+<p>Default constructs an instance of DFMVfsManager.</p><!-- @@@DFMVfsManager -->
+<!-- $$$~DFMVfsManager[overload1]$$$~DFMVfsManager -->
+<h3 class="fn" id="dtor.DFMVfsManager"><a name="dtor.DFMVfsManager"></a>DFMVfsManager::<span class="name">~DFMVfsManager</span>()</h3>
+<p>Destroys the instance of DFMVfsManager.</p><!-- @@@~DFMVfsManager -->
+<!-- $$$attach[overload1]$$$attachconstQUrl& -->
+<h3 class="fn" id="attach"><a name="attach"></a><span class="type">bool</span> DFMVfsManager::<span class="name">attach</span>(const <span class="type">QUrl</span> &amp;<i>url</i>)</h3>
+<!-- @@@attach -->
+<!-- $$$eventHandler[overload1]$$$eventHandler -->
+<h3 class="fn" id="eventHandler"><a name="eventHandler"></a><span class="type">DFMVfsAbstractEventHandler</span> *DFMVfsManager::<span class="name">eventHandler</span>() const</h3>
+<p><b>See also </b><a href="dfmvfsmanager.html#setEventHandler">setEventHandler</a>().</p>
+<!-- @@@eventHandler -->
+<!-- $$$getVfsList[overload1]$$$getVfsList -->
+<h3 class="fn" id="getVfsList"><a name="getVfsList"></a>const <span class="type">QList</span>&lt;<span class="type">QUrl</span>&gt; DFMVfsManager::<span class="name">getVfsList</span>()</h3>
+<p>Get a list of all attached virtual filesystem.</p>
+<p>Only virtual filesystems (i.e&#x2e; remote/network locations) will be returned.</p>
+<p>Returns QList of attached virtual filesystem with their root url.</p>
+<!-- @@@getVfsList -->
+<!-- $$$setEventHandler[overload1]$$$setEventHandlerDFMVfsAbstractEventHandler*QThread* -->
+<h3 class="fn" id="setEventHandler"><a name="setEventHandler"></a><span class="type">void</span> DFMVfsManager::<span class="name">setEventHandler</span>(<span class="type">DFMVfsAbstractEventHandler</span> *<i>handler</i>, <span class="type">QThread</span> *<i>threadOfHandle</i> = nullptr)</h3>
+<p><b>See also </b><a href="dfmvfsmanager.html#eventHandler">eventHandler</a>().</p>
+<!-- @@@setEventHandler -->
+<!-- $$$vfsAttached[overload1]$$$vfsAttachedconstQUrl& -->
+<h3 class="fn" id="vfsAttached"><a name="vfsAttached"></a><code>[signal] </code><span class="type">void</span> DFMVfsManager::<span class="name">vfsAttached</span>(const <span class="type">QUrl</span> &amp;<i>url</i>)</h3>
+<!-- @@@vfsAttached -->
+<!-- $$$vfsDetached[overload1]$$$vfsDetachedconstQUrl& -->
+<h3 class="fn" id="vfsDetached"><a name="vfsDetached"></a><code>[signal] </code><span class="type">void</span> DFMVfsManager::<span class="name">vfsDetached</span>(const <span class="type">QUrl</span> &amp;<i>url</i>)</h3>
+<!-- @@@vfsDetached -->
+<!-- $$$vfsDeviceListInfoChanged[overload1]$$$vfsDeviceListInfoChanged -->
+<h3 class="fn" id="vfsDeviceListInfoChanged"><a name="vfsDeviceListInfoChanged"></a><code>[signal] </code><span class="type">void</span> DFMVfsManager::<span class="name">vfsDeviceListInfoChanged</span>()</h3>
+<!-- @@@vfsDeviceListInfoChanged -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

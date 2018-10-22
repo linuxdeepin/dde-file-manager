@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- dfmvfsdevice.cpp -->
+  <title>DFMVfsDevice Class | Deepin File Manager</title>
+  <link rel="stylesheet" type="text/css" href="style/online.css" />
+</head>
+<body>
+<div class="header" id="qtdocheader">
+    <div class="main">
+    <div class="main-rounded">
+        <div class="navigationbar">
+        <ul>
+<li>DFMVfsDevice</li>
+    </ul>
+    </div>
+</div>
+<div class="content">
+<div class="line">
+<div class="content mainContent">
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#properties">Properties</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#static-public-members">Static Public Members</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<div class="context">
+<h1 class="title">DFMVfsDevice Class</h1>
+<!-- $$$DFMVfsDevice-brief -->
+<p><a href="dfmvfsdevice.html">DFMVfsDevice</a> allowed you query and manage a VFS mountpoint. <a href="#details">More...</a></p>
+<!-- @@@DFMVfsDevice -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;DFMVfsDevice&gt;</span>
+</td></tr></table></div><ul>
+<li><a href="dfmvfsdevice-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="properties"></a>
+<h2 id="properties">Properties</h2>
+<div class="table"><table class="propsummary">
+<tr><td class="topAlign"><ul>
+<li class="fn"><b><a href="dfmvfsdevice.html#canDetach-prop">canDetach</a></b> : const bool</li>
+<li class="fn"><b><a href="dfmvfsdevice.html#defaultPath-prop">defaultPath</a></b> : const QString</li>
+<li class="fn"><b><a href="dfmvfsdevice.html#defaultUri-prop">defaultUri</a></b> : const QUrl</li>
+<li class="fn"><b><a href="dfmvfsdevice.html#freeBytes-prop">freeBytes</a></b> : const quint64</li>
+<li class="fn"><b><a href="dfmvfsdevice.html#isReadOnly-prop">isReadOnly</a></b> : const bool</li>
+</ul></td><td class="topAlign"><ul>
+<li class="fn"><b><a href="dfmvfsdevice.html#name-prop">name</a></b> : const QString</li>
+<li class="fn"><b><a href="dfmvfsdevice.html#rootPath-prop">rootPath</a></b> : const QString</li>
+<li class="fn"><b><a href="dfmvfsdevice.html#rootUri-prop">rootUri</a></b> : const QUrl</li>
+<li class="fn"><b><a href="dfmvfsdevice.html#totalBytes-prop">totalBytes</a></b> : const quint64</li>
+<li class="fn"><b><a href="dfmvfsdevice.html#usedBytes-prop">usedBytes</a></b> : const quint64</li>
+</ul>
+</td></tr>
+</table></div>
+<a name="public-functions"></a>
+<h2 id="public-functions">Public Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsdevice.html#dtor.DFMVfsDevice">~DFMVfsDevice</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsdevice.html#attach">attach</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsdevice.html#canDetach-prop">canDetach</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsdevice.html#defaultPath">defaultPath</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QUrl </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsdevice.html#defaultUri">defaultUri</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsdevice.html#detachAsync">detachAsync</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> DFMVfsAbstractEventHandler *</td><td class="memItemRight bottomAlign"><b><a href="dfmvfsdevice.html#eventHandler">eventHandler</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> quint64 </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsdevice.html#freeBytes-prop">freeBytes</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsdevice.html#iconList">iconList</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsdevice.html#isReadOnly-prop">isReadOnly</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsdevice.html#name-prop">name</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsdevice.html#rootPath">rootPath</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QUrl </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsdevice.html#rootUri">rootUri</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsdevice.html#setEventHandler">setEventHandler</a></b>(DFMVfsAbstractEventHandler *<i>handler</i>, QThread *<i>threadOfHandle</i> = nullptr)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsdevice.html#symbolicIconList">symbolicIconList</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> quint64 </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsdevice.html#totalBytes-prop">totalBytes</a></b>() const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> quint64 </td><td class="memItemRight bottomAlign"><b><a href="dfmvfsdevice.html#usedBytes-prop">usedBytes</a></b>() const</td></tr>
+</table></div>
+<a name="static-public-members"></a>
+<h2 id="static-public-members">Static Public Members</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> DFMVfsDevice *</td><td class="memItemRight bottomAlign"><b><a href="dfmvfsdevice.html#create">create</a></b>(const QUrl &amp;<i>url</i>, QObject *<i>parent</i> = nullptr)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> DFMVfsDevice *</td><td class="memItemRight bottomAlign"><b><a href="dfmvfsdevice.html#createUnsafe">createUnsafe</a></b>(const QUrl &amp;<i>url</i>, QObject *<i>parent</i> = nullptr)</td></tr>
+</table></div>
+<a name="details"></a>
+<!-- $$$DFMVfsDevice-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p><a href="dfmvfsdevice.html">DFMVfsDevice</a> allowed you query and manage a VFS mountpoint.</p>
+<p>Once a virtual filesystem (i.e&#x2e; a remote/network device) got mounted. You can then manage this VFS by creating a new <a href="dfmvfsdevice.html">DFMVfsDevice</a> instance. Since we use the mount URI as an identifier, it may failed when creating <a href="dfmvfsdevice.html">DFMVfsDevice</a> instance, so using <a href="dfmvfsdevice.html#create">DFMVfsDevice::create</a>() for creating and don't forget to check if create failed.</p>
+<p><a href="dfmvfsmanager.html#getVfsList">DFMVfsManager::getVfsList</a>() will return a full list with all attached(i.e&#x2e; mounted) VFSes, using url from that function's return value is the recommend way to create a <a href="dfmvfsdevice.html">DFMVfsDevice</a> instance.</p>
+<p><a href="dfmvfsdevice.html">DFMVfsDevice</a> is actually a GMount and GFileInfo wrapper for a GMount mountpoint, but it's designed for virtual filesystem here. For local filesystem management, use <a href="dfmdiskmanager.html">DFMDiskManager</a> instead.</p>
+</div>
+<p><b>See also </b><a href="dfmvfsmanager.html">DFMVfsManager</a> and <a href="dfmdiskmanager.html">DFMDiskManager</a>.</p>
+<!-- @@@DFMVfsDevice -->
+<div class="prop">
+<h2>Property Documentation</h2>
+<!-- $$$canDetach-prop$$$canDetach -->
+<h3 class="fn" id="canDetach-prop"><a name="canDetach-prop"></a><span class="name">canDetach</span> : const <span class="type">bool</span></h3>
+<p><b>Access functions:</b></p>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> bool </td><td class="memItemRight bottomAlign"><span class="name"><b>canDetach</b></span>() const</td></tr>
+</table></div>
+<!-- @@@canDetach -->
+<!-- $$$defaultPath-prop$$$defaultPath -->
+<h3 class="fn" id="defaultPath-prop"><a name="defaultPath-prop"></a><span class="name">defaultPath</span> : const <span class="type">QString</span></h3>
+<p><b>Access functions:</b></p>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QString </td><td class="memItemRight bottomAlign"><span class="name"><b><a href="dfmvfsdevice.html#defaultPath">defaultPath</a></b></span>() const</td></tr>
+</table></div>
+<!-- @@@defaultPath -->
+<!-- $$$defaultUri-prop$$$defaultPath -->
+<h3 class="fn" id="defaultUri-prop"><a name="defaultUri-prop"></a><span class="name">defaultUri</span> : const <span class="type">QUrl</span></h3>
+<p><b>Access functions:</b></p>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QString </td><td class="memItemRight bottomAlign"><span class="name"><b><a href="dfmvfsdevice.html#defaultPath">defaultPath</a></b></span>() const</td></tr>
+</table></div>
+<!-- @@@defaultUri -->
+<!-- $$$freeBytes-prop$$$freeBytes -->
+<h3 class="fn" id="freeBytes-prop"><a name="freeBytes-prop"></a><span class="name">freeBytes</span> : const <span class="type">quint64</span></h3>
+<p><b>Access functions:</b></p>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> quint64 </td><td class="memItemRight bottomAlign"><span class="name"><b>freeBytes</b></span>() const</td></tr>
+</table></div>
+<!-- @@@freeBytes -->
+<!-- $$$isReadOnly-prop$$$isReadOnly -->
+<h3 class="fn" id="isReadOnly-prop"><a name="isReadOnly-prop"></a><span class="name">isReadOnly</span> : const <span class="type">bool</span></h3>
+<p><b>Access functions:</b></p>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> bool </td><td class="memItemRight bottomAlign"><span class="name"><b>isReadOnly</b></span>() const</td></tr>
+</table></div>
+<!-- @@@isReadOnly -->
+<!-- $$$name-prop$$$name -->
+<h3 class="fn" id="name-prop"><a name="name-prop"></a><span class="name">name</span> : const <span class="type">QString</span></h3>
+<p><b>Access functions:</b></p>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QString </td><td class="memItemRight bottomAlign"><span class="name"><b>name</b></span>() const</td></tr>
+</table></div>
+<!-- @@@name -->
+<!-- $$$rootPath-prop$$$rootPath -->
+<h3 class="fn" id="rootPath-prop"><a name="rootPath-prop"></a><span class="name">rootPath</span> : const <span class="type">QString</span></h3>
+<p><b>Access functions:</b></p>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QString </td><td class="memItemRight bottomAlign"><span class="name"><b><a href="dfmvfsdevice.html#rootPath">rootPath</a></b></span>() const</td></tr>
+</table></div>
+<!-- @@@rootPath -->
+<!-- $$$rootUri-prop$$$rootPath -->
+<h3 class="fn" id="rootUri-prop"><a name="rootUri-prop"></a><span class="name">rootUri</span> : const <span class="type">QUrl</span></h3>
+<p><b>Access functions:</b></p>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QString </td><td class="memItemRight bottomAlign"><span class="name"><b><a href="dfmvfsdevice.html#rootPath">rootPath</a></b></span>() const</td></tr>
+</table></div>
+<!-- @@@rootUri -->
+<!-- $$$totalBytes-prop$$$totalBytes -->
+<h3 class="fn" id="totalBytes-prop"><a name="totalBytes-prop"></a><span class="name">totalBytes</span> : const <span class="type">quint64</span></h3>
+<p><b>Access functions:</b></p>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> quint64 </td><td class="memItemRight bottomAlign"><span class="name"><b>totalBytes</b></span>() const</td></tr>
+</table></div>
+<!-- @@@totalBytes -->
+<!-- $$$usedBytes-prop$$$usedBytes -->
+<h3 class="fn" id="usedBytes-prop"><a name="usedBytes-prop"></a><span class="name">usedBytes</span> : const <span class="type">quint64</span></h3>
+<p><b>Access functions:</b></p>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> quint64 </td><td class="memItemRight bottomAlign"><span class="name"><b>usedBytes</b></span>() const</td></tr>
+</table></div>
+<!-- @@@usedBytes -->
+</div>
+<div class="func">
+<h2>Member Function Documentation</h2>
+<!-- $$$~DFMVfsDevice[overload1]$$$~DFMVfsDevice -->
+<h3 class="fn" id="dtor.DFMVfsDevice"><a name="dtor.DFMVfsDevice"></a>DFMVfsDevice::<span class="name">~DFMVfsDevice</span>()</h3>
+<p>Destroys the instance of DFMVfsDevice.</p><!-- @@@~DFMVfsDevice -->
+<!-- $$$attach[overload1]$$$attach -->
+<h3 class="fn" id="attach"><a name="attach"></a><span class="type">bool</span> DFMVfsDevice::<span class="name">attach</span>()</h3>
+<p>Attach the device.</p>
+<p>This method should be called by <a href="dfmvfsmanager.html">DFMVfsManager</a> in the most case, and it's okay to call even if the SFMVfsDevice instance is not yet attached. (of course, this function is to do the attach job).</p>
+<p>You can also use this function to mount uri like `smb://10.0&#x2e;12.161:445/` , but this kinds of mount won't trigger a <a href="dfmvfsmanager.html#vfsAttached">DFMVfsManager::vfsAttached</a>() (i.e&#x2e; vfs device mounted) signal.</p>
+<p>Returns</p>
+<!-- @@@attach -->
+<!-- $$$create[overload1]$$$createconstQUrl&QObject* -->
+<h3 class="fn" id="create"><a name="create"></a><code>[static] </code><span class="type">DFMVfsDevice</span> *DFMVfsDevice::<span class="name">create</span>(const <span class="type">QUrl</span> &amp;<i>url</i>, <span class="type">QObject</span> *<i>parent</i> = nullptr)</h3>
+<p>Create a new <a href="dfmvfsdevice.html">DFMVfsDevice</a> instance.</p>
+<p>Create a <a href="dfmvfsdevice.html">DFMVfsDevice</a> instance with the given mountpoint URI. like `sftp://blumia@127.0.0&#x2e;1/` or similar. You can use <a href="dfmvfsmanager.html#getVfsList">DFMVfsManager::getVfsList</a> to get a list of mounted VFS devices' URI which is ready for use to create <a href="dfmvfsdevice.html">DFMVfsDevice</a> instance.</p>
+<p><i>url</i> mountpoint URI.</p>
+<p><i>parent</i> useless for now, probably will be used later.</p>
+<p>Returns the created <a href="dfmvfsdevice.html">DFMVfsDevice</a> instance, or nullptr if failed.</p>
+<p><b>See also </b><a href="dfmvfsmanager.html#getVfsList">DFMVfsManager::getVfsList</a>.</p>
+<!-- @@@create -->
+<!-- $$$createUnsafe[overload1]$$$createUnsafeconstQUrl&QObject* -->
+<h3 class="fn" id="createUnsafe"><a name="createUnsafe"></a><code>[static] </code><span class="type">DFMVfsDevice</span> *DFMVfsDevice::<span class="name">createUnsafe</span>(const <span class="type">QUrl</span> &amp;<i>url</i>, <span class="type">QObject</span> *<i>parent</i> = nullptr)</h3>
+<p>Create a new <a href="dfmvfsdevice.html">DFMVfsDevice</a> instance.</p>
+<p>This method create a <a href="dfmvfsdevice.html">DFMVfsDevice</a> instance without checking if there is already a attached vfs device. This can be used to create a vfs device to attach a new vfs mountpoint to local.</p>
+<p><b>Note: </b>it's dangerous if you are creating a unmounted device and calling functions which requires device existed and mounted. You can use createUnsafe() to create a <a href="dfmvfsdevice.html">DFMVfsDevice</a> instance even if the given url is not related to a devive (e.g&#x2e; `smb://10.0&#x2e;12.161:445/` is not a url for device, `smb://10.0&#x2e;12.161:445/share/` is). It's useful for mounting a GFile with uri like this.</p><p><i>url</i> mountpoint URI.</p>
+<p><i>parent</i> parent useless for now, probably will be used later.</p>
+<p>Returns the created <a href="dfmvfsdevice.html">DFMVfsDevice</a> instance, or nullptr if <i>url</i> is a file scheme url.</p>
+<!-- @@@createUnsafe -->
+<!-- $$$defaultUri[overload1]$$$defaultUri -->
+<h3 class="fn" id="defaultUri"><a name="defaultUri"></a><span class="type">QUrl</span> DFMVfsDevice::<span class="name">defaultUri</span>() const</h3>
+<!-- @@@defaultUri -->
+<!-- $$$detachAsync[overload1]$$$detachAsync -->
+<h3 class="fn" id="detachAsync"><a name="detachAsync"></a><span class="type">bool</span> DFMVfsDevice::<span class="name">detachAsync</span>()</h3>
+<p>Async detach device.</p>
+<p>Returns if we start to do detach. will be false if it's not detachable.</p>
+<!-- @@@detachAsync -->
+<!-- $$$eventHandler[overload1]$$$eventHandler -->
+<h3 class="fn" id="eventHandler"><a name="eventHandler"></a><span class="type">DFMVfsAbstractEventHandler</span> *DFMVfsDevice::<span class="name">eventHandler</span>() const</h3>
+<p><b>See also </b><a href="dfmvfsdevice.html#setEventHandler">setEventHandler</a>().</p>
+<!-- @@@eventHandler -->
+<!-- $$$iconList[overload1]$$$iconList -->
+<h3 class="fn" id="iconList"><a name="iconList"></a><span class="type">QStringList</span> DFMVfsDevice::<span class="name">iconList</span>() const</h3>
+<p>Get icon theme name with a fallback list</p>
+<!-- @@@iconList -->
+<!-- $$$rootPath -->
+<h3 class="fn" id="rootPath"><a name="rootPath"></a><span class="type">QString</span> DFMVfsDevice::<span class="name">rootPath</span>() const</h3>
+<p>Get the root path of the mount point</p>
+<p>e.g&#x2e; &quot;/run/user/1002/gvfs/smb-share:server=10.0&#x2e;12.161,share=share&quot;</p>
+<p><b>Note:</b> Getter function for property <a href="dfmvfsdevice.html#rootPath-prop">rootPath</a>. Getter function for property <a href="dfmvfsdevice.html#rootUri-prop">rootUri</a>. </p><!-- @@@rootPath -->
+<!-- $$$rootUri[overload1]$$$rootUri -->
+<h3 class="fn" id="rootUri"><a name="rootUri"></a><span class="type">QUrl</span> DFMVfsDevice::<span class="name">rootUri</span>() const</h3>
+<p>Get the root uri of the mount point</p>
+<p>e.g&#x2e; QUrl(&quot;smb://10.0&#x2e;12.161/share/&quot;)</p>
+<!-- @@@rootUri -->
+<!-- $$$setEventHandler[overload1]$$$setEventHandlerDFMVfsAbstractEventHandler*QThread* -->
+<h3 class="fn" id="setEventHandler"><a name="setEventHandler"></a><span class="type">void</span> DFMVfsDevice::<span class="name">setEventHandler</span>(<span class="type">DFMVfsAbstractEventHandler</span> *<i>handler</i>, <span class="type">QThread</span> *<i>threadOfHandle</i> = nullptr)</h3>
+<p><b>See also </b><a href="dfmvfsdevice.html#eventHandler">eventHandler</a>().</p>
+<!-- @@@setEventHandler -->
+<!-- $$$symbolicIconList[overload1]$$$symbolicIconList -->
+<h3 class="fn" id="symbolicIconList"><a name="symbolicIconList"></a><span class="type">QStringList</span> DFMVfsDevice::<span class="name">symbolicIconList</span>() const</h3>
+<p>Get symbolic icon name with a fallback list</p>
+<p>TODO: What's the differences between `g_mount_get_icon` and `g_mount_get_symbolic_icon`?</p>
+<!-- @@@symbolicIconList -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
