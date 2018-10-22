@@ -55,5 +55,6 @@
 
     \list
         \li \l {https://github.com/linuxdeepin/developer-center/wiki/Contribution-Guidelines-for-Developers} {开发者代码贡献指南}
+        \li \l {https://www.transifex.com/linuxdeepin/deepin-file-manager/} {在 Transifex 上参与帮助多语言翻译}
     \endlist
 */
