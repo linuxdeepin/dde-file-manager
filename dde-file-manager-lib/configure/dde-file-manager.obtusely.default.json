@@ -10,6 +10,11 @@
             "sortOrder": 1,
             "sortRole": 262,
             "viewMode": 2
+        },
+        "recent:///": {
+            "sortOrder": 0,
+            "sortRole": 263,
+            "viewMode": 2
         }
     },
     "WindowManager": {

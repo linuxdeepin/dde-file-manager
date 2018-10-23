@@ -22,6 +22,9 @@
 
 #include "dabstractfileinfo.h"
 
+class RecentFileInfo;
+typedef QExplicitlySharedDataPointer<RecentFileInfo> RecentPointer;
+
 class RecentFileInfo : public DAbstractFileInfo
 {
 public:
@@ -40,9 +43,16 @@ public:
     QString subtitleForEmptyFloder() const override;
     Qt::ItemFlags fileItemDisableFlags() const override;
     DUrl mimeDataUrl() const override;
+    DUrl parentUrl() const override;
 
     bool canRedirectionFileUrl() const override;
     DUrl redirectedFileUrl() const override;
+
+    void setReadDateTime(const QString &time);
+
+private:
+    QDateTime m_lastReadTime;
+    QString m_lastReadTimeStr;
 };
 
 #endif // RECENTFILEINFO_H

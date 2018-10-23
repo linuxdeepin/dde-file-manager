@@ -21,6 +21,7 @@
 #define RECENTCONTROLLER_H
 
 #include "dabstractfilecontroller.h"
+#include "models/recentfileinfo.h"
 
 class DAbstractFileInfo;
 class DFileWatcher;
@@ -41,7 +42,7 @@ public:
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
 
 private:
-    DFileWatcher* m_fileWatcher;
+    mutable QMap<DUrl, RecentPointer> m_recentNodes;
 };
 
 #endif // RECENTCONTROLLER_H
