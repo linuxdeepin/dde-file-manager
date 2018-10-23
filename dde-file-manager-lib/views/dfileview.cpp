@@ -1654,12 +1654,16 @@ QModelIndex DFileView::moveCursor(QAbstractItemView::CursorAction cursorAction, 
 
 void DFileView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end)
 {
+    QModelIndex currentIdx = currentIndex();
     for (const QModelIndex &index : selectedIndexes()) {
         if (index.parent() != parent)
             continue;
 
         if (index.row() >= start && index.row() <= end) {
             selectionModel()->select(index, QItemSelectionModel::Clear);
+            if (index == currentIdx) {
+                clearSelection();
+            }
         }
     }
 
@@ -2087,6 +2091,7 @@ void DFileView::clearHeardView()
 void DFileView::clearSelection()
 {
     QListView::clearSelection();
+    setCurrentIndex(QModelIndex());
 }
 
 void DFileView::setContentLabel(const QString &text)
