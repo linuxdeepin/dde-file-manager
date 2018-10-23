@@ -21,11 +21,11 @@
 #include "dfileservices.h"
 #include "dfilewatcher.h"
 #include "dfmevent.h"
-#include "models/recentfileinfo.h"
 #include "private/dabstractfilewatcher_p.h"
 
-#include <qdebug.h>
-#include <qxmlstream.h>
+#include <QFileSystemWatcher>
+#include <QXmlStreamReader>
+#include <QDebug>
 
 class RecentFileWatcherPrivate : public DAbstractFileWatcherPrivate
 {
@@ -54,19 +54,57 @@ public:
     explicit RecentFileWatcher(const DUrl &url, QObject *parent = nullptr)
         : DAbstractFileWatcher(*new RecentFileWatcherPrivate(this), url, parent)
     {
-
     }
 };
 
 RecentController::RecentController(QObject *parent)
-    : DAbstractFileController(parent),
-      m_fileWatcher(new DFileWatcher(QDir::homePath() + "/.local/share/recently-used.xbel", this))
+    : DAbstractFileController(parent)
 {
-    m_fileWatcher->startWatcher();
+    QFileSystemWatcher *watcher = new QFileSystemWatcher;
+    watcher->addPath(QDir::homePath() + "/.local/share/recently-used.xbel");
 
-    connect(m_fileWatcher, &DFileWatcher::fileModified, this, [=] {
+    auto handleFileChanged = [=] {
+        QFile file(QDir::homePath() + "/.local/share/recently-used.xbel");
 
-    });
+        if (file.open(QIODevice::ReadOnly)) {
+            QXmlStreamReader reader(&file);
+
+            while (!reader.atEnd()) {
+                if (!reader.readNextStartElement() ||
+                     reader.name() != "bookmark") {
+                    continue;
+                }
+
+                const QStringRef &location = reader.attributes().value("href");
+                const QStringRef &added = reader.attributes().value("added");
+
+                if (!location.isEmpty()) {
+                    DUrl url = DUrl(location.toString());
+                    QFileInfo info(url.toLocalFile());
+
+                    if (info.exists() && info.isFile()) {
+                        if (!m_recentNodes.contains(url)) {
+                            DUrl recentUrl = url;
+                            recentUrl.setScheme(RECENT_SCHEME);
+                            DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
+                                                              &DAbstractFileWatcher::subfileCreated,
+                                                              recentUrl);
+
+                            RecentFileInfo *fileInfo = new RecentFileInfo(url);
+                            fileInfo->setReadDateTime(added.toString());
+
+                            m_recentNodes[url] = fileInfo;
+                        }
+                    }
+                }
+            }
+        }
+
+        watcher->addPath(QDir::homePath() + "/.local/share/recently-used.xbel");
+    };
+
+    handleFileChanged();
+    connect(watcher, &QFileSystemWatcher::fileChanged, this, handleFileChanged, Qt::QueuedConnection);
 }
 
 bool RecentController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
@@ -81,28 +119,12 @@ bool RecentController::openFileLocation(const QSharedPointer<DFMOpenFileLocation
 
 const QList<DAbstractFileInfoPointer> RecentController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
+    Q_UNUSED(event)
+
     QList<DAbstractFileInfoPointer> list;
 
-    QFile file(QDir::homePath() + "/.local/share/recently-used.xbel");
-    if (file.open(QIODevice::ReadOnly)) {
-        QXmlStreamReader reader(&file);
-
-        while (!reader.atEnd()) {
-            if (!reader.readNextStartElement() ||
-                 reader.name() != "bookmark") {
-                continue;
-            }
-
-            const auto &location = reader.attributes().value("href");
-            if (!location.isEmpty()) {
-                DUrl url = DUrl(location.toString());
-                QFileInfo info(url.toLocalFile());
-
-                if (info.exists() && info.isFile()) {
-                    list << DAbstractFileInfoPointer(new RecentFileInfo(url));
-                }
-            }
-        }
+    for (RecentPointer rp : m_recentNodes) {
+        list.append(DAbstractFileInfoPointer(rp));
     }
 
     return list;
@@ -115,5 +137,5 @@ const DAbstractFileInfoPointer RecentController::createFileInfo(const QSharedPoi
 
 DAbstractFileWatcher *RecentController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
-    return new DFileWatcher(QDir::homePath() + "/.local/share/recently-used.xbel");
+    return new RecentFileWatcher(event->url());
 }

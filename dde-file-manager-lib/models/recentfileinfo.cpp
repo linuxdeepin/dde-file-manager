@@ -26,7 +26,7 @@
 RecentFileInfo::RecentFileInfo(const DUrl &url)
     : DAbstractFileInfo(url)
 {
-      setProxy(DAbstractFileInfoPointer(new DFileInfo(DUrl::fromLocalFile(url.path()))));
+    setProxy(DAbstractFileInfoPointer(new DFileInfo(DUrl::fromLocalFile(url.path()))));
 }
 
 bool RecentFileInfo::makeAbsolute()
@@ -59,6 +59,8 @@ QFileDevice::Permissions RecentFileInfo::permissions() const
 
 QVector<MenuAction> RecentFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
+    Q_UNUSED(type)
+
     QVector<MenuAction> actions;
 
     actions << MenuAction::DisplayAs;
@@ -70,7 +72,8 @@ QVector<MenuAction> RecentFileInfo::menuActionList(DAbstractFileInfo::MenuType t
 
 QList<int> RecentFileInfo::userColumnRoles() const
 {
-    static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileUserRole + 1
+    static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileNameRole
+                                                     << DFileSystemModel::FileLastReadRole
                                                      << DFileSystemModel::FileSizeRole
                                                      << DFileSystemModel::FileMimeTypeRole;
 
@@ -79,16 +82,13 @@ QList<int> RecentFileInfo::userColumnRoles() const
 
 QVariant RecentFileInfo::userColumnDisplayName(int userColumnRole) const
 {
-    if (userColumnRole == DFileSystemModel::FileUserRole + 1)
-        return QObject::tr("Path", "SearchFileInfo");
-
     return DAbstractFileInfo::userColumnDisplayName(userColumnRole);
 }
 
 QVariant RecentFileInfo::userColumnData(int userColumnRole) const
 {
-    if (userColumnRole == DFileSystemModel::FileUserRole + 1) {
-        return fileUrl().fileName();
+    if (userColumnRole == DFileSystemModel::FileLastReadRole) {
+        return m_lastReadTimeStr;
     }
 
     return DAbstractFileInfo::userColumnData(userColumnRole);
@@ -96,7 +96,7 @@ QVariant RecentFileInfo::userColumnData(int userColumnRole) const
 
 int RecentFileInfo::userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const
 {
-    if (userColumnRole == DFileSystemModel::FileUserRole + 1)
+    if (userColumnRole == DFileSystemModel::FileNameRole)
         return -1;
 
     return DAbstractFileInfo::userColumnWidth(userColumnRole, fontMetrics);
@@ -117,6 +117,11 @@ DUrl RecentFileInfo::mimeDataUrl() const
     return DUrl(fileUrl().fragment());
 }
 
+DUrl RecentFileInfo::parentUrl() const
+{
+    return DUrl("recent:///");
+}
+
 bool RecentFileInfo::canRedirectionFileUrl() const
 {
     return fileUrl().hasFragment();
@@ -125,4 +130,11 @@ bool RecentFileInfo::canRedirectionFileUrl() const
 DUrl RecentFileInfo::redirectedFileUrl() const
 {
     return mimeDataUrl();
+}
+
+void RecentFileInfo::setReadDateTime(const QString &time)
+{
+    m_lastReadTime = QDateTime::fromString(time, Qt::ISODate);
+    m_lastReadTime = m_lastReadTime.toLocalTime();
+    m_lastReadTimeStr = m_lastReadTime.toString(dateTimeFormat());
 }
