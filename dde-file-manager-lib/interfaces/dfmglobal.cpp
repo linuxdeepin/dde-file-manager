@@ -1112,6 +1112,11 @@ float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, co
         }
     }
 
+    // blumia: not sure why original author assume non_base_latin_count must greater than zero...
+    if (non_base_latin_count == 0) {
+        return 1.0f;
+    }
+
     float c = qreal(hep_count) / non_base_latin_count / 1.2;
 
     c -= qreal(replacement_count) / non_base_latin_count;
