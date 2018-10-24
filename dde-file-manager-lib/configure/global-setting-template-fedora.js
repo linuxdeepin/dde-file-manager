@@ -139,8 +139,13 @@
                             "text": qsTranslate("GenerateSettingTranslate", "Hide file extension when rename"),
                             "type": "checkbox",
                             "default": true
+                        },
+                        {
+                            "key": "show_recent",
+                            "text": qsTranslate("GenerateSettingTranslate", "Display recent file entry in left pannel"),
+                            "type": "checkbox",
+                            "default": true
                         }
-
                     ]
                 }
 
