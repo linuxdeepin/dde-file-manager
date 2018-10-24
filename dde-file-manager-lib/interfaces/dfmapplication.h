@@ -67,7 +67,8 @@ public:
         GA_ShowedHiddenFiles, // 显示隐藏文件
         GA_ShowedFileSuffixOnRename, // 重命名文件时显示后缀
         GA_DisableNonRemovableDeviceUnmount, // 禁用本地磁盘卸载功能
-        GA_HiddenSystemPartition // 隐藏系统分区
+        GA_HiddenSystemPartition, // 隐藏系统分区
+        GA_ShowRecentFileEntry // 在侧边栏显示“最近文件”入口
     };
 
     Q_ENUM(GenericAttribute)

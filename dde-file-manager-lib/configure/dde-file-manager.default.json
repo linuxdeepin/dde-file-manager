@@ -24,6 +24,7 @@
         "OverrideFileChooserDialog": true,
         "ShowedHiddenOnSearch": true,
         "ShowedHiddenFiles": false,
+        "ShowRecentFileEntry": true,
         "ShowedFileSuffixOnRename": true,
         "DisableNonRemovableDeviceUnmount": false,
         "HiddenSystemPartition": false

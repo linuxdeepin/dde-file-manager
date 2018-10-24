@@ -392,7 +392,9 @@ void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::G
 
     switch (groupType) {
     case DFMSideBar::GroupName::Common:
-        group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::RecentPath));
+        if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowRecentFileEntry).toBool()) {
+            group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::RecentPath));
+        }
         group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::HomePath));
         group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::DesktopPath));
         group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::VideosPath));
@@ -405,8 +407,9 @@ void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::G
     case DFMSideBar::GroupName::Device:
         group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::ComputerRootPath));
 
-        if (!DFMApplication::instance()->genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool())
+        if (!DFMApplication::instance()->genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool()) {
             group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::Root));
+        }
         break;
     case DFMSideBar::GroupName::Bookmark: {
         QList<DAbstractFileInfoPointer> bookmark_infos = DFileService::instance()->getChildren(q_func(), DUrl(BOOKMARK_ROOT),
