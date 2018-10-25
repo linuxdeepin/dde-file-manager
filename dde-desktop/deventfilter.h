@@ -82,7 +82,7 @@ public:
 //            break;
 //        }
 
-        CanvasGridView *view{ dynamic_cast<CanvasGridView *>(watched) };
+        CanvasGridView *view{ qobject_cast<CanvasGridView *>(watched) };
 
         if (view && Desktop::instance()->getView() == view && event->type() == QEvent::DragEnter) {
             CanvasGridView::m_flag.store(true, std::memory_order_release);
