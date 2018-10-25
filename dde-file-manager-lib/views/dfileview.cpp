@@ -2116,6 +2116,10 @@ void DFileView::setMenuActionWhitelist(const QSet<MenuAction> &actionList)
     Q_D(DFileView);
 
     d->menuWhitelist = actionList;
+
+    if (focusWidget() == this) {
+        DFileMenuManager::setActionWhitelist(d->menuWhitelist);
+    }
 }
 
 void DFileView::setMenuActionBlacklist(const QSet<MenuAction> &actionList)
@@ -2123,6 +2127,10 @@ void DFileView::setMenuActionBlacklist(const QSet<MenuAction> &actionList)
     Q_D(DFileView);
 
     d->menuBlacklist = actionList;
+
+    if (focusWidget() == this) {
+        DFileMenuManager::setActionBlacklist(d->menuBlacklist);
+    }
 }
 
 void DFileView::updateHorizontalOffset()
