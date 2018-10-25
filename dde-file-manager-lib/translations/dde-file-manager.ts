@@ -284,7 +284,7 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2546"/>
+        <location filename="../views/dfileview.cpp" line="2554"/>
         <source>(Reverse)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -371,15 +371,15 @@
 <context>
     <name>DeepinStorage</name>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="50"/>
-        <source>data</source>
-        <comment>Data Partition</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="110"/>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="125"/>
         <source>%1 Volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="50"/>
+        <source>Data Disk</source>
+        <comment>Data Partition</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -949,13 +949,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="145"/>
-        <location filename="../configure/global-setting-template-pro.js" line="145"/>
-        <location filename="../configure/global-setting-template.js" line="145"/>
-        <source>Display recent file entry in left pannel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../configure/global-setting-template-fedora.js" line="156"/>
         <location filename="../configure/global-setting-template-pro.js" line="157"/>
         <location filename="../configure/global-setting-template.js" line="157"/>
@@ -1002,6 +995,13 @@
         <location filename="../configure/global-setting-template-pro.js" line="183"/>
         <location filename="../configure/global-setting-template.js" line="183"/>
         <source>Show hidden files in search results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="145"/>
+        <location filename="../configure/global-setting-template-pro.js" line="145"/>
+        <location filename="../configure/global-setting-template.js" line="145"/>
+        <source>Display recent file entry in left panel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1532,12 +1532,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1073"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1075"/>
         <source>Allow to execute as program</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="854"/>
+        <location filename="../dialogs/propertydialog.cpp" line="856"/>
         <source>Local disk</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1545,104 +1545,99 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="786"/>
+        <location filename="../dialogs/propertydialog.cpp" line="788"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="764"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="803"/>
-        <location filename="../dialogs/propertydialog.cpp" line="850"/>
-        <location filename="../dialogs/propertydialog.cpp" line="879"/>
+        <location filename="../dialogs/propertydialog.cpp" line="805"/>
+        <location filename="../dialogs/propertydialog.cpp" line="852"/>
+        <location filename="../dialogs/propertydialog.cpp" line="881"/>
         <source>Contains</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="787"/>
+        <location filename="../dialogs/propertydialog.cpp" line="789"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="765"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="788"/>
+        <location filename="../dialogs/propertydialog.cpp" line="790"/>
         <source>Time read</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="789"/>
+        <location filename="../dialogs/propertydialog.cpp" line="791"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="767"/>
         <source>Time modified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="811"/>
+        <location filename="../dialogs/propertydialog.cpp" line="813"/>
         <source>Link path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="849"/>
-        <location filename="../dialogs/propertydialog.cpp" line="877"/>
+        <location filename="../dialogs/propertydialog.cpp" line="851"/>
+        <location filename="../dialogs/propertydialog.cpp" line="879"/>
         <source>Device type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="851"/>
-        <location filename="../dialogs/propertydialog.cpp" line="880"/>
+        <location filename="../dialogs/propertydialog.cpp" line="853"/>
+        <location filename="../dialogs/propertydialog.cpp" line="882"/>
         <source>Free space</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="852"/>
-        <location filename="../dialogs/propertydialog.cpp" line="881"/>
+        <location filename="../dialogs/propertydialog.cpp" line="854"/>
+        <location filename="../dialogs/propertydialog.cpp" line="883"/>
         <source>Total space</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="878"/>
-        <source>Filesystem format</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../dialogs/propertydialog.cpp" line="987"/>
+        <location filename="../dialogs/propertydialog.cpp" line="989"/>
         <source>Access denied</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="988"/>
-        <location filename="../dialogs/propertydialog.cpp" line="998"/>
-        <source>Executable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../dialogs/propertydialog.cpp" line="989"/>
         <location filename="../dialogs/propertydialog.cpp" line="990"/>
-        <source>Write only</source>
+        <location filename="../dialogs/propertydialog.cpp" line="1000"/>
+        <source>Executable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="991"/>
         <location filename="../dialogs/propertydialog.cpp" line="992"/>
-        <source>Read only</source>
+        <source>Write only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="993"/>
         <location filename="../dialogs/propertydialog.cpp" line="994"/>
+        <source>Read only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/propertydialog.cpp" line="995"/>
+        <location filename="../dialogs/propertydialog.cpp" line="996"/>
         <source>Read-write</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1068"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1070"/>
         <source>Others</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1066"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1068"/>
         <source>Owner</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1067"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1069"/>
         <source>Group</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2006,53 +2001,53 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="273"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="277"/>
         <source>Local disk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="275"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="279"/>
         <source>Removable disk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="277"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="281"/>
         <source>Network shared directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="279"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="283"/>
         <source>Android mobile device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="281"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="285"/>
         <source>Apple mobile device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="283"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="287"/>
         <source>Camera</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="285"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="289"/>
         <source>Dvd</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="287"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="291"/>
         <source>Unknown device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="294"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="298"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="626"/>
         <source>%1 item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="296"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="300"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="628"/>
         <source>%1 items</source>
         <translation type="unfinished"></translation>
