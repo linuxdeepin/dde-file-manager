@@ -409,7 +409,7 @@ void PropertyDialog::updateFolderSize(qint64 size)
 void PropertyDialog::renameFile()
 {
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
-    m_edit->setPlainText(fileInfo->fileName());
+    m_edit->setPlainText(fileInfo->fileNameOfRename());
     m_editStackWidget->setCurrentIndex(0);
     m_edit->setFixedHeight(m_textShowFrame->height());
 
@@ -453,7 +453,9 @@ void PropertyDialog::showTextShowFrame()
         }
 
         if (fileService->renameFile(this, oldUrl, newUrl)) {
-            m_url = newUrl;
+            if (!fileInfo->isDesktopFile()) { // this is a dirty fix.
+                m_url = newUrl;
+            }
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
 
             initTextShowFrame(fileInfo->fileDisplayName());
