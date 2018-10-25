@@ -1,3 +1,50 @@
+<a name="4.6.9"></a>
+## 4.6.9 (2018-10-25)
+
+
+#### Features
+
+*   setting for toggle recent file entry in sidebar ([bc832825](https://github.com/linuxdeepin/dde-file-manager/commit/bc832825d8ae9862414a49d4f3ebea8dcc9489e7))
+*   'open with' context menu for folder ([be91c1f1](https://github.com/linuxdeepin/dde-file-manager/commit/be91c1f1a7ae4ba783aa1ab5384b2ad67b8a7300))
+*   do not limit the minimum height of the line edit on rename(icon mode) ([89237a2c](https://github.com/linuxdeepin/dde-file-manager/commit/89237a2c78af3477150b62b74e5cfeec28b26ca0))
+*   auto resize column width when the column header view section handle double clicked ([45339f7d](https://github.com/linuxdeepin/dde-file-manager/commit/45339f7d26b0094fd1afee088698d8fbca839eea))
+*   enable open-with option for debug build ([6dadfa75](https://github.com/linuxdeepin/dde-file-manager/commit/6dadfa75c599cba067a144ab719dcf16de598c83))
+*   support use windows style display partition name ([543321c0](https://github.com/linuxdeepin/dde-file-manager/commit/543321c023d1eeff3ef866b2979c50810ffcecf5))
+*   add two unidentified mimetype. ([cf603dc9](https://github.com/linuxdeepin/dde-file-manager/commit/cf603dc9f7c2d72b47648b4b38e0ffb875ed2b8e))
+*   root mode supports HiDPI. ([130278cd](https://github.com/linuxdeepin/dde-file-manager/commit/130278cdf1c1f1bd80876fcc0c4534c7ae39b856))
+* **ctxMenu:**
+  *  Support template folder to create new file ([c36406c7](https://github.com/linuxdeepin/dde-file-manager/commit/c36406c76ed3358f74cdd8f8fe9449480c874408))
+  *  Support template file to create new file ([285016c2](https://github.com/linuxdeepin/dde-file-manager/commit/285016c2814a8bcc89eb27dd692c0c869429ed0f))
+* **mountplugin:**  add network device back ([0eda4d9c](https://github.com/linuxdeepin/dde-file-manager/commit/0eda4d9c48e38a85aa64f794efed3c9c4c281380))
+* **propertyDlg:**  show fs idtype when debug enabled ([564b48a4](https://github.com/linuxdeepin/dde-file-manager/commit/564b48a4c37ed9008e63e48937ff6a7a73ee9427))
+* **recent:**  monitor file support. ([374a2ed9](https://github.com/linuxdeepin/dde-file-manager/commit/374a2ed9f7d205b94d7dfe3612f4c81f83f53c69))
+* **usb_formatter:**  support HiDPI. ([472cf954](https://github.com/linuxdeepin/dde-file-manager/commit/472cf954d3ebac03aa06d2b1eb316b29263aa1b9))
+
+#### Bug Fixes
+
+*   use qobject_cast instead of dynamic_cast ([be2f8ed4](https://github.com/linuxdeepin/dde-file-manager/commit/be2f8ed416719b924589a775a3e0e8b7d56c7028))
+*   preview not working on dde-desktop ([88ce6879](https://github.com/linuxdeepin/dde-file-manager/commit/88ce6879abc8ec83a53ca632b2b2a01b4f0a99dd))
+*   wrong context menu when switching views ([7193e4db](https://github.com/linuxdeepin/dde-file-manager/commit/7193e4dba20788152135e426b3f53becf6f27f26))
+*   rename on property dialog for .desktop file ([f8037edf](https://github.com/linuxdeepin/dde-file-manager/commit/f8037edf79cc5da8b8ac9e0a115f9a0878695bd4))
+*   i18n strings and typo ([a091ea8f](https://github.com/linuxdeepin/dde-file-manager/commit/a091ea8fa68a16475013c91ca7c242efc7bd0d7d))
+*   avoid divide zero. ([ed0ed24e](https://github.com/linuxdeepin/dde-file-manager/commit/ed0ed24e9cee50439d9e5d3dcd024cb414b8e044))
+*   Cannot select item in some case (#55 on gh) ([1543830e](https://github.com/linuxdeepin/dde-file-manager/commit/1543830e221eda26c0a8c1a744c5e3199983ee02))
+*   always update vfs device info when changed ([68b4db18](https://github.com/linuxdeepin/dde-file-manager/commit/68b4db188175788688d1a9850c2fb3d76f42bbec))
+*   file model event order not correct ([09dce730](https://github.com/linuxdeepin/dde-file-manager/commit/09dce730f6cca9770874440d6e98946dd0f2ff11))
+*   keep the directory modified datetime when copy/move it ([89dcc877](https://github.com/linuxdeepin/dde-file-manager/commit/89dcc877101d1e25a5044f0bdc96bb24ff753a40))
+*   crash when preview file ([a974e0b9](https://github.com/linuxdeepin/dde-file-manager/commit/a974e0b98751b77c1d1702e6078da6a3c8c30738))
+*   replace gvfs-open with gio ([887f1a35](https://github.com/linuxdeepin/dde-file-manager/commit/887f1a35ef0a40aad90a8aeda0d2b3e4c1abd78b))
+* **ComputerDialog:**  add computer name. ([f2714f9e](https://github.com/linuxdeepin/dde-file-manager/commit/f2714f9e92e26ee0d29ae329aa8231b7fdd8ec06))
+* **DFileSystemModel:**  check idle when do refresh ([172de247](https://github.com/linuxdeepin/dde-file-manager/commit/172de247307806f93bc59d1b1f3c874d1f847e47))
+* **desktop:**  avoid infinity EP query loop ([eddc6f2e](https://github.com/linuxdeepin/dde-file-manager/commit/eddc6f2e2981bd3bcdbc186f809ac2c2cdd9d181))
+* **mountPlugin:**
+  *  crash when vfsDevice create failed ([4e84a38b](https://github.com/linuxdeepin/dde-file-manager/commit/4e84a38bfb2534f02ea7e23f9775fcdd4b514f52))
+  *  crash when icon ptr is null ([b43a4e28](https://github.com/linuxdeepin/dde-file-manager/commit/b43a4e2800ee883b4751e0e7ccf1f98f4be2cb8a))
+* **statusBar:**  file size and number of files are incorrectly calculated ([3a63071a](https://github.com/linuxdeepin/dde-file-manager/commit/3a63071a796f1c9dc09e4f5cf1c2a88a40ba7cf3))
+* **trash:**  not exist warning when copy file out ([cf5c3560](https://github.com/linuxdeepin/dde-file-manager/commit/cf5c3560a89494a36c8f6dbf339c2b1dba57f1fb))
+
+
+
 <a name="4.6.8.4"></a>
 ## 4.6.8.4 (2018-09-13)
 
