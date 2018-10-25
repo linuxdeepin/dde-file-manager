@@ -142,7 +142,7 @@
                         },
                         {
                             "key": "show_recent",
-                            "text": qsTranslate("GenerateSettingTranslate", "Display recent file entry in left pannel"),
+                            "text": qsTranslate("GenerateSettingTranslate", "Display recent file entry in left panel"),
                             "type": "checkbox",
                             "default": true
                         }
