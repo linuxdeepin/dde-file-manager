@@ -131,6 +131,10 @@ int main(int argc, char *argv[])
 
     app.loadTranslator();
 
+    // init application object
+    DFMApplication fmApp;
+    Q_UNUSED(fmApp)
+
     qDebug() << "start " << app.applicationName() << app.applicationVersion();
 
     if (!preload) {
@@ -151,10 +155,6 @@ int main(int argc, char *argv[])
 
         Desktop::instance()->initDebugDBus(conn);
     }
-
-    // init application object
-    DFMApplication fmApp;
-    Q_UNUSED(fmApp)
 
     // init pixmap cache size limit, 20MB * devicePixelRatio
     QPixmapCache::setCacheLimit(20 * 1024 * app.devicePixelRatio());
