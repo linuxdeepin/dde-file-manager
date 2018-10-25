@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
 
     app.setOrganizationName("deepin");
     app.setApplicationName("dde-desktop");
-    app.setApplicationVersion((GIT_VERSION));
+    app.setApplicationVersion(DApplication::buildVersion((GIT_VERSION)));
     app.setTheme("light");
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
