@@ -1,3 +1,15 @@
+<a name="4.6.8.8"></a>
+## 4.6.8.8 (2018-10-25)
+
+
+#### Bug Fixes
+
+*   use qobject_cast instead of dynamic_cast ([8c2cb915](https://github.com/linuxdeepin/dde-file-manager/commit/8c2cb91512be2ffb13966a80df7ab1881916a898))
+*   rename on property dialog for .desktop file ([272bd33c](https://github.com/linuxdeepin/dde-file-manager/commit/272bd33c0b4718e798cd8e25845f5fd4a6521324))
+*   avoid divide zero. ([6916bf03](https://github.com/linuxdeepin/dde-file-manager/commit/6916bf03a61dc29b7fb4213c53da75af8df7ea15))
+
+
+
 <a name="4.6.8.7"></a>
 ## 4.6.8.7 (2018-10-10)
 
