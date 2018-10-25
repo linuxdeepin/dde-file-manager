@@ -875,7 +875,7 @@ QFrame *PropertyDialog::createDeviceInfoWidget(UDiskDeviceInfoPointer info)
 {
     QFrame *widget = new QFrame(this);
     SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Device type"));
-    SectionKeyLabel *formatSectionLabel = new SectionKeyLabel(QObject::tr("Filesystem format"));
+    SectionKeyLabel *formatSectionLabel = new SectionKeyLabel("Filesystem format");
     SectionKeyLabel *fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
     SectionKeyLabel *freeSectionLabel = new SectionKeyLabel(QObject::tr("Free space"));
     SectionKeyLabel *totalSectionLabel = new SectionKeyLabel(QObject::tr("Total space"));

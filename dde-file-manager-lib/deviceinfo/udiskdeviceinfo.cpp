@@ -47,7 +47,7 @@
 DFM_USE_NAMESPACE
 
 #if 0 // storage i10n
-QT_TRANSLATE_NOOP3("DeepinStorage", "data", "Data Partition")
+QT_TRANSLATE_NOOP3("DeepinStorage", "Data Disk", "Data Partition")
 #endif
 
 UDiskDeviceInfo::UDiskDeviceInfo()
@@ -205,12 +205,16 @@ QString UDiskDeviceInfo::fileName() const
 
 QString UDiskDeviceInfo::fileDisplayName() const
 {
+    static QMap<QString, const char*> i18nMap {
+        {"data", "Data Disk"}
+    };
+
     QString displayName = getName();
 
     if (!displayName.isEmpty()) {
         if (displayName.startsWith(ddeI18nSym)) {
-            displayName = displayName.mid(ddeI18nSym.size(), displayName.size() - ddeI18nSym.size());
-            displayName = qApp->translate("DeepinStorage", displayName.toUtf8().constData());
+            QString i18nKey = displayName.mid(ddeI18nSym.size(), displayName.size() - ddeI18nSym.size());
+            displayName = qApp->translate("DeepinStorage", i18nMap.value(i18nKey, i18nKey.toUtf8().constData()));
         }
     } else {
         displayName = FileUtils::formatSize(size());
