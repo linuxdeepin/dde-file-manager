@@ -1145,6 +1145,13 @@ void CanvasGridView::rowsInserted(const QModelIndex &parent, int first, int last
     update();
 }
 
+void CanvasGridView::keyboardSearch(const QString &search)
+{
+    if (search.isEmpty())
+        return;
+
+    d->fileViewHelper->keyboardSearch(search.toLocal8Bit().at(0));
+}
 
 void CanvasGridView::fakeDropEvent() noexcept
 {

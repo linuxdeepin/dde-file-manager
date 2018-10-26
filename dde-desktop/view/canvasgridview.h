@@ -86,6 +86,7 @@ public:
 
 
     virtual void rowsInserted(const QModelIndex &index, int first, int last) override;
+    virtual void keyboardSearch(const QString &search) override;
 
 
     void fakeDropEvent()noexcept;
