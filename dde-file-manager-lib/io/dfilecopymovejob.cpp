@@ -838,7 +838,7 @@ open_file: {
     currentJobFileHandle = toDevice->handle();
 
 //    int writtenDataSize = 0;
-    uLong source_checksum = adler32(0L, Z_NULL, 0);
+    uLong source_checksum = adler32(0L, nullptr, 0);
 
     Q_FOREVER {
         qint64 current_pos = fromDevice->pos();
@@ -974,7 +974,7 @@ open_file: {
     }
 
     char data[blockSize + 1];
-    ulong target_checksum = adler32(0L, Z_NULL, 0);
+    ulong target_checksum = adler32(0L, nullptr, 0);
 
     qint64 elapsed_time_checksum = 0;
 
@@ -1025,7 +1025,7 @@ open_file: {
         return false;
     }
 
-    qCDebug(fileJob(), "adler value: 0x%x", source_checksum);
+    qCDebug(fileJob(), "adler value: 0x%lx", source_checksum);
 
     return true;
 }
