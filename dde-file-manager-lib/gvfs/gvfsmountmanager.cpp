@@ -33,6 +33,7 @@
 #include "../partman/readusagemanager.h"
 #include "../interfaces/dfileservices.h"
 #include "../interfaces/dfmevent.h"
+#include "deviceinfo/udisklistener.h"
 #include "dialogs/dialogmanager.h"
 #include "partman/command.h"
 #include "mountsecretdiskaskpassworddialog.h"
@@ -100,6 +101,7 @@ void GvfsMountManager::initConnect()
         g_signal_connect (m_gVolumeMonitor, "volume-removed", (GCallback)&GvfsMountManager::monitor_volume_removed, NULL);
         g_signal_connect (m_gVolumeMonitor, "volume-changed", (GCallback)&GvfsMountManager::monitor_volume_changed, NULL);
     }
+    connect(this, &GvfsMountManager::loadDiskInfoFinished, deviceListener, &UDiskListener::update);
 }
 
 GvfsMountManager *GvfsMountManager::instance()

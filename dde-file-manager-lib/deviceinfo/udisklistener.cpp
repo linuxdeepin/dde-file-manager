@@ -105,7 +105,6 @@ void UDiskListener::initConnect()
     connect(m_diskMgr, &DFMDiskManager::fileSystemRemoved, this, [this](const QString& path) {
         delete m_fsDevMap.take(path);
     });
-    connect(gvfsMountManager, &GvfsMountManager::loadDiskInfoFinished, this, &UDiskListener::update);
     connect(gvfsMountManager, &GvfsMountManager::mount_added, this, &UDiskListener::addMountDiskInfo);
     connect(gvfsMountManager, &GvfsMountManager::mount_removed, this, &UDiskListener::removeMountDiskInfo);
     connect(gvfsMountManager, &GvfsMountManager::volume_added, this, &UDiskListener::addVolumeDiskInfo);
