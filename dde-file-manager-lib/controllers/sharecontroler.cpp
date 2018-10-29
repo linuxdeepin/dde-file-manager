@@ -111,6 +111,13 @@ DAbstractFileWatcher *ShareControler::createFileWatcher(const QSharedPointer<DFM
     return new ShareFileWatcher();
 }
 
+bool ShareControler::shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const
+{
+    return DFileService::instance()->shareFolder(event->sender(), realUrl(event->url()),
+                                                 event->name(), event->isWritable(),
+                                                 event->allowGuest());
+}
+
 bool ShareControler::unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const
 {
     return DFileService::instance()->unShareFolder(event->sender(), realUrl(event->url()));
