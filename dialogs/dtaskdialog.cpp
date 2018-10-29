@@ -70,6 +70,9 @@ public:
         switch (error) {
         case DFileCopyMoveJob::FileExistsError:
         case DFileCopyMoveJob::DirectoryExistsError:
+            if (sourceInfo->fileUrl() == targetInfo->fileUrl()) {
+                return DFileCopyMoveJob::CoexistAction;
+            }
             job->togglePause();
             m_taskWidget->updateMessageByJob();
             m_taskWidget->showConflict();
