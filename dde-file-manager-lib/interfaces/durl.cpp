@@ -717,6 +717,8 @@ QString DUrl::toLocalFile() const
         return path();
     } else if (isTaggedFile()) {
         return taggedLocalFilePath();
+    } else if (isUserShareFile()) {
+        return QString(path()).remove(USERSHARE_ROOT);
     } else {
         return QUrl::toLocalFile();
     }

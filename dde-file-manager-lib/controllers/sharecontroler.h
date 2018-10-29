@@ -22,7 +22,8 @@ public:
     const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const Q_DECL_OVERRIDE;
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
 
-    bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const Q_DECL_OVERRIDE;
+    bool shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const override;
+    bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const override;
 
     bool addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const override;
     bool removeBookmark(const QSharedPointer<DFMRemoveBookmarkEvent> &event) const override;

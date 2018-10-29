@@ -116,6 +116,7 @@ void ShareInfoFrame::initConnect()
 void ShareInfoFrame::handleCheckBoxChanged(const bool& checked)
 {
     bool ret = doShareInfoSetting();
+
     if (ret) {
         if(checked){
             emit folderShared(m_fileinfo->absoluteFilePath());
