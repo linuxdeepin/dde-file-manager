@@ -1601,7 +1601,13 @@ QModelIndex DFileView::moveCursor(QAbstractItemView::CursorAction cursorAction, 
             index = current.sibling(current.row() - 1, current.column());
         }
 
+        // rekols: Loop to find the next file item that can be selected.
+        while (!(index.flags() & Qt::ItemIsSelectable) && index.isValid()) {
+            index = index.sibling(index.row() - 1, index.column());
+        }
+
         break;
+
     case MoveRight:
         if (DFMGlobal::keyShiftIsPressed()) {
             index = DListView::moveCursor(cursorAction, modifiers);
@@ -1613,7 +1619,12 @@ QModelIndex DFileView::moveCursor(QAbstractItemView::CursorAction cursorAction, 
             index = current.sibling(current.row() + 1, current.column());
         }
 
+        while (!(index.flags() & Qt::ItemIsSelectable) && index.isValid()) {
+            index = index.sibling(index.row() + 1, index.column());
+        }
+
         break;
+
     default:
         index = DListView::moveCursor(cursorAction, modifiers);
         break;

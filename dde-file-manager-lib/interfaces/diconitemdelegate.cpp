@@ -626,7 +626,7 @@ void DIconItemDelegate::paint(QPainter *painter,
     /// draw icon
 
     if (isSelected) {
-        paintIcon(painter, opt.icon, icon_rect, Qt::AlignCenter, QIcon::Selected);
+        paintIcon(painter, opt.icon, icon_rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
     } else if (isDropTarget) {
         QPixmap pixmap = opt.icon.pixmap(icon_rect.size().toSize());
         QPainter p(&pixmap);
