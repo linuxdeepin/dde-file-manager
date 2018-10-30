@@ -86,14 +86,12 @@ FileIconItem::FileIconItem(QWidget *parent) :
 
     auto vlayout = new QVBoxLayout;
     vlayout->setContentsMargins(0, 0, 0, 0);
+    vlayout->setSpacing(0);
     setLayout(vlayout);
 
     vlayout->addWidget(icon, 0, Qt::AlignTop | Qt::AlignHCenter);
-
-    DAnchorsBase::setAnchor(edit, Qt::AnchorTop, icon, Qt::AnchorBottom);
-    DAnchorsBase::setAnchor(edit, Qt::AnchorHorizontalCenter, icon, Qt::AnchorHorizontalCenter);
-
-    DAnchorsBase::getAnchorBaseByWidget(edit)->setTopMargin(ICON_MODE_ICON_SPACING);
+    vlayout->addSpacing(ICON_MODE_ICON_SPACING);
+    vlayout->addWidget(edit, 0, Qt::AlignTop | Qt::AlignHCenter);
 
     setFrameShape(QFrame::NoFrame);
     setFocusProxy(edit);
