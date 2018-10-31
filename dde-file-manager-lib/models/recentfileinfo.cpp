@@ -72,7 +72,7 @@ QVector<MenuAction> RecentFileInfo::menuActionList(DAbstractFileInfo::MenuType t
 
 QList<int> RecentFileInfo::userColumnRoles() const
 {
-    static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileNameRole
+    static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileDisplayNameRole
                                                      << DFileSystemModel::FileLastReadRole
                                                      << DFileSystemModel::FileSizeRole
                                                      << DFileSystemModel::FileMimeTypeRole;
