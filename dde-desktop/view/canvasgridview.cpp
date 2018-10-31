@@ -1077,6 +1077,7 @@ void CanvasGridView::resizeEvent(QResizeEvent * event)
 
     if (d->backgroundLabel) {
         d->backgroundLabel->resize(event->size());
+        d->updateBackground(devicePixelRatioF());
     }
 }
 
