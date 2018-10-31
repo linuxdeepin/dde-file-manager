@@ -1496,7 +1496,10 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
     switch (action) {
     case Qt::CopyAction:
         if (urlList.count() > 0) {
-            fileService->pasteFile(this, DFMGlobal::CopyAction, toUrl, urlList);
+            // blumia: 如果不在新线程跑的话，用户就只能在复制完毕之后才能进行新的拖拽操作。
+            QtConcurrent::run([=](){
+                fileService->pasteFile(this, DFMGlobal::CopyAction, toUrl, urlList);
+            });
         }
         break;
     case Qt::LinkAction:

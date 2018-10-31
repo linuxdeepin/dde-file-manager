@@ -40,6 +40,7 @@
 #include <QPainter>
 #include <QSequentialAnimationGroup>
 #include <QVariantAnimation>
+#include <QtConcurrent>
 
 #include <DSvgRenderer>
 
@@ -551,7 +552,10 @@ bool DFMSideBarItem::dropMimeData(const QMimeData *data, Qt::DropAction action) 
 
     switch (action) {
     case Qt::CopyAction:
-        fileService->pasteFile(this, DFMGlobal::CopyAction, destUrl, oriUrlList);
+        // blumia: should run in another thread or user won't do another DnD opreation unless the copy action done.
+        QtConcurrent::run([=](){
+            fileService->pasteFile(this, DFMGlobal::CopyAction, destUrl, oriUrlList);
+        });
         break;
     case Qt::LinkAction:
         break;
