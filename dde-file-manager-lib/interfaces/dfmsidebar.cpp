@@ -75,6 +75,7 @@ private:
     void initMountedVolumes();
     void initUserShareItem();
     void initTagsConnection();
+    void initRecentConnection();
     void setGroupSaveItemOrder(DFMSideBarItemGroup *group, DFMSideBar::GroupName groupType);
     void addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::GroupName groupType);
 
@@ -89,6 +90,7 @@ DFMSideBarPrivate::DFMSideBarPrivate(DFMSideBar *qq)
     initMountedVolumes();
     initUserShareItem();
     initTagsConnection();
+    initRecentConnection();
 }
 
 void DFMSideBarPrivate::groupConnectionRegister(DFMSideBarItemGroup * group)
@@ -367,6 +369,22 @@ void DFMSideBarPrivate::initTagsConnection()
     q->connect(tags_watcher, &DAbstractFileWatcher::fileAttributeChanged, group, [group](const DUrl & url) {
         DFMSideBarItem *item = group->findItem(url);
         item->setIconFromThemeConfig("BookmarkItem." + TagManager::instance()->getTagColorName(url.tagName()));
+    });
+}
+
+void DFMSideBarPrivate::initRecentConnection()
+{
+    Q_Q(DFMSideBar);
+
+    q->connect(DFMApplication::instance(), &DFMApplication::recentDisplayChanged, q, [=] {
+        DFMSideBarItemGroup *group = groupNameMap[q->groupName(DFMSideBar::GroupName::Common)];
+        DFMSideBarItem *item = group->findItem(DUrl(RECENT_ROOT));
+
+        if (!item) {
+            group->insertItem(0, new DFMSideBarDefaultItem(DFMStandardPaths::StandardLocation::RecentPath));
+        } else {
+            q->removeItem(item);
+        }
     });
 }
 

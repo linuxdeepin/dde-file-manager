@@ -103,6 +103,7 @@ Q_SIGNALS:
     void previewCompressFileChanged(bool enable);
     void previewAttributeChanged(GenericAttribute ga, bool enable);
     void showedHiddenFilesChanged(bool enable);
+    void recentDisplayChanged(bool enable);
 
     void genericSettingCreated(DFMSettings *settings);
     void appSettingCreated(DFMSettings *settings);
