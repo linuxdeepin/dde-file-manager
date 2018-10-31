@@ -192,6 +192,7 @@ public:
         Type,
         CreatedDate,
         LastModifiedDate,
+        LastRead,
         DeletionDate,
         SourcePath,
         AbsolutePath,

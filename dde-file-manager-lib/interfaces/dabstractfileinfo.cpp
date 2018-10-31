@@ -1677,6 +1677,8 @@ MenuAction DAbstractFileInfo::menuActionByColumnRole(int role) const
         return MenuAction::CreatedDate;
     case DFileSystemModel::FileLastModifiedRole:
         return MenuAction::LastModifiedDate;
+    case DFileSystemModel::FileLastReadRole:
+        return MenuAction::LastRead;
     default:
         return MenuAction::Unknow;
     }
