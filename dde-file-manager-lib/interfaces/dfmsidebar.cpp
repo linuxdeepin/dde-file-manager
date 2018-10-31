@@ -29,6 +29,7 @@
 #include "views/dfmsidebardeviceitem.h"
 #include "views/dfilemanagerwindow.h"
 #include "views/dfmsidebarnetworkitem.h"
+#include "views/dfmsidebarrecentitem.h"
 #include "controllers/bookmarkmanager.h"
 #include "deviceinfo/udisklistener.h"
 
@@ -381,7 +382,7 @@ void DFMSideBarPrivate::initRecentConnection()
         DFMSideBarItem *item = group->findItem(DUrl(RECENT_ROOT));
 
         if (enable && !item) {
-            group->insertItem(0, new DFMSideBarDefaultItem(DFMStandardPaths::StandardLocation::RecentPath));
+            group->insertItem(0, new DFMSideBarRecentItem(DFMStandardPaths::StandardLocation::RecentPath));
         } else if (item && !enable) {
             q->removeItem(item);
         }
@@ -411,7 +412,7 @@ void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::G
     switch (groupType) {
     case DFMSideBar::GroupName::Common:
         if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowRecentFileEntry).toBool()) {
-            group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::RecentPath));
+            group->appendItem(new DFMSideBarRecentItem(DFM_STD_LOCATION::RecentPath));
         }
         group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::HomePath));
         group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::DesktopPath));
