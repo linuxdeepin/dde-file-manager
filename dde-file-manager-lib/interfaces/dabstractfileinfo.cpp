@@ -90,6 +90,7 @@ COMPARE_FUN_DEFINE(fileSize, Size, DAbstractFileInfo)
 COMPARE_FUN_DEFINE(lastModified, Modified, DAbstractFileInfo)
 COMPARE_FUN_DEFINE(fileTypeDisplayName, Mime, DAbstractFileInfo)
 COMPARE_FUN_DEFINE(created, Created, DAbstractFileInfo)
+COMPARE_FUN_DEFINE(lastRead, LastRead, DAbstractFileInfo)
 } /// end namespace FileSortFunction
 
 #define CALL_PROXY(Fun)\
@@ -1098,6 +1099,8 @@ DAbstractFileInfo::CompareFunction DAbstractFileInfo::compareFunByColumn(int col
         return FileSortFunction::compareFileListByMime;
     case DFileSystemModel::FileCreatedRole:
         return FileSortFunction::compareFileListByCreated;
+    case DFileSystemModel::FileLastReadRole:
+        return FileSortFunction::compareFileListByLastRead;
     default:
         return CompareFunction();
     }
