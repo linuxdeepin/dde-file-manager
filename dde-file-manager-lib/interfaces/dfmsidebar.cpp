@@ -376,13 +376,13 @@ void DFMSideBarPrivate::initRecentConnection()
 {
     Q_Q(DFMSideBar);
 
-    q->connect(DFMApplication::instance(), &DFMApplication::recentDisplayChanged, q, [=] {
+    q->connect(DFMApplication::instance(), &DFMApplication::recentDisplayChanged, q, [=] (bool enable) {
         DFMSideBarItemGroup *group = groupNameMap[q->groupName(DFMSideBar::GroupName::Common)];
         DFMSideBarItem *item = group->findItem(DUrl(RECENT_ROOT));
 
-        if (!item) {
+        if (enable && !item) {
             group->insertItem(0, new DFMSideBarDefaultItem(DFMStandardPaths::StandardLocation::RecentPath));
-        } else {
+        } else if (item && !enable) {
             q->removeItem(item);
         }
     });

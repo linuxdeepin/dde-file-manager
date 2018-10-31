@@ -527,7 +527,7 @@ bool DFMSettings::setValueNoNotify(const QString &group, const QString &key, con
 
         changed  = true;
     } else {
-        changed = this->value(group, key, value) == value;
+        changed = this->value(group, key, value) != value;
     }
 
     d->writableData.setValue(group, key, value);
