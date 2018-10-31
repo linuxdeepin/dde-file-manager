@@ -219,14 +219,16 @@ void Tab::setBorderLeft(const bool flag)
 QString Tab::getDisplayNameByUrl(const DUrl &url) const
 {
     QString urlDisplayName;
-    if(url.isComputerFile()){
+    if (url.isComputerFile()) {
         if(systemPathManager->isSystemPath(url.toString()))
             urlDisplayName = systemPathManager->getSystemPathDisplayNameByPath(url.toString());
-    } else if(url == DUrl::fromTrashFile("/")){
+    } else if (url == DUrl::fromTrashFile("/")) {
         urlDisplayName = systemPathManager->getSystemPathDisplayName("Trash");
-    } else if (PluginManager::instance()->getViewInterfacesMap().keys().contains(url.scheme())){
+    } else if (PluginManager::instance()->getViewInterfacesMap().keys().contains(url.scheme())) {
         urlDisplayName = PluginManager::instance()->getViewInterfaceByScheme(url.scheme())->bookMarkText();
-    } else{
+    } else if (url == DUrl(RECENT_ROOT)) {
+        urlDisplayName = systemPathManager->getSystemPathDisplayName("Recent");
+    } else {
         const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, url);
 
         if (fileInfo)
