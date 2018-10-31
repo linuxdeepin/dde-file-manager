@@ -1273,7 +1273,7 @@ QString DFileSystemModel::roleName(int role)
     case FileCreatedRole:
         return tr("Time created");
     case FileLastReadRole:
-        return tr("Last read time");
+        return tr("Last access");
     default: return QString();
     }
 }
