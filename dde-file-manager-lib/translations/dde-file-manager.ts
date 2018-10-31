@@ -276,6 +276,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1276"/>
+        <source>Last access</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../models/searchfileinfo.cpp" line="119"/>
         <source>Path</source>
         <translation type="unfinished"></translation>
@@ -284,7 +289,7 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2554"/>
+        <location filename="../views/dfileview.cpp" line="2565"/>
         <source>(Reverse)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -363,7 +368,7 @@
 <context>
     <name>DTaskDialog</name>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="78"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="81"/>
         <source>This action is not supported</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1093,32 +1098,32 @@
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1312"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1314"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1315"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1325"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1354"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1475"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1506"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1317"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1327"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1356"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1477"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1508"/>
         <source>Confirm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1322"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1503"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1324"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1505"/>
         <source>Cannot find the mounting device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1351"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1353"/>
         <source>Cannot unmount the device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1471"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1473"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1240,126 +1245,126 @@
 <context>
     <name>MoveCopyTaskWidget</name>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="350"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="353"/>
         <source>Skip</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="349"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="352"/>
         <source>Keep both</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="351"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="468"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="354"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="471"/>
         <source>Replace</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="372"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="375"/>
         <source>Do not ask again</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="466"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="469"/>
         <source>merge</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="436"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="439"/>
         <source>Copying %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="437"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="440"/>
         <source>Copy to %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="440"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="443"/>
         <source>Moving %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="441"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="444"/>
         <source>Move to %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="443"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="446"/>
         <source>Restoring %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="444"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="447"/>
         <source>Restore to %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="446"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="449"/>
         <source>Deleting %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="449"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="452"/>
         <source>Trashing %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="457"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="460"/>
         <source>Calculating space, please wait</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="460"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="463"/>
         <source>File named %1 already exists in target folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="461"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="464"/>
         <source>Original path %1 target path %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="476"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="479"/>
         <source>Retry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="570"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="582"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="573"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="585"/>
         <source>Time modified:%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="572"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="575"/>
         <source>Original folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="575"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="578"/>
         <source>Original file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="585"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="588"/>
         <source>Target folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="588"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="591"/>
         <source>Target file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="573"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="586"/>
-        <source>Contains:%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="576"/>
         <location filename="../../dialogs/dtaskdialog.cpp" line="589"/>
+        <source>Contains:%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="579"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="592"/>
         <source>Size:%1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2097,7 +2102,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../models/recentfileinfo.cpp" line="83"/>
         <location filename="../models/searchfileinfo.cpp" line="124"/>
         <source>Path</source>
         <comment>SearchFileInfo</comment>
@@ -2140,12 +2144,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="884"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="887"/>
         <source>1 task in progress</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="886"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="889"/>
         <source>%1 tasks in progress</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2810,7 +2814,7 @@
 <context>
     <name>UDiskListener</name>
     <message>
-        <location filename="../deviceinfo/udisklistener.cpp" line="187"/>
+        <location filename="../deviceinfo/udisklistener.cpp" line="186"/>
         <source>Failed to rename the label</source>
         <translation type="unfinished"></translation>
     </message>
