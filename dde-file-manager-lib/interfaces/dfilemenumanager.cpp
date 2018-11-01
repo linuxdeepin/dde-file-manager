@@ -1003,8 +1003,13 @@ bool DFileMenuManager::whetherShowTagActions(const QList<DUrl> &urls)
     return false;
 #endif // DISABLE_TAG_SUPPORT
 
-    for (const DUrl &path : urls) {
-        bool temp{ DAnythingMonitorFilter::instance()->whetherFilterCurrentPath(path.toLocalFile().toLocal8Bit()) };
+    for (const DUrl &url : urls) {
+        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(nullptr, url);
+
+        if (!info)
+            return false;
+
+        bool temp{ DAnythingMonitorFilter::instance()->whetherFilterCurrentPath(info->toLocalFile().toLocal8Bit()) };
 
         if (!temp) {
             return false;

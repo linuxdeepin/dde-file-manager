@@ -394,12 +394,12 @@ QStringList MimesAppsManager::getRecommendedApps(const DUrl &url)
     // blumia: maybe we should always use QMimeDatebase to get file mime type, instead of using gio.
     //         but since we can't guarantee simply replace the gio one with the qt one can always works,
     //         so now we only apply this change to avfs file.
-    if (url.isAVFSFile()) {
+//    if (url.isAVFSFile()) {
         DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, url);
         mimeType = info->mimeType().name();
-    } else {
-        mimeType = FileUtils::getMimeTypeByGIO(url.isSearchFile() ? url.searchedFileUrl().toString() : url.toString());
-    }
+//    } else {
+//        mimeType = FileUtils::getMimeTypeByGIO(url.isSearchFile() ? url.searchedFileUrl().toString() : url.toString());
+//    }
 
     QMimeDatabase db;
 

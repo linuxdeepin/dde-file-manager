@@ -40,13 +40,12 @@ public:
     QVector<MenuAction> menuActionList(MenuType type) const override;
     QSet<MenuAction> disableMenuActionList() const override;
     QList<int> userColumnRoles() const override;
-    QVariant userColumnDisplayName(int userColumnRole) const override;
     QVariant userColumnData(int userColumnRole) const override;
     int userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const override;
-    QString subtitleForEmptyFloder() const override;
-    Qt::ItemFlags fileItemDisableFlags() const override;
     DUrl mimeDataUrl() const override;
     DUrl parentUrl() const override;
+
+    QString toLocalFile() const override;
 
     void setReadDateTime(const QString &time);
 

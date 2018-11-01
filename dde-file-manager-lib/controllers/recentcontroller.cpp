@@ -124,7 +124,6 @@ bool RecentController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent>
 bool RecentController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
 {
     DUrlList list;
-
     for (const DUrl &url : event->urlList()) {
         list << DUrl::fromLocalFile(url.path());
     }
@@ -132,8 +131,53 @@ bool RecentController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsTo
     return DFileService::instance()->writeFilesToClipboard(event->sender(), event->action(), list);
 }
 
+bool RecentController::compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const
+{
+    DUrlList list;
+    for (const DUrl &url : event->urlList()) {
+        list << DUrl::fromLocalFile(url.path());
+    }
+
+    return DFileService::instance()->compressFiles(event->sender(), list);
+}
+
+bool RecentController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const
+{
+    return DFileService::instance()->createSymlink(event->sender(), DUrl::fromLocalFile(event->fileUrl().path()), event->toUrl());
+}
+
 bool RecentController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
+}
+
+bool RecentController::setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const
+{
+    if (!event->url().isValid()) {
+        return false;
+    }
+
+    QList<QString> tags = event->tags();
+    return DFileService::instance()->setFileTags(this, DUrl::fromLocalFile(event->fileUrl().path()), tags);
+}
+
+bool RecentController::removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const
+{
+    if (!event->url().isValid()) {
+        return false;
+    }
+
+    return DFileService::instance()->removeTagsOfFile(this, DUrl::fromLocalFile(event->fileUrl().path()), event->tags());
+}
+
+QList<QString> RecentController::getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const
+{
+    QList<DUrl> list = event->urlList();
+
+    for (DUrl &item : list) {
+        item = DUrl::fromLocalFile(item.path());
+    }
+
+    return DFileService::instance()->getTagsThroughFiles(this, list);
 }
 
 const QList<DAbstractFileInfoPointer> RecentController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
