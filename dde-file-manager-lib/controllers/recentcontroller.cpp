@@ -81,19 +81,18 @@ RecentController::RecentController(QObject *parent)
                 if (!location.isEmpty()) {
                     DUrl url = DUrl(location.toString());
                     QFileInfo info(url.toLocalFile());
+                    DUrl recentUrl = url;
+                    recentUrl.setScheme(RECENT_SCHEME);
 
                     if (info.exists() && info.isFile()) {
-                        if (!m_recentNodes.contains(url)) {
-                            DUrl recentUrl = url;
-                            recentUrl.setScheme(RECENT_SCHEME);
+                        if (!m_recentNodes.contains(recentUrl)) {
+                            RecentFileInfo *fileInfo = new RecentFileInfo(url);
+
+                            m_recentNodes[recentUrl] = fileInfo;
+
                             DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
                                                               &DAbstractFileWatcher::subfileCreated,
                                                               recentUrl);
-
-                            RecentFileInfo *fileInfo = new RecentFileInfo(url);
-                            fileInfo->setReadDateTime(added.toString());
-
-                            m_recentNodes[url] = fileInfo;
                         }
                     }
                 }
@@ -132,7 +131,11 @@ const QList<DAbstractFileInfoPointer> RecentController::getChildren(const QShare
 
 const DAbstractFileInfoPointer RecentController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
 {
-    return DAbstractFileInfoPointer(new RecentFileInfo(event->url()));
+    if (event->url() == DUrl(RECENT_ROOT)) {
+        return DAbstractFileInfoPointer(new RecentFileInfo(event->url()));
+    }
+
+    return DAbstractFileInfoPointer(m_recentNodes.value(event->url()));
 }
 
 DAbstractFileWatcher *RecentController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
