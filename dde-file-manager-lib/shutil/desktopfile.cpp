@@ -38,7 +38,7 @@ DesktopFile::DesktopFile(const QString &fileName) {
     m_fileName = fileName;
 
     // File validity
-    if (!QFile::exists(fileName)) {
+    if (m_fileName.isEmpty() || !QFile::exists(fileName)) {
         return;
     }
 
