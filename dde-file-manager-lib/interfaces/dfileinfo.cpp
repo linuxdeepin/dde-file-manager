@@ -418,6 +418,22 @@ bool DFileInfo::isReadable() const
     Q_D(const DFileInfo);
 
     if (FileUtils::isGvfsMountFile(absoluteFilePath())) {
+        // blumia: when user visiting dir as anonymous, file permission won't work
+        //         if you want to check user can list a dir or not. i.e. you'll see
+        //         a 700 permission with your username on it, but you can't do readdir
+        //         at all.
+        if (isDir()) {
+            struct dirent *next;
+            DIR* dirp = opendir(d->fileInfo.absoluteFilePath().toUtf8().constData());
+            if (!dirp) return false;
+            errno = 0;
+            next = readdir (dirp);
+            closedir(dirp);
+            if (!next && errno != 0) {
+//                qDebug() << errno;
+                return false;
+            }
+        }
         return true;
     } else {
         return d->fileInfo.isReadable();
