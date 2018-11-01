@@ -20,6 +20,7 @@
 #include "recentfileinfo.h"
 #include "dfileservices.h"
 #include "dfilesystemmodel.h"
+#include "private/dabstractfileinfo_p.h"
 
 #include <QXmlStreamReader>
 #include <QFile>
@@ -27,7 +28,7 @@
 RecentFileInfo::RecentFileInfo(const DUrl &url)
     : DAbstractFileInfo(url)
 {
-    setProxy(DFileService::instance()->createFileInfo(0, DUrl::fromLocalFile(url.path())));
+    setProxy(DFileService::instance()->createFileInfo(nullptr, DUrl::fromLocalFile(url.path())));
 
     QFile file(QDir::homePath() + "/.local/share/recently-used.xbel");
     if (file.open(QIODevice::ReadOnly)) {
@@ -61,16 +62,15 @@ bool RecentFileInfo::makeAbsolute()
 
 bool RecentFileInfo::exists() const
 {
-    return DAbstractFileInfo::exists() || QFile::exists(fileUrl().toLocalFile());
+    if (fileUrl() == DUrl(RECENT_ROOT))
+        return true;
+
+    return DAbstractFileInfo::exists();
 }
 
 bool RecentFileInfo::isDir() const
 {
-    if (fileUrl().path() == "/") {
-        return true;
-    }
-
-    return DAbstractFileInfo::isDir();
+    return fileUrl() == DUrl(RECENT_ROOT);
 }
 
 bool RecentFileInfo::isReadable() const
@@ -85,39 +85,51 @@ bool RecentFileInfo::isWritable() const
 
 QFileDevice::Permissions RecentFileInfo::permissions() const
 {
-    QFileDevice::Permissions p = DAbstractFileInfo::permissions();
+    if (fileUrl() == DUrl(RECENT_ROOT)) {
+        return QFileDevice::ReadGroup | QFileDevice::ReadOwner | QFileDevice::ReadOther;
+    }
 
-    p = p &(QFileDevice::WriteGroup | QFileDevice::WriteOwner | QFileDevice::WriteUser | QFileDevice::WriteOther);
+    QFileDevice::Permissions p = DAbstractFileInfo::permissions();
 
     return p;
 }
 
 QVector<MenuAction> RecentFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
-    QVector<MenuAction> actionKeys;
+    Q_D(const DAbstractFileInfo);
+
+    QVector<MenuAction> actions;
 
     if (type == SpaceArea) {
-        actionKeys << MenuAction::DisplayAs
-                   << MenuAction::SortBy;
-    } else if (type == SingleFile || type == MultiFiles) {
-        actionKeys << MenuAction::Open
-                   << MenuAction::OpenFileLocation
-                   << MenuAction::OpenWith
-                   << MenuAction::Separator
-                   << MenuAction::Copy
-                   << MenuAction::RemoveFromRecent
-                   << MenuAction::Separator
-                   << MenuAction::Property;
+        actions << MenuAction::DisplayAs;
+        actions << MenuAction::SortBy;
+        actions << MenuAction::SelectAll;
+
+        return actions;
     }
 
-    return actionKeys;
+    actions = d->proxy->menuActionList(type);
+
+    qDebug() << actions;
+
+    actions.insert(1, MenuAction::OpenFileLocation);
+    actions.insert(actions.indexOf(MenuAction::Delete), MenuAction::RemoveFromRecent);
+    actions.removeOne(MenuAction::Cut);
+    actions.removeOne(MenuAction::Rename);
+    actions.removeOne(MenuAction::Delete);
+    actions.removeOne(MenuAction::DecompressHere);
+
+    return actions;
 }
 
 QSet<MenuAction> RecentFileInfo::disableMenuActionList() const
 {
-    QSet<MenuAction> list;
+    Q_D(const DAbstractFileInfo);
 
-    return list;
+    if (fileUrl() == DUrl(RECENT_ROOT))
+        return {};
+
+    return d->proxy->disableMenuActionList();
 }
 
 QList<int> RecentFileInfo::userColumnRoles() const
@@ -128,11 +140,6 @@ QList<int> RecentFileInfo::userColumnRoles() const
                                                      << DFileSystemModel::FileMimeTypeRole;
 
     return userColumnRoles;
-}
-
-QVariant RecentFileInfo::userColumnDisplayName(int userColumnRole) const
-{
-    return DAbstractFileInfo::userColumnDisplayName(userColumnRole);
 }
 
 QVariant RecentFileInfo::userColumnData(int userColumnRole) const
@@ -152,24 +159,19 @@ int RecentFileInfo::userColumnWidth(int userColumnRole, const QFontMetrics &font
     return DAbstractFileInfo::userColumnWidth(userColumnRole, fontMetrics);
 }
 
-QString RecentFileInfo::subtitleForEmptyFloder() const
-{
-    return QObject::tr("Folder is empty");
-}
-
-Qt::ItemFlags RecentFileInfo::fileItemDisableFlags() const
-{
-    return Qt::ItemIsEditable | Qt::ItemIsDropEnabled;
-}
-
 DUrl RecentFileInfo::mimeDataUrl() const
 {
-    return DUrl::fromLocalFile(absoluteFilePath());
+    return DUrl::fromLocalFile(toLocalFile());
 }
 
 DUrl RecentFileInfo::parentUrl() const
 {
     return DUrl(RECENT_ROOT);
+}
+
+QString RecentFileInfo::toLocalFile() const
+{
+    return fileUrl().path();
 }
 
 void RecentFileInfo::setReadDateTime(const QString &time)
