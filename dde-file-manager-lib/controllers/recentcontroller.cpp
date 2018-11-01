@@ -25,6 +25,7 @@
 
 #include <QFileSystemWatcher>
 #include <QXmlStreamReader>
+#include <QDomDocument>
 #include <QDebug>
 
 class RecentFileWatcherPrivate : public DAbstractFileWatcherPrivate
@@ -87,7 +88,6 @@ RecentController::RecentController(QObject *parent)
                     if (info.exists() && info.isFile()) {
                         if (!m_recentNodes.contains(recentUrl)) {
                             RecentFileInfo *fileInfo = new RecentFileInfo(recentUrl);
-
                             m_recentNodes[recentUrl] = fileInfo;
 
                             DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
@@ -148,6 +148,52 @@ bool RecentController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent>
 
 bool RecentController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
+    DUrlList list;
+    for (const DUrl &url : event->urlList()) {
+        list << DUrl::fromLocalFile(url.path());
+    }
+
+    QFile file(QDir::homePath() + "/.local/share/recently-used.xbel");
+    if (!file.open(QIODevice::ReadOnly)) {
+        return false;
+    }
+
+    QDomDocument doc;
+    if (!doc.setContent(&file)) {
+        file.close();
+        return false;
+    }
+    file.close();
+
+    QDomElement root = doc.documentElement();
+    auto node_list = root.elementsByTagName("bookmark");
+
+    for (int i = 0; i < node_list.count(); ) {
+        const DUrl fileUrl = DUrl(node_list.at(i).toElement().attribute("href"));
+
+        if (list.contains(fileUrl)) {
+            root.removeChild(node_list.at(i));
+
+            DUrl recentUrl(fileUrl);
+            recentUrl.setScheme(RECENT_SCHEME);
+            m_recentNodes.remove(recentUrl);
+
+            DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
+                                              &DAbstractFileWatcher::fileDeleted,
+                                              recentUrl);
+        } else {
+            ++i;
+        }
+    }
+
+    if (!file.open(QIODevice::WriteOnly)) {
+        return false;
+    }
+
+    QTextStream out(&file);
+    out << doc.toString();
+
+    return true;
 }
 
 bool RecentController::setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const

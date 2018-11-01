@@ -8,7 +8,7 @@
 
 include(../common/common.pri)
 
-QT       += core gui svg dbus x11extras concurrent multimedia dbus KCodecs
+QT       += core gui svg dbus x11extras concurrent multimedia dbus xml KCodecs
 #private
 QT       += gui-private
 
