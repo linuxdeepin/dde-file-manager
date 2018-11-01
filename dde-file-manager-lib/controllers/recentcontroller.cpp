@@ -86,7 +86,7 @@ RecentController::RecentController(QObject *parent)
 
                     if (info.exists() && info.isFile()) {
                         if (!m_recentNodes.contains(recentUrl)) {
-                            RecentFileInfo *fileInfo = new RecentFileInfo(url);
+                            RecentFileInfo *fileInfo = new RecentFileInfo(recentUrl);
 
                             m_recentNodes[recentUrl] = fileInfo;
 
@@ -106,14 +106,34 @@ RecentController::RecentController(QObject *parent)
     connect(watcher, &QFileSystemWatcher::fileChanged, this, handleFileChanged, Qt::QueuedConnection);
 }
 
-bool RecentController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
-{
-    return DFileService::instance()->openFile(event->sender(), DUrl(event->url().fragment()));
-}
-
 bool RecentController::openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const
 {
-    return DFileService::instance()->openFileLocation(event->sender(), DUrl(event->url().fragment()));
+    return DFileService::instance()->openFileLocation(event->sender(), DUrl::fromLocalFile(event->url().path()));
+}
+
+bool RecentController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
+{
+    return DFileService::instance()->openFile(event->sender(), DUrl::fromLocalFile(event->url().path()));
+}
+
+bool RecentController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const
+{
+    return DFileService::instance()->openFileByApp(event->sender(), event->appName(), DUrl::fromLocalFile(event->url().path()));
+}
+
+bool RecentController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
+{
+    DUrlList list;
+
+    for (const DUrl &url : event->urlList()) {
+        list << DUrl::fromLocalFile(url.path());
+    }
+
+    return DFileService::instance()->writeFilesToClipboard(event->sender(), event->action(), list);
+}
+
+bool RecentController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
+{
 }
 
 const QList<DAbstractFileInfoPointer> RecentController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const

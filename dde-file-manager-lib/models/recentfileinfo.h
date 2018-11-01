@@ -33,9 +33,12 @@ public:
     bool makeAbsolute() override;
     bool exists() const override;
     bool isDir() const override;
+    bool isReadable() const override;
+    bool isWritable() const override;
 
     QFileDevice::Permissions permissions() const override;
-    QVector<MenuAction> menuActionList(MenuType type = SingleFile) const override;
+    QVector<MenuAction> menuActionList(MenuType type) const override;
+    QSet<MenuAction> disableMenuActionList() const override;
     QList<int> userColumnRoles() const override;
     QVariant userColumnDisplayName(int userColumnRole) const override;
     QVariant userColumnData(int userColumnRole) const override;
@@ -44,9 +47,6 @@ public:
     Qt::ItemFlags fileItemDisableFlags() const override;
     DUrl mimeDataUrl() const override;
     DUrl parentUrl() const override;
-
-    bool canRedirectionFileUrl() const override;
-    DUrl redirectedFileUrl() const override;
 
     void setReadDateTime(const QString &time);
 

@@ -760,6 +760,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::Unmount] = QObject::tr("Unmount");
     actionKeys[MenuAction::Eject] = QObject::tr("Eject");
     actionKeys[MenuAction::SafelyRemoveDrive] = QObject::tr("Safely Remove");
+    actionKeys[MenuAction::RemoveFromRecent] = QObject::tr("Remove");
     actionKeys[MenuAction::Name] = QObject::tr("Name");
     actionKeys[MenuAction::Size] = QObject::tr("Size");
     actionKeys[MenuAction::Type] = QObject::tr("Type");
