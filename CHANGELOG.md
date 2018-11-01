@@ -1,3 +1,38 @@
+<a name="4.6.10"></a>
+## 4.6.10 (2018-11-01)
+
+
+#### Features
+
+*   support recent file settings are displayed. ([a5ea5541](https://github.com/linuxdeepin/dde-file-manager/commit/a5ea5541388eaf4b382c5aaf21669be537977825))
+* **desktop:**  support keyboard chinese positioning. ([85e366f5](https://github.com/linuxdeepin/dde-file-manager/commit/85e366f5c3e5844df559b3ef355ea660247e5a37))
+* **xbel:**  support for removing files from recent. ([1d728071](https://github.com/linuxdeepin/dde-file-manager/commit/1d7280710838d5d52edaab8a3fc0af730f8dfc3c))
+
+#### Bug Fixes
+
+*   remove warning of style sheet ([7e1b5782](https://github.com/linuxdeepin/dde-file-manager/commit/7e1b578251314f6ae3a65739b11fed59e4640ac6))
+*   recent uses normal right menu. ([55265e1f](https://github.com/linuxdeepin/dde-file-manager/commit/55265e1f9e28d9492a166cc3ed89000df59e5886))
+*   check only when dir got accessed ([a8603248](https://github.com/linuxdeepin/dde-file-manager/commit/a860324810af132f5f8462bb90a7d54fb091add5))
+*   override the recent right menu. ([e00987e0](https://github.com/linuxdeepin/dde-file-manager/commit/e00987e03e207c59bb0a0cbe96f857bf07bb0f9d))
+*   check smb dir permission with anonymous access ([a057e515](https://github.com/linuxdeepin/dde-file-manager/commit/a057e515b95b78dc3f356c551b1e0431de4b79ee))
+*   allowed DnD when previous DnD copy not finished ([57c42479](https://github.com/linuxdeepin/dde-file-manager/commit/57c4247939774a99a2c19d6c90b6ea09904d58e5))
+*   can not sort on recent view ([5bec3eba](https://github.com/linuxdeepin/dde-file-manager/commit/5bec3eba3655e34bc480750916d04a745c03c9f4))
+*   file filtering cannot be selected. ([b372e1d7](https://github.com/linuxdeepin/dde-file-manager/commit/b372e1d7b9358086159f34cd1764cf00d4d8f72c))
+*   check if file are in the same folder ([bea0d224](https://github.com/linuxdeepin/dde-file-manager/commit/bea0d224db441d50d535f371f0f4ea480a44a891))
+*   invalid setting in usershare:/// ([6bc5423e](https://github.com/linuxdeepin/dde-file-manager/commit/6bc5423eb19c2386da66d41fc314ce3cf03e2233))
+*   update device list for open file dialog ([d80d18ed](https://github.com/linuxdeepin/dde-file-manager/commit/d80d18ed21e57e549ecc1da3fcc82c00bb9f7c4d))
+* **DFMSettings:**  no signal when a key first write to config file ([0bf9c69f](https://github.com/linuxdeepin/dde-file-manager/commit/0bf9c69f189977123cacf27dad445213b9e08dc8))
+* **GitHub:**  issue should report to developer-center ([7ec1672d](https://github.com/linuxdeepin/dde-file-manager/commit/7ec1672d8ebcd7162657a8dddc31f42443759a80))
+* **background:**  not update background pixmap when resolution changed ([fffcd811](https://github.com/linuxdeepin/dde-file-manager/commit/fffcd81188ddde127d44ff2e689046e4b4bb6afb))
+* **icon_mode:**  rename editor display incomplete. ([b772bf19](https://github.com/linuxdeepin/dde-file-manager/commit/b772bf1955cc067dd581ae51fcd06c249260d19d))
+* **recent:**
+  *  new item does not show time. ([ea996306](https://github.com/linuxdeepin/dde-file-manager/commit/ea996306dbd05821b541d6981b3fb6ae092f931b))
+  *  sort menu text does not display. ([3db6f293](https://github.com/linuxdeepin/dde-file-manager/commit/3db6f293b59ac91139b7203daf887096c04d185d))
+* **sidebar:**  recent item does not display the property menu. ([7bba0def](https://github.com/linuxdeepin/dde-file-manager/commit/7bba0def1991f41d8267d45eadfb2d3a015be43a))
+* **tabbar:**  no recent name is displayed. ([fa329e8a](https://github.com/linuxdeepin/dde-file-manager/commit/fa329e8ac3d392e892bf90c71652a50899116bee))
+
+
+
 <a name="4.6.9"></a>
 ## 4.6.9 (2018-10-25)
 
