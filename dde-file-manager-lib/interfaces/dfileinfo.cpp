@@ -251,6 +251,15 @@ DFileInfoPrivate::~DFileInfoPrivate()
         requestEP->cancelRequestEP(this);
 }
 
+bool DFileInfoPrivate::isLowSpeedFile() const
+{
+    if (lowSpeedFile < 0) {
+        lowSpeedFile = DStorageInfo::isLowSpeedDevice(fileInfo.absoluteFilePath());
+    }
+
+    return lowSpeedFile;
+}
+
 DFileInfo::DFileInfo(const QString &filePath, bool hasCache)
     : DFileInfo(DUrl::fromLocalFile(filePath), hasCache)
 {
@@ -734,7 +743,6 @@ void DFileInfo::refresh()
     d->icon = QIcon();
     d->epInitialized = false;
     d->hasThumbnail = -1;
-    d->isLowSpeedFile = -1;
 }
 
 DUrl DFileInfo::goToUrlWhenDeleted() const
@@ -751,7 +759,9 @@ void DFileInfo::makeToActive()
 {
     Q_D(DFileInfo);
 
-    d->fileInfo.refresh();
+    if (!d->isLowSpeedFile())
+        d->fileInfo.refresh();
+
     DAbstractFileInfo::makeToActive();
 }
 

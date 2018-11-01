@@ -26,6 +26,8 @@ public:
     DFileInfoPrivate(const DUrl &fileUrl, DFileInfo *qq, bool hasCache = true);
     ~DFileInfoPrivate();
 
+    bool isLowSpeedFile() const;
+
     QFileInfo fileInfo;
     mutable QMimeType mimeType;
     mutable QMimeDatabase::MatchMode mimeTypeMode;
@@ -36,7 +38,7 @@ public:
     mutable bool needThumbnail = false;
     // 小于0时表示此值未初始化，0表示不支持，1表示支持
     mutable qint8 hasThumbnail = -1;
-    mutable qint8 isLowSpeedFile = -1;
+    mutable qint8 lowSpeedFile = -1;
 
     mutable QVariantHash extensionPropertys;
     mutable bool epInitialized = false;
