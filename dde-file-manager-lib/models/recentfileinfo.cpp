@@ -23,10 +23,37 @@
 #include "dfileinfo.h"
 #include "private/dfileinfo_p.h"
 
+#include <QXmlStreamReader>
+#include <QFile>
+
 RecentFileInfo::RecentFileInfo(const DUrl &url)
     : DAbstractFileInfo(url)
 {
     setProxy(DAbstractFileInfoPointer(new DFileInfo(DUrl::fromLocalFile(url.path()))));
+
+    QFile file(QDir::homePath() + "/.local/share/recently-used.xbel");
+    if (file.open(QIODevice::ReadOnly)) {
+        QXmlStreamReader reader(&file);
+
+        while (!reader.atEnd()) {
+            if (!reader.readNextStartElement() ||
+                 reader.name() != "bookmark") {
+                continue;
+            }
+
+            const QStringRef &location = reader.attributes().value("href");
+            const QStringRef &added = reader.attributes().value("added");
+
+            if (!location.isEmpty()) {
+                DUrl findUrl = DUrl(location.toString());
+
+                if (findUrl.toLocalFile() == url.toLocalFile()) {
+                    setReadDateTime(added.toString());
+                    break;
+                }
+            }
+        }
+    }
 }
 
 bool RecentFileInfo::makeAbsolute()
@@ -134,7 +161,6 @@ DUrl RecentFileInfo::redirectedFileUrl() const
 
 void RecentFileInfo::setReadDateTime(const QString &time)
 {
-    m_lastReadTime = QDateTime::fromString(time, Qt::ISODate);
-    m_lastReadTime = m_lastReadTime.toLocalTime();
+    m_lastReadTime = QDateTime::fromString(time, Qt::ISODate).toLocalTime();
     m_lastReadTimeStr = m_lastReadTime.toString(dateTimeFormat());
 }
