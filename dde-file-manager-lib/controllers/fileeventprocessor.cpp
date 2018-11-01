@@ -312,6 +312,10 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
     case DFMGlobal::FormatDevice:
         AppController::instance()->actionFormatDevice(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
         break;
+    case DFMGlobal::RemoveFromRecent:
+        if (event->urlList().first().isRecentFile()) {
+            DFileService::instance()->deleteFiles(event->sender(), event->urlList(), false, true);
+        }
     }
 
     return true;

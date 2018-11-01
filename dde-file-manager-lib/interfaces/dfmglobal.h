@@ -141,6 +141,7 @@ public:
     Q_ENUM(MenuExtension)
 
     enum MenuAction {
+        Unknow,
         Open,
         OpenDisk,
         OpenInNewWindow,
@@ -224,7 +225,10 @@ public:
         PrivateFileToPublic,
 #endif
         ToggleTheme,
-        Unknow,
+
+        // recent
+        RemoveFromRecent,
+
         UserMenuAction = Unknow + 2000
     };
 

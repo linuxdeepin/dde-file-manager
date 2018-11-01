@@ -33,8 +33,12 @@ class RecentController : public DAbstractFileController
 public:
     explicit RecentController(QObject *parent = nullptr);
 
-    bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const override;
     bool openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const override;
+    bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const override;
+    bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const override;
+    bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
+
+    bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const override;
 
     const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const override;
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const override;

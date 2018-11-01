@@ -20,8 +20,6 @@
 #include "recentfileinfo.h"
 #include "dfileservices.h"
 #include "dfilesystemmodel.h"
-#include "dfileinfo.h"
-#include "private/dfileinfo_p.h"
 
 #include <QXmlStreamReader>
 #include <QFile>
@@ -29,7 +27,7 @@
 RecentFileInfo::RecentFileInfo(const DUrl &url)
     : DAbstractFileInfo(url)
 {
-    setProxy(DAbstractFileInfoPointer(new DFileInfo(DUrl::fromLocalFile(url.path()))));
+    setProxy(DFileService::instance()->createFileInfo(0, DUrl::fromLocalFile(url.path())));
 
     QFile file(QDir::homePath() + "/.local/share/recently-used.xbel");
     if (file.open(QIODevice::ReadOnly)) {
@@ -47,7 +45,7 @@ RecentFileInfo::RecentFileInfo(const DUrl &url)
             if (!location.isEmpty()) {
                 DUrl findUrl = DUrl(location.toString());
 
-                if (findUrl.toLocalFile() == url.toLocalFile()) {
+                if (findUrl.toLocalFile() == url.path()) {
                     setReadDateTime(added.toString());
                     break;
                 }
@@ -75,6 +73,16 @@ bool RecentFileInfo::isDir() const
     return DAbstractFileInfo::isDir();
 }
 
+bool RecentFileInfo::isReadable() const
+{
+    return true;
+}
+
+bool RecentFileInfo::isWritable() const
+{
+    return false;
+}
+
 QFileDevice::Permissions RecentFileInfo::permissions() const
 {
     QFileDevice::Permissions p = DAbstractFileInfo::permissions();
@@ -86,15 +94,30 @@ QFileDevice::Permissions RecentFileInfo::permissions() const
 
 QVector<MenuAction> RecentFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
-    Q_UNUSED(type)
+    QVector<MenuAction> actionKeys;
 
-    QVector<MenuAction> actions;
+    if (type == SpaceArea) {
+        actionKeys << MenuAction::DisplayAs
+                   << MenuAction::SortBy;
+    } else if (type == SingleFile || type == MultiFiles) {
+        actionKeys << MenuAction::Open
+                   << MenuAction::OpenFileLocation
+                   << MenuAction::OpenWith
+                   << MenuAction::Separator
+                   << MenuAction::Copy
+                   << MenuAction::RemoveFromRecent
+                   << MenuAction::Separator
+                   << MenuAction::Property;
+    }
 
-    actions << MenuAction::DisplayAs;
-    actions << MenuAction::SortBy;
-    actions << MenuAction::SelectAll;
+    return actionKeys;
+}
 
-    return actions;
+QSet<MenuAction> RecentFileInfo::disableMenuActionList() const
+{
+    QSet<MenuAction> list;
+
+    return list;
 }
 
 QList<int> RecentFileInfo::userColumnRoles() const
@@ -141,22 +164,12 @@ Qt::ItemFlags RecentFileInfo::fileItemDisableFlags() const
 
 DUrl RecentFileInfo::mimeDataUrl() const
 {
-    return DUrl(fileUrl().fragment());
+    return DUrl::fromLocalFile(absoluteFilePath());
 }
 
 DUrl RecentFileInfo::parentUrl() const
 {
-    return DUrl("recent:///");
-}
-
-bool RecentFileInfo::canRedirectionFileUrl() const
-{
-    return fileUrl().hasFragment();
-}
-
-DUrl RecentFileInfo::redirectedFileUrl() const
-{
-    return mimeDataUrl();
+    return DUrl(RECENT_ROOT);
 }
 
 void RecentFileInfo::setReadDateTime(const QString &time)
