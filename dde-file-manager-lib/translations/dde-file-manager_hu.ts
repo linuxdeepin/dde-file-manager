@@ -2,9 +2,9 @@
 <context>
     <name>AppController</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="343"/>
+        <location filename="../controllers/appcontroller.cpp" line="345"/>
         <source>New Folder</source>
-        <translation type="unfinished"/>
+        <translation>Új könyvtár</translation>
     </message>
 </context>
 <context>
@@ -23,47 +23,47 @@
 <context>
     <name>ComputerPropertyDialog</name>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="60"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="62"/>
         <source>Computer</source>
         <translation>Számítógép</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="71"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="73"/>
         <source>Basic Info</source>
         <translation>Alapinformáció</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="80"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="82"/>
         <source>Computer Name</source>
         <translation>Számítógép név</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="81"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="83"/>
         <source>Version</source>
         <translation>Verzió:</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="82"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="84"/>
         <source>Type</source>
         <translation>Típus</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="83"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="85"/>
         <source>Processor</source>
         <translation>Processzor</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="84"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="86"/>
         <source>Memory</source>
         <translation>Memória</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="85"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="87"/>
         <source>Disk</source>
         <translation>Lemez</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="211"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="148"/>
         <source>Bit</source>
         <translation>Bit</translation>
     </message>
@@ -71,32 +71,27 @@
 <context>
     <name>ComputerView</name>
     <message>
-        <location filename="../views/computerview.cpp" line="547"/>
+        <location filename="../views/computerview.cpp" line="551"/>
         <source>My Directories</source>
         <translation>Saját könyvtár</translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="553"/>
+        <location filename="../views/computerview.cpp" line="557"/>
         <source>Internal Disk</source>
         <translation>Belső tároló</translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="559"/>
+        <location filename="../views/computerview.cpp" line="563"/>
         <source>External Disk</source>
         <translation>Külső tároló</translation>
-    </message>
-    <message>
-        <location filename="../views/computerview.cpp" line="676"/>
-        <source>System Disk</source>
-        <translation>Rendszerlemez</translation>
     </message>
 </context>
 <context>
     <name>DFMAddressBar</name>
     <message>
-        <location filename="../views/dfmaddressbar.cpp" line="323"/>
+        <location filename="../views/dfmaddressbar.cpp" line="354"/>
         <source>Search or enter address</source>
-        <translation type="unfinished"/>
+        <translation>Cím megadása vagy keresése</translation>
     </message>
 </context>
 <context>
@@ -104,190 +99,195 @@
     <message>
         <location filename="../controllers/dfmtagcrumbcontroller.cpp" line="55"/>
         <source>Tag information</source>
-        <translation type="unfinished"/>
+        <translation>Címke információ</translation>
     </message>
 </context>
 <context>
     <name>DFileCopyMoveJob</name>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="112"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="113"/>
         <source>Permission error</source>
-        <translation type="unfinished"/>
+        <translation>Jogosultsági hiba</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="114"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="115"/>
         <source>The action is denied</source>
-        <translation type="unfinished"/>
+        <translation>Művelet megtagadva</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="120"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="121"/>
         <source>Failed to open the file</source>
-        <translation type="unfinished"/>
+        <translation>Fájl megnyitása sikertelen</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="122"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="123"/>
         <source>Failed to read the file</source>
-        <translation type="unfinished"/>
+        <translation>Fájl beolvasása sikertelen</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="124"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="125"/>
         <source>Failed to write the file</source>
-        <translation type="unfinished"/>
+        <translation>Fájl írása sikertelen</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="126"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="127"/>
         <source>Failed to create the directory</source>
-        <translation type="unfinished"/>
+        <translation>Könyvtár létrehozása sikertelen</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="128"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="129"/>
         <source>Failed to delete the file</source>
-        <translation type="unfinished"/>
+        <translation>Fájl törlése sikertelen</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="130"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="131"/>
         <source>Failed to move the file</source>
-        <translation type="unfinished"/>
+        <translation>Fájl áthelyezése sikertelen</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="132"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="133"/>
         <source>Original file does not exist</source>
-        <translation type="unfinished"/>
+        <translation>Az eredeti fájl nem létezik</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="134"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="135"/>
         <source>Failed, file size must be less than 4GB</source>
-        <translation type="unfinished"/>
+        <translation>Hiba, a fájlméretnek 4GB-nál kisebbnek kell lennie</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="136"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="137"/>
         <source>Target disk doesn&apos;t have enough space</source>
-        <translation type="unfinished"/>
+        <translation>Céllemezen nincs elegendő szabad hely</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="138"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="139"/>
         <source>File integrity was damaged</source>
-        <translation type="unfinished"/>
+        <translation>Fájlintegritás sérült</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="140"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="141"/>
         <source>The target device is read only</source>
-        <translation type="unfinished"/>
+        <translation>A céleszköz csak olvasható</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="142"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="143"/>
         <source>Target folder is inside the source folder</source>
-        <translation type="unfinished"/>
+        <translation>A célkönyvtár a forráskönyvtárban található</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="387"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="388"/>
         <source>copy</source>
         <comment>Extra name added to new file name when used for file name.</comment>
-        <translation type="unfinished"/>
+        <translation>másolás</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="681"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="685"/>
         <source>Failed to create the directory, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>Könyvtár létrehozása meghiúsult: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="778"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="800"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="782"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="804"/>
         <source>Failed to open the file, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>Fájl megnyitása sikertelen: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="857"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="861"/>
         <source>Failed to read the file, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>Fájl olvasása sikertelen: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="889"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="917"/>
         <source>Failed to write the file, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>Fájl írása sikertelen: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="964"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="993"/>
         <source>File integrity was damaged, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>Fájl integritása sérült: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1019"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1048"/>
         <source>Failed to delete the file, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>Fájl törlése sikertelen: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1079"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1108"/>
         <source>Fail to create symlink, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>Szimbolikus link létrehozása sikertelen: %1</translation>
     </message>
 </context>
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="998"/>
+        <location filename="../views/dfiledialog.cpp" line="1019"/>
         <source>%1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"/>
+        <translation>%1 már létezik, felül kívánja írni?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="999"/>
+        <location filename="../views/dfiledialog.cpp" line="1020"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Mégsem</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1000"/>
+        <location filename="../views/dfiledialog.cpp" line="1021"/>
         <source>Replace</source>
-        <translation type="unfinished"/>
+        <translation>Csere</translation>
     </message>
 </context>
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="832"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="842"/>
         <source>Dark Theme</source>
-        <translation type="unfinished"/>
+        <translation>Sötét téma</translation>
     </message>
 </context>
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="641"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1266"/>
         <location filename="../models/trashfileinfo.cpp" line="331"/>
         <source>Name</source>
         <translation>Név</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="987"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="643"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="994"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1268"/>
         <location filename="../models/searchfileinfo.cpp" line="121"/>
         <source>Time modified</source>
         <translation>Módosítási idő</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="645"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1270"/>
         <source>Size</source>
         <translation>Méret</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="647"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1272"/>
         <source>Type</source>
         <translation>Típus</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="649"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1274"/>
         <source>Time created</source>
         <translation>Létrehozási idő</translation>
     </message>
     <message>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1276"/>
+        <source>Last access</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <location filename="../models/searchfileinfo.cpp" line="119"/>
         <source>Path</source>
-        <translation type="unfinished"/>
+        <translation>Útvonal</translation>
     </message>
 </context>
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2534"/>
+        <location filename="../views/dfileview.cpp" line="2565"/>
         <source>(Reverse)</source>
         <translation>(Visszafele)</translation>
     </message>
@@ -295,70 +295,70 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="525"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="522"/>
         <source>Add tag &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Címke &quot;%1&quot; hozzáadása</translation>
     </message>
 </context>
 <context>
     <name>DStatusBar</name>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="65"/>
+        <location filename="../views/dstatusbar.cpp" line="66"/>
         <source>%1 item</source>
         <translation>%1 elem</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="66"/>
+        <location filename="../views/dstatusbar.cpp" line="67"/>
         <source>%1 items</source>
         <translation>%1 elemek</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="67"/>
+        <location filename="../views/dstatusbar.cpp" line="68"/>
         <source>%1 item selected</source>
         <translation>%1 elem kiválasztva</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="68"/>
+        <location filename="../views/dstatusbar.cpp" line="69"/>
         <source>%1 items selected</source>
         <translation>%1 elemek kiválasztva</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="69"/>
+        <location filename="../views/dstatusbar.cpp" line="70"/>
         <source>%1 folder selected (contains %2)</source>
         <translation>%1 mappa kiválasztva (összes: %2)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="70"/>
+        <location filename="../views/dstatusbar.cpp" line="71"/>
         <source>%1 folders selected (contains %2)</source>
         <translation>%1 mappák kiválasztva (összes: %2)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="71"/>
+        <location filename="../views/dstatusbar.cpp" line="72"/>
         <source>%1 file selected (%2)</source>
         <translation>%1 fájl kiválasztva (%2)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="72"/>
+        <location filename="../views/dstatusbar.cpp" line="73"/>
         <source>%1 files selected (%2)</source>
         <translation>%1 fájlok kiválasztva (%2)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="73"/>
+        <location filename="../views/dstatusbar.cpp" line="74"/>
         <source>%1 folder selected</source>
         <translation>%1 mappa kiválasztva</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="173"/>
+        <location filename="../views/dstatusbar.cpp" line="174"/>
         <source>Filter</source>
         <translation>Szűrő</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="183"/>
+        <location filename="../views/dstatusbar.cpp" line="184"/>
         <source>Save as:</source>
         <translation>Mentés más néven:</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="444"/>
+        <location filename="../views/dstatusbar.cpp" line="481"/>
         <source>Loading...</source>
         <translation>Betöltés...</translation>
     </message>
@@ -366,35 +366,42 @@
 <context>
     <name>DTaskDialog</name>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="78"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="81"/>
         <source>This action is not supported</source>
-        <translation type="unfinished"/>
+        <translation>Ez a művelet nem támogatott</translation>
     </message>
 </context>
 <context>
     <name>DeepinStorage</name>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="47"/>
-        <source>data</source>
+        <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="110"/>
+        <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="125"/>
+        <source>%1 Volume</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="50"/>
+        <source>Data Disk</source>
+        <comment>Data Partition</comment>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="354"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="358"/>
         <location filename="../dialogs/dialogmanager.cpp" line="849"/>
         <location filename="../dialogs/dialogmanager.cpp" line="864"/>
         <source>Operation failed!</source>
         <translation>Hibás művelet!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="355"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="359"/>
         <source>Target folder is inside the source folder!</source>
         <translation>A cél mappa a forrás mappán belül található</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="357"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="361"/>
         <location filename="../dialogs/dialogmanager.cpp" line="771"/>
         <location filename="../dialogs/dialogmanager.cpp" line="784"/>
         <location filename="../dialogs/dialogmanager.cpp" line="793"/>
@@ -406,17 +413,17 @@
         <translation>Rendben</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="380"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="384"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>%1 futtatjuk vagy megjelenítjük a tartalmát?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="381"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="385"/>
         <source>It is an executable text file.</source>
         <translation>Ez egy futtatható szöveges fájl.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="384"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="388"/>
         <location filename="../dialogs/dialogmanager.cpp" line="412"/>
         <location filename="../dialogs/dialogmanager.cpp" line="449"/>
         <location filename="../dialogs/dialogmanager.cpp" line="507"/>
@@ -428,19 +435,19 @@
         <translation>Mégse</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="384"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="388"/>
         <location filename="../dialogs/dialogmanager.cpp" line="414"/>
         <source>Run</source>
         <translation>Futtatás</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="384"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="388"/>
         <location filename="../dialogs/dialogmanager.cpp" line="413"/>
         <source>Run in terminal</source>
         <translation>Futtatás terminálban</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="384"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="388"/>
         <source>Display</source>
         <translation>Megjelenítés</translation>
     </message>
@@ -597,7 +604,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="410"/>
         <source>Do you want to run %1?</source>
-        <translation type="unfinished"/>
+        <translation>Futtatni akarja %1?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="970"/>
@@ -708,56 +715,56 @@
         <location filename="../configure/global-setting-template-pro.js" line="5"/>
         <location filename="../configure/global-setting-template.js" line="5"/>
         <source>Basic</source>
-        <translation type="unfinished"/>
+        <translation>Kezdő</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="9"/>
         <location filename="../configure/global-setting-template-pro.js" line="9"/>
         <location filename="../configure/global-setting-template.js" line="9"/>
         <source>Open behavior</source>
-        <translation type="unfinished"/>
+        <translation>Működés megnyitása</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="14"/>
         <location filename="../configure/global-setting-template-pro.js" line="14"/>
         <location filename="../configure/global-setting-template.js" line="14"/>
         <source>Always open folder in new window</source>
-        <translation type="unfinished"/>
+        <translation>Mindig új ablakban nyissa meg</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="19"/>
         <location filename="../configure/global-setting-template-pro.js" line="19"/>
         <location filename="../configure/global-setting-template.js" line="19"/>
         <source>Open file:</source>
-        <translation type="unfinished"/>
+        <translation>Fájl megnyitás:</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="22"/>
         <location filename="../configure/global-setting-template-pro.js" line="22"/>
         <location filename="../configure/global-setting-template.js" line="22"/>
         <source>Click</source>
-        <translation type="unfinished"/>
+        <translation>Kattintás</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="23"/>
         <location filename="../configure/global-setting-template-pro.js" line="23"/>
         <location filename="../configure/global-setting-template.js" line="23"/>
         <source>Double click</source>
-        <translation type="unfinished"/>
+        <translation>Dupla kattintás</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="31"/>
         <location filename="../configure/global-setting-template-pro.js" line="31"/>
         <location filename="../configure/global-setting-template.js" line="31"/>
         <source>New window and tab</source>
-        <translation type="unfinished"/>
+        <translation>Új ablak és fül</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="35"/>
         <location filename="../configure/global-setting-template-pro.js" line="35"/>
         <location filename="../configure/global-setting-template.js" line="35"/>
         <source>Open from default window:</source>
-        <translation type="unfinished"/>
+        <translation>Megnyitás alapértelmezett ablakban:</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="39"/>
@@ -767,7 +774,7 @@
         <location filename="../configure/global-setting-template.js" line="39"/>
         <location filename="../configure/global-setting-template.js" line="68"/>
         <source>Computer</source>
-        <translation type="unfinished"/>
+        <translation>Számítógép</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="40"/>
@@ -777,7 +784,7 @@
         <location filename="../configure/global-setting-template.js" line="40"/>
         <location filename="../configure/global-setting-template.js" line="69"/>
         <source>Home</source>
-        <translation type="unfinished"/>
+        <translation>Saját mappa</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="41"/>
@@ -787,7 +794,7 @@
         <location filename="../configure/global-setting-template.js" line="41"/>
         <location filename="../configure/global-setting-template.js" line="70"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation>Asztal</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="42"/>
@@ -797,7 +804,7 @@
         <location filename="../configure/global-setting-template.js" line="42"/>
         <location filename="../configure/global-setting-template.js" line="71"/>
         <source>Videos</source>
-        <translation type="unfinished"/>
+        <translation>Videók</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="43"/>
@@ -807,7 +814,7 @@
         <location filename="../configure/global-setting-template.js" line="43"/>
         <location filename="../configure/global-setting-template.js" line="72"/>
         <source>Music</source>
-        <translation type="unfinished"/>
+        <translation>Zene</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="44"/>
@@ -817,7 +824,7 @@
         <location filename="../configure/global-setting-template.js" line="44"/>
         <location filename="../configure/global-setting-template.js" line="73"/>
         <source>Pictures</source>
-        <translation type="unfinished"/>
+        <translation>Képek</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="45"/>
@@ -827,7 +834,7 @@
         <location filename="../configure/global-setting-template.js" line="45"/>
         <location filename="../configure/global-setting-template.js" line="74"/>
         <source>Documents</source>
-        <translation type="unfinished"/>
+        <translation>Dokumentumok</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="46"/>
@@ -837,238 +844,245 @@
         <location filename="../configure/global-setting-template.js" line="46"/>
         <location filename="../configure/global-setting-template.js" line="75"/>
         <source>Downloads</source>
-        <translation type="unfinished"/>
+        <translation>Letöltések</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="63"/>
         <location filename="../configure/global-setting-template-pro.js" line="63"/>
         <location filename="../configure/global-setting-template.js" line="63"/>
         <source>Open in new tab:</source>
-        <translation type="unfinished"/>
+        <translation>Megnyitás új fülön:</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="67"/>
         <location filename="../configure/global-setting-template-pro.js" line="67"/>
         <location filename="../configure/global-setting-template.js" line="67"/>
         <source>Current Directory</source>
-        <translation type="unfinished"/>
+        <translation>Jelenlegi mappa</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="95"/>
         <location filename="../configure/global-setting-template-pro.js" line="95"/>
         <location filename="../configure/global-setting-template.js" line="95"/>
         <source>View</source>
-        <translation type="unfinished"/>
+        <translation>Nézet</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="99"/>
         <location filename="../configure/global-setting-template-pro.js" line="99"/>
         <location filename="../configure/global-setting-template.js" line="99"/>
         <source>Default size:</source>
-        <translation type="unfinished"/>
+        <translation>Alapértelmezett méret:</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="102"/>
         <location filename="../configure/global-setting-template-pro.js" line="102"/>
         <location filename="../configure/global-setting-template.js" line="102"/>
         <source>Extra small</source>
-        <translation type="unfinished"/>
+        <translation>Rendkívül kicsi</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="103"/>
         <location filename="../configure/global-setting-template-pro.js" line="103"/>
         <location filename="../configure/global-setting-template.js" line="103"/>
         <source>Small</source>
-        <translation type="unfinished"/>
+        <translation>Kicsi</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="104"/>
         <location filename="../configure/global-setting-template-pro.js" line="104"/>
         <location filename="../configure/global-setting-template.js" line="104"/>
         <source>Medium</source>
-        <translation type="unfinished"/>
+        <translation>Közepes</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="105"/>
         <location filename="../configure/global-setting-template-pro.js" line="105"/>
         <location filename="../configure/global-setting-template.js" line="105"/>
         <source>Large</source>
-        <translation type="unfinished"/>
+        <translation>Nagy</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="106"/>
         <location filename="../configure/global-setting-template-pro.js" line="106"/>
         <location filename="../configure/global-setting-template.js" line="106"/>
         <source>Extra large</source>
-        <translation type="unfinished"/>
+        <translation>Rendkívül nagy</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="112"/>
         <location filename="../configure/global-setting-template-pro.js" line="112"/>
         <location filename="../configure/global-setting-template.js" line="112"/>
         <source>Default view:</source>
-        <translation type="unfinished"/>
+        <translation>Alapértelmezett nézet:</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="116"/>
         <location filename="../configure/global-setting-template-pro.js" line="116"/>
         <location filename="../configure/global-setting-template.js" line="116"/>
         <source>Icon</source>
-        <translation type="unfinished"/>
+        <translation>Ikon</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="117"/>
         <location filename="../configure/global-setting-template-pro.js" line="117"/>
         <location filename="../configure/global-setting-template.js" line="117"/>
         <source>List</source>
-        <translation type="unfinished"/>
+        <translation>Lista</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="129"/>
         <location filename="../configure/global-setting-template-pro.js" line="129"/>
         <location filename="../configure/global-setting-template.js" line="129"/>
         <source>Hidden files</source>
-        <translation type="unfinished"/>
+        <translation>Rejtett fájlok</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="133"/>
         <location filename="../configure/global-setting-template-pro.js" line="133"/>
         <location filename="../configure/global-setting-template.js" line="133"/>
         <source>Show hidden files</source>
-        <translation type="unfinished"/>
+        <translation>Rejtett fájlok megjelenítése</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="139"/>
         <location filename="../configure/global-setting-template-pro.js" line="139"/>
         <location filename="../configure/global-setting-template.js" line="139"/>
         <source>Hide file extension when rename</source>
-        <translation type="unfinished"/>
+        <translation>Fájlkiterjesztés elrejtése átnevezéskor</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="151"/>
-        <location filename="../configure/global-setting-template-pro.js" line="151"/>
-        <location filename="../configure/global-setting-template.js" line="151"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="156"/>
+        <location filename="../configure/global-setting-template-pro.js" line="157"/>
+        <location filename="../configure/global-setting-template.js" line="157"/>
         <source>Advanced</source>
-        <translation type="unfinished"/>
+        <translation>Haladó</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="155"/>
-        <location filename="../configure/global-setting-template-pro.js" line="155"/>
-        <location filename="../configure/global-setting-template.js" line="155"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="160"/>
+        <location filename="../configure/global-setting-template-pro.js" line="161"/>
+        <location filename="../configure/global-setting-template.js" line="161"/>
         <source>Index</source>
-        <translation type="unfinished"/>
+        <translation>Index</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="159"/>
-        <location filename="../configure/global-setting-template-pro.js" line="159"/>
-        <location filename="../configure/global-setting-template.js" line="159"/>
-        <source>Auto index internal disk</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="165"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="164"/>
         <location filename="../configure/global-setting-template-pro.js" line="165"/>
         <location filename="../configure/global-setting-template.js" line="165"/>
+        <source>Auto index internal disk</source>
+        <translation>Belső lemez automatikus indexelése</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="170"/>
+        <location filename="../configure/global-setting-template-pro.js" line="171"/>
+        <location filename="../configure/global-setting-template.js" line="171"/>
         <source>Index external storage device after connected to computer</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="254"/>
-        <location filename="../configure/global-setting-template-pro.js" line="253"/>
-        <location filename="../configure/global-setting-template.js" line="252"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="259"/>
+        <location filename="../configure/global-setting-template-pro.js" line="259"/>
+        <location filename="../configure/global-setting-template.js" line="258"/>
         <source>Other</source>
-        <translation type="unfinished"/>
+        <translation>Egyéb</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="258"/>
-        <location filename="../configure/global-setting-template-pro.js" line="257"/>
-        <location filename="../configure/global-setting-template.js" line="256"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="263"/>
+        <location filename="../configure/global-setting-template-pro.js" line="263"/>
+        <location filename="../configure/global-setting-template.js" line="262"/>
         <source>Hide system disk</source>
-        <translation type="unfinished"/>
+        <translation>Rendszerlemez elrejtése</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="177"/>
-        <location filename="../configure/global-setting-template-pro.js" line="177"/>
-        <location filename="../configure/global-setting-template.js" line="177"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="182"/>
+        <location filename="../configure/global-setting-template-pro.js" line="183"/>
+        <location filename="../configure/global-setting-template.js" line="183"/>
         <source>Show hidden files in search results</source>
+        <translation>Rejtett fájlok megjelenítése a keresési eredmények között</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="145"/>
+        <location filename="../configure/global-setting-template-pro.js" line="145"/>
+        <location filename="../configure/global-setting-template.js" line="145"/>
+        <source>Display recent file entry in left panel</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="186"/>
-        <location filename="../configure/global-setting-template-pro.js" line="186"/>
-        <location filename="../configure/global-setting-template.js" line="186"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="191"/>
+        <location filename="../configure/global-setting-template-pro.js" line="192"/>
+        <location filename="../configure/global-setting-template.js" line="192"/>
         <source>Preview</source>
-        <translation type="unfinished"/>
+        <translation>Előnézet</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="190"/>
-        <location filename="../configure/global-setting-template-pro.js" line="190"/>
-        <location filename="../configure/global-setting-template.js" line="190"/>
-        <source>Compress file preview</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="197"/>
-        <location filename="../configure/global-setting-template-pro.js" line="197"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="195"/>
+        <location filename="../configure/global-setting-template-pro.js" line="196"/>
         <location filename="../configure/global-setting-template.js" line="196"/>
-        <source>Text preview</source>
-        <translation type="unfinished"/>
+        <source>Compress file preview</source>
+        <translation>Tömörített fájl előnézete</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="203"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="202"/>
         <location filename="../configure/global-setting-template-pro.js" line="203"/>
         <location filename="../configure/global-setting-template.js" line="202"/>
-        <source>Document preview</source>
-        <translation type="unfinished"/>
+        <source>Text preview</source>
+        <translation>Szöveg előnézete</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="209"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="208"/>
         <location filename="../configure/global-setting-template-pro.js" line="209"/>
         <location filename="../configure/global-setting-template.js" line="208"/>
-        <source>Image preview</source>
-        <translation type="unfinished"/>
+        <source>Document preview</source>
+        <translation>Dokumentum előnézete</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="215"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="214"/>
         <location filename="../configure/global-setting-template-pro.js" line="215"/>
         <location filename="../configure/global-setting-template.js" line="214"/>
+        <source>Image preview</source>
+        <translation>Kép előnézete</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="220"/>
+        <location filename="../configure/global-setting-template-pro.js" line="221"/>
+        <location filename="../configure/global-setting-template.js" line="220"/>
         <source>Video preview</source>
-        <translation type="unfinished"/>
+        <translation>Videó előnézete</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="224"/>
-        <location filename="../configure/global-setting-template-pro.js" line="223"/>
-        <location filename="../configure/global-setting-template.js" line="222"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="229"/>
+        <location filename="../configure/global-setting-template-pro.js" line="229"/>
+        <location filename="../configure/global-setting-template.js" line="228"/>
         <source>Mount</source>
-        <translation type="unfinished"/>
+        <translation>Csatolás</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="228"/>
-        <location filename="../configure/global-setting-template-pro.js" line="227"/>
-        <location filename="../configure/global-setting-template.js" line="226"/>
-        <source>Auto mount</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="234"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="233"/>
         <location filename="../configure/global-setting-template-pro.js" line="233"/>
         <location filename="../configure/global-setting-template.js" line="232"/>
+        <source>Auto mount</source>
+        <translation>Automatikus csatolás</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="239"/>
+        <location filename="../configure/global-setting-template-pro.js" line="239"/>
+        <location filename="../configure/global-setting-template.js" line="238"/>
         <source>Open after auto mount</source>
-        <translation type="unfinished"/>
+        <translation>Automatikus csatolás után megnyitás</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="242"/>
-        <location filename="../configure/global-setting-template-pro.js" line="241"/>
-        <location filename="../configure/global-setting-template.js" line="240"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="247"/>
+        <location filename="../configure/global-setting-template-pro.js" line="247"/>
+        <location filename="../configure/global-setting-template.js" line="246"/>
         <source>Dialog</source>
-        <translation type="unfinished"/>
+        <translation>Párbeszéd</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="246"/>
-        <location filename="../configure/global-setting-template-pro.js" line="245"/>
-        <location filename="../configure/global-setting-template.js" line="244"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="251"/>
+        <location filename="../configure/global-setting-template-pro.js" line="251"/>
+        <location filename="../configure/global-setting-template.js" line="250"/>
         <source>Use the file chooser dialog of Deepin File Manager</source>
-        <translation type="unfinished"/>
+        <translation>A következő fájl kiválaszthatása a Deepin fájlkezelő ablakban</translation>
     </message>
 </context>
 <context>
@@ -1076,40 +1090,40 @@
     <message>
         <location filename="../gvfs/gvfsmountclient.cpp" line="149"/>
         <source>Mounting device error</source>
-        <translation type="unfinished"/>
+        <translation>Eszköz csatlakoztatása sikertelen</translation>
     </message>
 </context>
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1308"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1314"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
-        <translation type="unfinished"/>
+        <translation>A lemez &quot;%1&quot; felhasználó által csatlakoztatva van, leválasztás nem lehetséges.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1311"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1321"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1349"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1470"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1501"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1317"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1327"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1356"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1477"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1508"/>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>Megerősítés</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1318"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1498"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1324"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1505"/>
         <source>Cannot find the mounting device</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1346"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1353"/>
         <source>Cannot unmount the device</source>
-        <translation type="unfinished"/>
+        <translation>Eszköz nem leválasztható</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1466"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1473"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>&quot;%1&quot; eszköz nem kiadható</translation>
     </message>
 </context>
 <context>
@@ -1203,7 +1217,7 @@
         <translation>Jelszó</translation>
     </message>
     <message>
-        <location filename="../gvfs/mountaskpassworddialog.cpp" line="110"/>
+        <location filename="../gvfs/mountaskpassworddialog.cpp" line="111"/>
         <source>Remember password</source>
         <translation>Megjegyzés</translation>
     </message>
@@ -1218,7 +1232,7 @@
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="48"/>
         <source>UnLock</source>
-        <translation type="unfinished"/>
+        <translation>Feloldás</translation>
     </message>
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="52"/>
@@ -1229,126 +1243,126 @@
 <context>
     <name>MoveCopyTaskWidget</name>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="349"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="353"/>
         <source>Skip</source>
         <translation>Kihagyás</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="348"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="352"/>
         <source>Keep both</source>
         <translation>Mindkettő megtartása</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="350"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="467"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="354"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="471"/>
         <source>Replace</source>
         <translation>Csere</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="371"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="375"/>
         <source>Do not ask again</source>
         <translation>Ne kérdezze meg újra</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="465"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="469"/>
         <source>merge</source>
         <translation>összefűzés</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="435"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="439"/>
         <source>Copying %1</source>
         <translation>%1 másolás</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="436"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="440"/>
         <source>Copy to %2</source>
         <translation>%2 másolás</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="439"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="443"/>
         <source>Moving %1</source>
         <translation>%1 áthelyezés</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="440"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="444"/>
         <source>Move to %2</source>
         <translation>Áthelyezés %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="442"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="446"/>
         <source>Restoring %1</source>
         <translation>%1 visszaállítás</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="443"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="447"/>
         <source>Restore to %2</source>
         <translation>Visszaállítás %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="445"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="449"/>
         <source>Deleting %1</source>
         <translation>%1 törlés</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="448"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="452"/>
         <source>Trashing %1</source>
         <translation>%1 törlése</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="456"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="460"/>
         <source>Calculating space, please wait</source>
         <translation>Hely kiszámítása, várjunk</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="459"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="463"/>
         <source>File named %1 already exists in target folder</source>
         <translation>%1 mező neve létezik a célmappában</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="460"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="464"/>
         <source>Original path %1 target path %2</source>
         <translation>%1 eredeti útvonal %2 célútvonal</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="475"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="479"/>
         <source>Retry</source>
-        <translation type="unfinished"/>
+        <translation>Újra</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="569"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="581"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="573"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="585"/>
         <source>Time modified:%1</source>
         <translation>Idő módosítva: %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="571"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="575"/>
         <source>Original folder</source>
-        <translation type="unfinished"/>
+        <translation>Eredeti könyvtár</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="574"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="578"/>
         <source>Original file</source>
-        <translation type="unfinished"/>
+        <translation>Eredeti fájl</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="584"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="588"/>
         <source>Target folder</source>
-        <translation type="unfinished"/>
+        <translation>Célkönyvtár</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="587"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="591"/>
         <source>Target file</source>
-        <translation type="unfinished"/>
+        <translation>Célfájl</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="572"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="585"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="576"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="589"/>
         <source>Contains:%1</source>
         <translation>Tartalmaz: %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="575"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="588"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="579"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="592"/>
         <source>Size:%1</source>
         <translation>Méret: %1</translation>
     </message>
@@ -1427,65 +1441,70 @@
 <context>
     <name>PathManager</name>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="49"/>
+        <location filename="../controllers/pathmanager.cpp" line="55"/>
         <source>Home</source>
         <translation>Saját mappa</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="50"/>
+        <location filename="../controllers/pathmanager.cpp" line="56"/>
         <source>Desktop</source>
         <translation>Asztal</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="51"/>
+        <location filename="../controllers/pathmanager.cpp" line="57"/>
         <source>Videos</source>
         <translation>Videók</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="52"/>
+        <location filename="../controllers/pathmanager.cpp" line="58"/>
         <source>Music</source>
         <translation>Zene</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="53"/>
+        <location filename="../controllers/pathmanager.cpp" line="59"/>
         <source>Pictures</source>
         <translation>Képek</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="54"/>
+        <location filename="../controllers/pathmanager.cpp" line="60"/>
         <source>Documents</source>
         <translation>Dokumentumok</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="55"/>
+        <location filename="../controllers/pathmanager.cpp" line="61"/>
         <source>Downloads</source>
         <translation>Letöltések</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="56"/>
+        <location filename="../controllers/pathmanager.cpp" line="62"/>
         <location filename="../models/trashfileinfo.cpp" line="103"/>
         <source>Trash</source>
         <translation>Kuka</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="57"/>
+        <location filename="../controllers/pathmanager.cpp" line="63"/>
         <source>System Disk</source>
         <translation>Rendszerlemez</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="58"/>
+        <location filename="../controllers/pathmanager.cpp" line="64"/>
         <source>Computers in LAN</source>
         <translation>Számítógépek a hálózatban</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="59"/>
+        <location filename="../controllers/pathmanager.cpp" line="65"/>
         <source>My Shares</source>
         <translation>Megosztások</translation>
     </message>
     <message>
-        <location filename="../controllers/pathmanager.cpp" line="60"/>
+        <location filename="../controllers/pathmanager.cpp" line="66"/>
         <source>Computer</source>
         <translation>Számítógép</translation>
+    </message>
+    <message>
+        <location filename="../controllers/pathmanager.cpp" line="67"/>
+        <source>Recent</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1508,7 +1527,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="243"/>
         <source>Permission Management</source>
-        <translation type="unfinished"/>
+        <translation>Jogosultságkezelés</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="265"/>
@@ -1516,12 +1535,12 @@
         <translation>Rendszerlemez</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1039"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1075"/>
         <source>Allow to execute as program</source>
         <translation>Futtatás programként</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="845"/>
+        <location filename="../dialogs/propertydialog.cpp" line="856"/>
         <source>Local disk</source>
         <translation>Helyi lemez</translation>
     </message>
@@ -1529,107 +1548,107 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="777"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="778"/>
+        <location filename="../dialogs/propertydialog.cpp" line="788"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="764"/>
         <source>Size</source>
         <translation>Méret</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="796"/>
-        <location filename="../dialogs/propertydialog.cpp" line="841"/>
-        <location filename="../dialogs/propertydialog.cpp" line="869"/>
+        <location filename="../dialogs/propertydialog.cpp" line="805"/>
+        <location filename="../dialogs/propertydialog.cpp" line="852"/>
+        <location filename="../dialogs/propertydialog.cpp" line="881"/>
         <source>Contains</source>
         <translation>Tartalmak</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="778"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="779"/>
+        <location filename="../dialogs/propertydialog.cpp" line="789"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="765"/>
         <source>Type</source>
         <translation>Típus</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="779"/>
+        <location filename="../dialogs/propertydialog.cpp" line="790"/>
         <source>Time read</source>
         <translation>Olvasási idő</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="780"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="781"/>
+        <location filename="../dialogs/propertydialog.cpp" line="791"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="767"/>
         <source>Time modified</source>
         <translation>Módosítási idő</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="802"/>
+        <location filename="../dialogs/propertydialog.cpp" line="813"/>
         <source>Link path</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="840"/>
-        <location filename="../dialogs/propertydialog.cpp" line="868"/>
+        <location filename="../dialogs/propertydialog.cpp" line="851"/>
+        <location filename="../dialogs/propertydialog.cpp" line="879"/>
         <source>Device type</source>
         <translation>Eszköz típus</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="842"/>
-        <location filename="../dialogs/propertydialog.cpp" line="870"/>
+        <location filename="../dialogs/propertydialog.cpp" line="853"/>
+        <location filename="../dialogs/propertydialog.cpp" line="882"/>
         <source>Free space</source>
         <translation>Szabad tárhely</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="843"/>
-        <location filename="../dialogs/propertydialog.cpp" line="871"/>
+        <location filename="../dialogs/propertydialog.cpp" line="854"/>
+        <location filename="../dialogs/propertydialog.cpp" line="883"/>
         <source>Total space</source>
         <translation>Teljes tárhely</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="967"/>
+        <location filename="../dialogs/propertydialog.cpp" line="989"/>
         <source>Access denied</source>
-        <translation type="unfinished"/>
+        <translation>Hozzáférés megtagadva</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="968"/>
-        <location filename="../dialogs/propertydialog.cpp" line="977"/>
+        <location filename="../dialogs/propertydialog.cpp" line="990"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1000"/>
         <source>Executable</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="969"/>
-        <location filename="../dialogs/propertydialog.cpp" line="970"/>
+        <location filename="../dialogs/propertydialog.cpp" line="991"/>
+        <location filename="../dialogs/propertydialog.cpp" line="992"/>
         <source>Write only</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="971"/>
-        <location filename="../dialogs/propertydialog.cpp" line="972"/>
+        <location filename="../dialogs/propertydialog.cpp" line="993"/>
+        <location filename="../dialogs/propertydialog.cpp" line="994"/>
         <source>Read only</source>
-        <translation type="unfinished"/>
+        <translation>Csak olvasható</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="973"/>
-        <location filename="../dialogs/propertydialog.cpp" line="974"/>
+        <location filename="../dialogs/propertydialog.cpp" line="995"/>
+        <location filename="../dialogs/propertydialog.cpp" line="996"/>
         <source>Read-write</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1027"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1070"/>
         <source>Others</source>
-        <translation type="unfinished"/>
+        <translation>Egyéb</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1025"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1068"/>
         <source>Owner</source>
         <translation>Tulajdonos</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1026"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1069"/>
         <source>Group</source>
         <translation>Csoport</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="75"/>
         <location filename="../dialogs/previewdialog.cpp" line="156"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="731"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="734"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="717"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="720"/>
         <source>Open</source>
         <translation>Megnyitás</translation>
     </message>
@@ -1655,384 +1674,384 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="732"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="735"/>
-        <location filename="../interfaces/dfmsidebaritem.cpp" line="472"/>
-        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="77"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="90"/>
-        <location filename="../views/dfmsidebarnetworkitem.cpp" line="42"/>
-        <location filename="../views/dfmsidebartagitem.cpp" line="51"/>
-        <location filename="../views/dfmsidebartrashitem.cpp" line="48"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="718"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="721"/>
+        <location filename="../interfaces/dfmsidebaritem.cpp" line="477"/>
+        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="78"/>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="91"/>
+        <location filename="../views/dfmsidebarnetworkitem.cpp" line="43"/>
+        <location filename="../views/dfmsidebartagitem.cpp" line="52"/>
+        <location filename="../views/dfmsidebartrashitem.cpp" line="49"/>
         <source>Open in new window</source>
         <translation>Megnyitás új ablakban</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="733"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="736"/>
-        <location filename="../interfaces/dfmsidebaritem.cpp" line="476"/>
-        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="81"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="98"/>
-        <location filename="../views/dfmsidebarnetworkitem.cpp" line="46"/>
-        <location filename="../views/dfmsidebartagitem.cpp" line="55"/>
-        <location filename="../views/dfmsidebartrashitem.cpp" line="52"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="719"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="722"/>
+        <location filename="../interfaces/dfmsidebaritem.cpp" line="481"/>
+        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="82"/>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="99"/>
+        <location filename="../views/dfmsidebarnetworkitem.cpp" line="47"/>
+        <location filename="../views/dfmsidebartagitem.cpp" line="56"/>
+        <location filename="../views/dfmsidebartrashitem.cpp" line="53"/>
         <source>Open in new tab</source>
         <translation>Megnyitás új fülön</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="738"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="724"/>
         <source>Open with</source>
         <translation>Megnyitás </translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="741"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="727"/>
         <source>Compress</source>
         <translation>Tömörítés</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="742"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="728"/>
         <source>Extract</source>
         <translation>Kibontás</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="743"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="729"/>
         <source>Extract here</source>
         <translation>Kibontás ide</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="744"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="730"/>
         <source>Cut</source>
         <translation>Kivágás</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="745"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="731"/>
         <source>Copy</source>
         <translation>Másolás</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="746"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="732"/>
         <source>Paste</source>
         <translation>Beillesztés</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="382"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="747"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="748"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="804"/>
-        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="85"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="109"/>
-        <location filename="../views/dfmsidebartagitem.cpp" line="59"/>
-        <location filename="../views/drenamebar.cpp" line="301"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="733"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="734"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="790"/>
+        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="86"/>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="110"/>
+        <location filename="../views/dfmsidebartagitem.cpp" line="60"/>
+        <location filename="../views/drenamebar.cpp" line="300"/>
         <source>Rename</source>
         <translation>Átnevezés</translation>
     </message>
     <message>
-        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="90"/>
-        <location filename="../views/dfmsidebartagitem.cpp" line="64"/>
+        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="91"/>
+        <location filename="../views/dfmsidebartagitem.cpp" line="65"/>
         <source>Remove</source>
         <translation>Eltávolítás</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="750"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="736"/>
         <source>Create link</source>
         <translation>Hivatkozás létrehozása</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="751"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="737"/>
         <source>Send to desktop</source>
         <translation>Küldés az asztalra</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="752"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="738"/>
         <source>Send to</source>
         <translation>Küldés...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="753"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="739"/>
         <source>Add to bookmark</source>
         <translation>Hozzáadás a könyvjelzőkhöz</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="756"/>
-        <location filename="../interfaces/dfmsidebaritem.cpp" line="480"/>
-        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="94"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="153"/>
-        <location filename="../views/dfmsidebartrashitem.cpp" line="63"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="742"/>
+        <location filename="../interfaces/dfmsidebaritem.cpp" line="485"/>
+        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="95"/>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="154"/>
+        <location filename="../views/dfmsidebartrashitem.cpp" line="64"/>
         <source>Properties</source>
         <translation>Tulajdonságok</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="758"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="744"/>
         <source>New folder</source>
         <translation>Új mappa</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="759"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="745"/>
         <source>New window</source>
         <translation>Új ablak</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="760"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="746"/>
         <source>Select all</source>
         <translation>Összes kijelölése</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="761"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="747"/>
         <source>Clear recent history</source>
         <translation>Előzmények törlése</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="762"/>
-        <location filename="../views/dfmsidebartrashitem.cpp" line="56"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="748"/>
+        <location filename="../views/dfmsidebartrashitem.cpp" line="57"/>
         <source>Empty Trash</source>
         <translation>Kuka ürítése</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="763"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="749"/>
         <source>Display as</source>
         <translation>Megtekintés mint</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="764"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="750"/>
         <source>Sort by</source>
         <translation>Rendezés</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="765"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="751"/>
         <source>New document</source>
         <translation>Új dokumentum</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="766"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="752"/>
         <source>Office Text Document</source>
         <translation>Irodai szöveges dokumentum</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="767"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="753"/>
         <source>Spreadsheet Document</source>
         <translation>Táblázatkezelő dokumentum</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="768"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="754"/>
         <source>Presentation Document</source>
         <translation>Prezentáció dokumentum</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="769"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="755"/>
         <source>Plain Text Document</source>
         <translation>Egyszerű szöveges dokumentum</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="780"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="766"/>
         <source>Time created</source>
         <translation>Létrehozási idő</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="790"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="146"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="776"/>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="147"/>
         <source>Log out and unmount</source>
         <translation>Kijelentkezés és leválasztás</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="792"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="778"/>
         <source>Source path</source>
         <translation>Forrás Útvonal</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="794"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="780"/>
         <source>Share folder</source>
         <translation>Mappa megosztás</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="795"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="781"/>
         <source>Cancel sharing</source>
         <translation>Megosztás törlése</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="782"/>
         <source>Set share password</source>
         <translation>Jelszó használata a megosztáshoz</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="797"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="138"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="783"/>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="139"/>
         <source>Format</source>
         <translation>Formátum</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="800"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="786"/>
         <source>Tag information</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="737"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="723"/>
         <source>Open in new window as admin</source>
         <translation>Megnyitás új ablakban mint admin</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="739"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="725"/>
         <source>Select default program</source>
         <translation>Alapértelmezett program választása</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="740"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="726"/>
         <source>Open file location</source>
         <translation>Fájl helyének megnyitása</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="749"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="735"/>
         <source>Remove bookmark</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="754"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="755"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="802"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="740"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="741"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="788"/>
         <source>Delete</source>
         <translation>Törlés</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="770"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="756"/>
         <source>Open in terminal</source>
         <translation>Megnyitás terminálban</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="771"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="757"/>
         <source>Restore</source>
         <translation>Visszaállítás</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="772"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="758"/>
         <source>Restore all</source>
         <translation>Összes visszaállítása</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="341"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="342"/>
         <source>Auto mount</source>
         <translation>Automatikus csatolás</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="379"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="380"/>
         <source>Open after auto mount</source>
         <translation>Automatikus csatolás után megnyitás</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="773"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="128"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="759"/>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="129"/>
         <source>Mount</source>
         <translation>Csatolás</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="774"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="134"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="760"/>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="135"/>
         <source>Unmount</source>
         <translation>Leválasztás</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="775"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="116"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="761"/>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="117"/>
         <source>Eject</source>
         <translation>Kiadás</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="776"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="122"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="762"/>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="123"/>
         <source>Safely Remove</source>
         <translation>Biztonságos eltávolítás</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="777"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="763"/>
         <source>Name</source>
         <translation>Név</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="782"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="768"/>
         <source>Settings</source>
         <translation>Beállítások</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="783"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="769"/>
         <source>Help</source>
         <translation>Súgó</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="784"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="770"/>
         <source>About</source>
         <translation>Névjegy</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="785"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="771"/>
         <source>Exit</source>
         <translation>Kilépés</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="786"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="772"/>
         <source>Icon</source>
         <translation>Ikon</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="787"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="773"/>
         <source>List</source>
         <translation>Lista</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="788"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="774"/>
         <source>Extend</source>
         <translation>Kiterjesztés</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="789"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="775"/>
         <source>Set as wallpaper</source>
         <translation>Beállítás háttérnek</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="223"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="277"/>
         <source>Local disk</source>
         <translation>Helyi lemez</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="225"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="279"/>
         <source>Removable disk</source>
         <translation>Eltávolítható lemez</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="227"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="281"/>
         <source>Network shared directory</source>
         <translation>Hálózaton megosztott mappa</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="229"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="283"/>
         <source>Android mobile device</source>
         <translation>Android mobil eszköz</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="231"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="285"/>
         <source>Apple mobile device</source>
         <translation>Apple mobil eszköz</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="233"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="287"/>
         <source>Camera</source>
         <translation>Kamera</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="235"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="289"/>
         <source>Dvd</source>
         <translation>Dvd</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="237"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="291"/>
         <source>Unknown device</source>
         <translation>Ismeretlen eszköz</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="244"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="623"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="298"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="626"/>
         <source>%1 item</source>
         <translation>%1 elem</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="246"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="625"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="300"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="628"/>
         <source>%1 items</source>
         <translation>%1 elem</translation>
     </message>
@@ -2047,34 +2066,35 @@
         <translation>Új szimbolikus hivatkozás</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="793"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="779"/>
         <source>Path</source>
         <translation>Útvonal</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="791"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="777"/>
         <location filename="../models/trashfileinfo.cpp" line="335"/>
         <location filename="../models/trashfileinfo.cpp" line="343"/>
         <source>Time deleted</source>
         <translation>Törlési idő</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1192"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1199"/>
         <source>Loading...</source>
         <translation>Betöltés...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="669"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="704"/>
         <source>File has been moved or deleted</source>
         <translation>A fájl törölve lett vagy át lett helyezve</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="671"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="706"/>
         <source>You do not have permission to access this folder</source>
         <translation>Nincs jogosultság a mappa hozzáféréséhez</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="674"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="709"/>
+        <location filename="../models/recentfileinfo.cpp" line="107"/>
         <location filename="../models/trashfileinfo.cpp" line="376"/>
         <source>Folder is empty</source>
         <translation>A mappa üres</translation>
@@ -2102,32 +2122,32 @@
         <translation>Forrásútvonal</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="376"/>
+        <location filename="../controllers/appcontroller.cpp" line="378"/>
         <source>Document</source>
         <translation>Dokumentum</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="385"/>
+        <location filename="../controllers/appcontroller.cpp" line="387"/>
         <source>Spreadsheet</source>
         <translation>Táblázat</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="394"/>
+        <location filename="../controllers/appcontroller.cpp" line="396"/>
         <source>Presentation</source>
         <translation>Előadás</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="403"/>
+        <location filename="../controllers/appcontroller.cpp" line="405"/>
         <source>Text</source>
         <translation>Szöveg</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="883"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="887"/>
         <source>1 task in progress</source>
         <translation>1 feladat folyamatban</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="885"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="889"/>
         <source>%1 tasks in progress</source>
         <translation>%1 feladat folyamatban</translation>
     </message>
@@ -2138,19 +2158,19 @@
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="143"/>
-        <location filename="../views/drenamebar.cpp" line="235"/>
+        <location filename="../views/drenamebar.cpp" line="234"/>
         <source>Replace Text</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="143"/>
-        <location filename="../views/drenamebar.cpp" line="235"/>
+        <location filename="../views/drenamebar.cpp" line="234"/>
         <source>Add Text</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="143"/>
-        <location filename="../views/drenamebar.cpp" line="235"/>
+        <location filename="../views/drenamebar.cpp" line="234"/>
         <source>Custom Text</source>
         <translation type="unfinished"/>
     </message>
@@ -2166,7 +2186,7 @@
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="172"/>
-        <location filename="../views/drenamebar.cpp" line="252"/>
+        <location filename="../views/drenamebar.cpp" line="251"/>
         <source>Optional</source>
         <translation>Opcionális</translation>
     </message>
@@ -2194,63 +2214,63 @@
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="152"/>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="191"/>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="217"/>
-        <location filename="../views/drenamebar.cpp" line="244"/>
-        <location filename="../views/drenamebar.cpp" line="261"/>
-        <location filename="../views/drenamebar.cpp" line="277"/>
-        <location filename="../views/drenamebar.cpp" line="287"/>
+        <location filename="../views/drenamebar.cpp" line="243"/>
+        <location filename="../views/drenamebar.cpp" line="260"/>
+        <location filename="../views/drenamebar.cpp" line="276"/>
+        <location filename="../views/drenamebar.cpp" line="286"/>
         <source>Required</source>
         <translation>Szükséges</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="210"/>
-        <location filename="../views/drenamebar.cpp" line="270"/>
+        <location filename="../views/drenamebar.cpp" line="269"/>
         <source>Before file name</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="210"/>
-        <location filename="../views/drenamebar.cpp" line="270"/>
+        <location filename="../views/drenamebar.cpp" line="269"/>
         <source>After file name</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="242"/>
+        <location filename="../views/drenamebar.cpp" line="241"/>
         <source>Find</source>
         <translation>Keresés</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="251"/>
+        <location filename="../views/drenamebar.cpp" line="250"/>
         <source>Replace</source>
         <translation>Csere</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="260"/>
+        <location filename="../views/drenamebar.cpp" line="259"/>
         <source>Add</source>
         <translation>Hozzáadás</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="269"/>
+        <location filename="../views/drenamebar.cpp" line="268"/>
         <source>Location</source>
         <translation>Hely</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="276"/>
+        <location filename="../views/drenamebar.cpp" line="275"/>
         <source>File name</source>
         <translation>Fájlnév</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="285"/>
+        <location filename="../views/drenamebar.cpp" line="284"/>
         <source>+SN</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="293"/>
+        <location filename="../views/drenamebar.cpp" line="292"/>
         <source>Tips: Sort by selected file order</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="381"/>
-        <location filename="../views/drenamebar.cpp" line="298"/>
+        <location filename="../views/drenamebar.cpp" line="297"/>
         <source>Cancel</source>
         <translation>Mégsem</translation>
     </message>
@@ -2297,52 +2317,52 @@
     <message>
         <location filename="../tag/tagutil.cpp" line="49"/>
         <source>Orange</source>
-        <translation type="unfinished"/>
+        <translation>Narancs</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="50"/>
         <source>Red</source>
-        <translation type="unfinished"/>
+        <translation>Piros</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="51"/>
         <source>Purple</source>
-        <translation type="unfinished"/>
+        <translation>Lila</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="52"/>
         <source>Navy-blue</source>
-        <translation type="unfinished"/>
+        <translation>Sötétkék</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="53"/>
         <source>Azure</source>
-        <translation type="unfinished"/>
+        <translation>Égszínkék</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="54"/>
         <source>Green</source>
-        <translation type="unfinished"/>
+        <translation>Zöld</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="55"/>
         <source>Yellow</source>
-        <translation type="unfinished"/>
+        <translation>Sárga</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="56"/>
         <source>Gray</source>
-        <translation type="unfinished"/>
+        <translation>Szürke</translation>
     </message>
     <message>
-        <location filename="../views/dtagedit.cpp" line="87"/>
+        <location filename="../views/dtagedit.cpp" line="91"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../controllers/dfmbookmarkcrumbcontroller.cpp" line="46"/>
         <source>Bookmarks</source>
-        <translation type="unfinished"/>
+        <translation>Könyvjelzők</translation>
     </message>
 </context>
 <context>
@@ -2353,37 +2373,37 @@
         <translation>A mappa megosztása</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="61"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="67"/>
         <source>Share name:</source>
         <translation>Név megosztása:</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="68"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="74"/>
         <source>Permission:</source>
         <translation>Engedély:</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="74"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="80"/>
         <source>Read and write</source>
         <translation>Írás és olvasás</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="74"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="80"/>
         <source>Read only</source>
         <translation>Csak olvasható</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="77"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="83"/>
         <source>Anonymous:</source>
         <translation>Névtelen:</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="83"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="89"/>
         <source>Not allow</source>
         <translation>Nem engedélyezett</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="83"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="89"/>
         <source>Allow</source>
         <translation>Engedélyezés</translation>
     </message>
@@ -2792,7 +2812,7 @@
 <context>
     <name>UDiskListener</name>
     <message>
-        <location filename="../deviceinfo/udisklistener.cpp" line="187"/>
+        <location filename="../deviceinfo/udisklistener.cpp" line="186"/>
         <source>Failed to rename the label</source>
         <translation type="unfinished"/>
     </message>
@@ -2810,12 +2830,12 @@
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="416"/>
         <source>Kindly Reminder</source>
-        <translation type="unfinished"/>
+        <translation>Baráti figyelmeztetés</translation>
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="416"/>
         <source>Please firstly install samba to continue</source>
-        <translation type="unfinished"/>
+        <translation>A folytatáshoz először telepítse a samba-t</translation>
     </message>
 </context>
 <context>
@@ -2839,7 +2859,7 @@
 <context>
     <name>WindowManager</name>
     <message>
-        <location filename="../views/windowmanager.cpp" line="82"/>
+        <location filename="../views/windowmanager.cpp" line="81"/>
         <source>Deepin File Manager</source>
         <translation>Deepin fájlkezelő</translation>
     </message>
