@@ -30,6 +30,7 @@
 #include <dfmdiskmanager.h>
 #include <dfmblockdevice.h>
 #include <dfmdiskdevice.h>
+#include <dfmvfsdevice.h>
 #include <dfmsettings.h>
 #include <dfmvfsmanager.h>
 #include <DDesktopServices>
@@ -126,6 +127,14 @@ void DiskControlWidget::unmountAll()
             if (mountPoint != QStringLiteral("/boot") && mountPoint != QStringLiteral("/") && mountPoint != QStringLiteral("/home")) {
                 blDev->unmount({});
             }
+        }
+    }
+
+    QList<QUrl> vfsDevices = m_vfsManager->getVfsList();
+    for (const QUrl & vfsDevUrl : vfsDevices) {
+        DFMVfsDevice* vfsDev = DFMVfsDevice::create(vfsDevUrl);
+        if (vfsDev) {
+            vfsDev->detachAsync();
         }
     }
 }
