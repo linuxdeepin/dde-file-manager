@@ -571,13 +571,23 @@ bool DListItemDelegate::eventFilter(QObject *object, QEvent *event)
     return QStyledItemDelegate::eventFilter(object, event);
 }
 
+static void hideTooltipImmediately() {
+    QWidgetList qwl = QApplication::topLevelWidgets();
+    for (QWidget* qw : qwl) {
+        if (QStringLiteral("QTipLabel") == qw->metaObject()->className()) {
+            qw->close();
+        }
+    }
+}
+
 bool DListItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
     if (event->type() == QEvent::ToolTip) {
         const QString tooltip = index.data(Qt::ToolTipRole).toString();
 
         if (tooltip.isEmpty()) {
-            QToolTip::hideText();
+//            QToolTip::hideText();
+            hideTooltipImmediately();
         } else {
             QToolTip::showText(event->globalPos(), tooltip, view);
         }
