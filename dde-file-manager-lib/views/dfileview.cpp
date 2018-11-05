@@ -2777,6 +2777,10 @@ void DFileViewPrivate::_q_onSectionHandleDoubleClicked(int logicalIndex)
 {
     Q_Q(DFileView);
 
+    if (q->rowCount() == 0) {
+        return;
+    }
+
     QStyleOptionViewItem option = q->viewOptions();
 
     option.rect.setWidth(QWIDGETSIZE_MAX);
