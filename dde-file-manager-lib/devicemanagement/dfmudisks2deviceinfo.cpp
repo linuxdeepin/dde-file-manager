@@ -99,6 +99,10 @@ bool DFMUdisks2DeviceInfo::canRename() const
 
 QString DFMUdisks2DeviceInfo::displayName() const
 {
+    static QMap<QString, const char*> i18nMap {
+        {"data", "Data Disk"}
+    };
+
     QStorageInfo storage_info(mountPoint);
     bool hasLabelName = true;
     QString result;
@@ -112,8 +116,8 @@ QString DFMUdisks2DeviceInfo::displayName() const
 
         // Deepin i10n Label text (_dde_text):
         if (devName.startsWith(ddeI18nSym)) {
-            devName = devName.mid(ddeI18nSym.size(), devName.size() - ddeI18nSym.size());
-            devName = qApp->translate("DeepinStorage", devName.toUtf8().constData());
+            QString i18nKey = devName.mid(ddeI18nSym.size(), devName.size() - ddeI18nSym.size());
+            devName = qApp->translate("DeepinStorage", i18nMap.value(i18nKey, i18nKey.toUtf8().constData()));
         }
 
         result = devName;
