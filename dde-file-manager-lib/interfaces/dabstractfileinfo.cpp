@@ -869,7 +869,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                            << MenuAction::OpenInTerminal
                            << MenuAction::Separator;
             } else if (isFile()) {
-                if (mimeTypeName().startsWith("image") && isReadable()) {
+                if (mimeTypeName().startsWith("image") && isReadable() && !mimeTypeName().endsWith("gif")) {
                     actionKeys << MenuAction::SetAsWallpaper
                                << MenuAction::Separator;
                 }
