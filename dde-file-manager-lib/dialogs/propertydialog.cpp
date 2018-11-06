@@ -325,15 +325,16 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
             m_fileCount = 1;
             m_size = fileInfo->size();
 
-            if (!m_url.isTrashFile()) {
+            int openWithIndex = titleList.indexOf(openWith);
+            if (openWithIndex != -1) {
                 m_OpenWithListWidget = createOpenWithListWidget(fileInfo);
-                m_expandGroup->expand(1)->setContent(m_OpenWithListWidget);
-                m_expandGroup->expand(1)->setExpand(false);
+                m_expandGroup->expand(openWithIndex)->setContent(m_OpenWithListWidget);
+                m_expandGroup->expand(openWithIndex)->setExpand(false);
             }
         }
 
-        if (!m_url.isTrashFile()) {
-            int authMgrIndex = titleList.indexOf(authManager);
+        int authMgrIndex = titleList.indexOf(authManager);
+        if (authMgrIndex != -1) {
             m_authorityManagementFrame = createAuthorityManagementWidget(fileInfo);
             m_expandGroup->expand(authMgrIndex)->setContent(m_authorityManagementFrame);
             m_expandGroup->expand(authMgrIndex)->setExpand(false);
@@ -984,7 +985,7 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     QComboBox *otherBox = new QComboBox;
 
     // these are for file or folder, folder will with executable index.
-    int readWriteIndex, readOnlyIndex;
+    int readWriteIndex = 0, readOnlyIndex = 0;
 
     QStringList authorityList;
 
