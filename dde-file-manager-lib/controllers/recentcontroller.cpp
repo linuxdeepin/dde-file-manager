@@ -77,7 +77,7 @@ RecentController::RecentController(QObject *parent)
                 }
 
                 const QStringRef &location = reader.attributes().value("href");
-                const QStringRef &added = reader.attributes().value("added");
+//                const QStringRef &added = reader.attributes().value("added");
 
                 if (!location.isEmpty()) {
                     DUrl url = DUrl(location.toString());
