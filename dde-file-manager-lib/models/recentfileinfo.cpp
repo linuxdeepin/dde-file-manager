@@ -174,6 +174,11 @@ QString RecentFileInfo::toLocalFile() const
     return fileUrl().path();
 }
 
+QString RecentFileInfo::subtitleForEmptyFloder() const
+{
+    return QObject::tr("Folder is empty");
+}
+
 DUrl RecentFileInfo::goToUrlWhenDeleted() const
 {
     return DUrl::fromLocalFile(QDir::homePath());

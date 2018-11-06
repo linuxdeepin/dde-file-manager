@@ -46,6 +46,7 @@ public:
     DUrl parentUrl() const override;
 
     QString toLocalFile() const override;
+    QString subtitleForEmptyFloder() const override;
     DUrl goToUrlWhenDeleted() const override;
 
     void setReadDateTime(const QString &time);
