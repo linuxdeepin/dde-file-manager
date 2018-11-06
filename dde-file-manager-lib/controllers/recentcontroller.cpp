@@ -26,6 +26,7 @@
 #include <QFileSystemWatcher>
 #include <QXmlStreamReader>
 #include <QDomDocument>
+#include <QQueue>
 #include <QDebug>
 
 class RecentFileWatcherPrivate : public DAbstractFileWatcherPrivate
@@ -58,6 +59,83 @@ public:
     }
 };
 
+
+class RecentDirIterator : public DDirIterator
+{
+public:
+    RecentDirIterator(const DUrl &url, const QStringList &nameFilters, QDir::Filters filter,
+                      QDirIterator::IteratorFlags flags, RecentController *parent);
+
+    DUrl next() override;
+    bool hasNext() const override;
+
+    QString fileName() const override;
+    DUrl fileUrl() const override;
+    const DAbstractFileInfoPointer fileInfo() const override;
+    DUrl url() const override;
+
+private:
+    DAbstractFileInfoPointer m_currentFileInfo;
+    RecentController *parent;
+
+    mutable QQueue<DUrl> urlList;
+    DUrl m_url;
+};
+
+RecentDirIterator::RecentDirIterator(const DUrl &url, const QStringList &nameFilters,
+                                     QDir::Filters filter, QDirIterator::IteratorFlags flags,
+                                     RecentController *parent)
+    : DDirIterator(),
+      parent(parent)
+{
+    for (DUrl url : parent->recentNodes.keys()) {
+        urlList << url;
+    }
+}
+
+DUrl RecentDirIterator::next()
+{
+    if (!urlList.isEmpty()) {
+        m_url = urlList.dequeue();
+        return m_url;
+    }
+
+    return DUrl();
+}
+
+bool RecentDirIterator::hasNext() const
+{
+    if (!urlList.isEmpty()) {
+        return true;
+    }
+
+    return false;
+}
+
+QString RecentDirIterator::fileName() const
+{
+    DAbstractFileInfoPointer currentInfo = parent->recentNodes.value(m_url);
+
+    return currentInfo ? currentInfo->fileName() : QString();
+}
+
+DUrl RecentDirIterator::fileUrl() const
+{
+    DAbstractFileInfoPointer currentInfo = parent->recentNodes.value(m_url);
+
+    return currentInfo ? currentInfo->fileUrl() : DUrl();
+}
+
+const DAbstractFileInfoPointer RecentDirIterator::fileInfo() const
+{
+    return parent->recentNodes.value(m_url);
+}
+
+DUrl RecentDirIterator::url() const
+{
+    return DUrl(RECENT_ROOT);
+}
+
 RecentController::RecentController(QObject *parent)
     : DAbstractFileController(parent)
 {
@@ -77,7 +155,6 @@ RecentController::RecentController(QObject *parent)
                 }
 
                 const QStringRef &location = reader.attributes().value("href");
-//                const QStringRef &added = reader.attributes().value("added");
 
                 if (!location.isEmpty()) {
                     DUrl url = DUrl(location.toString());
@@ -86,9 +163,9 @@ RecentController::RecentController(QObject *parent)
                     recentUrl.setScheme(RECENT_SCHEME);
 
                     if (info.exists() && info.isFile()) {
-                        if (!m_recentNodes.contains(recentUrl)) {
+                        if (!recentNodes.contains(recentUrl)) {
                             RecentFileInfo *fileInfo = new RecentFileInfo(recentUrl);
-                            m_recentNodes[recentUrl] = fileInfo;
+                            recentNodes[recentUrl] = fileInfo;
 
                             DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
                                                               &DAbstractFileWatcher::subfileCreated,
@@ -176,7 +253,7 @@ bool RecentController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) 
 
             DUrl recentUrl(fileUrl);
             recentUrl.setScheme(RECENT_SCHEME);
-            m_recentNodes.remove(recentUrl);
+            recentNodes.remove(recentUrl);
 
             DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
                                               &DAbstractFileWatcher::fileDeleted,
@@ -226,17 +303,12 @@ QList<QString> RecentController::getTagsThroughFiles(const QSharedPointer<DFMGet
     return DFileService::instance()->getTagsThroughFiles(this, list);
 }
 
-const QList<DAbstractFileInfoPointer> RecentController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
+const DDirIteratorPointer RecentController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
-    Q_UNUSED(event)
-
-    QList<DAbstractFileInfoPointer> list;
-
-    for (RecentPointer rp : m_recentNodes) {
-        list.append(DAbstractFileInfoPointer(rp));
-    }
-
-    return list;
+    RecentDirIterator *iterator = new RecentDirIterator(event->url(), event->nameFilters(),
+                                                        event->filters(), event->flags(),
+                                                        const_cast<RecentController *>(this));
+    return DDirIteratorPointer(iterator);
 }
 
 const DAbstractFileInfoPointer RecentController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
@@ -245,7 +317,7 @@ const DAbstractFileInfoPointer RecentController::createFileInfo(const QSharedPoi
         return DAbstractFileInfoPointer(new RecentFileInfo(event->url()));
     }
 
-    return DAbstractFileInfoPointer(m_recentNodes.value(event->url()));
+    return DAbstractFileInfoPointer(recentNodes.value(event->url()));
 }
 
 DAbstractFileWatcher *RecentController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const

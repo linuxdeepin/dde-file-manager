@@ -83,6 +83,11 @@ bool RecentFileInfo::isWritable() const
     return false;
 }
 
+bool RecentFileInfo::canIteratorDir() const
+{
+    return true;
+}
+
 QFileDevice::Permissions RecentFileInfo::permissions() const
 {
     if (fileUrl() == DUrl(RECENT_ROOT)) {
