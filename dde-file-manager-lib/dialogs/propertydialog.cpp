@@ -846,7 +846,9 @@ ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPoin
 QFrame *PropertyDialog::createLocalDeviceInfoWidget(const DUrl &url)
 {
     QStorageInfo info(url.path());
-    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
+    QDir dir(url.path());
+    int count = dir.count();
+    QString countStr = (count > 1) ? QObject::tr("%1 items").arg(count) : QObject::tr("%1 item").arg(count);
     QFrame *widget = new QFrame(this);
     SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Device type"));
     SectionKeyLabel *fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
@@ -854,7 +856,7 @@ QFrame *PropertyDialog::createLocalDeviceInfoWidget(const DUrl &url)
     SectionKeyLabel *totalSectionLabel = new SectionKeyLabel(QObject::tr("Total space"));
 
     SectionValueLabel *typeLabel = new SectionValueLabel(tr("Local disk"));
-    SectionValueLabel *fileAmountLabel = new SectionValueLabel(fileInfo->sizeDisplayName());
+    SectionValueLabel *fileAmountLabel = new SectionValueLabel(countStr);
     SectionValueLabel *freeLabel = new SectionValueLabel(FileUtils::formatSize(info.bytesFree()));
     SectionValueLabel *totalLabel = new SectionValueLabel(FileUtils::formatSize(info.bytesTotal()));
 
@@ -996,7 +998,7 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
                   << QObject::tr("Read-write"); // 7 with x
 
     if (info->isFile()) {
-        // append `Execytable` string
+        // append `Executable` string
         QString append = QStringLiteral(" , ") + QObject::tr("Executable");
         authorityList[3] += append;
         authorityList[5] += append;
