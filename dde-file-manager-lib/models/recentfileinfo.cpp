@@ -174,6 +174,11 @@ QString RecentFileInfo::toLocalFile() const
     return fileUrl().path();
 }
 
+DUrl RecentFileInfo::goToUrlWhenDeleted() const
+{
+    return DUrl::fromLocalFile(QDir::homePath());
+}
+
 void RecentFileInfo::setReadDateTime(const QString &time)
 {
     m_lastReadTime = QDateTime::fromString(time, Qt::ISODate).toLocalTime();

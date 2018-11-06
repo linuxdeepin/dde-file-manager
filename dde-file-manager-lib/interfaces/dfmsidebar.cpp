@@ -165,8 +165,7 @@ void DFMSideBarPrivate::initUI()
     mainLayout->setSpacing(0);
     mainLayout->setMargin(0);
     mainLayout->setAlignment(Qt::AlignTop);
-    mainLayout->setSizeConstraint(QLayout::SetMinAndMaxSize); //SetFixedSize
-//    mainLayoutHolder->setLayout(mainLayout);
+    mainLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
 
     static QList<DFMSideBar::GroupName> groups = {
         DFMSideBar::GroupName::Common,
@@ -384,6 +383,7 @@ void DFMSideBarPrivate::initRecentConnection()
         if (enable && !item) {
             group->insertItem(0, new DFMSideBarRecentItem(DFMStandardPaths::StandardLocation::RecentPath));
         } else if (item && !enable) {
+            DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT), &DAbstractFileWatcher::fileDeleted, DUrl(RECENT_ROOT));
             q->removeItem(item);
         }
     });

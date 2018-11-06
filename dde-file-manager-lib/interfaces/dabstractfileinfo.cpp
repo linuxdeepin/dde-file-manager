@@ -1263,10 +1263,10 @@ void DAbstractFileInfo::makeToInactive()
 
 DUrl DAbstractFileInfo::goToUrlWhenDeleted() const
 {
-    DUrl extistParentUrl;
+    DUrl parentUrl;
 
     foreach (const DUrl &url, parentUrlList()) {
-        extistParentUrl = url;
+        parentUrl = url;
 
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
 
@@ -1275,7 +1275,7 @@ DUrl DAbstractFileInfo::goToUrlWhenDeleted() const
         }
     }
 
-    return extistParentUrl.isValid() ? extistParentUrl : DUrl::fromLocalFile(QDir::homePath());
+    return parentUrl.isValid() ? parentUrl : DUrl::fromLocalFile(QDir::homePath());
 }
 
 QString DAbstractFileInfo::toLocalFile() const
