@@ -35,6 +35,7 @@ public:
     bool isDir() const override;
     bool isReadable() const override;
     bool isWritable() const override;
+    bool canIteratorDir() const override;
 
     QFileDevice::Permissions permissions() const override;
     QVector<MenuAction> menuActionList(MenuType type) const override;
