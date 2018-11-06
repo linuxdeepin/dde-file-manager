@@ -140,13 +140,13 @@ RecentController::RecentController(QObject *parent)
     : DAbstractFileController(parent)
 {
     QFileSystemWatcher *watcher = new QFileSystemWatcher;
-    watcher->addPath(QDir::homePath() + "/.local/share/recently-used.xbel");
 
     auto handleFileChanged = [=] {
         QFile file(QDir::homePath() + "/.local/share/recently-used.xbel");
 
         if (file.open(QIODevice::ReadOnly)) {
             QXmlStreamReader reader(&file);
+            QList<DUrl> urlList;
 
             while (!reader.atEnd()) {
                 if (!reader.readNextStartElement() ||
@@ -163,6 +163,8 @@ RecentController::RecentController(QObject *parent)
                     recentUrl.setScheme(RECENT_SCHEME);
 
                     if (info.exists() && info.isFile()) {
+                        urlList << recentUrl;
+
                         if (!recentNodes.contains(recentUrl)) {
                             RecentFileInfo *fileInfo = new RecentFileInfo(recentUrl);
                             recentNodes[recentUrl] = fileInfo;
@@ -174,13 +176,28 @@ RecentController::RecentController(QObject *parent)
                     }
                 }
             }
+
+            // delete does not exist url.
+            for (auto iter = recentNodes.begin(); iter != recentNodes.end(); ) {
+                DUrl url = iter.key();
+
+                if (!urlList.contains(url)) {
+                    iter = recentNodes.erase(iter);
+
+                    DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
+                                                      &DAbstractFileWatcher::fileDeleted,
+                                                      url);
+                } else {
+                    ++iter;
+                }
+            }
         }
 
         watcher->addPath(QDir::homePath() + "/.local/share/recently-used.xbel");
     };
 
     handleFileChanged();
-    connect(watcher, &QFileSystemWatcher::fileChanged, this, handleFileChanged, Qt::QueuedConnection);
+    connect(watcher, &QFileSystemWatcher::fileChanged, this, handleFileChanged);
 }
 
 bool RecentController::openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const
