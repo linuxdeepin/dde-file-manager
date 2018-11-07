@@ -29,6 +29,25 @@
 #include <QQueue>
 #include <QDebug>
 
+class RecentFileWatcherPrivate;
+class RecentFileWatcher : public DAbstractFileWatcher
+{
+public:
+    explicit RecentFileWatcher(const DUrl &url, QObject *parent = nullptr);
+
+    void setEnabledSubfileWatcher(const DUrl &subfileUrl, bool enabled = true) override;
+
+private:
+    void addWatcher(const DUrl &url);
+    void removeWatcher(const DUrl &url);
+
+    void onFileDeleted(const DUrl &url);
+    void onFileAttributeChanged(const DUrl &url);
+    void onFileModified(const DUrl &url);
+
+    Q_DECLARE_PRIVATE(RecentFileWatcher)
+};
+
 class RecentFileWatcherPrivate : public DAbstractFileWatcherPrivate
 {
 public:
@@ -48,17 +67,98 @@ public:
 
         return true;
     }
+
+    QMap<DUrl, DAbstractFileWatcher *> urlToWatcherMap;
+
+    Q_DECLARE_PUBLIC(RecentFileWatcher)
 };
 
-class RecentFileWatcher : public DAbstractFileWatcher
+RecentFileWatcher::RecentFileWatcher(const DUrl &url, QObject *parent)
+    : DAbstractFileWatcher(*new RecentFileWatcherPrivate(this), url, parent)
 {
-public:
-    explicit RecentFileWatcher(const DUrl &url, QObject *parent = nullptr)
-        : DAbstractFileWatcher(*new RecentFileWatcherPrivate(this), url, parent)
-    {
-    }
-};
 
+}
+
+void RecentFileWatcher::setEnabledSubfileWatcher(const DUrl &subfileUrl, bool enabled)
+{
+    if (!subfileUrl.isRecentFile())
+        return;
+
+    if (enabled) {
+        addWatcher(subfileUrl);
+    } else {
+        removeWatcher(subfileUrl);
+    }
+}
+
+void RecentFileWatcher::addWatcher(const DUrl &url)
+{
+    Q_D(RecentFileWatcher);
+
+    if (!url.isValid() || d->urlToWatcherMap.contains(url)) {
+        return;
+    }
+
+    DUrl real_url = url;
+    real_url.setScheme(FILE_SCHEME);
+
+    DAbstractFileWatcher *watcher = DFileService::instance()->createFileWatcher(this, real_url);
+
+    if (!watcher)
+        return;
+
+    watcher->moveToThread(this->thread());
+    watcher->setParent(this);
+
+    connect(watcher, &DAbstractFileWatcher::fileAttributeChanged, this, &RecentFileWatcher::onFileAttributeChanged);
+    connect(watcher, &DAbstractFileWatcher::fileDeleted, this, &RecentFileWatcher::onFileDeleted);
+    connect(watcher, &DAbstractFileWatcher::fileModified, this, &RecentFileWatcher::onFileModified);
+
+    d->urlToWatcherMap[url] = watcher;
+
+    if (d->started) {
+        watcher->startWatcher();
+    }
+}
+
+void RecentFileWatcher::removeWatcher(const DUrl &url)
+{
+    Q_D(RecentFileWatcher);
+
+    DAbstractFileWatcher *watcher = d->urlToWatcherMap.take(url);
+
+    if (!watcher) {
+        return;
+    }
+
+    watcher->deleteLater();
+}
+
+void RecentFileWatcher::onFileDeleted(const DUrl &url)
+{
+    removeWatcher(url);
+
+    DUrl newUrl = url;
+    newUrl.setScheme(RECENT_SCHEME);
+
+    emit fileDeleted(newUrl);
+}
+
+void RecentFileWatcher::onFileAttributeChanged(const DUrl &url)
+{
+    DUrl newUrl = url;
+    newUrl.setScheme(RECENT_SCHEME);
+
+    emit fileAttributeChanged(newUrl);
+}
+
+void RecentFileWatcher::onFileModified(const DUrl &url)
+{
+    DUrl newUrl = url;
+    newUrl.setScheme(RECENT_SCHEME);
+
+    emit fileModified(newUrl);
+}
 
 class RecentDirIterator : public DDirIterator
 {
@@ -88,6 +188,11 @@ RecentDirIterator::RecentDirIterator(const DUrl &url, const QStringList &nameFil
     : DDirIterator(),
       parent(parent)
 {
+    Q_UNUSED(url)
+    Q_UNUSED(nameFilters)
+    Q_UNUSED(filter)
+    Q_UNUSED(flags)
+
     for (DUrl url : parent->recentNodes.keys()) {
         urlList << url;
     }

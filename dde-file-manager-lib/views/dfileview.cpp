@@ -905,7 +905,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             QString rootPath = rootUrl().toLocalFile();
             if (FileUtils::isGvfsMountFile(rootPath) || deviceListener->isInRemovableDeviceFolder(rootPath)){
                 appController->actionCompleteDeletion(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
-            }else{
+            } else {
                 appController->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
             }
             break;
