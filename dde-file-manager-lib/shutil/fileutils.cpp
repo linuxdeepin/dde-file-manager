@@ -53,6 +53,8 @@
 #include <QJsonArray>
 #include <QSettings>
 #include <QX11Info>
+#include <QDomDocument>
+#include <dabstractfilewatcher.h>
 
 #include <sys/vfs.h>
 
@@ -519,6 +521,9 @@ bool FileUtils::openFile(const QString &filePath)
 
     result = launchApp(defaultDesktopFile, QStringList() << DUrl::fromLocalFile(filePath).toString());
     if (result){
+        // workaround since DTK apps doesn't support the recent file spec.
+        // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
+        addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
         return result;
     }
 
@@ -1093,4 +1098,88 @@ void FileUtils::mountAVFS()
 void FileUtils::umountAVFS()
 {
     QProcess::startDetached("/usr/bin/umountavfs");
+}
+
+void FileUtils::addToRecentFile(const DUrl &fileUrl, const QString &mimetype)
+{
+    // spec: scheme must be file://
+    if (fileUrl.scheme() != FILE_SCHEME) return;
+
+    QFileInfo checkFile(fileUrl.path());
+    if (!checkFile.exists()) return;
+
+    DUrl recentUrl(fileUrl);
+    recentUrl.setScheme(RECENT_SCHEME);
+
+    bool shouldSendDeleteSignal = false;
+
+    QString addedTime = QDateTime::currentDateTime().toTimeSpec(Qt::OffsetFromUTC).toString(Qt::ISODate);
+
+    QFile file(QDir::homePath() + "/.local/share/recently-used.xbel");
+    if (!file.open(QIODevice::ReadOnly)) {
+        return;
+    }
+    QDomDocument doc;
+    if (!doc.setContent(&file)) {
+        file.close();
+        return;
+    }
+    file.close();
+
+    // Construct the new element
+    QDomElement bookmarkEl, infoEl, metadataEl, mimeEl;
+
+    bookmarkEl = doc.createElement("bookmark");
+    bookmarkEl.setAttribute("href", fileUrl.toString());
+    bookmarkEl.setAttribute("added", addedTime);
+    bookmarkEl.setAttribute("modified", addedTime);
+    bookmarkEl.setAttribute("visited", addedTime);
+
+    infoEl = doc.createElement("info");
+
+    metadataEl = doc.createElement("metadata");
+    metadataEl.setAttribute("owner", "http://freedesktop.org");
+
+    mimeEl = doc.createElement("mime:mime-type");
+    mimeEl.setAttribute("type", mimetype);
+
+    metadataEl.appendChild(mimeEl);
+    infoEl.appendChild(metadataEl);
+    bookmarkEl.appendChild(infoEl);
+
+    // Remove the existed element and insert the new element we've constructed
+    QDomElement root = doc.documentElement();
+    auto node_list = root.elementsByTagName("bookmark");
+    for (int i = 0; i < node_list.count(); i++) {
+        const DUrl currentFileUrl = DUrl(node_list.at(i).toElement().attribute("href"));
+
+        if (currentFileUrl == fileUrl) {
+            root.removeChild(node_list.at(i));
+            shouldSendDeleteSignal = true;
+            break;
+        }
+    }
+
+    QDomNode result = root.appendChild(bookmarkEl);
+    if (result.isNull()) {
+        return;
+    }
+
+    if (!file.open(QIODevice::WriteOnly)) {
+        return;
+    }
+
+    // Commit changes and send signal.
+    QTextStream out(&file);
+    out << doc.toString();
+    if (shouldSendDeleteSignal) {
+        DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
+                                          &DAbstractFileWatcher::fileDeleted,
+                                          recentUrl);
+    }
+    DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
+                                      &DAbstractFileWatcher::subfileCreated,
+                                      recentUrl);
+
+    return;
 }

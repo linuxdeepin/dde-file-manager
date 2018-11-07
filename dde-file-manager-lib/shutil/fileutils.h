@@ -111,6 +111,8 @@ public:
 
     static void mountAVFS();
     static void umountAVFS();
+
+    static void addToRecentFile(const DUrl &fileUrl, const QString &mimetype);
 };
 
 #endif // FILEUTILS_H
