@@ -61,6 +61,7 @@
 #include <QLocale>
 
 #include <glib.h> // only for g_get_user_special_dir()
+#include <memory> // std::unique_ptr
 
 #ifdef SW_LABEL
 #include "sw_label/filemanagerlibrary.h"
