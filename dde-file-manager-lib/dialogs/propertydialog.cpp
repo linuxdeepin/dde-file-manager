@@ -928,8 +928,8 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
 
     QStringList recommendApps = mimeAppsManager->getRecommendedApps(fileUrl);
 
-    QString gio_mimeType = FileUtils::getMimeTypeByGIO(fileUrl.toString());
-    QString defaultApp = mimeAppsManager->getDefaultAppDisplayNameByGio(gio_mimeType);
+    QString mimeType = infoPtr->mimeType().name(); // blumia: consider remove things like FileUtils::getMimeTypeByGIO ?
+    QString defaultApp = mimeAppsManager->getDefaultAppDisplayNameByGio(mimeType);
 
     foreach (const QString &appFile, recommendApps) {
         if (!QFile::exists(appFile)) {
@@ -944,8 +944,7 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
         itemBox->setIcon(QIcon::fromTheme(df.getIcon()));
         itemBox->setIconSize(QSize(16, 16));
         itemBox->setProperty("appPath", appFile);
-        //for future we use our api for getting mimeType
-        itemBox->setProperty("mimeTypeName", FileUtils::getMimeTypeByGIO(fileUrl.toString()));
+        itemBox->setProperty("mimeTypeName", mimeType);
         m_OpenWithButtonGroup->addButton(itemBox);
         item->setData(Qt::UserRole, df.getName());
         listWidget->addItem(item);
