@@ -72,17 +72,6 @@
 
 std::atomic<bool> CanvasGridView::m_flag{ false };
 
-static inline bool isPersistFile(const DUrl &url)
-{
-#ifdef DDE_COMPUTER_TRASH
-    return url.toString().endsWith("/dde-computer.desktop")
-           || url.toString().endsWith("/dde-trash.desktop");
-#else
-    Q_UNUSED(url);
-    return false;
-#endif
-}
-
 void startProcessDetached(const QString &program,
                           const QStringList &arguments = QStringList(),
                           QIODevice::OpenMode mode = QIODevice::ReadWrite)
@@ -563,7 +552,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
     bool canDeleted = true;
     for (const QModelIndex &index : selectionModel()->selectedIndexes()) {
         auto url = model()->getUrlByIndex(index);
-        if (isPersistFile(url) || url.isEmpty()) {
+        if (url.isEmpty()) {
             canDeleted = false;
             continue;
         }
@@ -789,9 +778,6 @@ void CanvasGridView::dropEvent(QDropEvent *event)
             continue;
         }
 
-        if (isPersistFile(info->fileUrl())) {
-            canMove = false;
-        }
         if (targetIndex == index) {
             canMove = false;
         }
