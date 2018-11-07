@@ -72,6 +72,10 @@
 #include <QHeaderView>
 #include <QMimeData>
 #include <QScrollBar>
+#include <QScroller>
+
+#include <private/qguiapplication_p.h>
+#include <qpa/qplatformtheme.h>
 
 DWIDGET_USE_NAMESPACE
 
@@ -149,10 +153,15 @@ public:
 
     QActionGroup *toolbarActionGroup;
 
-    bool enableSelectionByMouse = false;
     bool allowedAdjustColumnSize = true;
 
+    // 用于实现触屏滚动视图和框选文件不冲突，手指在屏幕上按下短时间内就开始移动
+    // 会被认为触发滚动视图，否则为触发文件选择（时间默认为300毫秒）
     QPointer<QTimer> updateEnableSelectionByMouseTimer;
+    // 记录触摸按下事件，在mouse move事件中使用，用于判断手指移动的距离，当大于
+    // QPlatformTheme::TouchDoubleTapDistance 的值时认为触发触屏滚动
+    QPoint lastTouchBeginPos;
+    int touchTapDistance = -1;
 
     Q_DECLARE_PUBLIC(DFileView)
 };
@@ -174,6 +183,7 @@ DFileView::DFileView(QWidget *parent)
                                  << ContiguousSelection;
 
     d_ptr->defaultViewMode = static_cast<ViewMode>(DFMApplication::instance()->appAttribute(DFMApplication::AA_ViewMode).toInt());
+    d_ptr->touchTapDistance = QGuiApplicationPrivate::platformTheme()->themeHint(QPlatformTheme::TouchDoubleTapDistance).toInt();
 
     initUI();
     initModel();
@@ -1049,22 +1059,25 @@ void DFileView::mousePressEvent(QMouseEvent *event)
     case Qt::LeftButton: {
         // 当事件source为MouseEventSynthesizedByQt，认为此事件为TouchBegin转换而来
         if (event->source() == Qt::MouseEventSynthesizedByQt) {
+            d->lastTouchBeginPos = event->pos();
+
+            // 清空触屏滚动操作，因为在鼠标按下时还不知道即将进行的是触屏滚动还是文件框选
+            if (QScroller::hasScroller(this)) {
+                // 不可使用 ungrab，会导致应用崩溃，或许是Qt的bug
+                QScroller::scroller(this)->deleteLater();
+            }
+
             if (d->updateEnableSelectionByMouseTimer) {
                 d->updateEnableSelectionByMouseTimer->stop();
             } else {
                 d->updateEnableSelectionByMouseTimer = new QTimer(this);
                 d->updateEnableSelectionByMouseTimer->setSingleShot(true);
-                d->updateEnableSelectionByMouseTimer->setInterval(300);
+                d->updateEnableSelectionByMouseTimer->setInterval(100);
 
-                connect(d->updateEnableSelectionByMouseTimer, &QTimer::timeout, this, [d] {
-                    d->enableSelectionByMouse = true;
-                    d->updateEnableSelectionByMouseTimer->deleteLater();
-                });
+                connect(d->updateEnableSelectionByMouseTimer, &QTimer::timeout, d->updateEnableSelectionByMouseTimer, &QTimer::deleteLater);
             }
 
             d->updateEnableSelectionByMouseTimer->start();
-        } else {
-            d->enableSelectionByMouse = true;
         }
 
         bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos());
@@ -1114,9 +1127,27 @@ void DFileView::mouseMoveEvent(QMouseEvent *event)
 {
     Q_D(const DFileView);
 
-    // 避免文件选择和触屏的拖动行为矛盾
-    if (!d->enableSelectionByMouse) {
-        return;
+    // source为此类型时认为是触屏事件
+    if (event->source() == Qt::MouseEventSynthesizedByQt) {
+        if (QScroller::hasScroller(this))
+            return;
+
+        // 在定时器期间收到鼠标move事件且距离大于一定值则认为触发视图滚动
+        if (d->updateEnableSelectionByMouseTimer
+                && d->updateEnableSelectionByMouseTimer->isActive()) {
+            const QPoint difference_pos = event->pos() - d->lastTouchBeginPos;
+
+            if (qAbs(difference_pos.x()) > d->touchTapDistance
+                    || qAbs(difference_pos.y()) > d->touchTapDistance) {
+                QScroller::grabGesture(this);
+                QScroller *scroller = QScroller::scroller(this);
+
+                scroller->handleInput(QScroller::InputPress, event->localPos(), event->timestamp());
+                scroller->handleInput(QScroller::InputMove, event->localPos(), event->timestamp());
+            }
+
+            return;
+        }
     }
 
     return DListView::mouseMoveEvent(event);
@@ -1127,15 +1158,14 @@ void DFileView::mouseReleaseEvent(QMouseEvent *event)
     D_D(DFileView);
 
     d->dragMoveHoverIndex = QModelIndex();
-    d->enableSelectionByMouse = false;
 
     if (d->mouseLastPressedIndex.isValid() && DFMGlobal::keyCtrlIsPressed()) {
         if (d->mouseLastPressedIndex == indexAt(event->pos()))
             selectionModel()->select(d->mouseLastPressedIndex, QItemSelectionModel::Deselect);
     }
 
-    // 避免通过触屏拖动视图松手后当前选中被清除
-    if (state() != NoState || event->source() != Qt::MouseEventSynthesizedByQt)
+    // 避免滚动视图导致文件选中状态被取消
+    if (!QScroller::hasScroller(this))
         return DListView::mouseReleaseEvent(event);
 }
 
@@ -1738,21 +1768,6 @@ bool DFileView::event(QEvent *e)
             }
         }
         break;
-    case QEvent::Gesture: {
-        // 避免和视图的文件选择操作冲突
-        if (state() != NoState) {
-            return false;
-        }
-
-        Q_D(DFileView);
-
-        if (d->updateEnableSelectionByMouseTimer) {
-            d->updateEnableSelectionByMouseTimer->stop();
-            d->updateEnableSelectionByMouseTimer->deleteLater();
-        }
-
-        break;
-    }
     default:
         break;
     }

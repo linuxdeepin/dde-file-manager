@@ -200,6 +200,7 @@ protected:
     void mousePressEvent(QMouseEvent* event);
     void showEvent(QShowEvent* event);
     void keyPressEvent(QKeyEvent* event);
+    void mouseMoveEvent(QMouseEvent *event);
 
     void setIconSizeBySizeIndex(int index);
 

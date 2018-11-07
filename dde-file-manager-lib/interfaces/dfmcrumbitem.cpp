@@ -261,7 +261,10 @@ void DFMCrumbItem::mouseReleaseEvent(QMouseEvent *event)
 {
     Q_D(DFMCrumbItem);
 
-    if (d->clickedPos == event->globalPos() && !d->data.url.isEmpty()) {
+    const QPoint pos_difference = d->clickedPos - event->globalPos();
+
+    if (qAbs(pos_difference.x()) < 2 && qAbs(pos_difference.y() < 2)
+            && !d->data.url.isEmpty()) {
         click();
     } else {
         QWidget::mouseReleaseEvent(event);

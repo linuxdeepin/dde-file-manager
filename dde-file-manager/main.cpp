@@ -78,11 +78,6 @@ int main(int argc, char *argv[])
     // Fixed the locale codec to utf-8
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
-    // init Environment
-    if (qEnvironmentVariableIsEmpty("QT_PAN_TOUCHPOINTS")) {
-        qputenv("QT_PAN_TOUCHPOINTS", "1");
-    }
-
     if (qEnvironmentVariableIsSet("PKEXEC_UID")) {
         const quint32 pkexecUID = qgetenv("PKEXEC_UID").toUInt();
         const QDir userHome(getpwuid(pkexecUID)->pw_dir);

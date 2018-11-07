@@ -450,7 +450,9 @@ void DFMCrumbBar::mouseReleaseEvent(QMouseEvent *event)
 
     //blumia: no need to check if it's clicked on other widgets
     //        since this will only happend when clicking empty.
-    if (d->clickedPos == event->globalPos()) {
+    const QPoint pos_difference = d->clickedPos - event->globalPos();
+
+    if (qAbs(pos_difference.x()) < 2 && qAbs(pos_difference.y()) < 2) {
         showAddressBar(qobject_cast<DFileManagerWindow*>(topLevelWidget())->currentUrl());
     }
 

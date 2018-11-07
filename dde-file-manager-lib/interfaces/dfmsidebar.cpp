@@ -39,6 +39,7 @@
 #include <QVBoxLayout>
 #include <QTimer>
 #include <QScrollBar>
+#include <QScroller>
 
 #include "dabstractfilewatcher.h"
 #include "dfmapplication.h"
@@ -477,6 +478,7 @@ DFMSideBar::DFMSideBar(QWidget *parent)
     , d_ptr(new DFMSideBarPrivate(this))
 {
     DThemeManager::instance()->registerWidget(this);
+    QScroller::grabGesture(this);
 }
 
 DFMSideBar::~DFMSideBar()
