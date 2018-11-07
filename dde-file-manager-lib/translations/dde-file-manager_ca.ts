@@ -276,7 +276,7 @@
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1276"/>
         <source>Last access</source>
-        <translation type="unfinished"/>
+        <translation>Últim accés</translation>
     </message>
     <message>
         <location filename="../models/searchfileinfo.cpp" line="119"/>

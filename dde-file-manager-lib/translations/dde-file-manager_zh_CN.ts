@@ -377,7 +377,7 @@
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="110"/>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="125"/>
         <source>%1 Volume</source>
-        <translation>%1卷</translation>
+        <translation>%1 卷</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="50"/>

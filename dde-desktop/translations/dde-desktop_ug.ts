@@ -37,7 +37,7 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="38"/>
         <source>Tiny</source>
-        <translation type="unfinished"/>
+        <translation>كىچىك</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="39"/>

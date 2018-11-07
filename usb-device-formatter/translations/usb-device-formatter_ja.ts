@@ -1,10 +1,10 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="es" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="ja" version="2.1">
 <context>
     <name>FinishPage</name>
     <message>
         <location filename="../view/finishpage.cpp" line="42"/>
         <source>Format successfully</source>
-        <translation>Formato completado</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12,7 +12,7 @@
     <message>
         <location filename="../view/formatingpage.cpp" line="43"/>
         <source>Formating, please wait for a minute...</source>
-        <translation>Formateando, espera un minuto por favor...</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -20,22 +20,22 @@
     <message>
         <location filename="../view/mainpage.cpp" line="109"/>
         <source>Type</source>
-        <translation>Tipo</translation>
+        <translation>種類</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="128"/>
         <source>Label</source>
-        <translation>Etiqueta</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="137"/>
         <source>Fast format</source>
-        <translation>Formato rápido </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="154"/>
         <source>This operation will clear all data from your device.</source>
-        <translation>Esta operación borrará todos los datos de tu dispositivo.</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -44,42 +44,42 @@
         <location filename="../view/mainwindow.cpp" line="80"/>
         <location filename="../view/mainwindow.cpp" line="103"/>
         <source>Format</source>
-        <translation>Formatear</translation>
+        <translation>フォーマット</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="190"/>
         <source>Continue</source>
-        <translation>Continuar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="195"/>
         <source>Formatting...</source>
-        <translation>Formateando...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="219"/>
         <source>Done</source>
-        <translation>Hecho</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="230"/>
         <source>Failed to format</source>
-        <translation>Fallo al formatear</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="226"/>
         <source>Quit</source>
-        <translation>Quitar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="227"/>
         <source>Your disk is removed when formatting</source>
-        <translation>El disco se quitará al formatear</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="231"/>
         <source>Reformat</source>
-        <translation>Reformatear</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -87,7 +87,7 @@
     <message>
         <location filename="../dialogs/messagedialog.cpp" line="43"/>
         <source>OK</source>
-        <translation>Aceptar</translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -95,12 +95,12 @@
     <message>
         <location filename="../main.cpp" line="122"/>
         <source>Device does not exist</source>
-        <translation>El dispositivo no existe</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../main.cpp" line="131"/>
         <source>Cannot format local device</source>
-        <translation>No se puede formatear el dispositivo local</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -108,7 +108,7 @@
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
         <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
-        <translation>La operación de formato borrará todos los datos de su disco, ¿está seguro de continuar? Esta opción no se puede deshacer.</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>

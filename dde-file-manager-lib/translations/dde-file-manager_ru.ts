@@ -276,7 +276,7 @@
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1276"/>
         <source>Last access</source>
-        <translation type="unfinished"/>
+        <translation>Последний доступ</translation>
     </message>
     <message>
         <location filename="../models/searchfileinfo.cpp" line="119"/>
@@ -1005,7 +1005,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="145"/>
         <location filename="../configure/global-setting-template.js" line="145"/>
         <source>Display recent file entry in left panel</source>
-        <translation>Отобразить последнюю запись файла в левой панели</translation>
+        <translation>Отобразить недавние обращения к файлам в левой панели</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="191"/>
