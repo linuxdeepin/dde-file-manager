@@ -2792,7 +2792,12 @@ void DFileViewPrivate::_q_onSectionHandleDoubleClicked(int logicalIndex)
 {
     Q_Q(DFileView);
 
-    if (q->rowCount() == 0) {
+    if (q->model()->state() != DFileSystemModel::Idle)
+        return;
+
+    int row_count = q->model()->rowCount();
+
+    if (row_count < 1) {
         return;
     }
 
@@ -2803,8 +2808,8 @@ void DFileViewPrivate::_q_onSectionHandleDoubleClicked(int logicalIndex)
 
     int column_max_width = 0;
 
-    for (int from = visibleIndexRande.first; from <= visibleIndexRande.second; ++from) {
-        const QModelIndex &index = q->model()->index(from, 0);
+    for (int i = 0; i < row_count; ++i) {
+        const QModelIndex &index = q->model()->index(i, 0);
         const QList<QRect> &list = q->itemDelegate()->paintGeomertys(option, index, true);
 
         // 第0列为文件名列，此列比较特殊，因为前面还有文件图标占用了一部分空间
