@@ -514,6 +514,9 @@ bool DFileService::renameFile(const QObject *sender, const DUrl &from, const DUr
 
 bool DFileService::deleteFiles(const QObject *sender, const DUrlList &list, bool confirmationDialog, bool slient, bool force) const
 {
+    if (list.isEmpty())
+        return false;
+
     foreach (const DUrl &url, list) {
         if (systemPathManager->isSystemPath(url.toLocalFile())) {
             if (!slient) {
