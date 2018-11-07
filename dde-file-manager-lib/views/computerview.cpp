@@ -59,6 +59,10 @@
 #include <QStorageInfo>
 #include <QSettings>
 #include <QUrlQuery>
+#include <QScroller>
+
+#include <private/qguiapplication_p.h>
+#include <qpa/qplatformtheme.h>
 
 #include <DApplication>
 
@@ -538,6 +542,15 @@ void ComputerView::initUI()
     m_contentArea = new DScrollArea(this);
     m_contentArea->setObjectName("ComputerView");
     m_contentArea->setWidgetResizable(true);
+
+    // 支持触屏滚动，直接使用TouchGesture会导致鼠标双击事件丢失
+    QScroller::grabGesture(m_contentArea, QScroller::LeftMouseButtonGesture);
+    QScroller *scroller = QScroller::scroller(m_contentArea);
+    auto scroller_properties = scroller->scrollerProperties();
+    int touchTapDistance = QGuiApplicationPrivate::platformTheme()->themeHint(QPlatformTheme::TouchDoubleTapDistance).toInt();
+    scroller_properties.setScrollMetric(QScrollerProperties::DragStartDistance, touchTapDistance / 1000);
+    scroller->setScrollerProperties(scroller_properties);
+
     m_statusBar = new DStatusBar(this);
     m_statusBar->setFixedHeight(22);
     m_statusBar->scalingSlider()->setMaximum(m_iconSizes.count() - 1);
@@ -1193,6 +1206,14 @@ void ComputerView::keyPressEvent(QKeyEvent *event)
     }
 
     QFrame::keyPressEvent(event);
+}
+
+void ComputerView::mouseMoveEvent(QMouseEvent *event)
+{
+    // 防止在使用触屏滚动视图的同时导致窗口移动
+    event->accept();
+
+    return;
 }
 
 void ComputerView::setIconSizeBySizeIndex(int index)
