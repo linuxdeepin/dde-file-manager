@@ -276,7 +276,7 @@
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1276"/>
         <source>Last access</source>
-        <translation type="unfinished"/>
+        <translation>Ostatni dostęp</translation>
     </message>
     <message>
         <location filename="../models/searchfileinfo.cpp" line="119"/>
@@ -377,13 +377,13 @@
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="110"/>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="125"/>
         <source>%1 Volume</source>
-        <translation type="unfinished"/>
+        <translation>Wolumin %1</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="50"/>
         <source>Data Disk</source>
         <comment>Data Partition</comment>
-        <translation type="unfinished"/>
+        <translation>Dysk z danymi</translation>
     </message>
 </context>
 <context>
@@ -1005,7 +1005,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="145"/>
         <location filename="../configure/global-setting-template.js" line="145"/>
         <source>Display recent file entry in left panel</source>
-        <translation type="unfinished"/>
+        <translation>Wyświetl wpisy niedawnych plików w panelu po lewej stronie</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="191"/>
@@ -1504,7 +1504,7 @@
     <message>
         <location filename="../controllers/pathmanager.cpp" line="67"/>
         <source>Recent</source>
-        <translation type="unfinished"/>
+        <translation>Niedawno</translation>
     </message>
 </context>
 <context>

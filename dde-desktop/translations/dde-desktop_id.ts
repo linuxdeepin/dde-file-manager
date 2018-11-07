@@ -78,7 +78,7 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Fast Screen Off</source>
-        <translation type="unfinished"/>
+        <translation>Matikan Layar Cepat</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>

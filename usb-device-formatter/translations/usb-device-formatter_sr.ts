@@ -44,7 +44,7 @@
         <location filename="../view/mainwindow.cpp" line="80"/>
         <location filename="../view/mainwindow.cpp" line="103"/>
         <source>Format</source>
-        <translation>Формат</translation>
+        <translation>Форматирај</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="190"/>
@@ -108,7 +108,7 @@
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
         <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
-        <translation>Форматирањем се бришу сви подаци са вашег диска. Заиста желите да наставите? Ово се не може опозвати.</translation>
+        <translation>Форматирањем се бришу сви подаци са вашег диска. Заиста желите да наставите? Ова радња је неповратна.</translation>
     </message>
 </context>
 </TS>

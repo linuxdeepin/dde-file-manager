@@ -19,7 +19,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="2284"/>
         <source>Display Settings</source>
-        <translation>Mostrar configuración </translation>
+        <translation>Configuración de pantalla</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2291"/>
