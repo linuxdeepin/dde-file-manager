@@ -770,7 +770,7 @@ void CanvasGridView::dropEvent(QDropEvent *event)
 
     QStringList selectLocalFiles;
     auto selects = selectionModel()->selectedIndexes();
-    bool canMove = true;
+    bool dropOnSelf = false;
     for (auto index : selects) {
         auto info = model()->fileInfo(index);
 
@@ -779,22 +779,18 @@ void CanvasGridView::dropEvent(QDropEvent *event)
         }
 
         if (targetIndex == index) {
-            canMove = false;
+            dropOnSelf = true;
         }
         selectLocalFiles << info->fileUrl().toLocalFile();
     }
 
     DAbstractFileInfoPointer targetInfo = model()->fileInfo(indexAt(event->pos()));
-    if (!targetInfo) {
+    if (!targetInfo || dropOnSelf) {
         targetInfo = model()->fileInfo(rootIndex());
     }
 
     if (event->source() == this && !DFMGlobal::keyCtrlIsPressed()) {
-        if (!canMove) {
-            event->setDropAction(Qt::IgnoreAction);
-        } else {
-            event->setDropAction(Qt::MoveAction);
-        }
+        event->setDropAction(Qt::MoveAction);
 
     } else {
         d->fileViewHelper->preproccessDropEvent(event);
@@ -819,7 +815,7 @@ void CanvasGridView::dropEvent(QDropEvent *event)
         if (event->dropAction() == Qt::MoveAction) {
             QModelIndex dropIndex = indexAt(gridRectAt(event->pos()).center());
 
-            if (event->source() == this && !dropIndex.isValid()) {
+            if (event->source() == this && (!dropIndex.isValid() || dropOnSelf)) {
                 auto point = event->pos();
                 auto row = (point.x() - d->viewMargins.left()) / d->cellWidth;
                 auto col = (point.y() - d->viewMargins.top()) / d->cellHeight;
