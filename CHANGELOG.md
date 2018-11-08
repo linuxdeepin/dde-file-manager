@@ -1,3 +1,13 @@
+<a name="4.6.8.9"></a>
+## 4.6.8.9 (2018-11-08)
+
+
+#### Bug Fixes
+
+* **pro:**  remove DnD limit for some desktop file ([67505b74](https://github.com/linuxdeepin/dde-file-manager/commit/67505b745432e7f2008dff2f367bcaf7dda85a90))
+
+
+
 <a name="4.6.8.8"></a>
 ## 4.6.8.8 (2018-10-25)
 
