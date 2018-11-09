@@ -27,6 +27,7 @@
 #include "dfilehandler.h"
 #include "ddiriterator.h"
 #include "dfilestatisticsjob.h"
+#include "dlocalfiledevice.h"
 
 #include <QMutex>
 #include <QTimer>
