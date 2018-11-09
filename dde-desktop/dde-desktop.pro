@@ -50,7 +50,8 @@ SOURCES += \
     dbus/dbusdock.cpp \
     config/profile.cpp \
     view/desktopitemdelegate.cpp \
-    presenter/gridcore.cpp
+    presenter/gridcore.cpp \
+    config/dfmdesktopsettings.cpp
 
 
 
@@ -73,7 +74,8 @@ HEADERS += \
     config/profile.h \
     view/desktopitemdelegate.h \
     presenter/gridcore.h \
-    deventfilter.h
+    deventfilter.h \
+    config/dfmdesktopsettings.h
 
 RESOURCES += \
     resource/theme/theme.qrc

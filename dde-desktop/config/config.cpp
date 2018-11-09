@@ -7,9 +7,11 @@
  * (at your option) any later version.
  **/
 #include "config.h"
+#include "dfmdesktopsettings.h"
 
 #include <QThread>
 #include <QStandardPaths>
+#include <QtConcurrent>
 #include <QApplication>
 #include <QDir>
 #include <QFileInfo>
@@ -39,7 +41,7 @@ Config::Config()
     if (!configFile.exists()) {
         configFile.absoluteDir().mkpath(".");
     }
-    m_settings = new QSettings(configPath, QSettings::IniFormat);
+    m_settings = new DFMDesktopSettings(configPath);
     auto work = new QThread(this);
     this->moveToThread(work);
     work->start();
@@ -49,7 +51,9 @@ Config::Config()
     connect(syncTimer, &QTimer::timeout, this, [ = ]() {
         if (needSync) {
             needSync = false;
-            m_settings->sync();
+            QtConcurrent::run([ = ](){
+                m_settings->sync();
+            });
         }
     }, Qt::QueuedConnection);
     syncTimer->start();
