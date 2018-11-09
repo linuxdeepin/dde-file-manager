@@ -1,3 +1,32 @@
+<a name="4.7"></a>
+## 4.7 (2018-11-09)
+
+
+#### Bug Fixes
+
+*   lag when copy large file on desktop ([e637e230](https://github.com/linuxdeepin/dde-file-manager/commit/e637e2305ec44986acaaa16ccaa3922c8e19bd38))
+*   multiple file DnD issue in some case ([bd4ef257](https://github.com/linuxdeepin/dde-file-manager/commit/bd4ef25754ac85cf5b0a612d4422cf3b79252dc4))
+*   open with dialog missing recommend apps ([a6a132c4](https://github.com/linuxdeepin/dde-file-manager/commit/a6a132c42c2c5107d5b470af782099a0e0fbe75e))
+*   delete files trash. ([3e10b5c9](https://github.com/linuxdeepin/dde-file-manager/commit/3e10b5c99679a26a110553a87c9e6e4bc68ab547))
+*   missing header file ([df6cf62c](https://github.com/linuxdeepin/dde-file-manager/commit/df6cf62cf1e29db37d8a58b9b8768a227b33376b))
+*   workaround for recent file support ([154d2528](https://github.com/linuxdeepin/dde-file-manager/commit/154d25283845986d0d307b4dc2d68dc380929d74))
+*   disable set wallpaper for gif file ([b0f2569a](https://github.com/linuxdeepin/dde-file-manager/commit/b0f2569a78c6a8bb65fb114d257782bcc019687d))
+*   wrong open with section when symlink no longer valid ([2409f208](https://github.com/linuxdeepin/dde-file-manager/commit/2409f208948d98dabd2effc994ee6b65e05eeacd))
+*   root partition wrong file count in property dialog ([201b722c](https://github.com/linuxdeepin/dde-file-manager/commit/201b722cbf4e76e04901fd00bc22448de0e24da2))
+*   subtitle empty floder. ([2f605bb0](https://github.com/linuxdeepin/dde-file-manager/commit/2f605bb0f2e9b5f68ead19a3c0b188f67c6d87e8))
+*   goto home dir when hide recent entry ([3ad1e9cd](https://github.com/linuxdeepin/dde-file-manager/commit/3ad1e9cda6350a353d7c086bb239c2b7a0aeb8fc))
+*   do not resize column if rowCount is 0 ([6de65107](https://github.com/linuxdeepin/dde-file-manager/commit/6de651076dd94ebc9ceed883f8b678e93f589641))
+*   mount plugin i18n ([3b1623d3](https://github.com/linuxdeepin/dde-file-manager/commit/3b1623d3ebf6718916c0906fa60451ef5ab8d6ce))
+*   tooltip hide right after mouse leave ([9500afc2](https://github.com/linuxdeepin/dde-file-manager/commit/9500afc23a491081c4d1a48ef53bf248b4b45591))
+* **mountPlugin:**  unmount all will now unmount vfs device ([97541409](https://github.com/linuxdeepin/dde-file-manager/commit/9754140981ebecf8b83623ee76556d7b023d9d69))
+* **pro:**  remove DnD limit for some desktop file ([d70f59c7](https://github.com/linuxdeepin/dde-file-manager/commit/d70f59c79615f89d35e6904f9bcdb6c5d93eb387))
+* **recent:**
+  *  support decompress file. ([36466703](https://github.com/linuxdeepin/dde-file-manager/commit/3646670377b808f6079fd5ec7cdb262083286ab7))
+  *  support tag color display. ([cc4a8d11](https://github.com/linuxdeepin/dde-file-manager/commit/cc4a8d11a0fbf0b0cba0bd35e6af89a82718b41f))
+  *  support listening delete files. ([5f3979a4](https://github.com/linuxdeepin/dde-file-manager/commit/5f3979a4d6a0335e059770700b740029468b107e))
+
+
+
 <a name="4.6.10"></a>
 ## 4.6.10 (2018-11-01)
 
