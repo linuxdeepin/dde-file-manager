@@ -38,6 +38,7 @@ public:
     bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const override;
     bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
     bool compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const override;
+    bool decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const;
     bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const override;
 
     bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const override;
@@ -52,6 +53,9 @@ public:
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
 
     mutable QMap<DUrl, RecentPointer> recentNodes;
+
+private:
+    static DUrlList realUrlList(const DUrlList &recentUrls);
 };
 
 #endif // RECENTCONTROLLER_H
