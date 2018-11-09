@@ -322,22 +322,18 @@ bool RecentController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent>
 
 bool RecentController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
 {
-    DUrlList list;
-    for (const DUrl &url : event->urlList()) {
-        list << DUrl::fromLocalFile(url.path());
-    }
-
-    return DFileService::instance()->writeFilesToClipboard(event->sender(), event->action(), list);
+    return DFileService::instance()->writeFilesToClipboard(event->sender(), event->action(),
+                                                           realUrlList(event->urlList()));
 }
 
 bool RecentController::compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const
 {
-    DUrlList list;
-    for (const DUrl &url : event->urlList()) {
-        list << DUrl::fromLocalFile(url.path());
-    }
+    return DFileService::instance()->compressFiles(event->sender(), realUrlList(event->urlList()));
+}
 
-    return DFileService::instance()->compressFiles(event->sender(), list);
+bool RecentController::decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const
+{
+    return DFileService::instance()->decompressFile(event->sender(), realUrlList(event->urlList()));
 }
 
 bool RecentController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const
@@ -445,4 +441,15 @@ const DAbstractFileInfoPointer RecentController::createFileInfo(const QSharedPoi
 DAbstractFileWatcher *RecentController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
     return new RecentFileWatcher(event->url());
+}
+
+DUrlList RecentController::realUrlList(const DUrlList &recentUrls)
+{
+    DUrlList list;
+
+    for (const DUrl &url : recentUrls) {
+        list << DUrl::fromLocalFile(url.path());
+    }
+
+    return list;
 }
