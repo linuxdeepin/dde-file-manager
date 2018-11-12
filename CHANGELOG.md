@@ -1,3 +1,17 @@
+<a name="4.7.1.1"></a>
+## 4.7.1.1 (2018-11-12)
+
+
+#### Bug Fixes
+
+*   undefined symbol on archlinux ([34748039](https://github.com/linuxdeepin/dde-file-manager/commit/3474803988d5a143ff5910f936da2ec4e014c0a9))
+*   xbel does not exist for listening failure. ([73763a4e](https://github.com/linuxdeepin/dde-file-manager/commit/73763a4eeb4d210f1f27027f370e479e446fd9da))
+* **recent:**
+  *  don't popup dialog. ([79686f09](https://github.com/linuxdeepin/dde-file-manager/commit/79686f09d304c15f410f5f006e141b49673b1a39))
+  *  conflict with gtk recent manager. ([a68d84f7](https://github.com/linuxdeepin/dde-file-manager/commit/a68d84f765add370b6ffb82cd79fadc21160e3b1))
+
+
+
 <a name="4.7.1"></a>
 ## 4.7.1 (2018-11-09)
 
