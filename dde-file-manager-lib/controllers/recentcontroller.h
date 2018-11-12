@@ -56,6 +56,9 @@ public:
 
 private:
     static DUrlList realUrlList(const DUrlList &recentUrls);
+    void createXbelFile();
+
+    QString m_xbelPath;
 };
 
 #endif // RECENTCONTROLLER_H
