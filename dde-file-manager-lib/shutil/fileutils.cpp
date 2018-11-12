@@ -973,6 +973,9 @@ DFMGlobal::MenuExtension FileUtils::getMenuExtension(const DUrlList &urlList)
 
 bool FileUtils::isGvfsMountFile(const QString &filePath)
 {
+    if (filePath.isEmpty())
+        return false;
+
     return !DStorageInfo::isLocalDevice(filePath);
 }
 
