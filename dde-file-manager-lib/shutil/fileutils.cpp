@@ -1114,14 +1114,13 @@ void FileUtils::addToRecentFile(const DUrl &fileUrl, const QString &mimetype)
     DUrl recentUrl(fileUrl);
     recentUrl.setScheme(RECENT_SCHEME);
 
-    bool shouldSendDeleteSignal = false;
-
     QString addedTime = QDateTime::currentDateTime().toTimeSpec(Qt::OffsetFromUTC).toString(Qt::ISODate);
 
     QFile file(QDir::homePath() + "/.local/share/recently-used.xbel");
     if (!file.open(QIODevice::ReadOnly)) {
         return;
     }
+
     QDomDocument doc;
     if (!doc.setContent(&file)) {
         file.close();
@@ -1156,7 +1155,6 @@ void FileUtils::addToRecentFile(const DUrl &fileUrl, const QString &mimetype)
     appElc.setAttribute("count", "1");
 
     appEl.appendChild(appElc);
-
     metadataEl.appendChild(mimeEl);
     metadataEl.appendChild(appEl);
     infoEl.appendChild(metadataEl);
@@ -1170,7 +1168,6 @@ void FileUtils::addToRecentFile(const DUrl &fileUrl, const QString &mimetype)
 
         if (currentFileUrl == fileUrl) {
             root.removeChild(node_list.at(i));
-            shouldSendDeleteSignal = true;
             break;
         }
     }
@@ -1187,14 +1184,6 @@ void FileUtils::addToRecentFile(const DUrl &fileUrl, const QString &mimetype)
     // Commit changes and send signal.
     QTextStream out(&file);
     out << doc.toString();
-    if (shouldSendDeleteSignal) {
-        DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
-                                          &DAbstractFileWatcher::fileDeleted,
-                                          recentUrl);
-    }
-    DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
-                                      &DAbstractFileWatcher::subfileCreated,
-                                      recentUrl);
 
     return;
 }
