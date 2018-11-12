@@ -6,7 +6,6 @@ PKGCONFIG       += dtkwidget gio-2.0
 
 INCLUDEPATH += /usr/include/dde-dock
 INCLUDEPATH += $$PWD/../../dde-file-manager-lib/interfaces \
-#               $$PWD/../../dde-file-manager-lib/gvfs \
                $$PWD/../../dde-file-manager-lib
 
 TARGET          = $$qtLibraryTarget(dde-disk-mount-plugin)
@@ -23,6 +22,8 @@ HEADERS += \
     diskpluginitem.h \
     diskcontrolitem.h \
     $$PWD/../../dde-file-manager-lib/interfaces/dfmsettings.h \
+    $$PWD/../../dde-file-manager-lib/interfaces/dfmstandardpaths.h \
+    $$PWD/../../dde-file-manager-lib/interfaces/durl.h \
     dattacheddeviceinterface.h \
     dattachedudisks2device.h \
     dattachedvfsdevice.h
@@ -33,6 +34,8 @@ SOURCES += \
     diskpluginitem.cpp \
     diskcontrolitem.cpp \
     $$PWD/../../dde-file-manager-lib/interfaces/dfmsettings.cpp \
+    $$PWD/../../dde-file-manager-lib/interfaces/dfmstandardpaths.cpp \
+    $$PWD/../../dde-file-manager-lib/interfaces/durl.cpp \
     dattachedudisks2device.cpp \
     dattachedvfsdevice.cpp
 
