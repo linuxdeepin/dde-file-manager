@@ -1127,7 +1127,7 @@ void FileUtils::addToRecentFile(const DUrl &fileUrl, const QString &mimetype)
     file.close();
 
     // Construct the new element
-    QDomElement bookmarkEl, infoEl, metadataEl, mimeEl;
+    QDomElement bookmarkEl, infoEl, metadataEl, mimeEl, appEl, appElc;
 
     bookmarkEl = doc.createElement("bookmark");
     bookmarkEl.setAttribute("href", fileUrl.toString());
@@ -1143,7 +1143,19 @@ void FileUtils::addToRecentFile(const DUrl &fileUrl, const QString &mimetype)
     mimeEl = doc.createElement("mime:mime-type");
     mimeEl.setAttribute("type", mimetype);
 
+    // below is the fake data.
+    // if there is no data below, GtkRecentManager will delete it.
+    appEl = doc.createElement("bookmark:applications");
+    appElc = doc.createElement("bookmark:application");
+    appElc.setAttribute("name", "DDE");
+    appElc.setAttribute("exec", "&apos;dde-file-manager&apos;");
+    appElc.setAttribute("modified", addedTime);
+    appElc.setAttribute("count", "1");
+
+    appEl.appendChild(appElc);
+
     metadataEl.appendChild(mimeEl);
+    metadataEl.appendChild(appEl);
     infoEl.appendChild(metadataEl);
     bookmarkEl.appendChild(infoEl);
 
