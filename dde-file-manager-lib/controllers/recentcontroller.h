@@ -42,6 +42,7 @@ public:
     bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const override;
 
     bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const override;
+    DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const override;
 
     bool setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const override;
     bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const override;

@@ -398,6 +398,13 @@ bool RecentController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) 
     return true;
 }
 
+DUrlList RecentController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
+{
+    DFileService::instance()->deleteFiles(event->sender(), event->urlList(), false, false, true);
+
+    return DUrlList();
+}
+
 bool RecentController::setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const
 {
     if (!event->url().isValid()) {
