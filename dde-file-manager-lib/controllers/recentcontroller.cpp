@@ -242,13 +242,20 @@ DUrl RecentDirIterator::url() const
 }
 
 RecentController::RecentController(QObject *parent)
-    : DAbstractFileController(parent)
+    : DAbstractFileController(parent),
+      m_xbelPath(QDir::homePath() + "/.local/share/recently-used.xbel")
 {
     QFileSystemWatcher *watcher = new QFileSystemWatcher;
 
     auto handleFileChanged = [=] {
-        QFile file(QDir::homePath() + "/.local/share/recently-used.xbel");
 
+        // create an empty file if the file does not exist because it will fail to listen.
+        if (!QFileInfo(m_xbelPath).exists()) {
+            createXbelFile();
+        }
+
+        // read xbel file.
+        QFile file(m_xbelPath);
         if (file.open(QIODevice::ReadOnly)) {
             QXmlStreamReader reader(&file);
             QList<DUrl> urlList;
@@ -298,7 +305,7 @@ RecentController::RecentController(QObject *parent)
             }
         }
 
-        watcher->addPath(QDir::homePath() + "/.local/share/recently-used.xbel");
+        watcher->addPath(m_xbelPath);
     };
 
     handleFileChanged();
@@ -348,7 +355,7 @@ bool RecentController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) 
         list << DUrl::fromLocalFile(url.path());
     }
 
-    QFile file(QDir::homePath() + "/.local/share/recently-used.xbel");
+    QFile file(m_xbelPath);
     if (!file.open(QIODevice::ReadOnly)) {
         return false;
     }
@@ -452,4 +459,22 @@ DUrlList RecentController::realUrlList(const DUrlList &recentUrls)
     }
 
     return list;
+}
+
+void RecentController::createXbelFile()
+{
+    QFile file(m_xbelPath);
+
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream stream(&file);
+        stream.setCodec("UTF-8");
+        stream << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                  "<xbel version=\"1.0\"\n"
+                  "xmlns:bookmark=\"http://www.freedesktop.org/standards/desktop-bookmarks\"\n"
+                  "xmlns:mime=\"http://www.freedesktop.org/standards/shared-mime-info\"\n"
+                  ">\n"
+                  "</xbel>\n";
+        stream.flush();
+        file.close();
+    }
 }
