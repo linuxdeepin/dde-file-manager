@@ -39,7 +39,7 @@ SOURCES += \
     dattachedudisks2device.cpp \
     dattachedvfsdevice.cpp
 
-target.path = $${PREFIX}/lib/dde-dock/plugins/
+target.path = $${PREFIX}/lib/dde-dock/plugins/system-trays/
 INSTALLS += target
 
 include($$PWD/udisks2/udisks2.pri)

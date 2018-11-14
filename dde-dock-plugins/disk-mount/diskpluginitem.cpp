@@ -66,7 +66,7 @@ void DiskPluginItem::mousePressEvent(QMouseEvent *e)
 
     const QPoint p(e->pos() - rect().center());
     if (p.manhattanLength() < std::min(width(), height()) * 0.8 * 0.5) {
-        emit requestContextMenu();
+        emit requestContextMenu(DISK_MOUNT_KEY);
         return;
     }
 
@@ -80,10 +80,13 @@ QSize DiskPluginItem::sizeHint() const
 
 void DiskPluginItem::updateIcon()
 {
-    if (m_displayMode == Dock::Efficient)
-        m_icon = QIcon::fromTheme("drive-removable-dock-symbolic").pixmap(16 * qApp->devicePixelRatio(), 16 * qApp->devicePixelRatio());
-    else
-        m_icon = QIcon::fromTheme("drive-removable-dock").pixmap(std::min(width(), height()) * 0.8 * qApp->devicePixelRatio(), std::min(width(), height()) * 0.8 * qApp->devicePixelRatio());
+//    if (m_displayMode == Dock::Efficient)
+//        m_icon = QIcon::fromTheme("drive-removable-dock-symbolic").pixmap(16 * qApp->devicePixelRatio(), 16 * qApp->devicePixelRatio());
+//    else
+//        m_icon = QIcon::fromTheme("drive-removable-dock").pixmap(std::min(width(), height()) * 0.8 * qApp->devicePixelRatio(), std::min(width(), height()) * 0.8 * qApp->devicePixelRatio());
+
+    // fashion mode icons are no longer needed
+    m_icon = QIcon::fromTheme("drive-removable-dock-symbolic").pixmap(16 * qApp->devicePixelRatio(), 16 * qApp->devicePixelRatio());
     m_icon.setDevicePixelRatio(qApp->devicePixelRatio());
     update();
 }
