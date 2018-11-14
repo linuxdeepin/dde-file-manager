@@ -30,6 +30,8 @@
 #include <QWidget>
 #include <QPixmap>
 
+#define DISK_MOUNT_KEY "mount-item-key"
+
 class DiskPluginItem : public QWidget
 {
     Q_OBJECT
@@ -38,7 +40,7 @@ public:
     explicit DiskPluginItem(QWidget *parent = 0);
 
 signals:
-    void requestContextMenu() const;
+    void requestContextMenu(const QString &itemKey) const;
 
 public slots:
     void setDockDisplayMode(const Dock::DisplayMode mode);

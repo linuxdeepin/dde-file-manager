@@ -50,7 +50,8 @@ DiskMountPlugin::DiskMountPlugin(QObject *parent)
     m_tipsLabel->setStyleSheet("color:white;"
                                "padding:0px 1px;");
 
-    connect(m_diskPluginItem, &DiskPluginItem::requestContextMenu, [this] {m_proxyInter->requestContextMenu(this, QString());});
+    connect(m_diskPluginItem, &DiskPluginItem::requestContextMenu,
+            [=](const QString &itemKey) { m_proxyInter->requestContextMenu(this, itemKey); });
 }
 
 const QString DiskMountPlugin::pluginName() const
@@ -168,7 +169,7 @@ void DiskMountPlugin::diskCountChanged(const int count)
     m_pluginAdded = bool(count);
 
     if (m_pluginAdded)
-        m_proxyInter->itemAdded(this, QString());
+        m_proxyInter->itemAdded(this, DISK_MOUNT_KEY);
     else
-        m_proxyInter->itemRemoved(this, QString());
+        m_proxyInter->itemRemoved(this, DISK_MOUNT_KEY);
 }
