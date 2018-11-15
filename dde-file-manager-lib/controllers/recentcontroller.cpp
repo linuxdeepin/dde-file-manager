@@ -300,6 +300,8 @@ RecentController::RecentController(QObject *parent)
                                                       &DAbstractFileWatcher::fileDeleted,
                                                       url);
                 } else {
+                    iter.value()->updateInfo();
+
                     ++iter;
                 }
             }
