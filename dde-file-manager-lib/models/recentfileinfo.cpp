@@ -180,7 +180,7 @@ void RecentFileInfo::updateInfo()
             }
 
             const QStringRef &location = reader.attributes().value("href");
-            const QStringRef &dateTime = reader.attributes().value("visited");
+            const QStringRef &dateTime = reader.attributes().value("modified");
 
             if (!location.isEmpty()) {
                 DUrl findUrl = DUrl(location.toString());
