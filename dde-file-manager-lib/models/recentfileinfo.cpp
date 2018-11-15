@@ -29,30 +29,7 @@ RecentFileInfo::RecentFileInfo(const DUrl &url)
     : DAbstractFileInfo(url)
 {
     setProxy(DFileService::instance()->createFileInfo(nullptr, DUrl::fromLocalFile(url.path())));
-
-    QFile file(QDir::homePath() + "/.local/share/recently-used.xbel");
-    if (file.open(QIODevice::ReadOnly)) {
-        QXmlStreamReader reader(&file);
-
-        while (!reader.atEnd()) {
-            if (!reader.readNextStartElement() ||
-                 reader.name() != "bookmark") {
-                continue;
-            }
-
-            const QStringRef &location = reader.attributes().value("href");
-            const QStringRef &added = reader.attributes().value("added");
-
-            if (!location.isEmpty()) {
-                DUrl findUrl = DUrl(location.toString());
-
-                if (findUrl.toLocalFile() == url.path()) {
-                    setReadDateTime(added.toString());
-                    break;
-                }
-            }
-        }
-    }
+    updateInfo();
 }
 
 bool RecentFileInfo::makeAbsolute()
@@ -187,6 +164,34 @@ QString RecentFileInfo::subtitleForEmptyFloder() const
 DUrl RecentFileInfo::goToUrlWhenDeleted() const
 {
     return DUrl::fromLocalFile(QDir::homePath());
+}
+
+void RecentFileInfo::updateInfo()
+{
+    QFile file(QDir::homePath() + "/.local/share/recently-used.xbel");
+
+    if (file.open(QIODevice::ReadOnly)) {
+        QXmlStreamReader reader(&file);
+
+        while (!reader.atEnd()) {
+            if (!reader.readNextStartElement() ||
+                 reader.name() != "bookmark") {
+                continue;
+            }
+
+            const QStringRef &location = reader.attributes().value("href");
+            const QStringRef &dateTime = reader.attributes().value("visited");
+
+            if (!location.isEmpty()) {
+                DUrl findUrl = DUrl(location.toString());
+
+                if (findUrl.toLocalFile() == fileUrl().path()) {
+                    setReadDateTime(dateTime.toString());
+                    break;
+                }
+            }
+        }
+    }
 }
 
 void RecentFileInfo::setReadDateTime(const QString &time)

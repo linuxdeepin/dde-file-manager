@@ -50,6 +50,7 @@ public:
     QString subtitleForEmptyFloder() const override;
     DUrl goToUrlWhenDeleted() const override;
 
+    void updateInfo();
     void setReadDateTime(const QString &time);
 
 private:
