@@ -949,11 +949,20 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
 
 void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
 {
-    TIMER_SINGLESHOT(1000, {
+    QTimer::singleShot(1000, [ = ]{
         if (qApp->applicationName() == QMAKE_TARGET && !DFMGlobal::IsFileManagerDiloagProcess)
         {
             QString fstype = PartMan::Partition::getPartitionByDevicePath(diskInfo.unix_device()).fs();
             if (fstype == "ntfs") {
+                // blumia: the ntfs partition will be read-only if user mount the ntfs device by the kernel driver.
+                //         the fstype (from `df -T` or `mount`) will be "ntfs" rather than "fuseblk" if user use the kernel driver
+                //         to mount the block device, so we use `df -t ntfs /dev/xxxxx` to check if the fstype is "ntfs".
+                QProcess checkFsDrv;
+                checkFsDrv.start("df", {"-t", "ntfs", diskInfo.unix_device()});
+                checkFsDrv.waitForFinished(-1);
+                QString dfStdOut = checkFsDrv.readAllStandardOutput();
+                if (!dfStdOut.startsWith("df:")) return;
+
                 bool isReadOnly = false;
                 DUrl mountUrl = DUrl(diskInfo.mounted_root_uri());
                 QFileInfo mountFileInfo(mountUrl.toLocalFile());
@@ -1013,7 +1022,7 @@ void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
                 }
             }
         }
-                     }, this, diskInfo);
+    });
 }
 
 void DialogManager::showErrorDialog(const QString &title, const QString &message)
