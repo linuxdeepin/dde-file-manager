@@ -523,7 +523,8 @@ bool FileUtils::openFile(const QString &filePath)
     if (result){
         // workaround since DTK apps doesn't support the recent file spec.
         // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
-        addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
+        // the correct approach: let the app add it to the recent list.
+        // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
         return result;
     }
 
