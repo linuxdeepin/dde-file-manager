@@ -29,6 +29,10 @@
 #include <QQueue>
 #include <QDebug>
 
+#include <DRecentManager>
+
+DCORE_USE_NAMESPACE
+
 class RecentFileWatcherPrivate;
 class RecentFileWatcher : public DAbstractFileWatcher
 {
@@ -352,50 +356,12 @@ bool RecentController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent>
 
 bool RecentController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
-    DUrlList list;
+    QStringList list;
     for (const DUrl &url : event->urlList()) {
-        list << DUrl::fromLocalFile(url.path());
+        list << DUrl::fromLocalFile(url.path()).toString();
     }
 
-    QFile file(m_xbelPath);
-    if (!file.open(QIODevice::ReadOnly)) {
-        return false;
-    }
-
-    QDomDocument doc;
-    if (!doc.setContent(&file)) {
-        file.close();
-        return false;
-    }
-    file.close();
-
-    QDomElement root = doc.documentElement();
-    auto node_list = root.elementsByTagName("bookmark");
-
-    for (int i = 0; i < node_list.count(); ) {
-        const DUrl fileUrl = DUrl(node_list.at(i).toElement().attribute("href"));
-
-        if (list.contains(fileUrl)) {
-            root.removeChild(node_list.at(i));
-
-            DUrl recentUrl(fileUrl);
-            recentUrl.setScheme(RECENT_SCHEME);
-            recentNodes.remove(recentUrl);
-
-            DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
-                                              &DAbstractFileWatcher::fileDeleted,
-                                              recentUrl);
-        } else {
-            ++i;
-        }
-    }
-
-    if (!file.open(QIODevice::WriteOnly)) {
-        return false;
-    }
-
-    QTextStream out(&file);
-    out << doc.toString();
+    DRecentManager::removeItems(list);
 
     return true;
 }
