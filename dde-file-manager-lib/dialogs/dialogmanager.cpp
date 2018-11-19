@@ -958,10 +958,10 @@ void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
                 //         the fstype (from `df -T` or `mount`) will be "ntfs" rather than "fuseblk" if user use the kernel driver
                 //         to mount the block device, so we use `df -t ntfs /dev/xxxxx` to check if the fstype is "ntfs".
                 QProcess checkFsDrv;
-                checkFsDrv.start("df", {"-t", "ntfs", diskInfo.unix_device()});
+                checkFsDrv.start("df", {"--output=fstype", diskInfo.unix_device()});
                 checkFsDrv.waitForFinished(-1);
-                QString dfStdOut = checkFsDrv.readAllStandardOutput();
-                if (!dfStdOut.startsWith("df:")) return;
+                QString dfStdOut = checkFsDrv.readAllStandardOutput().split('\n').value(1);
+                if (dfStdOut == QStringLiteral("ntfs")) return;
 
                 bool isReadOnly = false;
                 DUrl mountUrl = DUrl(diskInfo.mounted_root_uri());
