@@ -638,19 +638,9 @@ QString DFileInfo::sizeDisplayName() const
 {
     Q_D(const DFileInfo);
 
-//    if (d->isLowSpeedFile < 0) {
-//        d->isLowSpeedFile = DStorageInfo::isLowSpeedDevice(absoluteFilePath());
-//    }
-
-//    if (d->isLowSpeedFile == 0 && isDir()) {
-//        int size = filesCount();
-
-//        if (size <= 1) {
-//            return QObject::tr("%1 item").arg(size);
-//        }
-
-//        return QObject::tr("%1 items").arg(size);
-//    }
+    if (isDir()) {
+        return QStringLiteral("-");
+    }
 
     return FileUtils::formatSize(size());
 }
