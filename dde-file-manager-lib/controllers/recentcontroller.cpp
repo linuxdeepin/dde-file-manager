@@ -27,6 +27,7 @@
 #include <QXmlStreamReader>
 #include <QDomDocument>
 #include <QQueue>
+#include <QTimer>
 #include <QDebug>
 
 #include <DRecentManager>
@@ -248,13 +249,19 @@ DUrl RecentDirIterator::url() const
 RecentController::RecentController(QObject *parent)
     : DAbstractFileController(parent),
       m_watcher(new QFileSystemWatcher),
+      m_refreshTimer(new QTimer),
       m_xbelPath(QDir::homePath() + "/.local/share/recently-used.xbel")
 {
     // add directory.
     m_watcher->addPath(QDir::homePath() + "/.local/share");
 
+    m_refreshTimer->setInterval(100);
+    m_refreshTimer->setSingleShot(true);
+
     handleFileChanged();
-    connect(m_watcher, &QFileSystemWatcher::fileChanged, this, &RecentController::handleFileChanged);
+
+    connect(m_refreshTimer, &QTimer::timeout, this, &RecentController::handleFileChanged);
+    connect(m_watcher, &QFileSystemWatcher::fileChanged, m_refreshTimer, static_cast<void (QTimer::*)()>(&QTimer::start));
     connect(m_watcher, &QFileSystemWatcher::directoryChanged, this, &RecentController::handleDirectoryChanged);
 }
 
@@ -437,10 +444,11 @@ void RecentController::handleFileChanged()
 
 void RecentController::handleDirectoryChanged()
 {
+    m_refreshTimer->start();
+
     if (QFileInfo(m_xbelPath).exists()) {
         m_watcher->addPath(m_xbelPath);
     } else {
-        handleFileChanged();
         m_watcher->removePath(m_xbelPath);
     }
 }

@@ -26,6 +26,7 @@
 class QFileSystemWatcher;
 class DAbstractFileInfo;
 class DFileWatcher;
+class QTimer;
 
 class RecentController : public DAbstractFileController
 {
@@ -62,6 +63,7 @@ private:
     void handleDirectoryChanged();
 
     QFileSystemWatcher *m_watcher;
+    QTimer *m_refreshTimer;
     QString m_xbelPath;
 };
 
