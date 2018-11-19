@@ -247,75 +247,15 @@ DUrl RecentDirIterator::url() const
 
 RecentController::RecentController(QObject *parent)
     : DAbstractFileController(parent),
+      m_watcher(new QFileSystemWatcher),
       m_xbelPath(QDir::homePath() + "/.local/share/recently-used.xbel")
 {
-    QFileSystemWatcher *watcher = new QFileSystemWatcher;
-
-    auto handleFileChanged = [=] {
-
-        // create an empty file if the file does not exist because it will fail to listen.
-        if (!QFileInfo(m_xbelPath).exists()) {
-            createXbelFile();
-        }
-
-        // read xbel file.
-        QFile file(m_xbelPath);
-        if (file.open(QIODevice::ReadOnly)) {
-            QXmlStreamReader reader(&file);
-            QList<DUrl> urlList;
-
-            while (!reader.atEnd()) {
-                if (!reader.readNextStartElement() ||
-                     reader.name() != "bookmark") {
-                    continue;
-                }
-
-                const QStringRef &location = reader.attributes().value("href");
-
-                if (!location.isEmpty()) {
-                    DUrl url = DUrl(location.toString());
-                    QFileInfo info(url.toLocalFile());
-                    DUrl recentUrl = url;
-                    recentUrl.setScheme(RECENT_SCHEME);
-
-                    if (info.exists() && info.isFile()) {
-                        urlList << recentUrl;
-
-                        if (!recentNodes.contains(recentUrl)) {
-                            RecentFileInfo *fileInfo = new RecentFileInfo(recentUrl);
-                            recentNodes[recentUrl] = fileInfo;
-
-                            DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
-                                                              &DAbstractFileWatcher::subfileCreated,
-                                                              recentUrl);
-                        }
-                    }
-                }
-            }
-
-            // delete does not exist url.
-            for (auto iter = recentNodes.begin(); iter != recentNodes.end(); ) {
-                DUrl url = iter.key();
-
-                if (!urlList.contains(url)) {
-                    iter = recentNodes.erase(iter);
-
-                    DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
-                                                      &DAbstractFileWatcher::fileDeleted,
-                                                      url);
-                } else {
-                    iter.value()->updateInfo();
-
-                    ++iter;
-                }
-            }
-        }
-
-        watcher->addPath(m_xbelPath);
-    };
+    // add directory.
+    m_watcher->addPath(QDir::homePath() + "/.local/share");
 
     handleFileChanged();
-    connect(watcher, &QFileSystemWatcher::fileChanged, this, handleFileChanged);
+    connect(m_watcher, &QFileSystemWatcher::fileChanged, this, &RecentController::handleFileChanged);
+    connect(m_watcher, &QFileSystemWatcher::directoryChanged, this, &RecentController::handleDirectoryChanged);
 }
 
 bool RecentController::openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const
@@ -436,20 +376,71 @@ DUrlList RecentController::realUrlList(const DUrlList &recentUrls)
     return list;
 }
 
-void RecentController::createXbelFile()
+void RecentController::handleFileChanged()
 {
+    // read xbel file.
     QFile file(m_xbelPath);
+    QList<DUrl> urlList;
 
-    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QTextStream stream(&file);
-        stream.setCodec("UTF-8");
-        stream << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                  "<xbel version=\"1.0\"\n"
-                  "xmlns:bookmark=\"http://www.freedesktop.org/standards/desktop-bookmarks\"\n"
-                  "xmlns:mime=\"http://www.freedesktop.org/standards/shared-mime-info\"\n"
-                  ">\n"
-                  "</xbel>\n";
-        stream.flush();
-        file.close();
+    if (file.open(QIODevice::ReadOnly)) {
+        QXmlStreamReader reader(&file);
+
+        while (!reader.atEnd()) {
+            if (!reader.readNextStartElement() ||
+                 reader.name() != "bookmark") {
+                continue;
+            }
+
+            const QStringRef &location = reader.attributes().value("href");
+
+            if (!location.isEmpty()) {
+                DUrl url = DUrl(location.toString());
+                QFileInfo info(url.toLocalFile());
+                DUrl recentUrl = url;
+                recentUrl.setScheme(RECENT_SCHEME);
+
+                if (info.exists() && info.isFile()) {
+                    urlList << recentUrl;
+
+                    if (!recentNodes.contains(recentUrl)) {
+                        RecentFileInfo *fileInfo = new RecentFileInfo(recentUrl);
+                        recentNodes[recentUrl] = fileInfo;
+
+                        DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
+                                                          &DAbstractFileWatcher::subfileCreated,
+                                                          recentUrl);
+                    }
+                }
+            }
+        }
+    }
+
+    // delete does not exist url.
+    for (auto iter = recentNodes.begin(); iter != recentNodes.end(); ) {
+        DUrl url = iter.key();
+
+        if (!urlList.contains(url)) {
+            iter = recentNodes.erase(iter);
+
+            DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
+                                              &DAbstractFileWatcher::fileDeleted,
+                                              url);
+        } else {
+            iter.value()->updateInfo();
+
+            ++iter;
+        }
+    }
+
+    m_watcher->addPath(m_xbelPath);
+}
+
+void RecentController::handleDirectoryChanged()
+{
+    if (QFileInfo(m_xbelPath).exists()) {
+        m_watcher->addPath(m_xbelPath);
+    } else {
+        handleFileChanged();
+        m_watcher->removePath(m_xbelPath);
     }
 }

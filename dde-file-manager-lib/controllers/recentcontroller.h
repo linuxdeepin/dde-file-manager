@@ -23,6 +23,7 @@
 #include "dabstractfilecontroller.h"
 #include "models/recentfileinfo.h"
 
+class QFileSystemWatcher;
 class DAbstractFileInfo;
 class DFileWatcher;
 
@@ -57,8 +58,10 @@ public:
 
 private:
     static DUrlList realUrlList(const DUrlList &recentUrls);
-    void createXbelFile();
+    void handleFileChanged();
+    void handleDirectoryChanged();
 
+    QFileSystemWatcher *m_watcher;
     QString m_xbelPath;
 };
 
