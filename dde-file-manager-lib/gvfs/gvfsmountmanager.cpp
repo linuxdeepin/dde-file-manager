@@ -602,10 +602,10 @@ void GvfsMountManager::monitor_volume_added(GVolumeMonitor *volume_monitor, GVol
     qCDebug(mountManager()) << "===================" << qVolume.unix_device() << "=======================";
 
     GDrive *drive = g_volume_get_drive(volume);
-    if (drive){
+    if (drive) {
         QDrive qDrive = gDriveToqDrive(drive);
         Drives.insert(qDrive.unix_device(), qDrive);
-        if (!Volumes_Drive_Keys.contains(qDrive.unix_device())){
+        if (!Volumes_Drive_Keys.contains(qDrive.unix_device())) {
             Volumes_Drive_Keys.append(qDrive.unix_device());
         }
         if (drive != NULL){
@@ -616,8 +616,11 @@ void GvfsMountManager::monitor_volume_added(GVolumeMonitor *volume_monitor, GVol
 
     QDiskInfo diskInfo = qVolumeToqDiskInfo(qVolume);
 
-    if (diskInfo.type() == "iphone"){
-        if (diskInfo.activation_root_uri() != QString("afc://%1/").arg(diskInfo.uuid())){
+    if (diskInfo.type() == "iphone") {
+        QRegularExpression express(QString("afc://%1(:[\d]+)?/").arg(diskInfo.uuid()));
+        auto match = express.match(diskInfo.activation_root_uri());
+
+        if (!match.isValid()) {
             return;
         }
     }
