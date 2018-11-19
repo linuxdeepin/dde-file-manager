@@ -358,7 +358,9 @@ bool MimesAppsManager::setDefautlAppForTypeByGio(const QString &mimeType, const 
             }
 
             g_object_unref(desktopAppInfo);
-        } else if (appPath.endsWith("/" + QString::fromLocal8Bit(desktop_id))) {
+        }
+
+        if (appPath.endsWith("/" + QString::fromLocal8Bit(desktop_id))) {
             app = (GAppInfo*)iterator->data;
             break;
         }
