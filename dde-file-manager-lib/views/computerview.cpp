@@ -547,7 +547,11 @@ void ComputerView::initUI()
     QScroller::grabGesture(m_contentArea, QScroller::LeftMouseButtonGesture);
     QScroller *scroller = QScroller::scroller(m_contentArea);
     auto scroller_properties = scroller->scrollerProperties();
+#if QT_VERSION < QT_VERSION_CHECK(5,9,0)
+    int touchTapDistance = 15;
+#else
     int touchTapDistance = QGuiApplicationPrivate::platformTheme()->themeHint(QPlatformTheme::TouchDoubleTapDistance).toInt();
+#endif
     scroller_properties.setScrollMetric(QScrollerProperties::DragStartDistance, touchTapDistance / 1000);
     scroller->setScrollerProperties(scroller_properties);
 

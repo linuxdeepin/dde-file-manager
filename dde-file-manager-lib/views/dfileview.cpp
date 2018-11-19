@@ -183,7 +183,12 @@ DFileView::DFileView(QWidget *parent)
                                  << ContiguousSelection;
 
     d_ptr->defaultViewMode = static_cast<ViewMode>(DFMApplication::instance()->appAttribute(DFMApplication::AA_ViewMode).toInt());
+
+#if QT_VERSION < QT_VERSION_CHECK(5,9,0)
+    d_ptr->touchTapDistance = 15;
+#else
     d_ptr->touchTapDistance = QGuiApplicationPrivate::platformTheme()->themeHint(QPlatformTheme::TouchDoubleTapDistance).toInt();
+#endif
 
     initUI();
     initModel();
