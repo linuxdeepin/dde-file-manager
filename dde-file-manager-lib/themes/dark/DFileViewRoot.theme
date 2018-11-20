@@ -81,4 +81,5 @@ QLineEdit#DListItemDelegate_Editor {
     color: white;
     background: #0076F9;
     border-radius: 4px;
+    selection-background-color: rgba(255,255,255,0.4);
 }
