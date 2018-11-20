@@ -49,7 +49,9 @@ void DiskPluginItem::paintEvent(QPaintEvent *e)
     QWidget::paintEvent(e);
 
     QPainter painter(this);
-    painter.drawPixmap(rect().center() - m_icon.rect().center() / qApp->devicePixelRatio(), m_icon);
+    const QRectF &rf = QRectF(rect());
+    const QRectF &rfp = QRectF(m_icon.rect());
+    painter.drawPixmap(rf.center() - rfp.center() / qApp->devicePixelRatio(), m_icon);
 }
 
 void DiskPluginItem::resizeEvent(QResizeEvent *e)
