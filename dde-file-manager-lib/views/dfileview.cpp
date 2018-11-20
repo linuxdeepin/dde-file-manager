@@ -64,8 +64,6 @@
 #include <dthememanager.h>
 #include <danchors.h>
 
-#include <QLineEdit>
-#include <QTextEdit>
 #include <QUrlQuery>
 #include <QActionGroup>
 #include <QContextMenuEvent>
