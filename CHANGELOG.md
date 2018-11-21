@@ -1,3 +1,13 @@
+<a name="4.7.1.2"></a>
+## 4.7.1.2 (2018-11-21)
+
+
+#### Bug Fixes
+
+*   older qt version support ([cff40f8a](https://github.com/linuxdeepin/dde-file-manager/commit/cff40f8a76b6791b8bf42e871d116c2811065803))
+
+
+
 <a name="4.7.1.1"></a>
 ## 4.7.1.1 (2018-11-12)
 
