@@ -38,6 +38,7 @@ public:
 
 private:
     QSize m_sourceSize;
+    QMovie *movie = nullptr;
 };
 
 #endif // IMAGEVIEW_H
