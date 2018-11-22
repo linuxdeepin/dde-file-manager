@@ -48,12 +48,14 @@ public:
     }
 
     QString name;
+    QString genericName;
     QString exec;
     QString iconName;
     QString type;
     QStringList categories;
     QStringList mimeType;
     QString deepinID;
+    QString deepinVendor;
 
     void updateInfo(const DUrl &fileUrl);
 };
@@ -78,6 +80,10 @@ DesktopFileInfo::~DesktopFileInfo()
 QString DesktopFileInfo::getName() const
 {
     Q_D(const DesktopFileInfo);
+
+    if (d->deepinVendor == QStringLiteral("deepin") && !d->genericName.isEmpty()) {
+        return d->genericName;
+    }
 
     return d->name;
 }
@@ -225,11 +231,19 @@ QMap<QString, QVariant> DesktopFileInfo::getDesktopFileInfo(const DUrl &fileUrl)
     Properties desktop(fileUrl.path(), "Desktop Entry");
 
     const QString &name = desktop.value("Name[" + QLocale::system().name() + "]", settings.value("Name[" + QLocale::system().name() + "]")).toString();
+    const QString &genericName = desktop.value("GenericName[" + QLocale::system().name() + "]", settings.value("GenericName[" + QLocale::system().name() + "]")).toString();
 
-    if (name.isEmpty())
+    if (name.isEmpty()) {
         map["Name"] = desktop.value("Name", settings.value("Name"));
-    else
+    } else {
         map["Name"] = name;
+    }
+
+    if (genericName.isEmpty()) {
+        map["GenericName"] = desktop.value("GenericName", settings.value("GenericName"));
+    } else {
+        map["GenericName"] = name;
+    }
 
     map["Exec"] = desktop.value("Exec", settings.value("Exec"));
     map["Icon"] = desktop.value("Icon", settings.value("Icon"));
@@ -237,6 +251,7 @@ QMap<QString, QVariant> DesktopFileInfo::getDesktopFileInfo(const DUrl &fileUrl)
     map["Categories"] = desktop.value("Categories", settings.value("Categories")).toString().remove(" ").split(";");
     map["MimeType"] = desktop.value("MimeType", settings.value("MimeType")).toString().remove(" ").split(";");
     map["DeepinID"] = desktop.value("X-Deepin-AppID", settings.value("X-Deepin-AppID")).toString();
+    map["DeepinVendor"] = desktop.value("X-Deepin-Vendor", settings.value("X-Deepin-Vendor")).toString();
 
     return map;
 }
@@ -317,12 +332,14 @@ void DesktopFileInfoPrivate::updateInfo(const DUrl &fileUrl)
     const QMap<QString, QVariant> &map = DesktopFileInfo::getDesktopFileInfo(fileUrl);
 
     name = map.value("Name").toString();
+    genericName = map.value("GenericName").toString();
     exec = map.value("Exec").toString();
     iconName = map.value("Icon").toString();
     type = map.value("Type").toString();
     categories = map.value("Categories").toStringList();
     mimeType = map.value("MimeType").toStringList();
     deepinID = map.value("DeepinID").toString();
+    deepinVendor = map.value("DeepinVendor").toString();
     // Fix categories
     if (categories.first().compare("") == 0) {
       categories.removeFirst();
