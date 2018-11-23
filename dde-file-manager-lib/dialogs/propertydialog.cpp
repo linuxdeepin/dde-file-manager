@@ -880,13 +880,20 @@ QFrame *PropertyDialog::createDeviceInfoWidget(UDiskDeviceInfoPointer info)
 {
     QFrame *widget = new QFrame(this);
     SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Device type"));
-    SectionKeyLabel *formatSectionLabel = new SectionKeyLabel("Filesystem format");
+    SectionKeyLabel *formatSectionLabel = new SectionKeyLabel(QObject::tr("Filesystem"));
     SectionKeyLabel *fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
     SectionKeyLabel *freeSectionLabel = new SectionKeyLabel(QObject::tr("Free space"));
     SectionKeyLabel *totalSectionLabel = new SectionKeyLabel(QObject::tr("Total space"));
 
+    QString fsType = info->getIdType();
+#ifdef QT_DEBUG
+    if (!fsType.isEmpty()) {
+        fsType += (" on " + info->getPath());
+    }
+#endif // QT_DEBUG
+
     SectionValueLabel *typeLabel = new SectionValueLabel(info->deviceTypeDisplayName());
-    SectionValueLabel *formatLabel = new SectionValueLabel(info->getIdType() + " at " + info->getPath());
+    SectionValueLabel *formatLabel = new SectionValueLabel(fsType);
     SectionValueLabel *fileAmountLabel = new SectionValueLabel(info->sizeDisplayName());
     SectionValueLabel *freeLabel = new SectionValueLabel(FileUtils::formatSize(info->getFree()));
     SectionValueLabel *totalLabel = new SectionValueLabel(FileUtils::formatSize(info->getTotal()));
@@ -897,10 +904,10 @@ QFrame *PropertyDialog::createDeviceInfoWidget(UDiskDeviceInfoPointer info)
     layout->setLabelAlignment(Qt::AlignRight);
 
     layout->addRow(typeSectionLabel, typeLabel);
-#ifdef QT_DEBUG
-    layout->addRow(formatSectionLabel, formatLabel);
-#endif
     layout->addRow(totalSectionLabel, totalLabel);
+    if (!fsType.isEmpty()) {
+        layout->addRow(formatSectionLabel, formatLabel);
+    }
     layout->addRow(fileAmountSectionLabel, fileAmountLabel);
     layout->addRow(freeSectionLabel, freeLabel);
 
