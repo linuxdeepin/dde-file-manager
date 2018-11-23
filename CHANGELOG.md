@@ -1,3 +1,33 @@
+<a name="4.7.1.3"></a>
+## 4.7.1.3 (2018-11-23)
+
+
+#### Features
+
+*   selected text color ([cd284298](https://github.com/linuxdeepin/dde-file-manager/commit/cd284298af078179ea4f84e434744436d687520e))
+*   support preview the gif image ([3751bf14](https://github.com/linuxdeepin/dde-file-manager/commit/3751bf14ec0390edf13ecde242948c422da44682))
+*   GenericName and Vendor in .desktop file ([f92fe0e5](https://github.com/linuxdeepin/dde-file-manager/commit/f92fe0e5c3810132b7e8f955a615d4e01161b5a6))
+*   Support for deepin vendor desktop file ([d2f93e5d](https://github.com/linuxdeepin/dde-file-manager/commit/d2f93e5dd12641ef67eba117ebc31a76a4efce1e))
+*   display folder size as '-' ([a670ecec](https://github.com/linuxdeepin/dde-file-manager/commit/a670ececc95a1b433ea343914ae4c52cbde7e738))
+
+#### Bug Fixes
+
+*   for removable device, do eject instead of unmount ([1f8fe6ee](https://github.com/linuxdeepin/dde-file-manager/commit/1f8fe6ee3276a603139788bbdaafb66e51bbb6ea))
+*   GenericName and vendor support ([4b58acba](https://github.com/linuxdeepin/dde-file-manager/commit/4b58acba3b8795bc9360c5145090bf359be3ebc9))
+*   cannot mount afc. ([e6d7a570](https://github.com/linuxdeepin/dde-file-manager/commit/e6d7a570253695da1a7840a3321bd97553bdea7d))
+*   can not set as default app in some case ([95a6d377](https://github.com/linuxdeepin/dde-file-manager/commit/95a6d377ef2572a4a4f4a1666b4d8c7e8eb0e1c0))
+*   older qt version support ([a7e2eba2](https://github.com/linuxdeepin/dde-file-manager/commit/a7e2eba29cb99f2fa70be34802e3f1b7b379d491))
+*   recent view flashing. ([33a2dd64](https://github.com/linuxdeepin/dde-file-manager/commit/33a2dd648f28701f738ed0bd85d43ac043f67760))
+*   don't warning if ntfs mounted via kernel drv ([4b39c53e](https://github.com/linuxdeepin/dde-file-manager/commit/4b39c53e4055c8c9d03f05a2444a9f7235c99e6f))
+* **dock-plugin:**  pixmap align ([777e8302](https://github.com/linuxdeepin/dde-file-manager/commit/777e8302e5525bf5d164d36adc1ac1a7105e7087))
+* **fileutils:**  remove unused code. ([86742aac](https://github.com/linuxdeepin/dde-file-manager/commit/86742aac40e59ea8fa8a32e3480ab6ebffed830a))
+* **recent:**
+  *  search open location error. ([6a80e562](https://github.com/linuxdeepin/dde-file-manager/commit/6a80e5622c4ea7486a3e6d37d195c8c96806a8c6))
+  *  use modified datetime. ([45a795b7](https://github.com/linuxdeepin/dde-file-manager/commit/45a795b7dc5070b92cb6da6cb5dcf1a5e6810ff1))
+  *  use the correct last time. ([e3ec6545](https://github.com/linuxdeepin/dde-file-manager/commit/e3ec654579c960255701ea60a954cc8fdce09fb5))
+
+
+
 <a name="4.7.1.1"></a>
 ## 4.7.1.1 (2018-11-12)
 
