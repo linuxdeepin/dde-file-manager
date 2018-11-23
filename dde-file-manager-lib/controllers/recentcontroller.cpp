@@ -360,8 +360,8 @@ const DDirIteratorPointer RecentController::createDirIterator(const QSharedPoint
 
 const DAbstractFileInfoPointer RecentController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
 {
-    if (event->url() == DUrl(RECENT_ROOT)) {
-        return DAbstractFileInfoPointer(new RecentFileInfo(event->url()));
+    if (event->url().path() == "/") {
+        return DAbstractFileInfoPointer(new RecentFileInfo(DUrl(RECENT_ROOT)));
     }
 
     return DAbstractFileInfoPointer(recentNodes.value(event->url()));
