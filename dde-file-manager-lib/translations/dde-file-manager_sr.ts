@@ -578,7 +578,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="853"/>
         <source>%1 files failed to restore, target file removed or location changed</source>
-        <translation>%1 датотека неуспешно обновљена, селектована датотека је избрисана или померена на другу локацију</translation>
+        <translation>%1 датотека неуспешно обновљена, одредишна датотека је обрисана или премештена на другу локацију</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="865"/>
@@ -1054,7 +1054,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="229"/>
         <location filename="../configure/global-setting-template.js" line="228"/>
         <source>Mount</source>
-        <translation>Монтирај</translation>
+        <translation>Монтирање</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="233"/>
@@ -1410,7 +1410,7 @@
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="227"/>
         <source>Add other programs</source>
-        <translation>Додати друге програме</translation>
+        <translation>Додај друге програме</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="228"/>
@@ -1768,7 +1768,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="739"/>
         <source>Add to bookmark</source>
-        <translation>Додати у забелешке</translation>
+        <translation>Додај у забелешке</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="742"/>
@@ -2166,7 +2166,7 @@
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="143"/>
         <location filename="../views/drenamebar.cpp" line="234"/>
         <source>Add Text</source>
-        <translation>Додај Текст</translation>
+        <translation>Додај текст</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="143"/>
@@ -2266,7 +2266,7 @@
     <message>
         <location filename="../views/drenamebar.cpp" line="292"/>
         <source>Tips: Sort by selected file order</source>
-        <translation>Савет: Сортирај по одабраном редоследу датотека</translation>
+        <translation>Савет: Поређај по одабраном редоследу датотека</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="381"/>
