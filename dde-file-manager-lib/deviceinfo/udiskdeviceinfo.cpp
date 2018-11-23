@@ -471,6 +471,7 @@ QVariantHash UDiskDeviceInfo::extensionPropertys() const
     attrMap.insert("canStop", canStop());
     attrMap.insert("isMounted", !getMountPointUrl().isEmpty());
     attrMap.insert("mountPointUrl", getMountPointUrl().toString());
+    attrMap.insert("isRemovable", m_diskInfo.is_removable() && can_unmount);
 
     return attrMap;
 }

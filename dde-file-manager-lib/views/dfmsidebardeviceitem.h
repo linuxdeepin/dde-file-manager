@@ -46,7 +46,7 @@ protected:
 
 public slots:
     void itemOnClick();
-    void doUnmount();
+    void doUnmountOrEject();
 };
 
 DFM_END_NAMESPACE
