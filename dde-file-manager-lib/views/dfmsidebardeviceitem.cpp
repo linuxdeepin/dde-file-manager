@@ -49,7 +49,7 @@ DFMSideBarDeviceItem::DFMSideBarDeviceItem(DUrl url, QWidget *parent)
     this->setContentWidget(unmountButton);
 
     connect(unmountButton, &DImageButton::clicked,
-            this, &DFMSideBarDeviceItem::doUnmount);
+            this, &DFMSideBarDeviceItem::doUnmountOrEject);
 
     switch (info.value("mediaType", 0).toInt()) {
     case UDiskDeviceInfo::MediaType::native:
@@ -113,11 +113,11 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
         });
     }
 
-    if (info.value("canEject", false).toBool()) {
-        menu->addAction(QObject::tr("Eject"), [this, info]() {
-            gvfsMountManager->eject(info.value("deviceId").toString());
-        });
-    }
+//    if (info.value("canEject", false).toBool()) {
+//        menu->addAction(QObject::tr("Eject"), [this, info]() {
+//            gvfsMountManager->eject(info.value("deviceId").toString());
+//        });
+//    }
 
     if (info.value("canStop", false).toBool()) {
         menu->addAction(QObject::tr("Safely Remove"), [this, info, deviceIdUrl]() {
@@ -131,8 +131,16 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
         });
     }
 
+//    if (info.value("canUnmount", false).toBool()) {
+//        menu->addAction(QObject::tr("Unmount"), [this, info]() {
+//            gvfsMountManager->unmount(info.value("deviceId").toString());
+//        });
+//    }
+
+    // According to the designer and PM, we should use "Unmount" even we are actually doing *Eject* for removable device.
+    // This behavior should be discussed later.
     if (info.value("canUnmount", false).toBool()) {
-        menu->addAction(QObject::tr("Unmount"), this, SLOT(doUnmount()));
+        menu->addAction(QObject::tr("Unmount"), this, SLOT(doUnmountOrEject()));
     }
 
     if (info.value("mediaType", 0).toInt() == UDiskDeviceInfo::MediaType::removable) {
@@ -178,9 +186,15 @@ void DFMSideBarDeviceItem::itemOnClick()
     }
 }
 
-void DFMSideBarDeviceItem::doUnmount()
+void DFMSideBarDeviceItem::doUnmountOrEject()
 {
     QVariantHash info = getExtensionPropertys();
+
+    if (info.value("isRemovable", false).toBool() && info.value("canEject", false).toBool()) {
+        gvfsMountManager->eject(info.value("deviceId").toString());
+        return;
+    }
+
     if (info.value("canUnmount", false).toBool()) {
         gvfsMountManager->unmount(info.value("deviceId").toString());
     }
