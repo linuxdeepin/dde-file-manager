@@ -276,7 +276,7 @@
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1276"/>
         <source>Last access</source>
-        <translation type="unfinished"/>
+        <translation>Posledný prístup</translation>
     </message>
     <message>
         <location filename="../models/searchfileinfo.cpp" line="119"/>
@@ -383,7 +383,7 @@
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="50"/>
         <source>Data Disk</source>
         <comment>Data Partition</comment>
-        <translation type="unfinished"/>
+        <translation>Data Disk</translation>
     </message>
 </context>
 <context>
@@ -1005,7 +1005,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="145"/>
         <location filename="../configure/global-setting-template.js" line="145"/>
         <source>Display recent file entry in left panel</source>
-        <translation type="unfinished"/>
+        <translation>Zobraziť poslednú položku súboru v ľavom paneli</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="191"/>
@@ -1504,7 +1504,7 @@
     <message>
         <location filename="../controllers/pathmanager.cpp" line="67"/>
         <source>Recent</source>
-        <translation type="unfinished"/>
+        <translation>Posledné</translation>
     </message>
 </context>
 <context>
