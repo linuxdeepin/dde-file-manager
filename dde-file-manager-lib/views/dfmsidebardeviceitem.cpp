@@ -159,7 +159,7 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
 
     menu->addSeparator();
 
-    QAction *propertyAction = new QAction(QObject::tr("Properties"), menu);
+    QAction *propertyAction = new QAction(QObject::tr("Disk info"), menu);
     connect(propertyAction, &QAction::triggered, this, [this, info]() {
         DUrl mountPointUrl(info.value("mountPointUrl", QString()).toString());
         DUrlList list;
