@@ -40,6 +40,14 @@
         \li \l {Componments (zh)} {深度文件管理器 组件页}
         \li \l {All DFM Classes} {深度文件管理器的所有 C++ 类}
     \endlist
+    
+    \section1 知识库
+    
+    对于和文件管理器相关的，但不仅限于深度文件管理器的一些知识，可以在知识库中查看：
+    
+    \list
+        \li \l {Knowledge Base (zh)} {知识库 首页}
+    \endlist
 
     \section1 反馈 和 贡献方式
 

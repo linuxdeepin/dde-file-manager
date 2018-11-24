@@ -15,17 +15,16 @@
  */
 
 /*!
-    \page componments-zh.html
-    \title Componments (zh)
-    \nextpage Knowledge Base (zh)
+    \page knowledge-base-zh.html
+    \title Knowledge Base (zh)
+    \nextpage New File Templates (zh)
 
-    开发者文档 - 组件
+    知识库 - 首页
 
-    这里是深度文件管理器各个组件的开发设计流程文档.
+    这里是一些和深度文件管理器相关的知识库页面，这个页面的内容包括但不限于可被应用在深度
+    文件管理器的开发和使用中的知识.
 
     \list
-        \li \l {Crumb Bar and Address Bar (zh)} {面包屑栏和地址栏}
+        \li \l {New File Templates (zh)} {新建文件模板}
     \endlist
-
-    \sa {All DFM Classes}
 */
