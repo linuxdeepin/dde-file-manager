@@ -18,8 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMSIDEBARTRASHITEM_H
-#define DFMSIDEBARTRASHITEM_H
+
+#ifndef DFMSIDEBARHOMEITEM_H
+#define DFMSIDEBARHOMEITEM_H
 
 #include "dfmsidebardefaultitem.h"
 
@@ -27,10 +28,10 @@
 
 DFM_BEGIN_NAMESPACE
 
-class DFMSideBarTrashItem : public DFMSideBarDefaultItem
+class DFMSideBarHomeItem : public DFMSideBarDefaultItem
 {
 public:
-    DFMSideBarTrashItem();
+    DFMSideBarHomeItem();
 
 protected:
     virtual QMenu *createStandardContextMenu() const override;
@@ -38,4 +39,4 @@ protected:
 
 DFM_END_NAMESPACE
 
-#endif // DFMSIDEBARTRASHITEM_H
+#endif // DFMSIDEBARHOMEITEM_H

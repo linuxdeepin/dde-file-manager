@@ -265,7 +265,8 @@ HEADERS += \
     models/recentfileinfo.h \
     controllers/recentcontroller.h \
     controllers/dfmrecentcrumbcontroller.h \
-    views/dfmsidebarrecentitem.h
+    views/dfmsidebarrecentitem.h \
+    views/dfmsidebarhomeitem.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -438,7 +439,8 @@ SOURCES += \
     models/recentfileinfo.cpp \
     controllers/recentcontroller.cpp \
     controllers/dfmrecentcrumbcontroller.cpp \
-    views/dfmsidebarrecentitem.cpp
+    views/dfmsidebarrecentitem.cpp \
+    views/dfmsidebarhomeitem.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h \
