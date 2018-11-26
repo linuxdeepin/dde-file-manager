@@ -84,6 +84,8 @@ public:
     void focusOutEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
     void contextMenuEvent(QContextMenuEvent *event) Q_DECL_OVERRIDE;
 
+    bool event(QEvent *event) override;
+
 
     virtual void rowsInserted(const QModelIndex &index, int first, int last) override;
     virtual void keyboardSearch(const QString &search) override;
