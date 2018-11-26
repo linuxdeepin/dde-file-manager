@@ -1115,6 +1115,16 @@ void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
     }
 }
 
+bool CanvasGridView::event(QEvent *event)
+{
+    if (event->type() == QEvent::ApplicationFontChange) {
+        itemDelegate()->updateItemSizeHint();
+        updateCanvas();
+    }
+
+    return QAbstractItemView::event(event);
+}
+
 void CanvasGridView::rowsInserted(const QModelIndex &parent, int first, int last)
 {
     QAbstractItemView::rowsInserted(parent, first, last);
