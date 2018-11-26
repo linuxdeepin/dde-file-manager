@@ -179,7 +179,6 @@ int main(int argc, char *argv[])
             CommandLineManager::instance()->processCommand();
         }
 
-        FileUtils::setDefaultFileManager();
 #ifdef ENABLE_PPROF
         int request = app.exec();
 
