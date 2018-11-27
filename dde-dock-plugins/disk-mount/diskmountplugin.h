@@ -26,7 +26,6 @@
 #define DISKMOUNTPLUGIN_H
 
 #include <QLabel>
-#include <QSettings>
 
 #include "pluginsiteminterface.h"
 #include "diskcontrolwidget.h"
@@ -68,7 +67,6 @@ private:
     QLabel *m_tipsLabel;
     DiskPluginItem *m_diskPluginItem;
     DiskControlWidget *m_diskControlApplet;
-    QSettings m_settings;
 };
 
 #endif // DISKMOUNTPLUGIN_H
