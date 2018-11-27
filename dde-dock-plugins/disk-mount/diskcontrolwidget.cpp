@@ -125,7 +125,11 @@ void DiskControlWidget::unmountAll()
         if (blDev->hasFileSystem() /* && DFMSetting*/ && !blDev->mountPoints().isEmpty()) {
             QByteArray mountPoint = blDev->mountPoints().first();
             if (mountPoint != QStringLiteral("/boot") && mountPoint != QStringLiteral("/") && mountPoint != QStringLiteral("/home")) {
+                QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blDev->drive()));
                 blDev->unmount({});
+                if (diskDev->removable()) {
+                    diskDev->eject({});
+                }
             }
         }
     }
