@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>FinishPage</name>
     <message>
@@ -41,43 +43,43 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../view/mainwindow.cpp" line="80"/>
-        <location filename="../view/mainwindow.cpp" line="103"/>
+        <location filename="../view/mainwindow.cpp" line="85"/>
+        <location filename="../view/mainwindow.cpp" line="108"/>
         <source>Format</source>
         <translation>格式化</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="190"/>
+        <location filename="../view/mainwindow.cpp" line="198"/>
         <source>Continue</source>
         <translation>继续</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="195"/>
+        <location filename="../view/mainwindow.cpp" line="203"/>
         <source>Formatting...</source>
         <translation>格式化中……</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="219"/>
+        <location filename="../view/mainwindow.cpp" line="230"/>
         <source>Done</source>
         <translation>完成</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="230"/>
+        <location filename="../view/mainwindow.cpp" line="240"/>
         <source>Failed to format</source>
         <translation>格式化失败</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="226"/>
+        <location filename="../view/mainwindow.cpp" line="236"/>
         <source>Quit</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="227"/>
+        <location filename="../view/mainwindow.cpp" line="237"/>
         <source>Your disk is removed when formatting</source>
         <translation>您的磁盘在格式化过程中被移除</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="231"/>
+        <location filename="../view/mainwindow.cpp" line="241"/>
         <source>Reformat</source>
         <translation>重新格式化</translation>
     </message>
@@ -93,12 +95,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="122"/>
+        <location filename="../main.cpp" line="123"/>
         <source>Device does not exist</source>
         <translation>设备不存在</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="131"/>
+        <location filename="../main.cpp" line="132"/>
         <source>Cannot format local device</source>
         <translation>不能格式化本地设备</translation>
     </message>
