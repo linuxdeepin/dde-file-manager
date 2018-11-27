@@ -47,17 +47,30 @@ DesktopFile::DesktopFile(const QString &fileName) {
     // Loads .desktop file (read from 'Desktop Entry' group)
     Properties desktop(fileName, "Desktop Entry");
     m_name = desktop.value("Name", settings.value("Name")).toString();
+    m_genericName = desktop.value("GenericName", settings.value("GenericName")).toString();
 
     if(desktop.contains("X-Deepin-AppID")){
         m_deepinId = desktop.value("X-Deepin-AppID", settings.value("X-Deepin-AppID")).toString();
     }
 
-    QString localKey = QString("Name[%1]").arg(QLocale::system().name());
-    if (desktop.contains(localKey)){
-        m_localName = desktop.value(localKey, m_name).toString();
+    if(desktop.contains("X-Deepin-Vendor")){
+        m_deepinVendor = desktop.value("X-Deepin-Vendor", settings.value("X-Deepin-Vendor")).toString();
+    }
+
+    QString nLocalKey = QString("Name[%1]").arg(QLocale::system().name());
+    if (desktop.contains(nLocalKey)){
+        m_localName = desktop.value(nLocalKey, m_name).toString();
     }else{
         m_localName = m_name;
     }
+
+    QString gnlocalKey = QString("GenericName[%1]").arg(QLocale::system().name());
+    if (desktop.contains(gnlocalKey)){
+        m_genericName = desktop.value(gnlocalKey, m_name).toString();
+    }else{
+        m_genericName = m_name;
+    }
+
     if(desktop.contains("NoDisplay")){
         m_noDisplay = desktop.value("NoDisplay", settings.value("NoDisplay").toBool()).toBool();
     }
@@ -98,6 +111,14 @@ QString DesktopFile::getName() const {
 QString DesktopFile::getLocalName() const {
     return m_localName;
 }
+
+QString DesktopFile::getDisplayName() const
+{
+    if (m_deepinVendor == QStringLiteral("deepin") && !m_genericName.isEmpty()) {
+        return m_genericName;
+    }
+    return m_localName.isEmpty() ? m_name : m_localName;
+}
 //---------------------------------------------------------------------------
 
 QString DesktopFile::getExec() const {
@@ -117,6 +138,11 @@ QString DesktopFile::getType() const {
 QString DesktopFile::getDeepinId() const
 {
     return m_deepinId;
+}
+
+QString DesktopFile::getDeepinVendor() const
+{
+    return m_deepinVendor;
 }
 
 bool DesktopFile::getNoShow() const

@@ -81,7 +81,7 @@ QString DesktopFileInfo::getName() const
 {
     Q_D(const DesktopFileInfo);
 
-    if (d->deepinVendor == QStringLiteral("deepin") && !d->genericName.isEmpty()) {
+    if (d->deepinVendor == QStringLiteral("deepin") && !(d->genericName.isEmpty())) {
         return d->genericName;
     }
 
@@ -242,7 +242,7 @@ QMap<QString, QVariant> DesktopFileInfo::getDesktopFileInfo(const DUrl &fileUrl)
     if (genericName.isEmpty()) {
         map["GenericName"] = desktop.value("GenericName", settings.value("GenericName"));
     } else {
-        map["GenericName"] = name;
+        map["GenericName"] = genericName;
     }
 
     map["Exec"] = desktop.value("Exec", settings.value("Exec"));

@@ -946,7 +946,7 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
 
         QListWidgetItem *item = new QListWidgetItem;
 
-        QCheckBox *itemBox = new QCheckBox(df.getLocalName());
+        QCheckBox *itemBox = new QCheckBox(df.getDisplayName());
         itemBox->setObjectName("OpenWithItem");
         itemBox->setIcon(QIcon::fromTheme(df.getIcon()));
         itemBox->setIconSize(QSize(16, 16));
