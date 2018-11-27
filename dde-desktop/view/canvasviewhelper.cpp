@@ -116,6 +116,8 @@ void CanvasViewHelper::initStyleOption(QStyleOptionViewItem *option, const QMode
         if (!cuted)
             option->backgroundBrush = QColor("#2da6f7");
     }
+
+    option->textElideMode = Qt::ElideLeft;
 }
 
 int CanvasViewHelper::selectedIndexsCount() const

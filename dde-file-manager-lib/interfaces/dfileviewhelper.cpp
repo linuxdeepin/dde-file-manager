@@ -474,6 +474,8 @@ void DFileViewHelper::initStyleOption(QStyleOptionViewItem *option, const QModel
         if (!cuted)
             option->backgroundBrush = ThemeConfig::instace()->color("FileView", "background");
     }
+
+    option->textElideMode = Qt::ElideLeft;
 }
 
 void DFileViewHelper::handleMenu(QMenu *menu)

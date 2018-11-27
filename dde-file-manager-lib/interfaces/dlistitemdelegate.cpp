@@ -184,10 +184,41 @@ void DListItemDelegate::paint(QPainter *painter,
         const QVariant &data = index.data(role);
         painter->setPen(opt.palette.color(drawBackground ? QPalette::BrightText : QPalette::Text));
         if (data.canConvert<QString>()) {
-            const QString &file_name = DFMGlobal::elideText(index.data(role).toString().remove('\n'),
-                                       rect.size(), QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                       opt.font, Qt::ElideRight,
-                                       d->textLineHeight);
+            QString file_name;
+
+            do {
+                if (role != DFileSystemModel::FileNameRole && role != DFileSystemModel::FileDisplayNameRole) {
+                    break;
+                }
+
+                if (role == DFileSystemModel::FileDisplayNameRole) {
+                    const auto file_name = index.data(DFileSystemModel::FileNameRole);
+                    const auto file_display_name = index.data(DFileSystemModel::FileDisplayNameRole);
+
+                    if (file_name != file_display_name) {
+                        break;
+                    }
+                }
+
+                const QString &suffix = "." + index.data(DFileSystemModel::FileSuffixRole).toString();
+
+                if (suffix == ".") {
+                    break;
+                }
+
+                file_name = DFMGlobal::elideText(index.data(DFileSystemModel::FileBaseNameRole).toString().remove('\n'),
+                                                 QSize(rect.width() - opt.fontMetrics.width(suffix), rect.height()), QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                 opt.font, Qt::ElideRight,
+                                                 d->textLineHeight);
+                file_name.append(suffix);
+            } while (false);
+
+            if (file_name.isEmpty()) {
+                file_name = DFMGlobal::elideText(index.data(role).toString().remove('\n'),
+                                                 rect.size(), QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                 opt.font, Qt::ElideRight,
+                                                 d->textLineHeight);
+            }
 
             painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()), file_name);
         } else {
