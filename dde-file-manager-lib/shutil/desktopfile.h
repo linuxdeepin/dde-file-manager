@@ -40,16 +40,19 @@ public:
   QString getPureFileName() const;
   QString getName() const;
   QString getLocalName() const;
+  QString getDisplayName() const;
   QString getExec() const;
   QString getIcon() const;
   QString getType() const;
   QString getDeepinId() const;
+  QString getDeepinVendor() const;
   bool getNoShow() const;
   QStringList getCategories() const;
   QStringList getMimeType() const;
 private:
   QString m_fileName;
   QString m_name;
+  QString m_genericName;
   QString m_localName;
   QString m_exec;
   QString m_icon;
@@ -57,6 +60,7 @@ private:
   QStringList m_categories;
   QStringList m_mimeType;
   QString m_deepinId;
+  QString m_deepinVendor;
   bool m_noDisplay = false;
   bool m_hidden = false;
 };

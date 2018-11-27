@@ -287,7 +287,7 @@ void OpenWithDialog::initData()
     for (int i = 0; i < recommendApps.count(); ++i) {
         const DesktopFile &desktop_info = mimeAppsManager->DesktopObjs.value(recommendApps.at(i));
 
-        OpenWithDialogListItem *item = createItem(QIcon::fromTheme(desktop_info.getIcon()), desktop_info.getLocalName(), recommendApps.at(i));
+        OpenWithDialogListItem *item = createItem(QIcon::fromTheme(desktop_info.getIcon()), desktop_info.getDisplayName(), recommendApps.at(i));
         m_recommandLayout->addWidget(item);
 
         if (!default_app.isEmpty() && recommendApps.at(i).endsWith(default_app))
@@ -327,7 +327,7 @@ void OpenWithDialog::initData()
 
         other_app_list << mimeAppsManager->DesktopObjs.value(f);
         QString iconName = other_app_list.last().getIcon();
-        OpenWithDialogListItem *item = createItem(QIcon::fromTheme(iconName), other_app_list.last().getLocalName(), f);
+        OpenWithDialogListItem *item = createItem(QIcon::fromTheme(iconName), other_app_list.last().getDisplayName(), f);
         m_otherLayout->addWidget(item);
 
         if (!default_app.isEmpty() && f.endsWith(default_app))

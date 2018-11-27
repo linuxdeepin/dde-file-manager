@@ -453,6 +453,7 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
         const QString old_name = desktop.value(key).toString();
 
         desktop.set(key, newfilePointer->fileName());
+        desktop.set("X-Deepin-Vendor", QStringLiteral("user-custom"));
         result = desktop.save(filePath, "Desktop Entry");
 
         if (result) {

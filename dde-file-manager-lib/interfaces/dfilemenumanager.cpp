@@ -351,7 +351,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
 //                if(df.getNoShow())
 //                    continue;
                 DesktopFile desktopFile(app);
-                QAction *action = new QAction(desktopFile.getLocalName(), openWithMenu);
+                QAction *action = new QAction(desktopFile.getDisplayName(), openWithMenu);
                 action->setIcon(FileUtils::searchAppIcon(desktopFile));
                 action->setProperty("app", app);
                 action->setProperty("url", QVariant::fromValue(info->redirectedFileUrl()));
