@@ -41,43 +41,43 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../view/mainwindow.cpp" line="80"/>
-        <location filename="../view/mainwindow.cpp" line="103"/>
+        <location filename="../view/mainwindow.cpp" line="85"/>
+        <location filename="../view/mainwindow.cpp" line="108"/>
         <source>Format</source>
         <translation>Formatiraj</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="190"/>
+        <location filename="../view/mainwindow.cpp" line="198"/>
         <source>Continue</source>
         <translation>Nastavi</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="195"/>
+        <location filename="../view/mainwindow.cpp" line="203"/>
         <source>Formatting...</source>
         <translation>Formatiram...</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="219"/>
+        <location filename="../view/mainwindow.cpp" line="230"/>
         <source>Done</source>
         <translation>Učinjeno</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="230"/>
+        <location filename="../view/mainwindow.cpp" line="240"/>
         <source>Failed to format</source>
         <translation>Neuspjelo formatiranje</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="226"/>
+        <location filename="../view/mainwindow.cpp" line="236"/>
         <source>Quit</source>
         <translation>Završi</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="227"/>
+        <location filename="../view/mainwindow.cpp" line="237"/>
         <source>Your disk is removed when formatting</source>
         <translation>Nakon formatiranja vaš disk je uklonjen</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="231"/>
+        <location filename="../view/mainwindow.cpp" line="241"/>
         <source>Reformat</source>
         <translation>Ponovno formatiraj</translation>
     </message>
@@ -93,12 +93,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="122"/>
+        <location filename="../main.cpp" line="123"/>
         <source>Device does not exist</source>
         <translation>Uređaj ne postoji</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="131"/>
+        <location filename="../main.cpp" line="132"/>
         <source>Cannot format local device</source>
         <translation>Ne mogu formatirati lokalni uređaj</translation>
     </message>

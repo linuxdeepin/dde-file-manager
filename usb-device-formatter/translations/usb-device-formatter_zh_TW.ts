@@ -41,43 +41,43 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../view/mainwindow.cpp" line="80"/>
-        <location filename="../view/mainwindow.cpp" line="103"/>
+        <location filename="../view/mainwindow.cpp" line="85"/>
+        <location filename="../view/mainwindow.cpp" line="108"/>
         <source>Format</source>
         <translation>格式化</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="190"/>
+        <location filename="../view/mainwindow.cpp" line="198"/>
         <source>Continue</source>
         <translation>繼續</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="195"/>
+        <location filename="../view/mainwindow.cpp" line="203"/>
         <source>Formatting...</source>
         <translation>正在格式化…</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="219"/>
+        <location filename="../view/mainwindow.cpp" line="230"/>
         <source>Done</source>
         <translation>完成</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="230"/>
+        <location filename="../view/mainwindow.cpp" line="240"/>
         <source>Failed to format</source>
         <translation>格式化失敗</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="226"/>
+        <location filename="../view/mainwindow.cpp" line="236"/>
         <source>Quit</source>
         <translation>離開</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="227"/>
+        <location filename="../view/mainwindow.cpp" line="237"/>
         <source>Your disk is removed when formatting</source>
         <translation>磁碟機在格式化時被移除</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="231"/>
+        <location filename="../view/mainwindow.cpp" line="241"/>
         <source>Reformat</source>
         <translation>重新格式化</translation>
     </message>
@@ -93,12 +93,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="122"/>
+        <location filename="../main.cpp" line="123"/>
         <source>Device does not exist</source>
         <translation>裝置不存在</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="131"/>
+        <location filename="../main.cpp" line="132"/>
         <source>Cannot format local device</source>
         <translation>無法格式化本機裝置</translation>
     </message>
