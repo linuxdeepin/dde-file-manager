@@ -38,8 +38,7 @@ DiskMountPlugin::DiskMountPlugin(QObject *parent)
 
       m_tipsLabel(new QLabel),
       m_diskPluginItem(new DiskPluginItem),
-      m_diskControlApplet(nullptr),
-      m_settings("deepin", "dde-dock-diskmount")
+      m_diskControlApplet(nullptr)
 {
     qDebug() << "===============init=============";
     m_diskPluginItem->setVisible(false);
@@ -135,13 +134,13 @@ void DiskMountPlugin::invokedMenuItem(const QString &itemKey, const QString &men
 int DiskMountPlugin::itemSortKey(const QString &itemKey)
 {
     const QString &key = QString("pos_%1_%2").arg(itemKey).arg(displayMode());
-    return m_settings.value(key, 0).toInt();
+    return m_proxyInter->getValue(this, key, 0).toInt();
 }
 
 void DiskMountPlugin::setSortKey(const QString &itemKey, const int order)
 {
     const QString &key = QString("pos_%1_%2").arg(itemKey).arg(displayMode());
-    m_settings.setValue(key, order);
+    m_proxyInter->saveValue(this, key, order);
 }
 
 void DiskMountPlugin::initCompoments()
