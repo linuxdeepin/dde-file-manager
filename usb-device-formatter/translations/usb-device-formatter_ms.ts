@@ -41,43 +41,43 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../view/mainwindow.cpp" line="80"/>
-        <location filename="../view/mainwindow.cpp" line="103"/>
+        <location filename="../view/mainwindow.cpp" line="85"/>
+        <location filename="../view/mainwindow.cpp" line="108"/>
         <source>Format</source>
         <translation>Format</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="190"/>
+        <location filename="../view/mainwindow.cpp" line="198"/>
         <source>Continue</source>
         <translation>Teruskan</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="195"/>
+        <location filename="../view/mainwindow.cpp" line="203"/>
         <source>Formatting...</source>
         <translation>Memformat....</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="219"/>
+        <location filename="../view/mainwindow.cpp" line="230"/>
         <source>Done</source>
         <translation>Selesai</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="230"/>
+        <location filename="../view/mainwindow.cpp" line="240"/>
         <source>Failed to format</source>
         <translation>Gagal diformatkan</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="226"/>
+        <location filename="../view/mainwindow.cpp" line="236"/>
         <source>Quit</source>
         <translation>Keluar</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="227"/>
+        <location filename="../view/mainwindow.cpp" line="237"/>
         <source>Your disk is removed when formatting</source>
         <translation>Cakera anda telah ditanggalkan ketika memformat</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="231"/>
+        <location filename="../view/mainwindow.cpp" line="241"/>
         <source>Reformat</source>
         <translation>Format Semula</translation>
     </message>
@@ -93,12 +93,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="122"/>
+        <location filename="../main.cpp" line="123"/>
         <source>Device does not exist</source>
         <translation>Peranti tidak wujud</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="131"/>
+        <location filename="../main.cpp" line="132"/>
         <source>Cannot format local device</source>
         <translation>Tidak dapat format peranti setempat</translation>
     </message>

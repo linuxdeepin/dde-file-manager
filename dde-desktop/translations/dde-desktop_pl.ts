@@ -2,32 +2,32 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2239"/>
+        <location filename="../view/canvasgridview.cpp" line="2292"/>
         <source>Icon size</source>
         <translation>Rozmiar ikony</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2245"/>
+        <location filename="../view/canvasgridview.cpp" line="2298"/>
         <source>Auto arrange</source>
         <translation>Automatyczne porządkowanie</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2375"/>
+        <location filename="../view/canvasgridview.cpp" line="2427"/>
         <source>Properties</source>
         <translation>Właściwości</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2284"/>
+        <location filename="../view/canvasgridview.cpp" line="2337"/>
         <source>Display Settings</source>
         <translation>Ustawienia ekranu</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2291"/>
+        <location filename="../view/canvasgridview.cpp" line="2344"/>
         <source>Corner Settings</source>
         <translation>Ustawienia narożników</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2297"/>
+        <location filename="../view/canvasgridview.cpp" line="2350"/>
         <source>Set Wallpaper</source>
         <translation>Ustaw tapetę pulpitu</translation>
     </message>
@@ -63,12 +63,12 @@
 <context>
     <name>WallpaperItem</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="123"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="125"/>
         <source>Only desktop</source>
         <translation>Tylko pulpit</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="126"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="128"/>
         <source>Only lock screen</source>
         <translation>Tylko blokada ekranu</translation>
     </message>

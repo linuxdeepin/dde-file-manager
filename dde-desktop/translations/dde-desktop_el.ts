@@ -2,32 +2,32 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2239"/>
+        <location filename="../view/canvasgridview.cpp" line="2292"/>
         <source>Icon size</source>
         <translation>Μέγεθος εικονιδίων</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2245"/>
+        <location filename="../view/canvasgridview.cpp" line="2298"/>
         <source>Auto arrange</source>
         <translation>Αυτόματη στοίχιση</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2375"/>
+        <location filename="../view/canvasgridview.cpp" line="2427"/>
         <source>Properties</source>
         <translation>Ιδιότητες</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2284"/>
+        <location filename="../view/canvasgridview.cpp" line="2337"/>
         <source>Display Settings</source>
         <translation>Ρυθμίσεις Εμφάνισης</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2291"/>
+        <location filename="../view/canvasgridview.cpp" line="2344"/>
         <source>Corner Settings</source>
         <translation>Ρυθμίσεις Γωνίας</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2297"/>
+        <location filename="../view/canvasgridview.cpp" line="2350"/>
         <source>Set Wallpaper</source>
         <translation>Ορισμός Ταπετσαρίας</translation>
     </message>
@@ -63,12 +63,12 @@
 <context>
     <name>WallpaperItem</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="123"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="125"/>
         <source>Only desktop</source>
         <translation>Μόνο η επιφάνεια εργασίας</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="126"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="128"/>
         <source>Only lock screen</source>
         <translation>Μόνο το κλείδωμα οθόνης</translation>
     </message>
