@@ -51,11 +51,18 @@ bool DAttachedUdisks2Device::detachable()
 void DAttachedUdisks2Device::detach()
 {
     blockDevice()->unmount({});
+    QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blockDevice()->drive()));
+
     if (blockDevice()->device().startsWith("/dev/sr")) { // is a DVD driver
-        QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blockDevice()->drive()));
         if (diskDev->ejectable()) {
             diskDev->eject({});
+            return;
         }
+    }
+
+    if (diskDev->removable()) {
+        diskDev->eject({});
+        return;
     }
 }
 
