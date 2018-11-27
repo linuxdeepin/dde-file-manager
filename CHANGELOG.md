@@ -1,3 +1,21 @@
+<a name="4.7.1.4"></a>
+## 4.7.1.4 (2018-11-27)
+
+
+#### Features
+
+*   filesystem type on propertydialog #41 ([197e57d4](https://github.com/linuxdeepin/dde-file-manager/commit/197e57d476ff6254169de046cf2c962c3539d920))
+
+#### Bug Fixes
+
+*   eject removable device from dock ([75e142e9](https://github.com/linuxdeepin/dde-file-manager/commit/75e142e9ea0482faa889dd0e680a8889b10eb5c4))
+*   vendor support for context menu ([df26771a](https://github.com/linuxdeepin/dde-file-manager/commit/df26771ac03eb5d9cfc234bda37d43dae824be4d))
+*   adjust item height when changing font size ([91e009e6](https://github.com/linuxdeepin/dde-file-manager/commit/91e009e6896a1a26499c9858841dff403b819053))
+*   file template is not true-empty ([5b26d9ef](https://github.com/linuxdeepin/dde-file-manager/commit/5b26d9efedf50e576ebdc468e96b150ebbe3ae46))
+*   no longer set itself as default filemanager ([63b044ff](https://github.com/linuxdeepin/dde-file-manager/commit/63b044ff390701a5a00ca69f1773799d4c6f4cfd))
+
+
+
 <a name="4.7.1.3"></a>
 ## 4.7.1.3 (2018-11-23)
 
