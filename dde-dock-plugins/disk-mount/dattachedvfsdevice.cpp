@@ -37,6 +37,11 @@ DAttachedVfsDevice::DAttachedVfsDevice(const QUrl mountpointUrl)
     vfsDevice.reset(DFMVfsDevice::create(mountpointUrl));
 }
 
+bool DAttachedVfsDevice::isValid()
+{
+    return !vfsDevice.isNull();
+}
+
 bool DAttachedVfsDevice::detachable()
 {
     return vfsDevice->canDetach();
@@ -49,12 +54,12 @@ void DAttachedVfsDevice::detach()
 
 QString DAttachedVfsDevice::displayName()
 {
-    return vfsDevice->name();
+    return vfsDevice ? vfsDevice->name() : QStringLiteral("-");
 }
 
 bool DAttachedVfsDevice::deviceUsageValid()
 {
-    return true;
+    return !vfsDevice.isNull();
 }
 
 QPair<quint64, quint64> DAttachedVfsDevice::deviceUsage()

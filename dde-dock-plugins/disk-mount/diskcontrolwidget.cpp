@@ -168,10 +168,14 @@ void DiskControlWidget::onDiskListChanged()
 
     QList<QUrl> urlList = m_vfsManager->getVfsList();
     for (const QUrl& oneUrl : urlList) {
-        mountedCount++;
         DAttachedVfsDevice *dad = new DAttachedVfsDevice(oneUrl);
-        DiskControlItem *item = new DiskControlItem(dad, this);
-        m_centralLayout->addWidget(item);
+        if (dad->isValid()) {
+            mountedCount++;
+            DiskControlItem *item = new DiskControlItem(dad, this);
+            m_centralLayout->addWidget(item);
+        } else {
+            delete dad;
+        }
     }
 
     emit diskCountChanged(mountedCount);
