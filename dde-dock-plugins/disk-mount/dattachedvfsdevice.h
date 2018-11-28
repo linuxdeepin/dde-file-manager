@@ -38,6 +38,7 @@ class DAttachedVfsDevice : public DAttachedDeviceInterface
 public:
     DAttachedVfsDevice(const QUrl mountpointUrl);
 
+    bool isValid() override;
     bool detachable() override;
     void detach() override;
     QString displayName() override;

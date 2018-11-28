@@ -42,6 +42,11 @@ DAttachedUdisks2Device::DAttachedUdisks2Device(const DFMBlockDevice *blockDevice
     c_blockDevice.reset(DFMDiskManager::createBlockDevice(deviceDBusId)); // not take the ownership of the passed pointer.
 }
 
+bool DAttachedUdisks2Device::isValid()
+{
+    return !c_blockDevice.isNull();
+}
+
 bool DAttachedUdisks2Device::detachable()
 {
     QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blockDevice()->drive()));

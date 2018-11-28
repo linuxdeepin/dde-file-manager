@@ -35,6 +35,7 @@ class DAttachedUdisks2Device : public DAttachedDeviceInterface
 public:
     DAttachedUdisks2Device(const DFM_NAMESPACE::DFMBlockDevice *blockDevicePointer);
 
+    bool isValid() override;
     bool detachable() override;
     void detach() override;
     QString displayName() override;

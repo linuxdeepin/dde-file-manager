@@ -28,6 +28,7 @@
 
 class DAttachedDeviceInterface {
 public:
+    virtual bool isValid() = 0; // is device valid and useable
     virtual bool detachable() = 0; // can be unmounted / removable or not.
     virtual void detach() = 0; // do unmount, also do eject if possible.
     virtual QString displayName() = 0; // device display name.
