@@ -1,3 +1,13 @@
+<a name="4.6.8.10"></a>
+## 4.6.8.10 (2018-11-28)
+
+
+#### Bug Fixes
+
+*   adjust item height when changing font size ([d95e4829](https://github.com/linuxdeepin/dde-file-manager/commit/d95e48297e19c5956f897c6e0a58be22e8b64141))
+
+
+
 <a name="4.6.8.9"></a>
 ## 4.6.8.9 (2018-11-08)
 
