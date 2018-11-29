@@ -56,7 +56,7 @@ private slots:
     void onDriveConnected(const QString &deviceId);
     void onDriveDisconnected();
     void onMountAdded();
-    void onMountRemoved();
+    void onMountRemoved(const QString &blockDevicePath, const QByteArray &mountPoint);
     void onVolumeAdded();
     void onVolumeRemoved();
     void unmountDisk(const QString &diskId) const;

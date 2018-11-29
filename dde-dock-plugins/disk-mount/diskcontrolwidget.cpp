@@ -242,6 +242,7 @@ void DiskControlWidget::onDriveConnected(const QString &deviceId)
 void DiskControlWidget::onDriveDisconnected()
 {
     DDesktopServices::playSystemSoundEffect("device-removed");
+    onDiskListChanged();
 }
 
 void DiskControlWidget::onMountAdded()
@@ -249,8 +250,19 @@ void DiskControlWidget::onMountAdded()
     onDiskListChanged();
 }
 
-void DiskControlWidget::onMountRemoved()
+void DiskControlWidget::onMountRemoved(const QString &blockDevicePath, const QByteArray &mountPoint)
 {
+    Q_UNUSED(mountPoint);
+    // if it's a removable device, don't emit list changed signal.
+    // when eject done, it will got emited from onDriveDisconnected.
+    QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(blockDevicePath));
+    if (blDev) {
+        QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blDev->drive()));
+        if (diskDev && diskDev->removable()) {
+            return;
+        }
+    }
+
     onDiskListChanged();
 }
 
