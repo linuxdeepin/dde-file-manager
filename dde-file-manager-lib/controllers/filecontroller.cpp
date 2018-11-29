@@ -351,6 +351,11 @@ bool FileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) con
         return FileUtils::openExcutableFile(fileUrl.toLocalFile(), code);
     }
 
+    if (FileUtils::shouldAskUserToAddExecutableFlag(fileUrl.toLocalFile()) && !pfile->isDesktopFile()) {
+        int code = dialogManager->showAskIfAddExcutableFlagAndRunDialog(fileUrl, event->windowId());
+        return FileUtils::addExecutableFlagAndExecuse(fileUrl.toLocalFile(), code);
+    }
+
     if (FileUtils::isFileWindowsUrlShortcut(fileUrl.toLocalFile())) {
         QString url = FileUtils::getInternetShortcutUrl(fileUrl.toLocalFile());
         return FileUtils::openFile(url);

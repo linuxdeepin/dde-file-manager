@@ -89,6 +89,7 @@ public slots:
     void showUrlWrongDialog(const DUrl &url);
     int showRunExcutableScriptDialog(const DUrl& url, quint64 winId);
     int showRunExcutableFileDialog(const DUrl &url, quint64 winId);
+    int showAskIfAddExcutableFlagAndRunDialog(const DUrl &url, quint64 winId);
     int showRenameNameSameErrorDialog(const QString& name, const DFMEvent &event);
     int showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &event);
     int showRemoveBookMarkDialog(const DFMEvent &event);
