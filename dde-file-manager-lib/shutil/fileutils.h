@@ -82,6 +82,7 @@ public:
     static QByteArray md5(QFile *file, const QString &filePath);
 
     static bool isFileExecutable(const QString& path);
+    static bool shouldAskUserToAddExecutableFlag(const QString& path);
     static bool isFileRunnable(const QString& path);
     static bool isFileWindowsUrlShortcut(const QString& path); /*check file is windows url shortcut*/
     static QString getInternetShortcutUrl(const QString& path);/*get InternetShortcut url of windows url shortcut*/
@@ -89,6 +90,7 @@ public:
     static QString getFileMimetype(const QString& path);
     static bool isExecutableScript(const QString& path);
     static bool openExcutableScriptFile(const QString& path, int flag);
+    static bool addExecutableFlagAndExecuse(const QString& path, int flag);
     static bool openExcutableFile(const QString& path, int flag);
     static bool runCommand(const QString& cmd, const QStringList& args);
 
