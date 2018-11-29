@@ -707,6 +707,25 @@ bool FileUtils::isFileExecutable(const QString &path)
     return (file.permissions() & QFile::ReadUser) && (file.permissions() & QFile::ExeUser);
 }
 
+// sort of.. duplicate with FileUtils::isFileRunnable
+bool FileUtils::shouldAskUserToAddExecutableFlag(const QString &path)
+{
+    QString _path = path;
+    QFileInfo info(path);
+    QString mimetype = getFileMimetype(path);
+    if (info.isSymLink()){
+        _path = QFile(path).symLinkTarget();
+        mimetype = getFileMimetype(path);
+    }
+
+    if (mimetype == "application/x-iso9660-appimage"
+        || mimetype == "application/vnd.appimage") {
+        return !isFileExecutable(_path);
+    }
+
+    return false;
+}
+
 bool FileUtils::isFileRunnable(const QString &path)
 {
     QString _path = path;
@@ -803,6 +822,24 @@ bool FileUtils::openExcutableScriptFile(const QString &path, int flag)
     }
     case 3:
         result = openFile(path);
+        break;
+    default:
+        break;
+    }
+
+    return result;
+}
+
+bool FileUtils::addExecutableFlagAndExecuse(const QString &path, int flag)
+{
+    bool result = false;
+    QFile file(path);
+    switch (flag) {
+    case 0:
+        break;
+    case 1:
+        file.setPermissions(file.permissions() | QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther);
+        result = runCommand(path, QStringList());
         break;
     default:
         break;

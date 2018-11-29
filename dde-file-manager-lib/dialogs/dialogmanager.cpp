@@ -419,6 +419,20 @@ int DialogManager::showRunExcutableFileDialog(const DUrl &url, quint64 winId)
     return code;
 }
 
+int DialogManager::showAskIfAddExcutableFlagAndRunDialog(const DUrl &url, quint64 winId)
+{
+    DDialog d(WindowManager::getWindowById(winId));
+    const DAbstractFileInfoPointer &pfileInfo = fileService->createFileInfo(this, url);
+    // i18n text from: https://github.com/linuxdeepin/internal-discussion/issues/456 , seems a little weird..
+    QString message = tr("This file is not executable, do you want to add the execute permission and run?");
+    d.addButton(tr("Cancel"));
+    d.addButton(tr("Run"), true, DDialog::ButtonRecommend);
+    d.setTitle(message);
+    d.setIconPixmap(pfileInfo->fileIcon().pixmap(64, 64));
+    int code = d.exec();
+    return code;
+}
+
 
 int DialogManager::showRenameNameSameErrorDialog(const QString &name, const DFMEvent &event)
 {
