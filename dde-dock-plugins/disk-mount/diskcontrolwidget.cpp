@@ -122,7 +122,7 @@ void DiskControlWidget::unmountAll()
 
     for (const QString & blDevStr : blockDevices) {
         QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(blDevStr));
-        if (blDev->hasFileSystem() /* && DFMSetting*/ && !blDev->mountPoints().isEmpty()) {
+        if (blDev->hasFileSystem() /* && DFMSetting*/ && !blDev->mountPoints().isEmpty() && !blDev->hintIgnore()) {
             QByteArray mountPoint = blDev->mountPoints().first();
             if (mountPoint != QStringLiteral("/boot") && mountPoint != QStringLiteral("/") && mountPoint != QStringLiteral("/home")) {
                 QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blDev->drive()));
