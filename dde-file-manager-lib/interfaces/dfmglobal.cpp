@@ -815,6 +815,7 @@ QByteArray DFMGlobal::detectCharset(const QByteArray &data, const QString &fileN
         {KEncodingProber::ChineseTraditional, QLocale::China},
         {KEncodingProber::Japanese, QLocale::Japan},
         {KEncodingProber::Korean, QLocale::NorthKorea},
+        {KEncodingProber::Cyrillic, QLocale::Russia},
         {proberType, QLocale::system().country()}
     };
 
@@ -865,9 +866,6 @@ QByteArray DFMGlobal::detectCharset(const QByteArray &data, const QString &fileN
 
     return encoding;
 }
-
-
-
 
 bool DFMGlobal::keyShiftIsPressed()
 {
@@ -1078,6 +1076,10 @@ float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, co
         case QChar::Script_Hangul:
             hep_count += (country == QLocale::NorthKorea) || (country == QLocale::SouthKorea) ? 1.2 : 0.5;
             unidentification_count += (country == QLocale::NorthKorea) || (country == QLocale::SouthKorea) ? 0 : 0.3;
+            break;
+        case QChar::Script_Cyrillic:
+            hep_count += (country == QLocale::Russia) ? 1.2 : 0.5;
+            unidentification_count += (country == QLocale::Russia) ? 0 : 0.3;
             break;
         default:
             // full-width character, emoji, 常用标点, 拉丁文补充1
