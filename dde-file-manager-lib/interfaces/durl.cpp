@@ -52,6 +52,7 @@ QSet<QString> schemeList = QSet<QString>() << QString(TRASH_SCHEME)
                            << QString(AVFS_SCHEME)
                            << QString(FTP_SCHEME)
                            << QString(SFTP_SCHEME)
+                           << QString(DAV_SCHEME)
                            << QString{ TAG_SCHEME };
 
 DUrl::DUrl()
