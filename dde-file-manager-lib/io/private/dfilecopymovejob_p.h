@@ -62,6 +62,15 @@ public:
     ~DFileCopyMoveJobPrivate();
 
     static QString errorToString(DFileCopyMoveJob::Error error);
+    // 返回当前线程已经往block设备写入的数据，返回的是本次和上次间隔时间内写入的大小
+    static qint64 getWriteBytes(long tid);
+    qint64 getWriteBytes() const;
+    // 返回当前目标设备已写入扇区总数
+    // /sys/dev/block/[x:x]/stat 的第7个字段
+    // https://www.kernel.org/doc/Documentation/iostats.txt
+    qint64 getSectorsWritten() const;
+    // 返回已写入数据大小，根据多种情况，用不同的方式获取此数据
+    qint64 getCompletedDataSize() const;
 
     void setState(DFileCopyMoveJob::State s);
     void setError(DFileCopyMoveJob::Error e, const QString &es = QString());
@@ -114,6 +123,19 @@ public:
     DUrlList sourceUrlList;
     DUrlList targetUrlList;
     DUrl targetUrl;
+    // 是否可以使用 /pric/[pid]/task/[tid]/io 文件中的的 writeBytes 字段的值作为判断已写入数据的依据
+    qint8 canUseWriteBytes : 1;
+    // 目标磁盘设备是不是可移除或者热插拔设备
+    qint8 targetIsRemovable : 1;
+    // 逻辑扇区大小
+    qint16 targetLogSecionSize = 512;
+    // 记录任务开始时目标磁盘设备已写入扇区数
+    qint64 targetDeviceStartSectorsWritten;
+    // /sys/dev/block/x:x
+    QString targetSysDevPath;
+    // 目标设备所挂载的根目录
+    QString targetRootPath;
+
     QPointer<QThread> threadOfErrorHandle;
     DFileCopyMoveJob::Action actionOfError[DFileCopyMoveJob::UnknowError] = {DFileCopyMoveJob::NoAction};
     DFileStatisticsJob *fileStatistics = nullptr;
@@ -124,12 +146,16 @@ public:
     QList<QPair<DUrl, DUrl>> completedDirectoryList;
     int completedFilesCount = 0;
     qint64 completedDataSize = 0;
+    // 已经写入到block设备的总大小
+    qint64 completedDataSizeOnBlockDevice = 0;
     QPair<qint64 /*total*/, qint64 /*writed*/> currentJobDataSizeInfo;
     int currentJobFileHandle = -1;
     ElapsedTimer *updateSpeedElapsedTimer = nullptr;
     QTimer *updateSpeedTimer = nullptr;
     int timeOutCount = 0;
     bool needUpdateProgress = false;
+    // 线程id
+    long tid = -1;
 
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };

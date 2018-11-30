@@ -73,6 +73,7 @@ public:
         CreateFileWatcher,
         CreateFileDevice,
         CreateFileHandler,
+        CreateStorageInfo,
         SetFileExtensionPropertys,
         SetPermission,
 

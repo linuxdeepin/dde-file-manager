@@ -53,7 +53,8 @@ public:
         StoppedState,
         RunningState,
         PausedState,
-        SleepState
+        SleepState,
+        IOWaitState // 可能会长时间等待io的状态
     };
 
     Q_ENUM(State)

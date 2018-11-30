@@ -52,6 +52,7 @@ class DFileServicePrivate;
 DFM_BEGIN_NAMESPACE
 class DFileHandler;
 class DFileDevice;
+class DStorageInfo;
 DFM_END_NAMESPACE
 
 class DFileService : public QObject, public DFMAbstractEventHandler
@@ -157,6 +158,7 @@ public:
 
     DFileDevice *createFileDevice(const QObject *sender, const DUrl &url);
     DFileHandler *createFileHandler(const QObject *sender, const DUrl &url);
+    DStorageInfo *createStorageInfo(const QObject *sender, const DUrl &url);
 
 signals:
     void fileOpened(const DUrl &fileUrl) const;

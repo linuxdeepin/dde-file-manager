@@ -32,9 +32,11 @@
 #include <QMutex>
 #include <QTimer>
 #include <QLoggingCategory>
+#include <QProcess>
 
 #include <unistd.h>
 #include <zlib.h>
+#include <fcntl.h>
 
 DFM_BEGIN_NAMESPACE
 
@@ -43,6 +45,53 @@ Q_LOGGING_CATEGORY(fileJob, "file.job")
 #else
 Q_LOGGING_CATEGORY(fileJob, "file.job", QtInfoMsg)
 #endif
+
+#if defined(Q_OS_LINUX) && (defined(__GLIBC__) || QT_HAS_INCLUDE(<sys/syscall.h>))
+#  include <sys/syscall.h>
+
+# if defined(Q_OS_ANDROID) && !defined(SYS_gettid)
+#  define SYS_gettid __NR_gettid
+# endif
+
+static long qt_gettid()
+{
+    // no error handling
+    // this syscall has existed since Linux 2.4.11 and cannot fail
+    return syscall(SYS_gettid);
+}
+#elif defined(Q_OS_DARWIN)
+#  include <pthread.h>
+static int qt_gettid()
+{
+    // no error handling: this call cannot fail
+    __uint64_t tid;
+    pthread_threadid_np(NULL, &tid);
+    return tid;
+}
+#elif defined(Q_OS_FREEBSD_KERNEL) && defined(__FreeBSD_version) && __FreeBSD_version >= 900031
+#  include <pthread_np.h>
+static int qt_gettid()
+{
+    return pthread_getthreadid_np();
+}
+#else
+static QT_PREPEND_NAMESPACE(qint64) qt_gettid()
+{
+    QT_USE_NAMESPACE
+    return qintptr(QThread::currentThreadId());
+}
+#endif
+
+static QByteArray fileReadAll(const QString &file_path)
+{
+    QFile file(file_path);
+
+    if (file.open(QIODevice::ReadOnly)) {
+        return file.readAll();
+    }
+
+    return QByteArray();
+}
 
 class ElapsedTimer
 {
@@ -149,6 +198,72 @@ QString DFileCopyMoveJobPrivate::errorToString(DFileCopyMoveJob::Error error)
     return QString();
 }
 
+qint64 DFileCopyMoveJobPrivate::getWriteBytes(long tid)
+{
+    QFile file(QStringLiteral("/proc/self/task/%1/io").arg(tid));
+
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Failed on open the" << file.fileName() << ", will be not update the job speed and progress";
+
+        return 0;
+    }
+
+    const QByteArray &line_head = QByteArrayLiteral("write_bytes: ");
+    const QByteArray &all_data = file.readAll();
+
+    file.close();
+
+    QTextStream text_stream(all_data);
+
+    while (!text_stream.atEnd()) {
+        const QByteArray &line = text_stream.readLine().toLatin1();
+
+        if (line.startsWith(line_head)) {
+            bool ok = false;
+            qint64 size = line.mid(line_head.size()).toLongLong(&ok);
+
+            if (!ok) {
+                qWarning() << "Failed to convert to qint64, line string=" << line;
+
+                return 0;
+            }
+
+            qCDebug(fileJob(), "Did Write size on block device: %lld", size);
+
+            return size;
+        }
+    }
+
+    qWarning() << "Failed to find \"" << line_head << "\" from the" << file.fileName();
+
+    return 0;
+}
+
+qint64 DFileCopyMoveJobPrivate::getWriteBytes() const
+{
+    return getWriteBytes(tid);
+}
+
+qint64 DFileCopyMoveJobPrivate::getSectorsWritten() const
+{
+    const QByteArray data = fileReadAll(targetSysDevPath + "/stat");
+
+    return data.simplified().split(' ').value(6).toLongLong();
+}
+
+qint64 DFileCopyMoveJobPrivate::getCompletedDataSize() const
+{
+    if (canUseWriteBytes) {
+        return getWriteBytes();
+    }
+
+    if (targetDeviceStartSectorsWritten >= 0) {
+        return (getSectorsWritten() - targetDeviceStartSectorsWritten) * targetLogSecionSize;
+    }
+
+    return completedDataSize;
+}
+
 void DFileCopyMoveJobPrivate::setState(DFileCopyMoveJob::State s)
 {
     if (state == s) {
@@ -167,13 +282,14 @@ void DFileCopyMoveJobPrivate::setState(DFileCopyMoveJob::State s)
 
     if (s == DFileCopyMoveJob::RunningState) {
         if (updateSpeedElapsedTimer->isRunning()) {
-            updateSpeedElapsedTimer->togglePause();
+            if (updateSpeedElapsedTimer->isPaused())
+                updateSpeedElapsedTimer->togglePause();
         } else {
             updateSpeedElapsedTimer->start();
         }
 
         QMetaObject::invokeMethod(updateSpeedTimer, "start", Q_ARG(int, 500));
-    } else {
+    } else if (s != DFileCopyMoveJob::IOWaitState) {
         updateSpeedElapsedTimer->togglePause();
 
         QMetaObject::invokeMethod(updateSpeedTimer, "stop");
@@ -835,6 +951,18 @@ open_file: {
         }
     }
 
+#ifdef Q_OS_LINUX
+    // 开启读取优化，告诉内核，我们将顺序读取此文件
+
+    if (fromDevice->handle() > 0) {
+        posix_fadvise (fromDevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
+    }
+
+    if (toDevice->handle() > 0) {
+        posix_fadvise (toDevice->handle(), 0, 0, POSIX_FADV_SEQUENTIAL);
+    }
+#endif
+
     currentJobDataSizeInfo.first = fromDevice->size();
     currentJobFileHandle = toDevice->handle();
 
@@ -952,8 +1080,16 @@ open_file: {
 //        }
     }
 
+    // 关闭文件时可能会需要很长时间，因为内核可能要把内存里的脏数据回写到硬盘
+    setState(DFileCopyMoveJob::IOWaitState);
     fromDevice->close();
     toDevice->close();
+
+    if (state == DFileCopyMoveJob::IOWaitState) {
+        setState(DFileCopyMoveJob::RunningState);
+    } else if (Q_UNLIKELY(!stateCheck())) {
+        return false;
+    }
 
     if (fileHints.testFlag(DFileCopyMoveJob::DontIntegrityChecking)) {
         return true;
@@ -1005,6 +1141,10 @@ open_file: {
         }
 
         target_checksum = adler32(target_checksum, reinterpret_cast<Bytef *>(data), size);
+
+        if (Q_UNLIKELY(!stateCheck())) {
+            return false;
+        }
     }
 
     qCDebug(fileJob(), "Time spent of integrity check of the file: %lld", updateSpeedElapsedTimer->elapsed() - elapsed_time_checksum);
@@ -1263,7 +1403,8 @@ void DFileCopyMoveJobPrivate::joinToCompletedDirectoryList(const DUrl &from, con
 void DFileCopyMoveJobPrivate::updateProgress()
 {
     if (fileStatistics->isFinished()) {
-        const qint64 data_size = completedDataSize;
+        const qint64 data_size = getCompletedDataSize();
+
         Q_EMIT q_ptr->progressChanged(qreal(data_size) / fileStatistics->totalSize(), data_size);
 
         qCDebug(fileJob(), "completed data size: %lld, total data size: %lld", data_size, fileStatistics->totalSize());
@@ -1277,7 +1418,7 @@ void DFileCopyMoveJobPrivate::updateProgress()
 void DFileCopyMoveJobPrivate::updateSpeed()
 {
     const qint64 time = updateSpeedElapsedTimer->elapsed();
-    const qint64 total_size = completedDataSize;
+    const qint64 total_size = getCompletedDataSize();
 
     qint64 speed = total_size / time * 1000;
 
@@ -1287,9 +1428,15 @@ void DFileCopyMoveJobPrivate::updateSpeed()
 void DFileCopyMoveJobPrivate::_q_updateProgress()
 {
     ++timeOutCount;
-    needUpdateProgress = true;
 
     updateSpeed();
+
+    // 因为sleep状态时可能会导致进度信息长时间无法得到更新，故在此处直接更新进度信息
+    if (state == DFileCopyMoveJob::IOWaitState) {
+        updateProgress();
+    } else {
+        needUpdateProgress = true;
+    }
 }
 
 DFileCopyMoveJob::DFileCopyMoveJob(QObject *parent)
@@ -1559,7 +1706,9 @@ void DFileCopyMoveJob::run()
     d->completedFileList.clear();
     d->targetUrlList.clear();
     d->completedDataSize = 0;
+    d->completedDataSizeOnBlockDevice = 0;
     d->completedFilesCount = 0;
+    d->tid = qt_gettid();
 
     DAbstractFileInfoPointer target_info;
 
@@ -1580,6 +1729,71 @@ void DFileCopyMoveJob::run()
             d->setError(UnknowError, "The target url is not directory");
             goto end;
         }
+
+        // reset
+        d->canUseWriteBytes = 0;
+        d->targetIsRemovable = 0;
+        d->targetLogSecionSize = 512;
+        d->targetDeviceStartSectorsWritten = -1;
+        d->targetSysDevPath.clear();
+        d->targetRootPath.clear();
+
+        QScopedPointer<DStorageInfo> targetStorageInfo(DFileService::instance()->createStorageInfo(nullptr, d->targetUrl));
+
+        if (targetStorageInfo) {
+            d->targetRootPath = targetStorageInfo->rootPath();
+
+            qCDebug(fileJob(), "Target block device: \"%s\", Root Path: \"%s\"",
+                    targetStorageInfo->device().constData(), qPrintable(d->targetRootPath));
+
+            if (targetStorageInfo->isLocalDevice()) {
+                d->canUseWriteBytes = targetStorageInfo->fileSystemType().startsWith("ext");
+
+                if (!d->canUseWriteBytes) {
+                    const QByteArray dev_path = targetStorageInfo->device();
+
+                    QProcess process;
+
+                    process.start("lsblk", {"-niro", "MAJ:MIN,HOTPLUG,LOG-SEC", dev_path}, QIODevice::ReadOnly);
+
+                    if (process.waitForFinished(3000)) {
+                        if (process.exitCode() == 0) {
+                            const QByteArray &data = process.readAllStandardOutput();
+                            const QByteArrayList &list = data.split(' ');
+
+                            qCDebug(fileJob(), "lsblk result data: \"%s\"", data.constData());
+
+                            if (list.size() == 3) {
+                                d->targetSysDevPath = "/sys/dev/block/" + list.first();
+                                d->targetIsRemovable = list.at(1) == "1";
+
+                                bool ok = false;
+                                d->targetLogSecionSize = list.at(2).toInt(&ok);
+
+                                if (!ok) {
+                                    d->targetLogSecionSize = 512;
+
+                                    qCWarning(fileJob(), );
+                                }
+
+                                if (d->targetIsRemovable) {
+                                    d->targetDeviceStartSectorsWritten = d->getSectorsWritten();
+                                }
+
+                                qCDebug(fileJob(), "Block device path: \"%s\", Sys dev path: \"%s\", Is removable: %d, Log-Sec: %d",
+                                        qPrintable(dev_path), qPrintable(d->targetSysDevPath), bool(d->targetIsRemovable), d->targetLogSecionSize);
+                            } else {
+                                qCWarning(fileJob(), "Failed on parse the lsblk result data, data: \"%s\"", data.constData());
+                            }
+                        } else {
+                            qCWarning(fileJob(), "Failed on exec lsblk command, exit code: %d, error message: \"%s\"", process.exitCode(), process.readAllStandardError().constData());
+                        }
+                    }
+                }
+
+                qCDebug(fileJob(), "canUseWriteBytes = %d, targetIsRemovable = %d", bool(d->canUseWriteBytes));
+            }
+        }
     } else if (d->mode == CopyMode) {
         d->setError(UnknowError, "Invalid target url");
         goto end;
@@ -1595,7 +1809,7 @@ void DFileCopyMoveJob::run()
 
         const DAbstractFileInfoPointer &source_info = DFileService::instance()->createFileInfo(nullptr, source);
         if (!source_info) {
-            qDebug() << "Url not yet supported: " << source;
+            qWarning() << "Url not yet supported: " << source;
             continue;
         }
         const DUrl &parent_url = source_info->parentUrl();
@@ -1635,6 +1849,16 @@ void DFileCopyMoveJob::run()
     d->setError(NoError);
 
 end:
+    if (d->targetIsRemovable) {
+        // 任务完成后执行 sync 同步数据到硬盘, 同时将状态改为 SleepState，用于定时器更新进度和速度信息
+        d->setState(IOWaitState);
+        QProcess::execute("sync", {"-f", d->targetRootPath});
+        // 恢复状态
+        if (d->state == IOWaitState) {
+            d->setState(RunningState);
+        }
+    }
+
     d->fileStatistics->stop();
     d->setState(StoppedState);
 

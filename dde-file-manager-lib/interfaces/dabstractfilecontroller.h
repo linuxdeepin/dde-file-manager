@@ -68,6 +68,7 @@ class DFMUrlBaseEvent;
 DFM_BEGIN_NAMESPACE
 class DFileHandler;
 class DFileDevice;
+class DStorageInfo;
 DFM_END_NAMESPACE
 
 typedef QList<DUrl> DUrlList;
@@ -114,6 +115,7 @@ public:
     virtual DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const;
     virtual DFM_NAMESPACE::DFileDevice *createFileDevice(const QSharedPointer<DFMUrlBaseEvent> &event) const;
     virtual DFM_NAMESPACE::DFileHandler *createFileHandler(const QSharedPointer<DFMUrlBaseEvent> &event) const;
+    virtual DFM_NAMESPACE::DStorageInfo *createStorageInfo(const QSharedPointer<DFMUrlBaseEvent> &event) const;
 
     virtual bool setExtensionPropertys(const QSharedPointer<DFMSetFileExtensionPropertys> &event) const;
 };
