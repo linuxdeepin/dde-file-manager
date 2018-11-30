@@ -616,15 +616,15 @@ begin:
                     continue;
                 }
 
-                DThreadUtil::runInThread(&semaphore, model()->thread(), model(), &DFileSystemModel::beginRemoveRows,
-                                         model()->createIndex(rootNode, 0), row, row);
+                if (DThreadUtil::runInThread(&semaphore, model()->thread(), model(), &DFileSystemModel::beginRemoveRows,
+                                             model()->createIndex(rootNode, 0), row, row)) {
+                    if (!enable) {
+                        return;
+                    }
 
-                if (!enable) {
-                    return;
+                    Q_UNUSED(rootNode->takeNodeByIndex(row));
+                    DThreadUtil::runInThread(&semaphore, model()->thread(), model(), &DFileSystemModel::endRemoveRows);
                 }
-
-                Q_UNUSED(rootNode->takeNodeByIndex(row));
-                DThreadUtil::runInThread(&semaphore, model()->thread(), model(), &DFileSystemModel::endRemoveRows);
             }
         }
 
@@ -730,6 +730,8 @@ public:
     QQueue<QPair<EventType, DUrl>> fileEventQueue;
 
     bool enabledSort = true;
+
+    bool beginRemoveRowsFlag = false;
 
     // 每列包含多个role时，存储此列活跃的role
     QMap<int, int> columnActiveRole;
@@ -2088,11 +2090,10 @@ void DFileSystemModel::refresh(const DUrl &fileUrl)
 
     const QModelIndex &index = createIndex(node, 0);
 
-    beginRemoveRows(index, 0, rowCount(index) - 1);
-
-    node->clearChildren();
-
-    endRemoveRows();
+    if (beginRemoveRows(index, 0, rowCount(index) - 1)) {
+        node->clearChildren();
+        endRemoveRows();
+    }
 
     fetchMore(index);
 }
@@ -2138,13 +2139,14 @@ bool DFileSystemModel::removeRows(int row, int count, const QModelIndex &parent)
     const FileSystemNodePointer &parentNode = parent.isValid() ? getNodeByIndex(parent) : d->rootNode;
 
     if (parentNode && parentNode->populatedChildren) {
-        beginRemoveRows(createIndex(parentNode, 0), row, row + count - 1);
+        if (beginRemoveRows(createIndex(parentNode, 0), row, row + count - 1)) {
+            for (int i = 0; i < count; ++i) {
+                Q_UNUSED(parentNode->takeNodeByIndex(row));
+            }
 
-        for (int i = 0; i < count; ++i) {
-            Q_UNUSED(parentNode->takeNodeByIndex(row));
+            endRemoveRows();
         }
 
-        endRemoveRows();
     }
 
     return true;
@@ -2163,9 +2165,10 @@ bool DFileSystemModel::remove(const DUrl &url)
             return false;
         }
 
-        beginRemoveRows(createIndex(parentNode, 0), index, index);
-        Q_UNUSED(parentNode->takeNodeByIndex(index));
-        endRemoveRows();
+        if (beginRemoveRows(createIndex(parentNode, 0), index, index)) {
+            Q_UNUSED(parentNode->takeNodeByIndex(index));
+            endRemoveRows();
+        }
 
         return true;
     }
@@ -2299,11 +2302,10 @@ void DFileSystemModel::clear()
 
     const QModelIndex &index = createIndex(d->rootNode, 0);
 
-    beginRemoveRows(index, 0, d->rootNode->childrenCount() - 1);
-
-    deleteNode(d->rootNode);
-
-    endRemoveRows();
+    if (beginRemoveRows(index, 0, d->rootNode->childrenCount() - 1)) {
+        deleteNode(d->rootNode);
+        endRemoveRows();
+    }
 }
 
 void DFileSystemModel::setState(DFileSystemModel::State state)
@@ -2538,6 +2540,26 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
         }
     }
 
+}
+
+bool DFileSystemModel::beginRemoveRows(const QModelIndex &parent, int first, int last)
+{
+    Q_D(DFileSystemModel);
+
+    if (d->beginRemoveRowsFlag) {
+        return false;
+    } else {
+        QAbstractItemModel::beginRemoveRows(parent, first, last);
+        d->beginRemoveRowsFlag = true;
+        return true;
+    }
+}
+
+void DFileSystemModel::endRemoveRows()
+{
+    Q_D(DFileSystemModel);
+
+    d->beginRemoveRowsFlag = false;
 }
 
 #include "moc_dfilesystemmodel.cpp"
