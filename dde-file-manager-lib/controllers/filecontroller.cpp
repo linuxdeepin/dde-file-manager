@@ -914,6 +914,11 @@ DFileHandler *FileController::createFileHandler(const QSharedPointer<DFMUrlBaseE
     return new DLocalFileHandler();
 }
 
+DStorageInfo *FileController::createStorageInfo(const QSharedPointer<DFMUrlBaseEvent> &event) const
+{
+    return new DStorageInfo(event->url().toLocalFile());
+}
+
 class Match
 {
 public:

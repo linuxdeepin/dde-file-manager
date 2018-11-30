@@ -30,6 +30,7 @@
 #include "dfmfilecontrollerfactory.h"
 #include "dfiledevice.h"
 #include "dfilehandler.h"
+#include "dstorageinfo.h"
 
 #include "app/filesignalmanager.h"
 #include "dfmevent.h"
@@ -361,6 +362,9 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         break;
     case DFMEvent::CreateFileHandler:
         result = CALL_CONTROLLER(createFileHandler);
+        break;
+    case DFMEvent::CreateStorageInfo:
+        result = CALL_CONTROLLER(createStorageInfo);
         break;
     case DFMEvent::Tag:
     {
@@ -784,6 +788,13 @@ DFileHandler *DFileService::createFileHandler(const QObject *sender, const DUrl 
     const auto &&event = dMakeEventPointer<DFMUrlBaseEvent>(DFMEvent::CreateFileHandler, sender, url);
 
     return qvariant_cast<DFileHandler*>(DFMEventDispatcher::instance()->processEvent(event));
+}
+
+DStorageInfo *DFileService::createStorageInfo(const QObject *sender, const DUrl &url)
+{
+    const auto &&event = dMakeEventPointer<DFMUrlBaseEvent>(DFMEvent::CreateStorageInfo, sender, url);
+
+    return qvariant_cast<DStorageInfo*>(DFMEventDispatcher::instance()->processEvent(event));
 }
 
 QList<DAbstractFileController*> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl, bool ignoreHost, bool ignoreScheme)

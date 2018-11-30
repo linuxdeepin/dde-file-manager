@@ -320,6 +320,13 @@ DFM_NAMESPACE::DFileHandler *DAbstractFileController::createFileHandler(const QS
     return nullptr;
 }
 
+DFM_NAMESPACE::DStorageInfo *DAbstractFileController::createStorageInfo(const QSharedPointer<DFMUrlBaseEvent> &event) const
+{
+    event->ignore();
+
+    return nullptr;
+}
+
 bool DAbstractFileController::setExtensionPropertys(const QSharedPointer<DFMSetFileExtensionPropertys> &event) const
 {
     const auto && ep = event->extensionPropertys();
