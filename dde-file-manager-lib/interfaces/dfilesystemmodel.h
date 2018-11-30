@@ -219,6 +219,9 @@ private:
     void emitAllDataChanged();
     void selectAndRenameFile(const DUrl &fileUrl);
 
+    bool beginRemoveRows(const QModelIndex &parent, int first, int last);
+    void endRemoveRows();
+
     friend class FileSystemNode;
     friend class DFileView;
     friend class FileNodeManagerThread;
