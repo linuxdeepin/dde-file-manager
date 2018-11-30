@@ -151,7 +151,7 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
 
     // Device can be a network scheme, like smb://, ftp:// and sftp://
     QString devicePathScheme = DUrl::fromUserInput(info.value("deviceId").toString()).scheme();
-    if (devicePathScheme == SMB_SCHEME || devicePathScheme == FTP_SCHEME || devicePathScheme == SFTP_SCHEME) {
+    if (devicePathScheme == SMB_SCHEME || devicePathScheme == FTP_SCHEME || devicePathScheme == SFTP_SCHEME || devicePathScheme == DAV_SCHEME) {
         menu->addAction(QObject::tr("Log out and unmount"), [this, info, deviceIdUrl]() {
             AppController::instance()->actionForgetPassword(dMakeEventPointer<DFMUrlBaseEvent>(this, deviceIdUrl));
         });
