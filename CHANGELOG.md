@@ -1,3 +1,17 @@
+<a name="4.7.1.5"></a>
+## 4.7.1.5 (2018-11-30)
+
+
+#### Bug Fixes
+
+*   crash when remove file out of current view ([a2aa4ccd](https://github.com/linuxdeepin/dde-file-manager/commit/a2aa4ccde7da7a585831be07e944f4651b3e294d))
+*   no longer remove device which should be ignored ([7675f3bc](https://github.com/linuxdeepin/dde-file-manager/commit/7675f3bc39b4850e32e35f209899869a745b868b))
+*   no longer refresh device list when unmounting removable dev ([69db1f9c](https://github.com/linuxdeepin/dde-file-manager/commit/69db1f9cea01e2be91a1976268ab8fc7dc79c09e))
+*   crash when insert a blank dvd disc ([0fe51d0b](https://github.com/linuxdeepin/dde-file-manager/commit/0fe51d0bc1e62ec99cb846c5145d2f282ec9d7e2))
+* **text_preview:**  encoding support russian in cyrllic. ([b30e02e6](https://github.com/linuxdeepin/dde-file-manager/commit/b30e02e6541df97e9fd5eb9bb9adf3eee0e0d282))
+
+
+
 <a name="4.7.1.4"></a>
 ## 4.7.1.4 (2018-11-27)
 
