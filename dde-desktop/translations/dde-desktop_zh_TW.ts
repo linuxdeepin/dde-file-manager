@@ -14,7 +14,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="2427"/>
         <source>Properties</source>
-        <translation>內容</translation>
+        <translation>屬性</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2337"/>
@@ -65,12 +65,12 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="125"/>
         <source>Only desktop</source>
-        <translation>只套用於桌面</translation>
+        <translation>僅桌面</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="128"/>
         <source>Only lock screen</source>
-        <translation>只套用於鎖定畫面</translation>
+        <translation>僅鎖定畫面</translation>
     </message>
 </context>
 <context>
