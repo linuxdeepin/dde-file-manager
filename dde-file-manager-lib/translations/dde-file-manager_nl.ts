@@ -105,114 +105,114 @@
 <context>
     <name>DFileCopyMoveJob</name>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="114"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="163"/>
         <source>Permission error</source>
         <translation>Machtigingsfout</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="116"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="165"/>
         <source>The action is denied</source>
         <translation>De actie is niet toegestaan</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="122"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="171"/>
         <source>Failed to open the file</source>
         <translation>Openen van bestand mislukt</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="124"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="173"/>
         <source>Failed to read the file</source>
         <translation>Lezen van bestand mislukt</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="126"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="175"/>
         <source>Failed to write the file</source>
         <translation>Schrijven naar bestand mislukt</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="128"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="177"/>
         <source>Failed to create the directory</source>
         <translation>Creëren van map mislukt</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="130"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="179"/>
         <source>Failed to delete the file</source>
         <translation>Verwijderen van bestand mislukt</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="132"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="181"/>
         <source>Failed to move the file</source>
         <translation>Verplaatsen van bestand mislukt</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="134"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="183"/>
         <source>Original file does not exist</source>
         <translation>Origineel bestand bestaat niet</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="136"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="185"/>
         <source>Failed, file size must be less than 4GB</source>
         <translation>Mislukt; de bestandsgrootte moet kleiner dan 4 GB zijn</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="138"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="187"/>
         <source>Target disk doesn&apos;t have enough space</source>
         <translation>De doelschijf heeft niet genoeg vrije ruimte</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="140"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="189"/>
         <source>File integrity was damaged</source>
         <translation>De bestandsintegriteit is beschadigd</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="142"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="191"/>
         <source>The target device is read only</source>
         <translation>Het doelapparaat is alleen-lezen</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="144"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="193"/>
         <source>Target folder is inside the source folder</source>
         <translation>De doelmap bevindt zich in de hoofdmap!</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="389"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="505"/>
         <source>copy</source>
         <comment>Extra name added to new file name when used for file name.</comment>
         <translation>kopiëren</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="686"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="802"/>
         <source>Failed to create the directory, cause: %1</source>
         <translation>Creëren van map mislukt. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="783"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="805"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="899"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="921"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>Openen van bestand mislukt. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="862"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="990"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>Lezen van bestand mislukt. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="918"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1046"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>Schrijven naar bestand mislukt. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="994"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1130"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>Bestandsintegriteit is beschadigd. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1049"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1189"/>
         <source>Failed to delete the file, cause: %1</source>
         <translation>Verwijderen van bestand mislukt. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1109"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1249"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>Creëren van zachte koppeling mislukt. Oorzaak: %1</translation>
     </message>
@@ -246,36 +246,36 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1266"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1268"/>
         <location filename="../models/trashfileinfo.cpp" line="331"/>
         <source>Name</source>
         <translation>Naam</translation>
     </message>
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="996"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1268"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1270"/>
         <location filename="../models/searchfileinfo.cpp" line="121"/>
         <source>Time modified</source>
         <translation>Tijdstip wijziging</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1270"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1272"/>
         <source>Size</source>
         <translation>Grootte</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1272"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1274"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1274"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1276"/>
         <source>Time created</source>
         <translation>Tijdstip gecreëerd</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="769"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1276"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1278"/>
         <source>Last access</source>
         <translation>Laatst benaderd</translation>
     </message>
@@ -296,7 +296,7 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="522"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="524"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>Label &quot;%1&quot; toevoegen</translation>
     </message>
@@ -391,8 +391,8 @@
     <name>DialogManager</name>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="358"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="849"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="864"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="863"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="878"/>
         <source>Operation failed!</source>
         <translation>Operatie mislukt!</translation>
     </message>
@@ -403,13 +403,13 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="361"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="771"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="784"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="793"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="811"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="856"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="867"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1213"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="785"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="798"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="807"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="825"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="870"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="881"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1227"/>
         <source>OK</source>
         <translation>Oké</translation>
     </message>
@@ -426,18 +426,20 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="388"/>
         <location filename="../dialogs/dialogmanager.cpp" line="412"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="449"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="507"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="650"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="679"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="934"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1011"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="428"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="463"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="521"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="664"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="693"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="948"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1025"/>
         <source>Cancel</source>
         <translation>Annuleren</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="388"/>
         <location filename="../dialogs/dialogmanager.cpp" line="414"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="429"/>
         <source>Run</source>
         <translation>Uitvoeren</translation>
     </message>
@@ -459,146 +461,151 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="427"/>
+        <source>This file is not executable, do you want to add the execute permission and run?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="441"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>&quot;%1&quot; bestaat al. Kies een andere naam.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="429"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="679"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="896"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1033"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1154"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="443"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="693"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="910"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1047"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1168"/>
         <source>Confirm</source>
         <translation>Bevestigen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="440"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="454"/>
         <source>Are you sure to empty %1 item?</source>
         <translation>Weet je zeker dat u %1 item wilt legen?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="441"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="455"/>
         <source>Are you sure to empty %1 items?</source>
         <translation>Weet je zeker dat je %1 items wilt legen?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="442"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="456"/>
         <source>Permanently delete %1?</source>
         <translation>%1 permanent verwijderen?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="443"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="457"/>
         <source>Permanently delete %1 items?</source>
         <translation>%1 items permanent verwijderen?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="449"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="463"/>
         <source>Delete</source>
         <translation>Verwijderen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="460"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="474"/>
         <source>Empty</source>
         <translation>Leeg</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="491"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="505"/>
         <source>This action cannot be restored</source>
         <translation>Deze actie kan niet ongedaan worden gemaakt</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="504"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="518"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>Sorry, het is niet gelukt om je bladwijzermap te lokaliseren. Wil je het verwijderen?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="507"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="521"/>
         <source>Remove</source>
         <translation>Verwijderen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="647"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="661"/>
         <source>Disk file is being used, can not unmount now</source>
         <translation>Schijfbestand is in gebruik; je kunt nu niet afkoppelen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="648"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="662"/>
         <source>Name: </source>
         <translation>Naam:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="650"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="664"/>
         <source>Force unmount</source>
         <translation>Afkoppelen forceren</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="673"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="687"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>%1, dat naar deze snelkoppeling verwijst, is gewijzigd of verplaatst</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="677"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="691"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>Wil je deze snelkoppeling verwijderen?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="707"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="721"/>
         <source>Version:</source>
         <translation>Versie:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="709"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="723"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
         <translation>Bestandsbeheer is een hulpmiddel voor het beheren van bestanden, onafhankelijk ontwikkeld door Deepin Technology. Het bevat vele bestandsbeheerfuncties zoals zoeken, kopiëren, verwijderen, compressie/decompressie en andere bestandsbeheerfuncties.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="770"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="784"/>
         <source>Target disk doesn&apos;t have enough space, unable to copy!</source>
         <translation>Doelschijf heeft niet voldoende vrije ruimte; kopiëren niet mogelijk!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="782"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="796"/>
         <source>Failed, file size must be less than 4GB.</source>
         <translation>Mislukt. De bestandsgrootte moet kleiner dan 4 GB zijn.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="791"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="805"/>
         <source>Fail to create symlink, cause:</source>
         <translation>Creëren van zachte koppeling mislukt. Oorzaak:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="809"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="823"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>De geselecteerde items bevatten systeembestanden of -mappen, en kunnen niet worden verwijderd</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="851"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="865"/>
         <source>Target file removed or location changed</source>
         <translation>Doelbestand verwijderd of gewijzigde locatie</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="853"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="867"/>
         <source>%1 files failed to restore, target file removed or location changed</source>
         <translation>%1 bestanden kunnen niet worden hersteld. Het doelbestand is verwijderd of de locatie ervan is gewijzigd</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="865"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="887"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="879"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="901"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>Je bent niet gemachtigd om deze map/dit bestand te gebruiken!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="907"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="921"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>Sorry, je bent niet gemachtigd om het/de volgende %1 bestand(en)/map(pen) te gebruiken!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1211"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1225"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>Gedeelde mappen mogen niet dezelfde naam dragen als de huidige gebruikersnaam</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="935"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="949"/>
         <source>View</source>
         <translation>Tonen</translation>
     </message>
@@ -608,37 +615,37 @@
         <translation>Weet je zeker dat je %1 wilt uitvoeren?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="979"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="993"/>
         <source>Mount partition%1 to be read only</source>
         <translation>Koppel partitie %1 aan als alleen-lezen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="983"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="997"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
         <translation>In Windows zullen schijven niet meer kunnen lezen en schrijven als je de optie &quot;Snel opstarten inschakelen (aanbevolen)&quot; inschakelt in de afsluitinstellingen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="987"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1001"/>
         <source>Please restore by the following steps to normally access Windows disk</source>
         <translation>Herstel door de volgende stappen te ondernemen om normaal toegang te krijgen tot de Windows-schijf</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="993"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1007"/>
         <source>1. Reboot to enter Windows</source>
         <translation>1. Start opnieuw op om Windows te betreden</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="994"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1008"/>
         <source>2. Select Reboot</source>
         <translation>2. Selecteer Opnieuw opstarten</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="995"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1009"/>
         <source>3. Reboot and enter deepin</source>
         <translation>3. Start opnieuw op en selecteer deepin</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1012"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1026"/>
         <source>Reboot</source>
         <translation>Opnieuw opstarten</translation>
     </message>
@@ -1604,7 +1611,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="883"/>
         <source>Filesystem</source>
-        <translation type="unfinished"/>
+        <translation>Bestandssysteem</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="998"/>
@@ -2066,12 +2073,12 @@
         <translation>%1 items</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="816"/>
+        <location filename="../interfaces/dfileservices.cpp" line="827"/>
         <source>Shortcut</source>
         <translation>Snelkoppeling</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="616"/>
+        <location filename="../interfaces/dfileservices.cpp" line="620"/>
         <source>Create symlink</source>
         <translation>Zachte koppeling creëren</translation>
     </message>
@@ -2287,7 +2294,7 @@
         <translation>Annuleren</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1177"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1191"/>
         <source>Rename %1 Files</source>
         <translation>%1 bestandsnamen wijzigen</translation>
     </message>

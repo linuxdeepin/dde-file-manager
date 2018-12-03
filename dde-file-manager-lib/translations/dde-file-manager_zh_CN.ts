@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -464,7 +462,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="427"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
-        <translation type="unfinished"></translation>
+        <translation>此文件没有可执行权限，是否添加权限并运行？</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="441"/>
