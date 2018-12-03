@@ -1,3 +1,18 @@
+<a name="4.7.1.6"></a>
+## 4.7.1.6 (2018-12-03)
+
+
+#### Features
+
+*   ask for adding executable permission for AppImage file ([d7990128](https://github.com/linuxdeepin/dde-file-manager/commit/d7990128e6d38cbb352f229855ac0b437d22be11))
+*   keep the suffix when the file name is truncated ([77e76229](https://github.com/linuxdeepin/dde-file-manager/commit/77e762291feac47a2ec748af52553fddf9860c9b))
+
+#### Bug Fixes
+
+*   call QAbstractItemModel::endRemoveRows() ([cf1b43dd](https://github.com/linuxdeepin/dde-file-manager/commit/cf1b43dd720b03a199d6187815cdc1ac2c1a344f))
+
+
+
 <a name="4.7.1.5"></a>
 ## 4.7.1.5 (2018-11-30)
 
