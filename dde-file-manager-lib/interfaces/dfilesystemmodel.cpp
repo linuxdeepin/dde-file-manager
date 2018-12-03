@@ -2560,6 +2560,7 @@ void DFileSystemModel::endRemoveRows()
     Q_D(DFileSystemModel);
 
     d->beginRemoveRowsFlag = false;
+    QAbstractItemModel::endRemoveRows();
 }
 
 #include "moc_dfilesystemmodel.cpp"
