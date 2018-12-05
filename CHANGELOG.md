@@ -1,3 +1,13 @@
+<a name="4.6.8.11"></a>
+## 4.6.8.11 (2018-12-05)
+
+
+#### Bug Fixes
+
+* **dde-desktop:**  relayout on the font size changed ([93a104d7](https://github.com/linuxdeepin/dde-file-manager/commit/93a104d78c97cf9c69d5ab099f3ed8eaa9ecc874))
+
+
+
 <a name="4.6.8.10"></a>
 ## 4.6.8.10 (2018-11-28)
 
