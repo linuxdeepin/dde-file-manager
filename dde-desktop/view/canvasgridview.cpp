@@ -1120,8 +1120,7 @@ void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
 
 bool CanvasGridView::event(QEvent *event)
 {
-    if (event->type() == QEvent::ApplicationFontChange) {
-        itemDelegate()->updateItemSizeHint();
+    if (event->type() == QEvent::FontChange) {
         updateCanvas();
     }
 
@@ -1682,7 +1681,6 @@ void CanvasGridView::initUI()
         itemDelegate()->setIconSizeByIconSizeLevel(1);
     }
     settings->endGroup();
-    itemDelegate()->updateItemSizeHint();
 
     DFMSocketInterface::instance();
 
@@ -1944,6 +1942,7 @@ void CanvasGridView::updateCanvas()
     auto outRect = qApp->primaryScreen()->geometry();
     auto inRect = d->canvasRect;
 
+    itemDelegate()->updateItemSizeHint();
     auto itemSize = itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex());
 
     QMargins geometryMargins;
