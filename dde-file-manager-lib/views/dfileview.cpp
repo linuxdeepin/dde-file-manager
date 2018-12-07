@@ -93,6 +93,9 @@ public:
     QVariant fileViewStateValue(const DUrl &url, const QString &key, const QVariant &defalutValue);
     void setFileViewStateValue(const DUrl &url, const QString &key, const QVariant &value);
     void updateHorizontalScrollBarPosition();
+    void pureResizeEvent(QResizeEvent *event);
+    void doFileNameColResize();
+    void toggleHeaderViewSnap(bool on);
     void _q_onSectionHandleDoubleClicked(int logicalIndex);
 
     DFileView *q_ptr;
@@ -152,6 +155,8 @@ public:
     QActionGroup *toolbarActionGroup;
 
     bool allowedAdjustColumnSize = true;
+    bool adjustFileNameCol = false; // mac finder style half-auto col size adjustment flag.
+    int cachedViewWidth = -1;
 
     // 用于实现触屏滚动视图和框选文件不冲突，手指在屏幕上按下短时间内就开始移动
     // 会被认为触发滚动视图，否则为触发文件选择（时间默认为300毫秒）
@@ -1366,17 +1371,6 @@ void DFileView::resizeEvent(QResizeEvent *event)
 
     DListView::resizeEvent(event);
 
-    if (!d->allowedAdjustColumnSize) {
-        // auto switch list mode
-        if (d->currentViewMode == ListMode
-                && DFMApplication::instance()->appAttribute(DFMApplication::AA_ViewAutoCompace).toBool()) {
-            if (model()->setColumnCompact(event->size().width() < 600)) {
-                updateListHeaderViewProperty();
-                doItemsLayout();
-            }
-        }
-    }
-
     updateHorizontalOffset();
 
     if (itemDelegate()->editingIndex().isValid())
@@ -1754,6 +1748,7 @@ void DFileView::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
 
 bool DFileView::event(QEvent *e)
 {
+    Q_D(DFileView);
     switch (e->type()) {
     case QEvent::KeyPress: {
             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(e);
@@ -1771,6 +1766,11 @@ bool DFileView::event(QEvent *e)
             }
         }
         break;
+    case QEvent::Resize:
+        d->pureResizeEvent(static_cast<QResizeEvent*>(e));
+        break;
+    case QEvent::ParentChange:
+        window()->installEventFilter(this);
     default:
         break;
     }
@@ -1793,12 +1793,33 @@ void DFileView::updateGeometries()
 
 bool DFileView::eventFilter(QObject *obj, QEvent *event)
 {
-    if (obj != horizontalScrollBar()->parentWidget() || event->type() != QEvent::Move)
-        return DListView::eventFilter(obj, event);
-
     Q_D(DFileView);
 
-    d->updateHorizontalScrollBarPosition();
+    switch (event->type()) {
+    case QEvent::Move:
+        if (obj != horizontalScrollBar()->parentWidget())
+            return DListView::eventFilter(obj, event);
+        d->updateHorizontalScrollBarPosition();
+        break;
+    case QEvent::WindowStateChange:
+        if (d->headerView) {
+            d->toggleHeaderViewSnap(true);
+            d->doFileNameColResize();
+        }
+        break;
+    // blumia: 这里通过给横向滚动条加事件过滤器并监听其显示隐藏时间来判断是否应当进入吸附状态。
+    //         不过其实可以通过 Resize 事件的 size 和 oldSize 判断是否由于窗口调整大小而进入了吸附状态。
+    //         鉴于已经实现完了，如果当前的实现方式实际发现了较多问题，则应当调整为使用 Resize 事件来标记吸附状态的策略。
+    case QEvent::ShowToParent:
+    case QEvent::HideToParent:
+        if (d->headerView && d->cachedViewWidth != this->width()) {
+            d->cachedViewWidth = this->width();
+            d->toggleHeaderViewSnap(true);
+        }
+        break;
+    default:
+        break;
+    }
 
     return DListView::eventFilter(obj, event);
 }
@@ -1867,9 +1888,6 @@ void DFileView::initUI()
 
     if (d->allowedAdjustColumnSize) {
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-
-        // 给横向滚动条安装事件过滤器，用于将它的位置更新到状态栏上面
-        horizontalScrollBar()->parentWidget()->installEventFilter(this);
     }
 
     d->toolbarActionGroup = new QActionGroup(this);
@@ -2195,6 +2213,8 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
 
     itemDelegate()->hideAllIIndexWidget();
 
+    horizontalScrollBar()->parentWidget()->removeEventFilter(this);
+
     switch (mode) {
     case IconMode: {
         clearHeardView();
@@ -2249,7 +2269,8 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
                     this, &DFileView::onSortIndicatorChanged);
             connect(d->headerView, &QHeaderView::customContextMenuRequested,
                     this, &DFileView::popupHeaderViewContextMenu);
-            connect(d->headerView, &DFMHeaderView::mouseReleased, this, [this] {
+            connect(d->headerView, &DFMHeaderView::mouseReleased, this, [ = ] {
+                d->toggleHeaderViewSnap(false);
                 QList<int> roleList = columnRoleList();
                 QVariantMap state;
                 for (const int role : roleList) {
@@ -2279,6 +2300,13 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
         setSpacing(LIST_VIEW_SPACING);
         d->statusBar->scalingSlider()->hide();
         d->toolbarActionGroup->actions().at(1)->setChecked(true);
+
+        if (d->allowedAdjustColumnSize) {
+            horizontalScrollBar()->parentWidget()->installEventFilter(this);
+            // 初始化列宽调整
+            d->cachedViewWidth = this->width();
+            d->adjustFileNameCol = d->headerView->width() == this->width();
+        }
         break;
     }
     case ExtendMode: {
@@ -2488,6 +2516,10 @@ void DFileView::updateListHeaderViewProperty()
         } else {
             d->headerView->setSectionHidden(i, d->columnForRoleHiddenMap.value(column_name));
         }
+    }
+
+    if (d->adjustFileNameCol) {
+        d->doFileNameColResize();
     }
 
     updateColumnWidth();
@@ -2789,6 +2821,51 @@ void DFileViewPrivate::updateHorizontalScrollBarPosition()
 
     // 更新横向滚动条的位置，将它显示在状态栏上面（此处没有加防止陷入死循环的处理）
     widget->move(widget->x(), q->height() - statusBar->height() - widget->height());
+}
+
+void DFileViewPrivate::pureResizeEvent(QResizeEvent *event)
+{
+    Q_Q(DFileView);
+
+    if (!allowedAdjustColumnSize) {
+        // auto switch list mode
+        if (currentViewMode == DFileView::ListMode
+                && DFMApplication::instance()->appAttribute(DFMApplication::AA_ViewAutoCompace).toBool()) {
+            if (q->model()->setColumnCompact(event->size().width() < 600)) {
+                q->updateListHeaderViewProperty();
+                q->doItemsLayout();
+            }
+        }
+    } else {
+        doFileNameColResize();
+    }
+}
+
+void DFileViewPrivate::doFileNameColResize()
+{
+    Q_Q(DFileView);
+
+    if (allowedAdjustColumnSize && headerView && adjustFileNameCol) {
+        int fileNameColRole = q->model()->roleToColumn(DFileSystemModel::FileDisplayNameRole);
+        int columnCount = headerView->count();
+        int columnWidthSumOmitFileName = 0;
+        for (int i = 0; i < columnCount; ++i) {
+            if (i == fileNameColRole || headerView->isSectionHidden(i))
+                continue;
+            columnWidthSumOmitFileName += q->columnWidth(i);
+        }
+
+        int targetWidth = q->width() - columnWidthSumOmitFileName;
+        if (targetWidth >= headerView->minimumSectionSize()) {
+            headerView->resizeSection(fileNameColRole, q->width() - columnWidthSumOmitFileName);
+        }
+    }
+}
+
+void DFileViewPrivate::toggleHeaderViewSnap(bool on)
+{
+    adjustFileNameCol = on;
+//    DFMApplication::appObtuselySetting()->setValue("WindowManager", "HeaderViewSnapped", on);
 }
 
 void DFileViewPrivate::_q_onSectionHandleDoubleClicked(int logicalIndex)

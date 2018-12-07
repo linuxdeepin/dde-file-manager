@@ -151,7 +151,7 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
 
     // Device can be a network scheme, like smb://, ftp:// and sftp://
     QString devicePathScheme = DUrl::fromUserInput(info.value("deviceId").toString()).scheme();
-    if (devicePathScheme == SMB_SCHEME || devicePathScheme == FTP_SCHEME || devicePathScheme == SFTP_SCHEME) {
+    if (devicePathScheme == SMB_SCHEME || devicePathScheme == FTP_SCHEME || devicePathScheme == SFTP_SCHEME || devicePathScheme == DAV_SCHEME) {
         menu->addAction(QObject::tr("Log out and unmount"), [this, info, deviceIdUrl]() {
             AppController::instance()->actionForgetPassword(dMakeEventPointer<DFMUrlBaseEvent>(this, deviceIdUrl));
         });
@@ -159,7 +159,7 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
 
     menu->addSeparator();
 
-    QAction *propertyAction = new QAction(QObject::tr("Properties"), menu);
+    QAction *propertyAction = new QAction(QObject::tr("Disk info"), menu);
     connect(propertyAction, &QAction::triggered, this, [this, info]() {
         DUrl mountPointUrl(info.value("mountPointUrl", QString()).toString());
         DUrlList list;
