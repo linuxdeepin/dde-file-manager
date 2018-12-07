@@ -1,3 +1,22 @@
+<a name="4.7.1.7"></a>
+## 4.7.1.7 (2018-12-07)
+
+
+#### Bug Fixes
+
+*   QStorageInfo cannot get device on invalid symlink ([85d63953](https://github.com/linuxdeepin/dde-file-manager/commit/85d6395341e5b238b7b4216d21e692e63d91c722))
+*   mount plugin for dock ver 1.1 ([5272d6a5](https://github.com/linuxdeepin/dde-file-manager/commit/5272d6a55117f065e2b82b1dc76802c09b5da686))
+* **dde-desktop:**  relayout on the font size changed ([d1cc1313](https://github.com/linuxdeepin/dde-file-manager/commit/d1cc1313fee743cec7bf29e689ed1b1170c49d88))
+
+#### Features
+
+*   mac style headerview snapping ([9a661b07](https://github.com/linuxdeepin/dde-file-manager/commit/9a661b074752f57f14e9a43b6af2c51d25334ac8))
+*   dav scheme basic support ([7870d32a](https://github.com/linuxdeepin/dde-file-manager/commit/7870d32af7525cd351042392e85e02c677b13afe))
+*   ask for adding executable permission for flatpak file ([0ab1fb20](https://github.com/linuxdeepin/dde-file-manager/commit/0ab1fb20fbb5aaf8466872382d278f4664e0b4a1))
+*   disk property for /home if available ([e0ff94a9](https://github.com/linuxdeepin/dde-file-manager/commit/e0ff94a941c592a0674a0d4a7b9adcdc824046cd))
+
+
+
 <a name="4.7.1.6"></a>
 ## 4.7.1.6 (2018-12-03)
 
