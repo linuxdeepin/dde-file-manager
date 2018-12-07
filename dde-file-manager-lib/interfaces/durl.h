@@ -39,6 +39,7 @@
 #define SMB_SCHEME "smb"
 #define AFC_SCHEME "afc"
 #define MTP_SCHEME "mtp"
+#define DAV_SCHEME "dav"
 #define GPHOTO2_SCHEME "gphoto2"
 #define USERSHARE_SCHEME "usershare"
 #define AVFS_SCHEME "avfs"

@@ -23,6 +23,7 @@
 #include "app/define.h"
 #include "views/dfmsidebaritemgroup.h"
 #include "views/dfmsidebarbookmarkitem.h"
+#include "views/dfmsidebarhomeitem.h"
 #include "views/dfmsidebardefaultitem.h"
 #include "views/dfmsidebartrashitem.h"
 #include "views/dfmsidebartagitem.h"
@@ -422,7 +423,7 @@ void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::G
         if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowRecentFileEntry).toBool()) {
             group->appendItem(new DFMSideBarRecentItem(DFM_STD_LOCATION::RecentPath));
         }
-        group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::HomePath));
+        group->appendItem(new DFMSideBarHomeItem());
         group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::DesktopPath));
         group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::VideosPath));
         group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::MusicPath));
