@@ -337,37 +337,12 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         }
 
         menu = DFileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
-
-
-        QAction *openWithAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::OpenWith));
-        DFileMenu *openWithMenu = openWithAction ? qobject_cast<DFileMenu *>(openWithAction->menu()) : Q_NULLPTR;
-
-        if (openWithMenu) {
-            QStringList recommendApps = mimeAppsManager->getRecommendedApps(info->redirectedFileUrl());
-
-            foreach (QString app, recommendApps) {
-//                const DesktopFile& df = mimeAppsManager->DesktopObjs.value(app);
-                //ignore no show apps
-//                if(df.getNoShow())
-//                    continue;
-                DesktopFile desktopFile(app);
-                QAction *action = new QAction(desktopFile.getDisplayName(), openWithMenu);
-                action->setIcon(FileUtils::searchAppIcon(desktopFile));
-                action->setProperty("app", app);
-                action->setProperty("url", QVariant::fromValue(info->redirectedFileUrl()));
-                openWithMenu->addAction(action);
-                connect(action, &QAction::triggered, appController, &AppController::actionOpenFileByApp);
-            }
-
-            QAction *action = new QAction(fileMenuManger->getActionString(MenuAction::OpenWithCustom), openWithMenu);
-            action->setData((int)MenuAction::OpenWithCustom);
-            openWithMenu->addAction(action);
-            DFileMenuData::actions[MenuAction::OpenWithCustom] = action;
-            DFileMenuData::actionToMenuAction[action] = MenuAction::OpenWithCustom;
-        }
     } else {
         bool isSystemPathIncluded = false;
         bool isAllCompressedFiles = true;
+//        QMimeType fileMimeType;
+        QStringList supportedMimeTypes;
+        bool mime_displayOpenWith = true;
 
         foreach (DUrl url, urlList) {
             const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(Q_NULLPTR, url);
@@ -378,6 +353,34 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
 
             if (systemPathManager->isSystemPath(fileInfo->fileUrl().toLocalFile())) {
                 isSystemPathIncluded = true;
+            }
+
+            if (!mime_displayOpenWith) {
+                continue;
+            }
+
+            if (supportedMimeTypes.isEmpty()) {
+                QMimeType fileMimeType = fileInfo->mimeType();
+                QString defaultAppDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(fileMimeType.name());
+                QSettings desktopFile(defaultAppDesktopFile, QSettings::IniFormat);
+                desktopFile.setIniCodec("UTF-8");
+                Properties mimeTypeList(defaultAppDesktopFile, "Desktop Entry");
+                supportedMimeTypes = mimeTypeList.value("MimeType").toString().split(';');
+                supportedMimeTypes.removeAll({});
+            } else {
+                QStringList mimeTypeList = { fileInfo->mimeType().name() };
+                mimeTypeList.append(fileInfo->mimeType().parentMimeTypes());
+                bool matched = false;
+                for (const QString& oneMimeType : mimeTypeList) {
+                    if (supportedMimeTypes.contains(oneMimeType)) {
+                        matched = true;
+                        break;
+                    }
+                }
+                if (!matched) {
+                    mime_displayOpenWith = false;
+                    disableList << MenuAction::Open << MenuAction::OpenWith;
+                }
             }
         }
 
@@ -419,6 +422,37 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         }
 
         menu = DFileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
+    }
+
+    QAction *openWithAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::OpenWith));
+    DFileMenu *openWithMenu = openWithAction ? qobject_cast<DFileMenu *>(openWithAction->menu()) : Q_NULLPTR;
+
+    if (openWithMenu && openWithMenu->isEnabled()) {
+        QStringList recommendApps = mimeAppsManager->getRecommendedApps(info->redirectedFileUrl());
+
+        foreach (QString app, recommendApps) {
+//            const DesktopFile& df = mimeAppsManager->DesktopObjs.value(app);
+        //ignore no show apps
+//            if(df.getNoShow())
+//                continue;
+            DesktopFile desktopFile(app);
+            QAction *action = new QAction(desktopFile.getDisplayName(), openWithMenu);
+            action->setIcon(FileUtils::searchAppIcon(desktopFile));
+            action->setProperty("app", app);
+            if (urlList.length() == 1) {
+                action->setProperty("url", QVariant::fromValue(info->redirectedFileUrl()));
+            } else {
+                action->setProperty("urls", QVariant::fromValue(urlList));
+            }
+            openWithMenu->addAction(action);
+            connect(action, &QAction::triggered, appController, &AppController::actionOpenFileByApp);
+        }
+
+        QAction *action = new QAction(fileMenuManger->getActionString(MenuAction::OpenWithCustom), openWithMenu);
+        action->setData((int)MenuAction::OpenWithCustom);
+        openWithMenu->addAction(action);
+        DFileMenuData::actions[MenuAction::OpenWithCustom] = action;
+        DFileMenuData::actionToMenuAction[action] = MenuAction::OpenWithCustom;
     }
 
     if (deviceListener->isMountedRemovableDiskExits()) {

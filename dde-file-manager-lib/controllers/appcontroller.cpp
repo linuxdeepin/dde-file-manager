@@ -702,8 +702,17 @@ void AppController::actionOpenFileByApp()
     }
 
     QString app = action->property("app").toString();
-    DUrl fileUrl = qvariant_cast<DUrl>(action->property("url"));
-    fileService->openFileByApp(this, app, fileUrl);
+    if (action->property("urls").isValid()) {
+        DUrlList fileUrls = qvariant_cast<DUrlList>(action->property("urls"));
+        QStringList fileUrlStrs;
+        for (const DUrl& url : fileUrls) {
+            fileUrlStrs << url.toString();
+        }
+        FileUtils::openFilesByApp(app, fileUrlStrs);
+    } else {
+        DUrl fileUrl = qvariant_cast<DUrl>(action->property("url"));
+        fileService->openFileByApp(this, app, fileUrl);
+    }
 }
 
 void AppController::actionSendToRemovableDisk()

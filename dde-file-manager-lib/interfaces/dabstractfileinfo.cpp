@@ -902,6 +902,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
 
     } else if (type == MultiFiles) {
         actionKeys << MenuAction::Open
+                   << MenuAction::OpenWith
                    << MenuAction::Separator
                    << MenuAction::Cut
                    << MenuAction::Copy

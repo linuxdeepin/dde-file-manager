@@ -73,7 +73,7 @@ public:
     static bool launchAppByDBus(const QString& desktopFile, const QStringList& filePaths = {});
     static bool launchAppByGio(const QString& desktopFile, const QStringList& filePaths = {});
 
-    static bool openFileByApp(const QString& desktopFile, const QString& filePath);
+    static bool openFilesByApp(const QString& desktopFile, const QStringList &filePaths);
     static bool isFileManagerSelf(const QString& desktopFile);
 
     static bool setBackground(const QString& pictureFilePath);
