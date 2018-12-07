@@ -606,7 +606,7 @@ bool FileUtils::launchAppByGio(const QString &desktopFile, const QStringList &fi
     return ok;
 }
 
-bool FileUtils::openFileByApp(const QString& desktopFile, const QString& filePath)
+bool FileUtils::openFilesByApp(const QString& desktopFile, const QStringList& filePaths)
 {
     bool ok = false;
 
@@ -615,13 +615,12 @@ bool FileUtils::openFileByApp(const QString& desktopFile, const QString& filePat
         return ok;
     }
 
-    if (filePath.isEmpty()) {
+    if (filePaths.isEmpty()) {
         qDebug() << "Failed to open desktop file with gio: file path is empty";
         return ok;
     }
 
-
-    qDebug() << desktopFile << filePath;
+    qDebug() << desktopFile << filePaths;
 
     GDesktopAppInfo* appInfo = g_desktop_app_info_new_from_filename(desktopFile.toLocal8Bit().constData());
     if (!appInfo) {
@@ -633,12 +632,10 @@ bool FileUtils::openFileByApp(const QString& desktopFile, const QString& filePat
     if (terminalFlag == "true"){
         QString exec = QString(g_desktop_app_info_get_string(appInfo, "Exec"));
         QStringList args;
-        args << "-e" << exec.split(" ").at(0) << filePath;
+        args << "-e" << exec.split(" ").at(0) << filePaths;
         qDebug() << "/usr/bin/x-terminal-emulator" << args;
         ok = QProcess::startDetached("/usr/bin/x-terminal-emulator", args);
     }else{
-        QStringList filePaths;
-        filePaths << filePath;
         ok = launchApp(desktopFile, filePaths);
     }
     g_object_unref(appInfo);
