@@ -617,7 +617,7 @@ void GvfsMountManager::monitor_volume_added(GVolumeMonitor *volume_monitor, GVol
     QDiskInfo diskInfo = qVolumeToqDiskInfo(qVolume);
 
     if (diskInfo.type() == "iphone") {
-        QRegularExpression express(QString("afc://%1(:[\d]+)?/").arg(diskInfo.uuid()));
+        QRegularExpression express(QString("afc://%1(:[\\d]+)?/").arg(diskInfo.uuid()));
         auto match = express.match(diskInfo.activation_root_uri());
 
         if (!match.isValid()) {
