@@ -1,3 +1,13 @@
+<a name="4.7.1.8"></a>
+## 4.7.1.8 (2018-12-10)
+
+
+#### Bug Fixes
+
+*   remove focus border highlight ([42e9f8fd](https://github.com/linuxdeepin/dde-file-manager/commit/42e9f8fdd9e2f2926fda1af3b48cccbe10444cbe))
+
+
+
 <a name="4.7.1.7"></a>
 ## 4.7.1.7 (2018-12-07)
 
