@@ -874,7 +874,8 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
     const QModelIndex current = d->currentCursorIndex;
     const QAbstractItemModel *itemModel = this->model();
     const DFileSelectionModel *selections = this->selectionModel();
-    const bool focus = (hasFocus() || viewport()->hasFocus()) && current.isValid();
+    const bool focusEnabled = false;
+    const bool focus = (hasFocus() || viewport()->hasFocus()) && current.isValid() && focusEnabled;
     const QStyle::State state = option.state;
     const QAbstractItemView::State viewState = this->state();
     const bool enabled = (state & QStyle::State_Enabled) != 0;
