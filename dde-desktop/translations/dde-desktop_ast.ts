@@ -2,32 +2,32 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2292"/>
+        <location filename="../view/canvasgridview.cpp" line="2291"/>
         <source>Icon size</source>
         <translation>Tamañu d&apos;iconos</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2298"/>
+        <location filename="../view/canvasgridview.cpp" line="2297"/>
         <source>Auto arrange</source>
         <translation>Auto-ordenar</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2427"/>
+        <location filename="../view/canvasgridview.cpp" line="2426"/>
         <source>Properties</source>
         <translation>Propiedaes</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2337"/>
+        <location filename="../view/canvasgridview.cpp" line="2336"/>
         <source>Display Settings</source>
         <translation>Axustes de pantalla</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2344"/>
+        <location filename="../view/canvasgridview.cpp" line="2343"/>
         <source>Corner Settings</source>
         <translation>Axustes d&apos;esquines</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2350"/>
+        <location filename="../view/canvasgridview.cpp" line="2349"/>
         <source>Set Wallpaper</source>
         <translation>Afitar fondu de pantalla</translation>
     </message>

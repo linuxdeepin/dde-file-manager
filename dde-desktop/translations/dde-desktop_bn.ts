@@ -2,32 +2,32 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2292"/>
+        <location filename="../view/canvasgridview.cpp" line="2291"/>
         <source>Icon size</source>
         <translation>আইকনের আকার</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2298"/>
+        <location filename="../view/canvasgridview.cpp" line="2297"/>
         <source>Auto arrange</source>
         <translation>স্বয়ংক্রিয়ভাবে সাজান</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2427"/>
+        <location filename="../view/canvasgridview.cpp" line="2426"/>
         <source>Properties</source>
         <translation>বৈশিষ্ট্যসমূহ </translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2337"/>
+        <location filename="../view/canvasgridview.cpp" line="2336"/>
         <source>Display Settings</source>
         <translation>ডিসপ্লে সেটিংস</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2344"/>
+        <location filename="../view/canvasgridview.cpp" line="2343"/>
         <source>Corner Settings</source>
         <translation>কোনা সেটিংস </translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2350"/>
+        <location filename="../view/canvasgridview.cpp" line="2349"/>
         <source>Set Wallpaper</source>
         <translation>ওয়ালপেপার সেট করুন </translation>
     </message>

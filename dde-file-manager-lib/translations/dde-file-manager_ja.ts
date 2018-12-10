@@ -2,7 +2,7 @@
 <context>
     <name>AppController</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="345"/>
+        <location filename="../controllers/appcontroller.cpp" line="346"/>
         <source>New Folder</source>
         <translation>新しいフォルダー</translation>
     </message>
@@ -288,7 +288,7 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2583"/>
+        <location filename="../views/dfileview.cpp" line="2615"/>
         <source>(Reverse)</source>
         <translation type="unfinished"/>
     </message>
@@ -1450,6 +1450,7 @@
     <name>PathManager</name>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="55"/>
+        <location filename="../dialogs/propertydialog.cpp" line="266"/>
         <source>Home</source>
         <translation>ホーム</translation>
     </message>
@@ -1538,17 +1539,17 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="265"/>
+        <location filename="../dialogs/propertydialog.cpp" line="266"/>
         <source>System Disk</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1084"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1085"/>
         <source>Allow to execute as program</source>
         <translation>プログラムとして実行可能</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="859"/>
+        <location filename="../dialogs/propertydialog.cpp" line="860"/>
         <source>Local disk</source>
         <translation>ローカルディスク</translation>
     </message>
@@ -1556,104 +1557,104 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="789"/>
+        <location filename="../dialogs/propertydialog.cpp" line="790"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="765"/>
         <source>Size</source>
         <translation>サイズ</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="806"/>
-        <location filename="../dialogs/propertydialog.cpp" line="855"/>
-        <location filename="../dialogs/propertydialog.cpp" line="884"/>
+        <location filename="../dialogs/propertydialog.cpp" line="807"/>
+        <location filename="../dialogs/propertydialog.cpp" line="856"/>
+        <location filename="../dialogs/propertydialog.cpp" line="885"/>
         <source>Contains</source>
         <translation>含</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="790"/>
+        <location filename="../dialogs/propertydialog.cpp" line="791"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="766"/>
         <source>Type</source>
         <translation>種類</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="791"/>
+        <location filename="../dialogs/propertydialog.cpp" line="792"/>
         <source>Time read</source>
         <translation>読込時間</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="792"/>
+        <location filename="../dialogs/propertydialog.cpp" line="793"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="768"/>
         <source>Time modified</source>
         <translation>更新時間</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="814"/>
+        <location filename="../dialogs/propertydialog.cpp" line="815"/>
         <source>Link path</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="854"/>
-        <location filename="../dialogs/propertydialog.cpp" line="882"/>
+        <location filename="../dialogs/propertydialog.cpp" line="855"/>
+        <location filename="../dialogs/propertydialog.cpp" line="883"/>
         <source>Device type</source>
         <translation>デバイスの種類</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="856"/>
-        <location filename="../dialogs/propertydialog.cpp" line="885"/>
+        <location filename="../dialogs/propertydialog.cpp" line="857"/>
+        <location filename="../dialogs/propertydialog.cpp" line="886"/>
         <source>Free space</source>
         <translation>空き容量</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="857"/>
-        <location filename="../dialogs/propertydialog.cpp" line="886"/>
+        <location filename="../dialogs/propertydialog.cpp" line="858"/>
+        <location filename="../dialogs/propertydialog.cpp" line="887"/>
         <source>Total space</source>
         <translation>すべての容量</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="883"/>
+        <location filename="../dialogs/propertydialog.cpp" line="884"/>
         <source>Filesystem</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="998"/>
+        <location filename="../dialogs/propertydialog.cpp" line="999"/>
         <source>Access denied</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="999"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1009"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1000"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1010"/>
         <source>Executable</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1000"/>
         <location filename="../dialogs/propertydialog.cpp" line="1001"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1002"/>
         <source>Write only</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1002"/>
         <location filename="../dialogs/propertydialog.cpp" line="1003"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1004"/>
         <source>Read only</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1004"/>
         <location filename="../dialogs/propertydialog.cpp" line="1005"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1006"/>
         <source>Read-write</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1079"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1080"/>
         <source>Others</source>
         <translation>その他</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1077"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1078"/>
         <source>Owner</source>
         <translation>所有者</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1078"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1079"/>
         <source>Group</source>
         <translation>グループ</translation>
     </message>
@@ -1692,8 +1693,9 @@
         <location filename="../interfaces/dfmsidebaritem.cpp" line="478"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="78"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="91"/>
+        <location filename="../views/dfmsidebarhomeitem.cpp" line="50"/>
         <location filename="../views/dfmsidebarnetworkitem.cpp" line="43"/>
-        <location filename="../views/dfmsidebarrecentitem.cpp" line="49"/>
+        <location filename="../views/dfmsidebarrecentitem.cpp" line="47"/>
         <location filename="../views/dfmsidebartagitem.cpp" line="52"/>
         <location filename="../views/dfmsidebartrashitem.cpp" line="49"/>
         <source>Open in new window</source>
@@ -1705,8 +1707,9 @@
         <location filename="../interfaces/dfmsidebaritem.cpp" line="482"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="82"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="99"/>
+        <location filename="../views/dfmsidebarhomeitem.cpp" line="54"/>
         <location filename="../views/dfmsidebarnetworkitem.cpp" line="47"/>
-        <location filename="../views/dfmsidebarrecentitem.cpp" line="53"/>
+        <location filename="../views/dfmsidebarrecentitem.cpp" line="51"/>
         <location filename="../views/dfmsidebartagitem.cpp" line="56"/>
         <location filename="../views/dfmsidebartrashitem.cpp" line="53"/>
         <source>Open in new tab</source>
@@ -1790,7 +1793,7 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="742"/>
         <location filename="../interfaces/dfmsidebaritem.cpp" line="486"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="95"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="162"/>
+        <location filename="../views/dfmsidebarhomeitem.cpp" line="67"/>
         <location filename="../views/dfmsidebartrashitem.cpp" line="64"/>
         <source>Properties</source>
         <translation>プロパテイ</translation>
@@ -2060,14 +2063,14 @@
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="298"/>
-        <location filename="../dialogs/propertydialog.cpp" line="852"/>
+        <location filename="../dialogs/propertydialog.cpp" line="853"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="628"/>
         <source>%1 item</source>
         <translation>%1 項目</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="300"/>
-        <location filename="../dialogs/propertydialog.cpp" line="852"/>
+        <location filename="../dialogs/propertydialog.cpp" line="853"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="630"/>
         <source>%1 items</source>
         <translation>%1 項目</translation>
@@ -2141,22 +2144,22 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="378"/>
+        <location filename="../controllers/appcontroller.cpp" line="379"/>
         <source>Document</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="387"/>
+        <location filename="../controllers/appcontroller.cpp" line="388"/>
         <source>Spreadsheet</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="396"/>
+        <location filename="../controllers/appcontroller.cpp" line="397"/>
         <source>Presentation</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="405"/>
+        <location filename="../controllers/appcontroller.cpp" line="406"/>
         <source>Text</source>
         <translation>テキスト</translation>
     </message>
@@ -2381,6 +2384,12 @@
     <message>
         <location filename="../controllers/dfmbookmarkcrumbcontroller.cpp" line="46"/>
         <source>Bookmarks</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="162"/>
+        <location filename="../views/dfmsidebarhomeitem.cpp" line="60"/>
+        <source>Disk info</source>
         <translation type="unfinished"/>
     </message>
 </context>

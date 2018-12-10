@@ -2,7 +2,7 @@
 <context>
     <name>AppController</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="345"/>
+        <location filename="../controllers/appcontroller.cpp" line="346"/>
         <source>New Folder</source>
         <translation>Нова фасцикла</translation>
     </message>
@@ -178,7 +178,7 @@
         <location filename="../io/dfilecopymovejob.cpp" line="505"/>
         <source>copy</source>
         <comment>Extra name added to new file name when used for file name.</comment>
-        <translation>Копирај</translation>
+        <translation>Копија</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="802"/>
@@ -214,7 +214,7 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1249"/>
         <source>Fail to create symlink, cause: %1</source>
-        <translation>Неуспешно прављење симболичне везе, узрок: %1</translation>
+        <translation>Неуспешно прављење симболичке везе, узрок: %1</translation>
     </message>
 </context>
 <context>
@@ -288,7 +288,7 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2583"/>
+        <location filename="../views/dfileview.cpp" line="2615"/>
         <source>(Reverse)</source>
         <translation>(Поништи)</translation>
     </message>
@@ -462,7 +462,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="427"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
-        <translation type="unfinished"/>
+        <translation>Ова датотека није извршна. Да ли желите да додате дозволу за извршење и покренете?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="441"/>
@@ -481,12 +481,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="454"/>
         <source>Are you sure to empty %1 item?</source>
-        <translation>Сигурно желите да испразните %1 ставку?</translation>
+        <translation>Заиста желите да испразните %1 ставку?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="455"/>
         <source>Are you sure to empty %1 items?</source>
-        <translation>Сигурно желите да испразните %1 ставки/е?</translation>
+        <translation>Заиста желите да испразните %1 ставки/е?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="456"/>
@@ -571,7 +571,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="805"/>
         <source>Fail to create symlink, cause:</source>
-        <translation>Неуспешно прављење симболичне везе, узрок:</translation>
+        <translation>Неуспешно прављење симболичке везе, узрок:</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="823"/>
@@ -1284,7 +1284,7 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="440"/>
         <source>Copy to %2</source>
-        <translation>Копирати у %2</translation>
+        <translation>Копира се у %2</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="443"/>
@@ -1314,7 +1314,7 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="452"/>
         <source>Trashing %1</source>
-        <translation>Слање у отпад %1</translation>
+        <translation>Слање у смеће %1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="460"/>
@@ -1385,7 +1385,7 @@
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="38"/>
         <source>Are you sure to completely delete %1</source>
-        <translation>Да ли сте сигурни да желите да скроз обришете %1?</translation>
+        <translation>Заиста желите да потпуно обришете %1?</translation>
     </message>
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="41"/>
@@ -1395,7 +1395,7 @@
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="42"/>
         <source>Are you sure to completely delete %1 files</source>
-        <translation>Да ли сте сигурни да желите да скроз обришете %1 датотеке?</translation>
+        <translation>Заиста желите да потпуно обришете %1 датотеке?</translation>
     </message>
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="66"/>
@@ -1450,6 +1450,7 @@
     <name>PathManager</name>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="55"/>
+        <location filename="../dialogs/propertydialog.cpp" line="266"/>
         <source>Home</source>
         <translation>Лично</translation>
     </message>
@@ -1538,17 +1539,17 @@
         <translation>Управљање дозволама</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="265"/>
+        <location filename="../dialogs/propertydialog.cpp" line="266"/>
         <source>System Disk</source>
         <translation>Системски диск</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1084"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1085"/>
         <source>Allow to execute as program</source>
         <translation>Дозволи покретање као програм</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="859"/>
+        <location filename="../dialogs/propertydialog.cpp" line="860"/>
         <source>Local disk</source>
         <translation>Локлани диск</translation>
     </message>
@@ -1556,104 +1557,104 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="789"/>
+        <location filename="../dialogs/propertydialog.cpp" line="790"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="765"/>
         <source>Size</source>
         <translation>Величина</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="806"/>
-        <location filename="../dialogs/propertydialog.cpp" line="855"/>
-        <location filename="../dialogs/propertydialog.cpp" line="884"/>
+        <location filename="../dialogs/propertydialog.cpp" line="807"/>
+        <location filename="../dialogs/propertydialog.cpp" line="856"/>
+        <location filename="../dialogs/propertydialog.cpp" line="885"/>
         <source>Contains</source>
         <translation>Садржи</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="790"/>
+        <location filename="../dialogs/propertydialog.cpp" line="791"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="766"/>
         <source>Type</source>
         <translation>Тип</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="791"/>
+        <location filename="../dialogs/propertydialog.cpp" line="792"/>
         <source>Time read</source>
         <translation>Време читања</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="792"/>
+        <location filename="../dialogs/propertydialog.cpp" line="793"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="768"/>
         <source>Time modified</source>
         <translation>Време измене</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="814"/>
+        <location filename="../dialogs/propertydialog.cpp" line="815"/>
         <source>Link path</source>
         <translation>Путања везе</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="854"/>
-        <location filename="../dialogs/propertydialog.cpp" line="882"/>
+        <location filename="../dialogs/propertydialog.cpp" line="855"/>
+        <location filename="../dialogs/propertydialog.cpp" line="883"/>
         <source>Device type</source>
         <translation>Врста уређаја</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="856"/>
-        <location filename="../dialogs/propertydialog.cpp" line="885"/>
+        <location filename="../dialogs/propertydialog.cpp" line="857"/>
+        <location filename="../dialogs/propertydialog.cpp" line="886"/>
         <source>Free space</source>
         <translation>Слободан простор</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="857"/>
-        <location filename="../dialogs/propertydialog.cpp" line="886"/>
+        <location filename="../dialogs/propertydialog.cpp" line="858"/>
+        <location filename="../dialogs/propertydialog.cpp" line="887"/>
         <source>Total space</source>
         <translation>Укупан простор</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="883"/>
+        <location filename="../dialogs/propertydialog.cpp" line="884"/>
         <source>Filesystem</source>
         <translation>Систем датотека</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="998"/>
+        <location filename="../dialogs/propertydialog.cpp" line="999"/>
         <source>Access denied</source>
         <translation>Приступ одбијен</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="999"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1009"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1000"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1010"/>
         <source>Executable</source>
         <translation>Извршна</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1000"/>
         <location filename="../dialogs/propertydialog.cpp" line="1001"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1002"/>
         <source>Write only</source>
         <translation>Само уписивање</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1002"/>
         <location filename="../dialogs/propertydialog.cpp" line="1003"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1004"/>
         <source>Read only</source>
         <translation>Само читање</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1004"/>
         <location filename="../dialogs/propertydialog.cpp" line="1005"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1006"/>
         <source>Read-write</source>
         <translation>Читање-уписивање</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1079"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1080"/>
         <source>Others</source>
         <translation>Остало</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1077"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1078"/>
         <source>Owner</source>
         <translation>Власник</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1078"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1079"/>
         <source>Group</source>
         <translation>Група</translation>
     </message>
@@ -1692,8 +1693,9 @@
         <location filename="../interfaces/dfmsidebaritem.cpp" line="478"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="78"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="91"/>
+        <location filename="../views/dfmsidebarhomeitem.cpp" line="50"/>
         <location filename="../views/dfmsidebarnetworkitem.cpp" line="43"/>
-        <location filename="../views/dfmsidebarrecentitem.cpp" line="49"/>
+        <location filename="../views/dfmsidebarrecentitem.cpp" line="47"/>
         <location filename="../views/dfmsidebartagitem.cpp" line="52"/>
         <location filename="../views/dfmsidebartrashitem.cpp" line="49"/>
         <source>Open in new window</source>
@@ -1705,8 +1707,9 @@
         <location filename="../interfaces/dfmsidebaritem.cpp" line="482"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="82"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="99"/>
+        <location filename="../views/dfmsidebarhomeitem.cpp" line="54"/>
         <location filename="../views/dfmsidebarnetworkitem.cpp" line="47"/>
-        <location filename="../views/dfmsidebarrecentitem.cpp" line="53"/>
+        <location filename="../views/dfmsidebarrecentitem.cpp" line="51"/>
         <location filename="../views/dfmsidebartagitem.cpp" line="56"/>
         <location filename="../views/dfmsidebartrashitem.cpp" line="53"/>
         <source>Open in new tab</source>
@@ -1790,7 +1793,7 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="742"/>
         <location filename="../interfaces/dfmsidebaritem.cpp" line="486"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="95"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="162"/>
+        <location filename="../views/dfmsidebarhomeitem.cpp" line="67"/>
         <location filename="../views/dfmsidebartrashitem.cpp" line="64"/>
         <source>Properties</source>
         <translation>Својства</translation>
@@ -1906,7 +1909,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="725"/>
         <source>Select default program</source>
-        <translation>Изабери подразумевани програм</translation>
+        <translation>Одабери подразумевани програм</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="726"/>
@@ -2060,14 +2063,14 @@
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="298"/>
-        <location filename="../dialogs/propertydialog.cpp" line="852"/>
+        <location filename="../dialogs/propertydialog.cpp" line="853"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="628"/>
         <source>%1 item</source>
         <translation>%1 ставка/и</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="300"/>
-        <location filename="../dialogs/propertydialog.cpp" line="852"/>
+        <location filename="../dialogs/propertydialog.cpp" line="853"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="630"/>
         <source>%1 items</source>
         <translation>%1 ставки/е</translation>
@@ -2141,22 +2144,22 @@
         <translation>Изворна путања</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="378"/>
+        <location filename="../controllers/appcontroller.cpp" line="379"/>
         <source>Document</source>
         <translation>Документ</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="387"/>
+        <location filename="../controllers/appcontroller.cpp" line="388"/>
         <source>Spreadsheet</source>
         <translation>Табела</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="396"/>
+        <location filename="../controllers/appcontroller.cpp" line="397"/>
         <source>Presentation</source>
         <translation>Презентација</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="405"/>
+        <location filename="../controllers/appcontroller.cpp" line="406"/>
         <source>Text</source>
         <translation>Текст</translation>
     </message>
@@ -2383,6 +2386,12 @@
         <source>Bookmarks</source>
         <translation>Забелешке</translation>
     </message>
+    <message>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="162"/>
+        <location filename="../views/dfmsidebarhomeitem.cpp" line="60"/>
+        <source>Disk info</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ShareInfoFrame</name>
@@ -2477,7 +2486,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="39"/>
         <source>Select to upper row</source>
-        <translation>Обележи ред на горе</translation>
+        <translation>Обележи ред нагоре</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="39"/>
@@ -2487,7 +2496,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="40"/>
         <source>Select to lower row</source>
-        <translation>Обележи ред на доле</translation>
+        <translation>Обележи ред надоле</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="40"/>
@@ -2815,7 +2824,7 @@
     <message>
         <location filename="../dialogs/trashpropertydialog.cpp" line="72"/>
         <source>item</source>
-        <translation>ставка</translation>
+        <translation>ставку/и</translation>
     </message>
     <message>
         <location filename="../dialogs/trashpropertydialog.cpp" line="74"/>
