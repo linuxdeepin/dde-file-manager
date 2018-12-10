@@ -2,32 +2,32 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2292"/>
+        <location filename="../view/canvasgridview.cpp" line="2291"/>
         <source>Icon size</source>
-        <translation>Величина иконице</translation>
+        <translation>Величина иконица</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2298"/>
+        <location filename="../view/canvasgridview.cpp" line="2297"/>
         <source>Auto arrange</source>
         <translation>Аутоматски сложи</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2427"/>
+        <location filename="../view/canvasgridview.cpp" line="2426"/>
         <source>Properties</source>
         <translation>Својства</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2337"/>
+        <location filename="../view/canvasgridview.cpp" line="2336"/>
         <source>Display Settings</source>
         <translation>Поставке приказа</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2344"/>
+        <location filename="../view/canvasgridview.cpp" line="2343"/>
         <source>Corner Settings</source>
         <translation>Поставке углова</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2350"/>
+        <location filename="../view/canvasgridview.cpp" line="2349"/>
         <source>Set Wallpaper</source>
         <translation>Постави позадину</translation>
     </message>
@@ -93,7 +93,7 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Launcher</source>
-        <translation>Полетник</translation>
+        <translation>Покретач програма</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>

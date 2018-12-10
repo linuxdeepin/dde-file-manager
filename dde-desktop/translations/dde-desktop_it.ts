@@ -2,32 +2,32 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2292"/>
+        <location filename="../view/canvasgridview.cpp" line="2291"/>
         <source>Icon size</source>
         <translation>Dimensione icone</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2298"/>
+        <location filename="../view/canvasgridview.cpp" line="2297"/>
         <source>Auto arrange</source>
         <translation>Disponi automaticamente</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2427"/>
+        <location filename="../view/canvasgridview.cpp" line="2426"/>
         <source>Properties</source>
         <translation>Proprietà</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2337"/>
+        <location filename="../view/canvasgridview.cpp" line="2336"/>
         <source>Display Settings</source>
         <translation>Impostazioni visualizzazione</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2344"/>
+        <location filename="../view/canvasgridview.cpp" line="2343"/>
         <source>Corner Settings</source>
         <translation>Impostazioni angoli di navigazione</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2350"/>
+        <location filename="../view/canvasgridview.cpp" line="2349"/>
         <source>Set Wallpaper</source>
         <translation>Imposta sfondo</translation>
     </message>

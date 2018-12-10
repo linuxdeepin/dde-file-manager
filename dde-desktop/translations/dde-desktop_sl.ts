@@ -2,32 +2,32 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2292"/>
+        <location filename="../view/canvasgridview.cpp" line="2291"/>
         <source>Icon size</source>
         <translation>Velikost ikone</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2298"/>
+        <location filename="../view/canvasgridview.cpp" line="2297"/>
         <source>Auto arrange</source>
         <translation>Samodejno razporedi</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2427"/>
+        <location filename="../view/canvasgridview.cpp" line="2426"/>
         <source>Properties</source>
         <translation>Lastnosti</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2337"/>
+        <location filename="../view/canvasgridview.cpp" line="2336"/>
         <source>Display Settings</source>
         <translation>Nastavitve zaslona</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2344"/>
+        <location filename="../view/canvasgridview.cpp" line="2343"/>
         <source>Corner Settings</source>
         <translation>Nastavitve roba</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2350"/>
+        <location filename="../view/canvasgridview.cpp" line="2349"/>
         <source>Set Wallpaper</source>
         <translation>Nastavi ozadje</translation>
     </message>
