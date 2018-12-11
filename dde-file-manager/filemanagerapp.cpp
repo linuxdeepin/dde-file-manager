@@ -85,6 +85,7 @@ FileManagerApp::~FileManagerApp()
 
 void FileManagerApp::initApp()
 {
+    qDebug() << FileUtils::getKernelParameters();
     /*add menuextensions path*/
     DFMGlobal::autoLoadDefaultMenuExtensions();
 

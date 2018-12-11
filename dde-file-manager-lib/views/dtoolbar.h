@@ -98,6 +98,7 @@ public slots:
     void switchHistoryStack(const int index );
 
 private:
+    void toggleSearchButtonState(bool asb = true);
     void pushUrlToHistoryStack(DUrl url);
     void onBackButtonClicked();
     void onForwardButtonClicked();
@@ -114,6 +115,7 @@ private:
     QList<QAction*> m_actionList;
 
     bool m_switchState = false;
+    bool m_searchButtonAsbState = false;
     DFMCrumbBar * m_crumbWidget = nullptr;
     HistoryStack * m_navStack = NULL;
     QList<HistoryStack*> m_navStacks;

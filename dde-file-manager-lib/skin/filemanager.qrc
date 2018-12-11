@@ -203,9 +203,12 @@
         <file>images/icons/downloads_hover_16px.svg</file>
         <file>images/icons/downloads_checked_16px.svg</file>
         <file>images/icons/downloads_normal_16px.svg</file>
-        <file>images/icons/search_hover.png</file>
-        <file>images/icons/search_normal.png</file>
-        <file>images/icons/search_pressed.png</file>
+        <file>images/icons/search_hover.svg</file>
+        <file>images/icons/search_normal.svg</file>
+        <file>images/icons/search_press.svg</file>
+        <file>images/icons/filter_hover.svg</file>
+        <file>images/icons/filter_normal.svg</file>
+        <file>images/icons/filter_active.svg</file>
         <file>images/icons/icon_view_checked.png</file>
         <file>images/icons/icon_view_hover.png</file>
         <file>images/icons/icon_view_normal.png</file>
@@ -268,9 +271,6 @@
         <file>images/icons/stop_press@2x.png</file>
         <file>images/icons/empty_trash_press@2x.png</file>
         <file>images/icons/stop_normal@2x.png</file>
-        <file>images/icons/search_normal@2x.png</file>
-        <file>images/icons/search_pressed@2x.png</file>
-        <file>images/icons/search_hover@2x.png</file>
         <file>images/icons/backward_disabled@2x.png</file>
         <file>images/icons/forward_disabled@2x.png</file>
         <file>images/icons/backward_normal@2x.png</file>

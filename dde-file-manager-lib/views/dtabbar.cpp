@@ -96,8 +96,9 @@ void Tab::setFileView(DFMBaseView *view)
 
     m_fileView = view;
 
-    if (view)
+    if (view) {
         setCurrentUrl(view->rootUrl());
+    }
 }
 
 DUrl Tab::currentUrl() const

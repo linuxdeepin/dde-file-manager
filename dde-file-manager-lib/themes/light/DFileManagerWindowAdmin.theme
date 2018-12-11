@@ -380,9 +380,34 @@ QPushButton#searchButton:hover{
     background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                     stop: 0 #B1B1B1,
                     stop: 1  #9D9D9D);
-    image: url(:/icons/images/icons/search_hover.png);
+    image: url(:/icons/images/icons/search_hover.svg);
     border: 1px solid #909090;
     color: white;
+}
+
+QPushButton#filterButton{
+    background-color:white;
+    image: url(:/icons/images/icons/filter_normal.svg);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: black;
+    border-radius: 4px;
+}
+
+QPushButton#filterButton:hover{
+    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                    stop: 0 #B1B1B1,
+                    stop: 1  #9D9D9D);
+    image: url(:/icons/images/icons/filter_hover.svg);
+    border: 1px solid #909090;
+    color: white;
+}
+
+QPushButton#filterButton:pressed{
+    background-color:white;
+    image: url(:/icons/images/icons/filter_active.svg);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: black;
+    border-radius: 4px;
 }
 
 /* ******************DCrumbButton****************** */
