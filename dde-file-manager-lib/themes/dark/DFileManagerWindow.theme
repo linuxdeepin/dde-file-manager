@@ -305,21 +305,46 @@ QPushButton#settingsButton::menu-indicator {
 
 QPushButton#searchButton{
     background-color: rgba(255, 255, 255, 0.15);
-    image: url(:/dark/icons/search_normal.svg);
     border-radius: 4px;
     padding: 3px, 3px, 3px, 3px;
+    qproperty-icon: url(:/dark/icons/search_normal.svg);
+    qproperty-iconSize: 16px;
 }
 
 QPushButton#searchButton:hover{
     background-color: rgba(255, 255, 255, 0.3);
-    image: url(:/dark/icons/search_hover.svg);
     padding: 3px, 3px, 3px, 3px;
+    qproperty-icon: url(:/dark/icons/search_hover.svg);
+    qproperty-iconSize: 16px;
 }
 
 QPushButton#searchButton:pressed{
     background-color: rgba(255, 255, 255, 0.1);
-    image: url(:/dark/icons/search_press.svg);
     padding: 3px, 3px, 3px, 3px;
+    qproperty-icon: url(:/dark/icons/search_press.svg);
+    qproperty-iconSize: 16px;
+}
+
+QPushButton#filterButton{
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    padding: 3px, 3px, 3px, 3px;
+    qproperty-icon: url(:/dark/icons/filter_normal.svg);
+    qproperty-iconSize: 16px;
+}
+
+QPushButton#filterButton:hover{
+    background-color: rgba(255, 255, 255, 0.3);
+    padding: 3px, 3px, 3px, 3px;
+    qproperty-icon: url(:/dark/icons/filter_hover.svg);
+    qproperty-iconSize: 16px;
+}
+
+QPushButton#filterButton:pressed{
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 3px, 3px, 3px, 3px;
+    qproperty-icon: url(:/dark/icons/filter_active.svg);
+    qproperty-iconSize: 16px;
 }
 
 /* ******************DCrumbButton****************** */

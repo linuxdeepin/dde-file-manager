@@ -150,6 +150,7 @@ public slots:
 
     void setNameFilters(const QStringList &nameFilters);
     void setFilters(QDir::Filters filters);
+    void setAdvanceSearchFilter(const QMap<int, QVariant> &formData, bool turnOn = true, bool avoidUpdateView = false);
 
     void clearHeardView();
     void clearSelection();
@@ -187,6 +188,8 @@ private slots:
     void loadViewState(const DUrl &url);
     void saveViewState();
     void onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order);
+    void reset() override;
+    void setRootIndex(const QModelIndex &index) override;
 
 protected:
     void wheelEvent(QWheelEvent * event) Q_DECL_OVERRIDE;

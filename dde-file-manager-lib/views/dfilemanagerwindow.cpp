@@ -57,6 +57,7 @@
 
 #include "xutil.h"
 #include "utils.h"
+#include "dfmadvancesearchbar.h"
 
 #include "drenamebar.h"
 #include "singleton.h"
@@ -114,6 +115,7 @@ public:
     QStackedLayout *viewStackLayout { nullptr };
     QPushButton *emptyTrashButton { nullptr };
     DRenameBar *renameBar{ nullptr };
+    DFMAdvanceSearchBar *advanceSearchBar = nullptr;
 
     QMap<DUrl, QWidget *> views;
 
@@ -900,6 +902,8 @@ void DFileManagerWindow::initRightView()
     initViewLayout();
     d->rightView = new QFrame;
     d->renameBar = new DRenameBar;
+    d->advanceSearchBar = new DFMAdvanceSearchBar(this);
+    d->advanceSearchBar->setVisible(false);
 
     QSizePolicy sp = d->rightView->sizePolicy();
 
@@ -927,6 +931,7 @@ void DFileManagerWindow::initRightView()
     mainLayout->addLayout(tabBarLayout);
     mainLayout->addWidget(d->emptyTrashButton);
     mainLayout->addWidget(d->renameBar);
+    mainLayout->addWidget(d->advanceSearchBar);
     mainLayout->addLayout(d->viewStackLayout);
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -1025,6 +1030,15 @@ void DFileManagerWindow::initConnect()
     QObject::connect(d->renameBar, &DRenameBar::clickCancelButton, this, &DFileManagerWindow::hideRenameBar);
     QObject::connect(fileSignalManager, &FileSignalManager::requestMultiFilesRename, this, &DFileManagerWindow::onShowRenameBar);
     QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTabBarCurrentIndexChange);
+
+    QObject::connect(d->advanceSearchBar, &DFMAdvanceSearchBar::optionChanged, this, [ = ](const QMap<int, QVariant> &formData) {
+        if (d->currentView) {
+            DFileView *fv = dynamic_cast<DFileView*>(d->currentView);
+            if (fv) {
+                fv->setAdvanceSearchFilter(formData);
+            }
+        }
+    });
 }
 
 void DFileManagerWindow::moveCenterByRect(QRect rect)
@@ -1154,5 +1168,27 @@ void DFileManagerWindow::requestToSelectUrls()
         QTimer::singleShot(100, [ = ] { emit fileSignalManager->requestSelectFile(event); });
 
         DFileManagerWindow::renameBarState.reset(nullptr);
+    }
+}
+
+bool DFileManagerWindow::isAdvanceSearchBarVisible()
+{
+    DFileManagerWindowPrivate *const d{ d_func() };
+
+    return d->advanceSearchBar->isVisible();
+}
+
+void DFileManagerWindow::toggleAdvanceSearchBar(bool visible, bool resetForm)
+{
+    DFileManagerWindowPrivate *const d{ d_func() };
+
+    if (!d->currentView) return;
+
+    if (d->advanceSearchBar->isVisible() != visible) {
+        d->advanceSearchBar->setVisible(visible);
+    }
+
+    if (resetForm) {
+        d->advanceSearchBar->resetForm();
     }
 }
