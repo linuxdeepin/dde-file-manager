@@ -263,7 +263,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
     } else if (m_url == DUrl::fromLocalFile("/") || m_url.scheme() == "dev") {
         m_icon->setPixmap(QIcon::fromTheme("drive-harddisk").pixmap(128, 128));
 //        m_icon->setPixmap(svgToPixmap(":/devices/images/device/drive-harddisk-256px.svg", 128, 128));
-        m_edit->setPlainText(m_url == DUrl::fromLocalFile("/") ? tr("System Disk") : qApp->translate("PathManager", "Home")); // This check is a little dirty
+        m_edit->setPlainText(m_url.path() == QStringLiteral("/") ? tr("System Disk") : qApp->translate("PathManager", "Home")); // This check is a little dirty
         m_editDisbaled = true;
 
         m_localDeviceInfoFrame = createLocalDeviceInfoWidget(m_url);
