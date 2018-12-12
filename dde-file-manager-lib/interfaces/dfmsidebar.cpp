@@ -31,6 +31,7 @@
 #include "views/dfilemanagerwindow.h"
 #include "views/dfmsidebarnetworkitem.h"
 #include "views/dfmsidebarrecentitem.h"
+#include "views/dfmsidebarrootitem.h"
 #include "controllers/bookmarkmanager.h"
 #include "deviceinfo/udisklistener.h"
 
@@ -436,7 +437,7 @@ void DFMSideBarPrivate::addItemToGroup(DFMSideBarItemGroup *group, DFMSideBar::G
         group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::ComputerRootPath));
 
         if (!DFMApplication::instance()->genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool()) {
-            group->appendItem(new DFMSideBarDefaultItem(DFM_STD_LOCATION::Root));
+            group->appendItem(new DFMSideBarRootItem());
         }
         break;
     case DFMSideBar::GroupName::Bookmark: {
