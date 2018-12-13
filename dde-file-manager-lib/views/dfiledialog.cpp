@@ -1015,7 +1015,7 @@ void DFileDialog::onAcceptButtonClicked()
                         dialog.setWindowModality(Qt::WindowModal);
                     }
 
-                    dialog.setIcon(QIcon::fromTheme("dialog-warning"));
+                    dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
                     dialog.setTitle(tr("%1 already exists, do you want to replace it?").arg(file_name));
                     dialog.addButton(tr("Cancel"), true);
                     dialog.addButton(tr("Replace"), false, DDialog::ButtonWarning);

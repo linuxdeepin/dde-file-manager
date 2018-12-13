@@ -79,7 +79,7 @@ public:
             break;
         case DFileCopyMoveJob::UnknowUrlError: {
             DDialog dialog("error", QCoreApplication::translate("DTaskDialog", "This action is not supported"));
-            dialog.setIcon(QIcon::fromTheme("dialog-error"));
+            dialog.setIcon(QIcon::fromTheme("dialog-error"), QSize(64, 64));
             dialog.exec();
         }
         // fall-through
