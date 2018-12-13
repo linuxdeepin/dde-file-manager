@@ -1217,7 +1217,15 @@ QString DAbstractFileInfo::suffix() const
         return QString();
     }
 
-    return d->mimeDatabase.suffixForFileName(this->fileName());
+    // blumia: we should keep the letter case (chris: daxiaowrite) of suffix.
+    const QString &fileName = this->fileName();
+    const QString &suffix = d->mimeDatabase.suffixForFileName(fileName);
+
+    if (suffix.isEmpty()) {
+        return suffix;
+    }
+
+    return fileName.right(suffix.length());
 }
 
 QString DAbstractFileInfo::suffixOfRename() const
