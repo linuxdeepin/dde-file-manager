@@ -1,3 +1,20 @@
+<a name="4.7.1.9"></a>
+## 4.7.1.9 (2018-12-14)
+
+
+#### Features
+
+*   open with for multiple file selected ([250cc486](https://github.com/linuxdeepin/dde-file-manager/commit/250cc486bec256fa9c8831c1cb63c22b237d4f71))
+
+#### Bug Fixes
+
+*   file suffix keep letter-case ([f10e75c7](https://github.com/linuxdeepin/dde-file-manager/commit/f10e75c77a70989a4f3ebebf755edf67770066ad))
+*   Dialog size not correct when using icon from theme ([520e4dee](https://github.com/linuxdeepin/dde-file-manager/commit/520e4deea668b2cac8b8cb206aed32f73b25b0a4))
+*   display 'Disk info' in sidebar root item ([4f64df4f](https://github.com/linuxdeepin/dde-file-manager/commit/4f64df4f89a39d7b0ccd03e955918f64f18d52eb))
+* **dock-plugin:**  the icon will not change after the system theme changes ([bd48579d](https://github.com/linuxdeepin/dde-file-manager/commit/bd48579d6edef6065c1f7ca8e25c49cbae296d19))
+
+
+
 <a name="4.7.1.8"></a>
 ## 4.7.1.8 (2018-12-10)
 
