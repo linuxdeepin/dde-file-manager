@@ -143,6 +143,13 @@ void DiskMountPlugin::setSortKey(const QString &itemKey, const int order)
     m_proxyInter->saveValue(this, key, order);
 }
 
+void DiskMountPlugin::refreshIcon(const QString &itemKey)
+{
+    if (itemKey == DISK_MOUNT_KEY) {
+        m_diskPluginItem->updateIcon();
+    }
+}
+
 void DiskMountPlugin::initCompoments()
 {
     m_diskControlApplet = new DiskControlWidget;
