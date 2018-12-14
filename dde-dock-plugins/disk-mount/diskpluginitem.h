@@ -44,15 +44,13 @@ signals:
 
 public slots:
     void setDockDisplayMode(const Dock::DisplayMode mode);
+    void updateIcon();
 
 protected:
     void paintEvent(QPaintEvent *e);
     void resizeEvent(QResizeEvent *e);
     void mousePressEvent(QMouseEvent *e);
     QSize sizeHint() const;
-
-private:
-    void updateIcon();
 
 private:
     Dock::DisplayMode m_displayMode;
