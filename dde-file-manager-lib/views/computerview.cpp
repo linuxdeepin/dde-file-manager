@@ -890,30 +890,33 @@ void ComputerView::volumeAdded(UDiskDeviceInfoPointer device)
 
 void ComputerView::volumeRemoved(UDiskDeviceInfoPointer device)
 {
-    qDebug() << "===========volumeRemoved=============" << device->getId() << m_nativeItems.contains(device->getId()) << m_removableItems.contains(device->getId());
-    QString id = device->getId();
+    QString deviceId = device->getId();
+    QString deviceUuid = device->getDiskInfo().uuid();
+
+    qDebug() << "===========volumeRemoved=============" << deviceId << m_nativeItems.contains(deviceId) << m_removableItems.contains(deviceId);
 //    qDebug() << device->getDiskInfo();
+
     foreach (UDiskDeviceInfoPointer d, deviceListener->getDeviceList()) {
-//        qDebug() << d->getDiskInfo().id() << id << d->getDiskInfo().uuid() << device->getDiskInfo().uuid();
-        if (d->getDiskInfo().id() != id && d->getDiskInfo().uuid() == device->getDiskInfo().uuid()) {
-            id = d->getDiskInfo().id();
+//        qDebug() << d->getDiskInfo().id() << deviceId << d->getDiskInfo().uuid() << deviceUuid;
+        if (d->getDiskInfo().id() != deviceId && !deviceUuid.isEmpty() && d->getDiskInfo().uuid() == deviceUuid) {
+            deviceId = d->getDiskInfo().id();
         }
     }
 
 
-    if (m_nativeItems.contains(id)) {
-        ComputerViewItem *item = m_nativeItems.value(id);
+    if (m_nativeItems.contains(deviceId)) {
+        ComputerViewItem *item = m_nativeItems.value(deviceId);
         m_nativeFlowLayout->removeWidget(item);
-        m_nativeItems.remove(id);
+        m_nativeItems.remove(deviceId);
         item->setParent(NULL);
         delete item;
         if (m_nativeItems.count() == 0) {
             m_nativeTitleLine->hide();
         }
-    } else if (m_removableItems.contains(id)) {
-        ComputerViewItem *item = m_removableItems.value(id);
+    } else if (m_removableItems.contains(deviceId)) {
+        ComputerViewItem *item = m_removableItems.value(deviceId);
         m_removableFlowLayout->removeWidget(item);
-        m_removableItems.remove(id);
+        m_removableItems.remove(deviceId);
         item->setParent(NULL);
         delete item;
         if (m_removableItems.count() == 0) {
