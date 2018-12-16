@@ -115,7 +115,6 @@ HEADERS += \
     dialogs/propertydialog.h \
     views/dhoverbutton.h \
     views/dfmsidebaritemgroup.h \
-    views/dbookmarkview.h \
     controllers/trashmanager.h \
     models/trashfileinfo.h \
     shutil/mimesappsmanager.h \
@@ -296,7 +295,6 @@ SOURCES += \
     dialogs/propertydialog.cpp \
     views/dhoverbutton.cpp \
     views/dfmsidebaritemgroup.cpp \
-    views/dbookmarkview.cpp \
     controllers/trashmanager.cpp \
     models/trashfileinfo.cpp \
     shutil/mimesappsmanager.cpp \
