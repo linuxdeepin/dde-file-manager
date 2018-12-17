@@ -286,8 +286,8 @@ QList<int> TrashFileInfo::userColumnRoles() const
     static QList<int> userColumnRoles = QList<int>() /*<< DFileSystemModel::FileUserRole + 1
                                                      << DFileSystemModel::FileUserRole + 2*/
                                                      << DFileSystemModel::FileDisplayNameRole
-                                                     << DFileSystemModel::FileUserRole + 3
-                                                     << DFileSystemModel::FileUserRole + 4
+                                                     << DFileSystemModel::FileUserRole + 3 // originalFilePath
+                                                     << DFileSystemModel::FileUserRole + 4 // displayDeletionDate
                                                      << DFileSystemModel::FileSizeRole
                                                      << DFileSystemModel::FileMimeTypeRole;
 
@@ -471,10 +471,11 @@ DUrl TrashFileInfo::goToUrlWhenDeleted() const
 
 DAbstractFileInfo::CompareFunction TrashFileInfo::compareFunByColumn(int columnRole) const
 {
+    // see TrashFileInfo::userColumnRoles for role function
     if (columnRole == DFileSystemModel::FileUserRole + 3) {
-        return FileSortFunction::compareFileListByDeletionDate;
-    } else if (columnRole == DFileSystemModel::FileUserRole + 4) {
         return FileSortFunction::compareFileListBySourceFilePath;
+    } else if (columnRole == DFileSystemModel::FileUserRole + 4) {
+        return FileSortFunction::compareFileListByDeletionDate;
     } else {
         return DAbstractFileInfo::compareFunByColumn(columnRole);
     }
