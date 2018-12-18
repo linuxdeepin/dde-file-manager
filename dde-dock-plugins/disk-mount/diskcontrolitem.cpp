@@ -51,7 +51,7 @@ DiskControlItem::DiskControlItem(DAttachedDeviceInterface *attachedDevicePtr, QW
 
       m_unknowIcon(":/icons/resources/unknown.svg"),
 
-      m_diskIcon(new QLabel),
+      m_diskIcon(new QPushButton(this)),
       m_diskName(new QLabel),
       m_diskCapacity(new QLabel),
       m_capacityValueBar(new QProgressBar),
@@ -118,12 +118,11 @@ DiskControlItem::DiskControlItem(DAttachedDeviceInterface *attachedDevicePtr, QW
         m_unmountButton->hide();
     }
 
-    QIcon icon = QIcon::fromTheme(attachedDevice->iconName(), m_unknowIcon);
-
-    qreal devicePixelRatio = qApp->devicePixelRatio();
-    QPixmap diskIconPixmap = icon.pixmap(48 * devicePixelRatio , 48 * devicePixelRatio);
-    diskIconPixmap.setDevicePixelRatio(devicePixelRatio);
-    m_diskIcon->setPixmap(diskIconPixmap);
+    m_diskIcon->setFlat(true);
+    m_diskIcon->setIcon(QIcon::fromTheme(attachedDevice->iconName(), m_unknowIcon));
+    m_diskIcon->setIconSize(QSize(48, 48));
+    m_diskIcon->setAttribute(Qt::WA_TransparentForMouseEvents);
+    m_diskIcon->setStyleSheet("padding: 0;");
     m_diskName->setText(QStringLiteral("OwO")); // blumia: correct text should be set in DiskControlItem::showEvent()
     m_capacityValueBar->setMinimum(0);
     m_capacityValueBar->setMaximum(100);

@@ -29,8 +29,8 @@
 
 #include <QWidget>
 #include <QLabel>
+#include <QPushButton>
 #include <QProgressBar>
-#include <QIcon>
 #include <dfmglobal.h>
 #include "dattacheddeviceinterface.h"
 
@@ -58,7 +58,7 @@ private:
 private:
     QIcon m_unknowIcon;
 
-    QLabel *m_diskIcon;
+    QPushButton *m_diskIcon;
     QLabel *m_diskName;
     QLabel *m_diskCapacity;
     QProgressBar *m_capacityValueBar;
