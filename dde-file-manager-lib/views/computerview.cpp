@@ -574,7 +574,7 @@ void ComputerView::initUI()
     m_nativeFlowLayout = new DFlowLayout();
     m_nativeFlowLayout->setContentsMargins(20, 20, 20, 20);
     m_nativeFlowLayout->setHorizontalSpacing(40);
-    m_nativeFlowLayout->setVerticalSpacing(50); // Typo! but maybe we should switch to DFlowLayout...
+    m_nativeFlowLayout->setVerticalSpacing(50);
 
     m_removableTitleLine = new TitleLine(tr("External Disk"), this);
     m_removableFlowLayout = new DFlowLayout();
