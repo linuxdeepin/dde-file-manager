@@ -139,7 +139,6 @@ HEADERS += \
     dialogs/trashpropertydialog.h \
     controllers/jobcontroller.h \
     views/computerview.h \
-    views/flowlayout.h \
     shutil/shortcut.h \
     views/dtabbar.h \
     views/dfiledialog.h \
@@ -319,7 +318,6 @@ SOURCES += \
     dialogs/trashpropertydialog.cpp \
     controllers/jobcontroller.cpp \
     views/computerview.cpp \
-    views/flowlayout.cpp \
     shutil/shortcut.cpp \
     views/dtabbar.cpp \
     views/dfiledialog.cpp \
