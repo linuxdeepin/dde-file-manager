@@ -23,7 +23,6 @@
  */
 
 #include "computerview.h"
-#include "flowlayout.h"
 #include "dfilemenu.h"
 #include "dfilemenumanager.h"
 #include "windowmanager.h"
@@ -275,7 +274,7 @@ bool ComputerViewItem::eventFilter(QObject *obj, QEvent *event)
 bool ComputerViewItem::event(QEvent *event)
 {
     if (event->type() == QEvent::Resize) {
-        resize(width(), getIconLabel()->height() + getTextEdit()->height() + ICON_MODE_ICON_SPACING + 50);
+        resize(width(), getIconLabel()->height() + getTextEdit()->height() + ICON_MODE_ICON_SPACING + 45);
         adjustPosition();
         return true;
     }
@@ -566,22 +565,22 @@ void ComputerView::initUI()
     QFrame *contentFrame = new QFrame(this);
 
     m_systemTitleLine = new TitleLine(tr("My Directories"), this);
-    m_systemFlowLayout = new FlowLayout();
+    m_systemFlowLayout = new DFlowLayout();
     m_systemFlowLayout->setContentsMargins(20, 20, 20, 20);
     m_systemFlowLayout->setHorizontalSpacing(40);
-    m_systemFlowLayout->setVorizontalSpacing(40);
+    m_systemFlowLayout->setVerticalSpacing(40);
 
     m_nativeTitleLine = new TitleLine(tr("Internal Disk"), this);
-    m_nativeFlowLayout = new FlowLayout();
+    m_nativeFlowLayout = new DFlowLayout();
     m_nativeFlowLayout->setContentsMargins(20, 20, 20, 20);
     m_nativeFlowLayout->setHorizontalSpacing(40);
-    m_nativeFlowLayout->setVorizontalSpacing(40);
+    m_nativeFlowLayout->setVerticalSpacing(50); // Typo! but maybe we should switch to DFlowLayout...
 
     m_removableTitleLine = new TitleLine(tr("External Disk"), this);
-    m_removableFlowLayout = new FlowLayout();
+    m_removableFlowLayout = new DFlowLayout();
     m_removableFlowLayout->setContentsMargins(20, 20, 20, 20);
     m_removableFlowLayout->setHorizontalSpacing(40);
-    m_removableFlowLayout->setVorizontalSpacing(40);
+    m_removableFlowLayout->setVerticalSpacing(50);
 
     QVBoxLayout *contentLayout = new QVBoxLayout;
     contentLayout->addWidget(m_systemTitleLine);

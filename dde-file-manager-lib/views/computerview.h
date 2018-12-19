@@ -33,6 +33,7 @@
 #include <QShowEvent>
 #include <QIcon>
 #include <QFrame>
+#include <dflowlayout.h>
 
 #include "fileitem.h"
 #include "progressline.h"
@@ -44,8 +45,6 @@
 
 
 DFM_USE_NAMESPACE
-
-class FlowLayout;
 
 class TitleLine: public QFrame
 {
@@ -207,11 +206,11 @@ protected:
 private:
     QString m_viewId;
     TitleLine* m_systemTitleLine=NULL;
-    FlowLayout* m_systemFlowLayout = NULL;
+    DFlowLayout* m_systemFlowLayout = nullptr;
     TitleLine* m_nativeTitleLine=NULL;
-    FlowLayout* m_nativeFlowLayout = NULL;
+    DFlowLayout* m_nativeFlowLayout = nullptr;
     TitleLine* m_removableTitleLine=NULL;
-    FlowLayout* m_removableFlowLayout = NULL;
+    DFlowLayout* m_removableFlowLayout = nullptr;
     QTimer* m_testTimer;
 
     DStatusBar* m_statusBar;
