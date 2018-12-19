@@ -48,6 +48,7 @@
 #include <QCheckBox>
 #include <QFileDialog>
 #include <QStandardPaths>
+#include <QScroller>
 
 class OpenWithDialogListItem : public QWidget
 {
@@ -213,6 +214,8 @@ void OpenWithDialog::initUI()
     m_scrollArea->setStyleSheet("QScrollArea{background: transparent;} QWidget#contentWidget{background: transparent;}");
     m_scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_scrollArea->setFrameShape(QFrame::NoFrame);
+    QScroller::grabGesture(m_scrollArea);
+    m_scrollArea->installEventFilter(this);
 
     QWidget *content_widget = new QWidget;
 
@@ -443,7 +446,16 @@ void OpenWithDialog::showEvent(QShowEvent *event)
 
 bool OpenWithDialog::eventFilter(QObject *obj, QEvent *event)
 {
+    // blumia: for m_scrollArea, to avoid touch screen scrolling cause window move
+    if (event->type() == QEvent::MouseMove) {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+        if (mouseEvent->source() == Qt::MouseEventSynthesizedByQt) {
+            return true;
+        }
+    }
+
     if (event->type() == QEvent::MouseButtonPress) {
+
         if (static_cast<QMouseEvent*>(event)->button() == Qt::LeftButton) {
             if (OpenWithDialogListItem *item = qobject_cast<OpenWithDialogListItem*>(obj))
                 checkItem(item);
