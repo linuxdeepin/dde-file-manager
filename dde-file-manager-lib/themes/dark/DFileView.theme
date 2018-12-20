@@ -63,7 +63,7 @@ QHeaderView::section {
     background: transparent;
     border: none;
     padding-left: 10px inset transparent;
-    border-right: 1px inset rgba(0, 0, 0, 0.1);
+    border-right: 1px inset rgba(255, 255, 255, 0.1);
     margin-bottom: 1px;
 }
 
