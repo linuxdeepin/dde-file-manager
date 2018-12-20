@@ -109,7 +109,6 @@ HEADERS += \
     shutil/fileutils.h \
     shutil/properties.h \
     views/dfilemanagerwindow.h \
-    views/dcrumbbutton.h \
     views/dhorizseparator.h \
     views/historystack.h\
     dialogs/propertydialog.h \
@@ -288,7 +287,6 @@ SOURCES += \
     shutil/fileutils.cpp \
     shutil/properties.cpp \
     views/dfilemanagerwindow.cpp \
-    views/dcrumbbutton.cpp \
     views/dhorizseparator.cpp \
     views/historystack.cpp\
     dialogs/propertydialog.cpp \
