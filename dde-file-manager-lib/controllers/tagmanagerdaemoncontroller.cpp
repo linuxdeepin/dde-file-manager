@@ -21,6 +21,9 @@ TagManagerDaemonController::TagManagerDaemonController(QObject *const parent)
         }
     };
 
+    // blumia: since it's associated with context menu so we need to set a shorter timeout time.
+    m_daemonInterface->setTimeout(3000);
+
     this->init_connect();
 }
 
