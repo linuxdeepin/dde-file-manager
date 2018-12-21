@@ -1,3 +1,19 @@
+<a name="4.7.1.10"></a>
+## 4.7.1.10 (2018-12-21)
+
+
+#### Bug Fixes
+
+*   add a timeout for TagManagerDaemon/disposeClientData ([5c72e0b8](https://github.com/linuxdeepin/dde-file-manager/commit/5c72e0b8a2bcdfa0d9844d4665e547db66504e7f))
+*   dark theme header view section border color ([1b7af3f7](https://github.com/linuxdeepin/dde-file-manager/commit/1b7af3f77ce536bce07948b65eaeb2718446ddfc))
+*   OpenWidthDialog support touch scrolling ([a9415fb6](https://github.com/linuxdeepin/dde-file-manager/commit/a9415fb6866e8314811cc1ac77aa6cef02f8659e))
+*   ComputerView item vertical align spacing ([ff5a8d9d](https://github.com/linuxdeepin/dde-file-manager/commit/ff5a8d9d88428b39d9b56da54e17dc1a8dc0de17))
+*   Device icon not changed when switching theme ([3820e168](https://github.com/linuxdeepin/dde-file-manager/commit/3820e168e372d5c9d88ad5080314055af8b015da))
+*   trash view wrong sort order ([4fceafaa](https://github.com/linuxdeepin/dde-file-manager/commit/4fceafaa1ceb543b81ee21f18c32ea56b83e2d71))
+*   wrong item disappeared when remote device removed ([d14c17fd](https://github.com/linuxdeepin/dde-file-manager/commit/d14c17fd5802491d5a40fb2ec207b2de2ecf8bc1))
+
+
+
 <a name="4.7.1.9"></a>
 ## 4.7.1.9 (2018-12-14)
 
