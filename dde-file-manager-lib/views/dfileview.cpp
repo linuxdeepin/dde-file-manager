@@ -1080,7 +1080,15 @@ void DFileView::mousePressEvent(QMouseEvent *event)
             } else {
                 d->updateEnableSelectionByMouseTimer = new QTimer(this);
                 d->updateEnableSelectionByMouseTimer->setSingleShot(true);
-                d->updateEnableSelectionByMouseTimer->setInterval(100);
+
+                static QObject *theme_settings = reinterpret_cast<QObject*>(qvariant_cast<quintptr>(qApp->property("_d_theme_settings_object")));
+                QVariant touchFlickBeginMoveDelay;
+
+                if (theme_settings) {
+                    touchFlickBeginMoveDelay = theme_settings->property("touchFlickBeginMoveDelay");
+                }
+
+                d->updateEnableSelectionByMouseTimer->setInterval(touchFlickBeginMoveDelay.isValid() ? touchFlickBeginMoveDelay.toInt() : 300);
 
                 connect(d->updateEnableSelectionByMouseTimer, &QTimer::timeout, d->updateEnableSelectionByMouseTimer, &QTimer::deleteLater);
             }
