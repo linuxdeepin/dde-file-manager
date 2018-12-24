@@ -367,15 +367,14 @@ QPair<QString, QString> DSqliteHandle::getMountPointOfFile(DUrl url,
     if (DFileInfo::exists(url) && partionsAndMountPoints
             && !partionsAndMountPoints->empty()) {
         QString parentPath{url.parentUrl().path()};
-        std::multimap<QString, QString>::const_iterator partionAndMounpointItr{};
-        std::pair<QString, QString> rootPathPartionAndMountpoint;
+        std::pair<QString, QString> rootPathPartionAndMountpoint{};
         std::map<QString, std::multimap<QString, QString>>::const_iterator cbeg{ partionsAndMountPoints->cbegin() };
         std::map<QString, std::multimap<QString, QString>>::const_iterator cend{ partionsAndMountPoints->cend() };
+        bool flag{ false };
 
         for (; cbeg != cend; ++cbeg) {
             std::multimap<QString, QString>::const_iterator itrOfPartionAndMountpoint{ cbeg->second.cbegin() };
             std::multimap<QString, QString>::const_iterator itrOfPartionAndMountpointEnd{ cbeg->second.cend() };
-            bool flag{ false };
 
             for (; itrOfPartionAndMountpoint != itrOfPartionAndMountpointEnd; ++itrOfPartionAndMountpoint) {
 
@@ -384,7 +383,8 @@ QPair<QString, QString> DSqliteHandle::getMountPointOfFile(DUrl url,
                 }
 
                 if (itrOfPartionAndMountpoint->second != ROOTPATH && parentPath.startsWith(itrOfPartionAndMountpoint->second)) {
-                    partionAndMounpointItr = itrOfPartionAndMountpoint;
+                    partionAndMountPoint.first = itrOfPartionAndMountpoint->first;
+                    partionAndMountPoint.second = itrOfPartionAndMountpoint->second;
                     flag = true;
                     break;
                 }
@@ -395,13 +395,7 @@ QPair<QString, QString> DSqliteHandle::getMountPointOfFile(DUrl url,
             }
         }
 
-        if (partionAndMounpointItr != std::multimap<QString, QString>::const_iterator{}) {
-            partionAndMountPoint.first = partionAndMounpointItr->first;
-            partionAndMountPoint.second = partionAndMounpointItr->second;
-        }
-
-
-        if (partionAndMounpointItr == std::multimap<QString, QString>::const_iterator{} && parentPath.startsWith(ROOTPATH)) {
+        if (!flag && parentPath.startsWith(ROOTPATH)) {
             partionAndMountPoint.first = rootPathPartionAndMountpoint.first;
             partionAndMountPoint.second = rootPathPartionAndMountpoint.second;
         }
