@@ -368,7 +368,7 @@ QPair<QString, QString> DSqliteHandle::getMountPointOfFile(DUrl url,
             && !partionsAndMountPoints->empty()) {
         QString parentPath{url.parentUrl().path()};
         std::multimap<QString, QString>::const_iterator partionAndMounpointItr{};
-        std::multimap<QString, QString>::const_iterator rootPathPartionAndMountpointItr{};
+        std::pair<QString, QString> rootPathPartionAndMountpoint;
         std::map<QString, std::multimap<QString, QString>>::const_iterator cbeg{ partionsAndMountPoints->cbegin() };
         std::map<QString, std::multimap<QString, QString>>::const_iterator cend{ partionsAndMountPoints->cend() };
 
@@ -380,7 +380,7 @@ QPair<QString, QString> DSqliteHandle::getMountPointOfFile(DUrl url,
             for (; itrOfPartionAndMountpoint != itrOfPartionAndMountpointEnd; ++itrOfPartionAndMountpoint) {
 
                 if (itrOfPartionAndMountpoint->second == ROOTPATH) {
-                    rootPathPartionAndMountpointItr = itrOfPartionAndMountpoint;
+                    rootPathPartionAndMountpoint = *itrOfPartionAndMountpoint;
                 }
 
                 if (itrOfPartionAndMountpoint->second != ROOTPATH && parentPath.startsWith(itrOfPartionAndMountpoint->second)) {
@@ -402,8 +402,8 @@ QPair<QString, QString> DSqliteHandle::getMountPointOfFile(DUrl url,
 
 
         if (partionAndMounpointItr == std::multimap<QString, QString>::const_iterator{} && parentPath.startsWith(ROOTPATH)) {
-            partionAndMountPoint.first = rootPathPartionAndMountpointItr->first;
-            partionAndMountPoint.second = rootPathPartionAndMountpointItr->second;
+            partionAndMountPoint.first = rootPathPartionAndMountpoint.first;
+            partionAndMountPoint.second = rootPathPartionAndMountpoint.second;
         }
     }
 
