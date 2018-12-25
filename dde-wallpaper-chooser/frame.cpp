@@ -218,6 +218,49 @@ void Frame::reLayoutTools()
     }
 }
 
+static QString timeFormat(int second)
+{
+    quint8 s = second % 60;
+    quint8 m = second / 60;
+    quint8 h = m / 60;
+    quint8 d = h / 24;
+
+    m = m % 60;
+    h = h % 24;
+
+    QString time_string;
+
+    if (d > 0) {
+        time_string.append(QString::number(d)).append("d");
+    }
+
+    if (h > 0) {
+        if (!time_string.isEmpty()) {
+            time_string.append(' ');
+        }
+
+        time_string.append(QString::number(h)).append("h");
+    }
+
+    if (m > 0) {
+        if (!time_string.isEmpty()) {
+            time_string.append(' ');
+        }
+
+        time_string.append(QString::number(m)).append("m");
+    }
+
+    if (s > 0 || time_string.isEmpty()) {
+        if (!time_string.isEmpty()) {
+            time_string.append(' ');
+        }
+
+        time_string.append(QString::number(s)).append("s");
+    }
+
+    return time_string;
+}
+
 void Frame::initUI()
 {
 #ifndef DISABLE_SCREENSAVER
@@ -230,7 +273,7 @@ void Frame::initUI()
     m_waitControl = new DSegmentedControl(this);
     m_lockScreenBox = new QCheckBox(tr("Require a password on wake up"), this);
 
-    QVector<int> time_array {30, 60, 300, 600, 1800, 3200, 0};
+    QVector<int> time_array {30, 60, 300, 600, 1800, 3600, 0};
 
     if (!m_dbusScreenSaver) {
         m_dbusScreenSaver = new ComDeepinScreenSaverInterface("com.deepin.ScreenSaver", "/com/deepin/ScreenSaver",
@@ -239,10 +282,23 @@ void Frame::initUI()
 
     int current_wait_time_index = time_array.indexOf(m_dbusScreenSaver->linePowerScreenSaverTimeout());
 
+    // 当值不存在此列表时插入此值
+    if (current_wait_time_index < 0) {
+        int timeout = m_dbusScreenSaver->linePowerScreenSaverTimeout();
+        time_array.prepend(timeout);
+        current_wait_time_index = 0;
+    }
+
+    for (const int time : time_array) {
+        if (time > 0)
+            m_waitControl->addSegmented(timeFormat(time));
+    }
+
+    m_waitControl->addSegmented(tr("Never"));
     m_waitControlLabel = new  QLabel(tr("Wait:"), this);
-    m_waitControl->addSegmented({"30s", "1m", "5m", "10m", "30m", "1h", tr("Never")});
-    m_waitControl->setCurrentIndex(current_wait_time_index >= 0 ? current_wait_time_index : time_array.count() - 1);
+    m_waitControl->setCurrentIndex(current_wait_time_index);
     m_lockScreenBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    m_lockScreenBox->setChecked(m_dbusScreenSaver->lockScreenAtAwake());
 
     m_toolLayout->setSpacing(10);
     m_toolLayout->setContentsMargins(20, 10, 20, 10);
@@ -285,6 +341,7 @@ void Frame::initUI()
     });
 
     connect(m_switchModeControl, &DSegmentedControl::currentChanged, this, &Frame::setMode);
+    connect(m_lockScreenBox, &QCheckBox::toggled, m_dbusScreenSaver, &ComDeepinScreenSaverInterface::setLockScreenAtAwake);
 #endif
 }
 
