@@ -101,27 +101,9 @@ DialogManager::~DialogManager()
 
 void DialogManager::initData()
 {
-    m_dialogInfoIcon = QIcon();
-    m_dialogInfoIcon.addFile(":/images/dialogs/images/dialog_info.png");
-    m_dialogInfoIcon.addFile(":/images/dialogs/images/dialog_info@2x.png");
-
-    m_dialogWarningIcon = QIcon();
-    m_dialogWarningIcon.addFile(":/images/dialogs/images/dialog_warning.png");
-    m_dialogWarningIcon.addFile(":/images/dialogs/images/dialog_warning@2x.png");
-
-    m_dialogErrorIcon = QIcon();
-    m_dialogErrorIcon.addFile(":/images/dialogs/images/dialog_error.png");
-    m_dialogErrorIcon.addFile(":/images/dialogs/images/dialog_error@2x.png");
-
-    m_dialogSharePasswordIcon = QIcon();
-    m_dialogSharePasswordIcon.addFile(":/images/dialogs/images/share_password.png");
-    m_dialogSharePasswordIcon.addFile(":/images/dialogs/images/share_password@2x.png");
-
-    QIcon trash_full_icon = QIcon::fromTheme("user-trash-full-opened");
-    m_dialogTrashFullIcon.addPixmap(trash_full_icon.pixmap(64));
-    m_dialogTrashFullIcon.addPixmap(trash_full_icon.pixmap(128));
-//    m_dialogTrashFullIcon.addFile(":/images/dialogs/images/user-trash-full-opened.png");
-//    m_dialogTrashFullIcon.addFile(":/images/dialogs/images/user-trash-full-opened@2x.png");
+    m_dialogInfoIcon = QIcon::fromTheme("dialog-information", QIcon(":/images/dialogs/images/dialog_info.png"));
+    m_dialogWarningIcon = QIcon::fromTheme("dialog-warning", QIcon(":/images/dialogs/images/dialog_warning.png"));
+    m_dialogErrorIcon = QIcon::fromTheme("dialog-error", QIcon(":/images/dialogs/images/dialog_error.png"));
 }
 
 void DialogManager::initTaskDialog()
@@ -361,7 +343,7 @@ void DialogManager::showCopyMoveToSelfDialog(const QMap<QString, QString> &jobDe
     buttonTexts << tr("OK");
     d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
-    d.setIcon(m_dialogWarningIcon);
+    d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     QTimer::singleShot(200, &d, &DDialog::raise);
     int code = d.exec();
     qDebug() << code;
@@ -443,7 +425,7 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name, const DFME
     buttonTexts << tr("Confirm");
     d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
-    d.setIcon(m_dialogWarningIcon);
+    d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     int code = d.exec();
     return code;
 }
@@ -469,7 +451,7 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &ev
     }
 
     QFontMetrics fm(d.font());
-    d.setIcon(m_dialogTrashFullIcon);
+    d.setIcon(QIcon::fromTheme("user-trash-full-opened"), QSize(64, 64));
     if (urlList.first() == DUrl::fromTrashFile("/")) {
         buttonTexts[1] = tr("Empty");
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, urlList.first());
@@ -665,7 +647,7 @@ void DialogManager::showDiskErrorDialog(const QString &id, const QString &errorT
         d.addButton(buttonTexts[0], true);
         d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
         d.setDefaultButton(0);
-        d.setIcon(info->fileIcon(64, 64));
+        d.setIcon(info->fileIcon(64, 64), QSize(64, 64));
 
         dialogHadShowForId << id;
 
@@ -694,7 +676,7 @@ void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl
     d.addButton(buttonTexts[0], true);
     d.addButton(buttonTexts[1], false, DDialog::ButtonRecommend);
     d.setDefaultButton(1);
-    d.setIcon(fileInfo->fileIcon().pixmap(64, 64));
+    d.setIcon(fileInfo->fileIcon(), QSize(64, 64));
     int code = d.exec();
     if (code == 1) {
         DUrlList urls;
@@ -780,7 +762,7 @@ void DialogManager::showDiskSpaceOutOfUsedDialogLater()
 void DialogManager::showDiskSpaceOutOfUsedDialog()
 {
     DDialog d;
-    d.setIcon(m_dialogWarningIcon);
+    d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     d.setTitle(tr("Target disk doesn't have enough space, unable to copy!"));
     d.addButton(tr("OK"));
 
@@ -794,7 +776,7 @@ void DialogManager::show4gFat32Dialog()
 {
     DDialog d;
     d.setTitle(tr("Failed, file size must be less than 4GB."));
-    d.setIcon(m_dialogWarningIcon);
+    d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.exec();
 }
@@ -803,7 +785,7 @@ void DialogManager::showFailToCreateSymlinkDialog(const QString &errorString)
 {
     DDialog d;
     d.setTitle(tr("Fail to create symlink, cause:") + errorString);
-    d.setIcon(m_dialogWarningIcon);
+    d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.exec();
 }
@@ -821,7 +803,7 @@ void DialogManager::showDeleteSystemPathWarnDialog(quint64 winId)
 {
     DDialog d(WindowManager::getWindowById(winId));
     d.setTitle(tr("The selected files contain system file/directory, and it cannot be deleted"));
-    d.setIcon(m_dialogWarningIcon);
+    d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.exec();
 }
@@ -866,7 +848,7 @@ void DialogManager::showRestoreFailedDialog(const DUrlList &urlList)
     } else if (urlList.count() > 1) {
         d.setMessage(tr("%1 files failed to restore, target file removed or location changed").arg(QString::number(urlList.count())));
     }
-    d.setIcon(m_dialogWarningIcon);
+    d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.exec();
 }
@@ -877,7 +859,7 @@ void DialogManager::showRestoreFailedPerssionDialog(const QString &srcPath, cons
     DDialog d;
     d.setTitle(tr("Operation failed!"));
     d.setMessage(tr("You do not have permission to operate file/folder!"));
-    d.setIcon(m_dialogWarningIcon);
+    d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.exec();
 }
@@ -906,7 +888,7 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
         }
 
         d.setMessage(message);
-        d.setIcon(m_dialogWarningIcon);
+        d.setIcon(m_dialogWarningIcon, QSize(64, 64));
         d.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
         ret = d.exec();
     } else {
@@ -1169,13 +1151,13 @@ int DialogManager::showMessageDialog(int messageLevel, const QString &message)
     d.addButtons(buttonTexts);
     d.setDefaultButton(0);
     if (messageLevel == 1) {
-        d.setIcon(m_dialogInfoIcon);
+        d.setIcon(m_dialogInfoIcon, QSize(64, 64));
     } else if (messageLevel == 2) {
-        d.setIcon(m_dialogWarningIcon);
+        d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     } else if (messageLevel == 3) {
-        d.setIcon(m_dialogErrorIcon);
+        d.setIcon(m_dialogErrorIcon, QSize(64, 64));
     } else {
-        d.setIcon(m_dialogInfoIcon);
+        d.setIcon(m_dialogInfoIcon, QSize(64, 64));
     }
     int code = d.exec();
     qDebug() << code;
@@ -1223,7 +1205,7 @@ void DialogManager::showAddUserShareFailedDialog(const QString &sharePath)
 
     DDialog d;
     d.setTitle(tr("Share folder can't be named after the current username"));
-    d.setIcon(m_dialogWarningIcon);
+    d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.exec();
 }

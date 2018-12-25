@@ -137,8 +137,6 @@ private:
     QIcon m_dialogInfoIcon;
     QIcon m_dialogWarningIcon;
     QIcon m_dialogErrorIcon;
-    QIcon m_dialogSharePasswordIcon;
-    QIcon m_dialogTrashFullIcon;
     DTaskDialog* m_taskDialog{ nullptr };
     CloseAllDialogIndicator* m_closeIndicatorDialog{ nullptr };
     TrashPropertyDialog* m_trashDialog{ nullptr };
