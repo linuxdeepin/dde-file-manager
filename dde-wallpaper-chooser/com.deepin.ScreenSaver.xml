@@ -20,4 +20,8 @@
     <!--second-->
     <property name='batteryScreenSaverTimeout' type='i' access='readwrite'></property>
     <property name='linePowerScreenSaverTimeout' type='i' access='readwrite'></property>
+    <!--    唤醒时是否要锁定屏幕-->
+    <property name='lockScreenAtAwake' type='b' access='readwrite'></property>
+    <!--    从屏幕保护启动开始到一定时间段内唤醒总是不锁定屏幕，单位是秒-->
+    <property name='lockScreenDelay' type='i' access='readwrite'></property>
 </interface>
