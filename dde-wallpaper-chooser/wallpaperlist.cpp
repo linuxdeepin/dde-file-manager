@@ -201,7 +201,7 @@ void WallpaperList::setGridSize(const QSize &size)
     int c = width() / size.width();
 
     m_gridSize = size;
-    m_contentLayout->setSpacing((width() - c * ItemWidth) / (c + 1));
+    m_contentLayout->setSpacing(qRound((width() - c * ItemWidth) / qreal(c + 1) - 0.500001) + 1);
     m_contentLayout->setContentsMargins(m_contentLayout->spacing(), 0,
                                         m_contentLayout->spacing(), 0);
     m_contentWidget->adjustSize();

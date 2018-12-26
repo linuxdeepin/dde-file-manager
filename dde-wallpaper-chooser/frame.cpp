@@ -118,6 +118,7 @@ void Frame::show()
 void Frame::handleNeedCloseButton(QString path, QPoint pos)
 {
     if (!path.isEmpty()) {
+        m_closeButton->adjustSize();
         m_closeButton->move(pos.x() - 10, pos.y() - 10);
         m_closeButton->show();
         m_closeButton->disconnect();
@@ -194,6 +195,7 @@ void Frame::paintEvent(QPaintEvent *event)
     pa.drawLine(QPoint(0, 0), QPoint(width(), 0));
 }
 
+#ifndef DISABLE_SCREENSAVER
 void Frame::setMode(int mode)
 {
     if (m_mode == mode)
@@ -260,6 +262,7 @@ static QString timeFormat(int second)
 
     return time_string;
 }
+#endif
 
 void Frame::initUI()
 {
