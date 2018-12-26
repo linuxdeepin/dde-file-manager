@@ -293,8 +293,10 @@ void Frame::initUI()
     }
 
     for (const int time : time_array) {
-        if (time > 0)
-            m_waitControl->addSegmented(timeFormat(time));
+        if (time > 0) {
+            int index = m_waitControl->addSegmented(timeFormat(time));
+            m_waitControl->at(index)->setMinimumWidth(40);
+        }
     }
 
     m_waitControl->addSegmented(tr("Never"));
@@ -330,6 +332,8 @@ void Frame::initUI()
     // 使用anchors使此控件居中
     m_switchModeControl = new DSegmentedControl(this);
     m_switchModeControl->addSegmented({tr("Wallpaper"), tr("Screensaver")});
+    m_switchModeControl->at(0)->setMinimumWidth(40);
+    m_switchModeControl->at(1)->setMinimumWidth(40);
     m_switchModeControl->setCurrentIndex(m_mode == WallpaperMode ? 0 : 1);
 
     DAnchors<DSegmentedControl> anchors_switchControl(m_switchModeControl);
