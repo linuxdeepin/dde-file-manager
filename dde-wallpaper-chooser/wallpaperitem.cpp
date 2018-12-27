@@ -154,8 +154,11 @@ void WallpaperItem::initPixmap()
         tnm->find(QUrl::toPercentEncoding(m_path));
     } else {
         QIcon icon(m_path);
-
         m_wrapper->m_pixmap = icon.pixmap(window()->windowHandle(), QSize(ItemWidth, ItemHeight));
+        // 由于QIcon::pixmap中计算图片缩放比例时的特殊计算方式，当请求的pixmap大小的比例和图片实际大小比例不一致时
+        // 计算出的pixmap缩放系数和希望的值不一致，所以此处纠正一下
+        m_wrapper->m_pixmap.setDevicePixelRatio(qMax(m_wrapper->m_pixmap.width() / qreal(ItemWidth),
+                                                     m_wrapper->m_pixmap.height() / qreal(ItemHeight)));
         m_wrapper->update();
     }
 }
