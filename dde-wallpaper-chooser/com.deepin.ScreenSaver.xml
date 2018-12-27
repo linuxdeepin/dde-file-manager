@@ -1,0 +1,27 @@
+<interface name='com.deepin.ScreenSaver'>
+    <method name='Start'></method>
+    <method name='Stop'></method>
+    <method name='Preview'>
+        <arg name="name" type="s" direction="in"/>
+        <!--0 = Qt::WindowStaysOnBottomHint-->
+        <!--1 = Qt::WindowStaysOnTopHint-->
+        <arg name="staysOn" type="i" direction="in"/>
+        <arg name="ok" type="b" direction="out"/>
+    </method>
+    <method name='GetScreenSaverCover'>
+        <arg name="name" type="s" direction="in"/>
+        <arg name="imagePath" type="s" direction="out"/>
+    </method>
+    <property name='isRunning' type='b' access='read'></property>
+    <property name='currentScreenSaver' type='s' access='readwrite'></property>
+    <property name='allScreenSaver' type='as' access='read'></property>
+    <!--no wait-->
+    <method name='RefreshScreenSaverList'></method>
+    <!--second-->
+    <property name='batteryScreenSaverTimeout' type='i' access='readwrite'></property>
+    <property name='linePowerScreenSaverTimeout' type='i' access='readwrite'></property>
+    <!--    唤醒时是否要锁定屏幕-->
+    <property name='lockScreenAtAwake' type='b' access='readwrite'></property>
+    <!--    从屏幕保护启动开始到一定时间段内唤醒总是不锁定屏幕，单位是秒-->
+    <property name='lockScreenDelay' type='i' access='readwrite'></property>
+</interface>
