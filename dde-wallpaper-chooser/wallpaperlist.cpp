@@ -38,10 +38,6 @@
 
 WallpaperList::WallpaperList(QWidget * parent)
     : QScrollArea(parent)
-    , m_dbusAppearance(new AppearanceDaemonInterface(AppearanceServ,
-                                                   AppearancePath,
-                                                   QDBusConnection::sessionBus(),
-                                                   this))
     , m_wmInter(new com::deepin::wm("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this))
     , prevButton(new DImageButton(":/images/previous_normal.svg",
                                   ":/images/previous_hover.svg",
@@ -103,8 +99,6 @@ WallpaperItem * WallpaperList::addWallpaper(const QString &path)
     connect(wallpaper, &WallpaperItem::pressed, this, &WallpaperList::wallpaperItemPressed);
     connect(wallpaper, &WallpaperItem::hoverIn, this, &WallpaperList::wallpaperItemHoverIn);
     connect(wallpaper, &WallpaperItem::hoverOut, this, &WallpaperList::wallpaperItemHoverOut);
-    connect(wallpaper, &WallpaperItem::desktopButtonClicked, this, &WallpaperList::handleSetDesktop);
-    connect(wallpaper, &WallpaperItem::lockButtonClicked, this, &WallpaperList::handleSetLock);
 
     return wallpaper;
 }
@@ -153,7 +147,7 @@ void WallpaperList::scrollList(int step, int duration)
         nextItem->setOpacity(1);
 
     // hide the delete button.
-    emit needCloseButton("", QPoint(0, 0));
+    emit mouseOverItemChanged("", QPoint(0, 0));
 }
 
 void WallpaperList::prevPage()
@@ -194,11 +188,6 @@ void WallpaperList::showEvent(QShowEvent *event)
     return QScrollArea::showEvent(event);
 }
 
-QString WallpaperList::lockWallpaper() const
-{
-    return m_lockWallpaper;
-}
-
 QSize WallpaperList::gridSize() const
 {
     return m_gridSize;
@@ -212,7 +201,7 @@ void WallpaperList::setGridSize(const QSize &size)
     int c = width() / size.width();
 
     m_gridSize = size;
-    m_contentLayout->setSpacing((width() - c * ItemWidth) / (c + 1));
+    m_contentLayout->setSpacing(qRound((width() - c * ItemWidth) / qreal(c + 1) - 0.500001) + 1);
     m_contentLayout->setContentsMargins(m_contentLayout->spacing(), 0,
                                         m_contentLayout->spacing(), 0);
     m_contentWidget->adjustSize();
@@ -259,6 +248,7 @@ void WallpaperList::clear()
     }
 
     m_items.clear();
+    prevItem = nextItem = nullptr;
 }
 
 void WallpaperList::updateItemThumb()
@@ -276,11 +266,6 @@ void WallpaperList::updateItemThumb()
     updateBothEndsItem();
 }
 
-QString WallpaperList::desktopWallpaper() const
-{
-    return m_desktopWallpaper;
-}
-
 void WallpaperList::wallpaperItemPressed()
 {
     WallpaperItem * item = qobject_cast<WallpaperItem*>(sender());
@@ -295,11 +280,7 @@ void WallpaperList::wallpaperItemPressed()
             if (wallpaper == item) {
                 wallpaper->slideUp();
 
-                const QString &path = wallpaper->getPath();
-                emit needPreviewWallpaper(path);
-
-                m_desktopWallpaper = path;
-                m_lockWallpaper = path;
+                emit itemPressed(wallpaper->data());
             } else {
                 wallpaper->slideDown();
             }
@@ -318,24 +299,6 @@ void WallpaperList::wallpaperItemHoverIn()
 void WallpaperList::wallpaperItemHoverOut()
 {
 //    emit needCloseButton("", QPoint(0, 0));
-}
-
-void WallpaperList::handleSetDesktop()
-{
-    m_lockWallpaper = "";
-
-    qDebug() << "desktop item set, quit";
-    if (parentWidget())
-        parentWidget()->hide();
-}
-
-void WallpaperList::handleSetLock()
-{
-    m_desktopWallpaper = "";
-
-    qDebug() << "lock item set, quit";
-    if (parentWidget())
-        parentWidget()->hide();
 }
 
 void WallpaperList::updateBothEndsItem()
@@ -381,10 +344,10 @@ void WallpaperList::showDeleteButtonForItem(WallpaperItem const *item) const
         if (item->contentImageGeometry().isNull()) {
             return;
         }
-        emit needCloseButton(item->getPath(),
+        emit mouseOverItemChanged(item->getPath(),
                              item->mapTo(parentWidget(),
                                          item->contentImageGeometry().topRight() / devicePixelRatioF()));
     } else {
-        emit needCloseButton("", QPoint(0, 0));
+        emit mouseOverItemChanged("", QPoint(0, 0));
     }
 }
