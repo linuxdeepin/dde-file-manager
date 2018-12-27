@@ -276,7 +276,7 @@ void Frame::initUI()
     m_waitControl = new DSegmentedControl(this);
     m_lockScreenBox = new QCheckBox(tr("Require a password on wake up"), this);
 
-    QVector<int> time_array {30, 60, 300, 600, 1800, 3600, 0};
+    QVector<int> time_array {60, 300, 600, 900, 1800, 3600, 0};
 
     if (!m_dbusScreenSaver) {
         m_dbusScreenSaver = new ComDeepinScreenSaverInterface("com.deepin.ScreenSaver", "/com/deepin/ScreenSaver",
