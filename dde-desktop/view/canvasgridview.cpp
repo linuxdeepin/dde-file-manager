@@ -2347,7 +2347,11 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     }
 
     QAction wallpaper(menu);
+#ifdef DISABLE_SCREENSAVER
+    wallpaper.setText(tr("Wallpaper"));
+#else
     wallpaper.setText(tr("Wallpaper and Screensaver"));
+#endif
     wallpaper.setData(WallpaperSettings);
     menu->addAction(&wallpaper);
 
