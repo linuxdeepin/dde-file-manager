@@ -97,8 +97,42 @@ void DiskControlWidget::startMonitor()
     onDiskListChanged();
 }
 
+/*
+ *
+ * TODO: move this thing into dtkcore or somewhere...
+ *       There is also a FileUtils::getKernelParameters() in dde-file-manager.
+ * blumia: for writing unit test, try validate the result with `tr ' ' '\n' < /proc/cmdline`
+ */
+QMap<QString, QString> getKernelParameters()
+{
+    QFile cmdline("/proc/cmdline");
+    cmdline.open(QIODevice::ReadOnly);
+    QByteArray content = cmdline.readAll();
+
+    QByteArrayList paraList(content.split(' '));
+
+    QMap<QString, QString> result;
+    result.insert("_ori_proc_cmdline", content);
+
+    for (const QByteArray& onePara : paraList) {
+        int equalsIdx = onePara.indexOf('=');
+        QString key = equalsIdx == -1 ? onePara.trimmed() : onePara.left(equalsIdx).trimmed();
+        QString value = equalsIdx == -1 ? QString() : onePara.right(equalsIdx).trimmed();
+        result.insert(key, value);
+    }
+
+    return result;
+}
+
 void DiskControlWidget::doStartupAutoMount()
 {
+    // check if we are in live system, don't do auto mount if we are in live system.
+    static QMap<QString, QString> cmdline = getKernelParameters();
+    if (cmdline.value("boot", "") == QStringLiteral("live")) {
+        autoMountDisabled = true;
+        return;
+    }
+
     if (getGsGlobal()->value("GenericAttribute", "AutoMount", false).toBool() == false) {
         return;
     }
@@ -195,6 +229,10 @@ void DiskControlWidget::onDriveConnected(const QString &deviceId)
     QScopedPointer<DFMDiskDevice> diskDevice(DFMDiskManager::createDiskDevice(deviceId));
     if (diskDevice->removable()) {
         DDesktopServices::playSystemSoundEffect("device-added");
+
+        if (autoMountDisabled) {
+            return;
+        }
 
         bool mountAndOpen = false;
 

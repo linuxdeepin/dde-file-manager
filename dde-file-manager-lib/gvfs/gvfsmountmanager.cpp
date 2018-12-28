@@ -38,6 +38,7 @@
 #include "partman/command.h"
 #include "mountsecretdiskaskpassworddialog.h"
 #include "app/filesignalmanager.h"
+#include "shutil/fileutils.h"
 
 #include "networkmanager.h"
 #include "dfmapplication.h"
@@ -1078,16 +1079,6 @@ void GvfsMountManager::listMountsBylsblk()
     }
 }
 
-bool GvfsMountManager::getAutoMountSwitch() const
-{
-    return m_autoMountSwitch;
-}
-
-void GvfsMountManager::setAutoMountSwitch(bool autoMountSwitch)
-{
-    m_autoMountSwitch = autoMountSwitch;
-}
-
 /*
  * get real mount url from  mounted_root_uri of info
  * smb://10.0.12.150/share -> file:///run/user/1000/gvfs/smb-share:server=10.0.12.150,share=share
@@ -1126,6 +1117,12 @@ DUrl GvfsMountManager::getRealMountUrl(const QDiskInfo &info)
 
 void GvfsMountManager::autoMountAllDisks()
 {
+    // check if we are in live system, don't do auto mount if we are in live system.
+    static QMap<QString, QString> cmdline = FileUtils::getKernelParameters();
+    if (cmdline.value("boot", "") == QStringLiteral("live")) {
+        return;
+    }
+
     if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_AutoMount).toBool()) {
         foreach (const QDiskInfo& diskInfo, DiskInfos.values()) {
             if (diskInfo.can_mount()) {

@@ -64,6 +64,7 @@ private slots:
 private:
     QVBoxLayout *m_centralLayout;
     QWidget *m_centralWidget;
+    bool autoMountDisabled = false;
 
     DFM_NAMESPACE::DFMDiskManager *m_diskManager;
     DFM_NAMESPACE::DFMVfsManager *m_vfsManager;
