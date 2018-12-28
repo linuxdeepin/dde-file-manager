@@ -125,8 +125,6 @@ public:
     static QString getDriveUnixDevice(const QString& unix_device);
     static bool isDeviceCrypto_LUKS(const QDiskInfo& diskInfo);
 
-    bool getAutoMountSwitch() const;
-    void setAutoMountSwitch(bool autoMountSwitch);
     static DUrl getRealMountUrl(const QDiskInfo& info);
 
     void autoMountAllDisks();
@@ -155,7 +153,6 @@ public slots:
 
 private:
     GVolumeMonitor* m_gVolumeMonitor = NULL;
-    bool m_autoMountSwitch = false;
 };
 
 #endif // GVFSMOUNTMANAGER_H

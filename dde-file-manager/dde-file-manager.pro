@@ -59,8 +59,6 @@ INCLUDEPATH += $$PWD/../dde-file-manager-lib $$PWD/.. \
 BINDIR = $$PREFIX/bin
 DEFINES += APPSHAREDIR=\\\"$$PREFIX/share/$$TARGET\\\"
 
-DEFINES += AUTOMOUNT
-
 target.path = $$BINDIR
 
 desktop.path = $${PREFIX}/share/applications/

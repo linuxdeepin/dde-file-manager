@@ -135,9 +135,6 @@ void FileManagerApp::initApp()
 
     /*init gvfsMountClient */
     DFMGlobal::initGvfsMountManager();
-#ifdef AUTOMOUNT
-    gvfsMountManager->setAutoMountSwitch(true);
-#endif
 
     /*init secretManger */
     DFMGlobal::initSecretManager();
