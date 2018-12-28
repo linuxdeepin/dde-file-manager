@@ -29,32 +29,17 @@
 #include <dimagebutton.h>
 #include <dregionmonitor.h>
 
-DWIDGET_BEGIN_NAMESPACE
-class DSegmentedControl;
-DWIDGET_END_NAMESPACE
-
-QT_BEGIN_NAMESPACE
-class QCheckBox;
-class QHBoxLayout;
-QT_END_NAMESPACE
-
 DWIDGET_USE_NAMESPACE
 
 class WallpaperList;
 class WallpaperListView;
 class AppearanceDaemonInterface;
-class ComDeepinScreenSaverInterface;
 class DeepinWM;
 class Frame : public DBlurEffectWidget
 {
     Q_OBJECT
 
 public:
-    enum Mode {
-        WallpaperMode,
-        ScreenSaverMode
-    };
-
     Frame(QFrame *parent = 0);
     ~Frame();
 
@@ -70,43 +55,21 @@ protected:
     void showEvent(QShowEvent *);
     void hideEvent(QHideEvent *);
     void keyPressEvent(QKeyEvent *);
-    void paintEvent(QPaintEvent *event) override;
 
 private:
-#ifndef DISABLE_SCREENSAVER
-    void setMode(int mode);
-    void reLayoutTools();
-
-    Mode m_mode = WallpaperMode;
-    QHBoxLayout *m_toolLayout;
-    QLabel *m_waitControlLabel;
-    DSegmentedControl *m_waitControl;
-    DSegmentedControl *m_switchModeControl;
-    QCheckBox *m_lockScreenBox;
-#else
-    const Mode m_mode = WallpaperMode;
-#endif
     WallpaperList *m_wallpaperList = NULL;
-    QString m_desktopWallpaper;
-    QString m_lockWallpaper;
     DImageButton * m_closeButton = NULL;
 
     AppearanceDaemonInterface * m_dbusAppearance = NULL;
-#ifndef DISABLE_SCREENSAVER
-    ComDeepinScreenSaverInterface *m_dbusScreenSaver = nullptr;
-#endif
     DeepinWM * m_dbusDeepinWM = NULL;
     DRegionMonitor * m_mouseArea = NULL;
 
     QString m_formerWallpaper;
     QMap<QString, bool> m_deletableInfo;
 
-    void initUI();
     void initSize();
     void initListView();
     void refreshList();
-    void onItemPressed(const QString &data);
-    void onItemButtonClicked(const QString &buttonID);
     QStringList processListReply(const QString &reply);
 };
 

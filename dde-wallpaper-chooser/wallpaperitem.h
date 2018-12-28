@@ -29,21 +29,13 @@
 #include <QFutureWatcher>
 #include <QPropertyAnimation>
 
-QT_BEGIN_NAMESPACE
 class QLabel;
-class QPushButton;
-class QVBoxLayout;
-QT_END_NAMESPACE
-
 class Button;
 class AppearanceDaemonInterface;
 class WrapperWidget;
 class WallpaperItem : public QFrame
 {
     Q_OBJECT
-    Q_PROPERTY(QString data READ data WRITE setData)
-    Q_PROPERTY(bool useThumbnailManager READ useThumbnailManager WRITE setUseThumbnailManager)
-
 public:
     WallpaperItem(QFrame *parent = 0, const QString &path = "");
     ~WallpaperItem();
@@ -63,24 +55,16 @@ public:
 
     void initPixmap();
 
-    QString data() const;
-    bool useThumbnailManager() const;
-
-    QPushButton *addButton(const QString &id, const QString &text);
-
 signals:
     void pressed();
     void hoverIn();
     void hoverOut();
-
-    void buttonClicked(const QString &id);
+    void desktopButtonClicked();
+    void lockButtonClicked();
 
 public slots:
     void onThumbnailFounded(const QString &key, const QPixmap &pixmap);
     void thumbnailFinished();
-
-    void setData(const QString &data);
-    void setUseThumbnailManager(bool useThumbnailManager);
 
 protected:
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
@@ -91,12 +75,10 @@ protected:
 private:
     QString m_path;
     bool m_deletable;
-    QString m_data;
-    bool m_useThumbnailManager = true;
-
-    QVBoxLayout *m_buttonLayout = nullptr;
 
     WrapperWidget * m_wrapper = NULL;
+    Button * m_desktopButton = NULL;
+    Button * m_lockButton = NULL;
     QPropertyAnimation * m_upAnim = NULL;
     QPropertyAnimation * m_downAnim = NULL;
 
