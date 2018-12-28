@@ -62,6 +62,9 @@ public:
     void prevPage();
     void nextPage();
 
+    QString desktopWallpaper() const;
+    QString lockWallpaper() const;
+
     QSize gridSize() const;
     void setGridSize(const QSize &size);
 
@@ -76,8 +79,8 @@ public:
     void updateItemThumb();
 
 signals:
-    void itemPressed(QString data) const;
-    void mouseOverItemChanged(QString path, QPoint pos) const;
+    void needPreviewWallpaper(QString path) const;
+    void needCloseButton(QString path, QPoint pos) const;
 
 protected:
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
@@ -88,7 +91,11 @@ private:
     QWidget *m_contentWidget;
     QHBoxLayout *m_contentLayout;
 
+    AppearanceDaemonInterface * m_dbusAppearance;
     com::deepin::wm *m_wmInter;
+
+    QString m_desktopWallpaper;
+    QString m_lockWallpaper;
 
     //It was handpicked item, Used for wallpaper page
     WallpaperItem *prevItem = Q_NULLPTR;
@@ -108,12 +115,12 @@ private:
     void updateBothEndsItem();
     void showDeleteButtonForItem(const WallpaperItem *item) const;
 
-    friend class Frame;
-
 private slots:
     void wallpaperItemPressed();
     void wallpaperItemHoverIn();
     void wallpaperItemHoverOut();
+    void handleSetDesktop();
+    void handleSetLock();
 };
 
 #endif // WALLPAPERLIST_H
