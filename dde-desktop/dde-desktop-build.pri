@@ -22,3 +22,7 @@ load(deepin_qt)
 
 # add computer/trash icon on professional system
 deepin_professional: DEFINES += DDE_COMPUTER_TRASH
+
+!isEmpty(DISABLE_SCREENSAVER) {
+    DEFINES += DISABLE_SCREENSAVER
+}
