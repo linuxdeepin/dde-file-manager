@@ -1,3 +1,23 @@
+<a name="4.7.1.11"></a>
+## 4.7.1.11 (2018-12-29)
+
+
+#### Features
+
+*   disable automount in live system ([1ac5d667](https://github.com/linuxdeepin/dde-file-manager/commit/1ac5d667b57cc67f9846467e7ae860306f694c26))
+*   support set/preview screensaver ([edd7de5c](https://github.com/linuxdeepin/dde-file-manager/commit/edd7de5c449215d9699283112642528465652b40))
+* **screensaver:**  support set lock screen at awake ([d955143f](https://github.com/linuxdeepin/dde-file-manager/commit/d955143fd0bb7209e26315e99e2e096a7b092288))
+
+#### Bug Fixes
+
+* **dde-wallpaper:**
+  *  the svg cover image is blurry on HI-DPI ([433481da](https://github.com/linuxdeepin/dde-file-manager/commit/433481da481f491f03a60edefa5c31f8cde45b3c))
+  *  change the screensaver start time list ([559c06dd](https://github.com/linuxdeepin/dde-file-manager/commit/559c06ddd87c126608e606b9a0f333608f54862f))
+  *  set the DSegmentedControl button minimum width to 40px ([53ceff8d](https://github.com/linuxdeepin/dde-file-manager/commit/53ceff8df8a34cbc4af8b16fa5ea7e9df7453778))
+  *  the delete button position is warong ([ad77c2d9](https://github.com/linuxdeepin/dde-file-manager/commit/ad77c2d904ced42847fb421d6a521117bac0dbc1))
+
+
+
 <a name="4.7.1.10"></a>
 ## 4.7.1.10 (2018-12-21)
 
