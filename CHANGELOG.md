@@ -1,3 +1,13 @@
+<a name="4.7.1.12"></a>
+## 4.7.1.12 (2018-12-29)
+
+
+#### Bug Fixes
+
+*   no longer treat home dir as template dir ([87662ed9](https://github.com/linuxdeepin/dde-file-manager/commit/87662ed928f795ed12203a1b79a1f437e949ba8f))
+
+
+
 <a name="4.7.1.11"></a>
 ## 4.7.1.11 (2018-12-29)
 
