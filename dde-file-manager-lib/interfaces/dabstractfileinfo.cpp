@@ -1520,7 +1520,7 @@ static QList<QAction *> getTemplateFileList()
     if (templateFolderPathCStr != nullptr) {
         QString templateFolderPath(templateFolderPathCStr);
         QDir templateFolder(templateFolderPath);
-        if (templateFolder.exists()) {
+        if (templateFolder.exists() && templateFolder != QDir::home()) { // accroding to xdg-user-dir, dir point to home means disable.
             const QFileInfoList &templateFileInfoList = templateFolder.entryInfoList(QDir::Files | QDir::Readable | QDir::NoSymLinks);
             for (const QFileInfo &fileInfo : templateFileInfoList) {
                 const QString entrySourcePath = fileInfo.absoluteFilePath();
