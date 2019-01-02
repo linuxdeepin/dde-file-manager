@@ -2390,7 +2390,7 @@
         <location filename="../views/dfmsidebardeviceitem.cpp" line="162"/>
         <location filename="../views/dfmsidebarhomeitem.cpp" line="60"/>
         <source>Disk info</source>
-        <translation type="unfinished"/>
+        <translation>Maklumat cakera</translation>
     </message>
 </context>
 <context>
@@ -2601,7 +2601,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="51"/>
         <source>New window</source>
-        <translation>New window</translation>
+        <translation>Tetingkap baharu</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="51"/>

@@ -655,7 +655,7 @@
     <message>
         <location filename="../views/filedialogstatusbar.cpp" line="30"/>
         <source>File Name</source>
-        <translation>Име фасцикле</translation>
+        <translation>Име датотеке</translation>
     </message>
     <message>
         <location filename="../views/filedialogstatusbar.cpp" line="31"/>
@@ -1646,7 +1646,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1080"/>
         <source>Others</source>
-        <translation>Остало</translation>
+        <translation>Остали</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1078"/>
@@ -2390,7 +2390,7 @@
         <location filename="../views/dfmsidebardeviceitem.cpp" line="162"/>
         <location filename="../views/dfmsidebarhomeitem.cpp" line="60"/>
         <source>Disk info</source>
-        <translation type="unfinished"/>
+        <translation>Подаци диска</translation>
     </message>
 </context>
 <context>
@@ -2721,7 +2721,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="64"/>
         <source>Others</source>
-        <translation>Остало</translation>
+        <translation>Остали</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="65"/>

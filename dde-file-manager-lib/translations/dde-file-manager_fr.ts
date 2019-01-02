@@ -462,7 +462,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="427"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
-        <translation type="unfinished"/>
+        <translation>Ce fichier n’est pas exécutable, vous voulez ajouter la permission d’exécuter et l&apos;exécuter ?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="441"/>
@@ -1612,7 +1612,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="884"/>
         <source>Filesystem</source>
-        <translation type="unfinished"/>
+        <translation>Système de fichiers</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="999"/>
@@ -2390,7 +2390,7 @@
         <location filename="../views/dfmsidebardeviceitem.cpp" line="162"/>
         <location filename="../views/dfmsidebarhomeitem.cpp" line="60"/>
         <source>Disk info</source>
-        <translation type="unfinished"/>
+        <translation>Informations du disque</translation>
     </message>
 </context>
 <context>

@@ -462,7 +462,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="427"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
-        <translation type="unfinished"/>
+        <translation>Berkas ini bukan eksekusi, apakah anda ingin tambah ijin eksekusi dan jalan?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="441"/>
@@ -1513,7 +1513,7 @@
     <message>
         <location filename="../controllers/pathmanager.cpp" line="67"/>
         <source>Recent</source>
-        <translation>Baru-baru ini</translation>
+        <translation>Baru ini</translation>
     </message>
 </context>
 <context>
@@ -1612,7 +1612,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="884"/>
         <source>Filesystem</source>
-        <translation type="unfinished"/>
+        <translation>Berkas sistem</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="999"/>
