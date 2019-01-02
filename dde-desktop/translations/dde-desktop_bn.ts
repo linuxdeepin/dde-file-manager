@@ -2,34 +2,34 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2291"/>
+        <location filename="../view/canvasgridview.cpp" line="2292"/>
         <source>Icon size</source>
         <translation>আইকনের আকার</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2297"/>
+        <location filename="../view/canvasgridview.cpp" line="2298"/>
         <source>Auto arrange</source>
         <translation>স্বয়ংক্রিয়ভাবে সাজান</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2426"/>
+        <location filename="../view/canvasgridview.cpp" line="2350"/>
+        <source>Wallpaper and Screensaver</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../view/canvasgridview.cpp" line="2427"/>
         <source>Properties</source>
         <translation>বৈশিষ্ট্যসমূহ </translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2336"/>
+        <location filename="../view/canvasgridview.cpp" line="2337"/>
         <source>Display Settings</source>
         <translation>ডিসপ্লে সেটিংস</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2343"/>
+        <location filename="../view/canvasgridview.cpp" line="2344"/>
         <source>Corner Settings</source>
         <translation>কোনা সেটিংস </translation>
-    </message>
-    <message>
-        <location filename="../view/canvasgridview.cpp" line="2349"/>
-        <source>Set Wallpaper</source>
-        <translation>ওয়ালপেপার সেট করুন </translation>
     </message>
 </context>
 <context>
@@ -61,16 +61,46 @@
     </message>
 </context>
 <context>
-    <name>WallpaperItem</name>
+    <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="125"/>
-        <source>Only desktop</source>
-        <translation>শুধুমাত্র ডেস্কটপ</translation>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="277"/>
+        <source>Require a password on wake up</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="128"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="302"/>
+        <source>Never</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="303"/>
+        <source>Wait:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="334"/>
+        <source>Wallpaper</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="334"/>
+        <source>Screensaver</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="396"/>
+        <source>Only desktop</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="397"/>
         <source>Only lock screen</source>
-        <translation>শুধুমাত্র লক স্ক্রিন </translation>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="425"/>
+        <source>Apply</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

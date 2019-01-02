@@ -277,7 +277,7 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="769"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1278"/>
         <source>Last access</source>
-        <translation type="unfinished"/>
+        <translation>Последно използван</translation>
     </message>
     <message>
         <location filename="../models/searchfileinfo.cpp" line="119"/>
@@ -378,13 +378,13 @@
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="114"/>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="129"/>
         <source>%1 Volume</source>
-        <translation type="unfinished"/>
+        <translation>%1 обем</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="50"/>
         <source>Data Disk</source>
         <comment>Data Partition</comment>
-        <translation type="unfinished"/>
+        <translation>Диск за данни</translation>
     </message>
 </context>
 <context>
@@ -462,7 +462,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="427"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
-        <translation type="unfinished"/>
+        <translation>Този файл не е изпълним, искате ли да добавите разрешението за изпълнение и да стартирате?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="441"/>
@@ -1013,7 +1013,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="145"/>
         <location filename="../configure/global-setting-template.js" line="145"/>
         <source>Display recent file entry in left panel</source>
-        <translation type="unfinished"/>
+        <translation>Показване на последните въвеждания на файл в левия панел</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="191"/>
@@ -1513,7 +1513,7 @@
     <message>
         <location filename="../controllers/pathmanager.cpp" line="67"/>
         <source>Recent</source>
-        <translation type="unfinished"/>
+        <translation>Последни</translation>
     </message>
 </context>
 <context>
@@ -1612,7 +1612,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="884"/>
         <source>Filesystem</source>
-        <translation type="unfinished"/>
+        <translation>Файлова система</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="999"/>
@@ -2390,7 +2390,7 @@
         <location filename="../views/dfmsidebardeviceitem.cpp" line="162"/>
         <location filename="../views/dfmsidebarhomeitem.cpp" line="60"/>
         <source>Disk info</source>
-        <translation type="unfinished"/>
+        <translation>Информация за диска</translation>
     </message>
 </context>
 <context>

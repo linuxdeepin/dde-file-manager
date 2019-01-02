@@ -2391,7 +2391,7 @@ Localizzazione italiana a cura di Massimo A. Carofano</translation>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="162"/>
         <location filename="../views/dfmsidebarhomeitem.cpp" line="60"/>
         <source>Disk info</source>
-        <translation type="unfinished"/>
+        <translation>Info Disco</translation>
     </message>
 </context>
 <context>

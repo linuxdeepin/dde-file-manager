@@ -2390,7 +2390,7 @@
         <location filename="../views/dfmsidebardeviceitem.cpp" line="162"/>
         <location filename="../views/dfmsidebarhomeitem.cpp" line="60"/>
         <source>Disk info</source>
-        <translation type="unfinished"/>
+        <translation>磁碟資訊</translation>
     </message>
 </context>
 <context>

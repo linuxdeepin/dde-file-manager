@@ -462,7 +462,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="427"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
-        <translation type="unfinished"/>
+        <translation>Ten plik jest niewykonywalny, czy chcesz dodać uprawnienia do wykonywania i uruchomić?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="441"/>
@@ -2390,7 +2390,7 @@
         <location filename="../views/dfmsidebardeviceitem.cpp" line="162"/>
         <location filename="../views/dfmsidebarhomeitem.cpp" line="60"/>
         <source>Disk info</source>
-        <translation type="unfinished"/>
+        <translation>Informacje o dysku</translation>
     </message>
 </context>
 <context>
