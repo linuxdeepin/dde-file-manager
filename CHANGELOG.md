@@ -1,3 +1,14 @@
+<a name="4.7.2"></a>
+## 4.7.2 (2019-01-02)
+
+
+#### Bug Fixes
+
+*   can disable screensaver on dde-desktop project ([d0f5393b](https://github.com/linuxdeepin/dde-file-manager/commit/d0f5393baf23947669785d00bdb532bc3cb153c6))
+* **dde-wallpaper:**  the svg cover image is blurry on HI-DPI ([3293f4b4](https://github.com/linuxdeepin/dde-file-manager/commit/3293f4b4021256eebffecd07d429947f8a2e893a))
+
+
+
 <a name="4.7.1.12"></a>
 ## 4.7.1.12 (2018-12-29)
 
