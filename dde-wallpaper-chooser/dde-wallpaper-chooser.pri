@@ -17,3 +17,10 @@ HEADERS  += $$PWD/frame.h \
 
 RESOURCES += \
     $$PWD/images.qrc
+
+!isEmpty(DISABLE_SCREENSAVER) {
+    DEFINES += DISABLE_SCREENSAVER
+} else {
+    dbus_screensaver.files = $$PWD/com.deepin.ScreenSaver.xml
+    DBUS_INTERFACES += dbus_screensaver
+}

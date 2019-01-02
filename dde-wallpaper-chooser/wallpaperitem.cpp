@@ -74,10 +74,17 @@ protected:
     {
         if (m_pixmap.isNull()) return;
 
+        QRect pixmap_geometry = m_pixmapBoxGeometry;
+
+        pixmap_geometry.setSize(m_pixmap.size());
+        pixmap_geometry.moveCenter(m_pixmapBoxGeometry.center());
+
         QPainter pa(this);
 
         pa.setOpacity(m_opacity);
-        pa.drawPixmap(m_pixmapBoxGeometry.topLeft(), m_pixmap, m_pixmapBoxGeometry.united(event->rect()));
+        pa.drawPixmap(pixmap_geometry.topLeft(), m_pixmap, pixmap_geometry.united(event->rect()));
+        pa.setPen(QColor(255, 255, 255, 25));
+        pa.drawRect(m_pixmapBoxGeometry.adjusted(0, 0, -1, -1));
     }
 
 private:
@@ -117,68 +124,92 @@ void WallpaperItem::initUI()
     buttonArea->setFixedSize(ItemWidth, ItemHeight);
     buttonArea->move(0, ItemHeight);
 
-    QVBoxLayout * buttonLayout = new QVBoxLayout(buttonArea);
-    buttonLayout->setSpacing(0);
-    buttonLayout->setMargin(0);
-
-    m_desktopButton = new Button;
-    m_desktopButton->setText(tr("Only desktop"));
-    m_desktopButton->setAttract(false);
-    m_lockButton = new Button;
-    m_lockButton->setText(tr("Only lock screen"));
-    m_lockButton->setAttract(false);
-
-    buttonLayout->addWidget(m_desktopButton);
-    buttonLayout->addWidget(m_lockButton);
-
-    connect(m_desktopButton, &Button::clicked, this, &WallpaperItem::desktopButtonClicked);
-    connect(m_lockButton, &Button::clicked, this, &WallpaperItem::lockButtonClicked);
+    m_buttonLayout = new QVBoxLayout(buttonArea);
+    m_buttonLayout->setSpacing(10);
+    m_buttonLayout->setContentsMargins(0, 10, 0, 10);
 }
 
 void WallpaperItem::initAnimation()
 {
     m_upAnim = new QPropertyAnimation(m_wrapper, "pos");
     m_upAnim->setDuration(300);
-    m_upAnim->setStartValue(QPoint(0, 0));
-    m_upAnim->setEndValue(QPoint(0, -ItemHeight));
 
     m_downAnim = new QPropertyAnimation(m_wrapper, "pos");
     m_downAnim->setDuration(300);
-    m_downAnim->setStartValue(QPoint(0, -ItemHeight));
-    m_downAnim->setEndValue(QPoint(0, 0));
 }
 
 void WallpaperItem::initPixmap()
 {
-    ThumbnailManager *tnm = ThumbnailManager::instance();
+    if (m_useThumbnailManager) {
+        ThumbnailManager *tnm = ThumbnailManager::instance();
 
-//    if (!tnm->find(QUrl::toPercentEncoding(m_path), &m_wrapper->m_pixmap)
-//            || m_wrapper->m_pixmap.size() != QSize(ItemWidth, ItemHeight)) {
-//        QFuture<QPixmap> f = QtConcurrent::run(ThumbnailImage, m_path);
-//        m_thumbnailerWatcher->setFuture(f);
-//    }
+    //        if (!tnm->find(QUrl::toPercentEncoding(m_path), &m_wrapper->m_pixmap)
+    //                || m_wrapper->m_pixmap.size() != QSize(ItemWidth, ItemHeight)) {
+    //            QFuture<QPixmap> f = QtConcurrent::run(ThumbnailImage, m_path);
+    //            m_thumbnailerWatcher->setFuture(f);
+    //        }
 
-    connect(tnm, &ThumbnailManager::thumbnailFounded, this, &WallpaperItem::onThumbnailFounded);
+        connect(tnm, &ThumbnailManager::thumbnailFounded, this, &WallpaperItem::onThumbnailFounded);
 
-    tnm->find(QUrl::toPercentEncoding(m_path));
+        tnm->find(QUrl::toPercentEncoding(m_path));
+    } else {
+        QIcon icon(m_path);
+
+        m_wrapper->m_pixmap = icon.pixmap(window()->windowHandle(), QSize(ItemWidth, ItemHeight));
+        m_wrapper->update();
+    }
+}
+
+QString WallpaperItem::data() const
+{
+    return m_data;
+}
+
+bool WallpaperItem::useThumbnailManager() const
+{
+    return m_useThumbnailManager;
+}
+
+QPushButton *WallpaperItem::addButton(const QString &id, const QString &text)
+{
+    Button *button = new Button(this);
+    button->setText(text);
+    button->setAttract(false);
+
+    connect(button, &Button::clicked, this, [this, id] {
+        emit buttonClicked(id);
+    });
+
+    m_buttonLayout->addWidget(button, 0, Qt::AlignHCenter | Qt::AlignTop);
+
+    return button;
 }
 
 void WallpaperItem::slideUp()
 {
-    if (m_upAnim->endValue().toPoint() != m_wrapper->pos()) {
-        m_upAnim->start();
-    }
+    if (m_wrapper->y() < 0)
+        return;
+
+    m_upAnim->setStartValue(QPoint(0, 0));
+    m_upAnim->setEndValue(QPoint(0, -ItemHeight / 2 * m_buttonLayout->count()));
+    m_upAnim->start();
 }
 
 void WallpaperItem::slideDown()
 {
-    if (m_downAnim->endValue().toPoint() != m_wrapper->pos()) {
-        m_downAnim->start();
-    }
+    if (m_wrapper->y() >= 0)
+        return;
+
+    m_downAnim->setStartValue(QPoint(0, -ItemHeight / 2 * m_buttonLayout->count()));
+    m_downAnim->setEndValue(QPoint(0, 0));
+    m_downAnim->start();
 }
 
 QString WallpaperItem::getPath() const
 {
+    if (m_path.startsWith("/"))
+        return m_path;
+
     QUrl url = QUrl::fromPercentEncoding(m_path.toUtf8());
     return url.toLocalFile();
 }
@@ -188,6 +219,16 @@ void WallpaperItem::thumbnailFinished()
     QFuture<QPixmap> f = m_thumbnailerWatcher->future();
     m_wrapper->m_pixmap = f.result();
     m_wrapper->update();
+}
+
+void WallpaperItem::setData(const QString &data)
+{
+    m_data = data;
+}
+
+void WallpaperItem::setUseThumbnailManager(bool useThumbnailManager)
+{
+    m_useThumbnailManager = useThumbnailManager;
 }
 
 void WallpaperItem::mousePressEvent(QMouseEvent *event)
