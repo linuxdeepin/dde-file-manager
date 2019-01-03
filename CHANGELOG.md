@@ -1,3 +1,13 @@
+<a name="4.7.3"></a>
+## 4.7.3 (2019-01-03)
+
+
+#### Bug Fixes
+
+*   mute error dialog for some type ([613ec1e7](https://github.com/linuxdeepin/dde-file-manager/commit/613ec1e733840b1bc1cb79856fbfd0c3f7d878b7))
+
+
+
 <a name="4.7.2"></a>
 ## 4.7.2 (2019-01-02)
 
