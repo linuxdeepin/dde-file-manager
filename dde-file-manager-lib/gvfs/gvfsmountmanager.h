@@ -153,6 +153,7 @@ public slots:
 
 private:
     GVolumeMonitor* m_gVolumeMonitor = NULL;
+    static bool errorCodeNeedSilent(int errorCode);
 };
 
 #endif // GVFSMOUNTMANAGER_H
