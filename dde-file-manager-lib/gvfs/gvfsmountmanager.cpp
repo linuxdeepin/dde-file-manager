@@ -1079,6 +1079,19 @@ void GvfsMountManager::listMountsBylsblk()
     }
 }
 
+bool GvfsMountManager::errorCodeNeedSilent(int errorCode)
+{
+    switch(errorCode) {
+    case G_IO_ERROR_NOT_SUPPORTED:
+    case G_IO_ERROR_DBUS_ERROR: // to avoid: An operation is already pending.
+        return true;
+    default:
+        break;
+    }
+
+    return false;
+}
+
 /*
  * get real mount url from  mounted_root_uri of info
  * smb://10.0.12.150/share -> file:///run/user/1000/gvfs/smb-share:server=10.0.12.150,share=share
@@ -1174,8 +1187,8 @@ void GvfsMountManager::mount_with_mounted_uri_done(GObject *object, GAsyncResult
 
     if (!succeeded)
     {
-        qCDebug(mountManager()) << "Error mounting location: "<< error->message;
-        if (!silent) {
+        qCDebug(mountManager()) << "Error mounting location: " << error->message << error->code;
+        if (!silent && !errorCodeNeedSilent(error->code)) {
             fileSignalManager->requestShowErrorDialog(QString::fromLocal8Bit(error->message), QString(" "));
         }
     }
@@ -1237,8 +1250,9 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
     succeeded = g_volume_mount_finish (volume, res, &error);
 
     if (!succeeded) {
-        qCDebug(mountManager()) << "Error mounting :" << g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE) << error->message << silent;
-        if (!silent) {
+        qCDebug(mountManager()) << "Error mounting: " << g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE)
+                                << error->message << silent << error->code;
+        if (!silent && !errorCodeNeedSilent(error->code)) {
             fileSignalManager->requestShowErrorDialog(QString::fromLocal8Bit(error->message), QString(" "));
         }
     } else {
