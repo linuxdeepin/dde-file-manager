@@ -987,7 +987,7 @@ void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
                     messageLabel->setScaledContents(true);
 
                     QString message1 = tr("1. Reboot to enter Windows");
-                    QString message2 = tr("2. Select Reboot");
+                    QString message2 = tr("2. Uncheck \"Turn on fast startup\" and \"Hibernate\" in shutdown settings and reboot");
                     QString message3 = tr("3. Reboot and enter deepin");
 
                     messageLabel->setText(QString("%1\n%2\n%3").arg(message1, message2, message3));
