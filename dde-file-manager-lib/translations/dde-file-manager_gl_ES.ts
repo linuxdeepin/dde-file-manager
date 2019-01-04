@@ -71,17 +71,17 @@
 <context>
     <name>ComputerView</name>
     <message>
-        <location filename="../views/computerview.cpp" line="568"/>
+        <location filename="../views/computerview.cpp" line="567"/>
         <source>My Directories</source>
         <translation>Os meus cartafoles</translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="574"/>
+        <location filename="../views/computerview.cpp" line="573"/>
         <source>Internal Disk</source>
         <translation>Disco interno</translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="580"/>
+        <location filename="../views/computerview.cpp" line="579"/>
         <source>External Disk</source>
         <translation>Disco externo</translation>
     </message>
@@ -99,7 +99,7 @@
     <message>
         <location filename="../controllers/dfmtagcrumbcontroller.cpp" line="55"/>
         <source>Tag information</source>
-        <translation type="unfinished"/>
+        <translation>Información da etiqueta</translation>
     </message>
 </context>
 <context>
@@ -107,67 +107,67 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="163"/>
         <source>Permission error</source>
-        <translation type="unfinished"/>
+        <translation>Erro do permiso</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="165"/>
         <source>The action is denied</source>
-        <translation type="unfinished"/>
+        <translation>A acción foi invalidada</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="171"/>
         <source>Failed to open the file</source>
-        <translation type="unfinished"/>
+        <translation>Produciuse un erro ao abrir o arquivo</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="173"/>
         <source>Failed to read the file</source>
-        <translation type="unfinished"/>
+        <translation>Produciuse un erro ao abrir o arquivo</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="175"/>
         <source>Failed to write the file</source>
-        <translation type="unfinished"/>
+        <translation>Produciuse un erro ao escribir o arquivo</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="177"/>
         <source>Failed to create the directory</source>
-        <translation type="unfinished"/>
+        <translation>Produciuse un erro ao crear o cartafol</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="179"/>
         <source>Failed to delete the file</source>
-        <translation type="unfinished"/>
+        <translation>Produciuse un erro ao eliminar o arquivo</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="181"/>
         <source>Failed to move the file</source>
-        <translation type="unfinished"/>
+        <translation>Produciuse un erro ao mover o arquivo</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="183"/>
         <source>Original file does not exist</source>
-        <translation type="unfinished"/>
+        <translation>O arquivo orixinal non existe</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="185"/>
         <source>Failed, file size must be less than 4GB</source>
-        <translation type="unfinished"/>
+        <translation>Fallo, o tamaño do ficheiro ten que ser menor de 4GB</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="187"/>
         <source>Target disk doesn&apos;t have enough space</source>
-        <translation type="unfinished"/>
+        <translation>O disco de destino non ten espazo abondo</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="189"/>
         <source>File integrity was damaged</source>
-        <translation type="unfinished"/>
+        <translation>A integridade do arquivo foi danada</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="191"/>
         <source>The target device is read only</source>
-        <translation type="unfinished"/>
+        <translation>O arquivo só se pode leer</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="193"/>
@@ -183,33 +183,33 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="802"/>
         <source>Failed to create the directory, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>Produciuse un erro ao crear o cartafol debido a: %1</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="899"/>
         <location filename="../io/dfilecopymovejob.cpp" line="921"/>
         <source>Failed to open the file, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>Produciuse un erro ao abrir o arquivo debido a: %1</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="990"/>
         <source>Failed to read the file, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>Produciuse un erro ao leer o arquivo debido a: %1</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1046"/>
         <source>Failed to write the file, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>Produciuse un erro ao escribir o arquivo debido a: %1</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1130"/>
         <source>File integrity was damaged, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>A integridade do arquivo foi danada debido a: %1</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1189"/>
         <source>Failed to delete the file, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>Produciuse un erro ao eliminar o arquivo debido a: %1</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1249"/>
@@ -222,7 +222,7 @@
     <message>
         <location filename="../views/dfiledialog.cpp" line="1019"/>
         <source>%1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"/>
+        <translation>%1 xa existe, queres substituílo?</translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="1020"/>
@@ -240,7 +240,7 @@
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="842"/>
         <source>Dark Theme</source>
-        <translation type="unfinished"/>
+        <translation>Tema Escuro</translation>
     </message>
 </context>
 <context>
@@ -252,7 +252,7 @@
         <translation>Nome</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="996"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="997"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1270"/>
         <location filename="../models/searchfileinfo.cpp" line="121"/>
         <source>Time modified</source>
@@ -274,10 +274,10 @@
         <translation>Hora de creación</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="769"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="803"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1278"/>
         <source>Last access</source>
-        <translation type="unfinished"/>
+        <translation>Último acceso</translation>
     </message>
     <message>
         <location filename="../models/searchfileinfo.cpp" line="119"/>
@@ -288,7 +288,7 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2615"/>
+        <location filename="../views/dfileview.cpp" line="2623"/>
         <source>(Reverse)</source>
         <translation type="unfinished"/>
     </message>
@@ -298,7 +298,7 @@
     <message>
         <location filename="../interfaces/dfileviewhelper.cpp" line="524"/>
         <source>Add tag &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Engadir etiqueta &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -378,276 +378,276 @@
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="114"/>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="129"/>
         <source>%1 Volume</source>
-        <translation type="unfinished"/>
+        <translation>%1 Volume</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="50"/>
         <source>Data Disk</source>
         <comment>Data Partition</comment>
-        <translation type="unfinished"/>
+        <translation>Disco de datos</translation>
     </message>
 </context>
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="358"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="863"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="878"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="340"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="845"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="860"/>
         <source>Operation failed!</source>
         <translation>Faiou a operación!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="359"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="341"/>
         <source>Target folder is inside the source folder!</source>
         <translation>O cartafol destino está no cartafol orixe!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="361"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="785"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="798"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="343"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="767"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="780"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="789"/>
         <location filename="../dialogs/dialogmanager.cpp" line="807"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="825"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="870"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="881"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1227"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="852"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="863"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1209"/>
         <source>OK</source>
         <translation>Aceptar</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="384"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="366"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>Queres executar %1 ou amosar o seu contido?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="385"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="367"/>
         <source>It is an executable text file.</source>
         <translation>É un ficheiro de texto executable.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="388"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="412"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="428"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="463"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="521"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="664"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="693"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="948"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1025"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="370"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="394"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="410"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="445"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="503"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="646"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="675"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="930"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1007"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="388"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="414"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="429"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="370"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="396"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="411"/>
         <source>Run</source>
         <translation>Executar</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="388"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="413"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="370"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="395"/>
         <source>Run in terminal</source>
         <translation>Executar no terminal</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="388"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="370"/>
         <source>Display</source>
         <translation>Amosar</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="411"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="393"/>
         <source>It is an executable file.</source>
         <translation>É un ficheiro executable.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="427"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="409"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="441"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="423"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>&quot;%1&quot; xa existe, por favor emprega outro nome.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="443"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="693"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="910"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1047"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1168"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="425"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="675"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="892"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1029"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1150"/>
         <source>Confirm</source>
         <translation>Confirmar</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="454"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="436"/>
         <source>Are you sure to empty %1 item?</source>
         <translation>Tes a certeza de querer baleirar %1 elemento?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="455"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="437"/>
         <source>Are you sure to empty %1 items?</source>
         <translation>Tes a certeza de querer baleirar %1 elementos?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="456"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="438"/>
         <source>Permanently delete %1?</source>
         <translation>Eliminar permanentemente %1?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="457"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="439"/>
         <source>Permanently delete %1 items?</source>
         <translation>Eliminar permanentemente %1 elementos?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="463"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="445"/>
         <source>Delete</source>
         <translation>Eliminar</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="474"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="456"/>
         <source>Empty</source>
         <translation>Baleiro</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="505"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="487"/>
         <source>This action cannot be restored</source>
         <translation>Está acción non se pode restaurar</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="518"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="500"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>Sentímolo, non foi posíbel atopar o teu cartafol de marcadores, eliminalo?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="521"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="503"/>
         <source>Remove</source>
         <translation>Eliminar</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="661"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="643"/>
         <source>Disk file is being used, can not unmount now</source>
         <translation>Estase usando o ficheiro do disco, polo que non se pode desmontar neste intre</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="662"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="644"/>
         <source>Name: </source>
         <translation>Nome:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="664"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="646"/>
         <source>Force unmount</source>
         <translation>Forzar o desmontado</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="687"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="669"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>%1 que este atallo cambiouse ou foi movido</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="691"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="673"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>Queres eliminar este atallo?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="721"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="703"/>
         <source>Version:</source>
         <translation>Versión:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="723"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="705"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
         <translation>O Xestor de Ficheiros é unha ferramenta independente desenvolvida por Deepin Technology, con funcións de busca, copia, envío ao lixo, compresión/descompresión e propiedade de ficheiros.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="784"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="766"/>
         <source>Target disk doesn&apos;t have enough space, unable to copy!</source>
         <translation>O disco de destino non ten espazo abondo, non é posible copiar!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="796"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="778"/>
         <source>Failed, file size must be less than 4GB.</source>
         <translation>Fallo, o tamaño do ficheiro ten que ser menor de 4GB.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="805"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="787"/>
         <source>Fail to create symlink, cause:</source>
         <translation>Non se puido crear a ligazón simbólica, causa:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="823"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="805"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>Os ficheiros seleccionados conteñen ficheiros/cartafoles do sistema, e non poden ser eliminados</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="865"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="847"/>
         <source>Target file removed or location changed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="867"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="849"/>
         <source>%1 files failed to restore, target file removed or location changed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="879"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="901"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="861"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="883"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="921"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="903"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1225"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="990"/>
+        <source>2. Uncheck &quot;Turn on fast startup&quot; and &quot;Hibernate&quot; in shutdown settings and reboot</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="1207"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="949"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="931"/>
         <source>View</source>
         <translation>Ver</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="410"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="392"/>
         <source>Do you want to run %1?</source>
-        <translation type="unfinished"/>
+        <translation>Tes a certeza de querer executar %1?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="993"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="975"/>
         <source>Mount partition%1 to be read only</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="997"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="979"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1001"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="983"/>
         <source>Please restore by the following steps to normally access Windows disk</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1007"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="989"/>
         <source>1. Reboot to enter Windows</source>
-        <translation type="unfinished"/>
+        <translation>1. Reinicia para entrar en Windows</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="991"/>
+        <source>3. Reboot and enter deepin</source>
+        <translation>3. Reinicia e entra en Deepin</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1008"/>
-        <source>2. Select Reboot</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1009"/>
-        <source>3. Reboot and enter deepin</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1026"/>
         <source>Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Reinicia</translation>
     </message>
 </context>
 <context>
@@ -922,7 +922,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="112"/>
         <location filename="../configure/global-setting-template.js" line="112"/>
         <source>Default view:</source>
-        <translation type="unfinished"/>
+        <translation>Vista predefinida:</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="116"/>
@@ -999,7 +999,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="263"/>
         <location filename="../configure/global-setting-template.js" line="262"/>
         <source>Hide system disk</source>
-        <translation type="unfinished"/>
+        <translation>Ocultar o disco do sistema</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="182"/>
@@ -1076,7 +1076,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="239"/>
         <location filename="../configure/global-setting-template.js" line="238"/>
         <source>Open after auto mount</source>
-        <translation type="unfinished"/>
+        <translation>Abrir despois de montar automaticamente</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="247"/>
@@ -1098,40 +1098,40 @@
     <message>
         <location filename="../gvfs/gvfsmountclient.cpp" line="149"/>
         <source>Mounting device error</source>
-        <translation type="unfinished"/>
+        <translation>Error montando o dispositivo</translation>
     </message>
 </context>
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1317"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1328"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1320"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1330"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1359"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1480"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1511"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1331"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1341"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1370"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1491"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1522"/>
         <source>Confirm</source>
         <translation>Confirmar</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1327"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1508"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1338"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1519"/>
         <source>Cannot find the mounting device</source>
-        <translation type="unfinished"/>
+        <translation>Non se encontra o dispositivo</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1356"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1367"/>
         <source>Cannot unmount the device</source>
-        <translation type="unfinished"/>
+        <translation>Non se pode desmontar o dispositivo</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1476"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1487"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Non se pode expulsar o dispositivo &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -1245,7 +1245,7 @@
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="52"/>
         <source>Please input password to decrypt the disk</source>
-        <translation type="unfinished"/>
+        <translation>Por favor, introduza o contrasinal para desencriptar o disco</translation>
     </message>
 </context>
 <context>
@@ -1345,22 +1345,22 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="575"/>
         <source>Original folder</source>
-        <translation type="unfinished"/>
+        <translation>Cartafol orixinal</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="578"/>
         <source>Original file</source>
-        <translation type="unfinished"/>
+        <translation>Ficheiro orixinal</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="588"/>
         <source>Target folder</source>
-        <translation type="unfinished"/>
+        <translation>Cartafol destino</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="591"/>
         <source>Target file</source>
-        <translation type="unfinished"/>
+        <translation>Ficheiro destino</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="576"/>
@@ -1411,37 +1411,37 @@
 <context>
     <name>OpenWithDialog</name>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="210"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="211"/>
         <source>Open with</source>
         <translation>Abrir con</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="227"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="230"/>
         <source>Add other programs</source>
         <translation>Engadir outros programas</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="228"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="231"/>
         <source>Set as default</source>
         <translation>Definir como predefinido</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="230"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="233"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="231"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="234"/>
         <source>Choose</source>
         <translation>Escoller</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="235"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="238"/>
         <source>Recommended Applications</source>
-        <translation type="unfinished"/>
+        <translation>Aplicacións recomendadas</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="237"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="240"/>
         <source>Other Applications</source>
         <translation>Outras aplicacións</translation>
     </message>
@@ -1513,7 +1513,7 @@
     <message>
         <location filename="../controllers/pathmanager.cpp" line="67"/>
         <source>Recent</source>
-        <translation type="unfinished"/>
+        <translation>Recente</translation>
     </message>
 </context>
 <context>
@@ -1558,7 +1558,7 @@
     <name>QObject</name>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="790"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="765"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
         <source>Size</source>
         <translation>Tamaño</translation>
     </message>
@@ -1571,7 +1571,7 @@
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="791"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="766"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="800"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
@@ -1582,14 +1582,14 @@
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="793"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="768"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="802"/>
         <source>Time modified</source>
         <translation>Data de modificación</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="815"/>
         <source>Link path</source>
-        <translation type="unfinished"/>
+        <translation>Ruta enlazada</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="855"/>
@@ -1617,19 +1617,19 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="999"/>
         <source>Access denied</source>
-        <translation type="unfinished"/>
+        <translation>Acceso denegado</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1000"/>
         <location filename="../dialogs/propertydialog.cpp" line="1010"/>
         <source>Executable</source>
-        <translation type="unfinished"/>
+        <translation>Executable</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1001"/>
         <location filename="../dialogs/propertydialog.cpp" line="1002"/>
         <source>Write only</source>
-        <translation type="unfinished"/>
+        <translation>Só escribir</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1003"/>
@@ -1641,7 +1641,7 @@
         <location filename="../dialogs/propertydialog.cpp" line="1005"/>
         <location filename="../dialogs/propertydialog.cpp" line="1006"/>
         <source>Read-write</source>
-        <translation type="unfinished"/>
+        <translation>Ler-escribir</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1080"/>
@@ -1661,8 +1661,8 @@
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="75"/>
         <location filename="../dialogs/previewdialog.cpp" line="156"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="717"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="720"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="751"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="754"/>
         <source>Open</source>
         <translation>Abrir</translation>
     </message>
@@ -1680,81 +1680,83 @@
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="194"/>
         <source>Size: 0</source>
-        <translation type="unfinished"/>
+        <translation>Tamaño: 0</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="200"/>
         <source>Items: %1</source>
-        <translation type="unfinished"/>
+        <translation>Elemento: %1</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="718"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="721"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="752"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="755"/>
         <location filename="../interfaces/dfmsidebaritem.cpp" line="478"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="78"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="91"/>
         <location filename="../views/dfmsidebarhomeitem.cpp" line="50"/>
         <location filename="../views/dfmsidebarnetworkitem.cpp" line="43"/>
         <location filename="../views/dfmsidebarrecentitem.cpp" line="47"/>
+        <location filename="../views/dfmsidebarrootitem.cpp" line="48"/>
         <location filename="../views/dfmsidebartagitem.cpp" line="52"/>
         <location filename="../views/dfmsidebartrashitem.cpp" line="49"/>
         <source>Open in new window</source>
         <translation>Abrir nunha xanela nova</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="719"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="722"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="753"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="756"/>
         <location filename="../interfaces/dfmsidebaritem.cpp" line="482"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="82"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="99"/>
         <location filename="../views/dfmsidebarhomeitem.cpp" line="54"/>
         <location filename="../views/dfmsidebarnetworkitem.cpp" line="47"/>
         <location filename="../views/dfmsidebarrecentitem.cpp" line="51"/>
+        <location filename="../views/dfmsidebarrootitem.cpp" line="52"/>
         <location filename="../views/dfmsidebartagitem.cpp" line="56"/>
         <location filename="../views/dfmsidebartrashitem.cpp" line="53"/>
         <source>Open in new tab</source>
         <translation>Abrir nunha lapela nova</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="724"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="758"/>
         <source>Open with</source>
         <translation>Abrir con</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="727"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="761"/>
         <source>Compress</source>
         <translation>Comprimir</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="728"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="762"/>
         <source>Extract</source>
         <translation>Descomprimir</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="729"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="763"/>
         <source>Extract here</source>
         <translation>Descomprimir aquí</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="730"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="764"/>
         <source>Cut</source>
         <translation>Cortar</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="731"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="765"/>
         <source>Copy</source>
         <translation>Copiar</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="732"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="766"/>
         <source>Paste</source>
         <translation>Pegar</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="382"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="733"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="734"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="792"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="767"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="768"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="826"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="86"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="110"/>
         <location filename="../views/dfmsidebartagitem.cpp" line="60"/>
@@ -1763,34 +1765,34 @@
         <translation>Renomear</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="763"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="797"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="91"/>
         <location filename="../views/dfmsidebartagitem.cpp" line="65"/>
         <source>Remove</source>
         <translation>Eliminar</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="736"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="770"/>
         <source>Create link</source>
         <translation>Crear ligazón</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="737"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="771"/>
         <source>Send to desktop</source>
         <translation>Enviar ao escritorio</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="738"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="772"/>
         <source>Send to</source>
-        <translation type="unfinished"/>
+        <translation>Enviar a</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="739"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="773"/>
         <source>Add to bookmark</source>
         <translation>Engadir aos marcadores</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="742"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="776"/>
         <location filename="../interfaces/dfmsidebaritem.cpp" line="486"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="95"/>
         <location filename="../views/dfmsidebarhomeitem.cpp" line="67"/>
@@ -1799,147 +1801,147 @@
         <translation>Propiedades</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="744"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="778"/>
         <source>New folder</source>
         <translation>Novo cartafol</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="745"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="779"/>
         <source>New window</source>
         <translation>Nova xanela</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="746"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="780"/>
         <source>Select all</source>
         <translation>Seleccionar todo</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="747"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="781"/>
         <source>Clear recent history</source>
         <translation>Limpar o historial recente</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="748"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="782"/>
         <location filename="../views/dfmsidebartrashitem.cpp" line="57"/>
         <source>Empty Trash</source>
         <translation>Baleirar o lixo</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="749"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="783"/>
         <source>Display as</source>
         <translation>Amosar como</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="750"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="784"/>
         <source>Sort by</source>
         <translation>Ordenar por</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="751"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="785"/>
         <source>New document</source>
         <translation>Novo documento</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="752"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="786"/>
         <source>Office Text Document</source>
         <translation>Documento de texto</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="753"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="787"/>
         <source>Spreadsheet Document</source>
         <translation>Folla de cálculo</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="754"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="788"/>
         <source>Presentation Document</source>
         <translation>Documento de presentación </translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="755"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="789"/>
         <source>Plain Text Document</source>
         <translation>Documento de texto simple</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="767"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="801"/>
         <source>Time created</source>
         <translation>Data de creación</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="778"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="812"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="155"/>
         <source>Log out and unmount</source>
         <translation>Saír e desmontar</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="780"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="814"/>
         <source>Source path</source>
         <translation>Ruta orixe</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="782"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="816"/>
         <source>Share folder</source>
         <translation>Cartafol compartido</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="783"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="817"/>
         <source>Cancel sharing</source>
         <translation>Cancelar compartición</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="784"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="818"/>
         <source>Set share password</source>
         <translation>Fixar o contrasinal para compartir</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="785"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="819"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="147"/>
         <source>Format</source>
         <translation>Formatar</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="788"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="822"/>
         <source>Tag information</source>
-        <translation type="unfinished"/>
+        <translation>Información da etiqueta</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="723"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="757"/>
         <source>Open in new window as admin</source>
         <translation>Abrir nunha nova xanela como administrador</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="725"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="759"/>
         <source>Select default program</source>
         <translation>Seleccionar programa predefinido</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="726"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="760"/>
         <source>Open file location</source>
-        <translation type="unfinished"/>
+        <translation>Abrir localización do ficheiro</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="735"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="769"/>
         <source>Remove bookmark</source>
-        <translation type="unfinished"/>
+        <translation>Quitar dos marcadores</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="740"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="741"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="790"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="774"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="775"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="824"/>
         <source>Delete</source>
         <translation>Eliminar</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="756"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="790"/>
         <source>Open in terminal</source>
         <translation>Abrir no termial</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="757"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="791"/>
         <source>Restore</source>
         <translation>Restaurar</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="758"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="792"/>
         <source>Restore all</source>
         <translation>Restaurar todo</translation>
     </message>
@@ -1951,73 +1953,73 @@
     <message>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="380"/>
         <source>Open after auto mount</source>
-        <translation type="unfinished"/>
+        <translation>Abrir despois de montar automaticamente</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="759"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="793"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="129"/>
         <source>Mount</source>
         <translation>Montar</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="760"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="794"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="143"/>
         <source>Unmount</source>
         <translation>Desmontar</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="761"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="795"/>
         <source>Eject</source>
         <translation>Expulsar</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="762"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="796"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="123"/>
         <source>Safely Remove</source>
-        <translation type="unfinished"/>
+        <translation>Eliminar de forma segura</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="764"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="798"/>
         <source>Name</source>
         <translation>Nome</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="770"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="804"/>
         <source>Settings</source>
         <translation>Axustes</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="771"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="805"/>
         <source>Help</source>
         <translation>Axuda</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="772"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="806"/>
         <source>About</source>
         <translation>Canto a</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="773"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="807"/>
         <source>Exit</source>
         <translation>Saír</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="774"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="808"/>
         <source>Icon</source>
         <translation>Icona</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="775"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="809"/>
         <source>List</source>
         <translation>Listaxe</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="776"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="810"/>
         <source>Extend</source>
         <translation>Estender</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="777"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="811"/>
         <source>Set as wallpaper</source>
         <translation>Definir coma fondo de pantalla</translation>
     </message>
@@ -2086,19 +2088,19 @@
         <translation>Crear ligazón simbólica</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="781"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="815"/>
         <source>Path</source>
         <translation>Ruta</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="779"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="813"/>
         <location filename="../models/trashfileinfo.cpp" line="335"/>
         <location filename="../models/trashfileinfo.cpp" line="343"/>
         <source>Time deleted</source>
         <translation>Data de eliminación</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1203"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1204"/>
         <source>Loading...</source>
         <translation>Cargando...</translation>
     </message>
@@ -2176,61 +2178,61 @@
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="141"/>
         <source>Mode:</source>
-        <translation type="unfinished"/>
+        <translation>Modo:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="143"/>
         <location filename="../views/drenamebar.cpp" line="234"/>
         <source>Replace Text</source>
-        <translation type="unfinished"/>
+        <translation>Substituír Texto</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="143"/>
         <location filename="../views/drenamebar.cpp" line="234"/>
         <source>Add Text</source>
-        <translation type="unfinished"/>
+        <translation>Engadir Texto</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="143"/>
         <location filename="../views/drenamebar.cpp" line="234"/>
         <source>Custom Text</source>
-        <translation type="unfinished"/>
+        <translation>Texto personalizado</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="149"/>
         <source>Find:</source>
-        <translation type="unfinished"/>
+        <translation>Buscar:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="170"/>
         <source>Replace:</source>
-        <translation type="unfinished"/>
+        <translation>Substituír:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="172"/>
         <location filename="../views/drenamebar.cpp" line="251"/>
         <source>Optional</source>
-        <translation type="unfinished"/>
+        <translation>Opcional</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="189"/>
         <source>Add:</source>
-        <translation type="unfinished"/>
+        <translation>Engadir:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="208"/>
         <source>Location:</source>
-        <translation type="unfinished"/>
+        <translation>Localización:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="215"/>
         <source>File name:</source>
-        <translation type="unfinished"/>
+        <translation>Nome do ficheiro:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="232"/>
         <source>+SN:</source>
-        <translation type="unfinished"/>
+        <translation>+SN:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="152"/>
@@ -2241,24 +2243,24 @@
         <location filename="../views/drenamebar.cpp" line="276"/>
         <location filename="../views/drenamebar.cpp" line="286"/>
         <source>Required</source>
-        <translation type="unfinished"/>
+        <translation>Requirido</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="210"/>
         <location filename="../views/drenamebar.cpp" line="269"/>
         <source>Before file name</source>
-        <translation type="unfinished"/>
+        <translation>Antes do nome do ficheiro</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="210"/>
         <location filename="../views/drenamebar.cpp" line="269"/>
         <source>After file name</source>
-        <translation type="unfinished"/>
+        <translation>Despois do nome do ficheiro</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="241"/>
         <source>Find</source>
-        <translation type="unfinished"/>
+        <translation>Buscar</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="250"/>
@@ -2268,22 +2270,22 @@
     <message>
         <location filename="../views/drenamebar.cpp" line="259"/>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>Engadir</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="268"/>
         <source>Location</source>
-        <translation type="unfinished"/>
+        <translation>Localización</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="275"/>
         <source>File name</source>
-        <translation type="unfinished"/>
+        <translation>Nome do ficheiro</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="284"/>
         <source>+SN</source>
-        <translation type="unfinished"/>
+        <translation>+SN</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="292"/>
@@ -2297,9 +2299,9 @@
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1191"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1173"/>
         <source>Rename %1 Files</source>
-        <translation type="unfinished"/>
+        <translation>Renomear %1 ficheiros</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="150"/>
@@ -2314,12 +2316,12 @@
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="167"/>
         <source>Total size</source>
-        <translation type="unfinished"/>
+        <translation>Tamaño total</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="168"/>
         <source>Number of files</source>
-        <translation type="unfinished"/>
+        <translation>Número de ficheiros</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="168"/>
@@ -2329,52 +2331,52 @@
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="173"/>
         <source>Access time</source>
-        <translation type="unfinished"/>
+        <translation>Tempo de acceso</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
         <source>Modify time</source>
-        <translation type="unfinished"/>
+        <translation>Tempo de modificación</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="49"/>
         <source>Orange</source>
-        <translation type="unfinished"/>
+        <translation>Laranxa</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="50"/>
         <source>Red</source>
-        <translation type="unfinished"/>
+        <translation>Vermello</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="51"/>
         <source>Purple</source>
-        <translation type="unfinished"/>
+        <translation>Morado</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="52"/>
         <source>Navy-blue</source>
-        <translation type="unfinished"/>
+        <translation>Azul marino</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="53"/>
         <source>Azure</source>
-        <translation type="unfinished"/>
+        <translation>Azul</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="54"/>
         <source>Green</source>
-        <translation type="unfinished"/>
+        <translation>Verde</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="55"/>
         <source>Yellow</source>
-        <translation type="unfinished"/>
+        <translation>Amarelo</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="56"/>
         <source>Gray</source>
-        <translation type="unfinished"/>
+        <translation>Gris</translation>
     </message>
     <message>
         <location filename="../views/dtagedit.cpp" line="91"/>
@@ -2389,8 +2391,9 @@
     <message>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="162"/>
         <location filename="../views/dfmsidebarhomeitem.cpp" line="60"/>
+        <location filename="../views/dfmsidebarrootitem.cpp" line="56"/>
         <source>Disk info</source>
-        <translation type="unfinished"/>
+        <translation>Información do disco</translation>
     </message>
 </context>
 <context>
@@ -2706,7 +2709,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="62"/>
         <source>Ctrl + 1 </source>
-        <translation type="unfinished"/>
+        <translation>Ctrl + 1 </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="63"/>
@@ -2716,7 +2719,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="63"/>
         <source>Ctrl + 2 </source>
-        <translation type="unfinished"/>
+        <translation>Ctrl + 2</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="64"/>
@@ -2842,7 +2845,7 @@
     <message>
         <location filename="../deviceinfo/udisklistener.cpp" line="186"/>
         <source>Failed to rename the label</source>
-        <translation type="unfinished"/>
+        <translation>Produciuse un erro ao cambiar o nome da etiqueta</translation>
     </message>
 </context>
 <context>
@@ -2858,7 +2861,7 @@
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="416"/>
         <source>Kindly Reminder</source>
-        <translation type="unfinished"/>
+        <translation>Recordatorio</translation>
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="416"/>

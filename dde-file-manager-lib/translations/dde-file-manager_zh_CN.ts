@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -604,7 +602,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="990"/>
         <source>2. Uncheck &quot;Turn on fast startup&quot; and &quot;Hibernate&quot; in shutdown settings and reboot</source>
-        <translation type="unfinished"></translation>
+        <translation>2. 关闭快速启动和休眠，然后重启系统</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1207"/>
@@ -640,10 +638,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="989"/>
         <source>1. Reboot to enter Windows</source>
         <translation>1.重启电脑进入Windows系统</translation>
-    </message>
-    <message>
-        <source>2. Select Reboot</source>
-        <translation type="vanished">2.选择重启系统</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="991"/>
