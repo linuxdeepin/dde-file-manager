@@ -12,12 +12,17 @@
         <translation>Автоматическое размещение</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2350"/>
+        <location filename="../view/canvasgridview.cpp" line="2351"/>
+        <source>Wallpaper</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../view/canvasgridview.cpp" line="2353"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Обои и Заставки рабочего стола</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2427"/>
+        <location filename="../view/canvasgridview.cpp" line="2431"/>
         <source>Properties</source>
         <translation>Свойства</translation>
     </message>

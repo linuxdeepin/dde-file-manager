@@ -12,12 +12,17 @@
         <translation>Disposición automática</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2350"/>
-        <source>Wallpaper and Screensaver</source>
+        <location filename="../view/canvasgridview.cpp" line="2351"/>
+        <source>Wallpaper</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2427"/>
+        <location filename="../view/canvasgridview.cpp" line="2353"/>
+        <source>Wallpaper and Screensaver</source>
+        <translation>Fondo de pantalla e Salvapantalla</translation>
+    </message>
+    <message>
+        <location filename="../view/canvasgridview.cpp" line="2431"/>
         <source>Properties</source>
         <translation>Propiedades</translation>
     </message>
@@ -70,37 +75,37 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="302"/>
         <source>Never</source>
-        <translation type="unfinished"/>
+        <translation>Nunca</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="303"/>
         <source>Wait:</source>
-        <translation type="unfinished"/>
+        <translation>Espere:</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="334"/>
         <source>Wallpaper</source>
-        <translation type="unfinished"/>
+        <translation>Fondo de pantalla</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="334"/>
         <source>Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Salvapantallas</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="396"/>
         <source>Only desktop</source>
-        <translation type="unfinished"/>
+        <translation>Só no escritorio</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="397"/>
         <source>Only lock screen</source>
-        <translation type="unfinished"/>
+        <translation>Só na pantalla de bloqueo</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="425"/>
         <source>Apply</source>
-        <translation type="unfinished"/>
+        <translation>Confirmar</translation>
     </message>
 </context>
 <context>
