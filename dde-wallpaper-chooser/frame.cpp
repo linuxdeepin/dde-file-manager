@@ -211,6 +211,12 @@ void Frame::setMode(int mode)
     if (m_mode == mode)
         return;
 
+#ifndef DISABLE_SCREENSAVER
+    if (m_mode == ScreenSaverMode) {
+        m_dbusScreenSaver->Stop();
+    }
+#endif
+
     m_mode = Mode(mode);
 
     reLayoutTools();
