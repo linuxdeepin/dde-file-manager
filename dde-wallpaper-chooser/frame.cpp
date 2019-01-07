@@ -197,10 +197,12 @@ void Frame::paintEvent(QPaintEvent *event)
 
 bool Frame::event(QEvent *event)
 {
+#ifndef DISABLE_SCREENSAVER
     if (event->type() == QEvent::LayoutRequest
             || event->type() == QEvent::Resize) {
         adjustModeSwitcherPoint();
     }
+#endif
 
     return DBlurEffectWidget::event(event);
 }
