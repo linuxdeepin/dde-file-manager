@@ -1,3 +1,16 @@
+<a name="4.7.4"></a>
+## 4.7.4 (2019-01-07)
+
+
+#### Bug Fixes
+
+* **dde-desktop:**
+  *  fix the "Wallpaper" to "Set Wallpaper" ([279251f2](https://github.com/linuxdeepin/dde-file-manager/commit/279251f2665fcc86339a35ed90383e9551a33311))
+  *  translate error: "Wallpaper" on chinese ([dfa567da](https://github.com/linuxdeepin/dde-file-manager/commit/dfa567da1aa5366b271c7e6a540718f186845142))
+* **dde-wallpaper:**  the tool widgets and the switch mode widget is overlap ([29d7c09d](https://github.com/linuxdeepin/dde-file-manager/commit/29d7c09d3d1962f215797f54db24595267cbb267))
+
+
+
 <a name="4.7.3"></a>
 ## 4.7.3 (2019-01-03)
 
