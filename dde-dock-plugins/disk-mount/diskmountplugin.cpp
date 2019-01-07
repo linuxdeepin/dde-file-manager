@@ -48,9 +48,6 @@ DiskMountPlugin::DiskMountPlugin(QObject *parent)
     m_tipsLabel->setText(tr("Disk"));
     m_tipsLabel->setStyleSheet("color:white;"
                                "padding:0px 1px;");
-
-    connect(m_diskPluginItem, &DiskPluginItem::requestContextMenu,
-            [=](const QString &itemKey) { m_proxyInter->requestContextMenu(this, itemKey); });
 }
 
 const QString DiskMountPlugin::pluginName() const

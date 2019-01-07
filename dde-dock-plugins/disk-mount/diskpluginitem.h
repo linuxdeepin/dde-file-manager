@@ -39,9 +39,6 @@ class DiskPluginItem : public QWidget
 public:
     explicit DiskPluginItem(QWidget *parent = 0);
 
-signals:
-    void requestContextMenu(const QString &itemKey) const;
-
 public slots:
     void setDockDisplayMode(const Dock::DisplayMode mode);
     void updateIcon();
@@ -49,7 +46,6 @@ public slots:
 protected:
     void paintEvent(QPaintEvent *e);
     void resizeEvent(QResizeEvent *e);
-    void mousePressEvent(QMouseEvent *e);
     QSize sizeHint() const;
 
 private:

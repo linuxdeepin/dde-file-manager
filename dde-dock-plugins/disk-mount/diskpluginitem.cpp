@@ -61,20 +61,6 @@ void DiskPluginItem::resizeEvent(QResizeEvent *e)
     updateIcon();
 }
 
-void DiskPluginItem::mousePressEvent(QMouseEvent *e)
-{
-    if (e->button() != Qt::RightButton)
-        return QWidget::mousePressEvent(e);
-
-    const QPoint p(e->pos() - rect().center());
-    if (p.manhattanLength() < std::min(width(), height()) * 0.8 * 0.5) {
-        emit requestContextMenu(DISK_MOUNT_KEY);
-        return;
-    }
-
-    QWidget::mousePressEvent(e);
-}
-
 QSize DiskPluginItem::sizeHint() const
 {
     return QSize(26, 26);
