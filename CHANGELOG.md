@@ -1,3 +1,14 @@
+<a name="4.7.4.1"></a>
+## 4.7.4.1 (2019-01-07)
+
+
+#### Bug Fixes
+
+*   build failed on deepin_professional ([dd86e610](https://github.com/linuxdeepin/dde-file-manager/commit/dd86e6108b210570bbb57b0ff01d1a8c8c730399))
+* **dde-wallpaper:**  not stop screensaver preview when switch to set wallpaper mode ([a76b22e0](https://github.com/linuxdeepin/dde-file-manager/commit/a76b22e0d09c3c6e27c5b0cfdcb719c238a44d41))
+
+
+
 <a name="4.7.4"></a>
 ## 4.7.4 (2019-01-07)
 
