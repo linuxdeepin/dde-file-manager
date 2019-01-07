@@ -195,6 +195,16 @@ void Frame::paintEvent(QPaintEvent *event)
     pa.drawLine(QPoint(0, 0), QPoint(width(), 0));
 }
 
+bool Frame::event(QEvent *event)
+{
+    if (event->type() == QEvent::LayoutRequest
+            || event->type() == QEvent::Resize) {
+        adjustModeSwitcherPoint();
+    }
+
+    return DBlurEffectWidget::event(event);
+}
+
 #ifndef DISABLE_SCREENSAVER
 void Frame::setMode(int mode)
 {
@@ -217,6 +227,29 @@ void Frame::reLayoutTools()
         m_waitControlLabel->hide();
         m_waitControl->hide();
         m_lockScreenBox->hide();
+    }
+}
+
+void Frame::adjustModeSwitcherPoint()
+{
+    // 调整模式切换控件的位置
+    m_switchModeControl->adjustSize();
+
+    // 自己计算宽度，当控件未显示时无法使用layout的sizeHint
+    auto tools_layout_margins = m_toolLayout->contentsMargins();
+    int tools_width = tools_layout_margins.left() +
+                      m_waitControlLabel->sizeHint().width() +
+                      m_waitControl->sizeHint().width() +
+                      m_lockScreenBox->sizeHint().width() +
+                      m_toolLayout->count() * m_toolLayout->spacing();
+
+    // 防止在低分辨率情况下切换控件和左边的工具栏重叠
+    if (width() / 2 < tools_width) {
+        m_switchModeControl->move(width() - m_switchModeControl->width() - 10,
+                                  (m_wallpaperList->y() - m_switchModeControl->height()) / 2);
+    } else {
+        m_switchModeControl->move((width() - m_switchModeControl->width()) / 2,
+                                  (m_wallpaperList->y() - m_switchModeControl->height()) / 2);
     }
 }
 
@@ -326,8 +359,6 @@ void Frame::initUI()
     layout->setSpacing(0);
     layout->addStretch();
 
-    reLayoutTools();
-
     //###(zccrs): 直接把switModeControl放到布局中始终无法在两种mos模式下都居中
     // 使用anchors使此控件居中
     m_switchModeControl = new DSegmentedControl(this);
@@ -336,12 +367,6 @@ void Frame::initUI()
     m_switchModeControl->at(1)->setMinimumWidth(40);
     m_switchModeControl->setCurrentIndex(m_mode == WallpaperMode ? 0 : 1);
 
-    DAnchors<DSegmentedControl> anchors_switchControl(m_switchModeControl);
-
-    anchors_switchControl.setAnchor(Qt::AnchorHorizontalCenter, this, Qt::AnchorHorizontalCenter);
-    anchors_switchControl.setAnchor(Qt::AnchorTop, this, Qt::AnchorTop);
-    anchors_switchControl.setTopMargin(10);
-
     connect(m_waitControl, &DSegmentedControl::currentChanged, this, [this, time_array] (int index) {
         m_dbusScreenSaver->setBatteryScreenSaverTimeout(time_array[index]);
         m_dbusScreenSaver->setLinePowerScreenSaverTimeout(time_array[index]);
@@ -349,6 +374,8 @@ void Frame::initUI()
 
     connect(m_switchModeControl, &DSegmentedControl::currentChanged, this, &Frame::setMode);
     connect(m_lockScreenBox, &QCheckBox::toggled, m_dbusScreenSaver, &ComDeepinScreenSaverInterface::setLockScreenAtAwake);
+
+    reLayoutTools();
 #endif
 }
 

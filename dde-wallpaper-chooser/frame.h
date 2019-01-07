@@ -71,11 +71,13 @@ protected:
     void hideEvent(QHideEvent *);
     void keyPressEvent(QKeyEvent *);
     void paintEvent(QPaintEvent *event) override;
+    bool event(QEvent *event) override;
 
 private:
 #ifndef DISABLE_SCREENSAVER
     void setMode(int mode);
     void reLayoutTools();
+    void adjustModeSwitcherPoint();
 
     Mode m_mode = WallpaperMode;
     QHBoxLayout *m_toolLayout;
