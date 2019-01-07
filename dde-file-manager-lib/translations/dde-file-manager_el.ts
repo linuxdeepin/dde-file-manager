@@ -1901,7 +1901,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="822"/>
         <source>Tag information</source>
-        <translation type="unfinished"/>
+        <translation>Ετικέτα κατηγοριοποίησης </translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="757"/>

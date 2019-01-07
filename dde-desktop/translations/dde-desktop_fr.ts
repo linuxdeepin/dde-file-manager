@@ -13,8 +13,8 @@
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2351"/>
-        <source>Wallpaper</source>
-        <translation type="unfinished"/>
+        <source>Set Wallpaper</source>
+        <translation>Définir le fond d&apos;écran</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2353"/>
@@ -68,42 +68,42 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="277"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="310"/>
         <source>Require a password on wake up</source>
         <translation>Demander un mot de passe à la sortie de veille</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="302"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="335"/>
         <source>Never</source>
         <translation>Jamais</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="303"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="336"/>
         <source>Wait:</source>
         <translation>Attendre:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="334"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="365"/>
         <source>Wallpaper</source>
         <translation>Fond d&apos;écran</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="334"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="365"/>
         <source>Screensaver</source>
         <translation>Économiseur d&apos;écran</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="396"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="423"/>
         <source>Only desktop</source>
         <translation>Bureau seulement</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="397"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="424"/>
         <source>Only lock screen</source>
         <translation>Écran de verrouillage seulement</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="425"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="452"/>
         <source>Apply</source>
         <translation>Appliquer</translation>
     </message>
