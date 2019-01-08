@@ -561,7 +561,7 @@ void MoveCopyTaskWidget::hideButtonFrame()
     emit heightChanged();
 }
 
-void MoveCopyTaskWidget::updateConflictDetailFrame(const DUrl &originFilePath, const DUrl &targetFilePath)
+void MoveCopyTaskWidget::updateConflictDetailFrame(const DUrl originFilePath, const DUrl targetFilePath)
 {
     qDebug() << originFilePath << targetFilePath << m_originIconLabel << m_targetIconLabel;
     DAbstractFileInfoPointer originInfo = fileService->createFileInfo(NULL, originFilePath);
@@ -597,7 +597,7 @@ void MoveCopyTaskWidget::updateConflictDetailFrame(const DUrl &originFilePath, c
 
 }
 
-void MoveCopyTaskWidget::onJobCurrentJobChanged(const DUrl &from, const DUrl &to)
+void MoveCopyTaskWidget::onJobCurrentJobChanged(const DUrl from, const DUrl to)
 {
     m_jobInfo->currentJob = qMakePair(from, to);
     updateMessageByJob();

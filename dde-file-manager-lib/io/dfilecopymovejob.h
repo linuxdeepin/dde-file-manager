@@ -161,10 +161,13 @@ public Q_SLOTS:
     void setFileHints(FileHints fileHints);
 
 Q_SIGNALS:
+    // 此类工作在一个新的线程中，信号不要以引用的方式传递参数，容易出现一些较为诡异的崩溃问题
+    // 问题现象一般为，槽函数中的参数是个无效的对象(内存中已被销毁)，不知是否和槽函数形参也为
+    // 引用类型有关
     void stateChanged(State state);
     void errorChanged(Error error);
-    void currentJobChanged(const DUrl &from, const DUrl &to);
-    void finished(const DUrl &from, const DUrl &to);
+    void currentJobChanged(const DUrl from, const DUrl to);
+    void finished(const DUrl from, const DUrl to);
     void completedFilesCountChanged(int count);
     void fileStatisticsFinished();
     void progressChanged(qreal progress, qint64 writeData);
