@@ -97,9 +97,10 @@ public slots:
     void showButtonFrame();
     void hideButtonFrame();
 
-    void updateConflictDetailFrame(const DUrl &originFilePath, const DUrl &targetFilePath);
+    void updateConflictDetailFrame(const DUrl originFilePath, const DUrl targetFilePath);
 
-    void onJobCurrentJobChanged(const DUrl &from, const DUrl &to);
+    //　链接到其它线程的信号时尽量不使用引用接收参数，有时会发生此引用对象无效的诡异问题
+    void onJobCurrentJobChanged(const DUrl from, const DUrl to);
     void onJobSpeedChanged(qint64 speed);
     void onJobProgressChanged(qreal progress);
     void disposeJobError(DFileCopyMoveJob::Action action);
