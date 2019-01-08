@@ -93,6 +93,7 @@ public:
     QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
 
     DUrl getUrlByNewFileName(const QString &fileName) const override;
+    DUrl getUrlByChildFileName(const QString &fileName) const override;
 
     bool canRedirectionFileUrl() const Q_DECL_OVERRIDE;
     DUrl redirectedFileUrl() const Q_DECL_OVERRIDE;

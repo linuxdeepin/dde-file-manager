@@ -42,6 +42,7 @@
 
 #include <QIcon>
 
+#include <dfileservices.h>
 #include <unistd.h>
 
 DFM_USE_NAMESPACE
@@ -445,6 +446,12 @@ DUrl UDiskDeviceInfo::getUrlByNewFileName(const QString &fileName) const
     url.setQuery(query);
 
     return url;
+}
+
+DUrl UDiskDeviceInfo::getUrlByChildFileName(const QString &fileName) const
+{
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, redirectedFileUrl());
+    return fileInfo->getUrlByChildFileName(fileName);
 }
 
 bool UDiskDeviceInfo::canRedirectionFileUrl() const
