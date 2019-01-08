@@ -65,6 +65,11 @@ bool RecentFileInfo::canIteratorDir() const
     return true;
 }
 
+bool RecentFileInfo::canDrop() const
+{
+    return false;
+}
+
 QFileDevice::Permissions RecentFileInfo::permissions() const
 {
     if (fileUrl() == DUrl(RECENT_ROOT)) {
