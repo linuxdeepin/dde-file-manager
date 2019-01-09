@@ -32,6 +32,7 @@
 #include <QApplication>
 #include <QUrl>
 #include <QtConcurrent>
+#include <QImageReader>
 
 static QPixmap ThumbnailImage(const QString &path)
 {
@@ -42,7 +43,11 @@ static QPixmap ThumbnailImage(const QString &path)
 
     const qreal ratio = qApp->devicePixelRatio();
 
-    QPixmap pix = QPixmap::fromImage(QImage(realPath).scaled(QSize(ItemWidth * ratio, ItemHeight * ratio),
+    QImageReader imageReader(realPath);
+    imageReader.setDecideFormatFromContent(true);
+    QImage image = imageReader.read();
+
+    QPixmap pix = QPixmap::fromImage(image.scaled(QSize(ItemWidth * ratio, ItemHeight * ratio),
                                                              Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
 
     const QRect r(0, 0, ItemWidth * ratio, ItemHeight * ratio);
@@ -109,9 +114,8 @@ bool ThumbnailManager::replace(const QString &key, const QPixmap &pixmap)
     if (QFile::exists(file)) {
         QFile(file).remove();
     }
-    pixmap.save(file);
 
-    return true;
+    return pixmap.save(file);
 }
 
 void ThumbnailManager::stop()
