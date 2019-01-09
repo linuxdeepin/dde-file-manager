@@ -65,6 +65,7 @@
 namespace DFileMenuData
 {
 static QMap<MenuAction, QString> actionKeys;
+static QMap<MenuAction, QIcon> actionIcons;
 static QMap<MenuAction, QAction *> actions;
 static QMap<const QAction *, MenuAction> actionToMenuAction;
 static QMap<MenuAction, QString> actionIDs;
@@ -824,6 +825,25 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::DeleteTags] = QObject::tr("Delete");
     actionKeys[MenuAction::ChangeTagColor] = QString{"Change color of present tag"};
     actionKeys[MenuAction::RenameTag] = QObject::tr("Rename");
+
+    // Action Icons:
+#ifdef QT_DEBUG
+    actionIcons[MenuAction::NewFolder] = QIcon::fromTheme("folder-new");
+    actionIcons[MenuAction::NewDocument] = QIcon::fromTheme("document-new");
+    actionIcons[MenuAction::OpenInNewWindow] = QIcon::fromTheme("window-new");
+    actionIcons[MenuAction::OpenInNewTab] = QIcon::fromTheme("tab-new");
+    actionIcons[MenuAction::OpenInTerminal] = QIcon::fromTheme("utilities-terminal");
+    actionIcons[MenuAction::AddToBookMark] = QIcon::fromTheme("bookmark-new");
+    actionIcons[MenuAction::BookmarkRemove] = QIcon::fromTheme("bookmark-remove");
+    actionIcons[MenuAction::Copy] = QIcon::fromTheme("edit-copy");
+    actionIcons[MenuAction::Paste] = QIcon::fromTheme("edit-paste");
+    actionIcons[MenuAction::Cut] = QIcon::fromTheme("edit-cut");
+    actionIcons[MenuAction::Rename] = QIcon::fromTheme("edit-rename");
+    actionIcons[MenuAction::Delete] = QIcon::fromTheme("edit-delete");
+    actionIcons[MenuAction::Share] = QIcon::fromTheme("document-share");
+    actionIcons[MenuAction::CreateSymlink] = QIcon::fromTheme("insert-link");
+    actionIcons[MenuAction::Property] = QIcon::fromTheme("document-properties");
+#endif // QT_DEBUG
 }
 
 void DFileMenuData::initActions()
@@ -865,7 +885,7 @@ void DFileMenuData::initActions()
             continue;
         }
 
-        QAction *action = new QAction(actionKeys.value(key), 0);
+        QAction *action = new QAction(actionIcons.value(key), actionKeys.value(key), 0);
         action->setData(key);
         actions.insert(key, action);
         actionToMenuAction.insert(action, key);
