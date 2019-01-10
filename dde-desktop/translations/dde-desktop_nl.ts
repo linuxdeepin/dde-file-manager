@@ -14,7 +14,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="2351"/>
         <source>Set Wallpaper</source>
-        <translation>Achtergrond instellen</translation>
+        <translation>Bureaubladachtergrond instellen</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2353"/>

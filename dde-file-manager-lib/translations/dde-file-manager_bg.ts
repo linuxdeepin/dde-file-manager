@@ -602,7 +602,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="990"/>
         <source>2. Uncheck &quot;Turn on fast startup&quot; and &quot;Hibernate&quot; in shutdown settings and reboot</source>
-        <translation type="unfinished"/>
+        <translation>2. Махнете отметката от „Включване на бързо стартиране“ и „Хибернация“ в настройките за изключване и рестартирайте</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1207"/>

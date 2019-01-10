@@ -14,7 +14,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="2351"/>
         <source>Set Wallpaper</source>
-        <translation>Установить в качестве обоев</translation>
+        <translation>Установить в Качестве Обоев</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2353"/>

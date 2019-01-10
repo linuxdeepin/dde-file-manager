@@ -602,7 +602,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="990"/>
         <source>2. Uncheck &quot;Turn on fast startup&quot; and &quot;Hibernate&quot; in shutdown settings and reboot</source>
-        <translation type="unfinished"/>
+        <translation>2. Fravælg &quot;Aktivér hurtig start&quot; og &quot;Dvale&quot; i nedlukningsindstillinger og genstart</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1207"/>
@@ -627,7 +627,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="979"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
-        <translation>Diske i Windows vil ikke kunne læse og skrive normalt hvis &quot;Aktivér hurtig start (anbefales)&quot; er valgt til i lukkeindstillinger</translation>
+        <translation>Diske i Windows vil ikke kunne læse og skrive normalt hvis &quot;Aktivér hurtig start (anbefales)&quot; er valgt til i nedlukningsindstillinger</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="983"/>
