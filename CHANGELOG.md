@@ -1,3 +1,20 @@
+<a name="4.7.4.2"></a>
+## 4.7.4.2 (2019-01-10)
+
+
+#### Bug Fixes
+
+*   detect format by content when generate thumbnail for wallpaper ([e37f55ae](https://github.com/linuxdeepin/dde-file-manager/commit/e37f55aec15b2e75c10eefc77988a9f2b33657f5))
+*   crash when copy file ([434e4502](https://github.com/linuxdeepin/dde-file-manager/commit/434e4502a56aff3c1815772e22a32d0824bf67d9))
+*   DnD on device sidebar item ([203fc1df](https://github.com/linuxdeepin/dde-file-manager/commit/203fc1dffdd9e47f4f49d340facbe2fe080bc0a3))
+* **recent:**  disable drag and drop files to sidebar. ([ff701a37](https://github.com/linuxdeepin/dde-file-manager/commit/ff701a37028a97b37a58f8fcb8f382936eb2e96c))
+
+#### Features
+
+*   display icon at context menu in QT_DEBUG build ([f409c782](https://github.com/linuxdeepin/dde-file-manager/commit/f409c782bb813e81ead8759dab448a476c77f41a))
+
+
+
 <a name="4.7.4.1"></a>
 ## 4.7.4.1 (2019-01-07)
 
