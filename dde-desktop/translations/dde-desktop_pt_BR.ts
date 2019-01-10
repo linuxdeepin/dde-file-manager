@@ -14,7 +14,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="2351"/>
         <source>Set Wallpaper</source>
-        <translation>Definir papel de parede</translation>
+        <translation>Definir Papel de parede</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2353"/>
