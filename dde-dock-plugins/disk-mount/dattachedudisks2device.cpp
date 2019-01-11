@@ -67,7 +67,10 @@ void DAttachedUdisks2Device::detach()
 
     if (diskDev->removable()) {
         diskDev->eject({});
-        return;
+    }
+
+    if (diskDev->canPowerOff()) {
+        diskDev->powerOff({});
     }
 }
 
