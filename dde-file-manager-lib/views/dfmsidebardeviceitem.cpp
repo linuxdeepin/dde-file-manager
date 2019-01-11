@@ -198,6 +198,12 @@ void DFMSideBarDeviceItem::doUnmountOrEject()
     if (info.value("canUnmount", false).toBool()) {
         gvfsMountManager->unmount(info.value("deviceId").toString());
     }
+
+    if (info.value("canStop", false).toBool()) {
+        DUrl deviceIdUrl;
+        deviceIdUrl.setQuery(info.value("deviceId").toString());
+        AppController::instance()->actionSafelyRemoveDrive(dMakeEventPointer<DFMUrlBaseEvent>(this, deviceIdUrl));
+    }
 }
 
 DFM_END_NAMESPACE

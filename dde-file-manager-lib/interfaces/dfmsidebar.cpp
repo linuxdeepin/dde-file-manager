@@ -260,9 +260,10 @@ void DFMSideBarPrivate::initMountedVolumes()
             bool canUnmount = extensionInfo.value("canUnmount", true).toBool();
             bool isRemovable = extensionInfo.value("isRemovable", true).toBool();
             bool canEject = extensionInfo.value("canEject", true).toBool();
-
+qDebug() << isRemovable << "aaaaaaaaaaaaaaaaaaaa";
             if (isRemovable) {
-                casted->unmountButton->setVisible(canEject);
+                qDebug() << canEject << "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+                casted->unmountButton->setVisible(canEject || canUnmount);
             } else {
                 casted->unmountButton->setVisible(isMounted && canUnmount);
             }
