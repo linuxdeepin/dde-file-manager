@@ -1,3 +1,14 @@
+<a name="4.7.4.3"></a>
+## 4.7.4.3 (2019-01-11)
+
+
+#### Bug Fixes
+
+*   try stop device when do eject from sidebar ([f7d5be54](https://github.com/linuxdeepin/dde-file-manager/commit/f7d5be544e2cee792d3adb4aa12758508a39270b))
+*   do powerOff if a external disk can powerOff ([1225cc3b](https://github.com/linuxdeepin/dde-file-manager/commit/1225cc3b1a64809d4bbbe3e09af2703dbf62ef78))
+
+
+
 <a name="4.7.4.2"></a>
 ## 4.7.4.2 (2019-01-10)
 
