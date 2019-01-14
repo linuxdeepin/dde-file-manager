@@ -45,7 +45,7 @@ public slots:
     void preHandleCd(const DFMUrlBaseEvent &event);
     void cd(const DFMUrlBaseEvent &event);
     void cdUp(const DFMUrlBaseEvent &event);
-    void handleSelectEvent(const DFMUrlListBaseEvent &event);
+    void handleSelectEventOnPaste(const DFMUrlListBaseEvent &event);
     void selectAll(quint64 windowId);
     void setFoucsOnFileView(quint64 winId);
     void refreshFileView(quint64 winId);

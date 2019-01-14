@@ -26,7 +26,7 @@ FileViewHelper::FileViewHelper(DFileView *parent)
     connect(fileSignalManager, &FileSignalManager::requestViewSelectAll,
             this, &FileViewHelper::selectAll);
     connect(fileSignalManager, &FileSignalManager::requestSelectFile,
-            this, &FileViewHelper::handleSelectEvent);
+            this, &FileViewHelper::handleSelectEventOnPaste);
     connect(fileSignalManager, &FileSignalManager::requestFoucsOnFileView,
             this, &FileViewHelper::setFoucsOnFileView);
     connect(fileSignalManager, &FileSignalManager::requestFreshFileView,
@@ -146,9 +146,9 @@ void FileViewHelper::cdUp(const DFMUrlBaseEvent &event)
     lastEvent = DFMUrlBaseEvent(this, DUrl());
 }
 
-void FileViewHelper::handleSelectEvent(const DFMUrlListBaseEvent &event)
+void FileViewHelper::handleSelectEventOnPaste(const DFMUrlListBaseEvent &event)
 {
-    if (event.windowId() != windowId()) {
+    if (event.sender() != this->parent()) {
         return;
     }
 
