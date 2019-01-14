@@ -595,6 +595,11 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, DAbstractFileInfoPoint
 create_new_file_info:
     const DAbstractFileInfoPointer &new_file_info = DFileService::instance()->createFileInfo(nullptr, target_info->getUrlByChildFileName(file_name));
 
+    if (!new_file_info) {
+        qWarning() << "fileinfo create failed!" << target_info->getUrlByChildFileName(file_name);
+        return false;
+    }
+
     if (new_file_info->exists()) {
         if (mode == DFileCopyMoveJob::MoveMode) {
             // 不用再进行后面的操作
