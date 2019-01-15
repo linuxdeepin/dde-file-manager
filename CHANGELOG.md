@@ -1,3 +1,16 @@
+<a name="4.7.4.4"></a>
+## 4.7.4.4 (2019-01-15)
+
+
+#### Bug Fixes
+
+*   chinese garbled ([138c9c08](https://github.com/linuxdeepin/dde-file-manager/commit/138c9c08ff1a5a3dd4186b6816edbecb85d58ba6))
+*   remove debug output which should be deleted ([3ba87c74](https://github.com/linuxdeepin/dde-file-manager/commit/3ba87c74953c3198726832ec95e97345a5c480d6))
+*   only apply selection change in current view ([9edf74dc](https://github.com/linuxdeepin/dde-file-manager/commit/9edf74dc32879c50c65ffd56225a912ef5ce5c06))
+*   avoid crash when paste file to unsupported url ([63273c3e](https://github.com/linuxdeepin/dde-file-manager/commit/63273c3ee988fbb651138d0bd1edb5946ccc38eb))
+
+
+
 <a name="4.7.4.3"></a>
 ## 4.7.4.3 (2019-01-11)
 
