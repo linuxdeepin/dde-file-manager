@@ -1082,11 +1082,13 @@ float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, co
             unidentification_count += (country == QLocale::Russia) ? 0 : 0.3;
             break;
         default:
-            // full-width character, emoji, 常用标点, 拉丁文补充1，CJK符号和标点符号（如：【】）
+            // full-width character, emoji, 常用标点, 拉丁文补充1，天城文及其补充，CJK符号和标点符号（如：【】）
             if ((ch.unicode() >= 0xff00 && ch <= 0xffef)
                     || (ch.unicode() >= 0x2600 && ch.unicode() <= 0x27ff)
                     || (ch.unicode() >= 0x2000 && ch.unicode() <= 0x206f)
                     || (ch.unicode() >= 0x80 && ch.unicode() <= 0xff)
+                    || (ch.unicode() >= 0xa8e0 && ch.unicode() <= 0xa8ff)
+                    || (ch.unicode() >= 0x0900 && ch.unicode() <= 0x097f)
                     || (ch.unicode() >= 0x3000 && ch.unicode() <= 0x303f)) {
                 ++hep_count;
             } else if (ch.isSurrogate() && ch.isHighSurrogate()) {
