@@ -2086,8 +2086,8 @@ bool DFileView::setRootUrl(const DUrl &url)
         updateContentLabel();
     }
 
-    model()->setSortRole(d->fileViewStateValue(url, "sortRole", DFileSystemModel::FileDisplayNameRole).toInt(),
-                         (Qt::SortOrder)d->fileViewStateValue(url, "sortOrder", Qt::AscendingOrder).toInt());
+    model()->setSortRole(d->fileViewStateValue(fileUrl, "sortRole", DFileSystemModel::FileDisplayNameRole).toInt(),
+                         (Qt::SortOrder)d->fileViewStateValue(fileUrl, "sortOrder", Qt::AscendingOrder).toInt());
 
     if (d->headerView) {
         updateListHeaderViewProperty();
