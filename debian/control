@@ -26,7 +26,7 @@ Build-Depends:
  libx11-dev,
  qttools5-dev-tools,
  libglib2.0-dev,
- dde-dock-dev(>=4.0.5),
+ dde-dock-dev(>=4.8.4.1),
  libxcb-ewmh-dev,
  libdframeworkdbus-dev,
  libxcb-util0-dev,
