@@ -25,6 +25,11 @@
 #include <QXmlStreamReader>
 #include <QFile>
 
+namespace FileSortFunction
+{
+COMPARE_FUN_DEFINE(readDateTime, LastReadTime, RecentFileInfo)
+}
+
 RecentFileInfo::RecentFileInfo(const DUrl &url)
     : DAbstractFileInfo(url)
 {
@@ -156,6 +161,16 @@ DUrl RecentFileInfo::parentUrl() const
     return DUrl(RECENT_ROOT);
 }
 
+DAbstractFileInfo::CompareFunction RecentFileInfo::compareFunByColumn(int columnRole) const
+{
+    // see RecentFileInfo::userColumnRoles for role function
+    if (columnRole == DFileSystemModel::FileLastReadRole) {
+        return FileSortFunction::compareFileListByLastReadTime;
+    } else {
+        return DAbstractFileInfo::compareFunByColumn(columnRole);
+    }
+}
+
 QString RecentFileInfo::toLocalFile() const
 {
     return fileUrl().path();
@@ -203,4 +218,9 @@ void RecentFileInfo::setReadDateTime(const QString &time)
 {
     m_lastReadTime = QDateTime::fromString(time, Qt::ISODate).toLocalTime();
     m_lastReadTimeStr = m_lastReadTime.toString(dateTimeFormat());
+}
+
+QDateTime RecentFileInfo::readDateTime() const
+{
+    return m_lastReadTime;
 }

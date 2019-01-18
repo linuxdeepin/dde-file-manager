@@ -47,12 +47,15 @@ public:
     DUrl mimeDataUrl() const override;
     DUrl parentUrl() const override;
 
+    CompareFunction compareFunByColumn(int columnRole) const override;
+
     QString toLocalFile() const override;
     QString subtitleForEmptyFloder() const override;
     DUrl goToUrlWhenDeleted() const override;
 
     void updateInfo();
     void setReadDateTime(const QString &time);
+    QDateTime readDateTime() const;
 
 private:
     QDateTime m_lastReadTime;
