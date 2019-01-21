@@ -60,11 +60,9 @@ public:
 private:
     static DUrlList realUrlList(const DUrlList &recentUrls);
     void handleFileChanged();
-    void handleDirectoryChanged();
 
-    QFileSystemWatcher *m_watcher;
-    QTimer *m_refreshTimer;
     QString m_xbelPath;
+    DFileWatcher *m_watcher;
 };
 
 #endif // RECENTCONTROLLER_H
