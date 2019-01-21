@@ -82,7 +82,7 @@ bool DFileWatcherPrivate::start()
             continue;
 
         if (filePathToWatcherCount.value(path, -1) <= 0) {
-            if (!watcher_file_private->addPath(path)) {
+            if (QFile::exists(path) && !watcher_file_private->addPath(path)) {
                 qWarning() << Q_FUNC_INFO << "start watch failed, file path =" << path;
                 q->stopWatcher();
                 started = false;
@@ -215,6 +215,13 @@ bool DFileWatcherPrivate::_q_handleFileMoved(const QString &from, const QString 
 
 void DFileWatcherPrivate::_q_handleFileCreated(const QString &path, const QString &parentPath)
 {
+    if (watchFileList.contains(path)) {
+        bool result = watcher_file_private->addPath(path);
+        if (!result) {
+            qWarning() << Q_FUNC_INFO << "add to watcher failed, file path =" << path;
+        }
+    }
+
     if (path != this->path && parentPath != this->path)
         return;
 
