@@ -38,6 +38,7 @@ class QTimer;
 class WindowManager : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(bool enableAutoQuit READ enableAutoQuit WRITE setEnableAutoQuit)
 
 public:
     static WindowManager *instance();
@@ -53,6 +54,8 @@ public:
 
     static bool tabAddableByWinId(const quint64& winId);
 
+    bool enableAutoQuit() const;
+
 signals:
     void start(const QString &src);
 
@@ -62,10 +65,11 @@ public slots:
     static QWidget* getWindowById(quint64 winId);
     void reastartAppProcess();
 
+    void setEnableAutoQuit(bool enableAutoQuit);
+
 private slots:
     void onWindowClosed();
     void onLastActivedWindowClosed(quint64 winId);
-    void quit();
 
 protected:
     explicit WindowManager(QObject *parent = 0);
@@ -74,8 +78,10 @@ private:
     static QHash<const QWidget*, quint64> m_windows;
     static int m_count;
 
-     QTimer* m_restartProcessTimer = NULL;
-     bool m_isAppInDaemonStatus = true;
+#ifdef AUTO_RESTART_DEAMON
+    QTimer* m_restartProcessTimer = NULL;
+    bool m_enableAutoQuit = false;
+#endif
 };
 
 #endif // WINDOWMANAGER_H

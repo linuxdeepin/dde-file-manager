@@ -78,11 +78,9 @@ int WindowManager::m_count = 0;
 
 WindowManager::WindowManager(QObject *parent) : QObject(parent)
 {
-    qApp->setApplicationDisplayName(tr("Deepin File Manager"));
 #ifdef AUTO_RESTART_DEAMON
     m_restartProcessTimer = new QTimer(this);
     m_restartProcessTimer->setInterval(1000 * 60 * 5);
-    m_restartProcessTimer->start();
 #endif
     initConnect();
 }
@@ -104,7 +102,6 @@ void WindowManager::initConnect()
 {
     connect(fileSignalManager, &FileSignalManager::requestOpenNewWindowByUrl, this, &WindowManager::showNewWindow);
     connect(fileSignalManager, &FileSignalManager::aboutToCloseLastActivedWindow, this, &WindowManager::onLastActivedWindowClosed);
-    connect(fileSignalManager, &FileSignalManager::requestQuitApplication, this, &WindowManager::quit);
 
 #ifdef AUTO_RESTART_DEAMON
     connect(m_restartProcessTimer, &QTimer::timeout, this, &WindowManager::reastartAppProcess);
@@ -156,6 +153,15 @@ bool WindowManager::tabAddableByWinId(const quint64 &winId)
 
 }
 
+bool WindowManager::enableAutoQuit() const
+{
+#ifdef AUTO_RESTART_DEAMON
+    return m_enableAutoQuit;
+#else
+    return false;
+#endif
+}
+
 void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
 {
     if (!isNewWindow){
@@ -175,7 +181,7 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
     loadWindowState(window);
     window->setAttribute(Qt::WA_DeleteOnClose);
     window->show();
-    m_isAppInDaemonStatus = false;
+
     qDebug() << "new window" << window->winId() << url;
 
     connect(window, &DFileManagerWindow::aboutToClose,
@@ -250,11 +256,30 @@ void WindowManager::reastartAppProcess()
 {
     if (m_windows.count() == 0){
         if (dialogManager->isTaskDialogEmpty()){
-            if (m_isAppInDaemonStatus) {
+            // 当没有顶级窗口时才允许应用自动退出
+            if (qApp->topLevelWindows().isEmpty()) {
                 qApp->quit();
             }
         }
     }
+}
+
+void WindowManager::setEnableAutoQuit(bool enableAutoQuit)
+{
+#ifdef AUTO_RESTART_DEAMON
+    if (m_enableAutoQuit == enableAutoQuit)
+        return;
+
+    m_enableAutoQuit = enableAutoQuit;
+
+    if (m_enableAutoQuit) {
+        m_restartProcessTimer->start();
+    } else {
+        m_restartProcessTimer->stop();
+    }
+#else
+    Q_UNUSED(enableAutoQuit)
+#endif
 }
 
 void WindowManager::onWindowClosed()
@@ -280,13 +305,4 @@ void WindowManager::onLastActivedWindowClosed(quint64 winId)
         window->close();
 
     qApp->quit();
-}
-
-void WindowManager::quit()
-{
-    if (m_windows.count() == 0){
-        if (dialogManager->isTaskDialogEmpty()){
-            m_isAppInDaemonStatus = true;
-        }
-    }
 }
