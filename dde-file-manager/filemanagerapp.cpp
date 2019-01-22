@@ -160,6 +160,7 @@ void FileManagerApp::initApp()
 void FileManagerApp::initView()
 {
     m_windowManager = WindowManager::instance();
+    m_windowManager->setEnableAutoQuit(true);
 }
 
 void FileManagerApp::initManager()
