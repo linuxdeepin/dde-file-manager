@@ -158,7 +158,7 @@ public:
         }
 
         if (filter->f_comboValid[SIZE_RANGE]) {
-            quint64 fileSize = dataByRole(DFileSystemModel::FileSizeInKiloByteRole).toULongLong() / (2 << 10);
+            quint64 fileSize = dataByRole(DFileSystemModel::FileSizeInKiloByteRole).toULongLong() / (1 << 10);
             if (fileSize < filter->f_sizeRange.first || fileSize > filter->f_sizeRange.second) return true;
         }
 
