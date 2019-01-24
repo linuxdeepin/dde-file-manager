@@ -55,6 +55,7 @@ typedef struct fileFilter {
     bool filterEnabled = false;
     QPair<quint64, quint64> f_sizeRange;
     QDateTime f_dateRangeStart;
+    QDateTime f_dateRangeEnd;
     QString f_typeString;
     bool f_includeSubDir;
     bool f_comboValid[LABEL_COUNT];

@@ -164,7 +164,7 @@ public:
 
         if (filter->f_comboValid[DATE_RANGE]) {
             QDateTime filemtime = dataByRole(DFileSystemModel::FileLastModifiedDateTimeRole).toDateTime();
-            if (filemtime < filter->f_dateRangeStart) return true;
+            if (filemtime < filter->f_dateRangeStart || filemtime > filter->f_dateRangeEnd) return true;
         }
 
         return false;
@@ -1809,33 +1809,42 @@ void DFileSystemModel::setAdvanceSearchFilter(const QMap<int, QVariant> &formDat
 
         int firstDayOfWeek = QLocale::system().firstDayOfWeek();
         QDate today = QDate::currentDate();
+        QDate tomorrow = QDate::currentDate().addDays(+1);
         int dayDist = today.dayOfWeek() - firstDayOfWeek;
         if (dayDist < 0) dayDist += 7;
 
         switch (dateRange) { // see DFMAdvanceSearchBar::initUI() for all cases
         case 1:
             advanceSearchFilter()->f_dateRangeStart = QDateTime(today);
+            advanceSearchFilter()->f_dateRangeEnd = QDateTime(tomorrow);
             break;
         case 2:
             advanceSearchFilter()->f_dateRangeStart = QDateTime(today).addDays(-1);
+            advanceSearchFilter()->f_dateRangeEnd = QDateTime(today);
             break;
         case 7:
             advanceSearchFilter()->f_dateRangeStart = QDateTime(today).addDays(0 - dayDist);
+            advanceSearchFilter()->f_dateRangeEnd = QDateTime(tomorrow);
             break;
         case 14:
             advanceSearchFilter()->f_dateRangeStart = QDateTime(today).addDays(-7 - dayDist);
+            advanceSearchFilter()->f_dateRangeEnd = QDateTime(today).addDays(0 - dayDist);
             break;
         case 30:
             advanceSearchFilter()->f_dateRangeStart = QDateTime(QDate(today.year(), today.month(), 1));
+            advanceSearchFilter()->f_dateRangeEnd = QDateTime(tomorrow);
             break;
         case 60:
             advanceSearchFilter()->f_dateRangeStart = QDateTime(QDate(today.year(), today.month(), 1)).addMonths(-1);
+            advanceSearchFilter()->f_dateRangeEnd = QDateTime(QDate(today.year(), today.month(), 1));
             break;
         case 365:
             advanceSearchFilter()->f_dateRangeStart = QDateTime(QDate(today.year(), 1, 1));
+            advanceSearchFilter()->f_dateRangeEnd = QDateTime(tomorrow);
             break;
         case 730:
             advanceSearchFilter()->f_dateRangeStart = QDateTime(QDate(today.year(), 1, 1)).addYears(-1);
+            advanceSearchFilter()->f_dateRangeEnd = QDateTime(QDate(today.year(), 1, 1));
             break;
         default:
             break;
