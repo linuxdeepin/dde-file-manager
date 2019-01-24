@@ -42,12 +42,12 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="38"/>
         <source>Tiny</source>
-        <translation>Сићушно</translation>
+        <translation>Сићушне</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="39"/>
         <source>Small</source>
-        <translation>Мало</translation>
+        <translation>Мале</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="40"/>
@@ -57,53 +57,53 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="41"/>
         <source>Large</source>
-        <translation>Велико</translation>
+        <translation>Велике</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="42"/>
         <source>Super large</source>
-        <translation>Веома велико</translation>
+        <translation>Огромне</translation>
     </message>
 </context>
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="310"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="318"/>
         <source>Require a password on wake up</source>
         <translation>Тражи лозинку при буђењу</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="335"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="343"/>
         <source>Never</source>
         <translation>Никад</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="336"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="344"/>
         <source>Wait:</source>
-        <translation>Чекај:</translation>
+        <translation>Након:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="365"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="373"/>
         <source>Wallpaper</source>
         <translation>Позадина</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="365"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="373"/>
         <source>Screensaver</source>
         <translation>Чувар екрана</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="423"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="431"/>
         <source>Only desktop</source>
         <translation>Само радна површина</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="424"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="432"/>
         <source>Only lock screen</source>
         <translation>Само закључани екран</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="452"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="460"/>
         <source>Apply</source>
         <translation>Примени</translation>
     </message>

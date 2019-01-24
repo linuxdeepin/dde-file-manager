@@ -19,7 +19,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="2353"/>
         <source>Wallpaper and Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Háttérkép és képernyővédő</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2431"/>
@@ -68,44 +68,44 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="310"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="318"/>
         <source>Require a password on wake up</source>
-        <translation type="unfinished"/>
+        <translation>Jelszavas belépés felébredés után</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="335"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="343"/>
         <source>Never</source>
-        <translation type="unfinished"/>
+        <translation>Soha</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="336"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="344"/>
         <source>Wait:</source>
-        <translation type="unfinished"/>
+        <translation>Várakozás:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="365"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="373"/>
         <source>Wallpaper</source>
-        <translation type="unfinished"/>
+        <translation>Háttérkép</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="365"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="373"/>
         <source>Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Képernyővédő</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="423"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="431"/>
         <source>Only desktop</source>
         <translation>Csak asztal</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="424"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="432"/>
         <source>Only lock screen</source>
         <translation>Csak zárolási képernyő</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="452"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="460"/>
         <source>Apply</source>
-        <translation type="unfinished"/>
+        <translation>Alkalmazás</translation>
     </message>
 </context>
 <context>
