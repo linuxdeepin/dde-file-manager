@@ -139,8 +139,8 @@ void DFMAdvanceSearchBar::initUI()
     asbCombos[SIZE_RANGE]->addItem(tr("100 KB ~ 1 MB"), QVariant::fromValue(QPair<quint64, quint64>(100, 1024)));
     asbCombos[SIZE_RANGE]->addItem(tr("1 MB ~ 10 MB"), QVariant::fromValue(QPair<quint64, quint64>(1024, 10 * 1024)));
     asbCombos[SIZE_RANGE]->addItem(tr("10 MB ~ 100 MB"), QVariant::fromValue(QPair<quint64, quint64>(10 * 1024, 100 * 1024)));
-    asbCombos[SIZE_RANGE]->addItem(tr("100 MB ~ 1 GB"), QVariant::fromValue(QPair<quint64, quint64>(100 * 1024, 2 << 20)));
-    asbCombos[SIZE_RANGE]->addItem(tr("> 1 GB"), QVariant::fromValue(QPair<quint64, quint64>(2 << 20, 2 << 30))); // here to 1T
+    asbCombos[SIZE_RANGE]->addItem(tr("100 MB ~ 1 GB"), QVariant::fromValue(QPair<quint64, quint64>(100 * 1024, 1 << 20)));
+    asbCombos[SIZE_RANGE]->addItem(tr("> 1 GB"), QVariant::fromValue(QPair<quint64, quint64>(1 << 20, 1 << 30))); // here to 1T
 
     asbCombos[DATE_RANGE]->addItem("--", QVariant());
     asbCombos[DATE_RANGE]->addItem(tr("Today"), QVariant::fromValue(1));
