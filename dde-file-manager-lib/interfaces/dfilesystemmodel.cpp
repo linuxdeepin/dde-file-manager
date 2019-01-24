@@ -1858,7 +1858,9 @@ void DFileSystemModel::applyAdvanceSearchFilter()
 {
     Q_D(DFileSystemModel);
 
+    setState(Busy);
     d->rootNode->applyFileFilter(advanceSearchFilter());
+    setState(Idle);
     sort();
 }
 
