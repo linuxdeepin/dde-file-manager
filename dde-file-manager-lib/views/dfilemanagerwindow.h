@@ -99,6 +99,8 @@ public:
     bool tabAddable() const;
     void hideRenameBar() noexcept;
     void requestToSelectUrls();
+    bool isAdvanceSearchBarVisible();
+    void toggleAdvanceSearchBar(bool visible = true, bool resetForm = true);
 
 signals:
     void aboutToClose();

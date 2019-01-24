@@ -24,7 +24,6 @@
 
 #include "dtoolbar.h"
 #include "dcheckablebutton.h"
-//#include "dsearchbar.h"
 #include "dfmcrumbbar.h"
 #include "historystack.h"
 #include "dhoverbutton.h"
@@ -226,12 +225,12 @@ QPushButton *DToolBar::getSettingsButton()
 
 void DToolBar::searchBarActivated()
 {
-    m_searchButton->hide();
+    toggleSearchButtonState(true);
 }
 
 void DToolBar::searchBarDeactivated()
 {
-    m_searchButton->show();
+    toggleSearchButtonState(false);
 }
 
 /**
@@ -265,7 +264,15 @@ void DToolBar::searchBarTextEntered(const QString textEntered)
 
 void DToolBar::onSearchButtonClicked()
 {
-    m_crumbWidget->showAddressBar("");
+    if (!m_searchButtonAsbState) {
+        m_crumbWidget->showAddressBar("");
+    } else {
+        // toggle asb visible
+        DFileManagerWindow* dfmWindow = qobject_cast<DFileManagerWindow*>(window());
+        bool oldState = dfmWindow->isAdvanceSearchBarVisible();
+        dfmWindow->toggleAdvanceSearchBar(!oldState);
+        m_searchButton->setDown(!oldState);
+    }
 }
 
 void DToolBar::crumbSelected(const DFMCrumbItem* item)
@@ -348,6 +355,44 @@ void DToolBar::switchHistoryStack(const int index){
     if(!m_navStack)
         return;
     updateBackForwardButtonsState();
+}
+
+namespace DEEPIN_QT_THEME {
+extern QThreadStorage<QString> colorScheme;
+extern void(*setFollowColorScheme)(bool);
+extern bool(*followColorScheme)();
+}
+
+/*!
+ * \brief Switch Search Button State
+ *
+ * \param asb Make search button control Advance Search Bar
+ */
+void DToolBar::toggleSearchButtonState(bool asb)
+{
+    if (DEEPIN_QT_THEME::followColorScheme
+            && (*DEEPIN_QT_THEME::followColorScheme)() ) {
+        const QWidget *widget = m_searchButton;
+        const QPalette &pal = widget->palette();
+        DEEPIN_QT_THEME::colorScheme.setLocalData(pal.windowText().color().name());
+    }
+
+    if (asb) {
+        m_searchButton->setObjectName("filterButton");
+        m_searchButton->style()->unpolish(m_searchButton);
+        m_searchButton->style()->polish(m_searchButton);
+//        m_searchButton->setIcon(QIcon::fromTheme("dialog-filters"));
+        m_searchButtonAsbState = true;
+    } else {
+        m_searchButton->setObjectName("searchButton");
+        m_searchButton->style()->unpolish(m_searchButton);
+        m_searchButton->style()->polish(m_searchButton);
+//        m_searchButton->setIcon(QIcon::fromTheme("search")); // QIcon(":/dark/icons/search_normal.svg")
+        m_searchButton->setDown(false);
+        m_searchButtonAsbState = false;
+        DFileManagerWindow* dfmWindow = qobject_cast<DFileManagerWindow*>(window());
+        dfmWindow->toggleAdvanceSearchBar(false);
+    }
 }
 
 void DToolBar::removeNavStackAt(int index){

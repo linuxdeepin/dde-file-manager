@@ -256,7 +256,7 @@ FileViewHelper *DFileView::fileViewHelper() const
 
 DUrl DFileView::rootUrl() const
 {
-    return model()->getUrlByIndex(rootIndex());
+    return model()->rootUrl();
 }
 
 DFMBaseView::ViewState DFileView::viewState() const
@@ -789,6 +789,12 @@ QList<QAction *> DFileView::toolBarActionList() const
 void DFileView::setFilters(QDir::Filters filters)
 {
     model()->setFilters(filters);
+}
+
+void DFileView::setAdvanceSearchFilter(const QMap<int, QVariant> &formData, bool turnOn, bool avoidUpdateView)
+{
+    Q_UNUSED(avoidUpdateView);
+    model()->setAdvanceSearchFilter(formData, turnOn);
 }
 
 void DFileView::dislpayAsActionTriggered(QAction *action)
@@ -1360,6 +1366,16 @@ void DFileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
     d->setFileViewStateValue(root_url, "sortOrder", (int)order);
 }
 
+void DFileView::reset()
+{
+    DListView::reset();
+}
+
+void DFileView::setRootIndex(const QModelIndex &index)
+{
+    DListView::setRootIndex(index);
+}
+
 void DFileView::focusInEvent(QFocusEvent *event)
 {
     Q_D(const DFileView);
@@ -1733,6 +1749,8 @@ void DFileView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int e
 
 void DFileView::rowsInserted(const QModelIndex &parent, int start, int end)
 {
+    D_D(DFileView);
+
     DListView::rowsInserted(parent, start, end);
 }
 
@@ -2873,7 +2891,7 @@ void DFileViewPrivate::doFileNameColResize()
 void DFileViewPrivate::toggleHeaderViewSnap(bool on)
 {
     adjustFileNameCol = on;
-//    DFMApplication::appObtuselySetting()->setValue("WindowManager", "HeaderViewSnapped", on);
+    //    DFMApplication::appObtuselySetting()->setValue("WindowManager", "HeaderViewSnapped", on);
 }
 
 void DFileViewPrivate::_q_onSectionHandleDoubleClicked(int logicalIndex)

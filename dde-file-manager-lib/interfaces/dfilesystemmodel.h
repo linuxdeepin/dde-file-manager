@@ -45,6 +45,21 @@ class JobController;
 class DFileViewHelper;
 class DFMUrlListBaseEvent;
 
+enum _asb_LabelIndex {
+    SEARCH_RANGE, FILE_TYPE, SIZE_RANGE, DATE_RANGE, LABEL_COUNT,
+    TRIGGER_SEARCH = 114514
+};
+
+typedef struct fileFilter {
+    QMap<int, QVariant> filterRule; // for advanced search.
+    bool filterEnabled = false;
+    QPair<quint64, quint64> f_sizeRange;
+    QDateTime f_dateRangeStart;
+    QString f_typeString;
+    bool f_includeSubDir;
+    bool f_comboValid[LABEL_COUNT];
+} FileFilter;
+
 typedef QExplicitlySharedDataPointer<FileSystemNode> FileSystemNodePointer;
 class DFileSystemModelPrivate;
 class DFileSystemModel : public QAbstractItemModel
@@ -58,10 +73,10 @@ public:
         FileIconRole = Qt::DecorationRole,
         FilePathRole = Qt::UserRole + 1,
         FileNameRole = Qt::UserRole + 2,
-        FileSizeRole = Qt::UserRole + 3,
-        FileMimeTypeRole = Qt::UserRole + 4,
+        FileSizeRole = Qt::UserRole + 3, // a QString
+        FileMimeTypeRole = Qt::UserRole + 4, // a QString
         FileOwnerRole = Qt::UserRole + 5,
-        FileLastModifiedRole = Qt::UserRole + 6,
+        FileLastModifiedRole = Qt::UserRole + 6, // a QString
         FileLastReadRole = Qt::UserRole + 7,
         FileCreatedRole = Qt::UserRole + 8,
         FileDisplayNameRole = Qt::UserRole + 9,
@@ -72,6 +87,8 @@ public:
         FileNameOfRenameRole = Qt::UserRole + 14,
         FileBaseNameOfRenameRole = Qt::UserRole + 15,
         FileSuffixOfRenameRole = Qt::UserRole + 16,
+        FileSizeInKiloByteRole = Qt::UserRole + 17,
+        FileLastModifiedDateTimeRole = Qt::UserRole + 18,
         FileUserRole = Qt::UserRole + 99,
         UnknowRole = Qt::UserRole + 999
     };
@@ -143,6 +160,9 @@ public:
 //    void setActiveIndex(const QModelIndex &index);
     void setNameFilters(const QStringList &nameFilters);
     void setFilters(QDir::Filters filters);
+    void setAdvanceSearchFilter(const QMap<int, QVariant> &formData, bool turnOn);
+    void applyAdvanceSearchFilter();
+    std::shared_ptr<FileFilter> advanceSearchFilter();
 
     Qt::SortOrder sortOrder() const;
     void setSortOrder(const Qt::SortOrder &order);
@@ -153,6 +173,7 @@ public:
 
     void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) Q_DECL_OVERRIDE;
     bool sort();
+    bool sort(bool emitDataChange);
 
     const DAbstractFileInfoPointer fileInfo(const QModelIndex &index) const;
     const DAbstractFileInfoPointer fileInfo(const DUrl &fileUrl) const;
@@ -173,8 +194,6 @@ public:
 
     void setColumnActiveRole(int column, int role);
     int columnActiveRole(int column) const;
-
-    bool whetherHideCurrentFile(const QModelIndex &index)const;
 
 public slots:
     void updateChildren(QList<DAbstractFileInfoPointer> list);

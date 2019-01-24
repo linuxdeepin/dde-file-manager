@@ -314,19 +314,21 @@ QPushButton#settingsButton::menu-indicator {
 
 QPushButton#searchButton{
     background-color:white;
-    image: url(:/icons/images/icons/search_normal.png);
     border: 1px solid rgba(0, 0, 0, 0.1);
     color: black;
     border-radius: 4px;
     padding: 3px, 3px, 3px, 3px;
+    qproperty-icon: url(:/icons/images/icons/search_normal.svg);
+    qproperty-iconSize: 16px;
 }
 
 QPushButton#searchButton:pressed{
     background-color:white;
-    image: url(:/icons/images/icons/search_pressed.png);
     border: 1px solid #1088ff;
     color: white;
     padding: 3px, 3px, 3px, 3px;
+    qproperty-icon: url(:/icons/images/icons/search_pressed.svg);
+    qproperty-iconSize: 16px;
 }
 
 
@@ -334,10 +336,42 @@ QPushButton#searchButton:hover{
     background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                         stop: 0 #8CCFFF,
                         stop: 1  #4BB8FF);
-    image: url(:/icons/images/icons/search_hover.png);
     border: 1px solid #3caafd;
     color: white;
     padding: 3px, 3px, 3px, 3px;
+    qproperty-icon: url(:/icons/images/icons/search_hover.svg);
+    qproperty-iconSize: 16px;
+}
+
+QPushButton#filterButton{
+    background-color:white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: black;
+    border-radius: 4px;
+    padding: 3px, 3px, 3px, 3px;
+    qproperty-icon: url(:/icons/images/icons/filter_normal.svg);
+    qproperty-iconSize: 16px;
+}
+
+QPushButton#filterButton:pressed{
+    background-color:white;
+    border: 1px solid #1088ff;
+    color: white;
+    padding: 3px, 3px, 3px, 3px;
+    qproperty-icon: url(:/icons/images/icons/filter_active.svg);
+    qproperty-iconSize: 16px;
+}
+
+
+QPushButton#filterButton:hover{
+    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                        stop: 0 #8CCFFF,
+                        stop: 1  #4BB8FF);
+    border: 1px solid #3caafd;
+    color: white;
+    padding: 3px, 3px, 3px, 3px;
+    qproperty-icon: url(:/icons/images/icons/filter_hover.svg);
+    qproperty-iconSize: 16px;
 }
 
 /* ******************DCrumbButton****************** */
