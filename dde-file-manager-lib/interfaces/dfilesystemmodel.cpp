@@ -71,6 +71,105 @@ public:
 
     }
 
+    QVariant dataByRole(int role)
+    {
+        using Role = DFileSystemModel::Roles;
+
+        switch (role) {
+        case Role::FilePathRole:
+            return fileInfo->absoluteFilePath();
+        case Role::FileDisplayNameRole:
+            return fileInfo->fileDisplayName();
+        case Role::FileNameRole:
+            return fileInfo->fileName();
+        case Role::FileNameOfRenameRole:
+            return fileInfo->fileNameOfRename();
+        case Role::FileBaseNameRole:
+            return fileInfo->baseName();
+        case Role::FileBaseNameOfRenameRole:
+            return fileInfo->baseNameOfRename();
+        case Role::FileSuffixRole:
+            return fileInfo->suffix();
+        case Role::FileSuffixOfRenameRole:
+            return fileInfo->suffixOfRename();
+        case Qt::TextAlignmentRole:
+            return Qt::AlignVCenter;
+        case Role::FileLastModifiedRole:
+            return fileInfo->lastModifiedDisplayName();
+        case Role::FileLastModifiedDateTimeRole:
+            return fileInfo->lastModified();
+        case Role::FileSizeRole:
+            return fileInfo->sizeDisplayName();
+        case Role::FileSizeInKiloByteRole:
+            return fileInfo->size();
+        case Role::FileMimeTypeRole:
+            return fileInfo->mimeTypeDisplayName();
+        case Role::FileCreatedRole:
+            return fileInfo->createdDisplayName();
+        case Role::FilePinyinName:
+            return fileInfo->fileDisplayPinyinName();
+        case Role::ExtensionPropertys:
+            return fileInfo->extensionPropertys();
+        default: {
+            return QVariant();
+        }
+        }
+
+        return QVariant();
+    }
+
+    void setNodeVisible(const FileSystemNodePointer &node, bool visible) {
+        if (visible) {
+            if (!visibleChildren.contains(node.data())) {
+                visibleChildren.append(node.data());
+            }
+        } else {
+            if (visibleChildren.contains(node.data())) {
+                visibleChildren.removeOne(node.data());
+            }
+        }
+    }
+
+    void applyFileFilter(std::shared_ptr<FileFilter> filter) {
+        if (!filter) return;
+
+        visibleChildren.clear();
+
+        for (auto node : children) {
+            if (!node->shouldHideByFilterRule(filter)) {
+                visibleChildren.append(node.data());
+            }
+        }
+    }
+
+    bool shouldHideByFilterRule(std::shared_ptr<FileFilter> filter) {
+        if (!filter) return false;
+
+        if (filter->f_comboValid[SEARCH_RANGE] && !filter->f_includeSubDir) {
+            DUrl parentUrl = fileInfo->parentUrl().isSearchFile() ? fileInfo->parentUrl().searchTargetUrl() : fileInfo->parentUrl();
+            QString filePath = dataByRole(DFileSystemModel::FilePathRole).toString();
+            filePath.remove(parentUrl.path() + '/');
+            if (filePath.contains('/')) return true;
+        }
+
+        if (filter->f_comboValid[FILE_TYPE]) {
+            QString fileTypeStr = dataByRole(DFileSystemModel::FileMimeTypeRole).toString();
+            if (!fileTypeStr.startsWith(filter->f_typeString)) return true;
+        }
+
+        if (filter->f_comboValid[SIZE_RANGE]) {
+            quint64 fileSize = dataByRole(DFileSystemModel::FileSizeInKiloByteRole).toULongLong() / (2 << 10);
+            if (fileSize < filter->f_sizeRange.first || fileSize > filter->f_sizeRange.second) return true;
+        }
+
+        if (filter->f_comboValid[DATE_RANGE]) {
+            QDateTime filemtime = dataByRole(DFileSystemModel::FileLastModifiedDateTimeRole).toDateTime();
+            if (filemtime < filter->f_dateRangeStart) return true;
+        }
+
+        return false;
+    }
+
     void noLockInsertChildren(int index, const DUrl &url, const FileSystemNodePointer &node)
     {
         children[url] = node;
@@ -440,6 +539,9 @@ private:
 
                 FileSystemNodePointer node = model()->createNode(rootNode.data(), fileInfo);
                 rootNode->insertChildren(index++, fileInfo->fileUrl(), node);
+                if (node->shouldHideByFilterRule(model()->advanceSearchFilter())) {
+                    rootNode->setNodeVisible(node, false);
+                }
             }
 
             DThreadUtil::runInThread(&semaphore, model()->thread(), model(), &DFileSystemModel::endInsertRows);
@@ -719,6 +821,7 @@ public:
     QFuture<void> updateChildrenFuture;
     QAtomicInteger<bool> needQuitUpdateChildren;
     DAbstractFileWatcher *watcher = Q_NULLPTR;
+    std::shared_ptr<FileFilter> advanceSearchFilter;
 
     DFileSystemModel::State state = DFileSystemModel::Idle;
 
@@ -1147,39 +1250,28 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
         return d;
     }
     case FilePathRole:
-        return indexNode->fileInfo->absoluteFilePath();
     case FileDisplayNameRole:
-        return indexNode->fileInfo->fileDisplayName();
     case FileNameRole:
-        return indexNode->fileInfo->fileName();
     case FileNameOfRenameRole:
-        return indexNode->fileInfo->fileNameOfRename();
     case FileBaseNameRole:
-        return indexNode->fileInfo->baseName();
     case FileBaseNameOfRenameRole:
-        return indexNode->fileInfo->baseNameOfRename();
     case FileSuffixRole:
-        return indexNode->fileInfo->suffix();
     case FileSuffixOfRenameRole:
-        return indexNode->fileInfo->suffixOfRename();
+        return indexNode->dataByRole(role);
     case FileIconRole:
         if (index.column() == 0) {
             return indexNode->fileInfo->fileIcon();
         }
         break;
     case Qt::TextAlignmentRole:
-        return Qt::AlignVCenter;
     case FileLastModifiedRole:
-        return indexNode->fileInfo->lastModifiedDisplayName();
+    case FileLastModifiedDateTimeRole:
     case FileSizeRole:
-        return indexNode->fileInfo->sizeDisplayName();
-    case FileMimeTypeRole: {
-        return indexNode->fileInfo->mimeTypeDisplayName();
-    }
+    case FileSizeInKiloByteRole:
+    case FileMimeTypeRole:
     case FileCreatedRole:
-        return indexNode->fileInfo->createdDisplayName();
     case FilePinyinName:
-        return indexNode->fileInfo->fileDisplayPinyinName();
+        return indexNode->dataByRole(role);
     case Qt::ToolTipRole: {
         const QList<int> column_role_list = parent()->columnRoleList();
 
@@ -1213,7 +1305,7 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
         return QString();
     }
     case ExtensionPropertys:
-        return indexNode->fileInfo->extensionPropertys();
+        return indexNode->dataByRole(role);
     default: {
         const DAbstractFileInfoPointer &fileInfo = indexNode->fileInfo;
 
@@ -1684,6 +1776,90 @@ void DFileSystemModel::setFilters(QDir::Filters filters)
     refresh();
 }
 
+void DFileSystemModel::setAdvanceSearchFilter(const QMap<int, QVariant> &formData, bool turnOn)
+{
+    Q_D(DFileSystemModel);
+
+    if (!advanceSearchFilter()) {
+        d->advanceSearchFilter.reset(new FileFilter);
+    }
+
+    advanceSearchFilter()->filterEnabled = turnOn;
+
+    if (advanceSearchFilter()->filterRule == formData) {
+        return;
+    }
+
+    advanceSearchFilter()->filterRule = formData;
+
+    advanceSearchFilter()->f_comboValid[SEARCH_RANGE] = true;
+    advanceSearchFilter()->f_includeSubDir = advanceSearchFilter()->filterRule[SEARCH_RANGE].toBool();
+
+    advanceSearchFilter()->f_typeString = advanceSearchFilter()->filterRule[FILE_TYPE].toString();
+    advanceSearchFilter()->f_comboValid[FILE_TYPE] = !advanceSearchFilter()->f_typeString.isEmpty();
+
+    advanceSearchFilter()->f_comboValid[SIZE_RANGE] = advanceSearchFilter()->filterRule[SIZE_RANGE].canConvert<QPair<quint64, quint64> >();
+    if (advanceSearchFilter()->f_comboValid[SIZE_RANGE]) {
+        advanceSearchFilter()->f_sizeRange = advanceSearchFilter()->filterRule[SIZE_RANGE].value<QPair<quint64, quint64> >();
+    }
+
+    int dateRange = advanceSearchFilter()->filterRule[DATE_RANGE].toInt();
+    advanceSearchFilter()->f_comboValid[DATE_RANGE] = (dateRange != 0);
+    if (advanceSearchFilter()->f_comboValid[DATE_RANGE]) {
+
+        int firstDayOfWeek = QLocale::system().firstDayOfWeek();
+        QDate today = QDate::currentDate();
+        int dayDist = today.dayOfWeek() - firstDayOfWeek;
+        if (dayDist < 0) dayDist += 7;
+
+        switch (dateRange) { // see DFMAdvanceSearchBar::initUI() for all cases
+        case 1:
+            advanceSearchFilter()->f_dateRangeStart = QDateTime(today);
+            break;
+        case 2:
+            advanceSearchFilter()->f_dateRangeStart = QDateTime(today).addDays(-1);
+            break;
+        case 7:
+            advanceSearchFilter()->f_dateRangeStart = QDateTime(today).addDays(0 - dayDist);
+            break;
+        case 14:
+            advanceSearchFilter()->f_dateRangeStart = QDateTime(today).addDays(-7 - dayDist);
+            break;
+        case 30:
+            advanceSearchFilter()->f_dateRangeStart = QDateTime(QDate(today.year(), today.month(), 1));
+            break;
+        case 60:
+            advanceSearchFilter()->f_dateRangeStart = QDateTime(QDate(today.year(), today.month(), 1)).addMonths(-1);
+            break;
+        case 365:
+            advanceSearchFilter()->f_dateRangeStart = QDateTime(QDate(today.year(), 1, 1));
+            break;
+        case 730:
+            advanceSearchFilter()->f_dateRangeStart = QDateTime(QDate(today.year(), 1, 1)).addYears(-1);
+            break;
+        default:
+            break;
+        }
+    }
+
+    applyAdvanceSearchFilter();
+}
+
+void DFileSystemModel::applyAdvanceSearchFilter()
+{
+    Q_D(DFileSystemModel);
+
+    d->rootNode->applyFileFilter(advanceSearchFilter());
+    sort();
+}
+
+std::shared_ptr<FileFilter> DFileSystemModel::advanceSearchFilter()
+{
+    Q_D(DFileSystemModel);
+
+    return d->advanceSearchFilter;
+}
+
 //void DFileSystemModel::setActiveIndex(const QModelIndex &index)
 //{
 //    int old_column_count = columnCount(d->activeIndex);
@@ -1789,6 +1965,11 @@ void DFileSystemModel::sort(int column, Qt::SortOrder order)
 
 bool DFileSystemModel::sort()
 {
+    return sort(true);
+}
+
+bool DFileSystemModel::sort(bool emitDataChange)
+{
     Q_D(const DFileSystemModel);
 
     if (!enabledSort()) {
@@ -1824,7 +2005,9 @@ bool DFileSystemModel::sort()
 
     if (ok) {
         node->setChildrenList(list);
-        emitAllDataChanged();
+        if (emitDataChange) {
+            emitAllDataChanged();
+        }
     }
 
     return ok;
@@ -1975,20 +2158,6 @@ int DFileSystemModel::columnActiveRole(int column) const
     return d->columnActiveRole.value(column, roles.first());
 }
 
-bool DFileSystemModel::whetherHideCurrentFile(const QModelIndex &index) const
-{
-    Q_D(const DFileSystemModel);
-    void *internal_ptr{ index.internalPointer() };
-
-    if (FileSystemNode *node_ptr = reinterpret_cast<FileSystemNode *>(internal_ptr)) {
-        FileSystemNodePointer node_pointer{ node_ptr };
-
-        return d->passNameFilters(node_pointer);
-    }
-
-    return false;
-}
-
 void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 {
     Q_D(DFileSystemModel);
@@ -2024,8 +2193,10 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 
         const FileSystemNodePointer &chileNode = createNode(node.data(), fileInfo);
 
-        fileHash[fileInfo->fileUrl()] = chileNode;
-        fileList << chileNode.data();
+        if (!chileNode->shouldHideByFilterRule(advanceSearchFilter())) {
+            fileHash[fileInfo->fileUrl()] = chileNode;
+            fileList << chileNode.data();
+        }
     }
 
     if (enabledSort())

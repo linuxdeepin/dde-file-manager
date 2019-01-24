@@ -371,6 +371,25 @@ QPushButton#searchButton:pressed{
     padding: 3px, 3px, 3px, 3px;
 }
 
+QPushButton#filterButton{
+    background-color: rgba(255, 255, 255, 0.15);
+    image: url(:/dark/icons/filter_normal.svg);
+    border-radius: 4px;
+    padding: 3px, 3px, 3px, 3px;
+}
+
+QPushButton#filterButton:hover{
+    background-color: rgba(255, 255, 255, 0.3);
+    image: url(:/dark/icons/filter_hover.svg);
+    padding: 3px, 3px, 3px, 3px;
+}
+
+QPushButton#filterButton:pressed{
+    background-color: rgba(255, 255, 255, 0.1);
+    image: url(:/dark/icons/filter_active.svg);
+    padding: 3px, 3px, 3px, 3px;
+}
+
 /* ******************DCrumbButton****************** */
 QFrame#DCrumbWidget{
     background-color: transparent;
