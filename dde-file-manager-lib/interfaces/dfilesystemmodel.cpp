@@ -2679,7 +2679,7 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
         }
 
         AppController::selectionFile = qMakePair(DUrl(), 0);
-        DFMUrlListBaseEvent event(this, DUrlList() << fileUrl);
+        DFMUrlListBaseEvent event(parent()->parent(), DUrlList() << fileUrl);
         event.setWindowId(windowId);
 
         TIMER_SINGLESHOT_OBJECT(const_cast<DFileSystemModel *>(this), 100, {
@@ -2701,7 +2701,7 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
                     if (AppController::multiSelectionFilesCacheCounter.load(std::memory_order_seq_cst) ==
                             AppController::multiSelectionFilesCache.first.size()) {
 
-                        DFMUrlListBaseEvent event{ this,  AppController::multiSelectionFilesCache.first};
+                        DFMUrlListBaseEvent event{ parent()->parent(),  AppController::multiSelectionFilesCache.first};
                         event.setWindowId(winId);
 
                         ////###: clean cache!
