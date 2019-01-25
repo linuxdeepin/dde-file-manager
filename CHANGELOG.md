@@ -1,3 +1,28 @@
+<a name="4.7.5"></a>
+## 4.7.5 (2019-01-25)
+
+
+#### Bug Fixes
+
+*   won't select file after file rename or create ([8469d743](https://github.com/linuxdeepin/dde-file-manager/commit/8469d743d60ea3b892d9b7590aa127d7c3815105))
+*   dbus service exec argv use -d ([414f6c03](https://github.com/linuxdeepin/dde-file-manager/commit/414f6c03a03a074d3b44bb82ac53ebdf893af501))
+*   update status bar when fileview data change ([45fd6f1b](https://github.com/linuxdeepin/dde-file-manager/commit/45fd6f1b00cfebae89b82cc4dfccc58219e07c2c))
+*   search filter date use range ([ffc3e5bb](https://github.com/linuxdeepin/dde-file-manager/commit/ffc3e5bb6855fa085c4ad98a0ef6609ec4c2e45c))
+*   advance search bar i18n ([ca5fd082](https://github.com/linuxdeepin/dde-file-manager/commit/ca5fd0822bc61d23a40f77af7555c0c851cb239f))
+*   advance search file size range ([65313b00](https://github.com/linuxdeepin/dde-file-manager/commit/65313b00a2abbb1788070afa425ebb69861e7453))
+*   don't watch whole locale share dir for recent file support ([4e4ec08f](https://github.com/linuxdeepin/dde-file-manager/commit/4e4ec08fc13e969047538faabe85acb4ebf054d3))
+*   wrong sort order in recentfile view ([7c9b8312](https://github.com/linuxdeepin/dde-file-manager/commit/7c9b8312f6f4f862fa8f9b57696f42fa43ce6b80))
+*   avoid using dpkg-parsechangelog ([76189d11](https://github.com/linuxdeepin/dde-file-manager/commit/76189d11eba0d497b7b7cab578292feab6108d9c))
+*   update dde-dock-dev package version limit ([bbb3d0e9](https://github.com/linuxdeepin/dde-file-manager/commit/bbb3d0e9279c7fd6a02433b5c5ab6d1e14fa25ea))
+*   not apply saved view state in some case ([903bb1fe](https://github.com/linuxdeepin/dde-file-manager/commit/903bb1fe4da34245c0e4853739fdfb6e83b9b0c5))
+* **dde-desktop:**  the application will be auto quit on sw_64 platform ([5ac98c53](https://github.com/linuxdeepin/dde-file-manager/commit/5ac98c53bde00169ecec03424632cd4714786343))
+
+#### Features
+
+*   advance search ([419e539e](https://github.com/linuxdeepin/dde-file-manager/commit/419e539e74242bd2ef13dea254182aa510061dcd))
+
+
+
 <a name="4.7.4.4"></a>
 ## 4.7.4.4 (2019-01-15)
 
