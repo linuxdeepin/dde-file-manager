@@ -30,6 +30,10 @@
 #include <QDir>
 #include <QFuture>
 
+// for std::shared_ptr
+#include <iostream>
+#include <memory>
+
 #include "durl.h"
 #include "dabstractfileinfo.h"
 
