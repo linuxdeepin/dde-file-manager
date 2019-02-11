@@ -43,7 +43,7 @@
 #include "shutil/fileutils.h"
 #include "deviceinfo/udisklistener.h"
 
-
+#include <memory>
 #include <QList>
 #include <QDebug>
 #include <QMimeData>
