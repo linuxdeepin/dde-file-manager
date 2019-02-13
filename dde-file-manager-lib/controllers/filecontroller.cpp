@@ -829,7 +829,7 @@ bool FileController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent>
 
     QDir::setCurrent(event->url().toLocalFile());
 
-    bool ok = QProcess::startDetached("x-terminal-emulator");
+    bool ok = QProcess::startDetached(FileUtils::defaultTerminalPath());
 
     QDir::setCurrent(current_dir);
 

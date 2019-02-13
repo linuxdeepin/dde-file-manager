@@ -75,6 +75,7 @@ public:
 
     static bool openFilesByApp(const QString& desktopFile, const QStringList &filePaths);
     static bool isFileManagerSelf(const QString& desktopFile);
+    static QString defaultTerminalPath();
 
     static bool setBackground(const QString& pictureFilePath);
 

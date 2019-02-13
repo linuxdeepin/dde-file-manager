@@ -633,8 +633,9 @@ bool FileUtils::openFilesByApp(const QString& desktopFile, const QStringList& fi
         QString exec = QString(g_desktop_app_info_get_string(appInfo, "Exec"));
         QStringList args;
         args << "-e" << exec.split(" ").at(0) << filePaths;
-        qDebug() << "/usr/bin/x-terminal-emulator" << args;
-        ok = QProcess::startDetached("/usr/bin/x-terminal-emulator", args);
+        QString termPath = defaultTerminalPath();
+        qDebug() << termPath << args;
+        ok = QProcess::startDetached(termPath, args);
     }else{
         ok = launchApp(desktopFile, filePaths);
     }
@@ -650,6 +651,20 @@ bool FileUtils::isFileManagerSelf(const QString &desktopFile)
     */
     DesktopFile d(desktopFile);
     return d.getExec().contains("dde-file-manager") || d.getExec().contains("file-manager.sh");
+}
+
+QString FileUtils::defaultTerminalPath()
+{
+    const static QString dde_daemon_default_term = QStringLiteral("/usr/lib/deepin-daemon/default-terminal");
+    const static QString debian_x_term_emu = QStringLiteral("/usr/bin/x-terminal-emulator");
+
+    if (QFileInfo::exists(dde_daemon_default_term)) {
+        return dde_daemon_default_term;
+    } else if (QFileInfo::exists(debian_x_term_emu)) {
+        return debian_x_term_emu;
+    }
+
+    return QStandardPaths::findExecutable("xterm");
 }
 
 bool FileUtils::setBackground(const QString &pictureFilePath)
@@ -814,7 +829,7 @@ bool FileUtils::openExcutableScriptFile(const QString &path, int flag)
     case 2:{
         QStringList args;
         args << "-e" << path;
-        result = runCommand("x-terminal-emulator", args);
+        result = runCommand(FileUtils::defaultTerminalPath(), args);
         break;
     }
     case 3:
@@ -854,7 +869,7 @@ bool FileUtils::openExcutableFile(const QString &path, int flag)
     case 1:{
         QStringList args;
         args << "-e" << path;
-        result = runCommand("x-terminal-emulator", args);
+        result = runCommand(FileUtils::defaultTerminalPath(), args);
         break;
     }
     case 2:
