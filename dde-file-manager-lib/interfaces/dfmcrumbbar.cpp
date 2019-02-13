@@ -63,12 +63,16 @@ public:
     // Scheme support
     DFMCrumbInterface* crumbController = nullptr;
 
+    // Misc
+    bool clickableAreaEnabled = false;
+
     DFMCrumbBar *q_ptr = nullptr;
 
     void clearCrumbs();
     void checkArrowVisiable();
     void addCrumb(DFMCrumbItem* item);
     void updateController(const DUrl &url);
+    void setClickableAreaEnabled(bool enabled);
 
 private:
     void initUI();
@@ -171,6 +175,14 @@ void DFMCrumbBarPrivate::updateController(const DUrl &url)
     }
 }
 
+void DFMCrumbBarPrivate::setClickableAreaEnabled(bool enabled)
+{
+    if (clickableAreaEnabled == enabled) return;
+
+    clickableAreaEnabled = enabled;
+    crumbListHolder->setContentsMargins(0, 0, (enabled ? 30 : 0), 0);
+}
+
 void DFMCrumbBarPrivate::initUI()
 {
     Q_Q(DFMCrumbBar);
@@ -201,9 +213,10 @@ void DFMCrumbBarPrivate::initUI()
     crumbListScrollArea.setContentsMargins(0, 0, 0, 0);
     crumbListScrollArea.setSizeAdjustPolicy(QAbstractScrollArea::AdjustIgnored);
 
+    int clickableRightMargin = clickableAreaEnabled ? 30 : 0; // right 30 for easier click
     crumbListHolder = new QWidget();
     crumbListHolder->setObjectName("crumbListHolder");
-    crumbListHolder->setContentsMargins(0, 0, 30, 0); // right 30 for easier click
+    crumbListHolder->setContentsMargins(0, 0, clickableRightMargin, 0);
     crumbListHolder->setFixedHeight(q->height());
     crumbListHolder->installEventFilter(q);
     crumbListScrollArea.setWidget(crumbListHolder);
@@ -436,7 +449,7 @@ void DFMCrumbBar::mousePressEvent(QMouseEvent *event)
     Q_D(DFMCrumbBar);
     d->clickedPos = event->globalPos();
 
-    if (event->button() == Qt::RightButton) {
+    if (event->button() == Qt::RightButton && d->clickableAreaEnabled) {
         event->accept();
         return;
     }
@@ -448,8 +461,12 @@ void DFMCrumbBar::mouseReleaseEvent(QMouseEvent *event)
 {
     Q_D(DFMCrumbBar);
 
-    //blumia: no need to check if it's clicked on other widgets
-    //        since this will only happend when clicking empty.
+    if (!d->clickableAreaEnabled) {
+        return QFrame::mouseReleaseEvent(event);;
+    }
+
+    // blumia: no need to check if it's clicked on other widgets
+    //         since this will only happend when clicking empty.
     const QPoint pos_difference = d->clickedPos - event->globalPos();
 
     if (qAbs(pos_difference.x()) < 2 && qAbs(pos_difference.y()) < 2) {
@@ -510,15 +527,21 @@ void DFMCrumbBar::paintEvent(QPaintEvent *event)
     QColor crumbBarBgColor = ThemeConfig::instace()->color("DFMCrumbBar", "background");
     QPainterPath path;
 
+    QRectF crumbsRect(rect());
+
+    if (!d->clickableAreaEnabled) {
+        crumbsRect = d->crumbListHolder->rect();
+    }
+
     painter.setRenderHint(QPainter::Antialiasing);
-    path.addRoundedRect(QRectF(rect()).adjusted(0.5, 0.5, -0.5, -0.5), 4, 4);
+    path.addRoundedRect(QRectF(crumbsRect).adjusted(0.5, 0.5, -0.5, -0.5), 4, 4);
     QPen pen(borderColor, 1);
     painter.setPen(pen);
 
     if (d->addressBar->isHidden()) {
         QPainterPath path;
 
-        path.addRoundedRect(QRectF(rect()), 4, 4);
+        path.addRoundedRect(QRectF(crumbsRect), 4, 4);
         painter.fillPath(path, crumbBarBgColor);
     }
 
