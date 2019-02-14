@@ -92,6 +92,7 @@ void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, cons
             break;
         case DFMApplication::GA_ShowCsdCrumbBarClickableArea:
             Q_EMIT self->csdClickableAreaAttributeChanged(value.toBool());
+            break;
         default:
             break;
         }

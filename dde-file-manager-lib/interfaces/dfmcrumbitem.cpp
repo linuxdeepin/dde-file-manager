@@ -20,10 +20,13 @@
  */
 #include "dfmcrumbitem.h"
 #include "dfmcrumbinterface.h"
+#include "dfmcrumbbar.h"
 
 #include "dfileservices.h"
 #include "dstorageinfo.h"
 
+#include "views/dfilemanagerwindow.h"
+#include "views/windowmanager.h"
 #include "views/themeconfig.h"
 #include "deviceinfo/udisklistener.h"
 
@@ -31,7 +34,10 @@
 #include <DThemeManager>
 #include <QMimeData>
 
+#include <QGuiApplication>
+#include <QClipboard>
 #include <QDebug>
+#include <QMenu>
 
 #include "singleton.h"
 
@@ -48,6 +54,7 @@ public:
 
     QPixmap icon() const;
     ThemeConfig::State getState() const;
+    QMenu *createStandardContextMenu() const;
 
     QPoint clickedPos;
     CrumbData data;
@@ -83,6 +90,49 @@ ThemeConfig::State DFMCrumbItemPrivate::getState() const
     }
 
     return ThemeConfig::Normal;
+}
+
+QMenu *DFMCrumbItemPrivate::createStandardContextMenu() const
+{
+    Q_Q(const DFMCrumbItem);
+
+    QMenu *menu = new QMenu();
+    static QMap<QString, QIcon> actionIcons = {
+#ifdef QT_DEBUG
+        {"edit-copy", QIcon::fromTheme("edit-copy")},
+        {"window-new", QIcon::fromTheme("window-new")},
+        {"tab-new", QIcon::fromTheme("tab-new")},
+        {"entry-edit", QIcon::fromTheme("entry-edit")}
+#endif
+    };
+
+    DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(q->topLevelWidget());
+    bool shouldDisable = !WindowManager::tabAddableByWinId(wnd->windowId());
+
+    menu->addAction(actionIcons["edit-copy"], QObject::tr("Copy path"), [this]() {
+        QGuiApplication::clipboard()->setText(data.url.toString());
+    });
+
+    menu->addAction(actionIcons["window-new"], QObject::tr("Open in new window"), [this]() {
+        WindowManager::instance()->showNewWindow(data.url, true);
+    });
+
+    menu->addAction(actionIcons["tab-new"], QObject::tr("Open in new tab"), [wnd, this]() {
+        wnd->openNewTab(data.url);
+    })->setDisabled(shouldDisable);
+
+    menu->addSeparator();
+
+    menu->addAction(actionIcons["entry-edit"], QObject::tr("Edit address"), [=]() {
+        DFMCrumbBar* cb_ptr = qobject_cast<DFMCrumbBar*>(q->parentWidget()->parentWidget()->parentWidget()->parentWidget());
+        if (cb_ptr) {
+            cb_ptr->showAddressBar(qobject_cast<DFileManagerWindow*>(q->topLevelWidget())->currentUrl());
+        } else {
+            qWarning() << "cannot locate DFMCrumbBar widget to call showAddressBar()";
+        }
+    });
+
+    return menu;
 }
 
 /*!
@@ -269,6 +319,15 @@ void DFMCrumbItem::mouseReleaseEvent(QMouseEvent *event)
     } else {
         QWidget::mouseReleaseEvent(event);
     }
+}
+
+void DFMCrumbItem::contextMenuEvent(QContextMenuEvent *event)
+{
+    Q_D(DFMCrumbItem);
+
+    QMenu *menu = d->createStandardContextMenu();
+    menu->exec(event->globalPos());
+    menu->deleteLater();
 }
 
 void DFMCrumbItem::paintEvent(QPaintEvent *event)
