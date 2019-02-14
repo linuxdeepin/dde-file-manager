@@ -45,9 +45,10 @@ protected:
     virtual Qt::DropAction canDropMimeData(const QMimeData *data, Qt::DropActions actions) const;
     virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action) const;
 
-    void mousePressEvent(QMouseEvent * event) Q_DECL_OVERRIDE;
-    void mouseReleaseEvent(QMouseEvent * event) Q_DECL_OVERRIDE;
-    void paintEvent(QPaintEvent *event);
+    void mousePressEvent(QMouseEvent * event) override;
+    void mouseReleaseEvent(QMouseEvent * event) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 
 private:
     QScopedPointer<DFMCrumbItemPrivate> d_ptr;
