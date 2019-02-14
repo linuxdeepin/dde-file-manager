@@ -68,7 +68,8 @@ public:
         GA_ShowedFileSuffixOnRename, // 重命名文件时显示后缀
         GA_DisableNonRemovableDeviceUnmount, // 禁用本地磁盘卸载功能
         GA_HiddenSystemPartition, // 隐藏系统分区
-        GA_ShowRecentFileEntry // 在侧边栏显示“最近文件”入口
+        GA_ShowRecentFileEntry, // 在侧边栏显示“最近文件”入口
+        GA_ShowCsdCrumbBarClickableArea // 在面包屑栏预留可供点击以进入地址栏编辑状态的区域
     };
 
     Q_ENUM(GenericAttribute)
@@ -104,6 +105,7 @@ Q_SIGNALS:
     void previewAttributeChanged(GenericAttribute ga, bool enable);
     void showedHiddenFilesChanged(bool enable);
     void recentDisplayChanged(bool enable);
+    void csdClickableAreaAttributeChanged(bool enabled);
 
     void genericSettingCreated(DFMSettings *settings);
     void appSettingCreated(DFMSettings *settings);

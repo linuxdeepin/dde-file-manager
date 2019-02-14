@@ -263,6 +263,13 @@
                             "text": qsTranslate("GenerateSettingTranslate", "Hide system disk"),
                             "type": "checkbox",
                             "default": false
+                        },
+                        {
+                            "key": "show_crumbbar_clickable_area",
+                            "text": "Show crumb bar clickable area",
+                            "type": "checkbox",
+                            "default": false,
+                            "hide": true
                         }
                     ]
                 }

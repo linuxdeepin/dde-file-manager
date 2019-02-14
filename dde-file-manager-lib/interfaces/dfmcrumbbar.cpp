@@ -33,6 +33,7 @@
 #include "views/themeconfig.h"
 #include "dfmcrumbfactory.h"
 #include "dfmcrumbinterface.h"
+#include "dfmapplication.h"
 #include "dfmevent.h"
 
 #include <QButtonGroup>
@@ -177,10 +178,14 @@ void DFMCrumbBarPrivate::updateController(const DUrl &url)
 
 void DFMCrumbBarPrivate::setClickableAreaEnabled(bool enabled)
 {
+    Q_Q(DFMCrumbBar);
+
     if (clickableAreaEnabled == enabled) return;
 
     clickableAreaEnabled = enabled;
     crumbListHolder->setContentsMargins(0, 0, (enabled ? 30 : 0), 0);
+
+    q->update();
 }
 
 void DFMCrumbBarPrivate::initUI()
@@ -245,6 +250,7 @@ void DFMCrumbBarPrivate::initData()
 {
     Q_Q(DFMCrumbBar);
     addressBar = new DFMAddressBar(q);
+    clickableAreaEnabled = DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowCsdCrumbBarClickableArea).toBool();
 }
 
 void DFMCrumbBarPrivate::initConnections()
@@ -283,6 +289,10 @@ void DFMCrumbBarPrivate::initConnections()
         if (crumbController) {
             crumbController->processAction(DFMCrumbInterface::ClearButtonPressed);
         }
+    });
+
+    q->connect(DFMApplication::instance(), &DFMApplication::csdClickableAreaAttributeChanged, q, [this](bool enabled) {
+        setClickableAreaEnabled(enabled);
     });
 }
 
