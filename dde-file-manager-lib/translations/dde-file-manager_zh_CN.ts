@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -1247,92 +1245,56 @@
 <context>
     <name>MimeTypeDisplayManager</name>
     <message>
-        <source>directory</source>
-        <translation type="vanished">目录</translation>
-    </message>
-    <message>
-        <source>application</source>
-        <translation type="vanished">应用程序</translation>
-    </message>
-    <message>
-        <source>video</source>
-        <translation type="vanished">视频</translation>
-    </message>
-    <message>
-        <source>audio</source>
-        <translation type="vanished">音频</translation>
-    </message>
-    <message>
-        <source>image</source>
-        <translation type="vanished">图片</translation>
-    </message>
-    <message>
-        <source>archive</source>
-        <translation type="vanished">压缩文件</translation>
-    </message>
-    <message>
-        <source>text</source>
-        <translation type="vanished">文档</translation>
-    </message>
-    <message>
-        <source>executable</source>
-        <translation type="vanished">可执行程序</translation>
-    </message>
-    <message>
-        <source>unknown</source>
-        <translation type="vanished">未知</translation>
-    </message>
-    <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="52"/>
         <source>Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>目录</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="53"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="129"/>
         <source>Application</source>
-        <translation type="unfinished"></translation>
+        <translation>应用程序</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="54"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="130"/>
         <source>Video</source>
-        <translation type="unfinished"></translation>
+        <translation>视频</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="55"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="131"/>
         <source>Audio</source>
-        <translation type="unfinished"></translation>
+        <translation>音频</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="56"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="132"/>
         <source>Image</source>
-        <translation type="unfinished"></translation>
+        <translation>图片</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="57"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="133"/>
         <source>Archive</source>
-        <translation type="unfinished"></translation>
+        <translation>压缩文件</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="58"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="134"/>
         <source>Text</source>
-        <translation type="unfinished">新建文本</translation>
+        <translation>文档</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="59"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="135"/>
         <source>Executable</source>
-        <translation type="unfinished">可执行</translation>
+        <translation>可执行程序</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="60"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>未知</translation>
     </message>
 </context>
 <context>
@@ -2553,12 +2515,12 @@
     <message>
         <location filename="../interfaces/dfmcrumbitem.cpp" line="112"/>
         <source>Copy path</source>
-        <translation type="unfinished"></translation>
+        <translation>复制路径</translation>
     </message>
     <message>
         <location filename="../interfaces/dfmcrumbitem.cpp" line="126"/>
         <source>Edit address</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑地址</translation>
     </message>
 </context>
 <context>
@@ -3050,13 +3012,6 @@
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="48"/>
         <source>Confirm</source>
         <translation>确定</translation>
-    </message>
-</context>
-<context>
-    <name>WindowManager</name>
-    <message>
-        <source>Deepin File Manager</source>
-        <translation type="vanished">深度文件管理器</translation>
     </message>
 </context>
 </TS>

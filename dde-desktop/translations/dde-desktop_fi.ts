@@ -1,40 +1,40 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="fi" version="2.1">
 <context>
     <name>CanvasGridView</name>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2292"/>
         <source>Icon size</source>
-        <translation>图标大小</translation>
+        <translation>Kuvakkeen koko</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2298"/>
         <source>Auto arrange</source>
-        <translation>自动排列</translation>
+        <translation>Järjestä automaattisesti</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2351"/>
         <source>Set Wallpaper</source>
-        <translation>设置壁纸</translation>
+        <translation>Aseta taustakuva</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2353"/>
         <source>Wallpaper and Screensaver</source>
-        <translation>壁纸与屏保</translation>
+        <translation>Taustakuva ja näytönsäästäjä</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2431"/>
         <source>Properties</source>
-        <translation>属性</translation>
+        <translation>Ominaisuudet</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2337"/>
         <source>Display Settings</source>
-        <translation>显示设置</translation>
+        <translation>Näytön asetukset</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2344"/>
         <source>Corner Settings</source>
-        <translation>热区设置</translation>
+        <translation>Kulma-asetukset</translation>
     </message>
 </context>
 <context>
@@ -42,27 +42,27 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="38"/>
         <source>Tiny</source>
-        <translation>极小</translation>
+        <translation>Pikkuruinen</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="39"/>
         <source>Small</source>
-        <translation>小</translation>
+        <translation>Pieni</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="40"/>
         <source>Medium</source>
-        <translation>中</translation>
+        <translation>Keskikoko</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="41"/>
         <source>Large</source>
-        <translation>大</translation>
+        <translation>Iso</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="42"/>
         <source>Super large</source>
-        <translation>极大</translation>
+        <translation>Erittäin iso</translation>
     </message>
 </context>
 <context>
@@ -70,42 +70,42 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="318"/>
         <source>Require a password on wake up</source>
-        <translation>恢复时需要密码</translation>
+        <translation>Vaadi salasana herätessä</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="343"/>
         <source>Never</source>
-        <translation>从不</translation>
+        <translation>Koskaan</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="344"/>
         <source>Wait:</source>
-        <translation>闲置时间：</translation>
+        <translation>Odota:</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="373"/>
         <source>Wallpaper</source>
-        <translation>壁纸</translation>
+        <translation>Taustakuva</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="373"/>
         <source>Screensaver</source>
-        <translation>屏保</translation>
+        <translation>Näytönsäästäjä</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="431"/>
         <source>Only desktop</source>
-        <translation>仅设置桌面</translation>
+        <translation>Vain työpöytä</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="432"/>
         <source>Only lock screen</source>
-        <translation>仅设置锁屏</translation>
+        <translation>Lukitse vain näyttö</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="460"/>
         <source>Apply</source>
-        <translation>设置屏保</translation>
+        <translation>Käytä</translation>
     </message>
 </context>
 <context>
@@ -113,37 +113,37 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Fast Screen Off</source>
-        <translation>快速黑屏</translation>
+        <translation>Pikana näyttö pois</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Control Center</source>
-        <translation>控制中心</translation>
+        <translation>Ohjauskeskus</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>All Windows</source>
-        <translation>所有窗口</translation>
+        <translation>Kaikki ikkunat</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Launcher</source>
-        <translation>启动器</translation>
+        <translation>Käynnistin</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Desktop</source>
-        <translation>显示桌面</translation>
+        <translation>Työpöytä</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>None</source>
-        <translation>无</translation>
+        <translation>Tyhjyys</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="59"/>
         <source>Close Window</source>
-        <translation>关闭窗口</translation>
+        <translation>Sulje ikkuna</translation>
     </message>
 </context>
 </TS>

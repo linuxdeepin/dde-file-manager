@@ -99,107 +99,107 @@
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="102"/>
         <source>Search:</source>
-        <translation type="unfinished"/>
+        <translation>Keresés:</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="103"/>
         <source>File Type:</source>
-        <translation type="unfinished"/>
+        <translation>Fájltípus:</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="104"/>
         <source>File Size:</source>
-        <translation type="unfinished"/>
+        <translation>Fájlméret:</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="105"/>
         <source>Time Modified:</source>
-        <translation type="unfinished"/>
+        <translation>Módosítás időpontja:</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="107"/>
         <source>Reset</source>
-        <translation type="unfinished"/>
+        <translation>Visszaállítás</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="121"/>
         <source>All subdirectories</source>
-        <translation type="unfinished"/>
+        <translation>Minden alkönyvtár</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="122"/>
         <source>Current directory</source>
-        <translation type="unfinished"/>
+        <translation>Jelen könyvtár</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="138"/>
         <source>0 ~ 100 KB</source>
-        <translation type="unfinished"/>
+        <translation>0 ~ 100 KB</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="139"/>
         <source>100 KB ~ 1 MB</source>
-        <translation type="unfinished"/>
+        <translation>100 KB ~ 1 MB</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="140"/>
         <source>1 MB ~ 10 MB</source>
-        <translation type="unfinished"/>
+        <translation>1 MB ~ 10 MB</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="141"/>
         <source>10 MB ~ 100 MB</source>
-        <translation type="unfinished"/>
+        <translation>10 MB ~ 100 MB</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="142"/>
         <source>100 MB ~ 1 GB</source>
-        <translation type="unfinished"/>
+        <translation>100 MB ~ 1 GB</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="143"/>
         <source>&gt; 1 GB</source>
-        <translation type="unfinished"/>
+        <translation>&gt; 1 GB</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="146"/>
         <source>Today</source>
-        <translation type="unfinished"/>
+        <translation>Ma</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="147"/>
         <source>Yesterday</source>
-        <translation type="unfinished"/>
+        <translation>Tegnap</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="148"/>
         <source>This week</source>
-        <translation type="unfinished"/>
+        <translation>Ezen a héten</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="149"/>
         <source>Last week</source>
-        <translation type="unfinished"/>
+        <translation>Múlt héten</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="150"/>
         <source>This month</source>
-        <translation type="unfinished"/>
+        <translation>Ebben a hónapban</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="151"/>
         <source>Last month</source>
-        <translation type="unfinished"/>
+        <translation>Múlt hónapban</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="152"/>
         <source>This year</source>
-        <translation type="unfinished"/>
+        <translation>Ebben az évben</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="153"/>
         <source>Last year</source>
-        <translation type="unfinished"/>
+        <translation>Múlt évben</translation>
     </message>
 </context>
 <context>
@@ -346,7 +346,7 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="844"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="842"/>
         <source>Dark Theme</source>
         <translation>Sötét téma</translation>
     </message>
@@ -486,7 +486,7 @@
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="114"/>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="129"/>
         <source>%1 Volume</source>
-        <translation type="unfinished"/>
+        <translation>%1 Kötet</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="51"/>
@@ -570,7 +570,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="409"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
-        <translation type="unfinished"/>
+        <translation>Ez a fájl nem futtatható. Szeretnél hozzáadni futtatási jogot és utána futtatni?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="423"/>
@@ -700,17 +700,17 @@
         <location filename="../dialogs/dialogmanager.cpp" line="861"/>
         <location filename="../dialogs/dialogmanager.cpp" line="883"/>
         <source>You do not have permission to operate file/folder!</source>
-        <translation>Önnek nincs jogosultsága műveleket végrehajtani ezen a fájlon/mappán!</translation>
+        <translation>Sajnálom, nincs jogosultságod műveleteket végrehajtani ezen a fájlon/mappán!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="903"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
-        <translation>Sajnáljuk, de önnek nincs jogosultsága végrehajtani a következő műveletet ezeken a fájlokon/mappákon: %1!</translation>
+        <translation>Sajnálom, de  nincs jogosultságod végrehajtani a következő műveletet ezeken a fájlokon/mappákon: %1!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="990"/>
         <source>2. Uncheck &quot;Turn on fast startup&quot; and &quot;Hibernate&quot; in shutdown settings and reboot</source>
-        <translation type="unfinished"/>
+        <translation>2. Vedd ki a jelölést az &quot;gyors indításkori bekapcsolás&quot; és a &quot;hibernálás&quot; funkciókat a leállítás beállításainál és indítsd újra</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1207"/>
@@ -725,7 +725,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="392"/>
         <source>Do you want to run %1?</source>
-        <translation>Futtatni akarja %1?</translation>
+        <translation>Futtatni szeretnéd %1?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="975"/>
@@ -735,22 +735,22 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="979"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
-        <translation type="unfinished"/>
+        <translation>A lemez Windows alatti adatai alapesetben nem lesznek írhatóak és olvashatóak, hacsak nem ellenőrzöd a &quot;Gyors indításkori bekapcsolás (ajánlott)&quot; funkciót a leállítás beállításaiban.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="983"/>
         <source>Please restore by the following steps to normally access Windows disk</source>
-        <translation type="unfinished"/>
+        <translation>Kérjük végezd el a következő lépéseket, hogy hozzá tudj férni a merevlemez Windows rendszert használó részéhez</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="989"/>
         <source>1. Reboot to enter Windows</source>
-        <translation type="unfinished"/>
+        <translation>1. Indítsd újra a gépet a Windows rendszer indításához</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="991"/>
         <source>3. Reboot and enter deepin</source>
-        <translation type="unfinished"/>
+        <translation>3. Indítsd újra a gépet és lépj be a deepin-be</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1008"/>
@@ -1093,7 +1093,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="171"/>
         <location filename="../configure/global-setting-template.js" line="171"/>
         <source>Index external storage device after connected to computer</source>
-        <translation type="unfinished"/>
+        <translation>Indexelje a külső meghajtókat, miután azok csatlakoztak a számítógéphez</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="259"/>
@@ -1121,7 +1121,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="145"/>
         <location filename="../configure/global-setting-template.js" line="145"/>
         <source>Display recent file entry in left panel</source>
-        <translation type="unfinished"/>
+        <translation>Mutassa a legutóbbi fájlokat a bal oldali panelen</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="191"/>
@@ -1229,7 +1229,7 @@
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1338"/>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1519"/>
         <source>Cannot find the mounting device</source>
-        <translation type="unfinished"/>
+        <translation>A felcsatolt eszköz nem található</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1367"/>
@@ -1246,55 +1246,55 @@
     <name>MimeTypeDisplayManager</name>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="52"/>
-        <source>directory</source>
-        <translation>mappa</translation>
+        <source>Directory</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="53"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="129"/>
-        <source>application</source>
-        <translation>alkalmazás</translation>
+        <source>Application</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="54"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="130"/>
-        <source>video</source>
-        <translation>videó</translation>
+        <source>Video</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="55"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="131"/>
-        <source>audio</source>
-        <translation>audió</translation>
+        <source>Audio</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="56"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="132"/>
-        <source>image</source>
-        <translation>kép</translation>
+        <source>Image</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="57"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="133"/>
-        <source>archive</source>
-        <translation>archív</translation>
+        <source>Archive</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="58"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="134"/>
-        <source>text</source>
-        <translation>szöveg</translation>
+        <source>Text</source>
+        <translation>Szöveg</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="59"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="135"/>
-        <source>executable</source>
-        <translation>futtatható</translation>
+        <source>Executable</source>
+        <translation>Futtatható</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="60"/>
-        <source>unknown</source>
-        <translation>ismeretlen</translation>
+        <source>Unknown</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1360,7 +1360,7 @@
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="52"/>
         <source>Please input password to decrypt the disk</source>
-        <translation>Kérem adja meg a jelszavát a lemez kititkosításához</translation>
+        <translation>Kérlek add meg a jelszavadat a lemez kititkosításához</translation>
     </message>
 </context>
 <context>
@@ -1704,7 +1704,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="815"/>
         <source>Link path</source>
-        <translation type="unfinished"/>
+        <translation>Elérési útvonal</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="855"/>
@@ -1800,11 +1800,12 @@
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="200"/>
         <source>Items: %1</source>
-        <translation type="unfinished"/>
+        <translation>Elemek: %1</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="753"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="756"/>
+        <location filename="../interfaces/dfmcrumbitem.cpp" line="116"/>
         <location filename="../interfaces/dfmsidebaritem.cpp" line="478"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="78"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="91"/>
@@ -1820,6 +1821,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="754"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="757"/>
+        <location filename="../interfaces/dfmcrumbitem.cpp" line="120"/>
         <location filename="../interfaces/dfmsidebaritem.cpp" line="482"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="82"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="99"/>
@@ -2061,12 +2063,12 @@
         <translation>Összes visszaállítása</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="342"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="343"/>
         <source>Auto mount</source>
         <translation>Automatikus csatolás</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="380"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="381"/>
         <source>Open after auto mount</source>
         <translation>Automatikus csatolás után megnyitás</translation>
     </message>
@@ -2347,7 +2349,7 @@
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="232"/>
         <source>+SN:</source>
-        <translation type="unfinished"/>
+        <translation>+SN:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="152"/>
@@ -2400,12 +2402,12 @@
     <message>
         <location filename="../views/drenamebar.cpp" line="284"/>
         <source>+SN</source>
-        <translation type="unfinished"/>
+        <translation>+SN:</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="292"/>
         <source>Tips: Sort by selected file order</source>
-        <translation type="unfinished"/>
+        <translation>Tipp: Rendezés a kiválasztott fájl szerint</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="381"/>
@@ -2496,7 +2498,7 @@
     <message>
         <location filename="../views/dtagedit.cpp" line="91"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
-        <translation type="unfinished"/>
+        <translation>Írd be a tag-eket mint például munkahely, család. Vesszőt kell használni a tag-ek között.</translation>
     </message>
     <message>
         <location filename="../controllers/dfmbookmarkcrumbcontroller.cpp" line="46"/>
@@ -2509,6 +2511,16 @@
         <location filename="../views/dfmsidebarrootitem.cpp" line="56"/>
         <source>Disk info</source>
         <translation>Lemezinfó</translation>
+    </message>
+    <message>
+        <location filename="../interfaces/dfmcrumbitem.cpp" line="112"/>
+        <source>Copy path</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../interfaces/dfmcrumbitem.cpp" line="126"/>
+        <source>Edit address</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2824,7 +2836,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="62"/>
         <source>Ctrl + 1 </source>
-        <translation type="unfinished"/>
+        <translation>Ctrl + 1 </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="63"/>
@@ -2834,7 +2846,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="63"/>
         <source>Ctrl + 2 </source>
-        <translation type="unfinished"/>
+        <translation>Ctrl + 2 </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="64"/>
@@ -2960,7 +2972,7 @@
     <message>
         <location filename="../deviceinfo/udisklistener.cpp" line="186"/>
         <source>Failed to rename the label</source>
-        <translation type="unfinished"/>
+        <translation>Címke átnevezése meghiúsult</translation>
     </message>
 </context>
 <context>
@@ -2981,7 +2993,7 @@
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="416"/>
         <source>Please firstly install samba to continue</source>
-        <translation>A folytatáshoz először telepítse a samba-t</translation>
+        <translation>A folytatáshoz először telepítsd a samba-t</translation>
     </message>
 </context>
 <context>
@@ -3000,14 +3012,6 @@
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="48"/>
         <source>Confirm</source>
         <translation>Megerősítés</translation>
-    </message>
-</context>
-<context>
-    <name>WindowManager</name>
-    <message>
-        <location filename="../views/windowmanager.cpp" line="81"/>
-        <source>Deepin File Manager</source>
-        <translation>Deepin fájlkezelő</translation>
     </message>
 </context>
 </TS>

@@ -346,7 +346,7 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="844"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="842"/>
         <source>Dark Theme</source>
         <translation>暗色主題</translation>
     </message>
@@ -1246,55 +1246,55 @@
     <name>MimeTypeDisplayManager</name>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="52"/>
-        <source>directory</source>
-        <translation>資料夾</translation>
+        <source>Directory</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="53"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="129"/>
-        <source>application</source>
-        <translation>應用程式</translation>
+        <source>Application</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="54"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="130"/>
-        <source>video</source>
-        <translation>影片</translation>
+        <source>Video</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="55"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="131"/>
-        <source>audio</source>
-        <translation>音樂</translation>
+        <source>Audio</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="56"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="132"/>
-        <source>image</source>
-        <translation>圖片</translation>
+        <source>Image</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="57"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="133"/>
-        <source>archive</source>
-        <translation>壓縮檔案</translation>
+        <source>Archive</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="58"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="134"/>
-        <source>text</source>
-        <translation>文字檔案</translation>
+        <source>Text</source>
+        <translation>純文字文件</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="59"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="135"/>
-        <source>executable</source>
-        <translation>執行檔案</translation>
+        <source>Executable</source>
+        <translation>可執行</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="60"/>
-        <source>unknown</source>
-        <translation>未知</translation>
+        <source>Unknown</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1805,6 +1805,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="753"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="756"/>
+        <location filename="../interfaces/dfmcrumbitem.cpp" line="116"/>
         <location filename="../interfaces/dfmsidebaritem.cpp" line="478"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="78"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="91"/>
@@ -1820,6 +1821,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="754"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="757"/>
+        <location filename="../interfaces/dfmcrumbitem.cpp" line="120"/>
         <location filename="../interfaces/dfmsidebaritem.cpp" line="482"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="82"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="99"/>
@@ -2061,12 +2063,12 @@
         <translation>全部還原</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="342"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="343"/>
         <source>Auto mount</source>
         <translation>自動掛載</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="380"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="381"/>
         <source>Open after auto mount</source>
         <translation>自動掛載後開啟</translation>
     </message>
@@ -2509,6 +2511,16 @@
         <location filename="../views/dfmsidebarrootitem.cpp" line="56"/>
         <source>Disk info</source>
         <translation>磁碟資訊</translation>
+    </message>
+    <message>
+        <location filename="../interfaces/dfmcrumbitem.cpp" line="112"/>
+        <source>Copy path</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../interfaces/dfmcrumbitem.cpp" line="126"/>
+        <source>Edit address</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3000,14 +3012,6 @@
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="48"/>
         <source>Confirm</source>
         <translation>確定</translation>
-    </message>
-</context>
-<context>
-    <name>WindowManager</name>
-    <message>
-        <location filename="../views/windowmanager.cpp" line="81"/>
-        <source>Deepin File Manager</source>
-        <translation>Deepin 檔案管理器管理器</translation>
     </message>
 </context>
 </TS>

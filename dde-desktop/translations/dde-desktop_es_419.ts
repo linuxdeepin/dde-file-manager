@@ -19,7 +19,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="2353"/>
         <source>Wallpaper and Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Fondo de pantalla y salvapantallas</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2431"/>
@@ -70,27 +70,27 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="318"/>
         <source>Require a password on wake up</source>
-        <translation type="unfinished"/>
+        <translation>Requerir una contraseña al despertar</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="343"/>
         <source>Never</source>
-        <translation type="unfinished"/>
+        <translation>Nunca</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="344"/>
         <source>Wait:</source>
-        <translation type="unfinished"/>
+        <translation>Esperar:</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="373"/>
         <source>Wallpaper</source>
-        <translation type="unfinished"/>
+        <translation>Fondo de pantalla</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="373"/>
         <source>Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Salvapantallas</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="431"/>
@@ -105,7 +105,7 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="460"/>
         <source>Apply</source>
-        <translation type="unfinished"/>
+        <translation>Aplicar</translation>
     </message>
 </context>
 <context>

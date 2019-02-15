@@ -99,107 +99,107 @@
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="102"/>
         <source>Search:</source>
-        <translation type="unfinished"/>
+        <translation>Buscar:</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="103"/>
         <source>File Type:</source>
-        <translation type="unfinished"/>
+        <translation>Tipo de archivo:</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="104"/>
         <source>File Size:</source>
-        <translation type="unfinished"/>
+        <translation>Tamaño de archivo:</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="105"/>
         <source>Time Modified:</source>
-        <translation type="unfinished"/>
+        <translation>Fecha de modificación:</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="107"/>
         <source>Reset</source>
-        <translation type="unfinished"/>
+        <translation>Reiniciar</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="121"/>
         <source>All subdirectories</source>
-        <translation type="unfinished"/>
+        <translation>Todos los subdirectorios</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="122"/>
         <source>Current directory</source>
-        <translation type="unfinished"/>
+        <translation>Directorio actual</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="138"/>
         <source>0 ~ 100 KB</source>
-        <translation type="unfinished"/>
+        <translation>0 ~ 100 KB</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="139"/>
         <source>100 KB ~ 1 MB</source>
-        <translation type="unfinished"/>
+        <translation>100 KB ~ 1 MB</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="140"/>
         <source>1 MB ~ 10 MB</source>
-        <translation type="unfinished"/>
+        <translation>1 MB ~ 10 MB</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="141"/>
         <source>10 MB ~ 100 MB</source>
-        <translation type="unfinished"/>
+        <translation>10 MB ~ 100 MB</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="142"/>
         <source>100 MB ~ 1 GB</source>
-        <translation type="unfinished"/>
+        <translation>100 MB ~ 1 GB</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="143"/>
         <source>&gt; 1 GB</source>
-        <translation type="unfinished"/>
+        <translation>&gt; 1 GB</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="146"/>
         <source>Today</source>
-        <translation type="unfinished"/>
+        <translation>Hoy</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="147"/>
         <source>Yesterday</source>
-        <translation type="unfinished"/>
+        <translation>Ayer</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="148"/>
         <source>This week</source>
-        <translation type="unfinished"/>
+        <translation>Esta semana</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="149"/>
         <source>Last week</source>
-        <translation type="unfinished"/>
+        <translation>La semana pasada</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="150"/>
         <source>This month</source>
-        <translation type="unfinished"/>
+        <translation>Este mes</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="151"/>
         <source>Last month</source>
-        <translation type="unfinished"/>
+        <translation>El mes pasado</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="152"/>
         <source>This year</source>
-        <translation type="unfinished"/>
+        <translation>Este año</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="153"/>
         <source>Last year</source>
-        <translation type="unfinished"/>
+        <translation>El año pasado</translation>
     </message>
 </context>
 <context>
@@ -346,7 +346,7 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="844"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="842"/>
         <source>Dark Theme</source>
         <translation>Tema Oscuro</translation>
     </message>
@@ -570,7 +570,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="409"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
-        <translation type="unfinished"/>
+        <translation>Este archivo no es ejecutable, ¿desea agregar el permiso de ejecución y ejecutar?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="423"/>
@@ -710,7 +710,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="990"/>
         <source>2. Uncheck &quot;Turn on fast startup&quot; and &quot;Hibernate&quot; in shutdown settings and reboot</source>
-        <translation type="unfinished"/>
+        <translation>2. Desmarque &quot;Activar inicio rápido&quot; e &quot;Hibernar&quot; en las configuraciones de apagado y reinicio</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1207"/>
@@ -1246,55 +1246,55 @@
     <name>MimeTypeDisplayManager</name>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="52"/>
-        <source>directory</source>
-        <translation>directorio</translation>
+        <source>Directory</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="53"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="129"/>
-        <source>application</source>
-        <translation>aplicación</translation>
+        <source>Application</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="54"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="130"/>
-        <source>video</source>
-        <translation>vídeo</translation>
+        <source>Video</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="55"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="131"/>
-        <source>audio</source>
-        <translation>audio</translation>
+        <source>Audio</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="56"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="132"/>
-        <source>image</source>
-        <translation>imagen</translation>
+        <source>Image</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="57"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="133"/>
-        <source>archive</source>
-        <translation>archivo</translation>
+        <source>Archive</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="58"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="134"/>
-        <source>text</source>
-        <translation>texto</translation>
+        <source>Text</source>
+        <translation>Texto</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="59"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="135"/>
-        <source>executable</source>
-        <translation>ejecutable</translation>
+        <source>Executable</source>
+        <translation>Ejecutable</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="60"/>
-        <source>unknown</source>
-        <translation>desconocido</translation>
+        <source>Unknown</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1805,6 +1805,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="753"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="756"/>
+        <location filename="../interfaces/dfmcrumbitem.cpp" line="116"/>
         <location filename="../interfaces/dfmsidebaritem.cpp" line="478"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="78"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="91"/>
@@ -1820,6 +1821,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="754"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="757"/>
+        <location filename="../interfaces/dfmcrumbitem.cpp" line="120"/>
         <location filename="../interfaces/dfmsidebaritem.cpp" line="482"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="82"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="99"/>
@@ -2061,12 +2063,12 @@
         <translation>Restaurar todo</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="342"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="343"/>
         <source>Auto mount</source>
         <translation>Montar automáticamente </translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="380"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="381"/>
         <source>Open after auto mount</source>
         <translation>Abrir después de montar automáticamente</translation>
     </message>
@@ -2508,6 +2510,16 @@
         <location filename="../views/dfmsidebarhomeitem.cpp" line="60"/>
         <location filename="../views/dfmsidebarrootitem.cpp" line="56"/>
         <source>Disk info</source>
+        <translation>Información del disco</translation>
+    </message>
+    <message>
+        <location filename="../interfaces/dfmcrumbitem.cpp" line="112"/>
+        <source>Copy path</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../interfaces/dfmcrumbitem.cpp" line="126"/>
+        <source>Edit address</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -3000,14 +3012,6 @@
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="48"/>
         <source>Confirm</source>
         <translation>Confirmar</translation>
-    </message>
-</context>
-<context>
-    <name>WindowManager</name>
-    <message>
-        <location filename="../views/windowmanager.cpp" line="81"/>
-        <source>Deepin File Manager</source>
-        <translation>Gestor de archivos Deepin</translation>
     </message>
 </context>
 </TS>
