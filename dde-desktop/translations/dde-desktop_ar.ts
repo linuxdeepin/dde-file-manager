@@ -105,7 +105,7 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="460"/>
         <source>Apply</source>
-        <translation type="unfinished"/>
+        <translation>طبِّق</translation>
     </message>
 </context>
 <context>

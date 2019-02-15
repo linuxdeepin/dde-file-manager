@@ -346,7 +346,7 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="844"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="842"/>
         <source>Dark Theme</source>
         <translation>Temna tema</translation>
     </message>
@@ -1246,55 +1246,55 @@
     <name>MimeTypeDisplayManager</name>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="52"/>
-        <source>directory</source>
-        <translation>mapa</translation>
+        <source>Directory</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="53"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="129"/>
-        <source>application</source>
-        <translation>program</translation>
+        <source>Application</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="54"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="130"/>
-        <source>video</source>
-        <translation>videoposnetek</translation>
+        <source>Video</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="55"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="131"/>
-        <source>audio</source>
-        <translation>zvočni posnetek</translation>
+        <source>Audio</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="56"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="132"/>
-        <source>image</source>
-        <translation>slika</translation>
+        <source>Image</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="57"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="133"/>
-        <source>archive</source>
-        <translation>arhiv</translation>
+        <source>Archive</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="58"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="134"/>
-        <source>text</source>
-        <translation>besedilo</translation>
+        <source>Text</source>
+        <translation>Besedilo</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="59"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="135"/>
-        <source>executable</source>
-        <translation>izvršljivo</translation>
+        <source>Executable</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="60"/>
-        <source>unknown</source>
-        <translation>neznano</translation>
+        <source>Unknown</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1805,6 +1805,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="753"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="756"/>
+        <location filename="../interfaces/dfmcrumbitem.cpp" line="116"/>
         <location filename="../interfaces/dfmsidebaritem.cpp" line="478"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="78"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="91"/>
@@ -1820,6 +1821,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="754"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="757"/>
+        <location filename="../interfaces/dfmcrumbitem.cpp" line="120"/>
         <location filename="../interfaces/dfmsidebaritem.cpp" line="482"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="82"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="99"/>
@@ -2061,12 +2063,12 @@
         <translation>Obnovi vse</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="342"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="343"/>
         <source>Auto mount</source>
         <translation>Samodejno priklopi</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="380"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="381"/>
         <source>Open after auto mount</source>
         <translation>Odpri po samodejni priklopitvi</translation>
     </message>
@@ -2508,6 +2510,16 @@
         <location filename="../views/dfmsidebarhomeitem.cpp" line="60"/>
         <location filename="../views/dfmsidebarrootitem.cpp" line="56"/>
         <source>Disk info</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../interfaces/dfmcrumbitem.cpp" line="112"/>
+        <source>Copy path</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../interfaces/dfmcrumbitem.cpp" line="126"/>
+        <source>Edit address</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -3000,14 +3012,6 @@
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="48"/>
         <source>Confirm</source>
         <translation>Potrdi</translation>
-    </message>
-</context>
-<context>
-    <name>WindowManager</name>
-    <message>
-        <location filename="../views/windowmanager.cpp" line="81"/>
-        <source>Deepin File Manager</source>
-        <translation>Upravitelj datotek Deepin</translation>
     </message>
 </context>
 </TS>
