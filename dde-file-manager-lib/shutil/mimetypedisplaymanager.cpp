@@ -49,15 +49,15 @@ MimeTypeDisplayManager::~MimeTypeDisplayManager()
 
 void MimeTypeDisplayManager::initData()
 {
-    m_displayNames[FileType::Directory] = tr("directory");
-    m_displayNames[FileType::DesktopApplication] = tr("application");
-    m_displayNames[FileType::Videos] = tr("video");
-    m_displayNames[FileType::Audios] = tr("audio");
-    m_displayNames[FileType::Images] = tr("image");
-    m_displayNames[FileType::Archives] = tr("archive");
-    m_displayNames[FileType::Documents] = tr("text");
-    m_displayNames[FileType::Executable] = tr("executable");
-    m_displayNames[FileType::Unknown] = tr("unknown");
+    m_displayNames[FileType::Directory] = tr("Directory");
+    m_displayNames[FileType::DesktopApplication] = tr("Application");
+    m_displayNames[FileType::Videos] = tr("Video");
+    m_displayNames[FileType::Audios] = tr("Audio");
+    m_displayNames[FileType::Images] = tr("Image");
+    m_displayNames[FileType::Archives] = tr("Archive");
+    m_displayNames[FileType::Documents] = tr("Text");
+    m_displayNames[FileType::Executable] = tr("Executable");
+    m_displayNames[FileType::Unknown] = tr("Unknown");
 
 
     m_defaultIconNames[FileType::Directory] = "folder";
