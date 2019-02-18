@@ -1034,7 +1034,7 @@ void DFileDialog::onAcceptButtonClicked()
 
     const DUrlList &urls = getFileView()->selectedUrls();
 
-    switch (static_cast<int>(d->fileMode)) {
+    switch (d->fileMode) {
     case QFileDialog::AnyFile:
     case QFileDialog::ExistingFile:
         if (urls.count() == 1) {
@@ -1047,11 +1047,18 @@ void DFileDialog::onAcceptButtonClicked()
             }
         }
         break;
-    case QFileDialog::ExistingFiles:
+    case QFileDialog::ExistingFiles: {
+
+        bool doCdWhenPossible = urls.count() == 1;
+
         for (const DUrl &url : urls) {
             const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(url);
 
             if (!fileInfo->isFile()) {
+                if (doCdWhenPossible && fileInfo->isDir()) {
+                    // blumia: it's possible to select more than one file/dirs, we only do cd when select a single directory.
+                    getFileView()->cd(urls.first());
+                }
                 return;
             }
         }
@@ -1060,6 +1067,7 @@ void DFileDialog::onAcceptButtonClicked()
             accept();
         }
         break;
+    }
     default:
         for (const DUrl &url : urls) {
             const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(url);
