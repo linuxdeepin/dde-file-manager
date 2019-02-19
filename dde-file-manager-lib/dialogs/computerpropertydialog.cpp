@@ -75,7 +75,7 @@ void ComputerPropertyDialog::initUI()
 
     QGridLayout *gridLayout = new QGridLayout;
     gridLayout->setColumnMinimumWidth(0, 100);
-    gridLayout->setColumnMinimumWidth(1, 200);
+    gridLayout->setColumnMinimumWidth(1, 170);
     gridLayout->setSpacing(10);
 
     QStringList msgsTitle;
@@ -101,8 +101,8 @@ void ComputerPropertyDialog::initUI()
 
         gridLayout->addWidget(keyLabel, row, 0, Qt::AlignRight | Qt::AlignTop);
         gridLayout->addWidget(valLabel, row, 1, Qt::AlignLeft | Qt::AlignTop);
-        gridLayout->setRowMinimumHeight(row, 12);
-        row ++;
+        gridLayout->setRowMinimumHeight(row, valLabel->heightForWidth(gridLayout->columnMinimumWidth(1)));
+        row++;
     }
 
     QFrame *contentFrame = new QFrame;
