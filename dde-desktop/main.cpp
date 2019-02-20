@@ -107,12 +107,21 @@ int main(int argc, char *argv[])
     DApplication app(argc, argv);
 
     bool preload = false;
+    bool fileDialogOnly = false;
 
     for (const QString &arg : app.arguments()) {
         if (arg == "--preload") {
             preload = true;
             break;
         }
+        if (arg == "--file-dialog-only") {
+            fileDialogOnly = true;
+            break;
+        }
+    }
+
+    if (fileDialogOnly) {
+        app.setQuitOnLastWindowClosed(false);
     }
 
     app.setOrganizationName("deepin");
@@ -137,7 +146,7 @@ int main(int argc, char *argv[])
 
     qDebug() << "start " << app.applicationName() << app.applicationVersion();
 
-    if (!preload) {
+    if (!preload && !fileDialogOnly) {
         QDBusConnection conn = QDBusConnection::sessionBus();
 
         if (!conn.registerService(DesktopServiceName)) {
@@ -160,17 +169,24 @@ int main(int argc, char *argv[])
     QPixmapCache::setCacheLimit(20 * 1024 * app.devicePixelRatio());
 
     QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
-    Config::instance();
+
+    if (!fileDialogOnly) {
+        Config::instance();
+    }
 
     DFMGlobal::installTranslator();
 
-    Desktop::instance()->loadData();
+    if (!fileDialogOnly) {
+        Desktop::instance()->loadData();
+    }
 
     if (preload) {
         QTimer::singleShot(1000, &app, &QCoreApplication::quit);
     } else {
-        Desktop::instance()->Show();
-        Desktop::instance()->loadView();
+        if (!fileDialogOnly) {
+            Desktop::instance()->Show();
+            Desktop::instance()->loadView();
+        }
     }
 
     DFMGlobal::autoLoadDefaultPlugins();
@@ -184,7 +200,9 @@ int main(int argc, char *argv[])
 
     if  (!preload) {
         // Notify dde-desktop start up
-        Dde::Session::RegisterDdeSession();
+        if (!fileDialogOnly) {
+            Dde::Session::RegisterDdeSession();
+        }
 
         // ---------------------------------------------------------------------------
         // ability to show file selection dialog

@@ -1,3 +1,3 @@
 [D-BUS Service]
 Name=com.deepin.filemanager.filedialog
-Exec=/usr/bin/dde-desktop
+Exec=/usr/bin/dde-desktop --file-dialog-only
