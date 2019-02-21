@@ -359,7 +359,7 @@ QDiskInfo GvfsMountManager::qVolumeToqDiskInfo(const QVolume &volume)
 
     if (diskInfo.iconName() == "phone-apple-iphone"){
         diskInfo.setType("iphone");
-    }else if (diskInfo.iconName() == "phone"){
+    }else if (diskInfo.iconName() == "phone" || diskInfo.iconName() == "multimedia-player"){
         diskInfo.setType("phone");
     }else if (diskInfo.iconName() == "camera-photo" || diskInfo.iconName() == "camera"){
         diskInfo.setType("camera");
