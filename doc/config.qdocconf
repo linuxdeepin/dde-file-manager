@@ -1,7 +1,7 @@
 include(./qdoc-configs/qt-html-templates-online.qdocconf)
 
 project = Deepin File Manager
-description = A file management tool for Deepin Desktop Enviroment.
+description = A file management tool for Deepin Desktop Environment.
 
 sourcedirs += ../
 headerdirs += ../
