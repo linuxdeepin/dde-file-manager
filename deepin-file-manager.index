@@ -12053,6 +12053,14 @@
         <page name="http://www.w3.org/TR/html401/" href="http://www.w3.org/TR/html401/" status="active" location="external-resources.qdoc" filepath="/home/wzc/projects/dde-file-manager/doc/qdoc-configs/externalsites/external-resources.qdoc" lineno="186" subtype="externalpage" title="HTML 4" fulltitle="HTML 4" subtitle=""/>
         <page name="http://www.w3.org/TR/html5/" href="http://www.w3.org/TR/html5/" status="active" location="external-resources.qdoc" filepath="/home/wzc/projects/dde-file-manager/doc/qdoc-configs/externalsites/external-resources.qdoc" lineno="191" subtype="externalpage" title="HTML 5" fulltitle="HTML 5" subtitle=""/>
         <page name="http://www.w3.org/TR/2009/WD-webdatabase-20091029/" href="http://www.w3.org/TR/2009/WD-webdatabase-20091029/" status="active" location="external-resources.qdoc" filepath="/home/wzc/projects/dde-file-manager/doc/qdoc-configs/externalsites/external-resources.qdoc" lineno="481" subtype="externalpage" title="HTML5 Web Database API" fulltitle="HTML5 Web Database API" subtitle=""/>
+        <page name="hide-file-by-rule-zh.html" href="hide-file-by-rule-zh.html" status="active" location="hidefilebyrule_zh.qdoc" filepath="/home/wzc/projects/dde-file-manager/doc/qdoc/knowledgebase/hidefilebyrule_zh.qdoc" lineno="17" subtype="page" title="Hide File by Rule (zh)" fulltitle="Hide File by Rule (zh)" subtitle="" module="Deepin File Manager">
+            <contents name="" title="可能的应用场景" level="1"/>
+            <contents name="" title="实际做法" level="1"/>
+            <contents name="" title="配置文件的位置" level="2"/>
+            <contents name="" title="规则编写方式" level="2"/>
+            <contents name="" title="注意" level="2"/>
+            <contents name="" title="参考链接" level="1"/>
+        </page>
         <page name="http://site.icu-project.org/" href="http://site.icu-project.org/" status="active" location="external-resources.qdoc" filepath="/home/wzc/projects/dde-file-manager/doc/qdoc-configs/externalsites/external-resources.qdoc" lineno="196" subtype="externalpage" title="ICU" fulltitle="ICU" subtitle=""/>
         <page name="http://www.freedesktop.org/Standards/icon-theme-spec" href="http://www.freedesktop.org/Standards/icon-theme-spec" status="active" location="external-resources.qdoc" filepath="/home/wzc/projects/dde-file-manager/doc/qdoc-configs/externalsites/external-resources.qdoc" lineno="37" subtype="externalpage" title="Icon Themes Specification" fulltitle="Icon Themes Specification" subtitle=""/>
         <page name="https://developer.mozilla.org/en/JavaScript/Guide" href="https://developer.mozilla.org/en/JavaScript/Guide" status="active" location="external-resources.qdoc" filepath="/home/wzc/projects/dde-file-manager/doc/qdoc-configs/externalsites/external-resources.qdoc" lineno="426" subtype="externalpage" title="JavaScript Guide" fulltitle="JavaScript Guide" subtitle=""/>
