@@ -26,5 +26,6 @@
 
     \list
         \li \l {New File Templates (zh)} {新建文件模板}
+        \li \l {Hide File by Rule (zh)} {根据规则彻底隐藏匹配的文件}
     \endlist
 */
