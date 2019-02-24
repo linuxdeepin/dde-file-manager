@@ -1,0 +1,73 @@
+/*
+ * Copyright (C) 2017 ~ 2019 Deepin Technology Co., Ltd.
+ *
+ * Author:     zccrs<zhangjide@deepin.com>
+ *
+ * Maintainer: Gary Wang <wangzichong@deepin.com>
+ *
+ * GNU Free Documentation License Usage
+ * Alternatively, this file may be used under the terms of the GNU Free
+ * Documentation License version 1.3 as published by the Free Software
+ * Foundation and appearing in the file included in the packaging of
+ * this file. Please review the following information to ensure
+ * the GNU Free Documentation License version 1.3 requirements
+ * will be met: https://www.gnu.org/licenses/fdl-1.3.html.
+ */
+
+/*!
+    \page hide-file-by-rule-zh.html
+    \title Hide File by Rule (zh)
+
+    知识库 - 根据规则彻底隐藏文件
+    
+    \section1 可能的应用场景
+    
+    深度文件管理器遵循一个约定俗成的标准来隐藏文件，即隐藏由文件名半角字符点(`.`)开头的文件。
+    文件管理器会默认不显示这些文件，除非手动设置了显示隐藏的文件的选项（或通过快捷键Ctrl+H
+    来切换显示和隐藏状态）。
+    
+    但有时用户可能有需求根据某些规则隐藏掉特定的一些文件，例如，深度文件管理器后端存储标签和快速
+    索引信息时会在每个可写分区的根目录生成所用的数据库文件（.__deepin.db），以及 Windows 的 ntfs
+    分区中很可能包含的 `System Volume Information` 目录。这些文件一定程度上可以认为是所谓的
+    “系统文件”，因而可能被用户希望永久隐藏。
+    
+    用户也可能存在其他场景匹配此类需求，此时即可根据添加规则到配置文件来实现彻底隐藏指定规则的文件。
+    
+    \section1 实际做法
+    
+    当存在“希望根据规则来隐藏特定文件或目录”的需求时，即可根据修改配置文件，添加规则的方式来达到目的。
+    
+    \section2 配置文件的位置
+    
+    在1.8版本中统一了配置文件的格式和程序中的读写入口，针对根据规则彻底隐藏文件这个需求而言，
+    所涉及的配置文件位于 `~/.config/deepin/` 目录下，对应的配置名称为 dde-file-manager.obtusely.json
+    ，是常规的 json 文件。
+    
+    \section2 规则编写方式
+    
+    我们可以在 "PrivateFiles" 这个 json 对象中添加正则表达式规则。满足我们规则的文件
+    就会在文件管理器中隐身。
+    
+    \code
+	{
+		"PrivateFiles": {
+			"Hide deepin system files": "^\\.__deepin.+",
+			"Hide System Volume Information": "System Volume Information",
+			"Hide $RECYCLE.BIN": "\\$RECYCLE\\.BIN",
+			"Hide .Trash-1000": "\\.Trash-1000"
+		}
+	}
+    \endcode
+    
+    \section2 注意
+    
+    根据此规则所隐藏的文件为彻底隐藏，不会受到“显示隐藏文件”选项状态的影响。
+
+    \section1 参考链接
+
+    \list
+        \li \l {https://docs.deepin.io/?p=703} {文件管理器新配置文件格式详解}
+        \li \l {https://bbs.deepin.org/forum.php?mod=viewthread&tid=172237} {教大家几招文件管理器隐私管理的技巧}
+        \li \l {https://github.com/linuxdeepin/developer-center/issues/923} {[需求]隐藏 .deepin.db、.deepin.lft、.deepin.num等文件}
+    \endlist
+*/
