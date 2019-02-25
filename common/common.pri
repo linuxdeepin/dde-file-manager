@@ -15,7 +15,7 @@ unix {
         DEFINES += SPLICE_CP
     }
 
-    isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
+    isEqual(ARCH, sw_64) {
         DEFINES += ARCH_MIPSEL ARCH_SW
 
         #use classical file section mode
@@ -27,8 +27,6 @@ unix {
         DEFINES += DISABLE_COMPRESS_PREIVEW
 
         DEFINES += DISABLE_QUIT_ON_LAST_WINDOW_CLOSED
-
-        CONFIG += DISABLE_ANYTHING
     } else {
         isEmpty(DISABLE_JEMALLOC) {
             LIBS += -ljemalloc
