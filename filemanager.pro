@@ -18,7 +18,7 @@ isEqual(BUILD_MINIMUM, YES){
 }
 
 ARCH = $$QMAKE_HOST.arch
-isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
+isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, aarch64) {
     CONFIG += DISABLE_ANYTHING # disable deepin-anything support
 }
 
