@@ -36,8 +36,8 @@ Build-Depends:
  deepin-qt5config,
  libdmr-dev,
  dh-systemd,
- deepin-anything-dev [amd64 i386],
- deepin-anything-server-dev [amd64 i386]
+ deepin-anything-dev,
+ deepin-anything-server-dev
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 
