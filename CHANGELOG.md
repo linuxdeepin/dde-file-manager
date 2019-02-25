@@ -1,3 +1,25 @@
+<a name="4.7.7"></a>
+## 4.7.7 (2019-02-25)
+
+
+#### Features
+
+*   disable deepin anything on arm64(aarch64) ([359dd607](https://github.com/linuxdeepin/dde-file-manager/commit/359dd60722706c47c291c4ac329d007beb462404))
+*   crumb item context menu ([3dc9d110](https://github.com/linuxdeepin/dde-file-manager/commit/3dc9d110682611a06c422e6bf10b496f1262b927))
+*   hidden option to control crumbbar clickable area visible ([c1faa8e1](https://github.com/linuxdeepin/dde-file-manager/commit/c1faa8e160f3ad5693d906ecbcabf3d9a3edda66))
+*   remove addressbar clickable area ([e21c64d7](https://github.com/linuxdeepin/dde-file-manager/commit/e21c64d75906ba3ee68340d71e82bf439ef32a2f))
+* **dde-wallpaper:**  enable screensaver function for deepin professional ([4ae45381](https://github.com/linuxdeepin/dde-file-manager/commit/4ae453812c2e00b5017c798146829c06d61ab4af))
+
+#### Bug Fixes
+
+*   only do show filedialog via dbus call ([b6e97adc](https://github.com/linuxdeepin/dde-file-manager/commit/b6e97adcc6472b9de98107521d23c8d5ed283d7e))
+*   ComputerPropertyDialog value label width not correct ([927a83aa](https://github.com/linuxdeepin/dde-file-manager/commit/927a83aa5605da714b38a190160653d5db1c69a7))
+*   open folder when select a folder and click open in DFileDialog ([882f2295](https://github.com/linuxdeepin/dde-file-manager/commit/882f2295b73f278c7a33292c4b47c26267a90310))
+*   wrong search button icon on admin mode ([4233adb0](https://github.com/linuxdeepin/dde-file-manager/commit/4233adb0fee6fd843173d84c76a686d91af90839))
+*   use default-terminal provided by deepin-daemon if possible ([3ba6625c](https://github.com/linuxdeepin/dde-file-manager/commit/3ba6625c624e810e27c1a0dea3556955227f8b1d))
+
+
+
 <a name="4.7.6"></a>
 ## 4.7.6 (2019-02-11)
 
