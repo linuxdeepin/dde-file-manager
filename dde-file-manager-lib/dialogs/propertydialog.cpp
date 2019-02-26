@@ -60,6 +60,7 @@
 #include <darrowlineexpand.h>
 #include <dthememanager.h>
 #include <dexpandgroup.h>
+#include <dfmblockdevice.h>
 
 #include <QTextEdit>
 #include <QFormLayout>
@@ -75,6 +76,7 @@
 #include <QStorageInfo>
 #include <QVariantAnimation>
 #include <QScrollArea>
+#include <dfmdiskmanager.h>
 
 #include "unistd.h"
 
@@ -847,17 +849,40 @@ ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPoin
 
 QFrame *PropertyDialog::createLocalDeviceInfoWidget(const DUrl &url)
 {
-    QStorageInfo info(url.path());
-    QDir dir(url.path());
-    int count = dir.count();
+    QString urlPath = url.path();
+    QStorageInfo info(urlPath);
+    QString devicePath = info.device();
+    QDir dir(urlPath);
+    uint count = dir.count();
     QString countStr = (count > 1) ? QObject::tr("%1 items").arg(count) : QObject::tr("%1 item").arg(count);
     QFrame *widget = new QFrame(this);
     SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Device type"));
+    SectionKeyLabel *formatSectionLabel = new SectionKeyLabel(QObject::tr("Filesystem"));
     SectionKeyLabel *fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
     SectionKeyLabel *freeSectionLabel = new SectionKeyLabel(QObject::tr("Free space"));
     SectionKeyLabel *totalSectionLabel = new SectionKeyLabel(QObject::tr("Total space"));
 
+    QString fsType;
+
+    if (devicePath.startsWith("/dev")) {
+        QString udisksDBusPath = devicePath;
+        udisksDBusPath.replace("dev", "org/freedesktop/UDisks2/block_devices");
+        QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(udisksDBusPath));
+        if (blDev) {
+            DFMBlockDevice::FSType fsTypeEnum = blDev->fsType();
+            switch (fsTypeEnum) {
+            case DFMBlockDevice::UnknowFS:
+                fsType = info.fileSystemType() + '*';
+                break;
+            default:
+                QMetaEnum metaEnum = QMetaEnum::fromType<DFMBlockDevice::FSType>();
+                fsType = metaEnum.valueToKey(fsTypeEnum);
+            }
+        }
+    }
+
     SectionValueLabel *typeLabel = new SectionValueLabel(tr("Local disk"));
+    SectionValueLabel *formatLabel = new SectionValueLabel(fsType);
     SectionValueLabel *fileAmountLabel = new SectionValueLabel(countStr);
     SectionValueLabel *freeLabel = new SectionValueLabel(FileUtils::formatSize(info.bytesFree()));
     SectionValueLabel *totalLabel = new SectionValueLabel(FileUtils::formatSize(info.bytesTotal()));
@@ -869,6 +894,9 @@ QFrame *PropertyDialog::createLocalDeviceInfoWidget(const DUrl &url)
 
     layout->addRow(typeSectionLabel, typeLabel);
     layout->addRow(totalSectionLabel, totalLabel);
+    if (!fsType.isEmpty()) {
+        layout->addRow(formatSectionLabel, formatLabel);
+    }
     layout->addRow(fileAmountSectionLabel, fileAmountLabel);
     layout->addRow(freeSectionLabel, freeLabel);
 
