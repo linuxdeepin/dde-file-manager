@@ -789,7 +789,7 @@ void DIconItemDelegate::paint(QPainter *painter,
 
         QPixmap text_pixmap = QPixmap::fromImage(text_image);
         text_pixmap.setDevicePixelRatio(pixel_ratio);
-        qt_blurImage(text_image, 3, false);
+        qt_blurImage(text_image, 6, false);
 
         p.begin(&text_image);
         p.setCompositionMode(QPainter::CompositionMode_SourceIn);
