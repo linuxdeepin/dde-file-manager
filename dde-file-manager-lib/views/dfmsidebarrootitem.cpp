@@ -54,10 +54,10 @@ QMenu *DFMSideBarRootItem::createStandardContextMenu() const
     })->setDisabled(shouldDisable);
 
     menu->addAction(QObject::tr("Disk info"), [this]() {
-        DUrlList list;
-        list.append(url());
-//        fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(this, list));
-        fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(this, {DUrl("dev:///")}));
+        DUrl rootUrl = DUrl("file:///");
+        QStorageInfo rootInfo(QDir::rootPath());
+        rootUrl.setQuery(rootInfo.device());
+        fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(this, {rootUrl}));
     });
 
     return menu;
