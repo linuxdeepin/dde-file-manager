@@ -126,7 +126,7 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
     }
 
     if (info.value("canMount", false).toBool() && !info.value("isMounted", false).toBool()) {
-        menu->addAction(QObject::tr("Mount"), [this, info]() {
+        menu->addAction(QObject::tr("Mount"), [info]() {
             gvfsMountManager->mount(info.value("deviceId").toString());
         });
     }
@@ -162,9 +162,9 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
     QAction *propertyAction = new QAction(QObject::tr("Disk info"), menu);
     connect(propertyAction, &QAction::triggered, this, [this, info]() {
         DUrl mountPointUrl(info.value("mountPointUrl", QString()).toString());
-        DUrlList list;
-        list.append(mountPointUrl.isEmpty() ? url() : mountPointUrl);
-        fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(this, list));
+        mountPointUrl = mountPointUrl.isEmpty() ? url() : mountPointUrl;
+        mountPointUrl.setQuery(info.value("deviceId", "what?").toString());
+        fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(this, {mountPointUrl}));
     });
     propertyAction->setDisabled(!info.value("isMounted", false).toBool());
     menu->addAction(propertyAction);
