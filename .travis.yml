@@ -1,0 +1,14 @@
+dist: trusty
+
+language: minimal
+
+before_install:
+  - docker pull hualet/deepin:unstable-builder
+
+script:
+  - ls -al
+  - docker run --rm -v `pwd`:/source hualet/deepin:unstable-builder /bin/bash -c "sed -i s/https/http/ /etc/apt/sources.list && echo deb-src http://packages.deepin.com/deepin unstable main >> /etc/apt/sources.list && apt build-dep dde-file-manager -y && cd /source && dpkg-buildpackage -us -uc -nc -j`nproc`"
+
+services:
+  - docker
+
