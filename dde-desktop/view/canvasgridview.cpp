@@ -628,13 +628,14 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
         break;
 
     case Qt::ControlModifier:
-        if (event->key() == Qt::Key_Minus) {
+        switch (event->key()) {
+        case Qt::Key_Minus:
             decreaseIcon();
             return;
-        } else if (event->key() == Qt::Key_Equal) {
+        case Qt::Key_Equal:
             increaseIcon();
             return;
-        } else if (event->key() ==  Qt::Key_H) {
+        case Qt::Key_H: {
 
             ///###: record whether show files which were starting with ".";
             bool whetherShowHiddenFiles{ GridManager::instance()->getWhetherShowHiddenFiles() };
@@ -650,6 +651,12 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             }
 
             return;
+        }
+        case Qt::Key_I:
+            DFMGlobal::showPropertyDialog(nullptr, selectUrls);
+            return;
+        default:
+            break;
         }
         break;
 
