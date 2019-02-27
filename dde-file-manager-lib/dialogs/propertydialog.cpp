@@ -80,6 +80,8 @@
 
 #include "unistd.h"
 
+#include <models/trashfileinfo.h>
+
 NameTextEdit::NameTextEdit(const QString &text, QWidget *parent):
     QTextEdit(text, parent)
 {
@@ -814,13 +816,13 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Type"));
     SectionKeyLabel *TimeCreatedSectionLabel = new SectionKeyLabel(QObject::tr("Time read"));
     SectionKeyLabel *TimeModifiedSectionLabel = new SectionKeyLabel(QObject::tr("Time modified"));
+    SectionKeyLabel *sourcePathSectionLabel = new SectionKeyLabel(QObject::tr("Source path"));
 
     m_containSizeLabel = new SectionValueLabel(info->sizeDisplayName());
     m_folderSizeLabel = new SectionValueLabel;
     SectionValueLabel *typeLabel = new SectionValueLabel(info->mimeTypeDisplayName());
     SectionValueLabel *timeCreatedLabel = new SectionValueLabel(info->lastReadDisplayName());
     SectionValueLabel *timeModifiedLabel = new SectionValueLabel(info->lastModifiedDisplayName());
-
 
     QFormLayout *layout = new QFormLayout;
     layout->setHorizontalSpacing(12);
@@ -834,6 +836,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         layout->addRow(sizeSectionLabel, m_containSizeLabel);
     }
     layout->addRow(typeSectionLabel, typeLabel);
+
     if (info->isSymLink()) {
         SectionKeyLabel *linkPathSectionLabel = new SectionKeyLabel(QObject::tr("Link path"));
 
@@ -848,6 +851,16 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     }
     layout->addRow(TimeCreatedSectionLabel, timeCreatedLabel);
     layout->addRow(TimeModifiedSectionLabel, timeModifiedLabel);
+
+    if (info->fileUrl().isTrashFile()) {
+        QString pathStr = static_cast<const TrashFileInfo *>(info.constData())->sourceFilePath();
+        SectionValueLabel *sourcePathLabel = new SectionValueLabel(pathStr);
+        QString elidedStr = sourcePathLabel->fontMetrics().elidedText(pathStr, Qt::ElideMiddle, 150);
+        sourcePathLabel->setToolTip(pathStr);
+        sourcePathLabel->setWordWrap(false);
+        sourcePathLabel->setText(elidedStr);
+        layout->addRow(sourcePathSectionLabel, sourcePathLabel);
+    }
 
     layout->setContentsMargins(0, 0, 40, 0);
     widget->setLayout(layout);

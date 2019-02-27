@@ -116,7 +116,7 @@ class LinkSectionValueLabel: public SectionValueLabel
     Q_OBJECT
 
 public:
-    explicit LinkSectionValueLabel(const QString &text="", QWidget *parent=0, Qt::WindowFlags f=0);
+    explicit LinkSectionValueLabel(const QString &text="", QWidget *parent = nullptr, Qt::WindowFlags f = {});
 
     DUrl linkTargetUrl() const;
     void setLinkTargetUrl(const DUrl &linkTargetUrl);
