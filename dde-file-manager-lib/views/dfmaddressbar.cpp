@@ -477,13 +477,13 @@ void DFMAddressBar::clearCompleterModel()
 void DFMAddressBar::updateCompletionState(const QString &text)
 {
     int slashIndex = text.lastIndexOf('/');
-    bool hasSlash = (slashIndex == -1);
+    bool hasSlash = (slashIndex != -1);
 
-    DUrl url = DUrl::fromUserInput(hasSlash ? text : text.left(slashIndex + 1), false);
+    DUrl url = DUrl::fromUserInput(hasSlash ? text.left(slashIndex + 1) : text, false);
     const DAbstractFileInfoPointer& info = DFileService::instance()->createFileInfo(this, url);
 
     // Check if the entered text is a string to search or a url to complete.
-    if (!hasSlash && url.isValid() && !url.scheme().isEmpty()) {
+    if (hasSlash && url.isValid() && !url.scheme().isEmpty()) {
         // Update Icon
         setIndicator(IndicatorType::JumpTo);
 
