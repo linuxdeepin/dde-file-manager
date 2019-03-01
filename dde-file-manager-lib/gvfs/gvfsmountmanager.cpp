@@ -90,17 +90,17 @@ GvfsMountManager::GvfsMountManager(QObject *parent) : QObject(parent)
 void GvfsMountManager::initConnect()
 {
     if (DFMGlobal::isRootUser()){
-        g_signal_connect (m_gVolumeMonitor, "mount-added", (GCallback)&GvfsMountManager::monitor_mount_added_root, NULL);
-        g_signal_connect (m_gVolumeMonitor, "mount-removed", (GCallback)&GvfsMountManager::monitor_mount_removed_root, NULL);
+        g_signal_connect (m_gVolumeMonitor, "mount-added", (GCallback)&GvfsMountManager::monitor_mount_added_root, nullptr);
+        g_signal_connect (m_gVolumeMonitor, "mount-removed", (GCallback)&GvfsMountManager::monitor_mount_removed_root, nullptr);
     }else{
-        g_signal_connect (m_gVolumeMonitor, "drive-connected", (GCallback)&GvfsMountManager::monitor_drive_connected, NULL);
-        g_signal_connect (m_gVolumeMonitor, "drive-disconnected", (GCallback)&GvfsMountManager::monitor_drive_disconnected, NULL);
-        g_signal_connect (m_gVolumeMonitor, "mount-added", (GCallback)&GvfsMountManager::monitor_mount_added, NULL);
-        g_signal_connect (m_gVolumeMonitor, "mount-removed", (GCallback)&GvfsMountManager::monitor_mount_removed, NULL);
-        g_signal_connect (m_gVolumeMonitor, "mount-changed", (GCallback)&GvfsMountManager::monitor_mount_changed, NULL);
-        g_signal_connect (m_gVolumeMonitor, "volume-added", (GCallback)&GvfsMountManager::monitor_volume_added, NULL);
-        g_signal_connect (m_gVolumeMonitor, "volume-removed", (GCallback)&GvfsMountManager::monitor_volume_removed, NULL);
-        g_signal_connect (m_gVolumeMonitor, "volume-changed", (GCallback)&GvfsMountManager::monitor_volume_changed, NULL);
+        g_signal_connect (m_gVolumeMonitor, "drive-connected", (GCallback)&GvfsMountManager::monitor_drive_connected, nullptr);
+        g_signal_connect (m_gVolumeMonitor, "drive-disconnected", (GCallback)&GvfsMountManager::monitor_drive_disconnected, nullptr);
+        g_signal_connect (m_gVolumeMonitor, "mount-added", (GCallback)&GvfsMountManager::monitor_mount_added, nullptr);
+        g_signal_connect (m_gVolumeMonitor, "mount-removed", (GCallback)&GvfsMountManager::monitor_mount_removed, nullptr);
+        g_signal_connect (m_gVolumeMonitor, "mount-changed", (GCallback)&GvfsMountManager::monitor_mount_changed, nullptr);
+        g_signal_connect (m_gVolumeMonitor, "volume-added", (GCallback)&GvfsMountManager::monitor_volume_added, nullptr);
+        g_signal_connect (m_gVolumeMonitor, "volume-removed", (GCallback)&GvfsMountManager::monitor_volume_removed, nullptr);
+        g_signal_connect (m_gVolumeMonitor, "volume-changed", (GCallback)&GvfsMountManager::monitor_volume_changed, nullptr);
     }
     connect(this, &GvfsMountManager::loadDiskInfoFinished, deviceListener, &UDiskListener::update);
 }
@@ -115,8 +115,8 @@ QStringList GvfsMountManager::getIconNames(GThemedIcon *icon)
     QStringList iconNames;
     char **names;
     char **iter;
-    names = NULL;
-    g_object_get (icon, "names", &names, NULL);
+    names = nullptr;
+    g_object_get (icon, "names", &names, nullptr);
     for (iter = names; *iter; iter++){
         iconNames.append(QString(*iter));
     }
@@ -137,8 +137,8 @@ QDrive GvfsMountManager::gDriveToqDrive(GDrive *drive)
     g_free (name);
 
     ids = g_drive_enumerate_identifiers (drive);
-    if (ids && ids[0] != NULL){
-        for (int i = 0; ids[i] != NULL; i++){
+    if (ids && ids[0] != nullptr){
+        for (int i = 0; ids[i] != nullptr; i++){
             char *id = g_drive_get_identifier (drive,
                                                ids[i]);
             if (QString(ids[i]) == "unix-device"){
@@ -178,7 +178,7 @@ QDrive GvfsMountManager::gDriveToqDrive(GDrive *drive)
     }
 
     sort_key = g_drive_get_sort_key(drive);
-    if (sort_key != NULL){
+    if (sort_key != nullptr){
         qDrive.setSort_key(QString(sort_key));
     }
 
@@ -202,8 +202,8 @@ QVolume GvfsMountManager::gVolumeToqVolume(GVolume *volume)
     g_free (name);
 
     ids = g_volume_enumerate_identifiers (volume);
-    if (ids && ids[0] != NULL){
-        for (int i = 0; ids[i] != NULL; i++){
+    if (ids && ids[0] != nullptr){
+        for (int i = 0; ids[i] != nullptr; i++){
             char *id = g_volume_get_identifier(volume, ids[i]);
             if (QString(ids[i]) == G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE){
                qVolume.setUnix_device(QString(id));
@@ -246,7 +246,7 @@ QVolume GvfsMountManager::gVolumeToqVolume(GVolume *volume)
     }
 
     sort_key = g_volume_get_sort_key(volume);
-    if (sort_key != NULL){
+    if (sort_key != nullptr){
         qVolume.setSort_key(QString(sort_key));
     }
 
@@ -262,7 +262,7 @@ QVolume GvfsMountManager::gVolumeToqVolume(GVolume *volume)
     }
 
     activation_root = g_volume_get_activation_root(volume);
-    if (activation_root != NULL){
+    if (activation_root != nullptr){
         action_root_uri = g_file_get_uri (activation_root);
         qVolume.setActivation_root_uri(QString(action_root_uri));
         g_object_unref (activation_root);
@@ -326,7 +326,7 @@ QMount GvfsMountManager::gMountToqMount(GMount *mount)
     qMount.setIs_shadowed(g_mount_is_shadowed (mount));
 
     sort_key = g_mount_get_sort_key (mount);
-    if (sort_key != NULL){
+    if (sort_key != nullptr){
         qMount.setSort_key(QString(sort_key));
     }
 
@@ -498,7 +498,7 @@ void GvfsMountManager::monitor_mount_added(GVolumeMonitor *volume_monitor, GMoun
     GVolume *volume = g_mount_get_volume(mount);
     qCDebug(mountManager()) << "===================" << qMount.mounted_root_uri() << volume << "=======================";
     qCDebug(mountManager()) << "===================" << qMount << "=======================";
-    if (volume != NULL){
+    if (volume != nullptr){
         QVolume qVolume = gVolumeToqVolume(volume);
         Volumes.insert(qVolume.unix_device(), qVolume);
 
@@ -574,7 +574,7 @@ void GvfsMountManager::monitor_mount_changed(GVolumeMonitor *volume_monitor, GMo
     Q_UNUSED(mount)
 //    qDebug() << "==============================monitor_mount_changed==============================" ;
     GVolume *volume = g_mount_get_volume(mount);
-    if (volume != NULL){
+    if (volume != nullptr){
 //        qDebug() << "==============================changed removed==============================" ;
 
         QVolume qVolume = gVolumeToqVolume(volume);
@@ -609,7 +609,7 @@ void GvfsMountManager::monitor_volume_added(GVolumeMonitor *volume_monitor, GVol
         if (!Volumes_Drive_Keys.contains(qDrive.unix_device())) {
             Volumes_Drive_Keys.append(qDrive.unix_device());
         }
-        if (drive != NULL){
+        if (drive != nullptr){
             qVolume.setDrive_unix_device(QString(g_drive_get_identifier(drive, "unix-device")));
         }
     }
@@ -666,7 +666,7 @@ void GvfsMountManager::monitor_volume_changed(GVolumeMonitor *volume_monitor, GV
     Q_UNUSED(volume_monitor)
     qCDebug(mountManager()) << "==============================monitor_volume_changed==============================" ;
 
-    if (volume != NULL){
+    if (volume != nullptr){
         qCDebug(mountManager()) << "==============================volume changed==============================" ;
 
         QVolume qVolume = gVolumeToqVolume(volume);
@@ -686,7 +686,7 @@ GMountOperation *GvfsMountManager::new_mount_op()
 
     op = g_mount_operation_new ();
 
-    g_signal_connect (op, "ask_password", G_CALLBACK (&GvfsMountManager::ask_password_cb), NULL);
+    g_signal_connect (op, "ask_password", G_CALLBACK (&GvfsMountManager::ask_password_cb), nullptr);
 
     /* TODO: we *should* also connect to the "aborted" signal but since the
      *       main thread is blocked handling input we won't get that signal
@@ -863,7 +863,7 @@ void GvfsMountManager::getDrives(GList *drives)
     char **ids;
     int c, j, k;
     GDrive *drive;
-    for (c = 0, d = drives; d != NULL; d = d->next, c++){
+    for (c = 0, d = drives; d != nullptr; d = d->next, c++){
         drive = (GDrive *) d->data;
         QDrive qDrive = gDriveToqDrive(drive);
 
@@ -872,12 +872,12 @@ void GvfsMountManager::getDrives(GList *drives)
 
         volumes = g_drive_get_volumes (drive);
         GVolume *volume;
-        for (j = 0, v = volumes; v != NULL; v = v->next, j++){
+        for (j = 0, v = volumes; v != nullptr; v = v->next, j++){
             volume = (GVolume *) v->data;
 
             ids = g_volume_enumerate_identifiers (volume);
-            if (ids && ids[0] != NULL){
-                for (k = 0; ids[k] != NULL; k++){
+            if (ids && ids[0] != nullptr){
+                for (k = 0; ids[k] != nullptr; k++){
                     char *id = g_volume_get_identifier (volume,
                                                        ids[k]);
                     if (QString(ids[k]) == "unix-device"){
@@ -905,11 +905,11 @@ void GvfsMountManager::getVolumes(GList *volumes)
     GList *v = volumes;
     GVolume *volume;
 
-    for (int c = 0; v != NULL; v = v->next, c++){
+    for (int c = 0; v != nullptr; v = v->next, c++){
         volume = (GVolume *) v->data;
         QVolume qVolume = gVolumeToqVolume(volume);
         GDrive *drive = g_volume_get_drive(volume);
-        if (drive != NULL){
+        if (drive != nullptr){
             qVolume.setDrive_unix_device(QString(g_drive_get_identifier(drive, "unix-device")));
         }else{
             if (!Volumes_No_Drive_Keys.contains(qVolume.unix_device())){
@@ -969,12 +969,12 @@ void GvfsMountManager::getMounts(GList *mounts)
 {
     GList *m = mounts;
     GMount *mount;
-    for (int c = 0; m != NULL; m = m->next, c++){
+    for (int c = 0; m != nullptr; m = m->next, c++){
         mount = (GMount *) m->data;
         QMount qMount = gMountToqMount(mount);
         Mounts.insert(qMount.mounted_root_uri(), qMount);
         GVolume* volume = g_mount_get_volume(mount);
-        if (volume != NULL){
+        if (volume != nullptr){
             continue;
         }else{
             if (isIgnoreUnusedMounts(qMount)){
@@ -1170,18 +1170,18 @@ void GvfsMountManager::mount_mounted(const QString &mounted_root_uri, bool silen
     const char *f = file_uri.data();
     GFile *file;
     file = g_file_new_for_uri(f);
-    if (file == NULL)
+    if (file == nullptr)
         return;
     GMountOperation* op;
     op = new_mount_op ();
-    g_file_mount_enclosing_volume (file, G_MOUNT_MOUNT_NONE, op, NULL, &GvfsMountManager::mount_with_mounted_uri_done, silent ? &silent : nullptr);
+    g_file_mount_enclosing_volume (file, G_MOUNT_MOUNT_NONE, op, nullptr, &GvfsMountManager::mount_with_mounted_uri_done, silent ? &silent : nullptr);
     g_object_unref (file);
 }
 
 void GvfsMountManager::mount_with_mounted_uri_done(GObject *object, GAsyncResult *res, gpointer silent)
 {
     gboolean succeeded;
-    GError *error = NULL;
+    GError *error = nullptr;
 
     succeeded = g_file_mount_enclosing_volume_finish (G_FILE (object), res, &error);
 
@@ -1208,7 +1208,7 @@ void GvfsMountManager::mount_device(const QString &unix_device, bool silent)
     volume_monitor = g_volume_monitor_get();
 
     volumes = g_volume_monitor_get_volumes (volume_monitor);
-    for (l = volumes; l != NULL; l = l->next)
+    for (l = volumes; l != nullptr; l = l->next)
     {
         GVolume *volume = G_VOLUME (l->data);
 
@@ -1222,7 +1222,7 @@ void GvfsMountManager::mount_device(const QString &unix_device, bool silent)
             g_volume_mount (volume,
                           G_MOUNT_MOUNT_NONE,
                           op,
-                          NULL,
+                          nullptr,
                           &GvfsMountManager::mount_with_device_file_cb,
                           silent ? &silent : nullptr);
 
@@ -1243,7 +1243,7 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
 {
     GVolume *volume;
     gboolean succeeded;
-    GError *error = NULL;
+    GError *error = nullptr;
 
     volume = G_VOLUME (object);
 
@@ -1289,15 +1289,15 @@ void GvfsMountManager::unmount_mounted(const QString &mounted_root_uri)
 
     GFile *file;
     file = g_file_new_for_uri(QFile::encodeName(mounted_root_uri));
-    if (file == NULL)
+    if (file == nullptr)
         return;
 
     GMount *mount;
-    GError *error = NULL;
+    GError *error = nullptr;
     GMountOperation *mount_op;
 
-    mount = g_file_find_enclosing_mount (file, NULL, &error);
-    if (mount == NULL) {
+    mount = g_file_find_enclosing_mount (file, nullptr, &error);
+    if (mount == nullptr) {
         bool no_permission = false;
 
         QFileInfo fileInfo(QUrl(mounted_root_uri).toLocalFile());
@@ -1349,7 +1349,7 @@ void GvfsMountManager::unmount_mounted(const QString &mounted_root_uri)
     char *local_mount_point = is_netwrok_url ? g_file_get_path(file) : nullptr;
 
     mount_op = new_mount_op ();
-    g_mount_unmount_with_operation (mount, G_MOUNT_UNMOUNT_NONE, mount_op, NULL, &GvfsMountManager::unmount_done_cb, local_mount_point);
+    g_mount_unmount_with_operation (mount, G_MOUNT_UNMOUNT_NONE, mount_op, nullptr, &GvfsMountManager::unmount_done_cb, local_mount_point);
     g_object_unref (mount_op);
 
     g_object_unref (file);
@@ -1359,7 +1359,7 @@ void GvfsMountManager::unmount_mounted(const QString &mounted_root_uri)
 void GvfsMountManager::unmount_done_cb(GObject *object, GAsyncResult *res, gpointer user_data)
 {
     gboolean succeeded;
-    GError *error = NULL;
+    GError *error = nullptr;
 
     succeeded = g_mount_unmount_with_operation_finish (G_MOUNT (object), res, &error);
 
@@ -1442,7 +1442,7 @@ void GvfsMountManager::eject_device(const QString &unix_device)
     volume_monitor = g_volume_monitor_get();
 
     volumes = g_volume_monitor_get_volumes (volume_monitor);
-    for (l = volumes; l != NULL; l = l->next)
+    for (l = volumes; l != nullptr; l = l->next)
     {
         GVolume *volume = G_VOLUME (l->data);
 
@@ -1456,7 +1456,7 @@ void GvfsMountManager::eject_device(const QString &unix_device)
             g_volume_eject_with_operation (volume,
                           G_MOUNT_UNMOUNT_NONE,
                           op,
-                          NULL,
+                          nullptr,
                           &GvfsMountManager::eject_with_device_file_cb,
                           op);
 
@@ -1477,7 +1477,7 @@ void GvfsMountManager::eject_with_device_file_cb(GObject *object, GAsyncResult *
     Q_UNUSED(user_data)
     GVolume *volume;
     gboolean succeeded;
-    GError *error = NULL;
+    GError *error = nullptr;
 
     volume = G_VOLUME (object);
 
@@ -1504,18 +1504,18 @@ void GvfsMountManager::eject_mounted(const QString &mounted_root_uri)
     std::string file_uri = mounted_root_uri.toStdString();
     GFile *file;
     file = g_file_new_for_uri(file_uri.data());
-    if (file == NULL)
+    if (file == nullptr)
         return;
 
     GMount *mount;
-    GError *error = NULL;
+    GError *error = nullptr;
     GMountOperation *mount_op;
 
-    if (file == NULL)
+    if (file == nullptr)
         return;
 
-    mount = g_file_find_enclosing_mount (file, NULL, &error);
-    if (mount == NULL) {
+    mount = g_file_find_enclosing_mount (file, nullptr, &error);
+    if (mount == nullptr) {
         DDialog error_dilaog(tr("Cannot find the mounting device"), QString(error->message));
 
         error_dilaog.setIcon(QIcon::fromTheme("dialog-error"), QSize(64, 64));
@@ -1527,7 +1527,7 @@ void GvfsMountManager::eject_mounted(const QString &mounted_root_uri)
     }
 
     mount_op = new_mount_op ();
-    g_mount_eject_with_operation (mount, G_MOUNT_UNMOUNT_NONE, mount_op, NULL, &GvfsMountManager::eject_with_mounted_file_cb, NULL);
+    g_mount_eject_with_operation (mount, G_MOUNT_UNMOUNT_NONE, mount_op, nullptr, &GvfsMountManager::eject_with_mounted_file_cb, nullptr);
     g_object_unref (mount_op);
 
 }
@@ -1537,7 +1537,7 @@ void GvfsMountManager::eject_with_mounted_file_cb(GObject *object, GAsyncResult 
     Q_UNUSED(user_data)
     GMount* mount;
     gboolean succeeded;
-    GError *error = NULL;
+    GError *error = nullptr;
 
     mount = G_MOUNT (object);
     succeeded = g_mount_eject_with_operation_finish (G_MOUNT (object), res, &error);
@@ -1565,7 +1565,7 @@ void GvfsMountManager::stop_device(const QString &drive_unix_device)
 
     drives = g_volume_monitor_get_connected_drives( volume_monitor);
     GDrive *drive;
-    for (i = 0, d = drives; d != NULL; d = d->next, i++){
+    for (i = 0, d = drives; d != nullptr; d = d->next, i++){
         drive = (GDrive *) d->data;
 
         if (g_strcmp0 (g_drive_get_identifier(drive, "unix-device"), device_file) == 0)
@@ -1577,7 +1577,7 @@ void GvfsMountManager::stop_device(const QString &drive_unix_device)
             g_drive_stop (drive,
                           G_MOUNT_UNMOUNT_NONE,
                           op,
-                          NULL,
+                          nullptr,
                           &GvfsMountManager::stop_with_device_file_cb,
                           op);
         }
@@ -1592,7 +1592,7 @@ void GvfsMountManager::stop_with_device_file_cb(GObject *object, GAsyncResult *r
     Q_UNUSED(user_data)
     GDrive *drive;
     gboolean succeeded;
-    GError *error = NULL;
+    GError *error = nullptr;
 
     drive = G_DRIVE (object);
 
