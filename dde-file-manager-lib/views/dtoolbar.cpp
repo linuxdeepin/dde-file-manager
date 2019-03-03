@@ -23,7 +23,6 @@
  */
 
 #include "dtoolbar.h"
-#include "dcheckablebutton.h"
 #include "dfmcrumbbar.h"
 #include "historystack.h"
 #include "dhoverbutton.h"

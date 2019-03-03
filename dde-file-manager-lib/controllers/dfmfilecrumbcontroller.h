@@ -30,8 +30,8 @@ DFM_BEGIN_NAMESPACE
 class DFMFileCrumbController : public DFMCrumbInterface
 {
 public:
-    explicit DFMFileCrumbController(QObject *parent = 0);
-    ~DFMFileCrumbController();
+    explicit DFMFileCrumbController(QObject *parent = nullptr);
+    ~DFMFileCrumbController() override;
 
     bool supportedUrl(DUrl url) override;
     QList<CrumbData> seprateUrl(const DUrl &url) override;

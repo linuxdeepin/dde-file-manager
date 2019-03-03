@@ -94,7 +94,6 @@ HEADERS += \
     views/ddetailview.h \
     views/dicontextbutton.h \
     views/dstatebutton.h \
-    views/dcheckablebutton.h \
     controllers/filecontroller.h \
     app/filesignalmanager.h \
     views/fileitem.h \
@@ -109,7 +108,6 @@ HEADERS += \
     shutil/fileutils.h \
     shutil/properties.h \
     views/dfilemanagerwindow.h \
-    views/dhorizseparator.h \
     views/historystack.h\
     dialogs/propertydialog.h \
     views/dhoverbutton.h \
@@ -274,7 +272,6 @@ SOURCES += \
     views/ddetailview.cpp \
     views/dicontextbutton.cpp \
     views/dstatebutton.cpp \
-    views/dcheckablebutton.cpp \
     controllers/filecontroller.cpp \
     views/fileitem.cpp \
     models/desktopfileinfo.cpp \
@@ -288,7 +285,6 @@ SOURCES += \
     shutil/fileutils.cpp \
     shutil/properties.cpp \
     views/dfilemanagerwindow.cpp \
-    views/dhorizseparator.cpp \
     views/historystack.cpp\
     dialogs/propertydialog.cpp \
     views/dhoverbutton.cpp \
