@@ -639,45 +639,6 @@ bool DFileViewHelper::isEmptyArea(const QPoint &pos) const
     return true;
 }
 
-void DFileViewHelper::showPreviewFileDialog()
-{
-//    Q_D(DFileViewHelper);
-//    DUrlList canPreivewlist, entryUrlList;
-
-//    for (const DUrl &url : selectedUrls()) {
-//        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
-
-//        if (info && !info->toLocalFile().isEmpty())
-//            canPreivewlist << DUrl::fromLocalFile(info->toLocalFile());
-//    }
-
-//    if (canPreivewlist.count() == 1){
-////        qDebug() << rowCount() << model()->columnCount();
-////        for (int i = 0; i < rowCount(); ++i) {
-////            for (int j=0; j < model()->columnCount(); j++){
-////                const QModelIndex &index = parent()->model()->index(i, j, parent()->rootIndex());
-////                entryUrlList << model()->getUrlByIndex(index);
-////            }
-////        }
-//    }
-
-//    if (canPreivewlist.isEmpty())
-//        return;
-
-//    if (!d->filePreviewDialog){
-//        d->filePreviewDialog = new FilePreviewDialog(canPreivewlist, parent());
-//    }else{
-//        d->filePreviewDialog->updatePreviewList(canPreivewlist);
-//    }
-
-//    if (canPreivewlist.count() == 1){
-//        qDebug() << entryUrlList.count();
-//        d->filePreviewDialog->setEntryUrlList(entryUrlList);
-//    }
-
-    //    d->filePreviewDialog->show();
-}
-
 void DFileViewHelper::preproccessDropEvent(QDropEvent *event) const
 {
     if (event->source() == parent() && !DFMGlobal::keyCtrlIsPressed()) {

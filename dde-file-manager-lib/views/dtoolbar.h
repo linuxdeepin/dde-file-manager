@@ -30,9 +30,6 @@
 #include "dfileview.h"
 #include "dstatebutton.h"
 
-class DCheckableButton;
-class DSearchBar;
-class DTabBar;
 class DFMEvent;
 class HistoryStack;
 
@@ -56,7 +53,7 @@ class DToolBar : public QFrame
 {
     Q_OBJECT
 public:
-    explicit DToolBar(QWidget *parent = 0);
+    explicit DToolBar(QWidget *parent = nullptr);
     ~DToolBar();
     static const int ButtonWidth;
     static const int ButtonHeight;
@@ -105,10 +102,10 @@ private:
 
     bool m_searchState = false;
     QFrame* m_addressToolBar;
-    QPushButton* m_backButton=NULL;
-    QPushButton* m_forwardButton=NULL;
-    QPushButton* m_searchButton = NULL;
-    QPushButton* m_settingsButton = NULL;
+    QPushButton* m_backButton = nullptr;
+    QPushButton* m_forwardButton = nullptr;
+    QPushButton* m_searchButton = nullptr;
+    QPushButton* m_settingsButton = nullptr;
     QFrame* m_contollerToolBar;
     DGraphicsClipEffect *m_contollerToolBarClipMask;
     QHBoxLayout *m_contollerToolBarContentLayout;
@@ -117,7 +114,7 @@ private:
     bool m_switchState = false;
     bool m_searchButtonAsbState = false;
     DFMCrumbBar * m_crumbWidget = nullptr;
-    HistoryStack * m_navStack = NULL;
+    HistoryStack * m_navStack = nullptr;
     QList<HistoryStack*> m_navStacks;
 };
 

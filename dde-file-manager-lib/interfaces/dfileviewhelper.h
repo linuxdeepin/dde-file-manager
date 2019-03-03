@@ -65,8 +65,6 @@ public:
     void keyboardSearch(char key);
     bool isEmptyArea(const QPoint &pos) const;
 
-    void showPreviewFileDialog();
-
     void preproccessDropEvent(QDropEvent *event) const;
 
 public slots:
