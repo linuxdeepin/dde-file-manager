@@ -52,6 +52,14 @@ QMenu *DFMSideBarRecentItem::createStandardContextMenu() const
         wnd->openNewTab(url());
     })->setDisabled(shouldDisable);
 
+#ifdef QT_DEBUG
+    menu->addSeparator();
+
+    menu->addAction(QObject::tr("Clear recent history"), [](){
+        //
+    });
+#endif // QT_DEBUG
+
     return menu;
 }
 
