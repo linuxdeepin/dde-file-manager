@@ -54,12 +54,16 @@ QMenu *DFMSideBarTrashItem::createStandardContextMenu() const
         wnd->openNewTab(url());
     })->setDisabled(shouldDisable);
 
+    menu->addSeparator();
+
     QAction *emptyTrash = new QAction(QObject::tr("Empty Trash"), menu);
     connect(emptyTrash, &QAction::triggered, this, [this]() {
         appController->actionClearTrash(this);
     });
     emptyTrash->setDisabled(TrashManager::isEmpty());
     menu->addAction(emptyTrash);
+
+    menu->addSeparator();
 
     menu->addAction(QObject::tr("Properties"), [this]() {
         DUrlList list;

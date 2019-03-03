@@ -104,21 +104,6 @@ void recycleUserActionType(MenuAction type)
 }
 }
 
-
-DFileMenu *DFileMenuManager::createRecentLeftBarMenu(const QSet<MenuAction> &disableList)
-{
-    QVector<MenuAction> actionKeys;
-
-    actionKeys.reserve(2);
-
-    actionKeys << MenuAction::OpenInNewWindow
-               << MenuAction::OpenInNewTab
-               << MenuAction::ClearRecent
-               << MenuAction::Property;
-
-    return genereteMenuByKeys(actionKeys, disableList);
-}
-
 DFileMenu *DFileMenuManager::createDefaultBookMarkMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
@@ -132,127 +117,14 @@ DFileMenu *DFileMenuManager::createDefaultBookMarkMenu(const QSet<MenuAction> &d
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *DFileMenuManager::createNetworkMarkMenu(const QSet<MenuAction> &disableList)
-{
-    QVector<MenuAction> actionKeys;;
-
-    actionKeys.reserve(1);
-
-    actionKeys << MenuAction::OpenInNewWindow
-               << MenuAction::OpenInNewTab;
-
-    return genereteMenuByKeys(actionKeys, disableList);
-}
-
-DFileMenu *DFileMenuManager::createPluginBookMarkMenu(const QSet<MenuAction> &disableList)
-{
-    QVector<MenuAction> actionKeys;;
-
-    actionKeys.reserve(1);
-
-    actionKeys << MenuAction::OpenInNewWindow
-               << MenuAction::OpenInNewTab;
-
-    return genereteMenuByKeys(actionKeys, disableList);
-}
-
 DFileMenu *DFileMenuManager::createUserShareMarkMenu(const QSet<MenuAction> &disableList)
 {
-    QVector<MenuAction> actionKeys;;
+    QVector<MenuAction> actionKeys;
 
     actionKeys.reserve(1);
 
     actionKeys << MenuAction::OpenInNewWindow
                << MenuAction::OpenInNewTab;
-
-    return genereteMenuByKeys(actionKeys, disableList);
-}
-
-DFileMenu *DFileMenuManager::createCustomBookMarkMenu(const DUrl &url, QSet<MenuAction> disableList)
-{
-
-    QVector<MenuAction> actionKeys;
-
-    actionKeys.reserve(10);
-
-    actionKeys << MenuAction::OpenInNewWindow
-               << MenuAction::OpenInNewTab
-               << MenuAction::BookmarkRename
-               << MenuAction::BookmarkRemove
-               << MenuAction::Property;
-
-    const DAbstractFileInfoPointer &info = fileService->createFileInfo(Q_NULLPTR, url);
-    info->refresh();
-    if (!info->exists()) {
-        disableList << MenuAction::OpenInNewWindow
-                    << MenuAction::OpenInNewTab
-                    << MenuAction::BookmarkRename
-                    << MenuAction::Property;
-    }
-
-    return genereteMenuByKeys(actionKeys, disableList);
-}
-
-DFileMenu *DFileMenuManager::createTrashLeftBarMenu(const QSet<MenuAction> &disableList)
-{
-    QVector<MenuAction> actionKeys;
-
-    actionKeys.reserve(4);
-
-    actionKeys << MenuAction::OpenInNewWindow;
-    actionKeys << MenuAction::OpenInNewTab;
-    actionKeys << MenuAction::ClearTrash;
-    actionKeys << MenuAction::Property;
-
-    if (TrashManager::isEmpty()) {
-        QSet<MenuAction> tmp_disableList = disableList;
-
-        tmp_disableList << MenuAction::ClearTrash;
-
-        return genereteMenuByKeys(actionKeys, tmp_disableList);
-    }
-
-    return genereteMenuByKeys(actionKeys, disableList);
-}
-
-DFileMenu *DFileMenuManager::createComputerLeftBarMenu(const QSet<MenuAction> &disableList)
-{
-    QVector<MenuAction> actionKeys;
-
-    actionKeys.reserve(2);
-
-    actionKeys << MenuAction::OpenInNewWindow;
-    actionKeys << MenuAction::OpenInNewTab;
-    actionKeys << MenuAction::Property;
-
-    return genereteMenuByKeys(actionKeys, disableList);
-}
-
-DFileMenu *DFileMenuManager::createDiskLeftBarMenu(const QSet<MenuAction> &disableList)
-{
-    QVector<MenuAction> actionKeys;
-
-    actionKeys.reserve(4);
-
-    actionKeys << MenuAction::Open
-               << MenuAction::OpenInNewWindow
-               << MenuAction::Separator
-               << MenuAction::Property;
-
-    return genereteMenuByKeys(actionKeys, disableList);
-}
-
-DFileMenu *DFileMenuManager::createDiskViewMenu(const QSet<MenuAction> &disableList)
-{
-    QVector<MenuAction> actionKeys;
-
-    actionKeys.reserve(6);
-
-    actionKeys << MenuAction::Open << MenuAction::OpenInNewWindow
-               << MenuAction::Separator
-               << MenuAction::Mount << MenuAction::Unmount
-               << MenuAction::Separator
-               << MenuAction::Property;
 
     return genereteMenuByKeys(actionKeys, disableList);
 }
@@ -271,36 +143,6 @@ DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &d
                << MenuAction::Settings;
 
     return genereteMenuByKeys(actionKeys, disableList, false, subMenuKeys, false);
-}
-
-DFileMenu *DFileMenuManager::createToolBarSortMenu(const QSet<MenuAction> &disableList)
-{
-    QVector<MenuAction> actionKeys;
-
-    actionKeys.reserve(5);
-
-    actionKeys << MenuAction::Name << MenuAction::Size
-               << MenuAction::Type
-               << MenuAction::CreatedDate
-               << MenuAction::LastModifiedDate;
-    DFileMenuData::sortActionTypes = actionKeys;
-    DFileMenu *menu = genereteMenuByKeys(actionKeys, disableList, true);
-    return menu;
-}
-
-DFileMenu *DFileMenuManager::createListViewHeaderMenu(const QSet<MenuAction> &disableList)
-{
-    QVector<MenuAction> actionKeys;
-
-    actionKeys.reserve(4);
-
-    actionKeys << MenuAction::Size
-               << MenuAction::Type
-               << MenuAction::CreatedDate
-               << MenuAction::LastModifiedDate;
-
-    DFileMenu *menu = genereteMenuByKeys(actionKeys, disableList, true);
-    return menu;
 }
 
 DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrlList &urlList, QSet<MenuAction> disableList, QSet<MenuAction> unusedList, int windowId)
