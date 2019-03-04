@@ -560,7 +560,7 @@ DUrl DUrl::fromUserInput(const QString &userInput, QString workingDirectory,
         return QUrl::fromUserInput(userInput, workingDirectory, options);
     }
 
-    if ((userInput.startsWith("~") && (preferredLocalPath || userInput.length() == 1)) || userInput.startsWith("~/")) {
+    if ((userInput.startsWith("~") && preferredLocalPath) || userInput.startsWith("~/")) {
         return DUrl::fromLocalFile(QDir::homePath() + userInput.mid(1));
     } else if ((preferredLocalPath && QDir().exists(userInput)) || userInput.startsWith("./")
                || userInput.startsWith("../") || userInput.startsWith("/")) {
