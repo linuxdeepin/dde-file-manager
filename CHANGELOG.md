@@ -1,3 +1,22 @@
+<a name="4.7.7.1"></a>
+## 4.7.7.1 (2019-03-04)
+
+
+#### Features
+
+*   notify on device got disconnected ([64e9ce81](https://github.com/linuxdeepin/dde-file-manager/commit/64e9ce81526614df358085e2dc821923ac753749))
+*   Ctrl+I to show property dialog on desktop ([fbc650a6](https://github.com/linuxdeepin/dde-file-manager/commit/fbc650a6feea4c88b08e90de76a5da7f8e02269f))
+*   show source path on property dialog for trash url ([25a44d7f](https://github.com/linuxdeepin/dde-file-manager/commit/25a44d7f1514af63ac09261b6fe1fef334179f70))
+
+#### Bug Fixes
+
+*   enter ~ navigate to home dir ([e0440d76](https://github.com/linuxdeepin/dde-file-manager/commit/e0440d76daa92e3229b11ad380fb7b4421783ce3))
+*   crash in loongson platform ([648ce30d](https://github.com/linuxdeepin/dde-file-manager/commit/648ce30d86ecf760db611987884788f3a1ff6209))
+*   fs type for /home ([72e49a99](https://github.com/linuxdeepin/dde-file-manager/commit/72e49a99c0bba445c86354ec4a0d2ebe6abe37de))
+*  cannot browse Samsung devices ([ef95c920](https://github.com/linuxdeepin/dde-file-manager/commit/ef95c920cc7b83f35cf7fddb5a1d51a204a465a4))
+
+
+
 <a name="4.7.7"></a>
 ## 4.7.7 (2019-02-25)
 
