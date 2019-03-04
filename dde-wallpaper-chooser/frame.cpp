@@ -26,17 +26,16 @@
 #include "constants.h"
 #include "wallpaperlist.h"
 #include "wallpaperitem.h"
-#include "dbus/appearancedaemon_interface.h"
 #include "dbus/deepin_wm.h"
 #include "thumbnailmanager.h"
+#include "appearance_interface.h"
 
 #ifndef DISABLE_SCREENSAVER
 #include "screensaver_interface.h"
-
-#include <dsegmentedcontrol.h>
-#include <DThemeManager>
-#include <DAnchors>
 #endif
+
+#include <DThemeManager>
+#include <dsegmentedcontrol.h>
 
 #include <QApplication>
 #include <QDesktopWidget>
@@ -58,10 +57,10 @@ Frame::Frame(QFrame *parent)
       m_closeButton(new DImageButton(":/images/close_round_normal.svg",
                                  ":/images/close_round_hover.svg",
                                  ":/images/close_round_press.svg", this)),
-      m_dbusAppearance(new AppearanceDaemonInterface(AppearanceServ,
-                                                     AppearancePath,
-                                                     QDBusConnection::sessionBus(),
-                                                     this)),
+      m_dbusAppearance(new ComDeepinDaemonAppearanceInterface(AppearanceServ,
+                                                              AppearancePath,
+                                                              QDBusConnection::sessionBus(),
+                                                              this)),
       m_dbusDeepinWM(new DeepinWM(DeepinWMServ,
                                   DeepinWMPath,
                                   QDBusConnection::sessionBus(),
@@ -231,10 +230,22 @@ void Frame::reLayoutTools()
         m_waitControlLabel->show();
         m_waitControl->show();
         m_lockScreenBox->show();
+#ifndef DISABLE_WALLPAPER_CAROUSEL
+        m_wallpaperCarouselCheckBox->hide();
+        m_wallpaperCarouselControl->hide();
+        layout()->removeItem(m_wallpaperCarouselLayout);
+        static_cast<QBoxLayout*>(layout())->insertLayout(0, m_toolLayout);
+#endif
     } else {
         m_waitControlLabel->hide();
         m_waitControl->hide();
         m_lockScreenBox->hide();
+#ifndef DISABLE_WALLPAPER_CAROUSEL
+        m_wallpaperCarouselCheckBox->show();
+        m_wallpaperCarouselControl->setVisible(m_wallpaperCarouselCheckBox->isChecked());
+        layout()->removeItem(m_toolLayout);
+        static_cast<QBoxLayout*>(layout())->insertLayout(0, m_wallpaperCarouselLayout);
+#endif
     }
 }
 
@@ -260,6 +271,7 @@ void Frame::adjustModeSwitcherPoint()
                                   (m_wallpaperList->y() - m_switchModeControl->height()) / 2);
     }
 }
+#endif
 
 static QString timeFormat(int second)
 {
@@ -303,15 +315,83 @@ static QString timeFormat(int second)
 
     return time_string;
 }
-#endif
 
 void Frame::initUI()
 {
-#ifndef DISABLE_SCREENSAVER
-    DThemeManager::instance()->setTheme(this, "dark");
-
     QVBoxLayout *layout = new QVBoxLayout(this);
 
+    layout->setMargin(0);
+    layout->setSpacing(0);
+
+    DThemeManager::instance()->setTheme(this, "dark");
+
+#ifndef DISABLE_WALLPAPER_CAROUSEL
+    m_wallpaperCarouselLayout = new QHBoxLayout;
+    m_wallpaperCarouselCheckBox = new QCheckBox(tr("Wallpaper Slideshow"), this);
+    m_wallpaperCarouselCheckBox->setChecked(true);
+    m_wallpaperCarouselControl = new DSegmentedControl(this);
+
+    QByteArrayList array_policy {"30", "60", "300", "600", "900", "1800", "3600", "login", "wakeup"};
+
+    {
+        int current_policy_index = array_policy.indexOf(m_dbusAppearance->wallpaperRotationPolicy().toLatin1());
+
+        // 当值不存在此列表时插入此值
+        if (current_policy_index < 0) {
+            const QString &policy = m_dbusAppearance->wallpaperRotationPolicy();
+
+            if (!policy.isEmpty()) {
+                array_policy.prepend(policy.toLatin1());
+            } else {
+                m_wallpaperCarouselCheckBox->setChecked(false);
+            }
+
+            current_policy_index = 0;
+        }
+
+        for (const QByteArray &time : array_policy) {
+            int index = 0;
+
+            if (time == "login") {
+                index = m_wallpaperCarouselControl->addSegmented(tr("When login"));
+            } else if (time == "wakeup") {
+                index = m_wallpaperCarouselControl->addSegmented(tr("When wakeup"));
+            } else {
+                bool ok = false;
+                int t = time.toInt(&ok);
+                index = ok ? m_wallpaperCarouselControl->addSegmented(timeFormat(t)) : m_wallpaperCarouselControl->addSegmented(time);
+            }
+
+            m_wallpaperCarouselControl->at(index)->setMinimumWidth(40);
+        }
+
+        m_wallpaperCarouselControl->setCurrentIndex(current_policy_index);
+        m_wallpaperCarouselControl->setVisible(m_wallpaperCarouselCheckBox->isChecked());
+    }
+
+    m_wallpaperCarouselLayout->setSpacing(10);
+    m_wallpaperCarouselLayout->setContentsMargins(20, 10, 20, 10);
+    m_wallpaperCarouselLayout->addWidget(m_wallpaperCarouselCheckBox);
+    m_wallpaperCarouselLayout->addWidget(m_wallpaperCarouselControl);
+    m_wallpaperCarouselLayout->addStretch();
+
+    layout->addLayout(m_wallpaperCarouselLayout);
+
+    connect(m_wallpaperCarouselCheckBox, &QCheckBox::clicked, this, [this, array_policy] (bool checked) {
+        m_wallpaperCarouselControl->setVisible(checked);
+
+        if (!checked) {
+            m_dbusAppearance->setWallpaperRotationPolicy(QString());
+        } else if (m_wallpaperCarouselControl->currentIndex() >= 0) {
+            m_dbusAppearance->setWallpaperRotationPolicy(array_policy.at(m_wallpaperCarouselControl->currentIndex()));
+        }
+    });
+    connect(m_wallpaperCarouselControl, &DSegmentedControl::currentChanged, this, [this, array_policy] (int index) {
+        m_dbusAppearance->setWallpaperRotationPolicy(array_policy.at(index));
+    });
+#endif
+
+#ifndef DISABLE_SCREENSAVER
     m_toolLayout = new QHBoxLayout;
 
     m_waitControl = new DSegmentedControl(this);
@@ -363,9 +443,6 @@ void Frame::initUI()
 
     layout->addLayout(m_toolLayout);
     layout->addWidget(m_wallpaperList);
-    layout->setMargin(0);
-    layout->setSpacing(0);
-    layout->addStretch();
 
     //###(zccrs): 直接把switModeControl放到布局中始终无法在两种mos模式下都居中
     // 使用anchors使此控件居中
@@ -384,17 +461,21 @@ void Frame::initUI()
     connect(m_lockScreenBox, &QCheckBox::toggled, m_dbusScreenSaver, &ComDeepinScreenSaverInterface::setLockScreenAtAwake);
 
     reLayoutTools();
+#elif !defined(DISABLE_WALLPAPER_CAROUSEL)
+    layout->addWidget(m_wallpaperList);
 #endif
+
+    layout->addStretch();
 }
 
 void Frame::initSize()
 {
     const QRect primaryRect = qApp->primaryScreen()->geometry();
 
-#ifndef DISABLE_SCREENSAVER
-    setFixedSize(primaryRect.width(), FrameHeight + 35);
-#else
+#if defined(DISABLE_SCREENSAVER) && defined(DISABLE_WALLPAPER_CAROUSEL)
     setFixedSize(primaryRect.width(), FrameHeight);
+#else
+    setFixedSize(primaryRect.width(), FrameHeight + 35);
 #endif
     qDebug() << "move befor: " << this->geometry() << m_wallpaperList->geometry();
     move(primaryRect.x(), primaryRect.y() + primaryRect.height() - height());

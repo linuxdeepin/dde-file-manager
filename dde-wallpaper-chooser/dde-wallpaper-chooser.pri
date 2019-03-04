@@ -1,5 +1,4 @@
 SOURCES += $$PWD/frame.cpp \
-    $$PWD/dbus/appearancedaemon_interface.cpp \
     $$PWD/wallpaperlist.cpp \
     $$PWD/wallpaperitem.cpp \
     $$PWD/thumbnailmanager.cpp \
@@ -7,7 +6,6 @@ SOURCES += $$PWD/frame.cpp \
     $$PWD/dbus/deepin_wm.cpp
 
 HEADERS  += $$PWD/frame.h \
-    $$PWD/dbus/appearancedaemon_interface.h \
     $$PWD/wallpaperlist.h \
     $$PWD/wallpaperitem.h \
     $$PWD/constants.h \
@@ -19,6 +17,11 @@ RESOURCES += \
     $$PWD/images.qrc
 
 isEmpty(DISABLE_SCREENSAVER) {
-    dbus_screensaver.files = $$PWD/com.deepin.ScreenSaver.xml
+    dbus_screensaver.files = $$PWD/dbus/com.deepin.ScreenSaver.xml
     DBUS_INTERFACES += dbus_screensaver
+}
+
+isEmpty(DISABLE_WALLPAPER_CAROUSEL) {
+    dbus_appearance.files = $$PWD/dbus/com.deepin.daemon.Appearance.xml
+    DBUS_INTERFACES += dbus_appearance
 }

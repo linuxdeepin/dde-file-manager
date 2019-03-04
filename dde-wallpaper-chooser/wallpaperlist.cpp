@@ -25,7 +25,6 @@
 #include "wallpaperlist.h"
 #include "wallpaperitem.h"
 #include "constants.h"
-#include "dbus/appearancedaemon_interface.h"
 
 #include <QDebug>
 #include <QScrollBar>
