@@ -66,10 +66,6 @@ include(../dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
 include(../partman/partman.pri)
 include(tag/tag.pri)
 
-!CONFIG(DISABLE_ANYTHING) {
-    include(quick_search/quicksearch.pri)
-}
-
 isEqual(ARCH, sw_64){
 #    isEqual(ENABLE_SW_LABLE, YES){
         DEFINES += SW_LABEL
@@ -437,14 +433,8 @@ SOURCES += \
     views/dfmadvancesearchbar.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
-    HEADERS += shutil/danythingmonitor.h \
-               controllers/interface/quicksearchdaemon_interface.h \
-               controllers/quicksearchdaemoncontroller.h \
-               shutil/dquicksearchfilter.h
-    SOURCES += shutil/danythingmonitor.cpp \
-               controllers/interface/quicksearchdaemon_interface.cpp \
-               controllers/quicksearchdaemoncontroller.cpp \
-               shutil/dquicksearchfilter.cpp
+    HEADERS += shutil/danythingmonitor.h
+    SOURCES += shutil/danythingmonitor.cpp
 }
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET

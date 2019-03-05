@@ -30,10 +30,6 @@ CONFIG(debug, debug|release) {
 
 include(../partman/partman.pri)
 
-CONFIG(DISABLE_ANYTHING) {
-    DEFINES += DISABLE_QUICK_SEARCH
-}
-
 TEMPLATE = app
 
 #include(../utils/utils.pri)
@@ -89,8 +85,7 @@ SOURCES += main.cpp \
     dbusservice/dbusadaptor/deviceinfomanager_adaptor.cpp \
     dbusservice/dbusinterface/deviceinfomanager_interface.cpp \
     tag/tagmanagerdaemon.cpp \
-    dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.cpp \
-    dbusservice/dbusadaptor/quicksearchdaemon_adaptor.cpp
+    dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.cpp
 
 HEADERS += \
     app/filemanagerdaemon.h \
@@ -134,13 +129,7 @@ HEADERS += \
     dbusservice/dbusadaptor/deviceinfomanager_adaptor.h \
     dbusservice/dbusinterface/deviceinfomanager_interface.h \
     tag/tagmanagerdaemon.h \
-    dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.h \
-    dbusservice/dbusadaptor/quicksearchdaemon_adaptor.h
-
-!CONFIG(DISABLE_ANYTHING) {
-    HEADERS += quicksearch/quicksearchdaemon.h
-    SOURCES += quicksearch/quicksearchdaemon.cpp
-}
+    dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.h
 
 target.path = /usr/bin
 

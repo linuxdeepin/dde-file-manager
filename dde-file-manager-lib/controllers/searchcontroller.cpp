@@ -34,6 +34,10 @@
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 
+#ifndef DISABLE_QUICK_SEARCH
+#include "anything_interface.h"
+#endif
+
 #include <DDesktopServices>
 
 #include <QDebug>
@@ -266,6 +270,9 @@ public:
     mutable DDirIteratorPointer it;
     mutable bool m_hasIteratorByKeywordOfCurrentIt;
 
+    // 所有支持快速搜索的子目录(可包含待搜索目录本身)
+    QStringList hasLFTSubdirectories;
+
     bool closed = false;
 };
 
@@ -284,6 +291,20 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
 
     regular = QRegExp(keyword, Qt::CaseInsensitive, QRegExp::Wildcard);
     searchPathList << targetUrl;
+
+#ifndef DISABLE_QUICK_SEARCH
+    if (targetUrl.isLocalFile()) {
+        auto message = ComDeepinAnythingInterface("com.deepin.anything",
+                                                  "/com/deepin/anything",
+                                                  QDBusConnection::systemBus())
+                                                    .call("hasLFTSubdirectories",
+                                                          targetUrl.toLocalFile());
+
+        if (!message.arguments().isEmpty()) {
+            hasLFTSubdirectories = message.arguments().first().toStringList();
+        }
+    }
+#endif
 }
 
 SearchDiriterator::~SearchDiriterator()
@@ -328,7 +349,30 @@ bool SearchDiriterator::hasNext() const
                 continue;
             }
 
-            m_hasIteratorByKeywordOfCurrentIt = it->enableIteratorByKeyword(m_fileUrl.searchKeyword());
+            m_hasIteratorByKeywordOfCurrentIt = false;
+
+            if (url.isLocalFile()) { // 针对本地文件, 先判断此目录是否是索引数据的子目录, 可以依此过滤掉很多目录, 减少对anything dbus接口的调用
+#ifndef DISABLE_QUICK_SEARCH
+                const QString &file = url.toLocalFile();
+
+                for (const QString &path : hasLFTSubdirectories) {
+                    if (path == "/") {
+                        m_hasIteratorByKeywordOfCurrentIt = true;
+                        break;
+                    }
+
+                    if (file.startsWith(path)) {
+                        m_hasIteratorByKeywordOfCurrentIt = true;
+                        break;
+                    }
+                }
+
+                if (m_hasIteratorByKeywordOfCurrentIt)
+                    m_hasIteratorByKeywordOfCurrentIt = it->enableIteratorByKeyword(m_fileUrl.searchKeyword());
+#endif
+            } else {
+                m_hasIteratorByKeywordOfCurrentIt = it->enableIteratorByKeyword(m_fileUrl.searchKeyword());
+            }
         }
 
         while (it->hasNext()) {
