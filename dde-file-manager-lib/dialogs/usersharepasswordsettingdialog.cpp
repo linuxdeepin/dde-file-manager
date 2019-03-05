@@ -58,11 +58,14 @@ void UserSharePasswordSettingDialog::initUI()
 
 void UserSharePasswordSettingDialog::onButtonClicked(const int &index)
 {
-    if(index == 1){
+    if(index == 1) {
         // set usershare password
         QString password = m_passwordEdit->text();
-        if(password.isEmpty())
+        if (password.isEmpty()) {
+            close();
             return;
+        }
         userShareManager->setSambaPassword(UserShareManager::getCurrentUserName(), password);
     }
+    close();
 }
