@@ -210,7 +210,7 @@ public:
         , keyword(k)
         , dir(path)
     {
-
+        keyword.replace('*', ".*").replace('?', ".+");
     }
 
     ~DFMAnythingDirIterator()
@@ -228,7 +228,19 @@ public:
     bool hasNext() const override
     {
         if (!initialized) {
-            searchResults = interface->search(dir.absolutePath(), keyword, true);
+            const QString &dir_path = dir.absolutePath();
+
+            searchResults = interface->search(dir_path, keyword, true);
+            const QStringList sub_list = interface->hasLFTSubdirectories(dir_path);
+
+            // 如果挂载在此路径下的其它目录也支持索引数据, 则一并搜索
+            for (const QString &sub_path : sub_list) {
+                if (sub_path == dir_path)
+                    continue;
+
+                searchResults.append(interface->search(sub_path, keyword, true));
+            }
+
             initialized = true;
         }
 

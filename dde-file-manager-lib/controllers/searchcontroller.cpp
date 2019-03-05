@@ -294,14 +294,18 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
 
 #ifndef DISABLE_QUICK_SEARCH
     if (targetUrl.isLocalFile()) {
-        auto message = ComDeepinAnythingInterface("com.deepin.anything",
-                                                  "/com/deepin/anything",
-                                                  QDBusConnection::systemBus())
-                                                    .call("hasLFTSubdirectories",
-                                                          targetUrl.toLocalFile());
+        QStorageInfo info(targetUrl.toLocalFile());
 
-        if (!message.arguments().isEmpty()) {
-            hasLFTSubdirectories = message.arguments().first().toStringList();
+        if (info.isValid()) {
+            auto message = ComDeepinAnythingInterface("com.deepin.anything",
+                                                      "/com/deepin/anything",
+                                                      QDBusConnection::systemBus())
+                                                        .call("hasLFTSubdirectories",
+                                                              info.rootPath());
+
+            if (!message.arguments().isEmpty()) {
+                hasLFTSubdirectories = message.arguments().first().toStringList();
+            }
         }
     }
 #endif
@@ -353,7 +357,7 @@ bool SearchDiriterator::hasNext() const
 
             if (url.isLocalFile()) { // 针对本地文件, 先判断此目录是否是索引数据的子目录, 可以依此过滤掉很多目录, 减少对anything dbus接口的调用
 #ifndef DISABLE_QUICK_SEARCH
-                const QString &file = url.toLocalFile();
+                const QString &file = url.toLocalFile().append("/");
 
                 for (const QString &path : hasLFTSubdirectories) {
                     if (path == "/") {
@@ -361,7 +365,7 @@ bool SearchDiriterator::hasNext() const
                         break;
                     }
 
-                    if (file.startsWith(path)) {
+                    if (file.startsWith(path + "/")) {
                         m_hasIteratorByKeywordOfCurrentIt = true;
                         break;
                     }
