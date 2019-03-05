@@ -35,7 +35,6 @@ class UsbFormatter;
 class CommandManager;
 class DeviceInfoManager;
 class TagManagerDaemon;
-class QuickSearchDaemon;
 
 class AppController : public QObject
 {
@@ -58,7 +57,6 @@ private:
     CommandManager *m_commandManager = NULL;
     DeviceInfoManager *m_deviceInfoManager = NULL;
     TagManagerDaemon *m_tagManagerDaemon{ nullptr };
-    QuickSearchDaemon *m_quick_search_daemon{ nullptr };
 };
 
 #endif // APPCONTROLLER_H

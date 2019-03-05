@@ -76,9 +76,8 @@
 #include "dfmsettings.h"
 #include "dfmapplication.h"
 #ifndef DISABLE_QUICK_SEARCH
-#include "quick_search/dquicksearch.h"
+#include "anything_interface.h"
 #endif
-#include "controllers/quicksearchdaemoncontroller.h"
 
 class DFMQDirIterator : public DDirIterator
 {
@@ -202,43 +201,38 @@ private:
     QFileInfo currentFileInfo;
 };
 
-class DFMQuickSearchDirIterator : public DDirIterator
+class DFMAnythingDirIterator : public DDirIterator
 {
 public:
-    DFMQuickSearchDirIterator(const QString &path, const QString &keyword)
-        : m_pathForSearching(path)
-        , m_keyword(keyword)
+    DFMAnythingDirIterator(ComDeepinAnythingInterface *u,
+                           const QString &path, const QString &k)
+        : interface(u)
+        , keyword(k)
+        , dir(path)
+    {
+
+    }
+
+    ~DFMAnythingDirIterator()
     {
 
     }
 
     DUrl next() override
     {
-        QString searched_result{ m_searchedResult.takeFirst() };
-        currentFileInfo.setFile(searched_result);
+        currentFileInfo.setFile(searchResults.takeFirst());
 
-        return DUrl::fromLocalFile(currentFileInfo.absoluteFilePath());
+        return fileUrl();
     }
 
     bool hasNext() const override
     {
-        ///###: jundge whether had invoked quick-search and cached results or not.
-        ///###: the result is not empty.
-        if (m_cachedFlag.load(std::memory_order_consume) && !m_searchedResult.isEmpty()) {
-            return true;
+        if (!initialized) {
+            searchResults = interface->search(dir.absolutePath(), keyword, true);
+            initialized = true;
         }
 
-        ///###: if quick-search-daemon is not ready last time.
-        ///###: check out the status of quick-searh-daemon again here.
-        ///###: if ready, invoke quick-search-daemon to search files.
-        bool whether_cached_completely{ QuickSearchDaemonController::instance()->whetherCacheCompletely() };
-
-        if (whether_cached_completely && !m_cachedFlag.load(std::memory_order_consume)) {
-            m_searchedResult = QuickSearchDaemonController::instance()->search(m_pathForSearching, m_keyword);
-            m_cachedFlag.store(true, std::memory_order_release);
-        }
-
-        return (m_cachedFlag.load(std::memory_order_consume) && !m_searchedResult.isEmpty());
+        return !searchResults.isEmpty();
     }
 
     QString fileName() const override
@@ -253,23 +247,21 @@ public:
 
     const DAbstractFileInfoPointer fileInfo() const override
     {
-        if (currentFileInfo.suffix() == DESKTOP_SURRIX) {
-            return DAbstractFileInfoPointer(new DesktopFileInfo(currentFileInfo));
-        }
-
         return DAbstractFileInfoPointer(new DFileInfo(currentFileInfo));
     }
 
     DUrl url() const override
     {
-        return DUrl::fromLocalFile(m_pathForSearching);
+        return DUrl::fromLocalFile(dir.absolutePath());
     }
 
 private:
-    mutable std::atomic<bool> m_cachedFlag{ false };
-    mutable QList<QString> m_searchedResult{};
-    QString m_pathForSearching{};
-    QString m_keyword;
+    ComDeepinAnythingInterface *interface;
+    mutable bool initialized = false;
+    QString keyword;
+    mutable QStringList searchResults;
+
+    QDir dir;
     QFileInfo currentFileInfo;
 };
 
@@ -1137,57 +1129,20 @@ bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
 #else // !DISABLE_QUICK_SEARCH
     const QString pathForSearching = iterator->url().toLocalFile();
 
-    if (QFileInfo::exists(pathForSearching)) {
-        QPair<QString, QString> dev_and_mount_point{ DQuickSearch::getDevAndMountPoint(pathForSearching) };
-        bool is_usb_dev{ DQuickSearch::isUsbDevice(dev_and_mount_point.first) };
-        bool whether_index_internal{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_IndexInternal).toBool() };
-        bool whether_index_external{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_IndexExternal).toBool() };
+    static ComDeepinAnythingInterface anything("com.deepin.anything", "/com/deepin/anything",
+                                               QDBusConnection::systemBus());
 
-#ifdef QT_DEBUG
-        qDebug() << pathForSearching;
-#endif //QT_DEBUG
-
-        std::function<bool()> invoke_quick_search{
-            [this, &keyword, &pathForSearching]()->bool
-            {
-                bool whether_cached{ QuickSearchDaemonController::instance()->createCache() };
-
-#ifdef QT_DEBUG
-                qDebug() << whether_cached;
-#endif //QT_DEBUG
-
-                if (whether_cached)
-                {
-                    if (iterator) {
-                        delete iterator;
-                    }
-
-                    iterator = new DFMQuickSearchDirIterator(pathForSearching, keyword);
-
-#ifdef QT_DEBUG
-                    qDebug() << pathForSearching;
-#endif //QT_DEBUG
-                    return true;
-                }
-
-                return false;
-            }
-        };
-
-        bool whether_use_quick_search{ false };
-        if (whether_index_external && whether_index_internal) {
-            whether_use_quick_search = invoke_quick_search();
-
-        } else if (!is_usb_dev && whether_index_internal) {
-            whether_use_quick_search = invoke_quick_search();
-
-        } else if (is_usb_dev && whether_index_external) {
-            whether_use_quick_search = invoke_quick_search();
-        }
-
-        return whether_use_quick_search;
+    if (!anything.hasLFT(pathForSearching)) {
+        return false;
+    } else {
+        qDebug() << "support quick search for: " << pathForSearching;
     }
 
-    return false;
+    if (iterator)
+        delete iterator;
+
+    iterator = new DFMAnythingDirIterator(&anything, pathForSearching, keyword);
+
+    return true;
 #endif // DISABLE_QUICK_SEARCH
 }
