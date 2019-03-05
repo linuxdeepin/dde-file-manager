@@ -61,10 +61,10 @@ private slots:
     void virualFileSystemDeviceDetached(const QUrl &url);
 
 private:
-    QScopedPointer<DFM_NAMESPACE::DFMDiskManager> m_diskMgr;
+    QScopedPointer<DFMDiskManager> m_diskMgr;
     QScopedPointer<DFM_NAMESPACE::DFMVfsManager> m_vfsMgr;
 
-    QMap<QString, DFM_NAMESPACE::DFMBlockDevice*> m_fsDevMap; // key is udisks2 device dbus path
+    QMap<QString, DFMBlockDevice*> m_fsDevMap; // key is udisks2 device dbus path
     QSet<QUrl> m_vfsDevSet; // value is device scheme url with path as deviceId, eg. device:mtp://%5Busb%3A003,004%5D/
 };
 

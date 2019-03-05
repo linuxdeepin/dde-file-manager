@@ -37,7 +37,8 @@ Build-Depends:
  libdmr-dev,
  dh-systemd,
  deepin-anything-dev,
- deepin-anything-server-dev
+ deepin-anything-server-dev,
+ libudisks2-qt5-dev
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 

@@ -48,10 +48,8 @@ class UDiskDeviceInfo;
 class Subscriber;
 class DeviceInfoManagerInterface;
 
-DFM_BEGIN_NAMESPACE
 class DFMDiskManager;
 class DFMBlockDevice;
-DFM_END_NAMESPACE
 
 class UDiskListener : public DAbstractFileController
 {
@@ -126,9 +124,8 @@ private slots:
     void insertFileSystemDevice(const QString dbusPath);
 
 private:
-    dde_file_manager::DFMDiskManager* m_diskMgr = nullptr;
-//    QScopedPointer<dde_file_manager::DFMDiskManager> m_diskMgr;
-    QMap<QString, DFM_NAMESPACE::DFMBlockDevice*> m_fsDevMap;
+    DFMDiskManager* m_diskMgr = nullptr;
+    QMap<QString, DFMBlockDevice*> m_fsDevMap;
 
     QList<UDiskDeviceInfoPointer> m_list;
     QMap<QString, UDiskDeviceInfoPointer> m_map;

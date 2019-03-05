@@ -42,7 +42,6 @@
 #include <QDebug>
 #include <QRegularExpression>
 
-DFM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 
