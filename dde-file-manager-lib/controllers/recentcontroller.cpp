@@ -26,6 +26,7 @@
 #include <QFileSystemWatcher>
 #include <QXmlStreamReader>
 #include <QDomDocument>
+#include <QtConcurrent>
 #include <QQueue>
 #include <QTimer>
 #include <QDebug>
@@ -251,10 +252,10 @@ RecentController::RecentController(QObject *parent)
       m_xbelPath(QDir::homePath() + "/.local/share/recently-used.xbel"),
       m_watcher(new DFileWatcher(m_xbelPath))
 {
-    handleFileChanged();
+    asyncHandleFileChanged();
 
-    connect(m_watcher, &DFileWatcher::subfileCreated, this, &RecentController::handleFileChanged);
-    connect(m_watcher, &DFileWatcher::fileModified, this, &RecentController::handleFileChanged);
+    connect(m_watcher, &DFileWatcher::subfileCreated, this, &RecentController::asyncHandleFileChanged);
+    connect(m_watcher, &DFileWatcher::fileModified, this, &RecentController::asyncHandleFileChanged);
 
     m_watcher->startWatcher();
 }
@@ -432,4 +433,9 @@ void RecentController::handleFileChanged()
             ++iter;
         }
     }
+}
+
+void RecentController::asyncHandleFileChanged()
+{
+    QtConcurrent::run(this, &RecentController::handleFileChanged);
 }
