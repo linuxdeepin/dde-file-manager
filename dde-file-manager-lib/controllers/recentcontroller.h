@@ -60,6 +60,7 @@ public:
 private:
     static DUrlList realUrlList(const DUrlList &recentUrls);
     void handleFileChanged();
+    void asyncHandleFileChanged();
 
     QString m_xbelPath;
     DFileWatcher *m_watcher;
