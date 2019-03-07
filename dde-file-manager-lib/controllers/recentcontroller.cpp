@@ -21,6 +21,7 @@
 #include "dfileservices.h"
 #include "dfilewatcher.h"
 #include "dfmevent.h"
+#include "dfmglobal.h"
 #include "private/dabstractfilewatcher_p.h"
 
 #include <QFileSystemWatcher>
@@ -384,10 +385,16 @@ void RecentController::handleFileChanged()
     QFile file(m_xbelPath);
     QList<DUrl> urlList;
 
+    if (!m_xbelFileLock.tryLock()) {
+        // other process already reading the xbel stream, abort.
+        return;
+    }
+
     if (file.open(QIODevice::ReadOnly)) {
         QXmlStreamReader reader(&file);
 
         while (!reader.atEnd()) {
+
             if (!reader.readNextStartElement() ||
                  reader.name() != "bookmark") {
                 continue;
@@ -404,14 +411,16 @@ void RecentController::handleFileChanged()
                 if (info.exists() && info.isFile()) {
                     urlList << recentUrl;
 
-                    if (!recentNodes.contains(recentUrl)) {
-                        RecentFileInfo *fileInfo = new RecentFileInfo(recentUrl);
-                        recentNodes[recentUrl] = fileInfo;
+                    DThreadUtil::runInMainThread([=]() {
+                        if (!recentNodes.contains(recentUrl)) {
+                            RecentFileInfo *fileInfo = new RecentFileInfo(recentUrl);
+                            recentNodes[recentUrl] = fileInfo;
 
-                        DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
-                                                          &DAbstractFileWatcher::subfileCreated,
-                                                          recentUrl);
-                    }
+                            DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
+                                                              &DAbstractFileWatcher::subfileCreated,
+                                                              recentUrl);
+                        }
+                    });
                 }
             }
         }
@@ -422,17 +431,21 @@ void RecentController::handleFileChanged()
         DUrl url = iter.key();
 
         if (!urlList.contains(url)) {
-            iter = recentNodes.erase(iter);
+            DThreadUtil::runInMainThread([this, &iter, url]() {
+                iter = recentNodes.erase(iter);
 
-            DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
-                                              &DAbstractFileWatcher::fileDeleted,
-                                              url);
+                DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT),
+                                                  &DAbstractFileWatcher::fileDeleted,
+                                                  url);
+            });
         } else {
             iter.value()->updateInfo();
 
             ++iter;
         }
     }
+
+    m_xbelFileLock.unlock();
 }
 
 void RecentController::asyncHandleFileChanged()

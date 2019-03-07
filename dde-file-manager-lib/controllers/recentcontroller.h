@@ -23,6 +23,8 @@
 #include "dabstractfilecontroller.h"
 #include "models/recentfileinfo.h"
 
+#include <QMutex>
+
 class QFileSystemWatcher;
 class DAbstractFileInfo;
 class DFileWatcher;
@@ -40,7 +42,7 @@ public:
     bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const override;
     bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
     bool compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const override;
-    bool decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const;
+    bool decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const override;
     bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const override;
 
     bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const override;
@@ -64,6 +66,7 @@ private:
 
     QString m_xbelPath;
     DFileWatcher *m_watcher;
+    QMutex m_xbelFileLock;
 };
 
 #endif // RECENTCONTROLLER_H
