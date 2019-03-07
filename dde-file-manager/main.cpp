@@ -22,6 +22,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <signal.h>
+
 #include "durl.h"
 #include "dfmglobal.h"
 #include "dabstractfileinfo.h"
@@ -67,6 +69,22 @@
 #endif
 
 #define fileManagerApp FileManagerApp::instance()
+
+// blumia: DDE not yet got fully support about session management, so when logout or shutdown,
+//         the config file won't save. On mips64el, sw, arm, there will be a "warm-up" process
+//         running in the background (dde-file-manager -d) and the file manager instance will
+//         not got exit when all visible DFM window got closed, so that means the file manager
+//         config file will never got saved.
+// blumia: Handling SIGTERM is a workaround way to fix that issue, but we still need to add
+//         session management support to DDE.
+void handleSIGTERM(int sig)
+{
+    qDebug() << "!SIGTERM!" << sig;
+
+    if (qApp) {
+        qApp->quit();
+    }
+}
 
 DWIDGET_USE_NAMESPACE
 
@@ -178,6 +196,8 @@ int main(int argc, char *argv[])
         } else {
             CommandLineManager::instance()->processCommand();
         }
+
+        signal(SIGTERM, handleSIGTERM);
 
 #ifdef ENABLE_PPROF
         int request = app.exec();
