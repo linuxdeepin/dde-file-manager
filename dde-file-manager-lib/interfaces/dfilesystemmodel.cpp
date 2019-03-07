@@ -208,7 +208,12 @@ public:
     FileSystemNodePointer getNodeByIndex(int index)
     {
         rwLock->lockForRead();
-        FileSystemNodePointer node(visibleChildren.value(index));
+        FileSystemNode *n = visibleChildren.value(index);
+
+        if (n && n->ref < 1) {
+            n = nullptr;
+        }
+        FileSystemNodePointer node(n);
         rwLock->unlock();
 
         return node;
