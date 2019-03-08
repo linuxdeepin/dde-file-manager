@@ -66,6 +66,11 @@ bool PDFPreview::setFileUrl(const DUrl &url)
     return true;
 }
 
+DUrl PDFPreview::fileUrl() const
+{
+    return m_url;
+}
+
 QWidget *PDFPreview::contentWidget() const
 {
     return m_pdfWidget;

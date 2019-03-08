@@ -164,12 +164,13 @@ bool DFMGlobal::installTranslator()
     return false;
 }
 
-void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::ClipboardAction action)
+void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::ClipboardAction action, QMimeData *mimeData)
 {
     if (action == UnknowAction)
         return;
 
-    QMimeData *mimeData = new QMimeData;
+    if (!mimeData)
+        mimeData = new QMimeData;
 
     QByteArray ba = (action == DFMGlobal::CutAction) ? "cut" : "copy";
     QString text;
