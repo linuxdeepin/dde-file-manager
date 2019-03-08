@@ -93,7 +93,7 @@ public:
     static bool openExcutableScriptFile(const QString& path, int flag);
     static bool addExecutableFlagAndExecuse(const QString& path, int flag);
     static bool openExcutableFile(const QString& path, int flag);
-    static bool runCommand(const QString& cmd, const QStringList& args);
+    static bool runCommand(const QString& cmd, const QStringList& args, const QString& wd = QString());
 
     static QByteArray imageFormatName(QImage::Format f);
 
