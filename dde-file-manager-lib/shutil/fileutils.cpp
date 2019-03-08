@@ -824,12 +824,12 @@ bool FileUtils::openExcutableScriptFile(const QString &path, int flag)
 
         break;
     case 1:
-        result = runCommand(path, QStringList());
+        result = runCommand(path, QStringList(), QUrl(path).adjusted(QUrl::RemoveFilename).toString());
         break;
     case 2:{
         QStringList args;
         args << "-e" << path;
-        result = runCommand(FileUtils::defaultTerminalPath(), args);
+        result = runCommand(FileUtils::defaultTerminalPath(), args, QUrl(path).adjusted(QUrl::RemoveFilename).toString());
         break;
     }
     case 3:
@@ -869,11 +869,11 @@ bool FileUtils::openExcutableFile(const QString &path, int flag)
     case 1:{
         QStringList args;
         args << "-e" << path;
-        result = runCommand(FileUtils::defaultTerminalPath(), args);
+        result = runCommand(FileUtils::defaultTerminalPath(), args, QUrl(path).adjusted(QUrl::RemoveFilename).toString());
         break;
     }
     case 2:
-        result = runCommand(path, QStringList());
+        result = runCommand(path, QStringList(), QUrl(path).adjusted(QUrl::RemoveFilename).toString());
         break;
     default:
         break;
@@ -882,16 +882,20 @@ bool FileUtils::openExcutableFile(const QString &path, int flag)
     return result;
 }
 
-bool FileUtils::runCommand(const QString &cmd, const QStringList &args)
+bool FileUtils::runCommand(const QString &cmd, const QStringList &args, const QString& wd)
 {
     bool result = false;
     if (appController->hasLaunchAppInterface()){
-        qDebug() << "luanch cmd by dbus:" << cmd << args;
-        appController->startManagerInterface()->RunCommand(cmd, args);
+        qDebug() << "launch cmd by dbus:" << cmd << args;
+        if(wd.length()) {
+            QVariantMap opt = {{"dir", wd}};
+            appController->startManagerInterface()->RunCommandWithOptions(cmd, args, opt);
+        }
+        else appController->startManagerInterface()->RunCommand(cmd, args);
         result = true;
     }else{
-        qDebug() << "luanch cmd by qt:" << cmd << args;
-        result = QProcess::startDetached(cmd, args);
+        qDebug() << "launch cmd by qt:" << cmd << args;
+        result = QProcess::startDetached(cmd, args, wd);
     }
     return result;
 }
