@@ -206,6 +206,11 @@ bool VideoPreview::setFileUrl(const DUrl &url)
     return true;
 }
 
+DUrl VideoPreview::fileUrl() const
+{
+    return videoUrl;
+}
+
 QWidget *VideoPreview::contentWidget() const
 {
     return playerWidget.data();

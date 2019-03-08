@@ -53,10 +53,13 @@ public:
     void initialize(QWidget *window, QWidget *statusBar) Q_DECL_OVERRIDE;
 
     bool setFileUrl(const DUrl &url) Q_DECL_OVERRIDE;
+    DUrl fileUrl() const override;
 
     QWidget *contentWidget() const Q_DECL_OVERRIDE;
 
     QString title() const Q_DECL_OVERRIDE;
+
+    void copyFile() const override;
 
 private:
     DUrl m_url;
