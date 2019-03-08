@@ -229,19 +229,28 @@ public:
     {
         if (!initialized) {
             const QString &dir_path = dir.absolutePath();
-
-            searchResults = interface->search(dir_path, keyword, true);
-            const QStringList sub_list = interface->hasLFTSubdirectories(dir_path);
-
             // 如果挂载在此路径下的其它目录也支持索引数据, 则一并搜索
-            for (const QString &sub_path : sub_list) {
-                if (sub_path == dir_path)
-                    continue;
+            searchDirList << interface->hasLFTSubdirectories(dir_path);
 
-                searchResults.append(interface->search(sub_path, keyword, true));
+            if (searchDirList.isEmpty() || searchDirList.first() != dir_path) {
+                searchDirList.prepend(dir_path);
             }
 
             initialized = true;
+        }
+
+        while (searchResults.isEmpty() && !searchDirList.isEmpty()) {
+            const auto result = interface->search(100, 500, searchStartOffset, searchEndOffset, searchDirList.first(), keyword, true);
+
+            searchResults = result.argumentAt<0>();
+            searchStartOffset = result.argumentAt<1>();
+            searchEndOffset = result.argumentAt<2>();
+
+            // 当前目录已经搜索到了结尾
+            if (searchStartOffset >= searchEndOffset) {
+                searchStartOffset = searchEndOffset = 0;
+                searchDirList.removeAt(0);
+            }
         }
 
         return !searchResults.isEmpty();
@@ -269,8 +278,11 @@ public:
 
 private:
     ComDeepinAnythingInterface *interface;
-    mutable bool initialized = false;
     QString keyword;
+
+    mutable bool initialized = false;
+    mutable QStringList searchDirList;
+    mutable quint32 searchStartOffset = 0, searchEndOffset = 0;
     mutable QStringList searchResults;
 
     QDir dir;

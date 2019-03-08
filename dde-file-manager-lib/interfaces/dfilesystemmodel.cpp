@@ -1468,6 +1468,11 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
         return;
     }
 
+    if (!d->rootNode->fileInfo->hasOrderly()) {
+        // 对于无需列表, 较少返回结果的等待时间
+        d->jobController->setTimeCeiling(100);
+    }
+
     connect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren, Qt::QueuedConnection);
     connect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished, Qt::QueuedConnection);
     connect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildrenOnNewThread, Qt::DirectConnection);
