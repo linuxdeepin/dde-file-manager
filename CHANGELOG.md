@@ -1,3 +1,16 @@
+<a name="4.7.7.2"></a>
+## 4.7.7.2 (2019-03-08)
+
+
+#### Bug Fixes
+
+*   locker protect for handle xbel file changed ([07ae8de6](https://github.com/linuxdeepin/dde-file-manager/commit/07ae8de6ba934099dcaf745c4da21fe0ee418bc7))
+*   use concurrent to handle recent file changed ([406761e8](https://github.com/linuxdeepin/dde-file-manager/commit/406761e8520b6cddca27235c468da774c0bb84ba))
+*   user share dialog cannot open twice ([c11f6d1c](https://github.com/linuxdeepin/dde-file-manager/commit/c11f6d1c1f0a05944d4485dab41ce75bf56750bf))
+* **dde-file-manager:**  crash at getNodeByIndex ([302f7e2d](https://github.com/linuxdeepin/dde-file-manager/commit/302f7e2deb5adfd0a3d4346135b992341144e2c2))
+
+
+
 <a name="4.7.7.1"></a>
 ## 4.7.7.1 (2019-03-04)
 
