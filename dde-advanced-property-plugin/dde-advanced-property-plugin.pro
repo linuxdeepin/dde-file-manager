@@ -8,7 +8,7 @@ QT       += core gui widgets
 
 TARGET = dde-advanced-property-plugin
 TEMPLATE = lib
-CONFIG += plugin
+CONFIG += plugin c++11
 
 PLUGIN_INSTALL_DIR = $$PLUGINDIR/menu
 message($$PLUGIN_INSTALL_DIR)

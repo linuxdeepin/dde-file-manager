@@ -8,7 +8,7 @@ QT       += core gui widgets
 
 TARGET = dde-text-preview-plugin
 TEMPLATE = lib
-CONFIG += plugin
+CONFIG += c++11 plugin
 
 include(../../../common/common.pri)
 

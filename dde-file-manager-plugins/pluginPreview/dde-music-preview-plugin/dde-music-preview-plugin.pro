@@ -11,7 +11,7 @@ TEMPLATE = lib
 
 PKGCONFIG += taglib
 
-CONFIG += plugin link_pkgconfig
+CONFIG += c++11 plugin link_pkgconfig
 
 include(../../../common/common.pri)
 
