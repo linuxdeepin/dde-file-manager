@@ -20,6 +20,7 @@
  */
 
 #include "arrangeddesktopfileinfo.h"
+#include "controllers/arrangeddesktopcontroller.h"
 
 #include "private/dabstractfileinfo_p.h"
 
@@ -57,7 +58,41 @@ QString ArrangedDesktopFileInfo::fileName() const
     return "what";
 }
 
+QString ArrangedDesktopFileInfo::iconName() const
+{
+    if (fileUrl().path().startsWith("/entry/") && fileUrl().path() != "/entry/") {
+        switch (ArrangedDesktopController::entryTypeByName(fileName())) {
+        case DAD_APPLICATION:
+            return QStringLiteral("folder-applications-stack");
+        case DAD_DOCUMENT:
+            return QStringLiteral("folder-documents-stack");
+        case DAD_MUSIC:
+            return QStringLiteral("folder-music-stack");
+        case DAD_PICTURE:
+            return QStringLiteral("folder-images-stack");
+        case DAD_VIDEO:
+            return QStringLiteral("folder-video-stack");
+        case DAD_OTHER:
+            return QStringLiteral("folder-stack");
+        default:
+            qWarning() << "ArrangedDesktopFileInfo::iconName() no matched branch, it must be a bug!";
+        }
+    }
+
+    return DAbstractFileInfo::iconName();
+}
+
 bool ArrangedDesktopFileInfo::exists() const
 {
     return true;
+}
+
+bool ArrangedDesktopFileInfo::isReadable() const
+{
+    return true;
+}
+
+bool ArrangedDesktopFileInfo::canShare() const
+{
+    return false;
 }

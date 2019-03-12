@@ -30,10 +30,13 @@ class ArrangedDesktopFileInfo : public DAbstractFileInfo
 public:
     ArrangedDesktopFileInfo(const DUrl &url);
 
-    virtual bool isDir() const override;
-    QString fileName() const override;
-
     bool exists() const override;
+    bool isReadable() const override;
+    bool canShare() const override;
+    bool isDir() const override;
+
+    QString fileName() const override;
+    QString iconName() const override;
 
 private:
     Q_DECLARE_PRIVATE(ArrangedDesktopFileInfo)

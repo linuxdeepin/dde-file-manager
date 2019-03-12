@@ -40,24 +40,25 @@ public:
     const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const override;
 
 //    bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const override;
-//    DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const override;
+    DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const override;
 //    bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
-//    DUrlList pasteFile(const QSharedPointer<DFMPasteEvent> &event) const override;
+    DUrlList pasteFile(const QSharedPointer<DFMPasteEvent> &event) const override;
 //    bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const override;
-//    const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const override;
 
     const static QString entryNameByEnum(DAD_TYPES singleType);
     static DAD_TYPES entryTypeByName(QString entryName);
 
 public slots:
-    void desktopFilesChanged(const DUrl &url);
+    void desktopFilesCreated(const DUrl &url);
+    void desktopFilesRemoved(const DUrl &url);
 
 private:
     void initData() const;
+    DAD_TYPES checkUrlArrangedType(const DUrl url) const;
 
     DFileWatcher* m_desktopFileWatcher;
     mutable bool dataInitialized = false;
-    mutable QMap<DAD_TYPES, QList<DAbstractFileInfoPointer> > arrangedFileInfos;
+    mutable QMap<DAD_TYPES, QList<DUrl> > arrangedFileUrls;
 };
 
 #endif // ARRANGEDDESKTOPCONTROLLER_H
