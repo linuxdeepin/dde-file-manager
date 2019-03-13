@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- contextmenuext_zh.qdoc -->
+  <title>Context Menu Extension (zh) | Deepin File Manager</title>
+  <link rel="stylesheet" type="text/css" href="style/online.css" />
+</head>
+<body>
+<div class="header" id="qtdocheader">
+    <div class="main">
+    <div class="main-rounded">
+        <div class="navigationbar">
+        <ul>
+<li>Context Menu Extension (zh)</li>
+    </ul>
+    </div>
+</div>
+<div class="content">
+<div class="line">
+<div class="content mainContent">
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#">上下文菜单</a></li>
+<li class="level1"><a href="#">深度文件管理器的上下文菜单扩展支持</a></li>
+<li class="level2"><a href="#json">Json 形式的上下文菜单扩展</a></li>
+<li class="level2"><a href="#qt-c">遵守 Qt 插件规范的 C++ 上下文菜单插件</a></li>
+<li class="level1"><a href="#">参考链接</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<div class="context">
+<h1 class="title">Context Menu Extension (zh)</h1>
+<span class="subtitle"></span>
+<!-- $$$context-menu-ext-zh.html-description -->
+<div class="descr"> <a name="details"></a>
+<p>知识库 - 编写上下文菜单扩展</p>
+<a name=""></a>
+<h2 id="">上下文菜单</h2>
+<p>在大多应用软件程序中，在特定位置按下上下文菜单按键（通常是鼠标右键）即可触发对应语义的上下文菜单。 在深度文件管理器中，在文件浏览视图位置的不同情况下，如在文件上、在文件夹上、或者是在空白位置 按下上下文菜单键都会触发不同内容的上下文菜单。</p>
+<p>通常情况，空白位置的上下文菜单会呈现创建文件或是对当前路径进行的其他常见操作，而在文件上触发上下文菜单 则会呈现可对文件进行的若干处理选项，如打开方式、剪切等内容。</p>
+<p>尽管默认的呈现内容应当涵盖了大部分的使用场景，用户或应用程序可能依然希望呈现额外的上下文菜单以便辅助使用。 本文即覆盖了编写自己的上下文菜单扩展的须知内容。</p>
+<a name=""></a>
+<h2 id="">深度文件管理器的上下文菜单扩展支持</h2>
+<p>深度文件管理器目前提供两种形式的上下文菜单扩展支持，分别为 json 格式的扩展支持和特定的上下文菜单扩展插件。</p>
+<p>需要注意的是，如果您希望为您的应用程序能够出现在 “打开方式” 的应用列表中，您应当考虑为您的应用程序编写适当的 .desktop 文件并指定对应的 MimeType 文件（请参见 <a href="https://www.freedesktop.org/wiki/Specifications/desktop-entry-spec/">desktop-entry-spec</a>）。 如果您希望您的自定义文件类型能够出现在 “新建文档” 的列表中，您应当参阅 <a href="new-file-templates-zh.html">新建文件模板</a> 。 对于上述的这两种需求情况，使用上下文菜单扩展都不是恰当的选择。</p>
+<a name="json"></a>
+<h3 >Json 形式的上下文菜单扩展</h3>
+<p>默认情况下文件管理器会在开启时试图加载 `~/.config/deepin/dde-file-manager/menuextensions/` 目录 （如需要编写此类扩展但发现此路径不存在时，手动创建完整路径即可）中的 json 文件作为上下文菜单扩展， 对于一个上下文菜单扩展，应当包含有如下的通用字段。</p>
+<a name=""></a>
+<h4 >通用字段</h4>
+<p>支持扩展的右键菜单各个字段说明：</p>
+<ul>
+<li>MenuType 菜单类型（必须指定）<ul>
+<li>SingleFile 选中单个文件</li>
+<li>MultiFiles 选中多个文件</li>
+<li>SingleDir 选中单个目录</li>
+<li>MultiDirs 选中多个目录</li>
+<li>MultiFileDirs 选中多个文件和目录</li>
+<li>EmptyArea 空白区域</li>
+</ul>
+</li>
+<li>Icon 菜单项的指定图标（可选）<ul>
+<li>Icon: /home/djf/Music/usb_normal_16px.svg</li>
+</ul>
+</li>
+<li>Text[local] 根据不同的语言环境给出不同的菜单文本（必须指定）<ul>
+<li>Text[zh_CN]: 示例文本</li>
+<li>Text[en]: Sample Text</li>
+<li>...</li>
+</ul>
+</li>
+<li>Exec 点击菜单项执行的命令（必须指定）<ul>
+<li>Exec: xterm 启动 XTerm 。注意此项只能跟一个名称，不能包含参数。</li>
+</ul>
+</li>
+<li>Args 执行命令的额外参数列表<ul>
+<li>&quot;Args&quot;: [&quot;.&quot;] 为执行 Exec 内容指定额外的一个参数（&quot;.&quot;）。</li>
+</ul>
+</li>
+<li>SubMenu 子菜单列表，子菜单列表不需要再次指定 MenuType 字段，其他字段参数一样，支持 SubMenu 中嵌套无限</li>
+</ul>
+<p>如果 MenuType 为 SingleFile 或者 MultiFiles ，可以增加下面两个字段来细化菜单控制。</p>
+<ul>
+<li>MimeType 文件的MimeType类型，如果指定了这个参数，表示只拓展这个类型的文件右键菜单；以;隔开<ul>
+<li>MimeType:text/plain;image/jpeg</li>
+</ul>
+</li>
+<li>Suffix 文件的后缀，如果指定了这个参数，表示只拓展后缀名为指定后缀的文件的右键菜单；以;隔开<ul>
+<li>Suffix: md;txt</li>
+</ul>
+</li>
+<li>如果MimeType和Suffix两个参数同时指定，表示文件类型为MimeType且后缀名为Suffix的文件才支持扩展右键菜单</li>
+</ul>
+<a name=""></a>
+<h4 >示例扩展</h4>
+<p>下面的示例为 在空白区域触发上下文菜单，增加 “在 VSCode 中打开” 选项 的示例。</p>
+<pre class="cpp">    <span class="operator">[</span>
+    {
+        <span class="string">&quot;MenuType&quot;</span>: <span class="string">&quot;EmptyArea&quot;</span><span class="operator">,</span>
+        <span class="string">&quot;Icon&quot;</span>: <span class="string">&quot;Files&quot;</span><span class="operator">,</span>
+        <span class="string">&quot;Text[zh_CN]&quot;</span>: <span class="string">&quot;在 VSCode 中打开&quot;</span><span class="operator">,</span>
+        <span class="string">&quot;Text[en_US]&quot;</span>: <span class="string">&quot;Open with VSCode&quot;</span><span class="operator">,</span>
+        <span class="string">&quot;Exec&quot;</span>: <span class="string">&quot;code&quot;</span><span class="operator">,</span>
+        <span class="string">&quot;Args&quot;</span>: <span class="operator">[</span><span class="string">&quot;.&quot;</span><span class="operator">]</span>
+    }
+<span class="operator">]</span></pre>
+<p>下面为旧文档中所附带的示例。</p>
+<pre class="cpp">[
+    {
+        &quot;MenuType&quot;: <span class="string">&quot;SingleFile&quot;</span>,
+        &quot;Icon&quot;: <span class="string">&quot;/home/djf/Music/usb_normal_16px.svg&quot;</span>,
+        &quot;Text[zh_CN]&quot;: <span class="string">&quot;文件SingleFile&quot;</span>,
+        &quot;Text[zh_HK]&quot;: <span class="string">&quot;文件SingleFile&quot;</span>,
+        &quot;Text[zh_TW]&quot;: <span class="string">&quot;文件SingleFile&quot;</span>,
+        &quot;MimeType&quot;: <span class="string">&quot;&quot;</span>,
+        &quot;Suffix&quot;: <span class="string">&quot;md;&quot;</span>,
+        &quot;Exec&quot;: <span class="string">&quot;&quot;</span>,
+        &quot;SubMenu&quot;: [
+             {
+                &quot;Icon&quot;: <span class="string">&quot;111111111&quot;</span>,
+                &quot;Text[zh_CN]&quot;: <span class="string">&quot;sub文件SingleFile&quot;</span>,
+                &quot;Text[zh_HK]&quot;: <span class="string">&quot;sub文件SingleFile&quot;</span>,
+                &quot;Text[zh_TW]&quot;: <span class="string">&quot;sub文件SingleFile&quot;</span>,
+                &quot;Exec&quot;: <span class="string">&quot;dde-file-manager&quot;</span>,
+                &quot;SubMenu&quot;: [
+                    {
+                        &quot;Icon&quot;: <span class="string">&quot;dssd&quot;</span>,
+                        &quot;Text[zh_CN]&quot;: <span class="string">&quot;sub文件SingleFile&quot;</span>,
+                        &quot;Text[zh_HK]&quot;: <span class="string">&quot;sub文件SingleFile&quot;</span>,
+                        &quot;Text[zh_TW]&quot;: <span class="string">&quot;sub文件SingleFile&quot;</span>,
+                        &quot;Exec&quot;: <span class="string">&quot;dde-file-manager&quot;</span>
+                    },
+                    {
+                        &quot;Icon&quot;: <span class="string">&quot;dssd&quot;</span>,
+                        &quot;Text[zh_CN]&quot;: <span class="string">&quot;sub文件SingleFile&quot;</span>,
+                        &quot;Text[zh_HK]&quot;: <span class="string">&quot;sub文件SingleFile&quot;</span>,
+                        &quot;Text[zh_TW]&quot;: <span class="string">&quot;sub文件SingleFile&quot;</span>,
+                        &quot;Exec&quot;: <span class="string">&quot;dde-file-manager&quot;</span>
+                    }
+                ]
+             },
+             {
+                &quot;Icon&quot;: <span class="string">&quot;2222222&quot;</span>,
+                &quot;Text[zh_CN]&quot;: <span class="string">&quot;sub文件SingleFile&quot;</span>,
+                &quot;Text[zh_HK]&quot;: <span class="string">&quot;sub文件SingleFile&quot;</span>,
+                &quot;Text[zh_TW]&quot;: <span class="string">&quot;sub文件SingleFile&quot;</span>,
+                &quot;Exec&quot;: <span class="string">&quot;dde-file-manager&quot;</span>
+             }
+        ]
+    },
+    {
+        &quot;MenuType&quot;: <span class="string">&quot;SingleFile&quot;</span>,
+        &quot;Icon&quot;: <span class="string">&quot;Files&quot;</span>,
+        &quot;Text[zh_CN]&quot;: <span class="string">&quot;文件SingleFile2&quot;</span>,
+        &quot;Text[zh_HK]&quot;: <span class="string">&quot;文件SingleFile2&quot;</span>,
+        &quot;Text[zh_TW]&quot;: <span class="string">&quot;文件SingleFile2&quot;</span>,
+        &quot;MimeType&quot;: <span class="string">&quot;&quot;</span>,
+        &quot;Exec&quot;: <span class="string">&quot;dde-file-manager&quot;</span>
+    },
+    {
+        &quot;MenuType&quot;: <span class="string">&quot;MultiFiles&quot;</span>,
+        &quot;Icon&quot;: <span class="string">&quot;Files&quot;</span>,
+        &quot;Text[zh_CN]&quot;: <span class="string">&quot;文件MultiFiles&quot;</span>,
+        &quot;Text[zh_HK]&quot;: <span class="string">&quot;文件MultiFiles&quot;</span>,
+        &quot;Text[zh_TW]&quot;: <span class="string">&quot;文件MultiFiles&quot;</span>,
+        &quot;MimeType&quot;: <span class="string">&quot;text/plain;image/jpeg&quot;</span>,
+        &quot;Exec&quot;: <span class="string">&quot;dde-file-manager&quot;</span>
+    },
+    {
+        &quot;MenuType&quot;: <span class="string">&quot;MultiFiles&quot;</span>,
+        &quot;Icon&quot;: <span class="string">&quot;Files&quot;</span>,
+        &quot;Text[zh_CN]&quot;: <span class="string">&quot;文件MultiFiles2&quot;</span>,
+        &quot;Text[zh_HK]&quot;: <span class="string">&quot;文件MultiFiles2&quot;</span>,
+        &quot;Text[zh_TW]&quot;: <span class="string">&quot;文件MultiFiles2&quot;</span>,
+        &quot;MimeType&quot;: <span class="string">&quot;&quot;</span>,
+        &quot;Exec&quot;: <span class="string">&quot;dde-file-manager&quot;</span>
+    },
+    {
+        &quot;MenuType&quot;: <span class="string">&quot;SingleDir&quot;</span>,
+        &quot;Icon&quot;: <span class="string">&quot;Files&quot;</span>,
+        &quot;Text[zh_CN]&quot;: <span class="string">&quot;文件SingleDir&quot;</span>,
+        &quot;Text[zh_HK]&quot;: <span class="string">&quot;文件SingleDir&quot;</span>,
+        &quot;Text[zh_TW]&quot;: <span class="string">&quot;文件SingleDir&quot;</span>,
+        &quot;Exec&quot;: <span class="string">&quot;dde-file-manager&quot;</span>
+    },
+    {
+        &quot;MenuType&quot;: <span class="string">&quot;MultiDirs&quot;</span>,
+        &quot;Icon&quot;: <span class="string">&quot;Files&quot;</span>,
+        &quot;Text[zh_CN]&quot;: <span class="string">&quot;文件MultiDir&quot;</span>,
+        &quot;Text[zh_HK]&quot;: <span class="string">&quot;文件MultiDir&quot;</span>,
+        &quot;Text[zh_TW]&quot;: <span class="string">&quot;文件MultiDir&quot;</span>,
+        &quot;Exec&quot;: <span class="string">&quot;dde-file-manager&quot;</span>
+    },
+    {
+        &quot;MenuType&quot;: <span class="string">&quot;MultiFileDirs&quot;</span>,
+        &quot;Icon&quot;: <span class="string">&quot;Files&quot;</span>,
+        &quot;Text[zh_CN]&quot;: <span class="string">&quot;文件MultiFileDirs&quot;</span>,
+        &quot;Text[zh_HK]&quot;: <span class="string">&quot;文件MultiFileDirs&quot;</span>,
+        &quot;Text[zh_TW]&quot;: <span class="string">&quot;文件MultiFileDirs&quot;</span>,
+        &quot;Exec&quot;: <span class="string">&quot;dde-file-manager&quot;</span>
+    },
+    {
+        &quot;MenuType&quot;: <span class="string">&quot;EmptyArea&quot;</span>,
+        &quot;Icon&quot;: <span class="string">&quot;Files&quot;</span>,
+        &quot;Text[zh_CN]&quot;: <span class="string">&quot;EmptyArea&quot;</span>,
+        &quot;Text[zh_HK]&quot;: <span class="string">&quot;EmptyArea&quot;</span>,
+        &quot;Text[zh_TW]&quot;: <span class="string">&quot;EmptyArea&quot;</span>,
+        &quot;Exec&quot;: <span class="string">&quot;dde-file-manager&quot;</span>
+    }
+]</pre>
+<a name="qt-c"></a>
+<h3 >遵守 Qt 插件规范的 C++ 上下文菜单插件</h3>
+<p>文件管理器支持加载 Qt 规范的 C++ 插件，实现需继承 MenuInterface ，遵守 Qt 的插件规范实现你的菜单插件接口。</p>
+<a name=""></a>
+<h4 >插件头文件</h4>
+<p>在安装好 libdde-file-manager-dev （文件管理器开发包）后即可得到对应的插件头文件 menuinterface.h ，使用时需在对应的代码中包含此文件。</p>
+<pre class="cpp"><span class="preprocessor">#include &quot;dde-file-manager-plugins/menuinterface.h&quot;</span></pre>
+<a name=""></a>
+<h4 >接口说明</h4>
+<ul>
+<li>virtual QList additionalIcons(const QString &amp;file) 实现这个接口可以扩展指定文件的角标<ul>
+<li>const QString &amp;file 表示需要显示脚本的文件完整路径</li>
+<li>QList 返回一组QIcon列表</li>
+</ul>
+</li>
+<li>virtual QList&lt;QAction*&gt; additionalMenu(const QStringList &amp;files, const QString&amp; currentDir) 实现这个接口可以扩展选中文件的右键菜单<ul>
+<li>const QStringList &amp;files 表示选中的文件的完整路径列表</li>
+<li>const QString&amp; currentDir 表示选中的文件所在的目录</li>
+<li>QList&lt;QAction*&gt; 返回一组QAction指针列表</li>
+</ul>
+</li>
+<li>virtual QList&lt;QAction*&gt; additionalEmptyMenu(const QString &amp;currentDir) 实现这个接口可以扩展空白处的右键菜单<ul>
+<li>const QString&amp; currentDir 表示空白处所在的文件目录</li>
+<li>QList&lt;QAction*&gt; 返回一组QAction指针列表</li>
+</ul>
+</li>
+</ul>
+<a name=""></a>
+<h4 >插件安装目录</h4>
+<p>在 Deepin 上，安装位置为 `/usr/lib/&lt;target_arch&gt;/dde-file-manager/plugins/menu/` ，其中 &lt;target_arch&gt; 表示对应架构名，可以通过 `gcc -dumpmachine` 得到。下表供参考：</p>
+<ul>
+<li>x86 架构<ul>
+<li>/usr/lib/x86_64-linux-gnu/dde-file-manager/plugins/menu/ 64位</li>
+<li>/usr/lib/x86_32-linux-gnu/dde-file-manager/plugins/menu/ 32位</li>
+</ul>
+</li>
+<li>龙芯架构<ul>
+<li>/usr/lib/mipsel-linux-gnu/dde-file-manager/plugins/menu/</li>
+</ul>
+</li>
+<li>神威架构<ul>
+<li>/usr/lib/sw_64-linux-gnu/dde-file-manager/plugins/menu/</li>
+</ul>
+</li>
+</ul>
+<a name=""></a>
+<h4 >源码</h4>
+<p>对于接口头文件的源码，可以直接参阅开发包所附带的头文件。以下为可供参考的简单右键菜单扩展插件实例源码。</p>
+<p>context-menu-ext/content-menu-ext.pro:</p>
+<pre class="cpp"># Still need the widgets module since MenuInterface need it.
+QT       += widgets
+
+CONFIG   += link_pkgconfig
+PKGCONFIG += dde-file-manager
+
+TARGET = dde-file-manager-mounter-plugin
+TEMPLATE = lib
+
+DEFINES += DFMMOUNTERPLUGIN_LIBRARY
+
+# The following define makes your compiler emit warnings if you use
+# any feature of Qt which has been marked as deprecated.
+DEFINES += QT_DEPRECATED_WARNINGS
+
+SOURCES += \
+        dfmctxmenuplugin.cpp
+
+HEADERS += \
+        dfmctxmenuplugin.h
+
+unix {
+    target.path = /usr/lib
+    INSTALLS += target
+}</pre>
+<p>context-menu-ext/dfmctxmenuplugin.h:</p>
+<pre class="cpp"><span class="preprocessor">#ifndef DFMCTXMENUPLUGIN_H</span>
+<span class="preprocessor">#define DFMCTXMENUPLUGIN_H</span>
+
+<span class="preprocessor">#include &quot;dde-file-manager-plugins/menuinterface.h&quot;</span>
+
+<span class="keyword">class</span> DFMCtxMenuPlugin : <span class="keyword">public</span> MenuInterface
+{
+    Q_OBJECT
+    Q_INTERFACES(MenuInterface)
+    Q_PLUGIN_METADATA(IID MenuInterface_iid)
+<span class="keyword">public</span>:
+    DFMCtxMenuPlugin();
+
+    <span class="type">QList</span><span class="operator">&lt;</span><span class="type">QAction</span><span class="operator">*</span><span class="operator">&gt;</span> additionalMenu(<span class="keyword">const</span> <span class="type">QStringList</span> <span class="operator">&amp;</span>files<span class="operator">,</span> <span class="keyword">const</span> <span class="type">QString</span><span class="operator">&amp;</span> currentDir) override;
+};
+
+<span class="preprocessor">#endif // DFMCTXMENUPLUGIN_H</span></pre>
+<p>context-menu-ext/dfmctxmenuplugin.cpp:</p>
+<pre class="cpp"><span class="preprocessor">#include &quot;dfmctxmenuplugin.h&quot;</span>
+
+DFMCtxMenuPlugin<span class="operator">::</span>DFMCtxMenuPlugin()
+{
+}
+
+<span class="type">QList</span><span class="operator">&lt;</span><span class="type">QAction</span> <span class="operator">*</span><span class="operator">&gt;</span> DFMCtxMenuPlugin<span class="operator">::</span>additionalMenu(<span class="keyword">const</span> <span class="type">QStringList</span> <span class="operator">&amp;</span>files<span class="operator">,</span> <span class="keyword">const</span> <span class="type">QString</span> <span class="operator">&amp;</span>currentDir)
+{
+    <span class="type">QList</span><span class="operator">&lt;</span><span class="type">QAction</span> <span class="operator">*</span><span class="operator">&gt;</span> actionPtrList;
+    actionPtrList<span class="operator">.</span>append(<span class="keyword">new</span> <span class="type">QAction</span>(<span class="string">&quot;Sample Text&quot;</span>));
+    <span class="keyword">return</span> actionPtrList;
+}</pre>
+<a name=""></a>
+<h2 id="">参考链接</h2>
+<ul>
+<li><a href="https://github.com/linuxdeepin/dde-file-manager/issues/21">How to add entry to context menu?</a></li>
+</ul>
+</div>
+<!-- @@@context-menu-ext-zh.html -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

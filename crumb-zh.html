@@ -82,7 +82,7 @@
 <h2 id="">面包屑插件</h2>
 <p>面包屑插件的任务为为（额外的）协议提供分割路径的功能。</p>
 <p>加载面包屑通过如下固定的 IID 识别区分插件：</p>
-<p>``` c++ #define DFMCrumbFactoryInterface_iid &quot;com.deepin.filemanager.DFMCrumbFactoryInterface_iid&quot; ```</p>
+<pre class="cpp"><span class="preprocessor">#define DFMCrumbFactoryInterface_iid &quot;com.deepin.filemanager.DFMCrumbFactoryInterface_iid&quot;</span></pre>
 <p>加载插件时通过 Url 的 scheme 作为插件 key ，当存在多个插件注册同一个 key 时，使用最后一个注册的插件。</p>
 <p>- 插件的识别注册： <a href="dfmcrumbmanager.html">DFMCrumbManager</a> (单例) - 插件实例工厂： `DFMCrumbFactory`, 其 `create(key)` 返回新 <a href="dfmcrumbinterface.html">DFMCrumbInterface</a> 实例的指针。</p>
 <p>由于插件应该能够针对不同的 Url 的 scheme 使得面包屑栏做出不同的行为，故插件接口类持有一个 `<a href="dfmcrumbbar.html">DFMCrumbBar</a>` 实例的指针用以访问面包屑栏。</p>
