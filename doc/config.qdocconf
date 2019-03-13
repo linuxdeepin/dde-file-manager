@@ -5,6 +5,7 @@ description = A file management tool for Deepin Desktop Environment.
 
 sourcedirs += ../
 headerdirs += ../
+exampledirs += qdoc/snippets
 
 macro.param             = "\\e"
 macro.return            = "Returns"
