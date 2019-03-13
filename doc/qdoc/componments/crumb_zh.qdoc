@@ -84,9 +84,9 @@
 
     加载面包屑通过如下固定的 IID 识别区分插件：
 
-    ``` c++
+    \code
     #define DFMCrumbFactoryInterface_iid "com.deepin.filemanager.DFMCrumbFactoryInterface_iid"
-    ```
+    \endcode
 
     加载插件时通过 Url 的 scheme 作为插件 key ，当存在多个插件注册同一个 key 时，使用最后一个注册的插件。
 

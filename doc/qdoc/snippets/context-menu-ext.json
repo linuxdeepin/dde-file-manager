@@ -1,0 +1,103 @@
+[
+    {
+        "MenuType": "SingleFile",
+        "Icon": "/home/djf/Music/usb_normal_16px.svg",
+        "Text[zh_CN]": "文件SingleFile",
+        "Text[zh_HK]": "文件SingleFile",
+        "Text[zh_TW]": "文件SingleFile",
+        "MimeType": "",
+        "Suffix": "md;",
+        "Exec": "",
+        "SubMenu": [
+             {
+                "Icon": "111111111",
+                "Text[zh_CN]": "sub文件SingleFile",
+                "Text[zh_HK]": "sub文件SingleFile",
+                "Text[zh_TW]": "sub文件SingleFile",
+                "Exec": "dde-file-manager",
+                "SubMenu": [
+                    {
+                        "Icon": "dssd",
+                        "Text[zh_CN]": "sub文件SingleFile",
+                        "Text[zh_HK]": "sub文件SingleFile",
+                        "Text[zh_TW]": "sub文件SingleFile",
+                        "Exec": "dde-file-manager"
+                    },
+                    {
+                        "Icon": "dssd",
+                        "Text[zh_CN]": "sub文件SingleFile",
+                        "Text[zh_HK]": "sub文件SingleFile",
+                        "Text[zh_TW]": "sub文件SingleFile",
+                        "Exec": "dde-file-manager"
+                    }
+                ]
+             },
+             {
+                "Icon": "2222222",
+                "Text[zh_CN]": "sub文件SingleFile",
+                "Text[zh_HK]": "sub文件SingleFile",
+                "Text[zh_TW]": "sub文件SingleFile",
+                "Exec": "dde-file-manager"
+             }
+        ]
+    },
+    {
+        "MenuType": "SingleFile",
+        "Icon": "Files",
+        "Text[zh_CN]": "文件SingleFile2",
+        "Text[zh_HK]": "文件SingleFile2",
+        "Text[zh_TW]": "文件SingleFile2",
+        "MimeType": "",
+        "Exec": "dde-file-manager"
+    },
+    {
+        "MenuType": "MultiFiles",
+        "Icon": "Files",
+        "Text[zh_CN]": "文件MultiFiles",
+        "Text[zh_HK]": "文件MultiFiles",
+        "Text[zh_TW]": "文件MultiFiles",
+        "MimeType": "text/plain;image/jpeg",
+        "Exec": "dde-file-manager"
+    },
+    {
+        "MenuType": "MultiFiles",
+        "Icon": "Files",
+        "Text[zh_CN]": "文件MultiFiles2",
+        "Text[zh_HK]": "文件MultiFiles2",
+        "Text[zh_TW]": "文件MultiFiles2",
+        "MimeType": "",
+        "Exec": "dde-file-manager"
+    },
+    {
+        "MenuType": "SingleDir",
+        "Icon": "Files",
+        "Text[zh_CN]": "文件SingleDir",
+        "Text[zh_HK]": "文件SingleDir",
+        "Text[zh_TW]": "文件SingleDir",
+        "Exec": "dde-file-manager"
+    },
+    {
+        "MenuType": "MultiDirs",
+        "Icon": "Files",
+        "Text[zh_CN]": "文件MultiDir",
+        "Text[zh_HK]": "文件MultiDir",
+        "Text[zh_TW]": "文件MultiDir",
+        "Exec": "dde-file-manager"
+    },
+    {
+        "MenuType": "MultiFileDirs",
+        "Icon": "Files",
+        "Text[zh_CN]": "文件MultiFileDirs",
+        "Text[zh_HK]": "文件MultiFileDirs",
+        "Text[zh_TW]": "文件MultiFileDirs",
+        "Exec": "dde-file-manager"
+    },
+    {
+        "MenuType": "EmptyArea",
+        "Icon": "Files",
+        "Text[zh_CN]": "EmptyArea",
+        "Text[zh_HK]": "EmptyArea",
+        "Text[zh_TW]": "EmptyArea",
+        "Exec": "dde-file-manager"
+    }
+]
