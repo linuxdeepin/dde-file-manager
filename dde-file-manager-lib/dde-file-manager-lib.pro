@@ -501,7 +501,8 @@ mimetypeFiles.files += \
     mimetypes/video.mimetype \
     mimetypes/audio.mimetype \
     mimetypes/image.mimetype \
-    mimetypes/executable.mimetype
+    mimetypes/executable.mimetype \
+    mimetypes/backup.mimetype
 
 mimetypeAssociations.path = $$APPSHAREDIR/mimetypeassociations
 mimetypeAssociations.files += \
