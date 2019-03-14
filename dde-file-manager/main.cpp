@@ -101,6 +101,7 @@ int main(int argc, char *argv[])
         const QDir userHome(getpwuid(pkexecUID)->pw_dir);
 
         QFile pamFile(userHome.absoluteFilePath(".pam_environment"));
+        QFile ddeenvFile(userHome.absoluteFilePath(".dde_env"));
 
         if (pamFile.open(QIODevice::ReadOnly)) {
             while (!pamFile.atEnd()) {
@@ -117,6 +118,25 @@ int main(int argc, char *argv[])
             }
 
             pamFile.close();
+        }
+
+        if (ddeenvFile.open(QIODevice::ReadOnly)) {
+            QRegularExpression re("export (QT_.*)=\"(.*)\"");
+            QStringList scaleEnvList = {
+                // https://doc.qt.io/qt-5/highdpi.html#high-dpi-support-in-qt
+                "QT_SCALE_FACTOR", "QT_SCREEN_SCALE_FACTORS", "QT_AUTO_SCREEN_SCALE_FACTOR",
+                // seems no document for QT_FONT_DPI
+                "QT_FONT_DPI"
+            };
+            while (!ddeenvFile.atEnd()) {
+                const QByteArray &line = ddeenvFile.readLine().simplified();
+                QRegularExpressionMatch match = re.match(line);
+                if (match.lastCapturedIndex() == 2 && scaleEnvList.contains(match.captured(1))) {
+                    QByteArray val = match.captured(2).toLocal8Bit();
+                    qputenv(qPrintable(match.captured(1)), val);
+                }
+            }
+            ddeenvFile.close();
         }
     }
 
