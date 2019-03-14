@@ -34,6 +34,7 @@ QStringList MimeTypeDisplayManager::VideoMimeTypes;
 QStringList MimeTypeDisplayManager::AudioMimeTypes;
 QStringList MimeTypeDisplayManager::ImageMimeTypes;
 QStringList MimeTypeDisplayManager::ExecutableMimeTypes;
+QStringList MimeTypeDisplayManager::BackupMimeTypes;
 
 
 MimeTypeDisplayManager::MimeTypeDisplayManager(QObject *parent) : QObject(parent)
@@ -57,6 +58,7 @@ void MimeTypeDisplayManager::initData()
     m_displayNames[FileType::Archives] = tr("Archive");
     m_displayNames[FileType::Documents] = tr("Text");
     m_displayNames[FileType::Executable] = tr("Executable");
+    m_displayNames[FileType::Backups] = tr("Backup file");
     m_displayNames[FileType::Unknown] = tr("Unknown");
 
 
@@ -68,6 +70,7 @@ void MimeTypeDisplayManager::initData()
     m_defaultIconNames[FileType::Archives] = "application-x-archive";
     m_defaultIconNames[FileType::Documents] = "text-plain";
     m_defaultIconNames[FileType::Executable] = "application-x-executable";
+    m_defaultIconNames[FileType::Backups] = "application-x-archive"; // generic backup file icon?
     m_defaultIconNames[FileType::Unknown] = "application-default-icon";
 
     loadSupportMimeTypes();
@@ -88,23 +91,25 @@ QString MimeTypeDisplayManager::displayName(const QString &mimeType)
 
 DAbstractFileInfo::FileType MimeTypeDisplayManager::displayNameToEnum(const QString &mimeType)
 {
-    if (mimeType == "application/x-desktop"){
+    if (mimeType == "application/x-desktop") {
         return FileType::DesktopApplication;
-    }else if (mimeType == "inode/directory"){
+    } else if (mimeType == "inode/directory") {
         return FileType::Directory;
-    }else if (mimeType == "application/x-executable" || ExecutableMimeTypes.contains(mimeType)){
+    } else if (mimeType == "application/x-executable" || ExecutableMimeTypes.contains(mimeType)) {
         return FileType::Executable;
-    }else if (mimeType.startsWith("video/") || VideoMimeTypes.contains(mimeType)){
+    } else if (mimeType.startsWith("video/") || VideoMimeTypes.contains(mimeType)) {
         return FileType::Videos;
-    }else if (mimeType.startsWith("audio/") || AudioMimeTypes.contains(mimeType)){
+    } else if (mimeType.startsWith("audio/") || AudioMimeTypes.contains(mimeType)) {
         return FileType::Audios;
-    }else if (mimeType.startsWith("image/") || ImageMimeTypes.contains(mimeType)){
+    } else if (mimeType.startsWith("image/") || ImageMimeTypes.contains(mimeType)) {
         return FileType::Images;
-    }else if (mimeType.startsWith("text/") || TextMimeTypes.contains(mimeType)){
+    } else if (mimeType.startsWith("text/") || TextMimeTypes.contains(mimeType)) {
         return FileType::Documents;
-    }else if (ArchiveMimeTypes.contains(mimeType)){
+    } else if (ArchiveMimeTypes.contains(mimeType)) {
         return FileType::Archives;
-    }else{
+    } else if (BackupMimeTypes.contains(mimeType)) {
+        return FileType::Backups;
+    } else {
         return FileType::Unknown;
     }
 }
@@ -148,12 +153,14 @@ void MimeTypeDisplayManager::loadSupportMimeTypes()
     QString audioPath = QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::MimeTypePath), "audio.mimetype");
     QString imagePath = QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::MimeTypePath), "image.mimetype");
     QString executablePath = QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::MimeTypePath), "executable.mimetype");
+    QString backupPath = QString("%1/%2").arg(DFMStandardPaths::location(DFMStandardPaths::MimeTypePath), "backup.mimetype");
     TextMimeTypes = readlines(textPath);
     ArchiveMimeTypes = readlines(archivePath);
     VideoMimeTypes = readlines(videoPath);
     AudioMimeTypes = readlines(audioPath);
     ImageMimeTypes = readlines(imagePath);
     ExecutableMimeTypes = readlines(executablePath);
+    BackupMimeTypes = readlines(backupPath);
 }
 
 QStringList MimeTypeDisplayManager::supportArchiveMimetypes()

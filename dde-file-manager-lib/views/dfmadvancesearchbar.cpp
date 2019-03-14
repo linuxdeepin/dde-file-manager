@@ -133,6 +133,7 @@ void DFMAdvanceSearchBar::initUI()
     addItemToFileTypeCombo(qApp->translate("MimeTypeDisplayManager", "Archive"));
     addItemToFileTypeCombo(qApp->translate("MimeTypeDisplayManager", "Text"));
     addItemToFileTypeCombo(qApp->translate("MimeTypeDisplayManager", "Executable"));
+    addItemToFileTypeCombo(qApp->translate("MimeTypeDisplayManager", "Backup file"));
 
     asbCombos[SIZE_RANGE]->addItem("--", QVariant());
     asbCombos[SIZE_RANGE]->addItem(qApp->translate("DFMAdvanceSearchBar", "0 ~ 100 KB"), QVariant::fromValue(QPair<quint64, quint64>(0, 100)));

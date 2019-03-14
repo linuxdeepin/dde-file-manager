@@ -38,7 +38,7 @@ public:
 
     typedef DAbstractFileInfo::FileType FileType;
 
-    explicit MimeTypeDisplayManager(QObject *parent = 0);
+    explicit MimeTypeDisplayManager(QObject *parent = nullptr);
     ~MimeTypeDisplayManager();
 
     void initData();
@@ -64,6 +64,7 @@ private:
     static QStringList AudioMimeTypes;
     static QStringList ImageMimeTypes;
     static QStringList ExecutableMimeTypes;
+    static QStringList BackupMimeTypes;
 
     bool m_supportLoaded = false;
 };
