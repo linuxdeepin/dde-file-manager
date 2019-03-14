@@ -1,3 +1,13 @@
+<a name="4.7.7.3"></a>
+## 4.7.7.3 (2019-03-14)
+
+
+#### Features
+
+*   handle sigterm ([52ec6a98](https://github.com/linuxdeepin/dde-file-manager/commit/52ec6a9851be822eab0d6588a7bf18054fd92042))
+
+
+
 <a name="4.7.7.2"></a>
 ## 4.7.7.2 (2019-03-08)
 
