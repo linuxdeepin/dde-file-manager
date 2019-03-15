@@ -41,7 +41,7 @@ ArrangedDesktopFileInfo::ArrangedDesktopFileInfo(const DUrl &url)
 
 bool ArrangedDesktopFileInfo::isDir() const
 {
-    if (fileUrl().path() == "/" || fileUrl().path() == "/folder/" || fileUrl().path().startsWith("/entry/")) {
+    if (fileUrl().path() == "/" || fileUrl().path() == "/folder/" || fileUrl().path().startsWith("/entry")) {
         return true;
     }
 
@@ -51,8 +51,20 @@ bool ArrangedDesktopFileInfo::isDir() const
 
 QString ArrangedDesktopFileInfo::fileName() const
 {
-    if (fileUrl().path().startsWith("/entry/") && fileUrl().path() != "/entry/") {
-        return DAbstractFileInfo::fileName();
+    QString path = fileUrl().path();
+
+    if (path.startsWith("/entry/")) {
+        if (path != "/entry/") {
+            return DAbstractFileInfo::fileName();
+        } else {
+            return "Entry";
+        }
+    } else if (path.startsWith("/folder/")) {
+        if (path != "/folder/") {
+            return DAbstractFileInfo::fileName();
+        } else {
+            return "Folder";
+        }
     }
 
     return "what";
@@ -88,6 +100,11 @@ bool ArrangedDesktopFileInfo::exists() const
 }
 
 bool ArrangedDesktopFileInfo::isReadable() const
+{
+    return true;
+}
+
+bool ArrangedDesktopFileInfo::isWritable() const
 {
     return true;
 }

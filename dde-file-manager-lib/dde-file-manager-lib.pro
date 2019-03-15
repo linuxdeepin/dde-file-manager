@@ -255,7 +255,8 @@ HEADERS += \
     views/dfmsidebarrootitem.h \
     views/dfmadvancesearchbar.h \
     controllers/arrangeddesktopcontroller.h \
-    models/arrangeddesktopfileinfo.h
+    models/arrangeddesktopfileinfo.h \
+    controllers/dfmadcrumbcontrooler.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -428,7 +429,8 @@ SOURCES += \
     views/dfmsidebarrootitem.cpp \
     views/dfmadvancesearchbar.cpp \
     controllers/arrangeddesktopcontroller.cpp \
-    models/arrangeddesktopfileinfo.cpp
+    models/arrangeddesktopfileinfo.cpp \
+    controllers/dfmadcrumbcontrooler.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h

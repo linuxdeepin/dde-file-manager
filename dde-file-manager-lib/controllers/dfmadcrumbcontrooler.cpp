@@ -19,28 +19,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ARRANGEDDESKTOPFILEINFO_H
-#define ARRANGEDDESKTOPFILEINFO_H
+#include "dfmadcrumbcontrooler.h"
 
-#include "dabstractfileinfo.h"
+DFM_BEGIN_NAMESPACE
 
-class ArrangedDesktopFileInfoPrivate;
-class ArrangedDesktopFileInfo : public DAbstractFileInfo
+DFMADCrumbControoler::DFMADCrumbControoler(QObject *parent)
+    : DFMCrumbInterface(parent)
 {
-public:
-    ArrangedDesktopFileInfo(const DUrl &url);
 
-    bool exists() const override;
-    bool isReadable() const override;
-    bool isWritable() const override;
-    bool canShare() const override;
-    bool isDir() const override;
+}
 
-    QString fileName() const override;
-    QString iconName() const override;
+DFMADCrumbControoler::~DFMADCrumbControoler()
+{
 
-private:
-    Q_DECLARE_PRIVATE(ArrangedDesktopFileInfo)
-};
+}
 
-#endif // ARRANGEDDESKTOPFILEINFO_H
+bool DFMADCrumbControoler::supportedUrl(DUrl url)
+{
+    return (url.scheme() == "dfmad");
+}
+
+DFM_END_NAMESPACE

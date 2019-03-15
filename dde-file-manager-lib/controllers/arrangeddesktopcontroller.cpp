@@ -57,12 +57,20 @@ const QList<DAbstractFileInfoPointer> ArrangedDesktopController::getChildren(con
 
     if(currentUrl.scheme() == QStringLiteral("dfmad")) {
         if (path == QStringLiteral("/")) {
-            //
+            DUrl entryUrl("dfmad:///entry/");
+            DUrl folderUrl("dfmad:///folder/");
+            DAbstractFileInfoPointer adeEntryInfoPtr {
+                DFileService::instance()->createFileInfo(this, entryUrl)
+            };
+            DAbstractFileInfoPointer adeFolderInfoPtr {
+                DFileService::instance()->createFileInfo(this, folderUrl)
+            };
+            infoList.push_back(adeEntryInfoPtr);
+            infoList.push_back(adeFolderInfoPtr);
         } else if (path.startsWith(QStringLiteral("/entry/"))) {
             if (path == QStringLiteral("/entry/")) {
                 for (int i = DAD_PICTURE; i <= DAD_OTHER; i++) {
                     DAD_TYPES oneType = static_cast<DAD_TYPES>(i);
-                    qDebug() << arrangedFileUrls[oneType];
                     DUrl url("dfmad:///entry/" + entryNameByEnum(oneType));
                     DAbstractFileInfoPointer adeInfoPtr {
                         DFileService::instance()->createFileInfo(this, url)
