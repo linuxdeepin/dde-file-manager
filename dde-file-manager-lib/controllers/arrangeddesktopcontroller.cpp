@@ -55,28 +55,40 @@ const QList<DAbstractFileInfoPointer> ArrangedDesktopController::getChildren(con
     QString path { currentUrl.path() };
     QList<DAbstractFileInfoPointer> infoList;
 
+    auto appendVirtualEntries = [this, &infoList]() {
+        for (int i = DAD_PICTURE; i <= DAD_OTHER; i++) {
+            DAD_TYPES oneType = static_cast<DAD_TYPES>(i);
+            DUrl url("dfmad:///entry/" + entryNameByEnum(oneType));
+            DAbstractFileInfoPointer adeInfoPtr {
+                DFileService::instance()->createFileInfo(this, url)
+            };
+            infoList.push_back(adeInfoPtr);
+        }
+    };
+
+    auto appendFolders = [this, &infoList]() {
+        for (const DUrl & url : arrangedFileUrls[DAD_FOLDER]) {
+            DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
+            infoList.append(info);
+        }
+    };
+
+    auto makeAndInsertInfo = [this, &infoList](QString urlStr) {
+        DUrl entryUrl(urlStr);
+        DAbstractFileInfoPointer adeEntryInfoPtr {
+            DFileService::instance()->createFileInfo(this, entryUrl)
+        };
+        infoList.push_back(adeEntryInfoPtr);
+    };
+
     if(currentUrl.scheme() == QStringLiteral("dfmad")) {
         if (path == QStringLiteral("/")) {
-            DUrl entryUrl("dfmad:///entry/");
-            DUrl folderUrl("dfmad:///folder/");
-            DAbstractFileInfoPointer adeEntryInfoPtr {
-                DFileService::instance()->createFileInfo(this, entryUrl)
-            };
-            DAbstractFileInfoPointer adeFolderInfoPtr {
-                DFileService::instance()->createFileInfo(this, folderUrl)
-            };
-            infoList.push_back(adeEntryInfoPtr);
-            infoList.push_back(adeFolderInfoPtr);
+            makeAndInsertInfo("dfmad:///entry/");
+            makeAndInsertInfo("dfmad:///folder/");
+            makeAndInsertInfo("dfmad:///arrangeddesktop/");
         } else if (path.startsWith(QStringLiteral("/entry/"))) {
             if (path == QStringLiteral("/entry/")) {
-                for (int i = DAD_PICTURE; i <= DAD_OTHER; i++) {
-                    DAD_TYPES oneType = static_cast<DAD_TYPES>(i);
-                    DUrl url("dfmad:///entry/" + entryNameByEnum(oneType));
-                    DAbstractFileInfoPointer adeInfoPtr {
-                        DFileService::instance()->createFileInfo(this, url)
-                    };
-                    infoList.push_back(adeInfoPtr);
-                }
+                appendVirtualEntries();
             } else {
                 QString entryName = path.split('/', QString::SkipEmptyParts).last();
                 DAD_TYPES entryType = entryTypeByName(entryName);
@@ -86,10 +98,10 @@ const QList<DAbstractFileInfoPointer> ArrangedDesktopController::getChildren(con
                 }
             }
         } else if (path == QStringLiteral("/folder/")) {
-            for (const DUrl & url : arrangedFileUrls[DAD_FOLDER]) {
-                DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
-                infoList.append(info);
-            }
+            appendFolders();
+        } else if (path == QStringLiteral("/arrangeddesktop/")) {
+            appendVirtualEntries();
+            appendFolders();
         }
     }
 

@@ -41,7 +41,8 @@ ArrangedDesktopFileInfo::ArrangedDesktopFileInfo(const DUrl &url)
 
 bool ArrangedDesktopFileInfo::isDir() const
 {
-    if (fileUrl().path() == "/" || fileUrl().path() == "/folder/" || fileUrl().path().startsWith("/entry")) {
+    QString path = fileUrl().path();
+    if (path == "/" || path == "/folder/" || path.startsWith("/entry") || path == "/arrangeddesktop/") {
         return true;
     }
 
@@ -65,6 +66,8 @@ QString ArrangedDesktopFileInfo::fileName() const
         } else {
             return "Folder";
         }
+    } else if (path.startsWith("/arrangeddesktop/")) {
+        return "Arranged Desktop";
     }
 
     return "what";
