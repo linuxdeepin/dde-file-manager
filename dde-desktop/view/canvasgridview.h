@@ -42,6 +42,7 @@ public:
 
         FileManagerProperty,
 
+        AutoMerge,
         AutoSort,
 
         IconSize,
@@ -115,6 +116,8 @@ public:
 
     QMargins cellMargins() const;
     QSize cellSize() const;
+
+    void toggleAutoMerge(bool enable = true);
 
 signals:
     void sortRoleChanged(int role, Qt::SortOrder order);

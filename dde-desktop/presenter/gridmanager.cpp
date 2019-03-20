@@ -466,6 +466,7 @@ public:
     int                     coordHeight;
 
     bool                    autoArrang;
+    bool                    autoMarge = false;
     bool                    hasInited = false;
 
     std::atomic<bool>       m_whetherShowHiddenFiles{ false };
@@ -721,6 +722,23 @@ void GridManager::toggleAlign()
     }
 
     reAlign();
+}
+
+void GridManager::setAutoMerge(bool enable)
+{
+    if (d->autoMarge == enable) return;
+    d->autoMarge = enable;
+
+    if (enable) {
+        // when enable desktop merge
+    } else {
+        // switch back
+    }
+}
+
+void GridManager::toggleAutoMerge()
+{
+    setAutoMerge(!d->autoMarge);
 }
 
 
