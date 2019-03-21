@@ -40,6 +40,7 @@ SOURCES += \
     dattachedvfsdevice.cpp
 
 TRANSLATIONS += $$PWD/translations/$${TARGET}.ts
+TR_EXCLUDE += $$PWD/../../dde-file-manager-lib/configure/*
 
 # Automating generation .qm files from .ts files
 CONFIG(release, debug|release) {
