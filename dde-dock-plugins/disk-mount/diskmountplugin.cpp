@@ -57,6 +57,7 @@ const QString DiskMountPlugin::pluginName() const
 
 void DiskMountPlugin::init(PluginProxyInterface *proxyInter)
 {
+    qApp->loadTranslator();
     qDebug() << "===============init==proxyInter===========";
     m_proxyInter = proxyInter;
 
