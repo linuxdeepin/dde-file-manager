@@ -47,11 +47,11 @@ CONFIG(release, debug|release) {
 #    DEFINES += QT_NO_DEBUG_OUTPUT
 }
 
-translations.path = $$APPSHAREDIR/translations
+translations.path = $${PREFIX}/share/$${TARGET}/translations
 translations.files = translations/*.qm
 
 target.path = $${PREFIX}/lib/dde-dock/plugins/system-trays/
-INSTALLS += target
+INSTALLS += target translations
 
 include($$PWD/../../dde-file-manager-lib/interfaces/vfs/vfs.pri)
 
