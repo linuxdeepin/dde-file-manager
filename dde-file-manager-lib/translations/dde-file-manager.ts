@@ -134,72 +134,72 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="138"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="139"/>
         <source>0 ~ 100 KB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="139"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="140"/>
         <source>100 KB ~ 1 MB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="140"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="141"/>
         <source>1 MB ~ 10 MB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="141"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="142"/>
         <source>10 MB ~ 100 MB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="142"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="143"/>
         <source>100 MB ~ 1 GB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="143"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="144"/>
         <source>&gt; 1 GB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="146"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="147"/>
         <source>Today</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="147"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="148"/>
         <source>Yesterday</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="148"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="149"/>
         <source>This week</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="149"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="150"/>
         <source>Last week</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="150"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="151"/>
         <source>This month</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="151"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="152"/>
         <source>Last month</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="152"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="153"/>
         <source>This year</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="153"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="154"/>
         <source>Last year</source>
         <translation type="unfinished"></translation>
     </message>
@@ -356,36 +356,36 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1360"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1365"/>
         <location filename="../models/trashfileinfo.cpp" line="331"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="997"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1362"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1367"/>
         <location filename="../models/searchfileinfo.cpp" line="121"/>
         <source>Time modified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1364"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1369"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1366"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1371"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1368"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1373"/>
         <source>Time created</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="646"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1370"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1375"/>
         <source>Last access</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1247,54 +1247,60 @@
 <context>
     <name>MimeTypeDisplayManager</name>
     <message>
-        <location filename="../shutil/mimetypedisplaymanager.cpp" line="52"/>
+        <location filename="../shutil/mimetypedisplaymanager.cpp" line="53"/>
         <source>Directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shutil/mimetypedisplaymanager.cpp" line="53"/>
+        <location filename="../shutil/mimetypedisplaymanager.cpp" line="54"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="129"/>
         <source>Application</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shutil/mimetypedisplaymanager.cpp" line="54"/>
+        <location filename="../shutil/mimetypedisplaymanager.cpp" line="55"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="130"/>
         <source>Video</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shutil/mimetypedisplaymanager.cpp" line="55"/>
+        <location filename="../shutil/mimetypedisplaymanager.cpp" line="56"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="131"/>
         <source>Audio</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shutil/mimetypedisplaymanager.cpp" line="56"/>
+        <location filename="../shutil/mimetypedisplaymanager.cpp" line="57"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="132"/>
         <source>Image</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shutil/mimetypedisplaymanager.cpp" line="57"/>
+        <location filename="../shutil/mimetypedisplaymanager.cpp" line="58"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="133"/>
         <source>Archive</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shutil/mimetypedisplaymanager.cpp" line="58"/>
+        <location filename="../shutil/mimetypedisplaymanager.cpp" line="59"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="134"/>
         <source>Text</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shutil/mimetypedisplaymanager.cpp" line="59"/>
+        <location filename="../shutil/mimetypedisplaymanager.cpp" line="60"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="135"/>
         <source>Executable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shutil/mimetypedisplaymanager.cpp" line="60"/>
+        <location filename="../shutil/mimetypedisplaymanager.cpp" line="61"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="136"/>
+        <source>Backup file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shutil/mimetypedisplaymanager.cpp" line="62"/>
         <source>Unknown</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1785,23 +1791,23 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="181"/>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="201"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="188"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="208"/>
         <source>Size: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="182"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="189"/>
         <source>Type: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="194"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="201"/>
         <source>Size: 0</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="200"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="207"/>
         <source>Items: %1</source>
         <translation type="unfinished"></translation>
     </message>
