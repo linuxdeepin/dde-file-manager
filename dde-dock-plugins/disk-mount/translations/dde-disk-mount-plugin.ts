@@ -18,12 +18,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="97"/>
+        <location filename="../diskmountplugin.cpp" line="102"/>
         <source>Open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="103"/>
+        <location filename="../diskmountplugin.cpp" line="108"/>
         <source>Unmount all</source>
         <translation type="unfinished"></translation>
     </message>
