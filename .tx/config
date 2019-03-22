@@ -16,8 +16,8 @@ source_lang = en
 type = QT
 
 [deepin-file-manager.dde-disk-mount-plugin]
-file_filter = dde-dock-plugins/disk-mount/translations/dde-file-manager_<lang>.ts
-source_file = dde-dock-plugins/disk-mount/translations/dde-file-manager.ts
+file_filter = dde-dock-plugins/disk-mount/translations/dde-disk-mount-plugin_<lang>.ts
+source_file = dde-dock-plugins/disk-mount/translations/dde-disk-mount-plugin.ts
 source_lang = en
 type = QT
 
