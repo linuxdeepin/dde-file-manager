@@ -39,8 +39,20 @@ SOURCES += \
     dattachedudisks2device.cpp \
     dattachedvfsdevice.cpp
 
+TRANSLATIONS += $$PWD/translations/$${TARGET}.ts
+TR_EXCLUDE += $$PWD/../../dde-file-manager-lib/configure/*
+
+# Automating generation .qm files from .ts files
+CONFIG(release, debug|release) {
+    !system($$PWD/../../dde-file-manager-lib/generate_translations.sh): error("Failed to generate translation")
+#    DEFINES += QT_NO_DEBUG_OUTPUT
+}
+
+translations.path = $${PREFIX}/share/$${TARGET}/translations
+translations.files = translations/*.qm
+
 target.path = $${PREFIX}/lib/dde-dock/plugins/system-trays/
-INSTALLS += target
+INSTALLS += target translations
 
 include($$PWD/../../dde-file-manager-lib/interfaces/vfs/vfs.pri)
 
