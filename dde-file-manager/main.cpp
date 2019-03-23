@@ -22,6 +22,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <signal.h>
+
 #include "durl.h"
 #include "dfmglobal.h"
 #include "dabstractfileinfo.h"
@@ -68,6 +70,22 @@
 
 #define fileManagerApp FileManagerApp::instance()
 
+// blumia: DDE not yet got fully support about session management, so when logout or shutdown,
+//         the config file won't save. On mips64el, sw, arm, there will be a "warm-up" process
+//         running in the background (dde-file-manager -d) and the file manager instance will
+//         not got exit when all visible DFM window got closed, so that means the file manager
+//         config file will never got saved.
+// blumia: Handling SIGTERM is a workaround way to fix that issue, but we still need to add
+//         session management support to DDE.
+void handleSIGTERM(int sig)
+{
+    qDebug() << "!SIGTERM!" << sig;
+
+    if (qApp) {
+        qApp->quit();
+    }
+}
+
 DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
@@ -83,6 +101,7 @@ int main(int argc, char *argv[])
         const QDir userHome(getpwuid(pkexecUID)->pw_dir);
 
         QFile pamFile(userHome.absoluteFilePath(".pam_environment"));
+        QFile ddeenvFile(userHome.absoluteFilePath(".dde_env"));
 
         if (pamFile.open(QIODevice::ReadOnly)) {
             while (!pamFile.atEnd()) {
@@ -99,6 +118,25 @@ int main(int argc, char *argv[])
             }
 
             pamFile.close();
+        }
+
+        if (ddeenvFile.open(QIODevice::ReadOnly)) {
+            QRegularExpression re("export (QT_.*)=\"(.*)\"");
+            QStringList scaleEnvList = {
+                // https://doc.qt.io/qt-5/highdpi.html#high-dpi-support-in-qt
+                "QT_SCALE_FACTOR", "QT_SCREEN_SCALE_FACTORS", "QT_AUTO_SCREEN_SCALE_FACTOR",
+                // seems no document for QT_FONT_DPI
+                "QT_FONT_DPI"
+            };
+            while (!ddeenvFile.atEnd()) {
+                const QByteArray &line = ddeenvFile.readLine().simplified();
+                QRegularExpressionMatch match = re.match(line);
+                if (match.lastCapturedIndex() == 2 && scaleEnvList.contains(match.captured(1))) {
+                    QByteArray val = match.captured(2).toLocal8Bit();
+                    qputenv(qPrintable(match.captured(1)), val);
+                }
+            }
+            ddeenvFile.close();
         }
     }
 
@@ -178,6 +216,8 @@ int main(int argc, char *argv[])
         } else {
             CommandLineManager::instance()->processCommand();
         }
+
+        signal(SIGTERM, handleSIGTERM);
 
 #ifdef ENABLE_PPROF
         int request = app.exec();

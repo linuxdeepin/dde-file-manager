@@ -57,12 +57,18 @@ QMenu *DFMSideBarHomeItem::createStandardContextMenu() const
 
     QStorageInfo partitionHome("/home");
     if (partitionHome.isValid() && partitionHome.rootPath() == QStringLiteral("/home")) {
+        menu->addSeparator();
+
         QAction *propertyAction = new QAction(QObject::tr("Disk info"), menu);
         connect(propertyAction, &QAction::triggered, this, [this, partitionHome]() {
-            fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(this, {DUrl("dev:///home")}));
+            DUrl url(QDir::homePath());
+            url.setQuery(partitionHome.device());
+            fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(this, {url}));
         });
         menu->addAction(propertyAction);
     }
+
+    menu->addSeparator();
 
     menu->addAction(QObject::tr("Properties"), [this]() {
         DUrlList list;

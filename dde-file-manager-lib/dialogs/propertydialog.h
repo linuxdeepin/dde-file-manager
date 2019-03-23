@@ -35,6 +35,7 @@
 #include <QTextEdit>
 #include <QStackedWidget>
 #include <QPushButton>
+#include <QStorageInfo>
 #define EXTEND_FRAME_MAXHEIGHT 160
 
 QT_BEGIN_NAMESPACE
@@ -91,7 +92,7 @@ class GroupTitleLabel: public QLabel
     Q_OBJECT
 
 public:
-    explicit GroupTitleLabel(const QString &text="", QWidget *parent=0, Qt::WindowFlags f=0);
+    explicit GroupTitleLabel(const QString &text="", QWidget *parent = nullptr, Qt::WindowFlags f = {});
 };
 
 class SectionKeyLabel: public QLabel
@@ -99,7 +100,7 @@ class SectionKeyLabel: public QLabel
     Q_OBJECT
 
 public:
-    explicit SectionKeyLabel(const QString &text="", QWidget *parent=0, Qt::WindowFlags f=0);
+    explicit SectionKeyLabel(const QString &text="", QWidget *parent = nullptr, Qt::WindowFlags f = {});
 };
 
 class SectionValueLabel: public QLabel
@@ -107,7 +108,7 @@ class SectionValueLabel: public QLabel
     Q_OBJECT
 
 public:
-    explicit SectionValueLabel(const QString &text="", QWidget *parent=0, Qt::WindowFlags f=0);
+    explicit SectionValueLabel(const QString &text="", QWidget *parent = nullptr, Qt::WindowFlags f = {});
 };
 
 class LinkSectionValueLabel: public SectionValueLabel
@@ -115,7 +116,7 @@ class LinkSectionValueLabel: public SectionValueLabel
     Q_OBJECT
 
 public:
-    explicit LinkSectionValueLabel(const QString &text="", QWidget *parent=0, Qt::WindowFlags f=0);
+    explicit LinkSectionValueLabel(const QString &text="", QWidget *parent = nullptr, Qt::WindowFlags f = {});
 
     DUrl linkTargetUrl() const;
     void setLinkTargetUrl(const DUrl &linkTargetUrl);
@@ -200,8 +201,9 @@ private:
     void initTextShowFrame(const QString& text);
     QFrame *createBasicInfoWidget(const DAbstractFileInfoPointer &info);
     ShareInfoFrame* createShareInfoFrame(const DAbstractFileInfoPointer &info);
-    QFrame *createLocalDeviceInfoWidget(const DUrl& url);
-    QFrame *createDeviceInfoWidget(UDiskDeviceInfoPointer info);
+    QList<QPair<QString, QString> > createLocalDeviceInfoWidget(const QStorageInfo &info);
+    QList<QPair<QString, QString> > createLocalDeviceInfoWidget(const UDiskDeviceInfoPointer &info);
+    QFrame *createInfoFrame(const QList<QPair<QString, QString> > &properties);
     QListWidget *createOpenWithListWidget(const DAbstractFileInfoPointer &info);
     QFrame *createAuthorityManagementWidget(const DAbstractFileInfoPointer &info);
 };

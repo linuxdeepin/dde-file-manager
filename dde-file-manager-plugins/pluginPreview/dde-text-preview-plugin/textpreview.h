@@ -47,6 +47,7 @@ public:
     ~TextPreview();
 
     bool setFileUrl(const DUrl &url) Q_DECL_OVERRIDE;
+    DUrl fileUrl() const override;
 
     QWidget *contentWidget() const Q_DECL_OVERRIDE;
 

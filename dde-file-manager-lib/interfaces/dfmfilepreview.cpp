@@ -7,6 +7,7 @@
  * (at your option) any later version.
  **/
 #include "dfmfilepreview.h"
+#include "dfmglobal.h"
 
 DFM_BEGIN_NAMESPACE
 
@@ -55,6 +56,11 @@ void DFMFilePreview::pause()
 void DFMFilePreview::stop()
 {
 
+}
+
+void DFMFilePreview::copyFile() const
+{
+    DFMGlobal::setUrlsToClipboard({fileUrl()}, DFMGlobal::CopyAction);
 }
 
 DFM_END_NAMESPACE

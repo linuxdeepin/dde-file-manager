@@ -26,9 +26,10 @@
 
 #include <dfmglobal.h>
 
+class DFMBlockDevice;
+
 DFM_BEGIN_NAMESPACE
 
-class DFMBlockDevice;
 class DFMUdisks2DeviceInfo : public DFMAbstractDeviceInterface
 {
 public:

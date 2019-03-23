@@ -157,12 +157,19 @@ UnknowFilePreview::~UnknowFilePreview()
 
 bool UnknowFilePreview::setFileUrl(const DUrl &url)
 {
+    m_url = url;
+
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
 
     if (info)
         setFileInfo(info);
 
     return true;
+}
+
+DUrl UnknowFilePreview::fileUrl() const
+{
+    return m_url;
 }
 
 void UnknowFilePreview::setFileInfo(const DAbstractFileInfoPointer &info)
@@ -348,12 +355,22 @@ void FilePreviewDialog::initUI()
     layout->addLayout(separator_layout, 1);
     layout->addWidget(m_statusBar, 0, Qt::AlignBottom);
 
+    QAction *shortcut_action = new QAction(this);
+
+    shortcut_action->setShortcut(QKeySequence::Copy);
+    addAction(shortcut_action);
+
     connect(m_closeButton, &QPushButton::clicked, this, &FilePreviewDialog::close);
     connect(m_statusBar->preButton(), &QPushButton::clicked, this, &FilePreviewDialog::previousPage);
     connect(m_statusBar->nextButton(), &QPushButton::clicked, this, &FilePreviewDialog::nextPage);
     connect(m_statusBar->openButton(), &QPushButton::clicked, this, [this] {
         DFileService::instance()->openFile(this, m_fileList.at(m_currentPageIndex));
         close();
+    });
+    connect(shortcut_action, &QAction::triggered, this, [this] {
+        if (m_preview) {
+            m_preview->copyFile();
+        }
     });
 }
 

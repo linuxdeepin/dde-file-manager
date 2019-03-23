@@ -83,6 +83,8 @@ QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
         wnd->openNewTab(url());
     })->setEnabled(fileExist && shouldEnable);
 
+    menu->addSeparator();
+
     menu->addAction(QObject::tr("Rename"), [this]() {
         DFMSideBarBookmarkItem *ccItem = const_cast<DFMSideBarBookmarkItem *>(this);
         ccItem->showRenameEditor();
@@ -91,6 +93,8 @@ QMenu *DFMSideBarBookmarkItem::createStandardContextMenu() const
     menu->addAction(QObject::tr("Remove"), [ = ]() {
         fileService->deleteFiles(this, DUrlList{url()}, false);
     });
+
+    menu->addSeparator();
 
     menu->addAction(QObject::tr("Properties"), [ = ]() {
         DUrlList list;

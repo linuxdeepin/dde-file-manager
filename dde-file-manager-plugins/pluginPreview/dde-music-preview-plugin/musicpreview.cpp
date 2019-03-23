@@ -99,6 +99,11 @@ bool MusicPreview::setFileUrl(const DUrl &url)
     return true;
 }
 
+DUrl MusicPreview::fileUrl() const
+{
+    return m_url;
+}
+
 QWidget *MusicPreview::contentWidget() const
 {
     return m_musicView;

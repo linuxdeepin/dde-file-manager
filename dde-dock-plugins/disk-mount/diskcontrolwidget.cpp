@@ -41,6 +41,7 @@
 #include <QtConcurrent>
 #include <QScrollBar>
 #include <QDebug>
+#include <DDBusSender>
 
 #define WIDTH           300
 
@@ -280,6 +281,19 @@ void DiskControlWidget::onDriveConnected(const QString &deviceId)
 void DiskControlWidget::onDriveDisconnected()
 {
     DDesktopServices::playSystemSoundEffect("device-removed");
+    DDBusSender()
+        .service("org.freedesktop.Notifications")
+        .path("/org/freedesktop/Notifications")
+        .interface("org.freedesktop.Notifications")
+        .method(QString("Notify"))
+        .arg(qApp->applicationName())
+        .arg(static_cast<uint>(0))
+        .arg(QString("media-eject"))
+        .arg(QObject::tr("Device has been removed"))
+        .arg(QString())
+        .arg(QStringList())
+        .arg(QVariantMap())
+        .arg(5000).call();
     onDiskListChanged();
 }
 

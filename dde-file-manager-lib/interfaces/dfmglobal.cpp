@@ -164,12 +164,13 @@ bool DFMGlobal::installTranslator()
     return false;
 }
 
-void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::ClipboardAction action)
+void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::ClipboardAction action, QMimeData *mimeData)
 {
     if (action == UnknowAction)
         return;
 
-    QMimeData *mimeData = new QMimeData;
+    if (!mimeData)
+        mimeData = new QMimeData;
 
     QByteArray ba = (action == DFMGlobal::CutAction) ? "cut" : "copy";
     QString text;
@@ -816,47 +817,66 @@ QByteArray DFMGlobal::detectCharset(const QByteArray &data, const QString &fileN
         {KEncodingProber::Japanese, QLocale::Japan},
         {KEncodingProber::Korean, QLocale::NorthKorea},
         {KEncodingProber::Cyrillic, QLocale::Russia},
+        {KEncodingProber::Greek, QLocale::Greece},
         {proberType, QLocale::system().country()}
     };
 
     KEncodingProber prober(proberType);
+    prober.feed(data);
+    float pre_confidence = prober.confidence();
+    QByteArray pre_encoding = prober.encoding();
+
     QTextCodec *def_codec = QTextCodec::codecForLocale();
     QByteArray encoding;
     float confidence = 0;
 
-    for (const auto i : fallback_list) {
+    for (auto i : fallback_list) {
         prober.setProberType(i.first);
         prober.feed(data);
 
-        if (prober.confidence() == 0)
-            continue;
+        float prober_confidence = prober.confidence();
+        QByteArray prober_encoding = prober.encoding();
 
-        if (QTextCodec *codec = QTextCodec::codecForName(prober.encoding())) {
+        if (i.first != proberType && qFuzzyIsNull(prober_confidence)) {
+            prober_confidence = pre_confidence;
+            prober_encoding = pre_encoding;
+        }
+
+confidence:
+        if (QTextCodec *codec = QTextCodec::codecForName(prober_encoding)) {
             if (def_codec == codec)
                 def_codec = nullptr;
 
             float c = codecConfidenceForData(codec, data, i.second);
 
-            if (prober.confidence() > 0.5) {
-                c = c / 2 + prober.confidence() / 2;
+            if (prober_confidence > 0.5) {
+                c = c / 2 + prober_confidence / 2;
             } else {
-                c = c / 3 * 2 + prober.confidence() / 3;
+                c = c / 3 * 2 + prober_confidence / 3;
             }
 
             if (c > confidence) {
                 confidence = c;
-                encoding = prober.encoding();
+                encoding = prober_encoding;
             }
 
             if (i.first == KEncodingProber::ChineseTraditional && c < 0.5) {
                 // test Big5
-                c = codecConfidenceForData(QTextCodec::codecForName("Big5"), data, QLocale::China);
+                c = codecConfidenceForData(QTextCodec::codecForName("Big5"), data, i.second);
 
                 if (c > 0.5 && c > confidence) {
                     confidence = c;
                     encoding = "Big5";
                 }
             }
+        }
+
+        if (i.first != proberType) {
+            // 使用 proberType 类型探测出的结果结合此国家再次做编码检查
+            i.first = proberType;
+            prober_confidence = pre_confidence;
+            prober_encoding = pre_encoding;
+            goto confidence;
         }
     }
 
@@ -1080,6 +1100,10 @@ float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, co
         case QChar::Script_Cyrillic:
             hep_count += (country == QLocale::Russia) ? 1.2 : 0.5;
             unidentification_count += (country == QLocale::Russia) ? 0 : 0.3;
+            break;
+        case QChar::Script_Greek:
+            hep_count += (country == QLocale::Greece) ? 1.2 : 0.5;
+            unidentification_count += (country == QLocale::Greece) ? 0 : 0.3;
             break;
         default:
             // full-width character, emoji, 常用标点, 拉丁文补充1，天城文及其补充，CJK符号和标点符号（如：【】）

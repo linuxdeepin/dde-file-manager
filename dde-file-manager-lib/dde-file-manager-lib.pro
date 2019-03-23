@@ -30,13 +30,8 @@ isEmpty(PREFIX){
     PREFIX = /usr
 }
 
-PKGCONFIG += gsettings-qt libsecret-1 gio-unix-2.0 poppler-cpp
-CONFIG(release, release|debug) {
-    PKGCONFIG += dtkwidget
-} else {
-    PKGCONFIG += dtkwidget
-}
 CONFIG += c++11 link_pkgconfig
+PKGCONFIG += gsettings-qt libsecret-1 gio-unix-2.0 poppler-cpp dtkwidget udisks2-qt5
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
 
@@ -66,10 +61,6 @@ include(../dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
 include(../partman/partman.pri)
 include(tag/tag.pri)
 
-!CONFIG(DISABLE_ANYTHING) {
-    include(quick_search/quicksearch.pri)
-}
-
 isEqual(ARCH, sw_64){
 #    isEqual(ENABLE_SW_LABLE, YES){
         DEFINES += SW_LABEL
@@ -77,7 +68,6 @@ isEqual(ARCH, sw_64){
 #    }
 }
 include(io/io.pri)
-include(interfaces/udisks2/udisks2.pri)
 include(interfaces/vfs/vfs.pri)
 
 RESOURCES += \
@@ -94,7 +84,6 @@ HEADERS += \
     views/ddetailview.h \
     views/dicontextbutton.h \
     views/dstatebutton.h \
-    views/dcheckablebutton.h \
     controllers/filecontroller.h \
     app/filesignalmanager.h \
     views/fileitem.h \
@@ -109,7 +98,6 @@ HEADERS += \
     shutil/fileutils.h \
     shutil/properties.h \
     views/dfilemanagerwindow.h \
-    views/dhorizseparator.h \
     views/historystack.h\
     dialogs/propertydialog.h \
     views/dhoverbutton.h \
@@ -274,7 +262,6 @@ SOURCES += \
     views/ddetailview.cpp \
     views/dicontextbutton.cpp \
     views/dstatebutton.cpp \
-    views/dcheckablebutton.cpp \
     controllers/filecontroller.cpp \
     views/fileitem.cpp \
     models/desktopfileinfo.cpp \
@@ -288,7 +275,6 @@ SOURCES += \
     shutil/fileutils.cpp \
     shutil/properties.cpp \
     views/dfilemanagerwindow.cpp \
-    views/dhorizseparator.cpp \
     views/historystack.cpp\
     dialogs/propertydialog.cpp \
     views/dhoverbutton.cpp \
@@ -441,14 +427,8 @@ SOURCES += \
     views/dfmadvancesearchbar.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
-    HEADERS += shutil/danythingmonitor.h \
-               controllers/interface/quicksearchdaemon_interface.h \
-               controllers/quicksearchdaemoncontroller.h \
-               shutil/dquicksearchfilter.h
-    SOURCES += shutil/danythingmonitor.cpp \
-               controllers/interface/quicksearchdaemon_interface.cpp \
-               controllers/quicksearchdaemoncontroller.cpp \
-               shutil/dquicksearchfilter.cpp
+    HEADERS += shutil/danythingmonitor.h
+    SOURCES += shutil/danythingmonitor.cpp
 }
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
@@ -521,7 +501,8 @@ mimetypeFiles.files += \
     mimetypes/video.mimetype \
     mimetypes/audio.mimetype \
     mimetypes/image.mimetype \
-    mimetypes/executable.mimetype
+    mimetypes/executable.mimetype \
+    mimetypes/backup.mimetype
 
 mimetypeAssociations.path = $$APPSHAREDIR/mimetypeassociations
 mimetypeAssociations.files += \

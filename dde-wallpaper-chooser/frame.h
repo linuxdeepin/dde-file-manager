@@ -42,7 +42,7 @@ DWIDGET_USE_NAMESPACE
 
 class WallpaperList;
 class WallpaperListView;
-class AppearanceDaemonInterface;
+class ComDeepinDaemonAppearanceInterface;
 class ComDeepinScreenSaverInterface;
 class DeepinWM;
 class Frame : public DBlurEffectWidget
@@ -93,7 +93,13 @@ private:
     QString m_lockWallpaper;
     DImageButton * m_closeButton = NULL;
 
-    AppearanceDaemonInterface * m_dbusAppearance = NULL;
+#ifndef DISABLE_WALLPAPER_CAROUSEL
+    QHBoxLayout *m_wallpaperCarouselLayout;
+    QCheckBox *m_wallpaperCarouselCheckBox;
+    DSegmentedControl *m_wallpaperCarouselControl;
+#endif
+
+    ComDeepinDaemonAppearanceInterface * m_dbusAppearance = NULL;
 #ifndef DISABLE_SCREENSAVER
     ComDeepinScreenSaverInterface *m_dbusScreenSaver = nullptr;
 #endif

@@ -133,6 +133,7 @@ public:
         Audios,
         Archives,
         DesktopApplication,
+        Backups,
         Unknown
     };
 

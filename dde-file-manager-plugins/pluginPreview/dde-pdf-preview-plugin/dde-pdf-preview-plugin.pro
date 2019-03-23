@@ -11,7 +11,7 @@ TEMPLATE = lib
 
 PKGCONFIG += poppler-cpp
 
-CONFIG += plugin link_pkgconfig
+CONFIG += c++11 plugin link_pkgconfig
 
 include(../../../common/common.pri)
 

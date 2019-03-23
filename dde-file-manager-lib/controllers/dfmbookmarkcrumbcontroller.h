@@ -30,8 +30,8 @@ DFM_BEGIN_NAMESPACE
 class DFMBookmarkCrumbController : public DFMCrumbInterface
 {
 public:
-    explicit DFMBookmarkCrumbController(QObject *parent = 0);
-    ~DFMBookmarkCrumbController();
+    explicit DFMBookmarkCrumbController(QObject *parent = nullptr);
+    ~DFMBookmarkCrumbController() override;
 
     bool supportedUrl(DUrl url) override;
     QList<CrumbData> seprateUrl(const DUrl &url) override;

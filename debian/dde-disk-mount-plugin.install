@@ -1,1 +1,3 @@
 usr/lib/dde-dock/plugins/system-trays/libdde-disk-mount-plugin.so
+
+usr/share/dde-disk-mount-plugin/translations/*.qm

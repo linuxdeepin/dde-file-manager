@@ -80,6 +80,8 @@
 
 #include "unistd.h"
 
+#include <models/trashfileinfo.h>
+
 NameTextEdit::NameTextEdit(const QString &text, QWidget *parent):
     QTextEdit(text, parent)
 {
@@ -245,16 +247,48 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
     QString authManager = tr("Permission Management");
     initUI();
     QString query = m_url.query();
-    UDiskDeviceInfoPointer diskInfo = deviceListener->getDevice(query);
-    if (!diskInfo) {
-        diskInfo = deviceListener->getDeviceByPath(m_url.path());
-    }
-    if (diskInfo) {
-        QString name = diskInfo->fileDisplayName();
-        m_icon->setPixmap(diskInfo->fileIcon().pixmap(128, 128));
+    QStorageInfo diskInfo(m_url.path());
+
+    bool urlIsMountedVolume = diskInfo.isValid() && diskInfo.rootPath() == m_url.path();
+    // blumia: 当前判断要显示的是不是磁盘信息的做法可能不太干净，使用 query 可能也是历史遗留问题，暂且先这样。
+    //         不过把“磁盘信息”对话框和普通的“属性”对话框完全分开应该会更合理。
+    if (!query.isEmpty() || urlIsMountedVolume) {
+        bool useQStorageInfo = false;
+
+        if (urlIsMountedVolume || (diskInfo.isValid() && (diskInfo.device() == query))) {
+            useQStorageInfo = true;
+        }
+
+        UDiskDeviceInfoPointer udiskInfo;
+        QString name;
+        QIcon icon = QIcon::fromTheme("drive-harddisk");
+
+        if (useQStorageInfo) {
+            name = diskInfo.displayName();
+            udiskInfo = deviceListener->getDevice(diskInfo.device());
+        } else {
+            udiskInfo = deviceListener->getDevice(query);
+            if (!udiskInfo) {
+                udiskInfo = deviceListener->getDeviceByPath(m_url.path());
+            }
+            if (udiskInfo) {
+                name = udiskInfo->fileDisplayName();
+                icon = udiskInfo->fileIcon();
+            }
+        }
+
+        if (urlIsMountedVolume && diskInfo.isRoot()) {
+            name = tr("System Disk");
+        } else if (m_url == DUrl(QDir::homePath()) && name == QDir::homePath()) {
+            name = qApp->translate("PathManager", "Home");
+        }
+
+        m_icon->setPixmap(icon.pixmap(128, 128));
         m_edit->setPlainText(name);
         m_editDisbaled = true;
-        m_deviceInfoFrame = createDeviceInfoWidget(diskInfo);
+        const QList<QPair<QString, QString> > & properties = useQStorageInfo ? createLocalDeviceInfoWidget(diskInfo)
+                                                                             : createLocalDeviceInfoWidget(udiskInfo);
+        m_deviceInfoFrame = createInfoFrame(properties);
 
         QStringList titleList;
         titleList << basicInfo;
@@ -262,17 +296,6 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         m_expandGroup->expand(0)->setContent(m_deviceInfoFrame);
         m_expandGroup->expand(0)->setExpand(true);
 
-    } else if (m_url == DUrl::fromLocalFile("/") || m_url.scheme() == "dev") {
-        m_icon->setPixmap(QIcon::fromTheme("drive-harddisk").pixmap(128, 128));
-//        m_icon->setPixmap(svgToPixmap(":/devices/images/device/drive-harddisk-256px.svg", 128, 128));
-        m_edit->setPlainText(m_url.path() == QStringLiteral("/") ? tr("System Disk") : qApp->translate("PathManager", "Home")); // This check is a little dirty
-        m_editDisbaled = true;
-
-        m_localDeviceInfoFrame = createLocalDeviceInfoWidget(m_url);
-        QStringList titleList;
-        titleList << basicInfo;
-        m_expandGroup = addExpandWidget(titleList);
-        m_expandGroup->expand(0)->setContent(m_localDeviceInfoFrame);
     } else {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
         if (!fileInfo) {
@@ -793,13 +816,13 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Type"));
     SectionKeyLabel *TimeCreatedSectionLabel = new SectionKeyLabel(QObject::tr("Time read"));
     SectionKeyLabel *TimeModifiedSectionLabel = new SectionKeyLabel(QObject::tr("Time modified"));
+    SectionKeyLabel *sourcePathSectionLabel = new SectionKeyLabel(QObject::tr("Source path"));
 
     m_containSizeLabel = new SectionValueLabel(info->sizeDisplayName());
     m_folderSizeLabel = new SectionValueLabel;
     SectionValueLabel *typeLabel = new SectionValueLabel(info->mimeTypeDisplayName());
     SectionValueLabel *timeCreatedLabel = new SectionValueLabel(info->lastReadDisplayName());
     SectionValueLabel *timeModifiedLabel = new SectionValueLabel(info->lastModifiedDisplayName());
-
 
     QFormLayout *layout = new QFormLayout;
     layout->setHorizontalSpacing(12);
@@ -813,6 +836,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         layout->addRow(sizeSectionLabel, m_containSizeLabel);
     }
     layout->addRow(typeSectionLabel, typeLabel);
+
     if (info->isSymLink()) {
         SectionKeyLabel *linkPathSectionLabel = new SectionKeyLabel(QObject::tr("Link path"));
 
@@ -827,6 +851,16 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     }
     layout->addRow(TimeCreatedSectionLabel, timeCreatedLabel);
     layout->addRow(TimeModifiedSectionLabel, timeModifiedLabel);
+
+    if (info->fileUrl().isTrashFile()) {
+        QString pathStr = static_cast<const TrashFileInfo *>(info.constData())->sourceFilePath();
+        SectionValueLabel *sourcePathLabel = new SectionValueLabel(pathStr);
+        QString elidedStr = sourcePathLabel->fontMetrics().elidedText(pathStr, Qt::ElideMiddle, 150);
+        sourcePathLabel->setToolTip(pathStr);
+        sourcePathLabel->setWordWrap(false);
+        sourcePathLabel->setText(elidedStr);
+        layout->addRow(sourcePathSectionLabel, sourcePathLabel);
+    }
 
     layout->setContentsMargins(0, 0, 40, 0);
     widget->setLayout(layout);
@@ -847,20 +881,13 @@ ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPoin
     return frame;
 }
 
-QFrame *PropertyDialog::createLocalDeviceInfoWidget(const DUrl &url)
+QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(const QStorageInfo &info)
 {
-    QString urlPath = url.path();
-    QStorageInfo info(urlPath);
     QString devicePath = info.device();
-    QDir dir(urlPath);
+    QDir dir(info.rootPath());
     uint count = dir.count();
     QString countStr = (count > 1) ? QObject::tr("%1 items").arg(count) : QObject::tr("%1 item").arg(count);
-    QFrame *widget = new QFrame(this);
-    SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Device type"));
-    SectionKeyLabel *formatSectionLabel = new SectionKeyLabel(QObject::tr("Filesystem"));
-    SectionKeyLabel *fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
-    SectionKeyLabel *freeSectionLabel = new SectionKeyLabel(QObject::tr("Free space"));
-    SectionKeyLabel *totalSectionLabel = new SectionKeyLabel(QObject::tr("Total space"));
+    QList<QPair<QString, QString> > results;
 
     QString fsType;
 
@@ -878,41 +905,27 @@ QFrame *PropertyDialog::createLocalDeviceInfoWidget(const DUrl &url)
                 QMetaEnum metaEnum = QMetaEnum::fromType<DFMBlockDevice::FSType>();
                 fsType = metaEnum.valueToKey(fsTypeEnum);
             }
+#ifdef QT_DEBUG
+            if (!fsType.isEmpty()) {
+                fsType += (" on " + devicePath);
+            }
+#endif // QT_DEBUG
         }
     }
 
-    SectionValueLabel *typeLabel = new SectionValueLabel(tr("Local disk"));
-    SectionValueLabel *formatLabel = new SectionValueLabel(fsType);
-    SectionValueLabel *fileAmountLabel = new SectionValueLabel(countStr);
-    SectionValueLabel *freeLabel = new SectionValueLabel(FileUtils::formatSize(info.bytesFree()));
-    SectionValueLabel *totalLabel = new SectionValueLabel(FileUtils::formatSize(info.bytesTotal()));
-
-    QFormLayout *layout = new QFormLayout;
-    layout->setHorizontalSpacing(12);
-    layout->setVerticalSpacing(16);
-    layout->setLabelAlignment(Qt::AlignRight);
-
-    layout->addRow(typeSectionLabel, typeLabel);
-    layout->addRow(totalSectionLabel, totalLabel);
+    results.append({QObject::tr("Device type"), tr("Local disk")});
+    results.append({QObject::tr("Total space"), FileUtils::formatSize(info.bytesTotal())});
     if (!fsType.isEmpty()) {
-        layout->addRow(formatSectionLabel, formatLabel);
+        results.append({QObject::tr("Filesystem"), fsType});
     }
-    layout->addRow(fileAmountSectionLabel, fileAmountLabel);
-    layout->addRow(freeSectionLabel, freeLabel);
-
-    widget->setLayout(layout);
-    widget->setFixedHeight(EXTEND_FRAME_MAXHEIGHT);
-    return widget;
+    results.append({QObject::tr("Contains"), countStr});
+    results.append({QObject::tr("Free space"), FileUtils::formatSize(info.bytesFree())});
+    return results;
 }
 
-QFrame *PropertyDialog::createDeviceInfoWidget(UDiskDeviceInfoPointer info)
+QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(const UDiskDeviceInfoPointer &info)
 {
-    QFrame *widget = new QFrame(this);
-    SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Device type"));
-    SectionKeyLabel *formatSectionLabel = new SectionKeyLabel(QObject::tr("Filesystem"));
-    SectionKeyLabel *fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
-    SectionKeyLabel *freeSectionLabel = new SectionKeyLabel(QObject::tr("Free space"));
-    SectionKeyLabel *totalSectionLabel = new SectionKeyLabel(QObject::tr("Total space"));
+    QList<QPair<QString, QString> > results;
 
     QString fsType = info->getIdType();
 #ifdef QT_DEBUG
@@ -921,24 +934,32 @@ QFrame *PropertyDialog::createDeviceInfoWidget(UDiskDeviceInfoPointer info)
     }
 #endif // QT_DEBUG
 
-    SectionValueLabel *typeLabel = new SectionValueLabel(info->deviceTypeDisplayName());
-    SectionValueLabel *formatLabel = new SectionValueLabel(fsType);
-    SectionValueLabel *fileAmountLabel = new SectionValueLabel(info->sizeDisplayName());
-    SectionValueLabel *freeLabel = new SectionValueLabel(FileUtils::formatSize(info->getFree()));
-    SectionValueLabel *totalLabel = new SectionValueLabel(FileUtils::formatSize(info->getTotal()));
+
+    results.append({QObject::tr("Device type"), info->deviceTypeDisplayName()});
+    results.append({QObject::tr("Total space"), FileUtils::formatSize(info->getTotal())});
+    if (!fsType.isEmpty()) {
+        results.append({QObject::tr("Filesystem"), fsType});
+    }
+    results.append({QObject::tr("Contains"), info->sizeDisplayName()});
+    results.append({QObject::tr("Free space"), FileUtils::formatSize(info->getFree())});
+
+    return results;
+}
+
+QFrame *PropertyDialog::createInfoFrame(const QList<QPair<QString, QString> >& properties)
+{
+    QFrame *widget = new QFrame(this);
 
     QFormLayout *layout = new QFormLayout;
     layout->setHorizontalSpacing(12);
     layout->setVerticalSpacing(16);
     layout->setLabelAlignment(Qt::AlignRight);
 
-    layout->addRow(typeSectionLabel, typeLabel);
-    layout->addRow(totalSectionLabel, totalLabel);
-    if (!fsType.isEmpty()) {
-        layout->addRow(formatSectionLabel, formatLabel);
+    for (const QPair<QString, QString> & kv : properties) {
+        SectionKeyLabel *keyLabel = new SectionKeyLabel(kv.first, widget);
+        SectionValueLabel *valLabel = new SectionValueLabel(kv.second, widget);
+        layout->addRow(keyLabel, valLabel);
     }
-    layout->addRow(fileAmountSectionLabel, fileAmountLabel);
-    layout->addRow(freeSectionLabel, freeLabel);
 
     widget->setLayout(layout);
     widget->setFixedHeight(EXTEND_FRAME_MAXHEIGHT);

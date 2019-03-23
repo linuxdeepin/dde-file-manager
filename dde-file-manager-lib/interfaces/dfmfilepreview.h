@@ -25,6 +25,7 @@ public:
 
     virtual void initialize(QWidget *window, QWidget *statusBar);
     virtual bool setFileUrl(const DUrl &url) = 0;
+    virtual DUrl fileUrl() const = 0;
 
     virtual QWidget *contentWidget() const = 0;
     virtual QWidget *statusBarWidget() const;
@@ -36,6 +37,8 @@ public:
     virtual void play(); /*play media if file is music or video*/
     virtual void pause(); /*pause playing if file is music or video*/
     virtual void stop(); /*stop playing if file is music or video*/
+
+    virtual void copyFile() const;
 
 signals:
     void titleChanged();

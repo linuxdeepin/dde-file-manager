@@ -33,6 +33,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QFileInfo>
+#include <QMimeData>
 
 #include <danchors.h>
 
@@ -138,6 +139,11 @@ bool ImagePreview::setFileUrl(const DUrl &url)
     return true;
 }
 
+DUrl ImagePreview::fileUrl() const
+{
+    return m_url;
+}
+
 QWidget *ImagePreview::contentWidget() const
 {
     return m_imageView;
@@ -146,6 +152,17 @@ QWidget *ImagePreview::contentWidget() const
 QString ImagePreview::title() const
 {
     return m_title;
+}
+
+void ImagePreview::copyFile() const
+{
+    QMimeData *data = new QMimeData();
+    QImage image(m_url.toLocalFile());
+
+    if (!image.isNull())
+        data->setImageData(image);
+
+    DFMGlobal::setUrlsToClipboard({m_url}, DFMGlobal::CopyAction, data);
 }
 
 DFM_END_NAMESPACE

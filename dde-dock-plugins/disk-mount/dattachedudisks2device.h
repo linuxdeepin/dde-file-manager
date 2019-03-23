@@ -26,14 +26,12 @@
 
 #include <dfmglobal.h>
 
-DFM_BEGIN_NAMESPACE
 class DFMBlockDevice;
-DFM_END_NAMESPACE
 
 class DAttachedUdisks2Device : public DAttachedDeviceInterface
 {
 public:
-    DAttachedUdisks2Device(const DFM_NAMESPACE::DFMBlockDevice *blockDevicePointer);
+    DAttachedUdisks2Device(const DFMBlockDevice *blockDevicePointer);
 
     bool isValid() override;
     bool detachable() override;
@@ -44,10 +42,10 @@ public:
     QString iconName() override;
     QUrl mountpointUrl() override;
 
-    DFM_NAMESPACE::DFMBlockDevice* blockDevice();
+    DFMBlockDevice* blockDevice();
 
 private:
-    QScopedPointer<DFM_NAMESPACE::DFMBlockDevice> c_blockDevice;
+    QScopedPointer<DFMBlockDevice> c_blockDevice;
     QString deviceDBusId;
     QString mountPoint;
 

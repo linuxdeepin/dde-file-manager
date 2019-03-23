@@ -9,7 +9,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = ImageMenuPlugin
 TEMPLATE = lib
-CONFIG += plugin
+CONFIG += plugin c++11
 
 include(../../common/common.pri)
 include(../plugininterfaces/plugininterfaces.pri)

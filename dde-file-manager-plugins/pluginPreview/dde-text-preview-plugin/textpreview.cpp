@@ -102,6 +102,11 @@ bool TextPreview::setFileUrl(const DUrl &url)
     return true;
 }
 
+DUrl TextPreview::fileUrl() const
+{
+    return m_url;
+}
+
 QWidget *TextPreview::contentWidget() const
 {
     return m_textBrowser;

@@ -30,8 +30,8 @@ DFM_BEGIN_NAMESPACE
 class DFMMtpCrumbController : public DFMCrumbInterface
 {
 public:
-    explicit DFMMtpCrumbController(QObject *parent = 0);
-    ~DFMMtpCrumbController();
+    explicit DFMMtpCrumbController(QObject *parent = nullptr);
+    ~DFMMtpCrumbController() override;
 
     bool supportedUrl(DUrl url) override;
     DFMCrumbItem *createCrumbItem(const CrumbData &data) override;

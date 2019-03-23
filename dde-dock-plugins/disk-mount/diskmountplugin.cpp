@@ -57,9 +57,9 @@ const QString DiskMountPlugin::pluginName() const
 
 void DiskMountPlugin::init(PluginProxyInterface *proxyInter)
 {
-    // blumia: we are using i10n translation from DFM so...
+    // blumia: we are using i10n translation from DFM so...	    qApp->loadTranslator();
     QString applicationName = qApp->applicationName();
-    qApp->setApplicationName("dde-file-manager");
+    qApp->setApplicationName("dde-disk-mount-plugin");
     qDebug() << qApp->loadTranslator();
     qApp->setApplicationName(applicationName);
     qDebug() << "===============init==proxyInter===========";

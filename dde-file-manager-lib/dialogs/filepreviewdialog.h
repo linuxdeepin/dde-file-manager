@@ -36,6 +36,7 @@ public:
     ~UnknowFilePreview();
 
     bool setFileUrl(const DUrl &url) Q_DECL_OVERRIDE;
+    DUrl fileUrl() const override;
     void setFileInfo(const DAbstractFileInfoPointer &info);
 
     QWidget *contentWidget() const Q_DECL_OVERRIDE;
@@ -47,6 +48,7 @@ public slots:
     void updateFolderSize(qint64 size);
 
 private:
+    DUrl m_url;
     QPointer<QWidget> m_contentWidget;
     QLabel *m_iconLabel;
     QLabel *m_nameLabel;

@@ -20,6 +20,11 @@
  */
 #include "dfmapplication.h"
 #include "private/dfmapplication_p.h"
+#if QT_HAS_INCLUDE("anything_interface.h")
+#include "anything_interface.h"
+#else
+#define DISABLE_QUICK_SEARCH
+#endif
 
 #include "dfmsettings.h"
 
@@ -148,8 +153,31 @@ bool DFMApplication::syncAppAttribute()
     return appSetting()->sync();
 }
 
+#ifndef DISABLE_QUICK_SEARCH
+static ComDeepinAnythingInterface *getAnythingInterface()
+{
+    static ComDeepinAnythingInterface *interface = new ComDeepinAnythingInterface("com.deepin.anything", "/com/deepin/anything", QDBusConnection::systemBus());
+
+    return interface;
+}
+#endif
+
 QVariant DFMApplication::genericAttribute(DFMApplication::GenericAttribute ga)
 {
+    if (ga == GA_IndexInternal) {
+#ifndef DISABLE_QUICK_SEARCH
+        return getAnythingInterface()->autoIndexInternal();
+#else
+        return false;
+#endif
+    } else if (ga == GA_IndexExternal) {
+#ifndef DISABLE_QUICK_SEARCH
+        return getAnythingInterface()->autoIndexExternal();
+#else
+        return false;
+#endif
+    }
+
     const QString group(QT_STRINGIFY(GenericAttribute));
     const QMetaEnum &me = QMetaEnum::fromType<GenericAttribute>();
     const QString key = QString::fromLatin1(me.valueToKey(ga)).split("_").last();
@@ -159,6 +187,20 @@ QVariant DFMApplication::genericAttribute(DFMApplication::GenericAttribute ga)
 
 void DFMApplication::setGenericAttribute(DFMApplication::GenericAttribute ga, const QVariant &value)
 {
+    if (ga == GA_IndexInternal) {
+#ifndef DISABLE_QUICK_SEARCH
+        return getAnythingInterface()->setAutoIndexInternal(value.toBool());
+#else
+        return;
+#endif
+    } else if (ga == GA_IndexExternal) {
+#ifndef DISABLE_QUICK_SEARCH
+        return getAnythingInterface()->setAutoIndexExternal(value.toBool());
+#else
+        return;
+#endif
+    }
+
     const QString group(QT_STRINGIFY(GenericAttribute));
     const QMetaEnum &me = QMetaEnum::fromType<GenericAttribute>();
     const QString key = QString::fromLatin1(me.valueToKey(ga)).split("_").last();

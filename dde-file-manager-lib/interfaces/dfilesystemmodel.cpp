@@ -208,7 +208,12 @@ public:
     FileSystemNodePointer getNodeByIndex(int index)
     {
         rwLock->lockForRead();
-        FileSystemNodePointer node(visibleChildren.value(index));
+        FileSystemNode *n = visibleChildren.value(index);
+
+        if (n && n->ref < 1) {
+            n = nullptr;
+        }
+        FileSystemNodePointer node(n);
         rwLock->unlock();
 
         return node;
@@ -1461,6 +1466,11 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
 
     if (!d->jobController) {
         return;
+    }
+
+    if (!d->rootNode->fileInfo->hasOrderly()) {
+        // 对于无需列表, 较少返回结果的等待时间
+        d->jobController->setTimeCeiling(100);
     }
 
     connect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren, Qt::QueuedConnection);

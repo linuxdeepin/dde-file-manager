@@ -2,7 +2,7 @@ PREFIX = /usr
 QT              += core widgets concurrent dbus
 TEMPLATE         = lib
 CONFIG          += plugin c++11 link_pkgconfig
-PKGCONFIG       += dtkwidget gio-2.0
+PKGCONFIG       += dtkwidget gio-2.0 udisks2-qt5
 
 INCLUDEPATH += /usr/include/dde-dock
 INCLUDEPATH += $$PWD/../../dde-file-manager-lib/interfaces \
@@ -39,10 +39,21 @@ SOURCES += \
     dattachedudisks2device.cpp \
     dattachedvfsdevice.cpp
 
-target.path = $${PREFIX}/lib/dde-dock/plugins/system-trays/
-INSTALLS += target
+TRANSLATIONS += $$PWD/translations/$${TARGET}.ts
+TR_EXCLUDE += $$PWD/../../dde-file-manager-lib/configure/*
 
-include($$PWD/udisks2/udisks2.pri)
+# Automating generation .qm files from .ts files
+CONFIG(release, debug|release) {
+    !system($$PWD/../../dde-file-manager-lib/generate_translations.sh): error("Failed to generate translation")
+#    DEFINES += QT_NO_DEBUG_OUTPUT
+}
+
+translations.path = $${PREFIX}/share/$${TARGET}/translations
+translations.files = translations/*.qm
+
+target.path = $${PREFIX}/lib/dde-dock/plugins/system-trays/
+INSTALLS += target translations
+
 include($$PWD/../../dde-file-manager-lib/interfaces/vfs/vfs.pri)
 
 RESOURCES += \

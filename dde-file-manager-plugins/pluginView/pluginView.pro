@@ -9,7 +9,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = pluginView
 TEMPLATE = lib
-CONFIG += plugin
+CONFIG += c++11 plugin
 
 include(../../common/common.pri)
 include(../plugininterfaces/plugininterfaces.pri)

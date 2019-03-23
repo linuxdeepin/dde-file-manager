@@ -15,3 +15,8 @@ SOURCES += \
     $$PWD/commandmanager_interface.cpp \
     $$PWD/startmanager_interface.cpp \
     $$PWD/introspectable_interface.cpp
+
+!CONFIG(DISABLE_ANYTHING) {
+    dbus_anything.files = /usr/share/dbus-1/interfaces/com.deepin.anything.xml
+    DBUS_INTERFACES += dbus_anything
+}
