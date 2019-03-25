@@ -357,7 +357,7 @@ QList<QAction *> DFileMenuManager::loadNormalExtensionMenu(DFileMenu *menu, cons
         lastAction = menu->actionAt(menu->actions().count() - 2);
     }
 
-    QList<QAction *> actions = loadMenuExtemsionActions(urlList, currentUrl);
+    QList<QAction *> actions = loadMenuExtensionActions(urlList, currentUrl);
     foreach (QAction *action, actions) {
         menu->insertAction(lastAction, action);
     }
@@ -366,7 +366,7 @@ QList<QAction *> DFileMenuManager::loadNormalExtensionMenu(DFileMenu *menu, cons
     return actions;
 }
 
-QList<QAction *> DFileMenuManager::loadEmptyAreaPluginMenu(DFileMenu *menu, const DUrl &currentUrl)
+QList<QAction *> DFileMenuManager::loadEmptyAreaPluginMenu(DFileMenu *menu, const DUrl &currentUrl, bool onDesktop)
 {
     qDebug() << "load empty area plugin menu";
     QAction *lastAction = menu->actions().last();
@@ -375,9 +375,9 @@ QList<QAction *> DFileMenuManager::loadEmptyAreaPluginMenu(DFileMenu *menu, cons
     }
 
     QList<QAction *> actions;
-    foreach (MenuInterface *menuInterface, PluginManager::instance()->getMenuInterfaces()) {
-        actions = menuInterface->additionalEmptyMenu(currentUrl.toString());
-        foreach (QAction *action, actions) {
+    for (MenuInterface *menuInterface : PluginManager::instance()->getMenuInterfaces()) {
+        actions = menuInterface->additionalEmptyMenu(currentUrl.toString(), onDesktop);
+        for (QAction *action : actions) {
             menu->insertAction(lastAction, action);
         }
     }
@@ -385,7 +385,7 @@ QList<QAction *> DFileMenuManager::loadEmptyAreaPluginMenu(DFileMenu *menu, cons
     return actions;
 }
 
-QList<QAction *> DFileMenuManager::loadEmptyAreaExtensionMenu(DFileMenu *menu, const DUrl &currentUrl)
+QList<QAction *> DFileMenuManager::loadEmptyAreaExtensionMenu(DFileMenu *menu, const DUrl &currentUrl, bool onDesktop)
 {
     qDebug() << "load empty area extension menu";
     QAction *lastAction = menu->actions().last();
@@ -395,8 +395,8 @@ QList<QAction *> DFileMenuManager::loadEmptyAreaExtensionMenu(DFileMenu *menu, c
     }
 
     DUrlList urlList;
-    QList<QAction *> actions = loadMenuExtemsionActions(urlList, currentUrl);
-    foreach (QAction *action, actions) {
+    QList<QAction *> actions = loadMenuExtensionActions(urlList, currentUrl, onDesktop);
+    for (QAction *action : actions) {
         menu->insertAction(lastAction, action);
     }
     menu->insertSeparator(lastAction);
@@ -404,9 +404,9 @@ QList<QAction *> DFileMenuManager::loadEmptyAreaExtensionMenu(DFileMenu *menu, c
     return actions;
 }
 
-QList<QAction *> DFileMenuManager::loadMenuExtemsionActions(const DUrlList &urlList, const DUrl &currentUrl)
+QList<QAction *> DFileMenuManager::loadMenuExtensionActions(const DUrlList &urlList, const DUrl &currentUrl, bool onDesktop)
 {
-    QList<QAction *>  actions;
+    QList<QAction *> actions;
 
     QStringList menuExtensionPaths = DFMGlobal::MenuExtensionPaths;
 
@@ -434,7 +434,7 @@ QList<QAction *> DFileMenuManager::loadMenuExtemsionActions(const DUrlList &urlL
                 QByteArray data = file.readAll();
                 QJsonDocument jsonDoc(QJsonDocument::fromJson(data));
 
-                actions = jsonToActions(jsonDoc.array(), urlList, currentUrl, menuType);
+                actions << jsonToActions(jsonDoc.array(), urlList, currentUrl, menuType, onDesktop);
             }
         }
     }
@@ -442,11 +442,15 @@ QList<QAction *> DFileMenuManager::loadMenuExtemsionActions(const DUrlList &urlL
     return actions;
 }
 
-QList<QAction *> DFileMenuManager::jsonToActions(const QJsonArray &data, const DUrlList &urlList, const DUrl &currentUrl, const QString &menuExtensionType)
+QList<QAction *> DFileMenuManager::jsonToActions(const QJsonArray &data, const DUrlList &urlList,
+                                                 const DUrl &currentUrl, const QString &menuExtensionType,
+                                                 const bool onDesktop)
 {
     QList<QAction *> actions;
 
-    foreach (const QJsonValue &value, data) {
+    QString nowShowIn = onDesktop ? QStringLiteral("Desktop") : QStringLiteral("FileManager");
+
+    for (const QJsonValue &value : data) {
         QJsonObject v = value.toObject();
         QString menuType = v.toVariantMap().value("MenuType").toString();
         QString mimeType = v.toVariantMap().value("MimeType").toString();
@@ -459,6 +463,7 @@ QList<QAction *> DFileMenuManager::jsonToActions(const QJsonArray &data, const D
 
         QString exec = v.toVariantMap().value("Exec").toString();
         QStringList args = v.toVariantMap().value("Args", QStringList()).toStringList();
+        QStringList notShowIn = v.toVariantMap().value("NotShowIn", QStringList()).toStringList();
 
         QVariantList subMenuDataList = v.toVariantMap().value("SubMenu").toList();
 
@@ -468,9 +473,12 @@ QList<QAction *> DFileMenuManager::jsonToActions(const QJsonArray &data, const D
             canCreateAction = true;
         }
 
+        if (!notShowIn.isEmpty() && notShowIn.contains(nowShowIn)) {
+            canCreateAction = false;
+        }
+
         if (canCreateAction) {
-            if (menuExtensionType == "SingleFile" ||
-                    menuExtensionType == "MultiFiles") {
+            if (menuExtensionType == "SingleFile" || menuExtensionType == "MultiFiles") {
 
                 if (mimeType.isEmpty() && suffix.isEmpty()) {
                     canCreateAction = true;
@@ -478,7 +486,7 @@ QList<QAction *> DFileMenuManager::jsonToActions(const QJsonArray &data, const D
                 if (!mimeType.isEmpty()) {
                     QStringList supportMimeTypes = mimeType.split(";");
                     int count = 0;
-                    foreach (DUrl url, urlList) {
+                    for (const DUrl &url : urlList) {
                         QString mimeType = FileUtils::getFileMimetype(url.toLocalFile());
 
                         if (supportMimeTypes.isEmpty() || supportMimeTypes.contains(mimeType)) {
@@ -511,17 +519,17 @@ QList<QAction *> DFileMenuManager::jsonToActions(const QJsonArray &data, const D
         }
 
         if (canCreateAction) {
-            QAction *action = new QAction(QIcon(icon), text, NULL);
+            QAction *action = new QAction(QIcon(icon), text, nullptr);
 
             if (subMenuDataList.count() > 1) {
                 QJsonArray subActionsArray;
                 QJsonArray _subActionsArray = QJsonArray::fromVariantList(subMenuDataList);
-                foreach (QJsonValue v, _subActionsArray) {
+                for (const QJsonValue v : _subActionsArray) {
                     QJsonObject obj = v.toObject();
                     obj.insert("MenuType", menuType);
                     subActionsArray.append(QJsonValue(obj));
                 }
-                QList<QAction *> subActions = jsonToActions(subActionsArray, urlList, currentUrl, menuExtensionType);
+                QList<QAction *> subActions = jsonToActions(subActionsArray, urlList, currentUrl, menuExtensionType, onDesktop);
                 QMenu *menu = new QMenu;
                 menu->addActions(subActions);
                 action->setMenu(menu);
@@ -530,7 +538,7 @@ QList<QAction *> DFileMenuManager::jsonToActions(const QJsonArray &data, const D
                     QStringList argsList;
                     // If user doesn't leave a "Args" key, use the file list instead.
                     if (args.isEmpty()) {
-                        foreach (DUrl url, urlList) {
+                        for (const DUrl &url : urlList) {
                             argsList << url.toString();
                         }
                         if (urlList.isEmpty()) {

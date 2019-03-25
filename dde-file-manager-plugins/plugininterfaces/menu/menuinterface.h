@@ -40,27 +40,10 @@
 class MenuInterface : public QObject
 {
 public:
-    explicit MenuInterface(QObject *parent = 0)
+    explicit MenuInterface(QObject *parent = nullptr)
         : QObject(parent) {}
 
     virtual ~MenuInterface() {}
-
-    /*!
-     * \brief additionalIcons
-     * \param file: the file path
-     * \return QList<QIcon>: corner mark icon list of the file which you want to by drawed
-     */
-    /*!
-     * \brief additionalIcons　角标接口
-     * \param file: 文件路径
-     * \return QList<QIcon>:　返回一组QIcon列表，这些icon就是角标
-     */
-    virtual QList<QIcon> additionalIcons(const QString &file)
-    {
-        Q_UNUSED(file)
-        QList<QIcon> icons;
-        return icons;
-    }
 
     /*!
      * \brief additionalMenu
@@ -84,15 +67,18 @@ public:
     /*!
      * \brief additionalEmptyMenu
      * \param currentDir: the current dir of empty area menu which will be showed
+     * \param onDesktop: menu got triggered on desktop (dde-desktop) or not
      * \return QList<QAction*>: QAction pointer list
      */
     /*!
      * \brief additionalEmptyMenu　空白菜单接口
      * \param currentDir: 空白菜单所在的文件目录
+     * \param onDesktop: 空白菜单是否为在桌面上触发的
      * \return QList<QAction*>：返回一组QAction指针列表，每个action对应菜单的一个菜单项
      */
-    virtual QList<QAction*> additionalEmptyMenu(const QString &currentDir){
+    virtual QList<QAction*> additionalEmptyMenu(const QString &currentDir, bool onDesktop = false){
         Q_UNUSED(currentDir)
+        Q_UNUSED(onDesktop)
         QList<QAction*> actions;
         return actions;
     }
@@ -106,7 +92,7 @@ public:
 class PropertyDialogExpandInfoInterface : public QObject
 {
 public:
-    explicit PropertyDialogExpandInfoInterface(QObject *parent = 0)
+    explicit PropertyDialogExpandInfoInterface(QObject *parent = nullptr)
         : QObject(parent) {}
 
     virtual ~PropertyDialogExpandInfoInterface() {}
@@ -141,7 +127,7 @@ public:
 };
 
 
-#define MenuInterface_iid "com.deepin.dde-file-manager.MenuInterface"
+#define MenuInterface_iid "com.deepin.dde-file-manager.MenuInterface.V1"
 
 Q_DECLARE_INTERFACE(MenuInterface, MenuInterface_iid)
 

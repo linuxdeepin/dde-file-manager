@@ -689,13 +689,6 @@ QList<QIcon> DAbstractFileInfo::additionalIcon() const
         icons << QIcon::fromTheme("emblem-shared", DFMGlobal::instance()->standardIcon(DFMGlobal::ShareIcon));
     }
 
-    foreach (MenuInterface *menuInterface, PluginManager::instance()->getMenuInterfaces()) {
-        QList<QIcon> pluginIcons = menuInterface->additionalIcons(filePath());
-        foreach (const QIcon &icon, pluginIcons) {
-            icons << icon;
-        }
-    }
-
 #ifdef SW_LABEL
     QString labelIconPath = getLabelIcon();
     if (!labelIconPath.isEmpty()) {
