@@ -366,7 +366,7 @@ QList<QAction *> DFileMenuManager::loadNormalExtensionMenu(DFileMenu *menu, cons
     return actions;
 }
 
-QList<QAction *> DFileMenuManager::loadEmptyAreaPluginMenu(DFileMenu *menu, const DUrl &currentUrl)
+QList<QAction *> DFileMenuManager::loadEmptyAreaPluginMenu(DFileMenu *menu, const DUrl &currentUrl, bool onDesktop)
 {
     qDebug() << "load empty area plugin menu";
     QAction *lastAction = menu->actions().last();
@@ -385,8 +385,9 @@ QList<QAction *> DFileMenuManager::loadEmptyAreaPluginMenu(DFileMenu *menu, cons
     return actions;
 }
 
-QList<QAction *> DFileMenuManager::loadEmptyAreaExtensionMenu(DFileMenu *menu, const DUrl &currentUrl)
+QList<QAction *> DFileMenuManager::loadEmptyAreaExtensionMenu(DFileMenu *menu, const DUrl &currentUrl, bool onDesktop)
 {
+    Q_UNUSED(onDesktop);
     qDebug() << "load empty area extension menu";
     QAction *lastAction = menu->actions().last();
 

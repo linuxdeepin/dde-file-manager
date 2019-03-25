@@ -132,11 +132,6 @@
     \section3 接口说明
 
     \list
-        \li virtual QList additionalIcons(const QString &file) 实现这个接口可以扩展指定文件的角标
-            \list
-                \li const QString &file 表示需要显示脚本的文件完整路径
-                \li QList 返回一组QIcon列表
-            \endlist
         \li virtual QList<QAction*> additionalMenu(const QStringList &files, const QString& currentDir)　实现这个接口可以扩展选中文件的右键菜单
             \list
                 \li const QStringList &files 表示选中的文件的完整路径列表
