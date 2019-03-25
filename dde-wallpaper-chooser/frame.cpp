@@ -212,11 +212,9 @@ void Frame::setMode(int mode)
     if (m_mode == mode)
         return;
 
-#ifndef DISABLE_SCREENSAVER
     if (m_mode == ScreenSaverMode) {
         m_dbusScreenSaver->Stop();
     }
-#endif
 
     m_mode = Mode(mode);
 
@@ -248,7 +246,9 @@ void Frame::reLayoutTools()
 #endif
     }
 }
+#endif
 
+#if !defined(DISABLE_SCREENSAVER) || !defined(DISABLE_WALLPAPER_CAROUSEL)
 void Frame::adjustModeSwitcherPoint()
 {
     // 调整模式切换控件的位置
@@ -256,10 +256,31 @@ void Frame::adjustModeSwitcherPoint()
 
     // 自己计算宽度，当控件未显示时无法使用layout的sizeHint
     auto tools_layout_margins = m_toolLayout->contentsMargins();
-    int tools_width = tools_layout_margins.left() +
-                      m_waitControlLabel->sizeHint().width() +
-                      m_waitControl->sizeHint().width() +
-                      m_lockScreenBox->sizeHint().width() +
+    int content_width = 0;
+
+#ifndef DISABLE_SCREENSAVER
+    {
+        int width = m_waitControlLabel->sizeHint().width() +
+                    m_waitControl->sizeHint().width() +
+                    m_lockScreenBox->sizeHint().width();
+
+        if (width > content_width) {
+            content_width = width;
+        }
+    }
+#endif
+
+#ifndef DISABLE_WALLPAPER_CAROUSEL
+    {
+        int width = m_wallpaperCarouselCheckBox->sizeHint().width() +
+                    m_wallpaperCarouselControl->sizeHint().width();
+
+        if (width > content_width) {
+            content_width = width;
+        }
+    }
+#endif
+    int tools_width = tools_layout_margins.left() + content_width +
                       m_toolLayout->count() * m_toolLayout->spacing();
 
     // 防止在低分辨率情况下切换控件和左边的工具栏重叠
@@ -433,6 +454,7 @@ void Frame::initUI()
     m_toolLayout->addSpacing(10);
     m_toolLayout->addWidget(m_lockScreenBox, 1, Qt::AlignLeft);
 
+#ifdef DISABLE_WALLPAPER_CAROUSEL
     // 在布局中占位，保证布局的高度
     QWidget *fake_layout = new QWidget(this);
 
@@ -440,6 +462,7 @@ void Frame::initUI()
     fake_layout->setWindowFlags(Qt::WindowTransparentForInput | Qt::WindowDoesNotAcceptFocus);
     fake_layout->lower();
     m_toolLayout->addWidget(fake_layout);
+#endif
 
     layout->addLayout(m_toolLayout);
     layout->addWidget(m_wallpaperList);
