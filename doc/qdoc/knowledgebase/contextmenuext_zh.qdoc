@@ -79,6 +79,10 @@
             \list
                 \li "Args": ["."] 为执行 Exec 内容指定额外的一个参数（"."）。
             \endlist
+        \li NotShowIn 在什么情况下不显示
+            \list
+                \li "NotShowIn": ["Desktop"] 在桌面上不显示此菜单。
+            \endlist
         \li SubMenu 子菜单列表，子菜单列表不需要再次指定 MenuType 字段，其他字段参数一样，支持 SubMenu 中嵌套无限
     \endlist
 
@@ -98,17 +102,18 @@
 
     \section3 示例扩展
 
-    下面的示例为 在空白区域触发上下文菜单，增加 “在 VSCode 中打开” 选项 的示例。
+    下面的示例为 在文件管理器的空白区域触发上下文菜单，增加 “在 VSCode 中打开” 选项 的示例。
 
     \code
-	[
+    [
         {
             "MenuType": "EmptyArea",
             "Icon": "Files",
             "Text[zh_CN]": "在 VSCode 中打开",
             "Text[en_US]": "Open with VSCode",
             "Exec": "code",
-            "Args": ["."]
+            "Args": ["."],
+            "NotShowIn": ["Desktop"],
         }
     ]
     \endcode
@@ -138,8 +143,9 @@
                 \li const QString& currentDir 表示选中的文件所在的目录
                 \li QList<QAction*> 返回一组QAction指针列表
             \endlist
-        \li virtual QList<QAction*> additionalEmptyMenu(const QString &currentDir)　实现这个接口可以扩展空白处的右键菜单
+        \li virtual QList<QAction*> additionalEmptyMenu(const QString &currentDir, bool onDesktop = false)　实现这个接口可以扩展空白处的右键菜单
             \list
+                \li const QString& currentDir　表示空白处所在的文件目录
                 \li const QString& currentDir　表示空白处所在的文件目录
                 \li QList<QAction*> 返回一组QAction指针列表
             \endlist

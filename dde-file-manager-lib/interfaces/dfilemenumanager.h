@@ -54,11 +54,12 @@ public:
     static QList<QAction *> loadNormalPluginMenu(DFileMenu *menu, const DUrlList &urlList, const DUrl &currentUrl);
     static QList<QAction *> loadNormalExtensionMenu(DFileMenu *menu, const DUrlList &urlList, const DUrl &currentUrl);
 
-    static QList<QAction *> loadEmptyAreaPluginMenu(DFileMenu *menu, const DUrl &currentUrl, bool onDesktop = false);
-    static QList<QAction *> loadEmptyAreaExtensionMenu(DFileMenu *menu, const DUrl &currentUrl, bool onDesktop = false);
+    static QList<QAction *> loadEmptyAreaPluginMenu(DFileMenu *menu, const DUrl &currentUrl, bool onDesktop);
+    static QList<QAction *> loadEmptyAreaExtensionMenu(DFileMenu *menu, const DUrl &currentUrl, bool onDesktop);
 
-    static QList<QAction *> loadMenuExtemsionActions(const DUrlList &urlList, const DUrl &currentUrl);
-    static QList<QAction *> jsonToActions(const QJsonArray &data, const DUrlList &urlList, const DUrl &currentUrl, const QString &menuExtensionType);
+    static QList<QAction *> loadMenuExtensionActions(const DUrlList &urlList, const DUrl &currentUrl, bool onDesktop = false);
+    static QList<QAction *> jsonToActions(const QJsonArray &data, const DUrlList &urlList, const DUrl &currentUrl,
+                                          const QString &menuExtensionType, const bool onDesktop);
 
     static QAction *getAction(MenuAction action);
 
