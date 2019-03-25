@@ -2394,7 +2394,7 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
             action->setChecked(false);
         }
 
-        QAction *currentViewModeAction = 0;
+        QAction *currentViewModeAction = nullptr;
 
         if (d->currentViewMode == IconMode) {
             currentViewModeAction = displayAsSubMenu->actionAt(fileMenuManger->getActionString(MenuAction::IconView));
@@ -2426,10 +2426,10 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     }
 
 
-    DFileMenuManager::loadEmptyAreaPluginMenu(menu, rootUrl());
-    DFileMenuManager::loadEmptyAreaExtensionMenu(menu, rootUrl());
+    DFileMenuManager::loadEmptyAreaPluginMenu(menu, rootUrl(), false);
+    DFileMenuManager::loadEmptyAreaExtensionMenu(menu, rootUrl(), false);
 
-    if (!menu){
+    if (!menu) {
         return;
     }
 

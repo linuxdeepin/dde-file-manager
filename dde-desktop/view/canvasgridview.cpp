@@ -2331,8 +2331,8 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
 //        sortRoleAction->setChecked(d->autoSort);
 //}
 
-    QList<QAction *>  pluginActions  = DFileMenuManager::loadEmptyAreaPluginMenu(menu, model()->rootUrl());
-    /*QList<QAction *>  extensionActions = */DFileMenuManager::loadEmptyAreaExtensionMenu(menu, model()->rootUrl());
+    QList<QAction *> pluginActions = DFileMenuManager::loadEmptyAreaPluginMenu(menu, model()->rootUrl(), true);
+    /*QList<QAction *> extensionActions = */DFileMenuManager::loadEmptyAreaExtensionMenu(menu, model()->rootUrl(), true);
 
     if (pluginActions.count() > 0) {
         QAction *separator = new QAction(menu);
