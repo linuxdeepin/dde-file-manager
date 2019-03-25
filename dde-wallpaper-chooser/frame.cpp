@@ -334,11 +334,11 @@ void Frame::initUI()
     QByteArrayList array_policy {"30", "60", "300", "600", "900", "1800", "3600", "login", "wakeup"};
 
     {
-        int current_policy_index = array_policy.indexOf(m_dbusAppearance->wallpaperRotationPolicy().toLatin1());
+        int current_policy_index = array_policy.indexOf(m_dbusAppearance->wallpaperSlideShow().toLatin1());
 
         // 当值不存在此列表时插入此值
         if (current_policy_index < 0) {
-            const QString &policy = m_dbusAppearance->wallpaperRotationPolicy();
+            const QString &policy = m_dbusAppearance->wallpaperSlideShow();
 
             if (!policy.isEmpty()) {
                 array_policy.prepend(policy.toLatin1());
@@ -381,13 +381,13 @@ void Frame::initUI()
         m_wallpaperCarouselControl->setVisible(checked);
 
         if (!checked) {
-            m_dbusAppearance->setWallpaperRotationPolicy(QString());
+            m_dbusAppearance->setWallpaperSlideShow(QString());
         } else if (m_wallpaperCarouselControl->currentIndex() >= 0) {
-            m_dbusAppearance->setWallpaperRotationPolicy(array_policy.at(m_wallpaperCarouselControl->currentIndex()));
+            m_dbusAppearance->setWallpaperSlideShow(array_policy.at(m_wallpaperCarouselControl->currentIndex()));
         }
     });
     connect(m_wallpaperCarouselControl, &DSegmentedControl::currentChanged, this, [this, array_policy] (int index) {
-        m_dbusAppearance->setWallpaperRotationPolicy(array_policy.at(index));
+        m_dbusAppearance->setWallpaperSlideShow(array_policy.at(index));
     });
 #endif
 
