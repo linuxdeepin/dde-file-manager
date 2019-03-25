@@ -47,7 +47,7 @@
     <property name="IconTheme" type="s" access="read"/>
     <property name="CursorTheme" type="s" access="read"/>
     <property name="Background" type="s" access="read"/>
-    <property name="WallpaperRotationPolicy" type="s" access="readwrite"/>
+    <property name="WallpaperSlideShow" type="s" access="readwrite"/>
   </interface>
 </node>
 
