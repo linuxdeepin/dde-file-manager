@@ -253,7 +253,8 @@ HEADERS += \
     views/dfmsidebarrecentitem.h \
     views/dfmsidebarhomeitem.h \
     views/dfmsidebarrootitem.h \
-    views/dfmadvancesearchbar.h
+    views/dfmadvancesearchbar.h \
+    shutil/dfmregularexpression.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -424,7 +425,8 @@ SOURCES += \
     views/dfmsidebarrecentitem.cpp \
     views/dfmsidebarhomeitem.cpp \
     views/dfmsidebarrootitem.cpp \
-    views/dfmadvancesearchbar.cpp
+    views/dfmadvancesearchbar.cpp \
+    shutil/dfmregularexpression.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h
