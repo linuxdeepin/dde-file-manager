@@ -26,14 +26,14 @@
 
 #include <dfmglobal.h>
 
-class DFMBlockDevice;
+class DBlockDevice;
 
 DFM_BEGIN_NAMESPACE
 
 class DFMUdisks2DeviceInfo : public DFMAbstractDeviceInterface
 {
 public:
-    DFMUdisks2DeviceInfo(const DFMBlockDevice *blockDevicePointer);
+    DFMUdisks2DeviceInfo(const DBlockDevice *blockDevicePointer);
     DFMUdisks2DeviceInfo(const QString &dbusPath);
 
     void mount() override;
@@ -61,11 +61,11 @@ public:
     enum DeviceClassType deviceClassType() override;
 
     QString unixPath(); // "/dev/sdx"
-    DFMBlockDevice* blockDevice();
-    const DFMBlockDevice* blockDeviceConst() const;
+    DBlockDevice* blockDevice();
+    const DBlockDevice* blockDeviceConst() const;
 
 private:
-    QScopedPointer<DFMBlockDevice> c_blockDevice;
+    QScopedPointer<DBlockDevice> c_blockDevice;
     QString deviceDBusId;
     QString mountPoint;
 

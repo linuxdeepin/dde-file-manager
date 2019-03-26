@@ -23,9 +23,9 @@
  */
 
 #include "computerpropertydialog.h"
-#include "dfmdiskmanager.h"
-#include "dfmblockdevice.h"
-#include "dfmdiskdevice.h"
+#include "ddiskmanager.h"
+#include "dblockdevice.h"
+#include "ddiskdevice.h"
 
 #include "shutil/fileutils.h"
 

@@ -22,9 +22,9 @@
 #include "dattachedudisks2device.h"
 #include "diskcontrolitem.h"
 
-#include <dfmdiskmanager.h>
-#include <dfmblockdevice.h>
-#include <dfmdiskdevice.h>
+#include <ddiskmanager.h>
+#include <dblockdevice.h>
+#include <ddiskdevice.h>
 #include <QStorageInfo>
 
 DFM_USE_NAMESPACE
@@ -35,11 +35,11 @@ DFM_USE_NAMESPACE
  * \brief An attached (mounted) block device (partition)
  */
 
-DAttachedUdisks2Device::DAttachedUdisks2Device(const DFMBlockDevice *blockDevicePointer)
+DAttachedUdisks2Device::DAttachedUdisks2Device(const DBlockDevice *blockDevicePointer)
 {
     mountPoint = blockDevicePointer->mountPoints().first();
     deviceDBusId = blockDevicePointer->path();
-    c_blockDevice.reset(DFMDiskManager::createBlockDevice(deviceDBusId)); // not take the ownership of the passed pointer.
+    c_blockDevice.reset(DDiskManager::createBlockDevice(deviceDBusId)); // not take the ownership of the passed pointer.
 }
 
 bool DAttachedUdisks2Device::isValid()
@@ -49,14 +49,14 @@ bool DAttachedUdisks2Device::isValid()
 
 bool DAttachedUdisks2Device::detachable()
 {
-    QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blockDevice()->drive()));
+    QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blockDevice()->drive()));
     return diskDev->removable();
 }
 
 void DAttachedUdisks2Device::detach()
 {
     blockDevice()->unmount({});
-    QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blockDevice()->drive()));
+    QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blockDevice()->drive()));
 
     if (blockDevice()->device().startsWith("/dev/sr")) { // is a DVD driver
         if (diskDev->ejectable()) {
@@ -131,7 +131,7 @@ QPair<quint64, quint64> DAttachedUdisks2Device::deviceUsage()
 
 QString DAttachedUdisks2Device::iconName()
 {
-    QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blockDevice()->drive()));
+    QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blockDevice()->drive()));
 
     bool isDvd = blockDevice()->device().startsWith("/dev/sr");
     bool isRemovable = diskDev->removable();
@@ -153,7 +153,7 @@ QUrl DAttachedUdisks2Device::mountpointUrl()
     return QUrl::fromLocalFile(mountPoint);
 }
 
-DFMBlockDevice *DAttachedUdisks2Device::blockDevice()
+DBlockDevice *DAttachedUdisks2Device::blockDevice()
 {
     return c_blockDevice.data();
 }
