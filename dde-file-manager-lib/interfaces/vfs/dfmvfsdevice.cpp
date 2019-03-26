@@ -384,9 +384,9 @@ void DFMVfsDevicePrivate::GFileUnmountDoneCb(GObject *object, GAsyncResult *res,
     from that function's return value is the recommend way to create a DFMVfsDevice instance.
 
     DFMVfsDevice is actually a GMount and GFileInfo wrapper for a GMount mountpoint, but it's designed for
-    virtual filesystem here. For local filesystem management, use DFMDiskManager instead.
+    virtual filesystem here. For local filesystem management, use DDiskManager instead.
 
-    \sa DFMVfsManager, DFMDiskManager
+    \sa DFMVfsManager, DDiskManager
  */
 
 DFMVfsDevice::DFMVfsDevice(const QUrl &url, void *gmountObjectPtr, QObject *parent)

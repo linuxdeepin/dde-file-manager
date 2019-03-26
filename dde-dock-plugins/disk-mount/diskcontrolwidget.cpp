@@ -27,9 +27,9 @@
 #include "dattachedudisks2device.h"
 #include "dattachedvfsdevice.h"
 
-#include <dfmdiskmanager.h>
-#include <dfmblockdevice.h>
-#include <dfmdiskdevice.h>
+#include <ddiskmanager.h>
+#include <dblockdevice.h>
+#include <ddiskdevice.h>
 #include <dfmvfsdevice.h>
 #include <dfmsettings.h>
 #include <dfmvfsmanager.h>
@@ -66,7 +66,7 @@ DiskControlWidget::DiskControlWidget(QWidget *parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     verticalScrollBar()->setSingleStep(7);
     setStyleSheet("background-color:transparent;");
-    m_diskManager = new DFMDiskManager(this);
+    m_diskManager = new DDiskManager(this);
     initConnect();
 }
 
@@ -77,17 +77,17 @@ DiskControlWidget::~DiskControlWidget()
 
 void DiskControlWidget::initConnect()
 {
-    connect(m_diskManager, &DFMDiskManager::diskDeviceAdded, this, [this](const QString &path) {
+    connect(m_diskManager, &DDiskManager::diskDeviceAdded, this, [this](const QString &path) {
         // blumia: Workaround. Wait for udisks2 add new device to device list.
         QTimer::singleShot(500, this, [=](){
             onDriveConnected(path);
         });
     });
-    connect(m_diskManager, &DFMDiskManager::diskDeviceRemoved, this, &DiskControlWidget::onDriveDisconnected);
-    connect(m_diskManager, &DFMDiskManager::mountAdded, this, &DiskControlWidget::onMountAdded);
-    connect(m_diskManager, &DFMDiskManager::mountRemoved, this, &DiskControlWidget::onMountRemoved);
-    connect(m_diskManager, &DFMDiskManager::fileSystemAdded, this, &DiskControlWidget::onVolumeAdded);
-    connect(m_diskManager, &DFMDiskManager::fileSystemRemoved, this, &DiskControlWidget::onVolumeRemoved);
+    connect(m_diskManager, &DDiskManager::diskDeviceRemoved, this, &DiskControlWidget::onDriveDisconnected);
+    connect(m_diskManager, &DDiskManager::mountAdded, this, &DiskControlWidget::onMountAdded);
+    connect(m_diskManager, &DDiskManager::mountRemoved, this, &DiskControlWidget::onMountRemoved);
+    connect(m_diskManager, &DDiskManager::fileSystemAdded, this, &DiskControlWidget::onVolumeAdded);
+    connect(m_diskManager, &DDiskManager::fileSystemRemoved, this, &DiskControlWidget::onVolumeRemoved);
 
     connect(m_vfsManager, &DFMVfsManager::vfsDeviceListInfoChanged, this, &DiskControlWidget::onDiskListChanged);
 }
@@ -140,7 +140,7 @@ void DiskControlWidget::doStartupAutoMount()
 
     QStringList blDevList = m_diskManager->blockDevices();
     for (const QString& blDevStr : blDevList) {
-        QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(blDevStr));
+        QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
 
         if (blDev->isEncrypted()) continue;
         if (blDev->hintIgnore()) continue;
@@ -156,11 +156,11 @@ void DiskControlWidget::unmountAll()
     QStringList blockDevices = m_diskManager->blockDevices();
 
     for (const QString & blDevStr : blockDevices) {
-        QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(blDevStr));
+        QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
         if (blDev->hasFileSystem() /* && DFMSetting*/ && !blDev->mountPoints().isEmpty() && !blDev->hintIgnore()) {
             QByteArray mountPoint = blDev->mountPoints().first();
             if (mountPoint != QStringLiteral("/boot") && mountPoint != QStringLiteral("/") && mountPoint != QStringLiteral("/home")) {
-                QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blDev->drive()));
+                QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
                 blDev->unmount({});
                 if (diskDev->removable()) {
                     diskDev->eject({});
@@ -189,7 +189,7 @@ void DiskControlWidget::onDiskListChanged()
 
     QStringList blDevList = m_diskManager->blockDevices();
     for (const QString& blDevStr : blDevList) {
-        QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(blDevStr));
+        QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
         if (blDev->hasFileSystem() && !blDev->mountPoints().isEmpty() && !blDev->hintIgnore() && !blDev->isLoopDevice()) {
             QByteArray mountPoint = blDev->mountPoints().first();
             if (mountPoint != QStringLiteral("/boot") && mountPoint != QStringLiteral("/") && mountPoint != QStringLiteral("/home")) {
@@ -227,7 +227,7 @@ void DiskControlWidget::onDiskListChanged()
 
 void DiskControlWidget::onDriveConnected(const QString &deviceId)
 {
-    QScopedPointer<DFMDiskDevice> diskDevice(DFMDiskManager::createDiskDevice(deviceId));
+    QScopedPointer<DDiskDevice> diskDevice(DDiskManager::createDiskDevice(deviceId));
     if (diskDevice->removable()) {
         DDesktopServices::playSystemSoundEffect("device-added");
 
@@ -253,7 +253,7 @@ void DiskControlWidget::onDriveConnected(const QString &deviceId)
         // Do auto mount stuff..
         QStringList blDevList = m_diskManager->blockDevices();
         for (const QString& blDevStr : blDevList) {
-            QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(blDevStr));
+            QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
 
             if (blDev->drive() != deviceId) continue;
             if (blDev->isEncrypted()) continue;
@@ -307,9 +307,9 @@ void DiskControlWidget::onMountRemoved(const QString &blockDevicePath, const QBy
     Q_UNUSED(mountPoint);
     // if it's a removable device, don't emit list changed signal.
     // when eject done, it will got emited from onDriveDisconnected.
-    QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(blockDevicePath));
+    QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blockDevicePath));
     if (blDev) {
-        QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blDev->drive()));
+        QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
         if (diskDev && diskDev->removable()) {
             return;
         }
@@ -330,10 +330,10 @@ void DiskControlWidget::onVolumeRemoved()
 
 void DiskControlWidget::unmountDisk(const QString &diskId) const
 {
-    QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(diskId));
+    QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(diskId));
     blDev->unmount({});
     if (blDev->device().startsWith("/dev/sr")) { // is a DVD driver
-        QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blDev->drive()));
+        QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
         if (diskDev->ejectable()) {
             diskDev->eject({});
         }

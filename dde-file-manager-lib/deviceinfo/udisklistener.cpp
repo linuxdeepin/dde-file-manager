@@ -37,8 +37,8 @@
 
 #include "gvfs/gvfsmountmanager.h"
 #include "udiskdeviceinfo.h"
-#include "dfmblockdevice.h"
-#include "dfmdiskmanager.h"
+#include "dblockdevice.h"
+#include "ddiskmanager.h"
 #include "shutil/fileutils.h"
 #include "dialogs/dialogmanager.h"
 #include "private/dabstractfilewatcher_p.h"
@@ -91,7 +91,7 @@ UDiskListener::UDiskListener(QObject *parent):
 
 void UDiskListener::initDiskManager()
 {
-    m_diskMgr = new DFMDiskManager(this);
+    m_diskMgr = new DDiskManager(this);
     m_diskMgr->setWatchChanges(true);
     QStringList blDevList = m_diskMgr->blockDevices();
     for (const QString &str : blDevList) {
@@ -101,8 +101,8 @@ void UDiskListener::initDiskManager()
 
 void UDiskListener::initConnect()
 {
-    connect(m_diskMgr, &DFMDiskManager::fileSystemAdded, this, &UDiskListener::insertFileSystemDevice);
-    connect(m_diskMgr, &DFMDiskManager::fileSystemRemoved, this, [this](const QString& path) {
+    connect(m_diskMgr, &DDiskManager::fileSystemAdded, this, &UDiskListener::insertFileSystemDevice);
+    connect(m_diskMgr, &DDiskManager::fileSystemRemoved, this, [this](const QString& path) {
         delete m_fsDevMap.take(path);
     });
     connect(gvfsMountManager, &GvfsMountManager::mount_added, this, &UDiskListener::addMountDiskInfo);
@@ -156,7 +156,7 @@ bool UDiskListener::renameFile(const QSharedPointer<DFMRenameEvent> &event) cons
     QUrlQuery query(newUrl);
     devicePath.replace("dev", "org/freedesktop/UDisks2/block_devices");
     QString newName = query.queryItemValue("new_name");
-    DFMBlockDevice *partition = DFMDiskManager::createBlockDevice(devicePath, nullptr);
+    DBlockDevice *partition = DDiskManager::createBlockDevice(devicePath, nullptr);
 
     if (!partition) {
         return false;
@@ -166,7 +166,7 @@ bool UDiskListener::renameFile(const QSharedPointer<DFMRenameEvent> &event) cons
     partition->setLabel(newName, {});
 
     // check if we got error
-    QDBusError err = DFMDiskManager::lastError();
+    QDBusError err = DDiskManager::lastError();
     qDebug() << err.type();
     switch (err.type()) {
     case QDBusError::NoReply:
@@ -626,7 +626,7 @@ void UDiskListener::forceUnmount(const QString &id)
 
 void UDiskListener::fileSystemDeviceIdLabelChanged(const QString & labelName)
 {
-    DFMBlockDevice* blDev = qobject_cast<DFMBlockDevice*>(QObject::sender());
+    DBlockDevice* blDev = qobject_cast<DBlockDevice*>(QObject::sender());
     DUrl oldUrl, newUrl;
     oldUrl.setScheme(DEVICE_SCHEME);
     oldUrl.setPath(QString::fromLatin1(blDev->device()));
@@ -646,10 +646,10 @@ void UDiskListener::fileSystemDeviceIdLabelChanged(const QString & labelName)
  */
 void UDiskListener::insertFileSystemDevice(const QString dbusPath)
 {
-    DFMBlockDevice* blDev = DFMDiskManager::createBlockDevice(dbusPath);
+    DBlockDevice* blDev = DDiskManager::createBlockDevice(dbusPath);
     if (blDev->hasFileSystem()) {
         blDev->setWatchChanges(true);
-        connect(blDev, &DFMBlockDevice::idLabelChanged, this, &UDiskListener::fileSystemDeviceIdLabelChanged);
+        connect(blDev, &DBlockDevice::idLabelChanged, this, &UDiskListener::fileSystemDeviceIdLabelChanged);
         m_fsDevMap.insert(dbusPath, blDev);
     } else {
         delete blDev;

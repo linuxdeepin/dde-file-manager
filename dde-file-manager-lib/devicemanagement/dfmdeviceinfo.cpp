@@ -26,7 +26,7 @@
 #include "dfmvfsdeviceinfo.h"
 
 #include <QIcon>
-#include <dfmdiskmanager.h>
+#include <ddiskmanager.h>
 
 #include <shutil/fileutils.h>
 

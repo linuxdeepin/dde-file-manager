@@ -23,7 +23,7 @@
 #define DFMDEVICECONTROLLER_H
 
 #include <dabstractfilecontroller.h>
-#include <dfmdiskmanager.h>
+#include <ddiskmanager.h>
 #include <dfmvfsmanager.h>
 
 DFM_BEGIN_NAMESPACE
@@ -61,10 +61,10 @@ private slots:
     void virualFileSystemDeviceDetached(const QUrl &url);
 
 private:
-    QScopedPointer<DFMDiskManager> m_diskMgr;
+    QScopedPointer<DDiskManager> m_diskMgr;
     QScopedPointer<DFM_NAMESPACE::DFMVfsManager> m_vfsMgr;
 
-    QMap<QString, DFMBlockDevice*> m_fsDevMap; // key is udisks2 device dbus path
+    QMap<QString, DBlockDevice*> m_fsDevMap; // key is udisks2 device dbus path
     QSet<QUrl> m_vfsDevSet; // value is device scheme url with path as deviceId, eg. device:mtp://%5Busb%3A003,004%5D/
 };
 

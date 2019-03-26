@@ -33,9 +33,9 @@
 #include <QDebug>
 #include <QStorageInfo>
 
-#include <dfmdiskmanager.h>
-#include <dfmblockdevice.h>
-#include <dfmdiskdevice.h>
+#include <ddiskmanager.h>
+#include <dblockdevice.h>
+#include <ddiskdevice.h>
 #include <dfmsettings.h>
 #include <DDesktopServices>
 
