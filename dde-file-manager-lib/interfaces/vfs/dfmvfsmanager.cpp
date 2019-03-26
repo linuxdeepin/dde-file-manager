@@ -151,7 +151,7 @@ void DFMVfsManagerPrivate::initConnect()
     We use the URI which is used to mount the device as a identifier, use DFMVfsManager::getVfsList() to
     get a list of already attached vfs list, and use DFMVfsDevice to manage them when needed.
 
-    \sa DFMVfsDevice, DFMDiskManager
+    \sa DFMVfsDevice, DDiskManager
  */
 
 DFMVfsManager::DFMVfsManager(QObject *parent)

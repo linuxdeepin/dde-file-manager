@@ -25,8 +25,8 @@
 #include "models/mountfileinfo.h"
 
 #include "dfmeventdispatcher.h"
-#include "dfmdiskmanager.h"
-#include "dfmblockdevice.h"
+#include "ddiskmanager.h"
+#include "dblockdevice.h"
 
 #include <QTimer>
 #include <QWidget>
@@ -64,7 +64,7 @@ const QList<DAbstractFileInfoPointer> MountController::getChildren(const QShared
         //
     } else if (deviceUrl.scheme() == "udisks") {
         // for test:  mount://test#udisks:///org/freedesktop/UDisks2/block_devices/sda1
-        QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(deviceUrl.path()));
+        QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(deviceUrl.path()));
         if (!blDev || !blDev->hasFileSystem() || blDev->isEncrypted()) {
             return {};
         }

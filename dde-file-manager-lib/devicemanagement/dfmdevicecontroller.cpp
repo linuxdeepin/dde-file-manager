@@ -26,7 +26,7 @@
 #include "dabstractfilewatcher.h"
 #include "private/dabstractfilewatcher_p.h"
 
-#include <dfmblockdevice.h>
+#include <dblockdevice.h>
 #include <dfmvfsdevice.h>
 #include <QUrlQuery>
 
@@ -77,7 +77,7 @@ DFMDeviceController::DFMDeviceController(QObject *parent)
 
 void DFMDeviceController::initDiskManager()
 {
-    m_diskMgr.reset(new DFMDiskManager(this));
+    m_diskMgr.reset(new DDiskManager(this));
     m_diskMgr->setWatchChanges(true);
 
     // "init" mounted filesystem device.
@@ -87,8 +87,8 @@ void DFMDeviceController::initDiskManager()
     }
 
     // watch change, signals.
-    connect(m_diskMgr.data(), &DFMDiskManager::fileSystemAdded, this, &DFMDeviceController::fileSystemDeviceAdded);
-    connect(m_diskMgr.data(), &DFMDiskManager::fileSystemRemoved, this, &DFMDeviceController::fileSystemDeviceRemoved);
+    connect(m_diskMgr.data(), &DDiskManager::fileSystemAdded, this, &DFMDeviceController::fileSystemDeviceAdded);
+    connect(m_diskMgr.data(), &DDiskManager::fileSystemRemoved, this, &DFMDeviceController::fileSystemDeviceRemoved);
 }
 
 void DFMDeviceController::initVfsManager()
@@ -148,7 +148,7 @@ void DFMDeviceController::mount(const QString &path)
         if (!QUrl::fromUserInput(pathStr).scheme().isEmpty()) {
             m_vfsMgr->attach(QUrl::fromUserInput(pathStr));
         } else {
-            QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(pathStr));
+            QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(pathStr));
             blDev->mount({});
         }
     } else {
@@ -168,7 +168,7 @@ void DFMDeviceController::unmount(const QString &path)
                 vfsDev->detachAsync();
             }
         } else {
-            QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(pathStr));
+            QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(pathStr));
             blDev->unmount({});
         }
     } else {
@@ -199,10 +199,10 @@ void DFMDeviceController::forceUnmount(const QString &id)
  */
 void DFMDeviceController::fileSystemDeviceAdded(const QString dbusPath)
 {
-    DFMBlockDevice* blDev = DFMDiskManager::createBlockDevice(dbusPath);
+    DBlockDevice* blDev = DDiskManager::createBlockDevice(dbusPath);
     if (blDev->hasFileSystem()) {
         blDev->setWatchChanges(true);
-        connect(blDev, &DFMBlockDevice::idLabelChanged, this, &DFMDeviceController::fileSystemDeviceIdLabelChanged);
+        connect(blDev, &DBlockDevice::idLabelChanged, this, &DFMDeviceController::fileSystemDeviceIdLabelChanged);
         m_fsDevMap.insert(dbusPath, blDev);
         // now we use dbusPath as device identifier
         DAbstractFileWatcher::ghostSignal(DUrl(DEVICE_ROOT),
@@ -224,7 +224,7 @@ void DFMDeviceController::fileSystemDeviceRemoved(const QString dbusPath)
 
 void DFMDeviceController::fileSystemDeviceIdLabelChanged(const QString &labelName)
 {
-    DFMBlockDevice* blDev = qobject_cast<DFMBlockDevice*>(QObject::sender());
+    DBlockDevice* blDev = qobject_cast<DBlockDevice*>(QObject::sender());
     DUrl oldUrl, newUrl;
     oldUrl.setScheme(DEVICE_SCHEME);
     oldUrl.setPath(blDev->drive());

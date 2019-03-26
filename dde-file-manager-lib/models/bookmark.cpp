@@ -24,8 +24,8 @@
 
 #include "bookmark.h"
 #include "dfileservices.h"
-#include "dfmdiskmanager.h"
-#include "dfmblockdevice.h"
+#include "ddiskmanager.h"
+#include "dblockdevice.h"
 #include "dstorageinfo.h"
 
 #include <QIcon>
@@ -80,7 +80,7 @@ bool BookMark::exists() const
         if (mountPointUrl.scheme() == DEVICE_SCHEME && mountPointPath.startsWith("/dev")) {
             mountPointPath.replace("dev", "org/freedesktop/UDisks2/block_devices");
             udisksDBusPath = mountPointPath;
-            QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(mountPointPath));
+            QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(mountPointPath));
             udisksMountPoint = blDev->mountPoints().isEmpty() ? QString() : blDev->mountPoints().first();
         }
     }
@@ -102,7 +102,7 @@ QString BookMark::fileDisplayName() const
 bool BookMark::canRedirectionFileUrl() const
 {
     if (!mountPoint.isEmpty() && !locateUrl.isEmpty() && udisksMountPoint.isEmpty() && !udisksDBusPath.isEmpty()) {
-        QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(udisksDBusPath));
+        QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(udisksDBusPath));
         udisksMountPoint = blDev->mount({});
     }
 

@@ -29,7 +29,7 @@
 #include <QVBoxLayout>
 #include <dfmglobal.h>
 
-class DFMDiskManager;
+class DDiskManager;
 DFM_BEGIN_NAMESPACE
 class DFMSettings;
 class DFMVfsManager;
@@ -66,7 +66,7 @@ private:
     QWidget *m_centralWidget;
     bool autoMountDisabled = false;
 
-    DFMDiskManager *m_diskManager;
+    DDiskManager *m_diskManager;
     DFM_NAMESPACE::DFMVfsManager *m_vfsManager;
 };
 
