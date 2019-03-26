@@ -987,11 +987,10 @@ void ComputerView::updateComputerItemByDevice(UDiskDeviceInfoPointer device)
 
 void ComputerView::enlargeIcon()
 {
-
     if (m_currentIconSizeIndex < m_iconSizes.count() - 1) {
         ++m_currentIconSizeIndex;
     }
-    setIconSizeBySizeIndex(m_currentIconSizeIndex);
+    resizeAllItemsBySizeIndex(m_currentIconSizeIndex);
 }
 
 void ComputerView::shrinkIcon()
@@ -999,18 +998,18 @@ void ComputerView::shrinkIcon()
     if (m_currentIconSizeIndex > 0) {
         --m_currentIconSizeIndex;
     }
-    setIconSizeBySizeIndex(m_currentIconSizeIndex);
+    resizeAllItemsBySizeIndex(m_currentIconSizeIndex);
 }
 
 void ComputerView::resizeAllItemsBySizeIndex(int index)
 {
-    foreach (ComputerViewItem *item, m_systemItems) {
+    for (ComputerViewItem *item : m_systemItems) {
         updateItemBySizeIndex(index, item);
     }
-    foreach (ComputerViewItem *item, m_nativeItems) {
+    for (ComputerViewItem *item : m_nativeItems) {
         updateItemBySizeIndex(index, item);
     }
-    foreach (ComputerViewItem *item, m_removableItems) {
+    for (ComputerViewItem *item : m_removableItems) {
         updateItemBySizeIndex(index, item);
     }
 
