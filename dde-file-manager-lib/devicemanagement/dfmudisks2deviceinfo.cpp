@@ -21,25 +21,25 @@
 
 #include "dfmudisks2deviceinfo.h"
 
-#include <dfmdiskmanager.h>
-#include <dfmblockdevice.h>
-#include <dfmdiskdevice.h>
+#include <ddiskmanager.h>
+#include <dblockdevice.h>
+#include <ddiskdevice.h>
 #include <QStorageInfo>
 
 #include <shutil/fileutils.h>
 
 DFM_BEGIN_NAMESPACE
 
-DFMUdisks2DeviceInfo::DFMUdisks2DeviceInfo(const DFMBlockDevice *blockDevicePointer)
+DFMUdisks2DeviceInfo::DFMUdisks2DeviceInfo(const DBlockDevice *blockDevicePointer)
 {
     mountPoint = blockDevicePointer->mountPoints().first();
     deviceDBusId = blockDevicePointer->path();
-    c_blockDevice.reset(DFMDiskManager::createBlockDevice(deviceDBusId)); // not take the ownership of the passed pointer.
+    c_blockDevice.reset(DDiskManager::createBlockDevice(deviceDBusId)); // not take the ownership of the passed pointer.
 }
 
 DFMUdisks2DeviceInfo::DFMUdisks2DeviceInfo(const QString &dbusPath)
 {
-    c_blockDevice.reset(DFMDiskManager::createBlockDevice(dbusPath)); // not take the ownership of the passed pointer.
+    c_blockDevice.reset(DDiskManager::createBlockDevice(dbusPath)); // not take the ownership of the passed pointer.
 }
 
 void DFMUdisks2DeviceInfo::mount()
@@ -49,7 +49,7 @@ void DFMUdisks2DeviceInfo::mount()
 
 bool DFMUdisks2DeviceInfo::unmountable()
 {
-    QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blockDevice()->drive()));
+    QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blockDevice()->drive()));
     return diskDev->removable();
 }
 
@@ -57,7 +57,7 @@ void DFMUdisks2DeviceInfo::unmount()
 {
     blockDevice()->unmount({});
     if (blockDevice()->device().startsWith("/dev/sr")) { // is a DVD driver
-        QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blockDevice()->drive()));
+        QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blockDevice()->drive()));
         if (diskDev->ejectable()) {
             diskDev->eject({});
         }
@@ -66,13 +66,13 @@ void DFMUdisks2DeviceInfo::unmount()
 
 bool DFMUdisks2DeviceInfo::ejectable()
 {
-    QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blockDevice()->drive()));
+    QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blockDevice()->drive()));
     return diskDev->ejectable();
 }
 
 void DFMUdisks2DeviceInfo::eject()
 {
-    QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blockDevice()->drive()));
+    QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blockDevice()->drive()));
     if (diskDev->ejectable()) {
         diskDev->eject({});
     }
@@ -135,7 +135,7 @@ QString DFMUdisks2DeviceInfo::displayName() const
 
 QString DFMUdisks2DeviceInfo::iconName() const
 {
-    QScopedPointer<DFMDiskDevice> diskDev(DFMDiskManager::createDiskDevice(blockDeviceConst()->drive()));
+    QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blockDeviceConst()->drive()));
 
     bool isDvd = blockDeviceConst()->device().startsWith("/dev/sr");
     bool isRemovable = diskDev->removable();
@@ -206,12 +206,12 @@ QString DFMUdisks2DeviceInfo::unixPath()
     return blockDevice()->path();
 }
 
-DFMBlockDevice *DFMUdisks2DeviceInfo::blockDevice()
+DBlockDevice *DFMUdisks2DeviceInfo::blockDevice()
 {
     return c_blockDevice.data();
 }
 
-const DFMBlockDevice *DFMUdisks2DeviceInfo::blockDeviceConst() const
+const DBlockDevice *DFMUdisks2DeviceInfo::blockDeviceConst() const
 {
     return c_blockDevice.data();
 }

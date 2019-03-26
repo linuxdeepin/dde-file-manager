@@ -60,7 +60,7 @@
 #include <darrowlineexpand.h>
 #include <dthememanager.h>
 #include <dexpandgroup.h>
-#include <dfmblockdevice.h>
+#include <dblockdevice.h>
 
 #include <QTextEdit>
 #include <QFormLayout>
@@ -76,7 +76,7 @@
 #include <QStorageInfo>
 #include <QVariantAnimation>
 #include <QScrollArea>
-#include <dfmdiskmanager.h>
+#include <ddiskmanager.h>
 
 #include "unistd.h"
 
@@ -897,15 +897,15 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
     if (devicePath.startsWith("/dev")) {
         QString udisksDBusPath = devicePath;
         udisksDBusPath.replace("dev", "org/freedesktop/UDisks2/block_devices");
-        QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(udisksDBusPath));
+        QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(udisksDBusPath));
         if (blDev) {
-            DFMBlockDevice::FSType fsTypeEnum = blDev->fsType();
+            DBlockDevice::FSType fsTypeEnum = blDev->fsType();
             switch (fsTypeEnum) {
-            case DFMBlockDevice::UnknowFS:
+            case DBlockDevice::UnknowFS:
                 fsType = info.fileSystemType() + '*';
                 break;
             default:
-                QMetaEnum metaEnum = QMetaEnum::fromType<DFMBlockDevice::FSType>();
+                QMetaEnum metaEnum = QMetaEnum::fromType<DBlockDevice::FSType>();
                 fsType = metaEnum.valueToKey(fsTypeEnum);
             }
 #ifdef QT_DEBUG

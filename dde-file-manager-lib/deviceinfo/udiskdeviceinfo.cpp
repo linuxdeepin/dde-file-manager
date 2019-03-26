@@ -37,8 +37,8 @@
 
 #include "dfmapplication.h"
 #include "dfmsettings.h"
-#include "dfmdiskmanager.h"
-#include "dfmblockdevice.h"
+#include "ddiskmanager.h"
+#include "dblockdevice.h"
 
 #include <QIcon>
 
@@ -103,7 +103,7 @@ QString UDiskDeviceInfo::getIdType() const
 {
     // getIdType
     QString dbusPath = this->getDBusPath();
-    QScopedPointer<DFMBlockDevice> blDev(DFMDiskManager::createBlockDevice(dbusPath));
+    QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(dbusPath));
     return blDev->idType();
 }
 
@@ -321,7 +321,7 @@ bool UDiskDeviceInfo::canRename() const
 {
     QString devicePath = this->getDBusPath();
 
-    DFMBlockDevice *partition = DFMDiskManager::createBlockDevice(devicePath, nullptr);
+    DBlockDevice *partition = DDiskManager::createBlockDevice(devicePath, nullptr);
     bool result = partition->canSetLabel();
     partition->deleteLater();
 
