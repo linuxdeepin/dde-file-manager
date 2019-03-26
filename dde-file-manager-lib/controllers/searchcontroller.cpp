@@ -45,16 +45,6 @@
 #include <QRegularExpression>
 #include <QQueue>
 
-QString searchKeywordPattern(const QString &keyword)
-{
-    QString keywordPattern = keyword;
-    if (!keyword.contains('*') && !keyword.contains('?')) {
-        keywordPattern.prepend('*');
-        keywordPattern.append('*');
-    }
-    return keywordPattern;
-}
-
 class SearchFileWatcherPrivate;
 class SearchFileWatcher : public DAbstractFileWatcher
 {
@@ -187,10 +177,10 @@ void SearchFileWatcher::onFileMoved(const DUrl &fromUrl, const DUrl &toUrl)
 
     DUrl newToUrl = toUrl;
     if (fileUrl().searchTargetUrl().scheme() == toUrl.scheme() && toUrl.path().startsWith(fileUrl().searchTargetUrl().path())) {
-        QString keywordPattern = searchKeywordPattern(fileUrl().searchKeyword());
+        QString keywordPattern = DFMRegularExpression::wildcardToRegularExpression(fileUrl().searchKeyword());
         const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, toUrl);
 
-        QRegularExpression regexp(DFMRegularExpression::wildcardToRegularExpression(keywordPattern), QRegularExpression::CaseInsensitiveOption);
+        QRegularExpression regexp(keywordPattern, QRegularExpression::CaseInsensitiveOption);
         QRegularExpressionMatch match = regexp.match(info->fileDisplayName());
         if (match.hasMatch()) {
             newToUrl = fileUrl();
@@ -290,7 +280,7 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
     , m_flags(flags)
 {
     targetUrl = url.searchTargetUrl();
-    keyword = searchKeywordPattern(url.searchKeyword());
+    keyword = DFMRegularExpression::wildcardToRegularExpression(url.searchKeyword());
 
     regex = QRegularExpression(DFMRegularExpression::wildcardToRegularExpression(keyword), QRegularExpression::CaseInsensitiveOption);
     searchPathList << targetUrl;
