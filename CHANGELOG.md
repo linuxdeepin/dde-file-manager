@@ -1,3 +1,33 @@
+<a name="4.7.8"></a>
+## 4.7.8 (2019-03-27)
+
+
+#### Bug Fixes
+
+*   user dirs changed to English in other DEs (#67) ([b84dde56](https://github.com/linuxdeepin/dde-file-manager/commit/b84dde56ffc56a744e92dea802a8da892255ef16))
+*   whel not working on ComputerView (#82) ([2191f7d3](https://github.com/linuxdeepin/dde-file-manager/commit/2191f7d3a5d4f0c4ac90f8fd3314260bd9834dbe))
+*   disk property display name not correct ([832ffda4](https://github.com/linuxdeepin/dde-file-manager/commit/832ffda4d1654b1bb20cc4646169761be137b84b))
+*   set proper working directory when running executables ([4d861c9b](https://github.com/linuxdeepin/dde-file-manager/commit/4d861c9bafa67015d30487162753de5b669b2e13))
+*   UI stuck when searching ([266b285a](https://github.com/linuxdeepin/dde-file-manager/commit/266b285a8e02b944dc0faeb2716ea2d052ffc9ac))
+*   locker protect for handle xbel file changed ([70021a74](https://github.com/linuxdeepin/dde-file-manager/commit/70021a74462684109eebb86dac8baa1aecbf8a20))
+*   use concurrent to handle recent file changed ([e7a23aed](https://github.com/linuxdeepin/dde-file-manager/commit/e7a23aed0333d4a47e0c315f82b758e35a85c671))
+*   can't use anything for subdirectory ([79778fa5](https://github.com/linuxdeepin/dde-file-manager/commit/79778fa55201fa0aa1e51bedf7f57c93d49b5550))
+*   user share dialog cannot open twice ([92e33ede](https://github.com/linuxdeepin/dde-file-manager/commit/92e33ede74f9603f3ae7de33c08be32f51f63ecc))
+* **dde-file-manager:**  crash at getNodeByIndex ([cc5031e0](https://github.com/linuxdeepin/dde-file-manager/commit/cc5031e0bb92d85cb346519d705562df8c673182))
+* **dde-wallpaper:**  the mode switch widget overlaps with other widgets ([20d62130](https://github.com/linuxdeepin/dde-file-manager/commit/20d62130f343ad1107d11c7ab40f3fb611459b30))
+
+#### Features
+
+*   menu plugin can know menu is triggered on desktop (#78) ([24bb2f89](https://github.com/linuxdeepin/dde-file-manager/commit/24bb2f892bc0b9b23f678e8794a5bf5a4b5e4cfc))
+*   read ~/.dde_env when run via pkexec ([8e04d77b](https://github.com/linuxdeepin/dde-file-manager/commit/8e04d77bc3eda884ebe4ec861a114d1f6dfa4bd5))
+*   add backup file type for deepin-clone ([6646405a](https://github.com/linuxdeepin/dde-file-manager/commit/6646405a07a83ceac6f8672665e8dc8f93784c68))
+*   support copy file on preview dialog ([92a15496](https://github.com/linuxdeepin/dde-file-manager/commit/92a15496587232e47e7bacdaa69a373beb70d59e))
+*   get the search results with segment of quick search ([696a93b1](https://github.com/linuxdeepin/dde-file-manager/commit/696a93b152158e7cb7126aff116a64b260409b66))
+*   handle sigterm ([c85a7ba4](https://github.com/linuxdeepin/dde-file-manager/commit/c85a7ba4c83271513aa9a6e7c2efce899b3af144))
+* **dde-wallpaper:**  support wallpaper slideshow ([d371c5d1](https://github.com/linuxdeepin/dde-file-manager/commit/d371c5d120a036d3931a08332ae3ca29a30232c8))
+
+
+
 <a name="4.7.7.1"></a>
 ## 4.7.7.1 (2019-03-04)
 
