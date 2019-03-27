@@ -282,7 +282,7 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
     targetUrl = url.searchTargetUrl();
     keyword = DFMRegularExpression::wildcardToRegularExpression(url.searchKeyword());
 
-    regex = QRegularExpression(DFMRegularExpression::wildcardToRegularExpression(keyword), QRegularExpression::CaseInsensitiveOption);
+    regex = QRegularExpression(keyword, QRegularExpression::CaseInsensitiveOption);
     searchPathList << targetUrl;
 
 #ifndef DISABLE_QUICK_SEARCH
