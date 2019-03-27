@@ -23,6 +23,17 @@
 
 #include <QRegularExpression>
 
+
+
+QString DFMRegularExpression::checkWildcardAndToRegularExpression(const QString &pattern)
+{
+    if (!pattern.contains('*') && !pattern.contains('?')) {
+        return pattern;
+    }
+
+    return DFMRegularExpression::wildcardToRegularExpression(pattern);
+}
+
 QString DFMRegularExpression::wildcardToRegularExpression(const QString &pattern)
 {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))

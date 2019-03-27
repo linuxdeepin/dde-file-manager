@@ -211,7 +211,7 @@ public:
         , keyword(k)
         , dir(path)
     {
-        keyword = DFMRegularExpression::wildcardToRegularExpression(keyword);
+        keyword = DFMRegularExpression::checkWildcardAndToRegularExpression(keyword);
     }
 
     ~DFMAnythingDirIterator() override

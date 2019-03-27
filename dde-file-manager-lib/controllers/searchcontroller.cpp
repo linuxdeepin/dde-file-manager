@@ -177,7 +177,7 @@ void SearchFileWatcher::onFileMoved(const DUrl &fromUrl, const DUrl &toUrl)
 
     DUrl newToUrl = toUrl;
     if (fileUrl().searchTargetUrl().scheme() == toUrl.scheme() && toUrl.path().startsWith(fileUrl().searchTargetUrl().path())) {
-        QString keywordPattern = DFMRegularExpression::wildcardToRegularExpression(fileUrl().searchKeyword());
+        QString keywordPattern = DFMRegularExpression::checkWildcardAndToRegularExpression(fileUrl().searchKeyword());
         const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, toUrl);
 
         QRegularExpression regexp(keywordPattern, QRegularExpression::CaseInsensitiveOption);
@@ -280,7 +280,7 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
     , m_flags(flags)
 {
     targetUrl = url.searchTargetUrl();
-    keyword = DFMRegularExpression::wildcardToRegularExpression(url.searchKeyword());
+    keyword = DFMRegularExpression::checkWildcardAndToRegularExpression(url.searchKeyword());
 
     regex = QRegularExpression(keyword, QRegularExpression::CaseInsensitiveOption);
     searchPathList << targetUrl;

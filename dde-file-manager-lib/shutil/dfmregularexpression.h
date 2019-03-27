@@ -30,6 +30,7 @@
 class DFMRegularExpression
 {
 public:
+    static QString checkWildcardAndToRegularExpression(const QString &pattern);
     static QString wildcardToRegularExpression(const QString &pattern);
     static inline QString anchoredPattern(const QString &expression) {
         return QLatin1String("\\A(?:")
