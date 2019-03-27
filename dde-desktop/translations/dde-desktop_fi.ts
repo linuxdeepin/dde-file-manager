@@ -2,39 +2,39 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2292"/>
+        <location filename="../view/canvasgridview.cpp" line="2299"/>
         <source>Icon size</source>
         <translation>Kuvakkeen koko</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2298"/>
+        <location filename="../view/canvasgridview.cpp" line="2305"/>
         <source>Auto arrange</source>
         <translation>Järjestä automaattisesti</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2351"/>
+        <location filename="../view/canvasgridview.cpp" line="2358"/>
         <source>Set Wallpaper</source>
         <translation>Aseta taustakuva</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2353"/>
+        <location filename="../view/canvasgridview.cpp" line="2360"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Taustakuva ja näytönsäästäjä</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2431"/>
+        <location filename="../view/canvasgridview.cpp" line="2438"/>
         <source>Properties</source>
         <translation>Ominaisuudet</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2337"/>
+        <location filename="../view/canvasgridview.cpp" line="2344"/>
         <source>Display Settings</source>
         <translation>Näytön asetukset</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2344"/>
+        <location filename="../view/canvasgridview.cpp" line="2351"/>
         <source>Corner Settings</source>
-        <translation>Kulma-asetukset</translation>
+        <translation>Näytön kulma-asetukset</translation>
     </message>
 </context>
 <context>
@@ -68,42 +68,57 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="318"/>
-        <source>Require a password on wake up</source>
-        <translation>Vaadi salasana herätessä</translation>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="330"/>
+        <source>Wallpaper Slideshow</source>
+        <translation>Taustakuvaesitys</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="343"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="356"/>
+        <source>When login</source>
+        <translation>Kirjautuessa sisään</translation>
+    </message>
+    <message>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="358"/>
+        <source>When wakeup</source>
+        <translation>Tietokoneen herätessä</translation>
+    </message>
+    <message>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="398"/>
+        <source>Require a password on wake up</source>
+        <translation>Vaadi salasana</translation>
+    </message>
+    <message>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="423"/>
         <source>Never</source>
         <translation>Koskaan</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="344"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="424"/>
         <source>Wait:</source>
         <translation>Odota:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="373"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="450"/>
         <source>Wallpaper</source>
         <translation>Taustakuva</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="373"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="450"/>
         <source>Screensaver</source>
         <translation>Näytönsäästäjä</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="431"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="512"/>
         <source>Only desktop</source>
         <translation>Vain työpöytä</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="432"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="513"/>
         <source>Only lock screen</source>
         <translation>Lukitse vain näyttö</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="460"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="541"/>
         <source>Apply</source>
         <translation>Käytä</translation>
     </message>
@@ -113,22 +128,22 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Fast Screen Off</source>
-        <translation>Pikana näyttö pois</translation>
+        <translation>Pimennä näyttö</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Control Center</source>
-        <translation>Ohjauskeskus</translation>
+        <translation>Ohjauspaneeli</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>All Windows</source>
-        <translation>Kaikki ikkunat</translation>
+        <translation>Avatut ohjelmat</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Launcher</source>
-        <translation>Käynnistin</translation>
+        <translation>Valikko</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
@@ -138,7 +153,7 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>None</source>
-        <translation>Tyhjyys</translation>
+        <translation>Tyhjä</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="59"/>

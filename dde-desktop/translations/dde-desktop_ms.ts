@@ -2,37 +2,37 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2292"/>
+        <location filename="../view/canvasgridview.cpp" line="2299"/>
         <source>Icon size</source>
         <translation>Saiz ikon</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2298"/>
+        <location filename="../view/canvasgridview.cpp" line="2305"/>
         <source>Auto arrange</source>
         <translation>Auto susun</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2351"/>
+        <location filename="../view/canvasgridview.cpp" line="2358"/>
         <source>Set Wallpaper</source>
         <translation>Tetapkan Kertas Dinding</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2353"/>
+        <location filename="../view/canvasgridview.cpp" line="2360"/>
         <source>Wallpaper and Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Kertas Dinding dan Penyelamat Skrin</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2431"/>
+        <location filename="../view/canvasgridview.cpp" line="2438"/>
         <source>Properties</source>
         <translation>Sifat</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2337"/>
+        <location filename="../view/canvasgridview.cpp" line="2344"/>
         <source>Display Settings</source>
         <translation>Tetapan Paparan</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2344"/>
+        <location filename="../view/canvasgridview.cpp" line="2351"/>
         <source>Corner Settings</source>
         <translation>Tetapan Bucu</translation>
     </message>
@@ -68,44 +68,59 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="318"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="330"/>
+        <source>Wallpaper Slideshow</source>
+        <translation>Paparan Slaid Kertas Dinding</translation>
+    </message>
+    <message>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="356"/>
+        <source>When login</source>
+        <translation>Bila daftar masuk</translation>
+    </message>
+    <message>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="358"/>
+        <source>When wakeup</source>
+        <translation>Bila bangun</translation>
+    </message>
+    <message>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="398"/>
         <source>Require a password on wake up</source>
-        <translation type="unfinished"/>
+        <translation>Perlukan kata laluan ketika bangun</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="343"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="423"/>
         <source>Never</source>
-        <translation type="unfinished"/>
+        <translation>Tidak Sesekali</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="344"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="424"/>
         <source>Wait:</source>
-        <translation type="unfinished"/>
+        <translation>Tunggu:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="373"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="450"/>
         <source>Wallpaper</source>
-        <translation type="unfinished"/>
+        <translation>Kertas Dinding</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="373"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="450"/>
         <source>Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Penyelamat Skrin</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="431"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="512"/>
         <source>Only desktop</source>
         <translation>Desktop sahaja</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="432"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="513"/>
         <source>Only lock screen</source>
         <translation>Skrin kunci sahaja</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="460"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="541"/>
         <source>Apply</source>
-        <translation type="unfinished"/>
+        <translation>Laksana</translation>
     </message>
 </context>
 <context>
