@@ -4,7 +4,7 @@
     <message>
         <location filename="../view/finishpage.cpp" line="42"/>
         <source>Format successfully</source>
-        <translation>Format correcte</translation>
+        <translation>Formatació correcta</translation>
     </message>
 </context>
 <context>
