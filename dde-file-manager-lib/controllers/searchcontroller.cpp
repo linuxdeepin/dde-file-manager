@@ -30,6 +30,7 @@
 
 #include "models/searchfileinfo.h"
 #include "ddiriterator.h"
+#include "shutil/dfmregularexpression.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -43,24 +44,13 @@
 #include <QDebug>
 #include <QRegularExpression>
 #include <QQueue>
-#include <QRegExp>
-
-QString searchKeywordPattern(const QString &keyword)
-{
-    QString keywordPattern = keyword;
-    if (!keyword.contains('*') && !keyword.contains('?')) {
-        keywordPattern.prepend('*');
-        keywordPattern.append('*');
-    }
-    return keywordPattern;
-}
 
 class SearchFileWatcherPrivate;
 class SearchFileWatcher : public DAbstractFileWatcher
 {
 public:
-    explicit SearchFileWatcher(const DUrl &url, QObject *parent = 0);
-    ~SearchFileWatcher();
+    explicit SearchFileWatcher(const DUrl &url, QObject *parent = nullptr);
+    ~SearchFileWatcher() override;
 
     void setEnabledSubfileWatcher(const DUrl &subfileUrl, bool enabled = true) Q_DECL_OVERRIDE;
 
@@ -182,17 +172,17 @@ void SearchFileWatcher::onFileAttributeChanged(const DUrl &url)
 
 void SearchFileWatcher::onFileMoved(const DUrl &fromUrl, const DUrl &toUrl)
 {
-    Q_D(SearchFileWatcher);
-
     DUrl newFromUrl = fileUrl();
     newFromUrl.setSearchedFileUrl(fromUrl);
 
     DUrl newToUrl = toUrl;
     if (fileUrl().searchTargetUrl().scheme() == toUrl.scheme() && toUrl.path().startsWith(fileUrl().searchTargetUrl().path())) {
-        QString keywordPattern = searchKeywordPattern(fileUrl().searchKeyword());
+        QString keywordPattern = DFMRegularExpression::checkWildcardAndToRegularExpression(fileUrl().searchKeyword());
         const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, toUrl);
-        QRegExp regular = QRegExp(keywordPattern, Qt::CaseInsensitive, QRegExp::Wildcard);
-        if (regular.exactMatch(info->fileDisplayName())) {
+
+        QRegularExpression regexp(keywordPattern, QRegularExpression::CaseInsensitiveOption);
+        QRegularExpressionMatch match = regexp.match(info->fileDisplayName());
+        if (match.hasMatch()) {
             newToUrl = fileUrl();
             newToUrl.setSearchedFileUrl(toUrl);
 
@@ -244,7 +234,7 @@ class SearchDiriterator : public DDirIterator
 public:
     SearchDiriterator(const DUrl &url, const QStringList &nameFilters, QDir::Filters filter,
                       QDirIterator::IteratorFlags flags, SearchController *parent);
-    ~SearchDiriterator();
+    ~SearchDiriterator() override;
 
     DUrl next() Q_DECL_OVERRIDE;
     bool hasNext() const Q_DECL_OVERRIDE;
@@ -262,7 +252,7 @@ public:
     DUrl m_fileUrl;
     DUrl targetUrl;
     QString keyword;
-    QRegExp regular;
+    QRegularExpression regex;
     QStringList m_nameFilters;
     QDir::Filters m_filter;
     QDirIterator::IteratorFlags m_flags;
@@ -290,9 +280,9 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
     , m_flags(flags)
 {
     targetUrl = url.searchTargetUrl();
-    keyword = searchKeywordPattern(url.searchKeyword());
+    keyword = DFMRegularExpression::checkWildcardAndToRegularExpression(url.searchKeyword());
 
-    regular = QRegExp(keyword, Qt::CaseInsensitive, QRegExp::Wildcard);
+    regex = QRegularExpression(keyword, QRegularExpression::CaseInsensitiveOption);
     searchPathList << targetUrl;
 
 #ifndef DISABLE_QUICK_SEARCH
@@ -311,7 +301,7 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
             // 先将列表设置为适用于任意目录, 等取到异步结果后再更新此值
             hasLFTSubdirectories.append("/");
             QObject::connect(dbusWatcher, &QDBusPendingCallWatcher::finished,
-                             dbusWatcher, [this, interface] (QDBusPendingCallWatcher *call) {
+                             dbusWatcher, [this] (QDBusPendingCallWatcher *call) {
                 QDBusPendingReply<QStringList> result = *call;
 
                 hasLFTSubdirectories = result.value();
@@ -425,7 +415,8 @@ bool SearchDiriterator::hasNext() const
                 }
             }
 
-            if (regular.exactMatch(fileInfo->fileDisplayName())) {
+            QRegularExpressionMatch match = regex.match(fileInfo->fileDisplayName());
+            if (match.hasMatch()) {
                 DUrl url = m_fileUrl;
                 const DUrl &realUrl = fileInfo->fileUrl();
 
@@ -591,7 +582,7 @@ const DDirIteratorPointer SearchController::createDirIterator(const QSharedPoint
 DAbstractFileWatcher *SearchController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
     if (event->url().searchedFileUrl().isValid()) {
-        return 0;
+        return nullptr;
     }
 
     return new SearchFileWatcher(event->url());

@@ -46,6 +46,7 @@
 #include "tag/tagmanager.h"
 
 #include "shutil/fileutils.h"
+#include "shutil/dfmregularexpression.h"
 
 #include "dialogs/dialogmanager.h"
 #include "dialogs/dtaskdialog.h"
@@ -210,10 +211,10 @@ public:
         , keyword(k)
         , dir(path)
     {
-        keyword.replace('*', ".*").replace('?', ".+");
+        keyword = DFMRegularExpression::checkWildcardAndToRegularExpression(keyword);
     }
 
-    ~DFMAnythingDirIterator()
+    ~DFMAnythingDirIterator() override
     {
 
     }
@@ -296,7 +297,7 @@ public:
                     const QStringList &nameFilters,
                     QDir::Filters filter,
                     QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
-    ~FileDirIterator();
+    ~FileDirIterator() override;
 
     DUrl next() Q_DECL_OVERRIDE;
     bool hasNext() const Q_DECL_OVERRIDE;
