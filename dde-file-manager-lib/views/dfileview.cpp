@@ -1328,7 +1328,25 @@ void DFileView::loadViewState(const DUrl& url)
     Q_D(DFileView);
 
     setIconSizeBySizeIndex(d->fileViewStateValue(url, "iconSizeLevel", DFMApplication::instance()->appAttribute(DFMApplication::AA_IconSizeLevel)).toInt());
-    switchViewMode((ViewMode)d->fileViewStateValue(url, "viewMode", (int)d->defaultViewMode).toInt());
+    int savedViewMode = d->fileViewStateValue(url, "viewMode", -1).toInt();
+    ViewMode viewMode = getDefaultViewMode();
+    if (savedViewMode == -1) {
+        if (DFMApplication::appObtuselySetting()->value("ApplicationAttribute", "UseParentViewMode", false).toBool()) {
+            DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, url);
+            DUrlList urlList = info->parentUrlList();
+            for (const DUrl & url : urlList) {
+                int checkViewMode = d->fileViewStateValue(url, "viewMode", -1).toInt();
+                if (checkViewMode != -1) {
+                    viewMode = static_cast<ViewMode>(checkViewMode);
+                    break;
+                }
+            }
+        }
+    } else {
+        viewMode = static_cast<ViewMode>(savedViewMode);
+    }
+
+    switchViewMode(viewMode);
 }
 
 void DFileView::saveViewState()
