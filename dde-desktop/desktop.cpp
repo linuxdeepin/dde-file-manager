@@ -15,10 +15,12 @@
 #include <QStyleOptionViewItem>
 #include <QDir>
 #include <QDBusConnection>
+#include <QScreen>
 
 #include <durl.h>
 
 #include "view/canvasgridview.h"
+#include "view/backgroundhelper.h"
 #include "presenter/apppresenter.h"
 
 #include "../dde-wallpaper-chooser/frame.h"
@@ -26,6 +28,8 @@
 #ifndef DISABLE_ZONE
 #include "../dde-zone/mainwindow.h"
 #endif
+
+#include "util/xcb/xcb.h"
 
 using WallpaperSettings = Frame;
 
@@ -37,6 +41,7 @@ class DesktopPrivate
 {
 public:
     CanvasGridView      screenFrame;
+    BackgroundHelper *background = nullptr;
     WallpaperSettings *wallpaperSettings{ nullptr };
 
 #ifndef DISABLE_ZONE
@@ -47,12 +52,42 @@ public:
 Desktop::Desktop()
     : d(new DesktopPrivate)
 {
+    d->background = new BackgroundHelper();
 
+    connect(d->background, &BackgroundHelper::enableChanged, this, &Desktop::onBackgroundEnableChanged);
+    connect(qGuiApp, &QGuiApplication::primaryScreenChanged, this, &Desktop::onBackgroundEnableChanged);
+    connect(d->background, &BackgroundHelper::aboutDestoryBackground, this, [this] (QLabel *l) {
+        if (l == d->screenFrame.parent()) {
+            d->screenFrame.setParent(nullptr);
+        }
+    }, Qt::DirectConnection);
+    onBackgroundEnableChanged();
 }
 
 Desktop::~Desktop()
 {
 
+}
+
+void Desktop::onBackgroundEnableChanged()
+{
+    if (d->background->isEnabled()) {
+        QLabel *background = d->background->backgroundForScreen(qApp->primaryScreen());
+        d->screenFrame.setParent(background);
+        d->screenFrame.move(0, 0);
+        d->screenFrame.show();
+
+        // 应该将此窗口置顶显示（复制模式下防止被其它窗口遮挡）
+        background->activateWindow();
+        background->raise();
+    } else {
+        d->screenFrame.setWindowFlag(Qt::FramelessWindowHint);
+        d->screenFrame.QWidget::setGeometry(qApp->primaryScreen()->geometry());
+        d->screenFrame.setParent(nullptr);
+        d->screenFrame.show();
+
+        Xcb::XcbMisc::instance().set_window_type(d->screenFrame.winId(), Xcb::XcbMisc::Desktop);
+    }
 }
 
 void Desktop::loadData()
