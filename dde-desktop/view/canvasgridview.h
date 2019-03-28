@@ -36,7 +36,7 @@ public:
 
 
     enum ContextMenuAction {
-        DisplaySettings = MenuAction::Unknow + 1,
+        DisplaySettings = MenuAction::UserMenuAction + 1,
         CornerSettings,
         WallpaperSettings,
 
