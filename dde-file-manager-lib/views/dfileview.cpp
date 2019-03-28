@@ -1331,7 +1331,7 @@ void DFileView::loadViewState(const DUrl& url)
     int savedViewMode = d->fileViewStateValue(url, "viewMode", -1).toInt();
     ViewMode viewMode = getDefaultViewMode();
     if (savedViewMode == -1) {
-        if (d->fileViewStateValue(url, "UseParentViewMode", false).toBool()) {
+        if (DFMApplication::appObtuselySetting()->value("ApplicationAttribute", "UseParentViewMode", false).toBool()) {
             DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, url);
             DUrlList urlList = info->parentUrlList();
             for (const DUrl & url : urlList) {
