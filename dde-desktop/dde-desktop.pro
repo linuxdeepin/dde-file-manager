@@ -51,7 +51,8 @@ SOURCES += \
     config/profile.cpp \
     view/desktopitemdelegate.cpp \
     presenter/gridcore.cpp \
-    config/dfmdesktopsettings.cpp
+    config/dfmdesktopsettings.cpp \
+    view/backgroundhelper.cpp
 
 
 
@@ -75,7 +76,8 @@ HEADERS += \
     view/desktopitemdelegate.h \
     presenter/gridcore.h \
     deventfilter.h \
-    config/dfmdesktopsettings.h
+    config/dfmdesktopsettings.h \
+    view/backgroundhelper.h
 
 RESOURCES += \
     resource/theme/theme.qrc
