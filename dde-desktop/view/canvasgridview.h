@@ -116,6 +116,8 @@ public:
     QMargins cellMargins() const;
     QSize cellSize() const;
 
+    WId winId() const;
+
 signals:
     void sortRoleChanged(int role, Qt::SortOrder order);
     void autoAlignToggled();
