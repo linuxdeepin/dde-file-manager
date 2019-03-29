@@ -495,7 +495,7 @@ QString ComputerViewItem::displayName() const
 void ComputerViewItem::setDisplayName(const QString &displayName)
 {
     m_displayName = displayName;
-    getTextEdit()->setText(m_displayName);
+    getTextEdit()->setPlainText(m_displayName);
 }
 
 
