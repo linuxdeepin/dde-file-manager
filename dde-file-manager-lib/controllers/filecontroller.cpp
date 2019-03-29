@@ -202,6 +202,7 @@ private:
     QFileInfo currentFileInfo;
 };
 
+#ifndef DISABLE_QUICK_SEARCH
 class DFMAnythingDirIterator : public DDirIterator
 {
 public:
@@ -289,6 +290,7 @@ private:
     QDir dir;
     QFileInfo currentFileInfo;
 };
+#endif // DISABLE_QUICK_SEARCH
 
 class FileDirIterator : public DDirIterator
 {
