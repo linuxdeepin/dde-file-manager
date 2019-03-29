@@ -266,7 +266,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         if (useQStorageInfo) {
             name = diskInfo.displayName();
             udiskInfo = deviceListener->getDevice(diskInfo.device());
-            if (name == diskInfo.rootPath()) {
+            if (name == diskInfo.rootPath() && udiskInfo) {
                 name = udiskInfo->fileDisplayName();
             }
         } else {
