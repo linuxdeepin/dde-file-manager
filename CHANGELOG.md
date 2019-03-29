@@ -1,3 +1,16 @@
+<a name="4.7.8.1"></a>
+## 4.7.8.1 (2019-03-29)
+
+
+#### Bug Fixes
+
+*   use setPlainText for computer view items (#91) ([f3a53417](https://github.com/linuxdeepin/dde-file-manager/commit/f3a534178da8fb7a6acd9d80544ff2c0aee84f17))
+*   build error if enable DISABLE_ANYTHING ([1358fa39](https://github.com/linuxdeepin/dde-file-manager/commit/1358fa39a3331d1cd4bc7f9879f63133623b21a5))
+*   MenuAction::Unknow is no longer the last one (#89) ([931c97f8](https://github.com/linuxdeepin/dde-file-manager/commit/931c97f8c73c6aa535e9979970dec40138ccd6a2))
+*   allowed find parent view mode (#88) ([857eb615](https://github.com/linuxdeepin/dde-file-manager/commit/857eb6152d0fe4a7c3daf09f9cccef7df7a3ca78))
+
+
+
 <a name="4.7.8"></a>
 ## 4.7.8 (2019-03-27)
 
