@@ -334,6 +334,16 @@ void CanvasGridView::setGeometry(const QRect &rect)
     }
 }
 
+WId CanvasGridView::winId() const
+{
+    if (isTopLevel()) {
+        return QAbstractItemView::winId();
+    }
+    else {
+        return topLevelWidget()->winId();
+    }
+}
+
 QModelIndex CanvasGridView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
 {
     // Do not allow move when hold ctrl
