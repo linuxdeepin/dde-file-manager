@@ -1,3 +1,13 @@
+<a name="4.7.8.2"></a>
+## 4.7.8.2 (2019-03-29)
+
+
+#### Bug Fixes
+
+*   crash when open systemdisk property (#93) ([5c8d4b6f](https://github.com/linuxdeepin/dde-file-manager/commit/5c8d4b6f194d8b1b7923dc0435e888530dbd8f24))
+
+
+
 <a name="4.7.8.1"></a>
 ## 4.7.8.1 (2019-03-29)
 
