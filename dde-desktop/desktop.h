@@ -46,6 +46,7 @@ private:
     ~Desktop();
 
     void onBackgroundEnableChanged();
+    void onBackgroundGeometryChanged(QWidget *l);
 
     friend class Singleton<Desktop>;
     Q_DISABLE_COPY(Desktop)

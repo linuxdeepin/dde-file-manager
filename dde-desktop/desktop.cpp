@@ -61,12 +61,27 @@ Desktop::Desktop()
             d->screenFrame.setParent(nullptr);
         }
     }, Qt::DirectConnection);
+    // 任意控件改变位置都可能会引起主窗口被其它屏幕上的窗口所遮挡
+    connect(d->background, &BackgroundHelper::backgroundGeometryChanged, this, &Desktop::onBackgroundGeometryChanged);
     onBackgroundEnableChanged();
 }
 
 Desktop::~Desktop()
 {
 
+}
+
+static void setWindowFlag(QWidget *w, Qt::WindowType flag, bool on)
+{
+#if QT_VERSION < QT_VERSION_CHECK(5, 9, 0)
+    if (on) {
+        w->setWindowFlags(w->windowFlags() | flag);
+    } else {
+        w->setWindowFlags(w->windowFlags() & ~flag);
+    }
+#else
+    w->setWindowFlag(flag, on);
+#endif
 }
 
 void Desktop::onBackgroundEnableChanged()
@@ -77,16 +92,45 @@ void Desktop::onBackgroundEnableChanged()
         d->screenFrame.move(0, 0);
         d->screenFrame.show();
 
-        // 应该将此窗口置顶显示（复制模式下防止被其它窗口遮挡）
+        // 防止复制模式下主屏窗口被遮挡
         background->activateWindow();
-        background->raise();
+        QMetaObject::invokeMethod(background, "raise", Qt::QueuedConnection);
+
+        // 隐藏完全重叠的窗口
+        for (QLabel *l : d->background->allBackgrounds()) {
+            if (l != background) {
+                l->setVisible(!background->geometry().contains(l->geometry()));
+                Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), true);
+            } else {
+                l->show();
+                Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), false);
+            }
+        }
     } else {
-        d->screenFrame.setWindowFlag(Qt::FramelessWindowHint);
-        d->screenFrame.QWidget::setGeometry(qApp->primaryScreen()->geometry());
         d->screenFrame.setParent(nullptr);
+        setWindowFlag(&d->screenFrame, Qt::FramelessWindowHint, true);
+        d->screenFrame.QWidget::setGeometry(qApp->primaryScreen()->geometry());
         d->screenFrame.show();
 
         Xcb::XcbMisc::instance().set_window_type(d->screenFrame.winId(), Xcb::XcbMisc::Desktop);
+    }
+}
+
+void Desktop::onBackgroundGeometryChanged(QWidget *l)
+{
+    QWidget *primaryBackground = d->screenFrame.parentWidget();
+
+    if (!primaryBackground) {
+        return;
+    }
+
+    primaryBackground->activateWindow();
+    QMetaObject::invokeMethod(primaryBackground, "raise", Qt::QueuedConnection);
+
+    if (l != primaryBackground && primaryBackground->geometry().contains(l->geometry())) {
+        l->hide();
+    } else {
+        l->show();
     }
 }
 

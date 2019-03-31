@@ -38,10 +38,12 @@ public:
 
     bool isEnabled() const;
     QLabel *backgroundForScreen(QScreen *screen) const;
+    QList<QLabel*> allBackgrounds() const;
 
 Q_SIGNALS:
     void aboutDestoryBackground(QLabel *l);
     void enableChanged();
+    void backgroundGeometryChanged(QLabel *l);
 
 private:
     bool isKWin() const;

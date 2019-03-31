@@ -46,6 +46,11 @@ QLabel *BackgroundHelper::backgroundForScreen(QScreen *screen) const
     return backgroundMap.value(screen);
 }
 
+QList<QLabel *> BackgroundHelper::allBackgrounds() const
+{
+    return backgroundMap.values();
+}
+
 bool BackgroundHelper::isKWin() const
 {
     return windowManagerHelper->windowManagerName() == DWindowManagerHelper::KWinWM;
@@ -183,10 +188,14 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
     connect(screen, &QScreen::geometryChanged, l, [l, this] (const QRect &geo) {
         l->setGeometry(geo);
         updateBackground(l);
+
+        Q_EMIT backgroundGeometryChanged(l);
     });
 
     // 可能是由QGuiApplication引发的新屏幕添加，此处应该为新对象添加背景图
     updateBackground(l);
+
+    Q_EMIT backgroundGeometryChanged(l);
 }
 
 void BackgroundHelper::onScreenRemoved(QScreen *screen)
