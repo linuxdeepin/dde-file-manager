@@ -22,8 +22,10 @@
 #include "dfmcrumbinterface.h"
 #include "dfmcrumbbar.h"
 
+#include "dfmapplication.h"
 #include "dfileservices.h"
 #include "dstorageinfo.h"
+#include "dfmsettings.h"
 
 #include "views/dfilemanagerwindow.h"
 #include "views/windowmanager.h"
@@ -44,6 +46,23 @@
 DWIDGET_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
+
+namespace DFMCrumbItemData {
+    static QMap<QString, QIcon> actionIcons;
+
+    void initData();
+
+    void initData()
+    {
+        // Action Icons:
+        if (DFMApplication::genericObtuselySetting()->value("ApplicationAttribute", "DisplayContextMenuIcon", false).toBool()) {
+            actionIcons["edit-copy"] = QIcon::fromTheme("edit-copy");
+            actionIcons["window-new"] = QIcon::fromTheme("window-new");
+            actionIcons["tab-new"] = QIcon::fromTheme("tab-new");
+            actionIcons["entry-edit"] = QIcon::fromTheme("entry-edit");
+        }
+    }
+}
 
 class DFMCrumbItemPrivate
 {
@@ -96,34 +115,33 @@ QMenu *DFMCrumbItemPrivate::createStandardContextMenu() const
 {
     Q_Q(const DFMCrumbItem);
 
+    static bool actions_initialized = false;
+
+    if (!actions_initialized) {
+        actions_initialized = true;
+        DFMCrumbItemData::initData();
+    }
+
     QMenu *menu = new QMenu();
-    static QMap<QString, QIcon> actionIcons = {
-#ifdef QT_DEBUG
-        {"edit-copy", QIcon::fromTheme("edit-copy")},
-        {"window-new", QIcon::fromTheme("window-new")},
-        {"tab-new", QIcon::fromTheme("tab-new")},
-        {"entry-edit", QIcon::fromTheme("entry-edit")}
-#endif
-    };
 
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(q->topLevelWidget());
     bool shouldDisable = !WindowManager::tabAddableByWinId(wnd->windowId());
 
-    menu->addAction(actionIcons["edit-copy"], QObject::tr("Copy path"), [this]() {
+    menu->addAction(DFMCrumbItemData::actionIcons["edit-copy"], QObject::tr("Copy path"), [this]() {
         QGuiApplication::clipboard()->setText(data.url.toString());
     });
 
-    menu->addAction(actionIcons["window-new"], QObject::tr("Open in new window"), [this]() {
+    menu->addAction(DFMCrumbItemData::actionIcons["window-new"], QObject::tr("Open in new window"), [this]() {
         WindowManager::instance()->showNewWindow(data.url, true);
     });
 
-    menu->addAction(actionIcons["tab-new"], QObject::tr("Open in new tab"), [wnd, this]() {
+    menu->addAction(DFMCrumbItemData::actionIcons["tab-new"], QObject::tr("Open in new tab"), [wnd, this]() {
         wnd->openNewTab(data.url);
     })->setDisabled(shouldDisable);
 
     menu->addSeparator();
 
-    menu->addAction(actionIcons["entry-edit"], QObject::tr("Edit address"), [=]() {
+    menu->addAction(DFMCrumbItemData::actionIcons["entry-edit"], QObject::tr("Edit address"), [=]() {
         DFMCrumbBar* cb_ptr = qobject_cast<DFMCrumbBar*>(q->parentWidget()->parentWidget()->parentWidget()->parentWidget());
         if (cb_ptr) {
             cb_ptr->showAddressBar(qobject_cast<DFileManagerWindow*>(q->topLevelWidget())->currentUrl());
