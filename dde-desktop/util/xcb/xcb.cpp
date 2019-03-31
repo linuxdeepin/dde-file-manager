@@ -12,6 +12,7 @@
 
 #include <xcb/xcb.h>
 #include <xcb/xcb_ewmh.h>
+#include <xcb/shape.h>
 
 #include "xcb.h"
 
@@ -66,6 +67,17 @@ xcb_ewmh_wm_strut_partial_t XcbMisc::get_strut_partial(xcb_window_t winId)
         &strut,
         &e);
     return strut;
+}
+
+void XcbMisc::set_window_transparent_input(WId winId, bool transparent)
+{
+    if (transparent) {
+        xcb_shape_rectangles(QX11Info::connection(), XCB_SHAPE_SO_SET, XCB_SHAPE_SK_INPUT,
+                             XCB_CLIP_ORDERING_YX_BANDED, winId, 0, 0, 0, 0);
+    } else {
+        xcb_shape_mask(QX11Info::connection(), XCB_SHAPE_SO_SET,
+                       XCB_SHAPE_SK_INPUT, winId, 0, 0, XCB_NONE);
+    }
 }
 
 bool XcbMisc::is_dock_window(xcb_window_t winId)

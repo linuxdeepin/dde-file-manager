@@ -28,6 +28,7 @@ Build-Depends:
  libglib2.0-dev,
  dde-dock-dev(>=4.8.4.1),
  libxcb-ewmh-dev,
+ libxcb-shape0-dev,
  libdframeworkdbus-dev,
  libxcb-util0-dev,
  qtdeclarative5-dev,

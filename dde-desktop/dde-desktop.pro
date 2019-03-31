@@ -18,7 +18,7 @@ TEMPLATE    = app
 TARGET      = dde-desktop
 DESTDIR     = $$BUILD_DIST
 CONFIG      += c++11 link_pkgconfig
-PKGCONFIG   += xcb xcb-ewmh gsettings-qt dframeworkdbus 
+PKGCONFIG   += xcb xcb-ewmh xcb-shape gsettings-qt dframeworkdbus
 
 INCLUDEPATH += $$PWD/../dde-file-manager-lib\
                $$PWD/../utils \
