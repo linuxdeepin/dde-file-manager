@@ -45,6 +45,8 @@ public:
 
     QList<DockInfo> find_dock_window();
     xcb_ewmh_wm_strut_partial_t get_strut_partial(xcb_window_t winId);
+
+    void set_window_transparent_input(WId winId, bool transparent);
 private:
     XcbMisc();
 
