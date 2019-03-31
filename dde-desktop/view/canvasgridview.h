@@ -173,11 +173,10 @@ private:
 
     void updateHiddenItems();
 
-    void setGeometry(int, int, int, int) = delete;
-    void setGeometry(const QRect &rect);
-
     QScopedPointer<CanvasViewPrivate> d;
     double m_dragMoveTime;
+
+    void onWMHasCompositeChanged();
 };
 
 

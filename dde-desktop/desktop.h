@@ -45,8 +45,6 @@ private:
     explicit Desktop();
     ~Desktop();
 
-    void onBackgroundEnableChanged();
-
     friend class Singleton<Desktop>;
     Q_DISABLE_COPY(Desktop)
 

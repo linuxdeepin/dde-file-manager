@@ -325,12 +325,53 @@ void CanvasGridView::updateHiddenItems()
     }
 }
 
-void CanvasGridView::setGeometry(const QRect &rect)
+void CanvasGridView::onWMHasCompositeChanged()
 {
-    if (parentWidget()) {
-        QAbstractItemView::setGeometry(QRect(0, 0, rect.width(), rect.height()));
-    } else {
-        QAbstractItemView::setGeometry(rect);
+    if (!d->wmInter) {
+        d->wmInter = new WMInter("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this);
+
+        auto onWorkspaceSwitched = [this] (int, int to) {
+            d->currentWorkspaceIndex = to;
+
+            if (d->backgroundLabel)
+                d->updateBackground(devicePixelRatioF());
+        };
+
+        connect(d->wmInter, &WMInter::WorkspaceSwitched, this, onWorkspaceSwitched);
+        connect(d->wmInter, &WMInter::serviceValidChanged, this, &CanvasGridView::onWMHasCompositeChanged);
+    }
+
+    if (!d->wmDBusIsValid() || !d->windowManagerHelper->hasComposite()) {
+        // 对象已存在时只需要更新壁纸
+        if (d->backgroundLabel) {
+            d->updateBackground(devicePixelRatioF());
+
+            return;
+        }
+
+        d->gsettings = new QGSettings("com.deepin.dde.appearance", "", this);
+        d->currentWorkspaceIndex = 0;
+        d->backgroundLabel = new QLabel(this);
+
+        d->backgroundLabel->setWindowFlags(Qt::WindowStaysOnBottomHint);
+        d->backgroundLabel->lower();
+        d->backgroundLabel->resize(size());
+
+        d->updateBackground(devicePixelRatioF());
+
+        if (isVisible()) {
+            d->backgroundLabel->show();
+        }
+
+        connect(d->gsettings, &QGSettings::changed, this, [this] (const QString &key) {
+            if (key == "backgroundUris") {
+                d->updateBackground(devicePixelRatioF());
+            }
+        });
+    } else if (d->backgroundLabel) {
+        d->gsettings->deleteLater();
+        d->backgroundLabel->deleteLater();
+        d->backgroundLabel = nullptr;
     }
 }
 
@@ -1024,7 +1065,10 @@ void CanvasGridView::resizeEvent(QResizeEvent * event)
     updateCanvas();
     // todo restore
 
-    return QAbstractItemView::resizeEvent(event);
+    if (d->backgroundLabel) {
+        d->backgroundLabel->resize(event->size());
+        d->updateBackground(devicePixelRatioF());
+    }
 }
 
 void CanvasGridView::focusInEvent(QFocusEvent *event)
@@ -1609,6 +1653,7 @@ void CanvasGridView::initUI()
 
     setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAttribute(Qt::WA_TranslucentBackground);
+    Xcb::XcbMisc::instance().set_window_type(winId(), Xcb::XcbMisc::Desktop);
 
     auto primaryScreen = Display::instance()->primaryScreen();
     setGeometry(primaryScreen->geometry());
@@ -1654,6 +1699,10 @@ void CanvasGridView::initUI()
     d->waterMaskFrame = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json", this);
     d->waterMaskFrame->lower();
     d->waterMaskFrame->updatePosition();
+
+    // for background
+    d->windowManagerHelper = DWindowManagerHelper::instance();
+    onWMHasCompositeChanged();
 }
 
 void CanvasGridView::updateGeometry(const QRect &geometry)
@@ -1896,6 +1945,8 @@ void CanvasGridView::initConnection()
     });
 
     connect(DFMApplication::instance(), &DFMApplication::previewAttributeChanged, this->model(), &DFileSystemModel::update);
+
+    connect(d->windowManagerHelper, &DWindowManagerHelper::hasCompositeChanged, this, &CanvasGridView::onWMHasCompositeChanged);
 }
 
 void CanvasGridView::updateCanvas()

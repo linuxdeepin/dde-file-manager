@@ -21,16 +21,25 @@
 #include <QLabel>
 
 #include <dfilesystemwatcher.h>
+#include <DWindowManagerHelper>
 
 #include "../../global/coorinate.h"
 #include "../../dbus/dbusdock.h"
 #include "../canvasgridview.h"
+
+#include <com_deepin_wm.h>
+#include <QGSettings>
+
+DWIDGET_USE_NAMESPACE
 
 class QFrame;
 class CanvasViewHelper;
 class WaterMaskFrame;
 class DbusDock;
 class GridCore;
+class QGSettings;
+
+using WMInter = com::deepin::wm;
 
 class CanvasViewPrivate
 {
@@ -97,6 +106,38 @@ public:
 //        qDebug() << "------------------------------";
     }
 
+    void updateBackground(const qreal ratio)
+    {
+        QString path = wmDBusIsValid() ? wmInter->GetCurrentWorkspaceBackground() : QString();
+
+        if (path.isEmpty()
+                // 调用失败时会返回 "The name com.deepin.wm was not provided by any .service files"
+                // 此时 wmInter->isValid() = true, 且 dubs last error type 为 NoError
+                || (!path.startsWith("/") && !path.startsWith("file:"))) {
+            path = gsettings->get("background-uris").toStringList().value(currentWorkspaceIndex);
+        }
+
+        path = path.startsWith("file:") ? QUrl(path).toLocalFile() : path;
+
+        QPixmap pix(path);
+
+        QScreen *s = qApp->primaryScreen();
+        const QSize trueSize = s->size() * s->devicePixelRatio();
+
+        pix = pix.scaled(trueSize,
+                         Qt::KeepAspectRatioByExpanding,
+                         Qt::SmoothTransformation);
+
+        pix = pix.copy(QRect((pix.width() - trueSize.width()) / 2.0,
+                             (pix.height() - trueSize.height()) / 2.0,
+                             trueSize.width(),
+                             trueSize.height()));
+
+        pix.setDevicePixelRatio(ratio);
+
+        backgroundLabel->setPixmap(pix);
+    }
+
     Coordinate indexCoordinate(int index)
     {
         return Coordinate(index / rowCount, index % rowCount);
@@ -111,6 +152,11 @@ public:
     {
         return (coord.position().x() >= 0 && coord.position().x() < colCount)
                && (coord.position().y() >= 0 && coord.position().y() < rowCount);
+    }
+
+    bool wmDBusIsValid() const
+    {
+        return QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm");
     }
 
 public:
@@ -160,6 +206,12 @@ public:
     WaterMaskFrame *waterMaskFrame          = nullptr;
 
     DBusDock            *dbusDock           = nullptr;
+    // background image
+    QGSettings          *gsettings          = nullptr;
+    WMInter             *wmInter            = nullptr;
+    DWindowManagerHelper* windowManagerHelper = nullptr;
+    QLabel              *backgroundLabel    = nullptr;
+    int currentWorkspaceIndex               = 0;
 
     // debug
     bool                _debug_log          = false;
