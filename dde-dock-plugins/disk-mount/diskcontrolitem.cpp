@@ -61,6 +61,7 @@ DiskControlItem::DiskControlItem(DAttachedDeviceInterface *attachedDevicePtr, QW
 
     m_diskName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     m_diskName->setStyleSheet("color:white;");
+    m_diskName->setTextFormat(Qt::PlainText);
 
     m_diskCapacity->setStyleSheet("color:rgba(255, 255, 255, .6);");
 
