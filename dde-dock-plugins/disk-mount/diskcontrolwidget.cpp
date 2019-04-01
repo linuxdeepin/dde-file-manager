@@ -331,9 +331,9 @@ void DiskControlWidget::onVolumeRemoved()
 void DiskControlWidget::unmountDisk(const QString &diskId) const
 {
     QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(diskId));
+    QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
     blDev->unmount({});
-    if (blDev->device().startsWith("/dev/sr")) { // is a DVD driver
-        QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
+    if (diskDev->optical()) { // is optical
         if (diskDev->ejectable()) {
             diskDev->eject({});
         }
