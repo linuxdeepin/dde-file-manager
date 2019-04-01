@@ -56,8 +56,8 @@ bool DFMUdisks2DeviceInfo::unmountable()
 void DFMUdisks2DeviceInfo::unmount()
 {
     blockDevice()->unmount({});
-    if (blockDevice()->device().startsWith("/dev/sr")) { // is a DVD driver
-        QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blockDevice()->drive()));
+    QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blockDevice()->drive()));
+    if (diskDev->optical()) { // is optical
         if (diskDev->ejectable()) {
             diskDev->eject({});
         }
@@ -137,7 +137,7 @@ QString DFMUdisks2DeviceInfo::iconName() const
 {
     QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blockDeviceConst()->drive()));
 
-    bool isDvd = blockDeviceConst()->device().startsWith("/dev/sr");
+    bool isDvd = diskDev->optical();
     bool isRemovable = diskDev->removable();
     QString iconName = QStringLiteral("drive-harddisk");
 

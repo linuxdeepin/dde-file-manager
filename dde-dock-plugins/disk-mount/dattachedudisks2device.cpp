@@ -58,7 +58,7 @@ void DAttachedUdisks2Device::detach()
     blockDevice()->unmount({});
     QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blockDevice()->drive()));
 
-    if (blockDevice()->device().startsWith("/dev/sr")) { // is a DVD driver
+    if (diskDev->optical()) { // is optical
         if (diskDev->ejectable()) {
             diskDev->eject({});
             return;
@@ -133,7 +133,7 @@ QString DAttachedUdisks2Device::iconName()
 {
     QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blockDevice()->drive()));
 
-    bool isDvd = blockDevice()->device().startsWith("/dev/sr");
+    bool isDvd = diskDev->optical();
     bool isRemovable = diskDev->removable();
     QString iconName = QStringLiteral("drive-harddisk");
 
