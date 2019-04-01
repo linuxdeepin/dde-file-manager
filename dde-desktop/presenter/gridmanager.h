@@ -16,6 +16,7 @@
 #include <QScopedPointer>
 
 #include "gridcore.h"
+#include "dabstractfileinfo.h"
 
 #include "../global/coorinate.h"
 #include "../global/singleton.h"
@@ -27,7 +28,7 @@ class GridManager: public QObject, public Singleton<GridManager>
     Q_OBJECT
 public:
     bool isInited() const;
-    void initProfile(const QStringList &items);
+    void initProfile(const QList<DAbstractFileInfoPointer> &items);
 
     bool add(QPoint pos, const QString &itemId);
     bool add(const QString &itemId);

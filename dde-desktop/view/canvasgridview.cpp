@@ -1218,14 +1218,10 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
         d->filesystemWatcher->deleteLater();
     }
 
-    QDir rootDir(fileUrl.toLocalFile());
-    rootDir.setFilter(model()->filters());
+    QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
+                                                                                     QStringList(), model()->filters());
 
-    QStringList items;
-    for (auto entry : rootDir.entryInfoList()) {
-        items << entry.absoluteFilePath();
-    }
-    GridManager::instance()->initProfile(items);
+    GridManager::instance()->initProfile(infoList);
 
     d->filesystemWatcher = new DFileSystemWatcher(QStringList() << fileUrl.toLocalFile());
 

@@ -103,12 +103,12 @@ public:
         clear();
     }
 
-    void loadProfile(const QStringList &localFileLis)
+    void loadProfile(const QList<DAbstractFileInfoPointer> &fileInfoList)
     {
         QMap<QString, int> existItems;
 
-        for (auto &item : localFileLis) {
-            existItems.insert(item, 0);
+        for (const DAbstractFileInfoPointer &info : fileInfoList) {
+            existItems.insert(info->absoluteFilePath(), 0);
         }
 
         auto settings = Config::instance()->settings();
@@ -485,7 +485,7 @@ bool GridManager::isInited() const
     return d->hasInited;
 }
 
-void GridManager::initProfile(const QStringList &items)
+void GridManager::initProfile(const QList<DAbstractFileInfoPointer> &items)
 {
     d->loadProfile(items);
     d->hasInited = true;
