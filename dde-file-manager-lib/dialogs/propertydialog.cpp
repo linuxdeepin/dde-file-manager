@@ -930,6 +930,11 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
 {
     QList<QPair<QString, QString> > results;
 
+    if (!info) {
+        qWarning("BUG: cannot create local device info because given device info pointer is not valid");
+        return results;
+    }
+
     QString fsType = info->getIdType();
 #ifdef QT_DEBUG
     if (!fsType.isEmpty()) {
