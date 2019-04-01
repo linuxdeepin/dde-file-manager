@@ -283,7 +283,10 @@ void DFMSideBarPrivate::initMountedVolumes()
         QString newName = query.queryItemValue("new_name");
         DUrl url = toUrl.adjusted(DUrl::RemoveQuery);
         DFMSideBarItem *item = group->findItem(url);
-        Q_CHECK_PTR(item); // should always find one
+        // item could be NULL for a labelled optical media
+        if (!item) {
+            return;
+        }
         DAbstractFileInfoPointer fileInfo = DFileService::instance()->createFileInfo(q, url);
         if (fileInfo) {
             if (!newName.isEmpty()) {
