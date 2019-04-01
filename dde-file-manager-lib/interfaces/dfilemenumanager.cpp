@@ -677,23 +677,24 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::RenameTag] = QObject::tr("Rename");
 
     // Action Icons:
-#ifdef QT_DEBUG
-    actionIcons[MenuAction::NewFolder] = QIcon::fromTheme("folder-new");
-    actionIcons[MenuAction::NewDocument] = QIcon::fromTheme("document-new");
-    actionIcons[MenuAction::OpenInNewWindow] = QIcon::fromTheme("window-new");
-    actionIcons[MenuAction::OpenInNewTab] = QIcon::fromTheme("tab-new");
-    actionIcons[MenuAction::OpenInTerminal] = QIcon::fromTheme("utilities-terminal");
-    actionIcons[MenuAction::AddToBookMark] = QIcon::fromTheme("bookmark-new");
-    actionIcons[MenuAction::BookmarkRemove] = QIcon::fromTheme("bookmark-remove");
-    actionIcons[MenuAction::Copy] = QIcon::fromTheme("edit-copy");
-    actionIcons[MenuAction::Paste] = QIcon::fromTheme("edit-paste");
-    actionIcons[MenuAction::Cut] = QIcon::fromTheme("edit-cut");
-    actionIcons[MenuAction::Rename] = QIcon::fromTheme("edit-rename");
-    actionIcons[MenuAction::Delete] = QIcon::fromTheme("edit-delete");
-    actionIcons[MenuAction::Share] = QIcon::fromTheme("document-share");
-    actionIcons[MenuAction::CreateSymlink] = QIcon::fromTheme("insert-link");
-    actionIcons[MenuAction::Property] = QIcon::fromTheme("document-properties");
-#endif // QT_DEBUG
+    if (DFMApplication::genericObtuselySetting()->value("ApplicationAttribute", "DisplayContextMenuIcon", false).toBool()) {
+        actionIcons[MenuAction::NewFolder] = QIcon::fromTheme("folder-new");
+        actionIcons[MenuAction::NewDocument] = QIcon::fromTheme("document-new");
+        actionIcons[MenuAction::OpenInNewWindow] = QIcon::fromTheme("window-new");
+        actionIcons[MenuAction::OpenInNewTab] = QIcon::fromTheme("tab-new");
+        actionIcons[MenuAction::OpenInTerminal] = QIcon::fromTheme("utilities-terminal");
+        actionIcons[MenuAction::AddToBookMark] = QIcon::fromTheme("bookmark-new");
+        actionIcons[MenuAction::BookmarkRemove] = QIcon::fromTheme("bookmark-remove");
+        actionIcons[MenuAction::Copy] = QIcon::fromTheme("edit-copy");
+        actionIcons[MenuAction::Paste] = QIcon::fromTheme("edit-paste");
+        actionIcons[MenuAction::Cut] = QIcon::fromTheme("edit-cut");
+        actionIcons[MenuAction::Rename] = QIcon::fromTheme("edit-rename");
+        actionIcons[MenuAction::Delete] = QIcon::fromTheme("edit-delete");
+        actionIcons[MenuAction::Share] = QIcon::fromTheme("document-share");
+        actionIcons[MenuAction::SelectAll] = QIcon::fromTheme("edit-select-all");
+        actionIcons[MenuAction::CreateSymlink] = QIcon::fromTheme("insert-link");
+        actionIcons[MenuAction::Property] = QIcon::fromTheme("document-properties");
+    }
 }
 
 void DFileMenuData::initActions()
