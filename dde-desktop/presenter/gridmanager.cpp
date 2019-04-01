@@ -26,7 +26,7 @@ public:
         auto settings = Config::instance()->settings();
         settings->beginGroup(Config::groupGeneral);
         positionProfile = settings->value(Config::keyProfile).toString();
-        autoArrang = settings->value(Config::keyAutoAlign).toBool();
+        autoArrange = settings->value(Config::keyAutoAlign).toBool();
         settings->endGroup();
 
         coordWidth = 0;
@@ -127,13 +127,13 @@ public:
         }
         settings->endGroup();
 
-        if (autoArrang) {
-            arrange();
-        }
-
         for (auto &item : existItems.keys()) {
             QPoint empty_pos{ takeEmptyPos() };
             add(empty_pos, item);
+        }
+
+        if (autoArrange || autoMerge) {
+            arrange();
         }
     }
 
@@ -441,7 +441,7 @@ public:
             emit Presenter::instance()->removeConfig(positionProfile, "");
             emit Presenter::instance()->setConfigList(positionProfile, keyList, valueList);
 
-            return this->autoArrang;
+            return this->autoArrange;
         }
     }
 
@@ -466,8 +466,8 @@ public:
     int                     coordWidth;
     int                     coordHeight;
 
-    bool                    autoArrang;
-    bool                    autoMarge = false;
+    bool                    autoArrange;
+    bool                    autoMerge = false;
     bool                    hasInited = false;
 
     std::atomic<bool>       m_whetherShowHiddenFiles{ false };
@@ -499,7 +499,6 @@ bool GridManager::add(const QString &id)
 #ifdef QT_DEBUG
     qDebug() << "show hidden files: " << d->getWhetherShowHiddenFiles();
 #endif //QT_DEBUG
-
     DUrl url(id);
 
     if (!d->getWhetherShowHiddenFiles()) {
@@ -605,8 +604,8 @@ bool GridManager::move(const QStringList &selecteds, const QString &current, int
         add(point, selecteds.value(i));
     }
 
-    if (d->autoArrang) {
-        reAlign();
+    if (d->autoArrange) {
+        reArrange();
     }
 
     return true;
@@ -712,26 +711,31 @@ const QStringList &GridManager::overlapItems() const
     return d->m_overlapItems;
 }
 
-bool GridManager::autoAlign()
+bool GridManager::shouldArrange() const
 {
-    return d->autoArrang;
+    return d->autoArrange || d->autoMerge;
 }
 
-void GridManager::toggleAlign()
+bool GridManager::autoArrange() const
 {
-    d->autoArrang = !d->autoArrang;
+    return d->autoArrange;
+}
 
-    if (!d->autoArrang) {
+void GridManager::toggleArrange()
+{
+    d->autoArrange = !d->autoArrange;
+
+    if (!d->autoArrange) {
         return;
     }
 
-    reAlign();
+    reArrange();
 }
 
 void GridManager::setAutoMerge(bool enable)
 {
-    if (d->autoMarge == enable) return;
-    d->autoMarge = enable;
+    if (d->autoMerge == enable) return;
+    d->autoMerge = enable;
 
     if (enable) {
         // when enable desktop merge
@@ -742,11 +746,11 @@ void GridManager::setAutoMerge(bool enable)
 
 void GridManager::toggleAutoMerge()
 {
-    setAutoMerge(!d->autoMarge);
+    setAutoMerge(!d->autoMerge);
 }
 
 
-void GridManager::reAlign()
+void GridManager::reArrange()
 {
     d->arrange();
 

@@ -19,22 +19,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ARRANGEDDESKTOPCONTROLLER_H
-#define ARRANGEDDESKTOPCONTROLLER_H
+#ifndef MERGEDDESKTOPCONTROLLER_H
+#define MERGEDDESKTOPCONTROLLER_H
 
 #include "dabstractfilecontroller.h"
 
 typedef enum {
-    DAD_PICTURE, DAD_MUSIC, DAD_APPLICATION, DAD_VIDEO, DAD_DOCUMENT, DAD_OTHER, DAD_FOLDER
-} DAD_TYPES;
+    DMD_PICTURE, DMD_MUSIC, DMD_APPLICATION, DMD_VIDEO, DMD_DOCUMENT, DMD_OTHER, DMD_FOLDER
+} DMD_TYPES;
 
 class DFileWatcher;
-class ArrangedDesktopController : public DAbstractFileController
+class MergedDesktopController : public DAbstractFileController
 {
     Q_OBJECT
 
 public:
-    explicit ArrangedDesktopController(QObject *parent = nullptr);
+    explicit MergedDesktopController(QObject *parent = nullptr);
 
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const override;
     const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const override;
@@ -45,8 +45,8 @@ public:
     DUrlList pasteFile(const QSharedPointer<DFMPasteEvent> &event) const override;
 //    bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const override;
 
-    const static QString entryNameByEnum(DAD_TYPES singleType);
-    static DAD_TYPES entryTypeByName(QString entryName);
+    const static QString entryNameByEnum(DMD_TYPES singleType);
+    static DMD_TYPES entryTypeByName(QString entryName);
 
 public slots:
     void desktopFilesCreated(const DUrl &url);
@@ -54,11 +54,11 @@ public slots:
 
 private:
     void initData() const;
-    DAD_TYPES checkUrlArrangedType(const DUrl url) const;
+    DMD_TYPES checkUrlArrangedType(const DUrl url) const;
 
     DFileWatcher* m_desktopFileWatcher;
     mutable bool dataInitialized = false;
-    mutable QMap<DAD_TYPES, QList<DUrl> > arrangedFileUrls;
+    mutable QMap<DMD_TYPES, QList<DUrl> > arrangedFileUrls;
 };
 
-#endif // ARRANGEDDESKTOPCONTROLLER_H
+#endif // MERGEDDESKTOPCONTROLLER_H

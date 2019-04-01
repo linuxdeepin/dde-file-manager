@@ -19,30 +19,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "arrangeddesktopfileinfo.h"
-#include "controllers/arrangeddesktopcontroller.h"
+#include "mergeddesktopfileinfo.h"
+#include "controllers/mergeddesktopcontroller.h"
 
 #include "private/dabstractfileinfo_p.h"
 
-class ArrangedDesktopFileInfoPrivate : public DAbstractFileInfoPrivate
+class MergedDesktopFileInfoPrivate : public DAbstractFileInfoPrivate
 {
 public:
-    ArrangedDesktopFileInfoPrivate(const DUrl &url, ArrangedDesktopFileInfo *qq)
+    MergedDesktopFileInfoPrivate(const DUrl &url, MergedDesktopFileInfo *qq)
         : DAbstractFileInfoPrivate(url, qq, true)
     {
     }
 };
 
-ArrangedDesktopFileInfo::ArrangedDesktopFileInfo(const DUrl &url)
-    : DAbstractFileInfo(*new ArrangedDesktopFileInfoPrivate(url, this))
+MergedDesktopFileInfo::MergedDesktopFileInfo(const DUrl &url)
+    : DAbstractFileInfo(*new MergedDesktopFileInfoPrivate(url, this))
 {
 
 }
 
-bool ArrangedDesktopFileInfo::isDir() const
+bool MergedDesktopFileInfo::isDir() const
 {
     QString path = fileUrl().path();
-    if (path == "/" || path == "/folder/" || path.startsWith("/entry") || path == "/arrangeddesktop/") {
+    if (path == "/" || path == "/folder/" || path.startsWith("/entry") || path == "/mergeddesktop/") {
         return true;
     }
 
@@ -50,7 +50,7 @@ bool ArrangedDesktopFileInfo::isDir() const
     return DAbstractFileInfo::isDir();
 }
 
-QString ArrangedDesktopFileInfo::fileName() const
+QString MergedDesktopFileInfo::fileName() const
 {
     QString path = fileUrl().path();
 
@@ -66,53 +66,53 @@ QString ArrangedDesktopFileInfo::fileName() const
         } else {
             return "Folder";
         }
-    } else if (path.startsWith("/arrangeddesktop/")) {
-        return "Arranged Desktop";
+    } else if (path.startsWith("/mergeddesktop/")) {
+        return "Merged Desktop";
     }
 
     return "what";
 }
 
-QString ArrangedDesktopFileInfo::iconName() const
+QString MergedDesktopFileInfo::iconName() const
 {
     if (fileUrl().path().startsWith("/entry/") && fileUrl().path() != "/entry/") {
-        switch (ArrangedDesktopController::entryTypeByName(fileName())) {
-        case DAD_APPLICATION:
+        switch (MergedDesktopController::entryTypeByName(fileName())) {
+        case DMD_APPLICATION:
             return QStringLiteral("folder-applications-stack");
-        case DAD_DOCUMENT:
+        case DMD_DOCUMENT:
             return QStringLiteral("folder-documents-stack");
-        case DAD_MUSIC:
+        case DMD_MUSIC:
             return QStringLiteral("folder-music-stack");
-        case DAD_PICTURE:
+        case DMD_PICTURE:
             return QStringLiteral("folder-images-stack");
-        case DAD_VIDEO:
+        case DMD_VIDEO:
             return QStringLiteral("folder-video-stack");
-        case DAD_OTHER:
+        case DMD_OTHER:
             return QStringLiteral("folder-stack");
         default:
-            qWarning() << "ArrangedDesktopFileInfo::iconName() no matched branch, it must be a bug!";
+            qWarning() << "MergedDesktopFileInfo::iconName() no matched branch, it must be a bug!";
         }
     }
 
     return DAbstractFileInfo::iconName();
 }
 
-bool ArrangedDesktopFileInfo::exists() const
+bool MergedDesktopFileInfo::exists() const
 {
     return true;
 }
 
-bool ArrangedDesktopFileInfo::isReadable() const
+bool MergedDesktopFileInfo::isReadable() const
 {
     return true;
 }
 
-bool ArrangedDesktopFileInfo::isWritable() const
+bool MergedDesktopFileInfo::isWritable() const
 {
     return true;
 }
 
-bool ArrangedDesktopFileInfo::canShare() const
+bool MergedDesktopFileInfo::canShare() const
 {
     return false;
 }

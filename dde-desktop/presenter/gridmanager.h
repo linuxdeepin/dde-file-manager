@@ -48,11 +48,12 @@ public:
     bool isEmpty(int x, int y);
 
     const QStringList &overlapItems() const;
-    bool autoAlign();
-    void toggleAlign();
+    bool shouldArrange() const;
+    bool autoArrange() const;
+    void toggleArrange();
     void setAutoMerge(bool enable = true);
     void toggleAutoMerge();
-    void reAlign();
+    void reArrange();
 
     QPoint forwardFindEmpty(QPoint start) const;
     QSize gridSize() const;

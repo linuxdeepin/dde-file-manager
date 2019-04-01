@@ -19,32 +19,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "arrangeddesktopcontroller.h"
+#include "mergeddesktopcontroller.h"
 
 #include "dfmevent.h"
 #include "dfilewatcher.h"
 #include "dfileservices.h"
 
-#include "models/arrangeddesktopfileinfo.h"
+#include "models/mergeddesktopfileinfo.h"
 
 #include <QList>
 #include <QStandardPaths>
 
-ArrangedDesktopController::ArrangedDesktopController(QObject *parent)
+MergedDesktopController::MergedDesktopController(QObject *parent)
     : DAbstractFileController(parent),
       m_desktopFileWatcher(new DFileWatcher(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first(), this))
 {
-    connect(m_desktopFileWatcher, &DFileWatcher::fileDeleted, this, &ArrangedDesktopController::desktopFilesRemoved);
-    connect(m_desktopFileWatcher, &DFileWatcher::subfileCreated, this, &ArrangedDesktopController::desktopFilesCreated);
+    connect(m_desktopFileWatcher, &DFileWatcher::fileDeleted, this, &MergedDesktopController::desktopFilesRemoved);
+    connect(m_desktopFileWatcher, &DFileWatcher::subfileCreated, this, &MergedDesktopController::desktopFilesCreated);
     m_desktopFileWatcher->startWatcher();
 }
 
-const DAbstractFileInfoPointer ArrangedDesktopController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
+const DAbstractFileInfoPointer MergedDesktopController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
 {
-    return DAbstractFileInfoPointer(new ArrangedDesktopFileInfo(event->url()));
+    return DAbstractFileInfoPointer(new MergedDesktopFileInfo(event->url()));
 }
 
-const QList<DAbstractFileInfoPointer> ArrangedDesktopController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
+const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
     if (!dataInitialized) {
         initData();
@@ -56,9 +56,9 @@ const QList<DAbstractFileInfoPointer> ArrangedDesktopController::getChildren(con
     QList<DAbstractFileInfoPointer> infoList;
 
     auto appendVirtualEntries = [this, &infoList]() {
-        for (int i = DAD_PICTURE; i <= DAD_OTHER; i++) {
-            DAD_TYPES oneType = static_cast<DAD_TYPES>(i);
-            DUrl url("dfmad:///entry/" + entryNameByEnum(oneType));
+        for (int i = DMD_PICTURE; i <= DMD_OTHER; i++) {
+            DMD_TYPES oneType = static_cast<DMD_TYPES>(i);
+            DUrl url(DFMMD_ROOT "entry/" + entryNameByEnum(oneType));
             DAbstractFileInfoPointer adeInfoPtr {
                 DFileService::instance()->createFileInfo(this, url)
             };
@@ -67,7 +67,7 @@ const QList<DAbstractFileInfoPointer> ArrangedDesktopController::getChildren(con
     };
 
     auto appendFolders = [this, &infoList]() {
-        for (const DUrl & url : arrangedFileUrls[DAD_FOLDER]) {
+        for (const DUrl & url : arrangedFileUrls[DMD_FOLDER]) {
             DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
             infoList.append(info);
         }
@@ -81,17 +81,17 @@ const QList<DAbstractFileInfoPointer> ArrangedDesktopController::getChildren(con
         infoList.push_back(adeEntryInfoPtr);
     };
 
-    if(currentUrl.scheme() == QStringLiteral("dfmad")) {
+    if(currentUrl.scheme() == DFMMD_SCHEME) {
         if (path == QStringLiteral("/")) {
-            makeAndInsertInfo("dfmad:///entry/");
-            makeAndInsertInfo("dfmad:///folder/");
-            makeAndInsertInfo("dfmad:///arrangeddesktop/");
+            makeAndInsertInfo(DFMMD_ROOT "entry/");
+            makeAndInsertInfo(DFMMD_ROOT "folder/");
+            makeAndInsertInfo(DFMMD_ROOT "mergeddesktop/");
         } else if (path.startsWith(QStringLiteral("/entry/"))) {
             if (path == QStringLiteral("/entry/")) {
                 appendVirtualEntries();
             } else {
                 QString entryName = path.split('/', QString::SkipEmptyParts).last();
-                DAD_TYPES entryType = entryTypeByName(entryName);
+                DMD_TYPES entryType = entryTypeByName(entryName);
                 for (const DUrl & url : arrangedFileUrls[entryType]) {
                     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
                     infoList.append(info);
@@ -99,7 +99,7 @@ const QList<DAbstractFileInfoPointer> ArrangedDesktopController::getChildren(con
             }
         } else if (path == QStringLiteral("/folder/")) {
             appendFolders();
-        } else if (path == QStringLiteral("/arrangeddesktop/")) {
+        } else if (path == QStringLiteral("/mergeddesktop/")) {
             appendVirtualEntries();
             appendFolders();
         }
@@ -108,18 +108,18 @@ const QList<DAbstractFileInfoPointer> ArrangedDesktopController::getChildren(con
     return infoList;
 }
 
-DUrlList ArrangedDesktopController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
+DUrlList MergedDesktopController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
     DUrlList urlList = event->urlList();
     for (const DUrl &url : urlList) {
-        if (url.scheme() == "dfmad") {
+        if (url.scheme() == DFMMD_SCHEME) {
             urlList.removeOne(url);
         }
     }
     return DFileService::instance()->moveToTrash(event->sender(), urlList);
 }
 
-DUrlList ArrangedDesktopController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
+DUrlList MergedDesktopController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
 {
     return DAbstractFileController::pasteFile(
                 dMakeEventPointer<DFMPasteEvent>(event->sender(), event->action(),
@@ -128,104 +128,104 @@ DUrlList ArrangedDesktopController::pasteFile(const QSharedPointer<DFMPasteEvent
                 );
 }
 
-const QString ArrangedDesktopController::entryNameByEnum(DAD_TYPES singleType)
+const QString MergedDesktopController::entryNameByEnum(DMD_TYPES singleType)
 {
     switch (singleType) {
-    case DAD_PICTURE:
+    case DMD_PICTURE:
         return tr("Pictures");
-    case DAD_MUSIC:
+    case DMD_MUSIC:
         return tr("Music");
-    case DAD_APPLICATION:
+    case DMD_APPLICATION:
         return tr("Applications");
-    case DAD_VIDEO:
+    case DMD_VIDEO:
         return tr("Videos");
-    case DAD_DOCUMENT:
+    case DMD_DOCUMENT:
         return tr("Documents");
-    case DAD_OTHER:
+    case DMD_OTHER:
         return tr("Others");
-    case DAD_FOLDER:
+    case DMD_FOLDER:
         return "Folders";
     default:
         return "Bug";
     }
 }
 
-DAD_TYPES ArrangedDesktopController::entryTypeByName(QString entryName)
+DMD_TYPES MergedDesktopController::entryTypeByName(QString entryName)
 {
     if (entryName == tr("Pictures")) {
-        return DAD_PICTURE;
+        return DMD_PICTURE;
     } else if (entryName == tr("Music")) {
-        return DAD_MUSIC;
+        return DMD_MUSIC;
     } else if (entryName == tr("Applications")) {
-        return DAD_APPLICATION;
+        return DMD_APPLICATION;
     } else if (entryName == tr("Videos")) {
-        return DAD_VIDEO;
+        return DMD_VIDEO;
     } else if (entryName == tr("Documents")) {
-        return DAD_DOCUMENT;
+        return DMD_DOCUMENT;
     } else if (entryName == tr("Others")) {
-        return DAD_OTHER;
+        return DMD_OTHER;
     }
 
-    qWarning() << "ArrangedDesktopController::entryTypeByName() cannot match a reasonable result, that can be a bug." << qPrintable(entryName);
+    qWarning() << "MergedDesktopController::entryTypeByName() cannot match a reasonable result, that can be a bug." << qPrintable(entryName);
 
-    return DAD_OTHER;
+    return DMD_OTHER;
 }
 
 
-void ArrangedDesktopController::desktopFilesCreated(const DUrl &url)
+void MergedDesktopController::desktopFilesCreated(const DUrl &url)
 {
-    DAD_TYPES typeInfo = checkUrlArrangedType(url);
+    DMD_TYPES typeInfo = checkUrlArrangedType(url);
     arrangedFileUrls[typeInfo].append(url);
-    DUrl parentUrl("dfmad:///entry/" + entryNameByEnum(typeInfo) + "/");
+    DUrl parentUrl(DFMMD_SCHEME "entry/" + entryNameByEnum(typeInfo) + "/");
     DAbstractFileWatcher::ghostSignal(parentUrl, &DAbstractFileWatcher::subfileCreated, url);
 }
 
-void ArrangedDesktopController::desktopFilesRemoved(const DUrl &url)
+void MergedDesktopController::desktopFilesRemoved(const DUrl &url)
 {
-    for (int i = DAD_PICTURE; i <= DAD_OTHER; i++) {
-        DAD_TYPES typeInfo = static_cast<DAD_TYPES>(i);
+    for (int i = DMD_PICTURE; i <= DMD_OTHER; i++) {
+        DMD_TYPES typeInfo = static_cast<DMD_TYPES>(i);
         if (arrangedFileUrls[typeInfo].removeOne(url)) {
-            DUrl parentUrl("dfmad:///entry/" + entryNameByEnum(typeInfo) + "/");
+            DUrl parentUrl(DFMMD_SCHEME "entry/" + entryNameByEnum(typeInfo) + "/");
             DAbstractFileWatcher::ghostSignal(parentUrl, &DAbstractFileWatcher::fileDeleted, url);
             return;
         }
     }
 }
 
-void ArrangedDesktopController::initData() const
+void MergedDesktopController::initData() const
 {
     QDir desktopDir(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
     const QStringList &fileList = desktopDir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot);
     for (const QString &oneFile : fileList) {
         DUrl oneUrl = DUrl::fromLocalFile(desktopDir.filePath(oneFile));
-        DAD_TYPES typeInfo = checkUrlArrangedType(oneUrl);
+        DMD_TYPES typeInfo = checkUrlArrangedType(oneUrl);
         arrangedFileUrls[typeInfo].append(oneUrl);
     }
 
     return;
 }
 
-DAD_TYPES ArrangedDesktopController::checkUrlArrangedType(const DUrl url) const
+DMD_TYPES MergedDesktopController::checkUrlArrangedType(const DUrl url) const
 {
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
     if (info) {
         QString mimetypeDisplayName = info->mimeTypeDisplayName();
         if (mimetypeDisplayName.startsWith(qApp->translate("MimeTypeDisplayManager", "Application"))) {
-            return DAD_APPLICATION;
+            return DMD_APPLICATION;
         } else if (mimetypeDisplayName.startsWith(qApp->translate("MimeTypeDisplayManager", "Image"))) {
-            return DAD_PICTURE;
+            return DMD_PICTURE;
         } else if (mimetypeDisplayName.startsWith(qApp->translate("MimeTypeDisplayManager", "Audio"))) {
-            return DAD_MUSIC;
+            return DMD_MUSIC;
         } else if (mimetypeDisplayName.startsWith(qApp->translate("MimeTypeDisplayManager", "Video"))) {
-            return DAD_VIDEO;
+            return DMD_VIDEO;
         } else if (mimetypeDisplayName.startsWith(qApp->translate("MimeTypeDisplayManager", "Text"))) {
-            return DAD_DOCUMENT;
+            return DMD_DOCUMENT;
         } else if (mimetypeDisplayName.startsWith(qApp->translate("MimeTypeDisplayManager", "Directory"))) {
-            return DAD_FOLDER;
+            return DMD_FOLDER;
         } else {
-            return DAD_OTHER;
+            return DMD_OTHER;
         }
     }
 
-    return DAD_OTHER;
+    return DMD_OTHER;
 }

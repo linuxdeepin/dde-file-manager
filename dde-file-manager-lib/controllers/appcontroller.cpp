@@ -35,7 +35,7 @@
 #include "mountcontroller.h"
 #include "bookmarkmanager.h"
 #include "networkcontroller.h"
-#include "arrangeddesktopcontroller.h"
+#include "mergeddesktopcontroller.h"
 #include "deviceinfo/udisklistener.h"
 #include "dfileservices.h"
 #include "fileoperations/filejob.h"
@@ -132,7 +132,7 @@ void AppController::registerUrlHandle()
     DFileService::dRegisterUrlHandler<TagController>(TAG_SCHEME, "");
     DFileService::dRegisterUrlHandler<RecentController>(RECENT_SCHEME, "");
 #ifdef QT_DEBUG
-    DFileService::dRegisterUrlHandler<ArrangedDesktopController>("dfmad", "");
+    DFileService::dRegisterUrlHandler<MergedDesktopController>(DFMMD_SCHEME, "");
 #endif // QT_DEBUG
 }
 

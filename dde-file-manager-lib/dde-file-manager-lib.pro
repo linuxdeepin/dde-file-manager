@@ -255,9 +255,9 @@ HEADERS += \
     views/dfmsidebarrootitem.h \
     views/dfmadvancesearchbar.h \
     shutil/dfmregularexpression.h \
-    controllers/arrangeddesktopcontroller.h \
-    models/arrangeddesktopfileinfo.h \
-    controllers/dfmadcrumbcontrooler.h
+    controllers/mergeddesktopcontroller.h \
+    models/mergeddesktopfileinfo.h \
+    controllers/dfmmdcrumbcontrooler.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -430,9 +430,9 @@ SOURCES += \
     views/dfmsidebarrootitem.cpp \
     views/dfmadvancesearchbar.cpp \
     shutil/dfmregularexpression.cpp \
-    controllers/arrangeddesktopcontroller.cpp \
-    models/arrangeddesktopfileinfo.cpp \
-    controllers/dfmadcrumbcontrooler.cpp
+    models/mergeddesktopfileinfo.cpp \
+    controllers/dfmmdcrumbcontrooler.cpp \
+    controllers/mergeddesktopcontroller.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h

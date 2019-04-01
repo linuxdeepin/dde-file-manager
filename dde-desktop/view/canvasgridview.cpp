@@ -43,7 +43,6 @@
 #include <dlistitemdelegate.h>
 #include <dfileviewhelper.h>
 #include <dfileservices.h>
-#include <dfileinfo.h>
 #include <dfilemenu.h>
 #include <dfilemenumanager.h>
 #include <dfilewatcher.h>
@@ -324,8 +323,8 @@ void CanvasGridView::updateHiddenItems()
         GridManager::instance()->remove(nonexistItem);
     }
 
-    if (GridManager::instance()->autoAlign()) {
-        GridManager::instance()->reAlign();
+    if (GridManager::instance()->shouldArrange()) {
+        GridManager::instance()->reArrange();
     }
 }
 
@@ -1190,7 +1189,7 @@ void CanvasGridView::toggleAutoMerge(bool enable)
 qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!" << enable;
     if (enable) {
         // set view, call grid manager?
-        this->setRootUrl(DUrl("dfmad:///arrangeddesktop/"));
+        this->setRootUrl(DUrl(DFMMD_ROOT "mergeddesktop/"));
     } else {
         // sa
         this->setRootUrl(DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first()));
@@ -1845,9 +1844,8 @@ void CanvasGridView::initConnection()
             setCurrentIndex(QModelIndex());
         }
 
-        if (GridManager::instance()->autoAlign()) {
-            qDebug() << "reAlign on fileDeleted";
-            GridManager::instance()->reAlign();
+        if (GridManager::instance()->shouldArrange()) {
+            GridManager::instance()->reArrange();
         }
     });
 
@@ -1872,7 +1870,7 @@ void CanvasGridView::initConnection()
             for (auto lf : list) {
                 GridManager::instance()->add(lf);
             }
-            GridManager::instance()->reAlign();
+            GridManager::instance()->reArrange();
         }
     });
 
@@ -2288,7 +2286,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     autoSort.setText(tr("Auto arrange"));
     autoSort.setData(AutoSort);
     autoSort.setCheckable(true);
-    autoSort.setChecked(GridManager::instance()->autoAlign());
+    autoSort.setChecked(GridManager::instance()->autoArrange());
     menu->insertAction(pasteAction, &autoSort);
 
     auto *propertyAction = menu->actionAt(DFileMenuManager::getActionString(MenuAction::Property));

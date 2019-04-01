@@ -19,24 +19,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "dfmadcrumbcontrooler.h"
+#include "dfmmdcrumbcontrooler.h"
 
 DFM_BEGIN_NAMESPACE
 
-DFMADCrumbControoler::DFMADCrumbControoler(QObject *parent)
+DFMMDCrumbControoler::DFMMDCrumbControoler(QObject *parent)
     : DFMCrumbInterface(parent)
 {
 
 }
 
-DFMADCrumbControoler::~DFMADCrumbControoler()
+DFMMDCrumbControoler::~DFMMDCrumbControoler()
 {
 
 }
 
-bool DFMADCrumbControoler::supportedUrl(DUrl url)
+bool DFMMDCrumbControoler::supportedUrl(DUrl url)
 {
-    return (url.scheme() == "dfmad");
+    return (url.scheme() == DFMMD_SCHEME);
 }
 
 DFM_END_NAMESPACE
