@@ -1183,6 +1183,20 @@ QSize CanvasGridView::cellSize() const
     return QSize(d->cellWidth, d->cellHeight);
 }
 
+void CanvasGridView::toggleAutoMerge(bool enable)
+{
+    if (enable == d->autoMerge) return;
+    d->autoMerge = enable;
+qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!" << enable;
+    if (enable) {
+        // set view, call grid manager?
+        this->setRootUrl(DUrl("dfmad:///arrangeddesktop/"));
+    } else {
+        // sa
+        this->setRootUrl(DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first()));
+    }
+}
+
 void CanvasGridView::openUrl(const DUrl &url)
 {
     DFileService::instance()->openFile(this, url);
@@ -2165,6 +2179,10 @@ void CanvasGridView::handleContextMenuAction(int action)
 //        DFMSocketInterface::instance()->showProperty(localFiles);
 //        break;
 //    }
+    case AutoMerge:
+        qDebug() << "do auto merge stuff.";
+        this->toggleAutoMerge(!d->autoMerge);
+        break;
     case AutoSort:
         emit autoAlignToggled();
         break;
@@ -2260,7 +2278,12 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     iconSizeAction.setData(IconSize);
     iconSizeAction.setMenu(&iconSizeMenu);
     menu->insertAction(pasteAction, &iconSizeAction);
-
+#ifdef QT_DEBUG
+    QAction autoMerge(menu);
+    autoMerge.setText(tr("Auto merge"));
+    autoMerge.setData(AutoMerge);
+    menu->insertAction(pasteAction, &autoMerge);
+#endif // QT_DEBUG
     QAction autoSort(menu);
     autoSort.setText(tr("Auto arrange"));
     autoSort.setData(AutoSort);

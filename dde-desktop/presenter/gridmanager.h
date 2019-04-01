@@ -50,6 +50,8 @@ public:
     const QStringList &overlapItems() const;
     bool autoAlign();
     void toggleAlign();
+    void setAutoMerge(bool enable = true);
+    void toggleAutoMerge();
     void reAlign();
 
     QPoint forwardFindEmpty(QPoint start) const;

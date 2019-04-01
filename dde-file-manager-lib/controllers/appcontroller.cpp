@@ -35,6 +35,7 @@
 #include "mountcontroller.h"
 #include "bookmarkmanager.h"
 #include "networkcontroller.h"
+#include "arrangeddesktopcontroller.h"
 #include "deviceinfo/udisklistener.h"
 #include "dfileservices.h"
 #include "fileoperations/filejob.h"
@@ -130,6 +131,9 @@ void AppController::registerUrlHandle()
 
     DFileService::dRegisterUrlHandler<TagController>(TAG_SCHEME, "");
     DFileService::dRegisterUrlHandler<RecentController>(RECENT_SCHEME, "");
+#ifdef QT_DEBUG
+    DFileService::dRegisterUrlHandler<ArrangedDesktopController>("dfmad", "");
+#endif // QT_DEBUG
 }
 
 void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
