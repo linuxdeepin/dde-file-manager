@@ -255,33 +255,32 @@ void Frame::adjustModeSwitcherPoint()
     m_switchModeControl->adjustSize();
 
     // 自己计算宽度，当控件未显示时无法使用layout的sizeHint
-    auto tools_layout_margins = m_toolLayout->contentsMargins();
-    int content_width = 0;
+    int tools_width = 0;
 
 #ifndef DISABLE_SCREENSAVER
     {
+        auto tools_layout_margins = m_toolLayout->contentsMargins();
         int width = m_waitControlLabel->sizeHint().width() +
                     m_waitControl->sizeHint().width() +
                     m_lockScreenBox->sizeHint().width();
 
-        if (width > content_width) {
-            content_width = width;
-        }
+        tools_width = tools_layout_margins.left() + width +
+                      m_toolLayout->count() * m_toolLayout->spacing();
     }
 #endif
 
 #ifndef DISABLE_WALLPAPER_CAROUSEL
     {
         int width = m_wallpaperCarouselCheckBox->sizeHint().width() +
-                    m_wallpaperCarouselControl->sizeHint().width();
+                    m_wallpaperCarouselControl->sizeHint().width() +
+                    m_wallpaperCarouselLayout->contentsMargins().left() +
+                    m_wallpaperCarouselControl->count() * m_wallpaperCarouselLayout->spacing();
 
-        if (width > content_width) {
-            content_width = width;
+        if (width > tools_width) {
+            tools_width = width;
         }
     }
 #endif
-    int tools_width = tools_layout_margins.left() + content_width +
-                      m_toolLayout->count() * m_toolLayout->spacing();
 
     // 防止在低分辨率情况下切换控件和左边的工具栏重叠
     if (width() / 2 < tools_width) {
