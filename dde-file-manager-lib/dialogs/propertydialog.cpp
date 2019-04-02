@@ -252,7 +252,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
     bool urlIsMountedVolume = diskInfo.isValid() && diskInfo.rootPath() == m_url.path();
     // blumia: 当前判断要显示的是不是磁盘信息的做法可能不太干净，使用 query 可能也是历史遗留问题，暂且先这样。
     //         不过把“磁盘信息”对话框和普通的“属性”对话框完全分开应该会更合理。
-    if (!query.isEmpty() || urlIsMountedVolume) {
+    if ((!query.isEmpty() && !m_url.isSearchFile()) || urlIsMountedVolume) {
         bool useQStorageInfo = false;
 
         if (urlIsMountedVolume || (diskInfo.isValid() && (diskInfo.device() == query))) {
