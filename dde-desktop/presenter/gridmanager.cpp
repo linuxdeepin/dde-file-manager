@@ -520,7 +520,7 @@ bool GridManager::add(const QString &id)
 
 bool GridManager::add(QPoint pos, const QString &id)
 {
-//    qDebug() << "add" << pos << id;
+    qDebug() << "add" << pos << id;
     auto ret = d->add(pos, id);
     if (ret) {
         d->syncProfile();
@@ -748,7 +748,6 @@ void GridManager::toggleAutoMerge()
 {
     setAutoMerge(!d->autoMerge);
 }
-
 
 void GridManager::reArrange()
 {
