@@ -1,3 +1,15 @@
+<a name="4.7.8.4"></a>
+## 4.7.8.4 (2019-04-02)
+
+
+#### Bug Fixes
+
+*   the mode switch widget overlaps with other widgets ([361f069d](https://github.com/linuxdeepin/dde-file-manager/commit/361f069d96a95f03580a777066a9226f3ed1e14f))
+*   file search view property dialog is empty (#104) ([247c231d](https://github.com/linuxdeepin/dde-file-manager/commit/247c231dbd80dd1531a4eb9ce25b7606164aa05b))
+*   avoid crash when we cannot got device info (#98) ([91b90bc3](https://github.com/linuxdeepin/dde-file-manager/commit/91b90bc32412b475ddbc63a78a665e9ca157791e))
+
+
+
 <a name="4.7.8.2"></a>
 ## 4.7.8.2 (2019-03-29)
 
