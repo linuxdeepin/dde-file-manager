@@ -52,6 +52,9 @@ public:
 
     bool loadTranslator(QList<QLocale> localeFallback = QList<QLocale>() << QLocale::system());
 
+signals:
+    void screenDevicePixelRatioChanged(QScreen *s);
+
 public slots:
     bool setSingleInstance(const QString& key);
     void handleConnection();

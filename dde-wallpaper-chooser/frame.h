@@ -45,6 +45,7 @@ class WallpaperListView;
 class ComDeepinDaemonAppearanceInterface;
 class ComDeepinScreenSaverInterface;
 class DeepinWM;
+class BackgroundHelper;
 class Frame : public DBlurEffectWidget
 {
     Q_OBJECT
@@ -108,6 +109,8 @@ private:
 
     QString m_formerWallpaper;
     QMap<QString, bool> m_deletableInfo;
+
+    BackgroundHelper *m_backgroundHelper = nullptr;
 
     void initUI();
     void initSize();
