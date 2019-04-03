@@ -39,31 +39,6 @@
 #include <QResizeEvent>
 #include <QApplication>
 
-static QPixmap ThumbnailImage(const QString &path)
-{
-    QUrl url = QUrl::fromPercentEncoding(path.toUtf8());
-    QString realPath = url.toLocalFile();
-
-    ThumbnailManager * tnm = ThumbnailManager::instance();
-
-    const qreal ratio = qApp->devicePixelRatio();
-
-    QPixmap pix = QPixmap(realPath).scaled(QSize(ItemWidth * ratio, ItemHeight * ratio),
-                                           Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
-
-    const QRect r(0, 0, ItemWidth * ratio, ItemHeight * ratio);
-    const QSize size(ItemWidth * ratio, ItemHeight * ratio);
-
-    if (pix.width() > ItemWidth * ratio || pix.height() > ItemHeight * ratio)
-        pix = pix.copy(QRect(pix.rect().center() - r.center(), size));
-
-    pix.setDevicePixelRatio(ratio);
-
-    tnm->replace(QUrl::toPercentEncoding(path), pix);
-
-    return pix;
-}
-
 class WrapperWidget : public QWidget
 {
 public:
@@ -141,13 +116,7 @@ void WallpaperItem::initAnimation()
 void WallpaperItem::initPixmap()
 {
     if (m_useThumbnailManager) {
-        ThumbnailManager *tnm = ThumbnailManager::instance();
-
-    //        if (!tnm->find(QUrl::toPercentEncoding(m_path), &m_wrapper->m_pixmap)
-    //                || m_wrapper->m_pixmap.size() != QSize(ItemWidth, ItemHeight)) {
-    //            QFuture<QPixmap> f = QtConcurrent::run(ThumbnailImage, m_path);
-    //            m_thumbnailerWatcher->setFuture(f);
-    //        }
+        ThumbnailManager *tnm = ThumbnailManager::instance(devicePixelRatioF());
 
         connect(tnm, &ThumbnailManager::thumbnailFounded, this, &WallpaperItem::onThumbnailFounded);
 

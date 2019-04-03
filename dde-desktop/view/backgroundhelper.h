@@ -34,16 +34,21 @@ class BackgroundHelper : public QObject
 {
     Q_OBJECT
 public:
-    explicit BackgroundHelper(QWidget *parent = nullptr);
+    explicit BackgroundHelper(bool preview = false, QObject *parent = nullptr);
+    ~BackgroundHelper();
 
     bool isEnabled() const;
     QLabel *backgroundForScreen(QScreen *screen) const;
     QList<QLabel*> allBackgrounds() const;
 
+    void setBackground(const QString &path);
+    void setVisible(bool visible);
+
 Q_SIGNALS:
     void aboutDestoryBackground(QLabel *l);
     void enableChanged();
     void backgroundGeometryChanged(QLabel *l);
+    void backgroundAdded(QLabel *l);
 
 private:
     bool isKWin() const;
@@ -53,6 +58,9 @@ private:
     void updateBackground();
     void onScreenAdded(QScreen *screen);
     void onScreenRemoved(QScreen *screen);
+
+    bool m_previuew = false;
+    bool m_visible = true;
 
     QGSettings          *gsettings          = nullptr;
     WMInter             *wmInter            = nullptr;

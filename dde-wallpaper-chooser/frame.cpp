@@ -29,6 +29,7 @@
 #include "dbus/deepin_wm.h"
 #include "thumbnailmanager.h"
 #include "appearance_interface.h"
+#include "backgroundhelper.h"
 
 #ifndef DISABLE_SCREENSAVER
 #include "screensaver_interface.h"
@@ -36,6 +37,7 @@
 
 #include <DThemeManager>
 #include <dsegmentedcontrol.h>
+#include <DWindowManagerHelper>
 
 #include <QApplication>
 #include <QDesktopWidget>
@@ -51,6 +53,15 @@
 #define LOCK_SCREEN_BUTTON_ID "lock-screen"
 #define SCREENSAVER_BUTTON_ID "screensaver"
 
+static bool previewBackground()
+{
+    if (DWindowManagerHelper::instance()->windowManagerName() == DWindowManagerHelper::DeepinWM)
+        return false;
+
+    return DWindowManagerHelper::instance()->windowManagerName() == DWindowManagerHelper::KWinWM
+            || !DWindowManagerHelper::instance()->hasBlurWindow();
+}
+
 Frame::Frame(QFrame *parent)
     : DBlurEffectWidget(parent),
       m_wallpaperList(new WallpaperList(this)),
@@ -61,12 +72,12 @@ Frame::Frame(QFrame *parent)
                                                               AppearancePath,
                                                               QDBusConnection::sessionBus(),
                                                               this)),
-      m_dbusDeepinWM(new DeepinWM(DeepinWMServ,
-                                  DeepinWMPath,
-                                  QDBusConnection::sessionBus(),
-                                  this)),
       m_mouseArea(new DRegionMonitor(this))
 {
+    // 截止到dtkwidget 2.0.10版本，在多个屏幕设置不同缩放比时
+    // DRegionMonitor 计算的缩放后的坐标可能是错误的
+    m_mouseArea->setCoordinateType(DRegionMonitor::Original);
+
     setFocusPolicy(Qt::StrongFocus);
     setWindowFlags(Qt::BypassWindowManagerHint | Qt::WindowStaysOnTopHint);
     setAttribute(Qt::WA_TranslucentBackground);
@@ -85,7 +96,15 @@ Frame::Frame(QFrame *parent)
         } else {
             qDebug() << "button pressed on blank area, quit.";
 
-            if (!rect().contains(p.x() - this->x(), p.y() - this->y())) {
+            qreal scale = devicePixelRatioF();
+            const QRect sRect = this->windowHandle()->screen()->geometry();
+            QRect nativeRect = geometry();
+
+            // 获取窗口真实的geometry
+            nativeRect.setTopLeft((nativeRect.topLeft() - sRect.topLeft()) * scale + sRect.topLeft());
+            nativeRect.setSize(nativeRect.size() * scale);
+
+            if (!nativeRect.contains(p)) {
                 hide();
             }
         }
@@ -107,7 +126,33 @@ Frame::~Frame()
 
 void Frame::show()
 {
-    m_dbusDeepinWM->RequestHideWindows();
+    if (previewBackground()) {
+        if (m_dbusDeepinWM) {
+            // 销毁不需要的资源
+            m_dbusDeepinWM->deleteLater();
+            m_dbusDeepinWM = nullptr;
+        }
+
+        if (!m_backgroundHelper) {
+            m_backgroundHelper = new BackgroundHelper(true, this);
+            // 防止壁纸设置窗口被背景窗口覆盖
+            connect(m_backgroundHelper, &BackgroundHelper::backgroundAdded, this, &Frame::activateWindow);
+        }
+    } else if (!m_dbusDeepinWM) {
+        if (m_backgroundHelper) {
+            // 销毁不需要的资源
+            m_backgroundHelper->deleteLater();
+            m_backgroundHelper = nullptr;
+        }
+
+        m_dbusDeepinWM = new DeepinWM(DeepinWMServ,
+                                      DeepinWMPath,
+                                      QDBusConnection::sessionBus(),
+                                      this);
+    }
+
+    if (m_dbusDeepinWM)
+        m_dbusDeepinWM->RequestHideWindows();
 
     m_mouseArea->registerRegion();
 
@@ -149,19 +194,20 @@ void Frame::hideEvent(QHideEvent *event)
 {
     DBlurEffectWidget::hideEvent(event);
 
-    m_dbusDeepinWM->CancelHideWindows();
+    if (m_dbusDeepinWM)
+        m_dbusDeepinWM->CancelHideWindows();
     m_mouseArea->unregisterRegion();
 
     if (m_mode == WallpaperMode) {
         if (!m_desktopWallpaper.isEmpty())
             m_dbusAppearance->Set("background", m_desktopWallpaper);
-        else
+        else if (m_dbusDeepinWM)
             m_dbusDeepinWM->SetTransientBackground("");
 
         if (!m_lockWallpaper.isEmpty())
             m_dbusAppearance->Set("greeterbackground", m_lockWallpaper);
 
-        ThumbnailManager *manager = ThumbnailManager::instance();
+        ThumbnailManager *manager = ThumbnailManager::instance(devicePixelRatioF());
         manager->stop();
     }
 #ifndef DISABLE_SCREENSAVER
@@ -169,6 +215,17 @@ void Frame::hideEvent(QHideEvent *event)
         m_dbusScreenSaver->Stop();
     }
 #endif
+
+    // 销毁资源
+    if (m_dbusDeepinWM) {
+        m_dbusDeepinWM->deleteLater();
+        m_dbusDeepinWM = nullptr;
+    }
+
+    if (m_backgroundHelper) {
+        m_backgroundHelper->deleteLater();
+        m_backgroundHelper = nullptr;
+    }
 
     emit done();
 }
@@ -213,6 +270,10 @@ void Frame::setMode(int mode)
         return;
 
     if (m_mode == ScreenSaverMode) {
+        if (m_backgroundHelper) {
+            m_backgroundHelper->setVisible(true);
+        }
+
         m_dbusScreenSaver->Stop();
     }
 
@@ -576,13 +637,23 @@ void Frame::refreshList()
 void Frame::onItemPressed(const QString &data)
 {
     if (m_mode == WallpaperMode) {
-        m_dbusDeepinWM->SetTransientBackground(data);
+        if (m_dbusDeepinWM)
+            m_dbusDeepinWM->SetTransientBackground(data);
+
+        if (m_backgroundHelper)
+            m_backgroundHelper->setBackground(data);
+
         m_desktopWallpaper = data;
         m_lockWallpaper = data;
     }
 #ifndef DISABLE_SCREENSAVER
     else if (m_mode == ScreenSaverMode) {
-        m_dbusScreenSaver->Preview(data, 0);
+        // 防止壁纸背景盖住屏保预览窗口
+        if (m_backgroundHelper) {
+            m_backgroundHelper->setVisible(false);
+        }
+
+        m_dbusScreenSaver->Preview(data, 1);
     }
 #endif
 }

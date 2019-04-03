@@ -13,6 +13,8 @@ HEADERS  += $$PWD/frame.h \
     $$PWD/button.h \
     $$PWD/dbus/deepin_wm.h
 
+INCLUDEPATH += $$_PRO_FILE_PWD_/view
+
 RESOURCES += \
     $$PWD/images.qrc
 

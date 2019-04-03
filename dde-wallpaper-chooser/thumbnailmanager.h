@@ -34,7 +34,7 @@ class ThumbnailManager : public QObject
 {
     Q_OBJECT
 public:
-    ThumbnailManager();
+    ThumbnailManager(qreal scale);
 
     void clear();
     void find(const QString & key);
@@ -42,8 +42,9 @@ public:
     bool replace(const QString & key, const QPixmap & pixmap);
 
     void stop();
+    qreal scale() const;
 
-    static ThumbnailManager * instance();
+    static ThumbnailManager * instance(qreal scale);
 
 signals:
     void thumbnailFounded(const QString &key, const QPixmap &pixmap);
@@ -58,6 +59,7 @@ private:
     QQueue<QString> m_queuedRequests;
     QString m_cacheDir;
     QFutureWatcher<QPixmap> m_futureWatcher;
+    qreal m_scale;
 };
 
 #endif // THUMBNAILMANAGER_H
