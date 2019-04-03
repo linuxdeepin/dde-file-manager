@@ -62,6 +62,11 @@
 #define DEVICE_ROOT "device:///"
 #define MOUNT_ROOT "mount:///"
 
+// internal scheme, don't rely on this scheme outside the file manager app.
+#define DFMMD_SCHEME "dfmmd"
+#define DFMMD_ROOT "dfmmd:///"
+// internal scheme end.
+
 class DUrl;
 
 QT_BEGIN_NAMESPACE
