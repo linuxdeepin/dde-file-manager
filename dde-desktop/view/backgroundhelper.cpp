@@ -24,21 +24,33 @@
 #include <QScreen>
 #include <QGuiApplication>
 
-BackgroundHelper::BackgroundHelper(QWidget *parent)
+BackgroundHelper::BackgroundHelper(bool preview, QObject *parent)
     : QObject(parent)
+    , m_previuew(preview)
     , windowManagerHelper(DWindowManagerHelper::instance())
 {
-    connect(windowManagerHelper, &DWindowManagerHelper::windowManagerChanged,
-            this, &BackgroundHelper::onWMChanged);
-    connect(windowManagerHelper, &DWindowManagerHelper::hasCompositeChanged,
-            this, &BackgroundHelper::onWMChanged);
+    if (!preview) {
+        connect(windowManagerHelper, &DWindowManagerHelper::windowManagerChanged,
+                this, &BackgroundHelper::onWMChanged);
+        connect(windowManagerHelper, &DWindowManagerHelper::hasCompositeChanged,
+                this, &BackgroundHelper::onWMChanged);
+    }
 
     onWMChanged();
 }
 
+BackgroundHelper::~BackgroundHelper()
+{
+    for (QLabel *l : backgroundMap) {
+        l->hide();
+        l->deleteLater();
+    }
+}
+
 bool BackgroundHelper::isEnabled() const
 {
-    return windowManagerHelper->windowManagerName() != DWindowManagerHelper::OtherWM || !windowManagerHelper->hasComposite();
+    // 只支持kwin，或未开启混成的桌面环境
+    return windowManagerHelper->windowManagerName() == DWindowManagerHelper::KWinWM || !windowManagerHelper->hasComposite();
 }
 
 QLabel *BackgroundHelper::backgroundForScreen(QScreen *screen) const
@@ -49,6 +61,26 @@ QLabel *BackgroundHelper::backgroundForScreen(QScreen *screen) const
 QList<QLabel *> BackgroundHelper::allBackgrounds() const
 {
     return backgroundMap.values();
+}
+
+void BackgroundHelper::setBackground(const QString &path)
+{
+    currentWallpaper = path.startsWith("file:") ? QUrl(path).toLocalFile() : path;
+    backgroundPixmap = QPixmap(currentWallpaper);
+
+    // 更新背景图
+    for (QLabel *l : backgroundMap) {
+        updateBackground(l);
+    }
+}
+
+void BackgroundHelper::setVisible(bool visible)
+{
+    m_visible = visible;
+
+    for (QLabel *l : backgroundMap) {
+        l->setVisible(visible);
+    }
 }
 
 bool BackgroundHelper::isKWin() const
@@ -68,25 +100,26 @@ static bool wmDBusIsValid()
 
 void BackgroundHelper::onWMChanged()
 {
-    if (isEnabled()) {
+    if (m_previuew || isEnabled()) {
         if (wmInter) {
             return;
         }
 
         wmInter = new WMInter("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this);
-
-        connect(wmInter, &WMInter::WorkspaceSwitched, this, [this] (int, int to) {
-            currentWorkspaceIndex = to;
-            updateBackground();
-        });
-
         gsettings = new QGSettings("com.deepin.dde.appearance", "", this);
 
-        connect(gsettings, &QGSettings::changed, this, [this] (const QString &key) {
-            if (key == "backgroundUris") {
+        if (!m_previuew) {
+            connect(wmInter, &WMInter::WorkspaceSwitched, this, [this] (int, int to) {
+                currentWorkspaceIndex = to;
                 updateBackground();
-            }
-        });
+            });
+
+            connect(gsettings, &QGSettings::changed, this, [this] (const QString &key) {
+                if (key == "backgroundUris") {
+                    updateBackground();
+                }
+            });
+        }
 
         connect(qApp, &QGuiApplication::screenAdded, this, &BackgroundHelper::onScreenAdded);
         connect(qApp, &QGuiApplication::screenRemoved, this, &BackgroundHelper::onScreenRemoved);
@@ -162,13 +195,7 @@ void BackgroundHelper::updateBackground()
             return;
     }
 
-    currentWallpaper = path.startsWith("file:") ? QUrl(path).toLocalFile() : path;
-    backgroundPixmap = QPixmap(currentWallpaper);
-
-    // 更新背景图
-    for (QLabel *l : backgroundMap) {
-        updateBackground(l);
-    }
+    setBackground(path);
 }
 
 void BackgroundHelper::onScreenAdded(QScreen *screen)
@@ -181,9 +208,14 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
     l->windowHandle()->setScreen(screen);
     l->setGeometry(screen->geometry());
 
-    Xcb::XcbMisc::instance().set_window_type(l->winId(), Xcb::XcbMisc::Desktop);
+    if (m_previuew) {
+        l->setWindowFlags(l->windowFlags() | Qt::BypassWindowManagerHint | Qt::WindowDoesNotAcceptFocus);
+    } else {
+        Xcb::XcbMisc::instance().set_window_type(l->winId(), Xcb::XcbMisc::Desktop);
+    }
 
-    l->show();
+    if (m_visible)
+        l->show();
 
     connect(screen, &QScreen::geometryChanged, l, [l, this] (const QRect &geo) {
         l->setGeometry(geo);
@@ -196,6 +228,7 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
     updateBackground(l);
 
     Q_EMIT backgroundGeometryChanged(l);
+    Q_EMIT backgroundAdded(l);
 }
 
 void BackgroundHelper::onScreenRemoved(QScreen *screen)

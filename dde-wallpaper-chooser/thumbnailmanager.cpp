@@ -34,14 +34,14 @@
 #include <QtConcurrent>
 #include <QImageReader>
 
-static QPixmap ThumbnailImage(const QString &path)
+static QPixmap ThumbnailImage(const QString &path, qreal scale)
 {
     QUrl url = QUrl::fromPercentEncoding(path.toUtf8());
     QString realPath = url.toLocalFile();
 
-    ThumbnailManager * tnm = ThumbnailManager::instance();
+    ThumbnailManager * tnm = ThumbnailManager::instance(scale);
 
-    const qreal ratio = qApp->devicePixelRatio();
+    const qreal ratio = scale;
 
     QImageReader imageReader(realPath);
     imageReader.setDecideFormatFromContent(true);
@@ -63,18 +63,17 @@ static QPixmap ThumbnailImage(const QString &path)
     return pix;
 }
 
-ThumbnailManager::ThumbnailManager() :
-    QObject(NULL)
+ThumbnailManager::ThumbnailManager(qreal scale)
+    : QObject(NULL)
+    , m_scale(scale)
 {
     const QString cacheDir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
-    m_cacheDir = cacheDir + QDir::separator() + qApp->applicationVersion() + QDir::separator() + QString::number(qApp->devicePixelRatio());
+    m_cacheDir = cacheDir + QDir::separator() + qApp->applicationVersion() + QDir::separator() + QString::number(scale);
 
     connect(&m_futureWatcher, &QFutureWatcher<QPixmap>::finished, this, &ThumbnailManager::onProcessFinished, Qt::QueuedConnection);
 
     QDir::root().mkpath(m_cacheDir);
 }
-
-Q_GLOBAL_STATIC(ThumbnailManager, ThumbnailManagerInstance)
 
 void ThumbnailManager::clear()
 {
@@ -124,9 +123,21 @@ void ThumbnailManager::stop()
     m_queuedRequests.clear();
 }
 
-ThumbnailManager *ThumbnailManager::instance()
+qreal ThumbnailManager::scale() const
 {
-    return ThumbnailManagerInstance;
+    return m_scale;
+}
+
+ThumbnailManager *ThumbnailManager::instance(qreal scale)
+{
+    static ThumbnailManager *manager = new ThumbnailManager(scale);
+
+    if (qFuzzyCompare(manager->scale(), scale)) {
+        manager->deleteLater();
+        manager = new ThumbnailManager(scale);
+    }
+
+    return manager;
 }
 
 void ThumbnailManager::processNextReq()
@@ -135,7 +146,7 @@ void ThumbnailManager::processNextReq()
 
     const QString &item = m_queuedRequests.front();
 
-    QFuture<QPixmap> future = QtConcurrent::run(ThumbnailImage, item);
+    QFuture<QPixmap> future = QtConcurrent::run(ThumbnailImage, item, m_scale);
     m_futureWatcher.setFuture(future);
 }
 
