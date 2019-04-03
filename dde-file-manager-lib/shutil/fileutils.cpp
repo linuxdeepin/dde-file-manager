@@ -803,11 +803,18 @@ bool FileUtils::isExecutableScript(const QString &path)
     QFileInfo info(path);
     QString mimetype = getFileMimetype(path);
     qDebug() << info.isSymLink() << mimetype;
+
+    if (info.size() == 0) {
+        return false;
+    }
+
     if (info.isSymLink()){
         _path = QFile(path).symLinkTarget();
         mimetype = getFileMimetype(path);
     }
 
+    // blumia: it's not a good idea to check if it is a executable script by just checking
+    //         mimetype.startsWith("text/"), should be fixed later.
     if (mimetype.startsWith("text/") ||
             (mimetype == "application/x-shellscript")) {
         return isFileExecutable(_path);
