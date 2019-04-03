@@ -340,8 +340,16 @@ bool DFileViewHelper::isCut(const QModelIndex &index) const
         return false;
     }
     DUrl fileUrl = fileInfo->fileUrl();
+
     if (fileInfo->fileUrl().isSearchFile()) {
         fileUrl = fileInfo->fileUrl().searchedFileUrl();
+    }
+
+    //temporary hack to make files staging for burning transparent
+    DUrl burntemp = DUrl(QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/diskburn/");
+    burntemp.setScheme(FILE_SCHEME);
+    if (burntemp.isParentOf(fileUrl)) {
+        return true;
     }
 
     return DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction

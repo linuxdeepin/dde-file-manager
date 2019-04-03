@@ -56,14 +56,14 @@ public:
 public slots:
     void actionOpen(const QSharedPointer<DFMUrlListBaseEvent>& event);
     void actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event);
-    void asycOpenDisk(const QString& path);
+    void asyncOpenDisk(const QString& path);
 
     void actionOpenInNewWindow(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionOpenInNewTab(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionOpenDiskInNewTab(const QSharedPointer<DFMUrlBaseEvent> &event);
-    void asycOpenDiskInNewTab(const QString& path);
+    void asyncOpenDiskInNewTab(const QString& path);
     void actionOpenDiskInNewWindow(const QSharedPointer<DFMUrlBaseEvent> &event);
-    void asycOpenDiskInNewWindow(const QString& path);
+    void asyncOpenDiskInNewWindow(const QString& path);
     void actionOpenAsAdmin(const QSharedPointer<DFMUrlBaseEvent> &event);
 
     void actionOpenWithCustom(const QSharedPointer<DFMUrlBaseEvent> &event);

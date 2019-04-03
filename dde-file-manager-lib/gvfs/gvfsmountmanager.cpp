@@ -43,6 +43,9 @@
 #include "networkmanager.h"
 #include "dfmapplication.h"
 #include "dabstractfilewatcher.h"
+#include "ddiskmanager.h"
+#include "dblockdevice.h"
+#include "ddiskdevice.h"
 
 #include <QThread>
 #include <QApplication>
