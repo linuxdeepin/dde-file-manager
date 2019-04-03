@@ -106,7 +106,7 @@ CanvasGridView::~CanvasGridView()
 QRect CanvasGridView::visualRect(const QModelIndex &index) const
 {
     auto url = model()->getUrlByIndex(index);
-    auto gridPos = GridManager::instance()->position(url.toLocalFile());
+    auto gridPos = GridManager::instance()->position(url.toString());
 
     auto x = gridPos.x() * d->cellWidth + d->viewMargins.left();
     auto y = gridPos.y() * d->cellHeight + d->viewMargins.top();
@@ -117,7 +117,7 @@ QModelIndex CanvasGridView::indexAt(const QPoint &point) const
 {
     auto gridPos = gridAt(point);
     auto localFile =  GridManager::instance()->itemId(gridPos.x(), gridPos.y());
-    auto rowIndex = model()->index(DUrl::fromLocalFile(localFile));
+    auto rowIndex = model()->index(DUrl(localFile));
     QPoint pos = QPoint(point.x() + horizontalOffset(), point.y() + verticalOffset());
     auto list = itemPaintGeomertys(rowIndex);
 
@@ -187,7 +187,7 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
         return headIndex;
     }
     auto url = model()->getUrlByIndex(current);
-    auto pos = GridManager::instance()->position(url.toLocalFile());
+    auto pos = GridManager::instance()->position(url.toString());
     auto newCoord = Coordinate(pos);
 
     switch (cursorAction) {
@@ -250,7 +250,7 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
                 }
                 if (!GridManager::instance()->isEmpty(pos.x(), pos.y())) {
                     auto localFile = GridManager::instance()->itemId(pos.x(), pos.y());
-                    auto index = model()->index(DUrl::fromLocalFile(localFile));
+                    auto index = model()->index(DUrl(localFile));
 
                     QItemSelectionRange selectionRange(index);
                     selection.push_back(selectionRange);
@@ -273,7 +273,7 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
                 }
                 if (!GridManager::instance()->isEmpty(pos.x(), pos.y())) {
                     auto localFile = GridManager::instance()->itemId(pos.x(), pos.y());
-                    auto index = model()->index(DUrl::fromLocalFile(localFile));
+                    auto index = model()->index(DUrl(localFile));
 
                     QItemSelectionRange selectionRange(index);
                     selection.push_back(selectionRange);
@@ -291,7 +291,7 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
     }
 
     auto localFile =  GridManager::instance()->itemId(pos.x(), pos.y());
-    auto newIndex = model()->index(DUrl::fromLocalFile(localFile));
+    auto newIndex = model()->index(DUrl(localFile));
     if (newIndex.isValid()) {
         return newIndex;
     }
@@ -302,6 +302,10 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
 
 void CanvasGridView::updateHiddenItems()
 {
+    if (!currentUrl().isLocalFile()) {
+        return;
+    }
+
     QDir rootDir(currentUrl().toLocalFile());
     rootDir.setFilter(model()->filters());
 
@@ -572,7 +576,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             QStringList urls = GridManager::instance()->itemIds();
             DUrlList entryUrls;
             foreach (QString url, urls) {
-                entryUrls << DUrl::fromLocalFile(url);
+                entryUrls << DUrl(url);
             }
             DFMGlobal::showFilePreviewDialog(selectUrls, entryUrls);
         }
@@ -757,7 +761,8 @@ void CanvasGridView::dropEvent(QDropEvent *event)
         if (targetIndex == index) {
             dropOnSelf = true;
         }
-        selectLocalFiles << info->fileUrl().toLocalFile();
+
+        selectLocalFiles << info->fileUrl().toString();
     }
 
     DAbstractFileInfoPointer targetInfo = model()->fileInfo(indexAt(event->pos()));
@@ -795,7 +800,7 @@ void CanvasGridView::dropEvent(QDropEvent *event)
                 auto point = event->pos();
                 auto row = (point.x() - d->viewMargins.left()) / d->cellWidth;
                 auto col = (point.y() - d->viewMargins.top()) / d->cellHeight;
-                auto current = model()->fileInfo(d->currentCursorIndex)->fileUrl().toLocalFile();
+                auto current = model()->fileInfo(d->currentCursorIndex)->fileUrl().toString();
                 GridManager::instance()->move(selectLocalFiles, current, row, col);
                 setState(NoState);
                 itemDelegate()->hideNotEditingIndexWidget();
@@ -895,7 +900,7 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
         auto url = model()->getUrlByIndex(hoverIndex);
 
         if (selecteds.contains(url)
-                || (d->dodgeAnimationing && d->dodgeItems.contains(url.toLocalFile()))) {
+                || (d->dodgeAnimationing && d->dodgeItems.contains(url.toString()))) {
 
         } else {
             if (hoverIndex.isValid() && hoverIndex != d->currentCursorIndex) {
@@ -928,7 +933,7 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
 
 //    int drawCount = 0;
     for (auto &localFile : repaintLocalFiles) {
-        auto url = DUrl::fromLocalFile(localFile);
+        auto url = DUrl(localFile);
         // hide selected if draw animation
         if ((d->dodgeAnimationing || d->startDodge) && selecteds.contains(url)) {
 //            qDebug() << "skip drag select" << url;
@@ -1005,7 +1010,7 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
     if (d->dodgeAnimationing) {
         for (auto animatingItem : d->dodgeItems) {
             auto localFile = animatingItem;
-            auto index = model()->index(DUrl::fromLocalFile(localFile));
+            auto index = model()->index(DUrl(localFile));
             if (index.isValid()) {
                 option.rect = visualRect(index).marginsRemoved(d->cellMargins);
             }
@@ -1695,7 +1700,7 @@ void CanvasGridView::initConnection()
         this, [ = ]() {
             auto selecteds = selectedUrls();
             for (auto relocateItem : selecteds) {
-                auto localFile = relocateItem.toLocalFile();
+                auto localFile = relocateItem.toString();
                 GridManager::instance()->remove(localFile);
             }
 
@@ -1707,7 +1712,7 @@ void CanvasGridView::initConnection()
             }
 
             for (auto relocateItem : selecteds) {
-                auto localFile = relocateItem.toLocalFile();
+                auto localFile = relocateItem.toString();
                 GridManager::instance()->add(d->dodgeTargetGrid->pos(localFile), localFile);
             }
             d->dodgeAnimationing = false;
@@ -1730,7 +1735,7 @@ void CanvasGridView::initConnection()
         auto targetIndex = grid->toIndex(d->dragTargetGrid);
 
         for (auto sel : selURLs) {
-            auto localFile = sel.toLocalFile();
+            auto localFile = sel.toString();
             selLocalFiles << localFile;
             auto pos = grid->pos(localFile);
             auto index = grid->toIndex(pos);
@@ -1798,7 +1803,7 @@ void CanvasGridView::initConnection()
 
     connect(this->model(), &DFileSystemModel::newFileByInternal,
     this, [ = ](const DUrl & fileUrl) {
-        auto localFile = fileUrl.toLocalFile();
+        auto localFile = fileUrl.toString();
         auto gridPos = gridAt(d->lastMenuPos);
 
         if (d->lastMenuNewFilepath == localFile) {
@@ -1847,7 +1852,7 @@ void CanvasGridView::initConnection()
             QStringList list;
             for (int i = 0; i < model()->rowCount(); ++i) {
                 auto index = model()->index(i, 0);
-                auto localFile = model()->getUrlByIndex(index).toLocalFile();
+                auto localFile = model()->getUrlByIndex(index).toString();
                 list << localFile;
             }
             for (auto lf : list) {
@@ -2031,13 +2036,13 @@ inline QRect CanvasGridView::itemIconGeomerty(const QModelIndex &index) const
 inline QModelIndex CanvasGridView::firstIndex()
 {
     auto localFile = GridManager::instance()->firstItemId();
-    return model()->index(DUrl::fromLocalFile(localFile));
+    return model()->index(DUrl(localFile));
 }
 
 inline QModelIndex CanvasGridView::lastIndex()
 {
     auto localFile = GridManager::instance()->lastItemId();
-    return model()->index(DUrl::fromLocalFile(localFile));
+    return model()->index(DUrl(localFile));
 }
 
 void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command, bool byIconRect)
@@ -2094,7 +2099,7 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
             if (localFile.isEmpty()) {
                 continue;
             }
-            auto index = model()->index(DUrl::fromLocalFile(localFile));
+            auto index = model()->index(DUrl(localFile));
             auto list = QList<QRect>() << itemPaintGeomertys(index);
             for (const QRect &r : list) {
                 if (selectRect.intersects(r)) {

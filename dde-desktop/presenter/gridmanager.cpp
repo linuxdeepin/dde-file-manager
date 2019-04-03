@@ -13,8 +13,8 @@
 #include <QRect>
 #include <QDebug>
 
-#include "dfileinfo.h"
 #include "apppresenter.h"
+#include "dfileservices.h"
 #include "../config/config.h"
 
 class GridManagerPrivate
@@ -108,7 +108,7 @@ public:
         QMap<QString, int> existItems;
 
         for (const DAbstractFileInfoPointer &info : fileInfoList) {
-            existItems.insert(info->absoluteFilePath(), 0);
+            existItems.insert(info->fileUrl().toString(), 0);
         }
 
         auto settings = Config::instance()->settings();
@@ -487,6 +487,7 @@ bool GridManager::isInited() const
 
 void GridManager::initProfile(const QList<DAbstractFileInfoPointer> &items)
 {
+    d->createProfile();
     d->loadProfile(items);
     d->hasInited = true;
 }
@@ -497,10 +498,12 @@ bool GridManager::add(const QString &id)
     qDebug() << "show hidden files: " << d->getWhetherShowHiddenFiles();
 #endif //QT_DEBUG
 
-    if (!d->getWhetherShowHiddenFiles()) {
-        DFileInfo file_info{ id, false };
+    DUrl url(id);
 
-        if (file_info.isHidden()) {
+    if (!d->getWhetherShowHiddenFiles()) {
+        const DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
+
+        if (info->isHidden()) {
             return false;
         }
     }
@@ -724,7 +727,7 @@ void GridManager::toggleAlign()
 }
 
 
-void GridManager:: reAlign()
+void GridManager::reAlign()
 {
     d->arrange();
 
