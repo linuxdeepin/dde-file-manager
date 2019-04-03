@@ -39,6 +39,7 @@
 #include "dfmsettings.h"
 #include "ddiskmanager.h"
 #include "dblockdevice.h"
+#include "ddiskdevice.h"
 
 #include <QIcon>
 
@@ -461,7 +462,19 @@ bool UDiskDeviceInfo::canRedirectionFileUrl() const
 
 DUrl UDiskDeviceInfo::redirectedFileUrl() const
 {
-    return getMountPointUrl();
+    DUrl ret = getMountPointUrl();
+
+    // boss pineapple lets me stick with udisks2-qt, so here you go
+    QString dbuspath = m_diskInfo.unix_device();
+    dbuspath.replace("/dev/","/org/freedesktop/UDisks2/block_devices/");
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dbuspath));
+    QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+    if (drive->optical()) {
+        ret = DUrl(m_diskInfo.unix_device() + "/disk_files/");
+        ret.setScheme(BURN_SCHEME);
+    }
+
+    return ret;
 }
 
 QVariantHash UDiskDeviceInfo::extraProperties() const

@@ -259,7 +259,10 @@ HEADERS += \
     controllers/mergeddesktopcontroller.h \
     models/mergeddesktopfileinfo.h \
     controllers/dfmmdcrumbcontrooler.h \
-    interfaces/private/mergeddesktop_common_p.h
+    interfaces/private/mergeddesktop_common_p.h \
+    controllers/masteredmediacontroller.h \
+    controllers/dfmmasteredmediacrumbcontroller.h \
+    models/masteredmediafileinfo.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -434,7 +437,10 @@ SOURCES += \
     shutil/dfmregularexpression.cpp \
     models/mergeddesktopfileinfo.cpp \
     controllers/dfmmdcrumbcontrooler.cpp \
-    controllers/mergeddesktopcontroller.cpp
+    controllers/mergeddesktopcontroller.cpp \
+    controllers/masteredmediacontroller.cpp \
+    controllers/dfmmasteredmediacrumbcontroller.cpp \
+    models/masteredmediafileinfo.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h
