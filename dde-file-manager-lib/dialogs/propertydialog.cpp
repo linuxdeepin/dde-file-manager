@@ -327,7 +327,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
             if (fileInfo->canShare()) {
                 titleList << shareManager;
             }
-            if (!m_url.isTrashFile()) {
+            if (!fileInfo->isVirtualEntry() && !m_url.isTrashFile()) {
                 titleList << authManager;
             }
         }
@@ -838,7 +838,10 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     } else {
         layout->addRow(sizeSectionLabel, m_containSizeLabel);
     }
-    layout->addRow(typeSectionLabel, typeLabel);
+
+    if (!info->isVirtualEntry()) {
+        layout->addRow(typeSectionLabel, typeLabel);
+    }
 
     if (info->isSymLink()) {
         SectionKeyLabel *linkPathSectionLabel = new SectionKeyLabel(QObject::tr("Link path"));
@@ -852,8 +855,11 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         linkPathLabel->setText(t);
         layout->addRow(linkPathSectionLabel, linkPathLabel);
     }
-    layout->addRow(TimeCreatedSectionLabel, timeCreatedLabel);
-    layout->addRow(TimeModifiedSectionLabel, timeModifiedLabel);
+
+    if (!info->isVirtualEntry()) {
+        layout->addRow(TimeCreatedSectionLabel, timeCreatedLabel);
+        layout->addRow(TimeModifiedSectionLabel, timeModifiedLabel);
+    }
 
     if (info->fileUrl().isTrashFile()) {
         QString pathStr = static_cast<const TrashFileInfo *>(info.constData())->sourceFilePath();

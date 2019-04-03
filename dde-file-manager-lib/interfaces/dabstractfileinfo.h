@@ -182,6 +182,7 @@ public:
     virtual bool isDir() const;
     virtual bool isSymLink() const;
     virtual bool isDesktopFile() const;
+    virtual bool isVirtualEntry() const;
 
     virtual QString symlinkTargetPath() const;
     virtual DUrl symLinkTarget() const;

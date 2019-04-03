@@ -67,9 +67,10 @@
 #include "dfmevent.h"
 
 #include "app/define.h"
-#include "deviceinfo/udisklistener.h"
+#include "controllers/mergeddesktopcontroller.h"
 
 std::atomic<bool> CanvasGridView::m_flag{ false };
+QMap<DMD_TYPES, bool> CanvasGridView::virtualEntryExpandState;
 
 void startProcessDetached(const QString &program,
                           const QStringList &arguments = QStringList(),
@@ -345,6 +346,33 @@ WId CanvasGridView::winId() const
     else {
         return topLevelWidget()->winId();
     }
+}
+
+void CanvasGridView::setAutoMerge(bool enabled)
+{
+    d->autoMerge = enabled;
+
+    if (enabled) {
+        this->setRootUrl(DUrl(DFMMD_ROOT "mergeddesktop/"));
+    } else {
+        // sa
+        QString desktopPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
+        DUrl desktopUrl = DUrl::fromLocalFile(desktopPath);
+
+        if (!QDir(desktopPath).exists()) {
+            QDir::home().mkpath(desktopPath);
+        }
+
+        this->setRootUrl(desktopUrl);
+    }
+}
+
+void CanvasGridView::toggleAutoMerge(bool enabled)
+{
+    if (enabled == d->autoMerge) return;
+
+    setAutoMerge(enabled);
+
 }
 
 QModelIndex CanvasGridView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
@@ -844,6 +872,7 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
 //        d->lastRepaintTime = currentTime;
 //    }
 
+    static QIcon expandMaskIcon = QIcon::fromTheme("folder-stack-mask");
     QPainter painter(viewport());
     auto repaintRect = event->rect();
     painter.setRenderHints(QPainter::HighQualityAntialiasing);
@@ -1001,7 +1030,14 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
         }
 
         this->itemDelegate()->paint(&painter, option, index);
-//        qDebug() << "---  end itemDelegate()->paint";
+        DAbstractFileInfoPointer info = model()->fileInfo(index);
+        if (info && info->scheme() == DFMMD_SCHEME) {
+            DMD_TYPES oneType = MergedDesktopController::entryTypeByName(info->fileName());
+            if (virtualEntryExpandState[oneType]) {
+                // do draw mask here
+                painter.drawImage(itemIconGeomerty(index), expandMaskIcon.pixmap(cellSize()).toImage());
+            }
+        }
         painter.restore();
     }
 
@@ -1182,22 +1218,35 @@ QSize CanvasGridView::cellSize() const
     return QSize(d->cellWidth, d->cellHeight);
 }
 
-void CanvasGridView::toggleAutoMerge(bool enable)
-{
-    if (enable == d->autoMerge) return;
-    d->autoMerge = enable;
-qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!" << enable;
-    if (enable) {
-        // set view, call grid manager?
-        this->setRootUrl(DUrl(DFMMD_ROOT "mergeddesktop/"));
-    } else {
-        // sa
-        this->setRootUrl(DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first()));
-    }
-}
-
 void CanvasGridView::openUrl(const DUrl &url)
 {
+    if (url.scheme() == DFMMD_SCHEME) {
+        clearSelection();
+        // prepare root url
+        QString currentFragment = currentUrl().fragment();
+        DUrl targetUrl(DFMMD_ROOT "mergeddesktop/");
+
+        // toggle expand state
+        DMD_TYPES oneType = MergedDesktopController::entryTypeByName(url.fileName());
+        virtualEntryExpandState[oneType] = !virtualEntryExpandState[oneType];
+
+        // construct fragment which indicated the expanded entries
+        QStringList expandedEntries;
+        for (unsigned int i = DMD_PICTURE; i <= DMD_OTHER; i++) {
+            DMD_TYPES oneType = static_cast<DMD_TYPES>(i);
+            if (virtualEntryExpandState[oneType]) {
+                expandedEntries.append(MergedDesktopController::entryNameByEnum(oneType));
+            }
+        }
+        if (!expandedEntries.isEmpty()) {
+            targetUrl.setFragment(expandedEntries.join(','));
+        }
+
+        // set root url (which will update the view)
+        this->setRootUrl(targetUrl);
+        return;
+    }
+
     DFileService::instance()->openFile(this, url);
 }
 
@@ -1239,7 +1288,8 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
                                                                                      QStringList(), model()->filters());
 
-    GridManager::instance()->initProfile(infoList);
+//    GridManager::instance()->initProfile(infoList);
+    GridManager::instance()->initWithoutProfile(infoList);
 
     d->filesystemWatcher = new DFileSystemWatcher(QStringList() << fileUrl.toLocalFile());
 
@@ -1326,19 +1376,35 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     return true;
 }
 
+void CanvasGridView::initRootUrl()
+{
+    setAutoMerge(GridManager::instance()->autoMerge());
+}
+
 bool CanvasGridView::setRootUrl(const DUrl &url)
 {
     if (url.isEmpty()) {
         return false;
     }
 
+    if (url.scheme() == DFMMD_SCHEME) {
+        for (unsigned int oneType = DMD_PICTURE; oneType <= DMD_OTHER; oneType++) {
+            virtualEntryExpandState[static_cast<DMD_TYPES>(oneType)] = false;
+        }
+
+        QString frag = url.fragment();
+        if (!frag.isEmpty()) {
+            QStringList entryNameList = frag.split(',', QString::SkipEmptyParts);
+            for (const QString & oneEntry : entryNameList) {
+                virtualEntryExpandState[MergedDesktopController::entryTypeByName(oneEntry)] = true;
+            }
+        }
+    }
+
     itemDelegate()->hideAllIIndexWidget();
 
     clearSelection();
 
-    if (!url.isSearchFile()) {
-        setFocus();
-    }
     return setCurrentUrl(url);
 }
 
@@ -1883,6 +1949,8 @@ void CanvasGridView::initConnection()
 
     connect(this, &CanvasGridView::autoAlignToggled,
             Presenter::instance(), &Presenter::onAutoAlignToggled);
+    connect(this, &CanvasGridView::autoMergeToggled,
+            Presenter::instance(), &Presenter::onAutoMergeToggled);
     connect(this, &CanvasGridView::sortRoleChanged,
             Presenter::instance(), &Presenter::onSortRoleChanged);
     connect(this, &CanvasGridView::changeIconLevel,
@@ -2035,10 +2103,10 @@ inline QList<QRect> CanvasGridView::itemPaintGeomertys(const QModelIndex &index)
 inline QRect CanvasGridView::itemIconGeomerty(const QModelIndex &index) const
 {
     QStyleOptionViewItem option = viewOptions();
-    option.rect = visualRect(index);
+    option.rect = visualRect(index).marginsRemoved(d->cellMargins);
     auto rects = itemDelegate()->paintGeomertys(option, index);
     if (rects.isEmpty()) {
-        return  option.rect;
+        return option.rect;
     }
 
     return rects.value(0);
@@ -2178,8 +2246,8 @@ void CanvasGridView::handleContextMenuAction(int action)
 //        break;
 //    }
     case AutoMerge:
-        qDebug() << "do auto merge stuff.";
         this->toggleAutoMerge(!d->autoMerge);
+        emit autoMergeToggled();
         break;
     case AutoSort:
         emit autoAlignToggled();
@@ -2276,12 +2344,14 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     iconSizeAction.setData(IconSize);
     iconSizeAction.setMenu(&iconSizeMenu);
     menu->insertAction(pasteAction, &iconSizeAction);
-#ifdef QT_DEBUG
+//#ifdef QT_DEBUG
     QAction autoMerge(menu);
     autoMerge.setText(tr("Auto merge"));
     autoMerge.setData(AutoMerge);
+    autoMerge.setCheckable(true);
+    autoMerge.setChecked(GridManager::instance()->autoMerge());
     menu->insertAction(pasteAction, &autoMerge);
-#endif // QT_DEBUG
+//#endif // QT_DEBUG
     QAction autoSort(menu);
     autoSort.setText(tr("Auto arrange"));
     autoSort.setData(AutoSort);

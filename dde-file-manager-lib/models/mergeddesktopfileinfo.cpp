@@ -50,6 +50,11 @@ bool MergedDesktopFileInfo::isDir() const
     return DAbstractFileInfo::isDir();
 }
 
+bool MergedDesktopFileInfo::isVirtualEntry() const
+{
+    return true;
+}
+
 QString MergedDesktopFileInfo::fileName() const
 {
     QString path = fileUrl().path();
@@ -95,6 +100,11 @@ QString MergedDesktopFileInfo::iconName() const
     }
 
     return DAbstractFileInfo::iconName();
+}
+
+DAbstractFileInfo::CompareFunction MergedDesktopFileInfo::compareFunByColumn(int) const
+{
+    return nullptr;
 }
 
 bool MergedDesktopFileInfo::exists() const

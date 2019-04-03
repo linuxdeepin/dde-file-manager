@@ -28,11 +28,12 @@ signals:
 public slots:
     void onSortRoleChanged(int role, Qt::SortOrder order);
     void onAutoAlignToggled();
+    void onAutoMergeToggled();
     void OnIconLevelChanged(int iconLevel);
 
 private:
     Q_DISABLE_COPY(Presenter)
-    explicit Presenter(QObject *parent = 0);
+    explicit Presenter(QObject *parent = nullptr);
     friend class Singleton<Presenter>;
 };
 

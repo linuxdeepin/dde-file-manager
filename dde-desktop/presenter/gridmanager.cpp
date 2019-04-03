@@ -27,6 +27,7 @@ public:
         settings->beginGroup(Config::groupGeneral);
         positionProfile = settings->value(Config::keyProfile).toString();
         autoArrange = settings->value(Config::keyAutoAlign).toBool();
+        autoMerge = settings->value(Config::keyAutoMerge, false).toBool();
         settings->endGroup();
 
         coordWidth = 0;
@@ -130,6 +131,20 @@ public:
         for (auto &item : existItems.keys()) {
             QPoint empty_pos{ takeEmptyPos() };
             add(empty_pos, item);
+        }
+
+        if (autoArrange || autoMerge) {
+            arrange();
+        }
+    }
+
+    void loadWithoutProfile(const QList<DAbstractFileInfoPointer> &fileInfoList)
+    {
+        QMap<QString, int> existItems;
+
+        for (const DAbstractFileInfoPointer &info : fileInfoList) {
+            QPoint empty_pos{ takeEmptyPos() };
+            add(empty_pos, info->fileUrl().toString());
         }
 
         if (autoArrange || autoMerge) {
@@ -494,6 +509,14 @@ void GridManager::initProfile(const QList<DAbstractFileInfoPointer> &items)
     d->hasInited = true;
 }
 
+// init WITHOUT grid item position data from the config file.
+void GridManager::initWithoutProfile(const QList<DAbstractFileInfoPointer> &items)
+{
+    d->createProfile(); // nothing with profile.
+    d->loadWithoutProfile(items);
+    d->hasInited = true;
+}
+
 bool GridManager::add(const QString &id)
 {
 #ifdef QT_DEBUG
@@ -604,7 +627,7 @@ bool GridManager::move(const QStringList &selecteds, const QString &current, int
         add(point, selecteds.value(i));
     }
 
-    if (d->autoArrange) {
+    if (shouldArrange()) {
         reArrange();
     }
 
@@ -719,6 +742,11 @@ bool GridManager::shouldArrange() const
 bool GridManager::autoArrange() const
 {
     return d->autoArrange;
+}
+
+bool GridManager::autoMerge() const
+{
+    return d->autoMerge;
 }
 
 void GridManager::toggleArrange()

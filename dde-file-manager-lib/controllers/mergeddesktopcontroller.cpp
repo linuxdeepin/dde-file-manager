@@ -55,14 +55,21 @@ const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const
     QString path { currentUrl.path() };
     QList<DAbstractFileInfoPointer> infoList;
 
-    auto appendVirtualEntries = [this, &infoList]() {
-        for (int i = DMD_PICTURE; i <= DMD_OTHER; i++) {
+    auto appendVirtualEntries = [this, &infoList](bool displayEmptyEntry = false, const QStringList & expandedEntries = {}) {
+        for (unsigned int i = DMD_PICTURE; i <= DMD_OTHER; i++) {
             DMD_TYPES oneType = static_cast<DMD_TYPES>(i);
+            if (!displayEmptyEntry && arrangedFileUrls[oneType].isEmpty()) {
+                continue;
+            }
+            QString entryName = entryNameByEnum(oneType);
             DUrl url(DFMMD_ROOT "entry/" + entryNameByEnum(oneType));
-            DAbstractFileInfoPointer adeInfoPtr {
+            DAbstractFileInfoPointer infoPtr {
                 DFileService::instance()->createFileInfo(this, url)
             };
-            infoList.push_back(adeInfoPtr);
+            infoList.push_back(infoPtr);
+            if (expandedEntries.contains(entryName)) {
+                appendEntryFiles(infoList, oneType);
+            }
         }
     };
 
@@ -92,15 +99,17 @@ const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const
             } else {
                 QString entryName = path.split('/', QString::SkipEmptyParts).last();
                 DMD_TYPES entryType = entryTypeByName(entryName);
-                for (const DUrl & url : arrangedFileUrls[entryType]) {
-                    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
-                    infoList.append(info);
-                }
+                appendEntryFiles(infoList, entryType);
             }
         } else if (path == QStringLiteral("/folder/")) {
             appendFolders();
         } else if (path == QStringLiteral("/mergeddesktop/")) {
-            appendVirtualEntries();
+            QString expandedFolder = currentUrl.fragment();
+            QStringList expandedFolders;
+            if (!expandedFolder.isEmpty()) {
+                expandedFolders = expandedFolder.split(',', QString::SkipEmptyParts);
+            }
+            appendVirtualEntries(false, expandedFolders);
             appendFolders();
         }
     }
@@ -182,7 +191,7 @@ void MergedDesktopController::desktopFilesCreated(const DUrl &url)
 
 void MergedDesktopController::desktopFilesRemoved(const DUrl &url)
 {
-    for (int i = DMD_PICTURE; i <= DMD_OTHER; i++) {
+    for (unsigned int i = DMD_PICTURE; i <= DMD_OTHER; i++) {
         DMD_TYPES typeInfo = static_cast<DMD_TYPES>(i);
         if (arrangedFileUrls[typeInfo].removeOne(url)) {
             DUrl parentUrl(DFMMD_SCHEME "entry/" + entryNameByEnum(typeInfo) + "/");
@@ -228,4 +237,12 @@ DMD_TYPES MergedDesktopController::checkUrlArrangedType(const DUrl url) const
     }
 
     return DMD_OTHER;
+}
+
+void MergedDesktopController::appendEntryFiles(QList<DAbstractFileInfoPointer> &infoList, const DMD_TYPES &entryType) const
+{
+    for (const DUrl & url : arrangedFileUrls[entryType]) {
+        DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
+        infoList.append(info);
+    }
 }

@@ -131,9 +131,7 @@ void AppController::registerUrlHandle()
 
     DFileService::dRegisterUrlHandler<TagController>(TAG_SCHEME, "");
     DFileService::dRegisterUrlHandler<RecentController>(RECENT_SCHEME, "");
-#ifdef QT_DEBUG
     DFileService::dRegisterUrlHandler<MergedDesktopController>(DFMMD_SCHEME, "");
-#endif // QT_DEBUG
 }
 
 void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)

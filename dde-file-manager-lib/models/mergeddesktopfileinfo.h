@@ -35,9 +35,12 @@ public:
     bool isWritable() const override;
     bool canShare() const override;
     bool isDir() const override;
+    bool isVirtualEntry() const override;
 
     QString fileName() const override;
     QString iconName() const override;
+
+    CompareFunction compareFunByColumn(int columnRole) const override;
 
 private:
     Q_DECLARE_PRIVATE(MergedDesktopFileInfo)

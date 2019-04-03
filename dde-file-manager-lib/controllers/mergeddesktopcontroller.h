@@ -24,9 +24,9 @@
 
 #include "dabstractfilecontroller.h"
 
-typedef enum {
+enum DMD_TYPES : unsigned int {
     DMD_PICTURE, DMD_MUSIC, DMD_APPLICATION, DMD_VIDEO, DMD_DOCUMENT, DMD_OTHER, DMD_FOLDER
-} DMD_TYPES;
+};
 
 class DFileWatcher;
 class MergedDesktopController : public DAbstractFileController
@@ -55,6 +55,7 @@ public slots:
 private:
     void initData() const;
     DMD_TYPES checkUrlArrangedType(const DUrl url) const;
+    void appendEntryFiles(QList<DAbstractFileInfoPointer> &infoList, const DMD_TYPES &entryType) const;
 
     DFileWatcher* m_desktopFileWatcher;
     mutable bool dataInitialized = false;

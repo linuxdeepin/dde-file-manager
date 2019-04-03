@@ -17,6 +17,7 @@
 #define DesktopCanvasPath           "/com/deepin/dde/desktop/canvas"
 #define DesktopCanvasInterface      "com.deepin.dde.desktop.Canvas"
 
+enum DMD_TYPES : unsigned int;
 class DUrl;
 class DesktopItemDelegate;
 class DFileSystemModel;
@@ -30,6 +31,7 @@ class CanvasGridView: public QAbstractItemView
     Q_PROPERTY(double dodgeDuration READ dodgeDuration WRITE setDodgeDuration NOTIFY dodgeDurationChanged)
 public:
     static std::atomic<bool> m_flag;
+    static QMap<DMD_TYPES, bool> virtualEntryExpandState;
 
     explicit CanvasGridView(QWidget *parent = Q_NULLPTR);
     ~CanvasGridView() Q_DECL_OVERRIDE;
@@ -98,6 +100,7 @@ public:
     QRect rectForIndex(const QModelIndex &index) const;
     DUrl currentUrl() const;
     bool setCurrentUrl(const DUrl &url);
+    void initRootUrl();
     bool setRootUrl(const DUrl &url);
     const DUrlList selectedUrls() const;
 
@@ -118,11 +121,14 @@ public:
     QSize cellSize() const;
 
     WId winId() const;
-    void toggleAutoMerge(bool enable = true);
+    void setAutoMerge(bool enabled = false);
+    void toggleAutoMerge(bool enabled = true);
+    void toggleEntryExpandedState();
 
 signals:
     void sortRoleChanged(int role, Qt::SortOrder order);
     void autoAlignToggled();
+    void autoMergeToggled();
     void changeIconLevel(int iconLevel);
     void dodgeDurationChanged(double dodgeDuration);
 
