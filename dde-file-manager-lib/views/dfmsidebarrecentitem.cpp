@@ -33,6 +33,14 @@
 
 DFM_BEGIN_NAMESPACE
 
+const char *empty_recent_file =
+R"|(<?xml version="1.0" encoding="UTF-8"?>
+<xbel version="1.0"
+      xmlns:bookmark="http://www.freedesktop.org/standards/desktop-bookmarks"
+      xmlns:mime="http://www.freedesktop.org/standards/shared-mime-info"
+>
+</xbel>)|";
+
 DFMSideBarRecentItem::DFMSideBarRecentItem(DFMStandardPaths::StandardLocation location, QWidget *parent)
     : DFMSideBarDefaultItem(location, parent)
 {
@@ -52,13 +60,14 @@ QMenu *DFMSideBarRecentItem::createStandardContextMenu() const
         wnd->openNewTab(url());
     })->setDisabled(shouldDisable);
 
-#ifdef QT_DEBUG
     menu->addSeparator();
 
     menu->addAction(QObject::tr("Clear recent history"), [](){
-        //
+        QFile f(QDir::homePath() + "/.local/share/recently-used.xbel");
+        f.open(QIODevice::WriteOnly);
+        f.write(empty_recent_file);
+        f.close();
     });
-#endif // QT_DEBUG
 
     return menu;
 }
