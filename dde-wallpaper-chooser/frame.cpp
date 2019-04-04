@@ -101,7 +101,7 @@ Frame::Frame(QFrame *parent)
             QRect nativeRect = geometry();
 
             // 获取窗口真实的geometry
-            nativeRect.setTopLeft((nativeRect.topLeft() - sRect.topLeft()) * scale + sRect.topLeft());
+            nativeRect.moveTopLeft((nativeRect.topLeft() - sRect.topLeft()) * scale + sRect.topLeft());
             nativeRect.setSize(nativeRect.size() * scale);
 
             if (!nativeRect.contains(p)) {
