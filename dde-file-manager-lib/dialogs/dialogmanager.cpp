@@ -376,7 +376,7 @@ int DialogManager::showRunExcutableScriptDialog(const DUrl &url, quint64 winId)
     d.addButton(buttonTexts[1], false);
     d.addButton(buttonTexts[2], false);
     d.addButton(buttonTexts[3], false, DDialog::ButtonRecommend);
-    d.setDefaultButton(2);
+    d.setDefaultButton(3);
     d.setFixedWidth(480);
     int code = d.exec();
     return code;
