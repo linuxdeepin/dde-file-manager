@@ -1,3 +1,27 @@
+<a name="4.7.9"></a>
+## 4.7.9 (2019-04-04)
+
+
+#### Bug Fixes
+
+*   can not close wallpaper settings view on click empty area ([dab419cb](https://github.com/linuxdeepin/dde-file-manager/commit/dab419cb213bb45c0b645a6337135e0a02c5b730))
+*   zero size plain text file is not executable script (#108) ([5707925e](https://github.com/linuxdeepin/dde-file-manager/commit/5707925e0aed73af7f8c0509e1005f3d66fe5482))
+*   the mode switch widget overlaps with other widgets ([58b0f7a0](https://github.com/linuxdeepin/dde-file-manager/commit/58b0f7a093155fdc2dfd7915efc424c39358c12b))
+*   file search view property dialog is empty (#104) ([11ecac82](https://github.com/linuxdeepin/dde-file-manager/commit/11ecac82d04f082f41788988b41486c637609ba2))
+*   dock mount plugin label content as plain text (#101) ([ecb7cbd0](https://github.com/linuxdeepin/dde-file-manager/commit/ecb7cbd07cb4c190f74da8c7fe8d995e16dc2a94))
+*   potential crash when an optical media is inserted. (#100) ([52d1cf67](https://github.com/linuxdeepin/dde-file-manager/commit/52d1cf6783b6a9a437a279a96fb4eeb2099b4320))
+*   optical drive detection. (#99) ([2a524d63](https://github.com/linuxdeepin/dde-file-manager/commit/2a524d633f172362fe55b4538816a3efbdc9c702))
+*   avoid crash when we cannot got device info (#98) ([24d1b3cd](https://github.com/linuxdeepin/dde-file-manager/commit/24d1b3cd5ec810f8443b614a5eae1edfffe93819))
+*   Nothing on desktop in multi-screen and copy mode ([46f0028a](https://github.com/linuxdeepin/dde-file-manager/commit/46f0028a43eaeff6f8a20dd827a3245ef84e1ff0))
+* **Desktop:**  use right-click menu when use window scale ratio, desktop will draw the content misplaced ([91c00d2d](https://github.com/linuxdeepin/dde-file-manager/commit/91c00d2d0b5f59cc05a7a2c77b28dbdf2bf4dcec))
+
+#### Features
+
+*   mount disk image. (#110) ([9dace08c](https://github.com/linuxdeepin/dde-file-manager/commit/9dace08c2eb697a8b10447f61f974fd16be271fb))
+*   context menu icon visible state now configurable (#96) ([e2b4ff1f](https://github.com/linuxdeepin/dde-file-manager/commit/e2b4ff1f90df9d8ce401e0ae4f91ca48e6909b33))
+
+
+
 <a name="4.7.8.2"></a>
 ## 4.7.8.2 (2019-03-29)
 
