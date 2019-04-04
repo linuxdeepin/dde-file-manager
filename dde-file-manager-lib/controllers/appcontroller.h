@@ -91,6 +91,7 @@ public slots:
     void actionNewPowerpoint(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionNewText(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionMount(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionMountImage(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionRestore(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionRestoreAll(const QSharedPointer<DFMUrlBaseEvent> &event);

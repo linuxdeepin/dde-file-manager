@@ -229,6 +229,8 @@ public:
         // recent
         RemoveFromRecent,
 
+        MountImage,
+
         UserMenuAction = Unknow + 2000
     };
 
