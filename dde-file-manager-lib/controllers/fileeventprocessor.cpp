@@ -273,6 +273,9 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
     case DFMGlobal::Mount:
         AppController::instance()->actionMount(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
         break;
+    case DFMGlobal::MountImage:
+        AppController::instance()->actionMountImage(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+        break;
     case DFMGlobal::Unmount:
         AppController::instance()->actionUnmount(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
         break;

@@ -412,6 +412,14 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
     deviceListener->mount(fileUrl.query());
 }
 
+void AppController::actionMountImage(const QSharedPointer<DFMUrlBaseEvent> &event)
+{
+    QStringList args;
+    args << "mount";
+    args << "archive://" + QString(QUrl::toPercentEncoding(event->url().toString()));
+    QProcess::startDetached("gio", args);
+}
+
 void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();

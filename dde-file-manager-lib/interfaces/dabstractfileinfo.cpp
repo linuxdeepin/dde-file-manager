@@ -800,6 +800,10 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                            << MenuAction::OpenInNewTab;
             } else {
                 actionKeys << MenuAction::OpenWith;
+                if (mimeTypeName() == "application/x-cd-image"
+                /* || mimeTypeName() == "application/x-raw-disk-image"*/) {
+                    actionKeys << MenuAction::MountImage;
+                }
             }
             actionKeys << MenuAction::Separator
                        << MenuAction::Cut

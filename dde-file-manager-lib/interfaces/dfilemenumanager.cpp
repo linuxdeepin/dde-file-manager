@@ -676,6 +676,8 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::ChangeTagColor] = QString{"Change color of present tag"};
     actionKeys[MenuAction::RenameTag] = QObject::tr("Rename");
 
+    actionKeys[MenuAction::MountImage] = QObject::tr("Mount");
+
     // Action Icons:
     if (DFMApplication::genericObtuselySetting()->value("ApplicationAttribute", "DisplayContextMenuIcon", false).toBool()) {
         actionIcons[MenuAction::NewFolder] = QIcon::fromTheme("folder-new");
