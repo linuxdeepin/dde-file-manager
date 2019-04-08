@@ -1506,13 +1506,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="41"/>
-        <source>Files are too large to put into trash</source>
+        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="38"/>
+        <source>Are you sure you want to permanently delete %1?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="38"/>
-        <source>Are you sure?you want to permanently delete %1?</source>
+        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="41"/>
+        <source>Files are too large to put into trash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
