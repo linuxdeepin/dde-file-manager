@@ -49,7 +49,7 @@ void MountSecretDiskAskPasswordDialog::initUI()
 
     QFrame* content = new QFrame;
 
-    m_titleLabel = new QLabel(tr("Please input password to decrypt the disk"));
+    m_titleLabel = new QLabel(tr("Input password to decrypt the disk"));
     QFont titlefont;
     titlefont.setPointSize(10);
     m_titleLabel->setFont(titlefont);

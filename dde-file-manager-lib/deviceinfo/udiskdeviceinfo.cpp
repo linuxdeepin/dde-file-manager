@@ -287,7 +287,7 @@ QString UDiskDeviceInfo::deviceTypeDisplayName() const
     } else if (getType() == "camera") {
         return QObject::tr("Camera");
     } else if (getType() == "dvd") {
-        return QObject::tr("Dvd");
+        return QObject::tr("DVD");
     } else {
         return QObject::tr("Unknown device");
     }

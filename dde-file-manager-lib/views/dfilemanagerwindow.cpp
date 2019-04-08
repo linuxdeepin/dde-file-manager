@@ -839,7 +839,7 @@ void DFileManagerWindow::initTitleBar()
     QAction *set_theme_action = menu->actionAt(1);
     if (set_theme_action) {
         set_theme_action->setCheckable(true);
-        set_theme_action->setText(tr("Dark Theme"));
+        set_theme_action->setText(tr("Dark theme"));
         if (DThemeManager::instance()->theme(this) == "dark") {
             set_theme_action->setChecked(true);
         }
