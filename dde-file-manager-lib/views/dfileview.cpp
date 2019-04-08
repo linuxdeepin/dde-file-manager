@@ -36,6 +36,7 @@
 #include "dfmeventdispatcher.h"
 #include "themeconfig.h"
 #include "dfmsettings.h"
+#include "dfmopticalmediawidget.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -103,6 +104,7 @@ public:
     DFileMenuManager* fileMenuManager;
     DFMHeaderView *headerView = nullptr;
     QWidget *headerViewHolder = nullptr;
+    DFMOpticalMediaWidget *headerOpticalDisc = nullptr;
     DStatusBar* statusBar = nullptr;
 
     QActionGroup* displayAsActionGroup;
@@ -1924,6 +1926,10 @@ void DFileView::initUI()
 
     addFooterWidget(d->statusBar);
 
+    d->headerOpticalDisc = new DFMOpticalMediaWidget(this);
+    addHeaderWidget(d->headerOpticalDisc);
+    d->headerOpticalDisc->hide();
+
     d->verticalScrollBar = verticalScrollBar();
     d->verticalScrollBar->setParent(this);
 
@@ -2147,6 +2153,17 @@ bool DFileView::setRootUrl(const DUrl &url)
         setViewMode(ListMode);
     }
 
+    if (fileUrl.scheme() == BURN_SCHEME) {
+        QRegularExpression re("^(.*)/(disk_files|staging_files)/(.*)$");
+        auto rem = re.match(fileUrl.path());
+        Q_ASSERT(rem.hasMatch());
+        d->headerOpticalDisc->updateDiscInfo(rem.captured(1));
+        d->headerOpticalDisc->show();
+    }
+    else {
+        d->headerOpticalDisc->hide();
+    }
+
     // NOTE(zccrs): 视图模式切换失败后，被选中的action是一个错误的。此时切换目录，应该在目录改变后再根据当前视图模式重设action的选中状态。
     if (viewMode() == IconMode) {
         toolBarActionList().first()->setChecked(true);
@@ -2171,7 +2188,7 @@ void DFileView::clearHeardView()
     D_D(DFileView);
 
     if (d->headerView) {
-        removeHeaderWidget(0);
+        removeHeaderWidget(1);
 
         d->headerView->disconnect();
         d->headerView = nullptr;

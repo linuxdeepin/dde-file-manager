@@ -1012,8 +1012,9 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         }
 
         const DUrl &rootUrl = q->rootUrl();
+        const DAbstractFileInfoPointer rootinfo = fileService->createFileInfo(q, rootUrl);
 
-        if (fileUrl == rootUrl) {
+        if (fileUrl == rootUrl || (rootUrl.scheme() == BURN_SCHEME && fileUrl == rootinfo->parentUrl())) {
             if (event.first == RmFile) {
                 emit q->rootUrlDeleted(rootUrl);
             }
