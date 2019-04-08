@@ -5,7 +5,7 @@
     <name>FinishPage</name>
     <message>
         <location filename="../view/finishpage.cpp" line="42"/>
-        <source>Format successfully</source>
+        <source>Format successful</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13,7 +13,7 @@
     <name>FormatingPage</name>
     <message>
         <location filename="../view/formatingpage.cpp" line="43"/>
-        <source>Formating, please wait for a minute...</source>
+        <source>Formatting the disk, please wait...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -31,12 +31,12 @@
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="137"/>
-        <source>Fast format</source>
+        <source>Quick Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="154"/>
-        <source>This operation will clear all data from your device.</source>
+        <source>Formatting will erase all data on the disk.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -109,7 +109,7 @@
     <name>WarnPage</name>
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
-        <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
+        <source>Formatting will erase all data on this disk, are you sure you want to continue? It cannot be restored.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

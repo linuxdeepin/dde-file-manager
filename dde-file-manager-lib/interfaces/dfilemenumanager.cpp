@@ -634,10 +634,10 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::DisplayAs] = QObject::tr("Display as");
     actionKeys[MenuAction::SortBy] = QObject::tr("Sort by");
     actionKeys[MenuAction::NewDocument] = QObject::tr("New document");
-    actionKeys[MenuAction::NewWord] = QObject::tr("Office Text Document");
-    actionKeys[MenuAction::NewExcel] = QObject::tr("Spreadsheet Document");
-    actionKeys[MenuAction::NewPowerpoint] = QObject::tr("Presentation Document");
-    actionKeys[MenuAction::NewText] = QObject::tr("Plain Text Document");
+    actionKeys[MenuAction::NewWord] = QObject::tr("Office Text");
+    actionKeys[MenuAction::NewExcel] = QObject::tr("Spreadsheets");
+    actionKeys[MenuAction::NewPowerpoint] = QObject::tr("Presentation");
+    actionKeys[MenuAction::NewText] = QObject::tr("Plain Text");
     actionKeys[MenuAction::OpenInTerminal] = QObject::tr("Open in terminal");
     actionKeys[MenuAction::Restore] = QObject::tr("Restore");
     actionKeys[MenuAction::RestoreAll] = QObject::tr("Restore all");

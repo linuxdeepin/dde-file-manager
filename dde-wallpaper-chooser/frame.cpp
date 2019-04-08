@@ -476,7 +476,7 @@ void Frame::initUI()
     m_toolLayout = new QHBoxLayout;
 
     m_waitControl = new DSegmentedControl(this);
-    m_lockScreenBox = new QCheckBox(tr("Require a password on wake up"), this);
+    m_lockScreenBox = new QCheckBox(tr("Require a password on wakeup"), this);
 
     QVector<int> time_array {60, 300, 600, 900, 1800, 3600, 0};
 

@@ -433,8 +433,8 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name, const DFME
 
 int DialogManager::showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &event)
 {
-    QString ClearTrash = tr("Are you sure to empty %1 item?");
-    QString ClearTrashMutliple = tr("Are you sure to empty %1 items?");
+    QString ClearTrash = tr("Are you sure you want to empty %1 item?");
+    QString ClearTrashMutliple = tr("Are you sure you want to empty %1 items?");
     QString DeleteFileName = tr("Permanently delete %1?");
     QString DeleteFileItems = tr("Permanently delete %1 items?");
 
@@ -484,7 +484,7 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &ev
     } else {
         d.setTitle(DeleteFileItems.arg(urlList.size()));
     }
-    d.setMessage(tr("This action cannot be restored"));
+    d.setMessage(tr("This action cannot be undone"));
     d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
     d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
     d.setDefaultButton(1);
@@ -640,7 +640,7 @@ void DialogManager::showDiskErrorDialog(const QString &id, const QString &errorT
 
     if (info) {
         DDialog d;
-        d.setTitle(tr("Disk file is being used, can not unmount now"));
+        d.setTitle(tr("Disk is busy, cannot unmount now"));
         d.setMessage(tr("Name: ") + info->fileDisplayName()/* + ", " + tr("Path: ") + info->getPath()*/);
         QStringList buttonTexts;
         buttonTexts << tr("Cancel") << tr("Force unmount");
