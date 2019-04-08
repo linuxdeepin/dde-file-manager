@@ -31,7 +31,7 @@ isEmpty(PREFIX){
 }
 
 CONFIG += c++11 link_pkgconfig
-PKGCONFIG += gsettings-qt libsecret-1 gio-unix-2.0 poppler-cpp dtkwidget udisks2-qt5
+PKGCONFIG += gsettings-qt libsecret-1 gio-unix-2.0 poppler-cpp dtkwidget udisks2-qt5 disomaster
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
 
@@ -262,7 +262,8 @@ HEADERS += \
     interfaces/private/mergeddesktop_common_p.h \
     controllers/masteredmediacontroller.h \
     controllers/dfmmasteredmediacrumbcontroller.h \
-    models/masteredmediafileinfo.h
+    models/masteredmediafileinfo.h \
+    views/dfmopticalmediawidget.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -440,7 +441,8 @@ SOURCES += \
     controllers/mergeddesktopcontroller.cpp \
     controllers/masteredmediacontroller.cpp \
     controllers/dfmmasteredmediacrumbcontroller.cpp \
-    models/masteredmediafileinfo.cpp
+    models/masteredmediafileinfo.cpp \
+    views/dfmopticalmediawidget.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h

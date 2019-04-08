@@ -42,6 +42,7 @@
 #include "fileoperations/filejob.h"
 #include "dfmeventdispatcher.h"
 #include "dfmapplication.h"
+#include "disomaster.h"
 
 #include "app/filesignalmanager.h"
 #include "dfmevent.h"
@@ -161,13 +162,6 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
     QString id = fileUrl.query();
 
     if (!id.isEmpty()) {
-        QString dbusid(id);
-        QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dbusid.replace("/dev/","/org/freedesktop/UDisks2/block_devices/")));
-        QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
-        if (drive->optical())
-        {
-            qDebug() << id << "is optical.";
-        }
         const QDiskInfo &diskInfo = gvfsMountManager->getDiskInfo(id);
         if (diskInfo.can_mount()) {
             m_fmEvent = event;
@@ -415,10 +409,17 @@ void AppController::actionNewText(const QSharedPointer<DFMUrlBaseEvent> &event)
 void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
-    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(fileUrl.query()));
-    QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+    QString udiskspath = fileUrl.query();
+    udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+    QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+    QSharedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->optical()) {
-        blkdev->mount({});
+        QtConcurrent::run([=]{
+            ISOMaster->acquireDevice(fileUrl.query());
+            ISOMaster->getDeviceProperty();
+            ISOMaster->releaseDevice();
+            blkdev->mount({});
+        });
         return;
     }
     deviceListener->mount(fileUrl.query());
@@ -435,7 +436,9 @@ void AppController::actionMountImage(const QSharedPointer<DFMUrlBaseEvent> &even
 void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
-    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(fileUrl.query()));
+    QString udiskspath = fileUrl.query();
+    udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->optical()) {
         blkdev->unmount({});
@@ -862,11 +865,11 @@ void AppController::doSubscriberAction(const QString &path)
     //right here is some really dirty jobby. Replace ASAP.
     auto gdev = deviceListener->getDeviceByMountPoint(path)->getDiskInfo();
     QString dev =  gdev.drive_unix_device().length() ? gdev.drive_unix_device() : gdev.unix_device();
-    dev.replace("/dev/","/org/freedesktop/UDisks2/block_devices/");
+    dev.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
     QScopedPointer<DBlockDevice> uddev(DDiskManager::createBlockDevice(dev));
     QScopedPointer<DDiskDevice> uddrv(DDiskManager::createDiskDevice(uddev->drive()));
     if (uddrv->optical()) {
-        rpath = BURN_SCHEME + QString(uddev->device()) + "/disk_files/";
+        rpath = BURN_SCHEME "://" + QString(uddev->device()) + "/disk_files/";
     }
 
     switch (eventKey()) {

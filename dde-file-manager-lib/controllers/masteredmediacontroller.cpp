@@ -8,6 +8,7 @@
 #include "models/desktopfileinfo.h"
 #include "models/masteredmediafileinfo.h"
 #include "dfileservices.h"
+#include "dfilewatcher.h"
 
 #include <QRegularExpression>
 #include <QStandardPaths>
@@ -41,7 +42,7 @@ public:
 
     DUrl next() override
     {
-        return changeScheme(DUrl::fromLocalFile(iterator->hasNext() ? iterator->next() : (iterator = QSharedPointer<QDirIterator>(Q_NULLPTR), stagingiterator->next())));
+        return changeScheme(DUrl::fromLocalFile(iterator && iterator->hasNext() ? iterator->next() : (iterator = QSharedPointer<QDirIterator>(Q_NULLPTR), stagingiterator->next())));
     }
 
     bool hasNext() const override
@@ -134,16 +135,11 @@ DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> 
 
 const DAbstractFileInfoPointer MasteredMediaController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
 {
-    qDebug() << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" << event->url();
-
     return DAbstractFileInfoPointer(new MasteredMediaFileInfo(event->url()));
 }
 
 const DDirIteratorPointer MasteredMediaController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
-    qDebug() << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" << event->url();
-
-
     return DDirIteratorPointer(new DFMShadowedDirIterator(event->url(), event->nameFilters(), event->filters(), event->flags()));
 }
 
@@ -188,9 +184,8 @@ QList<QString> MasteredMediaController::getTagsThroughFiles(const QSharedPointer
 
 DAbstractFileWatcher *MasteredMediaController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
-    event->ignore();
-
-    return 0;
+    DAbstractFileInfoPointer ifo = fileService->createFileInfo(this, event->fileUrl());
+    return new DFileWatcher(ifo->parentUrl().toLocalFile());
 }
 
 void MasteredMediaController::mkpath(DUrl path) const

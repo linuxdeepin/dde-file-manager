@@ -28,10 +28,12 @@
 class DialogManager;
 class GvfsMountManager;
 class UDiskListener;
+class DISOMaster;
 
 DialogManager *getDialogManager(bool doConstruct = false);
 GvfsMountManager *getGvfsMountManager(bool doConstruct = false);
 UDiskListener *getUDiskListener(bool doConstruct = false);
+DISOMaster *getDISOMaster(bool doContruct = false);
 
 #define searchHistoryManager  Singleton<SearchHistroyManager>::instance()
 #define bookmarkManager  Singleton<BookMarkManager>::instance()
@@ -49,6 +51,7 @@ UDiskListener *getUDiskListener(bool doConstruct = false);
 #define gvfsMountManager getGvfsMountManager(true)
 #define secretManager Singleton<SecretManager>::instance()
 #define userShareManager Singleton<UserShareManager>::instance()
+#define ISOMaster getDISOMaster(true)
 
 #define defaut_icon ":/images/images/default.png"
 #define defaut_computerIcon ":/images/images/computer.png"
