@@ -35,7 +35,7 @@ MoveToTrashConflictDialog::MoveToTrashConflictDialog(QWidget *parent, const DUrl
 
     if(urls.size() == 1){
         title = tr("This file is too large to put into trash");
-        tip = tr("Are you sure?you want to permanently delete %1?").arg(urls.first().fileName());
+        tip = tr("Are you sure you want to permanently delete %1?").arg(urls.first().fileName());
     }
     else{
         title = tr("Files are too large to put into trash");
