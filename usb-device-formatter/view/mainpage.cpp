@@ -134,7 +134,7 @@ void MainPage::initUI()
     QCheckBox* fastFormatCheckBox = new QCheckBox(this);
     fastFormatCheckBox->setChecked(true);
 
-    QLabel* fastFormatLabel = new QLabel(tr("Fast format"), this);
+    QLabel* fastFormatLabel = new QLabel(tr("Quick Format"), this);
     fastFormatLabel->setObjectName("CheckBoxLabel");
 
     optGridLayout->addWidget(typeLable,0,0,Qt::AlignVCenter|Qt::AlignRight);
@@ -151,7 +151,7 @@ void MainPage::initUI()
     }
     mainLayout->addLayout(optGridLayout);
 
-    QString warmMsg = tr("This operation will clear all data from your device.");
+    QString warmMsg = tr("Formatting will erase all data on the disk.");
     m_warnLabel = new QLabel(this);
     m_warnLabel->setText(warmMsg);
     m_warnLabel->setObjectName("WarnMsg");

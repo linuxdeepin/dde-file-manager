@@ -39,7 +39,7 @@ void FinishPage::initUI()
     QLabel* warnIconLabel = new QLabel(this);
     warnIconLabel->setPixmap(QPixmap(":/icoms/icons/success.png"));
     QLabel* warnTextLabel = new QLabel(this);
-    QString warnText = tr("Format successfully");
+    QString warnText = tr("Format successful");
     warnTextLabel->setText(warnText);
     warnTextLabel->setWordWrap(true);
     warnTextLabel->setObjectName("StatusLabel");
