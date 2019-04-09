@@ -38,8 +38,14 @@ void Presenter::onSortRoleChanged(int role, Qt::SortOrder order)
 
 void Presenter::onAutoAlignToggled()
 {
-    GridManager::instance()->toggleAlign();
-    emit setConfig(Config::groupGeneral, Config::keyAutoAlign, GridManager::instance()->autoAlign());
+    GridManager::instance()->toggleArrange();
+    emit setConfig(Config::groupGeneral, Config::keyAutoAlign, GridManager::instance()->autoArrange());
+}
+
+void Presenter::onAutoMergeToggled()
+{
+    GridManager::instance()->toggleAutoMerge();
+    emit setConfig(Config::groupGeneral, Config::keyAutoMerge, GridManager::instance()->autoMerge());
 }
 
 void Presenter::OnIconLevelChanged(int iconLevel)

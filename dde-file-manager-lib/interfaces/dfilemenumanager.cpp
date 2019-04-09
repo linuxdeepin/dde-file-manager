@@ -692,6 +692,7 @@ void DFileMenuData::initData()
         actionIcons[MenuAction::Cut] = QIcon::fromTheme("edit-cut");
         actionIcons[MenuAction::Rename] = QIcon::fromTheme("edit-rename");
         actionIcons[MenuAction::Delete] = QIcon::fromTheme("edit-delete");
+        actionIcons[MenuAction::CompleteDeletion] = QIcon::fromTheme("edit-delete-shred");
         actionIcons[MenuAction::Share] = QIcon::fromTheme("document-share");
         actionIcons[MenuAction::SelectAll] = QIcon::fromTheme("edit-select-all");
         actionIcons[MenuAction::CreateSymlink] = QIcon::fromTheme("insert-link");

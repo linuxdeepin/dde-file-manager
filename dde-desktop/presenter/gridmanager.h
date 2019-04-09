@@ -29,6 +29,7 @@ class GridManager: public QObject, public Singleton<GridManager>
 public:
     bool isInited() const;
     void initProfile(const QList<DAbstractFileInfoPointer> &items);
+    void initWithoutProfile(const QList<DAbstractFileInfoPointer> &items);
 
     bool add(QPoint pos, const QString &itemId);
     bool add(const QString &itemId);
@@ -48,9 +49,13 @@ public:
     bool isEmpty(int x, int y);
 
     const QStringList &overlapItems() const;
-    bool autoAlign();
-    void toggleAlign();
-    void reAlign();
+    bool shouldArrange() const;
+    bool autoArrange() const;
+    bool autoMerge() const;
+    void toggleArrange();
+    void setAutoMerge(bool enable = true);
+    void toggleAutoMerge();
+    void reArrange();
 
     QPoint forwardFindEmpty(QPoint start) const;
     QSize gridSize() const;
