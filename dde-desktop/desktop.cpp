@@ -141,14 +141,7 @@ void Desktop::loadData()
 
 void Desktop::loadView()
 {
-    auto desktopPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
-    auto desktopUrl = DUrl::fromLocalFile(desktopPath);
-
-    if (!QDir(desktopPath).exists()) {
-        QDir::home().mkpath(desktopPath);
-    }
-
-    d->screenFrame.setRootUrl(desktopUrl);
+    d->screenFrame.initRootUrl();
 }
 
 void Desktop::showWallpaperSettings()

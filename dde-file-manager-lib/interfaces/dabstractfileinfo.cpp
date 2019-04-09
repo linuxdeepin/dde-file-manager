@@ -445,6 +445,14 @@ bool DAbstractFileInfo::isDesktopFile() const
     return mimeTypeName() == "application/x-desktop";
 }
 
+// blumia: 任何对应不到实际文件的项都应当被视为虚拟的项，虚拟的项没有 MimeType , 最后修改时间等实际文件本身所应具有的相关属性。
+bool DAbstractFileInfo::isVirtualEntry() const
+{
+    CALL_PROXY(isVirtualEntry());
+
+    return false;
+}
+
 QString DAbstractFileInfo::symlinkTargetPath() const
 {
     CALL_PROXY(symlinkTargetPath());
@@ -794,12 +802,14 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
         } else {
             actionKeys << MenuAction::Open;
 
-            if (isDir()) {
+            if (!isVirtualEntry()) {
                 actionKeys << MenuAction::OpenWith;
+            }
+
+            if (isDir()) {
                 actionKeys << MenuAction::OpenInNewWindow
                            << MenuAction::OpenInNewTab;
             } else {
-                actionKeys << MenuAction::OpenWith;
                 if (mimeTypeName() == "application/x-cd-image"
                 /* || mimeTypeName() == "application/x-raw-disk-image"*/) {
                     actionKeys << MenuAction::MountImage;
@@ -811,7 +821,9 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                        << MenuAction::Rename;
 
             if (FileUtils::isGvfsMountFile(absoluteFilePath()) || deviceListener->isInRemovableDeviceFolder(absoluteFilePath())) {
-                actionKeys << MenuAction::CompleteDeletion;
+                if (!isVirtualEntry()) {
+                    actionKeys << MenuAction::CompleteDeletion;
+                }
             } else {
                 actionKeys << MenuAction::Delete;
             }
@@ -1665,6 +1677,10 @@ QSet<MenuAction> DAbstractFileInfo::disableMenuActionList() const
 
     if (!canRename()) {
         list << MenuAction::Cut << MenuAction::Rename << MenuAction::Delete;
+    }
+
+    if (isVirtualEntry()) {
+        list << MenuAction::Copy;
     }
 
     return list;

@@ -16,6 +16,7 @@
 #include "apppresenter.h"
 #include "dfileservices.h"
 #include "../config/config.h"
+#include "dabstractfileinfo.h"
 
 class GridManagerPrivate
 {
@@ -25,7 +26,8 @@ public:
         auto settings = Config::instance()->settings();
         settings->beginGroup(Config::groupGeneral);
         positionProfile = settings->value(Config::keyProfile).toString();
-        autoArrang = settings->value(Config::keyAutoAlign).toBool();
+        autoArrange = settings->value(Config::keyAutoAlign).toBool();
+        autoMerge = settings->value(Config::keyAutoMerge, false).toBool();
         settings->endGroup();
 
         coordWidth = 0;
@@ -126,13 +128,27 @@ public:
         }
         settings->endGroup();
 
-        if (autoArrang) {
-            arrange();
-        }
-
         for (auto &item : existItems.keys()) {
             QPoint empty_pos{ takeEmptyPos() };
             add(empty_pos, item);
+        }
+
+        if (autoArrange || autoMerge) {
+            arrange();
+        }
+    }
+
+    void loadWithoutProfile(const QList<DAbstractFileInfoPointer> &fileInfoList)
+    {
+        QMap<QString, int> existItems;
+
+        for (const DAbstractFileInfoPointer &info : fileInfoList) {
+            QPoint empty_pos{ takeEmptyPos() };
+            add(empty_pos, info->fileUrl().toString());
+        }
+
+        if (autoArrange || autoMerge) {
+            arrange();
         }
     }
 
@@ -440,7 +456,7 @@ public:
             emit Presenter::instance()->removeConfig(positionProfile, "");
             emit Presenter::instance()->setConfigList(positionProfile, keyList, valueList);
 
-            return this->autoArrang;
+            return this->autoArrange;
         }
     }
 
@@ -465,7 +481,8 @@ public:
     int                     coordWidth;
     int                     coordHeight;
 
-    bool                    autoArrang;
+    bool                    autoArrange;
+    bool                    autoMerge = false;
     bool                    hasInited = false;
 
     std::atomic<bool>       m_whetherShowHiddenFiles{ false };
@@ -492,12 +509,19 @@ void GridManager::initProfile(const QList<DAbstractFileInfoPointer> &items)
     d->hasInited = true;
 }
 
+// init WITHOUT grid item position data from the config file.
+void GridManager::initWithoutProfile(const QList<DAbstractFileInfoPointer> &items)
+{
+    d->createProfile(); // nothing with profile.
+    d->loadWithoutProfile(items);
+    d->hasInited = true;
+}
+
 bool GridManager::add(const QString &id)
 {
 #ifdef QT_DEBUG
     qDebug() << "show hidden files: " << d->getWhetherShowHiddenFiles();
 #endif //QT_DEBUG
-
     DUrl url(id);
 
     if (!d->getWhetherShowHiddenFiles()) {
@@ -519,7 +543,7 @@ bool GridManager::add(const QString &id)
 
 bool GridManager::add(QPoint pos, const QString &id)
 {
-//    qDebug() << "add" << pos << id;
+    qDebug() << "add" << pos << id;
     auto ret = d->add(pos, id);
     if (ret) {
         d->syncProfile();
@@ -603,8 +627,8 @@ bool GridManager::move(const QStringList &selecteds, const QString &current, int
         add(point, selecteds.value(i));
     }
 
-    if (d->autoArrang) {
-        reAlign();
+    if (shouldArrange()) {
+        reArrange();
     }
 
     return true;
@@ -710,24 +734,44 @@ const QStringList &GridManager::overlapItems() const
     return d->m_overlapItems;
 }
 
-bool GridManager::autoAlign()
+bool GridManager::shouldArrange() const
 {
-    return d->autoArrang;
+    return d->autoArrange || d->autoMerge;
 }
 
-void GridManager::toggleAlign()
+bool GridManager::autoArrange() const
 {
-    d->autoArrang = !d->autoArrang;
+    return d->autoArrange;
+}
 
-    if (!d->autoArrang) {
+bool GridManager::autoMerge() const
+{
+    return d->autoMerge;
+}
+
+void GridManager::toggleArrange()
+{
+    d->autoArrange = !d->autoArrange;
+
+    if (!d->autoArrange) {
         return;
     }
 
-    reAlign();
+    reArrange();
 }
 
+void GridManager::setAutoMerge(bool enable)
+{
+    if (d->autoMerge == enable) return;
+    d->autoMerge = enable;
+}
 
-void GridManager::reAlign()
+void GridManager::toggleAutoMerge()
+{
+    setAutoMerge(!d->autoMerge);
+}
+
+void GridManager::reArrange()
 {
     d->arrange();
 
