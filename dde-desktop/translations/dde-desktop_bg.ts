@@ -2,37 +2,37 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2299"/>
+        <location filename="../view/canvasgridview.cpp" line="2259"/>
         <source>Icon size</source>
         <translation>Размер на икона</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2305"/>
+        <location filename="../view/canvasgridview.cpp" line="2265"/>
         <source>Auto arrange</source>
         <translation>Автоматична подредба</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2358"/>
+        <location filename="../view/canvasgridview.cpp" line="2318"/>
         <source>Set Wallpaper</source>
         <translation>Задай тапет</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2360"/>
+        <location filename="../view/canvasgridview.cpp" line="2320"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Тапет и предпазител на екрана</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2438"/>
+        <location filename="../view/canvasgridview.cpp" line="2398"/>
         <source>Properties</source>
         <translation>Свойства</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2344"/>
+        <location filename="../view/canvasgridview.cpp" line="2304"/>
         <source>Display Settings</source>
         <translation>Найстройки на екрана</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2351"/>
+        <location filename="../view/canvasgridview.cpp" line="2311"/>
         <source>Corner Settings</source>
         <translation>Настройки на ъглите</translation>
     </message>
@@ -68,57 +68,57 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="330"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="411"/>
         <source>Wallpaper Slideshow</source>
         <translation>Слайдшоу на тапети</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="356"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="437"/>
         <source>When login</source>
         <translation>При влизане</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="358"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="439"/>
         <source>When wakeup</source>
         <translation>При събуждане</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="398"/>
-        <source>Require a password on wake up</source>
-        <translation>Поискай парола при събуждане</translation>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="479"/>
+        <source>Require a password on wakeup</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="423"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="504"/>
         <source>Never</source>
         <translation>Никога</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="424"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="505"/>
         <source>Wait:</source>
         <translation>Чакай:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="450"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="533"/>
         <source>Wallpaper</source>
         <translation>Тапет</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="450"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="533"/>
         <source>Screensaver</source>
         <translation>Предпазител на екрана</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="512"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="595"/>
         <source>Only desktop</source>
         <translation>Само десктоп</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="513"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="596"/>
         <source>Only lock screen</source>
         <translation>Само заключи екрана</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="541"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="624"/>
         <source>Apply</source>
         <translation>Приложи</translation>
     </message>

@@ -3,7 +3,7 @@
     <name>FinishPage</name>
     <message>
         <location filename="../view/finishpage.cpp" line="42"/>
-        <source>Format successfully</source>
+        <source>Format successful</source>
         <translation>Форматування успішне</translation>
     </message>
 </context>
@@ -11,8 +11,8 @@
     <name>FormatingPage</name>
     <message>
         <location filename="../view/formatingpage.cpp" line="43"/>
-        <source>Formating, please wait for a minute...</source>
-        <translation>Форматую, будь ласка, зачекайте хвилину...</translation>
+        <source>Formatting the disk, please wait...</source>
+        <translation>Форматування диску, будь ласка, зачекайте...</translation>
     </message>
 </context>
 <context>
@@ -29,13 +29,13 @@
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="137"/>
-        <source>Fast format</source>
-        <translation>Швидке форматування</translation>
+        <source>Quick Format</source>
+        <translation>Швидке Форматування</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="154"/>
-        <source>This operation will clear all data from your device.</source>
-        <translation>Ця операція очистить всі дані вашого пристрою.</translation>
+        <source>Formatting will erase all data on the disk.</source>
+        <translation>Форматування знищить всі дані на диску.</translation>
     </message>
 </context>
 <context>
@@ -107,8 +107,8 @@
     <name>WarnPage</name>
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
-        <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
-        <translation>Операція форматування очистить всі дані з вашого диску, ви впевнені що хочете продовжити? Цей параметр не може бути відновлений.</translation>
+        <source>Formatting will erase all data on this disk, are you sure you want to continue? It cannot be restored.</source>
+        <translation>Форматування знищить всі дані на цьому диску. Ви впевнені, що хочете продовжити? Він не може бути відновлений.</translation>
     </message>
 </context>
 </TS>

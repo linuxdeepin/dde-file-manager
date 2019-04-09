@@ -3,7 +3,7 @@
     <name>FinishPage</name>
     <message>
         <location filename="../view/finishpage.cpp" line="42"/>
-        <source>Format successfully</source>
+        <source>Format successful</source>
         <translation>Formatavimas sėkmingas</translation>
     </message>
 </context>
@@ -11,8 +11,8 @@
     <name>FormatingPage</name>
     <message>
         <location filename="../view/formatingpage.cpp" line="43"/>
-        <source>Formating, please wait for a minute...</source>
-        <translation>Formatuojama, prašome palaukti minutėlę...</translation>
+        <source>Formatting the disk, please wait...</source>
+        <translation>Diskas formatuojamas, palaukite...</translation>
     </message>
 </context>
 <context>
@@ -29,13 +29,13 @@
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="137"/>
-        <source>Fast format</source>
-        <translation>Greitasis formatavimas</translation>
+        <source>Quick Format</source>
+        <translation>Spartusis formatavimas</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="154"/>
-        <source>This operation will clear all data from your device.</source>
-        <translation>Šis operacija išvalys visus duomenis iš jūsų įrenginio.</translation>
+        <source>Formatting will erase all data on the disk.</source>
+        <translation>Formatavimas ištrins visus diske esančius duomenis.</translation>
     </message>
 </context>
 <context>
@@ -107,8 +107,8 @@
     <name>WarnPage</name>
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
-        <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
-        <translation>Formatavimo operacija išvalys visus duomenis iš jūsų disko, ar tikrai norite tęsti? Šio pasirinkimo neįmanoma bus atkurti.</translation>
+        <source>Formatting will erase all data on this disk, are you sure you want to continue? It cannot be restored.</source>
+        <translation>Formatavimas ištrins visus šiame diske esančius duomenis, ar tikrai norite tęsti? Duomenų neįmanoma bus atkurti.</translation>
     </message>
 </context>
 </TS>
