@@ -3,7 +3,7 @@
     <name>FinishPage</name>
     <message>
         <location filename="../view/finishpage.cpp" line="42"/>
-        <source>Format successfully</source>
+        <source>Format successful</source>
         <translation>Formatado com sucesso</translation>
     </message>
 </context>
@@ -11,8 +11,8 @@
     <name>FormatingPage</name>
     <message>
         <location filename="../view/formatingpage.cpp" line="43"/>
-        <source>Formating, please wait for a minute...</source>
-        <translation>Formatando, aguarde alguns minutos...</translation>
+        <source>Formatting the disk, please wait...</source>
+        <translation>Formatando o disco, aguarde...</translation>
     </message>
 </context>
 <context>
@@ -29,13 +29,13 @@
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="137"/>
-        <source>Fast format</source>
-        <translation>Formatação rápida </translation>
+        <source>Quick Format</source>
+        <translation>Formatação Rápida</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="154"/>
-        <source>This operation will clear all data from your device.</source>
-        <translation>Esta operação apagará todos os dados do seu dispositivo. </translation>
+        <source>Formatting will erase all data on the disk.</source>
+        <translation>A formatação apagará todos os dados do disco.</translation>
     </message>
 </context>
 <context>
@@ -107,8 +107,8 @@
     <name>WarnPage</name>
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
-        <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
-        <translation>A formatação limpará todos os dados do seu disco, tem certeza que deseja continuar? Esta opção não poderá ser restaurada.</translation>
+        <source>Formatting will erase all data on this disk, are you sure you want to continue? It cannot be restored.</source>
+        <translation>A formatação apagará os dados do disco. Quer realmente continuar? Isso não pode ser revertido.</translation>
     </message>
 </context>
 </TS>

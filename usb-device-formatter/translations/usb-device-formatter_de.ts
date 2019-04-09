@@ -3,16 +3,16 @@
     <name>FinishPage</name>
     <message>
         <location filename="../view/finishpage.cpp" line="42"/>
-        <source>Format successfully</source>
-        <translation>Formatierung erfolgreich</translation>
+        <source>Format successful</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FormatingPage</name>
     <message>
         <location filename="../view/formatingpage.cpp" line="43"/>
-        <source>Formating, please wait for a minute...</source>
-        <translation>Formatiere, einen Augenblick bitte...</translation>
+        <source>Formatting the disk, please wait...</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -29,13 +29,13 @@
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="137"/>
-        <source>Fast format</source>
-        <translation>Schnellformatierung</translation>
+        <source>Quick Format</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="154"/>
-        <source>This operation will clear all data from your device.</source>
-        <translation>Dieser Vorgang wird alle Daten von Ihrem Datenträger löschen.</translation>
+        <source>Formatting will erase all data on the disk.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -107,8 +107,8 @@
     <name>WarnPage</name>
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
-        <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
-        <translation>Dieser Vorgang wird alle Daten von Ihrem Datenträger löschen. Sind Sie sicher, dass Sie fortfahren möchten? Der Vorgang kann nicht rückgängig gemacht werden.</translation>
+        <source>Formatting will erase all data on this disk, are you sure you want to continue? It cannot be restored.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>

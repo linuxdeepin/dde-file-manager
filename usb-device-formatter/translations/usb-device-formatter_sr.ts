@@ -3,7 +3,7 @@
     <name>FinishPage</name>
     <message>
         <location filename="../view/finishpage.cpp" line="42"/>
-        <source>Format successfully</source>
+        <source>Format successful</source>
         <translation>Успешно форматирано</translation>
     </message>
 </context>
@@ -11,8 +11,8 @@
     <name>FormatingPage</name>
     <message>
         <location filename="../view/formatingpage.cpp" line="43"/>
-        <source>Formating, please wait for a minute...</source>
-        <translation>Форматирање. Причекајте мало...</translation>
+        <source>Formatting the disk, please wait...</source>
+        <translation>Форматирање диска. Молимо сачекајте...</translation>
     </message>
 </context>
 <context>
@@ -29,13 +29,13 @@
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="137"/>
-        <source>Fast format</source>
-        <translation>Брзо форматирање</translation>
+        <source>Quick Format</source>
+        <translation>Брзо форматитање</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="154"/>
-        <source>This operation will clear all data from your device.</source>
-        <translation>Ова радња ће обрисати све податке са вашег уређаја.</translation>
+        <source>Formatting will erase all data on the disk.</source>
+        <translation>Форматирање ће обрисати све податке са диска.</translation>
     </message>
 </context>
 <context>
@@ -107,8 +107,8 @@
     <name>WarnPage</name>
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
-        <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
-        <translation>Форматирањем се бришу сви подаци са вашег диска. Заиста желите да наставите? Ова радња је неповратна.</translation>
+        <source>Formatting will erase all data on this disk, are you sure you want to continue? It cannot be restored.</source>
+        <translation>Форматирањем се бришу сви подаци са диска. Заиста желите да наставите? Ова радња је неповратна.</translation>
     </message>
 </context>
 </TS>

@@ -3,16 +3,16 @@
     <name>FinishPage</name>
     <message>
         <location filename="../view/finishpage.cpp" line="42"/>
-        <source>Format successfully</source>
-        <translation>Biçimlendirildi</translation>
+        <source>Format successful</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FormatingPage</name>
     <message>
         <location filename="../view/formatingpage.cpp" line="43"/>
-        <source>Formating, please wait for a minute...</source>
-        <translation>Lütfen biçimlendirme tamamlanana kadar bekleyin...</translation>
+        <source>Formatting the disk, please wait...</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -29,13 +29,13 @@
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="137"/>
-        <source>Fast format</source>
-        <translation>Hızlı Biçimlendirme</translation>
+        <source>Quick Format</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="154"/>
-        <source>This operation will clear all data from your device.</source>
-        <translation>Bu işlem aygıttaki tüm verileri siler.</translation>
+        <source>Formatting will erase all data on the disk.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -107,8 +107,8 @@
     <name>WarnPage</name>
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
-        <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
-        <translation>Biçimlendirme işlemi diskinizdeki tüm verileri siler. Devam etmek istediğinize emin misiniz? Bu işlem geri alınamaz.</translation>
+        <source>Formatting will erase all data on this disk, are you sure you want to continue? It cannot be restored.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>

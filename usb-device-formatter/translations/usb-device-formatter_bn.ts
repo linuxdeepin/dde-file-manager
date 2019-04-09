@@ -3,16 +3,16 @@
     <name>FinishPage</name>
     <message>
         <location filename="../view/finishpage.cpp" line="42"/>
-        <source>Format successfully</source>
-        <translation>সফলভাবে ফরম্যাট হয়েছে</translation>
+        <source>Format successful</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FormatingPage</name>
     <message>
         <location filename="../view/formatingpage.cpp" line="43"/>
-        <source>Formating, please wait for a minute...</source>
-        <translation>ফরম্যাট করা হচ্ছে। দয়া করে কিছুক্ষন অপেক্ষা করুন</translation>
+        <source>Formatting the disk, please wait...</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -29,13 +29,13 @@
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="137"/>
-        <source>Fast format</source>
-        <translation>দ্রুত ফরম্যাট </translation>
+        <source>Quick Format</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="154"/>
-        <source>This operation will clear all data from your device.</source>
-        <translation>এই অপারেশনটি আপনার ডিভাইস হতে সকল ডাটা মুছে ফেলবে</translation>
+        <source>Formatting will erase all data on the disk.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -107,8 +107,8 @@
     <name>WarnPage</name>
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
-        <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
-        <translation>ফরম্যাটিং অপারেশন আপনার ডিভাইসের সকল ডাটা মুছে ফেলবে। আপনি কি চালিয়ে যেতে চান? এই অপেরেশনটি আর পূর্বের অবস্থায় ফিরিয়ে আনা যাবেনা।</translation>
+        <source>Formatting will erase all data on this disk, are you sure you want to continue? It cannot be restored.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>

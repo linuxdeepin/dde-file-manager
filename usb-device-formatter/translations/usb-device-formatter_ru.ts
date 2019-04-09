@@ -3,7 +3,7 @@
     <name>FinishPage</name>
     <message>
         <location filename="../view/finishpage.cpp" line="42"/>
-        <source>Format successfully</source>
+        <source>Format successful</source>
         <translation>Успешно отформатировано</translation>
     </message>
 </context>
@@ -11,8 +11,8 @@
     <name>FormatingPage</name>
     <message>
         <location filename="../view/formatingpage.cpp" line="43"/>
-        <source>Formating, please wait for a minute...</source>
-        <translation>Форматирование, пожалуйста, подождите минуту ...</translation>
+        <source>Formatting the disk, please wait...</source>
+        <translation>Форматирование диска, пожалуйста ждите...</translation>
     </message>
 </context>
 <context>
@@ -29,13 +29,13 @@
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="137"/>
-        <source>Fast format</source>
-        <translation>Быстрое форматирование</translation>
+        <source>Quick Format</source>
+        <translation>Быстрый Формат</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="154"/>
-        <source>This operation will clear all data from your device.</source>
-        <translation>Это действие очистит всю информацию на вашем устройстве.</translation>
+        <source>Formatting will erase all data on the disk.</source>
+        <translation>Форматирование сотрет все данные на диске.</translation>
     </message>
 </context>
 <context>
@@ -107,8 +107,8 @@
     <name>WarnPage</name>
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
-        <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
-        <translation>Операция форматирования удалит все данные с вашего диска, вы уверены, что хотите  продолжить? Это действие нельзя отменить.</translation>
+        <source>Formatting will erase all data on this disk, are you sure you want to continue? It cannot be restored.</source>
+        <translation>Форматирование сотрет все данные на этом диске. Вы уверены, что хотите продолжить? Восстановлению не подлежит.</translation>
     </message>
 </context>
 </TS>

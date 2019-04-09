@@ -3,16 +3,16 @@
     <name>FinishPage</name>
     <message>
         <location filename="../view/finishpage.cpp" line="42"/>
-        <source>Format successfully</source>
-        <translation>تمت التهيئة بنجاح</translation>
+        <source>Format successful</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>FormatingPage</name>
     <message>
         <location filename="../view/formatingpage.cpp" line="43"/>
-        <source>Formating, please wait for a minute...</source>
-        <translation>تتم التهيئة ، الرجاء الانتظار قليلاّ ...</translation>
+        <source>Formatting the disk, please wait...</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -29,13 +29,13 @@
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="137"/>
-        <source>Fast format</source>
-        <translation>تهيئة سريعة</translation>
+        <source>Quick Format</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="154"/>
-        <source>This operation will clear all data from your device.</source>
-        <translation>ستؤدي هذه العملية إلى مسح كافة البيانات من جهازك.</translation>
+        <source>Formatting will erase all data on the disk.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -107,8 +107,8 @@
     <name>WarnPage</name>
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
-        <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
-        <translation>ستؤدي عملية التهيئة إلى مسح كافة البيانات من جهازك.، هل أنت متأكد من الاستمرار؟ لا يمكن استعادة هذا الخيار.</translation>
+        <source>Formatting will erase all data on this disk, are you sure you want to continue? It cannot be restored.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>
