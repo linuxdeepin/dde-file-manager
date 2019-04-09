@@ -1,3 +1,21 @@
+<a name="4.8.0"></a>
+## 4.8.0 (2019-04-09)
+
+
+#### Bug Fixes
+
+*   also prompt the user to set executable bits for ELF files. ([ad9910df](https://github.com/linuxdeepin/dde-file-manager/commit/ad9910dfcfc3f900972db8a91d1883fdd10183bf))
+*   crash on create file (#115) ([74beb59e](https://github.com/linuxdeepin/dde-file-manager/commit/74beb59ebfda31382fee666ccbf99e9a3962770b))
+*   stray question mark in string. (#114) ([45029ef3](https://github.com/linuxdeepin/dde-file-manager/commit/45029ef38e149f30e4f0bcf15ea88e54121b09d4))
+* **dialog:**  default button and recommend button not same (#112) ([ac591df8](https://github.com/linuxdeepin/dde-file-manager/commit/ac591df87bab4440c71a0a4a143ed9a7dc19c665))
+
+#### Features
+
+*   merged desktop (#118) ([96e69027](https://github.com/linuxdeepin/dde-file-manager/commit/96e69027c6a87ed13b1b834130baae2bdbb01b31))
+*   implement clear recent history. (#111) ([e25bca7d](https://github.com/linuxdeepin/dde-file-manager/commit/e25bca7d43cbeaa4b6b2f46560efad426beac59c))
+
+
+
 <a name="4.7.9"></a>
 ## 4.7.9 (2019-04-04)
 
