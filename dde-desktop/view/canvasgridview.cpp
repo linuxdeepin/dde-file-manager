@@ -1817,12 +1817,12 @@ void CanvasGridView::initConnection()
     });
 
     connect(this, &CanvasGridView::itemCreated, [ = ](const DUrl & url) {
-        d->lastMenuNewFilepath = url.toLocalFile();
-        GridManager::instance()->add(url.toLocalFile());
+        d->lastMenuNewFilepath = url.toString();
+        GridManager::instance()->add(d->lastMenuNewFilepath);
     });
 
     connect(this, &CanvasGridView::itemDeleted, [ = ](const DUrl & url) {
-        GridManager::instance()->remove(url.toLocalFile());
+        GridManager::instance()->remove(url.toString());
 
         auto index = model()->index(url);
         if (d->currentCursorIndex == index) {
