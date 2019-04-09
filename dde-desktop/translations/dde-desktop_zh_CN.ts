@@ -1,38 +1,45 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2259"/>
+        <location filename="../view/canvasgridview.cpp" line="2345"/>
         <source>Icon size</source>
         <translation>图标大小</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2265"/>
+        <location filename="../view/canvasgridview.cpp" line="2351"/>
+        <source>Auto merge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../view/canvasgridview.cpp" line="2358"/>
         <source>Auto arrange</source>
         <translation>自动排列</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2318"/>
+        <location filename="../view/canvasgridview.cpp" line="2411"/>
         <source>Set Wallpaper</source>
         <translation>设置壁纸</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2320"/>
+        <location filename="../view/canvasgridview.cpp" line="2413"/>
         <source>Wallpaper and Screensaver</source>
         <translation>壁纸与屏保</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2398"/>
+        <location filename="../view/canvasgridview.cpp" line="2491"/>
         <source>Properties</source>
         <translation>属性</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2304"/>
+        <location filename="../view/canvasgridview.cpp" line="2397"/>
         <source>Display Settings</source>
         <translation>显示设置</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2311"/>
+        <location filename="../view/canvasgridview.cpp" line="2404"/>
         <source>Corner Settings</source>
         <translation>热区设置</translation>
     </message>
