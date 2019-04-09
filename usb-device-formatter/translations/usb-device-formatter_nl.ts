@@ -3,7 +3,7 @@
     <name>FinishPage</name>
     <message>
         <location filename="../view/finishpage.cpp" line="42"/>
-        <source>Format successfully</source>
+        <source>Format successful</source>
         <translation>Geformatteerd</translation>
     </message>
 </context>
@@ -11,7 +11,7 @@
     <name>FormatingPage</name>
     <message>
         <location filename="../view/formatingpage.cpp" line="43"/>
-        <source>Formating, please wait for a minute...</source>
+        <source>Formatting the disk, please wait...</source>
         <translation>Bezig met formatteren; even geduld...</translation>
     </message>
 </context>
@@ -29,13 +29,13 @@
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="137"/>
-        <source>Fast format</source>
+        <source>Quick Format</source>
         <translation>Snel formatteren</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="154"/>
-        <source>This operation will clear all data from your device.</source>
-        <translation>Deze actie verwijdert alle gegevens van je USB-apparaat.</translation>
+        <source>Formatting will erase all data on the disk.</source>
+        <translation>Deze actie verwijdert alle gegevens van je schijf.</translation>
     </message>
 </context>
 <context>
@@ -107,8 +107,8 @@
     <name>WarnPage</name>
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
-        <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
-        <translation>Met de actie &apos;Formatteren&apos; wis je alle gegevens van je USB-apparaat. Weet je zeker dat je verder wilt gaan? Deze actie kan niet ongedaan worden gemaakt.</translation>
+        <source>Formatting will erase all data on this disk, are you sure you want to continue? It cannot be restored.</source>
+        <translation>Met de actie &apos;Formatteren&apos; wis je alle gegevens van je schijf. Weet je zeker dat je wilt doorgaan? Ongedaan maken is niet mogelijk.</translation>
     </message>
 </context>
 </TS>
