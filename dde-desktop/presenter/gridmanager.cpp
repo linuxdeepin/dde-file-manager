@@ -764,12 +764,6 @@ void GridManager::setAutoMerge(bool enable)
 {
     if (d->autoMerge == enable) return;
     d->autoMerge = enable;
-
-    if (enable) {
-        // when enable desktop merge
-    } else {
-        // switch back
-    }
 }
 
 void GridManager::toggleAutoMerge()

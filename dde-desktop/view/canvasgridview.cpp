@@ -69,6 +69,8 @@
 #include "app/define.h"
 #include "controllers/mergeddesktopcontroller.h"
 
+#define MERGEDDESKTOP_FOLDER "mergeddesktop/"
+
 std::atomic<bool> CanvasGridView::m_flag{ false };
 QMap<DMD_TYPES, bool> CanvasGridView::virtualEntryExpandState;
 
@@ -353,7 +355,7 @@ void CanvasGridView::setAutoMerge(bool enabled)
     d->autoMerge = enabled;
 
     if (enabled) {
-        this->setRootUrl(DUrl(DFMMD_ROOT "mergeddesktop/"));
+        this->setRootUrl(DUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER));
     } else {
         // sa
         QString desktopPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
@@ -872,7 +874,6 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
 //        d->lastRepaintTime = currentTime;
 //    }
 
-    static QIcon expandMaskIcon = QIcon::fromTheme("folder-stack-mask");
     QPainter painter(viewport());
     auto repaintRect = event->rect();
     painter.setRenderHints(QPainter::HighQualityAntialiasing);
@@ -1035,6 +1036,7 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
             DMD_TYPES oneType = MergedDesktopController::entryTypeByName(info->fileName());
             if (virtualEntryExpandState[oneType]) {
                 // do draw mask here
+                static QIcon expandMaskIcon = QIcon::fromTheme("folder-stack-mask");
                 painter.drawImage(itemIconGeomerty(index), expandMaskIcon.pixmap(cellSize()).toImage());
             }
         }
@@ -1224,7 +1226,7 @@ void CanvasGridView::openUrl(const DUrl &url)
         clearSelection();
         // prepare root url
         QString currentFragment = currentUrl().fragment();
-        DUrl targetUrl(DFMMD_ROOT "mergeddesktop/");
+        DUrl targetUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER);
 
         // toggle expand state
         DMD_TYPES oneType = MergedDesktopController::entryTypeByName(url.fileName());
