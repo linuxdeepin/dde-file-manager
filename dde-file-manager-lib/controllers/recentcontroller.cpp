@@ -385,8 +385,17 @@ void RecentController::handleFileChanged()
     QFile file(m_xbelPath);
     QList<DUrl> urlList;
 
-    if (!m_xbelFileLock.tryLock()) {
-        // other process already reading the xbel stream, abort.
+    // try interrupting any other running parsers, then acquire the lock
+    m_condition.wakeAll();
+    if (!m_xbelFileLock.tryLock(100)) {
+            return;
+    }
+
+    if(m_condition.wait(&m_xbelFileLock, 1000)) {
+        // if the parser is interrupted.
+        // we need a timeout long enough so that
+        // virtually all execution time is spent here.
+        m_xbelFileLock.unlock();
         return;
     }
 
@@ -450,5 +459,16 @@ void RecentController::handleFileChanged()
 
 void RecentController::asyncHandleFileChanged()
 {
+    /* remark 190410:
+     * This slot always gets triggered multiple times consecutively by the
+     * file closed/modified events. The correct fix should be applying a
+     * lock to 'recently-used.xbel' whenever writing.
+     * The current solution is setting a timeout, during which no matter
+     * how many handleFileChanged()'s are triggered, only the last one
+     * gets executed.
+     * The issue mentioned above is specific to applications that use DTK.
+     * Applications using GTK does not trigger file closed/modified events
+     * at all for some obscure reasons.
+     */
     QtConcurrent::run(this, &RecentController::handleFileChanged);
 }
