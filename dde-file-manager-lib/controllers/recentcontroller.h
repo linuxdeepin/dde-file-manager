@@ -23,6 +23,7 @@
 #include "dabstractfilecontroller.h"
 #include "models/recentfileinfo.h"
 
+#include <QWaitCondition>
 #include <QMutex>
 
 class QFileSystemWatcher;
@@ -66,6 +67,7 @@ private:
 
     QString m_xbelPath;
     DFileWatcher *m_watcher;
+    QWaitCondition m_condition;
     QMutex m_xbelFileLock;
 };
 
