@@ -388,7 +388,7 @@ void RecentController::handleFileChanged()
     // try interrupting any other running parsers, then acquire the lock
     m_condition.wakeAll();
     if (!m_xbelFileLock.tryLock(100)) {
-            return;
+        return;
     }
 
     if(m_condition.wait(&m_xbelFileLock, 1000)) {
