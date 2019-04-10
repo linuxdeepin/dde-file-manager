@@ -1296,83 +1296,50 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
 //    GridManager::instance()->initProfile(infoList);
     GridManager::instance()->initWithoutProfile(infoList);
 
-    d->filesystemWatcher = new DFileSystemWatcher(QStringList() << fileUrl.toLocalFile());
+    d->filesystemWatcher = model()->fileWatcher();
 
-    connect(d->filesystemWatcher, &DFileSystemWatcher::fileCreated,
-    this, [ = ](const QString & rootPath, const QString & name) {
-        Q_UNUSED(rootPath);
-        Q_UNUSED(name);
-
-        if (d->_debug_log) {
-            qDebug() << "fileCreated" << rootPath << name;
-        }
-        const QString &filePath = rootPath + QDir::separator() + name;
-
-        Q_EMIT itemCreated(DUrl::fromLocalFile(filePath));
+    connect(d->filesystemWatcher, &DAbstractFileWatcher::subfileCreated,
+    this, [ = ](const DUrl &url) {
+        Q_EMIT itemCreated(url);
         update();
     });
 
-    connect(d->filesystemWatcher, &DFileSystemWatcher::fileDeleted,
-    this, [ = ](const QString & path, const QString & name) {
-        Q_UNUSED(path);
-        Q_UNUSED(name);
-
-        auto fileUrl = DUrl::fromLocalFile(QString("%1/%2").arg(path).arg(name));
-        auto localFile = fileUrl.toLocalFile();
-
-        if (d->_debug_log) {
-            qDebug() << "fileDeleted" << path << name << localFile;
-        }
-
-        if (localFile != currentUrl().toLocalFile()) {
-            d->filesystemWatcher->removePath(localFile);
-        }
-
-        Q_EMIT itemDeleted(fileUrl);
+    connect(d->filesystemWatcher, &DAbstractFileWatcher::fileDeleted,
+    this, [ = ](const DUrl &url) {
+        Q_EMIT itemDeleted(url);
         update();
     });
 
-    connect(d->filesystemWatcher, &DFileSystemWatcher::fileMoved,
-            this, [ = ](const QString & fromPath, const QString & fromName,
-    const QString & toPath, const QString & toName) {
-        Q_UNUSED(fromName);
-        Q_UNUSED(toName);
+    connect(d->filesystemWatcher, &DAbstractFileWatcher::fileMoved,
+            this, [ = ](const DUrl &oriUrl, const DUrl &dstUrl) {
 
-        if (d->_debug_log) {
-            qDebug() << "fileMoved" << fromPath << fromName << toPath << toName;
-        }
-
-        auto fromFileUrl = DUrl::fromLocalFile(QString("%1/%2").arg(fromPath).arg(fromName));
-        auto oldLocalFile = fromFileUrl.toLocalFile();
         bool findOldPos = false;
         QPoint oldPos = QPoint(-1, -1);
 
-        if (GridManager::instance()->contains(oldLocalFile) && !fromName.isEmpty()) {
-            oldPos = GridManager::instance()->position(oldLocalFile);
+        if (GridManager::instance()->contains(oriUrl.toString()) && !oriUrl.fileName().isEmpty()) {
+            oldPos = GridManager::instance()->position(oriUrl.toString());
             findOldPos = true;
 
             if (d->_debug_log) {
-                qDebug() << "find oldPos" << oldPos << oldLocalFile;
+                qDebug() << "find oldPos" << oldPos << oriUrl;
             }
         }
 
         bool findNewPos = false;
-        if (DUrl::fromLocalFile(toPath) == currentUrl() && !toName.isEmpty()) {
+        if (dstUrl == currentUrl() && !dstUrl.fileName().isEmpty()) {
             findNewPos = true;
         }
 
-        auto toFileUrl = DUrl::fromLocalFile(QString("%1/%2").arg(toPath).arg(toName));
-        auto newLoaclFile = toFileUrl.toLocalFile();
-        findNewPos &= !GridManager::instance()->contains(newLoaclFile);
+        findNewPos &= !GridManager::instance()->contains(dstUrl.toString());
 
         if (!findNewPos) {
-            Q_EMIT itemDeleted(fromFileUrl);
+            Q_EMIT itemDeleted(oriUrl);
         } else {
             if (findOldPos) {
-                GridManager::instance()->remove(oldLocalFile);
-                GridManager::instance()->add(oldPos, newLoaclFile);
+                GridManager::instance()->remove(oriUrl.toString());
+                GridManager::instance()->add(oldPos, dstUrl.toString());
             } else {
-                Q_EMIT itemCreated(toFileUrl);
+                Q_EMIT itemCreated(dstUrl);
             }
         }
 

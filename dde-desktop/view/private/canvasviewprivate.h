@@ -29,8 +29,8 @@
 class QFrame;
 class CanvasViewHelper;
 class WaterMaskFrame;
-class DbusDock;
 class GridCore;
+class DAbstractFileWatcher;
 
 class CanvasViewPrivate
 {
@@ -158,7 +158,7 @@ public:
     // secice system up
 //    QTimer              *syncTimer          = nullptr;
 //    qint64              lastRepaintTime     = 0;
-    DFileSystemWatcher  *filesystemWatcher  = nullptr;
+    DAbstractFileWatcher  *filesystemWatcher  = nullptr;
     WaterMaskFrame *waterMaskFrame          = nullptr;
 
     DBusDock            *dbusDock           = nullptr;

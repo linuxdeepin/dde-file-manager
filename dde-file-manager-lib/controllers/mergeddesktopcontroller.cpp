@@ -194,6 +194,8 @@ void MergedDesktopController::desktopFilesCreated(const DUrl &url)
     arrangedFileUrls[typeInfo].append(url);
     DUrl parentUrl(DFMMD_SCHEME "entry/" + entryNameByEnum(typeInfo) + "/");
     DAbstractFileWatcher::ghostSignal(parentUrl, &DAbstractFileWatcher::subfileCreated, url);
+    DUrl parentUrl2(DFMMD_SCHEME "mergeddesktop/");
+    DAbstractFileWatcher::ghostSignal(parentUrl2, &DAbstractFileWatcher::subfileCreated, url);
 }
 
 void MergedDesktopController::desktopFilesRemoved(const DUrl &url)
@@ -203,6 +205,8 @@ void MergedDesktopController::desktopFilesRemoved(const DUrl &url)
         if (arrangedFileUrls[typeInfo].removeOne(url)) {
             DUrl parentUrl(DFMMD_SCHEME "entry/" + entryNameByEnum(typeInfo) + "/");
             DAbstractFileWatcher::ghostSignal(parentUrl, &DAbstractFileWatcher::fileDeleted, url);
+            DUrl parentUrl2(DFMMD_SCHEME "mergeddesktop/");
+            DAbstractFileWatcher::ghostSignal(parentUrl2, &DAbstractFileWatcher::fileDeleted, url);
             return;
         }
     }
