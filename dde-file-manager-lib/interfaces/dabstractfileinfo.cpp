@@ -615,6 +615,9 @@ QString DAbstractFileInfo::lastModifiedDisplayName() const
 {
     CALL_PROXY(lastModifiedDisplayName());
 
+    if(!lastModified().isValid())
+        return qApp->translate("MimeTypeDisplayManager", "Unknown");
+
     return lastModified().toString(dateTimeFormat());
 }
 
