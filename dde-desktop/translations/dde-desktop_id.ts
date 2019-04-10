@@ -2,37 +2,42 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2259"/>
+        <location filename="../view/canvasgridview.cpp" line="2345"/>
         <source>Icon size</source>
         <translation>Ukuran ikon</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2265"/>
+        <location filename="../view/canvasgridview.cpp" line="2351"/>
+        <source>Auto merge</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../view/canvasgridview.cpp" line="2358"/>
         <source>Auto arrange</source>
         <translation>Atur otomatis</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2318"/>
+        <location filename="../view/canvasgridview.cpp" line="2411"/>
         <source>Set Wallpaper</source>
         <translation>Setel Wallpaper</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2320"/>
+        <location filename="../view/canvasgridview.cpp" line="2413"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Wallpaper dan Screensaver</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2398"/>
+        <location filename="../view/canvasgridview.cpp" line="2491"/>
         <source>Properties</source>
         <translation>Properti</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2304"/>
+        <location filename="../view/canvasgridview.cpp" line="2397"/>
         <source>Display Settings</source>
         <translation>Pengaturan Tampilan</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2311"/>
+        <location filename="../view/canvasgridview.cpp" line="2404"/>
         <source>Corner Settings</source>
         <translation>Pengaturan Sudut</translation>
     </message>

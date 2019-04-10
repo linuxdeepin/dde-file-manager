@@ -2,37 +2,42 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2259"/>
+        <location filename="../view/canvasgridview.cpp" line="2345"/>
         <source>Icon size</source>
         <translation>Rozmiar ikony</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2265"/>
+        <location filename="../view/canvasgridview.cpp" line="2351"/>
+        <source>Auto merge</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../view/canvasgridview.cpp" line="2358"/>
         <source>Auto arrange</source>
         <translation>Automatyczne porządkowanie</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2318"/>
+        <location filename="../view/canvasgridview.cpp" line="2411"/>
         <source>Set Wallpaper</source>
         <translation>Ustaw tapetę pulpitu</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2320"/>
+        <location filename="../view/canvasgridview.cpp" line="2413"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Tapeta pulpitu i wygaszacz ekranu</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2398"/>
+        <location filename="../view/canvasgridview.cpp" line="2491"/>
         <source>Properties</source>
         <translation>Właściwości</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2304"/>
+        <location filename="../view/canvasgridview.cpp" line="2397"/>
         <source>Display Settings</source>
         <translation>Ustawienia ekranu</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2311"/>
+        <location filename="../view/canvasgridview.cpp" line="2404"/>
         <source>Corner Settings</source>
         <translation>Ustawienia narożników</translation>
     </message>

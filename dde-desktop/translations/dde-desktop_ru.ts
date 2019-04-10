@@ -2,37 +2,42 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2259"/>
+        <location filename="../view/canvasgridview.cpp" line="2345"/>
         <source>Icon size</source>
         <translation>Размер значка</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2265"/>
+        <location filename="../view/canvasgridview.cpp" line="2351"/>
+        <source>Auto merge</source>
+        <translation>Автоматическое объединение</translation>
+    </message>
+    <message>
+        <location filename="../view/canvasgridview.cpp" line="2358"/>
         <source>Auto arrange</source>
         <translation>Автоматическое размещение</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2318"/>
+        <location filename="../view/canvasgridview.cpp" line="2411"/>
         <source>Set Wallpaper</source>
         <translation>Установить в Качестве Обоев</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2320"/>
+        <location filename="../view/canvasgridview.cpp" line="2413"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Обои и Заставка рабочего стола</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2398"/>
+        <location filename="../view/canvasgridview.cpp" line="2491"/>
         <source>Properties</source>
         <translation>Свойства</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2304"/>
+        <location filename="../view/canvasgridview.cpp" line="2397"/>
         <source>Display Settings</source>
         <translation>Настройки Экрана</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2311"/>
+        <location filename="../view/canvasgridview.cpp" line="2404"/>
         <source>Corner Settings</source>
         <translation>Угловая Навигация</translation>
     </message>

@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -1250,37 +1248,37 @@
         <location filename="../controllers/mergeddesktopcontroller.cpp" line="144"/>
         <location filename="../controllers/mergeddesktopcontroller.cpp" line="164"/>
         <source>Pictures</source>
-        <translation type="unfinished">图片</translation>
+        <translation>图片</translation>
     </message>
     <message>
         <location filename="../controllers/mergeddesktopcontroller.cpp" line="146"/>
         <location filename="../controllers/mergeddesktopcontroller.cpp" line="166"/>
         <source>Music</source>
-        <translation type="unfinished">音乐</translation>
+        <translation>音乐</translation>
     </message>
     <message>
         <location filename="../controllers/mergeddesktopcontroller.cpp" line="148"/>
         <location filename="../controllers/mergeddesktopcontroller.cpp" line="168"/>
         <source>Applications</source>
-        <translation type="unfinished"></translation>
+        <translation>应用</translation>
     </message>
     <message>
         <location filename="../controllers/mergeddesktopcontroller.cpp" line="150"/>
         <location filename="../controllers/mergeddesktopcontroller.cpp" line="170"/>
         <source>Videos</source>
-        <translation type="unfinished">视频</translation>
+        <translation>视频</translation>
     </message>
     <message>
         <location filename="../controllers/mergeddesktopcontroller.cpp" line="152"/>
         <location filename="../controllers/mergeddesktopcontroller.cpp" line="172"/>
         <source>Documents</source>
-        <translation type="unfinished">文档</translation>
+        <translation>文档</translation>
     </message>
     <message>
         <location filename="../controllers/mergeddesktopcontroller.cpp" line="154"/>
         <location filename="../controllers/mergeddesktopcontroller.cpp" line="174"/>
         <source>Others</source>
-        <translation type="unfinished"></translation>
+        <translation>其他</translation>
     </message>
 </context>
 <context>
