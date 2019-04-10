@@ -123,7 +123,7 @@ public:
     WId winId() const;
     void setAutoMerge(bool enabled = false);
     void toggleAutoMerge(bool enabled = true);
-    void toggleEntryExpandedState();
+    void toggleEntryExpandedState(const DUrl &url);
 
 signals:
     void sortRoleChanged(int role, Qt::SortOrder order);
