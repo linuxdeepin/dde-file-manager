@@ -2437,16 +2437,15 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
 {
     if (!index.isValid()) {
         return;
-    }
-
-    if (d->autoMerge) {
-        return;
-    }
+    } 
 
     bool showProperty = true;
     DUrlList list = selectedUrls();
 
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
+    if (info->isVirtualEntry()) {
+        return;
+    }
 
     QSet<MenuAction> disableList;
     QSet<MenuAction> unusedList;
@@ -2462,7 +2461,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         }
 
         if (!indexFlags.testFlag(Qt::ItemIsEditable)) {
-            disableList << MenuAction::Rename ;
+            disableList << MenuAction::Rename;
         }
     }
 
