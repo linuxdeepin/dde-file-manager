@@ -377,6 +377,35 @@ void CanvasGridView::toggleAutoMerge(bool enabled)
 
 }
 
+void CanvasGridView::toggleEntryExpandedState(const DUrl &url)
+{
+    if (url.scheme() == DFMMD_SCHEME) {
+        clearSelection();
+        // prepare root url
+        QString currentFragment = currentUrl().fragment();
+        DUrl targetUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER);
+
+        // toggle expand state
+        DMD_TYPES oneType = MergedDesktopController::entryTypeByName(url.fileName());
+        virtualEntryExpandState[oneType] = !virtualEntryExpandState[oneType];
+
+        // construct fragment which indicated the expanded entries
+        QStringList expandedEntries;
+        for (unsigned int i = DMD_PICTURE; i <= DMD_OTHER; i++) {
+            DMD_TYPES oneType = static_cast<DMD_TYPES>(i);
+            if (virtualEntryExpandState[oneType]) {
+                expandedEntries.append(MergedDesktopController::entryNameByEnum(oneType));
+            }
+        }
+        if (!expandedEntries.isEmpty()) {
+            targetUrl.setFragment(expandedEntries.join(','));
+        }
+
+        // set root url (which will update the view)
+        this->setRootUrl(targetUrl);
+    }
+}
+
 QModelIndex CanvasGridView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
 {
     // Do not allow move when hold ctrl
@@ -490,8 +519,9 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
     QAbstractItemView::mousePressEvent(event);
 
     if (leftButtonPressed) {
-        qDebug() << model()->getUrlByIndex(index);
+        const DUrl &url = model()->getUrlByIndex(index);
         d->currentCursorIndex = index;
+        toggleEntryExpandedState(url);
     }
     update();
 }
@@ -516,22 +546,9 @@ void CanvasGridView::mouseDoubleClickEvent(QMouseEvent *event)
     QPersistentModelIndex persistent = index;
     emit doubleClicked(persistent);
     if ((event->button() == Qt::LeftButton) && !edit(persistent, DoubleClicked, event)
-            && !style()->styleHint(QStyle::SH_ItemView_ActivateItemOnSingleClick, 0, this)) {
+            && !style()->styleHint(QStyle::SH_ItemView_ActivateItemOnSingleClick, nullptr, this)) {
         emit activated(persistent);
     }
-
-//    if (!index.isValid()) {
-//        auto settings = Config::instance()->settings();
-//        settings->beginGroup(Config::groupGeneral);
-//        if (settings->contains(Config::keyQuickHide)) {
-//            auto quickHide = settings->value(Config::keyQuickHide).toBool();
-//            if (quickHide) {
-//                this->viewport()->hide();
-//            }
-//        }
-//        settings->endGroup();
-//        this->viewport()->hide();
-//    }
 }
 
 void CanvasGridView::wheelEvent(QWheelEvent *event)
@@ -1223,29 +1240,8 @@ QSize CanvasGridView::cellSize() const
 void CanvasGridView::openUrl(const DUrl &url)
 {
     if (url.scheme() == DFMMD_SCHEME) {
-        clearSelection();
-        // prepare root url
-        QString currentFragment = currentUrl().fragment();
-        DUrl targetUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER);
-
-        // toggle expand state
-        DMD_TYPES oneType = MergedDesktopController::entryTypeByName(url.fileName());
-        virtualEntryExpandState[oneType] = !virtualEntryExpandState[oneType];
-
-        // construct fragment which indicated the expanded entries
-        QStringList expandedEntries;
-        for (unsigned int i = DMD_PICTURE; i <= DMD_OTHER; i++) {
-            DMD_TYPES oneType = static_cast<DMD_TYPES>(i);
-            if (virtualEntryExpandState[oneType]) {
-                expandedEntries.append(MergedDesktopController::entryNameByEnum(oneType));
-            }
-        }
-        if (!expandedEntries.isEmpty()) {
-            targetUrl.setFragment(expandedEntries.join(','));
-        }
-
-        // set root url (which will update the view)
-        this->setRootUrl(targetUrl);
+        // we do expand the virtual entry on single click, so no longer need to do that here.
+        // toggleEntryExpandedState(url);
         return;
     }
 
@@ -2298,8 +2294,11 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     const QModelIndex &index = rootIndex();
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
     QVector<MenuAction> actions;
-    actions << MenuAction::NewFolder << MenuAction::NewDocument
-            << MenuAction::SortBy << MenuAction::Paste
+    if (!d->autoMerge) {
+        actions << MenuAction::NewFolder << MenuAction::NewDocument
+                << MenuAction::SortBy;
+    }
+    actions << MenuAction::Paste
             << MenuAction::SelectAll << MenuAction::OpenInTerminal
             << MenuAction::Property << MenuAction::Separator;
 
@@ -2346,20 +2345,22 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     iconSizeAction.setData(IconSize);
     iconSizeAction.setMenu(&iconSizeMenu);
     menu->insertAction(pasteAction, &iconSizeAction);
-//#ifdef QT_DEBUG
+
     QAction autoMerge(menu);
     autoMerge.setText(tr("Auto merge"));
     autoMerge.setData(AutoMerge);
     autoMerge.setCheckable(true);
     autoMerge.setChecked(GridManager::instance()->autoMerge());
     menu->insertAction(pasteAction, &autoMerge);
-//#endif // QT_DEBUG
-    QAction autoSort(menu);
-    autoSort.setText(tr("Auto arrange"));
-    autoSort.setData(AutoSort);
-    autoSort.setCheckable(true);
-    autoSort.setChecked(GridManager::instance()->autoArrange());
-    menu->insertAction(pasteAction, &autoSort);
+
+    if (!d->autoMerge) {
+        QAction autoSort(menu);
+        autoSort.setText(tr("Auto arrange"));
+        autoSort.setData(AutoSort);
+        autoSort.setCheckable(true);
+        autoSort.setChecked(GridManager::instance()->autoArrange());
+        menu->insertAction(pasteAction, &autoSort);
+    }
 
     auto *propertyAction = menu->actionAt(DFileMenuManager::getActionString(MenuAction::Property));
 //    QAction property(menu);
@@ -2435,6 +2436,10 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
 void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags)
 {
     if (!index.isValid()) {
+        return;
+    }
+
+    if (d->autoMerge) {
         return;
     }
 
