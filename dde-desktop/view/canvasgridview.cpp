@@ -470,6 +470,11 @@ QRegion CanvasGridView::visualRegionForSelection(const QItemSelection &selection
 
 void CanvasGridView::mouseMoveEvent(QMouseEvent *event)
 {
+    if (event->buttons() != Qt::LeftButton) {
+        event->ignore();
+        return;
+    }
+
     QAbstractItemView::mouseMoveEvent(event);
 
     auto curPos = event->pos();
