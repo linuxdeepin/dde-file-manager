@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>CanvasGridView</name>
     <message>
@@ -11,7 +9,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="2351"/>
         <source>Auto merge</source>
-        <translation type="unfinished"></translation>
+        <translation>自动整理</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2358"/>
