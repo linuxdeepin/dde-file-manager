@@ -2,7 +2,7 @@
 <context>
     <name>AppController</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="346"/>
+        <location filename="../controllers/appcontroller.cpp" line="348"/>
         <source>New Folder</source>
         <translation>Uusi kansio</translation>
     </message>
@@ -260,7 +260,7 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="185"/>
         <source>Failed, file size must be less than 4GB</source>
-        <translation>Epäonnistui, tiedoston koon on oltava alle 4 Gt</translation>
+        <translation>Epäonnistui, tiedoston koko on oltava alle 4Gt</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="187"/>
@@ -360,7 +360,7 @@
         <translation>Nimi</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="994"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1006"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1367"/>
         <location filename="../models/searchfileinfo.cpp" line="121"/>
         <source>Time modified</source>
@@ -1243,31 +1243,75 @@
     </message>
 </context>
 <context>
+    <name>MergedDesktopController</name>
+    <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="144"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="164"/>
+        <source>Pictures</source>
+        <translation>Kuvat</translation>
+    </message>
+    <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="146"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="166"/>
+        <source>Music</source>
+        <translation>Musiikki</translation>
+    </message>
+    <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="148"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="168"/>
+        <source>Applications</source>
+        <translation>Sovellukset</translation>
+    </message>
+    <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="150"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="170"/>
+        <source>Videos</source>
+        <translation>Videot</translation>
+    </message>
+    <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="152"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="172"/>
+        <source>Documents</source>
+        <translation>Asiakirjat</translation>
+    </message>
+    <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="154"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="174"/>
+        <source>Others</source>
+        <translation>Muut</translation>
+    </message>
+</context>
+<context>
     <name>MimeTypeDisplayManager</name>
     <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="232"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="53"/>
         <source>Directory</source>
         <translation>Hakemisto</translation>
     </message>
     <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="222"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="54"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="129"/>
         <source>Application</source>
         <translation>Sovellus</translation>
     </message>
     <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="228"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="55"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="130"/>
         <source>Video</source>
         <translation>Video</translation>
     </message>
     <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="226"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="56"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="131"/>
         <source>Audio</source>
         <translation>Ääni</translation>
     </message>
     <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="224"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="57"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="132"/>
         <source>Image</source>
@@ -1280,6 +1324,7 @@
         <translation>Arkisto</translation>
     </message>
     <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="230"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="59"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="134"/>
         <source>Text</source>
@@ -1665,12 +1710,12 @@
         <translation>Järjestelmä</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1142"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1148"/>
         <source>Allow to execute as program</source>
         <translation>Salli suorittaa ohjelma</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="919"/>
+        <location filename="../dialogs/propertydialog.cpp" line="925"/>
         <source>Local disk</source>
         <translation>Paikallinen levy</translation>
     </message>
@@ -1685,8 +1730,8 @@
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="835"/>
-        <location filename="../dialogs/propertydialog.cpp" line="924"/>
-        <location filename="../dialogs/propertydialog.cpp" line="951"/>
+        <location filename="../dialogs/propertydialog.cpp" line="930"/>
+        <location filename="../dialogs/propertydialog.cpp" line="957"/>
         <source>Contains</source>
         <translation>Sisältää</translation>
     </message>
@@ -1708,75 +1753,75 @@
         <translation>Muokattu</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="844"/>
+        <location filename="../dialogs/propertydialog.cpp" line="847"/>
         <source>Link path</source>
         <translation>Linkin polku</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="919"/>
-        <location filename="../dialogs/propertydialog.cpp" line="946"/>
+        <location filename="../dialogs/propertydialog.cpp" line="925"/>
+        <location filename="../dialogs/propertydialog.cpp" line="952"/>
         <source>Device type</source>
         <translation>Laitetyyppi</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="925"/>
-        <location filename="../dialogs/propertydialog.cpp" line="952"/>
+        <location filename="../dialogs/propertydialog.cpp" line="931"/>
+        <location filename="../dialogs/propertydialog.cpp" line="958"/>
         <source>Free space</source>
         <translation>Vapaa tila</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="920"/>
-        <location filename="../dialogs/propertydialog.cpp" line="947"/>
+        <location filename="../dialogs/propertydialog.cpp" line="926"/>
+        <location filename="../dialogs/propertydialog.cpp" line="953"/>
         <source>Total space</source>
         <translation>Kokonaistila</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="922"/>
-        <location filename="../dialogs/propertydialog.cpp" line="949"/>
+        <location filename="../dialogs/propertydialog.cpp" line="928"/>
+        <location filename="../dialogs/propertydialog.cpp" line="955"/>
         <source>Filesystem</source>
         <translation>Tiedostojärjestelmä</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1056"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1062"/>
         <source>Access denied</source>
         <translation>Pääsy evätty</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1057"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1067"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1063"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1073"/>
         <source>Executable</source>
         <translation>Suoritettava</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1058"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1059"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1064"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1065"/>
         <source>Write only</source>
         <translation>Vain kirjoitus</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1060"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1061"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1066"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1067"/>
         <source>Read only</source>
         <translation>Vain luku</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1062"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1063"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1068"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1069"/>
         <source>Read-write</source>
         <translation>Luku-kirjoitus</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1137"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1143"/>
         <source>Others</source>
         <translation>Muut</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1135"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1141"/>
         <source>Owner</source>
         <translation>Omistaja</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1136"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1142"/>
         <source>Group</source>
         <translation>Ryhmä</translation>
     </message>
@@ -2187,15 +2232,15 @@
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="299"/>
-        <location filename="../dialogs/propertydialog.cpp" line="892"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="628"/>
+        <location filename="../dialogs/propertydialog.cpp" line="898"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="636"/>
         <source>%1 item</source>
         <translation>%1 kohde</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="301"/>
-        <location filename="../dialogs/propertydialog.cpp" line="892"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="630"/>
+        <location filename="../dialogs/propertydialog.cpp" line="898"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="638"/>
         <source>%1 items</source>
         <translation>%1 kohdetta</translation>
     </message>
@@ -2222,7 +2267,7 @@
         <translation>Aika poistettu</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1201"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1213"/>
         <source>Loading...</source>
         <translation>Lataa...</translation>
     </message>
@@ -2268,23 +2313,23 @@
         <translation>Lähteen polku</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="379"/>
+        <location filename="../controllers/appcontroller.cpp" line="381"/>
         <source>Document</source>
         <translation>Asiakirja</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="388"/>
+        <location filename="../controllers/appcontroller.cpp" line="390"/>
         <source>Spreadsheet</source>
         <translation>Taulukko</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="397"/>
+        <location filename="../controllers/appcontroller.cpp" line="399"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="639"/>
         <source>Presentation</source>
         <translation>Esitys</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="406"/>
+        <location filename="../controllers/appcontroller.cpp" line="408"/>
         <source>Text</source>
         <translation>Teksti</translation>
     </message>
@@ -2413,7 +2458,7 @@
     <message>
         <location filename="../views/drenamebar.cpp" line="292"/>
         <source>Tips: Sort by selected file order</source>
-        <translation>Vihjeitä: Lajittele valitun tiedoston järjestyksen mukaan</translation>
+        <translation>Vihje: Lajittele valitun tiedoston mukaan</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="381"/>
@@ -2424,7 +2469,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1173"/>
         <source>Rename %1 Files</source>
-        <translation>Uudelleennimeä %1 tiedostoa</translation>
+        <translation>Nimeä %1 tiedostoa</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="150"/>
@@ -2459,7 +2504,7 @@
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
         <source>Modify time</source>
-        <translation>Muuta aikaa</translation>
+        <translation>Muutosaika</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="49"/>

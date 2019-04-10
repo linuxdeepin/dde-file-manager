@@ -2,7 +2,7 @@
 <context>
     <name>AppController</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="346"/>
+        <location filename="../controllers/appcontroller.cpp" line="348"/>
         <source>New Folder</source>
         <translation>Nova Pasta</translation>
     </message>
@@ -360,7 +360,7 @@
         <translation>Nome</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="994"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1006"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1367"/>
         <location filename="../models/searchfileinfo.cpp" line="121"/>
         <source>Time modified</source>
@@ -1243,31 +1243,75 @@
     </message>
 </context>
 <context>
+    <name>MergedDesktopController</name>
+    <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="144"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="164"/>
+        <source>Pictures</source>
+        <translation>Imagens</translation>
+    </message>
+    <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="146"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="166"/>
+        <source>Music</source>
+        <translation>Música</translation>
+    </message>
+    <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="148"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="168"/>
+        <source>Applications</source>
+        <translation>Aplicações</translation>
+    </message>
+    <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="150"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="170"/>
+        <source>Videos</source>
+        <translation>Vídeos</translation>
+    </message>
+    <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="152"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="172"/>
+        <source>Documents</source>
+        <translation>Documentos</translation>
+    </message>
+    <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="154"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="174"/>
+        <source>Others</source>
+        <translation>Outros</translation>
+    </message>
+</context>
+<context>
     <name>MimeTypeDisplayManager</name>
     <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="232"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="53"/>
         <source>Directory</source>
         <translation>Diretório</translation>
     </message>
     <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="222"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="54"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="129"/>
         <source>Application</source>
         <translation>Aplicativo</translation>
     </message>
     <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="228"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="55"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="130"/>
         <source>Video</source>
         <translation>Vídeo</translation>
     </message>
     <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="226"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="56"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="131"/>
         <source>Audio</source>
         <translation>Áudio</translation>
     </message>
     <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="224"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="57"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="132"/>
         <source>Image</source>
@@ -1280,6 +1324,7 @@
         <translation>Arquivar</translation>
     </message>
     <message>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="230"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="59"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="134"/>
         <source>Text</source>
@@ -1665,12 +1710,12 @@
         <translation>Disco do Sistema</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1142"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1148"/>
         <source>Allow to execute as program</source>
         <translation>Permitir executar como programa</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="919"/>
+        <location filename="../dialogs/propertydialog.cpp" line="925"/>
         <source>Local disk</source>
         <translation>Disco local</translation>
     </message>
@@ -1685,8 +1730,8 @@
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="835"/>
-        <location filename="../dialogs/propertydialog.cpp" line="924"/>
-        <location filename="../dialogs/propertydialog.cpp" line="951"/>
+        <location filename="../dialogs/propertydialog.cpp" line="930"/>
+        <location filename="../dialogs/propertydialog.cpp" line="957"/>
         <source>Contains</source>
         <translation>Contém</translation>
     </message>
@@ -1708,75 +1753,75 @@
         <translation>Modificado</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="844"/>
+        <location filename="../dialogs/propertydialog.cpp" line="847"/>
         <source>Link path</source>
         <translation>Caminho do link</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="919"/>
-        <location filename="../dialogs/propertydialog.cpp" line="946"/>
+        <location filename="../dialogs/propertydialog.cpp" line="925"/>
+        <location filename="../dialogs/propertydialog.cpp" line="952"/>
         <source>Device type</source>
         <translation>Tipo de dispositivo</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="925"/>
-        <location filename="../dialogs/propertydialog.cpp" line="952"/>
+        <location filename="../dialogs/propertydialog.cpp" line="931"/>
+        <location filename="../dialogs/propertydialog.cpp" line="958"/>
         <source>Free space</source>
         <translation>Espaço livre</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="920"/>
-        <location filename="../dialogs/propertydialog.cpp" line="947"/>
+        <location filename="../dialogs/propertydialog.cpp" line="926"/>
+        <location filename="../dialogs/propertydialog.cpp" line="953"/>
         <source>Total space</source>
         <translation>Espaço total</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="922"/>
-        <location filename="../dialogs/propertydialog.cpp" line="949"/>
+        <location filename="../dialogs/propertydialog.cpp" line="928"/>
+        <location filename="../dialogs/propertydialog.cpp" line="955"/>
         <source>Filesystem</source>
         <translation>Sistema de arquivos</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1056"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1062"/>
         <source>Access denied</source>
         <translation>Acesso negado</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1057"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1067"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1063"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1073"/>
         <source>Executable</source>
         <translation>Executável</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1058"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1059"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1064"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1065"/>
         <source>Write only</source>
         <translation>Somente escrita</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1060"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1061"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1066"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1067"/>
         <source>Read only</source>
         <translation>Somente leitura</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1062"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1063"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1068"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1069"/>
         <source>Read-write</source>
         <translation>Leitura e Escrita</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1137"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1143"/>
         <source>Others</source>
         <translation>Outros</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1135"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1141"/>
         <source>Owner</source>
         <translation>Proprietário</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1136"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1142"/>
         <source>Group</source>
         <translation>Grupo</translation>
     </message>
@@ -2187,15 +2232,15 @@
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="299"/>
-        <location filename="../dialogs/propertydialog.cpp" line="892"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="628"/>
+        <location filename="../dialogs/propertydialog.cpp" line="898"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="636"/>
         <source>%1 item</source>
         <translation>%1 item</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="301"/>
-        <location filename="../dialogs/propertydialog.cpp" line="892"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="630"/>
+        <location filename="../dialogs/propertydialog.cpp" line="898"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="638"/>
         <source>%1 items</source>
         <translation>%1 itens</translation>
     </message>
@@ -2222,7 +2267,7 @@
         <translation>Excluido</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1201"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1213"/>
         <source>Loading...</source>
         <translation>Carregando...</translation>
     </message>
@@ -2268,23 +2313,23 @@
         <translation>Caminho de origem</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="379"/>
+        <location filename="../controllers/appcontroller.cpp" line="381"/>
         <source>Document</source>
         <translation>Documento</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="388"/>
+        <location filename="../controllers/appcontroller.cpp" line="390"/>
         <source>Spreadsheet</source>
         <translation>Planilha</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="397"/>
+        <location filename="../controllers/appcontroller.cpp" line="399"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="639"/>
         <source>Presentation</source>
         <translation>Apresentação</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="406"/>
+        <location filename="../controllers/appcontroller.cpp" line="408"/>
         <source>Text</source>
         <translation>Texto</translation>
     </message>

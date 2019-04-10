@@ -2,37 +2,42 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2259"/>
+        <location filename="../view/canvasgridview.cpp" line="2345"/>
         <source>Icon size</source>
         <translation>Розмір іконки</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2265"/>
+        <location filename="../view/canvasgridview.cpp" line="2351"/>
+        <source>Auto merge</source>
+        <translation>Автоматичне обєднання</translation>
+    </message>
+    <message>
+        <location filename="../view/canvasgridview.cpp" line="2358"/>
         <source>Auto arrange</source>
         <translation>Автоматичне розміщення</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2318"/>
+        <location filename="../view/canvasgridview.cpp" line="2411"/>
         <source>Set Wallpaper</source>
         <translation>Встановити шпалери</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2320"/>
+        <location filename="../view/canvasgridview.cpp" line="2413"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Шпалери і зберігач екрана</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2398"/>
+        <location filename="../view/canvasgridview.cpp" line="2491"/>
         <source>Properties</source>
         <translation>Властивості</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2304"/>
+        <location filename="../view/canvasgridview.cpp" line="2397"/>
         <source>Display Settings</source>
         <translation>Налаштування дисплею</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2311"/>
+        <location filename="../view/canvasgridview.cpp" line="2404"/>
         <source>Corner Settings</source>
         <translation>Налаштування кутів</translation>
     </message>
