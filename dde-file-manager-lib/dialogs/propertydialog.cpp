@@ -894,6 +894,7 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
 {
     QString devicePath = info.device();
     QDir dir(info.rootPath());
+    dir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
     uint count = dir.count();
     QString countStr = (count > 1) ? QObject::tr("%1 items").arg(count) : QObject::tr("%1 item").arg(count);
     QList<QPair<QString, QString> > results;
