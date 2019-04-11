@@ -520,7 +520,7 @@ void GridManager::initWithoutProfile(const QList<DAbstractFileInfoPointer> &item
 bool GridManager::add(const QString &id)
 {
 #ifdef QT_DEBUG
-    qDebug() << "show hidden files: " << d->getWhetherShowHiddenFiles();
+    qDebug() << "show hidden files: " << d->getWhetherShowHiddenFiles() << id;
 #endif //QT_DEBUG
     DUrl url(id);
 
