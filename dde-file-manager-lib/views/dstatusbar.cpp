@@ -382,7 +382,7 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
 //                            m_label->setText(m_selectOnlyOneFolder.arg(QString::number(number),
 //                                                                       m_counted.arg(QString::number(fileInfo->filesCount()))));
 //                        }
-                        m_label->setText(m_selectOnlyOneFolder.arg(number).arg(m_OnlyOneItemCounted.arg(0)));
+                        m_label->setText(m_selectOnlyOneFolder.arg(number).arg(m_counted.arg(0)));
                         m_fileStatisticsJob->start(event.fileUrlList());
                     }
                 }
@@ -397,13 +397,13 @@ void DStatusBar::updateStatusMessage()
 {
     QString selectedFolders;
 
-    if (m_folderCount == 1 && m_folderContains <= 1) {
+    if (m_folderCount == 1 && m_folderContains == 1) {
         selectedFolders = m_selectOnlyOneFolder.arg(QString::number(m_folderCount), m_OnlyOneItemCounted.arg(m_folderContains));
-    } else if (m_folderCount == 1 && m_folderContains > 1) {
+    } else if (m_folderCount == 1 && m_folderContains != 1) {
         selectedFolders = m_selectOnlyOneFolder.arg(QString::number(m_folderCount), m_counted.arg(m_folderContains));
-    } else if (m_folderCount > 1 && m_folderContains <= 1) {
+    } else if (m_folderCount > 1 && m_folderContains == 1) {
         selectedFolders = m_selectFolders.arg(QString::number(m_folderCount), m_OnlyOneItemCounted.arg(m_folderContains));
-    } else if (m_folderCount > 1 && m_folderContains > 1) {
+    } else if (m_folderCount > 1 && m_folderContains != 1) {
         selectedFolders = m_selectFolders.arg(QString::number(m_folderCount), m_counted.arg(m_folderContains));
     } else {
         selectedFolders = "";
@@ -460,7 +460,7 @@ void DStatusBar::itemCounted(const DFMEvent &event, int number)
     if (!m_label || event.windowId() != WindowManager::getWindowId(this))
         return;
 
-    if (number > 1) {
+    if (number != 1) {
         m_label->setText(m_counted.arg(QString::number(number)));
     } else {
         m_label->setText(m_OnlyOneItemCounted.arg(QString::number(number)));
