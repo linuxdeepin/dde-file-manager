@@ -44,6 +44,7 @@ public:
 //    bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
     DUrlList pasteFile(const QSharedPointer<DFMPasteEvent> &event) const override;
 //    bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const override;
+    bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const override;
 
     const static QString entryNameByEnum(DMD_TYPES singleType);
     static DMD_TYPES entryTypeByName(QString entryName);
