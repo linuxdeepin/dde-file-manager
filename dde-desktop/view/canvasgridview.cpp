@@ -304,18 +304,20 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
 
 void CanvasGridView::updateHiddenItems()
 {
-    if (!currentUrl().isLocalFile()) {
+    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, currentUrl());
+    if (!info) {
+        qDebug() << "CanvasGridView::updateHiddenItems(): currentUrl() scheme is not supported";
         return;
     }
 
-    QDir rootDir(currentUrl().toLocalFile());
-    rootDir.setFilter(model()->filters());
+    QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, currentUrl(),
+                                                                                     QStringList(), model()->filters());
 
     auto existItems = GridManager::instance()->itemIds();
 
     QStringList items;
-    for (auto entry : rootDir.entryInfoList()) {
-        auto hideItem = entry.absoluteFilePath();
+    for (const DAbstractFileInfoPointer &info : infoList) {
+        QString hideItem = info->fileUrl().toString();
         existItems.removeAll(hideItem);
         if (!GridManager::instance()->contains(hideItem)) {
             GridManager::instance()->add(hideItem);
