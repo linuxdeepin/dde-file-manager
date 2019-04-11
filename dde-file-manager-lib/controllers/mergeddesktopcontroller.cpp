@@ -25,6 +25,8 @@
 #include "dfilewatcher.h"
 #include "dfileservices.h"
 
+#include "interfaces/dfileservices.h"
+#include "interfaces/dfmstandardpaths.h"
 #include "models/mergeddesktopfileinfo.h"
 
 #include <QList>
@@ -135,6 +137,11 @@ DUrlList MergedDesktopController::pasteFile(const QSharedPointer<DFMPasteEvent> 
                                                  DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first()),
                                                  event->fileUrlList())
                 );
+}
+
+bool MergedDesktopController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const
+{
+    return DFileService::instance()->openInTerminal(event->sender(), DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::DesktopPath)));
 }
 
 const QString MergedDesktopController::entryNameByEnum(DMD_TYPES singleType)
