@@ -70,7 +70,7 @@ void TrashPropertyDialog::initUI()
 
     const int fCount = fileInfo->filesCount();
     QString itemStr = tr("item");
-    if(fCount > 1)
+    if(fCount != 1)
         itemStr = tr("items");
 
     DSeparatorHorizontal* hLine = new DSeparatorHorizontal(this);
