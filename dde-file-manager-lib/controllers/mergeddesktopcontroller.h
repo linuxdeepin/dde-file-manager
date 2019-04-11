@@ -38,6 +38,7 @@ public:
 
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const override;
     const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const override;
+    DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &) const override;
 
 //    bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const override;
     DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const override;
@@ -52,6 +53,7 @@ public:
 public slots:
     void desktopFilesCreated(const DUrl &url);
     void desktopFilesRemoved(const DUrl &url);
+    void desktopFilesRenamed(const DUrl &oriUrl, const DUrl &dstUrl);
 
 private:
     void initData() const;

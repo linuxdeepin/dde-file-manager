@@ -38,6 +38,7 @@ MergedDesktopController::MergedDesktopController(QObject *parent)
 {
     connect(m_desktopFileWatcher, &DFileWatcher::fileDeleted, this, &MergedDesktopController::desktopFilesRemoved);
     connect(m_desktopFileWatcher, &DFileWatcher::subfileCreated, this, &MergedDesktopController::desktopFilesCreated);
+    connect(m_desktopFileWatcher, &DFileWatcher::fileMoved, this, &MergedDesktopController::desktopFilesRenamed);
     m_desktopFileWatcher->startWatcher();
 }
 
@@ -117,6 +118,11 @@ const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const
     }
 
     return infoList;
+}
+
+DAbstractFileWatcher *MergedDesktopController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &) const
+{
+    return new DFileWatcher(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first(), nullptr);
 }
 
 DUrlList MergedDesktopController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
@@ -210,6 +216,23 @@ void MergedDesktopController::desktopFilesRemoved(const DUrl &url)
             return;
         }
     }
+}
+
+void MergedDesktopController::desktopFilesRenamed(const DUrl &oriUrl, const DUrl &dstUrl)
+{
+    for (unsigned int i = DMD_PICTURE; i <= DMD_OTHER; i++) {
+        DMD_TYPES typeInfo = static_cast<DMD_TYPES>(i);
+        if (arrangedFileUrls[typeInfo].removeOne(oriUrl)) {
+            break;
+        }
+    }
+    DMD_TYPES typeInfo = checkUrlArrangedType(dstUrl);
+    arrangedFileUrls[typeInfo].append(dstUrl);
+
+    DUrl parentUrl(DFMMD_SCHEME "entry/" + entryNameByEnum(typeInfo) + "/");
+    DAbstractFileWatcher::ghostSignal(parentUrl, &DAbstractFileWatcher::fileMoved, oriUrl, dstUrl);
+    DUrl parentUrl2(DFMMD_SCHEME "mergeddesktop/");
+    DAbstractFileWatcher::ghostSignal(parentUrl2, &DAbstractFileWatcher::fileMoved, oriUrl, dstUrl);
 }
 
 void MergedDesktopController::initData() const

@@ -1320,13 +1320,14 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
             oldPos = GridManager::instance()->position(oriUrl.toString());
             findOldPos = true;
 
-            if (d->_debug_log) {
+            #ifdef QT_DEBUG
+                // TODO: switch to qCDebug()
                 qDebug() << "find oldPos" << oldPos << oriUrl;
-            }
+            #endif // QT_DEBUG
         }
 
         bool findNewPos = false;
-        if (dstUrl == currentUrl() && !dstUrl.fileName().isEmpty()) {
+        if (dstUrl.parentUrl() == oriUrl.parentUrl() && !dstUrl.fileName().isEmpty()) {
             findNewPos = true;
         }
 
