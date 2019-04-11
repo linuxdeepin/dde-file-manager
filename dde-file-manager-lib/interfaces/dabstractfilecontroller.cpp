@@ -303,7 +303,7 @@ DAbstractFileWatcher *DAbstractFileController::createFileWatcher(const QSharedPo
 {
     event->ignore();
 
-    return 0;
+    return nullptr;
 }
 
 DFM_NAMESPACE::DFileDevice *DAbstractFileController::createFileDevice(const QSharedPointer<DFMUrlBaseEvent> &event) const
