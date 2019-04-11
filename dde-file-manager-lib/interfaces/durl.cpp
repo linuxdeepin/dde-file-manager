@@ -720,8 +720,6 @@ QString DUrl::toLocalFile() const
         return taggedLocalFilePath();
     } else if (isUserShareFile()) {
         return QString(path()).remove(USERSHARE_ROOT);
-    } else if (scheme() == DFMMD_SCHEME) {
-        return DFMStandardPaths::location(DFMStandardPaths::DesktopPath);
     } else {
         return QUrl::toLocalFile();
     }

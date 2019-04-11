@@ -172,7 +172,7 @@ public:
 
     void makeAbsolutePath();
     DUrl toAbsolutePathUrl() const;
-    QString toLocalFile() const;
+    Q_DECL_DEPRECATED_X("consider use DAbstractFileInfo::toLocalFile()") QString toLocalFile() const;
 
 private:
     void updateVirtualPath();
