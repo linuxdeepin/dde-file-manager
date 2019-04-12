@@ -291,6 +291,13 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
     if (!m_label || event.windowId() != WindowManager::getWindowId(this))
         return;
 
+    /* remark 190412:
+     * This function is triggered by multiple different events when
+     * using keyboard navigation, causing DFileStatisticsJob to be
+     * started more than once.
+     * A fix better than the current one should eventually be applied.
+     */
+
     if (!m_fileStatisticsJob) {
         m_fileStatisticsJob = new DFileStatisticsJob(this);
         m_fileStatisticsJob->setFileHints(DFileStatisticsJob::ExcludeSourceFile | DFileStatisticsJob::SingleDepth);
@@ -303,6 +310,12 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
             updateStatusMessage();
         };
 
+        connect(m_fileStatisticsJob, &DFileStatisticsJob::finished, this,
+                [this] {
+                    m_folderContains = m_fileStatisticsJob->filesCount() + m_fileStatisticsJob->directorysCount();
+                    updateStatusMessage();
+                }
+        );
         connect(m_fileStatisticsJob, &DFileStatisticsJob::fileFound, this, onFoundFile);
         connect(m_fileStatisticsJob, &DFileStatisticsJob::directoryFound, this, onFoundFile);
     } else if (m_fileStatisticsJob->isRunning()) {
