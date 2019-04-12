@@ -55,6 +55,11 @@ bool MergedDesktopFileInfo::isVirtualEntry() const
     return true;
 }
 
+Qt::ItemFlags MergedDesktopFileInfo::fileItemDisableFlags() const
+{
+    return Qt::ItemIsDragEnabled;
+}
+
 QString MergedDesktopFileInfo::fileName() const
 {
     QString path = fileUrl().path();

@@ -379,33 +379,37 @@ void CanvasGridView::toggleAutoMerge(bool enabled)
 
 }
 
+// please make sure the passed \a url argument is a valid virtual entry url.
 void CanvasGridView::toggleEntryExpandedState(const DUrl &url)
 {
-    if (url.scheme() == DFMMD_SCHEME) {
-        clearSelection();
-        // prepare root url
-        QString currentFragment = currentUrl().fragment();
-        DUrl targetUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER);
-
-        // toggle expand state
-        DMD_TYPES oneType = MergedDesktopController::entryTypeByName(url.fileName());
-        virtualEntryExpandState[oneType] = !virtualEntryExpandState[oneType];
-
-        // construct fragment which indicated the expanded entries
-        QStringList expandedEntries;
-        for (unsigned int i = DMD_PICTURE; i <= DMD_OTHER; i++) {
-            DMD_TYPES oneType = static_cast<DMD_TYPES>(i);
-            if (virtualEntryExpandState[oneType]) {
-                expandedEntries.append(MergedDesktopController::entryNameByEnum(oneType));
-            }
-        }
-        if (!expandedEntries.isEmpty()) {
-            targetUrl.setFragment(expandedEntries.join(','));
-        }
-
-        // set root url (which will update the view)
-        this->setRootUrl(targetUrl);
+    // just some simple check
+    if (!url.isValid() || url.scheme() != DFMMD_SCHEME) {
+        return;
     }
+
+    clearSelection();
+    // prepare root url
+    QString currentFragment = currentUrl().fragment();
+    DUrl targetUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER);
+
+    // toggle expand state
+    DMD_TYPES oneType = MergedDesktopController::entryTypeByName(url.fileName());
+    virtualEntryExpandState[oneType] = !virtualEntryExpandState[oneType];
+
+    // construct fragment which indicated the expanded entries
+    QStringList expandedEntries;
+    for (unsigned int i = DMD_PICTURE; i <= DMD_OTHER; i++) {
+        DMD_TYPES oneType = static_cast<DMD_TYPES>(i);
+        if (virtualEntryExpandState[oneType]) {
+            expandedEntries.append(MergedDesktopController::entryNameByEnum(oneType));
+        }
+    }
+    if (!expandedEntries.isEmpty()) {
+        targetUrl.setFragment(expandedEntries.join(','));
+    }
+
+    // set root url (which will update the view)
+    this->setRootUrl(targetUrl);
 }
 
 QModelIndex CanvasGridView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
@@ -525,10 +529,13 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
 
     QAbstractItemView::mousePressEvent(event);
 
-    if (leftButtonPressed) {
+    if (leftButtonPressed && !isEmptyArea) {
         const DUrl &url = model()->getUrlByIndex(index);
         d->currentCursorIndex = index;
-        toggleEntryExpandedState(url);
+        DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
+        if (info && info->isVirtualEntry()) {
+            toggleEntryExpandedState(url);
+        }
     }
     update();
 }
