@@ -87,12 +87,7 @@ public:
     DUrl &operator=(const DUrl &other);
     DUrl &operator=(DUrl &&other);
 
-
-#ifdef QT_NO_URL_CAST_FROM_STRING
     explicit DUrl(const QString &url, ParsingMode mode = TolerantMode);
-#else
-    explicit DUrl(const QString &url, ParsingMode mode = TolerantMode);
-#endif
 
     void setPath(const QString &path, ParsingMode mode = DecodedMode, bool makeAbsolutePath = true);
     void setScheme(const QString &scheme, bool makeAbsolutePath = true);
@@ -172,7 +167,7 @@ public:
 
     void makeAbsolutePath();
     DUrl toAbsolutePathUrl() const;
-    Q_DECL_DEPRECATED_X("consider use DAbstractFileInfo::toLocalFile()") QString toLocalFile() const;
+    QString toLocalFile() const;
 
 private:
     void updateVirtualPath();
