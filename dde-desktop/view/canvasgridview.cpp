@@ -529,12 +529,15 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
 
     QAbstractItemView::mousePressEvent(event);
 
-    if (leftButtonPressed && !isEmptyArea) {
-        const DUrl &url = model()->getUrlByIndex(index);
+    if (leftButtonPressed) {
         d->currentCursorIndex = index;
-        DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
-        if (info && info->isVirtualEntry()) {
-            toggleEntryExpandedState(url);
+
+        if (!isEmptyArea) {
+            const DUrl &url = model()->getUrlByIndex(index);
+            DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
+            if (info && info->isVirtualEntry()) {
+                toggleEntryExpandedState(url);
+            }
         }
     }
     update();
