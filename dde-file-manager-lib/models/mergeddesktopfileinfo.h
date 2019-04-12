@@ -37,6 +37,8 @@ public:
     bool isDir() const override;
     bool isVirtualEntry() const override;
 
+    Qt::ItemFlags fileItemDisableFlags() const override;
+
     QString fileName() const override;
     QString iconName() const override;
 
