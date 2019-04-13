@@ -21,75 +21,19 @@
 
 #include "mergeddesktopfileinfo.h"
 #include "controllers/mergeddesktopcontroller.h"
+#include "dfileservices.h"
 
 #include "private/dabstractfileinfo_p.h"
 
-class MergedDesktopFileInfoPrivate : public DAbstractFileInfoPrivate
+#include <QStandardPaths>
+
+class VirtualEntryInfo : public DAbstractFileInfo
 {
 public:
-    MergedDesktopFileInfoPrivate(const DUrl &url, MergedDesktopFileInfo *qq)
-        : DAbstractFileInfoPrivate(url, qq, true)
+    VirtualEntryInfo(const DUrl &url) : DAbstractFileInfo(url) {}
+
+    QString iconName() const override
     {
-    }
-};
-
-MergedDesktopFileInfo::MergedDesktopFileInfo(const DUrl &url)
-    : DAbstractFileInfo(*new MergedDesktopFileInfoPrivate(url, this))
-{
-
-}
-
-bool MergedDesktopFileInfo::isDir() const
-{
-    QString path = fileUrl().path();
-    if (path == "/" || path == "/folder/" || path.startsWith("/entry") || path == "/mergeddesktop/") {
-        return true;
-    }
-
-    // TODO: redir to real url?
-    return DAbstractFileInfo::isDir();
-}
-
-bool MergedDesktopFileInfo::isVirtualEntry() const
-{
-    return true;
-}
-
-Qt::ItemFlags MergedDesktopFileInfo::fileItemDisableFlags() const
-{
-    if (isVirtualEntry()) {
-        return Qt::ItemIsDragEnabled;
-    }
-
-    return DAbstractFileInfo::fileItemDisableFlags();
-}
-
-QString MergedDesktopFileInfo::fileName() const
-{
-    QString path = fileUrl().path();
-
-    if (path.startsWith("/entry/")) {
-        if (path != "/entry/") {
-            return DAbstractFileInfo::fileName();
-        } else {
-            return "Entry";
-        }
-    } else if (path.startsWith("/folder/")) {
-        if (path != "/folder/") {
-            return DAbstractFileInfo::fileName();
-        } else {
-            return "Folder";
-        }
-    } else if (path.startsWith("/mergeddesktop/")) {
-        return "Merged Desktop";
-    }
-
-    return "what";
-}
-
-QString MergedDesktopFileInfo::iconName() const
-{
-    if (fileUrl().path().startsWith("/entry/") && fileUrl().path() != "/entry/") {
         switch (MergedDesktopController::entryTypeByName(fileName())) {
         case DMD_APPLICATION:
             return QStringLiteral("folder-applications-stack");
@@ -104,34 +48,111 @@ QString MergedDesktopFileInfo::iconName() const
         case DMD_OTHER:
             return QStringLiteral("folder-stack");
         default:
-            qWarning() << "MergedDesktopFileInfo::iconName() no matched branch, it must be a bug!";
+            qWarning() << "VirtualEntryInfo::iconName() no matched branch (it can be a bug!)";
+            qWarning() << "Url: " << fileUrl();
         }
+        return QStringLiteral("folder-stack");
     }
 
-    return DAbstractFileInfo::iconName();
-}
+    bool exists() const override
+    {
+        return true;
+    }
 
-DAbstractFileInfo::CompareFunction MergedDesktopFileInfo::compareFunByColumn(int) const
-{
-    return nullptr;
-}
+    bool isDir() const override
+    {
+        return true;
+    }
 
-bool MergedDesktopFileInfo::exists() const
-{
-    return true;
-}
+    bool isVirtualEntry() const override
+    {
+        return true;
+    }
 
-bool MergedDesktopFileInfo::isReadable() const
-{
-    return true;
-}
+    bool canShare() const override
+    {
+        return false;
+    }
 
-bool MergedDesktopFileInfo::isWritable() const
-{
-    return true;
-}
+    bool isReadable() const override
+    {
+        return true;
+    }
 
-bool MergedDesktopFileInfo::canShare() const
+    bool isWritable() const override
+    {
+        return true;
+    }
+
+    QString fileName() const override
+    {
+        QString path = fileUrl().path();
+
+        if (path.startsWith("/entry/")) {
+            if (path != "/entry/") {
+                return DAbstractFileInfo::fileName();
+            } else {
+                return "Entry";
+            }
+        } else if (path.startsWith("/folder/")) {
+            if (path != "/folder/") {
+                return DAbstractFileInfo::fileName();
+            } else {
+                return "Folder";
+            }
+        } else if (path.startsWith("/mergeddesktop/")) {
+            return "Merged Desktop";
+        }
+
+        return DAbstractFileInfo::fileName() + "(?)";
+    }
+
+    Qt::ItemFlags fileItemDisableFlags() const override
+    {
+        return Qt::ItemIsDragEnabled;
+    }
+
+    DAbstractFileInfo::CompareFunction compareFunByColumn(int) const override
+    {
+        return nullptr;
+    }
+};
+
+class DesktopFileInfo : public DAbstractFileInfo
 {
-    return false;
+public:
+    DesktopFileInfo(const DUrl &url) : DAbstractFileInfo(url)
+    {
+        QStringList urlPartList = url.path().split('/', QString::SkipEmptyParts);
+        if (!urlPartList.isEmpty()) {
+            QString fileName = url.path().split('/', QString::SkipEmptyParts).last();
+            QString realPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first() + QDir::separator() + fileName;
+            setProxy(DFileService::instance()->createFileInfo(nullptr, DUrl::fromLocalFile(realPath)));
+        }
+    }
+};
+
+class MergedDesktopFileInfoPrivate : public DAbstractFileInfoPrivate
+{
+public:
+    MergedDesktopFileInfoPrivate(const DUrl &url, MergedDesktopFileInfo *qq)
+        : DAbstractFileInfoPrivate(url, qq, true) {}
+};
+
+MergedDesktopFileInfo::MergedDesktopFileInfo(const DUrl &url)
+    : DAbstractFileInfo(*new MergedDesktopFileInfoPrivate(url, this))
+{
+    QString path = url.path();
+
+    if (path.startsWith("/entry/")) {
+        setProxy(DAbstractFileInfoPointer(new VirtualEntryInfo(url)));
+    } else if (path.startsWith("/folder/")) {
+        if (path != "/folder/") {
+            setProxy(DAbstractFileInfoPointer(new DesktopFileInfo(url)));
+        } else {
+            setProxy(DAbstractFileInfoPointer(new VirtualEntryInfo(url)));
+        }
+    } else if (path.startsWith("/mergeddesktop/")) {
+        setProxy(DAbstractFileInfoPointer(new VirtualEntryInfo(url)));
+    }
 }
