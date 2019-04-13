@@ -28,6 +28,7 @@
 #include "interfaces/dfileservices.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "models/mergeddesktopfileinfo.h"
+#include "interfaces/private/mergeddesktop_common_p.h"
 
 #include <QList>
 #include <QStandardPaths>
@@ -65,7 +66,7 @@ const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const
                 continue;
             }
             QString entryName = entryNameByEnum(oneType);
-            DUrl url(DFMMD_ROOT "entry/" + entryNameByEnum(oneType));
+            DUrl url(DFMMD_ROOT VIRTUALENTRY_FOLDER + entryNameByEnum(oneType));
             DAbstractFileInfoPointer infoPtr {
                 DFileService::instance()->createFileInfo(this, url)
             };
@@ -93,20 +94,20 @@ const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const
 
     if(currentUrl.scheme() == DFMMD_SCHEME) {
         if (path == QStringLiteral("/")) {
-            makeAndInsertInfo(DFMMD_ROOT "entry/");
-            makeAndInsertInfo(DFMMD_ROOT "folder/");
-            makeAndInsertInfo(DFMMD_ROOT "mergeddesktop/");
-        } else if (path.startsWith(QStringLiteral("/entry/"))) {
-            if (path == QStringLiteral("/entry/")) {
+            makeAndInsertInfo(DFMMD_ROOT VIRTUALENTRY_FOLDER);
+            makeAndInsertInfo(DFMMD_ROOT VIRTUALFOLDER_FOLDER);
+            makeAndInsertInfo(DFMMD_ROOT MERGEDDESKTOP_FOLDER);
+        } else if (path.startsWith(QStringLiteral(VIRTUALENTRY_PATH))) {
+            if (path == QStringLiteral(VIRTUALENTRY_PATH)) {
                 appendVirtualEntries();
             } else {
                 QString entryName = path.split('/', QString::SkipEmptyParts).last();
                 DMD_TYPES entryType = entryTypeByName(entryName);
                 appendEntryFiles(infoList, entryType);
             }
-        } else if (path == QStringLiteral("/folder/")) {
+        } else if (path == QStringLiteral(VIRTUALFOLDER_PATH)) {
             appendFolders();
-        } else if (path == QStringLiteral("/mergeddesktop/")) {
+        } else if (path == QStringLiteral(MERGEDDESKTOP_PATH)) {
             QString expandedFolder = currentUrl.fragment();
             QStringList expandedFolders;
             if (!expandedFolder.isEmpty()) {
@@ -198,9 +199,9 @@ void MergedDesktopController::desktopFilesCreated(const DUrl &url)
 {
     DMD_TYPES typeInfo = checkUrlArrangedType(url);
     arrangedFileUrls[typeInfo].append(url);
-    DUrl parentUrl(DFMMD_SCHEME "entry/" + entryNameByEnum(typeInfo) + "/");
+    DUrl parentUrl(DFMMD_ROOT VIRTUALENTRY_FOLDER + entryNameByEnum(typeInfo) + "/");
     DAbstractFileWatcher::ghostSignal(parentUrl, &DAbstractFileWatcher::subfileCreated, url);
-    DUrl parentUrl2(DFMMD_SCHEME "mergeddesktop/");
+    DUrl parentUrl2(DFMMD_ROOT MERGEDDESKTOP_FOLDER);
     DAbstractFileWatcher::ghostSignal(parentUrl2, &DAbstractFileWatcher::subfileCreated, url);
 }
 
@@ -209,9 +210,9 @@ void MergedDesktopController::desktopFilesRemoved(const DUrl &url)
     for (unsigned int i = DMD_PICTURE; i <= DMD_OTHER; i++) {
         DMD_TYPES typeInfo = static_cast<DMD_TYPES>(i);
         if (arrangedFileUrls[typeInfo].removeOne(url)) {
-            DUrl parentUrl(DFMMD_SCHEME "entry/" + entryNameByEnum(typeInfo) + "/");
+            DUrl parentUrl(DFMMD_ROOT VIRTUALENTRY_FOLDER + entryNameByEnum(typeInfo) + "/");
             DAbstractFileWatcher::ghostSignal(parentUrl, &DAbstractFileWatcher::fileDeleted, url);
-            DUrl parentUrl2(DFMMD_SCHEME "mergeddesktop/");
+            DUrl parentUrl2(DFMMD_ROOT MERGEDDESKTOP_FOLDER);
             DAbstractFileWatcher::ghostSignal(parentUrl2, &DAbstractFileWatcher::fileDeleted, url);
             return;
         }
@@ -229,9 +230,9 @@ void MergedDesktopController::desktopFilesRenamed(const DUrl &oriUrl, const DUrl
     DMD_TYPES typeInfo = checkUrlArrangedType(dstUrl);
     arrangedFileUrls[typeInfo].append(dstUrl);
 
-    DUrl parentUrl(DFMMD_SCHEME "entry/" + entryNameByEnum(typeInfo) + "/");
+    DUrl parentUrl(DFMMD_ROOT VIRTUALENTRY_FOLDER + entryNameByEnum(typeInfo) + "/");
     DAbstractFileWatcher::ghostSignal(parentUrl, &DAbstractFileWatcher::fileMoved, oriUrl, dstUrl);
-    DUrl parentUrl2(DFMMD_SCHEME "mergeddesktop/");
+    DUrl parentUrl2(DFMMD_ROOT MERGEDDESKTOP_FOLDER);
     DAbstractFileWatcher::ghostSignal(parentUrl2, &DAbstractFileWatcher::fileMoved, oriUrl, dstUrl);
 }
 

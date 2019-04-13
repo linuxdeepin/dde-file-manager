@@ -9,15 +9,13 @@
 
 #include "canvasgridview.h"
 
-#include <QScrollBar>
 #include <QPainter>
 #include <QResizeEvent>
 #include <QDebug>
 #include <QPainterPath>
-#include <QLineEdit>
+#include <QScrollBar>
 #include <QTextEdit>
 #include <QUrlQuery>
-#include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QHeaderView>
 #include <QMimeData>
@@ -30,8 +28,6 @@
 #include <QPropertyAnimation>
 
 #include <dthememanager.h>
-#include <dscrollbar.h>
-#include <dslider.h>
 #include <danchors.h>
 #include <DUtil>
 #include <DApplication>
@@ -59,6 +55,7 @@
 #include "../dbus/dbusdock.h"
 #include "../config/config.h"
 
+#include "interfaces/private/mergeddesktop_common_p.h"
 #include "util/xcb/xcb.h"
 #include "private/canvasviewprivate.h"
 #include "canvasviewhelper.h"
@@ -68,8 +65,6 @@
 
 #include "app/define.h"
 #include "controllers/mergeddesktopcontroller.h"
-
-#define MERGEDDESKTOP_FOLDER "mergeddesktop/"
 
 std::atomic<bool> CanvasGridView::m_flag{ false };
 QMap<DMD_TYPES, bool> CanvasGridView::virtualEntryExpandState;
