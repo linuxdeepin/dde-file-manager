@@ -257,7 +257,8 @@ HEADERS += \
     shutil/dfmregularexpression.h \
     controllers/mergeddesktopcontroller.h \
     models/mergeddesktopfileinfo.h \
-    controllers/dfmmdcrumbcontrooler.h
+    controllers/dfmmdcrumbcontrooler.h \
+    interfaces/private/mergeddesktop_common_p.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
