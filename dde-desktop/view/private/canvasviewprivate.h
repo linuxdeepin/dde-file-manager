@@ -153,8 +153,6 @@ public:
 
     int                 resortCount;
 
-    bool                autoMerge = false;
-
     // secice system up
 //    QTimer              *syncTimer          = nullptr;
 //    qint64              lastRepaintTime     = 0;
