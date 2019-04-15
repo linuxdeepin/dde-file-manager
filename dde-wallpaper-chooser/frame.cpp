@@ -159,6 +159,18 @@ void Frame::show()
     DBlurEffectWidget::show();
 }
 
+void Frame::hide()
+{
+    emit aboutHide();
+
+    DBlurEffectWidget::hide();
+}
+
+QString Frame::desktopBackground() const
+{
+    return m_desktopWallpaper;
+}
+
 void Frame::handleNeedCloseButton(QString path, QPoint pos)
 {
     if (!path.isEmpty()) {
