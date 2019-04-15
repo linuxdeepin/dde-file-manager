@@ -60,8 +60,12 @@ public:
     ~Frame();
 
     void show();
+    void hide();
+
+    QString desktopBackground() const;
 
 signals:
+    void aboutHide();
     void done();
 
 public slots:
