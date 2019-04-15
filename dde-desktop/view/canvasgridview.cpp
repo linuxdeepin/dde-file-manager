@@ -347,10 +347,13 @@ WId CanvasGridView::winId() const
     }
 }
 
+bool CanvasGridView::autoMerge() const
+{
+    return GridManager::instance()->autoMerge();
+}
+
 void CanvasGridView::setAutoMerge(bool enabled)
 {
-    d->autoMerge = enabled;
-
     if (enabled) {
         this->setRootUrl(DUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER));
     } else {
@@ -368,10 +371,9 @@ void CanvasGridView::setAutoMerge(bool enabled)
 
 void CanvasGridView::toggleAutoMerge(bool enabled)
 {
-    if (enabled == d->autoMerge) return;
+    if (enabled == GridManager::instance()->autoMerge()) return;
 
     setAutoMerge(enabled);
-
 }
 
 // please make sure the passed \a url argument is a valid virtual entry url.
@@ -1176,7 +1178,12 @@ void CanvasGridView::rowsInserted(const QModelIndex &parent, int first, int last
     for (int index = first; index <= last; ++index) {
         const QModelIndex &child = parent.child(index, 0);
 
-        model()->fileInfo(child)->makeToActive();
+        DAbstractFileInfoPointer info = model()->fileInfo(child);
+        if (info) {
+            info->makeToActive();
+        } else {
+            qCritical() << "CanvasGridView::rowsInserted(): Create file info failed!!!!!!!!!!!!!" << index;
+        }
     }
 
     update();
@@ -2224,7 +2231,7 @@ void CanvasGridView::handleContextMenuAction(int action)
 //        break;
 //    }
     case AutoMerge:
-        this->toggleAutoMerge(!d->autoMerge);
+        this->toggleAutoMerge(!autoMerge());
         emit autoMergeToggled();
         break;
     case AutoSort:
@@ -2274,7 +2281,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     const QModelIndex &index = rootIndex();
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
     QVector<MenuAction> actions;
-    if (!d->autoMerge) {
+    if (!autoMerge()) {
         actions << MenuAction::NewFolder << MenuAction::NewDocument
                 << MenuAction::SortBy;
     }
@@ -2326,19 +2333,19 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     iconSizeAction.setMenu(&iconSizeMenu);
     menu->insertAction(pasteAction, &iconSizeAction);
 
-    QAction autoMerge(menu);
-    autoMerge.setText(tr("Auto merge"));
-    autoMerge.setData(AutoMerge);
-    autoMerge.setCheckable(true);
-    autoMerge.setChecked(GridManager::instance()->autoMerge());
-    menu->insertAction(pasteAction, &autoMerge);
+    QAction menuAutoMerge(menu);
+    menuAutoMerge.setText(tr("Auto merge"));
+    menuAutoMerge.setData(AutoMerge);
+    menuAutoMerge.setCheckable(true);
+    menuAutoMerge.setChecked(autoMerge());
+    menu->insertAction(pasteAction, &menuAutoMerge);
 
-    if (!d->autoMerge) {
-        QAction autoSort(menu);
-        autoSort.setText(tr("Auto arrange"));
-        autoSort.setData(AutoSort);
-        autoSort.setCheckable(true);
-        autoSort.setChecked(GridManager::instance()->autoArrange());
+    QAction autoSort(menu);
+    autoSort.setText(tr("Auto arrange"));
+    autoSort.setData(AutoSort);
+    autoSort.setCheckable(true);
+    autoSort.setChecked(GridManager::instance()->autoArrange());
+    if (!autoMerge()) {
         menu->insertAction(pasteAction, &autoSort);
     }
 
