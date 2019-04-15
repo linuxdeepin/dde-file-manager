@@ -465,9 +465,6 @@ void DStatusBar::itemCounted(const DFMEvent &event, int number)
             m_fileStatisticsJob->wait();
             m_fileStatisticsJob->disconnect();
         }
-
-        delete m_fileStatisticsJob;
-        m_fileStatisticsJob = nullptr;
     }
 
     if (!m_label || event.windowId() != WindowManager::getWindowId(this))
