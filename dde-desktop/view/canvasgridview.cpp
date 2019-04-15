@@ -1306,7 +1306,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
                                                                                      QStringList(), model()->filters());
 
-    if (d->autoMerge) {
+    if (autoMerge()) {
         GridManager::instance()->initWithoutProfile(infoList);
     } else {
         GridManager::instance()->initProfile(infoList);
