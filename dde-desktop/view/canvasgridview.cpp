@@ -1063,7 +1063,7 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
 
         this->itemDelegate()->paint(&painter, option, index);
         DAbstractFileInfoPointer info = model()->fileInfo(index);
-        if (info && info->scheme() == DFMMD_SCHEME) {
+        if (info && info->scheme() == DFMMD_SCHEME && info->isVirtualEntry()) {
             DMD_TYPES oneType = MergedDesktopController::entryTypeByName(info->fileName());
             if (virtualEntryExpandState[oneType]) {
                 // do draw mask here
@@ -1258,7 +1258,8 @@ QSize CanvasGridView::cellSize() const
 
 void CanvasGridView::openUrl(const DUrl &url)
 {
-    if (url.scheme() == DFMMD_SCHEME) {
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
+    if (!info || info->isVirtualEntry()) {
         // we do expand the virtual entry on single click, so no longer need to do that here.
         // toggleEntryExpandedState(url);
         return;
@@ -1305,8 +1306,11 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
                                                                                      QStringList(), model()->filters());
 
-//    GridManager::instance()->initProfile(infoList);
-    GridManager::instance()->initWithoutProfile(infoList);
+    if (d->autoMerge) {
+        GridManager::instance()->initWithoutProfile(infoList);
+    } else {
+        GridManager::instance()->initProfile(infoList);
+    }
 
     d->filesystemWatcher = model()->fileWatcher();
 
@@ -2430,7 +2434,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     DUrlList list = selectedUrls();
 
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
-    if (info->isVirtualEntry()) {
+    if (!info || info->isVirtualEntry()) {
         return;
     }
 
