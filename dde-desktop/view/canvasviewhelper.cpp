@@ -73,7 +73,7 @@ void CanvasViewHelper::edit(const DFMEvent &event)
 
     const QModelIndex &index = model()->index(fileUrl);
 
-    parent()->edit(index, QAbstractItemView::EditKeyPressed, 0);
+    parent()->edit(index, QAbstractItemView::EditKeyPressed, nullptr);
 }
 
 void CanvasViewHelper::onRequestSelectFiles(const QList<DUrl> &urls)

@@ -19,19 +19,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MERGEDDESKTOPFILEINFO_H
-#define MERGEDDESKTOPFILEINFO_H
+#ifndef MERGEDDESKTOP_COMMON_P_H
+#define MERGEDDESKTOP_COMMON_P_H
 
-#include "dabstractfileinfo.h"
+#define VIRTUALENTRY_FOLDER "entry/"
+#define VIRTUALENTRY_PATH "/" VIRTUALENTRY_FOLDER
 
-class MergedDesktopFileInfoPrivate;
-class MergedDesktopFileInfo : public DAbstractFileInfo
-{
-public:
-    MergedDesktopFileInfo(const DUrl &url);
+#define VIRTUALFOLDER_FOLDER "folder/"
+#define VIRTUALFOLDER_PATH "/" VIRTUALFOLDER_FOLDER
 
-private:
-    Q_DECLARE_PRIVATE(MergedDesktopFileInfo)
-};
+#define MERGEDDESKTOP_FOLDER "mergeddesktop/"
+#define MERGEDDESKTOP_PATH "/" MERGEDDESKTOP_FOLDER
 
-#endif // MERGEDDESKTOPFILEINFO_H
+#endif // MERGEDDESKTOP_COMMON_P_H
