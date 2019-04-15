@@ -156,6 +156,12 @@ void Desktop::showWallpaperSettings()
         d->wallpaperSettings->deleteLater();
         d->wallpaperSettings = nullptr;
     });
+    connect(d->wallpaperSettings, &Frame::aboutHide, this, [this] {
+        const QString &desktopImage = d->wallpaperSettings->desktopBackground();
+
+        if (!desktopImage.isEmpty())
+            d->background->setBackground(desktopImage);
+    }, Qt::DirectConnection);
 
     d->wallpaperSettings->show();
     d->wallpaperSettings->grabKeyboard();
