@@ -24,6 +24,7 @@
 #include "dfileservices.h"
 
 #include "private/dabstractfileinfo_p.h"
+#include "private/mergeddesktop_common_p.h"
 
 #include <QStandardPaths>
 
@@ -88,19 +89,19 @@ public:
     {
         QString path = fileUrl().path();
 
-        if (path.startsWith("/entry/")) {
-            if (path != "/entry/") {
+        if (path.startsWith(VIRTUALENTRY_PATH)) {
+            if (path != VIRTUALENTRY_PATH) {
                 return DAbstractFileInfo::fileName();
             } else {
                 return "Entry";
             }
-        } else if (path.startsWith("/folder/")) {
-            if (path != "/folder/") {
+        } else if (path.startsWith(VIRTUALFOLDER_PATH)) {
+            if (path != VIRTUALFOLDER_PATH) {
                 return DAbstractFileInfo::fileName();
             } else {
                 return "Folder";
             }
-        } else if (path.startsWith("/mergeddesktop/")) {
+        } else if (path.startsWith(MERGEDDESKTOP_PATH)) {
             return "Merged Desktop";
         }
 
@@ -144,15 +145,15 @@ MergedDesktopFileInfo::MergedDesktopFileInfo(const DUrl &url)
 {
     QString path = url.path();
 
-    if (path.startsWith("/entry/")) {
+    if (path.startsWith(VIRTUALENTRY_PATH)) {
         setProxy(DAbstractFileInfoPointer(new VirtualEntryInfo(url)));
-    } else if (path.startsWith("/folder/")) {
-        if (path != "/folder/") {
+    } else if (path.startsWith(VIRTUALFOLDER_PATH)) {
+        if (path != VIRTUALFOLDER_PATH) {
             setProxy(DAbstractFileInfoPointer(new DesktopFileInfo(url)));
         } else {
             setProxy(DAbstractFileInfoPointer(new VirtualEntryInfo(url)));
         }
-    } else if (path.startsWith("/mergeddesktop/")) {
+    } else if (path.startsWith(MERGEDDESKTOP_PATH)) {
         setProxy(DAbstractFileInfoPointer(new VirtualEntryInfo(url)));
     }
 }
