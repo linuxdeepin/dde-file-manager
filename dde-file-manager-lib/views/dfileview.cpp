@@ -36,6 +36,9 @@
 #include "dfmeventdispatcher.h"
 #include "themeconfig.h"
 #include "dfmsettings.h"
+#include "dblockdevice.h"
+#include "ddiskmanager.h"
+#include "disomaster.h"
 #include "dfmopticalmediawidget.h"
 
 #include "app/define.h"
@@ -72,6 +75,7 @@
 #include <QMimeData>
 #include <QScrollBar>
 #include <QScroller>
+#include <QtConcurrent>
 
 #include <private/qguiapplication_p.h>
 #include <qpa/qplatformtheme.h>
@@ -2096,6 +2100,41 @@ bool DFileView::setRootUrl(const DUrl &url)
         return false;
     }
 
+    if (fileUrl.scheme() == BURN_SCHEME) {
+        QRegularExpression re("^(.*)/(disk_files|staging_files)/(.*)$");
+        auto rem = re.match(fileUrl.path());
+        Q_ASSERT(rem.hasMatch());
+        QString devpath=rem.captured(1);
+        QString udiskspath=devpath;
+        DeviceProperty dp = ISOMaster->getDevicePropertyCached(devpath);
+        udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+        QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+        if (blkdev->idLabel() != dp.volid) {
+            QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+            QSharedPointer<QFutureWatcher<void>> fw(new QFutureWatcher<void>);
+            connect(fw.data(), &QFutureWatcher<void>::finished, this, [=] {
+                QGuiApplication::restoreOverrideCursor();
+                setRootUrl(fileUrl);
+                Q_UNUSED(fw); //ensure future watcher is destructed only in the future
+            });
+            fw->setFuture(QtConcurrent::run([=] {
+                blkdev->unmount({});
+                ISOMaster->acquireDevice(devpath);
+                ISOMaster->getDeviceProperty();
+                ISOMaster->releaseDevice();
+                blkdev->mount({});
+            }));
+            return false;
+        }
+        else {
+            d->headerOpticalDisc->updateDiscInfo(rem.captured(1));
+            d->headerOpticalDisc->show();
+        }
+    }
+    else {
+        d->headerOpticalDisc->hide();
+    }
+
     const DUrl &rootUrl = this->rootUrl();
 
     qDebug() << "cd: current url:" << rootUrl << "to url:" << fileUrl;
@@ -2151,17 +2190,6 @@ bool DFileView::setRootUrl(const DUrl &url)
 
     if (fileUrl.isSearchFile()) {
         setViewMode(ListMode);
-    }
-
-    if (fileUrl.scheme() == BURN_SCHEME) {
-        QRegularExpression re("^(.*)/(disk_files|staging_files)/(.*)$");
-        auto rem = re.match(fileUrl.path());
-        Q_ASSERT(rem.hasMatch());
-        d->headerOpticalDisc->updateDiscInfo(rem.captured(1));
-        d->headerOpticalDisc->show();
-    }
-    else {
-        d->headerOpticalDisc->hide();
     }
 
     // NOTE(zccrs): 视图模式切换失败后，被选中的action是一个错误的。此时切换目录，应该在目录改变后再根据当前视图模式重设action的选中状态。
