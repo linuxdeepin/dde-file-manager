@@ -636,7 +636,10 @@ void FileJob::jobUpdated()
 
     QMap<QString, QString> jobDataDetail;
 
-    if (m_jobType == Restore && m_isInSameDisk){
+    if (m_jobType == OpticalBurn || m_jobType == OpticalBlank) {
+        //TODO: Write this!
+    }
+    else if (m_jobType == Restore && m_isInSameDisk){
         jobDataDetail.insert("file", m_srcFileName);
         jobDataDetail.insert("destination", m_tarDirName);
         if (!m_isFinished){

@@ -31,6 +31,7 @@
 #include <QUrl>
 #include "durl.h"
 #include <QStorageInfo>
+#include <disomaster.h>
 
 #define TRANSFER_RATE 5
 #define MSEC_FOR_DISPLAY 1000
@@ -62,7 +63,9 @@ public:
         Move,
         Trash,
         Delete,
-        Restore
+        Restore,
+        OpticalBurn,
+        OpticalBlank
     };
     Q_ENUM(JobType)
 
@@ -154,6 +157,9 @@ public slots:
 
     bool doTrashRestore(const QString &srcFilePath, const QString& tarFilePath);
 
+    void doOpticalBurn(const DUrl &device, QString volname, int speed);
+    void doOpticalBlank(const DUrl &device);
+
     void paused();
     void started();
     void cancelled();
@@ -205,6 +211,8 @@ private:
     bool m_isFinished = false;
 
     GCancellable* m_abortGCancellable = NULL;
+
+    DISOMaster *isomaster;
 
     DUrlList m_noPermissonUrls;
 

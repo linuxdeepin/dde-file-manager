@@ -1,13 +1,15 @@
 #include "dfmopticalmediawidget.h"
 #include "disomaster.h"
 #include "shutil/fileutils.h"
+#include "dialogs/burnoptdialog.h"
 
 class DFMOpticalMediaWidgetPrivate
 {
 public:
     DFMOpticalMediaWidgetPrivate(DFMOpticalMediaWidget *q);
+    ~DFMOpticalMediaWidgetPrivate();
     void setupUi();
-    void setProperty(DeviceProperty dp);
+    void setDeviceProperty(DeviceProperty dp);
 private:
     DLabel *lb_mediatype;
     DLabel *lb_available;
@@ -23,6 +25,12 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
 {
     Q_D(DFMOpticalMediaWidget);
     d->setupUi();
+
+    connect(d->pb_burn, &DPushButton::clicked, this, [=] {
+            QScopedPointer<BurnOptDialog> bd(new BurnOptDialog(this));
+            bd->exec();
+        }
+    );
 }
 
 DFMOpticalMediaWidget::~DFMOpticalMediaWidget()
@@ -33,11 +41,15 @@ void DFMOpticalMediaWidget::updateDiscInfo(QString dev)
 {
     Q_D(DFMOpticalMediaWidget);
     DeviceProperty dp = ISOMaster->getDevicePropertyCached(dev);
-    d->setProperty(dp);
+    d->setDeviceProperty(dp);
 }
 
 DFMOpticalMediaWidgetPrivate::DFMOpticalMediaWidgetPrivate(DFMOpticalMediaWidget *q) :
     q_ptr(q)
+{
+}
+
+DFMOpticalMediaWidgetPrivate::~DFMOpticalMediaWidgetPrivate()
 {
 }
 
@@ -58,7 +70,7 @@ void DFMOpticalMediaWidgetPrivate::setupUi()
     lb_available->setAlignment(Qt::AlignCenter);
 }
 
-void DFMOpticalMediaWidgetPrivate::setProperty(DeviceProperty dp)
+void DFMOpticalMediaWidgetPrivate::setDeviceProperty(DeviceProperty dp)
 {
     const static QHash<MediaType, QString> rtypemap = {
         {MediaType::CD_ROM       , "CD-ROM"  },
