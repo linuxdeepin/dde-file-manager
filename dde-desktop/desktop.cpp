@@ -99,20 +99,20 @@ void Desktop::onBackgroundEnableChanged()
         // 隐藏完全重叠的窗口
         for (QLabel *l : d->background->allBackgrounds()) {
             if (l != background) {
-                l->setVisible(!background->geometry().contains(l->geometry()));
                 Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), true);
+                l->setVisible(!background->geometry().contains(l->geometry()));
             } else {
-                l->show();
                 Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), false);
+                l->show();
             }
         }
     } else {
         d->screenFrame.setParent(nullptr);
         setWindowFlag(&d->screenFrame, Qt::FramelessWindowHint, true);
         d->screenFrame.QWidget::setGeometry(qApp->primaryScreen()->geometry());
-        d->screenFrame.show();
-
         Xcb::XcbMisc::instance().set_window_type(d->screenFrame.winId(), Xcb::XcbMisc::Desktop);
+
+        d->screenFrame.show();
     }
 }
 
