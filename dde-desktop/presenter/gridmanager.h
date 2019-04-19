@@ -27,7 +27,6 @@ class GridManager: public QObject, public Singleton<GridManager>
 {
     Q_OBJECT
 public:
-    bool isInited() const;
     void initProfile(const QList<DAbstractFileInfoPointer> &items);
     void initWithoutProfile(const QList<DAbstractFileInfoPointer> &items);
 
