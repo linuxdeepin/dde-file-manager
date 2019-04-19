@@ -731,7 +731,9 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
 void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
 {
     if (event->source()) {
-        d->startDodge = true;
+        if (!autoMerge()) {
+            d->startDodge = true;
+        }
         itemDelegate()->hideNotEditingIndexWidget();
     }
 
@@ -783,7 +785,9 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
         }
     }
 
-    startDodgeAnimation();
+    if (!autoMerge()) {
+        startDodgeAnimation();
+    }
     update();
 }
 
@@ -857,6 +861,9 @@ void CanvasGridView::dropEvent(QDropEvent *event)
             QModelIndex dropIndex = indexAt(gridRectAt(event->pos()).center());
 
             if (event->source() == this && (!dropIndex.isValid() || dropOnSelf)) {
+                if (autoMerge()) {
+                    return;
+                }
                 auto point = event->pos();
                 auto row = (point.x() - d->viewMargins.left()) / d->cellWidth;
                 auto col = (point.y() - d->viewMargins.top()) / d->cellHeight;
