@@ -28,12 +28,14 @@
 class DialogManager;
 class GvfsMountManager;
 class UDiskListener;
+namespace DISOMasterNS {
 class DISOMaster;
+}
 
 DialogManager *getDialogManager(bool doConstruct = false);
 GvfsMountManager *getGvfsMountManager(bool doConstruct = false);
 UDiskListener *getUDiskListener(bool doConstruct = false);
-DISOMaster *getDISOMaster(bool doContruct = false);
+DISOMasterNS::DISOMaster *getDISOMaster(bool doContruct = false);
 
 #define searchHistoryManager  Singleton<SearchHistroyManager>::instance()
 #define bookmarkManager  Singleton<BookMarkManager>::instance()

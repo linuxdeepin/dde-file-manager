@@ -3,6 +3,8 @@
 #include "shutil/fileutils.h"
 #include "dialogs/burnoptdialog.h"
 
+using namespace DISOMasterNS;
+
 class DFMOpticalMediaWidgetPrivate
 {
 public:
@@ -10,12 +12,15 @@ public:
     ~DFMOpticalMediaWidgetPrivate();
     void setupUi();
     void setDeviceProperty(DeviceProperty dp);
+    void setCurrentDevice(const QString &dev);
+    QString getCurrentDevice() const;
 private:
     DLabel *lb_mediatype;
     DLabel *lb_available;
     DPushButton *pb_burn;
     QHBoxLayout *layout;
     DFMOpticalMediaWidget *q_ptr;
+    QString curdev;
     Q_DECLARE_PUBLIC(DFMOpticalMediaWidget)
 };
 
@@ -27,7 +32,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
     d->setupUi();
 
     connect(d->pb_burn, &DPushButton::clicked, this, [=] {
-            QScopedPointer<BurnOptDialog> bd(new BurnOptDialog(this));
+            QScopedPointer<BurnOptDialog> bd(new BurnOptDialog(d->getCurrentDevice(), this));
             bd->exec();
         }
     );
@@ -40,8 +45,7 @@ DFMOpticalMediaWidget::~DFMOpticalMediaWidget()
 void DFMOpticalMediaWidget::updateDiscInfo(QString dev)
 {
     Q_D(DFMOpticalMediaWidget);
-    DeviceProperty dp = ISOMaster->getDevicePropertyCached(dev);
-    d->setDeviceProperty(dp);
+    d->setCurrentDevice(dev);
 }
 
 DFMOpticalMediaWidgetPrivate::DFMOpticalMediaWidgetPrivate(DFMOpticalMediaWidget *q) :
@@ -61,7 +65,7 @@ void DFMOpticalMediaWidgetPrivate::setupUi()
     layout->addWidget(lb_mediatype = new DLabel("<Media Type>"));
     layout->addWidget(lb_available = new DLabel("<Space Available>"));
     layout->addWidget(pb_burn = new DPushButton());
-    pb_burn->setText("Burn");
+    pb_burn->setText(QObject::tr("Burn"));
 
     pb_burn->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     lb_available->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -89,4 +93,16 @@ void DFMOpticalMediaWidgetPrivate::setDeviceProperty(DeviceProperty dp)
     };
     lb_available->setText(FileUtils::formatSize(dp.avail));
     lb_mediatype->setText(rtypemap[dp.media]);
+}
+
+void DFMOpticalMediaWidgetPrivate::setCurrentDevice(const QString &dev)
+{
+    curdev = dev;
+    DeviceProperty dp = ISOMaster->getDevicePropertyCached(dev);
+    setDeviceProperty(dp);
+}
+
+QString DFMOpticalMediaWidgetPrivate::getCurrentDevice() const
+{
+    return curdev;
 }

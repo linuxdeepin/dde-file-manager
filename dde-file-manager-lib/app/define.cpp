@@ -8,7 +8,7 @@
 Q_GLOBAL_STATIC(DialogManager, gsDialogManager)
 Q_GLOBAL_STATIC(GvfsMountManager, gsGvfsMountManager)
 Q_GLOBAL_STATIC(UDiskListener, gsUDiskListener)
-Q_GLOBAL_STATIC(DISOMaster, gsDISOMaster)
+Q_GLOBAL_STATIC(DISOMasterNS::DISOMaster, gsDISOMaster)
 
 DialogManager *getDialogManager(bool doConstruct)
 {
@@ -46,7 +46,7 @@ UDiskListener *getUDiskListener(bool doConstruct)
     return gsUDiskListener.exists() ? gsUDiskListener() : nullptr;
 }
 
-DISOMaster *getDISOMaster(bool doConstruct)
+DISOMasterNS::DISOMaster *getDISOMaster(bool doConstruct)
 {
     if (doConstruct) {
         if (!gsDISOMaster.exists() && qApp) {

@@ -37,6 +37,9 @@
 #include "dfmevent.h"
 #include "dfmeventdispatcher.h"
 #include "dabstractfilewatcher.h"
+#include "ddiskmanager.h"
+#include "dblockdevice.h"
+#include "ddiskdevice.h"
 
 #include "tag/tagmanager.h"
 
@@ -102,6 +105,7 @@ bool FileJob::setDirPermissions(const QString &scrPath, const QString& tarDirPat
 FileJob::FileJob(JobType jobType, QObject *parent) : QObject(parent)
 {
     qRegisterMetaType<QMap<QString, QString>>();
+    qRegisterMetaType<DISOMasterNS::DISOMaster::JobStatus>(QT_STRINGIFY(DISOMasterNS::DISOMaster::JobStatus));
     FileJobCount += 1;
     m_status = FileJob::Started;
 
@@ -598,6 +602,70 @@ bool FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
     return ok;
 }
 
+void FileJob::doOpticalBlank(const DUrl &device)
+{
+    QString dev = device.path();
+    dev.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dev));
+    blkdev->unmount({});
+    jobPrepared();
+
+    m_isomaster = new DISOMasterNS::DISOMaster(this);
+    connect(m_isomaster, &DISOMasterNS::DISOMaster::jobStatusChanged, this, &FileJob::opticalJobUpdated);
+    m_isomaster->acquireDevice(device.path());
+    m_isomaster->erase();
+    m_isomaster->releaseDevice();
+
+    if (m_isJobAdded)
+        jobRemoved();
+    emit finished();
+    delete m_isomaster;
+}
+
+/*
+ * flag:
+ * 1: close session?
+ * 2: eject?
+ * 4: check media?
+ */
+void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int flag)
+{
+    QString dev = device.path();
+    dev.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dev));
+    blkdev->unmount({});
+    jobPrepared();
+
+    m_isomaster = new DISOMasterNS::DISOMaster(this);
+    connect(m_isomaster, &DISOMasterNS::DISOMaster::jobStatusChanged, this, &FileJob::opticalJobUpdated);
+    m_isomaster->acquireDevice(device.path());
+    Q_UNUSED(volname);
+    QUrl stagingurl(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
+                    + "/diskburn/" + device.path().replace('/','_') + "/");
+    qDebug() << stagingurl;
+    m_isomaster->stageFiles({{stagingurl, QUrl("/")}});
+    m_isomaster->commit(speed, flag&1);
+    m_isomaster->releaseDevice();
+
+    if (flag&2) {
+        QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->device(), this));
+        diskdev->eject({});
+    }
+
+    // media check not yet implemented
+
+    if (m_isJobAdded)
+        jobRemoved();
+    emit finished();
+    delete m_isomaster;
+}
+
+void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster::JobStatus status, int progress)
+{
+    m_opticalJobStatus = status;
+    m_opticalJobProgress = progress;
+}
+
 void FileJob::paused()
 {
     m_status = FileJob::Paused;
@@ -637,7 +705,9 @@ void FileJob::jobUpdated()
     QMap<QString, QString> jobDataDetail;
 
     if (m_jobType == OpticalBurn || m_jobType == OpticalBlank) {
-        //TODO: Write this!
+        jobDataDetail["optical_op_type"] = QString::number(m_jobType);
+        jobDataDetail["optical_op_status"] = QString::number(m_opticalJobStatus);
+        jobDataDetail["optical_op_progress"] = QString::number(m_opticalJobProgress);
     }
     else if (m_jobType == Restore && m_isInSameDisk){
         jobDataDetail.insert("file", m_srcFileName);
