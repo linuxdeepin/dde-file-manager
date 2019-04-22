@@ -354,6 +354,7 @@ bool CanvasGridView::autoMerge() const
 
 void CanvasGridView::setAutoMerge(bool enabled)
 {
+    GridManager::instance()->setAutoMerge(enabled);
     if (enabled) {
         this->setRootUrl(DUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER));
     } else {
@@ -1945,8 +1946,6 @@ void CanvasGridView::initConnection()
 
     connect(this, &CanvasGridView::autoAlignToggled,
             Presenter::instance(), &Presenter::onAutoAlignToggled);
-    connect(this, &CanvasGridView::autoMergeToggled,
-            Presenter::instance(), &Presenter::onAutoMergeToggled);
     connect(this, &CanvasGridView::sortRoleChanged,
             Presenter::instance(), &Presenter::onSortRoleChanged);
     connect(this, &CanvasGridView::changeIconLevel,
@@ -2243,7 +2242,6 @@ void CanvasGridView::handleContextMenuAction(int action)
 //    }
     case AutoMerge:
         this->toggleAutoMerge(!autoMerge());
-        emit autoMergeToggled();
         break;
     case AutoSort:
         emit autoAlignToggled();

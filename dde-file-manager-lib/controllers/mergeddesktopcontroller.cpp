@@ -238,6 +238,8 @@ void MergedDesktopController::desktopFilesRenamed(const DUrl &oriUrl, const DUrl
 
 void MergedDesktopController::initData() const
 {
+    arrangedFileUrls.clear();
+
     QDir desktopDir(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
     const QStringList &fileList = desktopDir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot);
     for (const QString &oneFile : fileList) {
