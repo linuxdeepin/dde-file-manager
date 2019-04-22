@@ -157,8 +157,9 @@ public slots:
 
     bool doTrashRestore(const QString &srcFilePath, const QString& tarFilePath);
 
-    void doOpticalBurn(const DUrl &device, QString volname, int speed);
+    void doOpticalBurn(const DUrl &device, QString volname, int speed, int flag);
     void doOpticalBlank(const DUrl &device);
+    void opticalJobUpdated(DISOMasterNS::DISOMaster::JobStatus status, int progress);
 
     void paused();
     void started();
@@ -205,6 +206,8 @@ private:
     JobType m_jobType;
     int m_windowId = -1;
     bool m_skipandApplyToAll = false;
+    DISOMasterNS::DISOMaster::JobStatus m_opticalJobStatus;
+    int m_opticalJobProgress;
 
     int m_filedes[2] = {0, 0};
     bool m_isInSameDisk = true;
@@ -212,7 +215,7 @@ private:
 
     GCancellable* m_abortGCancellable = NULL;
 
-    DISOMaster *isomaster;
+    DISOMasterNS::DISOMaster *m_isomaster;
 
     DUrlList m_noPermissonUrls;
 

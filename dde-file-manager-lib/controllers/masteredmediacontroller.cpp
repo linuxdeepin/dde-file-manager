@@ -185,6 +185,9 @@ QList<QString> MasteredMediaController::getTagsThroughFiles(const QSharedPointer
 DAbstractFileWatcher *MasteredMediaController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
     DAbstractFileInfoPointer ifo = fileService->createFileInfo(this, event->fileUrl());
+    if (!ifo || !ifo->parentUrl().isValid() ) {
+        return nullptr;
+    }
     return new DFileWatcher(ifo->parentUrl().toLocalFile());
 }
 

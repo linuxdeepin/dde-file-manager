@@ -188,6 +188,7 @@ private slots:
     void loadViewState(const DUrl &url);
     void saveViewState();
     void onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order);
+    void onDriveOpticalChanged(const QString& path);
     void reset() override;
     void setRootIndex(const QModelIndex &index) override;
 

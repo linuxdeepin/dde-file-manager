@@ -35,6 +35,7 @@
 #include <ddialog.h>
 
 #include "dfmglobal.h"
+#include "disomaster.h"
 #include "dfileservices.h"
 #include "dabstractfileinfo.h"
 
@@ -401,6 +402,24 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data)
 {
     QString file, destination, speed, remainTime, progress, status, srcPath, targetPath;
     QString msg1, msg2;
+
+    if (data.contains("optical_op_type")) {
+        m_animatePad->setCanPause(false);
+        status = data["optical_op_status"];
+        progress = data["optical_op_progress"];
+        //TODO: caption
+        setMessage(tr("Burning files to ??? ..."), "");
+        qDebug() << status << progress;
+        if (status == QString::number(DISOMasterNS::DISOMaster::JobStatus::Stalled)) {
+            m_animatePad->startAnimation();
+        }
+        else if (status == QString::number(DISOMasterNS::DISOMaster::JobStatus::Running)) {
+            m_animatePad->stopAnimation();
+            setProgress(progress);
+        }
+        return;
+    }
+
     if (data.contains("file")) {
         file = data.value("file");
     }

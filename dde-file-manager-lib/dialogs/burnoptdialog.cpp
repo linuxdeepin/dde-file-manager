@@ -5,6 +5,11 @@
 #include <QCheckBox>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QtConcurrent>
+#include "disomaster.h"
+#include "app/define.h"
+#include "fileoperations/filejob.h"
+#include "dialogmanager.h"
 #include <QDebug>
 
 DWIDGET_USE_NAMESPACE
@@ -15,6 +20,7 @@ public:
     BurnOptDialogPrivate(BurnOptDialog *q);
     ~BurnOptDialogPrivate();
     void setupUi();
+    void setDevice(const QString &device);
 private:
     BurnOptDialog *q_ptr;
     QWidget *w_content;
@@ -26,16 +32,37 @@ private:
     DLabel *lb_postburn;
     QCheckBox *cb_checkdisc;
     QCheckBox *cb_eject;
+    QString dev;
 
     Q_DECLARE_PUBLIC(BurnOptDialog)
 };
 
-BurnOptDialog::BurnOptDialog(QWidget *parent) :
+BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
     DDialog(parent),
     d_ptr(new BurnOptDialogPrivate(this))
 {
     Q_D(BurnOptDialog);
+    d->setDevice(device);
     d->setupUi();
+    connect(this, &BurnOptDialog::buttonClicked, this,
+        [=](int index, const QString &text) {
+            Q_UNUSED(text);
+            if (index == 1) {
+                QtConcurrent::run([=] {
+                    FileJob job(FileJob::OpticalBurn);
+                    job.moveToThread(qApp->thread());
+                    qDebug() << job.thread() << qApp->thread();
+                    job.setWindowId(this->parentWidget()->window()->winId());
+                    dialogManager->addJob(&job);
+
+                    DUrl dev(device);
+                    dev.setScheme(BURN_SCHEME);
+
+                    job.doOpticalBurn(dev, d->le_volname->text(), 0, 0);;
+                    dialogManager->removeJob(job.getJobId());
+                });
+            }
+    });
 }
 
 BurnOptDialog::~BurnOptDialog()
@@ -57,10 +84,9 @@ void BurnOptDialogPrivate::setupUi()
     q->setModal(true);
     q->setIcon(QIcon::fromTheme("media-optical").pixmap(96, 96), QSize(96, 96));
 
-    QStringList sl;
-    sl << "Cancel";
-    sl << "Burn";
-    q->addButtons(sl);
+    q->addButton(QObject::tr("Cancel"));
+    q->addButton(QObject::tr("Burn"), true, DDialog::ButtonType::ButtonRecommend);
+
     w_content = new QWidget(q);
     w_content->setLayout(new QVBoxLayout);
     q->addContent(w_content);
@@ -79,6 +105,13 @@ void BurnOptDialogPrivate::setupUi()
     cb_writespeed->addItem(QObject::tr("Max speed"));
     w_content->layout()->addWidget(cb_writespeed);
 
+    DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(dev);
+    for (auto i : dp.writespeed) {
+        float speed;
+        sscanf(i.toUtf8().data(), "%*d%*c\t%f", &speed);
+        cb_writespeed->addItem(QString::number((int)speed) + 'x');
+    }
+
     cb_iclose = new QCheckBox(QObject::tr("Allow more data to be append to the disc"));
     w_content->layout()->addWidget(cb_iclose);
 
@@ -95,4 +128,9 @@ void BurnOptDialogPrivate::setupUi()
 
     cb_eject = new QCheckBox(QObject::tr("Eject"));
     wpostburn->layout()->addWidget(cb_eject);
+}
+
+void BurnOptDialogPrivate::setDevice(const QString &device)
+{
+    dev = device;
 }
