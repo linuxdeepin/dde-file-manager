@@ -1,3 +1,36 @@
+<a name="4.8.1"></a>
+## 4.8.1 (2019-04-22)
+
+
+#### Features
+
+*   fileItemDisableFlag() for merged desktop ([8e328e33](https://github.com/linuxdeepin/dde-file-manager/commit/8e328e33a334cc3cb5e88415c3408ed3f82ee98e))
+*   file watcher support for dfmmd scheme ([ca5d0486](https://github.com/linuxdeepin/dde-file-manager/commit/ca5d048664078627030ff1796e0f0eae091de201))
+
+#### Bug Fixes
+
+*   duplicated items from merged desktop controller ([ad3d514d](https://github.com/linuxdeepin/dde-file-manager/commit/ad3d514d23d46e1abffae7b49198fae88fe12f9e))
+*   disable drag on merged desktop ([40d88ae7](https://github.com/linuxdeepin/dde-file-manager/commit/40d88ae7ed33af8f7877456be5848cd0d173eae3))
+*   invalid command args quotes for QProcess ([6b27a341](https://github.com/linuxdeepin/dde-file-manager/commit/6b27a3419c05ee4141e98a6d2c45429dbed6e50b))
+*   avoid crashing on file stat job. ([846ad1c3](https://github.com/linuxdeepin/dde-file-manager/commit/846ad1c3979d605e416cfec0c3d4305fc2b25cbd))
+*   use plural for zero items. ([e0aa1e69](https://github.com/linuxdeepin/dde-file-manager/commit/e0aa1e694694647505ed6b34deda808478a1f5ba))
+*   merge order caused compile error ([39a1e331](https://github.com/linuxdeepin/dde-file-manager/commit/39a1e331d00a5cc201376a15a2c0359916ca67bb))
+*   some merged desktop check ([7f2acf05](https://github.com/linuxdeepin/dde-file-manager/commit/7f2acf054f894cf141770876c1c7239f989301d8))
+*   The desktop background flash when the wallpaper is changed by user setting ([fc112bde](https://github.com/linuxdeepin/dde-file-manager/commit/fc112bdec9de480da2f11e8129dc6b6ce89b5166))
+*   use macro ([3a655f5c](https://github.com/linuxdeepin/dde-file-manager/commit/3a655f5cc608d388e68b486fb20fd1f476bdc240))
+*   avoid crash in some case ([42abe05b](https://github.com/linuxdeepin/dde-file-manager/commit/42abe05b24b082742ba65f2335956ed553b89962))
+*   using keyboard navigation causes wrong number of files in the status bar. ([5b74ac8c](https://github.com/linuxdeepin/dde-file-manager/commit/5b74ac8c8eee521fc360facba76f1db11961cc5d))
+*   wrong number of items in disk properties dialog. ([4c78d270](https://github.com/linuxdeepin/dde-file-manager/commit/4c78d2709b2ba98f1537a1a3ebdeed9f535c6d4d))
+*   can open terminal under merged desktop scheme ([9795c6eb](https://github.com/linuxdeepin/dde-file-manager/commit/9795c6eb79d7111d02e7336f57b2d895023d14ab))
+*   show hidden file on desktop not working ([dd00701e](https://github.com/linuxdeepin/dde-file-manager/commit/dd00701e1ec111a0cc990837220931ae38e602c5))
+*   list of recently used files empties unexpectedly. https://github.com/linuxdeepin/internal-discussion/issues/1090 ([d9545d68](https://github.com/linuxdeepin/dde-file-manager/commit/d9545d684ede1ee11ee3fd660375222e5100563c))
+*   right mouse button drag on virtual entry lead crash ([e8336f04](https://github.com/linuxdeepin/dde-file-manager/commit/e8336f040946be8ad5302be3adc357113dfdfbf9))
+*   unknown mtime should show up properly now. ([e1f85519](https://github.com/linuxdeepin/dde-file-manager/commit/e1f85519c59f35a8ca82cee52c13b19b2f80bcce))
+*   disable desktop context menu for merged desktop mode (#121) ([f05f9e5a](https://github.com/linuxdeepin/dde-file-manager/commit/f05f9e5a3a5ef8efdc36ec0ea807d5855c8751ff))
+* **desktop:**  will show titlebar in a short time ([496d722c](https://github.com/linuxdeepin/dde-file-manager/commit/496d722c35a75384c39d9b08393764e5822ecdbb))
+
+
+
 <a name="4.8.0"></a>
 ## 4.8.0 (2019-04-09)
 
