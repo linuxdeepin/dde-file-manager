@@ -129,7 +129,6 @@ public:
 signals:
     void sortRoleChanged(int role, Qt::SortOrder order);
     void autoAlignToggled();
-    void autoMergeToggled();
     void changeIconLevel(int iconLevel);
     void dodgeDurationChanged(double dodgeDuration);
 

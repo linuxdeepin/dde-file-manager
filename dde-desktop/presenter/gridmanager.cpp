@@ -483,7 +483,6 @@ public:
 
     bool                    autoArrange;
     bool                    autoMerge = false;
-    bool                    hasInited = false;
 
     std::atomic<bool>       m_whetherShowHiddenFiles{ false };
 };
@@ -497,16 +496,10 @@ GridManager::~GridManager()
 
 }
 
-bool GridManager::isInited() const
-{
-    return d->hasInited;
-}
-
 void GridManager::initProfile(const QList<DAbstractFileInfoPointer> &items)
 {
     d->createProfile();
     d->loadProfile(items);
-    d->hasInited = true;
 }
 
 // init WITHOUT grid item position data from the config file.
@@ -514,7 +507,6 @@ void GridManager::initWithoutProfile(const QList<DAbstractFileInfoPointer> &item
 {
     d->createProfile(); // nothing with profile.
     d->loadWithoutProfile(items);
-    d->hasInited = true;
 }
 
 bool GridManager::add(const QString &id)
