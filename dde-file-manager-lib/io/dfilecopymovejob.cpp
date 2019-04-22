@@ -1410,13 +1410,13 @@ void DFileCopyMoveJobPrivate::updateProgress()
     if (fileStatistics->isFinished()) {
         const qint64 data_size = getCompletedDataSize();
 
-        Q_EMIT q_ptr->progressChanged(qreal(data_size) / fileStatistics->totalSize(), data_size);
+        Q_EMIT q_ptr->progressChanged(qMin(qreal(data_size) / fileStatistics->totalSize(), 1.0), data_size);
 
         qCDebug(fileJob(), "completed data size: %lld, total data size: %lld", data_size, fileStatistics->totalSize());
     }
 
     if (currentJobDataSizeInfo.first > 0) {
-        Q_EMIT q_ptr->currentFileProgressChanged(qreal(currentJobDataSizeInfo.second) / currentJobDataSizeInfo.first, currentJobDataSizeInfo.second);
+        Q_EMIT q_ptr->currentFileProgressChanged(qMin(qreal(currentJobDataSizeInfo.second) / currentJobDataSizeInfo.first, 1.0), currentJobDataSizeInfo.second);
     }
 }
 
