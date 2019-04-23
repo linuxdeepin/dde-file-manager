@@ -38,10 +38,11 @@ MasteredMediaFileInfo::MasteredMediaFileInfo(const DUrl &url)
     if (rem.hasMatch()) {
         auto dev = deviceListener->getDeviceByDevicePath(rem.captured(1));
         //udisks should be used in order to detect blank media properly
-        if (dev->getMountPoint() == "burn:///") {
+        if (dev->getMountPointUrl().scheme() == BURN_SCHEME && rem.captured(2) == "disk_files") {
+            //blank media contains no files on disc, duh!
             return;
         }
-        if(rem.captured(2)=="disk_files")
+        if(rem.captured(2) == "disk_files")
             m_parentUrl = DUrl(dev->getMountPoint() + rem.captured(3));
         else
             m_parentUrl = DUrl(MasteredMediaController::getStagingFolder(url));
