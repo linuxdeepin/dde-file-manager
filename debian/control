@@ -79,7 +79,8 @@ Depends:
  gvfs-backends(>=1.27.3),
  cryptsetup,
  libkf5codecs5,
- deepin-anything-libs
+ deepin-anything-libs,
+ libudisks2-qt5
 Breaks: dde-file-manager(<=1.2.3-3)
 Multi-Arch: same
 Description: DDE File Manager library
