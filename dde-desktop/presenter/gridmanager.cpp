@@ -217,7 +217,7 @@ public:
         return true;
     }
 
-    inline void syncProfile()
+    QPair<QStringList, QVariantList> generateProfileConfigVariable()
     {
         QStringList keyList;
         QVariantList valueList;
@@ -226,22 +226,29 @@ public:
             valueList << m_gridItems.value(pos);
         }
 
+        return QPair<QStringList, QVariantList>(keyList, valueList);
+    }
+
+    inline void syncProfile()
+    {
+        QPair<QStringList, QVariantList> kvList = generateProfileConfigVariable();
+
         if (m_gridItems.size() != m_itemGrids.size()) {
             qCritical() << "data sync failed";
             qCritical() << "-----------------------------";
-            qCritical() << m_gridItems << m_itemGrids << keyList;
+            qCritical() << m_gridItems << m_itemGrids << kvList.first;
             qCritical() << "-----------------------------";
         }
 
-        if (keyList.size() != m_gridItems.size()) {
+        if (kvList.first.size() != m_gridItems.size()) {
             qCritical() << "data sync failed";
             qCritical() << "-----------------------------";
-            qCritical() << m_gridItems << m_itemGrids << keyList;
+            qCritical() << m_gridItems << m_itemGrids << kvList.first;
             qCritical() << "-----------------------------";
         }
 
         emit Presenter::instance()->removeConfig(positionProfile, "");
-        emit Presenter::instance()->setConfigList(positionProfile, keyList, valueList);
+        emit Presenter::instance()->setConfigList(positionProfile, kvList.first, kvList.second);
     }
 
     inline bool remove(QPoint pos, const QString &id)
@@ -428,7 +435,7 @@ public:
         }
     }
 
-    bool updateGridProfile(int w, int h)
+    bool updateGridSize(int w, int h)
     {
         if (coordHeight == h && coordWidth == w) {
             qWarning() << "profile not changed";
@@ -443,18 +450,18 @@ public:
                      << "to" << w << h;
             changeGridSize(w, h);
 
-            QStringList keyList;
-            QVariantList valueList;
-            for (auto pos : m_gridItems.keys()) {
-                keyList << positionKey(pos);
-                valueList << m_gridItems.value(pos);
+            // check if we should update grid profile.
+            if (autoMerge) {
+                return this->autoArrange;
             }
 
-            qDebug() << "updateGridProfile:" << keyList.size()
+            QPair<QStringList, QVariantList> kvList = generateProfileConfigVariable();
+
+            qDebug() << "updateGridProfile:" << kvList.first.size()
                      << m_gridItems.size() << m_itemGrids.size();
 
             emit Presenter::instance()->removeConfig(positionProfile, "");
-            emit Presenter::instance()->setConfigList(positionProfile, keyList, valueList);
+            emit Presenter::instance()->setConfigList(positionProfile, kvList.first, kvList.second);
 
             return this->autoArrange;
         }
@@ -537,7 +544,7 @@ bool GridManager::add(QPoint pos, const QString &id)
 {
     qDebug() << "add" << pos << id;
     auto ret = d->add(pos, id);
-    if (ret) {
+    if (ret && !autoMerge()) {
         d->syncProfile();
     }
 
@@ -641,7 +648,7 @@ bool GridManager::remove(int x, int y, const QString &id)
 bool GridManager::remove(QPoint pos, const QString &id)
 {
     auto ret = d->remove(pos, id);
-    if (ret) {
+    if (ret && !autoMerge()) {
         d->syncProfile();
     }
     return ret;
@@ -767,15 +774,14 @@ void GridManager::reArrange()
 {
     d->arrange();
 
-    QStringList keyList;
-    QVariantList valueList;
-    for (auto pos : d->m_gridItems.keys()) {
-        keyList << positionKey(pos);
-        valueList << d->m_gridItems.value(pos);
+    if (autoMerge()) {
+        return;
     }
 
+    QPair<QStringList, QVariantList> kvList = d->generateProfileConfigVariable();
+
     emit Presenter::instance()->removeConfig(d->positionProfile, "");
-    emit Presenter::instance()->setConfigList(d->positionProfile, keyList, valueList);
+    emit Presenter::instance()->setConfigList(d->positionProfile, kvList.first, kvList.second);
 }
 
 QPoint GridManager::forwardFindEmpty(QPoint start) const
@@ -804,7 +810,7 @@ QSize GridManager::gridSize() const
 
 void GridManager::updateGridSize(int w, int h)
 {
-    if (d->updateGridProfile(w, h)) {
+    if (d->updateGridSize(w, h)) {
         d->arrange();
     }
 
