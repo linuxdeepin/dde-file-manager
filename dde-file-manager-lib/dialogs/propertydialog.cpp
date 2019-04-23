@@ -1000,7 +1000,7 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
 
     QStringList recommendApps = mimeAppsManager->getRecommendedApps(fileUrl);
 
-    QString mimeType = infoPtr->mimeType().name(); // blumia: consider remove things like FileUtils::getMimeTypeByGIO ?
+    QString mimeType = infoPtr->mimeType().name();
     QString defaultApp = mimeAppsManager->getDefaultAppDisplayNameByGio(mimeType);
 
     foreach (const QString &appFile, recommendApps) {
