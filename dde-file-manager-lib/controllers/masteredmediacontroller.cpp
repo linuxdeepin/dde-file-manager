@@ -27,16 +27,22 @@ public:
         if (rem.hasMatch()) {
             auto dev = deviceListener->getDeviceByDevicePath(rem.captured(1));
             mntpoint = DUrl(dev->getMountPoint()).toLocalFile();
-            if (mntpoint.length() == 0) {
+            devfile = rem.captured(1);
+            if (mntpoint.length() == 0 && dev->getMountPointUrl().scheme() == BURN_SCHEME) {
+                //blank disc
+                iterator.clear();
+                stagingiterator = QSharedPointer<QDirIterator>(
+                                      new QDirIterator(MasteredMediaController::getStagingFolder(DUrl(path)).path(),
+                                                       nameFilters, filter, flags)
+                                  );
                 return;
             }
-            devfile = rem.captured(1);
             QString realpath = mntpoint + rem.captured(2);
             iterator = QSharedPointer<QDirIterator>(new QDirIterator(realpath, nameFilters, filter, flags));
             stagingiterator = QSharedPointer<QDirIterator>(
-                                    new QDirIterator(MasteredMediaController::getStagingFolder(DUrl(path)).path(),
-                                                     nameFilters, filter, flags)
-                                    );
+                                  new QDirIterator(MasteredMediaController::getStagingFolder(DUrl(path)).path(),
+                                                   nameFilters, filter, flags)
+                              );
         }
     }
 

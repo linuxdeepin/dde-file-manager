@@ -414,7 +414,7 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
     QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QSharedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->optical()) {
-        QtConcurrent::run([=]{
+        QtConcurrent::run([=] {
             ISOMaster->acquireDevice(fileUrl.query());
             ISOMaster->getDeviceProperty();
             ISOMaster->releaseDevice();
