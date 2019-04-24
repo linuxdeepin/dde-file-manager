@@ -231,7 +231,6 @@ void MergedDesktopController::desktopFilesRemoved(const DUrl &url)
 
 void MergedDesktopController::desktopFilesRenamed(const DUrl &oriUrl, const DUrl &dstUrl)
 {
-    qDebug() << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" << oriUrl << dstUrl;
     for (unsigned int i = DMD_FIRST_TYPE; i <= DMD_ALL_TYPE; i++) {
         DMD_TYPES typeInfo = static_cast<DMD_TYPES>(i);
         if (arrangedFileUrls[typeInfo].removeOne(oriUrl)) {
