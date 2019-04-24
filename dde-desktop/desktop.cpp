@@ -88,6 +88,7 @@ void Desktop::onBackgroundEnableChanged()
 {
     if (d->background->isEnabled()) {
         QLabel *background = d->background->backgroundForScreen(qApp->primaryScreen());
+        d->screenFrame.setAttribute(Qt::WA_NativeWindow, false);
         d->screenFrame.setParent(background);
         d->screenFrame.move(0, 0);
         d->screenFrame.show();
