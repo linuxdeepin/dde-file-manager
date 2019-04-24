@@ -75,6 +75,12 @@ ThumbnailManager::ThumbnailManager(qreal scale)
     QDir::root().mkpath(m_cacheDir);
 }
 
+ThumbnailManager::~ThumbnailManager()
+{
+    if (!m_queuedRequests.isEmpty())
+        emit findAborted(m_queuedRequests);
+}
+
 void ThumbnailManager::clear()
 {
     QDir dir(m_cacheDir);
@@ -132,7 +138,7 @@ ThumbnailManager *ThumbnailManager::instance(qreal scale)
 {
     static ThumbnailManager *manager = new ThumbnailManager(scale);
 
-    if (qFuzzyCompare(manager->scale(), scale)) {
+    if (!qFuzzyCompare(manager->scale(), scale)) {
         manager->deleteLater();
         manager = new ThumbnailManager(scale);
     }

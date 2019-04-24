@@ -116,11 +116,7 @@ void WallpaperItem::initAnimation()
 void WallpaperItem::initPixmap()
 {
     if (m_useThumbnailManager) {
-        ThumbnailManager *tnm = ThumbnailManager::instance(devicePixelRatioF());
-
-        connect(tnm, &ThumbnailManager::thumbnailFounded, this, &WallpaperItem::onThumbnailFounded);
-
-        tnm->find(QUrl::toPercentEncoding(m_path));
+        refindPixmap();
     } else {
         QIcon icon(m_path);
         m_wrapper->m_pixmap = icon.pixmap(window()->windowHandle(), QSize(ItemWidth, ItemHeight));
@@ -234,6 +230,23 @@ void WallpaperItem::resizeEvent(QResizeEvent *event)
     m_wrapper->m_pixmapBoxGeometry = QRect(offset * ratio, QSize(ItemWidth * ratio, ItemHeight * ratio));
 
     QFrame::resizeEvent(event);
+}
+
+void WallpaperItem::refindPixmap()
+{
+    ThumbnailManager *tnm = ThumbnailManager::instance(devicePixelRatioF());
+
+    connect(tnm, &ThumbnailManager::thumbnailFounded, this, &WallpaperItem::onThumbnailFounded, Qt::UniqueConnection);
+    connect(tnm, &ThumbnailManager::findAborted, this, &WallpaperItem::onFindAborted, Qt::UniqueConnection);
+
+    tnm->find(QUrl::toPercentEncoding(m_path));
+}
+
+void WallpaperItem::onFindAborted(const QQueue<QString> &list)
+{
+    if (list.contains(QUrl::toPercentEncoding(m_path))) {
+        refindPixmap();
+    }
 }
 
 bool WallpaperItem::getDeletable() const
