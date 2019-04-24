@@ -60,7 +60,7 @@ const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const
     QList<DAbstractFileInfoPointer> infoList;
 
     auto appendVirtualEntries = [this, &infoList](bool displayEmptyEntry = false, const QStringList & expandedEntries = {}) {
-        for (unsigned int i = DMD_PICTURE; i <= DMD_OTHER; i++) {
+        for (unsigned int i = DMD_FIRST_TYPE; i <= DMD_ALL_ENTRY; i++) {
             DMD_TYPES oneType = static_cast<DMD_TYPES>(i);
             if (!displayEmptyEntry && arrangedFileUrls[oneType].isEmpty()) {
                 continue;
@@ -199,19 +199,29 @@ void MergedDesktopController::desktopFilesCreated(const DUrl &url)
 {
     DMD_TYPES typeInfo = checkUrlArrangedType(url);
     arrangedFileUrls[typeInfo].append(url);
-    DUrl parentUrl(DFMMD_ROOT VIRTUALENTRY_FOLDER + entryNameByEnum(typeInfo) + "/");
-    DAbstractFileWatcher::ghostSignal(parentUrl, &DAbstractFileWatcher::subfileCreated, url);
+    if (typeInfo == DMD_FOLDER) {
+        DUrl parentUrl(DFMMD_ROOT VIRTUALFOLDER_FOLDER "/");
+        DAbstractFileWatcher::ghostSignal(parentUrl, &DAbstractFileWatcher::subfileCreated, url);
+    } else {
+        DUrl parentUrl(DFMMD_ROOT VIRTUALENTRY_FOLDER + entryNameByEnum(typeInfo) + "/");
+        DAbstractFileWatcher::ghostSignal(parentUrl, &DAbstractFileWatcher::subfileCreated, url);
+    }
     DUrl parentUrl2(DFMMD_ROOT MERGEDDESKTOP_FOLDER);
     DAbstractFileWatcher::ghostSignal(parentUrl2, &DAbstractFileWatcher::subfileCreated, url);
 }
 
 void MergedDesktopController::desktopFilesRemoved(const DUrl &url)
 {
-    for (unsigned int i = DMD_PICTURE; i <= DMD_OTHER; i++) {
+    for (unsigned int i = DMD_FIRST_TYPE; i <= DMD_ALL_TYPE; i++) {
         DMD_TYPES typeInfo = static_cast<DMD_TYPES>(i);
         if (arrangedFileUrls[typeInfo].removeOne(url)) {
-            DUrl parentUrl(DFMMD_ROOT VIRTUALENTRY_FOLDER + entryNameByEnum(typeInfo) + "/");
-            DAbstractFileWatcher::ghostSignal(parentUrl, &DAbstractFileWatcher::fileDeleted, url);
+            if (typeInfo == DMD_FOLDER) {
+                DUrl parentUrl(DFMMD_ROOT VIRTUALFOLDER_FOLDER "/");
+                DAbstractFileWatcher::ghostSignal(parentUrl, &DAbstractFileWatcher::fileDeleted, url);
+            } else {
+                DUrl parentUrl(DFMMD_ROOT VIRTUALENTRY_FOLDER + entryNameByEnum(typeInfo) + "/");
+                DAbstractFileWatcher::ghostSignal(parentUrl, &DAbstractFileWatcher::fileDeleted, url);
+            }
             DUrl parentUrl2(DFMMD_ROOT MERGEDDESKTOP_FOLDER);
             DAbstractFileWatcher::ghostSignal(parentUrl2, &DAbstractFileWatcher::fileDeleted, url);
             return;
@@ -221,7 +231,7 @@ void MergedDesktopController::desktopFilesRemoved(const DUrl &url)
 
 void MergedDesktopController::desktopFilesRenamed(const DUrl &oriUrl, const DUrl &dstUrl)
 {
-    for (unsigned int i = DMD_PICTURE; i <= DMD_OTHER; i++) {
+    for (unsigned int i = DMD_FIRST_TYPE; i <= DMD_ALL_TYPE; i++) {
         DMD_TYPES typeInfo = static_cast<DMD_TYPES>(i);
         if (arrangedFileUrls[typeInfo].removeOne(oriUrl)) {
             break;
@@ -230,8 +240,13 @@ void MergedDesktopController::desktopFilesRenamed(const DUrl &oriUrl, const DUrl
     DMD_TYPES typeInfo = checkUrlArrangedType(dstUrl);
     arrangedFileUrls[typeInfo].append(dstUrl);
 
-    DUrl parentUrl(DFMMD_ROOT VIRTUALENTRY_FOLDER + entryNameByEnum(typeInfo) + "/");
-    DAbstractFileWatcher::ghostSignal(parentUrl, &DAbstractFileWatcher::fileMoved, oriUrl, dstUrl);
+    if (typeInfo == DMD_FOLDER) {
+        DUrl parentUrl(DFMMD_ROOT VIRTUALFOLDER_FOLDER "/");
+        DAbstractFileWatcher::ghostSignal(parentUrl, &DAbstractFileWatcher::fileMoved, oriUrl, dstUrl);
+    } else {
+        DUrl parentUrl(DFMMD_ROOT VIRTUALENTRY_FOLDER + entryNameByEnum(typeInfo) + "/");
+        DAbstractFileWatcher::ghostSignal(parentUrl, &DAbstractFileWatcher::fileMoved, oriUrl, dstUrl);
+    }
     DUrl parentUrl2(DFMMD_ROOT MERGEDDESKTOP_FOLDER);
     DAbstractFileWatcher::ghostSignal(parentUrl2, &DAbstractFileWatcher::fileMoved, oriUrl, dstUrl);
 }
