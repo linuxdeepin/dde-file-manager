@@ -89,6 +89,9 @@ protected:
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
 
 private:
+    void refindPixmap();
+    void onFindAborted(const QQueue<QString> &list);
+
     QString m_path;
     bool m_deletable;
     QString m_data;

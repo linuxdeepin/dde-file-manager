@@ -110,6 +110,8 @@ public:
     }
 
     void init();
+    QModelIndex findIndex(const QByteArray &keys, bool matchStart,
+                          int current, bool reverse_order, bool excludeCurrent) const;
 
     void _q_edit(const DFMUrlBaseEvent &event);
     void _q_selectAndRename(const DFMUrlBaseEvent &event);
@@ -133,7 +135,7 @@ void DFileViewHelperPrivate::init()
     Q_Q(DFileViewHelper);
 
     keyboardSearchTimer.setSingleShot(true);
-    keyboardSearchTimer.setInterval(500);
+    keyboardSearchTimer.setInterval(1000);
 
     // init connects
     QObject::connect(&keyboardSearchTimer, &QTimer::timeout,
@@ -213,6 +215,34 @@ void DFileViewHelperPrivate::init()
 
         pluginObjectList = DFMGenericFactory::createAll(QStringLiteral("fileinfo/additionalIcon"));
     }
+}
+
+QModelIndex DFileViewHelperPrivate::findIndex(const QByteArray &keys, bool matchStart,
+                                              int current, bool reverse_order, bool excludeCurrent) const
+{
+    Q_Q(const DFileViewHelper);
+
+    int row_count = q->parent()->model()->rowCount(q->parent()->rootIndex());
+
+    for (int i = excludeCurrent ? 1 : 0; i < row_count; ++i) {
+        int row = reverse_order ? row_count + current - i : current + i;
+
+        row = row % row_count;
+
+        if (excludeCurrent && row == current) {
+            continue;
+        }
+
+        const QModelIndex &index = q->parent()->model()->index(row, 0, q->parent()->rootIndex());
+        const QString &pinyin_name = q->parent()->model()->data(index, DFileSystemModel::FilePinyinName).toString();
+
+        if (matchStart ? pinyin_name.startsWith(keys, Qt::CaseInsensitive)
+                       : pinyin_name.contains(keys, Qt::CaseInsensitive)) {
+            return index;
+        }
+    }
+
+    return QModelIndex();
 }
 
 void DFileViewHelperPrivate::_q_edit(const DFMUrlBaseEvent &event)
@@ -577,32 +607,24 @@ void DFileViewHelper::keyboardSearch(char key)
     Q_D(DFileViewHelper);
 
     d->keyboardSearchKeys.append(key);
-    d->keyboardSearchTimer.start();
 
-    int row_count = parent()->model()->rowCount(parent()->rootIndex());
     bool reverse_order = qApp->keyboardModifiers() == Qt::ShiftModifier;
     const QModelIndex &current_index = parent()->currentIndex();
 
-    for (int i = 1; i < row_count; ++i) {
-        int row = reverse_order ? row_count + current_index.row() - i : current_index.row() + i;
+    QModelIndex index = d->findIndex(d->keyboardSearchKeys, true, current_index.row(), reverse_order, !d->keyboardSearchTimer.isActive());
 
-        row = row % row_count;
-
-        const QModelIndex &index = parent()->model()->index(row, 0, parent()->rootIndex());
-
-        if (index == current_index) {
-            continue;
-        }
-
-        const QString &pinyin_name = parent()->model()->data(index, DFileSystemModel::FilePinyinName).toString();
-
-        if (pinyin_name.startsWith(d->keyboardSearchKeys, Qt::CaseInsensitive)) {
-            parent()->setCurrentIndex(index);
-            parent()->scrollTo(index, reverse_order ? QAbstractItemView::PositionAtBottom : QAbstractItemView::PositionAtTop);
-
-            return;
-        }
+    if (!index.isValid()) {
+        // 使用 QString::contains 模式再次匹配
+        index = d->findIndex(d->keyboardSearchKeys, false, current_index.row(), reverse_order, !d->keyboardSearchTimer.isActive());
     }
+
+    if (index.isValid()) {
+        parent()->setCurrentIndex(index);
+        parent()->scrollTo(index, reverse_order ? QAbstractItemView::PositionAtBottom : QAbstractItemView::PositionAtTop);
+    }
+
+    // 开始计时，超过此时间后的搜索将清空之前输入的关键字
+    d->keyboardSearchTimer.start();
 }
 
 /*!

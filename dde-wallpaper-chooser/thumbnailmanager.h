@@ -35,6 +35,7 @@ class ThumbnailManager : public QObject
     Q_OBJECT
 public:
     ThumbnailManager(qreal scale);
+    ~ThumbnailManager();
 
     void clear();
     void find(const QString & key);
@@ -48,6 +49,7 @@ public:
 
 signals:
     void thumbnailFounded(const QString &key, const QPixmap &pixmap);
+    void findAborted(QQueue<QString> queue);
 
 private:
     void processNextReq();
