@@ -1,3 +1,17 @@
+<a name="4.8.2"></a>
+## 4.8.2 (2019-04-25)
+
+
+#### Bug Fixes
+
+*   workaround for merged desktop ([b7a2f85e](https://github.com/linuxdeepin/dde-file-manager/commit/b7a2f85e907fd04759fb8ca77791778200e3e21f))
+*   desktop widget hierarchy caused glitch ([8d329d86](https://github.com/linuxdeepin/dde-file-manager/commit/8d329d864c48d188680d0fd83e27241e997cdac8))
+*   avoid save profile when using merged desktop ([1579ac11](https://github.com/linuxdeepin/dde-file-manager/commit/1579ac11ebf722715c00d1478000fb783d347071))
+*   copy status not correct ([bd07342d](https://github.com/linuxdeepin/dde-file-manager/commit/bd07342d60f4f3c5fc91ba6e94fc4579684364f8))
+* **dde-wallpaper:**  find wallpaper thumbnails with no results (#146) ([854383fb](https://github.com/linuxdeepin/dde-file-manager/commit/854383fb96f4ce1b9d7f257a9440ceec1c53494d))
+
+
+
 <a name="4.8.1"></a>
 ## 4.8.1 (2019-04-22)
 
