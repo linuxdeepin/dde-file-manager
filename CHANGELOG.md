@@ -1,3 +1,13 @@
+<a name="4.8.3"></a>
+## 4.8.3 (2019-04-25)
+
+
+#### Bug Fixes
+
+*   temporary disable paste on merged desktop ([55d0c9e5](https://github.com/linuxdeepin/dde-file-manager/commit/55d0c9e58bd854b831c14240b8c63f410b5d2bcf))
+
+
+
 <a name="4.8.2"></a>
 ## 4.8.2 (2019-04-25)
 
