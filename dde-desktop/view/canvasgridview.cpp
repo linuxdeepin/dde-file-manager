@@ -2293,9 +2293,9 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     if (!autoMerge()) {
         actions << MenuAction::NewFolder << MenuAction::NewDocument
                 << MenuAction::SortBy;
+        actions << MenuAction::Paste;
     }
-    actions << MenuAction::Paste
-            << MenuAction::SelectAll << MenuAction::OpenInTerminal
+    actions << MenuAction::SelectAll << MenuAction::OpenInTerminal
             << MenuAction::Property << MenuAction::Separator;
 
     if (actions.isEmpty()) {
