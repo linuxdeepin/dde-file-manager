@@ -28,7 +28,11 @@ class MergedDesktopFileInfoPrivate;
 class MergedDesktopFileInfo : public DAbstractFileInfo
 {
 public:
-    MergedDesktopFileInfo(const DUrl &url);
+    MergedDesktopFileInfo(const DUrl &url, const DUrl &parentUrl);
+
+    DUrl parentUrl() const override;
+    QString iconName() const override;
+    QString genericIconName() const override;
 
 private:
     Q_DECLARE_PRIVATE(MergedDesktopFileInfo)

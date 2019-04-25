@@ -41,15 +41,39 @@ public:
     const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const override;
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &) const override;
 
-//    bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const override;
+    bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const override;
+    bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const override;
     DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const override;
-//    bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
+    bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
     DUrlList pasteFile(const QSharedPointer<DFMPasteEvent> &event) const override;
-//    bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const override;
+    bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const override;
+    bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const override;
     bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const override;
+
+    bool mkdir(const QSharedPointer<DFMMkdirEvent> &event) const override;
+    bool touch(const QSharedPointer<DFMTouchFileEvent> &event) const override;
+    bool setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const override;//
+    bool compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const override;
+    bool decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const override;//
+    bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const override;
+
+    bool setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const override;
+    bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const override;
+    QList<QString> getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const override;
+
+    DFM_NAMESPACE::DFileDevice *createFileDevice(const QSharedPointer<DFMUrlBaseEvent> &event) const override;//
+    DFM_NAMESPACE::DFileHandler *createFileHandler(const QSharedPointer<DFMUrlBaseEvent> &event) const override;
+    DFM_NAMESPACE::DStorageInfo *createStorageInfo(const QSharedPointer<DFMUrlBaseEvent> &event) const override;
+
+    bool setExtensionPropertys(const QSharedPointer<DFMSetFileExtensionPropertys> &event) const override;
 
     const static QString entryNameByEnum(DMD_TYPES singleType);
     static DMD_TYPES entryTypeByName(QString entryName);
+    static DUrl convertToDFMMDPath(const DUrl &oriUrl);
+    static DUrl convertToDFMMDPath(const DUrl &oriUrl, DMD_TYPES oneType);
+    static DUrl convertToRealPath(const DUrl &oneUrl);
+    static DUrlList convertToRealPaths(DUrlList urlList);
+    static DMD_TYPES checkUrlArrangedType(const DUrl url);
 
 public slots:
     void desktopFilesCreated(const DUrl &url);
@@ -58,7 +82,6 @@ public slots:
 
 private:
     void initData() const;
-    DMD_TYPES checkUrlArrangedType(const DUrl url) const;
     void appendEntryFiles(QList<DAbstractFileInfoPointer> &infoList, const DMD_TYPES &entryType) const;
 
     DFileWatcher* m_desktopFileWatcher;
