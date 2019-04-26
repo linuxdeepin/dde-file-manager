@@ -9,6 +9,7 @@
 #include "models/masteredmediafileinfo.h"
 #include "dfileservices.h"
 #include "dfilewatcher.h"
+#include "interfaces/dfileproxywatcher.h"
 
 #include <QRegularExpression>
 #include <QStandardPaths>
@@ -190,11 +191,29 @@ QList<QString> MasteredMediaController::getTagsThroughFiles(const QSharedPointer
 
 DAbstractFileWatcher *MasteredMediaController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
-    DAbstractFileInfoPointer ifo = fileService->createFileInfo(this, event->fileUrl());
+    DUrl stagingUrl = event->fileUrl();
+    stagingUrl.setPath(stagingUrl.path().replace("disk_files", "staging_files"));
+    qDebug() << stagingUrl;
+
+    DAbstractFileInfoPointer ifo = fileService->createFileInfo(this, stagingUrl);
+    qDebug() << ifo << ifo->parentUrl();
     if (!ifo || !ifo->parentUrl().isValid() ) {
         return nullptr;
     }
-    return new DFileWatcher(ifo->parentUrl().toLocalFile());
+    return new DFileProxyWatcher(ifo->parentUrl(),
+                                 new DFileWatcher(ifo->parentUrl().toLocalFile()),
+                                 [](const DUrl& in)->DUrl {
+                                     QString tmpp = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/diskburn/";
+                                     QString relp = in.path().mid(in.path().indexOf(tmpp) + tmpp.length());
+                                     QString devp = relp.left(relp.indexOf('/'));
+                                     QString imgp = relp.mid(relp.indexOf('/') + 1);
+                                     devp.replace('_', '/');
+                                     DUrl ret = DUrl(devp + "/staging_files/" + imgp);
+                                     ret.setScheme(BURN_SCHEME);
+                                     qDebug() << in << "->" << ret;
+                                     return ret;
+                                 }
+    );
 }
 
 void MasteredMediaController::mkpath(DUrl path) const

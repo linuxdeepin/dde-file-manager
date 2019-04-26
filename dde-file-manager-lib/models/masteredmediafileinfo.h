@@ -33,6 +33,7 @@ public:
 
     bool exists() const Q_DECL_OVERRIDE;
     bool isReadable() const Q_DECL_OVERRIDE;
+    bool isWritable() const Q_DECL_OVERRIDE;
     bool isDir() const Q_DECL_OVERRIDE;
 
     int filesCount() const Q_DECL_OVERRIDE;
@@ -44,6 +45,8 @@ public:
 
     bool canIteratorDir() const Q_DECL_OVERRIDE;
     QString toLocalFile() const Q_DECL_OVERRIDE;
+
+    bool canDrop() const Q_DECL_OVERRIDE;
 
 private:
     DUrl m_parentUrl;
