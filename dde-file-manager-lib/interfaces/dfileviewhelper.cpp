@@ -713,8 +713,10 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event) const
             actions << Qt::CopyAction << Qt::MoveAction << Qt::LinkAction;
 
             for (Qt::DropAction action : actions) {
+
                 if (event->possibleActions().testFlag(action) && info->supportedDropActions().testFlag(action)) {
                     event->setDropAction(action);
+
 
                     break;
                 }

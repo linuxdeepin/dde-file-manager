@@ -26,6 +26,7 @@
 #include "app/define.h"
 #include "deviceinfo/udisklistener.h"
 #include "dfileservices.h"
+#include "disomaster.h"
 #include <QRegularExpression>
 #include "controllers/masteredmediacontroller.h"
 
@@ -34,7 +35,7 @@ MasteredMediaFileInfo::MasteredMediaFileInfo(const DUrl &url)
 {
     QRegularExpression re("^(.*)/(disk_files|staging_files)/(.*)$");
     QString device(url.path());
-    auto rem=re.match(device);
+    auto rem = re.match(device);
     if (rem.hasMatch()) {
         auto dev = deviceListener->getDeviceByDevicePath(rem.captured(1));
         //udisks should be used in order to detect blank media properly
@@ -65,6 +66,11 @@ bool MasteredMediaFileInfo::isReadable() const
         return true;
 
     return d->proxy->isReadable();
+}
+
+bool MasteredMediaFileInfo::isWritable() const
+{
+    return canDrop();
 }
 
 bool MasteredMediaFileInfo::isDir() const
@@ -113,4 +119,18 @@ QString MasteredMediaFileInfo::toLocalFile() const
 
     if (d->proxy)
         return d->proxy->toLocalFile();
+
+    return "";
+}
+
+bool MasteredMediaFileInfo::canDrop() const
+{
+    QRegularExpression re("^(.*)/(disk_files|staging_files)/(.*)$");
+    auto rem = re.match(this->fileUrl().path());
+    if (rem.hasMatch()) {
+        return ISOMaster->getDevicePropertyCached(rem.captured(1)).avail > 0;
+    }
+    else {
+        return false;
+    }
 }
