@@ -44,6 +44,10 @@
 #include "dabstractfilewatcher.h"
 #include "dstorageinfo.h"
 
+#ifdef SW_LABEL
+#include "sw_label/filemanagerlibrary.h"
+#endif
+
 #include <QDateTime>
 #include <QDir>
 #include <QPainter>
@@ -231,6 +235,7 @@ DFileInfoPrivate::DFileInfoPrivate(const DUrl &url, DFileInfo *qq, bool hasCache
     : DAbstractFileInfoPrivate (url, qq, hasCache)
 {
     fileInfo.setFile(url.toLocalFile());
+    gvfsMountFile = FileUtils::isGvfsMountFile(url.toLocalFile());
 }
 
 DFileInfoPrivate::~DFileInfoPrivate()
@@ -299,6 +304,12 @@ bool DFileInfo::exists() const
 {
     Q_D(const DFileInfo);
 
+    if (d->isLowSpeedFile() && d->cacheFileExists < 0)
+        d->cacheFileExists = d->fileInfo.exists() || d->fileInfo.isSymLink();
+
+    if (d->cacheFileExists >= 0)
+        return d->cacheFileExists;
+
     return d->fileInfo.exists() || d->fileInfo.isSymLink();
 }
 
@@ -354,14 +365,46 @@ QString DFileInfo::fileSharedName() const
     return info.shareName();
 }
 
-bool DFileInfo::canRename() const
+QList<QIcon> DFileInfo::additionalIcon() const
 {
-    if (systemPathManager->isSystemPath(absoluteFilePath()))
-        return false;
-
     Q_D(const DFileInfo);
 
-    QFileInfo dir_info(d->fileInfo.absolutePath());
+    if (d->proxy)
+        return d->proxy->additionalIcon();
+
+    QList<QIcon> icons;
+
+    if (isSymLink()) {
+        icons << QIcon::fromTheme("emblem-symbolic-link", DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon));
+    }
+
+    if (!d->gvfsMountFile) {
+        if (!isWritable()) {
+            icons << QIcon::fromTheme("emblem-readonly", DFMGlobal::instance()->standardIcon(DFMGlobal::LockIcon));
+        }
+
+        if (!isReadable()) {
+            icons << QIcon::fromTheme("emblem-unreadable", DFMGlobal::instance()->standardIcon(DFMGlobal::UnreadableIcon));
+        }
+    }
+
+    if (isShared()) {
+        icons << QIcon::fromTheme("emblem-shared", DFMGlobal::instance()->standardIcon(DFMGlobal::ShareIcon));
+    }
+
+#ifdef SW_LABEL
+    QString labelIconPath = getLabelIcon();
+    if (!labelIconPath.isEmpty()) {
+        icons << QIcon(labelIconPath);
+    }
+#endif
+
+    return icons;
+}
+
+static bool fileIsWritable(const QString &path, uint ownerId)
+{
+    QFileInfo dir_info(path);
 
     if (!dir_info.isWritable())
         return false;
@@ -375,13 +418,30 @@ bool DFileInfo::canRename() const
     QT_STATBUF statBuffer;
     if (QT_LSTAT(QFile::encodeName(dir_info.absoluteFilePath()), &statBuffer) == 0) {
         // 如果父目录拥有t权限，则判断当前用户是不是文件的owner，不是则无法操作文件
-        if ((statBuffer.st_mode & S_ISVTX) && d->fileInfo.ownerId() != getuid()) {
+        if ((statBuffer.st_mode & S_ISVTX) && ownerId != getuid()) {
             return false;
         }
     }
 #endif
 
     return true;
+}
+
+bool DFileInfo::canRename() const
+{
+    if (systemPathManager->isSystemPath(absoluteFilePath()))
+        return false;
+
+    Q_D(const DFileInfo);
+
+    if (d->cacheCanRename < 0 && d->isLowSpeedFile()) {
+        d->cacheCanRename = fileIsWritable(d->fileInfo.absolutePath(), d->fileInfo.ownerId());
+    }
+
+    if (d->cacheCanRename >= 0)
+        return d->cacheCanRename;
+
+    return fileIsWritable(d->fileInfo.absolutePath(), d->fileInfo.ownerId());
 }
 
 bool DFileInfo::canShare() const
@@ -417,11 +477,7 @@ bool DFileInfo::isReadable() const
 
     Q_D(const DFileInfo);
 
-    if (FileUtils::isGvfsMountFile(absoluteFilePath())) {
-        return true;
-    } else {
-        return d->fileInfo.isReadable();
-    }
+    return d->fileInfo.isReadable();
 }
 
 bool DFileInfo::isWritable() const
@@ -431,21 +487,14 @@ bool DFileInfo::isWritable() const
 
     Q_D(const DFileInfo);
 
-    if (FileUtils::isGvfsMountFile(absoluteFilePath())) {
-        return true;
-    } else {
-        return d->fileInfo.isWritable();
-    }
+    return d->fileInfo.isWritable();
 }
 
 bool DFileInfo::isExecutable() const
 {
     Q_D(const DFileInfo);
-    if (FileUtils::isGvfsMountFile(absoluteFilePath())){
-        return true;
-    }else{
-        return d->fileInfo.isExecutable();
-    }
+
+    return d->fileInfo.isExecutable();
 }
 
 bool DFileInfo::isHidden() const
@@ -699,11 +748,13 @@ bool DFileInfo::canIteratorDir() const
 
 QString DFileInfo::subtitleForEmptyFloder() const
 {
+    Q_D(const DFileInfo);
+
     if (!exists()) {
         return QObject::tr("File has been moved or deleted");
     } else if (!isReadable()) {
         return QObject::tr("You do not have permission to access this folder");
-    } else if (FileUtils::isGvfsMountFile(absoluteFilePath()) && isDir()) {
+    } else if (d->gvfsMountFile && isDir()) {
         // blumia: when user visiting dir as anonymous, file permission won't work
         //         if you want to check user can list a dir or not. i.e. you'll see
         //         a 700 permission with your username on it, but you can't do readdir

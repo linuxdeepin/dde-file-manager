@@ -39,6 +39,9 @@ public:
     // 小于0时表示此值未初始化，0表示不支持，1表示支持
     mutable qint8 hasThumbnail = -1;
     mutable qint8 lowSpeedFile = -1;
+    mutable qint8 cacheFileExists = -1;
+    mutable qint8 cacheCanRename = -1;
+    bool gvfsMountFile = false;
 
     mutable QVariantHash extensionPropertys;
     mutable bool epInitialized = false;

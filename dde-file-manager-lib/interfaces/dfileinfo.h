@@ -49,6 +49,8 @@ public:
     QString fileName() const Q_DECL_OVERRIDE;
     QString fileSharedName() const Q_DECL_OVERRIDE;
 
+    QList<QIcon> additionalIcon() const override;
+
     bool canRename() const Q_DECL_OVERRIDE;
     bool canShare() const Q_DECL_OVERRIDE;
     bool canFetch() const Q_DECL_OVERRIDE;
