@@ -348,7 +348,7 @@ bool DFileViewHelper::isCut(const QModelIndex &index) const
     //temporary hack to make files staging for burning transparent
     DUrl burntemp = DUrl(QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/diskburn/");
     burntemp.setScheme(FILE_SCHEME);
-    if (currentUrl().scheme() == BURN_SCHEME && burntemp.isParentOf(fileUrl)) {
+    if (currentUrl().scheme() == BURN_SCHEME && fileUrl.scheme() == BURN_SCHEME) {
         return true;
     }
 

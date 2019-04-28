@@ -44,10 +44,10 @@ MasteredMediaFileInfo::MasteredMediaFileInfo(const DUrl &url)
             return;
         }
         if(rem.captured(2) == "disk_files")
-            m_parentUrl = DUrl(dev->getMountPoint() + rem.captured(3));
+            m_backerUrl = DUrl(dev->getMountPoint() + rem.captured(3));
         else
-            m_parentUrl = DUrl(MasteredMediaController::getStagingFolder(url));
-        setProxy(DFileService::instance()->createFileInfo(Q_NULLPTR, m_parentUrl));
+            m_backerUrl = DUrl(MasteredMediaController::getStagingFolder(url));
+        setProxy(DFileService::instance()->createFileInfo(Q_NULLPTR, m_backerUrl));
     }
 }
 
@@ -90,9 +90,18 @@ int MasteredMediaFileInfo::filesCount() const
     return d->proxy->filesCount();
 }
 
+QFileInfo MasteredMediaFileInfo::toQFileInfo() const
+{
+    return QFileInfo(m_backerUrl.path());
+}
+
 DUrl MasteredMediaFileInfo::parentUrl() const
 {
-    return m_parentUrl;
+    DUrl ret = this->DAbstractFileInfo::parentUrl();
+    ret.setPath(ret.path().replace("staging_files", "disk_files"));
+    if (!ret.path().endsWith('/'))
+        ret.setPath(ret.path() + '/');
+    return ret;
 }
 
 bool MasteredMediaFileInfo::canRedirectionFileUrl() const

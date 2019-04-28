@@ -38,6 +38,7 @@ public:
 
     int filesCount() const Q_DECL_OVERRIDE;
 
+    QFileInfo toQFileInfo() const Q_DECL_OVERRIDE;
     DUrl parentUrl() const Q_DECL_OVERRIDE;
 
     bool canRedirectionFileUrl() const Q_DECL_OVERRIDE;
@@ -49,7 +50,7 @@ public:
     bool canDrop() const Q_DECL_OVERRIDE;
 
 private:
-    DUrl m_parentUrl;
+    DUrl m_backerUrl;
 };
 
 #endif // MASTEREDMEDIAFILEINFO_H
