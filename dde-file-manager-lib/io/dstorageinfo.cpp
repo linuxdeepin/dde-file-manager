@@ -325,8 +325,9 @@ bool DStorageInfo::isLowSpeedDevice(const QString &path)
     if (match.hasMatch()) {
         const QString &scheme = match.captured("scheme");
 
-        if (scheme == "mtp" || scheme == "gphoto" || scheme == "gphoto2")
+        if (scheme == "mtp" || scheme == "gphoto" || scheme == "gphoto2" || scheme == "smb-share") {
             return true;
+        }
     }
 
     return DStorageInfo(path).isLowSpeedDevice();
