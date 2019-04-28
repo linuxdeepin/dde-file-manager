@@ -77,9 +77,6 @@ public:
         }*/
         DUrl url = fileUrl();
 
-        if (!MasteredMediaFileInfo(url).isDir())
-            return DAbstractFileInfoPointer(new DFileInfo(iterator ? iterator->filePath() : stagingiterator->filePath()));
-
         return DAbstractFileInfoPointer(new MasteredMediaFileInfo(url));
     }
 
@@ -117,16 +114,26 @@ MasteredMediaController::MasteredMediaController(QObject *parent) : DAbstractFil
 
 bool MasteredMediaController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
 {
-    event->ignore();
+    DUrl url = DUrl::fromLocalFile(MasteredMediaFileInfo(event->url()).toQFileInfo().absoluteFilePath());
 
-    return false;
+    return fileService->openFile(event->sender(), url);
 }
 
 bool MasteredMediaController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const
 {
-    event->ignore();
+    DUrl url = DUrl::fromLocalFile(MasteredMediaFileInfo(event->url()).toQFileInfo().absoluteFilePath());
 
-    return false;
+    return fileService->openFileByApp(event->sender(), event->appName(), url);
+}
+
+bool MasteredMediaController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
+{
+    DUrlList lst;
+    for (auto &i : event->urlList()) {
+        lst.push_back(getStagingFolder(i));
+    }
+
+    return fileService->deleteFiles(event->sender(), lst, false);
 }
 
 DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
@@ -193,15 +200,13 @@ DAbstractFileWatcher *MasteredMediaController::createFileWatcher(const QSharedPo
 {
     DUrl stagingUrl = event->fileUrl();
     stagingUrl.setPath(stagingUrl.path().replace("disk_files", "staging_files"));
-    qDebug() << stagingUrl;
 
     DAbstractFileInfoPointer ifo = fileService->createFileInfo(this, stagingUrl);
-    qDebug() << ifo << ifo->parentUrl();
     if (!ifo || !ifo->parentUrl().isValid() ) {
         return nullptr;
     }
-    return new DFileProxyWatcher(ifo->parentUrl(),
-                                 new DFileWatcher(ifo->parentUrl().toLocalFile()),
+    return new DFileProxyWatcher(DUrl::fromLocalFile(ifo->toQFileInfo().absoluteFilePath()),
+                                 new DFileWatcher(ifo->toQFileInfo().absoluteFilePath()),
                                  [](const DUrl& in)->DUrl {
                                      QString tmpp = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/diskburn/";
                                      QString relp = in.path().mid(in.path().indexOf(tmpp) + tmpp.length());
@@ -210,7 +215,6 @@ DAbstractFileWatcher *MasteredMediaController::createFileWatcher(const QSharedPo
                                      devp.replace('_', '/');
                                      DUrl ret = DUrl(devp + "/staging_files/" + imgp);
                                      ret.setScheme(BURN_SCHEME);
-                                     qDebug() << in << "->" << ret;
                                      return ret;
                                  }
     );

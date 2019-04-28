@@ -916,6 +916,7 @@ void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl)
     Q_Q(DFileSystemModel);
 
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(q, fileUrl);
+    qDebug() << fileUrl;
 
     if (!info || !passFileFilters(info)) {
         return;
