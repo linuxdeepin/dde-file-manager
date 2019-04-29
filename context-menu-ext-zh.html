@@ -81,6 +81,10 @@
 <li>&quot;Args&quot;: [&quot;.&quot;] 为执行 Exec 内容指定额外的一个参数（&quot;.&quot;）。</li>
 </ul>
 </li>
+<li>NotShowIn 在什么情况下不显示<ul>
+<li>&quot;NotShowIn&quot;: [&quot;Desktop&quot;] 在桌面上不显示此菜单。</li>
+</ul>
+</li>
 <li>SubMenu 子菜单列表，子菜单列表不需要再次指定 MenuType 字段，其他字段参数一样，支持 SubMenu 中嵌套无限</li>
 </ul>
 <p>如果 MenuType 为 SingleFile 或者 MultiFiles ，可以增加下面两个字段来细化菜单控制。</p>
@@ -97,15 +101,16 @@
 </ul>
 <a name=""></a>
 <h4 >示例扩展</h4>
-<p>下面的示例为 在空白区域触发上下文菜单，增加 “在 VSCode 中打开” 选项 的示例。</p>
-<pre class="cpp">    <span class="operator">[</span>
+<p>下面的示例为 在文件管理器的空白区域触发上下文菜单，增加 “在 VSCode 中打开” 选项 的示例。</p>
+<pre class="cpp"><span class="operator">[</span>
     {
         <span class="string">&quot;MenuType&quot;</span>: <span class="string">&quot;EmptyArea&quot;</span><span class="operator">,</span>
         <span class="string">&quot;Icon&quot;</span>: <span class="string">&quot;Files&quot;</span><span class="operator">,</span>
         <span class="string">&quot;Text[zh_CN]&quot;</span>: <span class="string">&quot;在 VSCode 中打开&quot;</span><span class="operator">,</span>
         <span class="string">&quot;Text[en_US]&quot;</span>: <span class="string">&quot;Open with VSCode&quot;</span><span class="operator">,</span>
         <span class="string">&quot;Exec&quot;</span>: <span class="string">&quot;code&quot;</span><span class="operator">,</span>
-        <span class="string">&quot;Args&quot;</span>: <span class="operator">[</span><span class="string">&quot;.&quot;</span><span class="operator">]</span>
+        <span class="string">&quot;Args&quot;</span>: <span class="operator">[</span><span class="string">&quot;.&quot;</span><span class="operator">]</span><span class="operator">,</span>
+        <span class="string">&quot;NotShowIn&quot;</span>: <span class="operator">[</span><span class="string">&quot;Desktop&quot;</span><span class="operator">]</span><span class="operator">,</span>
     }
 <span class="operator">]</span></pre>
 <p>下面为旧文档中所附带的示例。</p>
@@ -222,18 +227,14 @@
 <a name=""></a>
 <h4 >接口说明</h4>
 <ul>
-<li>virtual QList additionalIcons(const QString &amp;file) 实现这个接口可以扩展指定文件的角标<ul>
-<li>const QString &amp;file 表示需要显示脚本的文件完整路径</li>
-<li>QList 返回一组QIcon列表</li>
-</ul>
-</li>
 <li>virtual QList&lt;QAction*&gt; additionalMenu(const QStringList &amp;files, const QString&amp; currentDir) 实现这个接口可以扩展选中文件的右键菜单<ul>
 <li>const QStringList &amp;files 表示选中的文件的完整路径列表</li>
 <li>const QString&amp; currentDir 表示选中的文件所在的目录</li>
 <li>QList&lt;QAction*&gt; 返回一组QAction指针列表</li>
 </ul>
 </li>
-<li>virtual QList&lt;QAction*&gt; additionalEmptyMenu(const QString &amp;currentDir) 实现这个接口可以扩展空白处的右键菜单<ul>
+<li>virtual QList&lt;QAction*&gt; additionalEmptyMenu(const QString &amp;currentDir, bool onDesktop = false) 实现这个接口可以扩展空白处的右键菜单<ul>
+<li>const QString&amp; currentDir 表示空白处所在的文件目录</li>
 <li>const QString&amp; currentDir 表示空白处所在的文件目录</li>
 <li>QList&lt;QAction*&gt; 返回一组QAction指针列表</li>
 </ul>

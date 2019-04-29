@@ -93,9 +93,9 @@
 <p><a href="dfmvfsdevice.html">DFMVfsDevice</a> allowed you query and manage a VFS mountpoint.</p>
 <p>Once a virtual filesystem (i.e&#x2e; a remote/network device) got mounted. You can then manage this VFS by creating a new <a href="dfmvfsdevice.html">DFMVfsDevice</a> instance. Since we use the mount URI as an identifier, it may failed when creating <a href="dfmvfsdevice.html">DFMVfsDevice</a> instance, so using <a href="dfmvfsdevice.html#create">DFMVfsDevice::create</a>() for creating and don't forget to check if create failed.</p>
 <p><a href="dfmvfsmanager.html#getVfsList">DFMVfsManager::getVfsList</a>() will return a full list with all attached(i.e&#x2e; mounted) VFSes, using url from that function's return value is the recommend way to create a <a href="dfmvfsdevice.html">DFMVfsDevice</a> instance.</p>
-<p><a href="dfmvfsdevice.html">DFMVfsDevice</a> is actually a GMount and GFileInfo wrapper for a GMount mountpoint, but it's designed for virtual filesystem here. For local filesystem management, use DFMDiskManager instead.</p>
+<p><a href="dfmvfsdevice.html">DFMVfsDevice</a> is actually a GMount and GFileInfo wrapper for a GMount mountpoint, but it's designed for virtual filesystem here. For local filesystem management, use DDiskManager instead.</p>
 </div>
-<p><b>See also </b><a href="dfmvfsmanager.html">DFMVfsManager</a> and DFMDiskManager.</p>
+<p><b>See also </b><a href="dfmvfsmanager.html">DFMVfsManager</a> and DDiskManager.</p>
 <!-- @@@DFMVfsDevice -->
 <div class="prop">
 <h2>Property Documentation</h2>
