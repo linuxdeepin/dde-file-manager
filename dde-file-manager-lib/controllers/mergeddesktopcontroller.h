@@ -65,7 +65,7 @@ public:
     DFM_NAMESPACE::DFileHandler *createFileHandler(const QSharedPointer<DFMUrlBaseEvent> &event) const override;
     DFM_NAMESPACE::DStorageInfo *createStorageInfo(const QSharedPointer<DFMUrlBaseEvent> &event) const override;
 
-    bool setExtensionPropertys(const QSharedPointer<DFMSetFileExtensionPropertys> &event) const override;
+    bool setExtraProperties(const QSharedPointer<DFMSetFileExtraProperties> &event) const override;
 
     const static QString entryNameByEnum(DMD_TYPES singleType);
     static DMD_TYPES entryTypeByName(QString entryName);

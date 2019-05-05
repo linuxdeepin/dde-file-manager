@@ -361,10 +361,10 @@ DStorageInfo *MergedDesktopController::createStorageInfo(const QSharedPointer<DF
     return DFileService::instance()->createStorageInfo(event->sender(), convertToRealPath(event->url()));
 }
 
-bool MergedDesktopController::setExtensionPropertys(const QSharedPointer<DFMSetFileExtensionPropertys> &event) const
+bool MergedDesktopController::setExtraProperties(const QSharedPointer<DFMSetFileExtraProperties> &event) const
 {
-    return DFileService::instance()->setExtensionPropertys(event->sender(), convertToRealPath(event->url()),
-                                                           event->extensionPropertys());
+    return DFileService::instance()->setExtraProperties(event->sender(), convertToRealPath(event->url()),
+                                                           event->extraProperties());
 }
 
 const QString MergedDesktopController::entryNameByEnum(DMD_TYPES singleType)

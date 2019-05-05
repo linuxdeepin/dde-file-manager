@@ -2290,11 +2290,11 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     const QModelIndex &index = rootIndex();
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
     QVector<MenuAction> actions;
-    if (!autoMerge()) {
+//    if (!autoMerge()) {
         actions << MenuAction::NewFolder << MenuAction::NewDocument
                 << MenuAction::SortBy;
         actions << MenuAction::Paste;
-    }
+//    }
     actions << MenuAction::SelectAll << MenuAction::OpenInTerminal
             << MenuAction::Property << MenuAction::Separator;
 
