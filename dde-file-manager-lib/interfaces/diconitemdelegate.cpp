@@ -1192,7 +1192,7 @@ void DIconItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *la
 {
     Q_D(const DIconItemDelegate);
 
-    const QVariantHash &ep = index.data(DFileSystemModel::ExtensionPropertys).toHash();
+    const QVariantHash &ep = index.data(DFileSystemModel::ExtraProperties).toHash();
     const QList<QColor> &colors = qvariant_cast<QList<QColor>>(ep.value("colored"));
 
     if (!colors.isEmpty()) {

@@ -108,8 +108,8 @@ public:
             return fileInfo->createdDisplayName();
         case Role::FilePinyinName:
             return fileInfo->fileDisplayPinyinName();
-        case Role::ExtensionPropertys:
-            return fileInfo->extensionPropertys();
+        case Role::ExtraProperties:
+            return fileInfo->extraProperties();
         default: {
             return QVariant();
         }
@@ -1312,7 +1312,7 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
 
         return QString();
     }
-    case ExtensionPropertys:
+    case ExtraProperties:
         return indexNode->dataByRole(role);
     default: {
         const DAbstractFileInfoPointer &fileInfo = indexNode->fileInfo;

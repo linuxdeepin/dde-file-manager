@@ -37,7 +37,7 @@ class DFMSideBarDeviceItem : public DFMSideBarItem
 
 public:
     DFMSideBarDeviceItem(DUrl url, QWidget *parent = nullptr);
-    QVariantHash getExtensionPropertys() const;
+    QVariantHash getExtraProperties() const;
 
     DImageButton *unmountButton;
 

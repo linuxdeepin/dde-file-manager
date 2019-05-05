@@ -1360,9 +1360,9 @@ QIODevice *DAbstractFileInfo::createIODevice() const
     return 0;
 }
 
-QVariantHash DAbstractFileInfo::extensionPropertys() const
+QVariantHash DAbstractFileInfo::extraProperties() const
 {
-    CALL_PROXY(extensionPropertys());
+    CALL_PROXY(extraProperties());
 
     return QVariantHash();
 }

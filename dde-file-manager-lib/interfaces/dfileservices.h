@@ -154,7 +154,7 @@ public:
                                   QDir::Filters filters, QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool silent = false) const;
 
     DAbstractFileWatcher *createFileWatcher(const QObject *sender, const DUrl &fileUrl, QObject *parent = 0) const;
-    bool setExtensionPropertys(const QObject *sender, const DUrl &fileUrl, const QVariantHash &ep) const;
+    bool setExtraProperties(const QObject *sender, const DUrl &fileUrl, const QVariantHash &ep) const;
 
     DFileDevice *createFileDevice(const QObject *sender, const DUrl &url);
     DFileHandler *createFileHandler(const QObject *sender, const DUrl &url);

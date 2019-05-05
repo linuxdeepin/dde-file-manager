@@ -110,7 +110,7 @@ public:
     QFileInfo toQFileInfo() const Q_DECL_OVERRIDE;
     QIODevice *createIODevice() const override;
 
-    QVariantHash extensionPropertys() const Q_DECL_OVERRIDE;
+    QVariantHash extraProperties() const Q_DECL_OVERRIDE;
 
 protected:
     explicit DFileInfo(DFileInfoPrivate &dd);

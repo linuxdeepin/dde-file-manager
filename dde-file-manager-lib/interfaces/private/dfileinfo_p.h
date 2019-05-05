@@ -43,7 +43,7 @@ public:
     mutable qint8 cacheCanRename = -1;
     bool gvfsMountFile = false;
 
-    mutable QVariantHash extensionPropertys;
+    mutable QVariantHash extraProperties;
     mutable bool epInitialized = false;
     mutable QPointer<QTimer> getEPTimer;
     mutable QPointer<RequestEP> requestEP;
