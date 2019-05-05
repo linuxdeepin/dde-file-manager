@@ -70,6 +70,8 @@ public:
     bool canEject() const;
     bool canStop() const;
     bool canUnmount() const;
+    bool optical() const;
+    bool opticalReuseable() const;
     qulonglong getFree();
     qulonglong getTotal();
     qint64 size() const Q_DECL_OVERRIDE;

@@ -109,6 +109,7 @@ public slots:
     void actionSetUserSharePassword(quint64 winId);
     void actionSettings(quint64 winId);
     void actionFormatDevice(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionOpticalBlank(const QSharedPointer<DFMUrlBaseEvent> &event);
 
 
     void actionctrlL(quint64 winId);
