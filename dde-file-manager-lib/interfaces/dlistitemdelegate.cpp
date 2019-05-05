@@ -165,7 +165,7 @@ void DListItemDelegate::paint(QPainter *painter,
     int role = columnRoleList.at(0);
 
     if (index != d->editingIndex || (role != DFileSystemModel::FileNameRole && role != DFileSystemModel::FileDisplayNameRole)) {
-        const QVariantHash &ep = index.data(DFileSystemModel::ExtensionPropertys).toHash();
+        const QVariantHash &ep = index.data(DFileSystemModel::ExtraProperties).toHash();
         const QList<QColor> &colors = qvariant_cast<QList<QColor>>(ep.value("colored"));
 
         if (!colors.isEmpty()) {

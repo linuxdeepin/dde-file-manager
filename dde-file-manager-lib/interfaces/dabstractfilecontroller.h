@@ -62,7 +62,7 @@ class DAbstractFileWatcher;
 class DFMSetFileTagsEvent;
 class DFMRemoveTagsOfFileEvent;
 class DFMGetTagsThroughFilesEvent;
-class DFMSetFileExtensionPropertys;
+class DFMSetFileExtraProperties;
 class DFMUrlBaseEvent;
 
 DFM_BEGIN_NAMESPACE
@@ -117,7 +117,7 @@ public:
     virtual DFM_NAMESPACE::DFileHandler *createFileHandler(const QSharedPointer<DFMUrlBaseEvent> &event) const;
     virtual DFM_NAMESPACE::DStorageInfo *createStorageInfo(const QSharedPointer<DFMUrlBaseEvent> &event) const;
 
-    virtual bool setExtensionPropertys(const QSharedPointer<DFMSetFileExtensionPropertys> &event) const;
+    virtual bool setExtraProperties(const QSharedPointer<DFMSetFileExtraProperties> &event) const;
 };
 
 #endif // ABSTRACTFILECONTROLLER_H

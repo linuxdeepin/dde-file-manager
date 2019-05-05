@@ -254,7 +254,7 @@ void DFMSideBarPrivate::initMountedVolumes()
         DAbstractFileInfoPointer pointer = fileService->createFileInfo(item, url);
         if (item) {
             DFMSideBarDeviceItem *casted = qobject_cast<DFMSideBarDeviceItem *>(item);
-            const QVariantHash &extensionInfo = pointer->extensionPropertys();
+            const QVariantHash &extensionInfo = pointer->extraProperties();
 
             bool isMounted = extensionInfo.value("isMounted", false).toBool();
             bool canUnmount = extensionInfo.value("canUnmount", true).toBool();

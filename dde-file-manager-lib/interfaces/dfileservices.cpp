@@ -377,8 +377,8 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     case DFMEvent::GetTagsThroughFiles:
         result = CALL_CONTROLLER(getTagsThroughFiles);
         break;
-    case DFMEvent::SetFileExtensionPropertys:
-        result = CALL_CONTROLLER(setExtensionPropertys);
+    case DFMEvent::SetFileExtraProperties:
+        result = CALL_CONTROLLER(setExtraProperties);
         break;
     case DFMEvent::SetPermission:
         result = CALL_CONTROLLER(setPermissions);
@@ -769,9 +769,9 @@ DAbstractFileWatcher *DFileService::createFileWatcher(const QObject *sender, con
     return w;
 }
 
-bool DFileService::setExtensionPropertys(const QObject *sender, const DUrl &fileUrl, const QVariantHash &ep) const
+bool DFileService::setExtraProperties(const QObject *sender, const DUrl &fileUrl, const QVariantHash &ep) const
 {
-    const auto&& event = dMakeEventPointer<DFMSetFileExtensionPropertys>(sender, fileUrl, ep);
+    const auto&& event = dMakeEventPointer<DFMSetFileExtraProperties>(sender, fileUrl, ep);
 
     return DFMEventDispatcher::instance()->processEvent(event).toBool();
 }

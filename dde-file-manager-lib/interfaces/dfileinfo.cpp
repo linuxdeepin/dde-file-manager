@@ -71,7 +71,7 @@ public:
 
     ~RequestEP();
 
-    // Request get the file extension propertys
+    // Request get the file extra properties
     QQueue<QPair<DUrl, DFileInfoPrivate*>> requestEPFiles;
     QReadWriteLock requestEPFilesLock;
     QSet<DFileInfoPrivate*> dirtyFileInfos;
@@ -212,8 +212,8 @@ void RequestEP::processEPChanged(const DUrl &url, DFileInfoPrivate *info, const 
     QVariantHash oldEP;
 
     if (!dirtyFileInfos.contains(info)) {
-        oldEP = info->extensionPropertys;
-        info->extensionPropertys = ep;
+        oldEP = info->extraProperties;
+        info->extraProperties = ep;
         info->epInitialized = true;
         info->requestEP = nullptr;
     } else {
@@ -958,11 +958,11 @@ QIODevice *DFileInfo::createIODevice() const
     return new QFile(absoluteFilePath());
 }
 
-QVariantHash DFileInfo::extensionPropertys() const
+QVariantHash DFileInfo::extraProperties() const
 {
     Q_D(const DFileInfo);
 
-    // ensure extension propertys
+    // ensure extra properties
     if (!d->epInitialized) {
         d->epInitialized = true;
 
@@ -984,7 +984,7 @@ QVariantHash DFileInfo::extensionPropertys() const
         QMetaObject::invokeMethod(d->getEPTimer, "start", Qt::QueuedConnection);
     }
 
-    return d->extensionPropertys;
+    return d->extraProperties;
 }
 
 DFileInfo::DFileInfo(DFileInfoPrivate &dd)

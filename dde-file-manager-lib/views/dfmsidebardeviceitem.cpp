@@ -37,7 +37,7 @@ DFMSideBarDeviceItem::DFMSideBarDeviceItem(DUrl url, QWidget *parent)
     : DFMSideBarItem(url, parent)
 {
     const DAbstractFileInfoPointer infoPointer = fileService->createFileInfo(this, url);
-    QVariantHash info = infoPointer->extensionPropertys();
+    QVariantHash info = infoPointer->extraProperties();
     setText(infoPointer->fileDisplayName());
     setAutoOpenUrlOnClick(false);
 
@@ -72,9 +72,9 @@ DFMSideBarDeviceItem::DFMSideBarDeviceItem(DUrl url, QWidget *parent)
     }
 }
 
-QVariantHash DFMSideBarDeviceItem::getExtensionPropertys() const
+QVariantHash DFMSideBarDeviceItem::getExtraProperties() const
 {
-    return fileService->createFileInfo(this, url())->extensionPropertys();
+    return fileService->createFileInfo(this, url())->extraProperties();
 }
 
 QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
@@ -83,7 +83,7 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
     const DAbstractFileInfoPointer infoPointer = fileService->createFileInfo(this, url());
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
     bool shouldDisable = !WindowManager::tabAddableByWinId(wnd->windowId());
-    QVariantHash info = getExtensionPropertys();
+    QVariantHash info = getExtraProperties();
     DUrl deviceIdUrl;
 
     deviceIdUrl.setQuery(info.value("deviceId").toString());
@@ -174,7 +174,7 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
 
 void DFMSideBarDeviceItem::itemOnClick()
 {
-    QVariantHash info = getExtensionPropertys();
+    QVariantHash info = getExtraProperties();
 
     if (info.value("isMounted", false).toBool()) {
         DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
@@ -188,7 +188,7 @@ void DFMSideBarDeviceItem::itemOnClick()
 
 void DFMSideBarDeviceItem::doUnmountOrEject()
 {
-    QVariantHash info = getExtensionPropertys();
+    QVariantHash info = getExtraProperties();
 
     if (info.value("isRemovable", false).toBool() && info.value("canEject", false).toBool()) {
         gvfsMountManager->eject(info.value("deviceId").toString());

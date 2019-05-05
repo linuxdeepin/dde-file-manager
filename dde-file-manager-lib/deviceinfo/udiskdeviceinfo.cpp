@@ -464,7 +464,7 @@ DUrl UDiskDeviceInfo::redirectedFileUrl() const
     return getMountPointUrl();
 }
 
-QVariantHash UDiskDeviceInfo::extensionPropertys() const
+QVariantHash UDiskDeviceInfo::extraProperties() const
 {
     QVariantHash attrMap;
 

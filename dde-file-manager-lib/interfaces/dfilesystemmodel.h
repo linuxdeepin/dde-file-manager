@@ -86,7 +86,7 @@ public:
         FileCreatedRole = Qt::UserRole + 8,
         FileDisplayNameRole = Qt::UserRole + 9,
         FilePinyinName = Qt::UserRole + 10,
-        ExtensionPropertys = Qt::UserRole + 11,
+        ExtraProperties = Qt::UserRole + 11,
         FileBaseNameRole = Qt::UserRole + 12,
         FileSuffixRole = Qt::UserRole + 13,
         FileNameOfRenameRole = Qt::UserRole + 14,

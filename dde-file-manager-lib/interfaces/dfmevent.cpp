@@ -125,7 +125,7 @@ DFMEvent::DFMEvent(const DFMEvent &other)
 {
     m_accept = other.m_accept;
     m_data = other.m_data;
-    m_propertys = other.m_propertys;
+    m_properties = other.m_properties;
     m_id = other.m_id;
 }
 
@@ -140,7 +140,7 @@ DFMEvent &DFMEvent::operator =(const DFMEvent &other)
     m_sender = other.m_sender;
     m_accept = other.m_accept;
     m_data = other.m_data;
-    m_propertys = other.m_propertys;
+    m_properties = other.m_properties;
     m_id = other.m_id;
 
     return *this;
@@ -293,7 +293,7 @@ QDebug operator<<(QDebug deg, const DFMEvent &info)
 {
     deg << "type:" << fmeventType2String(info.type()) << "sender:" << info.sender();
     deg << "data:" << info.data();
-    deg << "propertys:" << info.propertys();
+    deg << "properties:" << info.properties();
 
     return deg;
 }
@@ -1011,15 +1011,15 @@ QSharedPointer<DFMGetTagsThroughFilesEvent> DFMGetTagsThroughFilesEvent::fromJso
     return QSharedPointer<DFMGetTagsThroughFilesEvent>{ nullptr };
 }
 
-DFMSetFileExtensionPropertys::DFMSetFileExtensionPropertys(const QObject *sender, const DUrl &url, const QVariantHash &ep)
-    : DFMUrlBaseEvent(SetFileExtensionPropertys, sender, url)
+DFMSetFileExtraProperties::DFMSetFileExtraProperties(const QObject *sender, const DUrl &url, const QVariantHash &ep)
+    : DFMUrlBaseEvent(SetFileExtraProperties, sender, url)
 {
-    setProperty(QT_STRINGIFY(DFMSetFileExtensionPropertys::extensionPropertys), ep);
+    setProperty(QT_STRINGIFY(DFMSetFileExtraProperties::extraProperties), ep);
 }
 
-QVariantHash DFMSetFileExtensionPropertys::extensionPropertys() const
+QVariantHash DFMSetFileExtraProperties::extraProperties() const
 {
-    return property(QT_STRINGIFY(DFMSetFileExtensionPropertys::extensionPropertys)).toHash();
+    return property(QT_STRINGIFY(DFMSetFileExtraProperties::extraProperties)).toHash();
 }
 
 DFMSetPermissionEvent::DFMSetPermissionEvent(const QObject *sender, const DUrl &url, const QFileDevice::Permissions &permissions)

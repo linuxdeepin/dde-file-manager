@@ -74,7 +74,7 @@ public:
         CreateFileDevice,
         CreateFileHandler,
         CreateStorageInfo,
-        SetFileExtensionPropertys,
+        SetFileExtraProperties,
         SetPermission,
 
         // other
@@ -187,18 +187,18 @@ public:
         return data<DUrlList>();
     }
 
-    inline QVariantMap propertys() const
+    inline QVariantMap properties() const
     {
-        return m_propertys;
+        return m_properties;
     }
     inline QVariant property(const QString &name, const QVariant &defaultValue = QVariant()) const
     {
-        return m_propertys.value(name, defaultValue);
+        return m_properties.value(name, defaultValue);
     }
     template<typename T>
     T property(const QString &name, T &&defaultValue) const
     {
-        return qvariant_cast<T>(m_propertys.value(name, QVariant::fromValue(std::forward<T>(defaultValue))));
+        return qvariant_cast<T>(m_properties.value(name, QVariant::fromValue(std::forward<T>(defaultValue))));
     }
     template<typename T>
     T property(const QString &name) const
@@ -207,12 +207,12 @@ public:
     }
     inline void setProperty(const QString &name, const QVariant &value)
     {
-        m_propertys[name] = value;
+        m_properties[name] = value;
     }
     template<typename T>
     void setProperty(const QString &name, T &&value)
     {
-        m_propertys[name] = QVariant::fromValue(std::forward<T>(value));
+        m_properties[name] = QVariant::fromValue(std::forward<T>(value));
     }
 
     static const QSharedPointer<DFMEvent> fromJson(Type type, const QJsonObject &json);
@@ -221,7 +221,7 @@ public:
 protected:
     ushort m_type;
     QVariant m_data;
-    QVariantMap m_propertys;
+    QVariantMap m_properties;
     QPointer<const QObject> m_sender;
 
 private:
@@ -714,12 +714,12 @@ public:
     static QSharedPointer<DFMGetTagsThroughFilesEvent> fromJson(const QJsonObject& json);
 };
 
-class DFMSetFileExtensionPropertys : public DFMUrlBaseEvent
+class DFMSetFileExtraProperties : public DFMUrlBaseEvent
 {
 public:
-    explicit DFMSetFileExtensionPropertys(const QObject *sender, const DUrl &url, const QVariantHash &ep);
+    explicit DFMSetFileExtraProperties(const QObject *sender, const DUrl &url, const QVariantHash &ep);
 
-    QVariantHash extensionPropertys() const;
+    QVariantHash extraProperties() const;
 };
 
 #endif // FMEVENT_H
