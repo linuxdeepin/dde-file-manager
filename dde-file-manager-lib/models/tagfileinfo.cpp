@@ -161,12 +161,12 @@ bool TagFileInfo::canIteratorDir() const
     return d->proxy->canIteratorDir();
 }
 
-QVariantHash TagFileInfo::extensionPropertys() const
+QVariantHash TagFileInfo::extraProperties() const
 {
     Q_D(const DAbstractFileInfo);
 
     if (d->proxy)
-        return d->proxy->extensionPropertys();
+        return d->proxy->extraProperties();
 
     QVariantHash hash;
 

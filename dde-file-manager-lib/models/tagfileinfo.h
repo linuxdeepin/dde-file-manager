@@ -40,7 +40,7 @@ public:
 
     bool canIteratorDir() const override;
 
-    QVariantHash extensionPropertys() const override;
+    QVariantHash extraProperties() const override;
 
     QList<int> userColumnRoles() const override;
 

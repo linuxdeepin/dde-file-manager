@@ -98,7 +98,7 @@ public:
     bool canRedirectionFileUrl() const Q_DECL_OVERRIDE;
     DUrl redirectedFileUrl() const Q_DECL_OVERRIDE;
 
-    QVariantHash extensionPropertys() const Q_DECL_OVERRIDE;
+    QVariantHash extraProperties() const Q_DECL_OVERRIDE;
 
     bool exists() const Q_DECL_OVERRIDE;
 

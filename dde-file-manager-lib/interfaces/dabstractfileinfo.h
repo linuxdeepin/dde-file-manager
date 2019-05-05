@@ -302,7 +302,7 @@ public:
     virtual QFileInfo toQFileInfo() const;
     virtual QIODevice *createIODevice() const;
 
-    virtual QVariantHash extensionPropertys() const;
+    virtual QVariantHash extraProperties() const;
 
 protected:
     explicit DAbstractFileInfo(DAbstractFileInfoPrivate &dd);

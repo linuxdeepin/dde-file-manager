@@ -327,9 +327,9 @@ DFM_NAMESPACE::DStorageInfo *DAbstractFileController::createStorageInfo(const QS
     return nullptr;
 }
 
-bool DAbstractFileController::setExtensionPropertys(const QSharedPointer<DFMSetFileExtensionPropertys> &event) const
+bool DAbstractFileController::setExtraProperties(const QSharedPointer<DFMSetFileExtraProperties> &event) const
 {
-    const auto && ep = event->extensionPropertys();
+    const auto && ep = event->extraProperties();
     const QStringList &tag_name_list = ep.value("tag_name_list").toStringList();
 
     return setFileTags(dMakeEventPointer<DFMSetFileTagsEvent>(event->sender(), event->url(), tag_name_list));
