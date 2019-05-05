@@ -430,6 +430,31 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name, const DFME
     return code;
 }
 
+int DialogManager::showOpticalBlankConfirmationDialog(const DFMUrlBaseEvent &event)
+{
+    QString EraseDisk = tr("Are you sure you want to erase all data on the disc?");
+
+    DUrl url = event.url();
+    qDebug() << url;
+    QStringList buttonTexts;
+    buttonTexts << tr("Cancel") << tr("Erase");
+
+    DDialog d;
+
+    if (!d.parentWidget()) {
+        d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
+    }
+
+    d.setTitle(EraseDisk);
+    d.setMessage(tr("This action cannot be undone"));
+    d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
+    d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
+    d.setDefaultButton(1);
+    d.getButton(1)->setFocus();
+    d.moveToCenter();
+    int code = d.exec();
+    return code;
+}
 
 int DialogManager::showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &event)
 {

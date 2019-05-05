@@ -38,6 +38,7 @@
 #include "disomaster.h"
 #include "dfileservices.h"
 #include "dabstractfileinfo.h"
+#include "fileoperations/filejob.h"
 
 #include "xutil.h"
 #include "app/define.h"
@@ -407,8 +408,9 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data)
         m_animatePad->setCanPause(false);
         status = data["optical_op_status"];
         progress = data["optical_op_progress"];
-        //TODO: caption
-        setMessage(tr("Burning files to ??? ..."), "");
+        setMessage((data["optical_op_type"] == QString::number(FileJob::JobType::OpticalBurn)
+                    ? tr("Burning disc %1, please wait...")
+                    : tr("Erasing disc %1, please wait...")).arg(data["optical_op_dest"]), "");
         qDebug() << status << progress;
         if (status == QString::number(DISOMasterNS::DISOMaster::JobStatus::Stalled)) {
             m_animatePad->startAnimation();

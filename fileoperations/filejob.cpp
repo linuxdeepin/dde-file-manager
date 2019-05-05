@@ -605,6 +605,7 @@ bool FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
 void FileJob::doOpticalBlank(const DUrl &device)
 {
     QString dev = device.path();
+    m_tarPath = dev;
     dev.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dev));
     blkdev->unmount({});
@@ -631,6 +632,7 @@ void FileJob::doOpticalBlank(const DUrl &device)
 void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int flag)
 {
     QString dev = device.path();
+    m_tarPath = dev;
     dev.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dev));
     blkdev->unmount({});
@@ -708,6 +710,7 @@ void FileJob::jobUpdated()
         jobDataDetail["optical_op_type"] = QString::number(m_jobType);
         jobDataDetail["optical_op_status"] = QString::number(m_opticalJobStatus);
         jobDataDetail["optical_op_progress"] = QString::number(m_opticalJobProgress);
+        jobDataDetail["optical_op_dest"] = m_tarPath;
     }
     else if (m_jobType == Restore && m_isInSameDisk){
         jobDataDetail.insert("file", m_srcFileName);

@@ -40,6 +40,7 @@
 #include "ddiskmanager.h"
 #include "dblockdevice.h"
 #include "ddiskdevice.h"
+#include "ddiskmanager.h"
 
 #include <QIcon>
 
@@ -172,6 +173,20 @@ bool UDiskDeviceInfo::canStop() const
 bool UDiskDeviceInfo::canUnmount() const
 {
     return m_diskInfo.can_unmount();
+}
+
+bool UDiskDeviceInfo::optical() const
+{
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(getDBusPath()));
+    QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
+    return diskdev->optical();
+}
+
+bool UDiskDeviceInfo::opticalReuseable() const
+{
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(getDBusPath()));
+    QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
+    return diskdev->optical() && diskdev->media().indexOf("_rw") != -1 && !diskdev->opticalBlank();
 }
 
 qulonglong UDiskDeviceInfo::getFree()
@@ -491,6 +506,8 @@ QVariantHash UDiskDeviceInfo::extraProperties() const
     attrMap.insert("isMounted", !getMountPointUrl().isEmpty());
     attrMap.insert("mountPointUrl", getMountPointUrl().toString());
     attrMap.insert("isRemovable", m_diskInfo.is_removable() && can_unmount);
+    attrMap.insert("optical", optical());
+    attrMap.insert("opticalReuseable", opticalReuseable());
 
     return attrMap;
 }

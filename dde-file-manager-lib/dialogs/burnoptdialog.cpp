@@ -51,14 +51,13 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
                 QtConcurrent::run([=] {
                     FileJob job(FileJob::OpticalBurn);
                     job.moveToThread(qApp->thread());
-                    qDebug() << job.thread() << qApp->thread();
                     job.setWindowId(this->parentWidget()->window()->winId());
                     dialogManager->addJob(&job);
 
                     DUrl dev(device);
                     dev.setScheme(BURN_SCHEME);
 
-                    job.doOpticalBurn(dev, d->le_volname->text(), 0, 0);;
+                    job.doOpticalBurn(dev, d->le_volname->text(), 0, 0);
                     dialogManager->removeJob(job.getJobId());
                 });
             }

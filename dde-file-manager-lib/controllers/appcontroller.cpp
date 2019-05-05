@@ -621,6 +621,23 @@ void AppController::actionFormatDevice(const QSharedPointer<DFMUrlBaseEvent> &ev
     process->startDetached(cmd, args);
 }
 
+void AppController::actionOpticalBlank(const QSharedPointer<DFMUrlBaseEvent> &event)
+{
+    if (DThreadUtil::runInMainThread(dialogManager, &DialogManager::showOpticalBlankConfirmationDialog, DFMUrlBaseEvent(event->sender(), event->url())) == DDialog::Accepted) {
+        QtConcurrent::run([=] {
+            FileJob job(FileJob::OpticalBlank);
+            job.moveToThread(qApp->thread());
+            job.setWindowId(event->windowId());
+            dialogManager->addJob(&job);
+
+            DUrl dev(event->url().query());
+
+            job.doOpticalBlank(dev);
+            dialogManager->removeJob(job.getJobId());
+        });
+    }
+}
+
 void AppController::actionctrlL(quint64 winId)
 {
     emit fileSignalManager->requestSearchCtrlL(winId);
