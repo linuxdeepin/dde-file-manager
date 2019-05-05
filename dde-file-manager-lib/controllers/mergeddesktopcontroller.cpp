@@ -308,7 +308,7 @@ bool MergedDesktopController::touch(const QSharedPointer<DFMTouchFileEvent> &eve
 
 bool MergedDesktopController::setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const
 {
-    return DFileService::instance()->setPermissions(event->sender(), event->url(), event->permissions());
+    return DFileService::instance()->setPermissions(event->sender(), convertToRealPath(event->url()), event->permissions());
 }
 
 bool MergedDesktopController::compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const

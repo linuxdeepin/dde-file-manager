@@ -45,23 +45,23 @@ public:
     bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const override;
     DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const override;
     bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
-    DUrlList pasteFile(const QSharedPointer<DFMPasteEvent> &event) const override;
+    DUrlList pasteFile(const QSharedPointer<DFMPasteEvent> &event) const override;//
     bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const override;
     bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const override;
     bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const override;
 
     bool mkdir(const QSharedPointer<DFMMkdirEvent> &event) const override;
     bool touch(const QSharedPointer<DFMTouchFileEvent> &event) const override;
-    bool setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const override;//
+    bool setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const override;
     bool compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const override;
-    bool decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const override;//
+    bool decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const override;
     bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const override;
 
     bool setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const override;
     bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const override;
     QList<QString> getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const override;
 
-    DFM_NAMESPACE::DFileDevice *createFileDevice(const QSharedPointer<DFMUrlBaseEvent> &event) const override;//
+    DFM_NAMESPACE::DFileDevice *createFileDevice(const QSharedPointer<DFMUrlBaseEvent> &event) const override;
     DFM_NAMESPACE::DFileHandler *createFileHandler(const QSharedPointer<DFMUrlBaseEvent> &event) const override;
     DFM_NAMESPACE::DStorageInfo *createStorageInfo(const QSharedPointer<DFMUrlBaseEvent> &event) const override;
 
