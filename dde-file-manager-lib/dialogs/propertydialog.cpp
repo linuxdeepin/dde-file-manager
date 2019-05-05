@@ -636,11 +636,11 @@ void PropertyDialog::startComputerFolderSize(const DUrl &url)
 
 void PropertyDialog::toggleFileExecutable(bool isChecked)
 {
-    QFile f(m_url.toLocalFile());
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(this, m_url);
     if (isChecked) {
-        f.setPermissions(f.permissions() | QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther);
+        DFileService::instance()->setPermissions(this, m_url, info->permissions() | QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther);
     } else {
-        f.setPermissions(f.permissions() & ~(QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther));
+        DFileService::instance()->setPermissions(this, m_url, info->permissions() & ~(QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther));
     }
 }
 
@@ -1112,9 +1112,11 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
 
     // when change the index...
     auto onComboBoxChanged = [ = ]() {
-        QFile f(m_url.toLocalFile());
-        f.setPermissions(QFileDevice::Permissions(ownerBox->currentData().toInt()) | /*(info->permissions() & 0x0700) |*/
-                         QFileDevice::Permissions(groupBox->currentData().toInt()) | QFileDevice::Permissions((otherBox->currentData().toInt())));
+        DFileService::instance()->setPermissions(this, m_url,
+                                                 QFileDevice::Permissions(ownerBox->currentData().toInt()) |
+                                                 /*(info->permissions() & 0x0700) |*/
+                                                 QFileDevice::Permissions(groupBox->currentData().toInt()) |
+                                                 QFileDevice::Permissions((otherBox->currentData().toInt())));
     };
 
     if (info->isDir()) {
