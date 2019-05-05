@@ -24,12 +24,22 @@ public:
     {
         QRegularExpression re("^(.*)/disk_files/(.*)$");
         QString device(path.path());
-        auto rem=re.match(device);
+        auto rem = re.match(device);
         if (rem.hasMatch()) {
-            auto dev = deviceListener->getDeviceByDevicePath(rem.captured(1));
-            mntpoint = DUrl(dev->getMountPoint()).toLocalFile();
+            QString udiskspath = rem.captured(1);
+            udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+            QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+            QSharedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
+            if (blkdev->mountPoints().size()) {
+                DUrl mnturl = DUrl(QString(blkdev->mountPoints().front()));
+                mnturl.setScheme(FILE_SCHEME);
+                mntpoint = mnturl.toLocalFile();
+            }
+            if (*mntpoint.rbegin() != '/') {
+                mntpoint += '/';
+            }
             devfile = rem.captured(1);
-            if (mntpoint.length() == 0 && dev->getMountPointUrl().scheme() == BURN_SCHEME) {
+            if (diskdev->opticalBlank()) {
                 //blank disc
                 iterator.clear();
                 stagingiterator = QSharedPointer<QDirIterator>(
@@ -98,10 +108,11 @@ private:
         DUrl ret;
         ret.setScheme(BURN_SCHEME);
         QString path = in.path();
-        if (burntmp.isParentOf(in))
+        if (burntmp.isParentOf(in)) {
             path.replace(stagingroot, devfile + "/staging_files/");
-        else
+        } else {
             path.replace(mntpoint, devfile + "/disk_files/");
+        }
         ret.setPath(path);
         return ret;
     }

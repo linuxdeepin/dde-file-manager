@@ -27,6 +27,9 @@
 #include "deviceinfo/udisklistener.h"
 #include "dfileservices.h"
 #include "disomaster.h"
+#include "dblockdevice.h"
+#include "ddiskdevice.h"
+#include "ddiskmanager.h"
 #include <QRegularExpression>
 #include "controllers/masteredmediacontroller.h"
 
@@ -37,16 +40,26 @@ MasteredMediaFileInfo::MasteredMediaFileInfo(const DUrl &url)
     QString device(url.path());
     auto rem = re.match(device);
     if (rem.hasMatch()) {
-        auto dev = deviceListener->getDeviceByDevicePath(rem.captured(1));
-        //udisks should be used in order to detect blank media properly
-        if (dev->getMountPointUrl().scheme() == BURN_SCHEME && rem.captured(2) == "disk_files") {
+        QString udiskspath = rem.captured(1);
+        udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+        QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+        QSharedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
+        if (diskdev->opticalBlank() && rem.captured(2) == "disk_files") {
             //blank media contains no files on disc, duh!
             return;
         }
-        if(rem.captured(2) == "disk_files")
-            m_backerUrl = DUrl(dev->getMountPoint() + rem.captured(3));
-        else
+        if(rem.captured(2) == "disk_files") {
+            Q_ASSERT(blkdev->mountPoints().size() > 0);
+            QString mntpoint = QString(blkdev->mountPoints().front());
+            if (*mntpoint.rbegin() != '/') {
+                mntpoint += '/';
+            }
+
+            m_backerUrl = DUrl(mntpoint + rem.captured(3));
+            m_backerUrl.setScheme(FILE_SCHEME);
+        } else {
             m_backerUrl = DUrl(MasteredMediaController::getStagingFolder(url));
+        }
         setProxy(DFileService::instance()->createFileInfo(Q_NULLPTR, m_backerUrl));
     }
 }
