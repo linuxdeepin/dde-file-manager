@@ -14,6 +14,9 @@ include($$PWD/../dde-zone/dde-zone.pri)
 QT       += core gui widgets svg dbus x11extras network concurrent multimediawidgets multimedia
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+greaterThan(QT_MINOR_VERSION, 7): QT += gui-private
+else: QT += platformsupport-private
+
 TEMPLATE    = app
 TARGET      = dde-desktop
 DESTDIR     = $$BUILD_DIST
