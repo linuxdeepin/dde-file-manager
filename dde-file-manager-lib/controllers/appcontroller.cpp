@@ -344,7 +344,7 @@ void AppController::actionAddToBookMark(const QSharedPointer<DFMUrlBaseEvent> &e
 
 void AppController::actionNewFolder(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    const QString targetDir = event->url().toLocalFile();
+    const QString targetDir = event->url().toLocalFile(); // ???????????????????????????????
     const QString name = FileUtils::newDocmentName(targetDir, tr("New Folder"), QString());
 
     fileService->mkdir(event->sender(), DUrl::fromLocalFile(name));

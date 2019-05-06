@@ -45,12 +45,12 @@ public:
     bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const override;
     DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const override;
     bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
-    DUrlList pasteFile(const QSharedPointer<DFMPasteEvent> &event) const override;//
+    DUrlList pasteFile(const QSharedPointer<DFMPasteEvent> &event) const override;
     bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const override;
     bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const override;
     bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const override;
 
-    bool mkdir(const QSharedPointer<DFMMkdirEvent> &event) const override;
+    bool mkdir(const QSharedPointer<DFMMkdirEvent> &event) const override; // AppController::actionNewFolder 有问题
     bool touch(const QSharedPointer<DFMTouchFileEvent> &event) const override;
     bool setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const override;
     bool compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const override;

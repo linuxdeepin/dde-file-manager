@@ -439,6 +439,10 @@ DMD_TYPES MergedDesktopController::checkUrlArrangedType(const DUrl url)
 void MergedDesktopController::desktopFilesCreated(const DUrl &url)
 {
     DMD_TYPES typeInfo = checkUrlArrangedType(url);
+    if (arrangedFileUrls[typeInfo].contains(url)) {
+        qWarning() << url << "existed, it must be a bug!!!!!!!!";
+        arrangedFileUrls[typeInfo].removeAll(url);
+    }
     arrangedFileUrls[typeInfo].append(url);
     DUrl vUrl = convertToDFMMDPath(url, typeInfo);
 

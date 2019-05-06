@@ -137,7 +137,8 @@ MergedDesktopFileInfo::MergedDesktopFileInfo(const DUrl &url, const DUrl &parent
 
     QString path = url.path();
     QString fileName = url.fileName();
-    QString realPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first() + QDir::separator() + fileName;
+    QString desktopPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
+    QString realPath = desktopPath + QDir::separator() + fileName;
 
     if (path.startsWith(VIRTUALENTRY_PATH)) {
         if (path.split('/', QString::SkipEmptyParts).count() != 2) {
@@ -152,7 +153,11 @@ MergedDesktopFileInfo::MergedDesktopFileInfo(const DUrl &url, const DUrl &parent
             setProxy(DAbstractFileInfoPointer(new VirtualEntryInfo(url)));
         }
     } else if (path.startsWith(MERGEDDESKTOP_PATH)) {
-        setProxy(DAbstractFileInfoPointer(new VirtualEntryInfo(url)));
+        if (path == MERGEDDESKTOP_PATH) {
+            setProxy(DAbstractFileInfoPointer(DFileService::instance()->createFileInfo(nullptr, DUrl::fromLocalFile(desktopPath))));
+        } else {
+            setProxy(DAbstractFileInfoPointer(new VirtualEntryInfo(url)));
+        }
     }
 }
 
