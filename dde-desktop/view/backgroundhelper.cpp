@@ -23,6 +23,11 @@
 
 #include <QScreen>
 #include <QGuiApplication>
+#include <qpa/qplatformwindow.h>
+#include <qpa/qplatformscreen.h>
+#define private public
+#include <private/qhighdpiscaling_p.h>
+#undef private
 
 BackgroundHelper::BackgroundHelper(bool preview, QObject *parent)
     : QObject(parent)
@@ -165,17 +170,19 @@ void BackgroundHelper::updateBackground(QLabel *l)
         return;
 
     QScreen *s = l->windowHandle()->screen();
-    const QSize trueSize = s->size() * s->devicePixelRatio();
+    const QSize trueSize = s->handle()->geometry().size();
     QPixmap pix = backgroundPixmap;
 
     pix = pix.scaled(trueSize,
                      Qt::KeepAspectRatioByExpanding,
                      Qt::SmoothTransformation);
 
-    pix = pix.copy(QRect((pix.width() - trueSize.width()) / 2.0,
-                         (pix.height() - trueSize.height()) / 2.0,
-                         trueSize.width(),
-                         trueSize.height()));
+    if (pix.width() > trueSize.width() || pix.height() > trueSize.height()) {
+        pix = pix.copy(QRect((pix.width() - trueSize.width()) / 2.0,
+                             (pix.height() - trueSize.height()) / 2.0,
+                             trueSize.width(),
+                             trueSize.height()));
+    }
 
     pix.setDevicePixelRatio(l->devicePixelRatioF());
     l->setPixmap(pix);
@@ -208,6 +215,14 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
     l->windowHandle()->setScreen(screen);
     l->setGeometry(screen->geometry());
 
+    QTimer::singleShot(0, this, [l, screen] {
+        // 禁用高分屏缩放，防止窗口的sizeIncrement默认设置大于1
+        bool hi_active = QHighDpiScaling::m_active;
+        QHighDpiScaling::m_active = false;
+        l->windowHandle()->handle()->setGeometry(screen->handle()->geometry());
+        QHighDpiScaling::m_active = hi_active;
+    });
+
     if (m_previuew) {
         l->setWindowFlags(l->windowFlags() | Qt::BypassWindowManagerHint | Qt::WindowDoesNotAcceptFocus);
     } else {
@@ -217,8 +232,11 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
     if (m_visible)
         l->show();
 
-    connect(screen, &QScreen::geometryChanged, l, [l, this] (const QRect &geo) {
-        l->setGeometry(geo);
+    connect(screen, &QScreen::geometryChanged, l, [l, this, screen] () {
+        bool hi_active = QHighDpiScaling::m_active;
+        QHighDpiScaling::m_active = false;
+        l->windowHandle()->handle()->setGeometry(screen->handle()->geometry());
+        QHighDpiScaling::m_active = hi_active;
         updateBackground(l);
 
         Q_EMIT backgroundGeometryChanged(l);
