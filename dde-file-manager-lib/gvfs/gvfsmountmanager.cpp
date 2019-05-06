@@ -605,10 +605,14 @@ void GvfsMountManager::monitor_volume_added(GVolumeMonitor *volume_monitor, GVol
     GDrive *drive = g_volume_get_drive(volume);
     if (drive) {
         QDrive qDrive = gDriveToqDrive(drive);
-        Drives.insert(qDrive.unix_device(), qDrive);
-        if (!Volumes_Drive_Keys.contains(qDrive.unix_device())) {
-            Volumes_Drive_Keys.append(qDrive.unix_device());
+
+        if (!qDrive.unix_device().isEmpty()) {
+            Drives.insert(qDrive.unix_device(), qDrive);
+            if (!Volumes_Drive_Keys.contains(qDrive.unix_device())) {
+                Volumes_Drive_Keys.append(qDrive.unix_device());
+            }
         }
+
         if (drive != nullptr){
             qVolume.setDrive_unix_device(QString(g_drive_get_identifier(drive, "unix-device")));
         }
@@ -641,8 +645,11 @@ void GvfsMountManager::monitor_volume_removed(GVolumeMonitor *volume_monitor, GV
     GDrive *drive = g_volume_get_drive(volume);
     if (drive){
         QDrive qDrive = gDriveToqDrive(drive);
-        Drives.insert(qDrive.unix_device(), qDrive);
-        Volumes_Drive_Keys.removeOne(qDrive.unix_device());
+
+        if (!qDrive.unix_device().isEmpty()) {
+            Drives.insert(qDrive.unix_device(), qDrive);
+            Volumes_Drive_Keys.removeOne(qDrive.unix_device());
+        }
     }
 
     bool removed = Volumes.remove(qVolume.unix_device());
@@ -867,8 +874,10 @@ void GvfsMountManager::getDrives(GList *drives)
         drive = (GDrive *) d->data;
         QDrive qDrive = gDriveToqDrive(drive);
 
-        Drives.insert(qDrive.unix_device(), qDrive);
-        Drives_Keys.append(qDrive.unix_device());
+        if (!qDrive.unix_device().isEmpty()) {
+            Drives.insert(qDrive.unix_device(), qDrive);
+            Drives_Keys.append(qDrive.unix_device());
+        }
 
         volumes = g_drive_get_volumes (drive);
         GVolume *volume;
