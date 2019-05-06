@@ -227,7 +227,8 @@ bool DStorageInfo::isLowSpeedDevice() const
 
     return device.startsWith("mtp://")
             || device.startsWith("gphoto://")
-            || device.startsWith("gphoto2://");
+            || device.startsWith("gphoto2://")
+            || device.startsWith("smb-share://");
 }
 
 bool DStorageInfo::isValid() const
@@ -325,9 +326,7 @@ bool DStorageInfo::isLowSpeedDevice(const QString &path)
     if (match.hasMatch()) {
         const QString &scheme = match.captured("scheme");
 
-        if (scheme == "mtp" || scheme == "gphoto" || scheme == "gphoto2" || scheme == "smb-share") {
-            return true;
-        }
+        return (scheme == "mtp" || scheme == "gphoto" || scheme == "gphoto2" || scheme == "smb-share");
     }
 
     return DStorageInfo(path).isLowSpeedDevice();
