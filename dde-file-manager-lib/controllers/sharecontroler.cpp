@@ -92,6 +92,8 @@ const QList<DAbstractFileInfoPointer> ShareControler::getChildren(const QSharedP
 
     QList<DAbstractFileInfoPointer> infolist;
 
+    userShareManager->updateUserShareInfo();
+
     ShareInfoList sharelist = userShareManager->shareInfoList();
     foreach (ShareInfo shareInfo, sharelist) {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, DUrl::fromUserShareFile(shareInfo.path()));
