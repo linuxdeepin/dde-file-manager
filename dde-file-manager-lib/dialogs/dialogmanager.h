@@ -93,6 +93,7 @@ public slots:
     int showAskIfAddExcutableFlagAndRunDialog(const DUrl &url, quint64 winId);
     int showRenameNameSameErrorDialog(const QString& name, const DFMEvent &event);
     int showOpticalBlankConfirmationDialog(const DFMUrlBaseEvent &event);
+    int showOpticalImageOpSelectionDialog(const DFMUrlBaseEvent &event);
     int showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &event);
     int showRemoveBookMarkDialog(const DFMEvent &event);
     void showOpenWithDialog(const DFMEvent &event);

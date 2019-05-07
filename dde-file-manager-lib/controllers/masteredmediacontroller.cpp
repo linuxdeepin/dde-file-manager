@@ -9,6 +9,8 @@
 #include "models/masteredmediafileinfo.h"
 #include "dfileservices.h"
 #include "dfilewatcher.h"
+#include "dialogs/dialogmanager.h"
+#include "dialogs/burnoptdialog.h"
 #include "interfaces/dfileproxywatcher.h"
 
 #include <QRegularExpression>
@@ -152,7 +154,28 @@ DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> 
     DUrlList src = event->urlList();
     DUrl dst = event->targetUrl();
 
-    DUrl tmpdst=getStagingFolder(dst);
+    if (src.size() == 1) {
+        DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), src.front());
+        if (fi->mimeTypeName() == "application/x-cd-image") {
+            int r = DThreadUtil::runInMainThread(dialogManager, &DialogManager::showOpticalImageOpSelectionDialog, DFMUrlBaseEvent(event->sender(), dst));
+            if (r == 1) {
+                DThreadUtil::runInMainThread([=] {
+                    QRegularExpression re("^(.*)/disk_files/(.*)$");
+                    auto rem = re.match(dst.path());
+                    Q_ASSERT(rem.hasMatch());
+                    QScopedPointer<BurnOptDialog> bd(new BurnOptDialog(rem.captured(1)));
+                    bd->setISOImage(src.front());
+                    bd->exec();
+                });
+                return DUrlList{};
+            }
+            if (r == 0) {
+                return DUrlList{};
+            }
+        }
+    }
+
+    DUrl tmpdst = getStagingFolder(dst);
     mkpath(tmpdst);
 
     return fileService->pasteFile(event->sender(), event->action(), tmpdst, src);

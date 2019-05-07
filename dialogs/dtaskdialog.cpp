@@ -408,9 +408,21 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data)
         m_animatePad->setCanPause(false);
         status = data["optical_op_status"];
         progress = data["optical_op_progress"];
-        setMessage((data["optical_op_type"] == QString::number(FileJob::JobType::OpticalBurn)
-                    ? tr("Burning disc %1, please wait...")
-                    : tr("Erasing disc %1, please wait...")).arg(data["optical_op_dest"]), "");
+
+        msg1 = (data["optical_op_type"] == QString::number(FileJob::JobType::OpticalBlank)
+               ? tr("Erasing disc %1, please wait...")
+               : tr("Burning disc %1, please wait...")).arg(data["optical_op_dest"]);
+        msg2 = "";
+        if (data["optical_op_type"] != QString::number(FileJob::JobType::OpticalBlank)) {
+            const QHash<QString, QString> msg2map = {
+                {"0", "erasing disc"},
+                {"1", "writing data"},
+                {"2", "checking disc"}
+            };
+            msg2 = msg2map.value(data["optical_op_phase"], "");
+        }
+        setMessage(msg1, msg2);
+
         qDebug() << status << progress;
         if (status == QString::number(DISOMasterNS::DISOMaster::JobStatus::Stalled)) {
             m_animatePad->startAnimation();

@@ -447,10 +447,38 @@ int DialogManager::showOpticalBlankConfirmationDialog(const DFMUrlBaseEvent &eve
 
     d.setTitle(EraseDisk);
     d.setMessage(tr("This action cannot be undone"));
+    d.setIcon(QIcon::fromTheme("media-optical").pixmap(64, 64), QSize(64, 64));
     d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
     d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
     d.setDefaultButton(1);
     d.getButton(1)->setFocus();
+    d.moveToCenter();
+    int code = d.exec();
+    return code;
+}
+
+int DialogManager::showOpticalImageOpSelectionDialog(const DFMUrlBaseEvent &event)
+{
+    QString EraseDisk = tr("How do you want to use this disc?");
+
+    DUrl url = event.url();
+    qDebug() << url;
+    QStringList buttonTexts;
+    buttonTexts << tr("Cancel") << tr("Burn image") << tr("Burn files");
+
+    DDialog d;
+
+    if (!d.parentWidget()) {
+        d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
+    }
+
+    d.setTitle(EraseDisk);
+    d.setIcon(QIcon::fromTheme("media-optical").pixmap(64, 64), QSize(64, 64));
+    d.addButton(buttonTexts[0], false, DDialog::ButtonNormal);
+    d.addButton(buttonTexts[1], false, DDialog::ButtonNormal);
+    d.addButton(buttonTexts[2], true, DDialog::ButtonRecommend);
+    d.setDefaultButton(2);
+    d.getButton(2)->setFocus();
     d.moveToCenter();
     int code = d.exec();
     return code;

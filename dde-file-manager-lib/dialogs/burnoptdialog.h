@@ -10,6 +10,9 @@ class BurnOptDialog : public Dtk::Widget::DDialog
 public:
     BurnOptDialog(QString device, QWidget *parent = 0);
     ~BurnOptDialog();
+
+    void setISOImage(DUrl image);
+    void setJobWindowId(int wid);
 private:
     QScopedPointer<BurnOptDialogPrivate> d_ptr;
     Q_DECLARE_PRIVATE(BurnOptDialog)

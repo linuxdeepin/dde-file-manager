@@ -65,7 +65,8 @@ public:
         Delete,
         Restore,
         OpticalBurn,
-        OpticalBlank
+        OpticalBlank,
+        OpticalImageBurn
     };
     Q_ENUM(JobType)
 
@@ -159,6 +160,7 @@ public slots:
 
     void doOpticalBurn(const DUrl &device, QString volname, int speed, int flag);
     void doOpticalBlank(const DUrl &device);
+    void doOpticalImageBurn(const DUrl &device, const DUrl &image, int speed, int flag);
     void opticalJobUpdated(DISOMasterNS::DISOMaster::JobStatus status, int progress);
 
     void paused();
@@ -208,14 +210,13 @@ private:
     bool m_skipandApplyToAll = false;
     DISOMasterNS::DISOMaster::JobStatus m_opticalJobStatus;
     int m_opticalJobProgress;
+    int m_opticalJobPhase;
 
     int m_filedes[2] = {0, 0};
     bool m_isInSameDisk = true;
     bool m_isFinished = false;
 
     GCancellable* m_abortGCancellable = NULL;
-
-    DISOMasterNS::DISOMaster *m_isomaster;
 
     DUrlList m_noPermissonUrls;
 

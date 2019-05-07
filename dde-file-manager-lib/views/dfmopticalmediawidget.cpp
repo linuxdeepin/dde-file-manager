@@ -33,6 +33,7 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
 
     connect(d->pb_burn, &DPushButton::clicked, this, [=] {
             QScopedPointer<BurnOptDialog> bd(new BurnOptDialog(d->getCurrentDevice(), this));
+            bd->setJobWindowId(this->window()->winId());
             bd->exec();
         }
     );

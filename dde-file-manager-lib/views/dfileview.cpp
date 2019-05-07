@@ -2124,8 +2124,8 @@ bool DFileView::setRootUrl(const DUrl &url)
         QRegularExpression re("^(.*)/(disk_files|staging_files)/(.*)$");
         auto rem = re.match(fileUrl.path());
         Q_ASSERT(rem.hasMatch());
-        QString devpath=rem.captured(1);
-        QString udiskspath=devpath;
+        QString devpath = rem.captured(1);
+        QString udiskspath = devpath;
         DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(devpath);
         udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
         QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
