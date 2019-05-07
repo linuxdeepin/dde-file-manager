@@ -617,6 +617,9 @@ void FileJob::doOpticalBlank(const DUrl &device)
     job_isomaster->erase();
     job_isomaster->releaseDevice();
 
+    blkdev->rescan({});
+    ISOMaster->nullifyDevicePropertyCache(device.path());
+
     if (m_isJobAdded)
         jobRemoved();
     emit finished();
@@ -659,6 +662,9 @@ void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int 
     if (flag & 2) {
         QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
         diskdev->eject({});
+    } else {
+        blkdev->rescan({});
+        ISOMaster->nullifyDevicePropertyCache(device.path());
     }
 
     if (m_isJobAdded)
@@ -703,15 +709,17 @@ void FileJob::doOpticalImageBurn(const DUrl &device, const DUrl &image, int spee
     if (flag & 2) {
         QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
         diskdev->eject({});
+    } else {
+        blkdev->rescan({});
+        ISOMaster->nullifyDevicePropertyCache(device.path());
     }
-
-    // media check not yet implemented
 
     if (m_isJobAdded)
         jobRemoved();
     emit finished();
     delete job_isomaster;
 }
+
 void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster::JobStatus status, int progress)
 {
     if (m_jobType == JobType::OpticalImageBurn && m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished
