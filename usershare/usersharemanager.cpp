@@ -93,7 +93,7 @@ void UserShareManager::initConnect()
         onFileDeleted(from);
         handleShareChanged(to);
     });
-    connect(m_shareInfosChangedTimer, &QTimer::timeout, this, &UserShareManager::updateUserShareInfo);
+    connect(m_shareInfosChangedTimer, &QTimer::timeout, this, [this](){emit updateUserShareInfo(true);});
 //    connect(m_lazyStartSambaServiceTimer, &QTimer::timeout, this, &UserShareManager::initSamaServiceSettings);
 }
 
@@ -264,7 +264,7 @@ void UserShareManager::handleShareChanged(const QString &filePath)
     m_shareInfosChangedTimer->start();
 }
 
-void UserShareManager::updateUserShareInfo()
+void UserShareManager::updateUserShareInfo(bool sendSignal)
 {
     //cache
     QStringList oldShareInfos = m_shareInfos.keys();
@@ -352,10 +352,14 @@ void UserShareManager::updateUserShareInfo()
         m_fileMonitor->add(info.path());
     }
 
+    if (!sendSignal) {
+        return;
+    }
+
+    // send signal.
     if (validShareInfoCount() <= 0) {
         emit userShareDeleted("/");
     }
-
     usershareCountchanged();
 }
 

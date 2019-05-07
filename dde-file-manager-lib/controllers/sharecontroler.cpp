@@ -92,7 +92,7 @@ const QList<DAbstractFileInfoPointer> ShareControler::getChildren(const QSharedP
 
     QList<DAbstractFileInfoPointer> infolist;
 
-    userShareManager->updateUserShareInfo();
+    userShareManager->updateUserShareInfo(false);
 
     ShareInfoList sharelist = userShareManager->shareInfoList();
     foreach (ShareInfo shareInfo, sharelist) {
