@@ -1630,8 +1630,17 @@ QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList() co
     static const QList<QAction *> template_file_list = getTemplateFileList();
     static const QVector<MenuAction> action_type_list = getMenuActionTypeListByAction(template_file_list);
 
+    QString urlStr = toLocalFile();
+    if (urlStr.isEmpty()) {
+#ifdef QT_DEBUG
+        qFatal() << fileUrl() << "scheme fileinfo seems doesn't implement toLocalFile() or implemented incorrectly.";
+        qFatal() << "This can be a bug and should be fixed!!!!!!!!";
+#endif
+        urlStr = fileUrl().toLocalFile();
+    }
+
     for (QAction *action : template_file_list) {
-        action->setProperty("_fileinfo_path", fileUrl().toLocalFile());
+        action->setProperty("_fileinfo_path", urlStr);
     }
 
     docmentMenuActionKeys << action_type_list;
