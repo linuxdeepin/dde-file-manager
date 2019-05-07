@@ -1630,10 +1630,8 @@ QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList() co
     static const QList<QAction *> template_file_list = getTemplateFileList();
     static const QVector<MenuAction> action_type_list = getMenuActionTypeListByAction(template_file_list);
 
-    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, fileUrl());
-
     for (QAction *action : template_file_list) {
-        action->setProperty("_fileinfo_path", info->toLocalFile());
+        action->setProperty("_fileinfo_path", toLocalFile());
     }
 
     docmentMenuActionKeys << action_type_list;
