@@ -33,6 +33,9 @@ private:
     QCheckBox *cb_checkdisc;
     QCheckBox *cb_eject;
     QString dev;
+    QHash<QString, int> speedmap;
+    DUrl image_file;
+    int window_id;
 
     Q_DECLARE_PUBLIC(BurnOptDialog)
 };
@@ -48,20 +51,64 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
         [=](int index, const QString &text) {
             Q_UNUSED(text);
             if (index == 1) {
-                QtConcurrent::run([=] {
-                    FileJob job(FileJob::OpticalBurn);
-                    job.moveToThread(qApp->thread());
-                    job.setWindowId(this->parentWidget()->window()->winId());
-                    dialogManager->addJob(&job);
+                if (d->image_file.path().length() == 0) {
+                    QtConcurrent::run([=] {
+                        FileJob job(FileJob::OpticalBurn);
+                        job.moveToThread(qApp->thread());
+                        job.setWindowId(d->window_id);
+                        dialogManager->addJob(&job);
 
-                    DUrl dev(device);
-                    dev.setScheme(BURN_SCHEME);
+                        DUrl dev(device);
 
-                    job.doOpticalBurn(dev, d->le_volname->text(), 0, 0);
-                    dialogManager->removeJob(job.getJobId());
-                });
+                        int flag = 0;
+                        d->cb_checkdisc->isChecked() && (flag |= 4);
+                        d->cb_eject->isChecked() && (flag |= 2);
+                        !d->cb_iclose->isChecked() && (flag |= 1);
+
+                        job.doOpticalBurn(dev, d->le_volname->text(), d->speedmap[d->cb_writespeed->currentText()], flag);
+                        dialogManager->removeJob(job.getJobId());
+                    });
+                } else {
+                    QtConcurrent::run([=] {
+                        FileJob job(FileJob::OpticalImageBurn);
+                        job.moveToThread(qApp->thread());
+                        job.setWindowId(d->window_id);
+                        dialogManager->addJob(&job);
+
+                        DUrl dev(device);
+
+                        int flag = 0;
+                        d->cb_checkdisc->isChecked() && (flag |= 4);
+                        d->cb_eject->isChecked() && (flag |= 2);
+
+                        job.doOpticalImageBurn(dev, d->image_file, d->speedmap[d->cb_writespeed->currentText()], flag);
+                        dialogManager->removeJob(job.getJobId());
+                    });
+                }
             }
     });
+}
+
+void BurnOptDialog::setISOImage(DUrl image)
+{
+    Q_D(BurnOptDialog);
+
+    d->image_file = image;
+    d->cb_iclose->hide();
+
+    d->le_volname->setEnabled(false);
+
+    //we are seemingly abusing DISOMaster here. However that's actually not the case.
+    ISOMaster->acquireDevice(QString("stdio:") + image.toLocalFile());
+    DISOMasterNS::DeviceProperty dp = ISOMaster->getDeviceProperty();
+    d->le_volname->setText(dp.volid);
+    ISOMaster->releaseDevice();
+}
+
+void BurnOptDialog::setJobWindowId(int wid)
+{
+    Q_D(BurnOptDialog);
+    d->window_id = wid;
 }
 
 BurnOptDialog::~BurnOptDialog()
@@ -95,6 +142,7 @@ void BurnOptDialogPrivate::setupUi()
     w_content->layout()->addWidget(lb_volname);
 
     le_volname = new DLineEdit();
+    le_volname->setMaxLength(32);
     w_content->layout()->addWidget(le_volname);
 
     lb_writespeed = new DLabel(QObject::tr("Write speed:"));
@@ -103,12 +151,15 @@ void BurnOptDialogPrivate::setupUi()
     cb_writespeed = new QComboBox();
     cb_writespeed->addItem(QObject::tr("Max speed"));
     w_content->layout()->addWidget(cb_writespeed);
+    speedmap[QObject::tr("Max speed")] = 0;
 
     DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(dev);
     for (auto i : dp.writespeed) {
         float speed;
-        sscanf(i.toUtf8().data(), "%*d%*c\t%f", &speed);
-        cb_writespeed->addItem(QString::number((int)speed) + 'x');
+        int speedk;
+        sscanf(i.toUtf8().data(), "%d%*c\t%f", &speedk, &speed);
+        speedmap[QString::number(speed, 'f', 1) + 'x'] = speedk;
+        cb_writespeed->addItem(QString::number(speed, 'f', 1) + 'x');
     }
 
     cb_iclose = new QCheckBox(QObject::tr("Allow more data to be append to the disc"));
