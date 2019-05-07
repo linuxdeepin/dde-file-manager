@@ -1633,8 +1633,8 @@ QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList() co
     QString urlStr = toLocalFile();
     if (urlStr.isEmpty()) {
 #ifdef QT_DEBUG
-        qFatal() << fileUrl() << "scheme fileinfo seems doesn't implement toLocalFile() or implemented incorrectly.";
-        qFatal() << "This can be a bug and should be fixed!!!!!!!!";
+        qCritical() << fileUrl() << "scheme fileinfo seems doesn't implement toLocalFile() or implemented incorrectly.";
+        qCritical() << "This can be a bug and should be fixed!!!!!!!!";
 #endif
         urlStr = fileUrl().toLocalFile();
     }
