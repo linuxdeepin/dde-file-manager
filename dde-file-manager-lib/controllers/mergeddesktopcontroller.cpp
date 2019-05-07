@@ -50,10 +50,12 @@ const DAbstractFileInfoPointer MergedDesktopController::createFileInfo(const QSh
 
 const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
-    if (!dataInitialized) {
-        initData();
-        dataInitialized = true;
-    }
+//    if (!dataInitialized) {
+//        initData();
+//        dataInitialized = true;
+//    }
+    // blumia: 文件监听占用完了的时候有可能桌面会监听不到文件变动,此时即便 F5 也不会刷新该 Controller 存储的整理桌面数据,故改为每次都重新初始化整理数据
+    initData();
 
     DUrl currentUrl { event->url() };
     QString path { currentUrl.path() };
