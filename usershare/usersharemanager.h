@@ -77,7 +77,7 @@ signals:
 public slots:
     void initSamaServiceSettings();
     void handleShareChanged(const QString &filePath);
-    void updateUserShareInfo();
+    void updateUserShareInfo(bool sendSignal = true);
     void testUpdateUserShareInfo();
     void setSambaPassword(const QString& userName, const QString& password);
     void addCurrentUserToSambashareGroup();
