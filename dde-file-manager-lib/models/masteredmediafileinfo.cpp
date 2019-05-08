@@ -117,6 +117,14 @@ DUrl MasteredMediaFileInfo::parentUrl() const
     return ret;
 }
 
+QVector<MenuAction> MasteredMediaFileInfo::menuActionList(MenuType type) const
+{
+    QVector<MenuAction> ret = DAbstractFileInfo::menuActionList(type);
+    ret.removeAll(MenuAction::TagInfo);
+    ret.removeAll(MenuAction::TagFilesUseColor);
+    return ret;
+}
+
 bool MasteredMediaFileInfo::canRedirectionFileUrl() const
 {
     return !isDir();
