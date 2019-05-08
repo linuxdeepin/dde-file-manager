@@ -186,3 +186,23 @@ QString MergedDesktopFileInfo::genericIconName() const
 
     return DAbstractFileInfo::genericIconName();
 }
+
+bool MergedDesktopFileInfo::canRedirectionFileUrl() const
+{
+    Q_D(const MergedDesktopFileInfo);
+    if (d->proxy) {
+        return true;
+    }
+
+    return DAbstractFileInfo::canRedirectionFileUrl();
+}
+
+DUrl MergedDesktopFileInfo::redirectedFileUrl() const
+{
+    Q_D(const MergedDesktopFileInfo);
+    if (d->proxy) {
+        return d->proxy->fileUrl();
+    }
+
+    return DAbstractFileInfo::redirectedFileUrl();
+}

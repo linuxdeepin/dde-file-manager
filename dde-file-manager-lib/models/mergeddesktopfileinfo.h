@@ -34,6 +34,9 @@ public:
     QString iconName() const override;
     QString genericIconName() const override;
 
+    bool canRedirectionFileUrl() const override;
+    DUrl redirectedFileUrl() const override;
+
 private:
     Q_DECLARE_PRIVATE(MergedDesktopFileInfo)
 };
