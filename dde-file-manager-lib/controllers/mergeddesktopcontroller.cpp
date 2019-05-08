@@ -24,6 +24,7 @@
 #include "dfmevent.h"
 #include "dfilewatcher.h"
 #include "dfileservices.h"
+#include "appcontroller.h"
 
 #include "interfaces/dfileservices.h"
 #include "interfaces/dfmstandardpaths.h"
@@ -294,16 +295,26 @@ bool MergedDesktopController::openInTerminal(const QSharedPointer<DFMOpenInTermi
                                                     DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::DesktopPath)));
 }
 
+// fixme: AppController::actionNewFolder 调了 FileUtils::newDocumentUrl 调了 getUrlByChildFileName ,可能需要重写
+//        否则在自动整理视图下新建文件后不会被选中
 bool MergedDesktopController::mkdir(const QSharedPointer<DFMMkdirEvent> &event) const
 {
-    return DFileService::instance()->mkdir(event->sender(),
-                                           DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)));
+    bool result = DFileService::instance()->mkdir(event->sender(),
+                                                  DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)));
+
+    AppController::selectionAndRenameFile = qMakePair(event->url(), event->windowId());
+
+    return result;
 }
 
 bool MergedDesktopController::touch(const QSharedPointer<DFMTouchFileEvent> &event) const
 {
-    return DFileService::instance()->touchFile(event->sender(),
+    bool result = DFileService::instance()->touchFile(event->sender(),
                                                DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)));
+
+    AppController::selectionAndRenameFile = qMakePair(event->url(), event->windowId());
+
+    return result;
 }
 
 bool MergedDesktopController::setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const
