@@ -85,6 +85,7 @@ private:
     void appendEntryFiles(QList<DAbstractFileInfoPointer> &infoList, const DMD_TYPES &entryType) const;
 
     DFileWatcher* m_desktopFileWatcher;
+    mutable DUrl currentUrl;
 //    mutable bool dataInitialized = false;
     mutable QMap<DMD_TYPES, QList<DUrl> > arrangedFileUrls;
 };

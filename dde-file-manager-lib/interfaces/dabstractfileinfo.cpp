@@ -1177,6 +1177,8 @@ DUrl DAbstractFileInfo::getUrlByNewFileName(const QString &fileName) const
 
 DUrl DAbstractFileInfo::getUrlByChildFileName(const QString &fileName) const
 {
+    CALL_PROXY(getUrlByChildFileName(fileName));
+
     if (!isDir()) {
         return DUrl();
     }
