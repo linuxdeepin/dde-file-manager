@@ -163,6 +163,7 @@ void BurnOptDialogPrivate::setupUi()
     }
 
     cb_iclose = new QCheckBox(QObject::tr("Allow more data to be append to the disc"));
+    cb_iclose->setChecked(true);
     w_content->layout()->addWidget(cb_iclose);
 
     lb_postburn = new DLabel(QObject::tr("After the files have been burned:"));
