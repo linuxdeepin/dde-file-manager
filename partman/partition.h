@@ -41,6 +41,7 @@ public:
     Partition();
 
     static Partition getPartitionByDevicePath(const QString& devicePath);
+    static Partition getPartitionByMountPoint(const QString& mountPoint);
 
     QString path() const;
     void setPath(const QString &path);

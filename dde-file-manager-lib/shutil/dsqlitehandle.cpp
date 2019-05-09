@@ -9,10 +9,12 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/xattr.h>
 
 #include "singleton.h"
 #include "tag/tagutil.h"
 #include "dsqlitehandle.h"
+#include "partman/partition.h"
 
 #include <QDir>
 #include <QList>
@@ -798,6 +800,22 @@ void DSqliteHandle::connectToSqlite(const QString &mountPoint, const QString &db
             } else {
                 qWarning() << "failed to open transaction!!!!!!";
                 m_sqlDatabasePtr->close();
+            }
+
+            PartMan::Partition p = PartMan::Partition::getPartitionByMountPoint(mountPoint);
+            if (p.fs() == "ntfs") {
+                QString db_path(mountPoint + QString("/") + db_name);
+                const char* db_path_cs(db_path.toUtf8().data());
+                quint32 attr;
+                getxattr(db_path.toUtf8().data(), "system.ntfs_attrib_be", (void*)&attr, 4);
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+                attr = __builtin_bswap32(attr);
+#endif
+                attr |= 0x2; // ATTR_HIDDEN
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+                attr = __builtin_bswap32(attr);
+#endif
+                setxattr(db_path.toUtf8().data(), "system.ntfs_attrib_be", (void*)&attr, 4, 0);
             }
 
         } else {
