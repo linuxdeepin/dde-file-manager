@@ -1,3 +1,24 @@
+<a name="4.8.4"></a>
+## 4.8.4 (2019-05-09)
+
+
+#### Bug Fixes
+
+*   hide indexing database in NTFS partition for Windows. ([4e8e6282](https://github.com/linuxdeepin/dde-file-manager/commit/4e8e6282654f36d46eca6c4520bc88712e77fc43))
+*   loop call of update usershare ([0f58c7dc](https://github.com/linuxdeepin/dde-file-manager/commit/0f58c7dc8c9f7e27165f4245b666d1ef0d566a4b))
+*   debug build FTBFS. ([eabfe29c](https://github.com/linuxdeepin/dde-file-manager/commit/eabfe29c7029b08cdb9d548afe83896d4ec513e8))
+*   should create fileinfo to get local file ([64a95a81](https://github.com/linuxdeepin/dde-file-manager/commit/64a95a81305d7547374fbf13d1095a2f7ebed80b))
+*   always update mergeddesktop file data ([98a20187](https://github.com/linuxdeepin/dde-file-manager/commit/98a201876e992751fb1b605c57a3a34302dd516b))
+*   unable to access mtp mount device ([e4468c06](https://github.com/linuxdeepin/dde-file-manager/commit/e4468c06317ce52f51f7e7c59f990af3a2adea0e))
+*   file mimetype results are not accurate on gvfs mount device ([55c050ea](https://github.com/linuxdeepin/dde-file-manager/commit/55c050eae00c6a59a8fef74cc98dcc6e2f85ba0d))
+*   Update usershare info when getChildren ([aad94bdc](https://github.com/linuxdeepin/dde-file-manager/commit/aad94bdce2782ecb77388d6a0722c6e740e2d14b))
+*   should create file info to get permissions ([33aba8ab](https://github.com/linuxdeepin/dde-file-manager/commit/33aba8ab0089a915ce46a7a6d30b098aee4f0a04))
+*   fix typo in method name. ([cc715000](https://github.com/linuxdeepin/dde-file-manager/commit/cc715000b39c218538a6e5ba69cceeaa249e4ce1))
+*   file permission error ([36d60f88](https://github.com/linuxdeepin/dde-file-manager/commit/36d60f88c03f2c4cd949fa3ec585712da4b9d4c7))
+* **dde-desktop:**  the background window size and screen size are inconsistent ([d212babd](https://github.com/linuxdeepin/dde-file-manager/commit/d212babd50e6c4492f8f73d790e38290b153dbe4))
+
+
+
 <a name="4.8.3"></a>
 ## 4.8.3 (2019-04-25)
 
