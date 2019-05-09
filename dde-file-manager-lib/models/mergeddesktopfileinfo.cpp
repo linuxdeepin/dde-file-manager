@@ -26,6 +26,7 @@
 #include "private/dabstractfileinfo_p.h"
 #include "private/mergeddesktop_common_p.h"
 
+#include <QIcon>
 #include <QStandardPaths>
 
 class VirtualEntryInfo : public DAbstractFileInfo
@@ -119,41 +120,89 @@ public:
     }
 };
 
-class DesktopFileInfo : public DAbstractFileInfo
-{
-public:
-    DesktopFileInfo(const DUrl &url) : DAbstractFileInfo(url)
-    {
-        QStringList urlPartList = url.path().split('/', QString::SkipEmptyParts);
-        if (!urlPartList.isEmpty()) {
-            QString fileName = url.path().split('/', QString::SkipEmptyParts).last();
-            QString realPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first() + QDir::separator() + fileName;
-            setProxy(DFileService::instance()->createFileInfo(nullptr, DUrl::fromLocalFile(realPath)));
-        }
-    }
-};
-
 class MergedDesktopFileInfoPrivate : public DAbstractFileInfoPrivate
 {
 public:
     MergedDesktopFileInfoPrivate(const DUrl &url, MergedDesktopFileInfo *qq)
         : DAbstractFileInfoPrivate(url, qq, true) {}
+
+    DUrl m_parentUrl;
 };
 
-MergedDesktopFileInfo::MergedDesktopFileInfo(const DUrl &url)
+MergedDesktopFileInfo::MergedDesktopFileInfo(const DUrl &url, const DUrl &parentUrl)
     : DAbstractFileInfo(*new MergedDesktopFileInfoPrivate(url, this))
 {
+    Q_D(MergedDesktopFileInfo);
+    d->m_parentUrl = parentUrl;
+
     QString path = url.path();
+    QString fileName = url.fileName();
+    QString desktopPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
+    QString realPath = desktopPath + QDir::separator() + fileName;
 
     if (path.startsWith(VIRTUALENTRY_PATH)) {
-        setProxy(DAbstractFileInfoPointer(new VirtualEntryInfo(url)));
+        if (path.split('/', QString::SkipEmptyParts).count() != 2) {
+            setProxy(DAbstractFileInfoPointer(DFileService::instance()->createFileInfo(nullptr, DUrl::fromLocalFile(realPath))));
+        } else {
+            setProxy(DAbstractFileInfoPointer(new VirtualEntryInfo(url)));
+        }
     } else if (path.startsWith(VIRTUALFOLDER_PATH)) {
         if (path != VIRTUALFOLDER_PATH) {
-            setProxy(DAbstractFileInfoPointer(new DesktopFileInfo(url)));
+            setProxy(DAbstractFileInfoPointer(DFileService::instance()->createFileInfo(nullptr, DUrl::fromLocalFile(realPath))));
         } else {
             setProxy(DAbstractFileInfoPointer(new VirtualEntryInfo(url)));
         }
     } else if (path.startsWith(MERGEDDESKTOP_PATH)) {
-        setProxy(DAbstractFileInfoPointer(new VirtualEntryInfo(url)));
+        if (path == MERGEDDESKTOP_PATH) {
+            setProxy(DAbstractFileInfoPointer(DFileService::instance()->createFileInfo(nullptr, DUrl::fromLocalFile(desktopPath))));
+        } else {
+            setProxy(DAbstractFileInfoPointer(new VirtualEntryInfo(url)));
+        }
     }
+}
+
+DUrl MergedDesktopFileInfo::parentUrl() const
+{
+    Q_D(const MergedDesktopFileInfo);
+    return d->m_parentUrl;
+}
+
+QString MergedDesktopFileInfo::iconName() const
+{
+    Q_D(const MergedDesktopFileInfo);
+    if (d->proxy) {
+        return d->proxy->iconName();
+    }
+
+    return DAbstractFileInfo::iconName();
+}
+
+QString MergedDesktopFileInfo::genericIconName() const
+{
+    Q_D(const MergedDesktopFileInfo);
+    if (d->proxy) {
+        return d->proxy->genericIconName();
+    }
+
+    return DAbstractFileInfo::genericIconName();
+}
+
+bool MergedDesktopFileInfo::canRedirectionFileUrl() const
+{
+    Q_D(const MergedDesktopFileInfo);
+    if (d->proxy) {
+        return true;
+    }
+
+    return DAbstractFileInfo::canRedirectionFileUrl();
+}
+
+DUrl MergedDesktopFileInfo::redirectedFileUrl() const
+{
+    Q_D(const MergedDesktopFileInfo);
+    if (d->proxy) {
+        return d->proxy->fileUrl();
+    }
+
+    return DAbstractFileInfo::redirectedFileUrl();
 }

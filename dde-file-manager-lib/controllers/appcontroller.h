@@ -163,6 +163,7 @@ private:
     bool m_hasLaunchAppInterface = false;
 
     friend class FileController;
+    friend class MergedDesktopController;
     friend class DFileSystemModel;
     friend class DFileViewHelper;
     friend class DRenameBar;
