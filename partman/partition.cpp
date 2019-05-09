@@ -101,6 +101,94 @@ Partition Partition::getPartitionByDevicePath(const QString &devicePath)
     return p;
 }
 
+Partition Partition::getPartitionByMountPoint(const QString &mountPoint)
+{
+    Partition ret;
+    QString output;
+    QString err;
+
+    bool status = SpawnCmd("lsblk", {"-pOJ"},
+                  output, err);
+    auto parseObject = [&ret](const QJsonObject &obj){
+        if (obj.contains("name")){
+            ret.setName(obj.value("name").toString());
+            ret.setPath(obj.value("name").toString());
+        }
+        if (obj.contains("fstype")){
+            ret.setFs(obj.value("fstype").toString());
+        }
+        if (obj.contains("label")){
+            ret.setLabel(obj.value("label").toString());
+        }
+        if (obj.contains("uuid")){
+            ret.setUuid(obj.value("uuid").toString());
+        }
+        if (obj.contains("mountpoint")){
+            ret.setMountPoint(obj.value("mountpoint").toString());
+        }
+        if(obj.contains("rm")){
+            QString data = obj.value("rm").toString();
+            if(data == "1")
+                ret.setIsRemovable(true);
+            else
+                ret.setIsRemovable(false);
+        }
+
+        if (!ret.fs().isEmpty()){
+            ReadUsageManager readUsageManager;
+            qlonglong freespace = 0;
+            qlonglong total = 0;
+            bool r = readUsageManager.readUsage(ret.path(), ret.fs(), freespace, total);
+            if (r){
+                ret.setFreespace(freespace);
+                ret.setTotal(total);
+            }
+            qDebug() << "read usage of" << ret.path() << r;
+        }
+    };
+    if(status){
+        QJsonParseError error;
+        QJsonDocument doc=QJsonDocument::fromJson(output.toLocal8Bit(),&error);
+        if (error.error == QJsonParseError::NoError){
+            QJsonObject devObj = doc.object();
+            foreach (QString key, devObj.keys()) {
+                if (key == "blockdevices"){
+                    QJsonArray arr = devObj.value(key).toArray();
+                    for (auto i = arr.begin(); i != arr.end(); ++i) {
+                        QJsonObject io = i->toObject();
+                        if (io.contains("mountpoint") && io["mountpoint"].toString() == mountPoint) {
+                            parseObject(io);
+                            break;
+                        }
+
+                        if (io.contains("children") && io["children"].isArray()) {
+                            QJsonArray children = io["children"].toArray();
+                            bool f = false;
+                            for (auto j = children.begin(); j != children.end(); ++j) {
+                                QJsonObject jo = j->toObject();
+                                if (jo.contains("mountpoint") && jo["mountpoint"].toString() == mountPoint) {
+                                    parseObject(jo);
+                                    f = true;
+                                    break;
+                                }
+                            }
+                            if (f) {
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+        }else{
+            qDebug() << error.errorString();
+        }
+    }else{
+        qDebug() << status << output << err;
+    }
+    return ret;
+}
+
 QString Partition::path() const
 {
     return m_path;
