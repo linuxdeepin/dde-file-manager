@@ -34,6 +34,7 @@
 #include "properties.h"
 #include "durl.h"
 #include "dfmglobal.h"
+#include "dabstractfileinfo.h"
 
 /**
  * @class FileUtils
@@ -65,6 +66,7 @@ public:
       const QIcon &defaultIcon = QIcon::fromTheme("application-x-executable"));
     static QString formatSize(qint64 num , bool withUnitVisible = true, int precision = 1, int forceUnit = -1, QStringList unitList = QStringList());
     static QString diskUsageString(qint64 usedSize, qint64 totalSize);
+    static DUrl newDocumentUrl(const DAbstractFileInfoPointer targetDirInfo, const QString& baseName, const QString& suffix);
     static QString newDocmentName(QString targetdir, const QString& baseName, const QString& suffix);
     static bool cpTemplateFileToTargetDir(const QString& targetdir, const QString& baseName, const QString& suffix, WId windowId);
 

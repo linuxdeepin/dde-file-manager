@@ -449,6 +449,31 @@ QString FileUtils::diskUsageString(qint64 usedSize, qint64 totalSize)
     return QString("%1/%2").arg(FileUtils::formatSize(usedSize, false, 0, forceUnit), FileUtils::formatSize(totalSize, true, 0, forceUnit, {"B", "K", "M", "G"}));
 }
 
+DUrl FileUtils::newDocumentUrl(const DAbstractFileInfoPointer targetDirInfo, const QString &baseName, const QString &suffix)
+{
+    if (targetDirInfo->isVirtualEntry()) {
+        return DUrl();
+    }
+
+    int i = 0;
+    QString fileName = suffix.isEmpty() ? QString("%1").arg(baseName) : QString("%1.%2").arg(baseName, suffix);
+    DUrl fileUrl = targetDirInfo->getUrlByChildFileName(fileName);
+    while (true) {
+        DAbstractFileInfoPointer newInfo = DFileService::instance()->createFileInfo(nullptr, fileUrl);
+        if (newInfo && newInfo->exists()) {
+            ++i;
+            fileName = suffix.isEmpty()
+                    ? QString("%1 %2").arg(baseName, QString::number(i))
+                    : QString("%1 %2.%3").arg(baseName, QString::number(i), suffix);
+            fileUrl = targetDirInfo->getUrlByChildFileName(fileName);
+        } else {
+            return fileUrl;
+        }
+    }
+
+    return DUrl();
+}
+
 QString FileUtils::newDocmentName(QString targetdir, const QString &baseName, const QString &suffix)
 {
     if (targetdir.isEmpty())

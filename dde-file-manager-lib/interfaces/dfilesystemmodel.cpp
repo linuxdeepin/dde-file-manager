@@ -1022,10 +1022,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
             continue;
         }
 
-        // TODO: 此处不应当特判协议，这里的特判是由于整理桌面视图下的项目并非都是整理桌面协议的 URL，
-        //       应当将整理桌面视图下的项目均使用整理桌面协议代理，然后移除特判。
-        //      （判断 parentUrl != rootUrl 应当保留）
-        if (info->parentUrl() != rootUrl && rootUrl.scheme() != DFMMD_SCHEME) {
+        if (info->parentUrl() != rootUrl) {
             continue;
         }
 

@@ -344,10 +344,9 @@ void AppController::actionAddToBookMark(const QSharedPointer<DFMUrlBaseEvent> &e
 
 void AppController::actionNewFolder(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    const QString targetDir = event->url().toLocalFile();
-    const QString name = FileUtils::newDocmentName(targetDir, tr("New Folder"), QString());
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
 
-    fileService->mkdir(event->sender(), DUrl::fromLocalFile(name));
+    fileService->mkdir(event->sender(), FileUtils::newDocumentUrl(info, tr("New Folder"), QString()));
 }
 
 void AppController::actionSelectAll(quint64 winId)
@@ -374,38 +373,30 @@ void AppController::actionClearTrash(const QObject *sender)
 
 void AppController::actionNewWord(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    const DUrl &fileUrl = event->url();
     int windowId = event->windowId();
-//    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("Document"), "doc");
-//    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
-    FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("Document"), "doc", windowId);
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
+    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Document"), "doc", windowId);
 }
 
 void AppController::actionNewExcel(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    const DUrl &fileUrl = event->url();
     int windowId = event->windowId();
-//    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("Spreadsheet"), "xls");
-//    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
-    FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("Spreadsheet"), "xls", windowId);
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
+    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Spreadsheet"), "xls", windowId);
 }
 
 void AppController::actionNewPowerpoint(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    const DUrl &fileUrl = event->url();
     int windowId = event->windowId();
-//    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("Presentation"), "ppt");
-//    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
-    FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("Presentation"), "ppt", windowId);
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
+    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Presentation"), "ppt", windowId);
 }
 
 void AppController::actionNewText(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    const DUrl &fileUrl = event->url();
     int windowId = event->windowId();
-//    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("Text"), "txt");
-//    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
-    FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("Text"), "txt", windowId);
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
+    FileUtils::cpTemplateFileToTargetDir(info->toLocalFile(), QObject::tr("Text"), "txt", windowId);
 }
 
 void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
