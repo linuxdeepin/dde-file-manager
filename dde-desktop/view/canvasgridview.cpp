@@ -582,7 +582,7 @@ void CanvasGridView::wheelEvent(QWheelEvent *event)
 
 void CanvasGridView::keyPressEvent(QKeyEvent *event)
 {
-    if (Q_UNLIKELY(DFMApplication::genericObtuselySetting()->value("ApplicationAttribute", "DisableDesktopShortcuts", false).toBool())) {
+    if (Q_UNLIKELY(DFMApplication::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopShortcuts", false).toBool())) {
         bool specialShortcut = false;
         if (event->modifiers() == Qt::NoModifier || event->modifiers() == Qt::KeypadModifier) {
             switch (event->key()) {
@@ -1159,7 +1159,7 @@ void CanvasGridView::focusOutEvent(QFocusEvent *event)
 
 void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
 {
-    if (Q_UNLIKELY(DFMApplication::genericObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool())) {
+    if (Q_UNLIKELY(DFMApplication::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool())) {
         return;
     }
 
