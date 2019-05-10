@@ -43,6 +43,7 @@
 #include <dfilemenumanager.h>
 #include <dfilewatcher.h>
 #include <dfmapplication.h>
+#include <dfmsettings.h>
 
 #include <QGSettings>
 
@@ -581,6 +582,28 @@ void CanvasGridView::wheelEvent(QWheelEvent *event)
 
 void CanvasGridView::keyPressEvent(QKeyEvent *event)
 {
+    if (Q_UNLIKELY(DFMApplication::genericObtuselySetting()->value("ApplicationAttribute", "DisableDesktopShortcuts", false).toBool())) {
+        bool specialShortcut = false;
+        if (event->modifiers() == Qt::NoModifier || event->modifiers() == Qt::KeypadModifier) {
+            switch (event->key()) {
+            case Qt::Key_Up:
+            case Qt::Key_Down:
+            case Qt::Key_Left:
+            case Qt::Key_Right:
+            case Qt::Key_Enter:
+            case Qt::Key_Return:
+                specialShortcut = true;
+                break;
+            default:
+                return;
+            }
+        }
+
+        if (!specialShortcut) {
+            return;
+        }
+    }
+
     QMap<QString, DUrl> selectUrlsMap;
     auto rootUrl = model()->rootUrl();
     bool canDeleted = true;
@@ -1136,6 +1159,10 @@ void CanvasGridView::focusOutEvent(QFocusEvent *event)
 
 void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
 {
+    if (Q_UNLIKELY(DFMApplication::genericObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool())) {
+        return;
+    }
+
     const QModelIndex &index = indexAt(event->pos());
     bool indexIsSelected = selectionModel()->isSelected(index);
     bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos()) && !indexIsSelected;
