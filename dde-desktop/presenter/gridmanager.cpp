@@ -784,6 +784,11 @@ void GridManager::reArrange()
     emit Presenter::instance()->setConfigList(d->positionProfile, kvList.first, kvList.second);
 }
 
+int GridManager::gridCount() const
+{
+    return d->coordWidth * d->coordHeight;
+}
+
 QPoint GridManager::forwardFindEmpty(QPoint start) const
 {
     auto size = gridSize();
