@@ -69,6 +69,7 @@ public:
 
     const static QString entryNameByEnum(DMD_TYPES singleType);
     static DMD_TYPES entryTypeByName(QString entryName);
+    static DUrl getVirtualEntryPath(DMD_TYPES oneType);
     static DUrl convertToDFMMDPath(const DUrl &oriUrl);
     static DUrl convertToDFMMDPath(const DUrl &oriUrl, DMD_TYPES oneType);
     static DUrl convertToRealPath(const DUrl &oneUrl);

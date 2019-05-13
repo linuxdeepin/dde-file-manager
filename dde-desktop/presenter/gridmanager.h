@@ -56,6 +56,7 @@ public:
     void toggleAutoMerge();
     void reArrange();
 
+    int gridCount() const;
     QPoint forwardFindEmpty(QPoint start) const;
     QSize gridSize() const;
     void updateGridSize(int w, int h);

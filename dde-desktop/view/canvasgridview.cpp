@@ -387,24 +387,41 @@ void CanvasGridView::toggleEntryExpandedState(const DUrl &url)
     }
 
     clearSelection();
-    // prepare root url
-    QString currentFragment = currentUrl().fragment();
-    DUrl targetUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER);
 
     // toggle expand state
-    DMD_TYPES oneType = MergedDesktopController::entryTypeByName(url.fileName());
-    virtualEntryExpandState[oneType] = !virtualEntryExpandState[oneType];
+    DMD_TYPES toggleType = MergedDesktopController::entryTypeByName(url.fileName());
+    virtualEntryExpandState[toggleType] = !virtualEntryExpandState[toggleType];
+    bool isExpand = virtualEntryExpandState[toggleType];
 
     // construct fragment which indicated the expanded entries
     QStringList expandedEntries;
-    for (unsigned int i = DMD_PICTURE; i <= DMD_OTHER; i++) {
+    int possibleChildCount = 0;
+    bool onlyExpandShowClickedEntry = false;
+    for (unsigned int i = DMD_FIRST_TYPE; i <= DMD_ALL_TYPE; i++) {
         DMD_TYPES oneType = static_cast<DMD_TYPES>(i);
-        if (virtualEntryExpandState[oneType]) {
+        if (oneType != DMD_FOLDER && virtualEntryExpandState[oneType]) {
             expandedEntries.append(MergedDesktopController::entryNameByEnum(oneType));
         }
+
+        // check if icon cound is greater than desktop grid count
+        possibleChildCount += 1; // 1: the virtual entry icon
+        if (isExpand && virtualEntryExpandState[oneType]) {
+            DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, MergedDesktopController::getVirtualEntryPath(oneType));
+            if (info) {
+                possibleChildCount += info->filesCount();
+            }
+        }
+        if (possibleChildCount > GridManager::instance()->gridCount()) {
+            onlyExpandShowClickedEntry = true;
+            break;
+        }
     }
+
+    // prepare root url
+    DUrl targetUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER);
+
     if (!expandedEntries.isEmpty()) {
-        targetUrl.setFragment(expandedEntries.join(','));
+        targetUrl.setFragment(onlyExpandShowClickedEntry ? MergedDesktopController::entryNameByEnum(toggleType) : expandedEntries.join(','));
     }
 
     // set root url (which will update the view)
