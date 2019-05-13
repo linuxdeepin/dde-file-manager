@@ -28,7 +28,7 @@
 QString DFMRegularExpression::checkWildcardAndToRegularExpression(const QString &pattern)
 {
     if (!pattern.contains('*') && !pattern.contains('?')) {
-        return pattern;
+        return DFMRegularExpression::wildcardToRegularExpression('*' + pattern + '*');
     }
 
     return DFMRegularExpression::wildcardToRegularExpression(pattern);
