@@ -39,7 +39,12 @@ Build-Depends:
  dh-systemd,
  deepin-anything-dev,
  deepin-anything-server-dev,
- libudisks2-qt5-dev
+ libudisks2-qt5-dev,
+ libxrender-dev,
+ libmtdev-dev,
+ libfontconfig1-dev,
+ libfreetype6-dev,
+ libegl1-mesa-dev
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 
