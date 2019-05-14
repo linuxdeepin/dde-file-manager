@@ -187,6 +187,16 @@ QString MergedDesktopFileInfo::genericIconName() const
     return DAbstractFileInfo::genericIconName();
 }
 
+DUrl MergedDesktopFileInfo::mimeDataUrl() const
+{
+    Q_D(const MergedDesktopFileInfo);
+    if (d->proxy) {
+        return d->proxy->mimeDataUrl();
+    }
+
+    return DAbstractFileInfo::mimeDataUrl();
+}
+
 bool MergedDesktopFileInfo::canRedirectionFileUrl() const
 {
     Q_D(const MergedDesktopFileInfo);

@@ -34,6 +34,8 @@ public:
     QString iconName() const override;
     QString genericIconName() const override;
 
+    DUrl mimeDataUrl() const override;
+
     bool canRedirectionFileUrl() const override;
     DUrl redirectedFileUrl() const override;
 
