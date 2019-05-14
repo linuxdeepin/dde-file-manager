@@ -79,16 +79,19 @@ protected:
     bool event(QEvent *event) override;
 
 private:
+#if !defined(DISABLE_SCREENSAVER) || !defined(DISABLE_WALLPAPER_CAROUSEL)
+    void adjustModeSwitcherPoint();
+    DSegmentedControl *m_switchModeControl;
+#endif
+
 #ifndef DISABLE_SCREENSAVER
     void setMode(int mode);
     void reLayoutTools();
-    void adjustModeSwitcherPoint();
 
     Mode m_mode = WallpaperMode;
     QHBoxLayout *m_toolLayout;
     QLabel *m_waitControlLabel;
     DSegmentedControl *m_waitControl;
-    DSegmentedControl *m_switchModeControl;
     QCheckBox *m_lockScreenBox;
 #else
     const Mode m_mode = WallpaperMode;
