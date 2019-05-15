@@ -408,6 +408,11 @@ qreal dRound64(qreal num, int count = 1)
  */
 QString FileUtils::formatSize(qint64 num, bool withUnitVisible, int precision, int forceUnit, QStringList unitList)
 {
+    if (num < 0) {
+        qWarning() << "Negative number passed to formatSize():" << num;
+        num = 0;
+    }
+
     bool isForceUnit = (forceUnit >= 0);
     QStringList list;
     qreal fileSize(num);
@@ -446,7 +451,8 @@ QString FileUtils::diskUsageString(qint64 usedSize, qint64 totalSize)
     const qint64 gb = 1024 * mb;
     int forceUnit = (totalSize < gb && totalSize > 0) ? 2 : 3;
 
-    return QString("%1/%2").arg(FileUtils::formatSize(usedSize, false, 0, forceUnit), FileUtils::formatSize(totalSize, true, 0, forceUnit, {"B", "K", "M", "G"}));
+    return QString("%1/%2").arg(FileUtils::formatSize(usedSize, false, 0, forceUnit),
+                                FileUtils::formatSize(totalSize, true, 0, forceUnit, {"B", "K", "M", "G"}));
 }
 
 DUrl FileUtils::newDocumentUrl(const DAbstractFileInfoPointer targetDirInfo, const QString &baseName, const QString &suffix)
