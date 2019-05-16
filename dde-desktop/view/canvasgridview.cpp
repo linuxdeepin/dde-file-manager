@@ -630,7 +630,10 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             canDeleted = false;
             continue;
         }
-        selectUrlsMap.insert(url.toString(), url);
+        const DAbstractFileInfoPointer fileInfo = model()->fileInfo(index);
+        if (fileInfo && !fileInfo->isVirtualEntry()) {
+            selectUrlsMap.insert(url.toString(), url);
+        }
     }
     selectUrlsMap.remove(rootUrl.toString());
 
@@ -1455,7 +1458,7 @@ const DUrlList CanvasGridView::selectedUrls() const
     DUrlList urls;
     for (auto index : selects) {
         auto info = model()->fileInfo(index);
-        if (info) {
+        if (info && !info->isVirtualEntry()) {
             urls << info->fileUrl();
         }
     }
