@@ -213,7 +213,6 @@ DFMSideBarItem *DFMSideBarItemGroup::takeItem(int index)
     if (index >= 0 && index < itemList.count()) {
         item = itemList.takeAt(index);
         itemHolder->removeWidget(item);
-        itemConnectionUnregister(item);
         item->setGroupName(QString());
         bottomSeparator->setVisible(visibleItemCount() != 0);
     }
@@ -225,7 +224,6 @@ DFMSideBarItem *DFMSideBarItemGroup::takeItem(DFMSideBarItem *item)
 {
     itemList.removeOne(item);
     itemHolder->removeWidget(item);
-    itemConnectionUnregister(item);
     item->setGroupName(QString());
 
     bottomSeparator->setVisible(visibleItemCount() != 0);
