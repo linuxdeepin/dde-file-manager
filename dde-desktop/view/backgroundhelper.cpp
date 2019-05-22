@@ -70,6 +70,8 @@ QList<QLabel *> BackgroundHelper::allBackgrounds() const
 
 void BackgroundHelper::setBackground(const QString &path)
 {
+    qInfo() << "path:" << path;
+
     currentWallpaper = path.startsWith("file:") ? QUrl(path).toLocalFile() : path;
     backgroundPixmap = QPixmap(currentWallpaper);
 
@@ -186,6 +188,8 @@ void BackgroundHelper::updateBackground(QLabel *l)
 
     pix.setDevicePixelRatio(l->devicePixelRatioF());
     l->setPixmap(pix);
+
+    qInfo() << l->windowHandle()->screen() << currentWallpaper << pix;
 }
 
 void BackgroundHelper::updateBackground()
@@ -233,6 +237,8 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
         l->show();
 
     connect(screen, &QScreen::geometryChanged, l, [l, this, screen] () {
+        qDebug() << "screen geometry changed:" << screen;
+
         bool hi_active = QHighDpiScaling::m_active;
         QHighDpiScaling::m_active = false;
         l->windowHandle()->handle()->setGeometry(screen->handle()->geometry());
@@ -247,6 +253,8 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
 
     Q_EMIT backgroundGeometryChanged(l);
     Q_EMIT backgroundAdded(l);
+
+    qInfo() << screen;
 }
 
 void BackgroundHelper::onScreenRemoved(QScreen *screen)
@@ -256,4 +264,6 @@ void BackgroundHelper::onScreenRemoved(QScreen *screen)
 
         l->deleteLater();
     }
+
+    qInfo() << screen;
 }
