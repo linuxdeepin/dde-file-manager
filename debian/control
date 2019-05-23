@@ -37,8 +37,8 @@ Build-Depends:
  deepin-qt5config,
  libdmr-dev,
  dh-systemd,
- deepin-anything-dev,
- deepin-anything-server-dev,
+ deepin-anything-dev[i386 amd64],
+ deepin-anything-server-dev[i386 amd64],
  libudisks2-qt5-dev,
  libxrender-dev,
  libmtdev-dev,
@@ -55,8 +55,8 @@ Depends:
  ${misc:Depends},
  libdde-file-manager( =${binary:Version}),
  socat,
- deepin-anything-dkms,
- deepin-anything-server
+ deepin-anything-dkms[i386 amd64],
+ deepin-anything-server[i386 amd64]
 Recommends: dde-qt5integration, avfs, samba
 Description: File manager front end
  File manager front-end of Deepin OS
@@ -84,7 +84,7 @@ Depends:
  gvfs-backends(>=1.27.3),
  cryptsetup,
  libkf5codecs5,
- deepin-anything-libs
+ deepin-anything-libs[i386 amd64]
 Breaks: dde-file-manager(<=1.2.3-3)
 Multi-Arch: same
 Description: DDE File Manager library
