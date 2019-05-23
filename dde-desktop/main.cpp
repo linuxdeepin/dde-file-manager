@@ -121,8 +121,9 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (fileDialogOnly && getuid() == 0) {
-        qDebug() << "Current UID == 0, the `--file-dialog-only` argument is ignored.";
+    if (fileDialogOnly && getuid() != 0) {
+        // --file-dialog-only should only used by `root`.
+        qDebug() << "Current UID != 0, the `--file-dialog-only` argument is ignored.";
         fileDialogOnly = false;
     }
 
