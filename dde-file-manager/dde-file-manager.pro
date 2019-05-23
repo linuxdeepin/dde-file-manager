@@ -62,7 +62,7 @@ DEFINES += APPSHAREDIR=\\\"$$PREFIX/share/$$TARGET\\\"
 target.path = $$BINDIR
 
 desktop.path = $${PREFIX}/share/applications/
-isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
+isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
     desktop.files = $$PWD/mips/$${TARGET}.desktop
 }else{
     desktop.files = $${TARGET}.desktop
