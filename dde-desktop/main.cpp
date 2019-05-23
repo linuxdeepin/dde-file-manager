@@ -16,6 +16,8 @@
 #include <DLog>
 #include <DApplication>
 
+#include <unistd.h>
+
 #include <dfmglobal.h>
 #include <dfmapplication.h>
 
@@ -33,7 +35,6 @@
 #include "filemanager1_adaptor.h"
 #include "dbusfilemanager1.h"
 
-#include <QApplication>
 
 using namespace Dtk::Core;
 using namespace Dtk::Widget;
@@ -118,6 +119,11 @@ int main(int argc, char *argv[])
             fileDialogOnly = true;
             break;
         }
+    }
+
+    if (fileDialogOnly && getuid() == 0) {
+        qDebug() << "Current UID == 0, the `--file-dialog-only` argument is ignored.";
+        fileDialogOnly = false;
     }
 
     if (fileDialogOnly) {
@@ -208,7 +214,9 @@ int main(int argc, char *argv[])
         // ability to show file selection dialog
         if (!registerDialogDBus()) {
             qWarning() << "Register dialog dbus failed.";
-            return 1;
+            if (fileDialogOnly) {
+                return 1;
+            }
         }
 
         if (!registerFileManager1DBus()) {
