@@ -1,3 +1,24 @@
+<a name="4.8.5"></a>
+## 4.8.5 (2019-05-23)
+
+
+#### Bug Fixes
+
+*   desktop won't start when fileDialogOnly process exist ([a9b91e0c](https://github.com/linuxdeepin/dde-file-manager/commit/a9b91e0cdc6a2658d8abaadc8056c531654f80d9))
+*   use customQtThemeConfigPathByUserHome() ([1275fdb0](https://github.com/linuxdeepin/dde-file-manager/commit/1275fdb0e8167bebc978b21510a72cd954ff6899))
+*   sidebar bookmark item cannot click after reorder ([1f0e9f3d](https://github.com/linuxdeepin/dde-file-manager/commit/1f0e9f3d49e69a53d35f9961cae662a47141065e))
+*   should no longer show virtual entry property dialog ([c41bf089](https://github.com/linuxdeepin/dde-file-manager/commit/c41bf0892ad4364ee346e26cfb94c37a333d7ffa))
+*   disk size sometimes can display negative number ([63d08b6a](https://github.com/linuxdeepin/dde-file-manager/commit/63d08b6af80cf42acff0dc3f7f44f4fb961b03fb))
+*   drag file to other app from mergeddesktop ([2bd8374d](https://github.com/linuxdeepin/dde-file-manager/commit/2bd8374d8f85b6ed1a5fcfb2096666d240fd96cf))
+*   search keyword contains brackets ([b256b5b3](https://github.com/linuxdeepin/dde-file-manager/commit/b256b5b39d2c8504fc5e9f615609f775426eb5a3))
+
+#### Features
+
+*   check if expand entry will make desktop full ([afd87d71](https://github.com/linuxdeepin/dde-file-manager/commit/afd87d71a59d067649e02fe57d16fa20ee6db13b))
+* **pro:**  able to disable desktop shortcut and context menu ([3e05fe49](https://github.com/linuxdeepin/dde-file-manager/commit/3e05fe499973d786638108bc1c0b189f68ad2588))
+
+
+
 <a name="4.8.4"></a>
 ## 4.8.4 (2019-05-09)
 
