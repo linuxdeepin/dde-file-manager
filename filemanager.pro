@@ -17,7 +17,15 @@ isEqual(BUILD_MINIMUM, YES){
 #    dde-sharefiles
 }
 
+isEqual(ARCH, x86_64) | isEqual(ARCH, i686) {
+    message("Build arch:" $$ARCH)
+} else {
+    message("Build arch:" $$ARCH "Deepin Anything support disabled")
+    CONFIG += DISABLE_ANYTHING
+}
+
 !CONFIG(DISABLE_ANYTHING) {
+    message("Deepin Anything server plugin enabled for" $$ARCH)
     SUBDIRS += deepin-anything-server-plugins
 }
 
