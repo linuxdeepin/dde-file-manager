@@ -105,10 +105,19 @@ QVector<MenuAction> RecentFileInfo::menuActionList(DAbstractFileInfo::MenuType t
     qDebug() << actions;
 
     actions.insert(1, MenuAction::OpenFileLocation);
-    actions.insert(actions.indexOf(MenuAction::Delete), MenuAction::RemoveFromRecent);
+    int indexOfDeleteMenuAction = actions.indexOf(MenuAction::Delete);
+    if (indexOfDeleteMenuAction == -1) {
+        int indexOfCompleteDelectionMenuAction = actions.indexOf(MenuAction::CompleteDeletion);
+        if (indexOfCompleteDelectionMenuAction != -1) {
+            actions.insert(indexOfCompleteDelectionMenuAction, MenuAction::RemoveFromRecent);
+        }
+    } else {
+        actions.insert(indexOfDeleteMenuAction, MenuAction::RemoveFromRecent);
+    }
     actions.removeOne(MenuAction::Cut);
     actions.removeOne(MenuAction::Rename);
     actions.removeOne(MenuAction::Delete);
+    actions.removeOne(MenuAction::CompleteDeletion);
     actions.removeOne(MenuAction::DecompressHere);
 
     return actions;
