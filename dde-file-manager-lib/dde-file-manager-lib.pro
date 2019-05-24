@@ -45,6 +45,7 @@ isEqual(BUILD_MINIMUM, YES){
 }
 
 CONFIG(DISABLE_ANYTHING) {
+    message("Quick search and tag support disabled dut to Anything support disabled.")
     DEFINES += DISABLE_QUICK_SEARCH
     DEFINES += DISABLE_TAG_SUPPORT
 }
