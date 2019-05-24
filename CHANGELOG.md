@@ -1,3 +1,13 @@
+<a name="4.8.5.1"></a>
+## 4.8.5.1 (2019-05-24)
+
+
+#### Bug Fixes
+
+*   Anything support disabled for non x86 arch ([990795ff](https://github.com/linuxdeepin/dde-file-manager/commit/990795ff3a9863b52afdd02558864855f7b9d0c7))
+
+
+
 <a name="4.8.5"></a>
 ## 4.8.5 (2019-05-23)
 
