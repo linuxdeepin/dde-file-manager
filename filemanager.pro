@@ -1,5 +1,7 @@
 TEMPLATE  = subdirs
 
+include(./common/common.pri)
+
 SUBDIRS  += \
     dde-file-manager \
     dde-file-manager-daemon \
@@ -15,13 +17,6 @@ isEqual(BUILD_MINIMUM, YES){
     SUBDIRS += usb-device-formatter
 #    dde-advanced-property-plugin \
 #    dde-sharefiles
-}
-
-isEqual(ARCH, x86_64) | isEqual(ARCH, i686) {
-    message("Build arch:" $$ARCH)
-} else {
-    message("Build arch:" $$ARCH "Deepin Anything support disabled")
-    CONFIG += DISABLE_ANYTHING
 }
 
 !CONFIG(DISABLE_ANYTHING) {

@@ -15,6 +15,13 @@ unix {
         DEFINES += SPLICE_CP
     }
 
+    isEqual(ARCH, x86_64) | isEqual(ARCH, i686) {
+        message("Build arch:" $$ARCH)
+    } else {
+        message("Build arch:" $$ARCH "Deepin Anything support disabled")
+        CONFIG += DISABLE_ANYTHING
+    }
+
     isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
         DEFINES += ARCH_MIPSEL ARCH_SW
 
