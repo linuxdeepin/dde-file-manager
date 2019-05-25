@@ -285,8 +285,8 @@ void ComputerViewItem::adjustPosition()
 {
     m_sizeLabel->setFixedWidth(this->width());
     m_sizeLabel->setAlignment(Qt::AlignCenter);
-    m_sizeLabel->move(0, getTextEdit()->y() + getTextEdit()->height());
-    m_progressLine->move((this->width() - m_progressLine->width()) / 2, m_sizeLabel->y() + m_sizeLabel->height() + 3);
+    m_sizeLabel->move(0, getTextEdit()->y() + getTextEdit()->height() - 7);
+    m_progressLine->move((this->width() - m_progressLine->width()) / 2 , m_sizeLabel->y() + m_progressLine->height() + 25);
 }
 
 bool ComputerViewItem::checked() const
