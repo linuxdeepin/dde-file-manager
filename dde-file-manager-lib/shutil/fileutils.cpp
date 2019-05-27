@@ -66,7 +66,6 @@ extern "C" {
 
 DFM_USE_NAMESPACE
 
-QString FileUtils::WallpaperKey = "pictureUri";
 QString FileUtils::XDG_RUNTIME_DIR = "";
 
 /**
@@ -699,8 +698,9 @@ QString FileUtils::defaultTerminalPath()
 
 bool FileUtils::setBackground(const QString &pictureFilePath)
 {
-    QGSettings gsettings("com.deepin.wrap.gnome.desktop.background", "/com/deepin/wrap/gnome/desktop/background/");
-    gsettings.set(WallpaperKey, pictureFilePath);
+    QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.daemon.Appearance", "/com/deepin/daemon/Appearance", "com.deepin.daemon.Appearance", "Set");
+    msg.setArguments({"Background", pictureFilePath});
+    QDBusConnection::sessionBus().asyncCall(msg);
 
     return true;
 }
