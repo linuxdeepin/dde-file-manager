@@ -439,6 +439,8 @@ void FilePreviewDialog::switchToPage(int index)
 
             if (preview->setFileUrl(m_fileList.at(index)))
                 break;
+            else if (info->canRedirectionFileUrl() && preview->setFileUrl(info->redirectedFileUrl()))
+                break;
             else
                 preview->deleteLater();
         }
