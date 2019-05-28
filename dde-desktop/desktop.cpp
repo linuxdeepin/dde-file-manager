@@ -86,6 +86,9 @@ static void setWindowFlag(QWidget *w, Qt::WindowType flag, bool on)
 
 void Desktop::onBackgroundEnableChanged()
 {
+    qInfo() << "Primary Screen:" << qApp->primaryScreen();
+    qInfo() << "Background enabled:" << d->background->isEnabled();
+
     if (d->background->isEnabled()) {
         QLabel *background = d->background->backgroundForScreen(qApp->primaryScreen());
         d->screenFrame.setAttribute(Qt::WA_NativeWindow, false);
@@ -124,6 +127,9 @@ void Desktop::onBackgroundGeometryChanged(QWidget *l)
     if (!primaryBackground) {
         return;
     }
+
+    qInfo() << "primaryBackground widget geometry: " << primaryBackground->geometry()
+            << "changedBackground widget geometry:" << l->geometry();
 
     primaryBackground->activateWindow();
     QMetaObject::invokeMethod(primaryBackground, "raise", Qt::QueuedConnection);
