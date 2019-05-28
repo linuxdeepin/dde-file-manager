@@ -1659,12 +1659,12 @@ static inline QRect fix_available_geometry()
     QList<QRect> strutParialRectList;
 
     auto screens = qApp->screens();
-    auto structParialInfoList = Xcb::XcbMisc::instance().find_dock_window();
 
     // virtualGeometry is same on all screen, so just get first one
     auto virtualGeometry = qApp->screens().value(0)->virtualGeometry();
     // try 5 time
     for (int i = 0; i < 5; ++i) {
+        auto structParialInfoList = Xcb::XcbMisc::instance().find_dock_window();
         for (auto info : structParialInfoList) {
             xcb_ewmh_wm_strut_partial_t st = Xcb::XcbMisc::instance().get_strut_partial(info.winId);
             qDebug() << "\n"
