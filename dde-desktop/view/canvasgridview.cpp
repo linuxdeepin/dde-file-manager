@@ -55,6 +55,7 @@
 #include "../desktop.h"
 #include "../dbus/dbusdock.h"
 #include "../config/config.h"
+#include "backgroundhelper.h"
 
 #include "interfaces/private/mergeddesktop_common_p.h"
 #include "util/xcb/xcb.h"
@@ -1799,6 +1800,13 @@ void CanvasGridView::updateGeometry(const QRect &geometry)
     d->canvasRect = newGeometry;
     qDebug() << "set newGeometry" << newGeometry << qApp->primaryScreen()->geometry();
     d->waterMaskFrame->updatePosition();
+
+    /*
+     * For some reason, BackgroundHelper fails to resize the wallpaper when switching
+     * a single active monitor among a multi-monitor setup, while CanvasGridView handles
+     * this just fine. So we trigger an extra background resize manually here.
+     */
+    BackgroundHelper::getDesktopInstance()->updateBackground((QLabel*)this->parent());
 
     updateCanvas();
     repaint();

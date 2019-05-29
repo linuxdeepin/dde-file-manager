@@ -33,6 +33,7 @@ DWIDGET_USE_NAMESPACE
 class BackgroundHelper : public QObject
 {
     Q_OBJECT
+    friend class CanvasGridView;
 public:
     explicit BackgroundHelper(bool preview = false, QObject *parent = nullptr);
     ~BackgroundHelper();
@@ -69,6 +70,10 @@ private:
     QString currentWallpaper;
     QPixmap backgroundPixmap;
     QMap<QScreen*, QLabel*> backgroundMap;
+    static BackgroundHelper *desktop_instance;
+
+public:
+    static BackgroundHelper* getDesktopInstance();
 };
 
 #endif // BACKGROUNDHELPER_H

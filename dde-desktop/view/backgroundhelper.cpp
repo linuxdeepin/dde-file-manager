@@ -29,6 +29,8 @@
 #include <private/qhighdpiscaling_p.h>
 #undef private
 
+BackgroundHelper *BackgroundHelper::desktop_instance = nullptr;
+
 BackgroundHelper::BackgroundHelper(bool preview, QObject *parent)
     : QObject(parent)
     , m_previuew(preview)
@@ -39,6 +41,7 @@ BackgroundHelper::BackgroundHelper(bool preview, QObject *parent)
                 this, &BackgroundHelper::onWMChanged);
         connect(windowManagerHelper, &DWindowManagerHelper::hasCompositeChanged,
                 this, &BackgroundHelper::onWMChanged);
+        desktop_instance = this;
     }
 
     onWMChanged();
@@ -50,6 +53,11 @@ BackgroundHelper::~BackgroundHelper()
         l->hide();
         l->deleteLater();
     }
+}
+
+BackgroundHelper* BackgroundHelper::getDesktopInstance()
+{
+    return desktop_instance;
 }
 
 bool BackgroundHelper::isEnabled() const
@@ -172,6 +180,8 @@ void BackgroundHelper::updateBackground(QLabel *l)
         return;
 
     QScreen *s = l->windowHandle()->screen();
+    l->windowHandle()->handle()->setGeometry(s->handle()->geometry());
+
     const QSize trueSize = s->handle()->geometry().size();
     QPixmap pix = backgroundPixmap;
 
