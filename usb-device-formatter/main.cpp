@@ -67,27 +67,8 @@ int main(int argc, char *argv[])
     qputenv("DESKTOP_SESSION", "deepin");
 
     if (qEnvironmentVariableIsSet("PKEXEC_UID")) {
-        const quint32 pkexec_uid = qgetenv("PKEXEC_UID").toUInt();
-        const QDir user_home(getpwuid(pkexec_uid)->pw_dir);
-
-        QFile pam_file(user_home.absoluteFilePath(".pam_environment"));
-
-        if (pam_file.open(QIODevice::ReadOnly)) {
-            while (!pam_file.atEnd()) {
-                const QByteArray &line = pam_file.readLine().simplified();
-
-                if (line.startsWith("QT_SCALE_FACTOR")) {
-                    const QByteArrayList &list = line.split('=');
-
-                    if (list.count() == 2) {
-                        qputenv("QT_SCALE_FACTOR", list.last());
-                        break;
-                    }
-                }
-            }
-
-            pam_file.close();
-        }
+        const quint32 pkexecUID = qgetenv("PKEXEC_UID").toUInt();
+        DApplication::customQtThemeConfigPathByUserHome(getpwuid(pkexecUID)->pw_dir);
     }
 
     //Load DXcbPlugin
