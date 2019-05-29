@@ -1119,7 +1119,9 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
             if (virtualEntryExpandState[oneType]) {
                 // do draw mask here
                 static QIcon expandMaskIcon = QIcon::fromTheme("folder-stack-mask");
-                painter.drawImage(itemIconGeomerty(index), expandMaskIcon.pixmap(cellSize()).toImage());
+                const QRect itemRect = itemIconGeomerty(index);
+                QPixmap pixmap = DStyledItemDelegate::getIconPixmap(expandMaskIcon, itemRect.size(), devicePixelRatioF());
+                painter.drawPixmap(itemRect.topLeft(), pixmap);
             }
         }
         painter.restore();
