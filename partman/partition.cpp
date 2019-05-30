@@ -71,12 +71,11 @@ Partition Partition::getPartitionByDevicePath(const QString &devicePath)
                     if (obj.contains("mountpoint")){
                         p.setMountPoint(obj.value("mountpoint").toString());
                     }
-                    if(obj.contains("rm")){
-                        QString data = obj.value("rm").toString();
-                        if(data == "1")
-                            p.setIsRemovable(true);
-                        else
-                            p.setIsRemovable(false);
+                    if (obj.contains("rm")) {
+                        // blumia: `lsblk -J` may return value like `1`(old behavior) or `true`(changed in util-linux v2.33).
+                        //         So we convert it to QVariant and use its toBool() to make sure the result is correct.
+                        QVariant data(obj.value("rm"));
+                        p.setIsRemovable(data.toBool());
                     }
 
                     if (!p.fs().isEmpty()){
@@ -127,11 +126,8 @@ Partition Partition::getPartitionByMountPoint(const QString &mountPoint)
             ret.setMountPoint(obj.value("mountpoint").toString());
         }
         if(obj.contains("rm")){
-            QString data = obj.value("rm").toString();
-            if(data == "1")
-                ret.setIsRemovable(true);
-            else
-                ret.setIsRemovable(false);
+            QVariant data(obj.value("rm"));
+            ret.setIsRemovable(data.toBool());
         }
 
         if (!ret.fs().isEmpty()){
