@@ -1036,11 +1036,8 @@ void GvfsMountManager::listMountsBylsblk()
                             p.setUuid(obj.value("uuid").toString());
                         }
                         if(obj.contains("rm")){
-                            QString data = obj.value("rm").toString();
-                            if(data == "1")
-                                p.setIsRemovable(true);
-                            else
-                                p.setIsRemovable(false);
+                            QVariant data(obj.value("rm"));
+                            p.setIsRemovable(data.toBool());
                         }
 
                         p.setPath(QString("/dev/%1").arg(p.name()));
