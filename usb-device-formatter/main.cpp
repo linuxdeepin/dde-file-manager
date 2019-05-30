@@ -98,9 +98,14 @@ int main(int argc, char *argv[])
     //Command line
     CMDManager::instance()->process(a);
 
+    // Check if we need display help text.
+    if (CMDManager::instance()->positionalArguments().isEmpty()) {
+        CMDManager::instance()->showHelp();
+    }
+
     //Check if exists path
     const QString path = CMDManager::instance()->getPath();
-    if(path.isEmpty() || !QFile::exists(path)){
+    if (path.isEmpty() || !path.startsWith("/dev/") || !QFile::exists(path)) {
         QString message = QObject::tr("Device does not exist");
         MessageDialog d(message, 0);
         d.exec();

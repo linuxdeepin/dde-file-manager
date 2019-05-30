@@ -37,8 +37,10 @@ public:
     static CMDManager* instance();
     void process(const QApplication &app);
     void init();
-    bool isSet(const QString& name);
+    bool isSet(const QString& name) const;
     QString getPath();
+    QStringList positionalArguments() const;
+    void showHelp(int exitCode = 0);
     int getWinId();
 
 signals:
