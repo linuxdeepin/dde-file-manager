@@ -44,18 +44,34 @@ void CMDManager::init()
 {
     m_parser.addOption(m_modelModeOpt);
     m_parser.setApplicationDescription("Usb Device Formatter");
+    m_parser.addPositionalArgument("device-path", "The external device path to format. (required)");
     m_parser.addHelpOption();
     m_parser.addVersionOption();
 }
 
-bool CMDManager::isSet(const QString &name)
+bool CMDManager::isSet(const QString &name) const
 {
     return m_parser.isSet(name);
 }
 
 QString CMDManager::getPath()
 {
-    return m_parser.positionalArguments().at(0);
+    QStringList positionalArguments = m_parser.positionalArguments();
+    if (positionalArguments.count() > 0) {
+        return m_parser.positionalArguments().at(0);
+    }
+
+    return QString();
+}
+
+QStringList CMDManager::positionalArguments() const
+{
+    return m_parser.positionalArguments();
+}
+
+void CMDManager::showHelp(int exitCode)
+{
+    return m_parser.showHelp(exitCode);
 }
 
 int CMDManager::getWinId()
