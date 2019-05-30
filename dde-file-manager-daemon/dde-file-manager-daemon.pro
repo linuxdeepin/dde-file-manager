@@ -134,7 +134,6 @@ HEADERS += \
 target.path = /usr/bin
 
 poliktpolicy.path = /usr/share/polkit-1/actions
-poliktpolicy.files = dbusservice/com.deepin.filemanager.daemon.policy
 
 systembusconf.path = /etc/dbus-1/system.d
 systembusconf.files = dbusservice/com.deepin.filemanager.daemon.conf
