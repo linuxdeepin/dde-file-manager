@@ -1,3 +1,25 @@
+<a name="4.8.6.1"></a>
+## 4.8.6.1 (2019-06-01)
+
+
+#### Bug Fixes
+
+*   should require auth ([dcc549c2](https://github.com/linuxdeepin/dde-file-manager/commit/dcc549c2b3ac6aa9af1552b3d813e3027464925e))
+*   remove com.deepin.filemanager.daemon.policy ([b18c95b2](https://github.com/linuxdeepin/dde-file-manager/commit/b18c95b271b263cb52e26771b80b1bff8ecedbcc))
+*   several usb-device-formatter issues ([155fa8cf](https://github.com/linuxdeepin/dde-file-manager/commit/155fa8cf33b26c6dee870af5dbbff4b8e4aa6f6c))
+*   lsar -J result changed after util-linux v2.33 ([64247173](https://github.com/linuxdeepin/dde-file-manager/commit/64247173a042283529ee0118e0ad442227bd9a13))
+*   wallpaper geometry not updated after switching monitor configuration. ([2e98db25](https://github.com/linuxdeepin/dde-file-manager/commit/2e98db2556eb0fa78ad1d75e8e428f89105f9801))
+*   merged desktop HiDPI icon blur ([2d1d1b2d](https://github.com/linuxdeepin/dde-file-manager/commit/2d1d1b2dfc9a0342639081f9c85843651e643678))
+*   redirect once for share panel in property dialog ([a5a35225](https://github.com/linuxdeepin/dde-file-manager/commit/a5a3522592822dab38cd74777ee7bcdb7683042b))
+*   update the geometry of the background widget before emit the backgroundGeometryChanged signal ([e23460b5](https://github.com/linuxdeepin/dde-file-manager/commit/e23460b5858c0c829a487794d4b1b52824b07484))
+*   desktop icons obscured by dock if scaling is enabled ... ([4b64fa31](https://github.com/linuxdeepin/dde-file-manager/commit/4b64fa312192df4d8434b268eb8cd32cf83479e6))
+*   also try redirected URL for previewing. ([69e01d9a](https://github.com/linuxdeepin/dde-file-manager/commit/69e01d9a541c49c3012f74e77aeaf4dfdd762898))
+*   dde-file-manager/dde-xdg-user-dirs-update set to executable ([10deedc8](https://github.com/linuxdeepin/dde-file-manager/commit/10deedc89191bf683f594ab7748e66fb24589adc))
+*   crash if cannot found Delete menu action for Recent scheme ([082a2701](https://github.com/linuxdeepin/dde-file-manager/commit/082a27014fc0617c238a449667a83993387edcd9))
+* **dev-formatter:**  use customQtThemeConfigPathByUserHome() ([6da134e7](https://github.com/linuxdeepin/dde-file-manager/commit/6da134e7f9778714d23aec32f510cd29765aa1ef))
+
+
+
 <a name="4.8.5.1"></a>
 ## 4.8.5.1 (2019-05-24)
 
