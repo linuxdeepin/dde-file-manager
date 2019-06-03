@@ -2333,27 +2333,27 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
         menu->insertAction(pluginActions.at(0), separator);
     }
 
-    QAction display(menu);
-    display.setText(tr("Display Settings"));
-    display.setData(DisplaySettings);
-    menu->addAction(&display);
+//    QAction display(menu);
+//    display.setText(tr("Display Settings"));
+//    display.setData(DisplaySettings);
+//    menu->addAction(&display);
 
-    QAction corner(menu);
-    QGSettings gsetting("com.deepin.dde.desktop", "/com/deepin/dde/desktop/");
-    if (gsetting.keys().contains("enableHotzoneSettings") && gsetting.get("enable-hotzone-settings").toBool()) {
-        corner.setText(tr("Corner Settings"));
-        corner.setData(CornerSettings);
-        menu->addAction(&corner);
-    }
+//    QAction corner(menu);
+//    QGSettings gsetting("com.deepin.dde.desktop", "/com/deepin/dde/desktop/");
+//    if (gsetting.keys().contains("enableHotzoneSettings") && gsetting.get("enable-hotzone-settings").toBool()) {
+//        corner.setText(tr("Corner Settings"));
+//        corner.setData(CornerSettings);
+//        menu->addAction(&corner);
+//    }
 
-    QAction wallpaper(menu);
-#ifdef DISABLE_SCREENSAVER
-    wallpaper.setText(tr("Set Wallpaper"));
-#else
-    wallpaper.setText(tr("Wallpaper and Screensaver"));
-#endif
-    wallpaper.setData(WallpaperSettings);
-    menu->addAction(&wallpaper);
+//    QAction wallpaper(menu);
+//#ifdef DISABLE_SCREENSAVER
+//    wallpaper.setText(tr("Set Wallpaper"));
+//#else
+//    wallpaper.setText(tr("Wallpaper and Screensaver"));
+//#endif
+//    wallpaper.setData(WallpaperSettings);
+////    menu->addAction(&wallpaper);
 
     menu->removeAction(propertyAction);
     menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this);
@@ -2409,6 +2409,8 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     } else {
         unusedList << MenuAction::SendToDesktop;
     }
+
+    unusedList << MenuAction::TagInfo << MenuAction::TagFilesUseColor << MenuAction::Share << MenuAction::UnShare;
 
     //totally use dde file manager libs for menu actions
     auto *menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, winId());
