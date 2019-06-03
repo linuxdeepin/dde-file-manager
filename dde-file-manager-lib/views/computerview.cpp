@@ -274,7 +274,7 @@ bool ComputerViewItem::eventFilter(QObject *obj, QEvent *event)
 bool ComputerViewItem::event(QEvent *event)
 {
     if (event->type() == QEvent::Resize) {
-        resize(width(), getIconLabel()->height() + getTextEdit()->height() + ICON_MODE_ICON_SPACING + 45);
+        resize(width(), getIconLabel()->height() + TEXT_LINE_HEIGHT + ICON_MODE_ICON_SPACING + 90);
         adjustPosition();
         return true;
     }
@@ -285,8 +285,8 @@ void ComputerViewItem::adjustPosition()
 {
     m_sizeLabel->setFixedWidth(this->width());
     m_sizeLabel->setAlignment(Qt::AlignCenter);
-    m_sizeLabel->move(0, getTextEdit()->y() + getTextEdit()->height() - 7);
-    m_progressLine->move((this->width() - m_progressLine->width()) / 2 , m_sizeLabel->y() + m_progressLine->height() + 25);
+    m_sizeLabel->move(0, getTextEdit()->y() + getTextEdit()->height());
+    m_progressLine->move((this->width() - m_progressLine->width()) / 2, m_sizeLabel->y() + m_sizeLabel->height() + 3);
 }
 
 bool ComputerViewItem::checked() const
