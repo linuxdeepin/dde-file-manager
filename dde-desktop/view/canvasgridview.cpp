@@ -341,7 +341,7 @@ void CanvasGridView::onWMHasCompositeChanged()
         connect(d->wmInter, &WMInter::serviceValidChanged, this, &CanvasGridView::onWMHasCompositeChanged);
     }
 
-    if (!d->wmDBusIsValid() || !d->windowManagerHelper->hasComposite()) {
+    if (!d->wmDBusIsValid() /*|| !d->windowManagerHelper->hasComposite()*/) {
         // 对象已存在时只需要更新壁纸
         if (d->backgroundLabel) {
             d->updateBackground(devicePixelRatioF());
@@ -349,7 +349,7 @@ void CanvasGridView::onWMHasCompositeChanged()
             return;
         }
 
-        d->gsettings = new QGSettings("com.deepin.dde.appearance", "", this);
+        d->gsettings = new QGSettings("org.mate.background", "", this);
         d->currentWorkspaceIndex = 0;
         d->backgroundLabel = new QLabel(this);
 
@@ -364,7 +364,7 @@ void CanvasGridView::onWMHasCompositeChanged()
         }
 
         connect(d->gsettings, &QGSettings::changed, this, [this] (const QString &key) {
-            if (key == "backgroundUris") {
+            if (key == "pictureFilename") {
                 d->updateBackground(devicePixelRatioF());
             }
         });

@@ -294,6 +294,7 @@ QSet<MenuAction> DesktopFileInfo::disableMenuActionList() const
 
 QList<QIcon> DesktopFileInfo::additionalIcon() const
 {
+	return {QIcon::fromTheme("emblem-symbolic-link", DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon))};
     return QList<QIcon>();
 }
 

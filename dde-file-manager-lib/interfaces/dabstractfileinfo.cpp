@@ -689,6 +689,11 @@ QList<QIcon> DAbstractFileInfo::additionalIcon() const
         icons << QIcon::fromTheme("emblem-shared", DFMGlobal::instance()->standardIcon(DFMGlobal::ShareIcon));
     }
 
+    if (isDesktopFile() || suffix() == "desktop" ) {
+        icons << QIcon::fromTheme("emblem-symbolic-link", DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon));
+	//icons << QIcon::fromTheme("arrow");
+    }
+
     foreach (MenuInterface *menuInterface, PluginManager::instance()->getMenuInterfaces()) {
         QList<QIcon> pluginIcons = menuInterface->additionalIcons(filePath());
         foreach (const QIcon &icon, pluginIcons) {

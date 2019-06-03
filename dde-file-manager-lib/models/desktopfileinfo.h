@@ -40,6 +40,7 @@ public:
 
     ~DesktopFileInfo();
 
+    bool exists() const override {return true;};
     QString getName() const;
     QString getExec() const;
     QString getIconName() const;

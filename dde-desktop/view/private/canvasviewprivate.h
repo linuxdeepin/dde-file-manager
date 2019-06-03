@@ -108,14 +108,14 @@ public:
 
     void updateBackground(const qreal ratio)
     {
-        QString path = wmDBusIsValid() ? wmInter->GetCurrentWorkspaceBackground() : QString();
+        //QString path = wmDBusIsValid() ? wmInter->GetCurrentWorkspaceBackground() : QString();
 
-        if (path.isEmpty()
+        //if (path.isEmpty()
                 // 调用失败时会返回 "The name com.deepin.wm was not provided by any .service files"
                 // 此时 wmInter->isValid() = true, 且 dubs last error type 为 NoError
-                || (!path.startsWith("/") && !path.startsWith("file:"))) {
-            path = gsettings->get("background-uris").toStringList().value(currentWorkspaceIndex);
-        }
+          //      || (!path.startsWith("/") && !path.startsWith("file:"))) {
+        QString path = gsettings->get("picture-filename").toStringList().value(currentWorkspaceIndex);
+        //}
 
         path = path.startsWith("file:") ? QUrl(path).toLocalFile() : path;
 

@@ -381,6 +381,9 @@ QList<QIcon> DFileViewHelper::additionalIcon(const QModelIndex &index) const
     const DAbstractFileInfoPointer &fileInfo = this->fileInfo(index);
 
     if (!fileInfo || !fileInfo->exists()) {
+	    if (fileInfo && fileInfo->isDesktopFile()) {
+	    	return {QIcon::fromTheme("emblem-symbolic-link", DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon))};
+	    }
         return list;
     }
 
