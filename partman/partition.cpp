@@ -74,7 +74,7 @@ Partition Partition::getPartitionByDevicePath(const QString &devicePath)
                     if (obj.contains("rm")) {
                         // blumia: `lsblk -J` may return value like `1`(old behavior) or `true`(changed in util-linux v2.33).
                         //         So we convert it to QVariant and use its toBool() to make sure the result is correct.
-                        QVariant data(obj.value("rm"));
+                        QVariant data(obj.value("rm").toVariant());
                         p.setIsRemovable(data.toBool());
                     }
 
