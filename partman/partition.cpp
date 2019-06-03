@@ -126,7 +126,7 @@ Partition Partition::getPartitionByMountPoint(const QString &mountPoint)
             ret.setMountPoint(obj.value("mountpoint").toString());
         }
         if(obj.contains("rm")){
-            QVariant data(obj.value("rm"));
+            QVariant data(obj.value("rm").toVariant());
             ret.setIsRemovable(data.toBool());
         }
 
