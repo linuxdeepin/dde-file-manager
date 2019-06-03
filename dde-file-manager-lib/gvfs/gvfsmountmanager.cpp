@@ -1036,7 +1036,7 @@ void GvfsMountManager::listMountsBylsblk()
                             p.setUuid(obj.value("uuid").toString());
                         }
                         if(obj.contains("rm")){
-                            QVariant data(obj.value("rm"));
+                            QVariant data(obj.value("rm").toVariant());
                             p.setIsRemovable(data.toBool());
                         }
 
