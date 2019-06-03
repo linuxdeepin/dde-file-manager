@@ -12,7 +12,8 @@ SUBDIRS  += \
 isEqual(BUILD_MINIMUM, YES){
 
 }else{
-    SUBDIRS += usb-device-formatter
+    SUBDIRS += usb-device-formatter \
+        lff
 #    dde-advanced-property-plugin \
 #    dde-sharefiles
 }

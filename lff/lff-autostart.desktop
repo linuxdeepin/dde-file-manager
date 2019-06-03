@@ -1,0 +1,4 @@
+[Desktop Entry]
+Type=Application
+Name=Desktop full reminder autostart
+Exec=lff
