@@ -14,12 +14,8 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     a.setQuitOnLastWindowClosed(false);
 
-    QProcess::startDetached("gsettings set org.mate.background show-desktop-icons false");
-
-    QProcess::startDetached("dde-desktop");
-
     const int warnCount = 110;
-    const int warnSkipTime = 60;
+    const int warnSkipTime = 0; // always warn it.
     QTime lastWarnDialogShownTime = QTime::currentTime().addSecs(-1 - warnSkipTime);
     QString warnTitle("整理桌面提醒"), warnContent("您的桌面上的文件太多了，有可能会导致桌面图标重叠，请考虑整理一下您的桌面。");
     QString btn0Text("好的"), btn1Text("本次启动不再提醒");
@@ -30,7 +26,7 @@ int main(int argc, char *argv[])
 
     if (entryCount > warnCount) {
         lastWarnDialogShownTime = QTime::currentTime();
-        int ret = QMessageBox::warning(nullptr, warnTitle, warnContent, btn0Text, btn1Text);
+        int ret = QMessageBox::warning(nullptr, warnTitle, warnContent, btn0Text);
         lastWarnDialogShownTime = QTime::currentTime();
         if (ret == 1) {
             quick_exit(0);
