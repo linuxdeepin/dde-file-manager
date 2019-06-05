@@ -1,3 +1,13 @@
+<a name="4.8.6.2"></a>
+## 4.8.6.2 (2019-06-05)
+
+
+#### Bug Fixes
+
+*   should convert to QVariant first ([80ea04c7](https://github.com/linuxdeepin/dde-file-manager/commit/80ea04c79c27f5cbfa66f0aeff68697c0bb78b94))
+
+
+
 <a name="4.8.6.1"></a>
 ## 4.8.6.1 (2019-06-01)
 
