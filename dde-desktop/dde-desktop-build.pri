@@ -18,10 +18,10 @@ CONFIG(release, release|debug) {
     PKGCONFIG += dtkwidget
 }
 
-load(deepin_qt)
+load(dtk_qmake)
 
 # add computer/trash icon on professional system
-deepin_professional: DEFINES += DDE_COMPUTER_TRASH
+deepin_professional: DEFINES += DDE_COMPUTER_TRASH DISABLE_AUTOMERGE
 
 !isEmpty(DISABLE_SCREENSAVER) {
     DEFINES += DISABLE_SCREENSAVER

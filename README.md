@@ -27,7 +27,7 @@ _The **master** branch is current development branch, build dependencies may cha
 * libdframeworkdbus-dev
 * dde-dock-dev(>=4.0.5)
 * deepin-gettext-tools
-* deepin-qt5config
+* libdtkcore-dev
 * ffmpeg module(s):
   - libffmpegthumbnailer-dev
 * Qt5(>= 5.6) with modules:
