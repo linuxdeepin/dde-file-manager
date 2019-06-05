@@ -58,6 +58,9 @@ int main(int argc, char *argv[])
     a.setOrganizationName("deepin");
 
     QDBusConnection connection = QDBusConnection::systemBus();
+    DTK_CORE_NAMESPACE::DLogManager::setlogFilePath("/var/log/" + QCoreApplication::organizationName() +
+                                                    QLatin1Char('/') + QCoreApplication::applicationName() +
+                                                    QLatin1Char('/') + QCoreApplication::applicationName() + ".log");
     DTK_CORE_NAMESPACE::DLogManager::registerConsoleAppender();
     DTK_CORE_NAMESPACE::DLogManager::registerFileAppender();
 
