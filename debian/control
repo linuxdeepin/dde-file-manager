@@ -34,7 +34,7 @@ Build-Depends:
  qtdeclarative5-dev,
  deepin-gettext-tools,
  libkf5codecs-dev,
- deepin-qt5config,
+ libdtkcore-dev,
  libdmr-dev,
  dh-systemd,
  deepin-anything-dev[i386 amd64],

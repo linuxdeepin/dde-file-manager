@@ -2404,7 +2404,9 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     menuAutoMerge.setData(AutoMerge);
     menuAutoMerge.setCheckable(true);
     menuAutoMerge.setChecked(autoMerge());
+#ifndef DISABLE_AUTOMERGE
     menu->insertAction(pasteAction, &menuAutoMerge);
+#endif // DISABLE_AUTOMERGE
 
     QAction autoSort(menu);
     autoSort.setText(tr("Auto arrange"));
