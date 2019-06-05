@@ -35,6 +35,7 @@ Build-Depends:
  deepin-gettext-tools,
  libkf5codecs-dev,
  libdtkcore-dev,
+ libdtkcore-bin,
  libdmr-dev,
  dh-systemd,
  deepin-anything-dev[i386 amd64],
