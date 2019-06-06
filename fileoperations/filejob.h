@@ -142,6 +142,8 @@ signals:
     /*tip dialog show when move file which size is large than of 1GB to trash*/
     void requestCanNotMoveToTrashDialogShowed(const DUrlList& urls);
 
+    void requestOpticalJobFailureDialog(JobType type, const QString& err, const QStringList& details);
+
     void progressPercent(int value);
     void error(QString content);
     void result(QString content);
@@ -161,7 +163,7 @@ public slots:
     void doOpticalBurn(const DUrl &device, QString volname, int speed, int flag);
     void doOpticalBlank(const DUrl &device);
     void doOpticalImageBurn(const DUrl &device, const DUrl &image, int speed, int flag);
-    void opticalJobUpdated(DISOMasterNS::DISOMaster::JobStatus status, int progress);
+    void opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, DISOMasterNS::DISOMaster::JobStatus status, int progress);
 
     void paused();
     void started();
@@ -256,6 +258,7 @@ private:
 
     static QStorageInfo getStorageInfo(const QString &file);
     static bool canMove(const QString &filePath);
+    static QString getXorrisoErrorMsg(const QStringList& msg);
 
 #ifdef SW_LABEL
 public:

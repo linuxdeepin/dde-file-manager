@@ -47,6 +47,7 @@
 #include "sw_label/llsdeepinlabellibrary.h"
 #endif
 
+#include <functional>
 #include <QFile>
 #include <QThread>
 #include <QDir>
@@ -612,7 +613,7 @@ void FileJob::doOpticalBlank(const DUrl &device)
     jobPrepared();
 
     DISOMasterNS::DISOMaster *job_isomaster = new DISOMasterNS::DISOMaster(this);
-    connect(job_isomaster, &DISOMasterNS::DISOMaster::jobStatusChanged, this, &FileJob::opticalJobUpdated);
+    connect(job_isomaster, &DISOMasterNS::DISOMaster::jobStatusChanged, this, std::bind(&FileJob::opticalJobUpdated, this, job_isomaster, std::placeholders::_1, std::placeholders::_2));
     job_isomaster->acquireDevice(device.path());
     job_isomaster->erase();
     job_isomaster->releaseDevice();
@@ -643,7 +644,7 @@ void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int 
     jobPrepared();
 
     DISOMasterNS::DISOMaster *job_isomaster = new DISOMasterNS::DISOMaster(this);
-    connect(job_isomaster, &DISOMasterNS::DISOMaster::jobStatusChanged, this, &FileJob::opticalJobUpdated);
+    connect(job_isomaster, &DISOMasterNS::DISOMaster::jobStatusChanged, this, std::bind(&FileJob::opticalJobUpdated, this, job_isomaster, std::placeholders::_1, std::placeholders::_2));
     job_isomaster->acquireDevice(device.path());
     job_isomaster->getDeviceProperty();
     QUrl stagingurl(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
@@ -690,7 +691,7 @@ void FileJob::doOpticalImageBurn(const DUrl &device, const DUrl &image, int spee
     jobPrepared();
 
     DISOMasterNS::DISOMaster *job_isomaster = new DISOMasterNS::DISOMaster(this);
-    connect(job_isomaster, &DISOMasterNS::DISOMaster::jobStatusChanged, this, &FileJob::opticalJobUpdated);
+    connect(job_isomaster, &DISOMasterNS::DISOMaster::jobStatusChanged, this, std::bind(&FileJob::opticalJobUpdated, this, job_isomaster, std::placeholders::_1, std::placeholders::_2));
     job_isomaster->acquireDevice(device.path());
     DISOMasterNS::DeviceProperty dp = job_isomaster->getDeviceProperty();
     if (dp.formatted) {
@@ -720,8 +721,12 @@ void FileJob::doOpticalImageBurn(const DUrl &device, const DUrl &image, int spee
     delete job_isomaster;
 }
 
-void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster::JobStatus status, int progress)
+void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom,DISOMasterNS::DISOMaster::JobStatus status, int progress)
 {
+    if (status == DISOMasterNS::DISOMaster::JobStatus::Failed) {
+        QStringList msg = jobisom->getInfoMessages();
+        emit requestOpticalJobFailureDialog(FileJob::getXorrisoErrorMsg(msg), msg);
+    }
     if (m_jobType == JobType::OpticalImageBurn && m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished
         && status != DISOMasterNS::DISOMaster::JobStatus::Finished) {
         ++m_opticalJobPhase;
@@ -2555,6 +2560,22 @@ bool FileJob::canMove(const QString &filePath)
 #endif
 
     return true;
+}
+
+QString FileJob::getXorrisoErrorMsg(const QStringList &msg)
+{
+    QRegularExpression ovrex("While grafting '(.*)' : file object exists and may not be overwritten");
+    auto ovrxm = ovrex.match(msg);
+    if (ovrxm.hasMatch()) {
+        return tr("%1 is a duplicate file.").arg(ovrxm.captured(1));
+    }
+    if (msg.indexOf("Lost connection to drive")) {
+        return tr("Lost connection to drive.");
+    }
+    if (msg.indexOf("servo failure")) {
+        return tr("The CD/DVD drive is not ready. Try another disc.");
+    }
+    return tr("Unknown error");
 }
 
 #ifdef SW_LABEL

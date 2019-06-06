@@ -94,6 +94,7 @@ public slots:
     int showRenameNameSameErrorDialog(const QString& name, const DFMEvent &event);
     int showOpticalBlankConfirmationDialog(const DFMUrlBaseEvent &event);
     int showOpticalImageOpSelectionDialog(const DFMUrlBaseEvent &event);
+    void showOpticalJobFailureDialog(FileJob::JobType type, const QString& err, const QStringList& details);
     int showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &event);
     int showRemoveBookMarkDialog(const DFMEvent &event);
     void showOpenWithDialog(const DFMEvent &event);
