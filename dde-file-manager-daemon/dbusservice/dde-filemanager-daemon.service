@@ -5,7 +5,6 @@ Description=DDE File Manager Daemon
 Type=dbus
 BusName=com.deepin.filemanager.daemon
 ExecStart=/usr/bin/dde-file-manager-daemon
-Environment=XDG_CACHE_HOME=/var/cache
 
 [Install]
 WantedBy=multi-user.target
