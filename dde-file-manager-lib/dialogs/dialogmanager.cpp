@@ -253,6 +253,7 @@ void DialogManager::addJob(FileJob *job)
     connect(job, &FileJob::requestCopyMoveToSelfDialogShowed, this, &DialogManager::showCopyMoveToSelfDialog);
     connect(job, &FileJob::requestNoEnoughSpaceDialogShowed, this, &DialogManager::showDiskSpaceOutOfUsedDialogLater);
     connect(job, &FileJob::requestCanNotMoveToTrashDialogShowed, this, &DialogManager::showMoveToTrashConflictDialog);
+    connect(job, &FileJob::requestOpticalJobFailureDialog, this, &DialogManager::showOpticalJobFailureDialog);
 }
 
 
@@ -462,7 +463,6 @@ int DialogManager::showOpticalImageOpSelectionDialog(const DFMUrlBaseEvent &even
     QString EraseDisk = tr("How do you want to use this disc?");
 
     DUrl url = event.url();
-    qDebug() << url;
     QStringList buttonTexts;
     buttonTexts << tr("Cancel") << tr("Burn image") << tr("Burn files");
 
@@ -482,6 +482,40 @@ int DialogManager::showOpticalImageOpSelectionDialog(const DFMUrlBaseEvent &even
     d.moveToCenter();
     int code = d.exec();
     return code;
+}
+
+void DialogManager::showOpticalJobFailureDialog(FileJob::JobType type, const QString &err, const QStringList &details)
+{
+    DDialog d;
+    d.setIcon(QIcon::fromTheme("dialog-error"), QSize(64,64));
+    QString failure_type;
+    switch (type)
+    {
+        case FileJob::OpticalBlank:
+            failure_type=tr("Disc erase failed");
+        break;
+        case FileJob::OpticalBurn:
+        case FileJob::OpticalImageBurn:
+            failure_type=tr("Burn process failed");
+        break;
+    }
+    d.setTitle(QString("%1: %2").arg(failure_type).arg(err));
+#if 1
+    QWidget *detailsw = new QWidget(&d);
+    detailsw->setLayout(new QVBoxLayout());
+    QPushButton *pb = new QPushButton("show details");
+    detailsw->layout()->addWidget(pb);
+    QTextEdit *te = new QTextEdit();
+    te->setPlainText(details.join('\n'));
+    te->setReadOnly(true);
+    te->hide();
+    detailsw->layout()->addWidget(te);
+    connect(pb, &QPushButton::clicked, te, &QTextEdit::show);
+    d.addContent(detailsw);
+#endif
+    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+    d.setDefaultButton(0);
+    d.getButton(0)->setFocus();
 }
 
 int DialogManager::showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &event)
