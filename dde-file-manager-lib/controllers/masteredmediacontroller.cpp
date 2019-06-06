@@ -12,6 +12,7 @@
 #include "dialogs/dialogmanager.h"
 #include "dialogs/burnoptdialog.h"
 #include "interfaces/dfileproxywatcher.h"
+#include "disomaster.h"
 
 #include <QRegularExpression>
 #include <QStandardPaths>
@@ -155,15 +156,19 @@ DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> 
     DUrl dst = event->targetUrl();
 
     if (src.size() == 1) {
+        QRegularExpression re("^(.*)/disk_files/(.*)$");
+        auto rem = re.match(dst.path());
+        Q_ASSERT(rem.hasMatch());
+        QString dev(rem.captured(1));
+        bool is_blank = ISOMaster->getDevicePropertyCached(dev).formatted;
+        QString dstdirpath = getStagingFolder(DUrl(dev + "/staging_files/"));
+        QDir dstdir = QDir(dstdirpath);
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), src.front());
-        if (fi->mimeTypeName() == "application/x-cd-image") {
+        if (is_blank && fi->mimeTypeName() == "application/x-cd-image" && dstdir.count() == 0) {
             int r = DThreadUtil::runInMainThread(dialogManager, &DialogManager::showOpticalImageOpSelectionDialog, DFMUrlBaseEvent(event->sender(), dst));
             if (r == 1) {
                 DThreadUtil::runInMainThread([=] {
-                    QRegularExpression re("^(.*)/disk_files/(.*)$");
-                    auto rem = re.match(dst.path());
-                    Q_ASSERT(rem.hasMatch());
-                    QScopedPointer<BurnOptDialog> bd(new BurnOptDialog(rem.captured(1)));
+                    QScopedPointer<BurnOptDialog> bd(new BurnOptDialog(dev));
                     bd->setISOImage(src.front());
                     bd->exec();
                 });
