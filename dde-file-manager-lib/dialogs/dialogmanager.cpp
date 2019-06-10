@@ -492,11 +492,11 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
     switch (type)
     {
         case FileJob::OpticalBlank:
-            failure_type=tr("Disc erase failed");
+            failure_type = tr("Disc erase failed");
         break;
         case FileJob::OpticalBurn:
         case FileJob::OpticalImageBurn:
-            failure_type=tr("Burn process failed");
+            failure_type = tr("Burn process failed");
         break;
     }
     d.setTitle(QString("%1: %2").arg(failure_type).arg(err));
@@ -516,6 +516,7 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
     d.getButton(0)->setFocus();
+    d.exec();
 }
 
 int DialogManager::showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &event)

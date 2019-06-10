@@ -2565,16 +2565,16 @@ bool FileJob::canMove(const QString &filePath)
 
 QString FileJob::getXorrisoErrorMsg(const QStringList &msg)
 {
-    QRegularExpression ovrex("While grafting '(.*)' : file object exists and may not be overwritten");
+    QRegularExpression ovrex("While grafting '(.*)'");
     for (auto& msgs : msg) {
         auto ovrxm = ovrex.match(msgs);
-        if (ovrxm.hasMatch()) {
+        if (msgs.indexOf("file object exists and may not be overwritten") && ovrxm.hasMatch()) {
             return tr("%1 is a duplicate file.").arg(ovrxm.captured(1));
         }
-        if (msgs.indexOf("Lost connection to drive")) {
+        if (msgs.indexOf("Lost connection to drive") != -1) {
             return tr("Lost connection to drive.");
         }
-        if (msgs.indexOf("servo failure")) {
+        if (msgs.indexOf("servo failure") != -1) {
             return tr("The CD/DVD drive is not ready. Try another disc.");
         }
     }
