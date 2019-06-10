@@ -44,11 +44,13 @@ MasteredMediaFileInfo::MasteredMediaFileInfo(const DUrl &url)
         udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
         QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
         QSharedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
-        if (diskdev->opticalBlank() && rem.captured(2) == "disk_files") {
-            //blank media contains no files on disc, duh!
-            return;
-        }
+
         if(rem.captured(2) == "disk_files") {
+            if (diskdev->opticalBlank()) {
+                //blank media contains no files on disc, duh!
+                return;
+            }
+
             Q_ASSERT(blkdev->mountPoints().size() > 0);
             QString mntpoint = QString(blkdev->mountPoints().front());
             if (*mntpoint.rbegin() != '/') {

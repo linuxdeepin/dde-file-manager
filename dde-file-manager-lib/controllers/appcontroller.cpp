@@ -416,9 +416,11 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
     if (drive->optical()) {
         QtConcurrent::run([=] {
             ISOMaster->acquireDevice(fileUrl.query());
-            ISOMaster->getDeviceProperty();
+            DISOMasterNS::DeviceProperty dp = ISOMaster->getDeviceProperty();
             ISOMaster->releaseDevice();
-            blkdev->mount({});
+            if (!dp.formatted) {
+                blkdev->mount({});
+            }
         });
         return;
     }
