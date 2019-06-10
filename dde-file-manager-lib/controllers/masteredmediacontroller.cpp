@@ -144,10 +144,26 @@ bool MasteredMediaController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &
 {
     DUrlList lst;
     for (auto &i : event->urlList()) {
-        lst.push_back(getStagingFolder(i));
+        if (i.path().indexOf("/staging_files/") != -1) {
+            lst.push_back(getStagingFolder(i));
+        }
     }
 
     return fileService->deleteFiles(event->sender(), lst, false);
+}
+
+DUrlList MasteredMediaController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
+{
+    DUrlList lst, retlst;
+    for (auto &i : event->urlList()) {
+        if (i.path().indexOf("/staging_files/") != -1) {
+            lst.push_back(getStagingFolder(i));
+            retlst.push_back(i);
+        }
+    }
+    fileService->deleteFiles(event->sender(), lst, false);
+
+    return retlst;
 }
 
 DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
