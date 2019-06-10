@@ -31,7 +31,6 @@
 #include <QUrl>
 #include "durl.h"
 #include <QStorageInfo>
-#include <disomaster.h>
 
 #define TRANSFER_RATE 5
 #define MSEC_FOR_DISPLAY 1000
@@ -44,6 +43,10 @@ extern "C" {
     #include <gio/gio.h>
 }
 #define signals public
+
+namespace DISOMasterNS {
+    class DISOMaster;
+}
 
 class FileJob : public QObject
 {
@@ -163,7 +166,7 @@ public slots:
     void doOpticalBurn(const DUrl &device, QString volname, int speed, int flag);
     void doOpticalBlank(const DUrl &device);
     void doOpticalImageBurn(const DUrl &device, const DUrl &image, int speed, int flag);
-    void opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, DISOMasterNS::DISOMaster::JobStatus status, int progress);
+    void opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, int progress);
 
     void paused();
     void started();
@@ -210,7 +213,7 @@ private:
     JobType m_jobType;
     int m_windowId = -1;
     bool m_skipandApplyToAll = false;
-    DISOMasterNS::DISOMaster::JobStatus m_opticalJobStatus;
+    int m_opticalJobStatus;
     int m_opticalJobProgress;
     int m_opticalJobPhase;
 

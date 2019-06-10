@@ -40,6 +40,7 @@
 #include "ddiskmanager.h"
 #include "dblockdevice.h"
 #include "ddiskdevice.h"
+#include "disomaster.h"
 
 #include "tag/tagmanager.h"
 
@@ -721,11 +722,11 @@ void FileJob::doOpticalImageBurn(const DUrl &device, const DUrl &image, int spee
     delete job_isomaster;
 }
 
-void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom,DISOMasterNS::DISOMaster::JobStatus status, int progress)
+void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, int progress)
 {
     if (status == DISOMasterNS::DISOMaster::JobStatus::Failed) {
         QStringList msg = jobisom->getInfoMessages();
-        emit requestOpticalJobFailureDialog(FileJob::getXorrisoErrorMsg(msg), msg);
+        emit requestOpticalJobFailureDialog(m_jobType, FileJob::getXorrisoErrorMsg(msg), msg);
     }
     if (m_jobType == JobType::OpticalImageBurn && m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished
         && status != DISOMasterNS::DISOMaster::JobStatus::Finished) {
@@ -2565,15 +2566,17 @@ bool FileJob::canMove(const QString &filePath)
 QString FileJob::getXorrisoErrorMsg(const QStringList &msg)
 {
     QRegularExpression ovrex("While grafting '(.*)' : file object exists and may not be overwritten");
-    auto ovrxm = ovrex.match(msg);
-    if (ovrxm.hasMatch()) {
-        return tr("%1 is a duplicate file.").arg(ovrxm.captured(1));
-    }
-    if (msg.indexOf("Lost connection to drive")) {
-        return tr("Lost connection to drive.");
-    }
-    if (msg.indexOf("servo failure")) {
-        return tr("The CD/DVD drive is not ready. Try another disc.");
+    for (auto& msgs : msg) {
+        auto ovrxm = ovrex.match(msgs);
+        if (ovrxm.hasMatch()) {
+            return tr("%1 is a duplicate file.").arg(ovrxm.captured(1));
+        }
+        if (msgs.indexOf("Lost connection to drive")) {
+            return tr("Lost connection to drive.");
+        }
+        if (msgs.indexOf("servo failure")) {
+            return tr("The CD/DVD drive is not ready. Try another disc.");
+        }
     }
     return tr("Unknown error");
 }

@@ -484,7 +484,7 @@ int DialogManager::showOpticalImageOpSelectionDialog(const DFMUrlBaseEvent &even
     return code;
 }
 
-void DialogManager::showOpticalJobFailureDialog(FileJob::JobType type, const QString &err, const QStringList &details)
+void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, const QStringList &details)
 {
     DDialog d;
     d.setIcon(QIcon::fromTheme("dialog-error"), QSize(64,64));

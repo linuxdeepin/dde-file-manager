@@ -161,7 +161,7 @@ DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> 
         Q_ASSERT(rem.hasMatch());
         QString dev(rem.captured(1));
         bool is_blank = ISOMaster->getDevicePropertyCached(dev).formatted;
-        QString dstdirpath = getStagingFolder(DUrl(dev + "/staging_files/"));
+        QString dstdirpath = getStagingFolder(DUrl(dev + "/staging_files/")).path();
         QDir dstdir = QDir(dstdirpath);
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), src.front());
         if (is_blank && fi->mimeTypeName() == "application/x-cd-image" && dstdir.count() == 0) {
