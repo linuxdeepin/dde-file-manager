@@ -25,7 +25,7 @@ public:
                     QDir::Filters filter,
                     QDirIterator::IteratorFlags flags)
     {
-        QRegularExpression re("^(.*)/disk_files/(.*)$");
+        QRegularExpression re("^(.*)/(disk_files|staging_files)/(.*)$");
         QString device(path.path());
         auto rem = re.match(device);
         if (rem.hasMatch()) {
@@ -51,7 +51,7 @@ public:
                                   );
                 return;
             }
-            QString realpath = mntpoint + rem.captured(2);
+            QString realpath = mntpoint + rem.captured(3);
             iterator = QSharedPointer<QDirIterator>(new QDirIterator(realpath, nameFilters, filter, flags));
             stagingiterator = QSharedPointer<QDirIterator>(
                                   new QDirIterator(MasteredMediaController::getStagingFolder(DUrl(path)).path(),
