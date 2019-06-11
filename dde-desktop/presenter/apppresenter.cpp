@@ -42,6 +42,11 @@ void Presenter::onAutoAlignToggled()
     emit setConfig(Config::groupGeneral, Config::keyAutoAlign, GridManager::instance()->autoArrange());
 }
 
+void Presenter::onAutoMergeToggled()
+{
+    emit setConfig(Config::groupGeneral, Config::keyAutoMerge, GridManager::instance()->autoMerge());
+}
+
 void Presenter::OnIconLevelChanged(int iconLevel)
 {
     emit setConfig(Config::groupGeneral, Config::keyIconLevel, iconLevel);
