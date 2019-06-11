@@ -85,7 +85,14 @@ bool MasteredMediaFileInfo::isReadable() const
 
 bool MasteredMediaFileInfo::isWritable() const
 {
-    return canDrop();
+    QRegularExpression re("^(.*)/(disk_files|staging_files)/(.*)$");
+    auto rem = re.match(this->fileUrl().path());
+    if (rem.hasMatch()) {
+        return ISOMaster->getDevicePropertyCached(rem.captured(1)).avail > 0;
+    }
+    else {
+        return false;
+    }
 }
 
 bool MasteredMediaFileInfo::isDir() const
@@ -124,6 +131,14 @@ QVector<MenuAction> MasteredMediaFileInfo::menuActionList(MenuType type) const
     QVector<MenuAction> ret = DAbstractFileInfo::menuActionList(type);
     ret.removeAll(MenuAction::TagInfo);
     ret.removeAll(MenuAction::TagFilesUseColor);
+    ret.removeAll(MenuAction::Cut);
+    ret.removeAll(MenuAction::Rename);
+    ret.removeAll(MenuAction::NewFolder);
+    ret.removeAll(MenuAction::NewText);
+    ret.removeAll(MenuAction::NewWord);
+    ret.removeAll(MenuAction::NewExcel);
+    ret.removeAll(MenuAction::NewDocument);
+    ret.removeAll(MenuAction::NewPowerpoint);
     return ret;
 }
 
@@ -157,12 +172,5 @@ QString MasteredMediaFileInfo::toLocalFile() const
 
 bool MasteredMediaFileInfo::canDrop() const
 {
-    QRegularExpression re("^(.*)/(disk_files|staging_files)/(.*)$");
-    auto rem = re.match(this->fileUrl().path());
-    if (rem.hasMatch()) {
-        return ISOMaster->getDevicePropertyCached(rem.captured(1)).avail > 0;
-    }
-    else {
-        return false;
-    }
+    return isWritable();
 }
