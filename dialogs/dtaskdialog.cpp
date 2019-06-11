@@ -848,6 +848,7 @@ void DTaskDialog::initUI()
     m_titlebar = new DTitlebar(this);
     m_titlebar->setBackgroundTransparent(true);
     m_titlebar->layout()->setContentsMargins(0, 0, 0, 0);
+    m_titlebar->setMenuVisible(false);
 
     m_taskListWidget = new QListWidget;
     m_taskListWidget->setSelectionMode(QListWidget::NoSelection);
