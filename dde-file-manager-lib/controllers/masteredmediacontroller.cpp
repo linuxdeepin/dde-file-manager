@@ -166,6 +166,23 @@ DUrlList MasteredMediaController::moveToTrash(const QSharedPointer<DFMMoveToTras
     return retlst;
 }
 
+bool MasteredMediaController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
+{
+    //TODO: hide/disable the menu item if no selected file is already on disc.
+    DUrlList lst;
+    for (auto &i : event->urlList()) {
+        DAbstractFileInfoPointer fp = fileService->createFileInfo(event->sender(), i);
+        if (!DUrl(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)).isParentOf(DUrl(fp->toQFileInfo().absoluteFilePath()))) {
+            DUrl diskurl(fp->toQFileInfo().absoluteFilePath());
+            diskurl.setScheme(FILE_SCHEME);
+            lst.push_back(diskurl);
+        }
+    }
+    DFMGlobal::setUrlsToClipboard(DUrl::toQUrlList(lst), event->action());
+
+    return !lst.empty();
+}
+
 DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
 {
     DUrlList src = event->urlList();
