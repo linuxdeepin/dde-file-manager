@@ -92,6 +92,7 @@ void DFMOpticalMediaWidgetPrivate::setDeviceProperty(DeviceProperty dp)
         {MediaType::BD_R         , "BD-R"    },
         {MediaType::BD_RE        , "BD-RE"   }
     };
+    pb_burn->setEnabled(dp.avail > 0);
     lb_available->setText(FileUtils::formatSize(dp.avail));
     lb_mediatype->setText(rtypemap[dp.media]);
 }
