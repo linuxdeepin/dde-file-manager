@@ -1,3 +1,14 @@
+<a name="4.8.6.3"></a>
+## 4.8.6.3 (2019-06-11)
+
+
+#### Bug Fixes
+
+*   copy dialog disable menu from titlebar ([daa6d016](https://github.com/linuxdeepin/dde-file-manager/commit/daa6d0168da0d17b8dbb92705eef8a81fc192f09))
+*   should remember auto merged status ([9eda50be](https://github.com/linuxdeepin/dde-file-manager/commit/9eda50be4f33973fb38bfb34217dc629bbf3529a))
+
+
+
 <a name="4.8.6.2"></a>
 ## 4.8.6.2 (2019-06-05)
 
