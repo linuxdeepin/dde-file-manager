@@ -245,6 +245,32 @@ bool MasteredMediaController::openFileByApp(const QSharedPointer<DFMOpenFileByAp
     return fileService->openFileByApp(event->sender(), event->appName(), url);
 }
 
+bool MasteredMediaController::compressFiles(const QSharedPointer<DFMCompressEvent> &event) const
+{
+    DUrlList lst;
+    for (auto &i : event->urlList()) {
+        if (i.path().indexOf("/disk_files/") != -1) {
+            DUrl local_file = DUrl::fromLocalFile(MasteredMediaFileInfo(i).extraProperties()["mm_backer"].toString());
+            lst.push_back(local_file);
+        }
+    }
+
+    return fileService->compressFiles(event->sender(), lst);
+}
+
+bool MasteredMediaController::decompressFile(const QSharedPointer<DFMDecompressEvent> &event) const
+{
+    DUrlList lst;
+    for (auto &i : event->urlList()) {
+        if (i.path().indexOf("/disk_files/") != -1) {
+            DUrl local_file = DUrl::fromLocalFile(MasteredMediaFileInfo(i).extraProperties()["mm_backer"].toString());
+            lst.push_back(local_file);
+        }
+    }
+
+    return fileService->decompressFile(event->sender(), lst);
+}
+
 bool MasteredMediaController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
     DUrlList lst;
@@ -323,7 +349,7 @@ DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> 
     return fileService->pasteFile(event->sender(), event->action(), tmpdst, src);
 }
 
-const DAbstractFileInfoPointer MasteredMediaController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
+const DAbstractFileInfoPointer MasteredMediaController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
 {
     return DAbstractFileInfoPointer(new MasteredMediaFileInfo(event->url()));
 }
@@ -333,7 +359,7 @@ const DDirIteratorPointer MasteredMediaController::createDirIterator(const QShar
     return DDirIteratorPointer(new DFMShadowedDirIterator(event->url(), event->nameFilters(), event->filters(), event->flags()));
 }
 
-bool MasteredMediaController::shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const
+bool MasteredMediaController::shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const
 {
     event->ignore();
 
@@ -366,6 +392,20 @@ bool MasteredMediaController::openInTerminal(const QSharedPointer<DFMOpenInTermi
     QDir::setCurrent(current_dir);
 
     return ok;
+}
+
+bool MasteredMediaController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const
+{
+    if (event->fileUrl().path().indexOf("/disk_files/") == -1) {
+        return false;
+    }
+
+    if (event->toUrl().scheme() == BURN_SCHEME) {
+        return false;
+    }
+
+    DUrl local_url = DUrl::fromLocalFile(MasteredMediaFileInfo(event->fileUrl()).extraProperties()["mm_backer"].toString());
+    return fileService->createSymlink(event->sender(), local_url, event->toUrl());
 }
 
 bool MasteredMediaController::setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const

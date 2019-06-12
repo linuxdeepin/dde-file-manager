@@ -148,6 +148,7 @@ QVector<MenuAction> MasteredMediaFileInfo::menuActionList(MenuType type) const
     ret.removeAll(MenuAction::NewExcel);
     ret.removeAll(MenuAction::NewDocument);
     ret.removeAll(MenuAction::NewPowerpoint);
+    ret.removeAll(MenuAction::DecompressHere);
     if (fileUrl().path().indexOf("/disk_files/") == -1 || !m_backerUrl.isValid() || m_backerUrl.isEmpty()) {
         ret.removeAll(MenuAction::OpenInTerminal);
         ret.removeAll(MenuAction::OpenAsAdmin);
