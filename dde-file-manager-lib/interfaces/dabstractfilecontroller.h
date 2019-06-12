@@ -35,8 +35,8 @@
 class DFMEvent;
 class DFMOpenFileEvent;
 class DFMOpenFileByAppEvent;
-class DFMCompressEvnet;
-class DFMDecompressEvnet;
+class DFMCompressEvent;
+class DFMDecompressEvent;
 class DFMWriteUrlsToClipboardEvent;
 class DFMRenameEvent;
 class DFMDeleteEvent;
@@ -52,10 +52,10 @@ class DFMRemoveBookmarkEvent;
 class DFMCreateSymlinkEvent;
 class DFMGetChildrensEvent;
 class DFMCreateDiriterator;
-class DFMCreateFileInfoEvnet;
+class DFMCreateFileInfoEvent;
 class DFMCreateFileWatcherEvent;
 class DFMOpenInTerminalEvent;
-class DFMFileShareEvnet;
+class DFMFileShareEvent;
 class DFMCancelFileShareEvent;
 class DUrl;
 class DAbstractFileWatcher;
@@ -81,9 +81,9 @@ public:
 
     virtual bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const;
     virtual bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const;
-    virtual bool compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const;
-    virtual bool decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const;
-    virtual bool decompressFileHere(const QSharedPointer<DFMDecompressEvnet> &event) const;
+    virtual bool compressFiles(const QSharedPointer<DFMCompressEvent> &event) const;
+    virtual bool decompressFile(const QSharedPointer<DFMDecompressEvent> &event) const;
+    virtual bool decompressFileHere(const QSharedPointer<DFMDecompressEvent> &event) const;
     virtual bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const;
     virtual bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const;
     virtual bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const;
@@ -97,14 +97,14 @@ public:
     virtual bool openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const;
 
     virtual const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const;
-    virtual const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const;
+    virtual const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const;
     virtual const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const;
 
     virtual bool addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const;
     virtual bool removeBookmark(const QSharedPointer<DFMRemoveBookmarkEvent> &event) const;
 
     virtual bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const;
-    virtual bool shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const;
+    virtual bool shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const;
     virtual bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const;
     virtual bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const;
 

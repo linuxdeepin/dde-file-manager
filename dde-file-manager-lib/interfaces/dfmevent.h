@@ -314,28 +314,28 @@ public:
     static QSharedPointer<DFMOpenFileByAppEvent> fromJson(const QJsonObject &json);
 };
 
-class DFMCompressEvnet : public DFMUrlListBaseEvent
+class DFMCompressEvent : public DFMUrlListBaseEvent
 {
 public:
-    explicit DFMCompressEvnet(const QObject *sender, const DUrlList &list);
+    explicit DFMCompressEvent(const QObject *sender, const DUrlList &list);
 
-    static QSharedPointer<DFMCompressEvnet> fromJson(const QJsonObject &json);
+    static QSharedPointer<DFMCompressEvent> fromJson(const QJsonObject &json);
 };
 
-class DFMDecompressEvnet : public DFMUrlListBaseEvent
+class DFMDecompressEvent : public DFMUrlListBaseEvent
 {
 public:
-    explicit DFMDecompressEvnet(const QObject *sender, const DUrlList &list);
+    explicit DFMDecompressEvent(const QObject *sender, const DUrlList &list);
 
-    static QSharedPointer<DFMDecompressEvnet> fromJson(const QJsonObject &json);
+    static QSharedPointer<DFMDecompressEvent> fromJson(const QJsonObject &json);
 };
 
-class DFMDecompressHereEvnet : public DFMDecompressEvnet
+class DFMDecompressHereEvent : public DFMDecompressEvent
 {
 public:
-    explicit DFMDecompressHereEvnet(const QObject *sender, const DUrlList &list);
+    explicit DFMDecompressHereEvent(const QObject *sender, const DUrlList &list);
 
-    static QSharedPointer<DFMDecompressHereEvnet> fromJson(const QJsonObject &json);
+    static QSharedPointer<DFMDecompressHereEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMWriteUrlsToClipboardEvent : public DFMUrlListBaseEvent
@@ -475,16 +475,16 @@ public:
     static QSharedPointer<DFMCreateSymlinkEvent> fromJson(const QJsonObject &json);
 };
 
-class DFMFileShareEvnet : public DFMUrlBaseEvent
+class DFMFileShareEvent : public DFMUrlBaseEvent
 {
 public:
-    explicit DFMFileShareEvnet(const QObject *sender, const DUrl &url, const QString &name, bool isWritable = false, bool allowGuest = false);
+    explicit DFMFileShareEvent(const QObject *sender, const DUrl &url, const QString &name, bool isWritable = false, bool allowGuest = false);
 
     QString name() const;
     bool isWritable() const;
     bool allowGuest() const;
 
-    static QSharedPointer<DFMFileShareEvnet> fromJson(const QJsonObject &json);
+    static QSharedPointer<DFMFileShareEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMCancelFileShareEvent : public DFMUrlBaseEvent
@@ -544,12 +544,12 @@ public:
     static QSharedPointer<DFMCreateGetChildrensJob> fromJson(const QJsonObject &json);
 };
 
-class DFMCreateFileInfoEvnet : public DFMUrlBaseEvent
+class DFMCreateFileInfoEvent : public DFMUrlBaseEvent
 {
 public:
-    explicit DFMCreateFileInfoEvnet(const QObject *sender, const DUrl &url);
+    explicit DFMCreateFileInfoEvent(const QObject *sender, const DUrl &url);
 
-    static QSharedPointer<DFMCreateFileInfoEvnet> fromJson(const QJsonObject &json);
+    static QSharedPointer<DFMCreateFileInfoEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMCreateFileWatcherEvent : public DFMUrlBaseEvent

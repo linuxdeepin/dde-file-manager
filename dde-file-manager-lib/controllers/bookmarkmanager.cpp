@@ -298,7 +298,7 @@ const QList<DAbstractFileInfoPointer> BookMarkManager::getChildren(const QShared
     return infolist;
 }
 
-const DAbstractFileInfoPointer BookMarkManager::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
+const DAbstractFileInfoPointer BookMarkManager::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
 {
     if (event->fileUrl() == DUrl(BOOKMARK_ROOT)) {
         return DAbstractFileInfoPointer(new BookMark(DUrl(BOOKMARK_ROOT)));

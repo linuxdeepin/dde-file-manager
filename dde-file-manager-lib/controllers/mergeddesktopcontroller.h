@@ -37,7 +37,7 @@ class MergedDesktopController : public DAbstractFileController
 public:
     explicit MergedDesktopController(QObject *parent = nullptr);
 
-    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const override;
+    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const override;
     const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const override;
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &) const override;
 
@@ -53,8 +53,8 @@ public:
     bool mkdir(const QSharedPointer<DFMMkdirEvent> &event) const override; // AppController::actionNewFolder 有问题
     bool touch(const QSharedPointer<DFMTouchFileEvent> &event) const override;
     bool setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const override;
-    bool compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const override;
-    bool decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const override;
+    bool compressFiles(const QSharedPointer<DFMCompressEvent> &event) const override;
+    bool decompressFile(const QSharedPointer<DFMDecompressEvent> &event) const override;
     bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const override;
 
     bool setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const override;
