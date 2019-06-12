@@ -38,7 +38,7 @@ class SearchController : public DAbstractFileController
 public:
     explicit SearchController(QObject *parent = 0);
 
-    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const Q_DECL_OVERRIDE;
+    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const Q_DECL_OVERRIDE;
     bool openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const Q_DECL_OVERRIDE;
 
     bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const Q_DECL_OVERRIDE;
@@ -51,14 +51,14 @@ public:
 
     bool setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const override;
 
-    bool compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const Q_DECL_OVERRIDE;
-    bool decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const Q_DECL_OVERRIDE;
+    bool compressFiles(const QSharedPointer<DFMCompressEvent> &event) const Q_DECL_OVERRIDE;
+    bool decompressFile(const QSharedPointer<DFMDecompressEvent> &event) const Q_DECL_OVERRIDE;
 
     bool addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const override;
     bool removeBookmark(const QSharedPointer<DFMRemoveBookmarkEvent> &event) const override;
     bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const override;
 
-    bool shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const Q_DECL_OVERRIDE;
+    bool shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const Q_DECL_OVERRIDE;
     bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const Q_DECL_OVERRIDE;
     bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const Q_DECL_OVERRIDE;
 

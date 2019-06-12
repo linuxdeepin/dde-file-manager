@@ -491,17 +491,17 @@ bool DFileService::openFileByApp(const QObject *sender, const QString &appName, 
 
 bool DFileService::compressFiles(const QObject *sender, const DUrlList &list) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMCompressEvnet>(sender, list)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMCompressEvent>(sender, list)).toBool();
 }
 
 bool DFileService::decompressFile(const QObject *sender, const DUrlList &list) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMDecompressEvnet>(sender, list)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMDecompressEvent>(sender, list)).toBool();
 }
 
 bool DFileService::decompressFileHere(const QObject *sender, const DUrlList &list) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMDecompressHereEvnet>(sender, list)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMDecompressHereEvent>(sender, list)).toBool();
 }
 
 bool DFileService::writeFilesToClipboard(const QObject *sender, DFMGlobal::ClipboardAction action, const DUrlList &list) const
@@ -653,7 +653,7 @@ bool DFileService::sendToDesktop(const QObject *sender, const DUrlList &urlList)
 
 bool DFileService::shareFolder(const QObject *sender, const DUrl &fileUrl, const QString &name, bool isWritable, bool allowGuest)
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMFileShareEvnet>(sender, fileUrl, name, isWritable, allowGuest)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMFileShareEvent>(sender, fileUrl, name, isWritable, allowGuest)).toBool();
 }
 
 bool DFileService::unShareFolder(const QObject *sender, const DUrl &fileUrl) const
@@ -729,7 +729,7 @@ const DAbstractFileInfoPointer DFileService::createFileInfo(const QObject *sende
         return info;
     }
 
-    const auto &&event = dMakeEventPointer<DFMCreateFileInfoEvnet>(sender, fileUrl);
+    const auto &&event = dMakeEventPointer<DFMCreateFileInfoEvent>(sender, fileUrl);
 
     return qvariant_cast<DAbstractFileInfoPointer>(DFMEventDispatcher::instance()->processEvent(event));
 }

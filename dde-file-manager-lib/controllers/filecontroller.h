@@ -42,14 +42,14 @@ public:
 
     static bool findExecutable(const QString & executableName, const QStringList & paths = QStringList());
 
-    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const Q_DECL_OVERRIDE;
+    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const Q_DECL_OVERRIDE;
     const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const Q_DECL_OVERRIDE;
 
     bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const Q_DECL_OVERRIDE;
     bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const Q_DECL_OVERRIDE;
-    bool compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const Q_DECL_OVERRIDE;
-    bool decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const Q_DECL_OVERRIDE;
-    bool decompressFileHere(const QSharedPointer<DFMDecompressEvnet> &event) const Q_DECL_OVERRIDE;
+    bool compressFiles(const QSharedPointer<DFMCompressEvent> &event) const Q_DECL_OVERRIDE;
+    bool decompressFile(const QSharedPointer<DFMDecompressEvent> &event) const Q_DECL_OVERRIDE;
+    bool decompressFileHere(const QSharedPointer<DFMDecompressEvent> &event) const Q_DECL_OVERRIDE;
     bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const Q_DECL_OVERRIDE;
     bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const Q_DECL_OVERRIDE;
     bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const Q_DECL_OVERRIDE;
@@ -60,7 +60,7 @@ public:
 
     bool setPermissions(const QSharedPointer<DFMSetPermissionEvent> &event) const override;
 
-    bool shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const Q_DECL_OVERRIDE;
+    bool shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const Q_DECL_OVERRIDE;
     bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const Q_DECL_OVERRIDE;
     bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const Q_DECL_OVERRIDE;
 

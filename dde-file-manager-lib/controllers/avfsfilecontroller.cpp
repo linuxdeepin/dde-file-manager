@@ -111,7 +111,7 @@ AVFSFileController::AVFSFileController(QObject *parent):
 
 }
 
-const DAbstractFileInfoPointer AVFSFileController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
+const DAbstractFileInfoPointer AVFSFileController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
 {
     DAbstractFileInfoPointer info(new AVFSFileInfo(event->url()));
 

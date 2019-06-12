@@ -224,11 +224,11 @@ const QSharedPointer<DFMEvent> DFMEvent::fromJson(DFMEvent::Type type, const QJs
     case OpenFileByApp:
         return DFMOpenFileByAppEvent::fromJson(json);
     case CompressFiles:
-        return DFMCompressEvnet::fromJson(json);
+        return DFMCompressEvent::fromJson(json);
     case DecompressFile:
-        return DFMDecompressEvnet::fromJson(json);
+        return DFMDecompressEvent::fromJson(json);
     case DecompressFileHere:
-        return DFMDecompressHereEvnet::fromJson(json);
+        return DFMDecompressHereEvent::fromJson(json);
     case WriteUrlsToClipboard:
         return DFMWriteUrlsToClipboardEvent::fromJson(json);
     case RenameFile:
@@ -250,7 +250,7 @@ const QSharedPointer<DFMEvent> DFMEvent::fromJson(DFMEvent::Type type, const QJs
     case CreateSymlink:
         return DFMCreateSymlinkEvent::fromJson(json);
     case FileShare:
-        return DFMFileShareEvnet::fromJson(json);
+        return DFMFileShareEvent::fromJson(json);
     case CancelFileShare:
         return DFMCancelFileShareEvent::fromJson(json);
     case OpenInTerminal:
@@ -258,7 +258,7 @@ const QSharedPointer<DFMEvent> DFMEvent::fromJson(DFMEvent::Type type, const QJs
     case GetChildrens:
         return DFMGetChildrensEvent::fromJson(json);
     case CreateFileInfo:
-        return DFMCreateFileInfoEvnet::fromJson(json);
+        return DFMCreateFileInfoEvent::fromJson(json);
     case CreateDiriterator:
         return DFMCreateDiriterator::fromJson(json);
     case CreateGetChildrensJob:
@@ -373,37 +373,37 @@ QSharedPointer<DFMOpenFileByAppEvent> DFMOpenFileByAppEvent::fromJson(const QJso
     return dMakeEventPointer<DFMOpenFileByAppEvent>(Q_NULLPTR, json["appName"].toString(), DUrl::fromUserInput(json["url"].toString()));
 }
 
-DFMCompressEvnet::DFMCompressEvnet(const QObject *sender, const DUrlList &list)
+DFMCompressEvent::DFMCompressEvent(const QObject *sender, const DUrlList &list)
     : DFMUrlListBaseEvent(CompressFiles, sender, list)
 {
 
 }
 
-QSharedPointer<DFMCompressEvnet> DFMCompressEvnet::fromJson(const QJsonObject &json)
+QSharedPointer<DFMCompressEvent> DFMCompressEvent::fromJson(const QJsonObject &json)
 {
-    return DFMUrlListBaseEvent::fromJson(CompressFiles, json).staticCast<DFMCompressEvnet>();
+    return DFMUrlListBaseEvent::fromJson(CompressFiles, json).staticCast<DFMCompressEvent>();
 }
 
-DFMDecompressEvnet::DFMDecompressEvnet(const QObject *sender, const DUrlList &list)
+DFMDecompressEvent::DFMDecompressEvent(const QObject *sender, const DUrlList &list)
     : DFMUrlListBaseEvent(DecompressFile, sender, list)
 {
 
 }
 
-QSharedPointer<DFMDecompressEvnet> DFMDecompressEvnet::fromJson(const QJsonObject &json)
+QSharedPointer<DFMDecompressEvent> DFMDecompressEvent::fromJson(const QJsonObject &json)
 {
-    return DFMUrlListBaseEvent::fromJson(DecompressFile, json).staticCast<DFMDecompressEvnet>();
+    return DFMUrlListBaseEvent::fromJson(DecompressFile, json).staticCast<DFMDecompressEvent>();
 }
 
-DFMDecompressHereEvnet::DFMDecompressHereEvnet(const QObject *sender, const DUrlList &list)
-    : DFMDecompressEvnet(sender, list)
+DFMDecompressHereEvent::DFMDecompressHereEvent(const QObject *sender, const DUrlList &list)
+    : DFMDecompressEvent(sender, list)
 {
     m_type = DecompressFileHere;
 }
 
-QSharedPointer<DFMDecompressHereEvnet> DFMDecompressHereEvnet::fromJson(const QJsonObject &json)
+QSharedPointer<DFMDecompressHereEvent> DFMDecompressHereEvent::fromJson(const QJsonObject &json)
 {
-    return DFMUrlListBaseEvent::fromJson(DecompressFileHere, json).staticCast<DFMDecompressHereEvnet>();
+    return DFMUrlListBaseEvent::fromJson(DecompressFileHere, json).staticCast<DFMDecompressHereEvent>();
 }
 
 DFMWriteUrlsToClipboardEvent::DFMWriteUrlsToClipboardEvent(const QObject *sender,
@@ -595,33 +595,33 @@ QSharedPointer<DFMCreateSymlinkEvent> DFMCreateSymlinkEvent::fromJson(const QJso
             DUrl::fromUserInput(json["toUrl"].toString()));
 }
 
-DFMFileShareEvnet::DFMFileShareEvnet(const QObject *sender, const DUrl &url,
+DFMFileShareEvent::DFMFileShareEvent(const QObject *sender, const DUrl &url,
                                      const QString &name, bool isWritable, bool allowGuest)
     : DFMUrlBaseEvent(FileShare, sender, url)
 {
-    setProperty(QT_STRINGIFY(DFMFileShareEvnet::name), name);
-    setProperty(QT_STRINGIFY(DFMFileShareEvnet::isWritable), isWritable);
-    setProperty(QT_STRINGIFY(DFMFileShareEvnet::allowGuest), allowGuest);
+    setProperty(QT_STRINGIFY(DFMFileShareEvent::name), name);
+    setProperty(QT_STRINGIFY(DFMFileShareEvent::isWritable), isWritable);
+    setProperty(QT_STRINGIFY(DFMFileShareEvent::allowGuest), allowGuest);
 }
 
-QString DFMFileShareEvnet::name() const
+QString DFMFileShareEvent::name() const
 {
-    return property(QT_STRINGIFY(DFMFileShareEvnet::name), QString());
+    return property(QT_STRINGIFY(DFMFileShareEvent::name), QString());
 }
 
-bool DFMFileShareEvnet::isWritable() const
+bool DFMFileShareEvent::isWritable() const
 {
-    return property(QT_STRINGIFY(DFMFileShareEvnet::isWritable), false);
+    return property(QT_STRINGIFY(DFMFileShareEvent::isWritable), false);
 }
 
-bool DFMFileShareEvnet::allowGuest() const
+bool DFMFileShareEvent::allowGuest() const
 {
-    return property(QT_STRINGIFY(DFMFileShareEvnet::allowGuest), false);
+    return property(QT_STRINGIFY(DFMFileShareEvent::allowGuest), false);
 }
 
-QSharedPointer<DFMFileShareEvnet> DFMFileShareEvnet::fromJson(const QJsonObject &json)
+QSharedPointer<DFMFileShareEvent> DFMFileShareEvent::fromJson(const QJsonObject &json)
 {
-    return dMakeEventPointer<DFMFileShareEvnet>(Q_NULLPTR, DUrl::fromUserInput(json["url"].toString()), json["name"].toString(),
+    return dMakeEventPointer<DFMFileShareEvent>(Q_NULLPTR, DUrl::fromUserInput(json["url"].toString()), json["name"].toString(),
             json["isWritable"].toBool(), json["allowGuest"].toBool());
 }
 
@@ -743,15 +743,15 @@ QSharedPointer<DFMCreateGetChildrensJob> DFMCreateGetChildrensJob::fromJson(cons
     return event;
 }
 
-DFMCreateFileInfoEvnet::DFMCreateFileInfoEvnet(const QObject *sender, const DUrl &url)
+DFMCreateFileInfoEvent::DFMCreateFileInfoEvent(const QObject *sender, const DUrl &url)
     : DFMUrlBaseEvent(CreateFileInfo, sender, url)
 {
 
 }
 
-QSharedPointer<DFMCreateFileInfoEvnet> DFMCreateFileInfoEvnet::fromJson(const QJsonObject &json)
+QSharedPointer<DFMCreateFileInfoEvent> DFMCreateFileInfoEvent::fromJson(const QJsonObject &json)
 {
-    return DFMUrlBaseEvent::fromJson(CreateFileInfo, json).staticCast<DFMCreateFileInfoEvnet>();
+    return DFMUrlBaseEvent::fromJson(CreateFileInfo, json).staticCast<DFMCreateFileInfoEvent>();
 }
 
 DFMCreateFileWatcherEvent::DFMCreateFileWatcherEvent(const QObject *sender, const DUrl &url)

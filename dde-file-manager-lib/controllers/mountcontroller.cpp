@@ -43,7 +43,7 @@ MountController::~MountController()
 
 }
 
-const DAbstractFileInfoPointer MountController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
+const DAbstractFileInfoPointer MountController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
 {
     MountFileInfo *info = new MountFileInfo(event->url());
 

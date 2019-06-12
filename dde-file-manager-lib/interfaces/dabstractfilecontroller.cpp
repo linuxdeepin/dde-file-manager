@@ -109,21 +109,21 @@ bool DAbstractFileController::openFileByApp(const QSharedPointer<DFMOpenFileByAp
     return false;
 }
 
-bool DAbstractFileController::compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const
+bool DAbstractFileController::compressFiles(const QSharedPointer<DFMCompressEvent> &event) const
 {
     event->ignore();
 
     return false;
 }
 
-bool DAbstractFileController::decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const
+bool DAbstractFileController::decompressFile(const QSharedPointer<DFMDecompressEvent> &event) const
 {
     event->ignore();
 
     return false;
 }
 
-bool DAbstractFileController::decompressFileHere(const QSharedPointer<DFMDecompressEvnet> &event) const
+bool DAbstractFileController::decompressFileHere(const QSharedPointer<DFMDecompressEvent> &event) const
 {
     event->ignore();
 
@@ -219,7 +219,7 @@ const QList<DAbstractFileInfoPointer> DAbstractFileController::getChildren(const
     return list;
 }
 
-const DAbstractFileInfoPointer DAbstractFileController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
+const DAbstractFileInfoPointer DAbstractFileController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
 {
     event->ignore();
 
@@ -260,7 +260,7 @@ bool DAbstractFileController::createSymlink(const QSharedPointer<DFMCreateSymlin
     return false;
 }
 
-bool DAbstractFileController::shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const
+bool DAbstractFileController::shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const
 {
     event->ignore();
 

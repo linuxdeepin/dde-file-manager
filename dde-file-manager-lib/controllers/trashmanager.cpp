@@ -116,7 +116,7 @@ TrashManager::TrashManager(QObject *parent)
     m_trashFileWatcher->startWatcher();
 }
 
-const DAbstractFileInfoPointer TrashManager::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
+const DAbstractFileInfoPointer TrashManager::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
 {
     return DAbstractFileInfoPointer(new TrashFileInfo(event->url()));
 }

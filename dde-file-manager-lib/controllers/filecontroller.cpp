@@ -328,7 +328,7 @@ bool FileController::findExecutable(const QString &executableName, const QString
     return !QStandardPaths::findExecutable(executableName, paths).isEmpty();
 }
 
-const DAbstractFileInfoPointer FileController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
+const DAbstractFileInfoPointer FileController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
 {
     if (event->url().toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX)) {
 
@@ -348,7 +348,7 @@ bool FileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) con
 {
     DUrl fileUrl = event->url();
 
-    const DAbstractFileInfoPointer pfile = createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvnet>(this, fileUrl));
+    const DAbstractFileInfoPointer pfile = createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvent>(this, fileUrl));
 
     if (pfile->isSymLink()) {
         const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(this, pfile->symLinkTarget());
@@ -389,7 +389,7 @@ bool FileController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &
     return FileUtils::openFilesByApp(event->appName(), {event->url().toString()});
 }
 
-bool FileController::compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const
+bool FileController::compressFiles(const QSharedPointer<DFMCompressEvent> &event) const
 {
     if (findExecutable("file-roller")) {
         QStringList args;
@@ -407,7 +407,7 @@ bool FileController::compressFiles(const QSharedPointer<DFMCompressEvnet> &event
     return false;
 }
 
-bool FileController::decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const
+bool FileController::decompressFile(const QSharedPointer<DFMDecompressEvent> &event) const
 {
     if (findExecutable("file-roller")) {
         QStringList args;
@@ -425,7 +425,7 @@ bool FileController::decompressFile(const QSharedPointer<DFMDecompressEvnet> &ev
     return false;
 }
 
-bool FileController::decompressFileHere(const QSharedPointer<DFMDecompressEvnet> &event) const
+bool FileController::decompressFileHere(const QSharedPointer<DFMDecompressEvent> &event) const
 {
     if (findExecutable("file-roller")) {
         QStringList args;
@@ -821,7 +821,7 @@ bool FileController::setPermissions(const QSharedPointer<DFMSetPermissionEvent> 
     return file.setPermissions(event->permissions());
 }
 
-bool FileController::shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const
+bool FileController::shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const
 {
     ShareInfo info;
     info.setPath(event->url().toLocalFile());

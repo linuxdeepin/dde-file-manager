@@ -160,7 +160,7 @@ MergedDesktopController::MergedDesktopController(QObject *parent)
     m_desktopFileWatcher->startWatcher();
 }
 
-const DAbstractFileInfoPointer MergedDesktopController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
+const DAbstractFileInfoPointer MergedDesktopController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
 {
     return DAbstractFileInfoPointer(new MergedDesktopFileInfo(event->url(), currentUrl));
 }
@@ -324,13 +324,13 @@ bool MergedDesktopController::setPermissions(const QSharedPointer<DFMSetPermissi
     return DFileService::instance()->setPermissions(event->sender(), convertToRealPath(event->url()), event->permissions());
 }
 
-bool MergedDesktopController::compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const
+bool MergedDesktopController::compressFiles(const QSharedPointer<DFMCompressEvent> &event) const
 {
     DUrlList urlList = convertToRealPaths(event->urlList());
     return DFileService::instance()->compressFiles(event->sender(), urlList);
 }
 
-bool MergedDesktopController::decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const
+bool MergedDesktopController::decompressFile(const QSharedPointer<DFMDecompressEvent> &event) const
 {
     DUrlList urlList = convertToRealPaths(event->urlList());
     return DFileService::instance()->decompressFile(event->sender(), urlList);

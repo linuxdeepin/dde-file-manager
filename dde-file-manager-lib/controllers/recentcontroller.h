@@ -42,8 +42,8 @@ public:
     bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const override;
     bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const override;
     bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
-    bool compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const override;
-    bool decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const override;
+    bool compressFiles(const QSharedPointer<DFMCompressEvent> &event) const override;
+    bool decompressFile(const QSharedPointer<DFMDecompressEvent> &event) const override;
     bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const override;
 
     bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const override;
@@ -54,7 +54,7 @@ public:
     QList<QString> getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const override;
 
     const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const override;
-    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const override;
+    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const override;
 
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
 

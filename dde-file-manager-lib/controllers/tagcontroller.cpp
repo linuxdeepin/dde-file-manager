@@ -26,7 +26,7 @@ TagController::TagController(QObject* const parent)
        //constructor!
 }
 
-const DAbstractFileInfoPointer TagController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet>& event) const
+const DAbstractFileInfoPointer TagController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent>& event) const
 {
     DAbstractFileInfoPointer TaggedFilesInfo{ new TagFileInfo{ event->url() } };
 
@@ -285,7 +285,7 @@ bool TagController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &e
     return DFileService::instance()->openFileByApp(event->sender(), event->appName(), local_file);
 }
 
-bool TagController::compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const
+bool TagController::compressFiles(const QSharedPointer<DFMCompressEvent> &event) const
 {
     const DUrlList &list = toLocalFileList(event->fileUrlList());
 
@@ -295,7 +295,7 @@ bool TagController::compressFiles(const QSharedPointer<DFMCompressEvnet> &event)
     return DFileService::instance()->compressFiles(event->sender(), list);
 }
 
-bool TagController::decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const
+bool TagController::decompressFile(const QSharedPointer<DFMDecompressEvent> &event) const
 {
     const DUrlList &list = toLocalFileList(event->fileUrlList());
 
@@ -305,7 +305,7 @@ bool TagController::decompressFile(const QSharedPointer<DFMDecompressEvnet> &eve
     return DFileService::instance()->decompressFile(event->sender(), list);
 }
 
-bool TagController::decompressFileHere(const QSharedPointer<DFMDecompressEvnet> &event) const
+bool TagController::decompressFileHere(const QSharedPointer<DFMDecompressEvent> &event) const
 {
     const DUrlList &list = toLocalFileList(event->fileUrlList());
 
@@ -437,7 +437,7 @@ bool TagController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &e
     return DFileService::instance()->createSymlink(event->sender(), local_file, event->toUrl());
 }
 
-bool TagController::shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const
+bool TagController::shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const
 {
     const DUrl &local_file = toLocalFile(event->url());
 
