@@ -2,13 +2,32 @@
 #define MASTEREDMEDIACONTROLLER_H
 
 #include "dabstractfilecontroller.h"
+#include "dabstractfilewatcher.h"
 #include "durl.h"
+
+class MasteredMediaFileWatcherPrivate;
+class MasteredMediaFileWatcher : public DAbstractFileWatcher
+{
+    Q_OBJECT
+
+public:
+    explicit MasteredMediaFileWatcher(const DUrl &url, QObject *parent = nullptr);
+
+private slots:
+    void onFileDeleted(const DUrl &url);
+    void onFileAttributeChanged(const DUrl &url);
+    void onFileMoved(const DUrl &fromUrl, const DUrl &toUrl);
+    void onSubfileCreated(const DUrl &url);
+
+private:
+    Q_DECLARE_PRIVATE(MasteredMediaFileWatcher)
+};
 
 class MasteredMediaController : public DAbstractFileController
 {
     Q_OBJECT
 public:
-    explicit MasteredMediaController(QObject *parent = 0);
+    explicit MasteredMediaController(QObject *parent = nullptr);
 
     bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const Q_DECL_OVERRIDE;
     bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const Q_DECL_OVERRIDE;
