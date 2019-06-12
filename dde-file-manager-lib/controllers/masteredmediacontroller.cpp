@@ -14,9 +14,11 @@
 #include "interfaces/dfileproxywatcher.h"
 #include "private/dabstractfilewatcher_p.h"
 #include "disomaster.h"
+#include "shutil/fileutils.h"
 
 #include <QRegularExpression>
 #include <QStandardPaths>
+#include <QProcess>
 
 class DFMShadowedDirIterator : public DDirIterator
 {
@@ -347,9 +349,23 @@ bool MasteredMediaController::unShareFolder(const QSharedPointer<DFMCancelFileSh
 
 bool MasteredMediaController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const
 {
-    event->ignore();
+    if (event->url().path().indexOf("/disk_files/") == -1) {
+        return false;
+    }
 
-    return false;
+    const QString &current_dir = QDir::currentPath();
+
+    QString backer = MasteredMediaFileInfo(event->url()).extraProperties()["mm_backer"].toString();
+    if (!backer.length()) {
+        return false;
+    }
+    QDir::setCurrent(backer);
+
+    bool ok = QProcess::startDetached(FileUtils::defaultTerminalPath());
+
+    QDir::setCurrent(current_dir);
+
+    return ok;
 }
 
 bool MasteredMediaController::setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const
