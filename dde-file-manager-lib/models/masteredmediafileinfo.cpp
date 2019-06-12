@@ -51,14 +51,16 @@ MasteredMediaFileInfo::MasteredMediaFileInfo(const DUrl &url)
                 return;
             }
 
-            Q_ASSERT(blkdev->mountPoints().size() > 0);
-            QString mntpoint = QString(blkdev->mountPoints().front());
-            if (*mntpoint.rbegin() != '/') {
-                mntpoint += '/';
-            }
+            if (blkdev->mountPoints().size() > 0) {
+                QString mntpoint = QString(blkdev->mountPoints().front());
+                if (*mntpoint.rbegin() != '/') {
+                    mntpoint += '/';
+                }
 
-            m_backerUrl = DUrl(mntpoint + rem.captured(3));
-            m_backerUrl.setScheme(FILE_SCHEME);
+                m_backerUrl = DUrl(mntpoint + rem.captured(3));
+                m_backerUrl.setScheme(FILE_SCHEME);
+            }
+            else m_backerUrl = DUrl();
         } else {
             m_backerUrl = DUrl(MasteredMediaController::getStagingFolder(url));
         }
@@ -112,9 +114,16 @@ int MasteredMediaFileInfo::filesCount() const
     return d->proxy->filesCount();
 }
 
-QFileInfo MasteredMediaFileInfo::toQFileInfo() const
+QVariantHash MasteredMediaFileInfo::extraProperties() const
 {
-    return QFileInfo(m_backerUrl.path());
+    Q_D(const DAbstractFileInfo);
+
+    QVariantHash ret;
+    if (d->proxy) {
+        ret = d->proxy->extraProperties();
+    }
+    ret["mm_backer"] = m_backerUrl.path();
+    return ret;
 }
 
 DUrl MasteredMediaFileInfo::parentUrl() const
@@ -158,6 +167,14 @@ bool MasteredMediaFileInfo::canIteratorDir() const
     Q_D(const DAbstractFileInfo);
 
     return !d->proxy;
+}
+
+DUrl MasteredMediaFileInfo::goToUrlWhenDeleted() const
+{
+    if (m_backerUrl.isEmpty()) {
+        return DUrl::fromLocalFile(QDir::homePath());
+    }
+    return DAbstractFileInfo::goToUrlWhenDeleted();
 }
 
 QString MasteredMediaFileInfo::toLocalFile() const
