@@ -84,6 +84,7 @@ DFileDialog::DFileDialog(QWidget *parent)
 
     if (titlebar()) {
         titlebar()->setDisableFlags(Qt::WindowSystemMenuHint);
+        titlebar()->setMenuVisible(false);
     }
 
     d_ptr->statusBar = new FileDialogStatusBar(this);
