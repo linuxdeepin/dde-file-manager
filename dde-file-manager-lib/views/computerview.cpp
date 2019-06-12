@@ -275,7 +275,7 @@ bool ComputerViewItem::event(QEvent *event)
 {
     if (event->type() == QEvent::Resize) {
         event->~QEvent();
-        resize(width(), getIconLabel()->height()+TEXT_LINE_HEIGHT+ ICON_MODE_ICON_SPACING + 90);
+        resize(width(), getIconLabel()->height() + TEXT_LINE_HEIGHT + ICON_MODE_ICON_SPACING + 90);
         adjustPosition();
         return true;
     }
