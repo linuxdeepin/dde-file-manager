@@ -114,7 +114,7 @@ NetworkController::~NetworkController()
 
 }
 
-const DAbstractFileInfoPointer NetworkController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
+const DAbstractFileInfoPointer NetworkController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
 {
     NetworkFileInfo *info = new NetworkFileInfo(event->url());
 

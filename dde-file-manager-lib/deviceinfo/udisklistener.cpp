@@ -147,7 +147,7 @@ bool UDiskListener::renameFile(const QSharedPointer<DFMRenameEvent> &event) cons
     const DUrl &oldUrl = event->fromUrl();
     const DUrl &newUrl = event->toUrl();
 
-    const QSharedPointer<DFMCreateFileInfoEvnet> e(new DFMCreateFileInfoEvnet(nullptr, oldUrl));
+    const QSharedPointer<DFMCreateFileInfoEvent> e(new DFMCreateFileInfoEvent(nullptr, oldUrl));
     const DAbstractFileInfoPointer &oldDevicePointer = UDiskListener::createFileInfo(e);
 
     DAbstractFileInfo* info = oldDevicePointer.data();
@@ -677,7 +677,7 @@ const QList<DAbstractFileInfoPointer> UDiskListener::getChildren(const QSharedPo
     return infolist;
 }
 
-const DAbstractFileInfoPointer UDiskListener::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
+const DAbstractFileInfoPointer UDiskListener::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
 {
     const QString &deviceId = event->url().path();
 

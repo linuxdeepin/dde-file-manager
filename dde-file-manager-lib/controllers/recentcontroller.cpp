@@ -282,12 +282,12 @@ bool RecentController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsTo
                                                            realUrlList(event->urlList()));
 }
 
-bool RecentController::compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const
+bool RecentController::compressFiles(const QSharedPointer<DFMCompressEvent> &event) const
 {
     return DFileService::instance()->compressFiles(event->sender(), realUrlList(event->urlList()));
 }
 
-bool RecentController::decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const
+bool RecentController::decompressFile(const QSharedPointer<DFMDecompressEvent> &event) const
 {
     return DFileService::instance()->decompressFile(event->sender(), realUrlList(event->urlList()));
 }
@@ -354,7 +354,7 @@ const DDirIteratorPointer RecentController::createDirIterator(const QSharedPoint
     return DDirIteratorPointer(iterator);
 }
 
-const DAbstractFileInfoPointer RecentController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
+const DAbstractFileInfoPointer RecentController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
 {
     if (event->url().path() == "/") {
         return DAbstractFileInfoPointer(new RecentFileInfo(DUrl(RECENT_ROOT)));

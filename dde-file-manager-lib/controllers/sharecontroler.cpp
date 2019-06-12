@@ -81,7 +81,7 @@ ShareControler::ShareControler(QObject *parent) :
 
 }
 
-const DAbstractFileInfoPointer ShareControler::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
+const DAbstractFileInfoPointer ShareControler::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
 {
     return DAbstractFileInfoPointer(new ShareFileInfo(event->url()));
 }
@@ -113,7 +113,7 @@ DAbstractFileWatcher *ShareControler::createFileWatcher(const QSharedPointer<DFM
     return new ShareFileWatcher();
 }
 
-bool ShareControler::shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const
+bool ShareControler::shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const
 {
     return DFileService::instance()->shareFolder(event->sender(), realUrl(event->url()),
                                                  event->name(), event->isWritable(),

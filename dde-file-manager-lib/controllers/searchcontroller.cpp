@@ -465,7 +465,7 @@ SearchController::SearchController(QObject *parent)
 
 }
 
-const DAbstractFileInfoPointer SearchController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
+const DAbstractFileInfoPointer SearchController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
 {
     DUrl url = event->url().searchTargetUrl();
 
@@ -529,12 +529,12 @@ bool SearchController::setPermissions(const QSharedPointer<DFMSetPermissionEvent
     return false;
 }
 
-bool SearchController::compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const
+bool SearchController::compressFiles(const QSharedPointer<DFMCompressEvent> &event) const
 {
     return DFileService::instance()->compressFiles(event->sender(), realUrlList(event->urlList()));
 }
 
-bool SearchController::decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const
+bool SearchController::decompressFile(const QSharedPointer<DFMDecompressEvent> &event) const
 {
     return DFileService::instance()->decompressFile(event->sender(), realUrlList(event->urlList()));
 }
@@ -554,7 +554,7 @@ bool SearchController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent>
     return DFileService::instance()->createSymlink(event->sender(), realUrl(event->fileUrl()), event->toUrl());
 }
 
-bool SearchController::shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const
+bool SearchController::shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const
 {
     return DFileService::instance()->shareFolder(event->sender(), realUrl(event->url()),
             event->name(), event->isWritable(), event->allowGuest());

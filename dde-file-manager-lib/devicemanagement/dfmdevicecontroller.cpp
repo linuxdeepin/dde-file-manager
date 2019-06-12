@@ -123,7 +123,7 @@ const QList<DAbstractFileInfoPointer> DFMDeviceController::getChildren(const QSh
     return list;
 }
 
-const DAbstractFileInfoPointer DFMDeviceController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
+const DAbstractFileInfoPointer DFMDeviceController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
 {
     const QString &devicePath = event->url().path();
 
