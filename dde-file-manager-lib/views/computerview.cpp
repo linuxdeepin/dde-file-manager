@@ -274,8 +274,8 @@ bool ComputerViewItem::eventFilter(QObject *obj, QEvent *event)
 bool ComputerViewItem::event(QEvent *event)
 {
     if (event->type() == QEvent::Resize) {
-        event->ignore();   // If the program tries to resize itself, then it does that incorrectly. So, the resizing event should be ignored.
-        resize(width(), (getIconLabel()->height() + TEXT_LINE_HEIGHT + ICON_MODE_ICON_SPACING + 90));
+        event->~QEvent();
+        resize(width(), getIconLabel()->height()+TEXT_LINE_HEIGHT+ ICON_MODE_ICON_SPACING + 90);
         adjustPosition();
         return true;
     }
