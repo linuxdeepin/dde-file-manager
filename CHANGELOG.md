@@ -1,3 +1,14 @@
+<a name="4.8.6.4"></a>
+## 4.8.6.4 (2019-06-12)
+
+
+#### Bug Fixes
+
+*   DFileDialog disable menu from titlebar ([e2f5c9a9](https://github.com/linuxdeepin/dde-file-manager/commit/e2f5c9a9bef2dadd261d83931985fbcf4f3631a3))
+*   typos in multiple DFMEvent subclasses. ([de2e33a6](https://github.com/linuxdeepin/dde-file-manager/commit/de2e33a6aad845f12e529c9786256364f5cafa14))
+
+
+
 <a name="4.8.6.3"></a>
 ## 4.8.6.3 (2019-06-11)
 
