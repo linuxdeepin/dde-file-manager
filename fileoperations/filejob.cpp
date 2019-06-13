@@ -650,7 +650,6 @@ void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int 
     job_isomaster->getDeviceProperty();
     QUrl stagingurl(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
                     + "/diskburn/" + device.path().replace('/','_') + "/");
-    qDebug() << stagingurl;
     job_isomaster->stageFiles({{stagingurl, QUrl("/")}});
     job_isomaster->commit(speed, flag & 1, volname);
     if (flag & 4) {
@@ -668,6 +667,8 @@ void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int 
         blkdev->rescan({});
         ISOMaster->nullifyDevicePropertyCache(device.path());
     }
+
+    doDelete({DUrl::fromLocalFile(stagingurl.path())});
 
     if (m_isJobAdded)
         jobRemoved();
