@@ -153,6 +153,8 @@ QVector<MenuAction> MasteredMediaFileInfo::menuActionList(MenuType type) const
         ret.removeAll(MenuAction::OpenInTerminal);
         ret.removeAll(MenuAction::OpenAsAdmin);
         ret.removeAll(MenuAction::Copy);
+        ret.removeAll(MenuAction::SendToRemovableDisk);
+        ret.removeAll(MenuAction::StageFileForBurning);
     }
     return ret;
 }

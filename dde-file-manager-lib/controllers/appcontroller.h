@@ -124,6 +124,7 @@ public slots:
 
     void actionOpenFileByApp();
     void actionSendToRemovableDisk();
+    void actionStageFileForBurning();
 
 
     ///###: tag protocol
