@@ -230,6 +230,7 @@ public:
         RemoveFromRecent,
 
         MountImage,
+        StageFileForBurning,
 
         UserMenuAction = Unknow + 2000
     };

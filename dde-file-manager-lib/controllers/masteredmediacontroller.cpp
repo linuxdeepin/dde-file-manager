@@ -197,7 +197,7 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const DUrl &url, QObject *par
             connect(d->diskm.data(), &DDiskManager::opticalChanged, this,
                 [this, blkdev, url](const QString &path) {
                 if (path == blkdev->drive()) {
-                emit fileDeleted(url);
+                    emit fileDeleted(url);
                 }
             });
             d->diskm->setWatchChanges(true);
@@ -319,12 +319,12 @@ DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> 
     DUrl dst = event->targetUrl();
 
     if (src.size() == 1) {
-        QRegularExpression re("^(.*)/disk_files/(.*)$");
+        QRegularExpression re("^(.*)/(disk_files|staging_files)/(.*)$");
         auto rem = re.match(dst.path());
         Q_ASSERT(rem.hasMatch());
         QString dev(rem.captured(1));
         bool is_blank = ISOMaster->getDevicePropertyCached(dev).formatted;
-        QString dstdirpath = getStagingFolder(DUrl(dev + "/staging_files/")).path();
+        QString dstdirpath = getStagingFolder(DUrl(dev + "/staging_files/" + rem.captured(3))).path();
         QDir dstdir = QDir(dstdirpath);
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), src.front());
         if (is_blank && fi->mimeTypeName() == "application/x-cd-image" && dstdir.count() == 0) {

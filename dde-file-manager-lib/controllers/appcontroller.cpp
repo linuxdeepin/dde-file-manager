@@ -777,6 +777,35 @@ void AppController::actionSendToRemovableDisk()
     fileService->pasteFile(action, DFMGlobal::CopyAction, targetUrl, urlList);
 }
 
+void AppController::actionStageFileForBurning()
+{
+    const QAction *action = qobject_cast<QAction *>(sender());
+
+    if (!action) {
+        return;
+    }
+
+    QString destdev = action->property("dest_drive").toString();
+    DUrlList urlList = DUrl::fromStringList(action->property("urlList").toStringList());
+
+    QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(destdev));
+    if (!dev->optical()) {
+        dev->eject({});
+        return;
+    }
+
+    DDiskManager diskm;
+    for(auto &blks : diskm.blockDevices()) {
+        QScopedPointer<DBlockDevice> blkd(DDiskManager::createBlockDevice(blks));
+        if (blkd->drive() == destdev) {
+            DUrl dest = DUrl(QString(blkd->device()) + "/staging_files/");
+            dest.setScheme(BURN_SCHEME);
+            fileService->pasteFile(action, DFMGlobal::CopyAction, dest, urlList);
+            break;
+        }
+    }
+}
+
 QList<QString> AppController::actionGetTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event)
 {
     QList<QString> tags{};
