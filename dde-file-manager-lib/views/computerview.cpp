@@ -242,6 +242,10 @@ bool ComputerViewItem::eventFilter(QObject *obj, QEvent *event)
         switch (keyEvent->key()) {
         case Qt::Key_Enter:
         case Qt::Key_Return:
+            if (!m_deviceInfo) {
+                qWarning() << "device info not valid, can be a bug." << obj;
+                break;
+            }
             event->accept();
             // do rename here
             {
