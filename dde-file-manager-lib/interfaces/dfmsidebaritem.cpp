@@ -94,6 +94,7 @@ private:
     bool pressed = false;
     bool checked = false;
     bool hovered = false;
+    bool kbdFocused = false;
     bool autoOpenUrlOnClick = true;
 };
 
@@ -191,6 +192,10 @@ ThemeConfig::State DFMSideBarItemPrivate::getState() const
 
     if (hovered) {
         return ThemeConfig::Hover;
+    }
+
+    if (kbdFocused) {
+        return ThemeConfig::Focus;
     }
 
     return ThemeConfig::Normal;
@@ -790,6 +795,33 @@ void DFMSideBarItem::paintEvent(QPaintEvent *event)
         painter.setBrush(iconBrushColor);
         painter.drawRect(width() - SIDEBAR_CHECK_BORDER_SIZE, 0, SIDEBAR_CHECK_BORDER_SIZE, height());
     }
+}
+
+void DFMSideBarItem::focusInEvent(QFocusEvent *event)
+{
+    Q_D(DFMSideBarItem);
+
+    switch (event->reason()) {
+    case Qt::TabFocusReason:
+    case Qt::BacktabFocusReason:
+        d->kbdFocused = true;
+        update();
+        break;
+    default:
+        break;
+    }
+
+    QWidget::focusInEvent(event);
+}
+
+void DFMSideBarItem::focusOutEvent(QFocusEvent *event)
+{
+    Q_D(DFMSideBarItem);
+
+    d->kbdFocused = false;
+    update();
+
+    QWidget::focusOutEvent(event);
 }
 
 void DFMSideBarItem::setVisible(bool visible)
