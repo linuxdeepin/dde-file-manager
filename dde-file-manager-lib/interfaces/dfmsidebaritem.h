@@ -110,6 +110,8 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
+    void focusInEvent(QFocusEvent *event) override;
+    void focusOutEvent(QFocusEvent *event) override;
     bool event(QEvent *event) override;
 
     //friend DFMSideBarItem *DFMSideBarItemGroup::takeItem(int index);
