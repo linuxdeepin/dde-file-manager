@@ -36,7 +36,7 @@
 MasteredMediaFileInfo::MasteredMediaFileInfo(const DUrl &url)
     : DAbstractFileInfo(url)
 {
-    QRegularExpression re("^(.*)/(disk_files|staging_files)/(.*)$");
+    QRegularExpression re("^(.*?)/(disk_files|staging_files)(.*)$");
     QString device(url.path());
     auto rem = re.match(device);
     if (rem.hasMatch()) {
@@ -53,8 +53,8 @@ MasteredMediaFileInfo::MasteredMediaFileInfo(const DUrl &url)
 
             if (blkdev->mountPoints().size() > 0) {
                 QString mntpoint = QString(blkdev->mountPoints().front());
-                if (*mntpoint.rbegin() != '/') {
-                    mntpoint += '/';
+                while (*mntpoint.rbegin() == '/') {
+                    mntpoint.chop(1);
                 }
 
                 m_backerUrl = DUrl(mntpoint + rem.captured(3));
@@ -72,6 +72,9 @@ bool MasteredMediaFileInfo::exists() const
 {
     Q_D(const DAbstractFileInfo);
 
+    if (fileUrl().isEmpty()) {
+        return false;
+    }
     return !d->proxy || d->proxy->exists();
 }
 
@@ -87,7 +90,7 @@ bool MasteredMediaFileInfo::isReadable() const
 
 bool MasteredMediaFileInfo::isWritable() const
 {
-    QRegularExpression re("^(.*)/(disk_files|staging_files)/(.*)$");
+    QRegularExpression re("^(.*?)/(disk_files|staging_files)(.*)$");
     auto rem = re.match(this->fileUrl().path());
     if (rem.hasMatch()) {
         return ISOMaster->getDevicePropertyCached(rem.captured(1)).avail > 0;
@@ -123,15 +126,6 @@ QVariantHash MasteredMediaFileInfo::extraProperties() const
         ret = d->proxy->extraProperties();
     }
     ret["mm_backer"] = m_backerUrl.path();
-    return ret;
-}
-
-DUrl MasteredMediaFileInfo::parentUrl() const
-{
-    DUrl ret = this->DAbstractFileInfo::parentUrl();
-    ret.setPath(ret.path().replace("staging_files", "disk_files"));
-    if (!ret.path().endsWith('/'))
-        ret.setPath(ret.path() + '/');
     return ret;
 }
 

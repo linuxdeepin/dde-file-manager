@@ -39,7 +39,6 @@ public:
     int filesCount() const Q_DECL_OVERRIDE;
 
     QVariantHash extraProperties() const Q_DECL_OVERRIDE;
-    DUrl parentUrl() const Q_DECL_OVERRIDE;
     QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
 
     bool canRedirectionFileUrl() const Q_DECL_OVERRIDE;
