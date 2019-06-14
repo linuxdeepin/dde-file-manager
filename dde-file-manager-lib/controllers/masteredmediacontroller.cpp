@@ -28,7 +28,7 @@ public:
                     QDir::Filters filter,
                     QDirIterator::IteratorFlags flags)
     {
-        QRegularExpression re("^(.*)/(disk_files|staging_files)/(.*)$");
+        QRegularExpression re("^(.*?)/(disk_files|staging_files)(.*)$");
         QString device(path.path());
         auto rem = re.match(device);
         if (rem.hasMatch()) {
@@ -41,8 +41,8 @@ public:
                 mnturl.setScheme(FILE_SCHEME);
                 mntpoint = mnturl.toLocalFile();
             }
-            if (*mntpoint.rbegin() != '/') {
-                mntpoint += '/';
+            while (*mntpoint.rbegin() == '/') {
+                mntpoint.chop(1);
             }
             devfile = rem.captured(1);
             if (diskdev->opticalBlank()) {
@@ -65,7 +65,7 @@ public:
 
     DUrl next() override
     {
-        return changeScheme(DUrl::fromLocalFile(iterator && iterator->hasNext() ? iterator->next() : (iterator = QSharedPointer<QDirIterator>(Q_NULLPTR), stagingiterator->next())));
+        return changeSchemeUpdate(DUrl::fromLocalFile(iterator && iterator->hasNext() ? iterator->next() : (iterator = QSharedPointer<QDirIterator>(Q_NULLPTR), stagingiterator->next())));
     }
 
     bool hasNext() const override
@@ -86,11 +86,6 @@ public:
 
     const DAbstractFileInfoPointer fileInfo() const override
     {
-        /*const QFileInfo &info = iterator->fileInfo();
-
-        if (info.suffix() == DESKTOP_SURRIX) {
-            return DAbstractFileInfoPointer(new DesktopFileInfo(info));
-        }*/
         DUrl url = fileUrl();
 
         return DAbstractFileInfoPointer(new MasteredMediaFileInfo(url));
@@ -106,20 +101,37 @@ private:
     QSharedPointer<QDirIterator> stagingiterator;
     QString mntpoint;
     QString devfile;
+    QSet<QString> seen;
+    QSet<DUrl> skip;
     DUrl changeScheme(DUrl in) const
     {
-        DUrl burntmp = DUrl(QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/diskburn/");
-        burntmp.setScheme(FILE_SCHEME);
-        QString stagingroot = burntmp.path() + QString(devfile).replace('/','_') + "/";
+        DUrl burntmp = DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/diskburn/");
+        QString stagingroot = burntmp.path() + QString(devfile).replace('/','_');
         DUrl ret;
         ret.setScheme(BURN_SCHEME);
         QString path = in.path();
         if (burntmp.isParentOf(in)) {
-            path.replace(stagingroot, devfile + "/staging_files/");
+            path.replace(stagingroot, devfile + "/staging_files");
         } else {
-            path.replace(mntpoint, devfile + "/disk_files/");
+            path.replace(mntpoint, devfile + "/disk_files");
         }
         ret.setPath(path);
+        if (skip.contains(ret)) {
+            return DUrl();
+        }
+        return ret;
+    }
+    DUrl changeSchemeUpdate(DUrl in)
+    {
+        DUrl ret = changeScheme(in);
+        QRegularExpression re("^(.*?)/(disk_files|staging_files)(.*)$");
+        auto rem = re.match(ret.path());
+        Q_ASSERT(rem.hasMatch());
+        if (seen.contains(rem.captured(3))) {
+            skip.insert(ret);
+            return DUrl();
+        }
+        seen.insert(rem.captured(3));
         return ret;
     }
 };
@@ -179,6 +191,10 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const DUrl &url, QObject *par
 
     d->proxyOnDisk.clear();
     //This watcher only watch for removal of the mount point
+    if (!url.path().contains(QRegularExpression("^(.*?)/(disk_files|staging_files)(/*)$"))) {
+        return;
+    }
+
     DUrl url_mountpoint = DUrl::fromLocalFile(MasteredMediaFileInfo(url).extraProperties()["mm_backer"].toString());
     if (url_mountpoint.isValid() && !url_mountpoint.isEmpty()) {
         d->proxyOnDisk = QPointer<DAbstractFileWatcher>(new DFileWatcher(url_mountpoint.path()));
@@ -186,7 +202,7 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const DUrl &url, QObject *par
         d->proxyOnDisk->setParent(this);
         connect(d->proxyOnDisk, &DAbstractFileWatcher::fileDeleted, this, [this, url] {emit fileDeleted(url);});
     } else { //The disc is not mounted, i.e. the disc is blank
-        QRegularExpression re("^(.*)/(disk_files|staging_files)/(.*)$");
+        QRegularExpression re("^(.*?)/(disk_files|staging_files)(.*)$");
         QString device(url.path());
         auto rem = re.match(device);
         if (rem.hasMatch()) {
@@ -319,12 +335,12 @@ DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> 
     DUrl dst = event->targetUrl();
 
     if (src.size() == 1) {
-        QRegularExpression re("^(.*)/(disk_files|staging_files)/(.*)$");
+        QRegularExpression re("^(.*?)/(disk_files|staging_files)(.*)$");
         auto rem = re.match(dst.path());
         Q_ASSERT(rem.hasMatch());
         QString dev(rem.captured(1));
         bool is_blank = ISOMaster->getDevicePropertyCached(dev).formatted;
-        QString dstdirpath = getStagingFolder(DUrl(dev + "/staging_files/" + rem.captured(3))).path();
+        QString dstdirpath = getStagingFolder(DUrl(dev + "/staging_files" + rem.captured(3))).path();
         QDir dstdir = QDir(dstdirpath);
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), src.front());
         if (is_blank && fi->mimeTypeName() == "application/x-cd-image" && dstdir.count() == 0) {
@@ -448,14 +464,12 @@ void MasteredMediaController::mkpath(DUrl path) const
 
 DUrl MasteredMediaController::getStagingFolder(DUrl dst)
 {
-    QRegularExpression re("^(.*)/(disk_files|staging_files)/(.*)$");
+    QRegularExpression re("^(.*?)/(disk_files|staging_files)(.*)$");
     auto rem = re.match(dst.path());
     if (!rem.hasMatch()) {
         return DUrl();
     }
-    DUrl tmpdst = DUrl(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
-                  + "/diskburn/" + rem.captured(1).replace('/','_') + "/"
+    return DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
+                  + "/diskburn/" + rem.captured(1).replace('/','_')
                   + rem.captured(3));
-    tmpdst.setScheme(FILE_SCHEME);
-    return tmpdst;
 }

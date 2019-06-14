@@ -2121,7 +2121,7 @@ bool DFileView::setRootUrl(const DUrl &url)
     }
 
     if (fileUrl.scheme() == BURN_SCHEME) {
-        QRegularExpression re("^(.*)/(disk_files|staging_files)/(.*)$");
+        QRegularExpression re("^(.*?)/(disk_files|staging_files)(.*)$");
         auto rem = re.match(fileUrl.path());
         Q_ASSERT(rem.hasMatch());
         QString devpath = rem.captured(1);
