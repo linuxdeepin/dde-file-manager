@@ -70,6 +70,7 @@ public:
     ThemeConfig::State getState() const;
 
     void hideRenameEditor();
+    void cdIfAutoOpenUrlOnClick();
 
     bool canDeleteViaDrag = false;
     bool reorderable = false;
@@ -86,25 +87,27 @@ public:
     DFMSideBarItem *q_ptr = nullptr;
 
 private:
+    QString groupName = QString();
+    QString displayText = "Placeholder";
+    QString iconGroup, iconKey; // use `icon()` and you'll get proper QPixmap for drawing.
+
     bool pressed = false;
     bool checked = false;
     bool hovered = false;
     bool autoOpenUrlOnClick = true;
-    QString groupName = QString();
-    QString displayText = "Placeholder";
-    QString iconGroup, iconKey; // use `icon()` and you'll get proper QPixmap for drawing.
 };
 
 DFMSideBarItemPrivate::DFMSideBarItemPrivate(DFMSideBarItem *qq)
     : q_ptr(qq)
 {
-    Q_Q(DFMSideBarItem);
+
 }
 
 void DFMSideBarItemPrivate::init()
 {
     Q_Q(DFMSideBarItem);
 
+    q->setFocusPolicy(Qt::TabFocus);
     q->setAcceptDrops(true);
     q->setMinimumSize(DFMSideBarItem::minimumWidth, SIDEBAR_ITEM_HEIGHT);
     q->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -199,6 +202,16 @@ void DFMSideBarItemPrivate::hideRenameEditor()
         renameLineEdit->hide();
         renameLineEdit->deleteLater();
         renameLineEdit = nullptr;
+    }
+}
+
+void DFMSideBarItemPrivate::cdIfAutoOpenUrlOnClick()
+{
+    Q_Q(DFMSideBarItem);
+
+    if (autoOpenUrlOnClick) {
+        DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(q->topLevelWidget());
+        wnd->cd(q->url()); // don't `setChecked` here, wait for a signal.
     }
 }
 
@@ -717,10 +730,7 @@ void DFMSideBarItem::mouseReleaseEvent(QMouseEvent *event)
     if (event->button() == Qt::MouseButton::LeftButton && mouseStillOnWidget) {
         emit clicked();
         // mouse click: cd to `url()`
-        if (autoOpenUrlOnClick()) {
-            DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
-            wnd->cd(url()); // don't `d->setChecked` here, wait for a signal.
-        }
+        d->cdIfAutoOpenUrlOnClick();
     }
 
     update();
@@ -796,10 +806,23 @@ bool DFMSideBarItem::event(QEvent *event)
 
     if (event->type() == QEvent::KeyPress) {
         QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-        if (keyEvent->key() == Qt::Key_Escape) {
-            keyEvent->accept();
-            d->hideRenameEditor();
+
+        switch (keyEvent->key()) {
+        case Qt::Key_Escape:
+            if (!d->renameLineEdit) {
+                keyEvent->accept();
+                d->hideRenameEditor();
+            }
             return true;
+        case Qt::Key_Return:
+        case Qt::Key_Enter:
+            if (!d->renameLineEdit) {
+                emit clicked();
+                d->cdIfAutoOpenUrlOnClick();
+            }
+            return true;
+        default:
+            break;
         }
     }
 
