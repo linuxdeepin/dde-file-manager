@@ -49,7 +49,7 @@ class DFMSideBarItem : public QWidget
 
 public:
     explicit DFMSideBarItem(const DUrl &url = DUrl(), QWidget *parent = nullptr);
-    ~DFMSideBarItem();
+    ~DFMSideBarItem() override;
 
     const DUrl url() const;
 
