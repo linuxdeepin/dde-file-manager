@@ -79,12 +79,15 @@ void ComputerPropertyDialog::initUI()
 
     QStringList msgsTitle;
     msgsTitle << tr("Computer Name")
-              << tr("Version")
+              << tr("OS version")
               << tr("Type")
               << tr("Processor")
               << tr("Memory")
-              << tr("Disk");
-
+              << tr("Disk")
+              << tr("Kernel version");
+    if(DSysInfo::isDDE()){
+         msgsTitle  << tr("Deepin DE version");
+    }
     int row = 0;
     QHash<QString, QString> datas = getMessage(msgsTitle);
 
@@ -100,7 +103,6 @@ void ComputerPropertyDialog::initUI()
 
         gridLayout->addWidget(keyLabel, row, 0, Qt::AlignRight | Qt::AlignTop);
         gridLayout->addWidget(valLabel, row, 1, Qt::AlignLeft | Qt::AlignTop);
-        gridLayout->setRowMinimumHeight(row, valLabel->heightForWidth(gridLayout->columnMinimumWidth(1)));
         row++;
     }
 
@@ -149,6 +151,9 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
                                                .arg(QThread::idealThreadCount()));
     datas.insert(data.at(4), FileUtils::formatSize(DSysInfo::memoryTotalSize()));
     datas.insert(data.at(5), FileUtils::formatSize(DSysInfo::systemDiskSize()));
-
+    datas.insert(data.at(6), QSysInfo::kernelVersion());
+    if(DSysInfo::isDDE()){
+    datas.insert(data.at(7), DSysInfo::deepinVersion());
+    }
     return datas;
 }
