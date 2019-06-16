@@ -103,6 +103,7 @@ void ComputerPropertyDialog::initUI()
 
         gridLayout->addWidget(keyLabel, row, 0, Qt::AlignRight | Qt::AlignTop);
         gridLayout->addWidget(valLabel, row, 1, Qt::AlignLeft | Qt::AlignTop);
+        gridLayout->setRowMinimumHeight(row, valLabel->heightForWidth(valLabel->width())-10);
         row++;
     }
 
