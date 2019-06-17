@@ -70,6 +70,10 @@ DFMSideBarDeviceItem::DFMSideBarDeviceItem(DUrl url, QWidget *parent)
     default:
         break;
     }
+
+    if (info["optical"].toBool()) {
+        hide();
+    }
 }
 
 QVariantHash DFMSideBarDeviceItem::getExtraProperties() const
