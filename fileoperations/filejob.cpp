@@ -611,6 +611,7 @@ void FileJob::doOpticalBlank(const DUrl &device)
     dev.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dev));
     blkdev->unmount({});
+    m_opticalOpSpeed.clear();
     jobPrepared();
 
     DISOMasterNS::DISOMaster *job_isomaster = new DISOMasterNS::DISOMaster(this);
@@ -642,6 +643,7 @@ void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int 
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dev));
     blkdev->unmount({});
     m_opticalJobPhase = 1;
+    m_opticalOpSpeed.clear();
     jobPrepared();
 
     DISOMasterNS::DISOMaster *job_isomaster = new DISOMasterNS::DISOMaster(this);
@@ -652,12 +654,12 @@ void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int 
                     + "/diskburn/" + device.path().replace('/','_') + "/");
     job_isomaster->stageFiles({{stagingurl, QUrl("/")}});
     job_isomaster->commit(speed, flag & 1, volname);
+    double gud, slo, bad;
     if (flag & 4) {
-        double gud, slo, bad;
         m_opticalJobPhase = 2;
         job_isomaster->checkmedia(&gud, &slo, &bad);
-        //what to do with the results is TBD.
     }
+    bool rst = ! ((flag & 4) && bad > 1e-6);
     job_isomaster->releaseDevice();
 
     if (flag & 2) {
@@ -673,6 +675,11 @@ void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int 
     if (m_isJobAdded)
         jobRemoved();
     emit finished();
+    if (flag & 4) {
+        emit requestOpticalJobCompletionDialog(rst ? tr("Data verification successful.") : tr("Data verification failed."), rst ? "dialog-ok" : "dialog-error");
+    } else {
+        emit requestOpticalJobCompletionDialog(tr("Burn process completed"), "dialog-ok");
+    }
     delete job_isomaster;
 }
 
@@ -690,6 +697,7 @@ void FileJob::doOpticalImageBurn(const DUrl &device, const DUrl &image, int spee
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dev));
     blkdev->unmount({});
     m_opticalJobPhase = 0;
+    m_opticalOpSpeed.clear();
     jobPrepared();
 
     DISOMasterNS::DISOMaster *job_isomaster = new DISOMasterNS::DISOMaster(this);
@@ -700,13 +708,12 @@ void FileJob::doOpticalImageBurn(const DUrl &device, const DUrl &image, int spee
         m_opticalJobPhase = 1;
     }
     job_isomaster->writeISO(image, speed);
+    double gud, slo, bad;
     if (flag & 4) {
         m_opticalJobPhase = 2;
-        double gud, slo, bad;
-        m_opticalJobPhase = 1;
         job_isomaster->checkmedia(&gud, &slo, &bad);
-        //what to do with the results is TBD.
     }
+    bool rst = ! ((flag & 4) && bad > 1e-6);
     job_isomaster->releaseDevice();
 
     if (flag & 2) {
@@ -720,6 +727,11 @@ void FileJob::doOpticalImageBurn(const DUrl &device, const DUrl &image, int spee
     if (m_isJobAdded)
         jobRemoved();
     emit finished();
+    if (flag & 4) {
+        emit requestOpticalJobCompletionDialog(rst ? tr("Data verification successful.") : tr("Data verification failed."), rst ? "dialog-ok" : "dialog-error");
+    } else {
+        emit requestOpticalJobCompletionDialog(tr("Burn process completed"), "dialog-ok");
+    }
     delete job_isomaster;
 }
 
@@ -735,6 +747,7 @@ void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, i
     }
     m_opticalJobStatus = status;
     m_opticalJobProgress = progress;
+    m_opticalOpSpeed = jobisom->getCurrentSpeed();
 }
 
 void FileJob::paused()
@@ -780,6 +793,7 @@ void FileJob::jobUpdated()
         jobDataDetail["optical_op_status"] = QString::number(m_opticalJobStatus);
         jobDataDetail["optical_op_progress"] = QString::number(m_opticalJobProgress);
         jobDataDetail["optical_op_phase"] = QString::number(m_opticalJobPhase);
+        jobDataDetail["optical_op_speed"] = m_opticalOpSpeed;
         jobDataDetail["optical_op_dest"] = m_tarPath;
     }
     else if (m_jobType == Restore && m_isInSameDisk){

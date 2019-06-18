@@ -146,6 +146,7 @@ signals:
     void requestCanNotMoveToTrashDialogShowed(const DUrlList& urls);
 
     void requestOpticalJobFailureDialog(JobType type, const QString& err, const QStringList& details);
+    void requestOpticalJobCompletionDialog(const QString& msg, const QString& icon);
 
     void progressPercent(int value);
     void error(QString content);
@@ -216,6 +217,7 @@ private:
     int m_opticalJobStatus;
     int m_opticalJobProgress;
     int m_opticalJobPhase;
+    QString m_opticalOpSpeed;
 
     int m_filedes[2] = {0, 0};
     bool m_isInSameDisk = true;
