@@ -422,6 +422,7 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data)
             msg2 = msg2map.value(data["optical_op_phase"], "");
         }
         setMessage(msg1, msg2);
+        setTipMessage(data["optical_op_speed"], "");
 
         qDebug() << status << progress;
         if (status == QString::number(DISOMasterNS::DISOMaster::JobStatus::Stalled)) {

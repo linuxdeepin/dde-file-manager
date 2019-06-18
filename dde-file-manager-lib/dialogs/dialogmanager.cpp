@@ -254,6 +254,7 @@ void DialogManager::addJob(FileJob *job)
     connect(job, &FileJob::requestNoEnoughSpaceDialogShowed, this, &DialogManager::showDiskSpaceOutOfUsedDialogLater);
     connect(job, &FileJob::requestCanNotMoveToTrashDialogShowed, this, &DialogManager::showMoveToTrashConflictDialog);
     connect(job, &FileJob::requestOpticalJobFailureDialog, this, &DialogManager::showOpticalJobFailureDialog);
+    connect(job, &FileJob::requestOpticalJobCompletionDialog, this, &DialogManager::showOpticalJobCompletionDialog);
 }
 
 
@@ -489,8 +490,7 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
     DDialog d;
     d.setIcon(QIcon::fromTheme("dialog-error"), QSize(64,64));
     QString failure_type;
-    switch (type)
-    {
+    switch (type) {
         case FileJob::OpticalBlank:
             failure_type = tr("Disc erase failed");
         break;
@@ -513,6 +513,17 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
     connect(pb, &QPushButton::clicked, te, &QTextEdit::show);
     d.addContent(detailsw);
 #endif
+    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+    d.setDefaultButton(0);
+    d.getButton(0)->setFocus();
+    d.exec();
+}
+
+void DialogManager::showOpticalJobCompletionDialog(const QString& msg, const QString& icon)
+{
+    DDialog d;
+    d.setIcon(QIcon::fromTheme(icon), QSize(64,64));
+    d.setTitle(msg);
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
     d.getButton(0)->setFocus();
