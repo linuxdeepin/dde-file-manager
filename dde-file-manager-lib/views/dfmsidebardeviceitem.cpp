@@ -27,6 +27,9 @@
 #include "app/filesignalmanager.h"
 #include "views/windowmanager.h"
 #include "gvfs/gvfsmountmanager.h"
+#include "dblockdevice.h"
+#include "ddiskdevice.h"
+#include "ddiskmanager.h"
 
 #include <QMenu>
 #include <QAction>
@@ -71,7 +74,11 @@ DFMSideBarDeviceItem::DFMSideBarDeviceItem(DUrl url, QWidget *parent)
         break;
     }
 
-    if (info["optical"].toBool()) {
+    QString devs(url.path());
+    devs.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(devs));
+    QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blkdev->drive()));
+    if (drv->mediaCompatibility().join(' ').contains("optical")) {
         hide();
     }
 }

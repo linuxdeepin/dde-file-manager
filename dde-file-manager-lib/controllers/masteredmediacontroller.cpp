@@ -195,29 +195,31 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const DUrl &url, QObject *par
         return;
     }
 
-    DUrl url_mountpoint = DUrl::fromLocalFile(MasteredMediaFileInfo(url).extraProperties()["mm_backer"].toString());
-    if (url_mountpoint.isValid() && !url_mountpoint.isEmpty()) {
+    QRegularExpression re("^(.*?)/(disk_files|staging_files)(.*)$");
+    QString device(url.path());
+    auto rem = re.match(device);
+    if (!rem.hasMatch()) {
+        return;
+    }
+    QString udiskspath = rem.captured(1);
+    udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+    QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+
+    if (blkdev->mountPoints().size()) {
+        DUrl url_mountpoint = DUrl::fromLocalFile(blkdev->mountPoints().front());
         d->proxyOnDisk = QPointer<DAbstractFileWatcher>(new DFileWatcher(url_mountpoint.path()));
         d->proxyOnDisk->moveToThread(thread());
         d->proxyOnDisk->setParent(this);
         connect(d->proxyOnDisk, &DAbstractFileWatcher::fileDeleted, this, [this, url] {emit fileDeleted(url);});
     } else { //The disc is not mounted, i.e. the disc is blank
-        QRegularExpression re("^(.*?)/(disk_files|staging_files)(.*)$");
-        QString device(url.path());
-        auto rem = re.match(device);
-        if (rem.hasMatch()) {
-            QString udiskspath = rem.captured(1);
-            udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
-            QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
-            d->diskm.reset(new DDiskManager(this));
-            connect(d->diskm.data(), &DDiskManager::opticalChanged, this,
-                [this, blkdev, url](const QString &path) {
+        d->diskm.reset(new DDiskManager(this));
+        connect(d->diskm.data(), &DDiskManager::opticalChanged, this,
+            [this, blkdev, url](const QString &path) {
                 if (path == blkdev->drive()) {
                     emit fileDeleted(url);
                 }
             });
-            d->diskm->setWatchChanges(true);
-        }
+        d->diskm->setWatchChanges(true);
     }
 
 }

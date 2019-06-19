@@ -484,7 +484,7 @@ DUrl UDiskDeviceInfo::redirectedFileUrl() const
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dbuspath));
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->optical()) {
-        ret = DUrl(m_diskInfo.unix_device() + "/disk_files/");
+        ret = DUrl(m_diskInfo.unix_device() + "/disk_files");
         ret.setScheme(BURN_SCHEME);
     }
 

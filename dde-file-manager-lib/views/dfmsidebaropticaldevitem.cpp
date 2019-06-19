@@ -41,34 +41,8 @@ DFMSideBarOpticalDevItem::DFMSideBarOpticalDevItem(DUrl url, QWidget *parent)
     udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
     blk.reset(DDiskManager::createBlockDevice(udiskspath));
     drv.reset(DDiskManager::createDiskDevice(blk->drive()));
-    QHash<QString, QString> mediamap = {
-        {"optical_cd",             "CD-ROM"},
-        {"optical_cd_r",           "CD-R"},
-        {"optical_cd_rw",          "CD-RW"},
-        {"optical_dvd",            "DVD-ROM"},
-        {"optical_dvd_r",          "DVD-R"},
-        {"optical_dvd_rw",         "DVD-RW"},
-        {"optical_dvd_ram",        "DVD-RAM"},
-        {"optical_dvd_plus_r",     "DVD+R"},
-        {"optical_dvd_plus_rw",    "DVD+RW"},
-        {"optical_dvd_plus_r_dl",  "DVD+R/DL"},
-        {"optical_dvd_plus_rw_dl", "DVD+RW/DL"},
-        {"optical_bd",             "Bluray"},
-        {"optical_bd_r",           "Bluray-R"},
-        {"optical_bd_rw",          "Bluray-RE"},
-        {"optical_hddvd",          "HD-DVD"},
-        {"optical_hddvd_r",        "HD-DVD-R"},
-        {"optical_hddvd_rw",       "HD-DVD-RW"}
-    };
-    if (blk->idLabel().length()) {
-        setText(blk->idLabel());
-    } else {
-        if (drv->opticalBlank()) {
-            setText(tr("Blank %1 disc").arg(mediamap[drv->media()]));
-        } else {
-            setText(tr("%1 disc").arg(mediamap[drv->media()]));
-        }
-    }
+    blk->setWatchChanges(true);
+    reloadLabel();
     setIconFromThemeConfig("BookmarkItem.Dvd");
     setAutoOpenUrlOnClick(false);
 
@@ -82,6 +56,7 @@ DFMSideBarOpticalDevItem::DFMSideBarOpticalDevItem(DUrl url, QWidget *parent)
     connect(unmountButton, &DImageButton::clicked,
             this, &DFMSideBarOpticalDevItem::eject);
 
+    connect(blk.data(), &DBlockDevice::idLabelChanged, this, &DFMSideBarOpticalDevItem::reloadLabel);
 }
 
 QMenu *DFMSideBarOpticalDevItem::createStandardContextMenu() const
@@ -149,10 +124,10 @@ void DFMSideBarOpticalDevItem::itemOnClick()
     if (ISOMaster->currentDevice() == url().path()) {
         return;
     }
-    if (!drv->opticalBlank()) {
+    if (drv->mediaAvailable()) {
         DUrl newUrl;
         newUrl.setQuery(blk->device());
-        if (blk->mountPoints().size()) {
+        if (blk->mountPoints().size() || drv->opticalBlank()) {
             DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
             wnd->cd(url());
         } else {
@@ -166,6 +141,47 @@ void DFMSideBarOpticalDevItem::eject()
     if (drv->ejectable()) {
         blk->unmount({});
         drv->eject({});
+    }
+}
+
+void DFMSideBarOpticalDevItem::reloadLabel()
+{
+    QHash<QString, QString> mediamap = {
+        {"optical_cd",             "CD-ROM"},
+        {"optical_cd_r",           "CD-R"},
+        {"optical_cd_rw",          "CD-RW"},
+        {"optical_dvd",            "DVD-ROM"},
+        {"optical_dvd_r",          "DVD-R"},
+        {"optical_dvd_rw",         "DVD-RW"},
+        {"optical_dvd_ram",        "DVD-RAM"},
+        {"optical_dvd_plus_r",     "DVD+R"},
+        {"optical_dvd_plus_rw",    "DVD+RW"},
+        {"optical_dvd_plus_r_dl",  "DVD+R/DL"},
+        {"optical_dvd_plus_rw_dl", "DVD+RW/DL"},
+        {"optical_bd",             "Bluray"},
+        {"optical_bd_r",           "Bluray-R"},
+        {"optical_bd_rw",          "Bluray-RE"},
+        {"optical_hddvd",          "HD-DVD"},
+        {"optical_hddvd_r",        "HD-DVD-R"},
+        {"optical_hddvd_rw",       "HD-DVD-RW"}
+    };
+    if (drv->mediaAvailable()) {
+        if (blk->idLabel().length()) {
+            setText(blk->idLabel());
+        } else {
+            if (drv->opticalBlank()) {
+                setText(tr("Blank %1 disc").arg(mediamap[drv->media()]));
+            } else {
+                setText(tr("%1 disc").arg(mediamap[drv->media()]));
+            }
+        }
+    } else {
+        QStringList mc = drv->mediaCompatibility();
+        while (mc.size() && (mc.back() == "optical_mrw" || mc.back() == "optical_mrw_w")) {
+            mc.pop_back();
+        }
+        Q_ASSERT(!mc.empty());
+        setText(tr("%1 drive").arg(mediamap[mc.back()]));
     }
 }
 DFM_END_NAMESPACE

@@ -171,9 +171,17 @@ bool MasteredMediaFileInfo::canIteratorDir() const
     return !d->proxy;
 }
 
+DUrl MasteredMediaFileInfo::parentUrl() const
+{
+    if (fileUrl().path().contains(QRegularExpression("^(.*?)/(disk_files|staging_files)(/*)$"))) {
+        return DUrl::fromLocalFile(QDir::homePath());
+    }
+    return DAbstractFileInfo::parentUrl();
+}
+
 DUrl MasteredMediaFileInfo::goToUrlWhenDeleted() const
 {
-    if (m_backerUrl.isEmpty()) {
+    if (m_backerUrl.isEmpty() || fileUrl().path().contains(QRegularExpression("^(.*?)/(disk_files|staging_files)(/*)$"))) {
         return DUrl::fromLocalFile(QDir::homePath());
     }
     return DAbstractFileInfo::goToUrlWhenDeleted();
