@@ -213,13 +213,13 @@ int main(int argc, char *argv[])
         if (!data.isEmpty())
             data.chop(1);
 
-        QLocalSocket *socket = SingleApplication::newClientProcess(uniqueKey, data);
         QWidget w;
         w.setWindowFlags(Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
         w.setAttribute(Qt::WA_TranslucentBackground);
         w.resize(1, 1);
         w.show();
 
+        QLocalSocket *socket = SingleApplication::newClientProcess(uniqueKey, data);
         if (is_set_get_monitor_files && socket->error() == QLocalSocket::UnknownSocketError) {
             socket->waitForReadyRead();
 

@@ -20,6 +20,7 @@ unix {
     } else {
         message("Build arch:" $$ARCH "Deepin Anything support disabled")
         CONFIG += DISABLE_ANYTHING
+        DEFINES += USE_LOCALSOCKET_PRELOAD
     }
 
     isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
