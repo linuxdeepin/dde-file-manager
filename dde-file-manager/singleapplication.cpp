@@ -159,6 +159,9 @@ QString SingleApplication::getUserID()
 
 bool SingleApplication::setSingleInstance(const QString &key)
 {
+// Currently only non-x86 version of dde-file-manager requires a background process to
+// accelerate launch speed, this is not used under x86 release.
+#ifdef USE_LOCALSOCKET_PRELOAD
     QString userKey = userServerName(key);
 
     QLocalSocket localSocket;
@@ -175,6 +178,8 @@ bool SingleApplication::setSingleInstance(const QString &key)
     bool f = m_localServer->listen(userKey);
 
     return f;
+#endif // USE_LOCALSOCKET_PRELOAD
+    return DApplication::setSingleInstance(key);
 }
 
 void SingleApplication::handleConnection()
