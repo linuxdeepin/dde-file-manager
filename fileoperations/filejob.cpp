@@ -675,10 +675,12 @@ void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int 
     if (m_isJobAdded)
         jobRemoved();
     emit finished();
-    if (flag & 4) {
-        emit requestOpticalJobCompletionDialog(rst ? tr("Data verification successful.") : tr("Data verification failed."), rst ? "dialog-ok" : "dialog-error");
-    } else {
-        emit requestOpticalJobCompletionDialog(tr("Burn process completed"), "dialog-ok");
+    if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished) {
+        if (flag & 4) {
+            emit requestOpticalJobCompletionDialog(rst ? tr("Data verification successful.") : tr("Data verification failed."), rst ? "dialog-ok" : "dialog-error");
+        } else {
+            emit requestOpticalJobCompletionDialog(tr("Burn process completed"), "dialog-ok");
+        }
     }
     delete job_isomaster;
 }
@@ -727,10 +729,12 @@ void FileJob::doOpticalImageBurn(const DUrl &device, const DUrl &image, int spee
     if (m_isJobAdded)
         jobRemoved();
     emit finished();
-    if (flag & 4) {
+    if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished) {
+        if (flag & 4) {
         emit requestOpticalJobCompletionDialog(rst ? tr("Data verification successful.") : tr("Data verification failed."), rst ? "dialog-ok" : "dialog-error");
-    } else {
+        } else {
         emit requestOpticalJobCompletionDialog(tr("Burn process completed"), "dialog-ok");
+        }
     }
     delete job_isomaster;
 }
@@ -747,7 +751,11 @@ void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, i
     }
     m_opticalJobStatus = status;
     m_opticalJobProgress = progress;
-    m_opticalOpSpeed = jobisom->getCurrentSpeed();
+    if (status == DISOMasterNS::DISOMaster::JobStatus::Running) {
+        m_opticalOpSpeed = jobisom->getCurrentSpeed();
+    } else {
+        m_opticalOpSpeed.clear();
+    }
 }
 
 void FileJob::paused()

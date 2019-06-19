@@ -917,7 +917,7 @@ void AppController::doSubscriberAction(const QString &path)
     QScopedPointer<DBlockDevice> uddev(DDiskManager::createBlockDevice(dev));
     QScopedPointer<DDiskDevice> uddrv(DDiskManager::createDiskDevice(uddev->drive()));
     if (uddrv->optical()) {
-        rpath = BURN_SCHEME "://" + QString(uddev->device()) + "/disk_files/";
+        rpath = BURN_SCHEME "://" + QString(uddev->device()) + "/disk_files";
     }
 
     switch (eventKey()) {

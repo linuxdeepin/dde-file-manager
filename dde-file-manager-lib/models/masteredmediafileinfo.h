@@ -45,6 +45,7 @@ public:
     DUrl redirectedFileUrl() const Q_DECL_OVERRIDE;
 
     bool canIteratorDir() const Q_DECL_OVERRIDE;
+    DUrl parentUrl() const Q_DECL_OVERRIDE;
     DUrl goToUrlWhenDeleted() const Q_DECL_OVERRIDE;
     QString toLocalFile() const Q_DECL_OVERRIDE;
 

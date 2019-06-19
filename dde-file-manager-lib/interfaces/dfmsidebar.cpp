@@ -256,7 +256,7 @@ void DFMSideBarPrivate::initMountedVolumes()
     for (auto& blks : dskm->blockDevices()) {
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
-        if (drv->optical()) {
+        if (drv->mediaCompatibility().join(' ').contains("optical")) {
             group->appendItem(new DFMSideBarOpticalDevItem(DUrl::fromDeviceId(blk->device())));
         }
     }
@@ -268,8 +268,24 @@ void DFMSideBarPrivate::initMountedVolumes()
     q->connect(dskm.data(), &DDiskManager::blockDeviceAdded, group, [group](const QString & s) {
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(s));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
-        if (drv->optical()) {
+        if (drv->mediaCompatibility().join(' ').contains("optical")) {
             group->appendItem(new DFMSideBarOpticalDevItem(DUrl::fromDeviceId(blk->device())));
+        }
+    });
+    q->connect(dskm.data(), &DDiskManager::opticalChanged, group, [group, this](const QString & path) {
+        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(path));
+        for (auto blks : dskm->blockDevices()) {
+        QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(blks));
+        if (path == blkdev->drive()) {
+            qDebug() << QString(blkdev->device());
+            DUrl url = DUrl::fromDeviceId(blkdev->device());
+            DFMSideBarItem *item = group->findItem(url);
+            DFMSideBarOpticalDevItem *optdevitem = qobject_cast<DFMSideBarOpticalDevItem*>(item);
+            if (optdevitem) {
+                optdevitem->unmountButton->setVisible(drv->mediaAvailable());
+                optdevitem->reloadLabel();
+            }
+        }
         }
     });
 
@@ -293,8 +309,8 @@ void DFMSideBarPrivate::initMountedVolumes()
                     casted->unmountButton->setVisible(isMounted && canUnmount);
                 }
             } else {
-                DFMSideBarOpticalDevItem *opticaldevit = qobject_cast<DFMSideBarOpticalDevItem *>(item);
-                opticaldevit->unmountButton->setVisible(canEject || canUnmount);
+                DFMSideBarOpticalDevItem *optdevitem = qobject_cast<DFMSideBarOpticalDevItem *>(item);
+                optdevitem->unmountButton->setVisible(canEject || canUnmount);
             }
         }
     });
@@ -303,7 +319,9 @@ void DFMSideBarPrivate::initMountedVolumes()
     q->connect(devices_watcher, &DAbstractFileWatcher::fileDeleted, group, [group, q](const DUrl & url) {
         DFMSideBarItem *item = group->findItem(url);
         Q_CHECK_PTR(item); // should always find one
-        q->removeItem(item);
+        if (item->inherits("DFMSideBarDeviceItem")) {
+            q->removeItem(item);
+        }
     });
     q->connect(dskm.data(), &DDiskManager::blockDeviceRemoved, group, [group, q](const QString & s) {
         QString devs(s);

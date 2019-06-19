@@ -52,6 +52,7 @@ protected:
 
 public slots:
     void itemOnClick();
+    void reloadLabel();
     void eject();
 };
 
