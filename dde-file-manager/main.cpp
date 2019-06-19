@@ -213,19 +213,23 @@ int main(int argc, char *argv[])
         if (!data.isEmpty())
             data.chop(1);
 
-        QLocalSocket *socket = SingleApplication::newClientProcess(uniqueKey, data);
         QWidget w;
         w.setWindowFlags(Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
         w.setAttribute(Qt::WA_TranslucentBackground);
         w.resize(1, 1);
         w.show();
 
+#ifdef USE_LOCALSOCKET_PRELOAD
+        // Currently only non-x86 version of dde-file-manager requires a background process to
+        // accelerate launch speed, this is not used under x86 release.
+        QLocalSocket *socket = SingleApplication::newClientProcess(uniqueKey, data);
         if (is_set_get_monitor_files && socket->error() == QLocalSocket::UnknownSocketError) {
             socket->waitForReadyRead();
 
             for (const QByteArray &i : socket->readAll().split(' '))
                 qDebug() << QString::fromLocal8Bit(QByteArray::fromBase64(i));
         }
+#endif // USE_LOCALSOCKET_PRELOAD
 
         return 0;
     }
