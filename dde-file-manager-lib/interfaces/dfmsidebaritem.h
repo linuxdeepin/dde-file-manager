@@ -65,6 +65,8 @@ public:
 
     void showRenameEditor();
 
+    virtual int sortingPriority() const;
+
     void setContentWidget(QWidget *widget);
     QWidget *contentWidget() const;
 

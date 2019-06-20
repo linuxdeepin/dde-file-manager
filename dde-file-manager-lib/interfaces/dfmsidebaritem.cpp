@@ -336,6 +336,15 @@ void DFMSideBarItem::showRenameEditor()
             this, &DFMSideBarItem::onEditingFinished);
 }
 
+/*!
+ * \return the sorting priority of this item. The smaller the value,
+ *         the higher the priority.
+ */
+int DFMSideBarItem::sortingPriority() const
+{
+    return 0;
+}
+
 void DFMSideBarItem::setContentWidget(QWidget *widget)
 {
     Q_D(DFMSideBarItem);

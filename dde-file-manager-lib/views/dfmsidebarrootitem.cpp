@@ -38,6 +38,11 @@ DFMSideBarRootItem::DFMSideBarRootItem()
 
 }
 
+int DFMSideBarRootItem::sortingPriority() const
+{
+    return -1;
+}
+
 QMenu *DFMSideBarRootItem::createStandardContextMenu() const
 {
     QMenu *menu = new QMenu();

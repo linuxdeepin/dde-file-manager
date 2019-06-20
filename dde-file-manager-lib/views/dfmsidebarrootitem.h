@@ -32,6 +32,7 @@ class DFMSideBarRootItem : public DFMSideBarDefaultItem
 {
 public:
     DFMSideBarRootItem();
+    int sortingPriority() const override;
 
 protected:
     virtual QMenu *createStandardContextMenu() const override;

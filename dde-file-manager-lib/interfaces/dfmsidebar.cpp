@@ -233,6 +233,8 @@ void DFMSideBarPrivate::initMountedVolumes()
     DFMSideBarItemGroup *group = groupNameMap[q->groupName(DFMSideBar::GroupName::Device)];
     Q_CHECK_PTR(group);
 
+    group->setAutoSort(true);
+
     DAbstractFileWatcher *devices_watcher = fileService->createFileWatcher(q_func(), DUrl(DEVICE_ROOT), group);
     Q_CHECK_PTR(devices_watcher);
     devices_watcher->startWatcher();
