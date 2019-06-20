@@ -670,6 +670,16 @@ void ComputerView::initConnect()
         cvi->updateStatus();
     });
 
+    connect(devices_watcher, &DAbstractFileWatcher::fileAttributeChanged, this, [ = ](const DUrl & url) {
+        ComputerViewItem *cvi = findDeviceViewItemByUrl(url);
+
+        if (!cvi) {
+            return;
+        }
+
+        cvi->updateStatus();
+    });
+
     connect(deviceListener, &UDiskListener::mountAdded, this, &ComputerView::mountAdded);
     connect(deviceListener, &UDiskListener::mountRemoved, this, &ComputerView::mountRemoved);
     connect(deviceListener, &UDiskListener::volumeAdded, this, &ComputerView::volumeAdded);
@@ -810,7 +820,7 @@ void ComputerView::saveViewState()
 }
 
 ComputerViewItem *ComputerView::findDeviceViewItemByUrl(const DUrl &url)
-{
+{    
     auto getContextMenuUrl = [](ComputerViewItem *oneItem) {
         DUrl url;
         UDiskDeviceInfoPointer m_deviceInfo = oneItem->deviceInfo();
@@ -822,6 +832,12 @@ ComputerViewItem *ComputerView::findDeviceViewItemByUrl(const DUrl &url)
         }
         return url;
     };
+
+    auto getDeviceId = [](ComputerViewItem *oneItem) {
+        UDiskDeviceInfoPointer m_deviceInfo = oneItem->deviceInfo();
+        return m_deviceInfo->getId(); // something like "/dev/sdb1"
+    };
+
     // Find the item we want to rename in the `Internam devices` section
     foreach (ComputerViewItem *oneItem, m_nativeItems) {
         qDebug() << oneItem->getUrl() << url;
@@ -833,6 +849,10 @@ ComputerViewItem *ComputerView::findDeviceViewItemByUrl(const DUrl &url)
     // not found? try `removeable devices` section
     foreach (ComputerViewItem *oneItem, m_removableItems) {
         if (getContextMenuUrl(oneItem) == url) {
+            return oneItem;
+        }
+
+        if (url.scheme() == DEVICE_SCHEME && getDeviceId(oneItem) == url.path()) {
             return oneItem;
         }
     }
