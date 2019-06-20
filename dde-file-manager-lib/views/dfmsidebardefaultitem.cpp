@@ -34,7 +34,15 @@ DFMSideBarDefaultItem::DFMSideBarDefaultItem(DFMStandardPaths::StandardLocation 
     setReorderable(false);
 }
 
-DUrl DFMSideBarDefaultItem::getDUrlFromStandardLocation(DFMStandardPaths::StandardLocation location)
+int DFMSideBarDefaultItem::sortingPriority() const
+{
+    if (url() == getDUrlFromStandardLocation(DFMStandardPaths::ComputerRootPath)) {
+        return -2;
+    }
+    return 0;
+}
+
+DUrl DFMSideBarDefaultItem::getDUrlFromStandardLocation(DFMStandardPaths::StandardLocation location) const
 {
     DUrl path;
 

@@ -53,6 +53,8 @@ public:
     int itemCount() const;
     int visibleItemCount() const;
     void setSaveItemOrder(bool saveItemOrder);
+    void setAutoSort(bool autoSort);
+    void sort();
     void setDisableUrlSchemes(const QSet<QString> &schemes);
     DFMSideBarItem *operator [](int index);
 
@@ -60,6 +62,7 @@ private:
     QString groupName;
     QVBoxLayout *itemHolder;
     bool m_saveItemOrder = false;
+    bool m_autosort = false;
     QList<DFMSideBarItem *> itemList;
     DFMSideBarItemSeparator *bottomSeparator;
 
