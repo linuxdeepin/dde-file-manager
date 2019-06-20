@@ -83,7 +83,12 @@ int DFMSideBarItemGroup::appendItem(DFMSideBarItem *item)
 
     bottomSeparator->setVisible(visibleItemCount() != 0);
 
-    return index; // array start at 0, so this is the right index.
+    if (!m_autosort) {
+        return index; // array start at 0, so this is the right index.
+    }
+
+    sort();
+    return itemIndex(item);
 }
 
 /*!
@@ -99,6 +104,10 @@ void DFMSideBarItemGroup::insertItem(int index, DFMSideBarItem *item)
     itemConnectionRegister(item);
 
     bottomSeparator->setVisible(visibleItemCount() != 0);
+
+    if (m_autosort) {
+        sort();
+    }
 }
 
 /*!
@@ -271,6 +280,46 @@ int DFMSideBarItemGroup::visibleItemCount() const
 void DFMSideBarItemGroup::setSaveItemOrder(bool saveItemOrder)
 {
     m_saveItemOrder = saveItemOrder;
+}
+
+/*!
+ * \brief Enable or disable automatic sorting.
+ *
+ * If enabled, items are sorted based on the priority they return.
+ *
+ * \param autoSort Whether automatic sorting is enabled.
+ */
+void DFMSideBarItemGroup::setAutoSort(bool autoSort)
+{
+    m_autosort = autoSort;
+}
+
+/*!
+ * \brief Sort the items in the container according to return value of
+ *        sortingPriority().
+ *
+ * Items with equal sorting priority retain their relative order.
+ */
+void DFMSideBarItemGroup::sort()
+{
+    std::vector<DFMSideBarItem*> items;
+    for(DFMSideBarItem* i; (i = takeItem(0)) != nullptr; ) {
+        items.push_back(i);
+    }
+    std::stable_sort(items.begin(), items.end(),
+                     [](const DFMSideBarItem* a, const DFMSideBarItem* b) {
+                         return a->sortingPriority() < b->sortingPriority();
+                     }
+    );
+
+    for (DFMSideBarItem* i : items) {
+        itemList.append(i);
+        itemHolder->addWidget(i);
+        i->setGroupName(groupName);
+        itemConnectionRegister(i);
+    }
+
+    bottomSeparator->setVisible(!items.empty());
 }
 
 /*!

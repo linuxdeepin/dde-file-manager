@@ -46,8 +46,9 @@ class DFMSideBarDefaultItem : public DFMSideBarItem
 
 public:
     DFMSideBarDefaultItem(DFMStandardPaths::StandardLocation location, QWidget *parent = nullptr);
+    int sortingPriority() const override;
 
-    DUrl getDUrlFromStandardLocation(DFMStandardPaths::StandardLocation location);
+    DUrl getDUrlFromStandardLocation(DFMStandardPaths::StandardLocation location) const;
     void initItemByLocation(DFMStandardPaths::StandardLocation location);
 };
 
