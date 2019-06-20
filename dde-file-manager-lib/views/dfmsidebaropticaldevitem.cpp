@@ -59,6 +59,11 @@ DFMSideBarOpticalDevItem::DFMSideBarOpticalDevItem(DUrl url, QWidget *parent)
     connect(blk.data(), &DBlockDevice::idLabelChanged, this, &DFMSideBarOpticalDevItem::reloadLabel);
 }
 
+int DFMSideBarOpticalDevItem::sortingPriority() const
+{
+    return 1;
+}
+
 QMenu *DFMSideBarOpticalDevItem::createStandardContextMenu() const
 {
     QMenu *menu = new QMenu();

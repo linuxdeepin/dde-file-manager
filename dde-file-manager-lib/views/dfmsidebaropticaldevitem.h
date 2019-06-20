@@ -39,7 +39,7 @@ class DFMSideBarOpticalDevItem : public DFMSideBarItem
 
 public:
     DFMSideBarOpticalDevItem(DUrl url, QWidget *parent = nullptr);
-    QVariantHash getExtraProperties() const;
+    int sortingPriority() const override;
 
     DImageButton *unmountButton;
 
