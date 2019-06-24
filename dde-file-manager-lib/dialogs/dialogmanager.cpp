@@ -500,22 +500,34 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
         break;
     }
     d.setTitle(QString("%1: %2").arg(failure_type).arg(err));
-#if 1
     QWidget *detailsw = new QWidget(&d);
     detailsw->setLayout(new QVBoxLayout());
-    QPushButton *pb = new QPushButton("show details");
-    detailsw->layout()->addWidget(pb);
     QTextEdit *te = new QTextEdit();
     te->setPlainText(details.join('\n'));
     te->setReadOnly(true);
     te->hide();
     detailsw->layout()->addWidget(te);
-    connect(pb, &QPushButton::clicked, te, &QTextEdit::show);
+    connect(&d, &DDialog::buttonClicked, this, [failure_type, err, te, &d](int idx, const QString&) {
+        if (idx == 1) {
+            d.done(idx);
+            return;
+        }
+        if (te->isVisible()) {
+            te->hide();
+            d.getButton(0)->setText(tr("Show details"));
+            d.setTitle(QString("%1: %2").arg(failure_type).arg(err));
+        } else {
+            te->show();
+            d.getButton(0)->setText(tr("Hide details"));
+            d.setTitle(tr("Error"));
+        }
+    });
     d.addContent(detailsw);
-#endif
-    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
-    d.setDefaultButton(0);
-    d.getButton(0)->setFocus();
+    d.setOnButtonClickedClose(false);
+    d.addButton(tr("Show details"));
+    d.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
+    d.setDefaultButton(1);
+    d.getButton(1)->setFocus();
     d.exec();
 }
 
