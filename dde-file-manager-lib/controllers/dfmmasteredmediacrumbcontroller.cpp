@@ -37,14 +37,27 @@ DFMMasteredMediaCrumbController::~DFMMasteredMediaCrumbController()
 
 bool DFMMasteredMediaCrumbController::supportedUrl(DUrl url)
 {
-    return url.scheme()==BURN_SCHEME;
+    return url.scheme() == BURN_SCHEME;
 }
 
 QList<CrumbData> DFMMasteredMediaCrumbController::seprateUrl(const DUrl &url)
 {
-    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
-    QString displayText = info ? info->fileDisplayName() : QObject::tr("DVD");
-    return { CrumbData(url, displayText, "CrumbIconButton.Dvd") };
+    QList<CrumbData> ret;
+    DUrl cururl(url);
+    while (true) {
+        DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, cururl);
+        if (!info) {
+            break;
+        }
+        QString displayText = info->fileDisplayName();
+        ret.push_front(CrumbData(cururl, displayText));
+        if (info->parentUrl() == DUrl::fromLocalFile(QDir::homePath())) {
+            ret.front().iconName = "CrumbIconButton.Dvd";
+            break;
+        }
+        cururl = info->parentUrl();
+    }
+    return ret;
 }
 
 DFM_END_NAMESPACE
