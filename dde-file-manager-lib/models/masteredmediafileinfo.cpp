@@ -117,6 +117,22 @@ int MasteredMediaFileInfo::filesCount() const
     return d->proxy->filesCount();
 }
 
+QString MasteredMediaFileInfo::fileDisplayName() const
+{
+    Q_D(const DAbstractFileInfo);
+    QRegularExpressionMatch rem;
+    if (fileUrl().path().contains(QRegularExpression("^(.*?)/(disk_files|staging_files)(/*)$"), &rem)) {
+        QString udiskspath = rem.captured(1);
+        udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+        QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+        return blkdev->idLabel();
+    }
+
+    if (!d->proxy)
+        return "";
+    return d->proxy->fileDisplayName();
+}
+
 QVariantHash MasteredMediaFileInfo::extraProperties() const
 {
     Q_D(const DAbstractFileInfo);

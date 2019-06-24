@@ -37,6 +37,7 @@ public:
     bool isDir() const Q_DECL_OVERRIDE;
 
     int filesCount() const Q_DECL_OVERRIDE;
+    QString fileDisplayName() const Q_DECL_OVERRIDE;
 
     QVariantHash extraProperties() const Q_DECL_OVERRIDE;
     QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
