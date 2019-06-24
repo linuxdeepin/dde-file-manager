@@ -53,10 +53,10 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
             if (index == 1) {
                 if (d->image_file.path().length() == 0) {
                     QtConcurrent::run([=] {
-                        FileJob job(FileJob::OpticalBurn);
-                        job.moveToThread(qApp->thread());
-                        job.setWindowId(d->window_id);
-                        dialogManager->addJob(&job);
+                        FileJob *job = new FileJob(FileJob::OpticalBurn);
+                        job->moveToThread(qApp->thread());
+                        job->setWindowId(d->window_id);
+                        dialogManager->addJob(job);
 
                         DUrl dev(device);
 
@@ -65,15 +65,16 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
                         d->cb_eject->isChecked() && (flag |= 2);
                         !d->cb_iclose->isChecked() && (flag |= 1);
 
-                        job.doOpticalBurn(dev, d->le_volname->text(), d->speedmap[d->cb_writespeed->currentText()], flag);
-                        dialogManager->removeJob(job.getJobId());
+                        job->doOpticalBurn(dev, d->le_volname->text(), d->speedmap[d->cb_writespeed->currentText()], flag);
+                        dialogManager->removeJob(job->getJobId());
+                        job->deleteLater();
                     });
                 } else {
                     QtConcurrent::run([=] {
-                        FileJob job(FileJob::OpticalImageBurn);
-                        job.moveToThread(qApp->thread());
-                        job.setWindowId(d->window_id);
-                        dialogManager->addJob(&job);
+                        FileJob *job = new FileJob(FileJob::OpticalImageBurn);
+                        job->moveToThread(qApp->thread());
+                        job->setWindowId(d->window_id);
+                        dialogManager->addJob(job);
 
                         DUrl dev(device);
 
@@ -81,8 +82,9 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
                         d->cb_checkdisc->isChecked() && (flag |= 4);
                         d->cb_eject->isChecked() && (flag |= 2);
 
-                        job.doOpticalImageBurn(dev, d->image_file, d->speedmap[d->cb_writespeed->currentText()], flag);
-                        dialogManager->removeJob(job.getJobId());
+                        job->doOpticalImageBurn(dev, d->image_file, d->speedmap[d->cb_writespeed->currentText()], flag);
+                        dialogManager->removeJob(job->getJobId());
+                        job->deleteLater();
                     });
                 }
             }

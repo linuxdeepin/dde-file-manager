@@ -744,6 +744,7 @@ void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, i
     if (status == DISOMasterNS::DISOMaster::JobStatus::Failed) {
         QStringList msg = jobisom->getInfoMessages();
         emit requestOpticalJobFailureDialog(m_jobType, FileJob::getXorrisoErrorMsg(msg), msg);
+        return;
     }
     if (m_jobType == JobType::OpticalImageBurn && m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished
         && status != DISOMasterNS::DISOMaster::JobStatus::Finished) {
