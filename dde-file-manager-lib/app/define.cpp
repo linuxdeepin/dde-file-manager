@@ -3,10 +3,12 @@
 #include "dialogs/dialogmanager.h"
 #include "gvfs/gvfsmountmanager.h"
 #include "deviceinfo/udisklistener.h"
+#include "disomaster.h"
 
 Q_GLOBAL_STATIC(DialogManager, gsDialogManager)
 Q_GLOBAL_STATIC(GvfsMountManager, gsGvfsMountManager)
 Q_GLOBAL_STATIC(UDiskListener, gsUDiskListener)
+Q_GLOBAL_STATIC(DISOMasterNS::DISOMaster, gsDISOMaster)
 
 DialogManager *getDialogManager(bool doConstruct)
 {
@@ -42,4 +44,16 @@ UDiskListener *getUDiskListener(bool doConstruct)
         return gsUDiskListener();
     }
     return gsUDiskListener.exists() ? gsUDiskListener() : nullptr;
+}
+
+DISOMasterNS::DISOMaster *getDISOMaster(bool doConstruct)
+{
+    if (doConstruct) {
+        if (!gsDISOMaster.exists() && qApp) {
+            gsDISOMaster->moveToThread(qApp->thread());
+        }
+
+        return gsDISOMaster();
+    }
+    return gsDISOMaster.exists() ? gsDISOMaster() : nullptr;
 }

@@ -253,6 +253,8 @@ void DialogManager::addJob(FileJob *job)
     connect(job, &FileJob::requestCopyMoveToSelfDialogShowed, this, &DialogManager::showCopyMoveToSelfDialog);
     connect(job, &FileJob::requestNoEnoughSpaceDialogShowed, this, &DialogManager::showDiskSpaceOutOfUsedDialogLater);
     connect(job, &FileJob::requestCanNotMoveToTrashDialogShowed, this, &DialogManager::showMoveToTrashConflictDialog);
+    connect(job, &FileJob::requestOpticalJobFailureDialog, this, &DialogManager::showOpticalJobFailureDialog);
+    connect(job, &FileJob::requestOpticalJobCompletionDialog, this, &DialogManager::showOpticalJobCompletionDialog);
 }
 
 
@@ -430,6 +432,115 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name, const DFME
     return code;
 }
 
+int DialogManager::showOpticalBlankConfirmationDialog(const DFMUrlBaseEvent &event)
+{
+    QString EraseDisk = tr("Are you sure you want to erase all data on the disc?");
+
+    DUrl url = event.url();
+    qDebug() << url;
+    QStringList buttonTexts;
+    buttonTexts << tr("Cancel") << tr("Erase");
+
+    DDialog d;
+
+    if (!d.parentWidget()) {
+        d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
+    }
+
+    d.setTitle(EraseDisk);
+    d.setMessage(tr("This action cannot be undone"));
+    d.setIcon(QIcon::fromTheme("media-optical").pixmap(64, 64), QSize(64, 64));
+    d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
+    d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
+    d.setDefaultButton(1);
+    d.getButton(1)->setFocus();
+    d.moveToCenter();
+    int code = d.exec();
+    return code;
+}
+
+int DialogManager::showOpticalImageOpSelectionDialog(const DFMUrlBaseEvent &event)
+{
+    QString EraseDisk = tr("How do you want to use this disc?");
+
+    DUrl url = event.url();
+    QStringList buttonTexts;
+    buttonTexts << tr("Cancel") << tr("Burn image") << tr("Burn files");
+
+    DDialog d;
+
+    if (!d.parentWidget()) {
+        d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
+    }
+
+    d.setTitle(EraseDisk);
+    d.setIcon(QIcon::fromTheme("media-optical").pixmap(64, 64), QSize(64, 64));
+    d.addButton(buttonTexts[0], false, DDialog::ButtonNormal);
+    d.addButton(buttonTexts[1], false, DDialog::ButtonNormal);
+    d.addButton(buttonTexts[2], true, DDialog::ButtonRecommend);
+    d.setDefaultButton(2);
+    d.getButton(2)->setFocus();
+    d.moveToCenter();
+    int code = d.exec();
+    return code;
+}
+
+void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, const QStringList &details)
+{
+    DDialog d;
+    d.setIcon(QIcon::fromTheme("dialog-error"), QSize(64,64));
+    QString failure_type;
+    switch (type) {
+        case FileJob::OpticalBlank:
+            failure_type = tr("Disc erase failed");
+        break;
+        case FileJob::OpticalBurn:
+        case FileJob::OpticalImageBurn:
+            failure_type = tr("Burn process failed");
+        break;
+    }
+    d.setTitle(QString("%1: %2").arg(failure_type).arg(err));
+    QWidget *detailsw = new QWidget(&d);
+    detailsw->setLayout(new QVBoxLayout());
+    QTextEdit *te = new QTextEdit();
+    te->setPlainText(details.join('\n'));
+    te->setReadOnly(true);
+    te->hide();
+    detailsw->layout()->addWidget(te);
+    connect(&d, &DDialog::buttonClicked, this, [failure_type, err, te, &d](int idx, const QString&) {
+        if (idx == 1) {
+            d.done(idx);
+            return;
+        }
+        if (te->isVisible()) {
+            te->hide();
+            d.getButton(0)->setText(tr("Show details"));
+            d.setTitle(QString("%1: %2").arg(failure_type).arg(err));
+        } else {
+            te->show();
+            d.getButton(0)->setText(tr("Hide details"));
+            d.setTitle(tr("Error"));
+        }
+    });
+    d.addContent(detailsw);
+    d.setOnButtonClickedClose(false);
+    d.addButton(tr("Show details"));
+    d.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
+    d.setDefaultButton(1);
+    d.getButton(1)->setFocus();
+    d.exec();
+}
+
+void DialogManager::showOpticalJobCompletionDialog(const QString& msg, const QString& icon)
+{
+    DDialog d;
+    d.setIcon(QIcon::fromTheme(icon), QSize(64,64));
+    d.setTitle(msg);
+    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+    d.setDefaultButton(0);
+    d.getButton(0)->setFocus();
+    d.exec();
+}
 
 int DialogManager::showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &event)
 {

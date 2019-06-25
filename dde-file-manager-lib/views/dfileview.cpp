@@ -36,6 +36,11 @@
 #include "dfmeventdispatcher.h"
 #include "themeconfig.h"
 #include "dfmsettings.h"
+#include "dblockdevice.h"
+#include "ddiskdevice.h"
+#include "ddiskmanager.h"
+#include "disomaster.h"
+#include "dfmopticalmediawidget.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -71,6 +76,7 @@
 #include <QMimeData>
 #include <QScrollBar>
 #include <QScroller>
+#include <QtConcurrent>
 
 #include <private/qguiapplication_p.h>
 #include <qpa/qplatformtheme.h>
@@ -103,6 +109,7 @@ public:
     DFileMenuManager* fileMenuManager;
     DFMHeaderView *headerView = nullptr;
     QWidget *headerViewHolder = nullptr;
+    DFMOpticalMediaWidget *headerOpticalDisc = nullptr;
     DStatusBar* statusBar = nullptr;
 
     QActionGroup* displayAsActionGroup;
@@ -151,6 +158,8 @@ public:
     QTimer* updateStatusBarTimer;
 
     QScrollBar* verticalScrollBar = NULL;
+
+    DDiskManager* diskmgr;
 
     QActionGroup *toolbarActionGroup;
 
@@ -203,6 +212,10 @@ DFileView::DFileView(QWidget *parent)
     d->updateStatusBarTimer->setInterval(100);
     d->updateStatusBarTimer->setSingleShot(true);
     connect(d->updateStatusBarTimer, &QTimer::timeout, this, &DFileView::updateStatusBar);
+
+    d->diskmgr = new DDiskManager(this);
+    connect(d->diskmgr, &DDiskManager::opticalChanged, this, &DFileView::onDriveOpticalChanged);
+    d->diskmgr->setWatchChanges(true);
 }
 
 DFileView::~DFileView()
@@ -1384,6 +1397,19 @@ void DFileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
     d->setFileViewStateValue(root_url, "sortOrder", (int)order);
 }
 
+void DFileView::onDriveOpticalChanged(const QString &path)
+{
+    Q_D(DFileView);
+
+    for (auto i : d->diskmgr->blockDevices()) {
+        QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(i));
+        if (path == blkdev->drive()) {
+            qDebug() << QString(blkdev->device());
+            ISOMaster->nullifyDevicePropertyCache(QString(blkdev->device()));
+        }
+    }
+}
+
 void DFileView::reset()
 {
     DListView::reset();
@@ -1924,6 +1950,10 @@ void DFileView::initUI()
 
     addFooterWidget(d->statusBar);
 
+    d->headerOpticalDisc = new DFMOpticalMediaWidget(this);
+    addHeaderWidget(d->headerOpticalDisc);
+    d->headerOpticalDisc->hide();
+
     d->verticalScrollBar = verticalScrollBar();
     d->verticalScrollBar->setParent(this);
 
@@ -2090,6 +2120,41 @@ bool DFileView::setRootUrl(const DUrl &url)
         return false;
     }
 
+    if (fileUrl.scheme() == BURN_SCHEME) {
+        QRegularExpression re("^(.*?)/(disk_files|staging_files)(.*)$");
+        auto rem = re.match(fileUrl.path());
+        Q_ASSERT(rem.hasMatch());
+        QString devpath = rem.captured(1);
+        QString udiskspath = devpath;
+        DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(devpath);
+        udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+        QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+        if (!dp.devid.length()) {
+            QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+            QSharedPointer<QFutureWatcher<void>> fw(new QFutureWatcher<void>);
+            connect(fw.data(), &QFutureWatcher<void>::finished, this, [=] {
+                QGuiApplication::restoreOverrideCursor();
+                setRootUrl(fileUrl);
+                Q_UNUSED(fw); //ensure future watcher is destructed only in the future
+            });
+            fw->setFuture(QtConcurrent::run([=] {
+                blkdev->unmount({});
+                ISOMaster->acquireDevice(devpath);
+                ISOMaster->getDeviceProperty();
+                ISOMaster->releaseDevice();
+                blkdev->mount({});
+            }));
+            return false;
+        }
+        else {
+            d->headerOpticalDisc->updateDiscInfo(rem.captured(1));
+            d->headerOpticalDisc->show();
+        }
+    }
+    else {
+        d->headerOpticalDisc->hide();
+    }
+
     const DUrl &rootUrl = this->rootUrl();
 
     qDebug() << "cd: current url:" << rootUrl << "to url:" << fileUrl;
@@ -2171,7 +2236,7 @@ void DFileView::clearHeardView()
     D_D(DFileView);
 
     if (d->headerView) {
-        removeHeaderWidget(0);
+        removeHeaderWidget(1);
 
         d->headerView->disconnect();
         d->headerView = nullptr;

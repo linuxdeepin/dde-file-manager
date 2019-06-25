@@ -56,14 +56,14 @@ public:
 public slots:
     void actionOpen(const QSharedPointer<DFMUrlListBaseEvent>& event);
     void actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event);
-    void asycOpenDisk(const QString& path);
+    void asyncOpenDisk(const QString& path);
 
     void actionOpenInNewWindow(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionOpenInNewTab(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionOpenDiskInNewTab(const QSharedPointer<DFMUrlBaseEvent> &event);
-    void asycOpenDiskInNewTab(const QString& path);
+    void asyncOpenDiskInNewTab(const QString& path);
     void actionOpenDiskInNewWindow(const QSharedPointer<DFMUrlBaseEvent> &event);
-    void asycOpenDiskInNewWindow(const QString& path);
+    void asyncOpenDiskInNewWindow(const QString& path);
     void actionOpenAsAdmin(const QSharedPointer<DFMUrlBaseEvent> &event);
 
     void actionOpenWithCustom(const QSharedPointer<DFMUrlBaseEvent> &event);
@@ -109,6 +109,7 @@ public slots:
     void actionSetUserSharePassword(quint64 winId);
     void actionSettings(quint64 winId);
     void actionFormatDevice(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionOpticalBlank(const QSharedPointer<DFMUrlBaseEvent> &event);
 
 
     void actionctrlL(quint64 winId);
@@ -123,6 +124,7 @@ public slots:
 
     void actionOpenFileByApp();
     void actionSendToRemovableDisk();
+    void actionStageFileForBurning();
 
 
     ///###: tag protocol

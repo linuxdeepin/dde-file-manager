@@ -916,6 +916,7 @@ void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl)
     Q_Q(DFileSystemModel);
 
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(q, fileUrl);
+    qDebug() << fileUrl;
 
     if (!info || !passFileFilters(info)) {
         return;
@@ -1012,8 +1013,19 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         }
 
         const DUrl &rootUrl = q->rootUrl();
+        const DAbstractFileInfoPointer rootinfo = fileService->createFileInfo(q, rootUrl);
 
-        if (fileUrl == rootUrl) {
+        DUrl nparentUrl(info->parentUrl());
+        DUrl nfileUrl(fileUrl);
+
+        if (rootUrl.scheme() == BURN_SCHEME) {
+            QRegularExpressionMatch m;
+            Q_ASSERT(rootUrl.path().contains(QRegularExpression("^(.*?)/(disk_files|staging_files)(.*)"), &m));
+            nfileUrl.setPath(nfileUrl.path().replace(QRegularExpression("^(.*?)/(disk_files|staging_files)(.*)"), QString("\\1/%1\\3").arg(m.captured(2))));
+            nparentUrl.setPath(nparentUrl.path().replace(QRegularExpression("^(.*?)/(disk_files|staging_files)(.*)"), QString("\\1/%1\\3").arg(m.captured(2))));
+        }
+
+        if (nfileUrl == rootUrl) {
             if (event.first == RmFile) {
                 emit q->rootUrlDeleted(rootUrl);
             }
@@ -1022,7 +1034,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
             continue;
         }
 
-        if (info->parentUrl() != rootUrl) {
+        if (nparentUrl != rootUrl) {
             continue;
         }
 

@@ -44,6 +44,10 @@ extern "C" {
 }
 #define signals public
 
+namespace DISOMasterNS {
+    class DISOMaster;
+}
+
 class FileJob : public QObject
 {
     Q_OBJECT
@@ -62,7 +66,10 @@ public:
         Move,
         Trash,
         Delete,
-        Restore
+        Restore,
+        OpticalBurn,
+        OpticalBlank,
+        OpticalImageBurn
     };
     Q_ENUM(JobType)
 
@@ -138,6 +145,9 @@ signals:
     /*tip dialog show when move file which size is large than of 1GB to trash*/
     void requestCanNotMoveToTrashDialogShowed(const DUrlList& urls);
 
+    void requestOpticalJobFailureDialog(JobType type, const QString& err, const QStringList& details);
+    void requestOpticalJobCompletionDialog(const QString& msg, const QString& icon);
+
     void progressPercent(int value);
     void error(QString content);
     void result(QString content);
@@ -153,6 +163,11 @@ public slots:
     DUrlList doMoveToTrash(const DUrlList &files);
 
     bool doTrashRestore(const QString &srcFilePath, const QString& tarFilePath);
+
+    void doOpticalBurn(const DUrl &device, QString volname, int speed, int flag);
+    void doOpticalBlank(const DUrl &device);
+    void doOpticalImageBurn(const DUrl &device, const DUrl &image, int speed, int flag);
+    void opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, int progress);
 
     void paused();
     void started();
@@ -199,6 +214,10 @@ private:
     JobType m_jobType;
     int m_windowId = -1;
     bool m_skipandApplyToAll = false;
+    int m_opticalJobStatus;
+    int m_opticalJobProgress;
+    int m_opticalJobPhase;
+    QString m_opticalOpSpeed;
 
     int m_filedes[2] = {0, 0};
     bool m_isInSameDisk = true;
@@ -244,6 +263,7 @@ private:
 
     static QStorageInfo getStorageInfo(const QString &file);
     static bool canMove(const QString &filePath);
+    static QString getXorrisoErrorMsg(const QStringList& msg);
 
 #ifdef SW_LABEL
 public:

@@ -37,6 +37,10 @@
 #include "dfmevent.h"
 #include "dfmeventdispatcher.h"
 #include "dabstractfilewatcher.h"
+#include "ddiskmanager.h"
+#include "dblockdevice.h"
+#include "ddiskdevice.h"
+#include "disomaster.h"
 
 #include "tag/tagmanager.h"
 
@@ -44,6 +48,7 @@
 #include "sw_label/llsdeepinlabellibrary.h"
 #endif
 
+#include <functional>
 #include <QFile>
 #include <QThread>
 #include <QDir>
@@ -102,6 +107,7 @@ bool FileJob::setDirPermissions(const QString &scrPath, const QString& tarDirPat
 FileJob::FileJob(JobType jobType, QObject *parent) : QObject(parent)
 {
     qRegisterMetaType<QMap<QString, QString>>();
+    qRegisterMetaType<DISOMasterNS::DISOMaster::JobStatus>(QT_STRINGIFY(DISOMasterNS::DISOMaster::JobStatus));
     FileJobCount += 1;
     m_status = FileJob::Started;
 
@@ -598,6 +604,161 @@ bool FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
     return ok;
 }
 
+void FileJob::doOpticalBlank(const DUrl &device)
+{
+    QString dev = device.path();
+    m_tarPath = dev;
+    dev.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dev));
+    blkdev->unmount({});
+    m_opticalOpSpeed.clear();
+    jobPrepared();
+
+    DISOMasterNS::DISOMaster *job_isomaster = new DISOMasterNS::DISOMaster(this);
+    connect(job_isomaster, &DISOMasterNS::DISOMaster::jobStatusChanged, this, std::bind(&FileJob::opticalJobUpdated, this, job_isomaster, std::placeholders::_1, std::placeholders::_2));
+    job_isomaster->acquireDevice(device.path());
+    job_isomaster->erase();
+    job_isomaster->releaseDevice();
+
+    blkdev->rescan({});
+    ISOMaster->nullifyDevicePropertyCache(device.path());
+
+    if (m_isJobAdded)
+        jobRemoved();
+    emit finished();
+    delete job_isomaster;
+}
+
+/*
+ * flag:
+ * 1: close session?
+ * 2: eject?
+ * 4: check media?
+ */
+void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int flag)
+{
+    QString dev = device.path();
+    m_tarPath = dev;
+    dev.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dev));
+    blkdev->unmount({});
+    m_opticalJobPhase = 1;
+    m_opticalOpSpeed.clear();
+    jobPrepared();
+
+    DISOMasterNS::DISOMaster *job_isomaster = new DISOMasterNS::DISOMaster(this);
+    connect(job_isomaster, &DISOMasterNS::DISOMaster::jobStatusChanged, this, std::bind(&FileJob::opticalJobUpdated, this, job_isomaster, std::placeholders::_1, std::placeholders::_2));
+    job_isomaster->acquireDevice(device.path());
+    job_isomaster->getDeviceProperty();
+    QUrl stagingurl(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
+                    + "/diskburn/" + device.path().replace('/','_') + "/");
+    job_isomaster->stageFiles({{stagingurl, QUrl("/")}});
+    job_isomaster->commit(speed, flag & 1, volname);
+    double gud, slo, bad;
+    if (flag & 4) {
+        m_opticalJobPhase = 2;
+        job_isomaster->checkmedia(&gud, &slo, &bad);
+    }
+    bool rst = ! ((flag & 4) && bad > 1e-6);
+    job_isomaster->releaseDevice();
+
+    if (flag & 2) {
+        QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
+        diskdev->eject({});
+    } else {
+        blkdev->rescan({});
+        ISOMaster->nullifyDevicePropertyCache(device.path());
+    }
+
+    doDelete({DUrl::fromLocalFile(stagingurl.path())});
+
+    if (m_isJobAdded)
+        jobRemoved();
+    emit finished();
+    if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished) {
+        if (flag & 4) {
+            emit requestOpticalJobCompletionDialog(rst ? tr("Data verification successful.") : tr("Data verification failed."), rst ? "dialog-ok" : "dialog-error");
+        } else {
+            emit requestOpticalJobCompletionDialog(tr("Burn process completed"), "dialog-ok");
+        }
+    }
+    delete job_isomaster;
+}
+
+/*
+ * flag:
+ * 1: unused
+ * 2: eject?
+ * 4: check media?
+ */
+void FileJob::doOpticalImageBurn(const DUrl &device, const DUrl &image, int speed, int flag)
+{
+    QString dev = device.path();
+    m_tarPath = dev;
+    dev.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dev));
+    blkdev->unmount({});
+    m_opticalJobPhase = 0;
+    m_opticalOpSpeed.clear();
+    jobPrepared();
+
+    DISOMasterNS::DISOMaster *job_isomaster = new DISOMasterNS::DISOMaster(this);
+    connect(job_isomaster, &DISOMasterNS::DISOMaster::jobStatusChanged, this, std::bind(&FileJob::opticalJobUpdated, this, job_isomaster, std::placeholders::_1, std::placeholders::_2));
+    job_isomaster->acquireDevice(device.path());
+    DISOMasterNS::DeviceProperty dp = job_isomaster->getDeviceProperty();
+    if (dp.formatted) {
+        m_opticalJobPhase = 1;
+    }
+    job_isomaster->writeISO(image, speed);
+    double gud, slo, bad;
+    if (flag & 4) {
+        m_opticalJobPhase = 2;
+        job_isomaster->checkmedia(&gud, &slo, &bad);
+    }
+    bool rst = ! ((flag & 4) && bad > 1e-6);
+    job_isomaster->releaseDevice();
+
+    if (flag & 2) {
+        QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
+        diskdev->eject({});
+    } else {
+        blkdev->rescan({});
+        ISOMaster->nullifyDevicePropertyCache(device.path());
+    }
+
+    if (m_isJobAdded)
+        jobRemoved();
+    emit finished();
+    if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished) {
+        if (flag & 4) {
+        emit requestOpticalJobCompletionDialog(rst ? tr("Data verification successful.") : tr("Data verification failed."), rst ? "dialog-ok" : "dialog-error");
+        } else {
+        emit requestOpticalJobCompletionDialog(tr("Burn process completed"), "dialog-ok");
+        }
+    }
+    delete job_isomaster;
+}
+
+void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, int progress)
+{
+    if (status == DISOMasterNS::DISOMaster::JobStatus::Failed) {
+        QStringList msg = jobisom->getInfoMessages();
+        emit requestOpticalJobFailureDialog(m_jobType, FileJob::getXorrisoErrorMsg(msg), msg);
+        return;
+    }
+    if (m_jobType == JobType::OpticalImageBurn && m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished
+        && status != DISOMasterNS::DISOMaster::JobStatus::Finished) {
+        ++m_opticalJobPhase;
+    }
+    m_opticalJobStatus = status;
+    m_opticalJobProgress = progress;
+    if (status == DISOMasterNS::DISOMaster::JobStatus::Running) {
+        m_opticalOpSpeed = jobisom->getCurrentSpeed();
+    } else {
+        m_opticalOpSpeed.clear();
+    }
+}
+
 void FileJob::paused()
 {
     m_status = FileJob::Paused;
@@ -636,7 +797,15 @@ void FileJob::jobUpdated()
 
     QMap<QString, QString> jobDataDetail;
 
-    if (m_jobType == Restore && m_isInSameDisk){
+    if (m_jobType >= OpticalBurn && m_jobType <= OpticalImageBurn) {
+        jobDataDetail["optical_op_type"] = QString::number(m_jobType);
+        jobDataDetail["optical_op_status"] = QString::number(m_opticalJobStatus);
+        jobDataDetail["optical_op_progress"] = QString::number(m_opticalJobProgress);
+        jobDataDetail["optical_op_phase"] = QString::number(m_opticalJobPhase);
+        jobDataDetail["optical_op_speed"] = m_opticalOpSpeed;
+        jobDataDetail["optical_op_dest"] = m_tarPath;
+    }
+    else if (m_jobType == Restore && m_isInSameDisk){
         jobDataDetail.insert("file", m_srcFileName);
         jobDataDetail.insert("destination", m_tarDirName);
         if (!m_isFinished){
@@ -2416,6 +2585,24 @@ bool FileJob::canMove(const QString &filePath)
 #endif
 
     return true;
+}
+
+QString FileJob::getXorrisoErrorMsg(const QStringList &msg)
+{
+    QRegularExpression ovrex("While grafting '(.*)'");
+    for (auto& msgs : msg) {
+        auto ovrxm = ovrex.match(msgs);
+        if (msgs.indexOf("file object exists and may not be overwritten") && ovrxm.hasMatch()) {
+            return tr("%1 is a duplicate file.").arg(ovrxm.captured(1));
+        }
+        if (msgs.indexOf("Lost connection to drive") != -1) {
+            return tr("Lost connection to drive.");
+        }
+        if (msgs.indexOf("servo failure") != -1) {
+            return tr("The CD/DVD drive is not ready. Try another disc.");
+        }
+    }
+    return tr("Unknown error");
 }
 
 #ifdef SW_LABEL

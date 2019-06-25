@@ -340,8 +340,16 @@ bool DFileViewHelper::isCut(const QModelIndex &index) const
         return false;
     }
     DUrl fileUrl = fileInfo->fileUrl();
+
     if (fileInfo->fileUrl().isSearchFile()) {
         fileUrl = fileInfo->fileUrl().searchedFileUrl();
+    }
+
+    //temporary hack to make files staging for burning transparent
+    DUrl burntemp = DUrl(QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/diskburn/");
+    burntemp.setScheme(FILE_SCHEME);
+    if (currentUrl().scheme() == BURN_SCHEME && fileUrl.scheme() == BURN_SCHEME && fileUrl.path().indexOf("staging_files") != -1) {
+        return true;
     }
 
     return DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction
@@ -705,8 +713,10 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event) const
             actions << Qt::CopyAction << Qt::MoveAction << Qt::LinkAction;
 
             for (Qt::DropAction action : actions) {
+
                 if (event->possibleActions().testFlag(action) && info->supportedDropActions().testFlag(action)) {
                     event->setDropAction(action);
+
 
                     break;
                 }

@@ -40,6 +40,7 @@ class FileJob;
 class DAbstractFileInfo;
 class DUrl;
 class DFMEvent;
+class DFMUrlBaseEvent;
 class DFMUrlListBaseEvent;
 class PropertyDialog;
 class CloseAllDialogIndicator;
@@ -91,6 +92,10 @@ public slots:
     int showRunExcutableFileDialog(const DUrl &url, quint64 winId);
     int showAskIfAddExcutableFlagAndRunDialog(const DUrl &url, quint64 winId);
     int showRenameNameSameErrorDialog(const QString& name, const DFMEvent &event);
+    int showOpticalBlankConfirmationDialog(const DFMUrlBaseEvent &event);
+    int showOpticalImageOpSelectionDialog(const DFMUrlBaseEvent &event);
+    void showOpticalJobFailureDialog(int type, const QString& err, const QStringList& details);
+    void showOpticalJobCompletionDialog(const QString& msg, const QString& icon);
     int showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &event);
     int showRemoveBookMarkDialog(const DFMEvent &event);
     void showOpenWithDialog(const DFMEvent &event);
