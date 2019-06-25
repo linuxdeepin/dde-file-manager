@@ -72,10 +72,10 @@ bool MasteredMediaFileInfo::exists() const
 {
     Q_D(const DAbstractFileInfo);
 
-    if (fileUrl().isEmpty()) {
+    if (fileUrl().isEmpty() || !m_backerUrl.isValid() || m_backerUrl.isEmpty()) {
         return false;
     }
-    return !d->proxy || d->proxy->exists();
+    return d->proxy && d->proxy->exists();
 }
 
 bool MasteredMediaFileInfo::isReadable() const

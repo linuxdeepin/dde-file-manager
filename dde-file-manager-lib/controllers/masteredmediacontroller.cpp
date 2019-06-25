@@ -190,10 +190,6 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const DUrl &url, QObject *par
     connect(d->proxyStaging, &DAbstractFileWatcher::subfileCreated, this, &MasteredMediaFileWatcher::onSubfileCreated);
 
     d->proxyOnDisk.clear();
-    //This watcher only watch for removal of the mount point
-    if (!url.path().contains(QRegularExpression("^(.*?)/(disk_files|staging_files)(/*)$"))) {
-        return;
-    }
 
     QRegularExpression re("^(.*?)/(disk_files|staging_files)(.*)$");
     QString device(url.path());
