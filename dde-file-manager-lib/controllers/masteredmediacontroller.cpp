@@ -341,7 +341,8 @@ DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> 
         QString dstdirpath = getStagingFolder(DUrl(dev + "/staging_files" + rem.captured(3))).path();
         QDir dstdir = QDir(dstdirpath);
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), src.front());
-        if (is_blank && fi->mimeTypeName() == "application/x-cd-image" && dstdir.count() == 0) {
+        QSet<QString> image_types = {"application/x-cd-image", "application/x-iso9660-image"};
+        if (is_blank && image_types.contains(fi->mimeTypeName()) && dstdir.count() == 0) {
             int r = DThreadUtil::runInMainThread(dialogManager, &DialogManager::showOpticalImageOpSelectionDialog, DFMUrlBaseEvent(event->sender(), dst));
             if (r == 1) {
                 DThreadUtil::runInMainThread([=] {
