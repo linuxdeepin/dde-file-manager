@@ -815,8 +815,8 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                 actionKeys << MenuAction::OpenInNewWindow
                            << MenuAction::OpenInNewTab;
             } else {
-                if (mimeTypeName() == "application/x-cd-image"
-                /* || mimeTypeName() == "application/x-raw-disk-image"*/) {
+                QSet<QString> mountable = {"application/x-cd-image", "application/x-iso9660-image"};
+                if (mountable.contains(mimeTypeName())) {
                     actionKeys << MenuAction::MountImage;
                 }
             }
