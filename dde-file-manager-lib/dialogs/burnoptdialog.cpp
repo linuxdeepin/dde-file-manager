@@ -140,7 +140,7 @@ void BurnOptDialogPrivate::setupUi()
     q->addContent(w_content);
 
 
-    lb_volname = new DLabel(QObject::tr("Volume label:"));
+    lb_volname = new DLabel(QObject::tr("Disc name:"));
     w_content->layout()->addWidget(lb_volname);
 
     le_volname = new DLineEdit();
@@ -151,9 +151,9 @@ void BurnOptDialogPrivate::setupUi()
     w_content->layout()->addWidget(lb_writespeed);
 
     cb_writespeed = new QComboBox();
-    cb_writespeed->addItem(QObject::tr("Max speed"));
+    cb_writespeed->addItem(QObject::tr("Maximum"));
     w_content->layout()->addWidget(cb_writespeed);
-    speedmap[QObject::tr("Max speed")] = 0;
+    speedmap[QObject::tr("Maximum")] = 0;
 
     DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(dev);
     for (auto i : dp.writespeed) {
@@ -164,19 +164,16 @@ void BurnOptDialogPrivate::setupUi()
         cb_writespeed->addItem(QString::number(speed, 'f', 1) + 'x');
     }
 
-    cb_iclose = new QCheckBox(QObject::tr("Allow more data to be append to the disc"));
+    cb_iclose = new QCheckBox(QObject::tr("Allow files to be added later"));
     cb_iclose->setChecked(true);
     w_content->layout()->addWidget(cb_iclose);
-
-    lb_postburn = new DLabel(QObject::tr("After the files have been burned:"));
-    w_content->layout()->addWidget(lb_postburn);
 
     QWidget *wpostburn = new QWidget();
     wpostburn->setLayout(new QHBoxLayout);
     w_content->layout()->addWidget(wpostburn);
     wpostburn->layout()->setMargin(0);
 
-    cb_checkdisc = new QCheckBox(QObject::tr("Check data"));
+    cb_checkdisc = new QCheckBox(QObject::tr("Verify data"));
     wpostburn->layout()->addWidget(cb_checkdisc);
 
     cb_eject = new QCheckBox(QObject::tr("Eject"));
