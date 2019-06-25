@@ -39,6 +39,8 @@
 #include "dfmsettings.h"
 #include "ddiskmanager.h"
 #include "dblockdevice.h"
+#include "ddiskdevice.h"
+#include "ddiskmanager.h"
 
 #include <QIcon>
 
@@ -171,6 +173,20 @@ bool UDiskDeviceInfo::canStop() const
 bool UDiskDeviceInfo::canUnmount() const
 {
     return m_diskInfo.can_unmount();
+}
+
+bool UDiskDeviceInfo::optical() const
+{
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(getDBusPath()));
+    QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
+    return diskdev->optical();
+}
+
+bool UDiskDeviceInfo::opticalReuseable() const
+{
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(getDBusPath()));
+    QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
+    return diskdev->optical() && diskdev->media().indexOf("_rw") != -1 && !diskdev->opticalBlank();
 }
 
 qulonglong UDiskDeviceInfo::getFree()
@@ -461,7 +477,18 @@ bool UDiskDeviceInfo::canRedirectionFileUrl() const
 
 DUrl UDiskDeviceInfo::redirectedFileUrl() const
 {
-    return getMountPointUrl();
+    DUrl ret = getMountPointUrl();
+
+    QString dbuspath = m_diskInfo.unix_device();
+    dbuspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dbuspath));
+    QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+    if (drive->optical()) {
+        ret = DUrl(m_diskInfo.unix_device() + "/disk_files");
+        ret.setScheme(BURN_SCHEME);
+    }
+
+    return ret;
 }
 
 QVariantHash UDiskDeviceInfo::extraProperties() const
@@ -479,6 +506,8 @@ QVariantHash UDiskDeviceInfo::extraProperties() const
     attrMap.insert("isMounted", !getMountPointUrl().isEmpty());
     attrMap.insert("mountPointUrl", getMountPointUrl().toString());
     attrMap.insert("isRemovable", m_diskInfo.is_removable() && can_unmount);
+    attrMap.insert("optical", optical());
+    attrMap.insert("opticalReuseable", opticalReuseable());
 
     return attrMap;
 }

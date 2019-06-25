@@ -36,6 +36,7 @@
 #include "controllers/dfmsearchcrumbcontroller.h"
 #include "controllers/dfmrecentcrumbcontroller.h"
 #include "controllers/dfmmdcrumbcontrooler.h"
+#include "controllers/dfmmasteredmediacrumbcontroller.h"
 
 DFM_BEGIN_NAMESPACE
 
@@ -140,6 +141,7 @@ DFMCrumbManager::DFMCrumbManager(QObject *parent)
     dRegisterCrumbCreator<DFMSearchCrumbController>(QStringLiteral(SEARCH_SCHEME));
     dRegisterCrumbCreator<DFMRecentCrumbController>(QStringLiteral(RECENT_SCHEME));
     dRegisterCrumbCreator<DFMMDCrumbControoler>(QStringLiteral(DFMMD_SCHEME));
+    dRegisterCrumbCreator<DFMMasteredMediaCrumbController>(QStringLiteral(BURN_SCHEME));
 
     // register plugins
     for (const QString &key : DFMCrumbFactory::keys()) {

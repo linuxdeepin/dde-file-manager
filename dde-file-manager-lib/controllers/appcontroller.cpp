@@ -33,6 +33,7 @@
 #include "sharecontroler.h"
 #include "avfsfilecontroller.h"
 #include "mountcontroller.h"
+#include "masteredmediacontroller.h"
 #include "bookmarkmanager.h"
 #include "networkcontroller.h"
 #include "mergeddesktopcontroller.h"
@@ -41,6 +42,7 @@
 #include "fileoperations/filejob.h"
 #include "dfmeventdispatcher.h"
 #include "dfmapplication.h"
+#include "disomaster.h"
 
 #include "app/filesignalmanager.h"
 #include "dfmevent.h"
@@ -85,6 +87,10 @@
 #include "models/desktopfileinfo.h"
 #include "controllers/tagmanagerdaemoncontroller.h"
 
+#include "dblockdevice.h"
+#include "ddiskdevice.h"
+#include "ddiskmanager.h"
+
 #ifdef SW_LABEL
 #include "sw_label/filemanagerlibrary.h"
 #endif
@@ -128,6 +134,7 @@ void AppController::registerUrlHandle()
     DFileService::dRegisterUrlHandler<ShareControler>(USERSHARE_SCHEME, "");
     DFileService::dRegisterUrlHandler<AVFSFileController>(AVFS_SCHEME, "");
     DFileService::dRegisterUrlHandler<MountController>(MOUNT_SCHEME, "");
+    DFileService::dRegisterUrlHandler<MasteredMediaController>(BURN_SCHEME, "");
 
     DFileService::dRegisterUrlHandler<TagController>(TAG_SCHEME, "");
     DFileService::dRegisterUrlHandler<RecentController>(RECENT_SCHEME, "");
@@ -172,7 +179,7 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
 }
 
 
-void AppController::asycOpenDisk(const QString &path)
+void AppController::asyncOpenDisk(const QString &path)
 {
     DUrlList urls;
     urls << DUrl(path);
@@ -208,7 +215,7 @@ void AppController::actionOpenDiskInNewTab(const QSharedPointer<DFMUrlBaseEvent>
     }
 }
 
-void AppController::asycOpenDiskInNewTab(const QString &path)
+void AppController::asyncOpenDiskInNewTab(const QString &path)
 {
     m_fmEvent->setData(DUrl(path));
     actionOpenDiskInNewTab(m_fmEvent.staticCast<DFMUrlBaseEvent>());
@@ -235,7 +242,7 @@ void AppController::actionOpenDiskInNewWindow(const QSharedPointer<DFMUrlBaseEve
     }
 }
 
-void AppController::asycOpenDiskInNewWindow(const QString &path)
+void AppController::asyncOpenDiskInNewWindow(const QString &path)
 {
     DUrlList urls;
     urls << DUrl(path);
@@ -402,6 +409,21 @@ void AppController::actionNewText(const QSharedPointer<DFMUrlBaseEvent> &event)
 void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
+    QString udiskspath = fileUrl.query();
+    udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+    QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+    QSharedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+    if (drive->optical()) {
+        QtConcurrent::run([=] {
+            ISOMaster->acquireDevice(fileUrl.query());
+            DISOMasterNS::DeviceProperty dp = ISOMaster->getDeviceProperty();
+            ISOMaster->releaseDevice();
+            if (!dp.formatted) {
+                blkdev->mount({});
+            }
+        });
+        return;
+    }
     deviceListener->mount(fileUrl.query());
 }
 
@@ -416,6 +438,14 @@ void AppController::actionMountImage(const QSharedPointer<DFMUrlBaseEvent> &even
 void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
+    QString udiskspath = fileUrl.query();
+    udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+    QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+    if (drive->optical()) {
+        blkdev->unmount({});
+        return;
+    }
     deviceListener->unmount(fileUrl.query(DUrl::FullyEncoded));
 }
 
@@ -593,6 +623,24 @@ void AppController::actionFormatDevice(const QSharedPointer<DFMUrlBaseEvent> &ev
     process->startDetached(cmd, args);
 }
 
+void AppController::actionOpticalBlank(const QSharedPointer<DFMUrlBaseEvent> &event)
+{
+    if (DThreadUtil::runInMainThread(dialogManager, &DialogManager::showOpticalBlankConfirmationDialog, DFMUrlBaseEvent(event->sender(), event->url())) == DDialog::Accepted) {
+        QtConcurrent::run([=] {
+            FileJob *job = new FileJob(FileJob::OpticalBlank);
+            job->moveToThread(qApp->thread());
+            job->setWindowId(event->windowId());
+            dialogManager->addJob(job);
+
+            DUrl dev(event->url().query());
+
+            job->doOpticalBlank(dev);
+            dialogManager->removeJob(job->getJobId());
+            job->deleteLater();
+        });
+    }
+}
+
 void AppController::actionctrlL(quint64 winId)
 {
     emit fileSignalManager->requestSearchCtrlL(winId);
@@ -730,6 +778,35 @@ void AppController::actionSendToRemovableDisk()
     fileService->pasteFile(action, DFMGlobal::CopyAction, targetUrl, urlList);
 }
 
+void AppController::actionStageFileForBurning()
+{
+    const QAction *action = qobject_cast<QAction *>(sender());
+
+    if (!action) {
+        return;
+    }
+
+    QString destdev = action->property("dest_drive").toString();
+    DUrlList urlList = DUrl::fromStringList(action->property("urlList").toStringList());
+
+    QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(destdev));
+    if (!dev->optical()) {
+        dev->eject({});
+        return;
+    }
+
+    DDiskManager diskm;
+    for(auto &blks : diskm.blockDevices()) {
+        QScopedPointer<DBlockDevice> blkd(DDiskManager::createBlockDevice(blks));
+        if (blkd->drive() == destdev) {
+            DUrl dest = DUrl(QString(blkd->device()) + "/staging_files/");
+            dest.setScheme(BURN_SCHEME);
+            fileService->pasteFile(action, DFMGlobal::CopyAction, dest, urlList);
+            break;
+        }
+    }
+}
+
 QList<QString> AppController::actionGetTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event)
 {
     QList<QString> tags{};
@@ -833,15 +910,26 @@ void AppController::actionByIds(const DFMEvent &event, QString actionId)
 
 void AppController::doSubscriberAction(const QString &path)
 {
+    QString rpath(path);
+    //right here is some really dirty jobby. Replace ASAP.
+    auto gdev = deviceListener->getDeviceByMountPoint(path)->getDiskInfo();
+    QString dev =  gdev.drive_unix_device().length() ? gdev.drive_unix_device() : gdev.unix_device();
+    dev.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+    QScopedPointer<DBlockDevice> uddev(DDiskManager::createBlockDevice(dev));
+    QScopedPointer<DDiskDevice> uddrv(DDiskManager::createDiskDevice(uddev->drive()));
+    if (uddrv->optical()) {
+        rpath = BURN_SCHEME "://" + QString(uddev->device()) + "/disk_files";
+    }
+
     switch (eventKey()) {
     case Open:
-        asycOpenDisk(path);
+        asyncOpenDisk(rpath);
         break;
     case OpenNewWindow:
-        asycOpenDiskInNewWindow(path);
+        asyncOpenDiskInNewWindow(rpath);
         break;
     case OpenNewTab:
-        asycOpenDiskInNewTab(path);
+        asyncOpenDiskInNewTab(rpath);
         break;
     default:
         break;

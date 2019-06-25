@@ -35,8 +35,10 @@
 #include <ddialog.h>
 
 #include "dfmglobal.h"
+#include "disomaster.h"
 #include "dfileservices.h"
 #include "dabstractfileinfo.h"
+#include "fileoperations/filejob.h"
 
 #include "xutil.h"
 #include "app/define.h"
@@ -401,6 +403,38 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data)
 {
     QString file, destination, speed, remainTime, progress, status, srcPath, targetPath;
     QString msg1, msg2;
+
+    if (data.contains("optical_op_type")) {
+        m_animatePad->setCanPause(false);
+        status = data["optical_op_status"];
+        progress = data["optical_op_progress"];
+
+        msg1 = (data["optical_op_type"] == QString::number(FileJob::JobType::OpticalBlank)
+               ? tr("Erasing disc %1, please wait...")
+               : tr("Burning disc %1, please wait...")).arg(data["optical_op_dest"]);
+        msg2 = "";
+        if (data["optical_op_type"] != QString::number(FileJob::JobType::OpticalBlank)) {
+            const QHash<QString, QString> msg2map = {
+                {"0", "erasing disc"},
+                {"1", "writing data"},
+                {"2", "checking disc"}
+            };
+            msg2 = msg2map.value(data["optical_op_phase"], "");
+        }
+        setMessage(msg1, msg2);
+        setTipMessage(data["optical_op_speed"], "");
+
+        qDebug() << status << progress;
+        if (status == QString::number(DISOMasterNS::DISOMaster::JobStatus::Stalled)) {
+            m_animatePad->startAnimation();
+        }
+        else if (status == QString::number(DISOMasterNS::DISOMaster::JobStatus::Running)) {
+            m_animatePad->stopAnimation();
+            setProgress(progress);
+        }
+        return;
+    }
+
     if (data.contains("file")) {
         file = data.value("file");
     }

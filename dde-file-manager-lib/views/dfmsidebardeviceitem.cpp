@@ -27,6 +27,9 @@
 #include "app/filesignalmanager.h"
 #include "views/windowmanager.h"
 #include "gvfs/gvfsmountmanager.h"
+#include "dblockdevice.h"
+#include "ddiskdevice.h"
+#include "ddiskmanager.h"
 
 #include <QMenu>
 #include <QAction>
@@ -69,6 +72,14 @@ DFMSideBarDeviceItem::DFMSideBarDeviceItem(DUrl url, QWidget *parent)
         break;
     default:
         break;
+    }
+
+    QString devs(url.path());
+    devs.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(devs));
+    QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blkdev->drive()));
+    if (drv->mediaCompatibility().join(' ').contains("optical")) {
+        hide();
     }
 }
 
@@ -143,16 +154,22 @@ QMenu *DFMSideBarDeviceItem::createStandardContextMenu() const
         menu->addAction(QObject::tr("Unmount"), this, SLOT(doUnmountOrEject()));
     }
 
-    if (info.value("mediaType", 0).toInt() == UDiskDeviceInfo::MediaType::removable) {
+    if (info.value("mediaType", 0).toInt() == UDiskDeviceInfo::MediaType::removable && !info.value("optical", false).toBool()) {
         menu->addAction(QObject::tr("Format"), [this, info, deviceIdUrl]() {
             AppController::instance()->actionFormatDevice(dMakeEventPointer<DFMUrlBaseEvent>(this, deviceIdUrl));
+        });
+    }
+
+    if (info.value("opticalReuseable", false).toBool()) {
+        menu->addAction(QObject::tr("Erase"), [this, info, deviceIdUrl]() {
+            AppController::instance()->actionOpticalBlank(dMakeEventPointer<DFMUrlBaseEvent>(this, deviceIdUrl));
         });
     }
 
     // Device can be a network scheme, like smb://, ftp:// and sftp://
     QString devicePathScheme = DUrl::fromUserInput(info.value("deviceId").toString()).scheme();
     if (devicePathScheme == SMB_SCHEME || devicePathScheme == FTP_SCHEME || devicePathScheme == SFTP_SCHEME || devicePathScheme == DAV_SCHEME) {
-        menu->addAction(QObject::tr("Log out and unmount"), [this, info, deviceIdUrl]() {
+        menu->addAction(QObject::tr("Log out and unmount"), [this, deviceIdUrl]() {
             AppController::instance()->actionForgetPassword(dMakeEventPointer<DFMUrlBaseEvent>(this, deviceIdUrl));
         });
     }

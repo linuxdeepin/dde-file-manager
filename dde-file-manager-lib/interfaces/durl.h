@@ -48,6 +48,7 @@
 #define TAG_SCHEME "tag"
 #define DEVICE_SCHEME "device"
 #define MOUNT_SCHEME "mount"
+#define BURN_SCHEME "burn"
 
 #define TRASH_ROOT "trash:///"
 #define RECENT_ROOT "recent:///"
@@ -61,6 +62,7 @@
 #define TAG_ROOT "tag:///"
 #define DEVICE_ROOT "device:///"
 #define MOUNT_ROOT "mount:///"
+#define BURN_ROOT "burn:///"
 
 // internal scheme, don't rely on this scheme outside the file manager app.
 #define DFMMD_SCHEME "dfmmd"

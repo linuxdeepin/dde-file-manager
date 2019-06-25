@@ -663,6 +663,12 @@ dde_file_manager--DFMSideBarDeviceItem > Dtk--Widget--DImageButton {
     qproperty-pressPic: ":/dark/icons/unmount_press.svg";
 }
 
+dde_file_manager--DFMSideBarOpticalDevItem > Dtk--Widget--DImageButton {
+    qproperty-normalPic: ":/leftsidebar/images/leftsidebar/unmount_normal_16px.svg";
+    qproperty-hoverPic: ":/leftsidebar/images/leftsidebar/unmount_hover_16px.svg";
+    qproperty-pressPic: ":/leftsidebar/images/leftsidebar/unmount_press_16px.svg";
+}
+
 QWidget#SidebarMainLayoutHolder {
     background: transparent;
 }

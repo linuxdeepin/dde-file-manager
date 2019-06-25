@@ -47,6 +47,8 @@
 #include "dde-file-manager-plugins/plugininterfaces/menu/menuinterface.h"
 
 #include "deviceinfo/udisklistener.h"
+#include "ddiskmanager.h"
+#include "ddiskdevice.h"
 
 #include <QDateTime>
 #include <QDebug>
@@ -867,6 +869,15 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                 actionKeys << MenuAction::SendToRemovableDisk;
             }
 
+            DDiskManager diskm;
+            for (auto &devs : diskm.diskDevices()) {
+                QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(devs));
+                if (dev->mediaCompatibility().join(' ').contains("_r")) {
+                    actionKeys << MenuAction::StageFileForBurning;
+                    break;
+                }
+            }
+
             if (isDir()) {
                 // FIXME: reimplement BookMark::exist() 's behavior and use it for check bookmark existance.
                 //        after doing this, don't forget to remove the "bookmarkmanager.h" header file include.
@@ -1674,6 +1685,15 @@ QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList() co
     if (deviceListener->isMountedRemovableDiskExits()) {
         QVector<MenuAction> diskMenuActionKeys;
         actions.insert(MenuAction::SendToRemovableDisk, diskMenuActionKeys);
+    }
+
+    DDiskManager diskm;
+    for (auto &drvs : diskm.diskDevices()) {
+        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(drvs));
+        if (drv->mediaCompatibility().join(' ').contains("_r")) {
+            actions.insert(MenuAction::StageFileForBurning, {});
+            break;
+        }
     }
 
     return actions;

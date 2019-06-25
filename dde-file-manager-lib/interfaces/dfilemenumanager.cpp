@@ -47,6 +47,8 @@
 #include "dde-file-manager-plugins/plugininterfaces/menu/menuinterface.h"
 #include "dfmstandardpaths.h"
 #include "deviceinfo/udisklistener.h"
+#include "ddiskmanager.h"
+#include "ddiskdevice.h"
 #include "views/dtagactionwidget.h"
 
 #include <QMetaObject>
@@ -313,6 +315,24 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         }
     }
 
+    if (menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::StageFileForBurning))) {
+        QAction *stageAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::StageFileForBurning));
+
+        DFileMenu *stageMenu = stageAction ? qobject_cast<DFileMenu *>(stageAction->menu()) : Q_NULLPTR;
+        if (stageMenu) {
+            DDiskManager diskm;
+            for (auto &devs : diskm.diskDevices()) {
+                QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(devs));
+                if (dev->mediaCompatibility().join(' ').contains("_r")) {
+                    QAction *action = new QAction(dev->id(), stageMenu);
+                    action->setProperty("dest_drive", devs);
+                    action->setProperty("urlList", DUrl::toStringList(urlList));
+                    stageMenu->addAction(action);
+                    connect(action, &QAction::triggered, appController, &AppController::actionStageFileForBurning);
+                }
+            }
+        }
+    }
 
     if (currentUrl == DesktopFileInfo::computerDesktopFileUrl() ||
             currentUrl == DesktopFileInfo::trashDesktopFileUrl()) {
@@ -677,6 +697,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::RenameTag] = QObject::tr("Rename");
 
     actionKeys[MenuAction::MountImage] = QObject::tr("Mount");
+    actionKeys[MenuAction::StageFileForBurning] = QObject::tr("Burn");
 
     // Action Icons:
     if (DFMApplication::genericObtuselySetting()->value("ApplicationAttribute", "DisplayContextMenuIcon", false).toBool()) {
