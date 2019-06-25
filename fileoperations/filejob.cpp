@@ -2592,14 +2592,17 @@ QString FileJob::getXorrisoErrorMsg(const QStringList &msg)
     QRegularExpression ovrex("While grafting '(.*)'");
     for (auto& msgs : msg) {
         auto ovrxm = ovrex.match(msgs);
-        if (msgs.indexOf("file object exists and may not be overwritten") && ovrxm.hasMatch()) {
+        if (msgs.contains("file object exists and may not be overwritten") && ovrxm.hasMatch()) {
             return tr("%1 is a duplicate file.").arg(ovrxm.captured(1));
         }
-        if (msgs.indexOf("Lost connection to drive") != -1) {
+        if (msgs.contains("Lost connection to drive")) {
             return tr("Lost connection to drive.");
         }
-        if (msgs.indexOf("servo failure") != -1) {
+        if (msgs.contains("servo failure")) {
             return tr("The CD/DVD drive is not ready. Try another disc.");
+        }
+        if (msgs.contains("Device or resource busy")) {
+            return tr("The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.");
         }
     }
     return tr("Unknown error");

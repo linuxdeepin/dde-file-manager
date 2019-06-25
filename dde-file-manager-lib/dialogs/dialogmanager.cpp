@@ -499,7 +499,8 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
             failure_type = tr("Burn process failed");
         break;
     }
-    d.setTitle(QString("%1: %2").arg(failure_type).arg(err));
+    QString failure_str = QString(tr("%1: %2")).arg(failure_type).arg(err);
+    d.setTitle(failure_str);
     QWidget *detailsw = new QWidget(&d);
     detailsw->setLayout(new QVBoxLayout());
     QTextEdit *te = new QTextEdit();
@@ -507,7 +508,7 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
     te->setReadOnly(true);
     te->hide();
     detailsw->layout()->addWidget(te);
-    connect(&d, &DDialog::buttonClicked, this, [failure_type, err, te, &d](int idx, const QString&) {
+    connect(&d, &DDialog::buttonClicked, this, [failure_str, te, &d](int idx, const QString&) {
         if (idx == 1) {
             d.done(idx);
             return;
@@ -515,7 +516,7 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
         if (te->isVisible()) {
             te->hide();
             d.getButton(0)->setText(tr("Show details"));
-            d.setTitle(QString("%1: %2").arg(failure_type).arg(err));
+            d.setTitle(failure_str);
         } else {
             te->show();
             d.getButton(0)->setText(tr("Hide details"));
