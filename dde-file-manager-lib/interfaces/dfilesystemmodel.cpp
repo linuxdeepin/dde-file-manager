@@ -1019,8 +1019,8 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         DUrl nfileUrl(fileUrl);
 
         if (rootUrl.scheme() == BURN_SCHEME) {
-            QRegularExpressionMatch m;
-            Q_ASSERT(rootUrl.path().contains(QRegularExpression("^(.*?)/(disk_files|staging_files)(.*)"), &m));
+            QRegularExpressionMatch m(QRegularExpression("^(.*?)/(disk_files|staging_files)(.*)").match(rootUrl.path()));
+            Q_ASSERT(m.hasMatch());
             nfileUrl.setPath(nfileUrl.path().replace(QRegularExpression("^(.*?)/(disk_files|staging_files)(.*)"), QString("\\1/%1\\3").arg(m.captured(2))));
             nparentUrl.setPath(nparentUrl.path().replace(QRegularExpression("^(.*?)/(disk_files|staging_files)(.*)"), QString("\\1/%1\\3").arg(m.captured(2))));
         }
