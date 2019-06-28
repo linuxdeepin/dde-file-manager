@@ -336,7 +336,7 @@ void DFMAddressBar::initUI()
     // Animation
     timer.setInterval(200); // animation delay
     timer.setSingleShot(true);
-    animation = new QVariantAnimation();
+    animation = new QVariantAnimation(this);
     animation->setDuration(616);
     animation->setEasingCurve(QEasingCurve::OutQuad);
     animation->setStartValue(QVariant(1.0f));
