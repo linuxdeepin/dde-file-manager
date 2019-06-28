@@ -2121,10 +2121,8 @@ bool DFileView::setRootUrl(const DUrl &url)
     }
 
     if (fileUrl.scheme() == BURN_SCHEME) {
-        QRegularExpression re("^(.*?)/(disk_files|staging_files)(.*)$");
-        auto rem = re.match(fileUrl.path());
-        Q_ASSERT(rem.hasMatch());
-        QString devpath = rem.captured(1);
+        Q_ASSERT(fileUrl.burnDestDevice().length() > 0);
+        QString devpath = fileUrl.burnDestDevice();
         QString udiskspath = devpath;
         DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(devpath);
         udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
@@ -2147,7 +2145,7 @@ bool DFileView::setRootUrl(const DUrl &url)
             return false;
         }
         else {
-            d->headerOpticalDisc->updateDiscInfo(rem.captured(1));
+            d->headerOpticalDisc->updateDiscInfo(fileUrl.burnDestDevice());
             d->headerOpticalDisc->show();
         }
     }
