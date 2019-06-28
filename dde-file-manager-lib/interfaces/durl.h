@@ -27,6 +27,7 @@
 
 #include <QUrl>
 #include <QMetaType>
+#include <QRegularExpression>
 
 
 #define TRASH_SCHEME "trash"
@@ -68,6 +69,10 @@
 #define DFMMD_SCHEME "dfmmd"
 #define DFMMD_ROOT "dfmmd:///"
 // internal scheme end.
+
+// Auxiliary path segment strings for the burn scheme
+#define BURN_SEG_ONDISC "disk_files"
+#define BURN_SEG_STAGING "staging_files"
 
 class DUrl;
 
@@ -120,6 +125,9 @@ public:
     QString deviceId() const;
     DUrl bookmarkTargetUrl() const;
     QString bookmarkName() const;
+    QString burnDestDevice() const;
+    QString burnFilePath() const;
+    bool burnIsOnDisc() const;
 
     DUrl parentUrl() const;
 
@@ -144,6 +152,7 @@ public:
     static DUrl fromAVFSFile(const QString& filePath);
     static DUrl fromUserTaggedFile(const QString& tag_name, const QString& localFilePath) noexcept;
     static DUrl fromDeviceId(const QString &deviceId);
+    static DUrl fromBurnFile(const QString &filePath);
 
     static DUrlList fromStringList(const QStringList &urls, ParsingMode mode = TolerantMode);
     static DUrlList fromQUrlList(const QList<QUrl> &urls);
@@ -175,6 +184,8 @@ private:
     void updateVirtualPath();
 
     QString m_virtualPath;
+
+    static QRegularExpression burn_rxp;
 };
 
 typedef QList<DUrl> DUrlList;

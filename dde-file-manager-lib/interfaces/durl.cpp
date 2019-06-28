@@ -33,6 +33,8 @@
 #include <QDebug>
 #include <QUrlQuery>
 
+QRegularExpression DUrl::burn_rxp = QRegularExpression("^(.*?)/(" BURN_SEG_ONDISC "|" BURN_SEG_STAGING ")(.*)$");
+
 static inline QString parseDecodedComponent(const QString &data)
 {
     return QString(data).replace(QLatin1Char('%'), QStringLiteral("%25"));
@@ -310,6 +312,33 @@ QString DUrl::bookmarkName() const
     return fragment(FullyDecoded);
 }
 
+QString DUrl::burnDestDevice() const
+{
+    QRegularExpressionMatch m;
+    if (!path().contains(burn_rxp, &m)) {
+        return "";
+    }
+    return m.captured(1);
+}
+
+QString DUrl::burnFilePath() const
+{
+    QRegularExpressionMatch m;
+    if (!path().contains(burn_rxp, &m)) {
+        return "";
+    }
+    return m.captured(3);
+}
+
+bool DUrl::burnIsOnDisc() const
+{
+    QRegularExpressionMatch m;
+    if (!path().contains(burn_rxp, &m)) {
+        return false;
+    }
+    return m.captured(2) == BURN_SEG_ONDISC;
+}
+
 DUrl DUrl::parentUrl() const
 {
     return parentUrl(*this);
@@ -524,6 +553,14 @@ DUrl DUrl::fromDeviceId(const QString &deviceId)
     url.setPath(deviceId);
 
     return url;
+}
+
+DUrl DUrl::fromBurnFile(const QString &filePath)
+{
+    DUrl ret;
+    ret.setScheme(BURN_SCHEME);
+    ret.setPath(filePath);
+    return ret;
 }
 
 DUrlList DUrl::fromStringList(const QStringList &urls, QUrl::ParsingMode mode)
