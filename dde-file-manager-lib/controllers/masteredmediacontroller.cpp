@@ -28,39 +28,34 @@ public:
                     QDir::Filters filter,
                     QDirIterator::IteratorFlags flags)
     {
-        QRegularExpression re("^(.*?)/(disk_files|staging_files)(.*)$");
-        QString device(path.path());
-        auto rem = re.match(device);
-        if (rem.hasMatch()) {
-            QString udiskspath = rem.captured(1);
-            udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
-            QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
-            QSharedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
-            if (blkdev->mountPoints().size()) {
-                DUrl mnturl = DUrl(QString(blkdev->mountPoints().front()));
-                mnturl.setScheme(FILE_SCHEME);
-                mntpoint = mnturl.toLocalFile();
-            }
-            while (*mntpoint.rbegin() == '/') {
-                mntpoint.chop(1);
-            }
-            devfile = rem.captured(1);
-            if (diskdev->opticalBlank()) {
-                //blank disc
-                iterator.clear();
-                stagingiterator = QSharedPointer<QDirIterator>(
-                                      new QDirIterator(MasteredMediaController::getStagingFolder(DUrl(path)).path(),
-                                                       nameFilters, filter, flags)
-                                  );
-                return;
-            }
-            QString realpath = mntpoint + rem.captured(3);
-            iterator = QSharedPointer<QDirIterator>(new QDirIterator(realpath, nameFilters, filter, flags));
-            stagingiterator = QSharedPointer<QDirIterator>(
-                                  new QDirIterator(MasteredMediaController::getStagingFolder(DUrl(path)).path(),
-                                                   nameFilters, filter, flags)
-                              );
+        DUrl url(path);
+        QString udiskspath = url.burnDestDevice();
+        udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+        QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+        QSharedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
+        if (blkdev->mountPoints().size()) {
+            DUrl mnturl = DUrl::fromLocalFile(QString(blkdev->mountPoints().front()));
+            mntpoint = mnturl.toLocalFile();
         }
+        while (*mntpoint.rbegin() == '/') {
+            mntpoint.chop(1);
+        }
+        devfile = url.burnDestDevice();
+        if (diskdev->opticalBlank()) {
+            //blank disc
+            iterator.clear();
+            stagingiterator = QSharedPointer<QDirIterator>(
+                        new QDirIterator(MasteredMediaController::getStagingFolder(DUrl(path)).path(),
+                                         nameFilters, filter, flags)
+                        );
+            return;
+        }
+        QString realpath = mntpoint + url.burnFilePath();
+        iterator = QSharedPointer<QDirIterator>(new QDirIterator(realpath, nameFilters, filter, flags));
+        stagingiterator = QSharedPointer<QDirIterator>(
+                    new QDirIterator(MasteredMediaController::getStagingFolder(DUrl(path)).path(),
+                                     nameFilters, filter, flags)
+                    );
     }
 
     DUrl next() override
@@ -108,14 +103,13 @@ private:
         DUrl burntmp = DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/diskburn/");
         QString stagingroot = burntmp.path() + QString(devfile).replace('/','_');
         DUrl ret;
-        ret.setScheme(BURN_SCHEME);
         QString path = in.path();
         if (burntmp.isParentOf(in)) {
-            path.replace(stagingroot, devfile + "/staging_files");
+            path.replace(stagingroot, devfile + "/" BURN_SEG_STAGING);
         } else {
-            path.replace(mntpoint, devfile + "/disk_files");
+            path.replace(mntpoint, devfile + "/" BURN_SEG_ONDISC);
         }
-        ret.setPath(path);
+        ret = DUrl::fromBurnFile(path);
         if (skip.contains(ret)) {
             return DUrl();
         }
@@ -124,14 +118,11 @@ private:
     DUrl changeSchemeUpdate(DUrl in)
     {
         DUrl ret = changeScheme(in);
-        QRegularExpression re("^(.*?)/(disk_files|staging_files)(.*)$");
-        auto rem = re.match(ret.path());
-        Q_ASSERT(rem.hasMatch());
-        if (seen.contains(rem.captured(3))) {
+        if (seen.contains(ret.burnFilePath())) {
             skip.insert(ret);
             return DUrl();
         }
-        seen.insert(rem.captured(3));
+        seen.insert(ret.burnFilePath());
         return ret;
     }
 };
@@ -171,13 +162,13 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const DUrl &url, QObject *par
     d->proxyStaging = QPointer<DAbstractFileWatcher>(new DFileProxyWatcher(url_staging,
                                  new DFileWatcher(url_staging.path()),
                                  [](const DUrl& in)->DUrl {
+                                     //TODO: use regexp instead.
                                      QString tmpp = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/diskburn/";
                                      QString relp = in.path().mid(in.path().indexOf(tmpp) + tmpp.length());
                                      QString devp = relp.left(relp.indexOf('/'));
                                      QString imgp = relp.mid(relp.indexOf('/') + 1);
                                      devp.replace('_', '/');
-                                     DUrl ret = DUrl(devp + "/staging_files/" + imgp);
-                                     ret.setScheme(BURN_SCHEME);
+                                     DUrl ret = DUrl::fromBurnFile(devp + "/" BURN_SEG_STAGING "/" + imgp);
                                      return ret;
                                  }
     ));
@@ -191,13 +182,7 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const DUrl &url, QObject *par
 
     d->proxyOnDisk.clear();
 
-    QRegularExpression re("^(.*?)/(disk_files|staging_files)(.*)$");
-    QString device(url.path());
-    auto rem = re.match(device);
-    if (!rem.hasMatch()) {
-        return;
-    }
-    QString udiskspath = rem.captured(1);
+    QString udiskspath = url.burnDestDevice();
     udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
     QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
 
@@ -263,7 +248,7 @@ bool MasteredMediaController::compressFiles(const QSharedPointer<DFMCompressEven
 {
     DUrlList lst;
     for (auto &i : event->urlList()) {
-        if (i.path().indexOf("/disk_files/") != -1) {
+        if (i.burnIsOnDisc()) {
             DUrl local_file = DUrl::fromLocalFile(MasteredMediaFileInfo(i).extraProperties()["mm_backer"].toString());
             lst.push_back(local_file);
         }
@@ -276,7 +261,7 @@ bool MasteredMediaController::decompressFile(const QSharedPointer<DFMDecompressE
 {
     DUrlList lst;
     for (auto &i : event->urlList()) {
-        if (i.path().indexOf("/disk_files/") != -1) {
+        if (i.burnIsOnDisc()) {
             DUrl local_file = DUrl::fromLocalFile(MasteredMediaFileInfo(i).extraProperties()["mm_backer"].toString());
             lst.push_back(local_file);
         }
@@ -289,7 +274,7 @@ bool MasteredMediaController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &
 {
     DUrlList lst;
     for (auto &i : event->urlList()) {
-        if (i.path().indexOf("/staging_files/") != -1) {
+        if (!i.burnIsOnDisc()) {
             lst.push_back(getStagingFolder(i));
         }
     }
@@ -301,7 +286,7 @@ DUrlList MasteredMediaController::moveToTrash(const QSharedPointer<DFMMoveToTras
 {
     DUrlList lst, retlst;
     for (auto &i : event->urlList()) {
-        if (i.path().indexOf("/staging_files/") != -1) {
+        if (!i.burnIsOnDisc()) {
             lst.push_back(getStagingFolder(i));
             retlst.push_back(i);
         }
@@ -333,12 +318,9 @@ DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> 
     DUrl dst = event->targetUrl();
 
     if (src.size() == 1) {
-        QRegularExpression re("^(.*?)/(disk_files|staging_files)(.*)$");
-        auto rem = re.match(dst.path());
-        Q_ASSERT(rem.hasMatch());
-        QString dev(rem.captured(1));
+        QString dev(dst.burnDestDevice());
         bool is_blank = ISOMaster->getDevicePropertyCached(dev).formatted;
-        QString dstdirpath = getStagingFolder(DUrl(dev + "/staging_files" + rem.captured(3))).path();
+        QString dstdirpath = getStagingFolder(DUrl::fromBurnFile(dev + "/" BURN_SEG_STAGING)).path();
         QDir dstdir = QDir(dstdirpath);
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), src.front());
         QSet<QString> image_types = {"application/x-cd-image", "application/x-iso9660-image"};
@@ -390,7 +372,7 @@ bool MasteredMediaController::unShareFolder(const QSharedPointer<DFMCancelFileSh
 
 bool MasteredMediaController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const
 {
-    if (event->url().path().indexOf("/disk_files/") == -1) {
+    if (!event->url().burnIsOnDisc()) {
         return false;
     }
 
@@ -411,7 +393,7 @@ bool MasteredMediaController::openInTerminal(const QSharedPointer<DFMOpenInTermi
 
 bool MasteredMediaController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const
 {
-    if (event->fileUrl().path().indexOf("/disk_files/") == -1) {
+    if (!event->fileUrl().burnIsOnDisc()) {
         return false;
     }
 
@@ -463,12 +445,8 @@ void MasteredMediaController::mkpath(DUrl path) const
 
 DUrl MasteredMediaController::getStagingFolder(DUrl dst)
 {
-    QRegularExpression re("^(.*?)/(disk_files|staging_files)(.*)$");
-    auto rem = re.match(dst.path());
-    if (!rem.hasMatch()) {
-        return DUrl();
-    }
+    Q_ASSERT(dst.burnDestDevice().length() > 0);
     return DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
-                  + "/diskburn/" + rem.captured(1).replace('/','_')
-                  + rem.captured(3));
+                  + "/diskburn/" + dst.burnDestDevice().replace('/','_')
+                  + dst.burnFilePath());
 }

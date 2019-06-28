@@ -36,36 +36,34 @@
 MasteredMediaFileInfo::MasteredMediaFileInfo(const DUrl &url)
     : DAbstractFileInfo(url)
 {
-    QRegularExpression re("^(.*?)/(disk_files|staging_files)(.*)$");
-    QString device(url.path());
-    auto rem = re.match(device);
-    if (rem.hasMatch()) {
-        QString udiskspath = rem.captured(1);
-        udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
-        QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
-        QSharedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
-
-        if(rem.captured(2) == "disk_files") {
-            if (diskdev->opticalBlank()) {
-                //blank media contains no files on disc, duh!
-                return;
-            }
-
-            if (blkdev->mountPoints().size() > 0) {
-                QString mntpoint = QString(blkdev->mountPoints().front());
-                while (*mntpoint.rbegin() == '/') {
-                    mntpoint.chop(1);
-                }
-
-                m_backerUrl = DUrl(mntpoint + rem.captured(3));
-                m_backerUrl.setScheme(FILE_SCHEME);
-            }
-            else m_backerUrl = DUrl();
-        } else {
-            m_backerUrl = DUrl(MasteredMediaController::getStagingFolder(url));
-        }
-        setProxy(DFileService::instance()->createFileInfo(Q_NULLPTR, m_backerUrl));
+    if (url.burnDestDevice().length() == 0) {
+        return;
     }
+    QString udiskspath = url.burnDestDevice();
+    udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+    QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+    QSharedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
+
+    if(url.burnIsOnDisc()) {
+        if (diskdev->opticalBlank()) {
+            //blank media contains no files on disc, duh!
+            return;
+        }
+
+        if (blkdev->mountPoints().size() > 0) {
+            QString mntpoint = QString(blkdev->mountPoints().front());
+            while (*mntpoint.rbegin() == '/') {
+                mntpoint.chop(1);
+            }
+
+            m_backerUrl = DUrl(mntpoint + url.burnFilePath());
+            m_backerUrl.setScheme(FILE_SCHEME);
+        }
+        else m_backerUrl = DUrl();
+    } else {
+        m_backerUrl = DUrl(MasteredMediaController::getStagingFolder(url));
+    }
+    setProxy(DFileService::instance()->createFileInfo(Q_NULLPTR, m_backerUrl));
 }
 
 bool MasteredMediaFileInfo::exists() const
@@ -90,14 +88,7 @@ bool MasteredMediaFileInfo::isReadable() const
 
 bool MasteredMediaFileInfo::isWritable() const
 {
-    QRegularExpression re("^(.*?)/(disk_files|staging_files)(.*)$");
-    auto rem = re.match(this->fileUrl().path());
-    if (rem.hasMatch()) {
-        return ISOMaster->getDevicePropertyCached(rem.captured(1)).avail > 0;
-    }
-    else {
-        return false;
-    }
+    return ISOMaster->getDevicePropertyCached(fileUrl().burnDestDevice()).avail > 0;
 }
 
 bool MasteredMediaFileInfo::isDir() const
@@ -120,9 +111,8 @@ int MasteredMediaFileInfo::filesCount() const
 QString MasteredMediaFileInfo::fileDisplayName() const
 {
     Q_D(const DAbstractFileInfo);
-    QRegularExpressionMatch rem;
-    if (fileUrl().path().contains(QRegularExpression("^(.*?)/(disk_files|staging_files)(/*)$"), &rem)) {
-        QString udiskspath = rem.captured(1);
+    if (fileUrl().burnFilePath().contains(QRegularExpression("^(/*)$"))) {
+        QString udiskspath = fileUrl().burnDestDevice();
         udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
         QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
         return blkdev->idLabel();
@@ -159,7 +149,7 @@ QVector<MenuAction> MasteredMediaFileInfo::menuActionList(MenuType type) const
     ret.removeAll(MenuAction::NewDocument);
     ret.removeAll(MenuAction::NewPowerpoint);
     ret.removeAll(MenuAction::DecompressHere);
-    if (fileUrl().path().indexOf("/disk_files/") == -1 || !m_backerUrl.isValid() || m_backerUrl.isEmpty()) {
+    if (!fileUrl().burnIsOnDisc() || !m_backerUrl.isValid() || m_backerUrl.isEmpty()) {
         ret.removeAll(MenuAction::OpenInTerminal);
         ret.removeAll(MenuAction::OpenAsAdmin);
         ret.removeAll(MenuAction::Copy);
@@ -189,7 +179,7 @@ bool MasteredMediaFileInfo::canIteratorDir() const
 
 DUrl MasteredMediaFileInfo::parentUrl() const
 {
-    if (fileUrl().path().contains(QRegularExpression("^(.*?)/(disk_files|staging_files)(/*)$"))) {
+    if (fileUrl().burnFilePath().contains(QRegularExpression("^(/*)$"))) {
         return DUrl::fromLocalFile(QDir::homePath());
     }
     return DAbstractFileInfo::parentUrl();
@@ -197,7 +187,7 @@ DUrl MasteredMediaFileInfo::parentUrl() const
 
 DUrl MasteredMediaFileInfo::goToUrlWhenDeleted() const
 {
-    if (m_backerUrl.isEmpty() || fileUrl().path().contains(QRegularExpression("^(.*?)/(disk_files|staging_files)(/*)$"))) {
+    if (m_backerUrl.isEmpty() || fileUrl().burnFilePath().contains(QRegularExpression("^(/*)$"))) {
         return DUrl::fromLocalFile(QDir::homePath());
     }
     return DAbstractFileInfo::goToUrlWhenDeleted();
