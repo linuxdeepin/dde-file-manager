@@ -192,16 +192,20 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const DUrl &url, QObject *par
         d->proxyOnDisk->moveToThread(thread());
         d->proxyOnDisk->setParent(this);
         connect(d->proxyOnDisk, &DAbstractFileWatcher::fileDeleted, this, [this, url] {emit fileDeleted(url);});
-    } else { //The disc is not mounted, i.e. the disc is blank
-        d->diskm.reset(new DDiskManager(this));
-        connect(d->diskm.data(), &DDiskManager::opticalChanged, this,
-            [this, blkdev, url](const QString &path) {
-                if (path == blkdev->drive()) {
-                    emit fileDeleted(url);
-                }
-            });
-        d->diskm->setWatchChanges(true);
     }
+    /*
+     * blank disc doesn't mount
+     * ejecting disc by pressing the eject button doesn't properly remove the mount point
+     * therefore this is always needed as a "last resort".
+     */
+    d->diskm.reset(new DDiskManager(this));
+    connect(d->diskm.data(), &DDiskManager::opticalChanged, this,
+        [this, blkdev, url](const QString &path) {
+        if (path == blkdev->drive()) {
+            emit fileDeleted(url);
+        }
+    });
+    d->diskm->setWatchChanges(true);
 
 }
 
