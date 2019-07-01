@@ -318,8 +318,7 @@ void DFMSideBarPrivate::initMountedVolumes()
     // Device/volume get removed.
     q->connect(devices_watcher, &DAbstractFileWatcher::fileDeleted, group, [group, q](const DUrl & url) {
         DFMSideBarItem *item = group->findItem(url);
-        Q_CHECK_PTR(item); // should always find one
-        if (item->inherits("DFMSideBarDeviceItem")) {
+        if (item && !item->inherits("DFMSideBarOpticalDevItem")) {
             q->removeItem(item);
         }
     });
