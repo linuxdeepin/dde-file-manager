@@ -156,6 +156,10 @@ QVector<MenuAction> MasteredMediaFileInfo::menuActionList(MenuType type) const
         ret.removeAll(MenuAction::SendToRemovableDisk);
         ret.removeAll(MenuAction::StageFileForBurning);
     }
+    if (fileUrl().burnIsOnDisc()) {
+        ret.removeAll(MenuAction::Delete);
+        ret.removeAll(MenuAction::CompleteDeletion);
+    }
     return ret;
 }
 
