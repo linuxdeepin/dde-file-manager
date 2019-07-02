@@ -50,7 +50,7 @@ DFMSideBarOpticalDevItem::DFMSideBarOpticalDevItem(DUrl url, QWidget *parent)
             this, &DFMSideBarOpticalDevItem::itemOnClick);
 
     unmountButton = new DImageButton(this);
-    unmountButton->setVisible(blk->mountPoints().size() != 0);
+    unmountButton->setVisible(drv->mediaAvailable());
     this->setContentWidget(unmountButton);
 
     connect(unmountButton, &DImageButton::clicked,
