@@ -56,12 +56,11 @@ MasteredMediaFileInfo::MasteredMediaFileInfo(const DUrl &url)
                 mntpoint.chop(1);
             }
 
-            m_backerUrl = DUrl(mntpoint + url.burnFilePath());
-            m_backerUrl.setScheme(FILE_SCHEME);
+            m_backerUrl = DUrl::fromLocalFile(mntpoint + url.burnFilePath());
         }
         else m_backerUrl = DUrl();
     } else {
-        m_backerUrl = DUrl(MasteredMediaController::getStagingFolder(url));
+        m_backerUrl = MasteredMediaController::getStagingFolder(url);
     }
     setProxy(DFileService::instance()->createFileInfo(Q_NULLPTR, m_backerUrl));
 }
