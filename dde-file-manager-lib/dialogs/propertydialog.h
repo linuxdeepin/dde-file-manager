@@ -195,6 +195,7 @@ private:
     DExpandGroup* m_expandGroup{ nullptr };
     DFM_NAMESPACE::DFileStatisticsJob* m_sizeWorker{ nullptr };
     QVBoxLayout* m_mainLayout{ nullptr };
+    QWidget* m_wdf;
 
     DExpandGroup *addExpandWidget(const QStringList &titleList);
 
