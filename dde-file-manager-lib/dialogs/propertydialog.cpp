@@ -55,6 +55,7 @@
 #include "plugins/pluginmanager.h"
 #include "../plugininterfaces/menu/menuinterface.h"
 #include "dfmeventdispatcher.h"
+#include "views/progressline.h"
 
 #include <dseparatorhorizontal.h>
 #include <darrowlineexpand.h>
@@ -298,6 +299,34 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         m_expandGroup = addExpandWidget(titleList);
         m_expandGroup->expand(0)->setContent(m_deviceInfoFrame);
         m_expandGroup->expand(0)->setExpand(true);
+
+        uint64_t dskspace = useQStorageInfo ? (uint64_t)diskInfo.bytesTotal() : udiskInfo->getTotal();
+        uint64_t dskinuse = dskspace - (useQStorageInfo ? (uint64_t)diskInfo.bytesFree() : udiskInfo->getFree());
+        QString devid(useQStorageInfo ? diskInfo.device() : udiskInfo->getDiskInfo().unix_device());
+
+        ProgressLine* progbdf = new ProgressLine();
+        progbdf->setMax(dskspace);
+        progbdf->setValue(dskinuse);
+        progbdf->setMaximumHeight(4);
+
+        QLabel* lbdf_l = new SectionKeyLabel(tr("%1 (%2)").arg(name).arg(devid));
+        QLabel* lbdf_r = new SectionKeyLabel(tr("%1 / %2").arg(FileUtils::formatSize(dskinuse)).arg(FileUtils::formatSize(dskspace)));
+        lbdf_l->setAlignment(Qt::AlignLeft);
+        lbdf_r->setAlignment(Qt::AlignRight);
+        lbdf_l->setMaximumWidth(QWIDGETSIZE_MAX);
+        lbdf_r->setMaximumWidth(QWIDGETSIZE_MAX);
+        QWidget* wdfl = new QWidget();
+        wdfl->setLayout(new QHBoxLayout);
+        wdfl->layout()->setMargin(0);
+        wdfl->layout()->addWidget(lbdf_l);
+        wdfl->layout()->addWidget(lbdf_r);
+
+        m_wdf = new QWidget(this);
+        m_wdf->setLayout(new QVBoxLayout);
+        m_wdf->layout()->setMargin(0);
+        m_wdf->layout()->addWidget(wdfl);
+        m_wdf->layout()->addWidget(progbdf);
+        m_mainLayout->addWidget(m_wdf);
 
     } else {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
