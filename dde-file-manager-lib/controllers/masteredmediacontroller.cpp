@@ -162,14 +162,13 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const DUrl &url, QObject *par
     d->proxyStaging = QPointer<DAbstractFileWatcher>(new DFileProxyWatcher(url_staging,
                                  new DFileWatcher(url_staging.path()),
                                  [](const DUrl& in)->DUrl {
-                                     //TODO: use regexp instead.
-                                     QString tmpp = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/diskburn/";
-                                     QString relp = in.path().mid(in.path().indexOf(tmpp) + tmpp.length());
-                                     QString devp = relp.left(relp.indexOf('/'));
-                                     QString imgp = relp.mid(relp.indexOf('/') + 1);
-                                     devp.replace('_', '/');
-                                     DUrl ret = DUrl::fromBurnFile(devp + "/" BURN_SEG_STAGING "/" + imgp);
-                                     return ret;
+                                     QRegularExpressionMatch m;
+                                     QString cachepath = QRegularExpression::escape(QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/diskburn/");
+                                     m = QRegularExpression(cachepath + "(.*)").match(in.path());
+                                     Q_ASSERT(m.hasMatch());
+                                     m = QRegularExpression("(.*?)/(.*)").match(m.captured(1));
+                                     Q_ASSERT(m.hasMatch());
+                                     return DUrl::fromBurnFile(m.captured(1).replace('_', '/') + "/" BURN_SEG_STAGING "/" + m.captured(2));
                                  }
     ));
     d->proxyStaging->moveToThread(thread());
