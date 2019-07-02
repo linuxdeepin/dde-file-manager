@@ -36,7 +36,7 @@ public:
     QAbstractItemView *parent() const;
 
     virtual quint64 windowId() const;
-    virtual bool isCut(const QModelIndex &index) const;
+    virtual bool isTransparent(const QModelIndex &index) const;
     virtual bool isSelected(const QModelIndex &index) const;
     virtual bool isDropTarget(const QModelIndex &index) const;
     virtual int selectedIndexsCount() const;

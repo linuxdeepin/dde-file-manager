@@ -149,7 +149,7 @@ void DFileViewHelperPrivate::init()
             QWidget *item = q->indexWidget(index);
 
             if (item) {
-                item->setProperty("opacity", q->isCut(index) ? 0.3 : 1);
+                item->setProperty("opacity", q->isTransparent(index) ? 0.3 : 1);
             }
         }
 
@@ -328,11 +328,11 @@ quint64 DFileViewHelper::windowId() const
 }
 
 /*!
- * \brief Return true if index is cut state; otherwise return false.
+ * \brief Return true if index is transparent; otherwise return false.
  * \param index
  * \return
  */
-bool DFileViewHelper::isCut(const QModelIndex &index) const
+bool DFileViewHelper::isTransparent(const QModelIndex &index) const
 {
     const DAbstractFileInfoPointer &fileInfo = this->fileInfo(index);
 
@@ -345,9 +345,7 @@ bool DFileViewHelper::isCut(const QModelIndex &index) const
         fileUrl = fileInfo->fileUrl().searchedFileUrl();
     }
 
-    //temporary hack to make files staging for burning transparent
-    DUrl burntemp = DUrl(QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/diskburn/");
-    burntemp.setScheme(FILE_SCHEME);
+    //staging files are transparent
     if (currentUrl().scheme() == BURN_SCHEME && fileUrl.scheme() == BURN_SCHEME && !fileUrl.burnIsOnDisc()) {
         return true;
     }
@@ -495,21 +493,21 @@ void DFileViewHelper::initStyleOption(QStyleOptionViewItem *option, const QModel
     option->palette.setColor(QPalette::BrightText, Qt::white);
     option->palette.setBrush(QPalette::Shadow, ThemeConfig::instace()->color("FileView", "shadow"));
 
-    bool cuted = isCut(index);
+    bool transp = isTransparent(index);
 
-    if (cuted) {
+    if (transp) {
         option->backgroundBrush = ThemeConfig::instace()->color("FileView", "background", ThemeConfig::Inactive);
     }
 
     if ((option->state & QStyle::State_HasFocus) && option->showDecorationSelected && selectedIndexsCount() > 1) {
         option->palette.setColor(QPalette::Background, ThemeConfig::instace()->color("FileView", "background", ThemeConfig::Focus));
 
-        if (!cuted)
+        if (!transp)
             option->backgroundBrush = ThemeConfig::instace()->color("FileView", "background", ThemeConfig::Focus);
     } else {
         option->palette.setColor(QPalette::Background, ThemeConfig::instace()->color("FileView", "background"));
 
-        if (!cuted)
+        if (!transp)
             option->backgroundBrush = ThemeConfig::instace()->color("FileView", "background");
     }
 

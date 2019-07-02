@@ -575,7 +575,7 @@ void DIconItemDelegate::paint(QPainter *painter,
     if (index == d->expandedIndex && !parent()->isSelected(index))
         const_cast<DIconItemDelegate*>(this)->hideNotEditingIndexWidget();
 
-    painter->setOpacity(parent()->isCut(index) ? 0.3 : 1.0);
+    painter->setOpacity(parent()->isTransparent(index) ? 0.3 : 1.0);
 
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
@@ -882,7 +882,7 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
 
     if (ExpandedItem *item = qobject_cast<ExpandedItem*>(editor)) {
         item->iconHeight = icon_size.height();
-        item->setOpacity(parent()->isCut(index) ? 0.3 : 1);
+        item->setOpacity(parent()->isTransparent(index) ? 0.3 : 1);
 
         return;
     }
@@ -914,7 +914,7 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
 
     item->edit->setAlignment(Qt::AlignHCenter);
     item->edit->document()->setTextWidth(d->itemSizeHint.width());
-    item->setOpacity(parent()->isCut(index) ? 0.3 : 1);
+    item->setOpacity(parent()->isTransparent(index) ? 0.3 : 1);
 
     if(item->edit->isReadOnly())
         return;
