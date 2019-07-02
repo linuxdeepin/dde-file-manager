@@ -73,14 +73,6 @@ DFMSideBarDeviceItem::DFMSideBarDeviceItem(DUrl url, QWidget *parent)
     default:
         break;
     }
-
-    QString devs(url.path());
-    devs.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
-    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(devs));
-    QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blkdev->drive()));
-    if (drv->mediaCompatibility().join(' ').contains("optical")) {
-        hide();
-    }
 }
 
 QVariantHash DFMSideBarDeviceItem::getExtraProperties() const

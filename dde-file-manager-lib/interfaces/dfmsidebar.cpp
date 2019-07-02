@@ -250,6 +250,13 @@ void DFMSideBarPrivate::initMountedVolumes()
     auto devices_info = fileService->getChildren(q_func(), DUrl(DEVICE_ROOT),
                         QStringList(), QDir::AllEntries);
     for (const DAbstractFileInfoPointer &info : devices_info) {
+        QString devs(info->fileUrl().path());
+        devs.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+        QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(devs));
+        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blkdev->drive()));
+        if (drv->mediaCompatibility().join(' ').contains("optical")) {
+            continue;
+        }
         group->appendItem(new DFMSideBarDeviceItem(info->fileUrl()));
     }
 
@@ -263,6 +270,13 @@ void DFMSideBarPrivate::initMountedVolumes()
 
     // New device/volume added.
     q->connect(devices_watcher, &DAbstractFileWatcher::subfileCreated, group, [group](const DUrl & url) {
+        QString devs(url.path());
+        devs.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+        QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(devs));
+        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blkdev->drive()));
+        if (drv->mediaCompatibility().join(' ').contains("optical")) {
+            return;
+        }
         group->appendItem(new DFMSideBarDeviceItem(url));
     });
     q->connect(dskm.data(), &DDiskManager::blockDeviceAdded, group, [group](const QString & s) {
@@ -275,17 +289,16 @@ void DFMSideBarPrivate::initMountedVolumes()
     q->connect(dskm.data(), &DDiskManager::opticalChanged, group, [group, this](const QString & path) {
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(path));
         for (auto blks : dskm->blockDevices()) {
-        QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(blks));
-        if (path == blkdev->drive()) {
-            qDebug() << QString(blkdev->device());
-            DUrl url = DUrl::fromDeviceId(blkdev->device());
-            DFMSideBarItem *item = group->findItem(url);
-            DFMSideBarOpticalDevItem *optdevitem = qobject_cast<DFMSideBarOpticalDevItem*>(item);
-            if (optdevitem) {
-                optdevitem->unmountButton->setVisible(drv->mediaAvailable());
-                optdevitem->reloadLabel();
+            QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(blks));
+            if (path == blkdev->drive()) {
+                DUrl url = DUrl::fromDeviceId(blkdev->device());
+                DFMSideBarItem *item = group->findItem(url);
+                DFMSideBarOpticalDevItem *optdevitem = qobject_cast<DFMSideBarOpticalDevItem*>(item);
+                if (optdevitem) {
+                    optdevitem->unmountButton->setVisible(drv->mediaAvailable());
+                    optdevitem->reloadLabel();
+                }
             }
-        }
         }
     });
 
@@ -293,7 +306,7 @@ void DFMSideBarPrivate::initMountedVolumes()
     q->connect(devices_watcher, &DAbstractFileWatcher::fileAttributeChanged, group, [group](const DUrl & url) {
         DFMSideBarItem *item = group->findItem(url);
         DAbstractFileInfoPointer pointer = fileService->createFileInfo(item, url);
-        if (item) {
+        if (item && !item->inherits(DFMSideBarOpticalDevItem::staticMetaObject.className())) {
             DFMSideBarDeviceItem *casted = qobject_cast<DFMSideBarDeviceItem *>(item);
             const QVariantHash &extensionInfo = pointer->extraProperties();
 
@@ -318,7 +331,7 @@ void DFMSideBarPrivate::initMountedVolumes()
     // Device/volume get removed.
     q->connect(devices_watcher, &DAbstractFileWatcher::fileDeleted, group, [group, q](const DUrl & url) {
         DFMSideBarItem *item = group->findItem(url);
-        if (item && !item->inherits("DFMSideBarOpticalDevItem")) {
+        if (item && !item->inherits(DFMSideBarOpticalDevItem::staticMetaObject.className())) {
             q->removeItem(item);
         }
     });
