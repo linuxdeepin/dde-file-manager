@@ -99,21 +99,21 @@ void CanvasViewHelper::initStyleOption(QStyleOptionViewItem *option, const QMode
     option->palette.setColor(QPalette::BrightText, Qt::white);
     option->palette.setBrush(QPalette::Shadow, QColor(0, 0, 0, 178));
 
-    bool cuted = isCut(index);
+    bool transp = isTransparent(index);
 
-    if (cuted) {
+    if (transp) {
         option->backgroundBrush = QColor("#BFE4FC");
     }
 
     if ((option->state & QStyle::State_HasFocus) && option->showDecorationSelected && selectedIndexsCount() > 1) {
         option->palette.setColor(QPalette::Background, QColor("#0076F9"));
 
-        if (!cuted)
+        if (!transp)
             option->backgroundBrush = QColor("#0076F9");
     } else {
         option->palette.setColor(QPalette::Background, QColor("#2da6f7"));
 
-        if (!cuted)
+        if (!transp)
             option->backgroundBrush = QColor("#2da6f7");
     }
 

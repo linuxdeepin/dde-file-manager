@@ -54,7 +54,7 @@ void DListItemDelegate::paint(QPainter *painter,
     bool isDropTarget = parent()->isDropTarget(index);
     bool isEnabled = option.state & QStyle::State_Enabled;
 
-    if (parent()->isCut(index)) {
+    if (parent()->isTransparent(index)) {
         painter->setOpacity(0.3);
     }
 
