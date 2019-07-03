@@ -111,7 +111,7 @@ private:
         }
         ret = DUrl::fromBurnFile(path);
         if (skip.contains(ret)) {
-            return DUrl();
+            ret.setFragment("dup");
         }
         return ret;
     }
@@ -173,7 +173,6 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const DUrl &url, QObject *par
                                      if (!m.hasMatch()) {
                                          devid = cpth;
                                      }
-                                     qDebug() << devid.replace('_', '/') + "/" BURN_SEG_STAGING "/" + path;
                                      return DUrl::fromBurnFile(devid.replace('_', '/') + "/" BURN_SEG_STAGING "/" + path);
                                  }
     ));
