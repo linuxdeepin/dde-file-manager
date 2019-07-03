@@ -909,26 +909,15 @@ void AppController::actionByIds(const DFMEvent &event, QString actionId)
 
 void AppController::doSubscriberAction(const QString &path)
 {
-    QString rpath(path);
-    //right here is some really dirty jobby. Replace ASAP.
-    auto gdev = deviceListener->getDeviceByMountPoint(path)->getDiskInfo();
-    QString dev =  gdev.drive_unix_device().length() ? gdev.drive_unix_device() : gdev.unix_device();
-    dev.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
-    QScopedPointer<DBlockDevice> uddev(DDiskManager::createBlockDevice(dev));
-    QScopedPointer<DDiskDevice> uddrv(DDiskManager::createDiskDevice(uddev->drive()));
-    if (uddrv->optical()) {
-        rpath = BURN_SCHEME "://" + QString(uddev->device()) + "/" BURN_SEG_ONDISC;
-    }
-
     switch (eventKey()) {
     case Open:
-        asyncOpenDisk(rpath);
+        asyncOpenDisk(path);
         break;
     case OpenNewWindow:
-        asyncOpenDiskInNewWindow(rpath);
+        asyncOpenDiskInNewWindow(path);
         break;
     case OpenNewTab:
-        asyncOpenDiskInNewTab(rpath);
+        asyncOpenDiskInNewTab(path);
         break;
     default:
         break;

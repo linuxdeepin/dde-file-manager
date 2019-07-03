@@ -2132,7 +2132,7 @@ bool DFileView::setRootUrl(const DUrl &url)
             QSharedPointer<QFutureWatcher<void>> fw(new QFutureWatcher<void>);
             connect(fw.data(), &QFutureWatcher<void>::finished, this, [=] {
                 QGuiApplication::restoreOverrideCursor();
-                setRootUrl(fileUrl);
+                cd(fileUrl);
                 Q_UNUSED(fw); //ensure future watcher is destructed only in the future
             });
             fw->setFuture(QtConcurrent::run([=] {
