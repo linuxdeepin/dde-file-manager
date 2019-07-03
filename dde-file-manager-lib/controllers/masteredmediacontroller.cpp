@@ -166,9 +166,15 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const DUrl &url, QObject *par
                                      QString cachepath = QRegularExpression::escape(QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/diskburn/");
                                      m = QRegularExpression(cachepath + "(.*)").match(in.path());
                                      Q_ASSERT(m.hasMatch());
-                                     m = QRegularExpression("(.*?)/(.*)").match(m.captured(1));
-                                     Q_ASSERT(m.hasMatch());
-                                     return DUrl::fromBurnFile(m.captured(1).replace('_', '/') + "/" BURN_SEG_STAGING "/" + m.captured(2));
+                                     QString cpth = m.captured(1);
+                                     m = QRegularExpression("(.*?)/(.*)").match(cpth);
+                                     QString devid(m.captured(1));
+                                     QString path(m.captured(2));
+                                     if (!m.hasMatch()) {
+                                         devid = cpth;
+                                     }
+                                     qDebug() << devid.replace('_', '/') + "/" BURN_SEG_STAGING "/" + path;
+                                     return DUrl::fromBurnFile(devid.replace('_', '/') + "/" BURN_SEG_STAGING "/" + path);
                                  }
     ));
     d->proxyStaging->moveToThread(thread());
