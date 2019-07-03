@@ -75,4 +75,6 @@ DISOMasterNS::DISOMaster *getDISOMaster(bool doContruct = false);
 
 #define MAX_PROPERTY_DIALOG_NUMBER 16
 
+#define DISCBURN_STAGING "discburn"
+
 #endif // GLOBAL_H
