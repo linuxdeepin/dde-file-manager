@@ -72,6 +72,10 @@ bool MasteredMediaFileInfo::exists() const
     if (fileUrl().isEmpty() || !m_backerUrl.isValid() || m_backerUrl.isEmpty()) {
         return false;
     }
+    if (fileUrl().fragment() == "dup") {
+        return false;
+    }
+
     return d->proxy && d->proxy->exists();
 }
 
