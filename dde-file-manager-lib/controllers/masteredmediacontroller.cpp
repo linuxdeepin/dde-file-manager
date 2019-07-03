@@ -100,7 +100,7 @@ private:
     QSet<DUrl> skip;
     DUrl changeScheme(DUrl in) const
     {
-        DUrl burntmp = DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/diskburn/");
+        DUrl burntmp = DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/");
         QString stagingroot = burntmp.path() + QString(devfile).replace('/','_');
         DUrl ret;
         QString path = in.path();
@@ -163,7 +163,7 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const DUrl &url, QObject *par
                                  new DFileWatcher(url_staging.path()),
                                  [](const DUrl& in)->DUrl {
                                      QRegularExpressionMatch m;
-                                     QString cachepath = QRegularExpression::escape(QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/diskburn/");
+                                     QString cachepath = QRegularExpression::escape(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/");
                                      m = QRegularExpression(cachepath + "(.*)").match(in.path());
                                      Q_ASSERT(m.hasMatch());
                                      QString cpth = m.captured(1);
@@ -310,7 +310,7 @@ bool MasteredMediaController::writeFilesToClipboard(const QSharedPointer<DFMWrit
     DUrlList lst;
     for (auto &i : event->urlList()) {
         DAbstractFileInfoPointer fp = fileService->createFileInfo(event->sender(), i);
-        if (!DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)).isParentOf(
+        if (!DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/").isParentOf(
              DUrl::fromLocalFile(fp->extraProperties()["mm_backer"].toString()))) {
             lst.push_back(DUrl::fromLocalFile(fp->extraProperties()["mm_backer"].toString()));
         }
@@ -454,7 +454,8 @@ void MasteredMediaController::mkpath(DUrl path) const
 DUrl MasteredMediaController::getStagingFolder(DUrl dst)
 {
     Q_ASSERT(dst.burnDestDevice().length() > 0);
-    return DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
-                  + "/diskburn/" + dst.burnDestDevice().replace('/','_')
+    return DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
+                  + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/"
+                  + dst.burnDestDevice().replace('/','_')
                   + dst.burnFilePath());
 }
