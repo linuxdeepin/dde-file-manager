@@ -38,6 +38,7 @@
 #include "gvfs/gvfsmountmanager.h"
 #include "udiskdeviceinfo.h"
 #include "dblockdevice.h"
+#include "ddiskdevice.h"
 #include "ddiskmanager.h"
 #include "shutil/fileutils.h"
 #include "dialogs/dialogmanager.h"
@@ -483,6 +484,13 @@ void UDiskListener::addMountDiskInfo(const QDiskInfo &diskInfo)
     qDebug() << m_subscribers;
     foreach (Subscriber *sub, m_subscribers) {
         QString url = device->getMountPointUrl().toString();
+        QString udiskspath = device->getId();
+        udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+        QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+        QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+        if (drive->optical()) {
+            url = DUrl::fromDeviceId(device->getId()).toString();
+        }
         qDebug() << url;
         sub->doSubscriberAction(url);
     }
