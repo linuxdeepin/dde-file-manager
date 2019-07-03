@@ -91,7 +91,7 @@ QMenu *DFMSideBarOpticalDevItem::createStandardContextMenu() const
 
     menu->addSeparator();
 
-    if (drv->mediaAvailable()) {
+    if (drv->mediaAvailable() && !drv->opticalBlank() && blk->mountPoints().empty()) {
         menu->addAction(QObject::tr("Mount"), [this]() {
             blk->mount({});
         });
@@ -99,7 +99,7 @@ QMenu *DFMSideBarOpticalDevItem::createStandardContextMenu() const
 
     // According to the designer and PM, we should use "Unmount" even we are actually doing *Eject* for removable device.
     // This behavior should be discussed later.
-    if (drv->ejectable()) {
+    if (drv->mediaAvailable()) {
         menu->addAction(QObject::tr("Unmount"), this, &DFMSideBarOpticalDevItem::eject);
     }
 
