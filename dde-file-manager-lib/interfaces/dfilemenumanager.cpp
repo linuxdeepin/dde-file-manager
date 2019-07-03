@@ -318,12 +318,30 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
     if (menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::StageFileForBurning))) {
         QAction *stageAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::StageFileForBurning));
 
-        DFileMenu *stageMenu = stageAction ? qobject_cast<DFileMenu *>(stageAction->menu()) : Q_NULLPTR;
-        if (stageMenu) {
-            DDiskManager diskm;
-            for (auto &devs : diskm.diskDevices()) {
-                QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(devs));
-                if (dev->mediaCompatibility().join(' ').contains("_r")) {
+        QStringList odrv;
+        DDiskManager diskm;
+        for (auto &devs : diskm.diskDevices()) {
+            QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(devs));
+            if (dev->mediaCompatibility().join(' ').contains("_r")) {
+                odrv.push_back(devs);
+            }
+        }
+
+        if (odrv.size() == 1) {
+            stageAction->setProperty("dest_drive", odrv.front());
+            stageAction->setProperty("urlList", DUrl::toStringList(urlList));
+            connect(stageAction, &QAction::triggered, appController, &AppController::actionStageFileForBurning);
+            DFileMenu *stageMenu = stageAction ? qobject_cast<DFileMenu *>(stageAction->menu()) : Q_NULLPTR;
+            if (stageMenu) {
+                stageAction->setMenu(nullptr);
+                delete stageMenu;
+            }
+        }
+        else {
+            DFileMenu *stageMenu = stageAction ? qobject_cast<DFileMenu *>(stageAction->menu()) : Q_NULLPTR;
+            if (stageMenu) {
+                for (auto &devs : odrv) {
+                    QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(devs));
                     QAction *action = new QAction(dev->id(), stageMenu);
                     action->setProperty("dest_drive", devs);
                     action->setProperty("urlList", DUrl::toStringList(urlList));
