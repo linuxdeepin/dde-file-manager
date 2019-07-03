@@ -366,16 +366,16 @@ const DDirIteratorPointer MasteredMediaController::createDirIterator(const QShar
 
 bool MasteredMediaController::shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const
 {
-    event->ignore();
+    DUrl url = DUrl::fromLocalFile(MasteredMediaFileInfo(event->url()).extraProperties()["mm_backer"].toString());
 
-    return false;
+    return fileService->shareFolder(event->sender(), url, event->name(), event->isWritable(), event->allowGuest());
 }
 
 bool MasteredMediaController::unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const
 {
-    event->ignore();
+    DUrl url = DUrl::fromLocalFile(MasteredMediaFileInfo(event->url()).extraProperties()["mm_backer"].toString());
 
-    return false;
+    return fileService->unShareFolder(event->sender(), url);
 }
 
 bool MasteredMediaController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const
@@ -413,22 +413,19 @@ bool MasteredMediaController::createSymlink(const QSharedPointer<DFMCreateSymlin
     return fileService->createSymlink(event->sender(), local_url, event->toUrl());
 }
 
-bool MasteredMediaController::setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const
+bool MasteredMediaController::addToBookmark(const QSharedPointer<DFMAddToBookmarkEvent> &event) const
 {
-    event->ignore();
-    return false;
+    DUrl destUrl = event->url();
+
+    const DAbstractFileInfoPointer &p = fileService->createFileInfo(nullptr, destUrl);
+    DUrl bookmarkUrl = DUrl::fromBookMarkFile(destUrl, p->fileDisplayName());
+
+    return fileService->touchFile(event->sender(), bookmarkUrl);
 }
 
-bool MasteredMediaController::removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent>& event) const
+bool MasteredMediaController::removeBookmark(const QSharedPointer<DFMRemoveBookmarkEvent> &event) const
 {
-    event->ignore();
-    return false;
-}
-
-QList<QString> MasteredMediaController::getTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFilesEvent> &event) const
-{
-    event->ignore();
-    return {QString()};
+    return DFileService::instance()->deleteFiles(nullptr, {DUrl::fromBookMarkFile(event->url(), QString())}, false);
 }
 
 DAbstractFileWatcher *MasteredMediaController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
