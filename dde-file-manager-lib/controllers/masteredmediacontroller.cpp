@@ -361,6 +361,10 @@ const DAbstractFileInfoPointer MasteredMediaController::createFileInfo(const QSh
 
 const DDirIteratorPointer MasteredMediaController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
+    //Make sure the staging folder exists. Otherwise the staging watcher won't work.
+    if (event->url().burnFilePath().contains(QRegularExpression("^/*$"))) {
+        mkpath(getStagingFolder(event->url()));
+    }
     return DDirIteratorPointer(new DFMShadowedDirIterator(event->url(), event->nameFilters(), event->filters(), event->flags()));
 }
 
