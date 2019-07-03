@@ -650,8 +650,8 @@ void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int 
     connect(job_isomaster, &DISOMasterNS::DISOMaster::jobStatusChanged, this, std::bind(&FileJob::opticalJobUpdated, this, job_isomaster, std::placeholders::_1, std::placeholders::_2));
     job_isomaster->acquireDevice(device.path());
     job_isomaster->getDeviceProperty();
-    QUrl stagingurl(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
-                    + "/diskburn/" + device.path().replace('/','_') + "/");
+    QUrl stagingurl(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName()
+                    + "/" DISCBURN_STAGING "/" + device.path().replace('/','_') + "/");
     job_isomaster->stageFiles({{stagingurl, QUrl("/")}});
     job_isomaster->commit(speed, flag & 1, volname);
     double gud, slo, bad;

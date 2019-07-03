@@ -71,7 +71,7 @@
 // internal scheme end.
 
 // Auxiliary path segment strings for the burn scheme
-#define BURN_SEG_ONDISC "disk_files"
+#define BURN_SEG_ONDISC "disc_files"
 #define BURN_SEG_STAGING "staging_files"
 
 class DUrl;
