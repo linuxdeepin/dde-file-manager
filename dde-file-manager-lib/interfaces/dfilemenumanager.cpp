@@ -330,7 +330,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         if (odrv.size() == 1) {
             stageAction->setProperty("dest_drive", odrv.front());
             stageAction->setProperty("urlList", DUrl::toStringList(urlList));
-            connect(stageAction, &QAction::triggered, appController, &AppController::actionStageFileForBurning);
+            connect(stageAction, &QAction::triggered, appController, &AppController::actionStageFileForBurning, Qt::UniqueConnection);
             DFileMenu *stageMenu = stageAction ? qobject_cast<DFileMenu *>(stageAction->menu()) : Q_NULLPTR;
             if (stageMenu) {
                 stageAction->setMenu(nullptr);
@@ -346,7 +346,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
                     action->setProperty("dest_drive", devs);
                     action->setProperty("urlList", DUrl::toStringList(urlList));
                     stageMenu->addAction(action);
-                    connect(action, &QAction::triggered, appController, &AppController::actionStageFileForBurning);
+                    connect(action, &QAction::triggered, appController, &AppController::actionStageFileForBurning, Qt::UniqueConnection);
                 }
             }
         }
