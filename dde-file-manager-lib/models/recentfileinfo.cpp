@@ -119,6 +119,7 @@ QVector<MenuAction> RecentFileInfo::menuActionList(DAbstractFileInfo::MenuType t
     actions.removeOne(MenuAction::Delete);
     actions.removeOne(MenuAction::CompleteDeletion);
     actions.removeOne(MenuAction::DecompressHere);
+    actions.removeOne(MenuAction::StageFileForBurning);
 
     return actions;
 }
