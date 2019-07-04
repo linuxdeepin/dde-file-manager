@@ -74,7 +74,7 @@ QMenu *DFMSideBarOpticalDevItem::createStandardContextMenu() const
     deviceIdUrl.setQuery(blk->device());
 
     menu->addAction(QObject::tr("Open in new window"), [this, deviceIdUrl]() {
-        if (blk->mountPoints().length()) {
+        if (blk->mountPoints().length() || drv->opticalBlank()) {
             WindowManager::instance()->showNewWindow(url(), true);
         } else {
             appController->actionOpenDiskInNewWindow(dMakeEventPointer<DFMUrlBaseEvent>(this, deviceIdUrl));
@@ -82,7 +82,7 @@ QMenu *DFMSideBarOpticalDevItem::createStandardContextMenu() const
     });
 
     menu->addAction(QObject::tr("Open in new tab"), [wnd, this, deviceIdUrl]() {
-        if (blk->mountPoints().length()) {
+        if (blk->mountPoints().length() || drv->opticalBlank()) {
             wnd->openNewTab(url());
         } else {
             appController->actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(this, deviceIdUrl));
