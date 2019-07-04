@@ -177,6 +177,7 @@ void BurnOptDialogPrivate::setupUi()
     wpostburn->layout()->addWidget(cb_checkdisc);
 
     cb_eject = new QCheckBox(QObject::tr("Eject"));
+    cb_eject->setChecked(true);
     wpostburn->layout()->addWidget(cb_eject);
 }
 
