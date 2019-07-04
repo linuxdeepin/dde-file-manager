@@ -4,7 +4,7 @@
     <message>
         <location filename="../view/finishpage.cpp" line="42"/>
         <source>Format successful</source>
-        <translation type="unfinished"/>
+        <translation>Επιτυχής μορφοποίηση</translation>
     </message>
 </context>
 <context>
@@ -12,7 +12,7 @@
     <message>
         <location filename="../view/formatingpage.cpp" line="43"/>
         <source>Formatting the disk, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Μορφοποίηση, παρακαλούμε περιμένετε...</translation>
     </message>
 </context>
 <context>
@@ -30,12 +30,12 @@
     <message>
         <location filename="../view/mainpage.cpp" line="137"/>
         <source>Quick Format</source>
-        <translation type="unfinished"/>
+        <translation>Γρήγορη Μορφοποίηση</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="154"/>
         <source>Formatting will erase all data on the disk.</source>
-        <translation type="unfinished"/>
+        <translation>Μορφοποιώντας, θα σβηστούν όλα τα δεδομένα στον δίσκο. </translation>
     </message>
 </context>
 <context>
@@ -93,12 +93,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="123"/>
+        <location filename="../main.cpp" line="109"/>
         <source>Device does not exist</source>
         <translation>Δεν υπάρχει η συσκευή</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="132"/>
+        <location filename="../main.cpp" line="118"/>
         <source>Cannot format local device</source>
         <translation>Δεν είναι δυνατή η μορφοποίηση της τοπικής συσκευής</translation>
     </message>
@@ -108,7 +108,7 @@
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
         <source>Formatting will erase all data on this disk, are you sure you want to continue? It cannot be restored.</source>
-        <translation type="unfinished"/>
+        <translation>Η λειτουργία μορφοποίησης θα καθαρίσει όλα τα δεδομένα από το δίσκο σας, είστε βέβαιοι ότι θα συνεχίσετε; Αυτή η επιλογή δεν μπορεί να αποκατασταθεί.</translation>
     </message>
 </context>
 </TS>

@@ -93,12 +93,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="123"/>
+        <location filename="../main.cpp" line="109"/>
         <source>Device does not exist</source>
         <translation>Il dispositivo non esiste</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="132"/>
+        <location filename="../main.cpp" line="118"/>
         <source>Cannot format local device</source>
         <translation>Impossibile formattare dispositivi di sistema</translation>
     </message>

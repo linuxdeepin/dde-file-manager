@@ -23,7 +23,7 @@
     <message>
         <location filename="../diskmountplugin.cpp" line="108"/>
         <source>Unmount all</source>
-        <translation>Tümünün Bağlantısını Kaldır</translation>
+        <translation>Tüm bağları ayır</translation>
     </message>
 </context>
 <context>

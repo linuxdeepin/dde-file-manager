@@ -4,7 +4,7 @@
     <message>
         <location filename="../view/finishpage.cpp" line="42"/>
         <source>Format successful</source>
-        <translation type="unfinished"/>
+        <translation>Format powiódł się</translation>
     </message>
 </context>
 <context>
@@ -12,7 +12,7 @@
     <message>
         <location filename="../view/formatingpage.cpp" line="43"/>
         <source>Formatting the disk, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Formatowanie dysku, proszę czekać ...</translation>
     </message>
 </context>
 <context>
@@ -30,12 +30,12 @@
     <message>
         <location filename="../view/mainpage.cpp" line="137"/>
         <source>Quick Format</source>
-        <translation type="unfinished"/>
+        <translation>Szybkie formatowanie</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="154"/>
         <source>Formatting will erase all data on the disk.</source>
-        <translation type="unfinished"/>
+        <translation>Formatowanie spowoduje usunięcie wszystkich danych z dysku.</translation>
     </message>
 </context>
 <context>
@@ -93,12 +93,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="123"/>
+        <location filename="../main.cpp" line="109"/>
         <source>Device does not exist</source>
         <translation>Urządzenie nie istnieje</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="132"/>
+        <location filename="../main.cpp" line="118"/>
         <source>Cannot format local device</source>
         <translation>Nie można sformatować urządzenia lokalnego</translation>
     </message>
@@ -108,7 +108,7 @@
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
         <source>Formatting will erase all data on this disk, are you sure you want to continue? It cannot be restored.</source>
-        <translation type="unfinished"/>
+        <translation>Formatowanie spowoduje usunięcie wszystkich danych z tego dysku. Czy na pewno chcesz kontynuować? Nie można go przywrócić.</translation>
     </message>
 </context>
 </TS>

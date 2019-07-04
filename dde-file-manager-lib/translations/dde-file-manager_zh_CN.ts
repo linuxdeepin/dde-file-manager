@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -209,17 +207,17 @@
     <message>
         <location filename="../views/dfmsidebaropticaldevitem.cpp" line="178"/>
         <source>Blank %1 disc</source>
-        <translation type="unfinished"></translation>
+        <translation>空白%1光盘</translation>
     </message>
     <message>
         <location filename="../views/dfmsidebaropticaldevitem.cpp" line="180"/>
         <source>%1 disc</source>
-        <translation type="unfinished"></translation>
+        <translation>%1光盘</translation>
     </message>
     <message>
         <location filename="../views/dfmsidebaropticaldevitem.cpp" line="189"/>
         <source>%1 drive</source>
-        <translation type="unfinished"></translation>
+        <translation>%1光驱</translation>
     </message>
 </context>
 <context>
@@ -613,58 +611,58 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="437"/>
         <source>Are you sure you want to erase all data on the disc?</source>
-        <translation type="unfinished"></translation>
+        <translation>您确定要擦除此光盘的所有内容吗？</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="442"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>擦除</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="464"/>
         <source>How do you want to use this disc?</source>
-        <translation type="unfinished"></translation>
+        <translation>您希望使用此光盘刻录镜像或者是存储文件？</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="468"/>
         <source>Burn image</source>
-        <translation type="unfinished"></translation>
+        <translation>刻录镜像</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="468"/>
         <source>Burn files</source>
-        <translation type="unfinished"></translation>
+        <translation>存储文件</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="495"/>
         <source>Disc erase failed</source>
-        <translation type="unfinished"></translation>
+        <translation>擦除失败</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="499"/>
         <source>Burn process failed</source>
-        <translation type="unfinished"></translation>
+        <translation>刻录失败</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="502"/>
         <source>%1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1：%2</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="518"/>
         <location filename="../dialogs/dialogmanager.cpp" line="528"/>
         <source>Show details</source>
-        <translation type="unfinished"></translation>
+        <translation>显示详情</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="522"/>
         <source>Hide details</source>
-        <translation type="unfinished"></translation>
+        <translation>隐藏详情</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="523"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>错误信息</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="550"/>
@@ -888,19 +886,19 @@
         <location filename="../../fileoperations/filejob.cpp" line="680"/>
         <location filename="../../fileoperations/filejob.cpp" line="734"/>
         <source>Data verification successful.</source>
-        <translation type="unfinished"></translation>
+        <translation>数据验证成功。</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="680"/>
         <location filename="../../fileoperations/filejob.cpp" line="734"/>
         <source>Data verification failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>数据验证失败。</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="682"/>
         <location filename="../../fileoperations/filejob.cpp" line="736"/>
         <source>Burn process completed</source>
-        <translation type="unfinished"></translation>
+        <translation>刻录完成</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="850"/>
@@ -925,27 +923,27 @@
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2596"/>
         <source>%1 is a duplicate file.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1为重复文件。</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2599"/>
         <source>Lost connection to drive.</source>
-        <translation type="unfinished"></translation>
+        <translation>与光驱的连接断开。</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2602"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
-        <translation type="unfinished"></translation>
+        <translation>光驱未准备好，您可以换一张光盘再试。</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2605"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
-        <translation type="unfinished"></translation>
+        <translation>光驱被占用，您可以尝试关掉正在使用光驱的程序后重新插入光驱。</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2608"/>
         <source>Unknown error</source>
-        <translation type="unfinished"></translation>
+        <translation>未知错误</translation>
     </message>
 </context>
 <context>
@@ -1575,12 +1573,12 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="413"/>
         <source>Erasing disc %1, please wait...</source>
-        <translation type="unfinished"></translation>
+        <translation>正在擦除%1，请稍候...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="414"/>
         <source>Burning disc %1, please wait...</source>
-        <translation type="unfinished"></translation>
+        <translation>正在刻录到%1，请稍候...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="474"/>
@@ -2278,33 +2276,33 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="700"/>
         <location filename="../views/dfmopticalmediawidget.cpp" line="69"/>
         <source>Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>刻录</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="143"/>
         <source>Disc name:</source>
-        <translation type="unfinished"></translation>
+        <translation>光盘名称：</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="154"/>
         <location filename="../dialogs/burnoptdialog.cpp" line="156"/>
         <source>Maximum</source>
-        <translation type="unfinished"></translation>
+        <translation>最大速度</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="167"/>
         <source>Allow files to be added later</source>
-        <translation type="unfinished"></translation>
+        <translation>允许追加数据</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="176"/>
         <source>Verify data</source>
-        <translation type="unfinished"></translation>
+        <translation>校验数据</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="150"/>
         <source>Write speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>写入速度：</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="179"/>
@@ -2734,7 +2732,7 @@
         <location filename="../views/dfmsidebardeviceitem.cpp" line="164"/>
         <location filename="../views/dfmsidebaropticaldevitem.cpp" line="107"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>擦除</translation>
     </message>
     <message>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="179"/>
