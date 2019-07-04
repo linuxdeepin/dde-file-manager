@@ -4,7 +4,7 @@
     <message>
         <location filename="../view/finishpage.cpp" line="42"/>
         <source>Format successful</source>
-        <translation type="unfinished"/>
+        <translation>Formatação bem sucedida</translation>
     </message>
 </context>
 <context>
@@ -12,7 +12,7 @@
     <message>
         <location filename="../view/formatingpage.cpp" line="43"/>
         <source>Formatting the disk, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>A formatar o disco, por favor aguarde...</translation>
     </message>
 </context>
 <context>
@@ -30,12 +30,12 @@
     <message>
         <location filename="../view/mainpage.cpp" line="137"/>
         <source>Quick Format</source>
-        <translation type="unfinished"/>
+        <translation>Formatação rápida</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="154"/>
         <source>Formatting will erase all data on the disk.</source>
-        <translation type="unfinished"/>
+        <translation>A formatação irá eliminar todos os dados no disco.</translation>
     </message>
 </context>
 <context>
@@ -93,12 +93,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="123"/>
+        <location filename="../main.cpp" line="109"/>
         <source>Device does not exist</source>
         <translation>Dispositivo inexistente</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="132"/>
+        <location filename="../main.cpp" line="118"/>
         <source>Cannot format local device</source>
         <translation>Não foi possível formatar o dispositivo local</translation>
     </message>
@@ -108,7 +108,7 @@
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
         <source>Formatting will erase all data on this disk, are you sure you want to continue? It cannot be restored.</source>
-        <translation type="unfinished"/>
+        <translation>A formatação irá eliminar todos os dados neste disco, Tem a certeza que deseja continuar? Esta operação é irreversível.</translation>
     </message>
 </context>
 </TS>

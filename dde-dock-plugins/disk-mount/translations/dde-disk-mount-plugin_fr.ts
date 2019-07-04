@@ -31,7 +31,7 @@
     <message>
         <location filename="../diskcontrolwidget.cpp" line="292"/>
         <source>Device has been removed</source>
-        <translation>Le périphérique a été enlevé</translation>
+        <translation>Le périphérique a été retiré</translation>
     </message>
 </context>
 </TS>

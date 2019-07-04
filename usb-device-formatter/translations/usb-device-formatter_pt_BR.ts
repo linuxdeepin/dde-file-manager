@@ -25,7 +25,7 @@
     <message>
         <location filename="../view/mainpage.cpp" line="128"/>
         <source>Label</source>
-        <translation>Rótulo do volume</translation>
+        <translation>Rótulo</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="137"/>
@@ -35,7 +35,7 @@
     <message>
         <location filename="../view/mainpage.cpp" line="154"/>
         <source>Formatting will erase all data on the disk.</source>
-        <translation>A formatação apagará todos os dados do disco.</translation>
+        <translation>A formatação irá apagar todos os dados do disco.</translation>
     </message>
 </context>
 <context>
@@ -44,7 +44,7 @@
         <location filename="../view/mainwindow.cpp" line="85"/>
         <location filename="../view/mainwindow.cpp" line="108"/>
         <source>Format</source>
-        <translation>Formatar</translation>
+        <translation>Formato</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="198"/>
@@ -59,7 +59,7 @@
     <message>
         <location filename="../view/mainwindow.cpp" line="230"/>
         <source>Done</source>
-        <translation>Pronto</translation>
+        <translation>Concluído</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="240"/>
@@ -69,12 +69,12 @@
     <message>
         <location filename="../view/mainwindow.cpp" line="236"/>
         <source>Quit</source>
-        <translation>Parar</translation>
+        <translation>Sair</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="237"/>
         <source>Your disk is removed when formatting</source>
-        <translation>O disco foi removido durante a formatação</translation>
+        <translation>Seu disco foi removido durante a formatação</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="241"/>
@@ -93,12 +93,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="123"/>
+        <location filename="../main.cpp" line="109"/>
         <source>Device does not exist</source>
         <translation>O dispositivo não existe</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="132"/>
+        <location filename="../main.cpp" line="118"/>
         <source>Cannot format local device</source>
         <translation>Não é possível formatar dispositivo local</translation>
     </message>
@@ -108,7 +108,7 @@
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
         <source>Formatting will erase all data on this disk, are you sure you want to continue? It cannot be restored.</source>
-        <translation>A formatação apagará os dados do disco. Quer realmente continuar? Isso não pode ser revertido.</translation>
+        <translation>A formatação irá apagar todos os dados do disco, tem certeza de que deseja continuar? Essa ação não pode ser revertida.</translation>
     </message>
 </context>
 </TS>

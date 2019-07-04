@@ -4,7 +4,7 @@
     <message>
         <location filename="../view/finishpage.cpp" line="42"/>
         <source>Format successful</source>
-        <translation type="unfinished"/>
+        <translation>フォーマット成功</translation>
     </message>
 </context>
 <context>
@@ -12,7 +12,7 @@
     <message>
         <location filename="../view/formatingpage.cpp" line="43"/>
         <source>Formatting the disk, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>ディスクをフォーマット中、しばらくお待ちください...</translation>
     </message>
 </context>
 <context>
@@ -25,17 +25,17 @@
     <message>
         <location filename="../view/mainpage.cpp" line="128"/>
         <source>Label</source>
-        <translation type="unfinished"/>
+        <translation>ラベル</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="137"/>
         <source>Quick Format</source>
-        <translation type="unfinished"/>
+        <translation>クイックフォーマット</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="154"/>
         <source>Formatting will erase all data on the disk.</source>
-        <translation type="unfinished"/>
+        <translation>フォーマットはディスク内のすべてのデータを削除します。</translation>
     </message>
 </context>
 <context>
@@ -49,37 +49,37 @@
     <message>
         <location filename="../view/mainwindow.cpp" line="198"/>
         <source>Continue</source>
-        <translation type="unfinished"/>
+        <translation>続ける</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="203"/>
         <source>Formatting...</source>
-        <translation type="unfinished"/>
+        <translation>フォーマット中...</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="230"/>
         <source>Done</source>
-        <translation type="unfinished"/>
+        <translation>完了</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="240"/>
         <source>Failed to format</source>
-        <translation type="unfinished"/>
+        <translation>フォーマット失敗</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="236"/>
         <source>Quit</source>
-        <translation type="unfinished"/>
+        <translation>終了</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="237"/>
         <source>Your disk is removed when formatting</source>
-        <translation type="unfinished"/>
+        <translation>フォーマット中にディスクが取り出されました</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="241"/>
         <source>Reformat</source>
-        <translation type="unfinished"/>
+        <translation>再フォーマット</translation>
     </message>
 </context>
 <context>
@@ -93,14 +93,14 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="123"/>
+        <location filename="../main.cpp" line="109"/>
         <source>Device does not exist</source>
-        <translation type="unfinished"/>
+        <translation>デバイスが存在しません</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="132"/>
+        <location filename="../main.cpp" line="118"/>
         <source>Cannot format local device</source>
-        <translation type="unfinished"/>
+        <translation>ローカルデバイスをフォーマットできません</translation>
     </message>
 </context>
 <context>
@@ -108,7 +108,7 @@
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
         <source>Formatting will erase all data on this disk, are you sure you want to continue? It cannot be restored.</source>
-        <translation type="unfinished"/>
+        <translation>フォーマットはディスク内のすべてのデータを削除しますが続行しますか？復元はできません。</translation>
     </message>
 </context>
 </TS>
