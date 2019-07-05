@@ -962,7 +962,7 @@ void DFileManagerWindow::initViewLayout()
 {
     D_D(DFileManagerWindow);
 
-    d->viewStackLayout = new QStackedLayout(this);
+    d->viewStackLayout = new QStackedLayout;
     d->viewStackLayout->setSpacing(0);
     d->viewStackLayout->setContentsMargins(0, 0, 0, 0);
 }

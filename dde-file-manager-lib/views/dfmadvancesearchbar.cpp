@@ -90,7 +90,7 @@ void DFMAdvanceSearchBar::initUI()
     const int LEFT_COMBO_MIN_WIDTH = 140;
     const int RIGHT_COMBO_MIN_WIDTH = 100;
 
-    QGridLayout *formLayout = new QGridLayout(this);
+    QGridLayout *formLayout = new QGridLayout;
 
     auto createLabelCombo = [ = ](int index, const QString& labelText) {
         asbLabels[index] = new QLabel(labelText);
