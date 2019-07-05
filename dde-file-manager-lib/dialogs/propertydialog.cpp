@@ -721,6 +721,7 @@ int PropertyDialog::contentHeight() const
             expandGroup()->expands().size() * 30 +
             contentsMargins().top() +
             contentsMargins().bottom() +
+            m_wdf->height() +
             40);
 }
 
