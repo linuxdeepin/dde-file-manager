@@ -133,8 +133,9 @@ public:
     MasteredMediaFileWatcherPrivate(MasteredMediaFileWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
-    bool start() Q_DECL_OVERRIDE;
-    bool stop() Q_DECL_OVERRIDE;
+    bool start() override;
+    bool stop() override;
+    bool handleGhostSignal(const DUrl &target, DAbstractFileWatcher::SignalType1 signal, const DUrl &url) override;
 
     QPointer<DAbstractFileWatcher> proxyStaging;
     QPointer<DAbstractFileWatcher> proxyOnDisk;
@@ -151,6 +152,19 @@ bool MasteredMediaFileWatcherPrivate::start()
 bool MasteredMediaFileWatcherPrivate::stop()
 {
     return (proxyOnDisk ? proxyOnDisk->startWatcher() : true) && proxyStaging && proxyStaging->stopWatcher();
+}
+
+bool MasteredMediaFileWatcherPrivate::handleGhostSignal(const DUrl &target, DAbstractFileWatcher::SignalType1 signal, const DUrl &url)
+{
+    Q_Q(MasteredMediaFileWatcher);
+    Q_UNUSED(url);
+
+    if (target.burnDestDevice() != q->fileUrl().burnDestDevice()) {
+        return false;
+    }
+
+    (q->*signal)(q->fileUrl());
+    return true;
 }
 
 MasteredMediaFileWatcher::MasteredMediaFileWatcher(const DUrl &url, QObject *parent)
