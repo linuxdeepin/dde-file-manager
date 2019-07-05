@@ -315,7 +315,7 @@ QString DUrl::bookmarkName() const
 QString DUrl::burnDestDevice() const
 {
     QRegularExpressionMatch m;
-    if (!path().contains(burn_rxp, &m)) {
+    if (scheme() != BURN_SCHEME || !path().contains(burn_rxp, &m)) {
         return "";
     }
     return m.captured(1);
@@ -324,7 +324,7 @@ QString DUrl::burnDestDevice() const
 QString DUrl::burnFilePath() const
 {
     QRegularExpressionMatch m;
-    if (!path().contains(burn_rxp, &m)) {
+    if (scheme() != BURN_SCHEME || !path().contains(burn_rxp, &m)) {
         return "";
     }
     return m.captured(3);
@@ -333,7 +333,7 @@ QString DUrl::burnFilePath() const
 bool DUrl::burnIsOnDisc() const
 {
     QRegularExpressionMatch m;
-    if (!path().contains(burn_rxp, &m)) {
+    if (scheme() != BURN_SCHEME || !path().contains(burn_rxp, &m)) {
         return false;
     }
     return m.captured(2) == BURN_SEG_ONDISC;
