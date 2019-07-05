@@ -93,7 +93,7 @@ void DFMOpticalMediaWidgetPrivate::setDeviceProperty(DeviceProperty dp)
         {MediaType::BD_RE        , "BD-RE"   }
     };
     pb_burn->setEnabled(dp.avail > 0);
-    lb_available->setText(QString("Free Space %1").arg(FileUtils::formatSize(dp.avail)));
+    lb_available->setText(QObject::tr("Free Space %1").arg(FileUtils::formatSize(dp.avail)));
     lb_mediatype->setText(rtypemap[dp.media]);
 }
 
