@@ -55,7 +55,6 @@
 #include "plugins/pluginmanager.h"
 #include "../plugininterfaces/menu/menuinterface.h"
 #include "dfmeventdispatcher.h"
-#include "views/progressline.h"
 
 #include <dseparatorhorizontal.h>
 #include <darrowlineexpand.h>
@@ -72,6 +71,8 @@
 #include <QThread>
 #include <QListWidget>
 #include <QButtonGroup>
+#include <QProgressBar>
+#include <QPainter>
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QStorageInfo>
@@ -82,6 +83,27 @@
 #include "unistd.h"
 
 #include <models/trashfileinfo.h>
+
+class DFProgressBar : public QProgressBar
+{
+protected:
+    void paintEvent(QPaintEvent *event) override
+    {
+        QPainter painter(this);
+        QRectF bgRect;
+        QRectF fgRect;
+        qreal p = 1. * (value() - minimum()) / (maximum() - minimum());
+
+        bgRect.setSize(size());
+        fgRect.setSize(QSizeF(width() * p, height()));
+        QColor bgColor = QColor(0xE7E7E7);
+        QColor fgColor = QColor(0x2CA7F8);
+        painter.setRenderHint(QPainter::Antialiasing);
+
+        painter.fillRect(bgRect, bgColor);
+        painter.fillRect(fgRect, fgColor);
+    }
+};
 
 NameTextEdit::NameTextEdit(const QString &text, QWidget *parent):
     QTextEdit(text, parent)
@@ -304,10 +326,10 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         uint64_t dskinuse = dskspace - (useQStorageInfo ? (uint64_t)diskInfo.bytesFree() : udiskInfo->getFree());
         QString devid(useQStorageInfo ? diskInfo.device() : udiskInfo->getDiskInfo().unix_device());
 
-        ProgressLine* progbdf = new ProgressLine();
-        progbdf->setMax(dskspace);
-        progbdf->setValue(dskinuse);
-        progbdf->setMaximumHeight(4);
+        QProgressBar* progbdf = new DFProgressBar();
+        progbdf->setMaximum(10000);
+        progbdf->setValue((int)(10000. * dskinuse / dskspace));
+        progbdf->setMaximumHeight(2);
 
         QLabel* lbdf_l = new SectionKeyLabel(tr("%1 (%2)").arg(name).arg(devid));
         QLabel* lbdf_r = new SectionKeyLabel(tr("%1 / %2").arg(FileUtils::formatSize(dskinuse)).arg(FileUtils::formatSize(dskspace)));
@@ -721,7 +743,7 @@ int PropertyDialog::contentHeight() const
             expandGroup()->expands().size() * 30 +
             contentsMargins().top() +
             contentsMargins().bottom() +
-            m_wdf->height() +
+            (m_wdf ? m_wdf->height() : 0)+
             40);
 }
 
