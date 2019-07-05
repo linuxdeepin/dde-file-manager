@@ -415,9 +415,9 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data)
         msg2 = "";
         if (data["optical_op_type"] != QString::number(FileJob::JobType::OpticalBlank)) {
             const QHash<QString, QString> msg2map = {
-                {"0", "erasing disc"},
-                {"1", "writing data"},
-                {"2", "checking disc"}
+                {"0", ""}, // unused right now
+                {"1", tr("Writing data...")},
+                {"2", tr("Verifying data...")}
             };
             msg2 = msg2map.value(data["optical_op_phase"], "");
         }
