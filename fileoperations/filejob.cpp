@@ -610,7 +610,12 @@ void FileJob::doOpticalBlank(const DUrl &device)
     m_tarPath = dev;
     dev.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dev));
-    blkdev->unmount({});
+    QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+    if (drive->opticalBlank()) {
+        DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(device.path() + "/" BURN_SEG_STAGING), &DAbstractFileWatcher::fileDeleted, DUrl());
+    } else {
+        blkdev->unmount({});
+    }
     m_opticalOpSpeed.clear();
     jobPrepared();
 
@@ -641,7 +646,12 @@ void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int 
     m_tarPath = dev;
     dev.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dev));
-    blkdev->unmount({});
+    QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+    if (drive->opticalBlank()) {
+        DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(device.path() + "/" BURN_SEG_STAGING), &DAbstractFileWatcher::fileDeleted, DUrl());
+    } else {
+        blkdev->unmount({});
+    }
     m_opticalJobPhase = 1;
     m_opticalOpSpeed.clear();
     jobPrepared();
@@ -697,7 +707,12 @@ void FileJob::doOpticalImageBurn(const DUrl &device, const DUrl &image, int spee
     m_tarPath = dev;
     dev.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dev));
-    blkdev->unmount({});
+    QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+    if (drive->opticalBlank()) {
+        DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(device.path() + "/" BURN_SEG_STAGING), &DAbstractFileWatcher::fileDeleted, DUrl());
+    } else {
+        blkdev->unmount({});
+    }
     m_opticalJobPhase = 0;
     m_opticalOpSpeed.clear();
     jobPrepared();
