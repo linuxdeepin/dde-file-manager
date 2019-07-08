@@ -2610,6 +2610,9 @@ QString FileJob::getXorrisoErrorMsg(const QStringList &msg)
         if (msgs.contains("file object exists and may not be overwritten") && ovrxm.hasMatch()) {
             return tr("%1 is a duplicate file.").arg(ovrxm.captured(1));
         }
+        if (msgs.contains(QRegularExpression("Image size [0-9s]* exceeds free space on media [0-9s]"))) {
+            return tr("Insufficient disc space.");
+        }
         if (msgs.contains("Lost connection to drive")) {
             return tr("Lost connection to drive.");
         }
