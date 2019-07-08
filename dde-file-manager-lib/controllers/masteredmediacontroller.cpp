@@ -344,6 +344,7 @@ DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> 
         bool is_blank = ISOMaster->getDevicePropertyCached(dev).formatted;
         QString dstdirpath = getStagingFolder(DUrl::fromBurnFile(dev + "/" BURN_SEG_STAGING)).path();
         QDir dstdir = QDir(dstdirpath);
+        dstdir.setFilter(QDir::Filter::AllEntries | QDir::Filter::NoDotAndDotDot);
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), src.front());
         QSet<QString> image_types = {"application/x-cd-image", "application/x-iso9660-image"};
         if (is_blank && image_types.contains(fi->mimeTypeName()) && dstdir.count() == 0) {
