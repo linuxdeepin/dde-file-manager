@@ -54,7 +54,7 @@
     <message>
         <location filename="../view/mainwindow.cpp" line="203"/>
         <source>Formatting...</source>
-        <translation>Форматирам...</translation>
+        <translation>Форматирање...</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="230"/>

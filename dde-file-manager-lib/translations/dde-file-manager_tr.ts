@@ -400,7 +400,7 @@
         <translation>Oluşturulma zamanı</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="674"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="692"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1387"/>
         <source>Last access</source>
         <translation>Son erişim</translation>
@@ -414,7 +414,7 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2724"/>
+        <location filename="../views/dfileview.cpp" line="2722"/>
         <source>(Reverse)</source>
         <translation>(Ters)</translation>
     </message>
@@ -422,7 +422,7 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="562"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="560"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>&quot;%1&quot; Etiketini ekle</translation>
     </message>
@@ -883,65 +883,70 @@
         <translation>kopyala</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="680"/>
-        <location filename="../../fileoperations/filejob.cpp" line="734"/>
+        <location filename="../../fileoperations/filejob.cpp" line="690"/>
+        <location filename="../../fileoperations/filejob.cpp" line="749"/>
         <source>Data verification successful.</source>
         <translation>Veri doğrulama başarılı.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="680"/>
-        <location filename="../../fileoperations/filejob.cpp" line="734"/>
+        <location filename="../../fileoperations/filejob.cpp" line="690"/>
+        <location filename="../../fileoperations/filejob.cpp" line="749"/>
         <source>Data verification failed.</source>
         <translation>Veri doğrulama başarısız.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="682"/>
-        <location filename="../../fileoperations/filejob.cpp" line="736"/>
+        <location filename="../../fileoperations/filejob.cpp" line="692"/>
+        <location filename="../../fileoperations/filejob.cpp" line="751"/>
         <source>Burn process completed</source>
         <translation>Yazma işlemi tamamlandı</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="850"/>
+        <location filename="../../fileoperations/filejob.cpp" line="865"/>
         <source>%1 s</source>
         <translation>%1 sn</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="854"/>
+        <location filename="../../fileoperations/filejob.cpp" line="869"/>
         <source>%1 m %2 s</source>
         <translation>%1 dk %2 sn</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="860"/>
+        <location filename="../../fileoperations/filejob.cpp" line="875"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 sa %2 dk %3 sn</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="869"/>
+        <location filename="../../fileoperations/filejob.cpp" line="884"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 g %2 sa %3 dk %4 sn</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2596"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2611"/>
         <source>%1 is a duplicate file.</source>
         <translation>%1 yinelenen bir dosya.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2599"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2614"/>
+        <source>Insufficient disc space.</source>
+        <translation>Yetersiz disk alanı.</translation>
+    </message>
+    <message>
+        <location filename="../../fileoperations/filejob.cpp" line="2617"/>
         <source>Lost connection to drive.</source>
         <translation>Sürücü bağlantısı kesildi.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2602"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2620"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
         <translation>CD/DVD sürücüsü hazır değil. Başka bir disk deneyin.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2605"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2623"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
         <translation>CD/DVD sürücüsü meşgul. Sürücüyü kullanarak uygulamadan çıkın ve sürücüyü tekrar takın.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2608"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2626"/>
         <source>Unknown error</source>
         <translation>Bilinmeyen hata</translation>
     </message>
@@ -1581,6 +1586,16 @@
         <translation>Disk yazılıyor %1 lütfen bekleyin...</translation>
     </message>
     <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="419"/>
+        <source>Writing data...</source>
+        <translation>Veri yazılıyor...</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="420"/>
+        <source>Verifying data...</source>
+        <translation>Veri doğrulanıyor...</translation>
+    </message>
+    <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="474"/>
         <source>Copy to %2</source>
         <translation>%2 üzerine kopyala</translation>
@@ -1749,7 +1764,7 @@
     <name>PathManager</name>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="55"/>
-        <location filename="../dialogs/propertydialog.cpp" line="286"/>
+        <location filename="../dialogs/propertydialog.cpp" line="309"/>
         <source>Home</source>
         <translation>Ev</translation>
     </message>
@@ -1818,37 +1833,47 @@
 <context>
     <name>PropertyDialog</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="244"/>
+        <location filename="../dialogs/propertydialog.cpp" line="267"/>
         <source>Basic info</source>
         <translation>Temel bilgi</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="245"/>
+        <location filename="../dialogs/propertydialog.cpp" line="268"/>
         <source>Open with</source>
         <translation>Birlikte aç</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="246"/>
+        <location filename="../dialogs/propertydialog.cpp" line="269"/>
         <source>Share Management</source>
         <translation>Paylaşım Yönetimi</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="247"/>
+        <location filename="../dialogs/propertydialog.cpp" line="270"/>
         <source>Permission Management</source>
         <translation>İzin Yönetimi</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="284"/>
+        <location filename="../dialogs/propertydialog.cpp" line="307"/>
         <source>System Disk</source>
         <translation>Sistem Diski</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1153"/>
+        <location filename="../dialogs/propertydialog.cpp" line="334"/>
+        <source>%1 (%2)</source>
+        <translation>%1 (%2)</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/propertydialog.cpp" line="335"/>
+        <source>%1 / %2</source>
+        <translation>%1 / %2</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/propertydialog.cpp" line="1205"/>
         <source>Allow to execute as program</source>
         <translation>Program olarak yürütülebilir</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="928"/>
+        <location filename="../dialogs/propertydialog.cpp" line="980"/>
         <source>Local disk</source>
         <translation>Yerel disk</translation>
     </message>
@@ -1856,113 +1881,113 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="818"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="670"/>
+        <location filename="../dialogs/propertydialog.cpp" line="870"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="688"/>
         <source>Size</source>
         <translation>Boyut</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="835"/>
-        <location filename="../dialogs/propertydialog.cpp" line="933"/>
-        <location filename="../dialogs/propertydialog.cpp" line="960"/>
+        <location filename="../dialogs/propertydialog.cpp" line="887"/>
+        <location filename="../dialogs/propertydialog.cpp" line="985"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1012"/>
         <source>Contains</source>
         <translation>İçeriği</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="819"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="671"/>
+        <location filename="../dialogs/propertydialog.cpp" line="871"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="689"/>
         <source>Type</source>
         <translation>Tür</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="820"/>
+        <location filename="../dialogs/propertydialog.cpp" line="872"/>
         <source>Time read</source>
         <translation>Okuma zamanı</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="821"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="673"/>
+        <location filename="../dialogs/propertydialog.cpp" line="873"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="691"/>
         <source>Time modified</source>
         <translation>Değiştirilme zamanı</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="847"/>
+        <location filename="../dialogs/propertydialog.cpp" line="899"/>
         <source>Link path</source>
         <translation>Bağ yolu</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="928"/>
-        <location filename="../dialogs/propertydialog.cpp" line="955"/>
+        <location filename="../dialogs/propertydialog.cpp" line="980"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1007"/>
         <source>Device type</source>
         <translation>Aygıt türü</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="934"/>
-        <location filename="../dialogs/propertydialog.cpp" line="961"/>
+        <location filename="../dialogs/propertydialog.cpp" line="986"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1013"/>
         <source>Free space</source>
         <translation>Boş alan</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="929"/>
-        <location filename="../dialogs/propertydialog.cpp" line="956"/>
+        <location filename="../dialogs/propertydialog.cpp" line="981"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1008"/>
         <source>Total space</source>
         <translation>Toplam alan</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="931"/>
-        <location filename="../dialogs/propertydialog.cpp" line="958"/>
+        <location filename="../dialogs/propertydialog.cpp" line="983"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1010"/>
         <source>Filesystem</source>
         <translation>Dosya sistemi</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1065"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1117"/>
         <source>Access denied</source>
         <translation>Erişim reddedildi</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1066"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1076"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1118"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1128"/>
         <source>Executable</source>
         <translation>Çalıştırılabilir</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1067"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1068"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1119"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1120"/>
         <source>Write only</source>
         <translation>Salt yazılır</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1069"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1070"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1121"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1122"/>
         <source>Read only</source>
         <translation>Salt okunur</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1071"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1072"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1123"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1124"/>
         <source>Read-write</source>
         <translation>Okunur-yazılır</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1148"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1200"/>
         <source>Others</source>
         <translation>Diğerleri</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1146"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1198"/>
         <source>Owner</source>
         <translation>Sahip</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1147"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1199"/>
         <source>Group</source>
         <translation>Grup</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="75"/>
         <location filename="../dialogs/previewdialog.cpp" line="156"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="622"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="625"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="640"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="643"/>
         <source>Open</source>
         <translation>Aç</translation>
     </message>
@@ -1988,12 +2013,12 @@
         <translation>Öge: %1</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="623"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="626"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="641"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="644"/>
         <location filename="../interfaces/dfmcrumbitem.cpp" line="134"/>
         <location filename="../interfaces/dfmsidebaritem.cpp" line="505"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="78"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="102"/>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="94"/>
         <location filename="../views/dfmsidebarhomeitem.cpp" line="50"/>
         <location filename="../views/dfmsidebarnetworkitem.cpp" line="43"/>
         <location filename="../views/dfmsidebaropticaldevitem.cpp" line="76"/>
@@ -2005,12 +2030,12 @@
         <translation>Yeni pencerede aç</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="624"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="627"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="642"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="645"/>
         <location filename="../interfaces/dfmcrumbitem.cpp" line="138"/>
         <location filename="../interfaces/dfmsidebaritem.cpp" line="509"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="82"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="110"/>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="102"/>
         <location filename="../views/dfmsidebarhomeitem.cpp" line="54"/>
         <location filename="../views/dfmsidebarnetworkitem.cpp" line="47"/>
         <location filename="../views/dfmsidebaropticaldevitem.cpp" line="84"/>
@@ -2022,81 +2047,81 @@
         <translation>Yeni sekmede aç</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="629"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="647"/>
         <source>Open with</source>
         <translation>Birlikte aç</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="632"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="650"/>
         <source>Compress</source>
         <translation>Sıkıştır</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="633"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="651"/>
         <source>Extract</source>
         <translation>Çıkart</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="634"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="652"/>
         <source>Extract here</source>
         <translation>Buraya çıkart</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="635"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="653"/>
         <source>Cut</source>
         <translation>Kes</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="636"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="654"/>
         <source>Copy</source>
         <translation>Kopyala</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="637"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="655"/>
         <source>Paste</source>
         <translation>Yapıştır</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="382"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="638"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="639"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="697"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="656"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="657"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="715"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="88"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="121"/>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="113"/>
         <location filename="../views/dfmsidebartagitem.cpp" line="60"/>
         <location filename="../views/drenamebar.cpp" line="300"/>
         <source>Rename</source>
         <translation>Yeniden adlandır</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="668"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="686"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="93"/>
         <location filename="../views/dfmsidebartagitem.cpp" line="65"/>
         <source>Remove</source>
         <translation>Kaldır</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="641"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="659"/>
         <source>Create link</source>
         <translation>Bağ oluştur</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="642"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="660"/>
         <source>Send to desktop</source>
         <translation>Masaüstüne gönder</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="643"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="661"/>
         <source>Send to</source>
         <translation>Şuraya gönder</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="644"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="662"/>
         <source>Add to bookmark</source>
         <translation>Yer imlerine ekle</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="647"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="665"/>
         <location filename="../interfaces/dfmsidebaritem.cpp" line="513"/>
         <location filename="../views/dfmsidebarbookmarkitem.cpp" line="99"/>
         <location filename="../views/dfmsidebarhomeitem.cpp" line="73"/>
@@ -2105,144 +2130,144 @@
         <translation>Özellikler</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="649"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="667"/>
         <source>New folder</source>
         <translation>Yeni klasör</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="650"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="668"/>
         <source>New window</source>
         <translation>Yeni pencere</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="651"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="669"/>
         <source>Select all</source>
         <translation>Tümünü seç</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="652"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="670"/>
         <location filename="../views/dfmsidebarrecentitem.cpp" line="65"/>
         <source>Clear recent history</source>
         <translation>Yakın geçmişi temizle</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="653"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="671"/>
         <location filename="../views/dfmsidebartrashitem.cpp" line="59"/>
         <source>Empty Trash</source>
         <translation>Çöp Kutusunu Boşalt</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="654"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="672"/>
         <source>Display as</source>
         <translation>Farklı görüntüle</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="655"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="673"/>
         <source>Sort by</source>
         <translation>Sırala</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="656"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="674"/>
         <source>New document</source>
         <translation>Yeni belge</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="672"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="690"/>
         <source>Time created</source>
         <translation>Oluşturulma tarihi</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="683"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="172"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="701"/>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="164"/>
         <source>Log out and unmount</source>
         <translation>Oturumu kapat ve bağı ayır</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="822"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="685"/>
+        <location filename="../dialogs/propertydialog.cpp" line="874"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="703"/>
         <source>Source path</source>
         <translation>Kaynak yol</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="687"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="705"/>
         <source>Share folder</source>
         <translation>Klasörü paylaş</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="688"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="706"/>
         <source>Cancel sharing</source>
         <translation>Paylaşımı iptal et</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="689"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="707"/>
         <source>Set share password</source>
         <translation>Paylaşım parolasını ayarla</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="690"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="158"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="708"/>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="150"/>
         <source>Format</source>
         <translation>Biçimlendir</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="693"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="711"/>
         <source>Tag information</source>
         <translation>Etiket bilgileri</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="628"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="646"/>
         <source>Open in new window as admin</source>
         <translation>Yönetici olarak yeni pencerede aç</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="630"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="648"/>
         <source>Select default program</source>
         <translation>Varsayılan programı seç</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="631"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="649"/>
         <source>Open file location</source>
         <translation>Dosya konumunu aç</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="640"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="658"/>
         <source>Remove bookmark</source>
         <translation>Yer imini kaldır</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="645"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="646"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="695"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="663"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="664"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="713"/>
         <source>Delete</source>
         <translation>Sil</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="657"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="675"/>
         <source>Office Text</source>
         <translation>Ofis Belgesi</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="658"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="676"/>
         <source>Spreadsheets</source>
         <translation>Ofis Tablosu</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="660"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="678"/>
         <source>Plain Text</source>
         <translation>Düz Metin</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="661"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="679"/>
         <source>Open in terminal</source>
         <translation>Uçbirimde aç</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="662"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="680"/>
         <source>Restore</source>
         <translation>Geri al</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="663"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="681"/>
         <source>Restore all</source>
         <translation>Tümünü geri al</translation>
     </message>
@@ -2257,23 +2282,23 @@
         <translation>Otomatik bağlanım sonrası aç</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="664"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="699"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="140"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="682"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="717"/>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="132"/>
         <location filename="../views/dfmsidebaropticaldevitem.cpp" line="95"/>
         <source>Mount</source>
         <translation>Bağla</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="665"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="154"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="683"/>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="146"/>
         <location filename="../views/dfmsidebaropticaldevitem.cpp" line="103"/>
         <source>Unmount</source>
         <translation>Bağı ayır</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="136"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="700"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="718"/>
         <location filename="../views/dfmopticalmediawidget.cpp" line="69"/>
         <source>Burn</source>
         <translation>Yaz</translation>
@@ -2306,58 +2331,58 @@
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="179"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="666"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="684"/>
         <source>Eject</source>
         <translation>Çıkar</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="667"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="134"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="685"/>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="126"/>
         <source>Safely Remove</source>
         <translation>Güvenli Kaldır</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="669"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="687"/>
         <source>Name</source>
         <translation>Ad</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="675"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="693"/>
         <source>Settings</source>
         <translation>Ayarlar</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="676"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="694"/>
         <source>Help</source>
         <translation>Yardım</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="677"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="695"/>
         <source>About</source>
         <translation>Hakkında</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="678"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="696"/>
         <source>Exit</source>
         <translation>Çıkış</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="679"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="697"/>
         <source>Icon</source>
         <translation>Simge</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="680"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="698"/>
         <source>List</source>
         <translation>Liste</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="681"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="699"/>
         <source>Extend</source>
         <translation>Genişlet</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="682"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="700"/>
         <source>Set as wallpaper</source>
         <translation>Duvar kağıdı olarak ayarla</translation>
     </message>
@@ -2403,14 +2428,14 @@
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="315"/>
-        <location filename="../dialogs/propertydialog.cpp" line="901"/>
+        <location filename="../dialogs/propertydialog.cpp" line="953"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="641"/>
         <source>%1 item</source>
         <translation>%1 öge</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="317"/>
-        <location filename="../dialogs/propertydialog.cpp" line="901"/>
+        <location filename="../dialogs/propertydialog.cpp" line="953"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="643"/>
         <source>%1 items</source>
         <translation>%1 öge</translation>
@@ -2426,12 +2451,12 @@
         <translation>Sembolik bağlantı oluştur</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="686"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="704"/>
         <source>Path</source>
         <translation>Yol</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="684"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="702"/>
         <location filename="../models/trashfileinfo.cpp" line="335"/>
         <location filename="../models/trashfileinfo.cpp" line="343"/>
         <source>Time deleted</source>
@@ -2456,7 +2481,7 @@
     </message>
     <message>
         <location filename="../interfaces/dfileinfo.cpp" line="774"/>
-        <location filename="../models/recentfileinfo.cpp" line="190"/>
+        <location filename="../models/recentfileinfo.cpp" line="191"/>
         <location filename="../models/trashfileinfo.cpp" line="376"/>
         <source>Folder is empty</source>
         <translation>Klasör boş</translation>
@@ -2495,7 +2520,7 @@
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="399"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="659"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="677"/>
         <source>Presentation</source>
         <translation>Sunum</translation>
     </message>
@@ -2729,13 +2754,13 @@
         <translation>Yer imleri</translation>
     </message>
     <message>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="164"/>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="156"/>
         <location filename="../views/dfmsidebaropticaldevitem.cpp" line="107"/>
         <source>Erase</source>
         <translation>Sil</translation>
     </message>
     <message>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="179"/>
+        <location filename="../views/dfmsidebardeviceitem.cpp" line="171"/>
         <location filename="../views/dfmsidebarhomeitem.cpp" line="62"/>
         <location filename="../views/dfmsidebaropticaldevitem.cpp" line="114"/>
         <location filename="../views/dfmsidebarrootitem.cpp" line="61"/>
@@ -2751,6 +2776,11 @@
         <location filename="../interfaces/dfmcrumbitem.cpp" line="144"/>
         <source>Edit address</source>
         <translation>Adresi düzenle</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="96"/>
+        <source>Free Space %1</source>
+        <translation>Boş Alan %1</translation>
     </message>
 </context>
 <context>
@@ -3200,7 +3230,7 @@
 <context>
     <name>UDiskListener</name>
     <message>
-        <location filename="../deviceinfo/udisklistener.cpp" line="186"/>
+        <location filename="../deviceinfo/udisklistener.cpp" line="187"/>
         <source>Failed to rename the label</source>
         <translation>Etiket yeniden adlandırılamadı</translation>
     </message>
