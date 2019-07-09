@@ -152,7 +152,7 @@ public:
 
 
     void storeUrlList(const QList<DUrl> &list)noexcept;
-    void restoreRenameBar()noexcept; //###: do not delete item! just clear content
+    void resetRenameBar()noexcept; //###: do not delete item! just clear content
     std::unique_ptr<RecordRenameBarState> getCurrentState()const;// return state and parameters by this function.
     void loadState(std::unique_ptr<RecordRenameBarState>& state);
 

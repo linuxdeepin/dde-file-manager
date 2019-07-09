@@ -102,6 +102,11 @@ public:
     void initAdvanceSearchBar();
     bool isAdvanceSearchBarVisible() const;
     void setAdvanceSearchBarVisible(bool visible);
+    void initRenameBar();
+    bool isRenameBarVisible() const;
+    void setRenameBarVisible(bool visible);
+    void resetRenameBar();
+    void storeUrlListToRenameBar(const QList<DUrl>& list) noexcept;
 
     QPushButton *logoButton{ nullptr };
     QFrame *centralWidget{ nullptr };
@@ -346,19 +351,22 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
 
 void DFileManagerWindowPrivate::initAdvanceSearchBar()
 {
+    if (advanceSearchBar) return;
+
     Q_Q(DFileManagerWindow);
 
     // blumia: we add the DFMAdvanceSearchBar widget to layout so actually we shouldn't give it a parent here,
     //         but we need to apply the currect stylesheet to it so set a parent will do this job.
     //         feel free to replace it with a better way to apply stylesheet.
     advanceSearchBar = new DFMAdvanceSearchBar(q);
-    advanceSearchBar->setVisible(false);
 
-    if (rightViewLayout && rightViewLayout->indexOf(advanceSearchBar) == -1) {
-        int renameWidgetIndex = rightViewLayout->indexOf(renameBar);
-        int advanceSearchBarInsertTo = renameWidgetIndex == -1 ? 0 : renameWidgetIndex + 1;
-        rightViewLayout->insertWidget(advanceSearchBarInsertTo, advanceSearchBar);
-    }
+    initRenameBar(); // ensure we can use renameBar.
+
+    Q_CHECK_PTR(rightViewLayout);
+
+    int renameWidgetIndex = rightViewLayout->indexOf(renameBar);
+    int advanceSearchBarInsertTo = renameWidgetIndex == -1 ? 0 : renameWidgetIndex + 1;
+    rightViewLayout->insertWidget(advanceSearchBarInsertTo, advanceSearchBar);
 
     QObject::connect(advanceSearchBar, &DFMAdvanceSearchBar::optionChanged, q, [ = ](const QMap<int, QVariant> &formData) {
         if (currentView) {
@@ -377,13 +385,55 @@ bool DFileManagerWindowPrivate::isAdvanceSearchBarVisible() const
 
 void DFileManagerWindowPrivate::setAdvanceSearchBarVisible(bool visible)
 {
-    if (advanceSearchBar) {
-        advanceSearchBar->setVisible(visible);
-        return;
-    } else {
+    if (!advanceSearchBar) {
+        if (!visible) return;
         initAdvanceSearchBar();
-        advanceSearchBar->setVisible(visible);
     }
+
+    advanceSearchBar->setVisible(visible);
+}
+
+void DFileManagerWindowPrivate::initRenameBar()
+{
+    if (renameBar) return;
+
+    Q_Q(DFileManagerWindow);
+
+    // see the comment in initAdvanceSearchBar()
+    renameBar = new DRenameBar(q);
+
+    rightViewLayout->insertWidget(0, renameBar);
+
+    QObject::connect(renameBar, &DRenameBar::clickCancelButton, q, &DFileManagerWindow::hideRenameBar);
+}
+
+bool DFileManagerWindowPrivate::isRenameBarVisible() const
+{
+    return advanceSearchBar ? advanceSearchBar->isVisible() : false;
+}
+
+void DFileManagerWindowPrivate::setRenameBarVisible(bool visible)
+{
+    if (!renameBar) {
+        if (!visible) return;
+        initRenameBar();
+    }
+
+    renameBar->setVisible(visible);
+}
+
+void DFileManagerWindowPrivate::resetRenameBar()
+{
+    if (!renameBar) return;
+
+    renameBar->resetRenameBar();
+}
+
+void DFileManagerWindowPrivate::storeUrlListToRenameBar(const QList<DUrl> &list) noexcept
+{
+    if (!renameBar) initRenameBar();
+
+    renameBar->storeUrlList(list);
 }
 
 DFileManagerWindow::DFileManagerWindow(QWidget *parent)
@@ -943,7 +993,6 @@ void DFileManagerWindow::initRightView()
     initTabBar();
     initViewLayout();
     d->rightView = new QFrame;
-    d->renameBar = new DRenameBar;
 
     QSizePolicy sp = d->rightView->sizePolicy();
 
@@ -1066,7 +1115,6 @@ void DFileManagerWindow::initConnect()
         }
     });
 
-    QObject::connect(d->renameBar, &DRenameBar::clickCancelButton, this, &DFileManagerWindow::hideRenameBar);
     QObject::connect(fileSignalManager, &FileSignalManager::requestMultiFilesRename, this, &DFileManagerWindow::onShowRenameBar);
     QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTabBarCurrentIndexChange);
 }
@@ -1084,10 +1132,10 @@ void DFileManagerWindow::onShowRenameBar(const DFMUrlListBaseEvent &event) noexc
     DFileManagerWindowPrivate *const d { d_func() };
 
     if (event.windowId() == this->windowId()) {
-        d->renameBar->storeUrlList(event.urlList()); //### get the urls of selection.
+        d->storeUrlListToRenameBar(event.urlList()); //### get the urls of selection.
 
         m_currentTab = d->tabBar->currentTab();
-        d->renameBar->setVisible(true);
+        d->setRenameBarVisible(true);
     }
 }
 
@@ -1097,23 +1145,20 @@ void DFileManagerWindow::onTabBarCurrentIndexChange(const int &index)noexcept
 
     if (m_currentTab != d->tabBar->tabAt(index)) {
 
-        if (d->renameBar->isVisible() == true) {
-            if (d->renameBar->isVisible() == true) {
-                this->onReuqestCacheRenameBarState();//###: invoke this function before setVisible.
+        if (d->isRenameBarVisible() == true) {
+            this->onReuqestCacheRenameBarState();//###: invoke this function before setVisible.
 
-                d->renameBar->setVisible(false);
-                d->renameBar->restoreRenameBar(); //###: when after hiding RenameBar, Must restore RenameBar.
-            }
+            hideRenameBar();
         }
-
     }
 }
 
 void DFileManagerWindow::hideRenameBar() noexcept //###: Hide renamebar and then clear history.
 {
     DFileManagerWindowPrivate *const d{ d_func() };
-    d->renameBar->setVisible(false);
-    d->renameBar->restoreRenameBar();
+
+    d->setRenameBarVisible(false);
+    d->resetRenameBar();
 }
 
 
@@ -1175,11 +1220,11 @@ void DFileManagerWindow::initRenameBarState()
             d->renameBar->loadState(DFileManagerWindow::renameBarState);
 
         } else { //###: when we drag a tab to create a new window, but the RenameBar is hiding.
-            d->renameBar->setVisible(false);
+            d->setRenameBarVisible(false);
         }
 
     } else { //###: when open a new window from right click menu.
-        d->renameBar->setVisible(false);
+        d->setRenameBarVisible(false);
     }
 }
 

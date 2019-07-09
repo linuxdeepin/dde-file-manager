@@ -502,7 +502,7 @@ void DRenameBar::eventDispatcher()
     }
 
     this->setVisible(false);
-    this->restoreRenameBar();
+    this->resetRenameBar();
 }
 
 void DRenameBar::onAddTextPatternChanged(const int &index)noexcept
@@ -622,7 +622,7 @@ void DRenameBar::initConnect()
 }
 
 
-void DRenameBar::restoreRenameBar()noexcept
+void DRenameBar::resetRenameBar()noexcept
 {
     DRenameBarPrivate* const d{ d_func() };
 
