@@ -99,11 +99,15 @@ public:
     void setCurrentView(DFMBaseView *view);
     bool processKeyPressEvent(QKeyEvent *event);
     bool cdForTab(Tab *tab, const DUrl &fileUrl);
+    void initAdvanceSearchBar();
+    bool isAdvanceSearchBarVisible() const;
+    void setAdvanceSearchBarVisible(bool visible);
 
     QPushButton *logoButton{ nullptr };
     QFrame *centralWidget{ nullptr };
     DFMSideBar *leftSideBar{ nullptr };
     QFrame *rightView { nullptr };
+    QVBoxLayout *rightViewLayout { nullptr };
     DToolBar *toolbar{ nullptr };
     TabBar *tabBar { nullptr };
     QPushButton *newTabButton;
@@ -240,8 +244,6 @@ bool DFileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
 
 bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
 {
-    Q_Q(DFileManagerWindow);
-
     DFMBaseView *current_view = tab->fileView();
 
     if (current_view && current_view->rootUrl() == fileUrl) {
@@ -340,6 +342,48 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
     }
 
     return ok;
+}
+
+void DFileManagerWindowPrivate::initAdvanceSearchBar()
+{
+    Q_Q(DFileManagerWindow);
+
+    // blumia: we add the DFMAdvanceSearchBar widget to layout so actually we shouldn't give it a parent here,
+    //         but we need to apply the currect stylesheet to it so set a parent will do this job.
+    //         feel free to replace it with a better way to apply stylesheet.
+    advanceSearchBar = new DFMAdvanceSearchBar(q);
+    advanceSearchBar->setVisible(false);
+
+    if (rightViewLayout && rightViewLayout->indexOf(advanceSearchBar) == -1) {
+        int renameWidgetIndex = rightViewLayout->indexOf(renameBar);
+        int advanceSearchBarInsertTo = renameWidgetIndex == -1 ? 0 : renameWidgetIndex + 1;
+        rightViewLayout->insertWidget(advanceSearchBarInsertTo, advanceSearchBar);
+    }
+
+    QObject::connect(advanceSearchBar, &DFMAdvanceSearchBar::optionChanged, q, [ = ](const QMap<int, QVariant> &formData) {
+        if (currentView) {
+            DFileView *fv = dynamic_cast<DFileView*>(currentView);
+            if (fv) {
+                fv->setAdvanceSearchFilter(formData);
+            }
+        }
+    });
+}
+
+bool DFileManagerWindowPrivate::isAdvanceSearchBarVisible() const
+{
+    return advanceSearchBar ? advanceSearchBar->isVisible() : false;
+}
+
+void DFileManagerWindowPrivate::setAdvanceSearchBarVisible(bool visible)
+{
+    if (advanceSearchBar) {
+        advanceSearchBar->setVisible(visible);
+        return;
+    } else {
+        initAdvanceSearchBar();
+        advanceSearchBar->setVisible(visible);
+    }
 }
 
 DFileManagerWindow::DFileManagerWindow(QWidget *parent)
@@ -900,8 +944,6 @@ void DFileManagerWindow::initRightView()
     initViewLayout();
     d->rightView = new QFrame;
     d->renameBar = new DRenameBar;
-    d->advanceSearchBar = new DFMAdvanceSearchBar(this);
-    d->advanceSearchBar->setVisible(false);
 
     QSizePolicy sp = d->rightView->sizePolicy();
 
@@ -925,15 +967,14 @@ void DFileManagerWindow::initRightView()
     tabBarLayout->addWidget(d->tabBar);
     tabBarLayout->addWidget(d->newTabButton);
 
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->addLayout(tabBarLayout);
-    mainLayout->addWidget(d->emptyTrashButton);
-    mainLayout->addWidget(d->renameBar);
-    mainLayout->addWidget(d->advanceSearchBar);
-    mainLayout->addLayout(d->viewStackLayout);
-    mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    d->rightView->setLayout(mainLayout);
+    d->rightViewLayout = new QVBoxLayout;
+    d->rightViewLayout->addLayout(tabBarLayout);
+    d->rightViewLayout->addWidget(d->emptyTrashButton);
+    d->rightViewLayout->addWidget(d->renameBar);
+    d->rightViewLayout->addLayout(d->viewStackLayout);
+    d->rightViewLayout->setSpacing(0);
+    d->rightViewLayout->setContentsMargins(0, 0, 0, 0);
+    d->rightView->setLayout(d->rightViewLayout);
 }
 
 void DFileManagerWindow::initToolBar()
@@ -1028,15 +1069,6 @@ void DFileManagerWindow::initConnect()
     QObject::connect(d->renameBar, &DRenameBar::clickCancelButton, this, &DFileManagerWindow::hideRenameBar);
     QObject::connect(fileSignalManager, &FileSignalManager::requestMultiFilesRename, this, &DFileManagerWindow::onShowRenameBar);
     QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTabBarCurrentIndexChange);
-
-    QObject::connect(d->advanceSearchBar, &DFMAdvanceSearchBar::optionChanged, this, [ = ](const QMap<int, QVariant> &formData) {
-        if (d->currentView) {
-            DFileView *fv = dynamic_cast<DFileView*>(d->currentView);
-            if (fv) {
-                fv->setAdvanceSearchFilter(formData);
-            }
-        }
-    });
 }
 
 void DFileManagerWindow::moveCenterByRect(QRect rect)
@@ -1171,22 +1203,22 @@ void DFileManagerWindow::requestToSelectUrls()
 
 bool DFileManagerWindow::isAdvanceSearchBarVisible()
 {
-    DFileManagerWindowPrivate *const d{ d_func() };
+    Q_D(DFileManagerWindow);
 
-    return d->advanceSearchBar->isVisible();
+    return d->isAdvanceSearchBarVisible();
 }
 
 void DFileManagerWindow::toggleAdvanceSearchBar(bool visible, bool resetForm)
 {
-    DFileManagerWindowPrivate *const d{ d_func() };
+    Q_D(DFileManagerWindow);
 
     if (!d->currentView) return;
 
-    if (d->advanceSearchBar->isVisible() != visible) {
-        d->advanceSearchBar->setVisible(visible);
+    if (d->isAdvanceSearchBarVisible() != visible) {
+        d->setAdvanceSearchBarVisible(visible);
     }
 
-    if (resetForm) {
+    if (d->advanceSearchBar && resetForm) {
         d->advanceSearchBar->resetForm();
     }
 }
