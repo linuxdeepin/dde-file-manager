@@ -402,7 +402,7 @@ void DFileManagerWindowPrivate::initRenameBar()
     // see the comment in initAdvanceSearchBar()
     renameBar = new DRenameBar(q);
 
-    rightViewLayout->insertWidget(0, renameBar);
+    rightViewLayout->insertWidget(rightViewLayout->indexOf(emptyTrashButton) + 1, renameBar);
 
     QObject::connect(renameBar, &DRenameBar::clickCancelButton, q, &DFileManagerWindow::hideRenameBar);
 }
@@ -1019,7 +1019,6 @@ void DFileManagerWindow::initRightView()
     d->rightViewLayout = new QVBoxLayout;
     d->rightViewLayout->addLayout(tabBarLayout);
     d->rightViewLayout->addWidget(d->emptyTrashButton);
-    d->rightViewLayout->addWidget(d->renameBar);
     d->rightViewLayout->addLayout(d->viewStackLayout);
     d->rightViewLayout->setSpacing(0);
     d->rightViewLayout->setContentsMargins(0, 0, 0, 0);
