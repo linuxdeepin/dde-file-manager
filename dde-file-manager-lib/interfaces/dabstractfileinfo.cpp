@@ -937,6 +937,15 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             actionKeys << MenuAction::SendToRemovableDisk;
         }
 
+        DDiskManager diskm;
+        for (auto &devs : diskm.diskDevices()) {
+            QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(devs));
+            if (dev->mediaCompatibility().join(' ').contains("_r")) {
+                actionKeys << MenuAction::StageFileForBurning;
+                break;
+            }
+        }
+
         actionKeys << MenuAction::Delete
                    << MenuAction::Separator
                    << MenuAction::Property;
