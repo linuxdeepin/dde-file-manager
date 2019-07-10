@@ -146,7 +146,7 @@ public:
 
     DExpandGroup *expandGroup() const;
     int contentHeight() const;
-    
+
     void loadPluginExpandWidgets();
 
 public slots:
@@ -195,7 +195,7 @@ private:
     DExpandGroup* m_expandGroup{ nullptr };
     DFM_NAMESPACE::DFileStatisticsJob* m_sizeWorker{ nullptr };
     QVBoxLayout* m_mainLayout{ nullptr };
-    QWidget* m_wdf;
+    QWidget* m_wdf{ nullptr };
 
     DExpandGroup *addExpandWidget(const QStringList &titleList);
 
