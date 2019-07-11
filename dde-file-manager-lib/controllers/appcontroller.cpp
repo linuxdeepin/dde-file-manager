@@ -788,12 +788,6 @@ void AppController::actionStageFileForBurning()
 
     QString destdev = action->property("dest_drive").toString();
     DUrlList urlList = DUrl::fromStringList(action->property("urlList").toStringList());
-    for (DUrl &u : urlList) {
-        DAbstractFileInfoPointer fp;
-        for (fp = fileService->createFileInfo(sender(), u); fp->canRedirectionFileUrl(); fp = fileService->createFileInfo(sender(), u)) {
-            u = fp->redirectedFileUrl();
-        }
-    }
 
     QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(destdev));
     if (!dev->optical()) {
