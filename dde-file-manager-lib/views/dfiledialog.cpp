@@ -99,8 +99,6 @@ DFileDialog::DFileDialog(QWidget *parent)
 
     DFMEventDispatcher::instance()->installEventFilter(this);
 
-    QPlatformFileDialogHelper::filterRegExp = "^(.*)\\(([^()]*)\\)$";
-
     connect(statusBar()->acceptButton(), &QPushButton::clicked, this, &DFileDialog::onAcceptButtonClicked);
     connect(statusBar()->rejectButton(), &QPushButton::clicked, this, &DFileDialog::onRejectButtonClicked);
     connect(statusBar()->comboBox(),
@@ -236,7 +234,7 @@ void DFileDialog::addDisableUrlScheme(const QString &scheme)
 QStringList qt_strip_filters(const QStringList &filters)
 {
     QStringList strippedFilters;
-    QRegExp r(QString::fromLatin1(QPlatformFileDialogHelper::filterRegExp));
+    QRegExp r(QString::fromLatin1("^(.*)\\(([^()]*)\\)$"));
     const int numFilters = filters.count();
     strippedFilters.reserve(numFilters);
     for (int i = 0; i < numFilters; ++i) {
