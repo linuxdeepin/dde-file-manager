@@ -599,9 +599,18 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
 
     ErrorHandle *error_handle = new ErrorHandle(job, &currentJob, slient);
 
+    DUrlList rlst;
+    for (const DUrl& u : list) {
+        DUrl ru(u);
+        for (DAbstractFileInfoPointer fi = fileService->createFileInfo(nullptr, ru); fi->canRedirectionFileUrl(); fi = fileService->createFileInfo(nullptr, ru)) {
+            ru = fi->redirectedFileUrl();
+        }
+        rlst.push_back(ru);
+    }
+
     job->setErrorHandle(error_handle, slient ? nullptr : error_handle->thread());
     job->setMode(action == DFMGlobal::CopyAction ? DFileCopyMoveJob::CopyMode : DFileCopyMoveJob::MoveMode);
-    job->start(list, target);
+    job->start(rlst, target);
     job->wait();
 
     QTimer::singleShot(200, dialogManager->taskDialog(), [job] {
@@ -689,7 +698,12 @@ DUrlList FileController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &
 
 static DUrlList pasteFilesV1(const QSharedPointer<DFMPasteEvent> &event)
 {
-    const DUrlList &urlList = event->urlList();
+    DUrlList urlList = event->urlList();
+    for (DUrl& u : urlList) {
+        for (DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), u); fi->canRedirectionFileUrl(); fi = fileService->createFileInfo(event->sender(), u)) {
+            u = fi->redirectedFileUrl();
+        }
+    }
 
     if (urlList.isEmpty()) {
         return DUrlList();
