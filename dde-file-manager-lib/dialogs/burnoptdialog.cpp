@@ -77,12 +77,14 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
                         dialogManager->addJob(job);
 
                         DUrl dev(device);
+                        //just to ensure we still have access to the image url even after 'this' is deleted
+                        DUrl img(d->image_file);
 
                         int flag = 0;
                         d->cb_checkdisc->isChecked() && (flag |= 4);
                         d->cb_eject->isChecked() && (flag |= 2);
 
-                        job->doOpticalImageBurn(dev, d->image_file, d->speedmap[d->cb_writespeed->currentText()], flag);
+                        job->doOpticalImageBurn(dev, img, d->speedmap[d->cb_writespeed->currentText()], flag);
                         dialogManager->removeJob(job->getJobId());
                         job->deleteLater();
                     });
