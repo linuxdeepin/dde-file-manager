@@ -754,7 +754,7 @@ static DUrlList pasteFilesV1(const QSharedPointer<DFMPasteEvent> &event)
     return list;
 }
 
-int requireInhibit()
+DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
 {
     QDBusInterface loginManager("org.freedesktop.login1",
             "/org/freedesktop/login1",
@@ -763,7 +763,7 @@ int requireInhibit()
 
     QList<QVariant> arg;
     arg << QString("shutdown:sleep:")                            // what
-        << (QCoreApplication::applicationName())                 // who
+        << qApp->applicationDisplayName()                        // who
         << QObject::tr("Files are being processed")              // why
         << QString("block");                                     // mode
 
@@ -773,18 +773,13 @@ int requireInhibit()
         fd = reply.value().fileDescriptor();
     }
 
-    return fd;
-}
-
-DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
-{
     struct InhibitHelper
     {
         InhibitHelper(int fileDescriptor) : fd(fileDescriptor) {}
         ~InhibitHelper() { if (fd >= 0) close(fd); }
 
         int fd;
-    } inhibit(requireInhibit());
+    } inhibit(fd);
 
     bool use_old_filejob = false;
 
