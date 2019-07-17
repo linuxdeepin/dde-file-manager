@@ -111,10 +111,6 @@ public:
 
     DFileViewHelper *parent() const;
 
-    inline QModelIndex createIndex(int arow, int acolumn, quintptr aid) const
-    {
-        return QAbstractItemModel::createIndex(arow, acolumn, aid);
-    }
     QModelIndex index(const DUrl &fileUrl, int column = 0);
     QModelIndex index(int row, int column,
                       const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
@@ -249,6 +245,7 @@ private:
     friend class FileSystemNode;
     friend class DFileView;
     friend class FileNodeManagerThread;
+    friend class DListItemDelegate;
 
     QScopedPointer<DFileSystemModelPrivate> d_ptr;
 

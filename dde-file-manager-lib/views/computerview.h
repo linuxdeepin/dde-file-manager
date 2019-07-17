@@ -33,13 +33,18 @@
 #include <QShowEvent>
 #include <QIcon>
 #include <QFrame>
+#include <QListView>
 #include <dflowlayout.h>
+#include "dstyleditemdelegate.h"
+#include "dfileview.h"
 
 #include "fileitem.h"
 #include "progressline.h"
 #include "durl.h"
 #include "dabstractfileinfo.h"
 #include "deviceinfo/udiskdeviceinfo.h"
+#include "ddiskmanager.h"
+#include "dblockdevice.h"
 #include "dstatusbar.h"
 #include "dfmbaseview.h"
 
@@ -224,6 +229,27 @@ private:
     QMap<QString, ComputerViewItem*> m_systemItems;
     QMap<QString, ComputerViewItem*> m_nativeItems;
     QMap<QString, ComputerViewItem*> m_removableItems;
+};
+
+class ComputerView2 : public QWidget, public DFMBaseView
+{
+    Q_OBJECT
+public:
+    explicit ComputerView2(QWidget *parent = nullptr);
+    ~ComputerView2() override;
+
+    QWidget* widget() const override;
+    DUrl rootUrl() const override;
+    bool setRootUrl(const DUrl &url) override;
+    QListView *view();
+public Q_SLOT:
+    void contextMenu();
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+private:
+    QListView *m_view;
+    DStatusBar *m_statusbar;
+    static const QList<int> iconsizes;
 };
 
 #endif // COMPUTERVIEW_H
