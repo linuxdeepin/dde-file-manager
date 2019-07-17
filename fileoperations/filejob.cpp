@@ -663,9 +663,10 @@ void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int 
     QUrl stagingurl(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName()
                     + "/" DISCBURN_STAGING "/" + device.path().replace('/','_') + "/");
     job_isomaster->stageFiles({{stagingurl, QUrl("/")}});
-    job_isomaster->commit(speed, flag & 1, volname);
+    bool wret = job_isomaster->commit(speed, flag & 1, volname);
+
     double gud, slo, bad;
-    if (flag & 4) {
+    if ((flag & 4) && wret) {
         m_opticalJobPhase = 2;
         job_isomaster->checkmedia(&gud, &slo, &bad);
     }
@@ -724,9 +725,10 @@ void FileJob::doOpticalImageBurn(const DUrl &device, const DUrl &image, int spee
     if (dp.formatted) {
         m_opticalJobPhase = 1;
     }
-    job_isomaster->writeISO(image, speed);
+    bool wret = job_isomaster->writeISO(image, speed);
+
     double gud, slo, bad;
-    if (flag & 4) {
+    if ((flag & 4) && wret) {
         m_opticalJobPhase = 2;
         job_isomaster->checkmedia(&gud, &slo, &bad);
     }
@@ -746,9 +748,9 @@ void FileJob::doOpticalImageBurn(const DUrl &device, const DUrl &image, int spee
     emit finished();
     if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished) {
         if (flag & 4) {
-        emit requestOpticalJobCompletionDialog(rst ? tr("Data verification successful.") : tr("Data verification failed."), rst ? "dialog-ok" : "dialog-error");
+            emit requestOpticalJobCompletionDialog(rst ? tr("Data verification successful.") : tr("Data verification failed."), rst ? "dialog-ok" : "dialog-error");
         } else {
-        emit requestOpticalJobCompletionDialog(tr("Burn process completed"), "dialog-ok");
+            emit requestOpticalJobCompletionDialog(tr("Burn process completed"), "dialog-ok");
         }
     }
     delete job_isomaster;
@@ -756,6 +758,8 @@ void FileJob::doOpticalImageBurn(const DUrl &device, const DUrl &image, int spee
 
 void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, int progress)
 {
+    m_opticalJobStatus = status;
+    m_opticalJobProgress = progress;
     if (status == DISOMasterNS::DISOMaster::JobStatus::Failed) {
         QStringList msg = jobisom->getInfoMessages();
         emit requestOpticalJobFailureDialog(m_jobType, FileJob::getXorrisoErrorMsg(msg), msg);
@@ -765,8 +769,6 @@ void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, i
         && status != DISOMasterNS::DISOMaster::JobStatus::Finished) {
         ++m_opticalJobPhase;
     }
-    m_opticalJobStatus = status;
-    m_opticalJobProgress = progress;
     if (status == DISOMasterNS::DISOMaster::JobStatus::Running) {
         m_opticalOpSpeed = jobisom->getCurrentSpeed();
     } else {
