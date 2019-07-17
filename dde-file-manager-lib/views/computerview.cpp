@@ -44,6 +44,8 @@
 #include "../shutil/fileutils.h"
 #include "partman/partition.h"
 #include "dabstractfilewatcher.h"
+#include "models/computermodel.h"
+#include "computerviewitemdelegate.h"
 
 #include <dslider.h>
 
@@ -64,6 +66,8 @@
 #include <qpa/qplatformtheme.h>
 
 #include <DApplication>
+#include <DLineEdit>
+#include <DStyle>
 
 DWIDGET_USE_NAMESPACE
 
@@ -1264,4 +1268,77 @@ void DScrollArea::wheelEvent(QWheelEvent *event)
         return;
     }
     QScrollArea::wheelEvent(event);
+}
+
+const QList<int> ComputerView2::iconsizes = {48, 64, 96, 128, 256};
+
+ComputerView2::ComputerView2(QWidget *parent) : QWidget(parent)
+{
+    m_view = new QListView(this);
+    m_statusbar = new DStatusBar(this);
+    m_statusbar->scalingSlider()->setMaximum(iconsizes.count() - 1);
+    m_statusbar->scalingSlider()->setMinimum(0);
+    m_statusbar->scalingSlider()->setTickInterval(1);
+    m_statusbar->scalingSlider()->setPageStep(1);
+    m_statusbar->setMaximumHeight(22);
+
+    setLayout(new QVBoxLayout);
+    layout()->addWidget(m_view);
+    layout()->addWidget(m_statusbar);
+    layout()->setMargin(0);
+
+    m_view->setModel(new ComputerModel(this));
+    m_view->setItemDelegate(new ComputerViewItemDelegate(this));
+    m_view->setWrapping(true);
+    m_view->setSpacing(10);
+    m_view->setFlow(QListView::Flow::LeftToRight);
+    m_view->setResizeMode(QListView::ResizeMode::Adjust);
+    m_view->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
+    m_view->setEditTriggers(QAbstractItemView::EditTrigger::NoEditTriggers);
+    m_view->setIconSize(QSize(iconsizes[m_statusbar->scalingSlider()->value()], iconsizes[m_statusbar->scalingSlider()->value()]));
+    m_view->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
+
+    connect(m_view, &QWidget::customContextMenuRequested, this, &ComputerView2::contextMenu);
+    connect(m_statusbar->scalingSlider(), &DSlider::valueChanged, this, [this] {m_view->setIconSize(QSize(iconsizes[m_statusbar->scalingSlider()->value()], iconsizes[m_statusbar->scalingSlider()->value()]));});
+}
+
+ComputerView2::~ComputerView2()
+{
+    ComputerModel *m = static_cast<ComputerModel*>(m_view->model());
+    m_view->setModel(nullptr);
+    delete m;
+}
+
+QWidget* ComputerView2::widget() const
+{
+    return const_cast<ComputerView2*>(this);
+}
+
+DUrl ComputerView2::rootUrl() const
+{
+    return DUrl(COMPUTER_ROOT);
+}
+
+bool ComputerView2::setRootUrl(const DUrl &url)
+{
+    return url == DUrl(COMPUTER_ROOT);
+}
+
+QListView* ComputerView2::view()
+{
+    return m_view;
+}
+
+void ComputerView2::contextMenu()
+{
+    qDebug() << "contextMenu";
+}
+
+void ComputerView2::resizeEvent(QResizeEvent *event)
+{
+    for (int i = 0; i < m_view->model()->rowCount(); ++i) {
+        if (m_view->model()->index(i, 0).data(ComputerModel::DataRoles::ICategoryRole) == ComputerModelItemData::Category::cat_splitter)
+            emit m_view->itemDelegate()->sizeHintChanged(m_view->model()->index(i, 0));
+    }
+    QWidget::resizeEvent(event);
 }
