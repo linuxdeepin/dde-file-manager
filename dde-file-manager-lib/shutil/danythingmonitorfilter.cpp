@@ -154,6 +154,7 @@ void DAnythingMonitorFilterPrivate::get_home_path_of_all_users()
 
         while (!in.atEnd()) {
             QString line_content{ in.readLine() };
+            if (line_content.isEmpty()) continue;
             QList<QString> contents{ line_content.split(':') };
             QString path_remove_ESC{ detail::restoreEscapedChar(contents[contents.size() - 2]) };
             m_user_name_and_home_path[contents[0]] = path_remove_ESC;
