@@ -4,7 +4,7 @@
 <context>
     <name>AppController</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="348"/>
+        <location filename="../controllers/appcontroller.cpp" line="349"/>
         <source>New Folder</source>
         <translation type="unfinished"></translation>
     </message>
@@ -330,17 +330,17 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1019"/>
+        <location filename="../views/dfiledialog.cpp" line="1020"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1020"/>
+        <location filename="../views/dfiledialog.cpp" line="1021"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1021"/>
+        <location filename="../views/dfiledialog.cpp" line="1022"/>
         <source>Replace</source>
         <translation type="unfinished"></translation>
     </message>
@@ -362,7 +362,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1006"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1009"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1367"/>
         <location filename="../models/searchfileinfo.cpp" line="121"/>
         <source>Time modified</source>
@@ -406,7 +406,7 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="524"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="554"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -469,7 +469,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="481"/>
+        <location filename="../views/dstatusbar.cpp" line="491"/>
         <source>Loading...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1214,32 +1214,32 @@
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1328"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1334"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1331"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1341"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1370"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1491"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1522"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1337"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1347"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1376"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1497"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1528"/>
         <source>Confirm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1338"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1519"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1344"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1525"/>
         <source>Cannot find the mounting device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1367"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1373"/>
         <source>Cannot unmount the device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1487"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1493"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1247,38 +1247,38 @@
 <context>
     <name>MergedDesktopController</name>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="144"/>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="164"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="387"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="407"/>
         <source>Pictures</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="146"/>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="166"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="389"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="409"/>
         <source>Music</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="148"/>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="168"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="391"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="411"/>
         <source>Applications</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="150"/>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="170"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="393"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="413"/>
         <source>Videos</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="152"/>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="172"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="395"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="415"/>
         <source>Documents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="154"/>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="174"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="397"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="417"/>
         <source>Others</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1286,34 +1286,34 @@
 <context>
     <name>MimeTypeDisplayManager</name>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="232"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="451"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="53"/>
         <source>Directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="222"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="441"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="54"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="129"/>
         <source>Application</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="228"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="447"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="55"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="130"/>
         <source>Video</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="226"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="445"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="56"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="131"/>
         <source>Audio</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="224"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="443"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="57"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="132"/>
         <source>Image</source>
@@ -1326,7 +1326,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="230"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="449"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="59"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="134"/>
         <source>Text</source>
@@ -1345,6 +1345,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="619"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="62"/>
         <source>Unknown</source>
         <translation type="unfinished"></translation>
@@ -1712,12 +1713,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1148"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1153"/>
         <source>Allow to execute as program</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="925"/>
+        <location filename="../dialogs/propertydialog.cpp" line="928"/>
         <source>Local disk</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1732,8 +1733,8 @@
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="835"/>
-        <location filename="../dialogs/propertydialog.cpp" line="930"/>
-        <location filename="../dialogs/propertydialog.cpp" line="957"/>
+        <location filename="../dialogs/propertydialog.cpp" line="933"/>
+        <location filename="../dialogs/propertydialog.cpp" line="960"/>
         <source>Contains</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1760,70 +1761,70 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="925"/>
-        <location filename="../dialogs/propertydialog.cpp" line="952"/>
+        <location filename="../dialogs/propertydialog.cpp" line="928"/>
+        <location filename="../dialogs/propertydialog.cpp" line="955"/>
         <source>Device type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/propertydialog.cpp" line="934"/>
+        <location filename="../dialogs/propertydialog.cpp" line="961"/>
+        <source>Free space</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/propertydialog.cpp" line="929"/>
+        <location filename="../dialogs/propertydialog.cpp" line="956"/>
+        <source>Total space</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="931"/>
         <location filename="../dialogs/propertydialog.cpp" line="958"/>
-        <source>Free space</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../dialogs/propertydialog.cpp" line="926"/>
-        <location filename="../dialogs/propertydialog.cpp" line="953"/>
-        <source>Total space</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../dialogs/propertydialog.cpp" line="928"/>
-        <location filename="../dialogs/propertydialog.cpp" line="955"/>
         <source>Filesystem</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1062"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1065"/>
         <source>Access denied</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1063"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1073"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1066"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1076"/>
         <source>Executable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1064"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1065"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1067"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1068"/>
         <source>Write only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1066"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1067"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1069"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1070"/>
         <source>Read only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1068"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1069"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1071"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1072"/>
         <source>Read-write</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1143"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1148"/>
         <source>Others</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1141"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1146"/>
         <source>Owner</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1142"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1147"/>
         <source>Group</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2234,15 +2235,15 @@
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="299"/>
-        <location filename="../dialogs/propertydialog.cpp" line="898"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="636"/>
+        <location filename="../dialogs/propertydialog.cpp" line="901"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="639"/>
         <source>%1 item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="301"/>
-        <location filename="../dialogs/propertydialog.cpp" line="898"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="638"/>
+        <location filename="../dialogs/propertydialog.cpp" line="901"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="641"/>
         <source>%1 items</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2269,25 +2270,25 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1213"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1218"/>
         <source>Loading...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="703"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="754"/>
         <source>File has been moved or deleted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="705"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="713"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="719"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="756"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="764"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="770"/>
         <source>You do not have permission to access this folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="723"/>
-        <location filename="../models/recentfileinfo.cpp" line="181"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="774"/>
+        <location filename="../models/recentfileinfo.cpp" line="190"/>
         <location filename="../models/trashfileinfo.cpp" line="376"/>
         <source>Folder is empty</source>
         <translation type="unfinished"></translation>
@@ -2315,33 +2316,33 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="381"/>
+        <location filename="../controllers/appcontroller.cpp" line="378"/>
         <source>Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="390"/>
+        <location filename="../controllers/appcontroller.cpp" line="385"/>
         <source>Spreadsheet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="399"/>
+        <location filename="../controllers/appcontroller.cpp" line="392"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="639"/>
         <source>Presentation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="408"/>
+        <location filename="../controllers/appcontroller.cpp" line="399"/>
         <source>Text</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="886"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="887"/>
         <source>1 task in progress</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="888"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="889"/>
         <source>%1 tasks in progress</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2573,6 +2574,11 @@
     <message>
         <location filename="../interfaces/dfmcrumbitem.cpp" line="144"/>
         <source>Edit address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../controllers/filecontroller.cpp" line="753"/>
+        <source>Files are being processed</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3039,12 +3045,12 @@
 <context>
     <name>UserShareManager</name>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="416"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="420"/>
         <source>Kindly Reminder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="416"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="420"/>
         <source>Please firstly install samba to continue</source>
         <translation type="unfinished"></translation>
     </message>
