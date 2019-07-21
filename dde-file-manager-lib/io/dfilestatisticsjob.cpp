@@ -258,7 +258,7 @@ int DFileStatisticsJob::directorysCount() const
 {
     Q_D(const DFileStatisticsJob);
 
-    return d->directoryCount.load();
+    return d->directoryCount.load() - 1;
 }
 
 void DFileStatisticsJob::start(const DUrlList &sourceUrls)
