@@ -56,3 +56,9 @@ file_filter = usb-device-formatter/translations/usb-device-formatter-desktop/des
 source_file = usb-device-formatter/translations/usb-device-formatter-desktop/desktop.ts
 source_lang = en
 type = QT
+
+[deepin-file-manager.usb-device-formatter-policy]
+file_filter = usb-device-formatter/translations/policy/policy_<lang>.ts
+source_file = usb-device-formatter/translations/policy/policy.ts
+source_lang = en
+type = QT
