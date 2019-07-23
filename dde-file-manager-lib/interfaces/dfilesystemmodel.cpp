@@ -1593,6 +1593,15 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 
     DUrlList urlList = DUrl::fromQUrlList(data->urls());
 
+    for (DUrl &u : urlList) {
+        // we only do redirection for burn:// urls for the fear of screwing everything up again
+        if (u.scheme() == BURN_SCHEME) {
+            for (DAbstractFileInfoPointer fi = fileService->createFileInfo(nullptr, u); fi->canRedirectionFileUrl(); fi = fileService->createFileInfo(nullptr, u)) {
+                u = fi->redirectedFileUrl();
+            }
+        }
+    }
+
     const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, toUrl);
 
     if (info->isSymLink()) {
