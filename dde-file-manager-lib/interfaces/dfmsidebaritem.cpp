@@ -572,6 +572,15 @@ bool DFMSideBarItem::dropMimeData(const QMimeData *data, Qt::DropAction action) 
     DUrlList oriUrlList = DUrl::fromQUrlList(data->urls());
     const DAbstractFileInfoPointer &destInfo = fileService->createFileInfo(this, destUrl);
 
+    for (DUrl &u : oriUrlList) {
+        // we only do redirection for burn:// urls for the fear of screwing everything up again
+        if (u.scheme() == BURN_SCHEME) {
+            for (DAbstractFileInfoPointer fi = fileService->createFileInfo(nullptr, u); fi->canRedirectionFileUrl(); fi = fileService->createFileInfo(nullptr, u)) {
+                u = fi->redirectedFileUrl();
+            }
+        }
+    }
+
     // convert destnation url to real path if it's a symbol link.
     if (destInfo->isSymLink()) {
         destUrl = destInfo->rootSymLinkTarget();
