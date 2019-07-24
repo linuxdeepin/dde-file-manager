@@ -86,7 +86,7 @@ Depends:
  gvfs-backends(>=1.27.3),
  cryptsetup,
  libkf5codecs5,
- gio-qt-dev,
+ libgio-qt-dev,
  deepin-anything-libs[i386 amd64]
 Breaks: dde-file-manager(<=1.2.3-3)
 Multi-Arch: same
