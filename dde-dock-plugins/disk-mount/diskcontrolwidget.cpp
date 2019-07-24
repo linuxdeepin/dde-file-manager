@@ -27,12 +27,14 @@
 #include "dattachedudisks2device.h"
 #include "dattachedvfsdevice.h"
 
+#include <dgiovolumemanager.h>
+#include <dgiomount.h>
+#include <dgiofile.h>
+
 #include <ddiskmanager.h>
 #include <dblockdevice.h>
 #include <ddiskdevice.h>
-#include <dfmvfsdevice.h>
 #include <dfmsettings.h>
-#include <dfmvfsmanager.h>
 #include <DDesktopServices>
 
 #include <QDebug>
@@ -57,7 +59,7 @@ DiskControlWidget::DiskControlWidget(QWidget *parent)
     m_centralWidget->setLayout(m_centralLayout);
     m_centralWidget->setFixedWidth(WIDTH);
 
-    m_vfsManager = new DFMVfsManager;
+    m_vfsManager.reset(new DGioVolumeManager);
 
     setWidget(m_centralWidget);
     setFixedWidth(WIDTH);
@@ -72,7 +74,7 @@ DiskControlWidget::DiskControlWidget(QWidget *parent)
 
 DiskControlWidget::~DiskControlWidget()
 {
-    delete m_vfsManager;
+
 }
 
 void DiskControlWidget::initConnect()
@@ -89,7 +91,9 @@ void DiskControlWidget::initConnect()
     connect(m_diskManager, &DDiskManager::fileSystemAdded, this, &DiskControlWidget::onVolumeAdded);
     connect(m_diskManager, &DDiskManager::fileSystemRemoved, this, &DiskControlWidget::onVolumeRemoved);
 
-    connect(m_vfsManager, &DFMVfsManager::vfsDeviceListInfoChanged, this, &DiskControlWidget::onDiskListChanged);
+    connect(m_vfsManager.data(), &DGioVolumeManager::mountAdded, this, &DiskControlWidget::onVfsMountChanged);
+//    connect(m_vfsManager.data(), &DGioVolumeManager::mountChanged, this, &DiskControlWidget::onVfsMountChanged);
+    connect(m_vfsManager.data(), &DGioVolumeManager::mountRemoved, this, &DiskControlWidget::onVfsMountChanged);
 }
 
 void DiskControlWidget::startMonitor()
@@ -169,13 +173,36 @@ void DiskControlWidget::unmountAll()
         }
     }
 
-    QList<QUrl> vfsDevices = m_vfsManager->getVfsList();
-    for (const QUrl & vfsDevUrl : vfsDevices) {
-        DFMVfsDevice* vfsDev = DFMVfsDevice::create(vfsDevUrl);
-        if (vfsDev) {
-            vfsDev->detachAsync();
+    QList<QExplicitlySharedDataPointer<DGioMount> > vfsMounts = getVfsMountList();
+    for (auto mount : vfsMounts) {
+        if (mount->canUnmount()) {
+            mount->unmount();
         }
     }
+}
+
+const QList<QExplicitlySharedDataPointer<DGioMount> > DiskControlWidget::getVfsMountList()
+{
+    QList<QExplicitlySharedDataPointer<DGioMount> > result;
+    const QList<QExplicitlySharedDataPointer<DGioMount> > mounts = m_vfsManager->getMounts();
+    for (auto mount : mounts) {
+        QExplicitlySharedDataPointer<DGioFile> file = mount->getRootFile();
+        QString uriStr = file->uri();
+        QUrl url(uriStr);
+
+#ifdef QT_DEBUG
+        if (!url.isValid()) {
+            qWarning() << "Gio uri is not a vaild QUrl!" << uriStr;
+            qFatal("See the above warning for reason");
+        }
+#endif // QT_DEBUG
+
+        if (url.scheme() == "file") continue;
+
+        result.append(mount);
+    }
+
+    return result;
 }
 
 void DiskControlWidget::onDiskListChanged()
@@ -201,9 +228,11 @@ void DiskControlWidget::onDiskListChanged()
         }
     }
 
-    QList<QUrl> urlList = m_vfsManager->getVfsList();
-    for (const QUrl& oneUrl : urlList) {
-        DAttachedVfsDevice *dad = new DAttachedVfsDevice(oneUrl);
+    const QList<QExplicitlySharedDataPointer<DGioMount> > mounts = getVfsMountList();
+    for (auto mount : mounts) {
+        QExplicitlySharedDataPointer<DGioFile> rootFile = mount->getRootFile();
+        QString path = rootFile->path();
+        DAttachedVfsDevice *dad = new DAttachedVfsDevice(path);
         if (dad->isValid()) {
             mountedCount++;
             DiskControlItem *item = new DiskControlItem(dad, this);
@@ -325,6 +354,24 @@ void DiskControlWidget::onVolumeAdded()
 
 void DiskControlWidget::onVolumeRemoved()
 {
+    onDiskListChanged();
+}
+
+void DiskControlWidget::onVfsMountChanged(QExplicitlySharedDataPointer<DGioMount> mount)
+{
+    QExplicitlySharedDataPointer<DGioFile> file = mount->getRootFile();
+    QString uriStr = file->uri();
+    QUrl url(uriStr);
+
+#ifdef QT_DEBUG
+    if (!url.isValid()) {
+        qWarning() << "Gio uri is not a vaild QUrl!" << uriStr;
+        qFatal("See the above warning for reason");
+    }
+#endif // QT_DEBUG
+
+    if (url.scheme() == "file") return;
+
     onDiskListChanged();
 }
 

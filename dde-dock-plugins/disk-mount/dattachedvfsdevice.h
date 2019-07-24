@@ -28,15 +28,12 @@
 #include <QScopedPointer>
 
 #include <dfmglobal.h>
-
-DFM_BEGIN_NAMESPACE
-class DFMVfsDevice;
-DFM_END_NAMESPACE
+#include <dgiomount.h>
 
 class DAttachedVfsDevice : public DAttachedDeviceInterface
 {
 public:
-    DAttachedVfsDevice(const QUrl mountpointUrl);
+    DAttachedVfsDevice(const QString mountpointPath);
 
     bool isValid() override;
     bool detachable() override;
@@ -48,7 +45,7 @@ public:
     QUrl mountpointUrl() override;
 
 private:
-    QScopedPointer<DFM_NAMESPACE::DFMVfsDevice> vfsDevice;
+    QScopedPointer<DGioMount> dgioMount;
 };
 
 #endif // DATTACHEDVFSDEVICE_H

@@ -21,9 +21,8 @@
 
 #include "dattachedvfsdevice.h"
 
-#include "dfmvfsdevice.h"
-
-DFM_USE_NAMESPACE
+#include <dgiofile.h>
+#include <dgiofileinfo.h>
 
 /*!
  * \class DAttachedVfsDevice
@@ -32,44 +31,56 @@ DFM_USE_NAMESPACE
  */
 
 
-DAttachedVfsDevice::DAttachedVfsDevice(const QUrl mountpointUrl)
+DAttachedVfsDevice::DAttachedVfsDevice(const QString mountpointPath)
 {
-    vfsDevice.reset(DFMVfsDevice::create(mountpointUrl));
+    dgioMount.reset(DGioMount::createFromPath(mountpointPath));
 }
 
 bool DAttachedVfsDevice::isValid()
 {
-    return !vfsDevice.isNull();
+    return !dgioMount.isNull();
 }
 
 bool DAttachedVfsDevice::detachable()
 {
-    return vfsDevice->canDetach();
+    return dgioMount->canUnmount();
 }
 
 void DAttachedVfsDevice::detach()
 {
-    vfsDevice->detachAsync();
+    dgioMount->unmount();
 }
 
 QString DAttachedVfsDevice::displayName()
 {
-    return vfsDevice ? vfsDevice->name() : QStringLiteral("-");
+    return dgioMount ? dgioMount->name() : QStringLiteral("-");
 }
 
 bool DAttachedVfsDevice::deviceUsageValid()
 {
-    return !vfsDevice.isNull();
+    if (dgioMount.isNull()) return false;
+
+    QExplicitlySharedDataPointer<DGioFile> file = dgioMount->getRootFile();
+    QExplicitlySharedDataPointer<DGioFileInfo> fsInfo = file->createFileSystemInfo();
+
+    return fsInfo;
 }
 
 QPair<quint64, quint64> DAttachedVfsDevice::deviceUsage()
 {
-    return QPair<quint64, quint64>(vfsDevice->freeBytes(), vfsDevice->totalBytes());
+    QExplicitlySharedDataPointer<DGioFile> file = dgioMount->getRootFile();
+    QExplicitlySharedDataPointer<DGioFileInfo> fsInfo = file->createFileSystemInfo();
+
+    if (fsInfo) {
+        return QPair<quint64, quint64>(fsInfo->fsFreeBytes(), fsInfo->fsTotalBytes());
+    }
+
+    return QPair<quint64, quint64>(0, 0);
 }
 
 QString DAttachedVfsDevice::iconName()
 {
-    QStringList iconList = vfsDevice ? vfsDevice->iconList() : QStringList();
+    QStringList iconList = dgioMount ? dgioMount->themedIconNames() : QStringList();
 
     if (iconList.empty()) {
         return QStringLiteral("drive-network");
@@ -80,5 +91,6 @@ QString DAttachedVfsDevice::iconName()
 
 QUrl DAttachedVfsDevice::mountpointUrl()
 {
-    return QUrl::fromLocalFile(vfsDevice->rootPath());
+    QExplicitlySharedDataPointer<DGioFile> file = dgioMount->getRootFile();
+    return QUrl::fromLocalFile(file->path());
 }

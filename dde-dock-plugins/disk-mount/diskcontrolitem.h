@@ -43,8 +43,8 @@ class DiskControlItem : public QFrame
     Q_OBJECT
 
 public:
-    explicit DiskControlItem(DAttachedDeviceInterface *attachedDevicePtr, QWidget *parent = 0);
-    ~DiskControlItem();
+    explicit DiskControlItem(DAttachedDeviceInterface *attachedDevicePtr, QWidget *parent = nullptr);
+    ~DiskControlItem() override;
 
     static QString formatDiskSize(const quint64 num);
 
