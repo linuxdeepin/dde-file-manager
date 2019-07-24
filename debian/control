@@ -46,6 +46,7 @@ Build-Depends:
  libfontconfig1-dev,
  libfreetype6-dev,
  libegl1-mesa-dev,
+ libgio-qt-dev,
  libdisomaster-dev
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
@@ -86,7 +87,6 @@ Depends:
  gvfs-backends(>=1.27.3),
  cryptsetup,
  libkf5codecs5,
- libgio-qt-dev,
  deepin-anything-libs[i386 amd64]
 Breaks: dde-file-manager(<=1.2.3-3)
 Multi-Arch: same
