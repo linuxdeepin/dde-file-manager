@@ -46,6 +46,7 @@ Build-Depends:
  libfontconfig1-dev,
  libfreetype6-dev,
  libegl1-mesa-dev,
+ libglibmm-2.4-dev,
  libgio-qt-dev,
  libdisomaster-dev
 Standards-Version: 3.9.8

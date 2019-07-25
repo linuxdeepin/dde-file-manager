@@ -5,14 +5,6 @@ include /usr/share/dpkg/default.mk
 
 DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
-a=$(shell pkg-config --cflags gio-qt)
-b=$(shell ls /usr/lib/x86_64-linux-gnu/pkgconfig/)
-c=$(shell dpkg -L libgio-qt-dev)
-$(info $$a is [${a}])
-$(info $$b is [${b}])
-$(info $$c is [${c}])
-
-
 %:
 	dh $@ --parallel
 
