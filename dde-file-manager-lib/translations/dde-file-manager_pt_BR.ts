@@ -283,7 +283,7 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="187"/>
         <source>Target disk doesn&apos;t have enough space</source>
-        <translation>O disco de destino não tem espaço suficiente</translation>
+        <translation>Espaço insuficiente no local de destino</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="189"/>
@@ -382,7 +382,7 @@
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1379"/>
         <location filename="../models/searchfileinfo.cpp" line="121"/>
         <source>Time modified</source>
-        <translation>Modificado</translation>
+        <translation>Última modificação</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1381"/>
@@ -727,7 +727,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="878"/>
         <source>Target disk doesn&apos;t have enough space, unable to copy!</source>
-        <translation>O disco de destino não tem espaço suficiente, impossível copiar!</translation>
+        <translation>Espaço insuficiente no local de destino. Não é possível copiar!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="890"/>
@@ -1563,7 +1563,7 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="377"/>
         <source>Do not ask again</source>
-        <translation>Não pergunte novamente</translation>
+        <translation>Não perguntar novamente</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="503"/>
@@ -1608,7 +1608,7 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="478"/>
         <source>Move to %2</source>
-        <translation>Mover para %2</translation>
+        <translation>para %2</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="480"/>
@@ -1648,13 +1648,13 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="513"/>
         <source>Retry</source>
-        <translation>Tente novamente</translation>
+        <translation>Tentar Novamente</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="607"/>
         <location filename="../../dialogs/dtaskdialog.cpp" line="619"/>
         <source>Time modified:%1</source>
-        <translation>Modificado: %1</translation>
+        <translation>Última modificação: %1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="609"/>
@@ -1908,7 +1908,7 @@
         <location filename="../dialogs/propertydialog.cpp" line="873"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="691"/>
         <source>Time modified</source>
-        <translation>Modificado em</translation>
+        <translation>Última modificação</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="899"/>
@@ -2244,7 +2244,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="675"/>
         <source>Office Text</source>
-        <translation>Texto do Office</translation>
+        <translation>Texto</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="676"/>
@@ -2701,7 +2701,7 @@
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
         <source>Modify time</source>
-        <translation>Modificado</translation>
+        <translation>Última modificação</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="49"/>

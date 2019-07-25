@@ -207,17 +207,17 @@
     <message>
         <location filename="../views/dfmsidebaropticaldevitem.cpp" line="178"/>
         <source>Blank %1 disc</source>
-        <translation type="unfinished"/>
+        <translation>빈 %1 디스크</translation>
     </message>
     <message>
         <location filename="../views/dfmsidebaropticaldevitem.cpp" line="180"/>
         <source>%1 disc</source>
-        <translation type="unfinished"/>
+        <translation>%1 디스크</translation>
     </message>
     <message>
         <location filename="../views/dfmsidebaropticaldevitem.cpp" line="189"/>
         <source>%1 drive</source>
-        <translation type="unfinished"/>
+        <translation>%1 드라이브</translation>
     </message>
 </context>
 <context>
@@ -618,58 +618,58 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="437"/>
         <source>Are you sure you want to erase all data on the disc?</source>
-        <translation type="unfinished"/>
+        <translation>디스크의 모든 데이터를 지우시겠습니까?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="442"/>
         <source>Erase</source>
-        <translation type="unfinished"/>
+        <translation>지우기</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="464"/>
         <source>How do you want to use this disc?</source>
-        <translation type="unfinished"/>
+        <translation>이 디스크를 어떻게 사용하시겠습니까?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="468"/>
         <source>Burn image</source>
-        <translation type="unfinished"/>
+        <translation>이미지 굽기</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="468"/>
         <source>Burn files</source>
-        <translation type="unfinished"/>
+        <translation>파일 굽기</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="495"/>
         <source>Disc erase failed</source>
-        <translation type="unfinished"/>
+        <translation>디스크 지우기 실패</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="499"/>
         <source>Burn process failed</source>
-        <translation type="unfinished"/>
+        <translation>굽기 프로세스 실패</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="502"/>
         <source>%1: %2</source>
-        <translation type="unfinished"/>
+        <translation>%1: %2</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="518"/>
         <location filename="../dialogs/dialogmanager.cpp" line="528"/>
         <source>Show details</source>
-        <translation type="unfinished"/>
+        <translation>세부 정보 표시</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="522"/>
         <source>Hide details</source>
-        <translation type="unfinished"/>
+        <translation>세부 정보 숨기기</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="523"/>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>오류</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="550"/>
@@ -895,19 +895,19 @@
         <location filename="../../fileoperations/filejob.cpp" line="690"/>
         <location filename="../../fileoperations/filejob.cpp" line="749"/>
         <source>Data verification successful.</source>
-        <translation type="unfinished"/>
+        <translation>데이터 확인 성공.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="690"/>
         <location filename="../../fileoperations/filejob.cpp" line="749"/>
         <source>Data verification failed.</source>
-        <translation type="unfinished"/>
+        <translation>데이터 검증 실패.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="692"/>
         <location filename="../../fileoperations/filejob.cpp" line="751"/>
         <source>Burn process completed</source>
-        <translation type="unfinished"/>
+        <translation>굽기 프로세스 완료</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="865"/>
@@ -932,32 +932,32 @@
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2611"/>
         <source>%1 is a duplicate file.</source>
-        <translation type="unfinished"/>
+        <translation>%1은(는) 중복 파일입니다.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2614"/>
         <source>Insufficient disc space.</source>
-        <translation type="unfinished"/>
+        <translation>디스크 공간이 부족함.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2617"/>
         <source>Lost connection to drive.</source>
-        <translation type="unfinished"/>
+        <translation>드라이브에 대한 연결 끊김.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2620"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
-        <translation type="unfinished"/>
+        <translation>CD/DVD 드라이브가 준비되지 않았습니다. 다른 디스크를 사용해 보십시오.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2623"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
-        <translation type="unfinished"/>
+        <translation>CD/DVD 드라이브가 사용 중입니다. 드라이브를 사용하여 프로그램을 종료하고 드라이브를 다시 삽입합니다.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2626"/>
         <source>Unknown error</source>
-        <translation type="unfinished"/>
+        <translation>알 수 없는 오류</translation>
     </message>
 </context>
 <context>
@@ -1587,22 +1587,22 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="413"/>
         <source>Erasing disc %1, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>%1 디스크를 지우는 중, 잠시 기다리십시오...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="414"/>
         <source>Burning disc %1, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>%1 굽는 중, 잠시 기다리십시오...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="419"/>
         <source>Writing data...</source>
-        <translation type="unfinished"/>
+        <translation>데이터를 쓰는 중...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="420"/>
         <source>Verifying data...</source>
-        <translation type="unfinished"/>
+        <translation>데이터 확인 중...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="474"/>
@@ -1869,12 +1869,12 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="334"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished"/>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="335"/>
         <source>%1 / %2</source>
-        <translation type="unfinished"/>
+        <translation>%1 / %2</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1205"/>
@@ -2310,33 +2310,33 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="718"/>
         <location filename="../views/dfmopticalmediawidget.cpp" line="69"/>
         <source>Burn</source>
-        <translation type="unfinished"/>
+        <translation>굽기</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="143"/>
         <source>Disc name:</source>
-        <translation type="unfinished"/>
+        <translation>디스크 이름:</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="154"/>
         <location filename="../dialogs/burnoptdialog.cpp" line="156"/>
         <source>Maximum</source>
-        <translation type="unfinished"/>
+        <translation>최대</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="167"/>
         <source>Allow files to be added later</source>
-        <translation type="unfinished"/>
+        <translation>파일을 나중에 추가할 수 있도록 허용</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="176"/>
         <source>Verify data</source>
-        <translation type="unfinished"/>
+        <translation>데이터 확인</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="150"/>
         <source>Write speed:</source>
-        <translation type="unfinished"/>
+        <translation>쓰기 속도:</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="179"/>
@@ -2766,7 +2766,7 @@
         <location filename="../views/dfmsidebardeviceitem.cpp" line="156"/>
         <location filename="../views/dfmsidebaropticaldevitem.cpp" line="107"/>
         <source>Erase</source>
-        <translation type="unfinished"/>
+        <translation>지우기</translation>
     </message>
     <message>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="171"/>
@@ -2789,7 +2789,7 @@
     <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="96"/>
         <source>Free Space %1</source>
-        <translation type="unfinished"/>
+        <translation>사용 가능한 공간 %1</translation>
     </message>
 </context>
 <context>

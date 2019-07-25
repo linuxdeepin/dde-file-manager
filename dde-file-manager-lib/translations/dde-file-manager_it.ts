@@ -929,7 +929,7 @@ Localizzazione italiana a cura di Massimo A. Carofano</translation>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2614"/>
         <source>Insufficient disc space.</source>
-        <translation type="unfinished"/>
+        <translation>Spazio insufficiente su disco</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2617"/>
@@ -1589,12 +1589,12 @@ Localizzazione italiana a cura di Massimo A. Carofano</translation>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="419"/>
         <source>Writing data...</source>
-        <translation type="unfinished"/>
+        <translation>Scrittura dati...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="420"/>
         <source>Verifying data...</source>
-        <translation type="unfinished"/>
+        <translation>Verifica dati...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="474"/>
@@ -1861,12 +1861,12 @@ Localizzazione italiana a cura di Massimo A. Carofano</translation>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="334"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished"/>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="335"/>
         <source>%1 / %2</source>
-        <translation type="unfinished"/>
+        <translation>%1 / %2</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1205"/>
@@ -2781,7 +2781,7 @@ Localizzazione italiana a cura di Massimo A. Carofano</translation>
     <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="96"/>
         <source>Free Space %1</source>
-        <translation type="unfinished"/>
+        <translation>Spazio Libero %1</translation>
     </message>
 </context>
 <context>
