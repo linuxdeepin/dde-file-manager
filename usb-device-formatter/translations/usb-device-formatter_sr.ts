@@ -12,7 +12,7 @@
     <message>
         <location filename="../view/formatingpage.cpp" line="43"/>
         <source>Formatting the disk, please wait...</source>
-        <translation>Форматирање диска. Молимо сачекајте...</translation>
+        <translation>Форматирање диска. Сачекајте...</translation>
     </message>
 </context>
 <context>
@@ -25,7 +25,7 @@
     <message>
         <location filename="../view/mainpage.cpp" line="128"/>
         <source>Label</source>
-        <translation>Ознака</translation>
+        <translation>Назив</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="137"/>

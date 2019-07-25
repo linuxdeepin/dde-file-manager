@@ -928,7 +928,7 @@
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2614"/>
         <source>Insufficient disc space.</source>
-        <translation type="unfinished"/>
+        <translation>Zu wenig Festplattenspeicher.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2617"/>
@@ -1588,12 +1588,12 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="419"/>
         <source>Writing data...</source>
-        <translation type="unfinished"/>
+        <translation>Schreibe Daten...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="420"/>
         <source>Verifying data...</source>
-        <translation type="unfinished"/>
+        <translation>Überprüfe Daten...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="474"/>
@@ -1860,12 +1860,12 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="334"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished"/>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="335"/>
         <source>%1 / %2</source>
-        <translation type="unfinished"/>
+        <translation>%1 / %2</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1205"/>
@@ -2780,7 +2780,7 @@
     <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="96"/>
         <source>Free Space %1</source>
-        <translation type="unfinished"/>
+        <translation>Freier Speicher %1</translation>
     </message>
 </context>
 <context>

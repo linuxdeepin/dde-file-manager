@@ -30,7 +30,7 @@
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="72"/>
         <source>Basic Info</source>
-        <translation type="unfinished"/>
+        <translation>基本情報</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="81"/>
@@ -652,17 +652,17 @@
         <location filename="../dialogs/dialogmanager.cpp" line="518"/>
         <location filename="../dialogs/dialogmanager.cpp" line="528"/>
         <source>Show details</source>
-        <translation type="unfinished"/>
+        <translation>詳細を表示</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="522"/>
         <source>Hide details</source>
-        <translation type="unfinished"/>
+        <translation>詳細を隠す</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="523"/>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>エラー</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="550"/>
@@ -799,7 +799,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="451"/>
         <location filename="../dialogs/dialogmanager.cpp" line="599"/>
         <source>This action cannot be undone</source>
-        <translation type="unfinished"/>
+        <translation>この操作は取り消せません</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="755"/>
@@ -809,12 +809,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1087"/>
         <source>Mount partition%1 to be read only</source>
-        <translation type="unfinished"/>
+        <translation>パーティション%1 を読取専用でマウント</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1091"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
-        <translation type="unfinished"/>
+        <translation>Windowsでシャットダウン設定の「高速スタートアップを有効にする (推奨)」にチェックが入っている場合ディスクは通常どおり読み書きすることができません</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1095"/>
@@ -824,12 +824,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1101"/>
         <source>1. Reboot to enter Windows</source>
-        <translation type="unfinished"/>
+        <translation>1. 再起動してWindowsに入る</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1103"/>
         <source>3. Reboot and enter deepin</source>
-        <translation type="unfinished"/>
+        <translation>3. 再起動してdeepinに入る</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1120"/>
@@ -1356,17 +1356,17 @@
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1347"/>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1528"/>
         <source>Cannot find the mounting device</source>
-        <translation type="unfinished"/>
+        <translation>マウント中デバイスがみつかりません</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1376"/>
         <source>Cannot unmount the device</source>
-        <translation type="unfinished"/>
+        <translation>デバイスをアンマウントできません</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1496"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>デバイス「%1」を取り出せません</translation>
     </message>
 </context>
 <context>
@@ -1568,7 +1568,7 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="503"/>
         <source>merge</source>
-        <translation type="unfinished"/>
+        <translation>マージ</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="473"/>
@@ -1588,12 +1588,12 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="419"/>
         <source>Writing data...</source>
-        <translation type="unfinished"/>
+        <translation>データを書き込み中…</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="420"/>
         <source>Verifying data...</source>
-        <translation type="unfinished"/>
+        <translation>データを検証中…</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="474"/>
@@ -2306,13 +2306,13 @@
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="143"/>
         <source>Disc name:</source>
-        <translation type="unfinished"/>
+        <translation>ディスク名:</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="154"/>
         <location filename="../dialogs/burnoptdialog.cpp" line="156"/>
         <source>Maximum</source>
-        <translation type="unfinished"/>
+        <translation>最大</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="167"/>
@@ -2327,7 +2327,7 @@
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="150"/>
         <source>Write speed:</source>
-        <translation type="unfinished"/>
+        <translation>書き込み速度:</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="179"/>
@@ -2542,7 +2542,7 @@
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="141"/>
         <source>Mode:</source>
-        <translation type="unfinished"/>
+        <translation>モード:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="143"/>
@@ -2581,17 +2581,17 @@
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="189"/>
         <source>Add:</source>
-        <translation type="unfinished"/>
+        <translation>追加:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="208"/>
         <source>Location:</source>
-        <translation type="unfinished"/>
+        <translation>場所:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="215"/>
         <source>File name:</source>
-        <translation type="unfinished"/>
+        <translation>ファイル名:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="232"/>
