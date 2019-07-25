@@ -4,42 +4,42 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="2400"/>
         <source>Icon size</source>
-        <translation type="unfinished"/>
+        <translation>Icon size</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2406"/>
         <source>Auto merge</source>
-        <translation type="unfinished"/>
+        <translation>Auto merge</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2415"/>
         <source>Auto arrange</source>
-        <translation type="unfinished"/>
+        <translation>Auto arrange</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2470"/>
         <source>Set Wallpaper</source>
-        <translation type="unfinished"/>
+        <translation>Set Wallpaper</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2472"/>
         <source>Wallpaper and Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Wallpaper and Screensaver</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2553"/>
         <source>Properties</source>
-        <translation type="unfinished"/>
+        <translation>Properties</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2456"/>
         <source>Display Settings</source>
-        <translation type="unfinished"/>
+        <translation>Display Settings</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2463"/>
         <source>Corner Settings</source>
-        <translation type="unfinished"/>
+        <translation>Corner Settings</translation>
     </message>
 </context>
 <context>
@@ -47,22 +47,22 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="38"/>
         <source>Tiny</source>
-        <translation type="unfinished"/>
+        <translation>Tiny</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="39"/>
         <source>Small</source>
-        <translation type="unfinished"/>
+        <translation>Small</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="40"/>
         <source>Medium</source>
-        <translation type="unfinished"/>
+        <translation>Medium</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="41"/>
         <source>Large</source>
-        <translation type="unfinished"/>
+        <translation>Large</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="42"/>
@@ -75,57 +75,58 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="423"/>
         <source>Wallpaper Slideshow</source>
-        <translation type="unfinished"/>
+        <translation>Wallpaper Slideshow</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="449"/>
         <source>When login</source>
-        <translation type="unfinished"/>
+        <translation>When login</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="451"/>
         <source>When wakeup</source>
-        <translation type="unfinished"/>
+        <translation>When wake up</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="491"/>
         <source>Require a password on wakeup</source>
-        <translation type="unfinished"/>
+        <translation>Password-required on wake up
+</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="516"/>
         <source>Never</source>
-        <translation type="unfinished"/>
+        <translation>Never</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="517"/>
         <source>Wait:</source>
-        <translation type="unfinished"/>
+        <translation>Wait:</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="545"/>
         <source>Wallpaper</source>
-        <translation type="unfinished"/>
+        <translation>Wallpaper</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="545"/>
         <source>Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Screensaver</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="607"/>
         <source>Only desktop</source>
-        <translation type="unfinished"/>
+        <translation>Desktop only</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="608"/>
         <source>Only lock screen</source>
-        <translation type="unfinished"/>
+        <translation>Lock screen only</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="636"/>
         <source>Apply</source>
-        <translation type="unfinished"/>
+        <translation>Apply</translation>
     </message>
 </context>
 <context>
@@ -133,7 +134,7 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Fast Screen Off</source>
-        <translation type="unfinished"/>
+        <translation>Fast Screen Off</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
@@ -143,27 +144,27 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>All Windows</source>
-        <translation type="unfinished"/>
+        <translation>All Windows</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Launcher</source>
-        <translation type="unfinished"/>
+        <translation>Launcher</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation>Desktop</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>None</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="59"/>
         <source>Close Window</source>
-        <translation type="unfinished"/>
+        <translation>Close Window</translation>
     </message>
 </context>
 </TS>

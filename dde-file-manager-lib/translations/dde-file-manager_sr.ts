@@ -17,7 +17,7 @@
     <message>
         <location filename="../dialogs/closealldialogindicator.cpp" line="71"/>
         <source>Total size is %1, contains %2 files</source>
-        <translation>Укупна величина је %1, садржи %2 датотека/е</translation>
+        <translation>Укупна величина је %1, садржaj %2 датотека/е</translation>
     </message>
 </context>
 <context>
@@ -457,7 +457,7 @@
     <message>
         <location filename="../views/dstatusbar.cpp" line="71"/>
         <source>%1 folders selected (contains %2)</source>
-        <translation>%1 фасцикли/е изабрано (садржи %2 ставки/е)</translation>
+        <translation>%1 фасцикли/е изабрано (садржај %2 ставки/е)</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="72"/>
@@ -1942,7 +1942,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1117"/>
         <source>Access denied</source>
-        <translation>Приступ одбијен</translation>
+        <translation>Приступ забрањен</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1118"/>
@@ -2191,7 +2191,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="705"/>
         <source>Share folder</source>
-        <translation>Подели фасциклу</translation>
+        <translation>Дели фасциклу</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="706"/>
@@ -2207,7 +2207,7 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="708"/>
         <location filename="../views/dfmsidebardeviceitem.cpp" line="150"/>
         <source>Format</source>
-        <translation>Формат</translation>
+        <translation>Форматирај</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="711"/>

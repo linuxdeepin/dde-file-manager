@@ -662,7 +662,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="523"/>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>Klaida</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="550"/>
@@ -928,7 +928,7 @@
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2614"/>
         <source>Insufficient disc space.</source>
-        <translation type="unfinished"/>
+        <translation>Trūksta vietos diske.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2617"/>
@@ -948,7 +948,7 @@
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2626"/>
         <source>Unknown error</source>
-        <translation type="unfinished"/>
+        <translation>Nežinoma klaida</translation>
     </message>
 </context>
 <context>
@@ -1588,12 +1588,12 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="419"/>
         <source>Writing data...</source>
-        <translation type="unfinished"/>
+        <translation>Rašomi duomenys...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="420"/>
         <source>Verifying data...</source>
-        <translation type="unfinished"/>
+        <translation>Tikrinami duomenys...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="474"/>
@@ -1860,12 +1860,12 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="334"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished"/>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="335"/>
         <source>%1 / %2</source>
-        <translation type="unfinished"/>
+        <translation>%1 / %2</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1205"/>
@@ -2780,7 +2780,7 @@
     <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="96"/>
         <source>Free Space %1</source>
-        <translation type="unfinished"/>
+        <translation>Laisva vieta %1</translation>
     </message>
 </context>
 <context>

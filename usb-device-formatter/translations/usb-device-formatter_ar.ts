@@ -12,7 +12,7 @@
     <message>
         <location filename="../view/formatingpage.cpp" line="43"/>
         <source>Formatting the disk, please wait...</source>
-        <translation>تتم التهيئة ، الرجاء الانتظار قليلاّ ...</translation>
+        <translation>تتم التهيئة ، الرجاء الانتظار...</translation>
     </message>
 </context>
 <context>
@@ -108,7 +108,7 @@
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
         <source>Formatting will erase all data on this disk, are you sure you want to continue? It cannot be restored.</source>
-        <translation>ستؤدي عملية التهيئة إلى مسح كافة البيانات من جهازك.، هل أنت متأكد من الاستمرار؟ لا يمكن استعادة هذا الخيار.</translation>
+        <translation>ستؤدي عملية التهيئة إلى مسح كافة البيانات من جهازك، هل أنت متأكد من الاستمرار؟ لا يمكن إرجاع البيانات.</translation>
     </message>
 </context>
 </TS>
