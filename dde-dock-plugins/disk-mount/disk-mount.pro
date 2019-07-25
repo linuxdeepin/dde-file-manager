@@ -2,7 +2,7 @@ PREFIX = /usr
 QT              += core widgets concurrent dbus
 TEMPLATE         = lib
 CONFIG          += plugin c++11 link_pkgconfig
-PKGCONFIG       += dtkwidget gio-2.0 udisks2-qt5
+PKGCONFIG       += dtkwidget gio-qt udisks2-qt5
 
 INCLUDEPATH += /usr/include/dde-dock
 INCLUDEPATH += $$PWD/../../dde-file-manager-lib/interfaces \
@@ -53,8 +53,6 @@ translations.files = translations/*.qm
 
 target.path = $${PREFIX}/lib/dde-dock/plugins/system-trays/
 INSTALLS += target translations
-
-include($$PWD/../../dde-file-manager-lib/interfaces/vfs/vfs.pri)
 
 RESOURCES += \
     resources.qrc \
