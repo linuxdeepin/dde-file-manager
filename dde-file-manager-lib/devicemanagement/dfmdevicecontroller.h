@@ -44,6 +44,10 @@ public:
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const override;
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
 
+signals:
+    void vfsMountAdded(const QUrl &url);
+    void vfsMountRemoved(const QUrl &url);
+
 public slots:
     void mount(const QString &path);
     void unmount(const QString &path);

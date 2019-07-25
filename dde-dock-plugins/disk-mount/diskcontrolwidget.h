@@ -28,6 +28,7 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <dfmglobal.h>
+#include <dgiomount.h>
 
 class DDiskManager;
 DFM_BEGIN_NAMESPACE
@@ -35,18 +36,21 @@ class DFMSettings;
 class DFMVfsManager;
 DFM_END_NAMESPACE
 
+class DGioVolumeManager;
 class DiskControlWidget : public QScrollArea
 {
     Q_OBJECT
 
 public:
-    explicit DiskControlWidget(QWidget *parent = 0);
+    explicit DiskControlWidget(QWidget *parent = nullptr);
     ~DiskControlWidget() override;
     void initConnect();
 
     void startMonitor();
     void doStartupAutoMount();
     void unmountAll();
+
+    const QList<QExplicitlySharedDataPointer<DGioMount> > getVfsMountList();
 
 signals:
     void diskCountChanged(const int count) const;
@@ -59,6 +63,7 @@ private slots:
     void onMountRemoved(const QString &blockDevicePath, const QByteArray &mountPoint);
     void onVolumeAdded();
     void onVolumeRemoved();
+    void onVfsMountChanged(QExplicitlySharedDataPointer<DGioMount> mount);
     void unmountDisk(const QString &diskId) const;
 
 private:
@@ -67,7 +72,8 @@ private:
     bool autoMountDisabled = false;
 
     DDiskManager *m_diskManager;
-    DFM_NAMESPACE::DFMVfsManager *m_vfsManager;
+
+    QScopedPointer<DGioVolumeManager> m_vfsManager;
 };
 
 #endif // DISKCONTROLWIDGET_H

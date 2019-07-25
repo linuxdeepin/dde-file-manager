@@ -38,7 +38,7 @@ class DiskMountPlugin : public QObject, PluginsItemInterface
     Q_PLUGIN_METADATA(IID "com.deepin.dock.PluginsItemInterface" FILE "disk-mount.json")
 
 public:
-    explicit DiskMountPlugin(QObject *parent = 0);
+    explicit DiskMountPlugin(QObject *parent = nullptr);
 
     const QString pluginName() const Q_DECL_OVERRIDE;
     void init(PluginProxyInterface *proxyInter) Q_DECL_OVERRIDE;
