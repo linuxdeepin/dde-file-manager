@@ -67,18 +67,6 @@ void GvfsMountClient::initConnect()
 //    connect(fileSignalManager, &FileSignalManager::requestSMBMount, this, &GvfsMountClient::mountByEvent);
 }
 
-void GvfsMountClient::mount(GFile *file)
-{
-    GMountOperation *op;
-
-    if (file == NULL)
-        return;
-
-    op = new_mount_op();
-
-    g_file_mount_enclosing_volume (file, static_cast<GMountMountFlags>(0), op, NULL, mount_done_cb, op);
-}
-
 int GvfsMountClient::mount_sync(const DFMUrlBaseEvent &event)
 {
     MountEvent = event;

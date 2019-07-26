@@ -57,7 +57,6 @@ public:
     static QJsonObject SMBLoginObj;
     static DFMUrlBaseEvent MountEvent;
 
-    static void mount(GFile *file);
     static int mount_sync(const DFMUrlBaseEvent &event);
     static GMountOperation *new_mount_op(void);
     static void mount_done_cb(GObject *object, GAsyncResult *res, gpointer user_data);
