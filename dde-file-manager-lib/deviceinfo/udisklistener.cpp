@@ -392,27 +392,6 @@ UDiskDeviceInfoPointer UDiskListener::getDeviceByDeviceID(const QString &deviceI
     return UDiskDeviceInfoPointer();
 }
 
-UDiskDeviceInfoPointer UDiskListener::getDeviceByUUID(const QString &uuid)
-{
-    foreach (const UDiskDeviceInfoPointer &info, m_list) {
-        if (info->getDiskInfo().uuid() == uuid) {
-            return info;
-        }
-    }
-    return UDiskDeviceInfoPointer();
-}
-
-UDiskDeviceInfo::MediaType UDiskListener::getDeviceMediaType(const QString &path)
-{
-    for (int i = 0; i < m_list.size(); i++) {
-        UDiskDeviceInfoPointer info = m_list.at(i);
-        if (info && info->getMountPointUrl().toLocalFile() == path) {
-            return info->getMediaType();
-        }
-    }
-    return UDiskDeviceInfo::unknown;
-}
-
 void UDiskListener::loadCustomVolumeLetters()
 {
     const QSet<QString> &keys = DFMApplication::genericObtuselySetting()->keys("Disk/Volume");
