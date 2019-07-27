@@ -119,7 +119,6 @@ HEADERS += \
     controllers/subscriber.h \
     models/dfileselectionmodel.h \
     dialogs/closealldialogindicator.h \
-    gvfs/gvfsmountclient.h \
     gvfs/mountaskpassworddialog.h \
     gvfs/networkmanager.h \
     gvfs/secretmanager.h \
@@ -307,7 +306,6 @@ SOURCES += \
     controllers/subscriber.cpp \
     models/dfileselectionmodel.cpp \
     dialogs/closealldialogindicator.cpp \
-    gvfs/gvfsmountclient.cpp \
     gvfs/mountaskpassworddialog.cpp \
     gvfs/networkmanager.cpp \
     gvfs/secretmanager.cpp \

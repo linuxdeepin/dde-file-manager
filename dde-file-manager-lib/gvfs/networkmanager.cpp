@@ -34,7 +34,7 @@
 
 #include "views/windowmanager.h"
 
-#include "gvfsmountclient.h"
+#include "gvfsmountmanager.h"
 
 #include <QProcess>
 #include <QRegularExpression>
@@ -190,7 +190,7 @@ void NetworkManager::network_enumeration_finished(GObject *source_object, GAsync
             }
         }
         qDebug() << error->message;
-        int ret = gvfsMountClient->mount_sync(*event);
+        int ret = gvfsMountManager->mount_sync(*event);
         g_clear_error (&error);
 
         if (eventLoop) {

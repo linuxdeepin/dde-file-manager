@@ -37,7 +37,6 @@
 #include "controllers/bookmarkmanager.h"
 #include "interfaces/dfilemenumanager.h"
 #include "controllers/pathmanager.h"
-#include "gvfs/gvfsmountclient.h"
 #include "gvfs/gvfsmountmanager.h"
 #include "gvfs/networkmanager.h"
 #include "gvfs/secretmanager.h"
@@ -286,15 +285,10 @@ void DFMGlobal::initNetworkManager()
     networkManager;
 }
 
-void DFMGlobal::initGvfsMountClient()
-{
-    gvfsMountClient;
-}
-
 void DFMGlobal::initGvfsMountManager()
 {
     QtConcurrent::run(QThreadPool::globalInstance(), gvfsMountManager,
-                                             &GvfsMountManager::startMonitor);
+                                                 &GvfsMountManager::startMonitor);
 }
 
 void DFMGlobal::initSecretManager()

@@ -46,10 +46,13 @@
 #include "ddiskmanager.h"
 #include "dblockdevice.h"
 #include "ddiskdevice.h"
+#include "mountaskpassworddialog.h"
 
 #include <QThread>
 #include <QApplication>
 #include <QLoggingCategory>
+
+#include <views/windowmanager.h>
 
 /*afc has no unix_device, so use uuid as unix_device*/
 
@@ -66,6 +69,11 @@ QStringList GvfsMountManager::NoVolumes_Mounts_Keys = {}; // key is mount point 
 QStringList GvfsMountManager::Lsblk_Keys = {}; // key is got by lsblk
 
 MountSecretDiskAskPasswordDialog* GvfsMountManager::mountSecretDiskAskPasswordDialog = nullptr;
+
+bool GvfsMountManager::AskingPassword = false;
+QJsonObject GvfsMountManager::SMBLoginObj = {};
+DFMUrlBaseEvent GvfsMountManager::MountEvent = DFMUrlBaseEvent(Q_NULLPTR, DUrl());
+QPointer<QEventLoop> GvfsMountManager::eventLoop;
 
 #ifdef QT_DEBUG
 Q_LOGGING_CATEGORY(mountManager, "gvfs.mountMgr")
@@ -690,13 +698,16 @@ void GvfsMountManager::monitor_volume_changed(GVolumeMonitor *volume_monitor, GV
     }
 }
 
-GMountOperation *GvfsMountManager::new_mount_op()
+GMountOperation *GvfsMountManager::new_mount_op(bool isDisk = true)
 {
     GMountOperation *op;
 
     op = g_mount_operation_new ();
 
-    g_signal_connect (op, "ask_password", G_CALLBACK (&GvfsMountManager::ask_password_cb), nullptr);
+    g_signal_connect (op, "ask_question", G_CALLBACK (ask_question_cb), NULL);
+    g_signal_connect (op, "ask_password",
+                      isDisk ? G_CALLBACK (ask_disk_password_cb) : G_CALLBACK (ask_password_cb),
+                      nullptr);
 
     /* TODO: we *should* also connect to the "aborted" signal but since the
      *       main thread is blocked handling input we won't get that signal
@@ -706,7 +717,145 @@ GMountOperation *GvfsMountManager::new_mount_op()
     return op;
 }
 
+static int requestAnswerDialog(WId parentWindowId, const QString& message, QStringList choices)
+{
+    DDialog askQuestionDialog(WindowManager::getWindowById(parentWindowId));
+
+    askQuestionDialog.setMessage(message);
+    askQuestionDialog.addButtons(choices);
+    askQuestionDialog.setMaximumWidth(480);
+
+    return askQuestionDialog.exec();
+}
+
+// blumia: This callback is mainly for sftp fingerprint identity dialog, but should works on any ask-question signal.
+//         ref: https://www.freedesktop.org/software/gstreamer-sdk/data/docs/latest/gio/GMountOperation.html#GMountOperation-ask-question
+void GvfsMountManager::ask_question_cb(GMountOperation *op, const char *message, const GStrv choices)
+{
+    char **ptr = choices;
+    int choice;
+    QStringList choiceList;
+
+    QString oneMessage(message);
+    qCDebug(mountManager()) << "ask_question_cb() message: " << message;
+
+    while (*ptr) {
+        QString oneOption = QString::asprintf("%s", *ptr++);
+        qCDebug(mountManager()) << "ask_question_cb()  - option(s): " << oneOption;
+        choiceList << oneOption;
+    }
+
+    choice = DThreadUtil::runInMainThread(requestAnswerDialog, MountEvent.windowId(), oneMessage, choiceList);
+    qCDebug(mountManager()) << "ask_question_cb() user choice(start at 0): " << choice;
+
+    // check if choose is invalid
+    if (choice < 0 && choice >= choiceList.count()) {
+        g_mount_operation_reply(op, G_MOUNT_OPERATION_ABORTED);
+        return;
+    }
+
+    g_mount_operation_set_choice(op, choice);
+    g_mount_operation_reply(op, G_MOUNT_OPERATION_HANDLED);
+
+    return;
+}
+
+static QJsonObject requestPasswordDialog(WId parentWindowId, bool showDomainLine, const QJsonObject &data)
+{
+    MountAskPasswordDialog askPasswordDialog(WindowManager::getWindowById(parentWindowId));
+
+    askPasswordDialog.setLoginData(data);
+    askPasswordDialog.setDomainLineVisible(showDomainLine);
+
+    int ret = askPasswordDialog.exec();
+
+    if (ret == DDialog::Accepted) {
+        return askPasswordDialog.getLoginData();
+    }
+
+    return QJsonObject();
+}
+
 void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message, const char *default_user, const char *default_domain, GAskPasswordFlags flags)
+{
+    bool anonymous = g_mount_operation_get_anonymous(op);
+    GPasswordSave passwordSave = g_mount_operation_get_password_save(op);
+
+    const char* default_password = g_mount_operation_get_password(op);
+
+    qCDebug(mountManager()) << "anonymous" << anonymous;
+    qCDebug(mountManager()) << "message" << message;
+    qCDebug(mountManager()) << "username" << default_user;
+    qCDebug(mountManager()) << "domain" << default_domain;
+    qCDebug(mountManager()) << "password" << default_password;
+    qCDebug(mountManager()) << "GAskPasswordFlags" << flags;
+    qCDebug(mountManager()) << "passwordSave" << passwordSave;
+
+    QJsonObject obj;
+    obj.insert("message", message);
+    obj.insert("anonymous", anonymous);
+    obj.insert("username", default_user);
+    obj.insert("domain", default_domain);
+    obj.insert("password", default_password);
+    obj.insert("GAskPasswordFlags", flags);
+    obj.insert("passwordSave", passwordSave);
+
+    QJsonObject loginObj = DThreadUtil::runInMainThread(requestPasswordDialog, MountEvent.windowId(), MountEvent.fileUrl().isSMBFile(), obj);
+
+    if (!loginObj.isEmpty()) {
+        anonymous = loginObj.value("anonymous").toBool();
+        QString username = loginObj.value("username").toString();
+        QString domain = loginObj.value("domain").toString();
+        QString password = loginObj.value("password").toString();
+        GPasswordSave passwordsaveFlag =  static_cast<GPasswordSave>(loginObj.value("passwordSave").toInt());
+
+        SMBLoginObj = loginObj;
+
+        if ((flags & G_ASK_PASSWORD_ANONYMOUS_SUPPORTED) && anonymous) {
+            g_mount_operation_set_anonymous (op, TRUE);
+        } else {
+            if (flags & G_ASK_PASSWORD_NEED_USERNAME) {
+                g_mount_operation_set_username (op, username.toStdString().c_str());
+            }
+
+            if (flags & G_ASK_PASSWORD_NEED_DOMAIN) {
+                g_mount_operation_set_domain (op, domain.toStdString().c_str());
+            }
+
+            if (flags & G_ASK_PASSWORD_NEED_PASSWORD) {
+                g_mount_operation_set_password (op, password.toStdString().c_str());
+            }
+
+            if (flags & G_ASK_PASSWORD_SAVING_SUPPORTED) {
+                g_mount_operation_set_password_save(op, passwordsaveFlag);
+            }
+        }
+
+        /* Only try anonymous access once. */
+        if (anonymous &&
+            GPOINTER_TO_INT (g_object_get_data (G_OBJECT (op), "state")) == MOUNT_OP_ASKED)
+        {
+            g_object_set_data (G_OBJECT (op), "state", GINT_TO_POINTER (MOUNT_OP_ABORTED));
+            g_mount_operation_reply (op, G_MOUNT_OPERATION_ABORTED);
+        }
+        else
+        {
+            qCDebug(mountManager()) << "g_mount_operation_reply before";
+//            g_object_set_data (G_OBJECT (op), "state", GINT_TO_POINTER (MOUNT_OP_ASKED));
+            g_mount_operation_reply (op, G_MOUNT_OPERATION_HANDLED);
+            qCDebug(mountManager()) << "g_mount_operation_reply end";
+        }
+        AskingPassword = true;
+        qCDebug(mountManager()) << "AskingPassword" << AskingPassword;
+
+    } else {
+        qCDebug(mountManager()) << "cancel connect";
+        g_object_set_data (G_OBJECT (op), "state", GINT_TO_POINTER (MOUNT_OP_ABORTED));
+        g_mount_operation_reply (op, G_MOUNT_OPERATION_ABORTED);
+    }
+}
+
+void GvfsMountManager::ask_disk_password_cb(GMountOperation *op, const char *message, const char *default_user, const char *default_domain, GAskPasswordFlags flags)
 {
     if (mountSecretDiskAskPasswordDialog){
         return;
@@ -1171,6 +1320,82 @@ void GvfsMountManager::mount(const QDiskInfo &diskInfo, bool silent)
     }else{
         mount_device(diskInfo.unix_device(), silent);
     }
+}
+
+int GvfsMountManager::mount_sync(const DFMUrlBaseEvent &event)
+{
+    MountEvent = event;
+    QPointer<QEventLoop> oldEventLoop = eventLoop;
+    QEventLoop event_loop;
+
+    eventLoop = &event_loop;
+
+    GFile* file = g_file_new_for_uri(event.fileUrl().toString().toUtf8().constData());
+
+    if (file == NULL)
+        return -1;
+
+    GMountOperation *op = new_mount_op(false);
+    g_file_mount_enclosing_volume(file, static_cast<GMountMountFlags>(0),
+                                  op, nullptr, mount_done_cb, op);
+
+    int ret = eventLoop->exec();
+
+    if (oldEventLoop) {
+        oldEventLoop->exit(ret);
+    }
+
+    return ret;
+}
+
+void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointer user_data)
+{
+    gboolean succeeded;
+    GError *error = NULL;
+    GMountOperation *op = static_cast<GMountOperation*>(user_data);
+
+    succeeded = g_file_mount_enclosing_volume_finish (G_FILE (object), res, &error);
+
+    if (!succeeded) {
+        Q_ASSERT(error->domain == G_IO_ERROR);
+
+        bool showWarnDlg = false;
+
+        switch (error->code) {
+        case G_IO_ERROR_FAILED_HANDLED: // Operation failed and a helper program has already interacted with the user. Do not display any error dialog.
+            break;
+        default:
+            showWarnDlg = true;
+            break;
+        }
+
+        if (showWarnDlg) {
+            DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
+                                         tr("Mounting device error"), QString(error->message));
+        }
+
+        qCDebug(mountManager()) << "g_file_mount_enclosing_volume_finish" << succeeded << error;
+        qCDebug(mountManager()) << "username" << g_mount_operation_get_username(op) << error->message;
+    } else {
+        qCDebug(mountManager()) << "g_file_mount_enclosing_volume_finish" << succeeded << AskingPassword;
+        if (AskingPassword) {
+            SMBLoginObj.insert("id", MountEvent.url().toString());
+            if (SMBLoginObj.value("passwordSave").toInt() == 2) {
+                SMBLoginObj.remove("password");
+                emit fileSignalManager->requsetCacheLoginData(SMBLoginObj);
+            }
+            SMBLoginObj = {};
+            AskingPassword = false;
+        } else {
+            qCDebug(mountManager()) << "username" << g_mount_operation_get_username(op);
+        }
+    }
+
+    if (eventLoop) {
+        eventLoop->exit(succeeded ? 0 : -1);
+    }
+
+    emit fileSignalManager->requestChooseSmbMountedFile(MountEvent);
 }
 
 void GvfsMountManager::mount_mounted(const QString &mounted_root_uri, bool silent)

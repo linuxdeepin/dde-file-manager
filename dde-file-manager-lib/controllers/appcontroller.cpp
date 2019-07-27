@@ -56,7 +56,6 @@
 #include "dbusinterface/commandmanager_interface.h"
 
 #include "gvfs/networkmanager.h"
-#include "gvfs/gvfsmountclient.h"
 #include "gvfs/gvfsmountmanager.h"
 #include "gvfs/secretmanager.h"
 #include "usershare/usersharemanager.h"
@@ -980,7 +979,6 @@ void AppController::initConnect()
 void AppController::createGVfSManager()
 {
     networkManager;
-    gvfsMountClient;
     secretManager;
 }
 
