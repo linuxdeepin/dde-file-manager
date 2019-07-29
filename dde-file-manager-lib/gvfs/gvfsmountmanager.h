@@ -27,6 +27,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include "dfmevent.h"
 #include "durl.h"
 
 class QDrive;
@@ -48,6 +49,12 @@ public:
     explicit GvfsMountManager(QObject *parent = 0);
     void initConnect();
 
+    enum MountOpState{
+      MOUNT_OP_NONE,
+      MOUNT_OP_ASKED,
+      MOUNT_OP_ABORTED
+    };
+
     static GvfsMountManager* instance();
     static MountSecretDiskAskPasswordDialog* mountSecretDiskAskPasswordDialog;
 
@@ -62,6 +69,10 @@ public:
 
     static QStringList NoVolumes_Mounts_Keys;
     static QStringList Lsblk_Keys;
+
+    static bool AskingPassword;
+    static QJsonObject SMBLoginObj;
+    static DFMUrlBaseEvent MountEvent;
 
     static QStringList getIconNames(GThemedIcon *icon);
     static QDrive gDriveToqDrive(GDrive *drive);
@@ -89,8 +100,14 @@ public:
     static void monitor_volume_changed (GVolumeMonitor *volume_monitor, GVolume *volume);
 
 
-    static GMountOperation* new_mount_op();
+    static GMountOperation* new_mount_op(bool isDisk);
+    static void ask_question_cb(GMountOperation *op, const char *message, const GStrv choices);
     static void ask_password_cb(GMountOperation *op,
+                     const char      *message,
+                     const char      *default_user,
+                     const char      *default_domain,
+                     GAskPasswordFlags flags);
+    static void ask_disk_password_cb(GMountOperation *op,
                                 const char      *message,
                                 const char      *default_user,
                                 const char      *default_domain,
@@ -98,6 +115,8 @@ public:
 
     static void mount(const QString& path, bool silent = false);
     static void mount(const QDiskInfo& diskInfo, bool silent = false);
+    static int mount_sync(const DFMUrlBaseEvent &event);
+    static void mount_done_cb(GObject *object, GAsyncResult *res, gpointer user_data);
     static void mount_device(const QString& unix_device, bool silent = false);
     static void mount_mounted(const QString& mounted_root_uri, bool silent = false);
     static void unmount(const QDiskInfo& diskInfo);
@@ -152,7 +171,8 @@ public slots:
     void listMountsBylsblk();
 
 private:
-    GVolumeMonitor* m_gVolumeMonitor = NULL;
+    GVolumeMonitor* m_gVolumeMonitor = nullptr;
+    static QPointer<QEventLoop> eventLoop;
     static bool errorCodeNeedSilent(int errorCode);
 };
 

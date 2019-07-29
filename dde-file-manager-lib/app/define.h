@@ -49,7 +49,6 @@ DISOMasterNS::DISOMaster *getDISOMaster(bool doContruct = false);
 #define systemPathManager Singleton<PathManager>::instance()
 #define mimeTypeDisplayManager Singleton<MimeTypeDisplayManager>::instance()
 #define networkManager Singleton<NetworkManager>::instance()
-#define gvfsMountClient Singleton<GvfsMountClient>::instance()
 #define gvfsMountManager getGvfsMountManager(true)
 #define secretManager Singleton<SecretManager>::instance()
 #define userShareManager Singleton<UserShareManager>::instance()
