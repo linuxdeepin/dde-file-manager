@@ -1,6 +1,6 @@
 # Actually for "Disk" or say "Partition"
 # For replacing stuff in deviceinfo/
-# Replacement of current UDisksDevice* / GvfsMountClient* / etc.
+# Replacement of current UDisksDevice* / GvfsMountManager* / etc.
 HEADERS += \
     $$PWD/dfmabstractdeviceinterface.h \
     $$PWD/dfmudisks2deviceinfo.h \

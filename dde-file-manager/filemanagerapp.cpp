@@ -131,10 +131,7 @@ void FileManagerApp::initApp()
     /*init networkManager */
     DFMGlobal::initNetworkManager();
 
-    /*init gvfsMountClient */
-    DFMGlobal::initGvfsMountClient();
-
-    /*init gvfsMountClient */
+    /*init gvfsMountManager */
     DFMGlobal::initGvfsMountManager();
 
     /*init secretManger */

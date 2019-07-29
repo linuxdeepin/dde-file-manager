@@ -81,9 +81,6 @@ QDBusObjectPath DBusFileDialogManager::createDialog(QString key)
         /*init networkManager */
         DFMGlobal::initNetworkManager();
 
-        /*init gvfsMountClient */
-        DFMGlobal::initGvfsMountClient();
-
         /*init secretManger */
         DFMGlobal::initSecretManager();
 
