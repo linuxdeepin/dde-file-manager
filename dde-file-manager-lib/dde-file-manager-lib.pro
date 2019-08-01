@@ -31,7 +31,7 @@ isEmpty(PREFIX){
 }
 
 CONFIG += c++11 link_pkgconfig
-PKGCONFIG += gsettings-qt libsecret-1 gio-unix-2.0 poppler-cpp dtkwidget udisks2-qt5 disomaster
+PKGCONFIG += gsettings-qt libsecret-1 gio-unix-2.0 poppler-cpp dtkwidget udisks2-qt5 disomaster gio-qt
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
 
