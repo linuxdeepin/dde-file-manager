@@ -62,7 +62,7 @@
 #include <QStandardPaths>
 #include <QLocale>
 
-#include <glib.h> // only for g_get_user_special_dir()
+#include <dglibutils.h>
 #include <memory> // std::unique_ptr
 
 #ifdef SW_LABEL
@@ -1451,17 +1451,6 @@ static void onActionTriggered(QAction *action)
     AppController::createFile(data.first, target_dir, data.second, menu ? menu->eventId() : -1);
 }
 
-// ------------ Temporary gchar* Wrapper Start -------------
-struct CStrDeleter {
-    void operator()(char* ptr) const {
-        g_free(ptr);
-    }
-};
-
-// smart pointer for C string (char*) which should be freed by free()
-typedef std::unique_ptr<char[], CStrDeleter> CStrPtr;
-// ------------- Temporary gchar* Wrapper End --------------
-
 static QList<QAction *> getTemplateFileList()
 {
     QList<QAction *> result;
@@ -1550,9 +1539,8 @@ static QList<QAction *> getTemplateFileList()
     //         It's suppored by many GNOME Nautilus based file manager. I don't think it's a good idea
     //         since we can't localization the file name text at all.
     // blumia: templateFolderPathCStr owned by glib, should NOT be freeed.
-    const gchar * templateFolderPathCStr = g_get_user_special_dir(G_USER_DIRECTORY_TEMPLATES);
-    if (templateFolderPathCStr != nullptr) {
-        QString templateFolderPath(templateFolderPathCStr);
+    QString templateFolderPath = DGlibUtils::userSpecialDir(DGlibUserDirectory::USER_DIRECTORY_TEMPLATES);
+    if (!templateFolderPath.isEmpty()) {
         QDir templateFolder(templateFolderPath);
         if (templateFolder.exists() && templateFolder != QDir::home()) { // accroding to xdg-user-dir, dir point to home means disable.
             const QFileInfoList &templateFileInfoList = templateFolder.entryInfoList(QDir::Files | QDir::Readable | QDir::NoSymLinks);
@@ -1572,17 +1560,13 @@ static QList<QAction *> getTemplateFileList()
     }
 
     // blumia: Following is support for `kf5-config --path templates` Templates folder.
-    // blumia: shareFolderPathCStr owned by glib, should NOT be freeed.
-    const gchar * const * shareFolderPathCStr = g_get_system_data_dirs();
+    QStringList systemDataFolderList = DGlibUtils::systemDataDirs();
     QStringList templateFolderList;
-    // system-wide template dirs
-    for(auto data_dir = shareFolderPathCStr; *data_dir; ++data_dir) {
-        CStrPtr dir_name{g_build_filename(*data_dir, "templates", nullptr)};
-        templateFolderList << QString(dir_name.get());
+    for (const QString & oneFolder : systemDataFolderList) {
+        templateFolderList << (oneFolder + QStringLiteral("templates"));
     }
     // user-specific template dir
-    CStrPtr dir_name{g_build_filename(g_get_user_data_dir(), "templates", nullptr)};
-    templateFolderList << QString(dir_name.get());
+    templateFolderList << QString(DGlibUtils::userDataDir() + "templates");
     // start scan..
     for (const QString & oneTemplateFolder : templateFolderList) {
         QDir templateFolder(oneTemplateFolder);
