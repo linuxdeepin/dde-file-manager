@@ -61,7 +61,7 @@ bool DAttachedVfsDevice::deviceUsageValid()
     if (dgioMount.isNull()) return false;
 
     QExplicitlySharedDataPointer<DGioFile> file = dgioMount->getRootFile();
-    QExplicitlySharedDataPointer<DGioFileInfo> fsInfo = file->createFileSystemInfo();
+    QExplicitlySharedDataPointer<DGioFileInfo> fsInfo = file->createFileSystemInfo("filesystem::*");
 
     return fsInfo;
 }
@@ -69,7 +69,7 @@ bool DAttachedVfsDevice::deviceUsageValid()
 QPair<quint64, quint64> DAttachedVfsDevice::deviceUsage()
 {
     QExplicitlySharedDataPointer<DGioFile> file = dgioMount->getRootFile();
-    QExplicitlySharedDataPointer<DGioFileInfo> fsInfo = file->createFileSystemInfo();
+    QExplicitlySharedDataPointer<DGioFileInfo> fsInfo = file->createFileSystemInfo("filesystem::*");
 
     if (fsInfo) {
         return QPair<quint64, quint64>(fsInfo->fsFreeBytes(), fsInfo->fsTotalBytes());
