@@ -94,16 +94,6 @@ void QMount::setIs_shadowed(bool is_shadowed)
     m_is_shadowed = is_shadowed;
 }
 
-QString QMount::sort_key() const
-{
-    return m_sort_key;
-}
-
-void QMount::setSort_key(const QString &sort_key)
-{
-    m_sort_key = sort_key;
-}
-
 void QMount::setName(const QString &name)
 {
     m_name = name;

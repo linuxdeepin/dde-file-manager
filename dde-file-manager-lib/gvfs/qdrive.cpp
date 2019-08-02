@@ -169,16 +169,6 @@ void QDrive::setStart_stop_type(const GDriveStartStopType &start_stop_type)
     m_start_stop_type = start_stop_type;
 }
 
-QString QDrive::sort_key() const
-{
-    return m_sort_key;
-}
-
-void QDrive::setSort_key(const QString &sort_key)
-{
-    m_sort_key = sort_key;
-}
-
 QString QDrive::unix_device() const
 {
     return m_unix_device;
