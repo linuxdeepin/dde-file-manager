@@ -54,9 +54,6 @@ public:
     bool is_shadowed() const;
     void setIs_shadowed(bool is_shadowed);
 
-    QString sort_key() const;
-    void setSort_key(const QString &sort_key);
-
     void setName(const QString &name);
 
     void setIcons(const QStringList &icons);
@@ -74,7 +71,6 @@ private:
     bool m_can_unmount = false;
     bool m_can_eject = false;
     bool m_is_shadowed = false;
-    QString m_sort_key;
 };
 
 QDebug operator<<(QDebug dbg, const QMount& mount);
