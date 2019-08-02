@@ -99,16 +99,6 @@ void QVolume::setShould_automount(bool should_automount)
     m_should_automount = should_automount;
 }
 
-QString QVolume::sort_key() const
-{
-    return m_sort_key;
-}
-
-void QVolume::setSort_key(const QString &sort_key)
-{
-    m_sort_key = sort_key;
-}
-
 QString QVolume::unix_device() const
 {
     return m_unix_device;

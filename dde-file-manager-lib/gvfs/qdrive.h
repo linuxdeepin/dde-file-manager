@@ -81,9 +81,6 @@ public:
     GDriveStartStopType start_stop_type() const;
     void setStart_stop_type(const GDriveStartStopType &start_stop_type);
 
-    QString sort_key() const;
-    void setSort_key(const QString &sort_key);
-
     QString unix_device() const;
     void setUnix_device(const QString &unix_device);
 
@@ -105,7 +102,6 @@ private:
     bool m_is_removable = false;
     bool m_is_media_removable = false;
     GDriveStartStopType m_start_stop_type;
-    QString m_sort_key;
 };
 
 Q_DECLARE_METATYPE(QDrive)

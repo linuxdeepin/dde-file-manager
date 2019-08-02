@@ -46,7 +46,7 @@ class GvfsMountManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit GvfsMountManager(QObject *parent = 0);
+    explicit GvfsMountManager(QObject *parent = nullptr);
     void initConnect();
 
     enum MountOpState{
@@ -150,8 +150,6 @@ public:
 
 signals:
     void loadDiskInfoFinished();
-    void drive_connected(const QDrive& drive);
-    void drive_disconnected(const QDrive& drive);
     void mount_added(const QDiskInfo& diskInfo);
     void mount_removed(const QDiskInfo& diskInfo);
     void volume_added(const QDiskInfo& diskInfo);

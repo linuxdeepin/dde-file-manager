@@ -104,8 +104,6 @@ void GvfsMountManager::initConnect()
         g_signal_connect (m_gVolumeMonitor, "mount-added", (GCallback)&GvfsMountManager::monitor_mount_added_root, nullptr);
         g_signal_connect (m_gVolumeMonitor, "mount-removed", (GCallback)&GvfsMountManager::monitor_mount_removed_root, nullptr);
     }else{
-        g_signal_connect (m_gVolumeMonitor, "drive-connected", (GCallback)&GvfsMountManager::monitor_drive_connected, nullptr);
-        g_signal_connect (m_gVolumeMonitor, "drive-disconnected", (GCallback)&GvfsMountManager::monitor_drive_disconnected, nullptr);
         g_signal_connect (m_gVolumeMonitor, "mount-added", (GCallback)&GvfsMountManager::monitor_mount_added, nullptr);
         g_signal_connect (m_gVolumeMonitor, "mount-removed", (GCallback)&GvfsMountManager::monitor_mount_removed, nullptr);
         g_signal_connect (m_gVolumeMonitor, "mount-changed", (GCallback)&GvfsMountManager::monitor_mount_changed, nullptr);
@@ -141,7 +139,6 @@ QDrive GvfsMountManager::gDriveToqDrive(GDrive *drive)
     char *name;
     char **ids;
     GIcon *icon;
-    const gchar *sort_key;
 
     name = g_drive_get_name (drive);
     qDrive.setName(QString(name));
@@ -188,11 +185,6 @@ QDrive GvfsMountManager::gDriveToqDrive(GDrive *drive)
         g_object_unref (icon);
     }
 
-    sort_key = g_drive_get_sort_key(drive);
-    if (sort_key != nullptr){
-        qDrive.setSort_key(QString(sort_key));
-    }
-
     return qDrive;
 }
 
@@ -202,7 +194,6 @@ QVolume GvfsMountManager::gVolumeToqVolume(GVolume *volume)
     char *name;
     char **ids;
     GIcon *icon;
-    const gchar *sort_key;
 
     GFile *root;
     GFile *activation_root;
@@ -256,11 +247,6 @@ QVolume GvfsMountManager::gVolumeToqVolume(GVolume *volume)
         g_object_unref (icon);
     }
 
-    sort_key = g_volume_get_sort_key(volume);
-    if (sort_key != nullptr){
-        qVolume.setSort_key(QString(sort_key));
-    }
-
     GMount *mount = g_volume_get_mount(volume);
     if (mount){
         qVolume.setIsMounted(true);
@@ -296,7 +282,6 @@ QMount GvfsMountManager::gMountToqMount(GMount *mount)
     char *name, *uri;
     GFile *root, *default_location;
     GIcon *icon;
-    const gchar *sort_key;
 
     name = g_mount_get_name (mount);
     qMount.setName(QString(name));
@@ -335,11 +320,6 @@ QMount GvfsMountManager::gMountToqMount(GMount *mount)
     qMount.setCan_unmount(g_mount_can_unmount (mount));
     qMount.setCan_eject(g_mount_can_eject (mount));
     qMount.setIs_shadowed(g_mount_is_shadowed (mount));
-
-    sort_key = g_mount_get_sort_key (mount);
-    if (sort_key != nullptr){
-        qMount.setSort_key(QString(sort_key));
-    }
 
     return qMount;
 }
@@ -448,24 +428,6 @@ QVolume GvfsMountManager::getVolumeByUnixDevice(const QString &unix_device)
     return QVolume();
 }
 
-void GvfsMountManager::monitor_drive_connected(GVolumeMonitor *volume_monitor, GDrive *drive)
-{
-    Q_UNUSED(volume_monitor)
-    qCDebug(mountManager()) << "==============================monitor_drive_connected==============================";
-    QDrive qDrive = gDriveToqDrive(drive);
-    qCDebug(mountManager()) << qDrive;
-    emit gvfsMountManager->drive_connected(qDrive);
-}
-
-void GvfsMountManager::monitor_drive_disconnected(GVolumeMonitor *volume_monitor, GDrive *drive)
-{
-    Q_UNUSED(volume_monitor)
-    qCDebug(mountManager()) << "==============================monitor_drive_disconnected==============================";
-    QDrive qDrive = gDriveToqDrive(drive);
-    qCDebug(mountManager()) << qDrive;
-    emit gvfsMountManager->drive_disconnected(qDrive);
-}
-
 void GvfsMountManager::monitor_mount_added_root(GVolumeMonitor *volume_monitor, GMount *mount)
 {
     Q_UNUSED(volume_monitor)
@@ -480,8 +442,6 @@ void GvfsMountManager::monitor_mount_added_root(GVolumeMonitor *volume_monitor, 
             return;
         }
     }
-
-
 }
 
 void GvfsMountManager::monitor_mount_removed_root(GVolumeMonitor *volume_monitor, GMount *mount)

@@ -40,9 +40,6 @@ public:
     QString name() const;
     void setName(const QString &name);
 
-    QMap<QString, QString> identifiers() const;
-    void setIdentifiers(const QMap<QString, QString> &identifiers);
-
     QString uuid() const;
     void setUuid(const QString &uuid);
 
@@ -60,9 +57,6 @@ public:
 
     bool should_automount() const;
     void setShould_automount(bool should_automount);
-
-    QString sort_key() const;
-    void setSort_key(const QString &sort_key);
 
     QString unix_device() const;
     void setUnix_device(const QString &unix_device);
@@ -109,7 +103,6 @@ private:
     bool m_should_automount = false;
     bool m_isMounted = false;
     bool m_is_removable = false;
-    QString m_sort_key;
     QDrive m_drive;
 };
 
