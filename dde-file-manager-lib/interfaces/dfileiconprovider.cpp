@@ -21,7 +21,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <gio/gio.h>
+#include <dgiofile.h>
+#include <dgiofileinfo.h>
 
 #include "dfileiconprovider.h"
 #include "dfileinfo.h"
@@ -55,36 +56,23 @@ void DFileIconProviderPrivate::init()
 QIcon DFileIconProviderPrivate::getFilesystemIcon(const QFileInfo &info) const
 {
     QIcon icon;
-    const QByteArray &file_path = QFile::encodeName(info.absoluteFilePath());
 
-    GFile *g_file = g_file_new_for_path(file_path);
-    GError *error = nullptr;
-    GFileInfo *g_file_info = g_file_query_info(g_file, G_FILE_ATTRIBUTE_STANDARD_ICON, G_FILE_QUERY_INFO_NONE, nullptr, &error);
+    QScopedPointer<DGioFile> file(DGioFile::createFromPath(info.absoluteFilePath()));
+    QExplicitlySharedDataPointer<DGioFileInfo> fileinfo = file->createFileInfo();
+    QStringList icons = fileinfo->themedIconNames();
+    if (!icons.isEmpty()) return QIcon::fromTheme(icons.first());
 
-    if (error) {
-        qWarning() << error->message;
-
-        g_error_free(error);
+    QString iconStr(fileinfo->iconString());
+    if (iconStr.startsWith('/')) {
+        icon = QIcon(iconStr);
     } else {
-        GIcon *g_icon = g_file_info_get_icon(g_file_info);
-        char *g_icon_name = g_icon_to_string(g_icon);
-
-        if (g_icon_name) {
-            const QByteArray icon_name(g_icon_name);
-
-            if (icon_name.startsWith("/")) {
-                icon = QIcon(QFile::decodeName(icon_name));
-            } else {
-                icon = QIcon::fromTheme(QFile::decodeName(icon_name));
-            }
-
-            g_free(g_icon_name);
-        }
-
-        g_object_unref(g_file_info);
+        // blumia: I guess it will failed since the g_icon_to_string() returned str can be something like
+        //         ". GThemedIcon text-plain text-x-generic text-plain-symbolic" which is definitely not
+        //         a valid icon name from theme.
+        //         Anyway here I keep the code as-is.
+        // TODO: a more Qt way than using gio?
+        icon = QIcon::fromTheme(iconStr);
     }
-
-    g_object_unref(g_file);
 
     return icon;
 }
