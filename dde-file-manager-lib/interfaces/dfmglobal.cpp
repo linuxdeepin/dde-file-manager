@@ -68,7 +68,6 @@
 #include <QLocale>
 #include <QMediaPlayer>
 #include <QDBusObjectPath>
-#include <QGSettings>
 #include <QRegularExpression>
 
 #include <private/qtextengine_p.h>

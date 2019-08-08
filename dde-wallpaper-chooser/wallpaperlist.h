@@ -45,7 +45,6 @@ DWIDGET_USE_NAMESPACE
 
 class WallpaperItem;
 class AppearanceDaemonInterface;
-class QGSettings;
 class WallpaperList : public QScrollArea
 {
     Q_OBJECT
