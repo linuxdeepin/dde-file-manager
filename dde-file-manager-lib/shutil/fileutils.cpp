@@ -42,7 +42,6 @@
 #include <QDirIterator>
 #include <QUrl>
 #include <QProcess>
-#include <QGSettings>
 #include <QFileDialog>
 #include <QCryptographicHash>
 #include <QDebug>

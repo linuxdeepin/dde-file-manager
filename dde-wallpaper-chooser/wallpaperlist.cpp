@@ -29,7 +29,6 @@
 #include <QDebug>
 #include <QScrollBar>
 #include <QToolButton>
-#include <QGSettings>
 #include <QHBoxLayout>
 
 #include <danchors.h>
