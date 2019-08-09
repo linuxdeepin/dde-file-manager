@@ -85,10 +85,63 @@
 #include <QtConcurrent>
 #include <QSplitter>
 
+#include <QFormLayout>
 DWIDGET_USE_NAMESPACE
 
 std::unique_ptr<RecordRenameBarState>  DFileManagerWindow::renameBarState{ nullptr };
 std::atomic<bool> DFileManagerWindow::flagForNewWindowFromTab{ false };
+
+class DRightDetailView;
+class DRightDetailViewPrivate{
+public:
+    explicit DRightDetailViewPrivate(DRightDetailView *qq, const DUrl& url)
+        :m_url(url)
+        ,q_ptr(qq){}
+
+    DUrl    m_url;
+    QVBoxLayout *mainLayout  {nullptr};
+    QLabel      *iconLabel  {nullptr};
+    QFormLayout *baseInfoLayout {nullptr};
+
+    DRightDetailView *q_ptr{ nullptr };
+    D_DECLARE_PUBLIC(DRightDetailView)
+};
+
+class DRightDetailView : public QFrame{
+public:
+    explicit DRightDetailView(const DUrl &fileUrl, QWidget* parent = nullptr)
+        :QFrame(parent)
+        , d_ptr(new DRightDetailViewPrivate(this, fileUrl)){
+        initUI();
+        initConnect();
+    }
+    virtual ~DRightDetailView(){}
+
+    void initUI();
+    void initConnect();
+    void setUrl(const DUrl& url);
+
+    QScopedPointer<DRightDetailViewPrivate> d_ptr;
+    Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DRightDetailView)
+};
+
+void DRightDetailView::initUI()
+{
+    Q_D(DFileManagerWindow);
+    //d->mainLayout
+}
+
+void DRightDetailView::initConnect()
+{
+
+}
+
+void DRightDetailView::setUrl(const DUrl &url)
+{
+
+}
+
+
 
 class DFileManagerWindowPrivate
 {
@@ -112,6 +165,7 @@ public:
     QFrame *centralWidget{ nullptr };
     DFMSideBar *leftSideBar{ nullptr };
     QFrame *rightView { nullptr };
+    QFrame *detailView { nullptr };
     QVBoxLayout *rightViewLayout { nullptr };
     DToolBar *toolbar{ nullptr };
     TabBar *tabBar { nullptr };
@@ -963,6 +1017,11 @@ void DFileManagerWindow::initSplitter()
     d->splitter = new QSplitter(Qt::Horizontal, this);
     d->splitter->addWidget(d->leftSideBar);
     d->splitter->addWidget(d->rightView);
+
+    d->detailView = new QFrame;
+    d->detailView->setFixedWidth(200);
+    d->splitter->addWidget(d->detailView);
+
     d->splitter->setChildrenCollapsible(false);
 }
 
@@ -1112,6 +1171,11 @@ void DFileManagerWindow::initConnect()
 
     QObject::connect(fileSignalManager, &FileSignalManager::requestMultiFilesRename, this, &DFileManagerWindow::onShowRenameBar);
     QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTabBarCurrentIndexChange);
+    QObject::connect(d->toolbar, &DToolBar::detailButtonClicked, this, [this, d](){
+        if(d->detailView){
+            d->detailView->setVisible(!d->detailView->isVisible());
+        }
+    });
 }
 
 void DFileManagerWindow::moveCenterByRect(QRect rect)

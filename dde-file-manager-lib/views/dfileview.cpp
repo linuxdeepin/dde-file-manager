@@ -1284,6 +1284,11 @@ void DFileView::updateStatusBar()
     event.setWindowId(windowId());
     event.setData(selectedUrls());
     int count = selectedIndexCount();
+    if(count==1){
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, selectedUrls().at(0));
+        qDebug()<< fileInfo->fileName() << fileInfo->fileType() <<  "\r\nsize:"<< fileInfo->fileSize() << "\r\nisDir:"
+                 << fileInfo->mimeTypeDisplayName() << "\r\n";
+    }
 
     if (count == 0){
         d->statusBar->itemCounted(event, this->count());
