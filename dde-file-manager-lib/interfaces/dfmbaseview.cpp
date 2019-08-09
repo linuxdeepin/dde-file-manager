@@ -67,4 +67,11 @@ void DFMBaseView::requestCdTo(const DUrl &url)
     }
 }
 
+void DFMBaseView::notifySelectUrlChanged(const QList<DUrl> &urlList)
+{
+    if (DFileManagerWindow *w = qobject_cast<DFileManagerWindow*>(widget()->window())) {
+        w->selectUrlChanged(urlList);
+    }
+}
+
 DFM_END_NAMESPACE
