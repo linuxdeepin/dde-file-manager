@@ -79,9 +79,9 @@ class DFileManagerWindow : public DMainWindow, public DFMAbstractEventHandler
 {
     Q_OBJECT
 public:
-    explicit DFileManagerWindow(QWidget *parent = 0);
-    explicit DFileManagerWindow(const DUrl &fileUrl, QWidget *parent = 0);
-    virtual ~DFileManagerWindow();
+    explicit DFileManagerWindow(QWidget *parent = nullptr);
+    explicit DFileManagerWindow(const DUrl &fileUrl, QWidget *parent = nullptr);
+    virtual ~DFileManagerWindow() override;
 
     DUrl currentUrl() const;
     DFMBaseView::ViewState currentViewState() const;
