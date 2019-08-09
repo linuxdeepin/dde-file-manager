@@ -107,6 +107,7 @@ signals:
     void positionChanged(const QPoint &pos);
     void currentUrlChanged();
     void currentViewStateChanged();
+    void selectUrlChanged(const QList<DUrl>& urlList);
 
 public slots:
     void moveCenter(const QPoint &cp);

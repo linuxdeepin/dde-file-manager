@@ -101,7 +101,13 @@ public:
     DUrl    m_url;
     QVBoxLayout *mainLayout  {nullptr};
     QLabel      *iconLabel  {nullptr};
+    QFrame      *baseInfoWidget {nullptr};
     QFormLayout *baseInfoLayout {nullptr};
+    QLabel      *nameLabel;
+    QLabel      *typeLabel;
+    QLabel      *sizeLabel;
+    QLabel      *createTimeLabel;
+    QLabel      *modifyTimeLabel;
 
     DRightDetailView *q_ptr{ nullptr };
     D_DECLARE_PUBLIC(DRightDetailView)
@@ -113,35 +119,104 @@ public:
         :QFrame(parent)
         , d_ptr(new DRightDetailViewPrivate(this, fileUrl)){
         initUI();
-        initConnect();
+        setUrl(fileUrl);
     }
     virtual ~DRightDetailView(){}
 
     void initUI();
-    void initConnect();
     void setUrl(const DUrl& url);
 
     QScopedPointer<DRightDetailViewPrivate> d_ptr;
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DRightDetailView)
 };
 
-void DRightDetailView::initUI()
+QLabel *createKeyLabel(QString text, QWidget *parent = nullptr)
 {
-    Q_D(DFileManagerWindow);
-    //d->mainLayout
+    QLabel *key = new QLabel(text, parent);
+    key->setObjectName("SectionKeyLabel");
+    key->setFixedWidth(100);
+    key->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+    return key;
 }
 
-void DRightDetailView::initConnect()
+QLabel *createValueLabel(QString text, QWidget *parent = nullptr)
 {
+    QLabel *value = new QLabel(text, parent);
+    value->setObjectName("SectionValueLabel");
+    value->setFixedWidth(150);
+    value->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+    value->setWordWrap(true);
+    return value;
+}
 
+void DRightDetailView::initUI()
+{
+    Q_D(DRightDetailView);
+
+    d->mainLayout = new QVBoxLayout;
+    setLayout(d->mainLayout);
+    d->mainLayout->setAlignment(Qt::AlignCenter);
+
+    d->iconLabel = new QLabel(this);
+    d->iconLabel->setFixedHeight(260);
+    d->mainLayout->addWidget(d->iconLabel, 1, Qt::AlignHCenter);
+
+    d->baseInfoLayout = new QFormLayout;
+    d->baseInfoLayout->setHorizontalSpacing(12);
+    d->baseInfoLayout->setVerticalSpacing(16);
+    d->baseInfoLayout->setLabelAlignment(Qt::AlignRight);
+
+    d->nameLabel = createValueLabel("...");
+    d->typeLabel = createValueLabel("...");
+    d->sizeLabel = createValueLabel("...");
+    d->createTimeLabel = createValueLabel("2019");
+    d->modifyTimeLabel = createValueLabel("0809");
+
+    d->baseInfoLayout->addRow(createKeyLabel("name"), d->nameLabel);
+    d->baseInfoLayout->addRow(createKeyLabel("size"), d->sizeLabel);
+    d->baseInfoLayout->addRow(createKeyLabel("type"), d->typeLabel);
+    d->baseInfoLayout->addRow(createKeyLabel("created time"), d->createTimeLabel);
+    d->baseInfoLayout->addRow(createKeyLabel("modified time"), d->modifyTimeLabel);
+
+    d->baseInfoLayout->setContentsMargins(0, 0, 40, 0);
+    d->baseInfoWidget = new QFrame;
+    d->baseInfoWidget->setLayout(d->baseInfoLayout);
+    d->baseInfoWidget->setFixedWidth(width());
+
+    d->mainLayout->addWidget(d->baseInfoWidget);
 }
 
 void DRightDetailView::setUrl(const DUrl &url)
 {
+    Q_D(DRightDetailView);
+
+    if(!url.isValid())
+        return;
+
+    d->m_url = url;
+
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, d->m_url);
+    if (fileInfo) {
+        if(d->iconLabel)
+            d->iconLabel->setPixmap(fileInfo->fileIcon().pixmap(256, 256));
+
+        if(d->nameLabel){
+            QString text = fileInfo->fileDisplayName();
+            d->nameLabel->setText(d->nameLabel->fontMetrics().elidedText(text, Qt::ElideMiddle, d->nameLabel->width()));
+            d->nameLabel->setToolTip(text);
+        }
+        if(d->typeLabel)
+            d->typeLabel->setText(fileInfo->mimeTypeDisplayName());
+        if(d->sizeLabel)
+            d->sizeLabel->setText(fileInfo->sizeDisplayName());
+        if(d->createTimeLabel)
+            d->createTimeLabel->setText(fileInfo->createdDisplayName());
+        if(d->modifyTimeLabel)
+            d->modifyTimeLabel->setText(fileInfo->lastModifiedDisplayName());
+        //update();
+    }
 
 }
-
-
 
 class DFileManagerWindowPrivate
 {
@@ -165,7 +240,7 @@ public:
     QFrame *centralWidget{ nullptr };
     DFMSideBar *leftSideBar{ nullptr };
     QFrame *rightView { nullptr };
-    QFrame *detailView { nullptr };
+    DRightDetailView *detailView { nullptr };
     QVBoxLayout *rightViewLayout { nullptr };
     DToolBar *toolbar{ nullptr };
     TabBar *tabBar { nullptr };
@@ -1018,8 +1093,8 @@ void DFileManagerWindow::initSplitter()
     d->splitter->addWidget(d->leftSideBar);
     d->splitter->addWidget(d->rightView);
 
-    d->detailView = new QFrame;
-    d->detailView->setFixedWidth(200);
+    d->detailView = new DRightDetailView(DUrl::fromLocalFile("/home/mike/Pictures/Autumn_in_Kanas_by_Wang_Jinyu.jpg"));
+    d->detailView->setFixedWidth(300);
     d->splitter->addWidget(d->detailView);
 
     d->splitter->setChildrenCollapsible(false);
@@ -1175,6 +1250,11 @@ void DFileManagerWindow::initConnect()
         if(d->detailView){
             d->detailView->setVisible(!d->detailView->isVisible());
         }
+    });
+
+    QObject::connect(this, &DFileManagerWindow::selectUrlChanged, this, [d](const QList<DUrl> &urlList){
+        if(urlList.size()>0)
+            d->detailView->setUrl(urlList.at(0));
     });
 }
 

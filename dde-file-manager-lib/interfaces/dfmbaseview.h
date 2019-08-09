@@ -42,6 +42,7 @@ protected:
     void notifyUrlChanged();
     void notifyStateChanged();
     void requestCdTo(const DUrl &url);
+    void notifySelectUrlChanged(const QList<DUrl> &urlList);
 };
 
 DFM_END_NAMESPACE

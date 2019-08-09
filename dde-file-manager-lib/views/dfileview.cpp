@@ -1289,6 +1289,7 @@ void DFileView::updateStatusBar()
         qDebug()<< fileInfo->fileName() << fileInfo->fileType() <<  "\r\nsize:"<< fileInfo->fileSize() << "\r\nisDir:"
                  << fileInfo->mimeTypeDisplayName() << "\r\n";
     }
+    emit notifySelectUrlChanged(selectedUrls());
 
     if (count == 0){
         d->statusBar->itemCounted(event, this->count());
