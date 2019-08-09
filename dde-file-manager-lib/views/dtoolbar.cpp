@@ -89,20 +89,11 @@ void DToolBar::initUI()
     initAddressToolBar();
     initContollerToolBar();
 
-    m_settingsButton = new QPushButton(this);
-    m_settingsButton->setFixedWidth(ButtonWidth);
-    m_settingsButton->setFixedHeight(ButtonHeight);
-    m_settingsButton->setObjectName("settingsButton");
-    m_settingsButton->setCheckable(true);
-    m_settingsButton->setFocusPolicy(Qt::NoFocus);
-
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_addressToolBar);
     mainLayout->addSpacing(10);
     mainLayout->addWidget(m_contollerToolBar);
     mainLayout->addSpacing(10);
-    mainLayout->addWidget(m_settingsButton);
-    mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(14, 0, 14, 0);
     setLayout(mainLayout);
 }
@@ -215,11 +206,6 @@ void DToolBar::initConnect()
 DFMCrumbBar *DToolBar::getCrumbWidget()
 {
     return m_crumbWidget;
-}
-
-QPushButton *DToolBar::getSettingsButton()
-{
-    return m_settingsButton;
 }
 
 void DToolBar::searchBarActivated()
