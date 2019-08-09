@@ -28,7 +28,6 @@
 #include "fileviewhelper.h"
 #include "ddetailview.h"
 #include "dfilemenu.h"
-#include "dfmsplitter.h"
 #include "extendview.h"
 #include "dstatusbar.h"
 #include "dfilemenumanager.h"
@@ -84,6 +83,7 @@
 #include <QTabBar>
 #include <QPair>
 #include <QtConcurrent>
+#include <QSplitter>
 
 DWIDGET_USE_NAMESPACE
 
@@ -119,7 +119,7 @@ public:
     DFMBaseView *currentView { nullptr };
     DStatusBar *statusBar { nullptr };
     QVBoxLayout *mainLayout { nullptr };
-    DFMSplitter *splitter { nullptr };
+    QSplitter *splitter { nullptr };
     QFrame *titleFrame { nullptr };
     QStackedLayout *viewStackLayout { nullptr };
     QPushButton *emptyTrashButton { nullptr };
@@ -551,7 +551,6 @@ void DFileManagerWindow::requestEmptyTrashFiles()
 
 void DFileManagerWindow::onTrashStateChanged()
 {
-    Q_D(DFileManagerWindow);
     if (currentUrl() == DUrl::fromTrashFile("/") && !TrashManager::isEmpty()) {
         showEmptyTrashButton();
     } else {
@@ -719,8 +718,8 @@ bool DFileManagerWindow::openNewTab(DUrl fileUrl)
     }
 
     d->toolbar->addHistoryStack();
-    d->setCurrentView(0);
-    d->tabBar->createTab(Q_NULLPTR);
+    d->setCurrentView(nullptr);
+    d->tabBar->createTab(nullptr);
 
     return cd(fileUrl);
 }
@@ -964,7 +963,7 @@ void DFileManagerWindow::initSplitter()
     initLeftSideBar();
     initRightView();
 
-    d->splitter = new DFMSplitter(Qt::Horizontal, this);
+    d->splitter = new QSplitter(Qt::Horizontal, this);
     d->splitter->addWidget(d->leftSideBar);
     d->splitter->addWidget(d->rightView);
     d->splitter->setChildrenCollapsible(false);

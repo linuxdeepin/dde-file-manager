@@ -247,7 +247,6 @@ HEADERS += \
     views/dfmheaderview.h \
     controllers/mountcontroller.h \
     models/mountfileinfo.h \
-    views/dfmsplitter.h \
     models/recentfileinfo.h \
     controllers/recentcontroller.h \
     controllers/dfmrecentcrumbcontroller.h \
@@ -428,7 +427,6 @@ SOURCES += \
     views/dfmheaderview.cpp \
     controllers/mountcontroller.cpp \
     models/mountfileinfo.cpp \
-    views/dfmsplitter.cpp \
     models/recentfileinfo.cpp \
     controllers/recentcontroller.cpp \
     controllers/dfmrecentcrumbcontroller.cpp \
