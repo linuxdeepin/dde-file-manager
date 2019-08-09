@@ -74,6 +74,7 @@ public:
 signals:
     void refreshButtonClicked();
     void toolbarUrlChanged(const DUrl& url);
+    void detailButtonClicked();
 
 public slots:
     void searchBarActivated();
@@ -104,6 +105,7 @@ private:
     QPushButton* m_backButton = nullptr;
     QPushButton* m_forwardButton = nullptr;
     QPushButton* m_searchButton = nullptr;
+    QPushButton* m_detailButton = nullptr;
     QFrame* m_contollerToolBar;
     DGraphicsClipEffect *m_contollerToolBarClipMask;
     QHBoxLayout *m_contollerToolBarContentLayout;

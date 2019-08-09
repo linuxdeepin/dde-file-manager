@@ -87,10 +87,20 @@ void DToolBar::initUI()
     initAddressToolBar();
     initContollerToolBar();
 
+    m_detailButton = new QPushButton(this);
+    m_detailButton->setFixedWidth(ButtonWidth);
+    m_detailButton->setFixedHeight(ButtonHeight);
+    m_detailButton->setObjectName("detailButton");
+    m_detailButton->setCheckable(true);
+    m_detailButton->setFocusPolicy(Qt::NoFocus);
+    m_detailButton->setText(QString::fromLocal8Bit("详"));
+    
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_addressToolBar);
     mainLayout->addSpacing(10);
     mainLayout->addWidget(m_contollerToolBar);
+    mainLayout->addSpacing(10);
+    mainLayout->addWidget(m_detailButton);
     mainLayout->addSpacing(10);
     mainLayout->setContentsMargins(14, 0, 14, 0);
     setLayout(mainLayout);
@@ -177,6 +187,7 @@ void DToolBar::initContollerToolBar()
 
 void DToolBar::initConnect()
 {
+    connect(m_detailButton, &QPushButton::clicked,this, &DToolBar::detailButtonClicked);
     connect(m_backButton, &DStateButton::clicked, this, &DToolBar::onBackButtonClicked);
     connect(m_forwardButton, &DStateButton::clicked, this, &DToolBar::onForwardButtonClicked);
     connect(m_crumbWidget, &DFMCrumbBar::addressBarContentEntered, this, &DToolBar::searchBarTextEntered);
