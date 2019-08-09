@@ -6,18 +6,6 @@ QMainWindow{
     background-color: white;
 }
 
-
-QPushButton#LogoButton{
-   border: none;
-   image: url(:/images/images/dde-file-manager.png);
-}
-QPushButton#LogoButton:hover{
-   image: url(:/images/images/dde-file-manager.png);
-}
-QPushButton#LogoButton:press{
-   image: url(:/images/images/dde-file-manager.png);
-}
-
 QFrame#CentralWidget{
     border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
@@ -283,34 +271,6 @@ DFMActionButton:hover {
 DFMActionButton:checked {
     background-color: #2ca7f8;
 }
-
-QPushButton#settingsButton{
-    background-color:white;
-    image: url(:/images/images/setting_normal.png);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    color: black;
-    border-radius: 4px;
-}
-
-QPushButton#settingsButton:pressed{
-    background-color:white;
-    image: url(:/images/images/setting_press.png);
-    border: 1px solid #1088ff;
-    color: white;
-}
-
-QPushButton#settingsButton:hover{
-    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                        stop: 0 #8CCFFF,
-                        stop: 1  #4BB8FF);
-    image: url(:/images/images/setting_hover.png);
-    border: 1px solid #3caafd;
-    color: white;
-}
-
-QPushButton#settingsButton::menu-indicator {
-     image: url();
- }
 
 QPushButton#searchButton{
     background-color:white;

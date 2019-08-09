@@ -459,7 +459,6 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
 
     /// init global AppController
 //    Q_UNUSED(AppController::instance());
-    setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
     setWindowIcon(QIcon(":/images/images/dde-file-manager.svg"));
 
     initData();
@@ -895,21 +894,31 @@ void DFileManagerWindow::initTitleFrame()
 {
     D_D(DFileManagerWindow);
 
-    d->logoButton = new QPushButton("");
-    d->logoButton->setObjectName("LogoButton");
+    d->logoButton = new QPushButton;
+    d->logoButton->setFlat(true);
+    d->logoButton->setIcon(QIcon::fromTheme("dde-file-manager", QIcon::fromTheme("system-file-manager")));
+    d->logoButton->setIconSize(QSize(24, 24));
     d->logoButton->setFixedSize(QSize(24, 24));
     d->logoButton->setFocusPolicy(Qt::NoFocus);
 
     initToolBar();
+
+    bool isDXcbPlatform = false;
+    SingleApplication *app = static_cast<SingleApplication *>(qApp);
+    if (app) {
+        isDXcbPlatform = app->isDXcbPlatform();
+    }
 
     d->titleFrame = new QFrame;
     d->titleFrame->setObjectName("TitleBar");
     QHBoxLayout *titleLayout = new QHBoxLayout;
     titleLayout->setMargin(0);
     titleLayout->setSpacing(0);
-    titleLayout->addSpacing(12);
-    titleLayout->addWidget(d->logoButton);
-    titleLayout->addSpacing(12);
+    if (isDXcbPlatform) {
+        titleLayout->addSpacing(12);
+        titleLayout->addWidget(d->logoButton);
+        titleLayout->addSpacing(12);
+    }
     titleLayout->addWidget(d->toolbar);
     titleLayout->setSpacing(0);
     titleLayout->setContentsMargins(0, 0, 0, 0);
@@ -939,21 +948,9 @@ void DFileManagerWindow::initTitleBar()
         connect(set_theme_action, &QAction::triggered, this, &DFileManagerWindow::onThemeChanged);
     }
 
-    bool isDXcbPlatform = false;
-    SingleApplication *app = static_cast<SingleApplication *>(qApp);
-    if (app) {
-        isDXcbPlatform = app->isDXcbPlatform();
-    }
-
-    if (isDXcbPlatform) {
-        d->toolbar->getSettingsButton()->hide();
-        titlebar()->setMenu(menu);
-        titlebar()->setContentsMargins(0, 0, 0, 0);
-
-        titlebar()->setCustomWidget(d->titleFrame, Qt::AlignLeft);
-    } else {
-        d->toolbar->getSettingsButton()->setMenu(menu);
-    }
+    titlebar()->setMenu(menu);
+    titlebar()->setContentsMargins(0, 0, 0, 0);
+    titlebar()->setCustomWidget(d->titleFrame, Qt::AlignLeft);
 }
 
 void DFileManagerWindow::initSplitter()
