@@ -113,7 +113,6 @@ HEADERS += \
     dialogs/basedialog.h \
     views/extendview.h \
     controllers/pathmanager.h \
-    views/ddragwidget.h \
     shutil/mimetypedisplaymanager.h \
     views/dstatusbar.h \
     controllers/subscriber.h \
@@ -299,7 +298,6 @@ SOURCES += \
     dialogs/basedialog.cpp \
     views/extendview.cpp \
     controllers/pathmanager.cpp \
-    views/ddragwidget.cpp \
     shutil/mimetypedisplaymanager.cpp \
     views/dstatusbar.cpp \
     controllers/subscriber.cpp \

@@ -76,7 +76,6 @@ private:
     using DDialog::setWindowTitle;
 
     void initUi();
-    void initUiParameters();
     void initConnect();
     void setRenameButtonStatus(const bool& enabled);
 

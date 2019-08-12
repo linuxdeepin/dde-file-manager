@@ -12,7 +12,6 @@
 #include <QDebug>
 #include <QApplication>
 #include <QStandardPaths>
-#include <QStyleOptionViewItem>
 #include <QDir>
 #include <QDBusConnection>
 #include <QScreen>

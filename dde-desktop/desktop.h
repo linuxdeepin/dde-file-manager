@@ -21,7 +21,6 @@
 
 class QDBusConnection;
 class CanvasGridView;
-class QStyleOptionViewItem;
 class DesktopPrivate;
 class Desktop : public QObject, public Singleton<Desktop>
 {

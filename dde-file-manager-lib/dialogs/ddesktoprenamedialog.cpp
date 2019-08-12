@@ -124,14 +124,6 @@ void DDesktopRenameDialogPrivate::initUi()
 void DDesktopRenameDialogPrivate::initUiParameters()
 {
     m_titleLabel->setAlignment(Qt::AlignCenter);
-    m_titleLabel->setObjectName(QString{"DRenameDialogTitleLabel"});
-    m_titleLabel->setStyleSheet(QString{"QLabel#DRenameDialogTitleLabel"
-                                        "{"
-                                            "color: #000000;"
-                                            "font-family: SourceHanSansSC;"
-                                            "font-size: 14px;"
-                                        "}"
-                                        });
 
     QLabel* tagLabel{ nullptr };
     QComboBox* modeChoseBox{ nullptr };
@@ -143,7 +135,6 @@ void DDesktopRenameDialogPrivate::initUiParameters()
     modeChoseBox->addItems(QList<QString>{ QObject::tr("Replace Text"), QObject::tr("Add Text"), QObject::tr("Custom Text") });
     modeChoseBox->setFixedSize(QSize{275, 25});
 
-
     ///###: mode 1
     tagLabel = std::get<0>(m_modeOneItemsForFinding);
     tagLabel->setText(QObject::tr("Find:"));
@@ -151,38 +142,12 @@ void DDesktopRenameDialogPrivate::initUiParameters()
     contentLineEdit->setFocus();
     contentLineEdit->setPlaceholderText(QObject::tr("Required"));
     contentLineEdit->setFixedSize(QSize{275, 25});
-    contentLineEdit->setObjectName( QString{"DRenameDialogLineEditForFinding"} );
-//    contentLineEdit->setFocusPolicy(Qt::StrongFocus);
-    contentLineEdit->setStyleSheet("QLineEdit#DRenameDialogLineEditForFinding:focus"
-                                                         "{"
-                                                                "border: 1px solid #2ca7f8;"
-                                                                "border-radius: 2px;"
-                                                         "}"
-                                                         "QLineEdit#DRenameDialogLineEditForFinding"
-                                                         "{"
-                                                                "border: 1px solid rgba(0, 0, 0, 0.08);"
-                                                                "border-radius: 2px;"
-                                                         "}"
-
-                                                        );
 
     tagLabel = std::get<0>(m_modeOneItemsForReplacing);
     tagLabel->setText(QObject::tr("Replace:"));
     contentLineEdit = std::get<1>(m_modeOneItemsForReplacing);
     contentLineEdit->setPlaceholderText(QObject::tr("Optional"));
     contentLineEdit->setFixedSize(QSize{275, 25});
-    contentLineEdit->setObjectName( QString{ "DRenameDialogLineEditForReplacing" } );
-    contentLineEdit->setStyleSheet("QLineEdit#DRenameDialogLineEditForReplacing:focus"
-                                                           "{"
-                                                                 "border: 1px solid #2ca7f8;"
-                                                                 "border-radius: 2px;"
-                                                           "}"
-                                                           "QLineEdit#DRenameDialogLineEditForReplacing"
-                                                           "{"
-                                                                  "border: 1px solid rgba(0, 0, 0, 0.08);"
-                                                                  "border-radius: 2px;"
-                                                           "}"
-                                                           );
 
     ///###: mode 2
     tagLabel = std::get<0>(m_modeTwoItemsForAdding);
@@ -191,18 +156,6 @@ void DDesktopRenameDialogPrivate::initUiParameters()
     contentLineEdit->setPlaceholderText(QObject::tr("Required"));
     contentLineEdit->setFixedSize(QSize{275, 25});
     contentLineEdit->setMaxLength(300);
-    contentLineEdit->setObjectName(QString{"DRenameDialogLineEditForAdding"});
-    contentLineEdit->setStyleSheet("QLineEdit#DRenameDialogLineEditForAdding:focus"
-                                                        "{"
-                                                              "border: 1px solid #2ca7f8;"
-                                                              "border-radius: 2px;"
-                                                         "}"
-                                                        "QLineEdit#DRenameDialogLineEditForAdding"
-                                                        "{"
-                                                               "border: 1px solid rgba(0, 0, 0, 0.08);"
-                                                               "border-radius: 2px;"
-                                                        "}"
-                                                        );
 
     tagLabel = std::get<0>(m_modeTwoItemsForLocating);
     tagLabel->setText(QObject::tr("Location:"));
@@ -216,18 +169,7 @@ void DDesktopRenameDialogPrivate::initUiParameters()
     contentLineEdit = std::get<1>(m_modeThreeItemsForFileName);
     contentLineEdit->setPlaceholderText(QObject::tr("Required"));
     contentLineEdit->setFixedSize(QSize{275, 25});
-    contentLineEdit->setObjectName( QString{ "DRenameDialogLineEditForCustomizing" } );
-    contentLineEdit->setStyleSheet("QLineEdit#DRenameDialogLineEditForCustomizing:focus"
-                                                            "{"
-                                                                    "border: 1px solid rgba(0, 132, 255, 0.4);"
-                                                                    "border-radius: 2px;"
-                                                             "}"
-                                                            "QLineEdit#DRenameDialogLineEditForCustomizing"
-                                                            "{"
-                                                                   "border: 1px solid rgba(0, 0, 0, 0.08);"
-                                                                   "border-radius: 2px;"
-                                                            "}"
-                                                            );
+
     tagLabel = std::get<0>(m_modeThreeItemsForSNNumber);
     tagLabel->setText(QObject::tr("+SN:"));
     contentLineEdit = std::get<1>(m_modeThreeItemsForSNNumber);
@@ -334,7 +276,7 @@ void DDesktopRenameDialogPrivate::initUiLayout()
 
 
     m_modeThreeLayout.first->addLayout(std::get<2>(m_modeThreeItemsForFileName));
-    m_modeThreeLayout.first->addSpacing(20);
+    m_modeThreeLayout.first->addSpacing(10);
     m_modeThreeLayout.first->addLayout(std::get<2>(m_modeThreeItemsForSNNumber));
     m_modeThreeLayout.first->setSpacing(0);
     m_modeThreeLayout.first->setMargin(0);
@@ -365,7 +307,6 @@ DDesktopRenameDialog::DDesktopRenameDialog(QWidget* const parent)
                    d_ptr{ new DDesktopRenameDialogPrivate{ this } }
 {
     this->initUi();
-    this->initUiParameters();
     this->initConnect();
 
     this->installEventFilter(this);
@@ -376,48 +317,15 @@ DDesktopRenameDialog::DDesktopRenameDialog(QWidget* const parent)
 ///   and other widgets in DDesktopRenameDialog is initialized when new DDesktopRenameDialogPrivate.
 void DDesktopRenameDialog::initUi()
 {
-    DDesktopRenameDialogPrivate* const d{ d_func() };
+    Q_D(const DDesktopRenameDialog);
     this->addContent(d->m_mainFrame, Qt::AlignCenter);
     this->addButton(QObject::tr("Cancel"));
-    this->addButton(QObject::tr("Rename"), true);
+    this->addButton(QObject::tr("Rename"), true, ButtonRecommend);
 }
-
-void DDesktopRenameDialog::initUiParameters()
-{
-    if(QPushButton* renameButton = dynamic_cast<QPushButton*>(this->getButton(1))){
-        renameButton->setStyleSheet(
-                    "QPushButton:enabled"
-                    "{"
-                        "font-family: SourceHanSansSC;"
-                        "font-size: 13px;"
-                        "color: #0087ff;"
-                    "}"
-
-                    "QPushButton:hover"
-                    "{"
-                         "background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-                         "stop: 0 #8CCFFF,"
-                         "stop: 1  #4BB8FF);"
-                         "color: white;"
-                        "border-radius: 0px;"
-                     "}"
-                     "QPushButton:pressed"
-                     "{"
-                              "background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-                                               "stop: 0 #0b8cff,"
-                                               "stop: 1 #0aa1ff);"
-                             "border: 1px solid rgba(29, 129, 255, 0.3);"
-                             "color: white;"
-                     "}"
-
-                    );
-    }
-}
-
 
 void DDesktopRenameDialog::initConnect()
 {
-    DDesktopRenameDialogPrivate* const d{ d_func() };
+    Q_D(const DDesktopRenameDialog);
     using funcType = void (QComboBox::*)(int index);
 
 
@@ -600,13 +508,13 @@ void DDesktopRenameDialog::onVisibleChanged(bool visible)noexcept
 
         switch(d->m_currentmode)
         {
-             case 0:
-             {
+            case 0:
+            {
                 QLineEdit* lineEdit{ std::get<1>(d->m_modeOneItemsForFinding) };
                 lineEdit->setFocus();
                 break;
-             }
-             case 1:
+            }
+            case 1:
             {
                 QLineEdit* lineEdit{ std::get<1>(d->m_modeTwoItemsForAdding) };
                 lineEdit->setFocus();
