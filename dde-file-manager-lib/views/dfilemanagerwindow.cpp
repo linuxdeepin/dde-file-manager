@@ -57,6 +57,8 @@
 #include "xutil.h"
 #include "utils.h"
 #include "dfmadvancesearchbar.h"
+#include "dtagactionwidget.h"
+#include "droundbutton.h"
 
 #include "drenamebar.h"
 #include "singleton.h"
@@ -84,8 +86,10 @@
 #include <QPair>
 #include <QtConcurrent>
 #include <QSplitter>
+#include<tag/tagmanager.h>
 
 #include <QFormLayout>
+#include <qlistwidget.h>
 DWIDGET_USE_NAMESPACE
 
 std::unique_ptr<RecordRenameBarState>  DFileManagerWindow::renameBarState{ nullptr };
@@ -108,6 +112,7 @@ public:
     QLabel      *sizeLabel;
     QLabel      *createTimeLabel;
     QLabel      *modifyTimeLabel;
+    QListWidget *tagNames;
 
     DRightDetailView *q_ptr{ nullptr };
     D_DECLARE_PUBLIC(DRightDetailView)
@@ -134,8 +139,9 @@ QLabel *createKeyLabel(QString text, QWidget *parent = nullptr)
 {
     QLabel *key = new QLabel(text, parent);
     key->setObjectName("SectionKeyLabel");
-    key->setFixedWidth(100);
+    key->setMinimumWidth(100);
     key->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+    //key->setStyleSheet("background-color:#666666;");
     return key;
 }
 
@@ -143,10 +149,19 @@ QLabel *createValueLabel(QString text, QWidget *parent = nullptr)
 {
     QLabel *value = new QLabel(text, parent);
     value->setObjectName("SectionValueLabel");
-    value->setFixedWidth(150);
+    value->setMinimumWidth(100);
     value->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-    value->setWordWrap(true);
+    //value->setWordWrap(true);
+    //value->setStyleSheet("background-color:#666666;");
     return value;
+}
+
+QFrame* createLine()
+{
+    auto line = new QFrame;
+    line->setFixedHeight(1);
+    line->setStyleSheet("background-color:#DFDFE0;");
+    return line;
 }
 
 void DRightDetailView::initUI()
@@ -164,7 +179,8 @@ void DRightDetailView::initUI()
     d->baseInfoLayout = new QFormLayout;
     d->baseInfoLayout->setHorizontalSpacing(12);
     d->baseInfoLayout->setVerticalSpacing(16);
-    d->baseInfoLayout->setLabelAlignment(Qt::AlignRight);
+
+    d->baseInfoLayout->addRow(createLine());
 
     d->nameLabel = createValueLabel("...");
     d->typeLabel = createValueLabel("...");
@@ -178,12 +194,35 @@ void DRightDetailView::initUI()
     d->baseInfoLayout->addRow(createKeyLabel("created time"), d->createTimeLabel);
     d->baseInfoLayout->addRow(createKeyLabel("modified time"), d->modifyTimeLabel);
 
-    d->baseInfoLayout->setContentsMargins(0, 0, 40, 0);
+    d->baseInfoLayout->addRow(createLine());
+
+    auto hl = new QHBoxLayout;
+    hl->setSpacing(-5);
+    QLabel *tagLable = createKeyLabel("tag");
+    auto tagWidget =  new DTagActionWidget;
+    tagWidget->setEnabled(false);
+    tagWidget->setToolTipVisible(false);
+    hl->addWidget(tagLable);
+    hl->addWidget(tagWidget);
+    d->baseInfoLayout->addRow(hl);
+
+    d->tagNames = new QListWidget();
+    d->tagNames->setViewMode(QListWidget::IconMode );
+    d->tagNames->setResizeMode(QListWidget::Adjust);
+    d->tagNames->setStyleSheet("border:1px solid #DFDFE0");
+    d->tagNames->setVisible(false);
+    d->tagNames->setSpacing(5);
+    d->tagNames->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    d->tagNames->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    //d->tagNames->setEnabled(false);
+    d->baseInfoLayout->addRow(d->tagNames);
+
     d->baseInfoWidget = new QFrame;
     d->baseInfoWidget->setLayout(d->baseInfoLayout);
-    d->baseInfoWidget->setFixedWidth(width());
+    d->baseInfoWidget->setFixedWidth(300);
+    d->baseInfoWidget->setMinimumHeight(400);
 
-    d->mainLayout->addWidget(d->baseInfoWidget);
+    d->mainLayout->addWidget(d->baseInfoWidget, 1, Qt::AlignHCenter);
 }
 
 void DRightDetailView::setUrl(const DUrl &url)
@@ -213,7 +252,20 @@ void DRightDetailView::setUrl(const DUrl &url)
             d->createTimeLabel->setText(fileInfo->createdDisplayName());
         if(d->modifyTimeLabel)
             d->modifyTimeLabel->setText(fileInfo->lastModifiedDisplayName());
-        //update();
+
+        const QStringList tag_name_list = TagManager::instance()->getTagsThroughFiles({url});
+        QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({tag_name_list});
+        if(d->tagNames){
+            d->tagNames->clear();
+            for(auto it = nameColors.begin();it != nameColors.end(); ++it){
+                QListWidgetItem *item = new QListWidgetItem(d->tagNames);
+                item->setText(it.key());
+                item->setBackgroundColor(it.value());
+                d->tagNames->addItem(item);
+            }
+            d->tagNames->setVisible(d->tagNames->count()>0);
+        }
+
     }
 
 }
@@ -1093,8 +1145,10 @@ void DFileManagerWindow::initSplitter()
     d->splitter->addWidget(d->leftSideBar);
     d->splitter->addWidget(d->rightView);
 
-    d->detailView = new DRightDetailView(DUrl::fromLocalFile("/home/mike/Pictures/Autumn_in_Kanas_by_Wang_Jinyu.jpg"));
-    d->detailView->setFixedWidth(300);
+    d->detailView = new DRightDetailView(DUrl());
+    //d->detailView->setFixedWidth(300);
+    d->detailView->setMaximumWidth(500);
+    d->detailView->setMinimumWidth(300);
     d->splitter->addWidget(d->detailView);
 
     d->splitter->setChildrenCollapsible(false);
@@ -1193,11 +1247,17 @@ void DFileManagerWindow::initCentralWidget()
 
     d->centralWidget = new QFrame(this);
     d->centralWidget->setObjectName("CentralWidget");
-    QVBoxLayout *mainLayout = new QVBoxLayout;
+    QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->addWidget(d->splitter);
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
+
+    /*d->detailView = new DRightDetailView(DUrl());
+    d->detailView->setFixedWidth(300);
+    mainLayout->addWidget(d->detailView);*/
+
     d->centralWidget->setLayout(mainLayout);
+
 }
 
 void DFileManagerWindow::initConnect()
