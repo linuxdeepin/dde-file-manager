@@ -84,7 +84,6 @@ HEADERS += \
     views/dtoolbar.h \
     views/dfileview.h \
     views/ddetailview.h \
-    views/dicontextbutton.h \
     views/dstatebutton.h \
     controllers/filecontroller.h \
     app/filesignalmanager.h \
@@ -102,7 +101,6 @@ HEADERS += \
     views/dfilemanagerwindow.h \
     views/historystack.h\
     dialogs/propertydialog.h \
-    views/dhoverbutton.h \
     views/dfmsidebaritemgroup.h \
     controllers/trashmanager.h \
     models/trashfileinfo.h \
@@ -270,7 +268,6 @@ SOURCES += \
     views/dtoolbar.cpp \
     views/dfileview.cpp \
     views/ddetailview.cpp \
-    views/dicontextbutton.cpp \
     views/dstatebutton.cpp \
     controllers/filecontroller.cpp \
     views/fileitem.cpp \
@@ -287,7 +284,6 @@ SOURCES += \
     views/dfilemanagerwindow.cpp \
     views/historystack.cpp\
     dialogs/propertydialog.cpp \
-    views/dhoverbutton.cpp \
     views/dfmsidebaritemgroup.cpp \
     controllers/trashmanager.cpp \
     models/trashfileinfo.cpp \
