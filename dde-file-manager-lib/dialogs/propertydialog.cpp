@@ -96,8 +96,9 @@ protected:
 
         bgRect.setSize(size());
         fgRect.setSize(QSizeF(width() * p, height()));
-        QColor bgColor = QColor(0xE7E7E7);
-        QColor fgColor = QColor(0x2CA7F8);
+        const QPalette pal = this->palette();
+        QColor bgColor = pal.color(QPalette::AlternateBase); // or maybe just QPalette::Base ?
+        QColor fgColor = pal.color(QPalette::Highlight);
         painter.setRenderHint(QPainter::Antialiasing);
 
         painter.fillRect(bgRect, bgColor);

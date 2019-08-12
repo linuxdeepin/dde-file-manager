@@ -31,6 +31,7 @@
 
 #include <DWidgetUtil>
 
+#include <QGuiApplication>
 #include <QPropertyAnimation>
 #include <QDebug>
 #include <QDrag>
