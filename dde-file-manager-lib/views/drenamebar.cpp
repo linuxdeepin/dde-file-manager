@@ -241,7 +241,6 @@ void DRenameBarPrivate::setUiParameters()
     label->setText(QObject::tr("Find"));
     label->setObjectName(QString{"DRenameBarLabel"});
     lineEdit->setPlaceholderText(QObject::tr("Required"));
-    lineEdit->setObjectName(QString{"DRenameBarLineEditForFinding"});
     label->setBuddy(lineEdit);
 
     label = std::get<2>(m_replaceOperatorItems);
@@ -249,18 +248,14 @@ void DRenameBarPrivate::setUiParameters()
     lineEdit = std::get<3>(m_replaceOperatorItems);
     label->setText(QObject::tr("Replace"));
     lineEdit->setPlaceholderText(QObject::tr("Optional"));
-    lineEdit->setObjectName(QString{"DRenameBarLineEditForReplacing"});
     label->setBuddy(lineEdit);
-
 
     label = std::get<0>(m_addOperatorItems);
     label->setObjectName(QString{"DRenameBarLabel"});
     lineEdit = std::get<1>(m_addOperatorItems);
     label->setText(QObject::tr("Add"));
     lineEdit->setPlaceholderText(QObject::tr("Required"));
-    lineEdit->setObjectName(QString{"DRenameBarLineEditForAdding"});
     label->setBuddy(lineEdit);
-
 
     label = std::get<2>(m_addOperatorItems);
     label->setObjectName(QString{"DRenameBarLabel"});
@@ -274,15 +269,12 @@ void DRenameBarPrivate::setUiParameters()
     lineEdit = std::get<1>(m_customOPeratorItems);
     label->setText(QObject::tr("File name"));
     lineEdit->setPlaceholderText(QObject::tr("Required"));
-    lineEdit->setObjectName(QString{"DRenameBarLineEditForCustomizing"});
     label->setBuddy(lineEdit);
-
 
     label = std::get<2>(m_customOPeratorItems);
     label->setObjectName(QString{"DRenameBarLabel"});
     lineEdit = std::get<3>(m_customOPeratorItems);
     label->setText(QObject::tr("+SN"));
-    lineEdit->setObjectName(QString{"DRenameBarLineEditSN"});
     lineEdit->setPlaceholderText(QObject::tr("Required"));
     lineEdit->setText(QString{"1"});
     lineEdit->setValidator(m_validator);
@@ -291,27 +283,14 @@ void DRenameBarPrivate::setUiParameters()
     label->setObjectName(QString{"DRenameBarLabel"});
     label->setText(QObject::tr("Tips: Sort by selected file order"));
 
-
     QPushButton* button{ std::get<0>(m_buttonsArea) };
     button->setFixedSize(QSize{70, 21});
     button->setText(QObject::tr("Cancel"));
     button = std::get<1>(m_buttonsArea);
     button->setFixedSize(QSize{70, 20});
     button->setText(QObject::tr("Rename"));
-    button->setObjectName(QString{"DRenameBarRenameBtn"});
-    button->setStyleSheet(QString{
-                              "QPushButton#DRenameBarRenameBtn:pressed"
-                              "{"
-                                  "background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-                                                                  "stop: 0 #0b8cff,"
-                                                                  "stop: 1 #0aa1ff);"
-                                  "border: 1px solid rgba(29, 129, 255, 0.3);"
-                                  "color: white;"
-                              "}"
-                          });
 
     button->setEnabled(false);
-
 }
 
 void DRenameBarPrivate::layoutItems()noexcept

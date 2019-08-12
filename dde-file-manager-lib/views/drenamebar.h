@@ -145,7 +145,7 @@ class DRenameBar : public QFrame
     Q_OBJECT
 public:
     explicit DRenameBar(QWidget *parent = nullptr);//###: init widgets and layout widgets when constructing DRenameBarPrivate.
-    virtual ~DRenameBar()=default;
+    virtual ~DRenameBar() override = default;
 
     DRenameBar(const DRenameBar&)=delete;
     DRenameBar& operator=(const DRenameBar&)=delete;

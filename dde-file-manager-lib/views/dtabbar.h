@@ -38,7 +38,6 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QCursor>
-#include "ddragwidget.h"
 #include "dfileview.h"
 #include "dfmevent.h"
 
@@ -52,7 +51,7 @@ class Tab:public QGraphicsObject{
 
 public:
     explicit Tab(QGraphicsObject *parent = 0, DFMBaseView* view = nullptr);
-    ~Tab();
+    ~Tab() override;
     void initConnect();
     void setTabText(QString text);
     QString tabText();
