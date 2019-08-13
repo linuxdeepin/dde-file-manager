@@ -260,6 +260,7 @@ HEADERS += \
     controllers/dfmmasteredmediacrumbcontroller.h \
     models/masteredmediafileinfo.h \
     views/dfmopticalmediawidget.h \
+    views/dfmrightdetailview.h \
     dialogs/burnoptdialog.h
 
 SOURCES += \
@@ -436,6 +437,7 @@ SOURCES += \
     controllers/dfmmasteredmediacrumbcontroller.cpp \
     models/masteredmediafileinfo.cpp \
     views/dfmopticalmediawidget.cpp \
+    views/dfmrightdetailview.cpp \
     dialogs/burnoptdialog.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
