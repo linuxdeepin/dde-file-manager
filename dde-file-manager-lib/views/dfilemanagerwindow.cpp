@@ -59,6 +59,7 @@
 #include "dfmadvancesearchbar.h"
 #include "dtagactionwidget.h"
 #include "droundbutton.h"
+#include "dfmrightdetailview.h"
 
 #include "drenamebar.h"
 #include "singleton.h"
@@ -86,189 +87,11 @@
 #include <QPair>
 #include <QtConcurrent>
 #include <QSplitter>
-#include<tag/tagmanager.h>
 
-#include <QFormLayout>
-#include <qlistwidget.h>
 DWIDGET_USE_NAMESPACE
 
 std::unique_ptr<RecordRenameBarState>  DFileManagerWindow::renameBarState{ nullptr };
 std::atomic<bool> DFileManagerWindow::flagForNewWindowFromTab{ false };
-
-class DRightDetailView;
-class DRightDetailViewPrivate{
-public:
-    explicit DRightDetailViewPrivate(DRightDetailView *qq, const DUrl& url)
-        :m_url(url)
-        ,q_ptr(qq){}
-
-    DUrl    m_url;
-    QVBoxLayout *mainLayout  {nullptr};
-    QLabel      *iconLabel  {nullptr};
-    QFrame      *baseInfoWidget {nullptr};
-    QFormLayout *baseInfoLayout {nullptr};
-    QLabel      *nameLabel;
-    QLabel      *typeLabel;
-    QLabel      *sizeLabel;
-    QLabel      *createTimeLabel;
-    QLabel      *modifyTimeLabel;
-    QListWidget *tagNames;
-
-    DRightDetailView *q_ptr{ nullptr };
-    D_DECLARE_PUBLIC(DRightDetailView)
-};
-
-class DRightDetailView : public QFrame{
-public:
-    explicit DRightDetailView(const DUrl &fileUrl, QWidget* parent = nullptr)
-        :QFrame(parent)
-        , d_ptr(new DRightDetailViewPrivate(this, fileUrl)){
-        initUI();
-        setUrl(fileUrl);
-    }
-    virtual ~DRightDetailView(){}
-
-    void initUI();
-    void setUrl(const DUrl& url);
-
-    QScopedPointer<DRightDetailViewPrivate> d_ptr;
-    Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DRightDetailView)
-};
-
-QLabel *createKeyLabel(QString text, QWidget *parent = nullptr)
-{
-    QLabel *key = new QLabel(text, parent);
-    key->setObjectName("SectionKeyLabel");
-    key->setMinimumWidth(100);
-    key->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-    //key->setStyleSheet("background-color:#666666;");
-    return key;
-}
-
-QLabel *createValueLabel(QString text, QWidget *parent = nullptr)
-{
-    QLabel *value = new QLabel(text, parent);
-    value->setObjectName("SectionValueLabel");
-    value->setMinimumWidth(100);
-    value->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-    //value->setWordWrap(true);
-    //value->setStyleSheet("background-color:#666666;");
-    return value;
-}
-
-QFrame* createLine()
-{
-    auto line = new QFrame;
-    line->setFixedHeight(1);
-    line->setStyleSheet("background-color:#DFDFE0;");
-    return line;
-}
-
-void DRightDetailView::initUI()
-{
-    Q_D(DRightDetailView);
-
-    d->mainLayout = new QVBoxLayout;
-    setLayout(d->mainLayout);
-    d->mainLayout->setAlignment(Qt::AlignCenter);
-
-    d->iconLabel = new QLabel(this);
-    d->iconLabel->setFixedHeight(260);
-    d->mainLayout->addWidget(d->iconLabel, 1, Qt::AlignHCenter);
-
-    d->baseInfoLayout = new QFormLayout;
-    d->baseInfoLayout->setHorizontalSpacing(12);
-    d->baseInfoLayout->setVerticalSpacing(16);
-
-    d->baseInfoLayout->addRow(createLine());
-
-    d->nameLabel = createValueLabel("...");
-    d->typeLabel = createValueLabel("...");
-    d->sizeLabel = createValueLabel("...");
-    d->createTimeLabel = createValueLabel("2019");
-    d->modifyTimeLabel = createValueLabel("0809");
-
-    d->baseInfoLayout->addRow(createKeyLabel("name"), d->nameLabel);
-    d->baseInfoLayout->addRow(createKeyLabel("size"), d->sizeLabel);
-    d->baseInfoLayout->addRow(createKeyLabel("type"), d->typeLabel);
-    d->baseInfoLayout->addRow(createKeyLabel("created time"), d->createTimeLabel);
-    d->baseInfoLayout->addRow(createKeyLabel("modified time"), d->modifyTimeLabel);
-
-    d->baseInfoLayout->addRow(createLine());
-
-    auto hl = new QHBoxLayout;
-    hl->setSpacing(-5);
-    QLabel *tagLable = createKeyLabel("tag");
-    auto tagWidget =  new DTagActionWidget;
-    tagWidget->setEnabled(false);
-    tagWidget->setToolTipVisible(false);
-    hl->addWidget(tagLable);
-    hl->addWidget(tagWidget);
-    d->baseInfoLayout->addRow(hl);
-
-    d->tagNames = new QListWidget();
-    d->tagNames->setViewMode(QListWidget::IconMode );
-    d->tagNames->setResizeMode(QListWidget::Adjust);
-    d->tagNames->setStyleSheet("border:1px solid #DFDFE0");
-    d->tagNames->setVisible(false);
-    d->tagNames->setSpacing(5);
-    d->tagNames->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    d->tagNames->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    //d->tagNames->setEnabled(false);
-    d->baseInfoLayout->addRow(d->tagNames);
-
-    d->baseInfoWidget = new QFrame;
-    d->baseInfoWidget->setLayout(d->baseInfoLayout);
-    d->baseInfoWidget->setFixedWidth(300);
-    d->baseInfoWidget->setMinimumHeight(400);
-
-    d->mainLayout->addWidget(d->baseInfoWidget, 1, Qt::AlignHCenter);
-}
-
-void DRightDetailView::setUrl(const DUrl &url)
-{
-    Q_D(DRightDetailView);
-
-    if(!url.isValid())
-        return;
-
-    d->m_url = url;
-
-    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, d->m_url);
-    if (fileInfo) {
-        if(d->iconLabel)
-            d->iconLabel->setPixmap(fileInfo->fileIcon().pixmap(256, 256));
-
-        if(d->nameLabel){
-            QString text = fileInfo->fileDisplayName();
-            d->nameLabel->setText(d->nameLabel->fontMetrics().elidedText(text, Qt::ElideMiddle, d->nameLabel->width()));
-            d->nameLabel->setToolTip(text);
-        }
-        if(d->typeLabel)
-            d->typeLabel->setText(fileInfo->mimeTypeDisplayName());
-        if(d->sizeLabel)
-            d->sizeLabel->setText(fileInfo->sizeDisplayName());
-        if(d->createTimeLabel)
-            d->createTimeLabel->setText(fileInfo->createdDisplayName());
-        if(d->modifyTimeLabel)
-            d->modifyTimeLabel->setText(fileInfo->lastModifiedDisplayName());
-
-        const QStringList tag_name_list = TagManager::instance()->getTagsThroughFiles({url});
-        QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({tag_name_list});
-        if(d->tagNames){
-            d->tagNames->clear();
-            for(auto it = nameColors.begin();it != nameColors.end(); ++it){
-                QListWidgetItem *item = new QListWidgetItem(d->tagNames);
-                item->setText(it.key());
-                item->setBackgroundColor(it.value());
-                d->tagNames->addItem(item);
-            }
-            d->tagNames->setVisible(d->tagNames->count()>0);
-        }
-
-    }
-
-}
 
 class DFileManagerWindowPrivate
 {
@@ -292,7 +115,7 @@ public:
     QFrame *centralWidget{ nullptr };
     DFMSideBar *leftSideBar{ nullptr };
     QFrame *rightView { nullptr };
-    DRightDetailView *detailView { nullptr };
+    DFMRightDetailView *detailView { nullptr };
     QVBoxLayout *rightViewLayout { nullptr };
     DToolBar *toolbar{ nullptr };
     TabBar *tabBar { nullptr };
@@ -1145,11 +968,12 @@ void DFileManagerWindow::initSplitter()
     d->splitter->addWidget(d->leftSideBar);
     d->splitter->addWidget(d->rightView);
 
-    d->detailView = new DRightDetailView(DUrl());
-    //d->detailView->setFixedWidth(300);
-    d->detailView->setMaximumWidth(500);
-    d->detailView->setMinimumWidth(300);
+#ifdef DFM_DETAILSVIEW
+    d->detailView = new DFMRightDetailView(currentUrl());
+    d->detailView->setFixedWidth(400);
+    d->detailView->setVisible(false); //不显示先
     d->splitter->addWidget(d->detailView);
+#endif
 
     d->splitter->setChildrenCollapsible(false);
 }
@@ -1313,7 +1137,7 @@ void DFileManagerWindow::initConnect()
     });
 
     QObject::connect(this, &DFileManagerWindow::selectUrlChanged, this, [d](const QList<DUrl> &urlList){
-        if(urlList.size()>0)
+        if(urlList.size()>0 && d->detailView)
             d->detailView->setUrl(urlList.at(0));
     });
 }
