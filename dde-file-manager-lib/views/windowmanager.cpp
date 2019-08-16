@@ -122,8 +122,6 @@ void WindowManager::loadWindowState(DFileManagerWindow *window)
 
 void WindowManager::saveWindowState(DFileManagerWindow *window)
 {
-//    m_fmStateManager->fmState()->setViewMode(window->getFileViewMode());
-
     /// The power by dxcb platform plugin
     NetWmStates states = (NetWmStates)window->window()->windowHandle()->property("_d_netWmStates").toInt();
 
@@ -207,7 +205,6 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
 
         window->moveCenter(currentScreenGeometry.center());
     }
-//    window->setFileViewMode(m_fmStateManager->fmState()->viewMode());
 
     qApp->setActiveWindow(window);
 }
