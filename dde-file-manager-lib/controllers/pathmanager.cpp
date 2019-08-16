@@ -70,13 +70,18 @@ void PathManager::initPaths()
         m_systemPathDisplayNamesMap["System Disk"] = m_systemPathDisplayNamesMap["System Disk"].append(" (C:)");
     }
 
-    m_systemPathIconNamesMap["Home"] = "folder-home";
+    m_systemPathIconNamesMap["Recent"] = "document-open-recent";
+    m_systemPathIconNamesMap["Home"] = "user-home";
     m_systemPathIconNamesMap["Desktop"] = "folder-desktop";
     m_systemPathIconNamesMap["Videos"] = "folder-videos";
     m_systemPathIconNamesMap["Music"] = "folder-music";
     m_systemPathIconNamesMap["Pictures"] = "folder-pictures";
     m_systemPathIconNamesMap["Documents"] = "folder-documents";
     m_systemPathIconNamesMap["Downloads"] = "folder-downloads";
+    m_systemPathIconNamesMap["Trash"] = "user-trash";
+    m_systemPathIconNamesMap["Computer"] = "computer";
+    m_systemPathIconNamesMap["System Disk"] = "drive-harddisk-root";
+    m_systemPathIconNamesMap["Network"] = "folder-remote";
 }
 
 QString PathManager::getSystemPath(QString key)
