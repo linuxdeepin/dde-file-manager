@@ -31,7 +31,6 @@
 class DFileManagerWindow;
 class DUrl;
 class DFMEvent;
-class FMState;
 class QTimer;
 
 
