@@ -1071,17 +1071,12 @@ void DFileManagerWindow::initCentralWidget()
 
     d->centralWidget = new QFrame(this);
     d->centralWidget->setObjectName("CentralWidget");
-    QHBoxLayout *mainLayout = new QHBoxLayout;
+    QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(d->splitter);
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
 
-    /*d->detailView = new DRightDetailView(DUrl());
-    d->detailView->setFixedWidth(300);
-    mainLayout->addWidget(d->detailView);*/
-
     d->centralWidget->setLayout(mainLayout);
-
 }
 
 void DFileManagerWindow::initConnect()
