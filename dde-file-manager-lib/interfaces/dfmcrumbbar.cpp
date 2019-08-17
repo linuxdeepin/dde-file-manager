@@ -18,15 +18,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "dfmapplication.h"
 #include "dfmcrumbbar.h"
 #include "dfmcrumbitem.h"
 #include "dfmcrumbmanager.h"
+#include "dfmsettings.h"
 
 #include <QHBoxLayout>
 #include <QPainter>
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QApplication>
+#include <qmenu.h>
 
 #include "views/dfilemanagerwindow.h"
 #include "views/dfmaddressbar.h"
@@ -35,9 +38,15 @@
 #include "dfmcrumbinterface.h"
 #include "dfmapplication.h"
 #include "dfmevent.h"
+#include "dfmcrumblistviewmodel.h"
 
 #include <QButtonGroup>
 #include <QDebug>
+#include <dlistview.h>
+
+#include <views/windowmanager.h>
+#include <QGuiApplication>
+#include <QClipboard>
 
 DWIDGET_USE_NAMESPACE
 
@@ -53,11 +62,9 @@ public:
     // UI
     QPushButton leftArrow;
     QPushButton rightArrow;
-    QScrollArea crumbListScrollArea;
-    QWidget *crumbListHolder;
-    QHBoxLayout *crumbListLayout;
+    DListView crumbListScrollArea;
+    DFMCrumbListviewModel *crumbListviewModel = nullptr;
     QHBoxLayout *crumbBarLayout;
-    QButtonGroup buttonGroup;
     QPoint clickedPos;
     DFMAddressBar *addressBar = nullptr;
 
@@ -71,7 +78,6 @@ public:
 
     void clearCrumbs();
     void checkArrowVisiable();
-    void addCrumb(DFMCrumbItem* item);
     void updateController(const DUrl &url);
     void setClickableAreaEnabled(bool enabled);
 
@@ -90,69 +96,28 @@ DFMCrumbBarPrivate::DFMCrumbBarPrivate(DFMCrumbBar *qq)
 }
 
 /*!
- * \brief Remove all crumbs inside crumb bar.
+ * \brief Remove all crumbs List items inside crumb listView.
  */
 void DFMCrumbBarPrivate::clearCrumbs()
 {
     leftArrow.hide();
     rightArrow.hide();
 
-    if (crumbListLayout == nullptr) return;
-
-    QList<QAbstractButton *> btns = buttonGroup.buttons();
-
-    for (QAbstractButton* btn : btns) {
-        crumbListLayout->removeWidget(btn);
-        buttonGroup.removeButton(btn);
-        btn->setParent(0);
-        btn->close();
-        btn->disconnect();
-        // blumia: calling btn->deleteLater() wont send the delete event to eventloop
-        //         don't know why... so we directly delete it here.
-        delete btn;
-    }
+    if (crumbListviewModel)
+        crumbListviewModel->removeAll();
 }
 
 void DFMCrumbBarPrivate::checkArrowVisiable()
 {
-    if (crumbListHolder->width() >= crumbListScrollArea.width()) {
-        if (!addressBar->isVisible()) {
-            leftArrow.show();
-            rightArrow.show();
-        }
+    QScrollBar* sb = crumbListScrollArea.horizontalScrollBar();
+    if (!sb)
+        return;
 
-        QScrollBar* sb = crumbListScrollArea.horizontalScrollBar();
-        leftArrow.setEnabled(sb->value() != sb->minimum());
-        rightArrow.setEnabled(sb->value() != sb->maximum());
-    } else {
-        leftArrow.hide();
-        rightArrow.hide();
-    }
-}
+    leftArrow.setVisible(sb->maximum() > 0);
+    rightArrow.setVisible(sb->maximum() > 0);
 
-/*!
- * \brief Add crumb item into crumb bar.
- * \param item The item to be added into the crumb bar
- *
- * Notice: This shouldn't be called outside `updateCrumbs`.
- */
-void DFMCrumbBarPrivate::addCrumb(DFMCrumbItem *item)
-{
-    Q_Q(DFMCrumbBar);
-
-    crumbListLayout->addWidget(item);
-    item->show();
-
-    crumbListScrollArea.horizontalScrollBar()->setPageStep(crumbListHolder->width());
-
-    checkArrowVisiable();
-
-    q->connect(item, &DFMCrumbItem::clicked, q, [this, q]() {
-        // change directory.
-        DFMCrumbItem * item = qobject_cast<DFMCrumbItem*>(q->sender());
-        Q_CHECK_PTR(item);
-        emit q->crumbItemClicked(item);
-    });
+    leftArrow.setEnabled(sb->value() != sb->minimum());
+    rightArrow.setEnabled(sb->value() != sb->maximum());
 }
 
 /*!
@@ -183,7 +148,7 @@ void DFMCrumbBarPrivate::setClickableAreaEnabled(bool enabled)
     if (clickableAreaEnabled == enabled) return;
 
     clickableAreaEnabled = enabled;
-    crumbListHolder->setContentsMargins(0, 0, (enabled ? 30 : 0), 0);
+    //crumbListHolder->setContentsMargins(0, 0, (enabled ? 30 : 0), 0);
 
     q->update();
 }
@@ -218,21 +183,14 @@ void DFMCrumbBarPrivate::initUI()
     crumbListScrollArea.setContentsMargins(0, 0, 0, 0);
     crumbListScrollArea.setSizeAdjustPolicy(QAbstractScrollArea::AdjustIgnored);
 
-    int clickableRightMargin = clickableAreaEnabled ? 30 : 0; // right 30 for easier click
-    crumbListHolder = new QWidget();
-    crumbListHolder->setObjectName("crumbListHolder");
-    crumbListHolder->setContentsMargins(0, 0, clickableRightMargin, 0);
-    crumbListHolder->setFixedHeight(q->height());
-    crumbListHolder->installEventFilter(q);
-    crumbListScrollArea.setWidget(crumbListHolder);
+    crumbListScrollArea.QListView::setFlow(QListView::LeftToRight);
+    crumbListScrollArea.QListView::setWrapping(false);
+    crumbListScrollArea.setEditTriggers(QAbstractItemView::NoEditTriggers);
+    crumbListScrollArea.setDragDropMode(QAbstractItemView::DragDropMode::NoDragDrop);
 
-    crumbListLayout = new QHBoxLayout;
-    crumbListLayout->setMargin(0);
-    crumbListLayout->setSpacing(0);
-    crumbListLayout->setAlignment(Qt::AlignLeft);
-//    crumbListLayout->setSizeConstraint(QLayout::SetMinimumSize);
-    crumbListLayout->setContentsMargins(0, 0, 0, 0);
-    crumbListHolder->setLayout(crumbListLayout);
+    crumbListviewModel = new DFMCrumbListviewModel;
+    crumbListScrollArea.setModel(crumbListviewModel);
+    crumbListScrollArea.setContextMenuPolicy(Qt::CustomContextMenu);
 
     // Crumb Bar Layout
     crumbBarLayout = new QHBoxLayout;
@@ -256,6 +214,17 @@ void DFMCrumbBarPrivate::initData()
 void DFMCrumbBarPrivate::initConnections()
 {
     Q_Q(DFMCrumbBar);
+    QObject::connect(&crumbListScrollArea, &QListView::customContextMenuRequested, q, &DFMCrumbBar::onListViewContextMenu);
+
+    QObject::connect(crumbListScrollArea.selectionModel(), &QItemSelectionModel::currentChanged, q,
+                     [q](const QModelIndex &current, const QModelIndex &previous){
+        Q_UNUSED(previous);
+        if (current.isValid()){
+            emit q->crumbListItemSelected(current.data(DFMCrumbListviewModel::FileUrlRole).toUrl());
+        } else {
+            qWarning() << "current index is invalid, (QItemSelectionModel::currentChanged)";
+        }
+    });
 
     q->connect(&leftArrow, &QPushButton::clicked, q, [this]() {
         crumbListScrollArea.horizontalScrollBar()->triggerAction(QAbstractSlider::SliderPageStepSub);
@@ -273,7 +242,7 @@ void DFMCrumbBarPrivate::initConnections()
         emit q->addressBarContentEntered(addressBar->text());
     });
 
-    q->connect(addressBar, &DFMAddressBar::escKeyPressed, q, [q, this]() {
+    q->connect(addressBar, &DFMAddressBar::escKeyPressed, q, [this]() {
         if (crumbController) {
             crumbController->processAction(DFMCrumbInterface::EscKeyPressed);
         }
@@ -285,7 +254,7 @@ void DFMCrumbBarPrivate::initConnections()
         }
     });
 
-    q->connect(addressBar, &DFMAddressBar::clearButtonPressed, q, [q, this] {
+    q->connect(addressBar, &DFMAddressBar::clearButtonPressed, q, [this] {
         if (crumbController) {
             crumbController->processAction(DFMCrumbInterface::ClearButtonPressed);
         }
@@ -410,16 +379,27 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
     QList<CrumbData> crumbDataList = d->crumbController->seprateUrl(url);
     for (const CrumbData& c : crumbDataList) {
         DFMCrumbItem* item = d->crumbController->createCrumbItem(c);
-        item->setParent(this);
-        d->buttonGroup.addButton(item);
-        if (item->url() == url) {
-            item->setCheckable(true);
-            item->setChecked(true);
+
+        if (d->crumbListviewModel) {
+            QStandardItem *listitem = nullptr;
+            if (!item->icon().isNull()) {
+                listitem = new QStandardItem(item->icon(), QString());
+                listitem->setSizeHint(item->iconSize());
+            } else {
+                listitem = new QStandardItem(item->text());
+            }
+
+            listitem->setCheckable(false);
+            listitem->setData(item->url(), DFMCrumbListviewModel::FileUrlRole);
+            d->crumbListviewModel->appendRow(listitem);
         }
-        d->addCrumb(item);
+        delete item;
+
     }
 
-    d->crumbListHolder->adjustSize();
+    if (d->crumbListScrollArea.selectionModel() && d->crumbListviewModel)
+        d->crumbListScrollArea.selectionModel()->select(d->crumbListviewModel->lastIndex(), QItemSelectionModel::Select);
+
     d->checkArrowVisiable();
     d->crumbListScrollArea.horizontalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
 }
@@ -500,7 +480,7 @@ void DFMCrumbBar::showEvent(QShowEvent *event)
 {
     Q_D(DFMCrumbBar);
 
-    d->crumbListScrollArea.horizontalScrollBar()->setPageStep(d->crumbListHolder->width());
+    //d->crumbListScrollArea.horizontalScrollBar()->setPageStep(d->crumbListHolder->width());
     d->crumbListScrollArea.horizontalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);
 
     d->checkArrowVisiable();
@@ -510,28 +490,13 @@ void DFMCrumbBar::showEvent(QShowEvent *event)
 
 bool DFMCrumbBar::eventFilter(QObject *watched, QEvent *event)
 {
-    Q_D(DFMCrumbBar);
-
-    if (event->type() == QEvent::Wheel && d && watched == d->crumbListHolder) {
-        class PublicQWheelEvent : public QWheelEvent
-        {
-        public:
-            friend class dde_file_manager::DFMCrumbBar;
-        };
-
-        PublicQWheelEvent *e = static_cast<PublicQWheelEvent*>(event);
-
-        e->modState = Qt::AltModifier;
-        e->qt4O = Qt::Horizontal;
-    }
-
     return QFrame::eventFilter(watched, event);
 }
 
 void DFMCrumbBar::paintEvent(QPaintEvent *event)
 {
     Q_D(DFMCrumbBar);
-
+    /*//设计图中没有边框
     QPainter painter(this);
     QColor borderColor = ThemeConfig::instace()->color("CrumbBar.BorderLine", "border-color");
     QColor crumbBarBgColor = ThemeConfig::instace()->color("DFMCrumbBar", "background");
@@ -540,7 +505,7 @@ void DFMCrumbBar::paintEvent(QPaintEvent *event)
     QRectF crumbsRect(rect());
 
     if (!d->clickableAreaEnabled) {
-        crumbsRect = d->crumbListHolder->rect();
+        crumbsRect = d->crumbListScrollArea.rect();
     }
 
     painter.setRenderHint(QPainter::Antialiasing);
@@ -556,8 +521,51 @@ void DFMCrumbBar::paintEvent(QPaintEvent *event)
     }
 
     painter.drawPath(path);
-
+*/
     QFrame::paintEvent(event);
+}
+
+void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
+{
+    Q_D(DFMCrumbBar);
+    QModelIndex index = d->crumbListScrollArea.indexAt(point);
+    if (!index.isValid())
+        return ;
+
+    QMenu *menu = new QMenu();
+    DUrl url = index.data(DFMCrumbListviewModel::FileUrlRole).toUrl();
+    bool displayIcon = DFMApplication::genericObtuselySetting()->value("ApplicationAttribute", "DisplayContextMenuIcon", false).toBool();
+    QIcon copyIcon, newWndIcon,  newTabIcon, editIcon;
+    if (displayIcon) {
+        copyIcon = QIcon::fromTheme("edit-copy");
+        newWndIcon = QIcon::fromTheme("window-new");
+        newTabIcon = QIcon::fromTheme("tab-new");
+        editIcon = QIcon::fromTheme("entry-edit");
+    }
+
+    DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(window());
+    bool shouldDisable = !WindowManager::tabAddableByWinId(wnd->windowId());
+
+    menu->addAction(copyIcon, QObject::tr("Copy path"), [=]() {
+        QGuiApplication::clipboard()->setText(url.toString());
+    });
+
+    menu->addAction(newWndIcon, QObject::tr("Open in new window"), [url]() {
+        WindowManager::instance()->showNewWindow(url, true);
+    });
+
+    menu->addAction(newTabIcon, QObject::tr("Open in new tab"), [wnd,url]() {
+        wnd->openNewTab(url);
+    })->setDisabled(shouldDisable);
+
+    menu->addSeparator();
+
+    menu->addAction(editIcon, QObject::tr("Edit address"), this, [=]() {
+        showAddressBar(wnd->currentUrl());
+    });
+
+    menu->exec(QCursor::pos());
+    menu->deleteLater();
 }
 
 /*!

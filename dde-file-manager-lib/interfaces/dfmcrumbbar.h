@@ -55,6 +55,7 @@ Q_SIGNALS:
     void addressBarHidden();
     void addressBarContentEntered(QString content);
     void crumbItemClicked(DFMCrumbItem *item);
+    void crumbListItemSelected(const DUrl &url);
 
 protected:
     void mousePressEvent(QMouseEvent * event) override;
@@ -63,6 +64,8 @@ protected:
     void showEvent(QShowEvent *event) override;
     bool eventFilter(QObject *watched, QEvent *event) override;
     void paintEvent(QPaintEvent * event) override;
+
+    void onListViewContextMenu(const QPoint &point);
 
     Q_DECLARE_PRIVATE(DFMCrumbBar)
 };
