@@ -18,19 +18,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+#include <QHBoxLayout>
+#include <QPainter>
+#include <QScrollBar>
+#include <QApplication>
+#include <QMenu>
+#include <QDebug>
+#include <QGuiApplication>
+#include <QClipboard>
+
 #include "dfmapplication.h"
 #include "dfmcrumbbar.h"
 #include "dfmcrumbitem.h"
 #include "dfmcrumbmanager.h"
 #include "dfmsettings.h"
-
-#include <QHBoxLayout>
-#include <QPainter>
-#include <QScrollArea>
-#include <QScrollBar>
-#include <QApplication>
-#include <qmenu.h>
-
+#include "views/windowmanager.h"
 #include "views/dfilemanagerwindow.h"
 #include "views/dfmaddressbar.h"
 #include "views/themeconfig.h"
@@ -38,15 +41,10 @@
 #include "dfmcrumbinterface.h"
 #include "dfmapplication.h"
 #include "dfmevent.h"
+#include "dlistview.h"
 #include "dfmcrumblistviewmodel.h"
 
-#include <QButtonGroup>
-#include <QDebug>
-#include <dlistview.h>
 
-#include <views/windowmanager.h>
-#include <QGuiApplication>
-#include <QClipboard>
 
 DWIDGET_USE_NAMESPACE
 
@@ -380,11 +378,17 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
     for (const CrumbData& c : crumbDataList) {
         DFMCrumbItem* item = d->crumbController->createCrumbItem(c);
 
+        if (item->url() == url && !url.isTrashFile()) {
+            item->setCheckable(true);
+            item->setChecked(true);
+            item->setIconFromThemeConfig(c.iconName); // set checked state icon
+        }
+
         if (d->crumbListviewModel) {
+
             QStandardItem *listitem = nullptr;
             if (!item->icon().isNull()) {
                 listitem = new QStandardItem(item->icon(), QString());
-                listitem->setSizeHint(item->iconSize());
             } else {
                 listitem = new QStandardItem(item->text());
             }
@@ -393,8 +397,8 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
             listitem->setData(item->url(), DFMCrumbListviewModel::FileUrlRole);
             d->crumbListviewModel->appendRow(listitem);
         }
-        delete item;
 
+        delete item;
     }
 
     if (d->crumbListScrollArea.selectionModel() && d->crumbListviewModel)
@@ -496,32 +500,32 @@ bool DFMCrumbBar::eventFilter(QObject *watched, QEvent *event)
 void DFMCrumbBar::paintEvent(QPaintEvent *event)
 {
     Q_D(DFMCrumbBar);
-    /*//设计图中没有边框
-    QPainter painter(this);
-    QColor borderColor = ThemeConfig::instace()->color("CrumbBar.BorderLine", "border-color");
-    QColor crumbBarBgColor = ThemeConfig::instace()->color("DFMCrumbBar", "background");
-    QPainterPath path;
+    //设计图中没有边框
+//    QPainter painter(this);
+//    QColor borderColor = ThemeConfig::instace()->color("CrumbBar.BorderLine", "border-color");
+//    QColor crumbBarBgColor = ThemeConfig::instace()->color("DFMCrumbBar", "background");
+//    QPainterPath path;
 
-    QRectF crumbsRect(rect());
+//    QRectF crumbsRect(rect());
 
-    if (!d->clickableAreaEnabled) {
-        crumbsRect = d->crumbListScrollArea.rect();
-    }
+//    if (!d->clickableAreaEnabled) {
+//        crumbsRect = d->crumbListScrollArea.rect();
+//    }
 
-    painter.setRenderHint(QPainter::Antialiasing);
-    path.addRoundedRect(QRectF(crumbsRect).adjusted(0.5, 0.5, -0.5, -0.5), 4, 4);
-    QPen pen(borderColor, 1);
-    painter.setPen(pen);
+//    painter.setRenderHint(QPainter::Antialiasing);
+//    path.addRoundedRect(QRectF(crumbsRect).adjusted(0.5, 0.5, -0.5, -0.5), 4, 4);
+//    QPen pen(borderColor, 1);
+//    painter.setPen(pen);
 
-    if (d->addressBar->isHidden()) {
-        QPainterPath path;
+//    if (d->addressBar->isHidden()) {
+//        QPainterPath path;
 
-        path.addRoundedRect(QRectF(crumbsRect), 4, 4);
-        painter.fillPath(path, crumbBarBgColor);
-    }
+//        path.addRoundedRect(QRectF(crumbsRect), 4, 4);
+//        painter.fillPath(path, crumbBarBgColor);
+//    }
 
-    painter.drawPath(path);
-*/
+//    painter.drawPath(path);
+
     QFrame::paintEvent(event);
 }
 
