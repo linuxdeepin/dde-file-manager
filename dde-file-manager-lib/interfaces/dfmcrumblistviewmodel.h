@@ -30,11 +30,17 @@ DFM_BEGIN_NAMESPACE
 class DFMCrumbListviewModel : public QStandardItemModel
 {
 public:
+    enum Roles {
+        FileUrlRole = Qt::UserRole+1
+    };
+    Q_ENUM(Roles)
+
     explicit DFMCrumbListviewModel(QObject *parent = nullptr);
     virtual ~DFMCrumbListviewModel();
 
     bool appendItem(const CrumbData& data);
     void removeAll();
+    QModelIndex lastIndex();
 };
 
 

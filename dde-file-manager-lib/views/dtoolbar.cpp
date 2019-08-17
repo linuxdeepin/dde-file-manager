@@ -198,6 +198,9 @@ void DToolBar::initConnect()
     connect(m_forwardButton, &DStateButton::clicked, this, &DToolBar::onForwardButtonClicked);
     connect(m_crumbWidget, &DFMCrumbBar::addressBarContentEntered, this, &DToolBar::searchBarTextEntered);
     connect(m_crumbWidget, &DFMCrumbBar::crumbItemClicked, this, &DToolBar::crumbSelected);
+    connect(m_crumbWidget, &DFMCrumbBar::crumbListItemSelected, this, [this](const DUrl &url){
+        DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(m_crumbWidget, url, window());
+    });
     connect(m_crumbWidget, &DFMCrumbBar::addressBarShown, this, &DToolBar::searchBarActivated);
     connect(m_crumbWidget, &DFMCrumbBar::addressBarHidden, this, &DToolBar::searchBarDeactivated);
     connect(m_searchButton, &DStateButton::clicked, this, &DToolBar::onSearchButtonClicked);

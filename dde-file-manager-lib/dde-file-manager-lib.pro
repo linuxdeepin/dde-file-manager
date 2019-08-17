@@ -261,7 +261,8 @@ HEADERS += \
     models/masteredmediafileinfo.h \
     views/dfmopticalmediawidget.h \
     views/dfmrightdetailview.h \
-    dialogs/burnoptdialog.h
+    dialogs/burnoptdialog.h \
+    interfaces/dfmcrumblistviewmodel.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -438,7 +439,8 @@ SOURCES += \
     models/masteredmediafileinfo.cpp \
     views/dfmopticalmediawidget.cpp \
     views/dfmrightdetailview.cpp \
-    dialogs/burnoptdialog.cpp
+    dialogs/burnoptdialog.cpp \
+    interfaces/dfmcrumblistviewmodel.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h
