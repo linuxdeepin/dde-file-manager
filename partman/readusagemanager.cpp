@@ -271,6 +271,12 @@ bool ReadUsageManager::readLvm2pvUsage(const QString &path, qlonglong &freespace
     return readUnknownUsage(path, freespace, total);
 }
 
+bool ReadUsageManager::readCrypto_LUKSUsage(const QString &path, qlonglong &freespace, qlonglong &total)
+{
+    qDebug() << "unsupport Crypto_LUKS fs type usage read";
+    return readUnknownUsage(path, freespace, total);
+}
+
 bool ReadUsageManager::readNilfs2Usage(const QString &path, qlonglong &freespace, qlonglong &total)
 {
     QString output;

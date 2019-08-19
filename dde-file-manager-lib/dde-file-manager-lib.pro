@@ -263,7 +263,12 @@ HEADERS += \
     views/dfmrightdetailview.h \
     dialogs/burnoptdialog.h \
     interfaces/dfmcrumblistviewmodel.h \
-    interfaces/dfmstyleditemdelegate.h
+    interfaces/dfmstyleditemdelegate.h \
+    views/dfmleftsidebar.h \
+    views/dfmsidebaritemdelegate.h \
+    models/dfmsidebarmodel.h \
+    views/dfmsidebarview.h \
+    interfaces/dfmleftsidebaritem.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -441,7 +446,12 @@ SOURCES += \
     views/dfmrightdetailview.cpp \
     dialogs/burnoptdialog.cpp \
     interfaces/dfmcrumblistviewmodel.cpp \
-    interfaces/dfmstyleditemdelegate.cpp
+    interfaces/dfmstyleditemdelegate.cpp \
+    views/dfmleftsidebar.cpp \
+    views/dfmsidebaritemdelegate.cpp \
+    models/dfmsidebarmodel.cpp \
+    views/dfmsidebarview.cpp \
+    interfaces/dfmleftsidebaritem.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h

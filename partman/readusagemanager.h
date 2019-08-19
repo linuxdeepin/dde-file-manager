@@ -55,6 +55,7 @@ public slots:
     bool readJfsUsage(const QString& path, qlonglong& freespace, qlonglong& total);
     bool readLinuxswapUsage(const QString& path, qlonglong& freespace, qlonglong& total);
     bool readLvm2pvUsage(const QString& path, qlonglong& freespace, qlonglong& total);
+    bool readCrypto_LUKSUsage(const QString& path, qlonglong& freespace, qlonglong& total);
     bool readNilfs2Usage(const QString& path, qlonglong& freespace, qlonglong& total);
     bool readNtfsUsage(const QString& path, qlonglong& freespace, qlonglong& total);
     bool readReiser4Usage(const QString& path, qlonglong& freespace, qlonglong& total);
