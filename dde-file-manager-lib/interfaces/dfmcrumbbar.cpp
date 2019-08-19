@@ -503,38 +503,6 @@ bool DFMCrumbBar::eventFilter(QObject *watched, QEvent *event)
     return QFrame::eventFilter(watched, event);
 }
 
-void DFMCrumbBar::paintEvent(QPaintEvent *event)
-{
-    Q_D(DFMCrumbBar);
-    //设计图中没有边框
-//    QPainter painter(this);
-//    QColor borderColor = ThemeConfig::instace()->color("CrumbBar.BorderLine", "border-color");
-//    QColor crumbBarBgColor = ThemeConfig::instace()->color("DFMCrumbBar", "background");
-//    QPainterPath path;
-
-//    QRectF crumbsRect(rect());
-
-//    if (!d->clickableAreaEnabled) {
-//        crumbsRect = d->crumbListScrollArea.rect();
-//    }
-
-//    painter.setRenderHint(QPainter::Antialiasing);
-//    path.addRoundedRect(QRectF(crumbsRect).adjusted(0.5, 0.5, -0.5, -0.5), 4, 4);
-//    QPen pen(borderColor, 1);
-//    painter.setPen(pen);
-
-//    if (d->addressBar->isHidden()) {
-//        QPainterPath path;
-
-//        path.addRoundedRect(QRectF(crumbsRect), 4, 4);
-//        painter.fillPath(path, crumbBarBgColor);
-//    }
-
-//    painter.drawPath(path);
-
-    QFrame::paintEvent(event);
-}
-
 void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
 {
     Q_D(DFMCrumbBar);

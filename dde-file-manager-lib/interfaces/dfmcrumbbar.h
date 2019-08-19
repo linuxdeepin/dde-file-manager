@@ -63,7 +63,6 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
     void showEvent(QShowEvent *event) override;
     bool eventFilter(QObject *watched, QEvent *event) override;
-    void paintEvent(QPaintEvent * event) override;
 
     void onListViewContextMenu(const QPoint &point);
 
