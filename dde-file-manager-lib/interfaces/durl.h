@@ -94,6 +94,9 @@ public:
     DUrl &operator=(const DUrl &other);
     DUrl &operator=(DUrl &&other);
 
+    QDataStream &operator<<(QDataStream &out);
+    QDataStream &operator>>(QDataStream &in);
+
     explicit DUrl(const QString &url, ParsingMode mode = TolerantMode);
 
     void setPath(const QString &path, ParsingMode mode = DecodedMode, bool makeAbsolutePath = true);
@@ -180,6 +183,9 @@ public:
     DUrl toAbsolutePathUrl() const;
     QString toLocalFile() const;
 
+    friend QDataStream &operator<<(QDataStream &out, const DUrl &url);
+    friend QDataStream &operator>>(QDataStream &in, DUrl &url);
+
 private:
     void updateVirtualPath();
 
@@ -195,6 +201,8 @@ Q_DECLARE_METATYPE(DUrlList)
 
 QT_BEGIN_NAMESPACE
 QDebug operator<<(QDebug deg, const DUrl &url);
+QDataStream &operator<<(QDataStream &out, const DUrl &url);
+QDataStream &operator>>(QDataStream &in, DUrl &url);
 QT_END_NAMESPACE
 
 #endif // ZURL_H
