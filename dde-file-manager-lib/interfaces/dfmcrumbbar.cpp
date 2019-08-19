@@ -44,8 +44,6 @@
 #include "dlistview.h"
 #include "dfmcrumblistviewmodel.h"
 
-
-
 DWIDGET_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
@@ -189,6 +187,9 @@ void DFMCrumbBarPrivate::initUI()
     crumbListviewModel = new DFMCrumbListviewModel;
     crumbListScrollArea.setModel(crumbListviewModel);
     crumbListScrollArea.setContextMenuPolicy(Qt::CustomContextMenu);
+
+    // 点击listview空白可拖动窗口
+    crumbListScrollArea.viewport()->installEventFilter(q);
 
     // Crumb Bar Layout
     crumbBarLayout = new QHBoxLayout;
@@ -494,6 +495,11 @@ void DFMCrumbBar::showEvent(QShowEvent *event)
 
 bool DFMCrumbBar::eventFilter(QObject *watched, QEvent *event)
 {
+    Q_D(DFMCrumbBar);
+    if (watched && watched->parent() == &d->crumbListScrollArea
+            && (event->type() == QEvent::MouseMove || event->type() == QEvent::MouseButtonDblClick))
+        event->ignore();
+
     return QFrame::eventFilter(watched, event);
 }
 
