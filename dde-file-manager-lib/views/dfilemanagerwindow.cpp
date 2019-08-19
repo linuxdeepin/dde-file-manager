@@ -37,6 +37,7 @@
 #include "dfileservices.h"
 #include "dfilesystemmodel.h"
 #include "dfmviewmanager.h"
+#include "dfmleftsidebar.h"
 #include "dfmsidebar.h"
 #include "dfmsidebaritem.h"
 #include "dfmaddressbar.h"
@@ -114,6 +115,7 @@ public:
     QPushButton *logoButton{ nullptr };
     QFrame *centralWidget{ nullptr };
     DFMSideBar *leftSideBar{ nullptr };
+    DFMLeftSideBar *sideBar{ nullptr };
     QFrame *rightView { nullptr };
     DFMRightDetailView *detailView { nullptr };
     QVBoxLayout *rightViewLayout { nullptr };
@@ -952,7 +954,8 @@ void DFileManagerWindow::initSplitter()
     initRightView();
 
     d->splitter = new QSplitter(Qt::Horizontal, this);
-    d->splitter->addWidget(d->leftSideBar);
+//    d->splitter->addWidget(d->leftSideBar);
+    d->splitter->addWidget(d->sideBar);
     d->splitter->addWidget(d->rightView);
 
 #ifdef DFM_DETAILSVIEW
@@ -978,6 +981,18 @@ void DFileManagerWindow::initLeftSideBar()
     // connections
     connect(this, &DFileManagerWindow::currentUrlChanged, this, [this, d]() {
         d->leftSideBar->setCurrentUrl(currentUrl());
+    });
+
+    // ---------------------------
+
+    d->sideBar = new DFMLeftSideBar(this);
+    d->sideBar->setObjectName("DFMSideBar");
+    d->sideBar->setMaximumWidth(DFMLeftSideBar::maximumWidth);
+    d->sideBar->setMinimumWidth(DFMLeftSideBar::minimumWidth);
+
+    // connections
+    connect(this, &DFileManagerWindow::currentUrlChanged, this, [this, d]() {
+        d->sideBar->setCurrentUrl(currentUrl());
     });
 }
 
