@@ -106,6 +106,25 @@ DUrl &DUrl::operator=(DUrl &&other)
     return *this;
 }
 
+QDataStream &DUrl::operator<<(QDataStream &out)
+{
+    QByteArray u;
+    if (this->isValid())
+        u = this->toEncoded();
+    out << u << m_virtualPath;
+    return out;
+}
+
+QDataStream &DUrl::operator>>(QDataStream &in)
+{
+    QByteArray u;
+    QString virtualPath;
+    in >> u >> virtualPath;
+    this->setUrl(QString::fromLatin1(u));
+    this->m_virtualPath = virtualPath;
+    return in;
+}
+
 
 DUrl::DUrl(const QString &url, QUrl::ParsingMode mode)
     : QUrl(url, mode)
@@ -793,5 +812,23 @@ uint qHash(const DUrl &url, uint seed) Q_DECL_NOTHROW {
     qHash(url.query()) ^
     qHash(url.fragment());
 }
-QT_END_NAMESPACE
 
+QDataStream &operator<<(QDataStream &out, const DUrl &url)
+{
+    QByteArray u;
+    if (url.isValid())
+        u = url.toEncoded();
+    out << u << url.m_virtualPath;
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, DUrl &url)
+{
+    QByteArray u;
+    QString virtualPath;
+    in >> u >> virtualPath;
+    url.setUrl(QString::fromLatin1(u));
+    url.m_virtualPath = virtualPath;
+    return in;
+}
+QT_END_NAMESPACE
