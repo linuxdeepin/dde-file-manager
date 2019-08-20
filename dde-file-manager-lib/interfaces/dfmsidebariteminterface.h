@@ -18,22 +18,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #pragma once
 
-#include <DStyledItemDelegate>
+#include <QMenu>
+#include <QObject>
 
-DWIDGET_USE_NAMESPACE
-
-class DFMSideBarItemDelegate : public DStyledItemDelegate
+class DFMLeftSideBar;
+class DFMLeftSideBarItem;
+class DFMSideBarItemInterface : public QObject
 {
-    Q_OBJECT
+    Q_GADGET
 public:
-    DFMSideBarItemDelegate(QAbstractItemView *parent = nullptr);
+    explicit DFMSideBarItemInterface(QObject *parent = nullptr);
 
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-
-private:
-    void paintSeparator(QPainter *painter, const QStyleOptionViewItem &option) const;
-    QSize sizeHintForType(int type) const;
+    virtual void cdAction(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem* item);
+    virtual QMenu * contextMenu(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem* item);
 };

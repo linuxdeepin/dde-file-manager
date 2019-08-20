@@ -18,22 +18,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #pragma once
 
-#include <DStyledItemDelegate>
+#include "dfmsidebariteminterface.h"
+#include "dtkwidget_global.h"
 
-DWIDGET_USE_NAMESPACE
+#define SIDEBAR_ID_DEVICE "__device"
 
-class DFMSideBarItemDelegate : public DStyledItemDelegate
+DWIDGET_BEGIN_NAMESPACE
+class DViewItemAction;
+DWIDGET_END_NAMESPACE
+
+class DUrl;
+class DFMSideBarDeviceItemHandler : public DFMSideBarItemInterface
 {
-    Q_OBJECT
 public:
-    DFMSideBarItemDelegate(QAbstractItemView *parent = nullptr);
+    static DTK_WIDGET_NAMESPACE::DViewItemAction * createUnmountOrEjectAction(const DUrl &url);
+    static DFMLeftSideBarItem * createItem(const DUrl &url);
 
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    DFMSideBarDeviceItemHandler(QObject *parent = nullptr);
 
-private:
-    void paintSeparator(QPainter *painter, const QStyleOptionViewItem &option) const;
-    QSize sizeHintForType(int type) const;
+    void cdAction(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem* item) override;
+    QMenu * contextMenu(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem* item) override;
 };

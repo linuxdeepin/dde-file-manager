@@ -19,83 +19,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dfmleftsidebaritem.h"
-
-#include "singleton.h"
-#include "dfileservices.h"
-#include "app/define.h"
-#include "controllers/pathmanager.h"
+#include "dfmsidebarmanager.h"
 
 #include <QObject>
 #include <QVariant>
 
 DFMLeftSideBarItem::DFMLeftSideBarItem(const QIcon &icon, const QString &text, const DUrl &url, const QString &groupName)
-    : QStandardItem (icon, text)
+    : DStandardItem (icon, text)
 {
     setUrl(url);
+    setGroupName(groupName);
     this->setData(SidebarItem, ItemTypeRole);
-    this->setData(groupName, ItemGroupNameRole);
-    this->setData(ChangeDirectory, ItemCdActionRole);
-}
-
-DFMLeftSideBarItem *DFMLeftSideBarItem::createSystemPathItem(const QString &pathKey, const QString &groupName)
-{
-    QString iconName = systemPathManager->getSystemPathIconName(pathKey);
-    if (!iconName.contains("-symbolic")) {
-        iconName.append("-symbolic");
-    }
-    DFMLeftSideBarItem * item = new DFMLeftSideBarItem(
-                    QIcon::fromTheme(iconName),
-                    systemPathManager->getSystemPathDisplayName(pathKey),
-                    DUrl::fromUserInput(systemPathManager->getSystemPath(pathKey)),
-                    groupName
-                );
-
-    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren);
-    qDebug() << item->flags();
-
-    return item;
-}
-
-DFMLeftSideBarItem *DFMLeftSideBarItem::createDeviceItem(const DUrl &url, const QString &groupName)
-{
-    const DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(nullptr, url);
-    QVariantHash info = infoPointer->extraProperties();
-    QString displayName = infoPointer->fileDisplayName();
-    QString iconName("drive-harddisk");
-
-    DFMLeftSideBarItem * item = new DFMLeftSideBarItem(QIcon::fromTheme(iconName), displayName, url, groupName);
-    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren);
-    item->setData(MountPartitionThenCd, ItemCdActionRole);
-
-    return item;
-}
-
-DFMLeftSideBarItem *DFMLeftSideBarItem::createBookmarkItem(const DUrl &url, const QString &groupName)
-{
-    // leave url a default display name.
-    DAbstractFileInfoPointer fileInfo = DFileService::instance()->createFileInfo(nullptr, url);
-    QString displayName;
-
-    if (fileInfo) {
-        displayName = fileInfo->fileDisplayName();
-    }
-
-    DFMLeftSideBarItem * item = new DFMLeftSideBarItem(
-                    QIcon::fromTheme("folder-bookmark-symbolic"), displayName, url, groupName
-                );
-
-    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemNeverHasChildren);
-
-    return item;
-}
-
-DFMLeftSideBarItem *DFMLeftSideBarItem::createTagItem(const DUrl &url, const QString &groupName)
-{
-    DFMLeftSideBarItem * item = new DFMLeftSideBarItem(QIcon(), url.fileName(), url, groupName);
-
-    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemNeverHasChildren);
-
-    return item;
+    this->setData("none", ItemUseRegisteredHandlerRole);
 }
 
 /*!
@@ -131,11 +66,6 @@ QString DFMLeftSideBarItem::groupName() const
     return this->data(ItemGroupNameRole).toString();
 }
 
-int DFMLeftSideBarItem::cdActionType() const
-{
-    return this->data(ItemCdActionRole).toInt();
-}
-
 int DFMLeftSideBarItem::itemType() const
 {
     return this->data(ItemTypeRole).toInt();
@@ -155,8 +85,33 @@ int DFMLeftSideBarItem::type() const
     return DFMLeftSideBarItem::SidebarItemType;
 }
 
+bool DFMLeftSideBarItem::useRegisteredHandler() const
+{
+    return this->registeredHandler() == "none";
+}
+
+QString DFMLeftSideBarItem::registeredHandler(const QString &fallback) const
+{
+    QString identifier = this->data(ItemUseRegisteredHandlerRole).toString();
+    if (identifier != "none") {
+        return identifier;
+    } else {
+        return fallback.isEmpty() ? identifier : fallback;
+    }
+}
+
 void DFMLeftSideBarItem::setUrl(const DUrl &url)
 {
     this->setData(QVariant::fromValue(url), ItemUrlRole);
+}
+
+void DFMLeftSideBarItem::setGroupName(const QString &groupName)
+{
+    this->setData(groupName, ItemGroupNameRole);
+}
+
+void DFMLeftSideBarItem::setRegisteredHandler(const QString &identifier)
+{
+    this->setData(identifier, ItemUseRegisteredHandlerRole);
 }
 

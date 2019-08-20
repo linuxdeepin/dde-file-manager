@@ -1,0 +1,129 @@
+/*
+ * Copyright (C) 2019 Deepin Technology Co., Ltd.
+ *
+ * Author:     Gary Wang <wzc782970009@gmail.com>
+ *
+ * Maintainer: Gary Wang <wangzichong@deepin.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include "dfmsidebardefaultitemhandler.h"
+
+#include "dfmleftsidebaritem.h"
+
+#include "singleton.h"
+#include "app/define.h"
+#include "app/filesignalmanager.h"
+#include "controllers/pathmanager.h"
+#include "views/dfilemanagerwindow.h"
+#include "views/dfmleftsidebar.h"
+#include "views/windowmanager.h"
+#include "trashmanager.h"
+#include "durl.h"
+
+DFMLeftSideBarItem *DFMSideBarDefaultItemHandler::createItem(const QString &pathKey)
+{
+    QString iconName = systemPathManager->getSystemPathIconName(pathKey);
+    if (!iconName.contains("-symbolic")) {
+        iconName.append("-symbolic");
+    }
+
+    QString pathStr = pathKey == "Trash" ? TRASH_ROOT : systemPathManager->getSystemPath(pathKey);
+
+    DFMLeftSideBarItem * item = new DFMLeftSideBarItem(
+                    QIcon::fromTheme(iconName),
+                    systemPathManager->getSystemPathDisplayName(pathKey),
+                    DUrl::fromUserInput(pathStr)
+                );
+
+    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren);
+    item->setData(SIDEBAR_ID_DEFAULT, DFMLeftSideBarItem::ItemUseRegisteredHandlerRole);
+
+    return item;
+}
+
+DFMSideBarDefaultItemHandler::DFMSideBarDefaultItemHandler(QObject *parent)
+    : DFMSideBarItemInterface (parent)
+{
+
+}
+
+void DFMSideBarDefaultItemHandler::cdAction(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem *item)
+{
+    return DFMSideBarItemInterface::cdAction(sidebar, item);
+}
+
+QMenu *DFMSideBarDefaultItemHandler::contextMenu(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem *item)
+{
+    static QStringList noPropertySchemes = {"usershare", "network"};
+
+//    if (item->url() != DUrl::fromTrashFile("/") && item->url() != DUrl::fromUserInput(QDir::rootPath())
+//            && item->text() != systemPathManager->getSystemPathDisplayName("Home")) {
+//        return DFMSideBarItemInterface::contextMenu(sidebar, item);
+//    }
+
+    QMenu *menu = new QMenu();
+
+    DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(sidebar->topLevelWidget());
+    bool shouldDisable = !WindowManager::tabAddableByWinId(wnd->windowId());
+
+    menu->addAction(QObject::tr("Open in new window"), [item]() {
+        WindowManager::instance()->showNewWindow(item->url(), true);
+    });
+
+    menu->addAction(QObject::tr("Open in new tab"), [wnd, item]() {
+        wnd->openNewTab(item->url());
+    })->setDisabled(shouldDisable);
+
+    menu->addSeparator();
+
+    if (item->text() == systemPathManager->getSystemPathDisplayName("Trash")) {
+        QAction *emptyTrash = new QAction(QObject::tr("Empty Trash"), menu);
+        connect(emptyTrash, &QAction::triggered, this, [this]() {
+            appController->actionClearTrash(this);
+        });
+        emptyTrash->setDisabled(TrashManager::isEmpty());
+        menu->addAction(emptyTrash);
+    }
+
+    if (item->text() == systemPathManager->getSystemPathDisplayName("Home")) {
+        QStorageInfo partitionHome("/home");
+        if (partitionHome.isValid() && partitionHome.rootPath() == QStringLiteral("/home")) {
+            menu->addSeparator();
+
+            QAction *propertyAction = new QAction(QObject::tr("Disk info"), menu);
+            connect(propertyAction, &QAction::triggered, this, [this, partitionHome]() {
+                DUrl url(QDir::homePath());
+                url.setQuery(partitionHome.device());
+                fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(this, {url}));
+            });
+            menu->addAction(propertyAction);
+        }
+    }
+
+    menu->addSeparator();
+
+    if (!noPropertySchemes.contains(item->url().scheme())) {
+        QString propertiesStr = item->text() == systemPathManager->getSystemPathDisplayName("System Disk") ?
+                                QObject::tr("Disk info") : QObject::tr("Properties");
+        menu->addAction(propertiesStr, [item]() {
+            DUrlList list;
+            list.append(item->url());
+            Singleton<FileSignalManager>::instance()->requestShowPropertyDialog(DFMUrlListBaseEvent(nullptr, list));
+        });
+    }
+
+    return menu;
+}

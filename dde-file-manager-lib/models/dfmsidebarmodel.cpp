@@ -74,6 +74,11 @@ QMimeData *DFMSideBarModel::mimeData(const QModelIndexList &indexes) const
     return data;
 }
 
+QModelIndex DFMSideBarModel::indexFromItem(const DFMLeftSideBarItem *item) const
+{
+    return QStandardItemModel::indexFromItem(item);
+}
+
 DFMLeftSideBarItem *DFMSideBarModel::itemFromIndex(const QModelIndex &index) const
 {
     QStandardItem *item = QStandardItemModel::itemFromIndex(index);

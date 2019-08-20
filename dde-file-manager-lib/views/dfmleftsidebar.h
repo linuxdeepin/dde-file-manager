@@ -49,8 +49,14 @@ public:
 
     int addItem(DFMLeftSideBarItem *item, const QString &group);
     bool removeItem(const DUrl &url, const QString &group);
+    int findItem(const DFMLeftSideBarItem * item) const;
     int findItem(const DUrl &url, const QString &group) const;
     int findLastItem(const QString &group) const;
+    void openItemEditor(int index) const;
+    QSet<QString> disableUrlSchemes() const;
+
+    void setContextMenuEnabled(bool enabled);
+    void setDisableUrlSchemes(const QSet<QString> &schemes);
 
     DUrlList savedItemOrder(const QString &groupName) const;
     void saveItemOrder(const QString &groupName) const;
@@ -75,11 +81,15 @@ private:
     void initConnection();
     void initBookmarkConnection();
     void initDeviceConnection();
+    void initTagsConnection();
     void updateSeparatorVisibleState();
     void addGroupItems(GroupName groupType);
-    void appendItemWithOrder(QList<DFMLeftSideBarItem *> &list, const DUrlList &order);
+    void insertItem(int index, DFMLeftSideBarItem * item, const QString &groupName);
+    void appendItem(DFMLeftSideBarItem * item, const QString &groupName);
+    void appendItemWithOrder(QList<DFMLeftSideBarItem *> &list, const DUrlList &order, const QString &groupName);
 
     DFMSideBarView *m_sidebarView;
     DFMSideBarModel *m_sidebarModel;
     QScopedPointer<DDiskManager> m_udisks2DiskManager;
+    bool m_contextMenuEnabled = true;
 };
