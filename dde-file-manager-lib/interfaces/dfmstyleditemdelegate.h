@@ -12,6 +12,8 @@
 #include <QStyledItemDelegate>
 #include <QTextOption>
 
+#include "dfmglobal.h"
+
 QT_BEGIN_NAMESPACE
 class QTextLayout;
 QT_END_NAMESPACE

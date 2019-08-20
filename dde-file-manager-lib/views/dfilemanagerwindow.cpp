@@ -114,7 +114,7 @@ public:
 
     QPushButton *logoButton{ nullptr };
     QFrame *centralWidget{ nullptr };
-    DFMSideBar *leftSideBar{ nullptr };
+//    DFMSideBar *leftSideBar{ nullptr };
     DFMLeftSideBar *sideBar{ nullptr };
     QFrame *rightView { nullptr };
     DFMRightDetailView *detailView { nullptr };
@@ -623,11 +623,11 @@ DFMBaseView *DFileManagerWindow::getFileView() const
     return d->currentView;
 }
 
-DFMSideBar *DFileManagerWindow::getLeftSideBar() const
+DFMLeftSideBar *DFileManagerWindow::getLeftSideBar() const
 {
     D_DC(DFileManagerWindow);
 
-    return d->leftSideBar;
+    return d->sideBar;
 }
 
 int DFileManagerWindow::getSplitterPosition() const
@@ -954,9 +954,9 @@ void DFileManagerWindow::initSplitter()
     initRightView();
 
     d->splitter = new QSplitter(Qt::Horizontal, this);
-//    d->splitter->addWidget(d->leftSideBar);
     d->splitter->addWidget(d->sideBar);
     d->splitter->addWidget(d->rightView);
+//    d->splitter->addWidget(d->leftSideBar);
 
 #ifdef DFM_DETAILSVIEW
     d->detailView = new DFMRightDetailView(currentUrl());
@@ -972,18 +972,18 @@ void DFileManagerWindow::initLeftSideBar()
 {
     D_D(DFileManagerWindow);
 
-//    d->leftSideBar = new DLeftSideBar(this);
-    d->leftSideBar = new DFMSideBar(this);
-    d->leftSideBar->setObjectName("LeftSideBar");
-//    d->leftSideBar->setFixedWidth(LEFTSIDEBAR_MAX_WIDTH);
-    d->leftSideBar->setMaximumWidth(DFMSideBarItem::maximumWidth);
-    d->leftSideBar->setMinimumWidth(DFMSideBarItem::minimumWidth);
-    // connections
-    connect(this, &DFileManagerWindow::currentUrlChanged, this, [this, d]() {
-        d->leftSideBar->setCurrentUrl(currentUrl());
-    });
+////    d->leftSideBar = new DLeftSideBar(this);
+//    d->leftSideBar = new DFMSideBar(this);
+//    d->leftSideBar->setObjectName("LeftSideBar");
+////    d->leftSideBar->setFixedWidth(LEFTSIDEBAR_MAX_WIDTH);
+//    d->leftSideBar->setMaximumWidth(DFMSideBarItem::maximumWidth);
+//    d->leftSideBar->setMinimumWidth(DFMSideBarItem::minimumWidth);
+//    // connections
+//    connect(this, &DFileManagerWindow::currentUrlChanged, this, [this, d]() {
+//        d->leftSideBar->setCurrentUrl(currentUrl());
+//    });
 
-    // ---------------------------
+//    // ---------------------------
 
     d->sideBar = new DFMLeftSideBar(this);
     d->sideBar->setObjectName("DFMSideBar");

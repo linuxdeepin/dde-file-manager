@@ -574,9 +574,10 @@ void PropertyDialog::flickFolderToSidebar()
 
     // we are actually using network group's center position as target position
     // since it's used as a animation target position, a fuzzy result is okay.
-    QPoint targetPos = window->getLeftSideBar()->groupGeometry(
-                           DFMSideBar::groupName(DFMSideBar::GroupName::Network)
-                       ).center();
+//    QPoint targetPos = window->getLeftSideBar()->groupGeometry(
+//                           DFMSideBar::groupName(DFMSideBar::GroupName::Network)
+//                       ).center();
+    QPoint targetPos = QPoint(0,0);
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
 
     QLabel *aniLabel = new QLabel(window);

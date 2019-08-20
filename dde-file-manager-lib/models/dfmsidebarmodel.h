@@ -30,6 +30,7 @@ public:
 
     bool canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const override;
     QMimeData *mimeData(const QModelIndexList &indexes) const override;
+    QModelIndex indexFromItem(const DFMLeftSideBarItem * item) const;
     DFMLeftSideBarItem *itemFromIndex(const QModelIndex &index) const;
     DFMLeftSideBarItem *itemFromIndex(int index) const;
 

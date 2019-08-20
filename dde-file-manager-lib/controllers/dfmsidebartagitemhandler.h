@@ -18,22 +18,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #pragma once
 
-#include <DStyledItemDelegate>
+#include "dfmsidebariteminterface.h"
 
-DWIDGET_USE_NAMESPACE
+#define SIDEBAR_ID_TAG "__tag"
 
-class DFMSideBarItemDelegate : public DStyledItemDelegate
+class DUrl;
+class DFMSideBarTagItemHandler : public DFMSideBarItemInterface
 {
-    Q_OBJECT
 public:
-    DFMSideBarItemDelegate(QAbstractItemView *parent = nullptr);
+    static DFMLeftSideBarItem * createItem(const DUrl &url);
 
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    DFMSideBarTagItemHandler(QObject *parent = nullptr);
 
-private:
-    void paintSeparator(QPainter *painter, const QStyleOptionViewItem &option) const;
-    QSize sizeHintForType(int type) const;
+    QMenu * contextMenu(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem* item) override;
 };

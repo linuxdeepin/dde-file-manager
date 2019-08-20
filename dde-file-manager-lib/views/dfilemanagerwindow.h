@@ -66,8 +66,8 @@ class RecordRenameBarState;
 
 class DFMUrlListBaseEvent;
 
+class DFMLeftSideBar;
 DFM_BEGIN_NAMESPACE
-class DFMSideBar;
 class DFMAddressBar;
 DFM_END_NAMESPACE
 
@@ -89,7 +89,7 @@ public:
 
     DToolBar *getToolBar() const;
     DFMBaseView *getFileView() const;
-    DFMSideBar *getLeftSideBar() const;
+    DFMLeftSideBar *getLeftSideBar() const;
     int getSplitterPosition() const;
 
     void setSplitterPosition(int pos);

@@ -27,10 +27,16 @@
 #include "dfileservices.h"
 #include "singleton.h"
 
+#include "dfmsidebarmanager.h"
+#include "interfaces/dfmsidebariteminterface.h"
 #include "views/dfmsidebarview.h"
 #include "models/dfmsidebarmodel.h"
 #include "dfmsidebaritemdelegate.h"
 #include "dfmleftsidebaritem.h"
+#include "controllers/dfmsidebardefaultitemhandler.h"
+#include "controllers/dfmsidebarbookmarkitemhandler.h"
+#include "controllers/dfmsidebardeviceitemhandler.h"
+#include "controllers/dfmsidebartagitemhandler.h"
 
 #include <QVBoxLayout>
 #include <QDebug>
@@ -51,7 +57,7 @@ DFMLeftSideBar::DFMLeftSideBar(QWidget *parent)
 {
     // init view.
     m_sidebarView->setModel(m_sidebarModel);
-    m_sidebarView->setItemDelegate(new DFMSideBarItemDelegate(this));
+    m_sidebarView->setItemDelegate(new DFMSideBarItemDelegate(m_sidebarView));
     m_sidebarView->setContextMenuPolicy(Qt::CustomContextMenu);
 
     initUI();
@@ -68,7 +74,7 @@ int DFMLeftSideBar::addItem(DFMLeftSideBarItem *item, const QString &group)
 {
     int lastAtGroup = findLastItem(group);
     lastAtGroup++; // append after the last item
-    m_sidebarModel->insertRow(lastAtGroup, item);
+    this->insertItem(lastAtGroup, item, group);
 
     return lastAtGroup;
 }
@@ -82,6 +88,11 @@ bool DFMLeftSideBar::removeItem(const DUrl &url, const QString &group)
     }
 
     return succ;
+}
+
+int DFMLeftSideBar::findItem(const DFMLeftSideBarItem *item) const
+{
+    return m_sidebarModel->indexFromItem(item).row();
 }
 
 int DFMLeftSideBar::findItem(const DUrl &url, const QString &group) const
@@ -112,6 +123,26 @@ int DFMLeftSideBar::findLastItem(const QString &group) const
     }
 
     return index;
+}
+
+void DFMLeftSideBar::openItemEditor(int index) const
+{
+    m_sidebarView->openPersistentEditor(m_sidebarModel->index(index, 0));
+}
+
+QSet<QString> DFMLeftSideBar::disableUrlSchemes() const
+{
+    return QSet<QString>();
+}
+
+void DFMLeftSideBar::setContextMenuEnabled(bool enabled)
+{
+    m_contextMenuEnabled = enabled;
+}
+
+void DFMLeftSideBar::setDisableUrlSchemes(const QSet<QString> &schemes)
+{
+    //
 }
 
 DUrlList DFMLeftSideBar::savedItemOrder(const QString &groupName) const
@@ -210,51 +241,38 @@ DFMLeftSideBar::GroupName DFMLeftSideBar::groupFromName(const QString &name)
 void DFMLeftSideBar::onItemActivated(const QModelIndex &index)
 {
     DFMLeftSideBarItem * item = m_sidebarModel->itemFromIndex(index);
-    if (item) {
-        qDebug() << item->url();
-        // simple switch, can be changed to plugin-based one.
-        switch (item->cdActionType()) {
-        case DFMLeftSideBarItem::ChangeDirectory: {
-            DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(this->topLevelWidget());
-            wnd->cd(item->url()); // don't `setChecked` here, wait for a signal.
-            break;
-        }
-        case DFMLeftSideBarItem::MountPartitionThenCd: {
-            QVariantHash info = DFileService::instance()->createFileInfo(this, item->url())->extraProperties();
+    QString identifierStr = item->registeredHandler(SIDEBAR_ID_INTERNAL_FALLBACK);
 
-            if (info.value("isMounted", false).toBool()) {
-                DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(topLevelWidget());
-                wnd->cd(item->url());
-            } else if (info.value("canMount", false).toBool()) {
-                DUrl newUrl;
-                newUrl.setQuery(info.value("deviceId").toString());
-                AppController::instance()->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, newUrl));
-            }
-            break;
-        }
-        default:
-            break;
-        }
+    QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
+    if (interface) {
+        interface->cdAction(this, item);
     }
 }
 
 void DFMLeftSideBar::onContextMenuRequested(const QPoint &pos)
 {
+    if (!m_contextMenuEnabled) return;
+
     QModelIndex modelIndex = m_sidebarView->indexAt(pos);
     if (!modelIndex.isValid()) {
         return;
     }
 
     DFMLeftSideBarItem *item = m_sidebarModel->itemFromIndex(modelIndex);
-    Q_UNUSED(item);
+    QString identifierStr = item->registeredHandler(SIDEBAR_ID_INTERNAL_FALLBACK);
 
-    QMenu *menu = new QMenu();
+    QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
+    QMenu *menu = nullptr;
 
-    menu->addAction(QObject::tr("Open in new window"));
+    if (interface) {
+        menu = interface->contextMenu(this, item);
+        if (menu) {
+            menu->exec(this->mapToGlobal(pos));
+            menu->deleteLater();
+        }
+    }
 
-    menu->addAction(QObject::tr("Open in new tab"));
-
-    menu->exec(this->mapToGlobal(pos));
+    return;
 }
 
 void DFMLeftSideBar::initUI()
@@ -297,6 +315,9 @@ void DFMLeftSideBar::initConnection()
     // do `cd` work
     connect(m_sidebarView, &QListView::activated, this, &DFMLeftSideBar::onItemActivated);
 
+    // we need single click also trigger activated()
+    connect(m_sidebarView, &QListView::clicked, this, &DFMLeftSideBar::onItemActivated);
+
     // context menu
     connect(m_sidebarView, &QListView::customContextMenuRequested, this, &DFMLeftSideBar::onContextMenuRequested);
 
@@ -308,6 +329,7 @@ void DFMLeftSideBar::initConnection()
 
     initBookmarkConnection();
     initDeviceConnection();
+    initTagsConnection();
 }
 
 void DFMLeftSideBar::initBookmarkConnection()
@@ -318,7 +340,7 @@ void DFMLeftSideBar::initBookmarkConnection()
     connect(bookmarkWatcher, &DAbstractFileWatcher::subfileCreated, this,
     [this](const DUrl & url) {
         const QString &groupNameStr = groupName(Bookmark);
-        this->addItem(DFMLeftSideBarItem::createBookmarkItem(url, groupNameStr), groupNameStr);
+        this->addItem(DFMSideBarBookmarkItemHandler::createItem(url), groupNameStr);
         this->saveItemOrder(groupNameStr);
     });
 
@@ -364,8 +386,7 @@ void DFMLeftSideBar::initDeviceConnection()
         if (drv->mediaCompatibility().join(' ').contains("optical")) {
             continue;
         }
-        this->addItem(DFMLeftSideBarItem::createDeviceItem(info->fileUrl(), groupName(Device)), groupName(Device));
-//        group->appendItem(new DFMSideBarDeviceItem(info->fileUrl()));
+        addItem(DFMSideBarDeviceItemHandler::createItem(info->fileUrl()), groupName(Device));
     }
 
     // optical device..
@@ -373,8 +394,7 @@ void DFMLeftSideBar::initDeviceConnection()
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
         if (drv->mediaCompatibility().join(' ').contains("optical")) {
-            this->addItem(DFMLeftSideBarItem::createDeviceItem(DUrl::fromDeviceId(blk->device()), groupName(Device)),
-                          groupName(Device));
+            addItem(DFMSideBarDeviceItemHandler::createItem(DUrl::fromDeviceId(blk->device())), groupName(Device));
         }
     }
 
@@ -387,18 +407,14 @@ void DFMLeftSideBar::initDeviceConnection()
         if (drv->mediaCompatibility().join(' ').contains("optical")) {
             return;
         }
-        this->addItem(DFMLeftSideBarItem::createDeviceItem(url, groupName(Device)),
-                      groupName(Device));
-//        group->appendItem(new DFMSideBarDeviceItem(url));
+        addItem(DFMSideBarDeviceItemHandler::createItem(url), groupName(Device));
     });
 
     connect(m_udisks2DiskManager.data(), &DDiskManager::blockDeviceAdded, this, [this](const QString & s) {
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(s));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
         if (drv->mediaCompatibility().join(' ').contains("optical")) {
-            this->addItem(DFMLeftSideBarItem::createDeviceItem(DUrl::fromDeviceId(blk->device()), groupName(Device))
-                          , groupName(Device));
-//            group->appendItem(new DFMSideBarOpticalDevItem(DUrl::fromDeviceId(blk->device())));
+            addItem(DFMSideBarDeviceItemHandler::createItem(DUrl::fromDeviceId(blk->device())), groupName(Device));
         }
     });
 
@@ -478,6 +494,47 @@ void DFMLeftSideBar::initDeviceConnection()
 //                item->setText(fileInfo->fileDisplayName());
 //            }
 //        }
+    //    });
+}
+
+void DFMLeftSideBar::initTagsConnection()
+{
+#ifdef DISABLE_TAG_SUPPORT
+    return;
+#endif
+
+    DAbstractFileWatcher *tagsWatcher = DFileService::instance()->createFileWatcher(this, DUrl(TAG_ROOT), this);
+    Q_CHECK_PTR(tagsWatcher);
+    tagsWatcher->startWatcher();
+
+    QString groupNameStr(groupName(Tag));
+
+    // New tag added.
+    connect(tagsWatcher, &DAbstractFileWatcher::subfileCreated, this, [this, groupNameStr](const DUrl & url) {
+        this->addItem(DFMSideBarTagItemHandler::createItem(url), groupNameStr);
+        this->saveItemOrder(groupNameStr);
+    });
+
+    // Tag get removed.
+    connect(tagsWatcher, &DAbstractFileWatcher::fileDeleted, this, [this, groupNameStr](const DUrl & url) {
+        this->removeItem(url, groupNameStr);
+        this->saveItemOrder(groupNameStr);
+    });
+
+//    // Tag got rename
+//    q->connect(tagsWatcher, &DAbstractFileWatcher::fileMoved, group,
+//    [this, group, q](const DUrl & source, const DUrl & target) {
+//        DFMSideBarItem *item = q->itemAt(source);
+//        if (item) {
+//            item->setUrl(target);
+//            group->saveItemOrder();
+//        }
+//    });
+
+//    // Tag changed color
+//    q->connect(tagsWatcher, &DAbstractFileWatcher::fileAttributeChanged, group, [group](const DUrl & url) {
+//        DFMSideBarItem *item = group->findItem(url);
+//        item->setIconFromThemeConfig("BookmarkItem." + TagManager::instance()->getTagColorName(url.tagName()));
 //    });
 }
 
@@ -514,42 +571,42 @@ void DFMLeftSideBar::addGroupItems(DFMLeftSideBar::GroupName groupType)
     const QString &groupNameStr = groupName(groupType);
     switch (groupType) {
     case GroupName::Common:
-        m_sidebarModel->appendRow(DFMLeftSideBarItem::createSystemPathItem("Recent", groupNameStr));
-        m_sidebarModel->appendRow(DFMLeftSideBarItem::createSystemPathItem("Home", groupNameStr));
-        m_sidebarModel->appendRow(DFMLeftSideBarItem::createSystemPathItem("Desktop", groupNameStr));
-        m_sidebarModel->appendRow(DFMLeftSideBarItem::createSystemPathItem("Videos", groupNameStr));
-        m_sidebarModel->appendRow(DFMLeftSideBarItem::createSystemPathItem("Music", groupNameStr));
-        m_sidebarModel->appendRow(DFMLeftSideBarItem::createSystemPathItem("Pictures", groupNameStr));
-        m_sidebarModel->appendRow(DFMLeftSideBarItem::createSystemPathItem("Documents", groupNameStr));
-        m_sidebarModel->appendRow(DFMLeftSideBarItem::createSystemPathItem("Downloads", groupNameStr));
-        m_sidebarModel->appendRow(DFMLeftSideBarItem::createSystemPathItem("Trash", groupNameStr));
+        appendItem(DFMSideBarDefaultItemHandler::createItem("Recent"), groupNameStr);
+        appendItem(DFMSideBarDefaultItemHandler::createItem("Home"), groupNameStr);
+        appendItem(DFMSideBarDefaultItemHandler::createItem("Desktop"), groupNameStr);
+        appendItem(DFMSideBarDefaultItemHandler::createItem("Videos"), groupNameStr);
+        appendItem(DFMSideBarDefaultItemHandler::createItem("Music"), groupNameStr);
+        appendItem(DFMSideBarDefaultItemHandler::createItem("Pictures"), groupNameStr);
+        appendItem(DFMSideBarDefaultItemHandler::createItem("Documents"), groupNameStr);
+        appendItem(DFMSideBarDefaultItemHandler::createItem("Downloads"), groupNameStr);
+        appendItem(DFMSideBarDefaultItemHandler::createItem("Trash"), groupNameStr);
         break;
     case GroupName::Device:
-        m_sidebarModel->appendRow(DFMLeftSideBarItem::createSystemPathItem("Computer", groupNameStr));
-        m_sidebarModel->appendRow(DFMLeftSideBarItem::createSystemPathItem("System Disk", groupNameStr));
+        appendItem(DFMSideBarDefaultItemHandler::createItem("Computer"), groupNameStr);
+        appendItem(DFMSideBarDefaultItemHandler::createItem("System Disk"), groupNameStr);
         break;
     case GroupName::Bookmark: {
         QList<DAbstractFileInfoPointer> bookmarkInfos = DFileService::instance()->getChildren(this, DUrl(BOOKMARK_ROOT),
                                                          QStringList(), QDir::AllEntries);
         QList<DFMLeftSideBarItem *> unsortedList;
         for (const DAbstractFileInfoPointer &info : bookmarkInfos) {
-            unsortedList << DFMLeftSideBarItem::createBookmarkItem(info->fileUrl(), groupNameStr);
+            unsortedList << DFMSideBarBookmarkItemHandler::createItem(info->fileUrl());
         }
-        appendItemWithOrder(unsortedList, savedItemOrder(groupNameStr));
+        appendItemWithOrder(unsortedList, savedItemOrder(groupNameStr), groupNameStr);
         break;
     }
     case GroupName::Network:
-        m_sidebarModel->appendRow(DFMLeftSideBarItem::createSystemPathItem("Network", groupNameStr));
-        m_sidebarModel->appendRow(DFMLeftSideBarItem::createSystemPathItem("UserShare", groupNameStr));
+        appendItem(DFMSideBarDefaultItemHandler::createItem("Network"), groupNameStr);
+        appendItem(DFMSideBarDefaultItemHandler::createItem("UserShare"), groupNameStr);
         break;
     case GroupName::Tag: {
         auto tag_infos = DFileService::instance()->getChildren(this, DUrl(TAG_ROOT),
                               QStringList(), QDir::AllEntries);
         QList<DFMLeftSideBarItem *> unsortedList;
         for (const DAbstractFileInfoPointer &info : tag_infos) {
-            unsortedList << DFMLeftSideBarItem::createTagItem(info->fileUrl(), groupNameStr);
+            unsortedList << DFMSideBarTagItemHandler::createItem(info->fileUrl());
         }
-        appendItemWithOrder(unsortedList, savedItemOrder(groupNameStr));
+        appendItemWithOrder(unsortedList, savedItemOrder(groupNameStr), groupNameStr);
         break;
     }
     default:
@@ -557,7 +614,26 @@ void DFMLeftSideBar::addGroupItems(DFMLeftSideBar::GroupName groupType)
     }
 }
 
-void DFMLeftSideBar::appendItemWithOrder(QList<DFMLeftSideBarItem *> &list, const DUrlList &order)
+void DFMLeftSideBar::insertItem(int index, DFMLeftSideBarItem *item, const QString &groupName)
+{
+    item->setGroupName(groupName);
+    m_sidebarModel->insertRow(index, item);
+}
+
+/*!
+ * \brief append an \a item to the sidebar item model, with the given \a groupName
+ *
+ * Warning! Item is directly append to the model, will NOT try to find the group
+ * location by the given group name. For that (find group location and append item)
+ * purpose, use addItem() instead.
+ */
+void DFMLeftSideBar::appendItem(DFMLeftSideBarItem *item, const QString &groupName)
+{
+    item->setGroupName(groupName);
+    m_sidebarModel->appendRow(item);
+}
+
+void DFMLeftSideBar::appendItemWithOrder(QList<DFMLeftSideBarItem *> &list, const DUrlList &order, const QString &groupName)
 {
     DUrlList urlList;
 
@@ -569,11 +645,11 @@ void DFMLeftSideBar::appendItemWithOrder(QList<DFMLeftSideBarItem *> &list, cons
         int idx = urlList.indexOf(url);
         if (idx >= 0) {
             urlList.removeAt(idx);
-            m_sidebarModel->appendRow(list.takeAt(idx));
+            this->appendItem(list.takeAt(idx), groupName);
         }
     }
 
     for (DFMLeftSideBarItem * item: list) {
-        m_sidebarModel->appendRow(item);
+        this->appendItem(item, groupName);
     }
 }

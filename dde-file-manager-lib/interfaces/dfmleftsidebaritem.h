@@ -20,18 +20,20 @@
  */
 #pragma once
 
-#include <QStandardItem>
+#include <DStandardItem>
 
 #include "durl.h"
 
-class DFMLeftSideBarItem : public QStandardItem
+DWIDGET_USE_NAMESPACE
+
+class DFMLeftSideBarItem : public DStandardItem
 {
 public:
     enum Roles {
         ItemTypeRole = Qt::UserRole + 1,
         ItemUrlRole = Qt::UserRole + 2,
         ItemGroupNameRole = Qt::UserRole + 3,
-        ItemCdActionRole = Qt::UserRole + 4,
+        ItemUseRegisteredHandlerRole = Qt::UserRole + 4,
         ItemUserCustomRole = Qt::UserRole + 0x0100
     };
 
@@ -49,19 +51,18 @@ public:
     DFMLeftSideBarItem(const DUrl &url = DUrl(), const QString &groupName = "default") : DFMLeftSideBarItem (QIcon(), QString(), url, groupName) {}
     DFMLeftSideBarItem(const QIcon &icon, const QString &text, const DUrl &url = DUrl(), const QString &groupName = "default");
 
-    static DFMLeftSideBarItem *createSystemPathItem(const QString &pathKey, const QString &groupName);
-    static DFMLeftSideBarItem *createDeviceItem(const DUrl &url, const QString &groupName);
-    static DFMLeftSideBarItem *createBookmarkItem(const DUrl &url, const QString &groupName);
-    static DFMLeftSideBarItem *createTagItem(const DUrl &url, const QString &groupName);
     static DFMLeftSideBarItem *createSeparatorItem(const QString &groupName);
 
     DUrl url() const;
     QString groupName() const;
-    int cdActionType() const;
     int itemType() const;
     int type() const;
+    bool useRegisteredHandler() const;
+    QString registeredHandler(const QString &fallback = QString()) const;
 
     void setUrl(const DUrl &url);
+    void setGroupName(const QString &groupName);
+    void setRegisteredHandler(const QString &identifier);
 
     constexpr static int SidebarItemType = QStandardItem::UserType + 1;
 

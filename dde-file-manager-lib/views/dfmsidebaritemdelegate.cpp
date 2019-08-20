@@ -24,9 +24,15 @@
 
 #include <QPainter>
 #include <QDebug>
+#include <QApplication>
+#include <DPalette>
+#include <qdrawutil.h>
 
-DFMSideBarItemDelegate::DFMSideBarItemDelegate(QWidget *parent)
-    : QStyledItemDelegate(parent)
+QT_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
+
+DFMSideBarItemDelegate::DFMSideBarItemDelegate(QAbstractItemView *parent)
+    : DStyledItemDelegate(parent)
 {
 
 }
@@ -38,7 +44,7 @@ void DFMSideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem
         return paintSeparator(painter, option);
     }
 
-    return QStyledItemDelegate::paint(painter, option, index);
+    return DStyledItemDelegate::paint(painter, option, index);
 }
 
 QSize DFMSideBarItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -47,18 +53,17 @@ QSize DFMSideBarItemDelegate::sizeHint(const QStyleOptionViewItem &option, const
     if (v.isValid() && v.toInt() == DFMLeftSideBarItem::Separator) {
         return sizeHintForType(DFMLeftSideBarItem::Separator);
     } else {
-        return QStyledItemDelegate::sizeHint(option, index);
+        return DStyledItemDelegate::sizeHint(option, index);
     }
 }
 
 void DFMSideBarItemDelegate::paintSeparator(QPainter *painter, const QStyleOptionViewItem &option) const
 {
-    QColor bColor("red");
-
     painter->save();
-    painter->setPen(bColor);
+
     int yPoint = option.rect.top() + option.rect.height() / 2;
-    painter->drawLine(0, yPoint, option.rect.width(), yPoint);
+    qDrawShadeLine(painter, 0, yPoint, option.rect.width(), yPoint, option.palette);
+
     painter->restore();
 }
 
