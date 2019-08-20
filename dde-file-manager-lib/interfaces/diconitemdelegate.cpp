@@ -601,15 +601,23 @@ void DIconItemDelegate::paint(QPainter *painter,
     bool isSelected = !isDragMode && (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
     bool isDropTarget = parent()->isDropTarget(index);
 
+    QColor qc = QColor(0xbb, 0xbb, 0xbb, 255/2); // file item background-color
+    if (isSelected || isDropTarget) {
+        qc = QColor(43, 167, 248, 0.50 * 255);
+    }
+
+    QRectF rect = opt.rect;
+    QPainterPath path;
+    rect.moveTopLeft(QPointF(0.5, 0.5) + rect.topLeft());
+    path.addRoundedRect(rect, ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
+
+    painter->setRenderHint(QPainter::Antialiasing, true);
+    //painter->fillPath(path, QColor(43, 167, 248, 0.50 * 255));
+    painter->fillPath(path, qc);
+    painter->setRenderHint(QPainter::Antialiasing, false);
+
     if (isDropTarget && !isSelected) {
-        QRectF rect = opt.rect;
-        QPainterPath path;
-
-        rect.moveTopLeft(QPointF(0.5, 0.5) + rect.topLeft());
-        path.addRoundedRect(rect, ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
-
         painter->setRenderHint(QPainter::Antialiasing, true);
-        painter->fillPath(path, QColor(43, 167, 248, 0.50 * 255));
         painter->setPen(opt.backgroundBrush.color());
         painter->drawPath(path);
         painter->setRenderHint(QPainter::Antialiasing, false);
@@ -621,7 +629,7 @@ void DIconItemDelegate::paint(QPainter *painter,
 
     icon_rect.setSize(parent()->parent()->iconSize());
     icon_rect.moveLeft(opt.rect.left() + (opt.rect.width() - icon_rect.width()) / 2.0);
-    icon_rect.moveTop(opt.rect.top());
+    icon_rect.moveTop(opt.rect.top() + (opt.rect.height() - icon_rect.height()) / 3.0 ); // move icon down
 
     /// draw icon
 
@@ -716,7 +724,7 @@ void DIconItemDelegate::paint(QPainter *painter,
 //            str = wordWrap_str;
 //        }
 
-        if (height > label_rect.height()) {
+        if (0 && height > label_rect.height()) {// do not expend select text height..?
             /// use widget(FileIconItem) show file icon and file name label.
 
             d->expandedIndex = index;
@@ -760,7 +768,7 @@ void DIconItemDelegate::paint(QPainter *painter,
         }
     }
 
-    if (isSelected || !d->enabledTextShadow) {
+    if (isSelected || !d->enabledTextShadow) {// do not draw text background color
         const QList<QRectF> &lines = drawText(index, painter, str, label_rect, ICON_MODE_RECT_RADIUS,
                                               isSelected ? opt.palette.brush(QPalette::Normal, QPalette::Highlight) : QBrush(Qt::NoBrush),
                                               QTextOption::WrapAtWordBoundaryOrAnywhere, opt.textElideMode, Qt::AlignCenter);
@@ -815,7 +823,7 @@ QSize DIconItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelInde
         return QSize(size.width(), d->expandedItem->heightForWidth(size.width()));
     }
 
-    return size;
+    return QSize(size.height(), size.height());//size;// width == height
 }
 
 QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const
@@ -866,7 +874,8 @@ void DIconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
     QLabel *icon = item->icon;
 
     if (icon_size.height() != icon->size().height()) {
-        icon->setFixedHeight(icon_size.height());
+        int topoffset = (opt.rect.height() - icon_size.height()) / 3;//update edit pos
+        icon->setFixedHeight(icon_size.height()+topoffset);
     }
 }
 

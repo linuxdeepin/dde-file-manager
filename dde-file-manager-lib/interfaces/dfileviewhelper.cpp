@@ -668,7 +668,7 @@ bool DFileViewHelper::isEmptyArea(const QPoint &pos) const
         }
     }
 
-    return true;
+    return index.isValid();//true;
 }
 
 void DFileViewHelper::preproccessDropEvent(QDropEvent *event) const
