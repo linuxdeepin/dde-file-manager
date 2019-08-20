@@ -464,7 +464,7 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
             if (rect.contains(pos))
                 return tmp_index;
 
-        return QModelIndex();
+        return isIconViewMode() ? tmp_index : QModelIndex(); // make click area bigger
     }
 
     return rootIndex().child(index, 0);
@@ -622,7 +622,7 @@ bool DFileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger tr
 #ifdef SW_LABEL
     bool isCheckRenameAction = false;
 #endif
-    if (trigger == SelectedClicked) {
+    if (trigger == SelectedClicked && !isIconViewMode()) {
         QStyleOptionViewItem option = viewOptions();
 
         option.rect = visualRect(index);
