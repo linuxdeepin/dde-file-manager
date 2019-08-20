@@ -936,15 +936,6 @@ void DFileManagerWindow::initSplitter()
     d->splitter = new QSplitter(Qt::Horizontal, this);
     d->splitter->addWidget(d->sideBar);
     d->splitter->addWidget(d->rightView);
-//    d->splitter->addWidget(d->leftSideBar);
-
-#ifdef DFM_DETAILSVIEW
-    d->detailView = new DFMRightDetailView(currentUrl());
-    d->detailView->setFixedWidth(400);
-    d->detailView->setVisible(false); //不显示先
-    d->splitter->addWidget(d->detailView);
-#endif
-
     d->splitter->setChildrenCollapsible(false);
 }
 
@@ -1042,7 +1033,22 @@ void DFileManagerWindow::initCentralWidget()
     d->centralWidget = new QFrame(this);
     d->centralWidget->setObjectName("CentralWidget");
     QVBoxLayout *mainLayout = new QVBoxLayout;
+
+
+#ifdef DFM_DETAILSVIEW
+    QWidget *midWidget = new QWidget;
+    QHBoxLayout *midLayout = new QHBoxLayout;
+    midWidget->setLayout(midLayout);
+    midLayout->addWidget(d->splitter);
+    d->detailView = new DFMRightDetailView(currentUrl());
+    d->detailView->setFixedWidth(300);
+    d->detailView->setVisible(false); //不显示先
+    midLayout->addWidget(d->detailView);
+    mainLayout->addWidget(midWidget);
+#else
     mainLayout->addWidget(d->splitter);
+#endif
+
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
 
