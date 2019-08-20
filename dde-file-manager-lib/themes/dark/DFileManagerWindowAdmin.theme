@@ -205,11 +205,6 @@ QPushButton#rightArrow{
     color: black;
 }
 
-QListWidget#DCrumbList{
-    background-color:transparent;
-    border: none;
-}
-
 QPushButton#iconViewButton{
     background-color:white;
     color: white;
@@ -355,56 +350,6 @@ QPushButton#filterButton:pressed{
     qproperty-icon: url(:/dark/icons/filter_active.svg);
     qproperty-iconSize: 16px;
 }
-
-/* ******************DCrumbButton****************** */
-QFrame#DCrumbWidget{
-    background-color: transparent;
-}
-
-QWidget#DCrumbBackgroundWidget{
-    background-color: rgba(255, 255, 255, 0.15);
-    border-radius: 4px;
-    border: none;
-}
-
-QPushButton#DCrumbButton{
-    background-color:transparent;
-    border: 1px;
-    color: #bdbdbd;
-    padding: 0px 10px 0px  10px;
-    text-align: center;
-}
-
-QPushButton#DCrumbButton:hover{
-    background-color: transparent;
-}
-
-QPushButton#DCrumbButton:checked{
-    background-color: #2ca7f8;
-    border: 1px solid #1088ff;
-    color: white;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-}
-
-QPushButton#DCrumbIconButton{
-    background-color:transparent;
-    border: 1px;
-    color: #bdbdbd;
-    padding: 0px 4px 0px 4px;
-    text-align: center;
-    border-radius: 4px;
-}
-
-QPushButton#DCrumbIconButton:hover{
-    background-color: transparent;
-}
-
-QPushButton#DCrumbIconButton:checked{
-    background-color: #646464;
-    color: white;
-}
-/* ******************End of DCrumbButton****************** */
 
 /* ******************DSearchBar****************** */
 QListWidget#SearchList{
@@ -637,19 +582,3 @@ QWidget#SidebarMainLayoutHolder {
 }
 
 /*================ Sidebar End =================*/
-
-/*============== Crumb Bar Begin ===============*/
-dde_file_manager--DFMCrumbBarItem:checked {
-    background: #27acf8;
-}
-
-QWidget#crumbListHolder {
-    background: transparent;
-}
-
-QWidget#DCrumbListScrollArea {
-    border: none;
-    padding: 0;
-    background: transparent;
-}
-/*=============== Crumb Bar End ================*/
