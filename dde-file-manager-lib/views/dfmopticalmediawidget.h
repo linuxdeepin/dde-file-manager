@@ -4,7 +4,7 @@
 #include "app/define.h"
 #include "dfileservices.h"
 
-#include <DtkWidgets>
+#include <QWidget>
 
 class DFMOpticalMediaWidgetPrivate;
 class DFMOpticalMediaWidget : public QWidget

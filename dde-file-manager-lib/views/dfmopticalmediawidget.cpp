@@ -3,6 +3,13 @@
 #include "shutil/fileutils.h"
 #include "dialogs/burnoptdialog.h"
 
+#include <DLabel>
+#include <DPushButton>
+
+#include <QHBoxLayout>
+
+DWIDGET_USE_NAMESPACE
+
 using namespace DISOMasterNS;
 
 class DFMOpticalMediaWidgetPrivate
