@@ -9,7 +9,7 @@
 
 #include "dfileviewhelper.h"
 #include "dfmglobal.h"
-#include "dstyleditemdelegate.h"
+#include "dfmstyleditemdelegate.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "dfmevent.h"

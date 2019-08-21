@@ -281,7 +281,7 @@ void FileTagObjectInterface::drawObject(QPainter *painter, const QRectF &rect, Q
 
     diameter -= padding * 2;
 
-    DStyledItemDelegate::paintCircleList(painter, boundingRect, diameter, colors, borderColor);
+    DFMStyledItemDelegate::paintCircleList(painter, boundingRect, diameter, colors, borderColor);
 }
 
 class ExpandedItem : public QWidget
@@ -422,11 +422,11 @@ public:
     DIconItemDelegate *delegate;
 };
 
-class DIconItemDelegatePrivate : public DStyledItemDelegatePrivate
+class DIconItemDelegatePrivate : public DFMStyledItemDelegatePrivate
 {
 public:
     DIconItemDelegatePrivate(DIconItemDelegate *qq)
-        : DStyledItemDelegatePrivate(qq)
+        : DFMStyledItemDelegatePrivate(qq)
     {}
 
     QSize textSize(const QString &text, const QFontMetrics &metrics, int lineHeight = -1) const;
@@ -528,7 +528,7 @@ QPixmap DIconItemDelegatePrivate::getFileIconPixmap(const QModelIndex &index, co
 }
 
 DIconItemDelegate::DIconItemDelegate(DFileViewHelper *parent) :
-    DStyledItemDelegate(*new DIconItemDelegatePrivate(this), parent)
+    DFMStyledItemDelegate(*new DIconItemDelegatePrivate(this), parent)
 {
     Q_D(DIconItemDelegate);
 
@@ -1048,9 +1048,9 @@ QModelIndexList DIconItemDelegate::hasWidgetIndexs() const
     const QModelIndex &index = expandedIndex();
 
     if (!index.isValid())
-        return DStyledItemDelegate::hasWidgetIndexs();
+        return DFMStyledItemDelegate::hasWidgetIndexs();
 
-    return DStyledItemDelegate::hasWidgetIndexs() << index;
+    return DFMStyledItemDelegate::hasWidgetIndexs() << index;
 }
 
 void DIconItemDelegate::hideNotEditingIndexWidget()
@@ -1241,7 +1241,7 @@ QList<QRectF> DIconItemDelegate::drawText(const QModelIndex &index, QPainter *pa
 
     const_cast<DIconItemDelegatePrivate*>(d)->drawTextBackgroundOnLast = background != Qt::NoBrush;
 
-    return DStyledItemDelegate::drawText(index, painter, layout, boundingRect, radius, background, wordWrap, mode, flags, shadowColor);
+    return DFMStyledItemDelegate::drawText(index, painter, layout, boundingRect, radius, background, wordWrap, mode, flags, shadowColor);
 }
 
 void DIconItemDelegate::onEditWidgetFocusOut()

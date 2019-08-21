@@ -22,7 +22,7 @@ class QStyleOptionViewItem;
 class QMenu;
 QT_END_NAMESPACE
 class DAbstractFileInfo;
-class DStyledItemDelegate;
+class DFMStyledItemDelegate;
 class DFileSystemModel;
 class DFileViewHelperPrivate;
 class DFileViewHelper : public QObject
@@ -49,7 +49,7 @@ public:
     virtual DUrl currentUrl() const;
 
     virtual const DAbstractFileInfoPointer fileInfo(const QModelIndex &index) const = 0;
-    virtual DStyledItemDelegate *itemDelegate() const = 0;
+    virtual DFMStyledItemDelegate *itemDelegate() const = 0;
     virtual DFileSystemModel *model() const = 0;
     virtual const DUrlList selectedUrls() const = 0;
     virtual void select(const QList<DUrl> &list) = 0;

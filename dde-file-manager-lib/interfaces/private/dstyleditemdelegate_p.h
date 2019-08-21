@@ -10,24 +10,24 @@
 #ifndef DSTYLEDITEMDELEGATE_P_H
 #define DSTYLEDITEMDELEGATE_P_H
 
-#include "dstyleditemdelegate.h"
+#include "dfmstyleditemdelegate.h"
 
-class DStyledItemDelegatePrivate
+class DFMStyledItemDelegatePrivate
 {
 public:
-    DStyledItemDelegatePrivate(DStyledItemDelegate *qq)
+    DFMStyledItemDelegatePrivate(DFMStyledItemDelegate *qq)
         : q_ptr(qq) {}
 
     void init();
     void _q_onRowsInserted(const QModelIndex &parent, int first, int last);
     void _q_onRowsRemoved(const QModelIndex &parent, int first, int last);
 
-    DStyledItemDelegate *q_ptr;
+    DFMStyledItemDelegate *q_ptr;
     mutable QModelIndex editingIndex;
     QSize itemSizeHint;
     int textLineHeight = -1;
 
-    Q_DECLARE_PUBLIC(DStyledItemDelegate)
+    Q_DECLARE_PUBLIC(DFMStyledItemDelegate)
 };
 
 #endif // DSTYLEDITEMDELEGATE_P_H

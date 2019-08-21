@@ -229,12 +229,12 @@ DFileSystemModel *DFileView::model() const
     return qobject_cast<DFileSystemModel*>(DListView::model());
 }
 
-DStyledItemDelegate *DFileView::itemDelegate() const
+DFMStyledItemDelegate *DFileView::itemDelegate() const
 {
-    return qobject_cast<DStyledItemDelegate*>(DListView::itemDelegate());
+    return qobject_cast<DFMStyledItemDelegate*>(DListView::itemDelegate());
 }
 
-void DFileView::setItemDelegate(DStyledItemDelegate *delegate)
+void DFileView::setItemDelegate(DFMStyledItemDelegate *delegate)
 {
     D_D(DFileView);
 
@@ -245,7 +245,7 @@ void DFileView::setItemDelegate(DStyledItemDelegate *delegate)
 
     DListView::setItemDelegate(delegate);
 
-    connect(d->statusBar->scalingSlider(), &DSlider::valueChanged, delegate, &DStyledItemDelegate::setIconSizeByIconSizeLevel);
+    connect(d->statusBar->scalingSlider(), &DSlider::valueChanged, delegate, &DFMStyledItemDelegate::setIconSizeByIconSizeLevel);
 
     if (isIconViewMode()) {
         d->statusBar->scalingSlider()->setMinimum(delegate->minimumIconSizeLevel());

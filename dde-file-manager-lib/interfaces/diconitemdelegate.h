@@ -25,7 +25,7 @@
 #ifndef DFILEITEMDELEGATE_H
 #define DFILEITEMDELEGATE_H
 
-#include "dstyleditemdelegate.h"
+#include "dfmstyleditemdelegate.h"
 
 #include <QPointer>
 
@@ -35,7 +35,7 @@ class QTextDocument;
 QT_END_NAMESPACE
 
 class DIconItemDelegatePrivate;
-class DIconItemDelegate : public DStyledItemDelegate
+class DIconItemDelegate : public DFMStyledItemDelegate
 {
     Q_OBJECT
 
@@ -44,7 +44,7 @@ class DIconItemDelegate : public DStyledItemDelegate
 
 public:
     explicit DIconItemDelegate(DFileViewHelper *parent);
-    ~DIconItemDelegate();
+    ~DIconItemDelegate() override;
 
     void paint(QPainter *painter,
                const QStyleOptionViewItem &option,
@@ -92,7 +92,7 @@ protected:
                            Qt::TextElideMode mode = Qt::ElideMiddle, int flags = Qt::AlignCenter,
                            const QColor &shadowColor = QColor()) const override;
 
-    using DStyledItemDelegate::drawText;
+    using DFMStyledItemDelegate::drawText;
 
 private:
     void onEditWidgetFocusOut();

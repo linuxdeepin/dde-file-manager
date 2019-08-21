@@ -10,10 +10,10 @@
 #ifndef DLISTITEMDELEGATE_H
 #define DLISTITEMDELEGATE_H
 
-#include "dstyleditemdelegate.h"
+#include "dfmstyleditemdelegate.h"
 
 class DListItemDelegatePrivate;
-class DListItemDelegate : public DStyledItemDelegate
+class DListItemDelegate : public DFMStyledItemDelegate
 {
 public:
     explicit DListItemDelegate(DFileViewHelper *parent);

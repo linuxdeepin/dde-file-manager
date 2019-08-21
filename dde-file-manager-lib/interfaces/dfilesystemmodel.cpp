@@ -27,7 +27,7 @@
 #include "dfileservices.h"
 #include "dfmevent.h"
 #include "dabstractfilewatcher.h"
-#include "dstyleditemdelegate.h"
+#include "dfmstyleditemdelegate.h"
 #include "dfmapplication.h"
 
 #include "app/define.h"
