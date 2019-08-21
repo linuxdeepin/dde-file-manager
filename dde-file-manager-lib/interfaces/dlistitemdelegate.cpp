@@ -30,15 +30,15 @@
 
 DFM_USE_NAMESPACE
 
-class DListItemDelegatePrivate : public DStyledItemDelegatePrivate
+class DListItemDelegatePrivate : public DFMStyledItemDelegatePrivate
 {
 public:
     DListItemDelegatePrivate(DListItemDelegate *qq)
-        : DStyledItemDelegatePrivate(qq) {}
+        : DFMStyledItemDelegatePrivate(qq) {}
 };
 
 DListItemDelegate::DListItemDelegate(DFileViewHelper *parent) :
-    DStyledItemDelegate(parent)
+    DFMStyledItemDelegate(parent)
 {
     parent->parent()->setIconSize(QSize(LIST_VIEW_ICON_SIZE, LIST_VIEW_ICON_SIZE));
 }
@@ -354,7 +354,7 @@ QSize DListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMod
     const DAbstractFileInfoPointer &file_info = parent()->fileInfo(index);
 
     if (!file_info) {
-        return DStyledItemDelegate::sizeHint(option, index);
+        return DFMStyledItemDelegate::sizeHint(option, index);
     }
 
     Q_D(const DListItemDelegate);
@@ -626,5 +626,5 @@ bool DListItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, co
         return true;
     }
 
-    return DStyledItemDelegate::helpEvent(event, view, option, index);
+    return DFMStyledItemDelegate::helpEvent(event, view, option, index);
 }

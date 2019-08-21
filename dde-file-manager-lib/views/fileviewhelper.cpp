@@ -73,7 +73,7 @@ const DAbstractFileInfoPointer FileViewHelper::fileInfo(const QModelIndex &index
     return parent()->model()->fileInfo(index);
 }
 
-DStyledItemDelegate *FileViewHelper::itemDelegate() const
+DFMStyledItemDelegate *FileViewHelper::itemDelegate() const
 {
     return parent()->itemDelegate();
 }

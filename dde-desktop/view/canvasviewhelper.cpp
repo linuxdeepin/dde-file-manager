@@ -37,9 +37,9 @@ const DAbstractFileInfoPointer CanvasViewHelper::fileInfo(const QModelIndex &ind
     return parent()->model()->fileInfo(index);
 }
 
-DStyledItemDelegate *CanvasViewHelper::itemDelegate() const
+DFMStyledItemDelegate *CanvasViewHelper::itemDelegate() const
 {
-    return qobject_cast<DStyledItemDelegate *>(parent()->itemDelegate());
+    return qobject_cast<DFMStyledItemDelegate *>(parent()->itemDelegate());
 }
 
 DFileSystemModel *CanvasViewHelper::model() const

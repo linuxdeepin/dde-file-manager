@@ -29,7 +29,7 @@
 #include "usersharepasswordsettingdialog.h"
 #include "movetotrashconflictdialog.h"
 #include "views/dfilemanagerwindow.h"
-#include "interfaces/dstyleditemdelegate.h"
+#include "interfaces/dfmstyleditemdelegate.h"
 #include "shutil/mimetypedisplaymanager.h"
 #include "previewdialog.h"
 #include "filepreviewdialog.h"

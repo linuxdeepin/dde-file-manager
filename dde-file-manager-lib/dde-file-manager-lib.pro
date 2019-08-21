@@ -137,7 +137,6 @@ HEADERS += \
     interfaces/diconitemdelegate.h \
     views/fileviewhelper.h \
     interfaces/dlistitemdelegate.h \
-    interfaces/dstyleditemdelegate.h \
     interfaces/durl.h \
     interfaces/dfilemenu.h \
     interfaces/ddiriterator.h \
@@ -262,7 +261,8 @@ HEADERS += \
     views/dfmopticalmediawidget.h \
     views/dfmrightdetailview.h \
     dialogs/burnoptdialog.h \
-    interfaces/dfmcrumblistviewmodel.h
+    interfaces/dfmcrumblistviewmodel.h \
+    interfaces/dfmstyleditemdelegate.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -322,7 +322,6 @@ SOURCES += \
     interfaces/diconitemdelegate.cpp \
     views/fileviewhelper.cpp \
     interfaces/dlistitemdelegate.cpp \
-    interfaces/dstyleditemdelegate.cpp \
     interfaces/durl.cpp \
     interfaces/dfilemenu.cpp \
     interfaces/dfilesystemmodel.cpp \
@@ -440,7 +439,8 @@ SOURCES += \
     views/dfmopticalmediawidget.cpp \
     views/dfmrightdetailview.cpp \
     dialogs/burnoptdialog.cpp \
-    interfaces/dfmcrumblistviewmodel.cpp
+    interfaces/dfmcrumblistviewmodel.cpp \
+    interfaces/dfmstyleditemdelegate.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h

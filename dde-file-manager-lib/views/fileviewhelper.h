@@ -32,7 +32,7 @@ public:
     int rowCount() const Q_DECL_OVERRIDE;
     int indexOfRow(const QModelIndex &index) const Q_DECL_OVERRIDE;
     const DAbstractFileInfoPointer fileInfo(const QModelIndex &index) const Q_DECL_OVERRIDE;
-    DStyledItemDelegate *itemDelegate() const Q_DECL_OVERRIDE;
+    DFMStyledItemDelegate *itemDelegate() const Q_DECL_OVERRIDE;
     DFileSystemModel *model() const Q_DECL_OVERRIDE;
     const DUrlList selectedUrls() const Q_DECL_OVERRIDE;
     DUrl currentUrl() const Q_DECL_OVERRIDE;

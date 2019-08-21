@@ -28,6 +28,7 @@
 #include "dfmglobal.h"
 #include "durl.h"
 #include "dfmbaseview.h"
+#include "dfmstyleditemdelegate.h"
 
 #include <dlistview.h>
 
@@ -46,7 +47,6 @@ DFM_USE_NAMESPACE
 class FileController;
 class DFileMenuManager;
 class DFileSystemModel;
-class DStyledItemDelegate;
 class DAbstractFileInfo;
 class DStatusBar;
 class FileViewHelper;
@@ -65,12 +65,12 @@ public:
 
     Q_DECLARE_FLAGS(ViewModes, ViewMode)
 
-    explicit DFileView(QWidget *parent = 0);
-    ~DFileView();
+    explicit DFileView(QWidget *parent = nullptr);
+    ~DFileView() override;
 
     DFileSystemModel *model() const;
-    DStyledItemDelegate *itemDelegate() const;
-    void setItemDelegate(DStyledItemDelegate *delegate);
+    DFMStyledItemDelegate *itemDelegate() const;
+    void setItemDelegate(DFMStyledItemDelegate *delegate);
     DStatusBar *statusBar() const;
     FileViewHelper *fileViewHelper() const;
 

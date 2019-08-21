@@ -7,8 +7,7 @@
  * (at your option) any later version.
  **/
 
-#ifndef DSTYLEDITEMDELEGATE_H
-#define DSTYLEDITEMDELEGATE_H
+#pragma once
 
 #include <QStyledItemDelegate>
 #include <QTextOption>
@@ -18,14 +17,14 @@ class QTextLayout;
 QT_END_NAMESPACE
 
 class DFileViewHelper;
-class DStyledItemDelegatePrivate;
-class DStyledItemDelegate : public QStyledItemDelegate
+class DFMStyledItemDelegatePrivate;
+class DFMStyledItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 
 public:
-    explicit DStyledItemDelegate(DFileViewHelper *parent);
-    ~DStyledItemDelegate();
+    explicit DFMStyledItemDelegate(DFileViewHelper *parent);
+    ~DFMStyledItemDelegate() override;
 
     DFileViewHelper *parent() const;
 
@@ -69,7 +68,7 @@ public:
     static QPixmap getIconPixmap(const QIcon &icon, const QSize &size, qreal pixelRatio, QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);
 
 protected:
-    DStyledItemDelegate(DStyledItemDelegatePrivate &dd, DFileViewHelper *parent);
+    DFMStyledItemDelegate(DFMStyledItemDelegatePrivate &dd, DFileViewHelper *parent);
 
     virtual void initTextLayout(const QModelIndex &index, QTextLayout *layout) const;
     void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const Q_DECL_OVERRIDE;
@@ -78,13 +77,11 @@ protected:
     static void paintIcon(QPainter *painter, const QIcon &icon, const QRectF &rect, Qt::Alignment alignment = Qt::AlignCenter,
                           QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);
 
-    QScopedPointer<DStyledItemDelegatePrivate> d_ptr;
+    QScopedPointer<DFMStyledItemDelegatePrivate> d_ptr;
 
     Q_PRIVATE_SLOT(d_ptr, void _q_onRowsInserted(const QModelIndex &parent, int first, int last))
     Q_PRIVATE_SLOT(d_ptr, void _q_onRowsRemoved(const QModelIndex &parent, int first, int last))
 
-    Q_DECLARE_PRIVATE(DStyledItemDelegate)
-    Q_DISABLE_COPY(DStyledItemDelegate)
+    Q_DECLARE_PRIVATE(DFMStyledItemDelegate)
+    Q_DISABLE_COPY(DFMStyledItemDelegate)
 };
-
-#endif // DSTYLEDITEMDELEGATE_H

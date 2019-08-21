@@ -23,7 +23,7 @@ public:
 
     virtual quint64 windowId() const Q_DECL_OVERRIDE;
     virtual const DAbstractFileInfoPointer fileInfo(const QModelIndex &index) const Q_DECL_OVERRIDE;
-    virtual DStyledItemDelegate *itemDelegate() const Q_DECL_OVERRIDE;
+    virtual DFMStyledItemDelegate *itemDelegate() const Q_DECL_OVERRIDE;
     virtual DFileSystemModel *model() const Q_DECL_OVERRIDE;
     virtual const DUrlList selectedUrls() const Q_DECL_OVERRIDE;
     virtual void select(const QList<DUrl> &list) Q_DECL_OVERRIDE;
