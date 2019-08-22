@@ -215,13 +215,9 @@ void DFMCrumbBarPrivate::initConnections()
     Q_Q(DFMCrumbBar);
     QObject::connect(&crumbListScrollArea, &QListView::customContextMenuRequested, q, &DFMCrumbBar::onListViewContextMenu);
 
-    QObject::connect(crumbListScrollArea.selectionModel(), &QItemSelectionModel::currentChanged, q,
-                     [q](const QModelIndex &current, const QModelIndex &previous){
-        Q_UNUSED(previous);
-        if (current.isValid()){
-            emit q->crumbListItemSelected(current.data(DFMCrumbListviewModel::FileUrlRole).toUrl());
-        } else {
-            qWarning() << "current index is invalid, (QItemSelectionModel::currentChanged)";
+    QObject::connect(&crumbListScrollArea, &QListView::clicked, q, [q](const QModelIndex &index){
+        if (index.isValid()){
+            emit q->crumbListItemSelected(index.data(DFMCrumbListviewModel::FileUrlRole).toUrl());
         }
     });
 
