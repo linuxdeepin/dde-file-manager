@@ -65,8 +65,8 @@ void SingleApplication::initConnect()
 void SingleApplication::initSources()
 {
     Q_INIT_RESOURCE(icons);
-    Q_INIT_RESOURCE(dui_theme_dark);
-    Q_INIT_RESOURCE(dui_theme_light);
+//    Q_INIT_RESOURCE(dui_theme_dark);
+//    Q_INIT_RESOURCE(dui_theme_light);
 }
 
 QLocalSocket *SingleApplication::newClientProcess(const QString &key, const QByteArray &message)
