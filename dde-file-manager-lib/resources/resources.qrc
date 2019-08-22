@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/deepin-app-light/actions/16/dfm_tag-deepblue.svg</file>
+        <file>icons/deepin-app-light/actions/16/dfm_tag-green.svg</file>
+        <file>icons/deepin-app-light/actions/16/dfm_tag-lightblue.svg</file>
+        <file>icons/deepin-app-light/actions/16/dfm_tag-orange.svg</file>
+        <file>icons/deepin-app-light/actions/16/dfm_tag-purple.svg</file>
+        <file>icons/deepin-app-light/actions/16/dfm_tag-red.svg</file>
+        <file>icons/deepin-app-light/actions/16/dfm_tag-yellow.svg</file>
+        <file>icons/deepin-app-light/actions/16/dfm_tag.svg</file>
+        <file>icons/deepin-app-dark/actions/16/dfm_tag-deepblue.svg</file>
+        <file>icons/deepin-app-dark/actions/16/dfm_tag-green.svg</file>
+        <file>icons/deepin-app-dark/actions/16/dfm_tag-lightblue.svg</file>
+        <file>icons/deepin-app-dark/actions/16/dfm_tag-orange.svg</file>
+        <file>icons/deepin-app-dark/actions/16/dfm_tag-purple.svg</file>
+        <file>icons/deepin-app-dark/actions/16/dfm_tag-red.svg</file>
+        <file>icons/deepin-app-dark/actions/16/dfm_tag-yellow.svg</file>
+        <file>icons/deepin-app-dark/actions/16/dfm_tag.svg</file>
+        <file>icons/deepin-app-dark/actions/16/dfm_tag-gray.svg</file>
+        <file>icons/deepin-app-light/actions/16/dfm_tag-gray.svg</file>
+    </qresource>
+</RCC>
