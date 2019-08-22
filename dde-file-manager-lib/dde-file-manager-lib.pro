@@ -76,7 +76,8 @@ RESOURCES += \
     skin/dialogs.qrc \
     skin/filemanager.qrc \
     themes/themes.qrc \
-    configure.qrc
+    configure.qrc \
+    resources/resources.qrc
 
 HEADERS += \
     controllers/appcontroller.h \
