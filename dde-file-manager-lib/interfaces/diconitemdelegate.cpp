@@ -43,6 +43,10 @@
 #include <QVBoxLayout>
 #include <private/qtextengine_p.h>
 
+#include "dstyleoption.h"
+#include <DStyle>
+
+DWIDGET_USE_NAMESPACE
 DFM_USE_NAMESPACE
 
 #define ICON_SPACING 16
@@ -601,19 +605,27 @@ void DIconItemDelegate::paint(QPainter *painter,
     bool isSelected = !isDragMode && (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
     bool isDropTarget = parent()->isDropTarget(index);
 
-    QColor qc = QColor(0xbb, 0xbb, 0xbb, 255/2); // file item background-color
-    if (isSelected || isDropTarget) {
-        qc = QColor(43, 167, 248, 0.50 * 255);
+    //QColor(Qt::lightGray); // file item background-color
+    QPalette::ColorGroup cg = (option.widget ? option.widget->isEnabled() : (option.state & QStyle::State_Enabled))
+            ? QPalette::Normal : QPalette::Disabled;
+    if (cg == QPalette::Normal && !(option.state & QStyle::State_Active))
+        cg = QPalette::Inactive;
+
+    QPalette::ColorRole role = QPalette::Background;
+    if ( /*cg == QPalette::Normal && */(isSelected || isDropTarget)) {
+        role = QPalette::Highlight;
     }
 
     QRectF rect = opt.rect;
+    rect.adjust(10,10,-10,-10); // 为了让对勾右上角， 缩小框框
+
     QPainterPath path;
     rect.moveTopLeft(QPointF(0.5, 0.5) + rect.topLeft());
     path.addRoundedRect(rect, ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
 
     painter->setRenderHint(QPainter::Antialiasing, true);
     //painter->fillPath(path, QColor(43, 167, 248, 0.50 * 255));
-    painter->fillPath(path, qc);
+    painter->fillPath(path, option.palette.color(cg, role));
     painter->setRenderHint(QPainter::Antialiasing, false);
 
     if (isDropTarget && !isSelected) {
@@ -657,6 +669,14 @@ void DIconItemDelegate::paint(QPainter *painter,
     for (int i = 0; i < cornerIconList.count(); ++i) {
         cornerIconList.at(i).paint(painter, cornerGeometryList.at(i).toRect());
     }
+
+    if (isSelected) {
+        QRect rc = option.rect;
+        rc.setSize({30,30});
+        rc.moveTopRight(QPoint(option.rect.right(),option.rect.top()));
+        QIcon::fromTheme("dialog-ok").paint(painter, rc);
+    }
+
 
 //    /// draw file name label
 //    if (isSelected) {
