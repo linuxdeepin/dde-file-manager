@@ -449,20 +449,7 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     : DMainWindow(parent)
     , d_ptr(new DFileManagerWindowPrivate(this))
 {
-    if (!DFMGlobal::IsFileManagerDiloagProcess) {
-        const QString &currentTheme = DFMApplication::appAttribute(DFMApplication::AA_ThemeName).toString();
-        DThemeManager::instance()->setTheme(this, currentTheme);
-        ThemeConfig::instace()->update(currentTheme);
-    }
-
-    if (DFMGlobal::isRootUser()) {
-        D_THEME_INIT_WIDGET(DFileManagerWindowAdmin)
-    } else {
-        D_THEME_INIT_WIDGET(DFileManagerWindow)
-    }
-
     /// init global AppController
-//    Q_UNUSED(AppController::instance());
     setWindowIcon(QIcon(":/images/images/dde-file-manager.svg"));
 
     initData();
@@ -1188,31 +1175,32 @@ void DFileManagerWindow::onReuqestCacheRenameBarState()const
 
 void DFileManagerWindow::setTheme(const QString &theme)
 {
-    DThemeManager::instance()->setTheme(this, theme);
-    DFMApplication::setAppAttribute(DFMApplication::AA_ThemeName, theme);
+    qApp->setTheme("chameleon");
+//    DThemeManager::instance()->setTheme(this, theme);
+//    DFMApplication::setAppAttribute(DFMApplication::AA_ThemeName, theme);
 
-    DFileMenu *dfmenu = static_cast<DFileMenu *>(titlebar()->menu());
-    QAction *theme_action = dfmenu->actionAt(1);
+//    DFileMenu *dfmenu = static_cast<DFileMenu *>(titlebar()->menu());
+//    QAction *theme_action = dfmenu->actionAt(1);
 
-    if (theme_action) {
-        if (theme == "dark") {
-            theme_action->setChecked(true);
-        }
-    }
+//    if (theme_action) {
+//        if (theme == "dark") {
+//            theme_action->setChecked(true);
+//        }
+//    }
 }
 
 void DFileManagerWindow::onThemeChanged()
 {
-    QString theme = DThemeManager::instance()->theme(this);
-    if (theme == "light") {
-        theme = "dark";
-    } else {
-        theme = "light";
-    }
-    foreach (const QWidget *w, WindowManager::instance()->getWindows().keys()) {
-        const DFileManagerWindow *dfm = static_cast<const DFileManagerWindow *>(w);
-        const_cast<DFileManagerWindow *>(dfm)->setTheme(theme);
-    }
+//    QString theme = DThemeManager::instance()->theme(this);
+//    if (theme == "light") {
+//        theme = "dark";
+//    } else {
+//        theme = "dark";
+//    }
+//    foreach (const QWidget *w, WindowManager::instance()->getWindows().keys()) {
+//        const DFileManagerWindow *dfm = static_cast<const DFileManagerWindow *>(w);
+//        const_cast<DFileManagerWindow *>(dfm)->setTheme(theme);
+//    }
 
     WindowManager::instance()->saveWindowState(this);
 }
