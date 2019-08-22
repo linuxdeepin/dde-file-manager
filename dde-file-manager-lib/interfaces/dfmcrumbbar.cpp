@@ -160,14 +160,13 @@ void DFMCrumbBarPrivate::initUI()
     q->setFixedHeight(24);
 
     // Arrows
-    leftArrow.setObjectName("backButton");
-    leftArrow.setFixedWidth(26);
-    leftArrow.setFixedHeight(24);
     leftArrow.setFocusPolicy(Qt::NoFocus);
-    rightArrow.setObjectName("forwardButton");
-    rightArrow.setFixedWidth(26);
-    rightArrow.setFixedHeight(24);
+    leftArrow.setIcon(QIcon::fromTheme("go-previous"));
+    rightArrow.setIcon(QIcon::fromTheme("go-next"));
     rightArrow.setFocusPolicy(Qt::NoFocus);
+
+    leftArrow.setFlat(true);
+    rightArrow.setFlat(true);
     leftArrow.hide();
     rightArrow.hide();
 
