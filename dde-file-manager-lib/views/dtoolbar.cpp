@@ -120,23 +120,27 @@ void DToolBar::initAddressToolBar()
 
 
     m_backButton = new QPushButton(this);
-    m_backButton->setObjectName("backButton");
+    //m_backButton->setObjectName("backButton");
+    m_backButton->setIcon(QIcon::fromTheme("go-previous").pixmap(QSize(ButtonWidth, ButtonHeight)));
     m_backButton->setFixedWidth(ButtonWidth);
     m_backButton->setFixedHeight(ButtonHeight);
     m_backButton->setDisabled(true);
     m_backButton->setFocusPolicy(Qt::NoFocus);
     m_forwardButton = new QPushButton(this);
-    m_forwardButton->setObjectName("forwardButton");
+    //m_forwardButton->setObjectName("forwardButton");
+    m_forwardButton->setIcon(QIcon::fromTheme("go-next").pixmap(QSize(ButtonWidth, ButtonHeight)));
     m_forwardButton->setFixedWidth(ButtonWidth);
     m_forwardButton->setFixedHeight(ButtonHeight);
     m_forwardButton->setDisabled(true);
     m_forwardButton->setFocusPolicy(Qt::NoFocus);
 
     m_searchButton = new QPushButton(this);
-    m_searchButton->setObjectName("searchButton");
+    //m_searchButton->setObjectName("searchButton");
     m_searchButton->setFixedWidth(ButtonWidth);
     m_searchButton->setFixedHeight(ButtonHeight);
     m_searchButton->setFocusPolicy(Qt::NoFocus);
+    m_searchButton->setFlat(true);
+    m_searchButton->setIcon(QIcon::fromTheme("search").pixmap(QSize(ButtonWidth, ButtonHeight)));
 
     backForwardLayout->addWidget(m_backButton);
     backForwardLayout->addWidget(m_forwardButton);
@@ -381,16 +385,17 @@ void DToolBar::toggleSearchButtonState(bool asb)
     }
 
     if (asb) {
-        m_searchButton->setObjectName("filterButton");
+        //m_searchButton->setObjectName("filterButton");
         m_searchButton->style()->unpolish(m_searchButton);
         m_searchButton->style()->polish(m_searchButton);
-//        m_searchButton->setIcon(QIcon::fromTheme("dialog-filters"));
+        m_searchButton->setIcon(QIcon::fromTheme("go-down-search").pixmap(QSize(ButtonWidth, ButtonHeight)));
+        m_searchButton->setFlat(true);
         m_searchButtonAsbState = true;
     } else {
-        m_searchButton->setObjectName("searchButton");
+        //m_searchButton->setObjectName("searchButton");
         m_searchButton->style()->unpolish(m_searchButton);
         m_searchButton->style()->polish(m_searchButton);
-//        m_searchButton->setIcon(QIcon::fromTheme("search")); // QIcon(":/dark/icons/search_normal.svg")
+        m_searchButton->setIcon(QIcon::fromTheme("search").pixmap(QSize(ButtonWidth, ButtonHeight))); // QIcon(":/dark/icons/search_normal.svg")
         m_searchButton->setDown(false);
         m_searchButtonAsbState = false;
         DFileManagerWindow* dfmWindow = qobject_cast<DFileManagerWindow*>(window());
