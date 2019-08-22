@@ -1455,7 +1455,7 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
     D_DC(DFileView);
 
     const QModelIndex &index = indexAt(event->pos());
-    bool indexIsSelected = this->isSelected(index);
+    bool indexIsSelected = isIconViewMode() ? index.isValid() : this->isSelected(index);
     bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos()) && !indexIsSelected;
     Qt::ItemFlags flags;
 
