@@ -109,8 +109,8 @@ void DFMCrumbBarPrivate::checkArrowVisiable()
     if (!sb)
         return;
 
-    leftArrow.setVisible(sb->maximum() > 0);
-    rightArrow.setVisible(sb->maximum() > 0);
+    leftArrow.setVisible(!addressBar->isVisible() && sb->maximum() > 0);
+    rightArrow.setVisible(!addressBar->isVisible() && sb->maximum() > 0);
 
     leftArrow.setEnabled(sb->value() != sb->minimum());
     rightArrow.setEnabled(sb->value() != sb->maximum());
