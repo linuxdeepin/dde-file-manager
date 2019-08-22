@@ -1003,6 +1003,7 @@ void DFileManagerWindow::initRightView()
     d->emptyTrashButton->setFixedHeight(25);
     d->emptyTrashButton->hide();
     d->emptyTrashButton->setContentsMargins(0, 0, 0, 0);
+    d->emptyTrashButton->setIcon(QIcon::fromTheme("trash-empty"));
     d->emptyTrashButton->setObjectName("EmptyTrashButton");
 
     QHBoxLayout *tabBarLayout = new QHBoxLayout;
@@ -1039,6 +1040,7 @@ void DFileManagerWindow::initTabBar()
     d->newTabButton = new QPushButton(this);
     d->newTabButton->setObjectName("NewTabButton");
     d->newTabButton->setFixedSize(25, 24);
+    d->newTabButton->setIcon(QIcon::fromTheme("tab-new"));
     d->newTabButton->hide();
 }
 

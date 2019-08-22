@@ -340,16 +340,12 @@ void PreviewDialog::updatePreview(const DUrl &url)
     const DAbstractFileInfoPointer& info = fileService->createFileInfo(this, url);
 
     if(info->mimeTypeName().startsWith("text") || info->mimeTypeName() == "application/pdf"){
-        D_THEME_INIT_WIDGET(DocPreviewDialog)
         d->line->show();
     } else if(info->mimeTypeName().startsWith("audio")){
-        D_THEME_INIT_WIDGET(MusicPreviewDialog)
         d->line->hide();
     } else if(info->mimeTypeName().startsWith("video") || mimeTypeDisplayManager->supportVideoMimeTypes().contains(info->mimeTypeName())){
-        D_THEME_INIT_WIDGET(PreviewDialogDefault)
         d->line->hide();
     } else {
-        D_THEME_INIT_WIDGET(PreviewDialogDefault)
         d->line->hide();
     }
 }

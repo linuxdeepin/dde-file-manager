@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>light/DFileView.theme</file>
-        <file>light/PropertyDialog.theme</file>
         <file>light/OpenWithOtherDialog.theme</file>
         <file>light/DFileViewRoot.theme</file>
         <file>light/PreviewDialogDefault.theme</file>
@@ -16,10 +15,7 @@
         <file>dark/MusicPreviewDialog.theme</file>
         <file>dark/OpenWithOtherDialog.theme</file>
         <file>dark/PreviewDialogDefault.theme</file>
-        <file>dark/PropertyDialog.theme</file>
         <file>light/DFileManagerWindow.theme</file>
-        <file>dark/DStatusBar.theme</file>
-        <file>light/DStatusBar.theme</file>
         <file>dark/config.ini</file>
         <file>light/config.ini</file>
         <file>dark/icons/Android_phone_active_16px.svg</file>

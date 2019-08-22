@@ -258,8 +258,6 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
     , m_icon(new QLabel)
     , m_edit(new NameTextEdit)
 {
-    D_THEME_INIT_WIDGET(PropertyDialog)
-
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowFlags(windowFlags()
                    & ~ Qt::WindowMaximizeButtonHint
@@ -803,6 +801,8 @@ void PropertyDialog::initTextShowFrame(const QString &text)
     m_editButton = new QPushButton(m_textShowFrame);
     m_editButton->setObjectName("EditButton");
     m_editButton->setFixedSize(16, 16);
+    m_editButton->setIcon(QIcon::fromTheme("edit-rename"));
+    m_editButton->setFlat(true);
     connect(m_editButton, &QPushButton::clicked, this, &PropertyDialog::renameFile);
 
     QString t = DFMGlobal::elideText(text, m_edit->size(), QTextOption::WrapAtWordBoundaryOrAnywhere, m_edit->font(), Qt::ElideMiddle, 0);

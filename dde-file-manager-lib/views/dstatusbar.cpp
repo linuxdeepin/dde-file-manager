@@ -52,8 +52,6 @@ DWIDGET_USE_NAMESPACE
 DStatusBar::DStatusBar(QWidget *parent)
     : QFrame(parent)
 {
-    D_THEME_INIT_WIDGET(DStatusBar, mode)
-
     setObjectName("DStatusBar");
 
     initUI();
