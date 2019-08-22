@@ -36,7 +36,7 @@ class FilePreviewDialogStatusBar : public QFrame
 {
     Q_OBJECT
 public:
-    explicit FilePreviewDialogStatusBar(QWidget *parent = 0);
+    explicit FilePreviewDialogStatusBar(QWidget *parent = nullptr);
 
     QLabel *title() const;
     QPushButton *preButton() const;
@@ -95,17 +95,17 @@ QPushButton *FilePreviewDialogStatusBar::openButton() const
 
 QPushButton *FilePreviewDialogStatusBar::nextButton() const
 {
-return m_nextButton;
+    return m_nextButton;
 }
 
 QPushButton *FilePreviewDialogStatusBar::preButton() const
 {
-return m_preButton;
+    return m_preButton;
 }
 
 QLabel *FilePreviewDialogStatusBar::title() const
 {
-return m_title;
+    return m_title;
 }
 
 UnknowFilePreview::UnknowFilePreview(QObject *parent)
@@ -218,8 +218,6 @@ FilePreviewDialog::FilePreviewDialog(const DUrlList &previewUrllist, QWidget *pa
     : DAbstractDialog(parent)
     , m_fileList(previewUrllist)
 {
-    D_THEME_INIT_WIDGET(FilePreviewDialog);
-
 #ifdef Q_OS_LINUX
 #ifndef ARCH_SW     // 申威和龙芯架构已禁用视频预览功能，不会触发此问题
 #ifndef ARCH_MIPSEL //
@@ -330,6 +328,8 @@ void FilePreviewDialog::initUI()
     m_closeButton = new QPushButton(this);
     m_closeButton->setObjectName("CloseButton");
     m_closeButton->setFocusPolicy(Qt::NoFocus);
+    m_closeButton->setIcon(QIcon::fromTheme("window-close"));
+    m_closeButton->setFlat(true);
 
     m_separator = new DSeparatorHorizontal(this);
     m_separator->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);

@@ -36,7 +36,7 @@ class TrashPropertyDialog : public DDialog
 {
     Q_OBJECT
 public:
-    explicit TrashPropertyDialog(const DUrl& url, QWidget *parent = 0);
+    explicit TrashPropertyDialog(const DUrl& url, QWidget *parent = nullptr);
     ~TrashPropertyDialog();
 
     void initUI();

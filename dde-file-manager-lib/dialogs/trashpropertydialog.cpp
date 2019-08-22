@@ -53,12 +53,10 @@ void TrashPropertyDialog::initUI()
 
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
     QIcon trashIcon;
-    if(fileInfo->filesCount()>0){
-        trashIcon.addFile(":/images/images/trash_full.png");
-        trashIcon.addFile(":/images/images/trash_full@2x.png");
-    }else{
-        trashIcon.addFile(":/images/images/trash.png");
-        trashIcon.addFile(":/images/images/trash@2x.png");
+    if(fileInfo->filesCount() > 0) {
+        trashIcon = QIcon::fromTheme("user-trash-full");
+    } else {
+        trashIcon = QIcon::fromTheme("user-trash");
     }
 
     m_iconLabel = new QLabel(this);
