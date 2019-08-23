@@ -57,12 +57,14 @@ FilePreviewDialogStatusBar::FilePreviewDialogStatusBar(QWidget *parent)
 {
     m_preButton = new QPushButton(this);
     m_preButton->setObjectName("PreButton");
+    m_preButton->setIcon(QIcon::fromTheme("go-previous"));
     m_preButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_preButton->setShortcut(QKeySequence::Back);
     m_preButton->setFocusPolicy(Qt::NoFocus);
 
     m_nextButton = new QPushButton(this);
     m_nextButton->setObjectName("NextButton");
+    m_nextButton->setIcon(QIcon::fromTheme("go-next"));
     m_nextButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_nextButton->setShortcut(QKeySequence::Forward);
     m_nextButton->setFocusPolicy(Qt::NoFocus);
