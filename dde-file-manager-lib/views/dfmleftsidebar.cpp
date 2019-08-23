@@ -37,6 +37,7 @@
 #include "controllers/dfmsidebarbookmarkitemhandler.h"
 #include "controllers/dfmsidebardeviceitemhandler.h"
 #include "controllers/dfmsidebartagitemhandler.h"
+#include "controllers/dfmsidebaropticalitemhandler.h"
 
 #include <QVBoxLayout>
 #include <QDebug>
@@ -394,7 +395,7 @@ void DFMLeftSideBar::initDeviceConnection()
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
         if (drv->mediaCompatibility().join(' ').contains("optical")) {
-            addItem(DFMSideBarDeviceItemHandler::createItem(DUrl::fromDeviceId(blk->device())), groupName(Device));
+            addItem(DFMSideBarOpticalItemHandler::createItem(DUrl::fromDeviceId(blk->device())), groupName(Device));
         }
     }
 
