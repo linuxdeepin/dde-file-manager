@@ -1,6 +1,8 @@
 #include "dfmsidebaropticalitemhandler.h"
 
+#include "app/define.h"
 #include "interfaces/dfmleftsidebaritem.h"
+#include "disomaster.h"
 
 DFMLeftSideBarItem *DFMSideBarOpticalItemHandler::createItem(const DUrl &url)
 {
@@ -22,6 +24,10 @@ DFMSideBarOpticalItemHandler::DFMSideBarOpticalItemHandler(QObject *parent)
 
 void DFMSideBarOpticalItemHandler::cdAction(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem *item)
 {
+    if (ISOMaster->currentDevice() == item->url().path()) {
+        return;
+    }
+
     return DFMSideBarItemInterface::cdAction(sidebar, item);
 }
 
