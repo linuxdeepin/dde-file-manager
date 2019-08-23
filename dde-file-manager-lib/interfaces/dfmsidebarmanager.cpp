@@ -26,6 +26,7 @@
 #include "controllers/dfmsidebardeviceitemhandler.h"
 #include "controllers/dfmsidebartagitemhandler.h"
 #include "controllers/dfmsidebarbookmarkitemhandler.h"
+#include "controllers/dfmsidebaropticalitemhandler.h"
 
 class DFMSideBarManagerPrivate
 {
@@ -90,6 +91,7 @@ DFMSideBarManager::DFMSideBarManager(QObject *parent)
     dRegisterSideBarInterface<DFMSideBarDeviceItemHandler>(QStringLiteral(SIDEBAR_ID_DEVICE));
     dRegisterSideBarInterface<DFMSideBarTagItemHandler>(QStringLiteral(SIDEBAR_ID_TAG));
     dRegisterSideBarInterface<DFMSideBarBookmarkItemHandler>(QStringLiteral(SIDEBAR_ID_BOOKMARK));
+    dRegisterSideBarInterface<DFMSideBarOpticalItemHandler>(QStringLiteral(SIDEBAR_ID_OPTICAL));
 }
 
 DFMSideBarManager::~DFMSideBarManager()
