@@ -18,5 +18,6 @@
         <file>icons/deepin-app-dark/actions/16/dfm_tag.svg</file>
         <file>icons/deepin-app-dark/actions/16/dfm_tag-gray.svg</file>
         <file>icons/deepin-app-light/actions/16/dfm_tag-gray.svg</file>
+        <file>icons/deepin-app-light/actions/24/dfm_view-filter.svg</file>
     </qresource>
 </RCC>

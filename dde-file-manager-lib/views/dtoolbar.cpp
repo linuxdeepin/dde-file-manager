@@ -135,7 +135,7 @@ void DToolBar::initAddressToolBar()
     m_forwardButton->setFocusPolicy(Qt::NoFocus);
 
     m_searchButton = new QPushButton(this);
-    //m_searchButton->setObjectName("searchButton");
+    m_searchButton->setObjectName("searchButton");
     m_searchButton->setFixedWidth(ButtonWidth);
     m_searchButton->setFixedHeight(ButtonHeight);
     m_searchButton->setFocusPolicy(Qt::NoFocus);
@@ -385,10 +385,10 @@ void DToolBar::toggleSearchButtonState(bool asb)
     }
 
     if (asb) {
-        //m_searchButton->setObjectName("filterButton");
+        m_searchButton->setObjectName("filterButton");
+        m_searchButton->setIcon(QIcon::fromTheme("dfm_view-filter"));
         m_searchButton->style()->unpolish(m_searchButton);
         m_searchButton->style()->polish(m_searchButton);
-        m_searchButton->setIcon(QIcon::fromTheme("go-down-search").pixmap(QSize(ButtonWidth, ButtonHeight)));
         m_searchButton->setFlat(true);
         m_searchButtonAsbState = true;
     } else {
