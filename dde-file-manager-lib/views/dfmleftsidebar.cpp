@@ -435,30 +435,27 @@ void DFMLeftSideBar::initDeviceConnection()
 //    });
 
     // Device/volume get mounted/unmounted
-//    q->connect(devices_watcher, &DAbstractFileWatcher::fileAttributeChanged, group, [group](const DUrl & url) {
-//        DFMSideBarItem *item = group->findItem(url);
-//        DAbstractFileInfoPointer pointer = fileService->createFileInfo(item, url);
-//        if (item && !item->inherits(DFMSideBarOpticalDevItem::staticMetaObject.className())) {
-//            DFMSideBarDeviceItem *casted = qobject_cast<DFMSideBarDeviceItem *>(item);
-//            const QVariantHash &extensionInfo = pointer->extraProperties();
+    connect(devicesWatcher, &DAbstractFileWatcher::fileAttributeChanged, this, [this](const DUrl & url) {
+        int index = findItem(url, groupName(Device));
+        DFMLeftSideBarItem *item = m_sidebarModel->itemFromIndex(index);
+        DViewItemActionList actionList = item->actionList(Qt::RightEdge);
+        DAbstractFileInfoPointer pointer = DFileService::instance()->createFileInfo(nullptr, url);
+        if (item && !actionList.isEmpty()) {
+            const QVariantHash &extensionInfo = pointer->extraProperties();
 
-//            bool isMounted = extensionInfo.value("isMounted", false).toBool();
-//            bool canUnmount = extensionInfo.value("canUnmount", true).toBool();
-//            bool isRemovable = extensionInfo.value("isRemovable", true).toBool();
-//            bool canEject = extensionInfo.value("canEject", true).toBool();
+            bool isMounted = extensionInfo.value("isMounted", false).toBool();
+            bool canUnmount = extensionInfo.value("canUnmount", true).toBool();
+            bool isRemovable = extensionInfo.value("isRemovable", true).toBool();
+            bool canEject = extensionInfo.value("canEject", true).toBool();
+            bool isOptical = extensionInfo.value("optical", true).toBool();
 
-//            if (casted) {
-//                if (isRemovable) {
-//                    casted->unmountButton->setVisible(canEject || canUnmount);
-//                } else {
-//                    casted->unmountButton->setVisible(isMounted && canUnmount);
-//                }
-//            } else {
-//                DFMSideBarOpticalDevItem *optdevitem = qobject_cast<DFMSideBarOpticalDevItem *>(item);
-//                optdevitem->unmountButton->setVisible(canEject || canUnmount);
-//            }
-//        }
-//    });
+            if (isRemovable || isOptical) {
+                actionList.first()->setVisible(canEject || canUnmount);
+            } else {
+                actionList.first()->setVisible(isMounted && canUnmount);
+            }
+        }
+    });
 
     // Device/volume get removed.
 //    connect(devicesWatcher, &DAbstractFileWatcher::fileDeleted, this, [this](const DUrl & url) {
