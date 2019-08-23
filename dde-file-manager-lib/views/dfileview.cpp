@@ -2869,23 +2869,7 @@ void DFileView::updateToolBarActions(QWidget *widget, QString theme)
             d->toolbarActionGroup->addAction(list_view_mode_action);
         }
 
-//        QIcon icon_view_mode_icon;
-//        icon_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "iconview.icon"));
-//        icon_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "iconview.icon", ThemeConfig::Hover), QSize(), QIcon::Active);
-//        icon_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "iconview.icon", ThemeConfig::Checked), QSize(), QIcon::Normal, QIcon::On);
-//        icon_view_mode_icon.addPixmap(QIcon::fromTheme("view-list-details").pixmap(32,32));
-//        icon_view_mode_icon.addPixmap(QIcon::fromTheme("view-list-details").pixmap(32,32), QIcon::Active);
-//        icon_view_mode_icon.addPixmap(QIcon::fromTheme("view-list-details").pixmap(32,32), QIcon::Normal, QIcon::On);
         icon_view_mode_action->setIcon(QIcon::fromTheme("view-list-icons"));
-
-
-//        QIcon list_view_mode_icon;
-//        list_view_mode_icon.addPixmap(QIcon::fromTheme("view-list-icons").pixmap(32,32));
-//        list_view_mode_icon.addPixmap(QIcon::fromTheme("view-list-icons").pixmap(32,32), QIcon::Active);
-//        list_view_mode_icon.addPixmap(QIcon::fromTheme("view-list-icons").pixmap(32,32), QIcon::Normal, QIcon::On);
-        //list_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "listview.icon"));
-        //list_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "listview.icon", ThemeConfig::Hover), QSize(), QIcon::Active);
-        //list_view_mode_icon.addFile(ThemeConfig::instace()->string("FileView", "listview.icon", ThemeConfig::Checked), QSize(), QIcon::Normal, QIcon::On);
         list_view_mode_action->setIcon(QIcon::fromTheme("view-list-details"));
     }
 }
