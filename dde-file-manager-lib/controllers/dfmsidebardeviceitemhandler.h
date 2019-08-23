@@ -34,7 +34,7 @@ class DUrl;
 class DFMSideBarDeviceItemHandler : public DFMSideBarItemInterface
 {
 public:
-    static DTK_WIDGET_NAMESPACE::DViewItemAction * createUnmountOrEjectAction(const DUrl &url);
+    static DTK_WIDGET_NAMESPACE::DViewItemAction * createUnmountOrEjectAction(const DUrl &url, bool withText);
     static DFMLeftSideBarItem * createItem(const DUrl &url);
 
     DFMSideBarDeviceItemHandler(QObject *parent = nullptr);

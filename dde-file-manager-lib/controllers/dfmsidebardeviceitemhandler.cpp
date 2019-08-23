@@ -36,10 +36,12 @@
 
 #include <QAction>
 
-DViewItemAction *DFMSideBarDeviceItemHandler::createUnmountOrEjectAction(const DUrl &url)
+DViewItemAction *DFMSideBarDeviceItemHandler::createUnmountOrEjectAction(const DUrl &url, bool withText)
 {
-    DViewItemAction * action = new DViewItemAction(Qt::AlignCenter, QSize(16, 16));
-    action->setText(QObject::tr("Unmount"));
+    DViewItemAction * action = new DViewItemAction(Qt::AlignCenter, QSize(16, 16), QSize(), true);
+    if (withText) {
+        action->setText(QObject::tr("Unmount"));
+    }
     action->setIcon(QIcon::fromTheme("media-eject-symbolic"));
 
     QObject::connect(action, &QAction::triggered, action, [url](){
@@ -75,7 +77,7 @@ DFMLeftSideBarItem *DFMSideBarDeviceItemHandler::createItem(const DUrl &url)
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren);
     item->setData(SIDEBAR_ID_DEVICE, DFMLeftSideBarItem::ItemUseRegisteredHandlerRole);
     DViewItemActionList lst;
-    DViewItemAction * act = createUnmountOrEjectAction(url);
+    DViewItemAction * act = createUnmountOrEjectAction(url, false);
     act->setIcon(QIcon::fromTheme("media-eject-symbolic"));
     act->setVisible(info.value("canUnmount", false).toBool());
     lst.push_back(act);
@@ -156,7 +158,7 @@ QMenu *DFMSideBarDeviceItemHandler::contextMenu(const DFMLeftSideBar *sidebar, c
     // According to the designer and PM, we should use "Unmount" even we are actually doing *Eject* for removable device.
     // This behavior should be discussed later.
     if (info.value("canUnmount", false).toBool()) {
-        menu->addAction(DFMSideBarDeviceItemHandler::createUnmountOrEjectAction(item->url()));
+        menu->addAction(DFMSideBarDeviceItemHandler::createUnmountOrEjectAction(item->url(), true));
     }
 
     if (info.value("mediaType", 0).toInt() == UDiskDeviceInfo::MediaType::removable && !info.value("optical", false).toBool()) {
