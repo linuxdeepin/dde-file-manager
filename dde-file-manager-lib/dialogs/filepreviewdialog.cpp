@@ -74,7 +74,7 @@ FilePreviewDialogStatusBar::FilePreviewDialogStatusBar(QWidget *parent)
 
     m_openButton = new QPushButton(QObject::tr("Open"), this);
     m_openButton->setObjectName("OpenButton");
-    m_openButton->setFixedHeight(24);
+    //m_openButton->setFixedHeight(24);
     m_openButton->setShortcut(QKeySequence::Open);
 
     QHBoxLayout *layout = new QHBoxLayout(this);
@@ -330,6 +330,7 @@ void FilePreviewDialog::initUI()
     m_closeButton->setFocusPolicy(Qt::NoFocus);
     m_closeButton->setIcon(QIcon::fromTheme("window-close"));
     m_closeButton->setFlat(true);
+    m_closeButton->setFixedSize({24,24});
 
     m_separator = new DSeparatorHorizontal(this);
     m_separator->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
