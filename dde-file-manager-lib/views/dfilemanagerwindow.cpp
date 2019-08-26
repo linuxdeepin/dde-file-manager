@@ -38,8 +38,6 @@
 #include "dfilesystemmodel.h"
 #include "dfmviewmanager.h"
 #include "dfmleftsidebar.h"
-#include "dfmsidebar.h"
-#include "dfmsidebaritem.h"
 #include "dfmaddressbar.h"
 #include "dfmsettings.h"
 #include "dfmapplication.h"
@@ -634,7 +632,7 @@ int DFileManagerWindow::getSplitterPosition() const
 {
     D_DC(DFileManagerWindow);
 
-    return d->splitter ? d->splitter->sizes().at(0) : DFMSideBarItem::maximumWidth;
+    return d->splitter ? d->splitter->sizes().at(0) : DFMLeftSideBar::maximumWidth;
 }
 
 void DFileManagerWindow::setSplitterPosition(int pos)
@@ -1227,7 +1225,7 @@ void DFileManagerWindow::showEvent(QShowEvent *event)
     DMainWindow::showEvent(event);
 
     const QVariantMap &state = DFMApplication::appObtuselySetting()->value("WindowManager", "SplitterState").toMap();
-    int splitterPos = state.value("sidebar", DFMSideBarItem::maximumWidth).toInt();
+    int splitterPos = state.value("sidebar", DFMLeftSideBar::maximumWidth).toInt();
     setSplitterPosition(splitterPos);
 }
 

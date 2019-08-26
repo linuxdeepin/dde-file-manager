@@ -71,7 +71,28 @@ DFMLeftSideBarItem *DFMSideBarDeviceItemHandler::createItem(const DUrl &url)
     const DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(nullptr, url);
     QVariantHash info = infoPointer->extraProperties();
     QString displayName = infoPointer->fileDisplayName();
-    QString iconName("drive-harddisk-symbolic");
+    QString iconName;
+
+    switch (info.value("mediaType", 0).toInt()) {
+    case UDiskDeviceInfo::MediaType::native:
+        iconName = "drive-harddisk-symbolic";
+        break;
+    case UDiskDeviceInfo::MediaType::removable:
+        iconName = "drive-removable-media-symbolic";
+        break;
+    case UDiskDeviceInfo::MediaType::dvd:
+        iconName = "media-optical-symbolic";
+        break;
+    case UDiskDeviceInfo::MediaType::phone:
+        iconName = "phone-symbolic";
+        break;
+    case UDiskDeviceInfo::MediaType::iphone:
+        iconName = "phone-apple-iphone-symbolic";
+        break;
+    default:
+        iconName = "drive-harddisk-symbolic";
+        break;
+    }
 
     DFMLeftSideBarItem * item = new DFMLeftSideBarItem(QIcon::fromTheme(iconName), displayName, url);
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren);

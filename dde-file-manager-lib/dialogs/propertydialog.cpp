@@ -49,8 +49,6 @@
 #include "views/windowmanager.h"
 #include "views/dfileview.h"
 #include "interfaces/dfilesystemmodel.h"
-#include "interfaces/dfmsidebar.h"
-#include "interfaces/dfmsidebaritem.h"
 
 #include "plugins/pluginmanager.h"
 #include "../plugininterfaces/menu/menuinterface.h"
