@@ -110,7 +110,6 @@ public:
     void resetRenameBar();
     void storeUrlListToRenameBar(const QList<DUrl>& list) noexcept;
 
-    QPushButton *logoButton{ nullptr };
     QFrame *centralWidget{ nullptr };
     DFMSideBar *sideBar{ nullptr };
     QFrame *rightView { nullptr };
@@ -884,13 +883,6 @@ void DFileManagerWindow::initTitleFrame()
 {
     D_D(DFileManagerWindow);
 
-    d->logoButton = new QPushButton;
-    d->logoButton->setFlat(true);
-    d->logoButton->setIcon(QIcon::fromTheme("dde-file-manager", QIcon::fromTheme("system-file-manager")));
-    d->logoButton->setIconSize(QSize(24, 24));
-    d->logoButton->setFixedSize(QSize(24, 24));
-    d->logoButton->setFocusPolicy(Qt::NoFocus);
-
     initToolBar();
 
     bool isDXcbPlatform = false;
@@ -905,13 +897,11 @@ void DFileManagerWindow::initTitleFrame()
     titleLayout->setMargin(0);
     titleLayout->setSpacing(0);
     if (isDXcbPlatform) {
-        titleLayout->addSpacing(12);
-        titleLayout->addWidget(d->logoButton);
-        titleLayout->addSpacing(12);
+        titlebar()->setIcon(QIcon::fromTheme("dde-file-manager", QIcon::fromTheme("system-file-manager")));
     }
     titleLayout->addWidget(d->toolbar);
     titleLayout->setSpacing(0);
-    titleLayout->setContentsMargins(0, 0, 0, 0);
+    titleLayout->setContentsMargins(0, 0, 22, 0);
     d->titleFrame->setLayout(titleLayout);
     d->titleFrame->setFixedHeight(TITLE_FIXED_HEIGHT);
 }
@@ -940,7 +930,7 @@ void DFileManagerWindow::initTitleBar()
 
     titlebar()->setMenu(menu);
     titlebar()->setContentsMargins(0, 0, 0, 0);
-    titlebar()->setCustomWidget(d->titleFrame, Qt::AlignLeft);
+    titlebar()->addWidget(d->titleFrame, Qt::AlignLeft);
 }
 
 void DFileManagerWindow::initSplitter()
