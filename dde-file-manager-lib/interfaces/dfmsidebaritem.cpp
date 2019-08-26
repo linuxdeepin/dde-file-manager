@@ -18,13 +18,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "dfmleftsidebaritem.h"
+#include "dfmsidebaritem.h"
 #include "dfmsidebarmanager.h"
 
 #include <QObject>
 #include <QVariant>
 
-DFMLeftSideBarItem::DFMLeftSideBarItem(const QIcon &icon, const QString &text, const DUrl &url, const QString &groupName)
+DFM_BEGIN_NAMESPACE
+
+DFMSideBarItem::DFMSideBarItem(const QIcon &icon, const QString &text, const DUrl &url, const QString &groupName)
     : DStandardItem (icon, text)
 {
     setUrl(url);
@@ -35,7 +37,7 @@ DFMLeftSideBarItem::DFMLeftSideBarItem(const QIcon &icon, const QString &text, c
 
 /*!
  * \internal
- * \brief DFMLeftSideBarItem::createSeparatorItem
+ * \brief DFMSideBarItem::createSeparatorItem
  *
  * This is more likely a group header for the group \a groupName .
  * Since QListView itself doesn't support grouping, so we need draw something as an
@@ -46,9 +48,9 @@ DFMLeftSideBarItem::DFMLeftSideBarItem(const QIcon &icon, const QString &text, c
  * For add/insert/append item to a group, we need find the correct group location, if
  * there are no item in the group, the separator is the "placeholder" of the group.
  */
-DFMLeftSideBarItem * DFMLeftSideBarItem::createSeparatorItem(const QString &groupName)
+DFMSideBarItem * DFMSideBarItem::createSeparatorItem(const QString &groupName)
 {
-    DFMLeftSideBarItem * item = new DFMLeftSideBarItem(DUrl(), groupName);
+    DFMSideBarItem * item = new DFMSideBarItem(DUrl(), groupName);
 
     item->setData(Separator, ItemTypeRole);
     item->setFlags(Qt::NoItemFlags);
@@ -56,17 +58,17 @@ DFMLeftSideBarItem * DFMLeftSideBarItem::createSeparatorItem(const QString &grou
     return item;
 }
 
-DUrl DFMLeftSideBarItem::url() const
+DUrl DFMSideBarItem::url() const
 {
     return this->data(ItemUrlRole).value<DUrl>();
 }
 
-QString DFMLeftSideBarItem::groupName() const
+QString DFMSideBarItem::groupName() const
 {
     return this->data(ItemGroupNameRole).toString();
 }
 
-int DFMLeftSideBarItem::itemType() const
+int DFMSideBarItem::itemType() const
 {
     return this->data(ItemTypeRole).toInt();
 }
@@ -80,17 +82,17 @@ int DFMLeftSideBarItem::itemType() const
  *
  * \sa itemType()
  */
-int DFMLeftSideBarItem::type() const
+int DFMSideBarItem::type() const
 {
-    return DFMLeftSideBarItem::SidebarItemType;
+    return DFMSideBarItem::SidebarItemType;
 }
 
-bool DFMLeftSideBarItem::useRegisteredHandler() const
+bool DFMSideBarItem::useRegisteredHandler() const
 {
     return this->registeredHandler() == "none";
 }
 
-QString DFMLeftSideBarItem::registeredHandler(const QString &fallback) const
+QString DFMSideBarItem::registeredHandler(const QString &fallback) const
 {
     QString identifier = this->data(ItemUseRegisteredHandlerRole).toString();
     if (identifier != "none") {
@@ -100,18 +102,19 @@ QString DFMLeftSideBarItem::registeredHandler(const QString &fallback) const
     }
 }
 
-void DFMLeftSideBarItem::setUrl(const DUrl &url)
+void DFMSideBarItem::setUrl(const DUrl &url)
 {
     this->setData(QVariant::fromValue(url), ItemUrlRole);
 }
 
-void DFMLeftSideBarItem::setGroupName(const QString &groupName)
+void DFMSideBarItem::setGroupName(const QString &groupName)
 {
     this->setData(groupName, ItemGroupNameRole);
 }
 
-void DFMLeftSideBarItem::setRegisteredHandler(const QString &identifier)
+void DFMSideBarItem::setRegisteredHandler(const QString &identifier)
 {
     this->setData(identifier, ItemUseRegisteredHandlerRole);
 }
 
+DFM_END_NAMESPACE

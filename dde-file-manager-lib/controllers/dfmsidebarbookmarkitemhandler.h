@@ -26,13 +26,18 @@
 #define SIDEBAR_ID_BOOKMARK "__bookmark"
 
 class DUrl;
+
+DFM_BEGIN_NAMESPACE
+
 class DFMSideBarBookmarkItemHandler : public DFMSideBarItemInterface
 {
 public:
-    static DFMLeftSideBarItem * createItem(const DUrl &url);
+    static DFMSideBarItem * createItem(const DUrl &url);
 
     DFMSideBarBookmarkItemHandler();
 
-    void cdAction(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem* item) override;
-    QMenu * contextMenu(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem* item) override;
+    void cdAction(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;
+    QMenu * contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;
 };
+
+DFM_END_NAMESPACE

@@ -20,7 +20,7 @@
  */
 #include "dfmsidebaritemdelegate.h"
 
-#include "interfaces/dfmleftsidebaritem.h"
+#include "interfaces/dfmsidebaritem.h"
 
 #include <QPainter>
 #include <QDebug>
@@ -31,6 +31,8 @@
 QT_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
+DFM_BEGIN_NAMESPACE
+
 DFMSideBarItemDelegate::DFMSideBarItemDelegate(QAbstractItemView *parent)
     : DStyledItemDelegate(parent)
 {
@@ -39,8 +41,8 @@ DFMSideBarItemDelegate::DFMSideBarItemDelegate(QAbstractItemView *parent)
 
 void DFMSideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QVariant v = index.data(DFMLeftSideBarItem::ItemTypeRole);
-    if (v.isValid() && v.toInt() == DFMLeftSideBarItem::Separator) {
+    QVariant v = index.data(DFMSideBarItem::ItemTypeRole);
+    if (v.isValid() && v.toInt() == DFMSideBarItem::Separator) {
         return paintSeparator(painter, option);
     }
 
@@ -49,9 +51,9 @@ void DFMSideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem
 
 QSize DFMSideBarItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QVariant v = index.data(DFMLeftSideBarItem::ItemTypeRole);
-    if (v.isValid() && v.toInt() == DFMLeftSideBarItem::Separator) {
-        return sizeHintForType(DFMLeftSideBarItem::Separator);
+    QVariant v = index.data(DFMSideBarItem::ItemTypeRole);
+    if (v.isValid() && v.toInt() == DFMSideBarItem::Separator) {
+        return sizeHintForType(DFMSideBarItem::Separator);
     } else {
         return DStyledItemDelegate::sizeHint(option, index);
     }
@@ -70,9 +72,11 @@ void DFMSideBarItemDelegate::paintSeparator(QPainter *painter, const QStyleOptio
 QSize DFMSideBarItemDelegate::sizeHintForType(int type) const
 {
     switch (type) {
-    case DFMLeftSideBarItem::Separator:
+    case DFMSideBarItem::Separator:
         return QSize(200, 5);
     }
 
     return QSize(0, 0);
 }
+
+DFM_END_NAMESPACE

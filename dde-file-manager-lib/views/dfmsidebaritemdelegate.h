@@ -20,9 +20,12 @@
  */
 #pragma once
 
+#include "dfmglobal.h"
 #include <DStyledItemDelegate>
 
 DWIDGET_USE_NAMESPACE
+
+DFM_BEGIN_NAMESPACE
 
 class DFMSideBarItemDelegate : public DStyledItemDelegate
 {
@@ -37,3 +40,5 @@ private:
     void paintSeparator(QPainter *painter, const QStyleOptionViewItem &option) const;
     QSize sizeHintForType(int type) const;
 };
+
+DFM_END_NAMESPACE

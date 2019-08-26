@@ -24,9 +24,9 @@
 #include "singleton.h"
 #include "app/filesignalmanager.h"
 #include "views/dfilemanagerwindow.h"
-#include "views/dfmleftsidebar.h"
+#include "views/dfmsidebar.h"
 #include "views/windowmanager.h"
-#include "interfaces/dfmleftsidebaritem.h"
+#include "interfaces/dfmsidebaritem.h"
 
 
 DFMSideBarItemInterface::DFMSideBarItemInterface(QObject *parent) : QObject(parent)
@@ -34,13 +34,13 @@ DFMSideBarItemInterface::DFMSideBarItemInterface(QObject *parent) : QObject(pare
 
 }
 
-void DFMSideBarItemInterface::cdAction(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem* item)
+void DFMSideBarItemInterface::cdAction(const DFMSideBar *sidebar, const DFMSideBarItem* item)
 {
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(sidebar->topLevelWidget());
     wnd->cd(item->url()); // don't `setChecked` here, wait for a signal.
 }
 
-QMenu *DFMSideBarItemInterface::contextMenu(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem *item)
+QMenu *DFMSideBarItemInterface::contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem *item)
 {
     QMenu *menu = new QMenu();
 

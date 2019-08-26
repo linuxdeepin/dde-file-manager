@@ -26,16 +26,18 @@
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "views/dfilemanagerwindow.h"
-#include "views/dfmleftsidebar.h"
+#include "views/dfmsidebar.h"
 #include "views/windowmanager.h"
 #include "controllers/bookmarkmanager.h"
-#include "interfaces/dfmleftsidebaritem.h"
+#include "interfaces/dfmsidebaritem.h"
 #include "dialogs/dialogmanager.h"
 #include "dfmsidebarmanager.h"
 
 #include <DDialog>
 
-DFMLeftSideBarItem *DFMSideBarBookmarkItemHandler::createItem(const DUrl &url)
+DFM_BEGIN_NAMESPACE
+
+DFMSideBarItem *DFMSideBarBookmarkItemHandler::createItem(const DUrl &url)
 {
     // leave url a default display name.
     DAbstractFileInfoPointer fileInfo = DFileService::instance()->createFileInfo(nullptr, url);
@@ -45,7 +47,7 @@ DFMLeftSideBarItem *DFMSideBarBookmarkItemHandler::createItem(const DUrl &url)
         displayName = fileInfo->fileDisplayName();
     }
 
-    DFMLeftSideBarItem * item = new DFMLeftSideBarItem(
+    DFMSideBarItem * item = new DFMSideBarItem(
                     QIcon::fromTheme("folder-bookmark-symbolic"), displayName, url
                 );
 
@@ -60,7 +62,7 @@ DFMSideBarBookmarkItemHandler::DFMSideBarBookmarkItemHandler()
 
 }
 
-void DFMSideBarBookmarkItemHandler::cdAction(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem *item)
+void DFMSideBarBookmarkItemHandler::cdAction(const DFMSideBar *sidebar, const DFMSideBarItem *item)
 {
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, item->url());
     if (info->exists()) {
@@ -74,7 +76,7 @@ void DFMSideBarBookmarkItemHandler::cdAction(const DFMLeftSideBar *sidebar, cons
     }
 }
 
-QMenu *DFMSideBarBookmarkItemHandler::contextMenu(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem *item)
+QMenu *DFMSideBarBookmarkItemHandler::contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem *item)
 {
     // this part could be duplicate since it seems every sidebar item should got
     // a new window/tab option and a properties option. maybe we need a menu manager
@@ -131,3 +133,5 @@ QMenu *DFMSideBarBookmarkItemHandler::contextMenu(const DFMLeftSideBar *sidebar,
 
     return menu;
 }
+
+DFM_END_NAMESPACE

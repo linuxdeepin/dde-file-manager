@@ -27,14 +27,16 @@
 #include "app/filesignalmanager.h"
 #include "dfileservices.h"
 #include "views/dfilemanagerwindow.h"
-#include "views/dfmleftsidebar.h"
+#include "views/dfmsidebar.h"
 #include "views/windowmanager.h"
 #include "gvfs/gvfsmountmanager.h"
-#include "interfaces/dfmleftsidebaritem.h"
+#include "interfaces/dfmsidebaritem.h"
 #include "deviceinfo/udiskdeviceinfo.h"
 #include "dfmsidebarmanager.h"
 
 #include <QAction>
+
+DFM_BEGIN_NAMESPACE
 
 DViewItemAction *DFMSideBarDeviceItemHandler::createUnmountOrEjectAction(const DUrl &url, bool withText)
 {
@@ -66,7 +68,7 @@ DViewItemAction *DFMSideBarDeviceItemHandler::createUnmountOrEjectAction(const D
     return action;
 }
 
-DFMLeftSideBarItem *DFMSideBarDeviceItemHandler::createItem(const DUrl &url)
+DFMSideBarItem *DFMSideBarDeviceItemHandler::createItem(const DUrl &url)
 {
     const DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(nullptr, url);
     QVariantHash info = infoPointer->extraProperties();
@@ -94,9 +96,9 @@ DFMLeftSideBarItem *DFMSideBarDeviceItemHandler::createItem(const DUrl &url)
         break;
     }
 
-    DFMLeftSideBarItem * item = new DFMLeftSideBarItem(QIcon::fromTheme(iconName), displayName, url);
+    DFMSideBarItem * item = new DFMSideBarItem(QIcon::fromTheme(iconName), displayName, url);
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren);
-    item->setData(SIDEBAR_ID_DEVICE, DFMLeftSideBarItem::ItemUseRegisteredHandlerRole);
+    item->setData(SIDEBAR_ID_DEVICE, DFMSideBarItem::ItemUseRegisteredHandlerRole);
     DViewItemActionList lst;
     DViewItemAction * act = createUnmountOrEjectAction(url, false);
     act->setIcon(QIcon::fromTheme("media-eject-symbolic"));
@@ -112,7 +114,7 @@ DFMSideBarDeviceItemHandler::DFMSideBarDeviceItemHandler(QObject *parent)
 
 }
 
-void DFMSideBarDeviceItemHandler::cdAction(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem *item)
+void DFMSideBarDeviceItemHandler::cdAction(const DFMSideBar *sidebar, const DFMSideBarItem *item)
 {
     QVariantHash info = DFileService::instance()->createFileInfo(this, item->url())->extraProperties();
 
@@ -126,7 +128,7 @@ void DFMSideBarDeviceItemHandler::cdAction(const DFMLeftSideBar *sidebar, const 
     }
 }
 
-QMenu *DFMSideBarDeviceItemHandler::contextMenu(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem *item)
+QMenu *DFMSideBarDeviceItemHandler::contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem *item)
 {
     QMenu *menu = new QMenu();
     const DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(this, item->url());
@@ -213,3 +215,5 @@ QMenu *DFMSideBarDeviceItemHandler::contextMenu(const DFMLeftSideBar *sidebar, c
 
     return menu;
 }
+
+DFM_END_NAMESPACE

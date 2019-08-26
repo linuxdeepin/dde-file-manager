@@ -20,9 +20,12 @@
  */
 #pragma once
 
+#include "dfmglobal.h"
 #include <DListView>
 
 DWIDGET_USE_NAMESPACE
+
+DFM_BEGIN_NAMESPACE
 
 class DFMSideBarView : public DListView
 {
@@ -30,3 +33,5 @@ class DFMSideBarView : public DListView
 public:
     DFMSideBarView(QWidget *parent = nullptr);
 };
+
+DFM_END_NAMESPACE

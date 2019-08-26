@@ -1,17 +1,19 @@
 #include "dfmsidebaropticalitemhandler.h"
 
 #include "app/define.h"
-#include "interfaces/dfmleftsidebaritem.h"
+#include "interfaces/dfmsidebaritem.h"
 #include "disomaster.h"
 
-DFMLeftSideBarItem *DFMSideBarOpticalItemHandler::createItem(const DUrl &url)
+DFM_BEGIN_NAMESPACE
+
+DFMSideBarItem *DFMSideBarOpticalItemHandler::createItem(const DUrl &url)
 {
     QString displayName = "DVD";
     QString iconName("drive-harddisk-symbolic");
 
-    DFMLeftSideBarItem * item = new DFMLeftSideBarItem(QIcon::fromTheme(iconName), displayName, url);
+    DFMSideBarItem * item = new DFMSideBarItem(QIcon::fromTheme(iconName), displayName, url);
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren);
-    item->setData(SIDEBAR_ID_OPTICAL, DFMLeftSideBarItem::ItemUseRegisteredHandlerRole);
+    item->setData(SIDEBAR_ID_OPTICAL, DFMSideBarItem::ItemUseRegisteredHandlerRole);
 
     return item;
 }
@@ -22,7 +24,7 @@ DFMSideBarOpticalItemHandler::DFMSideBarOpticalItemHandler(QObject *parent)
 
 }
 
-void DFMSideBarOpticalItemHandler::cdAction(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem *item)
+void DFMSideBarOpticalItemHandler::cdAction(const DFMSideBar *sidebar, const DFMSideBarItem *item)
 {
     if (ISOMaster->currentDevice() == item->url().path()) {
         return;
@@ -31,7 +33,9 @@ void DFMSideBarOpticalItemHandler::cdAction(const DFMLeftSideBar *sidebar, const
     return DFMSideBarItemInterface::cdAction(sidebar, item);
 }
 
-QMenu *DFMSideBarOpticalItemHandler::contextMenu(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem *item)
+QMenu *DFMSideBarOpticalItemHandler::contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem *item)
 {
     return DFMSideBarItemInterface::contextMenu(sidebar, item);
 }
+
+DFM_END_NAMESPACE

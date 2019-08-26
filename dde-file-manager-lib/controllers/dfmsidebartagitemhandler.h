@@ -26,12 +26,17 @@
 #define SIDEBAR_ID_TAG "__tag"
 
 class DUrl;
+
+DFM_BEGIN_NAMESPACE
+
 class DFMSideBarTagItemHandler : public DFMSideBarItemInterface
 {
 public:
-    static DFMLeftSideBarItem * createItem(const DUrl &url);
+    static DFMSideBarItem * createItem(const DUrl &url);
 
     DFMSideBarTagItemHandler(QObject *parent = nullptr);
 
-    QMenu * contextMenu(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem* item) override;
+    QMenu * contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;
 };
+
+DFM_END_NAMESPACE

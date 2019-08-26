@@ -20,9 +20,12 @@
  */
 #pragma once
 
+#include "dfmglobal.h"
 #include <QStandardItemModel>
 
-class DFMLeftSideBarItem;
+DFM_BEGIN_NAMESPACE
+
+class DFMSideBarItem;
 class DFMSideBarModel : public QStandardItemModel
 {
 public:
@@ -30,11 +33,13 @@ public:
 
     bool canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const override;
     QMimeData *mimeData(const QModelIndexList &indexes) const override;
-    QModelIndex indexFromItem(const DFMLeftSideBarItem * item) const;
-    DFMLeftSideBarItem *itemFromIndex(const QModelIndex &index) const;
-    DFMLeftSideBarItem *itemFromIndex(int index) const;
+    QModelIndex indexFromItem(const DFMSideBarItem * item) const;
+    DFMSideBarItem *itemFromIndex(const QModelIndex &index) const;
+    DFMSideBarItem *itemFromIndex(int index) const;
 
 private:
     QByteArray generateMimeData(const QModelIndexList &indexes) const;
     int getRowIndexFromMimeData(const QByteArray &data) const;
 };
+
+DFM_END_NAMESPACE

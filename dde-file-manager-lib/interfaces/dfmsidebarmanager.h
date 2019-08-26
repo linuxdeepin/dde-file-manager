@@ -25,7 +25,11 @@
 
 #include <functional>
 
+#include "dfmglobal.h"
+
 #define SIDEBAR_ID_INTERNAL_FALLBACK "__internal"
+
+DFM_BEGIN_NAMESPACE
 
 class DFMSideBarItemInterface;
 class DFMSideBarManagerPrivate;
@@ -68,3 +72,5 @@ private:
 
     Q_DECLARE_PRIVATE_D(d_private, DFMSideBarManager)
 };
+
+DFM_END_NAMESPACE

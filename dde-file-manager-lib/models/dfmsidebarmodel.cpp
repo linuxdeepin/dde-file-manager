@@ -21,12 +21,14 @@
 #include "dfmsidebarmodel.h"
 
 #include "views/dfmsidebaritemdelegate.h"
-#include "interfaces/dfmleftsidebaritem.h"
+#include "interfaces/dfmsidebaritem.h"
 
 #include <QMimeData>
 #include <QDebug>
 
 #define MODELITEM_MIMETYPE "application/x-dfmsidebaritemmodeldata"
+
+DFM_BEGIN_NAMESPACE
 
 DFMSideBarModel::DFMSideBarModel(QObject *parent)
     : QStandardItemModel(parent)
@@ -41,8 +43,8 @@ bool DFMSideBarModel::canDropMimeData(const QMimeData *data, Qt::DropAction acti
 
     Q_ASSERT(column == 0);
 
-    DFMLeftSideBarItem * targetItem = this->itemFromIndex(row);
-    DFMLeftSideBarItem * sourceItem = nullptr;
+    DFMSideBarItem * targetItem = this->itemFromIndex(row);
+    DFMSideBarItem * sourceItem = nullptr;
 
     // check if is item internal move by action and mimetype:
     if (action == Qt::MoveAction && data->formats().contains(MODELITEM_MIMETYPE)) {
@@ -74,20 +76,20 @@ QMimeData *DFMSideBarModel::mimeData(const QModelIndexList &indexes) const
     return data;
 }
 
-QModelIndex DFMSideBarModel::indexFromItem(const DFMLeftSideBarItem *item) const
+QModelIndex DFMSideBarModel::indexFromItem(const DFMSideBarItem *item) const
 {
     return QStandardItemModel::indexFromItem(item);
 }
 
-DFMLeftSideBarItem *DFMSideBarModel::itemFromIndex(const QModelIndex &index) const
+DFMSideBarItem *DFMSideBarModel::itemFromIndex(const QModelIndex &index) const
 {
     QStandardItem *item = QStandardItemModel::itemFromIndex(index);
-    DFMLeftSideBarItem* castedItem = static_cast<DFMLeftSideBarItem*>(item);
+    DFMSideBarItem* castedItem = static_cast<DFMSideBarItem*>(item);
 
     return castedItem;
 }
 
-DFMLeftSideBarItem *DFMSideBarModel::itemFromIndex(int index) const
+DFMSideBarItem *DFMSideBarModel::itemFromIndex(int index) const
 {
     return itemFromIndex(this->index(index, 0));
 }
@@ -109,3 +111,5 @@ int DFMSideBarModel::getRowIndexFromMimeData(const QByteArray &data) const
 
     return row;
 }
+
+DFM_END_NAMESPACE

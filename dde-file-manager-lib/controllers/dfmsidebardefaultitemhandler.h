@@ -25,13 +25,17 @@
 
 #define SIDEBAR_ID_DEFAULT "__default"
 
+DFM_BEGIN_NAMESPACE
+
 class DFMSideBarDefaultItemHandler : public DFMSideBarItemInterface
 {
 public:
-    static DFMLeftSideBarItem * createItem(const QString &pathKey);
+    static DFMSideBarItem * createItem(const QString &pathKey);
 
     DFMSideBarDefaultItemHandler(QObject *parent = nullptr);
 
-    void cdAction(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem* item) override;
-    QMenu * contextMenu(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem* item) override;
+    void cdAction(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;
+    QMenu * contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;
 };
+
+DFM_END_NAMESPACE
