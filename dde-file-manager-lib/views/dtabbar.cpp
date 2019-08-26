@@ -49,6 +49,8 @@
 #include "views/dfilemanagerwindow.h"
 #include "themeconfig.h"
 
+#include <qdrawutil.h>
+
 DWIDGET_USE_NAMESPACE
 
 Tab::Tab(QGraphicsObject *parent, DFMBaseView *view):
@@ -253,7 +255,6 @@ QPainterPath Tab::shape() const
 
 void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    Q_UNUSED(option)
     Q_UNUSED(widget)
 
     if(m_dragOutSide)
@@ -275,41 +276,38 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     QFontMetrics fm(font);
     QString str = fm.elidedText(m_tabText,Qt::ElideRight,m_width-10);
 
+    const QPalette &pal = option->palette;
+
     //draw backgound
     if(isChecked()){
-        painter->fillRect(boundingRect(), ThemeConfig::instace()->color("Tab", "background", ThemeConfig::Checked));
-        pen.setColor(ThemeConfig::instace()->color("Tab", "color", ThemeConfig::Checked));
-        painter->setPen(pen);
+        painter->fillRect(boundingRect(), pal.color(QPalette::Active, QPalette::Base));
         painter->drawText((m_width-fm.width(str))/2,(m_height-fm.height())/2,
                           fm.width(str),fm.height(),0,str);
     }
     else if(m_hovered||(m_hovered&&!isChecked())){
-        painter->fillRect(boundingRect(), ThemeConfig::instace()->color("Tab", "background", ThemeConfig::Hover));
-        pen.setColor(ThemeConfig::instace()->color("Tab", "color", ThemeConfig::Hover));
-        painter->setPen(pen);
+        painter->fillRect(boundingRect(), pal.color(QPalette::Active, QPalette::Base));
+//        pen.setColor(ThemeConfig::instace()->color("Tab", "color", ThemeConfig::Hover));
+//        painter->setPen(pen);
         painter->drawText((m_width-fm.width(str))/2,(m_height-fm.height())/2,
                           fm.width(str),fm.height(),0,str);
     }
     else{
-        painter->fillRect(boundingRect(), ThemeConfig::instace()->color("Tab", "background"));
-        pen.setColor(ThemeConfig::instace()->color("Tab", "color"));
-        painter->setPen(pen);
+        painter->fillRect(boundingRect(), pal.color(QPalette::Inactive, QPalette::Base));
         painter->drawText((m_width-fm.width(str))/2,(m_height-fm.height())/2,
                           fm.width(str),fm.height(),0,str);
     }
 
-    //draw line
+    // draw line
+    int number = static_cast<int>(boundingRect().height() - 1);
+    int number2 = static_cast<int>(boundingRect().width() - 1);
+    QPoint point = QPointF(boundingRect().width()-1, boundingRect().height()-1).toPoint();
+    qDrawShadeLine(painter, QPoint(0, number), point, option->palette);
+    qDrawShadeLine(painter, QPoint(number2, 0), point, option->palette);
     pen.setColor(ThemeConfig::instace()->color("Tab", "border"));
     painter->setPen(pen);
-    painter->drawLine(QPointF(0,boundingRect().height()-1),
-                      QPointF(boundingRect().width()-1,boundingRect().height()-1));
-
-    painter->drawLine(QPointF(boundingRect().width()-1,0),
-                      QPointF(boundingRect().width()-1,boundingRect().height()-2));
-    //border left
+    // border left
     if(m_borderLeft){
-        painter->drawLine(QPointF(0,0),
-                          QPointF(0,boundingRect().height()-1));
+        qDrawShadeLine(painter, QPoint(0, 0), QPointF(0,boundingRect().height()-1).toPoint(), option->palette);
     }
 }
 
@@ -462,31 +460,34 @@ void TabCloseButton::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     Q_UNUSED(widget);
     QPixmap pixmap;
     pixmap.setDevicePixelRatio(qApp->devicePixelRatio());
-//    QSize size = boundingRect().size().toSize();
-    if(m_mousePressed){
-        if(m_activeWidthTab)
-//            pixmap = m_active_pressIcon.pixmap(size);
-            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon", ThemeConfig::Pressed | ThemeConfig::Focus);
-        else
-            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon", ThemeConfig::Pressed);
-//            pixmap = m_pressIcon.pixmap(size);
-    }
-    else if(m_mouseHovered){
-        if(m_activeWidthTab)
-//            pixmap = m_active_hoverIcon.pixmap(size);
-            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon", ThemeConfig::Hover | ThemeConfig::Focus);
-        else
-            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon", ThemeConfig::Hover);
-//            pixmap = m_hoverIcon.pixmap(size);
-    }
-    else{
-        if(m_activeWidthTab)
-//            pixmap = m_active_normalIcon.pixmap(size);
-            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon", ThemeConfig::Focus);
-        else
-            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon");
-//            pixmap = m_normalIcon.pixmap(size);
-    }
+
+    QIcon closeIcon = QIcon::fromTheme("dialog-close");
+    QSize size = boundingRect().size().toSize();
+    pixmap = closeIcon.pixmap(size/*, QIcon::Active*/);
+//    if(m_mousePressed){
+//        if(m_activeWidthTab)
+////            pixmap = m_active_pressIcon.pixmap(size);
+//            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon", ThemeConfig::Pressed | ThemeConfig::Focus);
+//        else
+//            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon", ThemeConfig::Pressed);
+////            pixmap = m_pressIcon.pixmap(size);
+//    }
+//    else if(m_mouseHovered){
+//        if(m_activeWidthTab)
+////            pixmap = m_active_hoverIcon.pixmap(size);
+//            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon", ThemeConfig::Hover | ThemeConfig::Focus);
+//        else
+//            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon", ThemeConfig::Hover);
+////            pixmap = m_hoverIcon.pixmap(size);
+//    }
+//    else{
+//        if(m_activeWidthTab)
+////            pixmap = m_active_normalIcon.pixmap(size);
+//            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon", ThemeConfig::Focus);
+//        else
+//            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon");
+////            pixmap = m_normalIcon.pixmap(size);
+//    }
     painter->drawPixmap(boundingRect().toRect(),pixmap);
 }
 
@@ -595,7 +596,7 @@ void TabBar::initConnections()
 
 int TabBar::createTab(DFMBaseView *view)
 {
-    Tab *tab = new Tab(0,view);
+    Tab *tab = new Tab(nullptr, view);
     m_tabs.append(tab);
     m_scene->addItem(tab);
 
@@ -712,14 +713,14 @@ Tab *TabBar::currentTab()
 {
     if(m_currentIndex>=0 && m_currentIndex < count())
         return m_tabs.at(currentIndex());
-    return NULL;
+    return nullptr;
 }
 
 Tab *TabBar::tabAt(const int &index)
 {
     if(index>=0 && index < count())
         return m_tabs.at(index);
-    return NULL;
+    return nullptr;
 }
 
 void TabBar::onMoveNext(Tab *who)
