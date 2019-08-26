@@ -68,7 +68,12 @@ DFMSideBar::DFMSideBar(QWidget *parent)
 
 void DFMSideBar::setCurrentUrl(const DUrl &url)
 {
-    Q_UNUSED(url);
+    int index = findItem(url);
+    if (index != -1) {
+        m_sidebarView->setCurrentIndex(m_sidebarModel->index(index, 0));
+    } else {
+        m_sidebarView->clearSelection();
+    }
 }
 
 int DFMSideBar::addItem(DFMSideBarItem *item, const QString &group)
@@ -101,6 +106,25 @@ int DFMSideBar::findItem(const DUrl &url, const QString &group) const
     for (int i = 0; i < m_sidebarModel->rowCount(); i++) {
         DFMSideBarItem * item = m_sidebarModel->itemFromIndex(i);
         if (item->itemType() == DFMSideBarItem::SidebarItem && item->groupName() == group) {
+            if (item->url() == url) {
+                return i;
+            }
+        }
+    }
+
+    return -1;
+}
+
+/*!
+ * \brief Find the index of the first item match the given \a url
+ *
+ * \return the index of the item we can found, or -1 if not found.
+ */
+int DFMSideBar::findItem(const DUrl &url) const
+{
+    for (int i = 0; i < m_sidebarModel->rowCount(); i++) {
+        DFMSideBarItem * item = m_sidebarModel->itemFromIndex(i);
+        if (item->itemType() == DFMSideBarItem::SidebarItem) {
             if (item->url() == url) {
                 return i;
             }
