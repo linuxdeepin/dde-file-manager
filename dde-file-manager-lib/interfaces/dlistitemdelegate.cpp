@@ -86,36 +86,33 @@ void DListItemDelegate::paint(QPainter *painter,
 
     bool drawBackground = !isDragMode && (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
 
+    QPalette::ColorGroup cg = (option.widget ? option.widget->isEnabled() : (option.state & QStyle::State_Enabled))
+            ? QPalette::Normal : QPalette::Disabled;
+    if (cg == QPalette::Normal && !(option.state & QStyle::State_Active))
+        cg = QPalette::Inactive;
+
+    bool isSelected = (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
+    QPalette::ColorRole colorRole = QPalette::Background;
+    if ((isSelected || isDropTarget)) {
+        colorRole = QPalette::Highlight;
+    }
+
     if (drawBackground) {
         QPainterPath path;
-
         path.addRoundedRect(opt.rect, LIST_MODE_RECT_RADIUS, LIST_MODE_RECT_RADIUS);
-
         painter->save();
         painter->setOpacity(1);
         painter->setRenderHint(QPainter::Antialiasing);
-        painter->fillPath(path, opt.backgroundBrush);
+        painter->fillPath(path, option.palette.color(cg, colorRole));
         painter->restore();
-    } else {
-        if (!isDragMode) {
-            const QColor &color = option.palette.color(QPalette::Background);
-            if (index.row() % 2 == 0) {
-                painter->fillRect(opt.rect, color);
-            }
-        }
-
-        if (isDropTarget) {
-            QRectF rect = opt.rect;
-            QPainterPath path;
-
-            rect += QMarginsF(-0.5, -0.5, -0.5, -0.5);
-
-            path.addRoundedRect(rect, LIST_MODE_RECT_RADIUS, LIST_MODE_RECT_RADIUS);
-
-            painter->setRenderHint(QPainter::Antialiasing, true);
-            painter->fillPath(path, QColor(43, 167, 248, 0.50 * 255));
-            painter->setRenderHint(QPainter::Antialiasing, false);
-        }
+    } else if (isDropTarget) {
+        QRectF rect = opt.rect;
+        QPainterPath path;
+        rect += QMarginsF(-0.5, -0.5, -0.5, -0.5);
+        path.addRoundedRect(rect, LIST_MODE_RECT_RADIUS, LIST_MODE_RECT_RADIUS);
+        painter->setRenderHint(QPainter::Antialiasing, true);
+        painter->fillPath(path, option.palette.color(cg, colorRole));
+        painter->setRenderHint(QPainter::Antialiasing, false);
     }
 
     opt.rect.setLeft(opt.rect.left() + LEFT_PADDING);
