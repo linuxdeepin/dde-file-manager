@@ -884,24 +884,16 @@ void DFileManagerWindow::initTitleFrame()
     D_D(DFileManagerWindow);
 
     initToolBar();
-
-    bool isDXcbPlatform = false;
-    SingleApplication *app = static_cast<SingleApplication *>(qApp);
-    if (app) {
-        isDXcbPlatform = app->isDXcbPlatform();
-    }
-
+    titlebar()->setIcon(QIcon::fromTheme("dde-file-manager", QIcon::fromTheme("system-file-manager")));
     d->titleFrame = new QFrame;
     d->titleFrame->setObjectName("TitleBar");
     QHBoxLayout *titleLayout = new QHBoxLayout;
     titleLayout->setMargin(0);
     titleLayout->setSpacing(0);
-    if (isDXcbPlatform) {
-        titlebar()->setIcon(QIcon::fromTheme("dde-file-manager", QIcon::fromTheme("system-file-manager")));
-    }
+
     titleLayout->addWidget(d->toolbar);
     titleLayout->setSpacing(0);
-    titleLayout->setContentsMargins(0, 0, 22, 0);
+    titleLayout->setContentsMargins(0, 0, 22, 0); // 22内边距为了显示切换视图按钮， 后面dtk更新后可以改
     d->titleFrame->setLayout(titleLayout);
     d->titleFrame->setFixedHeight(TITLE_FIXED_HEIGHT);
 }
