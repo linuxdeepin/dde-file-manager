@@ -182,12 +182,6 @@ DFileView::DFileView(QWidget *parent)
     : DListView(parent)
     , d_ptr(new DFileViewPrivate(this))
 {
-    if (DFMGlobal::isRootUser()) {
-        D_THEME_INIT_WIDGET(DFileViewRoot)
-    } else {
-        D_THEME_INIT_WIDGET(DFileView);
-    }
-
     D_D(DFileView);
 
     d_ptr->enabledSelectionModes << NoSelection << SingleSelection
