@@ -112,7 +112,6 @@ public:
 
     QPushButton *logoButton{ nullptr };
     QFrame *centralWidget{ nullptr };
-//    DFMSideBar *leftSideBar{ nullptr };
     DFMSideBar *sideBar{ nullptr };
     QFrame *rightView { nullptr };
     DFMRightDetailView *detailView { nullptr };
@@ -969,19 +968,6 @@ void DFileManagerWindow::initSplitter()
 void DFileManagerWindow::initLeftSideBar()
 {
     D_D(DFileManagerWindow);
-
-////    d->leftSideBar = new DLeftSideBar(this);
-//    d->leftSideBar = new DFMSideBar(this);
-//    d->leftSideBar->setObjectName("LeftSideBar");
-////    d->leftSideBar->setFixedWidth(LEFTSIDEBAR_MAX_WIDTH);
-//    d->leftSideBar->setMaximumWidth(DFMSideBarItem::maximumWidth);
-//    d->leftSideBar->setMinimumWidth(DFMSideBarItem::minimumWidth);
-//    // connections
-//    connect(this, &DFileManagerWindow::currentUrlChanged, this, [this, d]() {
-//        d->leftSideBar->setCurrentUrl(currentUrl());
-//    });
-
-//    // ---------------------------
 
     d->sideBar = new DFMSideBar(this);
     d->sideBar->setObjectName("DFMSideBar");
