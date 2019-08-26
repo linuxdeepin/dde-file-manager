@@ -31,14 +31,19 @@ class DViewItemAction;
 DWIDGET_END_NAMESPACE
 
 class DUrl;
+
+DFM_BEGIN_NAMESPACE
+
 class DFMSideBarDeviceItemHandler : public DFMSideBarItemInterface
 {
 public:
     static DTK_WIDGET_NAMESPACE::DViewItemAction * createUnmountOrEjectAction(const DUrl &url, bool withText);
-    static DFMLeftSideBarItem * createItem(const DUrl &url);
+    static DFMSideBarItem * createItem(const DUrl &url);
 
     DFMSideBarDeviceItemHandler(QObject *parent = nullptr);
 
-    void cdAction(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem* item) override;
-    QMenu * contextMenu(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem* item) override;
+    void cdAction(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;
+    QMenu * contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;
 };
+
+DFM_END_NAMESPACE

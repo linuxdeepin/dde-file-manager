@@ -20,9 +20,11 @@
  */
 #include "dfmsidebarview.h"
 
-#include "dfmleftsidebaritem.h"
+#include "dfmsidebaritem.h"
 
 #include <QDebug>
+
+DFM_BEGIN_NAMESPACE
 
 DFMSideBarView::DFMSideBarView(QWidget *parent)
     : DListView (parent)
@@ -36,3 +38,5 @@ DFMSideBarView::DFMSideBarView(QWidget *parent)
     setDragDropMode(QAbstractItemView::InternalMove);
     setDragDropOverwriteMode(false);
 }
+
+DFM_END_NAMESPACE

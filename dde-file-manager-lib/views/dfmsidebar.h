@@ -24,12 +24,15 @@
 #include <QWidget>
 
 #include "durl.h"
+#include "dfmglobal.h"
 #include <ddiskmanager.h>
+
+DFM_BEGIN_NAMESPACE
 
 class DFMSideBarView;
 class DFMSideBarModel;
-class DFMLeftSideBarItem;
-class DFMLeftSideBar : public QWidget
+class DFMSideBarItem;
+class DFMSideBar : public QWidget
 {
     Q_OBJECT
 public:
@@ -43,13 +46,13 @@ public:
         Unknow
     };
 
-    explicit DFMLeftSideBar(QWidget *parent = nullptr);
+    explicit DFMSideBar(QWidget *parent = nullptr);
 
     void setCurrentUrl(const DUrl &url);
 
-    int addItem(DFMLeftSideBarItem *item, const QString &group);
+    int addItem(DFMSideBarItem *item, const QString &group);
     bool removeItem(const DUrl &url, const QString &group);
-    int findItem(const DFMLeftSideBarItem * item) const;
+    int findItem(const DFMSideBarItem * item) const;
     int findItem(const DUrl &url, const QString &group) const;
     int findLastItem(const QString &group) const;
     void openItemEditor(int index) const;
@@ -84,12 +87,14 @@ private:
     void initTagsConnection();
     void updateSeparatorVisibleState();
     void addGroupItems(GroupName groupType);
-    void insertItem(int index, DFMLeftSideBarItem * item, const QString &groupName);
-    void appendItem(DFMLeftSideBarItem * item, const QString &groupName);
-    void appendItemWithOrder(QList<DFMLeftSideBarItem *> &list, const DUrlList &order, const QString &groupName);
+    void insertItem(int index, DFMSideBarItem * item, const QString &groupName);
+    void appendItem(DFMSideBarItem * item, const QString &groupName);
+    void appendItemWithOrder(QList<DFMSideBarItem *> &list, const DUrlList &order, const QString &groupName);
 
     DFMSideBarView *m_sidebarView;
     DFMSideBarModel *m_sidebarModel;
     QScopedPointer<DDiskManager> m_udisks2DiskManager;
     bool m_contextMenuEnabled = true;
 };
+
+DFM_END_NAMESPACE

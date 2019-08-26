@@ -251,17 +251,17 @@ HEADERS += \
     dialogs/burnoptdialog.h \
     interfaces/dfmcrumblistviewmodel.h \
     interfaces/dfmstyleditemdelegate.h \
-    views/dfmleftsidebar.h \
     views/dfmsidebaritemdelegate.h \
     models/dfmsidebarmodel.h \
     views/dfmsidebarview.h \
-    interfaces/dfmleftsidebaritem.h \
     interfaces/dfmsidebariteminterface.h \
     interfaces/dfmsidebarmanager.h \
     controllers/dfmsidebardeviceitemhandler.h \
     controllers/dfmsidebartagitemhandler.h \
     controllers/dfmsidebardefaultitemhandler.h \
-    controllers/dfmsidebarbookmarkitemhandler.h
+    controllers/dfmsidebarbookmarkitemhandler.h \
+    interfaces/dfmsidebaritem.h \
+    views/dfmsidebar.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -427,17 +427,17 @@ SOURCES += \
     dialogs/burnoptdialog.cpp \
     interfaces/dfmcrumblistviewmodel.cpp \
     interfaces/dfmstyleditemdelegate.cpp \
-    views/dfmleftsidebar.cpp \
     views/dfmsidebaritemdelegate.cpp \
     models/dfmsidebarmodel.cpp \
     views/dfmsidebarview.cpp \
-    interfaces/dfmleftsidebaritem.cpp \
     interfaces/dfmsidebariteminterface.cpp \
     interfaces/dfmsidebarmanager.cpp \
     controllers/dfmsidebardeviceitemhandler.cpp \
     controllers/dfmsidebartagitemhandler.cpp \
     controllers/dfmsidebardefaultitemhandler.cpp \
-    controllers/dfmsidebarbookmarkitemhandler.cpp
+    controllers/dfmsidebarbookmarkitemhandler.cpp \
+    interfaces/dfmsidebaritem.cpp \
+    views/dfmsidebar.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h

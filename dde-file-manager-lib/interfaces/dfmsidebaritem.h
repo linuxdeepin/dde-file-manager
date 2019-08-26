@@ -23,10 +23,13 @@
 #include <DStandardItem>
 
 #include "durl.h"
+#include "dfmglobal.h"
 
 DWIDGET_USE_NAMESPACE
 
-class DFMLeftSideBarItem : public DStandardItem
+DFM_BEGIN_NAMESPACE
+
+class DFMSideBarItem : public DStandardItem
 {
 public:
     enum Roles {
@@ -48,10 +51,10 @@ public:
         UserCustom = 0x0100
     };
 
-    DFMLeftSideBarItem(const DUrl &url = DUrl(), const QString &groupName = "default") : DFMLeftSideBarItem (QIcon(), QString(), url, groupName) {}
-    DFMLeftSideBarItem(const QIcon &icon, const QString &text, const DUrl &url = DUrl(), const QString &groupName = "default");
+    DFMSideBarItem(const DUrl &url = DUrl(), const QString &groupName = "default") : DFMSideBarItem (QIcon(), QString(), url, groupName) {}
+    DFMSideBarItem(const QIcon &icon, const QString &text, const DUrl &url = DUrl(), const QString &groupName = "default");
 
-    static DFMLeftSideBarItem *createSeparatorItem(const QString &groupName);
+    static DFMSideBarItem *createSeparatorItem(const QString &groupName);
 
     DUrl url() const;
     QString groupName() const;
@@ -69,3 +72,5 @@ public:
 private:
     void initModelData();
 };
+
+DFM_END_NAMESPACE

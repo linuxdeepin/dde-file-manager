@@ -27,7 +27,7 @@
 #include "dfileservices.h"
 #include "dfmevent.h"
 #include "dfmeventdispatcher.h"
-#include "dfmleftsidebar.h"
+#include "dfmsidebar.h"
 #include "dfmaddressbar.h"
 #include "views/dstatusbar.h"
 #include "views/filedialogstatusbar.h"

@@ -28,6 +28,8 @@
 #include "controllers/dfmsidebarbookmarkitemhandler.h"
 #include "controllers/dfmsidebaropticalitemhandler.h"
 
+DFM_BEGIN_NAMESPACE
+
 class DFMSideBarManagerPrivate
 {
 public:
@@ -105,3 +107,5 @@ void DFMSideBarManager::insertToCreatorHash(const DFMSideBarManager::KeyType &ty
 
     d->controllerCreatorHash.insertMulti(type, creator);
 }
+
+DFM_END_NAMESPACE

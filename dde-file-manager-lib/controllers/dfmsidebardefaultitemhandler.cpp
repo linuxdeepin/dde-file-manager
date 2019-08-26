@@ -21,19 +21,21 @@
 
 #include "dfmsidebardefaultitemhandler.h"
 
-#include "dfmleftsidebaritem.h"
+#include "dfmsidebaritem.h"
 
 #include "singleton.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "controllers/pathmanager.h"
 #include "views/dfilemanagerwindow.h"
-#include "views/dfmleftsidebar.h"
+#include "views/dfmsidebar.h"
 #include "views/windowmanager.h"
 #include "trashmanager.h"
 #include "durl.h"
 
-DFMLeftSideBarItem *DFMSideBarDefaultItemHandler::createItem(const QString &pathKey)
+DFM_BEGIN_NAMESPACE
+
+DFMSideBarItem *DFMSideBarDefaultItemHandler::createItem(const QString &pathKey)
 {
     QString iconName = systemPathManager->getSystemPathIconName(pathKey);
     if (!iconName.contains("-symbolic")) {
@@ -42,14 +44,14 @@ DFMLeftSideBarItem *DFMSideBarDefaultItemHandler::createItem(const QString &path
 
     QString pathStr = pathKey == "Trash" ? TRASH_ROOT : systemPathManager->getSystemPath(pathKey);
 
-    DFMLeftSideBarItem * item = new DFMLeftSideBarItem(
+    DFMSideBarItem * item = new DFMSideBarItem(
                     QIcon::fromTheme(iconName),
                     systemPathManager->getSystemPathDisplayName(pathKey),
                     DUrl::fromUserInput(pathStr)
                 );
 
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren);
-    item->setData(SIDEBAR_ID_DEFAULT, DFMLeftSideBarItem::ItemUseRegisteredHandlerRole);
+    item->setData(SIDEBAR_ID_DEFAULT, DFMSideBarItem::ItemUseRegisteredHandlerRole);
 
     return item;
 }
@@ -60,12 +62,12 @@ DFMSideBarDefaultItemHandler::DFMSideBarDefaultItemHandler(QObject *parent)
 
 }
 
-void DFMSideBarDefaultItemHandler::cdAction(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem *item)
+void DFMSideBarDefaultItemHandler::cdAction(const DFMSideBar *sidebar, const DFMSideBarItem *item)
 {
     return DFMSideBarItemInterface::cdAction(sidebar, item);
 }
 
-QMenu *DFMSideBarDefaultItemHandler::contextMenu(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem *item)
+QMenu *DFMSideBarDefaultItemHandler::contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem *item)
 {
     static QStringList noPropertySchemes = {"usershare", "network"};
 
@@ -127,3 +129,5 @@ QMenu *DFMSideBarDefaultItemHandler::contextMenu(const DFMLeftSideBar *sidebar, 
 
     return menu;
 }
+
+DFM_END_NAMESPACE

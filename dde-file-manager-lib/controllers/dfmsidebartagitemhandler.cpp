@@ -23,16 +23,18 @@
 
 #include "tag/tagmanager.h"
 #include "views/dfilemanagerwindow.h"
-#include "views/dfmleftsidebar.h"
+#include "views/dfmsidebar.h"
 #include "views/windowmanager.h"
 #include "views/dtagactionwidget.h"
-#include "interfaces/dfmleftsidebaritem.h"
+#include "interfaces/dfmsidebaritem.h"
 #include "dfmeventdispatcher.h"
 #include "dfmsidebarmanager.h"
 
 #include <QWidgetAction>
 #include "durl.h"
 #include "dfilemenu.h"
+
+DFM_BEGIN_NAMESPACE
 
 // <TagColorName, ThemeName>
 static const QMap<QString, QString> TagColorThemeIconMap {
@@ -46,14 +48,14 @@ static const QMap<QString, QString> TagColorThemeIconMap {
     {"Gray", "dfm_tag-gray"}
 };
 
-DFMLeftSideBarItem *DFMSideBarTagItemHandler::createItem(const DUrl &url)
+DFMSideBarItem *DFMSideBarTagItemHandler::createItem(const DUrl &url)
 {
     QString colorName = TagManager::instance()->getTagColorName(url.fileName());
     QIcon icon = QIcon::fromTheme(TagColorThemeIconMap[colorName]);
-    DFMLeftSideBarItem * item = new DFMLeftSideBarItem(icon, url.fileName(), url);
+    DFMSideBarItem * item = new DFMSideBarItem(icon, url.fileName(), url);
 
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemNeverHasChildren);
-    item->setData(SIDEBAR_ID_TAG, DFMLeftSideBarItem::ItemUseRegisteredHandlerRole);
+    item->setData(SIDEBAR_ID_TAG, DFMSideBarItem::ItemUseRegisteredHandlerRole);
 
     return item;
 }
@@ -64,7 +66,7 @@ DFMSideBarTagItemHandler::DFMSideBarTagItemHandler(QObject *parent)
 
 }
 
-QMenu *DFMSideBarTagItemHandler::contextMenu(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem *item)
+QMenu *DFMSideBarTagItemHandler::contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem *item)
 {
     DFileMenu *menu = new DFileMenu();
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(sidebar->topLevelWidget());
@@ -108,3 +110,5 @@ QMenu *DFMSideBarTagItemHandler::contextMenu(const DFMLeftSideBar *sidebar, cons
 
     return menu;
 }
+
+DFM_END_NAMESPACE

@@ -23,15 +23,20 @@
 
 #include <QMenu>
 #include <QObject>
+#include "dfmglobal.h"
 
-class DFMLeftSideBar;
-class DFMLeftSideBarItem;
+DFM_BEGIN_NAMESPACE
+
+class DFMSideBar;
+class DFMSideBarItem;
 class DFMSideBarItemInterface : public QObject
 {
     Q_GADGET
 public:
     explicit DFMSideBarItemInterface(QObject *parent = nullptr);
 
-    virtual void cdAction(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem* item);
-    virtual QMenu * contextMenu(const DFMLeftSideBar *sidebar, const DFMLeftSideBarItem* item);
+    virtual void cdAction(const DFMSideBar *sidebar, const DFMSideBarItem* item);
+    virtual QMenu * contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem* item);
 };
+
+DFM_END_NAMESPACE

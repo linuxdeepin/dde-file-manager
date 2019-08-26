@@ -37,7 +37,7 @@
 #include "dfileservices.h"
 #include "dfilesystemmodel.h"
 #include "dfmviewmanager.h"
-#include "dfmleftsidebar.h"
+#include "dfmsidebar.h"
 #include "dfmaddressbar.h"
 #include "dfmsettings.h"
 #include "dfmapplication.h"
@@ -113,7 +113,7 @@ public:
     QPushButton *logoButton{ nullptr };
     QFrame *centralWidget{ nullptr };
 //    DFMSideBar *leftSideBar{ nullptr };
-    DFMLeftSideBar *sideBar{ nullptr };
+    DFMSideBar *sideBar{ nullptr };
     QFrame *rightView { nullptr };
     DFMRightDetailView *detailView { nullptr };
     QVBoxLayout *rightViewLayout { nullptr };
@@ -621,7 +621,7 @@ DFMBaseView *DFileManagerWindow::getFileView() const
     return d->currentView;
 }
 
-DFMLeftSideBar *DFileManagerWindow::getLeftSideBar() const
+DFMSideBar *DFileManagerWindow::getLeftSideBar() const
 {
     D_DC(DFileManagerWindow);
 
@@ -632,7 +632,7 @@ int DFileManagerWindow::getSplitterPosition() const
 {
     D_DC(DFileManagerWindow);
 
-    return d->splitter ? d->splitter->sizes().at(0) : DFMLeftSideBar::maximumWidth;
+    return d->splitter ? d->splitter->sizes().at(0) : DFMSideBar::maximumWidth;
 }
 
 void DFileManagerWindow::setSplitterPosition(int pos)
@@ -983,10 +983,10 @@ void DFileManagerWindow::initLeftSideBar()
 
 //    // ---------------------------
 
-    d->sideBar = new DFMLeftSideBar(this);
+    d->sideBar = new DFMSideBar(this);
     d->sideBar->setObjectName("DFMSideBar");
-    d->sideBar->setMaximumWidth(DFMLeftSideBar::maximumWidth);
-    d->sideBar->setMinimumWidth(DFMLeftSideBar::minimumWidth);
+    d->sideBar->setMaximumWidth(DFMSideBar::maximumWidth);
+    d->sideBar->setMinimumWidth(DFMSideBar::minimumWidth);
 
     // connections
     connect(this, &DFileManagerWindow::currentUrlChanged, this, [this, d]() {
@@ -1225,7 +1225,7 @@ void DFileManagerWindow::showEvent(QShowEvent *event)
     DMainWindow::showEvent(event);
 
     const QVariantMap &state = DFMApplication::appObtuselySetting()->value("WindowManager", "SplitterState").toMap();
-    int splitterPos = state.value("sidebar", DFMLeftSideBar::maximumWidth).toInt();
+    int splitterPos = state.value("sidebar", DFMSideBar::maximumWidth).toInt();
     setSplitterPosition(splitterPos);
 }
 
