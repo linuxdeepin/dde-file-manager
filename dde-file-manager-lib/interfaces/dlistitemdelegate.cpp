@@ -98,10 +98,9 @@ void DListItemDelegate::paint(QPainter *painter,
         painter->restore();
     } else {
         if (!isDragMode) {
+            const QColor &color = option.palette.color(QPalette::Background);
             if (index.row() % 2 == 0) {
-                painter->fillRect(opt.rect, ThemeConfig::instace()->color("FileView", "overlap"));
-            } else if (ThemeConfig::instace()->hasValue("FileView", "non-overlap")) {
-                painter->fillRect(opt.rect, ThemeConfig::instace()->color("FileView", "non-overlap"));
+                painter->fillRect(opt.rect, color);
             }
         }
 
