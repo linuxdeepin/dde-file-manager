@@ -82,7 +82,6 @@ RESOURCES += \
 HEADERS += \
     controllers/appcontroller.h \
     controllers/dfmsidebaropticalitemhandler.h \
-    views/dfmsidebaropticaldevitem.h \
     views/dtoolbar.h \
     views/dfileview.h \
     views/ddetailview.h \
@@ -103,7 +102,6 @@ HEADERS += \
     views/dfilemanagerwindow.h \
     views/historystack.h\
     dialogs/propertydialog.h \
-    views/dfmsidebaritemgroup.h \
     controllers/trashmanager.h \
     models/trashfileinfo.h \
     shutil/mimesappsmanager.h \
@@ -212,15 +210,6 @@ HEADERS += \
     controllers/tagmanagerdaemoncontroller.h \
     controllers/interface/tagmanagerdaemon_interface.h \
     interfaces/dfmsettings.h \
-    interfaces/dfmsidebar.h \
-    interfaces/dfmsidebaritem.h \
-    views/dfmsidebaritemseparator.h \
-    views/dfmsidebardefaultitem.h \
-    views/dfmsidebarbookmarkitem.h \
-    views/dfmsidebartrashitem.h \
-    views/dfmsidebardeviceitem.h \
-    views/dfmsidebarnetworkitem.h \
-    views/dfmsidebartagitem.h \
     interfaces/dfmcrumbbar.h \
     interfaces/dfmcrumbitem.h \
     interfaces/dfmcrumbinterface.h \
@@ -248,9 +237,6 @@ HEADERS += \
     models/recentfileinfo.h \
     controllers/recentcontroller.h \
     controllers/dfmrecentcrumbcontroller.h \
-    views/dfmsidebarrecentitem.h \
-    views/dfmsidebarhomeitem.h \
-    views/dfmsidebarrootitem.h \
     views/dfmadvancesearchbar.h \
     shutil/dfmregularexpression.h \
     controllers/mergeddesktopcontroller.h \
@@ -280,7 +266,6 @@ HEADERS += \
 SOURCES += \
     controllers/appcontroller.cpp \
     controllers/dfmsidebaropticalitemhandler.cpp \
-    views/dfmsidebaropticaldevitem.cpp \
     views/dtoolbar.cpp \
     views/dfileview.cpp \
     views/ddetailview.cpp \
@@ -300,7 +285,6 @@ SOURCES += \
     views/dfilemanagerwindow.cpp \
     views/historystack.cpp\
     dialogs/propertydialog.cpp \
-    views/dfmsidebaritemgroup.cpp \
     controllers/trashmanager.cpp \
     models/trashfileinfo.cpp \
     shutil/mimesappsmanager.cpp \
@@ -404,15 +388,6 @@ SOURCES += \
     controllers/tagmanagerdaemoncontroller.cpp \
     controllers/interface/tagmanagerdaemon_interface.cpp \
     interfaces/dfmsettings.cpp \
-    interfaces/dfmsidebar.cpp \
-    interfaces/dfmsidebaritem.cpp \
-    views/dfmsidebaritemseparator.cpp \
-    views/dfmsidebardefaultitem.cpp \
-    views/dfmsidebarbookmarkitem.cpp \
-    views/dfmsidebartrashitem.cpp \
-    views/dfmsidebardeviceitem.cpp \
-    views/dfmsidebarnetworkitem.cpp \
-    views/dfmsidebartagitem.cpp \
     interfaces/dfmcrumbbar.cpp \
     interfaces/dfmcrumbitem.cpp \
     interfaces/dfmcrumbinterface.cpp \
@@ -439,9 +414,6 @@ SOURCES += \
     models/recentfileinfo.cpp \
     controllers/recentcontroller.cpp \
     controllers/dfmrecentcrumbcontroller.cpp \
-    views/dfmsidebarrecentitem.cpp \
-    views/dfmsidebarhomeitem.cpp \
-    views/dfmsidebarrootitem.cpp \
     views/dfmadvancesearchbar.cpp \
     shutil/dfmregularexpression.cpp \
     models/mergeddesktopfileinfo.cpp \
