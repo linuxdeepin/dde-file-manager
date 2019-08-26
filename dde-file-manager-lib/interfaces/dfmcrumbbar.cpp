@@ -43,6 +43,10 @@
 #include "dfmevent.h"
 #include "dlistview.h"
 #include "dfmcrumblistviewmodel.h"
+#include "app/define.h"
+#include "singleton.h"
+#include "interfaces/dfmstandardpaths.h"
+#include "controllers/pathmanager.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -346,6 +350,56 @@ void DFMCrumbBar::hideAddressBar()
     return;
 }
 
+static QString getIconName(const CrumbData& c)
+{
+    QString iconName;
+    if (c.url.isComputerFile()) {
+        iconName = systemPathManager->getSystemPathIconName("Computer");
+    } else if (c.url.isRecentFile()) {
+        iconName = systemPathManager->getSystemPathIconName("Recent");
+    } else if (c.url.isTrashFile()) {
+        iconName = systemPathManager->getSystemPathIconName("Trash");
+    } else if (c.url.isNetWorkFile()) {
+        iconName = systemPathManager->getSystemPathIconName("Network");
+    } else if (c.url.isUserShareFile()) {
+        iconName = systemPathManager->getSystemPathIconName("UserShare");
+    }
+
+    if (iconName.isEmpty()) {
+        QString path = c.url.toLocalFile();
+        static QString home = DFMStandardPaths::location(DFMStandardPaths::HomePath);
+        if (path.size()>home.size() && path.startsWith(home))
+            return QString(); // 主目录下的（视频，文档，图片。。）不显示icon
+
+        iconName = systemPathManager->getSystemPathIconNameByPath(path);
+    }
+
+    static QMap<QString, QString> s_mapIconName = {
+        {"CrumbIconButton.Disk","drive-harddisk-symbolic"},
+        {"CrumbIconButton.Usb","drive-harddisk-usb-symbolic"},
+        {"CrumbIconButton.Dvd","media-optical-dvd-symbolic"},
+        {"CrumbIconButton.Iphone","iphone-symbolic"},
+        {"CrumbIconButton.Android","android-phone-symbolic"},
+        {"BookmarkItem.Orange", "dfm_tag-orange"},
+        {"BookmarkItem.Red", "dfm_tag-red"},
+        {"BookmarkItem.Purple", "dfm_tag-purple"},
+        {"BookmarkItem.Navy-blue", "dfm_tag-deepblue"},
+        {"BookmarkItem.Azure", "dfm_tag-lightblue"},
+        {"BookmarkItem.Grass-green", "dfm_tag-green"},
+        {"BookmarkItem.Yellow", "dfm_tag-yellow"},
+        {"BookmarkItem.Gray", "dfm_tag-gray"}
+    };
+
+    if (iconName.isEmpty() && s_mapIconName.contains(c.iconName)) {
+        iconName = s_mapIconName[c.iconName];
+    }
+
+    if (!iconName.isEmpty() && !iconName.startsWith("dfm_") && !iconName.contains("-symbolic"))
+        iconName.append("-symbolic");
+
+    return iconName;
+}
+
 /*!
  * \brief Update crumbs in crumb bar by the given \a url
  *
@@ -372,29 +426,19 @@ void DFMCrumbBar::updateCrumbs(const DUrl &url)
 
     QList<CrumbData> crumbDataList = d->crumbController->seprateUrl(url);
     for (const CrumbData& c : crumbDataList) {
-        DFMCrumbItem* item = d->crumbController->createCrumbItem(c);
-
-        if (item->url() == url && !url.isTrashFile()) {
-            item->setCheckable(true);
-            item->setChecked(true);
-            item->setIconFromThemeConfig(c.iconName); // set checked state icon
-        }
-
         if (d->crumbListviewModel) {
-
+            QString iconName = getIconName(c);
             QStandardItem *listitem = nullptr;
-            if (!item->icon().isNull()) {
-                listitem = new QStandardItem(item->icon(), QString());
+            if (!iconName.isEmpty()) {
+                listitem = new QStandardItem(QIcon::fromTheme(iconName), QString());
             } else {
-                listitem = new QStandardItem(item->text());
+                listitem = new QStandardItem(c.displayText);
             }
 
             listitem->setCheckable(false);
-            listitem->setData(item->url(), DFMCrumbListviewModel::FileUrlRole);
+            listitem->setData(c.url, DFMCrumbListviewModel::FileUrlRole);
             d->crumbListviewModel->appendRow(listitem);
         }
-
-        delete item;
     }
 
     if (d->crumbListScrollArea.selectionModel() && d->crumbListviewModel)
