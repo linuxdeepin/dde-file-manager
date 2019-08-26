@@ -2327,6 +2327,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
         setItemDelegate(new DIconItemDelegate(d->fileViewHelper));
         setUniformItemSizes(false);
         setResizeMode(Adjust);
+        setAlternatingRowColors(false);
 
         d->statusBar->scalingSlider()->show();
         itemDelegate()->setIconSizeByIconSizeLevel(d->statusBar->scalingSlider()->value());
@@ -2338,6 +2339,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
         setItemDelegate(new DListItemDelegate(d->fileViewHelper));
         setUniformItemSizes(true);
         setResizeMode(Fixed);
+        setAlternatingRowColors(true);
 
         if (!d->headerView) {
             if (d->allowedAdjustColumnSize) {
