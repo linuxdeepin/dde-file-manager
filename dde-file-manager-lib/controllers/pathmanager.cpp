@@ -81,7 +81,7 @@ void PathManager::initPaths()
     m_systemPathIconNamesMap["Trash"] = "user-trash";
     m_systemPathIconNamesMap["Computer"] = "computer";
     m_systemPathIconNamesMap["System Disk"] = "drive-harddisk-root";
-    m_systemPathIconNamesMap["Network"] = "folder-remote";
+    m_systemPathIconNamesMap["Network"] = "network-server"; // folder-remote ?
     m_systemPathIconNamesMap["UserShare"] = "folder-publicshare";
 }
 
