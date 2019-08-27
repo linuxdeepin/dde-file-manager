@@ -1538,6 +1538,8 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
     }
 
     update();
+    // update()没有使draging时delegate重绘(why？)， 再调用viewport()->update()一次
+    viewport()->update();
 
     if (dragDropMode() == InternalMove
         && (event->source() != this || !(event->possibleActions() & Qt::MoveAction)))
