@@ -623,20 +623,20 @@ void DIconItemDelegate::paint(QPainter *painter,
     rect.moveTopLeft(QPointF(0.5, 0.5) + rect.topLeft());
     path.addRoundedRect(rect, ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
 
-    painter->setRenderHint(QPainter::Antialiasing, true);
-    //painter->fillPath(path, QColor(43, 167, 248, 0.50 * 255));
-    painter->fillPath(path, option.palette.color(cg, role));
-    painter->setRenderHint(QPainter::Antialiasing, false);
+    if (!isDragMode){ // 拖拽的图标不画背景
+        painter->setRenderHint(QPainter::Antialiasing, true);
+        painter->fillPath(path, option.palette.color(cg, role));
+        painter->setRenderHint(QPainter::Antialiasing, false);
+    }
 
     if (isDropTarget && !isSelected) {
         painter->setRenderHint(QPainter::Antialiasing, true);
-        painter->setPen(opt.backgroundBrush.color());
+        painter->setPen(option.palette.color(cg, role));
         painter->drawPath(path);
         painter->setRenderHint(QPainter::Antialiasing, false);
     }
 
     /// init icon geomerty
-
     QRectF icon_rect = opt.rect;
 
     icon_rect.setSize(parent()->parent()->iconSize());
@@ -644,7 +644,6 @@ void DIconItemDelegate::paint(QPainter *painter,
     icon_rect.moveTop(opt.rect.top() + (opt.rect.height() - icon_rect.height()) / 3.0 ); // move icon down
 
     /// draw icon
-
     if (isSelected) {
         paintIcon(painter, opt.icon, icon_rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
     } else if (isDropTarget) {
@@ -767,22 +766,6 @@ void DIconItemDelegate::paint(QPainter *painter,
             return;
         }
     } else {
-//        /// init file name text
-//        if (d->elideMap.contains(str)) {
-//            str = d->elideMap.value(str);
-//        } else {
-//            QString elide_str = DFMGlobal::elideText(str, label_rect.size(),
-//                                                     QTextOption::WrapAtWordBoundaryOrAnywhere,
-//                                                     opt.font,
-//                                                     opt.textElideMode, d->textLineHeight);
-
-//            elide_str = trimmedEnd(elide_str);
-
-//            d->elideMap[str] = elide_str;
-
-//            str = elide_str;
-//        }
-
         if (!singleSelected) {
             const_cast<DIconItemDelegate*>(this)->hideNotEditingIndexWidget();
         }
@@ -843,7 +826,7 @@ QSize DIconItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelInde
         return QSize(size.width(), d->expandedItem->heightForWidth(size.width()));
     }
 
-    return QSize(size.height(), size.height());//size;// width == height
+    return size;
 }
 
 QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const
@@ -1182,8 +1165,11 @@ void DIconItemDelegate::updateItemSizeHint()
     d->textLineHeight = parent()->parent()->fontMetrics().height();
 
     int width = parent()->parent()->iconSize().width() + 30;
-
-    d->itemSizeHint = QSize(width, parent()->parent()->iconSize().height() + 2 * TEXT_PADDING  + ICON_MODE_ICON_SPACING + 3 * d->textLineHeight);
+    int height = parent()->parent()->iconSize().height()
+            + 2 * TEXT_PADDING  + ICON_MODE_ICON_SPACING + 3 * d->textLineHeight;
+    int size = qMax(width, height);
+    d->itemSizeHint = QSize(size, size);
+    //d->itemSizeHint = QSize(width, parent()->parent()->iconSize().height() + 2 * TEXT_PADDING  + ICON_MODE_ICON_SPACING + 3 * d->textLineHeight);
 }
 
 QColor DIconItemDelegate::focusTextBackgroundBorderColor() const
