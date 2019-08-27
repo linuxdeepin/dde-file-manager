@@ -762,7 +762,7 @@ void DIconItemDelegate::paint(QPainter *painter,
 
     if (isSelected || !d->enabledTextShadow) {
         const QList<QRectF> &lines = drawText(index, painter, str, label_rect, ICON_MODE_RECT_RADIUS,
-                                              isSelected ? opt.backgroundBrush : QBrush(Qt::NoBrush),
+                                              isSelected ? opt.palette.brush(QPalette::Normal, QPalette::Highlight) : QBrush(Qt::NoBrush),
                                               QTextOption::WrapAtWordBoundaryOrAnywhere, opt.textElideMode, Qt::AlignCenter);
 
         const QColor &border_color = focusTextBackgroundBorderColor();
