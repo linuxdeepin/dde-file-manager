@@ -55,7 +55,7 @@ public:
     int findItem(const DFMSideBarItem * item) const;
     int findItem(const DUrl &url, const QString &group) const;
     int findItem(const DUrl &url) const;
-    int findLastItem(const QString &group) const;
+    int findLastItem(const QString &group, bool sidebarItemOnly = true) const;
     void openItemEditor(int index) const;
     QSet<QString> disableUrlSchemes() const;
 

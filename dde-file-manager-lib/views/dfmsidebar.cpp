@@ -78,7 +78,7 @@ void DFMSideBar::setCurrentUrl(const DUrl &url)
 
 int DFMSideBar::addItem(DFMSideBarItem *item, const QString &group)
 {
-    int lastAtGroup = findLastItem(group);
+    int lastAtGroup = findLastItem(group, false);
     lastAtGroup++; // append after the last item
     this->insertItem(lastAtGroup, item, group);
 
@@ -134,12 +134,12 @@ int DFMSideBar::findItem(const DUrl &url) const
     return -1;
 }
 
-int DFMSideBar::findLastItem(const QString &group) const
+int DFMSideBar::findLastItem(const QString &group, bool sidebarItemOnly) const
 {
     int index = -1;
     for (int i = 0; i < m_sidebarModel->rowCount(); i++) {
         DFMSideBarItem * item = m_sidebarModel->itemFromIndex(i);
-        if (item->itemType() == DFMSideBarItem::SidebarItem && item->groupName() == group) {
+        if (item->groupName() == group && (item->itemType() == DFMSideBarItem::SidebarItem || !sidebarItemOnly)) {
             index = i;
         } else if (item->groupName() != group && index != -1) {
             // already found the group and already leaved the group
