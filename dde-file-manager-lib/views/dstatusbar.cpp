@@ -39,7 +39,6 @@
 #include <dtextbutton.h>
 #include <dlineedit.h>
 #include <danchors.h>
-#include <DThemeManager>
 
 #include <QFutureWatcher>
 #include <QFuture>

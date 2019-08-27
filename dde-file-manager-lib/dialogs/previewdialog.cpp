@@ -41,7 +41,6 @@
 #include "shutil/fileutils.h"
 
 #include "dplatformwindowhandle.h"
-#include "dthememanager.h"
 #include "shutil/mimetypedisplaymanager.h"
 
 #include "plugins/pluginmanager.h"

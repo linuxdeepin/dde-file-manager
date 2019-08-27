@@ -44,7 +44,6 @@
 #include "singleton.h"
 
 #include "shutil/fileutils.h"
-#include <DThemeManager>
 #include <DApplication>
 
 #include <QThread>

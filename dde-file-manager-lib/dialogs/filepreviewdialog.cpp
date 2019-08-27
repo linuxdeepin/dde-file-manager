@@ -15,7 +15,6 @@
 #include "shutil/fileutils.h"
 
 #include <danchors.h>
-#include <dthememanager.h>
 #include <denhancedwidget.h>
 
 #include <QPushButton>

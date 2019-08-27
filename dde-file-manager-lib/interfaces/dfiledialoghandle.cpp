@@ -55,7 +55,6 @@ DFileDialogHandle::DFileDialogHandle(QWidget *parent)
     , d_ptr(new DFileDialogHandlePrivate(this))
 {
     d_func()->dialog = new DFileDialog(parent);
-    DThemeManager::instance()->setTheme(d_func()->dialog, "light");
 
     connect(d_func()->dialog, &DFileDialog::accepted, this, &DFileDialogHandle::accepted);
     connect(d_func()->dialog, &DFileDialog::rejected, this, &DFileDialogHandle::rejected);

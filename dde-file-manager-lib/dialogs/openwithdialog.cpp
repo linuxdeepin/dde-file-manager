@@ -211,7 +211,6 @@ void OpenWithDialog::initUI()
     setTitle(tr("Open with"));
 
     m_scrollArea = new QScrollArea(this);
-    m_scrollArea->setStyleSheet("QScrollArea{background: transparent;} QWidget#contentWidget{background: transparent;}");
     m_scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_scrollArea->setFrameShape(QFrame::NoFrame);
     QScroller::grabGesture(m_scrollArea);
