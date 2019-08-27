@@ -56,7 +56,6 @@
 
 #include <dseparatorhorizontal.h>
 #include <darrowlineexpand.h>
-#include <dthememanager.h>
 #include <dexpandgroup.h>
 #include <dblockdevice.h>
 

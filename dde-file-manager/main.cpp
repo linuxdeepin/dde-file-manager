@@ -51,8 +51,6 @@
 #include "views/themeconfig.h"
 #include "dfmapplication.h"
 
-#include <dthememanager.h>
-
 #include <QApplication>
 #include <QDebug>
 #include <QTranslator>

@@ -52,7 +52,6 @@ void MountAskPasswordDialog::initUI()
     m_messageLabel = new QLabel(this);
 
     QLabel* connectTypeLabel = new QLabel(tr("Log in as"));
-    connectTypeLabel->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
     connectTypeLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     connectTypeLabel->setFixedWidth(80);
 
@@ -63,39 +62,32 @@ void MountAskPasswordDialog::initUI()
     anonymousButton->setCheckable(true);
     anonymousButton->setFixedHeight(28);
     anonymousButton->setMinimumWidth(100);
-    anonymousButton->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
     QPushButton* registerButton = new QPushButton(tr("Registered user"));
     registerButton->setObjectName("RegisterButton");
     registerButton->setCheckable(true);
     registerButton->setFixedHeight(28);
     registerButton->setMinimumWidth(100);
-    registerButton->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
     m_anonymousButtonGroup->addButton(anonymousButton, 0);
     m_anonymousButtonGroup->addButton(registerButton, 1);
 
     m_passwordFrame = new QFrame;
 
     QLabel* usernameLable = new QLabel(tr("Username"));
-    usernameLable->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
     usernameLable->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     usernameLable->setFixedWidth(80);
 
     m_usernameLineEdit = new QLineEdit;
-    m_usernameLineEdit->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
     m_usernameLineEdit->setFixedHeight(24);
     m_usernameLineEdit->setMinimumWidth(200);
 
     m_domainLabel = new QLabel(tr("Domain"));
-    m_domainLabel->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
     m_domainLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     m_domainLabel->setFixedWidth(80);
 
     m_domainLineEdit = new QLineEdit;
-    m_domainLineEdit->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
     m_domainLineEdit->setFixedHeight(24);
 
     QLabel* passwordLable = new QLabel(tr("Password"));
-    passwordLable->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
     passwordLable->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     passwordLable->setFixedWidth(80);
 
