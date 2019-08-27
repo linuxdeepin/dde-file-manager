@@ -824,7 +824,6 @@ void DFileManagerWindow::resizeEvent(QResizeEvent *event)
 {
     Q_D(DFileManagerWindow);
     DMainWindow::resizeEvent(event);
-    d->titleFrame->setFixedSize(event->size().width() - titlebar()->buttonAreaWidth(), TITLE_FIXED_HEIGHT);
 }
 
 bool DFileManagerWindow::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData)
@@ -896,6 +895,7 @@ void DFileManagerWindow::initTitleFrame()
     titleLayout->setContentsMargins(0, 0, 0, 0);
     d->titleFrame->setLayout(titleLayout);
     d->titleFrame->setFixedHeight(TITLE_FIXED_HEIGHT);
+    d->titleFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }
 
 void DFileManagerWindow::initTitleBar()
@@ -1195,11 +1195,6 @@ void DFileManagerWindow::showEvent(QShowEvent *event)
     const QVariantMap &state = DFMApplication::appObtuselySetting()->value("WindowManager", "SplitterState").toMap();
     int splitterPos = state.value("sidebar", DFMSideBar::maximumWidth).toInt();
     setSplitterPosition(splitterPos);
-    // 初次显示的时候resizeEvent获取buttonAreaWidth有误， 在showEven时再次尝试设置
-    Q_D(DFileManagerWindow);
-    int w = width() - titlebar()->buttonAreaWidth();
-    if (d->titleFrame && d->titleFrame->width()!=w)
-        d->titleFrame->setFixedWidth(w);
 }
 
 void DFileManagerWindow::initRenameBarState()
