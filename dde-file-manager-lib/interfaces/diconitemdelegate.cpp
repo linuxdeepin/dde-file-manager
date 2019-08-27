@@ -345,7 +345,7 @@ public:
         QRect label_rect(TEXT_PADDING + margins.left(), margins.top() + iconHeight + TEXT_PADDING + ICON_MODE_ICON_SPACING,
                          width() - TEXT_PADDING * 2 - margins.left() - margins.right(), INT_MAX);
         const QList<QRectF> &lines = delegate->drawText(index, &pa, option.text, label_rect, ICON_MODE_RECT_RADIUS,
-                                                        option.backgroundBrush,
+                                                        option.palette.brush(QPalette::Normal, QPalette::Highlight),
                                                         QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                         option.textElideMode, Qt::AlignCenter);
 
