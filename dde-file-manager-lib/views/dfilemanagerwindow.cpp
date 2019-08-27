@@ -893,7 +893,7 @@ void DFileManagerWindow::initTitleFrame()
 
     titleLayout->addWidget(d->toolbar);
     titleLayout->setSpacing(0);
-    titleLayout->setContentsMargins(0, 0, 22, 0); // 22内边距为了显示切换视图按钮， 后面dtk更新后可以改
+    titleLayout->setContentsMargins(0, 0, 0, 0);
     d->titleFrame->setLayout(titleLayout);
     d->titleFrame->setFixedHeight(TITLE_FIXED_HEIGHT);
 }
@@ -922,7 +922,7 @@ void DFileManagerWindow::initTitleBar()
 
     titlebar()->setMenu(menu);
     titlebar()->setContentsMargins(0, 0, 0, 0);
-    titlebar()->addWidget(d->titleFrame, Qt::AlignLeft);
+    titlebar()->setCustomWidget(d->titleFrame, false);
 }
 
 void DFileManagerWindow::initSplitter()
@@ -1195,6 +1195,11 @@ void DFileManagerWindow::showEvent(QShowEvent *event)
     const QVariantMap &state = DFMApplication::appObtuselySetting()->value("WindowManager", "SplitterState").toMap();
     int splitterPos = state.value("sidebar", DFMSideBar::maximumWidth).toInt();
     setSplitterPosition(splitterPos);
+    // 初次显示的时候resizeEvent获取buttonAreaWidth有误， 在showEven时再次尝试设置
+    Q_D(DFileManagerWindow);
+    int w = width() - titlebar()->buttonAreaWidth();
+    if (d->titleFrame && d->titleFrame->width()!=w)
+        d->titleFrame->setFixedWidth(w);
 }
 
 void DFileManagerWindow::initRenameBarState()
