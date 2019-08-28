@@ -52,6 +52,7 @@
 
 const int DToolBar::ButtonWidth = 24;
 const int DToolBar::ButtonHeight = 24;
+static const QSize iconSize(16, 16);
 
 /*!
  * \class DToolBar
@@ -118,29 +119,27 @@ void DToolBar::initAddressToolBar()
 
     QHBoxLayout * backForwardLayout = new QHBoxLayout;
 
-
+    QSize size(ButtonWidth, ButtonHeight);
     m_backButton = new QPushButton(this);
-    //m_backButton->setObjectName("backButton");
-    m_backButton->setIcon(QIcon::fromTheme("go-previous").pixmap(QSize(ButtonWidth, ButtonHeight)));
-    m_backButton->setFixedWidth(ButtonWidth);
-    m_backButton->setFixedHeight(ButtonHeight);
+    m_backButton->setIcon(QIcon::fromTheme("go-previous").pixmap(iconSize));
+    m_backButton->setIconSize(iconSize);
+    m_backButton->setFixedSize(size);
     m_backButton->setDisabled(true);
     m_backButton->setFocusPolicy(Qt::NoFocus);
     m_forwardButton = new QPushButton(this);
-    //m_forwardButton->setObjectName("forwardButton");
-    m_forwardButton->setIcon(QIcon::fromTheme("go-next").pixmap(QSize(ButtonWidth, ButtonHeight)));
-    m_forwardButton->setFixedWidth(ButtonWidth);
-    m_forwardButton->setFixedHeight(ButtonHeight);
+    m_forwardButton->setIcon(QIcon::fromTheme("go-next").pixmap(iconSize));
+    m_forwardButton->setIconSize(iconSize);
+    m_forwardButton->setFixedSize(size);
     m_forwardButton->setDisabled(true);
     m_forwardButton->setFocusPolicy(Qt::NoFocus);
 
     m_searchButton = new QPushButton(this);
     m_searchButton->setObjectName("searchButton");
-    m_searchButton->setFixedWidth(ButtonWidth);
-    m_searchButton->setFixedHeight(ButtonHeight);
+    m_searchButton->setFixedSize(size);
     m_searchButton->setFocusPolicy(Qt::NoFocus);
     m_searchButton->setFlat(true);
-    m_searchButton->setIcon(QIcon::fromTheme("search").pixmap(QSize(ButtonWidth, ButtonHeight)));
+    m_searchButton->setIcon(QIcon::fromTheme("search").pixmap(iconSize));
+    m_searchButton->setIconSize(iconSize);
 
     backForwardLayout->addWidget(m_backButton);
     backForwardLayout->addWidget(m_forwardButton);
@@ -386,16 +385,15 @@ void DToolBar::toggleSearchButtonState(bool asb)
 
     if (asb) {
         m_searchButton->setObjectName("filterButton");
-        m_searchButton->setIcon(QIcon::fromTheme("dfm_view-filter"));
+        m_searchButton->setIcon(QIcon::fromTheme("dfm_view-filter").pixmap(iconSize));
         m_searchButton->style()->unpolish(m_searchButton);
         m_searchButton->style()->polish(m_searchButton);
         m_searchButton->setFlat(true);
         m_searchButtonAsbState = true;
     } else {
-        //m_searchButton->setObjectName("searchButton");
         m_searchButton->style()->unpolish(m_searchButton);
         m_searchButton->style()->polish(m_searchButton);
-        m_searchButton->setIcon(QIcon::fromTheme("search").pixmap(QSize(ButtonWidth, ButtonHeight))); // QIcon(":/dark/icons/search_normal.svg")
+        m_searchButton->setIcon(QIcon::fromTheme("search").pixmap(iconSize));
         m_searchButton->setDown(false);
         m_searchButtonAsbState = false;
         DFileManagerWindow* dfmWindow = qobject_cast<DFileManagerWindow*>(window());
@@ -465,6 +463,7 @@ void DToolBar::setCustomActionList(const QList<QAction *> &list)
         button->setFixedSize(ButtonWidth - 2, ButtonHeight - 2);
         button->setFocusPolicy(Qt::NoFocus);
         button->setAction(list.at(i));
+        button->setIconSize(iconSize);
 
         m_contollerToolBarContentLayout->addWidget(button);
 
