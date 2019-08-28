@@ -22,8 +22,9 @@
 #define DFMCRUMBLISTVIEWDELEGATE_H
 
 #include "dfmcrumbinterface.h"
-#include <dfmglobal.h>
-#include <qstandarditemmodel.h>
+#include "dfmglobal.h"
+#include <DStandardItem>
+#include <QStandardItemModel>
 
 DFM_BEGIN_NAMESPACE
 
@@ -31,7 +32,7 @@ class DFMCrumbListviewModel : public QStandardItemModel
 {
 public:
     enum Roles {
-        FileUrlRole = Qt::UserRole+1
+        FileUrlRole = Dtk::UserRole + 1
     };
     Q_ENUM(Roles)
 
