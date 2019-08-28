@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<schemalist>
+
+  <schema path="/com/deepin/dde/filemanager/general/" id="com.deepin.dde.filemanager.general" gettext-domain="dde-file-manager-general">
+
+    <key name='context-menu-icons' type='b'>
+      <default>false</default>
+      <summary>Show icons in context menu</summary>
+      <description>
+        If enabled, icons can be displayed in context menu.
+        If disabled, context menu will not have any icons.
+      </description>
+    </key>
+
+  </schema>
+
+</schemalist>

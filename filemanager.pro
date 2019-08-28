@@ -9,7 +9,8 @@ SUBDIRS  += \
     dde-file-manager-plugins \
     dde-dock-plugins\
     dde-desktop \
-    dde-file-thumbnail-tool
+    dde-file-thumbnail-tool \
+    gschema
 
 isEqual(BUILD_MINIMUM, YES){
 
