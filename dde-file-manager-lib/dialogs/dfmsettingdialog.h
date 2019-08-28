@@ -40,7 +40,7 @@ DCORE_USE_NAMESPACE
 class DFMSettingDialog : public DSettingsDialog
 {
 public:
-    DFMSettingDialog(QWidget *parent = 0);
+    DFMSettingDialog(QWidget *parent = nullptr);
 
     static QWidget *createAutoMountCheckBox(QObject* opt);
     static QWidget *createAutoMountOpenCheckBox(QObject* opt);

@@ -33,11 +33,11 @@ class DFMSideBarItem : public DStandardItem
 {
 public:
     enum Roles {
-        ItemTypeRole = Qt::UserRole + 1,
-        ItemUrlRole = Qt::UserRole + 2,
-        ItemGroupNameRole = Qt::UserRole + 3,
-        ItemUseRegisteredHandlerRole = Qt::UserRole + 4,
-        ItemUserCustomRole = Qt::UserRole + 0x0100
+        ItemTypeRole = Dtk::UserRole + 1,
+        ItemUrlRole,
+        ItemGroupNameRole,
+        ItemUseRegisteredHandlerRole,
+        ItemUserCustomRole = Dtk::UserRole + 0x0100
     };
 
     enum ItemTypes {
