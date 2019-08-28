@@ -57,6 +57,7 @@ class QProgressBar;
 class QPushButton;
 
 DWIDGET_USE_NAMESPACE
+DGUI_USE_NAMESPACE
 
 class MainWindow : public QDialog
 {
