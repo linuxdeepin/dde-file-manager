@@ -1914,11 +1914,6 @@ void DFileView::initUI()
 {
     D_D(DFileView);
 
-    QPalette palette = this->palette();
-
-    palette.setColor(QPalette::Text, Qt::red);
-    setPalette(palette);
-
     setSpacing(ICON_VIEW_SPACING);
     setResizeMode(QListView::Adjust);
     setOrientation(QListView::LeftToRight, true);
@@ -2250,6 +2245,20 @@ void DFileView::setContentLabel(const QString &text)
 
     if (!d->contentLabel) {
         d->contentLabel = new QLabel(this);
+//        font-family: SourceHanSansSC-Light;
+//        font-size: 20px;
+//        color: #bdbdbd; #D0D0D0;
+        QPalette palette = d->contentLabel->palette();
+        QStyleOption opt;
+        opt.initFrom(d->contentLabel);
+        QColor color = opt.palette.color(QPalette::Inactive, QPalette::Text);
+        palette.setColor(QPalette::Text, color);
+        d->contentLabel->setPalette(palette);
+        auto font = d->contentLabel->font();
+        font.setFamily("SourceHanSansSC-Light");
+        font.setPixelSize(20);
+        d->contentLabel->setFont(font);
+
         d->contentLabel.setCenterIn(this);
         d->contentLabel->setObjectName("contentLabel");
         d->contentLabel->setStyleSheet(this->styleSheet());
