@@ -64,6 +64,7 @@ DFMSideBar::DFMSideBar(QWidget *parent)
     initUI();
     initModelData();
     initConnection();
+    initUserShareItem();
 }
 
 void DFMSideBar::setCurrentUrl(const DUrl &url)
@@ -357,6 +358,35 @@ void DFMSideBar::initConnection()
     initTagsConnection();
 }
 
+void DFMSideBar::initUserShareItem()
+{
+    int count = DFileService::instance()->getChildren(nullptr, DUrl::fromUserShareFile("/"),
+                                                      QStringList(), QDir::AllEntries).count();
+    if (count) {
+        addItem(DFMSideBarDefaultItemHandler::createItem("UserShare"), groupName(Network));
+    }
+
+    DAbstractFileWatcher *userShareFileWatcher = DFileService::instance()->createFileWatcher(this, DUrl::fromUserShareFile("/"), this);
+    Q_CHECK_PTR(userShareFileWatcher);
+    userShareFileWatcher->startWatcher();
+
+    auto userShareLambda = [ = ]() {
+        int cnt = DFileService::instance()->getChildren(nullptr, DUrl::fromUserShareFile("/"),
+                                                        QStringList(), QDir::AllEntries).count();
+        int index = findItem(DUrl::fromUserShareFile("/"));
+        if (index == -1) {
+            if (cnt > 0) {
+                addItem(DFMSideBarDefaultItemHandler::createItem("UserShare"), groupName(Network));
+            }
+        } else {
+            m_sidebarView->setRowHidden(index, cnt == 0);
+        }
+    };
+
+    connect(userShareFileWatcher, &DAbstractFileWatcher::fileDeleted, this, userShareLambda);
+    connect(userShareFileWatcher, &DAbstractFileWatcher::subfileCreated, this, userShareLambda);
+}
+
 void DFMSideBar::initBookmarkConnection()
 {
     DAbstractFileWatcher *bookmarkWatcher = DFileService::instance()->createFileWatcher(this, DUrl(BOOKMARK_ROOT), this);
@@ -619,7 +649,6 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
     }
     case GroupName::Network:
         appendItem(DFMSideBarDefaultItemHandler::createItem("Network"), groupNameStr);
-        appendItem(DFMSideBarDefaultItemHandler::createItem("UserShare"), groupNameStr);
         break;
     case GroupName::Tag: {
         auto tag_infos = DFileService::instance()->getChildren(this, DUrl(TAG_ROOT),
