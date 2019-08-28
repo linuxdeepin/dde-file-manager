@@ -54,16 +54,19 @@ private:
 FilePreviewDialogStatusBar::FilePreviewDialogStatusBar(QWidget *parent)
     : QFrame(parent)
 {
+    QSize iconSize(16, 16);
     m_preButton = new QPushButton(this);
     m_preButton->setObjectName("PreButton");
-    m_preButton->setIcon(QIcon::fromTheme("go-previous"));
+    m_preButton->setIcon(QIcon::fromTheme("go-previous").pixmap(iconSize));
+    m_preButton->setIconSize(iconSize);
     m_preButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_preButton->setShortcut(QKeySequence::Back);
     m_preButton->setFocusPolicy(Qt::NoFocus);
 
     m_nextButton = new QPushButton(this);
     m_nextButton->setObjectName("NextButton");
-    m_nextButton->setIcon(QIcon::fromTheme("go-next"));
+    m_nextButton->setIcon(QIcon::fromTheme("go-next").pixmap(iconSize));
+    m_nextButton->setIconSize(iconSize);
     m_nextButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_nextButton->setShortcut(QKeySequence::Forward);
     m_nextButton->setFocusPolicy(Qt::NoFocus);
@@ -75,6 +78,9 @@ FilePreviewDialogStatusBar::FilePreviewDialogStatusBar(QWidget *parent)
 
     m_openButton = new QPushButton(QObject::tr("Open"), this);
     m_openButton->setObjectName("OpenButton");
+    QFont font = m_openButton->font();
+    font.setPixelSize(12);
+    m_openButton->setFont(font);
     //m_openButton->setFixedHeight(24);
     m_openButton->setShortcut(QKeySequence::Open);
 
@@ -329,7 +335,8 @@ void FilePreviewDialog::initUI()
     m_closeButton = new QPushButton(this);
     m_closeButton->setObjectName("CloseButton");
     m_closeButton->setFocusPolicy(Qt::NoFocus);
-    m_closeButton->setIcon(QIcon::fromTheme("window-close"));
+    m_closeButton->setIcon(QIcon::fromTheme("window-close").pixmap({16, 16}));
+    m_closeButton->setIconSize({16, 16});
     m_closeButton->setFlat(true);
     m_closeButton->setFixedSize({24,24});
 

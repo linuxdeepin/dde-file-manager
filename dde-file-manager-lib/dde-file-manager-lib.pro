@@ -175,7 +175,6 @@ HEADERS += \
     interfaces/dfmeventdispatcher.h \
     interfaces/dfmabstracteventhandler.h \
     controllers/fileeventprocessor.h \
-    dialogs/previewdialog.h \
     interfaces/dfmbaseview.h \
     interfaces/dfmviewmanager.h \
     views/dfmactionbutton.h \
@@ -352,7 +351,6 @@ SOURCES += \
     interfaces/dfmeventdispatcher.cpp \
     interfaces/dfmabstracteventhandler.cpp \
     controllers/fileeventprocessor.cpp \
-    dialogs/previewdialog.cpp \
     interfaces/dfmbaseview.cpp \
     interfaces/dfmviewmanager.cpp \
     views/dfmactionbutton.cpp \
