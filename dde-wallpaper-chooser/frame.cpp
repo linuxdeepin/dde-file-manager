@@ -53,6 +53,8 @@
 #define LOCK_SCREEN_BUTTON_ID "lock-screen"
 #define SCREENSAVER_BUTTON_ID "screensaver"
 
+DGUI_USE_NAMESPACE
+
 static bool previewBackground()
 {
     if (DWindowManagerHelper::instance()->windowManagerName() == DWindowManagerHelper::DeepinWM)

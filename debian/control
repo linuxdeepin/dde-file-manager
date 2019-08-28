@@ -21,6 +21,7 @@ Build-Depends:
  libffmpegthumbnailer-dev,
  libtag1-dev,
  libdtkwidget-dev,
+ libdtkgui-dev,
  libxcb1-dev,
  x11proto-core-dev,
  libx11-dev,

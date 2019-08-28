@@ -28,7 +28,8 @@
 #include <DWindowManagerHelper>
 
 using WMInter = com::deepin::wm;
-DWIDGET_USE_NAMESPACE
+
+DGUI_USE_NAMESPACE
 
 class BackgroundHelper : public QObject
 {
