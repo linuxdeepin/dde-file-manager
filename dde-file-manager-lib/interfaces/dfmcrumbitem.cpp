@@ -40,6 +40,7 @@
 #include <QClipboard>
 #include <QDebug>
 #include <QMenu>
+#include <dgiosettings.h>
 
 #include "singleton.h"
 
@@ -55,7 +56,8 @@ namespace DFMCrumbItemData {
     void initData()
     {
         // Action Icons:
-        if (DFMApplication::genericObtuselySetting()->value("ApplicationAttribute", "DisplayContextMenuIcon", false).toBool()) {
+        DGioSettings settings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
+        if (settings.value("context-menu-icons").toBool()) {
             actionIcons["edit-copy"] = QIcon::fromTheme("edit-copy");
             actionIcons["window-new"] = QIcon::fromTheme("window-new");
             actionIcons["tab-new"] = QIcon::fromTheme("tab-new");

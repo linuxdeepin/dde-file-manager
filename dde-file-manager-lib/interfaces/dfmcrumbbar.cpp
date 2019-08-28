@@ -27,6 +27,7 @@
 #include <QDebug>
 #include <QGuiApplication>
 #include <QClipboard>
+#include <dgiosettings.h>
 
 #include "dfmapplication.h"
 #include "dfmcrumbbar.h"
@@ -557,7 +558,8 @@ void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
 
     QMenu *menu = new QMenu();
     DUrl url = index.data(DFMCrumbListviewModel::FileUrlRole).toUrl();
-    bool displayIcon = DFMApplication::genericObtuselySetting()->value("ApplicationAttribute", "DisplayContextMenuIcon", false).toBool();
+    DGioSettings settings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
+    bool displayIcon = settings.value("context-menu-icons").toBool();
     QIcon copyIcon, newWndIcon,  newTabIcon, editIcon;
     if (displayIcon) {
         copyIcon = QIcon::fromTheme("edit-copy");

@@ -51,6 +51,8 @@
 #include "ddiskdevice.h"
 #include "views/dtagactionwidget.h"
 
+#include <dgiosettings.h>
+
 #include <QMetaObject>
 #include <QMetaEnum>
 #include <QMenu>
@@ -718,7 +720,8 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::StageFileForBurning] = QObject::tr("Burn");
 
     // Action Icons:
-    if (DFMApplication::genericObtuselySetting()->value("ApplicationAttribute", "DisplayContextMenuIcon", false).toBool()) {
+    DGioSettings settings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
+    if (settings.value("context-menu-icons").toBool()) {
         actionIcons[MenuAction::NewFolder] = QIcon::fromTheme("folder-new");
         actionIcons[MenuAction::NewDocument] = QIcon::fromTheme("document-new");
         actionIcons[MenuAction::OpenInNewWindow] = QIcon::fromTheme("window-new");
