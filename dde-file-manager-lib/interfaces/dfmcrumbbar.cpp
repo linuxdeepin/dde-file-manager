@@ -164,11 +164,16 @@ void DFMCrumbBarPrivate::initUI()
     q->setFixedHeight(24);
 
     // Arrows
+    QSize size(24, 24), iconSize(16, 16);
     leftArrow.setFocusPolicy(Qt::NoFocus);
-    leftArrow.setIcon(QIcon::fromTheme("go-previous"));
-    rightArrow.setIcon(QIcon::fromTheme("go-next"));
+    leftArrow.setIcon(QIcon::fromTheme("go-previous").pixmap(iconSize));
+    rightArrow.setIcon(QIcon::fromTheme("go-next").pixmap(iconSize));
     rightArrow.setFocusPolicy(Qt::NoFocus);
 
+    leftArrow.setFixedSize(size);
+    leftArrow.setIconSize(iconSize);
+    rightArrow.setFixedSize(size);
+    rightArrow.setIconSize(iconSize);
     leftArrow.setFlat(true);
     rightArrow.setFlat(true);
     leftArrow.hide();

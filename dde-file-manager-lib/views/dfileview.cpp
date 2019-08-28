@@ -2865,8 +2865,8 @@ void DFileView::updateToolBarActions(QWidget *widget, QString theme)
             d->toolbarActionGroup->addAction(list_view_mode_action);
         }
 
-        icon_view_mode_action->setIcon(QIcon::fromTheme("view-list-icons"));
-        list_view_mode_action->setIcon(QIcon::fromTheme("view-list-details"));
+        icon_view_mode_action->setIcon(QIcon::fromTheme("view-list-icons").pixmap({16, 16}));
+        list_view_mode_action->setIcon(QIcon::fromTheme("view-list-details").pixmap({16, 16}));
     }
 }
 
