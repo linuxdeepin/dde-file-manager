@@ -62,8 +62,8 @@ class FilePreviewDialog : public DAbstractDialog
 {
     Q_OBJECT
 public:
-    explicit FilePreviewDialog(const DUrlList &previewUrllist, QWidget *parent = 0);
-    ~FilePreviewDialog();
+    explicit FilePreviewDialog(const DUrlList &previewUrllist, QWidget *parent = nullptr);
+    ~FilePreviewDialog() override;
 
     void updatePreviewList(const DUrlList &previewUrllist);
 
