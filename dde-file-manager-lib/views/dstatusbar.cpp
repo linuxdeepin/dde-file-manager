@@ -87,6 +87,8 @@ void DStatusBar::initUI()
     m_scaleSlider->adjustSize();
     m_scaleSlider->setFixedWidth(120);
 
+    setBackgroundRole(QPalette::Window);
+
     setFocusPolicy(Qt::NoFocus);
     setLayout(m_layout);
 }
@@ -146,12 +148,8 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
         DAnchors<QSlider> sliderAnchor(m_scaleSlider);
 
         sliderAnchor.setAnchor(Qt::AnchorRight, this, Qt::AnchorRight);
-        sliderAnchor.setAnchor(Qt::AnchorVerticalCenter, this, Qt::AnchorVerticalCenter);
+        //sliderAnchor.setAnchor(Qt::AnchorVerticalCenter, this, Qt::AnchorVerticalCenter);
         sliderAnchor.setRightMargin(20);
-
-//        setStyleSheet("QFrame{"
-//                      "background-color: white;"
-//                      "color: #797979;}");
 
         return;
     }
@@ -254,7 +252,7 @@ QSize DStatusBar::sizeHint() const
 {
     QSize size = QFrame::sizeHint();
 
-    size.setHeight(qMax(22, size.height()));
+    size.setHeight(qMax(25, size.height()));
 
     return size;
 }
