@@ -432,8 +432,9 @@ void DFMAddressBar::onWidgetThemeChanged(QWidget *widget, QString theme)
 void DFMAddressBar::updateIndicatorIcon()
 {
     QIcon indicatorIcon;
-    QString scope = indicatorType == IndicatorType::Search ? "DSearchBar.searchAction" : "DSearchBar.jumpToAction";
-    indicatorIcon.addFile(ThemeConfig::instace()->value(scope, "icon").toString());
+    QString scope = indicatorType == IndicatorType::Search ? "search" : "go-right";
+    //indicatorIcon.addFile(ThemeConfig::instace()->value(scope, "icon").toString());
+    indicatorIcon = QIcon::fromTheme(scope).pixmap({16, 16});
     indicator->setIcon(indicatorIcon);
 }
 
