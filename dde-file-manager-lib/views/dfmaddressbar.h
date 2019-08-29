@@ -60,7 +60,7 @@ public:
         JumpTo
     };
 
-    explicit DFMAddressBar(DFMCrumbBar *parent = 0);
+    explicit DFMAddressBar(DFMCrumbBar *parent = nullptr);
 
     QCompleter *completer() const;
     QString placeholderText() const;
