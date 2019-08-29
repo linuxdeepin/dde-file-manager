@@ -346,7 +346,7 @@ void DFMAddressBar::initUI()
             this, static_cast<void(DFMAddressBar::*)()>(&DFMAddressBar::update));
 
     // Other misc..
-    setFixedHeight(24);
+    //setFixedHeight(24);
     setObjectName("DSearchBar");
     setMinimumWidth(1);
     setAlignment(Qt::AlignHCenter);
