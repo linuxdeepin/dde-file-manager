@@ -162,7 +162,7 @@ void DFMCrumbBarPrivate::initUI()
     addressBar->hide();
 
     // Crumbbar Widget
-    q->setFixedHeight(24);
+    //q->setFixedHeight(24);
 
     // Arrows
     QSize size(24, 24), iconSize(16, 16);

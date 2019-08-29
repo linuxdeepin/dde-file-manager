@@ -115,7 +115,7 @@ void DToolBar::initAddressToolBar()
 {
     m_addressToolBar = new QFrame;
     m_addressToolBar->setObjectName("AddressToolBar");
-    m_addressToolBar->setFixedHeight(40);
+    //m_addressToolBar->setFixedHeight(40);
 
     QHBoxLayout * backForwardLayout = new QHBoxLayout;
 
