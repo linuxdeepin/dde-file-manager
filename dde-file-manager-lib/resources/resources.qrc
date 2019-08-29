@@ -19,5 +19,7 @@
         <file>icons/deepin-app-dark/actions/16/dfm_tag-gray.svg</file>
         <file>icons/deepin-app-light/actions/16/dfm_tag-gray.svg</file>
         <file>icons/deepin-app-light/actions/24/dfm_view-filter.svg</file>
+        <file>icons/deepin-app-light/icons/128/dfm_addressbar-glowing.svg</file>
+        <file>icons/deepin-app-dark/icons/128/dfm_addressbar-glowing.svg</file>
     </qresource>
 </RCC>

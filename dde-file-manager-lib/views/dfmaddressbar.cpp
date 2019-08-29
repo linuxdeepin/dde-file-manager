@@ -305,7 +305,12 @@ void DFMAddressBar::paintEvent(QPaintEvent *e)
 
     // Draw growing animation
     if (animation && animation->state() != QAbstractAnimation::Stopped) {
-        QPixmap glowingImg = ThemeConfig::instace()->pixmap("DSearchBar.glowingAnimation", "image");
+
+        QIcon icon = QIcon::fromTheme("dfm_addressbar-glowing");
+        if (icon.availableSizes().isEmpty())
+            return;
+        const QSize &size = icon.availableSizes().first();
+        QPixmap glowingImg = icon.pixmap(size);//ThemeConfig::instace()->pixmap("DSearchBar.glowingAnimation", "image");
         float curValue = animation->currentValue().toFloat();
         float xPos = (this->width() + glowingImg.width()) * curValue - glowingImg.width();
 
