@@ -456,11 +456,30 @@ void DFMSideBar::initDeviceConnection()
     // New device/volume added.
     connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl & url) {
         QString devs(url.path());
-        devs.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
-        QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(devs));
-        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blkdev->drive()));
-        if (drv->mediaCompatibility().join(' ').contains("optical")) {
-            return;
+        if (devs.contains("/dev/")) {
+            devs.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+            QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(devs));
+            QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blkdev->drive()));
+            if (drv->mediaCompatibility().join(' ').contains("optical")) {
+                return;
+            }
+        } else {
+            DDiskManager dummy;
+            QString mountpoint(QUrl(devs).path());
+            for (auto blks : dummy.blockDevices()) {
+                QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(blks));
+                QStringList blmp;
+                for (auto mp : blkdev->mountPoints()) {
+                    blmp.push_back(QString(mp));
+                }
+                if (!blmp.contains(mountpoint.toUtf8())) {
+                    continue;
+                }
+                QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blkdev->drive()));
+                if (drv->mediaCompatibility().join(' ').contains("optical")) {
+                    return;
+                }
+            }
         }
         addItem(DFMSideBarDeviceItemHandler::createItem(url), groupName(Device));
     });
@@ -492,6 +511,12 @@ void DFMSideBar::initDeviceConnection()
     // Device/volume get mounted/unmounted
     connect(devicesWatcher, &DAbstractFileWatcher::fileAttributeChanged, this, [this](const DUrl & url) {
         int index = findItem(url, groupName(Device));
+
+        // optical drives are not managed by this.
+        if (!~index) {
+            return;
+        }
+
         DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
         DViewItemActionList actionList = item->actionList(Qt::RightEdge);
         DAbstractFileInfoPointer pointer = DFileService::instance()->createFileInfo(nullptr, url);

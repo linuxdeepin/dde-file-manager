@@ -38,6 +38,8 @@ public:
 
     void cdAction(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;
     QMenu * contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;
+
+    static QString getDisplayNameForDevice(const QString &dev);
 };
 
 DFM_END_NAMESPACE
