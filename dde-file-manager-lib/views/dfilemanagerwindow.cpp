@@ -892,7 +892,7 @@ void DFileManagerWindow::initTitleFrame()
 
     titleLayout->addWidget(d->toolbar);
     titleLayout->setSpacing(0);
-    titleLayout->setContentsMargins(0, 0, 0, 0);
+    titleLayout->setContentsMargins(0, 5, 0, 5);
     d->titleFrame->setLayout(titleLayout);
     d->titleFrame->setFixedHeight(TITLE_FIXED_HEIGHT);
     d->titleFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -1008,7 +1008,6 @@ void DFileManagerWindow::initToolBar()
 
     d->toolbar = new DToolBar(this);
     d->toolbar->setObjectName("ToolBar");
-    d->toolbar->setFixedHeight(40);
 }
 
 void DFileManagerWindow::initTabBar()
