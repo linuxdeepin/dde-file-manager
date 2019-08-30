@@ -512,7 +512,6 @@ void DFMSideBar::initDeviceConnection()
     connect(devicesWatcher, &DAbstractFileWatcher::fileAttributeChanged, this, [this](const DUrl & url) {
         int index = findItem(url, groupName(Device));
 
-        // optical drives are not managed by this.
         if (!~index) {
             return;
         }
@@ -520,7 +519,7 @@ void DFMSideBar::initDeviceConnection()
         DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
         DViewItemActionList actionList = item->actionList(Qt::RightEdge);
         DAbstractFileInfoPointer pointer = DFileService::instance()->createFileInfo(nullptr, url);
-        if (item && !actionList.isEmpty()) {
+        if (pointer && item && !actionList.isEmpty()) {
             const QVariantHash &extensionInfo = pointer->extraProperties();
 
             bool isMounted = extensionInfo.value("isMounted", false).toBool();
