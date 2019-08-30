@@ -286,8 +286,6 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     }
     else if(m_hovered||(m_hovered&&!isChecked())){
         painter->fillRect(boundingRect(), pal.color(QPalette::Active, QPalette::Base));
-//        pen.setColor(ThemeConfig::instace()->color("Tab", "color", ThemeConfig::Hover));
-//        painter->setPen(pen);
         painter->drawText((m_width-fm.width(str))/2,(m_height-fm.height())/2,
                           fm.width(str),fm.height(),0,str);
     }
@@ -303,7 +301,8 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     QPoint point = QPointF(boundingRect().width()-1, boundingRect().height()-1).toPoint();
     qDrawShadeLine(painter, QPoint(0, number), point, option->palette);
     qDrawShadeLine(painter, QPoint(number2, 0), point, option->palette);
-    pen.setColor(ThemeConfig::instace()->color("Tab", "border"));
+    QPalette::ColorGroup cp = isChecked()||m_hovered?QPalette::Active:QPalette::Inactive;
+    pen.setColor(pal.color(cp, QPalette::Foreground));
     painter->setPen(pen);
     // border left
     if(m_borderLeft){
@@ -432,25 +431,11 @@ TabCloseButton::TabCloseButton(QGraphicsItem *parent):
 {
     setFlag(QGraphicsItem::ItemIsSelectable);
     setAcceptHoverEvents(true);
-
-//    m_active_normalIcon.addFile(":/icons/images/icons/active_tab_close_normal.png");
-//    m_active_normalIcon.addFile(":/icons/images/icons/active_tab_close_normal@2x.png");
-//    m_active_hoverIcon.addFile(":/icons/images/icons/active_tab_close_hover.png");
-//    m_active_hoverIcon.addFile(":/icons/images/icons/active_tab_close_hover@2x.png");
-//    m_active_pressIcon.addFile(":/icons/images/icons/active_tab_close_press.png");
-//    m_active_pressIcon.addFile(":/icons/images/icons/active_tab_close_press@2x.png");
-
-//    m_normalIcon.addFile(":/icons/images/icons/tab_close_normal.png");
-//    m_normalIcon.addFile(":/icons/images/icons/tab_close_normal@2x.png");
-//    m_hoverIcon.addFile(":/icons/images/icons/tab_close_hover.png");
-//    m_hoverIcon.addFile(":/icons/images/icons/tab_close_hover@2x.png");
-//    m_pressIcon.addFile(":/icons/images/icons/tab_close_press.png");
-//    m_pressIcon.addFile(":/icons/images/icons/tab_close_press@2x.png");
 }
 
 QRectF TabCloseButton::boundingRect() const
 {
-    return QRectF(0,0,23,23);
+    return QRectF(1,1,20,20);
 
 }
 
@@ -458,37 +443,27 @@ void TabCloseButton::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 {
     Q_UNUSED(option);
     Q_UNUSED(widget);
-    QPixmap pixmap;
-    pixmap.setDevicePixelRatio(qApp->devicePixelRatio());
 
     QIcon closeIcon = QIcon::fromTheme("dialog-close");
     QSize size = boundingRect().size().toSize();
-    pixmap = closeIcon.pixmap(size/*, QIcon::Active*/);
-//    if(m_mousePressed){
-//        if(m_activeWidthTab)
-////            pixmap = m_active_pressIcon.pixmap(size);
-//            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon", ThemeConfig::Pressed | ThemeConfig::Focus);
-//        else
-//            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon", ThemeConfig::Pressed);
-////            pixmap = m_pressIcon.pixmap(size);
-//    }
-//    else if(m_mouseHovered){
-//        if(m_activeWidthTab)
-////            pixmap = m_active_hoverIcon.pixmap(size);
-//            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon", ThemeConfig::Hover | ThemeConfig::Focus);
-//        else
-//            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon", ThemeConfig::Hover);
-////            pixmap = m_hoverIcon.pixmap(size);
-//    }
-//    else{
-//        if(m_activeWidthTab)
-////            pixmap = m_active_normalIcon.pixmap(size);
-//            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon", ThemeConfig::Focus);
-//        else
-//            pixmap = ThemeConfig::instace()->pixmap("TabCloseButton", "icon");
-////            pixmap = m_normalIcon.pixmap(size);
-//    }
-    painter->drawPixmap(boundingRect().toRect(),pixmap);
+    QPainterPath path;
+    QRectF rect = boundingRect();
+    path.addRoundedRect(rect, size.width()/2, size.width()/2);
+
+    QPalette::ColorGroup cp = m_mousePressed||m_mouseHovered ? QPalette::Active : QPalette::Normal;
+    QPalette::ColorRole  role = QPalette::Background;
+    if (m_mousePressed)
+        role = QPalette::Highlight;
+    if (m_mouseHovered)
+         role = QPalette::Dark;
+
+    // drawbackground color
+    painter->setRenderHint(QPainter::Antialiasing, true);
+    painter->fillPath(path, option->palette.color(cp, role));
+    painter->setRenderHint(QPainter::Antialiasing, false);
+
+    QRect rc = rect.toRect();
+    closeIcon.paint(painter, rc, Qt::AlignCenter, m_mousePressed||m_mouseHovered ? QIcon::Active : QIcon::Normal);
 }
 
 int TabCloseButton::closingIndex()
