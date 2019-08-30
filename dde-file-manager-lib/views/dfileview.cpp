@@ -1949,7 +1949,7 @@ void DFileView::initUI()
     d->verticalScrollBar->setParent(this);
 
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    setViewportMargins(0, 0, -verticalScrollBar()->sizeHint().width(), 0);
+    //setViewportMargins(0, 0, -verticalScrollBar()->sizeHint().width(), 0);
 
     if (d->allowedAdjustColumnSize) {
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
