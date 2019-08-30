@@ -366,7 +366,7 @@ static QString getIconName(const CrumbData& c)
         iconName = systemPathManager->getSystemPathIconName("Recent");
     } else if (c.url.isTrashFile()) {
         iconName = systemPathManager->getSystemPathIconName("Trash");
-    } else if (c.url.isNetWorkFile()) {
+    } else if (c.url.isNetWorkFile() || c.url.isSMBFile() ) {
         iconName = systemPathManager->getSystemPathIconName("Network");
     } else if (c.url.isUserShareFile()) {
         iconName = systemPathManager->getSystemPathIconName("UserShare");
