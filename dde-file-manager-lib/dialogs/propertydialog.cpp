@@ -80,6 +80,28 @@
 #include "unistd.h"
 
 #include <models/trashfileinfo.h>
+#define ArrowLineExpand_HIGHT   30
+#define ArrowLineExpand_SPACING 10
+
+class DFMDArrowLineExpand : public DArrowLineExpand{
+protected:
+    void paintEvent(QPaintEvent *event) override
+    {
+        Q_UNUSED(event);
+        QPainter painter(this);
+        QRectF bgRect;
+        bgRect.setSize(size());
+        const QPalette pal = this->palette();
+        QColor bgColor = pal.color(QPalette::Background);
+
+        QPainterPath path;
+        path.addRoundedRect(bgRect, 8, 8);
+        // drawbackground color
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        painter.fillPath(path, bgColor);
+        painter.setRenderHint(QPainter::Antialiasing, false);
+    }
+};
 
 class DFProgressBar : public QProgressBar
 {
@@ -737,7 +759,7 @@ int PropertyDialog::contentHeight() const
     return (m_icon->height() +
             m_editStackWidget->height() +
             expandGroup()->expands().first()->getContent()->height() +
-            expandGroup()->expands().size() * 30 +
+            expandGroup()->expands().size() * (ArrowLineExpand_HIGHT + ArrowLineExpand_SPACING) +
             contentsMargins().top() +
             contentsMargins().bottom() +
             (m_wdf ? m_wdf->height() : 0)+
@@ -749,7 +771,7 @@ void PropertyDialog::loadPluginExpandWidgets()
     QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(this->layout());
     QList<PropertyDialogExpandInfoInterface *> plugins = PluginManager::instance()->getExpandInfoInterfaces();
     foreach (PropertyDialogExpandInfoInterface *plugin, plugins) {
-        DArrowLineExpand *expand = new DArrowLineExpand;
+        DArrowLineExpand *expand = new DFMDArrowLineExpand;//DArrowLineExpand;
         QWidget *frame = plugin->expandWidget(m_url.toString());
         if (!frame) {
             continue;
@@ -757,10 +779,11 @@ void PropertyDialog::loadPluginExpandWidgets()
         frame->setMaximumHeight(EXTEND_FRAME_MAXHEIGHT);
         frame->setParent(this);
         expand->setTitle(plugin->expandWidgetTitle(m_url.toString()));
-        expand->setFixedHeight(30);
+        expand->setFixedHeight(ArrowLineExpand_HIGHT);
         expand->setExpand(false);
         expand->setContent(frame);
         layout->addWidget(expand, 0, Qt::AlignTop);
+        layout->addSpacing(ArrowLineExpand_SPACING);
         m_expandGroup->addExpand(expand);
     }
     layout->addStretch();
@@ -772,20 +795,17 @@ DExpandGroup *PropertyDialog::addExpandWidget(const QStringList &titleList)
 {
     QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(this->layout());
     DExpandGroup *group = new DExpandGroup;
-    QLabel *line = new QLabel(this);
-    line->setObjectName("Line");
-    line->setFixedHeight(1);
-    layout->addWidget(line);
 
     for (const QString &title : titleList) {
-        DArrowLineExpand *expand = new DArrowLineExpand;
+        DArrowLineExpand *expand = new DFMDArrowLineExpand;//DArrowLineExpand;
 
         expand->setTitle(title);
-        expand->setFixedHeight(30);
+        expand->setFixedHeight(ArrowLineExpand_HIGHT);
 
         connect(expand, &DArrowLineExpand::expandChange, this, &PropertyDialog::onExpandChanged);
 
         layout->addWidget(expand, 0, Qt::AlignTop);
+        layout->addSpacing(ArrowLineExpand_SPACING);
 
         group->addExpand(expand);
     }
@@ -799,14 +819,13 @@ void PropertyDialog::initTextShowFrame(const QString &text)
     m_editButton = new QPushButton(m_textShowFrame);
     m_editButton->setObjectName("EditButton");
     m_editButton->setFixedSize(16, 16);
-    m_editButton->setIcon(QIcon::fromTheme("edit-rename"));
+    m_editButton->setIcon(QIcon::fromTheme("edit-rename").pixmap({16, 16}));
     m_editButton->setFlat(true);
     connect(m_editButton, &QPushButton::clicked, this, &PropertyDialog::renameFile);
 
     QString t = DFMGlobal::elideText(text, m_edit->size(), QTextOption::WrapAtWordBoundaryOrAnywhere, m_edit->font(), Qt::ElideMiddle, 0);
     QStringList labelTexts = t.split("\n");
     const int maxLineCount = 3;
-
 
     int textLineCount = 1;
     QVBoxLayout *textShowLayout = new QVBoxLayout;
