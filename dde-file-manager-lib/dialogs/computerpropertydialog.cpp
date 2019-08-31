@@ -41,6 +41,8 @@
 #include <QProcess>
 #include <QDebug>
 #include <QRegularExpression>
+#include <QPainter>
+#include <DGraphicsClipEffect>
 
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
@@ -59,21 +61,13 @@ void ComputerPropertyDialog::initUI()
 
     iconLabel->setPixmap(logoIcon.pixmap(152, 39));
     QLabel *nameLabel = new QLabel(tr("Computer"), this);
-    nameLabel->setStyleSheet("QLabel { font-size: 13px; }");
-
-    QLabel *lineLabel = new QLabel(this);
-    lineLabel->setObjectName("Line");
-    lineLabel->setFixedSize(300, 2);
-    lineLabel->setStyleSheet("QLabel#Line{"
-                             "border: none;"
-                             "background-color: #f0f0f0;"
-                             "}");
+    nameLabel->setStyleSheet("QLabel { font-size: 17px; color:#001A2E; font-weight: bold; }");
 
     QLabel *messageLabel = new QLabel(tr("Basic Info"), this);
-    messageLabel->setStyleSheet("QLabel { font-size: 13px; }");
+    messageLabel->setStyleSheet("QLabel { font-size: 17px;color:#001A2E; font-weight: bold; }");
 
     QGridLayout *gridLayout = new QGridLayout;
-    gridLayout->setColumnMinimumWidth(0, 100);
+    //gridLayout->setColumnMinimumWidth(0, 100);
     gridLayout->setColumnMinimumWidth(1, 170);
     gridLayout->setSpacing(10);
 
@@ -95,10 +89,10 @@ void ComputerPropertyDialog::initUI()
         valLabel->setTextFormat(Qt::PlainText);
         valLabel->setWordWrap(true);
 
-        keyLabel->setStyleSheet("QLabel { color: #777777; font-size: 12px; }");
-        valLabel->setStyleSheet("QLabel { font-size: 12px; }");
+        keyLabel->setStyleSheet("QLabel { color: #001A2E; font-size: 13px; }");
+        valLabel->setStyleSheet("QLabel { color: #526A7F; font-size: 12px; }");
 
-        gridLayout->addWidget(keyLabel, row, 0, Qt::AlignRight | Qt::AlignTop);
+        gridLayout->addWidget(keyLabel, row, 0, Qt::AlignLeft | Qt::AlignTop);
         gridLayout->addWidget(valLabel, row, 1, Qt::AlignLeft | Qt::AlignTop);
         gridLayout->setRowMinimumHeight(row, valLabel->heightForWidth(gridLayout->columnMinimumWidth(1)));
         row++;
@@ -108,22 +102,25 @@ void ComputerPropertyDialog::initUI()
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->addWidget(iconLabel, 0, Qt::AlignHCenter);
-    mainLayout->addSpacing(60);
     mainLayout->addWidget(nameLabel, 0, Qt::AlignHCenter);
-    mainLayout->addSpacing(15);
-    mainLayout->addWidget(lineLabel, 0, Qt::AlignHCenter);
-    mainLayout->addSpacing(5);
-    QHBoxLayout *messageLayout = new QHBoxLayout;
-    messageLayout->setSpacing(0);
-    messageLayout->addSpacing(30);
-    messageLayout->addWidget(messageLabel);
-    mainLayout->addLayout(messageLayout);
-    mainLayout->addSpacing(10);
-    mainLayout->addLayout(gridLayout);
-    mainLayout->addStretch(1);
+    mainLayout->addSpacing(25);
+    mainLayout->addWidget(iconLabel, 0, Qt::AlignHCenter);
+    mainLayout->addSpacing(21);
 
-    setFixedSize(320, 460);
+
+    QFrame *baseInfoFrame = new QFrame;
+    QString backColor = palette().color(QPalette::Base).name();
+    baseInfoFrame->setStyleSheet(QString("background-color: %1; border-radius: 8px;").arg(backColor));
+    QVBoxLayout *baseInfoLayout = new QVBoxLayout;
+    baseInfoFrame->setLayout(baseInfoLayout);
+    baseInfoLayout->addWidget(messageLabel);
+    baseInfoLayout->addSpacing(10);
+    baseInfoLayout->setContentsMargins(10, 5, 10, 5);
+    baseInfoLayout->addLayout(gridLayout);
+
+    mainLayout->addWidget(baseInfoFrame);
+
+    setFixedSize(320, 400);
     contentFrame->setLayout(mainLayout);
 
     addContent(contentFrame);
