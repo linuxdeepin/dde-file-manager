@@ -61,10 +61,18 @@ void ComputerPropertyDialog::initUI()
 
     iconLabel->setPixmap(logoIcon.pixmap(152, 39));
     QLabel *nameLabel = new QLabel(tr("Computer"), this);
-    nameLabel->setStyleSheet("QLabel { font-size: 17px; color:#001A2E; font-weight: bold; }");
+    auto pt = nameLabel->palette();
+    pt.setColor(QPalette::Text, palette().color(QPalette::Normal, QPalette::Text));
+    auto font = nameLabel->font();
+    font.setBold(true);
+    font.setPixelSize(17);
+    nameLabel->setFont(font);
+    nameLabel->setPalette(pt);
 
     QLabel *messageLabel = new QLabel(tr("Basic Info"), this);
-    messageLabel->setStyleSheet("QLabel { font-size: 17px;color:#001A2E; font-weight: bold; }");
+    messageLabel->setPalette(pt);
+    messageLabel->setFont(font);
+
 
     QGridLayout *gridLayout = new QGridLayout;
     //gridLayout->setColumnMinimumWidth(0, 100);
@@ -89,8 +97,23 @@ void ComputerPropertyDialog::initUI()
         valLabel->setTextFormat(Qt::PlainText);
         valLabel->setWordWrap(true);
 
-        keyLabel->setStyleSheet("QLabel { color: #001A2E; font-size: 13px; }");
-        valLabel->setStyleSheet("QLabel { color: #526A7F; font-size: 12px; }");
+        font = keyLabel->font();
+        font.setPixelSize(13);
+        keyLabel->setFont(font);
+
+        font = valLabel->font();
+        font.setPixelSize(12);
+        valLabel->setFont(font);
+
+        pt = keyLabel->palette();
+        pt.setColor(QPalette::Text, palette().color(QPalette::Normal, QPalette::HighlightedText));
+        keyLabel->setPalette(pt);
+
+        pt = valLabel->palette();
+        pt.setColor(QPalette::Text, palette().color(QPalette::Inactive, QPalette::Text));
+        valLabel->setPalette(pt);
+//        keyLabel->setStyleSheet("QLabel { color: #001A2E; font-size: 13px; }");
+//        valLabel->setStyleSheet("QLabel { color: #526A7F; font-size: 12px; }");
 
         gridLayout->addWidget(keyLabel, row, 0, Qt::AlignLeft | Qt::AlignTop);
         gridLayout->addWidget(valLabel, row, 1, Qt::AlignLeft | Qt::AlignTop);
@@ -106,7 +129,6 @@ void ComputerPropertyDialog::initUI()
     mainLayout->addSpacing(25);
     mainLayout->addWidget(iconLabel, 0, Qt::AlignHCenter);
     mainLayout->addSpacing(21);
-
 
     QFrame *baseInfoFrame = new QFrame;
     QString backColor = palette().color(QPalette::Base).name();
