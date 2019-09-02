@@ -54,7 +54,8 @@ void ShareInfoFrame::initUI()
     int fieldWidth = 160;
 
     m_shareCheckBox = new QCheckBox(this);
-    m_shareCheckBox->setFixedHeight(20);
+    //m_shareCheckBox->setFixedHeight(20);
+    m_shareCheckBox->setFixedWidth(fieldWidth);
     m_shareCheckBox->setText(tr("Share this folder"));
 
     QWidget *centerAlignContainer = new QWidget();

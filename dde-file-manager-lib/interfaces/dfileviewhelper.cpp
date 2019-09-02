@@ -483,7 +483,7 @@ void DFileViewHelper::initStyleOption(QStyleOptionViewItem *option, const QModel
         option->state &= QStyle::StateFlag(~QStyle::State_Selected);
     }
 
-    auto appPalette = QGuiApplication::palette();
+    QPalette appPalette = QGuiApplication::palette();
 
     auto setcolor1 = [](QPalette& p1, QPalette& p2, QPalette::ColorRole role){
         p1.setColor(role, p2.color(role));

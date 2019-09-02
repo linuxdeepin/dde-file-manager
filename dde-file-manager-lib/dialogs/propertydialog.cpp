@@ -76,7 +76,7 @@
 #include <QVariantAnimation>
 #include <QScrollArea>
 #include <ddiskmanager.h>
-
+#include <QGuiApplication>
 #include "unistd.h"
 
 #include <models/trashfileinfo.h>
@@ -91,7 +91,7 @@ protected:
         QPainter painter(this);
         QRectF bgRect;
         bgRect.setSize(size());
-        const QPalette pal = this->palette();
+        const QPalette pal = QGuiApplication::palette();//this->palette();
         QColor bgColor = pal.color(QPalette::Background);
 
         QPainterPath path;
