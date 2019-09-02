@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
     app.setOrganizationName("deepin");
     app.setApplicationName("dde-desktop");
     app.setApplicationVersion(DApplication::buildVersion((GIT_VERSION)));
-    app.setTheme("light");
+    app.setTheme("chameleon");
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     const QString m_format = "%{time}{yyyyMMdd.HH:mm:ss.zzz}[%{type:1}][%{function:-35} %{line:-4} %{threadid} ] %{message}\n";

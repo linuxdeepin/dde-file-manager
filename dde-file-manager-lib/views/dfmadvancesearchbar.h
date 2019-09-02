@@ -29,7 +29,7 @@
 #include <QWidget>
 #include <dfmglobal.h>
 #include <dboxwidget.h>
-#include <dlinkbutton.h>
+#include <QCommandLinkButton>
 
 DWIDGET_USE_NAMESPACE
 
@@ -65,7 +65,7 @@ private:
     QBoxLayout *mainLayout;
     QLabel *asbLabels[LABEL_COUNT];
     QComboBox *asbCombos[LABEL_COUNT];
-    DLinkButton *resetBtn;
+    QCommandLinkButton *resetBtn;
     bool needSearchAgain = true;
 };
 

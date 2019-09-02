@@ -14,7 +14,7 @@
 #include "dfmfilepreview.h"
 #include "dabstractfileinfo.h"
 #include <dabstractdialog.h>
-#include <dseparatorhorizontal.h>
+#include <DHorizontalLine>
 #include <QPointer>
 QT_BEGIN_NAMESPACE
 class QPushButton;
@@ -32,8 +32,8 @@ class UnknowFilePreview : public DFMFilePreview
 {
     Q_OBJECT
 public:
-    explicit UnknowFilePreview(QObject *parent = 0);
-    ~UnknowFilePreview();
+    explicit UnknowFilePreview(QObject *parent = nullptr);
+    ~UnknowFilePreview() override;
 
     bool setFileUrl(const DUrl &url) Q_DECL_OVERRIDE;
     DUrl fileUrl() const override;
@@ -90,12 +90,12 @@ private:
     DUrlList m_fileList;
     DUrlList m_entryUrlList;
 
-    QPushButton *m_closeButton = 0;
-    DSeparatorHorizontal *m_separator;
+    QPushButton *m_closeButton = nullptr;
+    DHorizontalLine *m_separator;
     FilePreviewDialogStatusBar *m_statusBar;
 
     int m_currentPageIndex = -1;
-    DFMFilePreview *m_preview = 0;
+    DFMFilePreview *m_preview = nullptr;
 
 };
 

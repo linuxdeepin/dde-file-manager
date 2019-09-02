@@ -1,6 +1,6 @@
 #include "burnoptdialog.h"
 #include <DLineEdit>
-#include "dlabel.h"
+#include <DLabel>
 #include <QComboBox>
 #include <QCheckBox>
 #include <QVBoxLayout>

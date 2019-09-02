@@ -23,10 +23,11 @@
  */
 
 #include "trashpropertydialog.h"
-#include "dseparatorhorizontal.h"
 #include "shutil/fileutils.h"
 #include "dfileservices.h"
 #include "dfilestatisticsjob.h"
+
+#include <DHorizontalLine>
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -71,7 +72,7 @@ void TrashPropertyDialog::initUI()
     if(fCount != 1)
         itemStr = tr("items");
 
-    DSeparatorHorizontal* hLine = new DSeparatorHorizontal(this);
+    DHorizontalLine* hLine = new DHorizontalLine(this);
     m_countLabel = new QLabel(tr("Contains %1 %2").arg(QString::number(fCount),itemStr), this);
     m_sizeLabel = new QLabel(this);
 
