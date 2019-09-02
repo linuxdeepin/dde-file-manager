@@ -12,7 +12,6 @@
 #include "app/define.h"
 #include "dfilesystemmodel.h"
 #include "private/dstyleditemdelegate_p.h"
-#include "views/themeconfig.h"
 #include "dfmapplication.h"
 
 #include <QLabel>

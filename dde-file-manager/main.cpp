@@ -47,8 +47,6 @@
 #include "singleton.h"
 #include "gvfs/gvfsmountmanager.h"
 
-// DBus
-#include "views/themeconfig.h"
 #include "dfmapplication.h"
 
 #include <QApplication>

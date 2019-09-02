@@ -47,7 +47,6 @@
 #include "view/viewinterface.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "views/dfilemanagerwindow.h"
-#include "themeconfig.h"
 
 #include <qdrawutil.h>
 

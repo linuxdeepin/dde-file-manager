@@ -34,7 +34,6 @@
 #include "dabstractfilewatcher.h"
 #include "dfmheaderview.h"
 #include "dfmeventdispatcher.h"
-#include "themeconfig.h"
 #include "dfmsettings.h"
 #include "dblockdevice.h"
 #include "ddiskdevice.h"
