@@ -28,7 +28,6 @@
 #include "controllers/searchhistroymanager.h"
 
 #include "singleton.h"
-#include "themeconfig.h"
 #include "dfileservices.h"
 
 #include <QAction>
@@ -310,7 +309,7 @@ void DFMAddressBar::paintEvent(QPaintEvent *e)
         if (icon.availableSizes().isEmpty())
             return;
         const QSize &size = icon.availableSizes().first();
-        QPixmap glowingImg = icon.pixmap(size);//ThemeConfig::instace()->pixmap("DSearchBar.glowingAnimation", "image");
+        QPixmap glowingImg = icon.pixmap(size);
         float curValue = animation->currentValue().toFloat();
         float xPos = (this->width() + glowingImg.width()) * curValue - glowingImg.width();
 
@@ -438,7 +437,6 @@ void DFMAddressBar::updateIndicatorIcon()
 {
     QIcon indicatorIcon;
     QString scope = indicatorType == IndicatorType::Search ? "search" : "go-right";
-    //indicatorIcon.addFile(ThemeConfig::instace()->value(scope, "icon").toString());
     indicatorIcon = QIcon::fromTheme(scope).pixmap({16, 16});
     indicator->setIcon(indicatorIcon);
 }
