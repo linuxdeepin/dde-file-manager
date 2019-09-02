@@ -561,6 +561,8 @@ void ComputerView::initUI()
 #endif
     scroller_properties.setScrollMetric(QScrollerProperties::DragStartDistance, touchTapDistance / 1000);
     scroller->setScrollerProperties(scroller_properties);
+    setBackgroundRole(QPalette::ColorRole::Base);
+    m_contentArea->setFrameShape(QFrame::Shape::NoFrame);
 
     m_statusBar = new DStatusBar(this);
     m_statusBar->setFixedHeight(22);
@@ -569,6 +571,8 @@ void ComputerView::initUI()
     setIconSizeBySizeIndex(m_currentIconSizeIndex);
     m_statusBar->scalingSlider()->setTickInterval(1);
     m_statusBar->scalingSlider()->setPageStep(1);
+    m_statusBar->setBackgroundRole(QPalette::ColorRole::Base);
+    m_statusBar->setAutoFillBackground(true);
 
     QFrame *contentFrame = new QFrame(this);
 
