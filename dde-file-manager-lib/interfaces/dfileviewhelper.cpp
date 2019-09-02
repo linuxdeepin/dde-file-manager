@@ -483,33 +483,37 @@ void DFileViewHelper::initStyleOption(QStyleOptionViewItem *option, const QModel
         option->state &= QStyle::StateFlag(~QStyle::State_Selected);
     }
 
-    option->palette.setColor(QPalette::Text, ThemeConfig::instace()->color("FileView", "color"));
-    option->palette.setColor(QPalette::Disabled, QPalette::Text, ThemeConfig::instace()->color("FileView", "color", ThemeConfig::Dislable));
+    auto appPalette = QGuiApplication::palette();
+
+    auto setcolor1 = [](QPalette& p1, QPalette& p2, QPalette::ColorRole role){
+        p1.setColor(role, p2.color(role));
+    };
+
+    auto setcolor2 = [](QPalette& p1, QPalette& p2, QPalette::ColorGroup group, QPalette::ColorRole role){
+        p1.setColor(group, role, p2.color(group, role));
+    };
+
+    setcolor1(option->palette, appPalette, QPalette::Text);
+    setcolor2(option->palette, appPalette, QPalette::Disabled, QPalette::Text);
+
     if ((option->state & QStyle::State_Selected) && option->showDecorationSelected) {
-        option->palette.setColor(QPalette::Inactive, QPalette::Text, ThemeConfig::instace()->color("FileView", "color", ThemeConfig::Checked | ThemeConfig::Inactive));
+        setcolor2(option->palette, appPalette, QPalette::Inactive, QPalette::Text);
     } else {
-        option->palette.setColor(QPalette::Inactive, QPalette::Text, ThemeConfig::instace()->color("FileView", "color", ThemeConfig::Inactive));
+        setcolor2(option->palette, appPalette, QPalette::Inactive, QPalette::Text);
     }
+
     option->palette.setColor(QPalette::BrightText, Qt::white);
-    option->palette.setBrush(QPalette::Shadow, ThemeConfig::instace()->color("FileView", "shadow"));
 
-    bool transp = isTransparent(index);
-
-    if (transp) {
-        option->backgroundBrush = ThemeConfig::instace()->color("FileView", "background", ThemeConfig::Inactive);
-    }
+    setcolor1(option->palette, appPalette, QPalette::Shadow);
 
     if ((option->state & QStyle::State_HasFocus) && option->showDecorationSelected && selectedIndexsCount() > 1) {
-        option->palette.setColor(QPalette::Background, ThemeConfig::instace()->color("FileView", "background", ThemeConfig::Focus));
-
-        if (!transp)
-            option->backgroundBrush = ThemeConfig::instace()->color("FileView", "background", ThemeConfig::Focus);
+        setcolor2(option->palette, appPalette, QPalette::Current, QPalette::Background);
     } else {
-        option->palette.setColor(QPalette::Background, ThemeConfig::instace()->color("FileView", "background"));
-
-        if (!transp)
-            option->backgroundBrush = ThemeConfig::instace()->color("FileView", "background");
+        setcolor2(option->palette, appPalette, QPalette::Normal, QPalette::Background);
     }
+
+    bool transp = isTransparent(index);
+    option->backgroundBrush = appPalette.brush(transp ? QPalette::Inactive : QPalette::Current, QPalette::Background);
 
     option->textElideMode = Qt::ElideLeft;
 }
@@ -520,6 +524,7 @@ void DFileViewHelper::handleMenu(QMenu *menu)
 
     if (Q_UNLIKELY(!file_menu))
         return;
+
 
     QAction *tag_action = file_menu->actionAt("Add color tags");
 
