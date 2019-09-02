@@ -1,13 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>light/DFileView.theme</file>
-        <file>light/OpenWithOtherDialog.theme</file>
-        <file>light/DFileViewRoot.theme</file>
-        <file>dark/DFileManagerWindow.theme</file>
-        <file>dark/DFileView.theme</file>
-        <file>dark/DFileViewRoot.theme</file>
-        <file>dark/OpenWithOtherDialog.theme</file>
-        <file>light/DFileManagerWindow.theme</file>
         <file>dark/config.ini</file>
         <file>light/config.ini</file>
         <file>dark/icons/Android_phone_active_16px.svg</file>
@@ -77,8 +69,6 @@
         <file>dark/icons/tab_close_hover.svg</file>
         <file>dark/icons/tab_close_normal.svg</file>
         <file>dark/icons/tab_close_press.svg</file>
-        <file>dark/DFileManagerWindowAdmin.theme</file>
-        <file>light/DFileManagerWindowAdmin.theme</file>
         <file>dark/icons/network_normal_16px.svg</file>
         <file>dark/icons/network_active_16px.svg</file>
         <file>dark/icons/usb_active_16px.svg</file>

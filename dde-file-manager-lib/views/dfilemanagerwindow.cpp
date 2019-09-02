@@ -67,7 +67,6 @@
 #include "view/viewinterface.h"
 #include "plugins/pluginmanager.h"
 #include "controllers/trashmanager.h"
-#include "themeconfig.h"
 
 #include <dplatformwindowhandle.h>
 #include <DThemeManager>

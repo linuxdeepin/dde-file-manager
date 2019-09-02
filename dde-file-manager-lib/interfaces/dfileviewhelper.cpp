@@ -17,7 +17,6 @@
 #include "dabstractfileinfo.h"
 #include "dfilesystemmodel.h"
 #include "views/fileitem.h"
-#include "views/themeconfig.h"
 #include "views/dtagactionwidget.h"
 #include "singleton.h"
 #include "dfileservices.h"

@@ -37,7 +37,6 @@
 #include "views/windowmanager.h"
 #include "views/dfilemanagerwindow.h"
 #include "views/dfmaddressbar.h"
-#include "views/themeconfig.h"
 #include "dfmcrumbfactory.h"
 #include "dfmcrumbinterface.h"
 #include "dfmapplication.h"
