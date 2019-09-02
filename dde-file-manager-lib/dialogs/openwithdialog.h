@@ -29,7 +29,7 @@
 #include "durl.h"
 
 #include <dflowlayout.h>
-#include <dlinkbutton.h>
+#include <DCommandLinkButton>
 
 #include <QObject>
 #include <QMimeType>
@@ -47,15 +47,15 @@ class OpenWithDialog : public BaseDialog
 {
     Q_OBJECT
 public:
-    explicit OpenWithDialog(const DUrl& url, QWidget *parent = 0);
-    ~OpenWithDialog();
+    explicit OpenWithDialog(const DUrl& url, QWidget *parent = nullptr);
+    ~OpenWithDialog() override;
 
 public slots:
     void openFileByApp();
 
 protected:
-    void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
-    bool eventFilter(QObject *obj, QEvent *event) Q_DECL_OVERRIDE;
+    void showEvent(QShowEvent *event) override;
+    bool eventFilter(QObject *obj, QEvent *event) override;
 
 private:
     void initUI();
@@ -65,18 +65,18 @@ private:
     void useOtherApplication();
     OpenWithDialogListItem *createItem(const QIcon &icon, const QString &name, const QString &filePath);
 
-    QScrollArea *m_scrollArea = NULL;
-    DFlowLayout *m_recommandLayout = NULL;
-    DFlowLayout *m_otherLayout = NULL;
+    QScrollArea *m_scrollArea = nullptr;
+    DFlowLayout *m_recommandLayout = nullptr;
+    DFlowLayout *m_otherLayout = nullptr;
 
-    DLinkButton *m_openFileChooseButton = NULL;
-    QCheckBox *m_setToDefaultCheckBox = NULL;
-    QPushButton *m_cancelButton = NULL;
-    QPushButton *m_chooseButton = NULL;
+    QCommandLinkButton *m_openFileChooseButton = nullptr;
+    QCheckBox *m_setToDefaultCheckBox = nullptr;
+    QPushButton *m_cancelButton = nullptr;
+    QPushButton *m_chooseButton = nullptr;
     DUrl m_url;
     QMimeType m_mimeType;
 
-    OpenWithDialogListItem *m_checkedItem = NULL;
+    OpenWithDialogListItem *m_checkedItem = nullptr;
 };
 
 #endif // OPENWITHDIALOG_H

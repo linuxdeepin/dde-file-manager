@@ -36,9 +36,9 @@
 
 #include "singleton.h"
 #include <QComboBox>
-#include <dtextbutton.h>
-#include <dlineedit.h>
-#include <danchors.h>
+#include <QPushButton>
+#include <DLineEdit>
+#include <DAnchors>
 
 #include <QFutureWatcher>
 #include <QFuture>

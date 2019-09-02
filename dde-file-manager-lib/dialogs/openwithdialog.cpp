@@ -33,8 +33,6 @@
 
 #include "singleton.h"
 
-#include <dseparatorhorizontal.h>
-
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
@@ -49,6 +47,8 @@
 #include <QFileDialog>
 #include <QStandardPaths>
 #include <QScroller>
+#include <QCommandLinkButton>
+#include <DHorizontalLine>
 
 class OpenWithDialogListItem : public QWidget
 {
@@ -168,13 +168,13 @@ public:
     explicit OpenWithDialogListSparerItem(const QString &title, QWidget *parent = 0);
 
 private:
-    DSeparatorHorizontal *m_separator;
+    DHorizontalLine *m_separator;
     QLabel *m_title;
 };
 
 OpenWithDialogListSparerItem::OpenWithDialogListSparerItem(const QString &title, QWidget *parent)
     : QWidget(parent)
-    , m_separator(new DSeparatorHorizontal(this))
+    , m_separator(new DHorizontalLine(this))
     , m_title(new QLabel(title, this))
 {
     m_title->setStyleSheet("QLabel{color: rgba(32, 32, 32, 0.4); font-size: 18px;}");
@@ -226,7 +226,7 @@ void OpenWithDialog::initUI()
     m_recommandLayout = new DFlowLayout;
     m_otherLayout = new DFlowLayout;
 
-    m_openFileChooseButton = new DLinkButton(tr("Add other programs"));
+    m_openFileChooseButton = new QCommandLinkButton(tr("Add other programs"));
     m_setToDefaultCheckBox = new QCheckBox(tr("Set as default"));
     m_setToDefaultCheckBox->setChecked(true);
     m_cancelButton = new QPushButton(tr("Cancel"));
@@ -254,7 +254,7 @@ void OpenWithDialog::initUI()
     QVBoxLayout *main_layout= new QVBoxLayout(this);
     QVBoxLayout *bottom_layout = new QVBoxLayout;
 
-    bottom_layout->addWidget(new DSeparatorHorizontal(this));
+    bottom_layout->addWidget(new DHorizontalLine(this));
     bottom_layout->addSpacing(5);
     bottom_layout->addLayout(buttonLayout);
     bottom_layout->setContentsMargins(10, 0, 10, 0);
@@ -268,7 +268,7 @@ void OpenWithDialog::initConnect()
 {
     connect(m_cancelButton, &QPushButton::clicked, this, &OpenWithDialog::close);
     connect(m_chooseButton, &QPushButton::clicked, this, &OpenWithDialog::openFileByApp);
-    connect(m_openFileChooseButton, &DLinkButton::clicked, this, &OpenWithDialog::useOtherApplication);
+    connect(m_openFileChooseButton, &QCommandLinkButton::clicked, this, &OpenWithDialog::useOtherApplication);
 }
 
 void OpenWithDialog::initData()

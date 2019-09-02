@@ -28,6 +28,7 @@
 #include <QGuiApplication>
 #include <QCursor>
 #include <QDesktopWidget>
+#include <QHBoxLayout>
 
 DFM_BEGIN_NAMESPACE
 
@@ -340,7 +341,7 @@ void FilePreviewDialog::initUI()
     m_closeButton->setFlat(true);
     m_closeButton->setFixedSize({24,24});
 
-    m_separator = new DSeparatorHorizontal(this);
+    m_separator = new DHorizontalLine(this);
     m_separator->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     m_statusBar = new FilePreviewDialogStatusBar(this);
@@ -414,7 +415,7 @@ void FilePreviewDialog::switchToPage(int index)
         return switchToPage(index);
     }
 
-    DFMFilePreview *preview = 0;
+    DFMFilePreview *preview = nullptr;
     const QMimeType &mime_type = info->mimeType();
 
     QStringList key_list(mime_type.name());
@@ -490,7 +491,7 @@ void FilePreviewDialog::switchToPage(int index)
     m_separator->setVisible(preview->showStatusBarSeparator());
     m_preview = preview;
 
-    QTimer::singleShot(0, this, [preview, this] {
+    QTimer::singleShot(0, this, [this] {
         resize(sizeHint());
         updateTitle();
         m_statusBar->openButton()->setFocus();

@@ -54,7 +54,6 @@
 #include "../plugininterfaces/menu/menuinterface.h"
 #include "dfmeventdispatcher.h"
 
-#include <dseparatorhorizontal.h>
 #include <darrowlineexpand.h>
 #include <dexpandgroup.h>
 #include <dblockdevice.h>

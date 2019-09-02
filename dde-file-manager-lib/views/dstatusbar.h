@@ -66,7 +66,7 @@ public:
         DialogSave
     };
 
-    DStatusBar(QWidget * parent = 0);
+    DStatusBar(QWidget * parent = nullptr);
 
     void initUI();
     void initConnect();

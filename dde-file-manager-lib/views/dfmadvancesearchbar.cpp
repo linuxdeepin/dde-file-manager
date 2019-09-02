@@ -26,6 +26,8 @@
 #include <QFormLayout>
 #include <QLabel>
 #include <QTimer>
+#include <QCommandLinkButton>
+
 #include <dboxwidget.h>
 
 DWIDGET_USE_NAMESPACE
@@ -104,7 +106,7 @@ void DFMAdvanceSearchBar::initUI()
     createLabelCombo(SIZE_RANGE, qApp->translate("DFMAdvanceSearchBar", "File Size:"));
     createLabelCombo(DATE_RANGE, qApp->translate("DFMAdvanceSearchBar", "Time Modified:"));
 
-    resetBtn = new DLinkButton(qApp->translate("DFMAdvanceSearchBar", "Reset"), this);
+    resetBtn = new QCommandLinkButton(qApp->translate("DFMAdvanceSearchBar", "Reset"), this);
     resetBtn->setFocusPolicy(Qt::NoFocus);
 
     int leftLebelWidth = 80; //  qMin(asbLabels[SEARCH_RANGE]->width(), asbLabels[SIZE_RANGE]->width())
@@ -182,7 +184,7 @@ void DFMAdvanceSearchBar::initUI()
 
 void DFMAdvanceSearchBar::initConnection()
 {
-    connect(resetBtn, &DLinkButton::pressed, this, &DFMAdvanceSearchBar::onResetButtonPressed);
+    connect(resetBtn, &QCommandLinkButton::pressed, this, &DFMAdvanceSearchBar::onResetButtonPressed);
 
     for (int i = 0; i < LABEL_COUNT; i++) {
         connect(asbCombos[i], static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &DFMAdvanceSearchBar::onOptionChanged);
