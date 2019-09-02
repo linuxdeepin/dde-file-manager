@@ -75,11 +75,17 @@ void TrashPropertyDialog::initUI()
     m_countLabel = new QLabel(tr("Contains %1 %2").arg(QString::number(fCount),itemStr), this);
     m_sizeLabel = new QLabel(this);
 
+    QFrame *infoFrame = new QFrame;
+    infoFrame->setFixedHeight(48);
     QHBoxLayout* infoLayout = new QHBoxLayout;
     infoLayout->addWidget(m_countLabel);
     infoLayout->addStretch();
     infoLayout->addWidget(m_sizeLabel);
-    infoLayout->setContentsMargins(10, 0, 0, 0);
+    infoLayout->setContentsMargins(10, 0, 10, 0);
+    infoFrame->setLayout(infoLayout);
+
+    QString backColor = palette().color(QPalette::Base).name();
+    infoFrame->setStyleSheet(QString("background-color: %1; border-radius: 8px;").arg(backColor));
 
     QFrame* contenFrame = new QFrame;
 
@@ -87,7 +93,8 @@ void TrashPropertyDialog::initUI()
     mainLayout->addWidget(m_iconLabel, 0, Qt::AlignHCenter);
     mainLayout->addWidget(m_nameLable, 0, Qt::AlignHCenter);
     mainLayout->addWidget(hLine);
-    mainLayout->addLayout(infoLayout);
+    //mainLayout->addLayout(infoLayout);
+    mainLayout->addWidget(infoFrame);
     mainLayout->setContentsMargins(10, 10, 10, 10);
     contenFrame->setLayout(mainLayout);
 
