@@ -9,13 +9,10 @@
 #include "dfmactionbutton.h"
 
 #include <QAction>
-#include <QDebug>
-#include <QStyleOptionButton>
-#include <QStylePainter>
 #include <QApplication>
 
 DFMActionButton::DFMActionButton(QWidget *parent)
-    : QAbstractButton(parent)
+    : DIconButton(parent)
 {
     setMouseTracking(true);
 }
@@ -27,6 +24,7 @@ void DFMActionButton::setAction(QAction *action)
         setEnabled(action->isEnabled());
         setCheckable(action->isCheckable());
         setChecked(action->isChecked());
+        setIcon(action->icon());
     };
 
     onActionChanged();
@@ -40,30 +38,4 @@ void DFMActionButton::setAction(QAction *action)
 QAction *DFMActionButton::action() const
 {
     return actions().value(0);
-}
-
-void DFMActionButton::paintEvent(QPaintEvent *)
-{
-    QStylePainter p(this);
-    QStyleOption option;
-    option.rect = rect();
-    option.initFrom(this);
-
-    if (isChecked()) {
-        option.state |= QStyle::State_On;
-    }
-
-    p.drawPrimitive(QStyle::PE_Widget, option);
-
-    if (action()){
-        const QIcon &icon = action()->icon();
-        QSize pixmapSize(16, 16);
-        QPixmap pixmap = icon.pixmap(pixmapSize, QIcon::Normal, option.state.testFlag(QStyle::State_On) ? QIcon::On : QIcon::Off);
-
-        if (option.state.testFlag(QStyle::State_MouseOver)) {
-            pixmap = icon.pixmap(pixmapSize, QIcon::Active, option.state.testFlag(QStyle::State_On) ? QIcon::On : QIcon::Off);
-        }
-        pixmap.setDevicePixelRatio(qApp->devicePixelRatio());
-        p.drawItemPixmap(option.rect, Qt::AlignCenter, pixmap);
-    }
 }
