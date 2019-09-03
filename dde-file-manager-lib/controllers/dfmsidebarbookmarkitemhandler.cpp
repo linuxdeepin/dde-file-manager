@@ -97,12 +97,12 @@ QMenu *DFMSideBarBookmarkItemHandler::contextMenu(const DFMSideBar *sidebar, con
     })->setEnabled(fileExist && shouldEnable);
 
     menu->addSeparator();
-
+#ifdef QT_DEBUG // fixme: implement rename
     menu->addAction(QObject::tr("Rename"), []() {
 //        DFMSideBarBookmarkItem *ccItem = const_cast<DFMSideBarBookmarkItem *>(this);
 //        ccItem->showRenameEditor();
     })->setEnabled(fileExist);
-
+#endif // QT_DEBUG
     menu->addAction(QObject::tr("Remove"), [item]() {
         DFileService::instance()->deleteFiles(nullptr, DUrlList{item->url()}, false);
     });
