@@ -1765,6 +1765,7 @@ void CanvasGridView::initUI()
     d->selectFrame->setGeometry(QRect(-1, -1, 0, 0));
 
     d->fileViewHelper = new CanvasViewHelper(this);
+    d->fileViewHelper->setProperty("isCanvasViewHelper", true);
 
     setModel(new DFileSystemModel(d->fileViewHelper));
     model()->setEnabledSort(false);
