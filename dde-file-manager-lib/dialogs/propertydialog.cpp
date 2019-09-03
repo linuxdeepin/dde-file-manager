@@ -900,10 +900,13 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     layout->setHorizontalSpacing(12);
     layout->setVerticalSpacing(16);
     layout->setLabelAlignment(Qt::AlignRight);
+
+    int frameHeight = EXTEND_FRAME_MAXHEIGHT;
     if (info->isDir()) {
         SectionKeyLabel *fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
         layout->addRow(sizeSectionLabel, m_folderSizeLabel);
         layout->addRow(fileAmountSectionLabel, m_containSizeLabel);
+        frameHeight += 30;
     } else {
         layout->addRow(sizeSectionLabel, m_containSizeLabel);
     }
@@ -923,6 +926,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         QString t = linkPathLabel->fontMetrics().elidedText(info->symlinkTargetPath(), Qt::ElideMiddle, 150);
         linkPathLabel->setText(t);
         layout->addRow(linkPathSectionLabel, linkPathLabel);
+        frameHeight += 30;
     }
 
     if (!info->isVirtualEntry()) {
@@ -942,10 +946,10 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
 
     layout->setContentsMargins(0, 0, 40, 0);
     widget->setLayout(layout);
-    widget->setFixedSize(width(), EXTEND_FRAME_MAXHEIGHT);
-    if (info->isSymLink()) {
-        widget->setFixedSize(width(), EXTEND_FRAME_MAXHEIGHT + 30);
-    }
+    widget->setFixedSize(width(), frameHeight);
+//    if (info->isSymLink()) {
+//        widget->setFixedSize(width(), EXTEND_FRAME_MAXHEIGHT + 30);
+//    }
 
     return widget;
 }
