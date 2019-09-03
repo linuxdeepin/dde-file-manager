@@ -96,6 +96,8 @@ public:
     static bool openExcutableFile(const QString& path, int flag);
     static bool runCommand(const QString& cmd, const QStringList& args, const QString& wd = QString());
 
+    static void mkpath(const DUrl &path);
+
     static QByteArray imageFormatName(QImage::Format f);
 
     static QString getFileContent(const QString &file);
