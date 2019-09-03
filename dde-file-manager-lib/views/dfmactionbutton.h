@@ -9,20 +9,19 @@
 #ifndef DFMACTIONBUTTON_H
 #define DFMACTIONBUTTON_H
 
-#include <QAbstractButton>
+#include <DIconButton>
 
-class DFMActionButton : public QAbstractButton
+DWIDGET_USE_NAMESPACE
+
+class DFMActionButton : public DIconButton
 {
     Q_OBJECT
 
 public:
-    explicit DFMActionButton(QWidget *parent = 0);
+    explicit DFMActionButton(QWidget *parent = nullptr);
 
     void setAction(QAction *action);
     QAction *action() const;
-
-protected:
-    void paintEvent(QPaintEvent *) Q_DECL_OVERRIDE;
 };
 
 #endif // DFMACTIONBUTTON_H
