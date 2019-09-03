@@ -1745,6 +1745,7 @@ void CanvasGridView::initUI()
     setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAutoFillBackground(false);
+    setFrameShape(QFrame::NoFrame); // TODO: using QWidget instead of QFrame?
 
     auto primaryScreen = Display::instance()->primaryScreen();
     setGeometry(primaryScreen->geometry());
