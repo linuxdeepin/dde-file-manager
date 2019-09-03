@@ -82,8 +82,7 @@ HEADERS += \
     config/dfmdesktopsettings.h \
     view/backgroundhelper.h
 
-RESOURCES += \
-    resource/theme/theme.qrc
+RESOURCES +=
 
 # Automating generation .qm files from .ts files
 
