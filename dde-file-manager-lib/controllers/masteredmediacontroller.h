@@ -51,9 +51,6 @@ public:
 
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
 
-private:
-    void mkpath(DUrl path) const;
-
 public:
     static DUrl getStagingFolder(DUrl dst);
 };

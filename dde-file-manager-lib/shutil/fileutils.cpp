@@ -938,6 +938,21 @@ bool FileUtils::runCommand(const QString &cmd, const QStringList &args, const QS
     return result;
 }
 
+void FileUtils::mkpath(const DUrl &path)
+{
+    if (path.parentUrl() == path) {
+        return;
+    }
+    if (fileService->createFileInfo(nullptr, path)->isDir()) {
+        return;
+    }
+    if (fileService->mkdir(nullptr, path)) {
+        return;
+    }
+    mkpath(path.parentUrl());
+    fileService->mkdir(nullptr, path);
+}
+
 QByteArray FileUtils::imageFormatName(QImage::Format f)
 {
     switch (f) {

@@ -364,7 +364,7 @@ DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> 
     }
 
     DUrl tmpdst = getStagingFolder(dst);
-    mkpath(tmpdst);
+    FileUtils::mkpath(tmpdst);
 
     return fileService->pasteFile(event->sender(), event->action(), tmpdst, src);
 }
@@ -378,7 +378,7 @@ const DDirIteratorPointer MasteredMediaController::createDirIterator(const QShar
 {
     //Make sure the staging folder exists. Otherwise the staging watcher won't work.
     if (event->url().burnFilePath().contains(QRegularExpression("^/*$"))) {
-        mkpath(getStagingFolder(event->url()));
+        FileUtils::mkpath(getStagingFolder(event->url()));
     }
     return DDirIteratorPointer(new DFMShadowedDirIterator(event->url(), event->nameFilters(), event->filters(), event->flags()));
 }
@@ -452,20 +452,6 @@ DAbstractFileWatcher *MasteredMediaController::createFileWatcher(const QSharedPo
     return new MasteredMediaFileWatcher(event->url());
 }
 
-void MasteredMediaController::mkpath(DUrl path) const
-{
-    if (path.parentUrl() == path) {
-        return;
-    }
-    if (fileService->createFileInfo(this, path)->isDir()) {
-        return;
-    }
-    if (fileService->mkdir(this, path)) {
-        return;
-    }
-    mkpath(path.parentUrl());
-    fileService->mkdir(this, path);
-}
 
 DUrl MasteredMediaController::getStagingFolder(DUrl dst)
 {
