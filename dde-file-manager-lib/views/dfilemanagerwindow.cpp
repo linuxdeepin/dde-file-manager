@@ -917,6 +917,8 @@ void DFileManagerWindow::initTitleBar()
             set_theme_action->setChecked(true);
         }
         connect(set_theme_action, &QAction::triggered, this, &DFileManagerWindow::onThemeChanged);
+        // TODO: wait for new switch theme API or remove this menu completely
+        set_theme_action->setVisible(false);
     }
 
     titlebar()->setMenu(menu);
