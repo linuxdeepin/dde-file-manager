@@ -41,6 +41,7 @@
 #include <QApplication>
 #include <QAbstractItemView>
 #include <QVBoxLayout>
+#include <dgiosettings.h>
 #include <private/qtextengine_p.h>
 
 #include "dstyleoption.h"
@@ -606,19 +607,20 @@ void DIconItemDelegate::paint(QPainter *painter,
     bool isSelected = !isDragMode && (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
     bool isDropTarget = parent()->isDropTarget(index);
 
-    //QColor(Qt::lightGray); // file item background-color
     QPalette::ColorGroup cg = (option.widget ? option.widget->isEnabled() : (option.state & QStyle::State_Enabled))
             ? QPalette::Normal : QPalette::Disabled;
     if (cg == QPalette::Normal && !(option.state & QStyle::State_Active))
         cg = QPalette::Inactive;
 
     QPalette::ColorRole role = QPalette::Background;
-    if ( /*cg == QPalette::Normal && */(isSelected || isDropTarget)) {
+    if (isSelected || isDropTarget) {
         role = QPalette::Highlight;
     }
 
     QRectF rect = opt.rect;
-    rect.adjust(10,10,-10,-10); // 为了让对勾右上角， 缩小框框
+    int backgroundMargin = isCanvas ? 0 : 10;
+    if (!isCanvas)
+        rect.adjust(backgroundMargin, backgroundMargin, -backgroundMargin, -backgroundMargin); // 为了让对勾右上角， 缩小框框
 
     QPainterPath path;
     rect.moveTopLeft(QPointF(0.5, 0.5) + rect.topLeft());
@@ -641,8 +643,9 @@ void DIconItemDelegate::paint(QPainter *painter,
     QRectF icon_rect = opt.rect;
 
     icon_rect.setSize(parent()->parent()->iconSize());
+    int iconTopOffset = isCanvas ? 0 : (opt.rect.height() - icon_rect.height()) / 3.0;
     icon_rect.moveLeft(opt.rect.left() + (opt.rect.width() - icon_rect.width()) / 2.0);
-    icon_rect.moveTop(opt.rect.top() + (opt.rect.height() - icon_rect.height()) / 3.0 ); // move icon down
+    icon_rect.moveTop(opt.rect.top() +  iconTopOffset); // move icon down
 
     /// draw icon
     if (isSelected) {
@@ -670,36 +673,12 @@ void DIconItemDelegate::paint(QPainter *painter,
         cornerIconList.at(i).paint(painter, cornerGeometryList.at(i).toRect());
     }
 
-    if (isSelected) {
+    if (!isCanvas && isSelected) {
         QRect rc = option.rect;
         rc.setSize({30,30});
         rc.moveTopRight(QPoint(option.rect.right(),option.rect.top()));
         QIcon::fromTheme("dialog-ok").paint(painter, rc);
     }
-
-
-//    /// draw file name label
-//    if (isSelected) {
-//        QPainterPath path;
-
-//        QRect label_background_rect = label_rect;
-
-//        label_background_rect.setSize(d->textSize(str, painter->fontMetrics(), d->textLineHeight));
-//        label_background_rect.moveLeft(label_rect.left() + (label_rect.width() - label_background_rect.width()) / 2);
-//        label_background_rect += QMargins(TEXT_PADDING, TEXT_PADDING, TEXT_PADDING, TEXT_PADDING);
-
-//        path.addRoundedRect(label_background_rect, ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
-//        painter->save();
-//        painter->setRenderHint(QPainter::Antialiasing);
-//        painter->fillPath(path, opt.backgroundBrush);
-//        if (hasFocus && !singleSelected) {
-//            painter->setPen(QPen(focusTextBackgroundBorderColor(), 2));
-//            painter->drawPath(path);
-//        }
-//        painter->restore();
-//    } else {
-//        painter->fillRect(label_rect, Qt::transparent);
-//    }
 
     if ((index == d->expandedIndex || index == d->editingIndex) && !isDragMode) {
         return;
@@ -708,12 +687,11 @@ void DIconItemDelegate::paint(QPainter *painter,
     QString str = opt.text;
 
     /// init file name geometry
-
     QRectF label_rect = opt.rect;
 
     label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
-    label_rect.setWidth(opt.rect.width() - 2 * TEXT_PADDING);
-    label_rect.moveLeft(label_rect.left() + TEXT_PADDING);
+    label_rect.setWidth(opt.rect.width() - 2 * TEXT_PADDING - 2*backgroundMargin);
+    label_rect.moveLeft(label_rect.left() + TEXT_PADDING + backgroundMargin);
 
     if (isSelected) {
         painter->setPen(opt.palette.color(QPalette::BrightText));
@@ -730,23 +708,15 @@ void DIconItemDelegate::paint(QPainter *painter,
         int height = 0;
 
         /// init file name text
+        const QList<QRectF> &lines = drawText(index, 0, str, label_rect.adjusted(0, 0, 0, 99999), 0, QBrush(Qt::NoBrush));
+        height = boundingRect(lines).height();
 
-//        if (d->textHeightMap.contains(str)) {
-//            str = d->wordWrapMap.value(str);
-//            height = d->textHeightMap.value(str);
-//        } else {
-            const QList<QRectF> &lines = drawText(index, 0, str, label_rect.adjusted(0, 0, 0, 99999), 0, QBrush(Qt::NoBrush));
-//            wordWrap_str = trimmedEnd(wordWrap_str);
+        // do we expend select text height..?
+        DGioSettings settings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
+        bool shouldExpend = isCanvas || settings.value("iconview-expend-item").toBool();
 
-//            d->wordWrapMap[str] = wordWrap_str;
-            height = boundingRect(lines).height();
-//            d->textHeightMap[str] = height;
-//            str = wordWrap_str;
-//        }
-
-        if (0 && height > label_rect.height()) {// do not expend select text height..?
+        if (shouldExpend && height > label_rect.height()) {
             /// use widget(FileIconItem) show file icon and file name label.
-
             d->expandedIndex = index;
 
             setEditorData(d->expandedItem, index);
@@ -757,6 +727,7 @@ void DIconItemDelegate::paint(QPainter *painter,
             d->expandedItem->option = opt;
             d->expandedItem->textBounding = QRectF();
             d->expandedItem->setFixedWidth(0);
+            d->expandedItem->setContentsMargins(backgroundMargin, iconTopOffset, backgroundMargin, 0);
 
             if (parent()->indexOfRow(index) == parent()->rowCount() - 1) {
                 d->lastAndExpandedInde = index;
@@ -878,7 +849,8 @@ void DIconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
     QLabel *icon = item->icon;
 
     if (icon_size.height() != icon->size().height()) {
-        int topoffset = (opt.rect.height() - icon_size.height()) / 3;//update edit pos
+        bool isCanvas = parent()->property("isCanvasViewHelper").toBool();
+        int topoffset =  isCanvas ? 0 : (opt.rect.height() - icon_size.height()) / 3;//update edit pos
         icon->setFixedHeight(icon_size.height()+topoffset);
     }
 }
