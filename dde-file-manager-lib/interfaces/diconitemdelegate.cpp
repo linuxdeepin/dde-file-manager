@@ -618,7 +618,7 @@ void DIconItemDelegate::paint(QPainter *painter,
     }
 
     QRectF rect = opt.rect;
-    int backgroundMargin = isCanvas ? 0 : 10;
+    int backgroundMargin = isCanvas ? 0 : COLUMU_PADDING;
     if (!isCanvas)
         rect.adjust(backgroundMargin, backgroundMargin, -backgroundMargin, -backgroundMargin); // 为了让对勾右上角， 缩小框框
 
@@ -1138,7 +1138,7 @@ void DIconItemDelegate::updateItemSizeHint()
     d->textLineHeight = parent()->parent()->fontMetrics().height();
 
     int width = parent()->parent()->iconSize().width() + 30;
-    int height = parent()->parent()->iconSize().height()
+    int height = parent()->parent()->iconSize().height() + 2*COLUMU_PADDING
             + 2 * TEXT_PADDING  + ICON_MODE_ICON_SPACING + 3 * d->textLineHeight;
     int size = qMax(width, height);
     d->itemSizeHint = QSize(size, size);
