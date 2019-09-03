@@ -83,14 +83,14 @@ QMenu *DFMSideBarTagItemHandler::contextMenu(const DFMSideBar *sidebar, const DF
     })->setDisabled(shouldDisable);
 
     menu->addSeparator();
-
+#ifdef QT_DEBUG // fixme: implement rename
     menu->addAction(QObject::tr("Rename"), [sidebar, item]() {
         int index = sidebar->findItem(item);
         if (index >= 0) {
             sidebar->openItemEditor(index);
         }
     });
-
+#endif // QT_DEBUG
     menu->addAction(QObject::tr("Remove"), [item]() {
         DFileService::instance()->deleteFiles(nullptr, DUrlList{item->url()}, false);
     });

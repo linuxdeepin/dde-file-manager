@@ -156,7 +156,7 @@ QMenu *DFMSideBarDeviceItemHandler::contextMenu(const DFMSideBar *sidebar, const
     })->setDisabled(shouldDisable);
 
     menu->addSeparator();
-
+#ifdef QT_DEBUG // fixme: implement rename
     if (infoPointer->canRename()) {
         menu->addAction(QObject::tr("Rename"), [sidebar, item]() {
             int index = sidebar->findItem(item);
@@ -165,7 +165,7 @@ QMenu *DFMSideBarDeviceItemHandler::contextMenu(const DFMSideBar *sidebar, const
             }
         });
     }
-
+#endif // QT_DEBUG
     if (info.value("canStop", false).toBool()) {
         menu->addAction(QObject::tr("Safely Remove"), [info, deviceIdUrl]() {
             AppController::instance()->actionSafelyRemoveDrive(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, deviceIdUrl));
