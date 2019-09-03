@@ -571,6 +571,7 @@ void DIconItemDelegate::paint(QPainter *painter,
 {
     Q_D(const DIconItemDelegate);
 
+    bool isCanvas = parent()->property("isCanvasViewHelper").toBool();
     /// judgment way of the whether drag model(another way is: painter.devType() != 1)
     bool isDragMode = ((QPaintDevice*)parent()->parent()->viewport() != painter->device());
     bool isEnabled = option.state & QStyle::State_Enabled;
@@ -623,7 +624,7 @@ void DIconItemDelegate::paint(QPainter *painter,
     rect.moveTopLeft(QPointF(0.5, 0.5) + rect.topLeft());
     path.addRoundedRect(rect, ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
 
-    if (!isDragMode){ // 拖拽的图标不画背景
+    if (!isCanvas && !isDragMode){ // 桌面和拖拽的图标不画背景
         painter->setRenderHint(QPainter::Antialiasing, true);
         painter->fillPath(path, option.palette.color(cg, role));
         painter->setRenderHint(QPainter::Antialiasing, false);
