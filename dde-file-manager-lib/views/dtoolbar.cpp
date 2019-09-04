@@ -120,14 +120,12 @@ void DToolBar::initAddressToolBar()
     QHBoxLayout * backForwardLayout = new QHBoxLayout;
 
     QSize size(ButtonWidth, ButtonHeight);
-    m_backButton = new QPushButton(this);
-    m_backButton->setIcon(QIcon::fromTheme("go-previous").pixmap(iconSize));
+    m_backButton = new DIconButton(DStyle::SP_ArrowBack, this);
     m_backButton->setIconSize(iconSize);
     m_backButton->setFixedSize(size);
     m_backButton->setDisabled(true);
     m_backButton->setFocusPolicy(Qt::NoFocus);
-    m_forwardButton = new QPushButton(this);
-    m_forwardButton->setIcon(QIcon::fromTheme("go-next").pixmap(iconSize));
+    m_forwardButton = new DIconButton(DStyle::SP_ArrowForward, this);
     m_forwardButton->setIconSize(iconSize);
     m_forwardButton->setFixedSize(size);
     m_forwardButton->setDisabled(true);
