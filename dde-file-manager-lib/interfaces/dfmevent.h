@@ -454,7 +454,9 @@ public:
 class DFMCreateSymlinkEvent : public DFMEvent
 {
 public:
-    explicit DFMCreateSymlinkEvent(const QObject *sender, const DUrl &fileUrl, const DUrl &toUrl);
+    explicit DFMCreateSymlinkEvent(const QObject *sender, const DUrl &fileUrl, const DUrl &toUrl, bool force = false);
+
+    bool force() const;
 
     inline DUrl fileUrl() const
     {

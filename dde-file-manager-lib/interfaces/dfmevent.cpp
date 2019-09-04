@@ -578,10 +578,16 @@ DFMRemoveBookmarkEvent::DFMRemoveBookmarkEvent(const QObject *sender, const DUrl
 
 }
 
-DFMCreateSymlinkEvent::DFMCreateSymlinkEvent(const QObject *sender, const DUrl &fileUrl, const DUrl &toUrl)
+DFMCreateSymlinkEvent::DFMCreateSymlinkEvent(const QObject *sender, const DUrl &fileUrl, const DUrl &toUrl, bool force/* = false*/)
     : DFMEvent(CreateSymlink, sender)
 {
     setData(makeData(fileUrl, toUrl));
+    setProperty(QT_STRINGIFY(DFMDeleteEvent::force), force);
+}
+
+bool DFMCreateSymlinkEvent::force() const
+{
+    return property(QT_STRINGIFY(DFMDeleteEvent::force), false);
 }
 
 DUrlList DFMCreateSymlinkEvent::handleUrlList() const
@@ -591,8 +597,10 @@ DUrlList DFMCreateSymlinkEvent::handleUrlList() const
 
 QSharedPointer<DFMCreateSymlinkEvent> DFMCreateSymlinkEvent::fromJson(const QJsonObject &json)
 {
-    return dMakeEventPointer<DFMCreateSymlinkEvent>(Q_NULLPTR, DUrl::fromUserInput(json["fileUrl"].toString()),
+    const QSharedPointer<DFMCreateSymlinkEvent> &event = dMakeEventPointer<DFMCreateSymlinkEvent>(Q_NULLPTR, DUrl::fromUserInput(json["fileUrl"].toString()),
             DUrl::fromUserInput(json["toUrl"].toString()));
+    event->setProperty(QT_STRINGIFY(DFMDeleteEvent::force), json["force"].toBool());
+    return event;
 }
 
 DFMFileShareEvent::DFMFileShareEvent(const QObject *sender, const DUrl &url,

@@ -130,7 +130,7 @@ public:
     bool addToBookmark(const QObject *sender, const DUrl &fileUrl) const;
     bool removeBookmark(const QObject *sender, const DUrl &fileUrl) const;
     bool createSymlink(const QObject *sender, const DUrl &fileUrl) const;
-    bool createSymlink(const QObject *sender, const DUrl &fileUrl, const DUrl &linkToUrl) const;
+    bool createSymlink(const QObject *sender, const DUrl &fileUrl, const DUrl &linkToUrl, bool force = false) const;
     bool sendToDesktop(const QObject *sender, const DUrlList &urlList) const;
 
     bool shareFolder(const QObject *sender, const DUrl &fileUrl, const QString &name, bool isWritable = false, bool allowGuest = false);
