@@ -65,6 +65,7 @@ DFMSideBar::DFMSideBar(QWidget *parent)
     initModelData();
     initConnection();
     initUserShareItem();
+    initRecentItem();
 }
 
 void DFMSideBar::setCurrentUrl(const DUrl &url)
@@ -396,7 +397,7 @@ void DFMSideBar::initRecentItem()
     auto recentLambda = [=] (bool enable) {
         int index = findItem(DUrl(RECENT_ROOT), groupName(Common));
         if (index) {
-            m_sidebarView->setRowHidden(index, enable);
+            m_sidebarView->setRowHidden(index, !enable);
             if (!enable) {
                 // jump out of recent:///
                 DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT), &DAbstractFileWatcher::fileDeleted, DUrl(RECENT_ROOT));
