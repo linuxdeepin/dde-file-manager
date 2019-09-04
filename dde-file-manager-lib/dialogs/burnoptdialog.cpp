@@ -1,6 +1,6 @@
 #include "burnoptdialog.h"
 #include <DLineEdit>
-#include <DLabel>
+#include <QLabel>
 #include <QComboBox>
 #include <QCheckBox>
 #include <QVBoxLayout>
@@ -24,12 +24,12 @@ public:
 private:
     BurnOptDialog *q_ptr;
     QWidget *w_content;
-    DLabel *lb_volname;
+    QLabel *lb_volname;
     DLineEdit *le_volname;
-    DLabel *lb_writespeed;
+    QLabel *lb_writespeed;
     QComboBox *cb_writespeed;
     QCheckBox *cb_iclose;
-    DLabel *lb_postburn;
+    QLabel *lb_postburn;
     QCheckBox *cb_checkdisc;
     QCheckBox *cb_eject;
     QString dev;
@@ -142,14 +142,14 @@ void BurnOptDialogPrivate::setupUi()
     q->addContent(w_content);
 
 
-    lb_volname = new DLabel(QObject::tr("Disc name:"));
+    lb_volname = new QLabel(QObject::tr("Disc name:"));
     w_content->layout()->addWidget(lb_volname);
 
     le_volname = new DLineEdit();
     le_volname->setMaxLength(32);
     w_content->layout()->addWidget(le_volname);
 
-    lb_writespeed = new DLabel(QObject::tr("Write speed:"));
+    lb_writespeed = new QLabel(QObject::tr("Write speed:"));
     w_content->layout()->addWidget(lb_writespeed);
 
     cb_writespeed = new QComboBox();

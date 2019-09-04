@@ -3,7 +3,7 @@
 #include "shutil/fileutils.h"
 #include "dialogs/burnoptdialog.h"
 
-#include <DLabel>
+#include <QLabel>
 #include <DPushButton>
 
 #include <QHBoxLayout>
@@ -22,8 +22,8 @@ public:
     void setCurrentDevice(const QString &dev);
     QString getCurrentDevice() const;
 private:
-    DLabel *lb_mediatype;
-    DLabel *lb_available;
+    QLabel *lb_mediatype;
+    QLabel *lb_available;
     DPushButton *pb_burn;
     QHBoxLayout *layout;
     DFMOpticalMediaWidget *q_ptr;
@@ -70,8 +70,8 @@ void DFMOpticalMediaWidgetPrivate::setupUi()
     Q_Q(DFMOpticalMediaWidget);
     layout = new QHBoxLayout(q);
     q->setLayout(layout);
-    layout->addWidget(lb_mediatype = new DLabel("<Media Type>"));
-    layout->addWidget(lb_available = new DLabel("<Space Available>"));
+    layout->addWidget(lb_mediatype = new QLabel("<Media Type>"));
+    layout->addWidget(lb_available = new QLabel("<Space Available>"));
     layout->addWidget(pb_burn = new DPushButton());
     pb_burn->setText(QObject::tr("Burn"));
 
