@@ -391,6 +391,23 @@ void DFMSideBar::initUserShareItem()
     connect(userShareFileWatcher, &DAbstractFileWatcher::subfileCreated, this, userShareLambda);
 }
 
+void DFMSideBar::initRecentItem()
+{
+    auto recentLambda = [=] (bool enable) {
+        int index = findItem(DUrl(RECENT_ROOT), groupName(Common));
+        if (index) {
+            m_sidebarView->setRowHidden(index, enable);
+            if (!enable) {
+                // jump out of recent:///
+                DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT), &DAbstractFileWatcher::fileDeleted, DUrl(RECENT_ROOT));
+            }
+        }
+    };
+
+    recentLambda(DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowRecentFileEntry).toBool());
+    connect(DFMApplication::instance(), &DFMApplication::recentDisplayChanged, this, recentLambda);
+}
+
 void DFMSideBar::initBookmarkConnection()
 {
     DAbstractFileWatcher *bookmarkWatcher = DFileService::instance()->createFileWatcher(this, DUrl(BOOKMARK_ROOT), this);

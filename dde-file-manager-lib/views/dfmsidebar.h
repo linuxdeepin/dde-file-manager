@@ -84,6 +84,7 @@ private:
     void initModelData();
     void initConnection();
     void initUserShareItem();
+    void initRecentItem();
     void initBookmarkConnection();
     void initDeviceConnection();
     void initTagsConnection();
