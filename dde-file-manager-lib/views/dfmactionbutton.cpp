@@ -15,6 +15,7 @@ DFMActionButton::DFMActionButton(QWidget *parent)
     : DIconButton(parent)
 {
     setMouseTracking(true);
+    setFlat(true);
 }
 
 void DFMActionButton::setAction(QAction *action)
