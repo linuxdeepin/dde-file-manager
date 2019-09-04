@@ -2373,7 +2373,15 @@ QString FileJob::getNotExistsTrashFileName(const QString &fileName)
     name.chop(suffix.size());
     name = name.left(200 - suffix.size());
 
-    while (QFile::exists(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + "/" + name + suffix)) {
+    QString trashpath = DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + "/" ;
+
+    while (true) {
+        QFileInfo info(trashpath + name + suffix);
+        // QFile::exists ==> If the file is a symlink that points to a non-existing file, false is returned.
+        if(!info.isSymLink() && !info.exists()){
+            break;
+        }
+
         name = QCryptographicHash::hash(name, QCryptographicHash::Md5).toHex();
     }
 
