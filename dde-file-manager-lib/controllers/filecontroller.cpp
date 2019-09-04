@@ -928,6 +928,14 @@ bool FileController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &
         return true;
     }
 
+    if (event->force()){
+        // replace symlink, remove if target was existed
+        QFileInfo toLink(event->toUrl().toLocalFile());
+        if (toLink.isSymLink() || toLink.exists()){
+            QFile::remove(event->toUrl().toLocalFile());
+        }
+    }
+
     int code = ::symlink(event->fileUrl().toLocalFile().toLocal8Bit().constData(),
                          event->toUrl().toLocalFile().toLocal8Bit().constData());
     if (code == -1) {

@@ -623,12 +623,12 @@ bool DFileService::createSymlink(const QObject *sender, const DUrl &fileUrl) con
         return false;
     }
 
-    return createSymlink(sender, fileUrl, DUrl::fromLocalFile(linkPath));
+    return createSymlink(sender, fileUrl, DUrl::fromLocalFile(linkPath), true);
 }
 
-bool DFileService::createSymlink(const QObject *sender, const DUrl &fileUrl, const DUrl &linkToUrl) const
+bool DFileService::createSymlink(const QObject *sender, const DUrl &fileUrl, const DUrl &linkToUrl, bool force/* = false*/) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMCreateSymlinkEvent>(sender, fileUrl, linkToUrl)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMCreateSymlinkEvent>(sender, fileUrl, linkToUrl, force)).toBool();
 }
 
 bool DFileService::sendToDesktop(const QObject *sender, const DUrlList &urlList) const
