@@ -39,6 +39,7 @@ QT_END_NAMESPACE
 
 DWIDGET_BEGIN_NAMESPACE
 class DGraphicsClipEffect;
+class DIconButton;
 DWIDGET_END_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
@@ -102,8 +103,8 @@ private:
 
     bool m_searchState = false;
     QFrame* m_addressToolBar;
-    QPushButton* m_backButton = nullptr;
-    QPushButton* m_forwardButton = nullptr;
+    DIconButton* m_backButton = nullptr;
+    DIconButton* m_forwardButton = nullptr;
     QPushButton* m_searchButton = nullptr;
     QPushButton* m_detailButton = nullptr;
     QFrame* m_contollerToolBar;
