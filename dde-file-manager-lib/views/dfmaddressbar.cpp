@@ -308,7 +308,7 @@ void DFMAddressBar::paintEvent(QPaintEvent *e)
         QIcon icon = QIcon::fromTheme("dfm_addressbar-glowing");
         if (icon.availableSizes().isEmpty())
             return;
-        const QSize &size = icon.availableSizes().first();
+        const QSize size = icon.availableSizes().first();
         QPixmap glowingImg = icon.pixmap(size);
         float curValue = animation->currentValue().toFloat();
         float xPos = (this->width() + glowingImg.width()) * curValue - glowingImg.width();
