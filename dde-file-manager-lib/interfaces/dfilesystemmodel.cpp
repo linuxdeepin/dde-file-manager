@@ -25,7 +25,6 @@
 #include "dfilesystemmodel.h"
 #include "dabstractfileinfo.h"
 #include "dfileservices.h"
-#include "dfmevent.h"
 #include "dabstractfilewatcher.h"
 #include "dfmstyleditemdelegate.h"
 #include "dfmapplication.h"

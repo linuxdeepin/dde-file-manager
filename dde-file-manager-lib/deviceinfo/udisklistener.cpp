@@ -25,7 +25,6 @@
 #include "udisklistener.h"
 #include "fstab.h"
 #include "dfileservices.h"
-#include "dfmevent.h"
 #include "dfmapplication.h"
 #include "dfmsettings.h"
 

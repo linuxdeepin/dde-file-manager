@@ -16,6 +16,7 @@
 #include "singleton.h"
 #include "app/define.h"
 #include "dfileservices.h"
+#include "dfmevent.h"
 #include "private/dabstractfilewatcher_p.h"
 
 class ShareFileWatcherPrivate;

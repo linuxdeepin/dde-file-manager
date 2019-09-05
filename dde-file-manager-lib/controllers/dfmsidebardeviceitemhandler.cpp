@@ -22,7 +22,6 @@
 #include "dfmsidebardeviceitemhandler.h"
 
 #include "singleton.h"
-#include "dfmevent.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "dfileservices.h"

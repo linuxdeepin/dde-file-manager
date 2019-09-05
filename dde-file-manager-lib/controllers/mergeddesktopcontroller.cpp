@@ -21,7 +21,6 @@
 
 #include "mergeddesktopcontroller.h"
 
-#include "dfmevent.h"
 #include "dfilewatcher.h"
 #include "dfileservices.h"
 #include "appcontroller.h"

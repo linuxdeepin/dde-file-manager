@@ -12,7 +12,6 @@
 
 #include <QObject>
 #include "dabstractfileinfo.h"
-#include "dfmevent.h"
 
 class ShareFileInfo : public DAbstractFileInfo
 {
