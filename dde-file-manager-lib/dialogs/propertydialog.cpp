@@ -306,8 +306,9 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         if (useQStorageInfo) {
             name = diskInfo.displayName();
             udiskInfo = deviceListener->getDevice(diskInfo.device());
-            if (name == diskInfo.rootPath() && udiskInfo) {
-                name = udiskInfo->fileDisplayName();
+            if (name == diskInfo.rootPath()) {
+                name = udiskInfo ? udiskInfo->fileDisplayName()
+                                 : name.split('/').last();
             }
         } else {
             udiskInfo = deviceListener->getDevice(query);
@@ -341,7 +342,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
 
         uint64_t dskspace = useQStorageInfo ? (uint64_t)diskInfo.bytesTotal() : udiskInfo->getTotal();
         uint64_t dskinuse = dskspace - (useQStorageInfo ? (uint64_t)diskInfo.bytesFree() : udiskInfo->getFree());
-        QString devid(useQStorageInfo ? diskInfo.device() : udiskInfo->getDiskInfo().unix_device());
+        QString devid(useQStorageInfo ? FileUtils::displayPath(diskInfo.device()) : udiskInfo->getDiskInfo().unix_device());
 
         QProgressBar* progbdf = new DFProgressBar();
         progbdf->setMaximum(10000);
@@ -996,6 +997,15 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
             }
 #endif // QT_DEBUG
         }
+    } else if (devicePath.startsWith("cryfs@") || devicePath.startsWith("encfs@") ||
+               devicePath.startsWith("gocryptfs@") || devicePath.startsWith("sshfs@")) {
+        int atIndex = devicePath.indexOf('@');
+        fsType = devicePath.left(atIndex);
+#ifdef QT_DEBUG
+        if (!fsType.isEmpty()) {
+            fsType += (" on " + FileUtils::displayPath(devicePath.mid(atIndex + 1)));
+        }
+#endif // QT_DEBUG
     }
 
     results.append({QObject::tr("Device type"), tr("Local disk")});

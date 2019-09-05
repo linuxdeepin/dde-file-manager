@@ -97,6 +97,7 @@ public:
     static bool runCommand(const QString& cmd, const QStringList& args, const QString& wd = QString());
 
     static void mkpath(const DUrl &path);
+    static QString displayPath(const QString &pathStr);
 
     static QByteArray imageFormatName(QImage::Format f);
 
