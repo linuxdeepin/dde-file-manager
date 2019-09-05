@@ -953,6 +953,17 @@ void FileUtils::mkpath(const DUrl &path)
     fileService->mkdir(nullptr, path);
 }
 
+QString FileUtils::displayPath(const QString &pathStr)
+{
+    QString devicePath = pathStr;
+    QString homeDir = QDir::homePath();
+    if (devicePath.startsWith(homeDir)) {
+        devicePath.replace(0, homeDir.length(), "~");
+    }
+
+    return devicePath;
+}
+
 QByteArray FileUtils::imageFormatName(QImage::Format f)
 {
     switch (f) {
