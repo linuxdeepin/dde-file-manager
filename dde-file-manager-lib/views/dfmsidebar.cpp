@@ -70,7 +70,7 @@ DFMSideBar::DFMSideBar(QWidget *parent)
 
 void DFMSideBar::setCurrentUrl(const DUrl &url)
 {
-    int index = findItem(url);
+    int index = findItem(url, true);
     if (index != -1) {
         m_sidebarView->setCurrentIndex(m_sidebarModel->index(index, 0));
     } else {
@@ -122,13 +122,28 @@ int DFMSideBar::findItem(const DUrl &url, const QString &group) const
  *
  * \return the index of the item we can found, or -1 if not found.
  */
-int DFMSideBar::findItem(const DUrl &url) const
+int DFMSideBar::findItem(const DUrl &url, bool fuzzy/* = false*/) const
 {
     for (int i = 0; i < m_sidebarModel->rowCount(); i++) {
         DFMSideBarItem * item = m_sidebarModel->itemFromIndex(i);
         if (item->itemType() == DFMSideBarItem::SidebarItem) {
-            if (item->url() == url) {
+            if (item->url() == url)
                 return i;
+
+            if (!fuzzy)
+                continue;
+
+            DUrl itemUrl = item->url();
+            if (itemUrl.isBookMarkFile() && DUrl(itemUrl.path()) == url) {
+                return i;
+            } else if (itemUrl.scheme() == DEVICE_SCHEME) {
+                DAbstractFileInfoPointer pointer = DFileService::instance()->createFileInfo(nullptr, itemUrl);
+                if (!pointer)
+                    continue;
+                QVariantHash info = pointer->extraProperties();
+                DUrl mountPointUrl(info.value("mountPointUrl", QString()).toString());
+                if (mountPointUrl == url)
+                    return i;
             }
         }
     }
