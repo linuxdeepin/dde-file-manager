@@ -63,7 +63,6 @@
 #include "canvasviewhelper.h"
 #include "watermaskframe.h"
 #include "desktopitemdelegate.h"
-#include "dfmevent.h"
 
 #include "app/define.h"
 #include "controllers/mergeddesktopcontroller.h"

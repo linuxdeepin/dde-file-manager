@@ -1,14 +1,9 @@
 #ifndef TAGFILEINFO_H
 #define TAGFILEINFO_H
 
-
 #include <QObject>
 
-
-
-#include "dfmevent.h"
 #include "dabstractfileinfo.h"
-
 
 class TagFileInfo : public DAbstractFileInfo
 {

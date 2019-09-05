@@ -27,13 +27,11 @@
 #include "dabstractfilewatcher.h"
 #include "dabstractfileinfo.h"
 #include "dfileservices.h"
-#include "dfmeventdispatcher.h"
 #include "dfmapplication.h"
 #include "dfmsettings.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
-#include "dfmevent.h"
 
 #include "fileoperations/filejob.h"
 

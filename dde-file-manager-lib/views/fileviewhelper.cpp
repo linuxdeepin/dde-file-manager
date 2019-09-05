@@ -9,7 +9,6 @@
 
 #include "fileviewhelper.h"
 #include "dfileview.h"
-#include "dfmevent.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "controllers/appcontroller.h"
