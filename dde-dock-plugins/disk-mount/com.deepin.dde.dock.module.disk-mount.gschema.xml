@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<schemalist>
+
+  <schema path="/com/deepin/dde/dock/module/disk-mount/" id="com.deepin.dde.dock.module.disk-mount" gettext-domain="dde-dock-disk-mount">
+
+    <key name='filemanager-integration' type='b'>
+      <default>true</default>
+      <summary>Able to integration with file manager app</summary>
+      <description>
+        If enabled, it's able to integrate with file manager.
+        If disabled, will not try to open up file manager in any case.
+      </description>
+    </key>
+
+  </schema>
+
+</schemalist>

@@ -48,11 +48,14 @@ CONFIG(release, debug|release) {
 #    DEFINES += QT_NO_DEBUG_OUTPUT
 }
 
+gschema.path = $${PREFIX}/share/glib-2.0/schemas
+gschema.files = *.gschema.xml
+
 translations.path = $${PREFIX}/share/$${TARGET}/translations
 translations.files = translations/*.qm
 
 target.path = $${PREFIX}/lib/dde-dock/plugins/system-trays/
-INSTALLS += target translations
+INSTALLS += target gschema translations
 
 RESOURCES += \
     resources.qrc \
