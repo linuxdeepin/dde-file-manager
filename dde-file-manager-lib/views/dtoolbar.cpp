@@ -95,7 +95,10 @@ void DToolBar::initUI()
     m_detailButton->setObjectName("detailButton");
     m_detailButton->setCheckable(true);
     m_detailButton->setFocusPolicy(Qt::NoFocus);
-    m_detailButton->setText(QString::fromLocal8Bit("详"));
+    //m_detailButton->setText(QString::fromLocal8Bit("详"));
+    m_detailButton->setIcon(QIcon::fromTheme("dfm_rightview-detail").pixmap(iconSize));
+    m_detailButton->setIconSize(iconSize);
+    m_detailButton->setFlat(true);
 #endif
 
     QHBoxLayout* mainLayout = new QHBoxLayout;
