@@ -25,6 +25,7 @@
 #include "diskmountplugin.h"
 
 #include <DApplication>
+#include <dgiosettings.h>
 
 #define OPEN        "open"
 #define UNMOUNT_ALL "unmount_all"
@@ -97,11 +98,15 @@ const QString DiskMountPlugin::itemContextMenu(const QString &itemKey)
     QList<QVariant> items;
     items.reserve(2);
 
-    QMap<QString, QVariant> open;
-    open["itemId"] = OPEN;
-    open["itemText"] = tr("Open");
-    open["isActive"] = true;
-    items.push_back(open);
+    DGioSettings gsettings("com.deepin.dde.dock.module.disk-mount", "/com/deepin/dde/dock/module/disk-mount/");
+
+    if (gsettings.value("filemanager-integration").toBool()) {
+        QMap<QString, QVariant> open;
+        open["itemId"] = OPEN;
+        open["itemText"] = tr("Open");
+        open["isActive"] = true;
+        items.push_back(open);
+    }
 
     QMap<QString, QVariant> unmountAll;
     unmountAll["itemId"] = UNMOUNT_ALL;

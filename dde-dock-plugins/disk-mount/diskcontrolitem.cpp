@@ -32,6 +32,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QStorageInfo>
+#include <dgiosettings.h>
 
 #include <ddiskmanager.h>
 #include <dblockdevice.h>
@@ -177,7 +178,10 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
 {
     QWidget::mouseReleaseEvent(e);
 
-    DDesktopServices::showFolder(attachedDevice->mountpointUrl());
+    DGioSettings gsettings("com.deepin.dde.dock.module.disk-mount", "/com/deepin/dde/dock/module/disk-mount/");
+    if (gsettings.value("filemanager-integration").toBool()) {
+        DDesktopServices::showFolder(attachedDevice->mountpointUrl());
+    }
 }
 
 void DiskControlItem::showEvent(QShowEvent *e)
