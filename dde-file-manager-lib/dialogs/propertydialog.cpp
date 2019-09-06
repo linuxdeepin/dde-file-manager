@@ -887,14 +887,16 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     QFrame *widget = new QFrame(this);
     SectionKeyLabel *sizeSectionLabel = new SectionKeyLabel(QObject::tr("Size"));
     SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Type"));
-    SectionKeyLabel *TimeCreatedSectionLabel = new SectionKeyLabel(QObject::tr("Time read"));
+    SectionKeyLabel *TimeCreatedSectionLabel = new SectionKeyLabel(QObject::tr("Time created"));
+    SectionKeyLabel *TimeReadSectionLabel = new SectionKeyLabel(QObject::tr("Time read"));
     SectionKeyLabel *TimeModifiedSectionLabel = new SectionKeyLabel(QObject::tr("Time modified"));
     SectionKeyLabel *sourcePathSectionLabel = new SectionKeyLabel(QObject::tr("Source path"));
 
     m_containSizeLabel = new SectionValueLabel(info->sizeDisplayName());
     m_folderSizeLabel = new SectionValueLabel;
     SectionValueLabel *typeLabel = new SectionValueLabel(info->mimeTypeDisplayName());
-    SectionValueLabel *timeCreatedLabel = new SectionValueLabel(info->lastReadDisplayName());
+    SectionValueLabel *timeCreatedLabel = new SectionValueLabel(info->createdDisplayName());
+    SectionValueLabel *timeReadLabel = new SectionValueLabel(info->lastReadDisplayName());
     SectionValueLabel *timeModifiedLabel = new SectionValueLabel(info->lastModifiedDisplayName());
 
     QFormLayout *layout = new QFormLayout;
@@ -932,6 +934,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
 
     if (!info->isVirtualEntry()) {
         layout->addRow(TimeCreatedSectionLabel, timeCreatedLabel);
+        layout->addRow(TimeReadSectionLabel, timeReadLabel);
         layout->addRow(TimeModifiedSectionLabel, timeModifiedLabel);
     }
 
