@@ -21,9 +21,7 @@
 #include "dfmrightdetailview.h"
 #include "dtagactionwidget.h"
 #include "dfileservices.h"
-#include "app/define.h"
-#include "singleton.h"
-#include "shutil/mimetypedisplaymanager.h"
+#include "views/dfmfilebasicinfowidget.h"
 
 #include <QFormLayout>
 #include <QHBoxLayout>
@@ -31,8 +29,9 @@
 #include <dcrumbedit.h>
 #include <dobject.h>
 #include <dtkwidget_global.h>
-#include<tag/tagmanager.h>
+#include <tag/tagmanager.h>
 #include <QScrollArea>
+
 
 DWIDGET_USE_NAMESPACE
 
@@ -45,13 +44,6 @@ public:
     QVBoxLayout *mainLayout  {nullptr};
     QLabel      *iconLabel  {nullptr};
     QFrame      *baseInfoWidget {nullptr};
-    QFormLayout *baseInfoLayout {nullptr};
-    QLabel      *nameLabel{ nullptr };
-    QLabel      *typeLabel{ nullptr };
-    QLabel      *sizeLabel{ nullptr };
-    QLabel      *pixelLabel{ nullptr };
-    QLabel      *createTimeLabel{ nullptr };
-    QLabel      *modifyTimeLabel{ nullptr };
     DCrumbEdit  *tagNamesCrumbEdit{ nullptr };
     QFrame      *tagInfoWidget{ nullptr };
     QScrollArea *scrollArea{ nullptr };
@@ -85,26 +77,6 @@ DFMRightDetailView::~DFMRightDetailView()
 
 }
 
-static QLabel *createKeyLabel(QString text, QWidget *parent = nullptr)
-{
-    QLabel *key = new QLabel(text, parent);
-    key->setObjectName("SectionKeyLabel");
-    key->setMinimumWidth(100);
-    key->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-    //key->setStyleSheet("background-color:#666666;");
-    return key;
-}
-
-static QLabel *createValueLabel(QString text, QWidget *parent = nullptr)
-{
-    QLabel *value = new QLabel(text, parent);
-    value->setObjectName("SectionValueLabel");
-    value->setMinimumWidth(100);
-    //value->setStyleSheet("background-color:#999999;");
-    value->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-    return value;
-}
-
 static QFrame* createLine()
 {
     auto line = new QFrame;
@@ -116,65 +88,62 @@ static QFrame* createLine()
 void DFMRightDetailView::initUI()
 {
     Q_D(DFMRightDetailView);
+    d->scrollArea = new QScrollArea(this);
+    d->scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
+    d->scrollArea->setAlignment(Qt::AlignTop);
+    d->scrollArea->setFrameShape(Shape::NoFrame);
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setAlignment(Qt::AlignCenter);
+    layout->addWidget(d->scrollArea);
+    setLayout(layout);
+
     d->mainLayout = new QVBoxLayout;
-    d->mainLayout->setAlignment(Qt::AlignCenter);
+    d->mainLayout->setAlignment(Qt::AlignCenter | Qt::AlignTop);
     d->mainLayout->setSpacing(10);
-    setLayout(d->mainLayout);
+
+    QFrame *mainFrame = new QFrame;
+    mainFrame->setLayout(d->mainLayout);
 
     d->iconLabel = new QLabel(this);
-    d->iconLabel->setFixedHeight(256);
+    d->iconLabel->setFixedHeight(160);
     d->mainLayout->addWidget(d->iconLabel, 1, Qt::AlignHCenter);
 
     d->mainLayout->addWidget(createLine());
 
-    d->baseInfoLayout = new QFormLayout;
-    d->baseInfoLayout->setHorizontalSpacing(10);
-    d->baseInfoLayout->setVerticalSpacing(10);
+    initTagWidget();
 
-    d->nameLabel = createValueLabel("-");
-    d->typeLabel = createValueLabel("-");
-    d->sizeLabel = createValueLabel("-");
-    d->pixelLabel = createValueLabel("-");
-    d->createTimeLabel = createValueLabel("-");
-    d->modifyTimeLabel = createValueLabel("-");
+    mainFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    d->scrollArea->setViewport(mainFrame);
+}
 
-    d->baseInfoLayout->addRow(createKeyLabel("name"), d->nameLabel);
-    d->baseInfoLayout->addRow(createKeyLabel("size"), d->sizeLabel);
-    d->baseInfoLayout->addRow(createKeyLabel("pixel"), d->pixelLabel);
-    d->baseInfoLayout->addRow(createKeyLabel("type"), d->typeLabel);
-    d->baseInfoLayout->addRow(createKeyLabel("created time"), d->createTimeLabel);
-    d->baseInfoLayout->addRow(createKeyLabel("modified time"), d->modifyTimeLabel);
+void DFMRightDetailView::initTagWidget()
+{
+    Q_D(DFMRightDetailView);
 
-    d->baseInfoWidget = new QFrame;
-    d->baseInfoWidget->setLayout(d->baseInfoLayout);
-
-    d->baseInfoLayout->addRow(createLine());
-
-    d->tagInfoWidget = new QFrame;
+    d->tagInfoWidget = new QFrame(this);
     auto tagHolder = new QVBoxLayout;
     d->tagInfoWidget->setLayout(tagHolder);
 
     auto hl = new QHBoxLayout;
-    QLabel *tagLable = createKeyLabel("tag");
-    auto tagWidget =  new DTagActionWidget;
+    QLabel *tagLable = new QLabel("tag", this);
+    tagLable->setMinimumWidth(100);
+    tagLable->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+
+    auto tagWidget =  new DTagActionWidget(d->tagInfoWidget);
     tagWidget->setEnabled(false);
     tagWidget->setToolTipVisible(false);
     hl->addWidget(tagLable);
     hl->addWidget(tagWidget);
-
     tagHolder->addLayout(hl);
+
     d->tagNamesCrumbEdit = new DCrumbEdit(this);
     d->tagNamesCrumbEdit->setEnabled(false);
     tagHolder->addWidget(d->tagNamesCrumbEdit);
-    d->baseInfoLayout->addRow(d->tagInfoWidget);
+    d->tagInfoWidget->setMaximumHeight(200);
+    d->tagInfoWidget->setHidden(true);
 
-    d->scrollArea = new QScrollArea(this);
-    d->scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
-    d->scrollArea->setAlignment(Qt::AlignTop);
-    d->scrollArea->setWidget(d->baseInfoWidget);
-    d->scrollArea->setVisible(false);
-
-    d->mainLayout->addWidget(d->scrollArea, 1, Qt::AlignHCenter);
+    d->mainLayout->addWidget(d->tagInfoWidget);
 }
 
 void DFMRightDetailView::setUrl(const DUrl &url)
@@ -192,35 +161,27 @@ void DFMRightDetailView::setUrl(const DUrl &url)
 
     if (fileInfo) {
         if (d->iconLabel)
-            d->iconLabel->setPixmap(fileInfo->fileIcon().pixmap(256, 256));
+            d->iconLabel->setPixmap(fileInfo->fileIcon().pixmap(256, 160));
 
-        if (mimeTypeDisplayManager->displayNameToEnum(fileInfo->mimeTypeName()) == DAbstractFileInfo::FileType::Images) {
-            QPixmap pixmap;
-            pixmap.load(fileInfo->filePath());
-            if (!pixmap.isNull() && d->pixelLabel) {
-                QString text = QString("%1X%2").arg(pixmap.width()).arg(pixmap.height());
-                d->pixelLabel->setText(text);
-            }
+        if (d->baseInfoWidget){
+            d->mainLayout->removeWidget(d->baseInfoWidget);
+            d->baseInfoWidget->setHidden(true);
+            d->baseInfoWidget->deleteLater();
+
         }
 
-        if (d->nameLabel) {
-            QString text = fileInfo->fileDisplayName();
-            d->nameLabel->setText(d->nameLabel->fontMetrics().elidedText(text, Qt::ElideMiddle, d->nameLabel->width()));
-            d->nameLabel->setToolTip(text);
-        }
-        if (d->typeLabel)
-            d->typeLabel->setText(fileInfo->mimeTypeDisplayName());
-        if (d->sizeLabel)
-            d->sizeLabel->setText(fileInfo->sizeDisplayName());
-        if (d->createTimeLabel)
-            d->createTimeLabel->setText(fileInfo->createdDisplayName());
-        if (d->modifyTimeLabel)
-            d->modifyTimeLabel->setText(fileInfo->lastModifiedDisplayName());
+        DFMFileBasicInfoWidget *basicInfoWidget = new DFMFileBasicInfoWidget(this);
+        d->baseInfoWidget = basicInfoWidget;
+        basicInfoWidget->setShowFileName(true);
+        basicInfoWidget->setShowPicturePixel(true);
+        basicInfoWidget->setUrl(d->m_url);
+
+        d->mainLayout->insertWidget(2, d->baseInfoWidget);
 
         const QStringList tag_name_list = TagManager::instance()->getTagsThroughFiles({url});
         QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({tag_name_list});
         if (d->tagNamesCrumbEdit) {
-            d->tagNamesCrumbEdit->clear();
+            d->tagNamesCrumbEdit->setPlainText("");
             for(auto it = nameColors.begin();it != nameColors.end(); ++it) {
                 DCrumbTextFormat format = d->tagNamesCrumbEdit->makeTextFormat();
                 format.setText(it.key());

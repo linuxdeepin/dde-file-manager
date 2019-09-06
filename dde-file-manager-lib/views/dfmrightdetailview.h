@@ -26,15 +26,19 @@
 
 class DFMRightDetailViewPrivate;
 class DFMRightDetailView : public QFrame{
+    Q_OBJECT
 public:
     explicit DFMRightDetailView(const DUrl &fileUrl, QWidget *parent = nullptr);
     virtual ~DFMRightDetailView();
 
-    void initUI();
     void setUrl(const DUrl &url);
-
+protected:
+    void initUI();
+    void initTagWidget();
+private:
     QScopedPointer<DFMRightDetailViewPrivate> d_private;
     Q_DECLARE_PRIVATE_D(d_private, DFMRightDetailView)
+
 };
 
 
