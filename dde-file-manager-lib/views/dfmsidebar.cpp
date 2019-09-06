@@ -525,7 +525,7 @@ void DFMSideBar::initDeviceConnection()
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(s));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
         if (drv->mediaCompatibility().join(' ').contains("optical")) {
-            addItem(DFMSideBarDeviceItemHandler::createItem(DUrl::fromDeviceId(blk->device())), groupName(Device));
+            addItem(DFMSideBarOpticalItemHandler::createItem(DUrl::fromDeviceId(blk->device())), groupName(Device));
         }
     });
 
