@@ -4,6 +4,21 @@
 
   <schema path="/com/deepin/dde/dock/module/disk-mount/" id="com.deepin.dde.dock.module.disk-mount" gettext-domain="dde-dock-disk-mount">
 
+    <key type="b" name="control">
+      <default>false</default>
+      <summary>Blocking event</summary>
+      <description>
+            Blocking mouse events
+      </description>
+    </key>
+    <key type="b" name="enable">
+      <default>true</default>
+      <summary>Module Enable</summary>
+      <description>
+            Control Module Enable
+      </description>
+    </key>
+
     <key name='filemanager-integration' type='b'>
       <default>true</default>
       <summary>Able to integration with file manager app</summary>
