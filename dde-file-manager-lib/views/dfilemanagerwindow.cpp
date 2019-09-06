@@ -1041,7 +1041,7 @@ void DFileManagerWindow::initCentralWidget()
     midWidget->setLayout(midLayout);
     midLayout->addWidget(d->splitter);
     d->detailView = new DFMRightDetailView(currentUrl());
-    d->detailView->setFixedWidth(300);
+    d->detailView->setFixedWidth(350);
     d->detailView->setVisible(false); //不显示先
     midLayout->addWidget(d->detailView);
     mainLayout->addWidget(midWidget);
