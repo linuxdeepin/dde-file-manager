@@ -27,6 +27,7 @@
 #include <QPainter>
 #include <QDebug>
 #include <DPalette>
+#include <DApplicationHelper>
 
 DWIDGET_USE_NAMESPACE
 
@@ -46,7 +47,7 @@ void ProgressLine::paintEvent(QPaintEvent *event){
     bRect.setSize(size());
     cRect.setSize(QSize(width() * percent, height()));
 
-    const DPalette &pal = DPalette::get(this);
+    const DPalette &pal = DApplicationHelper::instance()->palette(this);
 
     QColor bColor = pal.color(QPalette::Base);
     QColor cColor;
