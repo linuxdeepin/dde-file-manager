@@ -39,6 +39,8 @@
 #include "controllers/dfmsidebartagitemhandler.h"
 #include "controllers/dfmsidebaropticalitemhandler.h"
 
+#include <DApplicationHelper>
+
 #include <QVBoxLayout>
 #include <QDebug>
 
@@ -329,9 +331,9 @@ void DFMSideBar::initUI()
     this->setMaximumWidth(200);
     this->setFocusProxy(m_sidebarView);
 
-    DPalette pa = DPalette::get(m_sidebarView);
+    DPalette pa = DApplicationHelper::instance()->palette(m_sidebarView);
     pa.setBrush(DPalette::ItemBackground, pa.base());
-    DPalette::set(m_sidebarView, pa);
+    DApplicationHelper::instance()->setPalette(m_sidebarView, pa);
 }
 
 void DFMSideBar::initModelData()

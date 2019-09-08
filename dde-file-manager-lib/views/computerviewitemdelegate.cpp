@@ -18,9 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <DStyleOption>
 #include <DLineEdit>
 #include <DApplication>
+#include <DApplicationHelper>
 
 #include "models/computermodel.h"
 #include "shutil/fileutils.h"
@@ -52,7 +52,7 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
         return;
     }
 
-    DPalette pl(DPalette::get(option.widget));
+    DPalette pl(DApplicationHelper::instance()->palette(option.widget));
     painter->setBrush(pl.brush(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground));
 
     if (option.state & QStyle::StateFlag::State_Selected) {
