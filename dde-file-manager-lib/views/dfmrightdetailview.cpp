@@ -45,6 +45,7 @@ public:
     QLabel      *iconLabel  {nullptr};
     QFrame      *baseInfoWidget {nullptr};
     DCrumbEdit  *tagNamesCrumbEdit{ nullptr };
+    DTagActionWidget *tagWidget{ nullptr };
     QFrame      *tagInfoWidget{ nullptr };
     QScrollArea *scrollArea{ nullptr };
 
@@ -113,8 +114,11 @@ void DFMRightDetailView::initUI()
 
     initTagWidget();
 
+    d->mainLayout->addStretch();
+
     mainFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    d->scrollArea->setViewport(mainFrame);
+    d->scrollArea->setWidget(mainFrame);
+    d->scrollArea->setWidgetResizable(true);
 }
 
 void DFMRightDetailView::initTagWidget()
@@ -122,26 +126,26 @@ void DFMRightDetailView::initTagWidget()
     Q_D(DFMRightDetailView);
 
     d->tagInfoWidget = new QFrame(this);
-    auto tagHolder = new QVBoxLayout;
+    QVBoxLayout *tagHolder = new QVBoxLayout;
     d->tagInfoWidget->setLayout(tagHolder);
 
-    auto hl = new QHBoxLayout;
+    QHBoxLayout *hl = new QHBoxLayout;
     QLabel *tagLable = new QLabel("tag", this);
     tagLable->setMinimumWidth(100);
     tagLable->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
 
-    auto tagWidget =  new DTagActionWidget(d->tagInfoWidget);
-    tagWidget->setEnabled(false);
-    tagWidget->setToolTipVisible(false);
+    d->tagWidget =  new DTagActionWidget(d->tagInfoWidget);
+    //tagWidget->setEnabled(false);
+    d->tagWidget->setToolTipVisible(false);
     hl->addWidget(tagLable);
-    hl->addWidget(tagWidget);
+    hl->addWidget(d->tagWidget);
     tagHolder->addLayout(hl);
 
     d->tagNamesCrumbEdit = new DCrumbEdit(this);
     d->tagNamesCrumbEdit->setEnabled(false);
     tagHolder->addWidget(d->tagNamesCrumbEdit);
-    d->tagInfoWidget->setMaximumHeight(200);
-    d->tagInfoWidget->setHidden(true);
+    d->tagNamesCrumbEdit->setMaximumHeight(100);
+    d->tagNamesCrumbEdit->setHidden(true);
 
     d->mainLayout->addWidget(d->tagInfoWidget);
 }
@@ -167,7 +171,6 @@ void DFMRightDetailView::setUrl(const DUrl &url)
             d->mainLayout->removeWidget(d->baseInfoWidget);
             d->baseInfoWidget->setHidden(true);
             d->baseInfoWidget->deleteLater();
-
         }
 
         DFMFileBasicInfoWidget *basicInfoWidget = new DFMFileBasicInfoWidget(this);
@@ -180,17 +183,21 @@ void DFMRightDetailView::setUrl(const DUrl &url)
 
         const QStringList tag_name_list = TagManager::instance()->getTagsThroughFiles({url});
         QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({tag_name_list});
+        QList<QColor>  selectColors;
         if (d->tagNamesCrumbEdit) {
             d->tagNamesCrumbEdit->setPlainText("");
             for(auto it = nameColors.begin();it != nameColors.end(); ++it) {
                 DCrumbTextFormat format = d->tagNamesCrumbEdit->makeTextFormat();
                 format.setText(it.key());
+                selectColors << it.value();
                 format.setBackground(QBrush(it.value()));
                 format.setBackgroundRadius(5);
                 d->tagNamesCrumbEdit->appendCrumb(format);
             }
         }
-        if (d->tagInfoWidget)
-            d->tagInfoWidget->setHidden(tag_name_list.isEmpty());
+        if (d->tagWidget)
+            d->tagWidget->setCheckedColorList(selectColors);
+        if (d->tagNamesCrumbEdit)
+            d->tagNamesCrumbEdit->setHidden(tag_name_list.isEmpty());
     }
 }
