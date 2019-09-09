@@ -1034,8 +1034,6 @@ void DFileManagerWindow::initCentralWidget()
     d->centralWidget->setObjectName("CentralWidget");
     QVBoxLayout *mainLayout = new QVBoxLayout;
 
-
-#ifdef DFM_DETAILSVIEW
     QWidget *midWidget = new QWidget;
     QHBoxLayout *midLayout = new QHBoxLayout;
     midWidget->setLayout(midLayout);
@@ -1045,9 +1043,6 @@ void DFileManagerWindow::initCentralWidget()
     d->detailView->setVisible(false); //不显示先
     midLayout->addWidget(d->detailView);
     mainLayout->addWidget(midWidget);
-#else
-    mainLayout->addWidget(d->splitter);
-#endif
 
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);

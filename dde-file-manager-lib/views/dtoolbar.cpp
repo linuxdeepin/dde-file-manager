@@ -88,27 +88,24 @@ void DToolBar::initUI()
     initAddressToolBar();
     initContollerToolBar();
 
-#ifdef DFM_DETAILSVIEW
     m_detailButton = new QPushButton(this);
     m_detailButton->setFixedWidth(ButtonWidth);
     m_detailButton->setFixedHeight(ButtonHeight);
     m_detailButton->setObjectName("detailButton");
     m_detailButton->setCheckable(true);
     m_detailButton->setFocusPolicy(Qt::NoFocus);
-    //m_detailButton->setText(QString::fromLocal8Bit("详"));
     m_detailButton->setIcon(QIcon::fromTheme("dfm_rightview-detail").pixmap(iconSize));
     m_detailButton->setIconSize(iconSize);
     m_detailButton->setFlat(true);
-#endif
 
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_addressToolBar);
     mainLayout->addSpacing(10);
     mainLayout->addWidget(m_contollerToolBar);
-#ifdef DFM_DETAILSVIEW
+
     mainLayout->addSpacing(10);
     mainLayout->addWidget(m_detailButton);
-#endif
+
     mainLayout->addSpacing(10);
     mainLayout->setContentsMargins(14, 0, 14, 0);
     setLayout(mainLayout);
@@ -190,9 +187,7 @@ void DToolBar::initContollerToolBar()
 
 void DToolBar::initConnect()
 {
-#ifdef DFM_DETAILSVIEW
     connect(m_detailButton, &QPushButton::clicked,this, &DToolBar::detailButtonClicked);
-#endif
     connect(m_backButton, &DIconButton::clicked, this, &DToolBar::onBackButtonClicked);
     connect(m_forwardButton, &DIconButton::clicked, this, &DToolBar::onForwardButtonClicked);
     connect(m_crumbWidget, &DFMCrumbBar::addressBarContentEntered, this, &DToolBar::searchBarTextEntered);
