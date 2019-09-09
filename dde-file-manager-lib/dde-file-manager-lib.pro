@@ -81,8 +81,10 @@ RESOURCES += \
 
 HEADERS += \
     controllers/appcontroller.h \
+    controllers/dfmrootcontroller.h \
     controllers/dfmsidebaropticalitemhandler.h \
     models/computermodel.h \
+    models/dfmrootfileinfo.h \
     views/computerviewitemdelegate.h \
     views/dtoolbar.h \
     views/dfileview.h \
@@ -266,8 +268,10 @@ HEADERS += \
 
 SOURCES += \
     controllers/appcontroller.cpp \
+    controllers/dfmrootcontroller.cpp \
     controllers/dfmsidebaropticalitemhandler.cpp \
     models/computermodel.cpp \
+    models/dfmrootfileinfo.cpp \
     views/computerviewitemdelegate.cpp \
     views/dtoolbar.cpp \
     views/dfileview.cpp \

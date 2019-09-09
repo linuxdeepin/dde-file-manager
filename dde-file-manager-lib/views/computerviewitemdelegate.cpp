@@ -39,30 +39,47 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
 {
     painter->setRenderHint(QPainter::RenderHint::Antialiasing);
 
-    if (index.data(ComputerModel::DataRoles::ICategoryRole) == ComputerModelItemData::Category::cat_splitter) {
+    ComputerModelItemData::Category cat = ComputerModelItemData::Category(index.data(ComputerModel::DataRoles::ICategoryRole).toInt());
+    if (cat == ComputerModelItemData::Category::cat_splitter) {
         QFont fnt(par->font());
-        fnt.setPixelSize(36);
+        fnt.setPixelSize(30);
         painter->setFont(fnt);
         painter->setPen(qApp->palette().color(QPalette::ColorRole::Text));
         painter->drawText(option.rect, 0, index.data(Qt::ItemDataRole::DisplayRole).toString());
         return;
     }
 
-    if (index.data(ComputerModel::DataRoles::ICategoryRole) == ComputerModelItemData::Category::cat_widget) {
+    if (cat == ComputerModelItemData::Category::cat_widget) {
         return;
     }
 
     DPalette pl(DApplicationHelper::instance()->palette(option.widget));
-    painter->setBrush(pl.brush(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground));
-
+    QColor c = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
     if (option.state & QStyle::StateFlag::State_Selected) {
-        painter->setPen(QColor(0xffff0000));
+        c = pl.color(DPalette::ColorGroup::Active, QPalette::ColorRole::Highlight);
     } else if (option.state & QStyle::StateFlag::State_MouseOver) {
-        painter->setPen(QColor(0xffffff00));
-    } else {
-        painter->setPen(QColor(0xff0000ff));
+        c = c.lighter();
     }
+    painter->setPen(c);
+    painter->setBrush(c);
+
     painter->drawRoundedRect(option.rect.adjusted(1, 1, -1, -1), 18, 18);
+
+    const QIcon icon = index.data(Qt::ItemDataRole::DecorationRole).value<QIcon>();
+
+    if (cat == ComputerModelItemData::Category::cat_user_directory) {
+        const int iconsize = par->view()->iconSize().width() * 4 / 3;
+        const int topmargin = iconsize / 8 + 3;
+        const int fstw = par->fontMetrics().width(index.data(Qt::ItemDataRole::DisplayRole).toString());
+        const int leftmargin = iconsize / 4 + 12;
+        const int text_topmargin = iconsize / 4;
+        painter->drawPixmap(option.rect.x() + leftmargin, option.rect.y() + topmargin, icon.pixmap(iconsize));
+
+        painter->setFont(par->font());
+        painter->setPen(qApp->palette().color(option.state & QStyle::StateFlag::State_Selected ? QPalette::ColorRole::HighlightedText : QPalette::ColorRole::Text));
+        painter->drawText(option.rect.x() + (option.rect.width() - fstw) / 2, option.rect.y() + topmargin + iconsize + text_topmargin, index.data(Qt::DisplayRole).toString());
+        return;
+    }
 
     QRect textrect = option.rect;
     QRect otextrect;
@@ -76,7 +93,7 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     textrect.setTop(option.rect.top() + topmargin);
     textrect.setHeight(par->fontInfo().pixelSize() * 2);
     painter->setFont(par->font());
-    painter->setPen(qApp->palette().color(QPalette::ColorRole::Text));
+    painter->setPen(qApp->palette().color(option.state & QStyle::StateFlag::State_Selected ? QPalette::ColorRole::HighlightedText : QPalette::ColorRole::Text));
     painter->drawText(textrect, Qt::TextWrapAnywhere, index.data(Qt::DisplayRole).toString(), &otextrect);
 
     otextrect.moveLeft(otextrect.right() + 12);
@@ -84,10 +101,10 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     otextrect.setWidth(fstw);
     otextrect.setHeight(par->fontInfo().pixelSize() + 4);
     otextrect.adjust(-4, 0, 4, 0);
-    painter->setBrush(QColor(0xFF99EE));
+    /*painter->setBrush(QColor(0xFF99EE));
     painter->setPen(QColor(0xAA3399));
     painter->drawRoundedRect(otextrect, 8, 8);
-    painter->drawText(otextrect, Qt::AlignCenter, index.data(ComputerModel::DataRoles::FileSystemRole).toString());
+    painter->drawText(otextrect, Qt::AlignCenter, index.data(ComputerModel::DataRoles::FileSystemRole).toString());*/
 
     QFont smallf(par->font());
     smallf.setPixelSize(int(par->fontInfo().pixelSize() * 0.85));
@@ -97,24 +114,29 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     textrect.setTop(option.rect.top() + topmargin + par->fontMetrics().height() + 5);
     textrect.setHeight(par->fontInfo().pixelSize());
 
-    index.data(ComputerModel::DataRoles::UsgWidgetRole).value<ProgressLine*>()->setFixedWidth(text_max_width);
-    index.data(ComputerModel::DataRoles::UsgWidgetRole).value<ProgressLine*>()->render(painter, option.rect.topLeft() + QPoint(iconsize + leftmargin + spacing, topmargin + 14 + 2 * par->fontInfo().pixelSize()) + par->mapTo(par->window(), QPoint(0, 0)));
+    ProgressLine *usgpl = index.data(ComputerModel::DataRoles::UsgWidgetRole).value<ProgressLine*>();
+    if (usgpl->width() != text_max_width) {
+        usgpl->setFixedWidth(text_max_width);
+    }
+    usgpl->render(painter, option.rect.topLeft() + QPoint(iconsize + leftmargin + spacing, topmargin + 14 + 2 * par->fontInfo().pixelSize()) + par->mapTo(par->window(), QPoint(0, 0)));
 
     painter->setPen(qApp->palette().color(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Text));
     painter->drawText(textrect, Qt::AlignLeft, QString("%1 in use").arg(FileUtils::formatSize(index.data(ComputerModel::DataRoles::SizeInUseRole).toULongLong())));
     painter->drawText(textrect, Qt::AlignRight, QString("%1 Total").arg(FileUtils::formatSize(index.data(ComputerModel::DataRoles::SizeTotalRole).toULongLong())));
 
-    painter->drawPixmap(option.rect.x() + leftmargin, option.rect.y() + topmargin, index.data(Qt::DecorationRole).value<QIcon>().pixmap(par->view()->iconSize()));
+    painter->drawPixmap(option.rect.x() + leftmargin, option.rect.y() + topmargin, icon.pixmap(iconsize));
 }
 
 QSize ComputerViewItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    if (index.data(ComputerModel::DataRoles::ICategoryRole).toInt() == ComputerModelItemData::Category::cat_widget) {
+    ComputerModelItemData::Category cat = ComputerModelItemData::Category(index.data(ComputerModel::DataRoles::ICategoryRole).toInt());
+    if (cat == ComputerModelItemData::Category::cat_widget) {
         return static_cast<ComputerModelItemData*>(index.internalPointer())->widget->size();
-    }
-    if (index.data(ComputerModel::DataRoles::ICategoryRole).toInt() == ComputerModelItemData::Category::cat_splitter)
-    {
-        return QSize(par->width() - 12, 48);
+    } else if (cat == ComputerModelItemData::Category::cat_splitter) {
+        return QSize(par->width() - 12, 45);
+    } else if (cat == ComputerModelItemData::Category::cat_user_directory) {
+        int sz = par->view()->iconSize().width() * 2 + 24;
+        return QSize(sz, sz);
     }
     const int iconsize = par->view()->iconSize().width();
     const int topmargin = iconsize / 2 + 2;

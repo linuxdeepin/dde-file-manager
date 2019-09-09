@@ -1303,6 +1303,9 @@ ComputerView2::ComputerView2(QWidget *parent) : QWidget(parent)
     m_view->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
 
     connect(m_view, &QWidget::customContextMenuRequested, this, &ComputerView2::contextMenu);
+    connect(m_view, &QAbstractItemView::doubleClicked, [this](const QModelIndex &idx) {
+        appController->actionOpen(QSharedPointer<DFMUrlListBaseEvent>(new DFMUrlListBaseEvent(this, {idx.data(ComputerModel::DataRoles::MountOpenUrlRole).value<DUrl>()})));
+    });
     connect(m_statusbar->scalingSlider(), &DSlider::valueChanged, this, [this] {m_view->setIconSize(QSize(iconsizes[m_statusbar->scalingSlider()->value()], iconsizes[m_statusbar->scalingSlider()->value()]));});
 }
 

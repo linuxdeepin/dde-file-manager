@@ -68,6 +68,8 @@
 // internal scheme, don't rely on this scheme outside the file manager app.
 #define DFMMD_SCHEME "dfmmd"
 #define DFMMD_ROOT "dfmmd:///"
+#define DFMROOT_SCHEME "dfmroot"
+#define DFMROOT_ROOT "dfmroot:///"
 // internal scheme end.
 
 // Auxiliary path segment strings for the burn scheme

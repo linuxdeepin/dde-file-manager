@@ -33,11 +33,6 @@ class ComputerView2;
 
 struct ComputerModelItemData
 {
-    enum StorageDataSource
-    {
-        ds_gio,
-        ds_udisks,
-    };
     enum Category
     {
         cat_user_directory,
@@ -47,13 +42,10 @@ struct ComputerModelItemData
         cat_widget
     };
     DAbstractFileInfoPointer fi;
-    QSharedPointer<DBlockDevice> blkdev;
-    QList<DFMGlobal::MenuAction> menuactionlist;
     DUrl url;
     QString sptext;
     QWidget* widget = nullptr;
     ProgressLine* pl = nullptr;
-    StorageDataSource ds;
     Category cat;
     bool selected;
 };
@@ -64,12 +56,16 @@ class ComputerModel : public QAbstractItemModel
 public:
     enum DataRoles
     {
-        SizeTotalRole = Qt::UserRole + 1,  //uint64_t
-        SizeInUseRole = Qt::UserRole + 2,  //uint64_t
-        FileSystemRole = Qt::UserRole + 3, //QString
-        UsgWidgetRole = Qt::UserRole + 4,  //ProgressLine*
-        ICategoryRole = Qt::UserRole + 5,  //ComputerModelItemData::Category
+        SizeTotalRole = Qt::UserRole + 1,   //uint64_t
+        SizeInUseRole = Qt::UserRole + 2,   //uint64_t
+        FileSystemRole = Qt::UserRole + 3,  //QString
+        UsgWidgetRole = Qt::UserRole + 4,   //ProgressLine*
+        ICategoryRole = Qt::UserRole + 5,   //ComputerModelItemData::Category
+        OpenUrlRole = Qt::UserRole + 6,     //DUrl
+        MountOpenUrlRole = Qt::UserRole + 7 //DUrl
     };
+    Q_ENUM(DataRoles)
+
     explicit ComputerModel(QObject* parent = nullptr);
     ~ComputerModel() override;
 
@@ -79,6 +75,7 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
+
 public Q_SLOTS:
     void addItem(const DUrl &url, QWidget *w = nullptr);
     void insertAfter(const DUrl &url, const DUrl &ref, QWidget *w = nullptr);
@@ -89,6 +86,9 @@ private:
     ComputerView2* par;
     QScopedPointer<DDiskManager> m_diskm;
     QList<ComputerModelItemData> m_items;
+    DAbstractFileWatcher* m_watcher;
+
+    void initItemData(ComputerModelItemData &data, const DUrl &url, QWidget *w);
 };
 
 
