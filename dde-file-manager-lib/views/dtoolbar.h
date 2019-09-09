@@ -28,12 +28,12 @@
 #include <QFrame>
 #include <QStackedWidget>
 #include "dfileview.h"
-#include "dstatebutton.h"
 
 class DFMEvent;
 class HistoryStack;
 
 QT_BEGIN_NAMESPACE
+class QPushButton;
 class QHBoxLayout;
 QT_END_NAMESPACE
 
