@@ -122,21 +122,16 @@ void DToolBar::initAddressToolBar()
 
     QHBoxLayout * backForwardLayout = new QHBoxLayout;
 
-    QSize size(ButtonWidth, ButtonHeight);
     m_backButton = new DIconButton(DStyle::SP_ArrowBack, this);
-    m_backButton->setIconSize(iconSize);
-    m_backButton->setFixedSize(size);
     m_backButton->setDisabled(true);
     m_backButton->setFocusPolicy(Qt::NoFocus);
     m_forwardButton = new DIconButton(DStyle::SP_ArrowForward, this);
-    m_forwardButton->setIconSize(iconSize);
-    m_forwardButton->setFixedSize(size);
     m_forwardButton->setDisabled(true);
     m_forwardButton->setFocusPolicy(Qt::NoFocus);
 
     m_searchButton = new QPushButton(this);
     m_searchButton->setObjectName("searchButton");
-    m_searchButton->setFixedSize(size);
+    m_searchButton->setFixedSize(ButtonWidth, ButtonHeight);
     m_searchButton->setFocusPolicy(Qt::NoFocus);
     m_searchButton->setFlat(true);
     m_searchButton->setIcon(QIcon::fromTheme("search").pixmap(iconSize));
@@ -198,8 +193,8 @@ void DToolBar::initConnect()
 #ifdef DFM_DETAILSVIEW
     connect(m_detailButton, &QPushButton::clicked,this, &DToolBar::detailButtonClicked);
 #endif
-    connect(m_backButton, &DStateButton::clicked, this, &DToolBar::onBackButtonClicked);
-    connect(m_forwardButton, &DStateButton::clicked, this, &DToolBar::onForwardButtonClicked);
+    connect(m_backButton, &DIconButton::clicked, this, &DToolBar::onBackButtonClicked);
+    connect(m_forwardButton, &DIconButton::clicked, this, &DToolBar::onForwardButtonClicked);
     connect(m_crumbWidget, &DFMCrumbBar::addressBarContentEntered, this, &DToolBar::searchBarTextEntered);
     connect(m_crumbWidget, &DFMCrumbBar::crumbItemClicked, this, &DToolBar::crumbSelected);
     connect(m_crumbWidget, &DFMCrumbBar::crumbListItemSelected, this, [this](const DUrl &url){
@@ -207,7 +202,7 @@ void DToolBar::initConnect()
     });
     connect(m_crumbWidget, &DFMCrumbBar::addressBarShown, this, &DToolBar::searchBarActivated);
     connect(m_crumbWidget, &DFMCrumbBar::addressBarHidden, this, &DToolBar::searchBarDeactivated);
-    connect(m_searchButton, &DStateButton::clicked, this, &DToolBar::onSearchButtonClicked);
+    connect(m_searchButton, &QPushButton::clicked, this, &DToolBar::onSearchButtonClicked);
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DToolBar::currentUrlChanged);
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlF, this, &DToolBar::handleHotkeyCtrlF);
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlL, this, &DToolBar::handleHotkeyCtrlL);

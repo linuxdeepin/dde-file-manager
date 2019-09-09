@@ -87,7 +87,6 @@ HEADERS += \
     views/dtoolbar.h \
     views/dfileview.h \
     views/ddetailview.h \
-    views/dstatebutton.h \
     controllers/filecontroller.h \
     app/filesignalmanager.h \
     views/fileitem.h \
@@ -273,7 +272,6 @@ SOURCES += \
     views/dtoolbar.cpp \
     views/dfileview.cpp \
     views/ddetailview.cpp \
-    views/dstatebutton.cpp \
     controllers/filecontroller.cpp \
     views/fileitem.cpp \
     models/desktopfileinfo.cpp \
