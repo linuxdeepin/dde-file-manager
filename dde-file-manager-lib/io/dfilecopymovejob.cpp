@@ -1427,6 +1427,11 @@ void DFileCopyMoveJobPrivate::updateSpeed()
 
     qint64 speed = total_size / time * 1000;
 
+    // 如果进度已经是100%，则不应该再有速度波动
+    if (fileStatistics->isFinished() && total_size >= fileStatistics->totalSize()) {
+        speed = 0;
+    }
+
     Q_EMIT q_ptr->speedUpdated(speed);
 }
 
