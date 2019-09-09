@@ -37,6 +37,7 @@
 #include "bookmarkmanager.h"
 #include "networkcontroller.h"
 #include "mergeddesktopcontroller.h"
+#include "dfmrootcontroller.h"
 #include "deviceinfo/udisklistener.h"
 #include "dfileservices.h"
 #include "fileoperations/filejob.h"
@@ -138,6 +139,7 @@ void AppController::registerUrlHandle()
     DFileService::dRegisterUrlHandler<TagController>(TAG_SCHEME, "");
     DFileService::dRegisterUrlHandler<RecentController>(RECENT_SCHEME, "");
     DFileService::dRegisterUrlHandler<MergedDesktopController>(DFMMD_SCHEME, "");
+    DFileService::dRegisterUrlHandler<DFMRootController>(DFMROOT_SCHEME, "");
 }
 
 void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
