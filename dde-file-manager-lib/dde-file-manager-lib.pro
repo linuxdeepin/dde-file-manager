@@ -21,7 +21,7 @@ CONFIG += create_pc create_prl no_install_prl
 
 
 DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"
-DEFINES += DFM_DETAILSVIEW
+
 isEmpty(QMAKE_ORGANIZATION_NAME) {
     DEFINES += QMAKE_ORGANIZATION_NAME=\\\"deepin\\\"
 }
