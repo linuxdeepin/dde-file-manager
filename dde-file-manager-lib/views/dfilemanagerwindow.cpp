@@ -1102,9 +1102,11 @@ void DFileManagerWindow::initConnect()
         }
     });
 
-    QObject::connect(this, &DFileManagerWindow::selectUrlChanged, this, [d](const QList<DUrl> &urlList){
-        if(urlList.size()>0 && d->detailView)
-            d->detailView->setUrl(urlList.at(0));
+    QObject::connect(this, &DFileManagerWindow::selectUrlChanged, this, [d](/*const QList<DUrl> &urlList*/){
+        DFileView *fv = dynamic_cast<DFileView*>(d->currentView);
+        if (d->detailView && fv) {
+           d->detailView->setUrl(fv->selectedUrls().value(0, fv->rootUrl()));
+        }
     });
 }
 
