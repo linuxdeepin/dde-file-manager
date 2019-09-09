@@ -82,7 +82,10 @@ public:
 
         const QList<QRect> &geometry_list = viewHelper->itemDelegate()->paintGeomertys(option, index);
         const QRect &icon_rect = geometry_list.first();
-        const QPoint &edit_pos = QPoint(icon_rect.x() + icon_rect.width() / 2, icon_rect.bottom());
+        bool isCanvas = viewHelper->property("isCanvasViewHelper").toBool();
+        int iconTopOffset = isCanvas ? 0 : (option.rect.height() - icon_rect.height()) / 3.0;
+
+        const QPoint &edit_pos = QPoint(icon_rect.x() + icon_rect.width() / 2, icon_rect.bottom() + iconTopOffset);
 
         appController->showTagEdit(viewHelper->parent()->viewport()->mapToGlobal(edit_pos), menu_event.selectedUrls());
 
