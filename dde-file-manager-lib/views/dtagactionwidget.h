@@ -36,6 +36,7 @@ public:
 
 signals:
     void hoverColorChanged(const QColor &color);
+    void checkedColorChanged(const QColor &color);
 
 private:
     void setCentralLayout()noexcept;

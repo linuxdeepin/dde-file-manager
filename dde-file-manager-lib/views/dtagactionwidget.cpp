@@ -204,5 +204,9 @@ void DTagActionWidget::initConnect()
                  }
              }
         });
+        connect(button, &DRoundButton::click, this, [this](QColor color) {
+            emit checkedColorChanged(color);
+        });
+
     }
 }
