@@ -35,6 +35,8 @@ public:
 protected:
     void initUI();
     void initTagWidget();
+    void LoadFileTags();
+
 private:
     QScopedPointer<DFMRightDetailViewPrivate> d_private;
     Q_DECLARE_PRIVATE_D(d_private, DFMRightDetailView)

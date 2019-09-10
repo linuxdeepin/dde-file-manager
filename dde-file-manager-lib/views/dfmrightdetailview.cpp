@@ -135,6 +135,32 @@ void DFMRightDetailView::initTagWidget()
     tagLable->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
 
     d->tagWidget =  new DTagActionWidget(d->tagInfoWidget);
+    QObject::connect(d->tagWidget, &DTagActionWidget::checkedColorChanged, this, [this, d](const QColor &color){
+        const QStringList tag_name_list = TagManager::instance()->getTagsThroughFiles({d->m_url});
+        QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({tag_name_list});
+        DUrlList urlList{d->m_url};
+        QList<QColor> colors{ d->tagWidget->checkedColorList() };
+        QSet<QString> dirtyTagFilter = TagManager::instance()->allTagOfDefaultColors();
+
+        QSet<QString> sameColors = nameColors.keys(color).toSet();
+        // 当有多个相同颜色名字不同的tag时， 取消tag优先取消默认颜色
+        if (sameColors.count()>0 && !colors.contains(color) && !sameColors.intersects(dirtyTagFilter)) {
+            dirtyTagFilter << *sameColors.begin();
+        }
+
+        QStringList new_tagNames;
+        for (const QColor &color : colors) {
+            QString tag_name = TagManager::instance()->getTagNameThroughColor(color);
+            if (tag_name.isEmpty()) {
+                continue;
+            }
+            new_tagNames << tag_name;
+        }
+
+        DFileService::instance()->makeTagsOfFiles(nullptr,urlList, new_tagNames, dirtyTagFilter);
+        LoadFileTags();
+    });
+
     //tagWidget->setEnabled(false);
     d->tagWidget->setToolTipVisible(false);
     hl->addWidget(tagLable);
@@ -144,10 +170,34 @@ void DFMRightDetailView::initTagWidget()
     d->tagNamesCrumbEdit = new DCrumbEdit(this);
     d->tagNamesCrumbEdit->setEnabled(false);
     tagHolder->addWidget(d->tagNamesCrumbEdit);
+    tagHolder->addStretch();
     d->tagNamesCrumbEdit->setMaximumHeight(100);
     d->tagNamesCrumbEdit->setHidden(true);
 
     d->mainLayout->addWidget(d->tagInfoWidget);
+}
+
+void DFMRightDetailView::LoadFileTags()
+{
+    Q_D(DFMRightDetailView);
+    const QStringList tag_name_list = TagManager::instance()->getTagsThroughFiles({d->m_url});
+    QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({tag_name_list});
+    QList<QColor>  selectColors;
+    if (d->tagNamesCrumbEdit) {
+        d->tagNamesCrumbEdit->setPlainText("");
+        for(auto it = nameColors.begin();it != nameColors.end(); ++it) {
+            DCrumbTextFormat format = d->tagNamesCrumbEdit->makeTextFormat();
+            format.setText(it.key());
+            selectColors << it.value();
+            format.setBackground(QBrush(it.value()));
+            format.setBackgroundRadius(5);
+            d->tagNamesCrumbEdit->appendCrumb(format);
+        }
+    }
+    if (d->tagWidget)
+        d->tagWidget->setCheckedColorList(selectColors);
+    if (d->tagNamesCrumbEdit)
+        d->tagNamesCrumbEdit->setHidden(tag_name_list.isEmpty());
 }
 
 void DFMRightDetailView::setUrl(const DUrl &url)
@@ -181,23 +231,6 @@ void DFMRightDetailView::setUrl(const DUrl &url)
 
         d->mainLayout->insertWidget(2, d->baseInfoWidget);
 
-        const QStringList tag_name_list = TagManager::instance()->getTagsThroughFiles({url});
-        QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({tag_name_list});
-        QList<QColor>  selectColors;
-        if (d->tagNamesCrumbEdit) {
-            d->tagNamesCrumbEdit->setPlainText("");
-            for(auto it = nameColors.begin();it != nameColors.end(); ++it) {
-                DCrumbTextFormat format = d->tagNamesCrumbEdit->makeTextFormat();
-                format.setText(it.key());
-                selectColors << it.value();
-                format.setBackground(QBrush(it.value()));
-                format.setBackgroundRadius(5);
-                d->tagNamesCrumbEdit->appendCrumb(format);
-            }
-        }
-        if (d->tagWidget)
-            d->tagWidget->setCheckedColorList(selectColors);
-        if (d->tagNamesCrumbEdit)
-            d->tagNamesCrumbEdit->setHidden(tag_name_list.isEmpty());
+        LoadFileTags();
     }
 }
