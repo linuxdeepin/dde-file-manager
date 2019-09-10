@@ -96,15 +96,15 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     painter->setPen(qApp->palette().color(option.state & QStyle::StateFlag::State_Selected ? QPalette::ColorRole::HighlightedText : QPalette::ColorRole::Text));
     painter->drawText(textrect, Qt::TextWrapAnywhere, index.data(Qt::DisplayRole).toString(), &otextrect);
 
-    otextrect.moveLeft(otextrect.right() + 12);
-    int fstw = par->fontMetrics().width(index.data(ComputerModel::DataRoles::FileSystemRole).toString());
-    otextrect.setWidth(fstw);
-    otextrect.setHeight(par->fontInfo().pixelSize() + 4);
-    otextrect.adjust(-4, 0, 4, 0);
-    /*painter->setBrush(QColor(0xFF99EE));
-    painter->setPen(QColor(0xAA3399));
-    painter->drawRoundedRect(otextrect, 8, 8);
-    painter->drawText(otextrect, Qt::AlignCenter, index.data(ComputerModel::DataRoles::FileSystemRole).toString());*/
+    //otextrect.moveLeft(otextrect.right() + 12);
+    //int fstw = par->fontMetrics().width(index.data(ComputerModel::DataRoles::FileSystemRole).toString());
+    //otextrect.setWidth(fstw);
+    //otextrect.setHeight(par->fontInfo().pixelSize() + 4);
+    //otextrect.adjust(-4, 0, 4, 0);
+    //painter->setBrush(QColor(0xFF99EE));
+    //painter->setPen(QColor(0xAA3399));
+    //painter->drawRoundedRect(otextrect, 8, 8);
+    //painter->drawText(otextrect, Qt::AlignCenter, index.data(ComputerModel::DataRoles::FileSystemRole).toString());
 
     QFont smallf(par->font());
     smallf.setPixelSize(int(par->fontInfo().pixelSize() * 0.85));
@@ -114,15 +114,15 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     textrect.setTop(option.rect.top() + topmargin + par->fontMetrics().height() + 5);
     textrect.setHeight(par->fontInfo().pixelSize());
 
+    painter->setPen(qApp->palette().color(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Text));
+    painter->drawText(textrect, Qt::AlignLeft, QString("%1 in use").arg(FileUtils::formatSize(index.data(ComputerModel::DataRoles::SizeInUseRole).toULongLong())));
+    painter->drawText(textrect, Qt::AlignRight, QString("%1 Total").arg(FileUtils::formatSize(index.data(ComputerModel::DataRoles::SizeTotalRole).toULongLong())));
+
     ProgressLine *usgpl = index.data(ComputerModel::DataRoles::UsgWidgetRole).value<ProgressLine*>();
     if (usgpl->width() != text_max_width) {
         usgpl->setFixedWidth(text_max_width);
     }
     usgpl->render(painter, option.rect.topLeft() + QPoint(iconsize + leftmargin + spacing, topmargin + 14 + 2 * par->fontInfo().pixelSize()) + par->mapTo(par->window(), QPoint(0, 0)));
-
-    painter->setPen(qApp->palette().color(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Text));
-    painter->drawText(textrect, Qt::AlignLeft, QString("%1 in use").arg(FileUtils::formatSize(index.data(ComputerModel::DataRoles::SizeInUseRole).toULongLong())));
-    painter->drawText(textrect, Qt::AlignRight, QString("%1 Total").arg(FileUtils::formatSize(index.data(ComputerModel::DataRoles::SizeTotalRole).toULongLong())));
 
     painter->drawPixmap(option.rect.x() + leftmargin, option.rect.y() + topmargin, icon.pixmap(iconsize));
 }
@@ -159,12 +159,14 @@ QWidget* ComputerViewItemDelegate::createEditor(QWidget *parent, const QStyleOpt
 
 void ComputerViewItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-    DLineEdit *le = (DLineEdit*)editor;
+    DLineEdit *le = qobject_cast<DLineEdit*>(editor);
     le->setText(index.data(Qt::DisplayRole).toString()); // TODO: implement EditRole
 }
 
 void ComputerViewItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
+    DLineEdit *le = qobject_cast<DLineEdit*>(editor);
+    model->setData(index, le->text());
 }
 
 void ComputerViewItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const

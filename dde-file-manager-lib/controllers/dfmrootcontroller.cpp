@@ -24,6 +24,7 @@ private:
     QSharedPointer<DGioVolumeManager> vfsmgr;
     QSharedPointer<DDiskManager> udisksmgr;
     QList<QMetaObject::Connection> connections;
+    QList<QSharedPointer<DBlockDevice>> blkdevs;
 
     Q_DECLARE_PUBLIC(DFMRootFileWatcher)
 };
@@ -127,7 +128,7 @@ bool DFMRootFileWatcherPrivate::start()
     connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::mountAdded, [wpar](QExplicitlySharedDataPointer<DGioMount> mnt) {
         Q_EMIT wpar->subfileCreated(DUrl(DFMROOT_ROOT + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + ".gvfsmp"));
     }));
-    connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::mountPreRemoved, [wpar](QExplicitlySharedDataPointer<DGioMount> mnt) {
+    connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::mountRemoved, [wpar](QExplicitlySharedDataPointer<DGioMount> mnt) {
         Q_EMIT wpar->fileDeleted(DUrl(DFMROOT_ROOT + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + ".gvfsmp"));
     }));
     connections.push_back(QObject::connect(udisksmgr.data(), &DDiskManager::fileSystemAdded, [wpar](const QString &blks) {
@@ -136,6 +137,14 @@ bool DFMRootFileWatcherPrivate::start()
     connections.push_back(QObject::connect(udisksmgr.data(), &DDiskManager::fileSystemRemoved, [wpar](const QString &blks) {
         Q_EMIT wpar->fileDeleted(DUrl(DFMROOT_ROOT + blks.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + ".localdisk"));
     }));
+
+    for (auto devs : udisksmgr->blockDevices()) {
+        blkdevs.push_back(QSharedPointer<DBlockDevice>(DDiskManager::createBlockDevice(devs)));
+        blkdevs.back()->setWatchChanges(true);
+        connections.push_back(QObject::connect(blkdevs.back().data(), &DBlockDevice::idLabelChanged, [wpar, devs](const QString &) {
+            Q_EMIT wpar->fileAttributeChanged(DUrl(DFMROOT_ROOT + devs.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + ".localdisk"));
+        }));
+    }
 
     started = true;
     return true;
@@ -153,6 +162,8 @@ bool DFMRootFileWatcherPrivate::stop()
         QObject::disconnect(conn);
     }
     connections.clear();
+
+    blkdevs.clear();
 
     started = false;
 

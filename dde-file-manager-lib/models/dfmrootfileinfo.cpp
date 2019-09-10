@@ -23,7 +23,6 @@ public:
     QExplicitlySharedDataPointer<DGioMount> gmnt;
     QExplicitlySharedDataPointer<DGioFileInfo> gfsi;
     QString backer_url;
-    QTime lastupdated;
     QByteArrayList mps;
     qulonglong size;
     QString label;
@@ -128,7 +127,7 @@ bool DFMRootFileInfo::canRename() const
     if (suffix() != "localdisk" || !d->blk) {
         return false;
     }
-    if (d->blk->readOnly()) {
+    if (d->blk->readOnly() || d->mps.size() > 0) {
         return false;
     }
     return true;
@@ -225,6 +224,18 @@ QString DFMRootFileInfo::iconName() const
 
 QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
+    Q_D(const DFMRootFileInfo);
+    QVector<MenuAction> ret;
+    ret.push_back(MenuAction::OpenInNewWindow);
+    ret.push_back(MenuAction::OpenInNewTab);
+    QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk ? d->blk->path() : ""));
+    if (suffix() == "gvfsmp" || (suffix() == "localdisk" && d->blk && d->blk->mountPoints().size() > 0)) {
+        ret.push_back(MenuAction::Unmount);
+    }
+    if (suffix() == "localdisk" && d->blk && d->blk->mountPoints().size() == 0) {
+        ret.push_back(MenuAction::Mount);
+    }
+    ret.push_back(MenuAction::Property);
     return {};
 }
 
@@ -275,10 +286,10 @@ QVariantHash DFMRootFileInfo::extraProperties() const
         ret["fsUsed"] = d->gfsi->fsUsedBytes();
         ret["fsSize"] = d->gfsi->fsTotalBytes();
     } else if (suffix() == "localdisk") {
-        if (d->blk->mountPoints().empty()) {
+        if (d->mps.empty()) {
             ret["fsUsed"] = quint64(d->size + 1);
         } else {
-            QStorageInfo si(d->blk->mountPoints().front());
+            QStorageInfo si(d->mps.front());
             ret["fsUsed"] = quint64(si.bytesTotal() - si.bytesFree());
         }
         ret["fsSize"] = quint64(d->size);
@@ -293,11 +304,7 @@ void DFMRootFileInfo::checkCache()
     if (!d->blk) {
         return;
     }
-    int ct = d->lastupdated.secsTo(QTime::currentTime());
-    if (!d->lastupdated.isValid() || ct > 60 || ct < 0) {
-        d->lastupdated = QTime::currentTime();
-        d->mps = d->blk->mountPoints();
-        d->size = d->blk->size();
-        d->label = d->blk->idLabel();
-    }
+    d->mps = d->blk->mountPoints();
+    d->size = d->blk->size();
+    d->label = d->blk->idLabel();
 }
