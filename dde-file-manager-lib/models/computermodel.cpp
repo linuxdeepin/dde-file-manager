@@ -52,6 +52,20 @@ ComputerModel::ComputerModel(QObject *parent) :
     m_watcher->startWatcher();
     connect(m_watcher, &DAbstractFileWatcher::fileDeleted, this, &ComputerModel::removeItem);
     connect(m_watcher, &DAbstractFileWatcher::subfileCreated, std::bind(&ComputerModel::addItem, this, std::placeholders::_1, nullptr));
+    connect(m_watcher, &DAbstractFileWatcher::fileAttributeChanged, [this](const DUrl &url) {
+        int p;
+        for (p = 0; p < m_items.size(); ++p) {
+            if (m_items[p].url == url) {
+                break;
+            }
+        }
+        if (p >= m_items.size()) {
+            return;
+        }
+        QModelIndex idx = index(p, 0);
+        static_cast<DFMRootFileInfo*>(m_items[p].fi.data())->checkCache();
+        emit dataChanged(idx, idx, {Qt::ItemDataRole::DisplayRole});
+    });
 }
 
 ComputerModel::~ComputerModel()
@@ -156,12 +170,32 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
+bool ComputerModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (role == Qt::EditRole) {
+        ComputerModelItemData *pitmdata = &m_items[index.row()];
+        if (!pitmdata->fi->canRename()) {
+            return false;
+        }
+        fileService->renameFile(this, pitmdata->fi->fileUrl(), DUrl(value.toString()));
+        emit dataChanged(index, index, {Qt::DisplayRole});
+        return true;
+    }
+    return false;
+}
+
 Qt::ItemFlags ComputerModel::flags(const QModelIndex &index) const
 {
+    Qt::ItemFlags ret = Qt::ItemIsEnabled;
     if (index.data(DataRoles::ICategoryRole) != ComputerModelItemData::Category::cat_splitter) {
-        return Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable;
+        ret |= Qt::ItemFlag::ItemIsSelectable;
     }
-    return Qt::ItemIsEnabled;
+
+    const ComputerModelItemData *pitmdata = &m_items[index.row()];
+    if (pitmdata->fi && pitmdata->fi->canRename()) {
+        ret |= Qt::ItemFlag::ItemIsEditable;
+    }
+    return ret;
 }
 
 void ComputerModel::addItem(const DUrl &url, QWidget* w)
