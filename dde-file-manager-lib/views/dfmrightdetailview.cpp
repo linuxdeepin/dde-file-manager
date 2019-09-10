@@ -31,6 +31,7 @@
 #include <dtkwidget_global.h>
 #include <tag/tagmanager.h>
 #include <QScrollArea>
+#include <dabstractfilewatcher.h>
 
 
 DWIDGET_USE_NAMESPACE
@@ -48,6 +49,7 @@ public:
     DTagActionWidget *tagWidget{ nullptr };
     QFrame      *tagInfoWidget{ nullptr };
     QScrollArea *scrollArea{ nullptr };
+    DAbstractFileWatcher *devicesWatcher{ nullptr };
 
     DFMRightDetailView *q_ptr{ nullptr };
     D_DECLARE_PUBLIC(DFMRightDetailView)
@@ -161,6 +163,7 @@ void DFMRightDetailView::initTagWidget()
         LoadFileTags();
     });
 
+
     //tagWidget->setEnabled(false);
     d->tagWidget->setToolTipVisible(false);
     hl->addWidget(tagLable);
@@ -194,8 +197,10 @@ void DFMRightDetailView::LoadFileTags()
             d->tagNamesCrumbEdit->appendCrumb(format);
         }
     }
+
     if (d->tagWidget)
         d->tagWidget->setCheckedColorList(selectColors);
+
     if (d->tagNamesCrumbEdit)
         d->tagNamesCrumbEdit->setHidden(tag_name_list.isEmpty());
 }
@@ -208,6 +213,24 @@ void DFMRightDetailView::setUrl(const DUrl &url)
         return;
 
     d->m_url = url;
+
+    if (d->devicesWatcher) {
+        d->devicesWatcher->stopWatcher();
+        d->devicesWatcher->deleteLater(); // should we?
+        d->devicesWatcher = nullptr;
+    }
+
+    d->devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, d->m_url, this);
+    if (d->devicesWatcher) {
+        d->devicesWatcher->startWatcher();
+
+        connect(d->devicesWatcher, &DAbstractFileWatcher::fileAttributeChanged, this, [this, d](const DUrl &url) {
+            if (url == d->m_url){
+                LoadFileTags();
+            }
+        });
+    }
+
 
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, d->m_url);
     if (d->scrollArea)
