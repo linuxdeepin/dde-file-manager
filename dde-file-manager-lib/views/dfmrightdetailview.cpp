@@ -22,7 +22,9 @@
 #include "dtagactionwidget.h"
 #include "dfileservices.h"
 #include "views/dfmfilebasicinfowidget.h"
-
+#include "app/define.h"
+#include "singleton.h"
+#include "controllers/pathmanager.h"
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -32,6 +34,8 @@
 #include <tag/tagmanager.h>
 #include <QScrollArea>
 #include <dabstractfilewatcher.h>
+#include <dfilemenumanager.h>
+#include <shutil/desktopfile.h>
 
 
 DWIDGET_USE_NAMESPACE
@@ -205,6 +209,21 @@ void DFMRightDetailView::LoadFileTags()
         d->tagNamesCrumbEdit->setHidden(tag_name_list.isEmpty());
 }
 
+bool isComputerOrTrash(const DAbstractFileInfoPointer &fileInfo)
+{
+    DUrl realTargetUrl = fileInfo->fileUrl();
+    if (fileInfo && fileInfo->isSymLink()) {
+        realTargetUrl = fileInfo->rootSymLinkTarget();
+    }
+
+    if (realTargetUrl.toLocalFile().endsWith(QString(".") + "desktop")) {
+        DesktopFile df(realTargetUrl.toLocalFile());
+        return (df.getDeepinId() == "dde-trash" || df.getDeepinId() == "dde-computer");
+    }
+
+    return false;
+}
+
 void DFMRightDetailView::setUrl(const DUrl &url)
 {
     Q_D(DFMRightDetailView);
@@ -220,40 +239,44 @@ void DFMRightDetailView::setUrl(const DUrl &url)
         d->devicesWatcher = nullptr;
     }
 
-    d->devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, d->m_url, this);
-    if (d->devicesWatcher) {
-        d->devicesWatcher->startWatcher();
-
-        connect(d->devicesWatcher, &DAbstractFileWatcher::fileAttributeChanged, this, [this, d](const DUrl &url) {
-            if (url == d->m_url){
-                LoadFileTags();
-            }
-        });
-    }
-
-
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, d->m_url);
     if (d->scrollArea)
         d->scrollArea->setVisible(fileInfo);
+    if (!fileInfo)
+        return;
 
-    if (fileInfo) {
-        if (d->iconLabel)
-            d->iconLabel->setPixmap(fileInfo->fileIcon().pixmap(256, 160));
+    bool showTags = !systemPathManager->isSystemPath(d->m_url.path()) &&
+             !isComputerOrTrash(fileInfo) && DFileMenuManager::whetherShowTagActions({d->m_url});
+    if (showTags) {
+        d->devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, d->m_url, this);
+        if (d->devicesWatcher) {
+            d->devicesWatcher->startWatcher();
 
-        if (d->baseInfoWidget){
-            d->mainLayout->removeWidget(d->baseInfoWidget);
-            d->baseInfoWidget->setHidden(true);
-            d->baseInfoWidget->deleteLater();
+            connect(d->devicesWatcher, &DAbstractFileWatcher::fileAttributeChanged, this, [this, d](const DUrl &url) {
+                if (url == d->m_url){
+                    LoadFileTags();
+                }
+            });
         }
-
-        DFMFileBasicInfoWidget *basicInfoWidget = new DFMFileBasicInfoWidget(this);
-        d->baseInfoWidget = basicInfoWidget;
-        basicInfoWidget->setShowFileName(true);
-        basicInfoWidget->setShowPicturePixel(true);
-        basicInfoWidget->setUrl(d->m_url);
-
-        d->mainLayout->insertWidget(2, d->baseInfoWidget);
-
         LoadFileTags();
     }
+
+    d->tagInfoWidget->setVisible(showTags);
+
+    if (d->iconLabel)
+        d->iconLabel->setPixmap(fileInfo->fileIcon().pixmap(256, 160));
+
+    if (d->baseInfoWidget){
+        d->mainLayout->removeWidget(d->baseInfoWidget);
+        d->baseInfoWidget->setHidden(true);
+        d->baseInfoWidget->deleteLater();
+    }
+
+    DFMFileBasicInfoWidget *basicInfoWidget = new DFMFileBasicInfoWidget(this);
+    d->baseInfoWidget = basicInfoWidget;
+    basicInfoWidget->setShowFileName(true);
+    basicInfoWidget->setShowPicturePixel(true);
+    basicInfoWidget->setUrl(d->m_url);
+
+    d->mainLayout->insertWidget(2, d->baseInfoWidget);
 }
