@@ -10,8 +10,6 @@ usr/lib/*/deepin-anything-server-lib/plugins/handlers/libdde-anythingmonitor.so
 
 usr/share/applications/dde-file-manager.desktop
 
-usr/share/glib-2.0/schemas/*.filemanager.gschema.xml
-
 usr/share/polkit-1/actions/com.deepin.pkexec.dde-file-manager.policy
 usr/share/polkit-1/actions/com.deepin.pkexec.usb-device-formatter.policy
 
