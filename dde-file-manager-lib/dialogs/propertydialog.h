@@ -48,6 +48,7 @@ QT_END_NAMESPACE
 
 DWIDGET_BEGIN_NAMESPACE
 class DExpandGroup;
+class DBaseExpand;
 DWIDGET_END_NAMESPACE
 
 class DAbstractFileInfo;
@@ -144,7 +145,7 @@ public:
     int getFileCount();
     qint64 getFileSize();
 
-    DExpandGroup *expandGroup() const;
+    const QList<DBaseExpand *> &expandGroup() const;
     int contentHeight() const;
 
     void loadPluginExpandWidgets();
@@ -169,6 +170,8 @@ protected:
     void hideEvent(QHideEvent* event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent* event) Q_DECL_OVERRIDE;
 
+    void initExpandConnection(DBaseExpand *expand);
+
 private:
     DFMEvent m_fmevent{};
     DUrl m_url{};
@@ -192,12 +195,13 @@ private:
     QFrame *m_OpenWithFrame{ nullptr };
     QListWidget* m_OpenWithListWidget{ nullptr };
     QButtonGroup* m_OpenWithButtonGroup{ nullptr };
-    DExpandGroup* m_expandGroup{ nullptr };
+    //DExpandGroup* m_expandGroup{ nullptr };
+    QList<DBaseExpand *> m_expandGroup;
     DFM_NAMESPACE::DFileStatisticsJob* m_sizeWorker{ nullptr };
     QVBoxLayout* m_mainLayout{ nullptr };
     QWidget* m_wdf{ nullptr };
 
-    DExpandGroup *addExpandWidget(const QStringList &titleList);
+    QList<DBaseExpand *> addExpandWidget(const QStringList &titleList);
 
     void initTextShowFrame(const QString& text);
     QFrame *createBasicInfoWidget(const DAbstractFileInfoPointer &info);

@@ -57,6 +57,7 @@
 #include <darrowlineexpand.h>
 #include <dexpandgroup.h>
 #include <dblockdevice.h>
+#include <denhancedwidget.h>
 
 #include <QTextEdit>
 #include <QFormLayout>
@@ -276,6 +277,8 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
     , m_icon(new QLabel)
     , m_edit(new NameTextEdit)
 {
+    setSizeGripEnabled(true);
+
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowFlags(windowFlags()
                    & ~ Qt::WindowMaximizeButtonHint
@@ -337,8 +340,8 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         QStringList titleList;
         titleList << basicInfo;
         m_expandGroup = addExpandWidget(titleList);
-        m_expandGroup->expand(0)->setContent(m_deviceInfoFrame);
-        m_expandGroup->expand(0)->setExpand(true);
+        m_expandGroup.at(0)->setContent(m_deviceInfoFrame);
+        m_expandGroup.at(0)->setExpand(true);
 
         uint64_t dskspace = useQStorageInfo ? (uint64_t)diskInfo.bytesTotal() : udiskInfo->getTotal();
         uint64_t dskinuse = dskspace - (useQStorageInfo ? (uint64_t)diskInfo.bytesFree() : udiskInfo->getFree());
@@ -401,13 +404,13 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
             }
         }
         m_expandGroup = addExpandWidget(titleList);
-        m_expandGroup->expand(0)->setContent(m_basicInfoFrame);
+        m_expandGroup.at(0)->setContent(m_basicInfoFrame);
 
         if (fileInfo->isDir()) {
             if (fileInfo->canShare()) {
                 m_shareinfoFrame = createShareInfoFrame(fileInfo);
-                m_expandGroup->expand(1)->setContent(m_shareinfoFrame);
-                m_expandGroup->expand(1)->setExpand(false);
+                m_expandGroup.at(1)->setContent(m_shareinfoFrame);
+                m_expandGroup.at(1)->setExpand(false);
             }
 
             if (fileInfo->toLocalFile().isEmpty()) {
@@ -426,16 +429,16 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
             int openWithIndex = titleList.indexOf(openWith);
             if (openWithIndex != -1) {
                 m_OpenWithListWidget = createOpenWithListWidget(fileInfo);
-                m_expandGroup->expand(openWithIndex)->setContent(m_OpenWithListWidget);
-                m_expandGroup->expand(openWithIndex)->setExpand(false);
+                m_expandGroup.at(openWithIndex)->setContent(m_OpenWithListWidget);
+                m_expandGroup.at(openWithIndex)->setExpand(false);
             }
         }
 
         int authMgrIndex = titleList.indexOf(authManager);
         if (authMgrIndex != -1) {
             m_authorityManagementFrame = createAuthorityManagementWidget(fileInfo);
-            m_expandGroup->expand(authMgrIndex)->setContent(m_authorityManagementFrame);
-            m_expandGroup->expand(authMgrIndex)->setExpand(false);
+            m_expandGroup.at(authMgrIndex)->setContent(m_authorityManagementFrame);
+            m_expandGroup.at(authMgrIndex)->setExpand(false);
         }
     }
     initTextShowFrame(m_edit->toPlainText());
@@ -445,8 +448,8 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
 
     loadPluginExpandWidgets();
 
-    m_expandGroup->expands().first()->setExpand(true);
-    m_expandGroup->expands().last()->setExpandedSeparatorVisible(false);
+    m_expandGroup.first()->setExpand(true);
+    m_expandGroup.last()->setExpandedSeparatorVisible(false);
 
     initConnect();
 }
@@ -749,7 +752,8 @@ void PropertyDialog::resizeEvent(QResizeEvent *event)
 {
     DDialog::resizeEvent(event);
 }
-DExpandGroup *PropertyDialog::expandGroup() const
+
+const QList<DBaseExpand *> &PropertyDialog::expandGroup() const
 {
     return m_expandGroup;
 }
@@ -758,8 +762,8 @@ int PropertyDialog::contentHeight() const
 {
     return (m_icon->height() +
             m_editStackWidget->height() +
-            expandGroup()->expands().first()->getContent()->height() +
-            expandGroup()->expands().size() * (ArrowLineExpand_HIGHT + ArrowLineExpand_SPACING) +
+            expandGroup().first()->getContent()->height() +
+            expandGroup().size() * (ArrowLineExpand_HIGHT + ArrowLineExpand_SPACING) +
             contentsMargins().top() +
             contentsMargins().bottom() +
             (m_wdf ? m_wdf->height() : 0)+
@@ -774,6 +778,7 @@ void PropertyDialog::loadPluginExpandWidgets()
         DArrowLineExpand *expand = new DFMDArrowLineExpand;//DArrowLineExpand;
         QWidget *frame = plugin->expandWidget(m_url.toString());
         if (!frame) {
+            expand->deleteLater();
             continue;
         }
         frame->setMaximumHeight(EXTEND_FRAME_MAXHEIGHT);
@@ -784,30 +789,42 @@ void PropertyDialog::loadPluginExpandWidgets()
         expand->setContent(frame);
         layout->addWidget(expand, 0, Qt::AlignTop);
         layout->addSpacing(ArrowLineExpand_SPACING);
-        m_expandGroup->addExpand(expand);
+
+        initExpandConnection(expand);
+        m_expandGroup.push_back(expand);
     }
     layout->addStretch();
-    setFixedSize(320, contentHeight());
+    //setFixedSize(320, contentHeight());
+    setFixedWidth(320);
     layout->setContentsMargins(5, 0, 5, 0);
 }
 
-DExpandGroup *PropertyDialog::addExpandWidget(const QStringList &titleList)
+void PropertyDialog::initExpandConnection(DBaseExpand *expand)
+{
+    connect(expand, &DBaseExpand::expandChange, this, &PropertyDialog::onExpandChanged);
+    DEnhancedWidget *hanceedWidget = new DEnhancedWidget(expand, expand);
+    connect(hanceedWidget, &DEnhancedWidget::heightChanged, hanceedWidget, [=](){
+        QRect rc = geometry();
+        rc.setHeight(contentHeight());
+        setGeometry(rc);
+    });
+}
+
+QList<DBaseExpand *> PropertyDialog::addExpandWidget(const QStringList &titleList)
 {
     QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(this->layout());
-    DExpandGroup *group = new DExpandGroup;
+    //DExpandGroup *group = new DExpandGroup;
+    QList<DBaseExpand *> group;
 
     for (const QString &title : titleList) {
         DArrowLineExpand *expand = new DFMDArrowLineExpand;//DArrowLineExpand;
-
         expand->setTitle(title);
         expand->setFixedHeight(ArrowLineExpand_HIGHT);
-
-        connect(expand, &DArrowLineExpand::expandChange, this, &PropertyDialog::onExpandChanged);
-
         layout->addWidget(expand, 0, Qt::AlignTop);
         layout->addSpacing(ArrowLineExpand_SPACING);
 
-        group->addExpand(expand);
+        initExpandConnection(expand);
+        group.push_back(expand);
     }
     return group;
 }

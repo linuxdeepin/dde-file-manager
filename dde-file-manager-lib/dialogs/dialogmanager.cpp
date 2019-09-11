@@ -653,6 +653,7 @@ void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
                     dialog->raise();
                 } else {
                     dialog = new PropertyDialog(event, url);
+                    dialog->setWindowFlags(dialog->windowFlags() & ~ Qt::FramelessWindowHint);
                     m_propertyDialogs.insert(url, dialog);
                     QPoint pos = getPerportyPos(dialog->size().width(), dialog->size().height(), count, index);
 
@@ -686,8 +687,8 @@ void DialogManager::showShareOptionsInPropertyDialog(const DFMUrlListBaseEvent &
     PropertyDialog *dialog;
     if (m_propertyDialogs.contains(url)) {
         dialog = m_propertyDialogs.value(url);
-        if (dialog->expandGroup()->expands().count() > 1) {
-            dialog->expandGroup()->expand(1)->setExpand(true);
+        if (dialog->expandGroup().count() > 1) {
+            dialog->expandGroup().at(1)->setExpand(true);
         }
     }
 }
