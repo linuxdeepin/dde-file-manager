@@ -125,22 +125,43 @@ bool DFMRootFileWatcherPrivate::start()
 
     DFMRootFileWatcher *wpar = qobject_cast<DFMRootFileWatcher*>(q);
 
+    static QMap<QString, QString> dbuspath2uuid;
+    static QSet<QString> uuidset;
+
     connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::mountAdded, [wpar](QExplicitlySharedDataPointer<DGioMount> mnt) {
+        if (mnt->getVolume() && uuidset.contains(mnt->getVolume()->identifier(DGioVolumeIdentifierType::VOLUME_IDENTIFIER_TYPE_UUID))) {
+            return;
+        }
         Q_EMIT wpar->subfileCreated(DUrl(DFMROOT_ROOT + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + ".gvfsmp"));
     }));
     connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::mountRemoved, [wpar](QExplicitlySharedDataPointer<DGioMount> mnt) {
+        if (mnt->getVolume() && uuidset.contains(mnt->getVolume()->identifier(DGioVolumeIdentifierType::VOLUME_IDENTIFIER_TYPE_UUID))) {
+            return;
+        }
         Q_EMIT wpar->fileDeleted(DUrl(DFMROOT_ROOT + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + ".gvfsmp"));
     }));
     connections.push_back(QObject::connect(udisksmgr.data(), &DDiskManager::fileSystemAdded, [wpar](const QString &blks) {
+        QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
+        QString uuid = blk->idUUID();
+
+        dbuspath2uuid[blks] = uuid;
+        uuidset.insert(uuid);
+
         Q_EMIT wpar->subfileCreated(DUrl(DFMROOT_ROOT + blks.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + ".localdisk"));
     }));
     connections.push_back(QObject::connect(udisksmgr.data(), &DDiskManager::fileSystemRemoved, [wpar](const QString &blks) {
+        uuidset.remove(dbuspath2uuid[blks]);
+        dbuspath2uuid.remove(blks);
         Q_EMIT wpar->fileDeleted(DUrl(DFMROOT_ROOT + blks.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + ".localdisk"));
     }));
 
     for (auto devs : udisksmgr->blockDevices()) {
         blkdevs.push_back(QSharedPointer<DBlockDevice>(DDiskManager::createBlockDevice(devs)));
         blkdevs.back()->setWatchChanges(true);
+
+        dbuspath2uuid[devs] = blkdevs.back()->idUUID();
+        uuidset.insert(dbuspath2uuid[devs]);
+
         connections.push_back(QObject::connect(blkdevs.back().data(), &DBlockDevice::idLabelChanged, [wpar, devs](const QString &) {
             Q_EMIT wpar->fileAttributeChanged(DUrl(DFMROOT_ROOT + devs.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + ".localdisk"));
         }));

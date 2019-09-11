@@ -331,6 +331,11 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
         const QSharedPointer<DFMOpenNewWindowEvent> &e = event.staticCast<DFMOpenNewWindowEvent>();
 
         for (const DUrl &url : e->urlList()) {
+            DUrl rurl = url;
+            if (rurl.scheme() == DFMROOT_SCHEME) {
+                DAbstractFileInfoPointer fi = fileService->createFileInfo(nullptr, rurl);
+                rurl = fi->redirectedFileUrl();
+            }
             WindowManager::instance()->showNewWindow(url, e->force());
         }
 

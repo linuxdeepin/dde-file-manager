@@ -838,13 +838,21 @@ bool DFileManagerWindow::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
         d->toolbar->forward();
         return true;
     case DFMEvent::OpenNewTab:
+    {
         if (event->windowId() != this->internalWinId()) {
             return false;
         }
 
-        openNewTab(event.staticCast<DFMUrlBaseEvent>()->url());
+        DUrl url = event.staticCast<DFMUrlBaseEvent>()->url();
+        if (url.scheme() == DFMROOT_SCHEME) {
+            DAbstractFileInfoPointer fi = fileService->createFileInfo(nullptr, url);
+            url = fi->redirectedFileUrl();
+        }
+
+        openNewTab(url);
 
         return true;
+    }
     default: break;
     }
 

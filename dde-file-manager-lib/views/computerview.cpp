@@ -1291,7 +1291,8 @@ ComputerView2::ComputerView2(QWidget *parent) : QWidget(parent)
     layout()->addWidget(m_statusbar);
     layout()->setMargin(0);
 
-    m_view->setModel(new ComputerModel(this));
+    m_model = new ComputerModel(this);
+    m_view->setModel(m_model);
     m_view->setItemDelegate(new ComputerViewItemDelegate(this));
     m_view->setWrapping(true);
     m_view->setSpacing(10);
@@ -1309,6 +1310,7 @@ ComputerView2::ComputerView2(QWidget *parent) : QWidget(parent)
         appController->actionOpen(QSharedPointer<DFMUrlListBaseEvent>(new DFMUrlListBaseEvent(this, {idx.data(ComputerModel::DataRoles::MountOpenUrlRole).value<DUrl>()})));
     });
     connect(m_statusbar->scalingSlider(), &DSlider::valueChanged, this, [this] {m_view->setIconSize(QSize(iconsizes[m_statusbar->scalingSlider()->value()], iconsizes[m_statusbar->scalingSlider()->value()]));});
+    connect(fileSignalManager, &FileSignalManager::requestRename, this, &ComputerView2::onRenameRequested);
 }
 
 ComputerView2::~ComputerView2()
@@ -1338,9 +1340,25 @@ QListView* ComputerView2::view()
     return m_view;
 }
 
-void ComputerView2::contextMenu()
+void ComputerView2::contextMenu(const QPoint &pos)
 {
-    qDebug() << "contextMenu";
+    const QModelIndex &idx = m_view->indexAt(pos);
+    if (!idx.isValid()) {
+        return;
+    }
+    const QVector<MenuAction> &av = idx.data(ComputerModel::DataRoles::ActionVectorRole).value<QVector<MenuAction>>();
+    DFileMenu *menu = DFileMenuManager::genereteMenuByKeys(av, {});
+    menu->setEventData(DUrl(), {idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>()}, WindowManager::getWindowId(this), this);
+    menu->exec(this->mapToGlobal(pos));
+    menu->deleteLater();
+}
+
+void ComputerView2::onRenameRequested(const DFMUrlBaseEvent &event)
+{
+    const QModelIndex &idx = m_model->findIndex(event.url());
+    if (idx.isValid()) {
+        m_view->edit(idx);
+    }
 }
 
 void ComputerView2::resizeEvent(QResizeEvent *event)
