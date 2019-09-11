@@ -34,11 +34,8 @@
 #include <QFrame>
 #include <QLabel>
 #include <QStackedLayout>
-#include <private/qobject_p.h>
-
 
 DFM_BEGIN_NAMESPACE
-
 
 SectionKeyLabel::SectionKeyLabel(const QString &text, QWidget *parent, Qt::WindowFlags f):
     QLabel(text, parent, f)
@@ -98,6 +95,7 @@ private:
     QLabel      *m_containSizeLabel{ nullptr };
     bool         m_showFileName{ false };
     bool         m_showPicturePixel{ false };
+    bool         m_showVideoInfo{ false }; // 视频时长
 
     DFM_NAMESPACE::DFileStatisticsJob* m_sizeWorker{ nullptr };
 
@@ -237,6 +235,23 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
         }
     }
 
+    if (m_showVideoInfo) {
+        DAbstractFileInfo::FileType fileType = mimeTypeDisplayManager->displayNameToEnum(info->mimeTypeName());
+        if (fileType == DAbstractFileInfo::FileType::Videos) {
+//            QSharedPointer<VideoWidget> playerWidget = QSharedPointer<VideoWidget>(new VideoWidget);
+//            QPixmap pixmap;
+//            pixmap.load(info->filePath());
+//            if (!pixmap.isNull()) {
+//                QString text = QString("%1X%2").arg(pixmap.width()).arg(pixmap.height());
+
+//                QLabel *pixelKeyLabel = new SectionKeyLabel(QObject::tr("Picture size"));
+//                QLabel *pixelLabel = new SectionValueLabel;
+//                pixelLabel->setText(text);
+//                layout->addRow(pixelKeyLabel, pixelLabel);
+//                frameHeight += 30;
+//            }
+        }
+    }
 
     if (!info->isVirtualEntry()) {
         layout->addRow(typeSectionLabel, typeLabel);
@@ -315,6 +330,18 @@ void DFMFileBasicInfoWidget::setShowPicturePixel(bool visible)
 {
     Q_D(DFMFileBasicInfoWidget);
     d->m_showPicturePixel = visible;
+}
+
+bool DFMFileBasicInfoWidget::showVideoInfo()
+{
+    Q_D(DFMFileBasicInfoWidget);
+    return d->m_showVideoInfo;
+}
+
+void DFMFileBasicInfoWidget::setShowVideoInfo(bool visible)
+{
+    Q_D(DFMFileBasicInfoWidget);
+    d->m_showVideoInfo = visible;
 }
 
 DFM_END_NAMESPACE

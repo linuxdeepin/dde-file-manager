@@ -77,6 +77,9 @@ public:
     void setShowFileName(bool visible);
     bool showPicturePixel();
     void setShowPicturePixel(bool visible);
+    bool showVideoInfo();
+    void setShowVideoInfo(bool visible);
+
 
 private:
     QScopedPointer<DFMFileBasicInfoWidgetPrivate> d_private;
