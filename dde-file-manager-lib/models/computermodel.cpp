@@ -186,7 +186,7 @@ bool ComputerModel::setData(const QModelIndex &index, const QVariant &value, int
 
 Qt::ItemFlags ComputerModel::flags(const QModelIndex &index) const
 {
-    Qt::ItemFlags ret = Qt::ItemIsEnabled;
+    Qt::ItemFlags ret = Qt::ItemIsEnabled | Qt::ItemFlag::ItemNeverHasChildren;
     if (index.data(DataRoles::ICategoryRole) != ComputerModelItemData::Category::cat_splitter) {
         ret |= Qt::ItemFlag::ItemIsSelectable;
     }

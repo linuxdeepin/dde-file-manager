@@ -246,6 +246,7 @@ public Q_SLOT:
     void contextMenu();
 protected:
     void resizeEvent(QResizeEvent *event) override;
+    bool eventFilter(QObject *obj, QEvent *event) override;
 private:
     QListView *m_view;
     DStatusBar *m_statusbar;
