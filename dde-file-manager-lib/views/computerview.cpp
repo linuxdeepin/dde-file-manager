@@ -1301,6 +1301,8 @@ ComputerView2::ComputerView2(QWidget *parent) : QWidget(parent)
     m_view->setEditTriggers(QAbstractItemView::EditTrigger::NoEditTriggers);
     m_view->setIconSize(QSize(iconsizes[m_statusbar->scalingSlider()->value()], iconsizes[m_statusbar->scalingSlider()->value()]));
     m_view->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
+    m_view->setFrameShape(QFrame::Shape::NoFrame);
+    m_view->viewport()->installEventFilter(this);
 
     connect(m_view, &QWidget::customContextMenuRequested, this, &ComputerView2::contextMenu);
     connect(m_view, &QAbstractItemView::doubleClicked, [this](const QModelIndex &idx) {
@@ -1348,4 +1350,17 @@ void ComputerView2::resizeEvent(QResizeEvent *event)
             emit m_view->itemDelegate()->sizeHintChanged(m_view->model()->index(i, 0));
     }
     QWidget::resizeEvent(event);
+}
+
+bool ComputerView2::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::MouseButtonRelease) {
+        QMouseEvent *e = static_cast<QMouseEvent*>(event);
+        if (e->button() == Qt::MouseButton::LeftButton && !m_view->indexAt(e->pos()).isValid()) {
+            m_view->selectionModel()->clearSelection();
+        }
+        return false;
+    } else {
+        return QObject::eventFilter(obj, event);
+    }
 }
