@@ -154,6 +154,7 @@ private:
     QLabel* m_lockedLabel = Q_NULLPTR;
 };
 
+class ComputerModel;
 
 class ComputerView : public QFrame, public DFMBaseView
 {
@@ -243,12 +244,14 @@ public:
     bool setRootUrl(const DUrl &url) override;
     QListView *view();
 public Q_SLOT:
-    void contextMenu();
+    void contextMenu(const QPoint &pos);
+    void onRenameRequested(const DFMUrlBaseEvent &event);
 protected:
     void resizeEvent(QResizeEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
 private:
     QListView *m_view;
+    ComputerModel *m_model;
     DStatusBar *m_statusbar;
     static const QList<int> iconsizes;
 };

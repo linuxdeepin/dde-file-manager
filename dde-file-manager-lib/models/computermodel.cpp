@@ -167,6 +167,18 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         }
     }
 
+    if (role == DataRoles::ActionVectorRole) {
+        if (pitmdata->fi) {
+            return QVariant::fromValue(pitmdata->fi->menuActionList());
+        }
+    }
+
+    if (role == DataRoles::DFMRootUrlRole) {
+        if (pitmdata->fi) {
+            return QVariant::fromValue(pitmdata->fi->fileUrl());
+        }
+    }
+
     return QVariant();
 }
 
@@ -196,6 +208,16 @@ Qt::ItemFlags ComputerModel::flags(const QModelIndex &index) const
         ret |= Qt::ItemFlag::ItemIsEditable;
     }
     return ret;
+}
+
+QModelIndex ComputerModel::findIndex(const DUrl &url) const
+{
+    for (int row = 0; row < m_items.size(); ++row) {
+        if (m_items[row].url == url) {
+            return index(row, 0);
+        }
+    }
+    return QModelIndex();
 }
 
 void ComputerModel::addItem(const DUrl &url, QWidget* w)

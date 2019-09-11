@@ -234,9 +234,10 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
     }
     if (suffix() == "localdisk" && d->blk && d->blk->mountPoints().size() == 0) {
         ret.push_back(MenuAction::Mount);
+        ret.push_back(MenuAction::Rename);
     }
     ret.push_back(MenuAction::Property);
-    return {};
+    return ret;
 }
 
 bool DFMRootFileInfo::canRedirectionFileUrl() const

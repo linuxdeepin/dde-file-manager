@@ -62,7 +62,9 @@ public:
         UsgWidgetRole = Qt::UserRole + 4,   //ProgressLine*
         ICategoryRole = Qt::UserRole + 5,   //ComputerModelItemData::Category
         OpenUrlRole = Qt::UserRole + 6,     //DUrl
-        MountOpenUrlRole = Qt::UserRole + 7 //DUrl
+        MountOpenUrlRole = Qt::UserRole + 7,//DUrl
+        ActionVectorRole = Qt::UserRole + 8,//QVector<MenuAction>
+        DFMRootUrlRole = Qt::UserRole + 9   //DUrl
     };
     Q_ENUM(DataRoles)
 
@@ -76,6 +78,8 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
+
+    QModelIndex findIndex(const DUrl &url) const;
 
 public Q_SLOTS:
     void addItem(const DUrl &url, QWidget *w = nullptr);
