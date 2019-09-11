@@ -142,7 +142,7 @@ void DToolBar::initAddressToolBar()
 
     QFrame * crumbAndSearch = new QFrame;
     m_crumbWidget = new DFMCrumbBar(this);
-    crumbAndSearch->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    crumbAndSearch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     QHBoxLayout * comboLayout = new QHBoxLayout;
     comboLayout->addWidget(m_crumbWidget);
