@@ -483,6 +483,26 @@ void PropertyDialog::initUI()
     QFrame *frame = new QFrame(this);
     frame->setLayout(m_mainLayout);
     addContent(frame);
+
+    m_scrollArea = new QScrollArea();
+    QPalette palette = m_scrollArea->viewport()->palette();
+    palette.setBrush(QPalette::Background, Qt::NoBrush);
+    m_scrollArea->viewport()->setPalette(palette);
+    m_scrollArea->setFrameShape(QFrame::Shape::NoFrame);
+    QFrame *infoframe= new QFrame;
+    QVBoxLayout *vlayout = new QVBoxLayout;
+    vlayout->setContentsMargins(5,0,5,0);
+    infoframe->setLayout(vlayout);
+    m_scrollArea->setWidget(infoframe);
+    m_scrollArea->setWidgetResizable(true);
+    m_scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
+
+    QVBoxLayout *scrolllayout = new QVBoxLayout;
+    scrolllayout->addWidget(m_scrollArea);
+    QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(this->layout());
+    layout->insertLayout(1, scrolllayout, 1);
+
+    setFixedWidth(320);
 }
 
 void PropertyDialog::initConnect()
@@ -760,10 +780,23 @@ const QList<DBaseExpand *> &PropertyDialog::expandGroup() const
 
 int PropertyDialog::contentHeight() const
 {
+    int expandsHeight = 0;
+    int firstExpandHeight = m_expandGroup.size()>0 ? m_expandGroup.first()->getContent()->height() : -1;
+    bool atleastOneExpand = false;
+    for (const DBaseExpand* expand : m_expandGroup) {
+        expandsHeight += ArrowLineExpand_HIGHT + ArrowLineExpand_SPACING;
+        if (expand->expand()) {
+            expandsHeight += expand->getContent()->height();
+            atleastOneExpand = true;
+        }
+    }
+
+    if (!atleastOneExpand && firstExpandHeight > 0)
+        expandsHeight += firstExpandHeight;
+
     return (m_icon->height() +
             m_editStackWidget->height() +
-            expandGroup().first()->getContent()->height() +
-            expandGroup().size() * (ArrowLineExpand_HIGHT + ArrowLineExpand_SPACING) +
+            expandsHeight +
             contentsMargins().top() +
             contentsMargins().bottom() +
             (m_wdf ? m_wdf->height() : 0)+
@@ -772,7 +805,8 @@ int PropertyDialog::contentHeight() const
 
 void PropertyDialog::loadPluginExpandWidgets()
 {
-    QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(this->layout());
+    //QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(this->layout());
+    QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(m_scrollArea->widget()->layout());
     QList<PropertyDialogExpandInfoInterface *> plugins = PluginManager::instance()->getExpandInfoInterfaces();
     foreach (PropertyDialogExpandInfoInterface *plugin, plugins) {
         DArrowLineExpand *expand = new DFMDArrowLineExpand;//DArrowLineExpand;
@@ -784,48 +818,45 @@ void PropertyDialog::loadPluginExpandWidgets()
         frame->setMaximumHeight(EXTEND_FRAME_MAXHEIGHT);
         frame->setParent(this);
         expand->setTitle(plugin->expandWidgetTitle(m_url.toString()));
-        expand->setFixedHeight(ArrowLineExpand_HIGHT);
         expand->setExpand(false);
         expand->setContent(frame);
-        layout->addWidget(expand, 0, Qt::AlignTop);
-        layout->addSpacing(ArrowLineExpand_SPACING);
 
-        initExpandConnection(expand);
+        initExpand(layout, expand);
         m_expandGroup.push_back(expand);
     }
     layout->addStretch();
-    //setFixedSize(320, contentHeight());
-    setFixedWidth(320);
-    layout->setContentsMargins(5, 0, 5, 0);
 }
 
-void PropertyDialog::initExpandConnection(DBaseExpand *expand)
+void PropertyDialog::initExpand(QVBoxLayout *layout, DBaseExpand *expand)
 {
+    expand->setFixedHeight(ArrowLineExpand_HIGHT);
+    QMargins cm = layout->contentsMargins();
+    QRect rc = contentsRect();
+    expand->setFixedWidth(rc.width()-cm.left()-cm.right());
+    layout->addWidget(expand, 0, Qt::AlignTop);
+    layout->addSpacing(ArrowLineExpand_SPACING);
+
     connect(expand, &DBaseExpand::expandChange, this, &PropertyDialog::onExpandChanged);
     DEnhancedWidget *hanceedWidget = new DEnhancedWidget(expand, expand);
     connect(hanceedWidget, &DEnhancedWidget::heightChanged, hanceedWidget, [=](){
         QRect rc = geometry();
-        rc.setHeight(contentHeight());
+        rc.setHeight(contentHeight()+ArrowLineExpand_SPACING*2);
         setGeometry(rc);
     });
 }
 
 QList<DBaseExpand *> PropertyDialog::addExpandWidget(const QStringList &titleList)
 {
-    QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(this->layout());
-    //DExpandGroup *group = new DExpandGroup;
+    QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(m_scrollArea->widget()->layout());
     QList<DBaseExpand *> group;
 
     for (const QString &title : titleList) {
         DArrowLineExpand *expand = new DFMDArrowLineExpand;//DArrowLineExpand;
         expand->setTitle(title);
-        expand->setFixedHeight(ArrowLineExpand_HIGHT);
-        layout->addWidget(expand, 0, Qt::AlignTop);
-        layout->addSpacing(ArrowLineExpand_SPACING);
-
-        initExpandConnection(expand);
+        initExpand(layout, expand);
         group.push_back(expand);
     }
+
     return group;
 }
 

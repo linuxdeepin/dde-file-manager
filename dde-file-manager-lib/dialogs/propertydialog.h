@@ -36,6 +36,7 @@
 #include <QStackedWidget>
 #include <QPushButton>
 #include <QStorageInfo>
+#include <QScrollArea>
 #define EXTEND_FRAME_MAXHEIGHT 160
 
 QT_BEGIN_NAMESPACE
@@ -170,7 +171,7 @@ protected:
     void hideEvent(QHideEvent* event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent* event) Q_DECL_OVERRIDE;
 
-    void initExpandConnection(DBaseExpand *expand);
+    void initExpand(QVBoxLayout *layout, DBaseExpand *expand);
 
 private:
     DFMEvent m_fmevent{};
@@ -200,6 +201,7 @@ private:
     DFM_NAMESPACE::DFileStatisticsJob* m_sizeWorker{ nullptr };
     QVBoxLayout* m_mainLayout{ nullptr };
     QWidget* m_wdf{ nullptr };
+    QScrollArea *m_scrollArea{ nullptr };
 
     QList<DBaseExpand *> addExpandWidget(const QStringList &titleList);
 
