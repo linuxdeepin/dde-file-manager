@@ -224,7 +224,6 @@ public:
         EditLabel,
         PrivateFileToPublic,
 #endif
-        ToggleTheme,
 
         // recent
         RemoveFromRecent,

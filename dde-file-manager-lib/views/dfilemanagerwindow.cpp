@@ -917,18 +917,6 @@ void DFileManagerWindow::initTitleBar()
     menu->setProperty("ToolBarSettingsMenu", true);
     menu->setEventData(DUrl(), DUrlList() << DUrl(), winId(), this);
 
-    QAction *set_theme_action = menu->actionAt(1);
-    if (set_theme_action) {
-        set_theme_action->setCheckable(true);
-        set_theme_action->setText(tr("Dark theme"));
-        if (DThemeManager::instance()->theme(this) == "dark") {
-            set_theme_action->setChecked(true);
-        }
-        connect(set_theme_action, &QAction::triggered, this, &DFileManagerWindow::onThemeChanged);
-        // TODO: wait for new switch theme API or remove this menu completely
-        set_theme_action->setVisible(false);
-    }
-
     titlebar()->setMenu(menu);
     titlebar()->setContentsMargins(0, 0, 0, 0);
     titlebar()->setCustomWidget(d->titleFrame, false);
