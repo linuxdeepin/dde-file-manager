@@ -141,7 +141,6 @@ DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &d
     actionKeys.reserve(5);
 
     actionKeys << MenuAction::NewWindow
-               << MenuAction::ToggleTheme
                << MenuAction::Separator
                << MenuAction::SetUserSharePassword
                << MenuAction::Settings;
