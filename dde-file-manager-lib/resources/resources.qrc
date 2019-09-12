@@ -22,5 +22,6 @@
         <file>icons/deepin-app-light/icons/128/dfm_addressbar-glowing.svg</file>
         <file>icons/deepin-app-dark/icons/128/dfm_addressbar-glowing.svg</file>
         <file>icons/deepin-app-light/actions/16/dfm_rightview-detail.svg</file>
+        <file>icons/deepin-app-dark/actions/16/dfm_rightview-detail.svg</file>
     </qresource>
 </RCC>
