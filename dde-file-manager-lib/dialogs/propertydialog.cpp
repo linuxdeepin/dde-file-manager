@@ -58,6 +58,8 @@
 #include <dexpandgroup.h>
 #include <dblockdevice.h>
 #include <denhancedwidget.h>
+#include <QScrollBar>
+#include <dcrumbedit.h>
 
 #include <QTextEdit>
 #include <QFormLayout>
@@ -78,8 +80,15 @@
 #include <ddiskmanager.h>
 #include <QGuiApplication>
 #include "unistd.h"
-
+#include <tag/tagmanager.h>
 #include <models/trashfileinfo.h>
+#include <views/dtagactionwidget.h>
+
+#include <dfilemenumanager.h>
+#include <shutil/desktopfile.h>
+#include "app/define.h"
+#include "controllers/pathmanager.h"
+
 #define ArrowLineExpand_HIGHT   30
 #define ArrowLineExpand_SPACING 10
 
@@ -100,6 +109,14 @@ protected:
         painter.setRenderHint(QPainter::Antialiasing, true);
         painter.fillPath(path, bgColor);
         painter.setRenderHint(QPainter::Antialiasing, false);
+    }
+public:
+    void setTitle(const QString &title){
+        QString boldTitle = title;
+        if (!boldTitle.contains("<b>"))
+            boldTitle.prepend("<b>").append("</b>");
+
+        DArrowLineExpand::setTitle(boldTitle);
     }
 };
 
@@ -234,7 +251,7 @@ SectionKeyLabel::SectionKeyLabel(const QString &text, QWidget *parent, Qt::Windo
 {
     setObjectName("SectionKeyLabel");
     setFixedWidth(120);
-    setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+    setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 }
 
 
@@ -490,9 +507,10 @@ void PropertyDialog::initUI()
     m_scrollArea->viewport()->setPalette(palette);
     m_scrollArea->setFrameShape(QFrame::Shape::NoFrame);
     QFrame *infoframe= new QFrame;
-    QVBoxLayout *vlayout = new QVBoxLayout;
-    vlayout->setContentsMargins(5,0,5,0);
-    infoframe->setLayout(vlayout);
+    QVBoxLayout *scrollWidgetLayout = new QVBoxLayout;
+    scrollWidgetLayout->setContentsMargins(15, 0, 15, 0);
+    scrollWidgetLayout->setSpacing(ArrowLineExpand_SPACING);
+    infoframe->setLayout(scrollWidgetLayout);
     m_scrollArea->setWidget(infoframe);
     m_scrollArea->setWidgetResizable(true);
     m_scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
@@ -501,8 +519,11 @@ void PropertyDialog::initUI()
     scrolllayout->addWidget(m_scrollArea);
     QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(this->layout());
     layout->insertLayout(1, scrolllayout, 1);
+    createTagWidget();
+    if (m_tagInfoFrame)
+        scrollWidgetLayout->addWidget(m_tagInfoFrame);
 
-    setFixedWidth(320);
+    setFixedWidth(350);
 }
 
 void PropertyDialog::initConnect()
@@ -800,6 +821,7 @@ int PropertyDialog::contentHeight() const
             contentsMargins().top() +
             contentsMargins().bottom() +
             (m_wdf ? m_wdf->height() : 0)+
+            (m_tagInfoFrame ? m_tagInfoFrame->height() : 0)+
             40);
 }
 
@@ -809,7 +831,7 @@ void PropertyDialog::loadPluginExpandWidgets()
     QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(m_scrollArea->widget()->layout());
     QList<PropertyDialogExpandInfoInterface *> plugins = PluginManager::instance()->getExpandInfoInterfaces();
     foreach (PropertyDialogExpandInfoInterface *plugin, plugins) {
-        DArrowLineExpand *expand = new DFMDArrowLineExpand;//DArrowLineExpand;
+        DFMDArrowLineExpand *expand = new DFMDArrowLineExpand;//DArrowLineExpand;
         QWidget *frame = plugin->expandWidget(m_url.toString());
         if (!frame) {
             expand->deleteLater();
@@ -834,7 +856,6 @@ void PropertyDialog::initExpand(QVBoxLayout *layout, DBaseExpand *expand)
     QRect rc = contentsRect();
     expand->setFixedWidth(rc.width()-cm.left()-cm.right());
     layout->addWidget(expand, 0, Qt::AlignTop);
-    layout->addSpacing(ArrowLineExpand_SPACING);
 
     connect(expand, &DBaseExpand::expandChange, this, &PropertyDialog::onExpandChanged);
     DEnhancedWidget *hanceedWidget = new DEnhancedWidget(expand, expand);
@@ -851,7 +872,7 @@ QList<DBaseExpand *> PropertyDialog::addExpandWidget(const QStringList &titleLis
     QList<DBaseExpand *> group;
 
     for (const QString &title : titleList) {
-        DArrowLineExpand *expand = new DFMDArrowLineExpand;//DArrowLineExpand;
+        DFMDArrowLineExpand *expand = new DFMDArrowLineExpand;//DArrowLineExpand;
         expand->setTitle(title);
         initExpand(layout, expand);
         group.push_back(expand);
@@ -996,7 +1017,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         layout->addRow(sourcePathSectionLabel, sourcePathLabel);
     }
 
-    layout->setContentsMargins(0, 0, 40, 0);
+    layout->setContentsMargins(15, 0, 30, 0);
     widget->setLayout(layout);
     widget->setFixedSize(width(), frameHeight);
 //    if (info->isSymLink()) {
@@ -1310,4 +1331,131 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     }
 
     return widget;
+}
+
+void loadTags(DCrumbEdit *tagNamesCrumbEdit, DTagActionWidget *tagWidget, const DUrl& url)
+{
+    const QStringList tag_name_list = TagManager::instance()->getTagsThroughFiles({url});
+    QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({tag_name_list});
+    QList<QColor>  selectColors;
+    if (tagNamesCrumbEdit) {
+        tagNamesCrumbEdit->setProperty("LoadFileTags", true);
+        tagNamesCrumbEdit->setPlainText("");
+
+        for(auto it = nameColors.begin();it != nameColors.end(); ++it) {
+            DCrumbTextFormat format = tagNamesCrumbEdit->makeTextFormat();
+            format.setText(it.key());
+            selectColors << it.value();
+            format.setBackground(QBrush(it.value()));
+            format.setBackgroundRadius(5);
+            tagNamesCrumbEdit->insertCrumb(format, 0);
+        }
+        tagNamesCrumbEdit->setProperty("LoadFileTags", false);
+    }
+
+    if (tagWidget)
+        tagWidget->setCheckedColorList(selectColors);
+}
+
+static bool isComputerOrTrash(const DAbstractFileInfoPointer &fileInfo)
+{
+    DUrl realTargetUrl = fileInfo->fileUrl();
+    if (fileInfo && fileInfo->isSymLink()) {
+        realTargetUrl = fileInfo->rootSymLinkTarget();
+    }
+
+    if (realTargetUrl.toLocalFile().endsWith(QString(".") + "desktop")) {
+        DesktopFile df(realTargetUrl.toLocalFile());
+        return (df.getDeepinId() == "dde-trash" || df.getDeepinId() == "dde-computer");
+    }
+
+    return false;
+}
+
+QFrame *PropertyDialog::createTagWidget()
+{
+    QFrame *tagInfoFrame = new QFrame(this);
+    tagInfoFrame->setObjectName("tagInfoFrame");
+    QString backColor = palette().color(QPalette::Base).name();
+    tagInfoFrame->setStyleSheet(QString("QFrame#tagInfoFrame{background-color: %1; border-radius: 8px;}").arg(backColor));
+
+    QVBoxLayout *tagHolder = new QVBoxLayout;
+    tagInfoFrame->setLayout(tagHolder);
+
+    QLabel *tagLable = new QLabel(tr("tag"), this);
+    QFont font = tagLable->font();
+    font.setBold(true);
+    font.setPixelSize(17);
+    tagLable->setFont(font);
+    tagHolder->addWidget(tagLable);
+
+    DTagActionWidget *tagWidget =  new DTagActionWidget(tagInfoFrame);
+    tagHolder->addWidget(tagWidget);
+
+    DCrumbEdit *tagNamesCrumbEdit = new DCrumbEdit(tagInfoFrame);
+    tagNamesCrumbEdit->setFrameShape(QFrame::Shape::NoFrame);
+    tagNamesCrumbEdit->viewport()->setBackgroundRole(QPalette::NoRole);
+    tagHolder->addWidget(tagNamesCrumbEdit);
+
+    tagInfoFrame->setMaximumHeight(150);
+
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
+    bool showTags = !systemPathManager->isSystemPath(m_url.path()) &&
+             !isComputerOrTrash(fileInfo) && DFileMenuManager::whetherShowTagActions({m_url});
+    if (!showTags) {
+        tagInfoFrame->deleteLater();
+        return nullptr;
+    }
+
+    DAbstractFileWatcher *devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, m_url, this);
+    if (devicesWatcher) {
+        devicesWatcher->startWatcher();
+
+        connect(devicesWatcher, &DAbstractFileWatcher::fileAttributeChanged, this, [=](const DUrl &url) {
+            if (url == m_url){
+                loadTags(tagNamesCrumbEdit, tagWidget, m_url);
+            }
+        });
+    }
+
+    loadTags(tagNamesCrumbEdit, tagWidget, m_url);
+
+    QObject::connect(tagNamesCrumbEdit, &DCrumbEdit::crumbListChanged, tagNamesCrumbEdit,[=](){
+        if (!tagNamesCrumbEdit->property("LoadFileTags").toBool())
+            DFileService::instance()->makeTagsOfFiles(nullptr, {m_url}, tagNamesCrumbEdit->crumbList());
+    });
+
+    QObject::connect(tagWidget, &DTagActionWidget::checkedColorChanged, this, [=](const QColor &color){
+        const QStringList tag_name_list = TagManager::instance()->getTagsThroughFiles({m_url});
+        QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({tag_name_list});
+        DUrlList urlList{m_url};
+        QList<QColor> checkedcolors{ tagWidget->checkedColorList() };
+        QSet<QString> dirtyTagFilter = TagManager::instance()->allTagOfDefaultColors();
+
+        QSet<QString> sameColors = nameColors.keys(color).toSet();
+        // 当有多个相同颜色名字不同的tag时， 取消tag优先取消默认颜色
+        if (sameColors.count()>0 && !checkedcolors.contains(color) && !sameColors.intersects(dirtyTagFilter)) {
+            dirtyTagFilter << *sameColors.begin();
+        }
+
+        QStringList new_tagNames;
+        for (const QColor &color : checkedcolors) {
+            QString tag_name =  nameColors.key(color);
+            if (tag_name.isEmpty())
+                tag_name = TagManager::instance()->getTagNameThroughColor(color);
+
+            if (tag_name.isEmpty()) {
+                continue;
+            }
+            new_tagNames << tag_name;
+        }
+
+        DFileService::instance()->makeTagsOfFiles(nullptr, urlList, new_tagNames, dirtyTagFilter);
+        loadTags(tagNamesCrumbEdit, tagWidget, m_url);
+    });
+
+    m_tagInfoFrame = tagInfoFrame;
+    m_tagInfoFrame->setVisible(showTags);
+
+    return m_tagInfoFrame;
 }
