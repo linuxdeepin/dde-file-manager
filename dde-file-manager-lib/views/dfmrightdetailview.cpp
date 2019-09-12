@@ -179,7 +179,6 @@ void DFMRightDetailView::initTagWidget()
     d->tagNamesCrumbEdit = new DCrumbEdit(this);
     d->tagNamesCrumbEdit->setFrameShape(QFrame::Shape::NoFrame);
     d->tagNamesCrumbEdit->viewport()->setBackgroundRole(QPalette::NoRole);
-    d->tagNamesCrumbEdit->viewport()->setContentsMargins(50, 5, 5, 5);
 
     //d->tagNamesCrumbEdit->setEnabled(false);
     tagHolder->addWidget(d->tagNamesCrumbEdit);

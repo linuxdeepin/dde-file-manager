@@ -202,6 +202,7 @@ private:
     QVBoxLayout* m_mainLayout{ nullptr };
     QWidget* m_wdf{ nullptr };
     QScrollArea *m_scrollArea{ nullptr };
+    QFrame      *m_tagInfoFrame{ nullptr };
 
     QList<DBaseExpand *> addExpandWidget(const QStringList &titleList);
 
@@ -213,6 +214,7 @@ private:
     QFrame *createInfoFrame(const QList<QPair<QString, QString> > &properties);
     QListWidget *createOpenWithListWidget(const DAbstractFileInfoPointer &info);
     QFrame *createAuthorityManagementWidget(const DAbstractFileInfoPointer &info);
+    QFrame *createTagWidget();
 };
 
 #endif // PROPERTYDIALOG_H
