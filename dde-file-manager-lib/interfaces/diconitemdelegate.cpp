@@ -51,7 +51,8 @@ DWIDGET_USE_NAMESPACE
 DFM_USE_NAMESPACE
 
 #define ICON_SPACING 16
-#define ICON_MODE_RECT_RADIUS TEXT_PADDING
+#define ICON_MODE_RECT_RADIUS 18
+#define TEXT_H_PADDING ICON_MODE_RECT_RADIUS
 
 QString trimmedEnd(QString str)
 {
@@ -348,7 +349,7 @@ public:
 
         const QMargins &margins = contentsMargins();
         QRect label_rect(TEXT_PADDING + margins.left(), margins.top() + iconHeight + TEXT_PADDING + ICON_MODE_ICON_SPACING,
-                         width() - TEXT_PADDING * 2 - margins.left() - margins.right(), INT_MAX);
+                         width() - TEXT_H_PADDING * 2 - margins.left() - margins.right(), INT_MAX);
         const QList<QRectF> &lines = delegate->drawText(index, &pa, option.text, label_rect, ICON_MODE_RECT_RADIUS,
                                                         option.palette.brush(QPalette::Normal, QPalette::Highlight),
                                                         QTextOption::WrapAtWordBoundaryOrAnywhere,
@@ -407,7 +408,7 @@ public:
 
             width -= (margins.left() + margins.right());
 
-            QRect label_rect(TEXT_PADDING + margins.left(), iconHeight + TEXT_PADDING + ICON_MODE_ICON_SPACING + margins.top(), width - TEXT_PADDING * 2, INT_MAX);
+            QRect label_rect(TEXT_PADDING + margins.left(), iconHeight + TEXT_PADDING + ICON_MODE_ICON_SPACING + margins.top(), width - TEXT_H_PADDING * 2, INT_MAX);
             const QList<QRectF> &lines = delegate->drawText(index, nullptr, option.text, label_rect, ICON_MODE_RECT_RADIUS, Qt::NoBrush,
                                                             QTextOption::WrapAtWordBoundaryOrAnywhere, option.textElideMode, Qt::AlignCenter);
 
@@ -690,8 +691,8 @@ void DIconItemDelegate::paint(QPainter *painter,
     QRectF label_rect = opt.rect;
 
     label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
-    label_rect.setWidth(opt.rect.width() - 2 * TEXT_PADDING - 2*backgroundMargin);
-    label_rect.moveLeft(label_rect.left() + TEXT_PADDING + backgroundMargin);
+    label_rect.setWidth(opt.rect.width() - 2 * TEXT_H_PADDING - 2*backgroundMargin);
+    label_rect.moveLeft(label_rect.left() + TEXT_H_PADDING + backgroundMargin);
 
     if (isSelected) {
         painter->setPen(opt.palette.color(QPalette::BrightText));
@@ -962,8 +963,8 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 
     QRect label_rect = option.rect;
 
-    label_rect.setWidth(label_rect.width() - 2 * TEXT_PADDING);
-    label_rect.moveLeft(label_rect.left() + TEXT_PADDING);
+    label_rect.setWidth(label_rect.width() - 2 * TEXT_H_PADDING);
+    label_rect.moveLeft(label_rect.left() + TEXT_H_PADDING);
     label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
 
     QStyleOptionViewItem opt = option;
