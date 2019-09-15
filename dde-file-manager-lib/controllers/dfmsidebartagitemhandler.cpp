@@ -38,14 +38,14 @@ DFM_BEGIN_NAMESPACE
 
 // <TagColorName, ThemeName>
 static const QMap<QString, QString> TagColorThemeIconMap {
-    {"Orange", "dfm_tag-orange"},
-    {"Red", "dfm_tag-red"},
-    {"Purple", "dfm_tag-purple"},
-    {"Navy-blue", "dfm_tag-deepblue"},
-    {"Azure", "dfm_tag-lightblue"},
-    {"Grass-green", "dfm_tag-green"},
-    {"Yellow", "dfm_tag-yellow"},
-    {"Gray", "dfm_tag-gray"}
+    {"Orange", "dfm_tag_orange"},
+    {"Red", "dfm_tag_red"},
+    {"Purple", "dfm_tag_purple"},
+    {"Navy-blue", "dfm_tag_deepblue"},
+    {"Azure", "dfm_tag_lightblue"},
+    {"Grass-green", "dfm_tag_green"},
+    {"Yellow", "dfm_tag_yellow"},
+    {"Gray", "dfm_tag_gray"}
 };
 
 DFMSideBarItem *DFMSideBarTagItemHandler::createItem(const DUrl &url)

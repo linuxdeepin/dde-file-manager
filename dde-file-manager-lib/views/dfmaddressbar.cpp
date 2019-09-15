@@ -305,7 +305,7 @@ void DFMAddressBar::paintEvent(QPaintEvent *e)
     // Draw growing animation
     if (animation && animation->state() != QAbstractAnimation::Stopped) {
 
-        QIcon icon = QIcon::fromTheme("dfm_addressbar-glowing");
+        QIcon icon = QIcon::fromTheme("dfm_addressbar_glowing");
         if (icon.availableSizes().isEmpty())
             return;
         const QSize size = icon.availableSizes().first();
