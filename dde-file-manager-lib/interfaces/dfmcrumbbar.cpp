@@ -386,14 +386,14 @@ static QString getIconName(const CrumbData& c)
         {"CrumbIconButton.Dvd","media-optical-dvd-symbolic"},
         {"CrumbIconButton.Iphone","iphone-symbolic"},
         {"CrumbIconButton.Android","android-phone-symbolic"},
-        {"BookmarkItem.Orange", "dfm_tag-orange"},
-        {"BookmarkItem.Red", "dfm_tag-red"},
-        {"BookmarkItem.Purple", "dfm_tag-purple"},
-        {"BookmarkItem.Navy-blue", "dfm_tag-deepblue"},
-        {"BookmarkItem.Azure", "dfm_tag-lightblue"},
-        {"BookmarkItem.Grass-green", "dfm_tag-green"},
-        {"BookmarkItem.Yellow", "dfm_tag-yellow"},
-        {"BookmarkItem.Gray", "dfm_tag-gray"}
+        {"BookmarkItem.Orange", "dfm_tag_orange"},
+        {"BookmarkItem.Red", "dfm_tag_red"},
+        {"BookmarkItem.Purple", "dfm_tag_purple"},
+        {"BookmarkItem.Navy-blue", "dfm_tag_deepblue"},
+        {"BookmarkItem.Azure", "dfm_tag_lightblue"},
+        {"BookmarkItem.Grass-green", "dfm_tag_green"},
+        {"BookmarkItem.Yellow", "dfm_tag_yellow"},
+        {"BookmarkItem.Gray", "dfm_tag_gray"}
     };
 
     if (iconName.isEmpty() && s_mapIconName.contains(c.iconName)) {
