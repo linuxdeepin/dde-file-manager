@@ -23,7 +23,7 @@
 #include <QDebug>
 #include <QScrollBar>
 
-#include <DThemeManager>
+#include <dtkwidget_global.h>
 
 DWIDGET_USE_NAMESPACE
 
