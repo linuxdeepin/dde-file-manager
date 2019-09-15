@@ -264,7 +264,8 @@ HEADERS += \
     controllers/dfmsidebarbookmarkitemhandler.h \
     interfaces/dfmsidebaritem.h \
     views/dfmsidebar.h \
-    views/dfmfilebasicinfowidget.h
+    views/dfmfilebasicinfowidget.h \
+    views/dfmtagwidget.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -443,7 +444,8 @@ SOURCES += \
     controllers/dfmsidebarbookmarkitemhandler.cpp \
     interfaces/dfmsidebaritem.cpp \
     views/dfmsidebar.cpp \
-    views/dfmfilebasicinfowidget.cpp
+    views/dfmfilebasicinfowidget.cpp \
+    views/dfmtagwidget.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h
