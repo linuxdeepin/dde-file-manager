@@ -23,20 +23,15 @@
 #include "dfileservices.h"
 #include "views/dfmfilebasicinfowidget.h"
 #include "app/define.h"
+#include "dfmtagwidget.h"
 #include "singleton.h"
 #include "controllers/pathmanager.h"
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <dcrumbedit.h>
 #include <dobject.h>
 #include <dtkwidget_global.h>
-#include <tag/tagmanager.h>
 #include <QScrollArea>
-#include <dabstractfilewatcher.h>
-#include <dfilemenumanager.h>
-#include <shutil/desktopfile.h>
-
 
 DWIDGET_USE_NAMESPACE
 
@@ -49,11 +44,8 @@ public:
     QVBoxLayout *mainLayout  {nullptr};
     QLabel      *iconLabel  {nullptr};
     QFrame      *baseInfoWidget {nullptr};
-    DCrumbEdit  *tagNamesCrumbEdit{ nullptr };
-    DTagActionWidget *tagWidget{ nullptr };
-    QFrame      *tagInfoWidget{ nullptr };
+    DFMTagWidget *tagInfoWidget{ nullptr };
     QScrollArea *scrollArea{ nullptr };
-    DAbstractFileWatcher *devicesWatcher{ nullptr };
 
     DFMRightDetailView *q_ptr{ nullptr };
     D_DECLARE_PUBLIC(DFMRightDetailView)
@@ -130,110 +122,9 @@ void DFMRightDetailView::initUI()
 void DFMRightDetailView::initTagWidget()
 {
     Q_D(DFMRightDetailView);
-
-    d->tagInfoWidget = new QFrame(this);
-    QVBoxLayout *tagHolder = new QVBoxLayout;
-    d->tagInfoWidget->setLayout(tagHolder);
-
-    QHBoxLayout *hl = new QHBoxLayout;
-    QLabel *tagLable = new QLabel("tag", this);
-    tagLable->setMinimumWidth(100);
-    tagLable->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-
-    d->tagWidget =  new DTagActionWidget(d->tagInfoWidget);
-    QObject::connect(d->tagWidget, &DTagActionWidget::checkedColorChanged, this, [this, d](const QColor &color){
-        const QStringList tag_name_list = TagManager::instance()->getTagsThroughFiles({d->m_url});
-        QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({tag_name_list});
-        DUrlList urlList{d->m_url};
-        QList<QColor> checkedcolors{ d->tagWidget->checkedColorList() };
-        QSet<QString> dirtyTagFilter = TagManager::instance()->allTagOfDefaultColors();
-
-        QSet<QString> sameColors = nameColors.keys(color).toSet();
-        // 当有多个相同颜色名字不同的tag时， 取消tag优先取消默认颜色
-        if (sameColors.count()>0 && !checkedcolors.contains(color) && !sameColors.intersects(dirtyTagFilter)) {
-            dirtyTagFilter << *sameColors.begin();
-        }
-
-        QStringList new_tagNames;
-        for (const QColor &color : checkedcolors) {
-            QString tag_name =  nameColors.key(color);
-            if (tag_name.isEmpty())
-                tag_name = TagManager::instance()->getTagNameThroughColor(color);
-
-            if (tag_name.isEmpty()) {
-                continue;
-            }
-            new_tagNames << tag_name;
-        }
-
-        DFileService::instance()->makeTagsOfFiles(nullptr, urlList, new_tagNames, dirtyTagFilter);
-        LoadFileTags();
-    });
-
-    //tagWidget->setEnabled(false);
-    d->tagWidget->setToolTipVisible(false);
-    hl->addWidget(tagLable);
-    hl->addWidget(d->tagWidget);
-    tagHolder->addLayout(hl);
-
-    d->tagNamesCrumbEdit = new DCrumbEdit(this);
-    d->tagNamesCrumbEdit->setFrameShape(QFrame::Shape::NoFrame);
-    d->tagNamesCrumbEdit->viewport()->setBackgroundRole(QPalette::NoRole);
-
-    //d->tagNamesCrumbEdit->setEnabled(false);
-    tagHolder->addWidget(d->tagNamesCrumbEdit);
-    connect(d->tagNamesCrumbEdit, &DCrumbEdit::crumbListChanged, d->tagNamesCrumbEdit,[d](){
-        if (!d->tagNamesCrumbEdit->property("LoadFileTags").toBool())
-            DFileService::instance()->makeTagsOfFiles(nullptr, {d->m_url}, d->tagNamesCrumbEdit->crumbList());
-    });
-    tagHolder->addStretch();
-    d->tagNamesCrumbEdit->setMaximumHeight(100);
-    //d->tagNamesCrumbEdit->setHidden(true);
-
+    d->tagInfoWidget = new DFMTagWidget(d->m_url, this);
+    d->tagInfoWidget->setMaximumHeight(180);
     d->mainLayout->addWidget(d->tagInfoWidget);
-}
-
-void DFMRightDetailView::LoadFileTags()
-{
-    Q_D(DFMRightDetailView);
-    const QStringList tag_name_list = TagManager::instance()->getTagsThroughFiles({d->m_url});
-    QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({tag_name_list});
-    QList<QColor>  selectColors;
-    if (d->tagNamesCrumbEdit) {
-        d->tagNamesCrumbEdit->setProperty("LoadFileTags", true);
-        d->tagNamesCrumbEdit->setPlainText("");
-
-        for(auto it = nameColors.begin();it != nameColors.end(); ++it) {
-            DCrumbTextFormat format = d->tagNamesCrumbEdit->makeTextFormat();
-            format.setText(it.key());
-            selectColors << it.value();
-            format.setBackground(QBrush(it.value()));
-            format.setBackgroundRadius(5);
-            d->tagNamesCrumbEdit->insertCrumb(format, 0);
-        }
-        d->tagNamesCrumbEdit->setProperty("LoadFileTags", false);
-    }
-
-    if (d->tagWidget)
-        d->tagWidget->setCheckedColorList(selectColors);
-
-//    if (d->tagNamesCrumbEdit)
-//        d->tagNamesCrumbEdit->setHidden(tag_name_list.isEmpty());
-}
-
-bool isComputerOrTrash(const DAbstractFileInfoPointer &fileInfo)
-{
-    DUrl realTargetUrl = fileInfo->fileUrl();
-    if (fileInfo && fileInfo->isSymLink()) {
-        realTargetUrl = fileInfo->rootSymLinkTarget();
-    }
-
-    if (realTargetUrl.toLocalFile().endsWith(QString(".") + "desktop")) {
-        DesktopFile df(realTargetUrl.toLocalFile());
-        return (df.getDeepinId() == "dde-trash" || df.getDeepinId() == "dde-computer");
-    }
-
-    return false;
 }
 
 void DFMRightDetailView::setUrl(const DUrl &url)
@@ -245,35 +136,17 @@ void DFMRightDetailView::setUrl(const DUrl &url)
 
     d->m_url = url;
 
-    if (d->devicesWatcher) {
-        d->devicesWatcher->stopWatcher();
-        d->devicesWatcher->deleteLater(); // should we?
-        d->devicesWatcher = nullptr;
-    }
-
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, d->m_url);
     if (d->scrollArea)
         d->scrollArea->setVisible(fileInfo);
     if (!fileInfo)
         return;
 
-    bool showTags = !systemPathManager->isSystemPath(d->m_url.path()) &&
-             !isComputerOrTrash(fileInfo) && DFileMenuManager::whetherShowTagActions({d->m_url});
-    if (showTags) {
-        d->devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, d->m_url, this);
-        if (d->devicesWatcher) {
-            d->devicesWatcher->startWatcher();
-
-            connect(d->devicesWatcher, &DAbstractFileWatcher::fileAttributeChanged, this, [this, d](const DUrl &url) {
-                if (url == d->m_url){
-                    LoadFileTags();
-                }
-            });
-        }
-        LoadFileTags();
+    bool shouldShowTags = DFMTagWidget::shouldShow(d->m_url);
+    if (d->tagInfoWidget) {
+        d->tagInfoWidget->setVisible(shouldShowTags);
+        d->tagInfoWidget->loadTags(d->m_url);
     }
-
-    d->tagInfoWidget->setVisible(showTags);
 
     if (d->iconLabel)
         d->iconLabel->setPixmap(fileInfo->fileIcon().pixmap(256, 160));

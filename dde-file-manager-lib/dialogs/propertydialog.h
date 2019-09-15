@@ -214,7 +214,6 @@ private:
     QFrame *createInfoFrame(const QList<QPair<QString, QString> > &properties);
     QListWidget *createOpenWithListWidget(const DAbstractFileInfoPointer &info);
     QFrame *createAuthorityManagementWidget(const DAbstractFileInfoPointer &info);
-    QFrame *createTagWidget();
 };
 
 #endif // PROPERTYDIALOG_H
