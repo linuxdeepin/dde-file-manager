@@ -82,12 +82,12 @@ FilePreviewDialogStatusBar::FilePreviewDialogStatusBar(QWidget *parent)
     QFont font = m_openButton->font();
     font.setPixelSize(12);
     m_openButton->setFont(font);
-    //m_openButton->setFixedHeight(24);
+    m_openButton->setMinimumWidth(60);
     m_openButton->setShortcut(QKeySequence::Open);
 
     QHBoxLayout *layout = new QHBoxLayout(this);
 
-    layout->setContentsMargins(10, 0, 10, 0);
+    layout->setContentsMargins(10, 10, 10, 10);
     layout->addWidget(m_preButton);
     layout->addWidget(m_nextButton);
     layout->addWidget(m_title);
