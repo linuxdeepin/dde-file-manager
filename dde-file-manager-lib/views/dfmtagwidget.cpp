@@ -34,6 +34,7 @@ DFM_BEGIN_NAMESPACE
 
 class DFMCrumbEdit : public DCrumbEdit{
 public:
+    DFMCrumbEdit(QWidget *parent = nullptr):DCrumbEdit(parent){}
     bool isEditing(){
         return m_isEditByDoubleClick;
     }
