@@ -226,16 +226,29 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
 {
     Q_D(const DFMRootFileInfo);
     QVector<MenuAction> ret;
-    ret.push_back(MenuAction::OpenInNewWindow);
-    ret.push_back(MenuAction::OpenInNewTab);
-    QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk ? d->blk->path() : ""));
-    if (suffix() == SUFFIX_GVFSMP || (suffix() == SUFFIX_UDISKS && d->blk && d->blk->mountPoints().size() > 0)) {
+    if (suffix() == SUFFIX_USRDIR) {
+        ret.push_back(MenuAction::OpenInNewWindow);
+        ret.push_back(MenuAction::OpenInNewTab);
+    } else {
+        ret.push_back(MenuAction::OpenDiskInNewWindow);
+        ret.push_back(MenuAction::OpenDiskInNewTab);
+    }
+
+    ret.push_back(MenuAction::Separator);
+
+    QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk ? d->blk->drive() : ""));
+    if (suffix() == SUFFIX_GVFSMP || (suffix() == SUFFIX_UDISKS && d->blk && d->blk->mountPoints().size() > 0 && !d->blk->hintSystem())) {
         ret.push_back(MenuAction::Unmount);
     }
     if (suffix() == SUFFIX_UDISKS && d->blk && d->blk->mountPoints().size() == 0) {
         ret.push_back(MenuAction::Mount);
-        ret.push_back(MenuAction::Rename);
+        if (!drv->mediaCompatibility().join(" ").contains("optical")) {
+            ret.push_back(MenuAction::Rename);
+        }
     }
+
+    ret.push_back(MenuAction::Separator);
+
     ret.push_back(MenuAction::Property);
     return ret;
 }
@@ -254,10 +267,10 @@ DUrl DFMRootFileInfo::redirectedFileUrl() const
         return DUrl::fromLocalFile(d->backer_url);
     } else if (suffix() == SUFFIX_UDISKS) {
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));
-        if (drv->optical()) {
-            return DUrl::fromBurnFile(QString(d->blk->device()) + "/" + BURN_SEG_ONDISC + "/");
-        }
         if (d->blk->mountPoints().size()) {
+            if (drv->optical()) {
+                return DUrl::fromBurnFile(QString(d->blk->device()) + "/" + BURN_SEG_ONDISC + "/");
+            }
             return DUrl::fromLocalFile(d->blk->mountPoints().first());
         }
     }

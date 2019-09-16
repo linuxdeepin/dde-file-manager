@@ -67,6 +67,7 @@
 #include "view/viewinterface.h"
 #include "plugins/pluginmanager.h"
 #include "controllers/trashmanager.h"
+#include "models/dfmrootfileinfo.h"
 
 #include <dplatformwindowhandle.h>
 #include <DThemeManager>
@@ -266,6 +267,13 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
             appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(q_ptr, newUrl));
 
             return true;
+        }
+    }
+
+    if (fileUrl.scheme() == DFMROOT_SCHEME) {
+        DAbstractFileInfoPointer fi = DFileService::instance()->createFileInfo(q_ptr, fileUrl);
+        if (fi->suffix() == SUFFIX_USRDIR) {
+            return cdForTab(tab, fi->redirectedFileUrl());
         }
     }
 
@@ -843,13 +851,7 @@ bool DFileManagerWindow::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
             return false;
         }
 
-        DUrl url = event.staticCast<DFMUrlBaseEvent>()->url();
-        if (url.scheme() == DFMROOT_SCHEME) {
-            DAbstractFileInfoPointer fi = fileService->createFileInfo(nullptr, url);
-            url = fi->redirectedFileUrl();
-        }
-
-        openNewTab(url);
+        openNewTab(event.staticCast<DFMUrlBaseEvent>()->url());
 
         return true;
     }

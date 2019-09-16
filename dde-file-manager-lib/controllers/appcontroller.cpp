@@ -201,7 +201,15 @@ void AppController::actionOpenInNewTab(const QSharedPointer<DFMUrlBaseEvent> &ev
 void AppController::actionOpenDiskInNewTab(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
-    if (!QStorageInfo(fileUrl.toLocalFile()).isValid()) {
+
+    bool mounted = QStorageInfo(fileUrl.toLocalFile()).isValid();
+
+    DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), fileUrl);
+    if (fi && fi->scheme() == DFMROOT_SCHEME) {
+        mounted |= (!fi->redirectedFileUrl().isEmpty());
+    }
+
+    if (!mounted) {
         m_fmEvent = event;
         actionMount(event);
         setEventKey(OpenNewTab);
@@ -211,6 +219,10 @@ void AppController::actionOpenDiskInNewTab(const QSharedPointer<DFMUrlBaseEvent>
         DUrl newUrl = fileUrl;
 
         newUrl.setQuery(QString());
+
+        if (fi && fi->scheme() == DFMROOT_SCHEME) {
+            newUrl = fi->redirectedFileUrl();
+        }
 
         actionOpenInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), newUrl));
     }
@@ -225,7 +237,15 @@ void AppController::asyncOpenDiskInNewTab(const QString &path)
 void AppController::actionOpenDiskInNewWindow(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
-    if (!QStorageInfo(fileUrl.toLocalFile()).isValid()) {
+
+    bool mounted = QStorageInfo(fileUrl.toLocalFile()).isValid();
+
+    DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), fileUrl);
+    if (fi && fi->scheme() == DFMROOT_SCHEME) {
+        mounted |= (!fi->redirectedFileUrl().isEmpty());
+    }
+
+    if (!mounted) {
         m_fmEvent = event;
         actionMount(event);
         setEventKey(OpenNewWindow);
@@ -235,6 +255,11 @@ void AppController::actionOpenDiskInNewWindow(const QSharedPointer<DFMUrlBaseEve
         DUrl newUrl = fileUrl;
 
         newUrl.setQuery(QString());
+
+        if (fi && fi->scheme() == DFMROOT_SCHEME) {
+            newUrl = fi->redirectedFileUrl();
+        }
+
         const QSharedPointer<DFMUrlListBaseEvent> newEvent(new DFMUrlListBaseEvent(event->sender(), DUrlList() << newUrl));
 
         newEvent->setWindowId(event->windowId());
@@ -410,17 +435,36 @@ void AppController::actionNewText(const QSharedPointer<DFMUrlBaseEvent> &event)
 void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
+
+    if (fileUrl.scheme() == DFMROOT_SCHEME) {
+        DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), fileUrl);
+        DUrl q;
+        q.setQuery("/dev/" + fi->baseName());
+        const QSharedPointer<DFMUrlBaseEvent> &e = dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), q);
+        actionMount(e);
+        return;
+    }
+
     QString udiskspath = fileUrl.query();
     udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
     QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QSharedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->optical()) {
         QtConcurrent::run([=] {
-            ISOMaster->acquireDevice(fileUrl.query());
-            DISOMasterNS::DeviceProperty dp = ISOMaster->getDeviceProperty();
-            ISOMaster->releaseDevice();
+            DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(fileUrl.query());
+            if (dp.devid.length() == 0) {
+                if (blkdev->mountPoints().size()) {
+                    blkdev->unmount({});
+                }
+                ISOMaster->acquireDevice(fileUrl.query());
+                dp = ISOMaster->getDeviceProperty();
+                ISOMaster->releaseDevice();
+            }
             if (!dp.formatted) {
-                blkdev->mount({});
+                //blkdev->mount({});
+                //We have to stick with 'UDisk'Listener until actionOpenDiskInNew*
+                //stops relying on doSubscriberAction...
+                deviceListener->mount(fileUrl.query());
             }
         });
         return;
@@ -447,7 +491,14 @@ void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
         blkdev->unmount({});
         return;
     }
-    deviceListener->unmount(fileUrl.query(DUrl::FullyEncoded));
+
+    QString dev = fileUrl.query(DUrl::FullyEncoded);
+    if (fileUrl.scheme() == DFMROOT_SCHEME) {
+        DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), fileUrl);
+        dev = "/dev/" + fi->baseName();
+    }
+
+    deviceListener->unmount(dev);
 }
 
 void AppController::actionRestore(const QSharedPointer<DFMUrlListBaseEvent> &event)
@@ -487,13 +538,17 @@ void AppController::actionProperty(const QSharedPointer<DFMUrlListBaseEvent> &ev
 {
     DUrlList urlList = event->urlList();
 
-    foreach (const DUrl &url, urlList) {
+    for (DUrl &url : urlList) {
         DUrl realTargetUrl = url;
 
         //consider symlink file that links to trash/computer desktop files
         const DAbstractFileInfoPointer &info = fileService->createFileInfo(event->sender(), url);
         if (info && info->isSymLink()) {
             realTargetUrl = info->rootSymLinkTarget();
+        }
+
+        if (info->scheme() == DFMROOT_SCHEME) {
+            url = info->redirectedFileUrl();
         }
 
         if (realTargetUrl.toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX)) {
