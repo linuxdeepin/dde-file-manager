@@ -61,6 +61,7 @@ include(../usershare/usershare.pri)
 include(../dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
 include(../partman/partman.pri)
 include(tag/tag.pri)
+include(mediainfo/mediainfo.pri)
 
 isEqual(ARCH, sw_64){
 #    isEqual(ENABLE_SW_LABLE, YES){
