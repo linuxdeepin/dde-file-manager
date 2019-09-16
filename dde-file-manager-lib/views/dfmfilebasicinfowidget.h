@@ -77,8 +77,8 @@ public:
     void setShowFileName(bool visible);
     bool showPicturePixel();
     void setShowPicturePixel(bool visible);
-    bool showVideoInfo();
-    void setShowVideoInfo(bool visible);
+    bool showMediaInfo();
+    void setShowMediaInfo(bool visible);
 
 
 private:

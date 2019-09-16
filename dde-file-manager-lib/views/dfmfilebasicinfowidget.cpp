@@ -35,6 +35,8 @@
 #include <QLabel>
 #include <QStackedLayout>
 
+#include <mediainfo/dfmmediainfo.h>
+
 DFM_BEGIN_NAMESPACE
 
 SectionKeyLabel::SectionKeyLabel(const QString &text, QWidget *parent, Qt::WindowFlags f):
@@ -95,7 +97,7 @@ private:
     QLabel      *m_containSizeLabel{ nullptr };
     bool         m_showFileName{ false };
     bool         m_showPicturePixel{ false };
-    bool         m_showVideoInfo{ false }; // 视频时长
+    bool         m_showMediaInfo{ false };
 
     DFM_NAMESPACE::DFileStatisticsJob* m_sizeWorker{ nullptr };
 
@@ -221,35 +223,55 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
     if (m_showPicturePixel) {
         DAbstractFileInfo::FileType fileType = mimeTypeDisplayManager->displayNameToEnum(info->mimeTypeName());
         if (fileType == DAbstractFileInfo::FileType::Images) {
-            QPixmap pixmap;
-            pixmap.load(info->filePath());
-            if (!pixmap.isNull()) {
-                QString text = QString("%1X%2").arg(pixmap.width()).arg(pixmap.height());
-
-                QLabel *pixelKeyLabel = new SectionKeyLabel(QObject::tr("Picture size"));
-                QLabel *pixelLabel = new SectionValueLabel;
-                pixelLabel->setText(text);
-                layout->addRow(pixelKeyLabel, pixelLabel);
-                frameHeight += 30;
+            DFMMediaInfo mediaInfo(info->filePath());
+            {
+                QString text = mediaInfo.Value("Width", DFMMediaInfo::Image);
+                if (!text.isEmpty()) {
+                    text.append("x").append(mediaInfo.Value("Height", DFMMediaInfo::Image));
+                    QLabel *pixelKeyLabel = new SectionKeyLabel(QObject::tr("Picture size"));
+                    QLabel *pixelLabel = new SectionValueLabel;
+                    pixelLabel->setText(text);
+                    layout->addRow(pixelKeyLabel, pixelLabel);
+                    frameHeight += 30;
+                }
             }
         }
     }
 
-    if (m_showVideoInfo) {
+    if (m_showMediaInfo) {
         DAbstractFileInfo::FileType fileType = mimeTypeDisplayManager->displayNameToEnum(info->mimeTypeName());
-        if (fileType == DAbstractFileInfo::FileType::Videos) {
-//            QSharedPointer<VideoWidget> playerWidget = QSharedPointer<VideoWidget>(new VideoWidget);
-//            QPixmap pixmap;
-//            pixmap.load(info->filePath());
-//            if (!pixmap.isNull()) {
-//                QString text = QString("%1X%2").arg(pixmap.width()).arg(pixmap.height());
 
-//                QLabel *pixelKeyLabel = new SectionKeyLabel(QObject::tr("Picture size"));
-//                QLabel *pixelLabel = new SectionValueLabel;
-//                pixelLabel->setText(text);
-//                layout->addRow(pixelKeyLabel, pixelLabel);
-//                frameHeight += 30;
-//            }
+        DFMMediaInfo::MeidiaType mediaType = DFMMediaInfo::Other;
+        switch (fileType) {
+        case DAbstractFileInfo::Videos:
+            mediaType = DFMMediaInfo::Video;
+            break;
+        case DAbstractFileInfo::Audios:
+            mediaType = DFMMediaInfo::Audio;
+            break;
+        default:
+            break;
+        }
+
+        if (mediaType!= DFMMediaInfo::Other){
+            DFMMediaInfo mediaInfo(info->filePath());
+            QString duration = mediaInfo.Value("Duration", mediaType);
+
+            // mkv duration may be float ?  like '666.000', toInt() will failed
+            bool ok = false;
+            int ms = duration.toInt(&ok);
+            if (!ok)
+                ms = static_cast<int>(duration.toFloat(&ok));
+
+            if (ok) {
+                QTime t(0, 0);
+                t = t.addMSecs(ms);
+                QLabel *pixelKeyLabel = new SectionKeyLabel(QObject::tr("Duration"));
+                QLabel *pixelLabel = new SectionValueLabel;
+                pixelLabel->setText(t.toString("hh:mm:ss"));
+                layout->addRow(pixelKeyLabel, pixelLabel);
+                frameHeight += 30;
+            }
         }
     }
 
@@ -332,16 +354,16 @@ void DFMFileBasicInfoWidget::setShowPicturePixel(bool visible)
     d->m_showPicturePixel = visible;
 }
 
-bool DFMFileBasicInfoWidget::showVideoInfo()
+bool DFMFileBasicInfoWidget::showMediaInfo()
 {
     Q_D(DFMFileBasicInfoWidget);
-    return d->m_showVideoInfo;
+    return d->m_showMediaInfo;
 }
 
-void DFMFileBasicInfoWidget::setShowVideoInfo(bool visible)
+void DFMFileBasicInfoWidget::setShowMediaInfo(bool visible)
 {
     Q_D(DFMFileBasicInfoWidget);
-    d->m_showVideoInfo = visible;
+    d->m_showMediaInfo = visible;
 }
 
 DFM_END_NAMESPACE

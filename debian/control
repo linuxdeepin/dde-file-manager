@@ -50,7 +50,8 @@ Build-Depends:
  libglibmm-2.4-dev,
  libgio-qt-dev,
  libdisomaster-dev,
- libssl-dev
+ libssl-dev,
+ libmediainfo-dev
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 

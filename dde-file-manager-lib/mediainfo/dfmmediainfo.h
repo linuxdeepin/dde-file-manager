@@ -19,17 +19,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #pragma once
-
+#include "dfmglobal.h"
 #include <QObject>
-#include <QScopedPointer>
 
+DFM_BEGIN_NAMESPACE
+class DFMMediaInfoPrivate;
 class DFMMediaInfo : public QObject
 {
     Q_OBJECT
 public:
+    enum MeidiaType{
+        General,
+        Video,
+        Audio,
+        Text,
+        Other,
+        Image,
+        Menu,
+        Max,
+    };
+
     DFMMediaInfo(const QString &filename, QObject *parent=nullptr);
-    QString generalInformation();
-    QString Value(const QString &key);
+    ~DFMMediaInfo();
+    static QString generalInformation(const QString &filename);
+    QString Value(const QString &key, MeidiaType meidiaType = General);
+
+private:
+    QScopedPointer<DFMMediaInfoPrivate> d_private;
+    Q_DECLARE_PRIVATE_D(d_private, DFMMediaInfo)
 };
 
-
+DFM_END_NAMESPACE
