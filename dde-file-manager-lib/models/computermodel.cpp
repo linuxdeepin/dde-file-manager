@@ -38,12 +38,12 @@ ComputerModel::ComputerModel(QObject *parent) :
 {
     m_diskm->setWatchChanges(true);
     par = qobject_cast<ComputerView2*>(parent);
-    addItem(DUrl("splitter://#My Directories"));
+    addItem(makeSplitterUrl(tr("My Directories")));
     QList<DAbstractFileInfoPointer> ch = fileService->getChildren(this, DUrl(DFMROOT_ROOT), {}, nullptr);
     bool splt = false;
     for (auto chi : ch) {
-        if (chi->suffix() != "userdir" && !splt) {
-            addItem(DUrl("splitter://#Disks"));
+        if (chi->suffix() != SUFFIX_USRDIR && !splt) {
+            addItem(makeSplitterUrl(tr("Disks")));
             splt = true;
         }
         addItem(chi->fileUrl());
@@ -290,15 +290,15 @@ void ComputerModel::initItemData(ComputerModelItemData &data, const DUrl &url, Q
 {
     data.url = url;
     data.pl = nullptr;
-    if (url.scheme() == "splitter") {
+    if (url.scheme() == SPLITTER_SCHEME) {
         data.cat = ComputerModelItemData::Category::cat_splitter;
         data.sptext = url.fragment();
-    } else if (url.scheme() == "widget") {
+    } else if (url.scheme() == WIDGET_SCHEME) {
         data.cat = ComputerModelItemData::Category::cat_widget;
         data.widget = w;
     } else {
         data.fi = fileService->createFileInfo(this, url);
-        if (data.fi->suffix() == "userdir") {
+        if (data.fi->suffix() == SUFFIX_USRDIR) {
             data.cat = ComputerModelItemData::Category::cat_user_directory;
         } else {
             data.cat = ComputerModelItemData::Category::cat_internal_storage;
@@ -311,4 +311,12 @@ void ComputerModel::initItemData(ComputerModelItemData &data, const DUrl &url, Q
             data.pl = pl;
         }
     }
+}
+
+DUrl ComputerModel::makeSplitterUrl(QString text)
+{
+    DUrl ret;
+    ret.setScheme(SPLITTER_SCHEME);
+    ret.setFragment(text);
+    return ret;
 }

@@ -29,6 +29,10 @@
 #include "interfaces/dabstractfileinfo.h"
 #include "views/progressline.h"
 
+//url schemes internal to ComputerModel
+#define SPLITTER_SCHEME "splitter"
+#define WIDGET_SCHEME "widget"
+
 class ComputerView2;
 
 struct ComputerModelItemData
@@ -94,6 +98,8 @@ private:
     DAbstractFileWatcher* m_watcher;
 
     void initItemData(ComputerModelItemData &data, const DUrl &url, QWidget *w);
+
+    static DUrl makeSplitterUrl(QString text);
 };
 
 

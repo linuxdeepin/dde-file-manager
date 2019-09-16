@@ -3,6 +3,10 @@
 
 #include "dfileinfo.h"
 
+#define SUFFIX_USRDIR "userdir"
+#define SUFFIX_GVFSMP "gvfsmp"
+#define SUFFIX_UDISKS "localdisk"
+
 class DFMRootFileInfoPrivate;
 
 class DFMRootFileInfo : public DAbstractFileInfo
