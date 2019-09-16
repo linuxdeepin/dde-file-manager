@@ -46,9 +46,7 @@ FileDialogStatusBar::FileDialogStatusBar(QWidget *parent)
     m_acceptButton = new QPushButton(this);
     m_rejectButton = new QPushButton(tr("Cancel"), this);
 
-    m_acceptButton->setFixedSize(100, 24);
     m_acceptButton->setObjectName("FileDialogStatusBarAcceptButton");
-    m_rejectButton->setFixedSize(100, 24);
 
     m_contentLayout = new QHBoxLayout();
 
