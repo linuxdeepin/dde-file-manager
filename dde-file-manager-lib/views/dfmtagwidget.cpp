@@ -31,6 +31,23 @@
 #include <dabstractfilewatcher.h>
 
 DFM_BEGIN_NAMESPACE
+
+class DFMCrumbEdit : public DCrumbEdit{
+public:
+    bool isEditing(){
+        return m_isEditByDoubleClick;
+    }
+protected:
+    void mouseDoubleClickEvent(QMouseEvent *event) override{
+        m_isEditByDoubleClick = true;
+        DCrumbEdit::mouseDoubleClickEvent(event);
+        m_isEditByDoubleClick = false;
+    }
+
+private:
+    bool m_isEditByDoubleClick{false};
+};
+
 class DFMTagWidgetPrivate : public QSharedData
 {
 public:
@@ -41,7 +58,7 @@ private:
     DUrl    m_url;
     QLabel      *m_tagLable;
     QVBoxLayout *m_mainLayout  {nullptr};
-    DCrumbEdit  *m_tagCrumbEdit{ nullptr };
+    DFMCrumbEdit  *m_tagCrumbEdit{ nullptr };
     DTagActionWidget *m_tagActionWidget{ nullptr };
     DAbstractFileWatcher *m_devicesWatcher{ nullptr };
 
@@ -89,7 +106,7 @@ void DFMTagWidget::initUi()
     d->m_tagActionWidget->setObjectName("tagActionWidget");
     d->m_mainLayout->addWidget(d->m_tagActionWidget);
 
-    d->m_tagCrumbEdit = new DCrumbEdit(this);
+    d->m_tagCrumbEdit = new DFMCrumbEdit(this);
     d->m_tagCrumbEdit->setObjectName("tagCrumbEdit");
     d->m_tagCrumbEdit->setFrameShape(QFrame::Shape::NoFrame);
     d->m_tagCrumbEdit->viewport()->setBackgroundRole(QPalette::NoRole);
@@ -105,7 +122,7 @@ void DFMTagWidget::initConnection()
         return;
 
     QObject::connect(d->m_tagCrumbEdit, &DCrumbEdit::crumbListChanged, d->m_tagCrumbEdit, [=](){
-        if (!d->m_tagCrumbEdit->property("LoadFileTags").toBool()) {
+        if (!d->m_tagCrumbEdit->isEditing() && !d->m_tagCrumbEdit->property("LoadFileTags").toBool()) {
             DFileService::instance()->makeTagsOfFiles(nullptr, {d->m_url}, d->m_tagCrumbEdit->crumbList());
         }
     });
