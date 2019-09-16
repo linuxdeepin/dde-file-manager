@@ -161,6 +161,7 @@ void DFMRightDetailView::setUrl(const DUrl &url)
     d->baseInfoWidget = basicInfoWidget;
     basicInfoWidget->setShowFileName(true);
     basicInfoWidget->setShowPicturePixel(true);
+    basicInfoWidget->setShowMediaInfo(true);
     basicInfoWidget->setUrl(d->m_url);
 
     d->mainLayout->insertWidget(2, d->baseInfoWidget);
