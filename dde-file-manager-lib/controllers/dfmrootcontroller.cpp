@@ -41,7 +41,7 @@ bool DFMRootController::renameFile(const QSharedPointer<DFMRenameEvent> &event) 
         return false;
     }
 
-    QString udiskspath = "/org/freedesktop/UDisks2/block_devices" + fi->fileUrl().path().chopped(QString(".localdisk").length());
+    QString udiskspath = "/org/freedesktop/UDisks2/block_devices" + fi->fileUrl().path().chopped(QString("." SUFFIX_UDISKS).length());
     QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
     Q_ASSERT(blk && blk->path().length() > 0);
 
@@ -57,7 +57,7 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
 
     static const QList<QString> udir = {"desktop", "videos", "music", "pictures", "documents", "downloads"};
     for (auto d : udir) {
-        DAbstractFileInfoPointer fp(new DFMRootFileInfo(DUrl(DFMROOT_ROOT + d + ".userdir")));
+        DAbstractFileInfoPointer fp(new DFMRootFileInfo(DUrl(DFMROOT_ROOT + d + "." SUFFIX_USRDIR)));
         if (fp->exists()) {
             ret.push_back(fp);
         }
@@ -75,7 +75,7 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         if (blk->hintIgnore()) {
             continue;
         }
-        DAbstractFileInfoPointer fp(new DFMRootFileInfo(DUrl(DFMROOT_ROOT + QString(blk->device()).mid(QString("/dev/").length()) + ".localdisk")));
+        DAbstractFileInfoPointer fp(new DFMRootFileInfo(DUrl(DFMROOT_ROOT + QString(blk->device()).mid(QString("/dev/").length()) + "." SUFFIX_UDISKS)));
         ret.push_back(fp);
     }
 
@@ -83,7 +83,7 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         if (gvfsmp->getVolume() && udisksuuids.contains(gvfsmp->getVolume()->identifier(DGioVolumeIdentifierType::VOLUME_IDENTIFIER_TYPE_UUID))) {
             continue;
         }
-        DAbstractFileInfoPointer fp(new DFMRootFileInfo(DUrl(DFMROOT_ROOT + QUrl::toPercentEncoding(gvfsmp->getRootFile()->path()) + ".gvfsmp")));
+        DAbstractFileInfoPointer fp(new DFMRootFileInfo(DUrl(DFMROOT_ROOT + QUrl::toPercentEncoding(gvfsmp->getRootFile()->path()) + "." SUFFIX_GVFSMP)));
         ret.push_back(fp);
     }
 
@@ -132,13 +132,13 @@ bool DFMRootFileWatcherPrivate::start()
         if (mnt->getVolume() && uuidset.contains(mnt->getVolume()->identifier(DGioVolumeIdentifierType::VOLUME_IDENTIFIER_TYPE_UUID))) {
             return;
         }
-        Q_EMIT wpar->subfileCreated(DUrl(DFMROOT_ROOT + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + ".gvfsmp"));
+        Q_EMIT wpar->subfileCreated(DUrl(DFMROOT_ROOT + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP));
     }));
     connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::mountRemoved, [wpar](QExplicitlySharedDataPointer<DGioMount> mnt) {
         if (mnt->getVolume() && uuidset.contains(mnt->getVolume()->identifier(DGioVolumeIdentifierType::VOLUME_IDENTIFIER_TYPE_UUID))) {
             return;
         }
-        Q_EMIT wpar->fileDeleted(DUrl(DFMROOT_ROOT + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + ".gvfsmp"));
+        Q_EMIT wpar->fileDeleted(DUrl(DFMROOT_ROOT + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP));
     }));
     connections.push_back(QObject::connect(udisksmgr.data(), &DDiskManager::fileSystemAdded, [wpar](const QString &blks) {
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
@@ -147,12 +147,12 @@ bool DFMRootFileWatcherPrivate::start()
         dbuspath2uuid[blks] = uuid;
         uuidset.insert(uuid);
 
-        Q_EMIT wpar->subfileCreated(DUrl(DFMROOT_ROOT + blks.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + ".localdisk"));
+        Q_EMIT wpar->subfileCreated(DUrl(DFMROOT_ROOT + blks.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
     }));
     connections.push_back(QObject::connect(udisksmgr.data(), &DDiskManager::fileSystemRemoved, [wpar](const QString &blks) {
         uuidset.remove(dbuspath2uuid[blks]);
         dbuspath2uuid.remove(blks);
-        Q_EMIT wpar->fileDeleted(DUrl(DFMROOT_ROOT + blks.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + ".localdisk"));
+        Q_EMIT wpar->fileDeleted(DUrl(DFMROOT_ROOT + blks.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
     }));
 
     for (auto devs : udisksmgr->blockDevices()) {
@@ -163,7 +163,7 @@ bool DFMRootFileWatcherPrivate::start()
         uuidset.insert(dbuspath2uuid[devs]);
 
         connections.push_back(QObject::connect(blkdevs.back().data(), &DBlockDevice::idLabelChanged, [wpar, devs](const QString &) {
-            Q_EMIT wpar->fileAttributeChanged(DUrl(DFMROOT_ROOT + devs.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + ".localdisk"));
+            Q_EMIT wpar->fileAttributeChanged(DUrl(DFMROOT_ROOT + devs.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
         }));
     }
 

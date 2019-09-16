@@ -34,7 +34,7 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
     DAbstractFileInfo(url),
     d_ptr(new DFMRootFileInfoPrivate)
 {
-    if (suffix() == "userdir") {
+    if (suffix() == SUFFIX_USRDIR) {
         QStandardPaths::StandardLocation loc = QStandardPaths::StandardLocation::HomeLocation;
         if (baseName() == "desktop") {
             loc = QStandardPaths::StandardLocation::DesktopLocation;
@@ -58,8 +58,8 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
         FileUtils::mkpath(DUrl::fromLocalFile(QStandardPaths::writableLocation(loc)));
 
         d_ptr->backer_url = QStandardPaths::writableLocation(loc);
-    } else if (suffix() == "gvfsmp") {
-        QString mpp = QUrl::fromPercentEncoding(fileUrl().path().mid(1).chopped(QString(".gvfsmp").length()).toUtf8());
+    } else if (suffix() == SUFFIX_GVFSMP) {
+        QString mpp = QUrl::fromPercentEncoding(fileUrl().path().mid(1).chopped(QString("." SUFFIX_GVFSMP).length()).toUtf8());
         QExplicitlySharedDataPointer<DGioMount> mp(DGioMount::createFromPath(mpp));
         if (mp->getRootFile()->createFileInfo()->fileType() == DGioFileType::FILE_TYPE_DIRECTORY) {
             QString mpurl = mp->getRootFile()->path();
@@ -67,8 +67,8 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
             d_ptr->gmnt = mp;
             d_ptr->gfsi = mp->getRootFile()->createFileSystemInfo();
         }
-    } else if (suffix() == "localdisk") {
-        QString udiskspath = "/org/freedesktop/UDisks2/block_devices" + url.path().chopped(QString(".localdisk").length());
+    } else if (suffix() == SUFFIX_UDISKS) {
+        QString udiskspath = "/org/freedesktop/UDisks2/block_devices" + url.path().chopped(QString("." SUFFIX_UDISKS).length());
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
         if (blk->path().length() != 0) {
             d_ptr->backer_url = udiskspath;
@@ -85,11 +85,11 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
 bool DFMRootFileInfo::exists() const
 {
     Q_D(const DFMRootFileInfo);
-    if (suffix() == "userdir") {
+    if (suffix() == SUFFIX_USRDIR) {
         return d->backer_url.length() != 0;
-    } else if (suffix() == "gvfsmp") {
+    } else if (suffix() == SUFFIX_GVFSMP) {
         return d->gmnt->getRootFile()->createFileInfo()->fileType() == DGioFileType::FILE_TYPE_DIRECTORY;
-    } else if (suffix() == "localdisk") {
+    } else if (suffix() == SUFFIX_UDISKS) {
         return d->blk->path().length() != 0;
     }
 }
@@ -107,15 +107,15 @@ QString DFMRootFileInfo::suffix() const
 QString DFMRootFileInfo::fileDisplayName() const
 {
     Q_D(const DFMRootFileInfo);
-    if (suffix() == "userdir") {
+    if (suffix() == SUFFIX_USRDIR) {
         return QStandardPaths::displayName(d->stdloc);
-    } else if (suffix() == "gvfsmp") {
+    } else if (suffix() == SUFFIX_GVFSMP) {
         return d->gmnt->name();
-    } else if (suffix() == "localdisk") {
+    } else if (suffix() == SUFFIX_UDISKS) {
         if (d->mps.size() == 1 && d->mps.front() == QString("/"))
-            return QString("System disk");
+            return QCoreApplication::translate("PathManager", "System Disk");
         if (d->label.length() == 0)
-            return QString("%1 Volume").arg(FileUtils::formatSize(d->size));
+            return QCoreApplication::translate("DeepinStorage", "%1 Volume").arg(FileUtils::formatSize(d->size));
         return d->label;
     }
     return baseName();
@@ -124,7 +124,7 @@ QString DFMRootFileInfo::fileDisplayName() const
 bool DFMRootFileInfo::canRename() const
 {
     Q_D(const DFMRootFileInfo);
-    if (suffix() != "localdisk" || !d->blk) {
+    if (suffix() != SUFFIX_UDISKS || !d->blk) {
         return false;
     }
     if (d->blk->readOnly() || d->mps.size() > 0) {
@@ -211,11 +211,11 @@ int DFMRootFileInfo::filesCount() const
 QString DFMRootFileInfo::iconName() const
 {
     Q_D(const DFMRootFileInfo);
-    if (suffix() == "userdir") {
+    if (suffix() == SUFFIX_USRDIR) {
         return systemPathManager->getSystemPathIconNameByPath(redirectedFileUrl().path());
-    } else if (suffix() == "gvfsmp") {
+    } else if (suffix() == SUFFIX_GVFSMP) {
         return d->gmnt->themedIconNames().front();
-    } else if (suffix() == "localdisk") {
+    } else if (suffix() == SUFFIX_UDISKS) {
         //!!TODO
         return "drive-harddisk";
     }
@@ -229,10 +229,10 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
     ret.push_back(MenuAction::OpenInNewWindow);
     ret.push_back(MenuAction::OpenInNewTab);
     QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk ? d->blk->path() : ""));
-    if (suffix() == "gvfsmp" || (suffix() == "localdisk" && d->blk && d->blk->mountPoints().size() > 0)) {
+    if (suffix() == SUFFIX_GVFSMP || (suffix() == SUFFIX_UDISKS && d->blk && d->blk->mountPoints().size() > 0)) {
         ret.push_back(MenuAction::Unmount);
     }
-    if (suffix() == "localdisk" && d->blk && d->blk->mountPoints().size() == 0) {
+    if (suffix() == SUFFIX_UDISKS && d->blk && d->blk->mountPoints().size() == 0) {
         ret.push_back(MenuAction::Mount);
         ret.push_back(MenuAction::Rename);
     }
@@ -248,11 +248,11 @@ bool DFMRootFileInfo::canRedirectionFileUrl() const
 DUrl DFMRootFileInfo::redirectedFileUrl() const
 {
     Q_D(const DFMRootFileInfo);
-    if (suffix() == "userdir") {
+    if (suffix() == SUFFIX_USRDIR) {
         return DUrl::fromLocalFile(d->backer_url);
-    } else if (suffix() == "gvfsmp") {
+    } else if (suffix() == SUFFIX_GVFSMP) {
         return DUrl::fromLocalFile(d->backer_url);
-    } else if (suffix() == "localdisk") {
+    } else if (suffix() == SUFFIX_UDISKS) {
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));
         if (drv->optical()) {
             return DUrl::fromBurnFile(QString(d->blk->device()) + "/" + BURN_SEG_ONDISC + "/");
@@ -283,10 +283,10 @@ QVariantHash DFMRootFileInfo::extraProperties() const
 {
     Q_D(const DFMRootFileInfo);
     QVariantHash ret;
-    if (suffix() == "gvfsmp") {
+    if (suffix() == SUFFIX_GVFSMP) {
         ret["fsUsed"] = d->gfsi->fsUsedBytes();
         ret["fsSize"] = d->gfsi->fsTotalBytes();
-    } else if (suffix() == "localdisk") {
+    } else if (suffix() == SUFFIX_UDISKS) {
         if (d->mps.empty()) {
             ret["fsUsed"] = quint64(d->size + 1);
         } else {
