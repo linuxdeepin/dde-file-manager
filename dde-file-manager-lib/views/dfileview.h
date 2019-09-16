@@ -156,6 +156,8 @@ public slots:
     void clearSelection();
 
     void setContentLabel(const QString &text);
+    void setOverlayWidget(QWidget * widget);
+    void setOverlayVisible(bool visible = true);
 
     void setMenuActionWhitelist(const QSet<DFMGlobal::MenuAction> &actionList);
     void setMenuActionBlacklist(const QSet<DFMGlobal::MenuAction> &actionList);

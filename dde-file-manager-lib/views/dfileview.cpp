@@ -133,7 +133,8 @@ public:
 
     DUrlList preSelectionUrls;
 
-    DAnchors<QLabel> contentLabel = Q_NULLPTR;
+    DAnchors<QLabel> contentLabel = nullptr;
+    DAnchors<QWidget> overlayWidget = nullptr;
 
     QModelIndex mouseLastPressedIndex;
 
@@ -156,7 +157,7 @@ public:
 
     QTimer* updateStatusBarTimer;
 
-    QScrollBar* verticalScrollBar = NULL;
+    QScrollBar* verticalScrollBar = nullptr;
 
     DDiskManager* diskmgr;
 
@@ -2271,6 +2272,42 @@ void DFileView::setContentLabel(const QString &text)
     d->contentLabel->adjustSize();
 }
 
+// will be visible by default (DAnchor::setFill will not work properly if original widget is not visible)
+// DFileView Takes the ownership of the given widget.
+void DFileView::setOverlayWidget(QWidget *widget)
+{
+    Q_D(DFileView);
+
+    if (!widget) {
+        return;
+    }
+
+    if (d->overlayWidget) {
+        QWidget * oldWidget = d->overlayWidget.widget();
+        d->overlayWidget = nullptr;
+
+        oldWidget->setVisible(false);
+        oldWidget->deleteLater();
+    }
+
+    d->overlayWidget = widget;
+    d->overlayWidget->setParent(this);
+    d->overlayWidget->setVisible(true);
+    d->overlayWidget.setFill(this);
+}
+
+void DFileView::setOverlayVisible(bool visible)
+{
+    Q_D(DFileView);
+
+    if (d->overlayWidget) {
+        d->overlayWidget->setVisible(visible);
+        if (visible) {
+            d->overlayWidget->raise();
+        }
+    }
+}
+
 void DFileView::setMenuActionWhitelist(const QSet<MenuAction> &actionList)
 {
     Q_D(DFileView);
@@ -2842,7 +2879,6 @@ void DFileView::updateContentLabel()
 
         if (fileInfo) {
             setContentLabel(fileInfo->subtitleForEmptyFloder());
-
             return;
         }
     }
