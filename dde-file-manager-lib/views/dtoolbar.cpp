@@ -100,13 +100,13 @@ void DToolBar::initUI()
 
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_addressToolBar);
-    mainLayout->addSpacing(10);
+    mainLayout->addSpacing(22);
     mainLayout->addWidget(m_contollerToolBar);
 
-    mainLayout->addSpacing(10);
+    mainLayout->addSpacing(22);
     mainLayout->addWidget(m_detailButton);
 
-    mainLayout->addSpacing(10);
+    mainLayout->addSpacing(0);
     mainLayout->setContentsMargins(14, 0, 14, 0);
     setLayout(mainLayout);
 }
@@ -119,12 +119,19 @@ void DToolBar::initAddressToolBar()
 
     QHBoxLayout * backForwardLayout = new QHBoxLayout;
 
-    m_backButton = new DIconButton(DStyle::SP_ArrowBack, this);
+    m_backButton = new DButtonBoxButton(DStyle::standardIcon(this->style(), DStyle::SP_ArrowLeave));
     m_backButton->setDisabled(true);
-    m_backButton->setFocusPolicy(Qt::NoFocus);
-    m_forwardButton = new DIconButton(DStyle::SP_ArrowForward, this);
+
+    m_forwardButton = new DButtonBoxButton(DStyle::standardIcon(this->style(), DStyle::SP_ArrowEnter));
     m_forwardButton->setDisabled(true);
-    m_forwardButton->setFocusPolicy(Qt::NoFocus);
+
+    QList<DButtonBoxButton*> buttonList;
+    buttonList << m_backButton << m_forwardButton;
+
+    DButtonBox* buttonBox = new DButtonBox(this);
+    buttonBox->setButtonList(buttonList, true);
+    buttonBox->setDisabled(true);
+    buttonBox->setFocusPolicy(Qt::NoFocus);
 
     m_searchButton = new QPushButton(this);
     m_searchButton->setObjectName("searchButton");
@@ -134,8 +141,8 @@ void DToolBar::initAddressToolBar()
     m_searchButton->setIcon(QIcon::fromTheme("search").pixmap(iconSize));
     m_searchButton->setIconSize(iconSize);
 
-    backForwardLayout->addWidget(m_backButton);
-    backForwardLayout->addWidget(m_forwardButton);
+
+    backForwardLayout->addWidget(buttonBox);
     backForwardLayout->setSpacing(0);
     backForwardLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -174,7 +181,7 @@ void DToolBar::initContollerToolBar()
 
     m_contollerToolBarContentLayout = new QHBoxLayout;
     m_contollerToolBarContentLayout->setContentsMargins(1, 1, 1, 1);
-    m_contollerToolBarContentLayout->setSpacing(0);
+    m_contollerToolBarContentLayout->setSpacing(30);
 
     content->setLayout(m_contollerToolBarContentLayout);
     content->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -188,8 +195,8 @@ void DToolBar::initContollerToolBar()
 void DToolBar::initConnect()
 {
     connect(m_detailButton, &QPushButton::clicked,this, &DToolBar::detailButtonClicked);
-    connect(m_backButton, &DIconButton::clicked, this, &DToolBar::onBackButtonClicked);
-    connect(m_forwardButton, &DIconButton::clicked, this, &DToolBar::onForwardButtonClicked);
+    connect(m_backButton, &DButtonBoxButton::clicked, this, &DToolBar::onBackButtonClicked);
+    connect(m_forwardButton, &DButtonBoxButton::clicked, this, &DToolBar::onForwardButtonClicked);
     connect(m_crumbWidget, &DFMCrumbBar::addressBarContentEntered, this, &DToolBar::searchBarTextEntered);
     connect(m_crumbWidget, &DFMCrumbBar::crumbItemClicked, this, &DToolBar::crumbSelected);
     connect(m_crumbWidget, &DFMCrumbBar::crumbListItemSelected, this, [this](const DUrl &url){

@@ -27,6 +27,7 @@
 
 #include <QFrame>
 #include <QStackedWidget>
+#include <DButtonBox>
 #include "dfileview.h"
 
 class DFMEvent;
@@ -103,8 +104,8 @@ private:
 
     bool m_searchState = false;
     QFrame* m_addressToolBar;
-    DIconButton* m_backButton = nullptr;
-    DIconButton* m_forwardButton = nullptr;
+    DButtonBoxButton* m_backButton = nullptr;
+    DButtonBoxButton* m_forwardButton = nullptr;
     QPushButton* m_searchButton = nullptr;
     QPushButton* m_detailButton = nullptr;
     QFrame* m_contollerToolBar;
