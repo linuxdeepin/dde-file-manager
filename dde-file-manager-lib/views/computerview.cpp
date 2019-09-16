@@ -1347,7 +1347,15 @@ void ComputerView2::contextMenu(const QPoint &pos)
         return;
     }
     const QVector<MenuAction> &av = idx.data(ComputerModel::DataRoles::ActionVectorRole).value<QVector<MenuAction>>();
-    DFileMenu *menu = DFileMenuManager::genereteMenuByKeys(av, {});
+    QSet<MenuAction> disabled;
+    if (!WindowManager::tabAddableByWinId(WindowManager::getWindowId(this))) {
+        disabled.insert(MenuAction::OpenInNewTab);
+        disabled.insert(MenuAction::OpenDiskInNewTab);
+    }
+    if (!idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>().isValid()) {
+        disabled.insert(MenuAction::Property);
+    }
+    DFileMenu *menu = DFileMenuManager::genereteMenuByKeys(av, disabled);
     menu->setEventData(DUrl(), {idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>()}, WindowManager::getWindowId(this), this);
     menu->exec(this->mapToGlobal(pos));
     menu->deleteLater();
