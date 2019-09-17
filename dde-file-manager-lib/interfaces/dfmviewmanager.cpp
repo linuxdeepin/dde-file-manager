@@ -130,7 +130,7 @@ DFMViewManager::DFMViewManager(QObject *parent)
     : QObject(parent)
     , d_ptr(new DFMViewManagerPrivate(this))
 {
-    dRegisterUrlView<ComputerView2>("computer", QString());
+    dRegisterUrlView<ComputerView>("computer", QString());
 
     // register plugins
     for (const QString &key : DFMViewFactory::keys()) {
