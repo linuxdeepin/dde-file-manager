@@ -27,7 +27,7 @@
 
 #include <QFrame>
 #include <QStackedWidget>
-#include <DButtonBox>
+
 #include "dfileview.h"
 
 class DFMEvent;
@@ -39,8 +39,7 @@ class QHBoxLayout;
 QT_END_NAMESPACE
 
 DWIDGET_BEGIN_NAMESPACE
-class DGraphicsClipEffect;
-class DIconButton;
+class DButtonBoxButton;
 DWIDGET_END_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
@@ -109,7 +108,6 @@ private:
     QPushButton* m_searchButton = nullptr;
     QPushButton* m_detailButton = nullptr;
     QFrame* m_contollerToolBar;
-    DGraphicsClipEffect *m_contollerToolBarClipMask;
     QHBoxLayout *m_contollerToolBarContentLayout;
     QList<QAction*> m_actionList;
 
