@@ -86,6 +86,7 @@
 #include "shutil/shortcut.h"
 //#include "views/dbookmarkitem.h"
 #include "models/desktopfileinfo.h"
+#include "models/dfmrootfileinfo.h"
 #include "controllers/tagmanagerdaemoncontroller.h"
 
 #include "dblockdevice.h"
@@ -564,7 +565,7 @@ void AppController::actionProperty(const QSharedPointer<DFMUrlListBaseEvent> &ev
             realTargetUrl = info->rootSymLinkTarget();
         }
 
-        if (info->scheme() == DFMROOT_SCHEME) {
+        if (info->scheme() == DFMROOT_SCHEME && info->suffix() == SUFFIX_USRDIR) {
             url = info->redirectedFileUrl();
         }
 

@@ -38,6 +38,7 @@
 #include "dialogs/dialogmanager.h"
 #include "app/filesignalmanager.h"
 
+#include "models/dfmrootfileinfo.h"
 #include "deviceinfo/udisklistener.h"
 
 #include "utils.h"
@@ -298,51 +299,18 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
     QString authManager = tr("Permission Management");
     initUI();
     QString query = m_url.query();
-    QStorageInfo diskInfo(m_url.path());
 
-    bool urlIsMountedVolume = diskInfo.isValid() && diskInfo.rootPath() == m_url.path();
-    // blumia: 当前判断要显示的是不是磁盘信息的做法可能不太干净，使用 query 可能也是历史遗留问题，暂且先这样。
-    //         不过把“磁盘信息”对话框和普通的“属性”对话框完全分开应该会更合理。
-    if ((!query.isEmpty() && !m_url.isSearchFile()) || urlIsMountedVolume) {
-        bool useQStorageInfo = false;
+    if (m_url.scheme() == DFMROOT_SCHEME) {
+        DAbstractFileInfoPointer fi = fileService->createFileInfo(this, m_url);
+        Q_ASSERT(fi);
 
-        if (urlIsMountedVolume || (diskInfo.isValid() && (diskInfo.device() == query))) {
-            useQStorageInfo = true;
-        }
-
-        UDiskDeviceInfoPointer udiskInfo;
-        QString name;
-        QIcon icon = QIcon::fromTheme("drive-harddisk");
-
-        if (useQStorageInfo) {
-            name = diskInfo.displayName();
-            udiskInfo = deviceListener->getDevice(diskInfo.device());
-            if (name == diskInfo.rootPath()) {
-                name = udiskInfo ? udiskInfo->fileDisplayName()
-                                 : name.split('/').last();
-            }
-        } else {
-            udiskInfo = deviceListener->getDevice(query);
-            if (!udiskInfo) {
-                udiskInfo = deviceListener->getDeviceByPath(m_url.path());
-            }
-            if (udiskInfo) {
-                name = udiskInfo->fileDisplayName();
-                icon = udiskInfo->fileIcon();
-            }
-        }
-
-        if (urlIsMountedVolume && diskInfo.isRoot()) {
-            name = tr("System Disk");
-        } else if (m_url == DUrl(QDir::homePath()) && name == QDir::homePath()) {
-            name = qApp->translate("PathManager", "Home");
-        }
+        QString name = fi->fileDisplayName();
+        QIcon icon = QIcon::fromTheme(fi->iconName());
 
         m_icon->setPixmap(icon.pixmap(128, 128));
         m_edit->setPlainText(name);
         m_editDisbaled = true;
-        const QList<QPair<QString, QString> > & properties = useQStorageInfo ? createLocalDeviceInfoWidget(diskInfo)
-                                                                             : createLocalDeviceInfoWidget(udiskInfo);
+        const QList<QPair<QString, QString> > & properties = createLocalDeviceInfoWidget(fi);
         m_deviceInfoFrame = createInfoFrame(properties);
 
         QStringList titleList;
@@ -351,9 +319,9 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         m_expandGroup.at(0)->setContent(m_deviceInfoFrame);
         m_expandGroup.at(0)->setExpand(true);
 
-        uint64_t dskspace = useQStorageInfo ? (uint64_t)diskInfo.bytesTotal() : udiskInfo->getTotal();
-        uint64_t dskinuse = dskspace - (useQStorageInfo ? (uint64_t)diskInfo.bytesFree() : udiskInfo->getFree());
-        QString devid(useQStorageInfo ? FileUtils::displayPath(diskInfo.device()) : udiskInfo->getDiskInfo().unix_device());
+        uint64_t dskspace = fi->extraProperties()["fsSize"].toULongLong();
+        uint64_t dskinuse = fi->extraProperties()["fsUsed"].toULongLong();
+        QString devid(fi->suffix() == SUFFIX_GVFSMP ? fi->fileDisplayName() : fi->baseName());
 
         QProgressBar* progbdf = new DFProgressBar();
         progbdf->setMaximum(10000);
@@ -1041,59 +1009,7 @@ ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPoin
     return frame;
 }
 
-QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(const QStorageInfo &info)
-{
-    QString devicePath = info.device();
-    QDir dir(info.rootPath());
-    dir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
-    uint count = dir.count();
-    QString countStr = (count != 1) ? QObject::tr("%1 items").arg(count) : QObject::tr("%1 item").arg(count);
-    QList<QPair<QString, QString> > results;
-
-    QString fsType;
-
-    if (devicePath.startsWith("/dev")) {
-        QString udisksDBusPath = devicePath;
-        udisksDBusPath.replace("dev", "org/freedesktop/UDisks2/block_devices");
-        QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(udisksDBusPath));
-        if (blDev) {
-            DBlockDevice::FSType fsTypeEnum = blDev->fsType();
-            switch (fsTypeEnum) {
-            case DBlockDevice::UnknowFS:
-                fsType = info.fileSystemType() + '*';
-                break;
-            default:
-                QMetaEnum metaEnum = QMetaEnum::fromType<DBlockDevice::FSType>();
-                fsType = metaEnum.valueToKey(fsTypeEnum);
-            }
-#ifdef QT_DEBUG
-            if (!fsType.isEmpty()) {
-                fsType += (" on " + devicePath);
-            }
-#endif // QT_DEBUG
-        }
-    } else if (devicePath.startsWith("cryfs@") || devicePath.startsWith("encfs@") ||
-               devicePath.startsWith("gocryptfs@") || devicePath.startsWith("sshfs@")) {
-        int atIndex = devicePath.indexOf('@');
-        fsType = devicePath.left(atIndex);
-#ifdef QT_DEBUG
-        if (!fsType.isEmpty()) {
-            fsType += (" on " + FileUtils::displayPath(devicePath.mid(atIndex + 1)));
-        }
-#endif // QT_DEBUG
-    }
-
-    results.append({QObject::tr("Device type"), tr("Local disk")});
-    results.append({QObject::tr("Total space"), FileUtils::formatSize(info.bytesTotal())});
-    if (!fsType.isEmpty()) {
-        results.append({QObject::tr("Filesystem"), fsType});
-    }
-    results.append({QObject::tr("Contains"), countStr});
-    results.append({QObject::tr("Free space"), FileUtils::formatSize(info.bytesFree())});
-    return results;
-}
-
-QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(const UDiskDeviceInfoPointer &info)
+QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(const DAbstractFileInfoPointer &info)
 {
     QList<QPair<QString, QString> > results;
 
@@ -1102,21 +1018,22 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
         return results;
     }
 
-    QString fsType = info->getIdType();
-#ifdef QT_DEBUG
-    if (!fsType.isEmpty()) {
-        fsType += (" on " + info->getPath());
+    QString fsType = info->extraProperties()["fsType"].toString();
+    quint64 fsUsed = info->extraProperties()["fsUsed"].toULongLong();
+    quint64 fsSize = info->extraProperties()["fsSize"].toULongLong();
+    quint64 fileCount = 0;
+    if (!info->redirectedFileUrl().isEmpty()) {
+        fileCount = FileUtils::filesCount(info->redirectedFileUrl().toLocalFile());
     }
-#endif // QT_DEBUG
 
-
-    results.append({QObject::tr("Device type"), info->deviceTypeDisplayName()});
-    results.append({QObject::tr("Total space"), FileUtils::formatSize(info->getTotal())});
+    //!!TODO
+    //results.append({QObject::tr("Device type"), ""});
+    results.append({QObject::tr("Total space"), FileUtils::formatSize(fsUsed)});
     if (!fsType.isEmpty()) {
         results.append({QObject::tr("Filesystem"), fsType});
     }
-    results.append({QObject::tr("Contains"), info->sizeDisplayName()});
-    results.append({QObject::tr("Free space"), FileUtils::formatSize(info->getFree())});
+    results.append({QObject::tr("Contains"), (fileCount != 1 ? QObject::tr("%1 items") : QObject::tr("%1 item")).arg(fileCount)});
+    results.append({QObject::tr("Free space"), FileUtils::formatSize(fsSize - fsUsed)});
 
     return results;
 }

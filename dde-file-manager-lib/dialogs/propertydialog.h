@@ -191,9 +191,7 @@ private:
     QFrame *m_basicInfoFrame{ nullptr };
     ShareInfoFrame* m_shareinfoFrame{ nullptr };
     QFrame* m_authorityManagementFrame{ nullptr };
-    QFrame *m_localDeviceInfoFrame{ nullptr };
     QFrame *m_deviceInfoFrame{ nullptr };
-    QFrame *m_OpenWithFrame{ nullptr };
     QListWidget* m_OpenWithListWidget{ nullptr };
     QButtonGroup* m_OpenWithButtonGroup{ nullptr };
     //DExpandGroup* m_expandGroup{ nullptr };
@@ -209,8 +207,7 @@ private:
     void initTextShowFrame(const QString& text);
     QFrame *createBasicInfoWidget(const DAbstractFileInfoPointer &info);
     ShareInfoFrame* createShareInfoFrame(const DAbstractFileInfoPointer &info);
-    QList<QPair<QString, QString> > createLocalDeviceInfoWidget(const QStorageInfo &info);
-    QList<QPair<QString, QString> > createLocalDeviceInfoWidget(const UDiskDeviceInfoPointer &info);
+    QList<QPair<QString, QString> > createLocalDeviceInfoWidget(const DAbstractFileInfoPointer &info);
     QFrame *createInfoFrame(const QList<QPair<QString, QString> > &properties);
     QListWidget *createOpenWithListWidget(const DAbstractFileInfoPointer &info);
     QFrame *createAuthorityManagementWidget(const DAbstractFileInfoPointer &info);

@@ -27,6 +27,7 @@
 #include <dgiofile.h>
 #include <dgiofileinfo.h>
 #include <dgiomount.h>
+#include <dgiovolume.h>
 #include <dgiovolumemanager.h>
 #include <ddiskmanager.h>
 #include <dblockdevice.h>
@@ -46,6 +47,7 @@ public:
     QByteArrayList mps;
     qulonglong size;
     QString label;
+    QString fs;
     DFMRootFileInfo *q_ptr;
     Q_DECLARE_PUBLIC(DFMRootFileInfo)
 };
@@ -98,6 +100,7 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::idLabelChanged, [this] {this->checkCache();});
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::mountPointsChanged, [this] {this->checkCache();});
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::sizeChanged, [this] {this->checkCache();});
+            QObject::connect(d_ptr->blk.data(), &DBlockDevice::idTypeChanged, [this] {this->checkCache();});
         }
     }
 }
@@ -319,6 +322,7 @@ QVariantHash DFMRootFileInfo::extraProperties() const
     if (suffix() == SUFFIX_GVFSMP) {
         ret["fsUsed"] = d->gfsi->fsUsedBytes();
         ret["fsSize"] = d->gfsi->fsTotalBytes();
+        ret["fsType"] = d->gfsi->fsType();
     } else if (suffix() == SUFFIX_UDISKS) {
         if (d->mps.empty()) {
             ret["fsUsed"] = quint64(d->size + 1);
@@ -327,6 +331,7 @@ QVariantHash DFMRootFileInfo::extraProperties() const
             ret["fsUsed"] = quint64(si.bytesTotal() - si.bytesFree());
         }
         ret["fsSize"] = quint64(d->size);
+        ret["fsType"] = d->fs;
         ret["blk"] = QVariant::fromValue(d->blk);
     }
     return ret;
@@ -341,4 +346,5 @@ void DFMRootFileInfo::checkCache()
     d->mps = d->blk->mountPoints();
     d->size = d->blk->size();
     d->label = d->blk->idLabel();
+    d->fs = d->blk->idType();
 }
