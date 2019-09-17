@@ -53,6 +53,11 @@ bool VaultFileInfo::exists() const
 
 DUrl VaultFileInfo::parentUrl() const
 {
+    Q_D(const VaultFileInfo);
+    if (d->proxy) {
+        return VaultController::localUrlToVault(d->proxy->parentUrl());
+    }
+
     qDebug() << "FIXME: implement parentUrl() for VaultFileInfo";
     return DUrl();
 }

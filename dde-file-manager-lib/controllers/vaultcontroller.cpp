@@ -21,6 +21,8 @@
 #include "vaultcontroller.h"
 #include "models/vaultfileinfo.h"
 #include "dfileservices.h"
+#include "dfilewatcher.h"
+#include "dfileproxywatcher.h"
 
 #include "dfmevent.h"
 
@@ -86,7 +88,14 @@ DUrl VaultDirIterator::url() const
 VaultController::VaultController(QObject *parent)
     : DAbstractFileController(parent)
 {
-
+    auto createIfNotExist = [](const QString & path){
+        if (!QFile::exists(path)) {
+            QDir().mkdir(path);
+        }
+    };
+    static QString appDataLocation = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QDir::separator();
+    createIfNotExist(appDataLocation + "vault_encrypted");
+    createIfNotExist(appDataLocation + "vault_unlocked");
 }
 
 const DAbstractFileInfoPointer VaultController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
@@ -96,23 +105,49 @@ const DAbstractFileInfoPointer VaultController::createFileInfo(const QSharedPoin
 
 const DDirIteratorPointer VaultController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
-    return DDirIteratorPointer(new VaultDirIterator(event->url(), event->nameFilters(), event->filters(), event->flags()));
+    if (event->url().host() == "files") {
+        return DDirIteratorPointer(new VaultDirIterator(event->url(), event->nameFilters(), event->filters(), event->flags()));
+    }
+
+    return nullptr;
+}
+
+DAbstractFileWatcher *VaultController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
+{
+    return new DFileProxyWatcher(event->url(),
+                                 new DFileWatcher(VaultController::vaultToLocal(event->url())),
+                                 VaultController::localUrlToVault);
+}
+
+DUrl VaultController::makeVaultUrl(QString path, QString host)
+{
+    DUrl newUrl;
+    newUrl.setScheme(DFMVAULT_SCHEME);
+    newUrl.setHost(host);
+    newUrl.setPath(path.isEmpty() ? "/" : path);
+    return newUrl;
+}
+
+DUrl VaultController::localUrlToVault(const DUrl &vaultUrl)
+{
+    return VaultController::localToVault(vaultUrl.path());
 }
 
 DUrl VaultController::localToVault(QString localPath)
 {
     QString nextPath = localPath;
     int index = nextPath.indexOf("vault_unlocked");
-    Q_ASSERT(index != -1);
+    if (index == -1) {
+        // fallback to vault file root dir.
+        return VaultController::makeVaultUrl("/");
+    }
+
     index += QString("vault_unlocked").length();
-    DUrl newUrl;
-    newUrl.setScheme(DFMVAULT_SCHEME);
-    newUrl.setHost("files");
-    newUrl.setPath(nextPath.mid(index));
-    return newUrl;
+
+    return VaultController::makeVaultUrl(nextPath.mid(index));
 }
 
-QString VaultController::vaultToLocal(DUrl vaultUrl)
+QString VaultController::vaultToLocal(const DUrl &vaultUrl)
 {
     return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
            + QDir::separator() + "vault_unlocked" + vaultUrl.path();

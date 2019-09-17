@@ -30,7 +30,10 @@ public:
 
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const override;
     const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const override;
+    DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
 
+    static DUrl makeVaultUrl(QString path = "", QString host = "files");
+    static DUrl localUrlToVault(const DUrl &vaultUrl);
     static DUrl localToVault(QString localPath);
-    static QString vaultToLocal(DUrl vaultUrl);
+    static QString vaultToLocal(const DUrl &vaultUrl);
 };
