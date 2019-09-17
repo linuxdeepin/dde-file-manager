@@ -85,6 +85,7 @@ public slots:
     void actionNewFolder(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionSelectAll(quint64 winId);
     void actionClearRecent(const QSharedPointer<DFMMenuActionEvent>& event);
+    void actionClearRecent();
     void actionClearTrash(const QObject *sender = 0);
     void actionNewWord(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionNewExcel(const QSharedPointer<DFMUrlBaseEvent> &event);
