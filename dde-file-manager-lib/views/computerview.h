@@ -243,12 +243,15 @@ public:
     DUrl rootUrl() const override;
     bool setRootUrl(const DUrl &url) override;
     QListView *view();
-public Q_SLOT:
+
+public Q_SLOTS:
     void contextMenu(const QPoint &pos);
     void onRenameRequested(const DFMUrlBaseEvent &event);
+
 protected:
     void resizeEvent(QResizeEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
+
 private:
     QListView *m_view;
     ComputerModel *m_model;
