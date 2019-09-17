@@ -1035,6 +1035,7 @@ void DFileManagerWindow::initCentralWidget()
     QWidget *midWidget = new QWidget;
     QHBoxLayout *midLayout = new QHBoxLayout;
     midWidget->setLayout(midLayout);
+    midLayout->setContentsMargins(0, 0, 0, 0);
     midLayout->addWidget(d->splitter);
     d->detailView = new DFMRightDetailView(currentUrl());
     d->detailView->setFixedWidth(350);

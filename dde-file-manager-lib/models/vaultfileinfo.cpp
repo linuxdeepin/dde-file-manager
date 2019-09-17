@@ -96,7 +96,7 @@ bool VaultFileInfo::canRedirectionFileUrl() const
 {
     Q_D(const VaultFileInfo);
     if (d->proxy) {
-        return d->proxy->isDir() ? false : d->proxy->canRedirectionFileUrl();
+        return !d->proxy->isDir();
     }
 
     return false;

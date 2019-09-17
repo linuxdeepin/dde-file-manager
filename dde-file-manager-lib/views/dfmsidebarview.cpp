@@ -30,6 +30,7 @@ DFMSideBarView::DFMSideBarView(QWidget *parent)
     : DListView (parent)
 {
     setVerticalScrollMode(ScrollPerPixel);
+    setIconSize(QSize(16, 16));
 //    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 

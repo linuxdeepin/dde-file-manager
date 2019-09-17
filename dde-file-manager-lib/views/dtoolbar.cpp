@@ -137,7 +137,7 @@ void DToolBar::initAddressToolBar()
     m_searchButton->setFixedSize(ButtonWidth, ButtonHeight);
     m_searchButton->setFocusPolicy(Qt::NoFocus);
     m_searchButton->setFlat(true);
-    m_searchButton->setIcon(QIcon::fromTheme("search").pixmap(iconSize));
+    m_searchButton->setIcon(QIcon::fromTheme("search"));
     m_searchButton->setIconSize(iconSize);
 
 
