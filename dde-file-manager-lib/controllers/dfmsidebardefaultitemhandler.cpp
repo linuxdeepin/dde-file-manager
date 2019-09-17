@@ -91,6 +91,16 @@ QMenu *DFMSideBarDefaultItemHandler::contextMenu(const DFMSideBar *sidebar, cons
 
     menu->addSeparator();
 
+    if (item->text() == systemPathManager->getSystemPathDisplayName("Recent")) {
+        QAction *emptyRecentVisits = new QAction(QObject::tr("Clear recent history"), menu);
+
+        connect(emptyRecentVisits, &QAction::triggered, this, []() {
+            appController->actionClearRecent();
+        });
+
+        menu->addAction(emptyRecentVisits);
+    }
+
     if (item->text() == systemPathManager->getSystemPathDisplayName("Trash")) {
         QAction *emptyTrash = new QAction(QObject::tr("Empty Trash"), menu);
         connect(emptyTrash, &QAction::triggered, this, [this]() {
@@ -117,7 +127,8 @@ QMenu *DFMSideBarDefaultItemHandler::contextMenu(const DFMSideBar *sidebar, cons
 
     menu->addSeparator();
 
-    if (!noPropertySchemes.contains(item->url().scheme())) {
+    if (!noPropertySchemes.contains(item->url().scheme()) &&
+            item->text() != systemPathManager->getSystemPathDisplayName("Recent")) {
         QString propertiesStr = item->text() == systemPathManager->getSystemPathDisplayName("System Disk") ?
                                 QObject::tr("Disk info") : QObject::tr("Properties");
         menu->addAction(propertiesStr, [item]() {

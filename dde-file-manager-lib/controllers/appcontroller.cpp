@@ -105,6 +105,13 @@ using iterator = typename QList<Ty>::iterator;
 template<typename Ty>
 using citerator = typename QList<Ty>::const_iterator;
 
+const char *empty_recent_file =
+R"|(<?xml version="1.0" encoding="UTF-8"?>
+<xbel version="1.0"
+      xmlns:bookmark="http://www.freedesktop.org/standards/desktop-bookmarks"
+      xmlns:mime="http://www.freedesktop.org/standards/shared-mime-info"
+>
+</xbel>)|";
 
 QPair<DUrl, quint64> AppController::selectionAndRenameFile;
 QPair<DUrl, quint64> AppController::selectionFile;
@@ -392,6 +399,14 @@ void AppController::actionSelectAll(quint64 winId)
 void AppController::actionClearRecent(const QSharedPointer<DFMMenuActionEvent> &event)
 {
     Q_UNUSED(event)
+}
+
+void AppController::actionClearRecent()
+{
+    QFile f(QDir::homePath() + "/.local/share/recently-used.xbel");
+    f.open(QIODevice::WriteOnly);
+    f.write(empty_recent_file);
+    f.close();
 }
 
 void AppController::actionClearTrash(const QObject *sender)
