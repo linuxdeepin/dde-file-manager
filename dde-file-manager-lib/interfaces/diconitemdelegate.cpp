@@ -51,8 +51,8 @@ DWIDGET_USE_NAMESPACE
 DFM_USE_NAMESPACE
 
 #define ICON_SPACING 16
-#define ICON_MODE_RECT_RADIUS 18
-#define TEXT_H_PADDING ICON_MODE_RECT_RADIUS
+#define ICON_MODE_RECT_RADIUS TEXT_PADDING
+#define ICON_MODE_BACK_RADIUS 18
 
 QString trimmedEnd(QString str)
 {
@@ -349,7 +349,7 @@ public:
 
         const QMargins &margins = contentsMargins();
         QRect label_rect(TEXT_PADDING + margins.left(), margins.top() + iconHeight + TEXT_PADDING + ICON_MODE_ICON_SPACING,
-                         width() - TEXT_H_PADDING * 2 - margins.left() - margins.right(), INT_MAX);
+                         width() - TEXT_PADDING * 2 - margins.left() - margins.right(), INT_MAX);
         const QList<QRectF> &lines = delegate->drawText(index, &pa, option.text, label_rect, ICON_MODE_RECT_RADIUS,
                                                         option.palette.brush(QPalette::Normal, QPalette::Highlight),
                                                         QTextOption::WrapAtWordBoundaryOrAnywhere,
@@ -408,7 +408,7 @@ public:
 
             width -= (margins.left() + margins.right());
 
-            QRect label_rect(TEXT_PADDING + margins.left(), iconHeight + TEXT_PADDING + ICON_MODE_ICON_SPACING + margins.top(), width - TEXT_H_PADDING * 2, INT_MAX);
+            QRect label_rect(TEXT_PADDING + margins.left(), iconHeight + TEXT_PADDING + ICON_MODE_ICON_SPACING + margins.top(), width - TEXT_PADDING * 2, INT_MAX);
             const QList<QRectF> &lines = delegate->drawText(index, nullptr, option.text, label_rect, ICON_MODE_RECT_RADIUS, Qt::NoBrush,
                                                             QTextOption::WrapAtWordBoundaryOrAnywhere, option.textElideMode, Qt::AlignCenter);
 
@@ -625,7 +625,7 @@ void DIconItemDelegate::paint(QPainter *painter,
 
     QPainterPath path;
     rect.moveTopLeft(QPointF(0.5, 0.5) + rect.topLeft());
-    path.addRoundedRect(rect, ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
+    path.addRoundedRect(rect, ICON_MODE_BACK_RADIUS, ICON_MODE_BACK_RADIUS);
 
     if (!isCanvas && !isDragMode){ // 桌面和拖拽的图标不画背景
         painter->setRenderHint(QPainter::Antialiasing, true);
@@ -691,8 +691,8 @@ void DIconItemDelegate::paint(QPainter *painter,
     QRectF label_rect = opt.rect;
 
     label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
-    label_rect.setWidth(opt.rect.width() - 2 * TEXT_H_PADDING - 2*backgroundMargin);
-    label_rect.moveLeft(label_rect.left() + TEXT_H_PADDING + backgroundMargin);
+    label_rect.setWidth(opt.rect.width() - 2 * TEXT_PADDING - 2*backgroundMargin - ICON_MODE_BACK_RADIUS);
+    label_rect.moveLeft(label_rect.left() + TEXT_PADDING + backgroundMargin + ICON_MODE_BACK_RADIUS/2);
 
     if (isSelected) {
         painter->setPen(opt.palette.color(QPalette::BrightText));
@@ -714,7 +714,7 @@ void DIconItemDelegate::paint(QPainter *painter,
 
         // do we expend select text height..?
         DGioSettings settings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
-        bool shouldExpend = isCanvas || settings.value("iconview-expend-item").toBool();
+        bool shouldExpend = settings.value("iconview-expend-item").toBool();
 
         if (shouldExpend && height > label_rect.height()) {
             /// use widget(FileIconItem) show file icon and file name label.
@@ -963,8 +963,8 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 
     QRect label_rect = option.rect;
 
-    label_rect.setWidth(label_rect.width() - 2 * TEXT_H_PADDING);
-    label_rect.moveLeft(label_rect.left() + TEXT_H_PADDING);
+    label_rect.setWidth(label_rect.width() - 2 * TEXT_PADDING);
+    label_rect.moveLeft(label_rect.left() + TEXT_PADDING);
     label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
 
     QStyleOptionViewItem opt = option;
