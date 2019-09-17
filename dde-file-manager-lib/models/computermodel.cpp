@@ -41,6 +41,7 @@ ComputerModel::ComputerModel(QObject *parent) :
     addItem(makeSplitterUrl(tr("My Directories")));
     QList<DAbstractFileInfoPointer> ch = fileService->getChildren(this, DUrl(DFMROOT_ROOT), {}, nullptr);
     bool splt = false;
+    m_nitems = 0;
     for (auto chi : ch) {
         if (chi->suffix() != SUFFIX_USRDIR && !splt) {
             addItem(makeSplitterUrl(tr("Disks")));
@@ -198,9 +199,9 @@ bool ComputerModel::setData(const QModelIndex &index, const QVariant &value, int
 
 Qt::ItemFlags ComputerModel::flags(const QModelIndex &index) const
 {
-    Qt::ItemFlags ret = Qt::ItemIsEnabled | Qt::ItemFlag::ItemNeverHasChildren;
+    Qt::ItemFlags ret = Qt::ItemFlag::ItemNeverHasChildren;
     if (index.data(DataRoles::ICategoryRole) != ComputerModelItemData::Category::cat_splitter) {
-        ret |= Qt::ItemFlag::ItemIsSelectable;
+        ret |= Qt::ItemIsEnabled | Qt::ItemFlag::ItemIsSelectable;
     }
 
     const ComputerModelItemData *pitmdata = &m_items[index.row()];
@@ -220,6 +221,11 @@ QModelIndex ComputerModel::findIndex(const DUrl &url) const
     return QModelIndex();
 }
 
+int ComputerModel::itemCount() const
+{
+    return m_nitems;
+}
+
 void ComputerModel::addItem(const DUrl &url, QWidget* w)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount() + 1);
@@ -227,6 +233,9 @@ void ComputerModel::addItem(const DUrl &url, QWidget* w)
     initItemData(id, url, w);
     m_items.append(id);
     endInsertRows();
+    if (url.scheme() != SPLITTER_SCHEME && url.scheme() != WIDGET_SCHEME) {
+        Q_EMIT itemCountChanged(++m_nitems);
+    }
 }
 
 void ComputerModel::insertAfter(const DUrl &url, const DUrl &ref, QWidget *w)
@@ -247,6 +256,9 @@ void ComputerModel::insertAfter(const DUrl &url, const DUrl &ref, QWidget *w)
     m_items.insert(p + 1, id);
     m_items.append(id);
     endInsertRows();
+    if (url.scheme() != SPLITTER_SCHEME && url.scheme() != WIDGET_SCHEME) {
+        Q_EMIT itemCountChanged(++m_nitems);
+    }
 }
 
 void ComputerModel::insertBefore(const DUrl &url, const DUrl &ref, QWidget *w)
@@ -267,6 +279,9 @@ void ComputerModel::insertBefore(const DUrl &url, const DUrl &ref, QWidget *w)
     m_items.insert(p, id);
     m_items.append(id);
     endInsertRows();
+    if (url.scheme() != SPLITTER_SCHEME && url.scheme() != WIDGET_SCHEME) {
+        Q_EMIT itemCountChanged(++m_nitems);
+    }
 }
 
 void ComputerModel::removeItem(const DUrl &url)
@@ -284,6 +299,9 @@ void ComputerModel::removeItem(const DUrl &url)
     beginRemoveRows(QModelIndex(), p, p);
     m_items.removeAt(p);
     endRemoveRows();
+    if (url.scheme() != SPLITTER_SCHEME && url.scheme() != WIDGET_SCHEME) {
+        Q_EMIT itemCountChanged(--m_nitems);
+    }
 }
 
 void ComputerModel::initItemData(ComputerModelItemData &data, const DUrl &url, QWidget *w)
