@@ -130,7 +130,6 @@ void DToolBar::initAddressToolBar()
 
     DButtonBox* buttonBox = new DButtonBox(this);
     buttonBox->setButtonList(buttonList, true);
-    buttonBox->setDisabled(true);
     buttonBox->setFocusPolicy(Qt::NoFocus);
 
     m_searchButton = new QPushButton(this);
