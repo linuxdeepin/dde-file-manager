@@ -43,7 +43,7 @@
 #include <QVBoxLayout>
 #include <dgiosettings.h>
 #include <private/qtextengine_p.h>
-
+#include <DApplicationHelper>
 #include "dstyleoption.h"
 #include <DStyle>
 
@@ -608,15 +608,16 @@ void DIconItemDelegate::paint(QPainter *painter,
     bool isSelected = !isDragMode && (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
     bool isDropTarget = parent()->isDropTarget(index);
 
-    QPalette::ColorGroup cg = (option.widget ? option.widget->isEnabled() : (option.state & QStyle::State_Enabled))
-            ? QPalette::Normal : QPalette::Disabled;
-    if (cg == QPalette::Normal && !(option.state & QStyle::State_Active))
-        cg = QPalette::Inactive;
-
-    QPalette::ColorRole role = QPalette::Background;
-    if (isSelected || isDropTarget) {
-        role = QPalette::Highlight;
+    DPalette pl(DApplicationHelper::instance()->palette(option.widget));
+    QColor c = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
+    if ((isDropTarget && !isSelected) ||option.state & QStyle::StateFlag::State_Selected) {
+        c = pl.color(DPalette::ColorGroup::Active, QPalette::ColorRole::Highlight);
+    } else if (option.state & QStyle::StateFlag::State_MouseOver) {
+        c = c.lighter();
     }
+
+    painter->setPen(c);
+    painter->setBrush(c);
 
     QRectF rect = opt.rect;
     int backgroundMargin = isCanvas ? 0 : COLUMU_PADDING;
@@ -629,13 +630,12 @@ void DIconItemDelegate::paint(QPainter *painter,
 
     if (!isCanvas && !isDragMode){ // 桌面和拖拽的图标不画背景
         painter->setRenderHint(QPainter::Antialiasing, true);
-        painter->fillPath(path, option.palette.color(cg, role));
+        painter->fillPath(path, c);
         painter->setRenderHint(QPainter::Antialiasing, false);
     }
 
     if (isDropTarget && !isSelected) {
         painter->setRenderHint(QPainter::Antialiasing, true);
-        painter->setPen(option.palette.color(cg, role));
         painter->drawPath(path);
         painter->setRenderHint(QPainter::Antialiasing, false);
     }
