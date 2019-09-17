@@ -130,11 +130,22 @@ QString DFMRootFileInfo::suffix() const
 QString DFMRootFileInfo::fileDisplayName() const
 {
     Q_D(const DFMRootFileInfo);
+
+    static QMap<QString, const char*> i18nMap {
+        {"data", "Data Disk"}
+    };
+    const QString ddeI18nSym = QStringLiteral("_dde_");
+
     if (suffix() == SUFFIX_USRDIR) {
         return QStandardPaths::displayName(d->stdloc);
     } else if (suffix() == SUFFIX_GVFSMP) {
         return d->gmnt->name();
     } else if (suffix() == SUFFIX_UDISKS) {
+        if (d->label.startsWith(ddeI18nSym)) {
+            QString i18nKey = d->label.mid(ddeI18nSym.size(), d->label.size() - ddeI18nSym.size());
+            return qApp->translate("DeepinStorage", i18nMap.value(i18nKey, i18nKey.toUtf8().constData()));
+        }
+
         if (d->mps.size() == 1 && d->mps.front() == QString("/"))
             return QCoreApplication::translate("PathManager", "System Disk");
         if (d->label.length() == 0)
