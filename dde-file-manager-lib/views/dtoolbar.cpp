@@ -43,7 +43,7 @@
 #include "views/dfilemanagerwindow.h"
 #include "views/dfmactionbutton.h"
 
-#include <DGraphicsClipEffect>
+#include <DButtonBox>
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -103,7 +103,7 @@ void DToolBar::initUI()
     mainLayout->addSpacing(22);
     mainLayout->addWidget(m_contollerToolBar);
 
-    mainLayout->addSpacing(22);
+    mainLayout->addSpacing(26);
     mainLayout->addWidget(m_detailButton);
 
     mainLayout->addSpacing(0);
@@ -173,22 +173,9 @@ void DToolBar::initContollerToolBar()
     m_contollerToolBar->setFrameShape(QFrame::NoFrame);
     m_contollerToolBar->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    QWidget *content = new QWidget();
-
-    m_contollerToolBarClipMask = new DGraphicsClipEffect(content);
-    content->setGraphicsEffect(m_contollerToolBarClipMask);
-
-    m_contollerToolBarContentLayout = new QHBoxLayout;
+    m_contollerToolBarContentLayout = new QHBoxLayout(m_contollerToolBar);
     m_contollerToolBarContentLayout->setContentsMargins(1, 1, 1, 1);
-    m_contollerToolBarContentLayout->setSpacing(30);
-
-    content->setLayout(m_contollerToolBarContentLayout);
-    content->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-    QHBoxLayout *layout = new QHBoxLayout(m_contollerToolBar);
-
-    layout->addWidget(content);
-    layout->setContentsMargins(0, 0, 0, 0);
+    m_contollerToolBarContentLayout->setSpacing(22);
 }
 
 void DToolBar::initConnect()
@@ -476,11 +463,6 @@ void DToolBar::setCustomActionList(const QList<QAction *> &list)
         if(m_detailButton->isChecked() && list.isEmpty())
             m_detailButton->click();
     }
-
-    QPainterPath path;
-
-    path.addRoundedRect(QRectF(QPointF(0, 0), m_contollerToolBar->sizeHint()).adjusted(0.5, 0.5, -0.5, -0.5), 4, 4);
-    m_contollerToolBarClipMask->setClipPath(path);
 }
 
 void DToolBar::triggerActionByIndex(int index)
