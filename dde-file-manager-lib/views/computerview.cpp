@@ -44,6 +44,7 @@
 #include "../shutil/fileutils.h"
 #include "partman/partition.h"
 #include "dabstractfilewatcher.h"
+#include "models/dfmrootfileinfo.h"
 #include "models/computermodel.h"
 #include "computerviewitemdelegate.h"
 
@@ -1305,6 +1306,34 @@ ComputerView2::ComputerView2(QWidget *parent) : QWidget(parent)
     m_view->setFrameShape(QFrame::Shape::NoFrame);
     m_view->viewport()->installEventFilter(this);
 
+    DFMEvent event(this);
+    event.setWindowId(window()->internalWinId());
+    m_statusbar->itemCounted(event, m_model->itemCount());
+
+    connect(m_model, &ComputerModel::itemCountChanged, this, [this](int count) {
+        DFMEvent event(this);
+        event.setWindowId(this->window()->internalWinId());
+        if (this->m_view->selectionModel()->currentIndex().isValid()) {
+            return;
+        }
+        this->m_statusbar->itemCounted(event, count);
+    });
+    connect(m_view->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this] {
+        DFMEvent event(this);
+        event.setWindowId(this->window()->internalWinId());
+        if (this->m_view->selectionModel()->hasSelection()) {
+            QModelIndex curidx(this->m_view->selectionModel()->currentIndex());
+            DAbstractFileInfoPointer fi = fileService->createFileInfo(this, curidx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>());
+            if (fi && fi->suffix() == SUFFIX_USRDIR) {
+                DUrlList urlList{curidx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()};
+                event.setData(urlList);
+            }
+            this->m_statusbar->itemSelected(event, 1);
+            return;
+        }
+        this->m_statusbar->itemCounted(event, this->m_model->itemCount());
+    });
+
     connect(m_view, &QWidget::customContextMenuRequested, this, &ComputerView2::contextMenu);
     connect(m_view, &QAbstractItemView::doubleClicked, [this](const QModelIndex &idx) {
         appController->actionOpen(QSharedPointer<DFMUrlListBaseEvent>(new DFMUrlListBaseEvent(this, {idx.data(ComputerModel::DataRoles::MountOpenUrlRole).value<DUrl>()})));
@@ -1382,7 +1411,8 @@ bool ComputerView2::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::MouseButtonRelease) {
         QMouseEvent *e = static_cast<QMouseEvent*>(event);
-        if (e->button() == Qt::MouseButton::LeftButton && !m_view->indexAt(e->pos()).isValid()) {
+        const QModelIndex &idx = m_view->indexAt(e->pos());
+        if (e->button() == Qt::MouseButton::LeftButton && (!idx.isValid() || !(idx.flags() & Qt::ItemFlag::ItemIsEnabled))) {
             m_view->selectionModel()->clearSelection();
         }
         return false;

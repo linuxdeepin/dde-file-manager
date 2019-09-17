@@ -195,12 +195,12 @@ bool DFMRootFileInfo::isAllowGuestShared() const
 
 bool DFMRootFileInfo::isFile() const
 {
-    return false;
+    return true;
 }
 
 bool DFMRootFileInfo::isDir() const
 {
-    return true;
+    return false;
 }
 
 int DFMRootFileInfo::filesCount() const

@@ -84,6 +84,7 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
     QModelIndex findIndex(const DUrl &url) const;
+    int itemCount() const;
 
 public Q_SLOTS:
     void addItem(const DUrl &url, QWidget *w = nullptr);
@@ -91,11 +92,15 @@ public Q_SLOTS:
     void insertBefore(const DUrl &url, const DUrl &ref, QWidget *w = nullptr);
     void removeItem(const DUrl &url);
 
+Q_SIGNALS:
+    void itemCountChanged(int nitems);
+
 private:
     ComputerView2* par;
     QScopedPointer<DDiskManager> m_diskm;
     QList<ComputerModelItemData> m_items;
     DAbstractFileWatcher* m_watcher;
+    int m_nitems;
 
     void initItemData(ComputerModelItemData &data, const DUrl &url, QWidget *w);
 
