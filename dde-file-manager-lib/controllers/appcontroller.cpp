@@ -34,6 +34,7 @@
 #include "avfsfilecontroller.h"
 #include "mountcontroller.h"
 #include "masteredmediacontroller.h"
+#include "vaultcontroller.h"
 #include "bookmarkmanager.h"
 #include "networkcontroller.h"
 #include "mergeddesktopcontroller.h"
@@ -140,6 +141,7 @@ void AppController::registerUrlHandle()
     DFileService::dRegisterUrlHandler<RecentController>(RECENT_SCHEME, "");
     DFileService::dRegisterUrlHandler<MergedDesktopController>(DFMMD_SCHEME, "");
     DFileService::dRegisterUrlHandler<DFMRootController>(DFMROOT_SCHEME, "");
+    DFileService::dRegisterUrlHandler<VaultController>(DFMVAULT_SCHEME, "");
 }
 
 void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)

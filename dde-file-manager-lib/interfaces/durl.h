@@ -70,6 +70,8 @@
 #define DFMMD_ROOT "dfmmd:///"
 #define DFMROOT_SCHEME "dfmroot"
 #define DFMROOT_ROOT "dfmroot:///"
+#define DFMVAULT_SCHEME "dfmvault"
+#define DFMVAULT_ROOT "dfmvault:///"
 // internal scheme end.
 
 // Auxiliary path segment strings for the burn scheme

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 ~ 2018 Deepin Technology Co., Ltd.
+ * Copyright (C) 2019 Deepin Technology Co., Ltd.
  *
  * Author:     Gary Wang <wzc782970009@gmail.com>
  *
@@ -18,28 +18,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMFILECRUMBCONTROLLER_H
-#define DFMFILECRUMBCONTROLLER_H
+#pragma once
 
-#include "interfaces/dfmcrumbinterface.h"
+#include "dabstractfileinfo.h"
 
-DFM_BEGIN_NAMESPACE
-
-class DFMFileCrumbController : public DFMCrumbInterface
+class VaultFileInfoPrivate;
+class VaultFileInfo : public DAbstractFileInfo
 {
 public:
-    explicit DFMFileCrumbController(QObject *parent = nullptr);
-    ~DFMFileCrumbController() override;
+    VaultFileInfo(const DUrl &url);
 
-    bool supportedUrl(DUrl url) override;
-    QList<CrumbData> seprateUrl(const DUrl &url) override;
+    bool exists() const override;
+
+    DUrl parentUrl() const override;
+    QString iconName() const override;
+    QString genericIconName() const override;
+
+    DUrl mimeDataUrl() const override;
+
+    bool canRedirectionFileUrl() const override;
+    DUrl redirectedFileUrl() const override;
 
 private:
-    QString homePath = QString();
-
-    QString getDisplayName(const QString& name) const;
+    Q_DECLARE_PRIVATE(VaultFileInfo)
 };
-
-DFM_END_NAMESPACE
-
-#endif // DFMFILECRUMBCONTROLLER_H
