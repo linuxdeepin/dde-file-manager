@@ -695,7 +695,7 @@ void PropertyDialog::mousePressEvent(QMouseEvent *event)
 {
     if (m_edit->isVisible()) {
         if (event->button() != Qt::RightButton) {
-            m_edit->setIsCanceled(false);
+            m_edit->setIsCanceled(m_edit->toPlainText().isEmpty());
             emit m_edit->editFinished();
         }
     }
