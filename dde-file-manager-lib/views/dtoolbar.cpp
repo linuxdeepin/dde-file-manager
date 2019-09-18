@@ -437,7 +437,7 @@ void DToolBar::setCustomActionList(const QList<QAction *> &list)
 {
     m_actionList = list;
 
-    for (DFMActionButton *button : m_contollerToolBar->findChild<QWidget*>()->findChildren<DFMActionButton*>()) {
+    for (DFMActionButton *button : m_contollerToolBar->findChildren<DFMActionButton*>()) {
         m_contollerToolBarContentLayout->removeWidget(button);
         button->deleteLater();
     }
