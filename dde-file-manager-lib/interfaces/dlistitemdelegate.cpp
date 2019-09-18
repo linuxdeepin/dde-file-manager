@@ -226,7 +226,10 @@ void DListItemDelegate::paint(QPainter *painter,
     }
 
     const DFileSystemModel *model = qobject_cast<const DFileSystemModel *>(index.model());
-    painter->setPen(opt.palette.color(QPalette::Inactive, QPalette::Text));
+    if (isSelected)
+        painter->setPen(opt.palette.color(QPalette::Active, QPalette::HighlightedText));
+    else
+        painter->setPen(opt.palette.color(QPalette::Inactive, QPalette::Text));
 
     for (int i = 1; i < columnRoleList.count(); ++i) {
         int column_width = parent()->columnWidth(i);
