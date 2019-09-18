@@ -301,7 +301,7 @@ void MoveCopyTaskWidget::initConflictDetailFrame()
 
     m_originSizeLabel = new QLabel(this);
 //    m_originSizeLabel->setStyleSheet("background-color: green");
-    m_originSizeLabel->setFixedSize(90, 20);
+    m_originSizeLabel->setFixedSize(110, 20);
 
     m_targetIconLabel = new QLabel(this);
 //    m_targetIconLabel->setStyleSheet("background-color: red");
@@ -318,7 +318,7 @@ void MoveCopyTaskWidget::initConflictDetailFrame()
 
     m_targetSizeLabel = new QLabel(this);
 //    m_targetSizeLabel->setStyleSheet("background-color: green");
-    m_targetSizeLabel->setFixedSize(90, 20);
+    m_targetSizeLabel->setFixedSize(110, 20);
 
     QGridLayout *conflictMainLayout = new QGridLayout(this);
 
@@ -895,6 +895,8 @@ void DTaskDialog::initUI()
     mainLayout->addWidget(m_taskListWidget);
     mainLayout->addStretch(1);
     setLayout(mainLayout);
+
+    setFixedWidth(qMax(m_titlebar->width(), m_taskListWidget->width()));
 
     moveToCenter();
 }
