@@ -87,8 +87,7 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
     DDiskManager dummy;
     for (auto blks : dummy.blockDevices()) {
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
-        if (blk->idUUID().length() == 0) {
-            //extended partition doesn't have a UUID.
+        if (!blk->hasFileSystem()) {
             continue;
         }
         udisksuuids.insert(blk->idUUID());
@@ -164,6 +163,10 @@ bool DFMRootFileWatcherPrivate::start()
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
         QString uuid = blk->idUUID();
 
+        if (!blk->hasFileSystem()) {
+            return;
+        }
+
         dbuspath2uuid[blks] = uuid;
         uuidset.insert(uuid);
 
@@ -176,13 +179,18 @@ bool DFMRootFileWatcherPrivate::start()
     }));
 
     for (auto devs : udisksmgr->blockDevices()) {
-        blkdevs.push_back(QSharedPointer<DBlockDevice>(DDiskManager::createBlockDevice(devs)));
-        blkdevs.back()->setWatchChanges(true);
+        QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(devs));
+        if (!blk->hasFileSystem()) {
+            continue;
+        }
 
-        dbuspath2uuid[devs] = blkdevs.back()->idUUID();
+        blkdevs.push_back(blk);
+        blk->setWatchChanges(true);
+
+        dbuspath2uuid[devs] = blk->idUUID();
         uuidset.insert(dbuspath2uuid[devs]);
 
-        connections.push_back(QObject::connect(blkdevs.back().data(), &DBlockDevice::idLabelChanged, [wpar, devs](const QString &) {
+        connections.push_back(QObject::connect(blk.data(), &DBlockDevice::idLabelChanged, [wpar, devs](const QString &) {
             Q_EMIT wpar->fileAttributeChanged(DUrl(DFMROOT_ROOT + devs.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
         }));
     }
