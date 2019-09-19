@@ -23,6 +23,7 @@
 #include "dfileview.h"
 #include "interface/dfmvaultcontentinterface.h"
 
+#include <QLabel>
 #include <QVBoxLayout>
 
 DFM_BEGIN_NAMESPACE
@@ -31,9 +32,11 @@ class FallbackDispatcher : public DFMVaultContentInterface
 {
     Q_OBJECT
 public:
-    explicit FallbackDispatcher(QWidget *parent = nullptr) : DFMVaultContentInterface(parent) {}
+    explicit FallbackDispatcher(QWidget *parent = nullptr);
     ~FallbackDispatcher() override {}
     QPair<DUrl, bool> requireRedirect(VaultController::VaultState state) override;
+private:
+    QLabel * m_label;
 };
 
 class DFMVaultView : public QWidget, public DFMBaseView
@@ -49,9 +52,12 @@ public:
 
     QWidget *replaceContainerWidget(QWidget * widget);
 
+public slots:
     bool cd(const DUrl &url);
 
 private:
+    void registerContentWidget(const QString& name, DFMVaultContentInterface *widget);
+
     DUrl m_rootUrl;
     QVBoxLayout * m_containerLayout;
     QWidget * m_contentWidget;

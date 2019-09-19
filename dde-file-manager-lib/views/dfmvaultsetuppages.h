@@ -23,11 +23,55 @@
 #include "interface/dfmvaultcontentinterface.h"
 
 #include <QStackedLayout>
+#include <QPushButton>
+#include <dtkwidget_global.h>
+
+DWIDGET_BEGIN_NAMESPACE
+class DPasswordEdit;
+DWIDGET_END_NAMESPACE
+
+DWIDGET_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
 
+class VaultSetupWelcomePage : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit VaultSetupWelcomePage(QWidget * parent = nullptr);
+    ~VaultSetupWelcomePage() override;
+
+signals:
+    void requestRedirect(DUrl url);
+
+private:
+    QPushButton * m_createNewButton;
+    QPushButton * m_importButton;
+};
+
+// --------------------------------------
+
+class VaultSetupSetPasswordPage : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit VaultSetupSetPasswordPage(QWidget * parent = nullptr);
+    ~VaultSetupSetPasswordPage() override;
+
+signals:
+    void requestRedirect(DUrl url);
+
+private:
+    DPasswordEdit * m_enterPassword;
+    DPasswordEdit * m_confirmPassword;
+    QPushButton * m_finishButton;
+};
+
+// --------------------------------------
+
 class DFMVaultSetupPages : public DFMVaultPages
 {
+    Q_OBJECT
 public:
     DFMVaultSetupPages(QWidget * parent = nullptr);
     ~DFMVaultSetupPages() override {}

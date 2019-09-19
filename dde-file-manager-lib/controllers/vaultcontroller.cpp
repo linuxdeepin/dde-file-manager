@@ -122,10 +122,16 @@ DAbstractFileWatcher *VaultController::createFileWatcher(const QSharedPointer<DF
 
 DUrl VaultController::makeVaultUrl(QString path, QString host)
 {
+    // blumia: if path is not start with a `/`, QUrl::setPath will destory the whole QUrl
+    //         and only leave the path to the QUrl.
+    if (!path.startsWith('/')) {
+        path = '/' + path;
+    }
+
     DUrl newUrl;
     newUrl.setScheme(DFMVAULT_SCHEME);
     newUrl.setHost(host);
-    newUrl.setPath(path.isEmpty() ? "/" : path);
+    newUrl.setPath(path);
     return newUrl;
 }
 

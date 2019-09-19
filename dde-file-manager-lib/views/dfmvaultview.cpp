@@ -25,10 +25,17 @@
 #include "controllers/vaultcontroller.h"
 #include "dfmvaultsetuppages.h"
 
-#include <QLabel>
 #include <QVBoxLayout>
 
 DFM_BEGIN_NAMESPACE
+
+FallbackDispatcher::FallbackDispatcher(QWidget *parent)
+    : DFMVaultContentInterface(parent)
+    , m_label(new QLabel(this))
+{
+    QVBoxLayout layout(this);
+    layout.addWidget(m_label);
+}
 
 QPair<DUrl, bool> FallbackDispatcher::requireRedirect(VaultController::VaultState state)
 {
@@ -50,8 +57,8 @@ DFMVaultView::DFMVaultView(QWidget *parent)
     , m_containerLayout(new QVBoxLayout(this))
     , m_contentWidget(nullptr)
 {
-    m_contentMap.insert("setup", new DFMVaultSetupPages(this));
-    m_contentMap.insert("_fallback_", new FallbackDispatcher(this));
+    registerContentWidget("setup", new DFMVaultSetupPages(this));
+    registerContentWidget("_fallback_", new FallbackDispatcher(this));
 }
 
 DFMVaultView::~DFMVaultView()
@@ -90,7 +97,8 @@ bool DFMVaultView::setRootUrl(const DUrl &url)
     }
 
     contentWidget->setRootUrl(m_rootUrl);
-    replaceContainerWidget(contentWidget);
+    QWidget * oldWidget = replaceContainerWidget(contentWidget);
+    if (oldWidget) oldWidget->setVisible(false);
 
     return true;
 }
@@ -115,6 +123,7 @@ QWidget *DFMVaultView::replaceContainerWidget(QWidget *widget)
     }
 
     m_contentWidget = widget;
+    m_contentWidget->setVisible(true);
     m_containerLayout->addWidget(widget);
 
     return oldWidget;
@@ -125,6 +134,12 @@ bool DFMVaultView::cd(const DUrl &url)
     DFileManagerWindow* w = qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(WindowManager::getWindowId(this)));
 
     return w && w->cd(url);
+}
+
+void DFMVaultView::registerContentWidget(const QString &name, DFMVaultContentInterface *widget)
+{
+    m_contentMap.insert(name, widget);
+    connect(widget, &DFMVaultContentInterface::requestRedirect, this, &DFMVaultView::cd);
 }
 
 DFM_END_NAMESPACE
