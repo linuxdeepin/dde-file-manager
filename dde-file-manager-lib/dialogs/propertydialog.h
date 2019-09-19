@@ -37,6 +37,8 @@
 #include <QPushButton>
 #include <QStorageInfo>
 #include <QScrollArea>
+
+#include <views/dfmactionbutton.h>
 #define EXTEND_FRAME_MAXHEIGHT 160
 
 QT_BEGIN_NAMESPACE
@@ -184,7 +186,7 @@ private:
     NameTextEdit *m_edit{ nullptr };
     QStackedWidget *m_editStackWidget{ nullptr };
     QFrame* m_textShowFrame{ nullptr };
-    QPushButton* m_editButton{ nullptr };
+    DIconButton* m_editButton{ nullptr };
     QCheckBox * m_executableCheckBox{ nullptr };
     SectionValueLabel* m_folderSizeLabel{ nullptr };
     SectionValueLabel* m_containSizeLabel{ nullptr };
