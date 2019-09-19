@@ -109,6 +109,7 @@ void DFMRightDetailView::initUI()
     d->mainLayout->addWidget(d->iconLabel, 1, Qt::AlignHCenter);
 
     d->mainLayout->addWidget(createLine());
+    d->mainLayout->addWidget(createLine());
 
     initTagWidget();
 
@@ -123,7 +124,9 @@ void DFMRightDetailView::initTagWidget()
 {
     Q_D(DFMRightDetailView);
     d->tagInfoWidget = new DFMTagWidget(d->m_url, this);
-    d->tagInfoWidget->setMaximumHeight(180);
+    d->tagInfoWidget->tagTitle()->setHidden(true);
+    d->tagInfoWidget->tagLeftTitle()->setHidden(false);
+    d->tagInfoWidget->setMaximumHeight(100);
     d->mainLayout->addWidget(d->tagInfoWidget);
 }
 

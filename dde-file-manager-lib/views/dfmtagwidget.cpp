@@ -57,8 +57,9 @@ public:
 
 private:
     DUrl    m_url;
-    QLabel      *m_tagLable;
-    QVBoxLayout *m_mainLayout  {nullptr};
+    QLabel      *m_tagLable{nullptr};
+    QLabel      *m_tagLeftLable{nullptr};
+    QVBoxLayout *m_mainLayout{nullptr};
     DFMCrumbEdit  *m_tagCrumbEdit{ nullptr };
     DTagActionWidget *m_tagActionWidget{ nullptr };
     DAbstractFileWatcher *m_devicesWatcher{ nullptr };
@@ -101,11 +102,16 @@ void DFMTagWidget::initUi()
 
     d->m_tagLable = new QLabel(tr("tag"), this);
     d->m_mainLayout->addWidget(d->m_tagLable);
+    d->m_tagLeftLable = new QLabel(tr("tag"), this);
 
     d->m_tagActionWidget =  new DTagActionWidget(this);
     d->m_tagActionWidget->setMaximumHeight(20);
     d->m_tagActionWidget->setObjectName("tagActionWidget");
-    d->m_mainLayout->addWidget(d->m_tagActionWidget);
+    QHBoxLayout *tagActionLayout = new QHBoxLayout;
+    tagActionLayout->addWidget(d->m_tagLeftLable);
+    tagActionLayout->addWidget(d->m_tagActionWidget);
+    d->m_mainLayout->addLayout(tagActionLayout);
+    d->m_tagLeftLable->setHidden(true);
 
     d->m_tagCrumbEdit = new DFMCrumbEdit(this);
     d->m_tagCrumbEdit->setObjectName("tagCrumbEdit");
@@ -209,6 +215,12 @@ QWidget *DFMTagWidget::tagTitle()
     return d->m_tagLable;
 }
 
+QWidget *DFMTagWidget::tagLeftTitle()
+{
+    Q_D(DFMTagWidget);
+    return d->m_tagLeftLable;
+}
+
 DTagActionWidget *DFMTagWidget::tagActionWidget()
 {
     Q_D(DFMTagWidget);
@@ -224,7 +236,7 @@ DCrumbEdit *DFMTagWidget::tagCrumbEdit()
 bool DFMTagWidget::shouldShow(const DUrl& url)
 {
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, url);
-    if (!fileInfo)
+    if (!fileInfo || fileInfo->isVirtualEntry())
         return false;
 
     bool isComputerOrTrash = false;

@@ -40,6 +40,7 @@ public:
 
     void loadTags(const DUrl& url);
     QWidget *tagTitle();
+    QWidget *tagLeftTitle();
     DTagActionWidget *tagActionWidget();
     DCrumbEdit *tagCrumbEdit();
 
