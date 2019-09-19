@@ -29,13 +29,27 @@
 
 DFM_BEGIN_NAMESPACE
 
+QPair<DUrl, bool> FallbackDispatcher::requireRedirect(VaultController::VaultState state)
+{
+    switch (state) {
+    case VaultController::Unlocked:
+        return {VaultController::makeVaultUrl(), true};
+    case VaultController::Encrypted:
+        return {VaultController::makeVaultUrl("/", "unlock"), true};
+    default:
+        return {VaultController::makeVaultUrl("/", "setup"), true};
+    }
+}
+
+// --------------------------------------------------------
+
 DFMVaultView::DFMVaultView(QWidget *parent)
     : QWidget (parent)
     , m_rootUrl(DFMVAULT_SCHEME)
     , m_containerLayout(new QVBoxLayout(this))
     , m_contentWidget(nullptr)
 {
-
+    m_contentMap.insert("_fallback_", new FallbackDispatcher(this));
 }
 
 DFMVaultView::~DFMVaultView()
@@ -55,48 +69,51 @@ DUrl DFMVaultView::rootUrl() const
 
 bool DFMVaultView::setRootUrl(const DUrl &url)
 {
-    static QStringList availableViewStates = {
-        "unlock",
-        "password_recovery",
-        "setup",
-        "import"
-    };
-
     m_rootUrl = url;
 
     VaultController::VaultState state = VaultController::state();
+    QString contentKey = url.host();
 
-    if (!availableViewStates.contains(url.host())) {
-        switch (state) {
-        case VaultController::Unlocked:
-            cd(VaultController::makeVaultUrl());
-            return false;
-        case VaultController::Encrypted:
-            cd(VaultController::makeVaultUrl("/", "unlock"));
-            return false;
-        default:
-            cd(VaultController::makeVaultUrl("/", "setup"));
-            return false;
-        }
+    if (!m_contentMap.contains(contentKey)) {
+        contentKey = "_fallback_";
     }
 
-    setContainerWidget(new QLabel(url.toString()));
+    DFMVaultContentInterface * contentWidget = m_contentMap.value(contentKey);
+    if (!contentWidget) return false;
+
+    QPair<DUrl, bool> requireRedirect = contentWidget->requireRedirect(state);
+    if (requireRedirect.second) {
+        cd(requireRedirect.first);
+        return false;
+    }
+
+    replaceContainerWidget(new QLabel(url.toString()));
 
     return true;
 }
 
-void DFMVaultView::setContainerWidget(QWidget *widget)
+/*!
+ * \brief replace the content widget with a new given \a widget
+ *
+ * It's the caller's response to manage the ownership of the given widget.
+ *
+ * \return the old widget we replaced, or null if we are not replace any widget.
+ */
+QWidget *DFMVaultView::replaceContainerWidget(QWidget *widget)
 {
-    if (!widget) return;
+    if (!widget) return nullptr;
+
+    QWidget * oldWidget = nullptr;
 
     if (m_contentWidget) {
         m_containerLayout->removeWidget(m_contentWidget);
-        QWidget * oldWidget = m_contentWidget;
-        oldWidget->deleteLater();
+        oldWidget = m_contentWidget;
     }
 
     m_contentWidget = widget;
     m_containerLayout->addWidget(widget);
+
+    return oldWidget;
 }
 
 bool DFMVaultView::cd(const DUrl &url)

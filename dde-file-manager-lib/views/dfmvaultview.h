@@ -21,10 +21,20 @@
 #pragma once
 
 #include "dfileview.h"
+#include "interface/dfmvaultcontentinterface.h"
 
 #include <QVBoxLayout>
 
 DFM_BEGIN_NAMESPACE
+
+class FallbackDispatcher : public DFMVaultContentInterface
+{
+    Q_OBJECT
+public:
+    explicit FallbackDispatcher(QWidget *parent = nullptr) : DFMVaultContentInterface(parent) {}
+    ~FallbackDispatcher() override {}
+    QPair<DUrl, bool> requireRedirect(VaultController::VaultState state) override;
+};
 
 class DFMVaultView : public QWidget, public DFMBaseView
 {
@@ -37,7 +47,7 @@ public:
     DUrl rootUrl() const override;
     bool setRootUrl(const DUrl &url) override;
 
-    void setContainerWidget(QWidget * widget);
+    QWidget *replaceContainerWidget(QWidget * widget);
 
     bool cd(const DUrl &url);
 
@@ -45,6 +55,8 @@ private:
     DUrl m_rootUrl;
     QVBoxLayout * m_containerLayout;
     QWidget * m_contentWidget;
+
+    QMap<QString, DFMVaultContentInterface*> m_contentMap;
 };
 
 DFM_END_NAMESPACE
