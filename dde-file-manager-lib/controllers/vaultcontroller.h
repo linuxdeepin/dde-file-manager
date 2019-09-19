@@ -26,6 +26,14 @@ class VaultController : public DAbstractFileController
 {
     Q_OBJECT
 public:
+    enum VaultState {
+        NotExisted,
+        Encrypted,
+        Unlocked,
+        UnderProcess,
+        Broken
+    };
+
     explicit VaultController(QObject *parent = nullptr);
 
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const override;
@@ -33,7 +41,9 @@ public:
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
 
     static DUrl makeVaultUrl(QString path = "", QString host = "files");
+    static QString makeVaultLocalUrl(QString path = "", QString base = "vault_unlocked");
     static DUrl localUrlToVault(const DUrl &vaultUrl);
     static DUrl localToVault(QString localPath);
     static QString vaultToLocal(const DUrl &vaultUrl);
+    static VaultState state();
 };

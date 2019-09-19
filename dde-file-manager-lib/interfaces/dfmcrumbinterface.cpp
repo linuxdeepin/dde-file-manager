@@ -152,8 +152,6 @@ void DFMCrumbInterface::processAction(DFMCrumbInterface::ActionType type)
  */
 void DFMCrumbInterface::crumbUrlChangedBehavior(const DUrl url)
 {
-    Q_D(DFMCrumbInterface);
-
     crumbBar()->hideAddressBar();
     crumbBar()->updateCrumbs(url);
 }
@@ -194,6 +192,13 @@ QList<CrumbData> DFMCrumbInterface::seprateUrl(const DUrl &url)
     QList<CrumbData> list;
 
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
+    if (!info) {
+        // blumia: it's possible if the url is not a file url at all, so we are not able
+        //         to create a fileinfo for a non-file url. In this case we just return
+        //         the empty list.
+        return list;
+    }
+
     DUrlList urlList;
     urlList.append(url);
     urlList.append(info->parentUrlList());
