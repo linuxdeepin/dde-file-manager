@@ -23,6 +23,7 @@
 #include "dfilemanagerwindow.h"
 #include "windowmanager.h"
 #include "controllers/vaultcontroller.h"
+#include "dfmvaultsetuppages.h"
 
 #include <QLabel>
 #include <QVBoxLayout>
@@ -49,6 +50,7 @@ DFMVaultView::DFMVaultView(QWidget *parent)
     , m_containerLayout(new QVBoxLayout(this))
     , m_contentWidget(nullptr)
 {
+    m_contentMap.insert("setup", new DFMVaultSetupPages(this));
     m_contentMap.insert("_fallback_", new FallbackDispatcher(this));
 }
 
@@ -87,7 +89,8 @@ bool DFMVaultView::setRootUrl(const DUrl &url)
         return false;
     }
 
-    replaceContainerWidget(new QLabel(url.toString()));
+    contentWidget->setRootUrl(m_rootUrl);
+    replaceContainerWidget(contentWidget);
 
     return true;
 }
@@ -102,6 +105,7 @@ bool DFMVaultView::setRootUrl(const DUrl &url)
 QWidget *DFMVaultView::replaceContainerWidget(QWidget *widget)
 {
     if (!widget) return nullptr;
+    if (widget == m_contentWidget) return nullptr;
 
     QWidget * oldWidget = nullptr;
 
