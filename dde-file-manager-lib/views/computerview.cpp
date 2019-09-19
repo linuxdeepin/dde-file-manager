@@ -693,8 +693,8 @@ void ComputerView::initConnect()
     connect(deviceListener, &UDiskListener::mountRemoved, this, &ComputerView::mountRemoved);
     connect(deviceListener, &UDiskListener::volumeAdded, this, &ComputerView::volumeAdded);
     connect(deviceListener, &UDiskListener::volumeRemoved, this, &ComputerView::volumeRemoved);
-    connect(m_statusBar->scalingSlider(), &DSlider::valueChanged, this, &ComputerView::resizeAllItemsBySizeIndex);
-    connect(m_statusBar->scalingSlider(), &DSlider::valueChanged, this, &ComputerView::saveViewState);
+    connect(m_statusBar->scalingSlider(), &QSlider::valueChanged, this, &ComputerView::resizeAllItemsBySizeIndex);
+    connect(m_statusBar->scalingSlider(), &QSlider::valueChanged, this, &ComputerView::saveViewState);
     connect(DFMApplication::instance(), &DFMApplication::iconSizeLevelChanged, this, &ComputerView::resizeAllItemsBySizeIndex);
     connect(fileSignalManager, &FileSignalManager::requestRename, this, &ComputerView::onRequestEdit);
 
@@ -1338,7 +1338,7 @@ ComputerView2::ComputerView2(QWidget *parent) : QWidget(parent)
     connect(m_view, &QAbstractItemView::doubleClicked, [this](const QModelIndex &idx) {
         appController->actionOpen(QSharedPointer<DFMUrlListBaseEvent>(new DFMUrlListBaseEvent(this, {idx.data(ComputerModel::DataRoles::MountOpenUrlRole).value<DUrl>()})));
     });
-    connect(m_statusbar->scalingSlider(), &DSlider::valueChanged, this, [this] {m_view->setIconSize(QSize(iconsizes[m_statusbar->scalingSlider()->value()], iconsizes[m_statusbar->scalingSlider()->value()]));});
+    connect(m_statusbar->scalingSlider(), &QSlider::valueChanged, this, [this] {m_view->setIconSize(QSize(iconsizes[m_statusbar->scalingSlider()->value()], iconsizes[m_statusbar->scalingSlider()->value()]));});
     connect(fileSignalManager, &FileSignalManager::requestRename, this, &ComputerView2::onRenameRequested);
 }
 
