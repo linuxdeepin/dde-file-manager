@@ -18,6 +18,9 @@ public:
 
     virtual QPair<DUrl, bool> requireRedirect(VaultController::VaultState state);
     virtual void setRootUrl(const DUrl & url);
+
+signals:
+    void requestRedirect(DUrl url);
 };
 
 // -------------------------------------------
