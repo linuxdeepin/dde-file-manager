@@ -563,11 +563,16 @@ void PropertyDialog::showTextShowFrame()
 {
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
 
+    QString newName = m_edit->toPlainText();
+    if (newName.trimmed().isEmpty()) {
+        m_edit->setIsCanceled(true);
+    }
+
     if (m_edit->isCanceled()) {
         initTextShowFrame(fileInfo->fileDisplayName());
     } else {
         DUrl oldUrl = m_url;
-        DUrl newUrl = fileInfo->getUrlByNewFileName(m_edit->toPlainText());
+        DUrl newUrl = fileInfo->getUrlByNewFileName(newName);
 
         if (oldUrl == newUrl) {
             m_editStackWidget->setCurrentIndex(1);
