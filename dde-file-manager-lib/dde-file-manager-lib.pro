@@ -269,7 +269,8 @@ HEADERS += \
     views/dfmtagwidget.h \
     controllers/vaultcontroller.h \
     models/vaultfileinfo.h \
-    controllers/dfmvaultcrumbcontroller.h
+    controllers/dfmvaultcrumbcontroller.h \
+    views/dfmvaultview.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -452,7 +453,8 @@ SOURCES += \
     views/dfmtagwidget.cpp \
     controllers/vaultcontroller.cpp \
     models/vaultfileinfo.cpp \
-    controllers/dfmvaultcrumbcontroller.cpp
+    controllers/dfmvaultcrumbcontroller.cpp \
+    views/dfmvaultview.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h

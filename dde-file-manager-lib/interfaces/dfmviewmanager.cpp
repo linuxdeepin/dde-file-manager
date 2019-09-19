@@ -14,6 +14,7 @@
 
 #include "views/dfileview.h"
 #include "views/computerview.h"
+#include "views/dfmvaultview.h"
 
 #include <QHash>
 
@@ -130,7 +131,8 @@ DFMViewManager::DFMViewManager(QObject *parent)
     : QObject(parent)
     , d_ptr(new DFMViewManagerPrivate(this))
 {
-    dRegisterUrlView<ComputerView2>("computer", QString());
+    dRegisterUrlView<ComputerView2>(COMPUTER_SCHEME, QString());
+    dRegisterUrlView<DFMVaultView>(DFMVAULT_SCHEME, QString());
 
     // register plugins
     for (const QString &key : DFMViewFactory::keys()) {

@@ -149,7 +149,7 @@ void AppController::registerUrlHandle()
     DFileService::dRegisterUrlHandler<RecentController>(RECENT_SCHEME, "");
     DFileService::dRegisterUrlHandler<MergedDesktopController>(DFMMD_SCHEME, "");
     DFileService::dRegisterUrlHandler<DFMRootController>(DFMROOT_SCHEME, "");
-    DFileService::dRegisterUrlHandler<VaultController>(DFMVAULT_SCHEME, "");
+    DFileService::dRegisterUrlHandler<VaultController>(DFMVAULT_SCHEME, "files");
 }
 
 void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)

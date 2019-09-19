@@ -27,6 +27,7 @@
 #include "dfmevent.h"
 
 #include <QStandardPaths>
+#include <QStorageInfo>
 
 class VaultDirIterator : public DDirIterator
 {
@@ -128,6 +129,12 @@ DUrl VaultController::makeVaultUrl(QString path, QString host)
     return newUrl;
 }
 
+QString VaultController::makeVaultLocalUrl(QString path, QString base)
+{
+    return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
+            + QDir::separator() + base + (path.startsWith('/') ? "" : "/") + path;
+}
+
 DUrl VaultController::localUrlToVault(const DUrl &vaultUrl)
 {
     return VaultController::localToVault(vaultUrl.path());
@@ -149,6 +156,19 @@ DUrl VaultController::localToVault(QString localPath)
 
 QString VaultController::vaultToLocal(const DUrl &vaultUrl)
 {
-    return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
-           + QDir::separator() + "vault_unlocked" + vaultUrl.path();
+    return makeVaultLocalUrl(vaultUrl.path());
+}
+
+VaultController::VaultState VaultController::state()
+{
+    if (QFile::exists(makeVaultLocalUrl("cryfs.config", "vault_encrypted"))) {
+        QStorageInfo info(makeVaultLocalUrl(""));
+        if (info.isValid() && info.fileSystemType() == "fuse.cryfs") {
+            return Unlocked;
+        }
+
+        return Encrypted;
+    } else {
+        return NotExisted;
+    }
 }

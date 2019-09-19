@@ -156,8 +156,6 @@ public slots:
     void clearSelection();
 
     void setContentLabel(const QString &text);
-    void setOverlayWidget(QWidget * widget);
-    void setOverlayVisible(bool visible = true);
 
     void setMenuActionWhitelist(const QSet<DFMGlobal::MenuAction> &actionList);
     void setMenuActionBlacklist(const QSet<DFMGlobal::MenuAction> &actionList);
@@ -167,6 +165,8 @@ public slots:
     void openIndexByOpenAction(const int &action, const QModelIndex& index);
 
     void setIconSizeBySizeIndex(const int& sizeIndex);
+
+    bool setRootUrl(const DUrl &url) override;
 
 #ifdef SW_LABEL
     bool checkRenamePrivilege_sw(DUrl fileUrl);
@@ -178,7 +178,6 @@ signals:
     void viewStateChanged();
 
 private slots:
-    bool setRootUrl(const DUrl &url) Q_DECL_OVERRIDE;
     void dislpayAsActionTriggered(QAction * action);
     void sortByActionTriggered(QAction * action);
     void openWithActionTriggered(QAction * action);
