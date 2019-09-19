@@ -20,17 +20,20 @@
  */
 #pragma once
 
-#include "interfaces/dfmcrumbinterface.h"
+#include "interface/dfmvaultcontentinterface.h"
+
+#include <QStackedLayout>
 
 DFM_BEGIN_NAMESPACE
 
-class DFMVaultCrumbController : public DFMCrumbInterface
+class DFMVaultSetupPages : public DFMVaultPages
 {
 public:
-    explicit DFMVaultCrumbController(QObject *parent = nullptr);
-    ~DFMVaultCrumbController() override;
+    DFMVaultSetupPages(QWidget * parent = nullptr);
+    ~DFMVaultSetupPages() override {}
 
-    bool supportedUrl(DUrl url) override;
+    QPair<DUrl, bool> requireRedirect(VaultController::VaultState state) override;
+    QString pageString(const DUrl & url) override;
 };
 
 DFM_END_NAMESPACE

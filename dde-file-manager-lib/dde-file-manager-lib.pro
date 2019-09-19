@@ -271,7 +271,8 @@ HEADERS += \
     models/vaultfileinfo.h \
     controllers/dfmvaultcrumbcontroller.h \
     views/dfmvaultview.h \
-    views/interface/dfmvaultcontentinterface.h
+    views/interface/dfmvaultcontentinterface.h \
+    views/dfmvaultsetuppages.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -456,7 +457,8 @@ SOURCES += \
     models/vaultfileinfo.cpp \
     controllers/dfmvaultcrumbcontroller.cpp \
     views/dfmvaultview.cpp \
-    views/interface/dfmvaultcontentinterface.cpp
+    views/interface/dfmvaultcontentinterface.cpp \
+    views/dfmvaultsetuppages.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h
