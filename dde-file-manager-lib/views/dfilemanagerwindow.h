@@ -41,7 +41,6 @@
 
 #define DEFAULT_WINDOWS_WIDTH 960
 #define DEFAULT_WINDOWS_HEIGHT 540
-#define TITLE_FIXED_HEIGHT 40
 
 class DTitleBar;
 class DToolBar;

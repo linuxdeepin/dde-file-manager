@@ -94,7 +94,7 @@ void DToolBar::initUI()
     m_detailButton->setObjectName("detailButton");
     m_detailButton->setCheckable(true);
     m_detailButton->setFocusPolicy(Qt::NoFocus);
-    m_detailButton->setIcon(QIcon::fromTheme("dfm_rightview_detail").pixmap(iconSize));
+    m_detailButton->setIcon(QIcon::fromTheme("dfm_rightview_detail"));
     m_detailButton->setIconSize(iconSize);
     m_detailButton->setFlat(true);
 
@@ -369,7 +369,7 @@ void DToolBar::toggleSearchButtonState(bool asb)
 
     if (asb) {
         m_searchButton->setObjectName("filterButton");
-        m_searchButton->setIcon(QIcon::fromTheme("dfm_view_filter").pixmap(iconSize));
+        m_searchButton->setIcon(QIcon::fromTheme("dfm_view_filter"));
         m_searchButton->style()->unpolish(m_searchButton);
         m_searchButton->style()->polish(m_searchButton);
         m_searchButton->setFlat(true);
@@ -377,7 +377,7 @@ void DToolBar::toggleSearchButtonState(bool asb)
     } else {
         m_searchButton->style()->unpolish(m_searchButton);
         m_searchButton->style()->polish(m_searchButton);
-        m_searchButton->setIcon(QIcon::fromTheme("search").pixmap(iconSize));
+        m_searchButton->setIcon(QIcon::fromTheme("search"));
         m_searchButton->setDown(false);
         m_searchButtonAsbState = false;
         DFileManagerWindow* dfmWindow = qobject_cast<DFileManagerWindow*>(window());

@@ -903,7 +903,6 @@ void DFileManagerWindow::initTitleFrame()
     titleLayout->setSpacing(0);
     titleLayout->setContentsMargins(0, 5, 0, 5);
     d->titleFrame->setLayout(titleLayout);
-    d->titleFrame->setFixedHeight(TITLE_FIXED_HEIGHT);
     d->titleFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }
 
