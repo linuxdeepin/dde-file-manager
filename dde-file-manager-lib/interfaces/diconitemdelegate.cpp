@@ -616,9 +616,6 @@ void DIconItemDelegate::paint(QPainter *painter,
         c = c.lighter();
     }
 
-    painter->setPen(c);
-    painter->setBrush(c);
-
     QRectF rect = opt.rect;
     int backgroundMargin = isCanvas ? 0 : COLUMU_PADDING;
     if (!isCanvas)
@@ -635,6 +632,7 @@ void DIconItemDelegate::paint(QPainter *painter,
     }
 
     if (isDropTarget && !isSelected) {
+        painter->setPen(c);
         painter->setRenderHint(QPainter::Antialiasing, true);
         painter->drawPath(path);
         painter->setRenderHint(QPainter::Antialiasing, false);
