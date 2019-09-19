@@ -869,10 +869,10 @@ void PropertyDialog::initTextShowFrame(const QString &text)
 {
     m_textShowFrame = new QFrame(this);
 
-    m_editButton = new QPushButton(m_textShowFrame);
+    m_editButton = new DIconButton(m_textShowFrame);
     m_editButton->setObjectName("EditButton");
-    m_editButton->setFixedSize(16, 16);
-    m_editButton->setIcon(QIcon::fromTheme("edit-rename").pixmap({16, 16}));
+    m_editButton->setIcon(QIcon::fromTheme("edit-rename"));
+    m_editButton->setIconSize({24, 24});
     m_editButton->setFlat(true);
     connect(m_editButton, &QPushButton::clicked, this, &PropertyDialog::renameFile);
 
