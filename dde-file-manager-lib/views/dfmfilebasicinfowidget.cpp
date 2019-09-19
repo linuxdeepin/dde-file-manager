@@ -44,7 +44,11 @@ SectionKeyLabel::SectionKeyLabel(const QString &text, QWidget *parent, Qt::Windo
 {
     setObjectName("SectionKeyLabel");
     setFixedWidth(120);
-    setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+    QFont font = this->font();
+    font.setBold(true);
+    font.setPixelSize(13);
+    setFont(font);
+    setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 }
 
 

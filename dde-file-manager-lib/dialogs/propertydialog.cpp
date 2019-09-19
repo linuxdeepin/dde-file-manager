@@ -87,6 +87,15 @@
 #define ArrowLineExpand_SPACING 10
 
 class DFMDArrowLineExpand : public DArrowLineExpand{
+public:
+    DFMDArrowLineExpand(){
+        if (headerLine()) {
+            QFont f = headerLine()->font();
+            f.setBold(true);
+            f.setPixelSize(17);
+            headerLine()->setFont(f);
+        }
+    }
 protected:
     void paintEvent(QPaintEvent *event) override
     {
@@ -103,14 +112,6 @@ protected:
         painter.setRenderHint(QPainter::Antialiasing, true);
         painter.fillPath(path, bgColor);
         painter.setRenderHint(QPainter::Antialiasing, false);
-    }
-public:
-    void setTitle(const QString &title){
-        QString boldTitle = title;
-        if (!boldTitle.contains("<b>"))
-            boldTitle.prepend("<b>").append("</b>");
-
-        DArrowLineExpand::setTitle(boldTitle);
     }
 };
 
@@ -243,6 +244,10 @@ SectionKeyLabel::SectionKeyLabel(const QString &text, QWidget *parent, Qt::Windo
 {
     setObjectName("SectionKeyLabel");
     setFixedWidth(120);
+    QFont font = this->font();
+    font.setBold(true);
+    font.setPixelSize(13);
+    setFont(font);
     setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 }
 
@@ -252,6 +257,9 @@ SectionValueLabel::SectionValueLabel(const QString &text, QWidget *parent, Qt::W
 {
     setObjectName("SectionValueLabel");
     setFixedWidth(150);
+    QFont font = this->font();
+    font.setPixelSize(12);
+    setFont(font);
     setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     setWordWrap(true);
 }
