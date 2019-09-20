@@ -45,7 +45,8 @@ class DBusFileDialogHandle : public DFileDialogHandle
     Q_PROPERTY(bool hideOnAccept READ hideOnAccept WRITE setHideOnAccept)
 
 public:
-    explicit DBusFileDialogHandle(QWidget *parent = 0);
+    explicit DBusFileDialogHandle(QWidget *parent = nullptr);
+    virtual ~DBusFileDialogHandle();
 
     QString directory() const;
 

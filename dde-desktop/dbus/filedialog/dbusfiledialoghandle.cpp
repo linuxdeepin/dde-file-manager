@@ -24,7 +24,10 @@
 
 #include "dbusfiledialoghandle.h"
 
+#include <QMetaObject>
 #include <QWindow>
+
+#include <views/dfiledialog.h>
 
 DBusFileDialogHandle::DBusFileDialogHandle(QWidget *parent)
     : DFileDialogHandle(parent)
@@ -43,6 +46,12 @@ DBusFileDialogHandle::DBusFileDialogHandle(QWidget *parent)
 
     m_heartbeatTimer.setInterval(30 * 1000);
     m_heartbeatTimer.start();
+}
+
+DBusFileDialogHandle::~DBusFileDialogHandle()
+{
+    if (widget())
+        widget()->close();
 }
 
 QString DBusFileDialogHandle::directory() const
