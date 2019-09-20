@@ -24,6 +24,7 @@
 #include "windowmanager.h"
 #include "controllers/vaultcontroller.h"
 #include "dfmvaultsetuppages.h"
+#include "dfmvaultunlockpages.h"
 
 #include <QVBoxLayout>
 
@@ -58,6 +59,7 @@ DFMVaultView::DFMVaultView(QWidget *parent)
     , m_contentWidget(nullptr)
 {
     registerContentWidget("setup", new DFMVaultSetupPages(this));
+    registerContentWidget("unlock", new DFMVaultUnlockPages(this));
     registerContentWidget("_fallback_", new FallbackDispatcher(this));
 }
 
@@ -138,6 +140,7 @@ bool DFMVaultView::cd(const DUrl &url)
 
 void DFMVaultView::registerContentWidget(const QString &name, DFMVaultContentInterface *widget)
 {
+    widget->setVisible(false);
     m_contentMap.insert(name, widget);
     connect(widget, &DFMVaultContentInterface::requestRedirect, this, &DFMVaultView::cd);
 }
