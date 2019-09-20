@@ -84,7 +84,7 @@ void CloseAllDialogIndicator::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event)
 
-    QRect screenGeometry = qApp->desktop()->screenGeometry();
+    QRect screenGeometry = qApp->desktop()->availableGeometry();
 
     move((screenGeometry.width() - width()) / 2, screenGeometry.height() - height());
 
