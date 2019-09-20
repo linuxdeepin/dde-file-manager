@@ -15,6 +15,7 @@
 #include "views/dfileview.h"
 #include "views/computerview.h"
 #include "views/dfmvaultview.h"
+#include "views/dfmvaultfileview.h"
 
 #include <QHash>
 
@@ -49,7 +50,7 @@ bool DFMViewManager::isRegisted(const QString &scheme, const QString &host, cons
 
     const KeyType &type = KeyType(scheme, host);
 
-    foreach (const ViewCreatorType &value, d->controllerCreatorHash.values(type)) {
+    for (const ViewCreatorType &value : d->controllerCreatorHash.values(type)) {
         if (value.first == info.name())
             return true;
     }
@@ -77,18 +78,18 @@ DFMBaseView *DFMViewManager::createViewByUrl(const DUrl &fileUrl) const
     handlerTypeList << KeyType(fileUrl.scheme(), QString());
 
     for (const KeyType &handlerType : handlerTypeList) {
-        if (DFileService::instance()->isRegisted(handlerType.first, handlerType.second))
-            return new DFileView();
-
         const QList<ViewCreatorType> creatorList = d->controllerCreatorHash.values(handlerType);
 
-        if (creatorList.isEmpty())
-            continue;
+        if (!creatorList.isEmpty()) {
+            return (creatorList.first().second)();
+        }
 
-        return (creatorList.first().second)();
+        if (DFileService::instance()->isRegisted(handlerType.first, handlerType.second)) {
+            return new DFileView();
+        }
     }
 
-    return 0;
+    return nullptr;
 }
 
 QString DFMViewManager::suitedViewTypeNameByUrl(const DUrl &fileUrl) const
@@ -102,15 +103,15 @@ QString DFMViewManager::suitedViewTypeNameByUrl(const DUrl &fileUrl) const
     handlerTypeList << KeyType(fileUrl.scheme(), QString());
 
     for (const KeyType &handlerType : handlerTypeList) {
-        if (DFileService::instance()->isRegisted(handlerType.first, handlerType.second))
-            return typeid(DFileView).name();
-
         const QList<ViewCreatorType> creatorList = d->controllerCreatorHash.values(handlerType);
 
-        if (creatorList.isEmpty())
-            continue;
+        if (!creatorList.isEmpty()) {
+            return creatorList.first().first;
+        }
 
-        return creatorList.first().first;
+        if (DFileService::instance()->isRegisted(handlerType.first, handlerType.second)) {
+            return typeid(DFileView).name();
+        }
     }
 
     return QString();
@@ -133,6 +134,7 @@ DFMViewManager::DFMViewManager(QObject *parent)
 {
     dRegisterUrlView<ComputerView2>(COMPUTER_SCHEME, QString());
     dRegisterUrlView<DFMVaultView>(DFMVAULT_SCHEME, QString());
+    dRegisterUrlView<DFMVaultFileView>(DFMVAULT_SCHEME, "files");
 
     // register plugins
     for (const QString &key : DFMViewFactory::keys()) {

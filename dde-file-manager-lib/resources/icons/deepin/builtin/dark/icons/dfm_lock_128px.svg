@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <filter id="lock-a" width="134%" height="132%" x="-17%" y="-16%" filterUnits="objectBoundingBox">
+      <feOffset dy="2" in="SourceAlpha" result="shadowOffsetOuter1"/>
+      <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="3"/>
+      <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"/>
+      <feColorMatrix in="shadowBlurOuter1" result="shadowMatrixOuter1" values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.2 0"/>
+      <feMerge>
+        <feMergeNode in="shadowMatrixOuter1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <linearGradient id="lock-b" x1="10.085%" x2="100%" y1="26.822%" y2="69.932%">
+      <stop offset="0%" stop-color="#EFD46E"/>
+      <stop offset="100%" stop-color="#C6A766"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" fill-rule="evenodd" filter="url(#lock-a)" transform="translate(17 13)">
+    <path fill="#405D80" fill-rule="nonzero" d="M47,0 C63.5685425,0 77,13.2279506 77,29.5454545 L77,35.4545455 C77,51.7720494 63.5685425,65 47,65 C30.4314575,65 17,51.7720494 17,35.4545455 L17,29.5454545 C17,13.2279506 30.4314575,0 47,0 Z M47,10 C35.954305,10 27,18.6345084 27,29.2857143 L27,35.7142857 C27,46.3654916 35.954305,55 47,55 C58.045695,55 67,46.3654916 67,35.7142857 L67,29.2857143 C67,18.6345084 58.045695,10 47,10 Z"/>
+    <rect width="94" height="64" y="36" fill="url(#lock-b)" rx="12"/>
+    <path fill="#2C4666" d="M47,50 C51.9705627,50 56,54.0294373 56,59 C56,62.7275345 53.7339128,65.9257959 50.5042137,67.2923092 L55.1953384,82.4072016 C55.522732,83.4621363 54.9329433,84.5827347 53.8780086,84.9101283 C53.6860476,84.9697024 53.486203,85 53.2852101,85 L40.7147899,85 C39.6102204,85 38.7147899,84.1045695 38.7147899,83 C38.7147899,82.7990072 38.7450875,82.5991626 38.8046616,82.4072016 L43.4957863,67.2923092 C40.2660872,65.9257959 38,62.7275345 38,59 C38,54.0294373 42.0294373,50 47,50 Z"/>
+  </g>
+</svg>
