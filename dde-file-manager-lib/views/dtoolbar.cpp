@@ -121,9 +121,11 @@ void DToolBar::initAddressToolBar()
 
     m_backButton = new DButtonBoxButton(DStyle::standardIcon(this->style(), DStyle::SP_ArrowLeave));
     m_backButton->setDisabled(true);
+    m_backButton->setFixedWidth(36);
 
     m_forwardButton = new DButtonBoxButton(DStyle::standardIcon(this->style(), DStyle::SP_ArrowEnter));
     m_forwardButton->setDisabled(true);
+    m_forwardButton->setFixedWidth(36);
 
     QList<DButtonBoxButton*> buttonList;
     buttonList << m_backButton << m_forwardButton;
