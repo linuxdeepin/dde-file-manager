@@ -29,8 +29,8 @@ DFM_BEGIN_NAMESPACE
 VaultSetupWelcomePage::VaultSetupWelcomePage(QWidget *parent)
     : QWidget (parent)
 {
-    m_createNewButton = new QPushButton(tr("Create New Vault"), this);
-    m_importButton = new QPushButton(tr("Import From File"), this);
+    m_createNewButton = new QPushButton(tr("Create a new vault"), this);
+    m_importButton = new QPushButton(tr("Import a vault"), this);
     m_importButton->setVisible(false);
 
     QPushButton * icon = new QPushButton(this);
@@ -40,12 +40,21 @@ VaultSetupWelcomePage::VaultSetupWelcomePage(QWidget *parent)
     icon->setIconSize(QSize(64, 64));
     icon->setMinimumHeight(64);
 
-    QLabel * description = new QLabel("Sample text, sample text.\nSample text.", this);
+    QLabel * title = new QLabel(tr("Vault"), this);
+    QLabel * description = new QLabel(tr("Welcome to use Deepin Vault.\n") +
+                                      tr("Create secure private space here.\n") +
+                                      tr("Advanced encryption technology, safe and secure.\n") +
+                                      tr("Convenient and easy to use."), this);
+    title->setAlignment(Qt::AlignHCenter);
+    QFont font = title->font();
+    font.setBold(true);
+    title->setFont(font);
     description->setAlignment(Qt::AlignHCenter);
 
     QVBoxLayout * layout = new QVBoxLayout(this);
     layout->addStretch();
     layout->addWidget(icon);
+    layout->addWidget(title);
     layout->addWidget(description);
     layout->addStretch();
     layout->addWidget(m_createNewButton);
