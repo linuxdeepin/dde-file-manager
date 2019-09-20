@@ -43,7 +43,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     QPushButton * icon = new QPushButton(this);
     icon->setDisabled(true);
     icon->setFlat(true);
-    icon->setIcon(QIcon::fromTheme("dfm_safebox"));
+    icon->setIcon(QIcon::fromTheme("dfm_lock"));
     icon->setIconSize(QSize(64, 64));
     icon->setMinimumHeight(64);
 

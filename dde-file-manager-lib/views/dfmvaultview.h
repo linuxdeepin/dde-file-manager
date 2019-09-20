@@ -20,7 +20,7 @@
  */
 #pragma once
 
-#include "dfileview.h"
+#include "dfmbaseview.h"
 #include "interface/dfmvaultcontentinterface.h"
 
 #include <QLabel>

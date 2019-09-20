@@ -273,7 +273,8 @@ HEADERS += \
     views/dfmvaultview.h \
     views/interface/dfmvaultcontentinterface.h \
     views/dfmvaultsetuppages.h \
-    views/dfmvaultunlockpages.h
+    views/dfmvaultunlockpages.h \
+    views/dfmvaultfileview.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -460,7 +461,8 @@ SOURCES += \
     views/dfmvaultview.cpp \
     views/interface/dfmvaultcontentinterface.cpp \
     views/dfmvaultsetuppages.cpp \
-    views/dfmvaultunlockpages.cpp
+    views/dfmvaultunlockpages.cpp \
+    views/dfmvaultfileview.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h
