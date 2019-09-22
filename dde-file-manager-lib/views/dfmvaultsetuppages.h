@@ -61,6 +61,9 @@ public:
 signals:
     void requestRedirect(DUrl url);
 
+public slots:
+    void onFinishButtonPressed();
+
 private:
     DPasswordEdit * m_enterPassword;
     DPasswordEdit * m_confirmPassword;

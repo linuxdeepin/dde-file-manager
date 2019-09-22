@@ -142,6 +142,7 @@ DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &d
 
     actionKeys << MenuAction::NewWindow
                << MenuAction::Separator
+               << MenuAction::Vault
                << MenuAction::SetUserSharePassword
                << MenuAction::Settings;
 
@@ -602,6 +603,11 @@ QAction *DFileMenuManager::getAction(MenuAction action)
     return DFileMenuData::actions.value(action);
 }
 
+QString DFileMenuManager::getActionText(MenuAction action)
+{
+    return DFileMenuData::actionKeys.value(action);
+}
+
 QSet<MenuAction> DFileMenuManager::getDisableActionList(const DUrl &fileUrl)
 {
     DUrlList list;
@@ -705,6 +711,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::AbsolutePath] = QObject::tr("Path");
     actionKeys[MenuAction::Share] = QObject::tr("Share folder");
     actionKeys[MenuAction::UnShare] = QObject::tr("Cancel sharing");
+    actionKeys[MenuAction::Vault] = QObject::tr("Deepin Vault");
     actionKeys[MenuAction::SetUserSharePassword] = QObject::tr("Set share password");
     actionKeys[MenuAction::FormatDevice] = QObject::tr("Format");
 
