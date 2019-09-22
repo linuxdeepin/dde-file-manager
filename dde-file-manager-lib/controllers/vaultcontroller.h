@@ -22,6 +22,10 @@
 
 #include "dabstractfilecontroller.h"
 
+#include <DSecureString>
+
+DCORE_USE_NAMESPACE
+
 class VaultController : public DAbstractFileController
 {
     Q_OBJECT
@@ -31,7 +35,8 @@ public:
         Encrypted,
         Unlocked,
         UnderProcess,
-        Broken
+        Broken,
+        NotAvailable
     };
 
     explicit VaultController(QObject *parent = nullptr);
@@ -40,10 +45,17 @@ public:
     const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const override;
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
 
+    bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const override;
+
+    static void prepareVaultDirs();
+    static bool runVaultProcess(QStringList arguments, const DSecureString &stdinString);
     static DUrl makeVaultUrl(QString path = "", QString host = "files");
     static QString makeVaultLocalUrl(QString path = "", QString base = "vault_unlocked");
     static DUrl localUrlToVault(const DUrl &vaultUrl);
     static DUrl localToVault(QString localPath);
     static QString vaultToLocal(const DUrl &vaultUrl);
+    static DUrl vaultToLocalUrl(const DUrl &vaultUrl);
     static VaultState state();
+
+    static bool unlockVault(const DSecureString &password);
 };

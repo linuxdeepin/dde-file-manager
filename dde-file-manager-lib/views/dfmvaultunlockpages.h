@@ -21,6 +21,14 @@
 #pragma once
 
 #include "interface/dfmvaultcontentinterface.h"
+#include "dtkwidget_global.h"
+
+DWIDGET_BEGIN_NAMESPACE
+class DPasswordEdit;
+class DFloatingButton;
+DWIDGET_END_NAMESPACE
+
+DWIDGET_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
 
@@ -32,6 +40,13 @@ public:
     ~DFMVaultUnlockPages() override {}
 
     QPair<DUrl, bool> requireRedirect(VaultController::VaultState state) override;
+
+private slots:
+    void unlock();
+
+private:
+    DPasswordEdit * m_passwordEdit;
+    DFloatingButton * m_unlockButton;
 };
 
 DFM_END_NAMESPACE

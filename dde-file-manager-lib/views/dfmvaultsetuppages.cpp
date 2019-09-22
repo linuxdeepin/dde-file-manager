@@ -114,6 +114,8 @@ VaultSetupSetPasswordPage::~VaultSetupSetPasswordPage()
 DFMVaultSetupPages::DFMVaultSetupPages(QWidget *parent)
     : DFMVaultPages(parent)
 {
+    VaultController::prepareVaultDirs();
+
     VaultSetupWelcomePage * welcomePage = new VaultSetupWelcomePage(this);
     VaultSetupSetPasswordPage * passwordPage = new VaultSetupSetPasswordPage(this);
 
@@ -130,7 +132,7 @@ QPair<DUrl, bool> DFMVaultSetupPages::requireRedirect(VaultController::VaultStat
     case VaultController::Unlocked:
         return {VaultController::makeVaultUrl(), true};
     case VaultController::Encrypted:
-//        return {VaultController::makeVaultUrl("/", "unlock"), true};
+        return {VaultController::makeVaultUrl("/", "unlock"), true};
     default:
         break;
     }

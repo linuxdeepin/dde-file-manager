@@ -34,4 +34,6 @@ class DFMVaultFileView : public DFileView
     Q_OBJECT
 public:
     explicit DFMVaultFileView(QWidget *parent = nullptr);
+
+    bool setRootUrl(const DUrl &url) override;
 };
