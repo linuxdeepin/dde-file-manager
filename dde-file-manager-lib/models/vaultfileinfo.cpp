@@ -113,3 +113,10 @@ DUrl VaultFileInfo::redirectedFileUrl() const
 
     return DAbstractFileInfo::redirectedFileUrl();
 }
+
+DUrl VaultFileInfo::getUrlByNewFileName(const QString &fileName) const
+{
+    DUrl url(parentUrl());
+    url.setPath(url.path() + QDir::separator() + fileName);
+    return url;
+}

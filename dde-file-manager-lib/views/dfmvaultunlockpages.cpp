@@ -25,9 +25,10 @@
 #include <QVBoxLayout>
 
 #include <DFloatingButton>
+#include <DSecureString>
 #include "dpasswordedit.h"
 
-DWIDGET_USE_NAMESPACE
+DCORE_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
 
@@ -37,8 +38,8 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     QLabel * description = new QLabel("Sample text, sample text.\nSample text.", this);
     description->setAlignment(Qt::AlignHCenter);
 
-    DFloatingButton * unlockButton = new DFloatingButton(DStyle::SP_UnlockElement, this);
-    DPasswordEdit * password = new DPasswordEdit(this);
+    m_unlockButton = new DFloatingButton(DStyle::SP_UnlockElement, this);
+    m_passwordEdit = new DPasswordEdit(this);
 
     QPushButton * icon = new QPushButton(this);
     icon->setDisabled(true);
@@ -51,11 +52,13 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     layout->addStretch();
     layout->addWidget(icon);
     layout->addWidget(description);
-    layout->addWidget(password);
-    layout->addWidget(unlockButton);
+    layout->addWidget(m_passwordEdit);
+    layout->addWidget(m_unlockButton);
     layout->addStretch();
 
-    layout->setAlignment(unlockButton, Qt::AlignHCenter);
+    layout->setAlignment(m_unlockButton, Qt::AlignHCenter);
+
+    connect(m_unlockButton, &QAbstractButton::clicked, this, &DFMVaultUnlockPages::unlock);
 }
 
 QPair<DUrl, bool> DFMVaultUnlockPages::requireRedirect(VaultController::VaultState state)
@@ -69,6 +72,18 @@ QPair<DUrl, bool> DFMVaultUnlockPages::requireRedirect(VaultController::VaultSta
         break;
     }
     return DFMVaultContentInterface::requireRedirect(state);
+}
+
+void DFMVaultUnlockPages::unlock()
+{
+    m_unlockButton->setDisabled(true);
+    DSecureString passwordString(m_passwordEdit->text());
+    bool succ = VaultController::unlockVault(passwordString);
+    if (succ) {
+        m_passwordEdit->clear();
+        emit requestRedirect(VaultController::makeVaultUrl("/"));
+    }
+    m_unlockButton->setDisabled(false);
 }
 
 DFM_END_NAMESPACE

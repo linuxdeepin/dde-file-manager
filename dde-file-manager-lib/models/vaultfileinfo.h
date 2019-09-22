@@ -39,6 +39,8 @@ public:
     bool canRedirectionFileUrl() const override;
     DUrl redirectedFileUrl() const override;
 
+    DUrl getUrlByNewFileName(const QString &fileName) const override;
+
 private:
     Q_DECLARE_PRIVATE(VaultFileInfo)
 };

@@ -26,6 +26,7 @@
 
 #include "dfmevent.h"
 
+#include <QProcess>
 #include <QStandardPaths>
 #include <QStorageInfo>
 
@@ -89,14 +90,7 @@ DUrl VaultDirIterator::url() const
 VaultController::VaultController(QObject *parent)
     : DAbstractFileController(parent)
 {
-    auto createIfNotExist = [](const QString & path){
-        if (!QFile::exists(path)) {
-            QDir().mkdir(path);
-        }
-    };
-    static QString appDataLocation = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QDir::separator();
-    createIfNotExist(appDataLocation + "vault_encrypted");
-    createIfNotExist(appDataLocation + "vault_unlocked");
+    prepareVaultDirs();
 }
 
 const DAbstractFileInfoPointer VaultController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
@@ -118,6 +112,46 @@ DAbstractFileWatcher *VaultController::createFileWatcher(const QSharedPointer<DF
     return new DFileProxyWatcher(event->url(),
                                  new DFileWatcher(VaultController::vaultToLocal(event->url())),
                                  VaultController::localUrlToVault);
+}
+
+bool VaultController::renameFile(const QSharedPointer<DFMRenameEvent> &event) const
+{
+    return DFileService::instance()->renameFile(event->sender(),
+                                                vaultToLocalUrl(event->fromUrl()),
+                                                vaultToLocalUrl(event->toUrl()));
+}
+
+void VaultController::prepareVaultDirs()
+{
+    auto createIfNotExist = [](const QString & path){
+        if (!QFile::exists(path)) {
+            QDir().mkdir(path);
+        }
+    };
+    static QString appDataLocation = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QDir::separator();
+    createIfNotExist(appDataLocation + "vault_encrypted");
+    createIfNotExist(appDataLocation + "vault_unlocked");
+}
+
+bool VaultController::runVaultProcess(QStringList arguments, const DSecureString &stdinString)
+{
+    QString cryfsBinary = QStandardPaths::findExecutable("cryfs");
+    if (cryfsBinary.isEmpty()) return false;
+
+    QByteArray passwordByteArray = stdinString.toUtf8();
+    passwordByteArray.append('\n');
+
+    QProcess cryfsExec;
+    cryfsExec.setEnvironment({"CRYFS_FRONTEND=noninteractive"});
+    cryfsExec.start(cryfsBinary, arguments);
+    cryfsExec.waitForStarted();
+    cryfsExec.write(passwordByteArray);
+    cryfsExec.waitForBytesWritten();
+    cryfsExec.closeWriteChannel();
+    cryfsExec.waitForFinished();
+    cryfsExec.terminate();
+
+    return cryfsExec.exitStatus() == QProcess::NormalExit;
 }
 
 DUrl VaultController::makeVaultUrl(QString path, QString host)
@@ -162,11 +196,24 @@ DUrl VaultController::localToVault(QString localPath)
 
 QString VaultController::vaultToLocal(const DUrl &vaultUrl)
 {
+    Q_ASSERT(vaultUrl.scheme() == DFMVAULT_SCHEME);
     return makeVaultLocalUrl(vaultUrl.path());
+}
+
+DUrl VaultController::vaultToLocalUrl(const DUrl &vaultUrl)
+{
+    Q_ASSERT(vaultUrl.scheme() == DFMVAULT_SCHEME);
+    if (vaultUrl.scheme() != DFMVAULT_SCHEME) return vaultUrl;
+    return DUrl::fromLocalFile(vaultToLocal(vaultUrl));
 }
 
 VaultController::VaultState VaultController::state()
 {
+    QString cryfsBinary = QStandardPaths::findExecutable("cryfs");
+    if (cryfsBinary.isEmpty()) {
+        return NotAvailable;
+    }
+
     if (QFile::exists(makeVaultLocalUrl("cryfs.config", "vault_encrypted"))) {
         QStorageInfo info(makeVaultLocalUrl(""));
         if (info.isValid() && info.fileSystemType() == "fuse.cryfs") {
@@ -177,4 +224,12 @@ VaultController::VaultState VaultController::state()
     } else {
         return NotExisted;
     }
+}
+
+bool VaultController::unlockVault(const DSecureString &password)
+{
+    return VaultController::runVaultProcess({
+                                                makeVaultLocalUrl("", "vault_encrypted"),
+                                                makeVaultLocalUrl("", "vault_unlocked")
+                                            }, password);
 }

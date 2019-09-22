@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dfmvaultfileview.h"
+#include "controllers/vaultcontroller.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -42,6 +43,7 @@ VaultHeaderView::VaultHeaderView(QWidget *parent)
     QHBoxLayout * layout = new QHBoxLayout(this);
     layout->addWidget(lb);
     layout->addStretch();
+
     layout->addWidget(menuBtn);
 }
 
@@ -52,4 +54,24 @@ DFMVaultFileView::DFMVaultFileView(QWidget *parent)
 {
     int index = this->addHeaderWidget(new VaultHeaderView(this));
     Q_UNUSED(index);
+}
+
+bool DFMVaultFileView::setRootUrl(const DUrl &url)
+{
+    VaultController::VaultState state = VaultController::state();
+
+    if (state != VaultController::Unlocked) {
+        switch (state) {
+        case VaultController::NotExisted:
+            cd(VaultController::makeVaultUrl("/", "setup"));
+            return false;
+        case VaultController::Encrypted:
+            cd(VaultController::makeVaultUrl("/", "unlock"));
+            return false;
+        default:
+            return false;
+        }
+    }
+
+    return DFileView::setRootUrl(url);
 }
