@@ -98,15 +98,30 @@ VaultSetupSetPasswordPage::VaultSetupSetPasswordPage(QWidget *parent)
     layout->addStretch();
     layout->addWidget(m_finishButton);
 
-    connect(m_finishButton, &QPushButton::clicked, this, [ = ](){
-        // TODO: create vault,
-    });
+    connect(m_finishButton, &QPushButton::clicked, this, &VaultSetupSetPasswordPage::onFinishButtonPressed);
 }
 
 VaultSetupSetPasswordPage::~VaultSetupSetPasswordPage()
 {
     m_enterPassword->clear();
     m_confirmPassword->clear();
+}
+
+void VaultSetupSetPasswordPage::onFinishButtonPressed()
+{
+    if (m_enterPassword->text() != m_confirmPassword->text()) {
+        m_confirmPassword->setAlert(true);
+        return;
+    }
+
+    m_finishButton->setDisabled(true);
+    bool succ = VaultController::createVault(m_enterPassword->text());
+    if (succ) {
+        m_enterPassword->clear();
+        m_confirmPassword->clear();
+        emit requestRedirect(VaultController::makeVaultUrl());
+    }
+    m_finishButton->setDisabled(false);
 }
 
 // --------------------------------------

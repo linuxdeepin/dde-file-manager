@@ -68,6 +68,7 @@
 #include "plugins/pluginmanager.h"
 #include "controllers/trashmanager.h"
 #include "models/dfmrootfileinfo.h"
+#include "controllers/vaultcontroller.h"
 
 #include <dplatformwindowhandle.h>
 #include <DThemeManager>
@@ -829,7 +830,6 @@ bool DFileManagerWindow::eventFilter(QObject *watched, QEvent *event)
 
 void DFileManagerWindow::resizeEvent(QResizeEvent *event)
 {
-    Q_D(DFileManagerWindow);
     DMainWindow::resizeEvent(event);
 }
 
@@ -912,11 +912,24 @@ void DFileManagerWindow::initTitleBar()
 
     initTitleFrame();
 
-    DFileMenu *menu = fileMenuManger->createToolBarSettingsMenu();
+    QSet<MenuAction> disableList;
+    VaultController::VaultState state = VaultController::state();
+    if (state == VaultController::NotAvailable) {
+        disableList << MenuAction::Vault;
+    }
+
+    DFileMenu *menu = fileMenuManger->createToolBarSettingsMenu(disableList);
 
     menu->setProperty("DFileManagerWindow", (quintptr)this);
     menu->setProperty("ToolBarSettingsMenu", true);
     menu->setEventData(DUrl(), DUrlList() << DUrl(), winId(), this);
+
+    QAction * vaultAction = menu->actionAt(DFileMenuManager::getActionText(MenuAction::Vault));
+    if (vaultAction) {
+        connect(vaultAction, &QAction::triggered, this, [=](){
+            cd(VaultController::makeVaultUrl("/", "setup"));
+        });
+    }
 
     titlebar()->setMenu(menu);
     titlebar()->setContentsMargins(0, 0, 0, 0);

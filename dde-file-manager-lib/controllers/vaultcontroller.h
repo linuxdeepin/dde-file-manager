@@ -50,12 +50,14 @@ public:
     static void prepareVaultDirs();
     static bool runVaultProcess(QStringList arguments, const DSecureString &stdinString);
     static DUrl makeVaultUrl(QString path = "", QString host = "files");
-    static QString makeVaultLocalUrl(QString path = "", QString base = "vault_unlocked");
+    static QString makeVaultLocalPath(QString path = "", QString base = "vault_unlocked");
     static DUrl localUrlToVault(const DUrl &vaultUrl);
     static DUrl localToVault(QString localPath);
     static QString vaultToLocal(const DUrl &vaultUrl);
     static DUrl vaultToLocalUrl(const DUrl &vaultUrl);
     static VaultState state();
 
+    static bool createVault(const DSecureString &password);
     static bool unlockVault(const DSecureString &password);
+    static bool lockVault();
 };

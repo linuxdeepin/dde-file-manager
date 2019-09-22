@@ -149,7 +149,7 @@ protected:
     bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
 
-    bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData = 0) Q_DECL_OVERRIDE;
+    bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData = nullptr) override;
     QObject *object() const Q_DECL_OVERRIDE;
 
     virtual void handleNewView(DFMBaseView *view);

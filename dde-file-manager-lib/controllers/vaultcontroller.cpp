@@ -169,7 +169,7 @@ DUrl VaultController::makeVaultUrl(QString path, QString host)
     return newUrl;
 }
 
-QString VaultController::makeVaultLocalUrl(QString path, QString base)
+QString VaultController::makeVaultLocalPath(QString path, QString base)
 {
     return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
             + QDir::separator() + base + (path.startsWith('/') ? "" : "/") + path;
@@ -197,7 +197,7 @@ DUrl VaultController::localToVault(QString localPath)
 QString VaultController::vaultToLocal(const DUrl &vaultUrl)
 {
     Q_ASSERT(vaultUrl.scheme() == DFMVAULT_SCHEME);
-    return makeVaultLocalUrl(vaultUrl.path());
+    return makeVaultLocalPath(vaultUrl.path());
 }
 
 DUrl VaultController::vaultToLocalUrl(const DUrl &vaultUrl)
@@ -214,8 +214,8 @@ VaultController::VaultState VaultController::state()
         return NotAvailable;
     }
 
-    if (QFile::exists(makeVaultLocalUrl("cryfs.config", "vault_encrypted"))) {
-        QStorageInfo info(makeVaultLocalUrl(""));
+    if (QFile::exists(makeVaultLocalPath("cryfs.config", "vault_encrypted"))) {
+        QStorageInfo info(makeVaultLocalPath(""));
         if (info.isValid() && info.fileSystemType() == "fuse.cryfs") {
             return Unlocked;
         }
@@ -226,10 +226,32 @@ VaultController::VaultState VaultController::state()
     }
 }
 
+bool VaultController::createVault(const DSecureString &password)
+{
+    return VaultController::runVaultProcess({
+                                                makeVaultLocalPath("", "vault_encrypted"),
+                                                makeVaultLocalPath("", "vault_unlocked")
+                                            }, password);
+}
+
 bool VaultController::unlockVault(const DSecureString &password)
 {
     return VaultController::runVaultProcess({
-                                                makeVaultLocalUrl("", "vault_encrypted"),
-                                                makeVaultLocalUrl("", "vault_unlocked")
+                                                makeVaultLocalPath("", "vault_encrypted"),
+                                                makeVaultLocalPath("", "vault_unlocked")
                                             }, password);
+}
+
+bool VaultController::lockVault()
+{
+    QString fusermountBinary = QStandardPaths::findExecutable("fusermount");
+    if (fusermountBinary.isEmpty()) return false;
+
+    QProcess fusermountExec;
+    fusermountExec.start(fusermountBinary, {"-u", makeVaultLocalPath("")});
+    fusermountExec.waitForStarted();
+    fusermountExec.waitForFinished();
+    fusermountExec.terminate();
+
+    return fusermountExec.exitStatus() == QProcess::NormalExit;
 }
