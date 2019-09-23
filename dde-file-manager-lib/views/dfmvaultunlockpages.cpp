@@ -35,7 +35,7 @@ DFM_BEGIN_NAMESPACE
 DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     : DFMVaultContentInterface(parent)
 {
-    QLabel * description = new QLabel("Sample text, sample text.\nSample text.", this);
+    QLabel * description = new QLabel(tr("Enter the vault password"), this);
     description->setAlignment(Qt::AlignHCenter);
 
     m_unlockButton = new DFloatingButton(DStyle::SP_UnlockElement, this);

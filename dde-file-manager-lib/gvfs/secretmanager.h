@@ -27,6 +27,11 @@
 
 #include <QObject>
 #include <QJsonObject>
+
+#include <DSecureString>
+
+DCORE_USE_NAMESPACE
+
 #undef signals
 extern "C" {
     #include <libsecret/secret.h>
@@ -37,7 +42,7 @@ class SecretManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit SecretManager(QObject *parent = 0);
+    explicit SecretManager(QObject *parent = nullptr);
     ~SecretManager();
 
     void initData();
@@ -45,11 +50,15 @@ public:
 
     static const SecretSchema * SMBSecretSchema();
     static const SecretSchema * FTPSecretSchema();
+    static const SecretSchema * VaultSecretSchema();
 
     static void on_password_cleared (GObject *source,
                                 GAsyncResult *result,
                                 gpointer unused);
 
+    bool storeVaultPassword(const DSecureString &string);
+    DSecureString lookupVaultPassword();
+    bool clearVaultPassword();
     void clearPasswordByLoginObj(const QJsonObject& obj);
     QJsonObject getLoginData(const QString& id);
     QJsonObject getLoginDatas();

@@ -711,7 +711,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::AbsolutePath] = QObject::tr("Path");
     actionKeys[MenuAction::Share] = QObject::tr("Share folder");
     actionKeys[MenuAction::UnShare] = QObject::tr("Cancel sharing");
-    actionKeys[MenuAction::Vault] = QObject::tr("Deepin Vault");
+    actionKeys[MenuAction::Vault] = QObject::tr("File Vault");
     actionKeys[MenuAction::SetUserSharePassword] = QObject::tr("Set share password");
     actionKeys[MenuAction::FormatDevice] = QObject::tr("Format");
 

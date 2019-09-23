@@ -25,6 +25,7 @@
 #include "controllers/vaultcontroller.h"
 #include "dfmvaultsetuppages.h"
 #include "dfmvaultunlockpages.h"
+#include "dfmvaultrecoverykeypages.h"
 
 #include <QVBoxLayout>
 
@@ -60,6 +61,7 @@ DFMVaultView::DFMVaultView(QWidget *parent)
 {
     registerContentWidget("setup", new DFMVaultSetupPages(this));
     registerContentWidget("unlock", new DFMVaultUnlockPages(this));
+    registerContentWidget("recovery_key", new DFMVaultRecoveryKeyPages(this));
     registerContentWidget("_fallback_", new FallbackDispatcher(this));
 }
 

@@ -89,6 +89,18 @@ const SecretSchema *SecretManager::FTPSecretSchema()
     return &the_schema;
 }
 
+const SecretSchema *SecretManager::VaultSecretSchema()
+{
+    static const SecretSchema the_schema = {
+        "com.deepin.filemanager.VaultPassword", SECRET_SCHEMA_DONT_MATCH_NAME, {
+            {"user", SECRET_SCHEMA_ATTRIBUTE_STRING }
+        },
+        0, 0, 0, 0, 0, 0, 0, 0
+    };
+
+    return &the_schema;
+}
+
 void SecretManager::on_password_cleared(GObject *source, GAsyncResult *result, gpointer unused)
 {
     Q_UNUSED(source)
@@ -109,6 +121,64 @@ void SecretManager::on_password_cleared(GObject *source, GAsyncResult *result, g
         /* removed will be TRUE if a password was removed */
         qDebug() << "password was removed";
     }
+}
+
+bool SecretManager::storeVaultPassword(const DSecureString &string)
+{
+    GError *error = NULL;
+    secret_password_store_sync(VaultSecretSchema(), SECRET_COLLECTION_SESSION, "Vault session password", string.toStdString().c_str(),
+                               NULL, &error,
+                               "user", "dde-file-manager",
+                               NULL);
+    if (error != NULL) {
+        /* ... handle the failure here */
+        g_error_free (error);
+        return false;
+    }
+
+    return true;
+}
+
+DSecureString SecretManager::lookupVaultPassword()
+{
+    GError *error = NULL;
+    gchar *password = secret_password_lookup_sync(VaultSecretSchema(), {}, NULL,
+                                                  "user", "dde-file-manager",
+                                                  NULL);
+    DSecureString result(password);
+
+    if (error != NULL) {
+        /* ... handle the failure here */
+        g_error_free(error);
+    } else if (password == NULL) {
+        /* password will be null, if no matching password found */
+    } else {
+        /* ... do something with the password */
+        secret_password_free(password);
+    }
+
+    return result;
+}
+
+bool SecretManager::clearVaultPassword()
+{
+    GError *error = NULL;
+
+    /*
+     * The variable argument list is the attributes used to later
+     * lookup the password. These attributes must conform to the schema.
+     */
+    gboolean removed = secret_password_clear_sync (VaultSecretSchema(), NULL, &error,
+                                                   "user", "dde-file-manager",
+                                                   NULL);
+
+    if (error != NULL) {
+        /* ... handle the failure here */
+        g_error_free (error);
+    } else {
+        /* removed will be TRUE if a password was removed */
+    }
+    return removed;
 }
 
 void SecretManager::clearPasswordByLoginObj(const QJsonObject &obj)
