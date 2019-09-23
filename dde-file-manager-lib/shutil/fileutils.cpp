@@ -535,6 +535,11 @@ bool FileUtils::openFile(const QString &filePath)
 
     QString mimetype = getFileMimetype(filePath);
     QString defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
+    if (defaultDesktopFile.isEmpty()) {
+        qDebug() << "no default application for" << filePath;
+        return false;
+    }
+
     if (isFileManagerSelf(defaultDesktopFile) && mimetype != "inode/directory"){
         QStringList recommendApps = mimeAppsManager->getRecommendedApps(DUrl::fromLocalFile(filePath));
         recommendApps.removeOne(defaultDesktopFile);
