@@ -71,6 +71,9 @@ QList<CrumbData> DFMFileCrumbController::seprateUrl(const DUrl &url)
     } else {
         QStorageInfo storageInfo(path);
         UDiskDeviceInfoPointer deviceInfo = deviceListener->getDeviceByPath(path);
+        if (!deviceInfo) {
+            deviceInfo = deviceListener->getDeviceByFilePath(path);
+        }
         QString iconName = QStringLiteral("CrumbIconButton.Disk");
         prefixPath = storageInfo.rootPath();
 

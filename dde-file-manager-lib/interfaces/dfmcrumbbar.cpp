@@ -363,7 +363,7 @@ static QString getIconName(const CrumbData& c)
         iconName = systemPathManager->getSystemPathIconName("Computer");
     } else if (c.url.isRecentFile()) {
         iconName = systemPathManager->getSystemPathIconName("Recent");
-    } else if (c.url.isTrashFile()) {
+    } else if (c.url == DUrl(TRASH_ROOT)) {
         iconName = systemPathManager->getSystemPathIconName("Trash");
     } else if (c.url.isNetWorkFile() || c.url.isSMBFile() ) {
         iconName = systemPathManager->getSystemPathIconName("Network");
@@ -382,10 +382,10 @@ static QString getIconName(const CrumbData& c)
 
     static QMap<QString, QString> s_mapIconName = {
         {"CrumbIconButton.Disk","drive-harddisk-symbolic"},
-        {"CrumbIconButton.Usb","drive-harddisk-usb-symbolic"},
-        {"CrumbIconButton.Dvd","media-optical-dvd-symbolic"},
-        {"CrumbIconButton.Iphone","iphone-symbolic"},
-        {"CrumbIconButton.Android","android-phone-symbolic"},
+        {"CrumbIconButton.Usb","drive-removable-media-symbolic"},
+        {"CrumbIconButton.Dvd","media-optical-symbolic"},
+        {"CrumbIconButton.Iphone","phone-apple-iphone-symbolic"},
+        {"CrumbIconButton.Android","phone-symbolic"},
         {"BookmarkItem.Orange", "dfm_tag_orange"},
         {"BookmarkItem.Red", "dfm_tag_red"},
         {"BookmarkItem.Purple", "dfm_tag_purple"},
