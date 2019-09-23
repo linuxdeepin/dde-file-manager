@@ -193,7 +193,7 @@
                     "options": [
                         {
                             "key": "compress_file_preview",
-                            "text": qsTranslate("GenerateSettingTranslate", "Compress file preview"),
+                            "text": qsTranslate("GenerateSettingTranslate", "Compressed file preview"),
                             "type": "checkbox",
                             "default": false
                         },

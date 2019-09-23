@@ -196,7 +196,7 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
 
     SectionKeyLabel *sizeSectionLabel = new SectionKeyLabel(QObject::tr("Size"));
     SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Type"));
-    SectionKeyLabel *TimeCreatedSectionLabel = new SectionKeyLabel(QObject::tr("Time read"));
+    SectionKeyLabel *TimeCreatedSectionLabel = new SectionKeyLabel(QObject::tr("Time access"));
     SectionKeyLabel *TimeModifiedSectionLabel = new SectionKeyLabel(QObject::tr("Time modified"));
     SectionKeyLabel *sourcePathSectionLabel = new SectionKeyLabel(QObject::tr("Source path"));
 

@@ -184,7 +184,7 @@ QString DFileCopyMoveJobPrivate::errorToString(DFileCopyMoveJob::Error error)
     case DFileCopyMoveJob::FileSizeTooBigError:
         return qApp->translate("DFileCopyMoveJob", "Failed, file size must be less than 4GB");
     case DFileCopyMoveJob::NotEnoughSpaceError:
-        return qApp->translate("DFileCopyMoveJob", "Target disk doesn't have enough space");
+        return qApp->translate("DFileCopyMoveJob", "Not enough free space on the target disk");
     case DFileCopyMoveJob::IntegrityCheckingError:
         return qApp->translate("DFileCopyMoveJob", "File integrity was damaged");
     case DFileCopyMoveJob::TargetReadOnlyError:

@@ -303,8 +303,8 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
                    & ~ Qt::WindowSystemMenuHint);
     QString basicInfo = tr("Basic info");
     QString openWith = tr("Open with");
-    QString shareManager = tr("Share Management");
-    QString authManager = tr("Permission Management");
+    QString shareManager = tr("Sharing");
+    QString authManager = tr("Permissions");
     initUI();
     QString query = m_url.query();
 
@@ -941,7 +941,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     SectionKeyLabel *sizeSectionLabel = new SectionKeyLabel(QObject::tr("Size"));
     SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Type"));
     SectionKeyLabel *TimeCreatedSectionLabel = new SectionKeyLabel(QObject::tr("Time created"));
-    SectionKeyLabel *TimeReadSectionLabel = new SectionKeyLabel(QObject::tr("Time read"));
+    SectionKeyLabel *TimeReadSectionLabel = new SectionKeyLabel(QObject::tr("Time access"));
     SectionKeyLabel *TimeModifiedSectionLabel = new SectionKeyLabel(QObject::tr("Time modified"));
     SectionKeyLabel *sourcePathSectionLabel = new SectionKeyLabel(QObject::tr("Source path"));
 
