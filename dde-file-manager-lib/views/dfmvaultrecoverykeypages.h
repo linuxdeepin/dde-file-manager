@@ -21,62 +21,69 @@
 #pragma once
 
 #include "interface/dfmvaultcontentinterface.h"
+#include "dtkwidget_global.h"
 
 #include <QPushButton>
-#include <dtkwidget_global.h>
+
+QT_BEGIN_NAMESPACE
+class QPlainTextEdit;
+QT_END_NAMESPACE
 
 DWIDGET_BEGIN_NAMESPACE
 class DPasswordEdit;
+class DFloatingButton;
 DWIDGET_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
 
-class VaultSetupWelcomePage : public QWidget
+class VaultVerifyUserPage : public QWidget
 {
     Q_OBJECT
 public:
-    explicit VaultSetupWelcomePage(QWidget * parent = nullptr);
-    ~VaultSetupWelcomePage() override;
+    explicit VaultVerifyUserPage(QWidget * parent = nullptr);
+    ~VaultVerifyUserPage() override;
+
+signals:
+    void requestRedirect(DUrl url);
+
+private slots:
+    void unlock();
+
+private:
+    DPasswordEdit * m_passwordEdit;
+    DFloatingButton * m_unlockButton;
+};
+
+// ------------------------------------------------
+
+class VaultGeneratedKeyPage : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit VaultGeneratedKeyPage(QWidget * parent = nullptr);
+    ~VaultGeneratedKeyPage() override;
 
 signals:
     void requestRedirect(DUrl url);
 
 private:
-    QPushButton * m_createNewButton;
-    QPushButton * m_importButton;
+    void clearData();
+
+    QPushButton * m_saveFileButton;
+    QPushButton * m_finishButton;
+    QPlainTextEdit * m_generatedKeyEdit;
 };
 
-// --------------------------------------
+// ------------------------------------------------
 
-class VaultSetupSetPasswordPage : public QWidget
+class DFMVaultRecoveryKeyPages : public DFMVaultPages
 {
     Q_OBJECT
 public:
-    explicit VaultSetupSetPasswordPage(QWidget * parent = nullptr);
-    ~VaultSetupSetPasswordPage() override;
-
-signals:
-    void requestRedirect(DUrl url);
-
-public slots:
-    void onFinishButtonPressed();
-
-private:
-    DPasswordEdit * m_enterPassword;
-    DPasswordEdit * m_confirmPassword;
-    QPushButton * m_nextButton;
-};
-
-// --------------------------------------
-
-class DFMVaultSetupPages : public DFMVaultPages
-{
-    Q_OBJECT
-public:
-    DFMVaultSetupPages(QWidget * parent = nullptr);
-    ~DFMVaultSetupPages() override {}
+    explicit DFMVaultRecoveryKeyPages(QWidget * parent = nullptr);
+    ~DFMVaultRecoveryKeyPages() override;
 
     QPair<DUrl, bool> requireRedirect(VaultController::VaultState state) override;
     QString pageString(const DUrl & url) override;

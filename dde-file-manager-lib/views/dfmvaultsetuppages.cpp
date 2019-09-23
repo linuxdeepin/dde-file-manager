@@ -23,6 +23,7 @@
 #include <QLabel>
 #include <dpasswordedit.h>
 #include <DSecureString>
+#include <QVBoxLayout>
 
 DFM_BEGIN_NAMESPACE
 
@@ -40,11 +41,11 @@ VaultSetupWelcomePage::VaultSetupWelcomePage(QWidget *parent)
     icon->setIconSize(QSize(64, 64));
     icon->setMinimumHeight(64);
 
-    QLabel * title = new QLabel(tr("Vault"), this);
-    QLabel * description = new QLabel(tr("Welcome to use Deepin Vault.\n") +
-                                      tr("Create secure private space here.\n") +
-                                      tr("Advanced encryption technology, safe and secure.\n") +
-                                      tr("Convenient and easy to use."), this);
+    QLabel * title = new QLabel(tr("File Vault"), this);
+    QLabel * description = new QLabel(tr("Welcome to use File Vault\n") +
+                                      tr("Create secure private space here\n") +
+                                      tr("Advanced encryption technology, safe and secure\n") +
+                                      tr("Convenient and easy to use"), this);
     title->setAlignment(Qt::AlignHCenter);
     QFont font = title->font();
     font.setBold(true);
@@ -77,7 +78,7 @@ VaultSetupSetPasswordPage::VaultSetupSetPasswordPage(QWidget *parent)
     , m_enterPassword(new DPasswordEdit(this))
     , m_confirmPassword(new DPasswordEdit(this))
 {
-    m_finishButton = new QPushButton(tr("Finished"), this);
+    m_nextButton = new QPushButton(tr("Next"), this);
 
     QPushButton * icon = new QPushButton(this);
     icon->setDisabled(true);
@@ -86,7 +87,7 @@ VaultSetupSetPasswordPage::VaultSetupSetPasswordPage(QWidget *parent)
     icon->setIconSize(QSize(64, 64));
     icon->setMinimumHeight(64);
 
-    QLabel * description = new QLabel("Sample text, sample text.", this);
+    QLabel * description = new QLabel(tr("Set a password for the vault"), this);
     description->setAlignment(Qt::AlignHCenter);
 
     QVBoxLayout * layout = new QVBoxLayout(this);
@@ -96,9 +97,9 @@ VaultSetupSetPasswordPage::VaultSetupSetPasswordPage(QWidget *parent)
     layout->addWidget(m_enterPassword);
     layout->addWidget(m_confirmPassword);
     layout->addStretch();
-    layout->addWidget(m_finishButton);
+    layout->addWidget(m_nextButton);
 
-    connect(m_finishButton, &QPushButton::clicked, this, &VaultSetupSetPasswordPage::onFinishButtonPressed);
+    connect(m_nextButton, &QPushButton::clicked, this, &VaultSetupSetPasswordPage::onFinishButtonPressed);
 }
 
 VaultSetupSetPasswordPage::~VaultSetupSetPasswordPage()
@@ -114,14 +115,14 @@ void VaultSetupSetPasswordPage::onFinishButtonPressed()
         return;
     }
 
-    m_finishButton->setDisabled(true);
+    m_nextButton->setDisabled(true);
     bool succ = VaultController::createVault(m_enterPassword->text());
     if (succ) {
         m_enterPassword->clear();
         m_confirmPassword->clear();
         emit requestRedirect(VaultController::makeVaultUrl());
     }
-    m_finishButton->setDisabled(false);
+    m_nextButton->setDisabled(false);
 }
 
 // --------------------------------------
