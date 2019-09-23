@@ -230,7 +230,7 @@ void OpenWithDialog::initUI()
     m_setToDefaultCheckBox = new QCheckBox(tr("Set as default"));
     m_setToDefaultCheckBox->setChecked(true);
     m_cancelButton = new QPushButton(tr("Cancel"));
-    m_chooseButton = new QPushButton(tr("Choose"));
+    m_chooseButton = new QPushButton(tr("Confirm"));
 
     QVBoxLayout* content_layout = new QVBoxLayout;
     content_layout->setContentsMargins(10, 0, 10, 0);

@@ -875,7 +875,7 @@ void DialogManager::showDiskSpaceOutOfUsedDialog()
 {
     DDialog d;
     d.setIcon(m_dialogWarningIcon, QSize(64, 64));
-    d.setTitle(tr("Target disk doesn't have enough space, unable to copy!"));
+    d.setTitle(tr("Unable to copy. Not enough free space on the target disk."));
     d.addButton(tr("OK"));
 
     QRect rect = d.geometry();
@@ -1001,7 +1001,7 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
 
         d.setMessage(message);
         d.setIcon(m_dialogWarningIcon, QSize(64, 64));
-        d.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
+        d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
         ret = d.exec();
     } else {
 

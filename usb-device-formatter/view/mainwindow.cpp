@@ -237,7 +237,7 @@ void MainWindow::onFormatingFinished(const bool &successful)
             m_errorPage->setErrorMsg(tr("Your disk is removed when formatting"));
         } else{
             m_currentStep = FormattError;
-            m_errorPage->setErrorMsg(tr("Failed to format"));
+            m_errorPage->setErrorMsg(tr("Failed to format the device"));
             m_comfirmButton->setText(tr("Reformat"));
         }
         m_comfirmButton->setEnabled(true);
