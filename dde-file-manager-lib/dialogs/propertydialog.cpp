@@ -876,6 +876,7 @@ void PropertyDialog::initTextShowFrame(const QString &text)
     m_editButton->setObjectName("EditButton");
     m_editButton->setIcon(QIcon::fromTheme("edit-rename"));
     m_editButton->setIconSize({24, 24});
+    m_editButton->setFixedSize(24, 24);
     m_editButton->setFlat(true);
     connect(m_editButton, &QPushButton::clicked, this, &PropertyDialog::renameFile);
 
@@ -911,7 +912,7 @@ void PropertyDialog::initTextShowFrame(const QString &text)
             }
 
             if (label->fontMetrics().width(labelText) > (m_edit->width() - 2 * m_editButton->width()) && labelTexts.length() >= maxLineCount) {
-                labelText = label->fontMetrics().elidedText(labelText, Qt::ElideMiddle, m_edit->width() - 2 * m_editButton->width());
+                labelText = label->fontMetrics().elidedText(labelText, Qt::ElideMiddle, m_edit->width() - m_editButton->width());
             }
             label->setText(labelText);
             hLayout->addSpacing(2);
