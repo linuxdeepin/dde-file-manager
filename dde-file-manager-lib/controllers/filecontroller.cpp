@@ -401,7 +401,7 @@ bool FileController::compressFiles(const QSharedPointer<DFMCompressEvent> &event
         bool result = QProcess::startDetached("file-roller", args);
         return result;
     } else {
-        dialogManager->showErrorDialog(tr("Kindly Reminder"), tr("Please install File Roller first and then continue."));
+        dialogManager->showErrorDialog(tr("Kindly Reminder"), tr("Please install File Roller first and then continue"));
         qDebug() << "file-roller is not installed";
     }
 
@@ -420,7 +420,7 @@ bool FileController::decompressFile(const QSharedPointer<DFMDecompressEvent> &ev
         bool result = QProcess::startDetached("file-roller", args);
         return result;
     } else {
-        dialogManager->showErrorDialog(tr("Kindly Reminder"), tr("Please install File Roller first and then continue."));
+        dialogManager->showErrorDialog(tr("Kindly Reminder"), tr("Please install File Roller first and then continue"));
         qDebug() << "file-roller is not installed";
     }
 
@@ -439,7 +439,7 @@ bool FileController::decompressFileHere(const QSharedPointer<DFMDecompressEvent>
         bool result = QProcess::startDetached("file-roller", args);
         return result;
     } else {
-        dialogManager->showErrorDialog(tr("Kindly Reminder"), tr("Please install File Roller first and then continue."));
+        dialogManager->showErrorDialog(tr("Kindly Reminder"), tr("Please install File Roller first and then continue"));
         qDebug() << "file-roller is not installed";
     }
 
