@@ -2,7 +2,7 @@
 <context>
     <name>AppController</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="356"/>
+        <location filename="../controllers/appcontroller.cpp" line="392"/>
         <source>New Folder</source>
         <translation>새 폴더</translation>
     </message>
@@ -16,14 +16,27 @@
     </message>
     <message>
         <location filename="../dialogs/closealldialogindicator.cpp" line="71"/>
-        <source>Total size is %1, contains %2 files</source>
-        <translation>총 크기 %1, %2개의 파일을 포함</translation>
+        <source>Total size: %1, %2 files</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>ComputerModel</name>
+    <message>
+        <location filename="../models/computermodel.cpp" line="41"/>
+        <source>My Directories</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../models/computermodel.cpp" line="47"/>
+        <source>Disks</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ComputerPropertyDialog</name>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="61"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="63"/>
         <source>Computer</source>
         <translation>컴퓨터</translation>
     </message>
@@ -33,37 +46,37 @@
         <translation>기본 정보</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="81"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="83"/>
         <source>Computer Name</source>
         <translation>컴퓨터 이름</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="82"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="84"/>
         <source>Version</source>
         <translation>버전</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="83"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="85"/>
         <source>Type</source>
         <translation>형식</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="84"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="86"/>
         <source>Processor</source>
         <translation>프로세서</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="85"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="87"/>
         <source>Memory</source>
         <translation>메모리</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="86"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="88"/>
         <source>Disk</source>
         <translation>디스크</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="147"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="166"/>
         <source>Bit</source>
         <translation>비트</translation>
     </message>
@@ -71,17 +84,17 @@
 <context>
     <name>ComputerView</name>
     <message>
-        <location filename="../views/computerview.cpp" line="571"/>
+        <location filename="../views/computerview.cpp" line="580"/>
         <source>My Directories</source>
         <translation>내 디렉토리</translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="577"/>
+        <location filename="../views/computerview.cpp" line="586"/>
         <source>Internal Disk</source>
         <translation>내부 디스크</translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="583"/>
+        <location filename="../views/computerview.cpp" line="592"/>
         <source>External Disk</source>
         <translation>외부 디스크</translation>
     </message>
@@ -89,7 +102,7 @@
 <context>
     <name>DFMAddressBar</name>
     <message>
-        <location filename="../views/dfmaddressbar.cpp" line="354"/>
+        <location filename="../views/dfmaddressbar.cpp" line="358"/>
         <source>Search or enter address</source>
         <translation>검색할 파일 이름 또는 주소를 입력하세요</translation>
     </message>
@@ -97,127 +110,127 @@
 <context>
     <name>DFMAdvanceSearchBar</name>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="102"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="104"/>
         <source>Search:</source>
         <translation>검색:</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="103"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="105"/>
         <source>File Type:</source>
         <translation>파일 형식:</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="104"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="106"/>
         <source>File Size:</source>
         <translation>파일 크기:</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="105"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="107"/>
         <source>Time Modified:</source>
         <translation>마지막 수정시간:</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="107"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="109"/>
         <source>Reset</source>
         <translation>되돌리기</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="121"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="123"/>
         <source>All subdirectories</source>
         <translation>모든 하위 디렉토리</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="122"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="124"/>
         <source>Current directory</source>
         <translation>현재 디렉토리</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="139"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="141"/>
         <source>0 ~ 100 KB</source>
         <translation>0 ~ 100 KB</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="140"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="142"/>
         <source>100 KB ~ 1 MB</source>
         <translation>100 KB ~ 1 MB</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="141"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="143"/>
         <source>1 MB ~ 10 MB</source>
         <translation>1 MB ~ 10 MB</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="142"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="144"/>
         <source>10 MB ~ 100 MB</source>
         <translation>10 MB ~ 100 MB</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="143"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="145"/>
         <source>100 MB ~ 1 GB</source>
         <translation>100 MB ~ 1 GB</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="144"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="146"/>
         <source>&gt; 1 GB</source>
         <translation>&gt; 1 GB</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="147"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="149"/>
         <source>Today</source>
         <translation>오늘</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="148"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="150"/>
         <source>Yesterday</source>
         <translation>어제</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="149"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="151"/>
         <source>This week</source>
         <translation>이번 주</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="150"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="152"/>
         <source>Last week</source>
         <translation>지난주</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="151"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="153"/>
         <source>This month</source>
         <translation>이번 달</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="152"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="154"/>
         <source>Last month</source>
         <translation>지난달</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="153"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="155"/>
         <source>This year</source>
         <translation>올해</translation>
     </message>
     <message>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="154"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="156"/>
         <source>Last year</source>
         <translation>작년</translation>
     </message>
 </context>
 <context>
-    <name>DFMSideBarOpticalDevItem</name>
+    <name>DFMSideBarOpticalItemHandler</name>
     <message>
-        <location filename="../views/dfmsidebaropticaldevitem.cpp" line="178"/>
+        <location filename="../controllers/dfmsidebaropticalitemhandler.cpp" line="136"/>
         <source>Blank %1 disc</source>
-        <translation>빈 %1 디스크</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmsidebaropticaldevitem.cpp" line="180"/>
+        <location filename="../controllers/dfmsidebaropticalitemhandler.cpp" line="138"/>
         <source>%1 disc</source>
-        <translation>%1 디스크</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmsidebaropticaldevitem.cpp" line="189"/>
+        <location filename="../controllers/dfmsidebaropticalitemhandler.cpp" line="150"/>
         <source>%1 drive</source>
-        <translation>%1 드라이브</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -226,6 +239,23 @@
         <location filename="../controllers/dfmtagcrumbcontroller.cpp" line="55"/>
         <source>Tag information</source>
         <translation>태그 정보</translation>
+    </message>
+</context>
+<context>
+    <name>DFMTagWidget</name>
+    <message>
+        <location filename="../views/dfmtagwidget.cpp" line="103"/>
+        <location filename="../views/dfmtagwidget.cpp" line="105"/>
+        <source>Tag</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>DFMVaultUnlockPages</name>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="38"/>
+        <source>Enter the vault password</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -282,8 +312,8 @@
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="187"/>
-        <source>Target disk doesn&apos;t have enough space</source>
-        <translation>디스크에 충분한 공간이 없습니다</translation>
+        <source>Not enough free space on the target disk</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="189"/>
@@ -353,62 +383,54 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1020"/>
+        <location filename="../views/dfiledialog.cpp" line="1018"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>%1은 이미 존재합니다. 덮어씌우겠습니까?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1021"/>
+        <location filename="../views/dfiledialog.cpp" line="1019"/>
         <source>Cancel</source>
         <translation>취소</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1022"/>
+        <location filename="../views/dfiledialog.cpp" line="1020"/>
         <source>Replace</source>
         <translation>치환</translation>
     </message>
 </context>
 <context>
-    <name>DFileManagerWindow</name>
-    <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="842"/>
-        <source>Dark theme</source>
-        <translation>어두운 테마</translation>
-    </message>
-</context>
-<context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1377"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1376"/>
         <location filename="../models/trashfileinfo.cpp" line="331"/>
         <source>Name</source>
         <translation>이름</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1020"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1379"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1029"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1378"/>
         <location filename="../models/searchfileinfo.cpp" line="121"/>
         <source>Time modified</source>
         <translation>마지막 수정시간</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1381"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1380"/>
         <source>Size</source>
         <translation>크기</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1383"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1382"/>
         <source>Type</source>
         <translation>형식</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1385"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1384"/>
         <source>Time created</source>
         <translation>생성된 시간</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="692"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1387"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="699"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1386"/>
         <source>Last access</source>
         <translation>마지막 접근 시간</translation>
     </message>
@@ -421,7 +443,7 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2722"/>
+        <location filename="../views/dfileview.cpp" line="2730"/>
         <source>(Reverse)</source>
         <translation>(역순)</translation>
     </message>
@@ -429,7 +451,7 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="560"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="567"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>&quot;%1&quot; 태그 추가</translation>
     </message>
@@ -437,62 +459,62 @@
 <context>
     <name>DStatusBar</name>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="66"/>
+        <location filename="../views/dstatusbar.cpp" line="63"/>
         <source>%1 item</source>
         <translation>%1개의 항목</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="67"/>
+        <location filename="../views/dstatusbar.cpp" line="64"/>
         <source>%1 items</source>
         <translation>%1개의 항목</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="68"/>
+        <location filename="../views/dstatusbar.cpp" line="65"/>
         <source>%1 item selected</source>
         <translation>%1개의 항목이 선택됨</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="69"/>
+        <location filename="../views/dstatusbar.cpp" line="66"/>
         <source>%1 items selected</source>
         <translation>%1개의 항목이 선택됨</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="70"/>
+        <location filename="../views/dstatusbar.cpp" line="67"/>
         <source>%1 folder selected (contains %2)</source>
         <translation>%1개의 폴더가 선택됨 (%2을 포함)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="71"/>
+        <location filename="../views/dstatusbar.cpp" line="68"/>
         <source>%1 folders selected (contains %2)</source>
         <translation>%1개의 폴더가 선택됨 (%2을 포함)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="72"/>
+        <location filename="../views/dstatusbar.cpp" line="69"/>
         <source>%1 file selected (%2)</source>
         <translation>%1개의 파일이 선택됨 (%2)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="73"/>
+        <location filename="../views/dstatusbar.cpp" line="70"/>
         <source>%1 files selected (%2)</source>
         <translation>%1개의 파일이 선택됨 (%2)</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="74"/>
+        <location filename="../views/dstatusbar.cpp" line="71"/>
         <source>%1 folder selected</source>
         <translation>%1개의 폴더가 선택됨</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="174"/>
+        <location filename="../views/dstatusbar.cpp" line="169"/>
         <source>Filter</source>
         <translation>필터</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="184"/>
+        <location filename="../views/dstatusbar.cpp" line="179"/>
         <source>Save as:</source>
         <translation>다른 이름으로 저장:</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="491"/>
+        <location filename="../views/dstatusbar.cpp" line="486"/>
         <source>Loading...</source>
         <translation>불러오는 중...</translation>
     </message>
@@ -510,6 +532,7 @@
     <message>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="114"/>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="129"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="152"/>
         <source>%1 Volume</source>
         <translation>%1 볼륨</translation>
     </message>
@@ -523,48 +546,49 @@
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="342"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="341"/>
         <location filename="../dialogs/dialogmanager.cpp" line="957"/>
         <location filename="../dialogs/dialogmanager.cpp" line="972"/>
         <source>Operation failed!</source>
         <translation>작업을 실패하였습니다!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="343"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="342"/>
         <source>Target folder is inside the source folder!</source>
         <translation>상위 폴더를 하위 폴더 밑으로 복사할 수 없습니다!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="345"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="540"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="344"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="539"/>
         <location filename="../dialogs/dialogmanager.cpp" line="879"/>
         <location filename="../dialogs/dialogmanager.cpp" line="892"/>
         <location filename="../dialogs/dialogmanager.cpp" line="901"/>
         <location filename="../dialogs/dialogmanager.cpp" line="919"/>
         <location filename="../dialogs/dialogmanager.cpp" line="964"/>
         <location filename="../dialogs/dialogmanager.cpp" line="975"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1004"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1321"/>
         <source>OK</source>
         <translation>확인</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="368"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="367"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>%1을 실행하거나 내용을 표시할까요?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="369"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="368"/>
         <source>It is an executable text file.</source>
         <translation>실행 가능한 텍스트 파일입니다.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="372"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="396"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="412"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="442"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="468"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="557"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="615"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="371"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="395"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="411"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="441"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="467"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="556"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="614"/>
         <location filename="../dialogs/dialogmanager.cpp" line="758"/>
         <location filename="../dialogs/dialogmanager.cpp" line="787"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1042"/>
@@ -573,131 +597,130 @@
         <translation>취소</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="372"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="398"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="413"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="371"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="397"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="412"/>
         <source>Run</source>
         <translation>실행</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="372"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="397"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="371"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="396"/>
         <source>Run in terminal</source>
         <translation>터미널에서 실행</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="372"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="371"/>
         <source>Display</source>
         <translation>표시</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="395"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="394"/>
         <source>It is an executable file.</source>
         <translation>실행 파일입니다.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="411"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="410"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>실행 가능한 파일이 아닙니다. 실행 권한을 추가하고 실행하시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="425"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="424"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>&quot;%1&quot;는 이미 존재합니다. 다른 이름을 사용해주십시오.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="427"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="529"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="426"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="528"/>
         <location filename="../dialogs/dialogmanager.cpp" line="787"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1004"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1141"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1262"/>
         <source>Confirm</source>
         <translation>확인</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="437"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="436"/>
         <source>Are you sure you want to erase all data on the disc?</source>
         <translation>디스크의 모든 데이터를 지우시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="442"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="441"/>
         <source>Erase</source>
         <translation>지우기</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="464"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="463"/>
         <source>How do you want to use this disc?</source>
         <translation>이 디스크를 어떻게 사용하시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="468"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="467"/>
         <source>Burn image</source>
         <translation>이미지 굽기</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="468"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="467"/>
         <source>Burn files</source>
         <translation>파일 굽기</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="495"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="494"/>
         <source>Disc erase failed</source>
         <translation>디스크 지우기 실패</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="499"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="498"/>
         <source>Burn process failed</source>
         <translation>굽기 프로세스 실패</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="502"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="501"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="518"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="528"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="517"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="527"/>
         <source>Show details</source>
         <translation>세부 정보 표시</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="522"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="521"/>
         <source>Hide details</source>
         <translation>세부 정보 숨기기</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="523"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="522"/>
         <source>Error</source>
         <translation>오류</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="550"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="549"/>
         <source>Permanently delete %1?</source>
         <translation>%1를 영구적으로 삭제하시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="551"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="550"/>
         <source>Permanently delete %1 items?</source>
         <translation>%1개의 항목을 영구적으로 삭제하시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="557"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="556"/>
         <source>Delete</source>
         <translation>삭제</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="568"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="567"/>
         <source>Empty</source>
         <translation>비우기</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="612"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="611"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>북마크 디렉토리에 접근할 수 없습니다. 제거 하시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="615"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="614"/>
         <source>Remove</source>
         <translation>제거</translation>
     </message>
@@ -730,11 +753,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="817"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
         <translation>파일 관리자는 Deepin Technology가 독립적으로 개발한 파일 관리 도구입니다. 파일의 검색 및 복사, 삭제, 압축/압축 해제, 속성의 확인/수정을 비롯한 다양한 파일 관리 기능을 제공합니다.</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="878"/>
-        <source>Target disk doesn&apos;t have enough space, unable to copy!</source>
-        <translation>복사를 할 수 없습니다. 디스크에 충분한 공간이 없습니다</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="890"/>
@@ -790,23 +808,23 @@
         <translation>보기</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="394"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="393"/>
         <source>Do you want to run %1?</source>
         <translation>%1을 실행하시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="548"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="547"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>%1 항목을 비우시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="549"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="548"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>%1 항목을 비우시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="451"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="599"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="450"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="598"/>
         <source>This action cannot be undone</source>
         <translation>이 작업은 실행 취소할 수 없습니다.</translation>
     </message>
@@ -814,6 +832,11 @@
         <location filename="../dialogs/dialogmanager.cpp" line="755"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>디스크가 사용 중입니다. 지금 마운트 해제할 수 없습니다.</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="878"/>
+        <source>Unable to copy. Not enough free space on the target disk.</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1087"/>
@@ -847,6 +870,23 @@
     </message>
 </context>
 <context>
+    <name>FileController</name>
+    <message>
+        <location filename="../controllers/filecontroller.cpp" line="404"/>
+        <location filename="../controllers/filecontroller.cpp" line="423"/>
+        <location filename="../controllers/filecontroller.cpp" line="442"/>
+        <source>Kindly Reminder</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../controllers/filecontroller.cpp" line="404"/>
+        <location filename="../controllers/filecontroller.cpp" line="423"/>
+        <location filename="../controllers/filecontroller.cpp" line="442"/>
+        <source>Please install File Roller first and then continue</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>FileDialogStatusBar</name>
     <message>
         <location filename="../views/filedialogstatusbar.cpp" line="30"/>
@@ -864,22 +904,22 @@
         <translation>취소</translation>
     </message>
     <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="68"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="66"/>
         <source>Save</source>
         <translation>저장</translation>
     </message>
     <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="68"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="66"/>
         <source>Open</source>
         <translation>열기</translation>
     </message>
     <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="73"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="71"/>
         <source>Save File</source>
         <translation>파일 저장</translation>
     </message>
     <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="73"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="71"/>
         <source>Open File</source>
         <translation>파일 열기</translation>
     </message>
@@ -892,70 +932,70 @@
         <translation>복사</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="690"/>
-        <location filename="../../fileoperations/filejob.cpp" line="749"/>
+        <location filename="../../fileoperations/filejob.cpp" line="691"/>
+        <location filename="../../fileoperations/filejob.cpp" line="751"/>
         <source>Data verification successful.</source>
         <translation>데이터 확인 성공.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="690"/>
-        <location filename="../../fileoperations/filejob.cpp" line="749"/>
+        <location filename="../../fileoperations/filejob.cpp" line="691"/>
+        <location filename="../../fileoperations/filejob.cpp" line="751"/>
         <source>Data verification failed.</source>
         <translation>데이터 검증 실패.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="692"/>
-        <location filename="../../fileoperations/filejob.cpp" line="751"/>
+        <location filename="../../fileoperations/filejob.cpp" line="693"/>
+        <location filename="../../fileoperations/filejob.cpp" line="753"/>
         <source>Burn process completed</source>
         <translation>굽기 프로세스 완료</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="865"/>
+        <location filename="../../fileoperations/filejob.cpp" line="867"/>
         <source>%1 s</source>
         <translation>%1 초</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="869"/>
+        <location filename="../../fileoperations/filejob.cpp" line="871"/>
         <source>%1 m %2 s</source>
         <translation>%1 분 %2 초</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="875"/>
+        <location filename="../../fileoperations/filejob.cpp" line="877"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 시간 %2 분 %3 초</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="884"/>
+        <location filename="../../fileoperations/filejob.cpp" line="886"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 일 %2 시간 %3 분 %4 초</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2611"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2621"/>
         <source>%1 is a duplicate file.</source>
         <translation>%1은(는) 중복 파일입니다.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2614"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2624"/>
         <source>Insufficient disc space.</source>
         <translation>디스크 공간이 부족함.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2617"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2627"/>
         <source>Lost connection to drive.</source>
         <translation>드라이브에 대한 연결 끊김.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2620"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2630"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
         <translation>CD/DVD 드라이브가 준비되지 않았습니다. 다른 디스크를 사용해 보십시오.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2623"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2633"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
         <translation>CD/DVD 드라이브가 사용 중입니다. 드라이브를 사용하여 프로그램을 종료하고 드라이브를 다시 삽입합니다.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2626"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2636"/>
         <source>Unknown error</source>
         <translation>알 수 없는 오류</translation>
     </message>
@@ -1269,7 +1309,6 @@
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="195"/>
         <location filename="../configure/global-setting-template-pro.js" line="196"/>
-        <location filename="../configure/global-setting-template.js" line="196"/>
         <source>Compress file preview</source>
         <translation>파일 미리보기 압축</translation>
     </message>
@@ -1336,44 +1375,46 @@
         <source>Use the file chooser dialog of Deepin File Manager</source>
         <translation>Deepin 파일 관리자의 파일 선택 대화상자를 사용</translation>
     </message>
-</context>
-<context>
-    <name>GvfsMountClient</name>
     <message>
-        <location filename="../gvfs/gvfsmountclient.cpp" line="149"/>
-        <source>Mounting device error</source>
-        <translation>마운트할 장치 오류</translation>
+        <location filename="../configure/global-setting-template.js" line="196"/>
+        <source>Compressed file preview</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1337"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1334"/>
+        <source>Mounting device error</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1522"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>이 디스크는 사용자 &quot;%1&quot;에 의해 마운트되었습니다. 마운트 해제할 수 없습니다.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1340"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1350"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1379"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1500"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1531"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1525"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1535"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1564"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1685"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1716"/>
         <source>Confirm</source>
         <translation>확인</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1347"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1528"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1532"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1713"/>
         <source>Cannot find the mounting device</source>
         <translation>마운트할 장치를 찾을 수 없습니다</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1376"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1561"/>
         <source>Cannot unmount the device</source>
         <translation>장치를 마운트 해제할 수 없습니다</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1496"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1681"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>장치 &quot;%1&quot;를 제거할 수 없습니다</translation>
     </message>
@@ -1381,38 +1422,38 @@
 <context>
     <name>MergedDesktopController</name>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="387"/>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="407"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="386"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="406"/>
         <source>Pictures</source>
         <translation>사진</translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="389"/>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="409"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="388"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="408"/>
         <source>Music</source>
         <translation>음악</translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="391"/>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="411"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="390"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="410"/>
         <source>Applications</source>
         <translation>응용 프로그램</translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="393"/>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="413"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="392"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="412"/>
         <source>Videos</source>
         <translation>동영상</translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="395"/>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="415"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="394"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="414"/>
         <source>Documents</source>
         <translation>문서</translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="397"/>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="417"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="396"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="416"/>
         <source>Others</source>
         <translation>기타</translation>
     </message>
@@ -1420,61 +1461,61 @@
 <context>
     <name>MimeTypeDisplayManager</name>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="451"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="450"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="53"/>
         <source>Directory</source>
         <translation>디렉토리</translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="441"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="440"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="54"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="129"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="131"/>
         <source>Application</source>
         <translation>응용 프로그램</translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="447"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="446"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="55"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="130"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="132"/>
         <source>Video</source>
         <translation>비디오</translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="445"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="444"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="56"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="131"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="133"/>
         <source>Audio</source>
         <translation>오디오</translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="443"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="442"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="57"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="132"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="134"/>
         <source>Image</source>
         <translation>이미지</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="58"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="133"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="135"/>
         <source>Archive</source>
         <translation>아카이브</translation>
     </message>
     <message>
-        <location filename="../controllers/mergeddesktopcontroller.cpp" line="449"/>
+        <location filename="../controllers/mergeddesktopcontroller.cpp" line="448"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="59"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="134"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="136"/>
         <source>Text</source>
         <translation>텍스트</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="60"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="135"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="137"/>
         <source>Executable</source>
         <translation>실행 가능한</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="61"/>
-        <location filename="../views/dfmadvancesearchbar.cpp" line="136"/>
+        <location filename="../views/dfmadvancesearchbar.cpp" line="138"/>
         <source>Backup file</source>
         <translation>백업 파일</translation>
     </message>
@@ -1503,32 +1544,32 @@
         <translation>로 로그인</translation>
     </message>
     <message>
-        <location filename="../gvfs/mountaskpassworddialog.cpp" line="61"/>
+        <location filename="../gvfs/mountaskpassworddialog.cpp" line="60"/>
         <source>Anonymous</source>
         <translation>익명</translation>
     </message>
     <message>
-        <location filename="../gvfs/mountaskpassworddialog.cpp" line="67"/>
+        <location filename="../gvfs/mountaskpassworddialog.cpp" line="65"/>
         <source>Registered user</source>
         <translation>등록된 사용자</translation>
     </message>
     <message>
-        <location filename="../gvfs/mountaskpassworddialog.cpp" line="78"/>
+        <location filename="../gvfs/mountaskpassworddialog.cpp" line="75"/>
         <source>Username</source>
         <translation>사용자명</translation>
     </message>
     <message>
-        <location filename="../gvfs/mountaskpassworddialog.cpp" line="88"/>
+        <location filename="../gvfs/mountaskpassworddialog.cpp" line="83"/>
         <source>Domain</source>
         <translation>도메인</translation>
     </message>
     <message>
-        <location filename="../gvfs/mountaskpassworddialog.cpp" line="97"/>
+        <location filename="../gvfs/mountaskpassworddialog.cpp" line="90"/>
         <source>Password</source>
         <translation>비밀번호</translation>
     </message>
     <message>
-        <location filename="../gvfs/mountaskpassworddialog.cpp" line="111"/>
+        <location filename="../gvfs/mountaskpassworddialog.cpp" line="103"/>
         <source>Remember password</source>
         <translation>비밀번호 기억</translation>
     </message>
@@ -1542,8 +1583,8 @@
     </message>
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="48"/>
-        <source>UnLock</source>
-        <translation>잠금 해제</translation>
+        <source>Unlock</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="52"/>
@@ -1701,19 +1742,19 @@
 <context>
     <name>MoveToTrashConflictDialog</name>
     <message>
-        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="37"/>
-        <source>This file is too large to put into trash</source>
-        <translation>파일이 너무 커서 휴지통에 버릴 수 없습니다</translation>
-    </message>
-    <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="38"/>
         <source>Are you sure you want to permanently delete %1?</source>
         <translation>% 1을(를) 영구히 삭제 하시겠습니까?</translation>
     </message>
     <message>
+        <location filename="../dialogs/movetotrashconflictdialog.cpp" line="37"/>
+        <source>This file is too big for the trash</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="41"/>
-        <source>Files are too large to put into trash</source>
-        <translation>파일이 너무 커서 휴지통에 버릴 수 없습니다</translation>
+        <source>The files are too big for the trash</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="42"/>
@@ -1739,32 +1780,32 @@
         <translation>다음으로 열기</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="230"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="229"/>
         <source>Add other programs</source>
         <translation>다른 프로그램 추가</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="231"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="230"/>
         <source>Set as default</source>
         <translation>기본으로 설정</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="233"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="232"/>
         <source>Cancel</source>
         <translation>취소</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="234"/>
-        <source>Choose</source>
-        <translation>선택</translation>
+        <location filename="../dialogs/openwithdialog.cpp" line="233"/>
+        <source>Confirm</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="238"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="237"/>
         <source>Recommended Applications</source>
         <translation>추천 프로그램</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="240"/>
+        <location filename="../dialogs/openwithdialog.cpp" line="239"/>
         <source>Other Applications</source>
         <translation>다른 프로그램</translation>
     </message>
@@ -1773,7 +1814,6 @@
     <name>PathManager</name>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="55"/>
-        <location filename="../dialogs/propertydialog.cpp" line="309"/>
         <source>Home</source>
         <translation>홈</translation>
     </message>
@@ -1815,6 +1855,7 @@
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="63"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="150"/>
         <source>System Disk</source>
         <translation>시스템 디스크</translation>
     </message>
@@ -1842,443 +1883,417 @@
 <context>
     <name>PropertyDialog</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="267"/>
+        <location filename="../dialogs/propertydialog.cpp" line="304"/>
         <source>Basic info</source>
         <translation>기본 정보</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="268"/>
+        <location filename="../dialogs/propertydialog.cpp" line="305"/>
         <source>Open with</source>
         <translation>다음으로 열기</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="269"/>
-        <source>Share Management</source>
-        <translation>공유 관리</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/propertydialog.cpp" line="270"/>
-        <source>Permission Management</source>
-        <translation>권한 관리</translation>
+        <location filename="../dialogs/propertydialog.cpp" line="306"/>
+        <source>Sharing</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="307"/>
-        <source>System Disk</source>
-        <translation>시스템 디스크</translation>
+        <source>Permissions</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="334"/>
+        <location filename="../dialogs/propertydialog.cpp" line="342"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="335"/>
+        <location filename="../dialogs/propertydialog.cpp" line="343"/>
         <source>%1 / %2</source>
         <translation>%1 / %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1205"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1240"/>
         <source>Allow to execute as program</source>
         <translation>실행권한 부여</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/propertydialog.cpp" line="980"/>
-        <source>Local disk</source>
-        <translation>로컬 디스크</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="870"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="688"/>
+        <location filename="../dialogs/propertydialog.cpp" line="944"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="695"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="198"/>
         <source>Size</source>
         <translation>크기</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="887"/>
-        <location filename="../dialogs/propertydialog.cpp" line="985"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1012"/>
+        <location filename="../dialogs/propertydialog.cpp" line="964"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1047"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="211"/>
         <source>Contains</source>
         <translation>포함</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="871"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="689"/>
+        <location filename="../dialogs/propertydialog.cpp" line="945"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="696"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="199"/>
         <source>Type</source>
         <translation>형식</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="872"/>
-        <source>Time read</source>
-        <translation>마지막 읽은시간:</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/propertydialog.cpp" line="873"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="691"/>
+        <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
+        <location filename="../dialogs/propertydialog.cpp" line="948"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="698"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="201"/>
         <source>Time modified</source>
         <translation>마지막 수정시간</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="899"/>
-        <source>Link path</source>
-        <translation>링크 경로</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/propertydialog.cpp" line="980"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1007"/>
-        <source>Device type</source>
-        <translation>장치 형식</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/propertydialog.cpp" line="986"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1013"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1048"/>
         <source>Free space</source>
         <translation>남은 공간</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="981"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1008"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1043"/>
         <source>Total space</source>
         <translation>총 공간</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="983"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1010"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1045"/>
         <source>Filesystem</source>
         <translation>파일시스템</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1117"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1152"/>
         <source>Access denied</source>
         <translation>접근 거부</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1118"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1128"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1153"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1163"/>
         <source>Executable</source>
         <translation>실행 가능한</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1119"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1120"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1154"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1155"/>
         <source>Write only</source>
         <translation>쓰기 전용</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1121"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1122"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1156"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1157"/>
         <source>Read only</source>
         <translation>읽기 전용</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1123"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1124"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1158"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1159"/>
         <source>Read-write</source>
         <translation>읽기-쓰기</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1200"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1235"/>
         <source>Others</source>
         <translation>다른 사용자</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1198"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1233"/>
         <source>Owner</source>
         <translation>소유자</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1199"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1234"/>
         <source>Group</source>
         <translation>그룹</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="75"/>
-        <location filename="../dialogs/previewdialog.cpp" line="156"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="640"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="643"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="80"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="647"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="650"/>
         <source>Open</source>
         <translation>열기</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="188"/>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="208"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="196"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="216"/>
         <source>Size: %1</source>
         <translation>크기: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="189"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="197"/>
         <source>Type: %1</source>
         <translation>형식: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="201"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="209"/>
         <source>Size: 0</source>
         <translation>크기: 0</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="207"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="215"/>
         <source>Items: %1</source>
         <translation>항목: %1</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="641"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="644"/>
-        <location filename="../interfaces/dfmcrumbitem.cpp" line="134"/>
-        <location filename="../interfaces/dfmsidebaritem.cpp" line="505"/>
-        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="78"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="94"/>
-        <location filename="../views/dfmsidebarhomeitem.cpp" line="50"/>
-        <location filename="../views/dfmsidebarnetworkitem.cpp" line="43"/>
-        <location filename="../views/dfmsidebaropticaldevitem.cpp" line="76"/>
-        <location filename="../views/dfmsidebarrecentitem.cpp" line="55"/>
-        <location filename="../views/dfmsidebarrootitem.cpp" line="53"/>
-        <location filename="../views/dfmsidebartagitem.cpp" line="52"/>
-        <location filename="../views/dfmsidebartrashitem.cpp" line="49"/>
+        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="91"/>
+        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="84"/>
+        <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="141"/>
+        <location filename="../controllers/dfmsidebaropticalitemhandler.cpp" line="62"/>
+        <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="77"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="648"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="651"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="577"/>
+        <location filename="../interfaces/dfmcrumbitem.cpp" line="136"/>
+        <location filename="../interfaces/dfmsidebariteminterface.cpp" line="50"/>
         <source>Open in new window</source>
         <translation>새 창에서 열기</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="642"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="645"/>
-        <location filename="../interfaces/dfmcrumbitem.cpp" line="138"/>
-        <location filename="../interfaces/dfmsidebaritem.cpp" line="509"/>
-        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="82"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="102"/>
-        <location filename="../views/dfmsidebarhomeitem.cpp" line="54"/>
-        <location filename="../views/dfmsidebarnetworkitem.cpp" line="47"/>
-        <location filename="../views/dfmsidebaropticaldevitem.cpp" line="84"/>
-        <location filename="../views/dfmsidebarrecentitem.cpp" line="59"/>
-        <location filename="../views/dfmsidebarrootitem.cpp" line="57"/>
-        <location filename="../views/dfmsidebartagitem.cpp" line="56"/>
-        <location filename="../views/dfmsidebartrashitem.cpp" line="53"/>
+        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="95"/>
+        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="88"/>
+        <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="149"/>
+        <location filename="../controllers/dfmsidebaropticalitemhandler.cpp" line="66"/>
+        <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="81"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="649"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="652"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="581"/>
+        <location filename="../interfaces/dfmcrumbitem.cpp" line="140"/>
+        <location filename="../interfaces/dfmsidebariteminterface.cpp" line="54"/>
         <source>Open in new tab</source>
         <translation>새 탭에서 열기</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="647"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="654"/>
         <source>Open with</source>
         <translation>다음으로 열기</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="650"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="657"/>
         <source>Compress</source>
         <translation>압축하기</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="651"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="658"/>
         <source>Extract</source>
         <translation>압축풀기</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="652"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="659"/>
         <source>Extract here</source>
         <translation>여기에 압축풀기</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="653"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="660"/>
         <source>Cut</source>
         <translation>잘라내기</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="654"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="661"/>
         <source>Copy</source>
         <translation>복사</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="655"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="662"/>
         <source>Paste</source>
         <translation>붙여넣기</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="382"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="656"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="657"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="715"/>
-        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="88"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="113"/>
-        <location filename="../views/dfmsidebartagitem.cpp" line="60"/>
-        <location filename="../views/drenamebar.cpp" line="300"/>
+        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="101"/>
+        <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="160"/>
+        <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="87"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="323"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="663"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="664"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="723"/>
+        <location filename="../views/drenamebar.cpp" line="291"/>
         <source>Rename</source>
         <translation>이름 변경</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="686"/>
-        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="93"/>
-        <location filename="../views/dfmsidebartagitem.cpp" line="65"/>
+        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="106"/>
+        <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="94"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="693"/>
         <source>Remove</source>
         <translation>제거</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="659"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="666"/>
         <source>Create link</source>
         <translation>링크 생성</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="660"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="667"/>
         <source>Send to desktop</source>
         <translation>데스크톱으로 전송</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="661"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="668"/>
         <source>Send to</source>
         <translation>전송</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="662"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="669"/>
         <source>Add to bookmark</source>
         <translation>즐겨찾기에 추가</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="665"/>
-        <location filename="../interfaces/dfmsidebaritem.cpp" line="513"/>
-        <location filename="../views/dfmsidebarbookmarkitem.cpp" line="99"/>
-        <location filename="../views/dfmsidebarhomeitem.cpp" line="73"/>
-        <location filename="../views/dfmsidebartrashitem.cpp" line="68"/>
+        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="112"/>
+        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="133"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="672"/>
+        <location filename="../interfaces/dfmsidebariteminterface.cpp" line="60"/>
         <source>Properties</source>
         <translation>속성</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="667"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="674"/>
         <source>New folder</source>
         <translation>새 폴더</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="668"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="675"/>
         <source>New window</source>
         <translation>새 창</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="669"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="676"/>
         <source>Select all</source>
         <translation>모두 선택</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="670"/>
-        <location filename="../views/dfmsidebarrecentitem.cpp" line="65"/>
+        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="95"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="677"/>
         <source>Clear recent history</source>
         <translation>최근 사용한 파일 목록 지우기</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="671"/>
-        <location filename="../views/dfmsidebartrashitem.cpp" line="59"/>
+        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="105"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="678"/>
         <source>Empty Trash</source>
         <translation>휴지통 비우기</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="672"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="679"/>
         <source>Display as</source>
         <translation>다음으로 표시</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="673"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="680"/>
         <source>Sort by</source>
         <translation>정렬</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="674"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="681"/>
         <source>New document</source>
         <translation>새 문서</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="690"/>
+        <location filename="../dialogs/propertydialog.cpp" line="946"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="697"/>
         <source>Time created</source>
         <translation>생성된 시간</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="701"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="164"/>
+        <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="201"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="708"/>
         <source>Log out and unmount</source>
         <translation>로그아웃하고 마운트 해제</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="874"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="703"/>
+        <location filename="../dialogs/propertydialog.cpp" line="949"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="710"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="202"/>
         <source>Source path</source>
         <translation>원본 경로</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="705"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="712"/>
         <source>Share folder</source>
         <translation>공유 폴더</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="706"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="713"/>
         <source>Cancel sharing</source>
         <translation>공유 취소</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="707"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="715"/>
         <source>Set share password</source>
         <translation>공유 비밀번호 설정</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="708"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="150"/>
+        <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="187"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="716"/>
         <source>Format</source>
         <translation>포맷</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="711"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="719"/>
         <source>Tag information</source>
         <translation>태그 정보</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="646"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="653"/>
         <source>Open in new window as admin</source>
         <translation>관리자 권한으로 새 창에서 열기</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="648"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="655"/>
         <source>Select default program</source>
         <translation>기본 프로그램 설정</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="649"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="656"/>
         <source>Open file location</source>
         <translation>파일 위치 열기</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="658"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="665"/>
         <source>Remove bookmark</source>
         <translation>즐겨찾기 제거</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="663"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="664"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="713"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="670"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="671"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="721"/>
         <source>Delete</source>
         <translation>삭제</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="675"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="682"/>
         <source>Office Text</source>
         <translation>Office 텍스트</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="676"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="683"/>
         <source>Spreadsheets</source>
         <translation>스프레드시트</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="678"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="685"/>
         <source>Plain Text</source>
         <translation>일반 텍스트</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="679"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="686"/>
         <source>Open in terminal</source>
         <translation>터미널에서 열기</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="680"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="687"/>
         <source>Restore</source>
         <translation>복구</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="681"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="688"/>
         <source>Restore all</source>
         <translation>전부 복원</translation>
+    </message>
+    <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="714"/>
+        <source>File Vault</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="343"/>
@@ -2291,107 +2306,108 @@
         <translation>자동으로 마운트한 후 열기</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="682"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="717"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="132"/>
-        <location filename="../views/dfmsidebaropticaldevitem.cpp" line="95"/>
+        <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="175"/>
+        <location filename="../controllers/dfmsidebaropticalitemhandler.cpp" line="72"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="689"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="725"/>
         <source>Mount</source>
         <translation>마운트</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="683"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="146"/>
-        <location filename="../views/dfmsidebaropticaldevitem.cpp" line="103"/>
+        <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="44"/>
+        <location filename="../controllers/dfmsidebaropticalitemhandler.cpp" line="79"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="690"/>
         <source>Unmount</source>
         <translation>마운트 해제</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="136"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="718"/>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="69"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="138"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="726"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="76"/>
         <source>Burn</source>
         <translation>굽기</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="143"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="145"/>
         <source>Disc name:</source>
         <translation>디스크 이름:</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="154"/>
         <location filename="../dialogs/burnoptdialog.cpp" line="156"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="158"/>
         <source>Maximum</source>
         <translation>최대</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="167"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="169"/>
         <source>Allow files to be added later</source>
         <translation>파일을 나중에 추가할 수 있도록 허용</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="176"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="178"/>
         <source>Verify data</source>
         <translation>데이터 확인</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="150"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="152"/>
         <source>Write speed:</source>
         <translation>쓰기 속도:</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="179"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="684"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="181"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="691"/>
         <source>Eject</source>
         <translation>제거</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="685"/>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="126"/>
+        <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="169"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="692"/>
         <source>Safely Remove</source>
         <translation>안전하게 제거</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="687"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="694"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="188"/>
         <source>Name</source>
         <translation>이름</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="693"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="700"/>
         <source>Settings</source>
         <translation>설정</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="694"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="701"/>
         <source>Help</source>
         <translation>도움말</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="695"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="702"/>
         <source>About</source>
         <translation>프로그램 정보</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="696"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="703"/>
         <source>Exit</source>
         <translation>종료</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="697"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="704"/>
         <source>Icon</source>
         <translation>아이콘</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="698"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="705"/>
         <source>List</source>
         <translation>목록</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="699"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="706"/>
         <source>Extend</source>
         <translation>확장</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="700"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="707"/>
         <source>Set as wallpaper</source>
         <translation>배경화면으로 설정</translation>
     </message>
@@ -2437,42 +2453,42 @@
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="315"/>
-        <location filename="../dialogs/propertydialog.cpp" line="953"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1047"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="641"/>
         <source>%1 item</source>
         <translation>%1개의 항목</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="317"/>
-        <location filename="../dialogs/propertydialog.cpp" line="953"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1047"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="643"/>
         <source>%1 items</source>
         <translation>%1개의 항목</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="827"/>
+        <location filename="../interfaces/dfileservices.cpp" line="829"/>
         <source>Shortcut</source>
         <translation>바로가기</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="620"/>
+        <location filename="../interfaces/dfileservices.cpp" line="622"/>
         <source>Create symlink</source>
         <translation>심볼릭 링크 생성</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="704"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="711"/>
         <source>Path</source>
         <translation>경로</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="702"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="709"/>
         <location filename="../models/trashfileinfo.cpp" line="335"/>
         <location filename="../models/trashfileinfo.cpp" line="343"/>
         <source>Time deleted</source>
         <translation>삭제된 시간</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1229"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1238"/>
         <source>Loading...</source>
         <translation>불러오는 중...</translation>
     </message>
@@ -2518,115 +2534,115 @@
         <translation>원본 경로</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="385"/>
+        <location filename="../controllers/appcontroller.cpp" line="429"/>
         <source>Document</source>
         <translation>문서</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="392"/>
+        <location filename="../controllers/appcontroller.cpp" line="436"/>
         <source>Spreadsheet</source>
         <translation>스프레드시트</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="399"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="677"/>
+        <location filename="../controllers/appcontroller.cpp" line="443"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="684"/>
         <source>Presentation</source>
         <translation>프레젠테이션</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="406"/>
+        <location filename="../controllers/appcontroller.cpp" line="450"/>
         <source>Text</source>
         <translation>텍스트</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="921"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="923"/>
         <source>1 task in progress</source>
         <translation>1개의 작업이 진행중</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="923"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="925"/>
         <source>%1 tasks in progress</source>
         <translation>%1개의 작업이 진행중</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="141"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="133"/>
         <source>Mode:</source>
         <translation>모드:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="143"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="135"/>
         <location filename="../views/drenamebar.cpp" line="234"/>
         <source>Replace Text</source>
         <translation>텍스트 치환</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="143"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="135"/>
         <location filename="../views/drenamebar.cpp" line="234"/>
         <source>Add Text</source>
         <translation>텍스트 추가</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="143"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="135"/>
         <location filename="../views/drenamebar.cpp" line="234"/>
         <source>Custom Text</source>
         <translation>임의의 텍스트</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="149"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="140"/>
         <source>Find:</source>
         <translation>찾기:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="170"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="147"/>
         <source>Replace:</source>
         <translation>치환:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="172"/>
-        <location filename="../views/drenamebar.cpp" line="251"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="149"/>
+        <location filename="../views/drenamebar.cpp" line="250"/>
         <source>Optional</source>
         <translation>선택가능</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="189"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="154"/>
         <source>Add:</source>
         <translation>추가:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="208"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="161"/>
         <source>Location:</source>
         <translation>위치:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="215"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="168"/>
         <source>File name:</source>
         <translation>파일 이름:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="232"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="174"/>
         <source>+SN:</source>
         <translation>+SN:</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="152"/>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="191"/>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="217"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="143"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="156"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="170"/>
         <location filename="../views/drenamebar.cpp" line="243"/>
-        <location filename="../views/drenamebar.cpp" line="260"/>
-        <location filename="../views/drenamebar.cpp" line="276"/>
-        <location filename="../views/drenamebar.cpp" line="286"/>
+        <location filename="../views/drenamebar.cpp" line="257"/>
+        <location filename="../views/drenamebar.cpp" line="271"/>
+        <location filename="../views/drenamebar.cpp" line="278"/>
         <source>Required</source>
         <translation>필수</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="210"/>
-        <location filename="../views/drenamebar.cpp" line="269"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="163"/>
+        <location filename="../views/drenamebar.cpp" line="264"/>
         <source>Before file name</source>
         <translation>파일 이름 앞에</translation>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="210"/>
-        <location filename="../views/drenamebar.cpp" line="269"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="163"/>
+        <location filename="../views/drenamebar.cpp" line="264"/>
         <source>After file name</source>
         <translation>파일 이름 뒤에</translation>
     </message>
@@ -2636,39 +2652,51 @@
         <translation>찾기</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="250"/>
+        <location filename="../views/drenamebar.cpp" line="249"/>
         <source>Replace</source>
         <translation>치환</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="259"/>
+        <location filename="../views/drenamebar.cpp" line="256"/>
         <source>Add</source>
         <translation>추가</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="268"/>
+        <location filename="../dialogs/propertydialog.cpp" line="976"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="279"/>
+        <location filename="../views/drenamebar.cpp" line="263"/>
         <source>Location</source>
         <translation>위치</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="275"/>
+        <location filename="../views/drenamebar.cpp" line="270"/>
         <source>File name</source>
         <translation>파일 이름</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="284"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="227"/>
+        <source>Dimension</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="265"/>
+        <source>Duration</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/drenamebar.cpp" line="277"/>
         <source>+SN</source>
         <translation>+SN</translation>
     </message>
     <message>
-        <location filename="../views/drenamebar.cpp" line="292"/>
+        <location filename="../views/drenamebar.cpp" line="284"/>
         <source>Tips: Sort by selected file order</source>
         <translation>팁: 선택한 파일 순서로 정렬</translation>
     </message>
     <message>
-        <location filename="../dialogs/burnoptdialog.cpp" line="135"/>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="381"/>
-        <location filename="../views/drenamebar.cpp" line="297"/>
+        <location filename="../dialogs/burnoptdialog.cpp" line="137"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="322"/>
+        <location filename="../views/drenamebar.cpp" line="288"/>
         <source>Cancel</source>
         <translation>취소</translation>
     </message>
@@ -2704,13 +2732,10 @@
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="173"/>
-        <source>Access time</source>
-        <translation>접근 시간</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
-        <source>Modify time</source>
-        <translation>수정 시간</translation>
+        <location filename="../dialogs/propertydialog.cpp" line="947"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="200"/>
+        <source>Time access</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="49"/>
@@ -2763,74 +2788,86 @@
         <translation>즐겨찾기</translation>
     </message>
     <message>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="156"/>
-        <location filename="../views/dfmsidebaropticaldevitem.cpp" line="107"/>
+        <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="193"/>
+        <location filename="../controllers/dfmsidebaropticalitemhandler.cpp" line="90"/>
         <source>Erase</source>
         <translation>지우기</translation>
     </message>
     <message>
-        <location filename="../views/dfmsidebardeviceitem.cpp" line="171"/>
-        <location filename="../views/dfmsidebarhomeitem.cpp" line="62"/>
-        <location filename="../views/dfmsidebaropticaldevitem.cpp" line="114"/>
-        <location filename="../views/dfmsidebarrootitem.cpp" line="61"/>
+        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="118"/>
+        <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="133"/>
+        <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="208"/>
+        <location filename="../controllers/dfmsidebaropticalitemhandler.cpp" line="96"/>
         <source>Disk info</source>
         <translation>디스크 정보</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbitem.cpp" line="130"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="573"/>
+        <location filename="../interfaces/dfmcrumbitem.cpp" line="132"/>
         <source>Copy path</source>
         <translation>복사 경로</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbitem.cpp" line="144"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="587"/>
+        <location filename="../interfaces/dfmcrumbitem.cpp" line="146"/>
         <source>Edit address</source>
         <translation>주소 수정</translation>
     </message>
     <message>
-        <location filename="../views/dfmopticalmediawidget.cpp" line="96"/>
+        <location filename="../views/dfmopticalmediawidget.cpp" line="103"/>
         <source>Free Space %1</source>
         <translation>사용 가능한 공간 %1</translation>
+    </message>
+    <message>
+        <location filename="../controllers/filecontroller.cpp" line="756"/>
+        <source>Files are being processed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../shutil/fileutils.cpp" line="451"/>
+        <source>%1/%2</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ShareInfoFrame</name>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="58"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="59"/>
         <source>Share this folder</source>
         <translation>이 폴더를 공유</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="67"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="68"/>
         <source>Share name:</source>
         <translation>공유 이름:</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="74"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="75"/>
         <source>Permission:</source>
         <translation>권한:</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="80"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="81"/>
         <source>Read and write</source>
         <translation>읽고 쓰기</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="80"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="81"/>
         <source>Read only</source>
         <translation>읽기 전용</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="83"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="84"/>
         <source>Anonymous:</source>
         <translation>익명 접근 여부:</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="89"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="90"/>
         <source>Not allow</source>
         <translation>비허용</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="89"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="90"/>
         <source>Allow</source>
         <translation>허용</translation>
     </message>
@@ -2949,8 +2986,63 @@
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="45"/>
-        <source>Ctrl + a </source>
-        <translation>Ctrl + a</translation>
+        <source>Ctrl + A </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../shutil/shortcut.cpp" line="46"/>
+        <source>Ctrl + C </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../shutil/shortcut.cpp" line="47"/>
+        <source>Ctrl + X </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../shutil/shortcut.cpp" line="48"/>
+        <source>Ctrl + V </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../shutil/shortcut.cpp" line="51"/>
+        <source>Ctrl + N </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../shutil/shortcut.cpp" line="52"/>
+        <source>Ctrl + Shift + N </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../shutil/shortcut.cpp" line="53"/>
+        <source>Ctrl + F</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../shutil/shortcut.cpp" line="54"/>
+        <source>Ctrl + T </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../shutil/shortcut.cpp" line="56"/>
+        <source>Ctrl + I </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../shutil/shortcut.cpp" line="60"/>
+        <source>Ctrl + H </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../shutil/shortcut.cpp" line="61"/>
+        <source>Ctrl + L </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../shutil/shortcut.cpp" line="66"/>
+        <source>Ctrl + W</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="46"/>
@@ -2958,29 +3050,14 @@
         <translation>복사</translation>
     </message>
     <message>
-        <location filename="../shutil/shortcut.cpp" line="46"/>
-        <source>Ctrl + c </source>
-        <translation>Ctrl + c</translation>
-    </message>
-    <message>
         <location filename="../shutil/shortcut.cpp" line="47"/>
         <source>Cut</source>
         <translation>잘라내기</translation>
     </message>
     <message>
-        <location filename="../shutil/shortcut.cpp" line="47"/>
-        <source>Ctrl + x </source>
-        <translation>Ctrl + x</translation>
-    </message>
-    <message>
         <location filename="../shutil/shortcut.cpp" line="48"/>
         <source>Paste</source>
         <translation>붙여넣기</translation>
-    </message>
-    <message>
-        <location filename="../shutil/shortcut.cpp" line="48"/>
-        <source>Ctrl + v </source>
-        <translation>Ctrl + v</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="49"/>
@@ -3003,19 +3080,9 @@
         <translation>새 창</translation>
     </message>
     <message>
-        <location filename="../shutil/shortcut.cpp" line="51"/>
-        <source>Ctrl + n </source>
-        <translation>Ctrl + n</translation>
-    </message>
-    <message>
         <location filename="../shutil/shortcut.cpp" line="52"/>
         <source>New folder</source>
         <translation>새 폴더</translation>
-    </message>
-    <message>
-        <location filename="../shutil/shortcut.cpp" line="52"/>
-        <source>Ctrl + Shift + n </source>
-        <translation>Ctrl + Shift + n</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="53"/>
@@ -3023,19 +3090,9 @@
         <translation>검색</translation>
     </message>
     <message>
-        <location filename="../shutil/shortcut.cpp" line="53"/>
-        <source>Ctrl + f</source>
-        <translation>Ctrl + f</translation>
-    </message>
-    <message>
         <location filename="../shutil/shortcut.cpp" line="54"/>
         <source>New tab</source>
         <translation>새 탭</translation>
-    </message>
-    <message>
-        <location filename="../shutil/shortcut.cpp" line="54"/>
-        <source>Ctrl + t </source>
-        <translation>Ctrl + t</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="55"/>
@@ -3046,11 +3103,6 @@
         <location filename="../shutil/shortcut.cpp" line="56"/>
         <source>Item information</source>
         <translation>항목 정보</translation>
-    </message>
-    <message>
-        <location filename="../shutil/shortcut.cpp" line="56"/>
-        <source>Ctrl + i </source>
-        <translation>Ctrl + i</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="57"/>
@@ -3083,19 +3135,9 @@
         <translation>항목 숨기기</translation>
     </message>
     <message>
-        <location filename="../shutil/shortcut.cpp" line="60"/>
-        <source>Ctrl + h </source>
-        <translation>Ctrl + h</translation>
-    </message>
-    <message>
         <location filename="../shutil/shortcut.cpp" line="61"/>
         <source>Input in address bar</source>
         <translation>주소창에 입력</translation>
-    </message>
-    <message>
-        <location filename="../shutil/shortcut.cpp" line="61"/>
-        <source>Ctrl + l </source>
-        <translation>Ctrl + l</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="62"/>
@@ -3136,11 +3178,6 @@
         <location filename="../shutil/shortcut.cpp" line="66"/>
         <source>Close current tab</source>
         <translation>현재 탭 닫기</translation>
-    </message>
-    <message>
-        <location filename="../shutil/shortcut.cpp" line="66"/>
-        <source>Ctrl + w</source>
-        <translation>Ctrl + w</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="67"/>
@@ -3216,22 +3253,22 @@
 <context>
     <name>TrashPropertyDialog</name>
     <message>
-        <location filename="../dialogs/trashpropertydialog.cpp" line="68"/>
+        <location filename="../dialogs/trashpropertydialog.cpp" line="67"/>
         <source>Trash</source>
         <translation>휴지통</translation>
     </message>
     <message>
-        <location filename="../dialogs/trashpropertydialog.cpp" line="72"/>
+        <location filename="../dialogs/trashpropertydialog.cpp" line="71"/>
         <source>item</source>
         <translation>항목</translation>
     </message>
     <message>
-        <location filename="../dialogs/trashpropertydialog.cpp" line="74"/>
+        <location filename="../dialogs/trashpropertydialog.cpp" line="73"/>
         <source>items</source>
         <translation>항목</translation>
     </message>
     <message>
-        <location filename="../dialogs/trashpropertydialog.cpp" line="77"/>
+        <location filename="../dialogs/trashpropertydialog.cpp" line="76"/>
         <source>Contains %1 %2</source>
         <translation>포함 %1 %2</translation>
     </message>
@@ -3239,17 +3276,9 @@
 <context>
     <name>UDiskListener</name>
     <message>
-        <location filename="../deviceinfo/udisklistener.cpp" line="187"/>
+        <location filename="../deviceinfo/udisklistener.cpp" line="186"/>
         <source>Failed to rename the label</source>
         <translation>레이블 변경에 실패하였습니다</translation>
-    </message>
-</context>
-<context>
-    <name>UnknownPreviewWidget</name>
-    <message>
-        <location filename="../dialogs/previewdialog.cpp" line="560"/>
-        <source>Type</source>
-        <translation>형식</translation>
     </message>
 </context>
 <context>
@@ -3269,8 +3298,8 @@
     <name>UserSharePasswordSettingDialog</name>
     <message>
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="37"/>
-        <source>Please enter share password</source>
-        <translation>공유 비밀번호를 입력해주세요</translation>
+        <source>Enter a password to protect shared folders</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="48"/>
@@ -3281,6 +3310,118 @@
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="48"/>
         <source>Confirm</source>
         <translation>확인</translation>
+    </message>
+</context>
+<context>
+    <name>VaultGeneratedKeyPage</name>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="98"/>
+        <source>Find your recovery key below</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="99"/>
+        <source>Take good care of the recovery key by printing, writing down or saving it to a USB flash drive</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="100"/>
+        <source>Your recovery key is as important as your password. Do not save the key file on this computer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="111"/>
+        <source>File Vault Recovery Key:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="112"/>
+        <source>To verify that this is the correct recovery key, compare the following key ID with the key ID displayed on your PC.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="113"/>
+        <source>Key ID: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="114"/>
+        <source>If they are identical, then use the following key to retrieve your vault password.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="115"/>
+        <source>Recovery Key: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="119"/>
+        <source>Save</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="120"/>
+        <source>Done</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>VaultSetupSetPasswordPage</name>
+    <message>
+        <location filename="../views/dfmvaultsetuppages.cpp" line="81"/>
+        <source>Next</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultsetuppages.cpp" line="90"/>
+        <source>Set a password for the vault</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>VaultSetupWelcomePage</name>
+    <message>
+        <location filename="../views/dfmvaultsetuppages.cpp" line="33"/>
+        <source>Create a new vault</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultsetuppages.cpp" line="34"/>
+        <source>Import a vault</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultsetuppages.cpp" line="44"/>
+        <source>File Vault</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultsetuppages.cpp" line="45"/>
+        <source>Welcome to use File Vault</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultsetuppages.cpp" line="46"/>
+        <source>Create secure private space here</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultsetuppages.cpp" line="47"/>
+        <source>Advanced encryption technology, safe and secure</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultsetuppages.cpp" line="48"/>
+        <source>Convenient and easy to use</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>VaultVerifyUserPage</name>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="38"/>
+        <source>Enter the vault password</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>

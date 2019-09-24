@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>FinishPage</name>
     <message>
@@ -64,10 +62,6 @@
         <translation>完成</translation>
     </message>
     <message>
-        <source>Failed to format</source>
-        <translation type="vanished">格式化失败</translation>
-    </message>
-    <message>
         <location filename="../view/mainwindow.cpp" line="236"/>
         <source>Quit</source>
         <translation>退出</translation>
@@ -80,7 +74,7 @@
     <message>
         <location filename="../view/mainwindow.cpp" line="240"/>
         <source>Failed to format the device</source>
-        <translation type="unfinished"></translation>
+        <translation>格式化失败</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="241"/>

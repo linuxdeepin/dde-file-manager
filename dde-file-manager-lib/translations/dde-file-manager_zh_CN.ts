@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -19,11 +17,7 @@
     <message>
         <location filename="../dialogs/closealldialogindicator.cpp" line="71"/>
         <source>Total size: %1, %2 files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Total size is %1, contains %2 files</source>
-        <translation type="vanished">总容量%1，总文件数%2个</translation>
+        <translation>总容量 %1，总文件数量 %2个</translation>
     </message>
 </context>
 <context>
@@ -31,12 +25,12 @@
     <message>
         <location filename="../models/computermodel.cpp" line="41"/>
         <source>My Directories</source>
-        <translation type="unfinished">我的目录</translation>
+        <translation>我的目录</translation>
     </message>
     <message>
         <location filename="../models/computermodel.cpp" line="47"/>
         <source>Disks</source>
-        <translation type="unfinished"></translation>
+        <translation>磁盘</translation>
     </message>
 </context>
 <context>
@@ -222,36 +216,21 @@
     </message>
 </context>
 <context>
-    <name>DFMSideBarOpticalDevItem</name>
-    <message>
-        <source>Blank %1 disc</source>
-        <translation type="vanished">空白%1光盘</translation>
-    </message>
-    <message>
-        <source>%1 disc</source>
-        <translation type="vanished">%1光盘</translation>
-    </message>
-    <message>
-        <source>%1 drive</source>
-        <translation type="vanished">%1光驱</translation>
-    </message>
-</context>
-<context>
     <name>DFMSideBarOpticalItemHandler</name>
     <message>
         <location filename="../controllers/dfmsidebaropticalitemhandler.cpp" line="136"/>
         <source>Blank %1 disc</source>
-        <translation type="unfinished">空白%1光盘</translation>
+        <translation>空白%1光盘</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebaropticalitemhandler.cpp" line="138"/>
         <source>%1 disc</source>
-        <translation type="unfinished">%1光盘</translation>
+        <translation>%1光盘</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebaropticalitemhandler.cpp" line="150"/>
         <source>%1 drive</source>
-        <translation type="unfinished">%1光驱</translation>
+        <translation>%1光驱</translation>
     </message>
 </context>
 <context>
@@ -268,7 +247,7 @@
         <location filename="../views/dfmtagwidget.cpp" line="103"/>
         <location filename="../views/dfmtagwidget.cpp" line="105"/>
         <source>Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>标记</translation>
     </message>
 </context>
 <context>
@@ -276,7 +255,7 @@
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="38"/>
         <source>Enter the vault password</source>
-        <translation type="unfinished"></translation>
+        <translation>请输入保险柜密码</translation>
     </message>
 </context>
 <context>
@@ -332,13 +311,9 @@
         <translation>操作失败，文件大小已超出上限值4GB！</translation>
     </message>
     <message>
-        <source>Target disk doesn&apos;t have enough space</source>
-        <translation type="vanished">目标磁盘剩余空间不足</translation>
-    </message>
-    <message>
         <location filename="../io/dfilecopymovejob.cpp" line="187"/>
         <source>Not enough free space on the target disk</source>
-        <translation type="unfinished"></translation>
+        <translation>目标磁盘剩余空间不足</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="189"/>
@@ -414,13 +389,6 @@
         <location filename="../views/dfiledialog.cpp" line="1020"/>
         <source>Replace</source>
         <translation>替换</translation>
-    </message>
-</context>
-<context>
-    <name>DFileManagerWindow</name>
-    <message>
-        <source>Dark theme</source>
-        <translation type="vanished">深色主题</translation>
     </message>
 </context>
 <context>
@@ -780,10 +748,6 @@
         <translation>文件管理器是深度科技自主研发的一款管理文件的工具， 它包括搜索、复制、回收站、压缩/解压缩， 文件属性等管理文件的功能。</translation>
     </message>
     <message>
-        <source>Target disk doesn&apos;t have enough space, unable to copy!</source>
-        <translation type="vanished">目标磁盘剩余空间不足，无法进行复制！</translation>
-    </message>
-    <message>
         <location filename="../dialogs/dialogmanager.cpp" line="890"/>
         <source>Failed, file size must be less than 4GB.</source>
         <translation>操作失败，文件大小已超出上限值4GB！</translation>
@@ -863,7 +827,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="878"/>
         <source>Unable to copy. Not enough free space on the target disk.</source>
-        <translation type="unfinished"></translation>
+        <translation>目标磁盘剩余空间不足，无法进行复制！</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1087"/>
@@ -903,14 +867,14 @@
         <location filename="../controllers/filecontroller.cpp" line="423"/>
         <location filename="../controllers/filecontroller.cpp" line="442"/>
         <source>Kindly Reminder</source>
-        <translation type="unfinished">温馨提示</translation>
+        <translation>温馨提示</translation>
     </message>
     <message>
         <location filename="../controllers/filecontroller.cpp" line="404"/>
         <location filename="../controllers/filecontroller.cpp" line="423"/>
         <location filename="../controllers/filecontroller.cpp" line="442"/>
         <source>Please install File Roller first and then continue</source>
-        <translation type="unfinished"></translation>
+        <translation>请先安装归档管理器然后继续</translation>
     </message>
 </context>
 <context>
@@ -1405,14 +1369,7 @@
     <message>
         <location filename="../configure/global-setting-template.js" line="196"/>
         <source>Compressed file preview</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>GvfsMountClient</name>
-    <message>
-        <source>Mounting device error</source>
-        <translation type="vanished">挂载设备出错</translation>
+        <translation>压缩文件预览</translation>
     </message>
 </context>
 <context>
@@ -1420,7 +1377,7 @@
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1334"/>
         <source>Mounting device error</source>
-        <translation type="unfinished">挂载设备出错</translation>
+        <translation>挂载设备出错</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1522"/>
@@ -1618,11 +1575,7 @@
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="48"/>
         <source>Unlock</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>UnLock</source>
-        <translation type="vanished">解锁</translation>
+        <translation>解锁</translation>
     </message>
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="52"/>
@@ -1780,27 +1733,19 @@
 <context>
     <name>MoveToTrashConflictDialog</name>
     <message>
-        <source>This file is too large to put into trash</source>
-        <translation type="vanished">该文件太大，无法放入回收站</translation>
-    </message>
-    <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="38"/>
         <source>Are you sure you want to permanently delete %1?</source>
         <translation>您确定要彻底删除%1吗？</translation>
     </message>
     <message>
-        <source>Files are too large to put into trash</source>
-        <translation type="vanished">文件太大，无法放入回收站</translation>
-    </message>
-    <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="37"/>
         <source>This file is too big for the trash</source>
-        <translation type="unfinished"></translation>
+        <translation>该文件太大，无法放入回收站</translation>
     </message>
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="41"/>
         <source>The files are too big for the trash</source>
-        <translation type="unfinished"></translation>
+        <translation>文件太大，无法放入回收站</translation>
     </message>
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="42"/>
@@ -1843,11 +1788,7 @@
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="233"/>
         <source>Confirm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Choose</source>
-        <translation type="vanished">选择</translation>
+        <translation>确定</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="237"/>
@@ -1943,26 +1884,14 @@
         <translation>打开方式</translation>
     </message>
     <message>
-        <source>Share Management</source>
-        <translation type="vanished">共享管理</translation>
-    </message>
-    <message>
-        <source>Permission Management</source>
-        <translation type="vanished">权限管理</translation>
-    </message>
-    <message>
-        <source>System Disk</source>
-        <translation type="vanished">系统盘</translation>
-    </message>
-    <message>
         <location filename="../dialogs/propertydialog.cpp" line="306"/>
         <source>Sharing</source>
-        <translation type="unfinished"></translation>
+        <translation>共享管理</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="307"/>
         <source>Permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>权限管理</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="342"/>
@@ -1978,10 +1907,6 @@
         <location filename="../dialogs/propertydialog.cpp" line="1240"/>
         <source>Allow to execute as program</source>
         <translation>允许以程序执行</translation>
-    </message>
-    <message>
-        <source>Local disk</source>
-        <translation type="vanished">本地磁盘</translation>
     </message>
 </context>
 <context>
@@ -2008,24 +1933,12 @@
         <translation>类型</translation>
     </message>
     <message>
-        <source>Time read</source>
-        <translation type="vanished">访问时间</translation>
-    </message>
-    <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
         <location filename="../dialogs/propertydialog.cpp" line="948"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="698"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="201"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
-    </message>
-    <message>
-        <source>Link path</source>
-        <translation type="vanished">链接路径</translation>
-    </message>
-    <message>
-        <source>Device type</source>
-        <translation type="vanished">设备类型</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1048"/>
@@ -2371,7 +2284,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="714"/>
         <source>File Vault</source>
-        <translation type="unfinished"></translation>
+        <translation>文件保险柜</translation>
     </message>
     <message>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="343"/>
@@ -2754,12 +2667,12 @@
     <message>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="227"/>
         <source>Dimension</source>
-        <translation type="unfinished"></translation>
+        <translation>尺寸</translation>
     </message>
     <message>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="265"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>时长</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="277"/>
@@ -2813,15 +2726,7 @@
         <location filename="../dialogs/propertydialog.cpp" line="947"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="200"/>
         <source>Time access</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Access time</source>
-        <translation type="vanished">访问时间</translation>
-    </message>
-    <message>
-        <source>Modify time</source>
-        <translation type="vanished">修改时间</translation>
+        <translation>访问时间</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="49"/>
@@ -2907,12 +2812,12 @@
     <message>
         <location filename="../controllers/filecontroller.cpp" line="756"/>
         <source>Files are being processed</source>
-        <translation type="unfinished"></translation>
+        <translation>正在处理文件</translation>
     </message>
     <message>
         <location filename="../shutil/fileutils.cpp" line="451"/>
         <source>%1/%2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1/%2</translation>
     </message>
 </context>
 <context>
@@ -3073,66 +2978,62 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="45"/>
         <source>Ctrl + A </source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl + A </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="46"/>
         <source>Ctrl + C </source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl + C </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="47"/>
         <source>Ctrl + X </source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl + X </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="48"/>
         <source>Ctrl + V </source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl + V </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="51"/>
         <source>Ctrl + N </source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl + N </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="52"/>
         <source>Ctrl + Shift + N </source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl + Shift + N </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="53"/>
         <source>Ctrl + F</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl + F</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="54"/>
         <source>Ctrl + T </source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl + T </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="56"/>
         <source>Ctrl + I </source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl + I </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="60"/>
         <source>Ctrl + H </source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl + H </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="61"/>
         <source>Ctrl + L </source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl + L </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="66"/>
         <source>Ctrl + W</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ctrl + a </source>
-        <translation type="vanished">Ctrl + a</translation>
+        <translation>Ctrl + W</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="46"/>
@@ -3140,26 +3041,14 @@
         <translation>拷贝文件</translation>
     </message>
     <message>
-        <source>Ctrl + c </source>
-        <translation type="vanished">Ctrl + c</translation>
-    </message>
-    <message>
         <location filename="../shutil/shortcut.cpp" line="47"/>
         <source>Cut</source>
         <translation>剪切文件</translation>
     </message>
     <message>
-        <source>Ctrl + x </source>
-        <translation type="vanished">Ctrl + x</translation>
-    </message>
-    <message>
         <location filename="../shutil/shortcut.cpp" line="48"/>
         <source>Paste</source>
         <translation>粘贴文件</translation>
-    </message>
-    <message>
-        <source>Ctrl + v </source>
-        <translation type="vanished">Ctrl + v</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="49"/>
@@ -3182,17 +3071,9 @@
         <translation>新建窗口</translation>
     </message>
     <message>
-        <source>Ctrl + n </source>
-        <translation type="vanished">Ctrl + n</translation>
-    </message>
-    <message>
         <location filename="../shutil/shortcut.cpp" line="52"/>
         <source>New folder</source>
         <translation>新建文件夹</translation>
-    </message>
-    <message>
-        <source>Ctrl + Shift + n </source>
-        <translation type="vanished">Ctrl + Shift + n</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="53"/>
@@ -3200,17 +3081,9 @@
         <translation>搜索</translation>
     </message>
     <message>
-        <source>Ctrl + f</source>
-        <translation type="vanished">Ctrl + f</translation>
-    </message>
-    <message>
         <location filename="../shutil/shortcut.cpp" line="54"/>
         <source>New tab</source>
         <translation>新建标签</translation>
-    </message>
-    <message>
-        <source>Ctrl + t </source>
-        <translation type="vanished">Ctrl + t </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="55"/>
@@ -3221,10 +3094,6 @@
         <location filename="../shutil/shortcut.cpp" line="56"/>
         <source>Item information</source>
         <translation>文件信息</translation>
-    </message>
-    <message>
-        <source>Ctrl + i </source>
-        <translation type="vanished">Ctrl + i</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="57"/>
@@ -3257,17 +3126,9 @@
         <translation>隐藏文件</translation>
     </message>
     <message>
-        <source>Ctrl + h </source>
-        <translation type="vanished">Ctrl + h</translation>
-    </message>
-    <message>
         <location filename="../shutil/shortcut.cpp" line="61"/>
         <source>Input in address bar</source>
         <translation>地址栏输入</translation>
-    </message>
-    <message>
-        <source>Ctrl + l </source>
-        <translation type="vanished">Ctrl + l</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="62"/>
@@ -3308,10 +3169,6 @@
         <location filename="../shutil/shortcut.cpp" line="66"/>
         <source>Close current tab</source>
         <translation>关闭当前标签</translation>
-    </message>
-    <message>
-        <source>Ctrl + w</source>
-        <translation type="vanished">Ctrl + w</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="67"/>
@@ -3416,13 +3273,6 @@
     </message>
 </context>
 <context>
-    <name>UnknownPreviewWidget</name>
-    <message>
-        <source>Type</source>
-        <translation type="vanished">类型</translation>
-    </message>
-</context>
-<context>
     <name>UserShareManager</name>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="420"/>
@@ -3438,13 +3288,9 @@
 <context>
     <name>UserSharePasswordSettingDialog</name>
     <message>
-        <source>Please enter share password</source>
-        <translation type="vanished">请输入共享密码</translation>
-    </message>
-    <message>
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="37"/>
         <source>Enter a password to protect shared folders</source>
-        <translation type="unfinished"></translation>
+        <translation>请输入共享密码</translation>
     </message>
     <message>
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="48"/>
@@ -3462,52 +3308,52 @@
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="98"/>
         <source>Find your recovery key below</source>
-        <translation type="unfinished"></translation>
+        <translation>您的恢复密钥如下</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="99"/>
         <source>Take good care of the recovery key by printing, writing down or saving it to a USB flash drive</source>
-        <translation type="unfinished"></translation>
+        <translation>请考虑通过打印、抄写记录、保存到U盘等形式妥当保存您的恢复密钥</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="100"/>
         <source>Your recovery key is as important as your password. Do not save the key file on this computer</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复密钥和您的密码有着同等级的安全程度，建议不要将安全密钥文件保存到本计算机</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="111"/>
         <source>File Vault Recovery Key:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="112"/>
         <source>To verify that this is the correct recovery key, compare the following key ID with the key ID displayed on your PC.</source>
-        <translation type="unfinished"></translation>
+        <translation>若要验证这是否为正确的恢复密钥，请将以下标识符与电脑上显示的标识符值进行比较。</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="113"/>
         <source>Key ID: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>密钥标识符：%1</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="114"/>
         <source>If they are identical, then use the following key to retrieve your vault password.</source>
-        <translation type="unfinished"></translation>
+        <translation>如果以上标识符与电脑显示的标识符匹配，则使用以下密钥找回您的保险柜密码。</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="115"/>
         <source>Recovery Key: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复密钥：%1</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="119"/>
         <source>Save</source>
-        <translation type="unfinished">保存</translation>
+        <translation>保存</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="120"/>
         <source>Done</source>
-        <translation type="unfinished"></translation>
+        <translation>完成</translation>
     </message>
 </context>
 <context>
@@ -3515,12 +3361,12 @@
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="81"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>下一步</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="90"/>
         <source>Set a password for the vault</source>
-        <translation type="unfinished"></translation>
+        <translation>请为保险柜创建密码</translation>
     </message>
 </context>
 <context>
@@ -3528,37 +3374,37 @@
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="33"/>
         <source>Create a new vault</source>
-        <translation type="unfinished"></translation>
+        <translation>新建保险柜</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="34"/>
         <source>Import a vault</source>
-        <translation type="unfinished"></translation>
+        <translation>导入保险柜</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="44"/>
         <source>File Vault</source>
-        <translation type="unfinished"></translation>
+        <translation>文件保险柜</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="45"/>
         <source>Welcome to use File Vault</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="46"/>
         <source>Create secure private space here</source>
-        <translation type="unfinished"></translation>
+        <translation>您可以在电脑中创建一个专属于个人的安全空间</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="47"/>
         <source>Advanced encryption technology, safe and secure</source>
-        <translation type="unfinished"></translation>
+        <translation>先进的加密技术，安全有保障</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="48"/>
         <source>Convenient and easy to use</source>
-        <translation type="unfinished"></translation>
+        <translation>使用更便捷，操作更简单</translation>
     </message>
 </context>
 <context>
@@ -3566,7 +3412,7 @@
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="38"/>
         <source>Enter the vault password</source>
-        <translation type="unfinished"></translation>
+        <translation>请输入保险柜密码</translation>
     </message>
 </context>
 </TS>

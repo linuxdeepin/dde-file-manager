@@ -4,7 +4,7 @@
     <message>
         <location filename="../view/finishpage.cpp" line="42"/>
         <source>Format successful</source>
-        <translation type="unfinished"/>
+        <translation>Успешно форматиране</translation>
     </message>
 </context>
 <context>
@@ -12,7 +12,7 @@
     <message>
         <location filename="../view/formatingpage.cpp" line="43"/>
         <source>Formatting the disk, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Форматиране, моля изчакайте…</translation>
     </message>
 </context>
 <context>
@@ -35,7 +35,7 @@
     <message>
         <location filename="../view/mainpage.cpp" line="154"/>
         <source>Formatting will erase all data on the disk.</source>
-        <translation type="unfinished"/>
+        <translation>Операцията ще изчисти всички данни за вашето устройство.</translation>
     </message>
 </context>
 <context>
@@ -62,11 +62,6 @@
         <translation>Приключено</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="240"/>
-        <source>Failed to format</source>
-        <translation>Неуспешен формат</translation>
-    </message>
-    <message>
         <location filename="../view/mainwindow.cpp" line="236"/>
         <source>Quit</source>
         <translation>Изход</translation>
@@ -75,6 +70,11 @@
         <location filename="../view/mainwindow.cpp" line="237"/>
         <source>Your disk is removed when formatting</source>
         <translation>Диска ви се премехва при форматиране</translation>
+    </message>
+    <message>
+        <location filename="../view/mainwindow.cpp" line="240"/>
+        <source>Failed to format the device</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="241"/>
@@ -108,7 +108,7 @@
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
         <source>Formatting will erase all data on this disk, are you sure you want to continue? It cannot be restored.</source>
-        <translation type="unfinished"/>
+        <translation>Форматирането ще премахне всички данни от вашия диск, да продължа ли? Възстановяването е невъзможно.</translation>
     </message>
 </context>
 </TS>

@@ -11,17 +11,17 @@
 <context>
     <name>DiskMountPlugin</name>
     <message>
-        <location filename="../diskmountplugin.cpp" line="48"/>
+        <location filename="../diskmountplugin.cpp" line="49"/>
         <source>Disk</source>
         <translation>Tároló</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="102"/>
+        <location filename="../diskmountplugin.cpp" line="106"/>
         <source>Open</source>
         <translation>Megnyitás</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="108"/>
+        <location filename="../diskmountplugin.cpp" line="113"/>
         <source>Unmount all</source>
         <translation>Mindet leválaszt</translation>
     </message>
@@ -29,7 +29,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="292"/>
+        <location filename="../diskcontrolwidget.cpp" line="321"/>
         <source>Device has been removed</source>
         <translation>Az eszköz el lett távolítva</translation>
     </message>
