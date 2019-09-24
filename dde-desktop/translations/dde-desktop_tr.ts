@@ -73,57 +73,57 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="423"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="425"/>
         <source>Wallpaper Slideshow</source>
         <translation>Duvar Kağıdı Slayt Gösterisi</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="449"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="451"/>
         <source>When login</source>
         <translation>Oturum açıldığında</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="451"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="453"/>
         <source>When wakeup</source>
         <translation>Uykudan uyanıldığında</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="491"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="493"/>
         <source>Require a password on wakeup</source>
         <translation>Uyanıldığında parola sor</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="516"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="518"/>
         <source>Never</source>
         <translation>Asla</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="517"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="519"/>
         <source>Wait:</source>
         <translation>Bekleme:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="545"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="547"/>
         <source>Wallpaper</source>
         <translation>Duvar Kağıdı</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="545"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="547"/>
         <source>Screensaver</source>
         <translation>Ekran Koruyucu</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="607"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="609"/>
         <source>Only desktop</source>
         <translation>Sadece masaüstü</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="608"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="610"/>
         <source>Only lock screen</source>
         <translation>Sadece kilit ekranı</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="636"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="638"/>
         <source>Apply</source>
         <translation>Uygula</translation>
     </message>

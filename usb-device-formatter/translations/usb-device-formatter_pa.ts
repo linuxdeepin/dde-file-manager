@@ -62,11 +62,6 @@
         <translation>ਮੁਕੰਮਲ</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="240"/>
-        <source>Failed to format</source>
-        <translation>ਫਾਰਮੈਟ ਕਰਨ ਲਈ ਅਫ਼ਲ ਹੈ</translation>
-    </message>
-    <message>
         <location filename="../view/mainwindow.cpp" line="236"/>
         <source>Quit</source>
         <translation>ਬਾਹਰ</translation>
@@ -75,6 +70,11 @@
         <location filename="../view/mainwindow.cpp" line="237"/>
         <source>Your disk is removed when formatting</source>
         <translation>ਫਾਰਮੈਟ ਕਰਨ ਦੇ ਦੌਰਾਨ ਤੁਹਾਡੀ ਡਿਸਕ ਨੂੰ ਹਟਾਇਆ ਜਾਂਦਾ ਹੈ</translation>
+    </message>
+    <message>
+        <location filename="../view/mainwindow.cpp" line="240"/>
+        <source>Failed to format the device</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="241"/>

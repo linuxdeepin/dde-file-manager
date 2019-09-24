@@ -62,11 +62,6 @@
         <translation>Завршено</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="240"/>
-        <source>Failed to format</source>
-        <translation>Неуспело форматирање</translation>
-    </message>
-    <message>
         <location filename="../view/mainwindow.cpp" line="236"/>
         <source>Quit</source>
         <translation>Напусти</translation>
@@ -75,6 +70,11 @@
         <location filename="../view/mainwindow.cpp" line="237"/>
         <source>Your disk is removed when formatting</source>
         <translation>Ваш диск је уклоњен током форматирања</translation>
+    </message>
+    <message>
+        <location filename="../view/mainwindow.cpp" line="240"/>
+        <source>Failed to format the device</source>
+        <translation>Неуспело форматирање уређаја</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="241"/>

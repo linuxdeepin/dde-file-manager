@@ -73,57 +73,57 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="423"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="425"/>
         <source>Wallpaper Slideshow</source>
         <translation>Letra e murit paraqitje</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="449"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="451"/>
         <source>When login</source>
         <translation>Kur te kycesh</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="451"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="453"/>
         <source>When wakeup</source>
         <translation>Kur zgjohet</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="491"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="493"/>
         <source>Require a password on wakeup</source>
         <translation>Kerko fjalekalim ne zgjim</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="516"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="518"/>
         <source>Never</source>
         <translation>Kurre</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="517"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="519"/>
         <source>Wait:</source>
         <translation>Prit:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="545"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="547"/>
         <source>Wallpaper</source>
         <translation>Leter muri</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="545"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="547"/>
         <source>Screensaver</source>
         <translation>Ruajtesi i ekranit</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="607"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="609"/>
         <source>Only desktop</source>
         <translation>Vetem ne desktop</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="608"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="610"/>
         <source>Only lock screen</source>
         <translation>Vetem kyc ekranin</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="636"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="638"/>
         <source>Apply</source>
         <translation>Zbato</translation>
     </message>

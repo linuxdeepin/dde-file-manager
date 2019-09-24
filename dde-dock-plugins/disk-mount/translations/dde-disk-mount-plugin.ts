@@ -1,13 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
 <context>
     <name>DeepinStorage</name>
     <message>
         <location filename="../dattachedudisks2device.cpp" line="91"/>
         <location filename="../dattachedudisks2device.cpp" line="106"/>
         <source>%1 Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Volume</translation>
     </message>
 </context>
 <context>
@@ -15,17 +13,17 @@
     <message>
         <location filename="../diskmountplugin.cpp" line="49"/>
         <source>Disk</source>
-        <translation type="unfinished"></translation>
+        <translation>Disk</translation>
     </message>
     <message>
         <location filename="../diskmountplugin.cpp" line="106"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Open</translation>
     </message>
     <message>
         <location filename="../diskmountplugin.cpp" line="113"/>
         <source>Unmount all</source>
-        <translation type="unfinished"></translation>
+        <translation>Unmount all</translation>
     </message>
 </context>
 <context>
@@ -33,7 +31,7 @@
     <message>
         <location filename="../diskcontrolwidget.cpp" line="321"/>
         <source>Device has been removed</source>
-        <translation type="unfinished"></translation>
+        <translation>Device has been removed</translation>
     </message>
 </context>
 </TS>

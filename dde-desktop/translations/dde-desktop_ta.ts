@@ -73,57 +73,57 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="423"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="425"/>
         <source>Wallpaper Slideshow</source>
         <translation>வால்பேப்பர் ஸ்லைடுஷோ</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="449"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="451"/>
         <source>When login</source>
         <translation>உள்நுழையும் போது</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="451"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="453"/>
         <source>When wakeup</source>
         <translation>விழிப்புணர்வு போது</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="491"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="493"/>
         <source>Require a password on wakeup</source>
         <translation>விழிப்பூட்டலில் கடவுச்சொல் தேவை</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="516"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="518"/>
         <source>Never</source>
         <translation>ஒருபோதும்</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="517"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="519"/>
         <source>Wait:</source>
         <translation>காத்திரு:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="545"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="547"/>
         <source>Wallpaper</source>
         <translation>வால்பேப்பர்</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="545"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="547"/>
         <source>Screensaver</source>
         <translation>ஸ்கிரீன்சேவர்கள்</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="607"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="609"/>
         <source>Only desktop</source>
         <translation>டெஸ்க்டாப்பில் மட்டும்</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="608"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="610"/>
         <source>Only lock screen</source>
         <translation>திரையை மட்டுமே பூட்டு</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="636"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="638"/>
         <source>Apply</source>
         <translation>உபயோகி</translation>
     </message>

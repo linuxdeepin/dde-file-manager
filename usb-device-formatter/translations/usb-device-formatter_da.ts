@@ -62,11 +62,6 @@
         <translation>Færdig</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="240"/>
-        <source>Failed to format</source>
-        <translation>Formatering mislykkedes</translation>
-    </message>
-    <message>
         <location filename="../view/mainwindow.cpp" line="236"/>
         <source>Quit</source>
         <translation>Afslut</translation>
@@ -75,6 +70,11 @@
         <location filename="../view/mainwindow.cpp" line="237"/>
         <source>Your disk is removed when formatting</source>
         <translation>Din disk fjernes ved formatering</translation>
+    </message>
+    <message>
+        <location filename="../view/mainwindow.cpp" line="240"/>
+        <source>Failed to format the device</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="241"/>

@@ -62,11 +62,6 @@
         <translation>Hecho</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="240"/>
-        <source>Failed to format</source>
-        <translation>Error al formatear</translation>
-    </message>
-    <message>
         <location filename="../view/mainwindow.cpp" line="236"/>
         <source>Quit</source>
         <translation>Quitar</translation>
@@ -75,6 +70,11 @@
         <location filename="../view/mainwindow.cpp" line="237"/>
         <source>Your disk is removed when formatting</source>
         <translation>El disco se quitara al formatear</translation>
+    </message>
+    <message>
+        <location filename="../view/mainwindow.cpp" line="240"/>
+        <source>Failed to format the device</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="241"/>
