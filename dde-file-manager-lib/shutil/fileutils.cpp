@@ -448,8 +448,8 @@ QString FileUtils::diskUsageString(qint64 usedSize, qint64 totalSize)
     const qint64 mb = 1024 * kb;
     const QStringList unitDisplayText = {"B", "K", "M", "G", "T"};
 
-    return QString("%1/%2").arg(FileUtils::formatSize(usedSize, true, 0, usedSize < mb ? 2 : -1, unitDisplayText),
-                                FileUtils::formatSize(totalSize, true, 0, totalSize < mb ? 2 : -1, unitDisplayText));
+    return QObject::tr("%1/%2").arg(FileUtils::formatSize(usedSize, true, 0, usedSize < mb ? 2 : -1, unitDisplayText),
+                                    FileUtils::formatSize(totalSize, true, 0, totalSize < mb ? 2 : -1, unitDisplayText));
 }
 
 DUrl FileUtils::newDocumentUrl(const DAbstractFileInfoPointer targetDirInfo, const QString &baseName, const QString &suffix)
