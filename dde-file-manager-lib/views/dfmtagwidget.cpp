@@ -100,9 +100,9 @@ void DFMTagWidget::initUi()
     d->m_mainLayout = new QVBoxLayout;
     setLayout(d->m_mainLayout);
 
-    d->m_tagLable = new QLabel(tr("tag"), this);
+    d->m_tagLable = new QLabel(tr("Tag"), this);
     d->m_mainLayout->addWidget(d->m_tagLable);
-    d->m_tagLeftLable = new QLabel(tr("tag"), this);
+    d->m_tagLeftLable = new QLabel(tr("Tag"), this);
 
     d->m_tagActionWidget =  new DTagActionWidget(this);
     d->m_tagActionWidget->setMaximumHeight(20);
