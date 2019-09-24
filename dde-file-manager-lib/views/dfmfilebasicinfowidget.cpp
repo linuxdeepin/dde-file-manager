@@ -92,7 +92,7 @@ public:
     void setUrl(const DUrl &url);
 protected:
     void initUI();
-    void startComputerFolderSize(const DUrl &url);
+    void startCalcFolderSize();
     void update();
 
 private:
@@ -121,12 +121,21 @@ DFMFileBasicInfoWidgetPrivate::~DFMFileBasicInfoWidgetPrivate()
         m_sizeWorker->stop();
 }
 
-void DFMFileBasicInfoWidgetPrivate::startComputerFolderSize(const DUrl &url)
+void DFMFileBasicInfoWidgetPrivate::startCalcFolderSize()
 {
     Q_Q(DFMFileBasicInfoWidget);
 
-    DUrl validUrl = url;
-    if (url.isUserShareFile()) {
+    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(q, m_url);
+    if (!info)
+        return;
+    DUrl validUrl = m_url;
+    if (info->isSymLink()) {
+        validUrl = info->redirectedFileUrl();
+    } else {
+        validUrl = DUrl::fromLocalFile(info->toLocalFile());
+    }
+
+    if (validUrl.isUserShareFile()) {
         validUrl.setScheme(FILE_SCHEME);
     }
 
@@ -135,15 +144,7 @@ void DFMFileBasicInfoWidgetPrivate::startComputerFolderSize(const DUrl &url)
 
     if (!m_sizeWorker) {
         m_sizeWorker = new DFileStatisticsJob(q);
-
-        QObject::connect(m_sizeWorker, &DFileStatisticsJob::dataNotify, q,
-                [=](qint64 size, int filesCount, int directoryCount){
-            int m_fileCount = filesCount + directoryCount;
-            if (m_folderSizeLabel)
-                m_folderSizeLabel->setText(FileUtils::formatSize(size));
-            if (m_containSizeLabel)
-                m_containSizeLabel->setText(QString::number(m_fileCount));
-        });
+        QObject::connect(m_sizeWorker, &DFileStatisticsJob::dataNotify, q, &DFMFileBasicInfoWidget::updateSizeText);
     }
 
     m_sizeWorker->start(urls);
@@ -210,15 +211,6 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
         SectionKeyLabel *fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
         layout->addRow(sizeSectionLabel, m_folderSizeLabel);
         layout->addRow(fileAmountSectionLabel, m_containSizeLabel);
-
-        if (info->toLocalFile().isEmpty()) {
-            startComputerFolderSize(m_url);
-        } else if (info->isSymLink()) {
-            startComputerFolderSize(info->redirectedFileUrl());
-        } else {
-            startComputerFolderSize(DUrl::fromLocalFile(info->toLocalFile()));
-        }
-
         frameHeight += 30;
     } else {
         layout->addRow(sizeSectionLabel, m_containSizeLabel);
@@ -368,6 +360,26 @@ void DFMFileBasicInfoWidget::setShowMediaInfo(bool visible)
 {
     Q_D(DFMFileBasicInfoWidget);
     d->m_showMediaInfo = visible;
+}
+
+void DFMFileBasicInfoWidget::updateSizeText(qint64 size, int filesCount, int directoryCount)
+{
+    Q_D(DFMFileBasicInfoWidget);
+
+    if (d->m_folderSizeLabel)
+        d->m_folderSizeLabel->setText(FileUtils::formatSize(size));
+    if (d->m_containSizeLabel)
+        d->m_containSizeLabel->setText(QString::number(filesCount + directoryCount));
+}
+
+void DFMFileBasicInfoWidget::showEvent(QShowEvent *event)
+{
+    Q_D(DFMFileBasicInfoWidget);
+    if (d->m_folderSizeLabel && d->m_folderSizeLabel->text().isEmpty()) {
+        d->startCalcFolderSize();
+    }
+
+    return QFrame::showEvent(event);
 }
 
 DFM_END_NAMESPACE
