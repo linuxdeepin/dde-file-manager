@@ -115,8 +115,8 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     textrect.setHeight(par->fontInfo().pixelSize());
 
     painter->setPen(qApp->palette().color(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Text));
-    painter->drawText(textrect, Qt::AlignLeft, QString("%1 in use").arg(FileUtils::formatSize(index.data(ComputerModel::DataRoles::SizeInUseRole).toULongLong())));
-    painter->drawText(textrect, Qt::AlignRight, QString("%1 Total").arg(FileUtils::formatSize(index.data(ComputerModel::DataRoles::SizeTotalRole).toULongLong())));
+    painter->drawText(textrect, Qt::AlignLeft, FileUtils::diskUsageString(index.data(ComputerModel::DataRoles::SizeInUseRole).toULongLong(),
+                                                                          index.data(ComputerModel::DataRoles::SizeTotalRole).toULongLong()));
 
     ProgressLine *usgpl = index.data(ComputerModel::DataRoles::UsgWidgetRole).value<ProgressLine*>();
     if (usgpl->width() != text_max_width) {
