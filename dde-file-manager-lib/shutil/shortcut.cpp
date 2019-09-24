@@ -57,7 +57,7 @@ Shortcut::Shortcut(QObject *parent) : QObject(parent)
                       << ShortcutItem(tr("Help"),tr("F1 "))
                       << ShortcutItem(tr("Keyboard shortcuts"),tr("Ctrl + Shift + / "));
     group4.groupName = tr("Switch display status");
-    group4.groupItems << ShortcutItem(tr("Hide item"),tr("Ctrl + h "))
+    group4.groupItems << ShortcutItem(tr("Hide item"),tr("Ctrl + H "))
                       << ShortcutItem(tr("Input in address bar"),tr("Ctrl + L "))
                       << ShortcutItem(tr("Switch to icon view"),tr("Ctrl + 1 "))
                       << ShortcutItem(tr("Switch to list view"),tr("Ctrl + 2 "));
