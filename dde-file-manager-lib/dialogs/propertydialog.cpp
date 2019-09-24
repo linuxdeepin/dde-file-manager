@@ -330,6 +330,9 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         uint64_t dskspace = fi->extraProperties()["fsSize"].toULongLong();
         uint64_t dskinuse = fi->extraProperties()["fsUsed"].toULongLong();
         QString devid(fi->suffix() == SUFFIX_GVFSMP ? fi->fileDisplayName() : fi->baseName());
+        if (devid == name) {
+            devid.clear();
+        }
 
         QProgressBar* progbdf = new DFProgressBar();
         progbdf->setMaximum(10000);
