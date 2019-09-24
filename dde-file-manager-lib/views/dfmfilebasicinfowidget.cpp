@@ -184,7 +184,7 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
 
     int frameHeight = 160;
     if (m_showFileName){
-        QLabel *fileNameKeyLabel = new SectionKeyLabel(QObject::tr("File name"));
+        QLabel *fileNameKeyLabel = new SectionKeyLabel(QObject::tr("Name"));
         QLabel *fileNameLabel = new SectionValueLabel(info->fileDisplayName());
         QString text = info->fileDisplayName();
         fileNameLabel->setText(fileNameLabel->fontMetrics().elidedText(text, Qt::ElideMiddle, fileNameLabel->width()));
@@ -232,7 +232,7 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
                 QString text = mediaInfo.Value("Width", DFMMediaInfo::Image);
                 if (!text.isEmpty()) {
                     text.append("x").append(mediaInfo.Value("Height", DFMMediaInfo::Image));
-                    QLabel *pixelKeyLabel = new SectionKeyLabel(QObject::tr("Picture size"));
+                    QLabel *pixelKeyLabel = new SectionKeyLabel(QObject::tr("Dimension"));
                     QLabel *pixelLabel = new SectionValueLabel;
                     pixelLabel->setText(text);
                     layout->addRow(pixelKeyLabel, pixelLabel);
@@ -284,7 +284,7 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
     }
 
     if (info->isSymLink()) {
-        SectionKeyLabel *linkPathSectionLabel = new SectionKeyLabel(QObject::tr("Link path"));
+        SectionKeyLabel *linkPathSectionLabel = new SectionKeyLabel(QObject::tr("Location"));
 
         LinkSectionValueLabel *linkPathLabel = new LinkSectionValueLabel(info->symlinkTargetPath());
         linkPathLabel->setToolTip(info->symlinkTargetPath());

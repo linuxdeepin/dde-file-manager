@@ -973,7 +973,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     }
 
     if (info->isSymLink()) {
-        SectionKeyLabel *linkPathSectionLabel = new SectionKeyLabel(QObject::tr("Link path"));
+        SectionKeyLabel *linkPathSectionLabel = new SectionKeyLabel(QObject::tr("Location"));
 
         LinkSectionValueLabel *linkPathLabel = new LinkSectionValueLabel(info->symlinkTargetPath());
         linkPathLabel->setToolTip(info->symlinkTargetPath());
