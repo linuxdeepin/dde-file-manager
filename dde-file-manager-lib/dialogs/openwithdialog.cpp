@@ -213,6 +213,7 @@ void OpenWithDialog::initUI()
     m_scrollArea = new QScrollArea(this);
     m_scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_scrollArea->setFrameShape(QFrame::NoFrame);
+    m_scrollArea->setWidgetResizable(true);
     QScroller::grabGesture(m_scrollArea);
     m_scrollArea->installEventFilter(this);
 
