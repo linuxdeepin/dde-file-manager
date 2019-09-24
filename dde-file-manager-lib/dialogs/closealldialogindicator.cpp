@@ -68,7 +68,7 @@ void CloseAllDialogIndicator::initConnect()
 
 void CloseAllDialogIndicator::setTotalMessage(qint64 size, int count)
 {
-    QString message = tr("Total size is %1, contains %2 files").arg(FileUtils::formatSize(size), QString::number(count));
+    QString message = tr("Total size: %1, %2 files").arg(FileUtils::formatSize(size), QString::number(count));
     m_messageLabel->setText(message);
 }
 
