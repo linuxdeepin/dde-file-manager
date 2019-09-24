@@ -51,9 +51,9 @@ void ProgressLine::paintEvent(QPaintEvent *event){
 
     QColor bColor = pal.color(QPalette::Base);
     QColor cColor;
-    if(percent <= 0.5)
+    if(percent <= 0.7)
         cColor = pal.color(QPalette::Highlight);
-    else if(percent > 0.5 && percent <= 0.8)
+    else if(percent > 0.7 && percent <= 0.9)
         cColor = QColor("#F89B2C");
     else
         cColor = QColor("#FF4E78");
