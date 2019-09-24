@@ -875,7 +875,7 @@
         <location filename="../controllers/filecontroller.cpp" line="404"/>
         <location filename="../controllers/filecontroller.cpp" line="423"/>
         <location filename="../controllers/filecontroller.cpp" line="442"/>
-        <source>Please install File Roller first and then continue.</source>
+        <source>Please install File Roller first and then continue</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1916,21 +1916,21 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="944"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="695"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="197"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="198"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="964"/>
         <location filename="../dialogs/propertydialog.cpp" line="1047"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="210"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="211"/>
         <source>Contains</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="945"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="696"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="198"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="199"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1938,7 +1938,7 @@
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
         <location filename="../dialogs/propertydialog.cpp" line="948"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="698"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="200"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="201"/>
         <source>Time modified</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2196,7 +2196,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="949"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="710"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="201"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="202"/>
         <source>Source path</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2360,7 +2360,7 @@
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="694"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="187"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="188"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2656,7 +2656,7 @@
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="976"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="287"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="279"/>
         <location filename="../views/drenamebar.cpp" line="263"/>
         <source>Location</source>
         <translation type="unfinished"></translation>
@@ -2667,12 +2667,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="235"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="227"/>
         <source>Dimension</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="273"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="265"/>
         <source>Duration</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2726,7 +2726,7 @@
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="173"/>
         <location filename="../dialogs/propertydialog.cpp" line="947"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="199"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="200"/>
         <source>Time access</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3309,22 +3309,52 @@
     <name>VaultGeneratedKeyPage</name>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="98"/>
-        <source>Find your recovery key below. Please take good care of it by printing, writing down or saving it to a USB flash drive</source>
+        <source>Find your recovery key below</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="99"/>
-        <source>Your recovery key is as important as your password. Please do not save the key file to this computer</source>
+        <source>Take good care of the recovery key by printing, writing down or saving it to a USB flash drive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="100"/>
+        <source>Your recovery key is as important as your password. Do not save the key file on this computer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="111"/>
+        <source>File Vault Recovery Key:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="112"/>
+        <source>To verify that this is the correct recovery key, compare the following key ID with the key ID displayed on your PC.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="113"/>
+        <source>Key ID: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="114"/>
-        <source>Save to file</source>
+        <source>If they are identical, then use the following key to retrieve your vault password.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="115"/>
-        <source>Finish</source>
+        <source>Recovery Key: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="119"/>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="120"/>
+        <source>Done</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3360,20 +3390,17 @@
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="45"/>
-        <source>Welcome to use File Vault
-</source>
+        <source>Welcome to use File Vault</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="46"/>
-        <source>Create secure private space here
-</source>
+        <source>Create secure private space here</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="47"/>
-        <source>Advanced encryption technology, safe and secure
-</source>
+        <source>Advanced encryption technology, safe and secure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
