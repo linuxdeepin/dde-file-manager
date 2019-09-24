@@ -18,8 +18,12 @@
     </message>
     <message>
         <location filename="../dialogs/closealldialogindicator.cpp" line="71"/>
+        <source>Total size: %1, %2 files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Total size is %1, contains %2 files</source>
-        <translation>总容量%1，总文件数%2个</translation>
+        <translation type="vanished">总容量%1，总文件数%2个</translation>
     </message>
 </context>
 <context>
@@ -264,6 +268,14 @@
         <location filename="../views/dfmtagwidget.cpp" line="103"/>
         <location filename="../views/dfmtagwidget.cpp" line="105"/>
         <source>Tag</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DFMVaultUnlockPages</name>
+    <message>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="38"/>
+        <source>Enter the vault password</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1953,17 +1965,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="339"/>
+        <location filename="../dialogs/propertydialog.cpp" line="342"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="340"/>
+        <location filename="../dialogs/propertydialog.cpp" line="343"/>
         <source>%1 / %2</source>
         <translation>%1 / %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1237"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1240"/>
         <source>Allow to execute as program</source>
         <translation>允许以程序执行</translation>
     </message>
@@ -1975,21 +1987,21 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="941"/>
+        <location filename="../dialogs/propertydialog.cpp" line="944"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="695"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="197"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="961"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1044"/>
+        <location filename="../dialogs/propertydialog.cpp" line="964"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1047"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="210"/>
         <source>Contains</source>
         <translation>文件个数</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="942"/>
+        <location filename="../dialogs/propertydialog.cpp" line="945"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="696"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="198"/>
         <source>Type</source>
@@ -2001,78 +2013,76 @@
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
-        <location filename="../dialogs/propertydialog.cpp" line="945"/>
+        <location filename="../dialogs/propertydialog.cpp" line="948"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="698"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="200"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="973"/>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="287"/>
         <source>Link path</source>
-        <translation>链接路径</translation>
+        <translation type="vanished">链接路径</translation>
     </message>
     <message>
         <source>Device type</source>
         <translation type="vanished">设备类型</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1045"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1048"/>
         <source>Free space</source>
         <translation>可用空间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1040"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1043"/>
         <source>Total space</source>
         <translation>总容量</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1042"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1045"/>
         <source>Filesystem</source>
         <translation>文件系统</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1149"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1152"/>
         <source>Access denied</source>
         <translation>不可读不可写</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1150"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1160"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1153"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1163"/>
         <source>Executable</source>
         <translation>可执行</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1151"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1152"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1154"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1155"/>
         <source>Write only</source>
         <translation>可写不可读</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1153"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1154"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1156"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1157"/>
         <source>Read only</source>
         <translation>只读</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1155"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1156"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1158"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1159"/>
         <source>Read-write</source>
         <translation>读写</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1232"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1235"/>
         <source>Others</source>
         <translation>其他</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1230"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1233"/>
         <source>Owner</source>
         <translation>所有者</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1231"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1234"/>
         <source>Group</source>
         <translation>群组</translation>
     </message>
@@ -2257,7 +2267,7 @@
         <translation>新建文档</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="943"/>
+        <location filename="../dialogs/propertydialog.cpp" line="946"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="697"/>
         <source>Time created</source>
         <translation>创建时间</translation>
@@ -2269,7 +2279,7 @@
         <translation>退出登录并卸载</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="946"/>
+        <location filename="../dialogs/propertydialog.cpp" line="949"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="710"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="201"/>
         <source>Source path</source>
@@ -2284,11 +2294,6 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="713"/>
         <source>Cancel sharing</source>
         <translation>取消共享</translation>
-    </message>
-    <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="714"/>
-        <source>Deepin Vault</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="715"/>
@@ -2364,6 +2369,11 @@
         <translation>全部还原</translation>
     </message>
     <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="714"/>
+        <source>File Vault</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="343"/>
         <source>Auto mount</source>
         <translation>自动挂载</translation>
@@ -2435,6 +2445,7 @@
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="694"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="187"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
@@ -2520,14 +2531,14 @@
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="315"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1044"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1047"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="641"/>
         <source>%1 item</source>
         <translation>%1 项</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="317"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1044"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1047"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="643"/>
         <source>%1 items</source>
         <translation>%1 项</translation>
@@ -2729,19 +2740,20 @@
         <translation>添加</translation>
     </message>
     <message>
+        <location filename="../dialogs/propertydialog.cpp" line="976"/>
+        <location filename="../views/dfmfilebasicinfowidget.cpp" line="287"/>
         <location filename="../views/drenamebar.cpp" line="263"/>
         <source>Location</source>
         <translation>位置</translation>
     </message>
     <message>
-        <location filename="../views/dfmfilebasicinfowidget.cpp" line="187"/>
         <location filename="../views/drenamebar.cpp" line="270"/>
         <source>File name</source>
         <translation>文件名</translation>
     </message>
     <message>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="235"/>
-        <source>Picture size</source>
+        <source>Dimension</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2798,7 +2810,7 @@
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="173"/>
-        <location filename="../dialogs/propertydialog.cpp" line="944"/>
+        <location filename="../dialogs/propertydialog.cpp" line="947"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="199"/>
         <source>Time access</source>
         <translation type="unfinished"></translation>
@@ -3446,51 +3458,87 @@
     </message>
 </context>
 <context>
+    <name>VaultGeneratedKeyPage</name>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="98"/>
+        <source>Find your recovery key below. Please take good care of it by printing, writing down or saving it to a USB flash drive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="99"/>
+        <source>Your recovery key is as important as your password. Please do not save the key file to this computer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="114"/>
+        <source>Save to file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="115"/>
+        <source>Finish</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>VaultSetupSetPasswordPage</name>
     <message>
-        <location filename="../views/dfmvaultsetuppages.cpp" line="80"/>
-        <source>Finished</source>
+        <location filename="../views/dfmvaultsetuppages.cpp" line="81"/>
+        <source>Next</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultsetuppages.cpp" line="90"/>
+        <source>Set a password for the vault</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>VaultSetupWelcomePage</name>
     <message>
-        <location filename="../views/dfmvaultsetuppages.cpp" line="32"/>
+        <location filename="../views/dfmvaultsetuppages.cpp" line="33"/>
         <source>Create a new vault</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultsetuppages.cpp" line="33"/>
+        <location filename="../views/dfmvaultsetuppages.cpp" line="34"/>
         <source>Import a vault</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultsetuppages.cpp" line="43"/>
-        <source>Vault</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="44"/>
-        <source>Welcome to use Deepin Vault.
-</source>
+        <source>File Vault</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="45"/>
-        <source>Create secure private space here.
+        <source>Welcome to use File Vault
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="46"/>
-        <source>Advanced encryption technology, safe and secure.
+        <source>Create secure private space here
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="47"/>
-        <source>Convenient and easy to use.</source>
+        <source>Advanced encryption technology, safe and secure
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultsetuppages.cpp" line="48"/>
+        <source>Convenient and easy to use</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>VaultVerifyUserPage</name>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="38"/>
+        <source>Enter the vault password</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
