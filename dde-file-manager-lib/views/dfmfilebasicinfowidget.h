@@ -80,7 +80,9 @@ public:
     bool showMediaInfo();
     void setShowMediaInfo(bool visible);
 
-
+protected:
+    void updateSizeText(qint64 size, int filesCount, int directoryCount);
+    virtual void showEvent(QShowEvent *event);
 private:
     QScopedPointer<DFMFileBasicInfoWidgetPrivate> d_private;
     Q_DECLARE_PRIVATE_D(d_private, DFMFileBasicInfoWidget)
