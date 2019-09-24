@@ -42,7 +42,7 @@ VaultSetupWelcomePage::VaultSetupWelcomePage(QWidget *parent)
     icon->setMinimumHeight(64);
 
     QLabel * title = new QLabel(tr("File Vault"), this);
-    QLabel * description = new QLabel(tr("Welcome to use File Vault") + '\n' +
+    QLabel * description = new QLabel(tr("Welcome to File Vault") + '\n' +
                                       tr("Create secure private space here") + '\n' +
                                       tr("Advanced encryption technology, safe and secure") + '\n' +
                                       tr("Convenient and easy to use"), this);
