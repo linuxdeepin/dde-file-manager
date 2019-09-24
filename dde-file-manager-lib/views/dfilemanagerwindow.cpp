@@ -87,6 +87,7 @@
 #include <QPair>
 #include <QtConcurrent>
 #include <QSplitter>
+#include <DAnchors>
 
 DWIDGET_USE_NAMESPACE
 
@@ -125,7 +126,7 @@ public:
     QSplitter *splitter { nullptr };
     QFrame *titleFrame { nullptr };
     QStackedLayout *viewStackLayout { nullptr };
-    QPushButton *emptyTrashButton { nullptr };
+    QFrame *emptyTrashHolder { nullptr };
     DRenameBar *renameBar{ nullptr };
     DFMAdvanceSearchBar *advanceSearchBar = nullptr;
 
@@ -412,7 +413,7 @@ void DFileManagerWindowPrivate::initRenameBar()
     // see the comment in initAdvanceSearchBar()
     renameBar = new DRenameBar(q);
 
-    rightViewLayout->insertWidget(rightViewLayout->indexOf(emptyTrashButton) + 1, renameBar);
+    rightViewLayout->insertWidget(rightViewLayout->indexOf(emptyTrashHolder) + 1, renameBar);
 
     QObject::connect(renameBar, &DRenameBar::clickCancelButton, q, &DFileManagerWindow::hideRenameBar);
 }
@@ -520,13 +521,13 @@ void DFileManagerWindow::hideNewTabButton()
 void DFileManagerWindow::showEmptyTrashButton()
 {
     Q_D(DFileManagerWindow);
-    d->emptyTrashButton->show();
+    d->emptyTrashHolder->show();
 }
 
 void DFileManagerWindow::hideEmptyTrashButton()
 {
     Q_D(DFileManagerWindow);
-    d->emptyTrashButton->hide();
+    d->emptyTrashHolder->hide();
 }
 
 void DFileManagerWindow::onNewTabButtonClicked()
@@ -982,12 +983,28 @@ void DFileManagerWindow::initRightView()
 
     this->initRenameBarState();
 
-    d->emptyTrashButton = new QPushButton{ this };
-    d->emptyTrashButton->setFixedHeight(25);
-    d->emptyTrashButton->hide();
-    d->emptyTrashButton->setContentsMargins(0, 0, 0, 0);
-    d->emptyTrashButton->setIcon(QIcon::fromTheme("trash-empty"));
-    d->emptyTrashButton->setObjectName("EmptyTrashButton");
+    d->emptyTrashHolder = new QFrame(this);
+    d->emptyTrashHolder->setFrameShape(QFrame::NoFrame);
+    QHBoxLayout *emptyTrashLayout = new QHBoxLayout(d->emptyTrashHolder);
+    QLabel *trashLabel = new QLabel(this);
+    trashLabel->setText(tr("Trash"));
+    QFont f = trashLabel->font();
+    f.setPixelSize(17);
+    f.setBold(true);
+    trashLabel->setFont(f);
+    QPushButton *emptyTrashButton = new QPushButton{ this };
+    emptyTrashButton->setContentsMargins(0, 0, 0, 0);
+    emptyTrashButton->setObjectName("EmptyTrashButton");
+    emptyTrashButton->setText(tr("Clear"));
+    emptyTrashButton->setToolTip(QObject::tr("Empty Trash"));
+    emptyTrashButton->setFixedSize({86, 36});
+    QObject::connect(emptyTrashButton, &QPushButton::clicked,
+                     this, &DFileManagerWindow::requestEmptyTrashFiles, Qt::QueuedConnection);
+    QPalette pa = emptyTrashButton->palette();
+    pa.setColor(QPalette::ColorRole::Text, QColor("#FF5736"));
+    emptyTrashButton->setPalette(pa);
+    emptyTrashLayout->addWidget(trashLabel, 0, Qt::AlignLeft);
+    emptyTrashLayout->addWidget(emptyTrashButton, 0, Qt::AlignRight);
 
     QHBoxLayout *tabBarLayout = new QHBoxLayout;
     tabBarLayout->setMargin(0);
@@ -997,11 +1014,12 @@ void DFileManagerWindow::initRightView()
 
     d->rightViewLayout = new QVBoxLayout;
     d->rightViewLayout->addLayout(tabBarLayout);
-    d->rightViewLayout->addWidget(d->emptyTrashButton);
+    d->rightViewLayout->addWidget(d->emptyTrashHolder);
     d->rightViewLayout->addLayout(d->viewStackLayout);
     d->rightViewLayout->setSpacing(0);
     d->rightViewLayout->setContentsMargins(0, 0, 0, 0);
     d->rightView->setLayout(d->rightViewLayout);
+    d->emptyTrashHolder->hide();
 }
 
 void DFileManagerWindow::initToolBar()
@@ -1082,9 +1100,6 @@ void DFileManagerWindow::initConnect()
     QObject::connect(d->tabBar, &TabBar::tabBarShown, this, &DFileManagerWindow::showNewTabButton);
     QObject::connect(d->tabBar, &TabBar::tabBarHidden, this, &DFileManagerWindow::hideNewTabButton);
     QObject::connect(d->newTabButton, &QPushButton::clicked, this, &DFileManagerWindow::onNewTabButtonClicked);
-
-    QObject::connect(d->emptyTrashButton, &QPushButton::clicked,
-                     this, &DFileManagerWindow::requestEmptyTrashFiles, Qt::QueuedConnection);
 
     QObject::connect(fileSignalManager, &FileSignalManager::trashStateChanged, this, &DFileManagerWindow::onTrashStateChanged);
     QObject::connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DFileManagerWindow::onTrashStateChanged);
