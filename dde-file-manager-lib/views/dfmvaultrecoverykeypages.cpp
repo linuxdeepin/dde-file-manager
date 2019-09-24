@@ -95,8 +95,9 @@ VaultGeneratedKeyPage::VaultGeneratedKeyPage(QWidget *parent)
     icon->setIconSize(QSize(64, 64));
     icon->setMinimumHeight(64);
 
-    QLabel * title = new QLabel(tr("Find your recovery key below. Please take good care of it by printing, writing down or saving it to a USB flash drive"), this);
-    QLabel * description = new QLabel(tr("Your recovery key is as important as your password. Please do not save the key file to this computer"), this);
+    QLabel * title = new QLabel(tr("Find your recovery key below") + '\n' +
+                                tr("Take good care of the recovery key by printing, writing down or saving it to a USB flash drive"), this);
+    QLabel * description = new QLabel(tr("Your recovery key is as important as your password. Do not save the key file on this computer"), this);
     title->setAlignment(Qt::AlignHCenter);
     title->setWordWrap(true);
     description->setAlignment(Qt::AlignHCenter);
@@ -106,13 +107,17 @@ VaultGeneratedKeyPage::VaultGeneratedKeyPage(QWidget *parent)
     title->setFont(font);
 
     m_generatedKeyEdit = new QPlainTextEdit(this);
-    m_generatedKeyEdit->setPlainText(DSecureString("Hint text:\nAAAA-BBBB-CCCC-DDDD-EEEE-FFFF-GGGG-HHHH\n") +
-                                     "Hint text:\nAAAA-BBBB-CCCC-DDDD-EEEE-FFFF-GGGG-HHHH");
+    m_generatedKeyEdit->setPlainText(
+                tr("File Vault Recovery Key:") + '\n' + '\n' +
+                tr("To verify that this is the correct recovery key, compare the following key ID with the key ID displayed on your PC.") + '\n' +
+                tr("Key ID: %1").arg("AAAA-BBBB-CCCC-DDDD-EEEE-FFFF-GGGG-HHHH") + '\n' + '\n' +
+                tr("If they are identical, then use the following key to retrieve your vault password.") + '\n' +
+                tr("Recovery Key: %1").arg("AAAA-BBBB-CCCC-DDDD-EEEE-FFFF-GGGG-HHHH") + '\n');
     m_generatedKeyEdit->setMaximumHeight(100);
     m_generatedKeyEdit->setReadOnly(true);
 
-    m_saveFileButton = new QPushButton(tr("Save to file"), this);
-    m_finishButton = new QPushButton(tr("Finish"), this);
+    m_saveFileButton = new QPushButton(tr("Save"), this);
+    m_finishButton = new QPushButton(tr("Done"), this);
 
     layout->addStretch();
     layout->addWidget(icon);
