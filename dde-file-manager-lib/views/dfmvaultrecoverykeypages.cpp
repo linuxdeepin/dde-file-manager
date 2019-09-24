@@ -108,7 +108,7 @@ VaultGeneratedKeyPage::VaultGeneratedKeyPage(QWidget *parent)
 
     m_generatedKeyEdit = new QPlainTextEdit(this);
     m_generatedKeyEdit->setPlainText(
-                tr("File Vault Recovery Key:") + '\n' + '\n' +
+                tr("File Vault Recovery Key") + '\n' + '\n' +
                 tr("To verify that this is the correct recovery key, compare the following key ID with the key ID displayed on your PC.") + '\n' +
                 tr("Key ID: %1").arg("AAAA-BBBB-CCCC-DDDD-EEEE-FFFF-GGGG-HHHH") + '\n' + '\n' +
                 tr("If they are identical, then use the following key to retrieve your vault password.") + '\n' +
