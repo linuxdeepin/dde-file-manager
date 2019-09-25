@@ -27,6 +27,13 @@ class VaultHeaderView : public QWidget
     Q_OBJECT
 public:
     explicit VaultHeaderView(QWidget *parent = nullptr);
+
+signals:
+    void requestLockVault();
+    void requestGenerateRecoveryKey();
+
+private:
+    QMenu * createMenu();
 };
 
 class DFMVaultFileView : public DFileView

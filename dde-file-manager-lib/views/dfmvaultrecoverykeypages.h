@@ -68,8 +68,12 @@ public:
 signals:
     void requestRedirect(DUrl url);
 
+public slots:
+    void startKeyGeneration();
+
 private:
     void clearData();
+    DSecureString createRecoveryKeyString(const DSecureString &ivHexString, const DSecureString &keyHexString);
 
     QPushButton * m_saveFileButton;
     QPushButton * m_finishButton;
@@ -87,6 +91,12 @@ public:
 
     QPair<DUrl, bool> requireRedirect(VaultController::VaultState state) override;
     QString pageString(const DUrl & url) override;
+
+signals:
+    void requestCreateRecoveryKey();
+
+public slots:
+    void onRootPageChanged(QString pageStr);
 };
 
 DFM_END_NAMESPACE

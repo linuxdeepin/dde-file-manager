@@ -32,7 +32,14 @@ DFMVaultPages::DFMVaultPages(QWidget *parent)
 
 void DFMVaultPages::setRootUrl(const DUrl &url)
 {
-    m_layout->setCurrentWidget(m_pages[pageString(url)]);
+    QString pageStr = pageString(url);
+    m_layout->setCurrentWidget(m_pages[pageStr]);
+    emit rootPageChanged(pageStr);
+}
+
+QWidget *DFMVaultPages::page(const QString &pageName)
+{
+    return m_pages.value(pageName, nullptr);
 }
 
 void DFMVaultPages::insertPage(const QString &pageName, QWidget *widget)

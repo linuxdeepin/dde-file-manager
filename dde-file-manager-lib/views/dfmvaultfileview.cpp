@@ -24,20 +24,20 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <DIconButton>
+#include <QMenu>
 
 DWIDGET_USE_NAMESPACE
 
 VaultHeaderView::VaultHeaderView(QWidget *parent)
     : QWidget (parent)
 {
-    QLabel * lb = new QLabel("Vault", this);
+    QLabel * lb = new QLabel(tr("File Vault"), this);
     QFont font = lb->font();
     font.setBold(true);
     font.setPixelSize(24);
     lb->setFont(font);
 
     DIconButton * menuBtn = new DIconButton(DStyle::SP_TitleBarMenuButton, this);
-    menuBtn->setFlat(true);
     menuBtn->setFixedSize(QSize(32, 32));
 
     QHBoxLayout * layout = new QHBoxLayout(this);
@@ -45,6 +45,22 @@ VaultHeaderView::VaultHeaderView(QWidget *parent)
     layout->addStretch();
 
     layout->addWidget(menuBtn);
+
+    connect(menuBtn, &QAbstractButton::clicked, this, [=](){
+        QMenu * menu = createMenu();
+        menu->exec(menuBtn->mapToGlobal(menuBtn->rect().center()));
+        menu->deleteLater();
+    });
+}
+
+QMenu *VaultHeaderView::createMenu()
+{
+    QMenu * menu = new QMenu;
+
+    menu->addAction(tr("Lock vault"), this, &VaultHeaderView::requestLockVault);
+    menu->addAction(tr("Generate key file"), this, &VaultHeaderView::requestGenerateRecoveryKey);
+
+    return menu;
 }
 
 // --------------------------------------------
@@ -52,8 +68,19 @@ VaultHeaderView::VaultHeaderView(QWidget *parent)
 DFMVaultFileView::DFMVaultFileView(QWidget *parent)
     : DFileView(parent)
 {
-    int index = this->addHeaderWidget(new VaultHeaderView(this));
+    VaultHeaderView * headerView = new VaultHeaderView(this);
+    int index = this->addHeaderWidget(headerView);
     Q_UNUSED(index);
+
+    connect(headerView, &VaultHeaderView::requestLockVault, this, [this](){
+        if (VaultController::lockVault()) {
+            cd(VaultController::makeVaultUrl("/", "unlock"));
+        }
+    });
+
+    connect(headerView, &VaultHeaderView::requestGenerateRecoveryKey, this, [this](){
+        cd(VaultController::makeVaultUrl("/verify", "recovery_key"));
+    });
 }
 
 bool DFMVaultFileView::setRootUrl(const DUrl &url)
