@@ -391,6 +391,13 @@ bool DAbstractFileInfo::isTaged() const
     return false;
 }
 
+bool DAbstractFileInfo::canTag() const
+{
+    CALL_PROXY(canTag());
+
+    return false;
+}
+
 bool DAbstractFileInfo::isWritableShared() const
 {
     CALL_PROXY(isWritableShared());

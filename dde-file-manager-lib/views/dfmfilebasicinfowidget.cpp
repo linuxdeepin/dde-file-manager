@@ -102,6 +102,7 @@ private:
     bool         m_showFileName{ false };
     bool         m_showPicturePixel{ false };
     bool         m_showMediaInfo{ false };
+    bool         m_showSummaryOnly{ false };
 
     DFM_NAMESPACE::DFileStatisticsJob* m_sizeWorker{ nullptr };
 
@@ -124,6 +125,8 @@ DFMFileBasicInfoWidgetPrivate::~DFMFileBasicInfoWidgetPrivate()
 void DFMFileBasicInfoWidgetPrivate::startCalcFolderSize()
 {
     Q_Q(DFMFileBasicInfoWidget);
+    if (m_showSummaryOnly)
+        return;
 
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(q, m_url);
     if (!info)
@@ -208,12 +211,14 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
     SectionValueLabel *timeModifiedLabel = new SectionValueLabel(info->lastModifiedDisplayName());
 
     if (info->isDir()) {
-        SectionKeyLabel *fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
-        layout->addRow(sizeSectionLabel, m_folderSizeLabel);
-        layout->addRow(fileAmountSectionLabel, m_containSizeLabel);
-        frameHeight += 30;
+        if (!m_showSummaryOnly) {
+            SectionKeyLabel *fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
+            layout->addRow(sizeSectionLabel, m_folderSizeLabel);
+            layout->addRow(fileAmountSectionLabel, m_containSizeLabel);
+            frameHeight += 30;
+        }
     } else {
-        layout->addRow(sizeSectionLabel, m_containSizeLabel);
+        layout->addRow(sizeSectionLabel, m_folderSizeLabel);
     }
 
     if (m_showPicturePixel) {
@@ -372,6 +377,18 @@ void DFMFileBasicInfoWidget::setShowMediaInfo(bool visible)
 {
     Q_D(DFMFileBasicInfoWidget);
     d->m_showMediaInfo = visible;
+}
+
+bool DFMFileBasicInfoWidget::showSummary()
+{
+    Q_D(DFMFileBasicInfoWidget);
+    return d->m_showSummaryOnly;
+}
+
+void DFMFileBasicInfoWidget::setShowSummary(bool enable)
+{
+    Q_D(DFMFileBasicInfoWidget);
+    d->m_showSummaryOnly = enable;
 }
 
 void DFMFileBasicInfoWidget::updateSizeText(qint64 size, int filesCount, int directoryCount)

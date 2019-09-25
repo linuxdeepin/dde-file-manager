@@ -79,6 +79,8 @@ public:
     void setShowPicturePixel(bool visible);
     bool showMediaInfo();
     void setShowMediaInfo(bool visible);
+    bool showSummary(); // 目录只显示概要， 包含几个文件等。
+    void setShowSummary(bool enable);
 
 protected:
     void updateSizeText(qint64 size, int filesCount, int directoryCount);

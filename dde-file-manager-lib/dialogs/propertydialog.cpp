@@ -490,7 +490,8 @@ void PropertyDialog::initUI()
     QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(this->layout());
     layout->insertLayout(1, scrolllayout, 1);
 
-    if (DFMTagWidget::shouldShow(m_url)) {
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
+    if (fileInfo && fileInfo->canTag()) {
         DFMTagWidget *tagInfoFrame = new DFMTagWidget(m_url, this);
         m_tagInfoFrame = tagInfoFrame;
 

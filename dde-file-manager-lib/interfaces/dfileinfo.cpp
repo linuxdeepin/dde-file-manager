@@ -43,6 +43,7 @@
 #include "dmimedatabase.h"
 #include "dabstractfilewatcher.h"
 #include "dstorageinfo.h"
+#include "shutil/danythingmonitorfilter.h"
 
 #ifdef SW_LABEL
 #include "sw_label/filemanagerlibrary.h"
@@ -468,6 +469,19 @@ bool DFileInfo::canFetch() const
         return false;
 
     return isDir() || FileUtils::isArchive(absoluteFilePath());
+}
+
+bool DFileInfo::canTag() const
+{
+#ifdef DISABLE_TAG_SUPPORT
+    return false;
+#endif // DISABLE_TAG_SUPPORT
+
+    bool isFiltered = DAnythingMonitorFilter::instance()->whetherFilterCurrentPath(toLocalFile().toLocal8Bit());
+    if (!isFiltered)
+        return false;
+
+    return !systemPathManager->isSystemPath(filePath());
 }
 
 bool DFileInfo::isReadable() const

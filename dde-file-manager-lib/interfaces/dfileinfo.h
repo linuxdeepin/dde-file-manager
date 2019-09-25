@@ -54,6 +54,7 @@ public:
     bool canRename() const Q_DECL_OVERRIDE;
     bool canShare() const Q_DECL_OVERRIDE;
     bool canFetch() const Q_DECL_OVERRIDE;
+    bool canTag() const Q_DECL_OVERRIDE;
 
     bool isReadable() const Q_DECL_OVERRIDE;
     bool isWritable() const Q_DECL_OVERRIDE;
