@@ -29,7 +29,7 @@
 #include "durl.h"
 
 #include <dflowlayout.h>
-#include <DCommandLinkButton>
+#include <QCommandLinkButton>
 
 #include <QObject>
 #include <QMimeType>
