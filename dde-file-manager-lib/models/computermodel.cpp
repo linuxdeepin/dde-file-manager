@@ -76,6 +76,9 @@ ComputerModel::~ComputerModel()
 QModelIndex ComputerModel::index(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
+    if (row >= rowCount() || row < 0) {
+        return QModelIndex();
+    }
     return createIndex(row, column, (void*)&m_items[row]);
 }
 
@@ -160,7 +163,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
 
     if (role == DataRoles::MountOpenUrlRole) {
         if (pitmdata->fi) {
-            QSharedPointer<DBlockDevice> blkdev(pitmdata->fi->extraProperties()["blk"].value<QSharedPointer<DBlockDevice>>());
+            QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(pitmdata->fi->extraProperties()["udisksblk"].toString()));
             if (blkdev && blkdev->mountPoints().size() == 0) {
                 blkdev->mount({});
             }

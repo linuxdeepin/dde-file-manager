@@ -36,6 +36,7 @@
 #include "partman/partition.h"
 #include "dfmevent.h"
 #include "dfmeventdispatcher.h"
+#include "dfileservices.h"
 #include "dabstractfilewatcher.h"
 #include "ddiskmanager.h"
 #include "dblockdevice.h"
@@ -607,26 +608,35 @@ bool FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
 void FileJob::doOpticalBlank(const DUrl &device)
 {
     QString dev = device.path();
+    DUrl rdevice(device);
     m_tarPath = dev;
-    dev.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+
+    DAbstractFileInfoPointer fi = fileService->createFileInfo(nullptr, device);
+    dev = fi->extraProperties()["udisksblk"].toString();
+
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dev));
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+
+    rdevice = DUrl(blkdev->device());
+    m_tarPath = rdevice.path();
+
     if (drive->opticalBlank()) {
-        DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(device.path() + "/" BURN_SEG_STAGING), &DAbstractFileWatcher::fileDeleted, DUrl());
+        DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(rdevice.path() + "/" BURN_SEG_STAGING), &DAbstractFileWatcher::fileDeleted, DUrl());
     } else {
         blkdev->unmount({});
     }
+
     m_opticalOpSpeed.clear();
     jobPrepared();
 
     DISOMasterNS::DISOMaster *job_isomaster = new DISOMasterNS::DISOMaster(this);
     connect(job_isomaster, &DISOMasterNS::DISOMaster::jobStatusChanged, this, std::bind(&FileJob::opticalJobUpdated, this, job_isomaster, std::placeholders::_1, std::placeholders::_2));
-    job_isomaster->acquireDevice(device.path());
+    job_isomaster->acquireDevice(rdevice.path());
     job_isomaster->erase();
     job_isomaster->releaseDevice();
 
     blkdev->rescan({});
-    ISOMaster->nullifyDevicePropertyCache(device.path());
+    ISOMaster->nullifyDevicePropertyCache(rdevice.path());
 
     if (m_isJobAdded)
         jobRemoved();
