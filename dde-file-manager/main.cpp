@@ -59,6 +59,7 @@
 #include <QPixmapCache>
 
 #include <pwd.h>
+#include <DApplicationSettings>
 
 #ifdef ENABLE_PPROF
 #include <gperftools/profiler.h>
@@ -119,6 +120,8 @@ int main(int argc, char *argv[])
 #ifdef DISABLE_QUIT_ON_LAST_WINDOW_CLOSED
     app.setQuitOnLastWindowClosed(false);
 #endif
+
+    DApplicationSettings setting;
 
     DFMGlobal::installTranslator();
 
