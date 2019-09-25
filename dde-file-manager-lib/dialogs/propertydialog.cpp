@@ -945,7 +945,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     SectionKeyLabel *sizeSectionLabel = new SectionKeyLabel(QObject::tr("Size"));
     SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Type"));
     SectionKeyLabel *TimeCreatedSectionLabel = new SectionKeyLabel(QObject::tr("Time created"));
-    SectionKeyLabel *TimeReadSectionLabel = new SectionKeyLabel(QObject::tr("Time access"));
+    SectionKeyLabel *TimeReadSectionLabel = new SectionKeyLabel(QObject::tr("Time accessed"));
     SectionKeyLabel *TimeModifiedSectionLabel = new SectionKeyLabel(QObject::tr("Time modified"));
     SectionKeyLabel *sourcePathSectionLabel = new SectionKeyLabel(QObject::tr("Source path"));
 
