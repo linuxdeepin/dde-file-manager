@@ -145,7 +145,7 @@ void DFMRightDetailView::setUrl(const DUrl &url)
     if (!fileInfo)
         return;
 
-    bool shouldShowTags = DFMTagWidget::shouldShow(d->m_url);
+    bool shouldShowTags = fileInfo->canTag();
     if (d->tagInfoWidget) {
         d->tagInfoWidget->setVisible(shouldShowTags);
         d->tagInfoWidget->loadTags(d->m_url);
@@ -165,7 +165,10 @@ void DFMRightDetailView::setUrl(const DUrl &url)
     basicInfoWidget->setShowFileName(true);
     basicInfoWidget->setShowPicturePixel(true);
     basicInfoWidget->setShowMediaInfo(true);
+    basicInfoWidget->setShowSummary(fileInfo->isDir());
     basicInfoWidget->setUrl(d->m_url);
 
     d->mainLayout->insertWidget(2, d->baseInfoWidget);
+
+
 }

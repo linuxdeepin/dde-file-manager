@@ -317,6 +317,15 @@ bool DesktopFileInfo::canDrop() const
     return DFileInfo::canDrop();
 }
 
+bool DesktopFileInfo::canTag() const
+{
+    Q_D(const DesktopFileInfo);
+    if(d->deepinID == "dde-trash" || d->deepinID == "dde-computer")
+        return false;
+
+    return DFileInfo::canTag();
+}
+
 DUrl DesktopFileInfo::trashDesktopFileUrl()
 {
     return DUrl::fromLocalFile(DFMStandardPaths::location(DFMStandardPaths::DesktopPath) + "/dde-trash.desktop");

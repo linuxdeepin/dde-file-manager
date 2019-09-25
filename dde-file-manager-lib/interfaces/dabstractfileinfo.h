@@ -173,6 +173,7 @@ public:
     virtual bool isAbsolute() const;
     virtual bool isShared() const;
     virtual bool isTaged() const;
+    virtual bool canTag() const;
     virtual bool isWritableShared() const;
     virtual bool isAllowGuestShared() const;
     virtual bool makeAbsolute();
