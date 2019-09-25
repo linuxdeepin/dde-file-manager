@@ -42,12 +42,30 @@ ComputerModel::ComputerModel(QObject *parent) :
     QList<DAbstractFileInfoPointer> ch = fileService->getChildren(this, DUrl(DFMROOT_ROOT), {}, nullptr);
     bool splt = false;
     m_nitems = 0;
+    bool rootinserted = false;
     for (auto chi : ch) {
         if (chi->suffix() != SUFFIX_USRDIR && !splt) {
             addItem(makeSplitterUrl(tr("Disks")));
             splt = true;
         }
-        addItem(chi->fileUrl());
+        DFMRootFileInfo::ItemType type = static_cast<DFMRootFileInfo::ItemType>(chi->fileType());
+        switch (type) {
+        case DFMRootFileInfo::ItemType::UDisksRoot:
+            insertAfter(chi->fileUrl(), makeSplitterUrl(tr("Disks")));
+            rootinserted = true;
+            break;
+        case DFMRootFileInfo::ItemType::UDisksNormal:
+            {
+                int p = findItem(makeSplitterUrl(tr("Disks")));
+                if (rootinserted) {
+                    ++p;
+                }
+                insertAfter(chi->fileUrl(), m_items[p].url);
+            }
+            break;
+        default:
+            addItem(chi->fileUrl());
+        }
     }
     m_watcher = fileService->createFileWatcher(this, DUrl(DFMROOT_ROOT), this);
     m_watcher->startWatcher();
@@ -243,13 +261,8 @@ void ComputerModel::addItem(const DUrl &url, QWidget* w)
 
 void ComputerModel::insertAfter(const DUrl &url, const DUrl &ref, QWidget *w)
 {
-    int p;
-    for (p = 0; p < m_items.size(); ++p) {
-        if (m_items[p].url == ref) {
-            break;
-        }
-    }
-    if (p >= m_items.size()) {
+    int p = findItem(ref);
+    if (p == -1) {
         return;
     }
 
@@ -257,7 +270,6 @@ void ComputerModel::insertAfter(const DUrl &url, const DUrl &ref, QWidget *w)
     ComputerModelItemData id;
     initItemData(id, url, w);
     m_items.insert(p + 1, id);
-    m_items.append(id);
     endInsertRows();
     if (url.scheme() != SPLITTER_SCHEME && url.scheme() != WIDGET_SCHEME) {
         Q_EMIT itemCountChanged(++m_nitems);
@@ -266,13 +278,8 @@ void ComputerModel::insertAfter(const DUrl &url, const DUrl &ref, QWidget *w)
 
 void ComputerModel::insertBefore(const DUrl &url, const DUrl &ref, QWidget *w)
 {
-    int p;
-    for (p = 0; p < m_items.size(); ++p) {
-        if (m_items[p].url == ref) {
-            break;
-        }
-    }
-    if (p >= m_items.size()) {
+    int p = findItem(ref);
+    if (p == -1) {
         return;
     }
 
@@ -280,7 +287,6 @@ void ComputerModel::insertBefore(const DUrl &url, const DUrl &ref, QWidget *w)
     ComputerModelItemData id;
     initItemData(id, url, w);
     m_items.insert(p, id);
-    m_items.append(id);
     endInsertRows();
     if (url.scheme() != SPLITTER_SCHEME && url.scheme() != WIDGET_SCHEME) {
         Q_EMIT itemCountChanged(++m_nitems);
@@ -289,13 +295,8 @@ void ComputerModel::insertBefore(const DUrl &url, const DUrl &ref, QWidget *w)
 
 void ComputerModel::removeItem(const DUrl &url)
 {
-    int p;
-    for (p = 0; p < m_items.size(); ++p) {
-        if (m_items[p].url == url) {
-            break;
-        }
-    }
-    if (p >= m_items.size()) {
+    int p = findItem(url);
+    if (p == -1) {
         return;
     }
 
@@ -332,6 +333,20 @@ void ComputerModel::initItemData(ComputerModelItemData &data, const DUrl &url, Q
             data.pl = pl;
         }
     }
+}
+
+int ComputerModel::findItem(const DUrl &url)
+{
+    int p;
+    for (p = 0; p < m_items.size(); ++p) {
+        if (m_items[p].url == url) {
+            break;
+        }
+    }
+    if (p >= m_items.size()) {
+        return -1;
+    }
+    return p;
 }
 
 DUrl ComputerModel::makeSplitterUrl(QString text)

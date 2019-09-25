@@ -134,7 +134,8 @@ public:
         Archives,
         DesktopApplication,
         Backups,
-        Unknown
+        Unknown,
+        CustomType = 0x100
     };
 
     inline static QString dateTimeFormat() {

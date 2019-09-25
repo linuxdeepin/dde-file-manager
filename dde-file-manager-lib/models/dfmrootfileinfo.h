@@ -32,6 +32,15 @@ class DFMRootFileInfoPrivate;
 class DFMRootFileInfo : public DAbstractFileInfo
 {
 public:
+
+    enum ItemType {
+        UserDirectory = DAbstractFileInfo::FileType::CustomType + 1,
+        GvfsMount,
+        UDisksRoot,
+        UDisksData,
+        UDisksNormal
+    };
+
     DFMRootFileInfo(const DUrl &url);
     bool exists() const override;
 
@@ -54,6 +63,7 @@ public:
 
     bool isFile() const override;
     bool isDir() const override;
+    FileType fileType() const override;
     int filesCount() const override;
     QString iconName() const override;
 
