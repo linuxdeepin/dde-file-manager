@@ -1305,6 +1305,7 @@ ComputerView2::ComputerView2(QWidget *parent) : QWidget(parent)
     m_view->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
     m_view->setFrameShape(QFrame::Shape::NoFrame);
     m_view->viewport()->installEventFilter(this);
+    m_view->viewport()->setAutoFillBackground(false);
 
     DFMEvent event(this);
     event.setWindowId(window()->internalWinId());
