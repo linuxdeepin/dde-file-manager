@@ -237,6 +237,26 @@ bool DFMRootFileInfo::isDir() const
     return false;
 }
 
+DAbstractFileInfo::FileType DFMRootFileInfo::fileType() const
+{
+    Q_D(const DFMRootFileInfo);
+
+    ItemType ret;
+
+    if (suffix() == SUFFIX_USRDIR) {
+        ret = ItemType::UserDirectory;
+    } else if (suffix() == SUFFIX_GVFSMP) {
+        ret = ItemType::GvfsMount;
+    } else if (d->mps.size() == 1 && d->mps.front() == QString("/")) {
+        ret = ItemType::UDisksRoot;
+    } else if (d->label == "_dde_data") {
+        ret = ItemType::UDisksData;
+    } else {
+        ret = ItemType::UDisksNormal;
+    }
+    return static_cast<FileType>(ret);
+}
+
 int DFMRootFileInfo::filesCount() const
 {
     return 0;

@@ -103,6 +103,7 @@ private:
     int m_nitems;
 
     void initItemData(ComputerModelItemData &data, const DUrl &url, QWidget *w);
+    int findItem(const DUrl &url);
 
     static DUrl makeSplitterUrl(QString text);
 };
