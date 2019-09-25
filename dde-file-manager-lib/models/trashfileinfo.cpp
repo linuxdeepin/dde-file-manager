@@ -504,10 +504,12 @@ bool TrashFileInfo::restore() const
     dialogManager->addJob(&job);
 
     bool ok = job.doTrashRestore(absoluteFilePath(), d->originalFilePath);
+    bool isAbortedOrSkipped = job.isAborted() || job.getIsSkip();
+    ok = ok || isAbortedOrSkipped; // ok==false will show error dialog
     dialogManager->removeJob(job.getJobId());
 
     // restore the file tag infos
-    if (ok && !d->tagNameList.isEmpty()) {
+    if (ok && !isAbortedOrSkipped && !d->tagNameList.isEmpty()) {
         DFileService::instance()->setFileTags(nullptr, DUrl::fromLocalFile(d->originalFilePath), d->tagNameList);
     }
 
