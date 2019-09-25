@@ -714,6 +714,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::Vault] = QObject::tr("File Vault");
     actionKeys[MenuAction::SetUserSharePassword] = QObject::tr("Set share password");
     actionKeys[MenuAction::FormatDevice] = QObject::tr("Format");
+    actionKeys[MenuAction::OpticalBlank] = QObject::tr("Erase");
 
     ///###: tag protocol.
     actionKeys[MenuAction::TagInfo] = QObject::tr("Tag information");

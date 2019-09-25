@@ -210,6 +210,7 @@ public:
         UnShare,
         SetUserSharePassword,
         FormatDevice,
+        OpticalBlank,
         Vault,
 
         ///###: tag protocol.

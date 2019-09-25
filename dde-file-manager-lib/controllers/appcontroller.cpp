@@ -513,7 +513,11 @@ void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
     QString dev = fileUrl.query(DUrl::FullyEncoded);
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), fileUrl);
-        dev = "/dev/" + fi->baseName();
+        if (fi->suffix() == SUFFIX_UDISKS) {
+            dev = "/dev/" + fi->baseName();
+        } else if (fi->suffix() == SUFFIX_GVFSMP) {
+            dev = fi->extraProperties()["rooturi"].toString();
+        }
     }
 
     deviceListener->unmount(dev);
@@ -663,12 +667,13 @@ void AppController::actionFormatDevice(const QSharedPointer<DFMUrlBaseEvent> &ev
         return;
     }
 
-    UDiskDeviceInfoPointer info = deviceListener->getDeviceByDeviceID(event->url().query());
+    DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, event->url());
     if (!info) {
         return;
     }
 
-    QString devicePath = info->getPath();
+    QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(info->extraProperties()["udisksblk"].toString()));
+    QString devicePath = blkdev->device();
 
     QString cmd = "usb-device-formatter-pkexec";
     QStringList args;
@@ -706,7 +711,7 @@ void AppController::actionOpticalBlank(const QSharedPointer<DFMUrlBaseEvent> &ev
             job->setWindowId(event->windowId());
             dialogManager->addJob(job);
 
-            DUrl dev(event->url().query());
+            DUrl dev(event->url());
 
             job->doOpticalBlank(dev);
             dialogManager->removeJob(job->getJobId());
@@ -754,7 +759,11 @@ void AppController::actionForward(quint64 winId)
 
 void AppController::actionForgetPassword(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    QString path = event->url().query();
+    QString path;
+    DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), event->url());
+    if (fi->suffix() == SUFFIX_GVFSMP) {
+        path = QUrl(fi->extraProperties()["rooturi"].toString()).toString();
+    }
 
     QJsonObject smbObj = secretManager->getLoginData(path);
     if (smbObj.empty()) {

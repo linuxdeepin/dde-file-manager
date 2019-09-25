@@ -250,7 +250,20 @@ QString DFMRootFileInfo::iconName() const
     } else if (suffix() == SUFFIX_GVFSMP) {
         return d->gmnt->themedIconNames().front();
     } else if (suffix() == SUFFIX_UDISKS) {
-        //!!TODO
+        if (d->blk) {
+            QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));
+            if (drv->mediaCompatibility().join(" ").contains("optical")) {
+                return "media-optical";
+            }
+            if (drv->mediaRemovable()) {
+                return "drive-removable-media";
+            }
+            for (auto mp : d->blk->mountPoints()) {
+                if (QString(mp) == "/") {
+                    return "drive-harddisk-root";
+                }
+            }
+        }
         return "drive-harddisk";
     }
     return "";
@@ -272,12 +285,25 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
 
     QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk ? d->blk->drive() : ""));
     if (suffix() == SUFFIX_GVFSMP || (suffix() == SUFFIX_UDISKS && d->blk && d->blk->mountPoints().size() > 0 && !d->blk->hintSystem())) {
+        //!!TODO (needs clarification): Unmount, Eject, SafelyRemove?
         ret.push_back(MenuAction::Unmount);
     }
-    if (suffix() == SUFFIX_UDISKS && d->blk && d->blk->mountPoints().size() == 0) {
+
+    if (suffix() == SUFFIX_UDISKS && d->blk && d->blk->mountPoints().empty()) {
         ret.push_back(MenuAction::Mount);
-        if (!drv->mediaCompatibility().join(" ").contains("optical")) {
+        if (!d->blk->readOnly()) {
             ret.push_back(MenuAction::Rename);
+            ret.push_back(MenuAction::FormatDevice);
+        }
+        if (drv->optical() && drv->media().contains(QRegularExpression("_r(w|e)"))) {
+            ret.push_back(MenuAction::OpticalBlank);
+        }
+    }
+
+    if (suffix() == SUFFIX_GVFSMP) {
+        QString scheme = QUrl(d->gmnt->getRootFile()->uri()).scheme();
+        if (QSet<QString>({SMB_SCHEME, FTP_SCHEME, SFTP_SCHEME, DAV_SCHEME}).contains(scheme)) {
+            ret.push_back(MenuAction::ForgetPassword);
         }
     }
 
@@ -334,6 +360,7 @@ QVariantHash DFMRootFileInfo::extraProperties() const
         ret["fsUsed"] = d->gfsi->fsUsedBytes();
         ret["fsSize"] = d->gfsi->fsTotalBytes();
         ret["fsType"] = d->gfsi->fsType();
+        ret["rooturi"] = d->gmnt->getRootFile()->uri();
     } else if (suffix() == SUFFIX_UDISKS) {
         if (d->mps.empty()) {
             ret["fsUsed"] = quint64(d->size + 1);
@@ -343,7 +370,7 @@ QVariantHash DFMRootFileInfo::extraProperties() const
         }
         ret["fsSize"] = quint64(d->size);
         ret["fsType"] = d->fs;
-        ret["blk"] = QVariant::fromValue(d->blk);
+        ret["udisksblk"] = d->blk->path();
     }
     return ret;
 }
