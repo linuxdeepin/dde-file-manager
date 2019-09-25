@@ -107,12 +107,6 @@ VaultGeneratedKeyPage::VaultGeneratedKeyPage(QWidget *parent)
     title->setFont(font);
 
     m_generatedKeyEdit = new QPlainTextEdit(this);
-    m_generatedKeyEdit->setPlainText(
-                tr("File Vault Recovery Key") + '\n' + '\n' +
-                tr("To verify that this is the correct recovery key, compare the following key ID with the key ID displayed on your PC.") + '\n' +
-                tr("Key ID: %1").arg("AAAA-BBBB-CCCC-DDDD-EEEE-FFFF-GGGG-HHHH") + '\n' + '\n' +
-                tr("If they are identical, then use the following key to retrieve your vault password.") + '\n' +
-                tr("Recovery Key: %1").arg("AAAA-BBBB-CCCC-DDDD-EEEE-FFFF-GGGG-HHHH") + '\n');
     m_generatedKeyEdit->setMaximumHeight(100);
     m_generatedKeyEdit->setReadOnly(true);
 
@@ -134,10 +128,25 @@ VaultGeneratedKeyPage::~VaultGeneratedKeyPage()
     clearData();
 }
 
+void VaultGeneratedKeyPage::startKeyGeneration()
+{
+    qDebug() << "start key generation here";
+}
+
 void VaultGeneratedKeyPage::clearData()
 {
     // TODO: remove saved password in GNOME keyring.
     m_generatedKeyEdit->clear();
+}
+
+DSecureString VaultGeneratedKeyPage::createRecoveryKeyString(const DSecureString &ivHexString, const DSecureString &keyHexString)
+{
+    return tr("File Vault Recovery Key") + '\n' + '\n' +
+           tr("To verify that this is the correct recovery key, compare the following key ID with the key ID displayed on your PC.") + '\n' +
+           tr("Key ID: %1").arg(ivHexString) + '\n' + '\n' +
+           tr("If they are identical, then use the following key to retrieve your vault password.") + '\n' +
+           tr("Recovery Key: %1").arg(keyHexString) + '\n' + '\n' +
+           tr("If they do not match, then this is not the right key, please try another recovery key.") + '\n';
 }
 
 // ----------------------------------------------
@@ -152,6 +161,9 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
 
     insertPage("verify", verifyPage);
     insertPage("generated_key", generatedKeyPage);
+
+    connect(this, &DFMVaultPages::rootPageChanged, this, &DFMVaultRecoveryKeyPages::onRootPageChanged);
+    connect(this, &DFMVaultRecoveryKeyPages::requestCreateRecoveryKey, generatedKeyPage, &VaultGeneratedKeyPage::startKeyGeneration);
 }
 
 DFMVaultRecoveryKeyPages::~DFMVaultRecoveryKeyPages()
@@ -182,6 +194,15 @@ QString DFMVaultRecoveryKeyPages::pageString(const DUrl &url)
         return "generated_key";
     }
     return "verify";
+}
+
+void DFMVaultRecoveryKeyPages::onRootPageChanged(QString pageStr)
+{
+    if (pageStr == "generated_key") {
+        if (!Singleton<SecretManager>::instance()->lookupVaultPassword().isEmpty()) {
+            emit requestCreateRecoveryKey();
+        }
+    }
 }
 
 DFM_END_NAMESPACE

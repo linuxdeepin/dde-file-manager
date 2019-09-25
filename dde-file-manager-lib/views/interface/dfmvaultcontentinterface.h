@@ -33,8 +33,12 @@ public:
 
     void setRootUrl(const DUrl & url) override;
 
+    virtual QWidget *page(const QString &pageName);
     virtual QString pageString(const DUrl & url) = 0;
     void insertPage(const QString &pageName, QWidget * widget);
+
+signals:
+    void rootPageChanged(QString pageString);
 
 private:
     QMap<QString, QWidget*> m_pages;
