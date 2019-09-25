@@ -1522,6 +1522,7 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(d->dragMoveHoverIndex);
 
         if (fileInfo) {
+            d->fileViewHelper->preproccessDropEvent(event);
             if (!fileInfo->canDrop()
                     || !fileInfo->supportedDropActions().testFlag(event->dropAction())
                     || (fileInfo->isDir() && !fileInfo->isWritable())) {
@@ -1530,8 +1531,6 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
 
                 return event->ignore();
             }
-
-            d->fileViewHelper->preproccessDropEvent(event);
 
             event->accept();
         }
