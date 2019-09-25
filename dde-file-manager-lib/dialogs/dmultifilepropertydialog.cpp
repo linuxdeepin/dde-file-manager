@@ -170,7 +170,7 @@ void DMultiFilePropertyDialogPrivate::initUiParameter()noexcept
                                     .arg( QString::fromStdString(std::to_string(quantityOfFilesAndFolders.second))));
 
 
-    coupleLabelContent.emplace_back(QObject::tr("Time access"), QString{"-"});
+    coupleLabelContent.emplace_back(QObject::tr("Time accessed"), QString{"-"});
     coupleLabelContent.emplace_back(QObject::tr("Time modified"), QString{"-"});
 
 
