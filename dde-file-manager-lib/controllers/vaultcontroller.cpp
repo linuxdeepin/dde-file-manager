@@ -125,7 +125,7 @@ void VaultController::prepareVaultDirs()
 {
     auto createIfNotExist = [](const QString & path){
         if (!QFile::exists(path)) {
-            QDir().mkdir(path);
+            QDir().mkpath(path);
         }
     };
     static QString appDataLocation = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QDir::separator();
