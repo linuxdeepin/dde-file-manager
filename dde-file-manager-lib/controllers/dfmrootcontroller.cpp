@@ -30,6 +30,7 @@
 #include <dgiovolumemanager.h>
 #include <ddiskmanager.h>
 #include <dblockdevice.h>
+#include <ddiskdevice.h>
 
 class DFMRootFileWatcherPrivate : public DAbstractFileWatcherPrivate
 {
@@ -87,7 +88,8 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
     DDiskManager dummy;
     for (auto blks : dummy.blockDevices()) {
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
-        if (!blk->hasFileSystem()) {
+        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+        if (!blk->hasFileSystem() && !drv->opticalBlank()) {
             continue;
         }
         udisksuuids.insert(blk->idUUID());
@@ -100,6 +102,9 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
 
     for (auto gvfsmp : DGioVolumeManager::getMounts()) {
         if (gvfsmp->getVolume() && udisksuuids.contains(gvfsmp->getVolume()->identifier(DGioVolumeIdentifierType::VOLUME_IDENTIFIER_TYPE_UUID))) {
+            continue;
+        }
+        if (DUrl(gvfsmp->getRootFile()->uri()).scheme() == BURN_SCHEME) {
             continue;
         }
         DAbstractFileInfoPointer fp(new DFMRootFileInfo(DUrl(DFMROOT_ROOT + QUrl::toPercentEncoding(gvfsmp->getRootFile()->path()) + "." SUFFIX_GVFSMP)));
@@ -151,6 +156,9 @@ bool DFMRootFileWatcherPrivate::start()
         if (mnt->getVolume() && uuidset.contains(mnt->getVolume()->identifier(DGioVolumeIdentifierType::VOLUME_IDENTIFIER_TYPE_UUID))) {
             return;
         }
+        if (DUrl(mnt->getRootFile()->uri()).scheme() == BURN_SCHEME) {
+            return;
+        }
         Q_EMIT wpar->subfileCreated(DUrl(DFMROOT_ROOT + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP));
     }));
     connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::mountRemoved, [wpar](QExplicitlySharedDataPointer<DGioMount> mnt) {
@@ -161,9 +169,10 @@ bool DFMRootFileWatcherPrivate::start()
     }));
     connections.push_back(QObject::connect(udisksmgr.data(), &DDiskManager::fileSystemAdded, [wpar](const QString &blks) {
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
+        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
         QString uuid = blk->idUUID();
 
-        if (!blk->hasFileSystem()) {
+        if (!blk->hasFileSystem() && !drv->opticalBlank()) {
             return;
         }
 
