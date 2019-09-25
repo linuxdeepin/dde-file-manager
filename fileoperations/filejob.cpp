@@ -2200,11 +2200,10 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
                 QThread::msleep(100);
                 break;
             case FileJob::Cancelled:
-                return true;
+                return false; // return true will delete .trashinfo and we cannot restore it anymore
             default:
                 return false;
          }
-
     }
     return false;
 }
