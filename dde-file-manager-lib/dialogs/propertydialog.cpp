@@ -1043,7 +1043,7 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
     //results.append({QObject::tr("Device type"), ""});
     results.append({QObject::tr("Total space"), FileUtils::formatSize(fsUsed)});
     if (!fsType.isEmpty()) {
-        results.append({QObject::tr("Filesystem"), fsType});
+        results.append({QObject::tr("File system"), fsType});
     }
     results.append({QObject::tr("Contains"), (fileCount != 1 ? QObject::tr("%1 items") : QObject::tr("%1 item")).arg(fileCount)});
     results.append({QObject::tr("Free space"), FileUtils::formatSize(fsSize - fsUsed)});
