@@ -94,6 +94,7 @@ typedef std::basic_string<char, std::char_traits<char>, zallocator<char> > secur
 static const unsigned int AES_128_KEY_SIZE = 16;
 static const unsigned int AES_128_BLOCK_SIZE = 16;
 
+void init_aes_128_cipher();
 void gen_aes_128_params(byte key[AES_128_KEY_SIZE], byte iv[AES_128_BLOCK_SIZE]);
 void aes_128_encrypt(const byte key[AES_128_KEY_SIZE], const byte iv[AES_128_BLOCK_SIZE], const secure_string& ptext, secure_string& ctext);
 void aes_128_decrypt(const byte key[AES_128_KEY_SIZE], const byte iv[AES_128_BLOCK_SIZE], const secure_string& ctext, secure_string& rtext);

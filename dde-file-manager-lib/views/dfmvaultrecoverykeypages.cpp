@@ -22,6 +22,7 @@
 
 #include "singleton.h"
 #include "gvfs/secretmanager.h"
+#include "cryptoutils.h"
 
 #include <QLabel>
 #include <QPlainTextEdit>
@@ -107,7 +108,6 @@ VaultGeneratedKeyPage::VaultGeneratedKeyPage(QWidget *parent)
     title->setFont(font);
 
     m_generatedKeyEdit = new QPlainTextEdit(this);
-    m_generatedKeyEdit->setMaximumHeight(100);
     m_generatedKeyEdit->setReadOnly(true);
 
     m_saveFileButton = new QPushButton(tr("Save"), this);
@@ -130,12 +130,36 @@ VaultGeneratedKeyPage::~VaultGeneratedKeyPage()
 
 void VaultGeneratedKeyPage::startKeyGeneration()
 {
-    qDebug() << "start key generation here";
+    DSecureString password = Singleton<SecretManager>::instance()->lookupVaultPassword();
+
+    QFile encryptedFile(VaultController::makeVaultLocalPath("dde-vault.config", "vault_encrypted"));
+    encryptedFile.open(QIODevice::WriteOnly | QIODevice::Truncate);
+    QDataStream fileStream(&encryptedFile);
+
+    CryptoUtils::byte key[CryptoUtils::AES_128_KEY_SIZE], iv[CryptoUtils::AES_128_BLOCK_SIZE];
+    CryptoUtils::secure_string origStr(password.toLatin1()), encryptedStr;
+    CryptoUtils::init_aes_128_cipher();
+    CryptoUtils::gen_aes_128_params(key, iv);
+    CryptoUtils::aes_128_encrypt(key, iv, origStr, encryptedStr);
+
+    int vaultConfigVersion = 1;
+    QByteArray encryptedData(encryptedStr.data(), encryptedStr.length());
+    QByteArray ivData((char *)iv, CryptoUtils::AES_128_BLOCK_SIZE);
+
+    fileStream << vaultConfigVersion << ivData.length() << ivData << encryptedData.length() << encryptedData;
+
+    encryptedFile.flush();
+    encryptedFile.close();
+
+    DSecureString ivHexStr(CryptoUtils::bin_to_hex(iv, CryptoUtils::AES_128_BLOCK_SIZE).data());
+    DSecureString keyHexStr(CryptoUtils::bin_to_hex(key, CryptoUtils::AES_128_KEY_SIZE).data());
+
+    m_generatedKeyEdit->setPlainText(createRecoveryKeyString(ivHexStr, keyHexStr));
 }
 
 void VaultGeneratedKeyPage::clearData()
 {
-    // TODO: remove saved password in GNOME keyring.
+    Singleton<SecretManager>::instance()->clearVaultPassword();
     m_generatedKeyEdit->clear();
 }
 

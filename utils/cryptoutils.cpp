@@ -114,5 +114,10 @@ void hex_to_bin(const secure_string &hexStr, byte *outputBuffer, const size_t le
     }
 }
 
+void init_aes_128_cipher()
+{
+    EVP_add_cipher(EVP_aes_128_cfb());
+}
+
 } // namespace CryptoUtils
 
