@@ -62,6 +62,8 @@ DFMSideBar::DFMSideBar(QWidget *parent)
     m_sidebarView->setModel(m_sidebarModel);
     m_sidebarView->setItemDelegate(new DFMSideBarItemDelegate(m_sidebarView));
     m_sidebarView->setContextMenuPolicy(Qt::CustomContextMenu);
+    m_sidebarView->setFrameShape(QFrame::Shape::NoFrame);
+    m_sidebarView->setAutoFillBackground(true);
 
     initUI();
     initModelData();
@@ -331,9 +333,7 @@ void DFMSideBar::initUI()
     this->setMaximumWidth(200);
     this->setFocusProxy(m_sidebarView);
 
-    DPalette pa = DApplicationHelper::instance()->palette(m_sidebarView);
-    pa.setBrush(DPalette::ItemBackground, pa.base());
-    DApplicationHelper::instance()->setPalette(m_sidebarView, pa);
+    applySidebarColor();
 }
 
 void DFMSideBar::initModelData()
@@ -653,6 +653,22 @@ void DFMSideBar::initTagsConnection()
 //    });
 }
 
+void DFMSideBar::applySidebarColor()
+{
+    DPalette pa = DApplicationHelper::instance()->palette(m_sidebarView);
+    QColor base_color = palette().base().color();
+    DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(base_color);
+
+    if (ct == DGuiApplicationHelper::LightType) {
+        pa.setBrush(DPalette::ItemBackground, palette().base());
+    } else {
+        base_color = DGuiApplicationHelper::adjustColor(base_color, 0, 0, +5, 0, 0, 0, 0);
+        pa.setColor(DPalette::ItemBackground, base_color);
+    }
+
+    DApplicationHelper::instance()->setPalette(m_sidebarView, pa);
+}
+
 void DFMSideBar::updateSeparatorVisibleState()
 {
     QString lastGroupName = "__not_existed_group";
@@ -766,6 +782,15 @@ void DFMSideBar::appendItemWithOrder(QList<DFMSideBarItem *> &list, const DUrlLi
     for (DFMSideBarItem * item: list) {
         this->appendItem(item, groupName);
     }
+}
+
+void DFMSideBar::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::PaletteChange) {
+        applySidebarColor();
+    }
+
+    return QWidget::changeEvent(event);
 }
 
 DFM_END_NAMESPACE

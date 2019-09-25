@@ -88,11 +88,14 @@ private:
     void initBookmarkConnection();
     void initDeviceConnection();
     void initTagsConnection();
+    void applySidebarColor();
     void updateSeparatorVisibleState();
     void addGroupItems(GroupName groupType);
     void insertItem(int index, DFMSideBarItem * item, const QString &groupName);
     void appendItem(DFMSideBarItem * item, const QString &groupName);
     void appendItemWithOrder(QList<DFMSideBarItem *> &list, const DUrlList &order, const QString &groupName);
+
+    void changeEvent(QEvent *event) override;
 
     DFMSideBarView *m_sidebarView;
     DFMSideBarModel *m_sidebarModel;
