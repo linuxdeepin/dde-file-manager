@@ -884,18 +884,19 @@ void PropertyDialog::initTextShowFrame(const QString &text)
     QStringList labelTexts = t.split("\n");
     const int maxLineCount = 3;
 
-    int textLineCount = 1;
+    int textHeight = 0;
     QVBoxLayout *textShowLayout = new QVBoxLayout;
 
     for (int i = 0; i < labelTexts.length(); i++) {
         if (i > (maxLineCount - 1)) {
-            textLineCount = i + 1;
             break;
         }
         QString labelText = labelTexts.at(i);
         QLabel *label = new QLabel(labelText, m_textShowFrame);
         label->setAlignment(Qt::AlignHCenter);
         QHBoxLayout *hLayout = new QHBoxLayout;
+
+        textHeight += label->fontInfo().pixelSize() + 10;
 
         hLayout->addStretch(1);
         hLayout->addWidget(label);
@@ -920,7 +921,6 @@ void PropertyDialog::initTextShowFrame(const QString &text)
         }
         textShowLayout->addLayout(hLayout);
         hLayout->addStretch(1);
-        textLineCount = i + 1;
     }
 
     textShowLayout->setContentsMargins(0, 0, 0, 0);
@@ -928,7 +928,7 @@ void PropertyDialog::initTextShowFrame(const QString &text)
     m_textShowFrame->setLayout(textShowLayout);
     textShowLayout->addStretch(1);
 
-    m_textShowFrame->setFixedHeight(textLineCount * 14 + 15);
+    m_textShowFrame->setFixedHeight(textHeight + 15);
 
     if (m_editStackWidget->count() == 1) {
         m_editStackWidget->addWidget(m_textShowFrame);
