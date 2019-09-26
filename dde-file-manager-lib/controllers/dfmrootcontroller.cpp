@@ -202,6 +202,9 @@ bool DFMRootFileWatcherPrivate::start()
         connections.push_back(QObject::connect(blk.data(), &DBlockDevice::idLabelChanged, [wpar, devs](const QString &) {
             Q_EMIT wpar->fileAttributeChanged(DUrl(DFMROOT_ROOT + devs.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
         }));
+        connections.push_back(QObject::connect(blk.data(), &DBlockDevice::mountPointsChanged, [wpar, devs](const QByteArrayList &) {
+            Q_EMIT wpar->fileAttributeChanged(DUrl(DFMROOT_ROOT + devs.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
+        }));
     }
 
     started = true;

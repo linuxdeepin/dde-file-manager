@@ -33,6 +33,7 @@
 #include "models/dfmsidebarmodel.h"
 #include "dfmsidebaritemdelegate.h"
 #include "dfmsidebaritem.h"
+#include "models/dfmrootfileinfo.h"
 #include "controllers/dfmsidebardefaultitemhandler.h"
 #include "controllers/dfmsidebarbookmarkitemhandler.h"
 #include "controllers/dfmsidebardeviceitemhandler.h"
@@ -48,6 +49,8 @@
 #include <ddiskdevice.h>
 #include <dblockdevice.h>
 #include <QMenu>
+
+#include <algorithm>
 
 #define SIDEBAR_ITEMORDER_KEY "SideBar/ItemOrder"
 
@@ -463,153 +466,51 @@ void DFMSideBar::initBookmarkConnection()
 
 void DFMSideBar::initDeviceConnection()
 {
-    DAbstractFileWatcher *devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, DUrl(DEVICE_ROOT), this);
+    DAbstractFileWatcher *devicesWatcher = DFileService::instance()->createFileWatcher(nullptr, DUrl(DFMROOT_ROOT), this);
     Q_CHECK_PTR(devicesWatcher);
     devicesWatcher->startWatcher();
 
     m_udisks2DiskManager.reset(new DDiskManager);
     m_udisks2DiskManager->setWatchChanges(true);
 
-    auto devicesInfo = DFileService::instance()->getChildren(this, DUrl(DEVICE_ROOT),
-                        QStringList(), QDir::AllEntries);
-    for (const DAbstractFileInfoPointer &info : devicesInfo) {
-        QString devs(info->fileUrl().path());
-        devs.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
-        QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(devs));
-        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blkdev->drive()));
-        if (drv->mediaCompatibility().join(' ').contains("optical")) {
-            continue;
-        }
-        addItem(DFMSideBarDeviceItemHandler::createItem(info->fileUrl()), groupName(Device));
-    }
+    QList<DAbstractFileInfoPointer> filist = DFileService::instance()->getChildren(this, DUrl(DFMROOT_ROOT),
+                                                                                   QStringList(), QDir::AllEntries);
+    std::sort(filist.begin(), filist.end(), [](DAbstractFileInfoPointer &a, DAbstractFileInfoPointer &b) {
+        static const QHash<DFMRootFileInfo::ItemType, int> priomap = {
+            {DFMRootFileInfo::ItemType::UDisksRoot   , 0},
+            {DFMRootFileInfo::ItemType::UDisksData   , 1},
+            {DFMRootFileInfo::ItemType::UDisksNormal , 2},
+            {DFMRootFileInfo::ItemType::GvfsMount    , 3},
+            {DFMRootFileInfo::ItemType::UserDirectory, 4}
+        };
+        return priomap[static_cast<DFMRootFileInfo::ItemType>(a->fileType())] < priomap[static_cast<DFMRootFileInfo::ItemType>(b->fileType())];
+    });
 
-    // optical device..
-    for (auto& blks : m_udisks2DiskManager->blockDevices()) {
-        QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
-        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
-        if (drv->mediaCompatibility().join(' ').contains("optical")) {
-            addItem(DFMSideBarOpticalItemHandler::createItem(DUrl::fromDeviceId(blk->device())), groupName(Device));
+    for (const DAbstractFileInfoPointer &fi : filist) {
+        if (static_cast<DFMRootFileInfo::ItemType>(fi->fileType()) != DFMRootFileInfo::ItemType::UserDirectory) {
+            addItem(DFMSideBarDeviceItemHandler::createItem(fi->fileUrl()), groupName(Device));
         }
     }
 
-    // New device/volume added.
-    connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl & url) {
-        QString devs(url.path());
-        if (devs.contains("/dev/")) {
-            devs.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
-            QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(devs));
-            QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blkdev->drive()));
-            if (drv->mediaCompatibility().join(' ').contains("optical")) {
-                return;
-            }
-        } else {
-            DDiskManager dummy;
-            QString mountpoint(QUrl(devs).path());
-            for (auto blks : dummy.blockDevices()) {
-                QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(blks));
-                QStringList blmp;
-                for (auto mp : blkdev->mountPoints()) {
-                    blmp.push_back(QString(mp));
-                }
-                if (!blmp.contains(mountpoint.toUtf8())) {
-                    continue;
-                }
-                QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blkdev->drive()));
-                if (drv->mediaCompatibility().join(' ').contains("optical")) {
-                    return;
-                }
-            }
-        }
-        addItem(DFMSideBarDeviceItemHandler::createItem(url), groupName(Device));
+    connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
+        this->addItem(DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
     });
-
-    connect(m_udisks2DiskManager.data(), &DDiskManager::blockDeviceAdded, this, [this](const QString & s) {
-        QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(s));
-        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
-        if (drv->mediaCompatibility().join(' ').contains("optical")) {
-            addItem(DFMSideBarOpticalItemHandler::createItem(DUrl::fromDeviceId(blk->device())), groupName(Device));
-        }
+    connect(devicesWatcher, &DAbstractFileWatcher::fileDeleted, this, [this](const DUrl &url) {
+        this->removeItem(url, this->groupName(Device));
     });
-
-//    connect(m_udisks2DiskManager.data(), &DDiskManager::opticalChanged, this, [this](const QString & path) {
-//        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(path));
-//        for (auto blks : m_udisks2DiskManager->blockDevices()) {
-//            QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(blks));
-//            if (path == blkdev->drive()) {
-//                DUrl url = DUrl::fromDeviceId(blkdev->device());
-//                DFMSideBarItem *item = group->findItem(url);
-//                DFMSideBarOpticalDevItem *optdevitem = qobject_cast<DFMSideBarOpticalDevItem*>(item);
-//                if (optdevitem) {
-//                    optdevitem->unmountButton->setVisible(drv->mediaAvailable());
-//                    optdevitem->reloadLabel();
-//                }
-//            }
-//        }
-//    });
-
-    // Device/volume get mounted/unmounted
-    connect(devicesWatcher, &DAbstractFileWatcher::fileAttributeChanged, this, [this](const DUrl & url) {
+    connect(devicesWatcher, &DAbstractFileWatcher::fileAttributeChanged, this, [this](const DUrl &url) {
         int index = findItem(url, groupName(Device));
+        DAbstractFileInfoPointer fi = DFileService::instance()->createFileInfo(nullptr, url);
 
-        if (!~index) {
+        if (!~index || !fi) {
             return;
         }
 
         DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
         DViewItemActionList actionList = item->actionList(Qt::RightEdge);
-        DAbstractFileInfoPointer pointer = DFileService::instance()->createFileInfo(nullptr, url);
-        if (pointer && item && !actionList.isEmpty()) {
-            const QVariantHash &extensionInfo = pointer->extraProperties();
-
-            bool isMounted = extensionInfo.value("isMounted", false).toBool();
-            bool canUnmount = extensionInfo.value("canUnmount", true).toBool();
-            bool isRemovable = extensionInfo.value("isRemovable", true).toBool();
-            bool canEject = extensionInfo.value("canEject", true).toBool();
-            bool isOptical = extensionInfo.value("optical", true).toBool();
-
-            if (isRemovable || isOptical) {
-                actionList.first()->setVisible(canEject || canUnmount);
-            } else {
-                actionList.first()->setVisible(isMounted && canUnmount);
-            }
-        }
+        actionList.front()->setVisible(fi->extraProperties()["canUnmount"].toBool());
+        item->setText(fi->fileDisplayName());
     });
-
-    // Device/volume get removed.
-//    connect(devicesWatcher, &DAbstractFileWatcher::fileDeleted, this, [this](const DUrl & url) {
-////        this->removeItem(url, groupName(Device));
-//        DFMSideBarItem *item = group->findItem(url);
-//        if (item && !item->inherits(DFMSideBarOpticalDevItem::staticMetaObject.className())) {
-//            q->removeItem(item);
-//        }
-//    });
-    connect(m_udisks2DiskManager.data(), &DDiskManager::blockDeviceRemoved, this, [this](const QString & s) {
-        QString devs(s);
-        devs.replace("/org/freedesktop/UDisks2/block_devices/", "/dev/");
-        DUrl url = DUrl::fromDeviceId(devs);
-        this->removeItem(url, groupName(Device));
-    });
-
-//    // Device/volume get renamed.
-//    q->connect(devices_watcher, &DAbstractFileWatcher::fileMoved, group, [group, q](const DUrl & fromUrl, const DUrl & toUrl) {
-//        Q_UNUSED(fromUrl);
-//        QUrlQuery query(toUrl);
-//        QString newName = query.queryItemValue("new_name");
-//        DUrl url = toUrl.adjusted(DUrl::RemoveQuery);
-//        DFMSideBarItem *item = group->findItem(url);
-//        // item could be NULL for a labelled optical media
-//        if (!item) {
-//            return;
-//        }
-//        DAbstractFileInfoPointer fileInfo = DFileService::instance()->createFileInfo(q, url);
-//        if (fileInfo) {
-//            if (!newName.isEmpty()) {
-//                item->setText(newName);
-//            } else {
-//                item->setText(fileInfo->fileDisplayName());
-//            }
-//        }
-    //    });
 }
 
 void DFMSideBar::initTagsConnection()
@@ -714,7 +615,6 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
         break;
     case GroupName::Device:
         appendItem(DFMSideBarDefaultItemHandler::createItem("Computer"), groupNameStr);
-        appendItem(DFMSideBarDefaultItemHandler::createItem("System Disk"), groupNameStr);
         break;
     case GroupName::Bookmark: {
         QList<DAbstractFileInfoPointer> bookmarkInfos = DFileService::instance()->getChildren(this, DUrl(BOOKMARK_ROOT),
