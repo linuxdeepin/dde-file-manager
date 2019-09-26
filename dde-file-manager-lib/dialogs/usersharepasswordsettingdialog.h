@@ -26,8 +26,8 @@
 #define USERSHAREPASSWORDSETTINGDIALOG_H
 
 #include <QObject>
-#include <ddialog.h>
-#include <dpasswordedit.h>
+#include <DDialog>
+#include <DPasswordEdit>
 
 DWIDGET_USE_NAMESPACE
 
@@ -35,7 +35,7 @@ class UserSharePasswordSettingDialog : public DDialog
 {
     Q_OBJECT
 public:
-    explicit UserSharePasswordSettingDialog(QWidget *parent = 0);
+    explicit UserSharePasswordSettingDialog(QWidget *parent = nullptr);
     void initUI();
 
 signals:

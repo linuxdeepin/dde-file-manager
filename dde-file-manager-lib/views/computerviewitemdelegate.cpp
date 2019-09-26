@@ -149,7 +149,7 @@ QSize ComputerViewItemDelegate::sizeHint(const QStyleOptionViewItem &option, con
 
 QWidget* ComputerViewItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    DLineEdit *le = new DLineEdit(parent);
+    QLineEdit *le = new QLineEdit(parent);
     le->setFrame(false);
     le->setTextMargins(0, 0, 0, 0);
     le->setAutoFillBackground(true);

@@ -122,6 +122,7 @@ signals:
 
 public slots:
     void showPassword();
+    void quitPasswordPage();
 
 private:
     QLineEdit * m_passwordEdit;

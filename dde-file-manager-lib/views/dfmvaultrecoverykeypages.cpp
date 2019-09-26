@@ -29,7 +29,7 @@
 #include <QVBoxLayout>
 
 #include <DFloatingButton>
-#include <dpasswordedit.h>
+#include <DPasswordEdit>
 
 DFM_BEGIN_NAMESPACE
 
@@ -42,11 +42,12 @@ VaultVerifyUserPage::VaultVerifyUserPage(QWidget *parent)
     m_unlockButton = new DFloatingButton(DStyle::SP_UnlockElement, this);
     m_passwordEdit = new DPasswordEdit(this);
 
-    QPushButton * icon = new QPushButton(this);
-    icon->setDisabled(true);
+    DIconButton * icon = new DIconButton(this);;
     icon->setFlat(true);
     icon->setIcon(QIcon::fromTheme("dfm_lock"));
     icon->setIconSize(QSize(64, 64));
+    icon->setWindowFlags(Qt::WindowTransparentForInput);
+    icon->setFocusPolicy(Qt::NoFocus);
     icon->setMinimumHeight(64);
 
     QVBoxLayout * layout = new QVBoxLayout(this);
@@ -89,11 +90,12 @@ VaultGeneratedKeyPage::VaultGeneratedKeyPage(QWidget *parent)
 {
     QVBoxLayout * layout = new QVBoxLayout(this);
 
-    QPushButton * icon = new QPushButton(this);
-    icon->setDisabled(true);
+    DIconButton * icon = new DIconButton(this);
     icon->setFlat(true);
     icon->setIcon(QIcon::fromTheme("dfm_lock"));
     icon->setIconSize(QSize(64, 64));
+    icon->setWindowFlags(Qt::WindowTransparentForInput);
+    icon->setFocusPolicy(Qt::NoFocus);
     icon->setMinimumHeight(64);
 
     QLabel * title = new QLabel(tr("Find your recovery key below") + '\n' +
@@ -180,11 +182,12 @@ VaultVerifyRecoveryKeyPage::VaultVerifyRecoveryKeyPage(QWidget *parent)
 {
     QVBoxLayout * layout = new QVBoxLayout(this);
 
-    QPushButton * icon = new QPushButton(this);
-    icon->setDisabled(true);
+    DIconButton * icon = new DIconButton(this);
     icon->setFlat(true);
     icon->setIcon(QIcon::fromTheme("dfm_lock"));
     icon->setIconSize(QSize(64, 64));
+    icon->setWindowFlags(Qt::WindowTransparentForInput);
+    icon->setFocusPolicy(Qt::NoFocus);
     icon->setMinimumHeight(64);
 
     QLabel * title = new QLabel(tr("Compare the following text with the key ID in your recovery key file") + '\n' +
@@ -197,6 +200,7 @@ VaultVerifyRecoveryKeyPage::VaultVerifyRecoveryKeyPage(QWidget *parent)
 
     m_verifyKeyEdit = new QLineEdit(this);
     m_verifyKeyEdit->setReadOnly(true);
+    m_verifyKeyEdit->setFocusPolicy(Qt::NoFocus);
     m_recoveryKeyEdit = new QLineEdit(this);
 
     m_retrievePasswordButton = new QPushButton(tr("Retrieve password"), this);
@@ -284,11 +288,12 @@ VaultPasswordPage::VaultPasswordPage(QWidget *parent)
     m_passwordEdit = new QLineEdit(this);
     m_passwordEdit->setReadOnly(true);
 
-    QPushButton * icon = new QPushButton(this);
-    icon->setDisabled(true);
+    DIconButton * icon = new DIconButton(this);
     icon->setFlat(true);
     icon->setIcon(QIcon::fromTheme("dfm_lock"));
     icon->setIconSize(QSize(64, 64));
+    icon->setWindowFlags(Qt::WindowTransparentForInput);
+    icon->setFocusPolicy(Qt::NoFocus);
     icon->setMinimumHeight(64);
 
     QVBoxLayout * layout = new QVBoxLayout(this);
@@ -298,6 +303,8 @@ VaultPasswordPage::VaultPasswordPage(QWidget *parent)
     layout->addWidget(m_passwordEdit);
     layout->addStretch();
     layout->addWidget(m_finishButton);
+
+    connect(m_finishButton, &QAbstractButton::clicked, this, &VaultPasswordPage::quitPasswordPage);
 }
 
 VaultPasswordPage::~VaultPasswordPage()
@@ -314,6 +321,12 @@ void VaultPasswordPage::showPassword()
     }
 }
 
+void VaultPasswordPage::quitPasswordPage()
+{
+    m_passwordEdit->clear();
+    emit requestRedirect(VaultController::makeVaultUrl());
+}
+
 // ----------------------------------------------
 
 DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
@@ -326,6 +339,7 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
 
     connect(verifyPage, &VaultVerifyUserPage::requestRedirect, this, &DFMVaultRecoveryKeyPages::requestRedirect);
     connect(enterRecoveryKeyPage, &VaultVerifyRecoveryKeyPage::requestRedirect, this, &DFMVaultRecoveryKeyPages::requestRedirect);
+    connect(vaultPasswordPage, &VaultPasswordPage::requestRedirect, this, &DFMVaultRecoveryKeyPages::requestRedirect);
 
     insertPage("verify", verifyPage);
     insertPage("generated_key", generatedKeyPage);
