@@ -27,7 +27,7 @@
 #include <DFloatingButton>
 #include <DCommandLinkButton>
 #include <DSecureString>
-#include "dpasswordedit.h"
+#include <DPasswordEdit>
 
 DCORE_USE_NAMESPACE
 
@@ -42,11 +42,12 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     m_unlockButton = new DFloatingButton(DStyle::SP_UnlockElement, this);
     m_passwordEdit = new DPasswordEdit(this);
 
-    QPushButton * icon = new QPushButton(this);
-    icon->setDisabled(true);
+    DIconButton * icon = new DIconButton(this);
     icon->setFlat(true);
     icon->setIcon(QIcon::fromTheme("dfm_lock"));
     icon->setIconSize(QSize(64, 64));
+    icon->setWindowFlags(Qt::WindowTransparentForInput);
+    icon->setFocusPolicy(Qt::NoFocus);
     icon->setMinimumHeight(64);
 
     m_retrievePasswordButton = new DCommandLinkButton(tr("Retrieve password"), this);

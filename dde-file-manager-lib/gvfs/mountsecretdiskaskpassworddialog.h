@@ -32,19 +32,16 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QJsonObject>
-#include <ddialog.h>
-#include <dpasswordedit.h>
-#include <dpasswordedit.h>
+#include <DDialog>
+#include <DPasswordEdit>
 
 DWIDGET_USE_NAMESPACE
-
-
 
 class MountSecretDiskAskPasswordDialog : public DDialog
 {
     Q_OBJECT
 public:
-    explicit MountSecretDiskAskPasswordDialog(const QString& tipMessage, QWidget *parent = 0);
+    explicit MountSecretDiskAskPasswordDialog(const QString& tipMessage, QWidget *parent = nullptr);
     ~MountSecretDiskAskPasswordDialog();
 
     void initUI();

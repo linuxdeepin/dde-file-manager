@@ -21,9 +21,10 @@
 #include "dfmvaultsetuppages.h"
 
 #include <QLabel>
-#include <dpasswordedit.h>
+#include <DPasswordEdit>
 #include <DSecureString>
 #include <QVBoxLayout>
+#include <DIconButton>
 
 DFM_BEGIN_NAMESPACE
 
@@ -34,11 +35,12 @@ VaultSetupWelcomePage::VaultSetupWelcomePage(QWidget *parent)
     m_importButton = new QPushButton(tr("Import a vault"), this);
     m_importButton->setVisible(false);
 
-    QPushButton * icon = new QPushButton(this);
-    icon->setDisabled(true);
+    DIconButton * icon = new DIconButton(this);
     icon->setFlat(true);
     icon->setIcon(QIcon::fromTheme("dfm_safebox"));
     icon->setIconSize(QSize(64, 64));
+    icon->setWindowFlags(Qt::WindowTransparentForInput);
+    icon->setFocusPolicy(Qt::NoFocus);
     icon->setMinimumHeight(64);
 
     QLabel * title = new QLabel(tr("File Vault"), this);
@@ -80,11 +82,12 @@ VaultSetupSetPasswordPage::VaultSetupSetPasswordPage(QWidget *parent)
 {
     m_nextButton = new QPushButton(tr("Next"), this);
 
-    QPushButton * icon = new QPushButton(this);
-    icon->setDisabled(true);
+    DIconButton * icon = new DIconButton(this);
     icon->setFlat(true);
     icon->setIcon(QIcon::fromTheme("dfm_lock"));
     icon->setIconSize(QSize(64, 64));
+    icon->setWindowFlags(Qt::WindowTransparentForInput);
+    icon->setFocusPolicy(Qt::NoFocus);
     icon->setMinimumHeight(64);
 
     QLabel * description = new QLabel(tr("Set a password for the vault"), this);

@@ -25,7 +25,7 @@ private:
     BurnOptDialog *q_ptr;
     QWidget *w_content;
     QLabel *lb_volname;
-    DLineEdit *le_volname;
+    QLineEdit *le_volname;
     QLabel *lb_writespeed;
     QComboBox *cb_writespeed;
     QCheckBox *cb_iclose;
@@ -145,7 +145,7 @@ void BurnOptDialogPrivate::setupUi()
     lb_volname = new QLabel(QObject::tr("Disc name:"));
     w_content->layout()->addWidget(lb_volname);
 
-    le_volname = new DLineEdit();
+    le_volname = new QLineEdit();
     le_volname->setMaxLength(32);
     w_content->layout()->addWidget(le_volname);
 

@@ -33,19 +33,16 @@
 #include <QPushButton>
 #include <QCheckBox>
 #include <QJsonObject>
-#include <ddialog.h>
-#include <dpasswordedit.h>
+#include <DDialog>
+#include <DPasswordEdit>
 
 DWIDGET_USE_NAMESPACE
-
-
-
 
 class MountAskPasswordDialog : public DDialog
 {
     Q_OBJECT
 public:
-    explicit MountAskPasswordDialog(QWidget *parent = 0);
+    explicit MountAskPasswordDialog(QWidget *parent = nullptr);
     ~MountAskPasswordDialog();
 
     void initUI();
