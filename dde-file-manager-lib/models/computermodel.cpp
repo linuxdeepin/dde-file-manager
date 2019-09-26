@@ -54,7 +54,7 @@ ComputerModel::ComputerModel(QObject *parent) :
             insertAfter(chi->fileUrl(), makeSplitterUrl(tr("Disks")));
             rootinserted = true;
             break;
-        case DFMRootFileInfo::ItemType::UDisksNormal:
+        case DFMRootFileInfo::ItemType::UDisksData:
             {
                 int p = findItem(makeSplitterUrl(tr("Disks")));
                 if (rootinserted) {
