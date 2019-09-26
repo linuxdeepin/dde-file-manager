@@ -961,8 +961,40 @@ void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail)
     }
 }
 
+void DTaskDialog::blockShutdown()
+{
+    if (m_reply.value().isValid()) {
+        return ;
+    }
+
+    QDBusInterface loginManager("org.freedesktop.login1",
+            "/org/freedesktop/login1",
+            "org.freedesktop.login1.Manager",
+            QDBusConnection::systemBus());
+
+    QList<QVariant> arg;
+    arg << QString("shutdown:sleep:")                            // what
+        << qApp->applicationDisplayName()                        // who
+        << QObject::tr("Files are being processed")              // why
+        << QString("block");                                     // mode
+
+    int fd = -1;
+    m_reply = loginManager.callWithArgumentList(QDBus::Block, "Inhibit", arg);
+    if (m_reply.isValid()) {
+        fd = m_reply.value().fileDescriptor();
+    }
+
+    if (fd > 0){
+        QObject::connect(this, &DTaskDialog::closed, this, [this](){
+            QDBusReply<QDBusUnixFileDescriptor> tmp = m_reply; //::close(fd);
+            m_reply = QDBusReply<QDBusUnixFileDescriptor>();
+        });
+    }
+}
+
 MoveCopyTaskWidget *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
 {
+    blockShutdown();
     MoveCopyTaskWidget *moveWidget = new MoveCopyTaskWidget(job);
     moveWidget->setFixedHeight(80);
     connect(moveWidget, SIGNAL(closed(QMap<QString, QString>)),
@@ -985,6 +1017,7 @@ MoveCopyTaskWidget *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
 
     moveWidget->setProperty("row", m_taskListWidget->count() - 1);
     emit currentHoverRowChanged(1, false, m_taskListWidget->count());
+    emit taskAdded(m_taskListWidget->count());
 
     return moveWidget;
 }
@@ -1055,6 +1088,10 @@ void DTaskDialog::removeTaskByPath(QString jobId)
 {
     if (m_jobIdItems.contains(jobId)) {
         QListWidgetItem *item = m_jobIdItems.value(jobId);
+        MoveCopyTaskWidget * mw = dynamic_cast<MoveCopyTaskWidget *>(m_taskListWidget->itemWidget(item));
+        disconnect(mw, &MoveCopyTaskWidget::hovereChanged, this, &DTaskDialog::onItemHovered);
+        disconnect(this, &DTaskDialog::currentHoverRowChanged, mw, &MoveCopyTaskWidget::handleLineDisplay);
+
         m_taskListWidget->removeItemWidget(item);
         m_taskListWidget->takeItem(m_taskListWidget->row(item));
         m_jobIdItems.remove(jobId);
