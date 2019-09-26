@@ -25,6 +25,7 @@
 #include <QVBoxLayout>
 
 #include <DFloatingButton>
+#include <DCommandLinkButton>
 #include <DSecureString>
 #include "dpasswordedit.h"
 
@@ -48,6 +49,8 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     icon->setIconSize(QSize(64, 64));
     icon->setMinimumHeight(64);
 
+    m_retrievePasswordButton = new DCommandLinkButton(tr("Retrieve password"), this);
+
     QVBoxLayout * layout = new QVBoxLayout(this);
     layout->addStretch();
     layout->addWidget(icon);
@@ -55,10 +58,15 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     layout->addWidget(m_passwordEdit);
     layout->addWidget(m_unlockButton);
     layout->addStretch();
+    layout->addWidget(m_retrievePasswordButton);
 
     layout->setAlignment(m_unlockButton, Qt::AlignHCenter);
+    layout->setAlignment(m_retrievePasswordButton, Qt::AlignHCenter);
 
     connect(m_unlockButton, &QAbstractButton::clicked, this, &DFMVaultUnlockPages::unlock);
+    connect(m_retrievePasswordButton, &QAbstractButton::clicked, this, [=](){
+        emit requestRedirect(VaultController::makeVaultUrl("/retrieve_password", "recovery_key"));
+    });
 }
 
 QPair<DUrl, bool> DFMVaultUnlockPages::requireRedirect(VaultController::VaultState state)
@@ -72,6 +80,14 @@ QPair<DUrl, bool> DFMVaultUnlockPages::requireRedirect(VaultController::VaultSta
         break;
     }
     return DFMVaultContentInterface::requireRedirect(state);
+}
+
+void DFMVaultUnlockPages::setRootUrl(const DUrl &url)
+{
+    QFile keyFile(VaultController::makeVaultLocalPath("dde-vault.config", "vault_encrypted"));
+    m_retrievePasswordButton->setVisible(keyFile.exists());
+
+    return DFMVaultContentInterface::setRootUrl(url);
 }
 
 void DFMVaultUnlockPages::unlock()

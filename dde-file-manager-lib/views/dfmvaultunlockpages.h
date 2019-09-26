@@ -26,6 +26,7 @@
 DWIDGET_BEGIN_NAMESPACE
 class DPasswordEdit;
 class DFloatingButton;
+class DCommandLinkButton;
 DWIDGET_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
@@ -40,6 +41,7 @@ public:
     ~DFMVaultUnlockPages() override {}
 
     QPair<DUrl, bool> requireRedirect(VaultController::VaultState state) override;
+    void setRootUrl(const DUrl & url) override;
 
 private slots:
     void unlock();
@@ -47,6 +49,7 @@ private slots:
 private:
     DPasswordEdit * m_passwordEdit;
     DFloatingButton * m_unlockButton;
+    DCommandLinkButton * m_retrievePasswordButton;
 };
 
 DFM_END_NAMESPACE
