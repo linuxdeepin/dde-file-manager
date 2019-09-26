@@ -259,19 +259,6 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
         return false;
     }
 
-    // old mount scheme support... may get removed when no other place use this...
-    if (fileUrl.scheme() == "mount") {
-        DUrl newUrl;
-        QUrlQuery query(fileUrl);
-
-        if (query.hasQueryItem("id")) {
-            newUrl.setQuery(query.queryItemValue("id"));
-            appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(q_ptr, newUrl));
-
-            return true;
-        }
-    }
-
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = DFileService::instance()->createFileInfo(q_ptr, fileUrl);
         if (fi->suffix() == SUFFIX_USRDIR) {

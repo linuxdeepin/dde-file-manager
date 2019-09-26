@@ -170,22 +170,31 @@ void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
 void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
-    QString id = fileUrl.query();
 
-    if (!id.isEmpty()) {
-        const QDiskInfo &diskInfo = gvfsMountManager->getDiskInfo(id);
-        if (diskInfo.can_mount()) {
-            m_fmEvent = event;
-            setEventKey(Open);
-            actionMount(event);
-            deviceListener->addSubscriber(this);
-        }
-        if (diskInfo.can_unmount()) {
-            const QSharedPointer<DFMUrlListBaseEvent> &e = dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), DUrlList() << event->url());
-            e->setWindowId(event->windowId());
+    bool mounted = QStorageInfo(fileUrl.toLocalFile()).isValid();
 
-            actionOpen(e);
+    DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), fileUrl);
+    if (fi && fi->scheme() == DFMROOT_SCHEME) {
+        mounted |= (!fi->redirectedFileUrl().isEmpty());
+    }
+
+    if (!mounted) {
+        m_fmEvent = event;
+        setEventKey(Open);
+        actionMount(event);
+        deviceListener->addSubscriber(this);
+    } else {
+        DUrl newUrl = fileUrl;
+        newUrl.setQuery(QString());
+
+        if (fi && fi->scheme() == DFMROOT_SCHEME) {
+            newUrl = fi->redirectedFileUrl();
         }
+
+        const QSharedPointer<DFMUrlListBaseEvent> &e = dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), DUrlList() << newUrl);
+        e->setWindowId(event->windowId());
+
+        actionOpen(e);
     }
 }
 

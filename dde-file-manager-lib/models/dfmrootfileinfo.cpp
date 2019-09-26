@@ -48,6 +48,7 @@ public:
     qulonglong size;
     QString label;
     QString fs;
+    bool isod;
     DFMRootFileInfo *q_ptr;
     Q_DECLARE_PUBLIC(DFMRootFileInfo)
 };
@@ -93,6 +94,8 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
         QString udiskspath = "/org/freedesktop/UDisks2/block_devices" + url.path().chopped(QString("." SUFFIX_UDISKS).length());
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
         if (blk->path().length() != 0) {
+            QSharedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+            d_ptr->isod = drv->mediaCompatibility().join(" ").contains("optical");
             d_ptr->backer_url = udiskspath;
             d_ptr->blk = blk;
             d_ptr->blk->setWatchChanges(true);
@@ -381,6 +384,8 @@ QVariantHash DFMRootFileInfo::extraProperties() const
         ret["fsSize"] = d->gfsi->fsTotalBytes();
         ret["fsType"] = d->gfsi->fsType();
         ret["rooturi"] = d->gmnt->getRootFile()->uri();
+        ret["canUnmount"] = true;
+        ret["mounted"] = true;
     } else if (suffix() == SUFFIX_UDISKS) {
         if (d->mps.empty()) {
             ret["fsUsed"] = quint64(d->size + 1);
@@ -391,6 +396,8 @@ QVariantHash DFMRootFileInfo::extraProperties() const
         ret["fsSize"] = quint64(d->size);
         ret["fsType"] = d->fs;
         ret["udisksblk"] = d->blk->path();
+        ret["canUnmount"] = d->isod || !d->mps.empty();
+        ret["mounted"] = !d->mps.empty();
     }
     return ret;
 }
