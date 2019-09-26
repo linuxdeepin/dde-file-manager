@@ -66,14 +66,21 @@ DFMSideBarItem *DFMSideBarDeviceItemHandler::createItem(const DUrl &url)
     QString iconName = infoPointer->iconName() + "-symbolic";
 
     DFMSideBarItem * item = new DFMSideBarItem(QIcon::fromTheme(iconName), displayName, url);
-    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren);
+
+    Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
+    if (infoPointer->menuActionList().contains(MenuAction::Rename))
+        flags |= Qt::ItemIsEditable;
+    item->setFlags(flags);
+
     item->setData(SIDEBAR_ID_DEVICE, DFMSideBarItem::ItemUseRegisteredHandlerRole);
+
     DViewItemActionList lst;
     DViewItemAction * act = createUnmountOrEjectAction(url, false);
     act->setIcon(QIcon::fromTheme("media-eject-symbolic"));
     act->setVisible(infoPointer->menuActionList().contains(MenuAction::Unmount));
     lst.push_back(act);
     item->setActionList(Qt::RightEdge, lst);
+
     return item;
 }
 
@@ -107,6 +114,14 @@ QMenu *DFMSideBarDeviceItemHandler::contextMenu(const DFMSideBar *sidebar, const
     menu->setEventData(DUrl(), {item->url()}, WindowManager::getWindowId(wnd), sidebar);
 
     return menu;
+}
+
+void DFMSideBarDeviceItemHandler::rename(const DFMSideBarItem *item, QString name)
+{
+    const DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(this, item->url());
+    if (infoPointer->fileDisplayName() != name) {
+        DFileService::instance()->renameFile(this, item->url(), DUrl(name));
+    }
 }
 
 DFM_END_NAMESPACE

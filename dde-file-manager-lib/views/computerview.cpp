@@ -1393,6 +1393,9 @@ void ComputerView2::contextMenu(const QPoint &pos)
 
 void ComputerView2::onRenameRequested(const DFMUrlBaseEvent &event)
 {
+    if (event.sender() != this) {
+        return;
+    }
     const QModelIndex &idx = m_model->findIndex(event.url());
     if (idx.isValid()) {
         m_view->edit(idx);

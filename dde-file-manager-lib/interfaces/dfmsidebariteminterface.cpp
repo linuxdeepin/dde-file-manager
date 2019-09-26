@@ -66,3 +66,8 @@ QMenu *DFMSideBarItemInterface::contextMenu(const DFMSideBar *sidebar, const DFM
     return menu;
 }
 
+void DFMSideBarItemInterface::rename(const DFMSideBarItem *item, QString name)
+{
+    //no-op
+}
+

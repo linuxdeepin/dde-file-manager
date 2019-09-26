@@ -26,6 +26,7 @@
 #include "dfilemanagerwindow.h"
 #include "dfileservices.h"
 #include "singleton.h"
+#include "app/define.h"
 
 #include "dfmsidebarmanager.h"
 #include "interfaces/dfmsidebariteminterface.h"
@@ -39,6 +40,7 @@
 #include "controllers/dfmsidebardeviceitemhandler.h"
 #include "controllers/dfmsidebartagitemhandler.h"
 #include "controllers/dfmsidebaropticalitemhandler.h"
+#include "app/filesignalmanager.h"
 
 #include <DApplicationHelper>
 
@@ -176,7 +178,7 @@ int DFMSideBar::findLastItem(const QString &group, bool sidebarItemOnly) const
 
 void DFMSideBar::openItemEditor(int index) const
 {
-    m_sidebarView->openPersistentEditor(m_sidebarModel->index(index, 0));
+    m_sidebarView->edit(m_sidebarModel->index(index, 0));
 }
 
 QSet<QString> DFMSideBar::disableUrlSchemes() const
@@ -324,6 +326,21 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
     return;
 }
 
+void DFMSideBar::onModelDataChanged(const QModelIndex &a, const QModelIndex &b, QVector<int> roles)
+{
+    if (a != b || !roles.contains(Qt::ItemDataRole::DisplayRole)) {
+        return;
+    }
+
+    DFMSideBarItem * item = m_sidebarModel->itemFromIndex(a);
+    QString identifierStr = item->registeredHandler(SIDEBAR_ID_INTERNAL_FALLBACK);
+
+    QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
+    if (interface) {
+        interface->rename(item, item->data(Qt::DisplayRole).toString());
+    }
+}
+
 void DFMSideBar::initUI()
 {
     // init layout.
@@ -377,6 +394,13 @@ void DFMSideBar::initConnection()
     connect(m_sidebarModel, &QStandardItemModel::rowsInserted, this, &DFMSideBar::updateSeparatorVisibleState);
     connect(m_sidebarModel, &QStandardItemModel::rowsRemoved, this, &DFMSideBar::updateSeparatorVisibleState);
     connect(m_sidebarModel, &QStandardItemModel::rowsMoved, this, &DFMSideBar::updateSeparatorVisibleState);
+    connect(m_sidebarModel, &QAbstractItemModel::dataChanged, this, &DFMSideBar::onModelDataChanged);
+
+    connect(fileSignalManager, &FileSignalManager::requestRename, this, [this](const DFMUrlBaseEvent &event){
+        if (event.sender() == this) {
+            this->openItemEditor(this->findItem(event.url()));
+        }
+    });
 
     initBookmarkConnection();
     initDeviceConnection();
@@ -510,6 +534,12 @@ void DFMSideBar::initDeviceConnection()
         DViewItemActionList actionList = item->actionList(Qt::RightEdge);
         actionList.front()->setVisible(fi->extraProperties()["canUnmount"].toBool());
         item->setText(fi->fileDisplayName());
+
+        Qt::ItemFlags flags = item->flags() & (~Qt::ItemFlag::ItemIsEditable);
+        if (fi->menuActionList().contains(MenuAction::Rename)) {
+            flags |= Qt::ItemFlag::ItemIsEditable;
+        }
+        item->setFlags(flags);
     });
 }
 

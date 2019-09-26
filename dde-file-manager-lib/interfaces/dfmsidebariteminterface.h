@@ -37,6 +37,7 @@ public:
 
     virtual void cdAction(const DFMSideBar *sidebar, const DFMSideBarItem* item);
     virtual QMenu * contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem* item);
+    virtual void rename(const DFMSideBarItem *item, QString name);
 };
 
 DFM_END_NAMESPACE
