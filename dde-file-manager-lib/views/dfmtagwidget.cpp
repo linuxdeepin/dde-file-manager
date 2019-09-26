@@ -135,31 +135,28 @@ void DFMTagWidget::initConnection()
     });
 
     QObject::connect(d->m_tagActionWidget, &DTagActionWidget::checkedColorChanged, d->m_tagActionWidget, [=](const QColor &color){
-        const QStringList tag_name_list = TagManager::instance()->getTagsThroughFiles({d->m_url});
-        QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({tag_name_list});
+        const QStringList tagNameList = TagManager::instance()->getTagsThroughFiles({d->m_url});
+        QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({tagNameList});
         DUrlList urlList{d->m_url};
-        QList<QColor> checkedcolors{ d->m_tagActionWidget->checkedColorList() };
-        QSet<QString> dirtyTagFilter = TagManager::instance()->allTagOfDefaultColors();
+        QList<QColor> checkedColors{ d->m_tagActionWidget->checkedColorList() };
+        QSet<QString> defaultNames = TagManager::instance()->allTagOfDefaultColors();
 
-        QSet<QString> sameColors = nameColors.keys(color).toSet();
-        // 当有多个相同颜色名字不同的tag时， 取消tag优先取消默认颜色
-        if (sameColors.count()>0 && !checkedcolors.contains(color) && !sameColors.intersects(dirtyTagFilter)) {
-            dirtyTagFilter << *sameColors.begin();
-        }
-
-        QStringList new_tagNames;
-        for (const QColor &color : checkedcolors) {
-            QString tag_name =  nameColors.key(color);
-            if (tag_name.isEmpty())
-                tag_name = TagManager::instance()->getTagNameThroughColor(color);
-
-            if (tag_name.isEmpty()) {
+        QStringList newTagNames;
+        for (const QColor &color : checkedColors) {
+            QString tagName = TagManager::instance()->getTagNameThroughColor(color);
+            if (tagName.isEmpty()) {
                 continue;
             }
-            new_tagNames << tag_name;
+            newTagNames << tagName;
         }
 
-        DFileService::instance()->makeTagsOfFiles(nullptr, urlList, new_tagNames, dirtyTagFilter);
+        for (auto it = nameColors.begin(); it!=nameColors.end();++it) {
+            if (!defaultNames.contains(it.key())) {
+                newTagNames << it.key();
+            }
+        }
+
+        DFileService::instance()->makeTagsOfFiles(nullptr, urlList, newTagNames);
         loadTags(d->m_url);
     });
 }
@@ -172,6 +169,7 @@ void DFMTagWidget::loadTags(const DUrl& url)
 
     const QStringList tag_name_list = TagManager::instance()->getTagsThroughFiles({url});
     QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({tag_name_list});
+    QSet<QString> defaultColors = TagManager::instance()->allTagOfDefaultColors();
     QList<QColor>  selectColors;
 
     d->m_tagCrumbEdit->setProperty("LoadFileTags", true);
@@ -179,7 +177,14 @@ void DFMTagWidget::loadTags(const DUrl& url)
     for(auto it = nameColors.begin();it != nameColors.end(); ++it) {
         DCrumbTextFormat format = d->m_tagCrumbEdit->makeTextFormat();
         format.setText(it.key());
-        selectColors << it.value();
+        // 默认名字的颜色才勾选 checkbox
+        QString colorName = TagManager::instance()->getColorByDisplayName(it.key());
+        if (!colorName.isEmpty()) {
+            QColor defaultColor = TagManager::instance()->getColorByColorName(colorName);
+            if (defaultColors.contains(it.key()) && it.value() == defaultColor) {
+                selectColors << it.value();
+            }
+        }
         format.setBackground(QBrush(it.value()));
         format.setBackgroundRadius(5);
         d->m_tagCrumbEdit->insertCrumb(format, 0);
