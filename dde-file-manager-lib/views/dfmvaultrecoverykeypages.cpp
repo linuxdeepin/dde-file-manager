@@ -146,7 +146,7 @@ void VaultGeneratedKeyPage::startKeyGeneration()
     QByteArray encryptedData(encryptedStr.data(), encryptedStr.length());
     QByteArray ivData((char *)iv, CryptoUtils::AES_128_BLOCK_SIZE);
 
-    fileStream << vaultConfigVersion << ivData.length() << ivData << encryptedData.length() << encryptedData;
+    fileStream << vaultConfigVersion << ivData << encryptedData;
 
     encryptedFile.flush();
     encryptedFile.close();
@@ -175,19 +175,167 @@ DSecureString VaultGeneratedKeyPage::createRecoveryKeyString(const DSecureString
 
 // ----------------------------------------------
 
+VaultVerifyRecoveryKeyPage::VaultVerifyRecoveryKeyPage(QWidget *parent)
+    : QWidget (parent)
+{
+    QVBoxLayout * layout = new QVBoxLayout(this);
+
+    QPushButton * icon = new QPushButton(this);
+    icon->setDisabled(true);
+    icon->setFlat(true);
+    icon->setIcon(QIcon::fromTheme("dfm_lock"));
+    icon->setIconSize(QSize(64, 64));
+    icon->setMinimumHeight(64);
+
+    QLabel * title = new QLabel(tr("Compare the following text with the key ID in your recovery key file") + '\n' +
+                                tr("If they are identical, input the recovery key below to retrieve your vault password"), this);
+    title->setAlignment(Qt::AlignHCenter);
+    title->setWordWrap(true);
+    QFont font = title->font();
+    font.setBold(true);
+    title->setFont(font);
+
+    m_verifyKeyEdit = new QLineEdit(this);
+    m_verifyKeyEdit->setReadOnly(true);
+    m_recoveryKeyEdit = new QLineEdit(this);
+
+    m_retrievePasswordButton = new QPushButton(tr("Retrieve password"), this);
+
+    layout->addStretch();
+    layout->addWidget(icon);
+    layout->addWidget(title);
+    layout->addWidget(m_verifyKeyEdit);
+    layout->addWidget(m_recoveryKeyEdit);
+    layout->addStretch();
+    layout->addWidget(m_retrievePasswordButton);
+
+    connect(m_retrievePasswordButton, &QAbstractButton::clicked, this, &VaultVerifyRecoveryKeyPage::startVerifyKey);
+}
+
+VaultVerifyRecoveryKeyPage::~VaultVerifyRecoveryKeyPage()
+{
+
+}
+
+void VaultVerifyRecoveryKeyPage::preparePage()
+{
+    QFile encryptedFile(VaultController::makeVaultLocalPath("dde-vault.config", "vault_encrypted"));
+    if (!encryptedFile.exists()) {
+        emit requestRedirect(VaultController::makeVaultUrl());
+    }
+
+    encryptedFile.open(QIODevice::ReadOnly);
+    QDataStream stream(&encryptedFile);
+
+    int version;
+    stream >> version;
+    stream >> m_ivData;
+    stream >> m_encryptedPasswordData;
+
+    encryptedFile.close();
+
+    CryptoUtils::secure_string ivHexStr = CryptoUtils::bin_to_hex((CryptoUtils::byte *)m_ivData.data(), m_ivData.length());
+    m_verifyKeyEdit->setText(ivHexStr.data());
+}
+
+void VaultVerifyRecoveryKeyPage::startVerifyKey()
+{
+    m_retrievePasswordButton->setDisabled(true);
+    bool succ = verifyKey();
+    if (succ) {
+        emit requestRedirect(VaultController::makeVaultUrl("/password", "recovery_key"));
+    }
+    m_retrievePasswordButton->setDisabled(false);
+}
+
+bool VaultVerifyRecoveryKeyPage::verifyKey()
+{
+    DSecureString encryptedKeyHexString(m_recoveryKeyEdit->text().trimmed());
+    if (!encryptedKeyHexString.isEmpty() && !m_verifyKeyEdit->text().isEmpty()) {
+        if (encryptedKeyHexString.length() != CryptoUtils::AES_128_KEY_SIZE * 2) {
+            return false;
+        }
+        CryptoUtils::byte encryptedKeyData[CryptoUtils::AES_128_KEY_SIZE];
+        CryptoUtils::secure_string keyHexStr(encryptedKeyHexString.toLatin1()),
+                                   encryptedPasswordStr(m_encryptedPasswordData.data()),
+                                   retrievedPasswordStr;
+        CryptoUtils::hex_to_bin(keyHexStr, encryptedKeyData, CryptoUtils::AES_128_KEY_SIZE);
+        CryptoUtils::aes_128_decrypt(encryptedKeyData, (CryptoUtils::byte *)m_ivData.data(),
+                                     encryptedPasswordStr, retrievedPasswordStr);
+
+        DSecureString password(retrievedPasswordStr.data());
+        Singleton<SecretManager>::instance()->storeVaultPassword(password);
+
+        return true;
+    }
+
+    return false;
+}
+
+// ----------------------------------------------
+
+VaultPasswordPage::VaultPasswordPage(QWidget *parent)
+    : QWidget (parent)
+{
+    QLabel * description = new QLabel(tr("Here is your vault password"), this);
+    description->setAlignment(Qt::AlignHCenter);
+
+    m_finishButton = new QPushButton(tr("OK"), this);
+    m_passwordEdit = new QLineEdit(this);
+    m_passwordEdit->setReadOnly(true);
+
+    QPushButton * icon = new QPushButton(this);
+    icon->setDisabled(true);
+    icon->setFlat(true);
+    icon->setIcon(QIcon::fromTheme("dfm_lock"));
+    icon->setIconSize(QSize(64, 64));
+    icon->setMinimumHeight(64);
+
+    QVBoxLayout * layout = new QVBoxLayout(this);
+    layout->addStretch();
+    layout->addWidget(icon);
+    layout->addWidget(description);
+    layout->addWidget(m_passwordEdit);
+    layout->addStretch();
+    layout->addWidget(m_finishButton);
+}
+
+VaultPasswordPage::~VaultPasswordPage()
+{
+    m_passwordEdit->clear();
+}
+
+void VaultPasswordPage::showPassword()
+{
+    DSecureString password = Singleton<SecretManager>::instance()->lookupVaultPassword();
+    if (!password.isEmpty()) {
+        m_passwordEdit->setText(password);
+        Singleton<SecretManager>::instance()->clearVaultPassword();
+    }
+}
+
+// ----------------------------------------------
+
 DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
     : DFMVaultPages(parent)
 {
     VaultVerifyUserPage * verifyPage = new VaultVerifyUserPage(this);
     VaultGeneratedKeyPage * generatedKeyPage = new VaultGeneratedKeyPage(this);
+    VaultVerifyRecoveryKeyPage * enterRecoveryKeyPage = new VaultVerifyRecoveryKeyPage(this);
+    VaultPasswordPage * vaultPasswordPage = new VaultPasswordPage(this);
 
     connect(verifyPage, &VaultVerifyUserPage::requestRedirect, this, &DFMVaultRecoveryKeyPages::requestRedirect);
+    connect(enterRecoveryKeyPage, &VaultVerifyRecoveryKeyPage::requestRedirect, this, &DFMVaultRecoveryKeyPages::requestRedirect);
 
     insertPage("verify", verifyPage);
     insertPage("generated_key", generatedKeyPage);
+    insertPage("retrieve_password", enterRecoveryKeyPage);
+    insertPage("password", vaultPasswordPage);
 
     connect(this, &DFMVaultPages::rootPageChanged, this, &DFMVaultRecoveryKeyPages::onRootPageChanged);
     connect(this, &DFMVaultRecoveryKeyPages::requestCreateRecoveryKey, generatedKeyPage, &VaultGeneratedKeyPage::startKeyGeneration);
+    connect(this, &DFMVaultRecoveryKeyPages::requestPrepareRetrievePasswordPage, enterRecoveryKeyPage, &VaultVerifyRecoveryKeyPage::preparePage);
+    connect(this, &DFMVaultRecoveryKeyPages::requestShowPassword, vaultPasswordPage, &VaultPasswordPage::showPassword);
 }
 
 DFMVaultRecoveryKeyPages::~DFMVaultRecoveryKeyPages()
@@ -217,6 +365,12 @@ QString DFMVaultRecoveryKeyPages::pageString(const DUrl &url)
     if (url.path() == "/generated_key") {
         return "generated_key";
     }
+    if (url.path() == "/retrieve_password") {
+        return "retrieve_password";
+    }
+    if (url.path() == "/password") {
+        return "password";
+    }
     return "verify";
 }
 
@@ -226,6 +380,10 @@ void DFMVaultRecoveryKeyPages::onRootPageChanged(QString pageStr)
         if (!Singleton<SecretManager>::instance()->lookupVaultPassword().isEmpty()) {
             emit requestCreateRecoveryKey();
         }
+    } else if (pageStr == "retrieve_password") {
+        emit requestPrepareRetrievePasswordPage();
+    } else if (pageStr == "password") {
+        emit requestShowPassword();
     }
 }
 
