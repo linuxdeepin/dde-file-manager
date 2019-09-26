@@ -33,7 +33,7 @@
 #define SPLITTER_SCHEME "splitter"
 #define WIDGET_SCHEME "widget"
 
-class ComputerView2;
+class ComputerView;
 
 struct ComputerModelItemData
 {
@@ -96,7 +96,7 @@ Q_SIGNALS:
     void itemCountChanged(int nitems);
 
 private:
-    ComputerView2* par;
+    ComputerView* par;
     QScopedPointer<DDiskManager> m_diskm;
     QList<ComputerModelItemData> m_items;
     DAbstractFileWatcher* m_watcher;

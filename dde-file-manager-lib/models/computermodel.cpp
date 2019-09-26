@@ -37,7 +37,7 @@ ComputerModel::ComputerModel(QObject *parent) :
     m_diskm(new DDiskManager(this))
 {
     m_diskm->setWatchChanges(true);
-    par = qobject_cast<ComputerView2*>(parent);
+    par = qobject_cast<ComputerView*>(parent);
     addItem(makeSplitterUrl(tr("My Directories")));
     QList<DAbstractFileInfoPointer> ch = fileService->getChildren(this, DUrl(DFMROOT_ROOT), {}, nullptr);
     bool splt = false;
@@ -324,7 +324,7 @@ void ComputerModel::initItemData(ComputerModelItemData &data, const DUrl &url, Q
             data.cat = ComputerModelItemData::Category::cat_user_directory;
         } else {
             data.cat = ComputerModelItemData::Category::cat_internal_storage;
-            ProgressLine *pl = new ProgressLine(qobject_cast<ComputerView2*>(this->QObject::parent()));
+            ProgressLine *pl = new ProgressLine(qobject_cast<ComputerView*>(this->QObject::parent()));
             pl->setRoundRadius(2);
             pl->setMin(0);
             pl->setMax(10000);
