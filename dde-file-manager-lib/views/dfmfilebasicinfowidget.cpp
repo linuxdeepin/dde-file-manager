@@ -268,6 +268,18 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
                 layout->addRow(pixelKeyLabel, pixelLabel);
                 frameHeight += 30;
             }
+
+            bool okw = false, okh = false;
+            int width = mediaInfo.Value("Width", mediaType).toInt(&okw);
+            int height = mediaInfo.Value("Height", mediaType).toInt(&okh);
+            if (okw && okh) {
+                QString text = QString("%1x%2").arg(width).arg(height);
+                QLabel *pixelKeyLabel = new SectionKeyLabel(QObject::tr("Dimension"));
+                QLabel *pixelLabel = new SectionValueLabel;
+                pixelLabel->setText(text);
+                layout->addRow(pixelKeyLabel, pixelLabel);
+                frameHeight += 30;
+            }
         }
     }
 
