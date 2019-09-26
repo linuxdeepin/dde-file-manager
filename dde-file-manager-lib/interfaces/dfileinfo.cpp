@@ -871,7 +871,7 @@ QIcon DFileInfo::fileIcon() const
             QPainter pa(&pixmap);
 
             pa.setPen(Qt::gray);
-            pa.drawRect(pixmap.rect().adjusted(0, 0, -1, -1));
+            pa.drawPixmap(0, 0, pixmap);
             d->icon.addPixmap(pixmap);
             d->iconFromTheme = false;
             d->needThumbnail = false;
