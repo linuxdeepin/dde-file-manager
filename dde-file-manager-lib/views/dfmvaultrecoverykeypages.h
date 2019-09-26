@@ -27,6 +27,7 @@
 
 QT_BEGIN_NAMESPACE
 class QPlainTextEdit;
+class QLineEdit;
 QT_END_NAMESPACE
 
 DWIDGET_BEGIN_NAMESPACE
@@ -82,6 +83,53 @@ private:
 
 // ------------------------------------------------
 
+class VaultVerifyRecoveryKeyPage : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit VaultVerifyRecoveryKeyPage(QWidget * parent = nullptr);
+    ~VaultVerifyRecoveryKeyPage() override;
+
+signals:
+    void requestRedirect(DUrl url);
+
+public slots:
+    void preparePage();
+    void startVerifyKey();
+
+private:
+    bool verifyKey();
+
+    QByteArray m_ivData;
+    QByteArray m_encryptedPasswordData;
+
+    QLineEdit * m_verifyKeyEdit;
+    QLineEdit * m_recoveryKeyEdit;
+    QPushButton * m_retrievePasswordButton;
+};
+
+// ------------------------------------------------
+
+class VaultPasswordPage : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit VaultPasswordPage(QWidget * parent = nullptr);
+    ~VaultPasswordPage() override;
+
+signals:
+    void requestRedirect(DUrl url);
+
+public slots:
+    void showPassword();
+
+private:
+    QLineEdit * m_passwordEdit;
+    QPushButton * m_finishButton;
+};
+
+// ------------------------------------------------
+
 class DFMVaultRecoveryKeyPages : public DFMVaultPages
 {
     Q_OBJECT
@@ -94,6 +142,8 @@ public:
 
 signals:
     void requestCreateRecoveryKey();
+    void requestPrepareRetrievePasswordPage();
+    void requestShowPassword();
 
 public slots:
     void onRootPageChanged(QString pageStr);
