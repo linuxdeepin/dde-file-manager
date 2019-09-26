@@ -39,7 +39,7 @@
 #include <ddialog.h>
 #include <dplatformwindowhandle.h>
 #include <DTitlebar>
-
+#include <QtDBus/QtDBus>
 DFM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
@@ -182,6 +182,7 @@ signals:
     void conflictHided(const QMap<QString, QString>& jobDetail);
     void closed();
     void currentHoverRowChanged(const int& row, const bool& hover, const int& taskNum);
+    void taskAdded(int taskNum);
 
 public slots:
     void setTitle(QString title);
@@ -212,7 +213,7 @@ protected:
     void closeEvent(QCloseEvent* event);
     void keyPressEvent(QKeyEvent *event);
 
-
+    void blockShutdown();
 private:
     int m_defaultWidth = 525;
     int m_defaultHeight = 120;
@@ -222,6 +223,7 @@ private:
     QListWidget* m_taskListWidget=NULL;
     QMap<QString, QListWidgetItem*> m_jobIdItems;
     DTitlebar* m_titlebar;
+    QDBusReply<QDBusUnixFileDescriptor> m_reply; // ~QDBusUnixFileDescriptor() will disposes of the Unix file descriptor that it contained.
 };
 
 #endif // DTASKDIALOG_H
