@@ -65,9 +65,10 @@
 #include "singleton.h"
 #include "interfaces/dfilemenumanager.h"
 
+#include "dfiledragclient.h"
+
 #include <dthememanager.h>
 #include <danchors.h>
-
 #include <QUrlQuery>
 #include <QActionGroup>
 #include <QContextMenuEvent>
@@ -76,7 +77,6 @@
 #include <QScrollBar>
 #include <QScroller>
 #include <QtConcurrent>
-
 #include <private/qguiapplication_p.h>
 #include <qpa/qplatformtheme.h>
 
@@ -1488,6 +1488,12 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
 
 void DFileView::dragEnterEvent(QDragEnterEvent *event)
 {
+    if (DFileDragClient::checkMimeData(event->mimeData())) {
+        event->acceptProposedAction();
+        DFileDragClient::setTargetUrl(event->mimeData(), rootUrl());
+        return;
+    }
+
     for (const DUrl &url : event->mimeData()->urls()) {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
 
@@ -1532,7 +1538,12 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
                 return event->ignore();
             }
 
-            event->accept();
+            if (DFileDragClient::checkMimeData(event->mimeData())) {
+                event->acceptProposedAction();
+                DFileDragClient::setTargetUrl(event->mimeData(), fileInfo->fileUrl());
+            } else {
+                event->accept();
+            }
         }
     }
 
@@ -1607,6 +1618,20 @@ void DFileView::dropEvent(QDropEvent *event)
         stopAutoScroll();
         setState(NoState);
         viewport()->update();
+    }
+
+    if (DFileDragClient::checkMimeData(event->mimeData())) {
+        event->acceptProposedAction();
+        DFileDragClient::setTargetUrl(event->mimeData(), QUrl());
+
+        // DFileDragClient deletelater() will be called after connection destroyed
+        DFileDragClient *c = new DFileDragClient(event->mimeData());
+        DUrlList urlList = DUrl::fromQUrlList(event->mimeData()->urls());
+        connect(c, &DFileDragClient::stateChanged, this, [this, urlList](DFileDragState state){
+            if (state == Finished) {
+                select(urlList);
+            }
+        });
     }
 }
 
