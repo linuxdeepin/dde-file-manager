@@ -40,7 +40,7 @@ public:
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
 private:
-    ComputerView2 *par;
+    ComputerView *par;
 };
 
 

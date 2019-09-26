@@ -39,7 +39,6 @@
 #include "controllers/dfmsidebarbookmarkitemhandler.h"
 #include "controllers/dfmsidebardeviceitemhandler.h"
 #include "controllers/dfmsidebartagitemhandler.h"
-#include "controllers/dfmsidebaropticalitemhandler.h"
 #include "app/filesignalmanager.h"
 
 #include <DApplicationHelper>

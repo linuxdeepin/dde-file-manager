@@ -132,7 +132,7 @@ DFMViewManager::DFMViewManager(QObject *parent)
     : QObject(parent)
     , d_ptr(new DFMViewManagerPrivate(this))
 {
-    dRegisterUrlView<ComputerView2>(COMPUTER_SCHEME, QString());
+    dRegisterUrlView<ComputerView>(COMPUTER_SCHEME, QString());
     dRegisterUrlView<DFMVaultView>(DFMVAULT_SCHEME, QString());
     dRegisterUrlView<DFMVaultFileView>(DFMVAULT_SCHEME, "files");
 

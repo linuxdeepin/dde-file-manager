@@ -28,7 +28,7 @@
 
 ComputerViewItemDelegate::ComputerViewItemDelegate(QObject *parent) : QStyledItemDelegate (parent)
 {
-    par = qobject_cast<ComputerView2*>(parent);
+    par = qobject_cast<ComputerView*>(parent);
 }
 
 ComputerViewItemDelegate::~ComputerViewItemDelegate()
