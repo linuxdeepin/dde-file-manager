@@ -307,7 +307,7 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
     ret.push_back(MenuAction::Separator);
 
     QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk ? d->blk->drive() : ""));
-    if (suffix() == SUFFIX_GVFSMP || (suffix() == SUFFIX_UDISKS && d->blk && d->blk->mountPoints().size() > 0 && !d->blk->hintSystem())) {
+    if (suffix() == SUFFIX_GVFSMP || (suffix() == SUFFIX_UDISKS && d->blk && ((!d->blk->mountPoints().empty() && !d->blk->hintSystem()) || d->isod))) {
         //!!TODO (needs clarification): Unmount, Eject, SafelyRemove?
         ret.push_back(MenuAction::Unmount);
     }
@@ -396,7 +396,7 @@ QVariantHash DFMRootFileInfo::extraProperties() const
         ret["fsSize"] = quint64(d->size);
         ret["fsType"] = d->fs;
         ret["udisksblk"] = d->blk->path();
-        ret["canUnmount"] = d->isod || !d->mps.empty();
+        ret["canUnmount"] = (!d->blk->mountPoints().empty() && !d->blk->hintSystem()) || d->isod;
         ret["mounted"] = !d->mps.empty();
     }
     return ret;
