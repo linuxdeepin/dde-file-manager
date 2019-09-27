@@ -51,7 +51,7 @@ DFMSideBarItem *DFMSideBarBookmarkItemHandler::createItem(const DUrl &url)
                     QIcon::fromTheme("folder-bookmark-symbolic"), displayName, url
                 );
 
-    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemNeverHasChildren);
+    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsEditable | Qt::ItemNeverHasChildren);
     item->setRegisteredHandler(SIDEBAR_ID_BOOKMARK);
 
     return item;
@@ -97,12 +97,14 @@ QMenu *DFMSideBarBookmarkItemHandler::contextMenu(const DFMSideBar *sidebar, con
     })->setEnabled(fileExist && shouldEnable);
 
     menu->addSeparator();
-#ifdef QT_DEBUG // fixme: implement rename
-    menu->addAction(QObject::tr("Rename"), []() {
-//        DFMSideBarBookmarkItem *ccItem = const_cast<DFMSideBarBookmarkItem *>(this);
-//        ccItem->showRenameEditor();
+
+    menu->addAction(QObject::tr("Rename"), [sidebar, item]() {
+        int index = sidebar->findItem(item);
+        if (index >= 0) {
+            sidebar->openItemEditor(index);
+        }
     })->setEnabled(fileExist);
-#endif // QT_DEBUG
+
     menu->addAction(QObject::tr("Remove"), [item]() {
         DFileService::instance()->deleteFiles(nullptr, DUrlList{item->url()}, false);
     });
@@ -132,6 +134,13 @@ QMenu *DFMSideBarBookmarkItemHandler::contextMenu(const DFMSideBar *sidebar, con
 #endif
 
     return menu;
+}
+
+void DFMSideBarBookmarkItemHandler::rename(const DFMSideBarItem *item, QString name)
+{
+    DUrl newUrl = item->url();
+    newUrl.setFragment(name);
+    DFileService::instance()->renameFile(this, item->url(), newUrl, true);
 }
 
 DFM_END_NAMESPACE

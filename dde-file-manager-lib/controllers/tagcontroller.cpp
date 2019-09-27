@@ -331,7 +331,7 @@ bool TagController::renameFile(const QSharedPointer<DFMRenameEvent> &event) cons
 
     if (local_file.isEmpty()) {
         const QString &old_name = event->fromUrl().tagName();
-        const QString &new_name = event->toUrl().tagName();;
+        const QString &new_name = event->toUrl().tagName();
 
         return TagManager::instance()->changeTagName(qMakePair(old_name, new_name));
     }
