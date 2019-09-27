@@ -24,4 +24,17 @@
 
   </schema>
 
+  <schema path="/com/deepin/dde/filemanager/desktop/" id="com.deepin.dde.filemanager.desktop" gettext-domain="dde-file-manager-desktop">
+
+    <key name='auto-merge' type='b'>
+      <default>true</default>
+      <summary>Wether use auto merge on the desktop</summary>
+      <description>
+        If enabled, auto merge menu will display on the desktop.
+        If disabled, auto merge menu will not display on the desktop.
+      </description>
+    </key>
+
+  </schema>
+
 </schemalist>

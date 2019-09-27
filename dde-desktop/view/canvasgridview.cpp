@@ -46,6 +46,7 @@
 #include <dfmsettings.h>
 
 #include <QGSettings>
+#include <dgiosettings.h>
 
 #include "../model/dfileselectionmodel.h"
 #include "../presenter/gridmanager.h"
@@ -2407,9 +2408,15 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     menuAutoMerge.setData(AutoMerge);
     menuAutoMerge.setCheckable(true);
     menuAutoMerge.setChecked(autoMerge());
-#if !defined(DISABLE_AUTOMERGE) || defined(QT_DEBUG)
-    menu->insertAction(pasteAction, &menuAutoMerge);
-#endif // DISABLE_AUTOMERGE
+
+//#if !defined(DISABLE_AUTOMERGE) || defined(QT_DEBUG)
+//    menu->insertAction(pasteAction, &menuAutoMerge);
+//#endif // DISABLE_AUTOMERGE
+
+    DGioSettings settings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
+    if (settings.value("auto-merge").toBool()) {
+        menu->insertAction(pasteAction, &menuAutoMerge);
+    }
 
     QAction autoSort(menu);
     autoSort.setText(tr("Auto arrange"));
