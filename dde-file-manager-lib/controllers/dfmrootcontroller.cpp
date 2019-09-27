@@ -107,7 +107,10 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         if (DUrl(gvfsmp->getRootFile()->uri()).scheme() == BURN_SCHEME) {
             continue;
         }
-        DAbstractFileInfoPointer fp(new DFMRootFileInfo(DUrl(DFMROOT_ROOT + QUrl::toPercentEncoding(gvfsmp->getRootFile()->path()) + "." SUFFIX_GVFSMP)));
+        DUrl url;
+        url.setScheme(DFMROOT_SCHEME);
+        url.setPath("/" + QUrl::toPercentEncoding(gvfsmp->getRootFile()->path()) + "." SUFFIX_GVFSMP);
+        DAbstractFileInfoPointer fp(new DFMRootFileInfo(url));
         ret.push_back(fp);
     }
 
@@ -159,13 +162,19 @@ bool DFMRootFileWatcherPrivate::start()
         if (DUrl(mnt->getRootFile()->uri()).scheme() == BURN_SCHEME) {
             return;
         }
-        Q_EMIT wpar->subfileCreated(DUrl(DFMROOT_ROOT + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP));
+        DUrl url;
+        url.setScheme(DFMROOT_SCHEME);
+        url.setPath("/" + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP);
+        Q_EMIT wpar->subfileCreated(url);
     }));
     connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::mountRemoved, [wpar](QExplicitlySharedDataPointer<DGioMount> mnt) {
         if (mnt->getVolume() && uuidset.contains(mnt->getVolume()->identifier(DGioVolumeIdentifierType::VOLUME_IDENTIFIER_TYPE_UUID))) {
             return;
         }
-        Q_EMIT wpar->fileDeleted(DUrl(DFMROOT_ROOT + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP));
+        DUrl url;
+        url.setScheme(DFMROOT_SCHEME);
+        url.setPath("/" + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP);
+        Q_EMIT wpar->fileDeleted(url);
     }));
     connections.push_back(QObject::connect(udisksmgr.data(), &DDiskManager::fileSystemAdded, [wpar](const QString &blks) {
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
