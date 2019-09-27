@@ -27,9 +27,11 @@
 #include <QLabel>
 #include <QPlainTextEdit>
 #include <QVBoxLayout>
+#include <QFileDialog>
 
 #include <DFloatingButton>
 #include <DPasswordEdit>
+#include <QSaveFile>
 
 DFM_BEGIN_NAMESPACE
 
@@ -123,6 +125,9 @@ VaultGeneratedKeyPage::VaultGeneratedKeyPage(QWidget *parent)
     layout->addStretch();
     layout->addWidget(m_saveFileButton);
     layout->addWidget(m_finishButton);
+
+    connect(m_saveFileButton, &QAbstractButton::clicked, this, &VaultGeneratedKeyPage::saveKeyFile);
+    connect(m_finishButton, &QAbstractButton::clicked, this, &VaultGeneratedKeyPage::finishButtonPressed);
 }
 
 VaultGeneratedKeyPage::~VaultGeneratedKeyPage()
@@ -157,6 +162,26 @@ void VaultGeneratedKeyPage::startKeyGeneration()
     DSecureString keyHexStr(CryptoUtils::bin_to_hex(key, CryptoUtils::AES_128_KEY_SIZE).data());
 
     m_generatedKeyEdit->setPlainText(createRecoveryKeyString(ivHexStr, keyHexStr));
+}
+
+void VaultGeneratedKeyPage::saveKeyFile()
+{
+    QString savePath = QFileDialog::getSaveFileName(this, tr("Save your vault recovery key"),
+                                                    QDir::home().absoluteFilePath(tr("File Vault Recovery Key")),
+                                                    tr("File Vault Recovery Key (*.txt)"));
+    if (savePath.isEmpty()) return;
+
+    QSaveFile file(savePath);
+    file.open(QIODevice::WriteOnly | QIODevice::Truncate);
+    QTextStream fileStream(&file);
+    fileStream << m_generatedKeyEdit->toPlainText();
+    file.commit();
+}
+
+void VaultGeneratedKeyPage::finishButtonPressed()
+{
+    clearData();
+    emit requestRedirect(VaultController::makeVaultUrl());
 }
 
 void VaultGeneratedKeyPage::clearData()
@@ -338,6 +363,7 @@ DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
     VaultPasswordPage * vaultPasswordPage = new VaultPasswordPage(this);
 
     connect(verifyPage, &VaultVerifyUserPage::requestRedirect, this, &DFMVaultRecoveryKeyPages::requestRedirect);
+    connect(generatedKeyPage, &VaultGeneratedKeyPage::requestRedirect, this, &DFMVaultRecoveryKeyPages::requestRedirect);
     connect(enterRecoveryKeyPage, &VaultVerifyRecoveryKeyPage::requestRedirect, this, &DFMVaultRecoveryKeyPages::requestRedirect);
     connect(vaultPasswordPage, &VaultPasswordPage::requestRedirect, this, &DFMVaultRecoveryKeyPages::requestRedirect);
 
