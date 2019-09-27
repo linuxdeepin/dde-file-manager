@@ -263,6 +263,11 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
         DAbstractFileInfoPointer fi = DFileService::instance()->createFileInfo(q_ptr, fileUrl);
         if (fi->suffix() == SUFFIX_USRDIR) {
             return cdForTab(tab, fi->redirectedFileUrl());
+        } else if (fi->suffix() == SUFFIX_UDISKS) {
+            QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
+            if (blk->mountPoints().empty()) {
+                blk->mount({});
+            }
         }
     }
 

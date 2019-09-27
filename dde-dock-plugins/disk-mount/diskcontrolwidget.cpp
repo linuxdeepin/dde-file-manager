@@ -26,6 +26,7 @@
 #include "diskcontrolitem.h"
 #include "dattachedudisks2device.h"
 #include "dattachedvfsdevice.h"
+#include "models/dfmrootfileinfo.h"
 
 #include <dgiovolumemanager.h>
 #include <dgiomount.h>
@@ -161,14 +162,11 @@ void DiskControlWidget::unmountAll()
 
     for (const QString & blDevStr : blockDevices) {
         QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
-        if (blDev->hasFileSystem() /* && DFMSetting*/ && !blDev->mountPoints().isEmpty() && !blDev->hintIgnore()) {
-            QByteArray mountPoint = blDev->mountPoints().first();
-            if (mountPoint != QStringLiteral("/boot") && mountPoint != QStringLiteral("/") && mountPoint != QStringLiteral("/home")) {
-                QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
-                blDev->unmount({});
-                if (diskDev->removable()) {
-                    diskDev->eject({});
-                }
+        if (blDev->hasFileSystem() /* && DFMSetting*/ && !blDev->mountPoints().isEmpty() && !blDev->hintIgnore() && !blDev->hintSystem()) {
+            QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
+            blDev->unmount({});
+            if (diskDev->removable()) {
+                diskDev->eject({});
             }
         }
     }
@@ -217,14 +215,12 @@ void DiskControlWidget::onDiskListChanged()
     QStringList blDevList = m_diskManager->blockDevices();
     for (const QString& blDevStr : blDevList) {
         QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
-        if (blDev->hasFileSystem() && !blDev->mountPoints().isEmpty() && !blDev->hintIgnore() && !blDev->isLoopDevice()) {
+        if (blDev->hasFileSystem() && !blDev->mountPoints().isEmpty() && !blDev->hintSystem() && !blDev->hintIgnore()) {
             QByteArray mountPoint = blDev->mountPoints().first();
-            if (mountPoint != QStringLiteral("/boot") && mountPoint != QStringLiteral("/") && mountPoint != QStringLiteral("/home")) {
-                mountedCount++;
-                DAttachedUdisks2Device *dad = new DAttachedUdisks2Device(blDev.data());
-                DiskControlItem *item = new DiskControlItem(dad, this);
-                m_centralLayout->addWidget(item);
-            }
+            mountedCount++;
+            DAttachedUdisks2Device *dad = new DAttachedUdisks2Device(blDev.data());
+            DiskControlItem *item = new DiskControlItem(dad, this);
+            m_centralLayout->addWidget(item);
         }
     }
 
@@ -293,7 +289,7 @@ void DiskControlWidget::onDriveConnected(const QString &deviceId)
                 // blumia: if mount&open enabled and dde-file-manager also got installed, use dde-file-manager.
                 //         using mount scheme with udisks sub-scheme to give user a *device is mounting* feedback.
                 if (mountAndOpen && !QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
-                    QString mountUrlStr = "mount://fromMountPlugin#udisks://" + blDevStr;
+                    QString mountUrlStr = DFMROOT_ROOT + blDevStr.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS;
                     QProcess::startDetached(QStringLiteral("dde-file-manager"), {mountUrlStr});
                     return;
                 }
