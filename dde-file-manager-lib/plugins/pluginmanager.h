@@ -40,14 +40,13 @@ class PluginManagerPrivate {
 public:
     PluginManagerPrivate(PluginManager* parent);
 
-    QList<MenuInterface*> menuInterfaces;
     QList<PropertyDialogExpandInfoInterface*> expandInfoInterfaces;
     QList<ViewInterface*> viewInterfaces;
     QMap<QString, ViewInterface*> viewInterfacesMap;
     QList<PreviewInterface*> previewInterfaces;
 
 private:
-    PluginManager* q_ptr=NULL;
+    PluginManager* q_ptr {nullptr};
     Q_DECLARE_PUBLIC(PluginManager)
 };
 
@@ -66,7 +65,6 @@ public:
 
 
     void loadPlugin();
-    QList<MenuInterface*> getMenuInterfaces();
     QList<PropertyDialogExpandInfoInterface*> getExpandInfoInterfaces();
     QList<ViewInterface*> getViewInterfaces();
     QMap<QString, ViewInterface*> getViewInterfacesMap();
@@ -78,7 +76,7 @@ signals:
 public slots:
 
 private:
-    explicit PluginManager(QObject *parent = 0);
+    explicit PluginManager(QObject *parent = nullptr);
     ~PluginManager();
 
     QScopedPointer<PluginManagerPrivate> d_ptr;
