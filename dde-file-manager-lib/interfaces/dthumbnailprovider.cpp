@@ -208,7 +208,7 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
         return true;
     }
 
-    if (Q_LIKELY(mime == "text/plain" || mime == "application/pdf"
+    if (Q_LIKELY(mime == "text/plain" || mimeType.parentMimeTypes().contains("application/pdf")
 //            || mime == "application/vnd.adobe.flash.movie"
             || mime == "application/vnd.rn-realmedia"
             || mime == "application/vnd.ms-asf"
@@ -372,7 +372,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
 
         option.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
         painter.drawText(image->rect(), text, option);
-    } else if (mime.name() == "application/pdf") {
+    } else if (mime.parentMimeTypes().contains("application/pdf")) {
         //FIXME(zccrs): This should be done using the image plugin?
         QScopedPointer<poppler::document> doc(poppler::document::load_from_file(absoluteFilePath.toStdString()));
 
