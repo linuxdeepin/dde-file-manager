@@ -37,6 +37,8 @@ public:
     DFMSideBarTagItemHandler(QObject *parent = nullptr);
 
     QMenu * contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;
+
+    void rename(const DFMSideBarItem *item, QString name) override;
 };
 
 DFM_END_NAMESPACE

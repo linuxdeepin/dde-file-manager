@@ -54,7 +54,7 @@ DFMSideBarItem *DFMSideBarTagItemHandler::createItem(const DUrl &url)
     QIcon icon = QIcon::fromTheme(TagColorThemeIconMap[colorName]);
     DFMSideBarItem * item = new DFMSideBarItem(icon, url.fileName(), url);
 
-    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemNeverHasChildren);
+    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsEditable);
     item->setData(SIDEBAR_ID_TAG, DFMSideBarItem::ItemUseRegisteredHandlerRole);
 
     return item;
@@ -83,14 +83,14 @@ QMenu *DFMSideBarTagItemHandler::contextMenu(const DFMSideBar *sidebar, const DF
     })->setDisabled(shouldDisable);
 
     menu->addSeparator();
-#ifdef QT_DEBUG // fixme: implement rename
+
     menu->addAction(QObject::tr("Rename"), [sidebar, item]() {
         int index = sidebar->findItem(item);
         if (index >= 0) {
             sidebar->openItemEditor(index);
         }
     });
-#endif // QT_DEBUG
+
     menu->addAction(QObject::tr("Remove"), [item]() {
         DFileService::instance()->deleteFiles(nullptr, DUrlList{item->url()}, false);
     });
@@ -109,6 +109,11 @@ QMenu *DFMSideBarTagItemHandler::contextMenu(const DFMSideBar *sidebar, const DF
     });
 
     return menu;
+}
+
+void DFMSideBarTagItemHandler::rename(const DFMSideBarItem *item, QString name)
+{
+    DFileService::instance()->renameFile(this, item->url(), DUrl::fromUserTaggedFile(name, ""));
 }
 
 DFM_END_NAMESPACE
