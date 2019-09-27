@@ -114,6 +114,23 @@ DAbstractFileWatcher *VaultController::createFileWatcher(const QSharedPointer<DF
                                  VaultController::localUrlToVault);
 }
 
+bool VaultController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
+{
+    return DFileService::instance()->openFile(event->sender(), vaultToLocalUrl(event->url()));
+}
+
+DUrlList VaultController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
+{
+    DUrlList urlList = vaultToLocalUrls(event->urlList());
+    return DFileService::instance()->moveToTrash(event->sender(), urlList);
+}
+
+bool VaultController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
+{
+    DUrlList urlList = vaultToLocalUrls(event->urlList());
+    return DFileService::instance()->writeFilesToClipboard(event->sender(), event->action(), urlList);
+}
+
 bool VaultController::renameFile(const QSharedPointer<DFMRenameEvent> &event) const
 {
     return DFileService::instance()->renameFile(event->sender(),
@@ -205,6 +222,16 @@ DUrl VaultController::vaultToLocalUrl(const DUrl &vaultUrl)
     Q_ASSERT(vaultUrl.scheme() == DFMVAULT_SCHEME);
     if (vaultUrl.scheme() != DFMVAULT_SCHEME) return vaultUrl;
     return DUrl::fromLocalFile(vaultToLocal(vaultUrl));
+}
+
+DUrlList VaultController::vaultToLocalUrls(DUrlList vaultUrls)
+{
+    for (DUrl &url : vaultUrls) {
+        DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, url);
+        url = vaultToLocalUrl(url);
+    }
+
+    return vaultUrls;
 }
 
 VaultController::VaultState VaultController::state()

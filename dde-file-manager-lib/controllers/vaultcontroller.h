@@ -45,6 +45,9 @@ public:
     const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const override;
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
 
+    bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const override;
+    DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const override;
+    bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
     bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const override;
 
     static void prepareVaultDirs();
@@ -55,6 +58,7 @@ public:
     static DUrl localToVault(QString localPath);
     static QString vaultToLocal(const DUrl &vaultUrl);
     static DUrl vaultToLocalUrl(const DUrl &vaultUrl);
+    static DUrlList vaultToLocalUrls(DUrlList vaultUrls);
     static VaultState state();
 
     static bool createVault(const DSecureString &password);

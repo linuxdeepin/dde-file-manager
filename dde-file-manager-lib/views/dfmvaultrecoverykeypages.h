@@ -71,6 +71,8 @@ signals:
 
 public slots:
     void startKeyGeneration();
+    void saveKeyFile();
+    void finishButtonPressed();
 
 private:
     void clearData();
