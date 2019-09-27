@@ -125,7 +125,6 @@ Q_GLOBAL_STATIC(DFMGlobalPrivate, dfmGlobal)
 }
 
 QStringList DFMGlobal::PluginLibraryPaths;
-QStringList DFMGlobal::MenuExtensionPaths;
 bool DFMGlobal::IsFileManagerDiloagProcess = false;
 
 DFMGlobal *DFMGlobal::instance()
@@ -215,28 +214,9 @@ void DFMGlobal::addPluginLibraryPaths(const QStringList &paths)
     refreshPlugins();
 }
 
-void DFMGlobal::addMenuExtensionPath(const QString &path)
-{
-    MenuExtensionPaths.append(path);
-}
-
-void DFMGlobal::addMenuExtensionPaths(const QStringList &paths)
-{
-    foreach (QString path, paths) {
-        MenuExtensionPaths.append(path);
-    }
-}
-
 void DFMGlobal::autoLoadDefaultPlugins()
 {
     addPluginLibraryPath(PluginManager::PluginDir());
-}
-
-void DFMGlobal::autoLoadDefaultMenuExtensions()
-{
-    QString configPath = DFMStandardPaths::location(DFMStandardPaths::ApplicationConfigPath);
-    QString menuExtensionPath = QString("%1/%2").arg(configPath, "menuextensions");
-    DFMGlobal::addMenuExtensionPath(menuExtensionPath);
 }
 
 void DFMGlobal::initPluginManager()

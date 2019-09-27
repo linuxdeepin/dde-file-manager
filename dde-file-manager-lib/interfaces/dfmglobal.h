@@ -241,7 +241,6 @@ public:
     static DFMGlobal *instance();
 
     static QStringList PluginLibraryPaths;
-    static QStringList MenuExtensionPaths;
     static bool IsFileManagerDiloagProcess;
 
     static QString organizationName();
@@ -256,11 +255,8 @@ public:
 
     static void addPluginLibraryPath(const QString& path);
     static void addPluginLibraryPaths(const QStringList& paths);
-    static void addMenuExtensionPath(const QString& path);
-    static void addMenuExtensionPaths(const QStringList& paths);
 
     static void autoLoadDefaultPlugins();
-    static void autoLoadDefaultMenuExtensions();
 
     /* Global instance initialization */
     static void initPluginManager();

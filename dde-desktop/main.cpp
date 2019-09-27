@@ -197,7 +197,6 @@ int main(int argc, char *argv[])
     }
 
     DFMGlobal::autoLoadDefaultPlugins();
-    DFMGlobal::autoLoadDefaultMenuExtensions();
     DFMGlobal::initPluginManager();
     DFMGlobal::initMimesAppsManager();
     DFMGlobal::initDialogManager();

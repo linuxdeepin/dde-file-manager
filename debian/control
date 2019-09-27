@@ -51,7 +51,8 @@ Build-Depends:
  libgio-qt-dev,
  libdisomaster-dev,
  libssl-dev,
- libmediainfo-dev
+ libmediainfo-dev,
+ libqt5xdg-dev
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 
@@ -64,6 +65,8 @@ Depends:
  socat,
  deepin-anything-dkms[i386 amd64],
  deepin-anything-server[i386 amd64]
+Conflicts: dde-file-manager-oem
+Replaces: dde-file-manager-oem
 Recommends: dde-qt5integration, avfs, samba
 Description: File manager front end
  File manager front-end of Deepin OS
@@ -71,7 +74,8 @@ Description: File manager front end
 Package: dde-desktop
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Version})
-Conflicts: dde-workspace (<< 2.90.5)
+Conflicts: dde-workspace (<< 2.90.5), dde-file-manager-oem
+Replaces: dde-file-manager-oem
 Recommends: qt5dxcb-plugin, deepin-screensaver
 Description: deepin desktop-environment - desktop module
  Deepin Desktop Environment (DDE) - desktop module.

@@ -31,7 +31,7 @@ isEmpty(PREFIX){
 }
 
 CONFIG += c++11 link_pkgconfig
-PKGCONFIG += libsecret-1 gio-unix-2.0 poppler-cpp dtkwidget dtkgui udisks2-qt5 disomaster gio-qt libcrypto
+PKGCONFIG += libsecret-1 gio-unix-2.0 poppler-cpp dtkwidget dtkgui udisks2-qt5 disomaster gio-qt libcrypto Qt5Xdg
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
 
@@ -274,7 +274,8 @@ HEADERS += \
     views/dfmvaultsetuppages.h \
     views/dfmvaultunlockpages.h \
     views/dfmvaultfileview.h \
-    views/dfmvaultrecoverykeypages.h
+    views/dfmvaultrecoverykeypages.h \
+    plugins/dfmadditionalmenu.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -462,7 +463,8 @@ SOURCES += \
     views/dfmvaultsetuppages.cpp \
     views/dfmvaultunlockpages.cpp \
     views/dfmvaultfileview.cpp \
-    views/dfmvaultrecoverykeypages.cpp
+    views/dfmvaultrecoverykeypages.cpp \
+    plugins/dfmadditionalmenu.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h
