@@ -144,13 +144,11 @@ int DFMSideBar::findItem(const DUrl &url, bool fuzzy/* = false*/) const
             DUrl itemUrl = item->url();
             if (itemUrl.isBookMarkFile() && DUrl(itemUrl.path()) == url) {
                 return i;
-            } else if (itemUrl.scheme() == DEVICE_SCHEME) {
+            } else if (itemUrl.scheme() == DFMROOT_SCHEME) {
                 DAbstractFileInfoPointer pointer = DFileService::instance()->createFileInfo(nullptr, itemUrl);
                 if (!pointer)
                     continue;
-                QVariantHash info = pointer->extraProperties();
-                DUrl mountPointUrl(info.value("mountPointUrl", QString()).toString());
-                if (mountPointUrl == url)
+                if (pointer->redirectedFileUrl() == url)
                     return i;
             }
         }
