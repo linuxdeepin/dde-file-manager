@@ -15,7 +15,7 @@
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
 #include <QPainter>
-#include <QGSettings>
+#include <dgiosettings.h>
 
 ZoneMainWindow::ZoneMainWindow(QWidget *parent)
     : QWidget(parent)
@@ -44,8 +44,8 @@ ZoneMainWindow::ZoneMainWindow(QWidget *parent)
     back->setGeometry(0, MAIN_ITEM_TOP_MARGIN, this->width(), this->height() - MAIN_ITEM_TOP_MARGIN);
 
     // check demo video gsettings value
-    QGSettings gsetting("com.deepin.dde.desktop", "/com/deepin/dde/desktop/");
-    if (gsetting.keys().contains("enableHotzoneVideo") && gsetting.get("enable-hotzone-video").toBool()) {
+    DGioSettings gsetting("com.deepin.dde.desktop", "/com/deepin/dde/desktop/");
+    if (gsetting.keys().contains("enable-hotzone-video") && gsetting.value("enable-hotzone-video").toBool()) {
         m_videoWidget = new DVideoWidget(this);
         m_videoWidget->setSourceVideoPixelRatio(devicePixelRatioF());
         QTimer::singleShot(1000, this, &ZoneMainWindow::onDemoVideo);

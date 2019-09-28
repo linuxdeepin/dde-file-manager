@@ -24,8 +24,8 @@
 #include <QLabel>
 
 #include <com_deepin_wm.h>
-#include <QGSettings>
 #include <DWindowManagerHelper>
+#include <dgiosettings.h>
 
 using WMInter = com::deepin::wm;
 
@@ -64,7 +64,7 @@ private:
     bool m_previuew = false;
     bool m_visible = true;
 
-    QGSettings          *gsettings          = nullptr;
+    DGioSettings          *gsettings          = nullptr;
     WMInter             *wmInter            = nullptr;
     DWindowManagerHelper* windowManagerHelper = nullptr;
     int currentWorkspaceIndex = 0;

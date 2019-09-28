@@ -44,8 +44,6 @@
 #include <dfilewatcher.h>
 #include <dfmapplication.h>
 #include <dfmsettings.h>
-
-#include <QGSettings>
 #include <dgiosettings.h>
 
 #include "../model/dfileselectionmodel.h"
@@ -2464,8 +2462,10 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     menu->addAction(&display);
 
     QAction corner(menu);
-    QGSettings gsetting("com.deepin.dde.desktop", "/com/deepin/dde/desktop/");
-    if (gsetting.keys().contains("enableHotzoneSettings") && gsetting.get("enable-hotzone-settings").toBool()) {
+    // QGSettings(const QByteArray &schema_id, const QByteArray &path = QByteArray(), QObject *parent = NULL);
+    //DGioSettings(const QString& schemaId, const QString& path, QObject* parent = nullptr);
+    DGioSettings gsetting("com.deepin.dde.desktop", "/com/deepin/dde/desktop/");
+    if (gsetting.keys().contains("enable-hotzone-settings") && gsetting.value("enable-hotzone-settings").toBool()) {
         corner.setText(tr("Corner Settings"));
         corner.setData(CornerSettings);
         menu->addAction(&corner);
