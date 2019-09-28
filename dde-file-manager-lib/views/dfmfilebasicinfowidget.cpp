@@ -311,7 +311,7 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
         layout->addRow(TimeModifiedSectionLabel, timeModifiedLabel);
     }
 
-    if (info->fileUrl().isTrashFile()) {
+    if (info->fileUrl().isTrashFile() && info->fileUrl() != DUrl(TRASH_ROOT)) {
         QString pathStr = static_cast<const TrashFileInfo *>(info.constData())->sourceFilePath();
         SectionValueLabel *sourcePathLabel = new SectionValueLabel(pathStr);
         QString elidedStr = sourcePathLabel->fontMetrics().elidedText(pathStr, Qt::ElideMiddle, 150);
