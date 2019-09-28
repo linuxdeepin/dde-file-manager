@@ -39,6 +39,27 @@ DWIDGET_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
 
+class VaultAskCreateKeyPage : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit VaultAskCreateKeyPage(QWidget * parent = nullptr);
+    ~VaultAskCreateKeyPage() override;
+
+signals:
+    void requestRedirect(DUrl url);
+
+private slots:
+    void next();
+    void skip();
+
+private:
+    QPushButton * m_nextButton;
+    QPushButton * m_skipButton;
+};
+
+// ------------------------------------------------
+
 class VaultVerifyUserPage : public QWidget
 {
     Q_OBJECT

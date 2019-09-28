@@ -39,6 +39,8 @@ public:
     bool canRedirectionFileUrl() const override;
     DUrl redirectedFileUrl() const override;
 
+    QString subtitleForEmptyFloder() const override;
+
     DUrl getUrlByNewFileName(const QString &fileName) const override;
 
 private:
