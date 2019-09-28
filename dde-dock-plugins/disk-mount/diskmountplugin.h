@@ -26,10 +26,40 @@
 #define DISKMOUNTPLUGIN_H
 
 #include <QLabel>
+#include <QPainter>
 
 #include "pluginsiteminterface.h"
 #include "diskcontrolwidget.h"
 #include "diskpluginitem.h"
+
+// TipsWidget from dde-dock.
+// TODO: move the disk mount plugin to dde-dock project.
+class TipsWidget : public QFrame
+{
+    Q_OBJECT
+public:
+    explicit TipsWidget(QWidget *parent = nullptr) : QFrame(parent) {}
+
+    void setText(const QString &text) {
+        m_text = text;
+        setFixedSize(fontMetrics().width(text) + 6, fontMetrics().height());
+        update();
+    }
+
+protected:
+    void paintEvent(QPaintEvent *event) override {
+        QFrame::paintEvent(event);
+        QPainter painter(this);
+        painter.setPen(QPen(palette().brightText(), 1));
+        QTextOption option;
+        option.setAlignment(Qt::AlignCenter);
+        painter.drawText(rect(), m_text, option);
+    }
+
+private:
+    QString m_text;
+};
+
 
 class DiskMountPlugin : public QObject, PluginsItemInterface
 {
@@ -66,7 +96,7 @@ private slots:
 private:
     bool m_pluginAdded;
 
-    QLabel *m_tipsLabel;
+    TipsWidget *m_tipsLabel;
     DiskPluginItem *m_diskPluginItem;
     DiskControlWidget *m_diskControlApplet;
 };
