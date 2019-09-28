@@ -1971,10 +1971,9 @@ void DFileView::initUI()
     d->headerOpticalDisc->hide();
 
     d->verticalScrollBar = verticalScrollBar();
-    d->verticalScrollBar->setParent(this);
+    //d->verticalScrollBar->setParent(this); // this will make verticalScrollBar always visible
 
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    //setViewportMargins(0, 0, -verticalScrollBar()->sizeHint().width(), 0);
 
     if (d->allowedAdjustColumnSize) {
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
