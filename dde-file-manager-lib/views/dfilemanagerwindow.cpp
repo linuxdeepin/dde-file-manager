@@ -172,9 +172,6 @@ bool DFileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
     switch (event->modifiers()) {
     case Qt::NoModifier: {
         switch (event->key()) {
-        case Qt::Key_F1:
-            appController->actionHelp();
-            return true;
         case Qt::Key_F5:
             if (currentView) {
                 currentView->refresh();
