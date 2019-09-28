@@ -2188,9 +2188,9 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
                     }else{
                         qDebug() << m_tarPath << from.error() << from.errorString();
                         result = (QProcess::execute("mv -T \"" + from.fileName().toUtf8() + "\" \"" + m_srcPath.toUtf8() + "\"") == 0);
-                        if (!result){
-                            emit fileSignalManager->requestShowRestoreFailedPerssionDialog(srcFile, m_tarPath);
-                        }
+//                        if (!result){
+//                            emit fileSignalManager->requestShowRestoreFailedPerssionDialog(srcFile, m_tarPath);
+//                        }
                     }
                 }
 
