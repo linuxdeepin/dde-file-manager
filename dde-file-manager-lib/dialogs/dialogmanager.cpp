@@ -956,9 +956,9 @@ void DialogManager::showRestoreFailedDialog(const DUrlList &urlList)
     DDialog d;
     d.setTitle(tr("Operation failed!"));
     if (urlList.count() == 1) {
-        d.setMessage(tr("Target file removed or location changed"));
+        d.setMessage(tr("Failed to restore %1 file, the target folder is read-only").arg(QString::number(1)));
     } else if (urlList.count() > 1) {
-        d.setMessage(tr("%1 files failed to restore, target file removed or location changed").arg(QString::number(urlList.count())));
+        d.setMessage(tr("Failed to restore %1 files, the target folder is read-only").arg(QString::number(urlList.count())));
     }
     d.setIcon(m_dialogWarningIcon, QSize(64, 64));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
