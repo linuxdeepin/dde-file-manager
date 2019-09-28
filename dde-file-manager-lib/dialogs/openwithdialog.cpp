@@ -177,7 +177,9 @@ OpenWithDialogListSparerItem::OpenWithDialogListSparerItem(const QString &title,
     , m_separator(new DHorizontalLine(this))
     , m_title(new QLabel(title, this))
 {
-    m_title->setStyleSheet("QLabel{color: rgba(32, 32, 32, 0.4); font-size: 18px;}");
+    QFont font;
+    font.setPixelSize(18);
+    m_title->setFont(font);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
 
