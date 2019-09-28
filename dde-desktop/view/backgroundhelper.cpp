@@ -121,7 +121,7 @@ void BackgroundHelper::onWMChanged()
         }
 
         wmInter = new WMInter("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this);
-        gsettings = new QGSettings("com.deepin.dde.appearance", "", this);
+        gsettings = new DGioSettings("com.deepin.dde.appearance", "", this);
 
         if (!m_previuew) {
             connect(wmInter, &WMInter::WorkspaceSwitched, this, [this] (int, int to) {
@@ -129,8 +129,9 @@ void BackgroundHelper::onWMChanged()
                 updateBackground();
             });
 
-            connect(gsettings, &QGSettings::changed, this, [this] (const QString &key) {
-                if (key == "backgroundUris") {
+            connect(gsettings, &DGioSettings::valueChanged, this, [this] (const QString &key, const QVariant &value) {
+                Q_UNUSED(value);
+                if (key == "background-uris") {
                     updateBackground();
                 }
             });
@@ -210,7 +211,7 @@ void BackgroundHelper::updateBackground()
             // 调用失败时会返回 "The name com.deepin.wm was not provided by any .service files"
             // 此时 wmInter->isValid() = true, 且 dubs last error type 为 NoError
             || (!path.startsWith("/") && !path.startsWith("file:"))) {
-        path = gsettings->get("background-uris").toStringList().value(currentWorkspaceIndex);
+        path = gsettings->value("background-uris").toStringList().value(currentWorkspaceIndex);
 
         if (path.isEmpty())
             return;

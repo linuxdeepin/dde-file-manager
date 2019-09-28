@@ -10,7 +10,6 @@ Build-Depends:
  qtbase5-private-dev,
  libqt5x11extras5-dev,
  libjemalloc-dev,
- libgsettings-qt-dev,
  libqt5svg5-dev,
  libmagic-dev,
  libsecret-1-dev,
