@@ -20,6 +20,9 @@
  */
 #include "dfmvaultsetuppages.h"
 
+#include "singleton.h"
+#include "gvfs/secretmanager.h"
+
 #include <QLabel>
 #include <DPasswordEdit>
 #include <DSecureString>
@@ -124,9 +127,10 @@ void VaultSetupSetPasswordPage::onFinishButtonPressed()
     m_nextButton->setDisabled(true);
     bool succ = VaultController::createVault(m_enterPassword->text());
     if (succ) {
+        Singleton<SecretManager>::instance()->storeVaultPassword(m_enterPassword->text());
         m_enterPassword->clear();
         m_confirmPassword->clear();
-        emit requestRedirect(VaultController::makeVaultUrl());
+        emit requestRedirect(VaultController::makeVaultUrl("/ask", "recovery_key"));
     }
     m_nextButton->setDisabled(false);
 }

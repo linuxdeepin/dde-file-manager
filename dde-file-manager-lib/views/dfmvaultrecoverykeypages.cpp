@@ -35,6 +35,59 @@
 
 DFM_BEGIN_NAMESPACE
 
+VaultAskCreateKeyPage::VaultAskCreateKeyPage(QWidget *parent)
+    : QWidget (parent)
+{
+    QLabel * description = new QLabel(tr("Do you want to export a key file in case that you forgot the password?"), this);
+    description->setAlignment(Qt::AlignHCenter);
+
+    m_nextButton = new QPushButton(tr("Export key"), this);
+    m_skipButton = new QPushButton(tr("Skip"), this);
+
+    DIconButton * icon = new DIconButton(this);
+    icon->setFlat(true);
+    icon->setIcon(QIcon::fromTheme("dfm_lock"));
+    icon->setIconSize(QSize(64, 64));
+    icon->setWindowFlags(Qt::WindowTransparentForInput);
+    icon->setFocusPolicy(Qt::NoFocus);
+    icon->setMinimumHeight(64);
+
+    QVBoxLayout * layout = new QVBoxLayout(this);
+    layout->addStretch();
+    layout->addWidget(icon);
+    layout->addWidget(description);
+    layout->addStretch();
+    layout->addWidget(m_nextButton);
+    layout->addWidget(m_skipButton);
+
+    connect(m_nextButton, &QAbstractButton::clicked, this, &VaultAskCreateKeyPage::next);
+    connect(m_skipButton, &QAbstractButton::clicked, this, &VaultAskCreateKeyPage::skip);
+}
+
+VaultAskCreateKeyPage::~VaultAskCreateKeyPage()
+{
+
+}
+
+void VaultAskCreateKeyPage::next()
+{
+    if (!Singleton<SecretManager>::instance()->lookupVaultPassword().isEmpty()) {
+        emit requestRedirect(VaultController::makeVaultUrl("/generated_key", "recovery_key"));
+    } else {
+        emit requestRedirect(VaultController::makeVaultUrl("/verify", "recovery_key"));
+    }
+}
+
+void VaultAskCreateKeyPage::skip()
+{
+    if (!Singleton<SecretManager>::instance()->lookupVaultPassword().isEmpty()) {
+        Singleton<SecretManager>::instance()->clearVaultPassword();
+    }
+    emit requestRedirect(VaultController::makeVaultUrl());
+}
+
+// ----------------------------------------------
+
 VaultVerifyUserPage::VaultVerifyUserPage(QWidget *parent)
     : QWidget (parent)
 {
@@ -357,16 +410,19 @@ void VaultPasswordPage::quitPasswordPage()
 DFMVaultRecoveryKeyPages::DFMVaultRecoveryKeyPages(QWidget *parent)
     : DFMVaultPages(parent)
 {
+    VaultAskCreateKeyPage * askPage = new VaultAskCreateKeyPage(this);
     VaultVerifyUserPage * verifyPage = new VaultVerifyUserPage(this);
     VaultGeneratedKeyPage * generatedKeyPage = new VaultGeneratedKeyPage(this);
     VaultVerifyRecoveryKeyPage * enterRecoveryKeyPage = new VaultVerifyRecoveryKeyPage(this);
     VaultPasswordPage * vaultPasswordPage = new VaultPasswordPage(this);
 
+    connect(askPage, &VaultAskCreateKeyPage::requestRedirect, this, &DFMVaultRecoveryKeyPages::requestRedirect);
     connect(verifyPage, &VaultVerifyUserPage::requestRedirect, this, &DFMVaultRecoveryKeyPages::requestRedirect);
     connect(generatedKeyPage, &VaultGeneratedKeyPage::requestRedirect, this, &DFMVaultRecoveryKeyPages::requestRedirect);
     connect(enterRecoveryKeyPage, &VaultVerifyRecoveryKeyPage::requestRedirect, this, &DFMVaultRecoveryKeyPages::requestRedirect);
     connect(vaultPasswordPage, &VaultPasswordPage::requestRedirect, this, &DFMVaultRecoveryKeyPages::requestRedirect);
 
+    insertPage("ask", askPage);
     insertPage("verify", verifyPage);
     insertPage("generated_key", generatedKeyPage);
     insertPage("retrieve_password", enterRecoveryKeyPage);
@@ -397,8 +453,11 @@ QPair<DUrl, bool> DFMVaultRecoveryKeyPages::requireRedirect(VaultController::Vau
 
 QString DFMVaultRecoveryKeyPages::pageString(const DUrl &url)
 {
-    // verify -> generated_key
+    // ask -> verify -> generated_key
     // recover_password -> password
+    if (url.path() == "/ask") {
+        return "ask";
+    }
     if (url.path() == "/verify") {
         return "verify";
     }

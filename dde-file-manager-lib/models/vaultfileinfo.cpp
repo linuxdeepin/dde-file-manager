@@ -114,6 +114,11 @@ DUrl VaultFileInfo::redirectedFileUrl() const
     return DAbstractFileInfo::redirectedFileUrl();
 }
 
+QString VaultFileInfo::subtitleForEmptyFloder() const
+{
+    return QObject::tr("Folder is empty");
+}
+
 DUrl VaultFileInfo::getUrlByNewFileName(const QString &fileName) const
 {
     DUrl url(parentUrl());
