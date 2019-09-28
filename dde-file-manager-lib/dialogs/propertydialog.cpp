@@ -1040,8 +1040,19 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
         fileCount = FileUtils::filesCount(info->redirectedFileUrl().toLocalFile());
     }
 
-    //!!TODO
-    //results.append({QObject::tr("Device type"), ""});
+    static QHash<DFMRootFileInfo::ItemType, QString> devtypemap = {
+        {DFMRootFileInfo::ItemType::UDisksRoot, QObject::tr("Local disk")},
+        {DFMRootFileInfo::ItemType::UDisksData, QObject::tr("Local disk")},
+        {DFMRootFileInfo::ItemType::UDisksFixed, QObject::tr("Local disk")},
+        {DFMRootFileInfo::ItemType::UDisksRemovable, QObject::tr("Removable disk")},
+        {DFMRootFileInfo::ItemType::UDisksOptical, QObject::tr("DVD")},
+        {DFMRootFileInfo::ItemType::GvfsFTP, QObject::tr("Network shared directory")},
+        {DFMRootFileInfo::ItemType::GvfsSMB, QObject::tr("Network shared directory")},
+        {DFMRootFileInfo::ItemType::GvfsMTP, QObject::tr("Android mobile device")},
+        {DFMRootFileInfo::ItemType::GvfsGPhoto2, QObject::tr("Apple mobile device")},
+        {DFMRootFileInfo::ItemType::GvfsCamera, QObject::tr("Camera")}
+    };
+    results.append({QObject::tr("Device type"), devtypemap.value(static_cast<DFMRootFileInfo::ItemType>(info->fileType()), QObject::tr("Unknown device"))});
     results.append({QObject::tr("Total space"), FileUtils::formatSize(fsUsed)});
     if (!fsType.isEmpty()) {
         results.append({QObject::tr("File system"), fsType});

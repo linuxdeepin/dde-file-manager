@@ -249,13 +249,28 @@ DAbstractFileInfo::FileType DFMRootFileInfo::fileType() const
     if (suffix() == SUFFIX_USRDIR) {
         ret = ItemType::UserDirectory;
     } else if (suffix() == SUFFIX_GVFSMP) {
-        ret = ItemType::GvfsMount;
+        ret = ItemType::GvfsGeneric;
+        DUrl url(d->gmnt->getRootFile()->uri());
+        if (url.scheme() == FTP_SCHEME) {
+            ret = ItemType::GvfsFTP;
+        } else if (url.scheme() == SMB_SCHEME) {
+            ret = ItemType::GvfsSMB;
+        } else if (url.scheme() == MTP_SCHEME) {
+            ret = ItemType::GvfsMTP;
+        } else if (url.scheme() == GPHOTO2_SCHEME) {
+            ret = ItemType::GvfsGPhoto2;
+        }
     } else if (d->mps.size() == 1 && d->mps.front() == QString("/")) {
         ret = ItemType::UDisksRoot;
     } else if (d->label == "_dde_data") {
         ret = ItemType::UDisksData;
     } else {
-        ret = ItemType::UDisksNormal;
+        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));
+        if (drv->mediaCompatibility().join(" ").contains("optical")) {
+            ret = ItemType::UDisksOptical;
+        } else {
+            ret = drv->removable() ? ItemType::UDisksRemovable : ItemType::UDisksFixed;
+        }
     }
     return static_cast<FileType>(ret);
 }

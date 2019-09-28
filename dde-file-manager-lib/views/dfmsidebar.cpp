@@ -500,11 +500,17 @@ void DFMSideBar::initDeviceConnection()
                                                                                    QStringList(), QDir::AllEntries);
     std::sort(filist.begin(), filist.end(), [](DAbstractFileInfoPointer &a, DAbstractFileInfoPointer &b) {
         static const QHash<DFMRootFileInfo::ItemType, int> priomap = {
-            {DFMRootFileInfo::ItemType::UDisksRoot   , 0},
-            {DFMRootFileInfo::ItemType::UDisksData   , 1},
-            {DFMRootFileInfo::ItemType::UDisksNormal , 2},
-            {DFMRootFileInfo::ItemType::GvfsMount    , 3},
-            {DFMRootFileInfo::ItemType::UserDirectory, 4}
+            {DFMRootFileInfo::ItemType::UDisksRoot     , 0},
+            {DFMRootFileInfo::ItemType::UDisksData     , 1},
+            {DFMRootFileInfo::ItemType::UDisksFixed    , 2},
+            {DFMRootFileInfo::ItemType::UDisksRemovable, 2},
+            {DFMRootFileInfo::ItemType::UDisksOptical  , 2},
+            {DFMRootFileInfo::ItemType::GvfsSMB        , 3},
+            {DFMRootFileInfo::ItemType::GvfsMTP        , 3},
+            {DFMRootFileInfo::ItemType::GvfsGPhoto2    , 3},
+            {DFMRootFileInfo::ItemType::GvfsFTP        , 3},
+            {DFMRootFileInfo::ItemType::GvfsGeneric    , 3},
+            {DFMRootFileInfo::ItemType::UserDirectory  , 4}
         };
         return priomap[static_cast<DFMRootFileInfo::ItemType>(a->fileType())] < priomap[static_cast<DFMRootFileInfo::ItemType>(b->fileType())];
     });
