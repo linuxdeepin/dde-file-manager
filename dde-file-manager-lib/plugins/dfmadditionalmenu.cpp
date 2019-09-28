@@ -162,6 +162,7 @@ QList<QAction *> DFMAdditionalMenu::actions(const QStringList &files, const QStr
         if(action) {
             // MimeType not exist == MimeType=*
             if (action->property(MIME_TYPE_KEY.data()).isNull()) {
+                ++it;
                 continue;
             }
 
