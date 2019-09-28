@@ -93,6 +93,9 @@ VaultSetupSetPasswordPage::VaultSetupSetPasswordPage(QWidget *parent)
     QLabel * description = new QLabel(tr("Set a password for the vault"), this);
     description->setAlignment(Qt::AlignHCenter);
 
+    m_enterPassword->lineEdit()->setPlaceholderText(tr("Password"));
+    m_confirmPassword->lineEdit()->setPlaceholderText(tr("Repeat password"));
+
     QVBoxLayout * layout = new QVBoxLayout(this);
     layout->addStretch();
     layout->addWidget(icon);

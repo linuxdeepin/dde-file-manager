@@ -51,6 +51,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     icon->setMinimumHeight(64);
 
     m_retrievePasswordButton = new DCommandLinkButton(tr("Retrieve password"), this);
+    m_passwordEdit->lineEdit()->setPlaceholderText(tr("Enter the vault password"));
 
     QVBoxLayout * layout = new QVBoxLayout(this);
     layout->addStretch();

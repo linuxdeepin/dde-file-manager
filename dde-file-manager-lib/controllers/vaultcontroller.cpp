@@ -168,7 +168,9 @@ bool VaultController::runVaultProcess(QStringList arguments, const DSecureString
     cryfsExec.waitForFinished();
     cryfsExec.terminate();
 
-    return cryfsExec.exitStatus() == QProcess::NormalExit;
+    // about cryfs exitcode please refer to:
+    // https://github.com/cryfs/cryfs/blob/develop/src/cryfs/impl/ErrorCodes.h
+    return (cryfsExec.exitStatus() == QProcess::NormalExit && cryfsExec.exitCode() == 0);
 }
 
 DUrl VaultController::makeVaultUrl(QString path, QString host)
