@@ -37,7 +37,7 @@ DiskMountPlugin::DiskMountPlugin(QObject *parent)
 
       m_pluginAdded(false),
 
-      m_tipsLabel(new QLabel),
+      m_tipsLabel(new TipsWidget),
       m_diskPluginItem(new DiskPluginItem),
       m_diskControlApplet(nullptr)
 {
@@ -47,8 +47,6 @@ DiskMountPlugin::DiskMountPlugin(QObject *parent)
     m_tipsLabel->setObjectName("diskmount");
     m_tipsLabel->setVisible(false);
     m_tipsLabel->setText(tr("Disk"));
-    m_tipsLabel->setStyleSheet("color:white;"
-                               "padding:0px 1px;");
 }
 
 const QString DiskMountPlugin::pluginName() const
