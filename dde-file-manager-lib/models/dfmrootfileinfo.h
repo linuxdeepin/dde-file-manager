@@ -35,10 +35,17 @@ public:
 
     enum ItemType {
         UserDirectory = DAbstractFileInfo::FileType::CustomType + 1,
-        GvfsMount,
+        GvfsGeneric,
+        GvfsSMB,
+        GvfsMTP,
+        GvfsGPhoto2,
+        GvfsFTP,
+        GvfsCamera,
         UDisksRoot,
         UDisksData,
-        UDisksNormal
+        UDisksFixed,
+        UDisksRemovable,
+        UDisksOptical
     };
 
     DFMRootFileInfo(const DUrl &url);
