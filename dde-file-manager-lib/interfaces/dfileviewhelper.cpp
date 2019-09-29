@@ -702,7 +702,7 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event) const
             default_action = Qt::MoveAction;
         } else if (!DFMGlobal::keyCtrlIsPressed()) {
             // 如果文件和目标路径在同一个分区下，默认为移动文件，否则默认为复制文件
-            if (DStorageInfo::inSameDevice(from, to)) {
+            if (DStorageInfo::inSameDevice(from, to) || to.isTrashFile()) {
                 default_action = Qt::MoveAction;
             }
         }
