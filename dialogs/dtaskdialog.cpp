@@ -189,6 +189,7 @@ void MoveCopyTaskWidget::initUI()
     m_bgLabel->setObjectName("Background");
     m_bgLabel->setAutoFillBackground(true);
     m_bgLabel->setWindowFlags(Qt::WindowStaysOnBottomHint);
+    m_bgLabel->setVisible(false);
 
     m_closeButton = new QPushButton;
     m_closeButton->setObjectName("StopButton");
@@ -649,11 +650,7 @@ bool MoveCopyTaskWidget::event(QEvent *e)
         m_closeButton->show();
         m_speedLabel->hide();
         m_remainLabel->hide();
-        m_bgLabel->setStyleSheet("QLabel#Background{"
-                                 "background-color: #f3f3f3;"
-                                 "border: 1px solid #f3f3f3;"
-                                 "border-radius: 8px;"
-                                 "}");
+        m_bgLabel->setVisible(true);
         m_bgLabel->setFixedSize(size() - QSize(20, 0));
         m_bgLabel->move(10, 0);
         emit hovereChanged(true);
@@ -662,11 +659,7 @@ bool MoveCopyTaskWidget::event(QEvent *e)
         m_speedLabel->show();
         m_remainLabel->show();
         m_closeButton->hide();
-        m_bgLabel->setStyleSheet("QLabel#Background{"
-                                 "background-color: #fff;"
-                                 "border: 1px solid #fff;"
-                                 "border-radius: 8px;"
-                                 "}");
+        m_bgLabel->setVisible(false);
     }
 
     return QFrame::event(e);
@@ -876,13 +869,14 @@ DTaskDialog::DTaskDialog(QWidget *parent) :
 
 void DTaskDialog::initUI()
 {
-    setWindowFlags((windowFlags() & ~ Qt::WindowSystemMenuHint & ~Qt::Dialog) | Qt::Window);
+    setWindowFlags((windowFlags() & ~ Qt::WindowSystemMenuHint & ~Qt::Dialog) | Qt::Window | Qt::WindowMinMaxButtonsHint);
     setFixedWidth(m_defaultWidth);
 
     m_titlebar = new DTitlebar(this);
     m_titlebar->setBackgroundTransparent(true);
     m_titlebar->layout()->setContentsMargins(0, 0, 0, 0);
     m_titlebar->setMenuVisible(false);
+    m_titlebar->setIcon(QIcon::fromTheme("dde-file-manager"));
 
     m_taskListWidget = new QListWidget;
     m_taskListWidget->setSelectionMode(QListWidget::NoSelection);
