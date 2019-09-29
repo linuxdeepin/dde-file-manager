@@ -253,39 +253,54 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
         default:
             break;
         }
-
+#ifdef QT_DEBUG
+        QTime t;
+#endif
+        t.start();
         if (mediaType!= DFMMediaInfo::Other){
-            DFMMediaInfo mediaInfo(info->filePath());
-            QString duration = mediaInfo.Value("Duration", mediaType);
+            DFMMediaInfo *mediaInfo = new DFMMediaInfo(info->filePath(), layoutWidget);
+            QObject::connect(mediaInfo, &DFMMediaInfo::Finished, layout, [=](){
+                int frameHeight = q->height();
+                QString duration = mediaInfo->Value("Duration", mediaType);
+                // mkv duration may be float ?  like '666.000', toInt() will failed
+                bool ok = false;
+                int ms = duration.toInt(&ok);
+                if (!ok)
+                    ms = static_cast<int>(duration.toFloat(&ok));
 
-            // mkv duration may be float ?  like '666.000', toInt() will failed
-            bool ok = false;
-            int ms = duration.toInt(&ok);
-            if (!ok)
-                ms = static_cast<int>(duration.toFloat(&ok));
+                int row = 2;
+                if (ok) {
+                    QTime t(0, 0);
+                    t = t.addMSecs(ms);
+                    QLabel *pixelKeyLabel = new SectionKeyLabel(QObject::tr("Duration"));
+                    QLabel *pixelLabel = new SectionValueLabel;
+                    pixelLabel->setText(t.toString("hh:mm:ss"));
+                    //layout->addRow(pixelKeyLabel, pixelLabel);
+                    layout->insertRow(row++, pixelKeyLabel, pixelLabel);
+                    frameHeight += 30;
+                }
 
-            if (ok) {
-                QTime t(0, 0);
-                t = t.addMSecs(ms);
-                QLabel *pixelKeyLabel = new SectionKeyLabel(QObject::tr("Duration"));
-                QLabel *pixelLabel = new SectionValueLabel;
-                pixelLabel->setText(t.toString("hh:mm:ss"));
-                layout->addRow(pixelKeyLabel, pixelLabel);
-                frameHeight += 30;
-            }
+                bool okw = false, okh = false;
+                int width = mediaInfo->Value("Width", mediaType).toInt(&okw);
+                int height = mediaInfo->Value("Height", mediaType).toInt(&okh);
+                if (okw && okh) {
+                    QString text = QString("%1x%2").arg(width).arg(height);
+                    QLabel *pixelKeyLabel = new SectionKeyLabel(QObject::tr("Dimension"));
+                    QLabel *pixelLabel = new SectionValueLabel;
+                    pixelLabel->setText(text);
+                    //layout->addRow(pixelKeyLabel, pixelLabel);
+                    layout->insertRow(row++, pixelKeyLabel, pixelLabel);
+                    frameHeight += 30;
+                }
 
-            bool okw = false, okh = false;
-            int width = mediaInfo.Value("Width", mediaType).toInt(&okw);
-            int height = mediaInfo.Value("Height", mediaType).toInt(&okh);
-            if (okw && okh) {
-                QString text = QString("%1x%2").arg(width).arg(height);
-                QLabel *pixelKeyLabel = new SectionKeyLabel(QObject::tr("Dimension"));
-                QLabel *pixelLabel = new SectionValueLabel;
-                pixelLabel->setText(text);
-                layout->addRow(pixelKeyLabel, pixelLabel);
-                frameHeight += 30;
-            }
+                if (ok || (okw && okh)) {
+                    q->setFixedHeight(frameHeight);
+                }
+            });
         }
+#ifdef QT_DEBUG
+        qDebug("Time elapsed: %d ms", t.elapsed());
+#endif
     }
 
     if (!info->isVirtualEntry()) {
