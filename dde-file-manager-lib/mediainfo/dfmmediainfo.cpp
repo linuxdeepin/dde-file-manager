@@ -20,36 +20,62 @@
  */
 #include "dfmmediainfo.h"
 #include "MediaInfo/MediaInfo.h"
+#include <QApplication>
+#include <QTimer>
+
+#define MediaInfo_State_Finished 10000
 using namespace MediaInfoLib;
 
 DFM_BEGIN_NAMESPACE
-
-class DFMMediaInfoPrivate : public QSharedData{
+class DFMMediaInfoPrivate : public QSharedData {
 public:
     DFMMediaInfoPrivate(DFMMediaInfo *qq, const QString &file) : q_ptr(qq){
-        m_mediaInfo.Open(file.toStdWString());
+        m_mediaInfo = new MediaInfo;
+        m_mediaInfo->Option(__T("Thread"), __T("1")); // open file in thread..
+        m_mediaInfo->Option(__T("Inform"), __T("Text"));
+        m_mediaInfo->Open(file.toStdWString());
+        m_timer = new QTimer(qq);
+        m_timer->setInterval(200);
+        m_timer->start();
+        QObject::connect(m_timer, &QTimer::timeout, qq, [this](){
+            if (m_mediaInfo) {
+                if (m_mediaInfo->State_Get() == MediaInfo_State_Finished) {
+                    emit q_ptr->Finished();
+                    m_timer->stop();
+                    return ;
+                }
+//                if (m_mediaInfo->Count_Get(Stream_Image)>0)
+//                    emit q_ptr->typeFinished("image");
+//                if (m_mediaInfo->Count_Get(Stream_Video)>0)
+//                    emit q_ptr->typeFinished("video");
+//                if (m_mediaInfo->Count_Get(Stream_Audio)>0)
+//                    emit q_ptr->typeFinished("audio");
+            }
+        });
     }
 
     ~DFMMediaInfoPrivate(){
-         m_mediaInfo.Close();
-    }
-
-    QString Option(const QString &opt= "Complete", QString value = "1"){
-        QString res = QString::fromStdWString(m_mediaInfo.Option(opt.toStdWString(), value.toStdWString()));
-        return res;
+        if (m_timer)
+            m_timer->stop();
+        if (m_mediaInfo)
+            delete m_mediaInfo;
     }
 
     QString Inform(){
-        return QString::fromStdWString(m_mediaInfo.Inform());
+        //m_mediaInfo->Option(__T("Inform"), __T("Text"));
+        qDebug() << "state:" << m_mediaInfo->State_Get(); // 10000 is ok?
+        QString info = QString::fromStdWString(m_mediaInfo->Inform());
+        return info;
     }
 
     QString Value(const QString &key, stream_t type){
-        return QString::fromStdWString(m_mediaInfo.Get(type, 0, key.toStdWString()));
+        QString info = QString::fromStdWString(m_mediaInfo->Get(type, 0, key.toStdWString()));
+        return info;
     }
 
 private:
-    MediaInfo m_mediaInfo;
-
+    MediaInfo     *m_mediaInfo {nullptr};
+    QTimer        *m_timer {nullptr};
     DFMMediaInfo *q_ptr{ nullptr };
     Q_DECLARE_PUBLIC(DFMMediaInfo)
 };

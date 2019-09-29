@@ -43,6 +43,8 @@ public:
     ~DFMMediaInfo();
     static QString generalInformation(const QString &filename);
     QString Value(const QString &key, MeidiaType meidiaType = General);
+signals:
+    void Finished();
 
 private:
     QScopedPointer<DFMMediaInfoPrivate> d_private;
