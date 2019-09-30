@@ -172,3 +172,11 @@ void DFMRightDetailView::setUrl(const DUrl &url)
 
 
 }
+
+void DFMRightDetailView::setTagWidgetVisible(bool visible)
+{
+    Q_D(DFMRightDetailView);
+    if (d->tagInfoWidget) {
+        d->tagInfoWidget->setVisible(visible);
+    }
+}
