@@ -32,6 +32,7 @@ public:
     virtual ~DFMRightDetailView();
 
     void setUrl(const DUrl &url);
+    void setTagWidgetVisible(bool visible);
 protected:
     void initUI();
     void initTagWidget();

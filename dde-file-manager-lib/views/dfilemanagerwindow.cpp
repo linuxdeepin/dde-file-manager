@@ -1121,6 +1121,8 @@ void DFileManagerWindow::initConnect()
         DFileView *fv = dynamic_cast<DFileView*>(d->currentView);
         if (d->detailView && fv) {
            d->detailView->setUrl(fv->selectedUrls().value(0, fv->rootUrl()));
+           if (fv->selectedIndexCount()==0)
+               d->detailView->setTagWidgetVisible(false);
         }
     });
 }
