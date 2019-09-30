@@ -255,13 +255,16 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
         }
 #ifdef QT_DEBUG
         QTime t;
-#endif
         t.start();
+#endif
         if (mediaType!= DFMMediaInfo::Other){
             DFMMediaInfo *mediaInfo = new DFMMediaInfo(info->filePath(), layoutWidget);
             QObject::connect(mediaInfo, &DFMMediaInfo::Finished, layout, [=](){
                 int frameHeight = q->height();
                 QString duration = mediaInfo->Value("Duration", mediaType);
+                if (duration.isEmpty()) {
+                    duration = mediaInfo->Value("Duration", DFMMediaInfo::General);
+                }
                 // mkv duration may be float ?  like '666.000', toInt() will failed
                 bool ok = false;
                 int ms = duration.toInt(&ok);
@@ -275,7 +278,6 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
                     QLabel *pixelKeyLabel = new SectionKeyLabel(QObject::tr("Duration"));
                     QLabel *pixelLabel = new SectionValueLabel;
                     pixelLabel->setText(t.toString("hh:mm:ss"));
-                    //layout->addRow(pixelKeyLabel, pixelLabel);
                     layout->insertRow(row++, pixelKeyLabel, pixelLabel);
                     frameHeight += 30;
                 }
@@ -288,7 +290,6 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
                     QLabel *pixelKeyLabel = new SectionKeyLabel(QObject::tr("Dimension"));
                     QLabel *pixelLabel = new SectionValueLabel;
                     pixelLabel->setText(text);
-                    //layout->addRow(pixelKeyLabel, pixelLabel);
                     layout->insertRow(row++, pixelKeyLabel, pixelLabel);
                     frameHeight += 30;
                 }
