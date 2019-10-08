@@ -154,8 +154,21 @@ void DFMRightDetailView::setUrl(const DUrl &url)
         d->tagInfoWidget->loadTags(d->m_url);
     }
 
-    if (d->iconLabel)
-        d->iconLabel->setPixmap(fileInfo->fileIcon().pixmap(256, 160));
+    if (d->iconLabel) {
+        QString iconName;
+        if (url == DUrl(RECENT_ROOT)) {
+            iconName = systemPathManager->getSystemPathIconName("Recent");
+        } else if (url == DUrl(TRASH_ROOT)) {
+            iconName = systemPathManager->getSystemPathIconName("Trash");
+        } else if (url.isNetWorkFile() || url.isSMBFile() ) {
+            iconName = systemPathManager->getSystemPathIconName("Network");
+        } else if (url.isUserShareFile()) {
+            iconName = systemPathManager->getSystemPathIconName("UserShare");
+        }
+
+        QIcon fileIcon = iconName.isEmpty() ? fileInfo->fileIcon() : QIcon::fromTheme(iconName);
+        d->iconLabel->setPixmap(fileIcon.pixmap(256, 160));
+    }
 
     if (d->baseInfoWidget){
         d->mainLayout->removeWidget(d->baseInfoWidget);

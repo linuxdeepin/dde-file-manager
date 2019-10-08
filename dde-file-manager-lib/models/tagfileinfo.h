@@ -43,6 +43,7 @@ public:
     Qt::DropActions supportedDragActions() const override;
     Qt::DropActions supportedDropActions() const override;
     bool canDrop() const override;
+    bool isVirtualEntry() const override;
 };
 
 

@@ -242,6 +242,11 @@ bool TagFileInfo::canDrop() const
     return !fileUrl().tagName().isEmpty();
 }
 
+bool TagFileInfo::isVirtualEntry() const
+{
+    return true;
+}
+
 DUrl TagFileInfo::parentUrl() const
 {
     DUrl url = fileUrl();
