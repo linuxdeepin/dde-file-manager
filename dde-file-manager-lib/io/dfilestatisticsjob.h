@@ -68,7 +68,7 @@ public:
 
     qint64 totalSize() const;
     int filesCount() const;
-    int directorysCount() const;
+    int directorysCount(bool includeSelf = true) const;
 
 public Q_SLOTS:
     void start(const DUrlList &sourceUrls);

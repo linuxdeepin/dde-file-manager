@@ -527,7 +527,7 @@ void PropertyDialog::initConnect()
 void PropertyDialog::updateFolderSize(qint64 size)
 {
     m_size = size;
-    m_fileCount = m_sizeWorker->filesCount() + m_sizeWorker->directorysCount();
+    m_fileCount = m_sizeWorker->filesCount() + m_sizeWorker->directorysCount(false);
     m_folderSizeLabel->setText(FileUtils::formatSize(size));
     m_containSizeLabel->setText(QString::number(m_fileCount));
 }
