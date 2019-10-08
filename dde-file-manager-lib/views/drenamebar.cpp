@@ -230,9 +230,7 @@ void DRenameBarPrivate::initUi()
 
 void DRenameBarPrivate::setUiParameters()
 {
-    q_ptr->setFixedHeight(40);
     m_comboBox->addItems(QList<QString>{ QObject::tr("Replace Text"), QObject::tr("Add Text"), QObject::tr("Custom Text") });
-    m_comboBox->setFixedWidth(107);
 
     QComboBox* comboBox{ nullptr };
     QLabel* label{ std::get<0>(m_replaceOperatorItems) };
@@ -284,10 +282,8 @@ void DRenameBarPrivate::setUiParameters()
     label->setText(QObject::tr("Tips: Sort by selected file order"));
 
     QPushButton* button{ std::get<0>(m_buttonsArea) };
-    button->setFixedSize(QSize{70, 21});
     button->setText(QObject::tr("Cancel"));
     button = std::get<1>(m_buttonsArea);
-    button->setFixedSize(QSize{70, 20});
     button->setText(QObject::tr("Rename"));
 
     button->setEnabled(false);
@@ -368,7 +364,7 @@ void DRenameBarPrivate::layoutItems()noexcept
 //    m_mainLayout->setSpacing(0);
     m_stackWidget->setCurrentIndex(0);
 
-
+    q_ptr->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
     q_ptr->setLayout(m_mainLayout);
 }
 
