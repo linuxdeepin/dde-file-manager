@@ -375,13 +375,17 @@ bool FileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) con
         return FileUtils::addExecutableFlagAndExecuse(fileUrl.toLocalFile(), code);
     }
 
-    if (FileUtils::isFileWindowsUrlShortcut(fileUrl.toLocalFile())) {
-        QString url = FileUtils::getInternetShortcutUrl(fileUrl.toLocalFile());
-        return FileUtils::openFile(url);
+    QString url = fileUrl.toLocalFile();
+    if (FileUtils::isFileWindowsUrlShortcut(url)) {
+        url = FileUtils::getInternetShortcutUrl(url);
     }
 
+    bool result = FileUtils::openFile(url);
+    if (!result) {
+        AppController::instance()->actionOpenWithCustom(event); // requestShowOpenWithDialog
+    }
 
-    return FileUtils::openFile(fileUrl.toLocalFile());
+    return result;
 }
 
 bool FileController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const
