@@ -254,11 +254,15 @@ int DFileStatisticsJob::filesCount() const
     return d->filesCount.load();
 }
 
-int DFileStatisticsJob::directorysCount() const
+int DFileStatisticsJob::directorysCount(bool includeSelf) const
 {
     Q_D(const DFileStatisticsJob);
 
-    return d->directoryCount.load();
+    if (includeSelf) {
+        return d->directoryCount.load();
+    } else {
+        return qMax(d->directoryCount.load() - 1, 0);
+    }
 }
 
 void DFileStatisticsJob::start(const DUrlList &sourceUrls)
