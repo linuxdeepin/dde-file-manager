@@ -32,6 +32,7 @@
 #include <dobject.h>
 #include <dtkwidget_global.h>
 #include <QScrollArea>
+#include <DHorizontalLine>
 
 DWIDGET_USE_NAMESPACE
 
@@ -44,7 +45,9 @@ public:
     QVBoxLayout *mainLayout  {nullptr};
     QLabel      *iconLabel  {nullptr};
     QFrame      *baseInfoWidget {nullptr};
+    QFrame      *separatorLine2 {nullptr};
     DFMTagWidget *tagInfoWidget{ nullptr };
+
     QScrollArea *scrollArea{ nullptr };
 
     DFMRightDetailView *q_ptr{ nullptr };
@@ -78,9 +81,9 @@ DFMRightDetailView::~DFMRightDetailView()
 
 static QFrame* createLine()
 {
-    auto line = new QFrame;
+    DHorizontalLine *line = new DHorizontalLine();
     line->setFixedHeight(1);
-    line->setStyleSheet("background-color:#DFDFE0;");
+    line->setWindowFlags(Qt::WindowTransparentForInput);
     return line;
 }
 
@@ -109,7 +112,7 @@ void DFMRightDetailView::initUI()
     d->mainLayout->addWidget(d->iconLabel, 1, Qt::AlignHCenter);
 
     d->mainLayout->addWidget(createLine());
-    d->mainLayout->addWidget(createLine());
+    d->mainLayout->addWidget(d->separatorLine2 = createLine());
 
     initTagWidget();
 
@@ -146,8 +149,8 @@ void DFMRightDetailView::setUrl(const DUrl &url)
         return;
 
     bool shouldShowTags = fileInfo->canTag();
+    setTagWidgetVisible(shouldShowTags);
     if (d->tagInfoWidget) {
-        d->tagInfoWidget->setVisible(shouldShowTags);
         d->tagInfoWidget->loadTags(d->m_url);
     }
 
@@ -169,8 +172,6 @@ void DFMRightDetailView::setUrl(const DUrl &url)
     basicInfoWidget->setUrl(d->m_url);
 
     d->mainLayout->insertWidget(2, d->baseInfoWidget);
-
-
 }
 
 void DFMRightDetailView::setTagWidgetVisible(bool visible)
@@ -178,5 +179,9 @@ void DFMRightDetailView::setTagWidgetVisible(bool visible)
     Q_D(DFMRightDetailView);
     if (d->tagInfoWidget) {
         d->tagInfoWidget->setVisible(visible);
+    }
+
+    if (d->separatorLine2) {
+        d->separatorLine2->setVisible(visible);
     }
 }
