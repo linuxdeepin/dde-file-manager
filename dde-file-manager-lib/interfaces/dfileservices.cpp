@@ -178,10 +178,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
 
         if (result.toBool()) {
             emit fileOpened(event->fileUrl());
-        } else {
-            emit fileSignalManager->requestShowOpenWithDialog(DFMUrlBaseEvent(event->sender(), event->fileUrl()));
         }
-
         break;
     case DFMEvent::OpenFileByApp:
         result = CALL_CONTROLLER(openFileByApp);
