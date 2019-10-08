@@ -52,6 +52,8 @@ public:
     QString toLocalFile() const override;
     QString subtitleForEmptyFloder() const override;
     DUrl goToUrlWhenDeleted() const override;
+    virtual QString fileDisplayName() const override;
+    virtual bool isVirtualEntry() const override;
 
     void updateInfo();
     void setReadDateTime(const QString &time);

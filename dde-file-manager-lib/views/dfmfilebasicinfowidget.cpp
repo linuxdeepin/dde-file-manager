@@ -161,6 +161,10 @@ void DFMFileBasicInfoWidgetPrivate::initUI()
 }
 void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
 {
+    if (m_url == url) {
+        return;
+    }
+
     m_url = url;
     Q_Q(DFMFileBasicInfoWidget);
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(q, m_url);
@@ -200,15 +204,11 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
 
     SectionKeyLabel *sizeSectionLabel = new SectionKeyLabel(QObject::tr("Size"));
     SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Type"));
-    SectionKeyLabel *TimeCreatedSectionLabel = new SectionKeyLabel(QObject::tr("Time accessed"));
-    SectionKeyLabel *TimeModifiedSectionLabel = new SectionKeyLabel(QObject::tr("Time modified"));
     SectionKeyLabel *sourcePathSectionLabel = new SectionKeyLabel(QObject::tr("Source path"));
 
     m_containSizeLabel = new SectionValueLabel(info->sizeDisplayName());
     m_folderSizeLabel = new SectionValueLabel;
     SectionValueLabel *typeLabel = new SectionValueLabel(info->mimeTypeDisplayName());
-    SectionValueLabel *timeCreatedLabel = new SectionValueLabel(info->lastReadDisplayName());
-    SectionValueLabel *timeModifiedLabel = new SectionValueLabel(info->lastModifiedDisplayName());
 
     if (info->isDir()) {
         if (!m_showSummaryOnly) {
@@ -304,7 +304,7 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
 #endif
     }
 
-    if (!info->isVirtualEntry()) {
+    /*if (!info->isVirtualEntry())*/ {
         layout->addRow(typeSectionLabel, typeLabel);
     }
 
@@ -323,6 +323,10 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
     }
 
     if (!info->isVirtualEntry()) {
+        SectionKeyLabel *TimeCreatedSectionLabel = new SectionKeyLabel(QObject::tr("Time accessed"));
+        SectionKeyLabel *TimeModifiedSectionLabel = new SectionKeyLabel(QObject::tr("Time modified"));
+        SectionValueLabel *timeCreatedLabel = new SectionValueLabel(info->lastReadDisplayName());
+        SectionValueLabel *timeModifiedLabel = new SectionValueLabel(info->lastModifiedDisplayName());
         layout->addRow(TimeCreatedSectionLabel, timeCreatedLabel);
         layout->addRow(TimeModifiedSectionLabel, timeModifiedLabel);
     }

@@ -21,7 +21,9 @@
 #include "dfileservices.h"
 #include "dfilesystemmodel.h"
 #include "private/dabstractfileinfo_p.h"
-
+#include "app/define.h"
+#include "singleton.h"
+#include "controllers/pathmanager.h"
 #include <QXmlStreamReader>
 #include <QFile>
 
@@ -194,6 +196,26 @@ QString RecentFileInfo::subtitleForEmptyFloder() const
 DUrl RecentFileInfo::goToUrlWhenDeleted() const
 {
     return DUrl::fromLocalFile(QDir::homePath());
+}
+
+QString RecentFileInfo::fileDisplayName() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    if (fileUrl() == DUrl(RECENT_ROOT))
+        return systemPathManager->getSystemPathDisplayName("Recent");
+
+    return d->proxy->fileDisplayName();
+}
+
+bool RecentFileInfo::isVirtualEntry() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    if (fileUrl() == DUrl(RECENT_ROOT))
+        return true;
+
+    return d->proxy->isVirtualEntry();
 }
 
 void RecentFileInfo::updateInfo()
