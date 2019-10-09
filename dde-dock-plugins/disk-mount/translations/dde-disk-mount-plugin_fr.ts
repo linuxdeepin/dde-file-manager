@@ -29,7 +29,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="321"/>
+        <location filename="../diskcontrolwidget.cpp" line="317"/>
         <source>Device has been removed</source>
         <translation>Le périphérique a été retiré</translation>
     </message>

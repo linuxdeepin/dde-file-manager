@@ -2,42 +2,42 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2400"/>
+        <location filename="../view/canvasgridview.cpp" line="2399"/>
         <source>Icon size</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2406"/>
+        <location filename="../view/canvasgridview.cpp" line="2405"/>
         <source>Auto merge</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2415"/>
+        <location filename="../view/canvasgridview.cpp" line="2420"/>
         <source>Auto arrange</source>
         <translation>Автоматаар зохион байгуулах</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2470"/>
+        <location filename="../view/canvasgridview.cpp" line="2476"/>
         <source>Set Wallpaper</source>
         <translation>Фон зургийг тохируулах</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2472"/>
+        <location filename="../view/canvasgridview.cpp" line="2478"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Фон зураг болон дэлгэц амраагч</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2553"/>
+        <location filename="../view/canvasgridview.cpp" line="2559"/>
         <source>Properties</source>
         <translation>Төлөв байдал</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2456"/>
+        <location filename="../view/canvasgridview.cpp" line="2460"/>
         <source>Display Settings</source>
         <translation>Дэлгэцийн тохируулга</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2463"/>
+        <location filename="../view/canvasgridview.cpp" line="2469"/>
         <source>Corner Settings</source>
         <translation>Булангийн тохируулга</translation>
     </message>

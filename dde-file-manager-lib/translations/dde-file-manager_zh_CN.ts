@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -259,7 +257,7 @@
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="53"/>
         <source>Retrieve password</source>
-        <translation type="unfinished"></translation>
+        <translation>找回密码</translation>
     </message>
 </context>
 <context>
@@ -400,12 +398,12 @@
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="979"/>
         <source>Trash</source>
-        <translation type="unfinished">回收站</translation>
+        <translation>回收站</translation>
     </message>
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="987"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>清空</translation>
     </message>
 </context>
 <context>
@@ -847,12 +845,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="959"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
-        <translation type="unfinished"></translation>
+        <translation>%1个文件还原失败，目标文件夹不可写</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="961"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
-        <translation type="unfinished"></translation>
+        <translation>%1个文件还原失败，目标文件夹不可写</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1087"/>
@@ -2021,12 +2019,12 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1055"/>
         <source>Device type</source>
-        <translation type="unfinished"></translation>
+        <translation>设备类型</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1058"/>
         <source>File system</source>
-        <translation type="unfinished"></translation>
+        <translation>文件系统</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1247"/>
@@ -2763,7 +2761,7 @@
         <location filename="../dialogs/propertydialog.cpp" line="949"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="203"/>
         <source>Time accessed</source>
-        <translation type="unfinished"></translation>
+        <translation>访问时间</translation>
     </message>
     <message>
         <source>Time access</source>
@@ -3346,17 +3344,17 @@
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="41"/>
         <source>Do you want to export a key file in case that you forgot the password?</source>
-        <translation type="unfinished"></translation>
+        <translation>是否需要生成一个密钥文件以防止您忘记密码？</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="44"/>
         <source>Export key</source>
-        <translation type="unfinished"></translation>
+        <translation>导出密钥</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="45"/>
         <source>Skip</source>
-        <translation type="unfinished">跳过</translation>
+        <translation>跳过</translation>
     </message>
 </context>
 <context>
@@ -3377,20 +3375,24 @@
         <translation>恢复密钥和您的密码有着同等级的安全程度，建议不要将安全密钥文件保存到本计算机</translation>
     </message>
     <message>
+        <source>File Vault Recovery Key:</source>
+        <translation type="vanished">文件保险柜恢复密钥：</translation>
+    </message>
+    <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="222"/>
         <source>Save your vault recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>保存您的保险柜恢复密钥</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="223"/>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="248"/>
         <source>File Vault Recovery Key</source>
-        <translation type="unfinished"></translation>
+        <translation>文件保险柜恢复密钥</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="224"/>
         <source>File Vault Recovery Key (*.txt)</source>
-        <translation type="unfinished"></translation>
+        <translation>文件保险柜恢复密钥(*.txt)</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="249"/>
@@ -3415,7 +3417,7 @@
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="253"/>
         <source>If they do not match, then this is not the right key, please try another recovery key.</source>
-        <translation type="unfinished"></translation>
+        <translation>如果以上标识符与电脑显示的标识符不匹配，则该密钥不是解锁您的保险柜的正确密钥，请尝试其他恢复密钥。</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="170"/>
@@ -3433,17 +3435,17 @@
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="34"/>
         <source>File Vault</source>
-        <translation type="unfinished">文件保险柜</translation>
+        <translation>文件保险柜</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="60"/>
         <source>Lock vault</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定保险柜</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="61"/>
         <source>Generate key file</source>
-        <translation type="unfinished"></translation>
+        <translation>生成密钥文件</translation>
     </message>
 </context>
 <context>
@@ -3451,12 +3453,12 @@
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="362"/>
         <source>Here is your vault password</source>
-        <translation type="unfinished"></translation>
+        <translation>您的保险柜密码如下</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="365"/>
         <source>OK</source>
-        <translation type="unfinished">确定</translation>
+        <translation>确定</translation>
     </message>
 </context>
 <context>
@@ -3474,12 +3476,12 @@
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="99"/>
         <source>Password</source>
-        <translation type="unfinished">密码</translation>
+        <translation>密码</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="100"/>
         <source>Repeat password</source>
-        <translation type="unfinished"></translation>
+        <translation>重复密码</translation>
     </message>
 </context>
 <context>
@@ -3502,7 +3504,11 @@
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="50"/>
         <source>Welcome to File Vault</source>
-        <translation type="unfinished"></translation>
+        <translation>欢迎使用深度文件保险柜</translation>
+    </message>
+    <message>
+        <source>Welcome to use File Vault</source>
+        <translation type="vanished">欢迎使用深度文件保险柜</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="51"/>
@@ -3525,17 +3531,17 @@
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="271"/>
         <source>Compare the following text with the key ID in your recovery key file</source>
-        <translation type="unfinished"></translation>
+        <translation>请核对下方文字与您恢复密钥中所记录的文字完全一致</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="272"/>
         <source>If they are identical, input the recovery key below to retrieve your vault password</source>
-        <translation type="unfinished"></translation>
+        <translation>确认无误后，请在下方输入32位恢复密钥，以便找回原始密码</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="284"/>
         <source>Retrieve password</source>
-        <translation type="unfinished"></translation>
+        <translation>找回密码</translation>
     </message>
 </context>
 <context>

@@ -74,7 +74,7 @@
     <message>
         <location filename="../view/mainwindow.cpp" line="240"/>
         <source>Failed to format the device</source>
-        <translation type="unfinished"/>
+        <translation>장치를 포맷하지 못했습니다</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="241"/>
