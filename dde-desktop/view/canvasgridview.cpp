@@ -45,6 +45,7 @@
 #include <dfmapplication.h>
 #include <dfmsettings.h>
 #include <dgiosettings.h>
+#include <dfiledragclient.h>
 
 #include "../model/dfileselectionmodel.h"
 #include "../presenter/gridmanager.h"
@@ -771,6 +772,12 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
 
 void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
 {
+    if (DFileDragClient::checkMimeData(event->mimeData())) {
+        event->acceptProposedAction();
+        DFileDragClient::setTargetUrl(event->mimeData(), currentUrl());
+        return;
+    }
+
     if (event->source()) {
         if (!autoMerge()) {
             d->startDodge = true;
@@ -808,7 +815,14 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
         }
 
         d->fileViewHelper->preproccessDropEvent(event);
-        event->accept();
+        if (!hoverIndex.isValid()) {
+            if (DFileDragClient::checkMimeData(event->mimeData())) {
+                event->acceptProposedAction();
+                DFileDragClient::setTargetUrl(event->mimeData(), currentUrl());
+            } else {
+                event->accept();
+            }
+        }
     };
 
     if (hoverIndex.isValid()) {
@@ -819,8 +833,21 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
                 event->setDropAction(Qt::MoveAction);
             }
 
-            if (fileInfo->canDrop() && fileInfo->supportedDropActions().testFlag(event->dropAction())) {
-                event->accept();
+            bool canDrop = fileInfo->canDrop();
+            canDrop = fileInfo->isDir() && !fileInfo->isWritable();
+            canDrop = fileInfo->supportedDropActions().testFlag(event->dropAction());
+            if(!fileInfo->canDrop() || (fileInfo->isDir() && !fileInfo->isWritable()) ||
+                    !fileInfo->supportedDropActions().testFlag(event->dropAction())) {
+                // not support drag
+                event->ignore();
+            } else {
+                if (DFileDragClient::checkMimeData(event->mimeData())) {
+                    event->acceptProposedAction();
+                    DFileDragClient::setTargetUrl(event->mimeData(), fileInfo->fileUrl());
+                } else {
+                    event->accept();
+                }
+
                 return;
             }
         }
@@ -938,6 +965,20 @@ void CanvasGridView::dropEvent(QDropEvent *event)
 
         setState(NoState);
         viewport()->update();
+    }
+
+    if (DFileDragClient::checkMimeData(event->mimeData())) {
+        event->acceptProposedAction();
+        DFileDragClient::setTargetUrl(event->mimeData(), model()->getUrlByIndex(targetIndex));
+
+        // DFileDragClient deletelater() will be called after connection destroyed
+        DFileDragClient *c = new DFileDragClient(event->mimeData());
+        DUrlList urlList = DUrl::fromQUrlList(event->mimeData()->urls());
+        connect(c, &DFileDragClient::stateChanged, this, [this, urlList](DFileDragState state){
+            if (state == Finished) {
+                select(urlList);
+            }
+        });
     }
 }
 
