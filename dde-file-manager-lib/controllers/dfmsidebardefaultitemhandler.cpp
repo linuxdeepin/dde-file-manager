@@ -110,27 +110,11 @@ QMenu *DFMSideBarDefaultItemHandler::contextMenu(const DFMSideBar *sidebar, cons
         menu->addAction(emptyTrash);
     }
 
-    if (item->text() == systemPathManager->getSystemPathDisplayName("Home")) {
-        QStorageInfo partitionHome("/home");
-        if (partitionHome.isValid() && partitionHome.rootPath() == QStringLiteral("/home")) {
-            menu->addSeparator();
-
-            QAction *propertyAction = new QAction(QObject::tr("Disk info"), menu);
-            connect(propertyAction, &QAction::triggered, this, [this, partitionHome]() {
-                DUrl url(QDir::homePath());
-                url.setQuery(partitionHome.device());
-                fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(this, {url}));
-            });
-            menu->addAction(propertyAction);
-        }
-    }
-
     menu->addSeparator();
 
     if (!noPropertySchemes.contains(item->url().scheme()) &&
             item->text() != systemPathManager->getSystemPathDisplayName("Recent")) {
-        QString propertiesStr = item->text() == systemPathManager->getSystemPathDisplayName("System Disk") ?
-                                QObject::tr("Disk info") : QObject::tr("Properties");
+        QString propertiesStr = QObject::tr("Properties");
         menu->addAction(propertiesStr, [item]() {
             DUrlList list;
             list.append(item->url());

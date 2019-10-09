@@ -582,6 +582,21 @@ void AppController::actionProperty(const QSharedPointer<DFMUrlListBaseEvent> &ev
             url = info->redirectedFileUrl();
         }
 
+        QStorageInfo partition(url.path());
+        if (partition.isValid() && partition.rootPath() == url.path()) {
+            QString dev(partition.device());
+            dev = dev.mid(dev.lastIndexOf('/') + 1);
+            url = DUrl(DFMROOT_ROOT + dev + "." + SUFFIX_UDISKS);
+        }
+
+        DUrl gvfsmpurl;
+        gvfsmpurl.setScheme(DFMROOT_SCHEME);
+        gvfsmpurl.setPath("/" + QUrl::toPercentEncoding(url.path()) + "." SUFFIX_GVFSMP);
+        DAbstractFileInfoPointer fp(new DFMRootFileInfo(gvfsmpurl));
+        if (fp->exists()) {
+            url = gvfsmpurl;
+        }
+
         if (realTargetUrl.toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX)) {
             DesktopFile df(realTargetUrl.toLocalFile());
             if (df.getDeepinId() == "dde-trash") {

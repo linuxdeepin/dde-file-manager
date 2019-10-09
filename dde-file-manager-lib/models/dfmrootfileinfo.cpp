@@ -84,12 +84,14 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
     } else if (suffix() == SUFFIX_GVFSMP) {
         QString mpp = QUrl::fromPercentEncoding(fileUrl().path().mid(1).chopped(QString("." SUFFIX_GVFSMP).length()).toUtf8());
         QExplicitlySharedDataPointer<DGioMount> mp(DGioMount::createFromPath(mpp));
-        QExplicitlySharedDataPointer<DGioFileInfo> fi = mp->getRootFile()->createFileInfo("*", FILE_QUERY_INFO_NONE, 2000);
-        if (fi && fi->fileType() == DGioFileType::FILE_TYPE_DIRECTORY) {
-            QString mpurl = mp->getRootFile()->path();
-            d_ptr->backer_url = mpurl;
-            d_ptr->gmnt = mp;
-            d_ptr->gfsi = mp->getRootFile()->createFileSystemInfo();
+        if (mp && mp->getRootFile()) {
+            QExplicitlySharedDataPointer<DGioFileInfo> fi = mp->getRootFile()->createFileInfo("*", FILE_QUERY_INFO_NONE, 2000);
+            if (fi && fi->fileType() == DGioFileType::FILE_TYPE_DIRECTORY) {
+                QString mpurl = mp->getRootFile()->path();
+                d_ptr->backer_url = mpurl;
+                d_ptr->gmnt = mp;
+                d_ptr->gfsi = mp->getRootFile()->createFileSystemInfo();
+            }
         }
     } else if (suffix() == SUFFIX_UDISKS) {
         QString udiskspath = "/org/freedesktop/UDisks2/block_devices" + url.path().chopped(QString("." SUFFIX_UDISKS).length());
