@@ -520,7 +520,9 @@ void DFMSideBar::initDeviceConnection()
     }
 
     connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
-        this->addItem(DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
+        if (this->findItem(url)==-1) {
+            this->addItem(DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
+        }
     });
     connect(devicesWatcher, &DAbstractFileWatcher::fileDeleted, this, [this](const DUrl &url) {
         this->removeItem(url, this->groupName(Device));

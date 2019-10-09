@@ -249,6 +249,10 @@ int ComputerModel::itemCount() const
 
 void ComputerModel::addItem(const DUrl &url, QWidget* w)
 {
+    if (findItem(url) != -1) {
+        return;
+    }
+
     beginInsertRows(QModelIndex(), rowCount(), rowCount() + 1);
     ComputerModelItemData id;
     initItemData(id, url, w);
@@ -261,6 +265,10 @@ void ComputerModel::addItem(const DUrl &url, QWidget* w)
 
 void ComputerModel::insertAfter(const DUrl &url, const DUrl &ref, QWidget *w)
 {
+    if (findItem(url) != -1) {
+        return;
+    }
+
     int p = findItem(ref);
     if (p == -1) {
         return;
@@ -278,6 +286,10 @@ void ComputerModel::insertAfter(const DUrl &url, const DUrl &ref, QWidget *w)
 
 void ComputerModel::insertBefore(const DUrl &url, const DUrl &ref, QWidget *w)
 {
+    if (findItem(url) != -1) {
+        return;
+    }
+
     int p = findItem(ref);
     if (p == -1) {
         return;
