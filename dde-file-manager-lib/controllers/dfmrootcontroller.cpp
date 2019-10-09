@@ -111,7 +111,9 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         url.setScheme(DFMROOT_SCHEME);
         url.setPath("/" + QUrl::toPercentEncoding(gvfsmp->getRootFile()->path()) + "." SUFFIX_GVFSMP);
         DAbstractFileInfoPointer fp(new DFMRootFileInfo(url));
-        ret.push_back(fp);
+        if (fp->exists()) {
+            ret.push_back(fp);
+        }
     }
 
     return ret;

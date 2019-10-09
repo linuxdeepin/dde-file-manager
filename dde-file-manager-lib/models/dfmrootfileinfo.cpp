@@ -84,7 +84,8 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
     } else if (suffix() == SUFFIX_GVFSMP) {
         QString mpp = QUrl::fromPercentEncoding(fileUrl().path().mid(1).chopped(QString("." SUFFIX_GVFSMP).length()).toUtf8());
         QExplicitlySharedDataPointer<DGioMount> mp(DGioMount::createFromPath(mpp));
-        if (mp->getRootFile()->createFileInfo()->fileType() == DGioFileType::FILE_TYPE_DIRECTORY) {
+        QExplicitlySharedDataPointer<DGioFileInfo> fi = mp->getRootFile()->createFileInfo("*", FILE_QUERY_INFO_NONE, 2000);
+        if (fi && fi->fileType() == DGioFileType::FILE_TYPE_DIRECTORY) {
             QString mpurl = mp->getRootFile()->path();
             d_ptr->backer_url = mpurl;
             d_ptr->gmnt = mp;
@@ -114,7 +115,11 @@ bool DFMRootFileInfo::exists() const
     if (suffix() == SUFFIX_USRDIR) {
         return d->backer_url.length() != 0;
     } else if (suffix() == SUFFIX_GVFSMP) {
-        return d->gmnt->getRootFile()->createFileInfo()->fileType() == DGioFileType::FILE_TYPE_DIRECTORY;
+        if (!d->gmnt) {
+            return false;
+        }
+        QExplicitlySharedDataPointer<DGioFileInfo> fi = d->gmnt->getRootFile()->createFileInfo("*", FILE_QUERY_INFO_NONE, 2000);
+        return fi && fi->fileType() == DGioFileType::FILE_TYPE_DIRECTORY;
     } else if (suffix() == SUFFIX_UDISKS) {
         return d->blk->path().length() != 0;
     }
