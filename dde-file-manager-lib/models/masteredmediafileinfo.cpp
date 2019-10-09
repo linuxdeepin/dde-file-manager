@@ -219,3 +219,8 @@ bool MasteredMediaFileInfo::canDrop() const
 {
     return isWritable();
 }
+
+bool MasteredMediaFileInfo::canTag() const
+{
+    return false;
+}
