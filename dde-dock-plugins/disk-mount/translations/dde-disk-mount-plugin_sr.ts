@@ -5,7 +5,7 @@
         <location filename="../dattachedudisks2device.cpp" line="91"/>
         <location filename="../dattachedudisks2device.cpp" line="106"/>
         <source>%1 Volume</source>
-        <translation>%1 Складиште</translation>
+        <translation>%1 Логички диск</translation>
     </message>
 </context>
 <context>
@@ -29,7 +29,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="321"/>
+        <location filename="../diskcontrolwidget.cpp" line="317"/>
         <source>Device has been removed</source>
         <translation>Уређај је уклоњен</translation>
     </message>

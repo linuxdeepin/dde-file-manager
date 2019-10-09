@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -259,7 +257,7 @@
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="53"/>
         <source>Retrieve password</source>
-        <translation type="unfinished"></translation>
+        <translation>Retrieve password</translation>
     </message>
 </context>
 <context>
@@ -400,12 +398,12 @@
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="979"/>
         <source>Trash</source>
-        <translation type="unfinished">Trash</translation>
+        <translation>Trash</translation>
     </message>
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="987"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>Clear</translation>
     </message>
 </context>
 <context>
@@ -847,12 +845,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="959"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to restore %1 file, the target folder is read-only</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="961"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to restore %1 files, the target folder is read-only</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1087"/>
@@ -2021,12 +2019,12 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1055"/>
         <source>Device type</source>
-        <translation type="unfinished"></translation>
+        <translation>Device type</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1058"/>
         <source>File system</source>
-        <translation type="unfinished"></translation>
+        <translation>File system</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1247"/>
@@ -2763,7 +2761,7 @@
         <location filename="../dialogs/propertydialog.cpp" line="949"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="203"/>
         <source>Time accessed</source>
-        <translation type="unfinished"></translation>
+        <translation>Time accessed</translation>
     </message>
     <message>
         <source>Time access</source>
@@ -3346,17 +3344,17 @@
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="41"/>
         <source>Do you want to export a key file in case that you forgot the password?</source>
-        <translation type="unfinished"></translation>
+        <translation>Do you want to export a key file in case that you forgot the password?</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="44"/>
         <source>Export key</source>
-        <translation type="unfinished"></translation>
+        <translation>Export key</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="45"/>
         <source>Skip</source>
-        <translation type="unfinished">Skip</translation>
+        <translation>Skip</translation>
     </message>
 </context>
 <context>
@@ -3383,18 +3381,18 @@
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="222"/>
         <source>Save your vault recovery key</source>
-        <translation type="unfinished"></translation>
+        <translation>Save your vault recovery key</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="223"/>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="248"/>
         <source>File Vault Recovery Key</source>
-        <translation type="unfinished"></translation>
+        <translation>File Vault Recovery Key</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="224"/>
         <source>File Vault Recovery Key (*.txt)</source>
-        <translation type="unfinished"></translation>
+        <translation>File Vault Recovery Key (*.txt)</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="249"/>
@@ -3419,7 +3417,7 @@
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="253"/>
         <source>If they do not match, then this is not the right key, please try another recovery key.</source>
-        <translation type="unfinished"></translation>
+        <translation>If they do not match, then this is not the right key, please try another recovery key.</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="170"/>
@@ -3437,17 +3435,17 @@
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="34"/>
         <source>File Vault</source>
-        <translation type="unfinished">File Vault</translation>
+        <translation>File Vault</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="60"/>
         <source>Lock vault</source>
-        <translation type="unfinished"></translation>
+        <translation>Lock vault</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="61"/>
         <source>Generate key file</source>
-        <translation type="unfinished"></translation>
+        <translation>Generate key file</translation>
     </message>
 </context>
 <context>
@@ -3455,12 +3453,12 @@
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="362"/>
         <source>Here is your vault password</source>
-        <translation type="unfinished"></translation>
+        <translation>Here is your vault password</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="365"/>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -3478,12 +3476,12 @@
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="99"/>
         <source>Password</source>
-        <translation type="unfinished">Password</translation>
+        <translation>Password</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="100"/>
         <source>Repeat password</source>
-        <translation type="unfinished"></translation>
+        <translation>Repeat password</translation>
     </message>
 </context>
 <context>
@@ -3506,7 +3504,7 @@
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="50"/>
         <source>Welcome to File Vault</source>
-        <translation type="unfinished"></translation>
+        <translation>Welcome to File Vault</translation>
     </message>
     <message>
         <source>Welcome to use File Vault</source>
@@ -3533,17 +3531,17 @@
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="271"/>
         <source>Compare the following text with the key ID in your recovery key file</source>
-        <translation type="unfinished"></translation>
+        <translation>Compare the following text with the key ID in your recovery key file</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="272"/>
         <source>If they are identical, input the recovery key below to retrieve your vault password</source>
-        <translation type="unfinished"></translation>
+        <translation>If they are identical, input the recovery key below to retrieve your vault password</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="284"/>
         <source>Retrieve password</source>
-        <translation type="unfinished"></translation>
+        <translation>Retrieve password</translation>
     </message>
 </context>
 <context>

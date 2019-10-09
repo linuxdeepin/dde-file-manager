@@ -74,7 +74,7 @@
     <message>
         <location filename="../view/mainwindow.cpp" line="240"/>
         <source>Failed to format the device</source>
-        <translation type="unfinished"/>
+        <translation>No se ha podido formatear el dispositivo</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="241"/>
