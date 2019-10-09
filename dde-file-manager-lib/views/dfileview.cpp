@@ -1621,8 +1621,16 @@ void DFileView::dropEvent(QDropEvent *event)
     }
 
     if (DFileDragClient::checkMimeData(event->mimeData())) {
+        QModelIndex index = d->fileViewHelper->isEmptyArea(event->pos()) ? QModelIndex() : indexAt(event->pos());
+
+        if (!index.isValid())
+            index = rootIndex();
+
+        if (!index.isValid())
+            return;
+
         event->acceptProposedAction();
-        DFileDragClient::setTargetUrl(event->mimeData(), QUrl());
+        DFileDragClient::setTargetUrl(event->mimeData(), model()->getUrlByIndex(index));
 
         // DFileDragClient deletelater() will be called after connection destroyed
         DFileDragClient *c = new DFileDragClient(event->mimeData());
