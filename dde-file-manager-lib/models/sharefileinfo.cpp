@@ -229,6 +229,11 @@ bool ShareFileInfo::isShared() const
     return true;
 }
 
+bool ShareFileInfo::canTag() const
+{
+    return false;
+}
+
 Qt::ItemFlags ShareFileInfo::fileItemDisableFlags() const
 {
     return Qt::ItemIsDragEnabled | Qt::ItemIsEditable;

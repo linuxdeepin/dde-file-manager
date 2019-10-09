@@ -51,6 +51,7 @@ public:
     QString toLocalFile() const Q_DECL_OVERRIDE;
 
     bool canDrop() const Q_DECL_OVERRIDE;
+    bool canTag() const Q_DECL_OVERRIDE;
 
 private:
     DUrl m_backerUrl;
