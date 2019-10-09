@@ -106,7 +106,7 @@ void DFMAdvanceSearchBar::initUI()
     createLabelCombo(SIZE_RANGE, qApp->translate("DFMAdvanceSearchBar", "File Size:"));
     createLabelCombo(DATE_RANGE, qApp->translate("DFMAdvanceSearchBar", "Time Modified:"));
 
-    resetBtn = new QCommandLinkButton(qApp->translate("DFMAdvanceSearchBar", "Reset"), this);
+    resetBtn = new DCommandLinkButton(qApp->translate("DFMAdvanceSearchBar", "Reset"), this);
     resetBtn->setFocusPolicy(Qt::NoFocus);
 
     int leftLebelWidth = 80; //  qMin(asbLabels[SEARCH_RANGE]->width(), asbLabels[SIZE_RANGE]->width())
