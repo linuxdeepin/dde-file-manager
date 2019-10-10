@@ -562,7 +562,17 @@ void AppController::actionRestoreAll(const QSharedPointer<DFMUrlBaseEvent> &even
 void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
-    deviceListener->eject(fileUrl.query(DUrl::FullyEncoded));
+    if (fileUrl.scheme() == DFMROOT_SCHEME) {
+        DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
+        QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
+        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+        if (!blk->mountPoints().empty()) {
+            blk->unmount({});
+        }
+        drv->eject({});
+    } else {
+        deviceListener->eject(fileUrl.query(DUrl::FullyEncoded));
+    }
 }
 
 void AppController::actionSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent> &event)

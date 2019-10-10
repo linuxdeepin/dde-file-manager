@@ -257,15 +257,17 @@ DAbstractFileInfo::FileType DFMRootFileInfo::fileType() const
         ret = ItemType::UserDirectory;
     } else if (suffix() == SUFFIX_GVFSMP) {
         ret = ItemType::GvfsGeneric;
-        DUrl url(d->gmnt->getRootFile()->uri());
-        if (url.scheme() == FTP_SCHEME) {
-            ret = ItemType::GvfsFTP;
-        } else if (url.scheme() == SMB_SCHEME) {
-            ret = ItemType::GvfsSMB;
-        } else if (url.scheme() == MTP_SCHEME) {
-            ret = ItemType::GvfsMTP;
-        } else if (url.scheme() == GPHOTO2_SCHEME) {
-            ret = ItemType::GvfsGPhoto2;
+        if (d->gmnt->getRootFile()) {
+            DUrl url(d->gmnt->getRootFile()->uri());
+            if (url.scheme() == FTP_SCHEME) {
+                ret = ItemType::GvfsFTP;
+            } else if (url.scheme() == SMB_SCHEME) {
+                ret = ItemType::GvfsSMB;
+            } else if (url.scheme() == MTP_SCHEME) {
+                ret = ItemType::GvfsMTP;
+            } else if (url.scheme() == GPHOTO2_SCHEME) {
+                ret = ItemType::GvfsGPhoto2;
+            }
         }
     } else if (d->mps.size() == 1 && d->mps.front() == QString("/")) {
         ret = ItemType::UDisksRoot;
@@ -329,7 +331,7 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
     ret.push_back(MenuAction::Separator);
 
     QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk ? d->blk->drive() : ""));
-    if (suffix() == SUFFIX_GVFSMP || (suffix() == SUFFIX_UDISKS && d->blk && ((!d->blk->mountPoints().empty() && !d->blk->hintSystem()) || d->isod))) {
+    if (suffix() == SUFFIX_GVFSMP || (suffix() == SUFFIX_UDISKS && d->blk && ((!d->blk->mountPoints().empty() && !d->blk->hintSystem())))) {
         //!!TODO (needs clarification): Unmount, Eject, SafelyRemove?
         ret.push_back(MenuAction::Unmount);
     }
@@ -343,6 +345,10 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
         if (drv->optical() && drv->media().contains(QRegularExpression("_r(w|e)"))) {
             ret.push_back(MenuAction::OpticalBlank);
         }
+    }
+
+    if (d->isod) {
+        ret.push_back(MenuAction::Eject);
     }
 
     if (suffix() == SUFFIX_GVFSMP) {
