@@ -25,33 +25,25 @@
 
 DFM_BEGIN_NAMESPACE
 
+class DFMAdditionalMenuPrivate;
 class DFMAdditionalMenu : public QObject
 {
     Q_OBJECT
 public:
-    const QStringList AllMenuTypes {
-        "SingleFile",
-        "SingleDir",
-        "MultiFileDirs",
-        "EmptyArea"
-    };
-
-    const QLatin1String MENU_TYPE_KEY {"X-DFM-MenuTypes"};
-    const QLatin1String MIME_TYPE_KEY {"X-DFM-MimeTypes"};
-
     explicit DFMAdditionalMenu(QObject *parent = nullptr);
+    ~DFMAdditionalMenu();
 
     // files.size() == 0 is emptyArea
-    QList<QAction*> actions(const QStringList &files, const QString& currentDir = QString());
+    QList<QAction *> actions(const QStringList &files, const QString &currentDir = QString(), bool onDesktop = false);
 protected:
     void appendParentMineType(const QStringList &parentmimeTypes,  QStringList& mimeTypes);
+
 private:
-    QList<QAction *> actionList;
-    QMap<QString, QList<QAction *>> actionListByType;
 
-signals:
+    QScopedPointer<DFMAdditionalMenuPrivate> d_private;
+    Q_DECLARE_PRIVATE_D(d_private, DFMAdditionalMenu)
 
-public slots:
+    Q_DISABLE_COPY(DFMAdditionalMenu)
 };
 
 DFM_END_NAMESPACE

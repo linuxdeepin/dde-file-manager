@@ -361,14 +361,14 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         return menu;
     }
 
-    loadNormalPluginMenu(menu, urlList, currentUrl);
+    //loadNormalPluginMenu(menu, urlList, currentUrl);
     // stop loading Extension menus from json files
     //loadNormalExtensionMenu(menu, urlList, currentUrl);
 
     return menu;
 }
 
-QList<QAction *> DFileMenuManager::loadNormalPluginMenu(DFileMenu *menu, const DUrlList &urlList, const DUrl &currentUrl)
+QList<QAction *> DFileMenuManager::loadNormalPluginMenu(DFileMenu *menu, const DUrlList &urlList, const DUrl &currentUrl, bool onDesktop)
 {
     qDebug() << "load normal plugin menu";
     QStringList files;
@@ -383,7 +383,7 @@ QList<QAction *> DFileMenuManager::loadNormalPluginMenu(DFileMenu *menu, const D
 
     QList<QAction *> actions;
     if (DFileMenuData::additionalMenu) {
-        actions = DFileMenuData::additionalMenu->actions(files, currentUrl.toString());
+        actions = DFileMenuData::additionalMenu->actions(files, currentUrl.toString(), onDesktop);
     }
     foreach (QAction *action, actions) {
         menu->insertAction(lastAction, action);
@@ -403,7 +403,7 @@ QList<QAction *> DFileMenuManager::loadEmptyAreaPluginMenu(DFileMenu *menu, cons
 
     QList<QAction *> actions;
     if (DFileMenuData::additionalMenu) {
-        actions = DFileMenuData::additionalMenu->actions({}, currentUrl.toString());
+        actions = DFileMenuData::additionalMenu->actions({}, currentUrl.toString(), onDesktop);
     }
 
     for (QAction *action : actions) {
