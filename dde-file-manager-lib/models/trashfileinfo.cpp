@@ -242,7 +242,7 @@ QVector<MenuAction> TrashFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
         actionKeys.reserve(12);
         if (isDir()) {
             actionKeys << MenuAction::Open
-                       << MenuAction::OpenInNewWindow
+                       //<< MenuAction::OpenInNewWindow
                        << MenuAction::Separator;
         }
         actionKeys << MenuAction::Restore
