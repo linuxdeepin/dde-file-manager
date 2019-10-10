@@ -92,6 +92,9 @@
 #include "dblockdevice.h"
 #include "ddiskdevice.h"
 #include "ddiskmanager.h"
+#include "dgiovolumemanager.h"
+#include "dgiofile.h"
+#include "dgiomount.h"
 
 #ifdef SW_LABEL
 #include "sw_label/filemanagerlibrary.h"
@@ -503,8 +506,22 @@ void AppController::actionMountImage(const QSharedPointer<DFMUrlBaseEvent> &even
 {
     QStringList args;
     args << "mount";
-    args << "archive://" + QString(QUrl::toPercentEncoding(event->url().toString()));
-    QProcess::startDetached("gio", args);
+    QString archiveuri = "archive://" + QString(QUrl::toPercentEncoding(event->url().toString()));
+    args << archiveuri;
+    QProcess *gioproc = new QProcess;
+    gioproc->start("gio", args);
+    connect(gioproc, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, [=](int ret) {
+        if (ret) {
+            dialogManager->showErrorDialog(tr("Mount Error"), tr("Unsupported image format"));
+        } else {
+            for (auto m : DGioVolumeManager::getMounts()) {
+                if (m && m->getRootFile() && QUrl::fromPercentEncoding(m->getRootFile()->uri().toUtf8()).startsWith(archiveuri)) {
+                    this->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), DUrlList() << DUrl::fromLocalFile(m->getRootFile()->path())));
+                }
+            }
+        }
+        gioproc->deleteLater();
+    });
 }
 
 void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
