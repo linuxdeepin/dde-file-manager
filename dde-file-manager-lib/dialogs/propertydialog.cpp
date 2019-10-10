@@ -1249,7 +1249,6 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
 
     if (info->isFile()) {
         m_executableCheckBox = new QCheckBox;
-        m_executableCheckBox->setFixedHeight(20);
         m_executableCheckBox->setText(tr("Allow to execute as program"));
         connect(m_executableCheckBox, &QCheckBox::toggled, this, &PropertyDialog::toggleFileExecutable);
         if (info->ownerId() != getuid()) {
@@ -1262,7 +1261,7 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     }
 
 
-    layout->setContentsMargins(45, 0, 15, 0);
+    layout->setContentsMargins(45, 10, 15, 10);
     widget->setLayout(layout);
 
     connect(ownerBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), widget, onComboBoxChanged);

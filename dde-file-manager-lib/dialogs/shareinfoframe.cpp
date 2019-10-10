@@ -54,7 +54,6 @@ void ShareInfoFrame::initUI()
     int fieldWidth = 160;
 
     m_shareCheckBox = new QCheckBox(this);
-    //m_shareCheckBox->setFixedHeight(20);
     m_shareCheckBox->setFixedWidth(fieldWidth);
     m_shareCheckBox->setText(tr("Share this folder"));
 
@@ -75,7 +74,6 @@ void ShareInfoFrame::initUI()
     SectionKeyLabel* permissionLabel = new SectionKeyLabel(tr("Permission:"));
     permissionLabel->setFixedWidth(labelWidth);
     m_permissoComBox = new QComboBox(this);
-    m_permissoComBox->setFixedHeight(23);
     m_permissoComBox->setFixedWidth(fieldWidth);
     QStringList permissions;
     permissions << tr("Read and write") << tr("Read only");
@@ -84,7 +82,6 @@ void ShareInfoFrame::initUI()
     SectionKeyLabel* anonymityLabel = new SectionKeyLabel(tr("Anonymous:"));
     anonymityLabel->setFixedWidth(labelWidth);
     m_anonymityCombox = new QComboBox(this);
-    m_anonymityCombox->setFixedHeight(23);
     m_anonymityCombox->setFixedWidth(fieldWidth);
     QStringList anonymityChoices;
     anonymityChoices << tr("Not allow") << tr("Allow");
