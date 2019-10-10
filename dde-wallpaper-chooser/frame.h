@@ -30,12 +30,13 @@
 #include <dregionmonitor.h>
 
 DWIDGET_BEGIN_NAMESPACE
-class DSegmentedControl;
+class DButtonBox;
 DWIDGET_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE
 class QCheckBox;
 class QHBoxLayout;
+class QAbstractButton;
 QT_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
@@ -56,8 +57,8 @@ public:
         ScreenSaverMode
     };
 
-    Frame(QFrame *parent = 0);
-    ~Frame();
+    Frame(QFrame *parent = nullptr);
+    ~Frame() override;
 
     void show();
     void hide();
@@ -72,47 +73,47 @@ public slots:
     void handleNeedCloseButton(QString path, QPoint pos);
 
 protected:
-    void showEvent(QShowEvent *);
-    void hideEvent(QHideEvent *);
-    void keyPressEvent(QKeyEvent *);
+    void showEvent(QShowEvent *) override;
+    void hideEvent(QHideEvent *) override;
+    void keyPressEvent(QKeyEvent *) override;
     void paintEvent(QPaintEvent *event) override;
     bool event(QEvent *event) override;
 
 private:
 #if !defined(DISABLE_SCREENSAVER) || !defined(DISABLE_WALLPAPER_CAROUSEL)
     void adjustModeSwitcherPoint();
-    DSegmentedControl *m_switchModeControl;
+    DButtonBox *m_switchModeControl;
 #endif
 
 #ifndef DISABLE_SCREENSAVER
-    void setMode(int mode);
+    void setMode(QAbstractButton *toggledBtn, bool on);
     void reLayoutTools();
 
     Mode m_mode = WallpaperMode;
     QHBoxLayout *m_toolLayout;
     QLabel *m_waitControlLabel;
-    DSegmentedControl *m_waitControl;
+    DButtonBox *m_waitControl = nullptr;
     QCheckBox *m_lockScreenBox;
 #else
     const Mode m_mode = WallpaperMode;
 #endif
-    WallpaperList *m_wallpaperList = NULL;
+    WallpaperList *m_wallpaperList = nullptr;
     QString m_desktopWallpaper;
     QString m_lockWallpaper;
-    DImageButton * m_closeButton = NULL;
+    DImageButton * m_closeButton = nullptr;
 
 #ifndef DISABLE_WALLPAPER_CAROUSEL
     QHBoxLayout *m_wallpaperCarouselLayout;
     QCheckBox *m_wallpaperCarouselCheckBox;
-    DSegmentedControl *m_wallpaperCarouselControl;
+    DButtonBox *m_wallpaperCarouselControl;
 #endif
 
-    ComDeepinDaemonAppearanceInterface * m_dbusAppearance = NULL;
+    ComDeepinDaemonAppearanceInterface * m_dbusAppearance = nullptr;
 #ifndef DISABLE_SCREENSAVER
     ComDeepinScreenSaverInterface *m_dbusScreenSaver = nullptr;
 #endif
-    DeepinWM * m_dbusDeepinWM = NULL;
-    DRegionMonitor * m_mouseArea = NULL;
+    DeepinWM * m_dbusDeepinWM = nullptr;
+    DRegionMonitor * m_mouseArea = nullptr;
 
     QString m_formerWallpaper;
     QMap<QString, bool> m_deletableInfo;

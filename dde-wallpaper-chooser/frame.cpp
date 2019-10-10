@@ -35,8 +35,7 @@
 #include "screensaver_interface.h"
 #endif
 
-#include <DThemeManager>
-#include <dsegmentedcontrol.h>
+#include <DButtonBox>
 #include <DWindowManagerHelper>
 
 #include <QApplication>
@@ -53,6 +52,7 @@
 #define LOCK_SCREEN_BUTTON_ID "lock-screen"
 #define SCREENSAVER_BUTTON_ID "screensaver"
 
+DWIDGET_USE_NAMESPACE
 DGUI_USE_NAMESPACE
 
 static bool previewBackground()
@@ -278,8 +278,11 @@ bool Frame::event(QEvent *event)
 }
 
 #ifndef DISABLE_SCREENSAVER
-void Frame::setMode(int mode)
+void Frame::setMode(QAbstractButton * toggledBtn, bool on)
 {
+    Q_UNUSED(on);
+
+    int mode = m_switchModeControl->buttonList().indexOf(toggledBtn);
     if (m_mode == mode)
         return;
 
@@ -348,8 +351,7 @@ void Frame::adjustModeSwitcherPoint()
     {
         int width = m_wallpaperCarouselCheckBox->sizeHint().width() +
                     m_wallpaperCarouselControl->sizeHint().width() +
-                    m_wallpaperCarouselLayout->contentsMargins().left() +
-                    m_wallpaperCarouselControl->count() * m_wallpaperCarouselLayout->spacing();
+                    m_wallpaperCarouselLayout->contentsMargins().left();
 
         if (width > tools_width) {
             tools_width = width;
@@ -418,13 +420,12 @@ void Frame::initUI()
     layout->setMargin(0);
     layout->setSpacing(0);
 
-    DThemeManager::instance()->setTheme(this, "dark");
-
 #ifndef DISABLE_WALLPAPER_CAROUSEL
     m_wallpaperCarouselLayout = new QHBoxLayout;
     m_wallpaperCarouselCheckBox = new QCheckBox(tr("Wallpaper Slideshow"), this);
     m_wallpaperCarouselCheckBox->setChecked(true);
-    m_wallpaperCarouselControl = new DSegmentedControl(this);
+    m_wallpaperCarouselControl = new DButtonBox(this);
+    QList<DButtonBoxButton*> wallpaperSlideshowBtns;
 
     QByteArrayList array_policy {"30", "60", "300", "600", "900", "1800", "3600", "login", "wakeup"};
 
@@ -447,20 +448,23 @@ void Frame::initUI()
         for (const QByteArray &time : array_policy) {
             int index = 0;
 
+            DButtonBoxButton * btn;
             if (time == "login") {
-                index = m_wallpaperCarouselControl->addSegmented(tr("When login"));
+                btn = new DButtonBoxButton(tr("When login"), this);
             } else if (time == "wakeup") {
-                index = m_wallpaperCarouselControl->addSegmented(tr("When wakeup"));
+                btn = new DButtonBoxButton(tr("When wakeup"), this);
             } else {
                 bool ok = false;
                 int t = time.toInt(&ok);
-                index = ok ? m_wallpaperCarouselControl->addSegmented(timeFormat(t)) : m_wallpaperCarouselControl->addSegmented(time);
+                btn = new DButtonBoxButton(ok ? timeFormat(t) : time, this);
             }
 
-            m_wallpaperCarouselControl->at(index)->setMinimumWidth(40);
+            btn->setMinimumWidth(40);
+            wallpaperSlideshowBtns.append(btn);
         }
 
-        m_wallpaperCarouselControl->setCurrentIndex(current_policy_index);
+        m_wallpaperCarouselControl->setButtonList(wallpaperSlideshowBtns, true);
+        wallpaperSlideshowBtns[current_policy_index]->setChecked(true);
         m_wallpaperCarouselControl->setVisible(m_wallpaperCarouselCheckBox->isChecked());
     }
 
@@ -475,24 +479,26 @@ void Frame::initUI()
     connect(m_wallpaperCarouselCheckBox, &QCheckBox::clicked, this, [this, array_policy] (bool checked) {
         m_wallpaperCarouselControl->setVisible(checked);
 
+        int checkedIndex = m_wallpaperCarouselControl->buttonList().indexOf(m_wallpaperCarouselControl->checkedButton());
         if (!checked) {
             m_dbusAppearance->setWallpaperSlideShow(QString());
-        } else if (m_wallpaperCarouselControl->currentIndex() >= 0) {
-            m_dbusAppearance->setWallpaperSlideShow(array_policy.at(m_wallpaperCarouselControl->currentIndex()));
+        } else if (checkedIndex >= 0) {
+            m_dbusAppearance->setWallpaperSlideShow(array_policy.at(checkedIndex));
         }
     });
-    connect(m_wallpaperCarouselControl, &DSegmentedControl::currentChanged, this, [this, array_policy] (int index) {
-        m_dbusAppearance->setWallpaperSlideShow(array_policy.at(index));
+    connect(m_wallpaperCarouselControl, &DButtonBox::buttonToggled, this, [this, array_policy] (QAbstractButton * toggledBtn, bool) {
+        m_dbusAppearance->setWallpaperSlideShow(array_policy.at(m_wallpaperCarouselControl->buttonList().indexOf(toggledBtn)));
     });
 #endif
 
 #ifndef DISABLE_SCREENSAVER
     m_toolLayout = new QHBoxLayout;
 
-    m_waitControl = new DSegmentedControl(this);
+    m_waitControl = new DButtonBox(this);
     m_lockScreenBox = new QCheckBox(tr("Require a password on wakeup"), this);
 
     QVector<int> time_array {60, 300, 600, 900, 1800, 3600, 0};
+    QList<DButtonBoxButton*> timeArrayBtns;
 
     if (!m_dbusScreenSaver) {
         m_dbusScreenSaver = new ComDeepinScreenSaverInterface("com.deepin.ScreenSaver", "/com/deepin/ScreenSaver",
@@ -510,14 +516,16 @@ void Frame::initUI()
 
     for (const int time : time_array) {
         if (time > 0) {
-            int index = m_waitControl->addSegmented(timeFormat(time));
-            m_waitControl->at(index)->setMinimumWidth(40);
+            DButtonBoxButton * btn = new DButtonBoxButton(timeFormat(time), this);
+            btn->setMinimumWidth(40);
+            timeArrayBtns.append(btn);
         }
     }
 
-    m_waitControl->addSegmented(tr("Never"));
-    m_waitControlLabel = new  QLabel(tr("Wait:"), this);
-    m_waitControl->setCurrentIndex(current_wait_time_index);
+    timeArrayBtns.append(new DButtonBoxButton(tr("Never"), this));
+    m_waitControlLabel = new QLabel(tr("Wait:"), this);
+    m_waitControl->setButtonList(timeArrayBtns, true);
+    timeArrayBtns[current_wait_time_index]->setChecked(true);
     m_lockScreenBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_lockScreenBox->setChecked(m_dbusScreenSaver->lockScreenAtAwake());
 
@@ -543,18 +551,25 @@ void Frame::initUI()
 
     //###(zccrs): 直接把switModeControl放到布局中始终无法在两种mos模式下都居中
     // 使用anchors使此控件居中
-    m_switchModeControl = new DSegmentedControl(this);
-    m_switchModeControl->addSegmented({tr("Wallpaper"), tr("Screensaver")});
-    m_switchModeControl->at(0)->setMinimumWidth(40);
-    m_switchModeControl->at(1)->setMinimumWidth(40);
-    m_switchModeControl->setCurrentIndex(m_mode == WallpaperMode ? 0 : 1);
+    DButtonBoxButton * wallpaperBtn = new DButtonBoxButton(tr("Wallpaper"), this);
+    DButtonBoxButton * screensaverBtn = new DButtonBoxButton(tr("Screensaver"), this);
+    wallpaperBtn->setMinimumWidth(40);
+    screensaverBtn->setMinimumWidth(40);
+    m_switchModeControl = new DButtonBox(this);
+    m_switchModeControl->setButtonList({wallpaperBtn, screensaverBtn}, true);
+    if (m_mode == WallpaperMode) {
+        wallpaperBtn->setChecked(true);
+    } else {
+        screensaverBtn->setChecked(true);
+    }
 
-    connect(m_waitControl, &DSegmentedControl::currentChanged, this, [this, time_array] (int index) {
+    connect(m_waitControl, &DButtonBox::buttonToggled, this, [this, time_array] (QAbstractButton * toggleBtn, bool) {
+        int index = m_waitControl->buttonList().indexOf(toggleBtn);
         m_dbusScreenSaver->setBatteryScreenSaverTimeout(time_array[index]);
         m_dbusScreenSaver->setLinePowerScreenSaverTimeout(time_array[index]);
     });
 
-    connect(m_switchModeControl, &DSegmentedControl::currentChanged, this, &Frame::setMode);
+    connect(m_switchModeControl, &DButtonBox::buttonToggled, this, &Frame::setMode);
     connect(m_lockScreenBox, &QCheckBox::toggled, m_dbusScreenSaver, &ComDeepinScreenSaverInterface::setLockScreenAtAwake);
 
     reLayoutTools();
