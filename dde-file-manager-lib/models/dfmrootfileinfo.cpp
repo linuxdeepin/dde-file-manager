@@ -402,9 +402,11 @@ QVariantHash DFMRootFileInfo::extraProperties() const
     Q_D(const DFMRootFileInfo);
     QVariantHash ret;
     if (suffix() == SUFFIX_GVFSMP) {
-        ret["fsUsed"] = d->gfsi->fsUsedBytes();
-        ret["fsSize"] = d->gfsi->fsTotalBytes();
-        ret["fsType"] = d->gfsi->fsType();
+        if (d->gfsi) {
+            ret["fsUsed"] = d->gfsi->fsUsedBytes();
+            ret["fsSize"] = d->gfsi->fsTotalBytes();
+            ret["fsType"] = d->gfsi->fsType();
+        }
         ret["rooturi"] = d->gmnt->getRootFile()->uri();
         ret["canUnmount"] = true;
         ret["mounted"] = true;
