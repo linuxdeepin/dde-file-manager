@@ -102,6 +102,7 @@ private:
     DFMSideBarModel *m_sidebarModel;
     QScopedPointer<DDiskManager> m_udisks2DiskManager;
     bool m_contextMenuEnabled = true;
+    QList<DUrl> devitems;
 };
 
 DFM_END_NAMESPACE

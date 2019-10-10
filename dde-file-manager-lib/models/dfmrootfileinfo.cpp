@@ -435,3 +435,21 @@ void DFMRootFileInfo::checkCache()
     d->label = d->blk->idLabel();
     d->fs = d->blk->idType();
 }
+
+bool DFMRootFileInfo::typeCompare(const DAbstractFileInfoPointer &a, const DAbstractFileInfoPointer &b)
+{
+    static const QHash<ItemType, int> priomap = {
+        {ItemType::UserDirectory  , -1},
+        {ItemType::UDisksRoot     ,  0},
+        {ItemType::UDisksData     ,  1},
+        {ItemType::UDisksFixed    ,  2},
+        {ItemType::UDisksRemovable,  3},
+        {ItemType::UDisksOptical  ,  4},
+        {ItemType::GvfsSMB        ,  5},
+        {ItemType::GvfsFTP        ,  5},
+        {ItemType::GvfsMTP        ,  6},
+        {ItemType::GvfsGPhoto2    ,  6},
+        {ItemType::GvfsGeneric    ,  7}
+    };
+    return priomap[static_cast<DFMRootFileInfo::ItemType>(a->fileType())] < priomap[static_cast<DFMRootFileInfo::ItemType>(b->fileType())];
+}

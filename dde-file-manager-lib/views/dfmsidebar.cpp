@@ -496,36 +496,36 @@ void DFMSideBar::initDeviceConnection()
 
     QList<DAbstractFileInfoPointer> filist = DFileService::instance()->getChildren(this, DUrl(DFMROOT_ROOT),
                                                                                    QStringList(), QDir::AllEntries);
-    std::sort(filist.begin(), filist.end(), [](DAbstractFileInfoPointer &a, DAbstractFileInfoPointer &b) {
-        static const QHash<DFMRootFileInfo::ItemType, int> priomap = {
-            {DFMRootFileInfo::ItemType::UDisksRoot     , 0},
-            {DFMRootFileInfo::ItemType::UDisksData     , 1},
-            {DFMRootFileInfo::ItemType::UDisksFixed    , 2},
-            {DFMRootFileInfo::ItemType::UDisksRemovable, 2},
-            {DFMRootFileInfo::ItemType::UDisksOptical  , 2},
-            {DFMRootFileInfo::ItemType::GvfsSMB        , 3},
-            {DFMRootFileInfo::ItemType::GvfsMTP        , 3},
-            {DFMRootFileInfo::ItemType::GvfsGPhoto2    , 3},
-            {DFMRootFileInfo::ItemType::GvfsFTP        , 3},
-            {DFMRootFileInfo::ItemType::GvfsGeneric    , 3},
-            {DFMRootFileInfo::ItemType::UserDirectory  , 4}
-        };
-        return priomap[static_cast<DFMRootFileInfo::ItemType>(a->fileType())] < priomap[static_cast<DFMRootFileInfo::ItemType>(b->fileType())];
-    });
+    std::sort(filist.begin(), filist.end(), &DFMRootFileInfo::typeCompare);
 
     for (const DAbstractFileInfoPointer &fi : filist) {
         if (static_cast<DFMRootFileInfo::ItemType>(fi->fileType()) != DFMRootFileInfo::ItemType::UserDirectory) {
             addItem(DFMSideBarDeviceItemHandler::createItem(fi->fileUrl()), groupName(Device));
+            devitems.push_back(fi->fileUrl());
         }
     }
 
     connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
-        if (this->findItem(url)==-1) {
-            this->addItem(DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
+        if (this->findItem(url) == -1) {
+            auto r = std::upper_bound(devitems.begin(), devitems.end(), url,
+                                      [](const DUrl &a, const DUrl &b) {
+                                          DAbstractFileInfoPointer fia = fileService->createFileInfo(nullptr, a);
+                                          DAbstractFileInfoPointer fib = fileService->createFileInfo(nullptr, b);
+                                          return DFMRootFileInfo::typeCompare(fia, fib);
+                                      }
+            );
+            if (r == devitems.end()) {
+                this->addItem(DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
+                devitems.append(url);
+            } else {
+                this->insertItem(this->findLastItem(this->groupName(Device)) - (devitems.end() - r) + 1, DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
+                devitems.insert(r, url);
+            }
         }
     });
     connect(devicesWatcher, &DAbstractFileWatcher::fileDeleted, this, [this](const DUrl &url) {
         this->removeItem(url, this->groupName(Device));
+        devitems.removeAll(url);
     });
     connect(devicesWatcher, &DAbstractFileWatcher::fileAttributeChanged, this, [this](const DUrl &url) {
         int index = findItem(url, groupName(Device));

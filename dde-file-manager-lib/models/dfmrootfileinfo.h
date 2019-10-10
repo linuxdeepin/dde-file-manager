@@ -85,6 +85,8 @@ public:
     QVariantHash extraProperties() const override;
 
     void checkCache();
+
+    static bool typeCompare(const DAbstractFileInfoPointer &a, const DAbstractFileInfoPointer &b);
 private:
     QScopedPointer<DFMRootFileInfoPrivate> d_ptr;
     Q_DECLARE_PRIVATE(DFMRootFileInfo)
