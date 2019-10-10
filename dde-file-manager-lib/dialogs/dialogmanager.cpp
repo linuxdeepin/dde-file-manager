@@ -196,7 +196,7 @@ QPoint DialogManager::getPerportyPos(int dialogWidth, int dialogHeight, int coun
     int desktopWidth = cursor_screen->size().width();
     int desktopHeight = cursor_screen->size().height();
     int SpaceWidth = 20;
-    int SpaceHeight = 100;
+    int SpaceHeight = 70;
     int row, x, y;
 
     int numberPerRow =  desktopWidth / (dialogWidth + SpaceWidth);
@@ -221,7 +221,7 @@ QPoint DialogManager::getPerportyPos(int dialogWidth, int dialogHeight, int coun
 
     x = (desktopWidth - dialogsWidth) / 2 + (dialogWidth + SpaceWidth) * (index % numberPerRow);
 
-    y = (desktopHeight - dialogsHeight) / 2 + (index / numberPerRow) * SpaceHeight;
+    y = 5 + (index / numberPerRow) * SpaceHeight;
 
     return QPoint(x, y) + cursor_screen->geometry().topLeft();
 }
