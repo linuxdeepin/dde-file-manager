@@ -302,7 +302,7 @@ QString DFMRootFileInfo::iconName() const
             if (drv->mediaCompatibility().join(" ").contains("optical")) {
                 return "media-optical";
             }
-            if (drv->mediaRemovable()) {
+            if (drv->mediaCompatibility().join(" ").contains("thumb")) {
                 return "drive-removable-media";
             }
             for (auto mp : d->blk->mountPoints()) {
