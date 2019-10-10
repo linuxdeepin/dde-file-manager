@@ -42,35 +42,40 @@ ComputerModel::ComputerModel(QObject *parent) :
     QList<DAbstractFileInfoPointer> ch = fileService->getChildren(this, DUrl(DFMROOT_ROOT), {}, nullptr);
     bool splt = false;
     m_nitems = 0;
-    bool rootinserted = false;
     for (auto chi : ch) {
         if (chi->suffix() != SUFFIX_USRDIR && !splt) {
             addItem(makeSplitterUrl(tr("Disks")));
             splt = true;
         }
-        DFMRootFileInfo::ItemType type = static_cast<DFMRootFileInfo::ItemType>(chi->fileType());
-        switch (type) {
-        case DFMRootFileInfo::ItemType::UDisksRoot:
-            insertAfter(chi->fileUrl(), makeSplitterUrl(tr("Disks")));
-            rootinserted = true;
-            break;
-        case DFMRootFileInfo::ItemType::UDisksData:
-            {
-                int p = findItem(makeSplitterUrl(tr("Disks")));
-                if (rootinserted) {
-                    ++p;
-                }
-                insertAfter(chi->fileUrl(), m_items[p].url);
+        if (splt) {
+            auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), chi,
+                                      [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
+                                          return DFMRootFileInfo::typeCompare(a, b.fi);
+                                      });
+            if (r == m_items.end()) {
+                addItem(chi->fileUrl());
+            } else {
+                insertBefore(chi->fileUrl(), r->url);
             }
-            break;
-        default:
+        } else {
             addItem(chi->fileUrl());
         }
     }
     m_watcher = fileService->createFileWatcher(this, DUrl(DFMROOT_ROOT), this);
     m_watcher->startWatcher();
     connect(m_watcher, &DAbstractFileWatcher::fileDeleted, this, &ComputerModel::removeItem);
-    connect(m_watcher, &DAbstractFileWatcher::subfileCreated, std::bind(&ComputerModel::addItem, this, std::placeholders::_1, nullptr));
+    connect(m_watcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
+            DAbstractFileInfoPointer fi = fileService->createFileInfo(this, url);
+            auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), fi,
+                                      [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
+                                          return DFMRootFileInfo::typeCompare(a, b.fi);
+                                      });
+            if (r == m_items.end()) {
+                addItem(url);
+            } else {
+                insertBefore(url, r->url);
+            }
+    });
     connect(m_watcher, &DAbstractFileWatcher::fileAttributeChanged, [this](const DUrl &url) {
         int p;
         for (p = 0; p < m_items.size(); ++p) {
