@@ -30,11 +30,17 @@
 #include <QIcon>
 #include <QtMath>
 #include <QApplication>
+#include <DGuiApplicationHelper>
+
+DGUI_USE_NAMESPACE
 
 DiskPluginItem::DiskPluginItem(QWidget *parent)
     : QWidget(parent),
       m_displayMode(Dock::Efficient)
 {
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this, [ = ] {
+        updateIcon();
+    });
 }
 
 void DiskPluginItem::setDockDisplayMode(const Dock::DisplayMode mode)
@@ -74,7 +80,12 @@ void DiskPluginItem::updateIcon()
 //        m_icon = QIcon::fromTheme("drive-removable-dock").pixmap(std::min(width(), height()) * 0.8 * qApp->devicePixelRatio(), std::min(width(), height()) * 0.8 * qApp->devicePixelRatio());
 
     // fashion mode icons are no longer needed
-    m_icon = QIcon::fromTheme("drive-removable-dock-symbolic").pixmap(16 * qApp->devicePixelRatio(), 16 * qApp->devicePixelRatio());
+
+    QString iconName = "drive-removable-dock-symbolic";
+    if (height() <= PLUGIN_BACKGROUND_MIN_SIZE && DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
+        iconName.append(PLUGIN_MIN_ICON_NAME);
+
+    m_icon = QIcon::fromTheme(iconName).pixmap(16 * qApp->devicePixelRatio(), 16 * qApp->devicePixelRatio());
     m_icon.setDevicePixelRatio(qApp->devicePixelRatio());
     update();
 }
