@@ -70,8 +70,7 @@
 #include "models/dfmrootfileinfo.h"
 #include "controllers/vaultcontroller.h"
 
-#include <dplatformwindowhandle.h>
-#include <DThemeManager>
+#include <DPlatformWindowHandle>
 #include <DTitlebar>
 
 #include <QStatusBar>
@@ -1174,38 +1173,6 @@ void DFileManagerWindow::onReuqestCacheRenameBarState()const
 {
     const DFileManagerWindowPrivate *const d{ d_func() };
     DFileManagerWindow::renameBarState = d->renameBar->getCurrentState();//###: record current state, when a new window is created from a already has tab.
-}
-
-void DFileManagerWindow::setTheme(const QString &theme)
-{
-    qApp->setTheme("chameleon");
-//    DThemeManager::instance()->setTheme(this, theme);
-//    DFMApplication::setAppAttribute(DFMApplication::AA_ThemeName, theme);
-
-//    DFileMenu *dfmenu = static_cast<DFileMenu *>(titlebar()->menu());
-//    QAction *theme_action = dfmenu->actionAt(1);
-
-//    if (theme_action) {
-//        if (theme == "dark") {
-//            theme_action->setChecked(true);
-//        }
-//    }
-}
-
-void DFileManagerWindow::onThemeChanged()
-{
-//    QString theme = DThemeManager::instance()->theme(this);
-//    if (theme == "light") {
-//        theme = "dark";
-//    } else {
-//        theme = "dark";
-//    }
-//    foreach (const QWidget *w, WindowManager::instance()->getWindows().keys()) {
-//        const DFileManagerWindow *dfm = static_cast<const DFileManagerWindow *>(w);
-//        const_cast<DFileManagerWindow *>(dfm)->setTheme(theme);
-//    }
-
-    WindowManager::instance()->saveWindowState(this);
 }
 
 void DFileManagerWindow::showEvent(QShowEvent *event)

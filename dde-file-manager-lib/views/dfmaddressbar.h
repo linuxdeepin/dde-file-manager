@@ -92,7 +92,6 @@ private:
     void initConnections();
     void initData();
     void setIndicator(enum IndicatorType type);
-    void onWidgetThemeChanged(QWidget *widget, QString theme);
     void updateIndicatorIcon();
     void doComplete();
     void clearCompleterModel();

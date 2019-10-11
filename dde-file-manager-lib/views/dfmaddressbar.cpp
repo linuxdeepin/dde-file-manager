@@ -39,9 +39,8 @@
 #include <QWidgetAction>
 #include <QDebug>
 
-#include <DThemeManager>
 #include <DSpinner>
-#include <danchors.h>
+#include <DAnchors>
 
 DWIDGET_USE_NAMESPACE
 
@@ -362,7 +361,6 @@ void DFMAddressBar::initUI()
 
 void DFMAddressBar::initConnections()
 {
-    connect(DThemeManager::instance(), &DThemeManager::widgetThemeChanged, this, &DFMAddressBar::onWidgetThemeChanged);
     connect(indicator, &QAction::triggered, this, [this]() {
         emit returnPressed();
     });
@@ -417,15 +415,6 @@ void DFMAddressBar::setIndicator(DFMAddressBar::IndicatorType type)
     }
     indicatorType = type;
     updateIndicatorIcon();
-}
-
-void DFMAddressBar::onWidgetThemeChanged(QWidget *widget, QString theme)
-{
-    DThemeManager::instance()->setTheme(completerView, theme);
-
-    if (widget == this) {
-        updateIndicatorIcon();
-    }
 }
 
 /*!
