@@ -33,7 +33,6 @@
 #include "deviceinfo/udisklistener.h"
 
 #include <QPainter>
-#include <DThemeManager>
 #include <QMimeData>
 
 #include <QGuiApplication>
@@ -91,10 +90,6 @@ DFMCrumbItemPrivate::DFMCrumbItemPrivate(DFMCrumbItem *qq)
 {
     qq->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     qq->setObjectName("DCrumbButton"); // init value, will be changed when setting icon.
-
-    qq->connect(DThemeManager::instance(), &DThemeManager::widgetThemeChanged, qq, [this, qq](){
-        qq->setIcon(icon());
-    });
 }
 
 QPixmap DFMCrumbItemPrivate::icon() const

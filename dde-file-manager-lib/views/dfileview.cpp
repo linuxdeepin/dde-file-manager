@@ -2054,14 +2054,10 @@ void DFileView::initConnects()
         else
             setViewModeToList();
     });
-
-    connect(DThemeManager::instance(), &DThemeManager::widgetThemeChanged, this, &DFileView::updateToolBarActions);
 }
 
 void DFileView::increaseIcon()
 {
-    D_D(DFileView);
-
     int iconSizeLevel = itemDelegate()->increaseIcon();
 
     if (iconSizeLevel >= 0) {
@@ -2071,8 +2067,6 @@ void DFileView::increaseIcon()
 
 void DFileView::decreaseIcon()
 {
-    D_D(DFileView);
-
     int iconSizeLevel = itemDelegate()->decreaseIcon();
 
     if (iconSizeLevel >= 0) {
@@ -2082,8 +2076,6 @@ void DFileView::decreaseIcon()
 
 void DFileView::openIndex(const QModelIndex &index)
 {
-    D_D(DFileView);
-
     const DUrl &url = model()->getUrlByIndex(index);
 
     DFMOpenUrlEvent::DirOpenMode mode = DFMApplication::instance()->appAttribute(DFMApplication::AA_AllwayOpenOnNewWindow).toBool()

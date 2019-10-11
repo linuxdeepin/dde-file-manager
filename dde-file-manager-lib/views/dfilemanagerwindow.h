@@ -136,9 +136,6 @@ public slots:
     void onTabBarCurrentIndexChange(const int &index)noexcept;
     void onReuqestCacheRenameBarState() const;
 
-    void setTheme(const QString &theme);
-    void onThemeChanged();
-
 protected:
     void showEvent(QShowEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
