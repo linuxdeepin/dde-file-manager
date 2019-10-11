@@ -178,6 +178,11 @@ bool DFMRootFileWatcherPrivate::start()
         url.setPath("/" + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP);
         Q_EMIT wpar->fileDeleted(url);
     }));
+    connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::volumeAdded, [](QExplicitlySharedDataPointer<DGioVolume> vol) {
+        if (vol->volumeMonitorName().contains(QRegularExpression("(MTP|GPhoto2|Afc)$"))) {
+            vol->mount();
+        }
+    }));
     connections.push_back(QObject::connect(udisksmgr.data(), &DDiskManager::fileSystemAdded, [wpar](const QString &blks) {
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
@@ -236,6 +241,9 @@ bool DFMRootFileWatcherPrivate::stop()
     connections.clear();
 
     blkdevs.clear();
+
+    vfsmgr.clear();
+    udisksmgr.clear();
 
     started = false;
 
