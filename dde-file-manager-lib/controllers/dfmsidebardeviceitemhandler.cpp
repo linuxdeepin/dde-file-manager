@@ -49,9 +49,9 @@ DViewItemAction *DFMSideBarDeviceItemHandler::createUnmountOrEjectAction(const D
 
     QObject::connect(action, &QAction::triggered, action, [url](){
         const DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(nullptr, url);
-        QVariantHash info = infoPointer->extraProperties();
-        if (info.value("canUnmount", false).toBool()) {
-            AppController::instance()->actionUnmount(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
+        const QVector<MenuAction> menuactions = infoPointer->menuActionList();
+        if (menuactions.contains(MenuAction::Eject)) {
+            AppController::instance()->actionEject(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
         }
     });
 
@@ -77,7 +77,7 @@ DFMSideBarItem *DFMSideBarDeviceItemHandler::createItem(const DUrl &url)
     DViewItemActionList lst;
     DViewItemAction * act = createUnmountOrEjectAction(url, false);
     act->setIcon(QIcon::fromTheme("media-eject-symbolic"));
-    act->setVisible(infoPointer->menuActionList().contains(MenuAction::Unmount));
+    act->setVisible(infoPointer->menuActionList().contains(MenuAction::Eject));
     lst.push_back(act);
     item->setActionList(Qt::RightEdge, lst);
 

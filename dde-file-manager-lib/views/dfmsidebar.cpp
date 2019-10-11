@@ -506,6 +506,9 @@ void DFMSideBar::initDeviceConnection()
     }
 
     connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
+        if (!fileService->createFileInfo(nullptr, url)->exists()) {
+            return;
+        }
         if (this->findItem(url) == -1) {
             auto r = std::upper_bound(devitems.begin(), devitems.end(), url,
                                       [](const DUrl &a, const DUrl &b) {
@@ -537,7 +540,7 @@ void DFMSideBar::initDeviceConnection()
 
         DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
         DViewItemActionList actionList = item->actionList(Qt::RightEdge);
-        actionList.front()->setVisible(fi->extraProperties()["canUnmount"].toBool());
+        actionList.front()->setVisible(fi->menuActionList().contains(MenuAction::Eject));
         item->setText(fi->fileDisplayName());
 
         Qt::ItemFlags flags = item->flags() & (~Qt::ItemFlag::ItemIsEditable);

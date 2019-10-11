@@ -332,7 +332,6 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
 
     QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk ? d->blk->drive() : ""));
     if (suffix() == SUFFIX_GVFSMP || (suffix() == SUFFIX_UDISKS && d->blk && ((!d->blk->mountPoints().empty() && !d->blk->hintSystem())))) {
-        //!!TODO (needs clarification): Unmount, Eject, SafelyRemove?
         ret.push_back(MenuAction::Unmount);
     }
 
@@ -347,7 +346,7 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
         }
     }
 
-    if (d->isod) {
+    if (drv && drv->ejectable()) {
         ret.push_back(MenuAction::Eject);
     }
 
