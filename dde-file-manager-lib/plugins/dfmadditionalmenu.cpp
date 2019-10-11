@@ -275,6 +275,15 @@ QList<QAction *> DFMAdditionalMenu::actions(const QStringList &files, const QStr
                 continue;
             }
 
+            // match exclude mime types
+            QStringList excludeMimeTypes = action->property(d->MIMETYPE_EXCLUDE_KEY.data()).toStringList();
+            excludeMimeTypes.removeAll({});
+            bool match = d->isMimeTypeMatch(fileMimeTypes, excludeMimeTypes);
+            if (match) {
+                it = actions.erase(it);
+                continue;
+            }
+
             // MimeType not exist == MimeType=*
             if (action->property(d->MIME_TYPE_KEY.data()).isNull()) {
                 ++it;
@@ -284,17 +293,8 @@ QList<QAction *> DFMAdditionalMenu::actions(const QStringList &files, const QStr
             // match support mime types
             QStringList supportMimeTypes =  action->property(d->MIME_TYPE_KEY.data()).toStringList();
             supportMimeTypes.removeAll({});
-            bool match = d->isMimeTypeMatch(fileMimeTypes, supportMimeTypes);
+            match = d->isMimeTypeMatch(fileMimeTypes, supportMimeTypes);
             if (!match) {
-                it = actions.erase(it);
-                continue;
-            }
-
-            // match exclude mime types
-            QStringList excludeMimeTypes =  action->property(d->MIMETYPE_EXCLUDE_KEY.data()).toStringList();
-            excludeMimeTypes.removeAll({});
-            match = d->isMimeTypeMatch(fileMimeTypes, excludeMimeTypes);
-            if (match) {
                 it = actions.erase(it);
                 continue;
             }
