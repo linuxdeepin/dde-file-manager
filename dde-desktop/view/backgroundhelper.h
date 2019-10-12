@@ -31,6 +31,7 @@ using WMInter = com::deepin::wm;
 
 DGUI_USE_NAMESPACE
 
+class BackgroundLabel;
 class BackgroundHelper : public QObject
 {
     Q_OBJECT
@@ -40,23 +41,23 @@ public:
     ~BackgroundHelper();
 
     bool isEnabled() const;
-    QLabel *backgroundForScreen(QScreen *screen) const;
-    QList<QLabel*> allBackgrounds() const;
+    QWidget *backgroundForScreen(QScreen *screen) const;
+    QList<QWidget*> allBackgrounds() const;
 
     void setBackground(const QString &path);
     void setVisible(bool visible);
 
 Q_SIGNALS:
-    void aboutDestoryBackground(QLabel *l);
+    void aboutDestoryBackground(QWidget *l);
     void enableChanged();
-    void backgroundGeometryChanged(QLabel *l);
-    void backgroundAdded(QLabel *l);
+    void backgroundGeometryChanged(QWidget *l);
+    void backgroundAdded(QWidget *l);
 
 private:
     bool isKWin() const;
     bool isDeepinWM() const;
     void onWMChanged();
-    void updateBackground(QLabel *l);
+    void updateBackground(QWidget *l);
     void updateBackground();
     void onScreenAdded(QScreen *screen);
     void onScreenRemoved(QScreen *screen);
@@ -70,7 +71,7 @@ private:
     int currentWorkspaceIndex = 0;
     QString currentWallpaper;
     QPixmap backgroundPixmap;
-    QMap<QScreen*, QLabel*> backgroundMap;
+    QMap<QScreen*, BackgroundLabel*> backgroundMap;
     static BackgroundHelper *desktop_instance;
 
 public:

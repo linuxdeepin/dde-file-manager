@@ -55,7 +55,7 @@ Desktop::Desktop()
 
     connect(d->background, &BackgroundHelper::enableChanged, this, &Desktop::onBackgroundEnableChanged);
     connect(qGuiApp, &QGuiApplication::primaryScreenChanged, this, &Desktop::onBackgroundEnableChanged);
-    connect(d->background, &BackgroundHelper::aboutDestoryBackground, this, [this] (QLabel *l) {
+    connect(d->background, &BackgroundHelper::aboutDestoryBackground, this, [this] (QWidget *l) {
         if (l == d->screenFrame.parent()) {
             d->screenFrame.setParent(nullptr);
         }
@@ -89,7 +89,7 @@ void Desktop::onBackgroundEnableChanged()
     qInfo() << "Background enabled:" << d->background->isEnabled();
 
     if (d->background->isEnabled()) {
-        QLabel *background = d->background->backgroundForScreen(qApp->primaryScreen());
+        QWidget *background = d->background->backgroundForScreen(qApp->primaryScreen());
         d->screenFrame.setAttribute(Qt::WA_NativeWindow, false);
         d->screenFrame.setParent(background);
         d->screenFrame.move(0, 0);
@@ -100,7 +100,7 @@ void Desktop::onBackgroundEnableChanged()
         QMetaObject::invokeMethod(background, "raise", Qt::QueuedConnection);
 
         // 隐藏完全重叠的窗口
-        for (QLabel *l : d->background->allBackgrounds()) {
+        for (QWidget *l : d->background->allBackgrounds()) {
             if (l != background) {
                 Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), true);
                 l->setVisible(!background->geometry().contains(l->geometry()));
