@@ -190,6 +190,14 @@ void MoveCopyTaskWidget::initUI()
     m_bgLabel->setAutoFillBackground(true);
     m_bgLabel->setWindowFlags(Qt::WindowStaysOnBottomHint);
     m_bgLabel->setVisible(false);
+    m_bgLabel->setAttribute(Qt::WA_StyledBackground);
+    QColor base_color = palette().base().color();
+    DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(base_color);
+    if (ct == DGuiApplicationHelper::LightType) {
+        m_bgLabel->setStyleSheet("background-color:rgba(0,0,0,13)");
+    } else {
+        m_bgLabel->setStyleSheet("background-color:rgba(255,255,255,13)");
+    }
 
     m_closeButton = new QPushButton;
     m_closeButton->setObjectName("StopButton");
