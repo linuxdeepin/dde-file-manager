@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
     }
 
     app.setOrganizationName("deepin");
-    app.setApplicationDisplayName(app.translate("Application", "Desktop"));
+    app.setApplicationDisplayName(app.translate("DesktopMain", "Desktop"));
     app.setApplicationVersion(DApplication::buildVersion((GIT_VERSION)));
     app.setTheme("chameleon");
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
