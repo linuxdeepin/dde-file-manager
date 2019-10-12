@@ -144,7 +144,6 @@ public:
     QItemSelection      beforeMoveSelection;
     bool                showSelectRect  = false;
     QRect               selectRect      = QRect();
-    QFrame              *selectFrame    = nullptr;
 
     bool                mousePressed;
 
