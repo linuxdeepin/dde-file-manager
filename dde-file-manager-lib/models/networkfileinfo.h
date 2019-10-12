@@ -42,6 +42,7 @@ public:
 
     bool isReadable() const Q_DECL_OVERRIDE;
     bool isWritable() const Q_DECL_OVERRIDE;
+    bool isVirtualEntry() const Q_DECL_OVERRIDE;
 
     bool canRename() const Q_DECL_OVERRIDE;
     bool canIteratorDir() const override;

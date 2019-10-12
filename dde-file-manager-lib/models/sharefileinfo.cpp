@@ -234,6 +234,16 @@ bool ShareFileInfo::canTag() const
     return false;
 }
 
+bool ShareFileInfo::isVirtualEntry() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    if (fileUrl() == DUrl(USERSHARE_ROOT))
+        return true;
+
+    return d->proxy->isVirtualEntry();
+}
+
 Qt::ItemFlags ShareFileInfo::fileItemDisableFlags() const
 {
     return Qt::ItemIsDragEnabled | Qt::ItemIsEditable;
