@@ -1497,7 +1497,8 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
     for (const DUrl &url : event->mimeData()->urls()) {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
 
-        if (!fileInfo || !fileInfo->isReadable()) {
+        // a symlink that points to a non-existing file QFileInfo::isReadAble() returns false
+        if (!fileInfo || (!fileInfo->isSymLink() && !fileInfo->isReadable())) {
             event->ignore();
 
             return;
