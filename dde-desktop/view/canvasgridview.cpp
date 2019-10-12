@@ -506,10 +506,10 @@ void CanvasGridView::mouseMoveEvent(QMouseEvent *event)
         selectRect.setRight(qMax(curPos.x(), d->lastPos.x()));
         selectRect.setBottom(qMax(curPos.y(), d->lastPos.y()));
         d->selectRect = selectRect.normalized();
-        d->selectFrame->setGeometry(d->selectRect);
     }
 
     if (d->showSelectRect) {
+        update();
         setState(DragSelectingState);
         auto command = QItemSelectionModel::Current | QItemSelectionModel::ClearAndSelect;
         setSelection(selectRect, command, true);
@@ -526,7 +526,6 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
     bool showSelectFrame = leftButtonPressed;
     showSelectFrame &= !index.isValid();
     d->showSelectRect = showSelectFrame;
-    d->selectFrame->setVisible(d->showSelectRect);
     d->lastPos = event->pos();
 
     bool isEmptyArea = !index.isValid();
@@ -566,8 +565,7 @@ void CanvasGridView::mouseReleaseEvent(QMouseEvent *event)
         d->selectRect = QRect();
 //        update(d->selectRect);
     }
-    d->selectFrame->setGeometry(d->selectRect);
-    d->selectFrame->setVisible(d->showSelectRect);
+
     update();
 }
 
@@ -1164,6 +1162,19 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
         }
         painter.restore();
     }
+
+    // draw select rect copy from QListView::paintEvent
+    if (d->showSelectRect && d->selectRect.isValid()) {
+        QStyleOptionRubberBand opt;
+        opt.initFrom(this);
+        opt.shape = QRubberBand::Rectangle;
+        opt.opaque = false;
+        opt.rect = d->selectRect;
+        painter.save();
+        style()->drawControl(QStyle::CE_RubberBand, &opt, &painter);
+        painter.restore();
+    }
+
 
 // draw dragMove animation
     if (d->dodgeAnimationing) {
@@ -1796,12 +1807,6 @@ void CanvasGridView::initUI()
     setDragDropMode(QAbstractItemView::DragDrop);
     setEditTriggers(QAbstractItemView::EditKeyPressed | QAbstractItemView::SelectedClicked);
     setDefaultDropAction(Qt::CopyAction);
-
-    d->selectFrame = new QFrame(this);
-    d->selectFrame->setVisible(false);
-    d->selectFrame->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    d->selectFrame->setObjectName("SelectRect");
-    d->selectFrame->setGeometry(QRect(-1, -1, 0, 0));
 
     d->fileViewHelper = new CanvasViewHelper(this);
     d->fileViewHelper->setProperty("isCanvasViewHelper", true);
