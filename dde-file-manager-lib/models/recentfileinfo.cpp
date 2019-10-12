@@ -24,6 +24,7 @@
 #include "app/define.h"
 #include "singleton.h"
 #include "controllers/pathmanager.h"
+#include "shutil/mimetypedisplaymanager.h"
 #include <QXmlStreamReader>
 #include <QFile>
 
@@ -206,6 +207,16 @@ QString RecentFileInfo::fileDisplayName() const
         return systemPathManager->getSystemPathDisplayName("Recent");
 
     return d->proxy->fileDisplayName();
+}
+
+QString RecentFileInfo::mimeTypeDisplayName() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    if (fileUrl() == DUrl(RECENT_ROOT))
+        return mimeTypeDisplayManager->displayName("");
+
+    return d->proxy->mimeTypeDisplayName();
 }
 
 bool RecentFileInfo::isVirtualEntry() const

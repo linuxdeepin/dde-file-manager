@@ -53,6 +53,7 @@ public:
     QString subtitleForEmptyFloder() const override;
     DUrl goToUrlWhenDeleted() const override;
     virtual QString fileDisplayName() const override;
+    virtual QString mimeTypeDisplayName() const override;
     virtual bool isVirtualEntry() const override;
 
     void updateInfo();

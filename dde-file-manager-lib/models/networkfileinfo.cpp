@@ -70,6 +70,14 @@ bool NetworkFileInfo::isWritable() const
     return true;
 }
 
+bool NetworkFileInfo::isVirtualEntry() const
+{
+    if (fileUrl() == DUrl(SMB_ROOT) || fileUrl() == DUrl(NETWORK_ROOT))
+        return true;
+
+    return DAbstractFileInfo::isVirtualEntry();
+}
+
 bool NetworkFileInfo::canRename() const
 {
     return false;
