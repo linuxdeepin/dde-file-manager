@@ -23,11 +23,51 @@
 
 #include <QScreen>
 #include <QGuiApplication>
+#include <QBackingStore>
+#include <QPainter>
+#include <QPaintEvent>
 #include <qpa/qplatformwindow.h>
 #include <qpa/qplatformscreen.h>
+#include <qpa/qplatformbackingstore.h>
 #define private public
 #include <private/qhighdpiscaling_p.h>
 #undef private
+
+class BackgroundLabel : public QWidget
+{
+public:
+    using QWidget::QWidget;
+
+    void setPixmap(const QPixmap &pixmap)
+    {
+        m_pixmap = pixmap;
+        m_noScalePixmap = pixmap;
+        m_noScalePixmap.setDevicePixelRatio(1);
+        update();
+    }
+
+    void paintEvent(QPaintEvent *event) override
+    {
+        qreal scale = devicePixelRatioF();
+
+        if (scale > 1.0 && event->rect() == rect()) {
+            if (backingStore()->handle()->paintDevice()->devType() != QInternal::Image) {
+                return;
+            }
+
+            QImage *image = static_cast<QImage*>(backingStore()->handle()->paintDevice());
+            QPainter pa(image);
+            pa.drawPixmap(0, 0, m_noScalePixmap);
+        }
+
+        QPainter pa(this);
+        pa.drawPixmap(event->rect().topLeft(), m_pixmap, QRect(event->rect().topLeft() * scale, event->rect().size() * scale));
+    }
+
+private:
+    QPixmap m_pixmap;
+    QPixmap m_noScalePixmap;
+};
 
 BackgroundHelper *BackgroundHelper::desktop_instance = nullptr;
 
@@ -49,7 +89,7 @@ BackgroundHelper::BackgroundHelper(bool preview, QObject *parent)
 
 BackgroundHelper::~BackgroundHelper()
 {
-    for (QLabel *l : backgroundMap) {
+    for (BackgroundLabel *l : backgroundMap) {
         l->hide();
         l->deleteLater();
     }
@@ -66,14 +106,19 @@ bool BackgroundHelper::isEnabled() const
     return windowManagerHelper->windowManagerName() == DWindowManagerHelper::KWinWM || !windowManagerHelper->hasComposite();
 }
 
-QLabel *BackgroundHelper::backgroundForScreen(QScreen *screen) const
+QWidget *BackgroundHelper::backgroundForScreen(QScreen *screen) const
 {
     return backgroundMap.value(screen);
 }
 
-QList<QLabel *> BackgroundHelper::allBackgrounds() const
+QList<QWidget *> BackgroundHelper::allBackgrounds() const
 {
-    return backgroundMap.values();
+    QList<QWidget*> backgrounds;
+
+    for (QWidget *w : backgroundMap)
+        backgrounds << w;
+
+    return backgrounds;
 }
 
 void BackgroundHelper::setBackground(const QString &path)
@@ -84,7 +129,7 @@ void BackgroundHelper::setBackground(const QString &path)
     backgroundPixmap = QPixmap(currentWallpaper);
 
     // 更新背景图
-    for (QLabel *l : backgroundMap) {
+    for (BackgroundLabel *l : backgroundMap) {
         updateBackground(l);
     }
 }
@@ -93,7 +138,7 @@ void BackgroundHelper::setVisible(bool visible)
 {
     m_visible = visible;
 
-    for (QLabel *l : backgroundMap) {
+    for (BackgroundLabel *l : backgroundMap) {
         l->setVisible(visible);
     }
 }
@@ -175,7 +220,7 @@ void BackgroundHelper::onWMChanged()
     Q_EMIT enableChanged();
 }
 
-void BackgroundHelper::updateBackground(QLabel *l)
+void BackgroundHelper::updateBackground(QWidget *l)
 {
     if (backgroundPixmap.isNull())
         return;
@@ -198,7 +243,7 @@ void BackgroundHelper::updateBackground(QLabel *l)
     }
 
     pix.setDevicePixelRatio(l->devicePixelRatioF());
-    l->setPixmap(pix);
+    dynamic_cast<BackgroundLabel*>(l)->setPixmap(pix);
 
     qInfo() << l->windowHandle()->screen() << currentWallpaper << pix;
 }
@@ -222,7 +267,7 @@ void BackgroundHelper::updateBackground()
 
 void BackgroundHelper::onScreenAdded(QScreen *screen)
 {
-    QLabel *l = new QLabel();
+    BackgroundLabel *l = new BackgroundLabel();
 
     backgroundMap[screen] = l;
 
@@ -278,7 +323,7 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
 
 void BackgroundHelper::onScreenRemoved(QScreen *screen)
 {
-    if (QLabel *l = backgroundMap.take(screen)) {
+    if (BackgroundLabel *l = backgroundMap.take(screen)) {
         Q_EMIT aboutDestoryBackground(l);
 
         l->deleteLater();
