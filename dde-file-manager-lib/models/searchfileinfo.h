@@ -35,6 +35,7 @@ public:
     bool exists() const Q_DECL_OVERRIDE;
     bool isReadable() const Q_DECL_OVERRIDE;
     bool isDir() const Q_DECL_OVERRIDE;
+    virtual bool isVirtualEntry() const Q_DECL_OVERRIDE;
 
     int filesCount() const Q_DECL_OVERRIDE;
 
@@ -76,6 +77,7 @@ public:
     DUrl mimeDataUrl() const Q_DECL_OVERRIDE;
 
     QString toLocalFile() const Q_DECL_OVERRIDE;
+    virtual QIcon fileIcon() const Q_DECL_OVERRIDE;
 
 private:
     DUrl m_parentUrl;

@@ -80,6 +80,16 @@ bool SearchFileInfo::isDir() const
     return d->proxy->isDir();
 }
 
+bool SearchFileInfo::isVirtualEntry() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    if (d->proxy)
+        return d->proxy->isVirtualEntry();
+
+    return true;
+}
+
 int SearchFileInfo::filesCount() const
 {
     Q_D(const DAbstractFileInfo);
@@ -325,6 +335,10 @@ QString SearchFileInfo::fileDisplayName() const
     if (d->proxy)
         return d->proxy->fileDisplayName();
 
+    if (fileUrl().isSearchFile()) {
+        return qApp->translate("Shortcut", "Search");
+    }
+
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, fileUrl().searchTargetUrl());
 
     if (fileInfo)
@@ -361,4 +375,9 @@ QString SearchFileInfo::toLocalFile() const
         return info->toLocalFile();
 
     return fileUrl().searchedFileUrl().toLocalFile();
+}
+
+QIcon SearchFileInfo::fileIcon() const
+{
+    return QIcon::fromTheme("search");
 }
