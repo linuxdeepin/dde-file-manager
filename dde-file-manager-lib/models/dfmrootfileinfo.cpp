@@ -41,6 +41,7 @@ class DFMRootFileInfoPrivate
 public:
     QStandardPaths::StandardLocation stdloc;
     QSharedPointer<DBlockDevice> blk;
+    QSharedPointer<DBlockDevice> ctblk;
     QExplicitlySharedDataPointer<DGioMount> gmnt;
     QExplicitlySharedDataPointer<DGioFileInfo> gfsi;
     QString backer_url;
@@ -49,6 +50,7 @@ public:
     QString label;
     QString fs;
     bool isod;
+    bool encrypted;
     DFMRootFileInfo *q_ptr;
     Q_DECLARE_PUBLIC(DFMRootFileInfo)
 };
@@ -107,6 +109,7 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::mountPointsChanged, [this] {this->checkCache();});
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::sizeChanged, [this] {this->checkCache();});
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::idTypeChanged, [this] {this->checkCache();});
+            QObject::connect(d_ptr->blk.data(), &DBlockDevice::cleartextDeviceChanged, [this]{this->checkCache();});
         }
     }
 }
@@ -158,8 +161,12 @@ QString DFMRootFileInfo::fileDisplayName() const
 
         if (d->mps.size() == 1 && d->mps.front() == QString("/"))
             return QCoreApplication::translate("PathManager", "System Disk");
-        if (d->label.length() == 0)
+        if (d->label.length() == 0) {
+            if (d->blk->isEncrypted() && !d->ctblk) {
+                return QCoreApplication::translate("DeepinStorage", "%1 Encrypted").arg(FileUtils::formatSize(d->size));
+            }
             return QCoreApplication::translate("DeepinStorage", "%1 Volume").arg(FileUtils::formatSize(d->size));
+        }
         return d->label;
     }
     return baseName();
@@ -377,11 +384,11 @@ DUrl DFMRootFileInfo::redirectedFileUrl() const
         return DUrl::fromLocalFile(d->backer_url);
     } else if (suffix() == SUFFIX_UDISKS) {
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));
-        if (d->blk->mountPoints().size()) {
+        if (d->mps.size()) {
             if (drv->optical()) {
                 return DUrl::fromBurnFile(QString(d->blk->device()) + "/" + BURN_SEG_ONDISC + "/");
             }
-            return DUrl::fromLocalFile(d->blk->mountPoints().first());
+            return DUrl::fromLocalFile(d->mps.first());
         }
     }
     return DUrl();
@@ -424,7 +431,9 @@ QVariantHash DFMRootFileInfo::extraProperties() const
         }
         ret["fsSize"] = quint64(d->size);
         ret["fsType"] = d->fs;
-        ret["udisksblk"] = d->blk->path();
+        ret["encrypted"] = d->encrypted;
+        ret["unlocked"] = !d->encrypted || d->ctblk;
+        ret["udisksblk"] = d->ctblk ? d->ctblk->path() : d->blk->path();
         ret["canUnmount"] = (!d->blk->mountPoints().empty() && !d->blk->hintSystem()) || d->isod;
         ret["mounted"] = !d->mps.empty();
     }
@@ -437,10 +446,21 @@ void DFMRootFileInfo::checkCache()
     if (!d->blk) {
         return;
     }
-    d->mps = d->blk->mountPoints();
-    d->size = d->blk->size();
-    d->label = d->blk->idLabel();
-    d->fs = d->blk->idType();
+
+    d->encrypted = d->blk->isEncrypted();
+    if (d->encrypted) {
+        if (d->blk->cleartextDevice().length() > 1) {
+            d->ctblk.reset(DDiskManager::createBlockDevice(d->blk->cleartextDevice()));
+        } else {
+            d->ctblk.clear();
+        }
+    }
+
+    DBlockDevice *blk = d->ctblk ? d->ctblk.data() : d->blk.data();
+    d->mps = blk->mountPoints();
+    d->size = blk->size();
+    d->label = blk->idLabel();
+    d->fs = blk->idType();
 }
 
 bool DFMRootFileInfo::typeCompare(const DAbstractFileInfoPointer &a, const DAbstractFileInfoPointer &b)
