@@ -376,10 +376,10 @@ void MoveCopyTaskWidget::initButtonFrame()
     m_keepBothButton->setCheckable(true);
     m_keepBothButton->setChecked(true);
 
+    buttonLayout->addStretch(1);
     buttonLayout->addWidget(m_skipButton);
     buttonLayout->addWidget(m_replaceButton);
     buttonLayout->addWidget(m_keepBothButton);
-    buttonLayout->addStretch(1);
 
     buttonLayout->setContentsMargins(0, 0, 0, 0);
 

@@ -117,13 +117,6 @@ QLabel#TipMessageLabel{
     font-size: 12px;
 }
 
-QLabel#TaskTipMessageLabel{
-    padding-top: 2px;
-    padding-bottom: 2px;
-    font-size: 10px;
-    color: rgba(0, 0, 0, 0.8);
-}
-
 QLabel#titleLable{
   color: rgba(0, 0, 0, 0.8);
   font-size: 12px;
@@ -153,7 +146,6 @@ QPushButton#AllCloseButton:pressed{
     color: #01bdff;
 }
 
-
 QPushButton#StopButton{
     image: url(:/icons/images/icons/stop_normal.png);
     border: none;
@@ -163,41 +155,6 @@ QPushButton#StopButton:hover{
 }
 QPushButton#StopButton:pressed{
     image: url(:/icons/images/icons/stop_press.png);
-}
-QPushButton#OptionButton{
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 4px;
-    background: white;
-    font-size: 12px;
-    padding-left: 20px;
-    padding-top: 5px;
-    padding-right: 20px;
-    padding-bottom: 5px;
-}
-
-QPushButton#OptionButton:checked{
-    border: 1px solid rgba(0, 131, 255, 0.4);
-    background: white;
-}
-
-QPushButton#OptionButton:hover{
-    color: white;
-    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,stop: 0 #8ccfff,stop: 1 #4bb8ff);
-    border: 1px solid rgba(0, 117, 243, 0.2);
-}
-
-QPushButton#OptionButton:pressed{
-    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,stop: 0 #0b8cff,stop: 1 #0aa1ff);
-    border: 1px solid rgba(29, 129, 255, 0.3);
-    color: white;
-}
-
-QLabel#MessageLabel1{
-    font-size: 12px;
-}
-
-QLabel#MessageLabel2{
-    font-size: 11px;
 }
 
 QLabel#ErrorLabel{
