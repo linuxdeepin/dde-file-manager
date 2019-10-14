@@ -285,7 +285,10 @@ DAbstractFileInfo::FileType DFMRootFileInfo::fileType() const
         if (drv->mediaCompatibility().join(" ").contains("optical")) {
             ret = ItemType::UDisksOptical;
         } else {
-            ret = drv->removable() ? ItemType::UDisksRemovable : ItemType::UDisksFixed;
+            ret = ItemType::UDisksFixed;
+            if (drv->media() == "thumb" || drv->removable() || drv->mediaRemovable() || drv->ejectable()) {
+                ret = ItemType::UDisksRemovable;
+            }
         }
     }
     return static_cast<FileType>(ret);
@@ -309,7 +312,7 @@ QString DFMRootFileInfo::iconName() const
             if (drv->mediaCompatibility().join(" ").contains("optical")) {
                 return "media-optical";
             }
-            if (drv->mediaCompatibility().join(" ").contains("thumb")) {
+            if (static_cast<ItemType>(fileType()) == ItemType::UDisksRemovable) {
                 return "drive-removable-media";
             }
             for (auto mp : d->blk->mountPoints()) {
