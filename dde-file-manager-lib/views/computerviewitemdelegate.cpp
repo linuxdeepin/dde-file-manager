@@ -18,9 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <DLineEdit>
 #include <DApplication>
 #include <DApplicationHelper>
+
+#include <QLineEdit>
 
 #include "models/computermodel.h"
 #include "shutil/fileutils.h"
@@ -159,13 +160,13 @@ QWidget* ComputerViewItemDelegate::createEditor(QWidget *parent, const QStyleOpt
 
 void ComputerViewItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-    DLineEdit *le = qobject_cast<DLineEdit*>(editor);
+    QLineEdit *le = qobject_cast<QLineEdit*>(editor);
     le->setText(index.data(Qt::DisplayRole).toString()); // TODO: implement EditRole
 }
 
 void ComputerViewItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-    DLineEdit *le = qobject_cast<DLineEdit*>(editor);
+    QLineEdit *le = qobject_cast<QLineEdit*>(editor);
     model->setData(index, le->text());
 }
 
