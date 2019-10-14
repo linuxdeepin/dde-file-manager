@@ -103,7 +103,15 @@ QMenu *DFMSideBarTagItemHandler::contextMenu(const DFMSideBar *sidebar, const DF
     tagWidget->setToolTipVisible(false);
 
     menu->addAction(tagAction);
-    connect(tagAction, &QWidgetAction::triggered, this, [item, menu]() {
+    connect(tagAction, &QWidgetAction::triggered, this, [item, menu, tagWidget]() {
+        // should setIcon first, processEvent will reset checkedColorList
+        if (tagWidget->checkedColorList().size()>0) {
+            QString colorName = TagManager::instance()->getColorNameByColor(tagWidget->checkedColorList().first());
+            QIcon icon = QIcon::fromTheme(TagColorThemeIconMap[colorName]);
+            DFMSideBarItem *it = const_cast<DFMSideBarItem *>(item);
+            it->setIcon(icon);
+        }
+
         DFMEventDispatcher::instance()->processEvent<DFMMenuActionEvent>(nullptr, menu, DUrl(TAG_ROOT),
         DUrlList{item->url()}, DFMGlobal::ChangeTagColor);
     });
