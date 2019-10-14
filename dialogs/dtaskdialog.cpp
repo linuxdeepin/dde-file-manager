@@ -885,6 +885,8 @@ void DTaskDialog::initUI()
     m_titlebar->layout()->setContentsMargins(0, 0, 0, 0);
     m_titlebar->setMenuVisible(false);
     m_titlebar->setIcon(QIcon::fromTheme("dde-file-manager"));
+    m_titlebar->setAttribute(Qt::WA_StyleSheet);
+    m_titlebar->setStyleSheet("background-color:rgba(0, 0, 0, 0)");
 
     m_taskListWidget = new QListWidget;
     m_taskListWidget->setSelectionMode(QListWidget::NoSelection);
@@ -893,7 +895,6 @@ void DTaskDialog::initUI()
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
     mainLayout->addWidget(m_titlebar);
-    mainLayout->addSpacing(3);
     mainLayout->addWidget(m_taskListWidget);
     mainLayout->addStretch(1);
     setLayout(mainLayout);
