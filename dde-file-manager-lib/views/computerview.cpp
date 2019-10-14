@@ -134,7 +134,12 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
 
     connect(m_view, &QWidget::customContextMenuRequested, this, &ComputerView::contextMenu);
     connect(m_view, &QAbstractItemView::doubleClicked, [this](const QModelIndex &idx) {
-        appController->actionOpen(QSharedPointer<DFMUrlListBaseEvent>(new DFMUrlListBaseEvent(this, {idx.data(ComputerModel::DataRoles::MountOpenUrlRole).value<DUrl>()})));
+        DUrl url = idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>();
+        if (url.path().endsWith(SUFFIX_USRDIR)) {
+            appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
+        } else {
+            appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, url));
+        }
     });
     connect(m_statusbar->scalingSlider(), &QSlider::valueChanged, this, [this] {m_view->setIconSize(QSize(iconsizes[m_statusbar->scalingSlider()->value()], iconsizes[m_statusbar->scalingSlider()->value()]));});
     connect(fileSignalManager, &FileSignalManager::requestRename, this, &ComputerView::onRenameRequested);

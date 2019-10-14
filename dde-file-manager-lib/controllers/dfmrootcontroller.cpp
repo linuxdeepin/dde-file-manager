@@ -89,11 +89,11 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
     for (auto blks : dummy.blockDevices()) {
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
-        if (!blk->hasFileSystem() && !drv->opticalBlank()) {
+        if (!blk->hasFileSystem() && !drv->opticalBlank() && !blk->isEncrypted()) {
             continue;
         }
         udisksuuids.insert(blk->idUUID());
-        if (blk->hintIgnore()) {
+        if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
             continue;
         }
         DAbstractFileInfoPointer fp(new DFMRootFileInfo(DUrl(DFMROOT_ROOT + QString(blk->device()).mid(QString("/dev/").length()) + "." SUFFIX_UDISKS)));
@@ -102,6 +102,9 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
 
     for (auto gvfsmp : DGioVolumeManager::getMounts()) {
         if (gvfsmp->getVolume() && udisksuuids.contains(gvfsmp->getVolume()->identifier(DGioVolumeIdentifierType::VOLUME_IDENTIFIER_TYPE_UUID))) {
+            continue;
+        }
+        if (gvfsmp->getVolume() && gvfsmp->getVolume()->volumeMonitorName().endsWith("UDisks2")) {
             continue;
         }
         if (DUrl(gvfsmp->getRootFile()->uri()).scheme() == BURN_SCHEME) {
@@ -161,6 +164,9 @@ bool DFMRootFileWatcherPrivate::start()
         if (mnt->getVolume() && uuidset.contains(mnt->getVolume()->identifier(DGioVolumeIdentifierType::VOLUME_IDENTIFIER_TYPE_UUID))) {
             return;
         }
+        if (mnt->getVolume() && mnt->getVolume()->volumeMonitorName().endsWith("UDisks2")) {
+            return;
+        }
         if (DUrl(mnt->getRootFile()->uri()).scheme() == BURN_SCHEME) {
             return;
         }
@@ -189,6 +195,10 @@ bool DFMRootFileWatcherPrivate::start()
         QString uuid = blk->idUUID();
 
         if (!blk->hasFileSystem() && !drv->opticalBlank()) {
+            return;
+        }
+
+        if (blk->cryptoBackingDevice().length() > 1) {
             return;
         }
 
