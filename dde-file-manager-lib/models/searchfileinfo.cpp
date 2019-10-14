@@ -379,5 +379,16 @@ QString SearchFileInfo::toLocalFile() const
 
 QIcon SearchFileInfo::fileIcon() const
 {
+    Q_D(const DAbstractFileInfo);
+
+    if (d->proxy)
+        return d->proxy->fileIcon();
+
+    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(Q_NULLPTR, fileUrl().searchedFileUrl());
+
+    if (info)
+        return info->fileIcon();
+
+
     return QIcon::fromTheme("search");
 }
