@@ -55,6 +55,9 @@ public:
     explicit DFMTagWidgetPrivate(DFMTagWidget *qq, const DUrl& url);
     virtual ~DFMTagWidgetPrivate();
 
+protected:
+    DUrl redirectUrl(const DUrl &url);
+
 private:
     DUrl    m_url;
     QLabel      *m_tagLable{nullptr};
@@ -69,8 +72,20 @@ private:
 };
 
 
+DUrl DFMTagWidgetPrivate::redirectUrl(const DUrl &url)
+{
+    DUrl durl = url;
+    if (url.isTaggedFile()) {
+        durl = DUrl::fromLocalFile(url.fragment());
+    } else/* if (url.isRecentFile()) */{
+        durl = DUrl::fromLocalFile(url.path());
+    }
+
+    return durl;
+}
+
 DFMTagWidgetPrivate::DFMTagWidgetPrivate(DFMTagWidget *qq, const DUrl &url)
-    : m_url(url)
+    : m_url(redirectUrl(url))
     , q_ptr(qq)
 {
 
@@ -161,9 +176,10 @@ void DFMTagWidget::initConnection()
     });
 }
 
-void DFMTagWidget::loadTags(const DUrl& url)
+void DFMTagWidget::loadTags(const DUrl& durl)
 {
     Q_D(DFMTagWidget);
+    DUrl url = d->redirectUrl(durl);
     if (!d->m_tagCrumbEdit || !d->m_tagActionWidget || !shouldShow(url))
         return;
 
