@@ -377,6 +377,13 @@ void DFMSideBar::initModelData()
 
 void DFMSideBar::initConnection()
 {
+    // drag to delete bookmark or tag
+    connect(m_sidebarView, &DFMSideBarView::requestRemoveItem, this, [this](){
+        DFMSideBarItem *item = m_sidebarModel->itemFromIndex(m_sidebarView->currentIndex());
+        if (item && item->flags().testFlag(Qt::ItemIsEnabled) && item->flags().testFlag(Qt::ItemIsDragEnabled)) {
+            DFileService::instance()->deleteFiles(nullptr, DUrlList{item->url()}, false);
+        }
+    });
     // do `cd` work
     connect(m_sidebarView, &QListView::activated, this, &DFMSideBar::onItemActivated);
 

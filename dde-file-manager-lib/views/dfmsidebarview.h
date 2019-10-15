@@ -32,6 +32,9 @@ class DFMSideBarView : public DListView
     Q_OBJECT
 public:
     DFMSideBarView(QWidget *parent = nullptr);
+    void mouseMoveEvent(QMouseEvent *event) override;
+signals:
+    void requestRemoveItem();
 };
 
 DFM_END_NAMESPACE

@@ -40,4 +40,19 @@ DFMSideBarView::DFMSideBarView(QWidget *parent)
     setDragDropOverwriteMode(false);
 }
 
+void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
+{
+    if (event->buttons() & Qt::LeftButton) {
+        startDrag(Qt::MoveAction);
+        QPoint pt = mapFromGlobal(QCursor::pos());
+        QRect rc = geometry();
+        if (!rc.contains(pt)) {
+            emit requestRemoveItem(); //model()->removeRow(currentIndex().row());
+            return;
+        }
+    }
+
+    DListView::mouseMoveEvent(event);
+}
+
 DFM_END_NAMESPACE
