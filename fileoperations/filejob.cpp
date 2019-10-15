@@ -586,7 +586,7 @@ bool FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
                 ok = QFile::rename(_tarFilePath, tarFilePath);
             }
         }else if (srcInfo.isFile() || srcInfo.isSymLink()){
-            if (copyFile(srcFilePath, tarDir, true, &_tarFilePath)) {
+            if (copyFile(srcFilePath, tarDir, true, &_tarFilePath) && !getIsSkip()) {
                 deleteFile(srcFilePath);
                 ok = QFile::rename(_tarFilePath, tarFilePath);
             }
