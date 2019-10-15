@@ -85,6 +85,7 @@ public:
     QVariantHash extraProperties() const override;
 
     void checkCache();
+    QString udisksDisplayName();
 
     static bool typeCompare(const DAbstractFileInfoPointer &a, const DAbstractFileInfoPointer &b);
 private:

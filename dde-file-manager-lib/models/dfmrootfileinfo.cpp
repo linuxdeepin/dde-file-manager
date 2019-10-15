@@ -49,6 +49,7 @@ public:
     qulonglong size;
     QString label;
     QString fs;
+    QString udispname;
     bool isod;
     bool encrypted;
     DFMRootFileInfo *q_ptr;
@@ -144,30 +145,12 @@ QString DFMRootFileInfo::fileDisplayName() const
 {
     Q_D(const DFMRootFileInfo);
 
-    static QMap<QString, const char*> i18nMap {
-        {"data", "Data Disk"}
-    };
-    const QString ddeI18nSym = QStringLiteral("_dde_");
-
     if (suffix() == SUFFIX_USRDIR) {
         return QStandardPaths::displayName(d->stdloc);
     } else if (suffix() == SUFFIX_GVFSMP) {
         return d->gmnt->name();
     } else if (suffix() == SUFFIX_UDISKS) {
-        if (d->label.startsWith(ddeI18nSym)) {
-            QString i18nKey = d->label.mid(ddeI18nSym.size(), d->label.size() - ddeI18nSym.size());
-            return qApp->translate("DeepinStorage", i18nMap.value(i18nKey, i18nKey.toUtf8().constData()));
-        }
-
-        if (d->mps.size() == 1 && d->mps.front() == QString("/"))
-            return QCoreApplication::translate("PathManager", "System Disk");
-        if (d->label.length() == 0) {
-            if (d->blk->isEncrypted() && !d->ctblk) {
-                return QCoreApplication::translate("DeepinStorage", "%1 Encrypted").arg(FileUtils::formatSize(d->size));
-            }
-            return QCoreApplication::translate("DeepinStorage", "%1 Volume").arg(FileUtils::formatSize(d->size));
-        }
-        return d->label;
+        return d->udispname;
     }
     return baseName();
 }
@@ -341,13 +324,15 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
     ret.push_back(MenuAction::Separator);
 
     QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk ? d->blk->drive() : ""));
-    if (suffix() == SUFFIX_GVFSMP || (suffix() == SUFFIX_UDISKS && d->blk && ((!d->blk->mountPoints().empty() && !d->blk->hintSystem())))) {
+    DBlockDevice *blk = d->ctblk ? d->ctblk.data() : d->blk.data();
+    //cleartextDevice has hintSystem = true regardless of its backer's value ...
+    if (suffix() == SUFFIX_GVFSMP || (suffix() == SUFFIX_UDISKS && blk && ((!blk->mountPoints().empty() && !d->blk->hintSystem())))) {
         ret.push_back(MenuAction::Unmount);
     }
 
-    if (suffix() == SUFFIX_UDISKS && d->blk && d->blk->mountPoints().empty()) {
+    if (suffix() == SUFFIX_UDISKS && blk && blk->mountPoints().empty()) {
         ret.push_back(MenuAction::Mount);
-        if (!d->blk->readOnly()) {
+        if (!blk->readOnly()) {
             ret.push_back(MenuAction::Rename);
             ret.push_back(MenuAction::FormatDevice);
         }
@@ -464,6 +449,64 @@ void DFMRootFileInfo::checkCache()
     d->size = blk->size();
     d->label = blk->idLabel();
     d->fs = blk->idType();
+    d->udispname = udisksDisplayName();
+}
+
+QString DFMRootFileInfo::udisksDisplayName()
+{
+    Q_D(DFMRootFileInfo);
+
+    static QMap<QString, const char*> i18nMap {
+        {"data", "Data Disk"}
+    };
+    const QString ddeI18nSym = QStringLiteral("_dde_");
+
+    if (d->label.startsWith(ddeI18nSym)) {
+        QString i18nKey = d->label.mid(ddeI18nSym.size(), d->label.size() - ddeI18nSym.size());
+        return qApp->translate("DeepinStorage", i18nMap.value(i18nKey, i18nKey.toUtf8().constData()));
+    }
+
+    if (d->mps.size() == 1 && d->mps.front() == QString("/"))
+        return QCoreApplication::translate("PathManager", "System Disk");
+    if (d->label.length() == 0) {
+        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));
+        if (!drv->mediaAvailable() && drv->mediaCompatibility().join(" ").contains("optical")) {
+            static QVector<QPair<QString, QString>> opticalmediamap {
+                {"optical",                "Optical"},
+                {"optical_cd",             "CD-ROM"},
+                {"optical_cd_r",           "CD-R"},
+                {"optical_cd_rw",          "CD-RW"},
+                {"optical_dvd",            "DVD-ROM"},
+                {"optical_dvd_r",          "DVD-R"},
+                {"optical_dvd_rw",         "DVD-RW"},
+                {"optical_dvd_ram",        "DVD-RAM"},
+                {"optical_dvd_plus_r",     "DVD+R"},
+                {"optical_dvd_plus_rw",    "DVD+RW"},
+                {"optical_dvd_plus_r_dl",  "DVD+R/DL"},
+                {"optical_dvd_plus_rw_dl", "DVD+RW/DL"},
+                {"optical_bd",             "BD-ROM"},
+                {"optical_bd_r",           "BD-R"},
+                {"optical_bd_re",          "BD-RE"},
+                {"optical_hddvd",          "HD DVD-ROM"},
+                {"optical_hddvd_r",        "HD DVD-R"},
+                {"optical_hddvd_rw",       "HD DVD-RW"},
+                {"optical_mo",             "MO"},
+            };
+            QString maxmediacompat;
+            for (auto i = opticalmediamap.rbegin(); i != opticalmediamap.rend(); ++i) {
+                if (drv->mediaCompatibility().contains(i->first)) {
+                maxmediacompat = i->second;
+                break;
+                }
+            }
+            return QCoreApplication::translate("DeepinStorage", "%1 Drive").arg(maxmediacompat);
+        }
+        if (d->blk->isEncrypted() && !d->ctblk) {
+            return QCoreApplication::translate("DeepinStorage", "%1 Encrypted").arg(FileUtils::formatSize(d->size));
+        }
+        return QCoreApplication::translate("DeepinStorage", "%1 Volume").arg(FileUtils::formatSize(d->size));
+    }
+    return d->label;
 }
 
 bool DFMRootFileInfo::typeCompare(const DAbstractFileInfoPointer &a, const DAbstractFileInfoPointer &b)

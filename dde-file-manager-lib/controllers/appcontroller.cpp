@@ -468,6 +468,14 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
 
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), fileUrl);
+        QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
+        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+
+        if (drv && drv->mediaCompatibility().join(" ").contains("optical") && !drv->mediaAvailable() && drv->ejectable()) {
+            drv->eject({});
+            return;
+        }
+
         DUrl q;
         q.setQuery("/dev/" + fi->baseName());
         const QSharedPointer<DFMUrlBaseEvent> &e = dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), q);
@@ -527,26 +535,24 @@ void AppController::actionMountImage(const QSharedPointer<DFMUrlBaseEvent> &even
 void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
-    QString udiskspath = fileUrl.query();
-    udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
-    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
-    QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
-    if (drive->optical()) {
-        blkdev->unmount({});
-        return;
-    }
 
-    QString dev = fileUrl.query(DUrl::FullyEncoded);
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), fileUrl);
         if (fi->suffix() == SUFFIX_UDISKS) {
-            dev = "/dev/" + fi->baseName();
+            QString udiskspath = fi->extraProperties()["udisksblk"].toString();
+            QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+            QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+            if (blkdev->isEncrypted()) {
+                blkdev.reset(DDiskManager::createBlockDevice(blkdev->cleartextDevice()));
+            }
+            blkdev->unmount({});
         } else if (fi->suffix() == SUFFIX_GVFSMP) {
-            dev = fi->extraProperties()["rooturi"].toString();
+            deviceListener->unmount(fi->extraProperties()["rooturi"].toString());
         }
+    } else if (fileUrl.query().length()) {
+        QString dev = fileUrl.query(DUrl::FullyEncoded);
+        deviceListener->unmount(dev);
     }
-
-    deviceListener->unmount(dev);
 }
 
 void AppController::actionRestore(const QSharedPointer<DFMUrlListBaseEvent> &event)
@@ -566,6 +572,9 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
         DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+        if (blk->isEncrypted()) {
+            blk.reset(DDiskManager::createBlockDevice(blk->cleartextDevice()));
+        }
         if (!blk->mountPoints().empty()) {
             blk->unmount({});
         }
