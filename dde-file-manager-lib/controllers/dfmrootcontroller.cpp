@@ -84,15 +84,13 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         }
     }
 
-    QSet<QString> udisksuuids;
     DDiskManager dummy;
     for (auto blks : dummy.blockDevices()) {
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
-        if (!blk->hasFileSystem() && !drv->opticalBlank() && !blk->isEncrypted()) {
+        if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
             continue;
         }
-        udisksuuids.insert(blk->idUUID());
         if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
             continue;
         }
@@ -101,9 +99,6 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
     }
 
     for (auto gvfsmp : DGioVolumeManager::getMounts()) {
-        if (gvfsmp->getVolume() && udisksuuids.contains(gvfsmp->getVolume()->identifier(DGioVolumeIdentifierType::VOLUME_IDENTIFIER_TYPE_UUID))) {
-            continue;
-        }
         if (gvfsmp->getVolume() && gvfsmp->getVolume()->volumeMonitorName().endsWith("UDisks2")) {
             continue;
         }
@@ -157,13 +152,7 @@ bool DFMRootFileWatcherPrivate::start()
 
     DFMRootFileWatcher *wpar = qobject_cast<DFMRootFileWatcher*>(q);
 
-    static QMap<QString, QString> dbuspath2uuid;
-    static QSet<QString> uuidset;
-
     connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::mountAdded, [wpar](QExplicitlySharedDataPointer<DGioMount> mnt) {
-        if (mnt->getVolume() && uuidset.contains(mnt->getVolume()->identifier(DGioVolumeIdentifierType::VOLUME_IDENTIFIER_TYPE_UUID))) {
-            return;
-        }
         if (mnt->getVolume() && mnt->getVolume()->volumeMonitorName().endsWith("UDisks2")) {
             return;
         }
@@ -176,7 +165,7 @@ bool DFMRootFileWatcherPrivate::start()
         Q_EMIT wpar->subfileCreated(url);
     }));
     connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::mountRemoved, [wpar](QExplicitlySharedDataPointer<DGioMount> mnt) {
-        if (mnt->getVolume() && uuidset.contains(mnt->getVolume()->identifier(DGioVolumeIdentifierType::VOLUME_IDENTIFIER_TYPE_UUID))) {
+        if (mnt->getVolume() && mnt->getVolume()->volumeMonitorName().endsWith("UDisks2")) {
             return;
         }
         DUrl url;
@@ -189,48 +178,83 @@ bool DFMRootFileWatcherPrivate::start()
             vol->mount();
         }
     }));
-    connections.push_back(QObject::connect(udisksmgr.data(), &DDiskManager::fileSystemAdded, [wpar](const QString &blks) {
-        QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
+    connections.push_back(QObject::connect(udisksmgr.data(), &DDiskManager::blockDeviceAdded, [wpar, this](const QString &blks) {
+        QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
-        QString uuid = blk->idUUID();
 
-        if (!blk->hasFileSystem() && !drv->opticalBlank()) {
+        if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
+            return;
+        }
+        if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
             return;
         }
 
-        if (blk->cryptoBackingDevice().length() > 1) {
-            return;
-        }
+        blkdevs.push_back(blk);
+        blk->setWatchChanges(true);
 
-        dbuspath2uuid[blks] = uuid;
-        uuidset.insert(uuid);
+        if (blk->isEncrypted()) {
+            QSharedPointer<DBlockDevice> ctblk(DDiskManager::createBlockDevice(blk->cleartextDevice()));
+            blkdevs.push_back(ctblk);
+            ctblk->setWatchChanges(true);
+            connections.push_back(QObject::connect(blk.data(), &DBlockDevice::cleartextDeviceChanged, [wpar, blks](const QString &) {
+                Q_EMIT wpar->fileAttributeChanged(DUrl(DFMROOT_ROOT + blks.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
+            }));
+            connections.push_back(QObject::connect(ctblk.data(), &DBlockDevice::idLabelChanged, [wpar, blks](const QString &) {
+                Q_EMIT wpar->fileAttributeChanged(DUrl(DFMROOT_ROOT + blks.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
+            }));
+            connections.push_back(QObject::connect(ctblk.data(), &DBlockDevice::mountPointsChanged, [wpar, blks](const QByteArrayList &) {
+                Q_EMIT wpar->fileAttributeChanged(DUrl(DFMROOT_ROOT + blks.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
+            }));
+        } else {
+            connections.push_back(QObject::connect(blk.data(), &DBlockDevice::idLabelChanged, [wpar, blks](const QString &) {
+                Q_EMIT wpar->fileAttributeChanged(DUrl(DFMROOT_ROOT + blks.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
+            }));
+            connections.push_back(QObject::connect(blk.data(), &DBlockDevice::mountPointsChanged, [wpar, blks](const QByteArrayList &) {
+                Q_EMIT wpar->fileAttributeChanged(DUrl(DFMROOT_ROOT + blks.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
+            }));
+        }
 
         Q_EMIT wpar->subfileCreated(DUrl(DFMROOT_ROOT + blks.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
     }));
-    connections.push_back(QObject::connect(udisksmgr.data(), &DDiskManager::fileSystemRemoved, [wpar](const QString &blks) {
-        uuidset.remove(dbuspath2uuid[blks]);
-        dbuspath2uuid.remove(blks);
+    connections.push_back(QObject::connect(udisksmgr.data(), &DDiskManager::blockDeviceRemoved, [wpar](const QString &blks) {
         Q_EMIT wpar->fileDeleted(DUrl(DFMROOT_ROOT + blks.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
     }));
 
     for (auto devs : udisksmgr->blockDevices()) {
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(devs));
-        if (!blk->hasFileSystem()) {
+        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+
+        if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
+            continue;
+        }
+        if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
             continue;
         }
 
         blkdevs.push_back(blk);
         blk->setWatchChanges(true);
 
-        dbuspath2uuid[devs] = blk->idUUID();
-        uuidset.insert(dbuspath2uuid[devs]);
-
-        connections.push_back(QObject::connect(blk.data(), &DBlockDevice::idLabelChanged, [wpar, devs](const QString &) {
-            Q_EMIT wpar->fileAttributeChanged(DUrl(DFMROOT_ROOT + devs.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
-        }));
-        connections.push_back(QObject::connect(blk.data(), &DBlockDevice::mountPointsChanged, [wpar, devs](const QByteArrayList &) {
-            Q_EMIT wpar->fileAttributeChanged(DUrl(DFMROOT_ROOT + devs.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
-        }));
+        if (blk->isEncrypted()) {
+            QSharedPointer<DBlockDevice> ctblk(DDiskManager::createBlockDevice(blk->cleartextDevice()));
+            blkdevs.push_back(ctblk);
+            ctblk->setWatchChanges(true);
+            connections.push_back(QObject::connect(blk.data(), &DBlockDevice::cleartextDeviceChanged, [wpar, devs](const QString &) {
+                Q_EMIT wpar->fileAttributeChanged(DUrl(DFMROOT_ROOT + devs.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
+            }));
+            connections.push_back(QObject::connect(ctblk.data(), &DBlockDevice::idLabelChanged, [wpar, devs](const QString &) {
+                Q_EMIT wpar->fileAttributeChanged(DUrl(DFMROOT_ROOT + devs.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
+            }));
+            connections.push_back(QObject::connect(ctblk.data(), &DBlockDevice::mountPointsChanged, [wpar, devs](const QByteArrayList &) {
+                Q_EMIT wpar->fileAttributeChanged(DUrl(DFMROOT_ROOT + devs.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
+            }));
+        } else {
+            connections.push_back(QObject::connect(blk.data(), &DBlockDevice::idLabelChanged, [wpar, devs](const QString &) {
+                Q_EMIT wpar->fileAttributeChanged(DUrl(DFMROOT_ROOT + devs.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
+            }));
+            connections.push_back(QObject::connect(blk.data(), &DBlockDevice::mountPointsChanged, [wpar, devs](const QByteArrayList &) {
+                Q_EMIT wpar->fileAttributeChanged(DUrl(DFMROOT_ROOT + devs.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
+            }));
+        }
     }
 
     started = true;

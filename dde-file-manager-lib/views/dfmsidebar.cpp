@@ -541,6 +541,7 @@ void DFMSideBar::initDeviceConnection()
         DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
         DViewItemActionList actionList = item->actionList(Qt::RightEdge);
         actionList.front()->setVisible(fi->menuActionList().contains(MenuAction::Eject));
+        qDebug() << fi->fileDisplayName();
         item->setText(fi->fileDisplayName());
 
         Qt::ItemFlags flags = item->flags() & (~Qt::ItemFlag::ItemIsEditable);
