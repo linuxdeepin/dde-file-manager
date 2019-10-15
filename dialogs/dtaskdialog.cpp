@@ -194,9 +194,9 @@ void MoveCopyTaskWidget::initUI()
     QColor base_color = palette().base().color();
     DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(base_color);
     if (ct == DGuiApplicationHelper::LightType) {
-        m_bgLabel->setStyleSheet("background-color:rgba(0,0,0,13)");
+        m_bgLabel->setStyleSheet("background-color:rgba(0,0,0,13); border-radius: 8px;");
     } else {
-        m_bgLabel->setStyleSheet("background-color:rgba(255,255,255,13)");
+        m_bgLabel->setStyleSheet("background-color:rgba(255,255,255,13); border-radius: 8px;");
     }
 
     m_closeButton = new QPushButton;
