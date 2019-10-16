@@ -107,8 +107,7 @@ int main(int argc, char *argv[])
     app.loadTranslator();
     app.setApplicationDisplayName(app.translate("Application", "Deepin File Manager"));
     app.setApplicationVersion(DApplication::buildVersion((QMAKE_VERSION)));
-    QIcon icon(":/images/images/dde-file-manager_96.svg");
-    app.setProductIcon(icon);
+    app.setProductIcon(QIcon::fromTheme("dde-file-manager"));
     app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" + qApp->applicationName());
     app.setApplicationDescription(app.translate("Application", "File Manager is a file management tool independently "
                                                                "developed by Deepin Technology, featured with searching, "

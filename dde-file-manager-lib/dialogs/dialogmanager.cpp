@@ -68,17 +68,16 @@
 #include "sw_label/llsdeepinlabellibrary.h"
 #endif
 
-#include <ddialog.h>
+#include <DDialog>
 #include <DAboutDialog>
-#include <dexpandgroup.h>
-#include <dsettingsdialog.h>
+#include <DExpandGroup>
+#include <DSettingsDialog>
 #include <DSettingsWidgetFactory>
 #include <DSettingsOption>
 #include <QTimer>
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QScreen>
-#include <qsettingbackend.h>
 
 DTK_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -108,7 +107,7 @@ void DialogManager::initData()
 void DialogManager::initTaskDialog()
 {
     m_taskDialog = new DTaskDialog;
-    m_taskDialog->setWindowIcon(QIcon(":/images/images/dde-file-manager.svg"));
+    m_taskDialog->setWindowIcon(QIcon::fromTheme("dde-file-manager"));
     m_taskDialog->setStyleSheet(getQssFromFile(":/qss/dialogs/qss/light.qss"));
     m_updateJobTaskTimer = new QTimer;
     m_updateJobTaskTimer->setInterval(1000);
@@ -118,7 +117,7 @@ void DialogManager::initTaskDialog()
 void DialogManager::initCloseIndicatorDialog()
 {
     m_closeIndicatorDialog = new CloseAllDialogIndicator;
-    m_closeIndicatorDialog->setWindowIcon(QIcon(":/images/images/dde-file-manager.svg"));
+    m_closeIndicatorDialog->setWindowIcon(QIcon::fromTheme("dde-file-manager"));
     m_closeIndicatorDialog->setStyleSheet(getQssFromFile(":/qss/dialogs/qss/light.qss"));
     m_closeIndicatorTimer = new QTimer;
     m_closeIndicatorTimer->setInterval(1000);
