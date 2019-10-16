@@ -86,6 +86,34 @@
 #define ArrowLineExpand_HIGHT   30
 #define ArrowLineExpand_SPACING 10
 
+bool DFMRoundBackground::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == parent() && event->type() == QEvent::Paint) {
+        QWidget *w = dynamic_cast<QWidget *>(watched);
+        if(!w) {
+            return false;
+        }
+        int radius = property("radius").toInt();
+
+        QPainter painter(w);
+        QRectF bgRect;
+        bgRect.setSize(w->size());
+        const QPalette pal = QGuiApplication::palette();
+        QColor bgColor = pal.color(QPalette::Background);
+
+        QPainterPath path;
+        path.addRoundedRect(bgRect, radius, radius);
+        // drawbackground color
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        painter.fillPath(path, bgColor);
+        painter.setRenderHint(QPainter::Antialiasing, false);
+        return true;
+    }
+
+    return QObject::eventFilter(watched, event);
+}
+
+
 class DFMDArrowLineExpand : public DArrowLineExpand{
 public:
     DFMDArrowLineExpand(){
@@ -95,23 +123,7 @@ public:
             f.setPixelSize(17);
             headerLine()->setFont(f);
         }
-    }
-protected:
-    void paintEvent(QPaintEvent *event) override
-    {
-        Q_UNUSED(event);
-        QPainter painter(this);
-        QRectF bgRect;
-        bgRect.setSize(size());
-        const QPalette pal = QGuiApplication::palette();//this->palette();
-        QColor bgColor = pal.color(QPalette::Background);
-
-        QPainterPath path;
-        path.addRoundedRect(bgRect, 8, 8);
-        // drawbackground color
-        painter.setRenderHint(QPainter::Antialiasing, true);
-        painter.fillPath(path, bgColor);
-        painter.setRenderHint(QPainter::Antialiasing, false);
+        new DFMRoundBackground(this, 8);
     }
 };
 
@@ -495,6 +507,7 @@ void PropertyDialog::initUI()
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
     if (fileInfo && fileInfo->canTag()) {
         DFMTagWidget *tagInfoFrame = new DFMTagWidget(m_url, this);
+        new DFMRoundBackground(tagInfoFrame, 8);
         m_tagInfoFrame = tagInfoFrame;
 
         QFont font = tagInfoFrame->tagTitle()->font();
@@ -502,9 +515,6 @@ void PropertyDialog::initUI()
         font.setPixelSize(17);
         tagInfoFrame->tagTitle()->setFont(font);
         m_tagInfoFrame->setMaximumHeight(150);
-        QString backColor = this->palette().color(QPalette::Base).name();
-        m_tagInfoFrame->setObjectName("tagInfoFrame");
-        m_tagInfoFrame->setStyleSheet(QString("QFrame#tagInfoFrame{background-color: %1; border-radius: 8px;}").arg(backColor));
         scrollWidgetLayout->addWidget(m_tagInfoFrame);
     }
 
