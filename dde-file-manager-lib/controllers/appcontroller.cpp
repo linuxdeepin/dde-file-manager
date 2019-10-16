@@ -477,7 +477,7 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
         }
 
         DUrl q;
-        q.setQuery("/dev/" + fi->baseName());
+        q.setQuery(blk->device());
         const QSharedPointer<DFMUrlBaseEvent> &e = dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), q);
         actionMount(e);
         return;
@@ -572,11 +572,13 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
         DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
-        if (blk->isEncrypted()) {
-            blk.reset(DDiskManager::createBlockDevice(blk->cleartextDevice()));
-        }
+        QScopedPointer<DBlockDevice> cbblk(DDiskManager::createBlockDevice(blk->cryptoBackingDevice()));
         if (!blk->mountPoints().empty()) {
             blk->unmount({});
+        }
+        if (blk->cryptoBackingDevice().length() > 1) {
+            cbblk->lock({});
+            drv.reset(DDiskManager::createDiskDevice(cbblk->drive()));
         }
         drv->eject({});
     } else {
