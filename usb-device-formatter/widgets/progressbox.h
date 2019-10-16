@@ -29,12 +29,6 @@
 #include <QTimer>
 #include <QVariantAnimation>
 
-class QImage;
-
-struct Bled{
-    QPointF pos;
-};
-
 DWIDGET_USE_NAMESPACE
 
 class ProgressBox : public DWaterProgress
