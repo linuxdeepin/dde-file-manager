@@ -265,7 +265,7 @@ DAbstractFileInfo::FileType DFMRootFileInfo::fileType() const
         ret = ItemType::UDisksData;
     } else {
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));
-        if (drv->mediaCompatibility().join(" ").contains("optical")) {
+        if (d->isod) {
             ret = ItemType::UDisksOptical;
         } else {
             ret = ItemType::UDisksFixed;
@@ -339,8 +339,11 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
         }
     }
 
-    if (drv && drv->ejectable()) {
+    if (drv && drv->ejectable() && (!drv->canPowerOff() || drv->mediaCompatibility().join(" ").contains("optical"))) {
         ret.push_back(MenuAction::Eject);
+    }
+    if (drv && drv->canPowerOff()) {
+        ret.push_back(MenuAction::SafelyRemoveDrive);
     }
 
     if (suffix() == SUFFIX_GVFSMP) {
@@ -406,7 +409,6 @@ QVariantHash DFMRootFileInfo::extraProperties() const
             ret["fsType"] = d->gfsi->fsType();
         }
         ret["rooturi"] = d->gmnt->getRootFile()->uri();
-        ret["canUnmount"] = true;
         ret["mounted"] = true;
     } else if (suffix() == SUFFIX_UDISKS) {
         if (d->mps.empty()) {
@@ -420,7 +422,6 @@ QVariantHash DFMRootFileInfo::extraProperties() const
         ret["encrypted"] = d->encrypted;
         ret["unlocked"] = !d->encrypted || d->ctblk;
         ret["udisksblk"] = d->ctblk ? d->ctblk->path() : d->blk->path();
-        ret["canUnmount"] = (!d->blk->mountPoints().empty() && !d->blk->hintSystem()) || d->isod;
         ret["mounted"] = !d->mps.empty();
     }
     return ret;

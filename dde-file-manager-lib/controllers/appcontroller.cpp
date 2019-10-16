@@ -589,10 +589,25 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
 void AppController::actionSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
-    QString unix_device = fileUrl.query(DUrl::FullyEncoded);
-    QString drive_unix_device = gvfsMountManager->getDriveUnixDevice(unix_device);
-    if (!drive_unix_device.isEmpty()) {
-        gvfsMountManager->stop_device(drive_unix_device);
+    if (fileUrl.scheme() == DFMROOT_SCHEME) {
+        DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
+        QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
+        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+        QScopedPointer<DBlockDevice> cbblk(DDiskManager::createBlockDevice(blk->cryptoBackingDevice()));
+        if (!blk->mountPoints().empty()) {
+            blk->unmount({});
+        }
+        if (blk->cryptoBackingDevice().length() > 1) {
+            cbblk->lock({});
+            drv.reset(DDiskManager::createDiskDevice(cbblk->drive()));
+        }
+        drv->powerOff({});
+    } else {
+        QString unix_device = fileUrl.query(DUrl::FullyEncoded);
+        QString drive_unix_device = gvfsMountManager->getDriveUnixDevice(unix_device);
+        if (!drive_unix_device.isEmpty()) {
+            gvfsMountManager->stop_device(drive_unix_device);
+        }
     }
 }
 
