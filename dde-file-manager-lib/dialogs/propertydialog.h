@@ -59,9 +59,24 @@ class UDiskDeviceInfo;
 class DUrl;
 class ShareInfoFrame;
 
+
 DFM_BEGIN_NAMESPACE
 class DFileStatisticsJob;
 DFM_END_NAMESPACE
+
+class DFMRoundBackground : public QObject{
+    Q_OBJECT
+public:
+    DFMRoundBackground(QWidget *parent, int radius):QObject (parent){
+        parent->installEventFilter(this);
+        setProperty("radius", radius);
+    }
+    ~DFMRoundBackground(){
+        parent()->removeEventFilter(this);
+    }
+
+    virtual bool eventFilter(QObject *watched, QEvent *event);
+};
 
 DWIDGET_USE_NAMESPACE
 
