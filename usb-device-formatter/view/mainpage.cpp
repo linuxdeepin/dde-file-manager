@@ -67,9 +67,8 @@ MainPage::MainPage(const QString& defautFormat, QWidget *parent) : QWidget(paren
 void MainPage::initUI()
 {
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    QIcon icon(":/icoms/icons/drive-removable-media-usb.svg");
     m_iconLabel = new QLabel(this);
-    m_iconLabel->setPixmap(icon.pixmap(80, 80));
+    m_iconLabel->setPixmap(QIcon::fromTheme("drive-removable-media-usb").pixmap(80, 80));
     mainLayout->addWidget(m_iconLabel, 0, Qt::AlignHCenter);
 
     QVBoxLayout* storageProgressLayout = new QVBoxLayout;
@@ -123,13 +122,13 @@ void MainPage::initUI()
 
     m_typeCombo->addItems(m_fileFormat);
     m_typeCombo->setCurrentIndex(index);
-    m_typeCombo->setFixedSize(160,22);
+    m_typeCombo->setFixedWidth(160);
 
     QLabel* labelText = new QLabel(tr("Label"),this);
     labelText->setObjectName("TagLabel");
     m_labelLineEdit = new QLineEdit(this);
     m_labelLineEdit->setText(m_typeCombo->currentText());
-    m_labelLineEdit->setFixedSize(160, 22);
+    m_labelLineEdit->setFixedWidth(160);
 
     QCheckBox* fastFormatCheckBox = new QCheckBox(this);
     fastFormatCheckBox->setChecked(true);

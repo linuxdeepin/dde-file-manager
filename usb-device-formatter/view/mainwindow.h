@@ -72,11 +72,10 @@ class MainWindow : public QDialog
     };
 
 public:
-    MainWindow(const QString& path, QWidget *parent = 0);
+    MainWindow(const QString& path, QWidget *parent = nullptr);
     ~MainWindow();
 
     void initUI();
-    void initStyleSheet();
     void initConnect();
     void formartDevice();
     void unMountDevice();
