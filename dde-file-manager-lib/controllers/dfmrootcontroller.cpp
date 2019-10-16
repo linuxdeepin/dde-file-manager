@@ -62,7 +62,7 @@ bool DFMRootController::renameFile(const QSharedPointer<DFMRenameEvent> &event) 
         return false;
     }
 
-    QString udiskspath = "/org/freedesktop/UDisks2/block_devices" + fi->fileUrl().path().chopped(QString("." SUFFIX_UDISKS).length());
+    QString udiskspath = fi->extraProperties()["udisksblk"].toString();
     QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
     Q_ASSERT(blk && blk->path().length() > 0);
 
