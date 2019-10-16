@@ -23,14 +23,7 @@
  */
 
 #include "progressbox.h"
-#include <QPen>
-#include <QPainter>
-#include <QLine>
-#include <QtMath>
 #include <QDebug>
-#include <QLabel>
-#include <QImage>
-#include <QVBoxLayout>
 
 ProgressBox::ProgressBox(QWidget *parent) :
     DWaterProgress(parent),

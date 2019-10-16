@@ -45,8 +45,8 @@ public:
         ComboBoxType = 1
     };
 
-    explicit DFileDialog(QWidget *parent = 0);
-    ~DFileDialog();
+    explicit DFileDialog(QWidget *parent = nullptr);
+    ~DFileDialog() override;
 
     void setDirectory(const QString & directory);
     void setDirectory(const QDir & directory);

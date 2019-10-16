@@ -571,8 +571,6 @@ void DFileDialog::addCustomWidget(CustomWidgetType type, const QString &data)
             comboBox->setCurrentText(defaultValue);
         }
 
-        comboBox->setFixedHeight(24);
-
         statusBar()->addComboBox(label, comboBox);
     }
 }
