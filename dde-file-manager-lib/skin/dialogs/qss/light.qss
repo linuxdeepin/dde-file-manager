@@ -146,17 +146,6 @@ QPushButton#AllCloseButton:pressed{
     color: #01bdff;
 }
 
-QPushButton#StopButton{
-    image: url(:/icons/images/icons/stop_normal.png);
-    border: none;
-}
-QPushButton#StopButton:hover{
-    image: url(:/icons/images/icons/stop_hover.png);
-}
-QPushButton#StopButton:pressed{
-    image: url(:/icons/images/icons/stop_press.png);
-}
-
 QLabel#ErrorLabel{
     font-size: 11px;
     color: "#F9704F";

@@ -108,7 +108,6 @@ void DialogManager::initTaskDialog()
 {
     m_taskDialog = new DTaskDialog;
     m_taskDialog->setWindowIcon(QIcon::fromTheme("dde-file-manager"));
-    m_taskDialog->setStyleSheet(getQssFromFile(":/qss/dialogs/qss/light.qss"));
     m_updateJobTaskTimer = new QTimer;
     m_updateJobTaskTimer->setInterval(1000);
     connect(m_updateJobTaskTimer, &QTimer::timeout, this, &DialogManager::updateJob);
@@ -118,7 +117,6 @@ void DialogManager::initCloseIndicatorDialog()
 {
     m_closeIndicatorDialog = new CloseAllDialogIndicator;
     m_closeIndicatorDialog->setWindowIcon(QIcon::fromTheme("dde-file-manager"));
-    m_closeIndicatorDialog->setStyleSheet(getQssFromFile(":/qss/dialogs/qss/light.qss"));
     m_closeIndicatorTimer = new QTimer;
     m_closeIndicatorTimer->setInterval(1000);
     connect(m_closeIndicatorTimer, &QTimer::timeout, this, &DialogManager::updateCloseIndicator);
