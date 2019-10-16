@@ -34,7 +34,11 @@ DFM_BEGIN_NAMESPACE
 
 class DFMCrumbEdit : public DCrumbEdit{
 public:
-    DFMCrumbEdit(QWidget *parent = nullptr):DCrumbEdit(parent){}
+    DFMCrumbEdit(QWidget *parent = nullptr):DCrumbEdit(parent){
+        auto doc = QTextEdit::document();
+        doc->setDocumentMargin(doc->documentMargin()+5);
+    }
+
     bool isEditing(){
         return m_isEditByDoubleClick;
     }
