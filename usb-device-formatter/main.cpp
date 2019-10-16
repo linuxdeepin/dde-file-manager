@@ -87,7 +87,6 @@ int main(int argc, char *argv[])
                      +QLocale::system().name()+".qm");
     a.installTranslator(translator);
 
-    a.setTheme("light");
     a.setOrganizationName("deepin");
     a.setApplicationName("Deepin usb device formatter");
     a.setApplicationVersion("1.0");

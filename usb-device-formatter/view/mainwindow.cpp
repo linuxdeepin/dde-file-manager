@@ -59,7 +59,7 @@ MainWindow::MainWindow(const QString &path, QWidget *parent):
     if(m_formatType == "vfat")
         m_formatType = "fat32";
     initUI();
-    initStyleSheet();
+//    initStyleSheet();
     initConnect();
 }
 
@@ -117,19 +117,6 @@ void MainWindow::initUI()
     mainLayout->addSpacing(34);
     setFixedHeight(m_titleBar->height() + m_pageStack->height() + 10 + m_comfirmButton->height() + 34);
     setLayout(mainLayout);
-}
-
-void MainWindow::initStyleSheet()
-{
-    QFile file(":/light/main-window.qss");
-    bool ret = file.open(QIODevice::ReadOnly);
-    if(!ret)
-        qDebug () << "Cannot load style sheet!";
-    QTextStream ts(&file);
-    QString styleStr = ts.readAll();
-    file.close();
-    this->setStyleSheet(styleStr);
-
 }
 
 void MainWindow::initConnect()
