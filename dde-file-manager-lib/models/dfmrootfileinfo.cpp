@@ -259,7 +259,7 @@ DAbstractFileInfo::FileType DFMRootFileInfo::fileType() const
                 ret = ItemType::GvfsGPhoto2;
             }
         }
-    } else if (d->mps.size() == 1 && d->mps.front() == QString("/")) {
+    } else if (d->mps.contains(QByteArray("/\0", 2))) {
         ret = ItemType::UDisksRoot;
     } else if (d->label == "_dde_data") {
         ret = ItemType::UDisksData;
@@ -298,10 +298,8 @@ QString DFMRootFileInfo::iconName() const
             if (static_cast<ItemType>(fileType()) == ItemType::UDisksRemovable) {
                 return "drive-removable-media";
             }
-            for (auto mp : d->blk->mountPoints()) {
-                if (QString(mp) == "/") {
-                    return "drive-harddisk-root";
-                }
+            if (d->mps.contains(QByteArray("/\0", 2))) {
+                return "drive-harddisk-root";
             }
         }
         return "drive-harddisk";
@@ -466,8 +464,9 @@ QString DFMRootFileInfo::udisksDisplayName()
         return qApp->translate("DeepinStorage", i18nMap.value(i18nKey, i18nKey.toUtf8().constData()));
     }
 
-    if (d->mps.size() == 1 && d->mps.front() == QString("/"))
+    if (d->mps.contains(QByteArray("/\0", 2))) {
         return QCoreApplication::translate("PathManager", "System Disk");
+    }
     if (d->label.length() == 0) {
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));
         if (!drv->mediaAvailable() && drv->mediaCompatibility().join(" ").contains("optical")) {
