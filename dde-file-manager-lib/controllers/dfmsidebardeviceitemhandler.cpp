@@ -34,6 +34,7 @@
 #include "dfmsidebarmanager.h"
 #include "dfilemenumanager.h"
 #include "dfilemenu.h"
+#include "models/dfmrootfileinfo.h"
 
 #include <QAction>
 
@@ -50,8 +51,12 @@ DViewItemAction *DFMSideBarDeviceItemHandler::createUnmountOrEjectAction(const D
     QObject::connect(action, &QAction::triggered, action, [url](){
         const DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(nullptr, url);
         const QVector<MenuAction> menuactions = infoPointer->menuActionList();
-        if (menuactions.contains(MenuAction::Eject)) {
+        if (static_cast<DFMRootFileInfo::ItemType>(infoPointer->fileType()) == DFMRootFileInfo::ItemType::UDisksOptical) {
             AppController::instance()->actionEject(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
+        } else if (menuactions.contains(MenuAction::SafelyRemoveDrive)) {
+            AppController::instance()->actionSafelyRemoveDrive(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
+        } else if (menuactions.contains(MenuAction::Unmount)) {
+            AppController::instance()->actionUnmount(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url));
         }
     });
 
@@ -77,7 +82,10 @@ DFMSideBarItem *DFMSideBarDeviceItemHandler::createItem(const DUrl &url)
     DViewItemActionList lst;
     DViewItemAction * act = createUnmountOrEjectAction(url, false);
     act->setIcon(QIcon::fromTheme("media-eject-symbolic"));
-    act->setVisible(infoPointer->menuActionList().contains(MenuAction::Eject));
+    auto actionlist = infoPointer->menuActionList();
+    act->setVisible(actionlist.contains(MenuAction::Eject) ||
+                    actionlist.contains(MenuAction::Unmount) ||
+                    actionlist.contains(MenuAction::SafelyRemoveDrive));
     lst.push_back(act);
     item->setActionList(Qt::RightEdge, lst);
 
