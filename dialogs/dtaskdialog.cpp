@@ -203,6 +203,9 @@ void MoveCopyTaskWidget::initUI()
     m_closeButton->setObjectName("StopButton");
     m_closeButton->setFixedSize(24, 24);
     m_closeButton->setAttribute(Qt::WA_NoMousePropagation);
+    m_closeButton->setStyleSheet("QPushButton{image: url(:/icons/images/icons/stop_normal.png); border: none;}"
+                                     "QPushButton:hover{image: url(:/icons/images/icons/stop_hover.png);}"
+                                     "QPushButton:pressed{image: url(:/icons/images/icons/stop_press.png);}");
 
     m_animatePad = new CircleProgressAnimatePad;
     m_animatePad->setFixedSize(54, 54);
@@ -881,15 +884,15 @@ void DTaskDialog::initUI()
     setFixedWidth(m_defaultWidth);
 
     m_titlebar = new DTitlebar(this);
-    m_titlebar->setBackgroundTransparent(true);
     m_titlebar->layout()->setContentsMargins(0, 0, 0, 0);
     m_titlebar->setMenuVisible(false);
     m_titlebar->setIcon(QIcon::fromTheme("dde-file-manager"));
-    m_titlebar->setAttribute(Qt::WA_StyleSheet);
     m_titlebar->setStyleSheet("background-color:rgba(0, 0, 0, 0)");
 
     m_taskListWidget = new QListWidget;
     m_taskListWidget->setSelectionMode(QListWidget::NoSelection);
+    m_taskListWidget->viewport()->setAutoFillBackground(false);
+    m_taskListWidget->setFrameShape(QFrame::NoFrame);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setContentsMargins(0, 0, 0, 0);

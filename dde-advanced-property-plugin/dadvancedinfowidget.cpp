@@ -132,6 +132,5 @@ void DAdvancedInfoWidget::initUI()
         m_listWidget->setItemWidget(item, frame);
     }
 
-    setStyleSheet(getQssFromFile(":/theme/advanced-info.theme"));
     setFixedWidth(310);
 }
