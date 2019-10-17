@@ -42,6 +42,7 @@ public:
     bool isShared() const Q_DECL_OVERRIDE;
     bool canTag() const Q_DECL_OVERRIDE;
     bool isVirtualEntry() const Q_DECL_OVERRIDE;
+    virtual bool canDrop() const Q_DECL_OVERRIDE;
 
     Qt::ItemFlags fileItemDisableFlags() const Q_DECL_OVERRIDE;
     QList<QIcon> additionalIcon() const Q_DECL_OVERRIDE;
