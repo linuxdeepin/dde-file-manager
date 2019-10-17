@@ -26,13 +26,23 @@
 DWIDGET_USE_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
-
+class DFMSideBarItem;
+typedef QDropEvent DFMDragEvent;
 class DFMSideBarView : public DListView
 {
     Q_OBJECT
 public:
     DFMSideBarView(QWidget *parent = nullptr);
-    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
+    void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
+    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
+
+    DFMSideBarItem *itemAt(const QPoint &pt);
+protected:
+    bool onDropData(DUrlList srcUrls, DUrl dstUrl, Qt::DropAction action) const;
+    Qt::DropAction canDropMimeData(DFMSideBarItem *item,const QMimeData *data, Qt::DropActions actions) const;
+    bool isAccepteDragEvent(DFMDragEvent *event);
 signals:
     void requestRemoveItem();
 };

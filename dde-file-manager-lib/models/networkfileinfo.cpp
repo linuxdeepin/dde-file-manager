@@ -78,6 +78,14 @@ bool NetworkFileInfo::isVirtualEntry() const
     return DAbstractFileInfo::isVirtualEntry();
 }
 
+bool NetworkFileInfo::canDrop() const
+{
+    if (fileUrl() == DUrl(SMB_ROOT) || fileUrl() == DUrl(NETWORK_ROOT))
+        return false;
+
+    return DAbstractFileInfo::canDrop();
+}
+
 bool NetworkFileInfo::canRename() const
 {
     return false;

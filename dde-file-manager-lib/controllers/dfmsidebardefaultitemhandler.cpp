@@ -50,7 +50,7 @@ DFMSideBarItem *DFMSideBarDefaultItemHandler::createItem(const QString &pathKey)
                     DUrl::fromUserInput(pathStr)
                 );
 
-    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren);
+    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled);
     item->setData(SIDEBAR_ID_DEFAULT, DFMSideBarItem::ItemUseRegisteredHandlerRole);
 
     return item;

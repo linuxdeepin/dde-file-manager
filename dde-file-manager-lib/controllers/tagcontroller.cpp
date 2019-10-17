@@ -387,7 +387,7 @@ DUrlList TagController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) co
     }
 
     for (const DUrl &url : event->urlList()) {
-        if (DFileService::instance()->makeTagsOfFiles(event->sender(), {url}, {to_url.tagName()}))  {
+        if (DFileService::instance()->makeTagsOfFiles(event->sender(), {url}, {to_url.tagName()}, {"just for not clear exist tags...."}))  {
             list << url;
         }
     }
