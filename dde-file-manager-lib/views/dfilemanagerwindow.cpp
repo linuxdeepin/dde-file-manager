@@ -115,6 +115,7 @@ public:
     DFMSideBar *sideBar{ nullptr };
     QFrame *rightView { nullptr };
     DFMRightDetailView *detailView { nullptr };
+    QFrame *rightDetailVLine { nullptr };
     QVBoxLayout *rightViewLayout { nullptr };
     DToolBar *toolbar{ nullptr };
     TabBar *tabBar { nullptr };
@@ -1058,7 +1059,12 @@ void DFileManagerWindow::initCentralWidget()
     d->detailView = new DFMRightDetailView(currentUrl());
     d->detailView->setFixedWidth(350);
     d->detailView->setVisible(false); //不显示先
+    d->rightDetailVLine = new QFrame;
+    d->rightDetailVLine->setFrameShape(QFrame::VLine);
+    d->rightDetailVLine->setVisible(false);
+    midLayout->addWidget(d->rightDetailVLine);
     midLayout->addWidget(d->detailView);
+
     mainLayout->addWidget(midWidget);
 
     mainLayout->setSpacing(0);
@@ -1113,6 +1119,9 @@ void DFileManagerWindow::initConnect()
     QObject::connect(d->toolbar, &DToolBar::detailButtonClicked, this, [this, d](){
         if(d->detailView){
             d->detailView->setVisible(!d->detailView->isVisible());
+        }
+        if (d->rightDetailVLine) {
+            d->rightDetailVLine->setVisible(d->detailView->isVisible());
         }
     });
 
