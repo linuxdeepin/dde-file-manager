@@ -95,7 +95,8 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     textrect.setHeight(par->fontInfo().pixelSize() * 2);
     painter->setFont(par->font());
     painter->setPen(qApp->palette().color(option.state & QStyle::StateFlag::State_Selected ? QPalette::ColorRole::HighlightedText : QPalette::ColorRole::Text));
-    painter->drawText(textrect, Qt::TextWrapAnywhere, index.data(Qt::DisplayRole).toString(), &otextrect);
+    QString text = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, text_max_width);
+    painter->drawText(textrect, Qt::TextWrapAnywhere, text, &otextrect);
 
     //otextrect.moveLeft(otextrect.right() + 12);
     //int fstw = par->fontMetrics().width(index.data(ComputerModel::DataRoles::FileSystemRole).toString());
