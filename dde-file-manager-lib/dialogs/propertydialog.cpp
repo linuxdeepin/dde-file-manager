@@ -351,7 +351,10 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         progbdf->setValue((int)(10000. * dskinuse / dskspace));
         progbdf->setMaximumHeight(2);
 
-        QLabel* lbdf_l = new SectionKeyLabel(tr("%1 (%2)").arg(name).arg(devid));
+        QString text = tr("%1 (%2)").arg(name).arg(devid);
+        QLabel* lbdf_l = new SectionKeyLabel();
+        text = lbdf_l->fontMetrics().elidedText(text, Qt::ElideMiddle, 150);
+        lbdf_l->setText(text);
         QLabel* lbdf_r = new SectionKeyLabel(tr("%1 / %2").arg(FileUtils::formatSize(dskinuse)).arg(FileUtils::formatSize(dskspace)));
         lbdf_l->setAlignment(Qt::AlignLeft);
         lbdf_r->setAlignment(Qt::AlignRight);
