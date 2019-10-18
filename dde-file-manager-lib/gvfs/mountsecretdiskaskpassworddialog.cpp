@@ -88,11 +88,7 @@ void MountSecretDiskAskPasswordDialog::initUI()
     addButtons(buttonTexts);
     setSpacing(10);
     setDefaultButton(1);
-
-    QIcon dialogWarningIcon;
-    dialogWarningIcon.addFile(":/images/dialogs/images/dialog_warning.png");
-    dialogWarningIcon.addFile(":/images/dialogs/images/dialog_warning@2x.png");
-    setIcon(dialogWarningIcon);
+    setIcon(QIcon::fromTheme("dialog-warning"));
 }
 
 void MountSecretDiskAskPasswordDialog::initConnect()

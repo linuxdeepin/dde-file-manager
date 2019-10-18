@@ -422,14 +422,14 @@ DFMGlobal::ClipboardAction DFMGlobal::clipboardAction() const
 
 QIcon DFMGlobal::standardIcon(DFMGlobal::Icon iconType) const
 {
-    static QIcon linkIcon(":/images/images/link_large.png");
-    static QIcon lockIcon (":/images/images/lock_large.png");
-    static QIcon unreadableIcon(":/images/images/unreadable_large.png");
-    static QIcon shareIcon(":/images/images/share_large.png");
+    static QIcon linkIcon(QIcon::fromTheme("emblem-symbolic-link"));
+    static QIcon lockIcon(QIcon::fromTheme("emblem-locked"));
+    static QIcon unreadableIcon(QIcon::fromTheme("emblem-unreadable"));
+    static QIcon shareIcon(QIcon::fromTheme("emblem-shared"));
 
     switch (iconType) {
     case LinkIcon:
-            return linkIcon;
+        return linkIcon;
     case LockIcon:
         return lockIcon;
     case UnreadableIcon:
