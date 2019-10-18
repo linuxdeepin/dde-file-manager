@@ -124,6 +124,18 @@ QString TagManager::getTagColorName(const QString &tag) const
     return getColorNameByColor(color);
 }
 
+QString TagManager::getTagIconName(const QString &tag) const
+{
+    QString colorName = getTagColorName(tag);
+    return Tag::ColorNameWithIconName.value(colorName);
+}
+
+QString TagManager::getTagIconName(const QColor &color) const
+{
+    QString colorName = getColorNameByColor(color);
+    return Tag::ColorNameWithIconName.value(colorName);
+}
+
 QList<QString> TagManager::getFilesThroughTag(const QString &tagName)
 {
     QList<QString> file_list{};

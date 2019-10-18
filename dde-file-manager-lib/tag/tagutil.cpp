@@ -28,6 +28,17 @@ const QMap<QString, QColor> NamesWithColors{
     {"Gray", "#cccccc"}
 };
 
+// <TagColorName, IconName>
+const  QMap<QString, QString> ColorNameWithIconName {
+    {"Orange", "dfm_tag_orange"},
+    {"Red", "dfm_tag_red"},
+    {"Purple", "dfm_tag_purple"},
+    {"Navy-blue", "dfm_tag_deepblue"},
+    {"Azure", "dfm_tag_lightblue"},
+    {"Grass-green", "dfm_tag_green"},
+    {"Yellow", "dfm_tag_yellow"},
+    {"Gray", "dfm_tag_gray"}
+};
 
 std::vector<QString> ColorName{
     "Orange",
