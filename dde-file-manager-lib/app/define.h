@@ -54,10 +54,6 @@ DISOMasterNS::DISOMaster *getDISOMaster(bool doContruct = false);
 #define userShareManager Singleton<UserShareManager>::instance()
 #define ISOMaster getDISOMaster(true)
 
-#define defaut_icon ":/images/images/default.png"
-#define defaut_computerIcon ":/images/images/computer.png"
-#define defaut_trashIcon ":/images/images/user-trash-full.png"
-
 // begin file item global define
 #define TEXT_PADDING 4
 #define ICON_MODE_ICON_SPACING 5

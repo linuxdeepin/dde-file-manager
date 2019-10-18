@@ -98,6 +98,7 @@ private:
     void onEditWidgetFocusOut();
     void onTriggerEdit(const QModelIndex &index);
     QSize iconSizeByIconSizeLevel() const;
+    QIcon m_checkedIcon;
 
     Q_DECLARE_PRIVATE(DIconItemDelegate)
 

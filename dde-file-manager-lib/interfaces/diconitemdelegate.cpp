@@ -533,8 +533,9 @@ QPixmap DIconItemDelegatePrivate::getFileIconPixmap(const QModelIndex &index, co
     return pixmap;
 }
 
-DIconItemDelegate::DIconItemDelegate(DFileViewHelper *parent) :
-    DFMStyledItemDelegate(*new DIconItemDelegatePrivate(this), parent)
+DIconItemDelegate::DIconItemDelegate(DFileViewHelper *parent)
+    : DFMStyledItemDelegate(*new DIconItemDelegatePrivate(this), parent)
+    , m_checkedIcon(QIcon::fromTheme("emblem-checked"))
 {
     Q_D(DIconItemDelegate);
 
@@ -676,7 +677,7 @@ void DIconItemDelegate::paint(QPainter *painter,
         QRect rc = option.rect;
         rc.setSize({30,30});
         rc.moveTopRight(QPoint(option.rect.right(),option.rect.top()));
-        QIcon::fromTheme("dialog-ok").paint(painter, rc);
+        m_checkedIcon.paint(painter, rc);
     }
 
     if ((index == d->expandedIndex || index == d->editingIndex) && !isDragMode) {
