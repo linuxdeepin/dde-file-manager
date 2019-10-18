@@ -150,14 +150,14 @@ void Desktop::loadView()
     d->screenFrame.initRootUrl();
 }
 
-void Desktop::showWallpaperSettings()
+void Desktop::showWallpaperSettings(int mode)
 {
     if (d->wallpaperSettings) {
         d->wallpaperSettings->deleteLater();
         d->wallpaperSettings = nullptr;
     }
 
-    d->wallpaperSettings = new WallpaperSettings;
+    d->wallpaperSettings = new WallpaperSettings(Frame::Mode(mode));
     connect(d->wallpaperSettings, &Frame::done, this, [ = ] {
         d->wallpaperSettings->deleteLater();
         d->wallpaperSettings = nullptr;
@@ -190,6 +190,7 @@ void Desktop::showZoneSettings()
     d->zoneSettings->show();
     d->zoneSettings->grabKeyboard();
 }
+
 #endif
 
 void Desktop::initDebugDBus(QDBusConnection &conn)
@@ -209,4 +210,14 @@ CanvasGridView *Desktop::getView()
 void Desktop::Show()
 {
     d->screenFrame.show();
+}
+
+void Desktop::ShowWallpaperChooser()
+{
+    showWallpaperSettings(Frame::WallpaperMode);
+}
+
+void Desktop::ShowScreensaverChooser()
+{
+    showWallpaperSettings(Frame::ScreenSaverMode);
 }
