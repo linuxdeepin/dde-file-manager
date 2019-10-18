@@ -49,6 +49,8 @@
 #include "views/dfilemanagerwindow.h"
 
 #include <qdrawutil.h>
+#include <DGuiApplicationHelper>
+#include <DApplicationHelper>
 
 DWIDGET_USE_NAMESPACE
 
@@ -258,7 +260,7 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
 
     if(m_dragOutSide)
         return;
-    QPen pen;
+    QPen pen = painter->pen();
     pen.setWidth(1);
 
     //draw text
@@ -275,31 +277,45 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     QFontMetrics fm(font);
     QString str = fm.elidedText(m_tabText,Qt::ElideRight,m_width-10);
 
-    const QPalette &pal = option->palette;
+    DPalette pal = DApplicationHelper::instance()->palette(widget);
+    QColor color;
 
     //draw backgound
     if(isChecked()){
-        painter->fillRect(boundingRect(), pal.color(QPalette::Active, QPalette::Base));
+        color = pal.color(QPalette::Active, QPalette::Base);
+        color = DGuiApplicationHelper::adjustColor(color, 0, 0, 0, 0, 0, 0, +51);
+        painter->fillRect(boundingRect(), color);
+
+        color = pal.color(QPalette::Inactive, QPalette::Highlight);
+        QPen tPen = painter->pen();
+        tPen.setColor(color);
+        painter->setPen(tPen);
         painter->drawText((m_width-fm.width(str))/2,(m_height-fm.height())/2,
                           fm.width(str),fm.height(),0,str);
     }
     else if(m_hovered||(m_hovered&&!isChecked())){
-        painter->fillRect(boundingRect(), pal.color(QPalette::Active, QPalette::Base));
+        color = pal.color(QPalette::Active, QPalette::Light);
+        color = DGuiApplicationHelper::adjustColor(color, 0, 0, 0, +2, +2, +2, +51);
+        painter->fillRect(boundingRect(), color);
         painter->drawText((m_width-fm.width(str))/2,(m_height-fm.height())/2,
                           fm.width(str),fm.height(),0,str);
     }
     else{
-        painter->fillRect(boundingRect(), pal.color(QPalette::Inactive, QPalette::Base));
+        color = pal.color(QPalette::Active, QPalette::Base);
+        color = DGuiApplicationHelper::adjustColor(color, 0, 0, 0, 0, 0, 0, +51);
+        painter->fillRect(boundingRect(), color);
         painter->drawText((m_width-fm.width(str))/2,(m_height-fm.height())/2,
                           fm.width(str),fm.height(),0,str);
     }
 
     // draw line
+    pen.setColor(pal.color(QPalette::Inactive, QPalette::Shadow));
+    painter->setPen(pen);
     int number = static_cast<int>(boundingRect().height() - 1);
     int number2 = static_cast<int>(boundingRect().width() - 1);
     QPoint point = QPointF(boundingRect().width()-1, boundingRect().height()-1).toPoint();
-    qDrawShadeLine(painter, QPoint(0, number), point, option->palette);
-    qDrawShadeLine(painter, QPoint(number2, 0), point, option->palette);
+    qDrawShadeLine(painter, QPoint(0, number), point, pal);
+    qDrawShadeLine(painter, QPoint(number2, 0), point, pal);
     QPalette::ColorGroup cp = isChecked()||m_hovered?QPalette::Active:QPalette::Inactive;
     pen.setColor(pal.color(cp, QPalette::Foreground));
     painter->setPen(pen);
