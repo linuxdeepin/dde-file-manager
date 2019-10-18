@@ -40,7 +40,7 @@ void ErrorPage::initUI()
 {
     QVBoxLayout* mainLayout = new QVBoxLayout;
     QLabel* warnIconLabel = new QLabel(this);
-    warnIconLabel->setPixmap(QPixmap(":/icoms/icons/fail.png"));
+    warnIconLabel->setPixmap(QIcon::fromTheme("dialog-error").pixmap(128, 128));
     m_errorLabel = new QLabel(this);
     m_errorLabel->setObjectName("StatusLabel");
     m_errorLabel->setText(m_errorText);

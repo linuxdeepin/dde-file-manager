@@ -37,7 +37,7 @@ void WarnPage::initUI()
 {
     QVBoxLayout* mainLayout = new QVBoxLayout;
     QLabel* warnIconLabel = new QLabel(this);
-    warnIconLabel->setPixmap(QPixmap(":/icoms/icons/info.png"));
+    warnIconLabel->setPixmap(QIcon::fromTheme("dialog-information").pixmap(128, 128));
     QLabel* warnTextLabel = new QLabel(this);
     warnTextLabel->setWordWrap(true);
     QString warnText = tr("Formatting will erase all data on this disk, are you sure you want to continue? It cannot be restored.");
