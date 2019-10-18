@@ -57,7 +57,7 @@ public:
         ScreenSaverMode
     };
 
-    Frame(QFrame *parent = nullptr);
+    Frame(Mode mode = WallpaperMode, QFrame *parent = nullptr);
     ~Frame() override;
 
     void show();
@@ -80,6 +80,7 @@ protected:
     bool event(QEvent *event) override;
 
 private:
+    void setMode(Mode mode);
 #if !defined(DISABLE_SCREENSAVER) || !defined(DISABLE_WALLPAPER_CAROUSEL)
     void adjustModeSwitcherPoint();
     DButtonBox *m_switchModeControl;
@@ -89,7 +90,7 @@ private:
     void setMode(QAbstractButton *toggledBtn, bool on);
     void reLayoutTools();
 
-    Mode m_mode = WallpaperMode;
+    Mode m_mode;
     QHBoxLayout *m_toolLayout;
     QLabel *m_waitControlLabel;
     DButtonBox *m_waitControl = nullptr;

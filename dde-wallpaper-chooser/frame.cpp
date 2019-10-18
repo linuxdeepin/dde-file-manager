@@ -64,17 +64,18 @@ static bool previewBackground()
             || !DWindowManagerHelper::instance()->hasBlurWindow();
 }
 
-Frame::Frame(QFrame *parent)
-    : DBlurEffectWidget(parent),
-      m_wallpaperList(new WallpaperList(this)),
-      m_closeButton(new DImageButton(":/images/close_round_normal.svg",
+Frame::Frame(Mode mode, QFrame *parent)
+    : DBlurEffectWidget(parent)
+    , m_mode(mode)
+    , m_wallpaperList(new WallpaperList(this))
+    , m_closeButton(new DImageButton(":/images/close_round_normal.svg",
                                  ":/images/close_round_hover.svg",
-                                 ":/images/close_round_press.svg", this)),
-      m_dbusAppearance(new ComDeepinDaemonAppearanceInterface(AppearanceServ,
+                                 ":/images/close_round_press.svg", this))
+    , m_dbusAppearance(new ComDeepinDaemonAppearanceInterface(AppearanceServ,
                                                               AppearancePath,
                                                               QDBusConnection::sessionBus(),
-                                                              this)),
-      m_mouseArea(new DRegionMonitor(this))
+                                                              this))
+    , m_mouseArea(new DRegionMonitor(this))
 {
     // 截止到dtkwidget 2.0.10版本，在多个屏幕设置不同缩放比时
     // DRegionMonitor 计算的缩放后的坐标可能是错误的
@@ -166,6 +167,25 @@ void Frame::hide()
     emit aboutHide();
 
     DBlurEffectWidget::hide();
+}
+
+void Frame::setMode(Frame::Mode mode)
+{
+    if (m_mode == mode)
+        return;
+
+    if (m_mode == ScreenSaverMode) {
+        if (m_backgroundHelper) {
+            m_backgroundHelper->setVisible(true);
+        }
+
+        m_dbusScreenSaver->Stop();
+    }
+
+    m_mode = mode;
+
+    reLayoutTools();
+    refreshList();
 }
 
 QString Frame::desktopBackground() const
@@ -283,21 +303,7 @@ void Frame::setMode(QAbstractButton * toggledBtn, bool on)
     Q_UNUSED(on);
 
     int mode = m_switchModeControl->buttonList().indexOf(toggledBtn);
-    if (m_mode == mode)
-        return;
-
-    if (m_mode == ScreenSaverMode) {
-        if (m_backgroundHelper) {
-            m_backgroundHelper->setVisible(true);
-        }
-
-        m_dbusScreenSaver->Stop();
-    }
-
-    m_mode = Mode(mode);
-
-    reLayoutTools();
-    refreshList();
+    setMode(Mode(mode));
 }
 
 void Frame::reLayoutTools()
@@ -569,7 +575,7 @@ void Frame::initUI()
         m_dbusScreenSaver->setLinePowerScreenSaverTimeout(time_array[index]);
     });
 
-    connect(m_switchModeControl, &DButtonBox::buttonToggled, this, &Frame::setMode);
+    connect(m_switchModeControl, &DButtonBox::buttonToggled, this, static_cast<void(Frame::*)(QAbstractButton*, bool)>(&Frame::setMode));
     connect(m_lockScreenBox, &QCheckBox::toggled, m_dbusScreenSaver, &ComDeepinScreenSaverInterface::setLockScreenAtAwake);
 
     reLayoutTools();

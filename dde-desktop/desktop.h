@@ -30,7 +30,7 @@ public:
     void loadData();
     void loadView();
 
-    void showWallpaperSettings();
+    void showWallpaperSettings(int mode = 0);
     void showZoneSettings();
 
     void initDebugDBus(QDBusConnection &conn);
@@ -39,6 +39,8 @@ public:
 
 public slots:
     void Show();
+    void ShowWallpaperChooser();
+    void ShowScreensaverChooser();
 
 private:
     explicit Desktop();
