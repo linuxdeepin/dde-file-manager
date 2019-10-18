@@ -47,7 +47,9 @@ bool DFMComputerCrumbController::supportedUrl(DUrl url)
 QList<CrumbData> DFMComputerCrumbController::seprateUrl(const DUrl &url)
 {
     Q_UNUSED(url);
-    return { CrumbData(DUrl::fromComputerFile("/"), Singleton<PathManager>::instance()->getSystemPathDisplayName("Computer"), "CrumbIconButton.Computer") };
+    QString text = Singleton<PathManager>::instance()->getSystemPathDisplayName("Computer");
+    QString iconName = Singleton<PathManager>::instance()->getSystemPathIconName("Computer");
+    return { CrumbData(DUrl::fromComputerFile("/"), text, iconName) };
 }
 
 DFM_END_NAMESPACE

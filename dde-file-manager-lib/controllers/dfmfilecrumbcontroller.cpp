@@ -66,7 +66,8 @@ QList<CrumbData> DFMFileCrumbController::seprateUrl(const DUrl &url)
 
     if (path.startsWith(homePath)) {
         prefixPath = homePath;
-        CrumbData data(DUrl::fromLocalFile(homePath), getDisplayName("Home"), "CrumbIconButton.Home");
+        QString iconName = Singleton<PathManager>::instance()->getSystemPathIconName("Home");
+        CrumbData data(DUrl::fromLocalFile(homePath), getDisplayName("Home"), iconName);
         list.append(data);
     } else {
         QStorageInfo storageInfo(path);
@@ -74,16 +75,24 @@ QList<CrumbData> DFMFileCrumbController::seprateUrl(const DUrl &url)
         if (!deviceInfo) {
             deviceInfo = deviceListener->getDeviceByFilePath(path);
         }
-        QString iconName = QStringLiteral("CrumbIconButton.Disk");
+        QString iconName = QStringLiteral("drive-harddisk-symbolic");
         prefixPath = storageInfo.rootPath();
-
         if (deviceInfo) {
             switch (deviceInfo->getMediaType()) {
             case UDiskDeviceInfo::MediaType::removable:
-                iconName = QStringLiteral("CrumbIconButton.Usb");
+                iconName = QStringLiteral("drive-removable-media-symbolic");
                 break;
             case UDiskDeviceInfo::MediaType::dvd:
-                iconName = QStringLiteral("CrumbIconButton.Dvd");
+                iconName = QStringLiteral("media-optical-symbolic");
+                break;
+            case UDiskDeviceInfo::MediaType::phone:
+                iconName = QStringLiteral("phone-symbolic");
+                break;
+            case UDiskDeviceInfo::MediaType::iphone:
+                iconName = QStringLiteral("phone-apple-iphone-symbolic");
+                break;
+            case UDiskDeviceInfo::MediaType::camera:
+                iconName = QStringLiteral("camera-photo-symbolic");
                 break;
             default:
                 break;
@@ -91,7 +100,7 @@ QList<CrumbData> DFMFileCrumbController::seprateUrl(const DUrl &url)
         }
 
         if (prefixPath == "/") {
-            CrumbData data(DUrl(FILE_ROOT), getDisplayName("System Disk"), "CrumbIconButton.Disk");
+            CrumbData data(DUrl(FILE_ROOT), getDisplayName("System Disk"), "drive-harddisk-root-symbolic");
             list.append(data);
         } else {
             CrumbData data(DUrl::fromLocalFile(prefixPath), QString(), iconName);

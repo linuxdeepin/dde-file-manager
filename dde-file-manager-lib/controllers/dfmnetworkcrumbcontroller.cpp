@@ -48,7 +48,8 @@ QList<CrumbData> DFMNetworkCrumbController::seprateUrl(const DUrl &url)
 {
     Q_UNUSED(url);
     QString displayText = Singleton<PathManager>::instance()->getSystemPathDisplayName("Network");
-    return { CrumbData(DUrl(NETWORK_ROOT), displayText, "CrumbIconButton.Network") };
+    QString iconName = Singleton<PathManager>::instance()->getSystemPathIconName("Network");
+    return { CrumbData(DUrl(NETWORK_ROOT), displayText, iconName) };
 }
 
 DFM_END_NAMESPACE

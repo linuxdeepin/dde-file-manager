@@ -52,7 +52,7 @@ QList<CrumbData> DFMMasteredMediaCrumbController::seprateUrl(const DUrl &url)
         QString displayText = info->fileDisplayName();
         ret.push_front(CrumbData(cururl, displayText));
         if (info->parentUrl() == DUrl::fromLocalFile(QDir::homePath())) {
-            ret.front().iconName = "CrumbIconButton.Dvd";
+            ret.front().iconName = "media-optical-symbolic";
             break;
         }
         cururl = info->parentUrl();

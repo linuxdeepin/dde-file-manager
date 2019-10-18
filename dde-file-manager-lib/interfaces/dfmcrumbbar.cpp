@@ -358,46 +358,11 @@ void DFMCrumbBar::hideAddressBar()
 
 static QString getIconName(const CrumbData& c)
 {
-    QString iconName;
-    if (c.url.isComputerFile()) {
-        iconName = systemPathManager->getSystemPathIconName("Computer");
-    } else if (c.url.isRecentFile()) {
-        iconName = systemPathManager->getSystemPathIconName("Recent");
-    } else if (c.url == DUrl(TRASH_ROOT)) {
+    QString iconName = c.iconName;
+    if (c.url == DUrl(TRASH_ROOT)) {
         iconName = systemPathManager->getSystemPathIconName("Trash");
     } else if (c.url.isNetWorkFile() || c.url.isSMBFile() ) {
         iconName = systemPathManager->getSystemPathIconName("Network");
-    } else if (c.url.isUserShareFile()) {
-        iconName = systemPathManager->getSystemPathIconName("UserShare");
-    }
-
-    if (iconName.isEmpty()) {
-        QString path = c.url.toLocalFile();
-        static QString home = DFMStandardPaths::location(DFMStandardPaths::HomePath);
-        if (path.size()>home.size() && path.startsWith(home))
-            return QString(); // 主目录下的（视频，文档，图片。。）不显示icon
-
-        iconName = systemPathManager->getSystemPathIconNameByPath(path);
-    }
-
-    static QMap<QString, QString> s_mapIconName = {
-        {"CrumbIconButton.Disk","drive-harddisk-symbolic"},
-        {"CrumbIconButton.Usb","drive-removable-media-symbolic"},
-        {"CrumbIconButton.Dvd","media-optical-symbolic"},
-        {"CrumbIconButton.Iphone","phone-apple-iphone-symbolic"},
-        {"CrumbIconButton.Android","phone-symbolic"},
-        {"BookmarkItem.Orange", "dfm_tag_orange"},
-        {"BookmarkItem.Red", "dfm_tag_red"},
-        {"BookmarkItem.Purple", "dfm_tag_purple"},
-        {"BookmarkItem.Navy-blue", "dfm_tag_deepblue"},
-        {"BookmarkItem.Azure", "dfm_tag_lightblue"},
-        {"BookmarkItem.Grass-green", "dfm_tag_green"},
-        {"BookmarkItem.Yellow", "dfm_tag_yellow"},
-        {"BookmarkItem.Gray", "dfm_tag_gray"}
-    };
-
-    if (iconName.isEmpty() && s_mapIconName.contains(c.iconName)) {
-        iconName = s_mapIconName[c.iconName];
     }
 
     if (!iconName.isEmpty() && !iconName.startsWith("dfm_") && !iconName.contains("-symbolic"))

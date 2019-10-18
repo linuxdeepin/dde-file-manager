@@ -88,6 +88,8 @@ public:
 
     QMap<QString, QColor> getTagColor(const QList<QString>& tags) const;
     QString getTagColorName(const QString &tag) const;
+    QString getTagIconName(const QString &tag) const;
+    QString getTagIconName(const QColor &color) const;
 
     QList<QString> getFilesThroughTag(const QString& tagName);
 

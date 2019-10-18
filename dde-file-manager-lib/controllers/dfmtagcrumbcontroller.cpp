@@ -49,8 +49,7 @@ QList<CrumbData> DFMTagCrumbController::seprateUrl(const DUrl &url)
 
     if (url != DUrl(TAG_ROOT)) {
         displayText = url.fileName();
-        colorName = TagManager::instance()->getTagColorName(url.fileName());
-        colorName = ("BookmarkItem." + colorName);
+        colorName = TagManager::instance()->getTagIconName(url.fileName());
     } else {
         displayText = QCoreApplication::translate("DFMTagCrumbController", "Tag information");
         colorName = QStringLiteral("CrumbIconButton.Tags");

@@ -36,22 +36,10 @@
 
 DFM_BEGIN_NAMESPACE
 
-// <TagColorName, ThemeName>
-static const QMap<QString, QString> TagColorThemeIconMap {
-    {"Orange", "dfm_tag_orange"},
-    {"Red", "dfm_tag_red"},
-    {"Purple", "dfm_tag_purple"},
-    {"Navy-blue", "dfm_tag_deepblue"},
-    {"Azure", "dfm_tag_lightblue"},
-    {"Grass-green", "dfm_tag_green"},
-    {"Yellow", "dfm_tag_yellow"},
-    {"Gray", "dfm_tag_gray"}
-};
-
 DFMSideBarItem *DFMSideBarTagItemHandler::createItem(const DUrl &url)
 {
-    QString colorName = TagManager::instance()->getTagColorName(url.fileName());
-    QIcon icon = QIcon::fromTheme(TagColorThemeIconMap[colorName]);
+    QString iconName = TagManager::instance()->getTagIconName(url.fileName());
+    QIcon icon = QIcon::fromTheme(iconName);
     DFMSideBarItem * item = new DFMSideBarItem(icon, url.fileName(), url);
 
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsEditable);
@@ -106,8 +94,8 @@ QMenu *DFMSideBarTagItemHandler::contextMenu(const DFMSideBar *sidebar, const DF
     connect(tagAction, &QWidgetAction::triggered, this, [item, menu, tagWidget]() {
         // should setIcon first, processEvent will reset checkedColorList
         if (tagWidget->checkedColorList().size()>0) {
-            QString colorName = TagManager::instance()->getColorNameByColor(tagWidget->checkedColorList().first());
-            QIcon icon = QIcon::fromTheme(TagColorThemeIconMap[colorName]);
+            QString iconName = TagManager::instance()->getTagIconName(tagWidget->checkedColorList().first());
+            QIcon icon = QIcon::fromTheme(iconName);
             DFMSideBarItem *it = const_cast<DFMSideBarItem *>(item);
             it->setIcon(icon);
         }

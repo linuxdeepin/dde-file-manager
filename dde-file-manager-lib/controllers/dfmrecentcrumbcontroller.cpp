@@ -42,7 +42,8 @@ QList<CrumbData> DFMRecentCrumbController::seprateUrl(const DUrl &url)
 {
     Q_UNUSED(url);
     QString displayText = Singleton<PathManager>::instance()->getSystemPathDisplayName("Recent");
-    return { CrumbData(DUrl(RECENT_ROOT), displayText, "CrumbIconButton.Recent") };
+    QString iconName = Singleton<PathManager>::instance()->getSystemPathIconName("Recent");
+    return { CrumbData(DUrl(RECENT_ROOT), displayText, iconName) };
 }
 
 DFM_END_NAMESPACE

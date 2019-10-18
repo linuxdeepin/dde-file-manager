@@ -31,6 +31,7 @@ enum class ActionType : std::size_t {
 
 extern const QMap<QString, QString> ColorsWithNames;
 extern const QMap<QString, QColor> NamesWithColors;
+extern const QMap<QString, QString> ColorNameWithIconName; // <TagColorName, IconName>
 
 const QMap<QString, QString> &ActualAndFakerName();
 
