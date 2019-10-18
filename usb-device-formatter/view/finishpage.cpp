@@ -37,7 +37,7 @@ void FinishPage::initUI()
 {
     QVBoxLayout* mainLayout = new QVBoxLayout;
     QLabel* warnIconLabel = new QLabel(this);
-    warnIconLabel->setPixmap(QPixmap(":/icoms/icons/success.png"));
+    warnIconLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(128, 128));
     QLabel* warnTextLabel = new QLabel(this);
     QString warnText = tr("Format successful");
     warnTextLabel->setText(warnText);

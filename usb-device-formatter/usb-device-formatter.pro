@@ -51,9 +51,6 @@ HEADERS  += \
     dialogs/messagedialog.h \
     app/singletonapp.h
 
-RESOURCES += \
-    theme/theme.qrc
-
 CONFIG(release, debug|release) {
     # generate translation file and generate policy file from translation file.
     !system(deepin-policy-ts-convert policy2ts pkexec/com.deepin.pkexec.usb-device-formatter.policy.tmp translations/policy): message("Failed policy to ts")

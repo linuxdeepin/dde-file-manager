@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
     a.setOrganizationName("deepin");
     a.setApplicationName("Deepin usb device formatter");
     a.setApplicationVersion("1.0");
-    a.setWindowIcon(QIcon(":/app/usb-device-formatter.png"));
+    a.setWindowIcon(QIcon::fromTheme("dde-file-manager", QIcon::fromTheme("system-file-manager")));
     a.setQuitOnLastWindowClosed(true);
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
