@@ -48,12 +48,16 @@ signals:
 public slots:
     void onPlayStateChanged(const QMediaPlayer::State& state);
     void onPlayStatusChanged(const QMediaPlayer::MediaStatus& status);
+    void onPlayDurationChanged(qint64 duration);
     void onPlayControlButtonClicked();
     void updateProgress();
     void seekPosition(const int& pos);
     void play();
     void pause();
     void stop();
+
+private:
+    void durationToLabel(qint64 duration);
 
 private:
     QMediaPlayer* m_player;
