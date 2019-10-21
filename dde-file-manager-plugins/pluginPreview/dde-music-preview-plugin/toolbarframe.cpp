@@ -81,9 +81,15 @@ void ToolBarFrame::initConnections()
 {
     connect(m_player, &QMediaPlayer::stateChanged, this, &ToolBarFrame::onPlayStateChanged);
     connect(m_player, &QMediaPlayer::mediaStatusChanged, this, &ToolBarFrame::onPlayStatusChanged);
+    connect(m_player, &QMediaPlayer::durationChanged, this, &ToolBarFrame::onPlayDurationChanged);
     connect(m_playControlButton, &QPushButton::clicked, this, &ToolBarFrame::onPlayControlButtonClicked);
     connect(m_updateProgressTimer, &QTimer::timeout, this, &ToolBarFrame::updateProgress);
     connect(m_progressSlider, &QSlider::valueChanged, this, &ToolBarFrame::seekPosition);
+}
+
+void ToolBarFrame::onPlayDurationChanged(qint64 duration)
+{
+    durationToLabel(duration);
 }
 
 void ToolBarFrame::onPlayStateChanged(const QMediaPlayer::State &state)
@@ -111,27 +117,7 @@ void ToolBarFrame::onPlayStateChanged(const QMediaPlayer::State &state)
 void ToolBarFrame::onPlayStatusChanged(const QMediaPlayer::MediaStatus &status)
 {
     if(status == QMediaPlayer::LoadedMedia || status == QMediaPlayer::BufferedMedia){
-        qlonglong msDuration = m_player->duration();
-        qlonglong sDurations = msDuration / 1000;
-        int minutes = sDurations / 60;
-        int seconds = sDurations % 60;
-        QString minutesStr;
-        QString secondsStr;
-        if(minutes < 10){
-            minutesStr = "0" + QString::number(minutes);
-        } else {
-            minutesStr = QString::number(minutes);
-        }
-        if(seconds < 10){
-            secondsStr = "0" + QString::number(seconds);
-        } else {
-            secondsStr = QString::number(seconds);
-        }
-
-        m_durationLabel->setText(QString("%1: %2").arg(minutesStr, secondsStr));
-
-        m_progressSlider->setMinimum(0);
-        m_progressSlider->setMaximum(m_player->duration());
+        durationToLabel(m_player->duration());
     } else{
         m_durationLabel->setText("00: 00");
     }
@@ -178,5 +164,30 @@ void ToolBarFrame::stop()
     m_progressSlider->setValue(0);
     m_player->stop();
     m_updateProgressTimer->stop();
+}
+
+void ToolBarFrame::durationToLabel(qint64 duration)
+{
+    qlonglong msDuration = duration;
+    qlonglong sDurations = msDuration / 1000;
+    int minutes = static_cast<int>(sDurations) / 60;
+    int seconds = sDurations % 60;
+    QString minutesStr;
+    QString secondsStr;
+    if(minutes < 10){
+        minutesStr = "0" + QString::number(minutes);
+    } else {
+        minutesStr = QString::number(minutes);
+    }
+    if(seconds < 10){
+        secondsStr = "0" + QString::number(seconds);
+    } else {
+        secondsStr = QString::number(seconds);
+    }
+
+    m_durationLabel->setText(QString("%1: %2").arg(minutesStr, secondsStr));
+
+    m_progressSlider->setMinimum(0);
+    m_progressSlider->setMaximum(static_cast<int>(duration));
 }
 
