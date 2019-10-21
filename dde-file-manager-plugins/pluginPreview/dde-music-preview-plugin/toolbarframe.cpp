@@ -94,6 +94,10 @@ void ToolBarFrame::onPlayDurationChanged(qint64 duration)
 
 void ToolBarFrame::onPlayStateChanged(const QMediaPlayer::State &state)
 {
+    if (state == QMediaPlayer::StoppedState) {
+        stop();
+    }
+
     QString iconName;
     if(state == QMediaPlayer::StoppedState || state == QMediaPlayer::PausedState){
         iconName = "start";
@@ -118,8 +122,6 @@ void ToolBarFrame::onPlayStatusChanged(const QMediaPlayer::MediaStatus &status)
 {
     if(status == QMediaPlayer::LoadedMedia || status == QMediaPlayer::BufferedMedia){
         durationToLabel(m_player->duration());
-    } else{
-        m_durationLabel->setText("00: 00");
     }
 }
 
