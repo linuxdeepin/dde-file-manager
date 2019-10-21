@@ -711,9 +711,8 @@ void DIconItemDelegate::paint(QPainter *painter,
         const QList<QRectF> &lines = drawText(index, 0, str, label_rect.adjusted(0, 0, 0, 99999), 0, QBrush(Qt::NoBrush));
         height = boundingRect(lines).height();
 
-        // do we expend select text height..?
-        DGioSettings settings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
-        bool shouldExpend = settings.value("iconview-expend-item").toBool();
+        // we don't expend item in dde-fm but expand item on desktop
+        bool shouldExpend = isCanvas;
 
         if (shouldExpend && height > label_rect.height()) {
             /// use widget(FileIconItem) show file icon and file name label.
