@@ -37,7 +37,9 @@ DFMSideBarItemInterface::DFMSideBarItemInterface(QObject *parent) : QObject(pare
 void DFMSideBarItemInterface::cdAction(const DFMSideBar *sidebar, const DFMSideBarItem* item)
 {
     DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(sidebar->topLevelWidget());
-    wnd->cd(item->url()); // don't `setChecked` here, wait for a signal.
+    if (item->itemType() != DFMSideBarItem::Separator) {
+        wnd->cd(item->url()); // don't `setChecked` here, wait for a signal.
+    }
 }
 
 QMenu *DFMSideBarItemInterface::contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem *item)
