@@ -53,6 +53,7 @@ void MusicMessageView::initUI()
     m_albumLabel->setObjectName("Albumn");
 
     m_imgLabel = new QLabel(this);
+    m_imgLabel->setFixedSize(QSize(240, 240));
 
     QMediaPlayer* player = new QMediaPlayer(this);
     connect(player, &QMediaPlayer::mediaStatusChanged, this, [=] (const QMediaPlayer::MediaStatus& status) {
@@ -66,11 +67,9 @@ void MusicMessageView::initUI()
             if(img.isNull()){
                 img = QImage(":/icons/icons/default_music_cover.png");
             }
-            m_imgLabel->setPixmap(QPixmap::fromImage(img));
-            m_imgLabel->setFixedSize(img.size());
+            m_imgLabel->setPixmap(QPixmap::fromImage(img).scaled(m_imgLabel->size(), Qt::KeepAspectRatio));
             player->deleteLater();
 
-            setFixedSize(601, 300);
             updateElidedText();
         }
     });
