@@ -13,15 +13,6 @@
       </description>
     </key>
 
-    <key name='iconview-expend-item' type='b'>
-      <default>false</default>
-      <summary>Show full name in iconview</summary>
-      <description>
-        If enabled, the select item can be expended to show full name when that don't fit in icon viewmode.
-        If disabled,the select item  will not be expended when file name that don't fit and ellipsis should appear.
-      </description>
-    </key>
-
   </schema>
 
   <schema path="/com/deepin/dde/filemanager/desktop/" id="com.deepin.dde.filemanager.desktop" gettext-domain="dde-file-manager-desktop">
