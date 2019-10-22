@@ -1215,6 +1215,9 @@ void DTaskDialog::closeEvent(QCloseEvent *event)
             if (m_taskListWidget->itemWidget(item)) {
                 MoveCopyTaskWidget *w = static_cast<MoveCopyTaskWidget *>(m_taskListWidget->itemWidget(item));
                 w->handleClose();
+                m_taskListWidget->removeItemWidget(item);
+                m_taskListWidget->takeItem(m_taskListWidget->row(item));
+                m_jobIdItems.remove(m_jobIdItems.key(item));
             }
         }
     }
