@@ -16,12 +16,12 @@
         <translation>Disque</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="106"/>
+        <location filename="../diskmountplugin.cpp" line="104"/>
         <source>Open</source>
         <translation>Ouvrir</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="113"/>
+        <location filename="../diskmountplugin.cpp" line="111"/>
         <source>Unmount all</source>
         <translation>Tout démonter</translation>
     </message>

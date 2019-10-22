@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -11,12 +9,12 @@
     <message>
         <location filename="../controllers/appcontroller.cpp" line="523"/>
         <source>Mount Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Mount Error</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="523"/>
         <source>Unsupported image format</source>
-        <translation type="unfinished"></translation>
+        <translation>Unsupported image format</translation>
     </message>
 </context>
 <context>
@@ -565,12 +563,12 @@
     <message>
         <location filename="../models/dfmrootfileinfo.cpp" line="502"/>
         <source>%1 Drive</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Drive</translation>
     </message>
     <message>
         <location filename="../models/dfmrootfileinfo.cpp" line="505"/>
         <source>%1 Encrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Encrypted</translation>
     </message>
 </context>
 <context>

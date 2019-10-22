@@ -16,12 +16,12 @@
         <translation>வட்டத் தகடு</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="106"/>
+        <location filename="../diskmountplugin.cpp" line="104"/>
         <source>Open</source>
         <translation>திற</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="113"/>
+        <location filename="../diskmountplugin.cpp" line="111"/>
         <source>Unmount all</source>
         <translation>அனைத்தையும் விலக்கு</translation>
     </message>

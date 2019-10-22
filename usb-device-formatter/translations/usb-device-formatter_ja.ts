@@ -18,22 +18,22 @@
 <context>
     <name>MainPage</name>
     <message>
-        <location filename="../view/mainpage.cpp" line="109"/>
+        <location filename="../view/mainpage.cpp" line="108"/>
         <source>Type</source>
         <translation>種類</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="128"/>
+        <location filename="../view/mainpage.cpp" line="127"/>
         <source>Label</source>
         <translation>ラベル</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="137"/>
+        <location filename="../view/mainpage.cpp" line="136"/>
         <source>Quick Format</source>
         <translation>クイックフォーマット</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="154"/>
+        <location filename="../view/mainpage.cpp" line="153"/>
         <source>Formatting will erase all data on the disk.</source>
         <translation>フォーマットはディスク内のすべてのデータを削除します。</translation>
     </message>
@@ -47,37 +47,37 @@
         <translation>フォーマット</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="198"/>
+        <location filename="../view/mainwindow.cpp" line="185"/>
         <source>Continue</source>
         <translation>続ける</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="203"/>
+        <location filename="../view/mainwindow.cpp" line="190"/>
         <source>Formatting...</source>
         <translation>フォーマット中...</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="230"/>
+        <location filename="../view/mainwindow.cpp" line="217"/>
         <source>Done</source>
         <translation>完了</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="236"/>
+        <location filename="../view/mainwindow.cpp" line="223"/>
         <source>Quit</source>
         <translation>終了</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="237"/>
+        <location filename="../view/mainwindow.cpp" line="224"/>
         <source>Your disk is removed when formatting</source>
         <translation>フォーマット中にディスクが取り出されました</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="240"/>
+        <location filename="../view/mainwindow.cpp" line="227"/>
         <source>Failed to format the device</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="241"/>
+        <location filename="../view/mainwindow.cpp" line="228"/>
         <source>Reformat</source>
         <translation>再フォーマット</translation>
     </message>
@@ -93,12 +93,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="109"/>
+        <location filename="../main.cpp" line="108"/>
         <source>Device does not exist</source>
         <translation>デバイスが存在しません</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="118"/>
+        <location filename="../main.cpp" line="117"/>
         <source>Cannot format local device</source>
         <translation>ローカルデバイスをフォーマットできません</translation>
     </message>

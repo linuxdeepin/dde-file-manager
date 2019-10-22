@@ -16,12 +16,12 @@
         <translation>디스크</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="106"/>
+        <location filename="../diskmountplugin.cpp" line="104"/>
         <source>Open</source>
         <translation>열기</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="113"/>
+        <location filename="../diskmountplugin.cpp" line="111"/>
         <source>Unmount all</source>
         <translation>모두 마운트 해제</translation>
     </message>

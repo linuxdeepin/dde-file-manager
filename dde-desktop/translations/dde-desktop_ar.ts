@@ -2,42 +2,42 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2399"/>
+        <location filename="../view/canvasgridview.cpp" line="2445"/>
         <source>Icon size</source>
         <translation>حجم الأيقونة</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2405"/>
+        <location filename="../view/canvasgridview.cpp" line="2451"/>
         <source>Auto merge</source>
         <translation>دمج تلقائى</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2420"/>
+        <location filename="../view/canvasgridview.cpp" line="2466"/>
         <source>Auto arrange</source>
         <translation>ترتيب تلقائي</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2476"/>
+        <location filename="../view/canvasgridview.cpp" line="2522"/>
         <source>Set Wallpaper</source>
         <translation>إعداد كخلفية</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2478"/>
+        <location filename="../view/canvasgridview.cpp" line="2524"/>
         <source>Wallpaper and Screensaver</source>
         <translation>الخلفيات و شاشة التوقف</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2559"/>
+        <location filename="../view/canvasgridview.cpp" line="2608"/>
         <source>Properties</source>
         <translation>الخصائص</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2460"/>
+        <location filename="../view/canvasgridview.cpp" line="2506"/>
         <source>Display Settings</source>
         <translation>إعدادات العرض</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2469"/>
+        <location filename="../view/canvasgridview.cpp" line="2515"/>
         <source>Corner Settings</source>
         <translation>إعدادات التنقل الزاوي</translation>
     </message>
@@ -71,59 +71,67 @@
     </message>
 </context>
 <context>
+    <name>DesktopMain</name>
+    <message>
+        <location filename="../main.cpp" line="135"/>
+        <source>Desktop</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="425"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="431"/>
         <source>Wallpaper Slideshow</source>
         <translation>عرض الخلفيات</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="451"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="459"/>
         <source>When login</source>
         <translation>عند تسجيل الدخول</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="453"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="461"/>
         <source>When wakeup</source>
         <translation>عند الإيقاظ</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="493"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="504"/>
         <source>Require a password on wakeup</source>
         <translation>يلزم كلمة مرور عند الإيقاظ</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="518"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="531"/>
         <source>Never</source>
         <translation>أبداً</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="519"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="532"/>
         <source>Wait:</source>
         <translation>انتظر:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="547"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="560"/>
         <source>Wallpaper</source>
         <translation>خلفية</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="547"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="561"/>
         <source>Screensaver</source>
         <translation>شاشة التوقف</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="609"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="630"/>
         <source>Only desktop</source>
         <translation>سطح المكتب فقط</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="610"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="631"/>
         <source>Only lock screen</source>
         <translation>شاشة القفل فقط</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="638"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="659"/>
         <source>Apply</source>
         <translation>طبِّق</translation>
     </message>

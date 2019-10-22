@@ -16,12 +16,12 @@
         <translation>Disk</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="106"/>
+        <location filename="../diskmountplugin.cpp" line="104"/>
         <source>Open</source>
         <translation>Aç</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="113"/>
+        <location filename="../diskmountplugin.cpp" line="111"/>
         <source>Unmount all</source>
         <translation>Tüm bağları ayır</translation>
     </message>

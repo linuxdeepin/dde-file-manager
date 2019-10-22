@@ -18,22 +18,22 @@
 <context>
     <name>MainPage</name>
     <message>
-        <location filename="../view/mainpage.cpp" line="109"/>
+        <location filename="../view/mainpage.cpp" line="108"/>
         <source>Type</source>
         <translation>종류</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="128"/>
+        <location filename="../view/mainpage.cpp" line="127"/>
         <source>Label</source>
         <translation>레이블</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="137"/>
+        <location filename="../view/mainpage.cpp" line="136"/>
         <source>Quick Format</source>
         <translation>빠른 포멧</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="154"/>
+        <location filename="../view/mainpage.cpp" line="153"/>
         <source>Formatting will erase all data on the disk.</source>
         <translation>포맷하면 디스크의 모든 데이터가 지워집니다.</translation>
     </message>
@@ -47,37 +47,37 @@
         <translation>포맷</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="198"/>
+        <location filename="../view/mainwindow.cpp" line="185"/>
         <source>Continue</source>
         <translation>계속</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="203"/>
+        <location filename="../view/mainwindow.cpp" line="190"/>
         <source>Formatting...</source>
         <translation>포맷중...</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="230"/>
+        <location filename="../view/mainwindow.cpp" line="217"/>
         <source>Done</source>
         <translation>완료</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="236"/>
+        <location filename="../view/mainwindow.cpp" line="223"/>
         <source>Quit</source>
         <translation>종료</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="237"/>
+        <location filename="../view/mainwindow.cpp" line="224"/>
         <source>Your disk is removed when formatting</source>
         <translation>포맷중에 디스크가 제거되었습니다</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="240"/>
+        <location filename="../view/mainwindow.cpp" line="227"/>
         <source>Failed to format the device</source>
         <translation>장치를 포맷하지 못했습니다</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="241"/>
+        <location filename="../view/mainwindow.cpp" line="228"/>
         <source>Reformat</source>
         <translation>재포맷</translation>
     </message>
@@ -93,12 +93,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="109"/>
+        <location filename="../main.cpp" line="108"/>
         <source>Device does not exist</source>
         <translation>장치가 없습니다</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="118"/>
+        <location filename="../main.cpp" line="117"/>
         <source>Cannot format local device</source>
         <translation>로컬 장치는 포맷할 수 없습니다</translation>
     </message>
