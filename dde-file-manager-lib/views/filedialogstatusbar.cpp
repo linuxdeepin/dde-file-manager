@@ -36,15 +36,15 @@ FileDialogStatusBar::FileDialogStatusBar(QWidget *parent)
     m_fileNameEdit = new QLineEdit(this);
     m_filtersComboBox = new QComboBox(this);
 
-    m_fileNameEdit->setFixedHeight(24);
-    m_filtersComboBox->setFixedHeight(24);
-
     m_fileNameEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_fileNameEdit->installEventFilter(this);
     m_filtersComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     m_acceptButton = new QPushButton(this);
     m_rejectButton = new QPushButton(tr("Cancel"), this);
+
+    m_acceptButton->setMinimumWidth(130);
+    m_rejectButton->setMinimumWidth(130);
 
     m_acceptButton->setObjectName("FileDialogStatusBarAcceptButton");
 
