@@ -77,6 +77,16 @@ DFMSideBar::DFMSideBar(QWidget *parent)
     initRecentItem();
 }
 
+QRect DFMSideBar::groupGeometry(const QString &groupName)
+{
+    return  m_sidebarView->visualRect(groupModelIndex(groupName));
+}
+
+void DFMSideBar::scrollToGroup(const QString &groupName)
+{
+    m_sidebarView->scrollTo(groupModelIndex(groupName));
+}
+
 void DFMSideBar::setCurrentUrl(const DUrl &url)
 {
     int index = findItem(url, true);
@@ -731,6 +741,16 @@ void DFMSideBar::appendItemWithOrder(QList<DFMSideBarItem *> &list, const DUrlLi
     for (DFMSideBarItem * item: list) {
         this->appendItem(item, groupName);
     }
+}
+
+/*!
+ * \brief Find the model-index of the groupNname
+ *
+ * \return the the model-index of the groupNname we can found, or invalid-model-index if not found.
+ */
+QModelIndex DFMSideBar::groupModelIndex(const QString &groupName)
+{
+    return m_sidebarModel->index(findLastItem(groupName), 0, m_sidebarView->rootIndex());
 }
 
 void DFMSideBar::changeEvent(QEvent *event)

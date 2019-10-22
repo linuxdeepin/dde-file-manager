@@ -48,6 +48,9 @@ public:
 
     explicit DFMSideBar(QWidget *parent = nullptr);
 
+    QRect groupGeometry(const QString &groupName);
+    void scrollToGroup(const QString &groupName);
+
     void setCurrentUrl(const DUrl &url);
 
     int addItem(DFMSideBarItem *item, const QString &group);
@@ -95,6 +98,8 @@ private:
     void insertItem(int index, DFMSideBarItem * item, const QString &groupName);
     void appendItem(DFMSideBarItem * item, const QString &groupName);
     void appendItemWithOrder(QList<DFMSideBarItem *> &list, const DUrlList &order, const QString &groupName);
+
+    QModelIndex groupModelIndex(const QString &groupName);
 
     void changeEvent(QEvent *event) override;
 

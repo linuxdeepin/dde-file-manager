@@ -54,6 +54,7 @@
 #include "plugins/pluginmanager.h"
 #include "../plugininterfaces/menu/menuinterface.h"
 #include "dfmeventdispatcher.h"
+#include "views/dfmsidebar.h"
 
 #include <darrowlineexpand.h>
 #include <dexpandgroup.h>
@@ -640,10 +641,11 @@ void PropertyDialog::flickFolderToSidebar()
 
     // we are actually using network group's center position as target position
     // since it's used as a animation target position, a fuzzy result is okay.
-//    QPoint targetPos = window->getLeftSideBar()->groupGeometry(
-//                           DFMSideBar::groupName(DFMSideBar::GroupName::Network)
-//                       ).center();
-    QPoint targetPos = QPoint(0,0);
+    DFMSideBar *sideBar = window->getLeftSideBar();
+    QString groupName = DFMSideBar::groupName(DFMSideBar::GroupName::Network);
+    sideBar->scrollToGroup(groupName);
+    QPoint targetPos = sideBar->groupGeometry(groupName).center();
+
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
 
     QLabel *aniLabel = new QLabel(window);
