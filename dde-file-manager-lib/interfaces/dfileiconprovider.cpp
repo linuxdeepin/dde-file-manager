@@ -59,6 +59,10 @@ QIcon DFileIconProviderPrivate::getFilesystemIcon(const QFileInfo &info) const
 
     QScopedPointer<DGioFile> file(DGioFile::createFromPath(info.absoluteFilePath()));
     QExplicitlySharedDataPointer<DGioFileInfo> fileinfo = file->createFileInfo();
+    if (!fileinfo) {
+        return icon;
+    }
+
     QStringList icons = fileinfo->themedIconNames();
     if (!icons.isEmpty()) return QIcon::fromTheme(icons.first());
 
