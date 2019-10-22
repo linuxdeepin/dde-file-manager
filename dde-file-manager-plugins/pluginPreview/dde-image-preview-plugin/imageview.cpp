@@ -75,8 +75,11 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
 
         return;
     } else if (movie) {
-        movie->stop();
-        movie->deleteLater();
+        QMovie * tmpMovie = movie;
+        movie = nullptr;
+        tmpMovie->stop();
+        tmpMovie->disconnect();
+        tmpMovie->deleteLater();
     }
 
     QImageReader reader(fileName, format);
