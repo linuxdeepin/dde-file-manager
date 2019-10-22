@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -11,12 +9,12 @@
     <message>
         <location filename="../controllers/appcontroller.cpp" line="523"/>
         <source>Mount Error</source>
-        <translation type="unfinished"></translation>
+        <translation>挂载错误</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="523"/>
         <source>Unsupported image format</source>
-        <translation type="unfinished"></translation>
+        <translation>不支持的镜像格式</translation>
     </message>
 </context>
 <context>
@@ -565,12 +563,12 @@
     <message>
         <location filename="../models/dfmrootfileinfo.cpp" line="502"/>
         <source>%1 Drive</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 设备</translation>
     </message>
     <message>
         <location filename="../models/dfmrootfileinfo.cpp" line="505"/>
         <source>%1 Encrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 已加密</translation>
     </message>
 </context>
 <context>

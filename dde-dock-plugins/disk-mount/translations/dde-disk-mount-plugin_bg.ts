@@ -16,14 +16,14 @@
         <translation>Диск</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="106"/>
+        <location filename="../diskmountplugin.cpp" line="104"/>
         <source>Open</source>
         <translation>Отваряне</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="113"/>
+        <location filename="../diskmountplugin.cpp" line="111"/>
         <source>Unmount all</source>
-        <translation type="unfinished"/>
+        <translation>Демонтиране на всичко</translation>
     </message>
 </context>
 <context>
@@ -31,7 +31,7 @@
     <message>
         <location filename="../diskcontrolwidget.cpp" line="317"/>
         <source>Device has been removed</source>
-        <translation type="unfinished"/>
+        <translation>Устройство беше премахнато</translation>
     </message>
 </context>
 </TS>

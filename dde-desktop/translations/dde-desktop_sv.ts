@@ -2,42 +2,42 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2399"/>
+        <location filename="../view/canvasgridview.cpp" line="2445"/>
         <source>Icon size</source>
         <translation>Ikonstorlek</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2405"/>
+        <location filename="../view/canvasgridview.cpp" line="2451"/>
         <source>Auto merge</source>
         <translation>Autosammanfogning</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2420"/>
+        <location filename="../view/canvasgridview.cpp" line="2466"/>
         <source>Auto arrange</source>
         <translation>Autoarrangera</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2476"/>
+        <location filename="../view/canvasgridview.cpp" line="2522"/>
         <source>Set Wallpaper</source>
         <translation>Ange som bakgrundsbild</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2478"/>
+        <location filename="../view/canvasgridview.cpp" line="2524"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Bakgrundsbild och skärmsläckare</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2559"/>
+        <location filename="../view/canvasgridview.cpp" line="2608"/>
         <source>Properties</source>
         <translation>Egenskaper</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2460"/>
+        <location filename="../view/canvasgridview.cpp" line="2506"/>
         <source>Display Settings</source>
         <translation>Skärminställningar</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2469"/>
+        <location filename="../view/canvasgridview.cpp" line="2515"/>
         <source>Corner Settings</source>
         <translation>Kantinställningar</translation>
     </message>
@@ -71,59 +71,67 @@
     </message>
 </context>
 <context>
+    <name>DesktopMain</name>
+    <message>
+        <location filename="../main.cpp" line="135"/>
+        <source>Desktop</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="425"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="431"/>
         <source>Wallpaper Slideshow</source>
         <translation>Bakgrundsbildsbildspel</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="451"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="459"/>
         <source>When login</source>
         <translation>Vid inloggning</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="453"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="461"/>
         <source>When wakeup</source>
         <translation>Vid väckning</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="493"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="504"/>
         <source>Require a password on wakeup</source>
         <translation>Kräv ett lösenord vid väckning</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="518"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="531"/>
         <source>Never</source>
         <translation>Aldrig</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="519"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="532"/>
         <source>Wait:</source>
         <translation>Vänta:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="547"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="560"/>
         <source>Wallpaper</source>
         <translation>Bakgrundsbild</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="547"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="561"/>
         <source>Screensaver</source>
         <translation>Skärmsläckare</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="609"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="630"/>
         <source>Only desktop</source>
         <translation>Bara skrivbord</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="610"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="631"/>
         <source>Only lock screen</source>
         <translation>Bara låsskärm</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="638"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="659"/>
         <source>Apply</source>
         <translation>Tillämpa</translation>
     </message>

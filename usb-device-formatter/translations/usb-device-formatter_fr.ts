@@ -18,22 +18,22 @@
 <context>
     <name>MainPage</name>
     <message>
-        <location filename="../view/mainpage.cpp" line="109"/>
+        <location filename="../view/mainpage.cpp" line="108"/>
         <source>Type</source>
         <translation>Genre</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="128"/>
+        <location filename="../view/mainpage.cpp" line="127"/>
         <source>Label</source>
         <translation>Étiquette</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="137"/>
+        <location filename="../view/mainpage.cpp" line="136"/>
         <source>Quick Format</source>
         <translation>Formatage rapide</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="154"/>
+        <location filename="../view/mainpage.cpp" line="153"/>
         <source>Formatting will erase all data on the disk.</source>
         <translation>Formater supprimera toutes les données du disque. </translation>
     </message>
@@ -47,37 +47,37 @@
         <translation>Formater</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="198"/>
+        <location filename="../view/mainwindow.cpp" line="185"/>
         <source>Continue</source>
         <translation>Continuer</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="203"/>
+        <location filename="../view/mainwindow.cpp" line="190"/>
         <source>Formatting...</source>
         <translation>Formatage...</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="230"/>
+        <location filename="../view/mainwindow.cpp" line="217"/>
         <source>Done</source>
         <translation>Terminé</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="236"/>
+        <location filename="../view/mainwindow.cpp" line="223"/>
         <source>Quit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="237"/>
+        <location filename="../view/mainwindow.cpp" line="224"/>
         <source>Your disk is removed when formatting</source>
         <translation>Votre disque est supprimé lors du formatage</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="240"/>
+        <location filename="../view/mainwindow.cpp" line="227"/>
         <source>Failed to format the device</source>
-        <translation type="unfinished"/>
+        <translation>Impossible de formater le périphérique</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="241"/>
+        <location filename="../view/mainwindow.cpp" line="228"/>
         <source>Reformat</source>
         <translation>Reformater</translation>
     </message>
@@ -93,12 +93,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="109"/>
+        <location filename="../main.cpp" line="108"/>
         <source>Device does not exist</source>
         <translation>Le périphérique n&apos;existe pas</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="118"/>
+        <location filename="../main.cpp" line="117"/>
         <source>Cannot format local device</source>
         <translation>Impossible de formater un périphérique local</translation>
     </message>
