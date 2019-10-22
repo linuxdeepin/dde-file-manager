@@ -116,7 +116,7 @@ public:
     {
         const QFileInfo &info = iterator.fileInfo();
 
-        if (info.suffix() == DESKTOP_SURRIX) {
+        if (!info.isSymLink() && info.suffix() == DESKTOP_SURRIX) {
             return DAbstractFileInfoPointer(new DesktopFileInfo(info));
         }
 
@@ -330,7 +330,8 @@ bool FileController::findExecutable(const QString &executableName, const QString
 
 const DAbstractFileInfoPointer FileController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const
 {
-    if (event->url().toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX)) {
+     QString localFile = event->url().toLocalFile();
+    if (!QFileInfo(localFile).isSymLink() && localFile.endsWith(QString(".") + DESKTOP_SURRIX)) {
 
         return DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
     }
