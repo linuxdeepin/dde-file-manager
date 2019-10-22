@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="en">
 <context>
     <name>DeepinStorage</name>
     <message>
@@ -16,12 +18,12 @@
         <translation>Disk</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="106"/>
+        <location filename="../diskmountplugin.cpp" line="104"/>
         <source>Open</source>
         <translation>Open</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="113"/>
+        <location filename="../diskmountplugin.cpp" line="111"/>
         <source>Unmount all</source>
         <translation>Unmount all</translation>
     </message>
