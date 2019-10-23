@@ -146,7 +146,9 @@ QString DFMRootFileInfo::fileDisplayName() const
     Q_D(const DFMRootFileInfo);
 
     if (suffix() == SUFFIX_USRDIR) {
-        return QStandardPaths::displayName(d->stdloc);
+        QString namekey = baseName();
+        namekey[0] = namekey[0].toUpper();
+        return systemPathManager->getSystemPathDisplayName(namekey);
     } else if (suffix() == SUFFIX_GVFSMP) {
         return d->gmnt ? d->gmnt->name() : "";
     } else if (suffix() == SUFFIX_UDISKS) {
