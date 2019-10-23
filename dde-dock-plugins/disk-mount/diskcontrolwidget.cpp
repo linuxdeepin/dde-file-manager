@@ -228,6 +228,9 @@ void DiskControlWidget::onDiskListChanged()
 
     const QList<QExplicitlySharedDataPointer<DGioMount> > mounts = getVfsMountList();
     for (auto mount : mounts) {
+        if (mount->isShadowed()) {
+            continue;
+        }
         QExplicitlySharedDataPointer<DGioFile> rootFile = mount->getRootFile();
         QString path = rootFile->path();
         DAttachedVfsDevice *dad = new DAttachedVfsDevice(path);
