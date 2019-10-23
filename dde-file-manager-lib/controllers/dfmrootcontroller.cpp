@@ -20,6 +20,7 @@
 
 #include "dfmrootcontroller.h"
 #include "dfmevent.h"
+#include "dfmapplication.h"
 #include "models/dfmrootfileinfo.h"
 #include "private/dabstractfilewatcher_p.h"
 
@@ -93,6 +94,10 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
             continue;
         }
         if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
+            continue;
+        }
+        using namespace DFM_NAMESPACE;
+        if (DFMApplication::genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool() && blk->hintSystem()) {
             continue;
         }
         DAbstractFileInfoPointer fp(new DFMRootFileInfo(DUrl(DFMROOT_ROOT + QString(blk->device()).mid(QString("/dev/").length()) + "." SUFFIX_UDISKS)));
@@ -195,6 +200,10 @@ bool DFMRootFileWatcherPrivate::start()
             return;
         }
         if ((blk->hintIgnore() && !blk->isEncrypted()) || blk->cryptoBackingDevice().length() > 1) {
+            return;
+        }
+        using namespace DFM_NAMESPACE;
+        if (DFMApplication::genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool() && blk->hintSystem()) {
             return;
         }
 
