@@ -75,8 +75,7 @@ public:
 
     bool showFileName();
     void setShowFileName(bool visible);
-    bool showPicturePixel();
-    void setShowPicturePixel(bool visible);
+
     bool showMediaInfo();
     void setShowMediaInfo(bool visible);
     bool showSummary(); // 目录只显示概要， 包含几个文件等。
