@@ -48,6 +48,7 @@
 #include "dfmstandardpaths.h"
 #include "deviceinfo/udisklistener.h"
 #include "ddiskmanager.h"
+#include "dblockdevice.h"
 #include "ddiskdevice.h"
 #include "views/dtagactionwidget.h"
 
@@ -324,14 +325,20 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
 
         QStringList odrv;
         DDiskManager diskm;
-        for (auto &devs : diskm.diskDevices()) {
-            QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(devs));
-            if (dev->mediaCompatibility().join(' ').contains("_r")) {
-                odrv.push_back(devs);
+        for (auto &blks : diskm.blockDevices()) {
+            QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
+            QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+            if (drv->mediaCompatibility().join(' ').contains("_r")) {
+                if ((currentUrl.scheme() == BURN_SCHEME && QString(blk->device()) == currentUrl.burnDestDevice()) || odrv.contains(drv->path())) {
+                    continue;
+                }
+                odrv.push_back(drv->path());
             }
         }
 
-        if (odrv.size() == 1) {
+        if (odrv.empty()) {
+            stageAction->setEnabled(false);
+        } else if (odrv.size() == 1) {
             stageAction->setProperty("dest_drive", odrv.front());
             stageAction->setProperty("urlList", DUrl::toStringList(urlList));
             connect(stageAction, &QAction::triggered, appController, &AppController::actionStageFileForBurning, Qt::UniqueConnection);
@@ -340,8 +347,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
                 stageAction->setMenu(nullptr);
                 delete stageMenu;
             }
-        }
-        else {
+        } else {
             DFileMenu *stageMenu = stageAction ? qobject_cast<DFileMenu *>(stageAction->menu()) : Q_NULLPTR;
             if (stageMenu) {
                 for (auto &devs : odrv) {
