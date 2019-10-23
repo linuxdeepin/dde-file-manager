@@ -148,7 +148,7 @@ QString DFMRootFileInfo::fileDisplayName() const
     if (suffix() == SUFFIX_USRDIR) {
         return QStandardPaths::displayName(d->stdloc);
     } else if (suffix() == SUFFIX_GVFSMP) {
-        return d->gmnt->name();
+        return d->gmnt ? d->gmnt->name() : "";
     } else if (suffix() == SUFFIX_UDISKS) {
         return d->udispname;
     }
@@ -247,7 +247,7 @@ DAbstractFileInfo::FileType DFMRootFileInfo::fileType() const
         ret = ItemType::UserDirectory;
     } else if (suffix() == SUFFIX_GVFSMP) {
         ret = ItemType::GvfsGeneric;
-        if (d->gmnt->getRootFile()) {
+        if (d->gmnt && d->gmnt->getRootFile()) {
             DUrl url(d->gmnt->getRootFile()->uri());
             if (url.scheme() == FTP_SCHEME) {
                 ret = ItemType::GvfsFTP;
@@ -288,7 +288,7 @@ QString DFMRootFileInfo::iconName() const
     if (suffix() == SUFFIX_USRDIR) {
         return systemPathManager->getSystemPathIconNameByPath(redirectedFileUrl().path());
     } else if (suffix() == SUFFIX_GVFSMP) {
-        return d->gmnt->themedIconNames().front();
+        return d->gmnt ? d->gmnt->themedIconNames().front() : "";
     } else if (suffix() == SUFFIX_UDISKS) {
         if (d->blk) {
             QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));
@@ -346,7 +346,7 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
         ret.push_back(MenuAction::SafelyRemoveDrive);
     }
 
-    if (suffix() == SUFFIX_GVFSMP) {
+    if (suffix() == SUFFIX_GVFSMP && d->gmnt && d->gmnt->getRootFile()) {
         QString scheme = QUrl(d->gmnt->getRootFile()->uri()).scheme();
         if (QSet<QString>({SMB_SCHEME, FTP_SCHEME, SFTP_SCHEME, DAV_SCHEME}).contains(scheme)) {
             ret.push_back(MenuAction::ForgetPassword);
@@ -408,7 +408,7 @@ QVariantHash DFMRootFileInfo::extraProperties() const
             ret["fsSize"] = d->gfsi->fsTotalBytes();
             ret["fsType"] = d->gfsi->fsType();
         }
-        ret["rooturi"] = d->gmnt->getRootFile()->uri();
+        ret["rooturi"] = d->gmnt && d->gmnt->getRootFile() ? d->gmnt->getRootFile()->uri() : "";
         ret["mounted"] = true;
     } else if (suffix() == SUFFIX_UDISKS) {
         if (d->mps.empty()) {
@@ -524,5 +524,11 @@ bool DFMRootFileInfo::typeCompare(const DAbstractFileInfoPointer &a, const DAbst
         {ItemType::GvfsGPhoto2    ,  6},
         {ItemType::GvfsGeneric    ,  7}
     };
+    if (!a->exists()) {
+        return false;
+    }
+    if (!b->exists()) {
+        return true;
+    }
     return priomap[static_cast<DFMRootFileInfo::ItemType>(a->fileType())] < priomap[static_cast<DFMRootFileInfo::ItemType>(b->fileType())];
 }

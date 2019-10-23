@@ -160,6 +160,9 @@ bool DFMRootFileWatcherPrivate::start()
         if (DUrl(mnt->getRootFile()->uri()).scheme() == BURN_SCHEME) {
             return;
         }
+        if (mnt->getRootFile()->path().length() == 0) {
+            return;
+        }
         DUrl url;
         url.setScheme(DFMROOT_SCHEME);
         url.setPath("/" + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP);
