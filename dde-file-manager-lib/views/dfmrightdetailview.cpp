@@ -179,7 +179,6 @@ void DFMRightDetailView::setUrl(const DUrl &url)
     DFMFileBasicInfoWidget *basicInfoWidget = new DFMFileBasicInfoWidget(this);
     d->baseInfoWidget = basicInfoWidget;
     basicInfoWidget->setShowFileName(true);
-    basicInfoWidget->setShowPicturePixel(true);
     basicInfoWidget->setShowMediaInfo(true);
     basicInfoWidget->setShowSummary(fileInfo->isDir());
     basicInfoWidget->setUrl(d->m_url);

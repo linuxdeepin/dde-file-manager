@@ -100,7 +100,6 @@ private:
     QLabel      *m_folderSizeLabel{ nullptr };
     QLabel      *m_containSizeLabel{ nullptr };
     bool         m_showFileName{ false };
-    bool         m_showPicturePixel{ false };
     bool         m_showMediaInfo{ false };
     bool         m_showSummaryOnly{ false };
 
@@ -221,24 +220,6 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
         layout->addRow(sizeSectionLabel, m_folderSizeLabel);
     }
 
-    if (m_showPicturePixel) {
-        DAbstractFileInfo::FileType fileType = mimeTypeDisplayManager->displayNameToEnum(info->mimeTypeName());
-        if (fileType == DAbstractFileInfo::FileType::Images) {
-            DFMMediaInfo mediaInfo(info->filePath());
-            {
-                QString text = mediaInfo.Value("Width", DFMMediaInfo::Image);
-                if (!text.isEmpty()) {
-                    text.append("x").append(mediaInfo.Value("Height", DFMMediaInfo::Image));
-                    QLabel *pixelKeyLabel = new SectionKeyLabel(QObject::tr("Dimension"));
-                    QLabel *pixelLabel = new SectionValueLabel;
-                    pixelLabel->setText(text);
-                    layout->addRow(pixelKeyLabel, pixelLabel);
-                    frameHeight += 30;
-                }
-            }
-        }
-    }
-
     if (m_showMediaInfo) {
         DAbstractFileInfo::FileType fileType = mimeTypeDisplayManager->displayNameToEnum(info->mimeTypeName());
 
@@ -249,6 +230,9 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
             break;
         case DAbstractFileInfo::Audios:
             mediaType = DFMMediaInfo::Audio;
+            break;
+        case DAbstractFileInfo::Images:
+            mediaType = DFMMediaInfo::Image;
             break;
         default:
             break;
@@ -373,18 +357,6 @@ void DFMFileBasicInfoWidget::setShowFileName(bool visible)
 {
     Q_D(DFMFileBasicInfoWidget);
     d->m_showFileName = visible;
-}
-
-bool DFMFileBasicInfoWidget::showPicturePixel()
-{
-    Q_D(DFMFileBasicInfoWidget);
-    return d->m_showPicturePixel;
-}
-
-void DFMFileBasicInfoWidget::setShowPicturePixel(bool visible)
-{
-    Q_D(DFMFileBasicInfoWidget);
-    d->m_showPicturePixel = visible;
 }
 
 bool DFMFileBasicInfoWidget::showMediaInfo()
