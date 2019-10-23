@@ -50,31 +50,21 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
 {
     if (format == QByteArrayLiteral("gif")) {
         if (movie) {
+            movie->stop(); // blumia: we need to stop it first before we load a new file
             movie->setFileName(fileName);
         } else {
             movie = new QMovie(fileName, format, this);
         }
 
-        connect(movie, &QMovie::frameChanged, this, [this] {
-            const QPixmap &current_pixmap = movie->currentPixmap();
-            m_sourceSize = current_pixmap.size();
-
-            const QSize &dsize = qApp->desktop()->size();
-            qreal device_pixel_ratio = this->devicePixelRatioF();
-
-            QPixmap pixmap = current_pixmap.scaled(QSize(qMin((int)(dsize.width() * 0.7 * device_pixel_ratio), m_sourceSize.width()),
-                                                         qMin((int)(dsize.height() * 0.8 * device_pixel_ratio), m_sourceSize.height())),
-                                                   Qt::KeepAspectRatio, Qt::SmoothTransformation);
-
-            pixmap.setDevicePixelRatio(device_pixel_ratio);
-
-            setPixmap(pixmap);
-        });
-
+        setMovie(movie);
         movie->start();
 
         return;
-    } else if (movie) {
+    } else {
+        setMovie(nullptr);
+    }
+
+    if (movie) {
         QMovie * tmpMovie = movie;
         movie = nullptr;
         tmpMovie->stop();
