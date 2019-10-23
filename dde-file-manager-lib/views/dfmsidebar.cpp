@@ -191,7 +191,7 @@ void DFMSideBar::openItemEditor(int index) const
 
 QSet<QString> DFMSideBar::disableUrlSchemes() const
 {
-    return QSet<QString>();
+    return m_disableUrlSchemes;
 }
 
 void DFMSideBar::setContextMenuEnabled(bool enabled)
@@ -201,7 +201,10 @@ void DFMSideBar::setContextMenuEnabled(bool enabled)
 
 void DFMSideBar::setDisableUrlSchemes(const QSet<QString> &schemes)
 {
-    //
+    m_disableUrlSchemes += schemes;
+    m_sidebarModel->clear();
+    initModelData();
+    emit disableUrlSchemesChanged();
 }
 
 DUrlList DFMSideBar::savedItemOrder(const QString &groupName) const
@@ -662,7 +665,9 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
     const QString &groupNameStr = groupName(groupType);
     switch (groupType) {
     case GroupName::Common:
-        appendItem(DFMSideBarDefaultItemHandler::createItem("Recent"), groupNameStr);
+        if (!m_disableUrlSchemes.contains(RECENT_SCHEME)) {
+            appendItem(DFMSideBarDefaultItemHandler::createItem("Recent"), groupNameStr);
+        }
         appendItem(DFMSideBarDefaultItemHandler::createItem("Home"), groupNameStr);
         appendItem(DFMSideBarDefaultItemHandler::createItem("Desktop"), groupNameStr);
         appendItem(DFMSideBarDefaultItemHandler::createItem("Videos"), groupNameStr);
@@ -670,14 +675,21 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
         appendItem(DFMSideBarDefaultItemHandler::createItem("Pictures"), groupNameStr);
         appendItem(DFMSideBarDefaultItemHandler::createItem("Documents"), groupNameStr);
         appendItem(DFMSideBarDefaultItemHandler::createItem("Downloads"), groupNameStr);
-        appendItem(DFMSideBarDefaultItemHandler::createItem("Trash"), groupNameStr);
+        if (!m_disableUrlSchemes.contains(TRASH_SCHEME)) {
+            appendItem(DFMSideBarDefaultItemHandler::createItem("Trash"), groupNameStr);
+        }
         break;
     case GroupName::Device:
-        appendItem(DFMSideBarDefaultItemHandler::createItem("Computer"), groupNameStr);
+        if (!m_disableUrlSchemes.contains(COMPUTER_SCHEME)) {
+            appendItem(DFMSideBarDefaultItemHandler::createItem("Computer"), groupNameStr);
+        }
         break;
     case GroupName::Bookmark: {
-        QList<DAbstractFileInfoPointer> bookmarkInfos = DFileService::instance()->getChildren(this, DUrl(BOOKMARK_ROOT),
-                                                         QStringList(), QDir::AllEntries);
+        if (m_disableUrlSchemes.contains(BOOKMARK_SCHEME))  {
+            break;
+        }
+
+        QList<DAbstractFileInfoPointer> bookmarkInfos = DFileService::instance()->getChildren(this, DUrl(BOOKMARK_ROOT),                                                         QStringList(), QDir::AllEntries);
         QList<DFMSideBarItem *> unsortedList;
         for (const DAbstractFileInfoPointer &info : bookmarkInfos) {
             unsortedList << DFMSideBarBookmarkItemHandler::createItem(info->fileUrl());
@@ -686,9 +698,16 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
         break;
     }
     case GroupName::Network:
+        if (m_disableUrlSchemes.contains(NETWORK_SCHEME))  {
+            break;
+        }
         appendItem(DFMSideBarDefaultItemHandler::createItem("Network"), groupNameStr);
         break;
     case GroupName::Tag: {
+        if (m_disableUrlSchemes.contains(TAG_SCHEME))  {
+            break;
+        }
+
         auto tag_infos = DFileService::instance()->getChildren(this, DUrl(TAG_ROOT),
                               QStringList(), QDir::AllEntries);
         QList<DFMSideBarItem *> unsortedList;

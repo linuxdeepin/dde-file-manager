@@ -75,7 +75,7 @@ public:
     static const int maximumWidth = 200;
 
 signals:
-
+    void disableUrlSchemesChanged();
 public slots:
 
 private slots:
@@ -108,6 +108,7 @@ private:
     QScopedPointer<DDiskManager> m_udisks2DiskManager;
     bool m_contextMenuEnabled = true;
     QList<DUrl> devitems;
+    QSet<QString> m_disableUrlSchemes;
 };
 
 DFM_END_NAMESPACE
