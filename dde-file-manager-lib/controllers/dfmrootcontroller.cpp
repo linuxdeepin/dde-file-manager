@@ -99,6 +99,11 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         ret.push_back(fp);
     }
 
+    for (auto gvfsvol : DGioVolumeManager::getVolumes()) {
+        if (gvfsvol->volumeMonitorName().contains(QRegularExpression("(MTP|GPhoto2|Afc)$")) && !gvfsvol->getMount()) {
+            gvfsvol->mount();
+        }
+    }
     for (auto gvfsmp : DGioVolumeManager::getMounts()) {
         if (gvfsmp->getVolume() && gvfsmp->getVolume()->volumeMonitorName().endsWith("UDisks2")) {
             continue;
