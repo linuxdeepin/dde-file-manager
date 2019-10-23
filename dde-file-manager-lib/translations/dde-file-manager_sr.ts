@@ -9,12 +9,12 @@
     <message>
         <location filename="../controllers/appcontroller.cpp" line="523"/>
         <source>Mount Error</source>
-        <translation type="unfinished"/>
+        <translation>Грешка монтирања</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="523"/>
         <source>Unsupported image format</source>
-        <translation type="unfinished"/>
+        <translation>Неподржан формат одраза</translation>
     </message>
 </context>
 <context>
@@ -563,12 +563,12 @@
     <message>
         <location filename="../models/dfmrootfileinfo.cpp" line="502"/>
         <source>%1 Drive</source>
-        <translation type="unfinished"/>
+        <translation>%1 Уређај</translation>
     </message>
     <message>
         <location filename="../models/dfmrootfileinfo.cpp" line="505"/>
         <source>%1 Encrypted</source>
-        <translation type="unfinished"/>
+        <translation>%1 Шифровано</translation>
     </message>
 </context>
 <context>
