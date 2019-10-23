@@ -64,11 +64,13 @@ DiskControlWidget::DiskControlWidget(QWidget *parent)
 
     setWidget(m_centralWidget);
     setFixedWidth(WIDTH);
-    setFrameStyle(QFrame::NoFrame);
+    setFrameShape(QFrame::NoFrame);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     verticalScrollBar()->setSingleStep(7);
-    setStyleSheet("background-color:transparent;");
+    m_centralWidget->setAutoFillBackground(false);
+    viewport()->setAutoFillBackground(false);
+
     m_diskManager = new DDiskManager(this);
     initConnect();
 }

@@ -39,8 +39,10 @@
 #include <ddiskdevice.h>
 #include <dfmsettings.h>
 #include <DDesktopServices>
+#include <DGuiApplicationHelper>
 
 DWIDGET_USE_NAMESPACE
+DGUI_USE_NAMESPACE
 
 DFM_USE_NAMESPACE
 
@@ -61,24 +63,11 @@ DiskControlItem::DiskControlItem(DAttachedDeviceInterface *attachedDevicePtr, QW
     attachedDevice.reset(attachedDevicePtr);
 
     m_diskName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    m_diskName->setStyleSheet("color:white;");
     m_diskName->setTextFormat(Qt::PlainText);
-
-    m_diskCapacity->setStyleSheet("color:rgba(255, 255, 255, .6);");
 
     m_capacityValueBar->setTextVisible(false);
     m_capacityValueBar->setFixedHeight(2);
-    m_capacityValueBar->setStyleSheet("QProgressBar {"
-                                      "border:none;"
-                                      "background-color:rgba(255, 255, 255, .1);"
-                                      "}"
-                                      "QProgressBar::chunk {"
-                                      "background-color:rgba(255, 255, 255, .8);"
-                                      "}");
 
-    m_unmountButton->setNormalPic(":/icons/resources/unmount-normal.svg");
-    m_unmountButton->setHoverPic(":/icons/resources/unmount-hover.svg");
-    m_unmountButton->setPressPic(":/icons/resources/unmount-press.svg");
     m_unmountButton->setStyleSheet("margin-top:12px;");
 
     QVBoxLayout *infoLayout = new QVBoxLayout;
@@ -107,10 +96,6 @@ DiskControlItem::DiskControlItem(DAttachedDeviceInterface *attachedDevicePtr, QW
 
     setLayout(centralLayout);
     setObjectName("DiskItem");
-    setStyleSheet("QFrame #DiskItem:hover {"
-                  "background-color:rgba(255, 255, 255, .1);"
-                  "border-radius:4px;"
-                  "}");
 
     connect(m_unmountButton, &DImageButton::clicked, this, [this] {
         attachedDevice->detach();
@@ -128,10 +113,26 @@ DiskControlItem::DiskControlItem(DAttachedDeviceInterface *attachedDevicePtr, QW
     m_diskName->setText(QStringLiteral("OwO")); // blumia: correct text should be set in DiskControlItem::showEvent()
     m_capacityValueBar->setMinimum(0);
     m_capacityValueBar->setMaximum(100);
+
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this, &DiskControlItem::refreshIcon);
+    refreshIcon();
 }
 
 DiskControlItem::~DiskControlItem()
 {
+}
+
+void DiskControlItem::refreshIcon()
+{
+    if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType) {
+        m_unmountButton->setNormalPic(":/icons/resources/unmount-normal-dark.svg");
+        m_unmountButton->setHoverPic(":/icons/resources/unmount-hover-dark.svg");
+        m_unmountButton->setPressPic(":/icons/resources/unmount-press-dark.svg");
+    } else {
+        m_unmountButton->setNormalPic(":/icons/resources/unmount-normal.svg");
+        m_unmountButton->setHoverPic(":/icons/resources/unmount-hover.svg");
+        m_unmountButton->setPressPic(":/icons/resources/unmount-press.svg");
+    }
 }
 
 QString DiskControlItem::sizeString(const QString &str)
@@ -162,7 +163,7 @@ QString DiskControlItem::formatDiskSize(const quint64 num)
     QString unit = i.next();
 
     int index = 0;
-    while(i.hasNext()) {
+    while (i.hasNext()) {
         if (fileSize < 1024) {
             break;
         }

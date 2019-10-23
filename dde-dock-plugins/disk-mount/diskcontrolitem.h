@@ -54,6 +54,7 @@ private slots:
 private:
     void mouseReleaseEvent(QMouseEvent *e) override;
     void showEvent(QShowEvent *e) override;
+    void refreshIcon();
 
 private:
     QIcon m_unknowIcon;
