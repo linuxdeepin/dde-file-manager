@@ -67,6 +67,7 @@ bool DFMRootController::renameFile(const QSharedPointer<DFMRenameEvent> &event) 
     Q_ASSERT(blk && blk->path().length() > 0);
 
     blk->setLabel(event->toUrl().path(), {});
+    return true;
 }
 
 const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
