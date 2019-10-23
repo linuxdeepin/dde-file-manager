@@ -75,7 +75,7 @@
     <message>
         <location filename="../main.cpp" line="135"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation>Радна површина </translation>
     </message>
 </context>
 <context>

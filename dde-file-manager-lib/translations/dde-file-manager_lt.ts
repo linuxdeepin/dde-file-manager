@@ -262,7 +262,7 @@
         <location filename="../views/dfmvaultunlockpages.cpp" line="39"/>
         <location filename="../views/dfmvaultunlockpages.cpp" line="54"/>
         <source>Enter the vault password</source>
-        <translation type="unfinished"/>
+        <translation>Įveskite slėptuvės slaptažodį</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="53"/>
@@ -563,12 +563,12 @@
     <message>
         <location filename="../models/dfmrootfileinfo.cpp" line="502"/>
         <source>%1 Drive</source>
-        <translation type="unfinished"/>
+        <translation>%1 diskas</translation>
     </message>
     <message>
         <location filename="../models/dfmrootfileinfo.cpp" line="505"/>
         <source>%1 Encrypted</source>
-        <translation type="unfinished"/>
+        <translation>Šifruotas %1</translation>
     </message>
 </context>
 <context>
@@ -1016,7 +1016,7 @@
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2636"/>
         <source>Lost connection to drive.</source>
-        <translation type="unfinished"/>
+        <translation>Prarastas ryšys su disku.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2639"/>
@@ -3523,7 +3523,7 @@
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="50"/>
         <source>Welcome to File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Sveiki atvykę į failų slėptuvę</translation>
     </message>
     <message>
         <source>Welcome to use File Vault</source>
@@ -3542,7 +3542,7 @@
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="53"/>
         <source>Convenient and easy to use</source>
-        <translation type="unfinished"/>
+        <translation>Patogi ir lengva naudoti</translation>
     </message>
 </context>
 <context>

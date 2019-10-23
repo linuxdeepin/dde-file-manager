@@ -563,7 +563,7 @@
     <message>
         <location filename="../models/dfmrootfileinfo.cpp" line="502"/>
         <source>%1 Drive</source>
-        <translation>%1 设备</translation>
+        <translation>%1 驱动器</translation>
     </message>
     <message>
         <location filename="../models/dfmrootfileinfo.cpp" line="505"/>
