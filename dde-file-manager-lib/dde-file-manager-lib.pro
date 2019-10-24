@@ -74,7 +74,6 @@ include(interfaces/vfs/vfs.pri)
 
 RESOURCES += \
     skin/skin.qrc \
-    skin/dialogs.qrc \
     skin/filemanager.qrc \
     themes/themes.qrc \
     configure.qrc \

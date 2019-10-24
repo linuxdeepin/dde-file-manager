@@ -99,9 +99,9 @@ DialogManager::~DialogManager()
 
 void DialogManager::initData()
 {
-    m_dialogInfoIcon = QIcon::fromTheme("dialog-information", QIcon(":/images/dialogs/images/dialog_info.png"));
-    m_dialogWarningIcon = QIcon::fromTheme("dialog-warning", QIcon(":/images/dialogs/images/dialog_warning.png"));
-    m_dialogErrorIcon = QIcon::fromTheme("dialog-error", QIcon(":/images/dialogs/images/dialog_error.png"));
+    m_dialogInfoIcon = QIcon::fromTheme("dialog-information");
+    m_dialogWarningIcon = QIcon::fromTheme("dialog-warning");
+    m_dialogErrorIcon = QIcon::fromTheme("dialog-error");
 }
 
 void DialogManager::initTaskDialog()

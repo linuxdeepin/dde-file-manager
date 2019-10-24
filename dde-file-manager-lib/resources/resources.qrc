@@ -30,5 +30,7 @@
         <file>icons/deepin/builtin/light/icons/dfm_lock_128px.svg</file>
         <file>icons/deepin/builtin/dark/icons/dde-file-manager_128px.svg</file>
         <file>icons/deepin/builtin/light/icons/dde-file-manager_128px.svg</file>
+        <file>icons/deepin/builtin/dark/icons/dfm_deepin_logo_128px.svg</file>
+        <file>icons/deepin/builtin/light/icons/dfm_deepin_logo_128px.svg</file>
     </qresource>
 </RCC>
