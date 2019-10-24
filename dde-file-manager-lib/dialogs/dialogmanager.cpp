@@ -652,10 +652,13 @@ void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
                     dialog = new PropertyDialog(event, url);
                     dialog->setWindowFlags(dialog->windowFlags() & ~ Qt::FramelessWindowHint);
                     m_propertyDialogs.insert(url, dialog);
-                    QPoint pos = getPerportyPos(dialog->size().width(), dialog->size().height(), count, index);
-
+                    if (1 == count) {
+                        dialog->moveToCenter();
+                    } else {
+                        QPoint pos = getPerportyPos(dialog->size().width(), dialog->size().height(), count, index);
+                        dialog->move(pos);
+                    }
                     dialog->show();
-                    dialog->move(pos);
 
                     connect(dialog, &PropertyDialog::closed, this, &DialogManager::removePropertyDialog);
                     //                connect(dialog, &PropertyDialog::raised, this, &DialogManager::raiseAllPropertyDialog);
