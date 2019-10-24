@@ -984,7 +984,7 @@ void DFileManagerWindow::initRightView()
     QPushButton *emptyTrashButton = new QPushButton{ this };
     emptyTrashButton->setContentsMargins(0, 0, 0, 0);
     emptyTrashButton->setObjectName("EmptyTrashButton");
-    emptyTrashButton->setText(tr("Clear"));
+    emptyTrashButton->setText(tr("Empty"));
     emptyTrashButton->setToolTip(QObject::tr("Empty Trash"));
     emptyTrashButton->setFixedSize({86, 36});
     QObject::connect(emptyTrashButton, &QPushButton::clicked,

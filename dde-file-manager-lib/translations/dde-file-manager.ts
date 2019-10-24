@@ -414,8 +414,12 @@
     </message>
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="987"/>
+        <source>Empty</source>
+        <translation type="unfinished">Empty</translation>
+    </message>
+    <message>
         <source>Clear</source>
-        <translation>Clear</translation>
+        <translation type="vanished">Clear</translation>
     </message>
 </context>
 <context>

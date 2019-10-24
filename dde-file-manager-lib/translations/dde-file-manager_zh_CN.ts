@@ -414,8 +414,12 @@
     </message>
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="987"/>
+        <source>Empty</source>
+        <translation type="unfinished">清空</translation>
+    </message>
+    <message>
         <source>Clear</source>
-        <translation>清空</translation>
+        <translation type="vanished">清空</translation>
     </message>
 </context>
 <context>
