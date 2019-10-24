@@ -612,7 +612,11 @@ void DIconItemDelegate::paint(QPainter *painter,
     DPalette pl(DApplicationHelper::instance()->palette(option.widget));
     QColor c = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
     if ((isDropTarget && !isSelected) ||option.state & QStyle::StateFlag::State_Selected) {
-        c = pl.color(DPalette::ColorGroup::Active, QPalette::ColorRole::Highlight);
+        if (isCanvas) {
+            c = pl.color(DPalette::ColorGroup::Active, QPalette::ColorRole::Highlight);
+        } else {
+            c.setAlpha(c.alpha()+30);
+        }
     } else if (option.state & QStyle::StateFlag::State_MouseOver) {
         c = c.lighter();
     }
@@ -744,7 +748,7 @@ void DIconItemDelegate::paint(QPainter *painter,
 
     if (isSelected || !d->enabledTextShadow) {// do not draw text background color
         const QList<QRectF> &lines = drawText(index, painter, str, label_rect, ICON_MODE_RECT_RADIUS,
-                                              isSelected ? opt.palette.brush(QPalette::Normal, QPalette::Highlight) : QBrush(Qt::NoBrush),
+                                              isSelected && isCanvas ? opt.palette.brush(QPalette::Normal, QPalette::Highlight) : QBrush(Qt::NoBrush),
                                               QTextOption::WrapAtWordBoundaryOrAnywhere, opt.textElideMode, Qt::AlignCenter);
 
         const QColor &border_color = focusTextBackgroundBorderColor();
