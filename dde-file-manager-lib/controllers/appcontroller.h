@@ -101,8 +101,6 @@ public slots:
     void actionOpenInTerminal(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionProperty(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionNewWindow(const QSharedPointer<DFMUrlListBaseEvent> &event);
-    void actionHelp();
-    void actionAbout(quint64 winId);
     void actionExit(quint64 winId);
     void actionSetAsWallpaper(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionShare(const QSharedPointer<DFMUrlListBaseEvent> &event);

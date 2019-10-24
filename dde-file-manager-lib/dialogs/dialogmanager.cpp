@@ -144,8 +144,6 @@ void DialogManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestShowDevicePropertyDialog, this, &DialogManager::showDevicePropertyDialog);
     connect(fileSignalManager, &FileSignalManager::showDiskErrorDialog,
             this, &DialogManager::showDiskErrorDialog);
-    connect(fileSignalManager, &FileSignalManager::showAboutDialog,
-            this, &DialogManager::showAboutDialog);
     connect(fileSignalManager, &FileSignalManager::requestShow4GFat32Dialog,
             this, &DialogManager::show4gFat32Dialog);
     connect(fileSignalManager, &FileSignalManager::requestShowRestoreFailedDialog,
@@ -795,36 +793,6 @@ void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl
         urls << linkfile;
         fileService->moveToTrash(this, urls);
     }
-}
-
-void DialogManager::showAboutDialog(quint64 winId)
-{
-    QWidget *w = WindowManager::getWindowById(winId);
-    if (!w || w->property("AboutDialogShown").toBool()) {
-        return;
-    }
-
-    QIcon productIcon;
-    productIcon.addFile(":/images/images/dde-file-manager_96.png", QSize(96, 96));
-    productIcon.addFile(":/images/images/dde-file-manager_96@2x.png", QSize(192, 192));
-    DAboutDialog *dialog = new DAboutDialog(w);
-    dialog->setAttribute(Qt::WA_DeleteOnClose);
-    dialog->setWindowTitle("");
-    dialog->setProductIcon(productIcon);
-    dialog->setProductName(qApp->applicationDisplayName());
-    dialog->setVersion(tr("Version:") + " V" + qApp->applicationVersion());
-    dialog->setAcknowledgementLink("https://www.deepin.org/acknowledgments/" + qApp->applicationName());
-    dialog->setDescription(tr("File Manager is a file management tool independently "
-                              "developed by Deepin Technology, featured with searching, "
-                              "copying, trash, compression/decompression, file property "
-                              "and other file management functions."));
-    const QPoint global = w->mapToGlobal(w->rect().center());
-    dialog->move(global.x() - dialog->width() / 2, global.y() - dialog->height() / 2);
-    dialog->show();
-    w->setProperty("AboutDialogShown", true);
-    connect(dialog, &DAboutDialog::closed, [ = ] {
-        w->setProperty("AboutDialogShown", false);
-    });
 }
 
 void DialogManager::showUserSharePasswordSettingDialog(quint64 winId)

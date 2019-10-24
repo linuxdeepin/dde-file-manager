@@ -288,12 +288,6 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
     case DFMGlobal::Settings:
         AppController::instance()->actionSettings(event->windowId());
         break;
-    case DFMGlobal::Help:
-        AppController::instance()->actionHelp();
-        break;
-    case DFMGlobal::About:
-        AppController::instance()->actionAbout(event->windowId());
-        break;
     case DFMGlobal::Exit:
         AppController::instance()->actionExit(event->windowId());
         break;

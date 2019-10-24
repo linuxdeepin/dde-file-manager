@@ -680,19 +680,6 @@ void AppController::actionNewWindow(const QSharedPointer<DFMUrlListBaseEvent> &e
     return actionOpenInNewWindow(event);
 }
 
-void AppController::actionHelp()
-{
-    class PublicApplication : public DApplication {
-        public: using  DApplication::handleHelpAction;
-    };
-    reinterpret_cast<PublicApplication*>(DApplication::instance())->handleHelpAction();
-}
-
-void AppController::actionAbout(quint64 winId)
-{
-    emit fileSignalManager->showAboutDialog(winId);
-}
-
 void AppController::actionExit(quint64 winId)
 {
     emit fileSignalManager->aboutToCloseLastActivedWindow(winId);

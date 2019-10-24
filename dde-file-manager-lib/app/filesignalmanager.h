@@ -157,9 +157,6 @@ signals:
     /*ctrl + L*/
     void requestSearchCtrlL(quint64 winId);
 
-    /* about dialog */
-    void showAboutDialog(quint64 winId);
-
     /*request cache samba login data*/
     void requsetCacheLoginData(const QJsonObject& obj);
 

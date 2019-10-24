@@ -198,8 +198,6 @@ public:
         SourcePath,
         AbsolutePath,
         Settings,
-        Help,
-        About,
         Exit,
         IconView,
         ListView,

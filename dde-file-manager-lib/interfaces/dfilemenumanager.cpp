@@ -520,8 +520,6 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::LastModifiedDate] = QObject::tr("Time modified");
     actionKeys[MenuAction::LastRead] = qApp->translate("DFileSystemModel", "Last access");
     actionKeys[MenuAction::Settings] = QObject::tr("Settings");
-    actionKeys[MenuAction::Help] = QObject::tr("Help");
-    actionKeys[MenuAction::About] = QObject::tr("About");
     actionKeys[MenuAction::Exit] = QObject::tr("Exit");
     actionKeys[MenuAction::IconView] = QObject::tr("Icon");
     actionKeys[MenuAction::ListView] = QObject::tr("List");
