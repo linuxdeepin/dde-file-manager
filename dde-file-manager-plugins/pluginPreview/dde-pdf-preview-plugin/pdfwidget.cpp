@@ -193,7 +193,6 @@ void PdfWidget::showBadPage()
     QLabel* badLabel = new QLabel(this);
     badLabel->setStyleSheet("QLabel{"
                                 "font-size: 20px;"
-                                "color: #d0d0d0;"
                             "}");
     badLabel->setText(tr("Cannot preview this file!"));
 
