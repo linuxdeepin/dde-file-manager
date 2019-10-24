@@ -1018,10 +1018,13 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         DUrl nfileUrl(fileUrl);
 
         if (rootUrl.scheme() == BURN_SCHEME) {
-            QRegularExpression burn_rxp("^(.*?)/(disk_files|staging_files)(.*)");
+            QRegularExpression burn_rxp("^(.*?)/(" BURN_SEG_ONDISC "|" BURN_SEG_STAGING ")(.*)$");
             QString rxp_after(QString("\\1/%1\\3").arg(rootUrl.burnIsOnDisc() ? BURN_SEG_ONDISC : BURN_SEG_STAGING));
             nfileUrl.setPath(nfileUrl.path().replace(burn_rxp, rxp_after));
             nparentUrl.setPath(nparentUrl.path().replace(burn_rxp, rxp_after));
+            if (!nparentUrl.path().endsWith('/')) {
+                nparentUrl.setPath(nparentUrl.path() + "/");
+            }
         }
 
         if (nfileUrl == rootUrl) {
