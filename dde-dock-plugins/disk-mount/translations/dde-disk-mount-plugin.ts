@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="en">
 <context>
     <name>DeepinStorage</name>
     <message>
@@ -29,7 +31,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="317"/>
+        <location filename="../diskcontrolwidget.cpp" line="322"/>
         <source>Device has been removed</source>
         <translation>Device has been removed</translation>
     </message>
