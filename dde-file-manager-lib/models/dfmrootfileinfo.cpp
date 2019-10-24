@@ -375,10 +375,10 @@ DUrl DFMRootFileInfo::redirectedFileUrl() const
         return DUrl::fromLocalFile(d->backer_url);
     } else if (suffix() == SUFFIX_UDISKS) {
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));
+        if (drv->optical()) {
+            return DUrl::fromBurnFile(QString(d->blk->device()) + "/" + BURN_SEG_ONDISC + "/");
+        }
         if (d->mps.size()) {
-            if (drv->optical()) {
-                return DUrl::fromBurnFile(QString(d->blk->device()) + "/" + BURN_SEG_ONDISC + "/");
-            }
             return DUrl::fromLocalFile(d->mps.first());
         }
     }
@@ -462,6 +462,30 @@ QString DFMRootFileInfo::udisksDisplayName()
     };
     const QString ddeI18nSym = QStringLiteral("_dde_");
 
+    static std::initializer_list<std::pair<QString, QString>> opticalmediakeys {
+        {"optical",                "Optical"},
+        {"optical_cd",             "CD-ROM"},
+        {"optical_cd_r",           "CD-R"},
+        {"optical_cd_rw",          "CD-RW"},
+        {"optical_dvd",            "DVD-ROM"},
+        {"optical_dvd_r",          "DVD-R"},
+        {"optical_dvd_rw",         "DVD-RW"},
+        {"optical_dvd_ram",        "DVD-RAM"},
+        {"optical_dvd_plus_r",     "DVD+R"},
+        {"optical_dvd_plus_rw",    "DVD+RW"},
+        {"optical_dvd_plus_r_dl",  "DVD+R/DL"},
+        {"optical_dvd_plus_rw_dl", "DVD+RW/DL"},
+        {"optical_bd",             "BD-ROM"},
+        {"optical_bd_r",           "BD-R"},
+        {"optical_bd_re",          "BD-RE"},
+        {"optical_hddvd",          "HD DVD-ROM"},
+        {"optical_hddvd_r",        "HD DVD-R"},
+        {"optical_hddvd_rw",       "HD DVD-RW"},
+        {"optical_mo",             "MO"}
+    };
+    static QVector<std::pair<QString, QString>> opticalmediakv(opticalmediakeys);
+    static QMap<QString, QString> opticalmediamap(opticalmediakeys);
+
     if (d->label.startsWith(ddeI18nSym)) {
         QString i18nKey = d->label.mid(ddeI18nSym.size(), d->label.size() - ddeI18nSym.size());
         return qApp->translate("DeepinStorage", i18nMap.value(i18nKey, i18nKey.toUtf8().constData()));
@@ -473,35 +497,17 @@ QString DFMRootFileInfo::udisksDisplayName()
     if (d->label.length() == 0) {
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk->drive()));
         if (!drv->mediaAvailable() && drv->mediaCompatibility().join(" ").contains("optical")) {
-            static QVector<QPair<QString, QString>> opticalmediamap {
-                {"optical",                "Optical"},
-                {"optical_cd",             "CD-ROM"},
-                {"optical_cd_r",           "CD-R"},
-                {"optical_cd_rw",          "CD-RW"},
-                {"optical_dvd",            "DVD-ROM"},
-                {"optical_dvd_r",          "DVD-R"},
-                {"optical_dvd_rw",         "DVD-RW"},
-                {"optical_dvd_ram",        "DVD-RAM"},
-                {"optical_dvd_plus_r",     "DVD+R"},
-                {"optical_dvd_plus_rw",    "DVD+RW"},
-                {"optical_dvd_plus_r_dl",  "DVD+R/DL"},
-                {"optical_dvd_plus_rw_dl", "DVD+RW/DL"},
-                {"optical_bd",             "BD-ROM"},
-                {"optical_bd_r",           "BD-R"},
-                {"optical_bd_re",          "BD-RE"},
-                {"optical_hddvd",          "HD DVD-ROM"},
-                {"optical_hddvd_r",        "HD DVD-R"},
-                {"optical_hddvd_rw",       "HD DVD-RW"},
-                {"optical_mo",             "MO"},
-            };
             QString maxmediacompat;
-            for (auto i = opticalmediamap.rbegin(); i != opticalmediamap.rend(); ++i) {
+            for (auto i = opticalmediakv.rbegin(); i != opticalmediakv.rend(); ++i) {
                 if (drv->mediaCompatibility().contains(i->first)) {
                 maxmediacompat = i->second;
                 break;
                 }
             }
             return QCoreApplication::translate("DeepinStorage", "%1 Drive").arg(maxmediacompat);
+        }
+        if (drv->opticalBlank()) {
+            return QCoreApplication::translate("DeepinStorage", "Blank %1 Disc").arg(opticalmediamap[drv->media()]);
         }
         if (d->blk->isEncrypted() && !d->ctblk) {
             return QCoreApplication::translate("DeepinStorage", "%1 Encrypted").arg(FileUtils::formatSize(d->size));
