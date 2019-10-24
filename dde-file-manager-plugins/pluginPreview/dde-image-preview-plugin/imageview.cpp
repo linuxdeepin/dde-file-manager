@@ -58,6 +58,7 @@ void ImageView::setFile(const QString &fileName, const QByteArray &format)
 
         setMovie(movie);
         movie->start();
+        m_sourceSize = movie->frameRect().size();
 
         return;
     } else {
