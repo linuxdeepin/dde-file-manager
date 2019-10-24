@@ -102,6 +102,7 @@ protected:
 
 private:
     void clearLayoutAndAnchors();
+    void initJobConnection();
 
     QString m_OnlyOneItemCounted;
     QString m_counted;
@@ -131,6 +132,7 @@ private:
     QLabel *m_lineEditLabel = Q_NULLPTR;
     QLabel *m_comboBoxLabel = Q_NULLPTR;
     DFileStatisticsJob *m_fileStatisticsJob = nullptr;
+    bool m_isjobDisconnect = true;
 
     Mode m_mode = Normal;
 };
