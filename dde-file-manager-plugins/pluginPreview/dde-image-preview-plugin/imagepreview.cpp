@@ -91,8 +91,7 @@ void ImagePreview::initialize(QWidget *window, QWidget *statusBar)
     m_messageStatusBar = new QLabel(statusBar);
     m_messageStatusBar->setStyleSheet("QLabel{font-family: Helvetica;\
                                    font-size: 12px;\
-                                   font-weight: 300;\
-                                   color: #545454;}");
+                                   font-weight: 300;}");
 
     DAnchorsBase(m_messageStatusBar).setCenterIn(statusBar);
 }

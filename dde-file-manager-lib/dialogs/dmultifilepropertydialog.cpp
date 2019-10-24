@@ -186,7 +186,7 @@ void DMultiFilePropertyDialogPrivate::initUiParameter()noexcept
         QLabel* wifeLabel{ new QLabel{ coupleContent.second } };
 
         husbandLabel->setObjectName(QString{"HusbandLabel"});
-        husbandLabel->setStyleSheet(QString{ "QLabel#HusbandLabel{ font-size: 11px; color: #777777;}"});
+        husbandLabel->setStyleSheet(QString{ "QLabel#HusbandLabel{ font-size: 11px;}"});
 
         if(flag == false){
             m_folderSizeLabel = wifeLabel; //###: this label for showing the quantity of current selected folders and files.
