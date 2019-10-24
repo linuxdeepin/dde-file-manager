@@ -26,8 +26,6 @@
 #define APPCONTROLLER_H
 
 #include <QObject>
-#include "../partman/partitionmanager.h"
-
 
 class FileOperation;
 class UserShareManager;
@@ -40,7 +38,7 @@ class AppController : public QObject
 {
     Q_OBJECT
 public:
-    explicit AppController(QObject *parent = 0);
+    explicit AppController(QObject *parent = nullptr);
     ~AppController();
 
     void initControllers();
@@ -51,12 +49,10 @@ signals:
 public slots:
 
 private:
-    FileOperation *m_fileOperationController = NULL;
-    UserShareManager *m_userShareManager = NULL;
-    UsbFormatter *m_usbFormatter = NULL;
-    CommandManager *m_commandManager = NULL;
-    DeviceInfoManager *m_deviceInfoManager = NULL;
-    TagManagerDaemon *m_tagManagerDaemon{ nullptr };
+    UserShareManager *m_userShareManager = nullptr;
+    UsbFormatter *m_usbFormatter = nullptr;
+    DeviceInfoManager *m_deviceInfoManager = nullptr;
+    TagManagerDaemon *m_tagManagerDaemon = nullptr;
 };
 
 #endif // APPCONTROLLER_H
