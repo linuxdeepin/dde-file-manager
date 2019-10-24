@@ -281,6 +281,30 @@ int DStatusBar::computerFolderContains(const DUrlList &urllist)
     return folderContains;
 }
 
+void DStatusBar::initJobConnection()
+{
+    if (!m_fileStatisticsJob) {
+        return;
+    }
+
+    auto onFoundFile = [this] {
+        if (!sender())
+            return;
+
+        ++m_folderContains;
+        updateStatusMessage();
+    };
+
+    connect(m_fileStatisticsJob, &DFileStatisticsJob::finished, this,
+            [this] {
+                m_folderContains = m_fileStatisticsJob->filesCount() + m_fileStatisticsJob->directorysCount();
+                updateStatusMessage();
+            }
+    );
+    connect(m_fileStatisticsJob, &DFileStatisticsJob::fileFound, this, onFoundFile);
+    connect(m_fileStatisticsJob, &DFileStatisticsJob::directoryFound, this, onFoundFile);
+}
+
 void DStatusBar::itemSelected(const DFMEvent &event, int number)
 {
     if (!m_label || event.windowId() != WindowManager::getWindowId(this))
@@ -296,26 +320,14 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
     if (!m_fileStatisticsJob) {
         m_fileStatisticsJob = new DFileStatisticsJob(this);
         m_fileStatisticsJob->setFileHints(DFileStatisticsJob::ExcludeSourceFile | DFileStatisticsJob::SingleDepth);
-
-        auto onFoundFile = [this] {
-            if (!sender())
-                return;
-
-            ++m_folderContains;
-            updateStatusMessage();
-        };
-
-        connect(m_fileStatisticsJob, &DFileStatisticsJob::finished, this,
-                [this] {
-                    m_folderContains = m_fileStatisticsJob->filesCount() + m_fileStatisticsJob->directorysCount();
-                    updateStatusMessage();
-                }
-        );
-        connect(m_fileStatisticsJob, &DFileStatisticsJob::fileFound, this, onFoundFile);
-        connect(m_fileStatisticsJob, &DFileStatisticsJob::directoryFound, this, onFoundFile);
     } else if (m_fileStatisticsJob->isRunning()) {
         m_fileStatisticsJob->stop();
         m_fileStatisticsJob->wait();
+    }
+
+    if (m_isjobDisconnect) {
+        m_isjobDisconnect = false;
+        initJobConnection();
     }
 
     m_fileCount = 0;
@@ -458,7 +470,9 @@ void DStatusBar::itemCounted(const DFMEvent &event, int number)
         if (m_fileStatisticsJob->isRunning()) {
             m_fileStatisticsJob->stop();
             m_fileStatisticsJob->wait();
-            m_fileStatisticsJob->disconnect();
+            if (m_fileStatisticsJob->disconnect()) {
+                m_isjobDisconnect = true;
+            }
         }
     }
 
