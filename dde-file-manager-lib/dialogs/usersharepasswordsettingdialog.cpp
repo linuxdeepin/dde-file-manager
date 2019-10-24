@@ -35,10 +35,7 @@
 UserSharePasswordSettingDialog::UserSharePasswordSettingDialog(QWidget *parent) : DDialog(parent)
 {
     setTitle(tr("Enter a password to protect shared folders"));
-    QIcon share_password;
-    share_password.addFile(":/images/dialogs/images/share_password.png");
-    share_password.addFile(":/images/dialogs/images/share_password@2x.png");
-    setIcon(share_password);
+    setIcon(QIcon::fromTheme("dialog-password-publicshare"));
     initUI();
 }
 

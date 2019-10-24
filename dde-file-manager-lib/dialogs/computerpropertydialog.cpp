@@ -55,9 +55,7 @@ ComputerPropertyDialog::ComputerPropertyDialog(QWidget *parent) : DDialog(parent
 void ComputerPropertyDialog::initUI()
 {
     QLabel *iconLabel = new QLabel(this);
-    QIcon logoIcon;
-    logoIcon.addFile(":/images/dialogs/images/deepin_logo.png");
-    logoIcon.addFile(":/images/dialogs/images/deepin_logo@2x.png");
+    QIcon logoIcon = QIcon::fromTheme("dfm_deepin_logo");
 
     iconLabel->setPixmap(logoIcon.pixmap(152, 39));
     QLabel *nameLabel = new QLabel(tr("Computer"), this);

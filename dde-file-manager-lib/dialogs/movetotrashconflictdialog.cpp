@@ -42,11 +42,7 @@ MoveToTrashConflictDialog::MoveToTrashConflictDialog(QWidget *parent, const DUrl
         tip = tr("Are you sure you want to permanently delete %1 files?").arg(QString::number(urls.size()));
     }
 
-    QIcon dialogWarningIcon;
-    dialogWarningIcon.addFile(":/images/dialogs/images/dialog_warning.png");
-    dialogWarningIcon.addFile(":/images/dialogs/images/dialog_warning@2x.png");
-
-    setIcon(dialogWarningIcon);
+    setIcon(QIcon::fromTheme("dialog-warning"));
     setTitle(title);
 
     QLabel* label = new QLabel(this);
