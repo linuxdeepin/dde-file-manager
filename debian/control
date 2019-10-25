@@ -66,7 +66,7 @@ Depends:
  deepin-anything-server[i386 amd64]
 Conflicts: dde-file-manager-oem
 Replaces: dde-file-manager-oem
-Recommends: dde-qt5integration, avfs, samba
+Recommends: dde-qt5integration, avfs, samba, libblockdev-crypto2
 Description: File manager front end
  File manager front-end of Deepin OS
 
