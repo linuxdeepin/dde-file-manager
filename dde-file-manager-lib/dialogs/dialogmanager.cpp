@@ -641,6 +641,10 @@ void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
                 event.setData(url);
                 showTrashPropertyDialog(event);
             } else {
+                if (urlList.count() >= 2) {
+                    m_closeIndicatorDialog->show();
+                    m_closeIndicatorTimer->start();
+                }
 
                 PropertyDialog *dialog;
                 if (m_propertyDialogs.contains(url)) {
@@ -661,11 +665,6 @@ void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
                     connect(dialog, &PropertyDialog::closed, this, &DialogManager::removePropertyDialog);
                     //                connect(dialog, &PropertyDialog::raised, this, &DialogManager::raiseAllPropertyDialog);
                     QTimer::singleShot(100, dialog, &PropertyDialog::raise);
-                }
-
-                if (urlList.count() >= 2) {
-                    m_closeIndicatorDialog->show();
-                    m_closeIndicatorTimer->start();
                 }
             }
         }
