@@ -374,8 +374,9 @@ void FilePreviewDialog::initUI()
     connect(m_statusBar->preButton(), &QPushButton::clicked, this, &FilePreviewDialog::previousPage);
     connect(m_statusBar->nextButton(), &QPushButton::clicked, this, &FilePreviewDialog::nextPage);
     connect(m_statusBar->openButton(), &QPushButton::clicked, this, [this] {
-        DFileService::instance()->openFile(this, m_fileList.at(m_currentPageIndex));
-        close();
+        if (DFileService::instance()->openFile(this, m_fileList.at(m_currentPageIndex))) {
+            close();
+        }
     });
     connect(shortcut_action, &QAction::triggered, this, [this] {
         if (m_preview) {
