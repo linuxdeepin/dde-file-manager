@@ -298,13 +298,13 @@ QString DFMRootFileInfo::iconName() const
                 return "media-optical";
             }
             if (static_cast<ItemType>(fileType()) == ItemType::UDisksRemovable) {
-                return "drive-removable-media";
+                return QString("drive-removable-media") + (d->encrypted ? "-encrypted" : "");
             }
             if (d->mps.contains(QByteArray("/\0", 2))) {
                 return "drive-harddisk-root";
             }
         }
-        return "drive-harddisk";
+        return QString("drive-harddisk") + (d->encrypted ? "-encrypted" : "");
     }
     return "";
 }
