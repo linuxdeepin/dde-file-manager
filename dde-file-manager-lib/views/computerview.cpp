@@ -82,6 +82,7 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     m_statusbar->scalingSlider()->setMinimum(0);
     m_statusbar->scalingSlider()->setTickInterval(1);
     m_statusbar->scalingSlider()->setPageStep(1);
+    m_statusbar->scalingSlider()->hide();
     m_statusbar->setMaximumHeight(22);
 
     setLayout(new QVBoxLayout);
