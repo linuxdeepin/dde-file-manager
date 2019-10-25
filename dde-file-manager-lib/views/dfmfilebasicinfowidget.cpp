@@ -58,7 +58,6 @@ SectionValueLabel::SectionValueLabel(const QString &text, QWidget *parent, Qt::W
     setObjectName("SectionValueLabel");
     setFixedWidth(150);
     setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-    setWordWrap(true);
 }
 
 LinkSectionValueLabel::LinkSectionValueLabel(const QString &text, QWidget *parent, Qt::WindowFlags f):
