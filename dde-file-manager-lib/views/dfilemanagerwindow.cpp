@@ -1057,7 +1057,7 @@ void DFileManagerWindow::initCentralWidget()
     midLayout->setContentsMargins(0, 0, 0, 0);
     midLayout->addWidget(d->splitter);
     d->detailView = new DFMRightDetailView(currentUrl());
-    d->detailView->setFixedWidth(350);
+    d->detailView->setFixedWidth(300);
     d->detailView->setVisible(false); //不显示先
     d->rightDetailVLine = new QFrame;
     d->rightDetailVLine->setFrameShape(QFrame::VLine);

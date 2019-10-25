@@ -43,7 +43,7 @@ SectionKeyLabel::SectionKeyLabel(const QString &text, QWidget *parent, Qt::Windo
     QLabel(text, parent, f)
 {
     setObjectName("SectionKeyLabel");
-    setFixedWidth(120);
+    setFixedWidth(80);
     QFont font = this->font();
     font.setBold(true);
     font.setPixelSize(13);
@@ -183,7 +183,7 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
 
     QWidget *layoutWidget = new QWidget;
     QFormLayout *layout = new QFormLayout(layoutWidget);
-    layout->setHorizontalSpacing(12);
+    layout->setHorizontalSpacing(5);
     layout->setVerticalSpacing(16);
     layout->setLabelAlignment(Qt::AlignRight);
     stackedLayout->addWidget(layoutWidget);
@@ -203,7 +203,6 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
 
     SectionKeyLabel *sizeSectionLabel = new SectionKeyLabel(QObject::tr("Size"));
     SectionKeyLabel *typeSectionLabel = new SectionKeyLabel(QObject::tr("Type"));
-    SectionKeyLabel *sourcePathSectionLabel = new SectionKeyLabel(QObject::tr("Source path"));
 
     m_containSizeLabel = new SectionValueLabel(info->sizeDisplayName());
     m_folderSizeLabel = new SectionValueLabel;
@@ -237,10 +236,7 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
         default:
             break;
         }
-#ifdef QT_DEBUG
-        QTime t;
-        t.start();
-#endif
+
         if (mediaType!= DFMMediaInfo::Other){
             DFMMediaInfo *mediaInfo = new DFMMediaInfo(info->filePath(), layoutWidget);
             QObject::connect(mediaInfo, &DFMMediaInfo::Finished, layout, [=](){
@@ -283,9 +279,6 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
                 }
             });
         }
-#ifdef QT_DEBUG
-        qDebug("Time elapsed: %d ms", t.elapsed());
-#endif
     }
 
     /*if (!info->isVirtualEntry())*/ {
@@ -322,10 +315,11 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
         sourcePathLabel->setToolTip(pathStr);
         sourcePathLabel->setWordWrap(false);
         sourcePathLabel->setText(elidedStr);
+        SectionKeyLabel *sourcePathSectionLabel = new SectionKeyLabel(QObject::tr("Source path"));
         layout->addRow(sourcePathSectionLabel, sourcePathLabel);
     }
 
-    layout->setContentsMargins(0, 0, 40, 0);
+    //layout->setContentsMargins(0, 0, 40, 0);
     q->setFixedHeight(frameHeight);
 }
 
