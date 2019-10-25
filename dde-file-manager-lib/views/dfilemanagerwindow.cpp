@@ -891,7 +891,7 @@ void DFileManagerWindow::initTitleFrame()
 
     titleLayout->addWidget(d->toolbar);
     titleLayout->setSpacing(0);
-    titleLayout->setContentsMargins(0, 5, 0, 5);
+    titleLayout->setContentsMargins(0, 7, 0, 7);
     d->titleFrame->setLayout(titleLayout);
     d->titleFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }
