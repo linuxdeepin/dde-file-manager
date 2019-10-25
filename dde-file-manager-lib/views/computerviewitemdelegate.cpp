@@ -57,7 +57,8 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     DPalette pl(DApplicationHelper::instance()->palette(option.widget));
     QColor c = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
     if (option.state & QStyle::StateFlag::State_Selected) {
-        c = pl.color(DPalette::ColorGroup::Active, QPalette::ColorRole::Highlight);
+        // c = pl.color(DPalette::ColorGroup::Active, QPalette::ColorRole::Highlight);
+        c.setAlpha(c.alpha() + 30);
     } else if (option.state & QStyle::StateFlag::State_MouseOver) {
         c = c.lighter();
     }
@@ -90,9 +91,10 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     const int text_max_width = int(iconsize * 3.75);
     const int spacing = iconsize / 3 + 1;
     const int rightmargin = iconsize / 3 + 9;
+    const int fontpixelsize = par->fontInfo().pixelSize();
     textrect.setLeft(option.rect.left() + leftmargin + iconsize + spacing + 1);
     textrect.setTop(option.rect.top() + topmargin);
-    textrect.setHeight(par->fontInfo().pixelSize() * 2);
+    textrect.setHeight(fontpixelsize * 2);
     painter->setFont(par->font());
     painter->setPen(qApp->palette().color(option.state & QStyle::StateFlag::State_Selected ? QPalette::ColorRole::HighlightedText : QPalette::ColorRole::Text));
     QString text = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, text_max_width);
@@ -101,7 +103,7 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     //otextrect.moveLeft(otextrect.right() + 12);
     //int fstw = par->fontMetrics().width(index.data(ComputerModel::DataRoles::FileSystemRole).toString());
     //otextrect.setWidth(fstw);
-    //otextrect.setHeight(par->fontInfo().pixelSize() + 4);
+    //otextrect.setHeight(fontpixelsize + 4);
     //otextrect.adjust(-4, 0, 4, 0);
     //painter->setBrush(QColor(0xFF99EE));
     //painter->setPen(QColor(0xAA3399));
@@ -109,14 +111,14 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     //painter->drawText(otextrect, Qt::AlignCenter, index.data(ComputerModel::DataRoles::FileSystemRole).toString());
 
     QFont smallf(par->font());
-    smallf.setPixelSize(int(par->fontInfo().pixelSize() * 0.85));
+    smallf.setPixelSize(int(fontpixelsize * 0.85));
     painter->setFont(smallf);
     textrect.setLeft(option.rect.left() + leftmargin + iconsize + spacing);
     textrect.setRight(option.rect.right() - rightmargin);
-    textrect.setTop(option.rect.top() + topmargin + par->fontMetrics().height() + 5);
-    textrect.setHeight(par->fontInfo().pixelSize());
+    textrect.setTop(option.rect.top() + topmargin + par->fontMetrics().height() + 3);
+    textrect.setHeight(fontpixelsize);
 
-    painter->setPen(qApp->palette().color(QPalette::ColorGroup::Disabled, QPalette::ColorRole::Text));
+    painter->setPen(pl.color(DPalette::TextTips));
     painter->drawText(textrect, Qt::AlignLeft, FileUtils::diskUsageString(index.data(ComputerModel::DataRoles::SizeInUseRole).toULongLong(),
                                                                           index.data(ComputerModel::DataRoles::SizeTotalRole).toULongLong()));
 
@@ -124,7 +126,7 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     if (usgpl->width() != text_max_width) {
         usgpl->setFixedWidth(text_max_width);
     }
-    usgpl->render(painter, option.rect.topLeft() + QPoint(iconsize + leftmargin + spacing, topmargin + 14 + 2 * par->fontInfo().pixelSize()) + par->mapTo(par->window(), QPoint(0, 0)));
+    usgpl->render(painter, option.rect.topLeft() + QPoint(iconsize + leftmargin + spacing, topmargin + 14 + 2 * fontpixelsize) + par->mapTo(par->window(), QPoint(0, 0)));
 
     painter->drawPixmap(option.rect.x() + leftmargin, option.rect.y() + topmargin, icon.pixmap(iconsize));
 }
