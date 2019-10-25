@@ -27,6 +27,16 @@
 #include <XdgDesktopFile>
 DFM_BEGIN_NAMESPACE
 
+#define SET_PROPERTY_IFEXIST(action, file, key)\
+do{\
+    QStringList values = d->getValues(file, key);\
+    if (file.contains(key)) {\
+        action->setProperty(key.data(), values);\
+    }\
+}while(false)
+
+#define MIME_TYPE_KEY "MimeType"
+
 class DFMAdditionalMenuPrivate : public QSharedData{
     Q_DECLARE_PUBLIC(DFMAdditionalMenu)
 public:
@@ -38,9 +48,10 @@ public:
     };
 
     const QLatin1String MENU_TYPE_KEY {"X-DFM-MenuTypes"};
-    const QLatin1String MIME_TYPE_KEY {"X-DFM-MimeTypes"};
     const QLatin1String MIMETYPE_EXCLUDE_KEY {"X-DFM-ExcludeMimeTypes"};
     const QLatin1String MENU_HIDDEN_KEY {"X-DFM-NotShowIn"};     // "Desktop", "Filemanager"
+    const QLatin1String SUPPORT_SCHEMES_KEY {"X-DFM-SupportSchemes"};
+
 
     DFMAdditionalMenuPrivate(DFMAdditionalMenu *qq);
 
@@ -48,6 +59,7 @@ public:
     bool isMimeTypeSupport(const QString &mt, const QStringList &fileMimeTypes);
     bool isMimeTypeMatch(const QStringList &fileMimeTypes, const QStringList &supportMimeTypes);
     bool isActionShouldShow(QAction *action, bool onDesktop);
+    bool isSchemeSupport(QAction *action, const DUrl &url);
     QList<QAction *> emptyAreaActoins(const QString &currentDir, bool onDesktop);
 private:
     QList<QAction *> actionList;
@@ -113,7 +125,7 @@ bool DFMAdditionalMenuPrivate::isActionShouldShow(QAction *action, bool onDeskto
     }
 
     // X-DFM-NotShowIn not exist
-    if (action->property(MENU_HIDDEN_KEY.data()).isNull()) {
+    if (!action->property(MENU_HIDDEN_KEY.data()).isValid()) {
         return true;
     }
 
@@ -123,13 +135,24 @@ bool DFMAdditionalMenuPrivate::isActionShouldShow(QAction *action, bool onDeskto
             (!onDesktop && !notShowInList.contains("Filemanager", Qt::CaseInsensitive));
 }
 
+bool DFMAdditionalMenuPrivate::isSchemeSupport(QAction *action, const DUrl &url)
+{
+    // X-DFM-SupportSchemes exist
+    if (!action->property(SUPPORT_SCHEMES_KEY.data()).isValid()) {
+        return true;
+    }
+
+    QStringList supportList =  action->property(SUPPORT_SCHEMES_KEY.data()).toStringList();
+    return supportList.contains(url.scheme(), Qt::CaseInsensitive);
+}
+
 QList<QAction *>DFMAdditionalMenuPrivate::emptyAreaActoins(const QString &currentDir, bool onDesktop)
 {
     QString menuType = "EmptyArea";
     QList<QAction *> actions = actionListByType[menuType];
     for (auto it = actions.begin(); it != actions.end(); ) {
         QAction * action = *it;
-        if(!action || !isActionShouldShow(action, onDesktop)) {
+        if(!action || !isActionShouldShow(action, onDesktop) || !isSchemeSupport(action, DUrl(currentDir))) {
             it = actions.erase(it);
             continue;
         }
@@ -163,12 +186,7 @@ DFMAdditionalMenu::DFMAdditionalMenu(QObject *parent)
             }
 
             QStringList menuTypes = d->getValues(file, d->MENU_TYPE_KEY, d->AllMenuTypes);
-            // MIMETYPE_EXCLUDE_KEY  "X-DFM-ExcludeMimeTypes"
-            QStringList excludeMimeTypes = d->getValues(file, d->MIMETYPE_EXCLUDE_KEY);
-            // MENU_HIDDEN_KEY  = "X-DFM-NotShowIn"
-            QStringList notShowInList = d->getValues(file, d->MENU_HIDDEN_KEY);
-
-            if (menuTypes.isEmpty()) {
+            if (!file.contains(d->MENU_TYPE_KEY)) {
                 qDebug() << "[OEM Menu Support] Entry will probably not be shown due to empty or have no valid"
                          << d->MENU_TYPE_KEY << "key in the desktop file.";
                 qDebug() << "[OEM Menu Support] Details:" << fileInfo.filePath() << "with entry name" << file.name();
@@ -197,15 +215,11 @@ DFMAdditionalMenu::DFMAdditionalMenu(QObject *parent)
             });
 
             d->actionList.append(action);
-            if (file.contains("MimeType")) {
-                action->setProperty(d->MIME_TYPE_KEY.data(), file.mimeTypes());
-            }
-            if (file.contains(d->MIMETYPE_EXCLUDE_KEY)) {
-                action->setProperty(d->MIMETYPE_EXCLUDE_KEY.data(), excludeMimeTypes);
-            }
-            if (file.contains(d->MENU_HIDDEN_KEY)) {
-                action->setProperty(d->MENU_HIDDEN_KEY.data(), notShowInList);
-            }
+
+            SET_PROPERTY_IFEXIST(action, file, QLatin1String(MIME_TYPE_KEY));
+            SET_PROPERTY_IFEXIST(action, file, d->MENU_HIDDEN_KEY);
+            SET_PROPERTY_IFEXIST(action, file, d->MIMETYPE_EXCLUDE_KEY);
+            SET_PROPERTY_IFEXIST(action, file, d->SUPPORT_SCHEMES_KEY);
 
             for (const QString &oneType : menuTypes) {
                 d->actionListByType[oneType].append(action);
@@ -236,7 +250,6 @@ void DFMAdditionalMenu::appendParentMineType(const QStringList &parentmimeTypes,
 
 QList<QAction *> DFMAdditionalMenu::actions(const QStringList &files, const QString &currentDir, bool onDesktop/* = false*/)
 {
-    Q_UNUSED(currentDir);
     Q_D(DFMAdditionalMenu);
     QString menuType = "EmptyArea";
     if (files.size() == 0) {
@@ -270,7 +283,7 @@ QList<QAction *> DFMAdditionalMenu::actions(const QStringList &files, const QStr
 
         for (auto it = actions.begin(); it != actions.end(); ) {
             QAction * action = *it;
-            if(!action || !d->isActionShouldShow(action, onDesktop)) {
+            if(!action || !d->isActionShouldShow(action, onDesktop) || !d->isSchemeSupport(action, DUrl(f))) {
                 it = actions.erase(it);
                 continue;
             }
@@ -285,13 +298,13 @@ QList<QAction *> DFMAdditionalMenu::actions(const QStringList &files, const QStr
             }
 
             // MimeType not exist == MimeType=*
-            if (action->property(d->MIME_TYPE_KEY.data()).isNull()) {
+            if (!action->property(MIME_TYPE_KEY).isValid()) {
                 ++it;
                 continue;
             }
 
             // match support mime types
-            QStringList supportMimeTypes =  action->property(d->MIME_TYPE_KEY.data()).toStringList();
+            QStringList supportMimeTypes =  action->property(MIME_TYPE_KEY).toStringList();
             supportMimeTypes.removeAll({});
             match = d->isMimeTypeMatch(fileMimeTypes, supportMimeTypes);
             if (!match) {
