@@ -81,7 +81,7 @@ public slots:
 private slots:
     void onItemActivated(const QModelIndex &index);
     void onContextMenuRequested(const QPoint &pos);
-    void onModelDataChanged(const QModelIndex &a, const QModelIndex &b, QVector<int> roles);
+    void onRename(const QModelIndex &index, QString newName) const ;
 
 private:
     void initUI();
