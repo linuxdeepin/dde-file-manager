@@ -59,6 +59,17 @@ QSize DFMSideBarItemDelegate::sizeHint(const QStyleOptionViewItem &option, const
     }
 }
 
+void DFMSideBarItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
+{
+    Q_UNUSED(model);
+    QByteArray n = editor->metaObject()->userProperty().name();
+    if (!n.isEmpty()) {
+        emit rename(index, editor->property(n).toString());
+    }
+
+    return;
+}
+
 void DFMSideBarItemDelegate::paintSeparator(QPainter *painter, const QStyleOptionViewItem &option) const
 {
     painter->save();

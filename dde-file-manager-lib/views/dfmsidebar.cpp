@@ -337,18 +337,14 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
     return;
 }
 
-void DFMSideBar::onModelDataChanged(const QModelIndex &a, const QModelIndex &b, QVector<int> roles)
+void DFMSideBar::onRename(const QModelIndex &index, QString newName) const
 {
-    if (a != b || !roles.contains(Qt::ItemDataRole::DisplayRole)) {
-        return;
-    }
-
-    DFMSideBarItem * item = m_sidebarModel->itemFromIndex(a);
+    DFMSideBarItem * item = m_sidebarModel->itemFromIndex(index);
     QString identifierStr = item->registeredHandler(SIDEBAR_ID_INTERNAL_FALLBACK);
 
     QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
-    if (interface) {
-        interface->rename(item, item->data(Qt::DisplayRole).toString());
+    if (interface && !newName.isEmpty() && item->text()!= newName) {
+        interface->rename(item, newName);
     }
 }
 
@@ -412,7 +408,10 @@ void DFMSideBar::initConnection()
     connect(m_sidebarModel, &QStandardItemModel::rowsInserted, this, &DFMSideBar::updateSeparatorVisibleState);
     connect(m_sidebarModel, &QStandardItemModel::rowsRemoved, this, &DFMSideBar::updateSeparatorVisibleState);
     connect(m_sidebarModel, &QStandardItemModel::rowsMoved, this, &DFMSideBar::updateSeparatorVisibleState);
-    connect(m_sidebarModel, &QAbstractItemModel::dataChanged, this, &DFMSideBar::onModelDataChanged);
+    DFMSideBarItemDelegate *idelegate = dynamic_cast<DFMSideBarItemDelegate *>(m_sidebarView->itemDelegate());
+    if (idelegate) {
+        connect(idelegate, &DFMSideBarItemDelegate::rename, this, &DFMSideBar::onRename);
+    }
 
     connect(fileSignalManager, &FileSignalManager::requestRename, this, [this](const DFMUrlBaseEvent &event){
         if (event.sender() == this) {
@@ -599,15 +598,17 @@ void DFMSideBar::initTagsConnection()
         this->saveItemOrder(groupNameStr);
     });
 
-//    // Tag got rename
-//    q->connect(tagsWatcher, &DAbstractFileWatcher::fileMoved, group,
-//    [this, group, q](const DUrl & source, const DUrl & target) {
-//        DFMSideBarItem *item = q->itemAt(source);
-//        if (item) {
-//            item->setUrl(target);
-//            group->saveItemOrder();
-//        }
-//    });
+    // Tag got rename
+    connect(tagsWatcher, &DAbstractFileWatcher::fileMoved, this,
+            [this, groupNameStr](const DUrl & source, const DUrl & target) {
+
+        int index = findItem(source, groupNameStr);
+        if (index>=0) {
+            DFMSideBarItem * item = m_sidebarModel->itemFromIndex(index);
+            item->setText(target.tagName());
+            item->setUrl(target);
+        }
+    });
 
 //    // Tag changed color
 //    q->connect(tagsWatcher, &DAbstractFileWatcher::fileAttributeChanged, group, [group](const DUrl & url) {
