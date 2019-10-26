@@ -36,7 +36,9 @@ COMPARE_FUN_DEFINE(readDateTime, LastReadTime, RecentFileInfo)
 RecentFileInfo::RecentFileInfo(const DUrl &url)
     : DAbstractFileInfo(url)
 {
-    setProxy(DFileService::instance()->createFileInfo(nullptr, DUrl::fromLocalFile(url.path())));
+    if (url.path() != "/") {
+        setProxy(DFileService::instance()->createFileInfo(nullptr, DUrl::fromLocalFile(url.path())));
+    }
     updateInfo();
 }
 
@@ -76,6 +78,16 @@ bool RecentFileInfo::canIteratorDir() const
 bool RecentFileInfo::canDrop() const
 {
     return false;
+}
+
+bool RecentFileInfo::canRedirectionFileUrl() const
+{
+    return d_ptr->proxy;
+}
+
+DUrl RecentFileInfo::redirectedFileUrl() const
+{
+    return d_ptr->proxy ? d_ptr->proxy->fileUrl() : fileUrl();
 }
 
 QFileDevice::Permissions RecentFileInfo::permissions() const
