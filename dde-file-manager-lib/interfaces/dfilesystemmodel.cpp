@@ -1362,10 +1362,6 @@ QVariant DFileSystemModel::headerData(int column, Qt::Orientation, int role) con
 
             return QVariant();
         }
-    } else if (role == Qt::BackgroundRole) {
-        return QBrush(Qt::white);
-    } else if (role == Qt::ForegroundRole) {
-        return QBrush(Qt::black);
     }
 
     return QVariant();
