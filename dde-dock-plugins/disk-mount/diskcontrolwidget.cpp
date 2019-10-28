@@ -162,16 +162,18 @@ void DiskControlWidget::unmountAll()
 {
     QStringList blockDevices = m_diskManager->blockDevices();
 
-    for (const QString & blDevStr : blockDevices) {
+    QtConcurrent::run([blockDevices]() {
+        for (const QString & blDevStr : blockDevices) {
         QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
         if (blDev->hasFileSystem() /* && DFMSetting*/ && !blDev->mountPoints().isEmpty() && !blDev->hintIgnore() && !blDev->hintSystem()) {
-            QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
-            blDev->unmount({});
-            if (diskDev->removable()) {
-                diskDev->eject({});
+                QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
+                blDev->unmount({});
+                if (diskDev->removable()) {
+                    diskDev->eject({});
+                }
             }
         }
-    }
+    });
 
     QList<QExplicitlySharedDataPointer<DGioMount> > vfsMounts = getVfsMountList();
     for (auto mount : vfsMounts) {
@@ -378,12 +380,14 @@ void DiskControlWidget::onVfsMountChanged(QExplicitlySharedDataPointer<DGioMount
 
 void DiskControlWidget::unmountDisk(const QString &diskId) const
 {
-    QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(diskId));
-    QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
-    blDev->unmount({});
-    if (diskDev->optical()) { // is optical
-        if (diskDev->ejectable()) {
-            diskDev->eject({});
+    QtConcurrent::run([diskId](){
+        QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(diskId));
+        QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
+        blDev->unmount({});
+        if (diskDev->optical()) { // is optical
+            if (diskDev->ejectable()) {
+                diskDev->eject({});
+            }
         }
-    }
+    });
 }
