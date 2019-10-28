@@ -77,6 +77,7 @@
 #include <QScrollBar>
 #include <QScroller>
 #include <QtConcurrent>
+#include <QMutex>
 #include <private/qguiapplication_p.h>
 #include <qpa/qplatformtheme.h>
 
@@ -2140,7 +2141,9 @@ bool DFileView::setRootUrl(const DUrl &url)
         Q_ASSERT(fileUrl.burnDestDevice().length() > 0);
         QString devpath = fileUrl.burnDestDevice();
         QString udiskspath = devpath;
+        getOpticalDriveMutex()->lock();
         DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(devpath);
+        getOpticalDriveMutex()->unlock();
         udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
         QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
         if (!dp.devid.length()) {
@@ -2152,11 +2155,13 @@ bool DFileView::setRootUrl(const DUrl &url)
                 Q_UNUSED(fw); //ensure future watcher is destructed only in the future
             });
             fw->setFuture(QtConcurrent::run([=] {
+                getOpticalDriveMutex()->lock();
                 blkdev->unmount({});
                 ISOMaster->acquireDevice(devpath);
                 ISOMaster->getDeviceProperty();
                 ISOMaster->releaseDevice();
                 blkdev->mount({});
+                getOpticalDriveMutex()->unlock();
             }));
             return false;
         }
