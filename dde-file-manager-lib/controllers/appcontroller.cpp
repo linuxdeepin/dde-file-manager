@@ -638,11 +638,13 @@ void AppController::actionProperty(const QSharedPointer<DFMUrlListBaseEvent> &ev
             url = info->redirectedFileUrl();
         }
 
-        QStorageInfo partition(url.path());
-        if (partition.isValid() && partition.rootPath() == url.path()) {
-            QString dev(partition.device());
-            dev = dev.mid(dev.lastIndexOf('/') + 1);
-            url = DUrl(DFMROOT_ROOT + dev + "." + SUFFIX_UDISKS);
+        if (url.isLocalFile()) {
+            QStorageInfo partition(url.path());
+            if (partition.isValid() && partition.rootPath() == url.path()) {
+                QString dev(partition.device());
+                dev = dev.mid(dev.lastIndexOf('/') + 1);
+                url = DUrl(DFMROOT_ROOT + dev + "." + SUFFIX_UDISKS);
+            }
         }
 
         DUrl gvfsmpurl;
