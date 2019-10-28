@@ -39,7 +39,8 @@ DFM_BEGIN_NAMESPACE
 DFMSideBarItem *DFMSideBarTagItemHandler::createItem(const DUrl &url)
 {
     QString iconName = TagManager::instance()->getTagIconName(url.fileName());
-    QIcon icon = QIcon::fromTheme(iconName);
+    QIcon icon;// = QIcon::fromTheme(iconName); // DBuiltinIconEngine will crash
+    icon.addPixmap(QIcon::fromTheme(iconName).pixmap({16, 16}));
     DFMSideBarItem * item = new DFMSideBarItem(icon, url.fileName(), url);
 
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsEditable);
