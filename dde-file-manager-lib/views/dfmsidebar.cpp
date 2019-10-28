@@ -498,6 +498,7 @@ void DFMSideBar::initBookmarkConnection()
         if (index > 0) {
             DFMSideBarItem * item = m_sidebarModel->itemFromIndex(index);
             if (item) {
+                item->setText(target.bookmarkName());
                 item->setUrl(target);
                 this->saveItemOrder(groupName(Bookmark));
             }
@@ -607,6 +608,7 @@ void DFMSideBar::initTagsConnection()
             DFMSideBarItem * item = m_sidebarModel->itemFromIndex(index);
             item->setText(target.tagName());
             item->setUrl(target);
+            this->saveItemOrder(groupNameStr);
         }
     });
 
