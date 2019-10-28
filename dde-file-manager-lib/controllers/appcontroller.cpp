@@ -77,6 +77,7 @@
 #include <DAboutDialog>
 #include <qprocess.h>
 #include <QtConcurrent>
+#include <QMutex>
 
 #include <DApplication>
 #include <DDesktopServices>
@@ -489,6 +490,7 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
     QSharedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->optical()) {
         QtConcurrent::run([=] {
+            getOpticalDriveMutex()->lock();
             DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(fileUrl.query());
             if (dp.devid.length() == 0) {
                 if (blkdev->mountPoints().size()) {
@@ -498,6 +500,7 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
                 dp = ISOMaster->getDeviceProperty();
                 ISOMaster->releaseDevice();
             }
+            getOpticalDriveMutex()->unlock();
             if (!dp.formatted) {
                 //blkdev->mount({});
                 //We have to stick with 'UDisk'Listener until actionOpenDiskInNew*

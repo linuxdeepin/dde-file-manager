@@ -1,5 +1,7 @@
 #include "define.h"
 
+#include <QMutex>
+
 #include "dialogs/dialogmanager.h"
 #include "gvfs/gvfsmountmanager.h"
 #include "deviceinfo/udisklistener.h"
@@ -9,6 +11,8 @@ Q_GLOBAL_STATIC(DialogManager, gsDialogManager)
 Q_GLOBAL_STATIC(GvfsMountManager, gsGvfsMountManager)
 Q_GLOBAL_STATIC(UDiskListener, gsUDiskListener)
 Q_GLOBAL_STATIC(DISOMasterNS::DISOMaster, gsDISOMaster)
+
+static QMutex odmutex;
 
 DialogManager *getDialogManager(bool doConstruct)
 {
@@ -56,4 +60,9 @@ DISOMasterNS::DISOMaster *getDISOMaster(bool doConstruct)
         return gsDISOMaster();
     }
     return gsDISOMaster.exists() ? gsDISOMaster() : nullptr;
+}
+
+QMutex *getOpticalDriveMutex()
+{
+    return &odmutex;
 }

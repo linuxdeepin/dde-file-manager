@@ -28,6 +28,7 @@
 class DialogManager;
 class GvfsMountManager;
 class UDiskListener;
+class QMutex;
 namespace DISOMasterNS {
 class DISOMaster;
 }
@@ -36,6 +37,7 @@ DialogManager *getDialogManager(bool doConstruct = false);
 GvfsMountManager *getGvfsMountManager(bool doConstruct = false);
 UDiskListener *getUDiskListener(bool doConstruct = false);
 DISOMasterNS::DISOMaster *getDISOMaster(bool doContruct = false);
+QMutex *getOpticalDriveMutex();
 
 #define searchHistoryManager  Singleton<SearchHistroyManager>::instance()
 #define bookmarkManager  Singleton<BookMarkManager>::instance()
