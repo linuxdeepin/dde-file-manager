@@ -181,6 +181,7 @@ void DFMCrumbBarPrivate::initUI()
 
     // Crumb List Layout
     crumbListView.setObjectName("DCrumbListScrollArea");
+    crumbListView.setItemSpacing(0);
     crumbListView.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     crumbListView.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     crumbListView.setFocusPolicy(Qt::NoFocus);
@@ -188,8 +189,7 @@ void DFMCrumbBarPrivate::initUI()
     crumbListView.setSizeAdjustPolicy(QAbstractScrollArea::AdjustIgnored);
     crumbListView.setIconSize({16, 16});
 
-    crumbListView.QListView::setFlow(QListView::LeftToRight);
-    crumbListView.QListView::setWrapping(false);
+    crumbListView.setOrientation(QListView::LeftToRight, false);
     crumbListView.setEditTriggers(QAbstractItemView::NoEditTriggers);
     crumbListView.setDragDropMode(QAbstractItemView::DragDropMode::NoDragDrop);
 
