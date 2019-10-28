@@ -26,6 +26,7 @@
 #include <dblockdevice.h>
 #include <ddiskdevice.h>
 #include <QStorageInfo>
+#include <QtConcurrentRun>
 
 DFM_USE_NAMESPACE
 
@@ -55,23 +56,25 @@ bool DAttachedUdisks2Device::detachable()
 
 void DAttachedUdisks2Device::detach()
 {
-    blockDevice()->unmount({});
-    QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blockDevice()->drive()));
+    QtConcurrent::run([this](){
+        blockDevice()->unmount({});
+        QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blockDevice()->drive()));
 
-    if (diskDev->optical()) { // is optical
-        if (diskDev->ejectable()) {
-            diskDev->eject({});
-            return;
+        if (diskDev->optical()) { // is optical
+            if (diskDev->ejectable()) {
+                diskDev->eject({});
+                return;
+            }
         }
-    }
 
-    if (diskDev->removable()) {
-        diskDev->eject({});
-    }
+        if (diskDev->removable()) {
+            diskDev->eject({});
+        }
 
-    if (diskDev->canPowerOff()) {
-        diskDev->powerOff({});
-    }
+        if (diskDev->canPowerOff()) {
+            diskDev->powerOff({});
+        }
+    });
 }
 
 QString DAttachedUdisks2Device::displayName()

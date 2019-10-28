@@ -473,7 +473,10 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
 
         if (drv && drv->mediaCompatibility().join(" ").contains("optical") && !drv->mediaAvailable() && drv->ejectable()) {
-            drv->eject({});
+            QtConcurrent::run([](QString drvs) {
+                QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(drvs));
+                drv->eject({});
+            }, blk->drive());
             return;
         }
 
@@ -523,7 +526,7 @@ void AppController::actionMountImage(const QSharedPointer<DFMUrlBaseEvent> &even
     gioproc->start("gio", args);
     connect(gioproc, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, [=](int ret) {
         if (ret) {
-            dialogManager->showErrorDialog(tr("Mount Error"), tr("Unsupported image format"));
+            dialogManager->showErrorDialog(tr("Mount error: unsupported image format"), QString());
         } else {
             for (auto m : DGioVolumeManager::getMounts()) {
                 if (m && m->getRootFile() && QUrl::fromPercentEncoding(m->getRootFile()->uri().toUtf8()).startsWith(archiveuri)) {
@@ -549,6 +552,9 @@ void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
                 blkdev.reset(DDiskManager::createBlockDevice(blkdev->cleartextDevice()));
             }
             blkdev->unmount({});
+            QDBusError err = blkdev->lastError();
+            if (err.isValid())
+                dialogManager->showErrorDialog(tr("Disk is busy, cannot unmount now"), QString());
         } else if (fi->suffix() == SUFFIX_GVFSMP) {
             deviceListener->unmount(fi->extraProperties()["rooturi"].toString());
         }
@@ -573,17 +579,22 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
     const DUrl &fileUrl = event->url();
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
-        QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
-        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
-        QScopedPointer<DBlockDevice> cbblk(DDiskManager::createBlockDevice(blk->cryptoBackingDevice()));
-        if (!blk->mountPoints().empty()) {
-            blk->unmount({});
-        }
-        if (blk->cryptoBackingDevice().length() > 1) {
-            cbblk->lock({});
-            drv.reset(DDiskManager::createDiskDevice(cbblk->drive()));
-        }
-        drv->eject({});
+        QtConcurrent::run([fi](){
+            QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
+            QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+            QScopedPointer<DBlockDevice> cbblk(DDiskManager::createBlockDevice(blk->cryptoBackingDevice()));
+            if (!blk->mountPoints().empty()) {
+                blk->unmount({});
+            }
+            if (blk->cryptoBackingDevice().length() > 1) {
+                cbblk->lock({});
+                drv.reset(DDiskManager::createDiskDevice(cbblk->drive()));
+            }
+            drv->eject({});
+            QDBusError err = blk->lastError();
+            if (err.isValid())
+                dialogManager->showErrorDialog(tr("Disk is busy, cannot eject now"), QString());
+        });
     } else {
         deviceListener->eject(fileUrl.query(DUrl::FullyEncoded));
     }
@@ -948,7 +959,10 @@ void AppController::actionStageFileForBurning()
 
     QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(destdev));
     if (!dev->optical()) {
-        dev->eject({});
+        QtConcurrent::run([destdev]() {
+            QScopedPointer<DDiskDevice> dev(DDiskManager::createDiskDevice(destdev));
+            dev->eject({});
+        });
         return;
     }
 
