@@ -34,6 +34,7 @@ DFM_BEGIN_NAMESPACE
 class DFMTagWidgetPrivate;
 class DFMTagWidget : public QFrame
 {
+    Q_OBJECT
 public:
     DFMTagWidget(DUrl url, QWidget *parent=nullptr);
     ~DFMTagWidget();
