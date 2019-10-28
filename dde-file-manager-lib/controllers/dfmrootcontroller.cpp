@@ -113,6 +113,9 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         if (gvfsmp->getVolume() && gvfsmp->getVolume()->volumeMonitorName().endsWith("UDisks2")) {
             continue;
         }
+        if (gvfsmp->mountClass() == "GUnixMount") {
+            continue;
+        }
         if (DUrl(gvfsmp->getRootFile()->uri()).scheme() == BURN_SCHEME) {
             continue;
         }
@@ -168,6 +171,9 @@ bool DFMRootFileWatcherPrivate::start()
             return;
         }
         if (DUrl(mnt->getRootFile()->uri()).scheme() == BURN_SCHEME) {
+            return;
+        }
+        if (mnt->mountClass() == "GUnixMount") {
             return;
         }
         if (mnt->getRootFile()->path().length() == 0) {
