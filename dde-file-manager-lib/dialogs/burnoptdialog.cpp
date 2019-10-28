@@ -147,6 +147,11 @@ void BurnOptDialogPrivate::setupUi()
 
     le_volname = new QLineEdit();
     le_volname->setMaxLength(32);
+    QObject::connect(le_volname, &QLineEdit::textChanged, [this] {
+        while (le_volname->text().toUtf8().length() > 32) {
+            le_volname->setText(le_volname->text().chopped(1));
+        }
+    });
     w_content->layout()->addWidget(le_volname);
 
     lb_writespeed = new QLabel(QObject::tr("Write speed:"));
