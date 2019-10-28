@@ -40,6 +40,8 @@
 #include <dplatformwindowhandle.h>
 #include <DTitlebar>
 #include <QtDBus/QtDBus>
+#include <DWaterProgress>
+#include <DIconButton>
 DFM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
@@ -126,8 +128,8 @@ private:
     QLabel* m_msg2Label;
     QLabel *m_errorLabel = nullptr;
 
-    QPushButton* m_closeButton;
-    QPushButton* m_pauseBuuton;
+    DIconButton* m_closeButton;
+    DIconButton* m_pauseBuuton;
     QPushButton* m_keepBothButton;
     QPushButton* m_skipButton;
     QPushButton* m_replaceButton;
@@ -147,7 +149,8 @@ private:
 
     QCheckBox* m_checkBox=NULL;
     QPushButton* m_enterButton=NULL;
-    CircleProgressAnimatePad* m_animatePad;
+    DWaterProgress *m_dwaterProgress;
+
     QLabel* m_bgLabel;
     QFrame* m_lineLabel = NULL;
 

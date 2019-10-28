@@ -135,13 +135,17 @@ MoveCopyTaskWidget::MoveCopyTaskWidget(DFileCopyMoveJob *job, QWidget *parent)
         updateMessageByJob();
     });
     connect(job, &DFileCopyMoveJob::stateChanged, this, [this](DFileCopyMoveJob::State state) {
-        m_animatePad->setPauseState(state == DFileCopyMoveJob::PausedState);
+        if (state == DFileCopyMoveJob::PausedState) {
+            m_pauseBuuton->setIcon(QIcon::fromTheme("dfm_task_start"));
+        } else {
+            m_pauseBuuton->setIcon(QIcon::fromTheme("dfm_task_pause"));
+        }
     });
     connect(job, &DFileCopyMoveJob::errorChanged, this, [this](DFileCopyMoveJob::Error error) {
-        m_animatePad->setCanPause(error == DFileCopyMoveJob::NoError);
+        m_pauseBuuton->setEnabled(error == DFileCopyMoveJob::NoError);
     }, Qt::QueuedConnection);
     connect(m_closeButton, &QPushButton::clicked, job, &DFileCopyMoveJob::stop);
-//    connect(m_pauseBuuton, &QPushButton::clicked, job, &DFileCopyMoveJob::togglePause);
+    connect(m_pauseBuuton, &QPushButton::clicked, job, &DFileCopyMoveJob::togglePause);
     connect(m_skipButton, &QPushButton::clicked, this, [this] {
         disposeJobError(DFileCopyMoveJob::SkipAction);
     });
@@ -160,15 +164,14 @@ MoveCopyTaskWidget::MoveCopyTaskWidget(DFileCopyMoveJob *job, QWidget *parent)
             disposeJobError(DFileCopyMoveJob::RetryAction);
         }
     });
-    connect(m_animatePad, &CircleProgressAnimatePad::clicked, job, &DFileCopyMoveJob::togglePause);
 
     m_jobInfo->totalDataSize = job->totalDataSize();
 
     if (!m_fileJob->fileStatisticsIsFinished()) {
-        m_animatePad->startAnimation();
+        m_dwaterProgress->start();
     }
 
-    m_animatePad->setCanPause(m_fileJob->error() == DFileCopyMoveJob::NoError);
+    m_pauseBuuton->setEnabled(m_fileJob->error() == DFileCopyMoveJob::NoError);
 }
 
 MoveCopyTaskWidget::~MoveCopyTaskWidget()
@@ -199,23 +202,26 @@ void MoveCopyTaskWidget::initUI()
         m_bgLabel->setStyleSheet("background-color:rgba(255,255,255,13); border-radius: 8px;");
     }
 
-    m_closeButton = new QPushButton;
+    m_closeButton = new DIconButton(this);
     m_closeButton->setObjectName("StopButton");
+    m_closeButton->setIcon(QIcon::fromTheme("dfm_task_stop"));
     m_closeButton->setFixedSize(24, 24);
+    m_closeButton->setIconSize({24, 24});
+    m_closeButton->setFlat(true);
     m_closeButton->setAttribute(Qt::WA_NoMousePropagation);
-    m_closeButton->setStyleSheet("QPushButton{image: url(:/icons/images/icons/stop_normal.png); border: none;}"
-                                     "QPushButton:hover{image: url(:/icons/images/icons/stop_hover.png);}"
-                                     "QPushButton:pressed{image: url(:/icons/images/icons/stop_press.png);}");
 
-    m_animatePad = new CircleProgressAnimatePad;
-    m_animatePad->setFixedSize(54, 54);
-    m_animatePad->setBackgroundColor(QColor("#E9E9E9"));
-    m_animatePad->setChunkColor(QColor("#3cadff"));
-    m_animatePad->setLineWidth(3);
-    m_animatePad->setFontSize(14);
-    m_animatePad->setCurrentValue(0);
+    m_pauseBuuton = new DIconButton(this);
+    m_pauseBuuton->setIcon(QIcon::fromTheme("dfm_media_pause"));
+    m_pauseBuuton->setIconSize({24, 24});
+    m_pauseBuuton->setFixedSize(24, 24);
+    m_pauseBuuton->setFlat(true);
+
+    m_dwaterProgress = new DWaterProgress();
+    m_dwaterProgress->setFixedSize(54, 54);
+    m_dwaterProgress->setValue(0);
 
     m_closeButton->hide();
+    m_pauseBuuton->hide();
     setMouseTracking(true);
 
     m_speedLabel = new QLabel;
@@ -277,11 +283,13 @@ void MoveCopyTaskWidget::initUI()
 
     QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->addSpacing(20);
-    mainLayout->addWidget(m_animatePad);
+    mainLayout->addWidget(m_dwaterProgress);
     mainLayout->addSpacing(20);
     mainLayout->addLayout(rightLayout);
     mainLayout->addSpacing(5);
     mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->addWidget(m_pauseBuuton, 0, Qt::AlignCenter);
+    mainLayout->addSpacing(5);
     mainLayout->addWidget(m_closeButton, 0, Qt::AlignCenter);
     mainLayout->addSpacing(20);
     setLayout(mainLayout);
@@ -417,7 +425,7 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data)
     QString msg1, msg2;
 
     if (data.contains("optical_op_type")) {
-        m_animatePad->setCanPause(false);
+        m_pauseBuuton->setEnabled(false);
         status = data["optical_op_status"];
         progress = data["optical_op_progress"];
 
@@ -438,10 +446,10 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data)
 
         qDebug() << status << progress;
         if (status == QString::number(DISOMasterNS::DISOMaster::JobStatus::Stalled)) {
-            m_animatePad->startAnimation();
+            m_dwaterProgress->start();
         }
         else if (status == QString::number(DISOMasterNS::DISOMaster::JobStatus::Running)) {
-            m_animatePad->stopAnimation();
+            m_dwaterProgress->stop();
             setProgress(progress);
         }
         return;
@@ -501,10 +509,10 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data)
         }
 
         if (status == "restoring") {
-            m_animatePad->startAnimation();
+            m_dwaterProgress->start();
         } else if (status == "calculating") {
             msg2 = tr("Calculating space, please wait");
-            m_animatePad->startAnimation();
+            m_dwaterProgress->start();
         } else if (status == "conflict") {
             msg1 = QString(tr("File named %1 already exists in target folder")).arg(file);
             msg2 = QString(tr("Original path %1 target path %2")).arg(QFileInfo(srcPath).absolutePath(), QFileInfo(targetPath).absolutePath());
@@ -527,7 +535,7 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data)
                 m_errorLabel->setText(m_fileJob->errorString());
             }
         } else if (!status.isEmpty()) {
-            m_animatePad->stopAnimation();
+            m_dwaterProgress->stop();
         } else if (m_fileJob) {
             m_errorLabel->setText(QString());
         }
@@ -659,6 +667,7 @@ bool MoveCopyTaskWidget::event(QEvent *e)
 {
     if (e->type() == QEvent::Enter) {
         m_closeButton->show();
+        m_pauseBuuton->show();
         m_speedLabel->hide();
         m_remainLabel->hide();
         m_bgLabel->setVisible(true);
@@ -670,6 +679,7 @@ bool MoveCopyTaskWidget::event(QEvent *e)
         m_speedLabel->show();
         m_remainLabel->show();
         m_closeButton->hide();
+        m_pauseBuuton->hide();
         m_bgLabel->setVisible(false);
     }
 
@@ -677,10 +687,8 @@ bool MoveCopyTaskWidget::event(QEvent *e)
 }
 
 void MoveCopyTaskWidget::onJobProgressChanged(qreal progress)
-{
-    if (m_animatePad->animationRunning()) {
-        m_animatePad->stopAnimation();
-    }
+{    
+    m_dwaterProgress->stop();
 
     m_jobInfo->progress = progress;
     setProgress(progress * 100);
@@ -823,13 +831,15 @@ int MoveCopyTaskWidget::getProgress()
 void MoveCopyTaskWidget::setProgress(int value)
 {
     m_progress = value;
-    m_animatePad->setCurrentValue(value);
+    m_dwaterProgress->setValue(value);
+    m_dwaterProgress->update();
 }
 
 void MoveCopyTaskWidget::setProgress(QString value)
 {
     m_progress = value.toInt();
-    m_animatePad->setCurrentValue(value.toInt());
+    m_dwaterProgress->setValue(value.toInt());
+    m_dwaterProgress->update();
 }
 
 float MoveCopyTaskWidget::getSpeed()

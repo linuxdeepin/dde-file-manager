@@ -32,5 +32,11 @@
         <file>icons/deepin/builtin/light/icons/dde-file-manager_128px.svg</file>
         <file>icons/deepin/builtin/dark/icons/dfm_deepin_logo_128px.svg</file>
         <file>icons/deepin/builtin/light/icons/dfm_deepin_logo_128px.svg</file>
+        <file>icons/deepin/builtin/light/icons/dfm_task_start_24px.svg</file>
+        <file>icons/deepin/builtin/dark/icons/dfm_task_start_24px.svg</file>
+        <file>icons/deepin/builtin/light/icons/dfm_task_stop_24px.svg</file>
+        <file>icons/deepin/builtin/dark/icons/dfm_task_stop_24px.svg</file>
+        <file>icons/deepin/builtin/light/icons/dfm_task_pause_24px.svg</file>
+        <file>icons/deepin/builtin/dark/icons/dfm_task_pause_24px.svg</file>
     </qresource>
 </RCC>
