@@ -2641,6 +2641,10 @@ QString FileJob::getXorrisoErrorMsg(const QStringList &msg)
         if (msgs.contains("Device or resource busy")) {
             return tr("The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.");
         }
+        if (msgs.contains("-volid: Text too long")) {
+            //something is wrong if the following return statement is reached.
+            return QString("invalid volume name");
+        }
     }
     return tr("Unknown error");
 }
