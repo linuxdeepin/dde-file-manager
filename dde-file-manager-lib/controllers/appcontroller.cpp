@@ -583,17 +583,21 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
             QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
             QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
             QScopedPointer<DBlockDevice> cbblk(DDiskManager::createBlockDevice(blk->cryptoBackingDevice()));
+            bool err = false;
             if (!blk->mountPoints().empty()) {
                 blk->unmount({});
+                err |= blk->lastError().isValid();
             }
             if (blk->cryptoBackingDevice().length() > 1) {
                 cbblk->lock({});
+                err |= cbblk->lastError().isValid();
                 drv.reset(DDiskManager::createDiskDevice(cbblk->drive()));
             }
             drv->eject({});
-            QDBusError err = blk->lastError();
-            if (err.isValid())
+            err |= drv->lastError().isValid();
+            if (err) {
                 dialogManager->showErrorDialog(tr("Disk is busy, cannot eject now"), QString());
+            }
         });
     } else {
         deviceListener->eject(fileUrl.query(DUrl::FullyEncoded));
@@ -608,14 +612,21 @@ void AppController::actionSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
         QScopedPointer<DBlockDevice> cbblk(DDiskManager::createBlockDevice(blk->cryptoBackingDevice()));
+        bool err = false;
         if (!blk->mountPoints().empty()) {
             blk->unmount({});
+            err |= blk->lastError().isValid();
         }
         if (blk->cryptoBackingDevice().length() > 1) {
             cbblk->lock({});
+            err |= cbblk->lastError().isValid();
             drv.reset(DDiskManager::createDiskDevice(cbblk->drive()));
         }
         drv->powerOff({});
+        err |= drv->lastError().isValid();
+        if (err) {
+            dialogManager->showErrorDialog(tr("Disk is busy, cannot eject now"), QString());
+        }
     } else {
         QString unix_device = fileUrl.query(DUrl::FullyEncoded);
         QString drive_unix_device = gvfsMountManager->getDriveUnixDevice(unix_device);
