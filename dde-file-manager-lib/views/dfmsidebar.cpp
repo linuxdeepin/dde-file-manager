@@ -408,6 +408,21 @@ void DFMSideBar::initConnection()
     connect(m_sidebarModel, &QStandardItemModel::rowsInserted, this, &DFMSideBar::updateSeparatorVisibleState);
     connect(m_sidebarModel, &QStandardItemModel::rowsRemoved, this, &DFMSideBar::updateSeparatorVisibleState);
     connect(m_sidebarModel, &QStandardItemModel::rowsMoved, this, &DFMSideBar::updateSeparatorVisibleState);
+    // drag to move item will emit rowsInserted and rowsMoved..
+    connect(m_sidebarModel, &QStandardItemModel::rowsRemoved, this,
+            [this](const QModelIndex &parent, int first, int last){
+        Q_UNUSED(parent);
+        Q_UNUSED(last);
+        DFMSideBarItem * item = m_sidebarModel->itemFromIndex(first);
+        if (!item) {
+            item = m_sidebarModel->itemFromIndex(first-1);
+        }
+
+        // only bookmark and tag item are DragEnabled
+        if (item && item->flags().testFlag(Qt::ItemIsEnabled) && item->flags().testFlag(Qt::ItemIsDragEnabled)) {
+            saveItemOrder(item->groupName());
+        }
+    });
     DFMSideBarItemDelegate *idelegate = dynamic_cast<DFMSideBarItemDelegate *>(m_sidebarView->itemDelegate());
     if (idelegate) {
         connect(idelegate, &DFMSideBarItemDelegate::rename, this, &DFMSideBar::onRename);
