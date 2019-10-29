@@ -677,6 +677,10 @@ void AppController::actionProperty(const QSharedPointer<DFMUrlListBaseEvent> &ev
             url = gvfsmpurl;
         }
 
+        if (info->scheme() == BURN_SCHEME && info->fileUrl().burnFilePath().contains(QRegularExpression("^/*$"))) {
+            url = DUrl(DFMROOT_ROOT + info->fileUrl().burnDestDevice().mid(QString("/dev/").length()) + "." + SUFFIX_UDISKS);
+        }
+
         if (realTargetUrl.toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX)) {
             DesktopFile df(realTargetUrl.toLocalFile());
             if (df.getDeepinId() == "dde-trash") {
