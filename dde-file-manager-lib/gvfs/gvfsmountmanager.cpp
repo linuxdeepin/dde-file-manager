@@ -1539,8 +1539,7 @@ void GvfsMountManager::unmount_mounted(const QString &mounted_root_uri)
         return;
     }
 
-    bool is_netwrok_url = mounted_root_uri.startsWith("smb://") || mounted_root_uri.startsWith("sftp://") || mounted_root_uri.startsWith("ftp://");
-    char *local_mount_point = is_netwrok_url ? g_file_get_path(file) : nullptr;
+    char *local_mount_point = g_file_get_path(file);
 
     mount_op = new_mount_op ();
     g_mount_unmount_with_operation (mount, G_MOUNT_UNMOUNT_NONE, mount_op, nullptr, &GvfsMountManager::unmount_done_cb, local_mount_point);
