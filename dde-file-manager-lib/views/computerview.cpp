@@ -172,6 +172,52 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
             appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, url));
         }
     };
+
+    QAction *newTabAction = new QAction();
+    m_view->addAction(newTabAction);
+    newTabAction->setShortcut(QKeySequence(Qt::Key::Key_T | Qt::Modifier::CTRL));
+    connect(newTabAction, &QAction::triggered, [this] {
+        if (m_view->selectionModel()->hasSelection()) {
+            const QModelIndex &idx = m_view->selectionModel()->currentIndex();
+            DUrl url = idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>();
+            if (url.path().endsWith(SUFFIX_USRDIR)) {
+                appController->actionOpenInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(this, idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
+            } else {
+                appController->actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(this, url));
+            }
+        } else {
+            appController->actionOpenInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(this, rootUrl()));
+        }
+    });
+
+    QAction *newWindowAction = new QAction();
+    m_view->addAction(newWindowAction);
+    newWindowAction->setShortcut(QKeySequence(Qt::Key::Key_N | Qt::Modifier::CTRL));
+    connect(newWindowAction, &QAction::triggered, [this] {
+        if (m_view->selectionModel()->hasSelection()) {
+            const QModelIndex &idx = m_view->selectionModel()->currentIndex();
+            DUrl url = idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>();
+            if (url.path().endsWith(SUFFIX_USRDIR)) {
+                appController->actionOpenInNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
+            } else {
+                appController->actionOpenDiskInNewWindow(dMakeEventPointer<DFMUrlBaseEvent>(this, url));
+            }
+        } else {
+            appController->actionOpenInNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << rootUrl()));
+        }
+    });
+
+    QAction *propAction = new QAction();
+    m_view->addAction(propAction);
+    propAction->setShortcut(QKeySequence(Qt::Key::Key_I | Qt::Modifier::CTRL));
+    connect(propAction, &QAction::triggered, [this] {
+        if (m_view->selectionModel()->hasSelection()) {
+            const QModelIndex &idx = m_view->selectionModel()->currentIndex();
+            DUrl url = idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>();
+            appController->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
+        }
+    });
+
     ViewReturnEater *re = new ViewReturnEater(m_view);
     m_view->installEventFilter(re);
     connect(m_view, &QAbstractItemView::doubleClicked, std::bind(enterfunc, std::placeholders::_1, 1));
