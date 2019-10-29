@@ -192,7 +192,7 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
     if (mime == "text/plain" && !DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewTextFile).toBool())
         return false;
 
-    if (Q_LIKELY(mime == "application/pdf"
+    if (Q_LIKELY(mimeType.parentMimeTypes().contains("application/pdf")
                  || mime == "application/cnd.rn-realmedia"
                  || mime == "application/mxf")
             && !DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewDocumentFile).toBool()) {
