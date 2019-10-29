@@ -465,7 +465,7 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
             if (rect.contains(pos))
                 return tmp_index;
 
-        return isIconViewMode() ? tmp_index : QModelIndex(); // make click area bigger
+        return  QModelIndex();
     }
 
     return rootIndex().child(index, 0);

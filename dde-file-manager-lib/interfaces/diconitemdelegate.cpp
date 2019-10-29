@@ -1028,6 +1028,16 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 
     geometries << label_rect;
 
+    // background rect
+    QRect background_rect = option.rect;
+    bool isCanvas = parent()->property("isCanvasViewHelper").toBool();
+    int backgroundMargin = isCanvas ? 0 : COLUMU_PADDING;
+    if (!isCanvas) {
+         // 为了让对勾右上角， 缩小框框
+        background_rect.adjust(backgroundMargin, backgroundMargin, -backgroundMargin, -backgroundMargin);
+        geometries << background_rect;
+    }
+
     return geometries;
 }
 
