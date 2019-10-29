@@ -181,7 +181,7 @@ void DFMCrumbBarPrivate::initUI()
 
     // Crumb List Layout
     crumbListView.setObjectName("DCrumbListScrollArea");
-    crumbListView.setItemSpacing(0);
+    crumbListView.setItemSpacing(10);
     crumbListView.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     crumbListView.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     crumbListView.setFocusPolicy(Qt::NoFocus);

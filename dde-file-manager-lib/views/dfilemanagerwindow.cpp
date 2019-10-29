@@ -115,7 +115,7 @@ public:
     DFMSideBar *sideBar{ nullptr };
     QFrame *rightView { nullptr };
     DFMRightDetailView *detailView { nullptr };
-    QFrame *rightDetailVLine { nullptr };
+    QFrame *rightDetailViewHolder { nullptr };
     QVBoxLayout *rightViewLayout { nullptr };
     DToolBar *toolbar{ nullptr };
     TabBar *tabBar { nullptr };
@@ -944,6 +944,8 @@ void DFileManagerWindow::initLeftSideBar()
     D_D(DFileManagerWindow);
 
     d->sideBar = new DFMSideBar(this);
+    d->sideBar->setContentsMargins(10, 0, 0, 0);
+
     d->sideBar->setObjectName("DFMSideBar");
     d->sideBar->setMaximumWidth(DFMSideBar::maximumWidth);
     d->sideBar->setMinimumWidth(DFMSideBar::minimumWidth);
@@ -1056,17 +1058,24 @@ void DFileManagerWindow::initCentralWidget()
     midWidget->setLayout(midLayout);
     midLayout->setContentsMargins(0, 0, 0, 0);
     midLayout->addWidget(d->splitter);
+
+    d->rightDetailViewHolder = new QFrame;
+    d->rightDetailViewHolder->setObjectName("rightviewHolder");
+    d->rightDetailViewHolder->setAutoFillBackground(true);
+    d->rightDetailViewHolder->setBackgroundRole(QPalette::ColorRole::Base);
+    d->rightDetailViewHolder->setFixedWidth(300);
+    QHBoxLayout *rvLayout = new QHBoxLayout(d->rightDetailViewHolder);
+    rvLayout->setMargin(0);
+
     d->detailView = new DFMRightDetailView(currentUrl());
-    d->detailView->setFixedWidth(300);
-    d->detailView->setVisible(false); //不显示先
-    d->rightDetailVLine = new QFrame;
-    d->rightDetailVLine->setFrameShape(QFrame::VLine);
-    d->rightDetailVLine->setVisible(false);
-    midLayout->addWidget(d->rightDetailVLine);
-    midLayout->addWidget(d->detailView);
+    QFrame *rightDetailVLine = new QFrame;
+    rightDetailVLine->setFrameShape(QFrame::VLine);
+    rvLayout->addWidget(rightDetailVLine);
+    rvLayout->addWidget(d->detailView);
+    midLayout->addWidget(d->rightDetailViewHolder);
+    d->rightDetailViewHolder->setVisible(false); //不显示先
 
     mainLayout->addWidget(midWidget);
-
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -1116,12 +1125,9 @@ void DFileManagerWindow::initConnect()
 
     QObject::connect(fileSignalManager, &FileSignalManager::requestMultiFilesRename, this, &DFileManagerWindow::onShowRenameBar);
     QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTabBarCurrentIndexChange);
-    QObject::connect(d->toolbar, &DToolBar::detailButtonClicked, this, [this, d](){
-        if(d->detailView){
-            d->detailView->setVisible(!d->detailView->isVisible());
-        }
-        if (d->rightDetailVLine) {
-            d->rightDetailVLine->setVisible(d->detailView->isVisible());
+    QObject::connect(d->toolbar, &DToolBar::detailButtonClicked, this, [d](){
+        if(d->rightDetailViewHolder){
+            d->rightDetailViewHolder->setVisible(!d->rightDetailViewHolder->isVisible());
         }
     });
 
