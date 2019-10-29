@@ -1261,11 +1261,16 @@ void DFileView::delayUpdateStatusBar()
 {
     Q_D(DFileView);
 
-    if (FileUtils::isGvfsMountFile(rootUrl().toLocalFile())){
-        d->updateStatusBarTimer->start();
-    }else{
-        updateStatusBar();
-    }
+    // when QItemSelectionModel::selectionChanged emit we get selectedUrls() were old selecturls
+    // so we wait...
+    d->updateStatusBarTimer->start();
+
+
+//    if (FileUtils::isGvfsMountFile(rootUrl().toLocalFile())){
+//        d->updateStatusBarTimer->start();
+//    }else{
+//        updateStatusBar();
+//    }
 }
 
 void DFileView::updateStatusBar()
