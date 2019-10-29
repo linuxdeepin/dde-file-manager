@@ -214,7 +214,11 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
         if (m_view->selectionModel()->hasSelection()) {
             const QModelIndex &idx = m_view->selectionModel()->currentIndex();
             DUrl url = idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>();
-            appController->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
+            if (url.path().endsWith(SUFFIX_USRDIR)) {
+                appController->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
+            } else {
+                appController->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << url));
+            }
         }
     });
 
