@@ -74,6 +74,31 @@ DWIDGET_USE_NAMESPACE
 
 const QList<int> ComputerView::iconsizes = {48, 64, 96, 128, 256};
 
+class ViewReturnEater : public QObject
+{
+    Q_OBJECT
+public:
+    explicit ViewReturnEater(QListView *parent) : QObject(parent){}
+
+protected:
+    bool eventFilter(QObject *, QEvent *e)
+    {
+        if (e->type() == QEvent::Type::KeyPress) {
+            QKeyEvent *ke = static_cast<QKeyEvent*>(e);
+            if (ke->key() == Qt::Key::Key_Return || ke->key() == Qt::Key::Key_Enter) {
+                QListView *v = qobject_cast<QListView*>(parent());
+                Q_ASSERT(v);
+                Q_EMIT entered(v->selectionModel()->currentIndex());
+            }
+            return true;
+        }
+        return false;
+    }
+
+Q_SIGNALS:
+    void entered(const QModelIndex &idx);
+};
+
 ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
 {
     m_view = new QListView(this);
@@ -134,14 +159,24 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     });
 
     connect(m_view, &QWidget::customContextMenuRequested, this, &ComputerView::contextMenu);
-    connect(m_view, &QAbstractItemView::doubleClicked, [this](const QModelIndex &idx) {
+    auto enterfunc = [this](const QModelIndex &idx, int triggermatch) {
+        if (~triggermatch) {
+            if (DFMApplication::instance()->appAttribute(DFMApplication::AA_OpenFileMode).toInt() != triggermatch) {
+                return;
+            }
+        }
         DUrl url = idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>();
         if (url.path().endsWith(SUFFIX_USRDIR)) {
             appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
         } else {
             appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, url));
         }
-    });
+    };
+    ViewReturnEater *re = new ViewReturnEater(m_view);
+    m_view->installEventFilter(re);
+    connect(m_view, &QAbstractItemView::doubleClicked, std::bind(enterfunc, std::placeholders::_1, 1));
+    connect(m_view, &QAbstractItemView::clicked, std::bind(enterfunc, std::placeholders::_1, 0));
+    connect(re, &ViewReturnEater::entered, std::bind(enterfunc, std::placeholders::_1, -1));
     connect(m_statusbar->scalingSlider(), &QSlider::valueChanged, this, [this] {m_view->setIconSize(QSize(iconsizes[m_statusbar->scalingSlider()->value()], iconsizes[m_statusbar->scalingSlider()->value()]));});
     connect(fileSignalManager, &FileSignalManager::requestRename, this, &ComputerView::onRenameRequested);
 }
@@ -227,3 +262,5 @@ bool ComputerView::eventFilter(QObject *obj, QEvent *event)
         return QObject::eventFilter(obj, event);
     }
 }
+
+#include "computerview.moc"
