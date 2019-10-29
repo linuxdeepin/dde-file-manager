@@ -4,8 +4,8 @@
 <context>
     <name>DeepinStorage</name>
     <message>
-        <location filename="../dattachedudisks2device.cpp" line="91"/>
-        <location filename="../dattachedudisks2device.cpp" line="106"/>
+        <location filename="../dattachedudisks2device.cpp" line="94"/>
+        <location filename="../dattachedudisks2device.cpp" line="109"/>
         <source>%1 Volume</source>
         <translation>%1 Volume</translation>
     </message>
@@ -31,7 +31,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="322"/>
+        <location filename="../diskcontrolwidget.cpp" line="324"/>
         <source>Device has been removed</source>
         <translation>Device has been removed</translation>
     </message>
