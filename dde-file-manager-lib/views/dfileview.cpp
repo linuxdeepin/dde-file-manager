@@ -1445,14 +1445,6 @@ void DFileView::resizeEvent(QResizeEvent *event)
     if (itemDelegate()->editingIndex().isValid())
         doItemsLayout();
 
-    d->verticalScrollBar->setFixedSize(d->verticalScrollBar->sizeHint().width(), event->size().height());
-
-    if(d->currentViewMode == IconMode){
-        d->verticalScrollBar->move(event->size().width() - d->verticalScrollBar->width(), 0);
-    } else if (d->currentViewMode == ListMode){
-        d->verticalScrollBar->move(event->size().width() - d->verticalScrollBar->width(), d->headerView->height());
-    }
-
     updateModelActiveIndex();
 }
 
