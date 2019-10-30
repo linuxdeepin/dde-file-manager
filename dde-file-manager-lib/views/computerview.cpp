@@ -316,6 +316,7 @@ bool ComputerView::eventFilter(QObject *obj, QEvent *event)
             this->event(event);
             return true;
         }
+        return false;
     } else {
         return QObject::eventFilter(obj, event);
     }
