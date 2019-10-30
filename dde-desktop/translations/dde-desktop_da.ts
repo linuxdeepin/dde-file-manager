@@ -75,7 +75,7 @@
     <message>
         <location filename="../main.cpp" line="135"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation>Skrivebord</translation>
     </message>
 </context>
 <context>

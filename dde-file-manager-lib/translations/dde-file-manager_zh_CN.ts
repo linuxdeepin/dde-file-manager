@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -11,17 +9,17 @@
     <message>
         <location filename="../controllers/appcontroller.cpp" line="529"/>
         <source>Mount error: unsupported image format</source>
-        <translation type="unfinished"></translation>
+        <translation>挂载错误，镜像文件格式不支持</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="557"/>
         <source>Disk is busy, cannot unmount now</source>
-        <translation type="unfinished">磁盘文件被占用，无法卸载</translation>
+        <translation>磁盘文件被占用，无法卸载</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="596"/>
         <source>Disk is busy, cannot eject now</source>
-        <translation type="unfinished"></translation>
+        <translation>磁盘文件被占用，无法弹出</translation>
     </message>
     <message>
         <source>Mount Error</source>
@@ -397,7 +395,7 @@
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="987"/>
         <source>Empty</source>
-        <translation type="unfinished">清空</translation>
+        <translation>清空</translation>
     </message>
 </context>
 <context>
@@ -552,7 +550,7 @@
     <message>
         <location filename="../models/dfmrootfileinfo.cpp" line="510"/>
         <source>Blank %1 Disc</source>
-        <translation type="unfinished"></translation>
+        <translation>空白%1光盘</translation>
     </message>
     <message>
         <location filename="../models/dfmrootfileinfo.cpp" line="513"/>

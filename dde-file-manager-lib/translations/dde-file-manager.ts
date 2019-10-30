@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -11,17 +9,17 @@
     <message>
         <location filename="../controllers/appcontroller.cpp" line="529"/>
         <source>Mount error: unsupported image format</source>
-        <translation type="unfinished"></translation>
+        <translation>Mount error: unsupported image format</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="557"/>
         <source>Disk is busy, cannot unmount now</source>
-        <translation type="unfinished">Disk is busy, cannot unmount now</translation>
+        <translation>Disk is busy, cannot unmount now</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="596"/>
         <source>Disk is busy, cannot eject now</source>
-        <translation type="unfinished"></translation>
+        <translation>Disk is busy, cannot eject now</translation>
     </message>
     <message>
         <source>Mount Error</source>
@@ -397,7 +395,7 @@
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="987"/>
         <source>Empty</source>
-        <translation type="unfinished">Empty</translation>
+        <translation>Empty</translation>
     </message>
 </context>
 <context>
@@ -552,7 +550,7 @@
     <message>
         <location filename="../models/dfmrootfileinfo.cpp" line="510"/>
         <source>Blank %1 Disc</source>
-        <translation type="unfinished"></translation>
+        <translation>Blank %1 Disc</translation>
     </message>
     <message>
         <location filename="../models/dfmrootfileinfo.cpp" line="513"/>

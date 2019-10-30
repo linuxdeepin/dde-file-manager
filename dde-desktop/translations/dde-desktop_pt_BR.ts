@@ -83,7 +83,7 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="431"/>
         <source>Wallpaper Slideshow</source>
-        <translation>Apresentação de Papéis de Parede</translation>
+        <translation>Trocar automaticamente o Papel de Parede</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="459"/>
@@ -118,17 +118,17 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="561"/>
         <source>Screensaver</source>
-        <translation>Proteção de Tela</translation>
+        <translation>Protetor de Tela</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="630"/>
         <source>Only desktop</source>
-        <translation>Apenas na Área de Trabalho</translation>
+        <translation>Somente na Área de Trabalho</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="631"/>
         <source>Only lock screen</source>
-        <translation>Apenas na Tela de Bloqueio</translation>
+        <translation>Somente no Protetor de Tela</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="659"/>
