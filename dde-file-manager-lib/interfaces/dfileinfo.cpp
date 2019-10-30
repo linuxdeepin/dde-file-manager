@@ -44,6 +44,7 @@
 #include "dabstractfilewatcher.h"
 #include "dstorageinfo.h"
 #include "shutil/danythingmonitorfilter.h"
+#include "dfmapplication.h"
 
 #ifdef SW_LABEL
 #include "sw_label/filemanagerlibrary.h"
@@ -468,7 +469,8 @@ bool DFileInfo::canFetch() const
     if (isPrivate())
         return false;
 
-    return isDir() || FileUtils::isArchive(absoluteFilePath());
+    return ( isDir() ||
+            (FileUtils::isArchive(absoluteFilePath()) && DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewCompressFile).toBool()) );
 }
 
 bool DFileInfo::canTag() const
