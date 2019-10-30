@@ -48,7 +48,7 @@
 
 using namespace PartMan;
 MainWindow::MainWindow(const QString &path, QWidget *parent):
-    QDialog(parent)
+    DDialog(parent)
 {
     DPlatformWindowHandle handle(this);
     Q_UNUSED(handle)
@@ -70,9 +70,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::initUI()
 {
-    setFixedSize(WINDOW_SIZE);
     setWindowFlags(Qt::WindowCloseButtonHint |
-                   Qt::FramelessWindowHint |
                    Qt::Dialog);
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
@@ -83,12 +81,7 @@ void MainWindow::initUI()
     QIcon transparentIcon(pixmap);
 
     QString title = tr("Format");
-    m_titleBar = new DTitlebar(this);
-    m_titleBar->setIcon(transparentIcon);
-    m_titleBar->setTitle(title);
-    m_titleBar->setFixedHeight(20);
-    m_titleBar->layout()->setContentsMargins(0, 0, 0, 0);
-    m_titleBar->setBackgroundTransparent(true);
+    setTitle(title);
 
     m_pageStack = new QStackedWidget(this);
     m_pageStack->setFixedSize(width(), 340);
@@ -109,14 +102,14 @@ void MainWindow::initUI()
     m_comfirmButton->setFixedSize(160, 36);
     m_comfirmButton->setObjectName("ComfirmButton");
 
-    mainLayout->addWidget(m_titleBar);
     mainLayout->addWidget(m_pageStack);
     mainLayout->addSpacing(10);
     mainLayout->addStretch(1);
     mainLayout->addWidget(m_comfirmButton, 0, Qt::AlignHCenter);
     mainLayout->addSpacing(34);
-    setFixedHeight(m_titleBar->height() + m_pageStack->height() + 10 + m_comfirmButton->height() + 34);
-    setLayout(mainLayout);
+    QWidget *centralWidget = new QWidget();
+    centralWidget->setLayout(mainLayout);
+    addContent(centralWidget);
 }
 
 void MainWindow::initConnect()
@@ -129,7 +122,7 @@ void MainWindow::initConnect()
 void MainWindow::formartDevice()
 {
     DWindowManagerHelper::setMotifFunctions(windowHandle(), DWindowManagerHelper::FUNC_CLOSE, false);
-    m_titleBar->setDisableFlags(Qt::WindowCloseButtonHint);
+    setWindowFlags(windowFlags() & (~Qt::WindowCloseButtonHint));
 
     QtConcurrent::run([=]{
         bool result = false;
@@ -210,7 +203,7 @@ void MainWindow::nextStep()
 void MainWindow::onFormatingFinished(const bool &successful)
 {
     DWindowManagerHelper::setMotifFunctions(windowHandle(), DWindowManagerHelper::FUNC_CLOSE, true);
-    m_titleBar->setDisableFlags({});
+    setWindowFlags(windowFlags() | Qt::WindowCloseButtonHint);
 
     if (successful) {
         m_currentStep = Finished;
