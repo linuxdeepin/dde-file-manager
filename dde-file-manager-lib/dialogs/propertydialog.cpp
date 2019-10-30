@@ -806,19 +806,10 @@ const QList<DBaseExpand *> &PropertyDialog::expandGroup() const
 
 int PropertyDialog::contentHeight() const
 {
-    int expandsHeight = 0;
-    int firstExpandHeight = m_expandGroup.size()>0 ? m_expandGroup.first()->getContent()->height() : -1;
-    bool atleastOneExpand = false;
+    int expandsHeight = ArrowLineExpand_SPACING;
     for (const DBaseExpand* expand : m_expandGroup) {
-        expandsHeight += ArrowLineExpand_HIGHT + ArrowLineExpand_SPACING;
-        if (expand->expand()) {
-            expandsHeight += expand->getContent()->height();
-            atleastOneExpand = true;
-        }
+        expandsHeight += expand->height();
     }
-
-    if (!atleastOneExpand && firstExpandHeight > 0)
-        expandsHeight += firstExpandHeight;
 
     return (m_icon->height() +
             m_editStackWidget->height() +
