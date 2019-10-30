@@ -30,8 +30,7 @@
 #include <QLabel>
 #include <QStackedWidget>
 
-#include <DTitlebar>
-#include <QDialog>
+#include <DDialog>
 #include <dplatformwindowhandle.h>
 
 #include "widgets/progressline.h"
@@ -59,7 +58,7 @@ class QPushButton;
 DWIDGET_USE_NAMESPACE
 DGUI_USE_NAMESPACE
 
-class MainWindow : public QDialog
+class MainWindow : public DDialog
 {
     Q_OBJECT
     enum FormatStep{
@@ -98,7 +97,6 @@ private:
     FormatingPage* m_formatingPage = nullptr;
     FinishPage* m_finishPage = nullptr;
     ErrorPage* m_errorPage = nullptr;
-    DTitlebar* m_titleBar = nullptr;
     QString m_formatPath;
     QString m_formatType;
 
