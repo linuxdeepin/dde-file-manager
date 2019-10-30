@@ -66,6 +66,9 @@ ComputerModel::ComputerModel(QObject *parent) :
     connect(m_watcher, &DAbstractFileWatcher::fileDeleted, this, &ComputerModel::removeItem);
     connect(m_watcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
             DAbstractFileInfoPointer fi = fileService->createFileInfo(this, url);
+            if (!fi->exists()) {
+                return;
+            }
             auto r = std::upper_bound(m_items.begin() + findItem(makeSplitterUrl(tr("Disks"))) + 1, m_items.end(), fi,
                                       [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
                                           return DFMRootFileInfo::typeCompare(a, b.fi);
