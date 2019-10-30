@@ -87,6 +87,8 @@
 #include <QtConcurrent>
 #include <QSplitter>
 #include <DAnchors>
+#include <DApplicationHelper>
+#include <DHorizontalLine>
 
 DWIDGET_USE_NAMESPACE
 
@@ -127,6 +129,7 @@ public:
     QFrame *titleFrame { nullptr };
     QStackedLayout *viewStackLayout { nullptr };
     QFrame *emptyTrashHolder { nullptr };
+    DHorizontalLine *emptyTrashSplitLine { nullptr };
     DRenameBar *renameBar{ nullptr };
     DFMAdvanceSearchBar *advanceSearchBar = nullptr;
 
@@ -511,12 +514,14 @@ void DFileManagerWindow::showEmptyTrashButton()
 {
     Q_D(DFileManagerWindow);
     d->emptyTrashHolder->show();
+    d->emptyTrashSplitLine->show();
 }
 
 void DFileManagerWindow::hideEmptyTrashButton()
 {
     Q_D(DFileManagerWindow);
     d->emptyTrashHolder->hide();
+    d->emptyTrashSplitLine->hide();
 }
 
 void DFileManagerWindow::onNewTabButtonClicked()
@@ -989,6 +994,10 @@ void DFileManagerWindow::initRightView()
     emptyTrashButton->setText(tr("Empty"));
     emptyTrashButton->setToolTip(QObject::tr("Empty Trash"));
     emptyTrashButton->setFixedSize({86, 36});
+    DPalette pal = DApplicationHelper::instance()->palette(this);
+    QPalette buttonPalette = emptyTrashButton->palette();
+    buttonPalette.setColor(QPalette::ButtonText, pal.color(DPalette::Active, DPalette::TextWarning));
+    emptyTrashButton->setPalette(buttonPalette);
     QObject::connect(emptyTrashButton, &QPushButton::clicked,
                      this, &DFileManagerWindow::requestEmptyTrashFiles, Qt::QueuedConnection);
     QPalette pa = emptyTrashButton->palette();
@@ -996,6 +1005,8 @@ void DFileManagerWindow::initRightView()
     emptyTrashButton->setPalette(pa);
     emptyTrashLayout->addWidget(trashLabel, 0, Qt::AlignLeft);
     emptyTrashLayout->addWidget(emptyTrashButton, 0, Qt::AlignRight);
+
+    d->emptyTrashSplitLine = new DHorizontalLine(this);
 
     QHBoxLayout *tabBarLayout = new QHBoxLayout;
     tabBarLayout->setMargin(0);
@@ -1006,11 +1017,13 @@ void DFileManagerWindow::initRightView()
     d->rightViewLayout = new QVBoxLayout;
     d->rightViewLayout->addLayout(tabBarLayout);
     d->rightViewLayout->addWidget(d->emptyTrashHolder);
+    d->rightViewLayout->addWidget(d->emptyTrashSplitLine);
     d->rightViewLayout->addLayout(d->viewStackLayout);
     d->rightViewLayout->setSpacing(0);
     d->rightViewLayout->setContentsMargins(0, 0, 0, 0);
     d->rightView->setLayout(d->rightViewLayout);
     d->emptyTrashHolder->hide();
+    d->emptyTrashSplitLine->hide();
 }
 
 void DFileManagerWindow::initToolBar()
