@@ -89,8 +89,8 @@ protected:
                 QListView *v = qobject_cast<QListView*>(parent());
                 Q_ASSERT(v);
                 Q_EMIT entered(v->selectionModel()->currentIndex());
+                return true;
             }
-            return true;
         }
         return false;
     }
@@ -127,6 +127,7 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     m_view->setIconSize(QSize(iconsizes[m_statusbar->scalingSlider()->value()], iconsizes[m_statusbar->scalingSlider()->value()]));
     m_view->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
     m_view->setFrameShape(QFrame::Shape::NoFrame);
+    m_view->installEventFilter(this);
     m_view->viewport()->installEventFilter(this);
     m_view->viewport()->setAutoFillBackground(false);
 
@@ -301,13 +302,20 @@ void ComputerView::resizeEvent(QResizeEvent *event)
 
 bool ComputerView::eventFilter(QObject *obj, QEvent *event)
 {
-    if (event->type() == QEvent::MouseButtonRelease) {
+    if (event->type() == QEvent::MouseButtonRelease && obj == m_view->viewport()) {
         QMouseEvent *e = static_cast<QMouseEvent*>(event);
         const QModelIndex &idx = m_view->indexAt(e->pos());
         if (e->button() == Qt::MouseButton::LeftButton && (!idx.isValid() || !(idx.flags() & Qt::ItemFlag::ItemIsEnabled))) {
             m_view->selectionModel()->clearSelection();
         }
         return false;
+    } else if (event->type() == QEvent::KeyPress && obj == m_view) {
+        QKeyEvent *ke = static_cast<QKeyEvent*>(event);
+        if (ke->modifiers() == Qt::Modifier::ALT)
+        {
+            this->event(event);
+            return true;
+        }
     } else {
         return QObject::eventFilter(obj, event);
     }
