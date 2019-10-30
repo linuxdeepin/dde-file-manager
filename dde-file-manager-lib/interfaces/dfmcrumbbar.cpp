@@ -506,9 +506,26 @@ void DFMCrumbBar::showEvent(QShowEvent *event)
 bool DFMCrumbBar::eventFilter(QObject *watched, QEvent *event)
 {
     Q_D(DFMCrumbBar);
-    if (watched && watched->parent() == &d->crumbListView
-            && (event->type() == QEvent::MouseMove || event->type() == QEvent::MouseButtonDblClick))
-        event->ignore();
+    QMouseEvent *me = nullptr;
+    if (watched && watched->parent() == &d->crumbListView && (me = dynamic_cast<QMouseEvent *>(event))) {
+        QEvent::Type type = event->type();
+
+        bool isMoveWindow = type == QEvent::MouseButtonPress ||
+                type == QEvent::MouseMove || type == QEvent::MouseButtonDblClick;
+
+        if (isMoveWindow) {
+            event->ignore();
+            return true;
+        }
+
+        if (type == QEvent::MouseButtonRelease && me->button() == Qt::LeftButton) {
+            QModelIndex index = d->crumbListView.indexAt(me->pos());
+            if (index.isValid() && index != d->crumbListView.currentIndex()){
+                d->crumbListView.clicked(index);
+                return true;
+            }
+        }
+    }
 
     return QFrame::eventFilter(watched, event);
 }
