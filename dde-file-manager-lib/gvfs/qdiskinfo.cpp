@@ -205,6 +205,10 @@ void QDiskInfo::updateGvfsFileSystemInfo()
     }
     error = NULL;
     systemInfo = g_file_query_filesystem_info(file, "*", NULL, &error);
+    if (error) {
+        g_error_free(error);
+        error = NULL;
+    }
     info = g_file_query_info(file, "*", G_FILE_QUERY_INFO_NONE, NULL, &error);
     if (info == NULL) {
         qWarning() << "g_file_query_filesystem_info" << error->message << error->code;
