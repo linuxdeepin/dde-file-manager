@@ -258,7 +258,7 @@ SectionKeyLabel::SectionKeyLabel(const QString &text, QWidget *parent, Qt::Windo
     setObjectName("SectionKeyLabel");
     setFixedWidth(120);
     QFont font = this->font();
-    font.setBold(true);
+    font.setWeight(QFont::Bold-8);
     font.setPixelSize(13);
     setFont(font);
     setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
