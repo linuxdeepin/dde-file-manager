@@ -282,6 +282,14 @@ bool RecentController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsTo
                                                            realUrlList(event->urlList()));
 }
 
+bool RecentController::renameFile(const QSharedPointer<DFMRenameEvent> &event) const
+{
+    DUrl oldUrl = DUrl::fromLocalFile(event->fromUrl().path());
+    DUrl newUrl = DUrl::fromLocalFile(event->toUrl().path());
+
+    return DFileService::instance()->renameFile(event->sender(), oldUrl, newUrl);
+}
+
 bool RecentController::compressFiles(const QSharedPointer<DFMCompressEvent> &event) const
 {
     return DFileService::instance()->compressFiles(event->sender(), realUrlList(event->urlList()));
