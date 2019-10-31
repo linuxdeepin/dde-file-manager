@@ -42,6 +42,7 @@ public:
     bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const override;
     bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const override;
     bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
+    bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const override;
     bool compressFiles(const QSharedPointer<DFMCompressEvent> &event) const override;
     bool decompressFile(const QSharedPointer<DFMDecompressEvent> &event) const override;
     bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const override;

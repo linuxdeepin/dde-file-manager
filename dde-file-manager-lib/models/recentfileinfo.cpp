@@ -90,6 +90,14 @@ DUrl RecentFileInfo::redirectedFileUrl() const
     return d_ptr->proxy ? d_ptr->proxy->fileUrl() : fileUrl();
 }
 
+DUrl RecentFileInfo::getUrlByNewFileName(const QString &fileName) const
+{
+    Q_D(const DAbstractFileInfo);
+
+    return d->proxy ? d->proxy->getUrlByNewFileName(fileName) :
+                      DAbstractFileInfo::getUrlByNewFileName(fileName);
+}
+
 QFileDevice::Permissions RecentFileInfo::permissions() const
 {
     if (fileUrl() == DUrl(RECENT_ROOT)) {
