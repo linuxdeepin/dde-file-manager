@@ -231,8 +231,13 @@ public:
     FileSystemNodePointer takeNodeByIndex(const int index)
     {
         rwLock->lockForWrite();
-        FileSystemNodePointer node(visibleChildren.takeAt(index));
-        children.remove(node->fileInfo->fileUrl());
+        FileSystemNodePointer node;
+        if (index >= 0 && visibleChildren.size() > index) {
+            node = visibleChildren.takeAt(index);
+            children.remove(node->fileInfo->fileUrl());
+        } else {
+            qWarning() << "index [" << index << "] out of range [" << visibleChildren.size() << "]";
+        }
         rwLock->unlock();
 
         return node;
