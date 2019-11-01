@@ -49,6 +49,12 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::replaceText(const QList<DUrl>& originUr
         QString fileBaseName{ info->baseName() };
         const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
         fileBaseName.replace(pair.first, pair.second);
+
+        if (fileBaseName.trimmed().isEmpty()) {
+            qWarning() << "replace fileBaseName(not include suffix) trimmed is empty string";
+            continue;
+        }
+
         int max_length = MAX_FILE_NAME_CHAR_COUNT - suffix.toLocal8Bit().size();
 
         if (fileBaseName.toLocal8Bit().size() > max_length) {
