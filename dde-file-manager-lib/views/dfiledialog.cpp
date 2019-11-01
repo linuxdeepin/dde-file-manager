@@ -33,7 +33,7 @@
 #include "views/filedialogstatusbar.h"
 
 #include <DTitlebar>
-#include <ddialog.h>
+#include <DDialog>
 #include <DPlatformWindowHandle>
 
 #include <QEventLoop>
