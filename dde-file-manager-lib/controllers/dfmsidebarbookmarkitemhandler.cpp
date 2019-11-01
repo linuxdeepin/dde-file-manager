@@ -47,9 +47,10 @@ DFMSideBarItem *DFMSideBarBookmarkItemHandler::createItem(const DUrl &url)
         displayName = fileInfo->fileDisplayName();
     }
 
-    DFMSideBarItem * item = new DFMSideBarItem(
-                    QIcon::fromTheme("folder-bookmark-symbolic"), displayName, url
-                );
+    // fix drag item crashed just like tag items
+    QIcon icon;// = QIcon::fromTheme("folder-bookmark-symbolic");
+    icon.addPixmap(QIcon::fromTheme("folder-bookmark-symbolic").pixmap({16,16}));
+    DFMSideBarItem * item = new DFMSideBarItem(icon, displayName, url);
 
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsEditable | Qt::ItemNeverHasChildren);
     item->setRegisteredHandler(SIDEBAR_ID_BOOKMARK);
