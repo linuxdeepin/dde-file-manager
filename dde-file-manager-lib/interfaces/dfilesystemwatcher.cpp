@@ -140,32 +140,36 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
     QList<inotify_event *> eventList;
     QHash<int, QString> pathForId;
     /// only save event: IN_MOVE_TO
-    QMap<int, QString> cookieToFilePath;
-    QMap<int, QString> cookieToFileName;
+    QMultiMap<int, QString> cookieToFilePath;
+    QMultiMap<int, QString> cookieToFileName;
     QSet<int> hasMoveFromByCookie;
     while (at < end) {
         inotify_event *event = reinterpret_cast<inotify_event *>(at);
-        QString path;
+        QStringList paths;
 
         at += sizeof(inotify_event) + event->len;
 
         int id = event->wd;
-        path = getPathFromID(id);
-        if (path.isEmpty()) {
+        paths = getPathFromID(id);
+        if (paths.empty()) {
             // perhaps a directory?
             id = -id;
-            path = getPathFromID(id);
-            if (path.isEmpty())
+            paths = getPathFromID(id);
+            if (paths.empty())
                 continue;
         }
 
         if (!(event->mask & IN_MOVED_TO) || !hasMoveFromByCookie.contains(event->cookie)) {
             eventList.append(event);
-            pathForId.insert(id, path);
+            for (auto &path : paths) {
+                pathForId.insert(id, path);
+            }
         }
 
         if (event->mask & IN_MOVED_TO) {
-            cookieToFilePath.insert(event->cookie, path);
+            for (auto &path : paths) {
+                cookieToFilePath.insert(event->cookie, path);
+            }
             cookieToFileName.insert(event->cookie, QString::fromUtf8(event->name));
         }
 
@@ -183,147 +187,150 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
 //        qDebug() << "inotify event, wd" << event.wd << "cookie" << event.cookie << "mask" << hex << event.mask;
 
         int id = event.wd;
-        QString path = pathForId.value(id);
+        QStringList paths = getPathFromID(id);
 
-        if (path.isEmpty()) {
+        if (paths.empty()) {
             id = -id;
-            path = pathForId.value(id);
+            paths = getPathFromID(id);
 
-            if (path.isEmpty())
+            if (paths.isEmpty())
                 continue;
         }
         const QString &name = QString::fromUtf8(event.name);
 
-//        qDebug() << "event for path" << path;
+        for (auto &path : paths) {
+//            qDebug() << "event for path" << path;
 
-        /// TODO: Existence of invalid utf8 characters QFile can not read the file information
-        if (event.name != QString::fromLocal8Bit(event.name).toLocal8Bit()) {
-            if (event.mask & (IN_CREATE | IN_MOVED_TO)) {
-                DFMGlobal::fileNameCorrection(path);
+            /// TODO: Existence of invalid utf8 characters QFile can not read the file information
+            if (event.name != QString::fromLocal8Bit(event.name).toLocal8Bit()) {
+                if (event.mask & (IN_CREATE | IN_MOVED_TO)) {
+                    DFMGlobal::fileNameCorrection(path);
+                }
             }
-        }
 
-        if ((event.mask & (IN_DELETE_SELF | IN_MOVE_SELF | IN_UNMOUNT)) != 0) {
-            do {
-                if (event.mask & IN_MOVE_SELF) {
-                    QMap<int, QString>::const_iterator iterator = cookieToFilePath.constBegin();
+            if ((event.mask & (IN_DELETE_SELF | IN_MOVE_SELF | IN_UNMOUNT)) != 0) {
+                do {
+                    if (event.mask & IN_MOVE_SELF) {
+                        QMap<int, QString>::const_iterator iterator = cookieToFilePath.constBegin();
 
-                    bool isMove = false;
+                        bool isMove = false;
 
-                    while (iterator != cookieToFilePath.constEnd()) {
-                        const QString &_path = iterator.value();
-                        const QString &_name = cookieToFileName.value(iterator.key());
+                        while (iterator != cookieToFilePath.constEnd()) {
+                            const QString &_path = iterator.value();
+                            const QString &_name = cookieToFileName.value(iterator.key());
 
-                        if (QFileInfo(_path + QDir::separator() + _name) == QFileInfo(path)) {
-                            isMove = true;
-                            break;
+                            if (QFileInfo(_path + QDir::separator() + _name) == QFileInfo(path)) {
+                                isMove = true;
+                                break;
+                            }
+
+                            ++iterator;
                         }
 
-                        ++iterator;
+                        if (isMove)
+                            break;
                     }
 
-                    if (isMove)
-                        break;
-                }
+                    /// Keep watcher
+//                    pathToID.remove(path);
+//                    idToPath.remove(id, getPathFromID(id));
+//                    if (!idToPath.contains(id))
+//                        inotify_rm_watch(inotifyFd, event.wd);
+//
+//                    if (id < 0)
+//                        onDirectoryChanged(path, true);
+//                    else
+//                        onFileChanged(path, true);
 
-                /// Keep watcher
-//                pathToID.remove(path);
-//                idToPath.remove(id, getPathFromID(id));
-//                if (!idToPath.contains(id))
-//                    inotify_rm_watch(inotifyFd, event.wd);
-
-//                if (id < 0)
-//                    onDirectoryChanged(path, true);
-//                else
-//                    onFileChanged(path, true);
-
-                emit q->fileDeleted(path, QString(), DFileSystemWatcher::QPrivateSignal());
-            } while (false);
-        } else {
-            if (id < 0)
-                onDirectoryChanged(path, false);
-            else
-                onFileChanged(path, false);
-        }
-
-        QString filePath = path;
-
-        if (id < 0) {
-            if (path.endsWith(QDir::separator()))
-                filePath = path + name;
-            else
-                filePath = path  + QDir::separator() + name;
-        }
-
-        if (event.mask & IN_CREATE) {
-//            qDebug() << "IN_CREATE" << filePath << name;
-
-            if (name.isEmpty()) {
-                if (pathToID.contains(path)) {
-                    q->removePath(path);
-                    q->addPath(path);
-                }
-            } else if (pathToID.contains(filePath)) {
-                q->removePath(filePath);
-                q->addPath(filePath);
+                    emit q->fileDeleted(path, QString(), DFileSystemWatcher::QPrivateSignal());
+                } while (false);
+            } else {
+                if (id < 0)
+                    onDirectoryChanged(path, false);
+                else
+                    onFileChanged(path, false);
             }
 
-            emit q->fileCreated(path, name, DFileSystemWatcher::QPrivateSignal());
-        }
+            QString filePath = path;
 
-        if (event.mask & IN_DELETE) {
-//            qDebug() << "IN_DELETE" << filePath;
+            if (id < 0) {
+                if (path.endsWith(QDir::separator()))
+                    filePath = path + name;
+                else
+                    filePath = path  + QDir::separator() + name;
+            }
 
-            emit q->fileDeleted(path, name, DFileSystemWatcher::QPrivateSignal());
-        }
+            if (event.mask & IN_CREATE) {
+//                qDebug() << "IN_CREATE" << filePath << name;
 
-        if (event.mask & IN_MOVED_FROM) {
-            const QString &toPath = cookieToFilePath.value(event.cookie);
-            const QString toName = cookieToFileName.value(event.cookie);
+                if (name.isEmpty()) {
+                    if (pathToID.contains(path)) {
+                        q->removePath(path);
+                        q->addPath(path);
+                    }
+                } else if (pathToID.contains(filePath)) {
+                    q->removePath(filePath);
+                    q->addPath(filePath);
+                }
 
-//            qDebug() << "IN_MOVED_FROM" << filePath << "to path:" << toPath << "to name:" << toName;
+                emit q->fileCreated(path, name, DFileSystemWatcher::QPrivateSignal());
+            }
 
-            emit q->fileMoved(path, name, toPath, toName, DFileSystemWatcher::QPrivateSignal());
-        }
+            if (event.mask & IN_DELETE) {
+//                qDebug() << "IN_DELETE" << filePath;
 
-        if (event.mask & IN_MOVED_TO) {
-//            qDebug() << "IN_MOVED_TO" << filePath;
+                emit q->fileDeleted(path, name, DFileSystemWatcher::QPrivateSignal());
+            }
 
-            if (!hasMoveFromByCookie.contains(event.cookie))
+            if (event.mask & IN_MOVED_FROM) {
+                QString toPath;
+                for (QString &candpath : cookieToFilePath.values(event.cookie)) {
+                    if (filePath.startsWith(candpath)) {
+                        toPath = candpath;
+                        break;
+                    }
+                }
+                const QString toName = cookieToFileName.value(event.cookie);
+
+//                qDebug() << "IN_MOVED_FROM" << filePath << "to path:" << toPath << "to name:" << toName;
+
+                if (toPath.length()) {
+                    emit q->fileMoved(path, name, toPath, toName, DFileSystemWatcher::QPrivateSignal());
+                }
+            }
+
+            if (event.mask & IN_MOVED_TO) {
+//                qDebug() << "IN_MOVED_TO" << filePath << name;
+
+                if (!hasMoveFromByCookie.contains(event.cookie))
                 emit q->fileMoved(QString(), QString(), path, name, DFileSystemWatcher::QPrivateSignal());
-        }
+            }
 
-        if (event.mask & IN_ATTRIB) {
-//            qDebug() << "IN_ATTRIB" <<  event.mask << filePath;
+            if (event.mask & IN_ATTRIB) {
+//                qDebug() << "IN_ATTRIB" <<  event.mask << filePath;
 
-            emit q->fileAttributeChanged(path, name, DFileSystemWatcher::QPrivateSignal());
-        }
+                emit q->fileAttributeChanged(path, name, DFileSystemWatcher::QPrivateSignal());
+            }
 
-        /*only monitor file close event which is opend by write mode*/
-        if (event.mask & IN_CLOSE_WRITE) {
-//            qDebug() << "IN_CLOSE_WRITE" <<  event.mask << filePath;
+            /*only monitor file close event which is opend by write mode*/
+            if (event.mask & IN_CLOSE_WRITE) {
+//                qDebug() << "IN_CLOSE_WRITE" <<  event.mask << filePath;
 
-            emit q->fileClosed(path, id < 0 ? name : QString(), DFileSystemWatcher::QPrivateSignal());
-        }
+                emit q->fileClosed(path, id < 0 ? name : QString(), DFileSystemWatcher::QPrivateSignal());
+            }
 
-        if (event.mask & IN_MODIFY) {
-//            qDebug() << "IN_MODIFY" <<  event.mask << filePath << name;
+            if (event.mask & IN_MODIFY) {
+//                qDebug() << "IN_MODIFY" <<  event.mask << filePath << name;
 
-            emit q->fileModified(path, name, DFileSystemWatcher::QPrivateSignal());
+                emit q->fileModified(path, name, DFileSystemWatcher::QPrivateSignal());
+            }
         }
     }
 }
 
-QString DFileSystemWatcherPrivate::getPathFromID(int id) const
+QStringList DFileSystemWatcherPrivate::getPathFromID(int id) const
 {
-    QHash<int, QString>::const_iterator i = idToPath.find(id);
-    while (i != idToPath.constEnd() && i.key() == id) {
-        if ((i + 1) == idToPath.constEnd() || (i + 1).key() != id) {
-            return i.value();
-        }
-        ++i;
-    }
-    return QString();
+    return idToPath.values(id);
 }
 
 void DFileSystemWatcherPrivate::onFileChanged(const QString &path, bool removed)
