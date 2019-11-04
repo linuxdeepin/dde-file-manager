@@ -403,6 +403,7 @@ void DFileDialog::setFileMode(QFileDialog::FileMode mode)
     case QFileDialog::Directory:
         // 文件名中不可能包含 '/', 此处目的是过滤掉所有文件
         getFileView()->setNameFilters(QStringList("/"));
+        getLeftSideBar()->setDisableUrlSchemes({"recent"}); // 打开目录时禁用recent
         // fall through
     default:
         getFileView()->setEnabledSelectionModes(QSet<DFileView::SelectionMode>() << QAbstractItemView::SingleSelection);
@@ -426,6 +427,7 @@ void DFileDialog::setAcceptMode(QFileDialog::AcceptMode mode)
         statusBar()->setMode(FileDialogStatusBar::Save);
         statusBar()->acceptButton()->setDisabled(statusBar()->lineEdit()->text().isEmpty());
         getFileView()->setSelectionMode(QAbstractItemView::SingleSelection);
+        getLeftSideBar()->setDisableUrlSchemes({"recent"}); // save mode disable recent
 
         connect(statusBar()->lineEdit(), &QLineEdit::textChanged,
                 this, &DFileDialog::onCurrentInputNameChanged);
@@ -889,6 +891,8 @@ void DFileDialog::handleNewView(DFMBaseView *view)
 
     DFileView *fileView = qobject_cast<DFileView *>(view->widget());
 
+    statusBar()->acceptButton()->setEnabled(fileView!=nullptr);
+
     if (!fileView) {
         // sava data
         d->currentNameFilterIndex = selectedNameFilterIndex();
@@ -918,6 +922,21 @@ void DFileDialog::handleNewView(DFMBaseView *view)
             this, &DFileDialog::selectionFilesChanged);
     connect(fileView, &DFileView::rootUrlChanged,
             this, &DFileDialog::currentUrlChanged);
+
+    auto updateAcceptButtonState = [this](const DUrl & url){
+        const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(url);
+        Q_D(const DFileDialog);
+        bool isDirMode = d->fileMode == QFileDialog::Directory || d->fileMode == QFileDialog::DirectoryOnly;
+
+        statusBar()->acceptButton()->setEnabled(!isDirMode || !fileInfo->isVirtualEntry());
+    };
+
+    connect(fileView, &DFileView::rootUrlChanged, this, updateAcceptButtonState);
+    connect(this, &DFileDialog::selectionFilesChanged, this, [=](){
+        const DUrlList &urls = getFileView()->selectedUrls();
+        DUrl url = urls.size()>0 ? urls.first() : getFileView()->rootUrl();
+        updateAcceptButtonState(url);
+    });
 
     connect(fileView, static_cast<void (DFileView::*)(const QModelIndex &)>(&DFileView::currentChanged),
     this, [this, fileView] {
@@ -954,6 +973,9 @@ void DFileDialog::handleNewView(DFMBaseView *view)
     if (!d->currentInputName.isEmpty()) {
         setCurrentInputName(d->currentInputName);
     }
+
+    // fix switch computerview --> fileview fileMode miss
+    setFileMode(d->fileMode);
 }
 
 FileDialogStatusBar *DFileDialog::statusBar() const
