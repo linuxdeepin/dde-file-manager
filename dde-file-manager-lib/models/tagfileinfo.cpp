@@ -244,7 +244,8 @@ bool TagFileInfo::canDrop() const
 
 bool TagFileInfo::isVirtualEntry() const
 {
-    return true;
+    Q_D(const DAbstractFileInfo);
+    return !d->proxy;
 }
 
 DUrl TagFileInfo::parentUrl() const
