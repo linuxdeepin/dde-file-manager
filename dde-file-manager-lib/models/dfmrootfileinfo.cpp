@@ -79,11 +79,10 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
         d_ptr->stdloc = loc;
         if (QStandardPaths::writableLocation(loc) == QStandardPaths::writableLocation(QStandardPaths::StandardLocation::HomeLocation)) {
             d_ptr->backer_url = "";
+        } else {
+            FileUtils::mkpath(DUrl::fromLocalFile(QStandardPaths::writableLocation(loc)));
+            d_ptr->backer_url = QStandardPaths::writableLocation(loc);
         }
-
-        FileUtils::mkpath(DUrl::fromLocalFile(QStandardPaths::writableLocation(loc)));
-
-        d_ptr->backer_url = QStandardPaths::writableLocation(loc);
     } else if (suffix() == SUFFIX_GVFSMP) {
         QString mpp = QUrl::fromPercentEncoding(fileUrl().path().mid(1).chopped(QString("." SUFFIX_GVFSMP).length()).toUtf8());
         QExplicitlySharedDataPointer<DGioMount> mp(DGioMount::createFromPath(mpp));
