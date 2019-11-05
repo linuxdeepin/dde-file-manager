@@ -637,15 +637,15 @@ void DFMSideBar::initTagsConnection()
 void DFMSideBar::applySidebarColor()
 {
     DPalette pa = DApplicationHelper::instance()->palette(m_sidebarView);
-    QColor base_color = palette().base().color();
-    DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(base_color);
+//    QColor base_color = palette().base().color();
+//    DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(base_color);
 
-    if (ct == DGuiApplicationHelper::LightType) {
-        pa.setBrush(DPalette::ItemBackground, palette().base());
-    } else {
-        base_color = DGuiApplicationHelper::adjustColor(base_color, 0, 0, +5, 0, 0, 0, 0);
-        pa.setColor(DPalette::ItemBackground, base_color);
-    }
+    pa.setBrush(DPalette::ItemBackground, palette().base());
+//    if (ct == DGuiApplicationHelper::LightType) {
+//    } else {
+//        base_color = DGuiApplicationHelper::adjustColor(base_color, 0, 0, +5, 0, 0, 0, 0);
+//        pa.setColor(DPalette::ItemBackground, base_color);
+//    }
 
     DApplicationHelper::instance()->setPalette(m_sidebarView, pa);
 }
