@@ -65,7 +65,7 @@ DFMSideBar::DFMSideBar(QWidget *parent)
     // init view.
     m_sidebarView->setModel(m_sidebarModel);
     m_sidebarView->setItemDelegate(new DFMSideBarItemDelegate(m_sidebarView));
-    m_sidebarView->setViewportMargins(0, 0, m_sidebarView->verticalScrollBar()->sizeHint().width(), 0);
+    m_sidebarView->setViewportMargins(10, 0, m_sidebarView->verticalScrollBar()->sizeHint().width(), 0);
     m_sidebarView->setContextMenuPolicy(Qt::CustomContextMenu);
     m_sidebarView->setFrameShape(QFrame::Shape::NoFrame);
     m_sidebarView->setAutoFillBackground(true);

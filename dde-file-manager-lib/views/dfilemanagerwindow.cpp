@@ -949,7 +949,7 @@ void DFileManagerWindow::initLeftSideBar()
     D_D(DFileManagerWindow);
 
     d->sideBar = new DFMSideBar(this);
-    d->sideBar->setContentsMargins(10, 0, 0, 0);
+    d->sideBar->setContentsMargins(0, 0, 0, 0);
 
     d->sideBar->setObjectName("DFMSideBar");
     d->sideBar->setMaximumWidth(DFMSideBar::maximumWidth);
