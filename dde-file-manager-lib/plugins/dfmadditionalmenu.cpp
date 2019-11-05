@@ -50,8 +50,8 @@ public:
     const QLatin1String MENU_TYPE_KEY {"X-DFM-MenuTypes"};
     const QLatin1String MIMETYPE_EXCLUDE_KEY {"X-DFM-ExcludeMimeTypes"};
     const QLatin1String MENU_HIDDEN_KEY {"X-DFM-NotShowIn"};     // "Desktop", "Filemanager"
-    const QLatin1String SUPPORT_SCHEMES_KEY {"X-DFM-SupportSchemes"};
-
+    const QLatin1String SUPPORT_SCHEMES_KEY {"X-DFM-SupportSchemes"}; // file, trash, tag..
+    const QLatin1String SUPPORT_SUFFIX_KEY {"X-DFM-SupportSuffix"}; // for deepin-compress *.7z.001,*.7z.002,*.7z.003...
 
     DFMAdditionalMenuPrivate(DFMAdditionalMenu *qq);
 
@@ -60,6 +60,7 @@ public:
     bool isMimeTypeMatch(const QStringList &fileMimeTypes, const QStringList &supportMimeTypes);
     bool isActionShouldShow(QAction *action, bool onDesktop);
     bool isSchemeSupport(QAction *action, const DUrl &url);
+    bool isSuffixSupport(QAction *action, const DUrl &url);
     QList<QAction *> emptyAreaActoins(const QString &currentDir, bool onDesktop);
 private:
     QList<QAction *> actionList;
@@ -137,13 +138,41 @@ bool DFMAdditionalMenuPrivate::isActionShouldShow(QAction *action, bool onDeskto
 
 bool DFMAdditionalMenuPrivate::isSchemeSupport(QAction *action, const DUrl &url)
 {
-    // X-DFM-SupportSchemes exist
-    if (!action->property(SUPPORT_SCHEMES_KEY.data()).isValid()) {
+    // X-DFM-SupportSchemes not exist
+    if (!action || !action->property(SUPPORT_SCHEMES_KEY.data()).isValid()) {
         return true;
     }
 
     QStringList supportList =  action->property(SUPPORT_SCHEMES_KEY.data()).toStringList();
     return supportList.contains(url.scheme(), Qt::CaseInsensitive);
+}
+
+bool DFMAdditionalMenuPrivate::isSuffixSupport(QAction *action, const DUrl &url)
+{
+    Q_Q(DFMAdditionalMenu);
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(q, url);
+    // X-DFM-SupportSuffix not exist
+    if (!fileInfo || fileInfo->isDir() || !action || !action->property(SUPPORT_SUFFIX_KEY.data()).isValid()) {
+        return true;
+    }
+
+    QFileInfo info(url.toLocalFile());
+    QStringList supportList =  action->property(SUPPORT_SUFFIX_KEY.data()).toStringList();
+    // 7z.001,7z.002, 7z.003 ... 7z.xxx
+    QString cs = info.completeSuffix();
+    if (supportList.contains(cs, Qt::CaseInsensitive)) {
+        return true;
+    }
+
+    bool match = false;
+    for (QString suffix : supportList) {
+        int endPos = suffix.lastIndexOf("*"); // 7z.*
+        if (endPos >=0 && cs.length()>endPos && suffix.left(endPos) == cs.left(endPos)) {
+            match = true;
+            break;
+        }
+    }
+    return match;
 }
 
 QList<QAction *>DFMAdditionalMenuPrivate::emptyAreaActoins(const QString &currentDir, bool onDesktop)
@@ -152,7 +181,9 @@ QList<QAction *>DFMAdditionalMenuPrivate::emptyAreaActoins(const QString &curren
     QList<QAction *> actions = actionListByType[menuType];
     for (auto it = actions.begin(); it != actions.end(); ) {
         QAction * action = *it;
-        if(!action || !isActionShouldShow(action, onDesktop) || !isSchemeSupport(action, DUrl(currentDir))) {
+        if(!action || !isActionShouldShow(action, onDesktop) ||
+                !isSchemeSupport(action, DUrl(currentDir)) ||
+                !isSuffixSupport(action, DUrl(currentDir))) {
             it = actions.erase(it);
             continue;
         }
@@ -220,6 +251,7 @@ DFMAdditionalMenu::DFMAdditionalMenu(QObject *parent)
             SET_PROPERTY_IFEXIST(action, file, d->MENU_HIDDEN_KEY);
             SET_PROPERTY_IFEXIST(action, file, d->MIMETYPE_EXCLUDE_KEY);
             SET_PROPERTY_IFEXIST(action, file, d->SUPPORT_SCHEMES_KEY);
+            SET_PROPERTY_IFEXIST(action, file, d->SUPPORT_SUFFIX_KEY);
 
             for (const QString &oneType : menuTypes) {
                 d->actionListByType[oneType].append(action);
@@ -283,7 +315,9 @@ QList<QAction *> DFMAdditionalMenu::actions(const QStringList &files, const QStr
 
         for (auto it = actions.begin(); it != actions.end(); ) {
             QAction * action = *it;
-            if(!action || !d->isActionShouldShow(action, onDesktop) || !d->isSchemeSupport(action, DUrl(f))) {
+            if(!action || !d->isActionShouldShow(action, onDesktop) ||
+                    !d->isSchemeSupport(action, DUrl(f)) ||
+                    !d->isSuffixSupport(action, DUrl(f))) {
                 it = actions.erase(it);
                 continue;
             }
