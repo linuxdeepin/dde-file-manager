@@ -77,6 +77,7 @@ public:
 DFileDialog::DFileDialog(QWidget *parent)
     : DFileManagerWindow(parent)
     , d_ptr(new DFileDialogPrivate())
+    , m_acceptCanOpenOnSave(false)
 {
     d_ptr->view = qobject_cast<DFileView *>(DFileManagerWindow::getFileView()->widget());
 
@@ -958,6 +959,19 @@ void DFileDialog::handleNewView(DFMBaseView *view)
             setCurrentInputName(fileInfo->fileName());
     });
 
+    connect(fileView, &DFileView::rootUrlChanged,
+            this, [this](){
+        Q_D(const DFileDialog);
+
+        if (d->acceptMode == QFileDialog::AcceptSave) {
+            statusBar()->lineEdit()->setText(QString());
+            setLabelText(QFileDialog::Accept, QString("Save"));
+            m_acceptCanOpenOnSave = false;
+            onCurrentInputNameChanged();
+        }
+    });
+
+
     if (!d->nameFilters.isEmpty()) {
         setNameFilters(d->nameFilters);
     }
@@ -1007,7 +1021,12 @@ void DFileDialog::onAcceptButtonClicked()
 {
     D_DC(DFileDialog);
 
+
     if (d->acceptMode == QFileDialog::AcceptSave) {
+        if (m_acceptCanOpenOnSave) {
+            getFileView()->cd(getFileView()->selectedUrls().first());
+            return;
+        }
         if (!directoryUrl().isLocalFile()) {
             return;
         }
@@ -1111,6 +1130,28 @@ void DFileDialog::onCurrentInputNameChanged()
 
     d->currentInputName = statusBar()->lineEdit()->text();
     statusBar()->acceptButton()->setDisabled(d->currentInputName.isEmpty());
+
+    DFileSystemModel * model = getFileView()->model();
+    if (!model->sortedUrls().isEmpty()) {
+
+        const DAbstractFileInfoPointer &fileInfo = model->fileInfo(model->sortedUrls().first());
+        if (fileInfo) {
+            DUrl fileUrl = fileInfo->getUrlByNewFileName(statusBar()->lineEdit()->text());
+
+            DUrlList urlList;
+            if (model->sortedUrls().contains(fileUrl) &&
+                    model->fileInfo(fileUrl)->isDir()) {
+                urlList << fileUrl;
+                setLabelText(QFileDialog::Accept, QString("Open"));
+                m_acceptCanOpenOnSave = true;
+            } else {
+                setLabelText(QFileDialog::Accept, QString("Save"));
+                m_acceptCanOpenOnSave = false;
+            }
+
+            getFileView()->select(urlList);
+        }
+    }
 }
 
 void DFileDialog::handleEnterPressed()
