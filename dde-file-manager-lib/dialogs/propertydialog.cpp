@@ -1061,7 +1061,7 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
         {DFMRootFileInfo::ItemType::GvfsCamera, QObject::tr("Camera")}
     };
     results.append({QObject::tr("Device type"), devtypemap.value(static_cast<DFMRootFileInfo::ItemType>(info->fileType()), QObject::tr("Unknown device"))});
-    results.append({QObject::tr("Total space"), FileUtils::formatSize(fsUsed)});
+    results.append({QObject::tr("Total space"), FileUtils::formatSize(fsSize)});
     if (!fsType.isEmpty()) {
         results.append({QObject::tr("File system"), fsType});
     }
