@@ -1115,6 +1115,10 @@ void DFileDialog::onCurrentInputNameChanged()
 
 void DFileDialog::handleEnterPressed()
 {
+    if (!statusBar()->acceptButton()->isEnabled()) {
+        return;
+    }
+
     if (!qobject_cast<DFMAddressBar*>(qApp->focusWidget())) {
         for (const QModelIndex &index : getFileView()->selectedIndexes()) {
             const DAbstractFileInfoPointer &info = getFileView()->model()->fileInfo(index);
