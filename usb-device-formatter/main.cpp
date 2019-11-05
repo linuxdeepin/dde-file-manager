@@ -30,12 +30,13 @@
 #include <QTranslator>
 #include <QLocale>
 #include <QIcon>
+#include <QDBusMetaType>
 #include "app/cmdmanager.h"
 #include "view/mainwindow.h"
 #include "dplatformwindowhandle.h"
 #include "dialogs/messagedialog.h"
-#include "../partman/partition.h"
 #include "app/singletonapp.h"
+#include "utils/udisksutils.h"
 #include <QProcessEnvironment>
 #include <QX11Info>
 #include <X11/Xlib.h>
@@ -48,6 +49,9 @@ int main(int argc, char *argv[])
 {
     //Logger
     DLogManager::registerConsoleAppender();
+
+    qDBusRegisterMetaType<QPair<bool,QString>>();
+    qDBusRegisterMetaType<QByteArrayList>();
 
     //Init Environment
     qputenv("QT_IM_MODULE", "xim");
@@ -111,10 +115,10 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    //Check if is a removable device
-    PartMan::Partition p = PartMan::Partition::getPartitionByDevicePath(path);
-    if(!p.getIsRemovable()){
-        QString message = QObject::tr("Cannot format local device");
+    //Check if the device is read-only
+    UDisksBlock blk(path);
+    if (blk.isReadOnly()){
+        QString message = QObject::tr("Device is read-only");
         MessageDialog d(message, 0);
         d.exec();
         return 0;

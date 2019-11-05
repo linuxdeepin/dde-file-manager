@@ -33,6 +33,8 @@
 #include "widgets/progressline.h"
 #include <QVariantAnimation>
 
+
+class QCheckBox;
 class MainPage : public QWidget
 {
     Q_OBJECT
@@ -55,6 +57,7 @@ public:
     void setTargetPath(const QString &targetPath);
     QString formatSize(const qint64& num);
     QString getSelectedFs() const;
+    bool shouldErase() const;
 
     int getMaxLabelNameLength() const;
     void setMaxLabelNameLength(int maxLabelNameLength);
@@ -79,7 +82,7 @@ private:
     QLabel* m_remainLabel = NULL;
     QLabel* m_nameLabel = NULL;
     int m_maxLabelNameLength = 0;
-    QVariantAnimation* animator;
+    QCheckBox* m_quickfmt = nullptr;
 };
 
 #endif // MAINPAGE_H

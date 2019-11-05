@@ -13,12 +13,8 @@ TEMPLATE = app
 
 include(../partman/partman.pri)
 
-PKGCONFIG += x11
-CONFIG(release, release|debug) {
-    PKGCONFIG += dtkwidget dtkgui
-} else {
-    PKGCONFIG += dtkwidget dtkgui
-}
+PKGCONFIG += x11 udisks2-qt5
+PKGCONFIG += dtkwidget dtkgui
 
 CONFIG += c++11 link_pkgconfig
 
@@ -36,7 +32,9 @@ SOURCES += main.cpp \
     view/errorpage.cpp \
     app/cmdmanager.cpp \
     dialogs/messagedialog.cpp \
-    app/singletonapp.cpp
+    app/singletonapp.cpp \
+    utils/udisksutils.cpp \
+    utils/fsutils.cpp
 
 HEADERS  += \
     view/mainwindow.h \
@@ -49,7 +47,9 @@ HEADERS  += \
     view/errorpage.h \
     app/cmdmanager.h \
     dialogs/messagedialog.h \
-    app/singletonapp.h
+    app/singletonapp.h \
+    utils/udisksutils.h \
+    utils/fsutils.h
 
 CONFIG(release, debug|release) {
     # generate translation file and generate policy file from translation file.
