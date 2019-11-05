@@ -24,10 +24,13 @@
 
 #include "formatingpage.h"
 
+#include <DWaterProgress>
+
 #include <QIcon>
 #include <QVBoxLayout>
 #include <QLabel>
-#include "widgets/progressbox.h"
+
+DWIDGET_USE_NAMESPACE
 
 FormatingPage::FormatingPage(QWidget *parent) : QFrame(parent)
 {
@@ -37,14 +40,13 @@ FormatingPage::FormatingPage(QWidget *parent) : QFrame(parent)
 void FormatingPage::initUI()
 {
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    m_progressBox = new ProgressBox(this);
+    m_progressBox = new DWaterProgress(this);
     m_progressBox->setFixedSize(128,128);
+    m_progressBox->start();
     QLabel* formatingLabel = new QLabel(this);
     QString formatingText = tr("Formatting the disk, please wait...");
     formatingLabel->setText(formatingText);
     formatingLabel->setObjectName("StatusLabel");
-
-    connect(m_progressBox, &ProgressBox::finished, this, &FormatingPage::finished);
 
     mainLayout->addSpacing(29);
     mainLayout->addWidget(m_progressBox, 0 , Qt::AlignHCenter);
@@ -54,13 +56,7 @@ void FormatingPage::initUI()
     setLayout(mainLayout);
 }
 
-void FormatingPage::animateToFinish(const bool &result)
+void FormatingPage::setProgress(double p)
 {
-    m_progressBox->finishedTask(result);
-}
-
-void FormatingPage::startAnimate()
-{
-    m_progressBox->setValue(0);
-    m_progressBox->startTask();
+    m_progressBox->setValue(int(p * 100));
 }

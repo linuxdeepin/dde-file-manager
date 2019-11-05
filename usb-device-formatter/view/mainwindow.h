@@ -54,6 +54,8 @@
 class QComboBox;
 class QProgressBar;
 class QPushButton;
+class DUDisksJob;
+class DDiskManager;
 
 DWIDGET_USE_NAMESPACE
 DGUI_USE_NAMESPACE
@@ -76,8 +78,7 @@ public:
 
     void initUI();
     void initConnect();
-    void formartDevice();
-    void unMountDevice();
+    void formatDevice();
     bool checkBackup();
 
 signals:
@@ -99,6 +100,8 @@ private:
     ErrorPage* m_errorPage = nullptr;
     QString m_formatPath;
     QString m_formatType;
+    QScopedPointer<DUDisksJob> m_job;
+    QScopedPointer<DDiskManager> m_diskm;
 
     PartMan::PartitionManager partitionManager;
 

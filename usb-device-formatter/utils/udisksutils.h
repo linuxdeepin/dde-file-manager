@@ -1,12 +1,8 @@
 /*
- * Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
- *               2016 ~ 2018 dragondjf
+ * Copyright (C) 2019 ~ 2019 Deepin Technology Co., Ltd.
+ *               2019 ~ 2019 Chris Xiong
  *
- * Author:     dragondjf<dingjiangfeng@deepin.com>
- *
- * Maintainer: dragondjf<dingjiangfeng@deepin.com>
- *             zccrs<zhangjide@deepin.com>
- *             Tangtong<tangtong@deepin.com>
+ * Author:     Chris Xiong<chirs241097@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,28 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FORMATINGPAGE_H
-#define FORMATINGPAGE_H
+#ifndef UDISKSUTILS_H
+#define UDISKSUTILS_H
 
-#include <QFrame>
+#include <QString>
+#include <QScopedPointer>
 
-namespace Dtk {
-namespace Widget {
-class DWaterProgress;
-}
-}
-
-class FormatingPage : public QFrame
+class DBlockDevice;
+class UDisksBlock
 {
-    Q_OBJECT
 public:
-    explicit FormatingPage(QWidget *parent = 0);
-    void initUI();
-    void setProgress(double p);
+    UDisksBlock(const QString &devnode);
+    ~UDisksBlock();
 
-public slots:
+    bool isReadOnly() const;
+    QString displayName() const;
+    QString iconName() const;
+    QString fsType() const;
+    qint64 sizeTotal() const;
+    qint64 sizeUsed() const;
+
+    DBlockDevice* operator ->();
 private:
-    Dtk::Widget::DWaterProgress* m_progressBox = NULL;
+    QScopedPointer<DBlockDevice> blk;
 };
-
-#endif // FORMATINGPAGE_H
+#endif // UDISKSUTILS_H

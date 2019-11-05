@@ -43,19 +43,25 @@
 #include <QApplication>
 #include <QtConcurrent>
 #include <DWindowManagerHelper>
-#include "../partman/partition.h"
 #include "dialogs/messagedialog.h"
+#include "utils/udisksutils.h"
+
+#include <dblockdevice.h>
+#include <ddiskmanager.h>
+#include <dudisksjob.h>
 
 using namespace PartMan;
 MainWindow::MainWindow(const QString &path, QWidget *parent):
-    DDialog(parent)
+    DDialog(parent),
+    m_diskm(new DDiskManager)
 {
     DPlatformWindowHandle handle(this);
     Q_UNUSED(handle)
 
     setObjectName("UsbDeviceFormatter");
+    m_diskm->setWatchChanges(true);
     m_formatPath = path;
-    m_formatType = Partition::getPartitionByDevicePath(path).fs();
+    m_formatType = UDisksBlock(path).fsType();
     if(m_formatType == "vfat")
         m_formatType = "fat32";
     initUI();
@@ -115,58 +121,33 @@ void MainWindow::initUI()
 void MainWindow::initConnect()
 {
     connect(m_comfirmButton, &QPushButton::clicked, this, &MainWindow::nextStep);
-    connect(m_formatingPage, &FormatingPage::finished, this, &MainWindow::onFormatingFinished);
     connect(this, &MainWindow::taskFinished, this, &MainWindow::preHandleTaskFinished);
-}
-
-void MainWindow::formartDevice()
-{
-    DWindowManagerHelper::setMotifFunctions(windowHandle(), DWindowManagerHelper::FUNC_CLOSE, false);
-    setWindowFlags(windowFlags() & (~Qt::WindowCloseButtonHint));
-
-    QtConcurrent::run([=]{
-        bool result = false;
-        QString format = m_mainPage->selectedFormat();
-        QString first = format.left(1);
-        format.remove(0, 1);
-        format.insert(0, first.toUpper());
-
-        //First of all to unmount device
-        unMountDevice();
-
-        //Format deivice
-        PartMan::PartitionManager partitonManager;
-        result = partitonManager.mkfs(m_formatPath,
-                             m_mainPage->getSelectedFs(),
-                             m_mainPage->getLabel());
-
-        //Delay on checking out disk status
-        QTimer::singleShot(300,this, [=]{
-            if(result){
-                bool f = checkBackup();
-                emit taskFinished(f);
-                return;
-            }
-
-            emit taskFinished(result);
-        });
+    connect(m_diskm.data(), &DDiskManager::jobAdded, [this](const QString &jobs) {
+        QScopedPointer<DUDisksJob> job(DDiskManager::createJob(jobs));
+        if (job->operation().contains("format") && job->objects().contains(UDisksBlock(m_formatPath)->path())) {
+            m_job.reset(DDiskManager::createJob(jobs));
+            connect(m_job.data(), &DUDisksJob::progressChanged, [this](double p){qDebug() << p;m_formatingPage->setProgress(p);});
+            connect(m_job.data(), &DUDisksJob::completed, [this](bool r, QString){this->onFormatingFinished(r);});
+        }
     });
 }
 
-void MainWindow::unMountDevice()
+void MainWindow::formatDevice()
 {
-    QStringList args;
-    args << m_formatPath;
-    QString cmd = "umount";
-    QProcess::execute(cmd, args);
+    DWindowManagerHelper::setMotifFunctions(windowHandle(), DWindowManagerHelper::FUNC_CLOSE, false);
+
+    QtConcurrent::run([=]{
+        UDisksBlock blk(m_formatPath);
+        blk->unmount({});
+        QVariantMap opt = {{"label", m_mainPage->getLabel()}};
+        if (m_mainPage->shouldErase()) opt["erase"] = "zero";
+        blk->format(m_mainPage->getSelectedFs(), opt);
+    });
 }
 
 bool MainWindow::checkBackup()
 {
-    PartMan::Partition p = PartMan::Partition::getPartitionByDevicePath(m_formatPath);
-    if(p.fs().isEmpty())
-        return false;
-    return true;
+    return !UDisksBlock(m_formatPath).fsType().isEmpty();
 }
 
 void MainWindow::nextStep()
@@ -182,8 +163,7 @@ void MainWindow::nextStep()
         m_currentStep = Formating;
         m_comfirmButton->setText(tr("Formatting..."));
         m_comfirmButton->setEnabled(false);
-        m_formatingPage->startAnimate();
-        formartDevice();
+        formatDevice();
         break;
     case Finished:
         qApp->quit();
@@ -203,7 +183,6 @@ void MainWindow::nextStep()
 void MainWindow::onFormatingFinished(const bool &successful)
 {
     DWindowManagerHelper::setMotifFunctions(windowHandle(), DWindowManagerHelper::FUNC_CLOSE, true);
-    setWindowFlags(windowFlags() | Qt::WindowCloseButtonHint);
 
     if (successful) {
         m_currentStep = Finished;
@@ -227,5 +206,4 @@ void MainWindow::onFormatingFinished(const bool &successful)
 
 void MainWindow::preHandleTaskFinished(const bool &result)
 {
-    m_formatingPage->animateToFinish(result);
 }

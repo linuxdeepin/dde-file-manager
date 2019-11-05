@@ -26,13 +26,12 @@
 #include <QVBoxLayout>
 #include <QGridLayout>
 #include <QCheckBox>
-#include "../partman/partitionmanager.h"
-#include "../partman/readusagemanager.h"
-#include "../partman/partition.h"
 #include <QMetaEnum>
 #include <QDebug>
 #include <QProcess>
-using namespace PartMan;
+
+#include "utils/fsutils.h"
+#include "utils/udisksutils.h"
 
 QString sizeString(const QString &str)
 {
@@ -56,8 +55,6 @@ QString sizeString(const QString &str)
 MainPage::MainPage(const QString& defautFormat, QWidget *parent) : QWidget(parent)
 {
     m_defautlFormat = defautFormat;
-    animator = new QVariantAnimation(this);
-    animator->setDuration(100);
     initUI();
     initConnections();
 
@@ -88,7 +85,6 @@ void MainPage::initUI()
     m_storageProgressBar->setMin(0);
     m_storageProgressBar->setValue(20);
 
-
     m_storageProgressBar->setFixedSize(qobject_cast<QWidget*>(parent())->width() - 70, 2);
     storageProgressLayout->addLayout(shLayout);
     storageProgressLayout->addWidget(m_storageProgressBar, 0, Qt::AlignHCenter);
@@ -110,14 +106,13 @@ void MainPage::initUI()
     m_typeCombo = new QComboBox(this);
     m_typeCombo->setObjectName("TypeCombo");
 
-    QMetaEnum metaEnum = QMetaEnum::fromType<FsType>();
-    int index = 0;
-    for(int i = 0; i < metaEnum.keyCount(); i++){
-        QString key = metaEnum.key(i);
-        m_fileFormat << key;
-        if(m_defautlFormat == key.toLower()){
+    int index = 0, i = 0;
+    for(auto &fs : FsUtils::supportedFilesystems()){
+        m_fileFormat << fs;
+        if(m_defautlFormat == fs.toLower()){
             index = i;
         }
+        ++i;
     }
 
     m_typeCombo->addItems(m_fileFormat);
@@ -130,8 +125,8 @@ void MainPage::initUI()
     m_labelLineEdit->setText(m_typeCombo->currentText());
     m_labelLineEdit->setFixedWidth(160);
 
-    QCheckBox* fastFormatCheckBox = new QCheckBox(this);
-    fastFormatCheckBox->setChecked(true);
+    m_quickfmt = new QCheckBox(this);
+    m_quickfmt->setChecked(true);
 
     QLabel* fastFormatLabel = new QLabel(tr("Quick Format"), this);
     fastFormatLabel->setObjectName("CheckBoxLabel");
@@ -142,7 +137,7 @@ void MainPage::initUI()
     optGridLayout->addWidget(labelText, 1, 0, Qt::AlignVCenter|Qt::AlignRight);
     optGridLayout->addWidget(m_labelLineEdit, 1, 1, Qt::AlignVCenter|Qt::AlignLeft);
 
-    optGridLayout->addWidget(fastFormatCheckBox,2,0,Qt::AlignVCenter|Qt::AlignRight);
+    optGridLayout->addWidget(m_quickfmt,2,0,Qt::AlignVCenter|Qt::AlignRight);
     optGridLayout->addWidget(fastFormatLabel,2,1,Qt::AlignVCenter|Qt::AlignLeft);
 
     for(int i = 0; i < optGridLayout->rowCount(); i++){
@@ -178,7 +173,7 @@ QString MainPage::getLabel()
 void MainPage::onCurrentSelectedTypeChanged(const QString &type)
 {
     m_labelLineEdit->setText(type);
-    m_maxLabelNameLength = PartMan::PartitionManager::getMaxNameLengthByTypeString(type);
+    m_maxLabelNameLength = FsUtils::maxLabelLength(type);
     m_labelLineEdit->setMaxLength(m_maxLabelNameLength);
 }
 
@@ -206,13 +201,14 @@ QString MainPage::getTargetPath() const
 void MainPage::setTargetPath(const QString &targetPath)
 {
     qlonglong total, free;
-    PartMan::ReadUsageManager readUsageManager;
-    readUsageManager.readUsage(targetPath, free, total);
+    UDisksBlock blk(targetPath);
+    total = blk.sizeTotal();
+    free = blk.sizeTotal() - blk.sizeUsed();
 
     m_storageProgressBar->setMax(total);
     m_storageProgressBar->setValue(total - free);
     m_remainLabel->setText(QString("%1/ %2").arg(formatSize(total - free), formatSize(total)));
-    QString deviceName = Partition::getPartitionByDevicePath(targetPath).label();
+    QString deviceName = blk.displayName();
     QFontMetrics fm(QFont("",10));
     m_nameLabel->setText(fm.elidedText(deviceName, Qt::ElideRight, 100  ));
 
@@ -252,5 +248,10 @@ QString MainPage::formatSize(const qint64 &num)
 QString MainPage::getSelectedFs() const
 {
     return m_typeCombo->currentText();
+}
+
+bool MainPage::shouldErase() const
+{
+    return !m_quickfmt->isChecked();
 }
 
