@@ -93,6 +93,7 @@ void MountAskPasswordDialog::initUI()
 
     m_passwordLineEdit = new DPasswordEdit;
     m_passwordLineEdit->setFixedHeight(24);
+    m_passwordLineEdit->setAttribute(Qt::WA_InputMethodEnabled, false);
 
     m_passwordButtonGroup = new QButtonGroup(this);
     m_passwordButtonGroup->setExclusive(true);
