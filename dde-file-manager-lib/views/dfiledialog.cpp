@@ -132,11 +132,17 @@ QDir DFileDialog::directory() const
 
 void DFileDialog::setDirectoryUrl(const DUrl &directory)
 {
+    if (!getFileView()){
+        return;
+    }
     getFileView()->cd(directory);
 }
 
 QUrl DFileDialog::directoryUrl() const
 {
+    if (!getFileView()){
+        return QUrl();
+    }
     return getFileView()->rootUrl();
 }
 
@@ -163,6 +169,9 @@ QStringList DFileDialog::selectedFiles() const
 
 void DFileDialog::selectUrl(const QUrl &url)
 {
+    if (!getFileView()){
+        return;
+    }
     getFileView()->select(DUrlList() << url);
 
     const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(url);
@@ -178,6 +187,9 @@ QList<QUrl> DFileDialog::selectedUrls() const
 {
     D_DC(DFileDialog);
 
+    if (!getFileView()){
+        return QList<QUrl>();
+    }
     DUrlList list = getFileView()->selectedUrls();
 
     DUrlList::iterator begin = list.begin();
@@ -290,6 +302,9 @@ void DFileDialog::selectNameFilter(const QString &filter)
 
 QString DFileDialog::modelCurrentNameFilter() const
 {
+    if (!getFileView()) {
+        return "";
+    }
     const QStringList &filters = getFileView()->nameFilters();
 
     if (filters.isEmpty()) {
@@ -312,7 +327,7 @@ void DFileDialog::selectNameFilterByIndex(int index)
 {
     D_D(DFileDialog);
 
-    if (index < 0 || index >= statusBar()->comboBox()->count()) {
+    if (index < 0 || index >= statusBar()->comboBox()->count() || !getFileView()) {
         return;
     }
 
@@ -366,26 +381,34 @@ int DFileDialog::selectedNameFilterIndex() const
 
 QDir::Filters DFileDialog::filter() const
 {
-    return getFileView()->filters();
+    return getFileView() ? getFileView()->filters() : QDir::Filters();
 }
 
 void DFileDialog::setFilter(QDir::Filters filters)
 {
-    getFileView()->setFilters(filters);
+    if (getFileView()) {
+        getFileView()->setFilters(filters);
+    }
 }
 
 void DFileDialog::setViewMode(DFileView::ViewMode mode)
 {
-    getFileView()->setViewMode(mode);
+    if (getFileView()) {
+        getFileView()->setViewMode(mode);
+    }
 }
 
 DFileView::ViewMode DFileDialog::viewMode() const
 {
-    return getFileView()->viewMode();
+    return getFileView() ? getFileView()->viewMode() : DFileView::ViewMode::ListMode ;
 }
 
 void DFileDialog::setFileMode(QFileDialog::FileMode mode)
 {
+    if (!getFileView()) {
+        return;
+    }
+
     D_D(DFileDialog);
 
     if (d->fileMode == QFileDialog::DirectoryOnly
@@ -414,6 +437,10 @@ void DFileDialog::setFileMode(QFileDialog::FileMode mode)
 
 void DFileDialog::setAcceptMode(QFileDialog::AcceptMode mode)
 {
+    if (!getFileView()) {
+        return;
+    }
+
     D_D(DFileDialog);
 
     d->acceptMode = mode;
@@ -472,6 +499,10 @@ QString DFileDialog::labelText(QFileDialog::DialogLabel label) const
 
 void DFileDialog::setOptions(QFileDialog::Options options)
 {
+    if (!getFileView()) {
+        return;
+    }
+
     Q_D(DFileDialog);
 
     d->options = options;
@@ -900,6 +931,7 @@ void DFileDialog::handleNewView(DFMBaseView *view)
         d->filters = filter();
         d->currentInputName = statusBar()->lineEdit()->text();
 
+        d->view = nullptr; // switch to computerview
         return;
     }
 
@@ -1020,7 +1052,9 @@ static bool pwPluginVersionGreaterThen(const QString &v)
 void DFileDialog::onAcceptButtonClicked()
 {
     D_DC(DFileDialog);
-
+    if (!getFileView()) {
+        return;
+    }
 
     if (d->acceptMode == QFileDialog::AcceptSave) {
         if (m_acceptCanOpenOnSave) {
@@ -1126,6 +1160,9 @@ void DFileDialog::onRejectButtonClicked()
 
 void DFileDialog::onCurrentInputNameChanged()
 {
+    if (!getFileView()) {
+        return;
+    }
     Q_D(DFileDialog);
 
     d->currentInputName = statusBar()->lineEdit()->text();
@@ -1156,7 +1193,7 @@ void DFileDialog::onCurrentInputNameChanged()
 
 void DFileDialog::handleEnterPressed()
 {
-    if (!statusBar()->acceptButton()->isEnabled()) {
+    if (!statusBar()->acceptButton()->isEnabled() || !getFileView()) {
         return;
     }
 
