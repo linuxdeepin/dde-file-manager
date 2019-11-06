@@ -56,11 +56,23 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
 
     DPalette pl(DApplicationHelper::instance()->palette(option.widget));
     QColor c = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
+    QColor base_color = c;
+    if (option.widget) {
+        DPalette pa = DApplicationHelper::instance()->palette(option.widget);
+        base_color = option.widget->palette().base().color();
+        DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(base_color);
+        if (ct == DGuiApplicationHelper::DarkType) {
+            base_color = DGuiApplicationHelper::adjustColor(base_color, 0, 0, +5, 0, 0, 0, 0);
+        }
+    }
+
     if (option.state & QStyle::StateFlag::State_Selected) {
         // c = pl.color(DPalette::ColorGroup::Active, QPalette::ColorRole::Highlight);
         c.setAlpha(c.alpha() + 30);
     } else if (option.state & QStyle::StateFlag::State_MouseOver) {
         c = c.lighter();
+    } else {
+        c = base_color;
     }
     painter->setPen(c);
     painter->setBrush(c);
@@ -96,7 +108,7 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     textrect.setTop(option.rect.top() + topmargin);
     textrect.setHeight(fontpixelsize * 2);
     painter->setFont(par->font());
-    painter->setPen(qApp->palette().color(option.state & QStyle::StateFlag::State_Selected ? QPalette::ColorRole::HighlightedText : QPalette::ColorRole::Text));
+    painter->setPen(qApp->palette().color(/*option.state & QStyle::StateFlag::State_Selected ? QPalette::ColorRole::HighlightedText : */QPalette::ColorRole::Text));
     QString text = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, text_max_width);
     painter->drawText(textrect, Qt::TextWrapAnywhere, text, &otextrect);
 
@@ -126,6 +138,8 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     if (usgpl->width() != text_max_width) {
         usgpl->setFixedWidth(text_max_width);
     }
+    usgpl->setProperty("isBaseColor", c == base_color);
+
     usgpl->render(painter, option.rect.topLeft() + QPoint(iconsize + leftmargin + spacing, topmargin + 14 + 2 * fontpixelsize) + par->mapTo(par->window(), QPoint(0, 0)));
 
     painter->drawPixmap(option.rect.x() + leftmargin, option.rect.y() + topmargin, icon.pixmap(iconsize));

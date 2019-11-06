@@ -611,6 +611,16 @@ void DIconItemDelegate::paint(QPainter *painter,
 
     DPalette pl(DApplicationHelper::instance()->palette(option.widget));
     QColor c = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
+    QColor base_color = c;
+    if (option.widget) {
+        DPalette pa = DApplicationHelper::instance()->palette(option.widget);
+        base_color = option.widget->palette().base().color();
+        DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(base_color);
+        if (ct == DGuiApplicationHelper::DarkType) {
+            base_color = DGuiApplicationHelper::adjustColor(base_color, 0, 0, +5, 0, 0, 0, 0);
+        }
+    }
+
     if ((isDropTarget && !isSelected) ||option.state & QStyle::StateFlag::State_Selected) {
         if (isCanvas) {
             c = pl.color(DPalette::ColorGroup::Active, QPalette::ColorRole::Highlight);
@@ -619,6 +629,8 @@ void DIconItemDelegate::paint(QPainter *painter,
         }
     } else if (option.state & QStyle::StateFlag::State_MouseOver) {
         c = c.lighter();
+    } else if (!isCanvas) {
+        c = base_color;
     }
 
     QRectF rect = opt.rect;
@@ -697,7 +709,7 @@ void DIconItemDelegate::paint(QPainter *painter,
     label_rect.setWidth(opt.rect.width() - 2 * TEXT_PADDING - 2*backgroundMargin - ICON_MODE_BACK_RADIUS);
     label_rect.moveLeft(label_rect.left() + TEXT_PADDING + backgroundMargin + ICON_MODE_BACK_RADIUS/2);
 
-    if (isSelected) {
+    if (isSelected && isCanvas) {
         painter->setPen(opt.palette.color(QPalette::BrightText));
     } else {
         painter->setPen(opt.palette.color(QPalette::Text));

@@ -50,6 +50,11 @@ void ProgressLine::paintEvent(QPaintEvent *event){
     const DPalette &pal = DApplicationHelper::instance()->palette(this);
 
     QColor bColor = pal.color(QPalette::Base);
+    // parent background color is base color, so we adjust lightness
+    if (property("isBaseColor").toBool()) {
+        bColor = DGuiApplicationHelper::adjustColor(bColor, 0, 0, -5, 0, 0, 0, 0);
+    }
+
     QColor cColor;
     if(percent <= 0.7)
         cColor = pal.color(QPalette::Highlight);
