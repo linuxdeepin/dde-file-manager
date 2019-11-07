@@ -121,6 +121,8 @@ void Desktop::onBackgroundEnableChanged()
 
 void Desktop::onBackgroundGeometryChanged(QWidget *l)
 {
+    d->background->resetBackgroundVisibleState();
+
     QWidget *primaryBackground = d->screenFrame.parentWidget();
 
     if (!primaryBackground) {

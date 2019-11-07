@@ -46,6 +46,7 @@ public:
 
     void setBackground(const QString &path);
     void setVisible(bool visible);
+    void resetBackgroundVisibleState();
 
 Q_SIGNALS:
     void aboutDestoryBackground(QWidget *l);
