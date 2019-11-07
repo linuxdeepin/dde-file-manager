@@ -4,7 +4,6 @@ usr/bin/dde-file-manager-pkexec
 usr/bin/dde-property-dialog
 usr/bin/dde-xdg-user-dirs-update
 usr/bin/usb-device-formatter
-usr/bin/usb-device-formatter-pkexec
 usr/bin/dde-computer.sh
 usr/bin/dde-trash.sh
 usr/bin/file-manager.sh
@@ -12,7 +11,6 @@ usr/bin/file-manager.sh
 usr/share/applications/dde-file-manager.desktop
 
 usr/share/polkit-1/actions/com.deepin.pkexec.dde-file-manager.policy
-usr/share/polkit-1/actions/com.deepin.pkexec.usb-device-formatter.policy
 
 etc/dbus-1/system.d/com.deepin.filemanager.daemon.conf
 

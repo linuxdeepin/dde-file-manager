@@ -49,12 +49,6 @@ HEADERS  += \
     utils/fsutils.h
 
 CONFIG(release, debug|release) {
-    # generate translation file and generate policy file from translation file.
-    !system(deepin-policy-ts-convert policy2ts pkexec/com.deepin.pkexec.usb-device-formatter.policy.tmp translations/policy): message("Failed policy to ts")
-    !system(deepin-policy-ts-convert ts2policy pkexec/com.deepin.pkexec.usb-device-formatter.policy.tmp translations/policy pkexec/com.deepin.pkexec.usb-device-formatter.policy) {
-        system(cp pkexec/com.deepin.pkexec.usb-device-formatter.policy.tmp pkexec/com.deepin.pkexec.usb-device-formatter.policy)
-    }
-
     # Automating generation .qm files from .ts files
     !system($$PWD/generate_translations.sh): error("Failed to generate translation")
     !system($$PWD/translate_ts2desktop.sh): error("Failed to generate translation")
@@ -69,14 +63,4 @@ target.path = $$BINDIR
 translations.files = $$PWD/translations/*.qm
 translations.path = $$SHAREDIR/translations
 
-policy.path = $${PREFIX}/share/polkit-1/actions/
-policy.files = pkexec/com.deepin.pkexec.usb-device-formatter.policy
-
-pkexec.files = pkexec/usb-device-formatter-pkexec
-pkexec.path = /usr/bin
-
-DISTFILES += \
-    pkexec/com.deepin.pkexec.usb-device-formatter.policy \
-    pkexec/usb-device-formatter-pkexec
-
-INSTALLS += target translations policy pkexec
+INSTALLS += target translations
