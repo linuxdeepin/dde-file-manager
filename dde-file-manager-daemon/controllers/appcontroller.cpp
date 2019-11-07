@@ -26,9 +26,7 @@
 #include "appcontroller.h"
 #include "fileoperation.h"
 #include "tag/tagmanagerdaemon.h"
-#include "usbformatter/usbformatter.h"
 #include "usershare/usersharemanager.h"
-#include "deviceinfo/deviceinfomanager.h"
 #include "commandmanager/commandmanager.h"
 
 AppController::AppController(QObject *parent) : QObject(parent)
@@ -45,8 +43,6 @@ AppController::~AppController()
 void AppController::initControllers()
 {
     m_userShareManager = new UserShareManager(this);
-    m_usbFormatter = new UsbFormatter(this);
-    m_deviceInfoManager = new DeviceInfoManager(this);
     m_tagManagerDaemon = new TagManagerDaemon{ this };
 }
 

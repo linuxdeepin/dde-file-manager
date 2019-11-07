@@ -41,8 +41,6 @@
 #include "finishpage.h"
 #include "errorpage.h"
 
-#include "../partman/partitionmanager.h"
-
 #define BORDER_WIDTH 1
 #define BORDER_COLOR QColor(0,0,0,120)
 #define BORDER_RADIUS 5
@@ -87,7 +85,6 @@ signals:
 public slots:
     void nextStep();
     void onFormatingFinished(const bool& successful);
-    void preHandleTaskFinished(const bool& result);
 
 private:
     QPushButton* m_comfirmButton = nullptr;
@@ -102,8 +99,6 @@ private:
     QString m_formatType;
     QScopedPointer<DUDisksJob> m_job;
     QScopedPointer<DDiskManager> m_diskm;
-
-    PartMan::PartitionManager partitionManager;
 
 };
 

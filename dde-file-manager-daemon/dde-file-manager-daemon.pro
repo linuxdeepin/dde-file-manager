@@ -27,9 +27,6 @@ CONFIG(debug, debug|release) {
     unix:QMAKE_RPATHDIR += $$OUT_PWD/../dde-file-manager-lib
 }
 
-
-include(../partman/partman.pri)
-
 TEMPLATE = app
 
 #include(../utils/utils.pri)
@@ -75,14 +72,10 @@ SOURCES += main.cpp \
     usershare/usersharemanager.cpp \
     dbusservice/dbusadaptor/usershare_adaptor.cpp \
     dbusservice/dbusinterface/usershare_interface.cpp \
-    usbformatter/usbformatter.cpp \
-    dbusservice/dbusadaptor/usbformatter_adaptor.cpp \
     dbusservice/dbusinterface/usbformatter_interface.cpp \
     commandmanager/commandmanager.cpp \
     dbusservice/dbusadaptor/commandmanager_adaptor.cpp \
     dbusservice/dbusinterface/commandmanager_interface.cpp \
-    deviceinfo/deviceinfomanager.cpp \
-    dbusservice/dbusadaptor/deviceinfomanager_adaptor.cpp \
     dbusservice/dbusinterface/deviceinfomanager_interface.cpp \
     tag/tagmanagerdaemon.cpp \
     dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.cpp
@@ -119,15 +112,10 @@ HEADERS += \
     usershare/usersharemanager.h \
     dbusservice/dbusadaptor/usershare_adaptor.h \
     dbusservice/dbusinterface/usershare_interface.h \
-    usbformatter/usbformatter.h \
-    dbusservice/dbusadaptor/usbformatter_adaptor.h \
     dbusservice/dbusinterface/usbformatter_interface.h \
     commandmanager/commandmanager.h \
     dbusservice/dbusadaptor/commandmanager_adaptor.h \
     dbusservice/dbusinterface/commandmanager_interface.h \
-    deviceinfo/deviceinfomanager.h \
-    dbusservice/dbusadaptor/deviceinfomanager_adaptor.h \
-    dbusservice/dbusinterface/deviceinfomanager_interface.h \
     tag/tagmanagerdaemon.h \
     dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.h
 

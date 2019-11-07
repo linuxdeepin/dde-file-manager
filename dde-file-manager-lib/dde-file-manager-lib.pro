@@ -59,7 +59,6 @@ include(devicemanagement/devicemanagement.pri)
 include(dbusinterface/dbusinterface.pri)
 include(../usershare/usershare.pri)
 include(../dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
-include(../partman/partman.pri)
 include(tag/tag.pri)
 include(mediainfo/mediainfo.pri)
 

@@ -50,7 +50,6 @@
 #include <ddiskmanager.h>
 #include <dudisksjob.h>
 
-using namespace PartMan;
 MainWindow::MainWindow(const QString &path, QWidget *parent):
     DDialog(parent),
     m_diskm(new DDiskManager)
@@ -121,12 +120,11 @@ void MainWindow::initUI()
 void MainWindow::initConnect()
 {
     connect(m_comfirmButton, &QPushButton::clicked, this, &MainWindow::nextStep);
-    connect(this, &MainWindow::taskFinished, this, &MainWindow::preHandleTaskFinished);
     connect(m_diskm.data(), &DDiskManager::jobAdded, [this](const QString &jobs) {
         QScopedPointer<DUDisksJob> job(DDiskManager::createJob(jobs));
         if (job->operation().contains("format") && job->objects().contains(UDisksBlock(m_formatPath)->path())) {
             m_job.reset(DDiskManager::createJob(jobs));
-            connect(m_job.data(), &DUDisksJob::progressChanged, [this](double p){qDebug() << p;m_formatingPage->setProgress(p);});
+            connect(m_job.data(), &DUDisksJob::progressChanged, [this](double p){m_formatingPage->setProgress(p);});
             connect(m_job.data(), &DUDisksJob::completed, [this](bool r, QString){this->onFormatingFinished(r);});
         }
     });
@@ -202,8 +200,4 @@ void MainWindow::onFormatingFinished(const bool &successful)
         m_comfirmButton->setEnabled(true);
         m_pageStack->setCurrentWidget(m_errorPage);
     }
-}
-
-void MainWindow::preHandleTaskFinished(const bool &result)
-{
 }

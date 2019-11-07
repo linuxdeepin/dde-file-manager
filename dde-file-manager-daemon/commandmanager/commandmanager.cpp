@@ -24,7 +24,6 @@
 
 #include "commandmanager.h"
 #include "dbusadaptor/commandmanager_adaptor.h"
-#include "../partman/command.h"
 #include <QDBusConnection>
 #include <QDBusVariant>
 #include <QtConcurrent>
@@ -39,16 +38,17 @@ CommandManager::CommandManager(QObject *parent) : QObject(parent)
     QDBusConnection::systemBus().registerObject(ObjectPath, this);
     m_commandManagerAdaptor = new CommandManagerAdaptor(this);
 }
-using namespace PartMan;
 
 bool CommandManager::process(const QString &cmd, const QStringList &args,  QString &output,  QString &error)
 {
-    typedef bool (*Exec) (const QString &, const QStringList & , QString &,  QString &);
-    Exec f = &PartMan::SpawnCmd;
-    QFuture<bool> future = QtConcurrent::run(f, cmd, args, output, error);
-    future.waitForFinished();
-    bool ret = future.result();
-    return ret;
+    QProcess p;
+    p.setProgram(cmd);
+    p.setArguments(args);
+    p.start();
+    p.waitForFinished(-1);
+    output = p.readAllStandardOutput();
+    error = p.readAllStandardError();
+    return p.exitStatus() == QProcess::NormalExit && p.exitCode() == 0;
 }
 
 bool CommandManager::startDetached(const QString &cmd, const QStringList &args)
