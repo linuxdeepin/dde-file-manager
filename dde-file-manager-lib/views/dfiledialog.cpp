@@ -996,8 +996,8 @@ void DFileDialog::handleNewView(DFMBaseView *view)
         Q_D(const DFileDialog);
 
         if (d->acceptMode == QFileDialog::AcceptSave) {
-            statusBar()->lineEdit()->setText(QString());
-            setLabelText(QFileDialog::Accept, QString("Save"));
+            statusBar()->lineEdit()->setText(tr(""));
+            setLabelText(QFileDialog::Accept, tr("Save"));
             m_acceptCanOpenOnSave = false;
             onCurrentInputNameChanged();
         }
@@ -1179,10 +1179,10 @@ void DFileDialog::onCurrentInputNameChanged()
             if (model->sortedUrls().contains(fileUrl) &&
                     model->fileInfo(fileUrl)->isDir()) {
                 urlList << fileUrl;
-                setLabelText(QFileDialog::Accept, QString("Open"));
+                setLabelText(QFileDialog::Accept, tr("Open"));
                 m_acceptCanOpenOnSave = true;
             } else {
-                setLabelText(QFileDialog::Accept, QString("Save"));
+                setLabelText(QFileDialog::Accept, tr("Save"));
                 m_acceptCanOpenOnSave = false;
             }
 
