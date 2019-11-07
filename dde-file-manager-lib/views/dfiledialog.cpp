@@ -70,9 +70,30 @@ public:
     int currentNameFilterIndex = -1;
     QDir::Filters filters = 0;
     QString currentInputName;
-
+    QModelIndexList orderedSelectedList;
     FileDialogStatusBar *statusBar;
+
+public:
+    QList<DUrl> orderedSelectedUrls() const;
 };
+
+QList<DUrl> DFileDialogPrivate::orderedSelectedUrls() const
+{
+    if (!view || !view->model()) {
+        return QList<DUrl>();
+    }
+
+    QModelIndex rootIndex = view->rootIndex();
+    DUrlList list;
+    for(const QModelIndex &index : orderedSelectedList) {
+        if (index.parent() != rootIndex)
+            continue;
+
+        list << view->model()->getUrlByIndex(index);
+    }
+    return list;
+}
+
 
 DFileDialog::DFileDialog(QWidget *parent)
     : DFileManagerWindow(parent)
@@ -190,7 +211,7 @@ QList<QUrl> DFileDialog::selectedUrls() const
     if (!getFileView()){
         return QList<QUrl>();
     }
-    DUrlList list = getFileView()->selectedUrls();
+    DUrlList list = d->orderedSelectedUrls();//getFileView()->selectedUrls();
 
     DUrlList::iterator begin = list.begin();
 
@@ -932,6 +953,7 @@ void DFileDialog::handleNewView(DFMBaseView *view)
         d->currentInputName = statusBar()->lineEdit()->text();
 
         d->view = nullptr; // switch to computerview
+        d->orderedSelectedList.clear();
         return;
     }
 
@@ -996,11 +1018,36 @@ void DFileDialog::handleNewView(DFMBaseView *view)
         Q_D(const DFileDialog);
 
         if (d->acceptMode == QFileDialog::AcceptSave) {
-            statusBar()->lineEdit()->setText(tr(""));
             setLabelText(QFileDialog::Accept, tr("Save"));
             m_acceptCanOpenOnSave = false;
             onCurrentInputNameChanged();
         }
+    });
+
+    connect(fileView->selectionModel(), &QItemSelectionModel::selectionChanged, fileView,
+            [d](const QItemSelection &selected, const QItemSelection &deselected){
+
+        //qDebug() << "----selectionChanged" << "selected----";
+        for ( auto range : selected) {
+            for (QModelIndex idx : range.indexes()) {
+                if (!d->orderedSelectedList.contains(idx))
+                    d->orderedSelectedList.append(idx);
+            }
+        }
+        //qDebug() << "----unselected----";
+        for ( auto range : deselected) {
+            QModelIndexList removeList = range.indexes();
+            if (removeList.size()==0 || d->orderedSelectedList.size()==0){
+                return;
+            }
+
+            auto beg = d->orderedSelectedList.begin();
+            auto end = d->orderedSelectedList.end();
+            d->orderedSelectedList.erase(std::remove_if(beg, end, [removeList](const QModelIndex &index)->bool {
+                return removeList.contains(index);
+            }));
+        }
+        //qDebug() << "----selectionChanged----";
     });
 
 
