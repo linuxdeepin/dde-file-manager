@@ -61,6 +61,7 @@ private:
     void updateBackground();
     void onScreenAdded(QScreen *screen);
     void onScreenRemoved(QScreen *screen);
+    void updateBackgroundGeometry(QScreen *screen, BackgroundLabel * l);
 
     bool m_previuew = false;
     bool m_visible = true;
