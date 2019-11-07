@@ -62,7 +62,8 @@
 
 #include "singleton.h"
 #include "gvfs/gvfsmountmanager.h"
-#include "partman/partition.h"
+#include "ddiskmanager.h"
+#include "dblockdevice.h"
 
 #ifdef SW_LABEL
 #include "sw_label/llsdeepinlabellibrary.h"
@@ -1027,7 +1028,10 @@ void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
     QTimer::singleShot(1000, [ = ]{
         if (qApp->applicationName() == QMAKE_TARGET && !DFMGlobal::IsFileManagerDiloagProcess)
         {
-            QString fstype = PartMan::Partition::getPartitionByDevicePath(diskInfo.unix_device()).fs();
+            QString udiskspath = diskInfo.unix_device();
+            udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+            QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
+            QString fstype = blk->idType();
             if (fstype == "ntfs") {
                 // blumia: the ntfs partition will be read-only if user mount the ntfs device by the kernel driver.
                 //         the fstype (from `df -T` or `mount`) will be "ntfs" rather than "fuseblk" if user use the kernel driver

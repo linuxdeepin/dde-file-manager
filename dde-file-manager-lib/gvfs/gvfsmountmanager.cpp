@@ -29,13 +29,10 @@
 #include "qdiskinfo.h"
 #include "singleton.h"
 #include "../app/define.h"
-#include "../partman/partition.h"
-#include "../partman/readusagemanager.h"
 #include "../interfaces/dfileservices.h"
 #include "../interfaces/dfmevent.h"
 #include "deviceinfo/udisklistener.h"
 #include "dialogs/dialogmanager.h"
-#include "partman/command.h"
 #include "mountsecretdiskaskpassworddialog.h"
 #include "app/filesignalmanager.h"
 #include "shutil/fileutils.h"
@@ -51,6 +48,9 @@
 #include <QThread>
 #include <QApplication>
 #include <QLoggingCategory>
+#include <QTimer>
+#include <QJsonArray>
+#include <QProcess>
 
 #include <views/windowmanager.h>
 
@@ -936,7 +936,10 @@ QString GvfsMountManager::getDriveUnixDevice(const QString &unix_device)
 bool GvfsMountManager::isDeviceCrypto_LUKS(const QDiskInfo &diskInfo)
 {
     if (diskInfo.can_mount()){
-        QString fstype = PartMan::Partition::getPartitionByDevicePath(diskInfo.unix_device()).fs();
+        QString udiskspath = diskInfo.unix_device();
+        udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+        QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
+        QString fstype = blk->idType();
         if (fstype == "crypto_LUKS" ){
             return true;
         }
@@ -1108,11 +1111,16 @@ void GvfsMountManager::getMounts(GList *mounts)
 
 void GvfsMountManager::listMountsBylsblk()
 {
-    PartMan::Partition p;
     QString output;
     QString err;
-    bool status = PartMan::SpawnCmd("lsblk", {"-O", "-J", "-l"},
-                  output, err);
+    QProcess p;
+    p.setProgram("lsblk");
+    p.setArguments({"-OJlb"});
+    p.start();
+    p.waitForFinished(-1);
+    output = p.readAllStandardOutput();
+    err = p.readAllStandardError();
+    bool status = p.exitStatus() == QProcess::NormalExit && p.exitCode() == 0;
     if(status){
         QJsonParseError error;
         QJsonDocument doc=QJsonDocument::fromJson(output.toLocal8Bit(),&error);
@@ -1122,60 +1130,47 @@ void GvfsMountManager::listMountsBylsblk()
                 if (key == "blockdevices"){
                     QJsonArray objArray = devObj.value(key).toArray();
                     for(int i=0; i< objArray.count(); i++){
-
-
                         QJsonObject obj = objArray.at(i).toObject();
+                        QDiskInfo diskInfo;
 
                         if (obj.contains("mountpoint")){
                             QString mountPoint = obj.value("mountpoint").toString();
                             if (mountPoint.isEmpty() || mountPoint=="/"){
                                 continue;
                             }else{
-                                p.setMountPoint(obj.value("mountpoint").toString());
+                                diskInfo.setMounted_root_uri(QString("file://%1").arg(obj.value("mountpoint").toString()));
                             }
                         }
 
                         if (obj.contains("name")){
-                            p.setName(obj.value("name").toString());
+                            diskInfo.setName(obj.value("name").toString());
+                        }
+                        if (obj.contains("path")){
+                            diskInfo.setUnix_device(obj.value("path").toString());
+                            diskInfo.setId(diskInfo.unix_device());
                         }
                         if (obj.contains("fstype")){
-                            p.setFs(obj.value("fstype").toString());
+                            diskInfo.setId_filesystem(obj.value("fstype").toString());
                         }
                         if (obj.contains("label")){
-                            p.setLabel(obj.value("label").toString());
+                            //diskInfo.setName(obj.value("label").toString());
                         }
                         if (obj.contains("uuid")){
-                            p.setUuid(obj.value("uuid").toString());
+                            diskInfo.setUuid(obj.value("uuid").toString());
                         }
                         if(obj.contains("rm")){
                             QVariant data(obj.value("rm").toVariant());
-                            p.setIsRemovable(data.toBool());
+                            diskInfo.setIs_removable(data.toBool());
+                        }
+                        if (obj.contains("fsavail") && obj.value("fsavail").type() != QJsonValue::Type::Null) {
+                            diskInfo.setFree(obj.value("fsavail").toVariant().toULongLong());
+                        }
+                        if (obj.contains("fssize") && obj.value("fssize").type() != QJsonValue::Type::Null) {
+                            diskInfo.setTotal(obj.value("fssize").toVariant().toULongLong());
+                        } else if (obj.contains("size") && obj.value("size").type() != QJsonValue::Type::Null) {
+                            diskInfo.setTotal(obj.value("size").toVariant().toULongLong());
                         }
 
-                        p.setPath(QString("/dev/%1").arg(p.name()));
-
-                        if (!p.fs().isEmpty()){
-                            PartMan::ReadUsageManager readUsageManager;
-                            qlonglong freespace = 0;
-                            qlonglong total = 0;
-                            bool ret = readUsageManager.readUsage(p.path(), p.fs(), freespace, total);
-                            if (ret){
-                                p.setFreespace(freespace);
-                                p.setTotal(total);
-                            }
-                        }
-
-
-                        QDiskInfo diskInfo;
-
-                        diskInfo.setName(p.name());
-                        diskInfo.setUnix_device(p.path());
-                        diskInfo.setUuid(p.uuid());
-                        diskInfo.setId(p.path());
-                        diskInfo.setFree(p.freespace());
-                        diskInfo.setTotal(p.total());
-                        diskInfo.setIs_removable(p.getIsRemovable());
-                        diskInfo.setMounted_root_uri(QString("file://%1").arg(p.mountPoint()));
                         diskInfo.setCan_unmount(true);
                         diskInfo.setCan_mount(false);
                         diskInfo.setCan_eject(false);
@@ -1184,7 +1179,7 @@ void GvfsMountManager::listMountsBylsblk()
                         }else{
                             diskInfo.setType("native");
                         }
-                        Lsblk_Keys.append(p.path());
+                        Lsblk_Keys.append(diskInfo.unix_device());
                         DiskInfos.insert(diskInfo.id(), diskInfo);
                     }
                 }

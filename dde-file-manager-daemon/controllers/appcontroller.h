@@ -50,8 +50,6 @@ public slots:
 
 private:
     UserShareManager *m_userShareManager = nullptr;
-    UsbFormatter *m_usbFormatter = nullptr;
-    DeviceInfoManager *m_deviceInfoManager = nullptr;
     TagManagerDaemon *m_tagManagerDaemon = nullptr;
 };
 

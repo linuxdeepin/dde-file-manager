@@ -4,17 +4,14 @@
 #
 #-------------------------------------------------
 
-QT       += core gui concurrent network x11extras
+QT       += core gui concurrent network x11extras dbus
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = usb-device-formatter
 TEMPLATE = app
 
-include(../partman/partman.pri)
-
-PKGCONFIG += x11 udisks2-qt5
-PKGCONFIG += dtkwidget dtkgui
+PKGCONFIG += x11 udisks2-qt5 dtkwidget dtkgui
 
 CONFIG += c++11 link_pkgconfig
 

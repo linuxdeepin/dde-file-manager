@@ -14,7 +14,9 @@
 #include "singleton.h"
 #include "tag/tagutil.h"
 #include "dsqlitehandle.h"
-#include "partman/partition.h"
+
+#include "ddiskmanager.h"
+#include "dblockdevice.h"
 
 #include <QDir>
 #include <QList>
@@ -802,8 +804,25 @@ void DSqliteHandle::connectToSqlite(const QString &mountPoint, const QString &db
                 m_sqlDatabasePtr->close();
             }
 
-            PartMan::Partition p = PartMan::Partition::getPartitionByMountPoint(mountPoint);
-            if (p.fs() == "ntfs") {
+            QString udiskspath = "";
+            DDiskManager dummy;
+            for (auto &devs : dummy.blockDevices()) {
+                QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(devs));
+                bool match = false;
+                for(auto &mp : blk->mountPoints()) {
+                    if (mountPoint == QString(mp)) {
+                        match = true;
+                        break;
+                    }
+                }
+                if (match) {
+                    udiskspath = blk->path();
+                    break;
+                }
+            }
+            udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+            QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
+            if (blk->idType() == "ntfs") {
                 QString db_path(mountPoint + QString("/") + db_name);
                 const char* db_path_cs(db_path.toUtf8().data());
                 quint32 attr;

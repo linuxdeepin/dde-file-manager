@@ -42,7 +42,6 @@
 #include "gvfs/gvfsmountmanager.h"
 #include "singleton.h"
 #include "../shutil/fileutils.h"
-#include "partman/partition.h"
 #include "dabstractfilewatcher.h"
 #include "models/dfmrootfileinfo.h"
 #include "models/computermodel.h"

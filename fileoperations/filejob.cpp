@@ -33,7 +33,6 @@
 #include "../app/filesignalmanager.h"
 #include "interfaces/dfmglobal.h"
 #include "dfmstandardpaths.h"
-#include "partman/partition.h"
 #include "dfmevent.h"
 #include "dfmeventdispatcher.h"
 #include "dfileservices.h"
@@ -2557,8 +2556,10 @@ bool FileJob::checkFat32FileOutof4G(const QString &srcFile, const QString &tarDi
             }
             if (pDesDevice){
                 QString devicePath = pDesDevice->getDiskInfo().unix_device();
-                QString fstype = PartMan::Partition::getPartitionByDevicePath(devicePath).fs();
-                if (fstype == "vfat" ){
+                QString udiskspath = devicePath;
+                udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+                QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
+                if (blk->idType() == "vfat" ){
                     emit fileSignalManager->requestShow4GFat32Dialog();
                     return true;
                 }
