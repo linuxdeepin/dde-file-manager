@@ -337,3 +337,11 @@ void BackgroundHelper::updateBackgroundGeometry(QScreen *screen, BackgroundLabel
     updateBackground(l);
 
 }
+
+void BackgroundHelper::resetBackgroundVisibleState()
+{
+    for (QScreen * screen : qGuiApp->screens()) {
+        BackgroundLabel * l = backgroundMap.value(screen);
+        l->show();
+    }
+}
