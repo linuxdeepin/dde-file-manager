@@ -39,7 +39,6 @@ public:
     void _q_readFromInotify();
 
 private:
-    QStringList getPathFromID(int id) const;
     void onFileChanged(const QString &path, bool removed);
     void onDirectoryChanged(const QString &path, bool removed);
 };
