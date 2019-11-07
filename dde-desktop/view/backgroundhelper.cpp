@@ -297,17 +297,7 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
     connect(screen, &QScreen::geometryChanged, l, [l, this, screen] () {
         qDebug() << "screen geometry changed:" << screen << screen->geometry();
 
-        // 因为接下来会发出backgroundGeometryChanged信号，
-        // 所以此处必须保证QWidget::geometry的值和接下来对其windowHandle()对象设置的geometry一致
-        l->setGeometry(screen->geometry());
-
-        // 忽略屏幕缩放，设置窗口的原始大小
-        // 调用此函数后不会立即更新QWidget::geometry，而是在收到窗口resize事件后更新
-        bool hi_active = QHighDpiScaling::m_active;
-        QHighDpiScaling::m_active = false;
-        l->windowHandle()->handle()->setGeometry(screen->handle()->geometry());
-        QHighDpiScaling::m_active = hi_active;
-        updateBackground(l);
+        updateBackgroundGeometry(screen, l);
 
         Q_EMIT backgroundGeometryChanged(l);
     });
@@ -330,4 +320,20 @@ void BackgroundHelper::onScreenRemoved(QScreen *screen)
     }
 
     qInfo() << screen;
+}
+
+void BackgroundHelper::updateBackgroundGeometry(QScreen *screen, BackgroundLabel *l)
+{
+    // 因为接下来会发出backgroundGeometryChanged信号，
+    // 所以此处必须保证QWidget::geometry的值和接下来对其windowHandle()对象设置的geometry一致
+    l->setGeometry(screen->geometry());
+
+    // 忽略屏幕缩放，设置窗口的原始大小
+    // 调用此函数后不会立即更新QWidget::geometry，而是在收到窗口resize事件后更新
+    bool hi_active = QHighDpiScaling::m_active;
+    QHighDpiScaling::m_active = false;
+    l->windowHandle()->handle()->setGeometry(screen->handle()->geometry());
+    QHighDpiScaling::m_active = hi_active;
+    updateBackground(l);
+
 }
