@@ -4,12 +4,10 @@ usr/bin/dde-file-manager-pkexec
 usr/bin/dde-property-dialog
 usr/bin/dde-xdg-user-dirs-update
 usr/bin/usb-device-formatter
-usr/bin/usb-device-formatter-pkexec
 
 usr/share/applications/dde-file-manager.desktop
 
 usr/share/polkit-1/actions/com.deepin.pkexec.dde-file-manager.policy
-usr/share/polkit-1/actions/com.deepin.pkexec.usb-device-formatter.policy
 
 etc/xdg/autostart/dde-file-manager-xdg-autostart.desktop
 etc/dbus-1/system.d/com.deepin.filemanager.daemon.conf
