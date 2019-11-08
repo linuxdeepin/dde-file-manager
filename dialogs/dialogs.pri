@@ -1,10 +1,6 @@
 HEADERS += \
-    $$PWD/dtaskdialog.h \
-    $$PWD/dmoveablewidget.h \
-    $$PWD/circleprogressanimatepad.h
+    $$PWD/dtaskdialog.h
 
 SOURCES += \
-    $$PWD/dtaskdialog.cpp \
-    $$PWD/dmoveablewidget.cpp \
-    $$PWD/circleprogressanimatepad.cpp
+    $$PWD/dtaskdialog.cpp
 
