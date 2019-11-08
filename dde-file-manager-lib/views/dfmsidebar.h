@@ -47,6 +47,7 @@ public:
     };
 
     explicit DFMSideBar(QWidget *parent = nullptr);
+    QWidget *sidebarView(); // return m_sidebarView
 
     QRect groupGeometry(const QString &groupName);
     void scrollToGroup(const QString &groupName);
