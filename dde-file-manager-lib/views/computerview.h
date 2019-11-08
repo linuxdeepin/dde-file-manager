@@ -39,7 +39,6 @@
 #include "dfileview.h"
 
 #include "fileitem.h"
-#include "progressline.h"
 #include "durl.h"
 #include "dabstractfileinfo.h"
 #include "deviceinfo/udiskdeviceinfo.h"
