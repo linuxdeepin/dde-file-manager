@@ -142,7 +142,7 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
     char * const end = at + buffSize;
 
     QList<inotify_event *> eventList;
-    QHash<int, QString> batch_pathmap;
+    QMultiHash<int, QString> batch_pathmap;
     /// only save event: IN_MOVE_TO
     QMultiMap<int, QString> cookieToFilePath;
     QMultiMap<int, QString> cookieToFileName;
