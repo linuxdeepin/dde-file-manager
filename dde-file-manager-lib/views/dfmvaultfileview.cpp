@@ -58,7 +58,7 @@ QMenu *VaultHeaderView::createMenu()
     QMenu * menu = new QMenu;
 
     menu->addAction(tr("Lock vault"), this, &VaultHeaderView::requestLockVault);
-    menu->addAction(tr("Generate key file"), this, &VaultHeaderView::requestGenerateRecoveryKey);
+    menu->addAction(tr("Generate key"), this, &VaultHeaderView::requestGenerateRecoveryKey);
 
     return menu;
 }
