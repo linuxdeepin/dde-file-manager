@@ -73,10 +73,6 @@ SOURCES += main.cpp \
     dbusservice/dbusadaptor/usershare_adaptor.cpp \
     dbusservice/dbusinterface/usershare_interface.cpp \
     dbusservice/dbusinterface/usbformatter_interface.cpp \
-    commandmanager/commandmanager.cpp \
-    dbusservice/dbusadaptor/commandmanager_adaptor.cpp \
-    dbusservice/dbusinterface/commandmanager_interface.cpp \
-    dbusservice/dbusinterface/deviceinfomanager_interface.cpp \
     tag/tagmanagerdaemon.cpp \
     dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.cpp
 
@@ -113,9 +109,6 @@ HEADERS += \
     dbusservice/dbusadaptor/usershare_adaptor.h \
     dbusservice/dbusinterface/usershare_interface.h \
     dbusservice/dbusinterface/usbformatter_interface.h \
-    commandmanager/commandmanager.h \
-    dbusservice/dbusadaptor/commandmanager_adaptor.h \
-    dbusservice/dbusinterface/commandmanager_interface.h \
     tag/tagmanagerdaemon.h \
     dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.h
 

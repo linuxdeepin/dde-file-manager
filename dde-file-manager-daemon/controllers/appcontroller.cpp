@@ -27,7 +27,6 @@
 #include "fileoperation.h"
 #include "tag/tagmanagerdaemon.h"
 #include "usershare/usersharemanager.h"
-#include "commandmanager/commandmanager.h"
 
 AppController::AppController(QObject *parent) : QObject(parent)
 {

@@ -55,7 +55,6 @@
 #include "views/windowmanager.h"
 #include "views/dfilemanagerwindow.h"
 #include "views/dtagedit.h"
-#include "dbusinterface/commandmanager_interface.h"
 
 #include "gvfs/networkmanager.h"
 #include "gvfs/gvfsmountmanager.h"
