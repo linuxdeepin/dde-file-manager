@@ -47,7 +47,6 @@ void UserSharePasswordSettingDialog::initUI()
     addButton(buttonTexts[1], false, DDialog::ButtonRecommend);
     setDefaultButton(1);
     m_passwordEdit = new DPasswordEdit(this);
-    m_passwordEdit->setFixedSize(240,24);
     m_passwordEdit->setFocus();
     addContent(m_passwordEdit);
     setContentsMargins(0,0,0,0);
