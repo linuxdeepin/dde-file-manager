@@ -119,7 +119,7 @@
     </message>
     <message>
         <location filename="../main.cpp" line="121"/>
-        <source>Device is read-only</source>
+        <source>The device is read-only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

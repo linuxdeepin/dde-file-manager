@@ -3321,14 +3321,22 @@
 <context>
     <name>VaultAskCreateKeyPage</name>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="41"/>
         <source>Do you want to export a key file in case that you forgot the password?</source>
-        <translation>是否需要生成一个密钥文件以防止您忘记密码？</translation>
+        <translation type="vanished">是否需要生成一个密钥文件以防止您忘记密码？</translation>
+    </message>
+    <message>
+        <source>Export key</source>
+        <translation type="vanished">导出密钥</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="41"/>
+        <source>Do you want to generate a key in case that you forgot the password?</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="44"/>
-        <source>Export key</source>
-        <translation>导出密钥</translation>
+        <source>Generate key</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="45"/>
@@ -3419,8 +3427,12 @@
     </message>
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="61"/>
+        <source>Generate key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Generate key file</source>
-        <translation>生成密钥文件</translation>
+        <translation type="vanished">生成密钥文件</translation>
     </message>
 </context>
 <context>
