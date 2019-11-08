@@ -77,6 +77,11 @@ DFMSideBar::DFMSideBar(QWidget *parent)
     initRecentItem();
 }
 
+QWidget *DFMSideBar::sidebarView()
+{
+    return m_sidebarView;
+}
+
 QRect DFMSideBar::groupGeometry(const QString &groupName)
 {
     return  m_sidebarView->visualRect(groupModelIndex(groupName));
