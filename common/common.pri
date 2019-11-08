@@ -10,8 +10,6 @@ unix {
 
     ARCH = $$QMAKE_HOST.arch
     isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
-        DEFINES += MENU_DIALOG_PLUGIN
-
         DEFINES += SPLICE_CP
     }
 
