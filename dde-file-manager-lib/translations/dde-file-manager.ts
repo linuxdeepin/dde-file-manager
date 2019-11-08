@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -376,7 +374,7 @@
         <location filename="../views/dfiledialog.cpp" line="1021"/>
         <location filename="../views/dfiledialog.cpp" line="1232"/>
         <source>Save</source>
-        <translation type="unfinished">Save</translation>
+        <translation>Save</translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="1138"/>
@@ -396,7 +394,7 @@
     <message>
         <location filename="../views/dfiledialog.cpp" line="1229"/>
         <source>Open</source>
-        <translation type="unfinished">Open</translation>
+        <translation>Open</translation>
     </message>
 </context>
 <context>
@@ -3331,12 +3329,12 @@
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="41"/>
         <source>Do you want to generate a key in case that you forgot the password?</source>
-        <translation type="unfinished"></translation>
+        <translation>Do you want to generate a key in case that you forgot the password?</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="44"/>
         <source>Generate key</source>
-        <translation type="unfinished"></translation>
+        <translation>Generate key</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="45"/>
@@ -3428,7 +3426,7 @@
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="61"/>
         <source>Generate key</source>
-        <translation type="unfinished"></translation>
+        <translation>Generate key</translation>
     </message>
     <message>
         <source>Generate key file</source>

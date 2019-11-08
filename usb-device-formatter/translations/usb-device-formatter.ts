@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
 <context>
     <name>FinishPage</name>
     <message>
@@ -97,17 +95,17 @@
     <message>
         <location filename="../utils/udisksutils.cpp" line="55"/>
         <source>System Disk</source>
-        <translation type="unfinished"></translation>
+        <translation>System Disk</translation>
     </message>
     <message>
         <location filename="../utils/udisksutils.cpp" line="59"/>
         <source>%1 Encrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Encrypted</translation>
     </message>
     <message>
         <location filename="../utils/udisksutils.cpp" line="61"/>
         <source>%1 Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Volume</translation>
     </message>
 </context>
 <context>
@@ -120,7 +118,7 @@
     <message>
         <location filename="../main.cpp" line="121"/>
         <source>The device is read-only</source>
-        <translation type="unfinished"></translation>
+        <translation>The device is read-only</translation>
     </message>
     <message>
         <source>Cannot format local device</source>
