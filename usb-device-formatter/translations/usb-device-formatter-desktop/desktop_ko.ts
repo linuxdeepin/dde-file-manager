@@ -4,7 +4,7 @@
         <message>
             <location filename="Desktop Entry]Name" line="0"/>
             <source>USB Device Formatter</source>
-            <translation>USB 장치 포맷</translation>
+            <translation>USB 장치 포맷도구</translation>
         </message>
     </context>
 </TS>

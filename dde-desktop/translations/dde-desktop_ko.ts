@@ -24,7 +24,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="2524"/>
         <source>Wallpaper and Screensaver</source>
-        <translation>배경화면과 화면보호기</translation>
+        <translation>배경화면 및 화면보호기</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="2608"/>
@@ -39,7 +39,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="2515"/>
         <source>Corner Settings</source>
-        <translation>코너 설정</translation>
+        <translation>모서리 설정</translation>
     </message>
 </context>
 <context>
@@ -47,27 +47,27 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="38"/>
         <source>Tiny</source>
-        <translation>매우 작음</translation>
+        <translation>초소형</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="39"/>
         <source>Small</source>
-        <translation>작음</translation>
+        <translation>소형</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="40"/>
         <source>Medium</source>
-        <translation>중간</translation>
+        <translation>중형</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="41"/>
         <source>Large</source>
-        <translation>큼</translation>
+        <translation>대형</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="42"/>
         <source>Super large</source>
-        <translation>매우 큼</translation>
+        <translation>초대형</translation>
     </message>
 </context>
 <context>
@@ -75,7 +75,7 @@
     <message>
         <location filename="../main.cpp" line="135"/>
         <source>Desktop</source>
-        <translation>데스크톱</translation>
+        <translation>바탕화면</translation>
     </message>
 </context>
 <context>
@@ -88,22 +88,22 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="459"/>
         <source>When login</source>
-        <translation>로그인 할 때</translation>
+        <translation>로그인 시</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="461"/>
         <source>When wakeup</source>
-        <translation>깨울 때</translation>
+        <translation>절전모드 해제 시</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="504"/>
         <source>Require a password on wakeup</source>
-        <translation>절전모드 해제시 비밀번호 필요</translation>
+        <translation>절전모드 해제 시 비밀번호 필요</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="531"/>
         <source>Never</source>
-        <translation>절대로 하지 않음</translation>
+        <translation>없음</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="532"/>
@@ -123,12 +123,12 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="630"/>
         <source>Only desktop</source>
-        <translation>데스크톱에서만</translation>
+        <translation>바탕화면 만</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="631"/>
         <source>Only lock screen</source>
-        <translation>잠금화면에서만</translation>
+        <translation>잠금화면 만</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="659"/>
@@ -146,7 +146,7 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Control Center</source>
-        <translation>설정</translation>
+        <translation>제어 센터</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
@@ -156,12 +156,12 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Launcher</source>
-        <translation>런처</translation>
+        <translation>실행도구</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Desktop</source>
-        <translation>데스크톱</translation>
+        <translation>바탕화면</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
