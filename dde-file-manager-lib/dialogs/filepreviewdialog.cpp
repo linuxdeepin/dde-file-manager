@@ -435,6 +435,7 @@ void FilePreviewDialog::switchToPage(int index)
                 updateTitle();
                 m_statusBar->openButton()->setFocus();
                 playCurrentPreviewFile();
+                moveToCenter();
                 return;
             }
         }
@@ -493,10 +494,11 @@ void FilePreviewDialog::switchToPage(int index)
     m_preview = preview;
 
     QTimer::singleShot(0, this, [this] {
-        resize(sizeHint());
+        adjustSize();
         updateTitle();
         m_statusBar->openButton()->setFocus();
         playCurrentPreviewFile();
+        moveToCenter();
     });
 }
 
