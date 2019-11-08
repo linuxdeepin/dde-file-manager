@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
     //Check if the device is read-only
     UDisksBlock blk(path);
     if (blk.isReadOnly()){
-        QString message = QObject::tr("Device is read-only");
+        QString message = QObject::tr("The device is read-only");
         MessageDialog d(message, 0);
         d.exec();
         return 0;
