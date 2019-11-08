@@ -46,7 +46,6 @@
 
 class UDiskDeviceInfo;
 class Subscriber;
-class DeviceInfoManagerInterface;
 
 class DDiskManager;
 class DBlockDevice;

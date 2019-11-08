@@ -20,6 +20,7 @@
 
 #include <DApplication>
 #include <DApplicationHelper>
+#include <DPalette>
 
 #include <QLineEdit>
 
@@ -132,9 +133,11 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     textrect.setTop(option.rect.top() + topmargin + par->fontMetrics().height() + 3);
     textrect.setHeight(fontpixelsize);
 
+    quint64 sizeinuse = index.data(ComputerModel::DataRoles::SizeInUseRole).toULongLong();
+    quint64 sizetotal = index.data(ComputerModel::DataRoles::SizeTotalRole).toULongLong();
+
     painter->setPen(pl.color(DPalette::TextTips));
-    painter->drawText(textrect, Qt::AlignLeft, FileUtils::diskUsageString(index.data(ComputerModel::DataRoles::SizeInUseRole).toULongLong(),
-                                                                          index.data(ComputerModel::DataRoles::SizeTotalRole).toULongLong()));
+    painter->drawText(textrect, Qt::AlignLeft, FileUtils::diskUsageString(sizeinuse, sizetotal));
 
     ProgressLine *usgpl = index.data(ComputerModel::DataRoles::UsgWidgetRole).value<ProgressLine*>();
     if (usgpl->width() != text_max_width) {
@@ -142,7 +145,28 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     }
     usgpl->setProperty("isBaseColor", c == base_color);
 
-    usgpl->render(painter, option.rect.topLeft() + QPoint(iconsize + leftmargin + spacing, topmargin + 14 + 2 * fontpixelsize) + par->mapTo(par->window(), QPoint(0, 0)));
+    //usgpl->render(painter, option.rect.topLeft() + QPoint(iconsize + leftmargin + spacing, topmargin + 14 + 2 * fontpixelsize) + par->mapTo(par->window(), QPoint(0, 0)));
+    QRect usgplrect(option.rect.topLeft() + QPoint(iconsize + leftmargin + spacing, topmargin + 14 + 2 * fontpixelsize), QSize(text_max_width, 6));
+    QStyle *sty = option.widget && option.widget->style() ? option.widget->style() : qApp->style();
+    QStyleOptionProgressBar plopt;
+    plopt.textVisible = false;
+    plopt.rect = usgplrect;
+    plopt.minimum = 0;
+    plopt.maximum = 10000;
+    plopt.progress = 10000 * sizeinuse / sizetotal;
+    QColor plcolor;
+    if (plopt.progress < 7000) {
+        plcolor = QColor(0xFF0081FF);
+    } else if (plopt.progress < 9000) {
+        plcolor = QColor(0xFFF8AE2C);
+    } else {
+        plcolor = QColor(0xFFFF6170);
+    }
+    plopt.palette = option.widget ? option.widget->palette() : qApp->palette();
+    plopt.palette.setColor(QPalette::ColorRole::Highlight, plcolor);
+    painter->setPen(Qt::PenStyle::NoPen);
+    sty->drawControl(QStyle::ControlElement::CE_ProgressBarGroove, &plopt, painter, option.widget);
+    sty->drawControl(QStyle::ControlElement::CE_ProgressBarContents, &plopt, painter, option.widget);
 
     painter->drawPixmap(option.rect.x() + leftmargin, option.rect.y() + topmargin, icon.pixmap(iconsize));
 }
