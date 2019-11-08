@@ -161,7 +161,6 @@ HEADERS += \
     interfaces/dfileproxywatcher.h \
     plugins/pluginmanager.h \
     interfaces/dthumbnailprovider.h \
-    views/progressline.h \
     controllers/avfsfilecontroller.h \
     models/avfsfileinfo.h \
     interfaces/dfileiconprovider.h \
@@ -351,7 +350,6 @@ SOURCES += \
     app/filesignalmanager.cpp \
     plugins/pluginmanager.cpp \
     interfaces/dthumbnailprovider.cpp \
-    views/progressline.cpp \
     controllers/avfsfilecontroller.cpp \
     models/avfsfileinfo.cpp \
     interfaces/dfileiconprovider.cpp \

@@ -139,13 +139,6 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     painter->setPen(pl.color(DPalette::TextTips));
     painter->drawText(textrect, Qt::AlignLeft, FileUtils::diskUsageString(sizeinuse, sizetotal));
 
-    ProgressLine *usgpl = index.data(ComputerModel::DataRoles::UsgWidgetRole).value<ProgressLine*>();
-    if (usgpl->width() != text_max_width) {
-        usgpl->setFixedWidth(text_max_width);
-    }
-    usgpl->setProperty("isBaseColor", c == base_color);
-
-    //usgpl->render(painter, option.rect.topLeft() + QPoint(iconsize + leftmargin + spacing, topmargin + 14 + 2 * fontpixelsize) + par->mapTo(par->window(), QPoint(0, 0)));
     QRect usgplrect(option.rect.topLeft() + QPoint(iconsize + leftmargin + spacing, topmargin + 14 + 2 * fontpixelsize), QSize(text_max_width, 6));
     QStyle *sty = option.widget && option.widget->style() ? option.widget->style() : qApp->style();
     QStyleOptionProgressBar plopt;

@@ -165,18 +165,6 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         }
     }
 
-    if (role == DataRoles::UsgWidgetRole) {
-        ProgressLine *pl = m_items.at(index.row()).pl;
-        quint64 u = data(index, DataRoles::SizeInUseRole).toULongLong();
-        quint64 t = data(index, DataRoles::SizeTotalRole).toULongLong();
-        if (u > t) {
-            u = 0;
-        }
-        pl->setValue(10000. * u / t);
-        pl->update();
-        return QVariant::fromValue(pl);
-    }
-
     if (role == DataRoles::ICategoryRole) {
         return m_items.at(index.row()).cat;
     }
@@ -331,7 +319,6 @@ void ComputerModel::removeItem(const DUrl &url)
 void ComputerModel::initItemData(ComputerModelItemData &data, const DUrl &url, QWidget *w)
 {
     data.url = url;
-    data.pl = nullptr;
     if (url.scheme() == SPLITTER_SCHEME) {
         data.cat = ComputerModelItemData::Category::cat_splitter;
         data.sptext = url.fragment();
@@ -344,13 +331,6 @@ void ComputerModel::initItemData(ComputerModelItemData &data, const DUrl &url, Q
             data.cat = ComputerModelItemData::Category::cat_user_directory;
         } else {
             data.cat = ComputerModelItemData::Category::cat_internal_storage;
-            ProgressLine *pl = new ProgressLine(qobject_cast<ComputerView*>(this->QObject::parent()));
-            pl->setRoundRadius(2);
-            pl->setMin(0);
-            pl->setMax(10000);
-            pl->setFixedHeight(6);
-            pl->hide();
-            data.pl = pl;
         }
     }
 }

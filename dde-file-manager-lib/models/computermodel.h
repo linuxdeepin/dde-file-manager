@@ -27,7 +27,6 @@
 
 #include "durl.h"
 #include "interfaces/dabstractfileinfo.h"
-#include "views/progressline.h"
 
 //url schemes internal to ComputerModel
 #define SPLITTER_SCHEME "splitter"
@@ -49,7 +48,6 @@ struct ComputerModelItemData
     DUrl url;
     QString sptext;
     QWidget* widget = nullptr;
-    ProgressLine* pl = nullptr;
     Category cat;
     bool selected;
 };
@@ -63,7 +61,7 @@ public:
         SizeTotalRole = Qt::UserRole + 1,   //uint64_t
         SizeInUseRole = Qt::UserRole + 2,   //uint64_t
         FileSystemRole = Qt::UserRole + 3,  //QString
-        UsgWidgetRole = Qt::UserRole + 4,   //ProgressLine*
+        UsgWidgetRole = Qt::UserRole + 4,   //No longer used
         ICategoryRole = Qt::UserRole + 5,   //ComputerModelItemData::Category
         OpenUrlRole = Qt::UserRole + 6,     //DUrl
         MountOpenUrlRole = Qt::UserRole + 7,//DUrl
