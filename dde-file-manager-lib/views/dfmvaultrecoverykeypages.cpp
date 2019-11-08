@@ -38,10 +38,10 @@ DFM_BEGIN_NAMESPACE
 VaultAskCreateKeyPage::VaultAskCreateKeyPage(QWidget *parent)
     : QWidget (parent)
 {
-    QLabel * description = new QLabel(tr("Do you want to export a key file in case that you forgot the password?"), this);
+    QLabel * description = new QLabel(tr("Do you want to generate a key in case that you forgot the password?"), this);
     description->setAlignment(Qt::AlignHCenter);
 
-    m_nextButton = new QPushButton(tr("Export key"), this);
+    m_nextButton = new QPushButton(tr("Generate key"), this);
     m_skipButton = new QPushButton(tr("Skip"), this);
 
     DIconButton * icon = new DIconButton(this);
