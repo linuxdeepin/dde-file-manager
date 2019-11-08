@@ -211,7 +211,7 @@ void MoveCopyTaskWidget::initUI()
     m_closeButton->setAttribute(Qt::WA_NoMousePropagation);
 
     m_pauseBuuton = new DIconButton(this);
-    m_pauseBuuton->setIcon(QIcon::fromTheme("dfm_media_pause"));
+    m_pauseBuuton->setIcon(QIcon::fromTheme("dfm_task_pause"));
     m_pauseBuuton->setIconSize({24, 24});
     m_pauseBuuton->setFixedSize(24, 24);
     m_pauseBuuton->setFlat(true);
@@ -358,8 +358,6 @@ void MoveCopyTaskWidget::initConflictDetailFrame()
     conflictMainLayout->setContentsMargins(0, 0, 0, 0);
 
     m_conflictFrame->setLayout(conflictMainLayout);
-    m_conflictFrame->setFixedHeight(120);
-
 }
 
 
@@ -387,6 +385,10 @@ void MoveCopyTaskWidget::initButtonFrame()
     m_keepBothButton->setCheckable(true);
     m_keepBothButton->setChecked(true);
 
+    m_skipButton->setFixedWidth(80);
+    m_replaceButton->setFixedWidth(80);
+    m_keepBothButton->setFixedWidth(160);
+
     buttonLayout->addStretch(1);
     buttonLayout->addWidget(m_skipButton);
     buttonLayout->addWidget(m_replaceButton);
@@ -403,7 +405,6 @@ void MoveCopyTaskWidget::initButtonFrame()
 
     mainLayout->setContentsMargins(0, 0, 0, 0);
     m_buttonFrame->setLayout(mainLayout);
-    m_buttonFrame->setFixedHeight(60);
 }
 
 DFileCopyMoveJob::Handle *MoveCopyTaskWidget::errorHandle() const
@@ -584,8 +585,8 @@ void MoveCopyTaskWidget::handleLineDisplay(const int &row, const bool &hover, co
 
 void MoveCopyTaskWidget::showConflict()
 {
-    qDebug() << m_buttonFrame->height() << m_conflictFrame->height();
-    setFixedHeight(100 + m_buttonFrame->height() + m_conflictFrame->height());
+    qDebug() << m_buttonFrame->sizeHint().height() << m_conflictFrame->sizeHint().height();
+    setFixedHeight(100 + m_buttonFrame->sizeHint().height() + m_conflictFrame->sizeHint().height());
     m_conflictFrame->show();
     m_buttonFrame->show();
     emit heightChanged();
@@ -603,7 +604,7 @@ void MoveCopyTaskWidget::hideConflict()
 
 void MoveCopyTaskWidget::showButtonFrame()
 {
-    setFixedHeight(100 + m_buttonFrame->height());
+    setFixedHeight(100 + m_buttonFrame->sizeHint().height());
     m_buttonFrame->show();
     emit heightChanged();
 }
