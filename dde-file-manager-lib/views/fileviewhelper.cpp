@@ -148,7 +148,8 @@ void FileViewHelper::cdUp(const DFMUrlBaseEvent &event)
 void FileViewHelper::handleSelectEvent(const DFMUrlListBaseEvent &event)
 {
     // TODO: should check fileSignalManager->requestSelectFile() and ensure sender correct.
-    if (event.sender() != this->parent()) {
+    if (event.sender() != this->parent()
+            && event.sender() != this->model()) {
         return;
     }
 
