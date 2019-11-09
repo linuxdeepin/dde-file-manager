@@ -461,7 +461,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
 
 void PropertyDialog::initUI()
 {
-    m_icon->setFixedHeight(150);
+    m_icon->setFixedHeight(128);
     m_icon->setParent(this);
     QFrame *m_editFrame = new QFrame;
 
@@ -506,7 +506,7 @@ void PropertyDialog::initUI()
     QVBoxLayout *scrolllayout = new QVBoxLayout;
     scrolllayout->addWidget(m_scrollArea);
     QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(this->layout());
-    layout->insertLayout(1, scrolllayout, 1);
+    layout->addLayout(scrolllayout, 1);
 
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
     if (fileInfo && fileInfo->canTag()) {
@@ -810,8 +810,9 @@ int PropertyDialog::contentHeight() const
     for (const DBaseExpand* expand : m_expandGroup) {
         expandsHeight += expand->height();
     }
-
-    return (m_icon->height() +
+#define DIALOG_TITLEBAR_HEIGHT 50
+    return (DIALOG_TITLEBAR_HEIGHT +
+            m_icon->height() +
             m_editStackWidget->height() +
             expandsHeight +
             contentsMargins().top() +
