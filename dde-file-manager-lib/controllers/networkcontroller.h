@@ -39,6 +39,7 @@ public:
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const override;
     const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const override;
     const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const override;
+    DUrlList pasteFile(const QSharedPointer<DFMPasteEvent> &event) const override;
 };
 
 #endif // NETWORKCONTROLLER_H

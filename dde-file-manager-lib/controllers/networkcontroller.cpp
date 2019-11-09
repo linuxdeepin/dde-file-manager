@@ -154,3 +154,10 @@ const DDirIteratorPointer NetworkController::createDirIterator(const QSharedPoin
     return DDirIteratorPointer(new NetworkFileDDirIterator(event->fileUrl(), event->sender().data(), silence_flag));
 }
 
+DUrlList NetworkController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
+{
+    Q_UNUSED(event)
+
+    return DUrlList(); // disabled for now.
+}
+
