@@ -101,6 +101,9 @@
     <method name="addDisableUrlScheme">
         <arg name="type" type="s" direction="in"/>
     </method>
+    <method name="setAllowMixedSelection">
+        <arg name="on" type="b" direction="in"/>
+    </method>
     <signal name="finished">
       <arg name="result" type="i" direction="out"/>
     </signal>

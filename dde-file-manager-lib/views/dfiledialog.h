@@ -79,6 +79,8 @@ public:
 
     void setFileMode(QFileDialog::FileMode mode);
 
+    void setAllowMixedSelection(bool on);
+
     void setAcceptMode(QFileDialog::AcceptMode mode);
     QFileDialog::AcceptMode acceptMode() const;
 
