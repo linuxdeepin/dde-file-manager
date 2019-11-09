@@ -339,6 +339,13 @@ void DFileDialogHandle::endAddCustomWidget()
     d->dialog->endAddCustomWidget();
 }
 
+void DFileDialogHandle::setAllowMixedSelection(bool on)
+{
+    D_D(DFileDialogHandle);
+
+    d->dialog->setAllowMixedSelection(on);
+}
+
 void DFileDialogHandle::setHideOnAccept(bool enable)
 {
     D_D(DFileDialogHandle);

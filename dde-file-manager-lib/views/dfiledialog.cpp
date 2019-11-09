@@ -59,6 +59,7 @@ class DFileDialogPrivate
 public:
     int result = 0;
     bool hideOnAccept = true;
+    bool allowMixedSelection = false;
 
     QFileDialog::FileMode fileMode = QFileDialog::AnyFile;
     QFileDialog::AcceptMode acceptMode = QFileDialog::AcceptOpen;
@@ -454,6 +455,13 @@ void DFileDialog::setFileMode(QFileDialog::FileMode mode)
         getFileView()->setEnabledSelectionModes(QSet<DFileView::SelectionMode>() << QAbstractItemView::SingleSelection);
         break;
     }
+}
+
+void DFileDialog::setAllowMixedSelection(bool on)
+{
+    D_D(DFileDialog);
+
+    d->allowMixedSelection = on;
 }
 
 void DFileDialog::setAcceptMode(QFileDialog::AcceptMode mode)

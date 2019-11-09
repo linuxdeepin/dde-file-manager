@@ -89,6 +89,8 @@ public:
     void beginAddCustomWidget();
     void endAddCustomWidget();
 
+    void setAllowMixedSelection(bool on);
+
     void setHideOnAccept(bool enable);
     bool hideOnAccept() const;
 
