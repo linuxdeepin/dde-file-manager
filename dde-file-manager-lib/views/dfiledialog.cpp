@@ -71,7 +71,7 @@ public:
     int currentNameFilterIndex = -1;
     QDir::Filters filters = 0;
     QString currentInputName;
-    QModelIndexList orderedSelectedList;
+    mutable QModelIndexList orderedSelectedList;
     FileDialogStatusBar *statusBar;
 
 public:
@@ -86,12 +86,33 @@ QList<DUrl> DFileDialogPrivate::orderedSelectedUrls() const
 
     QModelIndex rootIndex = view->rootIndex();
     DUrlList list;
+
+    QModelIndexList seclist = view->selectedIndexes();
+    if (seclist.size()<orderedSelectedList.size()) {
+        auto it = orderedSelectedList.begin();
+        while (it!=orderedSelectedList.end()) {
+            if (seclist.contains(*it)) {
+                ++it;
+            } else {
+                it = orderedSelectedList.erase(it);
+            }
+        }
+    } else if (seclist.size()>orderedSelectedList.size()) {
+        qWarning() << "oops, something was wrong...";
+        // the reset may not be ordered
+        QSet<QModelIndex> resetSet = seclist.toSet() - orderedSelectedList.toSet();
+        for (QModelIndex idx : resetSet) {
+            orderedSelectedList.append(idx);
+        }
+    }
+
     for(const QModelIndex &index : orderedSelectedList) {
         if (index.parent() != rootIndex)
             continue;
 
         list << view->model()->getUrlByIndex(index);
     }
+
     return list;
 }
 
@@ -1049,11 +1070,9 @@ void DFileDialog::handleNewView(DFMBaseView *view)
                 return;
             }
 
-            auto beg = d->orderedSelectedList.begin();
-            auto end = d->orderedSelectedList.end();
-            d->orderedSelectedList.erase(std::remove_if(beg, end, [removeList](const QModelIndex &index)->bool {
-                return removeList.contains(index);
-            }));
+            for (QModelIndex idx : removeList) {
+                d->orderedSelectedList.removeOne(idx);
+            }
         }
         //qDebug() << "----selectionChanged----";
     });
