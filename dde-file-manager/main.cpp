@@ -114,7 +114,6 @@ int main(int argc, char *argv[])
                                                                "copying, trash, compression/decompression, file property "
                                                                "and other file management functions."));
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
-    app.setStyle("chameleon");
 
 #ifdef DISABLE_QUIT_ON_LAST_WINDOW_CLOSED
     app.setQuitOnLastWindowClosed(false);
