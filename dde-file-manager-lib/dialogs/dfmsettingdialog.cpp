@@ -95,7 +95,7 @@ private:
 class SettingBackend : public DSettingsBackend
 {
 public:
-    explicit SettingBackend(QObject *parent = 0);
+    explicit SettingBackend(QObject *parent = nullptr);
 
     QStringList keys() const;
     QVariant getOption(const QString &key) const;
@@ -337,7 +337,7 @@ DFMSettingDialog::DFMSettingDialog(QWidget *parent):
     updateSettings("GenerateSettingTranslate", m_settings);
 }
 
-QWidget *DFMSettingDialog::createAutoMountCheckBox(QObject *opt)
+QPair<QWidget *, QWidget *> DFMSettingDialog::createAutoMountCheckBox(QObject *opt)
 {
     auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
     QCheckBox *mountCheckBox = new QCheckBox(QObject::tr("Auto mount"));
@@ -372,10 +372,10 @@ QWidget *DFMSettingDialog::createAutoMountCheckBox(QObject *opt)
         mountCheckBox->setChecked(value.toBool());
     });
 
-    return DSettingsWidgetFactory::createTwoColumWidget("GenerateSettingTranslate", option, mountCheckBox);
+    return DSettingsWidgetFactory::createStandardItem("GenerateSettingTranslate", option, mountCheckBox);
 }
 
-QWidget *DFMSettingDialog::createAutoMountOpenCheckBox(QObject *opt)
+QPair<QWidget *, QWidget *> DFMSettingDialog::createAutoMountOpenCheckBox(QObject *opt)
 {
     auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
     QCheckBox *openCheckBox = new QCheckBox(QObject::tr("Open after auto mount"));
@@ -405,5 +405,5 @@ QWidget *DFMSettingDialog::createAutoMountOpenCheckBox(QObject *opt)
         openCheckBox->setChecked(value.toBool());
     });
 
-    return DSettingsWidgetFactory::createTwoColumWidget("GenerateSettingTranslate", option, openCheckBox);
+    return DSettingsWidgetFactory::createStandardItem("GenerateSettingTranslate", option, openCheckBox);
 }
