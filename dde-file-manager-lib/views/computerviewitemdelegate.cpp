@@ -111,7 +111,7 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     textrect.setTop(option.rect.top() + topmargin);
     textrect.setHeight(fontpixelsize * 2);
     painter->setFont(par->font());
-    painter->setPen(qApp->palette().color(/*option.state & QStyle::StateFlag::State_Selected ? QPalette::ColorRole::HighlightedText : */QPalette::ColorRole::Text));
+    painter->setPen(qApp->palette().color(QPalette::ColorRole::Text));
     QString text = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, text_max_width);
     painter->drawText(textrect, Qt::TextWrapAnywhere, text, &otextrect);
 
@@ -146,7 +146,7 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     plopt.rect = usgplrect;
     plopt.minimum = 0;
     plopt.maximum = 10000;
-    plopt.progress = sizetotal ? int(10000. * sizeinuse / sizetotal) : 0;
+    plopt.progress = sizetotal && ~sizeinuse ? int(10000. * sizeinuse / sizetotal) : 0;
     QColor plcolor;
     if (plopt.progress < 7000) {
         plcolor = QColor(0xFF0081FF);
