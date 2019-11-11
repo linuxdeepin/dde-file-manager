@@ -128,6 +128,7 @@ QMenu *DFMSideBarBookmarkItemHandler::contextMenu(const DFMSideBar *sidebar, con
         messageLines.append(QStringLiteral("(i) Bookmark Exist: ") + (info->exists() ? "Y" : "N") + "\n");
         messageLines.append("(i) Bookmark Mount Point: " + bookmarkInfo->mountPoint + "\n");
         messageLines.append("(i) Bookmark Locate Url: " + bookmarkInfo->locateUrl + "\n");
+        messageLines.append("(i) Bookmark Redirected Url: " + bookmarkInfo->redirectedFileUrl().toString() + "\n");
         d.setMessage(messageLines);
         d.addButton("Gotcha", true, DDialog::ButtonNormal);
         d.exec();
