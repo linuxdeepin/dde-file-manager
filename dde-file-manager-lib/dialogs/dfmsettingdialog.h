@@ -42,8 +42,8 @@ class DFMSettingDialog : public DSettingsDialog
 public:
     DFMSettingDialog(QWidget *parent = nullptr);
 
-    static QWidget *createAutoMountCheckBox(QObject* opt);
-    static QWidget *createAutoMountOpenCheckBox(QObject* opt);
+    static QPair<QWidget*, QWidget*> createAutoMountCheckBox(QObject* opt);
+    static QPair<QWidget *, QWidget *> createAutoMountOpenCheckBox(QObject* opt);
 
     static QCheckBox* AutoMountCheckBox;
     static QCheckBox* AutoMountOpenCheckBox;
