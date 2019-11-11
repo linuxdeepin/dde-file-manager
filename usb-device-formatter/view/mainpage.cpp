@@ -30,6 +30,8 @@
 #include <QDebug>
 #include <QProcess>
 
+#include <DColoredProgressBar>
+
 #include "utils/fsutils.h"
 #include "utils/udisksutils.h"
 
@@ -80,12 +82,25 @@ void MainPage::initUI()
     shLayout->addStretch(1);
     shLayout->addWidget(m_remainLabel);
     shLayout->addSpacing(35);
-    m_storageProgressBar = new ProgressLine(this);
-    m_storageProgressBar->setMax(100);
-    m_storageProgressBar->setMin(0);
-    m_storageProgressBar->setValue(20);
+    DTK_WIDGET_NAMESPACE::DColoredProgressBar *stpb;
+    stpb = new DTK_WIDGET_NAMESPACE::DColoredProgressBar();
+    QLinearGradient lg(0, 0.5, 1, 0.5);
+    lg.setCoordinateMode(QGradient::CoordinateMode::ObjectBoundingMode);
 
-    m_storageProgressBar->setFixedSize(qobject_cast<QWidget*>(parent())->width() - 70, 2);
+    lg.setStops({{0, 0xFF0080FF}, {0.72, 0xFF0397FE}, {1, 0xFF06BEFD}});
+    stpb->addThreshold(0, lg);
+
+    lg.setStops({{0, 0xFFFFAE00}, {0.72, 0xFFFFD007}, {1, 0xFFF6FF0D}});
+    stpb->addThreshold(7000, lg);
+
+    lg.setStops({{0, 0xFFFF0000}, {0.72, 0xFFFF237A}, {1, 0xFFFF9393}});
+    stpb->addThreshold(9000, lg);
+
+    stpb->setMaximum(10000);
+    stpb->setTextVisible(false);
+
+    stpb->setFixedSize(qobject_cast<QWidget*>(parent())->width() - 70, 8);
+    m_storageProgressBar = stpb;
     storageProgressLayout->addLayout(shLayout);
     storageProgressLayout->addWidget(m_storageProgressBar, 0, Qt::AlignHCenter);
 
@@ -200,14 +215,13 @@ QString MainPage::getTargetPath() const
 
 void MainPage::setTargetPath(const QString &targetPath)
 {
-    qlonglong total, free;
+    qlonglong total, used;
     UDisksBlock blk(targetPath);
     total = blk.sizeTotal();
-    free = blk.sizeTotal() - blk.sizeUsed();
+    used =  blk.sizeUsed();
 
-    m_storageProgressBar->setMax(total);
-    m_storageProgressBar->setValue(total - free);
-    m_remainLabel->setText(QString("%1/ %2").arg(formatSize(total - free), formatSize(total)));
+    m_storageProgressBar->setValue(total ? int(10000. * used / total) : 0);
+    m_remainLabel->setText(QString("%1/ %2").arg(formatSize(used), formatSize(total)));
     QString deviceName = blk.displayName();
     QFontMetrics fm(QFont("",10));
     m_nameLabel->setText(fm.elidedText(deviceName, Qt::ElideRight, 100  ));

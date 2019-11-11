@@ -33,8 +33,6 @@
 #include <DDialog>
 #include <dplatformwindowhandle.h>
 
-#include "widgets/progressline.h"
-
 #include "mainpage.h"
 #include "warnpage.h"
 #include "formatingpage.h"

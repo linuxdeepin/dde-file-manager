@@ -20,7 +20,6 @@ TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
 
 SOURCES += main.cpp \
     view/mainwindow.cpp \
-    widgets/progressline.cpp \
     view/mainpage.cpp \
     view/warnpage.cpp \
     view/formatingpage.cpp \
@@ -35,7 +34,6 @@ SOURCES += main.cpp \
 
 HEADERS  += \
     view/mainwindow.h \
-    widgets/progressline.h \
     view/mainpage.h \
     view/warnpage.h \
     view/formatingpage.h \
