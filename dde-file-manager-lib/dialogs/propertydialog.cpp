@@ -340,7 +340,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         progbdf->addThreshold(9000, lg);
 
         progbdf->setMaximum(10000);
-        progbdf->setValue((int)(10000. * dskinuse / dskspace));
+        progbdf->setValue(dskspace ? int(10000. * dskinuse / dskspace) : 0);
         progbdf->setMaximumHeight(8);
         progbdf->setTextVisible(false);
 
