@@ -30,11 +30,11 @@
 #include <QPushButton>
 #include <QComboBox>
 #include <QLineEdit>
-#include "widgets/progressline.h"
 #include <QVariantAnimation>
 
 
 class QCheckBox;
+class QProgressBar;
 class MainPage : public QWidget
 {
     Q_OBJECT
@@ -73,7 +73,7 @@ private:
     QLabel* m_iconLabel = NULL;
     QComboBox* m_typeCombo = NULL;
     QPushButton* m_formatButton = NULL;
-    ProgressLine* m_storageProgressBar = NULL;
+    QProgressBar* m_storageProgressBar = NULL;
     QStringList m_fileFormat;
     QString m_defautlFormat;
     QLineEdit* m_labelLineEdit = NULL;
