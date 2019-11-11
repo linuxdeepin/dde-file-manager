@@ -60,6 +60,7 @@
 #include <dexpandgroup.h>
 #include <dblockdevice.h>
 #include <denhancedwidget.h>
+#include <DColoredProgressBar>
 #include <QScrollBar>
 
 #include <QTextEdit>
@@ -125,28 +126,6 @@ public:
             headerLine()->setFont(f);
         }
         new DFMRoundBackground(this, 8);
-    }
-};
-
-class DFProgressBar : public QProgressBar
-{
-protected:
-    void paintEvent(QPaintEvent *event) override
-    {
-        QPainter painter(this);
-        QRectF bgRect;
-        QRectF fgRect;
-        qreal p = 1. * (value() - minimum()) / (maximum() - minimum());
-
-        bgRect.setSize(size());
-        fgRect.setSize(QSizeF(width() * p, height()));
-        const QPalette pal = this->palette();
-        QColor bgColor = pal.color(QPalette::AlternateBase); // or maybe just QPalette::Base ?
-        QColor fgColor = pal.color(QPalette::Highlight);
-        painter.setRenderHint(QPainter::Antialiasing);
-
-        painter.fillRect(bgRect, bgColor);
-        painter.fillRect(fgRect, fgColor);
     }
 };
 
@@ -347,10 +326,23 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
             devid.clear();
         }
 
-        QProgressBar* progbdf = new DFProgressBar();
+        DColoredProgressBar* progbdf = new DTK_WIDGET_NAMESPACE::DColoredProgressBar();
+        QLinearGradient lg(0, 0.5, 1, 0.5);
+        lg.setCoordinateMode(QGradient::CoordinateMode::ObjectBoundingMode);
+
+        lg.setStops({{0, 0xFF0080FF}, {0.72, 0xFF0397FE}, {1, 0xFF06BEFD}});
+        progbdf->addThreshold(0, lg);
+
+        lg.setStops({{0, 0xFFFFAE00}, {0.72, 0xFFFFD007}, {1, 0xFFF6FF0D}});
+        progbdf->addThreshold(7000, lg);
+
+        lg.setStops({{0, 0xFFFF0000}, {0.72, 0xFFFF237A}, {1, 0xFFFF9393}});
+        progbdf->addThreshold(9000, lg);
+
         progbdf->setMaximum(10000);
         progbdf->setValue((int)(10000. * dskinuse / dskspace));
-        progbdf->setMaximumHeight(2);
+        progbdf->setMaximumHeight(8);
+        progbdf->setTextVisible(false);
 
         QString text = tr("%1 (%2)").arg(name).arg(devid);
         QLabel* lbdf_l = new SectionKeyLabel();
@@ -367,12 +359,14 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         wdfl->layout()->addWidget(lbdf_l);
         wdfl->layout()->addWidget(lbdf_r);
 
-        m_wdf = new QWidget(this);
+        m_wdf = new QFrame(this);
         m_wdf->setLayout(new QVBoxLayout);
         m_wdf->layout()->setMargin(0);
+        m_wdf->layout()->setContentsMargins(12, 8, 12, 8);
         m_wdf->layout()->addWidget(wdfl);
         m_wdf->layout()->addWidget(progbdf);
-        m_mainLayout->addWidget(m_wdf);
+        new DFMRoundBackground(m_wdf, 8);
+        qobject_cast<QVBoxLayout*>(m_scrollArea->widget()->layout())->insertWidget(0, m_wdf);
 
     } else {
         // tagged file basicinfo not complete??
@@ -852,6 +846,8 @@ void PropertyDialog::initExpand(QVBoxLayout *layout, DBaseExpand *expand)
     QMargins cm = layout->contentsMargins();
     QRect rc = contentsRect();
     expand->setFixedWidth(rc.width()-cm.left()-cm.right());
+    expand->setExpandedSeparatorVisible(false);
+    expand->setSeparatorVisible(false);
     layout->addWidget(expand, 0, Qt::AlignTop);
 
     connect(expand, &DBaseExpand::expandChange, this, &PropertyDialog::onExpandChanged);
