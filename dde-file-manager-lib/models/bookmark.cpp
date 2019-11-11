@@ -81,7 +81,14 @@ bool BookMark::exists() const
             mountPointPath.replace("dev", "org/freedesktop/UDisks2/block_devices");
             udisksDBusPath = mountPointPath;
             QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(mountPointPath));
-            udisksMountPoint = blDev->mountPoints().isEmpty() ? QString() : blDev->mountPoints().first();
+            udisksMountPoint.clear();
+            for (auto& mp : blDev->mountPoints()) {
+                QString mps(mp);
+                if (sourceUrl().path().startsWith(mps)) {
+                    udisksMountPoint = mps;
+                    break;
+                }
+            }
         }
     }
 
