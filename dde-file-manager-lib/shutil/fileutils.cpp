@@ -442,11 +442,15 @@ QString FileUtils::formatSize(qint64 num, bool withUnitVisible, int precision, i
     return QString("%1%2").arg(sizeString(QString::number(fileSize, 'f', precision)), unitString);
 }
 
-QString FileUtils::diskUsageString(qint64 usedSize, qint64 totalSize)
+QString FileUtils::diskUsageString(quint64 usedSize, quint64 totalSize)
 {
     const qint64 kb = 1024;
     const qint64 mb = 1024 * kb;
     const QStringList unitDisplayText = {"B", "K", "M", "G", "T"};
+
+    if (!~usedSize) {
+        return FileUtils::formatSize(totalSize, true, 0, totalSize < mb ? 2 : -1, unitDisplayText);
+    }
 
     return QObject::tr("%1/%2").arg(FileUtils::formatSize(usedSize, true, 0, usedSize < mb ? 2 : -1, unitDisplayText),
                                     FileUtils::formatSize(totalSize, true, 0, totalSize < mb ? 2 : -1, unitDisplayText));

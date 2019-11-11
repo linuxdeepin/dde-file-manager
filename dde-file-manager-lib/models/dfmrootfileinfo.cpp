@@ -413,7 +413,7 @@ QVariantHash DFMRootFileInfo::extraProperties() const
         ret["mounted"] = true;
     } else if (suffix() == SUFFIX_UDISKS) {
         if (d->mps.empty()) {
-            ret["fsUsed"] = quint64(d->size + 1);
+            ret["fsUsed"] = ~0ULL;
         } else {
             QStorageInfo si(d->mps.front());
             ret["fsUsed"] = quint64(si.bytesTotal() - si.bytesFree());
