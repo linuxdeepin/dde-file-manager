@@ -31,8 +31,8 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QCloseEvent>
-
 #include <ddialog.h>
+#include <DApplicationHelper>
 
 #include "dfmglobal.h"
 #include "disomaster.h"
@@ -303,42 +303,47 @@ void MoveCopyTaskWidget::initUI()
 
 void MoveCopyTaskWidget::initConflictDetailFrame()
 {
+    QPalette labelPalette = this->palette();
+    QColor text_color = labelPalette.text().color();
+    DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(this->palette().base().color());
+    if (ct == DGuiApplicationHelper::LightType) {
+        text_color = DGuiApplicationHelper::adjustColor(text_color, 0, 0, 0, +20, +20, +20, 0);
+    } else {
+        text_color = DGuiApplicationHelper::adjustColor(text_color, 0, 0, 0, -20, -20, -20, 0);
+    }
+    labelPalette.setColor(QPalette::Text, text_color);
 
     m_conflictFrame = new QFrame(this);
 
     m_originIconLabel = new QLabel(this);
-//    m_originIconLabel->setStyleSheet("background-color: green");
     m_originIconLabel->setFixedSize(48, 48);
     m_originIconLabel->setScaledContents(true);
 
     m_originTitleLabel = new QLabel(this);
-//    m_originTitleLabel->setStyleSheet("background-color: yellow");
     m_originTitleLabel->setFixedHeight(20);
 
     m_originTimeLabel = new QLabel(this);
-//    m_originTimeLabel->setStyleSheet("background-color: gray");
     m_originTimeLabel->setFixedHeight(20);
+    m_originTimeLabel->setPalette(labelPalette);
 
     m_originSizeLabel = new QLabel(this);
-//    m_originSizeLabel->setStyleSheet("background-color: green");
     m_originSizeLabel->setFixedSize(110, 20);
+    m_originSizeLabel->setPalette(labelPalette);
 
     m_targetIconLabel = new QLabel(this);
-//    m_targetIconLabel->setStyleSheet("background-color: red");
     m_targetIconLabel->setFixedSize(48, 48);
     m_targetIconLabel->setScaledContents(true);
 
     m_targetTitleLabel = new QLabel(this);
-//    m_targetTitleLabel->setStyleSheet("background-color: yellow");
     m_targetTitleLabel->setFixedHeight(20);
 
     m_targetTimeLabel = new QLabel(this);
-//    m_targetTimeLabel->setStyleSheet("background-color: gray");
     m_targetTimeLabel->setFixedHeight(20);
+    m_targetTimeLabel->setPalette(labelPalette);
 
     m_targetSizeLabel = new QLabel(this);
-//    m_targetSizeLabel->setStyleSheet("background-color: green");
     m_targetSizeLabel->setFixedSize(110, 20);
+    m_targetSizeLabel->setPalette(labelPalette);
 
     QGridLayout *conflictMainLayout = new QGridLayout(this);
 
