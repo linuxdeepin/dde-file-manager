@@ -215,7 +215,7 @@ private:
     QList<DBaseExpand *> m_expandGroup;
     DFM_NAMESPACE::DFileStatisticsJob* m_sizeWorker{ nullptr };
     QVBoxLayout* m_mainLayout{ nullptr };
-    QWidget* m_wdf{ nullptr };
+    QFrame* m_wdf{ nullptr };
     QScrollArea *m_scrollArea{ nullptr };
     QFrame      *m_tagInfoFrame{ nullptr };
 
