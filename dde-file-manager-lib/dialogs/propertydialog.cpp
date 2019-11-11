@@ -448,7 +448,6 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
     loadPluginExpandWidgets();
 
     m_expandGroup.first()->setExpand(true);
-    m_expandGroup.last()->setExpandedSeparatorVisible(false);
 
     initConnect();
 }
@@ -705,20 +704,6 @@ void PropertyDialog::onOpenWithBntsChecked(QAbstractButton *w)
     }
 }
 
-void PropertyDialog::onExpandChanged(const bool &e)
-{
-    DArrowLineExpand *expand = qobject_cast<DArrowLineExpand *>(sender());
-    if (expand) {
-        if (e) {
-            expand->setSeparatorVisible(false);
-        } else {
-            QTimer::singleShot(200, expand, [ = ] {
-                expand->setSeparatorVisible(true);
-            });
-        }
-    }
-}
-
 void PropertyDialog::mousePressEvent(QMouseEvent *event)
 {
     if (m_edit->isVisible()) {
@@ -850,7 +835,6 @@ void PropertyDialog::initExpand(QVBoxLayout *layout, DBaseExpand *expand)
     expand->setSeparatorVisible(false);
     layout->addWidget(expand, 0, Qt::AlignTop);
 
-    connect(expand, &DBaseExpand::expandChange, this, &PropertyDialog::onExpandChanged);
     DEnhancedWidget *hanceedWidget = new DEnhancedWidget(expand, expand);
     connect(hanceedWidget, &DEnhancedWidget::heightChanged, hanceedWidget, [=](){
         QRect rc = geometry();

@@ -176,7 +176,6 @@ public slots:
     void onChildrenRemoved(const DUrl &fileUrl);
     void flickFolderToSidebar();
     void onOpenWithBntsChecked(QAbstractButton *w);
-    void onExpandChanged(const bool& e);
 
 signals:
     void closed(const DUrl& url);
