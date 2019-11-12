@@ -49,6 +49,7 @@
 #include "interfaces/dlistitemdelegate.h"
 #include "dfmapplication.h"
 #include "interfaces/dfmcrumbbar.h"
+#include "dialogs/dialogmanager.h"
 
 #include "controllers/appcontroller.h"
 #include "dfileservices.h"
@@ -2150,20 +2151,26 @@ bool DFileView::setRootUrl(const DUrl &url)
         QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
         if (!dp.devid.length()) {
             QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-            QSharedPointer<QFutureWatcher<void>> fw(new QFutureWatcher<void>);
-            connect(fw.data(), &QFutureWatcher<void>::finished, this, [=] {
+            QSharedPointer<QFutureWatcher<bool>> fw(new QFutureWatcher<bool>);
+            connect(fw.data(), &QFutureWatcher<bool>::finished, this, [=] {
                 QGuiApplication::restoreOverrideCursor();
-                cd(fileUrl);
-                Q_UNUSED(fw); //ensure future watcher is destructed only in the future
+                if (fw->result()) {
+                    cd(fileUrl);
+                }
             });
             fw->setFuture(QtConcurrent::run([=] {
                 getOpticalDriveMutex()->lock();
                 blkdev->unmount({});
-                ISOMaster->acquireDevice(devpath);
+                if (!ISOMaster->acquireDevice(devpath)) {
+                    QMetaObject::invokeMethod(dialogManager, std::bind(&DialogManager::showErrorDialog, dialogManager, tr("The disc image was corrupted, cannot mount now, please erase the disc first"), QString()), Qt::ConnectionType::QueuedConnection);
+                    getOpticalDriveMutex()->unlock();
+                    return false;
+                }
                 ISOMaster->getDeviceProperty();
                 ISOMaster->releaseDevice();
                 blkdev->mount({});
                 getOpticalDriveMutex()->unlock();
+                return true;
             }));
             return false;
         }
