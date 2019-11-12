@@ -498,7 +498,11 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
                 if (blkdev->mountPoints().size()) {
                     blkdev->unmount({});
                 }
-                ISOMaster->acquireDevice(fileUrl.query());
+                if (!ISOMaster->acquireDevice(fileUrl.query())) {
+                    QMetaObject::invokeMethod(dialogManager, std::bind(&DialogManager::showErrorDialog, dialogManager, tr("The disc image was corrupted, cannot mount now, please erase the disc first"), QString()), Qt::ConnectionType::QueuedConnection);
+                    getOpticalDriveMutex()->unlock();
+                    return;
+                }
                 dp = ISOMaster->getDeviceProperty();
                 ISOMaster->releaseDevice();
             }
