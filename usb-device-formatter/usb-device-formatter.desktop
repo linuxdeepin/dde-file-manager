@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=/usr/bin/usb-device-formatter-pkexec
+Exec=/usr/bin/usb-device-formatter
 Icon=usb-device-formatter
 Name=USB Device Formatter
 NoShowIn=GNOME;Unity;Deepin

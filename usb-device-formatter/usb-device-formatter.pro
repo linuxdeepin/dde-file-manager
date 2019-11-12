@@ -23,7 +23,6 @@ SOURCES += main.cpp \
     view/mainpage.cpp \
     view/warnpage.cpp \
     view/formatingpage.cpp \
-    widgets/progressbox.cpp \
     view/finishpage.cpp \
     view/errorpage.cpp \
     app/cmdmanager.cpp \
@@ -37,7 +36,6 @@ HEADERS  += \
     view/mainpage.h \
     view/warnpage.h \
     view/formatingpage.h \
-    widgets/progressbox.h \
     view/finishpage.h \
     view/errorpage.h \
     app/cmdmanager.h \
