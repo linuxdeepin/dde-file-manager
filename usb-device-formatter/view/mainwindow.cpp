@@ -133,6 +133,7 @@ void MainWindow::initConnect()
 void MainWindow::formatDevice()
 {
     DWindowManagerHelper::setMotifFunctions(windowHandle(), DWindowManagerHelper::FUNC_CLOSE, false);
+    setCloseButtonVisible(false);
 
     QtConcurrent::run([=]{
         UDisksBlock blk(m_formatPath);
@@ -185,6 +186,7 @@ void MainWindow::nextStep()
 void MainWindow::onFormatingFinished(const bool &successful)
 {
     DWindowManagerHelper::setMotifFunctions(windowHandle(), DWindowManagerHelper::FUNC_CLOSE, true);
+    setCloseButtonVisible(true);
 
     if (successful) {
         m_currentStep = Finished;
