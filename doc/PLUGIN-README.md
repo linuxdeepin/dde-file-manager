@@ -30,6 +30,18 @@
 | `FileManager` | 在文件管理器中触发上下文菜单 |
 | `Desktop` | 在桌面触发上下文菜单 |
 
+`X-DFM-SupportSchemes` 可以决定是否在指定的目录scheme下显示菜单，此字段可包含一个或多个类型，其中包括 `file`, `trash`, `recent`, `bookmark` 等多种，字段不包含时任何位置均可显示菜单，字段内容为空时将不显示菜单。
+| 名称 | 含义 |
+| :- | :- |
+| `file` | 在本地文件上触发上下文菜单 |
+| `trash ` | 在回收站中触发上下文菜单 |
+| `recent ` | 在最近文件中触发上下文菜单 |
+| `bookmark ` | 在书签文件触发上下文菜单 |
+
+
+`X-DFM-SupportSuffix`  可以决定是否根据(全)后缀名过滤显示菜单，如在 `test.7z.002` `test.7z.003` `test.7z.004` 等文件上显示压缩菜单，由于分卷文件 `MimeType` 是 `application/octet-stream` 无法通过文件类型显示，特增加通过后缀显示菜单，此情况可以用 `7z.*` 来支持。
+
+
 OEM 厂商需要将待添加的 `desktop` 文件放置到 `/usr/share/deepin/dde-file-manager/oem-menuextensions/` 位置，在下次启动文件管理器时[^1]，选中任意一个或多个文件并触发上下文菜单，将可以看到新增的项目位于其中。
 
 ### 示例 `.desktop` 文件
@@ -66,7 +78,7 @@ Exec=/home/wzc/Temp/test.sh %U
 
 ### 完整示例 - 复制文件路径
 
-1. 安装 `dde-file-manager-menu-oem` 后， 切换到 `.desktop` 文件所在目录 `/usr/share/deepin/dde-file-manager/oem-menuextensions/` 。
+1. 切换到 `.desktop` 文件所在目录 `/usr/share/deepin/dde-file-manager/oem-menuextensions/` 。
 ```
 sudo mkdir /usr/share/deepin/dde-file-manager
 sudo mkdir /usr/share/deepin/dde-file-manager/oem-menuextensions
@@ -100,4 +112,4 @@ echo -n $1 | xclip -i -selection clipboard
 ```
 至此，重新启动文件管理器，文件列表中常规文本文件的右键菜单会多一个菜单项 `复制文件路径`，点击即可将文件路径复制到剪切板中。
 
-[^1]: 注：这是由于菜单列表仅在 OEM 插件加载时识别并记录一次。在部分平台，深度文件管理器存在加速启动用的进程常驻后台，您可能需要结束所有文件管理器进程。类似的，对于桌面，也需要结束桌面的相应进程才能使桌面使用新增的菜单。
+[^1]: 注：这是由于菜单列表仅在文件管理器（桌面）启动时识别并记录一次。在部分平台，深度文件管理器存在加速启动用的进程常驻后台，您可能需要结束所有文件管理器进程。类似的，对于桌面，也需要重启桌面的相应进程才能使桌面使用新增的菜单。
