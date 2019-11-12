@@ -25,8 +25,9 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-static const int FrameHeight = 120;
+static const int FrameHeight = 130;
 static const int ListHeight = 100;
+static const int HeaderSwitcherHeight = 45;
 
 static const int ItemCellWidth = 160;
 static const int ItemCellHeight = ListHeight;

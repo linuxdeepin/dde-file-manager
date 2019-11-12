@@ -64,7 +64,7 @@ static bool previewBackground()
             || !DWindowManagerHelper::instance()->hasBlurWindow();
 }
 
-Frame::Frame(Mode mode, QFrame *parent)
+Frame::Frame(Mode mode, QWidget *parent)
     : DBlurEffectWidget(parent)
     , m_mode(mode)
     , m_wallpaperList(new WallpaperList(this))
@@ -86,7 +86,6 @@ Frame::Frame(Mode mode, QFrame *parent)
     setAttribute(Qt::WA_TranslucentBackground);
 
     setBlendMode(DBlurEffectWidget::BehindWindowBlend);
-    setMaskColor(DBlurEffectWidget::DarkColor);
 
     initUI();
     initSize();
@@ -475,9 +474,10 @@ void Frame::initUI()
     }
 
     m_wallpaperCarouselLayout->setSpacing(10);
-    m_wallpaperCarouselLayout->setContentsMargins(20, 10, 20, 10);
+    m_wallpaperCarouselLayout->setContentsMargins(20, 5, 20, 5);
     m_wallpaperCarouselLayout->addWidget(m_wallpaperCarouselCheckBox);
     m_wallpaperCarouselLayout->addWidget(m_wallpaperCarouselControl);
+    m_wallpaperCarouselLayout->addItem(new QSpacerItem(1, HeaderSwitcherHeight));
     m_wallpaperCarouselLayout->addStretch();
 
     layout->addLayout(m_wallpaperCarouselLayout);
@@ -554,6 +554,8 @@ void Frame::initUI()
 
     layout->addLayout(m_toolLayout);
     layout->addWidget(m_wallpaperList);
+    layout->addSpacing(10);
+    layout->setSizeConstraint(QLayout::SetFixedSize);
 
     //###(zccrs): 直接把switModeControl放到布局中始终无法在两种mos模式下都居中
     // 使用anchors使此控件居中
@@ -589,18 +591,18 @@ void Frame::initUI()
 void Frame::initSize()
 {
     const QRect primaryRect = qApp->primaryScreen()->geometry();
-
+    int actualHeight;
 #if defined(DISABLE_SCREENSAVER) && defined(DISABLE_WALLPAPER_CAROUSEL)
-    setFixedSize(primaryRect.width(), FrameHeight);
+    actualHeight = FrameHeight;
 #else
-    setFixedSize(primaryRect.width(), FrameHeight + 35);
+    actualHeight = FrameHeight + HeaderSwitcherHeight;
 #endif
+    setFixedSize(primaryRect.width(), actualHeight);
+
     qDebug() << "move befor: " << this->geometry() << m_wallpaperList->geometry();
     move(primaryRect.x(), primaryRect.y() + primaryRect.height() - height());
     qDebug() << "this move : " << this->geometry() << m_wallpaperList->geometry();
     m_wallpaperList->setFixedSize(primaryRect.width(), ListHeight);
-    m_wallpaperList->move(0, (FrameHeight - ListHeight) / 2);
-    qDebug() << "m_wallpaperList move: " << this->geometry() << m_wallpaperList->geometry();
 }
 
 void Frame::initListView()

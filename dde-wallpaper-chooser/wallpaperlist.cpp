@@ -48,8 +48,8 @@ WallpaperList::WallpaperList(QWidget * parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setAttribute(Qt::WA_TranslucentBackground);
-    setStyleSheet("WallpaperList{background: transparent;}");
     setFrameShape(QFrame::NoFrame);
+    viewport()->setAutoFillBackground(false);
     horizontalScrollBar()->setEnabled(false);
 
     m_updateTimer->setInterval(100);

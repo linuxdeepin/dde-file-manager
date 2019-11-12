@@ -57,7 +57,7 @@ public:
         ScreenSaverMode
     };
 
-    Frame(Mode mode = WallpaperMode, QFrame *parent = nullptr);
+    Frame(Mode mode = WallpaperMode, QWidget *parent = nullptr);
     ~Frame() override;
 
     void show();
