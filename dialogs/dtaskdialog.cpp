@@ -137,8 +137,10 @@ MoveCopyTaskWidget::MoveCopyTaskWidget(DFileCopyMoveJob *job, QWidget *parent)
     connect(job, &DFileCopyMoveJob::stateChanged, this, [this](DFileCopyMoveJob::State state) {
         if (state == DFileCopyMoveJob::PausedState) {
             m_pauseBuuton->setIcon(QIcon::fromTheme("dfm_task_start"));
+            m_dwaterProgress->stop();
         } else {
             m_pauseBuuton->setIcon(QIcon::fromTheme("dfm_task_pause"));
+            m_dwaterProgress->start();
         }
     });
     connect(job, &DFileCopyMoveJob::errorChanged, this, [this](DFileCopyMoveJob::Error error) {
@@ -167,6 +169,8 @@ MoveCopyTaskWidget::MoveCopyTaskWidget(DFileCopyMoveJob *job, QWidget *parent)
 
     m_jobInfo->totalDataSize = job->totalDataSize();
 
+    /*之前的显示进度百分比的元件CircleProgressAnimatePad，
+     * 当在读取大量文件状态时，元件外边会有个转圈的动画效果*/
     if (!m_fileJob->fileStatisticsIsFinished()) {
         m_dwaterProgress->start();
     }
@@ -452,10 +456,10 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data)
 
         qDebug() << status << progress;
         if (status == QString::number(DISOMasterNS::DISOMaster::JobStatus::Stalled)) {
-            m_dwaterProgress->start();
+            m_dwaterProgress->stop();
         }
         else if (status == QString::number(DISOMasterNS::DISOMaster::JobStatus::Running)) {
-            m_dwaterProgress->stop();
+            m_dwaterProgress->start();
             setProgress(progress);
         }
         return;
@@ -515,10 +519,10 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data)
         }
 
         if (status == "restoring") {
-            m_dwaterProgress->start();
+            m_dwaterProgress->stop();
         } else if (status == "calculating") {
             msg2 = tr("Calculating space, please wait");
-            m_dwaterProgress->start();
+            m_dwaterProgress->stop();
         } else if (status == "conflict") {
             msg1 = QString(tr("File named %1 already exists in target folder")).arg(file);
             msg2 = QString(tr("Original path %1 target path %2")).arg(QFileInfo(srcPath).absolutePath(), QFileInfo(targetPath).absolutePath());
@@ -541,7 +545,7 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data)
                 m_errorLabel->setText(m_fileJob->errorString());
             }
         } else if (!status.isEmpty()) {
-            m_dwaterProgress->stop();
+            m_dwaterProgress->start();
         } else if (m_fileJob) {
             m_errorLabel->setText(QString());
         }
@@ -694,7 +698,7 @@ bool MoveCopyTaskWidget::event(QEvent *e)
 
 void MoveCopyTaskWidget::onJobProgressChanged(qreal progress)
 {    
-    m_dwaterProgress->stop();
+    m_dwaterProgress->start();
 
     m_jobInfo->progress = progress;
     setProgress(progress * 100);
