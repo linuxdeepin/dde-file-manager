@@ -1121,6 +1121,13 @@ void DFileView::mousePressEvent(QMouseEvent *event)
             setDragDropMode(DragDrop);
         }
 
+        const QModelIndex &index = indexAt(event->pos());
+        QWidget *editor = indexWidget(index);
+        // click other index or emptyArea we will commit data
+        if (!editor && itemDelegate()) {
+            itemDelegate()->commitDataAndCloseActiveEditor();
+        }
+
         if (isEmptyArea) {
             if (!DFMGlobal::keyCtrlIsPressed()) {
                 itemDelegate()->hideNotEditingIndexWidget();
@@ -1136,7 +1143,7 @@ void DFileView::mousePressEvent(QMouseEvent *event)
                 }
             }
         } else if (DFMGlobal::keyCtrlIsPressed()) {
-            const QModelIndex &index = indexAt(event->pos());
+            //const QModelIndex &index = indexAt(event->pos());
 
             if (selectionModel()->isSelected(index)) {
                 d->mouseLastPressedIndex = index;
