@@ -162,7 +162,7 @@ void DiskControlWidget::unmountAll()
 {
     QStringList blockDevices = m_diskManager->blockDevices();
 
-    QtConcurrent::run([blockDevices]() {
+    QtConcurrent::run([blockDevices, this]() {
         for (const QString & blDevStr : blockDevices) {
         QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
         if (blDev->hasFileSystem() /* && DFMSetting*/ && !blDev->mountPoints().isEmpty() && !blDev->hintIgnore() && !blDev->hintSystem()) {
@@ -170,6 +170,11 @@ void DiskControlWidget::unmountAll()
                 blDev->unmount({});
                 if (diskDev->removable()) {
                     diskDev->eject({});
+                    qDebug()<<"unmountAll";
+                    if (diskDev->lastError().isValid()) {
+                        qWarning() << diskDev->lastError().name() << blockDevices;
+                        NotifyMsg(tr("Disk is busy, cannot eject now"));
+                    }
                 }
             }
         }
@@ -224,6 +229,12 @@ void DiskControlWidget::onDiskListChanged()
             mountedCount++;
             DAttachedUdisks2Device *dad = new DAttachedUdisks2Device(blDev.data());
             DiskControlItem *item = new DiskControlItem(dad, this);
+            connect(item, &DiskControlItem::unMount, this, [this, dad](){
+                if (dad->blockDevice()->lastError().isValid()) {
+                    qWarning() << dad->blockDevice()->lastError().name() << dad->displayName();
+                    NotifyMsg(tr("Disk is busy, cannot eject now"));
+                }
+            });
             m_centralLayout->addWidget(item);
         }
     }
@@ -313,19 +324,7 @@ void DiskControlWidget::onDriveConnected(const QString &deviceId)
 void DiskControlWidget::onDriveDisconnected()
 {
     DDesktopServices::playSystemSoundEffect("device-removed");
-    DDBusSender()
-        .service("org.freedesktop.Notifications")
-        .path("/org/freedesktop/Notifications")
-        .interface("org.freedesktop.Notifications")
-        .method(QString("Notify"))
-        .arg(qApp->applicationName())
-        .arg(static_cast<uint>(0))
-        .arg(QString("media-eject"))
-        .arg(QObject::tr("Device has been removed"))
-        .arg(QString())
-        .arg(QStringList())
-        .arg(QVariantMap())
-        .arg(5000).call();
+    NotifyMsg(QObject::tr("Device has been removed"));
     onDiskListChanged();
 }
 
@@ -380,14 +379,36 @@ void DiskControlWidget::onVfsMountChanged(QExplicitlySharedDataPointer<DGioMount
 
 void DiskControlWidget::unmountDisk(const QString &diskId) const
 {
-    QtConcurrent::run([diskId](){
+    QtConcurrent::run([diskId, this](){
         QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(diskId));
         QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
         blDev->unmount({});
         if (diskDev->optical()) { // is optical
             if (diskDev->ejectable()) {
                 diskDev->eject({});
+                qDebug()<<"unmountDisk " << diskId;
+                if (diskDev->lastError().isValid()) {
+                    qWarning() << diskDev->lastError().name() << diskId;
+                    NotifyMsg(tr("Disk is busy, cannot eject now"));
+                }
             }
         }
     });
+}
+
+void DiskControlWidget::NotifyMsg(QString msg) const
+{
+    DDBusSender()
+        .service("org.freedesktop.Notifications")
+        .path("/org/freedesktop/Notifications")
+        .interface("org.freedesktop.Notifications")
+        .method(QString("Notify"))
+        .arg(qApp->applicationName())
+        .arg(static_cast<uint>(0))
+        .arg(QString("media-eject"))
+        .arg(msg)
+        .arg(QString())
+        .arg(QStringList())
+        .arg(QVariantMap())
+        .arg(5000).call();
 }
