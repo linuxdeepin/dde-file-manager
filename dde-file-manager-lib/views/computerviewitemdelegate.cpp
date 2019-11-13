@@ -147,6 +147,9 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
     plopt.minimum = 0;
     plopt.maximum = 10000;
     plopt.progress = sizetotal && ~sizeinuse ? int(10000. * sizeinuse / sizetotal) : 0;
+    if (plopt.progress > plopt.maximum) {
+        plopt.progress = plopt.maximum;
+    }
     QColor plcolor;
     if (plopt.progress < 7000) {
         plcolor = QColor(0xFF0081FF);
