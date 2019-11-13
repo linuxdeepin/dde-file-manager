@@ -531,10 +531,11 @@ void AppController::actionMountImage(const QSharedPointer<DFMUrlBaseEvent> &even
         if (ret) {
             dialogManager->showErrorDialog(tr("Mount error: unsupported image format"), QString());
         } else {
-            for (auto m : DGioVolumeManager::getMounts()) {
-                if (m && m->getRootFile() && QUrl::fromPercentEncoding(m->getRootFile()->uri().toUtf8()).startsWith(archiveuri)) {
-                    this->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), DUrlList() << DUrl::fromLocalFile(m->getRootFile()->path())));
-                }
+            QString double_encoded_uri = QUrl::toPercentEncoding(event->url().toEncoded());
+            double_encoded_uri = QUrl::toPercentEncoding(double_encoded_uri);
+            QExplicitlySharedDataPointer<DGioFile> f(DGioFile::createFromUri("archive://" + double_encoded_uri));
+            if (f->path().length()) {
+                this->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), DUrlList() << DUrl::fromLocalFile(f->path())));
             }
         }
         gioproc->deleteLater();
