@@ -18,22 +18,22 @@
 <context>
     <name>MainPage</name>
     <message>
-        <location filename="../view/mainpage.cpp" line="104"/>
+        <location filename="../view/mainpage.cpp" line="119"/>
         <source>Type</source>
         <translation>類型</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="122"/>
+        <location filename="../view/mainpage.cpp" line="137"/>
         <source>Label</source>
         <translation>標籤</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="131"/>
+        <location filename="../view/mainpage.cpp" line="146"/>
         <source>Quick Format</source>
         <translation>快速格式化</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="148"/>
+        <location filename="../view/mainpage.cpp" line="163"/>
         <source>Formatting will erase all data on the disk.</source>
         <translation>格式化會清空磁碟上所有資料。</translation>
     </message>
@@ -47,37 +47,37 @@
         <translation>格式化</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="161"/>
+        <location filename="../view/mainwindow.cpp" line="162"/>
         <source>Continue</source>
         <translation>繼續</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="166"/>
+        <location filename="../view/mainwindow.cpp" line="167"/>
         <source>Formatting...</source>
         <translation>正在格式化…</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="191"/>
+        <location filename="../view/mainwindow.cpp" line="193"/>
         <source>Done</source>
         <translation>完成</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="197"/>
+        <location filename="../view/mainwindow.cpp" line="199"/>
         <source>Quit</source>
         <translation>離開</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="198"/>
+        <location filename="../view/mainwindow.cpp" line="200"/>
         <source>Your disk is removed when formatting</source>
         <translation>磁碟機在格式化時被移除</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="201"/>
+        <location filename="../view/mainwindow.cpp" line="203"/>
         <source>Failed to format the device</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="202"/>
+        <location filename="../view/mainwindow.cpp" line="204"/>
         <source>Reformat</source>
         <translation>重新格式化</translation>
     </message>

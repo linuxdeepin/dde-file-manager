@@ -18,22 +18,22 @@
 <context>
     <name>MainPage</name>
     <message>
-        <location filename="../view/mainpage.cpp" line="104"/>
+        <location filename="../view/mainpage.cpp" line="119"/>
         <source>Type</source>
         <translation>Típus</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="122"/>
+        <location filename="../view/mainpage.cpp" line="137"/>
         <source>Label</source>
         <translation>Mező</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="131"/>
+        <location filename="../view/mainpage.cpp" line="146"/>
         <source>Quick Format</source>
         <translation>Gyorsformázás</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="148"/>
+        <location filename="../view/mainpage.cpp" line="163"/>
         <source>Formatting will erase all data on the disk.</source>
         <translation>A formázás minden adatot töröl a lemezről.</translation>
     </message>
@@ -47,37 +47,37 @@
         <translation>Formázás</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="161"/>
+        <location filename="../view/mainwindow.cpp" line="162"/>
         <source>Continue</source>
         <translation>Folytatás</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="166"/>
+        <location filename="../view/mainwindow.cpp" line="167"/>
         <source>Formatting...</source>
         <translation>Formázás...</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="191"/>
+        <location filename="../view/mainwindow.cpp" line="193"/>
         <source>Done</source>
         <translation>Elkészült</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="197"/>
+        <location filename="../view/mainwindow.cpp" line="199"/>
         <source>Quit</source>
         <translation>Kilépés</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="198"/>
+        <location filename="../view/mainwindow.cpp" line="200"/>
         <source>Your disk is removed when formatting</source>
         <translation>A lemez eltávolítása formázás közben</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="201"/>
+        <location filename="../view/mainwindow.cpp" line="203"/>
         <source>Failed to format the device</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="202"/>
+        <location filename="../view/mainwindow.cpp" line="204"/>
         <source>Reformat</source>
         <translation>Újraformázás</translation>
     </message>

@@ -18,22 +18,22 @@
 <context>
     <name>MainPage</name>
     <message>
-        <location filename="../view/mainpage.cpp" line="104"/>
+        <location filename="../view/mainpage.cpp" line="119"/>
         <source>Type</source>
         <translation>ধরণ</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="122"/>
+        <location filename="../view/mainpage.cpp" line="137"/>
         <source>Label</source>
         <translation>লেভেল</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="131"/>
+        <location filename="../view/mainpage.cpp" line="146"/>
         <source>Quick Format</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="148"/>
+        <location filename="../view/mainpage.cpp" line="163"/>
         <source>Formatting will erase all data on the disk.</source>
         <translation type="unfinished"/>
     </message>
@@ -47,37 +47,37 @@
         <translation>ফরম্যাট</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="161"/>
+        <location filename="../view/mainwindow.cpp" line="162"/>
         <source>Continue</source>
         <translation>চালিয়ে যান </translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="166"/>
+        <location filename="../view/mainwindow.cpp" line="167"/>
         <source>Formatting...</source>
         <translation>ফরম্যাট করা হচ্ছে...</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="191"/>
+        <location filename="../view/mainwindow.cpp" line="193"/>
         <source>Done</source>
         <translation>সম্পূর্ণ</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="197"/>
+        <location filename="../view/mainwindow.cpp" line="199"/>
         <source>Quit</source>
         <translation>বের হয়ে যান</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="198"/>
+        <location filename="../view/mainwindow.cpp" line="200"/>
         <source>Your disk is removed when formatting</source>
         <translation>ফরম্যাট করার সময় আপনার ডিস্কটি সড়িয়ে ফেলা হয়েসে</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="201"/>
+        <location filename="../view/mainwindow.cpp" line="203"/>
         <source>Failed to format the device</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="202"/>
+        <location filename="../view/mainwindow.cpp" line="204"/>
         <source>Reformat</source>
         <translation>পুনরায় ফরমেট করুন</translation>
     </message>

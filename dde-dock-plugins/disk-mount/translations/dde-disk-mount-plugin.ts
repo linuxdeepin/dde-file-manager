@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
 <context>
     <name>DeepinStorage</name>
     <message>
@@ -17,7 +15,7 @@
         <location filename="../diskcontrolwidget.cpp" line="235"/>
         <location filename="../diskcontrolwidget.cpp" line="392"/>
         <source>Disk is busy, cannot eject now</source>
-        <translation type="unfinished"></translation>
+        <translation>Disk is busy, cannot eject now</translation>
     </message>
 </context>
 <context>

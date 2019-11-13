@@ -18,22 +18,22 @@
 <context>
     <name>MainPage</name>
     <message>
-        <location filename="../view/mainpage.cpp" line="104"/>
+        <location filename="../view/mainpage.cpp" line="119"/>
         <source>Type</source>
         <translation>Tür</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="122"/>
+        <location filename="../view/mainpage.cpp" line="137"/>
         <source>Label</source>
         <translation>Etiket</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="131"/>
+        <location filename="../view/mainpage.cpp" line="146"/>
         <source>Quick Format</source>
         <translation>Hızlı Biçimlendir</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="148"/>
+        <location filename="../view/mainpage.cpp" line="163"/>
         <source>Formatting will erase all data on the disk.</source>
         <translation>Biçimlendirme işlemi disk üzerindeki tüm verileri siler.</translation>
     </message>
@@ -47,37 +47,37 @@
         <translation>Biçimlendir</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="161"/>
+        <location filename="../view/mainwindow.cpp" line="162"/>
         <source>Continue</source>
         <translation>Devam</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="166"/>
+        <location filename="../view/mainwindow.cpp" line="167"/>
         <source>Formatting...</source>
         <translation>Biçimlendiriliyor...</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="191"/>
+        <location filename="../view/mainwindow.cpp" line="193"/>
         <source>Done</source>
         <translation>Bitti</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="197"/>
+        <location filename="../view/mainwindow.cpp" line="199"/>
         <source>Quit</source>
         <translation>Çık</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="198"/>
+        <location filename="../view/mainwindow.cpp" line="200"/>
         <source>Your disk is removed when formatting</source>
         <translation>Diskiniz  biçimlendirilirken çıkartıldı</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="201"/>
+        <location filename="../view/mainwindow.cpp" line="203"/>
         <source>Failed to format the device</source>
         <translation>Cihaz biçimlendirilemedi</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="202"/>
+        <location filename="../view/mainwindow.cpp" line="204"/>
         <source>Reformat</source>
         <translation>Yeniden biçimlendir</translation>
     </message>
@@ -95,17 +95,17 @@
     <message>
         <location filename="../utils/udisksutils.cpp" line="55"/>
         <source>System Disk</source>
-        <translation type="unfinished"/>
+        <translation>Sistem Diski</translation>
     </message>
     <message>
         <location filename="../utils/udisksutils.cpp" line="59"/>
         <source>%1 Encrypted</source>
-        <translation type="unfinished"/>
+        <translation>%1 Şifreli</translation>
     </message>
     <message>
         <location filename="../utils/udisksutils.cpp" line="61"/>
         <source>%1 Volume</source>
-        <translation type="unfinished"/>
+        <translation>%1 Birim</translation>
     </message>
 </context>
 <context>
@@ -118,7 +118,7 @@
     <message>
         <location filename="../main.cpp" line="121"/>
         <source>The device is read-only</source>
-        <translation type="unfinished"/>
+        <translation>Aygıt salt okunur</translation>
     </message>
     <message>
         <source>Cannot format local device</source>

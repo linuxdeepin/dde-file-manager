@@ -73,7 +73,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="135"/>
+        <location filename="../main.cpp" line="130"/>
         <source>Desktop</source>
         <translation type="unfinished"/>
     </message>
@@ -81,17 +81,17 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="431"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="430"/>
         <source>Wallpaper Slideshow</source>
         <translation>عرض الخلفيات</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="459"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="458"/>
         <source>When login</source>
         <translation>عند تسجيل الدخول</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="461"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="460"/>
         <source>When wakeup</source>
         <translation>عند الإيقاظ</translation>
     </message>
@@ -111,27 +111,27 @@
         <translation>انتظر:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="560"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="562"/>
         <source>Wallpaper</source>
         <translation>خلفية</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="561"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="563"/>
         <source>Screensaver</source>
         <translation>شاشة التوقف</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="630"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="632"/>
         <source>Only desktop</source>
         <translation>سطح المكتب فقط</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="631"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="633"/>
         <source>Only lock screen</source>
         <translation>شاشة القفل فقط</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="659"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="661"/>
         <source>Apply</source>
         <translation>طبِّق</translation>
     </message>

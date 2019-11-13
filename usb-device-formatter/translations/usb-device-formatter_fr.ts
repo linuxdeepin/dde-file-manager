@@ -18,22 +18,22 @@
 <context>
     <name>MainPage</name>
     <message>
-        <location filename="../view/mainpage.cpp" line="104"/>
+        <location filename="../view/mainpage.cpp" line="119"/>
         <source>Type</source>
         <translation>Genre</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="122"/>
+        <location filename="../view/mainpage.cpp" line="137"/>
         <source>Label</source>
         <translation>Étiquette</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="131"/>
+        <location filename="../view/mainpage.cpp" line="146"/>
         <source>Quick Format</source>
         <translation>Formatage rapide</translation>
     </message>
     <message>
-        <location filename="../view/mainpage.cpp" line="148"/>
+        <location filename="../view/mainpage.cpp" line="163"/>
         <source>Formatting will erase all data on the disk.</source>
         <translation>Formater supprimera toutes les données du disque. </translation>
     </message>
@@ -47,37 +47,37 @@
         <translation>Formater</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="161"/>
+        <location filename="../view/mainwindow.cpp" line="162"/>
         <source>Continue</source>
         <translation>Continuer</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="166"/>
+        <location filename="../view/mainwindow.cpp" line="167"/>
         <source>Formatting...</source>
         <translation>Formatage...</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="191"/>
+        <location filename="../view/mainwindow.cpp" line="193"/>
         <source>Done</source>
         <translation>Terminé</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="197"/>
+        <location filename="../view/mainwindow.cpp" line="199"/>
         <source>Quit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="198"/>
+        <location filename="../view/mainwindow.cpp" line="200"/>
         <source>Your disk is removed when formatting</source>
         <translation>Votre disque est supprimé lors du formatage</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="201"/>
+        <location filename="../view/mainwindow.cpp" line="203"/>
         <source>Failed to format the device</source>
         <translation>Impossible de formater le périphérique</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="202"/>
+        <location filename="../view/mainwindow.cpp" line="204"/>
         <source>Reformat</source>
         <translation>Reformater</translation>
     </message>
@@ -95,17 +95,17 @@
     <message>
         <location filename="../utils/udisksutils.cpp" line="55"/>
         <source>System Disk</source>
-        <translation type="unfinished"/>
+        <translation>Disque système </translation>
     </message>
     <message>
         <location filename="../utils/udisksutils.cpp" line="59"/>
         <source>%1 Encrypted</source>
-        <translation type="unfinished"/>
+        <translation>%1 Crypté</translation>
     </message>
     <message>
         <location filename="../utils/udisksutils.cpp" line="61"/>
         <source>%1 Volume</source>
-        <translation type="unfinished"/>
+        <translation>%1 Volume</translation>
     </message>
 </context>
 <context>
@@ -118,7 +118,7 @@
     <message>
         <location filename="../main.cpp" line="121"/>
         <source>The device is read-only</source>
-        <translation type="unfinished"/>
+        <translation>L&apos;appareil est en lecture seule</translation>
     </message>
     <message>
         <source>Cannot format local device</source>
