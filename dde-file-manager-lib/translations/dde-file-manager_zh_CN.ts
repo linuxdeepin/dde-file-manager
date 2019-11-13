@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -11,7 +9,7 @@
     <message>
         <location filename="../controllers/appcontroller.cpp" line="502"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
-        <translation type="unfinished"></translation>
+        <translation>此光盘中的镜像已损坏，无法挂载，请擦除后使用</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="532"/>
@@ -464,7 +462,7 @@
     <message>
         <location filename="../views/dfileview.cpp" line="2165"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
-        <translation type="unfinished"></translation>
+        <translation>此光盘中的镜像已损坏，无法挂载，请擦除后使用</translation>
     </message>
     <message>
         <location filename="../views/dfileview.cpp" line="2770"/>

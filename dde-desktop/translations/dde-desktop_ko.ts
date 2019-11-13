@@ -73,7 +73,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="135"/>
+        <location filename="../main.cpp" line="130"/>
         <source>Desktop</source>
         <translation>바탕화면</translation>
     </message>
@@ -81,17 +81,17 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="431"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="430"/>
         <source>Wallpaper Slideshow</source>
         <translation>배경화면 슬라이드쇼</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="459"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="458"/>
         <source>When login</source>
         <translation>로그인 시</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="461"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="460"/>
         <source>When wakeup</source>
         <translation>절전모드 해제 시</translation>
     </message>
@@ -111,27 +111,27 @@
         <translation>대기:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="560"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="562"/>
         <source>Wallpaper</source>
         <translation>배경화면</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="561"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="563"/>
         <source>Screensaver</source>
         <translation>화면보호기</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="630"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="632"/>
         <source>Only desktop</source>
         <translation>바탕화면 만</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="631"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="633"/>
         <source>Only lock screen</source>
         <translation>잠금화면 만</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="659"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="661"/>
         <source>Apply</source>
         <translation>적용</translation>
     </message>

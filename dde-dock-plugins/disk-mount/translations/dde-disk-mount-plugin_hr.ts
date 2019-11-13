@@ -9,6 +9,16 @@
     </message>
 </context>
 <context>
+    <name>DiskControlWidget</name>
+    <message>
+        <location filename="../diskcontrolwidget.cpp" line="176"/>
+        <location filename="../diskcontrolwidget.cpp" line="235"/>
+        <location filename="../diskcontrolwidget.cpp" line="392"/>
+        <source>Disk is busy, cannot eject now</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>DiskMountPlugin</name>
     <message>
         <location filename="../diskmountplugin.cpp" line="49"/>
@@ -29,7 +39,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="324"/>
+        <location filename="../diskcontrolwidget.cpp" line="327"/>
         <source>Device has been removed</source>
         <translation>Uređaj je uklonjen</translation>
     </message>
