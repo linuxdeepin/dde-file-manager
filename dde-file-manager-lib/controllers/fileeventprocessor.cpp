@@ -34,6 +34,7 @@
 
 #include <memory>
 
+#include <QGuiApplication>
 #include <QObject>
 #include <QProcess>
 #include <QWidgetAction>
@@ -224,7 +225,11 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
         AppController::instance()->actionAddToBookMark(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
         break;
     case DFMGlobal::Delete:
-        AppController::instance()->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
+        if (QGuiApplication::keyboardModifiers().testFlag(Qt::ShiftModifier)) {
+            AppController::instance()->actionCompleteDeletion(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
+        } else {
+            AppController::instance()->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
+        }
         break;
     case DFMGlobal::Property:
         AppController::instance()->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls().isEmpty() ? DUrlList() << event->currentUrl() : event->selectedUrls()));
