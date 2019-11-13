@@ -65,6 +65,7 @@ private slots:
     void onVolumeRemoved();
     void onVfsMountChanged(QExplicitlySharedDataPointer<DGioMount> mount);
     void unmountDisk(const QString &diskId) const;
+    void NotifyMsg(QString msg) const;
 
 private:
     QVBoxLayout *m_centralLayout;

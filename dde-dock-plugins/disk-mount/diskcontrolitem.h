@@ -50,7 +50,8 @@ public:
 
 private slots:
     static QString sizeString(const QString &str);
-
+Q_SIGNALS:
+    void unMount();
 private:
     void mouseReleaseEvent(QMouseEvent *e) override;
     void showEvent(QShowEvent *e) override;
