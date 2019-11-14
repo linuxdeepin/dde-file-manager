@@ -63,12 +63,18 @@ void DAttachedUdisks2Device::detach()
         if (diskDev->optical()) { // is optical
             if (diskDev->ejectable()) {
                 diskDev->eject({});
+                if (errhandle && diskDev->lastError().isValid()) {
+                    errhandle->onError(this);
+                }
                 return;
             }
         }
 
         if (diskDev->removable()) {
             diskDev->eject({});
+            if (errhandle && diskDev->lastError().isValid()) {
+                errhandle->onError(this);
+            }
         }
 
         if (diskDev->canPowerOff()) {

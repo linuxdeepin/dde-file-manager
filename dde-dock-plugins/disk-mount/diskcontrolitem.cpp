@@ -99,7 +99,6 @@ DiskControlItem::DiskControlItem(DAttachedDeviceInterface *attachedDevicePtr, QW
 
     connect(m_unmountButton, &DImageButton::clicked, this, [this] {
         attachedDevice->detach();
-        emit unMount();
     });
 
     if (gsGlobal->value("GenericAttribute", "DisableNonRemovableDeviceUnmount", false).toBool() && !attachedDevice->detachable()) {

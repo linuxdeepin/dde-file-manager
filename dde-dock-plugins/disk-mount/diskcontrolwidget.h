@@ -51,6 +51,7 @@ public:
     void unmountAll();
 
     const QList<QExplicitlySharedDataPointer<DGioMount> > getVfsMountList();
+    static void NotifyMsg(QString msg);
 
 signals:
     void diskCountChanged(const int count) const;
@@ -65,7 +66,6 @@ private slots:
     void onVolumeRemoved();
     void onVfsMountChanged(QExplicitlySharedDataPointer<DGioMount> mount);
     void unmountDisk(const QString &diskId) const;
-    void NotifyMsg(QString msg) const;
 
 private:
     QVBoxLayout *m_centralLayout;
