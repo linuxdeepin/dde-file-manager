@@ -25,6 +25,10 @@
 #include "dattacheddeviceinterface.h"
 
 #include <dfmglobal.h>
+class ErrorHandleInfc {
+public:
+    virtual void onError(DAttachedDeviceInterface * device)=0;
+};
 
 class DBlockDevice;
 
@@ -43,11 +47,15 @@ public:
     QUrl mountpointUrl() override;
 
     DBlockDevice* blockDevice();
+    void setErrorHandler(ErrorHandleInfc *handle){
+        errhandle = handle;
+    }
 
 private:
     QScopedPointer<DBlockDevice> c_blockDevice;
     QString deviceDBusId;
     QString mountPoint;
+    ErrorHandleInfc *errhandle=nullptr;
 
     const QString ddeI18nSym = QStringLiteral("_dde_");
 };

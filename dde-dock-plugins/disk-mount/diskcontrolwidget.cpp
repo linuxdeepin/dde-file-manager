@@ -229,12 +229,20 @@ void DiskControlWidget::onDiskListChanged()
             mountedCount++;
             DAttachedUdisks2Device *dad = new DAttachedUdisks2Device(blDev.data());
             DiskControlItem *item = new DiskControlItem(dad, this);
-            connect(item, &DiskControlItem::unMount, this, [this, dad](){
-                if (dad->blockDevice()->lastError().isValid()) {
-                    qWarning() << dad->blockDevice()->lastError().name() << dad->displayName();
-                    NotifyMsg(tr("Disk is busy, cannot eject now"));
+
+            class ErrHandle : public ErrorHandleInfc, public QObject {
+            public:
+                ErrHandle(QObject *parent): QObject(parent){}
+                virtual void onError(DAttachedDeviceInterface * device){
+                    DAttachedUdisks2Device *drv = dynamic_cast<DAttachedUdisks2Device *>(device);
+                    if (drv) {
+                        qWarning() << drv->blockDevice()->lastError().name() << device->displayName();
+                        NotifyMsg(DiskControlWidget::tr("Disk is busy, cannot eject now"));
+                    }
                 }
-            });
+            };
+            dad->setErrorHandler(new ErrHandle(item));
+
             m_centralLayout->addWidget(item);
         }
     }
@@ -396,7 +404,7 @@ void DiskControlWidget::unmountDisk(const QString &diskId) const
     });
 }
 
-void DiskControlWidget::NotifyMsg(QString msg) const
+void DiskControlWidget::NotifyMsg(QString msg)
 {
     DDBusSender()
         .service("org.freedesktop.Notifications")
