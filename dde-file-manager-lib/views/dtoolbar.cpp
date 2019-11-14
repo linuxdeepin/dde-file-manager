@@ -119,11 +119,11 @@ void DToolBar::initAddressToolBar()
 
     QHBoxLayout * backForwardLayout = new QHBoxLayout;
 
-    m_backButton = new DButtonBoxButton(DStyle::standardIcon(this->style(), DStyle::SP_ArrowLeave));
+    m_backButton = new DButtonBoxButton(QStyle::SP_ArrowBack);
     m_backButton->setDisabled(true);
     m_backButton->setFixedWidth(36);
 
-    m_forwardButton = new DButtonBoxButton(DStyle::standardIcon(this->style(), DStyle::SP_ArrowEnter));
+    m_forwardButton = new DButtonBoxButton(QStyle::SP_ArrowForward);
     m_forwardButton->setDisabled(true);
     m_forwardButton->setFixedWidth(36);
 
