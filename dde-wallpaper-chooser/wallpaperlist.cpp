@@ -296,7 +296,7 @@ void WallpaperList::wallpaperItemHoverIn()
 
 void WallpaperList::wallpaperItemHoverOut()
 {
-//    emit needCloseButton("", QPoint(0, 0));
+    emit mouseOverItemChanged("", QPoint(0, 0));
 }
 
 void WallpaperList::updateBothEndsItem()
