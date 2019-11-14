@@ -447,7 +447,8 @@ void Frame::initUI()
                 m_wallpaperCarouselCheckBox->setChecked(false);
             }
 
-            current_policy_index = 0;
+            // wallpaper change default per 10 minutes
+            current_policy_index = 3;
         }
 
         for (const QByteArray &time : array_policy) {
