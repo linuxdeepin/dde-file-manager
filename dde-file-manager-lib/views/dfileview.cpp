@@ -2147,6 +2147,7 @@ bool DFileView::setRootUrl(const DUrl &url)
         return false;
     }
 
+    // TODO: drop this special case when we switch away from UDiskListener::addSubscriber in AppController.
     if (fileUrl.scheme() == BURN_SCHEME) {
         Q_ASSERT(fileUrl.burnDestDevice().length() > 0);
         QString devpath = fileUrl.burnDestDevice();
@@ -2184,6 +2185,9 @@ bool DFileView::setRootUrl(const DUrl &url)
         else {
             d->headerOpticalDisc->updateDiscInfo(fileUrl.burnDestDevice());
             d->headerOpticalDisc->show();
+            if (blkdev->mountPoints().empty()) {
+                blkdev->mount({});
+            }
         }
     }
     else {
