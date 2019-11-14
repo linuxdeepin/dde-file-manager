@@ -220,8 +220,13 @@ void MainPage::setTargetPath(const QString &targetPath)
     total = blk.sizeTotal();
     used =  blk.sizeUsed();
 
-    m_storageProgressBar->setValue(total ? int(10000. * used / total) : 0);
-    m_remainLabel->setText(QString("%1/ %2").arg(formatSize(used), formatSize(total)));
+    if (~used) {
+        m_storageProgressBar->setValue(total ? int(10000. * used / total) : 0);
+        m_remainLabel->setText(QString("%1 / %2").arg(formatSize(used), formatSize(total)));
+    } else {
+        m_storageProgressBar->setValue(0);
+        m_remainLabel->setText(formatSize(total));
+    }
     QString deviceName = blk.displayName();
     QFontMetrics fm(QFont("",10));
     m_nameLabel->setText(fm.elidedText(deviceName, Qt::ElideRight, 100  ));
