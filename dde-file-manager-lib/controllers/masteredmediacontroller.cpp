@@ -342,6 +342,13 @@ DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> 
     if (src.size() == 1) {
         QString dev(dst.burnDestDevice());
         bool is_blank = ISOMaster->getDevicePropertyCached(dev).formatted;
+        if (!ISOMaster->getDevicePropertyCached(dev).devid.length()) {
+            QString udiskspath(dev);
+            udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+            QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
+            QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+            is_blank = drv->opticalBlank();
+        }
         QString dstdirpath = getStagingFolder(DUrl::fromBurnFile(dev + "/" BURN_SEG_STAGING)).path();
         QDir dstdir = QDir(dstdirpath);
         dstdir.setFilter(QDir::Filter::AllEntries | QDir::Filter::NoDotAndDotDot);
