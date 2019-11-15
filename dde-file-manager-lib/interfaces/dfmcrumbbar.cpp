@@ -200,6 +200,21 @@ void DFMCrumbBarPrivate::initUI()
     // 点击listview空白可拖动窗口
     crumbListView.viewport()->installEventFilter(q);
 
+    // for first icon item icon AlignCenter...
+    class IconItemDelegate : public DStyledItemDelegate {
+    public:
+        explicit IconItemDelegate(QAbstractItemView *parent = nullptr):DStyledItemDelegate(parent){
+            setItemSpacing(10);
+        }
+
+        void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override{
+            QStyleOptionViewItem opt = option;
+            opt.decorationAlignment = Qt::AlignCenter;
+            DStyledItemDelegate::paint(painter, opt, index);
+        }
+    };
+    crumbListView.setItemDelegateForRow(0, new IconItemDelegate(&crumbListView));
+
     // Crumb Bar Layout
     crumbBarLayout = new QHBoxLayout;
     crumbBarLayout->addWidget(&leftArrow);
