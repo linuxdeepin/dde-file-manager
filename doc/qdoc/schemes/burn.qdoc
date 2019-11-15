@@ -1,0 +1,81 @@
+/*
+ * Copyright (C) 2017 ~ 2019 Deepin Technology Co., Ltd.
+ *
+ * Author:     Chris Xiong <chirs241097@gmail.com>
+ *
+ * Maintainer: Chris Xiong <chirs241097@gmail.com>
+ *
+ * GNU Free Documentation License Usage
+ * Alternatively, this file may be used under the terms of the GNU Free
+ * Documentation License version 1.3 as published by the Free Software
+ * Foundation and appearing in the file included in the packaging of
+ * this file. Please review the following information to ensure
+ * the GNU Free Documentation License version 1.3 requirements
+ * will be met: https://www.gnu.org/licenses/fdl-1.3.html.
+ */
+
+/*!
+    \page burn-scheme.html
+    \title Burn Scheme
+
+    The Burn scheme is used for the optical media authoring feature in the file manager.
+
+    \section1 Scheme Structure and Other Basics
+
+    URL of this scheme has the following structure:
+
+    burn://<path_to_optical_device_node>/<disc_files|staging_files>/<file_path_relative_to_filesystem_root>
+
+    These three sections will be referred to as the device segment, the status segment and the path segment
+    in the rest of this documentation. DUrl contains functions to fetch these segments for your convenience.
+    Macros for the strings used by the status segment can also be found there.
+
+    Examples:
+    
+    burn:///dev/sr0/disc_files/EFI/
+
+    burn:///dev/sr0/staging_files/README.txt
+
+    Each file using this scheme has a corresponding file in the local file hierarchy as its backer file.
+    If the middle segment of the path is "disc_files", its backer file is in the mount point of the optical
+    disc. Otherwise its backer file is in a temporary folder containing the files staged to be burnt (usually
+    ~/.cache/deepin/dde-file-manager/diskburn/<target device node with slashes replaced with underscores>).
+
+    \section1 FileInfo Usage
+
+    FileInfo objects for files of this scheme have proxies to its backing file. Therefore you can expect most
+    functions to work exactly the same as if you are dealing with the actual file. Some of the notable differences
+    are documented as follows:
+
+    \list
+    \li canRedirectionFileUrl() returns false for directories, even though redirectedFileUrl() can still be used
+        in this case.
+    \li if the path segment contains nothing but slashes, parentUrl() and goToUrlWhenDeleted() will return the home
+        directory of the current user.
+    \endlis
+
+    \section2 Controller Usage
+    
+    The controller mainly deals with files staged for burning. Some of its functions have a different purpose and
+    distinctive behaviors.
+
+    \list
+    \li pasteFile adds files to the staging collection. The files are actually pasted into the staging folder for
+        the target device. If the pasted file is a single ISO file and both the target disc and its staging folder
+        are empty, the user will be prompted whether to burn the image file.
+    \li deleteFiles and moveToTrash both remove files completely, when used on staging files.
+    \li The directory iterator returned by this controller will iterate through both on disc files and staging
+        files of the same path if created for a on disc URL. If created for a staging URL however, it only iterates
+        through staging files with that path. If there are files with the same name on the disc and in the staging
+        folder, the staging one will be ignored.
+    \li The file watcher employed by the scheme only watches for staging files. However, it does watch for the mount
+        point of the disc to generate a signal when the mount point is removed. It also watch for signals from UDisks
+        for the same purpose because the first method doesn't work when disc is ejected by pressing the eject button
+        on the drive with certain system configurations. Manual ejection detection is still somewhat broken even with
+        the workaround at the moment.
+    \endlist
+
+    In order to actually start a burn session, invoke the dialog BurnOptDialog. The user will be asked for options
+    and confirmation. Erasing a disc is initiated by calling AppController::actionOpticalBlank.
+
+*/
