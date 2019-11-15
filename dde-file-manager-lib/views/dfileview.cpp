@@ -985,17 +985,20 @@ void DFileView::keyPressEvent(QKeyEvent *event)
                 return;
 
             DUrl url;
+            bool selectionvalid = false;
 
-            const DAbstractFileInfoPointer &fileInfoPointer = model()->fileInfo(selectedIndexes().first());
-            if (selectedIndexCount() == 1 && fileInfoPointer->canFetch()) {
-                url = fileInfoPointer->fileUrl();
-                if (FileUtils::isArchive(fileInfoPointer->absoluteFilePath())) {
-                    url.setScheme(AVFS_SCHEME);
+            if (selectedIndexCount() == 1) {
+                const DAbstractFileInfoPointer &fileInfoPointer = model()->fileInfo(selectedIndexes().first());
+                if (fileInfoPointer->canFetch()) {
+                    selectionvalid = true;
+                    url = fileInfoPointer->fileUrl();
+                    if (FileUtils::isArchive(fileInfoPointer->absoluteFilePath())) {
+                        url.setScheme(AVFS_SCHEME);
+                    }
                 }
-
-            } else{
+            }
+            if (!selectionvalid) {
                 url = DFMApplication::instance()->appUrlAttribute(DFMApplication::AA_UrlOfNewTab);
-
                 if (!url.isValid())
                     url = rootUrl();
             }
