@@ -66,10 +66,8 @@
 #include "singleton.h"
 #include "interfaces/dfilemenumanager.h"
 
-#include "dfiledragclient.h"
-
-#include <dthememanager.h>
-#include <danchors.h>
+#include <DFileDragClient>
+#include <DAnchors>
 #include <QUrlQuery>
 #include <QActionGroup>
 #include <QContextMenuEvent>
