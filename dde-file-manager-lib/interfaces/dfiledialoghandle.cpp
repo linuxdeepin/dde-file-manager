@@ -25,8 +25,6 @@
 #include "dfiledialoghandle.h"
 #include "views/dfiledialog.h"
 
-#include <dthememanager.h>
-
 #include <QPointer>
 
 DWIDGET_USE_NAMESPACE

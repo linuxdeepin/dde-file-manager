@@ -27,7 +27,6 @@
 #include <QStandardPaths>
 #include <QPropertyAnimation>
 
-#include <dthememanager.h>
 #include <danchors.h>
 #include <DUtil>
 #include <DApplication>
