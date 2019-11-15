@@ -372,7 +372,7 @@ QPair<QWidget *, QWidget *> DFMSettingDialog::createAutoMountCheckBox(QObject *o
         mountCheckBox->setChecked(value.toBool());
     });
 
-    return DSettingsWidgetFactory::createStandardItem("GenerateSettingTranslate", option, mountCheckBox);
+    return qMakePair(mountCheckBox, nullptr);
 }
 
 QPair<QWidget *, QWidget *> DFMSettingDialog::createAutoMountOpenCheckBox(QObject *opt)
@@ -405,5 +405,5 @@ QPair<QWidget *, QWidget *> DFMSettingDialog::createAutoMountOpenCheckBox(QObjec
         openCheckBox->setChecked(value.toBool());
     });
 
-    return DSettingsWidgetFactory::createStandardItem("GenerateSettingTranslate", option, openCheckBox);
+    return qMakePair(openCheckBox, nullptr);
 }
