@@ -36,6 +36,7 @@
 #endif
 
 #include <DButtonBox>
+#include <DIconButton>
 #include <DWindowManagerHelper>
 
 #include <QApplication>
@@ -68,9 +69,7 @@ Frame::Frame(Mode mode, QWidget *parent)
     : DBlurEffectWidget(parent)
     , m_mode(mode)
     , m_wallpaperList(new WallpaperList(this))
-    , m_closeButton(new DImageButton(":/images/close_round_normal.svg",
-                                 ":/images/close_round_hover.svg",
-                                 ":/images/close_round_press.svg", this))
+    , m_closeButton(new DIconButton(this))
     , m_dbusAppearance(new ComDeepinDaemonAppearanceInterface(AppearanceServ,
                                                               AppearancePath,
                                                               QDBusConnection::sessionBus(),
@@ -200,7 +199,7 @@ void Frame::handleNeedCloseButton(QString path, QPoint pos)
         m_closeButton->show();
         m_closeButton->disconnect();
 
-        connect(m_closeButton, &DImageButton::clicked, this, [this, path] {
+        connect(m_closeButton, &DIconButton::clicked, this, [this, path] {
             m_dbusAppearance->Delete("background", path);
             m_wallpaperList->removeWallpaper(path);
             m_closeButton->hide();
@@ -420,6 +419,11 @@ static QString timeFormat(int second)
 
 void Frame::initUI()
 {
+    m_closeButton->setIcon(QIcon::fromTheme("dfm_close_round_normal"));
+    m_closeButton->setFixedSize(24, 24);
+    m_closeButton->setIconSize({24, 24});
+    m_closeButton->setFlat(true);
+
     QVBoxLayout *layout = new QVBoxLayout(this);
 
     layout->setMargin(0);

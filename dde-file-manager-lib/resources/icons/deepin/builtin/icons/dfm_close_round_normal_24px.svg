@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.2 (44496) - http://www.bohemiancoding.com/sketch -->
+    <title>close_round_normal</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="最大化最小化" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="close_round_normal">
+            <g id="close_round" transform="translate(3.000000, 3.000000)">
+                <circle id="Oval" fill-opacity="0.8" fill="#FFFFFF" cx="9" cy="9" r="9"></circle>
+                <polygon id="Combined-Shape" fill="#000000" fill-rule="nonzero" points="9.24264069 9.94974747 6.06066017 13.131728 5.70710678 13.4852814 5 12.7781746 5.35355339 12.4246212 8.53553391 9.24264069 5.35355339 6.06066017 5 5.70710678 5.70710678 5 6.06066017 5.35355339 9.24264069 8.53553391 12.4246212 5.35355339 12.7781746 5 13.4852814 5.70710678 13.131728 6.06066017 9.94974747 9.24264069 13.131728 12.4246212 13.4852814 12.7781746 12.7781746 13.4852814 12.4246212 13.131728"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>
