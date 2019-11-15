@@ -25,11 +25,11 @@
 #ifndef FRAME_H
 #define FRAME_H
 
-#include <dblureffectwidget.h>
-#include <dimagebutton.h>
+#include <DBlurEffectWidget>
 #include <dregionmonitor.h>
 
 DWIDGET_BEGIN_NAMESPACE
+class DIconButton;
 class DButtonBox;
 DWIDGET_END_NAMESPACE
 
@@ -37,6 +37,7 @@ QT_BEGIN_NAMESPACE
 class QCheckBox;
 class QHBoxLayout;
 class QAbstractButton;
+class QLabel;
 QT_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
@@ -101,7 +102,7 @@ private:
     WallpaperList *m_wallpaperList = nullptr;
     QString m_desktopWallpaper;
     QString m_lockWallpaper;
-    DImageButton * m_closeButton = nullptr;
+    DIconButton * m_closeButton = nullptr;
 
 #ifndef DISABLE_WALLPAPER_CAROUSEL
     QHBoxLayout *m_wallpaperCarouselLayout;

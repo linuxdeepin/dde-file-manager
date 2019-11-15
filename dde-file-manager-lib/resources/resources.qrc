@@ -38,5 +38,6 @@
         <file>icons/deepin/builtin/dark/icons/dfm_task_stop_24px.svg</file>
         <file>icons/deepin/builtin/light/icons/dfm_task_pause_24px.svg</file>
         <file>icons/deepin/builtin/dark/icons/dfm_task_pause_24px.svg</file>
+	<file>icons/deepin/builtin/icons/dfm_close_round_normal_24px.svg</file>
     </qresource>
 </RCC>
