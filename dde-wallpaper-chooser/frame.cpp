@@ -617,7 +617,9 @@ void Frame::initListView()
 
 void Frame::refreshList()
 {
+    m_wallpaperList->hide();
     m_wallpaperList->clear();
+    m_wallpaperList->show();
 
     if (m_mode == WallpaperMode) {
         QDBusPendingCall call = m_dbusAppearance->List("background");
