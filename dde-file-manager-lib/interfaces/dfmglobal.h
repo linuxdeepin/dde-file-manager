@@ -210,6 +210,7 @@ public:
         FormatDevice,
         OpticalBlank,
         Vault,
+        ConnectToServer,
 
         ///###: tag protocol.
         TagInfo,

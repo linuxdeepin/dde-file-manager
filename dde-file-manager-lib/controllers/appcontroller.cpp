@@ -749,6 +749,11 @@ void AppController::actionUnShare(const QSharedPointer<DFMUrlBaseEvent> &event)
     fileService->unShareFolder(event->sender(), event->url());
 }
 
+void AppController::actionConnectToServer(quint64 winId)
+{
+    dialogManager->showConnectToServerDialog(winId);
+}
+
 void AppController::actionSetUserSharePassword(quint64 winId)
 {
     dialogManager->showUserSharePasswordSettingDialog(winId);

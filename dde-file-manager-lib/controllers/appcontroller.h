@@ -105,6 +105,7 @@ public slots:
     void actionSetAsWallpaper(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionShare(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionUnShare(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionConnectToServer(quint64 winId);
     void actionSetUserSharePassword(quint64 winId);
     void actionSettings(quint64 winId);
     void actionFormatDevice(const QSharedPointer<DFMUrlBaseEvent> &event);

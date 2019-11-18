@@ -308,6 +308,9 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
     case DFMGlobal::UnShare:
         AppController::instance()->actionUnShare(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
         break;
+    case DFMGlobal::ConnectToServer:
+        AppController::instance()->actionConnectToServer(event->windowId());
+        break;
     case DFMGlobal::SetUserSharePassword:
         AppController::instance()->actionSetUserSharePassword(event->windowId());
         break;

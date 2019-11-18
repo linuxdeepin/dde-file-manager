@@ -146,6 +146,7 @@ DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &d
     actionKeys << MenuAction::NewWindow
                << MenuAction::Separator
 //               << MenuAction::Vault
+//               << MenuAction::ConnectToServer
                << MenuAction::SetUserSharePassword
                << MenuAction::Settings;
 
@@ -535,6 +536,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::Share] = QObject::tr("Share folder");
     actionKeys[MenuAction::UnShare] = QObject::tr("Cancel sharing");
     actionKeys[MenuAction::Vault] = QObject::tr("File Vault");
+    actionKeys[MenuAction::ConnectToServer] = QObject::tr("Connect to Server");
     actionKeys[MenuAction::SetUserSharePassword] = QObject::tr("Set share password");
     actionKeys[MenuAction::FormatDevice] = QObject::tr("Format");
     actionKeys[MenuAction::OpticalBlank] = QObject::tr("Erase");

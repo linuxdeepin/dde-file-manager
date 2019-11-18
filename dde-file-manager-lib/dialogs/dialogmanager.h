@@ -106,6 +106,7 @@ public slots:
     void showDevicePropertyDialog(const DFMEvent &event);
     void showDiskErrorDialog(const QString &id, const QString &errorText);
     void showBreakSymlinkDialog(const QString &targetName, const DUrl& linkfile);
+    void showConnectToServerDialog(quint64 winId);
     void showUserSharePasswordSettingDialog(quint64 winId);
     void showGlobalSettingsDialog(quint64 winId);
     void showDiskSpaceOutOfUsedDialogLater();
