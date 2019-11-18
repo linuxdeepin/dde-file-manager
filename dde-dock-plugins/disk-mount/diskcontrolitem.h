@@ -25,18 +25,23 @@
 #ifndef DISKCONTROLITEM_H
 #define DISKCONTROLITEM_H
 
-#include <dimagebutton.h>
-
 #include <QWidget>
 #include <QLabel>
 #include <QPushButton>
 #include <QProgressBar>
 #include <dfmglobal.h>
 #include "dattacheddeviceinterface.h"
+#include "dtkwidget_global.h"
 
 DFM_BEGIN_NAMESPACE
 class DFMSettings;
 DFM_END_NAMESPACE
+
+DWIDGET_BEGIN_NAMESPACE
+class DIconButton;
+DWIDGET_END_NAMESPACE
+
+DWIDGET_USE_NAMESPACE
 
 class DiskControlItem : public QFrame
 {
@@ -62,7 +67,7 @@ private:
     QLabel *m_diskName;
     QLabel *m_diskCapacity;
     QProgressBar *m_capacityValueBar;
-    Dtk::Widget::DImageButton *m_unmountButton;
+    DIconButton *m_unmountButton;
     QScopedPointer<DAttachedDeviceInterface> attachedDevice;
 };
 

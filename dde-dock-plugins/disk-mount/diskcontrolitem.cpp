@@ -40,6 +40,7 @@
 #include <dfmsettings.h>
 #include <DDesktopServices>
 #include <DGuiApplicationHelper>
+#include <DIconButton>
 
 DWIDGET_USE_NAMESPACE
 DGUI_USE_NAMESPACE
@@ -58,7 +59,7 @@ DiskControlItem::DiskControlItem(DAttachedDeviceInterface *attachedDevicePtr, QW
       m_diskName(new QLabel),
       m_diskCapacity(new QLabel),
       m_capacityValueBar(new QProgressBar),
-      m_unmountButton(new DImageButton)
+      m_unmountButton(new DIconButton(this))
 {
     attachedDevice.reset(attachedDevicePtr);
 
@@ -68,7 +69,9 @@ DiskControlItem::DiskControlItem(DAttachedDeviceInterface *attachedDevicePtr, QW
     m_capacityValueBar->setTextVisible(false);
     m_capacityValueBar->setFixedHeight(2);
 
-    m_unmountButton->setStyleSheet("margin-top:12px;");
+    m_unmountButton->setFixedSize(20, 20);
+    m_unmountButton->setIconSize({20, 20});
+    m_unmountButton->setFlat(true);
 
     QVBoxLayout *infoLayout = new QVBoxLayout;
     infoLayout->addWidget(m_diskName);
@@ -97,7 +100,7 @@ DiskControlItem::DiskControlItem(DAttachedDeviceInterface *attachedDevicePtr, QW
     setLayout(centralLayout);
     setObjectName("DiskItem");
 
-    connect(m_unmountButton, &DImageButton::clicked, this, [this] {
+    connect(m_unmountButton, &DIconButton::clicked, this, [this] {
         attachedDevice->detach();
     });
 
@@ -124,15 +127,7 @@ DiskControlItem::~DiskControlItem()
 
 void DiskControlItem::refreshIcon()
 {
-    if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType) {
-        m_unmountButton->setNormalPic(":/icons/resources/unmount-normal-dark.svg");
-        m_unmountButton->setHoverPic(":/icons/resources/unmount-hover-dark.svg");
-        m_unmountButton->setPressPic(":/icons/resources/unmount-press-dark.svg");
-    } else {
-        m_unmountButton->setNormalPic(":/icons/resources/unmount-normal.svg");
-        m_unmountButton->setHoverPic(":/icons/resources/unmount-hover.svg");
-        m_unmountButton->setPressPic(":/icons/resources/unmount-press.svg");
-    }
+    m_unmountButton->setIcon(QIcon::fromTheme("dfm_unmount"));
 }
 
 QString DiskControlItem::sizeString(const QString &str)
