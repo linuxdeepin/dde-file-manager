@@ -369,7 +369,6 @@ QString DFileDialog::selectedNameFilter() const
 void DFileDialog::selectNameFilterByIndex(int index)
 {
     D_D(DFileDialog);
-
     if (index < 0 || index >= statusBar()->comboBox()->count() || !getFileView()) {
         return;
     }
@@ -410,6 +409,13 @@ void DFileDialog::selectNameFilterByIndex(int index)
                              fileNameExtensionLength, newNameFilterExtension);
             setCurrentInputName(fileName);
         }
+    }
+
+    // when d->fileMode == QFileDialog::DirectoryOnly or d->fileMode == QFileDialog::Directory
+    // we use setNameFilters("/") to filter files (can't select file, select dir is ok)
+    if ((d->fileMode == QFileDialog::DirectoryOnly ||
+         d->fileMode == QFileDialog::Directory) && QStringList("/")!=newNameFilters) {
+        newNameFilters = QStringList("/");
     }
 
     getFileView()->setNameFilters(newNameFilters);
