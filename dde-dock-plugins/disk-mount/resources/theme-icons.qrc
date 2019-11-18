@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/deepin/builtin/dark/icons/dfm_unmount_20px.svg</file>
+        <file>icons/deepin/builtin/light/icons/dfm_unmount_20px.svg</file>
+    </qresource>
+</RCC>

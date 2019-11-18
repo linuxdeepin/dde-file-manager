@@ -59,4 +59,5 @@ INSTALLS += target gschema translations
 
 RESOURCES += \
     resources.qrc \
+    resources/theme-icons.qrc \
     $$PWD/../../dde-file-manager-lib/configure.qrc
