@@ -795,6 +795,23 @@ void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl
     }
 }
 
+void DialogManager::showConnectToServerDialog(quint64 winId)
+{
+    //ToDo
+    QWidget *w = WindowManager::getWindowById(winId);
+    if (!w || w->property("ConnectToServerDialogShown").toBool()) {
+        return;
+    }
+
+    w->setProperty("ConnectToServerDialogShown", true);
+//    connect(dialog, &UserSharePasswordSettingDialog::closed, [ = ] {
+//        w->setProperty("ConnectToServerDialogShown", false);
+//    });
+
+    qDebug() << "------------------show connect net server-------------------------";
+    qDebug() << winId;
+}
+
 void DialogManager::showUserSharePasswordSettingDialog(quint64 winId)
 {
     QWidget *w = WindowManager::getWindowById(winId);
