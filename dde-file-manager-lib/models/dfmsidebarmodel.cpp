@@ -48,7 +48,8 @@ bool DFMSideBarModel::canDropMimeData(const QMimeData *data, Qt::DropAction acti
 
     // check if is item internal move by action and mimetype:
     if (action == Qt::MoveAction && data->formats().contains(MODELITEM_MIMETYPE)) {
-        if (targetItem && targetItem->flags().testFlag(Qt::ItemIsDragEnabled)) {
+        if (targetItem && (targetItem->flags().testFlag(Qt::ItemIsDragEnabled) ||
+                targetItem->flags().testFlag(Qt::ItemIsDropEnabled))) {
             int oriRowIndex = getRowIndexFromMimeData(data->data(MODELITEM_MIMETYPE));
             if (oriRowIndex >= 0) {
                 sourceItem = this->itemFromIndex(oriRowIndex);

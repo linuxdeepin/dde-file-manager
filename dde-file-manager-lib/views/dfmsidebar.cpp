@@ -377,13 +377,26 @@ void DFMSideBar::initModelData()
         GroupName::Common, GroupName::Device, GroupName::Bookmark, GroupName::Network, GroupName::Tag
     };
 
+    bool hasSeparator = false;
     foreach (const DFMSideBar::GroupName &groupType, groups) {
 #ifdef DISABLE_TAG_SUPPORT
         if (groupType == DFMSideBar::GroupName::Tag) continue;
 #endif // DISABLE_TAG_SUPPORT
 
-        m_sidebarModel->appendRow(DFMSideBarItem::createSeparatorItem(groupName(groupType)));
+        if (!hasSeparator) {
+            m_sidebarModel->appendRow(DFMSideBarItem::createSeparatorItem(groupName(groupType)));
+        } else {
+            hasSeparator = false;
+        }
+
         addGroupItems(groupType);
+
+        if (groupType == GroupName::Bookmark || GroupName::Tag == groupType) {
+            DFMSideBarItem *item = DFMSideBarItem::createSeparatorItem(groupName(groupType));
+            item->setFlags(Qt::ItemFlag::ItemIsDropEnabled);
+            m_sidebarModel->appendRow(item);
+            hasSeparator = true;
+        }
     }
 
     // init done, then we should update the separator visible state.
