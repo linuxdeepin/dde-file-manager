@@ -135,6 +135,7 @@ private:
     void onRejectButtonClicked();
     void onCurrentInputNameChanged();
     void handleEnterPressed();
+    void updateAcceptButtonState();
 
     QScopedPointer<DFileDialogPrivate> d_ptr;
 
