@@ -467,6 +467,7 @@ void DFileDialog::setFileMode(QFileDialog::FileMode mode)
     }
 
     d->fileMode = mode;
+    updateAcceptButtonState();
 
     switch (static_cast<int>(mode)) {
     case QFileDialog::ExistingFiles:
@@ -500,6 +501,7 @@ void DFileDialog::setAcceptMode(QFileDialog::AcceptMode mode)
     D_D(DFileDialog);
 
     d->acceptMode = mode;
+    updateAcceptButtonState();
 
     if (mode == QFileDialog::AcceptOpen) {
         statusBar()->setMode(FileDialogStatusBar::Open);
@@ -509,7 +511,6 @@ void DFileDialog::setAcceptMode(QFileDialog::AcceptMode mode)
                    this, &DFileDialog::onCurrentInputNameChanged);
     } else {
         statusBar()->setMode(FileDialogStatusBar::Save);
-        statusBar()->acceptButton()->setDisabled(statusBar()->lineEdit()->text().isEmpty());
         getFileView()->setSelectionMode(QAbstractItemView::SingleSelection);
         getLeftSideBar()->setDisableUrlSchemes({"recent"}); // save mode disable recent
 
@@ -979,7 +980,7 @@ void DFileDialog::handleNewView(DFMBaseView *view)
 
     DFileView *fileView = qobject_cast<DFileView *>(view->widget());
 
-    statusBar()->acceptButton()->setEnabled(fileView!=nullptr);
+    statusBar()->acceptButton()->setDisabled(!fileView);
 
     if (!fileView) {
         // sava data
@@ -1010,23 +1011,12 @@ void DFileDialog::handleNewView(DFMBaseView *view)
 
     connect(fileView->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, &DFileDialog::selectionFilesChanged);
+
     connect(fileView, &DFileView::rootUrlChanged,
             this, &DFileDialog::currentUrlChanged);
 
-    auto updateAcceptButtonState = [this](const DUrl & url){
-        const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(url);
-        Q_D(const DFileDialog);
-        bool isDirMode = d->fileMode == QFileDialog::Directory || d->fileMode == QFileDialog::DirectoryOnly;
-
-        statusBar()->acceptButton()->setEnabled(!isDirMode || !fileInfo->isVirtualEntry());
-    };
-
-    connect(fileView, &DFileView::rootUrlChanged, this, updateAcceptButtonState);
-    connect(this, &DFileDialog::selectionFilesChanged, this, [=](){
-        const DUrlList &urls = getFileView()->selectedUrls();
-        DUrl url = urls.size()>0 ? urls.first() : getFileView()->rootUrl();
-        updateAcceptButtonState(url);
-    });
+    connect(fileView, &DFileView::rootUrlChanged, this, &DFileDialog::updateAcceptButtonState);
+    connect(this, &DFileDialog::selectionFilesChanged, &DFileDialog::updateAcceptButtonState);
 
     connect(fileView, static_cast<void (DFileView::*)(const QModelIndex &)>(&DFileView::currentChanged),
     this, [this, fileView] {
@@ -1246,7 +1236,8 @@ void DFileDialog::onCurrentInputNameChanged()
     Q_D(DFileDialog);
 
     d->currentInputName = statusBar()->lineEdit()->text();
-    statusBar()->acceptButton()->setDisabled(d->currentInputName.isEmpty());
+    //statusBar()->acceptButton()->setDisabled(d->currentInputName.isEmpty());
+    updateAcceptButtonState();
 
     DFileSystemModel * model = getFileView()->model();
     if (!model->sortedUrls().isEmpty()) {
@@ -1285,5 +1276,32 @@ void DFileDialog::handleEnterPressed()
             }
         }
         statusBar()->acceptButton()->animateClick();
+    }
+}
+
+void DFileDialog::updateAcceptButtonState()
+{
+    if (!getFileView()) {
+        return;
+    }
+
+    DUrl url = getFileView()->rootUrl();
+    const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(url);
+    if (!fileInfo) {
+        return;
+    }
+    Q_D(const DFileDialog);
+    qDebug() << "file mode:" << d->fileMode << "\r\naccept mode:" << d->acceptMode;
+    qDebug() << fileInfo->fileUrl() << "isVirtualEntry:" << fileInfo->isVirtualEntry();
+
+    bool isDirMode = d->fileMode == QFileDialog::Directory || d->fileMode == QFileDialog::DirectoryOnly;
+    bool isOpenMode = d->acceptMode == QFileDialog::AcceptOpen;
+    if (isOpenMode) {
+        bool isSelectFiles = getFileView()->selectedIndexes().size() > 0;
+        // 1.打开目录（非虚拟目录） 2.打开文件（选中文件）
+        statusBar()->acceptButton()->setDisabled((isDirMode && fileInfo->isVirtualEntry()) ||
+                                                (!isDirMode && !isSelectFiles));
+    } else { // save mode
+        statusBar()->acceptButton()->setDisabled(fileInfo->isVirtualEntry() || statusBar()->lineEdit()->text().trimmed().isEmpty());
     }
 }
