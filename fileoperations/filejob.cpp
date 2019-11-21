@@ -651,10 +651,9 @@ void FileJob::doOpticalBlank(const DUrl &device)
  */
 void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int flag)
 {
-    QString dev = device.path();
-    m_tarPath = dev;
-    dev.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
-    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dev));
+    m_tarPath = device.path();
+    QString udiskspath = DDiskManager::resolveDeviceNode(device.path(), {}).first();
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->opticalBlank()) {
         DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(device.path() + "/" BURN_SEG_STAGING), &DAbstractFileWatcher::fileDeleted, DUrl());
@@ -713,10 +712,9 @@ void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int 
  */
 void FileJob::doOpticalImageBurn(const DUrl &device, const DUrl &image, int speed, int flag)
 {
-    QString dev = device.path();
-    m_tarPath = dev;
-    dev.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
-    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dev));
+    m_tarPath = device.path();
+    QString udiskspath = DDiskManager::resolveDeviceNode(device.path(), {}).first();
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->opticalBlank()) {
         DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(device.path() + "/" BURN_SEG_STAGING), &DAbstractFileWatcher::fileDeleted, DUrl());
@@ -2556,8 +2554,7 @@ bool FileJob::checkFat32FileOutof4G(const QString &srcFile, const QString &tarDi
             }
             if (pDesDevice){
                 QString devicePath = pDesDevice->getDiskInfo().unix_device();
-                QString udiskspath = devicePath;
-                udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+                QString udiskspath = DDiskManager::resolveDeviceNode(devicePath, {}).first();
                 QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
                 if (blk->idType() == "vfat" ){
                     emit fileSignalManager->requestShow4GFat32Dialog();

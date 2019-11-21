@@ -30,8 +30,7 @@
 
 UDisksBlock::UDisksBlock(const QString &devnode)
 {
-    QString udiskspath(devnode);
-    udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+    QString udiskspath = DDiskManager::resolveDeviceNode(devnode, {}).first();
     blk.reset(DDiskManager::createBlockDevice(udiskspath));
 }
 

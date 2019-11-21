@@ -805,9 +805,8 @@ void DSqliteHandle::connectToSqlite(const QString &mountPoint, const QString &db
             }
 
             QString udiskspath = "";
-            DDiskManager dummy;
-            for (auto &devs : dummy.blockDevices()) {
-                QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(devs));
+            for (auto &dev : DDiskManager::blockDevices({})) {
+                QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(dev));
                 bool match = false;
                 for(auto &mp : blk->mountPoints()) {
                     if (mountPoint == QString(mp)) {
@@ -816,11 +815,10 @@ void DSqliteHandle::connectToSqlite(const QString &mountPoint, const QString &db
                     }
                 }
                 if (match) {
-                    udiskspath = blk->path();
+                    udiskspath = dev;
                     break;
                 }
             }
-            udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
             QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
             if (blk->idType() == "ntfs") {
                 QString db_path(mountPoint + QString("/") + db_name);

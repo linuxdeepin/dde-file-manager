@@ -486,8 +486,7 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
         return;
     }
 
-    QString udiskspath = fileUrl.query();
-    udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+    QString udiskspath = DDiskManager::resolveDeviceNode(fileUrl.query(), {}).first();
     QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QSharedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->optical()) {

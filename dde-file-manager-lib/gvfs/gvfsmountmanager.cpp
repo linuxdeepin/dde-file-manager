@@ -936,8 +936,7 @@ QString GvfsMountManager::getDriveUnixDevice(const QString &unix_device)
 bool GvfsMountManager::isDeviceCrypto_LUKS(const QDiskInfo &diskInfo)
 {
     if (diskInfo.can_mount()){
-        QString udiskspath = diskInfo.unix_device();
-        udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+        QString udiskspath = DDiskManager::resolveDeviceNode(diskInfo.unix_device(), {}).first();
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
         QString fstype = blk->idType();
         if (fstype == "crypto_LUKS" ){
