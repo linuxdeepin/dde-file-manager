@@ -96,7 +96,7 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
             }
         }
     } else if (suffix() == SUFFIX_UDISKS) {
-        QString udiskspath = "/org/freedesktop/UDisks2/block_devices" + url.path().chopped(QString("." SUFFIX_UDISKS).length());
+        QString udiskspath = DDiskManager::resolveDeviceNode("/dev" + url.path().chopped(QString("." SUFFIX_UDISKS).length()), {}).first();
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
         if (blk->path().length() != 0) {
             QSharedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
