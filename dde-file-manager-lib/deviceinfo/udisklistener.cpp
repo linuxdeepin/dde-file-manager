@@ -152,9 +152,8 @@ bool UDiskListener::renameFile(const QSharedPointer<DFMRenameEvent> &event) cons
 
     DAbstractFileInfo* info = oldDevicePointer.data();
     UDiskDeviceInfo* udiskInfo = dynamic_cast<UDiskDeviceInfo*>(info);
-    QString devicePath = udiskInfo->getPath();
+    QString devicePath = udiskInfo->getDBusPath();
     QUrlQuery query(newUrl);
-    devicePath.replace("dev", "org/freedesktop/UDisks2/block_devices");
     QString newName = query.queryItemValue("new_name");
     DBlockDevice *partition = DDiskManager::createBlockDevice(devicePath, nullptr);
 
