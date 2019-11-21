@@ -29,8 +29,7 @@ public:
                     QDirIterator::IteratorFlags flags)
     {
         DUrl url(path);
-        QString udiskspath = url.burnDestDevice();
-        udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+        QString udiskspath = DDiskManager::resolveDeviceNode(url.burnDestDevice(), {}).first();
         QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
         QSharedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
         if (blkdev->mountPoints().size()) {
@@ -200,8 +199,7 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const DUrl &url, QObject *par
 
     d->proxyOnDisk.clear();
 
-    QString udiskspath = url.burnDestDevice();
-    udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+    QString udiskspath = DDiskManager::resolveDeviceNode(url.burnDestDevice(), {}).first();
     QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
 
     if (blkdev->mountPoints().size()) {
@@ -343,8 +341,7 @@ DUrlList MasteredMediaController::pasteFile(const QSharedPointer<DFMPasteEvent> 
         QString dev(dst.burnDestDevice());
         bool is_blank = ISOMaster->getDevicePropertyCached(dev).formatted;
         if (!ISOMaster->getDevicePropertyCached(dev).devid.length()) {
-            QString udiskspath(dev);
-            udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+            QString udiskspath = DDiskManager::resolveDeviceNode(dev, {}).first();
             QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
             QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
             is_blank = drv->opticalBlank();

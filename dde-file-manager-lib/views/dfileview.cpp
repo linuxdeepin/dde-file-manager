@@ -2152,11 +2152,10 @@ bool DFileView::setRootUrl(const DUrl &url)
     if (fileUrl.scheme() == BURN_SCHEME) {
         Q_ASSERT(fileUrl.burnDestDevice().length() > 0);
         QString devpath = fileUrl.burnDestDevice();
-        QString udiskspath = devpath;
+        QString udiskspath = DDiskManager::resolveDeviceNode(devpath, {}).first();
         getOpticalDriveMutex()->lock();
         DISOMasterNS::DeviceProperty dp = ISOMaster->getDevicePropertyCached(devpath);
         getOpticalDriveMutex()->unlock();
-        udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
         QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
         if (!dp.devid.length()) {
             QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));

@@ -479,8 +479,7 @@ DUrl UDiskDeviceInfo::redirectedFileUrl() const
 {
     DUrl ret = getMountPointUrl();
 
-    QString dbuspath = m_diskInfo.unix_device();
-    dbuspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+    QString dbuspath = DDiskManager::resolveDeviceNode(m_diskInfo.unix_device(), {}).first();
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(dbuspath));
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
     if (drive->optical()) {

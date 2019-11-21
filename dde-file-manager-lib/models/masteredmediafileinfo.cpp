@@ -39,8 +39,7 @@ MasteredMediaFileInfo::MasteredMediaFileInfo(const DUrl &url)
     if (url.burnDestDevice().length() == 0) {
         return;
     }
-    QString udiskspath = url.burnDestDevice();
-    udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+    QString udiskspath = DDiskManager::resolveDeviceNode(url.burnDestDevice(), {}).first();
     QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QSharedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
 
@@ -115,8 +114,7 @@ QString MasteredMediaFileInfo::fileDisplayName() const
 {
     Q_D(const DAbstractFileInfo);
     if (fileUrl().burnFilePath().contains(QRegularExpression("^(/*)$"))) {
-        QString udiskspath = fileUrl().burnDestDevice();
-        udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+        QString udiskspath = DDiskManager::resolveDeviceNode(fileUrl().burnDestDevice(), {}).first();
         QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
         return blkdev->idLabel();
     }

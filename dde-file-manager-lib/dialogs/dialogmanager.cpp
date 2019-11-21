@@ -1045,8 +1045,7 @@ void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
     QTimer::singleShot(1000, [ = ]{
         if (qApp->applicationName() == QMAKE_TARGET && !DFMGlobal::IsFileManagerDiloagProcess)
         {
-            QString udiskspath = diskInfo.unix_device();
-            udiskspath.replace("/dev/", "/org/freedesktop/UDisks2/block_devices/");
+            QString udiskspath = DDiskManager::resolveDeviceNode(diskInfo.unix_device(), {}).first();
             QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
             QString fstype = blk->idType();
             if (fstype == "ntfs") {
