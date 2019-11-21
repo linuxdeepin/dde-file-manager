@@ -49,50 +49,51 @@ void MountAskPasswordDialog::initUI()
 
     QFrame* content = new QFrame;
 
-    m_messageLabel = new QLabel(this);
-
     QLabel* connectTypeLabel = new QLabel(tr("Log in as"));
-    connectTypeLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+    connectTypeLabel->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     connectTypeLabel->setFixedWidth(80);
 
-    m_anonymousButtonGroup = new QButtonGroup(this);
-    m_anonymousButtonGroup->setExclusive(true);
-    QPushButton* anonymousButton = new QPushButton(tr("Anonymous"));
-    anonymousButton->setObjectName("AnonymousButton");
-    anonymousButton->setCheckable(true);
-    anonymousButton->setFixedHeight(28);
-    anonymousButton->setMinimumWidth(100);
-    QPushButton* registerButton = new QPushButton(tr("Registered user"));
-    registerButton->setObjectName("RegisterButton");
-    registerButton->setCheckable(true);
-    registerButton->setFixedHeight(28);
-    registerButton->setMinimumWidth(100);
-    m_anonymousButtonGroup->addButton(anonymousButton, 0);
-    m_anonymousButtonGroup->addButton(registerButton, 1);
+    DButtonBox *anonmymousButtonBox = new DButtonBox(this);
+    anonmymousButtonBox->setEnabled(true);
+    m_anonymousButton = new DButtonBoxButton(tr("Anonymous"));
+    m_anonymousButton->setObjectName("AnonymousButton");
+    m_anonymousButton->setCheckable(true);
+    m_anonymousButton->setMinimumWidth(100);
+    m_anonymousButton->setFocusPolicy(Qt::NoFocus);
+    m_registerButton = new DButtonBoxButton(tr("Registered user"));
+    m_registerButton->setObjectName("RegisterButton");
+    m_registerButton->setCheckable(true);
+    m_registerButton->setMinimumWidth(100);
+    m_registerButton->setFocusPolicy(Qt::NoFocus);
+
+    QList<DButtonBoxButton*> buttonList;
+    buttonList << m_anonymousButton << m_registerButton;
+
+    anonmymousButtonBox->setButtonList(buttonList, true);
+    anonmymousButtonBox->setFocusPolicy(Qt::NoFocus);
 
     m_passwordFrame = new QFrame;
 
     QLabel* usernameLable = new QLabel(tr("Username"));
-    usernameLable->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+    usernameLable->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     usernameLable->setFixedWidth(80);
 
     m_usernameLineEdit = new QLineEdit;
-    m_usernameLineEdit->setFixedHeight(24);
-    m_usernameLineEdit->setMinimumWidth(200);
+    m_usernameLineEdit->setMinimumWidth(240);
 
     m_domainLabel = new QLabel(tr("Domain"));
-    m_domainLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+    m_domainLabel->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     m_domainLabel->setFixedWidth(80);
 
     m_domainLineEdit = new QLineEdit;
-    m_domainLineEdit->setFixedHeight(24);
+    m_domainLineEdit->setMinimumWidth(240);
 
     QLabel* passwordLable = new QLabel(tr("Password"));
-    passwordLable->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+    passwordLable->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     passwordLable->setFixedWidth(80);
 
     m_passwordLineEdit = new DPasswordEdit;
-    m_passwordLineEdit->setFixedHeight(24);
+    m_passwordLineEdit->setMinimumWidth(240);
     m_passwordLineEdit->setAttribute(Qt::WA_InputMethodEnabled, false);
 
     m_passwordButtonGroup = new QButtonGroup(this);
@@ -100,22 +101,20 @@ void MountAskPasswordDialog::initUI()
 
     m_passwordCheckBox = new QCheckBox();
     QWidget *empty = new QWidget();
-    m_passwordCheckBox->setFixedHeight(22);
     m_passwordCheckBox->setText(tr("Remember password"));
 
     QHBoxLayout* anonymousLayout = new QHBoxLayout;
-    anonymousLayout->addWidget(anonymousButton);
-    anonymousLayout->addWidget(registerButton);
+    anonymousLayout->addWidget(anonmymousButtonBox);
     anonymousLayout->setSpacing(0);
     anonymousLayout->setContentsMargins(0, 0, 0, 0);
 
     QFormLayout* connectTypeLayout = new  QFormLayout;
-    connectTypeLayout->setLabelAlignment(Qt::AlignVCenter | Qt::AlignRight);
+    connectTypeLayout->setLabelAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     connectTypeLayout->addRow(connectTypeLabel, anonymousLayout);
 
     QFormLayout* inputLayout = new  QFormLayout;
-    inputLayout->setLabelAlignment(Qt::AlignVCenter | Qt::AlignRight);
-    inputLayout->setFormAlignment(Qt::AlignVCenter | Qt::AlignRight);
+    inputLayout->setLabelAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+    inputLayout->setFormAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     inputLayout->addRow(usernameLable, m_usernameLineEdit);
     inputLayout->addRow(m_domainLabel, m_domainLineEdit);
     inputLayout->addRow(passwordLable, m_passwordLineEdit);
@@ -130,7 +129,6 @@ void MountAskPasswordDialog::initUI()
     m_passwordFrame->setLayout(passwordFrameLayout);
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(m_messageLabel, Qt::AlignCenter);
     mainLayout->addSpacing(16);
     mainLayout->addLayout(connectTypeLayout);
     mainLayout->addWidget(m_passwordFrame);
@@ -146,7 +144,12 @@ void MountAskPasswordDialog::initUI()
 
 void MountAskPasswordDialog::initConnect()
 {
-    connect(m_anonymousButtonGroup, SIGNAL(buttonClicked(int)), this, SLOT(togglePasswordFrame(int)));
+    connect(m_anonymousButton, &DButtonBoxButton::clicked, this, [=](){
+        m_passwordFrame->setVisible(false);
+    });
+    connect(m_registerButton, &DButtonBoxButton::clicked, this, [=](){
+        m_passwordFrame->setVisible(true);
+    });
     connect(this, SIGNAL(buttonClicked(int,QString)), this, SLOT(handleButtonClicked(int,QString)));
 }
 
@@ -159,17 +162,17 @@ void MountAskPasswordDialog::setLoginData(const QJsonObject &obj)
 {
     m_loginObj = obj;
 
-    QFontMetrics fm(m_messageLabel->font());
-    const QString& str = fm.elidedText(m_loginObj.value("message").toString()
+    QFontMetrics fm(this->font());
+    const QString &str = fm.elidedText(m_loginObj.value("message").toString()
                                        ,Qt::ElideMiddle,
                                        this->size().width()-80);
 
-    m_messageLabel->setText(str);
+    setTitle(str);
 
-    if (m_loginObj.value("anonymous").toBool()){
-        m_anonymousButtonGroup->button(0)->click();
-    }else{
-        m_anonymousButtonGroup->button(1)->click();
+    if (m_loginObj.value("anonymous").toBool()) {
+        m_anonymousButton->click();
+    } else {
+        m_registerButton->click();
     }
 
     m_usernameLineEdit->setText(m_loginObj.value("username").toString());
@@ -186,9 +189,9 @@ void MountAskPasswordDialog::setLoginData(const QJsonObject &obj)
 
 void MountAskPasswordDialog::handleConnect()
 {
-    m_loginObj.insert("message", m_messageLabel->text());
+    m_loginObj.insert("message", title());
 
-    if (m_anonymousButtonGroup->button(0)->isChecked()){
+    if (m_anonymousButton->isChecked()){
         m_loginObj.insert("anonymous", true);
     }else{
         m_loginObj.insert("anonymous", false);
@@ -204,11 +207,6 @@ void MountAskPasswordDialog::handleConnect()
         m_loginObj.insert("passwordSave", 0);
     }
     accept();
-}
-
-void MountAskPasswordDialog::togglePasswordFrame(int id)
-{
-    m_passwordFrame->setVisible(id != 0);
 }
 
 void MountAskPasswordDialog::handleButtonClicked(int index, QString text)

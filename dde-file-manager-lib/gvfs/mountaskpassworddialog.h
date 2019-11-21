@@ -35,6 +35,7 @@
 #include <QJsonObject>
 #include <DDialog>
 #include <DPasswordEdit>
+#include <DButtonBox>
 
 DWIDGET_USE_NAMESPACE
 
@@ -57,7 +58,6 @@ signals:
 public slots:
     void setLoginData(const QJsonObject& obj);
     void handleConnect();
-    void togglePasswordFrame(int id);
     void handleButtonClicked(int index, QString text);
 
 private:
@@ -66,7 +66,8 @@ private:
 
     QFrame* m_passwordFrame;
 
-    QButtonGroup* m_anonymousButtonGroup;
+    DButtonBoxButton *m_anonymousButton;
+    DButtonBoxButton *m_registerButton;
 
     QLineEdit* m_usernameLineEdit;
     QLineEdit* m_domainLineEdit;
