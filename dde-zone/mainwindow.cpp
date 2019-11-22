@@ -52,12 +52,11 @@ ZoneMainWindow::ZoneMainWindow(QWidget *parent)
     }
 
     // init corresponding QList for addButtons()
-    m_ButtonNames << tr("Fast Screen Off") << tr("Control Center") << tr("All Windows") << tr("Launcher") << tr("Desktop") << tr("None");
-    m_ActionStrs << FAST_SCREEN_OFF << CONTROL_CENTER_FROM_LEFT_STR << ALL_WINDOWS_STR << LAUNCHER_STR << SHOW_DESKTOP_STR << NONE_STR;
-    m_ActionStrs2 << FAST_SCREEN_OFF << CONTROL_CENTER_FROM_RIGHT_STR << ALL_WINDOWS_STR << LAUNCHER_STR << SHOW_DESKTOP_STR << NONE_STR;
+    m_ButtonNames << tr("Fast Screen Off") << tr("All Windows") << tr("Launcher") << tr("Desktop") << tr("None");
+    m_ActionStrs << FAST_SCREEN_OFF << ALL_WINDOWS_STR << LAUNCHER_STR << SHOW_DESKTOP_STR << NONE_STR;
 
     QStringList topRightNames = QStringList() << tr("Close Window") << m_ButtonNames;
-    QStringList topRightActionStr = QStringList() << CLOSE_MAX_WINDOW_STR << m_ActionStrs2;
+    QStringList topRightActionStr = QStringList() << CLOSE_MAX_WINDOW_STR << m_ActionStrs;
 
     // load 4 corners
     HotZone *hotzone1 = new HotZone(this, false, false);
@@ -70,7 +69,7 @@ ZoneMainWindow::ZoneMainWindow(QWidget *parent)
     hotzone3->addButtons(m_ButtonNames, m_ActionStrs);
 
     HotZone *hotzone4 = new HotZone(this, true, true);
-    hotzone4->addButtons(m_ButtonNames, m_ActionStrs2);
+    hotzone4->addButtons(m_ButtonNames, m_ActionStrs);
 
     m_dbusZoneInter->EnableZoneDetected(false);
 }
