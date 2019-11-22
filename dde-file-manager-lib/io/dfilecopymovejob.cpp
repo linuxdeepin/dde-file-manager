@@ -329,6 +329,12 @@ DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::handleError(const DAbstractFil
                            << "source url:" << sourceInfo->fileUrl()
                            << "target url:" << (targetInfo ? targetInfo->fileUrl() : DUrl());
 
+        // not update speed onerror
+        if (updateSpeedTimer->isActive()) {
+            //updateSpeedTimer->stop();
+            QMetaObject::invokeMethod(updateSpeedTimer, "stop");
+        }
+
         return lastErrorHandleAction;
     }
 
@@ -1721,7 +1727,7 @@ void DFileCopyMoveJob::run()
     d->tid = qt_gettid();
 
     DAbstractFileInfoPointer target_info;
-
+    bool mayExecSync = false;
     if (d->targetUrl.isValid()) {
         target_info = DFileService::instance()->createFileInfo(nullptr, d->targetUrl);
 
@@ -1833,6 +1839,12 @@ void DFileCopyMoveJob::run()
             goto end;
         }
 
+        // 只要有一个不是skip或者cancel就执行一下sync
+        if (!mayExecSync && d->lastErrorHandleAction!=SkipAction &&
+                            d->lastErrorHandleAction!=CancelAction) {
+            mayExecSync = true;
+        }
+
         if (enter_dir) {
             d->leaveDirectory();
         }
@@ -1859,7 +1871,10 @@ void DFileCopyMoveJob::run()
     d->setError(NoError);
 
 end:
-    if (d->targetIsRemovable) {
+    if (d->targetIsRemovable && mayExecSync &&
+            d->state != DFileCopyMoveJob::StoppedState) { //主动取消时state已经被设置为stop了
+        qCDebug(fileJob()) << "sync file, lastErrorHandleAction" << d->lastErrorHandleAction
+                           << ", state:" << d->state;
         // 任务完成后执行 sync 同步数据到硬盘, 同时将状态改为 SleepState，用于定时器更新进度和速度信息
         d->setState(IOWaitState);
         QProcess::execute("sync", {"-f", d->targetRootPath});
