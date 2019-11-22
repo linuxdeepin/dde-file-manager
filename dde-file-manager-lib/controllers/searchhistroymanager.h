@@ -36,6 +36,8 @@ public:
     QStringList toStringList();
 
     void writeIntoSearchHistory(QString keyword);
+
+    void clearHistory();
 };
 
 #endif // SEARCHHISTROYMANAGER_H

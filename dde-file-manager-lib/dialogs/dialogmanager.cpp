@@ -33,6 +33,7 @@
 #include "shutil/mimetypedisplaymanager.h"
 #include "filepreviewdialog.h"
 #include "dfmsettingdialog.h"
+#include "connecttoserverdialog.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -797,19 +798,19 @@ void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl
 
 void DialogManager::showConnectToServerDialog(quint64 winId)
 {
-    //ToDo
     QWidget *w = WindowManager::getWindowById(winId);
     if (!w || w->property("ConnectToServerDialogShown").toBool()) {
         return;
     }
 
+    ConnectToServerDialog *dialog = new ConnectToServerDialog(w);
+    dialog->show();
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    connect(dialog, &ConnectToServerDialog::finished, dialog, &ConnectToServerDialog::onButtonClicked);
     w->setProperty("ConnectToServerDialogShown", true);
-//    connect(dialog, &UserSharePasswordSettingDialog::closed, [ = ] {
-//        w->setProperty("ConnectToServerDialogShown", false);
-//    });
-
-    qDebug() << "------------------show connect net server-------------------------";
-    qDebug() << winId;
+    connect(dialog, &ConnectToServerDialog::closed, [ = ] {
+        w->setProperty("ConnectToServerDialogShown", false);
+    });
 }
 
 void DialogManager::showUserSharePasswordSettingDialog(quint64 winId)

@@ -55,3 +55,10 @@ void SearchHistroyManager::writeIntoSearchHistory(QString keyword)
     DFMApplication::appObtuselySetting()->setValue("Cache", "SearchHistroy", list);
 }
 
+void SearchHistroyManager::clearHistory()
+{
+    QStringList list;
+
+    DFMApplication::appObtuselySetting()->setValue("Cache", "SearchHistroy", list);
+}
+
