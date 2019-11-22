@@ -1045,8 +1045,9 @@ void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
     QTimer::singleShot(1000, [ = ]{
         if (qApp->applicationName() == QMAKE_TARGET && !DFMGlobal::IsFileManagerDiloagProcess)
         {
-            QString udiskspath = DDiskManager::resolveDeviceNode(diskInfo.unix_device(), {}).first();
-            QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
+            QStringList && udiskspaths = DDiskManager::resolveDeviceNode(diskInfo.unix_device(), {});
+            if (udiskspaths.isEmpty()) return;
+            QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspaths.first()));
             QString fstype = blk->idType();
             if (fstype == "ntfs") {
                 // blumia: the ntfs partition will be read-only if user mount the ntfs device by the kernel driver.
