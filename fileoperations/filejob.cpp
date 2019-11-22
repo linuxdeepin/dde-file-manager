@@ -2554,8 +2554,9 @@ bool FileJob::checkFat32FileOutof4G(const QString &srcFile, const QString &tarDi
             }
             if (pDesDevice){
                 QString devicePath = pDesDevice->getDiskInfo().unix_device();
-                QString udiskspath = DDiskManager::resolveDeviceNode(devicePath, {}).first();
-                QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
+                QStringList && udiskspaths = DDiskManager::resolveDeviceNode(devicePath, {});
+                if (udiskspaths.isEmpty()) return false;
+                QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspaths.first()));
                 if (blk->idType() == "vfat" ){
                     emit fileSignalManager->requestShow4GFat32Dialog();
                     return true;
