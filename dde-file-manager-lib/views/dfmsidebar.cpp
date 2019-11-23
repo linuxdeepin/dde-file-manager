@@ -173,6 +173,18 @@ int DFMSideBar::findItem(const DUrl &url, bool fuzzy/* = false*/) const
     return -1;
 }
 
+int DFMSideBar::findItem(std::function<bool (const DFMSideBarItem *)> cb) const
+{
+    for (int i = 0; i < m_sidebarModel->rowCount(); i++) {
+        DFMSideBarItem * item = m_sidebarModel->itemFromIndex(i);
+        if (cb(item)) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 int DFMSideBar::findLastItem(const QString &group, bool sidebarItemOnly) const
 {
     int index = -1;
@@ -207,8 +219,20 @@ void DFMSideBar::setContextMenuEnabled(bool enabled)
 void DFMSideBar::setDisableUrlSchemes(const QSet<QString> &schemes)
 {
     m_disableUrlSchemes += schemes;
-    m_sidebarModel->clear();
-    initModelData();
+    for (QString scheme : m_disableUrlSchemes) {
+        forever {
+            int index = findItem([&](const DFMSideBarItem *item)->bool{
+                return item->url().scheme() == scheme;
+            });
+
+            if (index>=0) {
+                m_sidebarModel->removeRow(index);
+            } else {
+                break;
+            }
+        }
+    }
+
     emit disableUrlSchemesChanged();
 }
 
