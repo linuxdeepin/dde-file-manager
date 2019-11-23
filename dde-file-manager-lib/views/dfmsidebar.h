@@ -59,6 +59,7 @@ public:
     int findItem(const DFMSideBarItem * item) const;
     int findItem(const DUrl &url, const QString &group) const;
     int findItem(const DUrl &url, bool fuzzy = false) const;
+    int findItem(std::function<bool(const DFMSideBarItem *item)> cb) const; // cb return true to get the index
     int findLastItem(const QString &group, bool sidebarItemOnly = true) const;
     void openItemEditor(int index) const;
     QSet<QString> disableUrlSchemes() const;
