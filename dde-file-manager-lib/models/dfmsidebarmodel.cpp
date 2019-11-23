@@ -43,26 +43,39 @@ bool DFMSideBarModel::canDropMimeData(const QMimeData *data, Qt::DropAction acti
 
     Q_ASSERT(column == 0);
 
+    auto isSeparator = [](DFMSideBarItem *item)->bool{
+        return item && item->itemType()==DFMSideBarItem::Separator;
+    };
+    auto isItemDragEnabled = [](DFMSideBarItem *item)->bool{
+        return item && item->flags().testFlag(Qt::ItemIsDragEnabled);
+    };
+    auto isTheSameGroup = [](DFMSideBarItem *item1, DFMSideBarItem *item2)->bool{
+        return item1 && item2 && item1->groupName() == item2->groupName();
+    };
+
     DFMSideBarItem * targetItem = this->itemFromIndex(row);
     DFMSideBarItem * sourceItem = nullptr;
 
     // check if is item internal move by action and mimetype:
     if (action == Qt::MoveAction && data->formats().contains(MODELITEM_MIMETYPE)) {
-        if (targetItem && (targetItem->flags().testFlag(Qt::ItemIsDragEnabled) ||
-                targetItem->flags().testFlag(Qt::ItemIsDropEnabled))) {
-            int oriRowIndex = getRowIndexFromMimeData(data->data(MODELITEM_MIMETYPE));
-            if (oriRowIndex >= 0) {
-                sourceItem = this->itemFromIndex(oriRowIndex);
-            }
-            if (sourceItem) {
-                // known issue: we cannot drag the item to the bottom of the group.
-                if (sourceItem->groupName() != targetItem->groupName()) {
-                    return false;
-                }
-            }
-        } else {
-            return false;
+        int oriRowIndex = getRowIndexFromMimeData(data->data(MODELITEM_MIMETYPE));
+        if (oriRowIndex >= 0) {
+            sourceItem = this->itemFromIndex(oriRowIndex);
         }
+
+        // normal drag tag or bookmark
+        if (isItemDragEnabled(targetItem) && isTheSameGroup(sourceItem, targetItem)) {
+            return true;
+        }
+
+        DFMSideBarItem * prevItem = itemFromIndex(row-1);
+        // drag tag item to bottom, targetItem is null
+        // drag bookmark item on the bookmark bottom separator, targetItem is Separator
+        if ((!targetItem || isSeparator(targetItem)) && sourceItem != prevItem) {
+            return isItemDragEnabled(prevItem) && isTheSameGroup(prevItem, sourceItem);
+        }
+
+        return false;
     }
 
     return QStandardItemModel::canDropMimeData(data, action, row, column, parent);
