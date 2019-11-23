@@ -326,6 +326,9 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
     }
 
     DFMSideBarItem *item = m_sidebarModel->itemFromIndex(modelIndex);
+    if (!item || item->itemType() == DFMSideBarItem::Separator) {
+        return ; // separator should not show menu
+    }
     QString identifierStr = item->registeredHandler(SIDEBAR_ID_INTERNAL_FALLBACK);
 
     QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
@@ -377,26 +380,15 @@ void DFMSideBar::initModelData()
         GroupName::Common, GroupName::Device, GroupName::Bookmark, GroupName::Network, GroupName::Tag
     };
 
-    bool hasSeparator = false;
+    //bool hasSeparator = false;
     foreach (const DFMSideBar::GroupName &groupType, groups) {
 #ifdef DISABLE_TAG_SUPPORT
         if (groupType == DFMSideBar::GroupName::Tag) continue;
 #endif // DISABLE_TAG_SUPPORT
 
-        if (!hasSeparator) {
-            m_sidebarModel->appendRow(DFMSideBarItem::createSeparatorItem(groupName(groupType)));
-        } else {
-            hasSeparator = false;
-        }
+        m_sidebarModel->appendRow(DFMSideBarItem::createSeparatorItem(groupName(groupType)));
 
         addGroupItems(groupType);
-
-        if (groupType == GroupName::Bookmark || GroupName::Tag == groupType) {
-            DFMSideBarItem *item = DFMSideBarItem::createSeparatorItem(groupName(groupType));
-            item->setFlags(Qt::ItemFlag::ItemIsDropEnabled);
-            m_sidebarModel->appendRow(item);
-            hasSeparator = true;
-        }
     }
 
     // init done, then we should update the separator visible state.
