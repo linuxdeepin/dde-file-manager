@@ -223,6 +223,13 @@ void FileJob::setReplace(bool v)
     m_isReplaced = v;
 }
 
+void FileJob::resetCustomChoice()
+{
+    m_isReplaced = false;
+    m_isSkip = false;
+    m_isCoExisted = true;
+}
+
 QString FileJob::getTargetDir()
 {
     return m_tarPath;
@@ -958,6 +965,10 @@ void FileJob::jobPrepared()
 
 void FileJob::jobConflicted()
 {
+    if (m_applyToAll) {
+        return;
+    }
+
     jobAdded();
     QMap<QString, QString> jobDataDetail;
     jobDataDetail.insert("remainTime", "");
@@ -2114,7 +2125,7 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
             case FileJob::Started:
             {
                 if (m_isSkip){
-                    return true;
+                    return false; // return true will delete .trashinfo and we cannot restore it anymore
                 }
 
                 if(m_isCoExisted && !m_isReplaced)

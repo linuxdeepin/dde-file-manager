@@ -88,8 +88,10 @@ public:
     QString getJobId();
     QString checkDuplicateName(const QString &name);
     void setApplyToAll(bool v);
+    bool getIsApplyToAll() const { return m_applyToAll; }
     void setReplace(bool v);
-
+    bool getIsReplaced() const { return m_isReplaced; }
+    void resetCustomChoice();
     QString getTargetDir();
 
     inline QMap<QString, QString> jobDetail(){ return m_jobDetail; }
