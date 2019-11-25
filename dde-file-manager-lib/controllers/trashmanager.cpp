@@ -44,6 +44,11 @@
 #include <QCoreApplication>
 #include <QThread>
 
+#include <fileoperations/filejob.h>
+#include "app/define.h"
+#include "singleton.h"
+#include "dialogs/dialogmanager.h"
+
 class TrashDirIterator : public DDirIterator
 {
 public:
@@ -254,10 +259,13 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
     DUrlList restoreFailedList;
     DUrlList restoreFileOriginUrlList;
 
+    FileJob job(FileJob::Restore);
+    dialogManager->addJob(&job);
     for (const DUrl &url : list) {
         if (url == DUrl::fromTrashFile("/")) {
             // restore all
             DUrlList list;
+            dialogManager->removeJob(job.getJobId());
 
             for (const DAbstractFileInfoPointer &info : DFileService::instance()->getChildren(Q_NULLPTR, DUrl::fromTrashFile("/"), QStringList(), QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System))
                 list << info->fileUrl();
@@ -273,7 +281,10 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
         //            如果直接定义一个TrashFileInfo对象，就可能存在对象被重复释放
         QExplicitlySharedDataPointer<TrashFileInfo> info(new TrashFileInfo(url));
 
-        bool ret = info->restore();
+        bool ret = info->restore(&job);
+        if (!job.getIsApplyToAll()) {
+            job.resetCustomChoice(); // if not apply to all we should reset button state
+        }
 
         if (!ret && info->exists()) {
             restoreFailedList << info->fileUrl();
@@ -283,6 +294,7 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
 
         ok = ok && ret;
     }
+    dialogManager->removeJob(job.getJobId());
 
     if (!ok && restoreFailedList.count() > 0){
         emit fileSignalManager->requestShowRestoreFailedDialog(restoreFailedList);

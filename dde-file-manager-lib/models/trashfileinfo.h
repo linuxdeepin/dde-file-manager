@@ -27,6 +27,7 @@
 
 #include "dabstractfileinfo.h"
 
+class FileJob;
 class DFMEvent;
 class TrashFileInfoPrivate;
 class TrashFileInfo : public DAbstractFileInfo
@@ -77,7 +78,7 @@ public:
 
     DUrl goToUrlWhenDeleted() const Q_DECL_OVERRIDE;
 
-    bool restore() const;
+    bool restore(FileJob *job=nullptr) const;
     QDateTime deletionDate() const;
     QString sourceFilePath() const;
 
