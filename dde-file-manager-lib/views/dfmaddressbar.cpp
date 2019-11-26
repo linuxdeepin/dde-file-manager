@@ -193,7 +193,6 @@ void DFMAddressBar::stopAnimation()
 
 void DFMAddressBar::hide()
 {
-    clearCompleterModel();
     QLineEdit::hide();
 }
 
