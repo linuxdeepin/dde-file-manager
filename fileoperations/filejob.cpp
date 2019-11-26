@@ -227,7 +227,7 @@ void FileJob::resetCustomChoice()
 {
     m_isReplaced = false;
     m_isSkip = false;
-    m_isCoExisted = true;
+    m_isCoExisted = false;
 }
 
 QString FileJob::getTargetDir()

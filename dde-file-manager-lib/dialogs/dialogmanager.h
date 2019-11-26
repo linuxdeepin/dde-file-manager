@@ -77,6 +77,7 @@ public slots:
     void handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response);
     void addJob(FileJob * job);
     void removeJob(const QString &jobId);
+    QString getJobIdByUrl(const DUrl& url);
     void removeAllJobs();
     void updateJob();
     void startUpdateJobTimer();

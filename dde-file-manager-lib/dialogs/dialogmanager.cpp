@@ -274,6 +274,26 @@ void DialogManager::removeJob(const QString &jobId)
     }
 }
 
+QString DialogManager::getJobIdByUrl(const DUrl &url)
+{
+    foreach (const QString &jobId, m_jobs.keys()) {
+        FileJob *job = m_jobs.value(jobId);
+        bool ret = false;
+        QStringList pathlist = job->property("pathlist").toStringList();
+        for (const QString& path : pathlist) {
+            if (path == url.toLocalFile()) {
+                ret = true;
+                break;
+            }
+        }
+        if (ret) {
+            return job->getJobId();
+        }
+    }
+
+    return QString();
+}
+
 void DialogManager::removeAllJobs()
 {
     foreach (const QString &jobId, m_jobs.keys()) {

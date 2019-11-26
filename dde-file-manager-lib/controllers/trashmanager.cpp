@@ -48,6 +48,7 @@
 #include "app/define.h"
 #include "singleton.h"
 #include "dialogs/dialogmanager.h"
+#include "dialogs/dtaskdialog.h"
 
 class TrashDirIterator : public DDirIterator
 {
@@ -259,9 +260,38 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
     DUrlList restoreFailedList;
     DUrlList restoreFileOriginUrlList;
 
-    FileJob job(FileJob::Restore);
-    dialogManager->addJob(&job);
+    DUrlList urlist;
+    QStringList pathlist;
+    bool isRestoreAll = false;
     for (const DUrl &url : list) {
+        if (url == DUrl::fromTrashFile("/")) {
+            isRestoreAll = true;
+            urlist << url;
+            break;
+        }
+
+        QString jid = dialogManager->getJobIdByUrl(url);
+        if (jid.isEmpty() && !urlist.contains(url)) {
+            urlist << url;
+            pathlist << url.toLocalFile();
+        } else {
+            qDebug() << "restore filejob url was existed " << url;
+        }
+    }
+
+    if (!isRestoreAll && urlist.size() == 0) {
+        DTaskDialog *dlg = dialogManager->taskDialog();
+        if (dlg && dlg->getTaskListWidget() && dlg->getTaskListWidget()->count()>0) {
+            dlg->raise();
+        }
+        return true; // job already existed
+    }
+
+    FileJob job(FileJob::Restore);
+    job.setProperty("pathlist", pathlist);
+    dialogManager->addJob(&job);
+    for (const DUrl &url : urlist) {
+
         if (url == DUrl::fromTrashFile("/")) {
             // restore all
             DUrlList list;
