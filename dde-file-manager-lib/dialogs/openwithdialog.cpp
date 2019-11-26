@@ -49,6 +49,8 @@
 #include <QScroller>
 #include <QCommandLinkButton>
 #include <DHorizontalLine>
+#include <DStyle>
+#include <DIconButton>
 
 class OpenWithDialogListItem : public QWidget
 {
@@ -68,8 +70,7 @@ protected:
 
 private:
     QIcon m_icon;
-    QIcon m_checkedIcon;
-    QLabel *m_checkLabel;
+    DIconButton *m_checkButton;
     QLabel *m_iconLabel;
     QLabel *m_label;
 };
@@ -81,13 +82,9 @@ OpenWithDialogListItem::OpenWithDialogListItem(const QIcon &icon, const QString 
     if (m_icon.isNull())
         m_icon = QIcon::fromTheme("application-x-desktop");
 
-    m_checkedIcon = QIcon();
-    m_checkedIcon.addFile(":/images/images/light/select.png");
-    m_checkedIcon.addFile(":/images/images/light/select@2x.png");
-
-    m_checkLabel = new QLabel(this);
-    m_checkLabel->setFixedSize(10, 10);
-    m_checkLabel->setAlignment(Qt::AlignCenter);
+    m_checkButton = new DIconButton(this);
+    m_checkButton->setFixedSize(10, 10);
+    m_checkButton->setFlat(true);
 
     m_label = new QLabel(this);
     m_label->setText(text);
@@ -98,7 +95,7 @@ OpenWithDialogListItem::OpenWithDialogListItem(const QIcon &icon, const QString 
     QHBoxLayout *layout = new QHBoxLayout(this);
 
     layout->setContentsMargins(5, 0, 5, 0);
-    layout->addWidget(m_checkLabel);
+    layout->addWidget(m_checkButton);
     layout->addWidget(m_iconLabel);
     layout->addWidget(m_label);
 
@@ -108,11 +105,9 @@ OpenWithDialogListItem::OpenWithDialogListItem(const QIcon &icon, const QString 
 void OpenWithDialogListItem::setChecked(bool checked)
 {
     if (checked) {
-        QPixmap p =m_checkedIcon.pixmap(12, 10);
-        p.setDevicePixelRatio(qApp->devicePixelRatio());
-        m_checkLabel->setPixmap(p);
+        m_checkButton->setIcon(DStyle::SP_MarkElement);
     } else {
-        m_checkLabel->setPixmap(QPixmap());
+        m_checkButton->setIcon(QIcon());
     }
 }
 
