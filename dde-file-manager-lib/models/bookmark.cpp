@@ -78,9 +78,12 @@ bool BookMark::exists() const
         QString mountPointPath = mountPointUrl.path();
 
         if (mountPointUrl.scheme() == DEVICE_SCHEME && mountPointPath.startsWith("/dev")) {
-            mountPointPath.replace("dev", "org/freedesktop/UDisks2/block_devices");
-            udisksDBusPath = mountPointPath;
-            QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(mountPointPath));
+            QStringList paths = DDiskManager::resolveDeviceNode(mountPointUrl.path(),{});
+            if (paths.isEmpty()) {
+                return false;
+            }
+            udisksDBusPath = paths.first();
+            QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(udisksDBusPath));
             udisksMountPoint.clear();
             for (auto& mp : blDev->mountPoints()) {
                 QString mps(mp);
