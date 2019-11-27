@@ -603,7 +603,8 @@ bool FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
         QFile::remove(DFMStandardPaths::location(DFMStandardPaths::TrashInfosPath) + QDir::separator() + QFileInfo(srcFilePath).fileName() + ".trashinfo");
     }
 
-    if(m_isJobAdded)
+    // 回收站恢复文件将多个fileJob合并为一个job，所以单个任务完成时不移除（会导致taskdialog被关闭）,在外部手动调用jobRemoved();
+    if(m_isJobAdded && !m_isManualRemoveJob)
         jobRemoved();
     emit finished();
     qDebug() << "Do restore trash file is done!";
@@ -945,7 +946,8 @@ void FileJob::jobAdded()
 
 void FileJob::jobRemoved()
 {
-    emit requestJobRemoved(m_jobDetail);
+    if (m_isJobAdded)
+        emit requestJobRemoved(m_jobDetail);
 }
 
 void FileJob::jobAborted()
@@ -1013,6 +1015,11 @@ bool FileJob::getIsCoExisted() const
 void FileJob::setIsCoExisted(bool isCoExisted)
 {
     m_isCoExisted = isCoExisted;
+}
+
+void FileJob::setManualRemoveJob(bool manual)
+{
+    m_isManualRemoveJob = manual;
 }
 
 bool FileJob::getIsSkip() const

@@ -287,15 +287,23 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
         return true; // job already existed
     }
 
-    FileJob job(FileJob::Restore);
-    job.setProperty("pathlist", pathlist);
-    dialogManager->addJob(&job);
+    struct ScopedPointerCustomDeleter{
+        static inline void cleanup(FileJob *job)
+        {
+            job->jobRemoved();
+            dialogManager->removeJob(job->getJobId());
+            job->deleteLater();
+        }
+    };
+    QScopedPointer<FileJob, ScopedPointerCustomDeleter> job(new FileJob(FileJob::Restore));
+    job->setProperty("pathlist", pathlist);
+    job->setManualRemoveJob(true);
+    dialogManager->addJob(job.data());
     for (const DUrl &url : urlist) {
 
         if (url == DUrl::fromTrashFile("/")) {
             // restore all
             DUrlList list;
-            dialogManager->removeJob(job.getJobId());
 
             for (const DAbstractFileInfoPointer &info : DFileService::instance()->getChildren(Q_NULLPTR, DUrl::fromTrashFile("/"), QStringList(), QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System))
                 list << info->fileUrl();
@@ -311,9 +319,9 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
         //            如果直接定义一个TrashFileInfo对象，就可能存在对象被重复释放
         QExplicitlySharedDataPointer<TrashFileInfo> info(new TrashFileInfo(url));
 
-        bool ret = info->restore(&job);
-        if (!job.getIsApplyToAll()) {
-            job.resetCustomChoice(); // if not apply to all we should reset button state
+        bool ret = info->restore(job.data());
+        if (!job->getIsApplyToAll()) {
+            job->resetCustomChoice(); // if not apply to all we should reset button state
         }
 
         if (!ret && info->exists()) {
@@ -324,7 +332,6 @@ bool TrashManager::restoreTrashFile(const DUrlList &list, DUrlList *restoreOrigi
 
         ok = ok && ret;
     }
-    dialogManager->removeJob(job.getJobId());
 
     if (!ok && restoreFailedList.count() > 0){
         emit fileSignalManager->requestShowRestoreFailedDialog(restoreFailedList);

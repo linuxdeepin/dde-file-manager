@@ -110,6 +110,9 @@ public:
     bool getIsCoExisted() const;
     void setIsCoExisted(bool isCoExisted);
 
+    bool getIsManualRemoveJob() const { return m_isManualRemoveJob; }
+    void setManualRemoveJob(bool manual);
+
     int getWindowId();
     void setWindowId(int windowId);
 
@@ -224,6 +227,7 @@ private:
     int m_filedes[2] = {0, 0};
     bool m_isInSameDisk = true;
     bool m_isFinished = false;
+    bool m_isManualRemoveJob = false; // 手动外部调用removejob，回收站回收多个文件作为一个任务时，处理完手动调用jobRemoved()
 
     GCancellable* m_abortGCancellable = NULL;
 
