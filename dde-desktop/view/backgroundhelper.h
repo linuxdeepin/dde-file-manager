@@ -47,6 +47,12 @@ public:
     void setBackground(const QString &path);
     void setVisible(bool visible);
     void resetBackgroundVisibleState();
+#ifdef QT_DEBUG
+    void printLog();
+    void printLog(int index);
+    void mapLabelScreen(int labelIndex, int screenIndex);
+    void enableAdjustScreen(bool enable);
+#endif //QT_DEBUG
 
 Q_SIGNALS:
     void aboutDestoryBackground(QWidget *l);

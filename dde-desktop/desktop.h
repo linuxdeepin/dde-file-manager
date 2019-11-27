@@ -41,6 +41,12 @@ public slots:
     void Show();
     void ShowWallpaperChooser();
     void ShowScreensaverChooser();
+#ifdef QT_DEBUG
+    void logAllScreenLabel();
+    void logScreenLabel(int index);
+    void mapLabelScreen(int labelIndex, int screenIndex);
+    void enableAdjustScreen(bool enable);
+#endif // QT_DEBUG
 
 private:
     explicit Desktop();
