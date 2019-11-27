@@ -226,6 +226,22 @@ void BackgroundHelper::updateBackground(QWidget *l)
         return;
 
     QScreen *s = l->windowHandle()->screen();
+    if (l->property("myScreen").toString()!=s->name()) {
+        // 当l->windowHandle()->screen()和原始绑定screen的不对会造成位置不对， 多屏幕是会造成label重叠，有的屏幕为黑屏没有壁纸。
+        qWarning() << "label's Screen changed somewhere";
+        for (QScreen * screen : qGuiApp->screens()) {
+            if (screen->name() == l->property("myScreen").toString()
+#ifdef QT_DEBUG
+                    && l->property("enableAdjustScreen").toBool()
+#endif
+                    ) {
+                l->windowHandle()->setScreen(screen);
+                qWarning() << "setScreen(" << screen->name() << ")";
+                break;
+            }
+        }
+    }
+
     l->windowHandle()->handle()->setGeometry(s->handle()->geometry());
 
     const QSize trueSize = s->handle()->geometry().size();
@@ -268,6 +284,7 @@ void BackgroundHelper::updateBackground()
 void BackgroundHelper::onScreenAdded(QScreen *screen)
 {
     BackgroundLabel *l = new BackgroundLabel();
+    l->setProperty("myScreen",screen->name()); // assert screen->name is unique
 
     backgroundMap[screen] = l;
 
@@ -335,7 +352,6 @@ void BackgroundHelper::updateBackgroundGeometry(QScreen *screen, BackgroundLabel
     l->windowHandle()->handle()->setGeometry(screen->handle()->geometry());
     QHighDpiScaling::m_active = hi_active;
     updateBackground(l);
-
 }
 
 void BackgroundHelper::resetBackgroundVisibleState()
@@ -345,3 +361,71 @@ void BackgroundHelper::resetBackgroundVisibleState()
         l->show();
     }
 }
+#ifdef QT_DEBUG
+void BackgroundHelper::printLog()
+{
+    qDebug() << "\n************************\n";
+    for (QScreen * screen : qGuiApp->screens()) {
+        BackgroundLabel * l = backgroundMap.value(screen);
+        qDebug() << screen->name() << "\n"<<
+                 "handle->geometry" <<screen->handle()->geometry() <<"\n"<<
+                  "\r\n----------------------\r\n" <<
+                  "label.screen" << l->windowHandle()->handle()->screen()->name()<<
+                  "label geo" << l->windowHandle()->handle()->geometry();
+    }
+    qDebug() << "\n************************\n" <<
+                "backgroundMap.size() " << backgroundMap.size() <<
+                "\n************************\n";
+     for (BackgroundLabel *l : backgroundMap) {
+         qDebug() << "\r\n" << l << "l->isvisible" << l->isVisible() <<
+                     "property.myScreen" << l->property("myScreen") <<
+                     "\r\nlabel.screen" << l->windowHandle()->handle()->screen()->name()<<
+                     "label geo" << l->windowHandle()->handle()->geometry();
+
+     }
+     qDebug() << "\n************************\n";
+}
+
+void BackgroundHelper::printLog(int index)
+{
+     QList<QWidget*> backgrounds = allBackgrounds();
+     QWidget *l = backgrounds.value(index);
+     if (l) {
+         qDebug() << l << "\nl->isvisible" << l->isVisible() <<
+                     "property.myScreen" << l->property("myScreen") <<
+                     "label.screen" << l->windowHandle()->handle()->screen()->name()<<
+                     "label geo" << l->windowHandle()->handle()->geometry();
+     } else {
+         qWarning() << "invalid index" << "backgrounds.size" << backgrounds.size();
+     }
+}
+
+void BackgroundHelper::mapLabelScreen(int labelIndex, int screenIndex)
+{
+    QList<QWidget*> backgrounds = allBackgrounds();
+    QWidget *l = backgrounds.value(labelIndex);
+    if (!l) {
+        qWarning() << "invalid index" << "backgrounds.size" << backgrounds.size();
+        return;
+    }
+    QScreen *screen = qGuiApp->screens().value(screenIndex);
+    if (!screen) {
+        qWarning() << "invalid index" << "screens.size" << qGuiApp->screens().size();
+        return;
+    }
+
+    if (l->windowHandle()->screen()!=screen) {
+        l->windowHandle()->setScreen(screen);
+    }
+
+    updateBackgroundGeometry(screen, static_cast<BackgroundLabel *>(l));
+}
+
+void BackgroundHelper::enableAdjustScreen(bool enable)
+{
+    QList<QWidget*> backgrounds = allBackgrounds();
+    for (QWidget *l : backgrounds) {
+        l->setProperty("enableAdjustScreen", enable);
+    }
+}
+#endif //QT_DEBUG

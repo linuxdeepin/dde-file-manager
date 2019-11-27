@@ -223,3 +223,29 @@ void Desktop::ShowScreensaverChooser()
 {
     showWallpaperSettings(Frame::ScreenSaverMode);
 }
+
+#ifdef QT_DEBUG
+void Desktop::logAllScreenLabel()
+{
+    if (d->background)
+        d->background->printLog();
+}
+
+void Desktop::logScreenLabel(int index)
+{
+    if (d->background)
+        d->background->printLog(index);
+}
+
+void Desktop::mapLabelScreen(int labelIndex, int screenIndex)
+{
+    if (d->background)
+        d->background->mapLabelScreen(labelIndex, screenIndex);
+}
+
+void Desktop::enableAdjustScreen(bool enable)
+{
+    if (d->background)
+        d->background->enableAdjustScreen(enable);
+}
+#endif // QT_DEBUG
