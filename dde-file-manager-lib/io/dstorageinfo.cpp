@@ -228,7 +228,8 @@ bool DStorageInfo::isLowSpeedDevice() const
     return device.startsWith("mtp://")
             || device.startsWith("gphoto://")
             || device.startsWith("gphoto2://")
-            || device.startsWith("smb-share://");
+            || device.startsWith("smb-share://")
+            || device.startsWith("smb://");
 }
 
 bool DStorageInfo::isValid() const
@@ -315,7 +316,7 @@ bool DStorageInfo::isLocalDevice(const QString &path)
 
 bool DStorageInfo::isLowSpeedDevice(const QString &path)
 {
-    static QRegularExpression regExp("^/run/user/\\d+/gvfs/(?'scheme'\\w+):.+/",
+    static QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):.+/",
                                      QRegularExpression::DotMatchesEverythingOption
                                      | QRegularExpression::DontCaptureOption
                                      | QRegularExpression::OptimizeOnFirstUsageOption);
