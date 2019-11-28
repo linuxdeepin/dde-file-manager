@@ -41,6 +41,7 @@ public:
     mutable qint8 lowSpeedFile = -1;
     mutable qint8 cacheFileExists = -1;
     mutable qint8 cacheCanRename = -1;
+    mutable qint8 cacheIsSymLink = -1;
     bool gvfsMountFile = false;
 
     mutable QVariantHash extraProperties;

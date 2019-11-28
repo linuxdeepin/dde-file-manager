@@ -478,6 +478,11 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
             }, blk->drive());
             return;
         }
+        // 断网时mount Samba无效
+        if (blk->device().isEmpty()) {
+            qWarning() << "blockDevice is invalid, fileurl is " << fileUrl;
+            return;
+        }
 
         DUrl q;
         q.setQuery(blk->device());

@@ -609,6 +609,13 @@ bool DFileInfo::isSymLink() const
 {
     Q_D(const DFileInfo);
 
+    if (d->isLowSpeedFile() && d->cacheIsSymLink < 0) {
+        d->cacheIsSymLink = d->fileInfo.isSymLink();
+    }
+
+    if (d->cacheIsSymLink >= 0)
+        return d->cacheIsSymLink!=0;
+
     return d->fileInfo.isSymLink();
 }
 

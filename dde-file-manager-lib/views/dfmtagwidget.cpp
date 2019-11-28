@@ -30,6 +30,7 @@
 #include <QVBoxLayout>
 #include <dabstractfilewatcher.h>
 #include <QScrollBar>
+#include <dstorageinfo.h>
 DFM_BEGIN_NAMESPACE
 
 class DFMCrumbEdit : public DCrumbEdit{
@@ -274,7 +275,7 @@ DCrumbEdit *DFMTagWidget::tagCrumbEdit()
 bool DFMTagWidget::shouldShow(const DUrl& url)
 {
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, url);
-    if (!fileInfo || fileInfo->isVirtualEntry())
+    if (!fileInfo || fileInfo->isVirtualEntry() || DStorageInfo::isLowSpeedDevice(url.toAbsolutePathUrl().path()))
         return false;
 
     bool isComputerOrTrash = false;
