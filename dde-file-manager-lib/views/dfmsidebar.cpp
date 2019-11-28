@@ -597,6 +597,23 @@ void DFMSideBar::initDeviceConnection()
         }
     });
     connect(devicesWatcher, &DAbstractFileWatcher::fileDeleted, this, [this](const DUrl &url) {
+        int index = findItem(url, groupName(Device));
+        if (m_sidebarView->currentIndex().row() == index) {
+            int i = 1;
+            DFMSideBarItem * item = m_sidebarModel->itemFromIndex(index-i);
+            while (item && item->itemType() == DFMSideBarItem::Separator) {
+                ++i;
+                item = m_sidebarModel->itemFromIndex(index-i);
+            }
+
+            if (item) {
+                QString identifierStr = item->registeredHandler(SIDEBAR_ID_INTERNAL_FALLBACK);
+                QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
+                if (interface) {
+                    interface->cdAction(this, item);
+                }
+            }
+        }
         this->removeItem(url, this->groupName(Device));
         devitems.removeAll(url);
     });
