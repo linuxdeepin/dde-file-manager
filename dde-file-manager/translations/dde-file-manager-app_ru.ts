@@ -8,8 +8,12 @@
     </message>
     <message>
         <location filename="../main.cpp" line="112"/>
+        <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
-        <translation>Файловый Менеджер представляет собой инструмент для самостоятельного управления файлами, разработанный Deepin Technology, с функциями поиска, копирования, удаления, компрессии / декомпрессии, свойств файла и другими функциями управления файлами.</translation>
+        <translation type="vanished">Файловый Менеджер представляет собой инструмент для самостоятельного управления файлами, разработанный Deepin Technology, с функциями поиска, копирования, удаления, компрессии / декомпрессии, свойств файла и другими функциями управления файлами.</translation>
     </message>
 </context>
 </TS>

@@ -93,17 +93,17 @@
 <context>
     <name>QCoreApplication</name>
     <message>
-        <location filename="../utils/udisksutils.cpp" line="55"/>
+        <location filename="../utils/udisksutils.cpp" line="54"/>
         <source>System Disk</source>
         <translation>دیسک سیستم</translation>
     </message>
     <message>
-        <location filename="../utils/udisksutils.cpp" line="59"/>
+        <location filename="../utils/udisksutils.cpp" line="58"/>
         <source>%1 Encrypted</source>
         <translation>%1 رمزگذاری شده</translation>
     </message>
     <message>
-        <location filename="../utils/udisksutils.cpp" line="61"/>
+        <location filename="../utils/udisksutils.cpp" line="60"/>
         <source>%1 Volume</source>
         <translation>%1 حجم</translation>
     </message>

@@ -2,42 +2,42 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2445"/>
+        <location filename="../view/canvasgridview.cpp" line="2451"/>
         <source>Icon size</source>
         <translation>आइकन का आकार</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2451"/>
+        <location filename="../view/canvasgridview.cpp" line="2457"/>
         <source>Auto merge</source>
         <translation>स्वतः विलय</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2466"/>
+        <location filename="../view/canvasgridview.cpp" line="2472"/>
         <source>Auto arrange</source>
         <translation>स्वतः क्रमबद्ध</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2522"/>
+        <location filename="../view/canvasgridview.cpp" line="2528"/>
         <source>Set Wallpaper</source>
         <translation>वॉलपेपर सेट करें</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2524"/>
+        <location filename="../view/canvasgridview.cpp" line="2530"/>
         <source>Wallpaper and Screensaver</source>
         <translation>वॉलपेपर व स्क्रीनसेवर</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2608"/>
+        <location filename="../view/canvasgridview.cpp" line="2614"/>
         <source>Properties</source>
         <translation>विशेषताएँ</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2506"/>
+        <location filename="../view/canvasgridview.cpp" line="2512"/>
         <source>Display Settings</source>
         <translation>डिस्प्ले सेटिंग्स</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2515"/>
+        <location filename="../view/canvasgridview.cpp" line="2521"/>
         <source>Corner Settings</source>
         <translation>स्क्रीन के कोनों की सेटिंग्स</translation>
     </message>
@@ -81,57 +81,57 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="430"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="434"/>
         <source>Wallpaper Slideshow</source>
         <translation>वॉलपेपर स्लाइड शो</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="458"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="463"/>
         <source>When login</source>
         <translation>लॉगिन के समय</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="460"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="465"/>
         <source>When wakeup</source>
         <translation>चालू होते समय</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="504"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="509"/>
         <source>Require a password on wakeup</source>
         <translation>चालू होने पर कूटशब्द अनिवार्य करें</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="531"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="536"/>
         <source>Never</source>
         <translation>कभी नहीं</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="532"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="537"/>
         <source>Wait:</source>
         <translation>प्रतीक्षा :</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="562"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="567"/>
         <source>Wallpaper</source>
         <translation>वॉलपेपर</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="563"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="568"/>
         <source>Screensaver</source>
         <translation>स्क्रीनसेवर</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="632"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="639"/>
         <source>Only desktop</source>
         <translation>केवल डेस्कटॉप</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="633"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="640"/>
         <source>Only lock screen</source>
         <translation>केवल लॉक स्क्रीन</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="661"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="668"/>
         <source>Apply</source>
         <translation>लागू करें</translation>
     </message>
@@ -144,9 +144,8 @@
         <translation>त्वरित स्क्रीन बंद</translation>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Control Center</source>
-        <translation>नियंत्रण केंद्र</translation>
+        <translation type="vanished">नियंत्रण केंद्र</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
@@ -169,7 +168,7 @@
         <translation>कुछ नहीं</translation>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="59"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="58"/>
         <source>Close Window</source>
         <translation>विंडो बंद करें</translation>
     </message>

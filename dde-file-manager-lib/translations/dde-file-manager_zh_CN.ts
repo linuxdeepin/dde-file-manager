@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -119,27 +117,27 @@
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="48"/>
         <source>Connect to Server</source>
-        <translation type="unfinished"></translation>
+        <translation>连接到服务器</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="153"/>
         <source>Cancel</source>
-        <translation type="unfinished">取消</translation>
+        <translation>取消</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="153"/>
         <source>Connect</source>
-        <translation type="unfinished">连接</translation>
+        <translation>连接</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="161"/>
         <source>My Favorites:</source>
-        <translation type="unfinished"></translation>
+        <translation>个人收藏服务器</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="204"/>
         <source>Clear History</source>
-        <translation type="unfinished"></translation>
+        <translation>清除最近使用的服务器</translation>
     </message>
 </context>
 <context>
@@ -845,7 +843,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1113"/>
         <source>3. Reboot and enter %1</source>
-        <translation type="unfinished"></translation>
+        <translation>3. 重启时选择%1</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1329"/>
@@ -1335,7 +1333,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="251"/>
         <location filename="../configure/global-setting-template.js" line="250"/>
         <source>Use the file chooser dialog of File Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>使用文件管理器的文件选择对话框</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="259"/>
@@ -2283,7 +2281,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="541"/>
         <source>Connect to Server</source>
-        <translation type="unfinished"></translation>
+        <translation>连接到服务器</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="542"/>

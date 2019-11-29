@@ -2,42 +2,42 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2445"/>
+        <location filename="../view/canvasgridview.cpp" line="2451"/>
         <source>Icon size</source>
         <translation>Simge boyutu</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2451"/>
+        <location filename="../view/canvasgridview.cpp" line="2457"/>
         <source>Auto merge</source>
         <translation>Otomatik birleştir</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2466"/>
+        <location filename="../view/canvasgridview.cpp" line="2472"/>
         <source>Auto arrange</source>
         <translation>Otomatik hizala</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2522"/>
+        <location filename="../view/canvasgridview.cpp" line="2528"/>
         <source>Set Wallpaper</source>
         <translation>Duvar Kağıdını Ayarla</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2524"/>
+        <location filename="../view/canvasgridview.cpp" line="2530"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Duvar Kağıdı ve Ekran Koruyucu</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2608"/>
+        <location filename="../view/canvasgridview.cpp" line="2614"/>
         <source>Properties</source>
         <translation>Özellikler</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2506"/>
+        <location filename="../view/canvasgridview.cpp" line="2512"/>
         <source>Display Settings</source>
         <translation>Görüntü Ayarları</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2515"/>
+        <location filename="../view/canvasgridview.cpp" line="2521"/>
         <source>Corner Settings</source>
         <translation>Köşe Ayarları</translation>
     </message>
@@ -81,57 +81,57 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="430"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="434"/>
         <source>Wallpaper Slideshow</source>
         <translation>Duvar Kağıdı Slayt Gösterisi</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="458"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="463"/>
         <source>When login</source>
         <translation>Oturum açıldığında</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="460"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="465"/>
         <source>When wakeup</source>
         <translation>Uykudan uyanıldığında</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="504"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="509"/>
         <source>Require a password on wakeup</source>
         <translation>Uyanıldığında parola sor</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="531"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="536"/>
         <source>Never</source>
         <translation>Asla</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="532"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="537"/>
         <source>Wait:</source>
         <translation>Bekleme:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="562"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="567"/>
         <source>Wallpaper</source>
         <translation>Duvar Kağıdı</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="563"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="568"/>
         <source>Screensaver</source>
         <translation>Ekran Koruyucu</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="632"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="639"/>
         <source>Only desktop</source>
         <translation>Sadece masaüstü</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="633"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="640"/>
         <source>Only lock screen</source>
         <translation>Sadece kilit ekranı</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="661"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="668"/>
         <source>Apply</source>
         <translation>Uygula</translation>
     </message>
@@ -144,9 +144,8 @@
         <translation>Hızlı Ekran Kapalı</translation>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
         <source>Control Center</source>
-        <translation>Kontrol Merkezi</translation>
+        <translation type="vanished">Kontrol Merkezi</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="55"/>
@@ -169,7 +168,7 @@
         <translation>Yok</translation>
     </message>
     <message>
-        <location filename="../../dde-zone/mainwindow.cpp" line="59"/>
+        <location filename="../../dde-zone/mainwindow.cpp" line="58"/>
         <source>Close Window</source>
         <translation>Pencereyi Kapat</translation>
     </message>
