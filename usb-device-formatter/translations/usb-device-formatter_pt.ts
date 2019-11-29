@@ -4,7 +4,7 @@
     <message>
         <location filename="../view/finishpage.cpp" line="42"/>
         <source>Format successful</source>
-        <translation>Formatação bem sucedida</translation>
+        <translation>Formatação concluída</translation>
     </message>
 </context>
 <context>
@@ -25,17 +25,17 @@
     <message>
         <location filename="../view/mainpage.cpp" line="137"/>
         <source>Label</source>
-        <translation>Etiqueta</translation>
+        <translation>Etiqueta do volume</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="146"/>
         <source>Quick Format</source>
-        <translation>Formatação rápida</translation>
+        <translation>Formatação Rápida</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="163"/>
         <source>Formatting will erase all data on the disk.</source>
-        <translation>A formatação irá eliminar todos os dados no disco.</translation>
+        <translation>A formatação irá apagar todos os dados no disco.</translation>
     </message>
 </context>
 <context>
@@ -74,7 +74,7 @@
     <message>
         <location filename="../view/mainwindow.cpp" line="203"/>
         <source>Failed to format the device</source>
-        <translation>Falha ao formatar o dispositivo</translation>
+        <translation>Erro ao formatar o dispositivo</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="204"/>
@@ -93,17 +93,17 @@
 <context>
     <name>QCoreApplication</name>
     <message>
-        <location filename="../utils/udisksutils.cpp" line="55"/>
+        <location filename="../utils/udisksutils.cpp" line="54"/>
         <source>System Disk</source>
         <translation>Disco do Sistema</translation>
     </message>
     <message>
-        <location filename="../utils/udisksutils.cpp" line="59"/>
+        <location filename="../utils/udisksutils.cpp" line="58"/>
         <source>%1 Encrypted</source>
         <translation>%1  Encriptado</translation>
     </message>
     <message>
-        <location filename="../utils/udisksutils.cpp" line="61"/>
+        <location filename="../utils/udisksutils.cpp" line="60"/>
         <source>%1 Volume</source>
         <translation>%1 Volume</translation>
     </message>
@@ -113,7 +113,7 @@
     <message>
         <location filename="../main.cpp" line="112"/>
         <source>Device does not exist</source>
-        <translation>Dispositivo inexistente</translation>
+        <translation>O dispositivo não existe</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="121"/>
@@ -130,7 +130,7 @@
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
         <source>Formatting will erase all data on this disk, are you sure you want to continue? It cannot be restored.</source>
-        <translation>A formatação irá eliminar todos os dados neste disco, Tem a certeza que deseja continuar? Esta operação é irreversível.</translation>
+        <translation>A formatação apagará todos os dados neste disco. Tem a certeza que deseja continuar? Esta operação é irreversível.</translation>
     </message>
 </context>
 </TS>

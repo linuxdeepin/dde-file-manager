@@ -4,7 +4,7 @@
     <message>
         <location filename="../view/finishpage.cpp" line="42"/>
         <source>Format successful</source>
-        <translation>Успешно форматирано</translation>
+        <translation>Успешно форматирање</translation>
     </message>
 </context>
 <context>
@@ -93,17 +93,17 @@
 <context>
     <name>QCoreApplication</name>
     <message>
-        <location filename="../utils/udisksutils.cpp" line="55"/>
+        <location filename="../utils/udisksutils.cpp" line="54"/>
         <source>System Disk</source>
         <translation>Системски диск</translation>
     </message>
     <message>
-        <location filename="../utils/udisksutils.cpp" line="59"/>
+        <location filename="../utils/udisksutils.cpp" line="58"/>
         <source>%1 Encrypted</source>
         <translation>%1 Шифровано</translation>
     </message>
     <message>
-        <location filename="../utils/udisksutils.cpp" line="61"/>
+        <location filename="../utils/udisksutils.cpp" line="60"/>
         <source>%1 Volume</source>
         <translation>%1 Логички диск</translation>
     </message>

@@ -2,8 +2,8 @@
 <context>
     <name>DeepinStorage</name>
     <message>
-        <location filename="../dattachedudisks2device.cpp" line="94"/>
-        <location filename="../dattachedudisks2device.cpp" line="109"/>
+        <location filename="../dattachedudisks2device.cpp" line="100"/>
+        <location filename="../dattachedudisks2device.cpp" line="115"/>
         <source>%1 Volume</source>
         <translation>%1 Объём</translation>
     </message>
@@ -12,10 +12,10 @@
     <name>DiskControlWidget</name>
     <message>
         <location filename="../diskcontrolwidget.cpp" line="176"/>
-        <location filename="../diskcontrolwidget.cpp" line="235"/>
-        <location filename="../diskcontrolwidget.cpp" line="392"/>
+        <location filename="../diskcontrolwidget.cpp" line="240"/>
+        <location filename="../diskcontrolwidget.cpp" line="400"/>
         <source>Disk is busy, cannot eject now</source>
-        <translation type="unfinished"/>
+        <translation> Диск занят и не может быть извлечён сейчас</translation>
     </message>
 </context>
 <context>
@@ -39,7 +39,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="327"/>
+        <location filename="../diskcontrolwidget.cpp" line="335"/>
         <source>Device has been removed</source>
         <translation>Устройство было удалено</translation>
     </message>

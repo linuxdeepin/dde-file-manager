@@ -93,17 +93,17 @@
 <context>
     <name>QCoreApplication</name>
     <message>
-        <location filename="../utils/udisksutils.cpp" line="55"/>
+        <location filename="../utils/udisksutils.cpp" line="54"/>
         <source>System Disk</source>
         <translation>시스템 디스크</translation>
     </message>
     <message>
-        <location filename="../utils/udisksutils.cpp" line="59"/>
+        <location filename="../utils/udisksutils.cpp" line="58"/>
         <source>%1 Encrypted</source>
         <translation>%1 암호화</translation>
     </message>
     <message>
-        <location filename="../utils/udisksutils.cpp" line="61"/>
+        <location filename="../utils/udisksutils.cpp" line="60"/>
         <source>%1 Volume</source>
         <translation>%1 볼륨</translation>
     </message>

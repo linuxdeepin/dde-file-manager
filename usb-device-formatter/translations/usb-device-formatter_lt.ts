@@ -93,17 +93,17 @@
 <context>
     <name>QCoreApplication</name>
     <message>
-        <location filename="../utils/udisksutils.cpp" line="55"/>
+        <location filename="../utils/udisksutils.cpp" line="54"/>
         <source>System Disk</source>
         <translation>Sistemos diskas</translation>
     </message>
     <message>
-        <location filename="../utils/udisksutils.cpp" line="59"/>
+        <location filename="../utils/udisksutils.cpp" line="58"/>
         <source>%1 Encrypted</source>
         <translation>Šifruotas %1</translation>
     </message>
     <message>
-        <location filename="../utils/udisksutils.cpp" line="61"/>
+        <location filename="../utils/udisksutils.cpp" line="60"/>
         <source>%1 Volume</source>
         <translation>%1 tomas</translation>
     </message>
@@ -130,7 +130,7 @@
     <message>
         <location filename="../view/warnpage.cpp" line="43"/>
         <source>Formatting will erase all data on this disk, are you sure you want to continue? It cannot be restored.</source>
-        <translation>Formatavimas ištrins visus šiame diske esančius duomenis, ar tikrai norite tęsti? Duomenų neįmanoma bus atkurti.</translation>
+        <translation>Formatavimas ištrins visus šiame diske esančius duomenis, ar tikrai norite tęsti? Duomenų bus nebeįmanoma atkurti.</translation>
     </message>
 </context>
 </TS>
