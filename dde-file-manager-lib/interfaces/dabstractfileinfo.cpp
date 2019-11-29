@@ -776,7 +776,6 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                    << MenuAction::Separator
                    << MenuAction::DisplayAs
                    << MenuAction::SortBy
-                   << MenuAction::OpenAsAdmin
                    << MenuAction::OpenInTerminal
                    << MenuAction::Separator
                    << MenuAction::Paste
@@ -805,7 +804,6 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             actionKeys << MenuAction::CreateSymlink
                        << MenuAction::SendToDesktop
                        << MenuAction::Separator
-                       << MenuAction::OpenAsAdmin
                        << MenuAction::OpenInTerminal
                        << MenuAction::Separator;
 
@@ -896,7 +894,6 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                 }
 
                 actionKeys << MenuAction::Separator
-                           << MenuAction::OpenAsAdmin
                            << MenuAction::OpenInTerminal
                            << MenuAction::Separator;
             } else if (isFile()) {
