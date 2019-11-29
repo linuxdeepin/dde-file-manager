@@ -80,6 +80,7 @@
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QScreen>
+#include <DSysInfo>
 
 DTK_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -1109,7 +1110,7 @@ void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
 
                     QString message1 = tr("1. Reboot to enter Windows");
                     QString message2 = tr("2. Uncheck \"Turn on fast startup\" and \"Hibernate\" in shutdown settings and reboot");
-                    QString message3 = tr("3. Reboot and enter deepin");
+                    QString message3 = tr("3. Reboot and enter %1").arg(DSysInfo::distributionOrgName());
 
                     messageLabel->setText(QString("%1\n%2\n%3").arg(message1, message2, message3));
 
