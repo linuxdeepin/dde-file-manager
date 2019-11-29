@@ -147,7 +147,7 @@ void ComputerPropertyDialog::initUI()
 
     mainLayout->addWidget(baseInfoFrame);
 
-    setFixedSize(320, 400);
+    setFixedWidth(320);
     contentFrame->setLayout(mainLayout);
 
     addContent(contentFrame);
