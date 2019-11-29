@@ -248,7 +248,7 @@
                     "options": [
                         {
                             "key": "default_chooser_dialog",
-                            "text": qsTranslate("GenerateSettingTranslate", "Use the file chooser dialog of Deepin File Manager"),
+                            "text": qsTranslate("GenerateSettingTranslate", "Use the file chooser dialog of File Manager"),
                             "type": "checkbox",
                             "default": true
                         }

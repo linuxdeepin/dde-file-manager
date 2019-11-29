@@ -109,10 +109,11 @@ int main(int argc, char *argv[])
     app.setApplicationVersion(DApplication::buildVersion((QMAKE_VERSION)));
     app.setProductIcon(QIcon::fromTheme("dde-file-manager"));
     app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" + qApp->applicationName());
-    app.setApplicationDescription(app.translate("Application", "File Manager is a file management tool independently "
-                                                               "developed by Deepin Technology, featured with searching, "
-                                                               "copying, trash, compression/decompression, file property "
-                                                               "and other file management functions."));
+    app.setApplicationDescription(app.translate("Application", "File Manager is a powerful and"
+                                                               "easy-to-use file management tool,"
+                                                               "featured with searching, copying, "
+                                                               "trash, compression/decompression, file property"
+                                                               "and other useful functions."));
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
 #ifdef DISABLE_QUIT_ON_LAST_WINDOW_CLOSED
