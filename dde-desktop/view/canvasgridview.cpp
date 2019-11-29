@@ -1693,9 +1693,13 @@ static inline QList<QRect> wm_strut_partial_rect_list(xcb_ewmh_wm_strut_partial_
     strutRectList << topStruct;
 
     // bottom
+    qreal ratio = qApp->devicePixelRatio();
+    Q_ASSERT(ratio>0);
     auto bottom = static_cast<int>(st.bottom);
+    bottom /= ratio;
     auto bottom_start = static_cast<int>(st.bottom_start_x);
     auto bottom_end = static_cast<int>(st.bottom_end_x);
+    bottom_end /= ratio;
     QRect bottomStruct = QRect(bottom_start, h - bottom, bottom_end - bottom_start, bottom);
     bottomStruct.setX(0);
     bottomStruct.setWidth(w);
@@ -1789,6 +1793,9 @@ static inline QRect getValidNewGeometry(const QRect &geometry, const QRect &oldG
 
 void CanvasGridView::initUI()
 {
+#ifdef QT_DEBUG
+    EnableUIDebug();
+#endif
     d->dbusDock = new DBusDock(this);
 
     setAttribute(Qt::WA_TranslucentBackground);
