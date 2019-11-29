@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="en">
 <context>
     <name>FinishPage</name>
     <message>
@@ -93,17 +95,17 @@
 <context>
     <name>QCoreApplication</name>
     <message>
-        <location filename="../utils/udisksutils.cpp" line="55"/>
+        <location filename="../utils/udisksutils.cpp" line="54"/>
         <source>System Disk</source>
         <translation>System Disk</translation>
     </message>
     <message>
-        <location filename="../utils/udisksutils.cpp" line="59"/>
+        <location filename="../utils/udisksutils.cpp" line="58"/>
         <source>%1 Encrypted</source>
         <translation>%1 Encrypted</translation>
     </message>
     <message>
-        <location filename="../utils/udisksutils.cpp" line="61"/>
+        <location filename="../utils/udisksutils.cpp" line="60"/>
         <source>%1 Volume</source>
         <translation>%1 Volume</translation>
     </message>
