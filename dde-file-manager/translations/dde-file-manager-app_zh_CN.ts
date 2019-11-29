@@ -10,7 +10,7 @@
     </message>
     <message>
         <location filename="../main.cpp" line="112"/>
-        <source>File Manager is a powerful andeasy-to-use file management tool,featured with searching, copying, trash, compression/decompression, file propertyand other useful functions.</source>
+        <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
