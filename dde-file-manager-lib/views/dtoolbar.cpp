@@ -31,6 +31,7 @@
 #include "dfmeventdispatcher.h"
 #include "dfmcrumbitem.h"
 #include "dfmaddressbar.h"
+#include "dfmiconbutton.h"
 
 #include "dfmevent.h"
 #include "app/define.h"
@@ -182,7 +183,7 @@ void DToolBar::initContollerToolBar()
 
 void DToolBar::initConnect()
 {
-    connect(m_detailButton, &QPushButton::clicked,this, &DToolBar::detailButtonClicked);
+    connect(m_detailButton, &QAbstractButton::clicked,this, &DToolBar::detailButtonClicked);
     connect(m_backButton, &DButtonBoxButton::clicked, this, &DToolBar::onBackButtonClicked);
     connect(m_forwardButton, &DButtonBoxButton::clicked, this, &DToolBar::onForwardButtonClicked);
     connect(m_crumbWidget, &DFMCrumbBar::addressBarContentEntered, this, &DToolBar::searchBarTextEntered);
