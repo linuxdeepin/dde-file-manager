@@ -101,6 +101,7 @@ private:
 #endif
     WallpaperList *m_wallpaperList = nullptr;
     QString m_desktopWallpaper;
+    QStringList m_needDeleteList;
     QString m_lockWallpaper;
     DIconButton * m_closeButton = nullptr;
 

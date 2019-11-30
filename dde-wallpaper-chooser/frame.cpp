@@ -122,7 +122,18 @@ Frame::Frame(Mode mode, QWidget *parent)
 
 Frame::~Frame()
 {
+    QStringList list = m_needDeleteList;
+    QTimer::singleShot(1000, [list](){
+        ComDeepinDaemonAppearanceInterface dbusAppearance(AppearanceServ,
+                                           AppearancePath,
+                                           QDBusConnection::sessionBus(),
+                                           nullptr);
 
+        for (const QString &path : list) {
+            dbusAppearance.Delete("background", path);
+            qDebug() << "delete background" << path;
+        }
+    });
 }
 
 void Frame::show()
@@ -200,7 +211,8 @@ void Frame::handleNeedCloseButton(QString path, QPoint pos)
         m_closeButton->disconnect();
 
         connect(m_closeButton, &DIconButton::clicked, this, [this, path] {
-            m_dbusAppearance->Delete("background", path);
+            m_dbusAppearance->Delete("background", path); // 当前自定义壁纸不一定能删成功
+            m_needDeleteList << path;
             m_wallpaperList->removeWallpaper(path);
             m_closeButton->hide();
         }, Qt::UniqueConnection);
@@ -631,8 +643,10 @@ void Frame::refreshList()
                 QDBusReply<QString> reply = call.reply();
                 QString value = reply.value();
                 QStringList strings = processListReply(value);
-
                 foreach (QString path, strings) {
+                    if (m_needDeleteList.contains(QUrl(path).path())) {
+                        continue;
+                    }
                     WallpaperItem * item = m_wallpaperList->addWallpaper(path);
                     item->setData(item->getPath());
                     item->setDeletable(m_deletableInfo.value(path));
@@ -689,6 +703,26 @@ void Frame::onItemPressed(const QString &data)
 
         m_desktopWallpaper = data;
         m_lockWallpaper = data;
+
+        // 点击当前壁纸不显示删除按钮
+        if (m_closeButton && m_closeButton->isVisible()) {
+            m_closeButton->hide();
+        }
+
+        {
+            for (int i=0;i<m_wallpaperList->count();++i) {
+                WallpaperItem *item = dynamic_cast<WallpaperItem *>(m_wallpaperList->item(i));
+                if (item) {
+                    bool isCustom = item->data().contains("custom-wallpapers");
+                    if (!isCustom) {
+                        continue;
+                    }
+                    bool isCurrent = m_backgroundHelper?(item->data()==m_backgroundHelper->background()):false;
+                    bool isDeletable = item->getDeletable();
+                    item->setDeletable(!isCurrent && (isDeletable || isCustom));
+                }
+            }
+        }
     }
 #ifndef DISABLE_SCREENSAVER
     else if (m_mode == ScreenSaverMode) {
