@@ -45,6 +45,7 @@ public:
     QList<QWidget*> allBackgrounds() const;
 
     void setBackground(const QString &path);
+    QString background() const {return currentWallpaper;}
     void setVisible(bool visible);
     void resetBackgroundVisibleState();
 #ifdef QT_DEBUG
