@@ -124,7 +124,6 @@ QList<QWidget *> BackgroundHelper::allBackgrounds() const
 void BackgroundHelper::setBackground(const QString &path)
 {
     qInfo() << "path:" << path;
-
     currentWallpaper = path.startsWith("file:") ? QUrl(path).toLocalFile() : path;
     backgroundPixmap = QPixmap(currentWallpaper);
 
@@ -268,14 +267,16 @@ void BackgroundHelper::updateBackground()
 {
     QString path = wmDBusIsValid() ? wmInter->GetCurrentWorkspaceBackground() : QString();
 
-    if (path.isEmpty()
+    if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())
             // 调用失败时会返回 "The name com.deepin.wm was not provided by any .service files"
             // 此时 wmInter->isValid() = true, 且 dubs last error type 为 NoError
             || (!path.startsWith("/") && !path.startsWith("file:"))) {
         path = gsettings->value("background-uris").toStringList().value(currentWorkspaceIndex);
 
-        if (path.isEmpty())
+        if (path.isEmpty()) {
+            qWarning() << "invalid path, will not setbackground";
             return;
+        }
     }
 
     setBackground(path);
