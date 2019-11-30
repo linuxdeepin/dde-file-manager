@@ -529,6 +529,8 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
 
     bool isEmptyArea = !index.isValid();
 
+    itemDelegate()->commitDataAndCloseActiveEditor();
+
     if (isEmptyArea) {
         if (!DFMGlobal::keyCtrlIsPressed() && !DFMGlobal::keyShiftIsPressed()) {
             itemDelegate()->hideNotEditingIndexWidget();
