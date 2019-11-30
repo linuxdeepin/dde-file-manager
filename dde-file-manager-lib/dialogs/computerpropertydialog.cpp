@@ -56,7 +56,7 @@ void ComputerPropertyDialog::initUI()
 {
     QLabel *iconLabel = new QLabel(this);
 
-    QString distributerLogoPath = DSysInfo::deepinDistributorLogo();
+    QString distributerLogoPath = DSysInfo::distributionOrgLogo();
     QIcon logoIcon;
     if (!distributerLogoPath.isEmpty() && QFile::exists(distributerLogoPath)) {
         logoIcon = QIcon(distributerLogoPath);
