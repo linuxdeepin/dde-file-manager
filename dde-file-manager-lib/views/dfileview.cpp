@@ -1123,11 +1123,8 @@ void DFileView::mousePressEvent(QMouseEvent *event)
         }
 
         const QModelIndex &index = indexAt(event->pos());
-        QWidget *editor = indexWidget(index);
-        // click other index or emptyArea we will commit data
-        if (!editor && itemDelegate()) {
-            itemDelegate()->commitDataAndCloseActiveEditor();
-        }
+
+        itemDelegate()->commitDataAndCloseActiveEditor();
 
         if (isEmptyArea) {
             if (!DFMGlobal::keyCtrlIsPressed()) {
