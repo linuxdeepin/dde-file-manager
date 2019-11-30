@@ -273,7 +273,8 @@ HEADERS += \
     views/dfmvaultfileview.h \
     views/dfmvaultrecoverykeypages.h \
     plugins/dfmadditionalmenu.h \
-    dialogs/connecttoserverdialog.h
+    dialogs/connecttoserverdialog.h \
+    views/dfmiconbutton.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -462,7 +463,8 @@ SOURCES += \
     views/dfmvaultfileview.cpp \
     views/dfmvaultrecoverykeypages.cpp \
     plugins/dfmadditionalmenu.cpp \
-    dialogs/connecttoserverdialog.cpp
+    dialogs/connecttoserverdialog.cpp \
+    views/dfmiconbutton.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h

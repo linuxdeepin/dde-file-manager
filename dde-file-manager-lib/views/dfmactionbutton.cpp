@@ -12,10 +12,9 @@
 #include <QApplication>
 
 DFMActionButton::DFMActionButton(QWidget *parent)
-    : DIconButton(parent)
+    : DFMIconButton(parent)
 {
     setMouseTracking(true);
-    setFlat(true);
 }
 
 void DFMActionButton::setAction(QAction *action)

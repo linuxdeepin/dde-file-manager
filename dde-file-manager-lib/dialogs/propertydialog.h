@@ -52,6 +52,7 @@ QT_END_NAMESPACE
 DWIDGET_BEGIN_NAMESPACE
 class DExpandGroup;
 class DBaseExpand;
+class DIconButton;
 DWIDGET_END_NAMESPACE
 
 class DAbstractFileInfo;

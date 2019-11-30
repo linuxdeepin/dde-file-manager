@@ -9,11 +9,11 @@
 #ifndef DFMACTIONBUTTON_H
 #define DFMACTIONBUTTON_H
 
-#include <DIconButton>
+#include "dfmiconbutton.h"
 
-DWIDGET_USE_NAMESPACE
+DFM_USE_NAMESPACE
 
-class DFMActionButton : public DIconButton
+class DFMActionButton : public DFMIconButton
 {
     Q_OBJECT
 
