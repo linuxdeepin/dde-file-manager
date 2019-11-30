@@ -181,6 +181,8 @@ bool DThumbnailProvider::hasThumbnail(const QFileInfo &info) const
 bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
 {
     const QString &mime = mimeType.name();
+    QStringList mimeTypeList = {mime};
+    mimeTypeList.append(mimeType.parentMimeTypes());
 
     if (mime.startsWith("image") && !DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewImage).toBool())
         return false;
@@ -192,7 +194,7 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
     if (mime == "text/plain" && !DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewTextFile).toBool())
         return false;
 
-    if (Q_LIKELY(mimeType.parentMimeTypes().contains("application/pdf")
+    if (Q_LIKELY(mimeTypeList.contains("application/pdf")
                  || mime == "application/cnd.rn-realmedia"
                  || mime == "application/mxf")
             && !DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewDocumentFile).toBool()) {
@@ -208,7 +210,7 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
         return true;
     }
 
-    if (Q_LIKELY(mime == "text/plain" || mimeType.parentMimeTypes().contains("application/pdf")
+    if (Q_LIKELY(mime == "text/plain" || mimeTypeList.contains("application/pdf")
 //            || mime == "application/vnd.adobe.flash.movie"
             || mime == "application/vnd.rn-realmedia"
             || mime == "application/vnd.ms-asf"
@@ -314,6 +316,9 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
     QMimeType mime = d->mimeDatabase.mimeTypeForFile(info);
     QScopedPointer<QImage> image(new QImage());
 
+    QStringList mimeTypeList = {mime.name()};
+    mimeTypeList.append(mime.parentMimeTypes());
+
     if (mime.name().startsWith("image/")) {
         mime = d->mimeDatabase.mimeTypeForFile(info, QMimeDatabase::MatchContent);
 
@@ -372,7 +377,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
 
         option.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
         painter.drawText(image->rect(), text, option);
-    } else if (mime.parentMimeTypes().contains("application/pdf")) {
+    } else if (mimeTypeList.contains("application/pdf")) {
         //FIXME(zccrs): This should be done using the image plugin?
         QScopedPointer<poppler::document> doc(poppler::document::load_from_file(absoluteFilePath.toStdString()));
 
