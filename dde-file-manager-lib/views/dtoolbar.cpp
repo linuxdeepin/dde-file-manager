@@ -89,7 +89,7 @@ void DToolBar::initUI()
     initAddressToolBar();
     initContollerToolBar();
 
-    m_detailButton = new QPushButton(this);
+    m_detailButton = new DFMIconButton(this);
     m_detailButton->setFixedWidth(ButtonWidth);
     m_detailButton->setFixedHeight(ButtonHeight);
     m_detailButton->setObjectName("detailButton");
@@ -97,7 +97,6 @@ void DToolBar::initUI()
     m_detailButton->setFocusPolicy(Qt::NoFocus);
     m_detailButton->setIcon(QIcon::fromTheme("dfm_rightview_detail"));
     m_detailButton->setIconSize(iconSize);
-    m_detailButton->setFlat(true);
 
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_addressToolBar);
