@@ -46,6 +46,7 @@ DFM_BEGIN_NAMESPACE
 class DFMCrumbBar;
 class DFMCrumbItem;
 class DFMAddressBar;
+class DFMIconButton;
 DFM_END_NAMESPACE
 
 DFM_USE_NAMESPACE
@@ -106,7 +107,7 @@ private:
     DButtonBoxButton* m_backButton = nullptr;
     DButtonBoxButton* m_forwardButton = nullptr;
     QPushButton* m_searchButton = nullptr;
-    QPushButton* m_detailButton = nullptr;
+    DFMIconButton* m_detailButton = nullptr;
     QFrame* m_contollerToolBar;
     QHBoxLayout *m_contollerToolBarContentLayout;
     QList<QAction*> m_actionList;
