@@ -210,7 +210,10 @@ void DFMAddressBar::focusOutEvent(QFocusEvent *e)
     // blumia: Sometimes completion will trigger weird Qt::ActiveWindowFocusReason event,
     //         right click context menu will trigger Qt::PopupFocusReason event. It will
     //         cause focusOutEvent. So we simply ignore it here.
-    if (e->reason() == Qt::ActiveWindowFocusReason || e->reason() == Qt::PopupFocusReason) {
+    // blumia: 2019/12/01: seems now based on current 5.11.3.2+c1-1+deepin version of Qt,
+    //         completion will no longer trigger Qt::ActiveWindowFocusReason reason focus
+    //         out event, so we comment out this case for now and see if it still happens.
+    if (/*e->reason() == Qt::ActiveWindowFocusReason || */ e->reason() == Qt::PopupFocusReason) {
         e->accept();
         setFocus();
         return;
