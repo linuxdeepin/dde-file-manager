@@ -124,22 +124,6 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
         return;
     }
 
-    if (info->isSymLink()) {
-        if (!fileHints.testFlag(DFileStatisticsJob::FollowSymlink)) {
-            ++filesCount;
-            Q_EMIT q_ptr->fileFound(url);
-            return;
-        }
-
-        info = DFileService::instance()->createFileInfo(nullptr, info->rootSymLinkTarget());
-
-        if (info->isSymLink()) {
-            ++filesCount;
-            Q_EMIT q_ptr->fileFound(url);
-            return;
-        }
-    }
-
     qint64 size = 0;
 
     if (info->isFile()) {
@@ -174,6 +158,22 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
 
         Q_EMIT q_ptr->fileFound(url);
     } else {
+        if (info->isSymLink()) {
+            if (!fileHints.testFlag(DFileStatisticsJob::FollowSymlink)) {
+                ++filesCount;
+                Q_EMIT q_ptr->fileFound(url);
+                return;
+            }
+
+            info = DFileService::instance()->createFileInfo(nullptr, info->rootSymLinkTarget());
+
+            if (info->isSymLink()) {
+                ++filesCount;
+                Q_EMIT q_ptr->fileFound(url);
+                return;
+            }
+        }
+
 //        size = info->size();
         ++directoryCount;
 
