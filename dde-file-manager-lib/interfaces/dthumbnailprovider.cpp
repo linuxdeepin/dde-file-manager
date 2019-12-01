@@ -220,7 +220,7 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
         return true;
     }
 
-    if (DTK_WIDGET_NAMESPACE::DThumbnailProvider::instance()->hasThumbnail(mimeType))
+    if (DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->hasThumbnail(mimeType))
         return true;
 
     return false;
@@ -436,8 +436,8 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
 
         *image = img.scaled(QSize(size, size), Qt::KeepAspectRatio, Qt::SmoothTransformation);
     } else {
-        thumbnail = DTK_WIDGET_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(info, (DTK_WIDGET_NAMESPACE::DThumbnailProvider::Size)size);
-        d->errorString = DTK_WIDGET_NAMESPACE::DThumbnailProvider::instance()->errorString();
+        thumbnail = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(info, (DTK_GUI_NAMESPACE::DThumbnailProvider::Size)size);
+        d->errorString = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();
 
         if (d->errorString.isEmpty()) {
             emit createThumbnailFinished(absoluteFilePath, thumbnail);
