@@ -604,7 +604,7 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
             drv->eject({});
             err |= drv->lastError().isValid();
             if (err) {
-                dialogManager->showErrorDialog(tr("Disk is busy, cannot eject now"), QString());
+                QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Disk is busy, cannot eject now")),  Q_ARG(QString, ""));
             }
         });
     } else {
