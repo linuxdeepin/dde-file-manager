@@ -96,7 +96,13 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
             }
         }
     } else if (suffix() == SUFFIX_UDISKS) {
-        QString udiskspath = DDiskManager::resolveDeviceNode("/dev" + url.path().chopped(QString("." SUFFIX_UDISKS).length()), {}).first();
+        QStringList pathList = DDiskManager::resolveDeviceNode("/dev" + url.path().chopped(QString("." SUFFIX_UDISKS).length()), {});
+        if (pathList.size()==0) {
+            qWarning() << url << "not existed";
+            return;
+        }
+
+        QString udiskspath = pathList.first();
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
         if (blk->path().length() != 0) {
             QSharedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
