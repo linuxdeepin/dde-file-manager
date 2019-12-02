@@ -54,15 +54,7 @@
 #include <poppler-page.h>
 #include <poppler-page-renderer.h>
 
-#include <dtkgui_config.h>
 #include <DThumbnailProvider>
-
-// migration of DThumbnailProvider move from dtkwidget to dtkgui
-#ifdef DTKGUI_CLASS_DThumbnailProvider
-DGUI_USE_NAMESPACE
-#else
-DWIDGET_USE_NAMESPACE
-#endif
 
 DFM_BEGIN_NAMESPACE
 
@@ -228,7 +220,7 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
         return true;
     }
 
-    if (DThumbnailProvider::instance()->hasThumbnail(mimeType))
+    if (DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->hasThumbnail(mimeType))
         return true;
 
     return false;
@@ -444,8 +436,8 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
 
         *image = img.scaled(QSize(size, size), Qt::KeepAspectRatio, Qt::SmoothTransformation);
     } else {
-        thumbnail = DThumbnailProvider::instance()->createThumbnail(info, (DThumbnailProvider::Size)size);
-        d->errorString = DThumbnailProvider::instance()->errorString();
+        thumbnail = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(info, (DTK_GUI_NAMESPACE::DThumbnailProvider::Size)size);
+        d->errorString = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();
 
         if (d->errorString.isEmpty()) {
             emit createThumbnailFinished(absoluteFilePath, thumbnail);
