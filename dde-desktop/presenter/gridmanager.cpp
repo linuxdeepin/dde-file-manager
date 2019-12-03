@@ -198,6 +198,15 @@ public:
 
     inline bool add(QPoint pos, const QString &itemId)
     {
+        if (itemId.isEmpty()) {
+            qCritical() << "add empty item"; // QVector<QString>.value() may retruen an empty QString
+            return false;
+        } else if (m_itemGrids.contains(itemId)) {
+            qCritical() << "add" << itemId  << "failed."
+                        << m_itemGrids.value(itemId) << "grid exist item";
+            return false;
+        }
+
         if (m_gridItems.contains(pos)) {
             if (pos != overlapPos()) {
                 qCritical() << "add" << itemId  << "failed."
@@ -208,7 +217,6 @@ public:
                 return false;
             }
         }
-
 
         m_gridItems.insert(pos, itemId);
         m_itemGrids.insert(itemId, pos);
