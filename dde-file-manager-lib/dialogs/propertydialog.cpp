@@ -524,6 +524,15 @@ void PropertyDialog::initUI()
 void PropertyDialog::initConnect()
 {
     connect(m_edit, &NameTextEdit::editFinished, this, &PropertyDialog::showTextShowFrame);
+    connect(m_edit, &NameTextEdit::textChanged, this, [this]() {
+        QString text = m_edit->toPlainText();
+        const QString old_text = text;
+
+        text = DFMGlobal::preprocessingFileName(text);
+        if (text.count() != old_text.count()) {
+            m_edit->setPlainText(text);
+        }
+    });
 
     DAbstractFileWatcher *fileWatcher = DFileService::instance()->createFileWatcher(this, m_url);
 
