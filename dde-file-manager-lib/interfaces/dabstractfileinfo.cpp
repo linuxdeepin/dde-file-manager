@@ -50,6 +50,8 @@
 #include "ddiskmanager.h"
 #include "ddiskdevice.h"
 
+#include <DDesktopEntry>
+
 #include <QDateTime>
 #include <QDebug>
 #include <QApplication>
@@ -64,6 +66,8 @@
 
 #include <dglibutils.h>
 #include <memory> // std::unique_ptr
+
+DCORE_USE_NAMESPACE
 
 #ifdef SW_LABEL
 #include "sw_label/filemanagerlibrary.h"
@@ -1575,24 +1579,17 @@ static QList<QAction *> getTemplateFileList()
     for (const QString & oneTemplateFolder : templateFolderList) {
         QDir templateFolder(oneTemplateFolder);
         if (templateFolder.exists()) {
-            // blumia: We use use QSettings with QSettings::IniFormat because .desktop file
-            //         actually IS simple ini file with utf-8 codec encoded.
-            // ref: https://doc.qt.io/archives/qtextended4.4/desktopfiles.html (some old docs..)
             const QStringList &templateFileList = templateFolder.entryList(QStringList(QStringLiteral("*.desktop")), QDir::Files | QDir::Readable | QDir::NoSymLinks);
             for (const QString &filePath : templateFileList) {
-                QSettings desktopFile(templateFolder.absoluteFilePath(filePath), QSettings::IniFormat);
-                desktopFile.setIniCodec("UTF-8");
-                const QString entrySourcePath = templateFolder.absoluteFilePath(desktopFile.value("Desktop Entry/URL").toString());
-                const QString entryText = desktopFile.value(
-                                            QString("Desktop Entry/Name[%1]").arg(QLocale::system().name()),
-                                            desktopFile.value("Desktop Entry/Name")
-                                        ).toString();
+                DDesktopEntry desktopFile(templateFolder.absoluteFilePath(filePath));
+                const QString entrySourcePath = templateFolder.absoluteFilePath(desktopFile.stringValue("URL"));
+                const QString entryText = desktopFile.localizedValue("Name");
                 const QString entryFileBaseName = entryText; // suffix is based on source file, only base name is okay here.
                 if (!QFileInfo(entrySourcePath).exists() || entryText.isEmpty()) {
                     continue; // holy shit!
                 }
-                qDebug() << desktopFile.allKeys() << templateFolder.absoluteFilePath(filePath) << entrySourcePath;
-                QIcon icon = QIcon::fromTheme(desktopFile.value("Desktop Entry/Icon").toString());
+                qDebug() << templateFolder.absoluteFilePath(filePath) << entrySourcePath;
+                QIcon icon = QIcon::fromTheme(desktopFile.stringValue("Icon"));
                 QAction *action = new QAction(icon, entryText, Q_NULLPTR);
                 action->setData(QVariant::fromValue(qMakePair(entrySourcePath, entryFileBaseName)));
                 QObject::connect(action, &QAction::triggered, action, [action] {
