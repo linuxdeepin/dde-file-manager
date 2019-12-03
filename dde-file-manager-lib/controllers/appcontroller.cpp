@@ -670,7 +670,7 @@ void AppController::actionProperty(const QSharedPointer<DFMUrlListBaseEvent> &ev
 
         if (url.isLocalFile()) {
             QStorageInfo partition(url.path());
-            if (partition.isValid() && partition.rootPath() == url.path()) {
+            if (partition.isValid() && partition.rootPath() == url.path() && !DDiskManager::resolveDeviceNode(partition.device(), {}).isEmpty()) {
                 QString dev(partition.device());
                 dev = dev.mid(dev.lastIndexOf('/') + 1);
                 url = DUrl(DFMROOT_ROOT + dev + "." + SUFFIX_UDISKS);
