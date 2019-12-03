@@ -58,7 +58,7 @@ QIcon DFileIconProviderPrivate::getFilesystemIcon(const QFileInfo &info) const
     QIcon icon;
 
     QScopedPointer<DGioFile> file(DGioFile::createFromPath(info.absoluteFilePath()));
-    QExplicitlySharedDataPointer<DGioFileInfo> fileinfo = file->createFileInfo();
+    QExplicitlySharedDataPointer<DGioFileInfo> fileinfo = file->createFileInfo("*", FILE_QUERY_INFO_NONE, 616);
     if (!fileinfo) {
         return icon;
     }
