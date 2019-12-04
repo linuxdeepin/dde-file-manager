@@ -1553,10 +1553,11 @@ static QList<QAction *> getTemplateFileList()
         if (templateFolder.exists() && templateFolder != QDir::home()) { // accroding to xdg-user-dir, dir point to home means disable.
             const QFileInfoList &templateFileInfoList = templateFolder.entryInfoList(QDir::Files | QDir::Readable | QDir::NoSymLinks);
             for (const QFileInfo &fileInfo : templateFileInfoList) {
+                auto dfileinfo = DFileService::instance()->createFileInfo(nullptr, DUrl::fromLocalFile(fileInfo.filePath()));
                 const QString entrySourcePath = fileInfo.absoluteFilePath();
                 const QString entryText = fileInfo.baseName();
                 const QString entryFileBaseName = entryText; // suffix is based on source file, only base name is okay here.
-                QIcon icon = QIcon::fromTheme(MimesAppsManager::getMimeType(entrySourcePath).iconName());
+                QIcon icon = dfileinfo->fileIcon();
                 QAction *action = new QAction(icon, entryText, Q_NULLPTR);
                 action->setData(QVariant::fromValue(qMakePair(entrySourcePath, entryFileBaseName)));
                 QObject::connect(action, &QAction::triggered, action, [action] {
