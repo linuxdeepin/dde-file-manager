@@ -614,12 +614,12 @@ void Frame::initSize()
 #else
     actualHeight = FrameHeight + HeaderSwitcherHeight;
 #endif
-    setFixedSize(primaryRect.width(), actualHeight);
+    setFixedSize(primaryRect.width()-20, actualHeight);
 
     qDebug() << "move befor: " << this->geometry() << m_wallpaperList->geometry();
-    move(primaryRect.x(), primaryRect.y() + primaryRect.height() - height());
+    move(primaryRect.x()+10, primaryRect.y() + primaryRect.height() - height());
     qDebug() << "this move : " << this->geometry() << m_wallpaperList->geometry();
-    m_wallpaperList->setFixedSize(primaryRect.width(), ListHeight);
+    m_wallpaperList->setFixedSize(primaryRect.width()-20, ListHeight);
 }
 
 void Frame::initListView()
