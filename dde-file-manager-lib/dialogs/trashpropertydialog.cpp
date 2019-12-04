@@ -49,8 +49,8 @@ TrashPropertyDialog::~TrashPropertyDialog()
 
 void TrashPropertyDialog::initUI()
 {
-    setFixedSize(320, 300);
-    setTitle("");
+    setFixedWidth(320);
+    setTitle(tr("Trash"));
 
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
     QIcon trashIcon;
@@ -64,8 +64,6 @@ void TrashPropertyDialog::initUI()
     m_iconLabel->setFixedSize(160, 160);
     m_iconLabel->setPixmap(trashIcon.pixmap(m_iconLabel->size()));
     m_iconLabel->setAlignment(Qt::AlignCenter);
-    m_nameLable = new QLabel(tr("Trash"), this);
-    m_nameLable->setAlignment(Qt::AlignCenter);
 
     const int fCount = fileInfo->filesCount();
     QString itemStr = tr("item");
@@ -92,7 +90,6 @@ void TrashPropertyDialog::initUI()
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addWidget(m_iconLabel, 0, Qt::AlignHCenter);
-    mainLayout->addWidget(m_nameLable, 0, Qt::AlignHCenter);
     mainLayout->addWidget(hLine);
     //mainLayout->addLayout(infoLayout);
     mainLayout->addWidget(infoFrame);
