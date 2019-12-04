@@ -64,6 +64,17 @@ public:
         pa.drawPixmap(event->rect().topLeft(), m_pixmap, QRect(event->rect().topLeft() * scale, event->rect().size() * scale));
     }
 
+    virtual void setVisible(bool visible) override {
+        if (!visible) {
+            // 暂时（紧急）解决arm64双屏切换复制模式容易出现无法显示桌面的问题，禁止隐藏任何桌面。
+            // 后续有较好的解决方案可以删除此代码
+            qDebug() << "not allow to hide desktop(screen is " << property("myScreen").toString() <<
+                       ") primaryScreen is " << qApp->primaryScreen()->name();
+            return ;
+        }
+        QWidget::setVisible(visible);
+    }
+
 private:
     QPixmap m_pixmap;
     QPixmap m_noScalePixmap;
@@ -293,7 +304,7 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
     l->windowHandle()->setScreen(screen);
     l->setGeometry(screen->geometry());
 
-    QTimer::singleShot(0, this, [l, screen] {
+    QTimer::singleShot(0, l, [l, screen] {
         // 禁用高分屏缩放，防止窗口的sizeIncrement默认设置大于1
         bool hi_active = QHighDpiScaling::m_active;
         QHighDpiScaling::m_active = false;
