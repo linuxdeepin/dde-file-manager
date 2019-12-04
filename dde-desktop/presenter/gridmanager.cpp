@@ -213,7 +213,9 @@ public:
                             << pos << "grid exist item" << m_gridItems.value(pos);
                 return false;
             } else {
-                m_overlapItems << itemId;
+                if (!m_overlapItems.contains(itemId)) {
+                    m_overlapItems << itemId;
+                }
                 return false;
             }
         }
