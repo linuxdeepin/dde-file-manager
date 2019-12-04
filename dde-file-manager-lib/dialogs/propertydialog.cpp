@@ -55,6 +55,7 @@
 #include "../plugininterfaces/menu/menuinterface.h"
 #include "dfmeventdispatcher.h"
 #include "views/dfmsidebar.h"
+#include "dfmapplication.h"
 
 #include <darrowlineexpand.h>
 #include <dexpandgroup.h>
@@ -555,8 +556,20 @@ void PropertyDialog::updateFolderSize(qint64 size)
 
 void PropertyDialog::renameFile()
 {
+    bool donotShowSuffix{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffixOnRename).toBool() };
+
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
-    m_edit->setPlainText(fileInfo->fileNameOfRename());
+
+    QString fileName;
+    if (donotShowSuffix &&
+            fileInfo->isFile() &&
+            !fileInfo->suffix().isEmpty() && !fileInfo->isDesktopFile()) {
+        fileName = fileInfo->baseNameOfRename();
+    } else {
+        fileName = fileInfo->fileNameOfRename();
+    }
+
+    m_edit->setPlainText(fileName);
     m_editStackWidget->setCurrentIndex(0);
     m_edit->setFixedHeight(m_textShowFrame->height());
 
@@ -565,8 +578,8 @@ void PropertyDialog::renameFile()
     if (pfile->isFile()) {
 
         QString suffixStr{ pfile->suffix() };
-        if (suffixStr.isEmpty() == true) {
-            endPos = m_edit->toPlainText().length() - pfile->suffix().length();
+        if (suffixStr.isEmpty() || donotShowSuffix || pfile->isDesktopFile()) {
+            endPos = m_edit->toPlainText().length();
 
         } else {
             endPos = m_edit->toPlainText().length() - pfile->suffix().length() - 1;
@@ -588,7 +601,14 @@ void PropertyDialog::showTextShowFrame()
 {
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
 
+    bool donotShowSuffix{ DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedFileSuffixOnRename).toBool() };
+
     QString newName = m_edit->toPlainText();
+    if (donotShowSuffix && fileInfo->isFile() &&
+            !fileInfo->suffix().isEmpty() && !fileInfo->isDesktopFile()) {
+        newName += "." + fileInfo->suffix();
+    }
+
     if (newName.trimmed().isEmpty()) {
         m_edit->setIsCanceled(true);
     }
