@@ -153,8 +153,6 @@ void DFileManagerWindowPrivate::setCurrentView(DFMBaseView *view)
     if (currentView && currentView->widget()) {
         currentView->widget()->installEventFilter(q);
         if (sideBar && sideBar->sidebarView()) {
-            currentView->widget()->setFocusPolicy(Qt::FocusPolicy::TabFocus);
-            sideBar->sidebarView()->setFocusPolicy(Qt::FocusPolicy::TabFocus);
             QWidget::setTabOrder(currentView->widget(), sideBar->sidebarView());
         }
     }
