@@ -275,7 +275,12 @@ void MoveCopyTaskWidget::initUI()
     QVBoxLayout *rightLayout = new QVBoxLayout;
     rightLayout->addStretch(1);
     rightLayout->addLayout(msgGridLayout);
-    rightLayout->addWidget(m_conflictFrame);
+    QHBoxLayout *hLayout = new QHBoxLayout;
+    hLayout->addWidget(m_conflictFrame, 1);
+    hLayout->addWidget(m_pauseBuuton, 0, Qt::AlignCenter);
+    hLayout->addSpacing(5);
+    hLayout->addWidget(m_closeButton, 0, Qt::AlignCenter);
+    rightLayout->addLayout(hLayout);
     rightLayout->addSpacing(20);
 
     rightLayout->addWidget(m_buttonFrame);
@@ -292,9 +297,6 @@ void MoveCopyTaskWidget::initUI()
     mainLayout->addLayout(rightLayout);
     mainLayout->addSpacing(5);
     mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->addWidget(m_pauseBuuton, 0, Qt::AlignCenter);
-    mainLayout->addSpacing(5);
-    mainLayout->addWidget(m_closeButton, 0, Qt::AlignCenter);
     mainLayout->addSpacing(20);
     setLayout(mainLayout);
     setFixedHeight(80);
