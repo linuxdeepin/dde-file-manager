@@ -627,11 +627,12 @@ void PropertyDialog::showTextShowFrame()
         if (fileService->renameFile(this, oldUrl, newUrl)) {
             if (!fileInfo->isDesktopFile()) { // this is a dirty fix.
                 m_url = newUrl;
+                dialogManager->refreshPropertyDialogs(oldUrl, newUrl);
             }
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
 
             initTextShowFrame(fileInfo->fileDisplayName());
-            dialogManager->refreshPropertyDialogs(oldUrl, newUrl);
+
             if (m_shareinfoFrame) {
                 m_shareinfoFrame->setFileinfo(fileInfo);
             }
