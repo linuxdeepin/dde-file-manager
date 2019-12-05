@@ -47,6 +47,7 @@ DFMSideBarView::DFMSideBarView(QWidget *parent)
 
 void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
 {
+    DListView::mouseMoveEvent(event);
 #if QT_CONFIG(draganddrop)
     if (state() == DraggingState) {
         startDrag(model()->supportedDragActions());
@@ -56,12 +57,9 @@ void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
         QRect rc = geometry();
         if (!rc.contains(pt)) {
             emit requestRemoveItem(); //model()->removeRow(currentIndex().row());
-            return;
         }
     }
 #endif // QT_CONFIG(draganddrop)
-
-    DListView::mouseMoveEvent(event);
 }
 
 void DFMSideBarView::dragEnterEvent(QDragEnterEvent *event)
