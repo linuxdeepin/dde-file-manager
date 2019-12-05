@@ -516,7 +516,10 @@ bool DFileInfo::isExecutable() const
 bool DFileInfo::isHidden() const
 {
     Q_D(const DFileInfo);
-
+    // blumia: 目前不在这里读 .hidden 文件并以此返回显示状态的原因是，切换到某个目录时遍历所有文件，每个文件都会调一次 isHidden() ，而每次
+    //         都重新读那个文件显然不合适，FileController 又位于没有跑事件循环的线程，也无法简单的缓存并监视文件变动。
+    //         鉴于需求要的特别急，所以先使用比较脏的做法，在 Controller 里创建目录迭代器时读取一次文件，这样以达到减少不必要的读取，不需要监视
+    //         文件变动，并且退出并重新进入目录时即会重新加载配置。
     return d->fileInfo.isHidden() || FileController::customHiddenFileMatch(d->fileInfo.absolutePath(), d->fileInfo.fileName());
 }
 

@@ -47,6 +47,7 @@
 
 #include "shutil/fileutils.h"
 #include "shutil/dfmregularexpression.h"
+#include "shutil/dfmfilelistfile.h"
 
 #include "dialogs/dialogmanager.h"
 #include "dialogs/dtaskdialog.h"
@@ -310,6 +311,8 @@ public:
     DUrl url() const Q_DECL_OVERRIDE;
 
     bool enableIteratorByKeyword(const QString &keyword) Q_DECL_OVERRIDE;
+
+    DFMFileListFile * hiddenFiles = nullptr;
 
 private:
     DDirIterator *iterator = nullptr;
@@ -1088,12 +1091,19 @@ FileDirIterator::FileDirIterator(const QString &path, const QStringList &nameFil
     } else {
         iterator = new DFMQDirIterator(path, nameFilters, filter, flags);
     }
+
+    // misc, not related to the file iterator at all.
+    hiddenFiles = new DFMFileListFile(path);
 }
 
 FileDirIterator::~FileDirIterator()
 {
     if (iterator) {
         delete iterator;
+    }
+
+    if (hiddenFiles) {
+        delete hiddenFiles;
     }
 }
 
@@ -1127,7 +1137,7 @@ bool FileDirIterator::hasNext() const
         const_cast<FileDirIterator *>(this)->iterator->next();
         info = iterator->fileInfo();
 
-        if (!info->isPrivate() && (showHidden || !info->isHidden())) {
+        if (!info->isPrivate() && (showHidden || (!info->isHidden() && !hiddenFiles->contains(info->fileName())))) {
             break;
         }
 
