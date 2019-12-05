@@ -48,11 +48,13 @@ void DFMIconButton::paintEvent(QPaintEvent *e)
 
     QPainter painter(this);
     QPixmap pm = icon().pixmap(size());
+    QPainter pa(&pm);
+    pa.setCompositionMode(QPainter::CompositionMode_SourceIn);
 
     if (isChecked()) {
-        QPainter pa(&pm);
-        pa.setCompositionMode(QPainter::CompositionMode_SourceIn);
         pa.fillRect(pm.rect(), qApp->palette().color(QPalette::Active, QPalette::Highlight));
+    } else {
+        pa.fillRect(pm.rect(), qApp->palette().color(QPalette::Active, QPalette::Text));
     }
 
     painter.drawPixmap(rect(), pm);
