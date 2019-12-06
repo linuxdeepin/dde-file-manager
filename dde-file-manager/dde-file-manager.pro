@@ -68,9 +68,6 @@ isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
     desktop.files = $${TARGET}.desktop
 }
 
-dde-xdg-user-dirs-update.path = $$BINDIR
-dde-xdg-user-dirs-update.files = $$PWD/dde-xdg-user-dirs-update
-
 policy.path = $${PREFIX}/share/polkit-1/actions/
 policy.files = pkexec/com.deepin.pkexec.dde-file-manager.policy
 
@@ -82,7 +79,7 @@ propertyDialogShell.files = dde-property-dialog
 
 
 
-INSTALLS += target desktop dde-xdg-user-dirs-update policy pkexec propertyDialogShell
+INSTALLS += target desktop policy pkexec propertyDialogShell
 
 isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
     dde-mips-shs.path = $$BINDIR
