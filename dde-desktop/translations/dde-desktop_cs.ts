@@ -2,42 +2,42 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2451"/>
+        <location filename="../view/canvasgridview.cpp" line="2453"/>
         <source>Icon size</source>
         <translation>Velikost ikony</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2457"/>
+        <location filename="../view/canvasgridview.cpp" line="2459"/>
         <source>Auto merge</source>
         <translation>Automatické sloučení</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2472"/>
+        <location filename="../view/canvasgridview.cpp" line="2474"/>
         <source>Auto arrange</source>
         <translation>Uspořádat automaticky</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2528"/>
+        <location filename="../view/canvasgridview.cpp" line="2530"/>
         <source>Set Wallpaper</source>
         <translation>Nastavit pozadí</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2530"/>
+        <location filename="../view/canvasgridview.cpp" line="2532"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Pozadí plochy a spořič obrazovky</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2614"/>
+        <location filename="../view/canvasgridview.cpp" line="2616"/>
         <source>Properties</source>
         <translation>Vlastnosti</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2512"/>
+        <location filename="../view/canvasgridview.cpp" line="2514"/>
         <source>Display Settings</source>
         <translation>Zobrazit nastavení</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2521"/>
+        <location filename="../view/canvasgridview.cpp" line="2523"/>
         <source>Corner Settings</source>
         <translation>Nastavení rohů</translation>
     </message>
@@ -81,57 +81,57 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="434"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="446"/>
         <source>Wallpaper Slideshow</source>
         <translation>Promítání pozadí plochy</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="463"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="475"/>
         <source>When login</source>
         <translation>Při přihlášení</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="465"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="477"/>
         <source>When wakeup</source>
         <translation>Při probuzení</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="509"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="521"/>
         <source>Require a password on wakeup</source>
         <translation>Vyžadovat heslo při probuzení</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="536"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="548"/>
         <source>Never</source>
         <translation>Nikdy</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="537"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="549"/>
         <source>Wait:</source>
         <translation>Čekat:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="567"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="579"/>
         <source>Wallpaper</source>
         <translation>Pozadí</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="568"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="580"/>
         <source>Screensaver</source>
         <translation>Spořič obrazovky</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="639"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="653"/>
         <source>Only desktop</source>
         <translation>Pouze plocha</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="640"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="654"/>
         <source>Only lock screen</source>
         <translation>Pouze uzamknutí obrazovky</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="668"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="682"/>
         <source>Apply</source>
         <translation>Použít</translation>
     </message>

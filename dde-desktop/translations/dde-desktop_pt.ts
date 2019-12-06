@@ -2,42 +2,42 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2451"/>
+        <location filename="../view/canvasgridview.cpp" line="2453"/>
         <source>Icon size</source>
         <translation>Tamanho do ícone</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2457"/>
+        <location filename="../view/canvasgridview.cpp" line="2459"/>
         <source>Auto merge</source>
         <translation>Agrupar automaticamente</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2472"/>
+        <location filename="../view/canvasgridview.cpp" line="2474"/>
         <source>Auto arrange</source>
         <translation>Organizar automaticamente</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2528"/>
+        <location filename="../view/canvasgridview.cpp" line="2530"/>
         <source>Set Wallpaper</source>
         <translation>Definir Papel de parede</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2530"/>
+        <location filename="../view/canvasgridview.cpp" line="2532"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Papel de parede e Protector de ecrã</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2614"/>
+        <location filename="../view/canvasgridview.cpp" line="2616"/>
         <source>Properties</source>
         <translation>Propriedades</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2512"/>
+        <location filename="../view/canvasgridview.cpp" line="2514"/>
         <source>Display Settings</source>
         <translation>Definições de visualização</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2521"/>
+        <location filename="../view/canvasgridview.cpp" line="2523"/>
         <source>Corner Settings</source>
         <translation>Definições de cantos</translation>
     </message>
@@ -81,57 +81,57 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="434"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="446"/>
         <source>Wallpaper Slideshow</source>
         <translation>Apresentação de diapositivos de papel de parede</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="463"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="475"/>
         <source>When login</source>
         <translation>Quando iniciar sessão</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="465"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="477"/>
         <source>When wakeup</source>
         <translation>Quando retomar sessão</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="509"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="521"/>
         <source>Require a password on wakeup</source>
         <translation>Requer palavra-passe ao retomar sessão</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="536"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="548"/>
         <source>Never</source>
         <translation>Nunca</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="537"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="549"/>
         <source>Wait:</source>
         <translation>Aguarde:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="567"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="579"/>
         <source>Wallpaper</source>
         <translation>Papel de parede</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="568"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="580"/>
         <source>Screensaver</source>
         <translation>Protector de ecrã</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="639"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="653"/>
         <source>Only desktop</source>
         <translation>Apenas ambiente de trabalho</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="640"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="654"/>
         <source>Only lock screen</source>
         <translation>Apenas ecrã de bloqueio</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="668"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="682"/>
         <source>Apply</source>
         <translation>Aplicar</translation>
     </message>

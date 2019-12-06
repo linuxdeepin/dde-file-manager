@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -1978,12 +1976,12 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1045"/>
         <source>Hide this folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Hide this folder</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1045"/>
         <source>Hide this file</source>
-        <translation type="unfinished"></translation>
+        <translation>Hide this file</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1296"/>

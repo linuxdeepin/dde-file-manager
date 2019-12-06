@@ -2,42 +2,42 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2451"/>
+        <location filename="../view/canvasgridview.cpp" line="2453"/>
         <source>Icon size</source>
         <translation>आइकन का आकार</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2457"/>
+        <location filename="../view/canvasgridview.cpp" line="2459"/>
         <source>Auto merge</source>
         <translation>स्वतः विलय</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2472"/>
+        <location filename="../view/canvasgridview.cpp" line="2474"/>
         <source>Auto arrange</source>
         <translation>स्वतः क्रमबद्ध</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2528"/>
+        <location filename="../view/canvasgridview.cpp" line="2530"/>
         <source>Set Wallpaper</source>
         <translation>वॉलपेपर सेट करें</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2530"/>
+        <location filename="../view/canvasgridview.cpp" line="2532"/>
         <source>Wallpaper and Screensaver</source>
         <translation>वॉलपेपर व स्क्रीनसेवर</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2614"/>
+        <location filename="../view/canvasgridview.cpp" line="2616"/>
         <source>Properties</source>
         <translation>विशेषताएँ</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2512"/>
+        <location filename="../view/canvasgridview.cpp" line="2514"/>
         <source>Display Settings</source>
         <translation>डिस्प्ले सेटिंग्स</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2521"/>
+        <location filename="../view/canvasgridview.cpp" line="2523"/>
         <source>Corner Settings</source>
         <translation>स्क्रीन के कोनों की सेटिंग्स</translation>
     </message>
@@ -81,57 +81,57 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="434"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="446"/>
         <source>Wallpaper Slideshow</source>
         <translation>वॉलपेपर स्लाइड शो</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="463"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="475"/>
         <source>When login</source>
         <translation>लॉगिन के समय</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="465"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="477"/>
         <source>When wakeup</source>
         <translation>चालू होते समय</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="509"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="521"/>
         <source>Require a password on wakeup</source>
         <translation>चालू होने पर कूटशब्द अनिवार्य करें</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="536"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="548"/>
         <source>Never</source>
         <translation>कभी नहीं</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="537"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="549"/>
         <source>Wait:</source>
         <translation>प्रतीक्षा :</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="567"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="579"/>
         <source>Wallpaper</source>
         <translation>वॉलपेपर</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="568"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="580"/>
         <source>Screensaver</source>
         <translation>स्क्रीनसेवर</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="639"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="653"/>
         <source>Only desktop</source>
         <translation>केवल डेस्कटॉप</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="640"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="654"/>
         <source>Only lock screen</source>
         <translation>केवल लॉक स्क्रीन</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="668"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="682"/>
         <source>Apply</source>
         <translation>लागू करें</translation>
     </message>
