@@ -18,12 +18,14 @@ public:
     bool isWritable() const;
     bool write(QIODevice &device) const;
 
+    QString filePath() const;
+
     bool loadFile();
     bool parseData(const QByteArray &data);
     void setStatus(const DFMFileListFile::Status &newStatus) const;
 
 protected:
-    QString filePath;
+    QString dirPath;
     QSet<QString> fileListSet;
     mutable DFMFileListFile::Status status;
 
@@ -34,8 +36,8 @@ private:
     Q_DECLARE_PUBLIC(DFMFileListFile)
 };
 
-DFMFileListFilePrivate::DFMFileListFilePrivate(const QString &filePath, DFMFileListFile *qq)
-    : filePath(filePath), q_ptr(qq)
+DFMFileListFilePrivate::DFMFileListFilePrivate(const QString &dirPath, DFMFileListFile *qq)
+    : dirPath(dirPath), q_ptr(qq)
 {
     loadFile();
 }
@@ -47,12 +49,14 @@ DFMFileListFilePrivate::~DFMFileListFilePrivate()
 
 bool DFMFileListFilePrivate::isWritable() const
 {
-    QFileInfo fileInfo(filePath);
+    Q_Q(const DFMFileListFile);
+
+    QFileInfo fileInfo(filePath());
 
 #ifndef QT_NO_TEMPORARYFILE
     if (fileInfo.exists()) {
 #endif
-        QFile file(filePath);
+        QFile file(q->filePath());
         return file.open(QFile::ReadWrite);
 #ifndef QT_NO_TEMPORARYFILE
     } else {
@@ -64,7 +68,7 @@ bool DFMFileListFilePrivate::isWritable() const
         }
 
         // we use a temporary file to avoid race conditions
-        QTemporaryFile file(filePath);
+        QTemporaryFile file(filePath());
         return file.open();
     }
 #endif
@@ -83,12 +87,14 @@ bool DFMFileListFilePrivate::write(QIODevice &device) const
     return true;
 }
 
+QString DFMFileListFilePrivate::filePath() const
+{
+    return QDir(dirPath).absoluteFilePath(".hidden");
+}
+
 bool DFMFileListFilePrivate::loadFile()
 {
-    QDir dir(filePath);
-    QFileInfo fileInfo(filePath);
-    QString fileFullPath(dir.absoluteFilePath(".hidden"));
-    QFile file(fileFullPath);
+    QFile file(filePath());
 
     if (!file.exists()) {
         setStatus(DFMFileListFile::NotExisted);
@@ -133,9 +139,9 @@ void DFMFileListFilePrivate::setStatus(const DFMFileListFile::Status &newStatus)
 }
 
 
-DFMFileListFile::DFMFileListFile(const QString &filePath, QObject *parent)
+DFMFileListFile::DFMFileListFile(const QString &dirPath, QObject *parent)
     : QObject (parent)
-    , d_ptr(new DFMFileListFilePrivate(filePath, this))
+    , d_ptr(new DFMFileListFilePrivate(dirPath, this))
 
 {
 
@@ -146,6 +152,20 @@ DFMFileListFile::~DFMFileListFile()
     // save on ~ ?
 }
 
+QString DFMFileListFile::filePath() const
+{
+    Q_D(const DFMFileListFile);
+
+    return d->filePath();
+}
+
+QString DFMFileListFile::dirPath() const
+{
+    Q_D(const DFMFileListFile);
+
+    return d->dirPath;
+}
+
 bool DFMFileListFile::save() const
 {
     Q_D(const DFMFileListFile);
@@ -154,10 +174,10 @@ bool DFMFileListFile::save() const
     if (d->isWritable()) {
         bool ok = false;
         bool createFile = false;
-        QFileInfo fileInfo(d->filePath);
+        QFileInfo fileInfo(d->dirPath);
 
 #if !defined(QT_BOOTSTRAPPED) && QT_CONFIG(temporaryfile)
-        QSaveFile sf(d->filePath);
+        QSaveFile sf(filePath());
         sf.setDirectWriteFallback(true);
 #else
         QFile sf(d->filePath);
@@ -180,7 +200,7 @@ bool DFMFileListFile::save() const
             if (createFile) {
                 QFile::Permissions perms = fileInfo.permissions() | QFile::ReadOwner | QFile::WriteOwner
                                                                   | QFile::ReadGroup | QFile::ReadOther;
-                QFile(d->filePath).setPermissions(perms);
+                QFile(filePath()).setPermissions(perms);
             }
             return true;
         } else {
@@ -211,6 +231,25 @@ bool DFMFileListFile::remove(const QString &fileName)
     Q_D(DFMFileListFile);
 
     return d->fileListSet.remove(fileName);
+}
+
+// Should we show the "Hide this file" checkbox?
+bool DFMFileListFile::supportHideByFile(const QString &fileFullPath)
+{
+    QFileInfo fileInfo(fileFullPath);
+    if (!fileInfo.exists()) return false;
+    if (fileInfo.fileName().startsWith('.')) return false;
+
+    return true;
+}
+
+// Can user check or uncheck the "Hide this file" checkbox?
+bool DFMFileListFile::canHideByFile(const QString &fileFullPath)
+{
+    QFileInfo fileInfo(fileFullPath);
+    QFileInfo dirInfo(fileInfo.absolutePath());
+
+    return dirInfo.isWritable();
 }
 
 bool DFMFileListFile::reload()

@@ -33,7 +33,7 @@
 
 #include "shutil/fileutils.h"
 #include "shutil/mimesappsmanager.h"
-#include "shutil/fileutils.h"
+#include "shutil/dfmfilelistfile.h"
 
 #include "dialogs/dialogmanager.h"
 #include "app/filesignalmanager.h"
@@ -654,7 +654,6 @@ void PropertyDialog::onChildrenRemoved(const DUrl &fileUrl)
 
 void PropertyDialog::flickFolderToSidebar()
 {
-
     DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(m_fmevent.windowId()));
     if (!window) {
         return;
@@ -735,6 +734,21 @@ void PropertyDialog::onOpenWithBntsChecked(QAbstractButton *w)
         MimesAppsManager::setDefautlAppForTypeByGio(w->property("mimeTypeName").toString(),
                 w->property("appPath").toString());
     }
+}
+
+void PropertyDialog::onHideFileCheckboxChecked(bool checked)
+{
+    QFileInfo info(m_url.toLocalFile());
+    if (!info.exists()) return;
+
+    DFMFileListFile flf(info.absolutePath());
+    qDebug() << info.absolutePath();
+    if (checked) {
+        flf.insert(info.fileName());
+    } else {
+        flf.remove(info.fileName());
+    }
+    flf.save();
 }
 
 void PropertyDialog::mousePressEvent(QMouseEvent *event)
@@ -1025,11 +1039,19 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         layout->addRow(sourcePathSectionLabel, sourcePathLabel);
     }
 
+    if (DFMFileListFile::supportHideByFile(info->filePath())) {
+        DFMFileListFile flf(QFileInfo(info->filePath()).absolutePath());
+        QString fileName = info->fileName();
+        QCheckBox * hideThisFile = new QCheckBox(info->isDir() ? tr("Hide this folder") : tr("Hide this file"));
+//        hideThisFile->setToolTip("TODO: hint message?");
+        hideThisFile->setEnabled(DFMFileListFile::canHideByFile(info->filePath()));
+        hideThisFile->setChecked(flf.contains(fileName));
+        layout->addWidget(hideThisFile); // FIXME: do the UI thing later.
+        connect(hideThisFile, &QCheckBox::clicked, this, &PropertyDialog::onHideFileCheckboxChecked);
+    }
+
     layout->setContentsMargins(15, 15, 30, 15);
     widget->setLayout(layout);
-//    if (info->isSymLink()) {
-//        widget->setFixedSize(width(), EXTEND_FRAME_MAXHEIGHT + 30);
-//    }
 
     return widget;
 }
