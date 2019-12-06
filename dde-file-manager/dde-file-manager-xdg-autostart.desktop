@@ -1,5 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=DDE xdg-user-dirs-update tool
-Exec=/usr/bin/dde-xdg-user-dirs-update
-OnlyShowIn=Deepin
