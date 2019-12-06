@@ -475,7 +475,7 @@ void DFMCrumbBar::mousePressEvent(QMouseEvent *event)
     }
 
     QModelIndex index = d->crumbListView.indexAt(event->pos());
-    if (event->button() == Qt::RightButton && !index.isValid()) {
+    if (event->button() != Qt::RightButton || !index.isValid()) {
         QFrame::mousePressEvent(event);
     }
 }
