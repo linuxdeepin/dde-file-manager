@@ -474,7 +474,10 @@ void DFMCrumbBar::mousePressEvent(QMouseEvent *event)
         return;
     }
 
-    QFrame::mousePressEvent(event);
+    QModelIndex index = d->crumbListView.indexAt(event->pos());
+    if (event->button() == Qt::RightButton && !index.isValid()) {
+        QFrame::mousePressEvent(event);
+    }
 }
 
 void DFMCrumbBar::mouseReleaseEvent(QMouseEvent *event)
