@@ -17,14 +17,21 @@ public:
     Q_ENUM(Status)
 
 public:
-    explicit DFMFileListFile(const QString & filePath, QObject * parent = nullptr);
+    // argument is a path, without filename.
+    explicit DFMFileListFile(const QString & dirPath, QObject * parent = nullptr);
     ~DFMFileListFile();
+
+    QString filePath() const;
+    QString dirPath() const;
 
     bool save() const;
 
     bool contains(const QString & fileName) const;
     void insert(const QString & fileName);
     bool remove(const QString & fileName);
+
+    static bool supportHideByFile(const QString & fileFullPath);
+    static bool canHideByFile(const QString & fileFullPath);
 
 public slots:
     bool reload();
