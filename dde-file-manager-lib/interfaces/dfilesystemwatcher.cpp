@@ -129,18 +129,6 @@ QStringList DFileSystemWatcherPrivate::removePaths(const QStringList &paths, QSt
     return p;
 }
 
-bool contain_event(const QList<inotify_event *> &list, const inotify_event *e)
-{
-    for (const inotify_event *event : list) {
-        if (event->wd == e->wd && event->mask==e->mask && event->cookie == e->cookie &&
-                event->len== e->len && !strcmp(event->name, e->name)) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 void DFileSystemWatcherPrivate::_q_readFromInotify()
 {
     Q_Q(DFileSystemWatcher);
@@ -159,7 +147,9 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
     QMultiMap<int, QString> cookieToFilePath;
     QMultiMap<int, QString> cookieToFileName;
     QSet<int> hasMoveFromByCookie;
+#ifdef QT_DEBUG
     int exist_count = 0;
+#endif
     while (at < end) {
         inotify_event *event = reinterpret_cast<inotify_event *>(at);
         QStringList paths;
@@ -177,17 +167,28 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
         }
 
         if (!(event->mask & IN_MOVED_TO) || !hasMoveFromByCookie.contains(event->cookie)) {
-            if (!contain_event(eventList, event)) {
-                eventList.append(event);
-            } else {
-#ifdef QT_DEBUG
-                qDebug() << "exist event:" << "event->wd" << event->wd <<
-                            "event->mask" << event->mask << "exist counts " << ++exist_count;
-#endif
-            }
+            auto it = std::find_if(eventList.begin(), eventList.end(), [event](inotify_event *e){
+                    return event->wd == e->wd && event->mask == e->mask &&
+                           event->cookie == e->cookie &&
+                           event->len == e->len &&
+                           !strcmp(event->name, e->name);
+            });
 
+            if (it==eventList.end()) {
+                eventList.append(event);
+            }
+#ifdef QT_DEBUG
+            else {
+                qDebug() << "exist event:" << "event->wd" << event->wd <<
+                            "event->mask" << event->mask <<
+                            "event->cookie" << event->cookie << "exist counts " << ++exist_count;
+            }
+#endif
+            const QList<QString> bps = batch_pathmap.values(id);
             for (auto &path : paths) {
-                batch_pathmap.insert(id, path);
+                if (!bps.contains(path)) {
+                    batch_pathmap.insert(id, path);
+                }
             }
         }
 
