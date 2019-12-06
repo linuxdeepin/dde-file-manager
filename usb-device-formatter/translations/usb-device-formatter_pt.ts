@@ -95,7 +95,7 @@
     <message>
         <location filename="../utils/udisksutils.cpp" line="54"/>
         <source>System Disk</source>
-        <translation>Disco do Sistema</translation>
+        <translation>Disco do sistema</translation>
     </message>
     <message>
         <location filename="../utils/udisksutils.cpp" line="58"/>

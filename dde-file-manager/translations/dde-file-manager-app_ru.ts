@@ -9,7 +9,7 @@
     <message>
         <location filename="../main.cpp" line="112"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
-        <translation type="unfinished"/>
+        <translation>Диспетчер Файлов - это мощный и простой в использовании инструмент управления файлами, включающий поиск, копирование, удаление, сжатие / распаковку, свойства файла и другие полезные функции.</translation>
     </message>
     <message>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>

@@ -117,33 +117,33 @@
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="48"/>
         <source>Connect to Server</source>
-        <translation type="unfinished"/>
+        <translation>Yhdistä palvelimeen</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="153"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Peru</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="153"/>
         <source>Connect</source>
-        <translation type="unfinished"/>
+        <translation>Yhdistä</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="161"/>
         <source>My Favorites:</source>
-        <translation type="unfinished"/>
+        <translation>Suosikkini:</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="204"/>
         <source>Clear History</source>
-        <translation type="unfinished"/>
+        <translation>Tyhjennä historia</translation>
     </message>
 </context>
 <context>
     <name>DFMAddressBar</name>
     <message>
-        <location filename="../views/dfmaddressbar.cpp" line="356"/>
+        <location filename="../views/dfmaddressbar.cpp" line="359"/>
         <source>Search or enter address</source>
         <translation>Etsi tai anna osoite</translation>
     </message>
@@ -433,12 +433,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="991"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="989"/>
         <source>Trash</source>
         <translation>Roskakori</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="999"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="997"/>
         <source>Empty</source>
         <translation>Tyhjennä</translation>
     </message>
@@ -452,7 +452,7 @@
         <translation>Nimi</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1036"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1039"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1382"/>
         <location filename="../models/searchfileinfo.cpp" line="131"/>
         <source>Time modified</source>
@@ -488,12 +488,12 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2173"/>
+        <location filename="../views/dfileview.cpp" line="2170"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation>Levyn kuva on vioittunut ja sitä ei voi liittää, tyhjennä levy ensin</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2781"/>
+        <location filename="../views/dfileview.cpp" line="2778"/>
         <source>(Reverse)</source>
         <translation>(Käänteinen)</translation>
     </message>
@@ -582,7 +582,7 @@
     <message>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="114"/>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="129"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="514"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="520"/>
         <source>%1 Volume</source>
         <translation>%1 Levy</translation>
     </message>
@@ -593,17 +593,17 @@
         <translation>Data-asema</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="506"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="512"/>
         <source>%1 Drive</source>
         <translation>%1 asema</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="509"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="515"/>
         <source>Blank %1 Disc</source>
         <translation>Tyhjä %1 levy</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="512"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="518"/>
         <source>%1 Encrypted</source>
         <translation>%1 salattu</translation>
     </message>
@@ -843,7 +843,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1113"/>
         <source>3. Reboot and enter %1</source>
-        <translation type="unfinished"/>
+        <translation>3. Käynnistä ja kirjaudu %1</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1329"/>
@@ -929,16 +929,16 @@
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="409"/>
-        <location filename="../controllers/filecontroller.cpp" line="428"/>
-        <location filename="../controllers/filecontroller.cpp" line="447"/>
+        <location filename="../controllers/filecontroller.cpp" line="412"/>
+        <location filename="../controllers/filecontroller.cpp" line="431"/>
+        <location filename="../controllers/filecontroller.cpp" line="450"/>
         <source>Kindly Reminder</source>
         <translation>Ystävällinen muistutus</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="409"/>
-        <location filename="../controllers/filecontroller.cpp" line="428"/>
-        <location filename="../controllers/filecontroller.cpp" line="447"/>
+        <location filename="../controllers/filecontroller.cpp" line="412"/>
+        <location filename="../controllers/filecontroller.cpp" line="431"/>
+        <location filename="../controllers/filecontroller.cpp" line="450"/>
         <source>Please install File Roller first and then continue</source>
         <translation>Asenna ensin File Roller ja jatka sitten</translation>
     </message>
@@ -1333,7 +1333,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="251"/>
         <location filename="../configure/global-setting-template.js" line="250"/>
         <source>Use the file chooser dialog of File Manager</source>
-        <translation type="unfinished"/>
+        <translation>Käytä tiedostonhallinnan tiedostojen valintaikkunaa</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="259"/>
@@ -1581,7 +1581,7 @@
         <translation>Varmuuskopio</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="628"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="632"/>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="62"/>
         <source>Unknown</source>
         <translation>Tuntematon</translation>
@@ -1656,146 +1656,146 @@
 <context>
     <name>MoveCopyTaskWidget</name>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="382"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="384"/>
         <source>Skip</source>
         <translation>Ohita</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="381"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="383"/>
         <source>Keep both</source>
         <translation>Pidä molemmat</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="383"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="535"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="385"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="537"/>
         <source>Replace</source>
         <translation>Korvaa</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="408"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="410"/>
         <source>Do not ask again</source>
         <translation>Älä kysy uudestaan</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="533"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="535"/>
         <source>merge</source>
         <translation>liitä</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="503"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="505"/>
         <source>Copying %1</source>
         <translation>Kopioi %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="443"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="445"/>
         <source>Erasing disc %1, please wait...</source>
         <translation>Tyhjentää levyä %1, odota hetki...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="444"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="446"/>
         <source>Burning disc %1, please wait...</source>
         <translation>Kirjoittaa levyä %1, odota hetki...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="449"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="451"/>
         <source>Writing data...</source>
         <translation>Kirjoitetaan tietoja...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="450"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="452"/>
         <source>Verifying data...</source>
         <translation>Tarkistetaan tietoja...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="504"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="506"/>
         <source>Copy to %2</source>
         <translation>Kopioi kohteeseen %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="507"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="509"/>
         <source>Moving %1</source>
         <translation>Siirtää %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="508"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="510"/>
         <source>Move to %2</source>
         <translation>Siirrä kohteeseen %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="510"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="512"/>
         <source>Restoring %1</source>
         <translation>Palautus %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="511"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="513"/>
         <source>Restore to %2</source>
         <translation>Palauttaa kohteeseen %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="513"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="515"/>
         <source>Deleting %1</source>
         <translation>Poistaa %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="516"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="518"/>
         <source>Trashing %1</source>
         <translation>Tuhoaa %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="524"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="526"/>
         <source>Calculating space, please wait</source>
         <translation>Lasketaan tilaa, odota hetki</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="527"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="529"/>
         <source>File named %1 already exists in target folder</source>
         <translation>Tiedosto nimeltä %1 on jo kohdekansiossa</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="528"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="530"/>
         <source>Original path %1 target path %2</source>
         <translation>Alkuperäinen polku %1 kode %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="543"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="545"/>
         <source>Retry</source>
         <translation>Uudelleen</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="637"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="649"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="639"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="651"/>
         <source>Time modified:%1</source>
         <translation>Muokattu: %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="639"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="641"/>
         <source>Original folder</source>
         <translation>Alkuperäinen kansio</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="642"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="644"/>
         <source>Original file</source>
         <translation>Alkuperäinen tiedosto</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="652"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="654"/>
         <source>Target folder</source>
         <translation>Kohde kansio</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="655"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="657"/>
         <source>Target file</source>
         <translation>Kohde tiedosto</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="640"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="653"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="642"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="655"/>
         <source>Contains:%1</source>
         <translation>Sisältää:%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="643"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="656"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="645"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="658"/>
         <source>Size:%1</source>
         <translation>Koko:%1</translation>
     </message>
@@ -1916,7 +1916,7 @@
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="63"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="494"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="500"/>
         <source>System Disk</source>
         <translation>Järjestelmä</translation>
     </message>
@@ -1944,37 +1944,47 @@
 <context>
     <name>PropertyDialog</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="296"/>
+        <location filename="../dialogs/propertydialog.cpp" line="297"/>
         <source>Basic info</source>
         <translation>Perustiedot</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="297"/>
+        <location filename="../dialogs/propertydialog.cpp" line="298"/>
         <source>Open with</source>
         <translation>Avaa sovelluksella</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="298"/>
+        <location filename="../dialogs/propertydialog.cpp" line="299"/>
         <source>Sharing</source>
         <translation>Jakaminen</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="299"/>
+        <location filename="../dialogs/propertydialog.cpp" line="300"/>
         <source>Permissions</source>
         <translation>Käyttöoikeudet</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="347"/>
+        <location filename="../dialogs/propertydialog.cpp" line="348"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="351"/>
+        <location filename="../dialogs/propertydialog.cpp" line="352"/>
         <source>%1 / %2</source>
         <translation>%1 / %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1244"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1045"/>
+        <source>Hide this folder</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/propertydialog.cpp" line="1045"/>
+        <source>Hide this file</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/propertydialog.cpp" line="1296"/>
         <source>Allow to execute as program</source>
         <translation>Salli suorittaa ohjelmana</translation>
     </message>
@@ -1982,21 +1992,21 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="938"/>
+        <location filename="../dialogs/propertydialog.cpp" line="982"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="523"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="203"/>
         <source>Size</source>
         <translation>Koko</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="958"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1052"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1002"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1104"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="212"/>
         <source>Contains</source>
         <translation>Sisältää</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="939"/>
+        <location filename="../dialogs/propertydialog.cpp" line="983"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="524"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="204"/>
         <source>Type</source>
@@ -2004,73 +2014,73 @@
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
-        <location filename="../dialogs/propertydialog.cpp" line="942"/>
+        <location filename="../dialogs/propertydialog.cpp" line="986"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="526"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="303"/>
         <source>Time modified</source>
         <translation>Muokattu</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1053"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1105"/>
         <source>Free space</source>
         <translation>Vapaa tila</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1048"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1100"/>
         <source>Total space</source>
         <translation>Kokonaistila</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1157"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1209"/>
         <source>Access denied</source>
         <translation>Pääsy evätty</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1158"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1168"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1210"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1220"/>
         <source>Executable</source>
         <translation>Suoritettava</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1159"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1160"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1211"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1212"/>
         <source>Write only</source>
         <translation>Vain kirjoitus</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1161"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1162"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1213"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1214"/>
         <source>Read only</source>
         <translation>Vain luku</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1163"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1164"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1215"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1216"/>
         <source>Read-write</source>
         <translation>Luku-kirjoitus</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1240"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1292"/>
         <source>Others</source>
         <translation>Muut</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1238"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1290"/>
         <source>Owner</source>
         <translation>Omistaja</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1047"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1099"/>
         <source>Device type</source>
         <translation>Laitetyyppi</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1050"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1102"/>
         <source>File system</source>
         <translation>Tiedostojärjestelmä</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1239"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1291"/>
         <source>Group</source>
         <translation>Ryhmä</translation>
     </message>
@@ -2108,7 +2118,7 @@
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="65"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="476"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="479"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="578"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="581"/>
         <location filename="../interfaces/dfmcrumbitem.cpp" line="131"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="52"/>
         <source>Open in new window</source>
@@ -2120,7 +2130,7 @@
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="69"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="477"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="480"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="582"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="585"/>
         <location filename="../interfaces/dfmcrumbitem.cpp" line="135"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="56"/>
         <source>Open in new tab</source>
@@ -2231,7 +2241,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="105"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="506"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1000"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="998"/>
         <source>Empty Trash</source>
         <translation>Tyhjennä roskakori</translation>
     </message>
@@ -2251,7 +2261,7 @@
         <translation>Uusi asiakirja</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="940"/>
+        <location filename="../dialogs/propertydialog.cpp" line="984"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="525"/>
         <source>Time created</source>
         <translation>Luotu</translation>
@@ -2262,7 +2272,7 @@
         <translation>Kirjaudu ulos ja irrota</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="943"/>
+        <location filename="../dialogs/propertydialog.cpp" line="987"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="536"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="317"/>
         <source>Source path</source>
@@ -2281,7 +2291,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="541"/>
         <source>Connect to Server</source>
-        <translation type="unfinished"/>
+        <translation>Yhdistä palvelimeen</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="542"/>
@@ -2464,66 +2474,66 @@
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="294"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1036"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1037"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1038"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1088"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1089"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1090"/>
         <source>Local disk</source>
         <translation>Paikallinen levy</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="296"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1039"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1091"/>
         <source>Removable disk</source>
         <translation>Irroitettava levy</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="298"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1041"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1042"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1093"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1094"/>
         <source>Network shared directory</source>
         <translation>Lähiverkon jaettu hakemisto</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="300"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1043"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1095"/>
         <source>Android mobile device</source>
         <translation>Android mobiililaite</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="302"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1044"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1096"/>
         <source>Apple mobile device</source>
         <translation>Apple mobiililaite</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="304"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1045"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1097"/>
         <source>Camera</source>
         <translation>Kamera</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="306"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1040"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1092"/>
         <source>DVD</source>
         <translation>DVD</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="308"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1047"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1099"/>
         <source>Unknown device</source>
         <translation>Tuntematon laite</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="315"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1052"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="648"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1104"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="652"/>
         <source>%1 item</source>
         <translation>%1 kohde</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="317"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1052"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="650"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1104"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="654"/>
         <source>%1 items</source>
         <translation>%1 kohdetta</translation>
     </message>
@@ -2550,24 +2560,24 @@
         <translation>Aika poistettu</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1245"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1248"/>
         <source>Loading...</source>
         <translation>Lataa...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="777"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="780"/>
         <source>File has been moved or deleted</source>
         <translation>Tiedosto on siirretty tai poistettu</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="779"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="787"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="793"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="782"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="790"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="796"/>
         <source>You do not have permission to access this folder</source>
         <translation>Sinulla ei ole oikeutta käyttää tätä kansiota</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="797"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="800"/>
         <location filename="../models/recentfileinfo.cpp" line="214"/>
         <location filename="../models/trashfileinfo.cpp" line="376"/>
         <location filename="../models/vaultfileinfo.cpp" line="119"/>
@@ -2618,12 +2628,12 @@
         <translation>Teksti</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="949"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="951"/>
         <source>1 task in progress</source>
         <translation>1 käynnissä oleva tehtävä</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="951"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="953"/>
         <source>%1 tasks in progress</source>
         <translation>%1 käynnissä olevaa tehtävää</translation>
     </message>
@@ -2725,7 +2735,7 @@
         <translation>Lisää</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="970"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1014"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="288"/>
         <location filename="../views/drenamebar.cpp" line="261"/>
         <source>Location</source>
@@ -2795,7 +2805,7 @@
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="173"/>
-        <location filename="../dialogs/propertydialog.cpp" line="941"/>
+        <location filename="../dialogs/propertydialog.cpp" line="985"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="302"/>
         <source>Time accessed</source>
         <translation>Käytetty aika</translation>
@@ -2856,13 +2866,13 @@
         <translation>Tyhjennä</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="574"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="577"/>
         <location filename="../interfaces/dfmcrumbitem.cpp" line="127"/>
         <source>Copy path</source>
         <translation>Kopioi kohde</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="588"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="591"/>
         <location filename="../interfaces/dfmcrumbitem.cpp" line="141"/>
         <source>Edit address</source>
         <translation>Muokkaa osoitetta</translation>
@@ -2873,7 +2883,7 @@
         <translation>Vapaa tila %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="1004"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="1006"/>
         <source>Files are being processed</source>
         <translation>Tiedostoja käsitellään</translation>
     </message>
@@ -3308,22 +3318,22 @@
 <context>
     <name>TrashPropertyDialog</name>
     <message>
-        <location filename="../dialogs/trashpropertydialog.cpp" line="67"/>
+        <location filename="../dialogs/trashpropertydialog.cpp" line="53"/>
         <source>Trash</source>
         <translation>Roskakori</translation>
     </message>
     <message>
-        <location filename="../dialogs/trashpropertydialog.cpp" line="71"/>
+        <location filename="../dialogs/trashpropertydialog.cpp" line="69"/>
         <source>item</source>
         <translation>kohde</translation>
     </message>
     <message>
-        <location filename="../dialogs/trashpropertydialog.cpp" line="73"/>
+        <location filename="../dialogs/trashpropertydialog.cpp" line="71"/>
         <source>items</source>
         <translation>kohdetta</translation>
     </message>
     <message>
-        <location filename="../dialogs/trashpropertydialog.cpp" line="76"/>
+        <location filename="../dialogs/trashpropertydialog.cpp" line="74"/>
         <source>Contains %1 %2</source>
         <translation>Sisältää %1 %2</translation>
     </message>
