@@ -93,13 +93,14 @@ BackgroundHelper::BackgroundHelper(bool preview, QObject *parent)
         connect(windowManagerHelper, &DWindowManagerHelper::hasCompositeChanged,
                 this, &BackgroundHelper::onWMChanged);
         desktop_instance = this;
-        QTimer *checkTimer = new QTimer(this);
-        checkTimer->setInterval(2000);
-        checkTimer->start();
-        connect(checkTimer, &QTimer::timeout, this, [this](){
-            checkBlackScreen();
-        });
     }
+
+    checkTimer = new QTimer(this);
+    checkTimer->setInterval(2000);
+    checkTimer->setSingleShot(true);
+    connect(checkTimer, &QTimer::timeout, this, [this](){
+        checkBlackScreen();
+    });
 
     onWMChanged();
 }
@@ -262,6 +263,10 @@ void BackgroundHelper::updateBackground(QWidget *l)
     dynamic_cast<BackgroundLabel*>(l)->setPixmap(pix);
 
     qInfo() << l->windowHandle()->screen() << currentWallpaper << pix;
+
+    if (checkTimer) {
+        checkTimer->start();
+    }
 }
 
 void BackgroundHelper::updateBackground()
@@ -358,9 +363,7 @@ void BackgroundHelper::updateBackgroundGeometry(QScreen *screen, BackgroundLabel
 
 void BackgroundHelper::checkBlackScreen()
 {
-#ifdef QT_DEBUG
     qDebug() << "check it out";
-#endif
 
     QScreen *ps = qApp->primaryScreen();
     QWidget *psl = backgroundForScreen(ps);
