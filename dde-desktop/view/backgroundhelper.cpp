@@ -93,6 +93,12 @@ BackgroundHelper::BackgroundHelper(bool preview, QObject *parent)
         connect(windowManagerHelper, &DWindowManagerHelper::hasCompositeChanged,
                 this, &BackgroundHelper::onWMChanged);
         desktop_instance = this;
+        QTimer *checkTimer = new QTimer(this);
+        checkTimer->setInterval(2000);
+        checkTimer->start();
+        connect(checkTimer, &QTimer::timeout, this, [this](){
+            checkBlackScreen();
+        });
     }
 
     onWMChanged();
@@ -236,22 +242,6 @@ void BackgroundHelper::updateBackground(QWidget *l)
         return;
 
     QScreen *s = l->windowHandle()->screen();
-    if (l->property("myScreen").toString()!=s->name()) {
-        // 当l->windowHandle()->screen()和原始绑定screen的不对会造成位置不对， 多屏幕是会造成label重叠，有的屏幕为黑屏没有壁纸。
-        qWarning() << "label's Screen changed somewhere";
-        for (QScreen * screen : qGuiApp->screens()) {
-            if (screen->name() == l->property("myScreen").toString()
-#ifdef QT_DEBUG
-                    && l->property("enableAdjustScreen").toBool()
-#endif
-                    ) {
-                l->windowHandle()->setScreen(screen);
-                qWarning() << "setScreen(" << screen->name() << ")";
-                break;
-            }
-        }
-    }
-
     l->windowHandle()->handle()->setGeometry(s->handle()->geometry());
 
     const QSize trueSize = s->handle()->geometry().size();
@@ -366,6 +356,72 @@ void BackgroundHelper::updateBackgroundGeometry(QScreen *screen, BackgroundLabel
     updateBackground(l);
 }
 
+void BackgroundHelper::checkBlackScreen()
+{
+#ifdef QT_DEBUG
+    qDebug() << "check it out";
+#endif
+
+    QScreen *ps = qApp->primaryScreen();
+    QWidget *psl = backgroundForScreen(ps);
+    QList<QWidget *> ls = allBackgrounds();
+    QList<QScreen *> ss = qApp->screens();
+    QSet<QScreen *> myScreens;
+
+    for (QWidget *l : ls) {
+        myScreens << l->windowHandle()->screen();
+    }
+
+    bool hasBlackScreen = myScreens.size()<ss.size();
+    bool isPrimaryScreenBlack = false;
+    if (!hasBlackScreen) {
+         //qDebug() << "No black Screen Found...";
+        return;
+    } else {
+        QSet<QScreen *>blackScreens = ss.toSet() - myScreens;
+        qInfo() << "primaryScreen is " << ps->name();
+
+        for (QScreen *s : blackScreens) {
+            qInfo() << "black Screen Found..." << s->name();
+            if (!isPrimaryScreenBlack) {
+                isPrimaryScreenBlack = s == ps;
+            }
+        }
+    }
+
+    if (isPrimaryScreenBlack && psl) {
+        qInfo() << "try restore primary Screen " << ps->name() << psl->property("myScreen");
+        psl->windowHandle()->setScreen(ps);
+        updateBackgroundGeometry(ps, static_cast<BackgroundLabel *>(psl));
+    }
+
+    // remove primaryScreen's label from ls
+    for (int i=0; i<ls.size(); ++i) {
+        if (ls.value(i)==psl) {
+            qInfo() << "remove " << ls[i]->property("myScreen");
+            ls.removeAt(i);
+            break;
+        }
+    }
+
+    // remove primaryScreen  from ss
+    for (int i=0; i<ss.size(); ++i) {
+        if (ss.value(i)==ps) {
+            qInfo() << "remove " << ss[i]->name();
+            ss.removeAt(i);
+            break;
+        }
+    }
+
+    Q_ASSERT(ls.size() == ss.size());
+    for (int i=0; i<ls.size() && i<ss.size(); ++i) {
+        if (ls[i]->windowHandle()->screen()!=ss[i]) {
+            ls[i]->windowHandle()->setScreen(ss[i]);
+        }
+        updateBackgroundGeometry(ss[i], static_cast<BackgroundLabel *>(ls[i]));
+    }
+}
+
 void BackgroundHelper::resetBackgroundVisibleState()
 {
     for (QScreen * screen : qGuiApp->screens()) {
@@ -431,13 +487,5 @@ void BackgroundHelper::mapLabelScreen(int labelIndex, int screenIndex)
     }
 
     updateBackgroundGeometry(screen, static_cast<BackgroundLabel *>(l));
-}
-
-void BackgroundHelper::enableAdjustScreen(bool enable)
-{
-    QList<QWidget*> backgrounds = allBackgrounds();
-    for (QWidget *l : backgrounds) {
-        l->setProperty("enableAdjustScreen", enable);
-    }
 }
 #endif //QT_DEBUG

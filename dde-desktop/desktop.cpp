@@ -242,10 +242,4 @@ void Desktop::mapLabelScreen(int labelIndex, int screenIndex)
     if (d->background)
         d->background->mapLabelScreen(labelIndex, screenIndex);
 }
-
-void Desktop::enableAdjustScreen(bool enable)
-{
-    if (d->background)
-        d->background->enableAdjustScreen(enable);
-}
 #endif // QT_DEBUG
