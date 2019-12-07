@@ -844,9 +844,10 @@ bool FileUtils::isExecutableScript(const QString &path)
     QString mimetype = getFileMimetype(path);
     qDebug() << info.isSymLink() << mimetype;
 
-    if (info.size() == 0) {
-        return false;
-    }
+    // anke requirement
+//    if (info.size() == 0) {
+//        return false;
+//    }
 
     if (info.isSymLink()){
         _path = QFile(path).symLinkTarget();
