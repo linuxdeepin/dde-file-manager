@@ -317,6 +317,7 @@ QString DFMRootFileInfo::iconName() const
 QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
     Q_D(const DFMRootFileInfo);
+    bool protectUnmountOrEject = false;
     QVector<MenuAction> ret;
     if (suffix() == SUFFIX_USRDIR) {
         ret.push_back(MenuAction::OpenInNewWindow);
@@ -330,9 +331,32 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
 
     QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(d->blk ? d->blk->drive() : ""));
     DBlockDevice *blk = d->ctblk ? d->ctblk.data() : d->blk.data();
+
+    if (suffix() == SUFFIX_UDISKS && blk && !blk->mountPoints().empty()) {
+        QList<QByteArray> mountPoints = blk->mountPoints();
+        for (auto & mountPoint : mountPoints) {
+            if (!mountPoint.startsWith("/media/")) {
+                protectUnmountOrEject = true;
+                break;
+            }
+        }
+
+        if (!protectUnmountOrEject) {
+            QStorageInfo qsi("/");
+            QStringList rootDevNodes = DDiskManager::resolveDeviceNode(qsi.device(), {});
+            if (!rootDevNodes.isEmpty()) {
+                if (DDiskManager::createBlockDevice(rootDevNodes.first())->drive() == blk->drive()) {
+                    protectUnmountOrEject = true;
+                }
+            }
+        }
+    }
+
     //cleartextDevice has hintSystem = true regardless of its backer's value ...
     if (suffix() == SUFFIX_GVFSMP || (suffix() == SUFFIX_UDISKS && blk && ((!blk->mountPoints().empty() && !d->blk->hintSystem())))) {
-        ret.push_back(MenuAction::Unmount);
+        if (!protectUnmountOrEject) {
+            ret.push_back(MenuAction::Unmount);
+        }
     }
 
     if (suffix() == SUFFIX_UDISKS && blk && blk->mountPoints().empty()) {
@@ -347,7 +371,9 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
     }
 
     if (drv && drv->ejectable() && (!drv->canPowerOff() || drv->mediaCompatibility().join(" ").contains("optical"))) {
-        ret.push_back(MenuAction::Eject);
+        if (!protectUnmountOrEject) {
+            ret.push_back(MenuAction::Eject);
+        }
     }
     if (drv && drv->canPowerOff()) {
         ret.push_back(MenuAction::SafelyRemoveDrive);
