@@ -86,6 +86,8 @@
 #include <models/trashfileinfo.h>
 #include <views/dfmtagwidget.h>
 
+#include <dgiosettings.h>
+
 #define ArrowLineExpand_HIGHT   30
 #define ArrowLineExpand_SPACING 10
 
@@ -1039,7 +1041,9 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         layout->addRow(sourcePathSectionLabel, sourcePathLabel);
     }
 
-    if (DFMFileListFile::supportHideByFile(info->filePath())) {
+    DGioSettings gsettings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
+
+    if (gsettings.value("property-dlg-hidefile-checkbox").toBool() && DFMFileListFile::supportHideByFile(info->filePath())) {
         DFMFileListFile flf(QFileInfo(info->filePath()).absolutePath());
         QString fileName = info->fileName();
         QCheckBox * hideThisFile = new QCheckBox(info->isDir() ? tr("Hide this folder") : tr("Hide this file"));
