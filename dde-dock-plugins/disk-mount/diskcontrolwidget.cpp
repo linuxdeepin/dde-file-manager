@@ -247,10 +247,11 @@ void DiskControlWidget::onDiskListChanged()
 
     int mountedCount = 0;
 
-    QStringList blDevList = m_diskManager->blockDevices();
+    QStringList blDevList = DDiskManager::blockDevices({});
     for (const QString& blDevStr : blDevList) {
         QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
         if (blDev->hasFileSystem() && !blDev->mountPoints().isEmpty() && !blDev->hintSystem() && !blDev->hintIgnore()) {
+            if (isProtectedDevice(blDev.data())) continue;
             QByteArray mountPoint = blDev->mountPoints().first();
             mountedCount++;
             DAttachedUdisks2Device *dad = new DAttachedUdisks2Device(blDev.data());
