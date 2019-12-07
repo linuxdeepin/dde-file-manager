@@ -28,6 +28,22 @@
       </description>
     </key>
 
+    <key name='protect-non-media-mounts' type='b'>
+      <default>true</default>
+      <summary>Hide the item and do not allowed eject or unmount if mount point is not under /media</summary>
+      <description>
+        If enabled, mounts which not mounted under /media will not allowed to eject or unmount.
+      </description>
+    </key>
+
+    <key name='protect-root-device-mounts' type='b'>
+      <default>true</default>
+      <summary>Hide the item and do not allowed eject or unmount if the mount device provided root (/) mount point</summary>
+      <description>
+        If enabled, mounts which on the same device as root (/) mount will not allowed to eject or unmount.
+      </description>
+    </key>
+
   </schema>
 
 </schemalist>
