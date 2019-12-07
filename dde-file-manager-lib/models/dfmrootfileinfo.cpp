@@ -29,6 +29,7 @@
 #include <dgiomount.h>
 #include <dgiovolume.h>
 #include <dgiovolumemanager.h>
+#include <dgiosettings.h>
 #include <ddiskmanager.h>
 #include <dblockdevice.h>
 #include <ddiskdevice.h>
@@ -318,6 +319,7 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
 {
     Q_D(const DFMRootFileInfo);
     bool protectUnmountOrEject = false;
+    DGioSettings gsettings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
     QVector<MenuAction> ret;
     if (suffix() == SUFFIX_USRDIR) {
         ret.push_back(MenuAction::OpenInNewWindow);
@@ -333,15 +335,17 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
     DBlockDevice *blk = d->ctblk ? d->ctblk.data() : d->blk.data();
 
     if (suffix() == SUFFIX_UDISKS && blk && !blk->mountPoints().empty()) {
-        QList<QByteArray> mountPoints = blk->mountPoints();
-        for (auto & mountPoint : mountPoints) {
-            if (!mountPoint.startsWith("/media/")) {
-                protectUnmountOrEject = true;
-                break;
+        if (gsettings.value("protect-non-media-mounts").toBool()) {
+            QList<QByteArray> mountPoints = blk->mountPoints();
+            for (auto & mountPoint : mountPoints) {
+                if (!mountPoint.startsWith("/media/")) {
+                    protectUnmountOrEject = true;
+                    break;
+                }
             }
         }
 
-        if (!protectUnmountOrEject) {
+        if (gsettings.value("protect-root-device-mounts").toBool() && !protectUnmountOrEject) {
             QStorageInfo qsi("/");
             QStringList rootDevNodes = DDiskManager::resolveDeviceNode(qsi.device(), {});
             if (!rootDevNodes.isEmpty()) {
