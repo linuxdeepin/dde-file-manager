@@ -36,6 +36,7 @@
 #include <dblockdevice.h>
 #include <ddiskdevice.h>
 #include <dfmsettings.h>
+#include <dgiosettings.h>
 #include <DDesktopServices>
 
 #include <QDebug>
@@ -158,14 +159,39 @@ void DiskControlWidget::doStartupAutoMount()
     }
 }
 
+bool isProtectedDevice(DBlockDevice * blk) {
+    DGioSettings gsettings("com.deepin.dde.dock.module.disk-mount", "/com/deepin/dde/dock/module/disk-mount/");
+    if (gsettings.value("protect-non-media-mounts").toBool()) {
+        QList<QByteArray> mountPoints = blk->mountPoints();
+        for (auto & mountPoint : mountPoints) {
+            if (!mountPoint.startsWith("/media/")) {
+                return true;
+            }
+        }
+    }
+
+    if (gsettings.value("protect-root-device-mounts").toBool()) {
+        QStorageInfo qsi("/");
+        QStringList rootDevNodes = DDiskManager::resolveDeviceNode(qsi.device(), {});
+        if (!rootDevNodes.isEmpty()) {
+            if (DDiskManager::createBlockDevice(rootDevNodes.first())->drive() == blk->drive()) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 void DiskControlWidget::unmountAll()
 {
     QStringList blockDevices = m_diskManager->blockDevices();
 
     QtConcurrent::run([blockDevices, this]() {
         for (const QString & blDevStr : blockDevices) {
-        QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
-        if (blDev->hasFileSystem() /* && DFMSetting*/ && !blDev->mountPoints().isEmpty() && !blDev->hintIgnore() && !blDev->hintSystem()) {
+            QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
+            if (isProtectedDevice(blDev.data())) continue;
+            if (blDev->hasFileSystem() /* && DFMSetting*/ && !blDev->mountPoints().isEmpty() && !blDev->hintIgnore() && !blDev->hintSystem()) {
                 QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
                 blDev->unmount({});
                 if (diskDev->removable()) {
@@ -302,10 +328,11 @@ void DiskControlWidget::onDriveConnected(const QString &deviceId)
         }
 
         // Do auto mount stuff..
-        QStringList blDevList = m_diskManager->blockDevices();
+        QStringList blDevList = DDiskManager::blockDevices({});
         for (const QString& blDevStr : blDevList) {
             QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
 
+            if (isProtectedDevice(blDev.data())) continue;
             if (blDev->drive() != deviceId) continue;
             if (blDev->isEncrypted()) continue;
             if (blDev->hintIgnore()) continue;
