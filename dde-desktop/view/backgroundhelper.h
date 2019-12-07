@@ -77,6 +77,7 @@ private:
     DGioSettings          *gsettings          = nullptr;
     WMInter             *wmInter            = nullptr;
     DWindowManagerHelper* windowManagerHelper = nullptr;
+    QTimer *checkTimer = nullptr;
     int currentWorkspaceIndex = 0;
     QString currentWallpaper;
     QPixmap backgroundPixmap;
