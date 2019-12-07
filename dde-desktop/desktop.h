@@ -45,7 +45,6 @@ public slots:
     void logAllScreenLabel();
     void logScreenLabel(int index);
     void mapLabelScreen(int labelIndex, int screenIndex);
-    void enableAdjustScreen(bool enable);
 #endif // QT_DEBUG
 
 private:

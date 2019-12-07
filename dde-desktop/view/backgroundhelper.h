@@ -52,7 +52,6 @@ public:
     void printLog();
     void printLog(int index);
     void mapLabelScreen(int labelIndex, int screenIndex);
-    void enableAdjustScreen(bool enable);
 #endif //QT_DEBUG
 
 Q_SIGNALS:
@@ -70,6 +69,7 @@ private:
     void onScreenAdded(QScreen *screen);
     void onScreenRemoved(QScreen *screen);
     void updateBackgroundGeometry(QScreen *screen, BackgroundLabel * l);
+    void checkBlackScreen();
 
     bool m_previuew = false;
     bool m_visible = true;
