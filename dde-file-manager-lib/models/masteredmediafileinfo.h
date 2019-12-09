@@ -52,6 +52,7 @@ public:
 
     bool canDrop() const Q_DECL_OVERRIDE;
     bool canTag() const Q_DECL_OVERRIDE;
+    bool canRename() const Q_DECL_OVERRIDE;
 
 private:
     DUrl m_backerUrl;

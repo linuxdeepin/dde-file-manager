@@ -222,3 +222,8 @@ bool MasteredMediaFileInfo::canTag() const
 {
     return false;
 }
+
+bool MasteredMediaFileInfo::canRename() const
+{
+    return false;
+}
