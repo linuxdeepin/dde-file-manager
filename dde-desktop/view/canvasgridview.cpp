@@ -2593,10 +2593,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     }
 
     //totally use dde file manager libs for menu actions
-    auto *menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, winId());
-
-    // load pluginActions
-    DFileMenuManager::loadNormalPluginMenu(menu, list, info->fileUrl(), true);
+    auto *menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, winId(), true);
 
     QSet<MenuAction> ignoreActions;
     ignoreActions  << MenuAction::Open;
