@@ -2612,10 +2612,7 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
         }
     }
 
-    menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, windowId());
-
-    // load pluginActions
-    DFileMenuManager::loadNormalPluginMenu(menu, list, info->fileUrl(), false);
+    menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, windowId(), false);
 
     if (!menu){
         return;

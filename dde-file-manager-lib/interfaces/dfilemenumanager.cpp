@@ -155,7 +155,7 @@ DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &d
     return genereteMenuByKeys(actionKeys, disableList, false, subMenuKeys, false);
 }
 
-DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrlList &urlList, QSet<MenuAction> disableList, QSet<MenuAction> unusedList, int windowId)
+DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrlList &urlList, QSet<MenuAction> disableList, QSet<MenuAction> unusedList, int windowId, bool onDesktop)
 {
     // remove compress/decompress action
     unusedList << MenuAction::Compress << MenuAction::Decompress << MenuAction::DecompressHere;
@@ -373,7 +373,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         return menu;
     }
 
-    //loadNormalPluginMenu(menu, urlList, currentUrl);
+    loadNormalPluginMenu(menu, urlList, currentUrl, onDesktop);
     // stop loading Extension menus from json files
     //loadNormalExtensionMenu(menu, urlList, currentUrl);
 
