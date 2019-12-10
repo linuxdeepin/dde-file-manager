@@ -171,12 +171,32 @@ void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::Clipboard
 
     QByteArray ba = (action == DFMGlobal::CutAction) ? "cut" : "copy";
     QString text;
+    QByteArray iconBa;
+    QDataStream stream(&iconBa, QIODevice::WriteOnly);
 
+    int maxIconsNum = 3;
     for(const QUrl &url : list) {
         ba.append("\n");
         ba.append(url.toString());
 
         const QString &path = url.toLocalFile();
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, url);
+
+        if (!fileInfo)
+            continue;
+        if (maxIconsNum-->0) {
+            QStringList iconList;
+            if (fileInfo->isSymLink()) {
+                iconList << "emblem-symbolic-link";
+            }
+            if (!fileInfo->isWritable()) {
+                iconList << "emblem-readonly";
+            }
+            if (!fileInfo->isReadable()) {
+                iconList << "emblem-unreadable";
+            }
+            stream << iconList << fileInfo->fileIcon();
+        }
 
         if (!path.isEmpty()) {
             text += path + '\n';
@@ -185,6 +205,7 @@ void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::Clipboard
 
     mimeData->setText(text.endsWith('\n') ? text.left(text.length() - 1) : text);
     mimeData->setData("x-special/gnome-copied-files", ba);
+    mimeData->setData("x-dfm-copied/file-icons", iconBa);
     mimeData->setUrls(list);
 
     qApp->clipboard()->setMimeData(mimeData);
