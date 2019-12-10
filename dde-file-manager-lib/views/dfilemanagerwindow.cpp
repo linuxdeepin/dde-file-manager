@@ -1021,7 +1021,7 @@ void DFileManagerWindow::initRightView()
     d->rightViewLayout->addLayout(tabBarLayout);
     d->rightViewLayout->addWidget(d->emptyTrashHolder);
     d->rightViewLayout->addWidget(d->emptyTrashSplitLine);
-    d->rightViewLayout->addLayout(d->viewStackLayout);
+    d->rightViewLayout->addLayout(d->viewStackLayout, 1);
     d->rightViewLayout->setSpacing(0);
     d->rightViewLayout->setContentsMargins(0, 0, 0, 0);
     d->rightView->setLayout(d->rightViewLayout);
