@@ -362,7 +362,10 @@ void DFileDialogHandle::show()
 {
     D_D(DFileDialogHandle);
 
-    d->dialog->show();
+    QTimer::singleShot(100, this, [=](){
+        d->dialog->activateWindow();
+        d->dialog->show();
+    });
 }
 
 void DFileDialogHandle::hide()
