@@ -153,7 +153,12 @@ void DFMTagWidget::initConnection()
 
     QObject::connect(d->m_tagCrumbEdit, &DCrumbEdit::crumbListChanged, d->m_tagCrumbEdit, [=](){
         if (!d->m_tagCrumbEdit->isEditing() && !d->m_tagCrumbEdit->property("LoadFileTags").toBool()) {
-            DFileService::instance()->makeTagsOfFiles(nullptr, {d->m_url}, d->m_tagCrumbEdit->crumbList());
+            bool ret = DFileService::instance()->makeTagsOfFiles(nullptr, {d->m_url}, d->m_tagCrumbEdit->crumbList());
+
+            if (!ret) {
+                loadTags(d->m_url);
+                return;
+            }
         }
     });
 
