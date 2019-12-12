@@ -21,7 +21,7 @@
 #include <QtSql/QSqlDatabase>
 
 
-
+#if QT_VERSION < QT_VERSION_CHECK(5,14,0)
 namespace std
 {
 
@@ -35,7 +35,7 @@ struct hash<QString>
 };
 
 }
-
+#endif
 
 
 class DSqliteHandle : public QObject
