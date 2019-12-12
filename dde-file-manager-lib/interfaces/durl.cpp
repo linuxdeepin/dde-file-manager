@@ -301,10 +301,17 @@ QString DUrl::taggedLocalFilePath() const noexcept
 QString DUrl::tagName() const noexcept
 {
     if(this->isTaggedFile()){
-        return this->fileName();
+        QUrlQuery qq(query());
+        return qq.hasQueryItem("tagname") ? qq.queryItemValue("tagname") : QUrl::fileName();
+        //return this->fileName();
     }
 
     return QString{};
+}
+
+QString DUrl::fileName(QUrl::ComponentFormattingOptions options) const
+{
+    return isTaggedFile() ? tagName() : QUrl::fileName(options);
 }
 
 QString DUrl::deviceId() const
@@ -557,6 +564,7 @@ DUrl DUrl::fromUserTaggedFile(const QString& tag_name, const QString& localFileP
     DUrl uri{};
     uri.setScheme(TAG_SCHEME);
     uri.setPath(QString{"/"} + tag_name);
+    uri.setQuery("tagname="+tag_name);
 
     if(!localFilePath.isEmpty()){
         uri.setFragment(localFilePath);

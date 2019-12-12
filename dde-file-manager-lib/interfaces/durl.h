@@ -129,6 +129,7 @@ public:
     DUrl searchedFileUrl() const;
     QString taggedLocalFilePath() const noexcept;
     QString tagName() const noexcept;
+    QString fileName(ComponentFormattingOptions options = FullyDecoded) const; // not virtual
     QString deviceId() const;
     DUrl bookmarkTargetUrl() const;
     QString bookmarkName() const;
