@@ -104,7 +104,7 @@ bool DFMRoundBackground::eventFilter(QObject *watched, QEvent *event)
         QRectF bgRect;
         bgRect.setSize(w->size());
         const QPalette pal = QGuiApplication::palette();
-        QColor bgColor = pal.color(QPalette::Background);
+        QColor bgColor = pal.color(QPalette::Base);
 
         QPainterPath path;
         path.addRoundedRect(bgRect, radius, radius);
@@ -1289,7 +1289,7 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     setComboBoxByPermission(groupBox, info->permissions() & 0x0070, 4);
     setComboBoxByPermission(otherBox, info->permissions() & 0x0007, 0);
 
-    layout->setLabelAlignment(Qt::AlignRight);
+    layout->setLabelAlignment(Qt::AlignLeft);
     layout->addRow(QObject::tr("Owner"), ownerBox);
     layout->addRow(QObject::tr("Group"), groupBox);
     layout->addRow(QObject::tr("Others"), otherBox);
@@ -1308,7 +1308,7 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     }
 
 
-    layout->setContentsMargins(45, 10, 15, 10);
+    layout->setContentsMargins(15, 10, 30, 10);
     widget->setLayout(layout);
 
     connect(ownerBox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), widget, onComboBoxChanged);
