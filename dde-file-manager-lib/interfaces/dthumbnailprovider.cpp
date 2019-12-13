@@ -340,6 +340,8 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
             reader.setScaledSize(reader.size().scaled(size, size, Qt::KeepAspectRatio));
         }
 
+        reader.setAutoTransform(true);
+
         if (!reader.read(image.data())) {
             d->errorString = reader.errorString();
             goto _return;
