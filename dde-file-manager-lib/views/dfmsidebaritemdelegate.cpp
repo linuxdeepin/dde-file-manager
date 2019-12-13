@@ -27,6 +27,7 @@
 #include <QApplication>
 #include <DPalette>
 #include <qdrawutil.h>
+#include <QLineEdit>
 
 QT_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -68,6 +69,19 @@ void DFMSideBarItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *m
     }
 
     return;
+}
+
+QWidget *DFMSideBarItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    QWidget *editor = DStyledItemDelegate::createEditor(parent, option, index);
+    QLineEdit *qle = nullptr;
+    if ((qle = dynamic_cast<QLineEdit *>(editor))) {
+        QRegExp regx("[^\\\\/:\\*\\?\"<>|%&]+");
+        QValidator *validator = new QRegExpValidator(regx, qle);
+        qle->setValidator(validator);
+    }
+
+    return editor;
 }
 
 void DFMSideBarItemDelegate::paintSeparator(QPainter *painter, const QStyleOptionViewItem &option) const
