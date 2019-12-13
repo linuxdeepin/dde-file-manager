@@ -675,7 +675,7 @@ bool DFileService::setFileTags(const QObject *sender, const DUrl &url, const QLi
 
 bool DFileService::makeTagsOfFiles(const QObject *sender, const DUrlList &urlList, const QStringList &tags, const QSet<QString> dirtyTagFilter) const
 {
-    QRegExp rx("[\\\\/:*?\"<>|]");
+    QRegExp rx("[\\\\/:\\*\\?\"<>|%&]");
     for (const QString &tag : tags) {
         if (tag.indexOf(rx)>=0) {
             return false;
