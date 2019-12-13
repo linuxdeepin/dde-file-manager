@@ -245,6 +245,10 @@ void MoveCopyTaskWidget::initUI()
     if (m_fileJob) {
         m_errorLabel = new QLabel(this);
         m_errorLabel->setObjectName("ErrorLabel");
+        m_errorLabel->setFixedWidth(450);
+        QFontMetrics fm(m_errorLabel->font());
+        m_errorLabel->setFixedHeight(fm.height()*2);
+        m_errorLabel->setWordWrap(true);
     }
 
     QGridLayout *msgGridLayout = new QGridLayout;
@@ -270,34 +274,36 @@ void MoveCopyTaskWidget::initUI()
     m_lineLabel = new QFrame;
     m_lineLabel->setFixedHeight(1);
     m_lineLabel->setObjectName("LineLabel");
+    m_lineLabel->setFrameShape(QFrame::HLine); // show the separator line
     m_lineLabel->hide();
 
     QVBoxLayout *rightLayout = new QVBoxLayout;
     rightLayout->addStretch(1);
     rightLayout->addLayout(msgGridLayout);
+    rightLayout->addWidget(m_conflictFrame);
+
     QHBoxLayout *hLayout = new QHBoxLayout;
-    hLayout->addWidget(m_conflictFrame, 1);
+    hLayout->addSpacing(20);
+    hLayout->addWidget(m_dwaterProgress);
+    hLayout->addSpacing(20);
+    hLayout->addLayout(rightLayout);
+    hLayout->addSpacing(5);
+    hLayout->setContentsMargins(0, 0, 0, 0);
     hLayout->addWidget(m_pauseBuuton, 0, Qt::AlignCenter);
     hLayout->addSpacing(5);
     hLayout->addWidget(m_closeButton, 0, Qt::AlignCenter);
-    rightLayout->addLayout(hLayout);
-    rightLayout->addSpacing(20);
+    hLayout->addSpacing(20);
 
-    rightLayout->addWidget(m_buttonFrame);
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->addLayout(hLayout);
+//    mainLayout->addWidget(m_buttonFrame);
+    QHBoxLayout *btnLayout = new QHBoxLayout;
+    btnLayout->setContentsMargins(10, 0, 10, 0);
+    btnLayout->addWidget(m_buttonFrame);
+    mainLayout->addLayout(btnLayout);
+    mainLayout->addWidget(m_lineLabel, 0, Qt::AlignBottom);
+    mainLayout->setContentsMargins(10, 0, 10, 10);
 
-    rightLayout->addStretch(1);
-    rightLayout->addWidget(m_lineLabel, 0, Qt::AlignBottom);
-    rightLayout->setSpacing(0);
-    rightLayout->setContentsMargins(0, 0, 0, 0);
-
-    QHBoxLayout *mainLayout = new QHBoxLayout;
-    mainLayout->addSpacing(20);
-    mainLayout->addWidget(m_dwaterProgress);
-    mainLayout->addSpacing(20);
-    mainLayout->addLayout(rightLayout);
-    mainLayout->addSpacing(5);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->addSpacing(20);
     setLayout(mainLayout);
     setFixedHeight(80);
 
