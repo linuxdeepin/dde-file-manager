@@ -36,12 +36,33 @@ DMimeDatabase::DMimeDatabase()
 
 QMimeType DMimeDatabase::mimeTypeForFile(const QString &fileName, QMimeDatabase::MatchMode mode) const
 {
-    return QMimeDatabase::mimeTypeForFile(fileName, mode);
+    return mimeTypeForFile(QFileInfo(fileName), mode);
 }
 
 QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabase::MatchMode mode) const
 {
-    return QMimeDatabase::mimeTypeForFile(fileInfo, mode);
+    QMimeType result = QMimeDatabase::mimeTypeForFile(fileInfo, mode);
+
+    // temporary dirty fix, once WPS get installed, the whole mimetype database thing get fscked up.
+    // we used to patch our Qt to fix this issue but the patch no longer works, we don't have time to
+    // look into this issue ATM.
+    // https://bugreports.qt.io/browse/QTBUG-71640
+    // https://codereview.qt-project.org/c/qt/qtbase/+/244887
+    // `file` command works but libmagic didn't even comes with any pkg-config support..
+    static QStringList officeSuffixList {
+        "docx", "xlsx", "pptx", "doc", "ppt", "xls"
+    };
+    static QStringList wrongMimeTypeNames {
+        "application/x-ole-storage", "application/zip"
+    };
+    if (officeSuffixList.contains(fileInfo.suffix()) && wrongMimeTypeNames.contains(result.name())) {
+        QList<QMimeType> results = QMimeDatabase::mimeTypesForFileName(fileInfo.fileName());
+        if (!results.isEmpty()) {
+            return results.first();
+        }
+    }
+
+    return result;
 }
 
 QMimeType DMimeDatabase::mimeTypeForUrl(const QUrl &url) const
