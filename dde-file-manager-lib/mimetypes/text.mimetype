@@ -24,9 +24,15 @@ application/wps-office.xls
 application/wps-office.xlsx
 application/wps-office.xlt
 application/wps-office.xltx
+application/wps-office.pdf
 application/octet-stream
 application/vnd.ms-htmlhelp
 application/x-zerosize
 application/vnd.openxmlformats-officedocument.wordprocessingml.document
 application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
-application/wps-office.pdf
+application/vnd.oasis.opendocument.text
+application/vnd.oasis.opendocument.presentation
+application/vnd.oasis.opendocument.spreadsheet
+application/uot
+application/uop
+application/uos
