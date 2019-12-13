@@ -83,7 +83,8 @@ public slots:
     void setProgress(QString value);
     void setSpeed(float speed);
     void setTimeLeft(int time);
-    void setMessage(const QString &operateStr, const QString &destinateStr);
+    void setMessage(const QString operateStr, const QString destinateStr);
+    void updateMessage();
     void setTipMessage(const QString &speedStr, const QString &remainStr);
     void handleClose();
     void handleResponse();
@@ -214,6 +215,7 @@ public slots:
 protected:
     void closeEvent(QCloseEvent* event);
     void keyPressEvent(QKeyEvent *event);
+    void changeEvent(QEvent *event);
 
     void blockShutdown();
 private:
