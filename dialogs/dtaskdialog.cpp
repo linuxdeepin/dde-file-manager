@@ -558,10 +558,6 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data)
             m_errorLabel->setText(QString());
         }
 
-        QFontMetrics fm(m_msg1Label->font());
-        msg1 = fm.elidedText(msg1, Qt::ElideMiddle, m_msg1Label->width());
-        msg2 = fm.elidedText(msg2, Qt::ElideMiddle, m_msg2Label->width());
-
         speedStr = speedStr.arg(speed);
         remainStr = remainStr.arg(remainTime);
         setMessage(msg1, msg2);
@@ -880,12 +876,25 @@ void MoveCopyTaskWidget::setTimeLeft(int time)
     m_timeLeft = time;
 }
 
-void MoveCopyTaskWidget::setMessage(const QString &operateStr, const QString &destinateStr)
+void MoveCopyTaskWidget::setMessage(const QString operateStr, const QString destinateStr)
 {
     m_operateMessage = operateStr;
     m_destinationMessage = destinateStr;
-    m_msg1Label->setText(m_operateMessage);
-    m_msg2Label->setText(m_destinationMessage);
+
+    QFontMetrics fm = fontMetrics();
+    QString msg1 = fm.elidedText(m_operateMessage, Qt::ElideMiddle, m_msg1Label->width());
+    QString msg2 = fm.elidedText(m_destinationMessage, Qt::ElideMiddle, m_msg2Label->width());
+
+    m_msg1Label->setText(msg1);
+    m_msg2Label->setText(msg2);
+}
+
+void MoveCopyTaskWidget::updateMessage()
+{
+    if (!m_msg1Label || !m_msg2Label)
+        return;
+
+    setMessage(m_operateMessage, m_destinationMessage);
 }
 
 void MoveCopyTaskWidget::setTipMessage(const QString &speedStr, const QString &remainStr)
@@ -1260,4 +1269,17 @@ void DTaskDialog::keyPressEvent(QKeyEvent *event)
         emit close();
     }
     QDialog::keyPressEvent(event);
+}
+
+void DTaskDialog::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::FontChange) {
+        for (MoveCopyTaskWidget *widget : findChildren<MoveCopyTaskWidget*>()) {
+            widget->setMaximumWidth(width());
+            // 更新文本内容
+            widget->updateMessage();
+        }
+    }
+
+    return QDialog::changeEvent(event);
 }
