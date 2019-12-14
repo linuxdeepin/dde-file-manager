@@ -300,9 +300,10 @@ void MoveCopyTaskWidget::initUI()
     QHBoxLayout *btnLayout = new QHBoxLayout;
     btnLayout->setContentsMargins(10, 0, 10, 0);
     btnLayout->addWidget(m_buttonFrame);
+    mainLayout->addSpacing(10);
     mainLayout->addLayout(btnLayout);
     mainLayout->addWidget(m_lineLabel, 0, Qt::AlignBottom);
-    mainLayout->setContentsMargins(10, 0, 10, 10);
+    mainLayout->setContentsMargins(10, 0, 20, 10);
 
     setLayout(mainLayout);
     setFixedHeight(80);
@@ -310,6 +311,7 @@ void MoveCopyTaskWidget::initUI()
     m_conflictFrame->hide();
     m_buttonFrame->hide();
     m_conflictFrame->hide();
+    onFontChanged();
 }
 
 
@@ -550,7 +552,9 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data)
                 m_replaceButton->setVisible(m_fileJob->supportActions(m_fileJob->error()).testFlag(DFileCopyMoveJob::RetryAction));
                 m_replaceButton->setText(tr("Retry"));
                 m_keepBothButton->hide();
-                m_errorLabel->setText(m_fileJob->errorString());
+                QFontMetrics fm(m_errorLabel->font());
+                QString text = fm.elidedText(m_fileJob->errorString(), Qt::ElideRight, m_errorLabel->width()*2);
+                m_errorLabel->setText(text);
             }
         } else if (!status.isEmpty()) {
             m_dwaterProgress->start();
@@ -677,6 +681,19 @@ void MoveCopyTaskWidget::onJobSpeedChanged(qint64 speed)
     updateMessageByJob();
 }
 
+void MoveCopyTaskWidget::onFontChanged()
+{
+    QFontMetrics fm(m_errorLabel->font());
+    int h = fm.height()*2;
+    int offset = h - m_errorLabel->height();
+    m_errorLabel->setFixedHeight(h);
+
+    int wh = height();
+    wh += 2*offset;
+    setFixedHeight(wh);
+    emit heightChanged();
+}
+
 bool MoveCopyTaskWidget::event(QEvent *e)
 {
     if (e->type() == QEvent::Enter) {
@@ -695,6 +712,8 @@ bool MoveCopyTaskWidget::event(QEvent *e)
         m_closeButton->hide();
         m_pauseBuuton->hide();
         m_bgLabel->setVisible(false);
+    } else if (e->type() == QEvent::FontChange) {
+        onFontChanged();
     }
 
     return QFrame::event(e);

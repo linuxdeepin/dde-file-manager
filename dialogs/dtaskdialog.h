@@ -108,7 +108,7 @@ public slots:
     void disposeJobError(DFileCopyMoveJob::Action action);
 protected:
     bool event(QEvent *e) Q_DECL_OVERRIDE;
-
+    void onFontChanged();
 private:
     int m_progress = 0;
     float m_speed = 0.0;
