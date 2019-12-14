@@ -1880,6 +1880,9 @@ bool DFileView::event(QEvent *e)
         break;
     case QEvent::ParentChange:
         window()->installEventFilter(this);
+    case QEvent::FontChange:
+        // blumia: to trigger DIconItemDelegate::updateItemSizeHint() to update its `d->itemSizeHint` ...
+        emit iconSizeChanged(iconSize());
     default:
         break;
     }
