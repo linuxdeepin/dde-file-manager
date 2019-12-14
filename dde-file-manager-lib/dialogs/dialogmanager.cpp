@@ -70,9 +70,9 @@
 #include "sw_label/llsdeepinlabellibrary.h"
 #endif
 
+#include <DDrawer>
 #include <DDialog>
 #include <DAboutDialog>
-#include <DExpandGroup>
 #include <DSettingsDialog>
 #include <DSettingsWidgetFactory>
 #include <DSettingsOption>
