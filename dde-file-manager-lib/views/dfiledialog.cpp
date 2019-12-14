@@ -789,8 +789,6 @@ void DFileDialog::reject()
 
 void DFileDialog::showEvent(QShowEvent *event)
 {
-    Q_D(DFileDialog);
-
     if (!event->spontaneous() && !testAttribute(Qt::WA_Moved)) {
         Qt::WindowStates  state = windowState();
         adjustPosition(parentWidget());
