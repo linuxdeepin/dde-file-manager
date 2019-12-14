@@ -65,7 +65,7 @@ public:
     }
 
     virtual void setVisible(bool visible) override {
-        if (!visible) {
+        if (!visible && !property("isPreview").toBool()) {
             // 暂时（紧急）解决arm64双屏切换复制模式容易出现无法显示桌面的问题，禁止隐藏任何桌面。
             // 后续有较好的解决方案可以删除此代码
             qDebug() << "not allow to hide desktop(screen is " << property("myScreen").toString() <<
@@ -291,6 +291,7 @@ void BackgroundHelper::updateBackground()
 void BackgroundHelper::onScreenAdded(QScreen *screen)
 {
     BackgroundLabel *l = new BackgroundLabel();
+    l->setProperty("isPreview", m_previuew);
     l->setProperty("myScreen",screen->name()); // assert screen->name is unique
 
     backgroundMap[screen] = l;
