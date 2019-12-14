@@ -50,7 +50,8 @@ class QButtonGroup;
 QT_END_NAMESPACE
 
 DWIDGET_BEGIN_NAMESPACE
-class DDrawer;
+class DExpandGroup;
+class DBaseExpand;
 class DIconButton;
 DWIDGET_END_NAMESPACE
 
@@ -163,7 +164,7 @@ public:
     int getFileCount();
     qint64 getFileSize();
 
-    const QList<Dtk::Widget::DDrawer *> &expandGroup() const;
+    const QList<DBaseExpand *> &expandGroup() const;
     int contentHeight() const;
 
     void loadPluginExpandWidgets();
@@ -188,7 +189,7 @@ protected:
     void hideEvent(QHideEvent* event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent* event) Q_DECL_OVERRIDE;
 
-    void initExpand(QVBoxLayout *layout, DDrawer *expand);
+    void initExpand(QVBoxLayout *layout, DBaseExpand *expand);
 
 private:
     DFMEvent m_fmevent{};
@@ -211,14 +212,15 @@ private:
     QFrame *m_deviceInfoFrame{ nullptr };
     QListWidget* m_OpenWithListWidget{ nullptr };
     QButtonGroup* m_OpenWithButtonGroup{ nullptr };
-    QList<DDrawer *> m_expandGroup;
+    //DExpandGroup* m_expandGroup{ nullptr };
+    QList<DBaseExpand *> m_expandGroup;
     DFM_NAMESPACE::DFileStatisticsJob* m_sizeWorker{ nullptr };
     QVBoxLayout* m_mainLayout{ nullptr };
     QFrame* m_wdf{ nullptr };
     QScrollArea *m_scrollArea{ nullptr };
     QFrame      *m_tagInfoFrame{ nullptr };
 
-    QList<DDrawer *> addExpandWidget(const QStringList &titleList);
+    QList<DBaseExpand *> addExpandWidget(const QStringList &titleList);
 
     void initTextShowFrame(const QString& text);
     QFrame *createBasicInfoWidget(const DAbstractFileInfoPointer &info);

@@ -57,9 +57,8 @@
 #include "views/dfmsidebar.h"
 #include "dfmapplication.h"
 
-#include <DDrawer>
-#include <DDrawerGroup>
-#include <DArrowLineDrawer>
+#include <darrowlineexpand.h>
+#include <dexpandgroup.h>
 #include <dblockdevice.h>
 #include <denhancedwidget.h>
 #include <DColoredProgressBar>
@@ -118,6 +117,20 @@ bool DFMRoundBackground::eventFilter(QObject *watched, QEvent *event)
 
     return QObject::eventFilter(watched, event);
 }
+
+
+class DFMDArrowLineExpand : public DArrowLineExpand{
+public:
+    DFMDArrowLineExpand(){
+        if (headerLine()) {
+            QFont f = headerLine()->font();
+            f.setBold(true);
+            f.setPixelSize(17);
+            headerLine()->setFont(f);
+        }
+        new DFMRoundBackground(this, 8);
+    }
+};
 
 NameTextEdit::NameTextEdit(const QString &text, QWidget *parent):
     QTextEdit(text, parent)
@@ -813,7 +826,7 @@ void PropertyDialog::resizeEvent(QResizeEvent *event)
     DDialog::resizeEvent(event);
 }
 
-const QList<DDrawer *> &PropertyDialog::expandGroup() const
+const QList<DBaseExpand *> &PropertyDialog::expandGroup() const
 {
     return m_expandGroup;
 }
@@ -821,7 +834,7 @@ const QList<DDrawer *> &PropertyDialog::expandGroup() const
 int PropertyDialog::contentHeight() const
 {
     int expandsHeight = ArrowLineExpand_SPACING;
-    for (const DDrawer* expand : m_expandGroup) {
+    for (const DBaseExpand* expand : m_expandGroup) {
         expandsHeight += expand->height();
     }
 #define DIALOG_TITLEBAR_HEIGHT 50
@@ -842,7 +855,7 @@ void PropertyDialog::loadPluginExpandWidgets()
     QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(m_scrollArea->widget()->layout());
     QList<PropertyDialogExpandInfoInterface *> plugins = PluginManager::instance()->getExpandInfoInterfaces();
     foreach (PropertyDialogExpandInfoInterface *plugin, plugins) {
-        DArrowLineDrawer *expand = new DArrowLineDrawer;//DArrowLineExpand;
+        DFMDArrowLineExpand *expand = new DFMDArrowLineExpand;//DArrowLineExpand;
         QWidget *frame = plugin->expandWidget(m_url.toString());
         if (!frame) {
             expand->deleteLater();
@@ -860,7 +873,7 @@ void PropertyDialog::loadPluginExpandWidgets()
     layout->addStretch();
 }
 
-void PropertyDialog::initExpand(QVBoxLayout *layout, DDrawer *expand)
+void PropertyDialog::initExpand(QVBoxLayout *layout, DBaseExpand *expand)
 {
     expand->setFixedHeight(ArrowLineExpand_HIGHT);
     QMargins cm = layout->contentsMargins();
@@ -878,13 +891,13 @@ void PropertyDialog::initExpand(QVBoxLayout *layout, DDrawer *expand)
     });
 }
 
-QList<DDrawer *> PropertyDialog::addExpandWidget(const QStringList &titleList)
+QList<DBaseExpand *> PropertyDialog::addExpandWidget(const QStringList &titleList)
 {
     QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(m_scrollArea->widget()->layout());
-    QList<DDrawer *> group;
+    QList<DBaseExpand *> group;
 
     for (const QString &title : titleList) {
-        DArrowLineDrawer *expand = new DArrowLineDrawer;//DArrowLineExpand;
+        DFMDArrowLineExpand *expand = new DFMDArrowLineExpand;//DArrowLineExpand;
         expand->setTitle(title);
         initExpand(layout, expand);
         group.push_back(expand);
