@@ -245,7 +245,7 @@ void MoveCopyTaskWidget::initUI()
     if (m_fileJob) {
         m_errorLabel = new QLabel(this);
         m_errorLabel->setObjectName("ErrorLabel");
-        m_errorLabel->setFixedWidth(450);
+        m_errorLabel->setFixedWidth(430);
         QFontMetrics fm(m_errorLabel->font());
         m_errorLabel->setFixedHeight(fm.height()*2);
         m_errorLabel->setWordWrap(true);
@@ -311,7 +311,6 @@ void MoveCopyTaskWidget::initUI()
     m_conflictFrame->hide();
     m_buttonFrame->hide();
     m_conflictFrame->hide();
-    onFontChanged();
 }
 
 
@@ -553,7 +552,7 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data)
                 m_replaceButton->setText(tr("Retry"));
                 m_keepBothButton->hide();
                 QFontMetrics fm(m_errorLabel->font());
-                QString text = fm.elidedText(m_fileJob->errorString(), Qt::ElideRight, m_errorLabel->width()*2);
+                QString text = fm.elidedText(m_fileJob->errorString(), Qt::ElideMiddle, m_errorLabel->width()*2-10);
                 m_errorLabel->setText(text);
             }
         } else if (!status.isEmpty()) {
@@ -713,7 +712,7 @@ bool MoveCopyTaskWidget::event(QEvent *e)
         m_pauseBuuton->hide();
         m_bgLabel->setVisible(false);
     } else if (e->type() == QEvent::FontChange) {
-        onFontChanged();
+        //onFontChanged();
     }
 
     return QFrame::event(e);
@@ -936,6 +935,10 @@ DTaskDialog::DTaskDialog(QWidget *parent) :
 
 void DTaskDialog::initUI()
 {
+    QFont f = font();
+    f.setPixelSize(14); // 固定字体大小不随系统字体大小改变。。label显示不全
+    setFont(f);
+
     setWindowFlags((windowFlags() & ~ Qt::WindowSystemMenuHint & ~Qt::Dialog) | Qt::Window | Qt::WindowMinMaxButtonsHint);
     setFixedWidth(m_defaultWidth);
 
