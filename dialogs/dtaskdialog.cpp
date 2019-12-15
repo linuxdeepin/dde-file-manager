@@ -248,7 +248,6 @@ void MoveCopyTaskWidget::initUI()
         m_errorLabel->setFixedWidth(430);
         QFontMetrics fm(m_errorLabel->font());
         m_errorLabel->setFixedHeight(fm.height()*2);
-        m_errorLabel->setWordWrap(true);
     }
 
     QGridLayout *msgGridLayout = new QGridLayout;
@@ -552,7 +551,7 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data)
                 m_replaceButton->setText(tr("Retry"));
                 m_keepBothButton->hide();
                 QFontMetrics fm(m_errorLabel->font());
-                QString text = fm.elidedText(m_fileJob->errorString(), Qt::ElideMiddle, m_errorLabel->width()*2-10);
+                QString text = fm.elidedText(m_fileJob->errorString(), Qt::ElideMiddle, m_errorLabel->width() - 10);
                 m_errorLabel->setText(text);
             }
         } else if (!status.isEmpty()) {
