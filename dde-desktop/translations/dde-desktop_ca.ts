@@ -27,7 +27,7 @@
         <translation>Fons i protector de pantalla</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2616"/>
+        <location filename="../view/canvasgridview.cpp" line="2613"/>
         <source>Properties</source>
         <translation>Propietats</translation>
     </message>

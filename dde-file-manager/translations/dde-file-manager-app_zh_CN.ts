@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>Application</name>
     <message>
@@ -10,7 +8,7 @@
     <message>
         <location filename="../main.cpp" line="108"/>
         <source>File Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>文件管理器</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="112"/>

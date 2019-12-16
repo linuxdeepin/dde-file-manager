@@ -27,7 +27,7 @@
         <translation>वॉलपेपर व स्क्रीनसेवर</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2616"/>
+        <location filename="../view/canvasgridview.cpp" line="2613"/>
         <source>Properties</source>
         <translation>विशेषताएँ</translation>
     </message>

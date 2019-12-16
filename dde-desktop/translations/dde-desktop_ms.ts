@@ -27,7 +27,7 @@
         <translation>Kertas Dinding dan Penyelamat Skrin</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2616"/>
+        <location filename="../view/canvasgridview.cpp" line="2613"/>
         <source>Properties</source>
         <translation>Sifat</translation>
     </message>
@@ -75,7 +75,7 @@
     <message>
         <location filename="../main.cpp" line="130"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation>Atas Meja</translation>
     </message>
 </context>
 <context>

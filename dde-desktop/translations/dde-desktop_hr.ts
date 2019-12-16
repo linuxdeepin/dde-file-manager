@@ -27,7 +27,7 @@
         <translation>Tapeta i čuvar zaslona</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2616"/>
+        <location filename="../view/canvasgridview.cpp" line="2613"/>
         <source>Properties</source>
         <translation>Svojstva</translation>
     </message>

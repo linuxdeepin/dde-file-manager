@@ -11,11 +11,11 @@
 <context>
     <name>DiskControlWidget</name>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="176"/>
-        <location filename="../diskcontrolwidget.cpp" line="240"/>
-        <location filename="../diskcontrolwidget.cpp" line="400"/>
+        <location filename="../diskcontrolwidget.cpp" line="202"/>
+        <location filename="../diskcontrolwidget.cpp" line="267"/>
+        <location filename="../diskcontrolwidget.cpp" line="428"/>
         <source>Disk is busy, cannot eject now</source>
-        <translation type="unfinished"/>
+        <translation>Dysk jest zajęty, nie można go teraz wysunąć</translation>
     </message>
 </context>
 <context>
@@ -39,7 +39,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="335"/>
+        <location filename="../diskcontrolwidget.cpp" line="363"/>
         <source>Device has been removed</source>
         <translation>Urządzenie zostało usunięte</translation>
     </message>

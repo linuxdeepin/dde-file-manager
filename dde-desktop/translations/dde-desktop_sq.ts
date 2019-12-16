@@ -27,7 +27,7 @@
         <translation>Letra e murit dhe ruajtesi i ekranit</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2616"/>
+        <location filename="../view/canvasgridview.cpp" line="2613"/>
         <source>Properties</source>
         <translation>Te dhenat</translation>
     </message>

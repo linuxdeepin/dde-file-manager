@@ -2,9 +2,13 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../main.cpp" line="108"/>
         <source>Deepin File Manager</source>
-        <translation>深度檔案管理員</translation>
+        <translation type="vanished">深度檔案管理員</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="108"/>
+        <source>File Manager</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../main.cpp" line="112"/>

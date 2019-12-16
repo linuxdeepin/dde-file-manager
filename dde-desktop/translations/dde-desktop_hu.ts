@@ -27,7 +27,7 @@
         <translation>Háttérkép és képernyővédő</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2616"/>
+        <location filename="../view/canvasgridview.cpp" line="2613"/>
         <source>Properties</source>
         <translation>Tulajdonságok</translation>
     </message>
@@ -75,7 +75,7 @@
     <message>
         <location filename="../main.cpp" line="130"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation>Asztal</translation>
     </message>
 </context>
 <context>
