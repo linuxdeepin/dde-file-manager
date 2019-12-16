@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
     app.setOrganizationName(QMAKE_ORGANIZATION_NAME);
     app.setApplicationName(QMAKE_TARGET);
     app.loadTranslator();
-    app.setApplicationDisplayName(app.translate("Application", "Deepin File Manager"));
+    app.setApplicationDisplayName(app.translate("Application", "File Manager"));
     app.setApplicationVersion(DApplication::buildVersion((QMAKE_VERSION)));
     app.setProductIcon(QIcon::fromTheme("dde-file-manager"));
     app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" + qApp->applicationName());
