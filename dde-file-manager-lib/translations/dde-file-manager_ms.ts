@@ -9,31 +9,31 @@
     <message>
         <location filename="../controllers/appcontroller.cpp" line="506"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
-        <translation type="unfinished"/>
+        <translation>Imej cakera telah rosak, tidak dapat dilekapkan, sila padam cakera dahulu</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="536"/>
         <source>Mount error: unsupported image format</source>
-        <translation type="unfinished"/>
+        <translation>Ralat lekap: format imej tidak disokong</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="565"/>
         <source>Disk is busy, cannot unmount now</source>
-        <translation type="unfinished"/>
+        <translation>Cakera sibuk, tidak dapat ditanggalkan sekarang</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="607"/>
         <location filename="../controllers/appcontroller.cpp" line="636"/>
         <source>Disk is busy, cannot eject now</source>
-        <translation type="unfinished"/>
+        <translation>Cakera sibuk, tidak dapat ditanggalkan sekarang</translation>
     </message>
     <message>
         <source>Mount Error</source>
-        <translation type="unfinished"/>
+        <translation type="vanished">Ralat Lekap</translation>
     </message>
     <message>
         <source>Unsupported image format</source>
-        <translation type="unfinished"/>
+        <translation type="vanished">Format imej tidak disokong</translation>
     </message>
 </context>
 <context>
@@ -46,7 +46,7 @@
     <message>
         <location filename="../dialogs/closealldialogindicator.cpp" line="71"/>
         <source>Total size: %1, %2 files</source>
-        <translation type="unfinished"/>
+        <translation>Jumlah saiz: %1, %2 fail</translation>
     </message>
 </context>
 <context>
@@ -54,14 +54,14 @@
     <message>
         <location filename="../models/computermodel.cpp" line="41"/>
         <source>My Directories</source>
-        <translation type="unfinished"/>
+        <translation>Direktori Saya</translation>
     </message>
     <message>
         <location filename="../models/computermodel.cpp" line="47"/>
         <location filename="../models/computermodel.cpp" line="51"/>
         <location filename="../models/computermodel.cpp" line="72"/>
         <source>Disks</source>
-        <translation type="unfinished"/>
+        <translation>Cakera-Cakera</translation>
     </message>
 </context>
 <context>
@@ -117,27 +117,27 @@
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="48"/>
         <source>Connect to Server</source>
-        <translation type="unfinished"/>
+        <translation>Sambung dengan Pelayan</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="153"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Batal</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="153"/>
         <source>Connect</source>
-        <translation type="unfinished"/>
+        <translation>Sambung</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="161"/>
         <source>My Favorites:</source>
-        <translation type="unfinished"/>
+        <translation>Kegemaran Saya:</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="204"/>
         <source>Clear History</source>
-        <translation type="unfinished"/>
+        <translation>Kosongkan Sejarah</translation>
     </message>
 </context>
 <context>
@@ -269,7 +269,7 @@
     <message>
         <location filename="../views/dfmtagwidget.cpp" line="124"/>
         <source>Tag</source>
-        <translation type="unfinished"/>
+        <translation>Tag</translation>
     </message>
 </context>
 <context>
@@ -278,12 +278,12 @@
         <location filename="../views/dfmvaultunlockpages.cpp" line="39"/>
         <location filename="../views/dfmvaultunlockpages.cpp" line="54"/>
         <source>Enter the vault password</source>
-        <translation type="unfinished"/>
+        <translation>Masukkan kata laluan kekubah</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="53"/>
         <source>Retrieve password</source>
-        <translation type="unfinished"/>
+        <translation>Peroleh kata laluan</translation>
     </message>
 </context>
 <context>
@@ -341,7 +341,7 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="187"/>
         <source>Not enough free space on the target disk</source>
-        <translation type="unfinished"/>
+        <translation>Ruang bebas dalam cakera sasaran tidak mencukupi</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="189"/>
@@ -404,30 +404,30 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1046"/>
-        <location filename="../views/dfiledialog.cpp" line="1256"/>
+        <location filename="../views/dfiledialog.cpp" line="1044"/>
+        <location filename="../views/dfiledialog.cpp" line="1254"/>
         <source>Save</source>
-        <translation type="unfinished"/>
+        <translation>Simpan</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1161"/>
+        <location filename="../views/dfiledialog.cpp" line="1159"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>%1 sudah wujud, anda mahu gantikannya?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1162"/>
+        <location filename="../views/dfiledialog.cpp" line="1160"/>
         <source>Cancel</source>
         <translation>Batal</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1163"/>
+        <location filename="../views/dfiledialog.cpp" line="1161"/>
         <source>Replace</source>
         <translation>Ganti</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1253"/>
+        <location filename="../views/dfiledialog.cpp" line="1251"/>
         <source>Open</source>
-        <translation type="unfinished"/>
+        <translation>Buka</translation>
     </message>
 </context>
 <context>
@@ -435,12 +435,12 @@
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="989"/>
         <source>Trash</source>
-        <translation type="unfinished"/>
+        <translation>Tong Sampah</translation>
     </message>
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="997"/>
         <source>Empty</source>
-        <translation type="unfinished"/>
+        <translation>Kosong</translation>
     </message>
 </context>
 <context>
@@ -452,7 +452,7 @@
         <translation>Nama</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1039"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1041"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1382"/>
         <location filename="../models/searchfileinfo.cpp" line="131"/>
         <source>Time modified</source>
@@ -488,9 +488,9 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2170"/>
+        <location filename="../views/dfileview.cpp" line="2173"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
-        <translation type="unfinished"/>
+        <translation>Imej cakera telah rosak, tidak dapat dilekapkan, sila padam cakera dahulu</translation>
     </message>
     <message>
         <location filename="../views/dfileview.cpp" line="2778"/>
@@ -582,7 +582,7 @@
     <message>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="114"/>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="129"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="520"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="550"/>
         <source>%1 Volume</source>
         <translation>Volum %1</translation>
     </message>
@@ -593,19 +593,19 @@
         <translation>Cakera Data</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="512"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="542"/>
         <source>%1 Drive</source>
-        <translation type="unfinished"/>
+        <translation>Pemacu %1</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="515"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="545"/>
         <source>Blank %1 Disc</source>
-        <translation type="unfinished"/>
+        <translation>Cakera %1 Kosong</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="518"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="548"/>
         <source>%1 Encrypted</source>
-        <translation type="unfinished"/>
+        <translation>%1 Disulitkan</translation>
     </message>
 </context>
 <context>
@@ -706,37 +706,37 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="454"/>
         <source>Are you sure you want to erase all data on the disc?</source>
-        <translation type="unfinished"/>
+        <translation>Anda pasti mahu memadam semua data di dalam cakera?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="459"/>
         <source>Erase</source>
-        <translation type="unfinished"/>
+        <translation>Padam</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="481"/>
         <source>How do you want to use this disc?</source>
-        <translation type="unfinished"/>
+        <translation>Bagaimanakah anda mahu gunakan cakera ini?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="485"/>
         <source>Burn image</source>
-        <translation type="unfinished"/>
+        <translation>Rakam imej</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="485"/>
         <source>Burn files</source>
-        <translation type="unfinished"/>
+        <translation>Rakam fail</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="512"/>
         <source>Disc erase failed</source>
-        <translation type="unfinished"/>
+        <translation>Pemadaman cakera gagal</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="516"/>
         <source>Burn process failed</source>
-        <translation type="unfinished"/>
+        <translation>Proses rakaman gagal</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="519"/>
@@ -747,17 +747,17 @@
         <location filename="../dialogs/dialogmanager.cpp" line="535"/>
         <location filename="../dialogs/dialogmanager.cpp" line="545"/>
         <source>Show details</source>
-        <translation type="unfinished"/>
+        <translation>Tunjuk perincian</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="539"/>
         <source>Hide details</source>
-        <translation type="unfinished"/>
+        <translation>Sembunyi perincian</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="540"/>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>Ralat</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="567"/>
@@ -843,7 +843,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1113"/>
         <source>3. Reboot and enter %1</source>
-        <translation type="unfinished"/>
+        <translation>3. But semula dan masuk %1</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1329"/>
@@ -884,17 +884,17 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="885"/>
         <source>Unable to copy. Not enough free space on the target disk.</source>
-        <translation type="unfinished"/>
+        <translation>Tidak boleh menyalin. Ruang bebas dalam cakera sasaran tidak mencukupi.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="966"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
-        <translation type="unfinished"/>
+        <translation>Gagal memulihkan %1 fail, folder sasaran adalah baca-sahaja</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="968"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
-        <translation type="unfinished"/>
+        <translation>Gagal memulihkan %1 fail, folder sasaran adalah baca-sahaja</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1097"/>
@@ -933,14 +933,14 @@
         <location filename="../controllers/filecontroller.cpp" line="431"/>
         <location filename="../controllers/filecontroller.cpp" line="450"/>
         <source>Kindly Reminder</source>
-        <translation type="unfinished"/>
+        <translation>Peringatan Mesra</translation>
     </message>
     <message>
         <location filename="../controllers/filecontroller.cpp" line="412"/>
         <location filename="../controllers/filecontroller.cpp" line="431"/>
         <location filename="../controllers/filecontroller.cpp" line="450"/>
         <source>Please install File Roller first and then continue</source>
-        <translation type="unfinished"/>
+        <translation>Sila pasang File Roller terlebih dahulu sebelum diteruskan</translation>
     </message>
 </context>
 <context>
@@ -992,19 +992,19 @@
         <location filename="../../fileoperations/filejob.cpp" line="707"/>
         <location filename="../../fileoperations/filejob.cpp" line="766"/>
         <source>Data verification successful.</source>
-        <translation type="unfinished"/>
+        <translation>Pengesahan data berjaya.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="707"/>
         <location filename="../../fileoperations/filejob.cpp" line="766"/>
         <source>Data verification failed.</source>
-        <translation type="unfinished"/>
+        <translation>Pengesahan data gagal.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="709"/>
         <location filename="../../fileoperations/filejob.cpp" line="768"/>
         <source>Burn process completed</source>
-        <translation type="unfinished"/>
+        <translation>Proses rakaman selesai</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="882"/>
@@ -1029,32 +1029,32 @@
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2647"/>
         <source>%1 is a duplicate file.</source>
-        <translation type="unfinished"/>
+        <translation>%1 merupakan fail pendua.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2650"/>
         <source>Insufficient disc space.</source>
-        <translation type="unfinished"/>
+        <translation>Ruang cakera tidak mencukupi.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2653"/>
         <source>Lost connection to drive.</source>
-        <translation type="unfinished"/>
+        <translation>Sambungan ke pemacu telah terputus.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2656"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
-        <translation type="unfinished"/>
+        <translation>Pemacu CD/DVD tidak sedia. Cuba cakera yang lain.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2659"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
-        <translation type="unfinished"/>
+        <translation>Pemacu CD/DVD masih sibuk. Keluar program menggunakan pemacu, dan sisip pemacu sekali lagi.</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="2666"/>
         <source>Unknown error</source>
-        <translation type="unfinished"/>
+        <translation>Ralat tidak diketahui</translation>
     </message>
 </context>
 <context>
@@ -1333,7 +1333,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="251"/>
         <location filename="../configure/global-setting-template.js" line="250"/>
         <source>Use the file chooser dialog of File Manager</source>
-        <translation type="unfinished"/>
+        <translation>Guna dialog pemilih fail bagi Pengurus Fail</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="259"/>
@@ -1439,7 +1439,7 @@
     <message>
         <location filename="../configure/global-setting-template.js" line="196"/>
         <source>Compressed file preview</source>
-        <translation type="unfinished"/>
+        <translation>Pratonton fail termampat</translation>
     </message>
 </context>
 <context>
@@ -1447,7 +1447,7 @@
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1329"/>
         <source>Mounting device error</source>
-        <translation type="unfinished"/>
+        <translation>Ralat melekap peranti</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1517"/>
@@ -1645,7 +1645,7 @@
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="48"/>
         <source>Unlock</source>
-        <translation type="unfinished"/>
+        <translation>Buka</translation>
     </message>
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="52"/>
@@ -1656,146 +1656,146 @@
 <context>
     <name>MoveCopyTaskWidget</name>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="384"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="390"/>
         <source>Skip</source>
         <translation>Langkau</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="383"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="389"/>
         <source>Keep both</source>
         <translation>Kekal kedua-duanya</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="385"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="537"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="391"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="543"/>
         <source>Replace</source>
         <translation>Ganti</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="410"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="416"/>
         <source>Do not ask again</source>
         <translation>Jangan tanya lagi</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="535"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="541"/>
         <source>merge</source>
         <translation>gabung</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="505"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="511"/>
         <source>Copying %1</source>
         <translation>Menyalin %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="445"/>
-        <source>Erasing disc %1, please wait...</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="446"/>
-        <source>Burning disc %1, please wait...</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="451"/>
-        <source>Writing data...</source>
-        <translation type="unfinished"/>
+        <source>Erasing disc %1, please wait...</source>
+        <translation>Memadam cakera %1, tunggu sebentar...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="452"/>
-        <source>Verifying data...</source>
-        <translation type="unfinished"/>
+        <source>Burning disc %1, please wait...</source>
+        <translation>Merakam cakera %1, tunggu sebentar...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="506"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="457"/>
+        <source>Writing data...</source>
+        <translation>Menulis data...</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="458"/>
+        <source>Verifying data...</source>
+        <translation>Mengesahkan data...</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="512"/>
         <source>Copy to %2</source>
         <translation>Salin ke %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="509"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="515"/>
         <source>Moving %1</source>
         <translation>Mengalih %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="510"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="516"/>
         <source>Move to %2</source>
         <translation>Alih ke %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="512"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="518"/>
         <source>Restoring %1</source>
         <translation>Memulihkan %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="513"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="519"/>
         <source>Restore to %2</source>
         <translation>Pulih ke %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="515"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="521"/>
         <source>Deleting %1</source>
         <translation>Memadam %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="518"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="524"/>
         <source>Trashing %1</source>
         <translation>Tong Sampahkan %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="526"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="532"/>
         <source>Calculating space, please wait</source>
         <translation>Mengira ruang, tunggu sebentar</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="529"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="535"/>
         <source>File named %1 already exists in target folder</source>
         <translation>Fail bernama %1 telah wujud dalam folder sasaran</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="530"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="536"/>
         <source>Original path %1 target path %2</source>
         <translation>Laluan asal %1 mensasarkan laluan %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="545"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="551"/>
         <source>Retry</source>
         <translation>Cuba lagi</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="639"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="651"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="643"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="655"/>
         <source>Time modified:%1</source>
         <translation>Masa diubahsuai:%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="641"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="645"/>
         <source>Original folder</source>
         <translation>Folder asal</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="644"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="648"/>
         <source>Original file</source>
         <translation>Fail asal</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="654"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="658"/>
         <source>Target folder</source>
         <translation>Folder sasaran</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="657"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="661"/>
         <source>Target file</source>
         <translation>Fail sasaran</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="642"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="655"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="646"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="659"/>
         <source>Contains:%1</source>
         <translation>Mengandungi:%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="645"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="658"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="649"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="662"/>
         <source>Size:%1</source>
         <translation>Saiz:%1</translation>
     </message>
@@ -1810,12 +1810,12 @@
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="37"/>
         <source>This file is too big for the trash</source>
-        <translation type="unfinished"/>
+        <translation>Fail ini terlalu besar untuk dimuatkan ke dalam tong sampah</translation>
     </message>
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="41"/>
         <source>The files are too big for the trash</source>
-        <translation type="unfinished"/>
+        <translation>Fail terlalu besar untuk dimuatkan ke dalam tong sampah</translation>
     </message>
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="42"/>
@@ -1858,7 +1858,7 @@
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="231"/>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>Sahkan</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="235"/>
@@ -1916,7 +1916,7 @@
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="63"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="500"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="530"/>
         <source>System Disk</source>
         <translation>Cakera Sistem</translation>
     </message>
@@ -1944,47 +1944,47 @@
 <context>
     <name>PropertyDialog</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="297"/>
+        <location filename="../dialogs/propertydialog.cpp" line="286"/>
         <source>Basic info</source>
         <translation>Maklumat asas</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="298"/>
+        <location filename="../dialogs/propertydialog.cpp" line="287"/>
         <source>Open with</source>
         <translation>Buka dengan</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="299"/>
+        <location filename="../dialogs/propertydialog.cpp" line="288"/>
         <source>Sharing</source>
-        <translation type="unfinished"/>
+        <translation>Perkongsian</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="300"/>
+        <location filename="../dialogs/propertydialog.cpp" line="289"/>
         <source>Permissions</source>
-        <translation type="unfinished"/>
+        <translation>Keizinan</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="348"/>
+        <location filename="../dialogs/propertydialog.cpp" line="337"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="352"/>
+        <location filename="../dialogs/propertydialog.cpp" line="341"/>
         <source>%1 / %2</source>
         <translation>%1 / %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1045"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1035"/>
         <source>Hide this folder</source>
-        <translation type="unfinished"/>
+        <translation>Sembunyi folder ini</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1045"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1035"/>
         <source>Hide this file</source>
-        <translation type="unfinished"/>
+        <translation>Sembunyi fail ini</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1296"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1286"/>
         <source>Allow to execute as program</source>
         <translation>Benarkan dilakukan sebagai program</translation>
     </message>
@@ -1992,21 +1992,21 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="982"/>
+        <location filename="../dialogs/propertydialog.cpp" line="970"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="523"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="203"/>
         <source>Size</source>
         <translation>Saiz</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1002"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1104"/>
+        <location filename="../dialogs/propertydialog.cpp" line="990"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1094"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="212"/>
         <source>Contains</source>
         <translation>Mengandungi</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="983"/>
+        <location filename="../dialogs/propertydialog.cpp" line="971"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="524"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="204"/>
         <source>Type</source>
@@ -2014,73 +2014,73 @@
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
-        <location filename="../dialogs/propertydialog.cpp" line="986"/>
+        <location filename="../dialogs/propertydialog.cpp" line="974"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="526"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="303"/>
         <source>Time modified</source>
         <translation>Masa diubahsuai</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1105"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1095"/>
         <source>Free space</source>
         <translation>Ruang bebas</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1100"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1090"/>
         <source>Total space</source>
         <translation>Jumlah ruang</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1209"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1199"/>
         <source>Access denied</source>
         <translation>Capaian dinafikan</translation>
     </message>
     <message>
+        <location filename="../dialogs/propertydialog.cpp" line="1200"/>
         <location filename="../dialogs/propertydialog.cpp" line="1210"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1220"/>
         <source>Executable</source>
         <translation>Bolehlaku</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1211"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1212"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1201"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1202"/>
         <source>Write only</source>
         <translation>Tulis sahaja</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1213"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1214"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1203"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1204"/>
         <source>Read only</source>
         <translation>Baca sahaja</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1215"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1216"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1205"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1206"/>
         <source>Read-write</source>
         <translation>Baca-tulis</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1292"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1282"/>
         <source>Others</source>
         <translation>Lain-lain</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1290"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1280"/>
         <source>Owner</source>
         <translation>Pemilik</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1099"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1089"/>
         <source>Device type</source>
-        <translation type="unfinished"/>
+        <translation>Jenis peranti</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1102"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1092"/>
         <source>File system</source>
-        <translation type="unfinished"/>
+        <translation>Sistem fail</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1291"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1281"/>
         <source>Group</source>
         <translation>Kumpulan</translation>
     </message>
@@ -2261,7 +2261,7 @@
         <translation>Dokumen baharu</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="984"/>
+        <location filename="../dialogs/propertydialog.cpp" line="972"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="525"/>
         <source>Time created</source>
         <translation>Masa dicipta</translation>
@@ -2272,7 +2272,7 @@
         <translation>Daftar keluar dan tanggalkan</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="987"/>
+        <location filename="../dialogs/propertydialog.cpp" line="975"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="536"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="317"/>
         <source>Source path</source>
@@ -2291,7 +2291,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="541"/>
         <source>Connect to Server</source>
-        <translation type="unfinished"/>
+        <translation>Sambung dengan Pelayan</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="542"/>
@@ -2368,7 +2368,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="540"/>
         <source>File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Kekubah Fail</translation>
     </message>
     <message>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="343"/>
@@ -2397,33 +2397,33 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="554"/>
         <location filename="../views/dfmopticalmediawidget.cpp" line="76"/>
         <source>Burn</source>
-        <translation type="unfinished"/>
+        <translation>Rakam</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="145"/>
         <source>Disc name:</source>
-        <translation type="unfinished"/>
+        <translation>Nama cakera:</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="161"/>
         <location filename="../dialogs/burnoptdialog.cpp" line="163"/>
         <source>Maximum</source>
-        <translation type="unfinished"/>
+        <translation>Maksimum</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="174"/>
         <source>Allow files to be added later</source>
-        <translation type="unfinished"/>
+        <translation>Benarkan fail-fail ditambah kemudian</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="183"/>
         <source>Verify data</source>
-        <translation type="unfinished"/>
+        <translation>Sahkan data</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="157"/>
         <source>Write speed:</source>
-        <translation type="unfinished"/>
+        <translation>Kelajuan tulis:</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="186"/>
@@ -2474,71 +2474,71 @@
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="294"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1088"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1089"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1090"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1078"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1079"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1080"/>
         <source>Local disk</source>
         <translation>Cakera setempat</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="296"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1091"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1081"/>
         <source>Removable disk</source>
         <translation>Cakera mudah alih</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="298"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1093"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1094"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1083"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1084"/>
         <source>Network shared directory</source>
         <translation>Direktori terkongsi rangkaian</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="300"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1095"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1085"/>
         <source>Android mobile device</source>
         <translation>Peranti mudah alih Android</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="302"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1096"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1086"/>
         <source>Apple mobile device</source>
         <translation>Peranti mudah alih Apple</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="304"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1097"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1087"/>
         <source>Camera</source>
         <translation>Kamera</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="306"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1092"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1082"/>
         <source>DVD</source>
         <translation>DVD</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="308"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1099"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1089"/>
         <source>Unknown device</source>
         <translation>Peranti tidak diketahui</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="315"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1104"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1094"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="652"/>
         <source>%1 item</source>
         <translation>%1 item</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="317"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1104"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1094"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="654"/>
         <source>%1 items</source>
         <translation>%1 item</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="826"/>
+        <location filename="../interfaces/dfileservices.cpp" line="833"/>
         <source>Shortcut</source>
         <translation>Pintasan</translation>
     </message>
@@ -2560,7 +2560,7 @@
         <translation>Masa dipadam</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1248"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1250"/>
         <source>Loading...</source>
         <translation>Memuatkan...</translation>
     </message>
@@ -2628,12 +2628,12 @@
         <translation>Teks</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="951"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="987"/>
         <source>1 task in progress</source>
         <translation>1 tugas sedang diproses</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="953"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="989"/>
         <source>%1 tasks in progress</source>
         <translation>%1 tugas sedang diproses</translation>
     </message>
@@ -2735,7 +2735,7 @@
         <translation>Tambah</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1014"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1002"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="288"/>
         <location filename="../views/drenamebar.cpp" line="261"/>
         <source>Location</source>
@@ -2749,12 +2749,12 @@
     <message>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="269"/>
         <source>Dimension</source>
-        <translation type="unfinished"/>
+        <translation>Dimensi</translation>
     </message>
     <message>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="257"/>
         <source>Duration</source>
-        <translation type="unfinished"/>
+        <translation>Jangka masa</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="275"/>
@@ -2805,10 +2805,10 @@
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="173"/>
-        <location filename="../dialogs/propertydialog.cpp" line="985"/>
+        <location filename="../dialogs/propertydialog.cpp" line="973"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="302"/>
         <source>Time accessed</source>
-        <translation type="unfinished"/>
+        <translation>Masa dicapai</translation>
     </message>
     <message>
         <location filename="../tag/tagutil.cpp" line="60"/>
@@ -2863,7 +2863,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="544"/>
         <source>Erase</source>
-        <translation type="unfinished"/>
+        <translation>Padam</translation>
     </message>
     <message>
         <location filename="../interfaces/dfmcrumbbar.cpp" line="577"/>
@@ -2880,17 +2880,17 @@
     <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="103"/>
         <source>Free Space %1</source>
-        <translation type="unfinished"/>
+        <translation>Ruang Bebas %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="1006"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="1042"/>
         <source>Files are being processed</source>
-        <translation type="unfinished"/>
+        <translation>Fail-fail yang telah diproses</translation>
     </message>
     <message>
         <location filename="../shutil/fileutils.cpp" line="455"/>
         <source>%1/%2</source>
-        <translation type="unfinished"/>
+        <translation>%1/%2</translation>
     </message>
 </context>
 <context>
@@ -3051,62 +3051,62 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="45"/>
         <source>Ctrl + A </source>
-        <translation type="unfinished"/>
+        <translation>Ctrl + A </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="46"/>
         <source>Ctrl + C </source>
-        <translation type="unfinished"/>
+        <translation>Ctrl + C </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="47"/>
         <source>Ctrl + X </source>
-        <translation type="unfinished"/>
+        <translation>Ctrl + X </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="48"/>
         <source>Ctrl + V </source>
-        <translation type="unfinished"/>
+        <translation>Ctrl + V </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="51"/>
         <source>Ctrl + N </source>
-        <translation type="unfinished"/>
+        <translation>Ctrl + N </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="52"/>
         <source>Ctrl + Shift + N </source>
-        <translation type="unfinished"/>
+        <translation>Ctrl + Shift + N </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="53"/>
         <source>Ctrl + F</source>
-        <translation type="unfinished"/>
+        <translation>Ctrl + F</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="54"/>
         <source>Ctrl + T </source>
-        <translation type="unfinished"/>
+        <translation>Ctrl + T </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="56"/>
         <source>Ctrl + I </source>
-        <translation type="unfinished"/>
+        <translation>Ctrl + I </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="60"/>
         <source>Ctrl + H </source>
-        <translation type="unfinished"/>
+        <translation>Ctrl + H </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="61"/>
         <source>Ctrl + L </source>
-        <translation type="unfinished"/>
+        <translation>Ctrl + L </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="66"/>
         <source>Ctrl + W</source>
-        <translation type="unfinished"/>
+        <translation>Ctrl + W</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="46"/>
@@ -3364,7 +3364,7 @@
     <message>
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="37"/>
         <source>Enter a password to protect shared folders</source>
-        <translation type="unfinished"/>
+        <translation>Masukkan satu kata laluan untuk melindungi folder-folder terkongsi</translation>
     </message>
     <message>
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="45"/>
@@ -3381,26 +3381,26 @@
     <name>VaultAskCreateKeyPage</name>
     <message>
         <source>Do you want to export a key file in case that you forgot the password?</source>
-        <translation type="unfinished"/>
+        <translation type="vanished">Anda mahu mengeksport satu fail kunci sekiranya anda terlupa kata laluan?</translation>
     </message>
     <message>
         <source>Export key</source>
-        <translation type="unfinished"/>
+        <translation type="vanished">Eksport kunci</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="41"/>
         <source>Do you want to generate a key in case that you forgot the password?</source>
-        <translation type="unfinished"/>
+        <translation>Anda mahu menjana satu fail kunci sekiranya anda terlupa kata laluan?</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="44"/>
         <source>Generate key</source>
-        <translation type="unfinished"/>
+        <translation>Jana kunci</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="45"/>
         <source>Skip</source>
-        <translation type="unfinished"/>
+        <translation>Langkau</translation>
     </message>
 </context>
 <context>
@@ -3408,68 +3408,68 @@
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="156"/>
         <source>Find your recovery key below</source>
-        <translation type="unfinished"/>
+        <translation>Cari kunci pemulihan anda di bawah</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="157"/>
         <source>Take good care of the recovery key by printing, writing down or saving it to a USB flash drive</source>
-        <translation type="unfinished"/>
+        <translation>Simpan baik-baik kunci pemulihan dengan mencetak, menulis ditempat lain atau menyimpannya di dalam pemacu kilat USB</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="158"/>
         <source>Your recovery key is as important as your password. Do not save the key file on this computer</source>
-        <translation type="unfinished"/>
+        <translation>Kunci pemulihan anda adalah penting seperti kata laluan anda. Jangan simpan fail kunci dalam komputer ini</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="222"/>
         <source>Save your vault recovery key</source>
-        <translation type="unfinished"/>
+        <translation>Simpan kunci pemulihan kekubah anda</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="223"/>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="248"/>
         <source>File Vault Recovery Key</source>
-        <translation type="unfinished"/>
+        <translation>Kunci Pemulihan Kekubah Fail</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="224"/>
         <source>File Vault Recovery Key (*.txt)</source>
-        <translation type="unfinished"/>
+        <translation>Kunci Pemulihan Kekubah Fail (*.txt)</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="249"/>
         <source>To verify that this is the correct recovery key, compare the following key ID with the key ID displayed on your PC.</source>
-        <translation type="unfinished"/>
+        <translation>Untuk mengesahkan ia adalah kunci pemulihan yang sebenar, bandingkan ID kunci berikut dengan ID kunci yang dipaparkan dalam Komputer anda.</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="250"/>
         <source>Key ID: %1</source>
-        <translation type="unfinished"/>
+        <translation>ID Kunci: %1</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="251"/>
         <source>If they are identical, then use the following key to retrieve your vault password.</source>
-        <translation type="unfinished"/>
+        <translation>Jika ia serupa, maka guna kunci berikut untuk memperoleh kata laluan kekubah anda</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="252"/>
         <source>Recovery Key: %1</source>
-        <translation type="unfinished"/>
+        <translation>Kunci Pemulihan: %1</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="253"/>
         <source>If they do not match, then this is not the right key, please try another recovery key.</source>
-        <translation type="unfinished"/>
+        <translation>Jika ia tidak sepadan, maka ia bukanlah kunci yang sebenar, sila guna kunci pemulihan yang lain.</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="170"/>
         <source>Save</source>
-        <translation type="unfinished"/>
+        <translation>Simpan</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="171"/>
         <source>Done</source>
-        <translation type="unfinished"/>
+        <translation>Selesai</translation>
     </message>
 </context>
 <context>
@@ -3477,21 +3477,21 @@
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="34"/>
         <source>File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Kekubah Fail</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="60"/>
         <source>Lock vault</source>
-        <translation type="unfinished"/>
+        <translation>Kunci kekubah</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="61"/>
         <source>Generate key</source>
-        <translation type="unfinished"/>
+        <translation>Jana kunci</translation>
     </message>
     <message>
         <source>Generate key file</source>
-        <translation type="unfinished"/>
+        <translation type="vanished">Jana fail kunci</translation>
     </message>
 </context>
 <context>
@@ -3499,12 +3499,12 @@
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="362"/>
         <source>Here is your vault password</source>
-        <translation type="unfinished"/>
+        <translation>Di sini adalah kata laluan kekubah anda</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="365"/>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -3512,22 +3512,22 @@
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="86"/>
         <source>Next</source>
-        <translation type="unfinished"/>
+        <translation>Berikutnya</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="96"/>
         <source>Set a password for the vault</source>
-        <translation type="unfinished"/>
+        <translation>Tetapkan kata laluan untuk kekubah</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="99"/>
         <source>Password</source>
-        <translation type="unfinished"/>
+        <translation>Kata laluan</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="100"/>
         <source>Repeat password</source>
-        <translation type="unfinished"/>
+        <translation>Ulang kata laluan</translation>
     </message>
 </context>
 <context>
@@ -3535,37 +3535,37 @@
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="37"/>
         <source>Create a new vault</source>
-        <translation type="unfinished"/>
+        <translation>Cipta satu kekubah baharu</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="38"/>
         <source>Import a vault</source>
-        <translation type="unfinished"/>
+        <translation>import satu kekubah</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="49"/>
         <source>File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Kekubah Fail</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="50"/>
         <source>Welcome to File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Selamat Datang ke Kekubah Fail</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="51"/>
         <source>Create secure private space here</source>
-        <translation type="unfinished"/>
+        <translation>Cipta ruang persendirian yang selamat di sini</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="52"/>
         <source>Advanced encryption technology, safe and secure</source>
-        <translation type="unfinished"/>
+        <translation>Teknologi penyulitan lanjutan, selamat dan dilindungi</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultsetuppages.cpp" line="53"/>
         <source>Convenient and easy to use</source>
-        <translation type="unfinished"/>
+        <translation>Mudah dan senang digunakan</translation>
     </message>
 </context>
 <context>
@@ -3573,17 +3573,17 @@
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="271"/>
         <source>Compare the following text with the key ID in your recovery key file</source>
-        <translation type="unfinished"/>
+        <translation>Bandingkan teks berikut dengan iD kunci dalam fail kunci pemulihan anda</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="272"/>
         <source>If they are identical, input the recovery key below to retrieve your vault password</source>
-        <translation type="unfinished"/>
+        <translation>Jika ia serupa, masukkan kunci pemulihan di bawah untuk memperoleh kata laluan kekubah anda</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="284"/>
         <source>Retrieve password</source>
-        <translation type="unfinished"/>
+        <translation>Peroleh kata laluan</translation>
     </message>
 </context>
 <context>
@@ -3591,7 +3591,7 @@
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="94"/>
         <source>Enter the vault password</source>
-        <translation type="unfinished"/>
+        <translation>Masukkan kata laluan kekubah</translation>
     </message>
 </context>
 </TS>

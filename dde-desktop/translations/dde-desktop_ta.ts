@@ -27,7 +27,7 @@
         <translation>வால்பேப்பர் மற்றும் ஸ்கிரீன்சேவர்கள்</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2616"/>
+        <location filename="../view/canvasgridview.cpp" line="2613"/>
         <source>Properties</source>
         <translation>பண்புகள்</translation>
     </message>

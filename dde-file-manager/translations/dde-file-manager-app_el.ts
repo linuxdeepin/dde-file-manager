@@ -2,9 +2,13 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../main.cpp" line="108"/>
         <source>Deepin File Manager</source>
-        <translation>Διαχειριστής Αρχείων Deepin</translation>
+        <translation type="vanished">Διαχειριστής Αρχείων Deepin</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="108"/>
+        <source>File Manager</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../main.cpp" line="112"/>

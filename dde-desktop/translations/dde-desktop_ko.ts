@@ -27,7 +27,7 @@
         <translation>배경화면 및 화면보호기</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2616"/>
+        <location filename="../view/canvasgridview.cpp" line="2613"/>
         <source>Properties</source>
         <translation>속성</translation>
     </message>

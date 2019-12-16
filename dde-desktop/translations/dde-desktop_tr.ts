@@ -27,7 +27,7 @@
         <translation>Duvar Kağıdı ve Ekran Koruyucu</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2616"/>
+        <location filename="../view/canvasgridview.cpp" line="2613"/>
         <source>Properties</source>
         <translation>Özellikler</translation>
     </message>

@@ -2,14 +2,18 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../main.cpp" line="108"/>
         <source>Deepin File Manager</source>
-        <translation>Zarządzanie plikami Deepin</translation>
+        <translation type="vanished">Zarządzanie plikami Deepin</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="108"/>
+        <source>File Manager</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../main.cpp" line="112"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
-        <translation type="unfinished"/>
+        <translation>File Manager to potężne i łatwe w użyciu narzędzie do zarządzania plikami, wyposażone w wyszukiwanie, kopiowanie, kosz, kompresję/dekompresję, właściwość pliku i inne przydatne funkcje.</translation>
     </message>
     <message>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>

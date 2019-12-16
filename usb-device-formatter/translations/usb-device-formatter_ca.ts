@@ -12,7 +12,7 @@
     <message>
         <location filename="../view/formatingpage.cpp" line="47"/>
         <source>Formatting the disk, please wait...</source>
-        <translation>S&apos;està formatant el disc, espereu...</translation>
+        <translation>Es formata el disc. Espereu, si us plau...</translation>
     </message>
 </context>
 <context>

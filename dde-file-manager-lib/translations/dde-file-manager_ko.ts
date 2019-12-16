@@ -404,28 +404,28 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1046"/>
-        <location filename="../views/dfiledialog.cpp" line="1256"/>
+        <location filename="../views/dfiledialog.cpp" line="1044"/>
+        <location filename="../views/dfiledialog.cpp" line="1254"/>
         <source>Save</source>
         <translation>저장</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1161"/>
+        <location filename="../views/dfiledialog.cpp" line="1159"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>%1이(가) 이미 있습니다. 바꾸시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1162"/>
+        <location filename="../views/dfiledialog.cpp" line="1160"/>
         <source>Cancel</source>
         <translation>취소</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1163"/>
+        <location filename="../views/dfiledialog.cpp" line="1161"/>
         <source>Replace</source>
         <translation>바꾸기</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1253"/>
+        <location filename="../views/dfiledialog.cpp" line="1251"/>
         <source>Open</source>
         <translation>열기</translation>
     </message>
@@ -452,7 +452,7 @@
         <translation>이름</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1039"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1041"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1382"/>
         <location filename="../models/searchfileinfo.cpp" line="131"/>
         <source>Time modified</source>
@@ -488,7 +488,7 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2170"/>
+        <location filename="../views/dfileview.cpp" line="2173"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation>디스크 이미지가 손상되어 지금 마운트할 수 없습니다, 먼저 디스크를 지우십시오.</translation>
     </message>
@@ -582,7 +582,7 @@
     <message>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="114"/>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="129"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="520"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="550"/>
         <source>%1 Volume</source>
         <translation>%1 볼륨</translation>
     </message>
@@ -593,17 +593,17 @@
         <translation>데이터 디스크</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="512"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="542"/>
         <source>%1 Drive</source>
         <translation>%1 드라이브</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="515"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="545"/>
         <source>Blank %1 Disc</source>
         <translation>빈 %1 디스크</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="518"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="548"/>
         <source>%1 Encrypted</source>
         <translation>%1 암호화</translation>
     </message>
@@ -1656,146 +1656,146 @@
 <context>
     <name>MoveCopyTaskWidget</name>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="384"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="390"/>
         <source>Skip</source>
         <translation>건너띄기</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="383"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="389"/>
         <source>Keep both</source>
         <translation>둘 다 유지</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="385"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="537"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="391"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="543"/>
         <source>Replace</source>
         <translation>바꾸기</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="410"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="416"/>
         <source>Do not ask again</source>
         <translation>다시 묻지 않기</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="535"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="541"/>
         <source>merge</source>
         <translation>합치기</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="505"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="511"/>
         <source>Copying %1</source>
         <translation>%1 복사중</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="445"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="451"/>
         <source>Erasing disc %1, please wait...</source>
         <translation>%1 디스크 지우는 중, 잠시 기다리십시오...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="446"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="452"/>
         <source>Burning disc %1, please wait...</source>
         <translation>%1 디스크 굽는 중, 잠시 기다리십시오...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="451"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="457"/>
         <source>Writing data...</source>
         <translation>데이터를 쓰는 중...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="452"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="458"/>
         <source>Verifying data...</source>
         <translation>데이터 확인중...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="506"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="512"/>
         <source>Copy to %2</source>
         <translation>%2로 복사</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="509"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="515"/>
         <source>Moving %1</source>
         <translation>%1 이동중</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="510"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="516"/>
         <source>Move to %2</source>
         <translation>%2로 이동</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="512"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="518"/>
         <source>Restoring %1</source>
         <translation>%1 복구중</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="513"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="519"/>
         <source>Restore to %2</source>
         <translation>%2로 복구</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="515"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="521"/>
         <source>Deleting %1</source>
         <translation>%1 삭제중</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="518"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="524"/>
         <source>Trashing %1</source>
         <translation>%1 휴지통에 버리기</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="526"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="532"/>
         <source>Calculating space, please wait</source>
         <translation>공간을 계산하는 중, 잠시 기다리십시오</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="529"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="535"/>
         <source>File named %1 already exists in target folder</source>
         <translation>%1 파일이 대상 폴더에 이미 존재합니다</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="530"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="536"/>
         <source>Original path %1 target path %2</source>
         <translation>원본 경로 %1 대상 경로 %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="545"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="551"/>
         <source>Retry</source>
         <translation>재시도</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="639"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="651"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="643"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="655"/>
         <source>Time modified:%1</source>
         <translation>수정된 시간:%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="641"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="645"/>
         <source>Original folder</source>
         <translation>원본 폴더</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="644"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="648"/>
         <source>Original file</source>
         <translation>원본 파일</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="654"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="658"/>
         <source>Target folder</source>
         <translation>대상 폴더</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="657"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="661"/>
         <source>Target file</source>
         <translation>대상 파일</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="642"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="655"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="646"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="659"/>
         <source>Contains:%1</source>
         <translation>포함:%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="645"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="658"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="649"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="662"/>
         <source>Size:%1</source>
         <translation>크기:%1</translation>
     </message>
@@ -1916,7 +1916,7 @@
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="63"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="500"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="530"/>
         <source>System Disk</source>
         <translation>시스템 디스크</translation>
     </message>
@@ -1944,47 +1944,47 @@
 <context>
     <name>PropertyDialog</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="297"/>
+        <location filename="../dialogs/propertydialog.cpp" line="286"/>
         <source>Basic info</source>
         <translation>기본 정보</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="298"/>
+        <location filename="../dialogs/propertydialog.cpp" line="287"/>
         <source>Open with</source>
         <translation>다음으로 열기</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="299"/>
+        <location filename="../dialogs/propertydialog.cpp" line="288"/>
         <source>Sharing</source>
         <translation>공유중</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="300"/>
+        <location filename="../dialogs/propertydialog.cpp" line="289"/>
         <source>Permissions</source>
         <translation>권한</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="348"/>
+        <location filename="../dialogs/propertydialog.cpp" line="337"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="352"/>
+        <location filename="../dialogs/propertydialog.cpp" line="341"/>
         <source>%1 / %2</source>
         <translation>%1 / %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1045"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1035"/>
         <source>Hide this folder</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1045"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1035"/>
         <source>Hide this file</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1296"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1286"/>
         <source>Allow to execute as program</source>
         <translation>프로그램으로 실행하도록 허용</translation>
     </message>
@@ -1992,21 +1992,21 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="982"/>
+        <location filename="../dialogs/propertydialog.cpp" line="970"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="523"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="203"/>
         <source>Size</source>
         <translation>크기</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1002"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1104"/>
+        <location filename="../dialogs/propertydialog.cpp" line="990"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1094"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="212"/>
         <source>Contains</source>
         <translation>포함</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="983"/>
+        <location filename="../dialogs/propertydialog.cpp" line="971"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="524"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="204"/>
         <source>Type</source>
@@ -2014,73 +2014,73 @@
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
-        <location filename="../dialogs/propertydialog.cpp" line="986"/>
+        <location filename="../dialogs/propertydialog.cpp" line="974"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="526"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="303"/>
         <source>Time modified</source>
         <translation>수정된 시간</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1105"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1095"/>
         <source>Free space</source>
         <translation>여유 공간</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1100"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1090"/>
         <source>Total space</source>
         <translation>총 공간</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1209"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1199"/>
         <source>Access denied</source>
         <translation>접근 거부</translation>
     </message>
     <message>
+        <location filename="../dialogs/propertydialog.cpp" line="1200"/>
         <location filename="../dialogs/propertydialog.cpp" line="1210"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1220"/>
         <source>Executable</source>
         <translation>실행가능</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1211"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1212"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1201"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1202"/>
         <source>Write only</source>
         <translation>쓰기 전용</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1213"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1214"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1203"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1204"/>
         <source>Read only</source>
         <translation>읽기 전용</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1215"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1216"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1205"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1206"/>
         <source>Read-write</source>
         <translation>읽기-쓰기</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1292"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1282"/>
         <source>Others</source>
         <translation>다른 사용자</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1290"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1280"/>
         <source>Owner</source>
         <translation>소유자</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1099"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1089"/>
         <source>Device type</source>
         <translation>장치 유형</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1102"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1092"/>
         <source>File system</source>
         <translation>파일 시스템</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1291"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1281"/>
         <source>Group</source>
         <translation>그룹</translation>
     </message>
@@ -2261,7 +2261,7 @@
         <translation>새 문서</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="984"/>
+        <location filename="../dialogs/propertydialog.cpp" line="972"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="525"/>
         <source>Time created</source>
         <translation>생성된 시간</translation>
@@ -2272,7 +2272,7 @@
         <translation>로그아웃 및 마운트 해제</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="987"/>
+        <location filename="../dialogs/propertydialog.cpp" line="975"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="536"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="317"/>
         <source>Source path</source>
@@ -2474,71 +2474,71 @@
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="294"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1088"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1089"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1090"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1078"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1079"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1080"/>
         <source>Local disk</source>
         <translation>로컬 디스크</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="296"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1091"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1081"/>
         <source>Removable disk</source>
         <translation>제거 가능한 디스크</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="298"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1093"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1094"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1083"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1084"/>
         <source>Network shared directory</source>
         <translation>네트워크 공유 디렉토리</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="300"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1095"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1085"/>
         <source>Android mobile device</source>
         <translation>안드로이드 모바일 장치</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="302"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1096"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1086"/>
         <source>Apple mobile device</source>
         <translation>애플 모바일 장치</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="304"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1097"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1087"/>
         <source>Camera</source>
         <translation>카메라</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="306"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1092"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1082"/>
         <source>DVD</source>
         <translation>DVD</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="308"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1099"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1089"/>
         <source>Unknown device</source>
         <translation>알 수 없는 장치</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="315"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1104"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1094"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="652"/>
         <source>%1 item</source>
         <translation>%1 항목</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="317"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1104"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1094"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="654"/>
         <source>%1 items</source>
         <translation>%1개의 항목</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="826"/>
+        <location filename="../interfaces/dfileservices.cpp" line="833"/>
         <source>Shortcut</source>
         <translation>바로가기</translation>
     </message>
@@ -2560,7 +2560,7 @@
         <translation>삭제된 시간</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1248"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1250"/>
         <source>Loading...</source>
         <translation>불러오는 중...</translation>
     </message>
@@ -2628,12 +2628,12 @@
         <translation>텍스트</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="951"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="987"/>
         <source>1 task in progress</source>
         <translation>1개의 작업이 진행중</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="953"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="989"/>
         <source>%1 tasks in progress</source>
         <translation>%1개의 작업이 진행중</translation>
     </message>
@@ -2735,7 +2735,7 @@
         <translation>추가</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1014"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1002"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="288"/>
         <location filename="../views/drenamebar.cpp" line="261"/>
         <source>Location</source>
@@ -2805,7 +2805,7 @@
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="173"/>
-        <location filename="../dialogs/propertydialog.cpp" line="985"/>
+        <location filename="../dialogs/propertydialog.cpp" line="973"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="302"/>
         <source>Time accessed</source>
         <translation>액세스한 시간</translation>
@@ -2883,7 +2883,7 @@
         <translation>여유 공간 %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="1006"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="1042"/>
         <source>Files are being processed</source>
         <translation>파일 처리 중</translation>
     </message>

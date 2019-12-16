@@ -27,7 +27,7 @@
         <translation>桌布和螢幕保護程式</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2616"/>
+        <location filename="../view/canvasgridview.cpp" line="2613"/>
         <source>Properties</source>
         <translation>屬性</translation>
     </message>
@@ -75,7 +75,7 @@
     <message>
         <location filename="../main.cpp" line="130"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation>桌面</translation>
     </message>
 </context>
 <context>

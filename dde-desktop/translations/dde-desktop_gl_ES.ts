@@ -27,7 +27,7 @@
         <translation>Fondo de pantalla e Salvapantalla</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2616"/>
+        <location filename="../view/canvasgridview.cpp" line="2613"/>
         <source>Properties</source>
         <translation>Propiedades</translation>
     </message>

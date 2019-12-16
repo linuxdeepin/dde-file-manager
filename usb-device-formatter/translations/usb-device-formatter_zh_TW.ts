@@ -74,7 +74,7 @@
     <message>
         <location filename="../view/mainwindow.cpp" line="203"/>
         <source>Failed to format the device</source>
-        <translation type="unfinished"/>
+        <translation>無法格式化裝置</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="204"/>
@@ -95,17 +95,17 @@
     <message>
         <location filename="../utils/udisksutils.cpp" line="54"/>
         <source>System Disk</source>
-        <translation type="unfinished"/>
+        <translation>系統磁碟</translation>
     </message>
     <message>
         <location filename="../utils/udisksutils.cpp" line="58"/>
         <source>%1 Encrypted</source>
-        <translation type="unfinished"/>
+        <translation>%1 已加密</translation>
     </message>
     <message>
         <location filename="../utils/udisksutils.cpp" line="60"/>
         <source>%1 Volume</source>
-        <translation type="unfinished"/>
+        <translation>%1 磁碟區</translation>
     </message>
 </context>
 <context>
@@ -118,7 +118,7 @@
     <message>
         <location filename="../main.cpp" line="121"/>
         <source>The device is read-only</source>
-        <translation type="unfinished"/>
+        <translation>裝置處於唯讀狀態</translation>
     </message>
     <message>
         <source>Cannot format local device</source>
