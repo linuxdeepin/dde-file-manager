@@ -47,7 +47,7 @@ void DFMIconButton::paintEvent(QPaintEvent *e)
     Q_UNUSED(e);
 
     QPainter painter(this);
-    QPixmap pm = icon().pixmap(size());
+    QPixmap pm = icon().pixmap(iconSize());
     QPainter pa(&pm);
     pa.setCompositionMode(QPainter::CompositionMode_SourceIn);
 
@@ -57,7 +57,9 @@ void DFMIconButton::paintEvent(QPaintEvent *e)
         pa.fillRect(pm.rect(), qApp->palette().color(QPalette::Active, QPalette::Text));
     }
 
-    painter.drawPixmap(rect(), pm);
+    painter.drawPixmap((rect().width() - pm.rect().width()) / 2,
+                           (rect().height() - pm.rect().height()) / 2,
+                           pm);
 }
 
 DFM_END_NAMESPACE

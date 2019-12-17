@@ -97,13 +97,14 @@ void DToolBar::initUI()
     m_detailButton->setFocusPolicy(Qt::NoFocus);
     m_detailButton->setIcon(QIcon::fromTheme("dfm_rightview_detail"));
     m_detailButton->setIconSize(iconSize);
+    m_detailButton->setFixedSize(ButtonWidth - 2, ButtonHeight - 2);
 
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_addressToolBar);
     mainLayout->addSpacing(22);
     mainLayout->addWidget(m_contollerToolBar);
 
-    mainLayout->addSpacing(26);
+    mainLayout->addSpacing(22);
     mainLayout->addWidget(m_detailButton);
 
     mainLayout->addSpacing(0);
@@ -177,7 +178,7 @@ void DToolBar::initContollerToolBar()
 
     m_contollerToolBarContentLayout = new QHBoxLayout(m_contollerToolBar);
     m_contollerToolBarContentLayout->setContentsMargins(1, 1, 1, 1);
-    m_contollerToolBarContentLayout->setSpacing(22);
+    m_contollerToolBarContentLayout->setSpacing(24);
 }
 
 void DToolBar::initConnect()
