@@ -31,6 +31,7 @@
 #include <qpa/qplatformbackingstore.h>
 #define private public
 #include <private/qhighdpiscaling_p.h>
+#include <QImageReader>
 #undef private
 
 class BackgroundLabel : public QWidget
@@ -144,6 +145,14 @@ void BackgroundHelper::setBackground(const QString &path)
     qInfo() << "path:" << path;
     currentWallpaper = path.startsWith("file:") ? QUrl(path).toLocalFile() : path;
     backgroundPixmap = QPixmap(currentWallpaper);
+    // fix whiteboard shows when a jpeg file with filename xxx.png
+    // content formart not epual to extension
+    if (backgroundPixmap.isNull()) {
+        QImageReader reader(currentWallpaper);
+        reader.setDecideFormatFromContent(true);
+        qDebug() << reader.canRead() << reader.format();
+        backgroundPixmap = QPixmap::fromImage(reader.read());
+    }
 
     // 更新背景图
     for (BackgroundLabel *l : backgroundMap) {
