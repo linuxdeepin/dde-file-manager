@@ -56,6 +56,7 @@
 #include <QApplication>
 #include <QtConcurrent>
 #include <qplatformdefs.h>
+#include <ddiskmanager.h>
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -449,7 +450,14 @@ bool DFileInfo::canRename() const
 bool DFileInfo::canShare() const
 {
     if (isDir() && isReadable()) {
-        if (absoluteFilePath().startsWith(QDir::homePath())) {
+        QStorageInfo stInfo(fileUrl().toLocalFile());
+        QStorageInfo hstInfo(QDir::homePath());
+        QString userPath = QDir::homePath();
+        if (stInfo.device() == hstInfo.device()) { // /data/user ==> /home/user ==> /dev/sda
+            userPath = stInfo.rootPath() + QString("/").append(UserShareManager::getCurrentUserName());
+        }
+
+        if (absoluteFilePath().startsWith(userPath)) {
             return true;
         }
 
@@ -458,6 +466,9 @@ bool DFileInfo::canShare() const
         if (info) {
             if (info->getMediaType() != UDiskDeviceInfo::unknown && info->getMediaType() !=UDiskDeviceInfo::network)
                 return true;
+        } else {
+            QStringList udiskspathes = DDiskManager::resolveDeviceNode(stInfo.device(), {});
+            return udiskspathes.size()>0;
         }
     }
 
