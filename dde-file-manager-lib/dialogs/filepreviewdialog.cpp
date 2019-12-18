@@ -17,6 +17,7 @@
 #include <danchors.h>
 #include <denhancedwidget.h>
 
+#include <DWindowCloseButton>
 #include <QPushButton>
 #include <QFrame>
 #include <QLabel>
@@ -333,13 +334,13 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
 
 void FilePreviewDialog::initUI()
 {
-    m_closeButton = new QPushButton(this);
+    m_closeButton = new DWindowCloseButton(this);
     m_closeButton->setObjectName("CloseButton");
     m_closeButton->setFocusPolicy(Qt::NoFocus);
-    m_closeButton->setIcon(QIcon::fromTheme("window-close").pixmap({16, 16}));
+    m_closeButton->setIcon(QIcon::fromTheme("window-close"));
     m_closeButton->setIconSize({16, 16});
     m_closeButton->setFlat(true);
-    m_closeButton->setFixedSize({24,24});
+    m_closeButton->setFixedSize({50,50});
 
     m_separator = new DHorizontalLine(this);
     m_separator->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
