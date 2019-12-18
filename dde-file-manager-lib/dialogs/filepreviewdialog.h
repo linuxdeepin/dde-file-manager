@@ -16,10 +16,15 @@
 #include <dabstractdialog.h>
 #include <DHorizontalLine>
 #include <QPointer>
+
 QT_BEGIN_NAMESPACE
 class QPushButton;
 class QLabel;
 QT_END_NAMESPACE
+
+DWIDGET_BEGIN_NAMESPACE
+class DWindowCloseButton;
+DWIDGET_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
 
@@ -90,7 +95,7 @@ private:
     DUrlList m_fileList;
     DUrlList m_entryUrlList;
 
-    QPushButton *m_closeButton = nullptr;
+    DWindowCloseButton *m_closeButton = nullptr;
     DHorizontalLine *m_separator;
     FilePreviewDialogStatusBar *m_statusBar;
 
