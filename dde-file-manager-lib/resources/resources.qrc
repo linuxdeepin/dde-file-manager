@@ -41,5 +41,7 @@
 	<file>icons/deepin/builtin/dark/icons/dfm_add_server_44px.svg</file>
 	<file>icons/deepin/builtin/light/icons/dfm_del_server_44px.svg</file>
 	<file>icons/deepin/builtin/dark/icons/dfm_del_server_44px.svg</file>
+	<file>icons/deepin/builtin/light/icons/dfm_tab_new_28px.svg</file>
+	<file>icons/deepin/builtin/dark/icons/dfm_tab_new_28px.svg</file>
     </qresource>
 </RCC>
