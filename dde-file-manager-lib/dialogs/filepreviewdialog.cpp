@@ -14,6 +14,7 @@
 
 #include "shutil/fileutils.h"
 
+#include <DGuiApplicationHelper>
 #include <danchors.h>
 #include <denhancedwidget.h>
 
@@ -337,10 +338,15 @@ void FilePreviewDialog::initUI()
     m_closeButton = new DWindowCloseButton(this);
     m_closeButton->setObjectName("CloseButton");
     m_closeButton->setFocusPolicy(Qt::NoFocus);
-    m_closeButton->setIcon(QIcon::fromTheme("window-close"));
-    m_closeButton->setIconSize({16, 16});
-    m_closeButton->setFlat(true);
+    m_closeButton->setIconSize({50, 50});
     m_closeButton->setFixedSize({50,50});
+    QColor base_color = palette().base().color();
+    DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(base_color);
+    if (ct == DGuiApplicationHelper::LightType) {
+        m_closeButton->setStyleSheet("background-color:rgba(255, 255, 255, 25);");
+    } else {
+        m_closeButton->setStyleSheet("background-color:rgba(0, 0, 0, 25);");
+    }
 
     m_separator = new DHorizontalLine(this);
     m_separator->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);

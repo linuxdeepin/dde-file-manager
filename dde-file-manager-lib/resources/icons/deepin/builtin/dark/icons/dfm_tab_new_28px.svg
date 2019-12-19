@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="28" height="28" viewBox="0 0 28 28">
+  <defs>
+    <linearGradient id="button_add_dark-c" x1="50%" x2="50%" y1="0%" y2="95.653%">
+      <stop offset="0%" stop-color="#484848"/>
+      <stop offset="100%" stop-color="#414141"/>
+    </linearGradient>
+    <rect id="button_add_dark-b" width="24" height="24" x="0" y="0" rx="12"/>
+    <filter id="button_add_dark-a" width="158.3%" height="158.3%" x="-29.2%" y="-20.8%" filterUnits="objectBoundingBox">
+      <feOffset dy="2" in="SourceAlpha" result="shadowOffsetOuter1"/>
+      <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="2"/>
+      <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"/>
+      <feColorMatrix in="shadowBlurOuter1" values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.05 0"/>
+    </filter>
+  </defs>
+  <g fill="none" fill-rule="evenodd" transform="translate(2 2)">
+    <use fill="#000" filter="url(#button_add_dark-a)" xlink:href="#button_add_dark-b"/>
+    <use fill="#000" fill-opacity=".08" xlink:href="#button_add_dark-b"/>
+    <rect width="23" height="23" x=".5" y=".5" fill="url(#button_add_dark-c)" stroke="#FFF" stroke-linejoin="square" stroke-opacity=".03" rx="11.5"/>
+    <path fill="#C5CFE0" d="M13,7 L13,12 L18,12 L18,13 L13,13 L13,18 L12,18 L12,13 L7,13 L7,12 L12,12 L12,7 L13,7 Z"/>
+  </g>
+</svg>

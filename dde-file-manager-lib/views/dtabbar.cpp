@@ -450,7 +450,7 @@ TabCloseButton::TabCloseButton(QGraphicsItem *parent):
 
 QRectF TabCloseButton::boundingRect() const
 {
-    return QRectF(1,1,20,20);
+    return QRectF(0, 0, 24, 24);
 
 }
 
@@ -472,9 +472,11 @@ void TabCloseButton::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     if (m_mouseHovered)
          role = QPalette::Dark;
 
+    DPalette pal = DApplicationHelper::instance()->palette(widget);
+
     // drawbackground color
     painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->fillPath(path, option->palette.color(cp, role));
+    painter->fillPath(path, pal.color(cp, role));
     painter->setRenderHint(QPainter::Antialiasing, false);
 
     QRect rc = rect.toRect();
@@ -865,7 +867,7 @@ void TabBar::mouseMoveEvent(QMouseEvent *event)
     if(closingIndex<count() && closingIndex>=0){
         Tab *tab = m_tabs.at(closingIndex);
         m_TabCloseButton->setClosingIndex(closingIndex);
-        m_TabCloseButton->setPos(tab->x()+tab->width()-26,0);
+        m_TabCloseButton->setPos(tab->x()+tab->width() - 30, 6);
 
         if(closingIndex == currentIndex())
             m_TabCloseButton->setActiveWidthTab(true);
@@ -924,9 +926,9 @@ QSize TabBar::tabSizeHint(const int &index)
     int averageWidth = m_historyWidth/count();
 
     if(index == count() -1)
-        return (QSize(m_historyWidth - averageWidth*(count()-1),24));
+        return (QSize(m_historyWidth - averageWidth*(count()-1),36));
     else
-        return (QSize(averageWidth,24));
+        return (QSize(averageWidth,36));
 }
 
 void TabBar::updateScreen()
@@ -951,7 +953,7 @@ void TabBar::updateScreen()
                 animation->deleteLater();
 
                 if (m_TabCloseButton->closingIndex() == counter) {
-                    m_TabCloseButton->setPos(tab->x()+tab->width()-26,0);
+                    m_TabCloseButton->setPos(tab->x()+tab->width() - 30, 6);
                 }
                 if ((m_TabCloseButton->closingIndex()>=count() || m_TabCloseButton->closingIndex()<0) && m_lastDeleteState) {
                     m_lastDeleteState = false;

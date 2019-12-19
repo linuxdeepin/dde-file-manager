@@ -121,7 +121,7 @@ public:
     QVBoxLayout *rightViewLayout { nullptr };
     DToolBar *toolbar{ nullptr };
     TabBar *tabBar { nullptr };
-    QPushButton *newTabButton;
+    DIconButton *newTabButton;
     DFMBaseView *currentView { nullptr };
     DStatusBar *statusBar { nullptr };
     QVBoxLayout *mainLayout { nullptr };
@@ -1042,12 +1042,14 @@ void DFileManagerWindow::initTabBar()
     D_D(DFileManagerWindow);
 
     d->tabBar = new TabBar(this);
-    d->tabBar->setFixedHeight(24);
+    d->tabBar->setFixedHeight(36);
 
-    d->newTabButton = new QPushButton(this);
+    d->newTabButton = new DIconButton(this);
     d->newTabButton->setObjectName("NewTabButton");
-    d->newTabButton->setFixedSize(25, 24);
-    d->newTabButton->setIcon(QIcon::fromTheme("tab-new"));
+    d->newTabButton->setFixedSize(36, 36);
+    d->newTabButton->setIconSize({28, 28});
+    d->newTabButton->setIcon(QIcon::fromTheme("dfm_tab_new"));
+    d->newTabButton->setFlat(true);
     d->newTabButton->hide();
 }
 
