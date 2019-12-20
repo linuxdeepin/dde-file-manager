@@ -148,6 +148,7 @@ public Q_SLOTS:
     Q_SCRIPTABLE QString Size();
     Q_SCRIPTABLE QString Dump();
     Q_SCRIPTABLE QString DumpPos(qint32 x, qint32 y);
+    Q_SCRIPTABLE void Refresh(); // 刷新桌面图标
 
 private:
     Q_DISABLE_COPY(CanvasGridView)

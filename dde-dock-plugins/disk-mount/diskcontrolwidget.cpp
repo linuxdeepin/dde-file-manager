@@ -157,6 +157,14 @@ void DiskControlWidget::doStartupAutoMount()
             blDev->mount({{"auth.no_user_interaction", true}});
         }
     }
+
+    qDebug() << "call desktop.canvas.reFresh";
+    // call desktop.canvas.reFresh
+    DDBusSender()
+        .service("com.deepin.dde.desktop")
+        .path("/com/deepin/dde/desktop/canvas")
+        .interface("com.deepin.dde.desktop.Canvas")
+        .method(QString("Refresh")).call();
 }
 
 bool isProtectedDevice(DBlockDevice * blk) {
