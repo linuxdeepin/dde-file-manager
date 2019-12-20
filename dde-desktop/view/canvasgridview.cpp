@@ -1649,6 +1649,11 @@ QString CanvasGridView::DumpPos(qint32 x, qint32 y)
     return QJsonDocument(debug).toJson();
 }
 
+void CanvasGridView::Refresh()
+{
+    model()->update();
+}
+
 // TODO: should fix by qt;
 bool find_wm_strut_partial_rect_list(QList<QRect> rects)
 {
