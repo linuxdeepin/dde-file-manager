@@ -577,11 +577,15 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
                 timer_id = 0;
             }
 
-            MoveCopyTaskWidget *taskWidget = dialogManager->taskDialog()->addTaskJob(job);
+            DFileCopyMoveJob::Handle *handle = dialogManager->taskDialog()->addTaskJob(job);
+            emit job->currentJobChanged(currentJob->first, currentJob->second);
 
-            taskWidget->onJobCurrentJobChanged(currentJob->first, currentJob->second);
+            if (!handle) {
+                qWarning() << "addTaskJob create handle failed!!";
+                return DFileCopyMoveJob::SkipAction;
+            }
 
-            return taskWidget->errorHandle()->handleError(job, error, sourceInfo, targetInfo);
+            return handle->handleError(job, error, sourceInfo, targetInfo);
         }
 
         void timerEvent(QTimerEvent *e) override
@@ -597,9 +601,8 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
             if (!fileJob || !currentJob)
                 return;
 
-            MoveCopyTaskWidget *taskWidget = dialogManager->taskDialog()->addTaskJob(fileJob);
-
-            taskWidget->onJobCurrentJobChanged(currentJob->first, currentJob->second);
+            dialogManager->taskDialog()->addTaskJob(fileJob);
+            emit fileJob->currentJobChanged(currentJob->first, currentJob->second);
         }
 
         int timer_id = 0;

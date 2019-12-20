@@ -246,7 +246,6 @@ void DialogManager::addJob(FileJob *job)
     connect(job, &FileJob::requestJobRemovedImmediately, m_taskDialog, &DTaskDialog::removeTaskImmediately);
     connect(job, &FileJob::requestJobDataUpdated, m_taskDialog, &DTaskDialog::handleUpdateTaskWidget);
     connect(job, &FileJob::requestAbortTask, m_taskDialog, &DTaskDialog::handleTaskClose);
-    connect(job, &FileJob::requestConflictDialogShowed, m_taskDialog, &DTaskDialog::showConflictDiloagByJob);
     connect(job, &FileJob::requestCopyMoveToSelfDialogShowed, this, &DialogManager::showCopyMoveToSelfDialog);
     connect(job, &FileJob::requestNoEnoughSpaceDialogShowed, this, &DialogManager::showDiskSpaceOutOfUsedDialogLater);
     connect(job, &FileJob::requestCanNotMoveToTrashDialogShowed, this, &DialogManager::showMoveToTrashConflictDialog);

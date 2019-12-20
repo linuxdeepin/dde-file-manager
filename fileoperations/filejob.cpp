@@ -983,9 +983,11 @@ void FileJob::jobConflicted()
     jobDataDetail.insert("sourcePath",m_srcPath);
     jobDataDetail.insert("targetPath", m_tarPath);
     jobDataDetail.insert("status", "conflict");
+    QString type = QMetaEnum::fromType<FileJob::JobType>().valueToKey(m_jobType);
+    jobDataDetail.insert("type", type.toLower());
+
 
     emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
-    emit requestConflictDialogShowed(m_jobDetail);
     m_status = Paused;
 }
 
