@@ -758,7 +758,7 @@ void DIconItemDelegate::paint(QPainter *painter,
         }
     }
 
-    if (isSelected || !d->enabledTextShadow) {// do not draw text background color
+    if (isSelected || !d->enabledTextShadow || isDragMode) {// do not draw text background color
         const QList<QRectF> &lines = drawText(index, painter, str, label_rect, ICON_MODE_RECT_RADIUS,
                                               isSelected && isCanvas ? opt.palette.brush(QPalette::Normal, QPalette::Highlight) : QBrush(Qt::NoBrush),
                                               QTextOption::WrapAtWordBoundaryOrAnywhere, opt.textElideMode, Qt::AlignCenter);
