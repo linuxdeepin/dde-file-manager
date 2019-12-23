@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="28" height="28" viewBox="0 0 28 28">
+  <defs>
+    <linearGradient id="深色_添加_点击-c" x1="50%" x2="50%" y1="0%" y2="95.653%">
+      <stop offset="0%" stop-color="#242424"/>
+      <stop offset="100%" stop-color="#282828"/>
+    </linearGradient>
+    <rect id="深色_添加_点击-b" width="24" height="24" x="0" y="0" rx="12"/>
+    <filter id="深色_添加_点击-a" width="158.3%" height="158.3%" x="-29.2%" y="-20.8%" filterUnits="objectBoundingBox">
+      <feOffset dy="2" in="SourceAlpha" result="shadowOffsetOuter1"/>
+      <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="2"/>
+      <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"/>
+      <feColorMatrix in="shadowBlurOuter1" values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.05 0"/>
+    </filter>
+  </defs>
+  <g fill="none" fill-rule="evenodd" transform="translate(-1313 -5794)">
+    <rect width="1520" height="15201" fill="#252525"/>
+    <g transform="translate(1315 5796)">
+      <use fill="#000" filter="url(#深色_添加_点击-a)" xlink:href="#深色_添加_点击-b"/>
+      <use fill="#000" fill-opacity=".08" xlink:href="#深色_添加_点击-b"/>
+      <rect width="23" height="23" x=".5" y=".5" fill="url(#深色_添加_点击-c)" stroke="#FFF" stroke-linejoin="square" stroke-opacity=".03" rx="11.5"/>
+      <path fill="#0081FF" d="M13,7 L13,12 L18,12 L18,13 L13,13 L13,18 L12,18 L12,13 L7,13 L7,12 L12,12 L12,7 L13,7 Z"/>
+    </g>
+  </g>
+</svg>
