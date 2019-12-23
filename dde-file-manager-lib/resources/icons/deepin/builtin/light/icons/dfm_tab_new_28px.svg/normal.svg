@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="28" height="28" viewBox="0 0 28 28">
   <defs>
-    <linearGradient id="button_add-c" x1="50%" x2="50%" y1="0%" y2="95.653%">
+    <linearGradient id="浅色_添加_正常-c" x1="50%" x2="50%" y1="0%" y2="95.653%">
       <stop offset="0%" stop-color="#E6E6E6"/>
       <stop offset="100%" stop-color="#E3E3E3"/>
     </linearGradient>
-    <rect id="button_add-b" width="24" height="24" x="0" y="0" rx="12"/>
-    <filter id="button_add-a" width="158.3%" height="158.3%" x="-29.2%" y="-20.8%" filterUnits="objectBoundingBox">
+    <rect id="浅色_添加_正常-b" width="24" height="24" x="0" y="0" rx="12"/>
+    <filter id="浅色_添加_正常-a" width="158.3%" height="158.3%" x="-29.2%" y="-20.8%" filterUnits="objectBoundingBox">
       <feOffset dy="2" in="SourceAlpha" result="shadowOffsetOuter1"/>
       <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="2"/>
       <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"/>
@@ -13,8 +13,8 @@
     </filter>
   </defs>
   <g fill="none" fill-rule="evenodd" transform="translate(2 2)">
-    <use fill="#000" filter="url(#button_add-a)" xlink:href="#button_add-b"/>
-    <rect width="23" height="23" x=".5" y=".5" fill="url(#button_add-c)" stroke="#000" stroke-linejoin="square" stroke-opacity=".03" rx="11.5"/>
+    <use fill="#000" filter="url(#浅色_添加_正常-a)" xlink:href="#浅色_添加_正常-b"/>
+    <rect width="23" height="23" x=".5" y=".5" fill="url(#浅色_添加_正常-c)" stroke="#000" stroke-linejoin="square" stroke-opacity=".03" rx="11.5"/>
     <path fill="#536076" d="M6.91666667,0 L6.91666667,5 L11.9166667,5 L11.9166667,6 L6.91666667,6 L6.91666667,11 L5.91666667,11 L5.91666667,6 L0.916666667,6 L0.916666667,5 L5.91666667,5 L5.91666667,0 L6.91666667,0 Z" transform="translate(6.083 7)"/>
   </g>
 </svg>
