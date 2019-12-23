@@ -126,6 +126,7 @@ int main(int argc, char *argv[])
         app.setQuitOnLastWindowClosed(false);
     }
 
+    app.loadTranslator();
     app.setOrganizationName("deepin");
     app.setApplicationDisplayName(app.translate("DesktopMain", "Desktop"));
     app.setApplicationVersion(DApplication::buildVersion((GIT_VERSION)));
@@ -138,8 +139,6 @@ int main(int argc, char *argv[])
     if (!preload) {
         DLogManager::registerFileAppender();
     }
-
-    app.loadTranslator();
 
     // init application object
     DFMApplication fmApp;
