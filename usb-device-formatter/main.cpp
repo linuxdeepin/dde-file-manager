@@ -53,23 +53,6 @@ int main(int argc, char *argv[])
     qDBusRegisterMetaType<QPair<bool,QString>>();
     qDBusRegisterMetaType<QByteArrayList>();
 
-    //Init Environment
-    qputenv("QT_IM_MODULE", "xim");
-    qputenv("GTK_IM_MODULE", "xim");
-    qputenv("QT4_IM_MODULE", "xim");
-    qputenv("IM_CONFIG_PHASE", "1");
-    qputenv("XMODIFIERS", "@im");
-    qputenv("IBUS_DISABLE_SNOOPER", "1");
-    qputenv("QT_LINUX_ACCESSIBILITY_ALWAYS_ON", "1");
-    qputenv("WINDOWPATH","2");
-    qputenv("XDG_SESSION_TYPE","x11");
-    qputenv("PAGER", "less");
-    qputenv("PAGER", "-R");
-    qputenv("SHLVL", "1");
-    qputenv("DBUS_STARTER_BUS_TYPE", "session");
-    qputenv("GDMSESSION", "deepin");
-    qputenv("DESKTOP_SESSION", "deepin");
-
     if (qEnvironmentVariableIsSet("PKEXEC_UID")) {
         const quint32 pkexecUID = qgetenv("PKEXEC_UID").toUInt();
         DApplication::customQtThemeConfigPathByUserHome(getpwuid(pkexecUID)->pw_dir);
