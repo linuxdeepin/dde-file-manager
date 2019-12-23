@@ -28,6 +28,7 @@
 #include "dfileservices.h"
 #include "dthumbnailprovider.h"
 #include "singleton.h"
+#include "dfileiconprovider.h"
 #include "dialogs/dialogmanager.h"
 #include "app/define.h"
 #include "plugins/pluginmanager.h"
@@ -195,7 +196,20 @@ void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::Clipboard
             if (!fileInfo->isReadable()) {
                 iconList << "emblem-unreadable";
             }
-            stream << iconList << fileInfo->fileIcon();
+
+            // 多文件时只显示文件图标, 一个文件时显示缩略图(如果有的话)
+            DFileInfo *fi = dynamic_cast<DFileInfo *>(fileInfo.data());
+            QIcon icon = fi ? DFileIconProvider::globalProvider()->icon(*fi) :
+                              DFileIconProvider::globalProvider()->icon(fileInfo->toQFileInfo());
+            if (list.size()==1) {
+                QIcon thumb(DThumbnailProvider::instance()->thumbnailFilePath(fileInfo->toQFileInfo(), DThumbnailProvider::Large));
+                if (thumb.isNull()) {
+                    //qWarning() << "thumbnail file faild " << fileInfo->absoluteFilePath();
+                } else {
+                    icon = thumb;
+                }
+            }
+            stream << iconList << icon;
         }
 
         if (!path.isEmpty()) {
