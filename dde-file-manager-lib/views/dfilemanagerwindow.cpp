@@ -121,7 +121,9 @@ public:
     QVBoxLayout *rightViewLayout { nullptr };
     DToolBar *toolbar{ nullptr };
     TabBar *tabBar { nullptr };
-    DIconButton *newTabButton;
+    DIconButton *newTabButton { nullptr };
+    DHorizontalLine * tabTopLine { nullptr };
+    DHorizontalLine * tabBottomLine { nullptr };
     DFMBaseView *currentView { nullptr };
     DStatusBar *statusBar { nullptr };
     QVBoxLayout *mainLayout { nullptr };
@@ -505,12 +507,16 @@ void DFileManagerWindow::showNewTabButton()
 {
     D_D(DFileManagerWindow);
     d->newTabButton->show();
+    d->tabTopLine->show();
+    d->tabBottomLine->show();
 }
 
 void DFileManagerWindow::hideNewTabButton()
 {
     D_D(DFileManagerWindow);
     d->newTabButton->hide();
+    d->tabTopLine->hide();
+    d->tabBottomLine->hide();
 }
 
 void DFileManagerWindow::showEmptyTrashButton()
@@ -1018,7 +1024,9 @@ void DFileManagerWindow::initRightView()
     tabBarLayout->addWidget(d->newTabButton);
 
     d->rightViewLayout = new QVBoxLayout;
+    d->rightViewLayout->addWidget(d->tabTopLine);
     d->rightViewLayout->addLayout(tabBarLayout);
+    d->rightViewLayout->addWidget(d->tabBottomLine);
     d->rightViewLayout->addWidget(d->emptyTrashHolder);
     d->rightViewLayout->addWidget(d->emptyTrashSplitLine);
     d->rightViewLayout->addLayout(d->viewStackLayout, 1);
@@ -1051,6 +1059,12 @@ void DFileManagerWindow::initTabBar()
     d->newTabButton->setIcon(QIcon::fromTheme("dfm_tab_new"));
     d->newTabButton->setFlat(true);
     d->newTabButton->hide();
+
+    d->tabTopLine = new DHorizontalLine(this);
+    d->tabBottomLine = new DHorizontalLine(this);
+
+    d->tabTopLine->hide();
+    d->tabBottomLine->hide();
 }
 
 void DFileManagerWindow::initViewLayout()

@@ -311,18 +311,12 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     // draw line
     pen.setColor(pal.color(QPalette::Inactive, QPalette::Shadow));
     painter->setPen(pen);
-    int number = static_cast<int>(boundingRect().height() - 1);
-    int number2 = static_cast<int>(boundingRect().width() - 1);
-    QPoint point = QPointF(boundingRect().width()-1, boundingRect().height()-1).toPoint();
-    qDrawShadeLine(painter, QPoint(0, number), point, pal);
-    qDrawShadeLine(painter, QPoint(number2, 0), point, pal);
+    int y = static_cast<int>(boundingRect().height());
+    int x = static_cast<int>(boundingRect().width());
+    qDrawShadeLine(painter, QPoint(x, 0), QPoint(x, y), pal);
     QPalette::ColorGroup cp = isChecked()||m_hovered?QPalette::Active:QPalette::Inactive;
     pen.setColor(pal.color(cp, QPalette::Foreground));
     painter->setPen(pen);
-    // border left
-    if(m_borderLeft){
-        qDrawShadeLine(painter, QPoint(0, 0), QPointF(0,boundingRect().height()-1).toPoint(), option->palette);
-    }
 }
 
 void Tab::onFileRootUrlChanged(const DUrl &url)
@@ -559,6 +553,7 @@ TabBar::TabBar(QWidget *parent):QGraphicsView(parent){
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     setMouseTracking(true);
+    setFrameShape(QFrame::NoFrame);
 
     initConnections();
     hide();
