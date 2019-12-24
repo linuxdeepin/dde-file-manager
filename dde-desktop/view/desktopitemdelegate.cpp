@@ -31,6 +31,8 @@
 #include "canvasgridview.h"
 #include "canvasviewhelper.h"
 
+#include <views/fileitem.h>
+
 DesktopItemDelegate::DesktopItemDelegate(DFileViewHelper *parent) :
     DIconItemDelegate(parent)
 {
@@ -50,6 +52,8 @@ DesktopItemDelegate::~DesktopItemDelegate()
 QWidget *DesktopItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &opt, const QModelIndex &index) const
 {
     auto widget = DIconItemDelegate::createEditor(parent, opt, index);
+    FileIconItem *item = static_cast<FileIconItem *>(widget);
+    connect(item, &FileIconItem::inputFocusOut, this, &DesktopItemDelegate::commitDataAndCloseActiveEditor);
     auto helper = qobject_cast<CanvasViewHelper *>(this->parent());
     auto itemSize = sizeHint(QStyleOptionViewItem(), QModelIndex());
     auto cellSize = helper->parent()->cellSize();
