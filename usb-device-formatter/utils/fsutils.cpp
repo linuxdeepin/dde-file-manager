@@ -78,6 +78,9 @@ QStringList FsUtils::supportedFilesystems()
     DDiskManager diskmgr;
     for (auto &fs : diskmgr.supportedFilesystems()) {
         if (diskmgr.canFormat(fs)) {
+            if (fs == "minix") {
+                continue;
+            }
             ret.push_back(fs);
         }
     }
