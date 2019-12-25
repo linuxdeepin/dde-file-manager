@@ -227,3 +227,24 @@ bool MasteredMediaFileInfo::canRename() const
 {
     return false;
 }
+
+QSet<MenuAction> MasteredMediaFileInfo::disableMenuActionList() const
+{
+    QSet<MenuAction> list;
+
+    if (!isWritable()) {
+        list << MenuAction::NewFolder
+             << MenuAction::NewDocument
+             << MenuAction::Paste;
+    }
+
+    if (!canRename()) {
+        list << MenuAction::Cut << MenuAction::Rename;// << MenuAction::Delete;
+    }
+
+    if (isVirtualEntry()) {
+        list << MenuAction::Copy;
+    }
+
+    return list;
+}
