@@ -275,7 +275,8 @@ HEADERS += \
     plugins/dfmadditionalmenu.h \
     dialogs/connecttoserverdialog.h \
     views/dfmiconbutton.h \
-    shutil/dfmfilelistfile.h
+    shutil/dfmfilelistfile.h \
+    views/dfmsplitter.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -466,7 +467,8 @@ SOURCES += \
     plugins/dfmadditionalmenu.cpp \
     dialogs/connecttoserverdialog.cpp \
     views/dfmiconbutton.cpp \
-    shutil/dfmfilelistfile.cpp
+    shutil/dfmfilelistfile.cpp \
+    views/dfmsplitter.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += shutil/danythingmonitor.h

@@ -69,6 +69,7 @@
 #include "controllers/trashmanager.h"
 #include "models/dfmrootfileinfo.h"
 #include "controllers/vaultcontroller.h"
+#include "dfmsplitter.h"
 
 #include <DPlatformWindowHandle>
 #include <DTitlebar>
@@ -77,7 +78,6 @@
 #include <QFrame>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QSplitter>
 #include <QResizeEvent>
 #include <QThread>
 #include <QDesktopWidget>
@@ -85,7 +85,6 @@
 #include <QTabBar>
 #include <QPair>
 #include <QtConcurrent>
-#include <QSplitter>
 #include <DAnchors>
 #include <DApplicationHelper>
 #include <DHorizontalLine>
@@ -127,7 +126,7 @@ public:
     DFMBaseView *currentView { nullptr };
     DStatusBar *statusBar { nullptr };
     QVBoxLayout *mainLayout { nullptr };
-    QSplitter *splitter { nullptr };
+    DFMSplitter *splitter { nullptr };
     QFrame *titleFrame { nullptr };
     QStackedLayout *viewStackLayout { nullptr };
     QFrame *emptyTrashHolder { nullptr };
@@ -947,7 +946,7 @@ void DFileManagerWindow::initSplitter()
     initLeftSideBar();
     initRightView();
 
-    d->splitter = new QSplitter(Qt::Horizontal, this);
+    d->splitter = new DFMSplitter(Qt::Horizontal, this);
     d->splitter->addWidget(d->sideBar);
     d->splitter->addWidget(d->rightView);
     d->splitter->setChildrenCollapsible(false);
