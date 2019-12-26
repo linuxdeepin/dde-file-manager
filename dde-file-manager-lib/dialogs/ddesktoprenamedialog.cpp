@@ -334,6 +334,15 @@ void DDesktopRenameDialog::initConnect()
     QObject::connect(std::get<1>(d->m_modeThreeItemsForSNNumber), &QLineEdit::textChanged, this, &DDesktopRenameDialog::onContentChangedForCustomzedSN);
     QObject::connect(this, &DDesktopRenameDialog::visibleChanged, this, &DDesktopRenameDialog::onVisibleChanged);
 
+    connect(std::get<1>(d->m_modeOneItemsForFinding), &QLineEdit::textChanged, this, [=](){
+        onVisibleChanged(true);
+    });
+    connect(std::get<1>(d->m_modeTwoItemsForAdding), &QLineEdit::textChanged, this, [=](){
+        onVisibleChanged(true);
+    });
+    connect(std::get<1>(d->m_modeThreeItemsForFileName), &QLineEdit::textChanged, this, [=](){
+        onVisibleChanged(true);
+    });
 
     try{
 
@@ -511,18 +520,21 @@ void DDesktopRenameDialog::onVisibleChanged(bool visible)noexcept
             case 0:
             {
                 QLineEdit* lineEdit{ std::get<1>(d->m_modeOneItemsForFinding) };
+                setRenameButtonStatus(!lineEdit->text().isEmpty());
                 lineEdit->setFocus();
                 break;
             }
             case 1:
             {
                 QLineEdit* lineEdit{ std::get<1>(d->m_modeTwoItemsForAdding) };
+                setRenameButtonStatus(!lineEdit->text().isEmpty());
                 lineEdit->setFocus();
                 break;
             }
             case 2:
             {
                 QLineEdit* lineEdit{ std::get<1>(d->m_modeThreeItemsForFileName) };
+                setRenameButtonStatus(!lineEdit->text().isEmpty());
                 lineEdit->setFocus();
                 break;
             }
