@@ -55,6 +55,22 @@ void SearchHistroyManager::writeIntoSearchHistory(QString keyword)
     DFMApplication::appObtuselySetting()->setValue("Cache", "SearchHistroy", list);
 }
 
+bool SearchHistroyManager::removeSearchHistory(QString keyword)
+{
+    if (keyword.isEmpty())
+        return false;
+
+    bool ret = false;
+    QStringList list = toStringList();
+    if (list.removeOne(keyword)) {
+        DFMApplication::appObtuselySetting()->setValue("Cache", "SearchHistroy", list);
+        ret = true;
+    } else {
+        qWarning() << keyword << "not exist in history";
+    }
+    return ret;
+}
+
 void SearchHistroyManager::clearHistory()
 {
     QStringList list;
