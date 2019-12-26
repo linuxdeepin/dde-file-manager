@@ -57,9 +57,9 @@ void DFMIconButton::paintEvent(QPaintEvent *e)
         pa.fillRect(pm.rect(), qApp->palette().color(QPalette::Active, QPalette::Text));
     }
 
-    painter.drawPixmap((rect().width() - pm.rect().width()) / 2,
-                           (rect().height() - pm.rect().height()) / 2,
-                           pm);
+    painter.drawPixmap((rect().width() - pm.rect().width() / pm.devicePixelRatioF()) / 2,
+                       (rect().height() - pm.rect().height() / pm.devicePixelRatioF()) / 2,
+                       pm);
 }
 
 DFM_END_NAMESPACE
