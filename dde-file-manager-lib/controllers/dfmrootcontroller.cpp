@@ -33,6 +33,9 @@
 #include <dblockdevice.h>
 #include <ddiskdevice.h>
 
+#include <gvfs/gvfsmountmanager.h>
+#include <gvfs/networkmanager.h>
+
 class DFMRootFileWatcherPrivate : public DAbstractFileWatcherPrivate
 {
 public:
@@ -188,6 +191,18 @@ bool DFMRootFileWatcherPrivate::start()
         if (mnt->getVolume() && mnt->getVolume()->volumeMonitorName().endsWith("UDisks2")) {
             return;
         }
+
+        mnt->unmount(); // yes, we need do it again...otherwise we will goto an removed path like /run/user/1000/gvfs/smb-sharexxxx
+        // remove NetworkNodes cache, so next time cd uri will fetchNetworks
+        QString smbUri = mnt->getRootFile()->uri();
+        if (smbUri.endsWith("/")) {
+            smbUri = smbUri.left(smbUri.length()-1);
+        }
+        DUrl uri(smbUri);
+        NetworkManager::NetworkNodes.remove(uri);
+        uri.setPath("");
+        NetworkManager::NetworkNodes.remove(uri);
+
         DUrl url;
         url.setScheme(DFMROOT_SCHEME);
         url.setPath("/" + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP);
