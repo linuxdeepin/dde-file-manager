@@ -236,6 +236,15 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
     }
 
     if (urlCompleter && urlCompleter->popup()->isVisible()) {
+        if (isHistoryInCompleterModel && e->modifiers() == Qt::ShiftModifier && e->key()==Qt::Key_Delete) {
+             QString completeResult = completerView->currentIndex().data().toString();
+             bool ret = Singleton<SearchHistroyManager>::instance()->removeSearchHistory(completeResult);
+             if (ret) {
+                 historyList.clear();
+                 historyList.append(Singleton<SearchHistroyManager>::instance()->toStringList());
+                 completerModel.setStringList(historyList);
+             }
+        }
         // The following keys are forwarded by the completer to the widget
         switch (e->key()) {
         case Qt::Key_Backtab:
