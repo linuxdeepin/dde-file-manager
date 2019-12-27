@@ -50,7 +50,7 @@ void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
     DListView::mouseMoveEvent(event);
 #if QT_CONFIG(draganddrop)
     if (state() == DraggingState) {
-        startDrag(model()->supportedDragActions());
+        startDrag(Qt::MoveAction);
         setState(NoState); // the startDrag will return when the dnd operation is done
         stopAutoScroll();
         QPoint pt = mapFromGlobal(QCursor::pos());
