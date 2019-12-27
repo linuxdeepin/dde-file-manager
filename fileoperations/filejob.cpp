@@ -697,8 +697,6 @@ void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int 
         ISOMaster->nullifyDevicePropertyCache(device.path());
     }
 
-    doDelete({DUrl::fromLocalFile(stagingurl.path())});
-
     if (m_isJobAdded)
         jobRemoved();
     emit finished();
@@ -707,6 +705,10 @@ void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int 
             emit requestOpticalJobCompletionDialog(rst ? tr("Data verification successful.") : tr("Data verification failed."), rst ? "dialog-ok" : "dialog-error");
         } else {
             emit requestOpticalJobCompletionDialog(tr("Burn process completed"), "dialog-ok");
+        }
+
+        if (rst) {
+            doDelete({DUrl::fromLocalFile(stagingurl.path())});
         }
     }
     delete job_isomaster;
