@@ -2201,7 +2201,7 @@ bool DFileView::setRootUrl(const DUrl &url)
     if (rootUrl == fileUrl)
         return true;
 
-    const DUrl &defaultSelectUrl = DUrl(QUrlQuery(fileUrl.query()).queryItemValue("selectUrl"));
+    const DUrl &defaultSelectUrl = DUrl(QUrlQuery(fileUrl.query()).queryItemValue("selectUrl", QUrl::FullyEncoded));
 
     if (defaultSelectUrl.isValid()) {
         d->preSelectionUrls << defaultSelectUrl;
