@@ -836,6 +836,7 @@ void DFileInfo::refresh()
     d->icon = QIcon();
     d->epInitialized = false;
     d->hasThumbnail = -1;
+    d->mimeType = QMimeType();
 }
 
 DUrl DFileInfo::goToUrlWhenDeleted() const
