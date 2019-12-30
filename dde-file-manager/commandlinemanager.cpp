@@ -126,22 +126,21 @@ void CommandLineManager::processCommand()
     DUrlList argumentUrls;
 
     foreach (QString path, positionalArguments()) {
-        DUrl url = DUrl::fromUserInput(path);
-        // filename is ? or #
-        if (url.fileName().isEmpty() && QFileInfo::exists(url.path())) {
-            qDebug() << url.path();
-            url = DUrl::fromLocalFile(path);
-            qDebug() << "filename:" << url.fileName();
-        }
-
-        if (url.fileName().contains(QRegExp("[#&@\\!\\?]"))) {
-            QString ecodeFileName =  QUrl::toPercentEncoding(url.fileName());
-            if (!ecodeFileName.isEmpty()) {
-                path = path.left(path.length()-url.fileName().length());
-                path = path + ecodeFileName;
-                url = DUrl::fromUserInput(path);
+        // 路径中包含特殊字符的全部uri编码
+        QRegExp regexp("[#&@\\!\\?]");
+        if (path.contains(regexp)) {
+            QString left, right, encode;
+            int idx = path.indexOf(regexp);
+            while (idx!=-1) {
+                left = path.left(idx);
+                right = path.mid(idx+1);
+                encode = QUrl::toPercentEncoding(path.mid(idx, 1));
+                path = left+encode+right;
+                idx = path.indexOf(regexp);
             }
         }
+
+        DUrl url = DUrl::fromUserInput(path);
 
         if (CommandLineManager::instance()->isSet("show-item")) {
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
