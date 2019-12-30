@@ -47,7 +47,7 @@
 #include "models/desktopfileinfo.h"
 #include "controllers/operatorrevocation.h"
 #include "tag/tagmanager.h"
-
+#include "shutil/mimetypedisplaymanager.h"
 #include "dabstractfilewatcher.h"
 #include <dfmstandardpaths.h>
 #include "dfmapplication.h"
@@ -201,7 +201,8 @@ void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::Clipboard
             DFileInfo *fi = dynamic_cast<DFileInfo *>(fileInfo.data());
             QIcon icon = fi ? DFileIconProvider::globalProvider()->icon(*fi) :
                               DFileIconProvider::globalProvider()->icon(fileInfo->toQFileInfo());
-            if (list.size()==1) {
+            DAbstractFileInfo::FileType fileType = mimeTypeDisplayManager->displayNameToEnum(fileInfo->mimeTypeName());
+            if (list.size()==1 && fileType == DAbstractFileInfo::FileType::Images) {
                 QIcon thumb(DThumbnailProvider::instance()->thumbnailFilePath(fileInfo->toQFileInfo(), DThumbnailProvider::Large));
                 if (thumb.isNull()) {
                     //qWarning() << "thumbnail file faild " << fileInfo->absoluteFilePath();
