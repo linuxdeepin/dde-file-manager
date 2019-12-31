@@ -479,7 +479,7 @@ DUrl DFileViewHelper::currentUrl() const
 
 void DFileViewHelper::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const
 {
-    if (isSelected(index)) {
+    if (isSelected(index) && index.flags().testFlag(Qt::ItemFlag::ItemIsSelectable)) {
         option->state |= QStyle::State_Selected;
     } else {
         option->state &= QStyle::StateFlag(~QStyle::State_Selected);
