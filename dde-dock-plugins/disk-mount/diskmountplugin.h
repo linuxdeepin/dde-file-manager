@@ -40,15 +40,24 @@ class TipsWidget : public QFrame
 public:
     explicit TipsWidget(QWidget *parent = nullptr) : QFrame(parent) {}
 
-    void setText(const QString &text) {
+    void setText(const QString &text)
+    {
         m_text = text;
         setFixedSize(fontMetrics().width(text) + 6, fontMetrics().height());
         update();
     }
 
+    void refreshFont()
+    {
+        setFixedSize(fontMetrics().width(m_text) + 6, fontMetrics().height());
+        update();
+    }
+
 protected:
-    void paintEvent(QPaintEvent *event) override {
+    void paintEvent(QPaintEvent *event) override
+    {
         QFrame::paintEvent(event);
+        refreshFont();
         QPainter painter(this);
         painter.setPen(QPen(palette().brightText(), 1));
         QTextOption option;
