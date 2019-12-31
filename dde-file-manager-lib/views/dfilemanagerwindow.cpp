@@ -937,6 +937,7 @@ void DFileManagerWindow::initTitleBar()
     titlebar()->setMenu(menu);
     titlebar()->setContentsMargins(0, 0, 0, 0);
     titlebar()->setCustomWidget(d->titleFrame, false);
+    titlebar()->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 }
 
 void DFileManagerWindow::initSplitter()
