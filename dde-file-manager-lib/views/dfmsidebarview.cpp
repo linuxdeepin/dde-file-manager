@@ -91,9 +91,6 @@ void DFMSideBarView::dragMoveEvent(QDragMoveEvent *event)
 
 void DFMSideBarView::dropEvent(QDropEvent *event)
 {
-    if (isAccepteDragEvent(event)) {
-
-    }
     DFMSideBarItem *item = itemAt(event->pos());
     if (!item) {
         return DListView::dropEvent(event);
@@ -123,6 +120,16 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
     }
 
     DListView::dropEvent(event);
+}
+
+QModelIndex DFMSideBarView::indexAt(const QPoint &p) const
+{
+    QModelIndex index = QListView::indexAt(p);
+    if (index.data(DFMSideBarItem::ItemTypeRole) == DFMSideBarItem::Separator) {
+        return QModelIndex();
+    }
+
+    return index;
 }
 
 bool DFMSideBarView::onDropData(DUrlList srcUrls, DUrl dstUrl, Qt::DropAction action) const

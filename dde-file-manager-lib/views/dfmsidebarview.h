@@ -37,6 +37,7 @@ public:
     void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
     void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
     void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
+    QModelIndex indexAt(const QPoint &p) const Q_DECL_OVERRIDE;
 
     DFMSideBarItem *itemAt(const QPoint &pt);
 protected:
