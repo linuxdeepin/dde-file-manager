@@ -38,7 +38,6 @@ class FileIconItem : public QFrame
 {
     Q_OBJECT
 
-    Q_PROPERTY(QColor borderColor READ borderColor WRITE setBorderColor NOTIFY borderColorChanged)
     Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
 
 public:
@@ -55,14 +54,11 @@ public:
     inline QTextEdit* getTextEdit() const
     { return edit; }
 
-    QColor borderColor() const;
 
 public slots:
-    void setBorderColor(QColor borderColor);
 
 signals:
     void inputFocusOut();
-    void borderColorChanged(QColor borderColor);
 
 private slots:
     void popupEditContentMenu();
@@ -89,7 +85,6 @@ private:
     bool disableEditTextStack = false;
     QStack<QString> editTextStack;
     QGraphicsOpacityEffect *opacityEffect = Q_NULLPTR;
-    QColor m_borderColor;
     int maxCharSize = INT_MAX;
 
     friend class DIconItemDelegate;
