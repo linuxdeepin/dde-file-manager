@@ -618,7 +618,16 @@ bool DListItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, co
 //            QToolTip::hideText();
             hideTooltipImmediately();
         } else {
-            QToolTip::showText(event->globalPos(), tooltip, view);
+            int tooltipsize = tooltip.size();
+            const int nlong = 32;
+            int lines = tooltipsize/nlong + 1;
+            QString strtooltip;
+            for (int i = 0; i < lines; ++i) {
+                strtooltip.append(tooltip.mid(i*nlong,nlong));
+                strtooltip.append("\n");
+            }
+            strtooltip.chop(1);
+            QToolTip::showText(event->globalPos(),strtooltip,view);
         }
 
         return true;
