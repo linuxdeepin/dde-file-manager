@@ -121,8 +121,8 @@ public:
     DToolBar *toolbar{ nullptr };
     TabBar *tabBar { nullptr };
     DIconButton *newTabButton { nullptr };
-    DHorizontalLine * tabTopLine { nullptr };
-    DHorizontalLine * tabBottomLine { nullptr };
+    QFrame * tabTopLine { nullptr };
+    QFrame * tabBottomLine { nullptr };
     DFMBaseView *currentView { nullptr };
     DStatusBar *statusBar { nullptr };
     QVBoxLayout *mainLayout { nullptr };
@@ -1023,6 +1023,9 @@ void DFileManagerWindow::initRightView()
     tabBarLayout->addWidget(d->tabBar);
     tabBarLayout->addWidget(d->newTabButton);
 
+    d->tabTopLine->setFixedHeight(1);
+    d->tabBottomLine->setFixedHeight(1);
+
     d->rightViewLayout = new QVBoxLayout;
     d->rightViewLayout->addWidget(d->tabTopLine);
     d->rightViewLayout->addLayout(tabBarLayout);
@@ -1055,7 +1058,7 @@ void DFileManagerWindow::initTabBar()
     d->newTabButton = new DIconButton(this);
     d->newTabButton->setObjectName("NewTabButton");
     d->newTabButton->setFixedSize(36, 36);
-    d->newTabButton->setIconSize({28, 28});
+    d->newTabButton->setIconSize({24, 24});
     d->newTabButton->setIcon(QIcon::fromTheme("dfm_tab_new"));
     d->newTabButton->setFlat(true);
     d->newTabButton->hide();
