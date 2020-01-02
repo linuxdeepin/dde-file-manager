@@ -61,14 +61,15 @@ void CommandLineManager::initOptions()
     QCommandLineOption backendOption(QStringList() << "d" << "none-window-process", "start dde-file-manager in no window mode");
     QCommandLineOption openPropertyDialogOption(QStringList() << "p" << "property", "show property dialog");
     QCommandLineOption rootOption(QStringList() << "r" << "root", "exec dde-file-manager in root mode");
-    QCommandLineOption showFileItem(QStringList() << "show-item", "Show a file item in a new window");
-    QCommandLineOption event(QStringList() << "e" << "event", "Process the event by json data");
+    QCommandLineOption showFileItem(QStringList() << "show-item", "show a file item in a new window");
+    QCommandLineOption raw(QStringList() << "R" << "raw", "process file item url as raw QUrl，will not encode special characters(e.g. '#' '&' '@' '!' '?')");
+    QCommandLineOption event(QStringList() << "e" << "event", "process the event by json data");
 
     QCommandLineOption get_monitor_files(QStringList() << "get-monitor-files", "Get all the files that have been monitored");
     // blumia: about -w and -r: -r will exec `dde-file-manager-pkexec` (it use `pkexec` command) which won't pass the currect
     //         working dir, so we need to manually set the working dir via -w. that's why we add a -w arg.
     QCommandLineOption workingDirOption(QStringList() << "w" << "working-dir",
-                                        "Set the file manager working directory (won't work with -r argument)",
+                                        "set the file manager working directory (won't work with -r argument)",
                                         "directory");
 
     addOption(newWindowOption);
@@ -76,6 +77,7 @@ void CommandLineManager::initOptions()
     addOption(openPropertyDialogOption);
     addOption(rootOption);
     addOption(showFileItem);
+    addOption(raw);
     addOption(event);
     addOption(get_monitor_files);
     addOption(workingDirOption);
@@ -126,17 +128,19 @@ void CommandLineManager::processCommand()
     DUrlList argumentUrls;
 
     foreach (QString path, positionalArguments()) {
-        // 路径中包含特殊字符的全部uri编码
-        QRegExp regexp("[#&@\\!\\?]");
-        if (path.contains(regexp)) {
-            QString left, right, encode;
-            int idx = path.indexOf(regexp);
-            while (idx!=-1) {
-                left = path.left(idx);
-                right = path.mid(idx+1);
-                encode = QUrl::toPercentEncoding(path.mid(idx, 1));
-                path = left+encode+right;
-                idx = path.indexOf(regexp);
+        if (!CommandLineManager::instance()->isSet("raw")) {
+            // 路径中包含特殊字符的全部uri编码
+            QRegExp regexp("[#&@\\!\\?]");
+            if (path.contains(regexp)) {
+                QString left, right, encode;
+                int idx = path.indexOf(regexp);
+                while (idx!=-1) {
+                    left = path.left(idx);
+                    right = path.mid(idx+1);
+                    encode = QUrl::toPercentEncoding(path.mid(idx, 1));
+                    path = left+encode+right;
+                    idx = path.indexOf(regexp);
+                }
             }
         }
 
