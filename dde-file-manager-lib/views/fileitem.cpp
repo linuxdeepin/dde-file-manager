@@ -31,6 +31,7 @@
 #include <QPainter>
 
 #include <danchors.h>
+#include <DTextEdit>
 
 #include "fileitem.h"
 #include "dfmglobal.h"
@@ -38,38 +39,11 @@
 
 DWIDGET_USE_NAMESPACE
 
-class FileIconItemEdit : public QTextEdit
-{
-public:
-    explicit FileIconItemEdit(QWidget *parent = 0)
-        : QTextEdit(parent) {}
-
-protected:
-    void paintEvent(QPaintEvent *event) override
-    {
-        QTextEdit::paintEvent(event);
-
-        if (!borderColor.isValid()) {
-            return;
-        }
-
-        QPainter pa(viewport());
-
-        pa.setPen(QPen(borderColor, 2));
-        pa.drawRoundedRect(rect(), 4, 4);
-    }
-
-private:
-    QColor borderColor;
-
-    friend class FileIconItem;
-};
-
 FileIconItem::FileIconItem(QWidget *parent) :
     QFrame(parent)
 {
     icon = new QLabel(this);
-    edit = new FileIconItemEdit(this);
+    edit = new DTextEdit(this);
 
     icon->setAlignment(Qt::AlignCenter);
     icon->setFrameShape(QFrame::NoFrame);
@@ -185,24 +159,6 @@ void FileIconItem::setMaxCharSize(int maxSize)
 QSize FileIconItem::sizeHint() const
 {
     return QSize(width(), icon->height() + edit->height());
-}
-
-QColor FileIconItem::borderColor() const
-{
-    return m_borderColor;
-}
-
-void FileIconItem::setBorderColor(QColor borderColor)
-{
-    if (m_borderColor == borderColor) {
-        return;
-    }
-
-    m_borderColor = borderColor;
-    emit borderColorChanged(borderColor);
-
-    static_cast<FileIconItemEdit *>(edit)->borderColor = borderColor;
-    edit->update();
 }
 
 void FileIconItem::popupEditContentMenu()
