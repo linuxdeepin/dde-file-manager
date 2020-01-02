@@ -59,10 +59,10 @@ void DBusFileManager1::ShowItems(const QStringList &URIs, const QString &Startup
 {
     Q_UNUSED(StartupId)
 
-    if (QProcess::startDetached("file-manager.sh", QStringList() << "--show-item" <<  URIs))
+    if (QProcess::startDetached("file-manager.sh", QStringList() << "--show-item" <<  URIs << "--raw"))
         return;
 
-    QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" <<  URIs);
+    QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" <<  URIs << "--raw");
 }
 
 void DBusFileManager1::Trash(const QStringList &URIs)
