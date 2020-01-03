@@ -9,11 +9,10 @@
 #ifndef DFMACTIONBUTTON_H
 #define DFMACTIONBUTTON_H
 
-#include "dfmiconbutton.h"
+#include <QToolButton>
 
-DFM_USE_NAMESPACE
 
-class DFMActionButton : public DFMIconButton
+class DFMActionButton : public QToolButton
 {
     Q_OBJECT
 

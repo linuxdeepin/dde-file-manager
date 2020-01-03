@@ -12,7 +12,7 @@
 #include <QApplication>
 
 DFMActionButton::DFMActionButton(QWidget *parent)
-    : DFMIconButton(parent)
+    : QToolButton(parent)
 {
     setMouseTracking(true);
 }
@@ -32,7 +32,7 @@ void DFMActionButton::setAction(QAction *action)
     connect(this, &DFMActionButton::clicked, action, &QAction::trigger);
     connect(action, &QAction::triggered, this, &DFMActionButton::setChecked);
 
-    addAction(action);
+    setDefaultAction(action);
 }
 
 QAction *DFMActionButton::action() const

@@ -31,7 +31,6 @@
 #include "dfmeventdispatcher.h"
 #include "dfmcrumbitem.h"
 #include "dfmaddressbar.h"
-#include "dfmiconbutton.h"
 
 #include "dfmevent.h"
 #include "app/define.h"
@@ -89,7 +88,7 @@ void DToolBar::initUI()
     initAddressToolBar();
     initContollerToolBar();
 
-    m_detailButton = new DFMIconButton(this);
+    m_detailButton = new QToolButton(this);
     m_detailButton->setFixedWidth(ButtonWidth);
     m_detailButton->setFixedHeight(ButtonHeight);
     m_detailButton->setObjectName("detailButton");
@@ -97,7 +96,7 @@ void DToolBar::initUI()
     m_detailButton->setFocusPolicy(Qt::NoFocus);
     m_detailButton->setIcon(QIcon::fromTheme("dfm_rightview_detail"));
     m_detailButton->setIconSize(iconSize);
-    m_detailButton->setFixedSize(ButtonWidth - 2, ButtonHeight - 2);
+    m_detailButton->setFixedSize(36, 36);
 
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_addressToolBar);
@@ -447,7 +446,7 @@ void DToolBar::setCustomActionList(const QList<QAction *> &list)
 
     for (int i = 0; i < list.count(); ++i) {
         DFMActionButton *button = new DFMActionButton(this);
-        button->setFixedSize(ButtonWidth - 2, ButtonHeight - 2);
+        button->setFixedSize(36, 36);
         button->setFocusPolicy(Qt::NoFocus);
         button->setAction(list.at(i));
         button->setIconSize(iconSize);

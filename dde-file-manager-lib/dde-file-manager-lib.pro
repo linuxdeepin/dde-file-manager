@@ -274,7 +274,6 @@ HEADERS += \
     views/dfmvaultrecoverykeypages.h \
     plugins/dfmadditionalmenu.h \
     dialogs/connecttoserverdialog.h \
-    views/dfmiconbutton.h \
     shutil/dfmfilelistfile.h \
     views/dfmsplitter.h
 
@@ -466,7 +465,6 @@ SOURCES += \
     views/dfmvaultrecoverykeypages.cpp \
     plugins/dfmadditionalmenu.cpp \
     dialogs/connecttoserverdialog.cpp \
-    views/dfmiconbutton.cpp \
     shutil/dfmfilelistfile.cpp \
     views/dfmsplitter.cpp
 
