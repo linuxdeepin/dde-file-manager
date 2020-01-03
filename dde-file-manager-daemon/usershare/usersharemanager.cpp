@@ -52,16 +52,6 @@ bool UserShareManager::addGroup(const QString &groupName)
     return ret;
 }
 
-bool UserShareManager::addUserToGroup(const QString &userName, const QString &groupName)
-{
-    addGroup(groupName);
-    QStringList args;
-    args << userName << groupName;
-    bool ret = QProcess::startDetached("/usr/sbin/adduser", args);
-    qDebug() << "adduser" << userName << groupName << ret;
-    return ret;
-}
-
 bool UserShareManager::setUserSharePassword(const QString &username, const QString &passward)
 {
     qDebug() << username << passward;
@@ -77,13 +67,3 @@ bool UserShareManager::setUserSharePassword(const QString &username, const QStri
     qDebug() << p.readAll() << p.readAllStandardError() << p.readAllStandardOutput();
     return ret;
 }
-
-bool UserShareManager::restartSambaService()
-{
-    QStringList args;
-    args << "restart";
-    bool ret = QProcess::startDetached("/usr/sbin/smbd", args);
-    qDebug() << "smbd restart" << ret;
-    return ret;
-}
-

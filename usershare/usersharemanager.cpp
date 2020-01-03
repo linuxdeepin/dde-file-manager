@@ -392,26 +392,6 @@ void UserShareManager::setSambaPassword(const QString &userName, const QString &
     }
 }
 
-void UserShareManager::addCurrentUserToSambashareGroup()
-{
-    QDBusReply<bool> reply = m_userShareInterface->addUserToGroup(getCurrentUserName(), "sambashare");
-    if(reply.isValid()){
-        qDebug() << "add" << getCurrentUserName() <<  "to sambashare group" << reply.value();
-    }else{
-        qDebug() << "add" << getCurrentUserName() <<  "to sambashare group" << reply.error();
-    }
-}
-
-void UserShareManager::restartSambaService()
-{
-    QDBusReply<bool> reply = m_userShareInterface->restartSambaService();
-    if(reply.isValid()){
-        qDebug() << "restartSambaService" << reply.value();
-    }else{
-        qDebug() <<"restartSambaService" << reply.error();
-    }
-}
-
 bool UserShareManager::addUserShare(const ShareInfo &info)
 {
     // check if we got `net` (in `samba-common-bin` package) installed

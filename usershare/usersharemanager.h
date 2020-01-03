@@ -80,9 +80,6 @@ public slots:
     void updateUserShareInfo(bool sendSignal = true);
     void testUpdateUserShareInfo();
     void setSambaPassword(const QString& userName, const QString& password);
-    void addCurrentUserToSambashareGroup();
-    void restartSambaService();
-
     bool addUserShare(const ShareInfo& info);
 
     void deleteUserShareByPath(const QString& path);
