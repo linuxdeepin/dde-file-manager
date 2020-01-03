@@ -43,19 +43,6 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("addGroup"), argumentList);
     }
 
-    inline QDBusPendingReply<bool> addUserToGroup(const QString &userName, const QString &groupName)
-    {
-        QList<QVariant> argumentList;
-        argumentList << QVariant::fromValue(userName) << QVariant::fromValue(groupName);
-        return asyncCallWithArgumentList(QStringLiteral("addUserToGroup"), argumentList);
-    }
-
-    inline QDBusPendingReply<bool> restartSambaService()
-    {
-        QList<QVariant> argumentList;
-        return asyncCallWithArgumentList(QStringLiteral("restartSambaService"), argumentList);
-    }
-
     inline QDBusPendingReply<bool> setUserSharePassword(const QString &username, const QString &passward)
     {
         QList<QVariant> argumentList;
