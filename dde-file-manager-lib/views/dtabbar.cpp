@@ -453,28 +453,18 @@ void TabCloseButton::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    QIcon closeIcon = QIcon::fromTheme("dialog-close");
-    QSize size = boundingRect().size().toSize();
-    QPainterPath path;
-    QRectF rect = boundingRect();
-    path.addRoundedRect(rect, size.width()/2, size.width()/2);
+    QIcon closeIcon = QIcon::fromTheme("window-close_round");
 
-    QPalette::ColorGroup cp = m_mousePressed||m_mouseHovered ? QPalette::Active : QPalette::Normal;
-    QPalette::ColorRole  role = QPalette::Background;
-    if (m_mousePressed)
-        role = QPalette::Highlight;
-    if (m_mouseHovered)
-         role = QPalette::Dark;
+    QIcon::Mode md = QIcon::Mode::Disabled;
+    if (m_mousePressed) {
+        md = QIcon::Mode::Selected;
+    }
+    if (m_mouseHovered) {
+        md = QIcon::Mode::Active;
+    }
 
-    DPalette pal = DApplicationHelper::instance()->palette(widget);
-
-    // drawbackground color
-    painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->fillPath(path, pal.color(cp, role));
-    painter->setRenderHint(QPainter::Antialiasing, false);
-
-    QRect rc = rect.toRect();
-    closeIcon.paint(painter, rc, Qt::AlignCenter, m_mousePressed||m_mouseHovered ? QIcon::Active : QIcon::Normal);
+    QRect rc = boundingRect().toRect();
+    closeIcon.paint(painter, rc, Qt::AlignCenter, md);
 }
 
 int TabCloseButton::closingIndex()
