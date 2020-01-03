@@ -28,11 +28,14 @@
 #include <QDBusVariant>
 #include <QProcess>
 #include <QDebug>
-
+#include "app/policykithelper.h"
 
 QString UserShareManager::ObjectPath = "/com/deepin/filemanager/daemon/UserShareManager";
+QString UserShareManager::PolicyKitActionId = "com.deepin.filemanager.daemon.UserShareManager";
 
-UserShareManager::UserShareManager(QObject *parent) : QObject(parent)
+UserShareManager::UserShareManager(QObject *parent)
+    : QObject(parent)
+    , QDBusContext()
 {
     QDBusConnection::systemBus().registerObject(ObjectPath, this);
     m_userShareAdaptor = new UserShareAdaptor(this);
@@ -43,8 +46,32 @@ UserShareManager::~UserShareManager()
 
 }
 
+bool UserShareManager::checkAuthentication()
+{
+    bool ret = false;
+    qint64 pid = 0;
+    QDBusConnection c = QDBusConnection::connectToBus(QDBusConnection::SystemBus, "org.freedesktop.DBus");
+    if(c.isConnected()) {
+       pid = c.interface()->servicePid(message().service()).value();
+    }
+
+    if (pid){
+        ret = PolicyKitHelper::instance()->checkAuthorization(PolicyKitActionId, pid);
+    }
+
+    if (!ret) {
+        qDebug() << "Authentication failed !!";
+    }
+    return ret;
+}
+
 bool UserShareManager::addGroup(const QString &groupName)
 {
+    if (!checkAuthentication()) {
+        qDebug() << "addGroup failed" <<  groupName;
+        return false;
+    }
+
     QStringList args;
     args << groupName;
     bool ret = QProcess::startDetached("/usr/sbin/groupadd", args);
@@ -54,7 +81,12 @@ bool UserShareManager::addGroup(const QString &groupName)
 
 bool UserShareManager::setUserSharePassword(const QString &username, const QString &passward)
 {
-    qDebug() << username << passward;
+    if (!checkAuthentication()) {
+        qDebug() << "setUserSharePassword failed" <<  username;
+        return false;
+    }
+
+    qDebug() << username;// << passward; // log password?
     QStringList args;
     args << "-a" << username << "-s";
     QProcess p;
