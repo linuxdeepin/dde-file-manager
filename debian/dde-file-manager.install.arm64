@@ -6,7 +6,7 @@ usr/bin/usb-device-formatter
 
 usr/share/applications/dde-file-manager.desktop
 
-usr/share/polkit-1/actions/com.deepin.pkexec.dde-file-manager.policy
+usr/share/polkit-1/actions/*.policy
 
 etc/dbus-1/system.d/com.deepin.filemanager.daemon.conf
 

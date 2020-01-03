@@ -25,11 +25,12 @@
 #ifndef USERSHAREDAEMONMANAGER_H
 #define USERSHAREDAEMONMANAGER_H
 
+#include <QDBusContext>
 #include <QObject>
 
 class UserShareAdaptor;
 
-class UserShareManager : public QObject
+class UserShareManager : public QObject, public QDBusContext
 {
     Q_OBJECT
 public:
@@ -37,14 +38,16 @@ public:
     ~UserShareManager();
 
     static QString ObjectPath;
-
+    static QString PolicyKitActionId;
+protected:
+    bool checkAuthentication();
 signals:
 
 public slots:
     bool addGroup(const QString &groupName);
     bool setUserSharePassword(const QString &username, const QString &passward);
 private:
-    UserShareAdaptor* m_userShareAdaptor = NULL;
+    UserShareAdaptor* m_userShareAdaptor = nullptr;
 };
 
 #endif // USERSHAREDAEMONMANAGER_H
