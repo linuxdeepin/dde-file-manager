@@ -36,6 +36,7 @@ class HistoryStack;
 QT_BEGIN_NAMESPACE
 class QPushButton;
 class QHBoxLayout;
+class QToolButton;
 QT_END_NAMESPACE
 
 DWIDGET_BEGIN_NAMESPACE
@@ -107,7 +108,7 @@ private:
     DButtonBoxButton* m_backButton = nullptr;
     DButtonBoxButton* m_forwardButton = nullptr;
     QPushButton* m_searchButton = nullptr;
-    DFMIconButton* m_detailButton = nullptr;
+    QToolButton* m_detailButton = nullptr;
     QFrame* m_contollerToolBar;
     QHBoxLayout *m_contollerToolBarContentLayout;
     QList<QAction*> m_actionList;
