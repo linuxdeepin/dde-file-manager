@@ -57,8 +57,8 @@ bool DAttachedUdisks2Device::detachable()
 void DAttachedUdisks2Device::detach()
 {
     QtConcurrent::run([this](){
-        blockDevice()->unmount({});
         QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blockDevice()->drive()));
+        blockDevice()->unmount({});
 
         if (diskDev->optical()) { // is optical
             if (diskDev->ejectable()) {
