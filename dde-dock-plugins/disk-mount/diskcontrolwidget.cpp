@@ -380,16 +380,16 @@ void DiskControlWidget::onMountAdded()
 void DiskControlWidget::onMountRemoved(const QString &blockDevicePath, const QByteArray &mountPoint)
 {
     Q_UNUSED(mountPoint);
-    // if it's a removable device, don't emit list changed signal.
-    // when eject done, it will got emited from onDriveDisconnected.
     QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blockDevicePath));
     if (blDev) {
         QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
         if (diskDev && diskDev->removable()) {
-            return;
+            qDebug() << "removable device" << blockDevicePath;// << mountPoint;
+            //return; // removable device emit onDiskListChanged too
         }
     }
 
+    qDebug() << "unmounted," << mountPoint;
     onDiskListChanged();
 }
 
