@@ -202,6 +202,11 @@ void DiskControlWidget::unmountAll()
             if (blDev->hasFileSystem() /* && DFMSetting*/ && !blDev->mountPoints().isEmpty() && !blDev->hintIgnore() && !blDev->hintSystem()) {
                 QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
                 blDev->unmount({});
+                qDebug()<<"unmountAll" << "removable" <<  diskDev->removable() <<
+                          "optical" << diskDev->optical() <<
+                          "canPowerOff" << diskDev->canPowerOff() <<
+                          "ejectable" << diskDev->ejectable();
+
                 if (diskDev->removable()) {
                     diskDev->eject({});
                     qDebug()<<"unmountAll";
@@ -209,6 +214,20 @@ void DiskControlWidget::unmountAll()
                         qWarning() << diskDev->lastError().name() << blockDevices;
                         NotifyMsg(tr("Disk is busy, cannot eject now"));
                     }
+                }
+                if (diskDev->optical()) { // is optical
+                    if (diskDev->ejectable()) {
+                        diskDev->eject({});
+                        if (diskDev->lastError().isValid()) {
+                            qWarning() << diskDev->lastError().name() << blockDevices;
+                            NotifyMsg(tr("Disk is busy, cannot eject now"));
+                        }
+                        return;
+                    }
+                }
+
+                if (diskDev->canPowerOff()) {
+                    diskDev->powerOff({});
                 }
             }
         }
