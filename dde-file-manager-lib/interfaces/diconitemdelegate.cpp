@@ -976,9 +976,11 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     /// init file name geometry
 
     QRect label_rect = option.rect;
+    bool isCanvas = parent()->property("isCanvasViewHelper").toBool();
+    int backgroundMargin = isCanvas ? 0 : COLUMU_PADDING;
 
-    label_rect.setWidth(label_rect.width() - 2 * TEXT_PADDING);
-    label_rect.moveLeft(label_rect.left() + TEXT_PADDING);
+    label_rect.setWidth(label_rect.width() - 2 * TEXT_PADDING - 2*backgroundMargin - ICON_MODE_BACK_RADIUS);
+    label_rect.moveLeft(label_rect.left() + TEXT_PADDING + backgroundMargin + ICON_MODE_BACK_RADIUS/2);
     label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
 
     QStyleOptionViewItem opt = option;
@@ -987,41 +989,6 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     bool isSelected = parent()->isSelected(index) && opt.showDecorationSelected;
     /// if has selected show all file name else show elide file name.
     bool singleSelected = parent()->selectedIndexsCount() < 2;
-
-//    if (isSelected && singleSelected) {
-//        int height = 0;
-
-//        if (d->wordWrapMap.contains(str)) {
-//            str = d->wordWrapMap.value(str);
-//            height = d->textHeightMap.value(str);
-//        } else {
-//            QString wordWrap_str = DFMGlobal::wordWrapText(str, label_rect.width(),
-//                                                           QTextOption::WrapAtWordBoundaryOrAnywhere,
-//                                                           opt.font,
-//                                                           d->textLineHeight,
-//                                                           &height);
-
-//            wordWrap_str = trimmedEnd(wordWrap_str);
-
-//            d->wordWrapMap[str] = wordWrap_str;
-//            d->textHeightMap[wordWrap_str] = height;
-//            str = wordWrap_str;
-//        }
-//    } else {
-//        if (d->elideMap.contains(str)) {
-//            str = d->elideMap.value(str);
-//        } else {
-//            QString elide_str = DFMGlobal::elideText(str, label_rect.size(), QTextOption::WrapAtWordBoundaryOrAnywhere,
-//                                                     opt.font, opt.textElideMode, d->textLineHeight);
-
-//            d->elideMap[str] = elide_str;
-//            str = elide_str;
-//        }
-//    }
-
-//    /// draw icon and file name label
-
-//    label_rect = option.fontMetrics.boundingRect(label_rect, Qt::AlignHCenter, str);
 
     QTextLayout text_layout;
 
@@ -1042,8 +1009,6 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 
     // background rect
     QRect background_rect = option.rect;
-    bool isCanvas = parent()->property("isCanvasViewHelper").toBool();
-    int backgroundMargin = isCanvas ? 0 : COLUMU_PADDING;
     if (!isCanvas) {
          // 为了让对勾右上角， 缩小框框
         background_rect.adjust(backgroundMargin, backgroundMargin, -backgroundMargin, -backgroundMargin);
