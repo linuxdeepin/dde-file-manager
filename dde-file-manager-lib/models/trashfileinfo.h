@@ -74,6 +74,7 @@ public:
     Qt::DropActions supportedDragActions() const Q_DECL_OVERRIDE;
     Qt::DropActions supportedDropActions() const Q_DECL_OVERRIDE;
 
+    QIcon fileIcon() const Q_DECL_OVERRIDE;
     QList<QIcon> additionalIcon() const Q_DECL_OVERRIDE;
 
     DUrl goToUrlWhenDeleted() const Q_DECL_OVERRIDE;
