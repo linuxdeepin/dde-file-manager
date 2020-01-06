@@ -38,6 +38,8 @@ public:
 protected:
     void appendParentMineType(const QStringList &parentmimeTypes,  QStringList& mimeTypes);
 
+    void loadDesktopFile();
+    
 private:
 
     QScopedPointer<DFMAdditionalMenuPrivate> d_private;

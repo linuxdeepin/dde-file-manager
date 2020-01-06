@@ -25,7 +25,10 @@
 #include <QMenu>
 #include <QMimeDatabase>
 #include <XdgDesktopFile>
+#include <dabstractfilewatcher.h>
 DFM_BEGIN_NAMESPACE
+
+#define MENUEXTENSIONS_PATH  "/usr/share/deepin/dde-file-manager/oem-menuextensions/"
 
 #define SET_PROPERTY_IFEXIST(action, file, key)\
 do{\
@@ -65,6 +68,8 @@ public:
 private:
     QList<QAction *> actionList;
     QMap<QString, QList<QAction *> > actionListByType;
+    QObject *menuActionHolder {nullptr};
+    QList<QMenu *> menuList;
 
     DFMAdditionalMenu *q_ptr;
 };
@@ -202,12 +207,24 @@ QList<QAction *>DFMAdditionalMenuPrivate::emptyAreaActoins(const QString &curren
     return actions;
 }
 
-DFMAdditionalMenu::DFMAdditionalMenu(QObject *parent)
-    : QObject(parent)
-    , d_private(new DFMAdditionalMenuPrivate(this))
+void DFMAdditionalMenu::loadDesktopFile()
 {
     Q_D(DFMAdditionalMenu);
-    QDir oemPath("/usr/share/deepin/dde-file-manager/oem-menuextensions/");
+    qDebug() << d->actionList;
+
+    if (d->menuActionHolder) {
+        d->menuActionHolder->deleteLater();
+    }
+    for (QMenu *menu : d->menuList) {
+        menu->deleteLater();
+    }
+
+    d->menuActionHolder = new QObject(this);
+
+    d->actionList.clear();
+    d->actionListByType.clear();
+
+    QDir oemPath(MENUEXTENSIONS_PATH);
     if (oemPath.exists()) {
         for (const QFileInfo &fileInfo : oemPath.entryInfoList({"*.desktop"})) {
             XdgDesktopFile file;
@@ -225,12 +242,13 @@ DFMAdditionalMenu::DFMAdditionalMenu(QObject *parent)
 
             // the XdgDesktopFile::icon() empty fallback is not really an empty fallback, so we need to check it manually.
             QString iconStr = file.localizedValue("Icon").toString();
-            QAction *action = new QAction(iconStr.isEmpty() ? QIcon() : file.icon(), file.name());
+            QAction *action = new QAction(iconStr.isEmpty() ? QIcon() : file.icon(), file.name(), d->menuActionHolder);
             QStringList entryActionList = file.actions();
             if (!entryActionList.isEmpty()) {
                 QMenu *menu = new QMenu();
+                d->menuList.append(menu);
                 for (const QString &actionName : entryActionList) {
-                    QAction *subAction = new QAction(file.actionIcon(actionName), file.actionName(actionName));
+                    QAction *subAction = new QAction(file.actionIcon(actionName), file.actionName(actionName), d->menuActionHolder);
                     connect(subAction, &QAction::triggered, this, [subAction, actionName, file](){
                         QStringList files = subAction->data().toStringList();
                         file.actionActivate(actionName, files);
@@ -258,6 +276,21 @@ DFMAdditionalMenu::DFMAdditionalMenu(QObject *parent)
             }
         }
     }
+}
+
+DFMAdditionalMenu::DFMAdditionalMenu(QObject *parent)
+    : QObject(parent)
+    , d_private(new DFMAdditionalMenuPrivate(this))
+{
+    DUrl url = DUrl::fromLocalFile(MENUEXTENSIONS_PATH);
+    DAbstractFileWatcher *dirWatch = DFileService::instance()->createFileWatcher(this, url, this);
+    if (dirWatch) {
+        dirWatch->startWatcher();
+    }
+    connect(dirWatch, &DAbstractFileWatcher::fileDeleted, this, &DFMAdditionalMenu::loadDesktopFile);
+    connect(dirWatch, &DAbstractFileWatcher::subfileCreated, this, &DFMAdditionalMenu::loadDesktopFile);
+
+    loadDesktopFile();
 }
 
 DFMAdditionalMenu::~DFMAdditionalMenu()
