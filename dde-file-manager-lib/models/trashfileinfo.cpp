@@ -35,6 +35,7 @@
 #include "singleton.h"
 #include "fileoperations/filejob.h"
 #include "dialogs/dialogmanager.h"
+#include "desktopfileinfo.h"
 
 #include <QMimeType>
 #include <QSettings>
@@ -447,6 +448,17 @@ Qt::DropActions TrashFileInfo::supportedDropActions() const
     const QString &path = fileUrl().path();
 
     return path.isEmpty() || path == "/" ? Qt::MoveAction : Qt::IgnoreAction;
+}
+
+QIcon TrashFileInfo::fileIcon() const
+{
+    if(isDesktopFile()) {
+        QFileInfo f(absoluteFilePath());
+        DesktopFileInfo dfi(f);
+        return dfi.fileIcon();
+    }
+
+    return DAbstractFileInfo::fileIcon();
 }
 
 QList<QIcon> TrashFileInfo::additionalIcon() const
