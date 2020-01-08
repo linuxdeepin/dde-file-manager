@@ -48,6 +48,7 @@
 #include <QScreen>
 #include <QVBoxLayout>
 #include <QCheckBox>
+#include <DApplicationHelper>
 
 #define DESKTOP_BUTTON_ID "desktop"
 #define LOCK_SCREEN_BUTTON_ID "lock-screen"
@@ -441,10 +442,16 @@ void Frame::initUI()
     layout->setMargin(0);
     layout->setSpacing(0);
 
+    DPalette pal = DApplicationHelper::instance()->palette(this);
+    QColor textColor = pal.color(QPalette::Normal, QPalette::BrightText);
+
 #ifndef DISABLE_WALLPAPER_CAROUSEL
     m_wallpaperCarouselLayout = new QHBoxLayout;
     m_wallpaperCarouselCheckBox = new QCheckBox(tr("Wallpaper Slideshow"), this);
     m_wallpaperCarouselCheckBox->setChecked(true);
+    QPalette wccPal = m_wallpaperCarouselCheckBox->palette();
+    wccPal.setColor(QPalette::All, QPalette::WindowText, textColor);
+    m_wallpaperCarouselCheckBox->setPalette(wccPal);
     m_wallpaperCarouselControl = new DButtonBox(this);
     QList<DButtonBoxButton*> wallpaperSlideshowBtns;
 
@@ -519,6 +526,9 @@ void Frame::initUI()
 
     m_waitControl = new DButtonBox(this);
     m_lockScreenBox = new QCheckBox(tr("Require a password on wakeup"), this);
+    QPalette lsPal = m_lockScreenBox->palette();
+    lsPal.setColor(QPalette::All, QPalette::WindowText, textColor);
+    m_lockScreenBox->setPalette(lsPal);
 
     QVector<int> time_array {60, 300, 600, 900, 1800, 3600, 0};
     QList<DButtonBoxButton*> timeArrayBtns;
@@ -547,6 +557,9 @@ void Frame::initUI()
 
     timeArrayBtns.append(new DButtonBoxButton(tr("Never"), this));
     m_waitControlLabel = new QLabel(tr("Wait:"), this);
+    QPalette wcPal = m_waitControlLabel->palette();
+    wcPal.setColor(QPalette::All, QPalette::WindowText, textColor);
+    m_waitControlLabel->setPalette(wcPal);
     m_waitControl->setButtonList(timeArrayBtns, true);
     timeArrayBtns[current_wait_time_index]->setChecked(true);
     m_lockScreenBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
