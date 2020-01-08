@@ -286,7 +286,7 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
         color = DGuiApplicationHelper::adjustColor(color, 0, 0, 0, 0, 0, 0, +51);
         painter->fillRect(boundingRect(), color);
 
-        color = pal.color(QPalette::Inactive, QPalette::Highlight);
+        color = pal.color(QPalette::Active, QPalette::Highlight);
         QPen tPen = painter->pen();
         tPen.setColor(color);
         painter->setPen(tPen);
