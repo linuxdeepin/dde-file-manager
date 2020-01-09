@@ -11,15 +11,19 @@
 
 #include <dfmevent.h>
 #include <dfileinfo.h>
+#include <singleton.h>
 #include <dfilesystemmodel.h>
 #include <diconitemdelegate.h>
+#include <app/define.h>
+#include <app/filesignalmanager.h>
 
 #include "canvasgridview.h"
 #include "desktopitemdelegate.h"
 
 CanvasViewHelper::CanvasViewHelper(CanvasGridView *parent): DFileViewHelper(parent)
 {
-
+    connect(fileSignalManager, &FileSignalManager::requestSelectFile,
+            this, &CanvasViewHelper::handleSelectEvent);
 }
 
 CanvasGridView *CanvasViewHelper::parent() const
@@ -79,6 +83,17 @@ void CanvasViewHelper::edit(const DFMEvent &event)
 void CanvasViewHelper::onRequestSelectFiles(const QList<DUrl> &urls)
 {
     select(urls);
+}
+
+void CanvasViewHelper::handleSelectEvent(const DFMUrlListBaseEvent &event)
+{
+    // TODO: should check fileSignalManager->requestSelectFile() and ensure sender correct.
+    if (event.sender() != this->parent()
+            && event.sender() != this->model()) {
+        return;
+    }
+
+    select(event.urlList());
 }
 
 void CanvasViewHelper::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const

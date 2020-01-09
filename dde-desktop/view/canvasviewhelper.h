@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <dfmevent.h>
 #include <dfileviewhelper.h>
 
 class DFMEvent;
@@ -34,4 +35,5 @@ public:
 public slots:
     void edit(const DFMEvent &event);
     void onRequestSelectFiles(const QList<DUrl> &urls);
+    void handleSelectEvent(const DFMUrlListBaseEvent &event);
 };

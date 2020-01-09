@@ -1526,6 +1526,9 @@ void CanvasGridView::select(const QList<DUrl> &list)
 {
     QModelIndex lastIndex;
     QItemSelection selection;
+
+    clearSelection();
+
     for (auto &url : list) {
         auto index = model()->index(url);
         QItemSelectionRange selectionRange(index);
