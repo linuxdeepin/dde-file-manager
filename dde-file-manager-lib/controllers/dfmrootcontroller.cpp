@@ -33,7 +33,6 @@
 #include <dblockdevice.h>
 #include <ddiskdevice.h>
 
-#include <gvfs/gvfsmountmanager.h>
 #include <gvfs/networkmanager.h>
 
 class DFMRootFileWatcherPrivate : public DAbstractFileWatcherPrivate

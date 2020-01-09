@@ -99,6 +99,13 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
     qDebug() << "source: " << event->mimeData()->urls();
     qDebug() << "target item: " << item->groupName() << "|" << item->text() <<  "|" << item->url();
 
+    QPoint pt = mapFromGlobal(QCursor::pos());
+    QRect rc = visualRect(indexAt(event->pos()));
+    if (!rc.contains(pt)) {
+        qDebug() << "mouse not in my area";
+        return DListView::dropEvent(event);
+    }
+
     DUrlList urls;
     for (const QUrl &url : event->mimeData()->urls()) {
         if (DUrl(url).parentUrl() == item->url()) {

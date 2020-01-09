@@ -41,7 +41,6 @@
 #include "fileitem.h"
 #include "durl.h"
 #include "dabstractfileinfo.h"
-#include "deviceinfo/udiskdeviceinfo.h"
 #include "ddiskmanager.h"
 #include "dblockdevice.h"
 #include "dstatusbar.h"
