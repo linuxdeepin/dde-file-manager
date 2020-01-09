@@ -274,7 +274,7 @@ void DFMCrumbBarPrivate::initConnections()
     });
 
     q->connect(addressBar, &DFMAddressBar::clearButtonPressed, q, [this] {
-        if (crumbController) {
+        if (crumbController && !addressBar->text().isEmpty()) {
             crumbController->processAction(DFMCrumbInterface::ClearButtonPressed);
         }
     });
