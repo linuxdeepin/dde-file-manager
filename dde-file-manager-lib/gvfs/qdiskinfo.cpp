@@ -189,7 +189,7 @@ void QDiskInfo::setCan_mount(bool can_mount)
     m_can_mount = can_mount;
 }
 
-void QDiskInfo::updateGvfsFileSystemInfo()
+void QDiskInfo::updateGvfsFileSystemInfo(int retryTimes/*=3*/)
 {
     if (m_mounted_root_uri.isEmpty()) {
         return;
@@ -210,12 +210,15 @@ void QDiskInfo::updateGvfsFileSystemInfo()
         error = NULL;
     }
     info = g_file_query_info(file, "*", G_FILE_QUERY_INFO_NONE, NULL, &error);
-    if (info == NULL) {
+    if (info == NULL && error) {
+        g_object_unref(systemInfo);
+        g_object_unref(file);
         qWarning() << "g_file_query_filesystem_info" << error->message << error->code;
-        if (error->code == 0) {
-            updateGvfsFileSystemInfo();
-            return;
+        if (error->code == 0 && retryTimes > 0) {
+            g_error_free(error);
+            return updateGvfsFileSystemInfo(--retryTimes);
         }
+
         g_error_free(error);
         return;
     }

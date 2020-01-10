@@ -81,7 +81,7 @@ public:
     void setCan_mount(bool can_mount);
 
 
-    void updateGvfsFileSystemInfo();
+    void updateGvfsFileSystemInfo(int retryTimes=3);
 
     bool read_only() const;
     void setRead_only(bool read_only);
