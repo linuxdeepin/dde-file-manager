@@ -2949,7 +2949,7 @@ int DFileViewPrivate::iconModeColumnCount(int itemWidth) const
     if (itemWidth <= 0)
         itemWidth = q->itemSizeHint().width() + q->spacing() * 2;
 
-    return (contentWidth - horizontalMargin - 1) / itemWidth;
+    return qMax((contentWidth - horizontalMargin - 1) / itemWidth, 1);
 }
 
 QVariant DFileViewPrivate::fileViewStateValue(const DUrl &url, const QString &key, const QVariant &defalutValue)
