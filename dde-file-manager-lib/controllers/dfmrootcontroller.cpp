@@ -195,21 +195,26 @@ bool DFMRootFileWatcherPrivate::start()
             return;
         }
 
-        mnt->unmount(); // yes, we need do it again...otherwise we will goto an removed path like /run/user/1000/gvfs/smb-sharexxxx
-        // remove NetworkNodes cache, so next time cd uri will fetchNetworks
-        QString smbUri = mnt->getRootFile()->uri();
-        if (smbUri.endsWith("/")) {
-            smbUri = smbUri.left(smbUri.length()-1);
-        }
-        DUrl uri(smbUri);
-        NetworkManager::NetworkNodes.remove(uri);
-        uri.setPath("");
-        NetworkManager::NetworkNodes.remove(uri);
-
         DUrl url;
         url.setScheme(DFMROOT_SCHEME);
         url.setPath("/" + QUrl::toPercentEncoding(mnt->getRootFile()->path()) + "." SUFFIX_GVFSMP);
         Q_EMIT wpar->fileDeleted(url);
+
+        QString uri = mnt->getRootFile()->uri();
+        qDebug() << uri << "mount removed";
+        if (uri.contains("smb-share://") || uri.contains("smb://")) {
+              // remove NetworkNodes cache, so next time cd uri will fetchNetworks
+              QString smbUri = uri;
+              if (smbUri.endsWith("/")) {
+                  smbUri = smbUri.left(smbUri.length()-1);
+              }
+              DUrl uri(smbUri);
+              NetworkManager::NetworkNodes.remove(uri);
+              uri.setPath("");
+              NetworkManager::NetworkNodes.remove(uri);
+
+              mnt->unmount(); // yes, we need do it again...otherwise we will goto an removed path like /run/user/1000/gvfs/smb-sharexxxx
+        }
     }));
     connections.push_back(QObject::connect(vfsmgr.data(), &DGioVolumeManager::volumeAdded, [](QExplicitlySharedDataPointer<DGioVolume> vol) {
         if (vol->volumeMonitorName().contains(QRegularExpression("(MTP|GPhoto2|Afc)$"))) {
