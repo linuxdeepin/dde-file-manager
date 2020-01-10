@@ -134,22 +134,16 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
             m_comboBox = Q_NULLPTR;
         }
 
-        m_label = new QLabel(m_counted.arg("0"), this);
-        m_label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+        m_label = new DFMElidLabel(m_counted.arg("0"), this);
+        m_label->setAlignment(Qt::AlignCenter);
+        m_label->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
         clearLayoutAndAnchors();
-        m_layout->addStretch();
         m_layout->addWidget(m_loadingIndicator);
         m_layout->addWidget(m_label);
-        m_layout->addStretch();
+        m_layout->addWidget(m_scaleSlider, 0, Qt::AlignRight);
         m_layout->setSpacing(14);
         m_layout->setContentsMargins(0, 0, 4, 0);
-
-        DAnchors<QSlider> sliderAnchor(m_scaleSlider);
-
-        sliderAnchor.setAnchor(Qt::AnchorRight, this, Qt::AnchorRight);
-        //sliderAnchor.setAnchor(Qt::AnchorVerticalCenter, this, Qt::AnchorVerticalCenter);
-        sliderAnchor.setRightMargin(20);
 
         return;
     }
@@ -533,4 +527,25 @@ void DStatusBar::clearLayoutAndAnchors()
 
     DAnchorsBase::clearAnchors(this);
     DAnchorsBase::clearAnchors(m_scaleSlider);
+}
+
+void DFMElidLabel::setText(const QString &text)
+{
+    m_text = text;
+    setElidText(text);
+}
+
+void DFMElidLabel::setElidText(const QString &text)
+{
+    QFont font = this->font();
+    QFontMetrics fm(font);
+    QString str = fm.elidedText(text, Qt::ElideRight, width());
+    setToolTip(m_text);
+    QLabel::setText(str);
+}
+
+void DFMElidLabel::resizeEvent(QResizeEvent *event)
+{
+    QLabel::resizeEvent(event);
+    setElidText(m_text);
 }
