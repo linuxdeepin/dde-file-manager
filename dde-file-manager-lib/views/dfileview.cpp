@@ -1451,6 +1451,10 @@ void DFileView::resizeEvent(QResizeEvent *event)
 
     DListView::resizeEvent(event);
 
+    if (d->statusBar && d->statusBar->width() != width()) {
+            d->statusBar->setFixedWidth(width());
+        }
+
     updateHorizontalOffset();
 
     if (itemDelegate()->editingIndex().isValid())

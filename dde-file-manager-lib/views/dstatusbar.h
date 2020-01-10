@@ -53,6 +53,27 @@ DFM_END_NAMESPACE
 
 DFM_USE_NAMESPACE
 
+
+class DFMElidLabel : public QLabel {
+public:
+    explicit DFMElidLabel(QWidget *parent=nullptr, Qt::WindowFlags f=Qt::WindowFlags())
+        :QLabel(parent, f) {
+    }
+    explicit DFMElidLabel(const QString &text, QWidget *parent=nullptr, Qt::WindowFlags f=Qt::WindowFlags())
+    :QLabel(text, parent, f) {
+
+    }
+    ~DFMElidLabel() {}
+
+    void setText(const QString &text);
+protected:
+    void setElidText(const QString &text);
+    void resizeEvent(QResizeEvent *event) override ;
+
+private:
+    QString m_text;
+};
+
 class DStatusBar : public QFrame
 {
     Q_OBJECT
@@ -121,7 +142,7 @@ private:
     int m_folderContains = 0;
 
     QHBoxLayout * m_layout;
-    QLabel * m_label = Q_NULLPTR;
+    DFMElidLabel * m_label = Q_NULLPTR;
     DPictureSequenceView* m_loadingIndicator;
     QSlider* m_scaleSlider;
 
