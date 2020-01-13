@@ -541,7 +541,13 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
 
     d->beforeMoveSelection = selectionModel()->selection();
 
+    bool isselected = isSelected(index);
     QAbstractItemView::mousePressEvent(event);
+
+    if (leftButtonPressed && isselected && event->modifiers()==Qt::ControlModifier) {
+        setProperty("lastPressedIndex", index);
+        selectionModel()->select(QItemSelection (index, index), QItemSelectionModel::Select);
+    }
 
     if (leftButtonPressed) {
         d->currentCursorIndex = index;
@@ -565,6 +571,12 @@ void CanvasGridView::mouseReleaseEvent(QMouseEvent *event)
         d->showSelectRect = false;
         d->selectRect = QRect();
 //        update(d->selectRect);
+    }
+
+    QModelIndex index = property("lastPressedIndex").toModelIndex();
+    if (index.isValid() && DFMGlobal::keyCtrlIsPressed() && index == indexAt(event->pos()) && isSelected(index)) {
+        selectionModel()->select(QItemSelection (index, index), QItemSelectionModel::Deselect);
+        setProperty("lastPressedIndex", QModelIndex());
     }
 
     update();
@@ -1875,6 +1887,14 @@ void CanvasGridView::updateGeometry(const QRect &geometry)
 
 void CanvasGridView::initConnection()
 {
+    connect(selectionModel(), &QItemSelectionModel::selectionChanged, this,
+            [this](const QItemSelection &selected, const QItemSelection &deselected){
+        Q_UNUSED(selected);
+        QModelIndex index = property("lastPressedIndex").toModelIndex();
+        if (index.isValid() && deselected.contains(index)) {
+            setProperty("lastPressedIndex", QModelIndex());
+        }
+    });
     connect(&d->dodgeDelayTimer, &QTimer::timeout,
     this, [ = ]() {
 //        qDebug() << "start animation";
@@ -2259,6 +2279,7 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
         if (!oldSelection.contains(d->currentCursorIndex)) {
             oldSelection.push_back(selectionRange);
         }
+
         QAbstractItemView::selectionModel()->select(oldSelection, command);
         return;
     }
