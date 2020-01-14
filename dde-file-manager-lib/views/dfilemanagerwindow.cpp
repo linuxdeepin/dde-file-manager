@@ -290,7 +290,6 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
 
             //###(zccrs):
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(q_ptr, fileUrl);
-
             if (fileInfo) {
                 /* Call fileInfo->exists() twice. First result is false and the second one is true;
                            Maybe this is a bug of fuse when smb://10.0.10.30/people is mounted and cd to mounted folder immediately.
@@ -300,7 +299,7 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
             }
 
             if (!fileInfo || !fileInfo->exists()) {
-                DUrl searchUrl = current_view->rootUrl();
+                DUrl searchUrl = current_view ? current_view->rootUrl() : DUrl::fromLocalFile(QDir::homePath());
 
                 if (searchUrl.isComputerFile()) {
                     searchUrl = DUrl::fromLocalFile("/");
