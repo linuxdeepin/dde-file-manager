@@ -39,20 +39,20 @@ void DBusFileManager1::ShowFolders(const QStringList &URIs, const QString &Start
 {
     Q_UNUSED(StartupId)
 
-    if (QProcess::startDetached("file-manager.sh", URIs))
+    if (QProcess::startDetached("file-manager.sh", QStringList() << "--raw" << URIs))
         return;
 
-    QProcess::startDetached("dde-file-manager", URIs);
+    QProcess::startDetached("dde-file-manager", QStringList() << "--raw" << URIs);
 }
 
 void DBusFileManager1::ShowItemProperties(const QStringList &URIs, const QString &StartupId)
 {
     Q_UNUSED(StartupId)
 
-    if (QProcess::startDetached("file-manager.sh", QStringList() << "-p" << URIs))
+    if (QProcess::startDetached("file-manager.sh", QStringList() << "--raw" << "-p" << URIs))
         return;
 
-    QProcess::startDetached("dde-file-manager", QStringList() << "-p" << URIs);
+    QProcess::startDetached("dde-file-manager", QStringList() << "--raw" << "-p" << URIs);
 }
 
 void DBusFileManager1::ShowItems(const QStringList &URIs, const QString &StartupId)
