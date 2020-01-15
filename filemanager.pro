@@ -12,14 +12,6 @@ SUBDIRS  += \
     dde-file-thumbnail-tool \
     gschema
 
-isEqual(BUILD_MINIMUM, YES){
-
-}else{
-    SUBDIRS += usb-device-formatter
-#    dde-advanced-property-plugin \
-#    dde-sharefiles
-}
-
 !CONFIG(DISABLE_ANYTHING) {
     message("Deepin Anything server plugin enabled for" $$ARCH)
     SUBDIRS += deepin-anything-server-plugins

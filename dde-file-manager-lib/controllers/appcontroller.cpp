@@ -783,7 +783,7 @@ void AppController::actionFormatDevice(const QSharedPointer<DFMUrlBaseEvent> &ev
     QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(info->extraProperties()["udisksblk"].toString()));
     QString devicePath = blkdev->device();
 
-    QString cmd = "usb-device-formatter";
+    QString cmd = "dde-device-formatter";
     QStringList args;
     args << "-m=" + QString::number(event->windowId()) << devicePath;
 
