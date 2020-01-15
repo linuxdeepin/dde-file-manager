@@ -455,6 +455,12 @@ QStringList MimesAppsManager::getRecommendedAppsByQio(const QMimeType &mimeType)
                         }
                     }
 
+                    // if desktop file was not existed do not recommend!!
+                    if (!QFileInfo::exists(app)) {
+                        qWarning() << app << "not exist anymore";
+                        continue;
+                    }
+
                     if (!app_exist)
                         recommendApps.append(app);
                 }

@@ -568,7 +568,12 @@ icon.files = skin/images/$${TARGET}.svg
 defaultConfig.path = $$APPSHAREDIR/config
 defaultConfig.files = configure/default-view-states.json
 
-INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations icon includes includes_private gvfs_includes plugin_includes defaultConfig
+# readme file for create oem-menuextension directory
+readmefile.path = $$PREFIX/share/deepin/$$TARGET/oem-menuextensions
+readmefile.files = plugins/.readme
+
+INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations \
+ icon includes includes_private gvfs_includes plugin_includes defaultConfig readmefile
 
 DISTFILES += \
     mimetypeassociations/mimetypeassociations.json
