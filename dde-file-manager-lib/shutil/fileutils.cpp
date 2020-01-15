@@ -249,23 +249,7 @@ QStringList FileUtils::getApplicationNames() {
   }
   return appNames;
 }
-//---------------------------------------------------------------------------
 
-/**
- * @brief Returns list of available applications
- * @return application list
- */
-QList<DesktopFile> FileUtils::getApplications() {
-  QList<DesktopFile> apps;
-  QDirIterator it("/usr/share/applications", QStringList("*.desktop"),
-                  QDir::Files | QDir::NoDotAndDotDot,
-                  QDirIterator::Subdirectories);
-  while (it.hasNext()) {
-    it.next();
-    apps.append(DesktopFile(it.filePath()));
-  }
-  return apps;
-}
 //---------------------------------------------------------------------------
 
 /**

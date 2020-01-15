@@ -55,7 +55,6 @@ public:
     static bool isArchive(const QString& path);
     static bool canFastReadArchive(const QString& path);
     static QStringList getApplicationNames();
-    static QList<DesktopFile> getApplications();
     static QString getRealSuffix(const QString &name);
     static QIcon searchGenericIcon(const QString &category,
        const QIcon &defaultIcon = QIcon::fromTheme("unknown"));
