@@ -117,6 +117,8 @@ public:
 
     static void mountAVFS();
     static void umountAVFS();
+
+    static bool isDesktopFile(const QString& filePath);
 };
 
 #endif // FILEUTILS_H

@@ -1216,3 +1216,10 @@ void FileUtils::umountAVFS()
 {
     QProcess::startDetached("/usr/bin/umountavfs");
 }
+
+bool FileUtils::isDesktopFile(const QString &filePath)
+{
+    QMimeType mt = DMimeDatabase().mimeTypeForFile(filePath);
+    return mt.name() == "application/x-desktop" &&
+           mt.suffixes().contains("desktop", Qt::CaseInsensitive);
+}

@@ -202,6 +202,11 @@ QString DesktopFileInfo::genericIconName() const
 
 QString DesktopFileInfo::fileDisplayName() const
 {
+    if (getName().isEmpty()) {
+        // if desktop file has no name section
+        return DFileInfo::fileDisplayName();
+    }
+
     return getName();
 }
 
