@@ -147,8 +147,8 @@ DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &d
                << MenuAction::Separator
 #ifdef QT_DEBUG
                << MenuAction::Vault
-               << MenuAction::ConnectToServer
 #endif // QT_DEBUG
+               << MenuAction::ConnectToServer
                << MenuAction::SetUserSharePassword
                << MenuAction::Settings;
 
