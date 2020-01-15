@@ -24,6 +24,7 @@
 #include <QDir>
 #include <QMenu>
 #include <QMimeDatabase>
+#include <QTimer>
 #include <XdgDesktopFile>
 #include <dabstractfilewatcher.h>
 DFM_BEGIN_NAMESPACE
@@ -70,6 +71,7 @@ private:
     QMap<QString, QList<QAction *> > actionListByType;
     QObject *menuActionHolder {nullptr};
     QList<QMenu *> menuList;
+    QTimer *m_delayedLoadFileTimer;
 
     DFMAdditionalMenu *q_ptr;
 };
@@ -77,7 +79,24 @@ private:
 DFMAdditionalMenuPrivate::DFMAdditionalMenuPrivate(DFMAdditionalMenu *qq)
     :q_ptr(qq)
 {
+    m_delayedLoadFileTimer = new QTimer(qq);
+    m_delayedLoadFileTimer->setSingleShot(true);
+    m_delayedLoadFileTimer->setInterval(500);
+    m_delayedLoadFileTimer->start();
+    QObject::connect(m_delayedLoadFileTimer, &QTimer::timeout, qq, &DFMAdditionalMenu::loadDesktopFile);
+    DUrl url = DUrl::fromLocalFile(MENUEXTENSIONS_PATH);
+    DAbstractFileWatcher *dirWatch = DFileService::instance()->createFileWatcher(qq, url, qq);
+    if (dirWatch) {
+        dirWatch->startWatcher();
+    }
 
+    QObject::connect(dirWatch, &DAbstractFileWatcher::fileDeleted, m_delayedLoadFileTimer, [=](){
+        m_delayedLoadFileTimer->start();
+    });
+
+    QObject::connect(dirWatch, &DAbstractFileWatcher::subfileCreated, m_delayedLoadFileTimer, [=](){
+        m_delayedLoadFileTimer->start();
+    });
 }
 
 QStringList DFMAdditionalMenuPrivate::getValues(XdgDesktopFile &file, const QLatin1String &key, const QStringList &whiteList)
@@ -282,15 +301,6 @@ DFMAdditionalMenu::DFMAdditionalMenu(QObject *parent)
     : QObject(parent)
     , d_private(new DFMAdditionalMenuPrivate(this))
 {
-    DUrl url = DUrl::fromLocalFile(MENUEXTENSIONS_PATH);
-    DAbstractFileWatcher *dirWatch = DFileService::instance()->createFileWatcher(this, url, this);
-    if (dirWatch) {
-        dirWatch->startWatcher();
-    }
-    connect(dirWatch, &DAbstractFileWatcher::fileDeleted, this, &DFMAdditionalMenu::loadDesktopFile);
-    connect(dirWatch, &DAbstractFileWatcher::subfileCreated, this, &DFMAdditionalMenu::loadDesktopFile);
-
-    loadDesktopFile();
 }
 
 DFMAdditionalMenu::~DFMAdditionalMenu()
