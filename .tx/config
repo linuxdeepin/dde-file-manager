@@ -27,12 +27,6 @@ source_file = dde-desktop/translations/dde-desktop.ts
 source_lang = en
 type = QT
 
-[deepin-file-manager.usb-device-formatter]
-file_filter = usb-device-formatter/translations/usb-device-formatter_<lang>.ts
-source_file = usb-device-formatter/translations/usb-device-formatter.ts
-source_lang = en
-type = QT
-
 [deepin-file-manager.dde-file-manager-desktop]
 file_filter = dde-file-manager/translations/dde-file-manager-desktop/desktop_<lang>.ts
 source_file = dde-file-manager/translations/dde-file-manager-desktop/desktop.ts
@@ -51,14 +45,3 @@ source_file = dde-desktop/translations/dde-trash-desktop/desktop.ts
 source_lang = en
 type = QT
 
-[deepin-file-manager.usb-device-formatter-desktop]
-file_filter = usb-device-formatter/translations/usb-device-formatter-desktop/desktop_<lang>.ts
-source_file = usb-device-formatter/translations/usb-device-formatter-desktop/desktop.ts
-source_lang = en
-type = QT
-
-[deepin-file-manager.usb-device-formatter-policy]
-file_filter = usb-device-formatter/translations/policy/policy_<lang>.ts
-source_file = usb-device-formatter/translations/policy/policy.ts
-source_lang = en
-type = QT
