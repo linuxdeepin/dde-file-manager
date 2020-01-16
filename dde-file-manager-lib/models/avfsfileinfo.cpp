@@ -112,6 +112,15 @@ QString AVFSFileInfo::toLocalFile() const
     return fileUrl().path();
 }
 
+DUrl AVFSFileInfo::parentUrl() const
+{
+    DUrl durl = DAbstractFileInfo::parentUrl();
+    if(fileType() == FileType::Directory){
+        durl.setScheme(FILE_SCHEME);
+    }
+    return durl;
+}
+
 AVFSFileInfo::AVFSFileInfo(AVFSFileInfoPrivate &dd):
     DAbstractFileInfo(dd)
 {
