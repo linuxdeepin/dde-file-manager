@@ -8,12 +8,12 @@
     <message>
         <location filename="../main.cpp" line="108"/>
         <source>File Manager</source>
-        <translation type="unfinished"/>
+        <translation>Gestor de archivos</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="112"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
-        <translation>File Manager es una herramienta de gestión de archivos potente y fácil de usar, con funciones de búsqueda, copia, papelera, compresión/descompresión, propiedad de archivos y otras funciones útiles.</translation>
+        <translation>El Gestor de archivos es una herramienta de gestión de archivos potente y fácil de usar, con funciones de búsqueda, copia, papelera, compresión/descompresión, propiedad de archivos y otras funciones útiles.</translation>
     </message>
     <message>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>

@@ -143,7 +143,7 @@
 <context>
     <name>DFMAddressBar</name>
     <message>
-        <location filename="../views/dfmaddressbar.cpp" line="359"/>
+        <location filename="../views/dfmaddressbar.cpp" line="368"/>
         <source>Search or enter address</source>
         <translation>Претражи или унеси адресу</translation>
     </message>
@@ -270,6 +270,84 @@
         <location filename="../views/dfmtagwidget.cpp" line="124"/>
         <source>Tag</source>
         <translation>Ознака</translation>
+    </message>
+</context>
+<context>
+    <name>DFMTaskWidget</name>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="178"/>
+        <source>Keep both</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="179"/>
+        <source>Skip</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="180"/>
+        <source>Replace</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="198"/>
+        <source>Do not ask again</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="390"/>
+        <source>Retry</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="403"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="413"/>
+        <source>Time modified: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="406"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="417"/>
+        <source>Contains: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="409"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="420"/>
+        <source>Size: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Time modified:%1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="405"/>
+        <source>Original folder</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Contains:%1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="408"/>
+        <source>Original file</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Size:%1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="416"/>
+        <source>Target folder</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="419"/>
+        <source>Target file</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -433,12 +511,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="989"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="994"/>
         <source>Trash</source>
         <translation>Смеће</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="997"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1002"/>
         <source>Empty</source>
         <translation>Испразни</translation>
     </message>
@@ -447,7 +525,7 @@
     <name>DFileSystemModel</name>
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1380"/>
-        <location filename="../models/trashfileinfo.cpp" line="331"/>
+        <location filename="../models/trashfileinfo.cpp" line="332"/>
         <source>Name</source>
         <translation>Име</translation>
     </message>
@@ -488,12 +566,12 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2173"/>
+        <location filename="../views/dfileview.cpp" line="2177"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation>Одраз диска је оштећен, тренутно се не може монтирати. Прво обришите диск.</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2778"/>
+        <location filename="../views/dfileview.cpp" line="2782"/>
         <source>(Reverse)</source>
         <translation>(Поништи)</translation>
     </message>
@@ -554,17 +632,17 @@
         <translation>%1 фасцикла изабрана</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="169"/>
+        <location filename="../views/dstatusbar.cpp" line="163"/>
         <source>Filter</source>
         <translation>Филтер</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="179"/>
+        <location filename="../views/dstatusbar.cpp" line="173"/>
         <source>Save as:</source>
         <translation>Сачувај као:</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="500"/>
+        <location filename="../views/dstatusbar.cpp" line="494"/>
         <source>Loading...</source>
         <translation>Учитавање...</translation>
     </message>
@@ -572,9 +650,106 @@
 <context>
     <name>DTaskDialog</name>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="83"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="79"/>
         <source>This action is not supported</source>
         <translation>Ова радња није подржана</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="519"/>
+        <source>Erasing disc %1, please wait...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="520"/>
+        <source>Burning disc %1, please wait...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="525"/>
+        <source>Writing data...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="526"/>
+        <source>Verifying data...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="576"/>
+        <source>Copying %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="577"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="581"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="584"/>
+        <source>to %2</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="600"/>
+        <source>%1 already exists in target folder</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="601"/>
+        <source>Original path %1 Target path %2</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Copy to %2</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="580"/>
+        <source>Moving %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Move to %2</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="583"/>
+        <source>Restoring %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Restore to %2</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="586"/>
+        <source>Deleting %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="589"/>
+        <source>Trashing %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="597"/>
+        <source>Calculating space, please wait</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File named %1 already exists in target folder</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Original path %1 target path %2</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="606"/>
+        <source>Merge</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="609"/>
+        <source>Replace</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -611,308 +786,308 @@
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="359"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="964"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="979"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="358"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="963"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="978"/>
         <source>Operation failed!</source>
         <translation>Операција неуспешна!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="360"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="359"/>
         <source>Target folder is inside the source folder!</source>
         <translation>Одредишна фасцикла је унутар изворне фасцикле!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="362"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="557"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="886"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="899"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="908"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="926"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="971"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="982"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1011"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1331"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="361"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="556"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="885"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="898"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="907"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="925"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="970"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="981"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1010"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1330"/>
         <source>OK</source>
         <translation>У реду</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="385"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="384"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>Да ли желите да покренете %1 или да прикажете садржај?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="386"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="385"/>
         <source>It is an executable text file.</source>
         <translation>Ово је извршна текстуална датотека.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="389"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="413"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="429"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="459"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="485"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="574"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="632"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="778"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="807"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1049"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1129"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="388"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="412"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="428"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="458"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="484"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="573"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="631"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="777"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="806"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1048"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1128"/>
         <source>Cancel</source>
         <translation>Откажи</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="389"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="415"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="430"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="388"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="414"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="429"/>
         <source>Run</source>
         <translation>Покрени</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="389"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="414"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="388"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="413"/>
         <source>Run in terminal</source>
         <translation>Покрени у терминалу</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="389"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="388"/>
         <source>Display</source>
         <translation>Прикажи</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="412"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="411"/>
         <source>It is an executable file.</source>
         <translation>Ово је извршна датотека.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="428"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="427"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>Ова датотека није извршна. Желите ли да додате дозволу за извршење и покренете?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="442"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="441"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>&quot;%1&quot; већ постоји, молимо користите друго име.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="444"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="546"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="807"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1151"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1272"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="443"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="545"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="806"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1150"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1271"/>
         <source>Confirm</source>
         <translation>Потврди</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="454"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="453"/>
         <source>Are you sure you want to erase all data on the disc?</source>
         <translation>Заиста желите да обришете све податке са диска?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="459"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="458"/>
         <source>Erase</source>
         <translation>Обриши</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="481"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="480"/>
         <source>How do you want to use this disc?</source>
         <translation>Како желите да користите диск?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="485"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="484"/>
         <source>Burn image</source>
         <translation>Нарежи одраз</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="485"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="484"/>
         <source>Burn files</source>
         <translation>Нарежи датотеке</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="512"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="511"/>
         <source>Disc erase failed</source>
         <translation>Неуспешно брисање диска</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="516"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="515"/>
         <source>Burn process failed</source>
         <translation>Неуспешан процес нарезивања</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="519"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="518"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="535"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="545"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="534"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="544"/>
         <source>Show details</source>
         <translation>Прикажи детаље</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="539"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="538"/>
         <source>Hide details</source>
         <translation>Сакриј детаље</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="540"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="539"/>
         <source>Error</source>
         <translation>Грешка</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="567"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="566"/>
         <source>Permanently delete %1?</source>
         <translation>Трајно обриши %1?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="568"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="567"/>
         <source>Permanently delete %1 items?</source>
         <translation>Трајно обриши %1 ставки/е?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="574"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="573"/>
         <source>Delete</source>
         <translation>Обриши</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="585"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="584"/>
         <source>Empty</source>
         <translation>Испразни</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="629"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="628"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>Жао нам је, не можемо да пронађемо путању забележеног директоријума, уколнити забелешку?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="632"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="631"/>
         <source>Remove</source>
         <translation>Уклони</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="776"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="775"/>
         <source>Name: </source>
         <translation>Име:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="778"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="777"/>
         <source>Force unmount</source>
         <translation>Принудно демонтирај</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="801"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="800"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>%1 на шта ова пречица показује је промењено или померено</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="805"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="804"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>Да ли желите да обришете ову пречицу?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="897"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="896"/>
         <source>Failed, file size must be less than 4GB.</source>
         <translation>Неуспех, величина датотека мора бити мања од 4GB</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="906"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="905"/>
         <source>Fail to create symlink, cause:</source>
         <translation>Неуспешно прављење симболичке везе, узрок:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="924"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="923"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>Изабране датотеке садрже системску датотеку или директоријум и зато се не могу обрисати</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="980"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1002"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="979"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1001"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>Немате дозволу за рад са датотеком/фасциклом!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1022"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1021"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>Нажалост немате дозволу за рад са следећим %1 датотекама/фасциклама!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1112"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1111"/>
         <source>2. Uncheck &quot;Turn on fast startup&quot; and &quot;Hibernate&quot; in shutdown settings and reboot</source>
         <translation>2. Онемогући &quot;Укључи брзо покретање&quot; и &quot;Хибернацију&quot; у поставкама искључивања и поново покрени</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1113"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1112"/>
         <source>3. Reboot and enter %1</source>
         <translation>3. Поново покрени и уђи у %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1329"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1328"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>Дељена фасикла не може имати исти назив као тренуто корисничко име</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1050"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1049"/>
         <source>View</source>
         <translation>Приказ</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="411"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="410"/>
         <source>Do you want to run %1?</source>
         <translation>Желите да покренете %1?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="565"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="564"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>Заиста желите да испразните %1 ставку?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="566"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="565"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>Заиста желите да испразните %1 ставки/е?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="468"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="616"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="467"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="615"/>
         <source>This action cannot be undone</source>
         <translation>Ова радња је неповратна</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="775"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="774"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Диск је у употреби, тренутно се не може демонтирати</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="885"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="884"/>
         <source>Unable to copy. Not enough free space on the target disk.</source>
         <translation>Немогуће копирати. Недовољно простора на одредишном диску.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="966"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="965"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>Неуспешно враћање %1 датотеке, одредишна фасцикла је само за читање</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="968"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="967"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>Неуспешно враћање %1 датотеке/а, одредишна фасцикла је само за читање</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1097"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1096"/>
         <source>Mount partition%1 to be read only</source>
         <translation>Монтирај партицију%1 да буде само за читање</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1101"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1100"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
         <translation>Дискови у Windows-у неће моћи нормално да читају и уписују ако одаберете &quot;Укључи брзо покретање (препоручено)&quot; у поставкама искључивања</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1105"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1104"/>
         <source>Please restore by the following steps to normally access Windows disk</source>
         <translation>Молимо обновите пратећи следеће кораке да нормално приступите Windows диску</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1111"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1110"/>
         <source>1. Reboot to enter Windows</source>
         <translation>1. Поново покрени да уђеш у Windows</translation>
     </message>
@@ -921,7 +1096,7 @@
         <translation type="vanished">3. Поново покрени и уђи у Дипин</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1130"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1129"/>
         <source>Reboot</source>
         <translation>Поново покрени</translation>
     </message>
@@ -989,70 +1164,70 @@
         <translation>Копирање</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="707"/>
-        <location filename="../../fileoperations/filejob.cpp" line="766"/>
+        <location filename="../../fileoperations/filejob.cpp" line="705"/>
+        <location filename="../../fileoperations/filejob.cpp" line="768"/>
         <source>Data verification successful.</source>
         <translation>Успешна провера података.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="707"/>
-        <location filename="../../fileoperations/filejob.cpp" line="766"/>
+        <location filename="../../fileoperations/filejob.cpp" line="705"/>
+        <location filename="../../fileoperations/filejob.cpp" line="768"/>
         <source>Data verification failed.</source>
         <translation>Неуспешна провера података.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="709"/>
-        <location filename="../../fileoperations/filejob.cpp" line="768"/>
+        <location filename="../../fileoperations/filejob.cpp" line="707"/>
+        <location filename="../../fileoperations/filejob.cpp" line="770"/>
         <source>Burn process completed</source>
         <translation>Процес нарезивања завршен</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="882"/>
+        <location filename="../../fileoperations/filejob.cpp" line="884"/>
         <source>%1 s</source>
         <translation>%1 сек</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="886"/>
+        <location filename="../../fileoperations/filejob.cpp" line="888"/>
         <source>%1 m %2 s</source>
         <translation>%1 мин %2 сек</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="892"/>
+        <location filename="../../fileoperations/filejob.cpp" line="894"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 час %2 мин %3 сек</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="901"/>
+        <location filename="../../fileoperations/filejob.cpp" line="903"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 дан %2 час %3 мин %4 сек</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2647"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2651"/>
         <source>%1 is a duplicate file.</source>
         <translation>%1 је дупликат.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2650"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2654"/>
         <source>Insufficient disc space.</source>
         <translation>Недовољно простора на диску.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2653"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2657"/>
         <source>Lost connection to drive.</source>
         <translation>Прекинута веза са уређајем.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2656"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2660"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
         <translation>ЦД/ДВД уређај није спреман. Покушајте са другим диском.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2659"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2663"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
         <translation>ЦД/ДВД уређеј је заузет. Изађите из програма за уређај и прикључите уређај поново.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2666"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2670"/>
         <source>Unknown error</source>
         <translation>Непозната грешка</translation>
     </message>
@@ -1656,148 +1831,116 @@
 <context>
     <name>MoveCopyTaskWidget</name>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="390"/>
         <source>Skip</source>
-        <translation>Прескочи</translation>
+        <translation type="vanished">Прескочи</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="389"/>
         <source>Keep both</source>
-        <translation>Задржи оба</translation>
+        <translation type="vanished">Задржи оба</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="391"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="543"/>
         <source>Replace</source>
-        <translation>Замени</translation>
+        <translation type="vanished">Замени</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="416"/>
         <source>Do not ask again</source>
-        <translation>Не питај поново</translation>
+        <translation type="vanished">Не питај поново</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="541"/>
         <source>merge</source>
-        <translation>Спој</translation>
+        <translation type="vanished">Спој</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="511"/>
         <source>Copying %1</source>
-        <translation>Копирање %1</translation>
+        <translation type="vanished">Копирање %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="451"/>
         <source>Erasing disc %1, please wait...</source>
-        <translation>Брисање диска %1, молимо сачекајте...</translation>
+        <translation type="vanished">Брисање диска %1, молимо сачекајте...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="452"/>
         <source>Burning disc %1, please wait...</source>
-        <translation>Нарезивање диска %1, молимо сачекајте...</translation>
+        <translation type="vanished">Нарезивање диска %1, молимо сачекајте...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="457"/>
         <source>Writing data...</source>
-        <translation>Уписивање података...</translation>
+        <translation type="vanished">Уписивање података...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="458"/>
         <source>Verifying data...</source>
-        <translation>Провера података...</translation>
+        <translation type="vanished">Провера података...</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="512"/>
         <source>Copy to %2</source>
-        <translation>Копира се у %2</translation>
+        <translation type="vanished">Копира се у %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="515"/>
         <source>Moving %1</source>
-        <translation>Премештање %1</translation>
+        <translation type="vanished">Премештање %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="516"/>
         <source>Move to %2</source>
-        <translation>Премешта се у %2</translation>
+        <translation type="vanished">Премешта се у %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="518"/>
         <source>Restoring %1</source>
-        <translation>Враћање %1</translation>
+        <translation type="vanished">Враћање %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="519"/>
         <source>Restore to %2</source>
-        <translation>Враћа се у %2</translation>
+        <translation type="vanished">Враћа се у %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="521"/>
         <source>Deleting %1</source>
-        <translation>Брисање %1</translation>
+        <translation type="vanished">Брисање %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="524"/>
         <source>Trashing %1</source>
-        <translation>Слање у смеће %1</translation>
+        <translation type="vanished">Слање у смеће %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="532"/>
         <source>Calculating space, please wait</source>
-        <translation>Израчунавање простора. молимо сачекајте</translation>
+        <translation type="vanished">Израчунавање простора. молимо сачекајте</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="535"/>
         <source>File named %1 already exists in target folder</source>
-        <translation>Датотека под називом %1 већ постоји у фасцикли</translation>
+        <translation type="vanished">Датотека под називом %1 већ постоји у фасцикли</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="536"/>
         <source>Original path %1 target path %2</source>
-        <translation>Првобитна путања %1 одредишна путања %2</translation>
+        <translation type="vanished">Првобитна путања %1 одредишна путања %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="551"/>
         <source>Retry</source>
-        <translation>Понови</translation>
+        <translation type="vanished">Понови</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="643"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="655"/>
         <source>Time modified:%1</source>
-        <translation>Време измене:%1</translation>
+        <translation type="vanished">Време измене:%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="645"/>
         <source>Original folder</source>
-        <translation>Првобитна фасцикла</translation>
+        <translation type="vanished">Првобитна фасцикла</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="648"/>
         <source>Original file</source>
-        <translation>Првобитна датотека</translation>
+        <translation type="vanished">Првобитна датотека</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="658"/>
         <source>Target folder</source>
-        <translation>Одредишна фасцикла</translation>
+        <translation type="vanished">Одредишна фасцикла</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="661"/>
         <source>Target file</source>
-        <translation>Одредишна датотека</translation>
+        <translation type="vanished">Одредишна датотека</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="646"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="659"/>
         <source>Contains:%1</source>
-        <translation>Садржи:%1</translation>
+        <translation type="vanished">Садржи:%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="649"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="662"/>
         <source>Size:%1</source>
-        <translation>Величина:%1</translation>
+        <translation type="vanished">Величина:%1</translation>
     </message>
 </context>
 <context>
@@ -1910,7 +2053,7 @@
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="62"/>
-        <location filename="../models/trashfileinfo.cpp" line="103"/>
+        <location filename="../models/trashfileinfo.cpp" line="104"/>
         <source>Trash</source>
         <translation>Смеће</translation>
     </message>
@@ -2085,30 +2228,30 @@
         <translation>Група</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="80"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="82"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="475"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="478"/>
         <source>Open</source>
         <translation>Отвори</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="196"/>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="216"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="198"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="218"/>
         <source>Size: %1</source>
         <translation>Величина: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="197"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="199"/>
         <source>Type: %1</source>
         <translation>Тип: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="209"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="211"/>
         <source>Size: 0</source>
         <translation>Величина: 0</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="215"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="217"/>
         <source>Items: %1</source>
         <translation>Ставки: %1</translation>
     </message>
@@ -2241,7 +2384,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="105"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="506"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="998"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1003"/>
         <source>Empty Trash</source>
         <translation>Испразни смеће</translation>
     </message>
@@ -2554,8 +2697,8 @@
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="535"/>
-        <location filename="../models/trashfileinfo.cpp" line="335"/>
-        <location filename="../models/trashfileinfo.cpp" line="343"/>
+        <location filename="../models/trashfileinfo.cpp" line="336"/>
+        <location filename="../models/trashfileinfo.cpp" line="344"/>
         <source>Time deleted</source>
         <translation>Време брисања</translation>
     </message>
@@ -2565,21 +2708,21 @@
         <translation>Учитавање...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="780"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="791"/>
         <source>File has been moved or deleted</source>
         <translation>Датотека је премештена или обрисана</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="782"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="790"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="796"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="793"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="801"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="807"/>
         <source>You do not have permission to access this folder</source>
         <translation>Немате дозволу да приступите овој фасцикли</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="800"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="811"/>
         <location filename="../models/recentfileinfo.cpp" line="214"/>
-        <location filename="../models/trashfileinfo.cpp" line="376"/>
+        <location filename="../models/trashfileinfo.cpp" line="377"/>
         <location filename="../models/vaultfileinfo.cpp" line="119"/>
         <source>Folder is empty</source>
         <translation>Фасцикла је празна</translation>
@@ -2601,7 +2744,7 @@
         <translation>Нема резултата</translation>
     </message>
     <message>
-        <location filename="../models/trashfileinfo.cpp" line="339"/>
+        <location filename="../models/trashfileinfo.cpp" line="340"/>
         <source>Source Path</source>
         <comment>TrashFileInfo</comment>
         <translation>Изворна путања</translation>
@@ -2628,12 +2771,12 @@
         <translation>Текст</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="987"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="198"/>
         <source>1 task in progress</source>
         <translation>1 задатак у току</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="989"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="200"/>
         <source>%1 tasks in progress</source>
         <translation>%1 задатака у току</translation>
     </message>
@@ -2774,7 +2917,7 @@
         <translation>Откажи</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1295"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1294"/>
         <source>Rename %1 Files</source>
         <translation>Преименуј %1 датотеке/а</translation>
     </message>
@@ -2883,12 +3026,12 @@
         <translation>Слободан простор %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="1042"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="250"/>
         <source>Files are being processed</source>
         <translation>Датотеке се обрађују</translation>
     </message>
     <message>
-        <location filename="../shutil/fileutils.cpp" line="455"/>
+        <location filename="../shutil/fileutils.cpp" line="439"/>
         <source>%1/%2</source>
         <translation>%1/%2</translation>
     </message>
@@ -3349,12 +3492,12 @@
 <context>
     <name>UserShareManager</name>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="420"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="400"/>
         <source>Kindly Reminder</source>
         <translation>Љубазно подсећамо</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="420"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="400"/>
         <source>Please firstly install samba to continue</source>
         <translation>Прво инсталирајте самбу за наставак</translation>
     </message>
