@@ -574,14 +574,14 @@ void DTaskDialog::updateData(DFMTaskWidget *wid, const QMap<QString, QString> &d
         if (!file.isEmpty()) {
             if (data.value("type") == "copy") {
                 msg1 = tr("Copying %1").arg(file);
-                msg2 = tr("Copy to %2").arg(destination);
+                msg2 = tr("to %2").arg(destination);
 
             } else if (data.value("type") == "move") {
                 msg1 = tr("Moving %1").arg(file);
-                msg2 = tr("Move to %2").arg(destination);
+                msg2 = tr("to %2").arg(destination);
             } else if (data.value("type") == "restore") {
                 msg1 = tr("Restoring %1").arg(file);
-                msg2 = tr("Restore to %2").arg(destination);
+                msg2 = tr("to %2").arg(destination);
             } else if (data.value("type") == "delete") {
                 msg1 = tr("Deleting %1").arg(file);
                 msg2 = tr("");
@@ -597,8 +597,8 @@ void DTaskDialog::updateData(DFMTaskWidget *wid, const QMap<QString, QString> &d
             msg2 = tr("Calculating space, please wait");
             wid->setProgressValue(-1);// stop
         } else if (status == "conflict") {
-            msg1 = QString(tr("File named %1 already exists in target folder")).arg(file);
-            msg2 = QString(tr("Original path %1 target path %2")).arg(QFileInfo(srcPath).absolutePath(), QFileInfo(targetPath).absolutePath());
+            msg1 = QString(tr("%1 already exists in target folder")).arg(file);
+            msg2 = QString(tr("Original path %1 Target path %2")).arg(QFileInfo(srcPath).absolutePath(), QFileInfo(targetPath).absolutePath());
             wid->setConflictMsg(DUrl::fromLocalFile(srcPath), DUrl::fromLocalFile(targetPath));
 
             if (QFileInfo(srcPath).isDir() &&
