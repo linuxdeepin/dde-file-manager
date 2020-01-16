@@ -11,11 +11,17 @@
 <context>
     <name>DiskControlWidget</name>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="202"/>
-        <location filename="../diskcontrolwidget.cpp" line="267"/>
-        <location filename="../diskcontrolwidget.cpp" line="428"/>
+        <location filename="../diskcontrolwidget.cpp" line="215"/>
+        <location filename="../diskcontrolwidget.cpp" line="223"/>
+        <location filename="../diskcontrolwidget.cpp" line="294"/>
+        <location filename="../diskcontrolwidget.cpp" line="455"/>
         <source>Disk is busy, cannot eject now</source>
         <translation>Диск зайнятий, зараз його неможливо вийняти</translation>
+    </message>
+    <message>
+        <location filename="../diskcontrolwidget.cpp" line="469"/>
+        <source>dde-file-manager</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -39,7 +45,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="363"/>
+        <location filename="../diskcontrolwidget.cpp" line="390"/>
         <source>Device has been removed</source>
         <translation>Пристрій вилучено</translation>
     </message>

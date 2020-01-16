@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -279,77 +277,77 @@
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="178"/>
         <source>Keep both</source>
-        <translation type="unfinished">Keep both</translation>
+        <translation>Keep both</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="179"/>
         <source>Skip</source>
-        <translation type="unfinished">Skip</translation>
+        <translation>Skip</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="180"/>
         <source>Replace</source>
-        <translation type="unfinished">Replace</translation>
+        <translation>Replace</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="198"/>
         <source>Do not ask again</source>
-        <translation type="unfinished">Do not ask again</translation>
+        <translation>Do not ask again</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="390"/>
         <source>Retry</source>
-        <translation type="unfinished">Retry</translation>
+        <translation>Retry</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="403"/>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="413"/>
         <source>Time modified: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Time modified: %1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="406"/>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="417"/>
         <source>Contains: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Contains: %1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="409"/>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="420"/>
         <source>Size: %1</source>
-        <translation type="unfinished">Size: %1</translation>
+        <translation>Size: %1</translation>
     </message>
     <message>
         <source>Time modified:%1</source>
-        <translation type="obsolete">Time modified:%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="405"/>
         <source>Original folder</source>
-        <translation type="unfinished">Original folder</translation>
+        <translation>Original folder</translation>
     </message>
     <message>
         <source>Contains:%1</source>
-        <translation type="obsolete">Contains:%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="408"/>
         <source>Original file</source>
-        <translation type="unfinished">Original file</translation>
+        <translation>Original file</translation>
     </message>
     <message>
         <source>Size:%1</source>
-        <translation type="obsolete">Size:%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="416"/>
         <source>Target folder</source>
-        <translation type="unfinished">Target folder</translation>
+        <translation>Target folder</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="419"/>
         <source>Target file</source>
-        <translation type="unfinished">Target file</translation>
+        <translation>Target file</translation>
     </message>
 </context>
 <context>
@@ -659,99 +657,99 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="519"/>
         <source>Erasing disc %1, please wait...</source>
-        <translation type="unfinished">Erasing disc %1, please wait...</translation>
+        <translation>Erasing disc %1, please wait...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="520"/>
         <source>Burning disc %1, please wait...</source>
-        <translation type="unfinished">Burning disc %1, please wait...</translation>
+        <translation>Burning disc %1, please wait...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="525"/>
         <source>Writing data...</source>
-        <translation type="unfinished">Writing data...</translation>
+        <translation>Writing data...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="526"/>
         <source>Verifying data...</source>
-        <translation type="unfinished">Verifying data...</translation>
+        <translation>Verifying data...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="576"/>
         <source>Copying %1</source>
-        <translation type="unfinished">Copying %1</translation>
+        <translation>Copying %1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="577"/>
         <location filename="../../dialogs/dtaskdialog.cpp" line="581"/>
         <location filename="../../dialogs/dtaskdialog.cpp" line="584"/>
         <source>to %2</source>
-        <translation type="unfinished"></translation>
+        <translation>to %2</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="600"/>
         <source>%1 already exists in target folder</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 already exists in target folder</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="601"/>
         <source>Original path %1 Target path %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Original path %1 Target path %2</translation>
     </message>
     <message>
         <source>Copy to %2</source>
-        <translation type="obsolete">Copy to %2</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="580"/>
         <source>Moving %1</source>
-        <translation type="unfinished">Moving %1</translation>
+        <translation>Moving %1</translation>
     </message>
     <message>
         <source>Move to %2</source>
-        <translation type="obsolete">Move to %2</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="583"/>
         <source>Restoring %1</source>
-        <translation type="unfinished">Restoring %1</translation>
+        <translation>Restoring %1</translation>
     </message>
     <message>
         <source>Restore to %2</source>
-        <translation type="obsolete">Restore to %2</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="586"/>
         <source>Deleting %1</source>
-        <translation type="unfinished">Deleting %1</translation>
+        <translation>Deleting %1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="589"/>
         <source>Trashing %1</source>
-        <translation type="unfinished">Trashing %1</translation>
+        <translation>Trashing %1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="597"/>
         <source>Calculating space, please wait</source>
-        <translation type="unfinished">Calculating space, please wait</translation>
+        <translation>Calculating space, please wait</translation>
     </message>
     <message>
         <source>File named %1 already exists in target folder</source>
-        <translation type="obsolete">File named %1 already exists in target folder</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Original path %1 target path %2</source>
-        <translation type="obsolete">Original path %1 target path %2</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="606"/>
         <source>Merge</source>
-        <translation type="unfinished"></translation>
+        <translation>Merge</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="609"/>
         <source>Replace</source>
-        <translation type="unfinished">Replace</translation>
+        <translation>Replace</translation>
     </message>
 </context>
 <context>

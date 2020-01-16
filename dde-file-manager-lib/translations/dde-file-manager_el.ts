@@ -143,7 +143,7 @@
 <context>
     <name>DFMAddressBar</name>
     <message>
-        <location filename="../views/dfmaddressbar.cpp" line="359"/>
+        <location filename="../views/dfmaddressbar.cpp" line="368"/>
         <source>Search or enter address</source>
         <translation>Αναζήτηση ή εισαγωγή διεύθυνσης</translation>
     </message>
@@ -269,6 +269,84 @@
     <message>
         <location filename="../views/dfmtagwidget.cpp" line="124"/>
         <source>Tag</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>DFMTaskWidget</name>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="178"/>
+        <source>Keep both</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="179"/>
+        <source>Skip</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="180"/>
+        <source>Replace</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="198"/>
+        <source>Do not ask again</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="390"/>
+        <source>Retry</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="403"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="413"/>
+        <source>Time modified: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="406"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="417"/>
+        <source>Contains: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="409"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="420"/>
+        <source>Size: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Time modified:%1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="405"/>
+        <source>Original folder</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Contains:%1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="408"/>
+        <source>Original file</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Size:%1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="416"/>
+        <source>Target folder</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="419"/>
+        <source>Target file</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -433,12 +511,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="989"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="994"/>
         <source>Trash</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="997"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1002"/>
         <source>Empty</source>
         <translation type="unfinished"/>
     </message>
@@ -447,7 +525,7 @@
     <name>DFileSystemModel</name>
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1380"/>
-        <location filename="../models/trashfileinfo.cpp" line="331"/>
+        <location filename="../models/trashfileinfo.cpp" line="332"/>
         <source>Name</source>
         <translation>Όνομα</translation>
     </message>
@@ -488,12 +566,12 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2173"/>
+        <location filename="../views/dfileview.cpp" line="2177"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2778"/>
+        <location filename="../views/dfileview.cpp" line="2782"/>
         <source>(Reverse)</source>
         <translation>(Αντίστροφα)</translation>
     </message>
@@ -554,17 +632,17 @@
         <translation>%1 επιλεγμένος φάκελος</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="169"/>
+        <location filename="../views/dstatusbar.cpp" line="163"/>
         <source>Filter</source>
         <translation>Φίλτρο</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="179"/>
+        <location filename="../views/dstatusbar.cpp" line="173"/>
         <source>Save as:</source>
         <translation>Αποθήκευση ως:</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="500"/>
+        <location filename="../views/dstatusbar.cpp" line="494"/>
         <source>Loading...</source>
         <translation>Φόρτωση...</translation>
     </message>
@@ -572,9 +650,106 @@
 <context>
     <name>DTaskDialog</name>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="83"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="79"/>
         <source>This action is not supported</source>
         <translation>Αυτή η ενέργεια δεν υποστηρίζεται</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="519"/>
+        <source>Erasing disc %1, please wait...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="520"/>
+        <source>Burning disc %1, please wait...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="525"/>
+        <source>Writing data...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="526"/>
+        <source>Verifying data...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="576"/>
+        <source>Copying %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="577"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="581"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="584"/>
+        <source>to %2</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="600"/>
+        <source>%1 already exists in target folder</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="601"/>
+        <source>Original path %1 Target path %2</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Copy to %2</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="580"/>
+        <source>Moving %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Move to %2</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="583"/>
+        <source>Restoring %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Restore to %2</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="586"/>
+        <source>Deleting %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="589"/>
+        <source>Trashing %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="597"/>
+        <source>Calculating space, please wait</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File named %1 already exists in target folder</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Original path %1 target path %2</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="606"/>
+        <source>Merge</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="609"/>
+        <source>Replace</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -611,308 +786,308 @@
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="359"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="964"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="979"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="358"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="963"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="978"/>
         <source>Operation failed!</source>
         <translation>Η λειτουργία απέτυχε!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="360"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="359"/>
         <source>Target folder is inside the source folder!</source>
         <translation>Ο φάκελος προορισμού είναι μέσα στον αρχικό φάκελο</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="362"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="557"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="886"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="899"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="908"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="926"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="971"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="982"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1011"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1331"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="361"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="556"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="885"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="898"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="907"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="925"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="970"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="981"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1010"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1330"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="385"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="384"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>Θέλετε να εκτελέσετε το %1 ή να εμφανιστούν τα περιεχόμενά του;</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="386"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="385"/>
         <source>It is an executable text file.</source>
         <translation>Είναι ένα εκτελέσιμο αρχείο κειμένου,</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="389"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="413"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="429"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="459"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="485"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="574"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="632"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="778"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="807"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1049"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1129"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="388"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="412"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="428"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="458"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="484"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="573"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="631"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="777"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="806"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1048"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1128"/>
         <source>Cancel</source>
         <translation>Άκυρο</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="389"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="415"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="430"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="388"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="414"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="429"/>
         <source>Run</source>
         <translation>Εκτέλεση</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="389"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="414"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="388"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="413"/>
         <source>Run in terminal</source>
         <translation>Εκτέλεση στο terminal</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="389"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="388"/>
         <source>Display</source>
         <translation>Εμφάνιση</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="412"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="411"/>
         <source>It is an executable file.</source>
         <translation>Είναι ένα εκτελέσιμο αρχείο.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="428"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="427"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>Αυτό το αρχείο δεν είναι εκτελέσιμο, θέλετε να προσθέσετε άδεια εκτέλεσης και να το τρέξετε;</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="442"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="441"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>Το &quot;%1&quot; υπάρχει ήδη, παρακαλούμε χρησιμοποιήστε άλλο όνομα.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="444"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="546"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="807"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1151"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1272"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="443"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="545"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="806"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1150"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1271"/>
         <source>Confirm</source>
         <translation>Επαλήθευση</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="454"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="453"/>
         <source>Are you sure you want to erase all data on the disc?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="459"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="458"/>
         <source>Erase</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="481"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="480"/>
         <source>How do you want to use this disc?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="485"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="484"/>
         <source>Burn image</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="485"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="484"/>
         <source>Burn files</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="512"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="511"/>
         <source>Disc erase failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="516"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="515"/>
         <source>Burn process failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="519"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="518"/>
         <source>%1: %2</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="535"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="545"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="534"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="544"/>
         <source>Show details</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="539"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="538"/>
         <source>Hide details</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="540"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="539"/>
         <source>Error</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="567"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="566"/>
         <source>Permanently delete %1?</source>
         <translation>Οριστική διαγραφή του %1;</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="568"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="567"/>
         <source>Permanently delete %1 items?</source>
         <translation>Οριστική διαγραφή %1 αντικειμένων;</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="574"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="573"/>
         <source>Delete</source>
         <translation>Διαγραφή</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="585"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="584"/>
         <source>Empty</source>
         <translation>Άδειασμα</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="629"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="628"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>Λυπούμαστε, δεν μπορεί να εντοπιστεί ο φάκελος σελιδοδεικτών σας, να αφαιρεθεί;</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="632"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="631"/>
         <source>Remove</source>
         <translation>Αφαίρεση</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="776"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="775"/>
         <source>Name: </source>
         <translation>Όνομα:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="778"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="777"/>
         <source>Force unmount</source>
         <translation>Δυναμική αποσύνδεση</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="801"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="800"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>%1 το ότι αυτή η συντόμευση αναφέρεται στο ότι έχει αλλάξει ή μετακινηθεί </translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="805"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="804"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>Θέλετε να διαγραφεί αυτή η συντόμευση;</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="897"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="896"/>
         <source>Failed, file size must be less than 4GB.</source>
         <translation>Αποτυχία, το αρχείο πρεπει να ειναι μικροτερο απο 4GB</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="906"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="905"/>
         <source>Fail to create symlink, cause:</source>
         <translation>Αποτυχία δημιουργίας συμβολικού συνδέσμου, λόγω:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="924"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="923"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>Τα επιλεγμένα αρχεία, περιέχουν, αρχείο/φάκελο συστήματος και δεν μπορεί να διαγραφεί</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="980"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1002"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="979"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1001"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>Δεν έχετε την άδεια να χειριστείτε αρχείο/φάκελο </translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1022"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1021"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>Συγγνώμη, δεν έχετε την άδεια να χειριστείτε το ακόλουθο %1 αρχείο/φάκελο(ους)!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1112"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1111"/>
         <source>2. Uncheck &quot;Turn on fast startup&quot; and &quot;Hibernate&quot; in shutdown settings and reboot</source>
         <translation>2. Αποεπιλέξετε το &quot;Ενεργοποίηση γρήγορης εκκίνησης&quot; και &quot;Αδράνεια&quot; στις ρυθμίσεις απενεργοποίησης και επανεκκίνησης</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1113"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1112"/>
         <source>3. Reboot and enter %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1329"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1328"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>Ο κοινόχρηστος φάκελλος δεν μπορεί να ονομάζεται με το τρέχον όνομα χρήστη</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1050"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1049"/>
         <source>View</source>
         <translation>Εμφάνιση</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="411"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="410"/>
         <source>Do you want to run %1?</source>
         <translation>Θέλετε να εκτελέσετε το %1;</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="565"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="564"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>Είστε βέβαιος, ότι θέλετε να αδειάσετε %1 αντικείμενο;</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="566"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="565"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>Είστε βέβαιος, ότι θέλετε να αδειάσετε %1 αντικείμενα;</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="468"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="616"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="467"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="615"/>
         <source>This action cannot be undone</source>
         <translation>Αυτή η ενέργεια δεν μπορεί να αναιρεθεί</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="775"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="774"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Ο δίσκος είναι απασχολημένος, δεν μπορεί να αποσυνδεθεί τώρα</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="885"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="884"/>
         <source>Unable to copy. Not enough free space on the target disk.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="966"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="965"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="968"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="967"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1097"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1096"/>
         <source>Mount partition%1 to be read only</source>
         <translation>Σύνδεση διαμερίσματος %1 ως μόνο για ανάγνωση</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1101"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1100"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
         <translation>Οι δίσκοι σε παράθυρα θα είναι ανίκανα να, διαβάσου και να γράψουν ομαλά εάν επιλεγεί &quot;Ενεργοποίηση γρήγορης εκκίνησης (προτείνεται)&quot; στις ρυθμίσεις απενεργοποίησης</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1105"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1104"/>
         <source>Please restore by the following steps to normally access Windows disk</source>
         <translation>Παρακαλώ επαναφέρετε με τα ακόλουθα βήματα για ομαλή πρόσβαση των δίσκων παραθύρων</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1111"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1110"/>
         <source>1. Reboot to enter Windows</source>
         <translation>1. Επανεκκίνηση για να μπείτε στα Windows</translation>
     </message>
@@ -921,7 +1096,7 @@
         <translation type="vanished">3. Επανεκκίνηση και είσοδος πάλι στο Deepin</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1130"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1129"/>
         <source>Reboot</source>
         <translation>Επανεκκίνηση</translation>
     </message>
@@ -989,70 +1164,70 @@
         <translation>αντιγραφή</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="707"/>
-        <location filename="../../fileoperations/filejob.cpp" line="766"/>
+        <location filename="../../fileoperations/filejob.cpp" line="705"/>
+        <location filename="../../fileoperations/filejob.cpp" line="768"/>
         <source>Data verification successful.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="707"/>
-        <location filename="../../fileoperations/filejob.cpp" line="766"/>
+        <location filename="../../fileoperations/filejob.cpp" line="705"/>
+        <location filename="../../fileoperations/filejob.cpp" line="768"/>
         <source>Data verification failed.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="709"/>
-        <location filename="../../fileoperations/filejob.cpp" line="768"/>
+        <location filename="../../fileoperations/filejob.cpp" line="707"/>
+        <location filename="../../fileoperations/filejob.cpp" line="770"/>
         <source>Burn process completed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="882"/>
+        <location filename="../../fileoperations/filejob.cpp" line="884"/>
         <source>%1 s</source>
         <translation>%1 δ</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="886"/>
+        <location filename="../../fileoperations/filejob.cpp" line="888"/>
         <source>%1 m %2 s</source>
         <translation>%1 λ %2 δ</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="892"/>
+        <location filename="../../fileoperations/filejob.cpp" line="894"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 ω %2 λ %3 δ</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="901"/>
+        <location filename="../../fileoperations/filejob.cpp" line="903"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 η %2 ω %3 λ %4 δ</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2647"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2651"/>
         <source>%1 is a duplicate file.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2650"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2654"/>
         <source>Insufficient disc space.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2653"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2657"/>
         <source>Lost connection to drive.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2656"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2660"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2659"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2663"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="2666"/>
+        <location filename="../../fileoperations/filejob.cpp" line="2670"/>
         <source>Unknown error</source>
         <translation type="unfinished"/>
     </message>
@@ -1656,148 +1831,116 @@
 <context>
     <name>MoveCopyTaskWidget</name>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="390"/>
         <source>Skip</source>
-        <translation>Παράλειψη</translation>
+        <translation type="vanished">Παράλειψη</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="389"/>
         <source>Keep both</source>
-        <translation>Διατήρηση και των δύο</translation>
+        <translation type="vanished">Διατήρηση και των δύο</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="391"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="543"/>
         <source>Replace</source>
-        <translation>Αντικατάσταση</translation>
+        <translation type="vanished">Αντικατάσταση</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="416"/>
         <source>Do not ask again</source>
-        <translation>Να μην ερωτηθείτε ξανά</translation>
+        <translation type="vanished">Να μην ερωτηθείτε ξανά</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="541"/>
         <source>merge</source>
-        <translation>συγχώνευση</translation>
+        <translation type="vanished">συγχώνευση</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="511"/>
         <source>Copying %1</source>
-        <translation>Αντιγραφή %1</translation>
+        <translation type="vanished">Αντιγραφή %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="451"/>
         <source>Erasing disc %1, please wait...</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="452"/>
         <source>Burning disc %1, please wait...</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="457"/>
         <source>Writing data...</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="458"/>
         <source>Verifying data...</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="512"/>
         <source>Copy to %2</source>
-        <translation>Αντιγραφή στο %2</translation>
+        <translation type="vanished">Αντιγραφή στο %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="515"/>
         <source>Moving %1</source>
-        <translation>Μεταφορά %1</translation>
+        <translation type="vanished">Μεταφορά %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="516"/>
         <source>Move to %2</source>
-        <translation>Μεταφορά στο %2</translation>
+        <translation type="vanished">Μεταφορά στο %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="518"/>
         <source>Restoring %1</source>
-        <translation>Ανάκτηση %1</translation>
+        <translation type="vanished">Ανάκτηση %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="519"/>
         <source>Restore to %2</source>
-        <translation>Ανάκτηση στο %2</translation>
+        <translation type="vanished">Ανάκτηση στο %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="521"/>
         <source>Deleting %1</source>
-        <translation>Διαγραφή %1</translation>
+        <translation type="vanished">Διαγραφή %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="524"/>
         <source>Trashing %1</source>
-        <translation>Πέταμα στα σκουπίδια %1</translation>
+        <translation type="vanished">Πέταμα στα σκουπίδια %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="532"/>
         <source>Calculating space, please wait</source>
-        <translation>Υπολογισμός χώρου, παρακαλούμε περιμένετε</translation>
+        <translation type="vanished">Υπολογισμός χώρου, παρακαλούμε περιμένετε</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="535"/>
         <source>File named %1 already exists in target folder</source>
-        <translation>Το αρχείο με όνομα %1 υπάρχει ήδη στο φάκελο προορισμού</translation>
+        <translation type="vanished">Το αρχείο με όνομα %1 υπάρχει ήδη στο φάκελο προορισμού</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="536"/>
         <source>Original path %1 target path %2</source>
-        <translation>Πρωτότυπος φάκελος %1 φάκελος προορισμού %2</translation>
+        <translation type="vanished">Πρωτότυπος φάκελος %1 φάκελος προορισμού %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="551"/>
         <source>Retry</source>
-        <translation>Επανάληψη</translation>
+        <translation type="vanished">Επανάληψη</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="643"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="655"/>
         <source>Time modified:%1</source>
-        <translation>Χρόνος τροποποίησης:%1</translation>
+        <translation type="vanished">Χρόνος τροποποίησης:%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="645"/>
         <source>Original folder</source>
-        <translation>Αρχικός φάκελλος</translation>
+        <translation type="vanished">Αρχικός φάκελλος</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="648"/>
         <source>Original file</source>
-        <translation>Αρχικό αρχείο</translation>
+        <translation type="vanished">Αρχικό αρχείο</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="658"/>
         <source>Target folder</source>
-        <translation>Φάκελλος προορισμού</translation>
+        <translation type="vanished">Φάκελλος προορισμού</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="661"/>
         <source>Target file</source>
-        <translation>Αρχείο προορισμού</translation>
+        <translation type="vanished">Αρχείο προορισμού</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="646"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="659"/>
         <source>Contains:%1</source>
-        <translation>Περιέχει:%1</translation>
+        <translation type="vanished">Περιέχει:%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="649"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="662"/>
         <source>Size:%1</source>
-        <translation>Μέγεθος:%1</translation>
+        <translation type="vanished">Μέγεθος:%1</translation>
     </message>
 </context>
 <context>
@@ -1910,7 +2053,7 @@
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="62"/>
-        <location filename="../models/trashfileinfo.cpp" line="103"/>
+        <location filename="../models/trashfileinfo.cpp" line="104"/>
         <source>Trash</source>
         <translation>Κάδος</translation>
     </message>
@@ -2085,30 +2228,30 @@
         <translation>Ομάδα</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="80"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="82"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="475"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="478"/>
         <source>Open</source>
         <translation>Άνοιγμα</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="196"/>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="216"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="198"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="218"/>
         <source>Size: %1</source>
         <translation>Μέγεθος: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="197"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="199"/>
         <source>Type: %1</source>
         <translation>Τύπος: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="209"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="211"/>
         <source>Size: 0</source>
         <translation>Μέγεθος: 0</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="215"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="217"/>
         <source>Items: %1</source>
         <translation>Αντικείμενα: %1</translation>
     </message>
@@ -2241,7 +2384,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="105"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="506"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="998"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1003"/>
         <source>Empty Trash</source>
         <translation>Άδειασμα κάδου</translation>
     </message>
@@ -2554,8 +2697,8 @@
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="535"/>
-        <location filename="../models/trashfileinfo.cpp" line="335"/>
-        <location filename="../models/trashfileinfo.cpp" line="343"/>
+        <location filename="../models/trashfileinfo.cpp" line="336"/>
+        <location filename="../models/trashfileinfo.cpp" line="344"/>
         <source>Time deleted</source>
         <translation>Ο χρόνος διαγράφηκε</translation>
     </message>
@@ -2565,21 +2708,21 @@
         <translation>Φόρτωση...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="780"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="791"/>
         <source>File has been moved or deleted</source>
         <translation>Το αρχείο έχει μετακινηθεί ή διεγράφη</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="782"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="790"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="796"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="793"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="801"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="807"/>
         <source>You do not have permission to access this folder</source>
         <translation>Δεν έχετε άδεια πρόσβασης σε αυτό το φάκελλο</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="800"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="811"/>
         <location filename="../models/recentfileinfo.cpp" line="214"/>
-        <location filename="../models/trashfileinfo.cpp" line="376"/>
+        <location filename="../models/trashfileinfo.cpp" line="377"/>
         <location filename="../models/vaultfileinfo.cpp" line="119"/>
         <source>Folder is empty</source>
         <translation>Ο φάκελλος είναι άδειος</translation>
@@ -2601,7 +2744,7 @@
         <translation>Κανένα αποτέλεσμα</translation>
     </message>
     <message>
-        <location filename="../models/trashfileinfo.cpp" line="339"/>
+        <location filename="../models/trashfileinfo.cpp" line="340"/>
         <source>Source Path</source>
         <comment>TrashFileInfo</comment>
         <translation>Μονοπάτι πηγής</translation>
@@ -2628,12 +2771,12 @@
         <translation>Κείμενο</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="987"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="198"/>
         <source>1 task in progress</source>
         <translation>1 εργασίας σε εξέλιξη</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="989"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="200"/>
         <source>%1 tasks in progress</source>
         <translation>%1 εργασίες σε εξέλιξη</translation>
     </message>
@@ -2774,7 +2917,7 @@
         <translation>Άκυρο</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1295"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1294"/>
         <source>Rename %1 Files</source>
         <translation>Μετονομασία %1 Αρχεία</translation>
     </message>
@@ -2883,12 +3026,12 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="1042"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="250"/>
         <source>Files are being processed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../shutil/fileutils.cpp" line="455"/>
+        <location filename="../shutil/fileutils.cpp" line="439"/>
         <source>%1/%2</source>
         <translation type="unfinished"/>
     </message>
@@ -3349,12 +3492,12 @@
 <context>
     <name>UserShareManager</name>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="420"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="400"/>
         <source>Kindly Reminder</source>
         <translation>Ευγενική Υπενθύμιση</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="420"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="400"/>
         <source>Please firstly install samba to continue</source>
         <translation>Αρχικά, εγκαταστήστε το samba για να συνεχίσετε</translation>
     </message>

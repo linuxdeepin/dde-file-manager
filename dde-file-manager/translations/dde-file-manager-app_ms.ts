@@ -8,7 +8,7 @@
     <message>
         <location filename="../main.cpp" line="108"/>
         <source>File Manager</source>
-        <translation type="unfinished"/>
+        <translation>Pengurus Fail</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="112"/>

@@ -8,7 +8,7 @@
     <message>
         <location filename="../main.cpp" line="108"/>
         <source>File Manager</source>
-        <translation type="unfinished"/>
+        <translation>Файловый Менеджер</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="112"/>

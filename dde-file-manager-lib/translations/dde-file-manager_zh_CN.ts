@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>AppController</name>
     <message>
@@ -279,77 +277,77 @@
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="178"/>
         <source>Keep both</source>
-        <translation type="unfinished">共存</translation>
+        <translation>共存</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="179"/>
         <source>Skip</source>
-        <translation type="unfinished">跳过</translation>
+        <translation>跳过</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="180"/>
         <source>Replace</source>
-        <translation type="unfinished">替换</translation>
+        <translation>替换</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="198"/>
         <source>Do not ask again</source>
-        <translation type="unfinished">不再询问</translation>
+        <translation>不再询问</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="390"/>
         <source>Retry</source>
-        <translation type="unfinished">重试</translation>
+        <translation>重试</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="403"/>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="413"/>
         <source>Time modified: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>修改时间：%1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="406"/>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="417"/>
         <source>Contains: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>个数：%1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="409"/>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="420"/>
         <source>Size: %1</source>
-        <translation type="unfinished">大小：%1</translation>
+        <translation>大小：%1</translation>
     </message>
     <message>
         <source>Time modified:%1</source>
-        <translation type="obsolete">修改时间:%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="405"/>
         <source>Original folder</source>
-        <translation type="unfinished">原始文件夹</translation>
+        <translation>原始文件夹</translation>
     </message>
     <message>
         <source>Contains:%1</source>
-        <translation type="obsolete">个数：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="408"/>
         <source>Original file</source>
-        <translation type="unfinished">原始文件</translation>
+        <translation>原始文件</translation>
     </message>
     <message>
         <source>Size:%1</source>
-        <translation type="obsolete">大小：%1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="416"/>
         <source>Target folder</source>
-        <translation type="unfinished">目标文件夹</translation>
+        <translation>目标文件夹</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="419"/>
         <source>Target file</source>
-        <translation type="unfinished">目标文件</translation>
+        <translation>目标文件</translation>
     </message>
 </context>
 <context>
@@ -492,7 +490,7 @@
     <message>
         <location filename="../views/dfiledialog.cpp" line="1159"/>
         <source>%1 already exists, do you want to replace it?</source>
-        <translation>“%1”已经存在，您是否要替换？</translation>
+        <translation>“%1”已存在，您是否要替换？</translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="1160"/>
@@ -659,99 +657,99 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="519"/>
         <source>Erasing disc %1, please wait...</source>
-        <translation type="unfinished">正在擦除%1，请稍候...</translation>
+        <translation>正在擦除%1，请稍候...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="520"/>
         <source>Burning disc %1, please wait...</source>
-        <translation type="unfinished">正在刻录到%1，请稍候...</translation>
+        <translation>正在刻录到%1，请稍候...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="525"/>
         <source>Writing data...</source>
-        <translation type="unfinished">正在写入数据...</translation>
+        <translation>正在写入数据...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="526"/>
         <source>Verifying data...</source>
-        <translation type="unfinished">正在校验数据...</translation>
+        <translation>正在校验数据...</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="576"/>
         <source>Copying %1</source>
-        <translation type="unfinished">正在复制%1</translation>
+        <translation>正在复制%1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="577"/>
         <location filename="../../dialogs/dtaskdialog.cpp" line="581"/>
         <location filename="../../dialogs/dtaskdialog.cpp" line="584"/>
         <source>to %2</source>
-        <translation type="unfinished"></translation>
+        <translation>到%2</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="600"/>
         <source>%1 already exists in target folder</source>
-        <translation type="unfinished"></translation>
+        <translation>目标文件夹中已存在名为%1的文件</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="601"/>
         <source>Original path %1 Target path %2</source>
-        <translation type="unfinished"></translation>
+        <translation>原路径%1 目标路径%2</translation>
     </message>
     <message>
         <source>Copy to %2</source>
-        <translation type="obsolete">复制到%2</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="580"/>
         <source>Moving %1</source>
-        <translation type="unfinished">正在移动%1</translation>
+        <translation>正在移动%1</translation>
     </message>
     <message>
         <source>Move to %2</source>
-        <translation type="obsolete">移动到%2</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="583"/>
         <source>Restoring %1</source>
-        <translation type="unfinished">正在恢复%1</translation>
+        <translation>正在恢复%1</translation>
     </message>
     <message>
         <source>Restore to %2</source>
-        <translation type="obsolete">恢复到%2</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="586"/>
         <source>Deleting %1</source>
-        <translation type="unfinished">正在删除%1</translation>
+        <translation>正在删除%1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="589"/>
         <source>Trashing %1</source>
-        <translation type="unfinished">正在移动 %1</translation>
+        <translation>正在移动 %1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="597"/>
         <source>Calculating space, please wait</source>
-        <translation type="unfinished">正在计算大小，请稍候</translation>
+        <translation>正在计算大小，请稍候</translation>
     </message>
     <message>
         <source>File named %1 already exists in target folder</source>
-        <translation type="obsolete">目标文件夹中已存在名为%1的文件</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Original path %1 target path %2</source>
-        <translation type="obsolete">原路径%1 目标路径%2</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="606"/>
         <source>Merge</source>
-        <translation type="unfinished"></translation>
+        <translation>合并</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="609"/>
         <source>Replace</source>
-        <translation type="unfinished">替换</translation>
+        <translation>替换</translation>
     </message>
 </context>
 <context>
