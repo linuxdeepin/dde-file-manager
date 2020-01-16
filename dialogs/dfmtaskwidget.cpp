@@ -400,24 +400,24 @@ void DFMTaskWidget::setConflictMsg(const DUrl &src, const DUrl &dst)
     DAbstractFileInfoPointer targetInfo = fileService->createFileInfo(nullptr, dst);
     if (originInfo && targetInfo) {
         d->m_lbSrcIcon->setPixmap(originInfo->fileIcon().pixmap(48, 48));
-        d->m_lbSrcModTime->setText(QString(tr("Time modified:%1")).arg(originInfo->lastModifiedDisplayName()));
+        d->m_lbSrcModTime->setText(QString(tr("Time modified: %1")).arg(originInfo->lastModifiedDisplayName()));
         if (originInfo->isDir()) {
             d->m_lbSrcTitle->setText(tr("Original folder"));
-            d->m_lbSrcFileSize->setText(QString(tr("Contains:%1")).arg(originInfo->sizeDisplayName()));
+            d->m_lbSrcFileSize->setText(QString(tr("Contains: %1")).arg(originInfo->sizeDisplayName()));
         } else {
             d->m_lbSrcTitle->setText(tr("Original file"));
-            d->m_lbSrcFileSize->setText(QString(tr("Size:%1")).arg(originInfo->sizeDisplayName()));
+            d->m_lbSrcFileSize->setText(QString(tr("Size: %1")).arg(originInfo->sizeDisplayName()));
         }
 
         d->m_lbDstIcon->setPixmap(targetInfo->fileIcon().pixmap(48, 48));
-        d->m_lbDstModTime->setText(QString(tr("Time modified:%1")).arg(targetInfo->lastModifiedDisplayName()));
+        d->m_lbDstModTime->setText(QString(tr("Time modified: %1")).arg(targetInfo->lastModifiedDisplayName()));
 
         if (targetInfo->isDir()) {
             d->m_lbDstTitle->setText(tr("Target folder"));
-            d->m_lbDstFileSize->setText(QString(tr("Contains:%1")).arg(targetInfo->sizeDisplayName()));
+            d->m_lbDstFileSize->setText(QString(tr("Contains: %1")).arg(targetInfo->sizeDisplayName()));
         } else {
             d->m_lbDstTitle->setText(tr("Target file"));
-            d->m_lbDstFileSize->setText(QString(tr("Size:%1")).arg(targetInfo->sizeDisplayName()));
+            d->m_lbDstFileSize->setText(QString(tr("Size: %1")).arg(targetInfo->sizeDisplayName()));
         }
 
         d->m_widConfict->show();
