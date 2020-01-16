@@ -304,8 +304,24 @@
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="403"/>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="413"/>
+        <source>Time modified: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="406"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="417"/>
+        <source>Contains: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="409"/>
+        <location filename="../../dialogs/dfmtaskwidget.cpp" line="420"/>
+        <source>Size: %1</source>
+        <translation type="unfinished">大小：%1</translation>
+    </message>
+    <message>
         <source>Time modified:%1</source>
-        <translation type="unfinished">修改时间:%1</translation>
+        <translation type="obsolete">修改时间:%1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="405"/>
@@ -313,10 +329,8 @@
         <translation type="unfinished">原始文件夹</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="406"/>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="417"/>
         <source>Contains:%1</source>
-        <translation type="unfinished">个数：%1</translation>
+        <translation type="obsolete">个数：%1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="408"/>
@@ -324,10 +338,8 @@
         <translation type="unfinished">原始文件</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="409"/>
-        <location filename="../../dialogs/dfmtaskwidget.cpp" line="420"/>
         <source>Size:%1</source>
-        <translation type="unfinished">大小：%1</translation>
+        <translation type="obsolete">大小：%1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="416"/>
@@ -671,8 +683,24 @@
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="577"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="581"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="584"/>
+        <source>to %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="600"/>
+        <source>%1 already exists in target folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="601"/>
+        <source>Original path %1 Target path %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Copy to %2</source>
-        <translation type="unfinished">复制到%2</translation>
+        <translation type="obsolete">复制到%2</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="580"/>
@@ -680,9 +708,8 @@
         <translation type="unfinished">正在移动%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="581"/>
         <source>Move to %2</source>
-        <translation type="unfinished">移动到%2</translation>
+        <translation type="obsolete">移动到%2</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="583"/>
@@ -690,9 +717,8 @@
         <translation type="unfinished">正在恢复%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="584"/>
         <source>Restore to %2</source>
-        <translation type="unfinished">恢复到%2</translation>
+        <translation type="obsolete">恢复到%2</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="586"/>
@@ -710,14 +736,12 @@
         <translation type="unfinished">正在计算大小，请稍候</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="600"/>
         <source>File named %1 already exists in target folder</source>
-        <translation type="unfinished">目标文件夹中已存在名为%1的文件</translation>
+        <translation type="obsolete">目标文件夹中已存在名为%1的文件</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="601"/>
         <source>Original path %1 target path %2</source>
-        <translation type="unfinished">原路径%1 目标路径%2</translation>
+        <translation type="obsolete">原路径%1 目标路径%2</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="606"/>
@@ -3009,7 +3033,7 @@
         <translation>正在处理文件</translation>
     </message>
     <message>
-        <location filename="../shutil/fileutils.cpp" line="455"/>
+        <location filename="../shutil/fileutils.cpp" line="439"/>
         <source>%1/%2</source>
         <translation>%1/%2</translation>
     </message>
