@@ -2134,6 +2134,8 @@ bool DFileView::setRootUrl(const DUrl &url)
 
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(this, fileUrl);
 
+
+
     while (info && info->canRedirectionFileUrl()) {
         const DUrl old_url = fileUrl;
 

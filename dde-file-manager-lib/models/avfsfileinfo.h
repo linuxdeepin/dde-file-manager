@@ -40,7 +40,7 @@ public:
     bool isDir() const Q_DECL_OVERRIDE;
 
     QString toLocalFile() const override;
-
+    DUrl parentUrl() const override;
     QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
 
     static DUrl realFileUrl(const DUrl& avfsUrl);
