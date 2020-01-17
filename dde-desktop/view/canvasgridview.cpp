@@ -1669,120 +1669,29 @@ void CanvasGridView::Refresh()
     model()->update();
 }
 
-// TODO: should fix by qt;
-bool find_wm_strut_partial_rect_list(QList<QRect> rects)
-{
-    bool find = false;
-    for (auto &rect : rects) {
-        find |= rect.isValid();
-    }
-
-    return find;
-}
-
-static inline QList<QRect> wm_strut_partial_rect_list(xcb_ewmh_wm_strut_partial_t st, QRect virtualGeometry)
-{
-    QList<QRect> strutRectList;
-
-    auto w = virtualGeometry.width();
-    auto h = virtualGeometry.height();
-
-    // left
-    auto left = static_cast<int>(st.left);
-    auto left_start = static_cast<int>(st.left_start_y);
-    auto left_end = static_cast<int>(st.left_end_y);
-    QRect leftStruct = QRect(0, left_start, left, left_end - left_start);
-    leftStruct.setY(0);
-    leftStruct.setHeight(h);
-    strutRectList << leftStruct;
-
-    // right
-    auto right = static_cast<int>(st.right);
-    auto right_start = static_cast<int>(st.right_start_y);
-    auto right_end = static_cast<int>(st.right_end_y);
-    QRect rightStruct = QRect(w - right, right_start, right, right_end - right_start);
-    rightStruct.setY(0);
-    rightStruct.setHeight(h);
-    strutRectList << rightStruct;
-
-    // top
-    auto top = static_cast<int>(st.top);
-    auto top_start = static_cast<int>(st.top_start_x);
-    auto top_end = static_cast<int>(st.top_end_x);
-    QRect topStruct = QRect(top_start, 0, top_end - top_start, top);
-    topStruct.setX(0);
-    topStruct.setWidth(w);
-    strutRectList << topStruct;
-
-    // bottom
-    qreal ratio = qApp->devicePixelRatio();
-    Q_ASSERT(ratio>0);
-    auto bottom = static_cast<int>(st.bottom);
-    bottom /= ratio;
-    auto bottom_start = static_cast<int>(st.bottom_start_x);
-    auto bottom_end = static_cast<int>(st.bottom_end_x);
-    bottom_end /= ratio;
-    QRect bottomStruct = QRect(bottom_start, h - bottom, bottom_end - bottom_start, bottom);
-    bottomStruct.setX(0);
-    bottomStruct.setWidth(w);
-    strutRectList << bottomStruct;
-
-    return strutRectList;
-}
-
 static inline QRect fix_available_geometry()
 {
-    QList<QRect> strutParialRectList;
-
-    auto screens = qApp->screens();
-
     // virtualGeometry is same on all screen, so just get first one
     auto virtualGeometry = qApp->screens().value(0)->virtualGeometry();
-    // try 5 time
-    for (int i = 0; i < 5; ++i) {
-        auto structParialInfoList = Xcb::XcbMisc::instance().find_dock_window();
-        for (auto info : structParialInfoList) {
-            xcb_ewmh_wm_strut_partial_t st = Xcb::XcbMisc::instance().get_strut_partial(info.winId);
-            qDebug() << "\n"
-                     << "dump xcb_ewmh_wm_strut_partial_t begin ---------------------------" << "\n"
-                     << "st.left :" << st.left << "\n"
-                     << "st.right :" << st.right << "\n"
-                     << "st.top :" << st.top << "\n"
-                     << "st.left_start_y :" << st.left_start_y << "\n"
-                     << "st.left_end_y :" << st.left_end_y << "\n"
-                     << "st.right_start_y :" << st.right_start_y << "\n"
-                     << "st.right_end_y :" << st.right_end_y << "\n"
-                     << "st.top_start_x :" << st.top_start_x << "\n"
-                     << "st.top_end_x :" << st.top_end_x << "\n"
-                     << "st.bottom_start_x :" << st.bottom_start_x << "\n"
-                     << "st.bottom_end_x :" << st.bottom_end_x << "\n"
-                     << "dump xcb_ewmh_wm_strut_partial_t end ---------------------------" << "\n";
-            strutParialRectList << wm_strut_partial_rect_list(st, virtualGeometry);
-        }
-        if (find_wm_strut_partial_rect_list(strutParialRectList)) {
-            qDebug() << "get fix availableRect" << strutParialRectList << virtualGeometry;
+    int dockHight = 0;
+    auto structParialInfoList = Xcb::XcbMisc::instance().find_dock_window();
+    for (auto info : structParialInfoList) {
+        if (info.rc.isValid()) {
+            dockHight = info.rc.height();
             break;
         }
-        QThread::sleep(1);
-    }
-    if (!find_wm_strut_partial_rect_list(strutParialRectList)) {
-        qCritical() << "can not get struct partial post !!!!!!!!!!!!!!!!!";
     }
 
     QRegion virtualRegion = QRegion(virtualGeometry);
-    QRegion strutParialRegion;
-    for (auto rect : strutParialRectList) {
-        strutParialRegion = strutParialRegion.united(rect);
-    }
-
-    QRegion availableRegion = virtualRegion.subtracted(strutParialRegion);
 
     auto primaryGeometry = qApp->primaryScreen()->geometry();
-    QRect availableRect = availableRegion.intersected(primaryGeometry).rects().value(0);
+
+    QRect availableRect = primaryGeometry;
+    // primary screen rect - dock rect;
+    availableRect.setHeight(availableRect.height()-dockHight);
 
     qDebug() << "\n"
              << "dump dock info begin ---------------------------" << "\n"
-             << "strutParialRegion:" << strutParialRegion << "\n"
              << "virtualGeometry:" << virtualGeometry << "\n"
              << "primarygeometry:" << primaryGeometry << "\n"
              << "availableRect:" << availableRect << "\n"

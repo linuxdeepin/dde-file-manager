@@ -101,6 +101,24 @@ bool XcbMisc::is_dock_window(xcb_window_t winId)
     return is_dock;
 }
 
+QRect get_window_rect(xcb_window_t winId)
+{
+    xcb_connection_t *c = xcb_connect (NULL, NULL);
+    xcb_get_geometry_cookie_t geo_cookie;
+    xcb_get_geometry_reply_t *reply;
+    QRect rc;
+    geo_cookie = xcb_get_geometry(c, winId);
+    if ((reply = xcb_get_geometry_reply(c, geo_cookie, NULL))) {
+        rc = {reply->x, reply->y, reply->width, reply->height};
+        qDebug() << reply->x << reply->y << reply->width << reply->height;
+    } else {
+        qCritical() << "xcb_get_geometry_reply failed !!?";
+    }
+    free(reply);
+    xcb_disconnect(c);
+    return rc;
+}
+
 QList<DockInfo> XcbMisc::find_dock_window()
 {
     QList<DockInfo> docks;
@@ -117,8 +135,9 @@ QList<DockInfo> XcbMisc::find_dock_window()
                     DockInfo info;
                     info.winId = winId;
                     info.screenId = i;
+                    info.rc = get_window_rect(winId);
                     docks << info;
-                    qDebug() << "find dock:" << info.winId << "on screen" << info.screenId;
+                    qDebug() << "find dock:" << info.winId << "on screen" << info.screenId << "geometry" << info.rc;
                 }
             }
         }

@@ -19,6 +19,7 @@ namespace Xcb
 struct DockInfo {
     xcb_window_t winId;
     int screenId;
+    QRect rc;
 };
 
 class XcbMisc
