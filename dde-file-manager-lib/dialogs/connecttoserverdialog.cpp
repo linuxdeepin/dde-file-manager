@@ -147,7 +147,7 @@ void ConnectToServerDialog::onDelButtonClicked()
 
 void ConnectToServerDialog::initUI()
 {
-    setFixedSize(476, 370);
+    setFixedSize(476, 380);
 
     QStringList buttonTexts;
     buttonTexts << tr("Cancel") << tr("Connect");
@@ -164,7 +164,6 @@ void ConnectToServerDialog::initUI()
     m_addButton->setFixedSize(44, 44);
     m_delButton->setFixedSize(44, 44);
     collectionLabel->setFixedSize(98, 20);
-    m_collectionServerView->setFixedHeight(180);
 
     m_addButton->setIcon(QIcon::fromTheme("dfm_add_server"));
     m_addButton->setIconSize({44, 44});
@@ -183,9 +182,9 @@ void ConnectToServerDialog::initUI()
 
     QVBoxLayout *contentLayout = new QVBoxLayout();
     contentLayout->addLayout(comboButtonLayout);
-    contentLayout->addSpacing(10);
+    contentLayout->addSpacing(5);
     contentLayout->addWidget(collectionLabel, 0, Qt::AlignVCenter);
-    contentLayout->addSpacing(10);
+    contentLayout->addSpacing(5);
     contentLayout->addWidget(m_collectionServerView, 0, Qt::AlignVCenter);
     contentLayout->setContentsMargins(5, 0, 0, 0);
 
