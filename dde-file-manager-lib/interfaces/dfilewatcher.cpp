@@ -71,6 +71,13 @@ QStringList parentPathList(const QString &path)
     return list;
 }
 
+bool isPathWatched(const QString &path)
+{
+    QFileInfo fi(path);
+    return (fi.isDir() && watcher_file_private->directories().contains(path)) ||
+           (fi.isFile() && watcher_file_private->files().contains(path));
+}
+
 bool DFileWatcherPrivate::start()
 {
     Q_Q(DFileWatcher);
@@ -81,7 +88,7 @@ bool DFileWatcherPrivate::start()
         if (watchFileList.contains(path))
             continue;
 
-        if (filePathToWatcherCount.value(path, -1) <= 0) {
+        if (filePathToWatcherCount.value(path, -1) <= 0 || !isPathWatched(path)) {
             if (QFile::exists(path) && !watcher_file_private->addPath(path)) {
                 qWarning() << Q_FUNC_INFO << "start watch failed, file path =" << path;
                 q->stopWatcher();
@@ -121,18 +128,26 @@ bool DFileWatcherPrivate::stop()
 
     bool ok = true;
 
-    foreach (const QString &path, watchFileList) {
-        int count = filePathToWatcherCount.value(path, 0);
+    for (auto it = watchFileList.begin(); it != watchFileList.end();) {
+        int count = filePathToWatcherCount.value(*it, 0);
 
         --count;
+        if (count > 0 && !isPathWatched(*it)) { // already removed from DFileSystemWatcher
+            filePathToWatcherCount.remove(*it);
+            it = watchFileList.erase(it);
+            continue;
+        }
 
         if (count <= 0) {
-            filePathToWatcherCount.remove(path);
-            watchFileList.removeOne(path);
-            ok = ok && watcher_file_private->removePath(path);
+            filePathToWatcherCount.remove(*it);
+            ok = ok && watcher_file_private->removePath(*it);
+            it = watchFileList.erase(it);
+            continue;
         } else {
-            filePathToWatcherCount[path] = count;
+            filePathToWatcherCount[*it] = count;
         }
+
+        ++it;
     }
 
     return ok;
