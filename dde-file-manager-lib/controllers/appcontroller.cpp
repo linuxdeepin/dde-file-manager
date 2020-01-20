@@ -194,6 +194,10 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
             newUrl = fi->redirectedFileUrl();
         }
 
+        QFile file(newUrl.path());
+        if(!(QFile::ExeUser & file.permissions()))
+            return;
+
         const QSharedPointer<DFMUrlListBaseEvent> &e = dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), DUrlList() << newUrl);
         e->setWindowId(event->windowId());
 
