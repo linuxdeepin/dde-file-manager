@@ -341,16 +341,16 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
 
         foreach (DUrl url, event.fileUrlList()) {
             const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, url);
-            if (fileInfo->isFile()) {
-                if (!isInGVFs){
-                    m_fileSize += fileInfo->size();
-                }
-                m_fileCount += 1;
-            } else {
+            if (fileInfo->isDir()) {
                 m_folderCount += 1;
                 if (!isInGVFs){
 //                    m_folderContains += fileInfo->filesCount();
                 }
+            } else {
+                if (!isInGVFs){
+                    m_fileSize += fileInfo->size();
+                }
+                m_fileCount += 1;
             }
         }
 
