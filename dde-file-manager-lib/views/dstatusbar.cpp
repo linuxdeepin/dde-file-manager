@@ -381,23 +381,14 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
                 QStringList networkSchemeList = {SMB_SCHEME, FTP_SCHEME, SFTP_SCHEME, MTP_SCHEME, DAV_SCHEME};
                 if (networkSchemeList.contains(event.fileUrlList().first().scheme())){
                     m_label->setText(m_selectedNetworkOnlyOneFolder.arg(QString::number(number)));
-                } else{
-                    if (!fileInfo)
-                        return;
-                    if (fileInfo->isFile()) {
-                        m_fileCount = 1;
-                        m_label->setText(m_selectOnlyOneFile.arg(QString::number(number), FileUtils::formatSize(fileInfo->size())));
-                    }else if (fileInfo->isDir()) {
+                } else if (fileInfo) {
+                    if (fileInfo->isDir()) {
                         m_folderCount = 1;
-//                        if (fileInfo->filesCount() <= 1) {
-//                            m_label->setText(m_selectOnlyOneFolder.arg(QString::number(number),
-//                                                                       m_OnlyOneItemCounted.arg(QString::number(fileInfo->filesCount()))));
-//                        } else {
-//                            m_label->setText(m_selectOnlyOneFolder.arg(QString::number(number),
-//                                                                       m_counted.arg(QString::number(fileInfo->filesCount()))));
-//                        }
                         m_label->setText(m_selectOnlyOneFolder.arg(number).arg(m_counted.arg(0)));
                         m_fileStatisticsJob->start(event.fileUrlList());
+                    } else /*if (fileInfo->isFile())*/ {
+                        m_fileCount = 1;
+                        m_label->setText(m_selectOnlyOneFile.arg(QString::number(number), FileUtils::formatSize(fileInfo->size())));
                     }
                 }
             } else{
