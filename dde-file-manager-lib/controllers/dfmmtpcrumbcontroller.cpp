@@ -20,8 +20,6 @@
  */
 #include "dfmmtpcrumbcontroller.h"
 
-#include "dfmcrumbitem.h"
-
 DFM_BEGIN_NAMESPACE
 
 DFMMtpCrumbController::DFMMtpCrumbController(QObject *parent)
@@ -38,16 +36,6 @@ DFMMtpCrumbController::~DFMMtpCrumbController()
 bool DFMMtpCrumbController::supportedUrl(DUrl url)
 {
     return (url.scheme() == MTP_SCHEME);
-}
-
-DFMCrumbItem *DFMMtpCrumbController::createCrumbItem(const CrumbData &data)
-{
-    DFMCrumbItem *item = new DFMCrumbItem(data);
-    if (!data.url.parentUrl().isValid()) {
-        item->setIconFromThemeConfig("CrumbIconButton.Android");
-        item->setText(data.url.toString());
-    }
-    return item;
 }
 
 DFM_END_NAMESPACE

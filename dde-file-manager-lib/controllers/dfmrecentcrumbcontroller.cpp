@@ -18,7 +18,6 @@
  */
 
 #include "dfmrecentcrumbcontroller.h"
-#include "dfmcrumbitem.h"
 #include "dfileservices.h"
 #include "pathmanager.h"
 #include "singleton.h"

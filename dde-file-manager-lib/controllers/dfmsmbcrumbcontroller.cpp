@@ -19,9 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dfmsmbcrumbcontroller.h"
-
-#include "dfmcrumbitem.h"
-
 #include "dfileservices.h"
 
 #include <QDebug>
@@ -42,19 +39,6 @@ DFMSmbCrumbController::~DFMSmbCrumbController()
 bool DFMSmbCrumbController::supportedUrl(DUrl url)
 {
     return (url.scheme() == SMB_SCHEME);
-}
-
-DFMCrumbItem *DFMSmbCrumbController::createCrumbItem(const CrumbData &data)
-{
-    DFMCrumbItem *item = new DFMCrumbItem(data);
-
-    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, data.url);
-
-    if (!info->parentUrl().isValid()) {
-        item->setIconFromThemeConfig("CrumbIconButton.Network");
-        item->setText(data.url.toString());
-    }
-    return item;
 }
 
 DFM_END_NAMESPACE

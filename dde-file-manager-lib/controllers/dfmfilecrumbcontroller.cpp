@@ -19,8 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dfmfilecrumbcontroller.h"
-#include "dfmcrumbitem.h"
-
 #include "controllers/pathmanager.h"
 #include "deviceinfo/udiskdeviceinfo.h"
 #include "deviceinfo/udisklistener.h"

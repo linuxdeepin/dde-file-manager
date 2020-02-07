@@ -45,7 +45,6 @@ DWIDGET_END_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
 class DFMCrumbBar;
-class DFMCrumbItem;
 class DFMAddressBar;
 class DFMIconButton;
 DFM_END_NAMESPACE
@@ -84,7 +83,6 @@ public slots:
     void searchBarDeactivated();
     void searchBarTextEntered(const QString textEntered);
     void onSearchButtonClicked();
-    void crumbSelected(const DFMCrumbItem* item);
     void currentUrlChanged(const DFMEvent &event);
 
     void back();

@@ -22,9 +22,6 @@
 
 #include "dfileservices.h"
 #include "dfileinfo.h"
-
-#include "dfmcrumbitem.h"
-
 DFM_BEGIN_NAMESPACE
 
 DFMAvfsCrumbController::DFMAvfsCrumbController(QObject *parent)
@@ -41,20 +38,6 @@ DFMAvfsCrumbController::~DFMAvfsCrumbController()
 bool DFMAvfsCrumbController::supportedUrl(DUrl url)
 {
     return (url.scheme() == AVFS_SCHEME);
-}
-
-DFMCrumbItem *DFMAvfsCrumbController::createCrumbItem(const CrumbData &data)
-{
-    DFMCrumbItem* item = new DFMCrumbItem(data);
-    DUrl urlCopy(data.url);
-    urlCopy.setScheme(FILE_SCHEME);
-    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, urlCopy);
-
-    if (info->exists() && info->isDir()) {
-        item->setUrl(urlCopy);
-    }
-
-    return item;
 }
 
 DFM_END_NAMESPACE

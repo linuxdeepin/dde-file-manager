@@ -39,7 +39,6 @@ public:
     explicit DFMCrumbListviewModel(QObject *parent = nullptr);
     virtual ~DFMCrumbListviewModel();
 
-    bool appendItem(const CrumbData& data);
     void removeAll();
     QModelIndex lastIndex();
 };

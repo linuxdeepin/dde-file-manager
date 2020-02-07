@@ -19,7 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dfmcrumblistviewmodel.h"
-#include "views/themeconfig.h"
 #include "dtkwidget_global.h"
 
 DWIDGET_USE_NAMESPACE
@@ -35,23 +34,6 @@ DFMCrumbListviewModel::DFMCrumbListviewModel(QObject *parent)
 DFMCrumbListviewModel::~DFMCrumbListviewModel()
 {
 
-}
-
-
-bool DFMCrumbListviewModel::appendItem(const CrumbData &data)
-{
-    QStandardItem *item = nullptr;
-    if (!data.iconName.isEmpty()){
-        auto icon = ThemeConfig::instace()->pixmap(data.iconName, data.iconKey, ThemeConfig::Normal);
-        item = new QStandardItem(icon, QString());
-    }else {
-        item = new QStandardItem(data.displayText);
-    }
-
-    item->setCheckable(false);
-    item->setData(data.url, FileUrlRole);
-    appendRow(item);
-    return true;
 }
 
 void DFMCrumbListviewModel::removeAll()

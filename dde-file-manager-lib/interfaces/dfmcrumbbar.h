@@ -27,7 +27,6 @@
 
 DFM_BEGIN_NAMESPACE
 
-class DFMCrumbItem;
 class DFMCrumbBarPrivate;
 class DFMCrumbBar : public QFrame
 {
@@ -54,7 +53,6 @@ Q_SIGNALS:
     void addressBarShown();
     void addressBarHidden();
     void addressBarContentEntered(QString content);
-    void crumbItemClicked(DFMCrumbItem *item);
     void crumbListItemSelected(const DUrl &url);
 
 protected:

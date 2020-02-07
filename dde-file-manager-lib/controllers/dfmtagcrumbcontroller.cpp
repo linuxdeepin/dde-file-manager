@@ -19,9 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dfmtagcrumbcontroller.h"
-
-#include "dfmcrumbitem.h"
-
 #include "tag/tagmanager.h"
 
 DFM_BEGIN_NAMESPACE

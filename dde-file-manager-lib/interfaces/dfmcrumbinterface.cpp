@@ -19,8 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dfmcrumbinterface.h"
-
-#include "dfmcrumbitem.h"
 #include "dfmcrumbbar.h"
 
 #include "controllers/jobcontroller.h"
@@ -76,12 +74,6 @@ CrumbData::operator QString() const
      }
 
      return QStringLiteral("CrumbData(") + ret + QStringLiteral(")");
-}
-
-void CrumbData::setIconFromThemeConfig(QString iconName, QString iconKey)
-{
-    this->iconName = iconName;
-    this->iconKey = iconKey;
 }
 
 class DFMCrumbInterfacePrivate {
@@ -222,18 +214,6 @@ QList<CrumbData> DFMCrumbInterface::seprateUrl(const DUrl &url)
     }
 
     return list;
-}
-
-/*!
- * \brief Creating crumb item by the given crumb data
- *
- * \param data The crunb data used to create a crumb item.
- *
- * \return Pointer of the created DFMCrumbItem
- */
-DFMCrumbItem *DFMCrumbInterface::createCrumbItem(const CrumbData &data)
-{
-    return new DFMCrumbItem(data);
 }
 
 /*!

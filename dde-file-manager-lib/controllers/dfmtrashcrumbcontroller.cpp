@@ -19,9 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dfmtrashcrumbcontroller.h"
-
-#include "dfmcrumbitem.h"
-
 #include "dfileservices.h"
 #include "dfileinfo.h"
 
@@ -41,15 +38,6 @@ DFMTrashCrumbController::~DFMTrashCrumbController()
 bool DFMTrashCrumbController::supportedUrl(DUrl url)
 {
     return (url.scheme() == TRASH_SCHEME);
-}
-
-DFMCrumbItem *DFMTrashCrumbController::createCrumbItem(const CrumbData &data)
-{
-    DFMCrumbItem* item = new DFMCrumbItem(data);
-    if (data.url == DUrl(TRASH_ROOT)) {
-        item->setIconFromThemeConfig(QStringLiteral("CrumbIconButton.Trash"));
-    }
-    return item;
 }
 
 DFM_END_NAMESPACE

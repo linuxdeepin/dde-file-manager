@@ -29,7 +29,6 @@
 #include "windowmanager.h"
 #include "dfileservices.h"
 #include "dfmeventdispatcher.h"
-#include "dfmcrumbitem.h"
 #include "dfmaddressbar.h"
 
 #include "dfmevent.h"
@@ -49,7 +48,7 @@
 #include <QVBoxLayout>
 #include <QDebug>
 #include <QToolButton>
-
+#include <QPushButton>
 const int DToolBar::ButtonWidth = 24;
 const int DToolBar::ButtonHeight = 24;
 static const QSize iconSize(16, 16);
@@ -186,7 +185,6 @@ void DToolBar::initConnect()
     connect(m_backButton, &DButtonBoxButton::clicked, this, &DToolBar::onBackButtonClicked);
     connect(m_forwardButton, &DButtonBoxButton::clicked, this, &DToolBar::onForwardButtonClicked);
     connect(m_crumbWidget, &DFMCrumbBar::addressBarContentEntered, this, &DToolBar::searchBarTextEntered);
-    connect(m_crumbWidget, &DFMCrumbBar::crumbItemClicked, this, &DToolBar::crumbSelected);
     connect(m_crumbWidget, &DFMCrumbBar::crumbListItemSelected, this, [this](const DUrl &url){
         DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(m_crumbWidget, url, window());
     });
@@ -265,11 +263,6 @@ void DToolBar::onSearchButtonClicked()
         dfmWindow->toggleAdvanceSearchBar(!oldState);
         m_searchButton->setDown(!oldState);
     }
-}
-
-void DToolBar::crumbSelected(const DFMCrumbItem* item)
-{
-    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(m_crumbWidget, item->url(), window());
 }
 
 void DToolBar::currentUrlChanged(const DFMEvent &event)

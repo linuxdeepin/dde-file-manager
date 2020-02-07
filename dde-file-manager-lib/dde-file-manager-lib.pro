@@ -198,7 +198,6 @@ HEADERS += \
     dialogs/movetotrashconflictdialog.h \
     dialogs/dfmsettingdialog.h \
     controllers/operatorrevocation.h \
-    views/themeconfig.h \
     controllers/tagcontroller.h \
     models/tagfileinfo.h \
     views/dtagactionwidget.h \
@@ -210,7 +209,6 @@ HEADERS += \
     controllers/interface/tagmanagerdaemon_interface.h \
     interfaces/dfmsettings.h \
     interfaces/dfmcrumbbar.h \
-    interfaces/dfmcrumbitem.h \
     interfaces/dfmcrumbinterface.h \
     interfaces/plugins/dfmcrumbplugin.h \
     interfaces/plugins/dfmcrumbfactory.h \
@@ -391,7 +389,6 @@ SOURCES += \
     dialogs/movetotrashconflictdialog.cpp \
     dialogs/dfmsettingdialog.cpp \
     controllers/operatorrevocation.cpp \
-    views/themeconfig.cpp \
     controllers/tagcontroller.cpp \
     models/tagfileinfo.cpp \
     views/dtagactionwidget.cpp \
@@ -403,7 +400,6 @@ SOURCES += \
     controllers/interface/tagmanagerdaemon_interface.cpp \
     interfaces/dfmsettings.cpp \
     interfaces/dfmcrumbbar.cpp \
-    interfaces/dfmcrumbitem.cpp \
     interfaces/dfmcrumbinterface.cpp \
     interfaces/plugins/dfmcrumbplugin.cpp \
     interfaces/plugins/dfmcrumbfactory.cpp \
