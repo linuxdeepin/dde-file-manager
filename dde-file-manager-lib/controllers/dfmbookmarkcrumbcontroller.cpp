@@ -20,8 +20,6 @@
  */
 #include "dfmbookmarkcrumbcontroller.h"
 
-#include "dfmcrumbitem.h"
-
 DFM_BEGIN_NAMESPACE
 
 DFMBookmarkCrumbController::DFMBookmarkCrumbController(QObject *parent)

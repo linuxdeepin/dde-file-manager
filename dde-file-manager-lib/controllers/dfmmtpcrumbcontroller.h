@@ -34,7 +34,6 @@ public:
     ~DFMMtpCrumbController() override;
 
     bool supportedUrl(DUrl url) override;
-    DFMCrumbItem *createCrumbItem(const CrumbData &data) override;
 };
 
 DFM_END_NAMESPACE

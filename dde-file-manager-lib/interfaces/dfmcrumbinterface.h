@@ -32,8 +32,6 @@ public:
 
     operator QString() const;
 
-    void setIconFromThemeConfig(QString iconName, QString iconKey = "icon");
-
     DUrl url = DUrl();
     QString iconName = QString(); // icon group name
     QString displayText = QString();
@@ -41,7 +39,6 @@ public:
 };
 
 class DFMCrumbBar;
-class DFMCrumbItem;
 class DFMCrumbInterfacePrivate;
 class DFMCrumbInterface : public QObject
 {
@@ -63,7 +60,6 @@ public:
     virtual void setCrumbBar(DFMCrumbBar *crumbBar) final;
     virtual bool supportedUrl(DUrl) = 0;
     virtual QList<CrumbData> seprateUrl(const DUrl &url);
-    virtual DFMCrumbItem* createCrumbItem(const CrumbData &data);
     virtual void requestCompletionList(const DUrl &url);
     virtual void cancelCompletionListTransmission();
 

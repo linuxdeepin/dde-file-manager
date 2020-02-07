@@ -28,10 +28,10 @@
 #include <QGuiApplication>
 #include <QClipboard>
 #include <dgiosettings.h>
+#include <QPushButton>
 
 #include "dfmapplication.h"
 #include "dfmcrumbbar.h"
-#include "dfmcrumbitem.h"
 #include "dfmcrumbmanager.h"
 #include "dfmsettings.h"
 #include "views/windowmanager.h"
@@ -291,10 +291,9 @@ void DFMCrumbBarPrivate::initConnections()
  * \brief DFMCrumbBar is the crumb bar widget of Deepin File Manager
  *
  * DFMCrumbBar is the crumb bar widget of Deepin File Manager, provide the interface to manage
- * crumb bar state. Crumb bar holds a group of DFMCrumbItem s, and crumb bar will be switch to
- * DFMAddressBar when clicking empty space at crumb bar.
+ * crumb bar state.
  *
- * \sa DFMCrumbInterface, DFMCrumbManager, DFMCrumbItem
+ * \sa DFMCrumbInterface, DFMCrumbManager
  */
 
 DFMCrumbBar::DFMCrumbBar(QWidget *parent)
@@ -394,9 +393,7 @@ static QString getIconName(const CrumbData& c)
  * DFMCrumbBar holds an instance of crumb controller (derived from DFMCrumbInterface), and when
  * calling updateCrumb, it will check the current used crumb controller is supporting the given
  * \a url. if isn't, we will create a new crumb controller form the registed controllers or the
- * plugin list. Then we will call DFMCrumbInterface::seprateUrl to seprate the url and call
- * DFMCrumbInterface::createCrumbItem to create the crumb item. Finally, we added the created
- * items to the crumb bar.
+ * plugin list. Then we will call DFMCrumbInterface::seprateUrl to seprate the url
  */
 void DFMCrumbBar::updateCrumbs(const DUrl &url)
 {
@@ -610,12 +607,6 @@ void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
  * \brief Emit when the address bar got hidden.
  *
  * \sa DFMAddressBar
- */
-
-/*!
- * \fn DFMCrumbBar::crumbItemClicked(DFMCrumbItem *item);
- *
- * \brief User clicked the crumb \a item.
  */
 
 DFM_END_NAMESPACE
