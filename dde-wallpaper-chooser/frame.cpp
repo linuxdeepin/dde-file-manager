@@ -49,10 +49,12 @@
 #include <QVBoxLayout>
 #include <QCheckBox>
 #include <DApplicationHelper>
+#include <QProcessEnvironment>
 
 #define DESKTOP_BUTTON_ID "desktop"
 #define LOCK_SCREEN_BUTTON_ID "lock-screen"
 #define SCREENSAVER_BUTTON_ID "screensaver"
+#define DESKTOP_CAN_SCREENSAVER "DESKTOP_CAN_SCREENSAVER"
 
 DWIDGET_USE_NAMESPACE
 DGUI_USE_NAMESPACE
@@ -589,16 +591,21 @@ void Frame::initUI()
 
     //###(zccrs): 直接把switModeControl放到布局中始终无法在两种mos模式下都居中
     // 使用anchors使此控件居中
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     DButtonBoxButton * wallpaperBtn = new DButtonBoxButton(tr("Wallpaper"), this);
-    DButtonBoxButton * screensaverBtn = new DButtonBoxButton(tr("Screensaver"), this);
     wallpaperBtn->setMinimumWidth(40);
-    screensaverBtn->setMinimumWidth(40);
     m_switchModeControl = new DButtonBox(this);
-    m_switchModeControl->setButtonList({wallpaperBtn, screensaverBtn}, true);
-    if (m_mode == WallpaperMode) {
-        wallpaperBtn->setChecked(true);
+
+    if (m_mode == WallpaperMode) wallpaperBtn->setChecked(true);
+
+    if(env.contains(DESKTOP_CAN_SCREENSAVER) && env.value(DESKTOP_CAN_SCREENSAVER).startsWith("N")) {
+        m_switchModeControl->setButtonList({wallpaperBtn}, true);
     } else {
-        screensaverBtn->setChecked(true);
+        DButtonBoxButton * screensaverBtn = new DButtonBoxButton(tr("Screensaver"), this);
+        screensaverBtn->setMinimumWidth(40);
+        m_switchModeControl->setButtonList({wallpaperBtn, screensaverBtn}, true);
+
+        if(m_mode == ScreenSaverMode)  m_switchModeControl->setChecked(true);
     }
 
     connect(m_waitControl, &DButtonBox::buttonToggled, this, [this, time_array] (QAbstractButton * toggleBtn, bool) {
