@@ -180,6 +180,16 @@ DUrl MasteredMediaFileInfo::redirectedFileUrl() const
     return d->proxy->fileUrl();
 }
 
+DUrl MasteredMediaFileInfo::mimeDataUrl() const
+{
+    Q_D(const DAbstractFileInfo);
+    if (d->proxy) {
+        return d->proxy->mimeDataUrl();
+    }
+
+    return DAbstractFileInfo::mimeDataUrl();
+}
+
 bool MasteredMediaFileInfo::canIteratorDir() const
 {
     Q_D(const DAbstractFileInfo);

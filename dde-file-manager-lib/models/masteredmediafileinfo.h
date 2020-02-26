@@ -44,6 +44,7 @@ public:
 
     bool canRedirectionFileUrl() const Q_DECL_OVERRIDE;
     DUrl redirectedFileUrl() const Q_DECL_OVERRIDE;
+    DUrl mimeDataUrl() const Q_DECL_OVERRIDE;
 
     bool canIteratorDir() const Q_DECL_OVERRIDE;
     DUrl parentUrl() const Q_DECL_OVERRIDE;
