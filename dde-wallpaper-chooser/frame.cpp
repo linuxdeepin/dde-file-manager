@@ -600,12 +600,11 @@ void Frame::initUI()
 
     if(env.contains(DESKTOP_CAN_SCREENSAVER) && env.value(DESKTOP_CAN_SCREENSAVER).startsWith("N")) {
         m_switchModeControl->setButtonList({wallpaperBtn}, true);
+        wallpaperBtn->setChecked(true);
     } else {
         DButtonBoxButton * screensaverBtn = new DButtonBoxButton(tr("Screensaver"), this);
         screensaverBtn->setMinimumWidth(40);
         m_switchModeControl->setButtonList({wallpaperBtn, screensaverBtn}, true);
-
-        if(m_mode == ScreenSaverMode)  m_switchModeControl->setChecked(true);
     }
 
     connect(m_waitControl, &DButtonBox::buttonToggled, this, [this, time_array] (QAbstractButton * toggleBtn, bool) {
