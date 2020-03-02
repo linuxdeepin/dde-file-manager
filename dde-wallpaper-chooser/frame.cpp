@@ -386,6 +386,20 @@ void Frame::adjustModeSwitcherPoint()
         m_switchModeControl->move((width() - m_switchModeControl->width()) / 2,
                                   (m_wallpaperList->y() - m_switchModeControl->height()) / 2);
     }
+
+    // fix bug-13404
+    if (m_wallpaperCarouselControl && m_switchModeControl &&
+            m_wallpaperCarouselControl->isVisible()){
+        QRect rcWcc = m_wallpaperCarouselControl->geometry();
+        QRect rcSmc = m_switchModeControl->geometry();
+        int spacing = rcSmc.left() - (rcWcc.right() + 10); // 10 spacing
+        if (spacing < 0) {
+            QPoint pSmc = m_switchModeControl->pos();
+            pSmc += {-spacing, 0};
+
+            m_switchModeControl->move(pSmc);
+        }
+    }
 }
 #endif
 
@@ -510,6 +524,9 @@ void Frame::initUI()
 
     connect(m_wallpaperCarouselCheckBox, &QCheckBox::clicked, this, [this, array_policy] (bool checked) {
         m_wallpaperCarouselControl->setVisible(checked);
+#if !defined(DISABLE_SCREENSAVER) || !defined(DISABLE_WALLPAPER_CAROUSEL)
+        adjustModeSwitcherPoint();
+#endif
 
         int checkedIndex = m_wallpaperCarouselControl->buttonList().indexOf(m_wallpaperCarouselControl->checkedButton());
         if (!checked) {
