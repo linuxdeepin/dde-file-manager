@@ -370,36 +370,26 @@ void Frame::adjustModeSwitcherPoint()
     {
         int width = m_wallpaperCarouselCheckBox->sizeHint().width() +
                     m_wallpaperCarouselControl->sizeHint().width() +
-                    m_wallpaperCarouselLayout->contentsMargins().left();
+                    m_wallpaperCarouselLayout->contentsMargins().left() +
+                    m_wallpaperCarouselLayout->contentsMargins().right() +
+                    m_wallpaperCarouselLayout->spacing();
 
-        if (width > tools_width) {
+        bool visble = m_wallpaperCarouselControl->isVisible();
+        if (visble && width > tools_width) {
             tools_width = width;
+        } else if (!visble && m_mode == WallpaperMode) {
+            tools_width = 0; // 壁纸模式未勾选自动换壁纸时， 居中即可
         }
     }
 #endif
 
     // 防止在低分辨率情况下切换控件和左边的工具栏重叠
-    if (width() / 2 < tools_width) {
-        m_switchModeControl->move(width() - m_switchModeControl->width() - 10,
-                                  (m_wallpaperList->y() - m_switchModeControl->height()) / 2);
-    } else {
-        m_switchModeControl->move((width() - m_switchModeControl->width()) / 2,
-                                  (m_wallpaperList->y() - m_switchModeControl->height()) / 2);
+    int x = width() / 2 - m_switchModeControl->width()/2;
+    if (x < tools_width) {
+        x = tools_width ;
     }
 
-    // fix bug-13404
-    if (m_wallpaperCarouselControl && m_switchModeControl &&
-            m_wallpaperCarouselControl->isVisible()){
-        QRect rcWcc = m_wallpaperCarouselControl->geometry();
-        QRect rcSmc = m_switchModeControl->geometry();
-        int spacing = rcSmc.left() - (rcWcc.right() + 10); // 10 spacing
-        if (spacing < 0) {
-            QPoint pSmc = m_switchModeControl->pos();
-            pSmc += {-spacing, 0};
-
-            m_switchModeControl->move(pSmc);
-        }
-    }
+    m_switchModeControl->move(x, (m_wallpaperList->y() - m_switchModeControl->height()) / 2);
 }
 #endif
 
