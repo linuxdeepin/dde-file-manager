@@ -349,12 +349,14 @@ QList<QAction *> DFMAdditionalMenu::actions(const QStringList &files, const QStr
             break;
         }
 
-        QStringList fileMimeTypes;
+        QStringList fileMimeTypes, fmts;
         fileMimeTypes.append(fileInfo->mimeType().name());
         fileMimeTypes.append(fileInfo->mimeType().aliases());
         const QMimeType &mt = fileInfo->mimeType();
+        fmts = fileMimeTypes;
         appendParentMineType(mt.parentMimeTypes(), fileMimeTypes);
         fileMimeTypes.removeAll({});
+        fmts.removeAll({});
 
         for (auto it = actions.begin(); it != actions.end(); ) {
             QAction * action = *it;
@@ -368,7 +370,8 @@ QList<QAction *> DFMAdditionalMenu::actions(const QStringList &files, const QStr
             // match exclude mime types
             QStringList excludeMimeTypes = action->property(d->MIMETYPE_EXCLUDE_KEY.data()).toStringList();
             excludeMimeTypes.removeAll({});
-            bool match = d->isMimeTypeMatch(fileMimeTypes, excludeMimeTypes);
+            // 排除时不包含 parentMimeTypes 不然容易误伤， 比如xlsx的 parentMimeTypes 是application/zip
+            bool match = d->isMimeTypeMatch(fmts, excludeMimeTypes);
             if (match) {
                 it = actions.erase(it);
                 continue;

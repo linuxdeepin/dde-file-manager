@@ -23,6 +23,8 @@
 
 `X-DFM-ExcludeMimeTypes` 可以排除特定的文件类型，只能用在 `[Desktop Entry]` 项目中，使用 `;` 作为分割填写多个值，支持模糊匹配。优先于 `MimeTypes`项过滤文件，即如果 `MimeTypes` 和 `X-DFM-ExcludeMimeTypes`同时包含某种文件类型时，该文件类型被选中将无法显示菜单。
 
+注意： MimeType 本身呈树形结构关系，配置 `MimeType` 所对应的值将匹配文件所对应的最佳匹配 MimeType 及其完整父级关系，即若文件的 MimeType 关系树中任意一项匹配了 `MimeType` 中所配置的值，则匹配成功。例如，若配置 `MimeType=text/plain;` 则除 `text/plain` 外还会匹配 `application/json` `application/xml` 等类型的文件，因为它们的父级 MimeType 关系中包含 `text/plain`。 而 `X-DFM-ExcludeMimeTypes` 则仅对完全匹配此配置中所包含的 MimeType 进行过滤，不过滤其父级关系。如 `*.xlxs` 文件的父级 MimeType 有 `application/zip`,但 `ExcludeMimeTypes=application/zip` 不会过滤掉 `*.xlxs` 文件。 
+
 `X-DFM-NotShowIn` 可以决定是否在桌面或者文件管理器显示菜单，此字段可包含一个或多个类型，其中包括 `FileManager`, `Desktop` 两种，字段不存在或字段为空时在桌面和文件管理均可显示。
 
 | 名称 | 含义 |
