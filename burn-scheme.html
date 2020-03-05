@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- burn.qdoc -->
+  <title>Burn Scheme | Deepin File Manager</title>
+  <link rel="stylesheet" type="text/css" href="style/online.css" />
+</head>
+<body>
+<div class="header" id="qtdocheader">
+    <div class="main">
+    <div class="main-rounded">
+        <div class="navigationbar">
+        <ul>
+<li>Burn Scheme</li>
+    </ul>
+    </div>
+</div>
+<div class="content">
+<div class="line">
+<div class="content mainContent">
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#scheme-structure-and-other-basics">Scheme Structure and Other Basics</a></li>
+<li class="level1"><a href="#fileinfo-usage">FileInfo Usage</a></li>
+<li class="level2"><a href="#controller-usage">Controller Usage</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<div class="context">
+<h1 class="title">Burn Scheme</h1>
+<span class="subtitle"></span>
+<!-- $$$burn-scheme.html-description -->
+<div class="descr"> <a name="details"></a>
+<p>The Burn scheme is used for the optical media authoring feature in the file manager.</p>
+<a name="scheme-structure-and-other-basics"></a>
+<h2 id="scheme-structure-and-other-basics">Scheme Structure and Other Basics</h2>
+<p>URL of this scheme has the following structure:</p>
+<p>burn://&lt;path_to_optical_device_node&gt;/&lt;disc_files|staging_files&gt;/&lt;file_path_relative_to_filesystem_root&gt;</p>
+<p>These three sections will be referred to as the device segment, the status segment and the path segment in the rest of this documentation. DUrl contains functions to fetch these segments for your convenience. Macros for the strings used by the status segment can also be found there.</p>
+<p>Examples:</p>
+<p>burn:///dev/sr0/disc_files/EFI/</p>
+<p>burn:///dev/sr0/staging_files/README.txt</p>
+<p>Each file using this scheme has a corresponding file in the local file hierarchy as its backer file. If the middle segment of the path is &quot;disc_files&quot;, its backer file is in the mount point of the optical disc. Otherwise its backer file is in a temporary folder containing the files staged to be burnt (usually ~/.cache/deepin/dde-file-manager/diskburn/&lt;target device node with slashes replaced with underscores&gt;).</p>
+<a name="fileinfo-usage"></a>
+<h2 id="fileinfo-usage">FileInfo Usage</h2>
+<p>FileInfo objects for files of this scheme have proxies to its backing file. Therefore you can expect most functions to work exactly the same as if you are dealing with the actual file. Some of the notable differences are documented as follows:</p>
+<ul>
+<li>canRedirectionFileUrl() returns false for directories, even though redirectedFileUrl() can still be used in this case.</li>
+<li>if the path segment contains nothing but slashes, parentUrl() and goToUrlWhenDeleted() will return the home directory of the current user. <b class="redFont"><code>\endlis</code></b><a name="controller-usage"></a>
+<h3 >Controller Usage</h3>
+<p>The controller mainly deals with files staged for burning. Some of its functions have a different purpose and distinctive behaviors.</p>
+<ul>
+<li>pasteFile adds files to the staging collection. The files are actually pasted into the staging folder for the target device. If the pasted file is a single ISO file and both the target disc and its staging folder are empty, the user will be prompted whether to burn the image file.</li>
+<li>deleteFiles and moveToTrash both remove files completely, when used on staging files.</li>
+<li>The directory iterator returned by this controller will iterate through both on disc files and staging files of the same path if created for a on disc URL. If created for a staging URL however, it only iterates through staging files with that path. If there are files with the same name on the disc and in the staging folder, the staging one will be ignored.</li>
+<li>The file watcher employed by the scheme only watches for staging files. However, it does watch for the mount point of the disc to generate a signal when the mount point is removed. It also watch for signals from UDisks for the same purpose because the first method doesn't work when disc is ejected by pressing the eject button on the drive with certain system configurations. Manual ejection detection is still somewhat broken even with the workaround at the moment.</li>
+</ul>
+<p>In order to actually start a burn session, invoke the dialog BurnOptDialog. The user will be asked for options and confirmation. Erasing a disc is initiated by calling <a href="appcontroller.html#actionOpticalBlank">AppController::actionOpticalBlank</a>.</p>
+</div>
+<!-- @@@burn-scheme.html -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

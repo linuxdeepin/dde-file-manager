@@ -26,6 +26,7 @@
 <ul>
 <li class="level1"><a href="#">上下文菜单</a></li>
 <li class="level1"><a href="#">深度文件管理器的上下文菜单扩展支持</a></li>
+<li class="level2"><a href="#desktop">desktop 格式形式的上下文菜单扩展</a></li>
 <li class="level2"><a href="#json">Json 形式的上下文菜单扩展</a></li>
 <li class="level2"><a href="#qt-c">遵守 Qt 插件规范的 C++ 上下文菜单插件</a></li>
 <li class="level1"><a href="#">参考链接</a></li>
@@ -45,10 +46,30 @@
 <p>尽管默认的呈现内容应当涵盖了大部分的使用场景，用户或应用程序可能依然希望呈现额外的上下文菜单以便辅助使用。 本文即覆盖了编写自己的上下文菜单扩展的须知内容。</p>
 <a name=""></a>
 <h2 id="">深度文件管理器的上下文菜单扩展支持</h2>
-<p>深度文件管理器目前提供两种形式的上下文菜单扩展支持，分别为 json 格式的扩展支持和特定的上下文菜单扩展插件。</p>
+<p>深度文件管理器目前提供多种形式的上下文菜单扩展支持，为 desktop 格式的上下文菜单扩展支持、 json 格式的扩展支持和 C++ 插件形式的上下文菜单扩展插件。</p>
+<p>在 v20 以上版本的文件管理器（版本号高于 5.0&#x2e;0）中，我们提供了 desktop 格式形式的上下文菜单扩展支持和 C++ 插件形式的上下文菜单支持， 在 v15 版本中，文件管理器提供了 json 文件形式的扩展支持和 C++ 插件形式的上下文菜单支持，为了方便用户和开发者，我们还 提供了适用于 v15 版本文件管理器的 desktop 格式形式的扩展支持插件。请根据您的实际需求选择对应的方案，配置方法参见下方的详细描述。</p>
 <p>需要注意的是，如果您希望为您的应用程序能够出现在 “打开方式” 的应用列表中，您应当考虑为您的应用程序编写适当的 .desktop 文件并指定对应的 MimeType 文件（请参见 <a href="https://www.freedesktop.org/wiki/Specifications/desktop-entry-spec/">desktop-entry-spec</a>）。 如果您希望您的自定义文件类型能够出现在 “新建文档” 的列表中，您应当参阅 <a href="new-file-templates-zh.html">新建文件模板</a> 。 对于上述的这两种需求情况，使用上下文菜单扩展都不是恰当的选择。</p>
+<a name="desktop"></a>
+<h3 >desktop 格式形式的上下文菜单扩展</h3>
+<p>适用版本：适用于 v20 版本（即版本 &gt; 5.0&#x2e;0 ）的深度文件管理器，或安装了 desktop 格式形式的上下文菜单扩展插件（在 Deepin 中包名为 dde-file-manager-menu-oem）的 v15 版本文件管理器。</p>
+<p>文件管理器会识别指定目录（ `/usr/share/deepin/dde-file-manager/oem-menuextensions` ）下的 `.desktop` 文件，并将其视为扩展菜单项，加入到文件管理器的上下文菜单中。 开发者或用户仅需按照正确的格式编写 desktop 文件并放置于对应目录即可使用。</p>
+<p>每个有效的 desktop 格式形式的上下文菜单扩展均为一个独立的 Application 类型的 `.desktop` 文件。对于每个文件，在其 `[Desktop Entry]` 下至少需要包含 `Name` 和 `Exec` 字段， `Name` 的内容为添加到上下文菜单中时将会显示的名称，`Exec` 的内容为当单击此新增的菜单项时将会执行的行为（遵循 desktop 文件规范标准，可以使用 `%u` 等参数）。</p>
+<p>定制菜单支持使用 `Actions` 字段增加指定的子菜单，子菜单需至少包含 `Name` 和 `Exec` 字段，可以通过 `Icon` 指定图标。 若指定子菜单，则入口项（原本 `[Desktop Entry]` 下）的 `Exec` 字段将不再有效。</p>
+<p>对于文件管理器菜单项定制，支持额外的字段可供定制，可以使用 `X-DFM-MenuTypes` 字段来指定菜单项在何种情况会显示，此字段可包含一个或多个类型， 其中包括 `SingleFile`, `SingleDir`, `MultiFileDirs` 和 `EmptyArea` 四种。</p>
+<p>对于此种类型的配置详细规则，请参阅：<a href="https://github.com/linuxdeepin/dde-file-manager/blob/master/doc/PLUGIN-README.md">项目源码仓库中所附带的 PLUGIN-README.md</a></p>
+<a name=""></a>
+<h4 >示例扩展</h4>
+<p>可以将下面的示例存储为 `test.desktop` 并放置到 `/usr/share/deepin/dde-file-manager/oem-menuextensions/` 中，关闭现有的所有文件管理器窗口并打开新的文件管理器窗口，定制的菜单将会出现在单独目录或多选文件的情况的上下文菜单中。</p>
+<pre class="cpp"><span class="operator">[</span>Desktop Entry<span class="operator">]</span>
+Type<span class="operator">=</span>Application
+Exec<span class="operator">=</span><span class="operator">/</span>home<span class="operator">/</span>wzc<span class="operator">/</span>Temp<span class="operator">/</span>test<span class="operator">.</span>sh <span class="operator">%</span>U
+Icon<span class="operator">=</span>utilities<span class="operator">-</span>terminal
+Name<span class="operator">=</span>示例菜单项名称
+X<span class="operator">-</span>DFM<span class="operator">-</span>MenuTypes<span class="operator">=</span>SingleDir;MultiFileDirs;</pre>
 <a name="json"></a>
 <h3 >Json 形式的上下文菜单扩展</h3>
+<p>适用版本：仅适用于 v15 版本，即版本 &lt;= 5.0&#x2e;0 的深度文件管理器。</p>
+<p>注意：如果您计划在将来升级到 v20 版本的文件管理器，请考虑安装由我们提供的适用于 v15 版本的 desktop 格式形式的扩展支持插件，并使用 desktop 格式形式的扩展支持。</p>
 <p>默认情况下文件管理器会在开启时试图加载 `~/.config/deepin/dde-file-manager/menuextensions/` 目录 （如需要编写此类扩展但发现此路径不存在时，手动创建完整路径即可）中的 json 文件作为上下文菜单扩展， 对于一个上下文菜单扩展，应当包含有如下的通用字段。</p>
 <a name=""></a>
 <h4 >通用字段</h4>
@@ -219,6 +240,7 @@
 ]</pre>
 <a name="qt-c"></a>
 <h3 >遵守 Qt 插件规范的 C++ 上下文菜单插件</h3>
+<p>注意：接口可能在将来废弃或调整，尽管适用于 v15 和 v20 版本，但仍不推荐使用。</p>
 <p>文件管理器支持加载 Qt 规范的 C++ 插件，实现需继承 MenuInterface ，遵守 Qt 的插件规范实现你的菜单插件接口。</p>
 <a name=""></a>
 <h4 >插件头文件</h4>
@@ -284,7 +306,7 @@ HEADERS += \
         dfmctxmenuplugin.h
 
 unix {
-    target.path = /usr/lib
+    target.path = $$[QT_INSTALL_LIBS]/dde-file-manager/plugins/menu/
     INSTALLS += target
 }</pre>
 <p>context-menu-ext/dfmctxmenuplugin.h:</p>

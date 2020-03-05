@@ -25,6 +25,7 @@
 <h3><a name="toc">Contents</a></h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#reimplemented-public-functions">Reimplemented Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
 </ul>
 </div>
@@ -32,7 +33,7 @@
 <div class="context">
 <h1 class="title">DAttachedUdisks2Device Class</h1>
 <!-- $$$DAttachedUdisks2Device-brief -->
-<p>An attached (mounted) block device (partition) <a href="#details">More...</a></p>
+<p>An attached (mounted) block device (partition). <a href="#details">More...</a></p>
 <!-- @@@DAttachedUdisks2Device -->
 <div class="table"><table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;DAttachedUdisks2Device&gt;</span>
@@ -44,10 +45,20 @@
 <div class="table"><table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dattachedudisks2device.html#DAttachedUdisks2Device">DAttachedUdisks2Device</a></b>(const DBlockDevice *<i>blockDevicePointer</i>)</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> DBlockDevice *</td><td class="memItemRight bottomAlign"><b><a href="dattachedudisks2device.html#blockDevice">blockDevice</a></b>()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="dattachedudisks2device.html#deviceUsage">deviceUsage</a></b>() override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="dattachedudisks2device.html#displayName">displayName</a></b>() override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="dattachedudisks2device.html#iconName">iconName</a></b>() override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="dattachedudisks2device.html#mountpointUrl">mountpointUrl</a></b>() override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="dattachedudisks2device.html#setErrorHandler">setErrorHandler</a></b>(ErrorHandleInfc *<i>handle</i>)</td></tr>
 </table></div>
-<ul>
-<li class="fn">8 public functions inherited from <a href="dattacheddeviceinterface.html#public-functions">DAttachedDeviceInterface</a></li>
-</ul>
+<a name="reimplemented-public-functions"></a>
+<h2 id="reimplemented-public-functions">Reimplemented Public Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="dattachedudisks2device.html#detach">detach</a></b>() override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="dattachedudisks2device.html#detachable">detachable</a></b>() override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="dattachedudisks2device.html#deviceUsageValid">deviceUsageValid</a></b>() override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="dattachedudisks2device.html#isValid">isValid</a></b>() override</td></tr>
+</table></div>
 <a name="details"></a>
 <!-- $$$DAttachedUdisks2Device-description -->
 <div class="descr">
@@ -63,6 +74,33 @@
 <!-- $$$blockDevice[overload1]$$$blockDevice -->
 <h3 class="fn" id="blockDevice"><a name="blockDevice"></a><span class="type">DBlockDevice</span> *DAttachedUdisks2Device::<span class="name">blockDevice</span>()</h3>
 <!-- @@@blockDevice -->
+<!-- $$$detach[overload1]$$$detach -->
+<h3 class="fn" id="detach"><a name="detach"></a><code>[override virtual] </code><span class="type">void</span> DAttachedUdisks2Device::<span class="name">detach</span>()</h3>
+<!-- @@@detach -->
+<!-- $$$detachable[overload1]$$$detachable -->
+<h3 class="fn" id="detachable"><a name="detachable"></a><code>[override virtual] </code><span class="type">bool</span> DAttachedUdisks2Device::<span class="name">detachable</span>()</h3>
+<!-- @@@detachable -->
+<!-- $$$deviceUsage[overload1]$$$deviceUsage -->
+<h3 class="fn" id="deviceUsage"><a name="deviceUsage"></a><span class="type">int</span> DAttachedUdisks2Device::<span class="name">deviceUsage</span>()</h3>
+<!-- @@@deviceUsage -->
+<!-- $$$deviceUsageValid[overload1]$$$deviceUsageValid -->
+<h3 class="fn" id="deviceUsageValid"><a name="deviceUsageValid"></a><code>[override virtual] </code><span class="type">bool</span> DAttachedUdisks2Device::<span class="name">deviceUsageValid</span>()</h3>
+<!-- @@@deviceUsageValid -->
+<!-- $$$displayName[overload1]$$$displayName -->
+<h3 class="fn" id="displayName"><a name="displayName"></a><span class="type">int</span> DAttachedUdisks2Device::<span class="name">displayName</span>()</h3>
+<!-- @@@displayName -->
+<!-- $$$iconName[overload1]$$$iconName -->
+<h3 class="fn" id="iconName"><a name="iconName"></a><span class="type">int</span> DAttachedUdisks2Device::<span class="name">iconName</span>()</h3>
+<!-- @@@iconName -->
+<!-- $$$isValid[overload1]$$$isValid -->
+<h3 class="fn" id="isValid"><a name="isValid"></a><code>[override virtual] </code><span class="type">bool</span> DAttachedUdisks2Device::<span class="name">isValid</span>()</h3>
+<!-- @@@isValid -->
+<!-- $$$mountpointUrl[overload1]$$$mountpointUrl -->
+<h3 class="fn" id="mountpointUrl"><a name="mountpointUrl"></a><span class="type">int</span> DAttachedUdisks2Device::<span class="name">mountpointUrl</span>()</h3>
+<!-- @@@mountpointUrl -->
+<!-- $$$setErrorHandler[overload1]$$$setErrorHandlerErrorHandleInfc* -->
+<h3 class="fn" id="setErrorHandler"><a name="setErrorHandler"></a><span class="type">void</span> DAttachedUdisks2Device::<span class="name">setErrorHandler</span>(<span class="type">ErrorHandleInfc</span> *<i>handle</i>)</h3>
+<!-- @@@setErrorHandler -->
 </div>
 </div>
 </div>

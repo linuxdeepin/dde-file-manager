@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- dattachedvfsdevice.cpp -->
+  <title>DAttachedVfsDevice Class | Deepin File Manager</title>
+  <link rel="stylesheet" type="text/css" href="style/online.css" />
+</head>
+<body>
+<div class="header" id="qtdocheader">
+    <div class="main">
+    <div class="main-rounded">
+        <div class="navigationbar">
+        <ul>
+<li>DAttachedVfsDevice</li>
+    </ul>
+    </div>
+</div>
+<div class="content">
+<div class="line">
+<div class="content mainContent">
+<div class="sidebar">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#reimplemented-public-functions">Reimplemented Public Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<div class="sidebar-content" id="sidebar-content"></div></div>
+<div class="context">
+<h1 class="title">DAttachedVfsDevice Class</h1>
+<!-- $$$DAttachedVfsDevice-brief -->
+<p>An attached (mounted) virtual filesystem device from gio. <a href="#details">More...</a></p>
+<!-- @@@DAttachedVfsDevice -->
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> Header:</td><td class="memItemRight bottomAlign"> <span class="preprocessor">#include &lt;DAttachedVfsDevice&gt;</span>
+</td></tr><tr><td class="memItemLeft rightAlign topAlign"> Inherits:</td><td class="memItemRight bottomAlign"> DAttachedDeviceInterface</td></tr></table></div><ul>
+<li><a href="dattachedvfsdevice-members.html">List of all members, including inherited members</a></li>
+</ul>
+<a name="public-functions"></a>
+<h2 id="public-functions">Public Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="dattachedvfsdevice.html#DAttachedVfsDevice">DAttachedVfsDevice</a></b>(const int <i>mountpointPath</i>)</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="dattachedvfsdevice.html#deviceUsage">deviceUsage</a></b>() override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="dattachedvfsdevice.html#displayName">displayName</a></b>() override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="dattachedvfsdevice.html#iconName">iconName</a></b>() override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="dattachedvfsdevice.html#mountpointUrl">mountpointUrl</a></b>() override</td></tr>
+</table></div>
+<a name="reimplemented-public-functions"></a>
+<h2 id="reimplemented-public-functions">Reimplemented Public Functions</h2>
+<div class="table"><table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="dattachedvfsdevice.html#detach">detach</a></b>() override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="dattachedvfsdevice.html#detachable">detachable</a></b>() override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="dattachedvfsdevice.html#deviceUsageValid">deviceUsageValid</a></b>() override</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="dattachedvfsdevice.html#isValid">isValid</a></b>() override</td></tr>
+</table></div>
+<a name="details"></a>
+<!-- $$$DAttachedVfsDevice-description -->
+<div class="descr">
+<h2 id="details">Detailed Description</h2>
+<p>An attached (mounted) virtual filesystem device from gio</p>
+</div>
+<!-- @@@DAttachedVfsDevice -->
+<div class="func">
+<h2>Member Function Documentation</h2>
+<!-- $$$DAttachedVfsDevice[overload1]$$$DAttachedVfsDeviceconstint -->
+<h3 class="fn" id="DAttachedVfsDevice"><a name="DAttachedVfsDevice"></a>DAttachedVfsDevice::<span class="name">DAttachedVfsDevice</span>(const <span class="type">int</span> <i>mountpointPath</i>)</h3>
+<p>Default constructs an instance of DAttachedVfsDevice.</p><!-- @@@DAttachedVfsDevice -->
+<!-- $$$detach[overload1]$$$detach -->
+<h3 class="fn" id="detach"><a name="detach"></a><code>[override virtual] </code><span class="type">void</span> DAttachedVfsDevice::<span class="name">detach</span>()</h3>
+<!-- @@@detach -->
+<!-- $$$detachable[overload1]$$$detachable -->
+<h3 class="fn" id="detachable"><a name="detachable"></a><code>[override virtual] </code><span class="type">bool</span> DAttachedVfsDevice::<span class="name">detachable</span>()</h3>
+<!-- @@@detachable -->
+<!-- $$$deviceUsage[overload1]$$$deviceUsage -->
+<h3 class="fn" id="deviceUsage"><a name="deviceUsage"></a><span class="type">int</span> DAttachedVfsDevice::<span class="name">deviceUsage</span>()</h3>
+<!-- @@@deviceUsage -->
+<!-- $$$deviceUsageValid[overload1]$$$deviceUsageValid -->
+<h3 class="fn" id="deviceUsageValid"><a name="deviceUsageValid"></a><code>[override virtual] </code><span class="type">bool</span> DAttachedVfsDevice::<span class="name">deviceUsageValid</span>()</h3>
+<!-- @@@deviceUsageValid -->
+<!-- $$$displayName[overload1]$$$displayName -->
+<h3 class="fn" id="displayName"><a name="displayName"></a><span class="type">int</span> DAttachedVfsDevice::<span class="name">displayName</span>()</h3>
+<!-- @@@displayName -->
+<!-- $$$iconName[overload1]$$$iconName -->
+<h3 class="fn" id="iconName"><a name="iconName"></a><span class="type">int</span> DAttachedVfsDevice::<span class="name">iconName</span>()</h3>
+<!-- @@@iconName -->
+<!-- $$$isValid[overload1]$$$isValid -->
+<h3 class="fn" id="isValid"><a name="isValid"></a><code>[override virtual] </code><span class="type">bool</span> DAttachedVfsDevice::<span class="name">isValid</span>()</h3>
+<!-- @@@isValid -->
+<!-- $$$mountpointUrl[overload1]$$$mountpointUrl -->
+<h3 class="fn" id="mountpointUrl"><a name="mountpointUrl"></a><span class="type">int</span> DAttachedVfsDevice::<span class="name">mountpointUrl</span>()</h3>
+<!-- @@@mountpointUrl -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
