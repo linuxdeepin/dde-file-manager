@@ -107,6 +107,15 @@ void WallpaperList::removeWallpaper(const QString &path)
         WallpaperItem *item = m_items[i];
 
         if (item->getPath() == path) {
+
+            if (item == prevItem) {
+                prevItem = nullptr;
+            }
+
+            else if (item == nextItem) {
+                nextItem = nullptr;
+            }
+
             m_items.removeOne(item);
             m_contentLayout->removeWidget(item);
             item->deleteLater();
@@ -303,14 +312,14 @@ void WallpaperList::updateBothEndsItem()
 {
     int current_value = horizontalScrollBar()->value();
 
-    prevItem = qobject_cast<WallpaperItem *>(itemAt(ItemWidth / 2, ItemHeight / 2));
-    nextItem = qobject_cast<WallpaperItem *>(itemAt(width() - ItemWidth / 2, ItemHeight / 2));
-
     if (prevItem)
         prevItem->setOpacity(1);
 
     if (nextItem)
         nextItem->setOpacity(1);
+
+    prevItem = qobject_cast<WallpaperItem *>(itemAt(ItemWidth / 2, ItemHeight / 2));
+    nextItem = qobject_cast<WallpaperItem *>(itemAt(width() - ItemWidth / 2, ItemHeight / 2));
 
     if (current_value == horizontalScrollBar()->minimum()) {
         prevItem = Q_NULLPTR;
