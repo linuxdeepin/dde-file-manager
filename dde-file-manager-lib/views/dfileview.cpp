@@ -1677,7 +1677,9 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
 
     if (flags == (QItemSelectionModel::Current|QItemSelectionModel::Rows|QItemSelectionModel::ClearAndSelect)) {
         QRect tmp_rect = rect;
-
+        //修改远程时，文件选择框内容选中后被取消问题
+        if(tmp_rect.width() < 5 && tmp_rect.height() < 5)
+            return;
         tmp_rect.translate(horizontalOffset(), verticalOffset());
         tmp_rect.setCoords(qMin(tmp_rect.left(), tmp_rect.right()), qMin(tmp_rect.top(), tmp_rect.bottom()),
                            qMax(tmp_rect.left(), tmp_rect.right()), qMax(tmp_rect.top(), tmp_rect.bottom()));
