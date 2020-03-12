@@ -34,7 +34,7 @@
 #include <danchors.h>
 #include <dimagebutton.h>
 
-WallpaperList::WallpaperList(QWidget * parent)
+WallpaperList::WallpaperList(QWidget *parent)
     : QScrollArea(parent)
     , m_wmInter(new com::deepin::wm("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this))
     , prevButton(new DImageButton(":/images/previous_normal.svg",
@@ -88,9 +88,9 @@ WallpaperList::~WallpaperList()
 
 }
 
-WallpaperItem * WallpaperList::addWallpaper(const QString &path)
+WallpaperItem *WallpaperList::addWallpaper(const QString &path)
 {
-    WallpaperItem * wallpaper = new WallpaperItem(this, path);
+    WallpaperItem *wallpaper = new WallpaperItem(this, path);
     wallpaper->setFixedSize(QSize(ItemWidth, ItemHeight));
     addItem(wallpaper);
 
@@ -240,7 +240,7 @@ int WallpaperList::count() const
 
 void WallpaperList::clear()
 {
-    for (WallpaperItem * item : m_items) {
+    for (WallpaperItem *item : m_items) {
         m_contentLayout->removeWidget(item);
         item->deleteLater();
     }
@@ -253,7 +253,7 @@ void WallpaperList::updateItemThumb()
 {
     m_contentWidget->adjustSize();
 
-    showDeleteButtonForItem(static_cast<WallpaperItem*>(itemAt(mapFromGlobal(QCursor::pos()))));
+    showDeleteButtonForItem(static_cast<WallpaperItem *>(itemAt(mapFromGlobal(QCursor::pos()))));
 
     for (WallpaperItem *item : m_items) {
         if (rect().intersects(QRect(item->mapTo(this, QPoint()), item->size()))) {
@@ -266,13 +266,13 @@ void WallpaperList::updateItemThumb()
 
 void WallpaperList::wallpaperItemPressed()
 {
-    WallpaperItem * item = qobject_cast<WallpaperItem*>(sender());
+    WallpaperItem *item = qobject_cast<WallpaperItem *>(sender());
 
     if (item == prevItem || item == nextItem)
         return;
 
     for (int i = 0; i < count(); i++) {
-        WallpaperItem * wallpaper = qobject_cast<WallpaperItem*>(this->item(i));
+        WallpaperItem *wallpaper = qobject_cast<WallpaperItem *>(this->item(i));
 
         if (wallpaper) {
             if (wallpaper == item) {
@@ -288,7 +288,7 @@ void WallpaperList::wallpaperItemPressed()
 
 void WallpaperList::wallpaperItemHoverIn()
 {
-    WallpaperItem *item = qobject_cast<WallpaperItem*>(sender());
+    WallpaperItem *item = qobject_cast<WallpaperItem *>(sender());
 
     if (item->isVisible())
         showDeleteButtonForItem(item);
@@ -303,14 +303,14 @@ void WallpaperList::updateBothEndsItem()
 {
     int current_value = horizontalScrollBar()->value();
 
+    prevItem = qobject_cast<WallpaperItem *>(itemAt(ItemWidth / 2, ItemHeight / 2));
+    nextItem = qobject_cast<WallpaperItem *>(itemAt(width() - ItemWidth / 2, ItemHeight / 2));
+
     if (prevItem)
         prevItem->setOpacity(1);
 
     if (nextItem)
         nextItem->setOpacity(1);
-
-    prevItem = qobject_cast<WallpaperItem*>(itemAt(ItemWidth / 2, ItemHeight / 2));
-    nextItem = qobject_cast<WallpaperItem*>(itemAt(width() - ItemWidth / 2, ItemHeight / 2));
 
     if (current_value == horizontalScrollBar()->minimum()) {
         prevItem = Q_NULLPTR;
@@ -324,14 +324,12 @@ void WallpaperList::updateBothEndsItem()
         prevButton.setLeftMargin(gridSize().width() / 2 - prevButton->sizeHint().width() / 2);
         prevItem->setOpacity(0.4);
     }
-
     prevButton->setVisible(prevItem);
 
     if (nextItem) {
         nextButton.setRightMargin(gridSize().width() / 2 - nextButton->sizeHint().width() / 2);
         nextItem->setOpacity(0.4);
     }
-
     nextButton->setVisible(nextItem);
 }
 
@@ -343,8 +341,8 @@ void WallpaperList::showDeleteButtonForItem(WallpaperItem const *item) const
             return;
         }
         emit mouseOverItemChanged(item->getPath(),
-                             item->mapTo(parentWidget(),
-                                         item->contentImageGeometry().topRight() / devicePixelRatioF()));
+                                  item->mapTo(parentWidget(),
+                                              item->contentImageGeometry().topRight() / devicePixelRatioF()));
     } else {
         emit mouseOverItemChanged("", QPoint(0, 0));
     }

@@ -65,7 +65,7 @@ static bool previewBackground()
         return false;
 
     return DWindowManagerHelper::instance()->windowManagerName() == DWindowManagerHelper::KWinWM
-            || !DWindowManagerHelper::instance()->hasBlurWindow();
+           || !DWindowManagerHelper::instance()->hasBlurWindow();
 }
 
 Frame::Frame(Mode mode, QWidget *parent)
@@ -92,7 +92,7 @@ Frame::Frame(Mode mode, QWidget *parent)
     initUI();
     initSize();
 
-    connect(m_mouseArea, &DRegionMonitor::buttonPress, [this](const QPoint &p, const int button){
+    connect(m_mouseArea, &DRegionMonitor::buttonPress, [this](const QPoint & p, const int button) {
         if (button == 4) {
             m_wallpaperList->prevPage();
         } else if (button == 5) {
@@ -126,11 +126,11 @@ Frame::Frame(Mode mode, QWidget *parent)
 Frame::~Frame()
 {
     QStringList list = m_needDeleteList;
-    QTimer::singleShot(1000, [list](){
+    QTimer::singleShot(1000, [list]() {
         ComDeepinDaemonAppearanceInterface dbusAppearance(AppearanceServ,
-                                           AppearancePath,
-                                           QDBusConnection::sessionBus(),
-                                           nullptr);
+                                                          AppearancePath,
+                                                          QDBusConnection::sessionBus(),
+                                                          nullptr);
 
         for (const QString &path : list) {
             dbusAppearance.Delete("background", path);
@@ -224,7 +224,7 @@ void Frame::handleNeedCloseButton(QString path, QPoint pos)
     }
 }
 
-void Frame::showEvent(QShowEvent * event)
+void Frame::showEvent(QShowEvent *event)
 {
 #ifndef DISABLE_SCREENSAVER
     m_switchModeControl->adjustSize();
@@ -277,7 +277,7 @@ void Frame::hideEvent(QHideEvent *event)
     emit done();
 }
 
-void Frame::keyPressEvent(QKeyEvent * event)
+void Frame::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Escape) {
         qDebug() << "escape key pressed, quit.";
@@ -311,7 +311,7 @@ bool Frame::event(QEvent *event)
 }
 
 #ifndef DISABLE_SCREENSAVER
-void Frame::setMode(QAbstractButton * toggledBtn, bool on)
+void Frame::setMode(QAbstractButton *toggledBtn, bool on)
 {
     Q_UNUSED(on);
 
@@ -329,7 +329,7 @@ void Frame::reLayoutTools()
         m_wallpaperCarouselCheckBox->hide();
         m_wallpaperCarouselControl->hide();
         layout()->removeItem(m_wallpaperCarouselLayout);
-        static_cast<QBoxLayout*>(layout())->insertLayout(0, m_toolLayout);
+        static_cast<QBoxLayout *>(layout())->insertLayout(0, m_toolLayout);
 #endif
     } else {
         m_waitControlLabel->hide();
@@ -339,7 +339,7 @@ void Frame::reLayoutTools()
         m_wallpaperCarouselCheckBox->show();
         m_wallpaperCarouselControl->setVisible(m_wallpaperCarouselCheckBox->isChecked());
         layout()->removeItem(m_toolLayout);
-        static_cast<QBoxLayout*>(layout())->insertLayout(0, m_wallpaperCarouselLayout);
+        static_cast<QBoxLayout *>(layout())->insertLayout(0, m_wallpaperCarouselLayout);
 #endif
     }
 }
@@ -384,7 +384,7 @@ void Frame::adjustModeSwitcherPoint()
 #endif
 
     // 防止在低分辨率情况下切换控件和左边的工具栏重叠
-    int x = width() / 2 - m_switchModeControl->width()/2;
+    int x = width() / 2 - m_switchModeControl->width() / 2;
     if (x < tools_width) {
         x = tools_width ;
     }
@@ -459,7 +459,7 @@ void Frame::initUI()
     wccPal.setColor(QPalette::All, QPalette::WindowText, textColor);
     m_wallpaperCarouselCheckBox->setPalette(wccPal);
     m_wallpaperCarouselControl = new DButtonBox(this);
-    QList<DButtonBoxButton*> wallpaperSlideshowBtns;
+    QList<DButtonBoxButton *> wallpaperSlideshowBtns;
 
     QByteArrayList array_policy {"30", "60", "300", "600", "900", "1800", "3600", "login", "wakeup"};
 
@@ -483,7 +483,7 @@ void Frame::initUI()
         for (const QByteArray &time : array_policy) {
             int index = 0;
 
-            DButtonBoxButton * btn;
+            DButtonBoxButton *btn;
             if (time == "login") {
                 btn = new DButtonBoxButton(tr("When login"), this);
             } else if (time == "wakeup") {
@@ -540,7 +540,7 @@ void Frame::initUI()
     m_lockScreenBox->setPalette(lsPal);
 
     QVector<int> time_array {60, 300, 600, 900, 1800, 3600, 0};
-    QList<DButtonBoxButton*> timeArrayBtns;
+    QList<DButtonBoxButton *> timeArrayBtns;
 
     if (!m_dbusScreenSaver) {
         m_dbusScreenSaver = new ComDeepinScreenSaverInterface("com.deepin.ScreenSaver", "/com/deepin/ScreenSaver",
@@ -558,7 +558,7 @@ void Frame::initUI()
 
     for (const int time : time_array) {
         if (time > 0) {
-            DButtonBoxButton * btn = new DButtonBoxButton(timeFormat(time), this);
+            DButtonBoxButton *btn = new DButtonBoxButton(timeFormat(time), this);
             btn->setMinimumWidth(40);
             timeArrayBtns.append(btn);
         }
@@ -599,17 +599,17 @@ void Frame::initUI()
     //###(zccrs): 直接把switModeControl放到布局中始终无法在两种mos模式下都居中
     // 使用anchors使此控件居中
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    DButtonBoxButton * wallpaperBtn = new DButtonBoxButton(tr("Wallpaper"), this);
+    DButtonBoxButton *wallpaperBtn = new DButtonBoxButton(tr("Wallpaper"), this);
     wallpaperBtn->setMinimumWidth(40);
     m_switchModeControl = new DButtonBox(this);
 
     if (m_mode == WallpaperMode) wallpaperBtn->setChecked(true);
 
-    if(env.contains(DESKTOP_CAN_SCREENSAVER) && env.value(DESKTOP_CAN_SCREENSAVER).startsWith("N")) {
+    if (env.contains(DESKTOP_CAN_SCREENSAVER) && env.value(DESKTOP_CAN_SCREENSAVER).startsWith("N")) {
         m_switchModeControl->setButtonList({wallpaperBtn}, true);
         wallpaperBtn->setChecked(true);
     } else {
-        DButtonBoxButton * screensaverBtn = new DButtonBoxButton(tr("Screensaver"), this);
+        DButtonBoxButton *screensaverBtn = new DButtonBoxButton(tr("Screensaver"), this);
         screensaverBtn->setMinimumWidth(40);
         m_switchModeControl->setButtonList({wallpaperBtn, screensaverBtn}, true);
     }
@@ -620,7 +620,7 @@ void Frame::initUI()
         m_dbusScreenSaver->setLinePowerScreenSaverTimeout(time_array[index]);
     });
 
-    connect(m_switchModeControl, &DButtonBox::buttonToggled, this, static_cast<void(Frame::*)(QAbstractButton*, bool)>(&Frame::setMode));
+    connect(m_switchModeControl, &DButtonBox::buttonToggled, this, static_cast<void(Frame::*)(QAbstractButton *, bool)>(&Frame::setMode));
     connect(m_lockScreenBox, &QCheckBox::toggled, m_dbusScreenSaver, &ComDeepinScreenSaverInterface::setLockScreenAtAwake);
 
     reLayoutTools();
@@ -640,12 +640,12 @@ void Frame::initSize()
 #else
     actualHeight = FrameHeight + HeaderSwitcherHeight;
 #endif
-    setFixedSize(primaryRect.width()-20, actualHeight);
+    setFixedSize(primaryRect.width() - 20, actualHeight);
 
     qDebug() << "move befor: " << this->geometry() << m_wallpaperList->geometry();
-    move(primaryRect.x()+10, primaryRect.y() + primaryRect.height() - height());
+    move(primaryRect.x() + 10, primaryRect.y() + primaryRect.height() - height());
     qDebug() << "this move : " << this->geometry() << m_wallpaperList->geometry();
-    m_wallpaperList->setFixedSize(primaryRect.width()-20, ListHeight);
+    m_wallpaperList->setFixedSize(primaryRect.width() - 20, ListHeight);
 }
 
 void Frame::initListView()
@@ -663,9 +663,11 @@ void Frame::refreshList()
         QDBusPendingCall call = m_dbusAppearance->List("background");
         QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
         connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, call] {
-            if (call.isError()) {
+            if (call.isError())
+            {
                 qWarning() << "failed to get all backgrounds: " << call.error().message();
-            } else {
+            } else
+            {
                 QDBusReply<QString> reply = call.reply();
                 QString value = reply.value();
                 QStringList strings = processListReply(value);
@@ -673,7 +675,7 @@ void Frame::refreshList()
                     if (m_needDeleteList.contains(QUrl(path).path())) {
                         continue;
                     }
-                    WallpaperItem * item = m_wallpaperList->addWallpaper(path);
+                    WallpaperItem *item = m_wallpaperList->addWallpaper(path);
                     item->setData(item->getPath());
                     item->setDeletable(m_deletableInfo.value(path));
                     item->addButton(DESKTOP_BUTTON_ID, tr("Only desktop"));
@@ -736,14 +738,14 @@ void Frame::onItemPressed(const QString &data)
         }
 
         {
-            for (int i=0;i<m_wallpaperList->count();++i) {
+            for (int i = 0; i < m_wallpaperList->count(); ++i) {
                 WallpaperItem *item = dynamic_cast<WallpaperItem *>(m_wallpaperList->item(i));
                 if (item) {
                     bool isCustom = item->data().contains("custom-wallpapers");
                     if (!isCustom) {
                         continue;
                     }
-                    bool isCurrent = m_backgroundHelper?(item->data()==m_backgroundHelper->background()):false;
+                    bool isCurrent = m_backgroundHelper ? (item->data() == m_backgroundHelper->background()) : false;
                     bool isDeletable = item->getDeletable();
                     item->setDeletable(!isCurrent && (isDeletable || isCustom));
                 }
@@ -764,7 +766,7 @@ void Frame::onItemPressed(const QString &data)
 
 void Frame::onItemButtonClicked(const QString &buttonID)
 {
-    WallpaperItem *item = qobject_cast<WallpaperItem*>(sender());
+    WallpaperItem *item = qobject_cast<WallpaperItem *>(sender());
 
     if (!item)
         return;
