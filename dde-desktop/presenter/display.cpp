@@ -14,19 +14,20 @@
 
 #include <dbus/dbusdisplay.h>
 
+QScreen * GetPrimaryScreen()
+{
+    return Display::instance()->primaryScreen();
+}
+
 Display::Display(QObject *parent) : QObject(parent)
 {
 #ifdef DDE_DBUS_DISPLAY
     m_display = new DBusDisplay(this);
     connect(m_display, &DBusDisplay::PrimaryRectChanged, this, [ = ]() {
         auto primaryName = m_display->primary();
-        for (auto screen : qApp->screens()) {
-            if (screen && screen->name() == primaryName) {
-                emit primaryScreenChanged(screen);
-                return;
-            }
-        }
-        qCritical() << "Can not find" << primaryName << qApp->screens();
+
+        emit primaryScreenChanged(primaryScreen());
+        qCritical() << "find primaryScreen:" << primaryName << primaryScreen();
     });
 #else
     connect(qApp, &QApplication::primaryScreenChanged,
@@ -38,12 +39,25 @@ QScreen *Display::primaryScreen()
 {
 #ifdef DDE_DBUS_DISPLAY
     auto primaryName = m_display->primary();
+    static QPair<QString, QScreen *> s_primaryScreen;
+    if (s_primaryScreen.first.isEmpty()) {
+        s_primaryScreen.first = primaryName;
+        s_primaryScreen.second = qApp->primaryScreen();
+    }
+
+    if (m_display->primary() == s_primaryScreen.first) {
+        qCritical() << "primaryScreen:" << s_primaryScreen.second;
+        return s_primaryScreen.second;
+    }
+
     for (auto screen : qApp->screens()) {
-        if (screen && screen->name() == primaryName) {
+        if (screen != s_primaryScreen.second) {
+            qCritical() << "primaryScreen:" << screen;
             return screen;
         }
     }
-    qCritical() << "Can not find" << primaryName;
+
+    qCritical() << "primaryScreen:" << qApp->primaryScreen();
     return qApp->primaryScreen();
 #else
     return qApp->primaryScreen();

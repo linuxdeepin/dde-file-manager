@@ -21,8 +21,10 @@
 #include "view/canvasgridview.h"
 #include "view/backgroundhelper.h"
 #include "presenter/apppresenter.h"
+#include "presenter/display.h"
 
 #include "../dde-wallpaper-chooser/frame.h"
+#include "../util/dde/desktopinfo.h"
 
 #ifndef DISABLE_ZONE
 #include "../dde-zone/mainwindow.h"
@@ -31,6 +33,8 @@
 #include "util/xcb/xcb.h"
 
 using WallpaperSettings = Frame;
+
+extern QScreen * GetPrimaryScreen();
 
 #ifndef DISABLE_ZONE
 using ZoneSettings = ZoneMainWindow;
@@ -52,9 +56,16 @@ Desktop::Desktop()
     : d(new DesktopPrivate)
 {
     d->background = new BackgroundHelper();
-
+    DesktopInfo desktoInfo;
     connect(d->background, &BackgroundHelper::enableChanged, this, &Desktop::onBackgroundEnableChanged);
-    connect(qGuiApp, &QGuiApplication::primaryScreenChanged, this, &Desktop::onBackgroundEnableChanged);
+    if(desktoInfo.waylandDectected()){
+        connect(Display::instance(), &Display::primaryScreenChanged, this, &Desktop::onBackgroundEnableChanged);
+    }
+    else {
+        connect(qGuiApp, &QGuiApplication::primaryScreenChanged, this, &Desktop::onBackgroundEnableChanged);
+    }
+
+
     connect(d->background, &BackgroundHelper::aboutDestoryBackground, this, [this] (QWidget *l) {
         if (l == d->screenFrame.parent()) {
             d->screenFrame.setParent(nullptr);
@@ -89,7 +100,7 @@ void Desktop::onBackgroundEnableChanged()
     qInfo() << "Background enabled:" << d->background->isEnabled();
 
     if (d->background->isEnabled()) {
-        QWidget *background = d->background->backgroundForScreen(qApp->primaryScreen());
+        QWidget *background = d->background->backgroundForScreen(GetPrimaryScreen());
         d->screenFrame.setAttribute(Qt::WA_NativeWindow, false);
         d->screenFrame.setParent(background);
         d->screenFrame.move(0, 0);
@@ -112,7 +123,7 @@ void Desktop::onBackgroundEnableChanged()
     } else {
         d->screenFrame.setParent(nullptr);
         setWindowFlag(&d->screenFrame, Qt::FramelessWindowHint, true);
-        d->screenFrame.QWidget::setGeometry(qApp->primaryScreen()->geometry());
+        d->screenFrame.QWidget::setGeometry(GetPrimaryScreen()->geometry());
         Xcb::XcbMisc::instance().set_window_type(d->screenFrame.winId(), Xcb::XcbMisc::Desktop);
 
         d->screenFrame.show();

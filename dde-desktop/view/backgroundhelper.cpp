@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "backgroundhelper.h"
+#include "presenter/display.h"
 #include "util/xcb/xcb.h"
 
 #include <QScreen>
@@ -375,7 +376,7 @@ void BackgroundHelper::checkBlackScreen()
 {
     qDebug() << "check it out";
 
-    QScreen *ps = qApp->primaryScreen();
+    QScreen *ps = Display::instance()->primaryScreen();
     QWidget *psl = backgroundForScreen(ps);
     QList<QWidget *> ls = allBackgrounds();
     QList<QScreen *> ss = qApp->screens();
