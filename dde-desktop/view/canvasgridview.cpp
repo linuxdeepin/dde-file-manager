@@ -1672,7 +1672,7 @@ void CanvasGridView::Refresh()
 static inline QRect fix_available_geometry()
 {
     // virtualGeometry is same on all screen, so just get first one
-    auto virtualGeometry = qApp->screens().value(0)->virtualGeometry();
+    auto virtualGeometry = Display::instance()->primaryScreen()->virtualGeometry();
     int dockHight = 0;
     auto structParialInfoList = Xcb::XcbMisc::instance().find_dock_window();
     for (auto info : structParialInfoList) {
@@ -1684,7 +1684,7 @@ static inline QRect fix_available_geometry()
 
     QRegion virtualRegion = QRegion(virtualGeometry);
 
-    auto primaryGeometry = qApp->primaryScreen()->geometry();
+    auto primaryGeometry = Display::instance()->primaryScreen()->geometry();
 
     QRect availableRect = primaryGeometry;
     // primary screen rect - dock rect;
@@ -1778,9 +1778,9 @@ void CanvasGridView::initUI()
 void CanvasGridView::updateGeometry(const QRect &geometry)
 {
     auto newGeometry =  getValidNewGeometry(geometry, this->geometry());
-    setGeometry(qApp->primaryScreen()->geometry());
+    setGeometry(Display::instance()->primaryScreen()->geometry());
     d->canvasRect = newGeometry;
-    qDebug() << "set newGeometry" << newGeometry << qApp->primaryScreen()->geometry();
+    qDebug() << "set newGeometry" << newGeometry << Display::instance()->primaryScreen()->geometry();
     d->waterMaskFrame->updatePosition();
 
     /*
@@ -1908,8 +1908,8 @@ void CanvasGridView::initConnection()
     connect(Display::instance(), &Display::primaryScreenChanged,
     this, [ = ](QScreen * screen) {
         qDebug() << "primaryScreenChanged to:" << screen;
-        qDebug() << "currend primaryScreen" << qApp->primaryScreen()
-                 << qApp->primaryScreen()->availableGeometry();
+        qDebug() << "currend primaryScreen" << screen
+                 << screen->availableGeometry();
 
         if (!screen) {
             return;
@@ -2035,7 +2035,7 @@ void CanvasGridView::initConnection()
 
 void CanvasGridView::updateCanvas()
 {
-    auto outRect = qApp->primaryScreen()->geometry();
+    auto outRect = Display::instance()->primaryScreen()->geometry();
     auto inRect = d->canvasRect;
 
     itemDelegate()->updateItemSizeHint();
