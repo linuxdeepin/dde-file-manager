@@ -75,8 +75,7 @@ DCORE_USE_NAMESPACE
 #endif
 
 
-namespace FileSortFunction
-{
+namespace FileSortFunction {
 QCollator sortCollator;
 
 bool compareByString(const QString &str1, const QString &str2, Qt::SortOrder order)
@@ -551,9 +550,9 @@ int DAbstractFileInfo::filesCount() const
     CALL_PROXY(filesCount());
 
     const DDirIteratorPointer &iterator = fileService->createDirIterator(Q_NULLPTR, fileUrl(), QStringList(),
-                                          QDir::AllEntries | QDir::System
-                                          | QDir::NoDotAndDotDot | QDir::Hidden,
-                                          QDirIterator::NoIteratorFlags);
+                                                                         QDir::AllEntries | QDir::System
+                                                                         | QDir::NoDotAndDotDot | QDir::Hidden,
+                                                                         QDirIterator::NoIteratorFlags);
 
     int count = 0;
 
@@ -628,7 +627,7 @@ QString DAbstractFileInfo::lastModifiedDisplayName() const
 {
     CALL_PROXY(lastModifiedDisplayName());
 
-    if(!lastModified().isValid())
+    if (!lastModified().isValid())
         return qApp->translate("MimeTypeDisplayManager", "Unknown");
 
     return lastModified().toString(dateTimeFormat());
@@ -891,20 +890,20 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                 // FIXME: reimplement BookMark::exist() 's behavior and use it for check bookmark existance.
                 //        after doing this, don't forget to remove the "bookmarkmanager.h" header file include.
                 // if (DFileService::instance()->createFileInfo(nullptr, DUrl::fromBookMarkFile(fileUrl(), QString()))) {
-               if (!isSymLink()) {
+                if (!isSymLink()) {
                     if (Singleton<BookMarkManager>::instance()->checkExist(DUrl::fromBookMarkFile(fileUrl(), QString()))) {
                         actionKeys << MenuAction::BookmarkRemove;
                     } else {
                         actionKeys << MenuAction::AddToBookMark;
                     }
-               }
+                }
 
                 actionKeys << MenuAction::Separator
                            << MenuAction::OpenInTerminal
                            << MenuAction::Separator;
             } else if (isFile()) {
                 if (mimeTypeName().startsWith("image") && isReadable()
-                        && !mimeTypeName().endsWith("gif")
+//                        && !mimeTypeName().endsWith("gif")
                         && !mimeTypeName().endsWith("svg+xml")) {
                     actionKeys << MenuAction::SetAsWallpaper
                                << MenuAction::Separator;
@@ -1180,8 +1179,8 @@ bool DAbstractFileInfo::isEmptyFloder(const QDir::Filters &filters) const
     }
 
     DDirIteratorPointer it = DFileService::instance()->createDirIterator(Q_NULLPTR, fileUrl(), QStringList(),
-                             filters,
-                             QDirIterator::NoIteratorFlags);
+                                                                         filters,
+                                                                         QDirIterator::NoIteratorFlags);
 
     return it && !it->hasNext();
 }
@@ -1495,13 +1494,13 @@ static QList<QAction *> getTemplateFileList()
     // blumia: Following is support for `kf5-config --path templates` Templates folder.
     QStringList systemDataFolderList = DGlibUtils::systemDataDirs();
     QStringList templateFolderList;
-    for (const QString & oneFolder : systemDataFolderList) {
+    for (const QString &oneFolder : systemDataFolderList) {
         templateFolderList << (oneFolder + QStringLiteral("templates"));
     }
     // user-specific template dir
     templateFolderList << QString(DGlibUtils::userDataDir() + "templates");
     // start scan..
-    for (const QString & oneTemplateFolder : templateFolderList) {
+    for (const QString &oneTemplateFolder : templateFolderList) {
         QDir templateFolder(oneTemplateFolder);
         if (templateFolder.exists()) {
             const QStringList &templateFileList = templateFolder.entryList(QStringList(QStringLiteral("*.desktop")), QDir::Files | QDir::Readable | QDir::NoSymLinks);
