@@ -89,6 +89,7 @@ bool TextPreview::setFileUrl(const DUrl &url)
         m_textBrowser->setWordWrapMode(QTextOption::NoWrap);
         m_textBrowser->setFixedSize(800, 500);
         m_textBrowser->setFocusPolicy(Qt::NoFocus);
+        m_textBrowser->setContextMenuPolicy(Qt::NoContextMenu);
     }
 
 
