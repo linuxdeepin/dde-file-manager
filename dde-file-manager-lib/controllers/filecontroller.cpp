@@ -210,8 +210,8 @@ public:
     DFMAnythingDirIterator(ComDeepinAnythingInterface *u,
                            const QString &path, const QString &k)
         : interface(u)
-        , keyword(k)
-        , dir(path)
+            , keyword(k)
+            , dir(path)
     {
         keyword = DFMRegularExpression::checkWildcardAndToRegularExpression(keyword);
     }
@@ -312,7 +312,7 @@ public:
 
     bool enableIteratorByKeyword(const QString &keyword) Q_DECL_OVERRIDE;
 
-    DFMFileListFile * hiddenFiles = nullptr;
+    DFMFileListFile *hiddenFiles = nullptr;
 
 private:
     DDirIterator *iterator = nullptr;
@@ -345,7 +345,7 @@ const DAbstractFileInfoPointer FileController::createFileInfo(const QSharedPoint
 const DDirIteratorPointer FileController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
     return DDirIteratorPointer(new FileDirIterator(event->url().toLocalFile(), event->nameFilters(),
-                               event->filters(), event->flags()));
+                                                   event->filters(), event->flags()));
 }
 
 bool FileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
@@ -650,6 +650,11 @@ bool FileController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) co
 
 //    job.doDelete(event->urlList());
 //    dialogManager->removeJob(job.getJobId());
+    // 解决撤销操作后文件删除不提示问题
+//    if (event->type() == DFMEvent::DeleteFiles) {
+//        return DFileService::instance()->deleteFiles(nullptr, event->urlList(), false);
+//    }
+
 
     bool ok = !pasteFilesV2(DFMGlobal::CutAction, event->fileUrlList(), DUrl(), event->silent(), event->force()).isEmpty();
 
@@ -673,7 +678,7 @@ DUrlList FileController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &
 
     // save event
     const QVariant &result = DFMEventDispatcher::instance()->processEvent<DFMGetChildrensEvent>(event->sender(), DUrl::fromTrashFile("/"),
-                             QStringList(), QDir::AllEntries);
+                                                                                                QStringList(), QDir::AllEntries);
     const QList<DAbstractFileInfoPointer> &infos = qvariant_cast<QList<DAbstractFileInfoPointer>>(result);
 
     if (infos.isEmpty()) {
@@ -914,10 +919,10 @@ bool FileController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &
         return true;
     }
 
-    if (event->force()){
+    if (event->force()) {
         // replace symlink, remove if target was existed
         QFileInfo toLink(event->toUrl().toLocalFile());
-        if (toLink.isSymLink() || toLink.exists()){
+        if (toLink.isSymLink() || toLink.exists()) {
             QFile::remove(event->toUrl().toLocalFile());
         }
     }
