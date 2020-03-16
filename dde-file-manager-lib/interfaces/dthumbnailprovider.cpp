@@ -517,13 +517,23 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
                 goto _return;
             }
 
-            const QByteArray png_data = QByteArray::fromBase64(process.readAllStandardOutput());
+            const QByteArray output = process.readAllStandardOutput();
+            const QByteArray png_data = QByteArray::fromBase64(output);
             Q_ASSERT(!png_data.isEmpty());
 
             if (image->loadFromData(png_data, "png")) {
                 d->errorString.clear();
             } else {
-                d->errorString = QString("load png image failed from the \"%1\" application").arg(tool);
+                //过滤video tool的其他输出信息
+                QString processResult(output);
+                processResult = processResult.split(QRegExp("[\n]"),QString::SkipEmptyParts).last();
+                const QByteArray png_data = QByteArray::fromBase64(processResult.toUtf8());
+                Q_ASSERT(!png_data.isEmpty());
+                if (image->loadFromData(png_data, "png")) {
+                    d->errorString.clear();
+                } else {
+                    d->errorString = QString("load png image failed from the \"%1\" application").arg(tool);
+                }
             }
         }
     }
