@@ -560,7 +560,9 @@ void DFileService::pasteFileByClipboard(const QObject *sender, const DUrl &targe
     if (action == DFMGlobal::UnknowAction) {
         return;
     }
-
+    if (targetUrl.scheme() == SEARCH_SCHEME) {
+        return;
+    }
     const DUrlList &list = DUrl::fromQUrlList(DFMGlobal::instance()->clipboardFileUrlList());
 
     if (action == DFMGlobal::CutAction)
