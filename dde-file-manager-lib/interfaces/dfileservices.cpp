@@ -163,7 +163,8 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         event->setData(urlList);
         break;
     }
-    default: break;
+    default:
+        break;
     }
 #endif
 
@@ -217,15 +218,42 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         break;
     }
     case DFMEvent::DeleteFiles: {
-        result = CALL_CONTROLLER(deleteFiles);
 
-        if (result.toBool()) {
-            for (const DUrl &url : event->fileUrlList()) {
-                emit fileDeleted(url);
+        // 解决撤销操作后文件删除不提示问题
+        for (const DUrl &url : event->fileUrlList()) {
+            const DAbstractFileInfoPointer &f = createFileInfo(this, url);
+            if (f && f->exists()) {
+                if (DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteFilesClearTrashDialog, DFMUrlListBaseEvent(nullptr, event->fileUrlList())) == DDialog::Accepted) {
+                    result = CALL_CONTROLLER(deleteFiles);
+
+                    if (result.toBool()) {
+                        for (const DUrl &url : event->fileUrlList()) {
+                            emit fileDeleted(url);
+                        }
+                    }
+
+                }
+                break;
+            }
+
+            else {
+                continue;
             }
         }
 
+
+//        if (DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteFilesClearTrashDialog, DFMUrlListBaseEvent(nullptr, event->fileUrlList())) == DDialog::Accepted) {
+//            result = CALL_CONTROLLER(deleteFiles);
+
+//            if (result.toBool()) {
+//                for (const DUrl &url : event->fileUrlList()) {
+//                    emit fileDeleted(url);
+//                }
+//            }
+
+//        }
         break;
+
     }
     case DFMEvent::MoveToTrash: {
         //handle system files should not be able to move to trash
@@ -265,7 +293,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                 continue;
 
             emit fileMovedToTrash(list.at(i), new_list.at(i));
-    //        emit fileRenamed(list.at(i), result.at(i));
+            //        emit fileRenamed(list.at(i), result.at(i));
         }
 
         break;
@@ -365,8 +393,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     case DFMEvent::CreateStorageInfo:
         result = CALL_CONTROLLER(createStorageInfo);
         break;
-    case DFMEvent::Tag:
-    {
+    case DFMEvent::Tag: {
         result = CALL_CONTROLLER(setFileTags);
         break;
     }
@@ -530,11 +557,12 @@ bool DFileService::deleteFiles(const QObject *sender, const DUrlList &list, bool
         }
     }
 
-    if (!confirmationDialog || DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteFilesClearTrashDialog, DFMUrlListBaseEvent(sender, list)) == DDialog::Accepted) {
-        return DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMDeleteEvent>(sender, list, slient, force)).toBool();
-    }
+//    if (!confirmationDialog || DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteFilesClearTrashDialog, DFMUrlListBaseEvent(sender, list)) == DDialog::Accepted) {
+//    if (!confirmationDialog ) {
+    return DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMDeleteEvent>(sender, list, slient, force)).toBool();
+//    }
 
-    return false;
+//    return false;
 }
 
 DUrlList DFileService::moveToTrash(const QObject *sender, const DUrlList &list) const
@@ -616,7 +644,7 @@ bool DFileService::createSymlink(const QObject *sender, const DUrl &fileUrl) con
 {
     QString linkName = getSymlinkFileName(fileUrl);
     QString linkPath = QFileDialog::getSaveFileName(qobject_cast<const QWidget *>(sender) ? qobject_cast<const QWidget *>(sender)->window() : Q_NULLPTR,
-                       QObject::tr("Create symlink"), linkName);
+                                                    QObject::tr("Create symlink"), linkName);
     //handle for cancel select file
     if (linkPath.isEmpty()) {
         return false;
@@ -677,7 +705,7 @@ bool DFileService::makeTagsOfFiles(const QObject *sender, const DUrlList &urlLis
 {
     QRegExp rx("[\\\\/:\\*\\?\"<>|%&]");
     for (const QString &tag : tags) {
-        if (tag.indexOf(rx)>=0) {
+        if (tag.indexOf(rx) >= 0) {
             return false;
         }
     }
@@ -741,7 +769,7 @@ const DAbstractFileInfoPointer DFileService::createFileInfo(const QObject *sende
 }
 
 const DDirIteratorPointer DFileService::createDirIterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-        QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent) const
+                                                          QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent) const
 {
     const auto &&event = dMakeEventPointer<DFMCreateDiriterator>(sender, fileUrl, nameFilters, filters, flags, silent);
 
@@ -749,7 +777,7 @@ const DDirIteratorPointer DFileService::createDirIterator(const QObject *sender,
 }
 
 const QList<DAbstractFileInfoPointer> DFileService::getChildren(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-                                                               QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent) const
+                                                                QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent) const
 {
     const auto &&event = dMakeEventPointer<DFMGetChildrensEvent>(sender, fileUrl, nameFilters, filters, flags, silent);
 
@@ -757,7 +785,7 @@ const QList<DAbstractFileInfoPointer> DFileService::getChildren(const QObject *s
 }
 
 JobController *DFileService::getChildrenJob(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
-        QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent) const
+                                            QDir::Filters filters, QDirIterator::IteratorFlags flags, bool silent) const
 {
     const auto &&event = dMakeEventPointer<DFMCreateGetChildrensJob>(sender, fileUrl, nameFilters, filters, flags, silent);
 
@@ -777,7 +805,7 @@ DAbstractFileWatcher *DFileService::createFileWatcher(const QObject *sender, con
 
 bool DFileService::setExtraProperties(const QObject *sender, const DUrl &fileUrl, const QVariantHash &ep) const
 {
-    const auto&& event = dMakeEventPointer<DFMSetFileExtraProperties>(sender, fileUrl, ep);
+    const auto &&event = dMakeEventPointer<DFMSetFileExtraProperties>(sender, fileUrl, ep);
 
     return DFMEventDispatcher::instance()->processEvent(event).toBool();
 }
@@ -786,24 +814,24 @@ DFileDevice *DFileService::createFileDevice(const QObject *sender, const DUrl &u
 {
     const auto &&event = dMakeEventPointer<DFMUrlBaseEvent>(DFMEvent::CreateFileDevice, sender, url);
 
-    return qvariant_cast<DFileDevice*>(DFMEventDispatcher::instance()->processEvent(event));
+    return qvariant_cast<DFileDevice *>(DFMEventDispatcher::instance()->processEvent(event));
 }
 
 DFileHandler *DFileService::createFileHandler(const QObject *sender, const DUrl &url)
 {
     const auto &&event = dMakeEventPointer<DFMUrlBaseEvent>(DFMEvent::CreateFileHandler, sender, url);
 
-    return qvariant_cast<DFileHandler*>(DFMEventDispatcher::instance()->processEvent(event));
+    return qvariant_cast<DFileHandler *>(DFMEventDispatcher::instance()->processEvent(event));
 }
 
 DStorageInfo *DFileService::createStorageInfo(const QObject *sender, const DUrl &url)
 {
     const auto &&event = dMakeEventPointer<DFMUrlBaseEvent>(DFMEvent::CreateStorageInfo, sender, url);
 
-    return qvariant_cast<DStorageInfo*>(DFMEventDispatcher::instance()->processEvent(event));
+    return qvariant_cast<DStorageInfo *>(DFMEventDispatcher::instance()->processEvent(event));
 }
 
-QList<DAbstractFileController*> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl, bool ignoreHost, bool ignoreScheme)
+QList<DAbstractFileController *> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl, bool ignoreHost, bool ignoreScheme)
 {
     HandlerType handlerType(ignoreScheme ? "" : fileUrl.scheme(), ignoreHost ? "" : fileUrl.host());
 
