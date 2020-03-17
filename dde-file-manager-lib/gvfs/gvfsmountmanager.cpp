@@ -603,7 +603,6 @@ void GvfsMountManager::monitor_volume_added(GVolumeMonitor *volume_monitor, GVol
 
     DiskInfos.insert(diskInfo.id(), diskInfo);
     emit gvfsMountManager->volume_added(diskInfo);
-    gvfsMountManager->autoMountAllDisks();
 }
 
 void GvfsMountManager::monitor_volume_removed(GVolumeMonitor *volume_monitor, GVolume *volume)

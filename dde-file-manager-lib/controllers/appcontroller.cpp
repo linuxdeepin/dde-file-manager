@@ -195,10 +195,26 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
         }
 
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), newUrl);
-        QFile file(fi->filePath());
-        if (!(QFile::ExeUser & file.permissions()))
-            return;
-
+        if (newUrl.scheme() == BURN_SCHEME) {
+            Q_ASSERT(newUrl.burnDestDevice().length() > 0);
+            QString devpath = newUrl.burnDestDevice();
+            QString udiskspath = DDiskManager::resolveDeviceNode(devpath, {}).first();
+            QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+            bool mounted = blkdev->mountPoints().count() != 0;
+            if (mounted) {
+                QString  mountPoint = blkdev->mountPoints().first();
+                if (mountPoint.length() > 0) {
+                    QFile file(mountPoint);
+                    if (!(QFile::ExeUser & file.permissions())) {
+                            return;
+                    }
+                }
+            }
+        } else {
+            QFile file(fi->filePath());
+            if (!(QFile::ExeUser & file.permissions()))
+                return;
+        }
 
         const QSharedPointer<DFMUrlListBaseEvent> &e = dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), DUrlList() << newUrl);
         e->setWindowId(event->windowId());
