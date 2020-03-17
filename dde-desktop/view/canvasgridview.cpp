@@ -339,8 +339,7 @@ WId CanvasGridView::winId() const
 {
     if (isTopLevel()) {
         return QAbstractItemView::winId();
-    }
-    else {
+    } else {
         return topLevelWidget()->winId();
     }
 }
@@ -544,7 +543,7 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
     bool isselected = isSelected(index);
     QAbstractItemView::mousePressEvent(event);
 
-    if (leftButtonPressed && isselected && event->modifiers()==Qt::ControlModifier) {
+    if (leftButtonPressed && isselected && event->modifiers() == Qt::ControlModifier) {
         setProperty("lastPressedIndex", index);
         selectionModel()->select(QItemSelection (index, index), QItemSelectionModel::Select);
     }
@@ -654,7 +653,8 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_F1: {
             class PublicApplication : public DApplication
             {
-            public: using  DApplication::handleHelpAction;
+            public:
+                using  DApplication::handleHelpAction;
             };
 
             QString app_name = qApp->applicationName();
@@ -663,7 +663,8 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             qApp->setApplicationName(app_name);
             break;
         }
-        default: break;
+        default:
+            break;
         }
     // fall through
     case Qt::KeypadModifier:
@@ -694,7 +695,8 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             DFMGlobal::showFilePreviewDialog(selectUrls, entryUrls);
         }
         break;
-        default: break;
+        default:
+            break;
         }
         break;
 
@@ -767,7 +769,8 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
         }
         break;
 
-    default: break;
+    default:
+        break;
     }
 
     QAbstractItemView::keyPressEvent(event);
@@ -847,7 +850,7 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
             bool canDrop = fileInfo->canDrop();
             canDrop = fileInfo->isDir() && !fileInfo->isWritable();
             canDrop = fileInfo->supportedDropActions().testFlag(event->dropAction());
-            if(!fileInfo->canDrop() || (fileInfo->isDir() && !fileInfo->isWritable()) ||
+            if (!fileInfo->canDrop() || (fileInfo->isDir() && !fileInfo->isWritable()) ||
                     !fileInfo->supportedDropActions().testFlag(event->dropAction())) {
                 // not support drag
                 event->ignore();
@@ -985,7 +988,7 @@ void CanvasGridView::dropEvent(QDropEvent *event)
         // DFileDragClient deletelater() will be called after connection destroyed
         DFileDragClient *c = new DFileDragClient(event->mimeData());
         DUrlList urlList = DUrl::fromQUrlList(event->mimeData()->urls());
-        connect(c, &DFileDragClient::stateChanged, this, [this, urlList](DFileDragState state){
+        connect(c, &DFileDragClient::stateChanged, this, [this, urlList](DFileDragState state) {
             if (state == Finished) {
                 select(urlList);
             }
@@ -1217,7 +1220,7 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
     }
 }
 
-void CanvasGridView::resizeEvent(QResizeEvent * event)
+void CanvasGridView::resizeEvent(QResizeEvent *event)
 {
     updateCanvas();
     // todo restore
@@ -1434,19 +1437,19 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     d->filesystemWatcher = model()->fileWatcher();
 
     connect(d->filesystemWatcher, &DAbstractFileWatcher::subfileCreated,
-    this, [ = ](const DUrl &url) {
+    this, [ = ](const DUrl & url) {
         Q_EMIT itemCreated(url);
         update();
     });
 
     connect(d->filesystemWatcher, &DAbstractFileWatcher::fileDeleted,
-    this, [ = ](const DUrl &url) {
+    this, [ = ](const DUrl & url) {
         Q_EMIT itemDeleted(url);
         update();
     });
 
     connect(d->filesystemWatcher, &DAbstractFileWatcher::fileMoved,
-            this, [ = ](const DUrl &oriUrl, const DUrl &dstUrl) {
+    this, [ = ](const DUrl & oriUrl, const DUrl & dstUrl) {
 
         bool findOldPos = false;
         QPoint oldPos = QPoint(-1, -1);
@@ -1455,10 +1458,10 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
             oldPos = GridManager::instance()->position(oriUrl.toString());
             findOldPos = true;
 
-            #ifdef QT_DEBUG
-                // TODO: switch to qCDebug()
-                qDebug() << "find oldPos" << oldPos << oriUrl;
-            #endif // QT_DEBUG
+#ifdef QT_DEBUG
+            // TODO: switch to qCDebug()
+            qDebug() << "find oldPos" << oldPos << oriUrl;
+#endif // QT_DEBUG
         }
 
         bool findNewPos = false;
@@ -1503,7 +1506,7 @@ bool CanvasGridView::setRootUrl(const DUrl &url)
         QString frag = url.fragment();
         if (!frag.isEmpty()) {
             QStringList entryNameList = frag.split(',', QString::SkipEmptyParts);
-            for (const QString & oneEntry : entryNameList) {
+            for (const QString &oneEntry : entryNameList) {
                 virtualEntryExpandState[MergedDesktopController::entryTypeByName(oneEntry)] = true;
             }
         }
@@ -1672,7 +1675,28 @@ void CanvasGridView::Refresh()
 static inline QRect fix_available_geometry()
 {
     // virtualGeometry is same on all screen, so just get first one
-    auto virtualGeometry = Display::instance()->primaryScreen()->virtualGeometry();
+
+    //if X11
+    //auto virtualGeometry = qApp->screens().value(0)->virtualGeometry();
+    //else
+
+    QRect virtualGeometry;
+
+    auto e = QProcessEnvironment::systemEnvironment();
+    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
+    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
+
+    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
+            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+        virtualGeometry = Display::instance()->primaryScreen()->virtualGeometry();
+    }
+
+    else {
+        virtualGeometry = qApp->screens().value(0)->virtualGeometry();
+    }
+
+
+
     int dockHight = 0;
     auto structParialInfoList = Xcb::XcbMisc::instance().find_dock_window();
     for (auto info : structParialInfoList) {
@@ -1684,11 +1708,23 @@ static inline QRect fix_available_geometry()
 
     QRegion virtualRegion = QRegion(virtualGeometry);
 
-    auto primaryGeometry = Display::instance()->primaryScreen()->geometry();
+    //if X11
+    //auto primaryGeometry = qApp->primaryScreen()->geometry();
+    //else
+    QRect primaryGeometry;
+
+    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
+            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+        primaryGeometry = Display::instance()->primaryScreen()->geometry();
+    } else {
+        primaryGeometry = qApp->primaryScreen()->geometry();
+    }
+
+//    auto primaryGeometry = Display::instance()->primaryScreen()->geometry();
 
     QRect availableRect = primaryGeometry;
     // primary screen rect - dock rect;
-    availableRect.setHeight(availableRect.height()-dockHight);
+    availableRect.setHeight(availableRect.height() - dockHight);
 
     qDebug() << "\n"
              << "dump dock info begin ---------------------------" << "\n"
@@ -1778,9 +1814,31 @@ void CanvasGridView::initUI()
 void CanvasGridView::updateGeometry(const QRect &geometry)
 {
     auto newGeometry =  getValidNewGeometry(geometry, this->geometry());
-    setGeometry(Display::instance()->primaryScreen()->geometry());
-    d->canvasRect = newGeometry;
-    qDebug() << "set newGeometry" << newGeometry << Display::instance()->primaryScreen()->geometry();
+
+    //if X11
+    //setGeometry(qApp->primaryScreen()->geometry());
+    //d->canvasRect = newGeometry;
+    //qDebug() << "set newGeometry" << newGeometry << qApp->primaryScreen()->geometry();
+    //else
+
+    auto e = QProcessEnvironment::systemEnvironment();
+    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
+    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
+
+    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
+            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+        setGeometry(Display::instance()->primaryScreen()->geometry());
+        d->canvasRect = newGeometry;
+        qDebug() << "set newGeometry" << newGeometry << Display::instance()->primaryScreen()->geometry();
+    }
+
+    else {
+        setGeometry(qApp->primaryScreen()->geometry());
+        d->canvasRect = newGeometry;
+        qDebug() << "set newGeometry" << newGeometry << qApp->primaryScreen()->geometry();
+    }
+
+
     d->waterMaskFrame->updatePosition();
 
     /*
@@ -1788,7 +1846,7 @@ void CanvasGridView::updateGeometry(const QRect &geometry)
      * a single active monitor among a multi-monitor setup, while CanvasGridView handles
      * this just fine. So we trigger an extra background resize manually here.
      */
-    BackgroundHelper::getDesktopInstance()->updateBackground((QLabel*)this->parent());
+    BackgroundHelper::getDesktopInstance()->updateBackground((QLabel *)this->parent());
 
     updateCanvas();
     repaint();
@@ -1797,7 +1855,7 @@ void CanvasGridView::updateGeometry(const QRect &geometry)
 void CanvasGridView::initConnection()
 {
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this,
-            [this](const QItemSelection &selected, const QItemSelection &deselected){
+    [this](const QItemSelection & selected, const QItemSelection & deselected) {
         Q_UNUSED(selected);
         QModelIndex index = property("lastPressedIndex").toModelIndex();
         if (index.isValid() && deselected.contains(index)) {
@@ -1908,6 +1966,12 @@ void CanvasGridView::initConnection()
     connect(Display::instance(), &Display::primaryScreenChanged,
     this, [ = ](QScreen * screen) {
         qDebug() << "primaryScreenChanged to:" << screen;
+
+        //if X11
+        //qDebug() << "currend primaryScreen" << qApp->primaryScreen()
+        //       << qApp->primaryScreen()->availableGeometry();
+        //else
+
         qDebug() << "currend primaryScreen" << screen
                  << screen->availableGeometry();
 
@@ -2035,7 +2099,23 @@ void CanvasGridView::initConnection()
 
 void CanvasGridView::updateCanvas()
 {
-    auto outRect = Display::instance()->primaryScreen()->geometry();
+    //if X11
+    //auto outRect = qApp->primaryScreen()->geometry();
+    //else
+    QRect outRect;
+
+    auto e = QProcessEnvironment::systemEnvironment();
+    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
+    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
+
+    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
+            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+        outRect = Display::instance()->primaryScreen()->geometry();
+    } else {
+        outRect = qApp->primaryScreen()->geometry();
+    }
+
+
     auto inRect = d->canvasRect;
 
     itemDelegate()->updateItemSizeHint();
@@ -2179,12 +2259,11 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
     //  keep old selection if mouse press
     bool ctrlShiftPress = DFMGlobal::keyShiftIsPressed() || DFMGlobal::keyCtrlIsPressed();
     if (ctrlShiftPress) {
-        if(0 == selectionModel()->selection().indexes().size() && DFMGlobal::keyShiftIsPressed())
-                d->beginPos = topLeftGridPos;
+        if (0 == selectionModel()->selection().indexes().size() && DFMGlobal::keyShiftIsPressed())
+            d->beginPos = topLeftGridPos;
         oldSelection = selectionModel()->selection();
-    }
-    else {
-        d->beginPos = QPoint(-1,-1);
+    } else {
+        d->beginPos = QPoint(-1, -1);
     }
 
     // select by  key board, so mouse not pressed
@@ -2209,8 +2288,8 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
                 lastPoint = clickedPoint + QPoint(1, 1);
             }
             tempClickedPoint = gridAt(clickedPoint);
-            tempLastPoint =gridAt(lastPoint);
-            qDebug()<< "clickedPoint " << tempClickedPoint <<" lastPoint " << tempLastPoint;
+            tempLastPoint = gridAt(lastPoint);
+            qDebug() << "clickedPoint " << tempClickedPoint << " lastPoint " << tempLastPoint;
             selectRect = QRect(clickedPoint, lastPoint).normalized();
             topLeftGridPos = gridAt(selectRect.topLeft());
             bottomRightGridPos = gridAt(selectRect.bottomRight());
@@ -2224,37 +2303,33 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
             bottomRightGridPos = gridAt(d->selectRect.bottomRight());
         }
     }
-    qDebug()<<"beginPos " << d->beginPos <<  "topLeftGridPos " << topLeftGridPos <<" bottomRightGridPos " << bottomRightGridPos;
+    qDebug() << "beginPos " << d->beginPos <<  "topLeftGridPos " << topLeftGridPos << " bottomRightGridPos " << bottomRightGridPos;
     QItemSelection rectSelection;
     QItemSelection toRemoveSelection;
     QPoint outPoint;
     QPoint inPoint;
-    if (d->beginPos != QPoint(-1,-1))
-    {
+    if (d->beginPos != QPoint(-1, -1)) {
         qDebug() << "d->beginPos.isNull()";
         auto beginSmall = (d->beginPos.y() < tempClickedPoint.y()) || (d->beginPos.x() < tempClickedPoint.x() && d->beginPos.y() == tempClickedPoint.y());
         auto beginMax = (d->beginPos.y() > tempClickedPoint.y()) || (d->beginPos.x() == tempClickedPoint.x() && d->beginPos.y() < tempClickedPoint.y());
 
-        if (beginSmall){
+        if (beginSmall) {
             outPoint = d->beginPos;
             inPoint = tempClickedPoint;
-        }
-        else if (beginMax) {
+        } else if (beginMax) {
             outPoint  = tempClickedPoint;
             inPoint = d->beginPos;
-        }
-        else {
+        } else {
             outPoint = topLeftGridPos;
-            inPoint =bottomRightGridPos;
+            inPoint = bottomRightGridPos;
         }
-    }
-    else {
-        qDebug()<< "no d->beginPos.isNull() ";
+    } else {
+        qDebug() << "no d->beginPos.isNull() ";
         outPoint = topLeftGridPos;
-        inPoint =bottomRightGridPos;
+        inPoint = bottomRightGridPos;
     }
 
-    qDebug()<<"outPoint " << outPoint <<  "inPoint " << inPoint ;
+    qDebug() << "outPoint " << outPoint <<  "inPoint " << inPoint ;
 //    if (outPoint != inPoint)
 //        int aa = 1;
     for (auto x = 0; x <= d->colCount; ++x) {
@@ -2268,7 +2343,7 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
                 continue;
             }
             auto index = model()->index(DUrl(localFile));
-             QItemSelectionRange selectionRange(index);
+            QItemSelectionRange selectionRange(index);
             if (!rectSelection.contains(index)) {
                 rectSelection.push_back(selectionRange);
             }
@@ -2277,7 +2352,7 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
             }
         }
     }
-    qDebug() << "old size " <<oldSelection.size() << "new size " << rectSelection.size();
+    qDebug() << "old size " << oldSelection.size() << "new size " << rectSelection.size();
     if (command != QItemSelectionModel::Deselect) {
         // Remove dump select
         for (auto &sel : rectSelection) {
@@ -2286,11 +2361,9 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
                     oldSelection += rectSelection;
                 }
         }
-        for (auto &oldS : oldSelection)
-        {
-            for (auto &oldIndex : oldS.indexes())
-            {
-                if(DFMGlobal::keyShiftIsPressed()  && !rectSelection.contains(oldIndex)) {
+        for (auto &oldS : oldSelection) {
+            for (auto &oldIndex : oldS.indexes()) {
+                if (DFMGlobal::keyShiftIsPressed()  && !rectSelection.contains(oldIndex)) {
                     toRemoveSelection.push_back(oldS);
                 }
             }
@@ -2536,7 +2609,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
 {
     if (!index.isValid()) {
         return;
-    } 
+    }
 
     bool showProperty = true;
     DUrlList list = selectedUrls();

@@ -14,7 +14,7 @@
 
 #include <dbus/dbusdisplay.h>
 
-QScreen * GetPrimaryScreen()
+QScreen *GetPrimaryScreen()
 {
     return Display::instance()->primaryScreen();
 }
@@ -25,8 +25,35 @@ Display::Display(QObject *parent) : QObject(parent)
     m_display = new DBusDisplay(this);
     connect(m_display, &DBusDisplay::PrimaryRectChanged, this, [ = ]() {
         auto primaryName = m_display->primary();
+        //if X11
+        /*for (auto screen : qApp->screens()) {
+            if (screen && screen->name() == primaryName) {
+                emit primaryScreenChanged(screen);
+                return;
+            }
+        }*/
+        //else
 
-        emit primaryScreenChanged(primaryScreen());
+        auto e = QProcessEnvironment::systemEnvironment();
+        QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
+        QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
+
+        if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
+                WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+            emit primaryScreenChanged(primaryScreen());
+        }
+
+        else {
+            for (auto screen : qApp->screens()) {
+                if (screen && screen->name() == primaryName) {
+                    emit primaryScreenChanged(screen);
+                    return;
+                }
+            }
+        }
+
+
+
         qCritical() << "find primaryScreen:" << primaryName << primaryScreen();
     });
 #else
@@ -38,23 +65,57 @@ Display::Display(QObject *parent) : QObject(parent)
 QScreen *Display::primaryScreen()
 {
 #ifdef DDE_DBUS_DISPLAY
-    auto primaryName = m_display->primary();
-    static QPair<QString, QScreen *> s_primaryScreen;
-    if (s_primaryScreen.first.isEmpty()) {
-        s_primaryScreen.first = primaryName;
-        s_primaryScreen.second = qApp->primaryScreen();
-    }
+//    auto primaryName = m_display->primary();
 
-    if (m_display->primary() == s_primaryScreen.first) {
-        qCritical() << "primaryScreen:" << s_primaryScreen.second;
-        return s_primaryScreen.second;
-    }
+    //if X11
+    //auto primaryName = m_display->primary();
+    //else
 
-    for (auto screen : qApp->screens()) {
-        if (screen != s_primaryScreen.second) {
-            qCritical() << "primaryScreen:" << screen;
-            return screen;
+    auto e = QProcessEnvironment::systemEnvironment();
+    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
+    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
+
+    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
+            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+
+        static QPair<QString, QScreen *> s_primaryScreen;
+        if (s_primaryScreen.first.isEmpty()) {
+//        s_primaryScreen.first = primaryName;
+            s_primaryScreen.first = "eDP-1";
+            s_primaryScreen.second = qApp->primaryScreen();
         }
+
+        if (m_display->primary() == s_primaryScreen.first) {
+            qCritical() << "primaryScreen:" << s_primaryScreen.second;
+            return s_primaryScreen.second;
+        }
+
+
+        //if X11
+        /*for (auto screen : qApp->screens()) {
+            if (screen && screen->name() == primaryName) {
+                return screen;
+            }
+        }*/
+        //else
+
+        for (auto screen : qApp->screens()) {
+            if (screen != s_primaryScreen.second) {
+                qCritical() << "primaryScreen:" << screen;
+                return screen;
+            }
+        }
+    }
+
+    else {
+        auto primaryName = m_display->primary();
+
+        for (auto screen : qApp->screens()) {
+            if (screen && screen->name() == primaryName) {
+                return screen;
+            }
+        }
+
     }
 
     qCritical() << "primaryScreen:" << qApp->primaryScreen();
