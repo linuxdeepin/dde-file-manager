@@ -618,13 +618,21 @@ QMargins DFileViewHelper::fileViewViewportMargins() const
 void DFileViewHelper::keyboardSearch(char key)
 {
     Q_D(DFileViewHelper);
-
-    d->keyboardSearchKeys.append(key);
-
+    QByteArray indexChar;
+    if(d->keyboardSearchKeys.right(1).contains(key)){
+        indexChar.append(key);
+        d->keyboardSearchTimer.stop();
+    }
+    else {
+        d->keyboardSearchKeys.append(key);
+        indexChar = d->keyboardSearchKeys;
+        d->keyboardSearchTimer.stop();
+    }
+    qDebug() << "d->keyboardSearchKeys: " << d->keyboardSearchKeys << "key:" << key <<"indexKey: " << indexChar ;
     bool reverse_order = qApp->keyboardModifiers() == Qt::ShiftModifier;
     const QModelIndex &current_index = parent()->currentIndex();
 
-    QModelIndex index = d->findIndex(d->keyboardSearchKeys, true, current_index.row(), reverse_order, !d->keyboardSearchTimer.isActive());
+    QModelIndex index = d->findIndex(indexChar/*d->keyboardSearchKeys*/, true, current_index.row(), reverse_order, !d->keyboardSearchTimer.isActive());
 
     if (!index.isValid()) {
         // 使用 QString::contains 模式再次匹配

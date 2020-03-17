@@ -140,6 +140,7 @@ public:
     QString             lastMenuNewFilepath;
 
     QPoint              lastPos;
+    QPoint              beginPos{QPoint(-1,-1)};
 
     QItemSelection      beforeMoveSelection;
     bool                showSelectRect  = false;

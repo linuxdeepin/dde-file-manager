@@ -612,6 +612,7 @@ void Frame::initUI()
         DButtonBoxButton *screensaverBtn = new DButtonBoxButton(tr("Screensaver"), this);
         screensaverBtn->setMinimumWidth(40);
         m_switchModeControl->setButtonList({wallpaperBtn, screensaverBtn}, true);
+        wallpaperBtn->setChecked(true);
     }
 
     connect(m_waitControl, &DButtonBox::buttonToggled, this, [this, time_array] (QAbstractButton * toggleBtn, bool) {
