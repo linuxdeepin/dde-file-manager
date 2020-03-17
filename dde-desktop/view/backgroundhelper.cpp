@@ -57,7 +57,7 @@ public:
                 return;
             }
 
-            QImage *image = static_cast<QImage*>(backingStore()->handle()->paintDevice());
+            QImage *image = static_cast<QImage *>(backingStore()->handle()->paintDevice());
             QPainter pa(image);
             pa.drawPixmap(0, 0, m_noScalePixmap);
         }
@@ -66,12 +66,13 @@ public:
         pa.drawPixmap(event->rect().topLeft(), m_pixmap, QRect(event->rect().topLeft() * scale, event->rect().size() * scale));
     }
 
-    virtual void setVisible(bool visible) override {
+    virtual void setVisible(bool visible) override
+    {
         if (!visible && !property("isPreview").toBool()) {
             // 暂时（紧急）解决arm64双屏切换复制模式容易出现无法显示桌面的问题，禁止隐藏任何桌面。
             // 后续有较好的解决方案可以删除此代码
             qDebug() << "not allow to hide desktop(screen is " << property("myScreen").toString() <<
-                       ") primaryScreen is " << qApp->primaryScreen()->name();
+                     ") primaryScreen is " << qApp->primaryScreen()->name();
             return ;
         }
         QWidget::setVisible(visible);
@@ -100,7 +101,7 @@ BackgroundHelper::BackgroundHelper(bool preview, QObject *parent)
     checkTimer = new QTimer(this);
     checkTimer->setInterval(2000);
     checkTimer->setSingleShot(true);
-    connect(checkTimer, &QTimer::timeout, this, [this](){
+    connect(checkTimer, &QTimer::timeout, this, [this]() {
         checkBlackScreen();
     });
 
@@ -115,7 +116,7 @@ BackgroundHelper::~BackgroundHelper()
     }
 }
 
-BackgroundHelper* BackgroundHelper::getDesktopInstance()
+BackgroundHelper *BackgroundHelper::getDesktopInstance()
 {
     return desktop_instance;
 }
@@ -133,7 +134,7 @@ QWidget *BackgroundHelper::backgroundForScreen(QScreen *screen) const
 
 QList<QWidget *> BackgroundHelper::allBackgrounds() const
 {
-    QList<QWidget*> backgrounds;
+    QList<QWidget *> backgrounds;
 
     for (QWidget *w : backgroundMap)
         backgrounds << w;
@@ -201,7 +202,7 @@ void BackgroundHelper::onWMChanged()
                 updateBackground();
             });
 
-            connect(gsettings, &DGioSettings::valueChanged, this, [this] (const QString &key, const QVariant &value) {
+            connect(gsettings, &DGioSettings::valueChanged, this, [this] (const QString & key, const QVariant & value) {
                 Q_UNUSED(value);
                 if (key == "background-uris") {
                     updateBackground();
@@ -270,7 +271,7 @@ void BackgroundHelper::updateBackground(QWidget *l)
     }
 
     pix.setDevicePixelRatio(l->devicePixelRatioF());
-    dynamic_cast<BackgroundLabel*>(l)->setPixmap(pix);
+    dynamic_cast<BackgroundLabel *>(l)->setPixmap(pix);
 
     qInfo() << l->windowHandle()->screen() << currentWallpaper << pix;
 
@@ -302,7 +303,7 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
 {
     BackgroundLabel *l = new BackgroundLabel();
     l->setProperty("isPreview", m_previuew);
-    l->setProperty("myScreen",screen->name()); // assert screen->name is unique
+    l->setProperty("myScreen", screen->name()); // assert screen->name is unique
 
     backgroundMap[screen] = l;
 
@@ -375,8 +376,25 @@ void BackgroundHelper::updateBackgroundGeometry(QScreen *screen, BackgroundLabel
 void BackgroundHelper::checkBlackScreen()
 {
     qDebug() << "check it out";
+    //if X11
+    //QScreen *ps = qApp->primaryScreen();
+    //else
+    QScreen *ps;
 
-    QScreen *ps = Display::instance()->primaryScreen();
+    auto e = QProcessEnvironment::systemEnvironment();
+    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
+    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
+
+    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
+            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+        ps = Display::instance()->primaryScreen();
+    }
+
+    else {
+        ps = qApp->primaryScreen();
+    }
+
+
     QWidget *psl = backgroundForScreen(ps);
     QList<QWidget *> ls = allBackgrounds();
     QList<QScreen *> ss = qApp->screens();
@@ -386,10 +404,10 @@ void BackgroundHelper::checkBlackScreen()
         myScreens << l->windowHandle()->screen();
     }
 
-    bool hasBlackScreen = myScreens.size()<ss.size();
+    bool hasBlackScreen = myScreens.size() < ss.size();
     bool isPrimaryScreenBlack = false;
     if (!hasBlackScreen) {
-         //qDebug() << "No black Screen Found...";
+        //qDebug() << "No black Screen Found...";
         return;
     } else {
         QSet<QScreen *>blackScreens = ss.toSet() - myScreens;
@@ -410,8 +428,8 @@ void BackgroundHelper::checkBlackScreen()
     }
 
     // remove primaryScreen's label from ls
-    for (int i=0; i<ls.size(); ++i) {
-        if (ls.value(i)==psl) {
+    for (int i = 0; i < ls.size(); ++i) {
+        if (ls.value(i) == psl) {
             qInfo() << "remove " << ls[i]->property("myScreen");
             ls.removeAt(i);
             break;
@@ -419,8 +437,8 @@ void BackgroundHelper::checkBlackScreen()
     }
 
     // remove primaryScreen  from ss
-    for (int i=0; i<ss.size(); ++i) {
-        if (ss.value(i)==ps) {
+    for (int i = 0; i < ss.size(); ++i) {
+        if (ss.value(i) == ps) {
             qInfo() << "remove " << ss[i]->name();
             ss.removeAt(i);
             break;
@@ -428,8 +446,8 @@ void BackgroundHelper::checkBlackScreen()
     }
 
     Q_ASSERT(ls.size() == ss.size());
-    for (int i=0; i<ls.size() && i<ss.size(); ++i) {
-        if (ls[i]->windowHandle()->screen()!=ss[i]) {
+    for (int i = 0; i < ls.size() && i < ss.size(); ++i) {
+        if (ls[i]->windowHandle()->screen() != ss[i]) {
             ls[i]->windowHandle()->setScreen(ss[i]);
         }
         updateBackgroundGeometry(ss[i], static_cast<BackgroundLabel *>(ls[i]));
@@ -438,8 +456,8 @@ void BackgroundHelper::checkBlackScreen()
 
 void BackgroundHelper::resetBackgroundVisibleState()
 {
-    for (QScreen * screen : qGuiApp->screens()) {
-        BackgroundLabel * l = backgroundMap.value(screen);
+    for (QScreen *screen : qGuiApp->screens()) {
+        BackgroundLabel *l = backgroundMap.value(screen);
         l->show();
     }
 }
@@ -447,44 +465,44 @@ void BackgroundHelper::resetBackgroundVisibleState()
 void BackgroundHelper::printLog()
 {
     qDebug() << "\n************************\n";
-    for (QScreen * screen : qGuiApp->screens()) {
-        BackgroundLabel * l = backgroundMap.value(screen);
-        qDebug() << screen->name() << "\n"<<
-                 "handle->geometry" <<screen->handle()->geometry() <<"\n"<<
-                  "\r\n----------------------\r\n" <<
-                  "label.screen" << l->windowHandle()->handle()->screen()->name()<<
-                  "label geo" << l->windowHandle()->handle()->geometry();
+    for (QScreen *screen : qGuiApp->screens()) {
+        BackgroundLabel *l = backgroundMap.value(screen);
+        qDebug() << screen->name() << "\n" <<
+                 "handle->geometry" << screen->handle()->geometry() << "\n" <<
+                 "\r\n----------------------\r\n" <<
+                 "label.screen" << l->windowHandle()->handle()->screen()->name() <<
+                 "label geo" << l->windowHandle()->handle()->geometry();
     }
     qDebug() << "\n************************\n" <<
-                "backgroundMap.size() " << backgroundMap.size() <<
-                "\n************************\n";
-     for (BackgroundLabel *l : backgroundMap) {
-         qDebug() << "\r\n" << l << "l->isvisible" << l->isVisible() <<
-                     "property.myScreen" << l->property("myScreen") <<
-                     "\r\nlabel.screen" << l->windowHandle()->handle()->screen()->name()<<
-                     "label geo" << l->windowHandle()->handle()->geometry();
+             "backgroundMap.size() " << backgroundMap.size() <<
+             "\n************************\n";
+    for (BackgroundLabel *l : backgroundMap) {
+        qDebug() << "\r\n" << l << "l->isvisible" << l->isVisible() <<
+                 "property.myScreen" << l->property("myScreen") <<
+                 "\r\nlabel.screen" << l->windowHandle()->handle()->screen()->name() <<
+                 "label geo" << l->windowHandle()->handle()->geometry();
 
-     }
-     qDebug() << "\n************************\n";
+    }
+    qDebug() << "\n************************\n";
 }
 
 void BackgroundHelper::printLog(int index)
 {
-     QList<QWidget*> backgrounds = allBackgrounds();
-     QWidget *l = backgrounds.value(index);
-     if (l) {
-         qDebug() << l << "\nl->isvisible" << l->isVisible() <<
-                     "property.myScreen" << l->property("myScreen") <<
-                     "label.screen" << l->windowHandle()->handle()->screen()->name()<<
-                     "label geo" << l->windowHandle()->handle()->geometry();
-     } else {
-         qWarning() << "invalid index" << "backgrounds.size" << backgrounds.size();
-     }
+    QList<QWidget *> backgrounds = allBackgrounds();
+    QWidget *l = backgrounds.value(index);
+    if (l) {
+        qDebug() << l << "\nl->isvisible" << l->isVisible() <<
+                 "property.myScreen" << l->property("myScreen") <<
+                 "label.screen" << l->windowHandle()->handle()->screen()->name() <<
+                 "label geo" << l->windowHandle()->handle()->geometry();
+    } else {
+        qWarning() << "invalid index" << "backgrounds.size" << backgrounds.size();
+    }
 }
 
 void BackgroundHelper::mapLabelScreen(int labelIndex, int screenIndex)
 {
-    QList<QWidget*> backgrounds = allBackgrounds();
+    QList<QWidget *> backgrounds = allBackgrounds();
     QWidget *l = backgrounds.value(labelIndex);
     if (!l) {
         qWarning() << "invalid index" << "backgrounds.size" << backgrounds.size();
@@ -496,7 +514,7 @@ void BackgroundHelper::mapLabelScreen(int labelIndex, int screenIndex)
         return;
     }
 
-    if (l->windowHandle()->screen()!=screen) {
+    if (l->windowHandle()->screen() != screen) {
         l->windowHandle()->setScreen(screen);
     }
 

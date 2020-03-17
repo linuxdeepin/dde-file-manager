@@ -34,7 +34,7 @@
 
 using WallpaperSettings = Frame;
 
-extern QScreen * GetPrimaryScreen();
+extern QScreen *GetPrimaryScreen();
 
 #ifndef DISABLE_ZONE
 using ZoneSettings = ZoneMainWindow;
@@ -58,15 +58,14 @@ Desktop::Desktop()
     d->background = new BackgroundHelper();
     DesktopInfo desktoInfo;
     connect(d->background, &BackgroundHelper::enableChanged, this, &Desktop::onBackgroundEnableChanged);
-    if(desktoInfo.waylandDectected()){
+    if (desktoInfo.waylandDectected()) {
         connect(Display::instance(), &Display::primaryScreenChanged, this, &Desktop::onBackgroundEnableChanged);
-    }
-    else {
+    } else {
         connect(qGuiApp, &QGuiApplication::primaryScreenChanged, this, &Desktop::onBackgroundEnableChanged);
     }
 
 
-    connect(d->background, &BackgroundHelper::aboutDestoryBackground, this, [this] (QWidget *l) {
+    connect(d->background, &BackgroundHelper::aboutDestoryBackground, this, [this] (QWidget * l) {
         if (l == d->screenFrame.parent()) {
             d->screenFrame.setParent(nullptr);
         }
@@ -100,7 +99,24 @@ void Desktop::onBackgroundEnableChanged()
     qInfo() << "Background enabled:" << d->background->isEnabled();
 
     if (d->background->isEnabled()) {
-        QWidget *background = d->background->backgroundForScreen(GetPrimaryScreen());
+
+        //if X11
+        //QWidget *background = d->background->backgroundForScreen(qApp->primaryScreen());
+        //else
+        QWidget *background;
+
+        auto e = QProcessEnvironment::systemEnvironment();
+        QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
+        QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
+
+        if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
+                WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+
+            background = d->background->backgroundForScreen(GetPrimaryScreen());
+        } else {
+            background = d->background->backgroundForScreen(qApp->primaryScreen());
+        }
+
         d->screenFrame.setAttribute(Qt::WA_NativeWindow, false);
         d->screenFrame.setParent(background);
         d->screenFrame.move(0, 0);
@@ -120,10 +136,39 @@ void Desktop::onBackgroundEnableChanged()
                 l->show();
             }
         }
+
+        if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
+                WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+            onBackgroundGeometryChanged(background);
+        }
+
+        //if X11
+        //nothing
+        //else
+
     } else {
         d->screenFrame.setParent(nullptr);
         setWindowFlag(&d->screenFrame, Qt::FramelessWindowHint, true);
-        d->screenFrame.QWidget::setGeometry(GetPrimaryScreen()->geometry());
+
+        //if X11
+        //d->screenFrame.QWidget::setGeometry(qApp->primaryScreen()->geometry());
+        //else
+
+
+        auto e = QProcessEnvironment::systemEnvironment();
+        QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
+        QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
+
+        if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
+                WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+            d->screenFrame.QWidget::setGeometry(GetPrimaryScreen()->geometry());
+        }
+
+        else {
+            d->screenFrame.QWidget::setGeometry(qApp->primaryScreen()->geometry());
+        }
+
+
         Xcb::XcbMisc::instance().set_window_type(d->screenFrame.winId(), Xcb::XcbMisc::Desktop);
 
         d->screenFrame.show();
