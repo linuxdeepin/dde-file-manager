@@ -86,6 +86,7 @@ BookMarkManager::BookMarkManager(QObject *parent)
     fileService->setFileUrlHandler(BOOKMARK_SCHEME, "", this);
 
     connect(DFMApplication::genericSetting(), &DFMSettings::valueEdited, this, &BookMarkManager::onFileEdited);
+    connect(DFileService::instance(), &DFileService::fileRenamed, this, &BookMarkManager::onFileRenamed);
 }
 
 BookMarkManager::~BookMarkManager()
@@ -111,6 +112,10 @@ bool BookMarkManager::checkExist(const DUrl &url)
 
 bool BookMarkManager::renameFile(const QSharedPointer<DFMRenameEvent> &event) const
 {
+    DUrl from = event->fromUrl();
+    DUrl new_from = from.bookmarkTargetUrl();
+    DUrl to = event->toUrl();
+
     BookMarkPointer item = findBookmark(event->fromUrl());
 
     if (!item) {
@@ -284,6 +289,64 @@ void BookMarkManager::onFileEdited(const QString &group, const QString &key, con
         return;
 
     update(value);
+}
+
+void BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
+{
+    //转换为书签设置标签???
+    //make bookMarkDUrl
+    QString fromPath = from.scheme() + "://" + from.path();
+    DUrl bookMarkFrom(from);
+    bookMarkFrom.setScheme(BOOKMARK_SCHEME);
+    bookMarkFrom.setPath(fromPath);
+
+    QString toPath = to.scheme() + "://" + to.path();
+    DUrl bookMarkTo(to);
+    bookMarkTo.setScheme(BOOKMARK_SCHEME);
+    bookMarkTo.setPath(toPath);
+
+    BookMarkPointer item = findBookmark(bookMarkFrom);
+    if (!item)
+    {
+        return;
+    }
+
+    QVariantList list = DFMApplication::genericSetting()->value("BookMark", "Items").toList();
+    for (int i = 0; i < list.count(); ++i) {
+        QVariantMap map = list.at(i).toMap();
+
+        if (map.value("name").toString() == item->getName()) {
+            QString fromQueryStr = "mount_point=" + map.value("mountPoint").toString() + "&locate_url=" + map.value("locateUrl").toString();
+            bookMarkFrom.setQuery(fromQueryStr);
+            bookMarkFrom.setFragment(map.value("name").toString());
+
+            QString locateUrl = bookMarkTo.bookmarkTargetUrl().toLocalFile();
+            if (locateUrl.startsWith("/home"))
+            {
+                locateUrl = locateUrl.mid(sizeof ("/home") - 1);
+            }
+            QString toQueryStr = "mount_point=" + map.value("mountPoint").toString() + "&locate_url=" + locateUrl;
+            bookMarkTo.setQuery(toQueryStr);
+            bookMarkTo.setFragment(map.value("name").toString());
+
+            map["locateUrl"] = locateUrl;
+            map["url"] = toPath;
+            list[i] = map;
+            DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
+
+            BookMark *new_item = new BookMark(bookMarkTo);
+            new_item->m_created = item->m_created;
+            new_item->m_lastModified = QDateTime::currentDateTime();
+            new_item->mountPoint = map.value("mountPoint").toString();
+            new_item->locateUrl = locateUrl;
+
+            m_bookmarks.remove(bookMarkFrom.bookmarkTargetUrl());
+            m_bookmarks[bookMarkTo.bookmarkTargetUrl()] = new_item;
+
+            DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::fileMoved, bookMarkFrom, bookMarkTo);
+            break;
+        }
+    }
 }
 
 const QList<DAbstractFileInfoPointer> BookMarkManager::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
