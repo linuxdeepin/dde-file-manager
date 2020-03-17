@@ -62,6 +62,7 @@ private:
 
     void update(const QVariant &value);
     void onFileEdited(const QString &group, const QString &key, const QVariant &value);
+    void onFileRenamed(const DUrl & from, const DUrl & to);
 //    std::deque<QExplicitlySharedDataPointer<BookMark>> m_tagBookmarks{};
 };
 
