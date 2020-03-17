@@ -32,7 +32,7 @@
 #include <QMediaPlayer>
 #include <QMediaMetaData>
 
-MusicMessageView::MusicMessageView(const QString& uri, QWidget *parent) :
+MusicMessageView::MusicMessageView(const QString &uri, QWidget *parent) :
     QFrame(parent),
     m_uri(uri)
 {
@@ -55,16 +55,19 @@ void MusicMessageView::initUI()
     m_imgLabel = new QLabel(this);
     m_imgLabel->setFixedSize(QSize(240, 240));
 
-    QMediaPlayer* player = new QMediaPlayer(this);
-    connect(player, &QMediaPlayer::mediaStatusChanged, this, [=] (const QMediaPlayer::MediaStatus& status) {
-        if(status == QMediaPlayer::BufferedMedia || status == QMediaPlayer::LoadedMedia){
+    QMediaPlayer *player = new QMediaPlayer(this);
+    connect(player, &QMediaPlayer::mediaStatusChanged, this, [ = ] (const QMediaPlayer::MediaStatus & status) {
+        if (status == QMediaPlayer::BufferedMedia || status == QMediaPlayer::LoadedMedia) {
+            qDebug() << player->isMetaDataAvailable();
             m_title = player->metaData(QMediaMetaData::Title).toString();
 
-            m_artist = player->metaData(QMediaMetaData::AlbumArtist).toString();
+            m_artist = QString(tr("Artist："));
+            m_artist += player->metaData(QMediaMetaData::AlbumArtist).toString();
 
-            m_album = player->metaData(QMediaMetaData::AlbumTitle).toString();
+            m_album = QString(tr("Album："));
+            m_album += player->metaData(QMediaMetaData::AlbumTitle).toString();
             QImage img = player->metaData(QMediaMetaData::CoverArtImage).value<QImage>();
-            if(img.isNull()){
+            if (img.isNull()) {
                 img = QImage(":/icons/icons/default_music_cover.png");
             }
             m_imgLabel->setPixmap(QPixmap::fromImage(img).scaled(m_imgLabel->size(), Qt::KeepAspectRatio));
@@ -77,39 +80,41 @@ void MusicMessageView::initUI()
 
     player->setMedia(QUrl::fromUserInput(m_uri));
 
-    QVBoxLayout* messageLayout = new QVBoxLayout;
+    QVBoxLayout *messageLayout = new QVBoxLayout;
     messageLayout->setSpacing(0);
     messageLayout->addWidget(m_titleLabel, 0, Qt::AlignLeft);
     messageLayout->addSpacing(10);
     messageLayout->addWidget(m_artistLabel, 0, Qt::AlignLeft);
+    messageLayout->addSpacing(3);
     messageLayout->addWidget(m_albumLabel, 0, Qt::AlignLeft);
     messageLayout->addStretch();
 
-    QHBoxLayout* mainLayout = new QHBoxLayout;
+    QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addWidget(m_imgLabel, 0, Qt::AlignTop);
-    mainLayout->addSpacing(5);
+    mainLayout->addSpacing(15);
     mainLayout->addLayout(messageLayout);
     mainLayout->addStretch();
 
     setLayout(mainLayout);
 
     setStyleSheet("QLabel#Title{"
-                            "font-size: 16px;"
-                         "}"
-                         "QLabel#Artist{"
-                            "color: #5b5b5b;"
-                            "font-size: 12px;"
-                         "}"
-                         "QLabel#Albumn{"
-                            "color: #5b5b5b;"
-                            "font-size: 12px;"
-                         "}");
+                  "font-size: 18px;"
+                  "font:demibold;"
+                  "}"
+                  "QLabel#Artist{"
+                  "color: #5b5b5b;"
+                  "font-size: 12px;"
+                  "}"
+                  "QLabel#Albumn{"
+                  "color: #5b5b5b;"
+                  "font-size: 12px;"
+                  "}");
 
 }
 
 void MusicMessageView::updateElidedText()
-{   
+{
     QFont font;
     font.setPixelSize(16);
     QFontMetrics fm(font);
@@ -126,7 +131,7 @@ void MusicMessageView::resizeEvent(QResizeEvent *event)
 {
     QFrame::resizeEvent(event);
     m_margins = (event->size().height() - m_imgLabel->height()) / 2;
-    if((event->size().width() - m_margins - 250) < m_imgLabel->width()){
+    if ((event->size().width() - m_margins - 250) < m_imgLabel->width()) {
         m_margins = event->size().width() - 250 - m_imgLabel->width();
     }
     setContentsMargins(m_margins, m_margins, 0, m_margins);
