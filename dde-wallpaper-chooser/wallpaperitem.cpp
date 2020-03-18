@@ -90,6 +90,7 @@ void WallpaperItem::initUI()
 {
     setAttribute(Qt::WA_TranslucentBackground);
     setFrameShape(QFrame::NoFrame);
+    this->setFocusPolicy(Qt::NoFocus);
 
     m_wrapper = new WrapperWidget(this);
     m_wrapper->setFixedSize(ItemWidth, ItemHeight * 2);
