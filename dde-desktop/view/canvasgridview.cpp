@@ -2251,6 +2251,8 @@ inline QModelIndex CanvasGridView::lastIndex()
 
 void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command, bool byIconRect)
 {
+    Q_UNUSED(byIconRect)
+
     auto selectRect = rect.normalized();
     auto topLeftGridPos = gridAt(selectRect.topLeft());
     auto bottomRightGridPos = gridAt(selectRect.bottomRight());
@@ -2259,11 +2261,13 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
     //  keep old selection if mouse press
     bool ctrlShiftPress = DFMGlobal::keyShiftIsPressed() || DFMGlobal::keyCtrlIsPressed();
     if (ctrlShiftPress) {
-        if (0 == selectionModel()->selection().indexes().size() && DFMGlobal::keyShiftIsPressed())
-            d->beginPos = topLeftGridPos;
         oldSelection = selectionModel()->selection();
-    } else {
-        d->beginPos = QPoint(-1, -1);
+        if(0 == selectionModel()->selection().indexes().size() && DFMGlobal::keyShiftIsPressed())
+            d->beginPos = topLeftGridPos;
+    }
+    else
+    {
+        d->beginPos = QPoint(-1,-1);
     }
 
     // select by  key board, so mouse not pressed
@@ -2276,105 +2280,95 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
         QAbstractItemView::selectionModel()->select(oldSelection, command);
         return;
     }
-    QPoint tempClickedPoint;
-    QPoint tempLastPoint;
-    if (d->mousePressed && ctrlShiftPress) {
+
+    //get current Point
+    QPoint currentPoint(-1,-1);
+    if (d->mousePressed) {
         auto clickIndex = indexAt(d->lastPos);
         if (clickIndex.isValid()) {
-            auto clickedPoint = visualRect(clickIndex).center();
-            auto lastPoint = visualRect(d->currentCursorIndex).center();
-            // when ctrl, only deal the mouse clicked item
-            if (!d->currentCursorIndex.isValid() || DFMGlobal::keyCtrlIsPressed()) {
-                lastPoint = clickedPoint + QPoint(1, 1);
-            }
-            tempClickedPoint = gridAt(clickedPoint);
-            tempLastPoint = gridAt(lastPoint);
-            qDebug() << "clickedPoint " << tempClickedPoint << " lastPoint " << tempLastPoint;
-            selectRect = QRect(clickedPoint, lastPoint).normalized();
+            QPoint tempClickIndex = visualRect(clickIndex).center();
+            QPoint tempLastPoint = visualRect(d->currentCursorIndex).center();
+            if (!d->currentCursorIndex.isValid())
+                tempLastPoint = tempClickIndex +QPoint(1 ,1);
+            selectRect = QRect(tempClickIndex,tempLastPoint);
+
             topLeftGridPos = gridAt(selectRect.topLeft());
             bottomRightGridPos = gridAt(selectRect.bottomRight());
-        } else {
-            // TODO: what?
-            if (!d->showSelectRect) {
+            currentPoint = topLeftGridPos;
+            if (QPoint(-1,-1) == currentPoint)
                 return;
-            }
-            oldSelection = d->beforeMoveSelection;
-            topLeftGridPos = gridAt(d->selectRect.topLeft());
-            bottomRightGridPos = gridAt(d->selectRect.bottomRight());
+        }
+        else {
+            return;
         }
     }
-    qDebug() << "beginPos " << d->beginPos <<  "topLeftGridPos " << topLeftGridPos << " bottomRightGridPos " << bottomRightGridPos;
-    QItemSelection rectSelection;
-    QItemSelection toRemoveSelection;
-    QPoint outPoint;
-    QPoint inPoint;
-    if (d->beginPos != QPoint(-1, -1)) {
-        qDebug() << "d->beginPos.isNull()";
-        auto beginSmall = (d->beginPos.y() < tempClickedPoint.y()) || (d->beginPos.x() < tempClickedPoint.x() && d->beginPos.y() == tempClickedPoint.y());
-        auto beginMax = (d->beginPos.y() > tempClickedPoint.y()) || (d->beginPos.x() == tempClickedPoint.x() && d->beginPos.y() < tempClickedPoint.y());
 
+    if (DFMGlobal::keyShiftIsPressed()) {
+        QItemSelection rectSelection;
+        QItemSelection toRemoveSelection;
+        //just keyShift
+        bool beginSmall = d->beginPos.x() < currentPoint.x() || d->beginPos.y() < currentPoint.y();
         if (beginSmall) {
-            outPoint = d->beginPos;
-            inPoint = tempClickedPoint;
-        } else if (beginMax) {
-            outPoint  = tempClickedPoint;
-            inPoint = d->beginPos;
-        } else {
-            outPoint = topLeftGridPos;
-            inPoint = bottomRightGridPos;
+            topLeftGridPos = d->beginPos;
+            bottomRightGridPos = currentPoint;
         }
-    } else {
-        qDebug() << "no d->beginPos.isNull() ";
-        outPoint = topLeftGridPos;
-        inPoint = bottomRightGridPos;
-    }
-
-    qDebug() << "outPoint " << outPoint <<  "inPoint " << inPoint ;
-//    if (outPoint != inPoint)
-//        int aa = 1;
-    for (auto x = 0; x <= d->colCount; ++x) {
-        for (auto y = outPoint.y(); y <= inPoint.y(); ++y) {
-            if (x < outPoint.x() && y == outPoint.y())
-                continue;
-            if (y > inPoint.y() || (x > inPoint.x() && y == inPoint.y()))
-                break;
-            auto localFile = GridManager::instance()->itemId(x, y);
-            if (localFile.isEmpty()) {
-                continue;
-            }
-            auto index = model()->index(DUrl(localFile));
-            QItemSelectionRange selectionRange(index);
-            if (!rectSelection.contains(index)) {
-                rectSelection.push_back(selectionRange);
-            }
-            if (DFMGlobal::keyCtrlIsPressed() && oldSelection.contains(index)) {
-                toRemoveSelection.push_back(selectionRange);
-            }
+        else {
+            topLeftGridPos = currentPoint;
+            bottomRightGridPos = d->beginPos;
         }
-    }
-    qDebug() << "old size " << oldSelection.size() << "new size " << rectSelection.size();
-    if (command != QItemSelectionModel::Deselect) {
-        // Remove dump select
-        for (auto &sel : rectSelection) {
-            for (auto &index : sel.indexes())
-                if (!oldSelection.contains(index)) {
-                    oldSelection += rectSelection;
+        qDebug() << "topLeftGridPos"  << topLeftGridPos << "bottomRightGridPos " << bottomRightGridPos;
+        for (int x = 0; x < d->colCount; ++x) {
+            for (int y = topLeftGridPos.y(); y <= bottomRightGridPos.y(); ++y) {
+                if (x < topLeftGridPos.x() && y == topLeftGridPos.y())
+                    continue;
+                if (x > bottomRightGridPos.x() && y == bottomRightGridPos.y())
+                    break;
+                auto localFile = GridManager::instance()->itemId(x, y);
+                if (localFile.isEmpty()) {
+                    continue;
                 }
-        }
-        for (auto &oldS : oldSelection) {
-            for (auto &oldIndex : oldS.indexes()) {
-                if (DFMGlobal::keyShiftIsPressed()  && !rectSelection.contains(oldIndex)) {
-                    toRemoveSelection.push_back(oldS);
+                auto index = model()->index(DUrl(localFile));
+                auto list = QList<QRect>() << itemPaintGeomertys(index);
+                QItemSelectionRange selectionRange(index);
+                if (!rectSelection.contains(index)) {
+                    rectSelection.push_back(selectionRange);
                 }
             }
         }
-        for (auto toRemove : toRemoveSelection) {
-            oldSelection.removeAll(toRemove);
-        }
-        QAbstractItemView::selectionModel()->select(oldSelection, command);
-    } else {
+        QAbstractItemView::selectionModel()->clear();
         QAbstractItemView::selectionModel()->select(rectSelection, command);
     }
+    else if (DFMGlobal::keyCtrlIsPressed()) {
+        //just Ctrl
+        auto localFile = GridManager::instance()->itemId(topLeftGridPos.x(), topLeftGridPos.y());
+        if (localFile.isEmpty()) {
+            return;
+        }
+        auto index = model()->index(DUrl(localFile));
+        QItemSelectionRange selectionRange(index);
+        if (!oldSelection.contains(index)) {
+            oldSelection.push_back(selectionRange);
+        }
+        else{
+            oldSelection.removeOne(selectionRange);
+        }
+        QAbstractItemView::selectionModel()->select(oldSelection, command);
+        d->beginPos = topLeftGridPos;
+    }
+    else {
+        //just click
+        auto localFile = GridManager::instance()->itemId(topLeftGridPos.x(), topLeftGridPos.y());
+        if (localFile.isEmpty()) {
+            return;
+        }
+        auto index = model()->index(DUrl(localFile));
+        QItemSelectionRange selectionRange(index);
+        QItemSelection rectSelection;
+        rectSelection.push_back(selectionRange);
+        QAbstractItemView::selectionModel()->select(rectSelection, command);
+        d->beginPos = topLeftGridPos;
+    }
+    return;
 }
 
 void CanvasGridView::handleContextMenuAction(int action)

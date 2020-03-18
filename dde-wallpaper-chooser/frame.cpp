@@ -88,7 +88,6 @@ Frame::Frame(Mode mode, QWidget *parent)
     setAttribute(Qt::WA_TranslucentBackground);
 
     setBlendMode(DBlurEffectWidget::BehindWindowBlend);
-
     initUI();
     initSize();
 
@@ -442,6 +441,7 @@ void Frame::initUI()
     m_closeButton->setFixedSize(24, 24);
     m_closeButton->setIconSize({24, 24});
     m_closeButton->setFlat(true);
+    m_closeButton->setFocusPolicy(Qt::NoFocus);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
 
@@ -460,7 +460,8 @@ void Frame::initUI()
     m_wallpaperCarouselCheckBox->setPalette(wccPal);
     m_wallpaperCarouselControl = new DButtonBox(this);
     QList<DButtonBoxButton *> wallpaperSlideshowBtns;
-
+    m_wallpaperCarouselCheckBox->setFocusPolicy(Qt::NoFocus);
+    m_wallpaperCarouselControl->setFocusPolicy(Qt::NoFocus);
     QByteArrayList array_policy {"30", "60", "300", "600", "900", "1800", "3600", "login", "wakeup"};
 
     {
@@ -601,6 +602,7 @@ void Frame::initUI()
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     DButtonBoxButton *wallpaperBtn = new DButtonBoxButton(tr("Wallpaper"), this);
     wallpaperBtn->setMinimumWidth(40);
+    wallpaperBtn->setFocusPolicy(Qt::NoFocus);
     m_switchModeControl = new DButtonBox(this);
 
     if (m_mode == WallpaperMode) wallpaperBtn->setChecked(true);
@@ -611,10 +613,10 @@ void Frame::initUI()
     } else {
         DButtonBoxButton *screensaverBtn = new DButtonBoxButton(tr("Screensaver"), this);
         screensaverBtn->setMinimumWidth(40);
+        screensaverBtn->setFocusPolicy(Qt::NoFocus);
         m_switchModeControl->setButtonList({wallpaperBtn, screensaverBtn}, true);
         wallpaperBtn->setChecked(true);
     }
-
     connect(m_waitControl, &DButtonBox::buttonToggled, this, [this, time_array] (QAbstractButton * toggleBtn, bool) {
         int index = m_waitControl->buttonList().indexOf(toggleBtn);
         m_dbusScreenSaver->setBatteryScreenSaverTimeout(time_array[index]);

@@ -51,7 +51,7 @@ WallpaperList::WallpaperList(QWidget *parent)
     setFrameShape(QFrame::NoFrame);
     viewport()->setAutoFillBackground(false);
     horizontalScrollBar()->setEnabled(false);
-
+    this->setFocusPolicy(Qt::NoFocus);
     m_updateTimer->setInterval(100);
     m_updateTimer->setSingleShot(true);
 
