@@ -411,7 +411,9 @@ bool SearchDiriterator::hasNext() const
                 const DUrl &url = fileInfo->fileUrl();
 
                 if (!searchPathList.contains(url)) {
-                    searchPathList << url;
+                    //这个文件夹类型异常，搜索访问目录会卡死，暂时做跳过处理
+                    if (!url.path().startsWith("/sys/kernel/security/apparmor"))
+                        searchPathList << url;
                 }
             }
 
