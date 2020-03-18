@@ -28,6 +28,10 @@
 
 #include "singleton.h"
 
+#include <QMutex>
+
+Q_GLOBAL_STATIC(QMutex, fetchNetworksMutex)
+
 class NetworkFileDDirIterator : public DDirIterator
 {
 public:
@@ -54,9 +58,11 @@ public:
 
         initialized = true;
 
+        fetchNetworksMutex->lock();
         if (!m_silence && NetworkManager::NetworkNodes.value(m_url).isEmpty()) {
             Singleton<NetworkManager>::instance()->fetchNetworks(DFMUrlBaseEvent(m_sender.data(), m_url));
         }
+        fetchNetworksMutex->unlock();
 
         foreach (const NetworkNode &node, NetworkManager::NetworkNodes.value(m_url)) {
             NetworkFileInfo *info = new NetworkFileInfo(DUrl(node.url()));
