@@ -16,3 +16,8 @@ isEqual(IS_TEST_VIEW_PLUGIN, True){
 
 SUBDIRS += \
     pluginPreview
+
+
+
+TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
+                $$PWD/translations/$${TARGET}_zh_CN.ts
