@@ -1289,6 +1289,6 @@ void DFileManagerWindow::toggleAdvanceSearchBar(bool visible, bool resetForm)
     }
 
     if (d->advanceSearchBar && resetForm) {
-        d->advanceSearchBar->resetForm();
+        d->advanceSearchBar->resetForm(false);
     }
 }
