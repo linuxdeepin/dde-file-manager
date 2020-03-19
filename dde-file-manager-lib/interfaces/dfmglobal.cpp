@@ -114,7 +114,7 @@ void onClipboardDataChanged()
     }
 
     for (QUrl url : qApp->clipboard()->mimeData()->urls()) {
-        if (url.scheme().isEmpty()){
+        if (url.scheme().isEmpty()) {
             url.setScheme("file");
         }
         clipboardFileUrls << url;
@@ -151,9 +151,17 @@ QString DFMGlobal::applicationVersion()
 bool DFMGlobal::installTranslator()
 {
     QTranslator *translator = new QTranslator(QGuiApplication::instance());
+    QTranslator *translatorMusic = new QTranslator(QGuiApplication::instance());
 
     QString transLatorPath = DFMStandardPaths::location(DFMStandardPaths::TranslationPath) +
-            QDir::separator() + DFMGlobal::applicationName() + "_" + QLocale::system().name();
+                             QDir::separator() + DFMGlobal::applicationName() + "_" + QLocale::system().name();
+
+    QString transLatorPathMusic = DFMStandardPaths::location(DFMStandardPaths::TranslationPath) +
+                                  QDir::separator() + "dde-file-manager-plugins" + "_" + QLocale::system().name();
+    qDebug() << "transLatorPath1" << transLatorPathMusic;
+
+    translatorMusic->load(transLatorPathMusic);
+    qApp->installTranslator(translatorMusic);
 
     if (translator->load(transLatorPath)) {
         return qApp->installTranslator(translator);
@@ -176,7 +184,7 @@ void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::Clipboard
     QDataStream stream(&iconBa, QIODevice::WriteOnly);
 
     int maxIconsNum = 3;
-    for(const QUrl &url : list) {
+    for (const QUrl &url : list) {
         ba.append("\n");
         ba.append(url.toString());
 
@@ -185,7 +193,7 @@ void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::Clipboard
 
         if (!fileInfo)
             continue;
-        if (maxIconsNum-->0) {
+        if (maxIconsNum-- > 0) {
             QStringList iconList;
             if (fileInfo->isSymLink()) {
                 iconList << "emblem-symbolic-link";
@@ -200,9 +208,9 @@ void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::Clipboard
             // 多文件时只显示文件图标, 一个文件时显示缩略图(如果有的话)
             DFileInfo *fi = dynamic_cast<DFileInfo *>(fileInfo.data());
             QIcon icon = fi ? DFileIconProvider::globalProvider()->icon(*fi) :
-                              DFileIconProvider::globalProvider()->icon(fileInfo->toQFileInfo());
+                         DFileIconProvider::globalProvider()->icon(fileInfo->toQFileInfo());
             DAbstractFileInfo::FileType fileType = mimeTypeDisplayManager->displayNameToEnum(fileInfo->mimeTypeName());
-            if (list.size()==1 && fileType == DAbstractFileInfo::FileType::Images) {
+            if (list.size() == 1 && fileType == DAbstractFileInfo::FileType::Images) {
                 QIcon thumb(DThumbnailProvider::instance()->thumbnailFilePath(fileInfo->toQFileInfo(), DThumbnailProvider::Large));
                 if (thumb.isNull()) {
                     //qWarning() << "thumbnail file faild " << fileInfo->absoluteFilePath();
@@ -303,7 +311,7 @@ void DFMGlobal::initNetworkManager()
 void DFMGlobal::initGvfsMountManager()
 {
     QtConcurrent::run(QThreadPool::globalInstance(), gvfsMountManager,
-                                                 &GvfsMountManager::startMonitor);
+                      &GvfsMountManager::startMonitor);
 }
 
 void DFMGlobal::initSecretManager()
@@ -344,7 +352,7 @@ void DFMGlobal::initOperatorRevocation()
 void DFMGlobal::initTagManagerConnect()
 {
     connect(TagManager::instance(), static_cast<void(TagManager::*)(const QMap<QString, QString>&)>(&TagManager::changeTagColor),
-            [] (const QMap<QString, QString>& tag_and_new_color) {
+    [] (const QMap<QString, QString> &tag_and_new_color) {
         for (auto i = tag_and_new_color.constBegin(); i != tag_and_new_color.constEnd(); ++i) {
             const QString &tag_name = i.key();
             const QStringList &files = TagManager::instance()->getFilesThroughTag(tag_name);
@@ -360,7 +368,7 @@ void DFMGlobal::initTagManagerConnect()
             DAbstractFileWatcher::ghostSignal(DUrl(TAG_ROOT), &DAbstractFileWatcher::fileAttributeChanged, file_url);
         }
     });
-    connect(TagManager::instance(), &TagManager::filesWereTagged, [] (const QMap<QString, QList<QString>>& files_were_tagged) {
+    connect(TagManager::instance(), &TagManager::filesWereTagged, [] (const QMap<QString, QList<QString>> &files_were_tagged) {
         for (auto i = files_were_tagged.constBegin(); i != files_were_tagged.constEnd(); ++i) {
             // is trash files
             if (i.key().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)))
@@ -378,7 +386,7 @@ void DFMGlobal::initTagManagerConnect()
             }
         }
     });
-    connect(TagManager::instance(), &TagManager::untagFiles, [] (const QMap<QString, QList<QString>>& tag_be_removed_files) {
+    connect(TagManager::instance(), &TagManager::untagFiles, [] (const QMap<QString, QList<QString>> &tag_be_removed_files) {
         for (auto i = tag_be_removed_files.constBegin(); i != tag_be_removed_files.constEnd(); ++i) {
             DUrl url = DUrl::fromLocalFile(i.key());
             DAbstractFileWatcher::ghostSignal(url.parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, url);
@@ -394,18 +402,18 @@ void DFMGlobal::initTagManagerConnect()
     });
 
     // for tag watcher
-    connect(TagManager::instance(), &TagManager::addNewTag, [] (const QList<QString>& new_tags) {
+    connect(TagManager::instance(), &TagManager::addNewTag, [] (const QList<QString> &new_tags) {
         for (const QString &tag : new_tags) {
             DAbstractFileWatcher::ghostSignal(DUrl(TAG_ROOT), &DAbstractFileWatcher::subfileCreated, DUrl::fromUserTaggedFile(tag, QString()));
         }
     });
-    connect(TagManager::instance(), &TagManager::deleteTag, [] (const QList<QString>& new_tags) {
+    connect(TagManager::instance(), &TagManager::deleteTag, [] (const QList<QString> &new_tags) {
         for (const QString &tag : new_tags) {
             DAbstractFileWatcher::ghostSignal(DUrl(TAG_ROOT), &DAbstractFileWatcher::fileDeleted, DUrl::fromUserTaggedFile(tag, QString()));
         }
     });
     connect(TagManager::instance(), static_cast<void(TagManager::*)(const QMap<QString, QString>&)>(&TagManager::changeTagName),
-            [] (const QMap<QString, QString>& old_and_new_name) {
+    [] (const QMap<QString, QString> &old_and_new_name) {
         for (auto i = old_and_new_name.constBegin(); i != old_and_new_name.constEnd(); ++i) {
             const DUrl &old_url = DUrl::fromUserTaggedFile(i.key(), QString());
             const DUrl &new_url = DUrl::fromUserTaggedFile(i.value(), QString());
@@ -417,7 +425,7 @@ void DFMGlobal::initTagManagerConnect()
 
 void DFMGlobal::initThumbnailConnection()
 {
-    connect(DThumbnailProvider::instance(), &DThumbnailProvider::createThumbnailFinished, [ = ] (const QString &filePath) {
+    connect(DThumbnailProvider::instance(), &DThumbnailProvider::createThumbnailFinished, [ = ] (const QString & filePath) {
         const DUrl &fileUrl = DUrl::fromLocalFile(filePath);
 
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, fileUrl);
@@ -528,7 +536,7 @@ void DFMGlobal::elideText(QTextLayout *layout, const QSizeF &size, QTextOption::
     bool drawShadow = shadowColor.isValid();
 
     QString text = layout->engine()->hasFormats() ? layout->engine()->block.text() : layout->text();
-    QTextOption &text_option = *const_cast<QTextOption*>(&layout->textOption());
+    QTextOption &text_option = *const_cast<QTextOption *>(&layout->textOption());
 
     text_option.setWrapMode(wordWrap);
 
@@ -553,7 +561,7 @@ void DFMGlobal::elideText(QTextLayout *layout, const QSizeF &size, QTextOption::
         return new_rect;
     };
 
-    auto drawShadowFun = [&] (const QTextLine &line) {
+    auto drawShadowFun = [&] (const QTextLine & line) {
         const QPen pen = painter->pen();
 
         painter->setPen(shadowColor);
@@ -578,7 +586,7 @@ void DFMGlobal::elideText(QTextLayout *layout, const QSizeF &size, QTextOption::
             layout->setText(end_str);
 
             if (layout->engine()->block.docHandle()) {
-                const_cast<QTextDocument*>(layout->engine()->block.document())->setPlainText(end_str);
+                const_cast<QTextDocument *>(layout->engine()->block.document())->setPlainText(end_str);
             }
 
             text_option.setWrapMode(QTextOption::NoWrap);
@@ -946,7 +954,7 @@ bool DFMGlobal::isDesktopFile(const DUrl &url)
 
 bool DFMGlobal::isTrashDesktopFile(const DUrl &url)
 {
-    if(isDesktopFile(url)){
+    if (isDesktopFile(url)) {
         DesktopFile df(url.toLocalFile());
         return df.getDeepinId() == DDE_TRASH_ID;
     }
@@ -955,7 +963,7 @@ bool DFMGlobal::isTrashDesktopFile(const DUrl &url)
 
 bool DFMGlobal::isComputerDesktopFile(const DUrl &url)
 {
-    if(isDesktopFile(url)){
+    if (isDesktopFile(url)) {
         DesktopFile df(url.toLocalFile());
         return df.getDeepinId() == DDE_COMPUTER_ID;
     }
@@ -986,7 +994,7 @@ void DFMGlobal::showFilePreviewDialog(const DUrlList &selectUrls, const DUrlList
     emit fileSignalManager->requestShowFilePreviewDialog(selectUrls, entryUrls);
 }
 
-void DFMGlobal::showPropertyDialog(QObject * const sender, const QList<DUrl>& selectedFiles)
+void DFMGlobal::showPropertyDialog(QObject *const sender, const QList<DUrl> &selectedFiles)
 {
     dialogManager->showPropertyDialog(DFMUrlListBaseEvent{sender, selectedFiles});
 }
@@ -1064,7 +1072,7 @@ QString DFMGlobal::cutString(const QString &text, int dataByteSize, const QTextC
 namespace DThreadUtil {
 FunctionCallProxy::FunctionCallProxy(QThread *thread)
 {
-    connect(this, &FunctionCallProxy::callInLiveThread, this, [this] (FunctionType *func) {
+    connect(this, &FunctionCallProxy::callInLiveThread, this, [this] (FunctionType * func) {
         (*func)();
     }, Qt::QueuedConnection);
     connect(thread, &QThread::finished, this, [this] {

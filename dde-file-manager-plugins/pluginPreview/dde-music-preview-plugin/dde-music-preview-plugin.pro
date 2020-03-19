@@ -33,7 +33,10 @@ DESTDIR = $$top_srcdir/plugins/previews
 
 unix {
     target.path = $$PLUGIN_INSTALL_DIR
-    INSTALLS += target
+
+    translations.path = $${PREFIX}/share/dde-file-manager/translations
+    translations.files = $$PWD/../../translations/*.qm
+    INSTALLS += target translations
 }
 
 RESOURCES += \
