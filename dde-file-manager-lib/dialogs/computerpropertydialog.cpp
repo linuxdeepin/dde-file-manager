@@ -44,11 +44,14 @@
 #include <QPainter>
 #include <DGraphicsClipEffect>
 
+#include "dbus/dbussysteminfo.h"
+
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 
 ComputerPropertyDialog::ComputerPropertyDialog(QWidget *parent) : DDialog(parent)
 {
+    m_systemInfo = new DBusSystemInfo();
     initUI();
 }
 
@@ -159,20 +162,21 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
     QString version;
 
     if (DSysInfo::isDeepin()) {
-        version = QString("%1 %2").arg(DSysInfo::productVersion())
-                                  .arg(DSysInfo::deepinTypeDisplayName());
+        version = m_systemInfo->version();
     } else {
         version = QString("%1 %2").arg(DSysInfo::productTypeString())
-                                  .arg(DSysInfo::productVersion());
+                  .arg(DSysInfo::productVersion());
     }
+
+    QString memoryStr = QString::number(static_cast<double>(m_systemInfo->memoryCap()) / (1024 * 1024 * 1024), 'f', 2) + " GB";
+    QString diskStr = QString::number(static_cast<double>(m_systemInfo->diskCap()) / (1024 * 1024 * 1024), 'f', 2) + " GB";
 
     datas.insert(data.at(0), DSysInfo::computerName());
     datas.insert(data.at(1), version);
-    datas.insert(data.at(2), QString::number(QSysInfo::WordSize) + tr("Bit"));
-    datas.insert(data.at(3), QString("%1 x %2").arg(DSysInfo::cpuModelName())
-                                               .arg(QThread::idealThreadCount()));
-    datas.insert(data.at(4), FileUtils::formatSize(DSysInfo::memoryTotalSize()));
-    datas.insert(data.at(5), FileUtils::formatSize(DSysInfo::systemDiskSize()));
+    datas.insert(data.at(2), QString::number(m_systemInfo->systemType()) + tr("Bit"));
+    datas.insert(data.at(3), m_systemInfo->processor());
+    datas.insert(data.at(4), memoryStr);
+    datas.insert(data.at(5), diskStr);
 
     return datas;
 }

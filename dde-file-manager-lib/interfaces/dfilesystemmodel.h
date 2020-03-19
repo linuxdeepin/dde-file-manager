@@ -161,7 +161,7 @@ public:
 //    void setActiveIndex(const QModelIndex &index);
     void setNameFilters(const QStringList &nameFilters);
     void setFilters(QDir::Filters filters);
-    void setAdvanceSearchFilter(const QMap<int, QVariant> &formData, bool turnOn);
+    void setAdvanceSearchFilter(const QMap<int, QVariant> &formData, bool turnOn, bool updateView);
     void applyAdvanceSearchFilter();
     std::shared_ptr<FileFilter> advanceSearchFilter();
 

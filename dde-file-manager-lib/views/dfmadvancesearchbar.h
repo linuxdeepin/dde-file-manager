@@ -41,10 +41,10 @@ class DFMAdvanceSearchBar : public DBoxWidget
 public:
     DFMAdvanceSearchBar(QWidget* parent = nullptr);
 
-    void resetForm();
+    void resetForm(bool updateView = true);
 
 signals:
-    void optionChanged(QMap<int, QVariant> formData);
+    void optionChanged(QMap<int, QVariant> formData, bool updateView);
 
 private slots:
     void onOptionChanged();
@@ -67,6 +67,7 @@ private:
     QComboBox *asbCombos[LABEL_COUNT];
     DCommandLinkButton *resetBtn;
     bool needSearchAgain = true;
+    bool allowUpdateView = true;
 };
 
 DFM_END_NAMESPACE

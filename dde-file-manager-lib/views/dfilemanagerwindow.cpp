@@ -374,11 +374,11 @@ void DFileManagerWindowPrivate::initAdvanceSearchBar()
     int advanceSearchBarInsertTo = renameWidgetIndex == -1 ? 0 : renameWidgetIndex + 1;
     rightViewLayout->insertWidget(advanceSearchBarInsertTo, advanceSearchBar);
 
-    QObject::connect(advanceSearchBar, &DFMAdvanceSearchBar::optionChanged, q, [ = ](const QMap<int, QVariant> &formData) {
+    QObject::connect(advanceSearchBar, &DFMAdvanceSearchBar::optionChanged, q, [ = ](const QMap<int, QVariant> &formData, bool updateView) {
         if (currentView) {
             DFileView *fv = dynamic_cast<DFileView*>(currentView);
             if (fv) {
-                fv->setAdvanceSearchFilter(formData);
+                fv->setAdvanceSearchFilter(formData, true, updateView);
             }
         }
     });
