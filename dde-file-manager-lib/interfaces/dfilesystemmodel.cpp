@@ -1810,7 +1810,7 @@ void DFileSystemModel::setFilters(QDir::Filters filters)
     refresh();
 }
 
-void DFileSystemModel::setAdvanceSearchFilter(const QMap<int, QVariant> &formData, bool turnOn)
+void DFileSystemModel::setAdvanceSearchFilter(const QMap<int, QVariant> &formData, bool turnOn, bool updateView)
 {
     Q_D(DFileSystemModel);
 
@@ -1885,7 +1885,9 @@ void DFileSystemModel::setAdvanceSearchFilter(const QMap<int, QVariant> &formDat
         }
     }
 
-    applyAdvanceSearchFilter();
+    if (updateView) {
+        applyAdvanceSearchFilter();
+    }
 }
 
 void DFileSystemModel::applyAdvanceSearchFilter()

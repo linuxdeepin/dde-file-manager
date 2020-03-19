@@ -41,11 +41,13 @@ DFMAdvanceSearchBar::DFMAdvanceSearchBar(QWidget *parent)
     initConnection();
 }
 
-void DFMAdvanceSearchBar::resetForm()
+void DFMAdvanceSearchBar::resetForm(bool updateView)
 {
+    allowUpdateView = updateView;
     for (int i = 0; i < LABEL_COUNT; i++) {
         asbCombos[i]->setCurrentIndex(0);
     }
+    allowUpdateView = true;
 }
 
 void DFMAdvanceSearchBar::onOptionChanged()
@@ -72,7 +74,7 @@ void DFMAdvanceSearchBar::onOptionChanged()
 
     formData[TRIGGER_SEARCH] = QVariant::fromValue(triggerSearch);
 
-    emit optionChanged(formData);
+    emit optionChanged(formData, allowUpdateView);
 }
 
 void DFMAdvanceSearchBar::onResetButtonPressed()

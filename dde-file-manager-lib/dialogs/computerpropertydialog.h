@@ -31,6 +31,8 @@
 
 DWIDGET_USE_NAMESPACE
 
+class DBusSystemInfo;
+
 class ComputerPropertyDialog : public DDialog
 {
     Q_OBJECT
@@ -41,6 +43,9 @@ public:
 
 signals:
     void closed();
+
+private:
+    DBusSystemInfo *m_systemInfo = nullptr;
 };
 
 #endif // COMPUTERPROPERTYDIALOG_H

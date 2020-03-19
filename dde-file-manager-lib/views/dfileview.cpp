@@ -799,8 +799,8 @@ void DFileView::setFilters(QDir::Filters filters)
 
 void DFileView::setAdvanceSearchFilter(const QMap<int, QVariant> &formData, bool turnOn, bool avoidUpdateView)
 {
-    Q_UNUSED(avoidUpdateView);
-    model()->setAdvanceSearchFilter(formData, turnOn);
+//    Q_UNUSED(avoidUpdateView);
+    model()->setAdvanceSearchFilter(formData, turnOn, avoidUpdateView);
 }
 
 void DFileView::dislpayAsActionTriggered(QAction *action)
@@ -2460,7 +2460,9 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
             });
             connect(horizontalScrollBar(), &QScrollBar::valueChanged, d->headerView,
             [d] (int value) {
-                d->headerView->move(-value, d->headerView->y());
+                if (d->headerView) {
+                    d->headerView->move(-value, d->headerView->y());
+                }
             });
 
             if (d->allowedAdjustColumnSize) {
