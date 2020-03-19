@@ -65,7 +65,7 @@ void DAttachedUdisks2Device::detach()
             if (diskDev->ejectable()) {
                 diskDev->eject({});
                 if (diskDev->lastError().isValid()) {
-                    DiskControlWidget::NotifyMsg(QObject::tr("Disk is busy, cannot eject now"));
+                    DiskControlWidget::NotifyMsg(DiskControlWidget::tr("Disk is busy, cannot eject now"));
                 }
                 return;
             }
@@ -74,7 +74,7 @@ void DAttachedUdisks2Device::detach()
         if (diskDev->removable()) {
             diskDev->eject({});
             if (diskDev->lastError().isValid()) {
-                DiskControlWidget::NotifyMsg(QObject::tr("Disk is busy, cannot eject now"));
+                DiskControlWidget::NotifyMsg(DiskControlWidget::tr("Disk is busy, cannot eject now"));
             }
         }
 
