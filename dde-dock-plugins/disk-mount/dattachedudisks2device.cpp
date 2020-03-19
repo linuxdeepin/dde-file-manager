@@ -21,6 +21,7 @@
 
 #include "dattachedudisks2device.h"
 #include "diskcontrolitem.h"
+#include "diskcontrolwidget.h"
 
 #include <ddiskmanager.h>
 #include <dblockdevice.h>
@@ -56,15 +57,15 @@ bool DAttachedUdisks2Device::detachable()
 
 void DAttachedUdisks2Device::detach()
 {
-    QtConcurrent::run([this](){
+    QtConcurrent::run([this]() {
         QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blockDevice()->drive()));
         blockDevice()->unmount({});
 
         if (diskDev->optical()) { // is optical
             if (diskDev->ejectable()) {
                 diskDev->eject({});
-                if (errhandle && diskDev->lastError().isValid()) {
-                    errhandle->onError(this);
+                if (diskDev->lastError().isValid()) {
+                    DiskControlWidget::NotifyMsg(QObject::tr("Disk is busy, cannot eject now"));
                 }
                 return;
             }
@@ -72,8 +73,8 @@ void DAttachedUdisks2Device::detach()
 
         if (diskDev->removable()) {
             diskDev->eject({});
-            if (errhandle && diskDev->lastError().isValid()) {
-                errhandle->onError(this);
+            if (diskDev->lastError().isValid()) {
+                DiskControlWidget::NotifyMsg(QObject::tr("Disk is busy, cannot eject now"));
             }
         }
 
@@ -85,7 +86,7 @@ void DAttachedUdisks2Device::detach()
 
 QString DAttachedUdisks2Device::displayName()
 {
-    static QMap<QString, const char*> i18nMap {
+    static QMap<QString, const char *> i18nMap {
         {"data", "Data Disk"}
     };
 
