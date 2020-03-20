@@ -1722,7 +1722,7 @@ static inline QRect fix_available_geometry()
 //    auto primaryGeometry = Display::instance()->primaryScreen()->geometry();
 
     QRect availableRect = primaryGeometry;
-       // primary screen rect - dock rect;
+    // primary screen rect - dock rect;
     if (dock_xcb_ewmh_wm_strut_partial_t.top > 0) {
         availableRect.setY(dock_xcb_ewmh_wm_strut_partial_t.top);
     } else if (dock_xcb_ewmh_wm_strut_partial_t.right > 0) {
@@ -1746,9 +1746,9 @@ static inline QRect getValidNewGeometry(const QRect &geometry, const QRect &oldG
 {
     auto newGeometry = geometry;
 
-    if (qApp->screens().length() >= 2) {
-        newGeometry = fix_available_geometry();
-    }
+//    if (qApp->screens().length() >= 2) {
+    newGeometry = fix_available_geometry();
+//    }
     bool geometryValid = (newGeometry.width() > 0) && (newGeometry.height() > 0);
     if (geometryValid) {
         return newGeometry;
@@ -2270,12 +2270,10 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
     bool ctrlShiftPress = DFMGlobal::keyShiftIsPressed() || DFMGlobal::keyCtrlIsPressed();
     if (ctrlShiftPress) {
         oldSelection = selectionModel()->selection();
-        if(0 == selectionModel()->selection().indexes().size() && DFMGlobal::keyShiftIsPressed())
+        if (0 == selectionModel()->selection().indexes().size() && DFMGlobal::keyShiftIsPressed())
             d->beginPos = topLeftGridPos;
-    }
-    else
-    {
-        d->beginPos = QPoint(-1,-1);
+    } else {
+        d->beginPos = QPoint(-1, -1);
     }
 
     // select by  key board, so mouse not pressed
@@ -2289,23 +2287,22 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
     }
 
     //get current Point
-    QPoint currentPoint(-1,-1);
+    QPoint currentPoint(-1, -1);
     if (d->mousePressed) {
         auto clickIndex = indexAt(d->lastPos);
         if (clickIndex.isValid()) {
             QPoint tempClickIndex = visualRect(clickIndex).center();
             QPoint tempLastPoint = visualRect(d->currentCursorIndex).center();
             if (!d->currentCursorIndex.isValid())
-                tempLastPoint = tempClickIndex +QPoint(1 ,1);
-            selectRect = QRect(tempClickIndex,tempLastPoint);
+                tempLastPoint = tempClickIndex + QPoint(1, 1);
+            selectRect = QRect(tempClickIndex, tempLastPoint);
 
             topLeftGridPos = gridAt(selectRect.topLeft());
             bottomRightGridPos = gridAt(selectRect.bottomRight());
             currentPoint = topLeftGridPos;
-            if (QPoint(-1,-1) == currentPoint)
+            if (QPoint(-1, -1) == currentPoint)
                 return;
-        }
-        else {
+        } else {
             // TODO: what?
             if (!d->showSelectRect) {
                 return;
@@ -2365,8 +2362,7 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
         if (beginSmall) {
             topLeftGridPos = d->beginPos;
             bottomRightGridPos = currentPoint;
-        }
-        else {
+        } else {
             topLeftGridPos = currentPoint;
             bottomRightGridPos = d->beginPos;
         }
@@ -2391,8 +2387,7 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
         }
         QAbstractItemView::selectionModel()->clear();
         QAbstractItemView::selectionModel()->select(rectSelection, command);
-    }
-    else if (DFMGlobal::keyCtrlIsPressed()) {
+    } else if (DFMGlobal::keyCtrlIsPressed()) {
         //just Ctrl
         auto localFile = GridManager::instance()->itemId(topLeftGridPos.x(), topLeftGridPos.y());
         if (localFile.isEmpty()) {
@@ -2402,14 +2397,12 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
         QItemSelectionRange selectionRange(index);
         if (!oldSelection.contains(index)) {
             oldSelection.push_back(selectionRange);
-        }
-        else{
+        } else {
             oldSelection.removeOne(selectionRange);
         }
         QAbstractItemView::selectionModel()->select(oldSelection, command);
         d->beginPos = topLeftGridPos;
-    }
-    else {
+    } else {
         //just click or mouseleft select
         auto localFile = GridManager::instance()->itemId(topLeftGridPos.x(), topLeftGridPos.y());
         if (localFile.isEmpty()) {
