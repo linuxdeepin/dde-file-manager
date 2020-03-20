@@ -1687,7 +1687,7 @@ static inline QRect fix_available_geometry()
 
     if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
             WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
-        virtualGeometry = Display::instance()->primaryRect();
+        virtualGeometry = Display::instance()->primaryScreen()->virtualGeometry();
     }
 
     else {
@@ -1714,19 +1714,17 @@ static inline QRect fix_available_geometry()
 
     if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
             WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
-        primaryGeometry = Display::instance()->primaryRect();
+        primaryGeometry = Display::instance()->primaryScreen()->geometry();
     } else {
         primaryGeometry = qApp->primaryScreen()->geometry();
     }
-
-//    auto primaryGeometry = Display::instance()->primaryScreen()->geometry();
 
     QRect availableRect = primaryGeometry;
     // primary screen rect - dock rect;
     if (dock_xcb_ewmh_wm_strut_partial_t.top > 0) {
         availableRect.setY(dock_xcb_ewmh_wm_strut_partial_t.top);
     } else if (dock_xcb_ewmh_wm_strut_partial_t.right > 0) {
-        availableRect.setWidth(availableRect.width() - dock_xcb_ewmh_wm_strut_partial_t.right);
+        availableRect.setWidth(2 * availableRect.width() - dock_xcb_ewmh_wm_strut_partial_t.right);
     } else if (dock_xcb_ewmh_wm_strut_partial_t.bottom > 0) {
         availableRect.setHeight(availableRect.height() - dock_xcb_ewmh_wm_strut_partial_t.bottom);
     } else if (dock_xcb_ewmh_wm_strut_partial_t.left > 0) {
