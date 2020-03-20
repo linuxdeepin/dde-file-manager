@@ -1687,7 +1687,7 @@ static inline QRect fix_available_geometry()
 
     if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
             WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
-        virtualGeometry = Display::instance()->primaryScreen()->virtualGeometry();
+        virtualGeometry = Display::instance()->primaryRect();
     }
 
     else {
@@ -1714,7 +1714,7 @@ static inline QRect fix_available_geometry()
 
     if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
             WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
-        primaryGeometry = Display::instance()->primaryScreen()->geometry();
+        primaryGeometry = Display::instance()->primaryRect();
     } else {
         primaryGeometry = qApp->primaryScreen()->geometry();
     }
@@ -1755,7 +1755,7 @@ static inline QRect getValidNewGeometry(const QRect &geometry, const QRect &oldG
     }
 
     auto primaryScreen = Display::instance()->primaryScreen();
-    newGeometry = primaryScreen->geometry();;
+    newGeometry = Display::instance()->primaryRect();;
     geometryValid = (newGeometry.width() > 0) && (newGeometry.height() > 0);
     if (geometryValid) {
         return newGeometry;
@@ -1778,8 +1778,8 @@ void CanvasGridView::initUI()
     setFrameShape(QFrame::NoFrame); // TODO: using QWidget instead of QFrame?
 
     auto primaryScreen = Display::instance()->primaryScreen();
-    setGeometry(primaryScreen->geometry());
-    auto newGeometry =  getValidNewGeometry(primaryScreen->availableGeometry(), this->geometry());
+    setGeometry(Display::instance()->primaryRect());
+    auto newGeometry =  getValidNewGeometry(Display::instance()->primaryRect(), this->geometry());
     d->canvasRect = newGeometry;
 
     setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -1834,7 +1834,7 @@ void CanvasGridView::updateGeometry(const QRect &geometry)
 
     if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
             WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
-        setGeometry(Display::instance()->primaryScreen()->geometry());
+        setGeometry(Display::instance()->primaryRect());
         d->canvasRect = newGeometry;
         qDebug() << "set newGeometry" << newGeometry << Display::instance()->primaryScreen()->geometry();
     }
@@ -1960,7 +1960,7 @@ void CanvasGridView::initConnection()
         connect(screen, &QScreen::availableGeometryChanged,
         this, [ = ](const QRect & /*geometry*/) {
             QTimer::singleShot(400, this, [ = ]() {
-                auto geometry = Display::instance()->primaryScreen()->availableGeometry();
+                auto geometry = Display::instance()->primaryRect();
                 qDebug() << "primaryScreen availableGeometryChanged changed to:" << geometry;
                 qDebug() << "primaryScreen:" << qApp->primaryScreen() << qApp->primaryScreen()->geometry();
                 updateGeometry(geometry);
@@ -1982,6 +1982,7 @@ void CanvasGridView::initConnection()
         qDebug() << "currend primaryScreen" << screen
                  << screen->availableGeometry();
 
+        screen = Display::instance()->primaryScreen();
         if (!screen) {
             return;
         }
@@ -1992,7 +1993,7 @@ void CanvasGridView::initConnection()
         }
         connectScreenGeometryChanged(screen);
 
-        updateGeometry(screen->availableGeometry());
+        updateGeometry(Display::instance()->primaryRect());
     });
 
     connect(this->model(), &DFileSystemModel::newFileByInternal,
@@ -2074,13 +2075,13 @@ void CanvasGridView::initConnection()
     connect(d->dbusDock, &DBusDock::HideModeChanged,
     this, [ = ]() {
         if (3 == d->dbusDock->hideMode() || 1 == d->dbusDock->hideMode()) {
-            updateGeometry(Display::instance()->primaryScreen()->availableGeometry());
+            updateGeometry(Display::instance()->primaryRect());
         }
     });
     connect(d->dbusDock, &DBusDock::PositionChanged,
     this, [ = ]() {
         if (3 == d->dbusDock->hideMode()) {
-            updateGeometry(Display::instance()->primaryScreen()->availableGeometry());
+            updateGeometry(Display::instance()->primaryRect());
         }
     });
     connect(d->dbusDock, &DBusDock::IconSizeChanged,
@@ -2117,7 +2118,7 @@ void CanvasGridView::updateCanvas()
 
     if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
             WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
-        outRect = Display::instance()->primaryScreen()->geometry();
+        outRect = Display::instance()->primaryRect();
     } else {
         outRect = qApp->primaryScreen()->geometry();
     }

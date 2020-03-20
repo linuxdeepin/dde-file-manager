@@ -22,6 +22,8 @@ class Display: public QObject, public Singleton<Display>
 public:
     explicit Display(QObject *parent = 0);
 
+    QRect primaryRect();
+
     QScreen *primaryScreen();
 
 signals:

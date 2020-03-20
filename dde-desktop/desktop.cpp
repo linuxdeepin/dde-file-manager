@@ -137,11 +137,6 @@ void Desktop::onBackgroundEnableChanged()
             }
         }
 
-        if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-                WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
-            onBackgroundGeometryChanged(background);
-        }
-
         //if X11
         //nothing
         //else
@@ -161,7 +156,7 @@ void Desktop::onBackgroundEnableChanged()
 
         if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
                 WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
-            d->screenFrame.QWidget::setGeometry(GetPrimaryScreen()->geometry());
+            d->screenFrame.QWidget::setGeometry(Display::instance()->primaryRect());
         }
 
         else {
