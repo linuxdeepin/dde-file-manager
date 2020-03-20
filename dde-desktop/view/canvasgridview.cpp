@@ -26,7 +26,6 @@
 #include <QDir>
 #include <QStandardPaths>
 #include <QPropertyAnimation>
-
 #include <danchors.h>
 #include <DUtil>
 #include <DApplication>
@@ -2276,7 +2275,6 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
         if (!oldSelection.contains(d->currentCursorIndex)) {
             oldSelection.push_back(selectionRange);
         }
-
         QAbstractItemView::selectionModel()->select(oldSelection, command);
         return;
     }
@@ -2299,6 +2297,53 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
                 return;
         }
         else {
+            // TODO: what?
+            if (!d->showSelectRect) {
+                return;
+            }
+            oldSelection = d->beforeMoveSelection;
+            topLeftGridPos = gridAt(d->selectRect.topLeft());
+            bottomRightGridPos = gridAt(d->selectRect.bottomRight());
+
+            QItemSelection rectSelection;
+            QItemSelection toRemoveSelection;
+            for (auto x = topLeftGridPos.x(); x <= bottomRightGridPos.x(); ++x) {
+                for (auto y = topLeftGridPos.y(); y <= bottomRightGridPos.y(); ++y) {
+                    auto localFile = GridManager::instance()->itemId(x, y);
+                    if (localFile.isEmpty()) {
+                        continue;
+                    }
+                    auto index = model()->index(DUrl(localFile));
+                    auto list = QList<QRect>() << itemPaintGeomertys(index);
+                    for (const QRect &r : list) {
+                        if (selectRect.intersects(r)) {
+                            QItemSelectionRange selectionRange(index);
+                            if (!rectSelection.contains(index)) {
+                                rectSelection.push_back(selectionRange);
+                            }
+                            break;
+                        }
+                        if (byIconRect) {
+                            break;
+                        }
+                    }
+                }
+            }
+            if (command != QItemSelectionModel::Deselect) {
+                // Remove dump select
+                for (auto &sel : rectSelection) {
+                    for (auto &index : sel.indexes())
+                        if (!oldSelection.contains(index)) {
+                            oldSelection += rectSelection;
+                        }
+                }
+                for (auto toRemove : toRemoveSelection) {
+                    oldSelection.removeAll(toRemove);
+                }
+                QAbstractItemView::selectionModel()->select(oldSelection, command);
+            } else {
+                QAbstractItemView::selectionModel()->select(rectSelection, command);
+            }
             return;
         }
     }
@@ -2356,7 +2401,7 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
         d->beginPos = topLeftGridPos;
     }
     else {
-        //just click
+        //just click or mouseleft select
         auto localFile = GridManager::instance()->itemId(topLeftGridPos.x(), topLeftGridPos.y());
         if (localFile.isEmpty()) {
             return;
@@ -2368,7 +2413,6 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
         QAbstractItemView::selectionModel()->select(rectSelection, command);
         d->beginPos = topLeftGridPos;
     }
-    return;
 }
 
 void CanvasGridView::handleContextMenuAction(int action)
