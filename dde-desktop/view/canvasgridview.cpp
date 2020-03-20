@@ -1695,12 +1695,12 @@ static inline QRect fix_available_geometry()
     }
 
 
-
-    int dockHight = 0;
+    xcb_ewmh_wm_strut_partial_t dock_xcb_ewmh_wm_strut_partial_t;
+    memset(&dock_xcb_ewmh_wm_strut_partial_t, 0, sizeof(xcb_ewmh_wm_strut_partial_t));
     auto structParialInfoList = Xcb::XcbMisc::instance().find_dock_window();
     for (auto info : structParialInfoList) {
         if (info.rc.isValid()) {
-            dockHight = info.rc.height();
+            dock_xcb_ewmh_wm_strut_partial_t = Xcb::XcbMisc::instance().get_strut_partial(info.winId);
             break;
         }
     }
@@ -1722,8 +1722,16 @@ static inline QRect fix_available_geometry()
 //    auto primaryGeometry = Display::instance()->primaryScreen()->geometry();
 
     QRect availableRect = primaryGeometry;
-    // primary screen rect - dock rect;
-    availableRect.setHeight(availableRect.height() - dockHight);
+       // primary screen rect - dock rect;
+    if (dock_xcb_ewmh_wm_strut_partial_t.top > 0) {
+        availableRect.setY(dock_xcb_ewmh_wm_strut_partial_t.top);
+    } else if (dock_xcb_ewmh_wm_strut_partial_t.right > 0) {
+        availableRect.setWidth(availableRect.width() - dock_xcb_ewmh_wm_strut_partial_t.right);
+    } else if (dock_xcb_ewmh_wm_strut_partial_t.bottom > 0) {
+        availableRect.setHeight(availableRect.height() - dock_xcb_ewmh_wm_strut_partial_t.bottom);
+    } else if (dock_xcb_ewmh_wm_strut_partial_t.left > 0) {
+        availableRect.setX(dock_xcb_ewmh_wm_strut_partial_t.left);
+    }
 
     qDebug() << "\n"
              << "dump dock info begin ---------------------------" << "\n"
