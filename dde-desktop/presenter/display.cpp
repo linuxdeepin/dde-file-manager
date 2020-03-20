@@ -62,6 +62,11 @@ Display::Display(QObject *parent) : QObject(parent)
 #endif
 }
 
+QRect Display::primaryRect()
+{
+    return m_display->primaryRect();
+}
+
 QScreen *Display::primaryScreen()
 {
 #ifdef DDE_DBUS_DISPLAY
@@ -82,7 +87,7 @@ QScreen *Display::primaryScreen()
         if (s_primaryScreen.first.isEmpty()) {
 //        s_primaryScreen.first = primaryName;
             s_primaryScreen.first = "eDP-1";
-            s_primaryScreen.second = qApp->primaryScreen();
+            s_primaryScreen.second = qApp->screens().first();
         }
 
         if (m_display->primary() == s_primaryScreen.first) {
@@ -90,21 +95,7 @@ QScreen *Display::primaryScreen()
             return s_primaryScreen.second;
         }
 
-
-        //if X11
-        /*for (auto screen : qApp->screens()) {
-            if (screen && screen->name() == primaryName) {
-                return screen;
-            }
-        }*/
-        //else
-
-        for (auto screen : qApp->screens()) {
-            if (screen != s_primaryScreen.second) {
-                qCritical() << "primaryScreen:" << screen;
-                return screen;
-            }
-        }
+        return qApp->screens().back();
     }
 
     else {
