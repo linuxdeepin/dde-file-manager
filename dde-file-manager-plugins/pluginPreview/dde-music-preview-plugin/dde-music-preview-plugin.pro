@@ -31,6 +31,9 @@ PLUGIN_INSTALL_DIR = $$PLUGINDIR/previews
 
 DESTDIR = $$top_srcdir/plugins/previews
 
+TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
+                $$PWD/translations/$${TARGET}_zh_CN.ts
+
 unix {
     target.path = $$PLUGIN_INSTALL_DIR
 
