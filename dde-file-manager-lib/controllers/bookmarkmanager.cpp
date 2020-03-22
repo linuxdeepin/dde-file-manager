@@ -321,10 +321,9 @@ void BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
             bookMarkFrom.setFragment(map.value("name").toString());
 
             QString locateUrl = bookMarkTo.bookmarkTargetUrl().toLocalFile();
-            if (locateUrl.startsWith("/home"))
-            {
-                locateUrl = locateUrl.mid(sizeof ("/home") - 1);
-            }
+            int indexOfFirstDir = locateUrl.indexOf("/", 1);
+            locateUrl = locateUrl.mid(indexOfFirstDir);
+
             QString toQueryStr = "mount_point=" + map.value("mountPoint").toString() + "&locate_url=" + locateUrl;
             bookMarkTo.setQuery(toQueryStr);
             bookMarkTo.setFragment(map.value("name").toString());
