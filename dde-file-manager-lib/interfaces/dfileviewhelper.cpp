@@ -137,7 +137,7 @@ void DFileViewHelperPrivate::init()
     Q_Q(DFileViewHelper);
 
     keyboardSearchTimer.setSingleShot(true);
-    keyboardSearchTimer.setInterval(1000);
+    keyboardSearchTimer.setInterval(200);
 
     // init connects
     QObject::connect(&keyboardSearchTimer, &QTimer::timeout,
@@ -619,30 +619,32 @@ void DFileViewHelper::keyboardSearch(char key)
 {
     Q_D(DFileViewHelper);
     QByteArray indexChar;
-    if(d->keyboardSearchKeys.right(1).contains(key)){
-        indexChar.append(key);
-        d->keyboardSearchTimer.stop();
-    }
-    else {
-        d->keyboardSearchKeys.append(key);
-        indexChar = d->keyboardSearchKeys;
-    }
+//    if(d->keyboardSearchKeys.right(1).contains(key)){
+//        indexChar.append(key);
+//        d->keyboardSearchTimer.stop();
+//    }
+//    else {
+//        d->keyboardSearchKeys.append(key);
+//        indexChar = d->keyboardSearchKeys;
+//    }
+//    indexChar = d->keyboardSearchKeys;
+    d->keyboardSearchKeys.append(key);
     qDebug() << "d->keyboardSearchKeys: " << d->keyboardSearchKeys << "key:" << key <<"indexKey: " << indexChar ;
     bool reverse_order = qApp->keyboardModifiers() == Qt::ShiftModifier;
     const QModelIndex &current_index = parent()->currentIndex();
 
-    QModelIndex index = d->findIndex(indexChar/*d->keyboardSearchKeys*/, true, current_index.row(), reverse_order, !d->keyboardSearchTimer.isActive());
+    //QModelIndex index = d->findIndex(indexChar/*d->keyboardSearchKeys*/, true, current_index.row(), reverse_order, !d->keyboardSearchTimer.isActive());
+    QModelIndex index = d->findIndex(d->keyboardSearchKeys, true, current_index.row(), reverse_order, !d->keyboardSearchTimer.isActive());
     qDebug()<< "reverse_order " << reverse_order << "current_index" << current_index << "index: " << index;
-    if (!index.isValid()) {
-        // 使用 QString::contains 模式再次匹配
-        index = d->findIndex(d->keyboardSearchKeys, false, current_index.row(), reverse_order, !d->keyboardSearchTimer.isActive());
-    }
+//    if (!index.isValid()) {
+//        // 使用 QString::contains 模式再次匹配
+//        index = d->findIndex(d->keyboardSearchKeys, false, current_index.row(), reverse_order, !d->keyboardSearchTimer.isActive());
+//    }
 
     if (index.isValid()) {
         parent()->setCurrentIndex(index);
         parent()->scrollTo(index, reverse_order ? QAbstractItemView::PositionAtBottom : QAbstractItemView::PositionAtTop);
     }
-
     // 开始计时，超过此时间后的搜索将清空之前输入的关键字
     d->keyboardSearchTimer.start();
 }
