@@ -806,6 +806,11 @@ void DFileDialog::showEvent(QShowEvent *event)
         overrideWindowFlags(windowFlags() & ~Qt::WindowSystemMenuHint);
     }
 
+    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, currentUrl());
+    if (info) {
+        setWindowTitle(info->fileDisplayName());
+    }
+
     return DFileManagerWindow::showEvent(event);
 }
 
