@@ -109,11 +109,10 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
                     break;
                 qWarning() << url << "not existed" << i;
             }
-            if(pathList.size() == 0)
-                return;
+            Q_ASSERT(pathList.size() != 0);
             //old
             //return;
-            //end
+            //endl
         }
 
         QString udiskspath = pathList.first();
