@@ -100,7 +100,19 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
         QStringList pathList = DDiskManager::resolveDeviceNode("/dev" + url.path().chopped(QString("." SUFFIX_UDISKS).length()), {});
         if (pathList.size()==0) {
             qWarning() << url << "not existed";
-            return;
+            //fix 临时解决方案，彻底解决需要DDiskManager::resolveDeviceNode往下追踪
+            for (int i = 0;i < 20; ++i)
+            {
+                QThread::msleep(100);
+                pathList = DDiskManager::resolveDeviceNode("/dev" + url.path().chopped(QString("." SUFFIX_UDISKS).length()), {});
+                if (pathList.size() != 0)
+                    break;
+                qWarning() << url << "not existed" << i;
+            }
+            Q_ASSERT(pathList.size() != 0);
+            //old
+            //return;
+            //endl
         }
 
         QString udiskspath = pathList.first();
