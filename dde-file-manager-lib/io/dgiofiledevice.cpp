@@ -204,6 +204,7 @@ void DGIOFileDevice::close()
         }
 
         if (d->output_stream) {
+            //todo vfat文件格式的U盘在close的时候耗时很长
             g_output_stream_close(d->output_stream, nullptr, nullptr);
             g_object_unref(d->output_stream);
 
