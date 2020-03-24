@@ -279,7 +279,14 @@ QList<DUrl> DFileView::selectedUrls() const
         if (index.parent() != rootIndex)
             continue;
 
-        list << model()->getUrlByIndex(index);
+        DUrl url = model()->getUrlByIndex(index);
+        if (url.scheme() == SEARCH_SCHEME) {
+            //搜索目录需要特殊处理
+            list << url.searchedFileUrl();
+        }
+        else {
+            list << model()->getUrlByIndex(index);
+        }
     }
 
     return list;
