@@ -204,7 +204,7 @@ void DGIOFileDevice::close()
         }
 
         if (d->output_stream) {
-            //todo vfat文件格式的U盘在close的时候耗时很长
+            //todo vfat文件格式的U盘在close的时候耗时很长,卡死的根源
             g_output_stream_close(d->output_stream, nullptr, nullptr);
             g_object_unref(d->output_stream);
 
@@ -350,7 +350,14 @@ bool DGIOFileDevice::flush()
 
 bool DGIOFileDevice::syncToDisk()
 {
-    return flush();
+    //fix 修复卡死问题，在vfat格式的U盘g_output_stream_flush无效，使用关闭再打开强制刷新
+    close();
+    if (!open(QIODevice::WriteOnly | QIODevice::Append))
+        return false;
+    return true;
+    //old
+    //return flush();
+    //end
 }
 
 qint64 DGIOFileDevice::readData(char *data, qint64 maxlen)
