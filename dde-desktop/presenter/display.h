@@ -28,6 +28,7 @@ public:
 
 signals:
     void primaryScreenChanged(QScreen *screen);
+    void primaryChanged();
 
 private:
     DBusDisplay *m_display = nullptr;

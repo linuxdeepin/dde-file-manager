@@ -1991,7 +1991,18 @@ void CanvasGridView::initConnection()
         }
         connectScreenGeometryChanged(screen);
 
-        updateGeometry(Display::instance()->primaryRect());
+//        updateGeometry(Display::instance()->primaryRect());
+        QTimer::singleShot(400, this, [ = ]() {
+            auto geometry = Display::instance()->primaryRect();
+            updateGeometry(geometry);
+        });
+    });
+
+    connect(Display::instance(),&Display::primaryChanged,this, [ = ](){
+        QTimer::singleShot(400, this, [ = ]() {
+            auto geometry = Display::instance()->primaryRect();
+            updateGeometry(geometry);
+        });
     });
 
     connect(this->model(), &DFileSystemModel::newFileByInternal,

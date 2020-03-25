@@ -428,7 +428,6 @@ void BackgroundHelper::checkBlackScreen()
     for (QWidget *l : ls) {
         myScreens << l->windowHandle()->screen();
     }
-
     bool hasBlackScreen = myScreens.size() < ss.size();
     bool isPrimaryScreenBlack = false;
     if (!hasBlackScreen) {

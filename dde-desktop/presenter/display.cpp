@@ -23,6 +23,10 @@ Display::Display(QObject *parent) : QObject(parent)
 {
 #ifdef DDE_DBUS_DISPLAY
     m_display = new DBusDisplay(this);
+    connect(m_display, &DBusDisplay::PrimaryChanged,this, [ = ]() {
+        qDebug()<< "primarChanged emit....  ";
+        emit  primaryChanged();
+    });
     connect(m_display, &DBusDisplay::PrimaryRectChanged, this, [ = ]() {
         auto primaryName = m_display->primary();
         //if X11

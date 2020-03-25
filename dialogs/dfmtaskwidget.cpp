@@ -319,7 +319,7 @@ void DFMTaskWidgetPrivate::initConnection()
         m_widButton->hide();
         q->showConflictButtons(false);
         emit q->butonClicked(DFMTaskWidget::STOP);
-    });
+    },Qt::DirectConnection);
 }
 
 
