@@ -142,6 +142,11 @@ QList<QWidget *> BackgroundHelper::allBackgrounds() const
     return backgrounds;
 }
 
+bool BackgroundHelper::visible() const
+{
+    return m_visible;
+}
+
 void BackgroundHelper::setBackground(const QString &path)
 {
     qInfo() << "path:" << path;
@@ -165,6 +170,7 @@ void BackgroundHelper::setBackground(const QString &path)
 void BackgroundHelper::setVisible(bool visible)
 {
     m_visible = visible;
+
 
     for (BackgroundLabel *l : backgroundMap) {
         l->setVisible(visible);

@@ -757,12 +757,13 @@ void Frame::onItemPressed(const QString &data)
     }
 #ifndef DISABLE_SCREENSAVER
     else if (m_mode == ScreenSaverMode) {
+        m_dbusScreenSaver->Preview(data, 1);
+        qDebug() << "screensaver start";
         // 防止壁纸背景盖住屏保预览窗口
-        if (m_backgroundHelper) {
+        if (m_backgroundHelper && m_backgroundHelper->visible()) {
+            QThread::msleep(100); // TODO: 临时方案，暂不清除如何获取屏保显示开始的状态
             m_backgroundHelper->setVisible(false);
         }
-
-        m_dbusScreenSaver->Preview(data, 1);
     }
 #endif
 }
