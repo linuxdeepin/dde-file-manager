@@ -43,6 +43,7 @@ public:
     bool isEnabled() const;
     QWidget *backgroundForScreen(QScreen *screen) const;
     QList<QWidget*> allBackgrounds() const;
+    bool visible() const;
 
     void setBackground(const QString &path);
     QString background() const {return currentWallpaper;}
