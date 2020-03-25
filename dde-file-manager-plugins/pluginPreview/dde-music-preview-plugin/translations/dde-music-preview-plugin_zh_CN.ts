@@ -6,7 +6,7 @@
     <message>
         <location filename="../musicmessageview.cpp" line="64"/>
         <source>Artist：</source>
-        <translation type="unfinished">演唱者：</translation>
+        <translation type="unfinished">歌手：</translation>
     </message>
     <message>
         <location filename="../musicmessageview.cpp" line="67"/>
