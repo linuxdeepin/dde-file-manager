@@ -1028,6 +1028,10 @@ open_file: {
 
         qint64 size_write = toDevice->write(data, size_read);
 
+        //fix 修复vfat格式u盘卡死问题，写入数据后立刻同步
+        if (size_write > 0)
+            toDevice->syncToDisk();
+
         if (Q_UNLIKELY(size_write != size_read)) {
             do {
                 // 在某些情况下（往sftp挂载目录写入），可能一次未能写入那么多数据
