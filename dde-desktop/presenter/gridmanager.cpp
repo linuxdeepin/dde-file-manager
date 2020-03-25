@@ -222,7 +222,11 @@ public:
 
         m_gridItems.insert(pos, itemId);
         m_itemGrids.insert(itemId, pos);
-        m_cellStatus[indexOfGridPos(pos)] = true;
+        int index = indexOfGridPos(pos);
+        if (m_cellStatus.length() <= index) {
+            return false;
+        }
+        m_cellStatus[index] = true;
 
         return true;
     }
