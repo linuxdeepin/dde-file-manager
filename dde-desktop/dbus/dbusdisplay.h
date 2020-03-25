@@ -148,6 +148,12 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("ChangeBrightness"), argumentList);
     }
 
+    inline QDBusPendingReply<QStringList> ListOutputNames()
+    {
+        QList<QVariant> argumentList;
+        return asyncCallWithArgumentList(QStringLiteral("ListOutputNames"),argumentList);
+    }
+
     inline QDBusPendingReply<> JoinMonitor(const QString &in0, const QString &in1)
     {
         QList<QVariant> argumentList;

@@ -211,6 +211,7 @@ void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail)
         connect(wid, &DFMTaskWidget::butonClicked, this, [this, wid, jobDetail](DFMTaskWidget::BUTTON bt) {
             int code = -1;
             if (bt == DFMTaskWidget::STOP) {
+                this->close();
                 handleTaskClose(jobDetail);
             } else if (bt == DFMTaskWidget::SKIP) {
                 code = 2;
@@ -292,13 +293,18 @@ DFileCopyMoveJob::Handle *DTaskDialog::addTaskJob(DFileCopyMoveJob *job)
     connect(handle, &ErrorHandle::onConflict, wid, &DFMTaskWidget::setConflictMsg);
     connect(handle, &ErrorHandle::onError, wid, &DFMTaskWidget::setErrorMsg);
     connect(wid, &DFMTaskWidget::heightChanged, this, &DTaskDialog::adjustSize);
-    connect(wid, &DFMTaskWidget::butonClicked, job, [job, wid, handle](DFMTaskWidget::BUTTON bt) {
+
+
+    connect(wid, &DFMTaskWidget::butonClicked, job, [job, wid, handle, this](DFMTaskWidget::BUTTON bt) {
         DFileCopyMoveJob::Action action = DFileCopyMoveJob::NoAction;
+        QCloseEvent event;
         switch (bt) {
             case DFMTaskWidget::PAUSE:
             emit job->togglePause();
                 break;
             case DFMTaskWidget::STOP:
+
+//                this->closeEvent(&event);
             emit job->stop();
                 break;
             case DFMTaskWidget::SKIP:
