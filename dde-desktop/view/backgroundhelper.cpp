@@ -264,11 +264,15 @@ void BackgroundHelper::updateBackground(QWidget *l)
 
     QSize trueSize = s->handle()->geometry().size();
 
+    // 禁用高分屏缩放，防止窗口的sizeIncrement默认设置大于1
+    bool hi_active = QHighDpiScaling::m_active;
+    QHighDpiScaling::m_active = false;
     if (Display::instance()->primaryScreen() == s)
     {
         trueSize = Display::instance()->primaryRect().size();
         l->windowHandle()->handle()->setGeometry(Display::instance()->primaryRect());
     }
+    QHighDpiScaling::m_active = hi_active;
 
     QPixmap pix = backgroundPixmap;
 
@@ -323,10 +327,14 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
     l->createWinId();
     l->windowHandle()->setScreen(screen);
     l->setGeometry(screen->geometry());
+    // 禁用高分屏缩放，防止窗口的sizeIncrement默认设置大于1
+    bool hi_active = QHighDpiScaling::m_active;
+    QHighDpiScaling::m_active = false;
     if (Display::instance()->primaryScreen() == screen)
     {
         l->setGeometry(Display::instance()->primaryRect());
     }
+    QHighDpiScaling::m_active = hi_active;
 
     QTimer::singleShot(0, l, [l, screen] {
         // 禁用高分屏缩放，防止窗口的sizeIncrement默认设置大于1
@@ -385,14 +393,19 @@ void BackgroundHelper::updateBackgroundGeometry(QScreen *screen, BackgroundLabel
     // 因为接下来会发出backgroundGeometryChanged信号，
     // 所以此处必须保证QWidget::geometry的值和接下来对其windowHandle()对象设置的geometry一致
     l->setGeometry(screen->geometry());
+
+    // 禁用高分屏缩放，防止窗口的sizeIncrement默认设置大于1
+    bool hi_active = QHighDpiScaling::m_active;
+    QHighDpiScaling::m_active = false;
     if (Display::instance()->primaryScreen() == screen)
     {
         l->setGeometry(Display::instance()->primaryRect());
     }
+    QHighDpiScaling::m_active = hi_active;
 
     // 忽略屏幕缩放，设置窗口的原始大小
     // 调用此函数后不会立即更新QWidget::geometry，而是在收到窗口resize事件后更新
-    bool hi_active = QHighDpiScaling::m_active;
+    hi_active = QHighDpiScaling::m_active;
     QHighDpiScaling::m_active = false;
     l->windowHandle()->handle()->setGeometry(screen->handle()->geometry());
     if (Display::instance()->primaryScreen() == screen)

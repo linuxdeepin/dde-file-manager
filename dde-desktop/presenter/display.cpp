@@ -11,6 +11,8 @@
 
 #include <QScreen>
 #include <QApplication>
+#define private public
+#include <private/qhighdpiscaling_p.h>
 
 #include <dbus/dbusdisplay.h>
 
@@ -45,6 +47,7 @@ Display::Display(QObject *parent) : QObject(parent)
         if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
                 WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
             emit primaryScreenChanged(primaryScreen());
+            emit  primaryChanged();
         }
 
         else {
@@ -68,7 +71,17 @@ Display::Display(QObject *parent) : QObject(parent)
 
 QRect Display::primaryRect()
 {
-    return m_display->primaryRect();
+    QRect t_screenRect = m_display->primaryRect();
+
+    qreal t_devicePixelRatio = Display::instance()->primaryScreen()->devicePixelRatio();
+    if (!QHighDpiScaling::m_active) {
+        t_devicePixelRatio = 1;
+    }
+
+    t_screenRect.setSize(t_screenRect.size() / t_devicePixelRatio);
+
+
+    return t_screenRect;
 }
 
 QScreen *Display::primaryScreen()
