@@ -761,7 +761,7 @@ void Frame::onItemPressed(const QString &data)
         qDebug() << "screensaver start";
         // 防止壁纸背景盖住屏保预览窗口
         if (m_backgroundHelper && m_backgroundHelper->visible()) {
-            QThread::msleep(100); // TODO: 临时方案，暂不清除如何获取屏保显示开始的状态
+            QThread::msleep(300); // TODO: 临时方案，暂不清除如何获取屏保显示开始的状态
             m_backgroundHelper->setVisible(false);
         }
     }
