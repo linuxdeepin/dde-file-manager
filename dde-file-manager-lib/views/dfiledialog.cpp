@@ -1145,6 +1145,35 @@ void DFileDialog::onAcceptButtonClicked()
         const QString &file_name = statusBar()->lineEdit()->text();
 
         if (!file_name.isEmpty()) {
+            if (file_name.startsWith(".")) {
+                //文件名以点开头的文件会被视为隐藏文件，需要确认
+                DDialog dialog(this);
+
+                dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+                dialog.setTitle(tr("The file will be hide when the file's name start with '.', confirm that?"));
+                dialog.addButton(tr("Cancel"), true);
+                dialog.addButton(tr("Confirm"), false, DDialog::ButtonWarning);
+
+                if (dialog.exec() != DDialog::Accepted) {
+                    return;
+                }
+            }
+
+            //linux文件名长度不能超过255
+            int nameLength = file_name.toLocal8Bit().length();
+            if (nameLength > 255)
+            {
+                DDialog dialog(this);
+
+                dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+                dialog.setTitle(tr("The file name length is too long!"));
+                dialog.addButton(tr("Confirm"), true);
+
+                dialog.exec();
+
+                return;
+            }
+
             if (!d->options.testFlag(QFileDialog::DontConfirmOverwrite)) {
                 QFileInfo info(directory().absoluteFilePath(file_name));
 
