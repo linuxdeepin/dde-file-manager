@@ -662,6 +662,12 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             qApp->setApplicationName(app_name);
             break;
         }
+        case Qt::Key_Tab: {
+            this->selectionModel()->clear();
+            QKeyEvent downKey(QEvent::KeyPress, Qt::Key_Down,  Qt::NoModifier);
+            QCoreApplication::sendEvent(this, &downKey);
+            break;
+        }
         default:
             break;
         }
