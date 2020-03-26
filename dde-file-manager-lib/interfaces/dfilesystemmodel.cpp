@@ -212,10 +212,8 @@ public:
         if (n && n->ref < 1) {
             n = nullptr;
         }
-
+        FileSystemNodePointer node(n);
         rwLock->unlock();
-
-        FileSystemNodePointer node = getFileSystemNode(n);
 
         return node;
     }
@@ -240,10 +238,8 @@ public:
         } else {
             qWarning() << "index [" << index << "] out of range [" << visibleChildren.size() << "]";
         }
-
         rwLock->unlock();
 
-        removeFileSystemNode(node);
         return node;
     }
 
@@ -323,46 +319,10 @@ public:
         return children.contains(url);
     }
 
-    void addFileSystemNode(const FileSystemNodePointer &node) {
-        if (nullptr != node->parent) {
-            rwLock->lockForWrite();
-            m_allFileSystemNodes[node->parent] = node;
-            rwLock->unlock();
-        }
-    }
-
-    void removeFileSystemNode(const FileSystemNodePointer &node) {
-        if (nullptr != node->parent) {
-            rwLock->lockForWrite();
-            qDebug()<< m_allFileSystemNodes[node->parent];
-            m_allFileSystemNodes.remove(node->parent);
-            rwLock->unlock();
-        }
-    }
-
-    const FileSystemNodePointer getFileSystemNode(FileSystemNode *parent) {
-        if (nullptr == parent) {
-            return FileSystemNodePointer();
-        }
-
-        rwLock->lockForWrite();
-        if (!m_allFileSystemNodes.contains(parent)) {
-            FileSystemNodePointer tmpNode(parent);
-            m_allFileSystemNodes[parent] = tmpNode;
-            rwLock->unlock();
-            return tmpNode;
-        }
-
-        FileSystemNodePointer tmpNode1(m_allFileSystemNodes[parent]);
-        rwLock->unlock();
-        return tmpNode1;
-    }
-
 private:
     QHash<DUrl, FileSystemNodePointer> children;
     QList<FileSystemNode*> visibleChildren;
     QReadWriteLock *rwLock = nullptr;
-    QMap<FileSystemNode *, FileSystemNodePointer> m_allFileSystemNodes;
 };
 
 template<typename T>
@@ -818,7 +778,6 @@ public:
         : q_ptr(qq)
         , rootNodeManager(new FileNodeManagerThread(qq))
         , needQuitUpdateChildren(false)
-        , rootNode(nullptr)
     {
         if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedHiddenFiles).toBool()) {
             filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
@@ -2458,9 +2417,7 @@ const FileSystemNodePointer DFileSystemModel::getNodeByIndex(const QModelIndex &
         return FileSystemNodePointer();
     }
 
-
-    return d->rootNode->getFileSystemNode(indexNode);
-    ///return FileSystemNodePointer(indexNode);
+    return FileSystemNodePointer(indexNode);
 }
 
 QModelIndex DFileSystemModel::createIndex(const FileSystemNodePointer &node, int column) const
@@ -2535,10 +2492,6 @@ const FileSystemNodePointer DFileSystemModel::createNode(FileSystemNode *parent,
 
     node->fileInfo->setColumnCompact(d->columnCompact);
 //        d->urlToNode[info->fileUrl()] = node;
-
-    if (d->rootNode) {
-        d->rootNode->addFileSystemNode(node);
-    }
 
     return node;
 //    }

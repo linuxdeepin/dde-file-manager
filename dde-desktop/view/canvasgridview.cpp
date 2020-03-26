@@ -1687,7 +1687,10 @@ static inline QRect fix_available_geometry()
 
     if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
             WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
-        virtualGeometry = Display::instance()->primaryScreen()->virtualGeometry();
+//        virtualGeometry = Display::instance()->primaryScreen()->virtualGeometry();
+        qDebug()<<"Display::instance()->primaryScreen()->virtualGeometry():" << Display::instance()->primaryScreen()->virtualGeometry();
+        qDebug()<<"Display::instance()->primaryRect():" << Display::instance()->primaryRect();
+        virtualGeometry = Display::instance()->primaryRect();
     }
 
     else {
@@ -1714,7 +1717,8 @@ static inline QRect fix_available_geometry()
 
     if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
             WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
-        primaryGeometry = Display::instance()->primaryScreen()->geometry();
+//        primaryGeometry = Display::instance()->primaryScreen()->geometry();
+        primaryGeometry = Display::instance()->primaryRect();
     } else {
         primaryGeometry = qApp->primaryScreen()->geometry();
     }
