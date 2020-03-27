@@ -23,6 +23,23 @@
 /*
  * Proxy class for interface com.deepin.dde.daemon.Dock
  */
+struct DockRect{
+    qint32 x;
+    qint32 y;
+    quint32 width;
+    quint32 height;
+
+    operator QRect() const
+    {
+        return QRect(x, y, width, height);
+    }
+};
+Q_DECLARE_METATYPE(DockRect)
+
+QDBusArgument &operator<<(QDBusArgument &argument, const DockRect &rect);
+const QDBusArgument &operator>>(const QDBusArgument &argument, DockRect &rect);
+QDebug operator<<(QDebug deg, const DockRect &rect);
+
 class DBusDock: public QDBusAbstractInterface
 {
     Q_OBJECT
@@ -94,6 +111,10 @@ public:
     Q_PROPERTY(quint32 ShowTimeout READ showTimeout NOTIFY ShowTimeoutChanged)
     inline quint32 showTimeout() const
     { return qvariant_cast< quint32 >(property("ShowTimeout")); }
+
+    Q_PROPERTY(DockRect FrontendWindowRect READ frontendWindowRect)
+    inline DockRect frontendWindowRect() const
+    { return qvariant_cast< DockRect >(property("FrontendWindowRect")); }
 
 public Q_SLOTS: // METHODS
     inline QDBusPendingReply<> ActivateWindow(uint in0)

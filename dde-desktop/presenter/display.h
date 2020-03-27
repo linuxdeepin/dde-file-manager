@@ -34,3 +34,15 @@ private:
     DBusDisplay *m_display = nullptr;
 };
 
+class DBusDock;
+class DockIns: public QObject, public Singleton<DBusDock>
+{
+    Q_OBJECT
+
+    friend class Singleton<DBusDock>;
+public:
+    explicit DockIns(QObject *parent = 0);
+
+private:
+    DBusDock *m_dock = nullptr;
+};
