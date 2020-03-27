@@ -78,6 +78,14 @@ public:
 ////        rwLock->unlock();
     }
 
+//    inline bool operator==(const FileSystemNode *other)
+//    {
+//        if ( == other)
+//            return true;
+//        else
+//            return false;
+//    }
+
     QVariant dataByRole(int role)
     {
         using Role = DFileSystemModel::Roles;
@@ -353,6 +361,26 @@ public:
         if (nullptr == parent) {
             return FileSystemNodePointer();
         }
+
+//        return FileSystemNodePointer(parent);
+
+//        qDebug() << "start check map!";
+//        qDebug() << "Count = " << QString::number(m_dFileSystemModel->m_allFileSystemNodes.count());
+//        for (FileSystemNodePointer pointer : m_dFileSystemModel->m_allFileSystemNodes)
+//        {
+//            auto key = m_dFileSystemModel->m_allFileSystemNodes.key(pointer);
+//            qDebug() << "value = " << pointer.data();
+//            qDebug() << "key = " << key;
+//        }
+
+
+//        qDebug() << "start check list!";
+//        QList<FileSystemNode *> keyList = m_dFileSystemModel->m_allFileSystemNodes.uniqueKeys();
+//        qDebug() << "Count = " << QString::number(keyList.count());
+//        for (FileSystemNode *t_node : keyList)
+//        {
+//            qDebug() << "key = " << t_node;
+//        }
 
         QString url = parent->fileInfo->filePath();
 
@@ -2723,9 +2751,17 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
             return;
         }
 
+        qDebug() << "insert node row = " << QString::number(row);
         beginInsertRows(createIndex(parentNode, 0), row, row);
 
+//        FileSystemNodePointer node = d->urlToNode.value(fileUrl);
+
+//        if(!node) {
         FileSystemNodePointer node = createNode(parentNode.data(), fileInfo);
+
+//            d->urlToNode[fileUrl] = node;
+//        }
+
         parentNode->insertChildren(row, fileUrl, node);
 
         endInsertRows();
