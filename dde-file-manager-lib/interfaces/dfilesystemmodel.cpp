@@ -52,7 +52,6 @@
 
 #define fileService DFileService::instance()
 #define DEFAULT_COLUMN_COUNT 0
-
 class FileSystemNode : public QSharedData
 {
 public:
@@ -62,12 +61,21 @@ public:
 
     FileSystemNode(FileSystemNode *parent,
                    const DAbstractFileInfoPointer &info,
+                   DFileSystemModel * dFileSystemModel,
                    QReadWriteLock *lock = nullptr)
         : fileInfo(info)
         , parent(parent)
+        , m_dFileSystemModel(dFileSystemModel)
         , rwLock(lock)
     {
+    }
 
+    ~FileSystemNode()
+    {
+////        rwLock->lockForWrite();
+//        qDebug()<< m_dFileSystemModel->m_allFileSystemNodes[this];
+//        m_dFileSystemModel->m_allFileSystemNodes.remove(this);
+////        rwLock->unlock();
     }
 
     QVariant dataByRole(int role)
@@ -319,10 +327,54 @@ public:
         return children.contains(url);
     }
 
+
+    void addFileSystemNode(const FileSystemNodePointer &node) {
+        if (nullptr != node->parent) {
+            QString url = node->fileInfo->filePath();
+            rwLock->lockForWrite();
+            if (!m_dFileSystemModel->m_allFileSystemNodes.contains(url)) {
+                m_dFileSystemModel->m_allFileSystemNodes[url] = node;
+            }
+            rwLock->unlock();
+        }
+    }
+
+    void removeFileSystemNode(const FileSystemNodePointer &node) {
+        if (nullptr != node->parent) {
+            QString url = node->fileInfo->filePath();
+            rwLock->lockForWrite();
+            qDebug()<< m_dFileSystemModel->m_allFileSystemNodes[url];
+            m_dFileSystemModel->m_allFileSystemNodes.remove(url);
+            rwLock->unlock();
+        }
+    }
+
+    const FileSystemNodePointer getFileSystemNode(FileSystemNode *parent) {
+        if (nullptr == parent) {
+            return FileSystemNodePointer();
+        }
+
+        QString url = parent->fileInfo->filePath();
+
+        rwLock->lockForWrite();
+        if (!m_dFileSystemModel->m_allFileSystemNodes.contains(url)) {
+            FileSystemNodePointer tmpNode(parent);
+            m_dFileSystemModel->m_allFileSystemNodes[url] = tmpNode;
+            rwLock->unlock();
+            return tmpNode;
+        }
+
+        FileSystemNodePointer tmpNode1(m_dFileSystemModel->m_allFileSystemNodes[url]);
+        rwLock->unlock();
+        return tmpNode1;
+    }
+
+
 private:
     QHash<DUrl, FileSystemNodePointer> children;
     QList<FileSystemNode*> visibleChildren;
     QReadWriteLock *rwLock = nullptr;
+    DFileSystemModel * m_dFileSystemModel;
 };
 
 template<typename T>
@@ -1724,6 +1776,7 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
 //    d->rootNode = d->urlToNode.value(fileUrl);
 
     d->rootNode = createNode(Q_NULLPTR, fileService->createFileInfo(this, fileUrl), &d->rootNodeRWLock);
+    qDebug() << "child count = " << d->rootNode->childrenCount();
     d->rootNodeManager->stop();
     d->rootNodeManager->setRootNode(d->rootNode);
     d->watcher = DFileService::instance()->createFileWatcher(this, fileUrl);
@@ -2209,6 +2262,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 {
     Q_D(DFileSystemModel);
 
+    qDebug() << "Begin update chidren. file list count " <<  list.count();
     const FileSystemNodePointer &node = d->rootNode;
 
     if (!node) {
@@ -2237,7 +2291,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 //        if (fileHash.contains(fileInfo->fileUrl())) {
 //            continue;
 //        }
-
+        qDebug() << "update node url = " << fileInfo->filePath();
         const FileSystemNodePointer &chileNode = createNode(node.data(), fileInfo);
 
         if (!chileNode->shouldHideByFilterRule(advanceSearchFilter())) {
@@ -2249,6 +2303,7 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
     if (enabledSort())
         sort(node->fileInfo, fileList);
 
+    qDebug() << "begin insert rows count = " << QString::number( list.count());
     beginInsertRows(createIndex(node, 0), 0, list.count() - 1);
 
     node->setChildrenMap(fileHash);
@@ -2265,6 +2320,8 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
     if (job && job->state() == JobController::Paused) {
         job->start();
     }
+
+    qDebug() << "finish update children. file count = " << node->childrenCount();
 }
 
 void DFileSystemModel::updateChildrenOnNewThread(QList<DAbstractFileInfoPointer> list)
@@ -2487,8 +2544,13 @@ const FileSystemNodePointer DFileSystemModel::createNode(FileSystemNode *parent,
 //        return node;
 //    } else {
     Q_D(const DFileSystemModel);
+    QString url(info->filePath());
+    if (m_allFileSystemNodes.contains(url) && d->rootNode) {
+        qDebug() << "recreate node url = " << url;
+        d->rootNode->removeFileSystemNode(m_allFileSystemNodes[url]);
+    }
 
-    FileSystemNodePointer node(new FileSystemNode(parent, info, lock));
+    FileSystemNodePointer node(new FileSystemNode(parent, info, this, lock));
 
     node->fileInfo->setColumnCompact(d->columnCompact);
 //        d->urlToNode[info->fileUrl()] = node;
@@ -2656,16 +2718,14 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
             row = parentNode->childrenCount();
         }
 
+        if (m_allFileSystemNodes.contains(fileInfo->filePath())) {
+            qDebug() << "File already exist url = " <<  fileInfo->filePath();
+            return;
+        }
+
         beginInsertRows(createIndex(parentNode, 0), row, row);
 
-//        FileSystemNodePointer node = d->urlToNode.value(fileUrl);
-
-//        if(!node) {
         FileSystemNodePointer node = createNode(parentNode.data(), fileInfo);
-
-//            d->urlToNode[fileUrl] = node;
-//        }
-
         parentNode->insertChildren(row, fileUrl, node);
 
         endInsertRows();

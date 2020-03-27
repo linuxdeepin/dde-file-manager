@@ -242,6 +242,10 @@ private:
     bool beginRemoveRows(const QModelIndex &parent, int first, int last);
     void endRemoveRows();
 
+private:
+
+    QMap<QString, FileSystemNodePointer> m_allFileSystemNodes;
+
     friend class FileSystemNode;
     friend class DFileView;
     friend class FileNodeManagerThread;
