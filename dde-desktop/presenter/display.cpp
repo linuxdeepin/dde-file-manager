@@ -15,6 +15,7 @@
 #include <private/qhighdpiscaling_p.h>
 
 #include <dbus/dbusdisplay.h>
+#include <dbus/dbusdock.h>
 
 QScreen *GetPrimaryScreen()
 {
@@ -131,4 +132,9 @@ QScreen *Display::primaryScreen()
 #else
     return qApp->primaryScreen();
 #endif
+}
+
+DockIns::DockIns(QObject *parent) : QObject(parent)
+{
+    m_dock = new DBusDock(this);
 }

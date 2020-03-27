@@ -18,6 +18,7 @@
 DBusDock::DBusDock(QObject *parent)
     : QDBusAbstractInterface("com.deepin.dde.daemon.Dock", "/com/deepin/dde/daemon/Dock", staticInterfaceName(), QDBusConnection::sessionBus(), parent)
 {
+    qDBusRegisterMetaType<DockRect>();
     QDBusConnection::sessionBus().connect(this->service(), this->path(), "org.freedesktop.DBus.Properties",  "PropertiesChanged","sa{sv}as", this, SLOT(__propertyChanged__(QDBusMessage)));
 }
 
@@ -26,3 +27,25 @@ DBusDock::~DBusDock()
     QDBusConnection::sessionBus().disconnect(service(), path(), "org.freedesktop.DBus.Properties",  "PropertiesChanged",  "sa{sv}as", this, SLOT(propertyChanged(QDBusMessage)));
 }
 
+QDBusArgument &operator<<(QDBusArgument &argument, const DockRect &rect)
+{
+    argument.beginStructure();
+    argument << rect.x << rect.y << rect.width << rect.height;
+    argument.endStructure();
+    return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument, DockRect &rect)
+{
+    argument.beginStructure();
+    argument >> rect.x >> rect.y >> rect.width >> rect.height;
+    argument.endStructure();
+    return argument;
+}
+
+QDebug operator<<(QDebug deg, const DockRect &rect)
+{
+    qDebug() << "x:" << rect.x << "y:" << rect.y << "width:" << rect.width << "height:" << rect.height;
+
+    return deg;
+}

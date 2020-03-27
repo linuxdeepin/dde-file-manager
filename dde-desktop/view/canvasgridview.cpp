@@ -1697,8 +1697,38 @@ static inline QRect fix_available_geometry()
         qDebug()<<"Display::instance()->primaryScreen()->virtualGeometry():" << Display::instance()->primaryScreen()->virtualGeometry();
         qDebug()<<"Display::instance()->primaryRect():" << Display::instance()->primaryRect();
         virtualGeometry = Display::instance()->primaryRect();
-    }
 
+        //fix xcb的dock区域获取数据不对
+        DockRect dockrect = DockIns::instance()->frontendWindowRect();
+        QRect primaryGeometry = Display::instance()->primaryRect();
+        QRect ret = primaryGeometry;
+        switch (DockIns::instance()->position()) {
+        case 0: //上
+            ret.setY(dockrect.height);
+            break;
+        case 1: //右
+            ret.setWidth(ret.width() - dockrect.width);
+            break;
+        case 2: //下
+            ret.setHeight(ret.height() - dockrect.height);
+            break;
+        case 3: //左
+            ret.setX(dockrect.width);
+            break;
+        default:
+            qCritical() << "dock postion error!";
+            break;
+        }
+        qDebug() << "\n"
+                 << "dump dock info begin ---------------------------" << "\n"
+                 << "dockGeometry:" << dockrect << "\n"
+                 << "virtualGeometry:" << virtualGeometry << "\n"
+                 << "primarygeometry:" << primaryGeometry << "\n"
+                 << "availableRect:" << ret << "\n"
+                 << "dump dock info end ---------------------------" << "\n";
+        return ret;
+        //end
+    }
     else {
         virtualGeometry = qApp->screens().value(0)->virtualGeometry();
     }
@@ -1778,7 +1808,7 @@ void CanvasGridView::initUI()
 #ifdef QT_DEBUG
     EnableUIDebug();
 #endif
-    d->dbusDock = new DBusDock(this);
+    d->dbusDock = DockIns::instance();//new DBusDock(this);
 
     setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAttribute(Qt::WA_TranslucentBackground);
