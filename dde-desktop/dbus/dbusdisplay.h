@@ -33,7 +33,7 @@ typedef QMap<QString, double> BrightnessMap;
 
 Q_DECLARE_METATYPE(BrightnessMap)
 
-struct DisplayRect {
+struct DisplayRect{
     qint16 x;
     qint16 y;
     quint16 width;
@@ -58,39 +58,33 @@ class DBusDisplay: public QDBusAbstractInterface
 {
     Q_OBJECT
 
-    Q_SLOT void __propertyChanged__(const QDBusMessage &msg)
+    Q_SLOT void __propertyChanged__(const QDBusMessage& msg)
     {
         QList<QVariant> arguments = msg.arguments();
         if (3 != arguments.count())
             return;
         QString interfaceName = msg.arguments().at(0).toString();
-        if (interfaceName != "com.deepin.daemon.Display")
+        if (interfaceName !="com.deepin.daemon.Display")
             return;
         QVariantMap changedProps = qdbus_cast<QVariantMap>(arguments.at(1).value<QDBusArgument>());
         QStringList keys = changedProps.keys();
-        foreach (const QString &prop, keys) {
-            const QMetaObject *self = metaObject();
-            for (int i = self->propertyOffset(); i < self->propertyCount(); ++i) {
+        foreach(const QString &prop, keys) {
+        const QMetaObject* self = metaObject();
+            for (int i=self->propertyOffset(); i < self->propertyCount(); ++i) {
                 QMetaProperty p = self->property(i);
                 if (p.name() == prop) {
-                    Q_EMIT p.notifySignal().invoke(this);
+ 	            Q_EMIT p.notifySignal().invoke(this);
                 }
             }
         }
-    }
+   }
 public:
     static inline const char *staticInterfaceName()
-    {
-        return "com.deepin.daemon.Display";
-    }
+    { return "com.deepin.daemon.Display"; }
     static inline const char *staticServiceName()
-    {
-        return "com.deepin.daemon.Display";
-    }
+    { return "com.deepin.daemon.Display"; }
     static inline const char *staticObjectPath()
-    {
-        return "/com/deepin/daemon/Display";
-    }
+    { return "/com/deepin/daemon/Display"; }
 
 public:
     DBusDisplay(QObject *parent = 0);
@@ -99,57 +93,39 @@ public:
 
     Q_PROPERTY(BrightnessMap Brightness READ brightness NOTIFY BrightnessChanged)
     inline BrightnessMap brightness() const
-    {
-        return qvariant_cast< BrightnessMap >(property("Brightness"));
-    }
+    { return qvariant_cast< BrightnessMap >(property("Brightness")); }
 
     Q_PROPERTY(QDBusObjectPath BuiltinOutput READ builtinOutput NOTIFY BuiltinOutputChanged)
     inline QDBusObjectPath builtinOutput() const
-    {
-        return qvariant_cast< QDBusObjectPath >(property("BuiltinOutput"));
-    }
+    { return qvariant_cast< QDBusObjectPath >(property("BuiltinOutput")); }
 
-    Q_PROPERTY(uchar DisplayMode READ displayMode NOTIFY DisplayModeChanged)
+    Q_PROPERTY(short DisplayMode READ displayMode NOTIFY DisplayModeChanged)
     inline short displayMode() const
-    {
-        return qvariant_cast< uchar >(property("DisplayMode"));
-    }
+    { return qvariant_cast< short >(property("DisplayMode")); }
 
     Q_PROPERTY(bool HasChanged READ hasChanged NOTIFY HasChangedChanged)
     inline bool hasChanged() const
-    {
-        return qvariant_cast< bool >(property("HasChanged"));
-    }
+    { return qvariant_cast< bool >(property("HasChanged")); }
 
     Q_PROPERTY(QList<QDBusObjectPath> Monitors READ monitors NOTIFY MonitorsChanged)
     inline QList<QDBusObjectPath> monitors() const
-    {
-        return qvariant_cast< QList<QDBusObjectPath> >(property("Monitors"));
-    }
+    { return qvariant_cast< QList<QDBusObjectPath> >(property("Monitors")); }
 
     Q_PROPERTY(QString Primary READ primary NOTIFY PrimaryChanged)
     inline QString primary() const
-    {
-        return qvariant_cast< QString >(property("Primary"));
-    }
+    { return qvariant_cast< QString >(property("Primary")); }
 
     Q_PROPERTY(DisplayRect PrimaryRect READ primaryRect NOTIFY PrimaryRectChanged)
     inline DisplayRect primaryRect() const
-    {
-        return qvariant_cast< DisplayRect >(property("PrimaryRect"));
-    }
+    { return qvariant_cast< DisplayRect >(property("PrimaryRect")); }
 
     Q_PROPERTY(ushort ScreenHeight READ screenHeight NOTIFY ScreenHeightChanged)
     inline ushort screenHeight() const
-    {
-        return qvariant_cast< ushort >(property("ScreenHeight"));
-    }
+    { return qvariant_cast< ushort >(property("ScreenHeight")); }
 
     Q_PROPERTY(ushort ScreenWidth READ screenWidth NOTIFY ScreenWidthChanged)
     inline ushort screenWidth() const
-    {
-        return qvariant_cast< ushort >(property("ScreenWidth"));
-    }
+    { return qvariant_cast< ushort >(property("ScreenWidth")); }
 
 public Q_SLOTS: // METHODS
     inline QDBusPendingReply<> Apply()
@@ -175,7 +151,7 @@ public Q_SLOTS: // METHODS
     inline QDBusPendingReply<QStringList> ListOutputNames()
     {
         QList<QVariant> argumentList;
-        return asyncCallWithArgumentList(QStringLiteral("ListOutputNames"), argumentList);
+        return asyncCallWithArgumentList(QStringLiteral("ListOutputNames"),argumentList);
     }
 
     inline QDBusPendingReply<> JoinMonitor(const QString &in0, const QString &in1)
@@ -254,55 +230,52 @@ public Q_SLOTS: // METHODS
 Q_SIGNALS: // SIGNALS
     //void PrimaryChanged(const QRect &in0);
 // begin property changed signals
-    void BrightnessChanged();
-    void BuiltinOutputChanged();
-    void DisplayModeChanged();
-    void HasChangedChanged();
-    void MonitorsChanged();
-    void PrimaryChanged();
-    void PrimaryRectChanged();
-    void ScreenHeightChanged();
-    void ScreenWidthChanged();
+void BrightnessChanged();
+void BuiltinOutputChanged();
+void DisplayModeChanged();
+void HasChangedChanged();
+void MonitorsChanged();
+void PrimaryChanged();
+void PrimaryRectChanged();
+void ScreenHeightChanged();
+void ScreenWidthChanged();
 };
-
-//system("qdbus --literal com.deepin.SessionManager /com/deepin/XSettings com.deepin.XSettings.GetScaleFactor > /tmp/123");
 
 class DBusAppearance: public QDBusAbstractInterface
 {
     Q_OBJECT
 
-    Q_SLOT void __propertyChanged__(const QDBusMessage &msg)
+    Q_SLOT void __propertyChanged__(const QDBusMessage& msg)
     {
         QList<QVariant> arguments = msg.arguments();
         if (3 != arguments.count())
             return;
         QString interfaceName = msg.arguments().at(0).toString();
-//        if (interfaceName != "com.deepin.daemon.Appearance")
-        if (interfaceName != "com.deepin.XSettings")
+        if (interfaceName !="com.deepin.daemon.Appearance")
             return;
         QVariantMap changedProps = qdbus_cast<QVariantMap>(arguments.at(1).value<QDBusArgument>());
         QStringList keys = changedProps.keys();
-        foreach (const QString &prop, keys) {
-            const QMetaObject *self = metaObject();
-            for (int i = self->propertyOffset(); i < self->propertyCount(); ++i) {
+        foreach(const QString &prop, keys) {
+        const QMetaObject* self = metaObject();
+            for (int i=self->propertyOffset(); i < self->propertyCount(); ++i) {
                 QMetaProperty p = self->property(i);
                 if (p.name() == prop) {
-                    Q_EMIT p.notifySignal().invoke(this);
+                Q_EMIT p.notifySignal().invoke(this);
                 }
             }
         }
-    }
+   }
 public:
     DBusAppearance(QObject *parent = 0);
 
     ~DBusAppearance();
 public:
     static inline const char *staticInterfaceName()
-    { return "com.deepin.XSettings"; }
+    { return "com.deepin.daemon.Appearance"; }
     static inline const char *staticServiceName()
-    { return "com.deepin.SessionManager"; }
+    { return "com.deepin.daemon.Appearance"; }
     static inline const char *staticObjectPath()
-    { return "/com/deepin/XSettings"; }
+    { return "/com/deepin/daemon/Appearance"; }
 public Q_SLOTS: // METHODS
     inline QDBusPendingReply<double> GetScaleFactor()
     {
