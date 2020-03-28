@@ -241,4 +241,46 @@ void ScreenHeightChanged();
 void ScreenWidthChanged();
 };
 
+class DBusAppearance: public QDBusAbstractInterface
+{
+    Q_OBJECT
+
+    Q_SLOT void __propertyChanged__(const QDBusMessage& msg)
+    {
+        QList<QVariant> arguments = msg.arguments();
+        if (3 != arguments.count())
+            return;
+        QString interfaceName = msg.arguments().at(0).toString();
+        if (interfaceName !="com.deepin.daemon.Appearance")
+            return;
+        QVariantMap changedProps = qdbus_cast<QVariantMap>(arguments.at(1).value<QDBusArgument>());
+        QStringList keys = changedProps.keys();
+        foreach(const QString &prop, keys) {
+        const QMetaObject* self = metaObject();
+            for (int i=self->propertyOffset(); i < self->propertyCount(); ++i) {
+                QMetaProperty p = self->property(i);
+                if (p.name() == prop) {
+                Q_EMIT p.notifySignal().invoke(this);
+                }
+            }
+        }
+   }
+public:
+    DBusAppearance(QObject *parent = 0);
+
+    ~DBusAppearance();
+public:
+    static inline const char *staticInterfaceName()
+    { return "com.deepin.daemon.Appearance"; }
+    static inline const char *staticServiceName()
+    { return "com.deepin.daemon.Appearance"; }
+    static inline const char *staticObjectPath()
+    { return "/com/deepin/daemon/Appearance"; }
+public Q_SLOTS: // METHODS
+    inline QDBusPendingReply<double> GetScaleFactor()
+    {
+        QList<QVariant> argumentList;
+        return asyncCallWithArgumentList(QStringLiteral("GetScaleFactor"), argumentList);
+    }
+};
 #endif

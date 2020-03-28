@@ -47,6 +47,7 @@
 #include <dgiosettings.h>
 #include <dfiledragclient.h>
 
+#include "../util/dde/desktopinfo.h"
 #include "../model/dfileselectionmodel.h"
 #include "../presenter/gridmanager.h"
 #include "../presenter/apppresenter.h"
@@ -1700,6 +1701,10 @@ static inline QRect fix_available_geometry()
         qDebug()<<"Display::instance()->primaryRect():" << Display::instance()->primaryRect();
         virtualGeometry = Display::instance()->primaryRect();
 
+        int dockHideMode = DockIns::instance()->hideMode();
+        if ( 1 == dockHideMode || 3 == dockHideMode) //隐藏与智能隐藏
+            return virtualGeometry;
+
         //fix xcb的dock区域获取数据不对
         DockRect dockrect = DockIns::instance()->frontendWindowRect();
         qreal t_devicePixelRatio = Display::instance()->primaryScreen()->devicePixelRatio();
@@ -1801,7 +1806,6 @@ static inline QRect getValidNewGeometry(const QRect &geometry, const QRect &oldG
         return newGeometry;
     }
 
-    auto primaryScreen = Display::instance()->primaryScreen();
     newGeometry = Display::instance()->primaryRect();;
     geometryValid = (newGeometry.width() > 0) && (newGeometry.height() > 0);
     if (geometryValid) {
@@ -1824,7 +1828,6 @@ void CanvasGridView::initUI()
     viewport()->setAutoFillBackground(false);
     setFrameShape(QFrame::NoFrame); // TODO: using QWidget instead of QFrame?
 
-    auto primaryScreen = Display::instance()->primaryScreen();
     setGeometry(Display::instance()->primaryRect());
     auto newGeometry =  getValidNewGeometry(Display::instance()->primaryRect(), this->geometry());
     d->canvasRect = newGeometry;
@@ -2132,22 +2135,24 @@ void CanvasGridView::initConnection()
 
     connect(d->dbusDock, &DBusDock::HideModeChanged,
     this, [ = ]() {
-        if (3 == d->dbusDock->hideMode() || 1 == d->dbusDock->hideMode()) {
-            updateGeometry(Display::instance()->primaryRect());
-        }
+          updateGeometry(Display::instance()->primaryRect());
     });
     connect(d->dbusDock, &DBusDock::PositionChanged,
     this, [ = ]() {
-        if (3 == d->dbusDock->hideMode()) {
-            updateGeometry(Display::instance()->primaryRect());
-        }
+         updateGeometry(Display::instance()->primaryRect());
     });
+
+    connect(d->dbusDock, &DBusDock::FrontendWindowRectChanged,
+    this, [ = ]() {
+         updateGeometry(Display::instance()->primaryRect());
+    });
+
     connect(d->dbusDock, &DBusDock::IconSizeChanged,
     this, [ = ]() {
-        if (3 == d->dbusDock->hideMode()) {
-            this->updateCanvas();
-        }
+        updateGeometry(Display::instance()->primaryRect());
+        this->updateCanvas();
     });
+
 
     connect(DFMApplication::instance(), &DFMApplication::showedHiddenFilesChanged, [ = ](bool isShowedHiddenFile) {
         QDir::Filters filters;
@@ -2699,6 +2704,20 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
 
     d->fileViewHelper->handleMenu(menu);
 
+    if (DesktopInfo().waylandDectected()) {
+
+        QPoint t_tmpPoint = QCursor::pos();
+        if (t_tmpPoint.x() + menu->sizeHint().width() > width())
+            t_tmpPoint.setX(t_tmpPoint.x() - menu->sizeHint().width());
+
+        if (t_tmpPoint.y() + menu->sizeHint().height() > height())
+            t_tmpPoint.setY(t_tmpPoint.y() - menu->sizeHint().height());
+        menu->exec(t_tmpPoint);
+        menu->deleteLater();
+        return;
+    }
+
+
     menu->exec();
     menu->deleteLater();
 }
@@ -2804,6 +2823,19 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     });
 
     d->fileViewHelper->handleMenu(menu);
+
+    if (DesktopInfo().waylandDectected()) {
+
+        QPoint t_tmpPoint = QCursor::pos();
+        if (t_tmpPoint.x() + menu->sizeHint().width() > width())
+            t_tmpPoint.setX(t_tmpPoint.x() - menu->sizeHint().width());
+
+        if (t_tmpPoint.y() + menu->sizeHint().height() > height())
+            t_tmpPoint.setY(t_tmpPoint.y() - menu->sizeHint().height());
+        menu->exec(t_tmpPoint);
+        menu->deleteLater();
+        return;
+    }
 
     menu->exec();
     menu->deleteLater();

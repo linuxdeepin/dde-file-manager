@@ -40,21 +40,23 @@ public:
     inline QString name() const
     { return qvariant_cast< QString >(property("Name")); }
 
-    Q_PROPERTY(qint16 X READ x)
+    Q_PROPERTY(qint16 X READ x NOTIFY monitorRectChanged)
     inline qint16 x() const
     { return qvariant_cast< qint16 >(property("X")); }
 
-    Q_PROPERTY(qint16 Y READ y)
+    Q_PROPERTY(qint16 Y READ y NOTIFY monitorRectChanged)
     inline qint16 y() const
-    { return qvariant_cast< qint16 >(property("Y")); }
+    { return qvariant_cast< qint16 >(property("Y") ); }
 
-    Q_PROPERTY(quint16 Width READ width)
+    Q_PROPERTY(quint16 Width READ width NOTIFY monitorRectChanged)
     inline quint16 width() const
     { return qvariant_cast< quint16 >(property("Width")); }
 
-    Q_PROPERTY(quint16 Height READ height)
+    Q_PROPERTY(quint16 Height READ height NOTIFY monitorRectChanged)
     inline quint16 height() const
     { return qvariant_cast< quint16 >(property("Height")); }
+signals:
+    void monitorRectChanged();
 public:
     QRect rect() const;
 };
