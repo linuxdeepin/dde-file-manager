@@ -112,7 +112,7 @@ public:
     inline quint32 showTimeout() const
     { return qvariant_cast< quint32 >(property("ShowTimeout")); }
 
-    Q_PROPERTY(DockRect FrontendWindowRect READ frontendWindowRect)
+    Q_PROPERTY(DockRect FrontendWindowRect READ frontendWindowRect NOTIFY FrontendWindowRectChanged)
     inline DockRect frontendWindowRect() const
     { return qvariant_cast< DockRect >(property("FrontendWindowRect")); }
 
@@ -197,6 +197,7 @@ void HideStateChanged();
 void PositionChanged();
 void IconSizeChanged();
 void ShowTimeoutChanged();
+void FrontendWindowRectChanged();
 };
 
 namespace com {
