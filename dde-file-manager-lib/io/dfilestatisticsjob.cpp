@@ -152,6 +152,10 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
             }
 
             size = info->size();
+            if (size > 0) {
+                totalSize += size;
+                Q_EMIT q_ptr->sizeChanged(totalSize);
+            }
         } while (false);
 
         ++filesCount;
@@ -203,10 +207,6 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
         Q_EMIT q_ptr->directoryFound(url);
     }
 
-    if (size > 0) {
-        totalSize += size;
-        Q_EMIT q_ptr->sizeChanged(totalSize);
-    }
 }
 
 DFileStatisticsJob::DFileStatisticsJob(QObject *parent)
