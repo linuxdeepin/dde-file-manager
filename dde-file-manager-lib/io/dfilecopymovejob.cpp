@@ -1423,6 +1423,26 @@ void DFileCopyMoveJobPrivate::updateProgress()
         Q_EMIT q_ptr->progressChanged(qMin(qreal(data_size) / fileStatistics->totalSize(), 1.0), data_size);
 
         qCDebug(fileJob(), "completed data size: %lld, total data size: %lld", data_size, fileStatistics->totalSize());
+    } else {
+        // 文件大小没计算出来之前的策略，获取一个时时的总大小来计算一个模糊进度
+        const qint64 total_size = fileStatistics->totalSize();
+        const qint64 data_size = getCompletedDataSize();
+
+        static bool only = true;
+        if (only) {
+            Q_EMIT q_ptr->progressChanged(0.01, data_size);
+            only = false;
+            return;
+        }
+
+        if (data_size < total_size && total_size > 0) {
+            static qreal last_progress = 0.01;
+            qreal fuzzy_progress = qreal(data_size) / total_size;
+            if (fuzzy_progress < 0.4 && fuzzy_progress > last_progress) {
+                Q_EMIT q_ptr->progressChanged(fuzzy_progress, data_size);
+                last_progress = fuzzy_progress;
+            }
+        }
     }
 
     if (currentJobDataSizeInfo.first > 0) {
