@@ -14,6 +14,7 @@
 
 class QScreen;
 class DBusDisplay;
+class DBusAppearance;
 class Display: public QObject, public Singleton<Display>
 {
     Q_OBJECT
@@ -23,16 +24,20 @@ public:
     explicit Display(QObject *parent = 0);
 
     QRect primaryRect();
+    QString primaryName();
 
     QScreen *primaryScreen();
 
     QStringList monitorObjectPaths() const;
+
+    double getScaleFactor();
 signals:
     void primaryScreenChanged(QScreen *screen);
     void primaryChanged();
 
 private:
     DBusDisplay *m_display = nullptr;
+    DBusAppearance *m_appearance = nullptr;
 };
 
 class DBusDock;

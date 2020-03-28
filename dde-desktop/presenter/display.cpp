@@ -25,6 +25,7 @@ QScreen *GetPrimaryScreen()
 Display::Display(QObject *parent) : QObject(parent)
 {
 #ifdef DDE_DBUS_DISPLAY
+    m_appearance = new DBusAppearance(this);
     m_display = new DBusDisplay(this);
     connect(m_display, &DBusDisplay::PrimaryChanged,this, [ = ]() {
         qDebug()<< "primarChanged emit....  ";
@@ -74,7 +75,7 @@ QRect Display::primaryRect()
 {
     QRect t_screenRect = m_display->primaryRect();
 
-    qreal t_devicePixelRatio = Display::instance()->primaryScreen()->devicePixelRatio();
+    qreal t_devicePixelRatio = m_appearance->GetScaleFactor();//Display::instance()->primaryScreen()->devicePixelRatio();
     if (!QHighDpiScaling::m_active) {
         t_devicePixelRatio = 1;
     }
@@ -83,6 +84,11 @@ QRect Display::primaryRect()
 
 
     return t_screenRect;
+}
+
+QString Display::primaryName()
+{
+    return m_display->primary();
 }
 
 QScreen *Display::primaryScreen()
@@ -140,6 +146,11 @@ QStringList Display::monitorObjectPaths() const
     for(const QDBusObjectPath &path : m_display->monitors())
         ret << path.path();
     return  ret;
+}
+
+double Display::getScaleFactor()
+{
+    return m_appearance->GetScaleFactor().value();
 }
 
 DockIns::DockIns(QObject *parent) : QObject(parent)
