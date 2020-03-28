@@ -134,6 +134,14 @@ QScreen *Display::primaryScreen()
 #endif
 }
 
+QStringList Display::monitorObjectPaths() const
+{
+    QStringList ret;
+    for(const QDBusObjectPath &path : m_display->monitors())
+        ret << path.path();
+    return  ret;
+}
+
 DockIns::DockIns(QObject *parent) : QObject(parent)
 {
     m_dock = new DBusDock(this);

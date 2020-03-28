@@ -26,6 +26,7 @@ public:
 
     QScreen *primaryScreen();
 
+    QStringList monitorObjectPaths() const;
 signals:
     void primaryScreenChanged(QScreen *screen);
     void primaryChanged();
