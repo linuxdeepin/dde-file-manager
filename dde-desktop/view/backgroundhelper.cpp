@@ -100,7 +100,7 @@ BackgroundHelper::BackgroundHelper(bool preview, QObject *parent)
         desktop_instance = this;
     }
 
-    if (!DesktopInfo().waylandDectected()){
+    if (!DesktopInfo().waylandDectected()) {
 
         checkTimer = new QTimer(this);
         checkTimer->setInterval(2000);
@@ -193,8 +193,7 @@ void BackgroundHelper::setBackground(const QString &path)
         for (BackgroundLabel *l : waylandbackgroundMap) {
             updateBackground(l);
         }
-    }
-    else {
+    } else {
         // 更新背景图
         for (BackgroundLabel *l : backgroundMap) {
             updateBackground(l);
@@ -293,9 +292,10 @@ void BackgroundHelper::updateBackground(QWidget *l)
 {
     if (backgroundPixmap.isNull())
         return;
-    if (DesktopInfo().waylandDectected())
-    {
-        QSize trueSize = l->size();
+    if (DesktopInfo().waylandDectected()) {
+//        QSize trueSize = l->size();
+        //修复背景图片被缩放问题
+        QSize trueSize = l->size() * Display::instance()->getScaleFactor();
         QPixmap pix = backgroundPixmap;
 
         pix = pix.scaled(trueSize,
@@ -321,8 +321,7 @@ void BackgroundHelper::updateBackground(QWidget *l)
     // 禁用高分屏缩放，防止窗口的sizeIncrement默认设置大于1
     bool hi_active = QHighDpiScaling::m_active;
     QHighDpiScaling::m_active = false;
-    if (Display::instance()->primaryScreen() == s)
-    {
+    if (Display::instance()->primaryScreen() == s) {
         trueSize = Display::instance()->primaryRect().size();
         l->windowHandle()->handle()->setGeometry(Display::instance()->primaryRect());
     }
@@ -374,14 +373,12 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
 {
     if (DesktopInfo().waylandDectected()) {
         QStringList monitorPaths = Display::instance()->monitorObjectPaths();
-        for (const QString &path : monitorPaths)
-        {
-            if (!waylandScreen.contains(path))
-            {
+        for (const QString &path : monitorPaths) {
+            if (!waylandScreen.contains(path)) {
                 DBusMonitor *monitor = new DBusMonitor(path);
-                waylandScreen.insert(path,monitor);
+                waylandScreen.insert(path, monitor);
                 BackgroundLabel *l = new BackgroundLabel();
-                waylandbackgroundMap.insert(monitor->name(),l);
+                waylandbackgroundMap.insert(monitor->name(), l);
 
                 l->setProperty("isPreview", m_previuew);
                 l->setProperty("myScreen", monitor->name());
@@ -389,7 +386,7 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
                 QRect screenRect = monitor->rect();
                 screenRect.setSize(screenRect.size() / Display::instance()->getScaleFactor());
                 l->setGeometry(screenRect);
-                connect(monitor,&::DBusMonitor::monitorRectChanged,[this,monitor,l](){
+                connect(monitor, &::DBusMonitor::monitorRectChanged, [this, monitor, l]() {
                     qDebug() << "monitor geometry changed:" << monitor->name()
                              << monitor->rect();
 
@@ -430,8 +427,7 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
     // 禁用高分屏缩放，防止窗口的sizeIncrement默认设置大于1
     bool hi_active = QHighDpiScaling::m_active;
     QHighDpiScaling::m_active = false;
-    if (Display::instance()->primaryScreen() == screen)
-    {
+    if (Display::instance()->primaryScreen() == screen) {
         l->setGeometry(Display::instance()->primaryRect());
     }
     QHighDpiScaling::m_active = hi_active;
@@ -497,8 +493,7 @@ void BackgroundHelper::updateBackgroundGeometry(QScreen *screen, BackgroundLabel
     // 禁用高分屏缩放，防止窗口的sizeIncrement默认设置大于1
     bool hi_active = QHighDpiScaling::m_active;
     QHighDpiScaling::m_active = false;
-    if (Display::instance()->primaryScreen() == screen)
-    {
+    if (Display::instance()->primaryScreen() == screen) {
         l->setGeometry(Display::instance()->primaryRect());
     }
     QHighDpiScaling::m_active = hi_active;
@@ -508,8 +503,7 @@ void BackgroundHelper::updateBackgroundGeometry(QScreen *screen, BackgroundLabel
     hi_active = QHighDpiScaling::m_active;
     QHighDpiScaling::m_active = false;
     l->windowHandle()->handle()->setGeometry(screen->handle()->geometry());
-    if (Display::instance()->primaryScreen() == screen)
-    {
+    if (Display::instance()->primaryScreen() == screen) {
         l->windowHandle()->handle()->setGeometry(Display::instance()->primaryRect());
     }
 
