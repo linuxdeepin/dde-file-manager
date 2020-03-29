@@ -94,6 +94,10 @@ private:
 
 public:
     static BackgroundHelper* getDesktopInstance();
+
+private slots:
+
+    void monitorRectChanged();
 };
 
 #endif // BACKGROUNDHELPER_H

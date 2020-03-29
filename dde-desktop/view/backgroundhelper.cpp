@@ -62,6 +62,7 @@ public:
             QImage *image = static_cast<QImage *>(backingStore()->handle()->paintDevice());
             QPainter pa(image);
             pa.drawPixmap(0, 0, m_noScalePixmap);
+            return;
         }
 
         QPainter pa(this);
@@ -369,6 +370,32 @@ void BackgroundHelper::updateBackground()
     setBackground(path);
 }
 
+
+void BackgroundHelper::monitorRectChanged()
+{
+
+    QStringList monitorPaths = Display::instance()->monitorObjectPaths();
+    for (const QString &path : monitorPaths) {
+        DBusMonitor * t_busMobitor = waylandScreen.value(path);
+        qDebug() << "monitor geometry changed:" << t_busMobitor->name()
+                 << t_busMobitor->rect();
+
+        BackgroundLabel *l = waylandbackgroundMap.value(t_busMobitor->name());
+
+        qDebug()<<"path :"<<t_busMobitor->name()<< "screenRect: "<<t_busMobitor->rect() << "l:" << l;
+
+        QRect screenRect = t_busMobitor->rect();
+
+        screenRect.setSize(screenRect.size() / Display::instance()->getScaleFactor());
+        qDebug()<<"path :"<<t_busMobitor->name()<< "screenRect: "<<screenRect << "l:" << l;
+
+        l->setGeometry(screenRect);
+
+        updateBackground(l);
+        //todo mode changed
+    }
+}
+
 void BackgroundHelper::onScreenAdded(QScreen *screen)
 {
     if (DesktopInfo().waylandDectected()) {
@@ -384,19 +411,43 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
                 l->setProperty("myScreen", monitor->name());
                 l->createWinId();
                 QRect screenRect = monitor->rect();
+
+//                qDebug()<<"path :"<<path<< "screenRect: "<<screenRect;
+
+//                screenRect.setTopLeft(screenRect.topLeft() / Display::instance()->getScaleFactor());
+
+//                qDebug()<<"path :"<<path<< "screenRect: "<<screenRect;
+
+//                screenRect.setBottomRight(screenRect.bottomRight() / Display::instance()->getScaleFactor());
+
+//                qDebug()<<"path :"<<path<< "screenRect: "<<screenRect;
+
                 screenRect.setSize(screenRect.size() / Display::instance()->getScaleFactor());
+                qDebug()<<"path :"<<monitor->name()<< "screenRect: "<<screenRect;
                 l->setGeometry(screenRect);
-                connect(monitor, &::DBusMonitor::monitorRectChanged, [this, monitor, l]() {
-                    qDebug() << "monitor geometry changed:" << monitor->name()
-                             << monitor->rect();
+//                connect(monitor, &::DBusMonitor::monitorRectChanged, [this, monitor, l]() {
+//                    qDebug() << "monitor geometry changed:" << monitor->name()
+//                             << monitor->rect();
 
-                    QRect screenRect = monitor->rect();
-                    screenRect.setSize(screenRect.size() / Display::instance()->getScaleFactor());
-                    l->setGeometry(screenRect);
+//                    qDebug()<<"path :"<<monitor->name()<< "screenRect: "<<monitor->rect() << "l:" << l;
 
-                    updateBackground(l);
-                    //todo mode changed
-                });
+//                    QRect screenRect = monitor->rect();
+////                    screenRect.setTopLeft(screenRect.topLeft() / Display::instance()->getScaleFactor());
+
+////                    qDebug()<<"path :"<<monitor->name()<< "screenRect: "<<screenRect;
+
+////                    screenRect.setBottomRight(screenRect.bottomRight() / Display::instance()->getScaleFactor());
+
+////                    qDebug()<<"path :"<<monitor->name()<< "screenRect: "<<screenRect;
+
+//                    screenRect.setSize(screenRect.size() / Display::instance()->getScaleFactor());
+//                    qDebug()<<"path :"<<monitor->name()<< "screenRect: "<<screenRect << "l:" << l;
+
+//                    l->setGeometry(screenRect);
+
+//                    updateBackground(l);
+//                    //todo mode changed
+//                });
 
                 if (m_previuew) {
                     l->setWindowFlags(l->windowFlags() | Qt::BypassWindowManagerHint | Qt::WindowDoesNotAcceptFocus);
