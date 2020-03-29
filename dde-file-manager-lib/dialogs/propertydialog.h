@@ -37,6 +37,7 @@
 #include <QPushButton>
 #include <QStorageInfo>
 #include <QScrollArea>
+#include <QVariantAnimation>
 
 #include <views/dfmactionbutton.h>
 #define EXTEND_FRAME_MAXHEIGHT 160
@@ -217,6 +218,10 @@ private:
     QFrame* m_wdf{ nullptr };
     QScrollArea *m_scrollArea{ nullptr };
     QFrame      *m_tagInfoFrame{ nullptr };
+    QVariantAnimation *m_xani {nullptr};
+    QVariantAnimation *m_gani {nullptr};
+    QLabel *m_aniLabel {nullptr};
+
 
     QList<DDrawer *> addExpandWidget(const QStringList &titleList);
 
