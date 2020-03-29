@@ -79,7 +79,7 @@
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QStorageInfo>
-#include <QVariantAnimation>
+//#include <QVariantAnimation>
 #include <QScrollArea>
 #include <ddiskmanager.h>
 #include <QGuiApplication>
@@ -661,60 +661,63 @@ void PropertyDialog::flickFolderToSidebar()
 
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
 
-    QLabel *aniLabel = new QLabel(window);
-    aniLabel->raise();
-    aniLabel->setFixedSize(m_icon->size());
-    aniLabel->setAttribute(Qt::WA_TranslucentBackground);
-    aniLabel->setPixmap(fileInfo->fileIcon().pixmap(160, 160));
-    aniLabel->move(window->mapFromGlobal(m_icon->mapToGlobal(m_icon->pos())));
+    //QLabel *aniLabel = new QLabel(window);
+    m_aniLabel = new QLabel (window);
+    m_aniLabel->raise();
+    m_aniLabel->setFixedSize(m_icon->size());
+    m_aniLabel->setAttribute(Qt::WA_TranslucentBackground);
+    m_aniLabel->setPixmap(fileInfo->fileIcon().pixmap(160, 160));
+    m_aniLabel->move(window->mapFromGlobal(m_icon->mapToGlobal(m_icon->pos())));
 
     int angle;
-    if (targetPos.x() > aniLabel->x()) {
+    if (targetPos.x() > m_aniLabel->x()) {
         angle = 45;
     } else {
         angle = -45;
     }
 
-    QVariantAnimation *xani = new QVariantAnimation(this);
-    xani->setStartValue(aniLabel->pos());
-    xani->setEndValue(QPoint(targetPos.x(), angle));
-    xani->setDuration(440);
+   // QVariantAnimation *xani = new QVariantAnimation(this);
+    m_xani = new QVariantAnimation (this);
+    m_xani->setStartValue(m_aniLabel->pos());
+    m_xani->setEndValue(QPoint(targetPos.x(), angle));
+    m_xani->setDuration(440);
 
-    QVariantAnimation *gani = new QVariantAnimation(this);
-    gani->setStartValue(aniLabel->geometry());
-    gani->setEndValue(QRect(targetPos.x(), targetPos.y(), 20, 20));
-    gani->setEasingCurve(QEasingCurve::InBack);
-    gani->setDuration(440);
+    //QVariantAnimation *gani = new QVariantAnimation(this);
+    m_gani = new QVariantAnimation (this);
+    m_gani->setStartValue(m_aniLabel->geometry());
+    m_gani->setEndValue(QRect(targetPos.x(), targetPos.y(), 20, 20));
+    m_gani->setEasingCurve(QEasingCurve::InBack);
+    m_gani->setDuration(440);
 
-    connect(xani, &QVariantAnimation::valueChanged, [ = ](const QVariant & val) {
-        if (aniLabel) {
-            aniLabel->move(QPoint(val.toPoint().x() - aniLabel->width() / 2, aniLabel->y()));
-            QImage img = fileInfo->fileIcon().pixmap(aniLabel->size()).toImage();
+    connect(m_xani, &QVariantAnimation::valueChanged, [ = ](const QVariant & val) {
+        if (m_aniLabel) {
+            m_aniLabel->move(QPoint(val.toPoint().x() - m_aniLabel->width() / 2, m_aniLabel->y()));
+            QImage img = fileInfo->fileIcon().pixmap(m_aniLabel->size()).toImage();
             QMatrix ma;
             ma.rotate(val.toPoint().y());
             img = img.transformed(ma, Qt::SmoothTransformation);
-            img = img.scaled(aniLabel->width() / 2, aniLabel->height() / 2, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-            aniLabel->setPixmap(QPixmap::fromImage(img));
-            if (aniLabel->isHidden()) {
-                aniLabel->show();
+            img = img.scaled(m_aniLabel->width() / 2, m_aniLabel->height() / 2, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            m_aniLabel->setPixmap(QPixmap::fromImage(img));
+            if (m_aniLabel->isHidden()) {
+                m_aniLabel->show();
             }
         }
     });
-    connect(xani, &QVariantAnimation::finished, [ = ] {
-        xani->deleteLater();
+    connect(m_xani, &QVariantAnimation::finished, [ = ] {
+        m_xani->deleteLater();
     });
 
-    connect(gani, &QVariantAnimation::valueChanged, [ = ](const QVariant & val) {
-        aniLabel->move(QPoint(aniLabel->x(),
+    connect(m_gani, &QVariantAnimation::valueChanged, [ = ](const QVariant & val) {
+        m_aniLabel->move(QPoint(m_aniLabel->x(),
                               val.toRect().y() - val.toRect().width() / 2));
-        aniLabel->setFixedSize(val.toRect().size() * 2);
+        m_aniLabel->setFixedSize(val.toRect().size() * 2);
     });
-    connect(gani, &QVariantAnimation::finished, [ = ] {
-        gani->deleteLater();
-        aniLabel->deleteLater();
+    connect(m_gani, &QVariantAnimation::finished, [ = ] {
+        m_gani->deleteLater();
+        m_aniLabel->deleteLater();
     });
-    xani->start();
-    gani->start();
+    m_xani->start();
+    m_gani->start();
 }
 void PropertyDialog::onOpenWithBntsChecked(QAbstractButton *w)
 {
@@ -800,6 +803,16 @@ void PropertyDialog::raise()
 
 void PropertyDialog::hideEvent(QHideEvent *event)
 {
+    if(m_xani){
+        m_xani->stop();
+        delete m_xani;
+    }
+    if(m_gani){
+        m_gani->stop();
+        delete m_gani;
+    }
+    if(m_aniLabel)
+        delete  m_aniLabel;
     emit aboutToClosed(m_url);
     DDialog::hideEvent(event);
     emit closed(m_url);
