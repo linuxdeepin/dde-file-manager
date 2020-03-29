@@ -376,18 +376,18 @@ void BackgroundHelper::monitorRectChanged()
 
     QStringList monitorPaths = Display::instance()->monitorObjectPaths();
     for (const QString &path : monitorPaths) {
-        DBusMonitor * t_busMobitor = waylandScreen.value(path);
+        DBusMonitor *t_busMobitor = waylandScreen.value(path);
         qDebug() << "monitor geometry changed:" << t_busMobitor->name()
                  << t_busMobitor->rect();
 
         BackgroundLabel *l = waylandbackgroundMap.value(t_busMobitor->name());
 
-        qDebug()<<"path :"<<t_busMobitor->name()<< "screenRect: "<<t_busMobitor->rect() << "l:" << l;
+        qDebug() << "path :" << t_busMobitor->name() << "screenRect: " << t_busMobitor->rect() << "l:" << l;
 
         QRect screenRect = t_busMobitor->rect();
 
         screenRect.setSize(screenRect.size() / Display::instance()->getScaleFactor());
-        qDebug()<<"path :"<<t_busMobitor->name()<< "screenRect: "<<screenRect << "l:" << l;
+        qDebug() << "path :" << t_busMobitor->name() << "screenRect: " << screenRect << "l:" << l;
 
         l->setGeometry(screenRect);
 
@@ -421,9 +421,9 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
 //                screenRect.setBottomRight(screenRect.bottomRight() / Display::instance()->getScaleFactor());
 
 //                qDebug()<<"path :"<<path<< "screenRect: "<<screenRect;
-
+                connect(monitor, SIGNAL(monitorRectChanged()), this, SLOT(monitorRectChanged()));
                 screenRect.setSize(screenRect.size() / Display::instance()->getScaleFactor());
-                qDebug()<<"path :"<<monitor->name()<< "screenRect: "<<screenRect;
+                qDebug() << "path :" << monitor->name() << "screenRect: " << screenRect;
                 l->setGeometry(screenRect);
 //                connect(monitor, &::DBusMonitor::monitorRectChanged, [this, monitor, l]() {
 //                    qDebug() << "monitor geometry changed:" << monitor->name()
