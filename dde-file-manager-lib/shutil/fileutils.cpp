@@ -454,8 +454,8 @@ DUrl FileUtils::newDocumentUrl(const DAbstractFileInfoPointer targetDirInfo, con
         if (newInfo && newInfo->exists()) {
             ++i;
             fileName = suffix.isEmpty()
-                    ? QString("%1 %2").arg(baseName, QString::number(i))
-                    : QString("%1 %2.%3").arg(baseName, QString::number(i), suffix);
+                    ? QString("%1%2").arg(baseName, QString::number(i))
+                    : QString("%1%2.%3").arg(baseName, QString::number(i), suffix);
             fileUrl = targetDirInfo->getUrlByChildFileName(fileName);
         } else {
             return fileUrl;
