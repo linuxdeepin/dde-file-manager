@@ -28,6 +28,8 @@
 #include "ddiriterator.h"
 #include "dfilestatisticsjob.h"
 #include "dlocalfiledevice.h"
+#include "models/trashfileinfo.h"
+#include "interfaces/dfmstandardpaths.h"
 
 #include <QMutex>
 #include <QTimer>
@@ -598,6 +600,12 @@ bool DFileCopyMoveJobPrivate::doProcess(const DUrl &from, DAbstractFileInfoPoint
     }
 
     QString file_name = handle ? handle->getNewFileName(q_ptr, source_info.constData()) : source_info->fileName();
+
+    // 回收站可能重名文件，因此回收站中的文件实际filename是经过处理的,这里需要取真正需要展示的filename
+    if (source_info->filePath().startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
+        QExplicitlySharedDataPointer<TrashFileInfo> info(new TrashFileInfo(DUrl::fromTrashFile("/" + source_info->fileName())));
+        file_name = info->fileDisplayName();
+    }
 create_new_file_info:
     const DAbstractFileInfoPointer &new_file_info = DFileService::instance()->createFileInfo(nullptr, target_info->getUrlByChildFileName(file_name));
 
