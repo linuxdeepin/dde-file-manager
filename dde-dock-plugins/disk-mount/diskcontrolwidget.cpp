@@ -252,8 +252,16 @@ void DiskControlWidget::unmountAll()
 
     QList<QExplicitlySharedDataPointer<DGioMount> > vfsMounts = getVfsMountList();
     for (auto mount : vfsMounts) {
-        if (mount->canUnmount()) {
-            mount->unmount();
+        if (mount->isShadowed()) {
+            continue;
+        }
+        QExplicitlySharedDataPointer<DGioFile> rootFile = mount->getRootFile();
+        QString path = rootFile->path();
+        DAttachedVfsDevice *dad = new DAttachedVfsDevice(path);
+        if (dad->isValid()) {
+           dad->detach();
+        } else {
+            qDebug() << "dad->isValid()" << mount->name();
         }
     }
 }
