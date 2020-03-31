@@ -69,6 +69,7 @@ public:
     void initTaskDialog();
     void initCloseIndicatorDialog();
     void initConnect();
+    QPoint getPropertyPos(int dialogWidth, int dialogHeight);
     QPoint getPerportyPos(int dialogWidth, int dialogHeight, int count, int index);
     bool isTaskDialogEmpty();
     DTaskDialog *taskDialog() const;

@@ -175,6 +175,31 @@ void DialogManager::initConnect()
 
 }
 
+QPoint DialogManager::getPropertyPos(int dialogWidth, int dialogHeight)
+{
+    const QScreen *cursor_screen = Q_NULLPTR;
+    const QPoint &cursor_pos = QCursor::pos();
+
+    for (const QScreen *screen : qApp->screens()) {
+        if (screen->geometry().contains(cursor_pos)) {
+            cursor_screen = screen;
+            break;
+        }
+    }
+
+    if (!cursor_screen) {
+        cursor_screen = qApp->primaryScreen();
+    }
+
+    int desktopWidth = cursor_screen->size().width();
+    int desktopHeight = cursor_screen->size().height();
+    int x = (desktopWidth - dialogWidth) / 2;
+
+    int y = (desktopHeight - dialogHeight) / 2;
+
+    return QPoint(x, y) + cursor_screen->geometry().topLeft();
+}
+
 QPoint DialogManager::getPerportyPos(int dialogWidth, int dialogHeight, int count, int index)
 {
     const QScreen *cursor_screen = Q_NULLPTR;
@@ -677,7 +702,8 @@ void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
                     dialog->setWindowFlags(dialog->windowFlags() & ~ Qt::FramelessWindowHint);
                     m_propertyDialogs.insert(url, dialog);
                     if (1 == count) {
-                        dialog->moveToCenter();
+                        QPoint pos = getPropertyPos(dialog->size().width(), dialog->getDialogHeight());
+                        dialog->move(pos);
                     } else {
                         QPoint pos = getPerportyPos(dialog->size().width(), dialog->size().height(), count, index);
                         dialog->move(pos);
