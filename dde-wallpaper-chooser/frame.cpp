@@ -38,6 +38,7 @@
 #include <DButtonBox>
 #include <DIconButton>
 #include <DWindowManagerHelper>
+#include <DSysInfo>
 
 #include <QApplication>
 #include <QDesktopWidget>
@@ -58,6 +59,7 @@
 
 DWIDGET_USE_NAMESPACE
 DGUI_USE_NAMESPACE
+DCORE_USE_NAMESPACE
 
 static bool previewBackground()
 {
@@ -335,8 +337,12 @@ void Frame::reLayoutTools()
         m_waitControl->hide();
         m_lockScreenBox->hide();
 #ifndef DISABLE_WALLPAPER_CAROUSEL
-        m_wallpaperCarouselCheckBox->show();
-        m_wallpaperCarouselControl->setVisible(m_wallpaperCarouselCheckBox->isChecked());
+        // 服务器版本不支持自动更换桌面背景
+        if (DSysInfo::deepinType() != DSysInfo::DeepinServer)
+        {
+            m_wallpaperCarouselCheckBox->show();
+            m_wallpaperCarouselControl->setVisible(m_wallpaperCarouselCheckBox->isChecked());
+        }
         layout()->removeItem(m_toolLayout);
         static_cast<QBoxLayout *>(layout())->insertLayout(0, m_wallpaperCarouselLayout);
 #endif
@@ -454,7 +460,15 @@ void Frame::initUI()
 #ifndef DISABLE_WALLPAPER_CAROUSEL
     m_wallpaperCarouselLayout = new QHBoxLayout;
     m_wallpaperCarouselCheckBox = new QCheckBox(tr("Wallpaper Slideshow"), this);
-    m_wallpaperCarouselCheckBox->setChecked(true);
+    // 服务器版本不支持自动更换桌面背景
+    if (DSysInfo::deepinType() == DSysInfo::DeepinServer) {
+        m_wallpaperCarouselCheckBox->setChecked(false);
+        m_wallpaperCarouselCheckBox->setEnabled(false);
+        m_wallpaperCarouselCheckBox->setVisible(false);
+    }
+    else {
+        m_wallpaperCarouselCheckBox->setChecked(true);
+    }
     QPalette wccPal = m_wallpaperCarouselCheckBox->palette();
     wccPal.setColor(QPalette::All, QPalette::WindowText, textColor);
     m_wallpaperCarouselCheckBox->setPalette(wccPal);
@@ -462,6 +476,7 @@ void Frame::initUI()
     QList<DButtonBoxButton *> wallpaperSlideshowBtns;
     m_wallpaperCarouselCheckBox->setFocusPolicy(Qt::NoFocus);
     m_wallpaperCarouselControl->setFocusPolicy(Qt::NoFocus);
+    qDebug() << "DSysInfo::deepinType = " << QString::number(DSysInfo::DeepinProfessional);
     QByteArrayList array_policy {"30", "60", "300", "600", "900", "1800", "3600", "login", "wakeup"};
 
     {
@@ -529,6 +544,7 @@ void Frame::initUI()
     connect(m_wallpaperCarouselControl, &DButtonBox::buttonToggled, this, [this, array_policy] (QAbstractButton * toggledBtn, bool) {
         m_dbusAppearance->setWallpaperSlideShow(array_policy.at(m_wallpaperCarouselControl->buttonList().indexOf(toggledBtn)));
     });
+
 #endif
 
 #ifndef DISABLE_SCREENSAVER
