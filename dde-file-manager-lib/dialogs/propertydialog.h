@@ -166,6 +166,7 @@ public:
 
     const QList<Dtk::Widget::DDrawer *> &expandGroup() const;
     int contentHeight() const;
+    int getDialogHeight() const;
 
     void loadPluginExpandWidgets();
 

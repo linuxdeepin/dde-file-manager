@@ -849,6 +849,18 @@ int PropertyDialog::contentHeight() const
             40);
 }
 
+int PropertyDialog::getDialogHeight() const
+{
+    int totalHeight = this->size().height() + contentHeight() ;
+
+    for (const DDrawer* expand : m_expandGroup) {
+       if(expand->expand())
+            totalHeight += expand->window()->height();
+    }
+
+    return totalHeight;
+}
+
 void PropertyDialog::loadPluginExpandWidgets()
 {
     //QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(this->layout());
