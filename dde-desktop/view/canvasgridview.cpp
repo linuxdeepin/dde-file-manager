@@ -751,6 +751,41 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_I:
             DFMGlobal::showPropertyDialog(nullptr, selectUrls);
             return;
+        case Qt::Key_M:{
+            if (Q_UNLIKELY(DFMApplication::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool())) {
+                return;
+            }
+
+            QModelIndexList indexList = selectionModel()->selectedIndexes();
+            bool isEmptyArea = indexList.empty();
+            Qt::ItemFlags flags;
+
+            if (isEmptyArea) {
+                flags = model()->flags(rootIndex());
+
+                if (!flags.testFlag(Qt::ItemIsEnabled)) {
+                    return;
+                }
+            } else {
+                const QModelIndex &index = indexList.first();
+                flags = model()->flags(index);
+
+                if (!flags.testFlag(Qt::ItemIsEnabled)) {
+                    isEmptyArea = true;
+                    flags = rootIndex().flags();
+                }
+            }
+
+            if (isEmptyArea) {
+                itemDelegate()->hideNotEditingIndexWidget();
+                clearSelection();
+                showEmptyAreaMenu(flags);
+            } else {
+                const QModelIndex &index = indexList.first();
+                showNormalMenu(index, flags);
+            }
+            return;
+        }
         default:
             break;
         }
