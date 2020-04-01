@@ -56,9 +56,15 @@ void DFileIconProviderPrivate::init()
 QIcon DFileIconProviderPrivate::getFilesystemIcon(const QFileInfo &info) const
 {
     QIcon icon;
+    //fix 修复当链接文件指向的文件被删时，界面卡顿。如果文件不存在，直接返回空图标
+    if (!info.exists())
+        return icon;
+    //end
 
     QScopedPointer<DGioFile> file(DGioFile::createFromPath(info.absoluteFilePath()));
+    //todo 当链接文件指向的文件被删除时，file->createFileInfo函数耗时很长
     QExplicitlySharedDataPointer<DGioFileInfo> fileinfo = file->createFileInfo("*", FILE_QUERY_INFO_NONE, 616);
+    //end
     if (!fileinfo) {
         return icon;
     }
