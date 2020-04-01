@@ -17,5 +17,5 @@ else
         paths=$paths,\"$path\";
     done;
     json="{\"paths\":[$paths],\"isShowPropertyDialogRequest\":true}";
-    echo $json |socat - $XDG_RUNTIME_DIR/dde-file-manager;
+    ./file-manager.sh  $json
 fi
