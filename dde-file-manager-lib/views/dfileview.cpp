@@ -1366,7 +1366,9 @@ void DFileView::loadViewState(const DUrl &url)
 {
     Q_D(DFileView);
 
-    setIconSizeBySizeIndex(d->fileViewStateValue(url, "iconSizeLevel", DFMApplication::instance()->appAttribute(DFMApplication::AA_IconSizeLevel)).toInt());
+    QVariant defIconSize = DFMApplication::instance()->appAttribute(DFMApplication::AA_IconSizeLevel).toInt();
+    int iconSize = d->fileViewStateValue(url, "iconSizeLevel", defIconSize).toInt();
+    setIconSizeBySizeIndex(iconSize);
     int savedViewMode = d->fileViewStateValue(url, "viewMode", -1).toInt();
     ViewMode viewMode = getDefaultViewMode();
     if (savedViewMode == -1) {

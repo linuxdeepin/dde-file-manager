@@ -145,6 +145,20 @@ void DFMApplication::setAppAttribute(DFMApplication::ApplicationAttribute aa, co
     const QMetaEnum &me = QMetaEnum::fromType<ApplicationAttribute>();
     const QString key = QString::fromLatin1(me.valueToKey(aa)).split("_").last();
 
+    // clear all self iconSize, use globbal iconSize
+    if (key == "IconSizeLevel") {
+        auto settings = appObtuselySetting();
+        const QStringList &keys = settings->keyList("FileViewState");
+        for (const QString &url : keys) {
+            auto map = settings->value("FileViewState", url).toMap();
+            if (map.contains("iconSizeLevel")) {
+                qDebug() << "reset" << url << "iconSizeLevel to " << value.toInt();
+                map["iconSizeLevel"] = value;
+                settings->setValue("FileViewState", url, map);
+            }
+        }
+    }
+
     appSetting()->setValue(group, key, value);
 }
 

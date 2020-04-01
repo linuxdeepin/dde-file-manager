@@ -671,6 +671,7 @@ bool DFMSettings::sync()
     if (ok) {
         d->makeSettingFileToDirty(false);
     }
+    file.close();
 
     return ok;
 }
