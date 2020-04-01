@@ -7,7 +7,17 @@ do
         data=$data" "$arg_base64
 done
 
-echo -n $data|socat - $XDG_RUNTIME_DIR/dde-file-manager
+target=$XDG_RUNTIME_DIR/dde-file-manager
+
+if [ ! -f $target ];then
+        target=/tmp/dde-file-manager
+        if [ ! -f $target ];then
+                dde-file-manager "$@"
+                exit "$?"
+        fi
+fi
+
+echo -n $data|socat - $tagrt
 
 if [ $? != 0 ]; then
         dde-file-manager "$@"
