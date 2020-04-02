@@ -1040,3 +1040,14 @@ QFileDevice::Permissions DFMSetPermissionEvent::permissions() const
 {
     return static_cast<QFileDevice::Permissions>(property(QT_STRINGIFY(DFMSetPermissionEvent::permissions)).toInt());
 }
+
+DFMOpenFilesEvent::DFMOpenFilesEvent(const QObject *sender, const DUrlList &list)
+        : DFMUrlListBaseEvent(OpenFiles, sender, list)
+{
+
+}
+
+QSharedPointer<DFMOpenFilesEvent> DFMOpenFilesEvent::fromJson(const QJsonObject &json)
+{
+    return DFMUrlListBaseEvent::fromJson(OpenFiles, json).staticCast<DFMOpenFilesEvent>();
+}
