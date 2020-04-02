@@ -45,8 +45,9 @@
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "dialogs/dialogmanager.h"
+#include "ddialog.h"
 
-
+DWIDGET_USE_NAMESPACE
 QString UserShareManager::CurrentUser = "";
 
 UserShareManager::UserShareManager(QObject *parent) : QObject(parent)
@@ -439,8 +440,17 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
         }
 
         if (process.exitCode() != 0) {
-            dialogManager->showErrorDialog(QString(), err);
-            qWarning() << err;
+            DDialog dialog;
+
+            dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
+            dialog.setTitle(tr("For security, this file can not be shared!"));
+            dialog.addButton(tr("Got it."), true);
+
+            qWarning() << err << "err code = " << QString::number(process.exitCode());
+            if (dialog.exec() == DDialog::Accepted) {
+                return false;
+            }
+//            dialogManager->showErrorDialog(QString(), err);
             return false;
         }
 
