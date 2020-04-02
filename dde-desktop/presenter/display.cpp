@@ -75,8 +75,7 @@ QRect Display::primaryRect()
 {
     QRect t_screenRect = m_display->primaryRect();
 
-//    qreal t_devicePixelRatio = m_appearance->GetScaleFactor();//Display::instance()->primaryScreen()->devicePixelRatio();
-    qreal t_devicePixelRatio = getScaleFactor();
+    qreal t_devicePixelRatio = Display::instance()->primaryScreen()->devicePixelRatio();
     if (!QHighDpiScaling::m_active) {
         t_devicePixelRatio = 1;
     }

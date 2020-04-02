@@ -108,40 +108,6 @@ static void setWindowFlag(QWidget *w, Qt::WindowType flag, bool on)
 #if USINGOLD
 void Desktop::onBackgroundEnableChanged()
 {
-    if (DesktopInfo().waylandDectected()) {
-        qInfo() << "Primary Screen:" << Display::instance()->primaryName();
-        if (d->background->isEnabled()) {
-            QWidget *background = d->background->waylandBackground(Display::instance()->primaryName());
-
-            d->screenFrame.setAttribute(Qt::WA_NativeWindow, false);
-            d->screenFrame.setParent(background);
-            d->screenFrame.move(0, 0);
-            d->screenFrame.show();
-
-            // 防止复制模式下主屏窗口被遮挡
-            background->activateWindow();
-            QMetaObject::invokeMethod(background, "raise", Qt::QueuedConnection);
-
-            // 隐藏完全重叠的窗口
-            for (QWidget *l : d->background->waylandAllBackgrounds()) {
-                if (l != background) {
-                    Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), true);
-                    l->setVisible(!background->geometry().contains(l->geometry()));
-                } else {
-                    Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), false);
-                    l->show();
-                }
-            }
-        } else {
-            d->screenFrame.setParent(nullptr);
-            setWindowFlag(&d->screenFrame, Qt::FramelessWindowHint, true);
-            d->screenFrame.QWidget::setGeometry(Display::instance()->primaryRect());
-            Xcb::XcbMisc::instance().set_window_type(d->screenFrame.winId(), Xcb::XcbMisc::Desktop);
-            d->screenFrame.show();
-        }
-
-        return;
-    }
     qInfo() << "Primary Screen:" << qApp->primaryScreen();
     qInfo() << "Background enabled:" << d->background->isEnabled();
 
