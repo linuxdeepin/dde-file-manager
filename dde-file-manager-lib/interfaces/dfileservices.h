@@ -107,6 +107,7 @@ public:
             bool ignoreScheme = false);
 
     bool openFile(const QObject *sender, const DUrl &url) const;
+    bool openFiles(const QObject *sender, const DUrlList &list) const;
     bool openFileByApp(const QObject *sender, const QString &appName, const DUrl &url) const;
     bool compressFiles(const QObject *sender, const DUrlList &list) const;
     bool decompressFile(const QObject *sender, const DUrlList &list) const;

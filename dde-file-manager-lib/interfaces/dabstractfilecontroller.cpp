@@ -102,6 +102,12 @@ bool DAbstractFileController::openFile(const QSharedPointer<DFMOpenFileEvent> &e
     return false;
 }
 
+bool DAbstractFileController::openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const
+{
+    event->ignore();
+    return false;
+}
+
 bool DAbstractFileController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const
 {
     event->ignore();

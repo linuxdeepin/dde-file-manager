@@ -34,6 +34,7 @@
 
 class DFMEvent;
 class DFMOpenFileEvent;
+class DFMOpenFilesEvent;
 class DFMOpenFileByAppEvent;
 class DFMCompressEvent;
 class DFMDecompressEvent;
@@ -80,6 +81,7 @@ public:
     explicit DAbstractFileController(QObject *parent = 0);
 
     virtual bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const;
+    virtual bool openFiles(const QSharedPointer<DFMOpenFilesEvent> &event) const;
     virtual bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const;
     virtual bool compressFiles(const QSharedPointer<DFMCompressEvent> &event) const;
     virtual bool decompressFile(const QSharedPointer<DFMDecompressEvent> &event) const;
