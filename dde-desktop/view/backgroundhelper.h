@@ -32,7 +32,6 @@ using WMInter = com::deepin::wm;
 DGUI_USE_NAMESPACE
 
 class BackgroundLabel;
-class DBusMonitor;
 class BackgroundHelper : public QObject
 {
     Q_OBJECT
@@ -42,8 +41,6 @@ public:
     ~BackgroundHelper();
 
     bool isEnabled() const;
-    QWidget *waylandBackground(const QString &name) const;
-    QList<QWidget*> waylandAllBackgrounds() const;
     QWidget *backgroundForScreen(QScreen *screen) const;
     QList<QWidget*> allBackgrounds() const;
     bool visible() const;
@@ -86,18 +83,10 @@ private:
     QString currentWallpaper;
     QPixmap backgroundPixmap;
     QMap<QScreen*, BackgroundLabel*> backgroundMap;
-
-    QMap<QString,BackgroundLabel*> waylandbackgroundMap; //屏幕名称，背景窗
-    QMap<QString,DBusMonitor *> waylandScreen;      //屏幕信息
-
     static BackgroundHelper *desktop_instance;
 
 public:
     static BackgroundHelper* getDesktopInstance();
-
-private slots:
-
-    void monitorRectChanged();
 };
 
 #endif // BACKGROUNDHELPER_H
