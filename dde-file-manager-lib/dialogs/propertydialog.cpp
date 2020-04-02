@@ -1052,6 +1052,16 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         layout->addRow(sourcePathSectionLabel, sourcePathLabel);
     }
 
+    if (info->fileUrl().isRecentFile()) {
+        QString pathStr = info->filePath();
+        SectionValueLabel *sourcePathLabel = new SectionValueLabel(pathStr);
+        QString elidedStr = sourcePathLabel->fontMetrics().elidedText(pathStr, Qt::ElideMiddle, 150);
+        sourcePathLabel->setToolTip(pathStr);
+        sourcePathLabel->setWordWrap(false);
+        sourcePathLabel->setText(elidedStr);
+        layout->addRow(sourcePathSectionLabel, sourcePathLabel);
+    }
+
     DGioSettings gsettings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
 
     if (gsettings.value("property-dlg-hidefile-checkbox").toBool() && DFMFileListFile::supportHideByFile(info->filePath())) {
