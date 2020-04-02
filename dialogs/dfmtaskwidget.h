@@ -74,6 +74,7 @@ signals:
 
 public slots:
     void onProgressChanged(qreal progress, qint64 writeData);
+    void onBurnProgressChanged(qreal progress, qint64 writeData);
     void onSpeedUpdated(qint64 speed);
     void onStateChanged(int state);
 
