@@ -334,7 +334,10 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         progbdf->setMaximumHeight(8);
         progbdf->setTextVisible(false);
 
-        QString text = tr("%1 (%2)").arg(name).arg(devid);
+        //fix 没有devid则只显示名称
+        QString text = devid.isEmpty() ? tr("%1").arg(name) : tr("%1 (%2)").arg(name).arg(devid);
+        //end
+
         QLabel* lbdf_l = new SectionKeyLabel();
         text = lbdf_l->fontMetrics().elidedText(text, Qt::ElideMiddle, 150);
         lbdf_l->setText(text);
@@ -1121,7 +1124,30 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
         {DFMRootFileInfo::ItemType::GvfsGPhoto2, QObject::tr("Apple mobile device")},
         {DFMRootFileInfo::ItemType::GvfsCamera, QObject::tr("Camera")}
     };
-    results.append({QObject::tr("Device type"), devtypemap.value(static_cast<DFMRootFileInfo::ItemType>(info->fileType()), QObject::tr("Unknown device"))});
+
+    //fix GvfsGPhoto2协议对Apple mobile device判断有问题，再增加一层判断
+    {
+        auto itemtype = static_cast<DFMRootFileInfo::ItemType>(info->fileType());
+        if (itemtype == DFMRootFileInfo::ItemType::GvfsGPhoto2)
+        {
+            QString devicePath = info->redirectedFileUrl().path();
+
+            qInfo() << "Deivce Type: DFMRootFileInfo::ItemType::GvfsGPhoto2 Device Path:" << devicePath;
+
+            //判断host中是否有"Apple_Inc"，没有且不为空则改为安卓
+            if (!devicePath.isEmpty() && !devicePath.contains("Apple_Inc"))
+            {
+                qWarning() << "Deivce Type is DFMRootFileInfo::ItemType::GvfsGPhoto2. Not find Apple_Inc in device path"
+                           << devicePath << "Set Deivce Type [GvfsGPhoto2] to [GvfsMTP]";
+                itemtype = DFMRootFileInfo::ItemType::GvfsMTP;
+            }
+        }
+        results.append({QObject::tr("Device type"), devtypemap.value(itemtype, QObject::tr("Unknown device"))});
+    }
+    //old
+    //results.append({QObject::tr("Device type"), devtypemap.value(static_cast<DFMRootFileInfo::ItemType>(info->fileType()), QObject::tr("Unknown device"))});
+    //end fix
+
     results.append({QObject::tr("Total space"), FileUtils::formatSize(fsSize)});
     if (!fsType.isEmpty()) {
         results.append({QObject::tr("File system"), fsType});
