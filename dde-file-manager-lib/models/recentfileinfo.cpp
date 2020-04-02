@@ -160,6 +160,7 @@ QSet<MenuAction> RecentFileInfo::disableMenuActionList() const
 QList<int> RecentFileInfo::userColumnRoles() const
 {
     static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileDisplayNameRole
+                                                     << DFileSystemModel::FileUserRole + 1
                                                      << DFileSystemModel::FileLastReadRole
                                                      << DFileSystemModel::FileSizeRole
                                                      << DFileSystemModel::FileMimeTypeRole;
@@ -173,8 +174,23 @@ QVariant RecentFileInfo::userColumnData(int userColumnRole) const
         return m_lastReadTimeStr;
     }
 
+    if (userColumnRole == DFileSystemModel::FileUserRole + 1) {
+        return toLocalFile();
+    }
+
     return DAbstractFileInfo::userColumnData(userColumnRole);
 }
+
+
+QVariant RecentFileInfo::userColumnDisplayName(int userColumnRole) const
+{
+    if (userColumnRole == DFileSystemModel::FileUserRole + 1){
+        return qApp->translate("DFileSystemModel",  "Path");
+    }
+
+    return DAbstractFileInfo::userColumnDisplayName(userColumnRole);
+}
+
 
 int RecentFileInfo::userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const
 {
