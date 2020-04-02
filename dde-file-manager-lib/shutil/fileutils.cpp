@@ -563,6 +563,69 @@ bool FileUtils::openFile(const QString &filePath)
     return result;
 }
 
+bool FileUtils::openFiles(const QStringList &filePaths)
+{
+    QStringList rePath = filePaths;
+    bool ret = false;
+    for (const QString &filePath : filePaths){
+        if (QFileInfo(filePath).suffix() == "desktop"){
+            ret = FileUtils::launchApp(filePath) || ret; //有一个成功就成功
+            rePath.removeOne(filePath);
+            continue;
+        }
+    }
+    if (rePath.isEmpty())
+        return ret;
+
+    const QString filePath = rePath.first();
+    QString mimetype = getFileMimetype(filePath);
+    QString defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
+    if (defaultDesktopFile.isEmpty()) {
+        qDebug() << "no default application for" << rePath;
+        return false;
+    }
+
+    if (isFileManagerSelf(defaultDesktopFile) && mimetype != "inode/directory"){
+        QStringList recommendApps = mimeAppsManager->getRecommendedApps(DUrl::fromLocalFile(filePath));
+        recommendApps.removeOne(defaultDesktopFile);
+        if (recommendApps.count() > 0){
+            defaultDesktopFile = recommendApps.first();
+        }else{
+            qDebug() << "no default application for" << rePath;
+            return false;
+        }
+    }
+
+    QStringList appAgrs;
+    for (const QString &tmp : rePath)
+        appAgrs << DUrl::fromLocalFile(tmp).toString();
+    bool result = launchApp(defaultDesktopFile, appAgrs);
+    if (result){
+        // workaround since DTK apps doesn't support the recent file spec.
+        // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
+        // the correct approach: let the app add it to the recent list.
+        // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
+        return result;
+    }
+
+    if (mimeAppsManager->getDefaultAppByFileName(filePath) == "org.gnome.font-viewer.desktop"){
+        QProcess::startDetached("gio", QStringList() << "open" << rePath);
+        QTimer::singleShot(200, [=]{
+            QProcess::startDetached("gio", QStringList() << "open" << rePath);
+        });
+        return true;
+    }
+
+    result = QProcess::startDetached("gio", QStringList() << "open" << rePath);
+
+    if (!result){
+        result = false;
+        for (const QString &tmp : rePath)
+            result = QDesktopServices::openUrl(QUrl::fromLocalFile(tmp)) || result; //有一个成功就成功
+    }
+    return result;
+}
+
 bool FileUtils::launchApp(const QString &desktopFile, const QStringList &filePaths)
 {
     if (isFileManagerSelf(desktopFile) && filePaths.count() > 1){

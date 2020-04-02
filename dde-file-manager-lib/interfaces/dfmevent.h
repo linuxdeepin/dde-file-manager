@@ -96,7 +96,7 @@ public:
         Untag,
         ChangeTagColor,
         GetTagsThroughFiles,
-
+        OpenFiles,  //fix 修改多文件选中右键打开只启动一次应用，传多个参数
         // user custom
         CustomBase = 1000                            // first user event id
     };
@@ -302,6 +302,14 @@ public:
     explicit DFMOpenFileEvent(const QObject *sender, const DUrl &url);
 
     static QSharedPointer<DFMOpenFileEvent> fromJson(const QJsonObject &json);
+};
+
+class DFMOpenFilesEvent : public DFMUrlListBaseEvent
+{
+public:
+    explicit DFMOpenFilesEvent(const QObject *sender, const DUrlList &list);
+
+    static QSharedPointer<DFMOpenFilesEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMOpenFileByAppEvent : public DFMOpenFileEvent

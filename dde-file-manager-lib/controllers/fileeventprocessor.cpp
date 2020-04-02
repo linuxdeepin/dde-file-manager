@@ -360,6 +360,9 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
 
         //sort urls by files and dirs
         DUrlList dirList;
+        //fix 修改多文件选中右键打开只启动一次应用，传多个参数
+        DUrlList fileList;
+        //end
 
         foreach (DUrl url, e->urlList()) {
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
@@ -376,7 +379,29 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
                     continue;
                 }
             }
+#if 1   //修改多文件选中右键打开只启动一次应用，传多个参数
+            if (fileInfo) {
+                if (fileInfo->isDir()) {
+                    dirList << url;
+                } else {
+                    fileList << url;
+                }
+            }
 
+            //computer url is virtual dir
+            if (url == DUrl::fromComputerFile("/") || url.scheme() == "mount") {
+                dirList << url;
+            }
+        }
+
+        if (!fileList.empty())
+        {
+            if (fileList.size() == 1)
+                DThreadUtil::runInMainThread(DFileService::instance(), &DFileService::openFile, event->sender(), fileList[0]);
+            else
+                DThreadUtil::runInMainThread(DFileService::instance(), &DFileService::openFiles, event->sender(), fileList);
+        }
+#else
             if (fileInfo) {
                 if (fileInfo->isDir()) {
                     dirList << url;
@@ -390,7 +415,7 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
                 dirList << url;
             }
         }
-
+#endif
         if (dirList.isEmpty()) {
             break;
         }

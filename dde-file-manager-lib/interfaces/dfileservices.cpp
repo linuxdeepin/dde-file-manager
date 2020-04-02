@@ -429,6 +429,13 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     case DFMEvent::SetPermission:
         result = CALL_CONTROLLER(setPermissions);
         break;
+    case DFMEvent::OpenFiles:
+        result = CALL_CONTROLLER(openFiles);
+
+//        if (result.toBool()) {
+//            emit fileOpened(event->fileUrl());
+//        }
+        break;
     default:
         return false;
     }
@@ -528,6 +535,11 @@ void DFileService::clearFileUrlHandler(const QString &scheme, const QString &hos
 bool DFileService::openFile(const QObject *sender, const DUrl &url) const
 {
     return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenFileEvent>(sender, url)).toBool();
+}
+
+bool DFileService::openFiles(const QObject *sender, const DUrlList &list) const
+{
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenFilesEvent>(sender, list)).toBool();
 }
 
 bool DFileService::openFileByApp(const QObject *sender, const QString &appName, const DUrl &url) const
