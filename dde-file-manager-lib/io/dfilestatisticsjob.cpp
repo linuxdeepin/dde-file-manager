@@ -22,11 +22,13 @@
 #include "dfileservices.h"
 #include "dabstractfileinfo.h"
 #include "dstorageinfo.h"
+#include <models/trashfileinfo.h>
 
 #include <QMutex>
 #include <QQueue>
 #include <QTimer>
 #include <QWaitCondition>
+
 
 DFM_BEGIN_NAMESPACE
 
@@ -128,8 +130,13 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
 
     if (info->isFile()) {
         do {
-            // ###(zccrs): skip the file
+            // ###(zccrs): skip the file,os file
             if (info->fileUrl() == DUrl::fromLocalFile("/proc/kcore")) {
+                break;
+            }
+            //skip os file Shortcut
+            if (info->isSymLink() && info->symlinkTargetPath() == QString("/proc/kcore"))
+            {
                 break;
             }
 
@@ -148,6 +155,10 @@ void DFileStatisticsJobPrivate::processFile(const DUrl &url, QQueue<DUrl> &direc
             }
 
             if (type == DAbstractFileInfo::SocketFile && !fileHints.testFlag(DFileStatisticsJob::DontSkipSocketFile)) {
+                break;
+            }
+            if (type == DAbstractFileInfo::Unknown)
+            {
                 break;
             }
 
