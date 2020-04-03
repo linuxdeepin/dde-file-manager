@@ -85,6 +85,11 @@ bool RecentFileInfo::canRedirectionFileUrl() const
     return d_ptr->proxy;
 }
 
+bool RecentFileInfo::canRename() const
+{
+    return false;
+}
+
 DUrl RecentFileInfo::redirectedFileUrl() const
 {
     return d_ptr->proxy ? d_ptr->proxy->fileUrl() : fileUrl();
