@@ -113,6 +113,12 @@ QString PathManager::getSystemPathDisplayName(QString key) const
 
 void cleanPath(QString &path)
 {
+    //这里去掉/data的目的 是让通过数据盘路径进入的用户目录下的Docunment,Vedios等文件也可以被翻译
+    if (path.startsWith("/data"))
+    {
+        path.remove(0, sizeof("/data") - 1);
+    }
+
     if (path.size() > 1 && path.at(0) == '/' && path.endsWith("/")) {
         path.chop(1);
     }
