@@ -1277,7 +1277,7 @@ void GvfsMountManager::mount(const QDiskInfo &diskInfo, bool silent)
     }
 }
 
-int GvfsMountManager::mount_sync(const DFMUrlBaseEvent &event)
+MountStatus GvfsMountManager::mount_sync(const DFMUrlBaseEvent &event)
 {
     MountEvent = event;
     QPointer<QEventLoop> oldEventLoop = eventLoop;
@@ -1288,7 +1288,7 @@ int GvfsMountManager::mount_sync(const DFMUrlBaseEvent &event)
     GFile* file = g_file_new_for_uri(event.fileUrl().toString().toUtf8().constData());
 
     if (file == NULL)
-        return -1;
+        return MOUNT_FAILED;
 
     GMountOperation *op = new_mount_op(false);
     g_file_mount_enclosing_volume(file, static_cast<GMountMountFlags>(0),
@@ -1300,7 +1300,7 @@ int GvfsMountManager::mount_sync(const DFMUrlBaseEvent &event)
         oldEventLoop->exit(ret);
     }
 
-    return ret;
+    return (MountStatus)ret;
 }
 
 void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointer user_data)
@@ -1308,6 +1308,7 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
     gboolean succeeded;
     GError *error = NULL;
     GMountOperation *op = static_cast<GMountOperation*>(user_data);
+    MountStatus status = MOUNT_SUCCESS;
 
     succeeded = g_file_mount_enclosing_volume_finish (G_FILE (object), res, &error);
 
@@ -1317,8 +1318,14 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
         bool showWarnDlg = false;
 
         switch (error->code) {
-        case G_IO_ERROR_FAILED_HANDLED: // Operation failed and a helper program has already interacted with the user. Do not display any error dialog.
+        case G_IO_ERROR_FAILED:
+            status = MOUNT_PASSWORD_WRONG;
             break;
+
+        case G_IO_ERROR_FAILED_HANDLED: // Operation failed and a helper program has already interacted with the user. Do not display any error dialog.
+            status = MOUNT_CANCEL;
+            break;
+
         default:
             showWarnDlg = true;
             break;
@@ -1344,10 +1351,12 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
         } else {
             qCDebug(mountManager()) << "username" << g_mount_operation_get_username(op);
         }
+
+        status = MOUNT_SUCCESS;
     }
 
     if (eventLoop) {
-        eventLoop->exit(succeeded ? 0 : -1);
+        eventLoop->exit(status);
     }
 
     emit fileSignalManager->requestChooseSmbMountedFile(MountEvent);
