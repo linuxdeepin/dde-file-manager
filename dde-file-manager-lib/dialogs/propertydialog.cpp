@@ -22,6 +22,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+//fixed:CD display size error
+#include "views/dfmopticalmediawidget.h"
+
 #include "propertydialog.h"
 #include "dabstractfilewatcher.h"
 #include "dfileinfo.h"
@@ -328,6 +331,12 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
 
         lg.setStops({{0, 0xFFFF0000}, {0.72, 0xFFFF237A}, {1, 0xFFFF9393}});
         progbdf->addThreshold(9000, lg);
+
+        //fixed:CD display size error
+        if (static_cast<DFMRootFileInfo::ItemType>(fi->fileType()) == DFMRootFileInfo::ItemType::UDisksOptical) {
+            dskspace = DFMOpticalMediaWidget::g_totalSize;
+            dskinuse = DFMOpticalMediaWidget::g_usedSize;
+        }
 
         progbdf->setMaximum(10000);
         progbdf->setValue(dskspace && ~dskinuse ? int(10000. * dskinuse / dskspace) : 0);
@@ -1147,6 +1156,12 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
     //old
     //results.append({QObject::tr("Device type"), devtypemap.value(static_cast<DFMRootFileInfo::ItemType>(info->fileType()), QObject::tr("Unknown device"))});
     //end fix
+
+    //fixed:CD display size error
+    if (static_cast<DFMRootFileInfo::ItemType>(info->fileType()) == DFMRootFileInfo::ItemType::UDisksOptical) {
+        fsSize = DFMOpticalMediaWidget::g_totalSize;
+        fsUsed = DFMOpticalMediaWidget::g_usedSize;
+    }
 
     results.append({QObject::tr("Total space"), FileUtils::formatSize(fsSize)});
     if (!fsType.isEmpty()) {
