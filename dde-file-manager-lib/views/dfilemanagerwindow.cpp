@@ -112,7 +112,7 @@ public:
     void resetRenameBar();
     void storeUrlListToRenameBar(const QList<DUrl>& list) noexcept;
 
-    QFrame *centralWidget{ nullptr };
+    QFrame *centralWidget{ nullptr };//中央区域（所有的除顶部区域）
     DFMSideBar *sideBar{ nullptr };
     QFrame *rightView { nullptr };
     DFMRightDetailView *detailView { nullptr };
@@ -128,7 +128,7 @@ public:
     QVBoxLayout *mainLayout { nullptr };
     DFMSplitter *splitter { nullptr };
     QFrame *titleFrame { nullptr };
-    QStackedLayout *viewStackLayout { nullptr };
+    QStackedLayout *viewStackLayout { nullptr };//右边文件显示的布局
     QFrame *emptyTrashHolder { nullptr };
     DHorizontalLine *emptyTrashSplitLine { nullptr };
     DRenameBar *renameBar{ nullptr };
