@@ -42,6 +42,13 @@ extern "C" {
 }
 #define signals public
 
+typedef enum {
+    MOUNT_SUCCESS,
+    MOUNT_FAILED,
+    MOUNT_CANCEL,
+    MOUNT_PASSWORD_WRONG,
+}MountStatus;
+
 class GvfsMountManager : public QObject
 {
     Q_OBJECT
@@ -115,7 +122,7 @@ public:
 
     static void mount(const QString& path, bool silent = false);
     static void mount(const QDiskInfo& diskInfo, bool silent = false);
-    static int mount_sync(const DFMUrlBaseEvent &event);
+    static MountStatus mount_sync(const DFMUrlBaseEvent &event);
     static void mount_done_cb(GObject *object, GAsyncResult *res, gpointer user_data);
     static void mount_device(const QString& unix_device, bool silent = false);
     static void mount_mounted(const QString& mounted_root_uri, bool silent = false);
