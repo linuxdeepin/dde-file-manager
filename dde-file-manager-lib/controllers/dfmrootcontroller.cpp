@@ -135,6 +135,8 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
             gvfsvol->mount();
         }
     }
+    //寻找所有的移动设备（移动硬盘，手机，U盘等）
+    QStringList urllist;
     for (auto gvfsmp : DGioVolumeManager::getMounts()) {
         if (gvfsmp->getVolume() && gvfsmp->getVolume()->volumeMonitorName().endsWith("UDisks2")) {
             continue;
@@ -148,8 +150,22 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         DUrl url;
         url.setScheme(DFMROOT_SCHEME);
         url.setPath("/" + QUrl::toPercentEncoding(gvfsmp->getRootFile()->path()) + "." SUFFIX_GVFSMP);
+        bool bsame = false;
+        foreach(const QString &str,urllist)
+        {
+            if(str == QString("/" + QUrl::toPercentEncoding(gvfsmp->getRootFile()->path()) + "." SUFFIX_GVFSMP))
+            {
+                bsame = true;
+                break;
+            }
+        }
+        if (bsame)
+        {
+            continue;
+        }
         DAbstractFileInfoPointer fp(new DFMRootFileInfo(url));
         if (fp->exists()) {
+            urllist << QString("/" + QUrl::toPercentEncoding(gvfsmp->getRootFile()->path()) + "." SUFFIX_GVFSMP);
             ret.push_back(fp);
         }
     }
