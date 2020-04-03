@@ -190,12 +190,19 @@ void NetworkManager::network_enumeration_finished(GObject *source_object, GAsync
             }
         }
         qDebug() << error->message;
-        int ret = gvfsMountManager->mount_sync(*event);
+        MountStatus status = gvfsMountManager->mount_sync(*event);
         g_clear_error (&error);
 
         if (eventLoop) {
             // 挂载完成时, 返回 1, 在fetch_networks中再次调用g_file_enumerate_children_async获取列表
-            eventLoop->exit(ret == 0 ? EventLoopCode::MountFinished : EventLoopCode::FetchFailed);
+            if(status == MOUNT_SUCCESS || status == MOUNT_PASSWORD_WRONG)
+            {
+                eventLoop->exit(EventLoopCode::MountFinished);
+            }
+            else
+            {
+                eventLoop->exit(EventLoopCode::FetchFailed);
+            }
         }
     } else {
         if (!enumerator) {
