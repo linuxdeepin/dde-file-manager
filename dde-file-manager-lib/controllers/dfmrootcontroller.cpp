@@ -35,6 +35,8 @@
 
 #include <gvfs/networkmanager.h>
 
+#include <QProcessEnvironment>
+
 class DFMRootFileWatcherPrivate : public DAbstractFileWatcherPrivate
 {
 public:
@@ -95,10 +97,25 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         }
     }
 
+    bool iswWayland = false;
+    auto e = QProcessEnvironment::systemEnvironment();
+    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
+    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
+
+    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
+            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+        iswWayland = true;
+    }
+
     DDiskManager dummy;
     for (auto blks : dummy.blockDevices()) {
         QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
         QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+        if (iswWayland && blks.contains(QRegularExpression("/sd[a-c][1-9]*$"))) {
+              qDebug()  <<" blDev->drive()"  << blks << blk->drive();
+              continue;
+        }
+
         if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
             continue;
         }
