@@ -18,6 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+//fixed:CD display size error
+#include "views/dfmopticalmediawidget.h"
+
 #include "dblockdevice.h"
 #include "ddiskdevice.h"
 #include "controllers/dfmrootcontroller.h"
@@ -155,13 +158,23 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
 
     if (role == DataRoles::SizeInUseRole) {
         if (pitmdata->fi) {
-            return pitmdata->fi->extraProperties()["fsUsed"];
+            //fixed:CD display size error
+            if (static_cast<DFMRootFileInfo::ItemType>(pitmdata->fi->fileType()) == DFMRootFileInfo::ItemType::UDisksOptical) {
+                return DFMOpticalMediaWidget::g_usedSize;
+            } else {
+                return pitmdata->fi->extraProperties()["fsUsed"];
+            }
         }
     }
 
     if (role == DataRoles::SizeTotalRole) {
         if (pitmdata->fi) {
-            return pitmdata->fi->extraProperties()["fsSize"];
+            //fixed:CD display size error
+            if (static_cast<DFMRootFileInfo::ItemType>(pitmdata->fi->fileType()) == DFMRootFileInfo::ItemType::UDisksOptical) {
+                return DFMOpticalMediaWidget::g_totalSize;
+            } else {
+                return pitmdata->fi->extraProperties()["fsSize"];
+            }
         }
     }
 
