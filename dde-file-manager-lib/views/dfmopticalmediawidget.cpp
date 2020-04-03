@@ -12,6 +12,10 @@ DWIDGET_USE_NAMESPACE
 
 using namespace DISOMasterNS;
 
+//fixed:CD display size error
+quint64 DFMOpticalMediaWidget::g_totalSize = 0;
+quint64 DFMOpticalMediaWidget::g_usedSize = 0;
+
 class DFMOpticalMediaWidgetPrivate
 {
 public:
@@ -109,6 +113,11 @@ void DFMOpticalMediaWidgetPrivate::setCurrentDevice(const QString &dev)
     curdev = dev;
     DeviceProperty dp = ISOMaster->getDevicePropertyCached(dev);
     setDeviceProperty(dp);
+
+    //fixed:CD display size error
+    DFMOpticalMediaWidget::g_usedSize = dp.data;
+    DFMOpticalMediaWidget::g_totalSize = dp.data + dp.avail;
+    //qDebug() << dp.datablocks << "Sectors" << DFMOpticalMediaWidget::g_usedSize / 1024 / 1024 << "MB" << (DFMOpticalMediaWidget::g_totalSize - DFMOpticalMediaWidget::g_usedSize) / 1024 / 1024 << "MB";
 }
 
 QString DFMOpticalMediaWidgetPrivate::getCurrentDevice() const
