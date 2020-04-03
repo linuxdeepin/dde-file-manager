@@ -11,6 +11,10 @@ class DFMOpticalMediaWidget : public QWidget
 {
     Q_OBJECT
 public:
+    //fixed:CD display size error
+    static quint64 g_totalSize;
+    static quint64 g_usedSize;
+
     explicit DFMOpticalMediaWidget(QWidget* parent);
     ~DFMOpticalMediaWidget();
 
