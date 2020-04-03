@@ -38,6 +38,7 @@ public:
     bool canIteratorDir() const override;
     bool canDrop() const override;
     bool canRedirectionFileUrl() const override;
+    bool canRename() const override;
     DUrl redirectedFileUrl() const override;
     DUrl getUrlByNewFileName(const QString &fileName) const override;
 
