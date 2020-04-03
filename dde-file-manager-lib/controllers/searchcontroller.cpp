@@ -397,6 +397,11 @@ bool SearchDiriterator::hasNext() const
 
             fileInfo->makeAbsolute();
 
+            //隐藏文件不支持索引和搜索
+            if (fileInfo->isHidden() == true) {
+                return false;
+            }
+
             if (m_hasIteratorByKeywordOfCurrentIt) {
                 DUrl url = m_fileUrl;
                 const DUrl &realUrl = fileInfo->fileUrl();
@@ -422,6 +427,7 @@ bool SearchDiriterator::hasNext() const
                 DUrl url = m_fileUrl;
                 const DUrl &realUrl = fileInfo->fileUrl();
 
+//                qDebug() << "search matched url = " << realUrl.path() + "/" + realUrl.fileName();
                 url.setSearchedFileUrl(realUrl);
 
                 childrens << url;
