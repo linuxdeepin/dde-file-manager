@@ -348,8 +348,12 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         //end
 
         QLabel* lbdf_l = new SectionKeyLabel();
+        QString fullText(text);
         text = lbdf_l->fontMetrics().elidedText(text, Qt::ElideMiddle, 150);
         lbdf_l->setText(text);
+        if (text != fullText) {
+            lbdf_l->setToolTip(fullText);
+        }
         QLabel* lbdf_r = new SectionKeyLabel(tr("%1 / %2").arg(FileUtils::formatSize(dskinuse)).arg(FileUtils::formatSize(dskspace)));
         if (!~dskinuse) {
             lbdf_r->setText(FileUtils::formatSize(dskspace));
