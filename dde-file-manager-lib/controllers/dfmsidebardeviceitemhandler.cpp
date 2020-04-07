@@ -86,8 +86,12 @@ DFMSideBarItem *DFMSideBarDeviceItemHandler::createItem(const DUrl &url)
     act->setVisible(actionlist.contains(MenuAction::Eject) ||
                     actionlist.contains(MenuAction::Unmount) ||
                     actionlist.contains(MenuAction::SafelyRemoveDrive));
-    lst.push_back(act);
-    item->setActionList(Qt::RightEdge, lst);
+
+    // 防止无图标的act也占用空间，item缩小时文字被压缩至空
+    if (act->isVisible()) {
+        lst.push_back(act);
+        item->setActionList(Qt::RightEdge, lst);
+    }
 
     return item;
 }
