@@ -56,7 +56,14 @@ SOURCES += \
     presenter/gridcore.cpp \
     config/dfmdesktopsettings.cpp \
     view/backgroundhelper.cpp \
-    dbus/dbusmonitor.cpp
+    dbus/dbusmonitor.cpp \
+    screen/abstractscreen.cpp \
+    screen/abstractscreenmanager.cpp \
+    screen/screenmanager.cpp \
+    screen/screenobject.cpp \
+    view/backgroundmanager.cpp \
+    screen/screenhelper.cpp \
+    view/backgroundwidget.cpp
 
 
 
@@ -82,7 +89,14 @@ HEADERS += \
     deventfilter.h \
     config/dfmdesktopsettings.h \
     view/backgroundhelper.h \
-    dbus/dbusmonitor.h
+    dbus/dbusmonitor.h \
+    screen/abstractscreen.h \
+    screen/abstractscreenmanager.h \
+    screen/screenmanager.h \
+    screen/screenobject.h \
+    view/backgroundmanager.h \
+    screen/screenhelper.h \
+    view/backgroundwidget.h
 
 RESOURCES +=
 
