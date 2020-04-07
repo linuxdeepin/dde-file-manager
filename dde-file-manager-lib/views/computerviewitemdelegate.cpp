@@ -129,10 +129,11 @@ void ComputerViewItemDelegate::paint(QPainter* painter, const QStyleOptionViewIt
 
     QFont smallf(par->font());
     smallf.setPixelSize(int(fontpixelsize * 0.85));
+   // smallf.setPixelSize(int(fontpixelsize * 0.85));
     painter->setFont(smallf);
     textrect.setLeft(option.rect.left() + leftmargin + iconsize + spacing);
     textrect.setRight(option.rect.right() - rightmargin);
-    textrect.setTop(option.rect.top() + topmargin + par->fontMetrics().height() + 3);
+    textrect.setTop(option.rect.top() + topmargin + par->fontMetrics().height() + 1);
     textrect.setHeight(fontpixelsize);
 
     quint64 sizeinuse = index.data(ComputerModel::DataRoles::SizeInUseRole).toULongLong();
