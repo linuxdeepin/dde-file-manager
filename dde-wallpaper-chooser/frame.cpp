@@ -391,7 +391,8 @@ void Frame::adjustModeSwitcherPoint()
     // 防止在低分辨率情况下切换控件和左边的工具栏重叠
     int x = width() / 2 - m_switchModeControl->width() / 2;
     if (x < tools_width) {
-        x = tools_width ;
+        //根据“桌面V20需求文档”中“屏保”的第8条修改（当屏幕分辨率太小左边文字和中间文件重叠时，中间的文字局右显示）
+        x = width()  - m_switchModeControl->width() - 5;
     }
 
     m_switchModeControl->move(x, (m_wallpaperList->y() - m_switchModeControl->height()) / 2);
