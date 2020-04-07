@@ -8,6 +8,8 @@
  **/
 
 #include "watermaskframe.h"
+
+#include <DSysInfo>
 #include <QFile>
 #include <QDebug>
 #include <QJsonParseError>
@@ -19,6 +21,8 @@
 #include <QImageReader>
 
 #include "util/xcb/xcb.h"
+
+DCORE_USE_NAMESPACE
 
 WaterMaskFrame::WaterMaskFrame(const QString &fileName, QWidget *parent) :
     QFrame(parent),
@@ -57,6 +61,12 @@ void WaterMaskFrame::loadConfig(const QString &fileName)
     QJsonParseError error;
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
     if (error.error == QJsonParseError::NoError) {
+        DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
+        switch (deepinType) {
+        default:
+            break;
+        }
+
         m_configs = QJsonObject::fromVariantMap(doc.toVariant().toMap());
         initUI();
     } else {
