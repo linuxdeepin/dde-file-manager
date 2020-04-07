@@ -18,39 +18,20 @@ ScreenManager::~ScreenManager()
 
 void ScreenManager::onScreenAdded(QScreen *screen)
 {
-    if (m_screens.contains(screen))
-        return;
-
     ScreenObjectPointer psc(new ScreenObject(screen));
-    m_screens.insert(screen,psc);
-    connectScreen(psc);
-
+    m_screens.append(psc);
     emit sigScreenChanged();
 }
 
 void ScreenManager::onScreenRemoved(QScreen *screen)
 {
-    auto psc = m_screens.take(screen);
-    if (psc.get() != nullptr){
-        disconnectScreen(psc);
-        emit sigScreenChanged();
+    for (int i = 0; i < m_screens.size(); ++i){
+        if (SCREENOBJECT(m_screens.at(i).get())->screen() == screen){
+            m_screens.remove(i);
+            break;
+        }
     }
-}
-
-void ScreenManager::onScreenGeometryChanged(const QRect &rect)
-{
-    ScreenObject *sc = SCREENOBJECT(sender());
-    if (sc != nullptr && m_screens.contains(sc->screen())) {
-        emit sigScreenGeometryChanged(m_screens.value(sc->screen()), rect);
-    }
-}
-
-void ScreenManager::onScreenAvailableGeometryChanged(const QRect &rect)
-{
-    ScreenObject *sc = SCREENOBJECT(sender());
-    if (sc != nullptr && m_screens.contains(sc->screen())) {
-        emit sigScreenAvailableGeometryChanged(m_screens.value(sc->screen()), rect);
-    }
+    emit sigScreenChanged();
 }
 
 void ScreenManager::init()
@@ -63,73 +44,27 @@ void ScreenManager::init()
     m_screens.clear();
     for (QScreen *sc : qApp->screens()){
         ScreenPointer psc(new ScreenObject(sc));
-        m_screens.insert(sc,psc);
-        connectScreen(psc);
+        m_screens.append(psc);
     }
-}
-
-void ScreenManager::connectScreen(ScreenPointer psc)
-{
-    connect(psc.get(),&AbstractScreen::sigGeometryChanged,this,
-            &ScreenManager::onScreenGeometryChanged);
-    connect(psc.get(),&AbstractScreen::sigAvailableGeometryChanged,this,
-            &ScreenManager::onScreenAvailableGeometryChanged);
-}
-
-
-void ScreenManager::disconnectScreen(ScreenPointer psc)
-{
-    disconnect(psc.get(),&AbstractScreen::sigGeometryChanged,this,
-               &ScreenManager::onScreenGeometryChanged);
-    disconnect(psc.get(),&AbstractScreen::sigAvailableGeometryChanged,this,
-                &ScreenManager::onScreenAvailableGeometryChanged);
 }
 
 ScreenPointer ScreenManager::primaryScreen()
 {
+    ScreenPointer ret;
     QScreen *primary = qApp->primaryScreen();
-    ScreenPointer ret = m_screens.value(primary);
+    for (ScreenPointer psc : m_screens){
+        if (SCREENOBJECT(psc.get())->screen() == primary){
+            ret = ScreenPointer(psc.get());
+            break;
+        }
+    }
     Q_ASSERT(ret.get() != nullptr);
     return ret;
 }
 
 QVector<ScreenPointer> ScreenManager::screens() const
 {
-    QVector<ScreenPointer> order;
-    for (QScreen *sc : qApp->screens()){
-        if (m_screens.contains(sc))
-            order.append(m_screens.value(sc));
-    }
-    return order;
-}
-
-QVector<ScreenPointer> ScreenManager::logicScreens() const
-{
-    QVector<ScreenPointer> order;
-    auto screens = qApp->screens();
-
-    //调整主屏幕到第一
-    QScreen *primary = qApp->primaryScreen();
-    screens.removeOne(primary);
-    screens.push_front(primary);
-
-    for (QScreen *sc : screens){
-        if (m_screens.contains(sc))
-            order.append(m_screens.value(sc));
-    }
-    return order;
-}
-
-ScreenPointer ScreenManager::screen(const QString &name) const
-{
-    ScreenPointer ret;
-    for (const ScreenPointer &sp : m_screens.values()) {
-        if (sp->name() == name){
-            ret = sp;
-            break;
-        }
-    }
-    return ret;
+    return m_screens;
 }
 
 qreal ScreenManager::devicePixelRatio() const
@@ -141,16 +76,4 @@ AbstractScreenManager::DisplayMode ScreenManager::displayMode() const
 {
     AbstractScreenManager::DisplayMode ret = AbstractScreenManager::DisplayMode(m_display->displayMode());
     return ret;
-}
-
-void ScreenManager::reset()
-{
-    if (m_display)
-    {
-        delete m_display;
-        m_display = nullptr;
-    }
-
-    m_display = new DBusDisplay(this);
-    init();
 }

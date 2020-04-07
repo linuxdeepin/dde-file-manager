@@ -22,20 +22,12 @@ public:
     explicit BackgroundManager(bool preview = false,QObject *parent = nullptr);
     ~BackgroundManager();
     bool isEnabled() const;
-    void setVisible(bool visible);
-    bool isVisible() const;
-    BackgroundWidgetPointer backgroundWidget(ScreenPointer) const;
-    //自定义背景，临时方案
-    void setBackgroundImage(const QString &screen,const QString &path);
 signals:
-    void sigBackgroundBuilded(int mode); //通知canvasview
+    void sigBackgroundEnableChanged();
 public slots:
-    void onBackgroundBuild();       //创建背景窗口
-    void onSkipBackgroundBuild();   //不创建背景窗口，直接发完成信号
-    void onResetBackgroundImage();
+    void onBackgroundBuild();
 protected slots:
-    void onRestBackgroundManager(); //重置背景，响应窗管改变
-    void onScreenGeometryChanged(ScreenPointer);    //响应屏幕大小改变
+    void onRestBackgroundManager();
 private:
     void init();
     BackgroundWidgetPointer createBackgroundWidget(ScreenPointer);
@@ -44,15 +36,11 @@ protected:
     WMInter *wmInter = nullptr;
     DWindowManagerHelper* windowManagerHelper = nullptr;
 private:
-    bool m_preview = false; //壁纸预览
+    bool m_preview = false;
     bool m_visible = true;
     int currentWorkspaceIndex = 0;
 
     QMap<ScreenPointer,BackgroundWidgetPointer> m_backgroundMap;
-
-    //记录设置的背景的壁纸，临时解决方案
-    QMap<QString, QString> m_backgroundImagePath;
-
 };
 
 #endif // BACKGROUNDMANAGER_H
