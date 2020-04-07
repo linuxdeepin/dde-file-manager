@@ -179,7 +179,10 @@ bool BookMarkManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) c
 
 bool BookMarkManager::touch(const QSharedPointer<DFMTouchFileEvent> &event) const
 {
-    BookMarkPointer item(new BookMark(event->url()));
+    //与其他书签储存逻辑保持一致，去掉url中的Query字符串
+    DUrl newUrl = event->url();
+    newUrl.setQuery("");
+    BookMarkPointer item(new BookMark(newUrl));
     QUrlQuery query(event->url());
 
     item->m_created = QDateTime::currentDateTime();
@@ -317,15 +320,22 @@ void BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
 
         if (map.value("name").toString() == item->getName()) {
             QString fromQueryStr = "mount_point=" + map.value("mountPoint").toString() + "&locate_url=" + map.value("locateUrl").toString();
-            bookMarkFrom.setQuery(fromQueryStr);
+//            bookMarkFrom.setQuery(fromQueryStr);
             bookMarkFrom.setFragment(map.value("name").toString());
 
             QString locateUrl = bookMarkTo.bookmarkTargetUrl().toLocalFile();
-            int indexOfFirstDir = locateUrl.indexOf("/", 1);
+            int indexOfFirstDir = 0;
+            //挂载的设备目录特殊处理
+            if (locateUrl.startsWith("/media")) {
+                indexOfFirstDir = locateUrl.lastIndexOf("/", locateUrl.length() - 1);
+            }
+            else {
+                indexOfFirstDir = locateUrl.indexOf("/", 1);
+            }
             locateUrl = locateUrl.mid(indexOfFirstDir);
 
             QString toQueryStr = "mount_point=" + map.value("mountPoint").toString() + "&locate_url=" + locateUrl;
-            bookMarkTo.setQuery(toQueryStr);
+//            bookMarkTo.setQuery(toQueryStr);
             bookMarkTo.setFragment(map.value("name").toString());
 
             map["locateUrl"] = locateUrl;
