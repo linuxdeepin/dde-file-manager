@@ -31,6 +31,7 @@
 #endif
 
 #include "util/xcb/xcb.h"
+#include "backgroundmanager.h"
 
 using WallpaperSettings = Frame;
 
@@ -55,6 +56,8 @@ public:
 Desktop::Desktop()
     : d(new DesktopPrivate)
 {
+    auto ss = new BackgroundManager;
+    return;
     d->background = new BackgroundHelper();
     DesktopInfo desktoInfo;
     connect(d->background, &BackgroundHelper::enableChanged, this, &Desktop::onBackgroundEnableChanged);

@@ -49,3 +49,38 @@ QDebug operator<<(QDebug deg, const DockRect &rect)
 
     return deg;
 }
+
+DBusDockGeometry::DBusDockGeometry(QObject *parent)
+    : QDBusAbstractInterface(staticObjectPath(), staticObjectPath(), staticInterfaceName(), QDBusConnection::sessionBus(), parent)
+{
+    qDBusRegisterMetaType<DockRect>();
+    QDBusConnection::sessionBus().connect(this->service(), this->path(), "org.freedesktop.DBus.Properties",  "PropertiesChanged","sa{sv}as", this, SLOT(__propertyChanged__(QDBusMessage)));
+}
+
+DBusDockGeometry::~DBusDockGeometry()
+{
+    QDBusConnection::sessionBus().disconnect(service(), path(), "org.freedesktop.DBus.Properties",  "PropertiesChanged",  "sa{sv}as", this, SLOT(__propertyChanged__(QDBusMessage)));
+}
+
+DockInfo *DockInfo::ins()
+{
+    static DockInfo ins;
+    return  &ins;
+}
+
+DBusDockGeometry *DockInfo::dockGeo() const
+{
+    return m_dockgeo;
+}
+
+DBusDock *DockInfo::dock() const
+{
+    return m_dock;
+}
+
+DockInfo::DockInfo(QObject *parent)
+    : QObject (parent)
+{
+    m_dockgeo = new DBusDockGeometry(this);
+    m_dock = new DBusDock(this);
+}

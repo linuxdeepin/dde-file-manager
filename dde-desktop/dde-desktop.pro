@@ -63,7 +63,9 @@ SOURCES += \
     screen/screenobject.cpp \
     view/backgroundmanager.cpp \
     screen/screenhelper.cpp \
-    view/backgroundwidget.cpp
+    view/backgroundwidget.cpp \
+    screen/screenmanagerwayland.cpp \
+    screen/screenobjectwayland.cpp
 
 
 
@@ -96,7 +98,9 @@ HEADERS += \
     screen/screenobject.h \
     view/backgroundmanager.h \
     screen/screenhelper.h \
-    view/backgroundwidget.h
+    view/backgroundwidget.h \
+    screen/screenmanagerwayland.h \
+    screen/screenobjectwayland.h
 
 RESOURCES +=
 
