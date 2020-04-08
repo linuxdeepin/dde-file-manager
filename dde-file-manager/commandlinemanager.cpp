@@ -130,13 +130,26 @@ void CommandLineManager::processCommand()
     foreach (QString path, positionalArguments()) {
         if (!CommandLineManager::instance()->isSet("raw")) {
 
-            QDir t_dir(path);
+//            QDir t_dir(path);
 
-            if (t_dir.exists(path)) {
-                if (!path.startsWith("file://")) {
-                    path = "file://" + t_dir.absolutePath();
-                }
-            }
+//            if (t_dir.exists(path)) {
+//                if (!path.startsWith("file://")) {
+//                    path = "file://" + t_dir.absolutePath();
+//                    QRegExp regexp("[%]");
+//                    if (path.contains(regexp)) {
+//                        QString left, right, encode;
+//                        int idx = path.indexOf(regexp);
+//                        while (idx != -1) {
+//                            left = path.left(idx);
+//                            right = path.mid(idx + 1);
+//                            encode = QUrl::toPercentEncoding(path.mid(idx, 1));
+//                            path = left + encode + right;
+//                            idx = path.indexOf(regexp, idx + 1);
+//                        }
+//                    }
+//                }
+//            }
+
 
             // 路径中包含特殊字符的全部uri编码
             QRegExp regexp("[#&@\\!\\?]");

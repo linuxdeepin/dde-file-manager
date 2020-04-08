@@ -28,6 +28,7 @@
 #include "view/canvasgridview.h"
 
 #include "deventfilter.h"
+#include "controllers/appcontroller.h"
 
 // DBus
 #include "filedialogmanager_adaptor.h"
@@ -101,6 +102,8 @@ int main(int argc, char *argv[])
     DApplication::loadDXcbPlugin();
 
     DApplication app(argc, argv);
+
+    AppController::instance();
 
     bool preload = false;
     bool fileDialogOnly = false;
