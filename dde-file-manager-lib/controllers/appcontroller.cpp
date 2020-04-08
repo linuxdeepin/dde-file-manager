@@ -1238,6 +1238,9 @@ void AppController::setHasLaunchAppInterface(bool hasLaunchAppInterface)
 
 bool AppController::hasLaunchAppInterface() const
 {
+    while (!m_hasLaunchAppInterface) {
+        qDebug() << "LaunchAppInterface is loading...";
+    }
     return m_hasLaunchAppInterface;
 }
 
