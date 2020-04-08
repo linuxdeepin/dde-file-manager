@@ -1,43 +1,45 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="en">
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2482"/>
+        <location filename="../view/canvasgridview.cpp" line="2645"/>
         <source>Icon size</source>
         <translation>Icon size</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2488"/>
+        <location filename="../view/canvasgridview.cpp" line="2651"/>
         <source>Auto merge</source>
         <translation>Auto merge</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2503"/>
+        <location filename="../view/canvasgridview.cpp" line="2666"/>
         <source>Auto arrange</source>
         <translation>Auto arrange</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2559"/>
+        <location filename="../view/canvasgridview.cpp" line="2722"/>
         <source>Set Wallpaper</source>
         <translation>Set Wallpaper</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2561"/>
+        <location filename="../view/canvasgridview.cpp" line="2724"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Wallpaper and Screensaver</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2642"/>
+        <location filename="../view/canvasgridview.cpp" line="2819"/>
         <source>Properties</source>
         <translation>Properties</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2543"/>
+        <location filename="../view/canvasgridview.cpp" line="2706"/>
         <source>Display Settings</source>
         <translation>Display Settings</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="2552"/>
+        <location filename="../view/canvasgridview.cpp" line="2715"/>
         <source>Corner Settings</source>
         <translation>Corner Settings</translation>
     </message>
@@ -81,59 +83,77 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="450"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="462"/>
         <source>Wallpaper Slideshow</source>
         <translation>Wallpaper Slideshow</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="482"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="504"/>
         <source>When login</source>
         <translation>When login</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="484"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="506"/>
         <source>When wakeup</source>
         <translation>When wakeup</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="528"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="554"/>
         <source>Require a password on wakeup</source>
         <translation>Require a password on wakeup</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="558"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="584"/>
         <source>Never</source>
         <translation>Never</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="559"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="585"/>
         <source>Wait:</source>
         <translation>Wait:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="592"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="619"/>
         <source>Wallpaper</source>
         <translation>Wallpaper</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="593"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="630"/>
         <source>Screensaver</source>
         <translation>Screensaver</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="666"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="700"/>
         <source>Only desktop</source>
         <translation>Only desktop</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="667"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="701"/>
         <source>Only lock screen</source>
         <translation>Only lock screen</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="695"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="729"/>
         <source>Apply</source>
         <translation>Apply</translation>
+    </message>
+</context>
+<context>
+    <name>WaterMaskFrame</name>
+    <message>
+        <location filename="../view/watermaskframe.cpp" line="236"/>
+        <source>Not authorized</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../view/watermaskframe.cpp" line="239"/>
+        <source>authorized</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../view/watermaskframe.cpp" line="242"/>
+        <source>In trial period</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -227,7 +227,25 @@ void WaterMaskFrame::initUI()
     }
 
     m_textLabel = new QLabel(this);
-    m_textLabel->setText(tr(maskText.toLatin1().data()));
+    if(isNeedState()){
+        ActiveState stateType = static_cast<ActiveState>(m_licenseInterface->AuthorizationState());
+        switch (stateType) {
+        case Unauthorized:
+        case AuthorizedLapse:
+        case TrialExpired:
+            m_textLabel->setText(tr("Not authorized"));
+            break;
+        case Authorized:
+            m_textLabel->setText(tr("authorized"));
+            break;
+        case TrialAuthorized:
+            m_textLabel->setText(tr("In trial period"));
+            break;
+        }
+    }else {
+        m_textLabel->setText("");
+    }
+
     m_textLabel->setFixedSize(maskTextWidth, maskTextHeight);
 
     if (maskTextAlign == "left") {
@@ -254,7 +272,7 @@ void WaterMaskFrame::initUI()
 
     mainLayout->addSpacing(maskLogoTextSpacing);
 
-    if (maskText.length() != 0) {
+    if (isNeedState()) {
         if (maskTextLayoutAlign == "left") {
             mainLayout->addWidget(m_textLabel, 0, Qt::AlignLeft | Qt::AlignVCenter);
         } else if (maskTextLayoutAlign == "right") {
@@ -306,13 +324,13 @@ QString WaterMaskFrame::getAuthorizationState()
     case Unauthorized:
     case AuthorizedLapse:
     case TrialExpired:
-        state = "Unauthorized";
+        state = "Not authorized";
         break;
     case Authorized:
-        state = "Authorized";
+        state = "authorized";
         break;
     case TrialAuthorized:
-        state = "TrialAuthorized";
+        state = "In trial period";
         break;
     }
     return state;
