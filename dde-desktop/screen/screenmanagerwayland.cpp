@@ -38,44 +38,7 @@ ScreenPointer ScreenManagerWayland::primaryScreen()
 
 QVector<ScreenPointer> ScreenManagerWayland::screens() const
 {
-    QVector<ScreenPointer> order;
-    for (const QDBusObjectPath &path : m_display->monitors()){
-        if (m_screens.contains(path.path()))
-            order.append(m_screens.value(path.path()));
-    }
-    return order;
-}
-
-QVector<ScreenPointer> ScreenManagerWayland::logicScreens() const
-{
-    QVector<ScreenPointer> order;
-    QString primaryName = m_display->primary();;
-
-    //调整主屏幕到第一
-    for (const QDBusObjectPath &path : m_display->monitors()){
-        if (m_screens.contains(path.path())){
-            ScreenPointer sp = m_screens.value(path.path());
-            if (sp->name() == primaryName){
-                order.push_front(sp);
-            }
-            else{
-                order.push_back(sp);
-            }
-        }
-    }
-    return order;
-}
-
-ScreenPointer ScreenManagerWayland::screen(const QString &name) const
-{
-    ScreenPointer ret;
-    for (const ScreenPointer &sp : m_screens.values()) {
-        if (sp->name() == name){
-            ret = sp;
-            break;
-        }
-    }
-    return ret;
+    return  m_screens.values().toVector();
 }
 
 qreal ScreenManagerWayland::devicePixelRatio() const
@@ -88,17 +51,6 @@ AbstractScreenManager::DisplayMode ScreenManagerWayland::displayMode() const
 {
     AbstractScreenManager::DisplayMode ret = AbstractScreenManager::DisplayMode(m_display->displayMode());
     return ret;
-}
-
-void ScreenManagerWayland::reset()
-{
-    if (m_display){
-        delete m_display;
-        m_display = nullptr;
-    }
-
-    m_display = new DBusDisplay(this);
-    init();
 }
 
 void ScreenManagerWayland::onMonitorChanged()
@@ -130,16 +82,23 @@ void ScreenManagerWayland::onMonitorChanged()
 void ScreenManagerWayland::onDockChanged()
 {
     auto screen = primaryScreen();
+    qDebug() << "dockkkkkkkkkkk" << screen->geometry() << screen->availableGeometry()
+             << qApp->primaryScreen()->geometry() << qApp->primaryScreen()->availableGeometry();
     emit sigScreenAvailableGeometryChanged(screen, screen->availableGeometry());
 }
 
 void ScreenManagerWayland::onScreenGeometryChanged(const QRect &rect)
 {
     ScreenObjectWayland *sc = SCREENOBJECT(sender());
-    if (sc != nullptr && m_screens.contains(sc->path())) {
+    if (sc != nullptr) {
         ScreenPointer sp = m_screens.value(sc->path());
-        emit sigScreenGeometryChanged(sp, rect);
+        if (sp.get() != nullptr) {
+            emit sigScreenGeometryChanged(sp, rect);
+        }
     }
+
+    qDebug() << "ddddddddddddddd" << sc->geometry() << sc->availableGeometry()
+             << qApp->primaryScreen()->geometry() << qApp->primaryScreen()->availableGeometry();
 }
 
 void ScreenManagerWayland::init()
@@ -148,12 +107,12 @@ void ScreenManagerWayland::init()
 
     //先尝试使用Qt信号，若有问题再使用DBUS的信号
     connect(qApp, &QGuiApplication::screenAdded, this, &ScreenManagerWayland::onMonitorChanged);
-    connect(m_display, &DBusDisplay::MonitorsChanged, this, &ScreenManagerWayland::onMonitorChanged);
-    connect(m_display, &DBusDisplay::PrimaryChanged, this, &AbstractScreenManager::sigScreenChanged);
+    connect(qApp, &QGuiApplication::screenRemoved, this, &ScreenManagerWayland::onMonitorChanged);
+    connect(qApp, &QGuiApplication::primaryScreenChanged, this, &AbstractScreenManager::sigScreenChanged);
     connect(m_display, &DBusDisplay::DisplayModeChanged, this, &AbstractScreenManager::sigDisplayModeChanged);
 
     //dock区处理
-    connect(DockInfoIns,&DBusDock::FrontendWindowRectChanged,this, &ScreenManagerWayland::onDockChanged);
+    connect(DockGeoIns,&DBusDockGeometry::GeometryChanged,this, &ScreenManagerWayland::onDockChanged);
     connect(DockInfoIns,&DBusDock::HideModeChanged,this, &ScreenManagerWayland::onDockChanged);
     connect(DockInfoIns,&DBusDock::PositionChanged,this, &ScreenManagerWayland::onDockChanged);
 
