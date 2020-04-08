@@ -3,6 +3,7 @@
 
 #include "abstractscreenmanager.h"
 #include <QVector>
+#include <QMap>
 
 class QScreen;
 class ScreenObject;
@@ -20,10 +21,14 @@ public:
 protected slots:
     void onScreenAdded(QScreen *screen);
     void onScreenRemoved(QScreen *screen);
+    void onScreenGeometryChanged(const QRect &);
+    void onScreenAvailableGeometryChanged(const QRect &);
 private:
     void init();
+    void connectScreen(ScreenPointer);
+    void disconnectScreen(ScreenPointer);
 protected:
-    QVector<ScreenPointer> m_screens;
+    QMap<QScreen *,ScreenPointer> m_screens;
     DBusDisplay *m_display = nullptr;
 };
 

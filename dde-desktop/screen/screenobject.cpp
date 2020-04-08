@@ -1,4 +1,5 @@
 #include "screenobject.h"
+#include <qdebug.h>
 
 ScreenObject::ScreenObject(QScreen *sc, QObject *parent)
   : AbstractScreen(parent)
@@ -14,12 +15,17 @@ ScreenObject::~ScreenObject()
 
 QString ScreenObject::name() const
 {
-    m_screen->name();
+    return m_screen->name();
 }
 
 QRect ScreenObject::geometry() const
 {
-    m_screen->geometry();
+    return m_screen->geometry();
+}
+
+QRect ScreenObject::availableGeometry() const
+{
+    return m_screen->availableGeometry();
 }
 
 QScreen *ScreenObject::screen() const
@@ -29,5 +35,6 @@ QScreen *ScreenObject::screen() const
 
 void ScreenObject::init()
 {
-    connect(m_screen,SIGNAL(geometryChanged(const QRect &geometry)),this,SIGNAL(sigGeometryChanged()));
+    connect(m_screen,SIGNAL(geometryChanged(const QRect &)),this,SIGNAL(sigGeometryChanged(const QRect &)));
+    connect(m_screen,SIGNAL(availableGeometryChanged(const QRect &)),this,SIGNAL(sigAvailableGeometryChanged(const QRect &)));
 }
