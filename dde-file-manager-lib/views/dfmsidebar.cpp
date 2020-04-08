@@ -598,7 +598,7 @@ void DFMSideBar::initDeviceConnection()
     });
     connect(devicesWatcher, &DAbstractFileWatcher::fileDeleted, this, [this](const DUrl &url) {
         int index = findItem(url, groupName(Device));
-        if (m_sidebarView->currentIndex().row() == index) {
+        if (m_sidebarView->currentIndex().row() == index && index != -1) {
             index = findItem(DUrl::fromLocalFile(QDir::homePath()), groupName(Common));
             DFMSideBarItem * item = m_sidebarModel->itemFromIndex(index);
             if (item) {
