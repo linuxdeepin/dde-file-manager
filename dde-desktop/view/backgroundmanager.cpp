@@ -2,6 +2,8 @@
 #include "screen/screenhelper.h"
 #include "util/xcb/xcb.h"
 
+#include <qpa/qplatformwindow.h>
+
 BackgroundManager::BackgroundManager(bool preview, QObject *parent)
     : QObject(parent)
     ,windowManagerHelper(DWindowManagerHelper::instance())
@@ -60,6 +62,10 @@ void BackgroundManager::onRestBackgroundManager()
         connect(ScreenHelper::screenManager(), &AbstractScreenManager::sigDisplayModeChanged,
                 this, &BackgroundManager::onBackgroundBuild);
 
+        //屏幕大小改变
+        connect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenGeometryChanged,
+                this, &BackgroundManager::onScreenGeometryChanged);
+
         //创建背景
         onBackgroundBuild();
     } else {
@@ -88,6 +94,18 @@ void BackgroundManager::onRestBackgroundManager()
     emit sigBackgroundEnableChanged();
 }
 
+void BackgroundManager::onScreenGeometryChanged(ScreenPointer sp)
+{
+    BackgroundWidgetPointer bw = m_backgroundMap.value(sp);
+    if (bw.get() != nullptr){
+        bw->setGeometry(sp->geometry());
+        bw->windowHandle()->handle()->setGeometry(sp->geometry());
+        //todo 背景处理
+        bw->setPixmap(QPixmap("/home/uos/Pictures/Wallpapers/abc-123.jpg").scaled(sp->geometry().size()));
+        qDebug() << __FUNCTION__ << sp->name() << sp->geometry() << ScreenMrg->devicePixelRatio() << ScreenMrg->displayMode();
+    }
+}
+
 void BackgroundManager::init()
 {
     if (!m_preview) {
@@ -106,7 +124,8 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(ScreenPointer 
     bwp->setProperty("isPreview", m_preview);
     bwp->setProperty("myScreen", screen->name()); // assert screen->name is unique
     bwp->createWinId();
-    bwp->setGeometry(screen->geometry()); //经过缩放的区域
+    bwp->windowHandle()->handle()->setGeometry(screen->geometry()); //经过缩放的区域
+    bwp->setGeometry(screen->geometry());
 
     if (m_preview) {
         bwp->setWindowFlags(bwp->windowFlags() | Qt::BypassWindowManagerHint | Qt::WindowDoesNotAcceptFocus);
@@ -114,10 +133,6 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(ScreenPointer 
         Xcb::XcbMisc::instance().set_window_type(bwp->winId(), Xcb::XcbMisc::Desktop);
     }
 
-    if (m_visible)
-        bwp->show();
-    else
-        qDebug() << "Disable show the background widget, of screen:" << screen << screen->geometry();
     return bwp;
 }
 
@@ -134,7 +149,8 @@ void BackgroundManager::onBackgroundBuild()
     qDebug() << "screen mode" << mode;
 
     //实际是单屏
-    if (AbstractScreenManager::Showonly == mode || AbstractScreenManager::Duplicate == mode){
+    if ((AbstractScreenManager::Showonly == mode) || (AbstractScreenManager::Duplicate == mode) //仅显示和复制
+            || (ScreenMrg->screens().count() == 1)){   //单屏模式
         //移除多余的屏幕
         m_backgroundMap.clear();
 
@@ -142,13 +158,13 @@ void BackgroundManager::onBackgroundBuild()
         BackgroundWidgetPointer bwp = createBackgroundWidget(primary);
         m_backgroundMap.insert(primary,bwp);
         //todo 设置壁纸
-        bwp->setPixmap(QPixmap("/home/uos/Pictures/Wallpapers/abc-123.jpg"));
-
+        bwp->setPixmap(QPixmap("/home/uos/Pictures/Wallpapers/abc-123.jpg").scaled(primary->geometry().size()));
+        if (m_visible)
+            bwp->show();
+        else
+            qDebug() << "Disable show the background widget, of screen:" << primary->name() << primary->geometry();
     }
     else {  //多屏
 
     }
-
-
-    //删除没有的屏幕
 }

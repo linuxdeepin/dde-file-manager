@@ -109,10 +109,10 @@ public:
         return qvariant_cast< QDBusObjectPath >(property("BuiltinOutput"));
     }
 
-    Q_PROPERTY(short DisplayMode READ displayMode NOTIFY DisplayModeChanged)
+    Q_PROPERTY(uchar DisplayMode READ displayMode NOTIFY DisplayModeChanged)
     inline short displayMode() const
     {
-        return qvariant_cast< short >(property("DisplayMode"));
+        return qvariant_cast< uchar >(property("DisplayMode"));
     }
 
     Q_PROPERTY(bool HasChanged READ hasChanged NOTIFY HasChangedChanged)

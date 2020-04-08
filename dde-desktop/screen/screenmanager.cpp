@@ -19,19 +19,41 @@ ScreenManager::~ScreenManager()
 void ScreenManager::onScreenAdded(QScreen *screen)
 {
     ScreenObjectPointer psc(new ScreenObject(screen));
-    m_screens.append(psc);
+    m_screens.insert(screen,psc);
+    connectScreen(psc);
+
     emit sigScreenChanged();
 }
 
 void ScreenManager::onScreenRemoved(QScreen *screen)
 {
-    for (int i = 0; i < m_screens.size(); ++i){
-        if (SCREENOBJECT(m_screens.at(i).get())->screen() == screen){
-            m_screens.remove(i);
-            break;
+    auto psc = m_screens.take(screen);
+    if (psc.get() != nullptr){
+        disconnectScreen(psc);
+        emit sigScreenChanged();
+    }
+}
+
+void ScreenManager::onScreenGeometryChanged(const QRect &rect)
+{
+    QScreen *sc = dynamic_cast<QScreen *>(sender());
+    if (sc != nullptr) {
+        ScreenPointer sp = m_screens.value(sc);
+        if (sp.get() != nullptr) {
+            emit sigScreenGeometryChanged(sp, rect);
         }
     }
-    emit sigScreenChanged();
+}
+
+void ScreenManager::onScreenAvailableGeometryChanged(const QRect &rect)
+{
+    QScreen *sc = dynamic_cast<QScreen *>(sender());
+    if (sc != nullptr) {
+        ScreenPointer sp = m_screens.value(sc);
+        if (sp.get() != nullptr) {
+            emit sigScreenAvailableGeometryChanged(sp, rect);
+        }
+    }
 }
 
 void ScreenManager::init()
@@ -44,27 +66,39 @@ void ScreenManager::init()
     m_screens.clear();
     for (QScreen *sc : qApp->screens()){
         ScreenPointer psc(new ScreenObject(sc));
-        m_screens.append(psc);
+        m_screens.insert(sc,psc);
+        connectScreen(psc);
     }
+}
+
+void ScreenManager::connectScreen(ScreenPointer psc)
+{
+    connect(psc.get(),&AbstractScreen::sigGeometryChanged,this,
+            &ScreenManager::onScreenGeometryChanged);
+    connect(psc.get(),&AbstractScreen::sigAvailableGeometryChanged,this,
+            &ScreenManager::onScreenAvailableGeometryChanged);
+}
+
+
+void ScreenManager::disconnectScreen(ScreenPointer psc)
+{
+    disconnect(psc.get(),&AbstractScreen::sigAvailableGeometryChanged,this,
+               &ScreenManager::onScreenGeometryChanged);
+    disconnect(psc.get(),&AbstractScreen::sigAvailableGeometryChanged,this,
+                &ScreenManager::onScreenAvailableGeometryChanged);
 }
 
 ScreenPointer ScreenManager::primaryScreen()
 {
-    ScreenPointer ret;
     QScreen *primary = qApp->primaryScreen();
-    for (ScreenPointer psc : m_screens){
-        if (SCREENOBJECT(psc.get())->screen() == primary){
-            ret = ScreenPointer(psc.get());
-            break;
-        }
-    }
+    ScreenPointer ret = m_screens.value(primary);
     Q_ASSERT(ret.get() != nullptr);
     return ret;
 }
 
 QVector<ScreenPointer> ScreenManager::screens() const
 {
-    return m_screens;
+    return m_screens.values().toVector();
 }
 
 qreal ScreenManager::devicePixelRatio() const

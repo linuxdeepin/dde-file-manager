@@ -25,9 +25,10 @@ public:
 signals:
     void sigBackgroundEnableChanged();
 public slots:
-    void onBackgroundBuild();
+    void onBackgroundBuild();       //创建背景窗口
 protected slots:
-    void onRestBackgroundManager();
+    void onRestBackgroundManager(); //重置背景，响应窗管改变
+    void onScreenGeometryChanged(ScreenPointer);    //响应屏幕大小改变
 private:
     void init();
     BackgroundWidgetPointer createBackgroundWidget(ScreenPointer);

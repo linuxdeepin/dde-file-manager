@@ -12,8 +12,10 @@ public:
     virtual ~AbstractScreen();
     virtual QString name() const = 0;
     virtual QRect geometry() const = 0;
+    virtual QRect availableGeometry() const = 0;
 signals:
-    void sigGeometryChanged();
+    void sigGeometryChanged(const QRect &);
+    void sigAvailableGeometryChanged(const QRect &);
 public slots:
 private:
     Q_DISABLE_COPY(AbstractScreen)
