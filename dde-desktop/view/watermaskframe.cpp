@@ -29,6 +29,16 @@ WaterMaskFrame::WaterMaskFrame(const QString &fileName, QWidget *parent) :
     m_configFile(fileName)
 {
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    m_licenseInterface = std::unique_ptr<ComDeepinLicenseInterface> { new ComDeepinLicenseInterface {
+            "com.deepin.license",
+            "/com/deepin/license/Info",
+            QDBusConnection::systemBus()
+        }
+    };
+
+    if (m_licenseInterface) {
+        QObject::connect(m_licenseInterface.get(), &ComDeepinLicenseInterface::LicenseStateChange, this, &WaterMaskFrame::updateAuthorizationState);
+    }
 
     bool isConfigFileExist = checkConfigFile(m_configFile);
     if (isConfigFileExist) {
@@ -61,13 +71,15 @@ void WaterMaskFrame::loadConfig(const QString &fileName)
     QJsonParseError error;
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
     if (error.error == QJsonParseError::NoError) {
-        DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
-        switch (deepinType) {
-        default:
-            break;
+        m_configs = QJsonObject::fromVariantMap(doc.toVariant().toMap());
+
+        if(!parseJson(getSysType()))
+            return;
+        if(isNeedState()){
+            if(!parseJson(getAuthorizationState()))
+                return;
         }
 
-        m_configs = QJsonObject::fromVariantMap(doc.toVariant().toMap());
         initUI();
     } else {
         qDebug() << error.errorString();
@@ -96,21 +108,21 @@ void WaterMaskFrame::initUI()
     if (m_configs.contains("maskLogoLayoutAlign")) {
         maskLogoLayoutAlign = m_configs.value("maskLogoLayoutAlign").toString();
     } else {
-        maskLogoLayoutAlign = "center";
+        maskLogoLayoutAlign = "left";
     }
 
     int maskLogoWidth;
     if (m_configs.contains("maskLogoWidth")) {
         maskLogoWidth = m_configs.value("maskLogoWidth").toInt();
     } else {
-        maskLogoWidth = 239;
+        maskLogoWidth = 128;
     }
 
     int maskLogoHeight;
     if (m_configs.contains("maskLogoHeight")) {
         maskLogoHeight = m_configs.value("maskLogoHeight").toInt();
     } else {
-        maskLogoHeight = 64;
+        maskLogoHeight = 48;
     }
 
     QString maskText;
@@ -124,21 +136,21 @@ void WaterMaskFrame::initUI()
     if (m_configs.contains("maskTextLayoutAlign")) {
         maskTextLayoutAlign = m_configs.value("maskTextLayoutAlign").toString();
     } else {
-        maskTextLayoutAlign = "center";
+        maskTextLayoutAlign = "right";
     }
 
     QString maskTextColor;
     if (m_configs.contains("maskTextColor")) {
         maskTextColor = m_configs.value("maskTextColor").toString();
     } else {
-        maskTextColor = "#04d5f7";
+        maskTextColor = "rgba(245,245,245,245.130)";
     }
 
     QString maskTextFontSize;
     if (m_configs.contains("maskTextFontSize")) {
         maskTextFontSize = m_configs.value("maskTextFontSize").toString();
     } else {
-        maskTextFontSize = "22px";
+        maskTextFontSize = "12px";
     }
 
 
@@ -146,21 +158,21 @@ void WaterMaskFrame::initUI()
     if (m_configs.contains("maskTextWidth")) {
         maskTextWidth = m_configs.value("maskTextWidth").toInt();
     } else {
-        maskTextWidth = 139;
+        maskTextWidth = 100;
     }
 
     int maskTextHeight;
     if (m_configs.contains("maskTextHeight")) {
         maskTextHeight = m_configs.value("maskTextHeight").toInt();
     } else {
-        maskTextHeight = 40;
+        maskTextHeight = 30;
     }
 
     QString maskTextAlign;
     if (m_configs.contains("maskTextAlign")) {
         maskTextAlign = m_configs.value("maskTextAlign").toString();
     } else {
-        maskTextAlign = "center";
+        maskTextAlign = "left";
     }
 
     int maskLogoTextSpacing;
@@ -173,13 +185,13 @@ void WaterMaskFrame::initUI()
     if (m_configs.contains("maskWidth")) {
         m_maskWidth = m_configs.value("maskWidth").toInt();
     } else {
-        m_maskWidth = 239;
+        m_maskWidth = 228;
     }
 
     if (m_configs.contains("maskHeight")) {
         m_maskHeight = m_configs.value("maskHeight").toInt();
     } else {
-        m_maskHeight = 110;
+        m_maskHeight = 48;
     }
 
     if (m_configs.contains("xRightBottom")) {
@@ -215,18 +227,18 @@ void WaterMaskFrame::initUI()
     }
 
     m_textLabel = new QLabel(this);
-    m_textLabel->setText(maskText);
+    m_textLabel->setText(tr(maskText.toLatin1().data()));
     m_textLabel->setFixedSize(maskTextWidth, maskTextHeight);
 
     if (maskTextAlign == "left") {
-        m_textLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+        m_textLabel->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
     } else if (maskTextAlign == "right") {
-        m_textLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        m_textLabel->setAlignment(Qt::AlignRight | Qt::AlignBottom);
     } else if (maskTextAlign == "center") {
         m_textLabel->setAlignment(Qt::AlignCenter);
     }
 
-    QVBoxLayout *mainLayout = new QVBoxLayout;
+    QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->setSpacing(0);
     mainLayout->addStretch();
 
@@ -262,9 +274,79 @@ void WaterMaskFrame::initUI()
     setStyleSheet(style);
 }
 
+QString WaterMaskFrame::getSysType()
+{
+    QString sysType;
+    DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
+    switch (deepinType) {
+    case DSysInfo::DeepinType::DeepinDesktop:
+        sysType = "DeepinDesktop";
+        break;
+    case DSysInfo::DeepinType::DeepinProfessional:
+        sysType = "DeepinProfessional";
+        break;
+    case DSysInfo::DeepinType::DeepinServer:
+        sysType = "DeepinServer";
+        break;
+    case DSysInfo::DeepinType::DeepinPersonal:
+        sysType = "DeepinPersonal";
+        break;
+    default:
+        qDebug() << "DeepinType is error";
+    }
+
+    return sysType;
+}
+
+QString WaterMaskFrame::getAuthorizationState()
+{
+    QString state;
+    ActiveState stateType = static_cast<ActiveState>(m_licenseInterface->AuthorizationState());
+    switch (stateType) {
+    case Unauthorized:
+    case AuthorizedLapse:
+    case TrialExpired:
+        state = "Unauthorized";
+        break;
+    case Authorized:
+        state = "Authorized";
+        break;
+    case TrialAuthorized:
+        state = "TrialAuthorized";
+        break;
+    }
+    return state;
+}
+
+bool WaterMaskFrame::isNeedState()
+{
+    DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
+    return DSysInfo::DeepinType::DeepinDesktop != deepinType;
+}
+
+bool WaterMaskFrame::parseJson(QString key)
+{
+    if(key.isNull() || key.isEmpty() || (!m_configs.contains(key))){
+        qDebug() << key <<"WaterMask load Config fail";
+        return false;
+    }
+    else {
+        m_configs = m_configs.value(key).toObject();
+        return true;
+    }
+}
+
 void WaterMaskFrame::updatePosition()
 {
     int x = static_cast<QWidget *>(parent())->width() - m_xRightBottom - m_maskWidth;
     int y = static_cast<QWidget *>(parent())->height() - m_yRightBottom - m_maskHeight;
     move(x, y);
+}
+
+void WaterMaskFrame::updateAuthorizationState()
+{
+    bool isConfigFileExist = checkConfigFile(m_configFile);
+    if (isConfigFileExist) {
+        loadConfig(m_configFile);
+    }
 }

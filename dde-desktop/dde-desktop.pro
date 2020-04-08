@@ -57,15 +57,7 @@ SOURCES += \
     config/dfmdesktopsettings.cpp \
     view/backgroundhelper.cpp \
     dbus/dbusmonitor.cpp \
-    screen/abstractscreen.cpp \
-    screen/abstractscreenmanager.cpp \
-    screen/screenmanager.cpp \
-    screen/screenobject.cpp \
-    view/backgroundmanager.cpp \
-    screen/screenhelper.cpp \
-    view/backgroundwidget.cpp \
-    screen/screenmanagerwayland.cpp \
-    screen/screenobjectwayland.cpp
+    dbus/licenceInterface.cpp
 
 
 
@@ -92,15 +84,7 @@ HEADERS += \
     config/dfmdesktopsettings.h \
     view/backgroundhelper.h \
     dbus/dbusmonitor.h \
-    screen/abstractscreen.h \
-    screen/abstractscreenmanager.h \
-    screen/screenmanager.h \
-    screen/screenobject.h \
-    view/backgroundmanager.h \
-    screen/screenhelper.h \
-    view/backgroundwidget.h \
-    screen/screenmanagerwayland.h \
-    screen/screenobjectwayland.h
+    dbus/licenceInterface.h
 
 RESOURCES +=
 
