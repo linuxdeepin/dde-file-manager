@@ -32,8 +32,6 @@
 
 #include "util/xcb/xcb.h"
 #include "backgroundmanager.h"
-#include "canvasviewmanager.h"
-#include "screen/screenhelper.h"
 
 using WallpaperSettings = Frame;
 
@@ -46,13 +44,8 @@ using ZoneSettings = ZoneMainWindow;
 class DesktopPrivate
 {
 public:
-#if USINGOLD
     CanvasGridView      screenFrame;
     BackgroundHelper *background = nullptr;
-#else
-    BackgroundManager *m_background = nullptr;
-    CanvasViewManager *m_canvas = nullptr;
-#endif
     WallpaperSettings *wallpaperSettings{ nullptr };
 
 #ifndef DISABLE_ZONE
@@ -63,7 +56,8 @@ public:
 Desktop::Desktop()
     : d(new DesktopPrivate)
 {
-#if USINGOLD
+    auto ss = new BackgroundManager;
+    return;
     d->background = new BackgroundHelper();
     DesktopInfo desktoInfo;
     connect(d->background, &BackgroundHelper::enableChanged, this, &Desktop::onBackgroundEnableChanged);
@@ -82,9 +76,6 @@ Desktop::Desktop()
     // 任意控件改变位置都可能会引起主窗口被其它屏幕上的窗口所遮挡
     connect(d->background, &BackgroundHelper::backgroundGeometryChanged, this, &Desktop::onBackgroundGeometryChanged);
     onBackgroundEnableChanged();
-#else
-    d->m_background = new BackgroundManager;
-#endif
 }
 
 Desktop::~Desktop()
@@ -105,7 +96,6 @@ static void setWindowFlag(QWidget *w, Qt::WindowType flag, bool on)
 #endif
 }
 
-#if USINGOLD
 void Desktop::onBackgroundEnableChanged()
 {
     qInfo() << "Primary Screen:" << qApp->primaryScreen();
@@ -205,7 +195,7 @@ void Desktop::onBackgroundGeometryChanged(QWidget *l)
         l->show();
     }
 }
-#endif
+
 void Desktop::loadData()
 {
     Presenter::instance()->init();
@@ -213,56 +203,27 @@ void Desktop::loadData()
 
 void Desktop::loadView()
 {
-#if USINGOLD //old;
     d->screenFrame.initRootUrl();
-#else
-    d->m_canvas = new CanvasViewManager(d->m_background);
-#endif
 }
 
-void Desktop::showWallpaperSettings(QString name, int mode)
+void Desktop::showWallpaperSettings(int mode)
 {
-    if(name.isNull() || name.isEmpty()){
-        name = ScreenHelper::screenManager()->primaryScreen()->name();
-    }
     if (d->wallpaperSettings) {
         d->wallpaperSettings->deleteLater();
         d->wallpaperSettings = nullptr;
     }
 
-    d->wallpaperSettings = new WallpaperSettings(name, Frame::Mode(mode));
+    d->wallpaperSettings = new WallpaperSettings(Frame::Mode(mode));
     connect(d->wallpaperSettings, &Frame::done, this, [ = ] {
         d->wallpaperSettings->deleteLater();
         d->wallpaperSettings = nullptr;
     });
     connect(d->wallpaperSettings, &Frame::aboutHide, this, [this] {
-        //const QString &desktopImage = d->wallpaperSettings->desktopBackground(); /*** old code ***/
-        QPair<QString, QString> screenImage = d->wallpaperSettings->desktopBackground();
+        const QString &desktopImage = d->wallpaperSettings->desktopBackground();
 
-#if 0
         if (!desktopImage.isEmpty())
             d->background->setBackground(desktopImage);
-#else
-            d->m_background->setBackgroundImage(screenImage.first, screenImage.second);
-#endif
     }, Qt::DirectConnection);
-
-    //屏幕有改变直接退出壁纸设置
-    auto close = [this](){
-        qDebug() << "screen changed , wallpaperSettings is exiting";
-        if (d->wallpaperSettings) {
-            d->wallpaperSettings->close();
-            d->wallpaperSettings->deleteLater();
-            d->wallpaperSettings = nullptr;
-        }
-    };
-    connect(ScreenMrg, &AbstractScreenManager::sigScreenChanged,[close](){
-            close();
-    });
-    connect(ScreenMrg, &AbstractScreenManager::sigScreenGeometryChanged,[close](){
-            close();
-    });
-    //end
 
     d->wallpaperSettings->show();
     d->wallpaperSettings->grabKeyboard();
@@ -290,52 +251,33 @@ void Desktop::showZoneSettings()
 
 void Desktop::initDebugDBus(QDBusConnection &conn)
 {
-#if USINGOLD
     if (!conn.registerObject(DesktopCanvasPath, &d->screenFrame,
                              QDBusConnection::ExportScriptableSlots)) {
         qDebug() << "registerObject Failed" << conn.lastError();
         exit(0x0004);
     }
-#endif
 }
 
-void Desktop::EnableUIDebug(bool enable)
+CanvasGridView *Desktop::getView()
 {
-    for (CanvasViewPointer view: d->m_canvas->canvas().values()){
-        view->EnableUIDebug(enable);
-        view->update();
-    }
-}
-
-void Desktop::Reset()
-{
-    ScreenMrg->reset();
-    if (d->m_background->isEnabled()){
-        d->m_background->onBackgroundBuild();
-    }
-    else {
-        d->m_background->onSkipBackgroundBuild();
-    }
+    return (&(d->screenFrame));
 }
 
 void Desktop::Show()
 {
-#if    USINGOLD
     d->screenFrame.show();
-#endif
 }
 
-void Desktop::ShowWallpaperChooser(const QString &screen)
+void Desktop::ShowWallpaperChooser()
 {
-    showWallpaperSettings(screen,Frame::WallpaperMode);
+    showWallpaperSettings(Frame::WallpaperMode);
 }
 
-void Desktop::ShowScreensaverChooser(const QString &screen)
+void Desktop::ShowScreensaverChooser()
 {
-    showWallpaperSettings(screen,Frame::ScreenSaverMode);
+    showWallpaperSettings(Frame::ScreenSaverMode);
 }
 
-#if USINGOLD
 #ifdef QT_DEBUG
 void Desktop::logAllScreenLabel()
 {
@@ -354,5 +296,4 @@ void Desktop::mapLabelScreen(int labelIndex, int screenIndex)
     if (d->background)
         d->background->mapLabelScreen(labelIndex, screenIndex);
 }
-#endif
 #endif // QT_DEBUG

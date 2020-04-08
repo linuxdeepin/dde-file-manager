@@ -82,7 +82,7 @@ void ScreenManager::connectScreen(ScreenPointer psc)
 
 void ScreenManager::disconnectScreen(ScreenPointer psc)
 {
-    disconnect(psc.get(),&AbstractScreen::sigAvailableGeometryChanged,this,
+    disconnect(psc.get(),&AbstractScreen::sigGeometryChanged,this,
                &ScreenManager::onScreenGeometryChanged);
     disconnect(psc.get(),&AbstractScreen::sigAvailableGeometryChanged,this,
                 &ScreenManager::onScreenAvailableGeometryChanged);

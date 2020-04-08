@@ -200,6 +200,64 @@ void ShowTimeoutChanged();
 void FrontendWindowRectChanged();
 };
 
+class DBusDockGeometry: public QDBusAbstractInterface
+{
+    Q_OBJECT
+
+private slots:
+    void __propertyChanged__(const QDBusMessage& msg)
+    {
+        QList<QVariant> arguments = msg.arguments();
+        if (3 != arguments.count())
+            return;
+        QString interfaceName = msg.arguments().at(0).toString();
+        if (interfaceName !="com.deepin.dde.Dock")
+            return;
+        QVariantMap changedProps = qdbus_cast<QVariantMap>(arguments.at(1).value<QDBusArgument>());
+        foreach(const QString &prop, changedProps.keys()) {
+        const QMetaObject* self = metaObject();
+            for (int i=self->propertyOffset(); i < self->propertyCount(); ++i) {
+                QMetaProperty p = self->property(i);
+                if (p.name() == prop) {
+                Q_EMIT p.notifySignal().invoke(this);
+                }
+            }
+        }
+   }
+public:
+    static inline const char *staticInterfaceName()
+    { return "com.deepin.dde.Dock"; }
+    static inline const char *staticServiceName()
+    { return "com.deepin.dde.Dock";}
+    static inline const char *staticObjectPath()
+    { return "/com/deepin/dde/Dock";}
+
+public:
+    explicit DBusDockGeometry(QObject *parent = 0);
+
+    ~DBusDockGeometry();
+    Q_PROPERTY(DockRect Geometry READ geometry NOTIFY GeometryChanged)
+    inline DockRect geometry() const
+    { return qvariant_cast< DockRect >(property("geometry")); }
+Q_SIGNALS:
+    void GeometryChanged();
+};
+
+class DockInfo : public QObject
+{
+    Q_OBJECT
+public:
+    static DockInfo *ins();
+    DBusDockGeometry *dockGeo() const;
+    DBusDock *dock() const;
+private:
+    DockInfo(QObject *parent = nullptr);
+    DBusDockGeometry *m_dockgeo = nullptr;
+    DBusDock *m_dock = nullptr;
+};
+#define DockInfoIns DockInfo::ins()->dock()
+#define DockGeoIns DockInfo::ins()->dockGeo()
+
 namespace com {
   namespace deepin {
     namespace dde {
