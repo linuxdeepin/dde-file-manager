@@ -36,23 +36,17 @@ void ScreenManager::onScreenRemoved(QScreen *screen)
 
 void ScreenManager::onScreenGeometryChanged(const QRect &rect)
 {
-    QScreen *sc = dynamic_cast<QScreen *>(sender());
-    if (sc != nullptr) {
-        ScreenPointer sp = m_screens.value(sc);
-        if (sp.get() != nullptr) {
-            emit sigScreenGeometryChanged(sp, rect);
-        }
+    ScreenObject *sc = SCREENOBJECT(sender());
+    if (sc != nullptr && m_screens.contains(sc->screen())) {
+        emit sigScreenGeometryChanged(m_screens.value(sc->screen()), rect);
     }
 }
 
 void ScreenManager::onScreenAvailableGeometryChanged(const QRect &rect)
 {
-    QScreen *sc = dynamic_cast<QScreen *>(sender());
-    if (sc != nullptr) {
-        ScreenPointer sp = m_screens.value(sc);
-        if (sp.get() != nullptr) {
-            emit sigScreenAvailableGeometryChanged(sp, rect);
-        }
+    ScreenObject *sc = SCREENOBJECT(sender());
+    if (sc != nullptr && m_screens.contains(sc->screen())) {
+        emit sigScreenAvailableGeometryChanged(m_screens.value(sc->screen()), rect);
     }
 }
 
@@ -98,7 +92,29 @@ ScreenPointer ScreenManager::primaryScreen()
 
 QVector<ScreenPointer> ScreenManager::screens() const
 {
-    return m_screens.values().toVector();
+    QVector<ScreenPointer> order;
+    for (QScreen *sc : qApp->screens()){
+        if (m_screens.contains(sc))
+            order.append(m_screens.value(sc));
+    }
+    return order;
+}
+
+QVector<ScreenPointer> ScreenManager::logicScreens() const
+{
+    QVector<ScreenPointer> order;
+    auto screens = qApp->screens();
+
+    //调整主屏幕到第一
+    QScreen *primary = qApp->primaryScreen();
+    screens.removeOne(primary);
+    screens.push_front(primary);
+
+    for (QScreen *sc : screens){
+        if (m_screens.contains(sc))
+            order.append(m_screens.value(sc));
+    }
+    return order;
 }
 
 qreal ScreenManager::devicePixelRatio() const

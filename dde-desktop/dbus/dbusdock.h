@@ -44,7 +44,8 @@ class DBusDock: public QDBusAbstractInterface
 {
     Q_OBJECT
 
-    Q_SLOT void __propertyChanged__(const QDBusMessage& msg)
+private slots:
+    void __propertyChanged__(const QDBusMessage& msg)
     {
         QList<QVariant> arguments = msg.arguments();
         if (3 != arguments.count())
@@ -66,6 +67,10 @@ class DBusDock: public QDBusAbstractInterface
 public:
     static inline const char *staticInterfaceName()
     { return "com.deepin.dde.daemon.Dock"; }
+    static inline const char *staticServiceName()
+    { return "com.deepin.dde.daemon.Dock";}
+    static inline const char *staticObjectPath()
+    { return "/com/deepin/dde/daemon/Dock";}
 
 public:
     explicit DBusDock(QObject *parent = 0);
@@ -188,17 +193,34 @@ Q_SIGNALS: // SIGNALS
     void EntryAdded(const QDBusObjectPath &entryPath, const int index);
     void EntryRemoved(const QString &entryId);
     void ServiceRestarted();
-// begin property changed signals
-void ActiveWindowChanged();
-void DisplayModeChanged();
-void EntriesChanged();
-void HideModeChanged();
-void HideStateChanged();
-void PositionChanged();
-void IconSizeChanged();
-void ShowTimeoutChanged();
-void FrontendWindowRectChanged();
+    // begin property changed signals
+    void ActiveWindowChanged();
+    void DisplayModeChanged();
+    void EntriesChanged();
+    void HideModeChanged();
+    void HideStateChanged();
+    void PositionChanged();
+    void IconSizeChanged();
+    void ShowTimeoutChanged();
+    void FrontendWindowRectChanged();
 };
+
+struct DockRectI{
+    qint32 x;
+    qint32 y;
+    qint32 width;
+    qint32 height;
+
+    operator QRect() const
+    {
+        return QRect(x, y, width, height);
+    }
+};
+Q_DECLARE_METATYPE(DockRectI)
+
+QDBusArgument &operator<<(QDBusArgument &argument, const DockRect &rect);
+const QDBusArgument &operator>>(const QDBusArgument &argument, DockRect &rect);
+QDebug operator<<(QDebug deg, const DockRect &rect);
 
 class DBusDockGeometry: public QDBusAbstractInterface
 {
@@ -224,6 +246,7 @@ private slots:
             }
         }
    }
+
 public:
     static inline const char *staticInterfaceName()
     { return "com.deepin.dde.Dock"; }
@@ -236,9 +259,9 @@ public:
     explicit DBusDockGeometry(QObject *parent = 0);
 
     ~DBusDockGeometry();
-    Q_PROPERTY(DockRect Geometry READ geometry NOTIFY GeometryChanged)
-    inline DockRect geometry() const
-    { return qvariant_cast< DockRect >(property("geometry")); }
+    Q_PROPERTY(DockRectI geometry READ getGeometry NOTIFY GeometryChanged)
+    inline DockRectI getGeometry() const
+    { return qvariant_cast< DockRectI >(property("geometry")); }
 Q_SIGNALS:
     void GeometryChanged();
 };

@@ -32,6 +32,7 @@
 
 #include "util/xcb/xcb.h"
 #include "backgroundmanager.h"
+#include "screen/screenhelper.h"
 
 using WallpaperSettings = Frame;
 
@@ -56,8 +57,10 @@ public:
 Desktop::Desktop()
     : d(new DesktopPrivate)
 {
-    auto ss = new BackgroundManager;
-    return;
+    //auto ss = new BackgroundManager;
+    //d->screenFrame.setWindowFlag(Qt::FramelessWindowHint, true);
+    //d->screenFrame.setParent(ss->backgroundWidget(ScreenMrg->primaryScreen()).get());
+    //return;
     d->background = new BackgroundHelper();
     DesktopInfo desktoInfo;
     connect(d->background, &BackgroundHelper::enableChanged, this, &Desktop::onBackgroundEnableChanged);

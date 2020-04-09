@@ -45,8 +45,7 @@ QRect ScreenObjectWayland::availableGeometry() const
     if ( 1 == dockHideMode || 3 == dockHideMode) //隐藏与智能隐藏
         return ret;
 
-    //todo dbus获取的dock区有问题
-    DockRect dockrect = DockGeoIns->geometry(); //经过缩放处理后的docks
+    DockRectI dockrect = DockGeoIns->getGeometry(); //经过缩放处理后的docks
     switch (DockInfoIns->position()) {
     case 0: //上
         ret.setY(dockrect.height);
@@ -67,6 +66,11 @@ QRect ScreenObjectWayland::availableGeometry() const
     return ret;
 }
 
+QRect ScreenObjectWayland::handleGeometry() const
+{
+    return m_monitor->rect();
+}
+
 QString ScreenObjectWayland::path() const
 {
     return  m_monitor->path();
@@ -75,6 +79,7 @@ QString ScreenObjectWayland::path() const
 void ScreenObjectWayland::init()
 {
     connect(m_monitor,&DBusMonitor::monitorRectChanged,[this](){
+        qDebug() << "eeeeeeeeeeeeeeeeee" << m_monitor->rect();
         emit sigGeometryChanged(m_monitor->rect());
     });
 }
