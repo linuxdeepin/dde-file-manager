@@ -14,7 +14,8 @@ public:
     explicit AbstractScreenManager(QObject *parent = nullptr);
     virtual ~AbstractScreenManager();
     virtual ScreenPointer primaryScreen() = 0;
-    virtual QVector<ScreenPointer> screens() const = 0;
+    virtual QVector<ScreenPointer> screens() const = 0; //按接入顺序
+    virtual QVector<ScreenPointer> logicScreens() const = 0;    //主屏第一，其他按接入顺序
     virtual qreal devicePixelRatio() const = 0;
     virtual DisplayMode displayMode() const = 0;
 signals:

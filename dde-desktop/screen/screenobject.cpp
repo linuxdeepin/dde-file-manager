@@ -1,11 +1,13 @@
 #include "screenobject.h"
+
+#include <qpa/qplatformscreen.h>
 #include <qdebug.h>
 
 ScreenObject::ScreenObject(QScreen *sc, QObject *parent)
   : AbstractScreen(parent)
   ,m_screen(sc)
 {
-
+    init();
 }
 
 ScreenObject::~ScreenObject()
@@ -26,6 +28,11 @@ QRect ScreenObject::geometry() const
 QRect ScreenObject::availableGeometry() const
 {
     return m_screen->availableGeometry();
+}
+
+QRect ScreenObject::handleGeometry() const
+{
+    return m_screen->handle()->geometry();
 }
 
 QScreen *ScreenObject::screen() const

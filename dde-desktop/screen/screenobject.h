@@ -12,6 +12,7 @@ public:
     QString name() const Q_DECL_OVERRIDE;
     QRect geometry() const Q_DECL_OVERRIDE;
     QRect availableGeometry() const Q_DECL_OVERRIDE;
+    QRect handleGeometry() const Q_DECL_OVERRIDE;
 public:
     QScreen *screen() const;
 private:

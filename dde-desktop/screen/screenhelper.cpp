@@ -5,7 +5,7 @@
 
 AbstractScreenManager *ScreenHelper::screenManager()
 {
-    if (DesktopInfo().waylandDectected() || 1){
+    if (DesktopInfo().waylandDectected()){
         static ScreenManagerWayland ins;
         return &ins;
     }

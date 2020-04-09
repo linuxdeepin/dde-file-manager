@@ -38,7 +38,32 @@ ScreenPointer ScreenManagerWayland::primaryScreen()
 
 QVector<ScreenPointer> ScreenManagerWayland::screens() const
 {
-    return  m_screens.values().toVector();
+    QVector<ScreenPointer> order;
+    for (const QDBusObjectPath &path : m_display->monitors()){
+        if (m_screens.contains(path.path()))
+            order.append(m_screens.value(path.path()));
+    }
+    return order;
+}
+
+QVector<ScreenPointer> ScreenManagerWayland::logicScreens() const
+{
+    QVector<ScreenPointer> order;
+    QString primaryName = m_display->primary();;
+
+    //调整主屏幕到第一
+    for (const QDBusObjectPath &path : m_display->monitors()){
+        if (m_screens.contains(path.path())){
+            ScreenPointer sp = m_screens.value(path.path());
+            if (sp->name() == primaryName){
+                order.push_front(sp);
+            }
+            else{
+                order.push_back(sp);
+            }
+        }
+    }
+    return order;
 }
 
 qreal ScreenManagerWayland::devicePixelRatio() const
@@ -82,23 +107,16 @@ void ScreenManagerWayland::onMonitorChanged()
 void ScreenManagerWayland::onDockChanged()
 {
     auto screen = primaryScreen();
-    qDebug() << "dockkkkkkkkkkk" << screen->geometry() << screen->availableGeometry()
-             << qApp->primaryScreen()->geometry() << qApp->primaryScreen()->availableGeometry();
     emit sigScreenAvailableGeometryChanged(screen, screen->availableGeometry());
 }
 
 void ScreenManagerWayland::onScreenGeometryChanged(const QRect &rect)
 {
     ScreenObjectWayland *sc = SCREENOBJECT(sender());
-    if (sc != nullptr) {
+    if (sc != nullptr && m_screens.contains(sc->path())) {
         ScreenPointer sp = m_screens.value(sc->path());
-        if (sp.get() != nullptr) {
-            emit sigScreenGeometryChanged(sp, rect);
-        }
+        emit sigScreenGeometryChanged(sp, rect);
     }
-
-    qDebug() << "ddddddddddddddd" << sc->geometry() << sc->availableGeometry()
-             << qApp->primaryScreen()->geometry() << qApp->primaryScreen()->availableGeometry();
 }
 
 void ScreenManagerWayland::init()
@@ -112,7 +130,7 @@ void ScreenManagerWayland::init()
     connect(m_display, &DBusDisplay::DisplayModeChanged, this, &AbstractScreenManager::sigDisplayModeChanged);
 
     //dock区处理
-    connect(DockGeoIns,&DBusDockGeometry::GeometryChanged,this, &ScreenManagerWayland::onDockChanged);
+    connect(DockInfoIns,&DBusDock::FrontendWindowRectChanged,this, &ScreenManagerWayland::onDockChanged);
     connect(DockInfoIns,&DBusDock::HideModeChanged,this, &ScreenManagerWayland::onDockChanged);
     connect(DockInfoIns,&DBusDock::PositionChanged,this, &ScreenManagerWayland::onDockChanged);
 

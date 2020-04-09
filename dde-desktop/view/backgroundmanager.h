@@ -22,10 +22,14 @@ public:
     explicit BackgroundManager(bool preview = false,QObject *parent = nullptr);
     ~BackgroundManager();
     bool isEnabled() const;
+    void setVisible(bool visible);
+    bool isVisible() const;
+    BackgroundWidgetPointer backgroundWidget(ScreenPointer) const;
 signals:
     void sigBackgroundEnableChanged();
 public slots:
     void onBackgroundBuild();       //创建背景窗口
+    void onResetBackgroundImage();
 protected slots:
     void onRestBackgroundManager(); //重置背景，响应窗管改变
     void onScreenGeometryChanged(ScreenPointer);    //响应屏幕大小改变
