@@ -1,4 +1,5 @@
 #include "backgroundwidget.h"
+#include "canvasgridview.h"
 
 #include <QPaintEvent>
 #include <QBackingStore>
@@ -9,11 +10,19 @@
 #include <QPainter>
 #include <QImage>
 #include <qdebug.h>
-
+#include <QScreen>
 BackgroundWidget::BackgroundWidget(QWidget *parent)
     : QWidget(parent)
 {
 
+}
+
+BackgroundWidget::~BackgroundWidget()
+{
+    if (m_view.get() != nullptr){
+        m_view->setParent(nullptr);
+        m_view = nullptr;
+    }
 }
 
 void BackgroundWidget::setPixmap(const QPixmap &pixmap)
@@ -54,4 +63,10 @@ void BackgroundWidget::setVisible(bool visible)
     }
 #endif
     QWidget::setVisible(visible);
+}
+
+void BackgroundWidget::setView(const QSharedPointer<CanvasGridView> &v)
+{
+    v->setParent(this);
+    m_view = v;
 }

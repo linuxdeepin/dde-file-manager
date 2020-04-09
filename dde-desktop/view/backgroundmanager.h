@@ -26,7 +26,7 @@ public:
     bool isVisible() const;
     BackgroundWidgetPointer backgroundWidget(ScreenPointer) const;
 signals:
-    void sigBackgroundEnableChanged();
+    void sigBackgroundBuilded(int mode); //通知canvasview
 public slots:
     void onBackgroundBuild();       //创建背景窗口
     void onResetBackgroundImage();

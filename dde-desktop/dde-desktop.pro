@@ -66,7 +66,8 @@ SOURCES += \
     view/backgroundwidget.cpp \
     screen/screenmanagerwayland.cpp \
     screen/screenobjectwayland.cpp \
-    dbus/licenceInterface.cpp
+    dbus/licenceInterface.cpp \
+    view/canvasviewmanager.cpp
 
 
 
@@ -102,7 +103,8 @@ HEADERS += \
     screen/screenhelper.h \
     view/backgroundwidget.h \
     screen/screenmanagerwayland.h \
-    screen/screenobjectwayland.h
+    screen/screenobjectwayland.h \
+    view/canvasviewmanager.h
 
 RESOURCES +=
 
