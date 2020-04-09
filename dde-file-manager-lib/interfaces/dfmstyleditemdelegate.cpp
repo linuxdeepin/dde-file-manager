@@ -224,9 +224,24 @@ QPixmap DFMStyledItemDelegate::getIconPixmap(const QIcon &icon, const QSize &siz
     bool useHighDpiPixmaps = qApp->testAttribute(Qt::AA_UseHighDpiPixmaps);
     qApp->setAttribute(Qt::AA_UseHighDpiPixmaps, false);
 
+
     QSize icon_size = icon.actualSize(size, mode, state);
 
-    if (icon_size.width() > size.width() || icon_size.height() > size.height())
+    //确保特殊比例icon的高或宽不为0
+    bool isSpecialSize = false;
+    QSize tempSize(size.width(), size.height());
+    while (icon_size.width() < 1) {
+        tempSize.setHeight(tempSize.height() * 2);
+        icon_size = icon.actualSize(tempSize, mode, state);
+        isSpecialSize = true;
+    }
+    while (icon_size.height() < 1) {
+        tempSize.setWidth(tempSize.width() * 2);
+        icon_size = icon.actualSize(tempSize, mode, state);
+        isSpecialSize = true;
+    }
+
+    if ((icon_size.width() > size.width() || icon_size.height() > size.height()) && !isSpecialSize)
         icon_size.scale(size, Qt::KeepAspectRatio);
 
     QSize pixmapSize = icon_size * pixelRatio;
@@ -234,6 +249,16 @@ QPixmap DFMStyledItemDelegate::getIconPixmap(const QIcon &icon, const QSize &siz
 
     // restore the value
     qApp->setAttribute(Qt::AA_UseHighDpiPixmaps, useHighDpiPixmaps);
+
+    //约束特殊比例icon的尺寸
+    if (isSpecialSize) {
+        if (px.width() > size.width() * pixelRatio) {
+            px = px.scaled(size.width() * pixelRatio, px.height(), Qt::IgnoreAspectRatio);
+        }
+        else if (px.height() > size.height() * pixelRatio) {
+            px = px.scaled(px.width(), size.height() * pixelRatio, Qt::IgnoreAspectRatio);
+        }
+    }
 
     if (px.width() > icon_size.width() * pixelRatio) {
         px.setDevicePixelRatio(px.width() / (qreal)icon_size.width());
