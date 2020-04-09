@@ -380,6 +380,18 @@ void DiskControlWidget::onDriveConnected(const QString &deviceId)
             return;
         }
 
+        QDBusInterface loginManager("org.freedesktop.login1",
+                                    "/org/freedesktop/login1/user/self",
+                                    "org.freedesktop.login1.User",
+                                    QDBusConnection::systemBus());
+        QVariant replay = loginManager.property(("State"));
+        if (replay.isValid()) {
+            QString state = replay.toString();
+            if (state != "active") {
+                return;
+            }
+        }
+
         // Do auto mount stuff..
         QStringList blDevList = DDiskManager::blockDevices({});
         for (const QString& blDevStr : blDevList) {
