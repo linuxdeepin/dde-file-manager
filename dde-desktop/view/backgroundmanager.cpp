@@ -87,24 +87,28 @@ void BackgroundManager::onRestBackgroundManager()
 
         disconnect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenChanged,
                 this, &BackgroundManager::onBackgroundBuild);
+        disconnect(ScreenHelper::screenManager(), &AbstractScreenManager::sigDisplayModeChanged,
+                this, &BackgroundManager::onBackgroundBuild);
+        disconnect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenGeometryChanged,
+                this, &BackgroundManager::onScreenGeometryChanged);
 
         //销毁窗口
         m_backgroundMap.clear();
-    }
 
-    emit sigBackgroundEnableChanged();
+        //通知view重建
+        emit sigBackgroundBuilded(ScreenMrg->displayMode());
+    }
 }
 
 void BackgroundManager::onScreenGeometryChanged(ScreenPointer sp)
 {
     BackgroundWidgetPointer bw = m_backgroundMap.value(sp);
     if (bw.get() != nullptr){
-        bw->windowHandle()->handle()->setGeometry(sp->handleGeometry());
+        //bw->windowHandle()->handle()->setGeometry(sp->handleGeometry()); //不能设置，设置了widget的geometry会被乱改
         bw->setGeometry(sp->geometry());
 
         //todo 背景处理
         onResetBackgroundImage();
-        qDebug() << __FUNCTION__ << sp->name() << sp->geometry() << ScreenMrg->devicePixelRatio() << ScreenMrg->displayMode();
     }
 }
 
@@ -126,7 +130,7 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(ScreenPointer 
     bwp->setProperty("isPreview", m_preview);
     bwp->setProperty("myScreen", screen->name()); // assert screen->name is unique
     bwp->createWinId();
-    bwp->windowHandle()->handle()->setGeometry(screen->handleGeometry()); //分辨率原始大小
+    //bwp->windowHandle()->handle()->setGeometry(screen->handleGeometry()); //不能设置，设置了widget的geometry会被乱改//分辨率原始大小
     bwp->setGeometry(screen->geometry()); //经过缩放的区域
 
     if (m_preview) {
@@ -168,7 +172,7 @@ void BackgroundManager::onBackgroundBuild()
     AbstractScreenManager::DisplayMode mode = ScreenMrg->displayMode();
     qDebug() << "screen mode" << mode;
 
-    //删除所有
+    //删除不存在的屏
     m_backgroundMap.clear();
 
     //实际是单屏
@@ -202,6 +206,9 @@ void BackgroundManager::onBackgroundBuild()
 
         onResetBackgroundImage();
     }
+
+    //通知view重建
+    emit sigBackgroundBuilded(mode);
 }
 
 //临时使用

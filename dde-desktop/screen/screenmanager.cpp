@@ -18,6 +18,9 @@ ScreenManager::~ScreenManager()
 
 void ScreenManager::onScreenAdded(QScreen *screen)
 {
+    if (m_screens.contains(screen))
+        return;
+
     ScreenObjectPointer psc(new ScreenObject(screen));
     m_screens.insert(screen,psc);
     connectScreen(psc);

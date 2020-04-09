@@ -37,7 +37,7 @@ QRect ScreenObject::handleGeometry() const
 
 QScreen *ScreenObject::screen() const
 {
-    return  m_screen;
+    return m_screen;
 }
 
 void ScreenObject::init()
