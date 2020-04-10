@@ -58,10 +58,14 @@ void BackgroundManager::onRestBackgroundManager()
         //屏幕改变
         connect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenChanged,
                 this, &BackgroundManager::onBackgroundBuild);
+        disconnect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenChanged,
+                this, &BackgroundManager::onSkipBackgroundBuild);
 
         //显示模式改变
         connect(ScreenHelper::screenManager(), &AbstractScreenManager::sigDisplayModeChanged,
                 this, &BackgroundManager::onBackgroundBuild);
+        disconnect(ScreenHelper::screenManager(), &AbstractScreenManager::sigDisplayModeChanged,
+                this, &BackgroundManager::onSkipBackgroundBuild);
 
         //屏幕大小改变
         connect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenGeometryChanged,
@@ -70,25 +74,34 @@ void BackgroundManager::onRestBackgroundManager()
         //创建背景
         onBackgroundBuild();
     } else {
-        if (!wmInter) {
-            return;
-        }
 
         // 清理数据
-        gsettings->deleteLater();
-        gsettings = nullptr;
+        if (gsettings){
+            gsettings->deleteLater();
+            gsettings = nullptr;
+        }
 
-        wmInter->deleteLater();
-        wmInter = nullptr;
+        if (wmInter){
+            wmInter->deleteLater();
+            wmInter = nullptr;
+        }
 
         //currentWallpaper.clear();
         currentWorkspaceIndex = 0;
         //backgroundPixmap = QPixmap();
-
+        //屏幕改变
+        connect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenChanged,
+                this, &BackgroundManager::onSkipBackgroundBuild);
         disconnect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenChanged,
                 this, &BackgroundManager::onBackgroundBuild);
+
+        //显示模式改变
+        connect(ScreenHelper::screenManager(), &AbstractScreenManager::sigDisplayModeChanged,
+                this, &BackgroundManager::onSkipBackgroundBuild);
         disconnect(ScreenHelper::screenManager(), &AbstractScreenManager::sigDisplayModeChanged,
                 this, &BackgroundManager::onBackgroundBuild);
+
+        //没有背景所以不用关心
         disconnect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenGeometryChanged,
                 this, &BackgroundManager::onScreenGeometryChanged);
 
@@ -144,6 +157,7 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(ScreenPointer 
 
 bool BackgroundManager::isEnabled() const
 {
+    return false;
     // 只支持kwin，或未开启混成的桌面环境
     return windowManagerHelper->windowManagerName() == DWindowManagerHelper::KWinWM || !windowManagerHelper->hasComposite();
 }
@@ -170,7 +184,7 @@ void BackgroundManager::onBackgroundBuild()
 {
     //屏幕模式判断
     AbstractScreenManager::DisplayMode mode = ScreenMrg->displayMode();
-    qDebug() << "screen mode" << mode;
+    qDebug() << "11111111111111111111111screen mode" << mode;
 
     //删除不存在的屏
     m_backgroundMap.clear();
@@ -209,6 +223,13 @@ void BackgroundManager::onBackgroundBuild()
 
     //通知view重建
     emit sigBackgroundBuilded(mode);
+}
+
+void BackgroundManager::onSkipBackgroundBuild()
+{
+    qDebug() << "2222222222222222screen mode" << ScreenMrg->displayMode();
+    //通知view重建
+    emit sigBackgroundBuilded(ScreenMrg->displayMode());
 }
 
 //临时使用

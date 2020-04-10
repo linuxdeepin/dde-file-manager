@@ -29,6 +29,7 @@ signals:
     void sigBackgroundBuilded(int mode); //通知canvasview
 public slots:
     void onBackgroundBuild();       //创建背景窗口
+    void onSkipBackgroundBuild();   //不创建背景窗口，直接发完成信号
     void onResetBackgroundImage();
 protected slots:
     void onRestBackgroundManager(); //重置背景，响应窗管改变
