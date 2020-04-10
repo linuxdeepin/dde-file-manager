@@ -235,9 +235,11 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
             }
             const DAbstractFileInfoPointer &f = createFileInfo(this, url);
             if (f && f->exists()) {
-                if (DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteFilesClearTrashDialog, DFMUrlListBaseEvent(nullptr, event->fileUrlList())) == DDialog::Accepted) {
+                static bool lock = false;
+                if (!lock && DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteFilesClearTrashDialog, DFMUrlListBaseEvent(nullptr, event->fileUrlList())) == DDialog::Accepted) {
+                    lock = true;
                     result = CALL_CONTROLLER(deleteFiles);
-
+                    lock = false;
                     if (result.toBool()) {
                         for (const DUrl &url : event->fileUrlList()) {
                             emit fileDeleted(url);
@@ -245,9 +247,16 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
                     }
 
                 }
+                if (lock) {
+                    result = CALL_CONTROLLER(deleteFiles);
+                    if (result.toBool()) {
+                        for (const DUrl &url : event->fileUrlList()) {
+                            emit fileDeleted(url);
+                        }
+                    }
+                }
                 break;
-            }
-            else {
+            } else {
                 continue;
             }
         }
