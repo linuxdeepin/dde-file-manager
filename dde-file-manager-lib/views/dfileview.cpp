@@ -1993,11 +1993,7 @@ void DFileView::initUI()
     setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
 //    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    //fix 原有代码，默认使用复制，导致项目拖入侧边栏使用的复制
-    //setDefaultDropAction(Qt::CopyAction);
-    //修改为默认使用移动
-    setDefaultDropAction(Qt::MoveAction);
-    //end
+    setDefaultDropAction(Qt::CopyAction);
 
     // disable auto remove item when drop of MoveAction finished
     setDragDropOverwriteMode(true);

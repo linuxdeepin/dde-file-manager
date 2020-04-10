@@ -115,7 +115,7 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
         }
     }
 
-    Qt::DropAction action = canDropMimeData(item, event->mimeData(), event->proposedAction());
+    Qt::DropAction action = canDropMimeData(item, event->mimeData(), Qt::MoveAction);
     if (action == Qt::IgnoreAction) {
         action = canDropMimeData(item, event->mimeData(), event->possibleActions());
     }
