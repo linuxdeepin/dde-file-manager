@@ -17,6 +17,7 @@
 #include "dfileservices.h"
 #include "../config/config.h"
 #include "dabstractfileinfo.h"
+#include "interfaces/dfmstandardpaths.h"
 
 class GridManagerPrivate
 {
@@ -111,6 +112,37 @@ public:
 
         for (const DAbstractFileInfoPointer &info : fileInfoList) {
             existItems.insert(info->fileUrl().toString(), 0);
+
+            //避免第一次启动的时候，没有执行dde-first-run脚本，因此没有计算机和回收站文件产生
+            if (info->fileUrl().fileName() == "dde-computer.desktop"
+                    || info->fileUrl().fileName() == "dde-trash.desktop") {
+                QString t_filePath = info->fileUrl().path();
+                qDebug() << "desktop file judge:" << t_filePath;
+
+                QFile t_file(t_filePath);
+                if (t_file.exists()) {
+                    //没有文件内容,拷贝share下的desktop到桌面
+                    t_file.open(QIODevice::ReadOnly);
+                    if (t_file.readAll().length() == 0) {
+                        qDebug() << "desktop file is empty:" << t_filePath;
+                        t_file.remove(t_filePath);
+                        t_file.flush();
+                        t_file.close();
+                        QString t_absoluteFileLocate = "/usr/share/applications/" + info->fileUrl().fileName();
+                        qDebug() << "desktop file is in:" << t_absoluteFileLocate;
+                        if (QFile::copy(t_absoluteFileLocate, t_filePath)) {
+                            qDebug() << "desktop file is copy right:" << t_absoluteFileLocate << "to" << t_filePath;
+                        }
+                    }
+                }
+
+                else {
+                    QString t_absoluteFileLocate = "/usr/share/applications/" + info->fileUrl().fileName();
+                    if (QFile::copy(t_absoluteFileLocate, t_filePath)) {
+                        qDebug() << "desktop file is copy right:" << t_absoluteFileLocate << "to" << t_filePath;
+                    }
+                }
+            }
         }
 
         auto settings = Config::instance()->settings();

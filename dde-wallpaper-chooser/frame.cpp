@@ -721,6 +721,10 @@ void Frame::refreshList()
         const QStringList &saver_name_list = m_dbusScreenSaver->allScreenSaver();
 
         for (const QString &name : saver_name_list) {
+            if("flurry" == name){
+                continue;//临时屏蔽名字为flurry的屏保
+            }
+
             const QString &cover_path = m_dbusScreenSaver->GetScreenSaverCover(name);
 
             WallpaperItem *item = m_wallpaperList->addWallpaper(cover_path);

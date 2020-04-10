@@ -119,7 +119,14 @@ QMenu *DFMSideBarDeviceItemHandler::contextMenu(const DFMSideBar *sidebar, const
         disabled.insert(MenuAction::OpenInNewTab);
         disabled.insert(MenuAction::OpenDiskInNewTab);
     }
-    if (!info["mounted"].toBool()) {
+    //fix:光驱还没有加载成功前，右键点击光驱“挂载”，光驱自动弹出。
+    if ((!info["mounted"].toBool()) && (info["fsType"].toString() ==  NULL)) {
+        disabled.insert(MenuAction::OpenDiskInNewWindow);
+        disabled.insert(MenuAction::OpenDiskInNewTab);
+        disabled.insert(MenuAction::Mount);
+        disabled.insert(MenuAction::Eject);
+        disabled.insert(MenuAction::SafelyRemoveDrive);
+
         disabled.insert(MenuAction::Property);
     }
     DFileMenu *menu = DFileMenuManager::genereteMenuByKeys(infoPointer->menuActionList(), disabled);

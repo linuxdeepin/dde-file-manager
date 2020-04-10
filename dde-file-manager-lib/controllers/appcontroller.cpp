@@ -495,8 +495,9 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
 
         if (drv && drv->mediaCompatibility().join(" ").contains("optical") && !drv->mediaAvailable() && drv->ejectable()) {
             QtConcurrent::run([](QString drvs) {
-                QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(drvs));
-                drv->eject({});
+                //fix:对于磁盘这块，主要由于光驱不会自动挂载，只有加载成功后鼠标左键双击才会执行此步，现在这样容易导致用户一系列误操作，故关闭。
+                //QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(drvs));
+                //drv->eject({});
             }, blk->drive());
             return;
         }
@@ -1238,6 +1239,9 @@ void AppController::setHasLaunchAppInterface(bool hasLaunchAppInterface)
 
 bool AppController::hasLaunchAppInterface() const
 {
+    while (!m_hasLaunchAppInterface) {
+        qDebug() << "LaunchAppInterface is loading...";
+    }
     return m_hasLaunchAppInterface;
 }
 
