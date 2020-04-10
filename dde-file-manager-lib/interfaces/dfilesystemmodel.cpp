@@ -2321,8 +2321,8 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 //        }
         qDebug() << "update node url = " << fileInfo->filePath();
         const FileSystemNodePointer &chileNode = createNode(node.data(), fileInfo);
-
-        if (!chileNode->shouldHideByFilterRule(advanceSearchFilter())) {
+        //当文件路径和名称都相同的情况下，fileHash在赋值，会释放，fileList保存的普通指针就是悬空指针
+        if (!chileNode->shouldHideByFilterRule(advanceSearchFilter()) && !fileHash[fileInfo->fileUrl()]) {
             fileHash[fileInfo->fileUrl()] = chileNode;
             fileList << chileNode.data();
         }
