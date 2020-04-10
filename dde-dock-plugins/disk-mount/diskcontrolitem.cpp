@@ -185,12 +185,20 @@ void DiskControlItem::showEvent(QShowEvent *e)
     m_diskName->setText(attachedDevice->displayName());
 
     if (attachedDevice->deviceUsageValid()) {
+        QString iconName = attachedDevice->iconName();
         QPair<quint64, quint64> freeAndTotal = attachedDevice->deviceUsage();
-        qint64 bytesFree = freeAndTotal.first;
-        qint64 bytesTotal = freeAndTotal.second;
-        m_diskCapacity->setText(QString("%1 / %2")
-                                .arg(formatDiskSize(bytesTotal - bytesFree))
-                                .arg(formatDiskSize(bytesTotal)));
+        quint64 bytesFree = freeAndTotal.first;
+        quint64 bytesTotal = freeAndTotal.second;
+
+        if (iconName.simplified().toLower() == "media-optical") { // 光驱无法读取容量
+            bytesTotal = 0;
+            m_diskCapacity->setText(tr("Unknown"));
+        } else {
+            m_diskCapacity->setText(QString("%1 / %2")
+                                    .arg(formatDiskSize(bytesTotal - bytesFree))
+                                    .arg(formatDiskSize(bytesTotal)));
+        }
+
         if (bytesTotal > 0) {
             m_capacityValueBar->setValue(100 * (bytesTotal - bytesFree) / bytesTotal);
         }
