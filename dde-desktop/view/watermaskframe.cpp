@@ -8,7 +8,7 @@
  **/
 
 #include "watermaskframe.h"
-
+#include "../config/config.h"
 #include <DSysInfo>
 #include <QFile>
 #include <QDebug>
@@ -93,15 +93,24 @@ void WaterMaskFrame::initUI()
         m_isMaskAlwaysOn =  m_configs.value("isMaskAlwaysOn").toBool();
     }
 
+    auto settings = Config::instance()->settings();
+    settings->beginGroup(Config::groupGeneral);
+    bool useJosn = settings->value(Config::keyWaterMask, false).toBool();
+    settings->endGroup();
     QString maskLogoUri;
-    if (m_configs.contains("maskLogoUri")) {
-        maskLogoUri = m_configs.value("maskLogoUri").toString();
-
-        if (maskLogoUri.startsWith("~/")) {
-            maskLogoUri.replace(0, 1, QDir::homePath());
+    if(useJosn){
+        if (m_configs.contains("maskLogoUri")) {
+            maskLogoUri = m_configs.value("maskLogoUri").toString();
+        } else {
+            maskLogoUri.clear();
         }
-    } else {
-        maskLogoUri.clear();
+    }
+    else {
+        maskLogoUri = DSysInfo::distributionOrgLogo(DSysInfo::OrgType::Distribution, DSysInfo::LogoType::Transparent);
+    }
+
+    if (maskLogoUri.startsWith("~/")) {
+        maskLogoUri.replace(0, 1, QDir::homePath());
     }
 
     QString maskLogoLayoutAlign;
