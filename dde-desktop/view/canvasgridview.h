@@ -125,7 +125,7 @@ public:
     void setAutoMerge(bool enabled = false);
     void toggleAutoMerge(bool enabled = true);
     void toggleEntryExpandedState(const DUrl &url);
-
+    void setGeometry(const QRect &rect);
 signals:
     void sortRoleChanged(int role, Qt::SortOrder order);
     void autoAlignToggled();
@@ -186,7 +186,7 @@ private:
     void updateHiddenItems();
 
     void setGeometry(int, int, int, int) = delete;
-    void setGeometry(const QRect &rect);
+
 
     QScopedPointer<CanvasViewPrivate> d;
     double m_dragMoveTime;
