@@ -454,7 +454,7 @@ QVariantHash DFMRootFileInfo::extraProperties() const
     QVariantHash ret;
     if (suffix() == SUFFIX_GVFSMP) {
         if (d->gfsi) {
-            ret["fsUsed"] = d->gfsi->fsUsedBytes();
+            ret["fsUsed"] = d->gfsi->fsTotalBytes() - d->gfsi->fsFreeBytes();
             ret["fsSize"] = d->gfsi->fsTotalBytes();
             ret["fsType"] = d->gfsi->fsType();
         }
