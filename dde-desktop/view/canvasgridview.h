@@ -33,7 +33,7 @@ public:
     static std::atomic<bool> m_flag;
     static QMap<DMD_TYPES, bool> virtualEntryExpandState;
 
-    explicit CanvasGridView(const QString &screen,QWidget *parent = Q_NULLPTR);
+    explicit CanvasGridView(QWidget *parent = Q_NULLPTR);
     ~CanvasGridView() Q_DECL_OVERRIDE;
 
 
@@ -82,7 +82,7 @@ public:
     void dragLeaveEvent(QDragLeaveEvent *event) Q_DECL_OVERRIDE;
     void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
     void paintEvent(QPaintEvent *) Q_DECL_OVERRIDE;
-    //void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
+    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
     void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
     void focusOutEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
     void contextMenuEvent(QContextMenuEvent *event) Q_DECL_OVERRIDE;
@@ -97,14 +97,13 @@ public:
     void fakeDropEvent()noexcept;
 
     // list view function
-    QString canvansScreenName();
     QRect rectForIndex(const QModelIndex &index) const;
     DUrl currentUrl() const;
     bool setCurrentUrl(const DUrl &url);
     void initRootUrl();
     bool setRootUrl(const DUrl &url);
     const DUrlList selectedUrls() const;
-    void setScreenNum(int num);
+
     bool isSelected(const QModelIndex &index) const;
     void select(const QList<DUrl> &list);
     int selectedIndexCount() const;
@@ -122,15 +121,11 @@ public:
     QSize cellSize() const;
 
     WId winId() const;
+    bool autoMerge() const;
     void setAutoMerge(bool enabled = false);
+    void toggleAutoMerge(bool enabled = true);
     void toggleEntryExpandedState(const DUrl &url);
-    void updateEntryExpandedState(const DUrl &url);
     void setGeometry(const QRect &rect);
-    void delayModelRefresh(int ms = 50);
-    void delayArrage(int ms = 50);
-    DUrl currentCursorFile() const;
-    inline int screenNum() const {return m_screenNum;}
-    void syncIconLevel(int level);
 signals:
     void sortRoleChanged(int role, Qt::SortOrder order);
     void autoAlignToggled();
@@ -147,11 +142,9 @@ public slots:
 
     void setDodgeDuration(double dragMoveTime);
 
-    void delayAutoMerge();
-
 // Debug interface
 public Q_SLOTS:
-    Q_SCRIPTABLE void EnableUIDebug(bool enable);
+    Q_SCRIPTABLE void EnableUIDebug();
     Q_SCRIPTABLE QString Size();
     Q_SCRIPTABLE QString Dump();
     Q_SCRIPTABLE QString DumpPos(qint32 x, qint32 y);
@@ -194,13 +187,9 @@ private:
 
     void setGeometry(int, int, int, int) = delete;
 
+
     QScopedPointer<CanvasViewPrivate> d;
     double m_dragMoveTime;
-
-    QString m_screenName;
-    int     m_screenNum{1};
-
-    QTimer *m_refreshTimer = nullptr;
 };
 
 

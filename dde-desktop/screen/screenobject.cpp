@@ -1,4 +1,7 @@
 #include "screenobject.h"
+#include "dbus/dbusdock.h"
+
+#include "util/xcb/xcb.h"
 
 #include <qpa/qplatformscreen.h>
 #include <qdebug.h>
@@ -27,7 +30,32 @@ QRect ScreenObject::geometry() const
 
 QRect ScreenObject::availableGeometry() const
 {
-    return m_screen->availableGeometry();
+    //!QScreen::availableGeometry在刚启动时返回的值是错的，需要拖到下dock区才能正确显示
+    //return m_screen->availableGeometry();
+    //end
+
+    //使用xcb获取dock区
+    xcb_ewmh_wm_strut_partial_t dock_xcb_ewmh_wm_strut_partial_t;
+    memset(&dock_xcb_ewmh_wm_strut_partial_t, 0, sizeof(xcb_ewmh_wm_strut_partial_t));
+    auto structParialInfoList = Xcb::XcbMisc::instance().find_dock_window();
+    for (auto info : structParialInfoList) {
+        if (info.rc.isValid()) {
+            dock_xcb_ewmh_wm_strut_partial_t = Xcb::XcbMisc::instance().get_strut_partial(info.winId);
+            break;
+        }
+    }
+
+    QRect availableRect = geometry();
+    if (dock_xcb_ewmh_wm_strut_partial_t.top > 0) {
+        availableRect.setY(dock_xcb_ewmh_wm_strut_partial_t.top);
+    } else if (dock_xcb_ewmh_wm_strut_partial_t.right > 0) {
+        availableRect.setWidth(2 * availableRect.width() - dock_xcb_ewmh_wm_strut_partial_t.right);
+    } else if (dock_xcb_ewmh_wm_strut_partial_t.bottom > 0) {
+        availableRect.setHeight(availableRect.height() - dock_xcb_ewmh_wm_strut_partial_t.bottom);
+    } else if (dock_xcb_ewmh_wm_strut_partial_t.left > 0) {
+        availableRect.setX(dock_xcb_ewmh_wm_strut_partial_t.left);
+    }
+    return availableRect;
 }
 
 QRect ScreenObject::handleGeometry() const
