@@ -13,17 +13,14 @@ class CanvasViewManager : public QObject
 public:
     explicit CanvasViewManager(BackgroundManager *bmrg,QObject *parent = nullptr);
     ~CanvasViewManager();
-    inline QMap<ScreenPointer, CanvasViewPointer> canvas() const{return m_canvasMap;}
 signals:
 public slots:
     void onCanvasViewBuild(int mode);
 private slots:
     void onBackgroundEnableChanged();
     void onScreenGeometryChanged(ScreenPointer);
-    void onSyncOperation(int so, QVariant var);
 private:
     void init();
-    void arrageEditDeal(const QString &);
 private:
     BackgroundManager *m_background = nullptr;
     QMap<ScreenPointer, CanvasViewPointer> m_canvasMap;
