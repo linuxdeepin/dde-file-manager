@@ -33,7 +33,7 @@ QRect ScreenObject::availableGeometry() const
     //!QScreen::availableGeometry在刚启动时返回的值是错的，需要拖到下dock区才能正确显示
     //return m_screen->availableGeometry();
     //end
-
+    //!自定义模式下，低分辨率获取到的dock区错误
     //使用xcb获取dock区
     xcb_ewmh_wm_strut_partial_t dock_xcb_ewmh_wm_strut_partial_t;
     memset(&dock_xcb_ewmh_wm_strut_partial_t, 0, sizeof(xcb_ewmh_wm_strut_partial_t));
