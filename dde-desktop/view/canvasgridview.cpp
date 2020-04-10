@@ -1898,7 +1898,7 @@ void CanvasGridView::initUI()
 
     DFMSocketInterface::instance();
 
-    d->waterMaskFrame = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask-test.json", this);
+    d->waterMaskFrame = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json", this);
     d->waterMaskFrame->lower();
     d->waterMaskFrame->updatePosition();
 }
