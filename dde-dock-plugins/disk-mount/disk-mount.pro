@@ -39,7 +39,8 @@ SOURCES += \
     dattachedudisks2device.cpp \
     dattachedvfsdevice.cpp
 
-TRANSLATIONS += $$PWD/translations/$${TARGET}.ts
+TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
+    $$PWD/translations/$${TARGET}_zh_CN.ts
 TR_EXCLUDE += $$PWD/../../dde-file-manager-lib/configure/*
 
 # Automating generation .qm files from .ts files
