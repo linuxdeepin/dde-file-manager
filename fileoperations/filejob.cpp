@@ -686,7 +686,9 @@ void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int 
         m_opticalJobPhase = 2;
         job_isomaster->checkmedia(&gud, &slo, &bad);
     }
-    bool rst = ! ((flag & 4) && bad > 1e-6);
+    //fix:不同品牌的光盘或者光驱，刻录校验识别能力不同，对应获取到的bad数据也不一样，但是数据在校验前已经写入成功，根据厂商要求所以此处需要放开
+    //bool rst = ! ((flag & 4) && bad > 1e-6);
+    bool rst = ! ((flag & 4) && (bad > (2 + 1e-6)));
     job_isomaster->releaseDevice();
 
     if (flag & 2) {
@@ -749,7 +751,9 @@ void FileJob::doOpticalImageBurn(const DUrl &device, const DUrl &image, int spee
         m_opticalJobPhase = 2;
         job_isomaster->checkmedia(&gud, &slo, &bad);
     }
-    bool rst = ! ((flag & 4) && bad > 1e-6);
+    //fix:不同品牌的光盘或者光驱，刻录校验识别能力不同，对应获取到的bad数据也不一样，但是数据在校验前已经写入成功，根据厂商要求所以此处需要放开
+    //bool rst = ! ((flag & 4) && bad > 1e-6);
+    bool rst = ! ((flag & 4) && (bad > (2 + 1e-6)));
     job_isomaster->releaseDevice();
 
     if (flag & 2) {
