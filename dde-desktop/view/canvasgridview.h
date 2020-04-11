@@ -187,9 +187,11 @@ private:
 
     void setGeometry(int, int, int, int) = delete;
     void setGeometry(const QRect &rect);
+    bool fetchDragEventUrlsFromSharedMemory();
 
     QScopedPointer<CanvasViewPrivate> d;
     double m_dragMoveTime;
+    QList<QUrl> m_urlsForDragEvent;
 };
 
 

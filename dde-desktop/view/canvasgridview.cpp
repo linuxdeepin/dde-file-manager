@@ -337,6 +337,32 @@ void CanvasGridView::setGeometry(const QRect &rect)
     }
 }
 
+bool CanvasGridView::fetchDragEventUrlsFromSharedMemory()
+{
+    QSharedMemory sm;
+    sm.setKey(DRAG_EVENT_URLS);
+
+    if (!sm.isAttached()) {
+        if (!sm.attach()) {
+            qDebug() << "FQSharedMemory detach failed.";
+            return false;
+        }
+    }
+
+    QBuffer buffer;
+    QDataStream in(&buffer);
+
+    sm.lock();
+    //用缓冲区得到共享内存关联后得到的数据和数据大小
+    buffer.setData((char*)sm.constData(), sm.size());
+    buffer.open(QBuffer::ReadOnly);     //设置读取模式
+    in >> m_urlsForDragEvent;               //使用数据流从缓冲区获得共享内存的数据，然后输出到字符串中
+    sm.unlock();    //解锁
+    sm.detach();//与共享内存空间分离
+
+    return true;
+}
+
 WId CanvasGridView::winId() const
 {
     if (isTopLevel()) {
@@ -842,7 +868,9 @@ void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
         itemDelegate()->hideNotEditingIndexWidget();
     }
 
-    d->fileViewHelper->preproccessDropEvent(event);
+    fetchDragEventUrlsFromSharedMemory();
+
+    d->fileViewHelper->preproccessDropEvent(event, m_urlsForDragEvent);
 
     if (event->mimeData()->hasFormat("XdndDirectSave0")) {
         event->setDropAction(Qt::CopyAction);
@@ -871,7 +899,7 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
             d->dodgeDelayTimer.start();
         }
 
-        d->fileViewHelper->preproccessDropEvent(event);
+        d->fileViewHelper->preproccessDropEvent(event, m_urlsForDragEvent);
         if (!hoverIndex.isValid()) {
             if (DFileDragClient::checkMimeData(event->mimeData())) {
                 event->acceptProposedAction();

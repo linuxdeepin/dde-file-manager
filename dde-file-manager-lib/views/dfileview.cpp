@@ -1523,7 +1523,10 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
         return;
     }
 
-    for (const DUrl &url : event->mimeData()->urls()) {
+    if (!fetchDragEventUrlsFromSharedMemory())
+        return;
+
+    for (const DUrl &url : m_urlsForDragEvent) {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
 
         // a symlink that points to a non-existing file QFileInfo::isReadAble() returns false
@@ -1536,7 +1539,7 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
 
     Q_D(const DFileView);
 
-    d->fileViewHelper->preproccessDropEvent(event);
+    d->fileViewHelper->preproccessDropEvent(event, m_urlsForDragEvent);
 
     if (event->mimeData()->hasFormat("XdndDirectSave0")) {
         event->setDropAction(Qt::CopyAction);
@@ -1558,7 +1561,7 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(d->dragMoveHoverIndex);
 
         if (fileInfo) {
-            d->fileViewHelper->preproccessDropEvent(event);
+            d->fileViewHelper->preproccessDropEvent(event, m_urlsForDragEvent);
             if (!fileInfo->canDrop()
                     || !fileInfo->supportedDropActions().testFlag(event->dropAction())
                     || (fileInfo->isDir() && !fileInfo->isWritable())) {
@@ -1612,10 +1615,12 @@ void DFileView::dropEvent(QDropEvent *event)
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(index.isValid() ? index : rootIndex());
 
         if (fileInfo && fileInfo->fileUrl().isLocalFile()) {
-            if (fileInfo->isDir())
+            if (fileInfo->isDir()) {
                 const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->fileUrl());
-            else
+            }
+            else {
                 const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->parentUrl());
+            }
         }
 
         event->accept(); // yeah! we've done with XDS so stop Qt from further event propagation.
@@ -2962,6 +2967,33 @@ void DFileView::updateToolBarActions(QWidget *widget, QString theme)
 void DFileView::refresh()
 {
     model()->refresh();
+}
+
+bool DFileView::fetchDragEventUrlsFromSharedMemory()
+{
+    QSharedMemory sm;
+    sm.setKey(DRAG_EVENT_URLS);
+
+    if (!sm.isAttached()) {
+        if (!sm.attach()) {
+            qDebug() << "FQSharedMemory detach failed.";
+            return false;
+        }
+    }
+
+    QBuffer buffer;
+    QDataStream in(&buffer);
+    QList<QUrl> urls;
+
+    sm.lock();
+    //用缓冲区得到共享内存关联后得到的数据和数据大小
+    buffer.setData((char*)sm.constData(), sm.size());
+    buffer.open(QBuffer::ReadOnly);     //设置读取模式
+    in >> m_urlsForDragEvent;               //使用数据流从缓冲区获得共享内存的数据，然后输出到字符串中
+    sm.unlock();    //解锁
+    sm.detach();//与共享内存空间分离
+
+    return true;
 }
 
 int DFileViewPrivate::iconModeColumnCount(int itemWidth) const

@@ -66,6 +66,7 @@ public:
     bool isEmptyArea(const QPoint &pos) const;
 
     void preproccessDropEvent(QDropEvent *event) const;
+    void preproccessDropEvent(QDropEvent *event, const QList<QUrl> &urls) const;
 
 public slots:
     void handleCommitData(QWidget *editor) const;

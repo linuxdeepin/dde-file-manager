@@ -244,9 +244,11 @@ private:
     using DListView::setOrientation;
 
     void refresh() Q_DECL_OVERRIDE;
+    bool fetchDragEventUrlsFromSharedMemory();
 
 
     QScopedPointer<DFileViewPrivate> d_ptr;
+    QList<QUrl> m_urlsForDragEvent;
 
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DFileView)
     Q_PRIVATE_SLOT(d_ptr, void _q_onSectionHandleDoubleClicked(int))
