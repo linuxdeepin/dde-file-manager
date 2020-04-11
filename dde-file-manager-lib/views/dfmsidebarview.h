@@ -46,6 +46,10 @@ protected:
     bool isAccepteDragEvent(DFMDragEvent *event);
 signals:
     void requestRemoveItem();
+private:
+    bool fetchDragEventUrlsFromSharedMemory();
+
+    QList<QUrl> m_urlsForDragEvent;
 };
 
 DFM_END_NAMESPACE
