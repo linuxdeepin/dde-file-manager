@@ -321,7 +321,9 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
                 nextPage();
             break;
         case Qt::Key_Space:{
-            m_preview->stop();
+            if (m_preview) {
+                m_preview->stop();
+            }
             close();
             return true;
         }
@@ -534,7 +536,10 @@ void FilePreviewDialog::done(int r)
 
 void FilePreviewDialog::playCurrentPreviewFile()
 {
-    m_preview->play();
+    if (m_preview) {
+        m_preview->play();
+    }
+
 }
 
 void FilePreviewDialog::previousPage()
