@@ -34,6 +34,7 @@ public:
 signals:
     void primaryScreenChanged(QScreen *screen);
     void primaryChanged();
+    void sigDisplayModeChanged();
 
 private:
     DBusDisplay *m_display = nullptr;

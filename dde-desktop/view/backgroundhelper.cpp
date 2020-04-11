@@ -62,6 +62,7 @@ public:
             QImage *image = static_cast<QImage *>(backingStore()->handle()->paintDevice());
             QPainter pa(image);
             pa.drawPixmap(0, 0, m_noScalePixmap);
+            return;
         }
 
         QPainter pa(this);
@@ -100,12 +101,15 @@ BackgroundHelper::BackgroundHelper(bool preview, QObject *parent)
         desktop_instance = this;
     }
 
-    checkTimer = new QTimer(this);
-    checkTimer->setInterval(2000);
-    checkTimer->setSingleShot(true);
-    connect(checkTimer, &QTimer::timeout, this, [this]() {
-        checkBlackScreen();
-    });
+    if (!DesktopInfo().waylandDectected()) {
+
+        checkTimer = new QTimer(this);
+        checkTimer->setInterval(2000);
+        checkTimer->setSingleShot(true);
+        connect(checkTimer, &QTimer::timeout, this, [this]() {
+            checkBlackScreen();
+        });
+    }
 
     onWMChanged();
 }
@@ -115,6 +119,15 @@ BackgroundHelper::~BackgroundHelper()
     for (BackgroundLabel *l : backgroundMap) {
         l->hide();
         l->deleteLater();
+    }
+
+    for (BackgroundLabel *l : waylandbackgroundMap) {
+        l->hide();
+        l->deleteLater();
+    }
+
+    for (DBusMonitor *m : waylandScreen) {
+        m->deleteLater();
     }
 }
 
@@ -127,6 +140,19 @@ bool BackgroundHelper::isEnabled() const
 {
     // 只支持kwin，或未开启混成的桌面环境
     return windowManagerHelper->windowManagerName() == DWindowManagerHelper::KWinWM || !windowManagerHelper->hasComposite();
+}
+
+QWidget *BackgroundHelper::waylandBackground(const QString &name) const
+{
+    return waylandbackgroundMap.value(name);
+}
+
+QList<QWidget *> BackgroundHelper::waylandAllBackgrounds() const
+{
+    QList<QWidget *> ret;
+    for (QWidget *w : waylandbackgroundMap.values())
+        ret << w;
+    return ret;
 }
 
 QWidget *BackgroundHelper::backgroundForScreen(QScreen *screen) const
@@ -163,9 +189,16 @@ void BackgroundHelper::setBackground(const QString &path)
         backgroundPixmap = QPixmap::fromImage(reader.read());
     }
 
-    // 更新背景图
-    for (BackgroundLabel *l : backgroundMap) {
-        updateBackground(l);
+    if (DesktopInfo().waylandDectected()) {
+        // 更新背景图
+        for (BackgroundLabel *l : waylandbackgroundMap) {
+            updateBackground(l);
+        }
+    } else {
+        // 更新背景图
+        for (BackgroundLabel *l : backgroundMap) {
+            updateBackground(l);
+        }
     }
 }
 
@@ -260,7 +293,27 @@ void BackgroundHelper::updateBackground(QWidget *l)
 {
     if (backgroundPixmap.isNull())
         return;
+    if (DesktopInfo().waylandDectected()) {
+//        QSize trueSize = l->size();
+        //修复背景图片被缩放问题
+        QSize trueSize = l->size() * Display::instance()->getScaleFactor();
+        QPixmap pix = backgroundPixmap;
 
+        pix = pix.scaled(trueSize,
+                         Qt::KeepAspectRatioByExpanding,
+                         Qt::SmoothTransformation);
+
+        if (pix.width() > trueSize.width() || pix.height() > trueSize.height()) {
+            pix = pix.copy(QRect((pix.width() - trueSize.width()) / 2.0,
+                                 (pix.height() - trueSize.height()) / 2.0,
+                                 trueSize.width(),
+                                 trueSize.height()));
+        }
+
+        pix.setDevicePixelRatio(l->devicePixelRatioF());
+        dynamic_cast<BackgroundLabel *>(l)->setPixmap(pix);
+        return ;
+    }
     QScreen *s = l->windowHandle()->screen();
     l->windowHandle()->handle()->setGeometry(s->handle()->geometry());
 
@@ -317,8 +370,107 @@ void BackgroundHelper::updateBackground()
     setBackground(path);
 }
 
+
+void BackgroundHelper::monitorRectChanged()
+{
+
+    QStringList monitorPaths = Display::instance()->monitorObjectPaths();
+    for (const QString &path : monitorPaths) {
+        DBusMonitor *t_busMobitor = waylandScreen.value(path);
+        qDebug() << "monitor geometry changed:" << t_busMobitor->name()
+                 << t_busMobitor->rect();
+
+        BackgroundLabel *l = waylandbackgroundMap.value(t_busMobitor->name());
+
+        qDebug() << "path :" << t_busMobitor->name() << "screenRect: " << t_busMobitor->rect() << "l:" << l;
+        QRect screenRect = t_busMobitor->rect();        
+        QRect otherRect(screenRect);
+        screenRect.setSize(screenRect.size() / Display::instance()->getScaleFactor());
+        qDebug() << "path :" << t_busMobitor->name() << "screenRect: " << screenRect << "l:" << l;
+
+        l->setGeometry(screenRect);
+        l->windowHandle()->setGeometry(screenRect);
+        l->windowHandle()->handle()->setGeometry(otherRect);
+        updateBackground(l);
+        //todo mode changed
+    }
+}
+
 void BackgroundHelper::onScreenAdded(QScreen *screen)
 {
+    if (DesktopInfo().waylandDectected()) {
+        QStringList monitorPaths = Display::instance()->monitorObjectPaths();
+        for (const QString &path : monitorPaths) {
+            if (!waylandScreen.contains(path)) {
+                DBusMonitor *monitor = new DBusMonitor(path);
+                waylandScreen.insert(path, monitor);
+                BackgroundLabel *l = new BackgroundLabel();
+                waylandbackgroundMap.insert(monitor->name(), l);
+
+                l->setProperty("isPreview", m_previuew);
+                l->setProperty("myScreen", monitor->name());
+                l->createWinId();
+                QRect screenRect = monitor->rect();
+                QRect otherRect(screenRect);
+
+//                qDebug()<<"path :"<<path<< "screenRect: "<<screenRect;
+
+//                screenRect.setTopLeft(screenRect.topLeft() / Display::instance()->getScaleFactor());
+
+//                qDebug()<<"path :"<<path<< "screenRect: "<<screenRect;
+
+//                screenRect.setBottomRight(screenRect.bottomRight() / Display::instance()->getScaleFactor());
+
+//                qDebug()<<"path :"<<path<< "screenRect: "<<screenRect;
+                connect(monitor, SIGNAL(monitorRectChanged()), this, SLOT(monitorRectChanged()));
+                connect(Display::instance(),SIGNAL(sigDisplayModeChanged()), this, SLOT(monitorRectChanged()));
+
+                screenRect.setSize(screenRect.size() / Display::instance()->getScaleFactor());
+                qDebug() << "path :" << monitor->name() << "screenRect: " << screenRect;
+                l->setGeometry(screenRect);
+                l->windowHandle()->setGeometry(screenRect);
+                l->windowHandle()->handle()->setGeometry(otherRect);
+//                connect(monitor, &::DBusMonitor::monitorRectChanged, [this, monitor, l]() {
+//                    qDebug() << "monitor geometry changed:" << monitor->name()
+//                             << monitor->rect();
+
+//                    qDebug()<<"path :"<<monitor->name()<< "screenRect: "<<monitor->rect() << "l:" << l;
+
+//                    QRect screenRect = monitor->rect();
+////                    screenRect.setTopLeft(screenRect.topLeft() / Display::instance()->getScaleFactor());
+
+////                    qDebug()<<"path :"<<monitor->name()<< "screenRect: "<<screenRect;
+
+////                    screenRect.setBottomRight(screenRect.bottomRight() / Display::instance()->getScaleFactor());
+
+////                    qDebug()<<"path :"<<monitor->name()<< "screenRect: "<<screenRect;
+
+//                    screenRect.setSize(screenRect.size() / Display::instance()->getScaleFactor());
+//                    qDebug()<<"path :"<<monitor->name()<< "screenRect: "<<screenRect << "l:" << l;
+
+//                    l->setGeometry(screenRect);
+
+//                    updateBackground(l);
+//                    //todo mode changed
+//                });
+
+                if (m_previuew) {
+                    l->setWindowFlags(l->windowFlags() | Qt::BypassWindowManagerHint | Qt::WindowDoesNotAcceptFocus);
+                } else {
+                    Xcb::XcbMisc::instance().set_window_type(l->winId(), Xcb::XcbMisc::Desktop);
+                }
+
+                if (m_visible)
+                    l->show();
+                else
+                    qDebug() << "Disable show the background widget, of screen:" << monitor->name() << screenRect;
+
+                Q_EMIT backgroundAdded(l);
+            }
+        }
+        return;
+    };
+
     BackgroundLabel *l = new BackgroundLabel();
     l->setProperty("isPreview", m_previuew);
     l->setProperty("myScreen", screen->name()); // assert screen->name is unique
