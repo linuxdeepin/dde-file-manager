@@ -673,7 +673,7 @@ bool DFileViewHelper::isEmptyArea(const QPoint &pos) const
     return index.isValid();//true;
 }
 
-void DFileViewHelper::preproccessDropEvent(QDropEvent *event) const
+void DFileViewHelper:: preproccessDropEvent(QDropEvent *event) const
 {
     if (event->source() == parent() && !DFMGlobal::keyCtrlIsPressed()) {
         event->setDropAction(Qt::MoveAction);
@@ -687,11 +687,10 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event) const
             return;
         }
 
-        const QList<QUrl> &urls = event->mimeData()->urls();
+        QList<QUrl> urls = event->mimeData()->urls();
 
-        if (urls.isEmpty()) {
+        if (urls.empty())
             return;
-        }
 
         const DUrl from = urls.first();
         const DUrl to = info->fileUrl();
@@ -720,8 +719,57 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event) const
 
                 if (event->possibleActions().testFlag(action) && info->supportedDropActions().testFlag(action)) {
                     event->setDropAction(action);
+                    break;
+                }
+            }
+        }
+    }
+}
 
+void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &urls) const
+{
+    if (event->source() == parent() && !DFMGlobal::keyCtrlIsPressed()) {
+        event->setDropAction(Qt::MoveAction);
+    } else {
+        DAbstractFileInfoPointer info = model()->fileInfo(parent()->indexAt(event->pos()));
 
+        if (!info)
+            info = model()->fileInfo(parent()->rootIndex());
+
+        if (!info) {
+            return;
+        }
+
+        if (urls.empty())
+            return;
+
+        const DUrl from = urls.first();
+        const DUrl to = info->fileUrl();
+        Qt::DropAction default_action = Qt::CopyAction;
+
+        if (qApp->keyboardModifiers() == Qt::AltModifier) {
+            default_action = Qt::MoveAction;
+        } else if (!DFMGlobal::keyCtrlIsPressed()) {
+            // 如果文件和目标路径在同一个分区下，默认为移动文件，否则默认为复制文件
+            if (DStorageInfo::inSameDevice(from, to) || to.isTrashFile()) {
+                default_action = Qt::MoveAction;
+            }
+        }
+
+        if (event->possibleActions().testFlag(default_action)) {
+            event->setDropAction(default_action);
+        }
+
+        if (!info->supportedDropActions().testFlag(event->dropAction())) {
+            QList<Qt::DropAction> actions;
+
+            actions.reserve(3);
+            actions << Qt::CopyAction << Qt::MoveAction << Qt::LinkAction;
+
+            for (Qt::DropAction action : actions) {
+
+                if (event->possibleActions().testFlag(action) && info->supportedDropActions().testFlag(action)) {
+                    event->setDropAction(action);
                     break;
                 }
             }

@@ -1145,11 +1145,19 @@ DFileSystemModel::DFileSystemModel(DFileViewHelper *parent)
 {
     qRegisterMetaType<State>(QT_STRINGIFY(State));
     qRegisterMetaType<DAbstractFileInfoPointer>(QT_STRINGIFY(DAbstractFileInfoPointer));
+
+    m_smForDragEvent = new QSharedMemory();
 }
 
 DFileSystemModel::~DFileSystemModel()
 {
     Q_D(DFileSystemModel);
+
+    if (m_smForDragEvent)
+    {
+        delete m_smForDragEvent;
+        m_smForDragEvent = nullptr;
+    }
 
     if (d->jobController) {
         d->jobController->stopAndDeleteLater();
@@ -1746,6 +1754,32 @@ QMimeData *DFileSystemModel::mimeData(const QModelIndexList &indexes) const
 
     QMimeData *data = new QMimeData();
     data->setUrls(urls);
+//    data->setText(urls.first().path());
+//    data->setData("forDragEvent", urls.first().toEncoded());
+//    FOR_DRAGEVENT = urls;
+//    qDebug() << "Set FOR_DRAGEVENT urls FOR_DRAGEVENT count = " << FOR_DRAGEVENT.length();
+
+    m_smForDragEvent->setKey(DRAG_EVENT_URLS);
+    if (m_smForDragEvent->isAttached()) {
+        if (!m_smForDragEvent->detach()) {
+            return data;
+        }
+    }
+
+    QBuffer buffer;
+    buffer.open(QBuffer::ReadWrite);
+    QDataStream out(&buffer);
+    out << urls;
+    int size = static_cast<int>(buffer.size());
+    if (m_smForDragEvent->create(size))
+    {
+        m_smForDragEvent->lock();
+        char *to = static_cast<char*>(m_smForDragEvent->data());
+        const char *from = buffer.data().data();
+        memcpy(to, from, m_smForDragEvent->size());
+        m_smForDragEvent->unlock();
+        qDebug() << "write mem finish.";
+    }
 
     return data;
 }
