@@ -156,7 +156,17 @@ QStringList Display::monitorObjectPaths() const
 
 double Display::getScaleFactor()
 {
-    return m_appearance->GetScaleFactor().value();
+    static double s_scaleFactor = 1;
+    static bool s_first = true;
+    if (s_first) {
+        s_scaleFactor = m_appearance->GetScaleFactor().value();
+        s_first = false;
+        if ((s_scaleFactor < 0) || (s_scaleFactor > 1000)) {
+            s_scaleFactor = 1;
+            s_first = true;
+        }
+    }
+    return s_scaleFactor;
 }
 
 DockIns::DockIns(QObject *parent) : QObject(parent)
