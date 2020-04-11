@@ -233,7 +233,9 @@ Qt::Alignment VideoPreview::statusBarWidgetAlignment() const
 
 void VideoPreview::play()
 {
-    playerWidget->play(videoUrl);
+    if (playerWidget) {
+        playerWidget->play(videoUrl);
+    }
 }
 
 void VideoPreview::pause()
