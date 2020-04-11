@@ -1037,8 +1037,8 @@ open_file: {
         qint64 size_write = toDevice->write(data, size_read);
 
         //fix 修复vfat格式u盘卡死问题，写入数据后立刻同步
-        if (size_write > 0)
-            toDevice->syncToDisk();
+//        if (size_write > 0)
+//            toDevice->syncToDisk();
 
         if (Q_UNLIKELY(size_write != size_read)) {
             do {
@@ -1102,7 +1102,7 @@ open_file: {
 //            toDevice->syncToDisk();
 //        }
     }
-
+// end forever
     // 关闭文件时可能会需要很长时间，因为内核可能要把内存里的脏数据回写到硬盘
     setState(DFileCopyMoveJob::IOWaitState);
     fromDevice->close();
