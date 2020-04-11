@@ -1770,10 +1770,11 @@ static inline QRect fix_available_geometry()
 
         //fix xcb的dock区域获取数据不对
         DockRect dockrect = DockIns::instance()->frontendWindowRect();
-        qreal t_devicePixelRatio = Display::instance()->primaryScreen()->devicePixelRatio();
-        if (!QHighDpiScaling::m_active) {
-            t_devicePixelRatio = 1;
-        }
+        qDebug()<<"fix_available_geometry dockrect"<< (QRect)dockrect;
+        qreal t_devicePixelRatio = Display::instance()->getScaleFactor();
+//        if (!QHighDpiScaling::m_active) {
+//            t_devicePixelRatio = 1;
+//        }
 
         dockrect.width = dockrect.width / t_devicePixelRatio;
         dockrect.height = dockrect.height / t_devicePixelRatio;

@@ -31,6 +31,11 @@ Display::Display(QObject *parent) : QObject(parent)
         qDebug()<< "primarChanged emit....  ";
         emit  primaryChanged();
     });
+    connect(m_display, &DBusDisplay::DisplayModeChanged,this, [ = ]() {
+        qDebug()<< "sigDisplayModeChanged emit....  ";
+        emit  sigDisplayModeChanged();
+    });
+
     connect(m_display, &DBusDisplay::PrimaryRectChanged, this, [ = ]() {
         auto primaryName = m_display->primary();
         //if X11
@@ -75,7 +80,8 @@ QRect Display::primaryRect()
 {
     QRect t_screenRect = m_display->primaryRect();
 
-    qreal t_devicePixelRatio = Display::instance()->primaryScreen()->devicePixelRatio();
+//    qreal t_devicePixelRatio = m_appearance->GetScaleFactor();//Display::instance()->primaryScreen()->devicePixelRatio();
+    qreal t_devicePixelRatio = getScaleFactor();
     if (!QHighDpiScaling::m_active) {
         t_devicePixelRatio = 1;
     }
