@@ -157,7 +157,7 @@ public:
     // 线程id
     long tid = -1;
 
-    qreal lastProgress = 0.01;
+    qreal lastProgress = 0.01; // 上次刷新的进度
 
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };

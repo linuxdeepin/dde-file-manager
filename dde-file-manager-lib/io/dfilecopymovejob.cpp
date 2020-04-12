@@ -1425,28 +1425,32 @@ void DFileCopyMoveJobPrivate::joinToCompletedDirectoryList(const DUrl &from, con
 
 void DFileCopyMoveJobPrivate::updateProgress()
 {
+    const qint64 total_size = fileStatistics->totalSize();
+    const qint64 data_size = getCompletedDataSize();
+
+    if (total_size == 0)
+        return;
+
     if (fileStatistics->isFinished()) {
-        const qint64 data_size = getCompletedDataSize();
-
-        Q_EMIT q_ptr->progressChanged(qMin(qreal(data_size) / fileStatistics->totalSize(), 1.0), data_size);
-
+        qreal real_progress = qreal(data_size) / total_size;
+        if (real_progress > lastProgress)
+            lastProgress = real_progress;
         qCDebug(fileJob(), "completed data size: %lld, total data size: %lld", data_size, fileStatistics->totalSize());
-    } else {
-        // 文件大小没计算出来之前的策略，获取一个时时的总大小来计算一个模糊进度
-        const qint64 total_size = fileStatistics->totalSize();
-        const qint64 data_size = getCompletedDataSize();
-        qDebug() << "last progress:" << lastProgress;
-
-        if (data_size < total_size && total_size > 0) {
-            qreal fuzzy_progress = qreal(data_size) / total_size;
-            if (fuzzy_progress < 0.4 && fuzzy_progress > lastProgress) {
-                Q_EMIT q_ptr->progressChanged(fuzzy_progress, data_size);
-                lastProgress = fuzzy_progress;
-            }
-        } else {
-            Q_EMIT q_ptr->progressChanged(lastProgress, data_size);
+    } else {        
+     if (data_size < total_size && total_size > 0) {
+         // 取一个时时的总大小来计算一个模糊进度
+         qreal fuzzy_progress = qreal(data_size) / total_size;
+         if (fuzzy_progress < 0.3 && fuzzy_progress > lastProgress)
+             lastProgress = fuzzy_progress;
         }
     }
+
+     // 保证至少出现%1
+    if (lastProgress < 0.02) {
+        lastProgress = 0.01;
+    }
+
+    Q_EMIT q_ptr->progressChanged(qMin(lastProgress, 1.0), data_size);
 
     if (currentJobDataSizeInfo.first > 0) {
         Q_EMIT q_ptr->currentFileProgressChanged(qMin(qreal(currentJobDataSizeInfo.second) / currentJobDataSizeInfo.first, 1.0), currentJobDataSizeInfo.second);
