@@ -54,6 +54,7 @@ private:
     QSharedPointer<DDiskManager> udisksmgr;
     QList<QMetaObject::Connection> connections;
     QList<QSharedPointer<DBlockDevice>> blkdevs;
+    QStringList connectionsurl;
 
     Q_DECLARE_PUBLIC(DFMRootFileWatcher)
 };
@@ -195,13 +196,19 @@ void DFMRootFileWatcherPrivate::initBlockDevConnections(QSharedPointer<DBlockDev
     DFMRootFileWatcher *wpar = qobject_cast<DFMRootFileWatcher*>(q);
     blkdevs.push_back(blk);
     blk->setWatchChanges(true);
-    DUrl url(DFMROOT_ROOT + devs.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS);
+    QString urlstr = DFMROOT_ROOT + devs.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS;
+    DUrl url(urlstr);
 
     if (blk->isEncrypted()) {
         QSharedPointer<DBlockDevice> ctblk(DDiskManager::createBlockDevice(blk->cleartextDevice()));
         blkdevs.push_back(ctblk);
         ctblk->setWatchChanges(true);
-
+        foreach(const QString &str,connectionsurl){
+            if (str == urlstr+QString("_en"))
+            {
+                return;
+            }
+        }
         connections.push_back(QObject::connect(blk.data(), &DBlockDevice::cleartextDeviceChanged, [wpar, url](const QString &) {
             Q_EMIT wpar->fileAttributeChanged(url);
         }));
@@ -211,7 +218,14 @@ void DFMRootFileWatcherPrivate::initBlockDevConnections(QSharedPointer<DBlockDev
         connections.push_back(QObject::connect(ctblk.data(), &DBlockDevice::mountPointsChanged, [wpar, url](const QByteArrayList &) {
             Q_EMIT wpar->fileAttributeChanged(url);
         }));
+        connectionsurl<<urlstr+QString("_en");
     } else {
+        foreach(const QString &str,connectionsurl){
+            if (str == urlstr)
+            {
+                return;
+            }
+        }
         connections.push_back(QObject::connect(blk.data(), &DBlockDevice::idLabelChanged, [wpar, url](const QString &) {
             Q_EMIT wpar->fileAttributeChanged(url);
         }));
@@ -228,6 +242,7 @@ void DFMRootFileWatcherPrivate::initBlockDevConnections(QSharedPointer<DBlockDev
         connections.push_back(QObject::connect(blk.data(), &DBlockDevice::cleartextDeviceChanged, [wpar, url](const QString &) {
             Q_EMIT wpar->fileAttributeChanged(url);
         }));
+        connectionsurl<<urlstr;
     }
 }
 
@@ -352,7 +367,7 @@ bool DFMRootFileWatcherPrivate::stop()
         QObject::disconnect(conn);
     }
     connections.clear();
-
+    connectionsurl.clear();
     blkdevs.clear();
 
     vfsmgr.clear();
