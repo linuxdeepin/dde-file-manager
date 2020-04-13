@@ -103,7 +103,7 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
             //fix 临时解决方案，彻底解决需要DDiskManager::resolveDeviceNode往下追踪
             for (int i = 0;i < 20; ++i)
             {
-                QThread::msleep(100);
+                QThread::msleep(50);
                 pathList = DDiskManager::resolveDeviceNode("/dev" + url.path().chopped(QString("." SUFFIX_UDISKS).length()), {});
                 if (pathList.size() != 0)
                     break;
