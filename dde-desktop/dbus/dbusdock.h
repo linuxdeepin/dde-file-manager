@@ -59,7 +59,7 @@ private slots:
             for (int i=self->propertyOffset(); i < self->propertyCount(); ++i) {
                 QMetaProperty p = self->property(i);
                 if (p.name() == prop) {
- 	            Q_EMIT p.notifySignal().invoke(this);
+                    Q_EMIT p.notifySignal().invoke(this);
                 }
             }
         }
@@ -204,7 +204,11 @@ Q_SIGNALS: // SIGNALS
     void ShowTimeoutChanged();
     void FrontendWindowRectChanged();
 };
+#define DockInfoIns DockInfo::ins()->dock()
 
+//这个DBUS有问题，弃用
+#define DockGeometry 0
+#if DockGeometry
 struct DockRectI{
     qint32 x;
     qint32 y;
@@ -265,21 +269,27 @@ public:
 Q_SIGNALS:
     void GeometryChanged();
 };
-
+#define DockGeoIns DockInfo::ins()->dockGeo()
+#endif
 class DockInfo : public QObject
 {
     Q_OBJECT
 public:
     static DockInfo *ins();
+#if DockGeometry
     DBusDockGeometry *dockGeo() const;
+#endif
     DBusDock *dock() const;
 private:
     DockInfo(QObject *parent = nullptr);
+#if DockGeometry
     DBusDockGeometry *m_dockgeo = nullptr;
+#endif
     DBusDock *m_dock = nullptr;
 };
-#define DockInfoIns DockInfo::ins()->dock()
-#define DockGeoIns DockInfo::ins()->dockGeo()
+
+
+
 
 namespace com {
   namespace deepin {

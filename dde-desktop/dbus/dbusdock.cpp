@@ -51,7 +51,7 @@ QDebug operator<<(QDebug deg, const DockRect &rect)
 
     return deg;
 }
-
+#if DockGeometry
 DBusDockGeometry::DBusDockGeometry(QObject *parent)
     : QDBusAbstractInterface(staticServiceName(), staticObjectPath(), staticInterfaceName(), QDBusConnection::sessionBus(), parent)
 {
@@ -90,6 +90,7 @@ QDebug operator<<(QDebug deg, const DockRectI &rect)
 
     return deg;
 }
+#endif
 
 DockInfo *DockInfo::ins()
 {
@@ -97,10 +98,12 @@ DockInfo *DockInfo::ins()
     return  &ins;
 }
 
+#if DockGeometry
 DBusDockGeometry *DockInfo::dockGeo() const
 {
     return m_dockgeo;
 }
+#endif
 
 DBusDock *DockInfo::dock() const
 {
@@ -110,6 +113,9 @@ DBusDock *DockInfo::dock() const
 DockInfo::DockInfo(QObject *parent)
     : QObject (parent)
 {
+
+#if DockGeometry
     m_dockgeo = new DBusDockGeometry(this);
+#endif
     m_dock = new DBusDock(this);
 }

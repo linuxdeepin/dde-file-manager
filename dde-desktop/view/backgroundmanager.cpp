@@ -108,8 +108,8 @@ void BackgroundManager::onRestBackgroundManager()
         //销毁窗口
         m_backgroundMap.clear();
 
-        //通知view重建
-        emit sigBackgroundBuilded(ScreenMrg->displayMode());
+        //不创建背景
+        onSkipBackgroundBuild();
     }
 }
 
@@ -227,7 +227,6 @@ void BackgroundManager::onBackgroundBuild()
 
 void BackgroundManager::onSkipBackgroundBuild()
 {
-    qDebug() << "2222222222222222screen mode" << ScreenMrg->displayMode();
     //通知view重建
     emit sigBackgroundBuilded(ScreenMrg->displayMode());
 }
