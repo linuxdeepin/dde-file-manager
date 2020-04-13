@@ -5,6 +5,17 @@
 #include <QGuiApplication>
 #include <QScreen>
 
+static QRect dealRectRatio(QRect orgRect)
+{
+    //处理缩放，先不考虑高分屏的特殊处理
+    qreal ratio = qApp->primaryScreen()->devicePixelRatio();
+    if (ratio != 1.0)
+        orgRect = QRect(orgRect.x(), orgRect.y()
+                        , orgRect.width() / ratio
+                        , orgRect.height() / ratio);
+    return orgRect;
+}
+
 ScreenObjectWayland::ScreenObjectWayland(DBusMonitor *monitor,QObject *parent)
     : AbstractScreen(parent)
     , m_monitor(monitor)
@@ -28,12 +39,7 @@ QString ScreenObjectWayland::name() const
 QRect ScreenObjectWayland::geometry() const
 {
     QRect orgRect = m_monitor->rect();
-    //处理缩放，先不考虑高分屏的特殊处理
-    qreal ratio = qApp->primaryScreen()->devicePixelRatio();
-    if (ratio != 1.0)
-        orgRect = QRect(orgRect.x(), orgRect.y()
-                        , orgRect.width() / ratio
-                        , orgRect.height() / ratio);
+    orgRect = dealRectRatio(orgRect);
     return orgRect;
 }
 
@@ -45,24 +51,27 @@ QRect ScreenObjectWayland::availableGeometry() const
     if ( 1 == dockHideMode || 3 == dockHideMode) //隐藏与智能隐藏
         return ret;
 
-    DockRectI dockrect = DockGeoIns->getGeometry(); //经过缩放处理后的docks
+    //DockGeoIns->getGeometry(); //经过缩放处理后的docks,有问题
+    DockRect dockrectI = DockInfoIns->frontendWindowRect(); //原始dock大小
+    QRect dockrect = dealRectRatio(dockrectI.operator QRect());  //缩放处理
     switch (DockInfoIns->position()) {
     case 0: //上
-        ret.setY(dockrect.height);
+        ret.setY(dockrect.height());
         break;
     case 1: //右
-        ret.setWidth(ret.width() - dockrect.width);
+        ret.setWidth(ret.width() - dockrect.width());
         break;
     case 2: //下
-        ret.setHeight(ret.height() - dockrect.height);
+        ret.setHeight(ret.height() - dockrect.height());
         break;
     case 3: //左
-        ret.setX(dockrect.width);
+        ret.setX(dockrect.width());
         break;
     default:
         qCritical() << "dock postion error!";
         break;
     }
+
     return ret;
 }
 
