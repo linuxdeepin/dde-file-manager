@@ -1227,7 +1227,7 @@ void DFileDialog::onAcceptButtonClicked()
 
         for (const DUrl &url : urls) {
             const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(url);
-
+            if (!fileInfo) {continue;}
             if (!fileInfo->isFile() && !d->allowMixedSelection) {
                 if (doCdWhenPossible && fileInfo->isDir()) {
                     // blumia: it's possible to select more than one file/dirs, we only do cd when select a single directory.
