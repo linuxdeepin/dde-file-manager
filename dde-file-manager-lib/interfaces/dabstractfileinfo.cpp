@@ -1402,6 +1402,11 @@ QVariantHash DAbstractFileInfo::extraProperties() const
     return QVariantHash();
 }
 
+bool DAbstractFileInfo::checkMpsStr(const QString &) const
+{
+    return false;
+}
+
 void DAbstractFileInfo::makeToActive()
 {
     Q_D(DAbstractFileInfo);
