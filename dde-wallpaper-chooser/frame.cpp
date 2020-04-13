@@ -30,6 +30,9 @@
 #include "thumbnailmanager.h"
 #include "appearance_interface.h"
 #include "backgroundhelper.h"
+#include "util/xcb/xcb.h"
+#include "presenter/display.h"
+#include "util/dde/desktopinfo.h"
 
 #ifndef DISABLE_SCREENSAVER
 #include "screensaver_interface.h"
@@ -151,6 +154,27 @@ void Frame::show()
 
         if (!m_backgroundHelper) {
             m_backgroundHelper = new BackgroundHelper(true, this);
+            QWidget *background;
+            QList<QWidget *> allBackgrounds;
+            if (DesktopInfo().waylandDectected()) {
+
+                background = m_backgroundHelper->waylandBackground(Display::instance()->primaryName());
+                allBackgrounds = m_backgroundHelper->waylandAllBackgrounds();
+            } else {
+                background = m_backgroundHelper->backgroundForScreen(qApp->primaryScreen());
+                allBackgrounds = m_backgroundHelper->allBackgrounds();
+            }
+
+            // 隐藏完全重叠的窗口
+            for (QWidget *l : allBackgrounds) {
+                if (l != background) {
+                    Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), true);
+                    l->setVisible(l->geometry().topLeft() != background->geometry().topLeft());
+                } else {
+                    Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), false);
+                    l->show();
+                }
+            }
             // 防止壁纸设置窗口被背景窗口覆盖
             connect(m_backgroundHelper, &BackgroundHelper::backgroundAdded, this, &Frame::activateWindow);
         }
@@ -653,7 +677,13 @@ void Frame::initUI()
 
 void Frame::initSize()
 {
-    const QRect primaryRect = qApp->primaryScreen()->geometry();
+    QRect primaryRect;
+    if(DesktopInfo().waylandDectected()){
+        primaryRect= Display::instance()->primaryRect();
+    }else {
+        primaryRect = qApp->primaryScreen()->geometry();
+    }
+
     int actualHeight;
 #if defined(DISABLE_SCREENSAVER) && defined(DISABLE_WALLPAPER_CAROUSEL)
     actualHeight = FrameHeight;
