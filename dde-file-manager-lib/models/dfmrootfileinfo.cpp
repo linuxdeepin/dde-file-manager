@@ -570,6 +570,20 @@ QString DFMRootFileInfo::udisksDisplayName()
     return d->label;
 }
 
+bool DFMRootFileInfo::checkMpsStr(const QString &path) const
+{
+    Q_D(const DFMRootFileInfo);
+
+    for (QByteArray ba : d->mps)
+    {
+        QString baStr(ba.data());
+        if (baStr.startsWith(path))
+            return true;
+    }
+
+    return false;
+}
+
 bool DFMRootFileInfo::typeCompare(const DAbstractFileInfoPointer &a, const DAbstractFileInfoPointer &b)
 {
     static const QHash<ItemType, int> priomap = {

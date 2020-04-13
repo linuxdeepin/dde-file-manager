@@ -306,6 +306,8 @@ public:
 
     virtual QVariantHash extraProperties() const;
 
+    virtual bool checkMpsStr(const QString &) const;
+
 protected:
     explicit DAbstractFileInfo(DAbstractFileInfoPrivate &dd);
     void setProxy(const DAbstractFileInfoPointer &proxy);
