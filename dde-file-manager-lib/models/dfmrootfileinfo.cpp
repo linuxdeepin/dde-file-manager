@@ -98,12 +98,13 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
         }
     } else if (suffix() == SUFFIX_UDISKS) {
         QStringList pathList = DDiskManager::resolveDeviceNode("/dev" + url.path().chopped(QString("." SUFFIX_UDISKS).length()), {});
-        if (pathList.size()==0) {
+        if (pathList.size() == 0) {
             qWarning() << url << "not existed";
             //fix 临时解决方案，彻底解决需要DDiskManager::resolveDeviceNode往下追踪
             for (int i = 0;i < 20; ++i)
             {
                 QThread::msleep(50);
+
                 pathList = DDiskManager::resolveDeviceNode("/dev" + url.path().chopped(QString("." SUFFIX_UDISKS).length()), {});
                 if (pathList.size() != 0)
                     break;
@@ -129,7 +130,7 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::mountPointsChanged, [this] {this->checkCache();});
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::sizeChanged, [this] {this->checkCache();});
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::idTypeChanged, [this] {this->checkCache();});
-            QObject::connect(d_ptr->blk.data(), &DBlockDevice::cleartextDeviceChanged, [this]{this->checkCache();});
+            QObject::connect(d_ptr->blk.data(), &DBlockDevice::cleartextDeviceChanged, [this] {this->checkCache();});
         }
     }
 }
@@ -146,7 +147,11 @@ bool DFMRootFileInfo::exists() const
         QExplicitlySharedDataPointer<DGioFileInfo> fi = d->gmnt->getRootFile()->createFileInfo("*", FILE_QUERY_INFO_NONE, 2000);
         return fi && fi->fileType() == DGioFileType::FILE_TYPE_DIRECTORY;
     } else if (suffix() == SUFFIX_UDISKS) {
-        return d->blk->path().length() != 0;
+        if (d->blk)  {
+            return d->blk->path().length() != 0;
+        } else {
+            return false;
+        }
     }
 }
 
@@ -350,7 +355,7 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
     if (suffix() == SUFFIX_UDISKS && blk && !blk->mountPoints().empty()) {
         if (gsettings.value("protect-non-media-mounts").toBool()) {
             QList<QByteArray> mountPoints = blk->mountPoints();
-            for (auto & mountPoint : mountPoints) {
+            for (auto &mountPoint : mountPoints) {
                 if (!mountPoint.startsWith("/media/")) {
                     protectUnmountOrEject = true;
                     break;
@@ -454,7 +459,7 @@ QVariantHash DFMRootFileInfo::extraProperties() const
     QVariantHash ret;
     if (suffix() == SUFFIX_GVFSMP) {
         if (d->gfsi) {
-            ret["fsUsed"] = d->gfsi->fsUsedBytes();
+            ret["fsUsed"] = d->gfsi->fsTotalBytes() - d->gfsi->fsFreeBytes();
             ret["fsSize"] = d->gfsi->fsTotalBytes();
             ret["fsType"] = d->gfsi->fsType();
         }
@@ -505,7 +510,7 @@ QString DFMRootFileInfo::udisksDisplayName()
 {
     Q_D(DFMRootFileInfo);
 
-    static QMap<QString, const char*> i18nMap {
+    static QMap<QString, const char *> i18nMap {
         {"data", "Data Disk"}
     };
     const QString ddeI18nSym = QStringLiteral("_dde_");
@@ -548,8 +553,8 @@ QString DFMRootFileInfo::udisksDisplayName()
             QString maxmediacompat;
             for (auto i = opticalmediakv.rbegin(); i != opticalmediakv.rend(); ++i) {
                 if (drv->mediaCompatibility().contains(i->first)) {
-                maxmediacompat = i->second;
-                break;
+                    maxmediacompat = i->second;
+                    break;
                 }
             }
             return QCoreApplication::translate("DeepinStorage", "%1 Drive").arg(maxmediacompat);
@@ -568,17 +573,17 @@ QString DFMRootFileInfo::udisksDisplayName()
 bool DFMRootFileInfo::typeCompare(const DAbstractFileInfoPointer &a, const DAbstractFileInfoPointer &b)
 {
     static const QHash<ItemType, int> priomap = {
-        {ItemType::UserDirectory  , -1},
-        {ItemType::UDisksRoot     ,  0},
-        {ItemType::UDisksData     ,  1},
-        {ItemType::UDisksFixed    ,  2},
+        {ItemType::UserDirectory, -1},
+        {ItemType::UDisksRoot,  0},
+        {ItemType::UDisksData,  1},
+        {ItemType::UDisksFixed,  2},
         {ItemType::UDisksRemovable,  3},
-        {ItemType::UDisksOptical  ,  4},
-        {ItemType::GvfsSMB        ,  5},
-        {ItemType::GvfsFTP        ,  5},
-        {ItemType::GvfsMTP        ,  6},
-        {ItemType::GvfsGPhoto2    ,  6},
-        {ItemType::GvfsGeneric    ,  7}
+        {ItemType::UDisksOptical,  4},
+        {ItemType::GvfsSMB,  5},
+        {ItemType::GvfsFTP,  5},
+        {ItemType::GvfsMTP,  6},
+        {ItemType::GvfsGPhoto2,  6},
+        {ItemType::GvfsGeneric,  7}
     };
     if (!a->exists()) {
         return false;

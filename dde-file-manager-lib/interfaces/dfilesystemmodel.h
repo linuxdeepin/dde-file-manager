@@ -42,12 +42,15 @@ class QEventLoop;
 class QReadWriteLock;
 QT_END_NAMESPACE
 
+#define DRAG_EVENT_URLS "UrlsInDragEvent"
+
 class FileSystemNode;
 class DAbstractFileInfo;
 class DFMEvent;
 class JobController;
 class DFileViewHelper;
 class DFMUrlListBaseEvent;
+class QSharedMemory;
 
 enum _asb_LabelIndex {
     SEARCH_RANGE, FILE_TYPE, SIZE_RANGE, DATE_RANGE, LABEL_COUNT,
@@ -64,6 +67,8 @@ typedef struct fileFilter {
     bool f_includeSubDir;
     bool f_comboValid[LABEL_COUNT];
 } FileFilter;
+
+static QList<QUrl> FOR_DRAGEVENT;
 
 typedef QExplicitlySharedDataPointer<FileSystemNode> FileSystemNodePointer;
 class DFileSystemModelPrivate;
@@ -196,6 +201,8 @@ public:
     void setColumnActiveRole(int column, int role);
     int columnActiveRole(int column) const;
 
+//    static QList<QUrl> m_urlForDragEvent;
+
 public slots:
     void updateChildren(QList<DAbstractFileInfoPointer> list);
     void updateChildrenOnNewThread(QList<DAbstractFileInfoPointer> list);
@@ -252,6 +259,7 @@ private:
     friend class DListItemDelegate;
 
     QScopedPointer<DFileSystemModelPrivate> d_ptr;
+    QSharedMemory *m_smForDragEvent;
 
     Q_PRIVATE_SLOT(d_func(), void _q_onFileCreated(const DUrl &fileUrl))
     Q_PRIVATE_SLOT(d_func(), void _q_onFileDeleted(const DUrl &fileUrl))

@@ -29,6 +29,8 @@
 #include <QtConcurrent>
 #include <models/dfmsidebarmodel.h>
 
+#define DRAG_EVENT_URLS "UrlsInDragEvent"
+
 DFM_BEGIN_NAMESPACE
 
 DFMSideBarView::DFMSideBarView(QWidget *parent)
@@ -64,6 +66,8 @@ void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
 
 void DFMSideBarView::dragEnterEvent(QDragEnterEvent *event)
 {
+    fetchDragEventUrlsFromSharedMemory();
+
     if (isAccepteDragEvent(event)) {
         return;
     }
@@ -115,7 +119,7 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
         }
     }
 
-    Qt::DropAction action = canDropMimeData(item, event->mimeData(), event->proposedAction());
+    Qt::DropAction action = canDropMimeData(item, event->mimeData(), Qt::MoveAction);
     if (action == Qt::IgnoreAction) {
         action = canDropMimeData(item, event->mimeData(), event->possibleActions());
     }
@@ -200,7 +204,7 @@ DFMSideBarItem *DFMSideBarView::itemAt(const QPoint &pt)
 Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMimeData *data, Qt::DropActions actions) const
 {
     // Got a copy of urls so whatever data was changed, it won't affact the following code.
-    QList<QUrl> urls = data->urls();
+    QList<QUrl> urls = m_urlsForDragEvent;
 
     if (urls.empty()) {
         return Qt::IgnoreAction;
@@ -262,6 +266,33 @@ bool DFMSideBarView::isAccepteDragEvent(DFMDragEvent *event)
     }
 
     return accept;
+}
+
+bool DFMSideBarView::fetchDragEventUrlsFromSharedMemory()
+{
+    QSharedMemory sm;
+    sm.setKey(DRAG_EVENT_URLS);
+
+    if (!sm.isAttached()) {
+        if (!sm.attach()) {
+            qDebug() << "FQSharedMemory detach failed.";
+            return false;
+        }
+    }
+
+    QBuffer buffer;
+    QDataStream in(&buffer);
+    QList<QUrl> urls;
+
+    sm.lock();
+    //用缓冲区得到共享内存关联后得到的数据和数据大小
+    buffer.setData((char*)sm.constData(), sm.size());
+    buffer.open(QBuffer::ReadOnly);     //设置读取模式
+    in >> m_urlsForDragEvent;               //使用数据流从缓冲区获得共享内存的数据，然后输出到字符串中
+    sm.unlock();    //解锁
+    sm.detach();//与共享内存空间分离
+
+    return true;
 }
 
 DFM_END_NAMESPACE

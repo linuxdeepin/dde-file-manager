@@ -981,6 +981,7 @@ void DialogManager::showFilePreviewDialog(const DUrlList &selectUrls, const DUrl
 
     m_filePreviewDialog->show();
     m_filePreviewDialog->raise();
+    m_filePreviewDialog->activateWindow();
 }
 
 void DialogManager::showRestoreFailedDialog(const DUrlList &urlList)

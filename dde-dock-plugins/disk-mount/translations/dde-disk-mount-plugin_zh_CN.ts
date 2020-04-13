@@ -1,25 +1,27 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>DeepinStorage</name>
     <message>
-        <location filename="../dattachedudisks2device.cpp" line="100"/>
-        <location filename="../dattachedudisks2device.cpp" line="115"/>
         <source>%1 Volume</source>
         <translation>%1 卷</translation>
     </message>
 </context>
 <context>
+    <name>DiskControlItem</name>
+    <message>
+        <source>Unknown</source>
+        <translation>容量未知</translation>
+    </message>
+</context>
+<context>
     <name>DiskControlWidget</name>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="215"/>
-        <location filename="../diskcontrolwidget.cpp" line="223"/>
-        <location filename="../diskcontrolwidget.cpp" line="294"/>
-        <location filename="../diskcontrolwidget.cpp" line="455"/>
         <source>Disk is busy, cannot eject now</source>
         <translation>磁盘文件被占用，无法弹出</translation>
     </message>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="469"/>
         <source>dde-file-manager</source>
         <translation>dde-file-manager</translation>
     </message>
@@ -27,17 +29,14 @@
 <context>
     <name>DiskMountPlugin</name>
     <message>
-        <location filename="../diskmountplugin.cpp" line="49"/>
         <source>Disk</source>
         <translation>磁盘</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="104"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../diskmountplugin.cpp" line="111"/>
         <source>Unmount all</source>
         <translation>卸载全部</translation>
     </message>
@@ -45,7 +44,6 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../diskcontrolwidget.cpp" line="390"/>
         <source>Device has been removed</source>
         <translation>设备已被移除</translation>
     </message>
