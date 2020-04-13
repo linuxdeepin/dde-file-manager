@@ -145,6 +145,7 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(ScreenPointer 
     bwp->createWinId();
     //bwp->windowHandle()->handle()->setGeometry(screen->handleGeometry()); //不能设置，设置了widget的geometry会被乱改//分辨率原始大小
     bwp->setGeometry(screen->geometry()); //经过缩放的区域
+    qInfo() << "screen name" << screen->name() << "geometry" << screen->geometry();
 
     if (m_preview) {
         bwp->setWindowFlags(bwp->windowFlags() | Qt::BypassWindowManagerHint | Qt::WindowDoesNotAcceptFocus);
@@ -157,7 +158,6 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(ScreenPointer 
 
 bool BackgroundManager::isEnabled() const
 {
-    return false;
     // 只支持kwin，或未开启混成的桌面环境
     return windowManagerHelper->windowManagerName() == DWindowManagerHelper::KWinWM || !windowManagerHelper->hasComposite();
 }

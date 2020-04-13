@@ -330,9 +330,18 @@ void CanvasGridView::updateHiddenItems()
 
 void CanvasGridView::setGeometry(const QRect &rect)
 {
+#if 0 //old
     if (parentWidget()) {
         QAbstractItemView::setGeometry(QRect(0, 0, rect.width(), rect.height()));
     } else {
+        QAbstractItemView::setGeometry(rect);
+    }
+#endif
+    //!防止获取到的屏幕区域是0x0的时候崩溃
+    if (rect.size().width() < 1 || rect.size().height() < 1){
+        return;
+    }
+    else {
         QAbstractItemView::setGeometry(rect);
     }
 }
@@ -1862,11 +1871,11 @@ void CanvasGridView::initUI()
     viewport()->setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAutoFillBackground(false);
     setFrameShape(QFrame::NoFrame); // TODO: using QWidget instead of QFrame?
-
+#if 0 //old
     setGeometry(Display::instance()->primaryRect());
     auto newGeometry =  getValidNewGeometry(Display::instance()->primaryRect(), this->geometry());
     d->canvasRect = newGeometry;
-
+#endif
     setSelectionMode(QAbstractItemView::ExtendedSelection);
     setAcceptDrops(true);
     setDragDropMode(QAbstractItemView::DragDrop);
@@ -1938,7 +1947,7 @@ void CanvasGridView::updateGeometry(const QRect &geometry)
      * a single active monitor among a multi-monitor setup, while CanvasGridView handles
      * this just fine. So we trigger an extra background resize manually here.
      */
-    BackgroundHelper::getDesktopInstance()->updateBackground((QLabel *)this->parent());
+    //BackgroundHelper::getDesktopInstance()->updateBackground((QLabel *)this->parent());
 
     updateCanvas();
     repaint();
@@ -2040,7 +2049,7 @@ void CanvasGridView::initConnection()
 //        d->syncTimer->setInterval(interval);
 //    });
 //    d->syncTimer->start();
-
+#if 0 //old
     auto connectScreenGeometryChanged = [this](QScreen * screen) {
         connect(screen, &QScreen::availableGeometryChanged,
         this, [ = ](const QRect & /*geometry*/) {
@@ -2091,7 +2100,7 @@ void CanvasGridView::initConnection()
             updateGeometry(geometry);
         });
     });
-
+#endif
     connect(this->model(), &DFileSystemModel::newFileByInternal,
     this, [ = ](const DUrl & fileUrl) {
         auto localFile = fileUrl.toString();
@@ -2167,7 +2176,7 @@ void CanvasGridView::initConnection()
             Presenter::instance(), &Presenter::onSortRoleChanged);
     connect(this, &CanvasGridView::changeIconLevel,
             Presenter::instance(), &Presenter::OnIconLevelChanged);
-
+#if 0 //old
     connect(d->dbusDock, &DBusDock::HideModeChanged,
     this, [ = ]() {
           updateGeometry(Display::instance()->primaryRect());
@@ -2187,7 +2196,7 @@ void CanvasGridView::initConnection()
         updateGeometry(Display::instance()->primaryRect());
         this->updateCanvas();
     });
-
+#endif
 
     connect(DFMApplication::instance(), &DFMApplication::showedHiddenFilesChanged, [ = ](bool isShowedHiddenFile) {
         QDir::Filters filters;
@@ -2205,6 +2214,7 @@ void CanvasGridView::initConnection()
 
 void CanvasGridView::updateCanvas()
 {
+#if 0 //old
     //if X11
     //auto outRect = qApp->primaryScreen()->geometry();
     //else
@@ -2274,7 +2284,22 @@ void CanvasGridView::updateCanvas()
         QMargins margins(offset, d->cellMargins.top(), 0, 0);
         expandedWidget ->setContentsMargins(margins);
     }
+#else //todo计算margin
+    itemDelegate()->updateItemSizeHint();
+    auto itemSize = itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex());
+    QMargins geometryMargins = QMargins(0, 0, 0, 0);
+    d->updateCanvasSize(this->geometry().size(), this->geometry().size(), geometryMargins, itemSize);
+    GridManager::instance()->updateGridSize(d->colCount, d->rowCount);
 
+    updateEditorGeometries();
+
+    auto expandedWidget = reinterpret_cast<QWidget *>(itemDelegate()->expandedIndexWidget());
+    if (expandedWidget) {
+        int offset = -1 * ((d->cellWidth - itemSize.width()) % 2);
+        QMargins margins(offset, d->cellMargins.top(), 0, 0);
+        expandedWidget ->setContentsMargins(margins);
+    }
+#endif
     update();
 }
 

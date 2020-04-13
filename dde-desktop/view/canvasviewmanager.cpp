@@ -5,7 +5,7 @@
 
 inline QRect relativeRect(const QRect &avRect,const QRect &geometry)
 {
-    QPoint relativePos = geometry.topLeft() - avRect.topLeft();
+    QPoint relativePos = avRect.topLeft() - geometry.topLeft();
 
     return QRect(relativePos,avRect.size());
 }
@@ -129,7 +129,7 @@ void CanvasViewManager::onScreenGeometryChanged(ScreenPointer sp)
 
         qDebug() << "dddddddddddddd" << ScreenMrg->primaryScreen()->name()
                  << mView->geometry() << sp->name()
-                 << sp->geometry() << sp->availableGeometry();
+                 << sp->geometry() << sp->availableGeometry() << avRect;
         mView->setGeometry(avRect);
     }
 }

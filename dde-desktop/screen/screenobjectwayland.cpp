@@ -79,7 +79,6 @@ QString ScreenObjectWayland::path() const
 void ScreenObjectWayland::init()
 {
     connect(m_monitor,&DBusMonitor::monitorRectChanged,[this](){
-        qDebug() << "eeeeeeeeeeeeeeeeee" << m_monitor->rect();
-        emit sigGeometryChanged(m_monitor->rect());
+        emit sigGeometryChanged(geometry());
     });
 }

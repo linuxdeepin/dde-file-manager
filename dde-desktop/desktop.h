@@ -50,10 +50,10 @@ public slots:
 private:
     explicit Desktop();
     ~Desktop();
-
+#if USINGOLD
     void onBackgroundEnableChanged();
     void onBackgroundGeometryChanged(QWidget *l);
-
+#endif
     friend class Singleton<Desktop>;
     Q_DISABLE_COPY(Desktop)
 

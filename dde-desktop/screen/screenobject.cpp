@@ -49,7 +49,8 @@ QRect ScreenObject::availableGeometry() const
     if (dock_xcb_ewmh_wm_strut_partial_t.top > 0) {
         availableRect.setY(dock_xcb_ewmh_wm_strut_partial_t.top);
     } else if (dock_xcb_ewmh_wm_strut_partial_t.right > 0) {
-        availableRect.setWidth(2 * availableRect.width() - dock_xcb_ewmh_wm_strut_partial_t.right);
+        availableRect.setWidth((dock_xcb_ewmh_wm_strut_partial_t.right / availableRect.width()  + 1)
+                               * availableRect.width() - dock_xcb_ewmh_wm_strut_partial_t.right); //!右边dock计算有问题就改这
     } else if (dock_xcb_ewmh_wm_strut_partial_t.bottom > 0) {
         availableRect.setHeight(availableRect.height() - dock_xcb_ewmh_wm_strut_partial_t.bottom);
     } else if (dock_xcb_ewmh_wm_strut_partial_t.left > 0) {

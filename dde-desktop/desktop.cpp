@@ -33,7 +33,7 @@
 #include "util/xcb/xcb.h"
 #include "backgroundmanager.h"
 #include "canvasviewmanager.h"
-#include "screen/screenhelper.h"
+
 
 using WallpaperSettings = Frame;
 
@@ -43,10 +43,14 @@ extern QScreen *GetPrimaryScreen();
 using ZoneSettings = ZoneMainWindow;
 #endif
 
+#define USINGOLD 0
+
 class DesktopPrivate
 {
 public:
+#if USINGOLD
     CanvasGridView      screenFrame;
+#endif
     BackgroundHelper *background = nullptr;
     WallpaperSettings *wallpaperSettings{ nullptr };
 
@@ -58,9 +62,7 @@ public:
 Desktop::Desktop()
     : d(new DesktopPrivate)
 {
-//    auto ss = new BackgroundManager;
-//    auto vv = new CanvasViewManager(ss);
-//    return;
+#if USINGOLD
     d->background = new BackgroundHelper();
     DesktopInfo desktoInfo;
     connect(d->background, &BackgroundHelper::enableChanged, this, &Desktop::onBackgroundEnableChanged);
@@ -79,6 +81,10 @@ Desktop::Desktop()
     // 任意控件改变位置都可能会引起主窗口被其它屏幕上的窗口所遮挡
     connect(d->background, &BackgroundHelper::backgroundGeometryChanged, this, &Desktop::onBackgroundGeometryChanged);
     onBackgroundEnableChanged();
+#else
+    auto ss = new BackgroundManager;
+    auto vv = new CanvasViewManager(ss);
+#endif
 }
 
 Desktop::~Desktop()
@@ -99,6 +105,7 @@ static void setWindowFlag(QWidget *w, Qt::WindowType flag, bool on)
 #endif
 }
 
+#if USINGOLD
 void Desktop::onBackgroundEnableChanged()
 {
     qInfo() << "Primary Screen:" << qApp->primaryScreen();
@@ -198,7 +205,7 @@ void Desktop::onBackgroundGeometryChanged(QWidget *l)
         l->show();
     }
 }
-
+#endif
 void Desktop::loadData()
 {
     Presenter::instance()->init();
@@ -206,7 +213,9 @@ void Desktop::loadData()
 
 void Desktop::loadView()
 {
+#if USINGOLD //old;
     d->screenFrame.initRootUrl();
+#endif
 }
 
 void Desktop::showWallpaperSettings(int mode)
@@ -254,21 +263,28 @@ void Desktop::showZoneSettings()
 
 void Desktop::initDebugDBus(QDBusConnection &conn)
 {
+#if USINGOLD
     if (!conn.registerObject(DesktopCanvasPath, &d->screenFrame,
                              QDBusConnection::ExportScriptableSlots)) {
         qDebug() << "registerObject Failed" << conn.lastError();
         exit(0x0004);
     }
+#endif
 }
 
 CanvasGridView *Desktop::getView()
 {
+#if USINGOLD
     return (&(d->screenFrame));
+#endif
+    return  nullptr;
 }
 
 void Desktop::Show()
 {
+#if    USINGOLD
     d->screenFrame.show();
+#endif
 }
 
 void Desktop::ShowWallpaperChooser()
