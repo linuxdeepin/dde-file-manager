@@ -25,6 +25,8 @@ public:
     void setVisible(bool visible);
     bool isVisible() const;
     BackgroundWidgetPointer backgroundWidget(ScreenPointer) const;
+    //自定义背景，临时方案
+    void setBackgroundImage(const QString &screen,const QString &path);
 signals:
     void sigBackgroundBuilded(int mode); //通知canvasview
 public slots:
@@ -47,6 +49,10 @@ private:
     int currentWorkspaceIndex = 0;
 
     QMap<ScreenPointer,BackgroundWidgetPointer> m_backgroundMap;
+
+    //记录设置的背景的壁纸，临时解决方案
+    QMap<QString, QString> m_backgroundImagePath;
+
 };
 
 #endif // BACKGROUNDMANAGER_H

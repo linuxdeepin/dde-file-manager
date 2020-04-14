@@ -33,7 +33,7 @@ public:
     static std::atomic<bool> m_flag;
     static QMap<DMD_TYPES, bool> virtualEntryExpandState;
 
-    explicit CanvasGridView(QWidget *parent = Q_NULLPTR);
+    explicit CanvasGridView(const QString &screen,QWidget *parent = Q_NULLPTR);
     ~CanvasGridView() Q_DECL_OVERRIDE;
 
 
@@ -189,6 +189,8 @@ private:
 
     QScopedPointer<CanvasViewPrivate> d;
     double m_dragMoveTime;
+
+    QString m_screenName;
 };
 
 

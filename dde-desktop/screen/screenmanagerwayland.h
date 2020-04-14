@@ -15,6 +15,7 @@ public:
     ScreenPointer primaryScreen() Q_DECL_OVERRIDE;
     QVector<ScreenPointer> screens() const Q_DECL_OVERRIDE;
     QVector<ScreenPointer> logicScreens() const Q_DECL_OVERRIDE;
+    ScreenPointer screen(const QString &name) const Q_DECL_OVERRIDE;
     qreal devicePixelRatio() const Q_DECL_OVERRIDE;
     DisplayMode displayMode() const Q_DECL_OVERRIDE;
 protected slots:

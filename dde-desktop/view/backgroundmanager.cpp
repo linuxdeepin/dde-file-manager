@@ -180,6 +180,15 @@ BackgroundWidgetPointer BackgroundManager::backgroundWidget(ScreenPointer sp) co
     return m_backgroundMap.value(sp);
 }
 
+void BackgroundManager::setBackgroundImage(const QString &screen, const QString &path)
+{
+    if (screen.isEmpty() || path.isEmpty())
+        return;
+
+    m_backgroundImagePath[screen] = path;
+    onResetBackgroundImage();
+}
+
 void BackgroundManager::onBackgroundBuild()
 {
     //屏幕模式判断
@@ -234,37 +243,49 @@ void BackgroundManager::onSkipBackgroundBuild()
 //临时使用
 void BackgroundManager::onResetBackgroundImage()
 {
-    //todo 获取每个屏幕的壁纸
-    QString path = QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm")
-            ? wmInter->GetCurrentWorkspaceBackground() : QString();
+    auto getPix = [](const QString &path,const QPixmap &defalutPixmap)->QPixmap{
+        if (path.isEmpty())
+            return defalutPixmap;
 
-    if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())
-            // 调用失败时会返回 "The name com.deepin.wm was not provided by any .service files"
-            // 此时 wmInter->isValid() = true, 且 dubs last error type 为 NoError
-            || (!path.startsWith("/") && !path.startsWith("file:"))) {
-        path = gsettings->value("background-uris").toStringList().value(currentWorkspaceIndex);
-
-        if (path.isEmpty()) {
-            qWarning() << "invalid path, will not setbackground";
-            return;
+        auto currentWallpaper = path.startsWith("file:") ? QUrl(path).toLocalFile() : path;
+        QPixmap backgroundPixmap = QPixmap(currentWallpaper);
+        // fix whiteboard shows when a jpeg file with filename xxx.png
+        // content formart not epual to extension
+        if (backgroundPixmap.isNull()) {
+            QImageReader reader(currentWallpaper);
+            reader.setDecideFormatFromContent(true);
+            backgroundPixmap = QPixmap::fromImage(reader.read());
         }
-    }
+        return backgroundPixmap.isNull() ? defalutPixmap : backgroundPixmap;
+    };
 
-    auto currentWallpaper = path.startsWith("file:") ? QUrl(path).toLocalFile() : path;
-    QPixmap backgroundPixmap = QPixmap(currentWallpaper);
-    // fix whiteboard shows when a jpeg file with filename xxx.png
-    // content formart not epual to extension
-    if (backgroundPixmap.isNull()) {
-        QImageReader reader(currentWallpaper);
-        reader.setDecideFormatFromContent(true);
-        backgroundPixmap = QPixmap::fromImage(reader.read());
-    }
+    QPixmap defaultImage;
+    //todo 获取每个屏幕的壁纸
+    {
+        QString path = QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm")
+                ? wmInter->GetCurrentWorkspaceBackground() : QString();
 
-    // 更新背景图
-    if (backgroundPixmap.isNull())
-        return;
+        if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())
+                // 调用失败时会返回 "The name com.deepin.wm was not provided by any .service files"
+                // 此时 wmInter->isValid() = true, 且 dubs last error type 为 NoError
+                || (!path.startsWith("/") && !path.startsWith("file:"))) {
+            path = gsettings->value("background-uris").toStringList().value(currentWorkspaceIndex);
+
+            if (path.isEmpty()) {
+                qWarning() << "invalid path, will not setbackground";
+                //return;
+            }
+        }
+
+        defaultImage = getPix(path, defaultImage);
+    }
 
     for (ScreenPointer sp : m_backgroundMap.keys()){
+        QString userPath = m_backgroundImagePath.value(sp->name());
+        QPixmap backgroundPixmap = getPix(userPath, defaultImage);
+        if (backgroundPixmap.isNull())
+            continue;
+
         BackgroundWidgetPointer bw = m_backgroundMap.value(sp);
         QSize trueSize = sp->handleGeometry().size(); //使用屏幕缩放前的分辨率
         auto pix = backgroundPixmap.scaled(trueSize,

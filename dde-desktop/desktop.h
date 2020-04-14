@@ -32,7 +32,6 @@ public:
     void loadData();
     void loadView();
 
-    void showWallpaperSettings(int mode = 0);
     void showZoneSettings();
 
     void initDebugDBus(QDBusConnection &conn);
@@ -41,9 +40,10 @@ public:
 
 public slots:
     void Show();
-    void ShowWallpaperChooser();
-    void ShowScreensaverChooser();
-
+    void ShowWallpaperChooser(const QString &screen);
+    void ShowScreensaverChooser(const QString &screen);
+protected:
+    void showWallpaperSettings(const QString &name, int mode = 0);
 #if USINGOLD
 #ifdef QT_DEBUG
     void logAllScreenLabel();

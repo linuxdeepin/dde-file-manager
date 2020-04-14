@@ -39,7 +39,7 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
         m_canvasMap.clear();
 
         if (mView.get() == nullptr){
-            mView = CanvasViewPointer(new CanvasGridView());
+            mView = CanvasViewPointer(new CanvasGridView(primary->name()));
             mView->show();
             mView->initRootUrl();
         }
@@ -54,7 +54,7 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
 
             //新增
             if (mView.get() == nullptr){
-                mView = CanvasViewPointer(new CanvasGridView());
+                mView = CanvasViewPointer(new CanvasGridView(sp->name()));
                 mView->show();
                 mView->initRootUrl();
                 m_canvasMap.insert(sp, mView);
