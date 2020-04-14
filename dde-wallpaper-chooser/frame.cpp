@@ -30,6 +30,7 @@
 #include "thumbnailmanager.h"
 #include "appearance_interface.h"
 #include "backgroundhelper.h"
+#include "screen/screenhelper.h"
 
 #ifndef DISABLE_SCREENSAVER
 #include "screensaver_interface.h"
@@ -70,8 +71,9 @@ static bool previewBackground()
            || !DWindowManagerHelper::instance()->hasBlurWindow();
 }
 
-Frame::Frame(Mode mode, QWidget *parent)
-    : DBlurEffectWidget(parent)
+Frame::Frame(QString screenName, Mode mode, QWidget *parent)
+    : m_screenName(screenName)
+    , DBlurEffectWidget(parent)
     , m_mode(mode)
     , m_wallpaperList(new WallpaperList(this))
     , m_closeButton(new DIconButton(this))
@@ -102,7 +104,12 @@ Frame::Frame(Mode mode, QWidget *parent)
             qDebug() << "button pressed on blank area, quit.";
 
             qreal scale = devicePixelRatioF();
-            const QRect sRect = this->windowHandle()->screen()->geometry();
+            //old
+            //const QRect sRect = this->windowHandle()->screen()->geometry();
+            if(!ScreenHelper::screenManager()->screen(m_screenName)){
+                return;
+            }
+            const QRect sRect = ScreenHelper::screenManager()->screen(m_screenName)->geometry();
             QRect nativeRect = geometry();
 
             // 获取窗口真实的geometry
@@ -148,17 +155,28 @@ void Frame::show()
             m_dbusDeepinWM->deleteLater();
             m_dbusDeepinWM = nullptr;
         }
-
-        if (!m_backgroundHelper) {
-            m_backgroundHelper = new BackgroundHelper(true, this);
-            // 防止壁纸设置窗口被背景窗口覆盖
-            connect(m_backgroundHelper, &BackgroundHelper::backgroundAdded, this, &Frame::activateWindow);
+/*** old code begin ***/
+//        if (!m_backgroundHelper) {
+//            m_backgroundHelper = new BackgroundHelper(true, this);
+//            // 防止壁纸设置窗口被背景窗口覆盖
+//            connect(m_backgroundHelper, &BackgroundHelper::backgroundAdded, this, &Frame::activateWindow);
+//        }
+/*** old code end ***/
+        if (!m_backgroundManager) {
+            m_backgroundManager = new BackgroundManager(true, this);
         }
     } else if (!m_dbusDeepinWM) {
-        if (m_backgroundHelper) {
+/*** old code begin ***/
+//        if (m_backgroundHelper) {
+//            // 销毁不需要的资源
+//            m_backgroundHelper->deleteLater();
+//            m_backgroundHelper = nullptr;
+//        }
+/*** old code end ***/
+        if (m_backgroundManager) {
             // 销毁不需要的资源
-            m_backgroundHelper->deleteLater();
-            m_backgroundHelper = nullptr;
+            m_backgroundManager->deleteLater();
+            m_backgroundManager = nullptr;
         }
 
         m_dbusDeepinWM = new DeepinWM(DeepinWMServ,
@@ -188,8 +206,13 @@ void Frame::setMode(Frame::Mode mode)
         return;
 
     if (m_mode == ScreenSaverMode) {
-        if (m_backgroundHelper) {
-            m_backgroundHelper->setVisible(true);
+/*****old code begin*****/
+//        if (m_backgroundHelper) {
+//            m_backgroundHelper->setVisible(true);
+//        }
+/*****old code end*****/
+        if (m_backgroundManager) {
+            m_backgroundManager->setVisible(true);
         }
 
         m_dbusScreenSaver->Stop();
@@ -201,9 +224,15 @@ void Frame::setMode(Frame::Mode mode)
     refreshList();
 }
 
-QString Frame::desktopBackground() const
+/*** old code begin ***/
+//QString Frame::desktopBackground() const
+//{
+//    return m_desktopWallpaper;
+//}
+/*** old code end ***/
+QPair<QString, QString> Frame::desktopBackground() const
 {
-    return m_desktopWallpaper;
+    return QPair<QString, QString>(m_screenName, m_desktopWallpaper);
 }
 
 void Frame::handleNeedCloseButton(QString path, QPoint pos)
@@ -270,9 +299,15 @@ void Frame::hideEvent(QHideEvent *event)
         m_dbusDeepinWM = nullptr;
     }
 
-    if (m_backgroundHelper) {
-        m_backgroundHelper->deleteLater();
-        m_backgroundHelper = nullptr;
+/*** old code begin ***/
+//    if (m_backgroundHelper) {
+//        m_backgroundHelper->deleteLater();
+//        m_backgroundHelper = nullptr;
+//    }
+/*** old code end ***/
+    if (m_backgroundManager) {
+        m_backgroundManager->deleteLater();
+        m_backgroundManager = nullptr;
     }
 
     emit done();
@@ -652,19 +687,24 @@ void Frame::initUI()
 
 void Frame::initSize()
 {
-    const QRect primaryRect = qApp->primaryScreen()->geometry();
+    //old
+    //const QRect primaryRect = qApp->primaryScreen()->geometry();
+    if(!ScreenHelper::screenManager()->screen(m_screenName)){
+        return;
+    }
+    const QRect screenRect = ScreenHelper::screenManager()->screen(m_screenName)->geometry();
     int actualHeight;
 #if defined(DISABLE_SCREENSAVER) && defined(DISABLE_WALLPAPER_CAROUSEL)
     actualHeight = FrameHeight;
 #else
     actualHeight = FrameHeight + HeaderSwitcherHeight;
 #endif
-    setFixedSize(primaryRect.width() - 20, actualHeight);
+    setFixedSize(screenRect.width() - 20, actualHeight);
 
     qDebug() << "move befor: " << this->geometry() << m_wallpaperList->geometry();
-    move(primaryRect.x() + 10, primaryRect.y() + primaryRect.height() - height());
+    move(screenRect.x() + 10, screenRect.y() + screenRect.height() - height());
     qDebug() << "this move : " << this->geometry() << m_wallpaperList->geometry();
-    m_wallpaperList->setFixedSize(primaryRect.width() - 20, ListHeight);
+    m_wallpaperList->setFixedSize(screenRect.width() - 20, ListHeight);
 }
 
 void Frame::initListView()
@@ -744,9 +784,12 @@ void Frame::onItemPressed(const QString &data)
     if (m_mode == WallpaperMode) {
         if (m_dbusDeepinWM)
             m_dbusDeepinWM->SetTransientBackground(data);
-
-        if (m_backgroundHelper)
-            m_backgroundHelper->setBackground(data);
+/*** old code begin ***/
+//        if (m_backgroundHelper)
+//            m_backgroundHelper->setBackground(data);
+/*** old code end ***/
+        if (m_backgroundManager)
+            m_backgroundManager->setBackgroundImage(m_screenName, data);
 
         m_desktopWallpaper = data;
         m_lockWallpaper = data;
@@ -764,7 +807,8 @@ void Frame::onItemPressed(const QString &data)
                     if (!isCustom) {
                         continue;
                     }
-                    bool isCurrent = m_backgroundHelper ? (item->data() == m_backgroundHelper->background()) : false;
+                    //bool isCurrent = m_backgroundHelper ? (item->data() == m_backgroundHelper->background()) : false; /*** old code ***/
+                    bool isCurrent = true;
                     bool isDeletable = item->getDeletable();
                     item->setDeletable(!isCurrent && (isDeletable || isCustom));
                 }
@@ -776,9 +820,15 @@ void Frame::onItemPressed(const QString &data)
         m_dbusScreenSaver->Preview(data, 1);
         qDebug() << "screensaver start";
         // 防止壁纸背景盖住屏保预览窗口
-        if (m_backgroundHelper && m_backgroundHelper->visible()) {
+/*** old code begin ***/
+//        if (m_backgroundHelper && m_backgroundHelper->visible()) {
+//            QThread::msleep(300); // TODO: 临时方案，暂不清除如何获取屏保显示开始的状态
+//            m_backgroundHelper->setVisible(false);
+//        }
+/*** old code end ***/
+        if (m_backgroundManager && m_backgroundManager->isVisible()) {
             QThread::msleep(300); // TODO: 临时方案，暂不清除如何获取屏保显示开始的状态
-            m_backgroundHelper->setVisible(false);
+            m_backgroundManager->setVisible(false);
         }
     }
 #endif

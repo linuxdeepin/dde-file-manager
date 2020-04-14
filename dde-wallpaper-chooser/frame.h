@@ -25,6 +25,7 @@
 #ifndef FRAME_H
 #define FRAME_H
 
+#include "view/backgroundmanager.h"
 #include <DBlurEffectWidget>
 #include <dregionmonitor.h>
 
@@ -58,13 +59,14 @@ public:
         ScreenSaverMode
     };
 
-    Frame(Mode mode = WallpaperMode, QWidget *parent = nullptr);
+    Frame(QString screenName, Mode mode = WallpaperMode, QWidget *parent = nullptr);
     ~Frame() override;
 
     void show();
     void hide();
 
-    QString desktopBackground() const;
+    //QString desktopBackground() const; /*** old code ***/
+    QPair<QString,QString> desktopBackground() const;
 
 signals:
     void aboutHide();
@@ -122,6 +124,7 @@ private:
     QMap<QString, bool> m_deletableInfo;
 
     BackgroundHelper *m_backgroundHelper = nullptr;
+    BackgroundManager *m_backgroundManager = nullptr;
 
     void initUI();
     void initSize();
@@ -130,6 +133,8 @@ private:
     void onItemPressed(const QString &data);
     void onItemButtonClicked(const QString &buttonID);
     QStringList processListReply(const QString &reply);
+
+    QString m_screenName;
 };
 
 #endif // FRAME_H

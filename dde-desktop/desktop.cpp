@@ -33,7 +33,7 @@
 #include "util/xcb/xcb.h"
 #include "backgroundmanager.h"
 #include "canvasviewmanager.h"
-
+#include "screen/screenhelper.h"
 
 using WallpaperSettings = Frame;
 
@@ -222,24 +222,28 @@ void Desktop::loadView()
 
 void Desktop::showWallpaperSettings(const QString &name, int mode)
 {
+    if(name.isNull() || name.isEmpty()){
+        name = ScreenHelper::screenManager()->primaryScreen()->name();
+    }
     if (d->wallpaperSettings) {
         d->wallpaperSettings->deleteLater();
         d->wallpaperSettings = nullptr;
     }
 
-    d->wallpaperSettings = new WallpaperSettings(Frame::Mode(mode));
+    d->wallpaperSettings = new WallpaperSettings(name, Frame::Mode(mode));
     connect(d->wallpaperSettings, &Frame::done, this, [ = ] {
         d->wallpaperSettings->deleteLater();
         d->wallpaperSettings = nullptr;
     });
     connect(d->wallpaperSettings, &Frame::aboutHide, this, [this] {
-        const QString &desktopImage = d->wallpaperSettings->desktopBackground();
+        //const QString &desktopImage = d->wallpaperSettings->desktopBackground(); /*** old code ***/
+        QPair<QString, QString> screenImage = d->wallpaperSettings->desktopBackground();
 
-        if (!desktopImage.isEmpty())
 #if 0
+        if (!desktopImage.isEmpty())
             d->background->setBackground(desktopImage);
 #else
-            d->m_background->setBackgroundImage("",desktopImage);
+            d->m_background->setBackgroundImage(screenImage.first, screenImage.second);
             d->m_background->onResetBackgroundImage();
 #endif
     }, Qt::DirectConnection);
