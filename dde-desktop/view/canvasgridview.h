@@ -185,7 +185,7 @@ private:
 
     void updateHiddenItems();
 
-//    void setGeometry(int, int, int, int) = delete;
+    void setGeometry(int, int, int, int) = delete;
 
     QScopedPointer<CanvasViewPrivate> d;
     double m_dragMoveTime;
