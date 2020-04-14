@@ -184,7 +184,9 @@ int main(int argc, char *argv[])
         QTimer::singleShot(1000, &app, &QCoreApplication::quit);
     } else {
         if (!fileDialogOnly) {
+#if 0 //old
             Desktop::instance()->Show();
+#endif
             Desktop::instance()->loadView();
         }
     }

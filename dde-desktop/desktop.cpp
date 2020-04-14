@@ -43,15 +43,16 @@ extern QScreen *GetPrimaryScreen();
 using ZoneSettings = ZoneMainWindow;
 #endif
 
-#define USINGOLD 0
-
 class DesktopPrivate
 {
 public:
 #if USINGOLD
     CanvasGridView      screenFrame;
-#endif
     BackgroundHelper *background = nullptr;
+#else
+    BackgroundManager *m_background = nullptr;
+    CanvasViewManager *m_canvas = nullptr;
+#endif
     WallpaperSettings *wallpaperSettings{ nullptr };
 
 #ifndef DISABLE_ZONE
@@ -82,8 +83,7 @@ Desktop::Desktop()
     connect(d->background, &BackgroundHelper::backgroundGeometryChanged, this, &Desktop::onBackgroundGeometryChanged);
     onBackgroundEnableChanged();
 #else
-    auto ss = new BackgroundManager;
-    auto vv = new CanvasViewManager(ss);
+    d->m_background = new BackgroundManager;
 #endif
 }
 
@@ -215,6 +215,8 @@ void Desktop::loadView()
 {
 #if USINGOLD //old;
     d->screenFrame.initRootUrl();
+#else
+    d->m_canvas = new CanvasViewManager(d->m_background);
 #endif
 }
 
@@ -234,7 +236,11 @@ void Desktop::showWallpaperSettings(int mode)
         const QString &desktopImage = d->wallpaperSettings->desktopBackground();
 
         if (!desktopImage.isEmpty())
+#if 0
             d->background->setBackground(desktopImage);
+#else
+            d->m_background->onResetBackgroundImage();
+#endif
     }, Qt::DirectConnection);
 
     d->wallpaperSettings->show();
@@ -297,6 +303,7 @@ void Desktop::ShowScreensaverChooser()
     showWallpaperSettings(Frame::ScreenSaverMode);
 }
 
+#if USINGOLD
 #ifdef QT_DEBUG
 void Desktop::logAllScreenLabel()
 {
@@ -315,4 +322,5 @@ void Desktop::mapLabelScreen(int labelIndex, int screenIndex)
     if (d->background)
         d->background->mapLabelScreen(labelIndex, screenIndex);
 }
+#endif
 #endif // QT_DEBUG

@@ -19,6 +19,8 @@
 #define DesktopServicePath          "/com/deepin/dde/desktop"
 #define DesktopServiceInterface     "com.deepin.dde.desktop"
 
+#define USINGOLD 0
+
 class QDBusConnection;
 class CanvasGridView;
 class DesktopPrivate;
@@ -41,12 +43,14 @@ public slots:
     void Show();
     void ShowWallpaperChooser();
     void ShowScreensaverChooser();
+
+#if USINGOLD
 #ifdef QT_DEBUG
     void logAllScreenLabel();
     void logScreenLabel(int index);
     void mapLabelScreen(int labelIndex, int screenIndex);
 #endif // QT_DEBUG
-
+#endif
 private:
     explicit Desktop();
     ~Desktop();
