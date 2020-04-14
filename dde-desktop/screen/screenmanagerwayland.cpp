@@ -66,6 +66,18 @@ QVector<ScreenPointer> ScreenManagerWayland::logicScreens() const
     return order;
 }
 
+ScreenPointer ScreenManagerWayland::screen(const QString &name) const
+{
+    ScreenPointer ret;
+    for (const ScreenPointer &sp : m_screens.values()) {
+        if (sp->name() == name){
+            ret = sp;
+            break;
+        }
+    }
+    return ret;
+}
+
 qreal ScreenManagerWayland::devicePixelRatio() const
 {
     //dbus获取的缩放不是应用值而是设置值，目前还是使用QT来获取

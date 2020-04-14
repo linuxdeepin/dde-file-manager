@@ -120,6 +120,18 @@ QVector<ScreenPointer> ScreenManager::logicScreens() const
     return order;
 }
 
+ScreenPointer ScreenManager::screen(const QString &name) const
+{
+    ScreenPointer ret;
+    for (const ScreenPointer &sp : m_screens.values()) {
+        if (sp->name() == name){
+            ret = sp;
+            break;
+        }
+    }
+    return ret;
+}
+
 qreal ScreenManager::devicePixelRatio() const
 {
     return qApp->primaryScreen()->devicePixelRatio();

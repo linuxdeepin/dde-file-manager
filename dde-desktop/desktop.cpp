@@ -220,7 +220,7 @@ void Desktop::loadView()
 #endif
 }
 
-void Desktop::showWallpaperSettings(int mode)
+void Desktop::showWallpaperSettings(const QString &name, int mode)
 {
     if (d->wallpaperSettings) {
         d->wallpaperSettings->deleteLater();
@@ -239,6 +239,7 @@ void Desktop::showWallpaperSettings(int mode)
 #if 0
             d->background->setBackground(desktopImage);
 #else
+            d->m_background->setBackgroundImage("",desktopImage);
             d->m_background->onResetBackgroundImage();
 #endif
     }, Qt::DirectConnection);
@@ -284,6 +285,7 @@ CanvasGridView *Desktop::getView()
     return (&(d->screenFrame));
 #endif
     return  nullptr;
+    //return  d->m_canvas->primaryCanvas().get();//nullptr;
 }
 
 void Desktop::Show()
@@ -293,14 +295,14 @@ void Desktop::Show()
 #endif
 }
 
-void Desktop::ShowWallpaperChooser()
+void Desktop::ShowWallpaperChooser(const QString &screen)
 {
-    showWallpaperSettings(Frame::WallpaperMode);
+    showWallpaperSettings(screen,Frame::WallpaperMode);
 }
 
-void Desktop::ShowScreensaverChooser()
+void Desktop::ShowScreensaverChooser(const QString &screen)
 {
-    showWallpaperSettings(Frame::ScreenSaverMode);
+    showWallpaperSettings(screen,Frame::ScreenSaverMode);
 }
 
 #if USINGOLD

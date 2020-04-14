@@ -159,7 +159,7 @@ public:
     DAbstractFileWatcher  *filesystemWatcher  = nullptr;
     WaterMaskFrame *waterMaskFrame          = nullptr;
 
-    DBusDock            *dbusDock           = nullptr;
+    //DBusDock            *dbusDock           = nullptr;
 
     // debug
     bool                _debug_log          = false;

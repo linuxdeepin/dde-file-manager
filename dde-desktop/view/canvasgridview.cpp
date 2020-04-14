@@ -88,8 +88,10 @@ void startProcessDetached(const QString &program,
 
 DWIDGET_USE_NAMESPACE
 
-CanvasGridView::CanvasGridView(QWidget *parent)
-    : QAbstractItemView(parent), d(new CanvasViewPrivate)
+CanvasGridView::CanvasGridView(const QString &screen, QWidget *parent)
+    : QAbstractItemView(parent)
+    , d(new CanvasViewPrivate)
+    , m_screenName(screen)
 {
     initUI();
     initConnection();
@@ -1865,7 +1867,7 @@ void CanvasGridView::initUI()
 #ifdef QT_DEBUG
     EnableUIDebug();
 #endif
-    d->dbusDock = DockIns::instance();//new DBusDock(this);
+    //d->dbusDock = DockIns::instance();//new DBusDock(this);
 
     setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAttribute(Qt::WA_TranslucentBackground);
@@ -2557,7 +2559,7 @@ void CanvasGridView::handleContextMenuAction(int action)
         Desktop::instance()->showZoneSettings();
         break;
     case WallpaperSettings:
-        Desktop::instance()->showWallpaperSettings();
+        Desktop::instance()->ShowWallpaperChooser(m_screenName);
         break;
     case MenuAction::SelectAll:
         this->selectAll();
