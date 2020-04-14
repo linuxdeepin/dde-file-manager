@@ -42,7 +42,7 @@ protected:
     WMInter *wmInter = nullptr;
     DWindowManagerHelper* windowManagerHelper = nullptr;
 private:
-    bool m_preview = false;
+    bool m_preview = false; //壁纸预览
     bool m_visible = true;
     int currentWorkspaceIndex = 0;
 

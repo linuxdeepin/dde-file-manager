@@ -32,17 +32,18 @@ public:
     void loadData();
     void loadView();
 
+    void showWallpaperSettings(int mode = 0);
     void showZoneSettings();
 
     void initDebugDBus(QDBusConnection &conn);
+
+    CanvasGridView *getView();
+
 public slots:
-    void EnableUIDebug(bool enable);
-    void Reset();
     void Show();
-    void ShowWallpaperChooser(const QString &screen = QString());
-    void ShowScreensaverChooser(const QString &screen = QString());
-protected:
-    void showWallpaperSettings(QString name, int mode = 0);
+    void ShowWallpaperChooser();
+    void ShowScreensaverChooser();
+
 #if USINGOLD
 #ifdef QT_DEBUG
     void logAllScreenLabel();
