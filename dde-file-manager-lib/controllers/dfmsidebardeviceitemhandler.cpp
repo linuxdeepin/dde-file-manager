@@ -127,7 +127,8 @@ QMenu *DFMSideBarDeviceItemHandler::contextMenu(const DFMSideBar *sidebar, const
         disabled.insert(MenuAction::OpenDiskInNewTab);
         disabled.insert(MenuAction::Mount);
         disabled.insert(MenuAction::OpticalBlank);
-        disabled.insert(MenuAction::Eject);
+        //fix:不插光盘，打开文件管理器，光盘的弹出按钮不能置灰
+        //disabled.insert(MenuAction::Eject);
         disabled.insert(MenuAction::SafelyRemoveDrive);
 
         disabled.insert(MenuAction::Property);
