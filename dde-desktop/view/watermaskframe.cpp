@@ -72,14 +72,6 @@ void WaterMaskFrame::loadConfig(const QString &fileName)
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
     if (error.error == QJsonParseError::NoError) {
         m_configs = QJsonObject::fromVariantMap(doc.toVariant().toMap());
-
-        if(!parseJson(getSysType()))
-            return;
-        if(isNeedState()){
-            if(!parseJson(getAuthorizationState()))
-                return;
-        }
-
         initUI();
     } else {
         qDebug() << error.errorString();
@@ -95,7 +87,7 @@ void WaterMaskFrame::initUI()
 
     auto settings = Config::instance()->settings();
     settings->beginGroup(Config::groupGeneral);
-    bool useJosn = settings->value(Config::keyWaterMask, false).toBool();
+    bool useJosn = settings->value(Config::keyWaterMask, true).toBool();
     settings->endGroup();
     QString maskLogoUri;
     if(useJosn){
@@ -113,12 +105,12 @@ void WaterMaskFrame::initUI()
         maskLogoUri.replace(0, 1, QDir::homePath());
     }
 
-    QString maskLogoLayoutAlign;
-    if (m_configs.contains("maskLogoLayoutAlign")) {
-        maskLogoLayoutAlign = m_configs.value("maskLogoLayoutAlign").toString();
-    } else {
-        maskLogoLayoutAlign = "left";
-    }
+//    QString maskLogoLayoutAlign;
+//    if (m_configs.contains("maskLogoLayoutAlign")) {
+//        maskLogoLayoutAlign = m_configs.value("maskLogoLayoutAlign").toString();
+//    } else {
+//        maskLogoLayoutAlign = "left";
+//    }
 
     int maskLogoWidth;
     if (m_configs.contains("maskLogoWidth")) {
@@ -134,55 +126,55 @@ void WaterMaskFrame::initUI()
         maskLogoHeight = 48;
     }
 
-    QString maskText;
-    if (m_configs.contains("maskText")) {
-        maskText = m_configs.value("maskText").toString();
-    } else {
-        maskText = "";
-    }
+//    QString maskText;
+//    if (m_configs.contains("maskText")) {
+//        maskText = m_configs.value("maskText").toString();
+//    } else {
+//        maskText = "";
+//    }
 
-    QString maskTextLayoutAlign;
-    if (m_configs.contains("maskTextLayoutAlign")) {
-        maskTextLayoutAlign = m_configs.value("maskTextLayoutAlign").toString();
-    } else {
-        maskTextLayoutAlign = "right";
-    }
+//    QString maskTextLayoutAlign;
+//    if (m_configs.contains("maskTextLayoutAlign")) {
+//        maskTextLayoutAlign = m_configs.value("maskTextLayoutAlign").toString();
+//    } else {
+//        maskTextLayoutAlign = "right";
+//    }
 
-    QString maskTextColor;
-    if (m_configs.contains("maskTextColor")) {
-        maskTextColor = m_configs.value("maskTextColor").toString();
-    } else {
-        maskTextColor = "rgba(245,245,245,245.130)";
-    }
+//    QString maskTextColor;
+//    if (m_configs.contains("maskTextColor")) {
+//        maskTextColor = m_configs.value("maskTextColor").toString();
+//    } else {
+//        maskTextColor = "rgba(245,245,245,245.130)";
+//    }
 
-    QString maskTextFontSize;
-    if (m_configs.contains("maskTextFontSize")) {
-        maskTextFontSize = m_configs.value("maskTextFontSize").toString();
-    } else {
-        maskTextFontSize = "12px";
-    }
+//    QString maskTextFontSize;
+//    if (m_configs.contains("maskTextFontSize")) {
+//        maskTextFontSize = m_configs.value("maskTextFontSize").toString();
+//    } else {
+//        maskTextFontSize = "12px";
+//    }
 
 
-    int maskTextWidth;
-    if (m_configs.contains("maskTextWidth")) {
-        maskTextWidth = m_configs.value("maskTextWidth").toInt();
-    } else {
-        maskTextWidth = 100;
-    }
+//    int maskTextWidth;
+//    if (m_configs.contains("maskTextWidth")) {
+//        maskTextWidth = m_configs.value("maskTextWidth").toInt();
+//    } else {
+//        maskTextWidth = 100;
+//    }
 
-    int maskTextHeight;
-    if (m_configs.contains("maskTextHeight")) {
-        maskTextHeight = m_configs.value("maskTextHeight").toInt();
-    } else {
-        maskTextHeight = 30;
-    }
+//    int maskTextHeight;
+//    if (m_configs.contains("maskTextHeight")) {
+//        maskTextHeight = m_configs.value("maskTextHeight").toInt();
+//    } else {
+//        maskTextHeight = 30;
+//    }
 
-    QString maskTextAlign;
-    if (m_configs.contains("maskTextAlign")) {
-        maskTextAlign = m_configs.value("maskTextAlign").toString();
-    } else {
-        maskTextAlign = "left";
-    }
+//    QString maskTextAlign;
+//    if (m_configs.contains("maskTextAlign")) {
+//        maskTextAlign = m_configs.value("maskTextAlign").toString();
+//    } else {
+//        maskTextAlign = "left";
+//    }
 
     int maskLogoTextSpacing;
     if (m_configs.contains("maskLogoTextSpacing")) {
@@ -191,11 +183,11 @@ void WaterMaskFrame::initUI()
         maskLogoTextSpacing = 0;
     }
 
-    if (m_configs.contains("maskWidth")) {
-        m_maskWidth = m_configs.value("maskWidth").toInt();
-    } else {
-        m_maskWidth = 228;
-    }
+//    if (m_configs.contains("maskWidth")) {
+//        m_maskWidth = m_configs.value("maskWidth").toInt();
+//    } else {
+//        m_maskWidth = 228;
+//    }
 
     if (m_configs.contains("maskHeight")) {
         m_maskHeight = m_configs.value("maskHeight").toInt();
@@ -214,6 +206,15 @@ void WaterMaskFrame::initUI()
     } else {
         m_yRightBottom = 98;
     }
+
+    QString maskLogoLayoutAlign = "left";
+    QString maskTextLayoutAlign = "right";
+    QString maskTextColor = "rgba(245,245,245,245.120)";
+    QString maskTextFontSize = "12px";
+    int maskTextWidth = 100;
+    int maskTextHeight = 30;
+    QString maskTextAlign = "left";
+    m_maskWidth = maskLogoWidth + maskTextWidth;
 
     m_logoLabel = new QLabel(this);
 
@@ -301,54 +302,12 @@ void WaterMaskFrame::initUI()
     setStyleSheet(style);
 }
 
-QString WaterMaskFrame::getSysType()
-{
-    QString sysType;
-    DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
-    switch (deepinType) {
-    case DSysInfo::DeepinType::DeepinDesktop:
-        sysType = "DeepinDesktop";
-        break;
-    case DSysInfo::DeepinType::DeepinProfessional:
-        sysType = "DeepinProfessional";
-        break;
-    case DSysInfo::DeepinType::DeepinServer:
-        sysType = "DeepinServer";
-        break;
-    case DSysInfo::DeepinType::DeepinPersonal:
-        sysType = "DeepinPersonal";
-        break;
-    default:
-        qDebug() << "DeepinType is error";
-    }
-
-    return sysType;
-}
-
-QString WaterMaskFrame::getAuthorizationState()
-{
-    QString state;
-    ActiveState stateType = static_cast<ActiveState>(m_licenseInterface->AuthorizationState());
-    switch (stateType) {
-    case Unauthorized:
-    case AuthorizedLapse:
-    case TrialExpired:
-        state = "Not authorized";
-        break;
-    case Authorized:
-        state = "authorized";
-        break;
-    case TrialAuthorized:
-        state = "In trial period";
-        break;
-    }
-    return state;
-}
-
 bool WaterMaskFrame::isNeedState()
 {
     DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
-    return DSysInfo::DeepinType::DeepinDesktop != deepinType;
+    return (DSysInfo::DeepinType::DeepinProfessional == deepinType
+            || DSysInfo::DeepinType::DeepinPersonal == deepinType
+            || DSysInfo::DeepinType::DeepinServer == deepinType );
 }
 
 bool WaterMaskFrame::parseJson(QString key)

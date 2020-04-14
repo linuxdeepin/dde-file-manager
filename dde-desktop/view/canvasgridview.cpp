@@ -345,6 +345,7 @@ void CanvasGridView::setGeometry(const QRect &rect)
     }
     else {
         QAbstractItemView::setGeometry(rect);
+        d->waterMaskFrame->updatePosition();
     }
 }
 

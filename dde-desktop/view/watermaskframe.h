@@ -35,8 +35,6 @@ public:
     void initUI();
 
 private:
-    QString getSysType();
-    QString getAuthorizationState();
     bool isNeedState();
     bool parseJson(QString key);
 
