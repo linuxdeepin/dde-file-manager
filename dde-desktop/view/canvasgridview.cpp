@@ -2771,11 +2771,11 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     if (DesktopInfo().waylandDectected()) {
 
         QPoint t_tmpPoint = QCursor::pos();
-        if (t_tmpPoint.x() + menu->sizeHint().width() > width())
-            t_tmpPoint.setX(t_tmpPoint.x() - menu->sizeHint().width());
+        if (t_tmpPoint.x() + int(menu->sizeHint().width()/devicePixelRatioF()) > width())
+            t_tmpPoint.setX(t_tmpPoint.x() - int(menu->sizeHint().width()/devicePixelRatioF()));
 
-        if (t_tmpPoint.y() + menu->sizeHint().height() > height())
-            t_tmpPoint.setY(t_tmpPoint.y() - menu->sizeHint().height());
+        if (t_tmpPoint.y() + int(menu->sizeHint().height()/devicePixelRatioF()) > height())
+            t_tmpPoint.setY(t_tmpPoint.y() - int(menu->sizeHint().height()/devicePixelRatioF()));
         menu->exec(t_tmpPoint);
         menu->deleteLater();
         return;
@@ -2891,11 +2891,11 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     if (DesktopInfo().waylandDectected()) {
 
         QPoint t_tmpPoint = QCursor::pos();
-        if (t_tmpPoint.x() + menu->sizeHint().width() > width())
-            t_tmpPoint.setX(t_tmpPoint.x() - menu->sizeHint().width());
+        if (t_tmpPoint.x() + int(menu->sizeHint().width()/devicePixelRatioF()) > width())
+            t_tmpPoint.setX(t_tmpPoint.x() - int(menu->sizeHint().width()/devicePixelRatioF()));
 
-        if (t_tmpPoint.y() + menu->sizeHint().height() > height())
-            t_tmpPoint.setY(t_tmpPoint.y() - menu->sizeHint().height());
+        if (t_tmpPoint.y() + int(menu->sizeHint().height()/devicePixelRatioF()) > height())
+            t_tmpPoint.setY(t_tmpPoint.y() - int(menu->sizeHint().height()/devicePixelRatioF()));
         menu->exec(t_tmpPoint);
         menu->deleteLater();
         return;
