@@ -220,7 +220,7 @@ void Desktop::loadView()
 #endif
 }
 
-void Desktop::showWallpaperSettings(const QString &name, int mode)
+void Desktop::showWallpaperSettings(QString name, int mode)
 {
     if(name.isNull() || name.isEmpty()){
         name = ScreenHelper::screenManager()->primaryScreen()->name();

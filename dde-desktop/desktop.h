@@ -40,10 +40,10 @@ public:
 
 public slots:
     void Show();
-    void ShowWallpaperChooser(const QString &screen);
-    void ShowScreensaverChooser(const QString &screen);
+    void ShowWallpaperChooser(const QString &screen = QString());
+    void ShowScreensaverChooser(const QString &screen = QString());
 protected:
-    void showWallpaperSettings(const QString &name, int mode = 0);
+    void showWallpaperSettings(QString name, int mode = 0);
 #if USINGOLD
 #ifdef QT_DEBUG
     void logAllScreenLabel();
