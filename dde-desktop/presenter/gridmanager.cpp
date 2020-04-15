@@ -1210,7 +1210,7 @@ public:
             qCritical() << "-----------------------------";
         }
 
-        if (kvList.first.value(screenNum).size() != m_gridItems.value(screenNum).size()) {
+        if (kvList.first.size() != m_gridItems.value(screenNum).size()) {
             qCritical() << "data sync failed";
             qCritical() << "-----------------------------";
             qCritical() << m_gridItems << m_itemGrids << kvList.first;
@@ -1450,6 +1450,38 @@ public:
 
             emit Presenter::instance()->removeConfig(positionProfile, "");
             emit Presenter::instance()->setConfigList(positionProfile, kvList.first, kvList.second);
+
+            return this->autoArrange;
+        }
+#else
+
+        auto coordInfo = screensCoordInfo.value(screenNum);
+        if (coordInfo.second == h && coordInfo.first == w) {
+            qWarning() << "profile not changed";
+            return false;
+        }
+
+        if (0 == coordInfo.first && 0 == coordInfo.second) {
+            resetGridSize(screenNum, w, h);
+            return false;
+        } else {
+            qDebug() << "change grid from" << coordInfo.first << coordInfo.second
+                     << "to" << w << h;
+            changeGridSize(screenNum, w, h);
+
+            // check if we should update grid profile.
+            if (autoMerge) {
+                return this->autoArrange;
+            }
+
+            QPair<QStringList, QVariantList> kvList = generateProfileConfigVariable(screenNum);
+
+            qDebug() << "updateGridProfile:" << kvList.first.size()
+                     << m_gridItems.size() << m_itemGrids.size();
+
+            auto screenPositionProfile = positionProfiles.value(screenNum);
+            emit Presenter::instance()->removeConfig(screenPositionProfile, "");
+            emit Presenter::instance()->setConfigList(screenPositionProfile, kvList.first, kvList.second);
 
             return this->autoArrange;
         }
