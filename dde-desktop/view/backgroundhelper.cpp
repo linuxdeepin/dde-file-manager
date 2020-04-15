@@ -381,12 +381,21 @@ void BackgroundHelper::updateBackground()
 
 void BackgroundHelper::monitorRectChanged()
 {
-
     QStringList monitorPaths = Display::instance()->monitorObjectPaths();
     for (const QString &path : monitorPaths) {
+        if (!waylandScreen.contains(path)){
+            qWarning() << "no screen " << path;
+            continue;
+        }
+
         DBusMonitor *t_busMobitor = waylandScreen.value(path);
         qDebug() << "monitor geometry changed:" << t_busMobitor->name()
                  << t_busMobitor->rect();
+
+        if (!waylandbackgroundMap.contains(t_busMobitor->name())){
+            qWarning() << "no background, screen name" << t_busMobitor->name();
+            continue;
+        }
 
         BackgroundLabel *l = waylandbackgroundMap.value(t_busMobitor->name());
 
@@ -475,6 +484,7 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
 
                 Q_EMIT backgroundAdded(l);
             }
+            qInfo() << " new " << monitorPaths << "current screens:" << waylandScreen.keys();
         }
         return;
     };
