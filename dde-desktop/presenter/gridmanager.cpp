@@ -1253,10 +1253,13 @@ public:
 
     inline void resetGridSize(int screenNum, int w, int h)
     {
-        auto coordInfo = screensCoordInfo.value(screenNum);
-        Q_ASSERT(!(coordInfo.second == h && coordInfo.first == w));
-        coordInfo.first = w;
-        coordInfo.second = h;
+        if(!screensCoordInfo.contains(screenNum))
+            return;
+
+        auto coordInfo = screensCoordInfo.find(screenNum);
+        Q_ASSERT(!(coordInfo.value().second == h && coordInfo.value().first == w));
+        coordInfo.value().first = w;
+        coordInfo.value().second = h;
 
         createProfile();
 
@@ -1268,13 +1271,15 @@ public:
 
     inline void changeGridSizeScared(int screenNum, int w, int h)
     {
-        auto coordInfo = screensCoordInfo.value(screenNum);
-        Q_ASSERT(!(coordInfo.second == h && coordInfo.first == w));
+        if(screensCoordInfo.contains(screenNum))
+            return;
+        auto coordInfo = screensCoordInfo.find(screenNum);
+        Q_ASSERT(!(coordInfo.value().second == h && coordInfo.value().first == w));
 
-        qDebug() << "old grid size" << coordInfo.second << coordInfo.first;
+        qDebug() << "old grid size" << coordInfo.value().second << coordInfo.value().first;
         qDebug() << "new grid size" << w << h;
 
-        auto oldCellCount = coordInfo.second * coordInfo.first;
+        auto oldCellCount = coordInfo.value().second * coordInfo.value().first;
         auto newCellCount = w * h;
 
         auto allItems = m_itemGrids;
@@ -1290,8 +1295,8 @@ public:
             }
         }
 
-        coordInfo.second = h;
-        coordInfo.first = w;
+        coordInfo.value().second = h;
+        coordInfo.value().first = w;
 
         createProfile();
 
