@@ -587,7 +587,24 @@ void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
             if (err.isValid())
                 dialogManager->showErrorDialog(tr("Disk is busy, cannot unmount now"), QString());
         } else if (fi->suffix() == SUFFIX_GVFSMP) {
-            deviceListener->unmount(fi->extraProperties()["rooturi"].toString());
+            QString path = fi->extraProperties()["rooturi"].toString();
+            if(path.isEmpty())
+            {
+                //FIXME(zccrs): 为解决，无法访问smb共享地址时，点击卸载共享目录，创建的fileinfo拿到的path为""，所有就没办法umount，临时解决方案，重Durl中获取
+                path = QString("smb://");
+                QString mpp = QUrl::fromPercentEncoding(fileUrl.path().mid(1).chopped(QString("." SUFFIX_GVFSMP).length()).toUtf8());
+                QStringList strlist = mpp.split(",");
+                if (strlist.size() >= 2) {
+                    if(strlist.at(0).contains(QString("="))){
+                        path = path + strlist.at(0).split("=").at(1) + QString("/");
+                    }
+                    if(strlist.at(1).contains(QString("="))){
+                        path = path + strlist.at(1).split("=").at(1) + QString("/");
+                    }
+                }
+            }
+
+            deviceListener->unmount(path);
         }
     } else if (fileUrl.query().length()) {
         QString dev = fileUrl.query(DUrl::FullyEncoded);
