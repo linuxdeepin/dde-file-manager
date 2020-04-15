@@ -78,6 +78,8 @@ public:
                      ") primaryScreen is " << qApp->primaryScreen()->name();
             return ;
         }
+        qInfo() << this->geometry() << visible << "(screen is " << property("myScreen").toString() <<
+                 ") primaryScreen is " << qApp->primaryScreen()->name();
         QWidget::setVisible(visible);
     }
 
@@ -312,6 +314,7 @@ void BackgroundHelper::updateBackground(QWidget *l)
 
         pix.setDevicePixelRatio(l->devicePixelRatioF());
         dynamic_cast<BackgroundLabel *>(l)->setPixmap(pix);
+        qInfo() << "wayland" << l->windowHandle()->screen() << currentWallpaper << pix;
         return ;
     }
     QScreen *s = l->windowHandle()->screen();

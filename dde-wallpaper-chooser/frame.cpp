@@ -165,18 +165,24 @@ void Frame::show()
                 allBackgrounds = m_backgroundHelper->allBackgrounds();
             }
 
+            qDebug() << "background counts" << allBackgrounds.size();
             // 隐藏完全重叠的窗口
             for (QWidget *l : allBackgrounds) {
                 if (l != background) {
                     Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), true);
                     l->setVisible(l->geometry().topLeft() != background->geometry().topLeft());
+                    qInfo() << "backgorund hide" << l << l->geometry() << "show" << background
+                            << background->isVisible() << background->geometry();
                 } else {
                     Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), false);
                     l->show();
+                    qInfo() << "backgorund show" << l << l->geometry() << "show" << background
+                            << background->isVisible() << background->geometry();
                 }
             }
             // 防止壁纸设置窗口被背景窗口覆盖
             connect(m_backgroundHelper, &BackgroundHelper::backgroundAdded, this, &Frame::activateWindow);
+            qDebug() << "background " << m_backgroundHelper->background();
         }
     } else if (!m_dbusDeepinWM) {
         if (m_backgroundHelper) {
