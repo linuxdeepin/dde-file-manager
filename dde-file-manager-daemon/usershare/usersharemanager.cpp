@@ -99,3 +99,22 @@ bool UserShareManager::setUserSharePassword(const QString &username, const QStri
     qDebug() << p.readAll() << p.readAllStandardError() << p.readAllStandardOutput();
     return ret;
 }
+
+bool UserShareManager::closeSmbShareByShareName(const QString &sharename)
+{
+    if (!checkAuthentication()) {
+        qDebug() << "closeSmbShareByShareName failed" <<  sharename;
+        return false;
+    }
+
+    qDebug() << sharename;
+    QProcess p;
+    //取得所有连击的pid
+    QString cmd = QString("smbcontrol smbd close-share %1").arg(sharename);
+    qDebug() << "cmd==========" << cmd;
+    p.start(cmd);
+    bool ret = p.waitForFinished();
+
+    qDebug() << p.readAll() << p.readAllStandardError() << p.readAllStandardOutput();
+    return ret;
+}

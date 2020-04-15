@@ -42,6 +42,12 @@ public Q_SLOTS: // METHODS
         argumentList << QVariant::fromValue(username) << QVariant::fromValue(passward);
         return asyncCallWithArgumentList(QStringLiteral("setUserSharePassword"), argumentList);
     }
+    inline QDBusPendingReply<bool> closeSmbShareByShareName(const QString &sharename)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(sharename);
+        return asyncCallWithArgumentList(QStringLiteral("closeSmbShareByShareName"), argumentList);
+    }
 
 Q_SIGNALS: // SIGNALS
 };

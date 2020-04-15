@@ -33,6 +33,10 @@ class UserShareAdaptor: public QDBusAbstractAdaptor
     Q_CLASSINFO("D-Bus Interface", "com.deepin.filemanager.daemon.UserShareManager")
     Q_CLASSINFO("D-Bus Introspection", ""
 "  <interface name=\"com.deepin.filemanager.daemon.UserShareManager\">\n"
+"    <method name=\"closeSmbShareByShareName\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"sharename\"/>\n"
+"      <arg direction=\"out\" type=\"b\" name=\"result\"/>\n"
+"    </method>\n"
 "    <method name=\"setUserSharePassword\">\n"
 "      <arg direction=\"in\" type=\"s\" name=\"username\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"passward\"/>\n"
@@ -55,6 +59,7 @@ public: // PROPERTIES
 public Q_SLOTS: // METHODS
     bool addGroup(const QString &groupName);
     bool setUserSharePassword(const QString &username, const QString &passward);
+    bool closeSmbShareByShareName(const QString &sharename);
 Q_SIGNALS: // SIGNALS
 };
 
