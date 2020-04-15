@@ -244,9 +244,18 @@ void Desktop::showWallpaperSettings(QString name, int mode)
             d->background->setBackground(desktopImage);
 #else
             d->m_background->setBackgroundImage(screenImage.first, screenImage.second);
-            d->m_background->onResetBackgroundImage();
 #endif
     }, Qt::DirectConnection);
+
+    //屏幕有改变直接退出壁纸设置
+    connect(ScreenMrg, &AbstractScreenManager::sigScreenChanged,[this](){
+        qDebug() << "screen changed , wallpaperSettings is exiting";
+        if (d->wallpaperSettings) {
+            d->wallpaperSettings->close();
+            d->wallpaperSettings->deleteLater();
+            d->wallpaperSettings = nullptr;
+        }
+    });
 
     d->wallpaperSettings->show();
     d->wallpaperSettings->grabKeyboard();
