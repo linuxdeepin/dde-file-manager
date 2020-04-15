@@ -60,7 +60,8 @@ DFM_BEGIN_NAMESPACE
 DFMSideBar::DFMSideBar(QWidget *parent)
     : QWidget(parent),
       m_sidebarView(new DFMSideBarView(this)),
-      m_sidebarModel(new DFMSideBarModel(this))
+      m_sidebarModel(new DFMSideBarModel(this)),
+      m_bmenuexec(false)
 {
     // init view.
     m_sidebarView->setModel(m_sidebarModel);
@@ -75,6 +76,14 @@ DFMSideBar::DFMSideBar(QWidget *parent)
     initConnection();
     initUserShareItem();
     initRecentItem();
+
+
+    m_timer = new QTimer(this);
+    connect(m_timer,&QTimer::timeout,[ = ](){
+        m_bmenuexec = false;
+        qDebug() << "m_bmenuexec  ====== ==   " << m_bmenuexec;
+        m_timer->stop();
+    });
 }
 
 QWidget *DFMSideBar::sidebarView()
@@ -343,7 +352,11 @@ void DFMSideBar::onItemActivated(const QModelIndex &index)
 void DFMSideBar::onContextMenuRequested(const QPoint &pos)
 {
     if (!m_contextMenuEnabled) return;
-
+    //判断是否有之前的menu还在exec
+    if(m_bmenuexec) {
+        qDebug()<< "m_bmenuexec = " << m_bmenuexec << pos;
+        return;
+    }
     QModelIndex modelIndex = m_sidebarView->indexAt(pos);
     if (!modelIndex.isValid()) {
         return;
@@ -360,12 +373,21 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
 
     if (interface) {
         menu = interface->contextMenu(this, item);
+        //临时解决方案，在处理onContextMenuRequested信号时，处理时间很长，在左边栏一直点击鼠标右键-鼠标左键，就会一直触发onContextMenuRequested信号
+        //这时再次创建menu和执行menu->exec，释放menu就崩溃
+        //要忽略掉在处理onContextMenuRequested信号时，在收到onContextMenuRequested信号
         if (menu) {
+            qDebug() << "menu->exec  =  " << identifierStr << menu;
+            m_bmenuexec = true;
             menu->exec(this->mapToGlobal(pos));
+            connect(menu,&QMenu::destroyed,this,[ = ](){
+                m_timer->setInterval(250);
+                m_timer->start();
+                qDebug() << " destroyed ====================================="<<menu;
+            });
             menu->deleteLater();
         }
     }
-
     return;
 }
 

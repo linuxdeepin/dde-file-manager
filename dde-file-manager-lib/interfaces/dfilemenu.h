@@ -37,6 +37,7 @@ class DFileMenu : public QMenu
 
 public:
     explicit DFileMenu(QWidget * parent = 0);
+    ~DFileMenu(){ qDebug()<< "~DFileMenu" << this << parent();}
 
     const QSharedPointer<DFMMenuActionEvent> makeEvent(DFMGlobal::MenuAction action) const;
     void setEventData(const DUrl &currentUrl, const DUrlList &selectedUrls, quint64 eventId = 0, const QObject *sender = 0);
@@ -53,6 +54,9 @@ public:
     void setIgnoreMenuActions(const QSet<DFMGlobal::MenuAction> &ignoreMenuActions);
 
     DUrlList selectedUrls() const;
+
+//    void mouseReleaseEvent(QMouseEvent *event) override;
+//    void mousePressEvent(QMouseEvent *event) override;
 
 private:
     DUrl m_currentUrl;
