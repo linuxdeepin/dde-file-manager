@@ -57,6 +57,7 @@
 #include "../dbus/dbusdock.h"
 #include "../config/config.h"
 #include "backgroundhelper.h"
+#include "screen/screenhelper.h"
 
 #include "interfaces/private/mergeddesktop_common_p.h"
 #include "util/xcb/xcb.h"
@@ -105,7 +106,7 @@ CanvasGridView::~CanvasGridView()
 QRect CanvasGridView::visualRect(const QModelIndex &index) const
 {
     auto url = model()->getUrlByIndex(index);
-    auto gridPos = GridManager::instance()->position(url.toString());
+    auto gridPos = GridManager::instance()->position(screenNum, url.toString());
 
     auto x = gridPos.x() * d->cellWidth + d->viewMargins.left();
     auto y = gridPos.y() * d->cellHeight + d->viewMargins.top();
@@ -115,7 +116,7 @@ QRect CanvasGridView::visualRect(const QModelIndex &index) const
 QModelIndex CanvasGridView::indexAt(const QPoint &point) const
 {
     auto gridPos = gridAt(point);
-    auto localFile =  GridManager::instance()->itemId(gridPos.x(), gridPos.y());
+    auto localFile =  GridManager::instance()->itemId(screenNum, gridPos.x(), gridPos.y());
     auto rowIndex = model()->index(DUrl(localFile));
     QPoint pos = QPoint(point.x() + horizontalOffset(), point.y() + verticalOffset());
     auto list = itemPaintGeomertys(rowIndex);
@@ -186,7 +187,8 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
         return headIndex;
     }
     auto url = model()->getUrlByIndex(current);
-    auto pos = GridManager::instance()->position(url.toString());
+
+    auto pos = GridManager::instance()->position(screenNum, url.toString());
     auto newCoord = Coordinate(pos);
 
     switch (cursorAction) {
@@ -194,7 +196,7 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
         while (pos.x() >= 0) {
             newCoord = newCoord.moveLeft();
             pos = newCoord.position();
-            if (!GridManager::instance()->isEmpty(pos.x(), pos.y())) {
+            if (!GridManager::instance()->isEmpty(screenNum, pos.x(), pos.y())) {
                 break;
             }
         }
@@ -203,7 +205,7 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
         while (pos.x() < d->colCount) {
             newCoord = newCoord.moveRight();
             pos = newCoord.position();
-            if (!GridManager::instance()->isEmpty(pos.x(), pos.y())) {
+            if (!GridManager::instance()->isEmpty(screenNum, pos.x(), pos.y())) {
                 break;
             }
         }
@@ -217,7 +219,7 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
                 newCoord = Coordinate(pos.x() - 1, d->rowCount - 1);
                 pos = newCoord.position();
             }
-            if (!GridManager::instance()->isEmpty(pos.x(), pos.y())) {
+            if (!GridManager::instance()->isEmpty(screenNum, pos.x(), pos.y())) {
                 break;
             }
         }
@@ -231,7 +233,7 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
                 newCoord = Coordinate(pos.x() + 1, 0);
                 pos = newCoord.position();
             }
-            if (!GridManager::instance()->isEmpty(pos.x(), pos.y())) {
+            if (!GridManager::instance()->isEmpty(screenNum, pos.x(), pos.y())) {
                 break;
             }
         }
@@ -247,8 +249,8 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
                     newCoord = Coordinate(pos.x() - 1, d->rowCount - 1);
                     pos = newCoord.position();
                 }
-                if (!GridManager::instance()->isEmpty(pos.x(), pos.y())) {
-                    auto localFile = GridManager::instance()->itemId(pos.x(), pos.y());
+                if (!GridManager::instance()->isEmpty(screenNum, pos.x(), pos.y())) {
+                    auto localFile = GridManager::instance()->itemId(screenNum, pos.x(), pos.y());
                     auto index = model()->index(DUrl(localFile));
 
                     QItemSelectionRange selectionRange(index);
@@ -270,8 +272,8 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
                     newCoord = Coordinate(pos.x() + 1, 0);
                     pos = newCoord.position();
                 }
-                if (!GridManager::instance()->isEmpty(pos.x(), pos.y())) {
-                    auto localFile = GridManager::instance()->itemId(pos.x(), pos.y());
+                if (!GridManager::instance()->isEmpty(screenNum, pos.x(), pos.y())) {
+                    auto localFile = GridManager::instance()->itemId(screenNum, pos.x(), pos.y());
                     auto index = model()->index(DUrl(localFile));
 
                     QItemSelectionRange selectionRange(index);
@@ -289,7 +291,7 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
         return current;
     }
 
-    auto localFile =  GridManager::instance()->itemId(pos.x(), pos.y());
+    auto localFile =  GridManager::instance()->itemId(screenNum, pos.x(), pos.y());
     auto newIndex = model()->index(DUrl(localFile));
     if (newIndex.isValid()) {
         return newIndex;
@@ -309,24 +311,23 @@ void CanvasGridView::updateHiddenItems()
 
     QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, currentUrl(),
                                                                                      QStringList(), model()->filters());
-
-    auto existItems = GridManager::instance()->itemIds();
+    auto existItems = GridManager::instance()->itemIds(screenNum);
 
     QStringList items;
     for (const DAbstractFileInfoPointer &info : infoList) {
         QString hideItem = info->fileUrl().toString();
         existItems.removeAll(hideItem);
-        if (!GridManager::instance()->contains(hideItem)) {
-            GridManager::instance()->add(hideItem);
+        if (!GridManager::instance()->contains(screenNum, hideItem)) {
+            GridManager::instance()->add(screenNum, hideItem);
         }
     }
 
     for (auto nonexistItem : existItems) {
-        GridManager::instance()->remove(nonexistItem);
+        GridManager::instance()->remove(screenNum, nonexistItem);
     }
 
     if (GridManager::instance()->shouldArrange()) {
-        GridManager::instance()->reArrange();
+        GridManager::instance()->reArrange(screenNum);
     }
 }
 
@@ -421,7 +422,7 @@ void CanvasGridView::toggleEntryExpandedState(const DUrl &url)
                 possibleChildCount += info->filesCount();
             }
         }
-        if (possibleChildCount > GridManager::instance()->gridCount()) {
+        if (possibleChildCount > GridManager::instance()->gridCount(screenNum)) {
             onlyExpandShowClickedEntry = true;
             break;
         }
@@ -707,7 +708,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             }
             break;
         case Qt::Key_Space: {
-            QStringList urls = GridManager::instance()->itemIds();
+            QStringList urls = GridManager::instance()->itemIds(screenNum);
             DUrlList entryUrls;
             foreach (QString url, urls) {
                 entryUrls << DUrl(url);
@@ -878,7 +879,7 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
         d->dragTargetGrid.setY((pos.y() - d->viewMargins.top()) / d->cellHeight);
 
         // FIXME: out of border???
-        auto localeFile = GridManager::instance()->itemId(d->dragTargetGrid);
+        auto localeFile = GridManager::instance()->itemId(screenNum, d->dragTargetGrid);
         if (!localeFile.isEmpty() && !d->dodgeAnimationing) {
             d->dodgeDelayTimer.start();
         }
@@ -1005,7 +1006,7 @@ void CanvasGridView::dropEvent(QDropEvent *event)
                 auto row = (point.x() - d->viewMargins.left()) / d->cellWidth;
                 auto col = (point.y() - d->viewMargins.top()) / d->cellHeight;
                 auto current = model()->fileInfo(d->currentCursorIndex)->fileUrl().toString();
-                GridManager::instance()->move(selectLocalFiles, current, row, col);
+                GridManager::instance()->move(screenNum, selectLocalFiles, current, row, col);
                 setState(NoState);
                 itemDelegate()->hideNotEditingIndexWidget();
                 DUtil::TimerSingleShot(20, [this]() {
@@ -1134,7 +1135,7 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
     QStringList repaintLocalFiles;
     for (int x = 0; x < d->colCount; ++x) {
         for (int y = 0; y < d->rowCount; ++y) {
-            auto localFile = GridManager::instance()->itemId(x, y);
+            auto localFile = GridManager::instance()->itemId(screenNum, x, y);
             if (!localFile.isEmpty()) {
                 repaintLocalFiles << localFile;
             }
@@ -1256,7 +1257,7 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
                 option.rect = visualRect(index).marginsRemoved(d->cellMargins);
             }
 
-            auto gridPos = d->dodgeTargetGrid->pos(localFile);
+            auto gridPos = d->dodgeTargetGrid->pos(screenNum, localFile);
             auto x = gridPos.x() * d->cellWidth + d->viewMargins.left();
             auto y = gridPos.y() * d->cellHeight + d->viewMargins.top();
 
@@ -1484,9 +1485,9 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
                                                                                      QStringList(), model()->filters());
 
     if (autoMerge()) {
-        GridManager::instance()->initWithoutProfile(infoList);
+        GridManager::instance()->initWithoutProfile(screenNum, infoList);
     } else {
-        GridManager::instance()->initProfile(infoList);
+        GridManager::instance()->initProfile(screenNum, infoList);
     }
 
     d->filesystemWatcher = model()->fileWatcher();
@@ -1509,8 +1510,8 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
         bool findOldPos = false;
         QPoint oldPos = QPoint(-1, -1);
 
-        if (GridManager::instance()->contains(oriUrl.toString()) && !oriUrl.fileName().isEmpty()) {
-            oldPos = GridManager::instance()->position(oriUrl.toString());
+        if (GridManager::instance()->contains(screenNum, oriUrl.toString()) && !oriUrl.fileName().isEmpty()) {
+            oldPos = GridManager::instance()->position(screenNum, oriUrl.toString());
             findOldPos = true;
 
 #ifdef QT_DEBUG
@@ -1524,14 +1525,14 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
             findNewPos = true;
         }
 
-        findNewPos &= !GridManager::instance()->contains(dstUrl.toString());
+        findNewPos &= !GridManager::instance()->contains(screenNum, dstUrl.toString());
 
         if (!findNewPos) {
             Q_EMIT itemDeleted(oriUrl);
         } else {
             if (findOldPos) {
-                GridManager::instance()->remove(oriUrl.toString());
-                GridManager::instance()->add(oldPos, dstUrl.toString());
+                GridManager::instance()->remove(screenNum, oriUrl.toString());
+                GridManager::instance()->add(screenNum, oldPos, dstUrl.toString());
             } else {
                 Q_EMIT itemCreated(dstUrl);
             }
@@ -1692,7 +1693,7 @@ QString CanvasGridView::Size()
     buffer.open(QBuffer::ReadWrite);
     QDataStream debug(&buffer);
 
-    debug << GridManager::instance()->gridSize();
+    debug << GridManager::instance()->gridSize(screenNum);
 
     return QString::fromUtf8(buffer.buffer());
 }
@@ -1717,7 +1718,7 @@ QString CanvasGridView::DumpPos(qint32 x, qint32 y)
     debug.insert("checkPoint:", QJsonValue::fromVariant(QList<QVariant>({px, py})));
     debug.insert("index", QJsonValue::fromVariant(QList<QVariant>({index.row(), index.column()})));
     debug.insert("url", model()->getUrlByIndex(index).toString());
-    debug.insert("grid content", GridManager::instance()->itemId(x, y));
+    debug.insert("grid content", GridManager::instance()->itemId(screenNum, x, y));
 
     return QJsonDocument(debug).toJson();
 }
@@ -1865,6 +1866,18 @@ static inline QRect getValidNewGeometry(const QRect &geometry, const QRect &oldG
 
 void CanvasGridView::initUI()
 {
+    QVector<ScreenPointer> screens = ScreenMrg->screens();
+    int num = 1;
+    for (auto &oneScreen : screens) {
+        if( m_screenName == oneScreen->name()){
+            QPair<int ,int> coordInfo;
+            coordInfo.first = 0;
+            coordInfo.second = 0;
+            GridManager::instance()->addCoord(num, coordInfo);
+            break;
+        }
+        ++num;
+    }
 #ifdef QT_DEBUG
     EnableUIDebug();
 #endif
@@ -1986,19 +1999,19 @@ void CanvasGridView::initConnection()
             auto selecteds = selectedUrls();
             for (auto relocateItem : selecteds) {
                 auto localFile = relocateItem.toString();
-                GridManager::instance()->remove(localFile);
+                GridManager::instance()->remove(screenNum, localFile);
             }
 
             // commit dodgeTargetGrid
             for (auto relocateItem : d->dodgeItems) {
-                GridManager::instance()->remove(relocateItem);
-                auto pos = d->dodgeTargetGrid->pos(relocateItem);
-                GridManager::instance()->add(pos, relocateItem);
+                GridManager::instance()->remove(screenNum, relocateItem);
+                auto pos = d->dodgeTargetGrid->pos(screenNum, relocateItem);
+                GridManager::instance()->add(screenNum, pos, relocateItem);
             }
 
             for (auto relocateItem : selecteds) {
                 auto localFile = relocateItem.toString();
-                GridManager::instance()->add(d->dodgeTargetGrid->pos(localFile), localFile);
+                GridManager::instance()->add(screenNum, d->dodgeTargetGrid->pos(screenNum, localFile), localFile);
             }
             d->dodgeAnimationing = false;
             delete d->dodgeTargetGrid;
@@ -2017,14 +2030,14 @@ void CanvasGridView::initConnection()
 
         auto emptyBefore = 0;
         auto emptyAfter = 0;
-        auto targetIndex = grid->toIndex(d->dragTargetGrid);
+        auto targetIndex = grid->toIndex(screenNum, d->dragTargetGrid);
 
         for (auto sel : selURLs) {
             auto localFile = sel.toString();
             selLocalFiles << localFile;
-            auto pos = grid->pos(localFile);
-            auto index = grid->toIndex(pos);
-            grid->removeItem(localFile);
+            auto pos = grid->pos(screenNum, localFile);
+            auto index = grid->toIndex(screenNum, pos);
+            grid->removeItem(screenNum, localFile);
 
             if (index < targetIndex) {
                 ++emptyBefore;
@@ -2036,9 +2049,9 @@ void CanvasGridView::initConnection()
             ++targetIndex;
         }
 
-        d->dodgeItems = grid->reloacle(targetIndex, emptyBefore, emptyAfter);
+        d->dodgeItems = grid->reloacle(screenNum, targetIndex, emptyBefore, emptyAfter);
         for (auto i = 0; i < selLocalFiles.length(); ++i) {
-            grid->addItem(targetIndex - emptyBefore + i, selLocalFiles.value(i));
+            grid->addItem(screenNum, targetIndex - emptyBefore + i, selLocalFiles.value(i));
         }
     });
 
@@ -2107,25 +2120,44 @@ void CanvasGridView::initConnection()
     connect(this->model(), &DFileSystemModel::newFileByInternal,
     this, [ = ](const DUrl & fileUrl) {
         auto localFile = fileUrl.toString();
-        auto gridPos = gridAt(d->lastMenuPos);
-
+        QPair<int, QPoint> gridPos;
+        gridPos.first = screenNum;
+        gridPos.second = gridAt(d->lastMenuPos);
         if (d->lastMenuNewFilepath == localFile) {
-            if (gridPos == GridManager::instance()->position(localFile)) {
+            if (gridPos.second == GridManager::instance()->position(screenNum, localFile)) {
                 return;
             }
         }
 
-        gridPos = GridManager::instance()->forwardFindEmpty(gridPos);
-        GridManager::instance()->move(QStringList() << localFile, localFile, gridPos.x(), gridPos.y());
+        gridPos = GridManager::instance()->forwardFindEmpty(screenNum, gridPos.second);
+        GridManager::instance()->move(screenNum, QStringList() << localFile, localFile, gridPos.second.x(), gridPos.second.y());
     });
 
     connect(this, &CanvasGridView::itemCreated, [ = ](const DUrl & url) {
         d->lastMenuNewFilepath = url.toString();
-        GridManager::instance()->add(d->lastMenuNewFilepath);
+        GridManager::instance()->add(screenNum, d->lastMenuNewFilepath);
+        /***************************************************************/
+        //lee add 创建或者粘贴时保持之前的状态
+        if(autoMerge()){
+            DMD_TYPES toggleType = MergedDesktopController::checkUrlArrangedType(url);
+            bool isExpand = virtualEntryExpandState[toggleType];
+            if(isExpand){
+                DUrl autoMergeUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER);
+                autoMergeUrl.setFragment(QString());
+                this->setRootUrl(autoMergeUrl);
+                autoMergeUrl.setFragment(MergedDesktopController::entryNameByEnum(toggleType));
+                this->setRootUrl(autoMergeUrl);
+            }
+            else {
+                model()->refresh();
+            }
+        }
+        /***************************************************************/
     });
 
     connect(this, &CanvasGridView::itemDeleted, [ = ](const DUrl & url) {
-        GridManager::instance()->remove(url.toString());
+
+        GridManager::instance()->remove(screenNum, url.toString());
 
         auto index = model()->index(url);
         if (d->currentCursorIndex == index) {
@@ -2135,7 +2167,7 @@ void CanvasGridView::initConnection()
         }
 
         if (GridManager::instance()->shouldArrange()) {
-            GridManager::instance()->reArrange();
+            GridManager::instance()->reArrange(screenNum);
         }
     });
 
@@ -2158,9 +2190,9 @@ void CanvasGridView::initConnection()
                 list << localFile;
             }
             for (auto lf : list) {
-                GridManager::instance()->add(lf);
+                GridManager::instance()->add(screenNum, lf);
             }
-            GridManager::instance()->reArrange();
+            GridManager::instance()->reArrange(screenNum);
         }
     });
 
@@ -2292,7 +2324,8 @@ void CanvasGridView::updateCanvas()
     auto itemSize = itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex());
     QMargins geometryMargins = QMargins(0, 0, 0, 0);
     d->updateCanvasSize(this->geometry().size(), this->geometry().size(), geometryMargins, itemSize);
-    GridManager::instance()->updateGridSize(d->colCount, d->rowCount);
+
+    GridManager::instance()->updateGridSize(screenNum, d->colCount, d->rowCount);
 
     updateEditorGeometries();
 
@@ -2373,13 +2406,13 @@ inline QRect CanvasGridView::itemIconGeomerty(const QModelIndex &index) const
 
 inline QModelIndex CanvasGridView::firstIndex()
 {
-    auto localFile = GridManager::instance()->firstItemId();
+    auto localFile = GridManager::instance()->firstItemId(screenNum);
     return model()->index(DUrl(localFile));
 }
 
 inline QModelIndex CanvasGridView::lastIndex()
 {
-    auto localFile = GridManager::instance()->lastItemId();
+    auto localFile = GridManager::instance()->lastItemId(screenNum);
     return model()->index(DUrl(localFile));
 }
 
@@ -2441,7 +2474,7 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
             QItemSelection toRemoveSelection;
             for (auto x = topLeftGridPos.x(); x <= bottomRightGridPos.x(); ++x) {
                 for (auto y = topLeftGridPos.y(); y <= bottomRightGridPos.y(); ++y) {
-                    auto localFile = GridManager::instance()->itemId(x, y);
+                    auto localFile = GridManager::instance()->itemId(screenNum, x, y);
                     if (localFile.isEmpty()) {
                         continue;
                     }
@@ -2499,7 +2532,7 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
                     continue;
                 if (x > bottomRightGridPos.x() && y == bottomRightGridPos.y())
                     break;
-                auto localFile = GridManager::instance()->itemId(x, y);
+                auto localFile = GridManager::instance()->itemId(screenNum, x, y);
                 if (localFile.isEmpty()) {
                     continue;
                 }
@@ -2515,7 +2548,7 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
         QAbstractItemView::selectionModel()->select(rectSelection, command);
     } else if (DFMGlobal::keyCtrlIsPressed()) {
         //just Ctrl
-        auto localFile = GridManager::instance()->itemId(topLeftGridPos.x(), topLeftGridPos.y());
+        auto localFile = GridManager::instance()->itemId(screenNum, topLeftGridPos.x(), topLeftGridPos.y());
         if (localFile.isEmpty()) {
             return;
         }
@@ -2530,7 +2563,7 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
         d->beginPos = topLeftGridPos;
     } else {
         //just click or mouseleft select
-        auto localFile = GridManager::instance()->itemId(topLeftGridPos.x(), topLeftGridPos.y());
+        auto localFile = GridManager::instance()->itemId(screenNum, topLeftGridPos.x(), topLeftGridPos.y());
         if (localFile.isEmpty()) {
             return;
         }
@@ -2620,6 +2653,7 @@ void CanvasGridView::handleContextMenuAction(int action)
 
 void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
 {
+#if 0 //older code
     const QModelIndex &index = rootIndex();
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
     QVector<MenuAction> actions;
@@ -2779,7 +2813,135 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
         menu->deleteLater();
         return;
     }
+#endif
 
+    const QModelIndex &index = rootIndex();
+    const DAbstractFileInfoPointer &info = model()->fileInfo(index);
+    QVector<MenuAction> actions;
+    actions << MenuAction::NewFolder << MenuAction::NewDocument;
+    if(!autoMerge()){
+        actions << MenuAction::SortBy;
+    }
+    actions << MenuAction::Paste
+            << MenuAction::SelectAll << MenuAction::OpenInTerminal
+            << MenuAction::Property << MenuAction::Separator;
+    if (actions.isEmpty()) {
+        return;
+    }
+
+    const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
+
+    QSet<MenuAction> disableList = DFileMenuManager::getDisableActionList(model()->getUrlByIndex(index));
+
+    if (model()->state() != DFileSystemModel::Idle) {
+        disableList << MenuAction::SortBy;
+    }
+    if (!model()->rowCount()) {
+        disableList << MenuAction::SelectAll;
+    }
+
+    DFileMenu *menu = DFileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
+    if (!menu) {
+        return;
+    }
+
+    auto *pasteAction = menu->actionAt(DFileMenuManager::getActionString(MenuAction::Paste));
+
+    QMenu iconSizeMenu;
+
+    for (int i = itemDelegate()->minimumIconSizeLevel(); i <= itemDelegate()->maximumIconSizeLevel(); ++i) {
+        auto iconSize = new QAction(&iconSizeMenu);
+        iconSize->setText(itemDelegate()->iconSizeLevelDescription(i));
+        iconSize->setData(IconSize + i);
+        iconSize->setCheckable(true);
+        iconSize->setChecked(i == itemDelegate()->iconSizeLevel());
+        iconSizeMenu.addAction(iconSize);
+    }
+    //图标大小排列
+    QAction iconSizeAction(menu);
+    iconSizeAction.setText(tr("Icon size"));
+    iconSizeAction.setData(IconSize);
+    iconSizeAction.setMenu(&iconSizeMenu);
+    menu->insertAction(pasteAction, &iconSizeAction);
+    //自动整理
+    QAction menuAutoMerge(menu);
+    menuAutoMerge.setText(tr("Auto merge"));
+    menuAutoMerge.setData(AutoMerge);
+    menuAutoMerge.setCheckable(true);
+    menuAutoMerge.setChecked(autoMerge());
+    DGioSettings settings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
+    if (settings.value("auto-merge").toBool()) {
+        menu->insertAction(pasteAction, &menuAutoMerge);
+    }
+    //自动排序
+    QAction autoSort(menu);
+    autoSort.setText(tr("Auto arrange"));
+    autoSort.setData(AutoSort);
+    autoSort.setCheckable(true);
+    autoSort.setChecked(GridManager::instance()->autoArrange());
+    if (!autoMerge()) {
+        menu->insertAction(pasteAction, &autoSort);
+    }
+
+    auto *propertyAction = menu->actionAt(DFileMenuManager::getActionString(MenuAction::Property));
+    QList<QAction *> pluginActions = DFileMenuManager::loadEmptyAreaPluginMenu(menu, model()->rootUrl(), true);
+
+    if (pluginActions.count() > 0) {
+        QAction *separator = new QAction(menu);
+        separator->setSeparator(true);
+        menu->insertAction(pluginActions.at(0), separator);
+    }
+
+    //显示设置
+    QAction display(menu);
+    display.setText(tr("Display Settings"));
+    display.setData(DisplaySettings);
+    menu->addAction(&display);
+
+    //热区设置，新版无热区设置需求
+    //    QAction corner(menu);
+    //    DGioSettings gsetting("com.deepin.dde.desktop", "/com/deepin/dde/desktop/");
+    //    if (gsetting.keys().contains("enable-hotzone-settings") && gsetting.value("enable-hotzone-settings").toBool()) {
+    //        corner.setText(tr("Corner Settings"));
+    //        corner.setData(CornerSettings);
+    //        menu->addAction(&corner);
+    //    }
+
+    //壁纸和屏保设置
+    QAction wallpaper(menu);
+#ifdef DISABLE_SCREENSAVER
+    wallpaper.setText(tr("Set Wallpaper"));
+#else
+    wallpaper.setText(tr("Wallpaper and Screensaver"));
+#endif
+    wallpaper.setData(WallpaperSettings);
+    menu->addAction(&wallpaper);
+
+    menu->removeAction(propertyAction);
+    menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this);
+
+    connect(menu, &DFileMenu::triggered, this, [ = ](QAction * action) {
+        qDebug() << "trigger action" << action->data();
+        if (!action->data().isValid()) {
+            return;
+        }
+        handleContextMenuAction(action->data().toInt());
+    });
+
+    d->fileViewHelper->handleMenu(menu);
+
+    if (DesktopInfo().waylandDectected()) {
+
+        QPoint t_tmpPoint = QCursor::pos();
+        if (t_tmpPoint.x() + menu->sizeHint().width() > width())
+            t_tmpPoint.setX(t_tmpPoint.x() - menu->sizeHint().width());
+
+        if (t_tmpPoint.y() + menu->sizeHint().height() > height())
+            t_tmpPoint.setY(t_tmpPoint.y() - menu->sizeHint().height());
+        menu->exec(t_tmpPoint);
+        menu->deleteLater();
+        return;
+    }
 
     menu->exec();
     menu->deleteLater();

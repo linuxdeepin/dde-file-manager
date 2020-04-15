@@ -38,7 +38,11 @@ void Presenter::onSortRoleChanged(int role, Qt::SortOrder order)
 
 void Presenter::onAutoAlignToggled()
 {
-    GridManager::instance()->toggleArrange();
+    /*******************************************/
+    //更改多屏配置文件后，暂时防止编译出错给的一个临时值
+    int screenNum = 1;
+    /*******************************************/
+    GridManager::instance()->toggleArrange(screenNum);
     emit setConfig(Config::groupGeneral, Config::keyAutoAlign, GridManager::instance()->autoArrange());
 }
 

@@ -89,22 +89,15 @@ class GridManager: public QObject, public Singleton<GridManager>
 {
     Q_OBJECT
 public:
-    enum SyncOperation{soAutoMerge,soRename,soIconSize,soSort,soHideEditing,soUpdate,soAutoMergeUpdate};
-    DUrl getInitRootUrl();
-    void initGridItemsInfos();
-    void initProfile(const QList<DAbstractFileInfoPointer> &items);
-    void initWithoutProfile(const QList<DAbstractFileInfoPointer> &items);
-    void initAutoMerge(const QList<DAbstractFileInfoPointer> &items);
-    void initArrage(const QStringList &items);
+    void initProfile(int screenNum, const QList<DAbstractFileInfoPointer> &items);
+    void initWithoutProfile(int screenNum, const QList<DAbstractFileInfoPointer> &items);
 
     bool add(int screenNum, QPoint pos, const QString &itemId);
     bool add(int screenNum, const QString &itemId);
     bool move(int screenNum, const QStringList &selectedIds, const QString &itemId, int x, int y);
-    bool move(int fromScreen, int toScreen, const QStringList &selectedIds, const QString &itemId, int x, int y);
     bool remove(int screenNum, const QString &itemId);
 
     bool clear();
-    void restCoord();
 
     void addCoord(int screenNum, QPair<int, int> coordInfo);
     QString firstItemId(int screenNum);
@@ -113,22 +106,20 @@ public:
 
     bool contains(int screebNum, const QString &itemId);
     QPoint position(int screenNum, const QString &itemId);
-    bool find(const QString &itemId, QPair<int,QPoint> &pos);
     QString itemId(int screenNum, int x, int y);
     QString itemId(int screenNum, QPoint pos);
     bool isEmpty(int screenNum, int x, int y);
 
-    QStringList overlapItems(int screen) const;
+    const QStringList &overlapItems() const;
     bool shouldArrange() const;
     bool autoArrange() const;
     bool autoMerge() const;
-    bool doneInit()const;
-    void toggleArrange();
+    void toggleArrange(int screenNum);
     void setAutoMerge(bool enable = true);
     void toggleAutoMerge();
-    void reArrange();
+    void reArrange(int screenNum);
 
-    int gridCount() const;
+    int gridCount(int screenNum) const;
     QPair<int, QPoint> forwardFindEmpty(int screenNum, QPoint start) const;
     QSize gridSize(int screenNum) const;
     void updateGridSize(int screenNum, int w, int h);
@@ -138,23 +129,11 @@ public:
     void setWhetherShowHiddenFiles(bool value)noexcept;
     bool getWhetherShowHiddenFiles()noexcept;
 
-    bool getCanvasFullStatus(int screenId);
-
-    void setDisplayMode(bool single);
-    void delaySyncAllProfile(int ms = 100);
-
-    void setCurrentVirtualExpandUrl(const DUrl url);
-    DUrl getCurrentVirtualExpandUrl();
-    void setCurrentAllItems(const QList<DAbstractFileInfoPointer> &infoList);
-
-
 public:
     void dump();
-signals:
-    void sigSyncOperation(int so,QVariant var = QVariant());
-    void sigAutoMergeUpdateExpandDate(QString screenName, DUrl url);
+
 protected:
-    //bool remove(int screenNum, int x, int y, const QString &itemId);
+    bool remove(int screenNum, int x, int y, const QString &itemId);
     bool remove(int screenNum, QPoint pos, const QString &itemId);
 
     friend class Singleton<GridManager>;
