@@ -1873,6 +1873,8 @@ void CanvasGridView::initUI()
             QPair<int ,int> coordInfo;
             coordInfo.first = 0;
             coordInfo.second = 0;
+            QRect rect = m_screenName == ScreenMrg->primaryScreen()->name() ? oneScreen->availableGeometry() : oneScreen->geometry();
+            QAbstractItemView::setGeometry(rect);
             GridManager::instance()->addCoord(num, coordInfo);
             break;
         }

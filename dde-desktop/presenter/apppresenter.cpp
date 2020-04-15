@@ -20,14 +20,14 @@ Presenter::Presenter(QObject *parent) : QObject(parent)
 
 void Presenter::init()
 {
-    connect(Presenter::instance(), &Presenter::setConfig,
-            Config::instance(), &Config::setConfig, Qt::QueuedConnection);
-    connect(Presenter::instance(), &Presenter::removeConfig,
-            Config::instance(), &Config::removeConfig, Qt::QueuedConnection);
-    connect(Presenter::instance(), &Presenter::setConfigList,
-            Config::instance(), &Config::setConfigList, Qt::QueuedConnection);
-    connect(Presenter::instance(), &Presenter::removeConfigList,
-            Config::instance(), &Config::removeConfigList, Qt::QueuedConnection);
+//    connect(Presenter::instance(), &Presenter::setConfig,
+//            Config::instance(), &Config::setConfig, Qt::QueuedConnection);
+//    connect(Presenter::instance(), &Presenter::removeConfig,
+//            Config::instance(), &Config::removeConfig, Qt::QueuedConnection);
+//    connect(Presenter::instance(), &Presenter::setConfigList,
+//            Config::instance(), &Config::setConfigList, Qt::QueuedConnection);
+//    connect(Presenter::instance(), &Presenter::removeConfigList,
+//            Config::instance(), &Config::removeConfigList, Qt::QueuedConnection);
 }
 
 void Presenter::onSortRoleChanged(int role, Qt::SortOrder order)
