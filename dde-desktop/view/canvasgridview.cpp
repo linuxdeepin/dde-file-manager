@@ -1262,7 +1262,6 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
         painter.restore();
     }
 
-
 // draw dragMove animation
     if (d->dodgeAnimationing) {
         for (auto animatingItem : d->dodgeItems) {
@@ -1762,100 +1761,87 @@ static inline QRect fix_available_geometry()
 //        virtualGeometry = Display::instance()->primaryScreen()->virtualGeometry();
         qDebug()<<"Display::instance()->primaryScreen()->virtualGeometry():" << Display::instance()->primaryScreen()->virtualGeometry();
         qDebug()<<"Display::instance()->primaryRect():" << Display::instance()->primaryRect();
-        virtualGeometry = Display::instance()->primaryRect();
-
-        int dockHideMode = DockIns::instance()->hideMode();
-        if ( 1 == dockHideMode || 3 == dockHideMode) //隐藏与智能隐藏
-            return virtualGeometry;
-
-        //fix xcb的dock区域获取数据不对
-        DockRect dockrect = DockIns::instance()->frontendWindowRect();
-        qDebug()<<"fix_available_geometry dockrect"<< (QRect)dockrect;
-        qreal t_devicePixelRatio = Display::instance()->getScaleFactor();
-//        if (!QHighDpiScaling::m_active) {
-//            t_devicePixelRatio = 1;
-//        }
-
-        dockrect.width = dockrect.width / t_devicePixelRatio;
-        dockrect.height = dockrect.height / t_devicePixelRatio;
-        QRect primaryGeometry = Display::instance()->primaryRect();
-        QRect ret = primaryGeometry;
-        switch (DockIns::instance()->position()) {
-        case 0: //上
-            ret.setY(dockrect.height);
-            break;
-        case 1: //右
-            ret.setWidth(ret.width() - dockrect.width);
-            break;
-        case 2: //下
-            ret.setHeight(ret.height() - dockrect.height);
-            break;
-        case 3: //左
-            ret.setX(dockrect.width);
-            break;
-        default:
-            qCritical() << "dock postion error!";
-            break;
-        }
-        qDebug() << "\n"
-                 << "dump dock info begin ---------------------------" << "\n"
-                 << "dockGeometry:" << dockrect << "\n"
-                 << "virtualGeometry:" << virtualGeometry << "\n"
-                 << "primarygeometry:" << primaryGeometry << "\n"
-                 << "availableRect:" << ret << "\n"
-                 << "dump dock info end ---------------------------" << "\n";
-        return ret;
-        //end
-    }
+        virtualGeometry = Display::instance()->primaryRect();}
     else {
         virtualGeometry = qApp->screens().value(0)->virtualGeometry();
     }
 
+    int dockHideMode = DockIns::instance()->hideMode();
+    if ( 1 == dockHideMode || 3 == dockHideMode) //隐藏与智能隐藏
+        return virtualGeometry;
 
-    xcb_ewmh_wm_strut_partial_t dock_xcb_ewmh_wm_strut_partial_t;
-    memset(&dock_xcb_ewmh_wm_strut_partial_t, 0, sizeof(xcb_ewmh_wm_strut_partial_t));
-    auto structParialInfoList = Xcb::XcbMisc::instance().find_dock_window();
-    for (auto info : structParialInfoList) {
-        if (info.rc.isValid()) {
-            dock_xcb_ewmh_wm_strut_partial_t = Xcb::XcbMisc::instance().get_strut_partial(info.winId);
-            break;
-        }
+    DockRect dockrect = DockIns::instance()->frontendWindowRect();
+    qDebug()<<"fix_available_geometry dockrect"<< (QRect)dockrect;
+    qreal t_devicePixelRatio = Display::instance()->getScaleFactor();
+    //        if (!QHighDpiScaling::m_active) {
+    //            t_devicePixelRatio = 1;
+    //        }
+
+    dockrect.width = dockrect.width / t_devicePixelRatio;
+    dockrect.height = dockrect.height / t_devicePixelRatio;
+    QRect primaryGeometry = Display::instance()->primaryRect();
+    QRect ret = primaryGeometry;
+    switch (DockIns::instance()->position()) {
+    case 0: //上
+        ret.setY(dockrect.height);
+        break;
+    case 1: //右
+        ret.setWidth(ret.width() - dockrect.width);
+        break;
+    case 2: //下
+        ret.setHeight(ret.height() - dockrect.height);
+        break;
+    case 3: //左
+        ret.setX(dockrect.width);
+        break;
+    default:
+        qCritical() << "dock postion error!";
+        break;
     }
-
-    QRegion virtualRegion = QRegion(virtualGeometry);
-
-    //if X11
-    //auto primaryGeometry = qApp->primaryScreen()->geometry();
-    //else
-    QRect primaryGeometry;
-
-    if (XDG_SESSION_TYPE == QLatin1String("wayland") ||
-            WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
-//        primaryGeometry = Display::instance()->primaryScreen()->geometry();
-        primaryGeometry = Display::instance()->primaryRect();
-    } else {
-        primaryGeometry = qApp->primaryScreen()->geometry();
-    }
-
-    QRect availableRect = primaryGeometry;
-    // primary screen rect - dock rect;
-    if (dock_xcb_ewmh_wm_strut_partial_t.top > 0) {
-        availableRect.setY(dock_xcb_ewmh_wm_strut_partial_t.top);
-    } else if (dock_xcb_ewmh_wm_strut_partial_t.right > 0) {
-        availableRect.setWidth(2 * availableRect.width() - dock_xcb_ewmh_wm_strut_partial_t.right);
-    } else if (dock_xcb_ewmh_wm_strut_partial_t.bottom > 0) {
-        availableRect.setHeight(availableRect.height() - dock_xcb_ewmh_wm_strut_partial_t.bottom);
-    } else if (dock_xcb_ewmh_wm_strut_partial_t.left > 0) {
-        availableRect.setX(dock_xcb_ewmh_wm_strut_partial_t.left);
-    }
-
     qDebug() << "\n"
              << "dump dock info begin ---------------------------" << "\n"
+             << "dockGeometry:" << dockrect << "\n"
              << "virtualGeometry:" << virtualGeometry << "\n"
              << "primarygeometry:" << primaryGeometry << "\n"
-             << "availableRect:" << availableRect << "\n"
+             << "availableRect:" << ret << "\n"
              << "dump dock info end ---------------------------" << "\n";
-    return availableRect;
+    return ret;
+    //end
+
+//    xcb_ewmh_wm_strut_partial_t dock_xcb_ewmh_wm_strut_partial_t;
+//    memset(&dock_xcb_ewmh_wm_strut_partial_t, 0, sizeof(xcb_ewmh_wm_strut_partial_t));
+//    auto structParialInfoList = Xcb::XcbMisc::instance().find_dock_window();
+//    for (auto info : structParialInfoList) {
+//        if (info.rc.isValid()) {
+//            dock_xcb_ewmh_wm_strut_partial_t = Xcb::XcbMisc::instance().get_strut_partial(info.winId);
+//            break;
+//        }
+//    }
+
+//    QRegion virtualRegion = QRegion(virtualGeometry);
+
+//    auto primaryGeometry = qApp->primaryScreen()->geometry();
+//    QRect availableRect = primaryGeometry;
+//    qreal actualZoom = qApp->primaryScreen()->devicePixelRatio();
+
+//    // primary screen rect - dock rect;
+//    if (dock_xcb_ewmh_wm_strut_partial_t.top > 0) {
+//        availableRect.setY(dock_xcb_ewmh_wm_strut_partial_t.top/actualZoom);
+//    } else if (dock_xcb_ewmh_wm_strut_partial_t.right > 0) {
+//        availableRect.setWidth(2 * availableRect.width() - dock_xcb_ewmh_wm_strut_partial_t.right/actualZoom);
+//    } else if (dock_xcb_ewmh_wm_strut_partial_t.bottom > 0) {
+//        availableRect.setHeight(availableRect.height() - dock_xcb_ewmh_wm_strut_partial_t.bottom/actualZoom);
+//    } else if (dock_xcb_ewmh_wm_strut_partial_t.left > 0) {
+//        availableRect.setX(dock_xcb_ewmh_wm_strut_partial_t.left/actualZoom);
+//    }
+
+//    qDebug() << "\n"
+//             << "dump dock info begin ---------------------------" << "\n"
+//             << "virtualGeometry:" << virtualGeometry << "\n"
+//             << "primarygeometry:" << primaryGeometry << "\n"
+//             << "availableRect:" << availableRect << "\n"
+//             << "dump dock info end ---------------------------" << "\n";
+//    return availableRect;
 }
 
 static inline QRect getValidNewGeometry(const QRect &geometry, const QRect &oldGeometry)
