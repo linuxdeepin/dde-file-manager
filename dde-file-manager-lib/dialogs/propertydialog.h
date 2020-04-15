@@ -219,9 +219,9 @@ private:
     QFrame* m_wdf{ nullptr };
     QScrollArea *m_scrollArea{ nullptr };
     QFrame      *m_tagInfoFrame{ nullptr };
-    QVariantAnimation *m_xani {nullptr};
-    QVariantAnimation *m_gani {nullptr};
-    QLabel *m_aniLabel {nullptr};
+    QPointer<QVariantAnimation> m_xani {nullptr};
+    QPointer<QVariantAnimation> m_gani {nullptr};
+    QPointer<QLabel> m_aniLabel {nullptr};
 
 
     QList<DDrawer *> addExpandWidget(const QStringList &titleList);
