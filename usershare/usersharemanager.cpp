@@ -485,6 +485,16 @@ void UserShareManager::usershareCountchanged()
 
 void UserShareManager::deleteUserShareByShareName(const QString &shareName)
 {
+
+
+    QDBusReply<bool> reply = m_userShareInterface->closeSmbShareByShareName(shareName);
+    if(reply.isValid()){
+        qDebug() << "closeSmbShareByShareName:" << reply.value();
+    }else{
+        qDebug() <<"closeSmbShareByShareName:" << reply.error();
+        return;
+    }
+
     QString cmd = "net";
     QStringList args;
     args << "usershare" << "delete"

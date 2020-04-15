@@ -28,7 +28,7 @@
 DFileMenu::DFileMenu(QWidget *parent)
     : QMenu(parent)
 {
-
+    qDebug() << "DFileMenu create " << this << QThread::currentThreadId() << "parent = " << parent;
 }
 
 const QSharedPointer<DFMMenuActionEvent> DFileMenu::makeEvent(DFMGlobal::MenuAction action) const
@@ -88,3 +88,13 @@ DUrlList DFileMenu::selectedUrls() const
 {
     return m_selectedUrls;
 }
+
+//void DFileMenu::mouseReleaseEvent(QMouseEvent *event)
+//{
+//    if(show())
+//}
+
+//void DFileMenu::mousePressEvent(QMouseEvent *event)
+//{
+
+//}
