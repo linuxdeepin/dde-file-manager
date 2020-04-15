@@ -815,7 +815,7 @@ void Frame::onItemPressed(const QString &data)
 #ifndef DISABLE_SCREENSAVER
     else if (m_mode == ScreenSaverMode) {
         m_dbusScreenSaver->Preview(data, 1);
-        qDebug() << "screensaver start";
+        qDebug() << "screensaver start " << data;
         // 防止壁纸背景盖住屏保预览窗口
         if (m_backgroundHelper && m_backgroundHelper->visible()) {
             QThread::msleep(300); // TODO: 临时方案，暂不清除如何获取屏保显示开始的状态
