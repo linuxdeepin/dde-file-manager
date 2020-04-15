@@ -208,9 +208,14 @@ void BackgroundHelper::setVisible(bool visible)
 {
     m_visible = visible;
 
-
-    for (BackgroundLabel *l : backgroundMap) {
-        l->setVisible(visible);
+    if (DesktopInfo().waylandDectected()) {
+        for (BackgroundLabel *l : waylandbackgroundMap) {
+            updateBackground(l);
+        }
+    } else {
+        for (BackgroundLabel *l : backgroundMap) {
+            l->setVisible(visible);
+        }
     }
 }
 
@@ -652,9 +657,17 @@ void BackgroundHelper::checkBlackScreen()
 
 void BackgroundHelper::resetBackgroundVisibleState()
 {
-    for (QScreen *screen : qGuiApp->screens()) {
-        BackgroundLabel *l = backgroundMap.value(screen);
-        l->show();
+    m_visible = true;
+    if (DesktopInfo().waylandDectected()){
+        for (BackgroundLabel *l : waylandbackgroundMap) {
+            l->show();
+        }
+    }
+    else{
+        for (QScreen *screen : qGuiApp->screens()) {
+            BackgroundLabel *l = backgroundMap.value(screen);
+            l->show();
+        }
     }
 }
 #ifdef QT_DEBUG
