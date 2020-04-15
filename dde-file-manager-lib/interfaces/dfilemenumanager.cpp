@@ -69,8 +69,7 @@
 
 #include <plugins/dfmadditionalmenu.h>
 
-namespace DFileMenuData
-{
+namespace DFileMenuData {
 static QMap<MenuAction, QString> actionKeys;
 static QMap<MenuAction, QIcon> actionIcons;
 static QMap<MenuAction, QAction *> actions;
@@ -227,7 +226,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
                 QStringList mimeTypeList = { fileInfo->mimeType().name() };
                 mimeTypeList.append(fileInfo->mimeType().parentMimeTypes());
                 bool matched = false;
-                for (const QString& oneMimeType : mimeTypeList) {
+                for (const QString &oneMimeType : mimeTypeList) {
                     if (supportedMimeTypes.contains(oneMimeType)) {
                         matched = true;
                         break;
@@ -288,10 +287,14 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
 
         foreach (QString app, recommendApps) {
 //            const DesktopFile& df = mimeAppsManager->DesktopObjs.value(app);
-        //ignore no show apps
+            //ignore no show apps
 //            if(df.getNoShow())
 //                continue;
             DesktopFile desktopFile(app);
+
+            if (desktopFile.getName() == "ImageMagick (color depth=q16)") {
+                continue;
+            }
             QAction *action = new QAction(desktopFile.getDisplayName(), openWithMenu);
             action->setIcon(FileUtils::searchAppIcon(desktopFile));
             action->setProperty("app", app);
@@ -625,9 +628,9 @@ void DFileMenuData::initActions()
 }
 
 DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
-        const QSet<MenuAction> &disableList,
-        bool checkable,
-        const QMap<MenuAction, QVector<MenuAction> > &subMenuList, bool isUseCachedAction, bool isRecursiveCall)
+                                                const QSet<MenuAction> &disableList,
+                                                bool checkable,
+                                                const QMap<MenuAction, QVector<MenuAction> > &subMenuList, bool isUseCachedAction, bool isRecursiveCall)
 {
     static bool actions_initialized = false;
 
