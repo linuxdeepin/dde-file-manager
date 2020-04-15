@@ -28,7 +28,7 @@
 DFileMenu::DFileMenu(QWidget *parent)
     : QMenu(parent)
 {
-    qDebug() << "DFileMenu create " << this << QThread::currentThreadId() << "parent = " << parent;
+
 }
 
 const QSharedPointer<DFMMenuActionEvent> DFileMenu::makeEvent(DFMGlobal::MenuAction action) const
