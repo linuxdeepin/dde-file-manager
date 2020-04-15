@@ -56,7 +56,7 @@ QRect ScreenObjectWayland::availableGeometry() const
     QRect dockrect = dealRectRatio(dockrectI.operator QRect());  //缩放处理
     switch (DockInfoIns->position()) {
     case 0: //上
-        ret.setY(dockrect.height());
+        ret.setY(ret.y() + dockrect.height());
         break;
     case 1: //右
         ret.setWidth(ret.width() - dockrect.width());
@@ -65,13 +65,12 @@ QRect ScreenObjectWayland::availableGeometry() const
         ret.setHeight(ret.height() - dockrect.height());
         break;
     case 3: //左
-        ret.setX(dockrect.width());
+        ret.setX(ret.x() + dockrect.width());
         break;
     default:
         qCritical() << "dock postion error!";
         break;
     }
-
     return ret;
 }
 
