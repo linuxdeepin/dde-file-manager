@@ -35,6 +35,7 @@ signals:
     void primaryScreenChanged(QScreen *screen);
     void primaryChanged();
     void sigDisplayModeChanged();
+    void sigMonitorsChanged(QScreen *screen);
 
 private:
     DBusDisplay *m_display = nullptr;
