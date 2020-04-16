@@ -6,11 +6,15 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QtConcurrent>
+#include <QDebug>
+
+#include <unistd.h>
+#include <sys/wait.h>
+
 #include "disomaster.h"
 #include "app/define.h"
 #include "fileoperations/filejob.h"
 #include "dialogmanager.h"
-#include <QDebug>
 
 DWIDGET_USE_NAMESPACE
 
@@ -84,7 +88,8 @@ BurnOptDialog::BurnOptDialog(QString device, QWidget *parent) :
                         d->cb_checkdisc->isChecked() && (flag |= 4);
                         d->cb_eject->isChecked() && (flag |= 2);
 
-                        job->doOpticalImageBurn(dev, img, d->speedmap[d->cb_writespeed->currentText()], flag);
+                        // fix: use fork() burn image
+                        job->doOpticalImageBurnByChildProcess(dev, img, d->speedmap[d->cb_writespeed->currentText()], flag);
                         dialogManager->removeJob(job->getJobId());
                         job->deleteLater();
                     });
