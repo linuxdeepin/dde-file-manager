@@ -17,6 +17,7 @@
 #include "dfileservices.h"
 #include "../config/config.h"
 #include "dabstractfileinfo.h"
+#include "screen/screenhelper.h"
 
 #if 0 //多屏图标自定义配置做修改： older
 class GridManagerPrivate
@@ -920,8 +921,6 @@ public:
                 oneValue[i] = false;
             }
         }
-
-
     }
 
     QStringList rangeItems(int screenNum)
@@ -976,8 +975,9 @@ public:
     void createProfile()
     {
         //m_cellStatus.resize(coordWidth * coordHeight);
-
-        clear();
+        if(0 == createProfileTime)
+            clear();
+        createProfileTime++;
     }
 
     void loadProfile(int screenNum, const QList<DAbstractFileInfoPointer> &fileInfoList)
@@ -992,37 +992,34 @@ public:
         auto settings = Config::instance()->settings();
         //先取屏幕分辨率信息
         settings->beginGroup(Config::keyProfile);
-        QStringList screenProfiles;
+        QString screenProfile;
         QStringList screenNumbers = settings->allKeys();
         for(auto &key : screenNumbers){
-            screenProfiles << settings->value(key).toString();
+            if(screenNum != key.toInt())
+                continue;
+            screenProfile = settings->value(key).toString();
+            break;
+        }
+        if(screenProfile.isEmpty())
+            return;
+        settings->endGroup();
+
+        //屏幕分辨率对应下的自定义图标信息
+        settings->beginGroup(screenProfile);
+        for (auto &key : settings->allKeys()) {
+            auto coords = key.split("_");
+            auto x = coords.value(0).toInt();
+            auto y = coords.value(1).toInt();
+            auto item = settings->value(key).toString();
+            if (existItems.contains(item)) {
+                QPoint pos{x, y};
+                //这里不能直接这样add对应配置文件里的屏幕，因为有可能启动桌面时没有多了或者少了屏幕甚至是分辨率变化了
+                //这里暂时当成和配置文件一样多的屏幕来处理（整体联调或者大体功能完成再修改）
+                add(screenNum, pos, item);
+                existItems.remove(item);
+            }
         }
         settings->endGroup();
-        if(screenProfiles.size() != screenNumbers.size()){
-            //理论上讲screenNumbers与screenProfiles的size是一样的，这里只是做个预防
-            qCritical()<< "screenProfiles != screenNumbers";
-            return;
-        }
-        //屏幕分辨率对应下的自定义图标信息
-        int num = 0;
-        for (auto &onceScreenProfile : screenProfiles) {
-            settings->beginGroup(onceScreenProfile);
-            for (auto &key : settings->allKeys()) {
-                auto coords = key.split("_");
-                auto x = coords.value(0).toInt();
-                auto y = coords.value(1).toInt();
-                auto item = settings->value(key).toString();
-                if (existItems.contains(item)) {
-                    QPoint pos{x, y};
-                    //这里不能直接这样add对应配置文件里的屏幕，因为有可能启动桌面时没有多了或者少了屏幕甚至是分辨率变化了
-                    //这里暂时当成和配置文件一样多的屏幕来处理（整体联调或者大体功能完成再修改）
-                    add(screenNumbers.at(num).toInt(), pos, item);
-                    existItems.remove(item);
-                }
-            }
-            settings->endGroup();
-            num++;
-        }
 
         for (auto &item : existItems.keys()) {
             QPair<int, QPoint> empty_pos{ takeEmptyPos() };
@@ -1523,7 +1520,7 @@ public:
 /**************************************************************/
     bool                    autoArrange;
     bool                    autoMerge = false;
-
+    int                     createProfileTime{0};
     std::atomic<bool>       m_whetherShowHiddenFiles{ false };
 };
 
@@ -1539,7 +1536,11 @@ GridManager::~GridManager()
 void GridManager::initProfile(int screenNum, const QList<DAbstractFileInfoPointer> &items)
 {
     //初始化Profile,用实际地址的文件去匹配图标位置（自动整理则图标顺延展开，自定义则按照配置文件对应顺序）
-    d->createProfile();
+
+    //默认主屏为1，createProfile得考虑初只执行一次，不然在加载非主屏的图标时会删除主屏的数据
+//    if(1 == screenNum){
+//        d->createProfile();
+//    }
     d->loadProfile(screenNum, items);
 }
 
