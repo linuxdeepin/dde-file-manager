@@ -210,7 +210,7 @@ void BackgroundHelper::setVisible(bool visible)
 
     if (DesktopInfo().waylandDectected()) {
         for (BackgroundLabel *l : waylandbackgroundMap) {
-            updateBackground(l);
+            l->setVisible(visible);
         }
     } else {
         for (BackgroundLabel *l : backgroundMap) {
