@@ -60,8 +60,23 @@ Desktop::Desktop()
     connect(d->background, &BackgroundHelper::enableChanged, this, &Desktop::onBackgroundEnableChanged);
     if (desktoInfo.waylandDectected()) {
         connect(Display::instance(), &Display::primaryScreenChanged, this, &Desktop::onBackgroundEnableChanged);
+        connect(Display::instance(), &Display::sigMonitorsChanged, this, [=]{
+            if(d->wallpaperSettings){
+                d->wallpaperSettings->close();
+            }
+        });
     } else {
         connect(qGuiApp, &QGuiApplication::primaryScreenChanged, this, &Desktop::onBackgroundEnableChanged);
+        connect(qGuiApp, &QGuiApplication::screenAdded, this, [=]{
+            if(d->wallpaperSettings){
+                d->wallpaperSettings->close();
+            }
+        });
+        connect(qGuiApp, &QGuiApplication::screenRemoved, this, [=]{
+            if(d->wallpaperSettings){
+                d->wallpaperSettings->close();
+            }
+        });
     }
 
 
