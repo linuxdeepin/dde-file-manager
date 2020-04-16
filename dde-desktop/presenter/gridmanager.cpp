@@ -1260,7 +1260,16 @@ public:
 
         createProfile();
 
-        auto profile = QString("Position_%1_%2x%3").arg(screenNum).arg(w).arg(h);
+        //auto profile = QString("Position_%1_%2x%3").arg(screenNum).arg(w).arg(h);
+
+        QString profile;
+        if ((AbstractScreenManager::Showonly == ScreenMrg->displayMode())
+                || (AbstractScreenManager::Duplicate == ScreenMrg->displayMode())){
+            profile = QString("SinglePosition");  //单一桌面模式和扩展桌面模式需要独立保存桌面项目位置配置文件，以便两种模式互相切换时仍然完好如初
+        }else {
+            profile = QString("Position_%1").arg(screenNum);
+        }
+
         if (profile != positionProfiles.value(screenNum)) {
             positionProfiles[screenNum]= profile;
         }
@@ -1297,7 +1306,8 @@ public:
 
         createProfile();
 
-        auto profile = QString("Position_%1_%2x%3").arg(screenNum).arg(w).arg(h);
+        //auto profile = QString("Position_%1_%2x%3").arg(screenNum).arg(w).arg(h);
+        auto profile = QString("Position_%1").arg(screenNum);
         if (profile != positionProfiles.value(screenNum)) {
             positionProfiles[screenNum] = profile;
         }
@@ -1476,14 +1486,15 @@ public:
                 return this->autoArrange;
             }
 
-            QPair<QStringList, QVariantList> kvList = generateProfileConfigVariable(screenNum);
+//            QPair<QStringList, QVariantList> kvList = generateProfileConfigVariable(screenNum);
 
-            qDebug() << "updateGridProfile:" << kvList.first.size()
-                     << m_gridItems.size() << m_itemGrids.size();
+//            qDebug() << "updateGridProfile:" << kvList.first.size()
+//                     << m_gridItems.size() << m_itemGrids.size();
 
-            auto screenPositionProfile = positionProfiles.value(screenNum);
-            emit Presenter::instance()->removeConfig(screenPositionProfile, "");
-            emit Presenter::instance()->setConfigList(screenPositionProfile, kvList.first, kvList.second);
+//            auto screenPositionProfile = positionProfiles.value(screenNum);
+//            emit Presenter::instance()->removeConfig(screenPositionProfile, "");
+//            emit Presenter::instance()->setConfigList(screenPositionProfile, kvList.first, kvList.second);
+            syncProfile(screenNum);
 
             return this->autoArrange;
         }
@@ -1835,11 +1846,12 @@ void GridManager::reArrange(int screenNum)
         return;
     }
 
-    QPair<QStringList, QVariantList> kvList = d->generateProfileConfigVariable(screenNum);
-    auto oneScreenPositionProfile = d->positionProfiles.value(screenNum);
+    d->syncProfile(screenNum);
+//    QPair<QStringList, QVariantList> kvList = d->generateProfileConfigVariable(screenNum);
+//    auto oneScreenPositionProfile = d->positionProfiles.value(screenNum);
 
-    emit Presenter::instance()->removeConfig(oneScreenPositionProfile, "");
-    emit Presenter::instance()->setConfigList(oneScreenPositionProfile, kvList.first, kvList.second);
+//    emit Presenter::instance()->removeConfig(oneScreenPositionProfile, "");
+//    emit Presenter::instance()->setConfigList(oneScreenPositionProfile, kvList.first, kvList.second);
 }
 
 int GridManager::gridCount(int screenNum) const
