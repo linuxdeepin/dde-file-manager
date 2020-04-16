@@ -258,7 +258,13 @@ void BackgroundHelper::onWMChanged()
             });
         }
 
-        connect(qApp, &QGuiApplication::screenAdded, this, &BackgroundHelper::onScreenAdded);
+
+        if (!DesktopInfo().waylandDectected()) {
+            connect(qApp, &QGuiApplication::screenAdded, this, &BackgroundHelper::onScreenAdded);
+        } else {
+            connect(Display::instance(), &Display::sigMonitorsChanged, this, &BackgroundHelper::onScreenAdded);
+        }
+
         connect(qApp, &QGuiApplication::screenRemoved, this, &BackgroundHelper::onScreenRemoved);
 
         // 初始化窗口
@@ -483,6 +489,9 @@ void BackgroundHelper::onScreenAdded(QScreen *screen)
                     qDebug() << "Disable show the background widget, of screen:" << monitor->name() << screenRect;
 
                 Q_EMIT backgroundAdded(l);
+
+                // 初始化背景图
+                updateBackground();
             }
             qInfo() << " new " << monitorPaths << "current screens:" << waylandScreen.keys();
         }
