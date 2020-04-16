@@ -60,6 +60,9 @@
 #include <QCryptographicHash>
 #include <QMetaEnum>
 #include <QStorageInfo>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -69,6 +72,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/syscall.h>
+#include <sys/wait.h>
 
 #include "sort.h"
 
@@ -713,7 +717,6 @@ void FileJob::doOpticalBurn(const DUrl &device, QString volname, int speed, int 
             doDelete({DUrl::fromLocalFile(stagingurl.path())});
         }
     }
-    delete job_isomaster;
 }
 
 /*
@@ -774,14 +777,161 @@ void FileJob::doOpticalImageBurn(const DUrl &device, const DUrl &image, int spee
             emit requestOpticalJobCompletionDialog(tr("Burn process completed"), "dialog-ok");
         }
     }
-    delete job_isomaster;
+}
+
+
+void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &image, int speed, int flag)
+{
+    m_tarPath = device.path();
+    QString udiskspath = DDiskManager::resolveDeviceNode(device.path(), {}).first();
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+    QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+    if (drive->opticalBlank()) {
+        DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(device.path() + "/" BURN_SEG_STAGING), &DAbstractFileWatcher::fileDeleted, DUrl());
+    } else {
+        blkdev->unmount({});
+    }
+    m_opticalJobPhase = 0;
+    m_opticalOpSpeed.clear();
+    jobPrepared();
+
+/////////////////////////////
+    constexpr int BUFFERSIZE = 1024;
+    int progressPipefd[2];
+    if (pipe(progressPipefd) < 0)
+        return;
+
+    int badPipefd[2];
+    if (pipe(badPipefd) < 0)
+        return;
+    double globalBad;
+/////////////////////////////
+
+    pid_t pid = fork();
+    if (pid == 0) { // child process: burn image;
+        close(badPipefd[0]);
+        close(progressPipefd[0]);
+
+        DISOMasterNS::DISOMaster *job_isomaster = new DISOMasterNS::DISOMaster(this);
+        connect(job_isomaster, &DISOMasterNS::DISOMaster::jobStatusChanged, [&](int status, int progress) mutable {
+            qDebug() << "status:" << status << progress;
+            char progressBuf[BUFFERSIZE] = {0};
+            QJsonObject obj;
+            obj["phase"] = m_opticalJobPhase;
+            obj["status"] = status;
+            obj["progress"] = progress;
+            obj["speed"] = job_isomaster->getCurrentSpeed();
+            obj["msg"] = QJsonArray::fromStringList(job_isomaster->getInfoMessages());
+            strncpy(progressBuf, QJsonDocument(obj).toJson().data(), BUFFERSIZE);
+            write(progressPipefd[1], progressBuf, strlen(progressBuf) + 1);
+        });
+        qDebug() << "progressPipefd[1] closed";
+
+        job_isomaster->acquireDevice(device.path());
+        DISOMasterNS::DeviceProperty dp = job_isomaster->getDeviceProperty();
+        if (dp.formatted) {
+            m_opticalJobPhase = 1;
+        }
+
+        // write iso
+        bool wret = job_isomaster->writeISO(image, speed);
+        job_isomaster->releaseDevice();
+
+        double gud, slo, bad;
+        if ((flag & 4) && wret) {
+            m_opticalJobPhase = 2;
+            job_isomaster->acquireDevice(device.path());
+            job_isomaster->checkmedia(&gud, &slo, &bad);
+            job_isomaster->releaseDevice();
+            globalBad = bad;
+            write(badPipefd[1], &globalBad, sizeof(globalBad)); // pipe
+        }
+        close(progressPipefd[1]);
+
+        close(badPipefd[0]);
+        _exit(0);
+    } else if (pid > 0) { // parent process: wait and notify
+        close(badPipefd[1]);
+        close(progressPipefd[1]);
+
+        // read prpgress
+        while (true) {
+            char buf[BUFFERSIZE] = {0};
+            if (read(progressPipefd[0], buf, BUFFERSIZE) <= 0) {
+                qDebug() << "progressPipefd[0] break";
+                break;
+            } else{
+                QByteArray bufByes(buf);
+                qDebug() << "read bytes json:" << bufByes;
+                QJsonObject obj = QJsonDocument::fromJson(bufByes).object();
+                m_opticalJobPhase = obj["phase"].toInt();
+                int status = obj["status"].toInt();
+                int progress = obj["progress"].toInt();
+                QString speed = obj["speed"].toString();
+                QJsonArray jsonArray = obj["msg"].toArray();
+                QStringList msgList;
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    msgList.append(jsonArray[i].toString());
+                }
+                opticalJobUpdatedByParentProcess(status, progress, speed, msgList);
+            }
+        }
+
+        // read bad
+        if (flag & 4) {
+            m_opticalJobPhase = 2;
+            read(badPipefd[0], &globalBad, sizeof(globalBad));
+        }
+
+        bool statusRet = true;
+        int status;
+        wait(&status);
+
+        if (WIFEXITED(status)) {
+            qDebug() << "chiild exit with" << WEXITSTATUS(status);
+        }
+
+        // abort exit
+        if (WIFSIGNALED(status)) {
+            statusRet = false;
+            qDebug() << "child killed by" << WTERMSIG(status);
+        }
+
+        // last handle
+        if (flag & 2) {
+            QScopedPointer<DDiskDevice> diskdev(DDiskManager::createDiskDevice(blkdev->drive()));
+            diskdev->eject({});
+        } else {
+            blkdev->rescan({});
+            ISOMaster->nullifyDevicePropertyCache(device.path());
+        }
+
+        bool rst = ! ((flag & 4) && (globalBad > (2 + 1e-6)));
+
+        if (m_isJobAdded)
+            jobRemoved();
+        emit finished();
+        if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished) {
+            if ((flag & 4) && statusRet) {
+                emit requestOpticalJobCompletionDialog(rst ? tr("Data verification successful.") : tr("Data verification failed."), rst ? "dialog-ok" : "dialog-error");
+            } else {
+                emit requestOpticalJobCompletionDialog(tr("Burn process completed"), "dialog-ok");
+            }
+        }
+
+        close(badPipefd[0]);
+        close(progressPipefd[0]);
+    } else {
+        perror("fork failed");
+        return;
+    }
 }
 
 void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, int progress)
 {
     m_opticalJobStatus = status;
     m_opticalJobProgress = progress;
-    if (status == DISOMasterNS::DISOMaster::JobStatus::Failed) {
+    if (status == DISOMasterNS::DISOMaster::JobStatus::Failed && jobisom) {
         QStringList msg = jobisom->getInfoMessages();
         emit requestOpticalJobFailureDialog(m_jobType, FileJob::getXorrisoErrorMsg(msg), msg);
         return;
@@ -790,8 +940,29 @@ void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, i
         && status != DISOMasterNS::DISOMaster::JobStatus::Finished) {
         ++m_opticalJobPhase;
     }
-    if (status == DISOMasterNS::DISOMaster::JobStatus::Running) {
+    if (status == DISOMasterNS::DISOMaster::JobStatus::Running && jobisom) {
         m_opticalOpSpeed = jobisom->getCurrentSpeed();
+    } else {
+        m_opticalOpSpeed.clear();
+    }
+}
+
+void FileJob::opticalJobUpdatedByParentProcess(int status, int progress, const QString &speed, const QStringList &msgs)
+{
+    m_opticalJobStatus = status;
+    m_opticalJobProgress = progress;
+    if (status == DISOMasterNS::DISOMaster::JobStatus::Failed) {
+        QStringList msg(msgs);
+        //dialogManager->showOpticalJobFailureDialog(m_jobType, FileJob::getXorrisoErrorMsg(msgs), msgs);
+        emit requestOpticalJobFailureDialog(m_jobType, FileJob::getXorrisoErrorMsg(msg), msg);
+        return;
+    }
+    if (m_jobType == JobType::OpticalImageBurn && m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished
+        && status != DISOMasterNS::DISOMaster::JobStatus::Finished) {
+        ++m_opticalJobPhase;
+    }
+    if (status == DISOMasterNS::DISOMaster::JobStatus::Running) {
+        m_opticalOpSpeed = speed;
     } else {
         m_opticalOpSpeed.clear();
     }
