@@ -153,6 +153,8 @@ void DFMAddressBar::setCompleter(QCompleter *c)
             this, &DFMAddressBar::onCompletionModelCountChanged);
 
     completerView->setItemDelegate(&styledItemDelegate);
+    //解决bug19609文件管理器中，文件夹搜索功能中输入法在输入过程中忽然失效然后恢复，设置这个属性listview就可以拥有地址兰的输入法
+    completerView->setWindowFlag(Qt::Sheet);
 
 }
 
@@ -226,6 +228,7 @@ void DFMAddressBar::focusOutEvent(QFocusEvent *e)
 void DFMAddressBar::keyPressEvent(QKeyEvent *e)
 {
     lastPressedKey = e->key();
+    qDebug() << "keyPressEvent    ++  " << e->key();
     switch (e->key()) {
     case Qt::Key_Escape:
         emit escKeyPressed();
@@ -251,6 +254,8 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
             e->ignore();
             return;
         case Qt::Key_Enter:
+            e->ignore();
+            return;
         case Qt::Key_Return:
             e->accept();
             emit returnPressed();
@@ -269,9 +274,15 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
             }
             e->accept();
             return;
+        //解决bug19609文件管理器中，文件夹搜索功能中输入法在输入过程中忽然失效然后恢复
+        case Qt::Key_Up:
+        case Qt::Key_Down:
+            completerView->keyPressEvent(e);
+            break;
         default:
            break;
         }
+        setFocus();
     } else {
         // If no compiler
         switch (e->key()) {
@@ -594,6 +605,14 @@ void DFMAddressBar::onCompletionHighlighted(const QString &highlightedCompletion
     int selectBeginPos = highlightedCompletion.length() - completionPrefixLen;
     setText(completerBaseString + highlightedCompletion);
     setSelection(text().length() - selectBeginPos, text().length());
+    if(0 >= selectBeginPos)
+    {
+//        completerView->setWindowFlag(Qt::Sheet);
+//        completerView->update();
+//        completerView->show();
+    }
+    qDebug() << "    completerBaseString   "<< completerBaseString;
+    qDebug() << "    onCompletionHighlighted   "<< highlightedCompletion;
 }
 
 void DFMAddressBar::onCompletionModelCountChanged()

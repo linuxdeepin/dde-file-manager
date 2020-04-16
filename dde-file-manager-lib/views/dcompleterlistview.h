@@ -34,6 +34,8 @@ class DCompleterListView : public QListView
 public:
     DCompleterListView(QWidget *parent = nullptr);
 
+    void keyPressEvent(QKeyEvent *e) override;
+
 protected:
     void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
