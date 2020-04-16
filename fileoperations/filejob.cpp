@@ -847,12 +847,15 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
             write(badPipefd[1], &globalBad, sizeof(globalBad)); // pipe
         }
         close(progressPipefd[1]);
-
-        close(badPipefd[0]);
+        close(badPipefd[1]);
         _exit(0);
     } else if (pid > 0) { // parent process: wait and notify
         close(badPipefd[1]);
         close(progressPipefd[1]);
+
+        int status;
+        waitpid(-1, &status, WNOHANG);
+        qDebug() << "start read child process data";
 
         // read prpgress
         while (true) {
@@ -878,14 +881,10 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
         }
 
         // read bad
-        if (flag & 4) {
+        if ((flag & 4) && (m_opticalJobStatus != DISOMasterNS::DISOMaster::JobStatus::Failed)) {
             m_opticalJobPhase = 2;
             read(badPipefd[0], &globalBad, sizeof(globalBad));
         }
-
-        bool statusRet = true;
-        int status;
-        wait(&status);
 
         if (WIFEXITED(status)) {
             qDebug() << "chiild exit with" << WEXITSTATUS(status);
@@ -893,7 +892,6 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
 
         // abort exit
         if (WIFSIGNALED(status)) {
-            statusRet = false;
             qDebug() << "child killed by" << WTERMSIG(status);
         }
 
@@ -912,7 +910,7 @@ void FileJob::doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &i
             jobRemoved();
         emit finished();
         if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished) {
-            if ((flag & 4) && statusRet) {
+            if ((flag & 4)) {
                 emit requestOpticalJobCompletionDialog(rst ? tr("Data verification successful.") : tr("Data verification failed."), rst ? "dialog-ok" : "dialog-error");
             } else {
                 emit requestOpticalJobCompletionDialog(tr("Burn process completed"), "dialog-ok");
@@ -953,8 +951,10 @@ void FileJob::opticalJobUpdatedByParentProcess(int status, int progress, const Q
     m_opticalJobProgress = progress;
     if (status == DISOMasterNS::DISOMaster::JobStatus::Failed) {
         QStringList msg(msgs);
+        // tmp : 暂不处理失败
         //dialogManager->showOpticalJobFailureDialog(m_jobType, FileJob::getXorrisoErrorMsg(msgs), msgs);
-        emit requestOpticalJobFailureDialog(m_jobType, FileJob::getXorrisoErrorMsg(msg), msg);
+        //emit requestOpticalJobFailureDialog(m_jobType, FileJob::getXorrisoErrorMsg(msg), msg);
+        qDebug() << "encounter failed";
         return;
     }
     if (m_jobType == JobType::OpticalImageBurn && m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Finished
