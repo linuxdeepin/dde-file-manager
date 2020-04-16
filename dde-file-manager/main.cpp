@@ -192,6 +192,8 @@ int main(int argc, char *argv[])
         }
 
         signal(SIGTERM, handleSIGTERM);
+        signal(SIGBUS, SIG_IGN); // 硬件问题引起coredump
+        signal(SIGCHLD, SIG_IGN);
 
 #ifdef ENABLE_PPROF
         int request = app.exec();

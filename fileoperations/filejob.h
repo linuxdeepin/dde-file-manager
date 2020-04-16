@@ -172,7 +172,9 @@ public slots:
     void doOpticalBurn(const DUrl &device, QString volname, int speed, int flag);
     void doOpticalBlank(const DUrl &device);
     void doOpticalImageBurn(const DUrl &device, const DUrl &image, int speed, int flag);
+    void doOpticalImageBurnByChildProcess(const DUrl &device, const DUrl &image, int speed, int flag);
     void opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, int progress);
+    void opticalJobUpdatedByParentProcess(int status, int progress, const QString &speed, const QStringList &msgs);
 
     void paused();
     void started();
