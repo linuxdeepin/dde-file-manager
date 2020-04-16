@@ -35,6 +35,10 @@ Display::Display(QObject *parent) : QObject(parent)
         qDebug()<< "sigDisplayModeChanged emit....  ";
         emit  sigDisplayModeChanged();
     });
+    connect(m_display, &DBusDisplay::MonitorsChanged,this, [ = ]() {
+        qDebug()<< "sigMonitorsChanged emit....  ";
+        emit  sigMonitorsChanged(NULL);
+    });
 
     connect(m_display, &DBusDisplay::PrimaryRectChanged, this, [ = ]() {
         auto primaryName = m_display->primary();
