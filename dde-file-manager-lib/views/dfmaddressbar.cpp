@@ -228,6 +228,7 @@ void DFMAddressBar::focusOutEvent(QFocusEvent *e)
 void DFMAddressBar::keyPressEvent(QKeyEvent *e)
 {
     lastPressedKey = e->key();
+    qDebug() << "keyPressEvent    ++  " << e->key();
     switch (e->key()) {
     case Qt::Key_Escape:
         emit escKeyPressed();
@@ -253,6 +254,8 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
             e->ignore();
             return;
         case Qt::Key_Enter:
+            e->ignore();
+            return;
         case Qt::Key_Return:
             e->accept();
             emit returnPressed();
@@ -609,6 +612,14 @@ void DFMAddressBar::onCompletionHighlighted(const QString &highlightedCompletion
     int selectBeginPos = highlightedCompletion.length() - completionPrefixLen;
     setText(completerBaseString + highlightedCompletion);
     setSelection(text().length() - selectBeginPos, text().length());
+    if(0 >= selectBeginPos)
+    {
+//        completerView->setWindowFlag(Qt::Sheet);
+//        completerView->update();
+//        completerView->show();
+    }
+    qDebug() << "    completerBaseString   "<< completerBaseString;
+    qDebug() << "    onCompletionHighlighted   "<< highlightedCompletion;
 }
 
 void DFMAddressBar::onCompletionModelCountChanged()
