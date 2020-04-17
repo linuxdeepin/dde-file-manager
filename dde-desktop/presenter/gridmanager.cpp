@@ -1030,22 +1030,32 @@ public:
         }
 
         //获取对应屏幕分组信息
-        auto settings = Config::instance()->settings();
-        settings->beginGroup(Config::keyProfile);
-        QStringList screenNumbers = settings->allKeys();
-        QMap<int, QString> screenNumProfiles;
-        for(auto &key : screenNumbers){
-            screenNumProfiles.insert(key.toInt(), settings->value(key).toString());
-        }
-        settings->endGroup();
+//        auto settings = Config::instance()->settings();
+//        settings->beginGroup(Config::keyProfile);
+//        QStringList screenNumbers = settings->allKeys();
+//        QMap<int, QString> screenNumProfiles;
+//        for(auto &key : screenNumbers){
+//            screenNumProfiles.insert(key.toInt(), settings->value(key).toString());
+//        }
+//        settings->endGroup();
 
-        //屏幕个数与配置文件不符合时直接自动排列
-        if(ScreenMrg->screens().size() != screenNumbers.size()){
-            //调用自动整理接口
-            return;
+        QMap<int, QString> screenNumProfiles;
+        if(m_bSingleMode){
+            screenNumProfiles.insert(1, QString("SinglePosition"));
+        }else {
+            QList<int> screens = screenCode();
+            foreach(int index, screens){
+                screenNumProfiles.insert(index, QString("Position_%1").arg(index));
+            }
         }
+        //屏幕个数与配置文件不符合时直接自动排列
+//        if(ScreenMrg->screens().size() != screenNumbers.size()){
+//            //调用自动整理接口
+//            return;
+//        }
 
         //获取个屏幕分组信息对应的图标信息
+        auto settings = Config::instance()->settings();
         for (auto &screenKey : screenNumProfiles.keys()) {
             settings->beginGroup(screenNumProfiles.value(screenKey));
             for (auto &key : settings->allKeys()) {
@@ -1173,8 +1183,10 @@ public:
             }
         }
 
-        posPair.first = m_cellStatus.lastKey();
-        posPair.second = overlapPos(posPair.first);
+        if(!m_cellStatus.isEmpty()){
+            posPair.first = m_cellStatus.lastKey();
+            posPair.second = overlapPos(posPair.first);
+        }
         return  posPair;
     }
 
@@ -1479,16 +1491,7 @@ public:
             if (autoMerge) {
                 return this->autoArrange;
             }
-
-//            QPair<QStringList, QVariantList> kvList = generateProfileConfigVariable(screenNum);
-
-//            qDebug() << "updateGridProfile:" << kvList.first.size()
-//                     << m_gridItems.size() << m_itemGrids.size();
-
-//            auto screenPositionProfile = positionProfiles.value(screenNum);
-//            emit Presenter::instance()->removeConfig(screenPositionProfile, "");
-//            emit Presenter::instance()->setConfigList(screenPositionProfile, kvList.first, kvList.second);
-            syncProfile(screenNum);
+            //syncProfile(screenNum);
 
             return this->autoArrange;
         }
@@ -1984,7 +1987,7 @@ bool GridManager::isEmpty(int screenNum, int x, int y)
 
 QStringList GridManager::overlapItems(int screen) const
 {
-    if (screen == d->screenCode().last())
+    if (!d->screenCode().empty() && screen == d->screenCode().last())
         return d->m_overlapItems;
 
     return QStringList();
