@@ -556,7 +556,8 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
     QWidget *detailsw = new QWidget(&d);
     detailsw->setLayout(new QVBoxLayout());
     QTextEdit *te = new QTextEdit();
-    te->setPlainText(details.join('\n'));
+    // tmp: 暂时不要详细信息
+    // te->setPlainText(details.join('\n'));
     te->setReadOnly(true);
     te->hide();
     detailsw->layout()->addWidget(te);
