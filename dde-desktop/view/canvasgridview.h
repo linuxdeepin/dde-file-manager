@@ -103,7 +103,7 @@ public:
     void initRootUrl();
     bool setRootUrl(const DUrl &url);
     const DUrlList selectedUrls() const;
-
+    void setScreenNum(int num);
     bool isSelected(const QModelIndex &index) const;
     void select(const QList<DUrl> &list);
     int selectedIndexCount() const;

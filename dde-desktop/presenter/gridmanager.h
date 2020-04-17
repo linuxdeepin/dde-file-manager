@@ -89,11 +89,11 @@ class GridManager: public QObject, public Singleton<GridManager>
 {
     Q_OBJECT
 public:
-
     DUrl getInitRootUrl();
     void initGridItemsInfos();
     void initProfile(const QList<DAbstractFileInfoPointer> &items);
     void initWithoutProfile(const QList<DAbstractFileInfoPointer> &items);
+    void initArrage(const QList<DAbstractFileInfoPointer> &items);
 
     bool add(int screenNum, QPoint pos, const QString &itemId);
     bool add(int screenNum, const QString &itemId);
@@ -102,6 +102,7 @@ public:
     bool remove(int screenNum, const QString &itemId);
 
     bool clear();
+    void restCoord();
 
     void addCoord(int screenNum, QPair<int, int> coordInfo);
     QString firstItemId(int screenNum);
@@ -114,7 +115,7 @@ public:
     QString itemId(int screenNum, QPoint pos);
     bool isEmpty(int screenNum, int x, int y);
 
-    const QStringList &overlapItems() const;
+    QStringList overlapItems(int screen) const;
     bool shouldArrange() const;
     bool autoArrange() const;
     bool autoMerge() const;
@@ -133,7 +134,7 @@ public:
     void setWhetherShowHiddenFiles(bool value)noexcept;
     bool getWhetherShowHiddenFiles()noexcept;
 
-    void setDisplayMode(int mode);
+    void setDisplayMode(bool single);
 
 public:
     void dump();
