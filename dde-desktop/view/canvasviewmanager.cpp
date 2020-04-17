@@ -42,9 +42,8 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
         if (mView.get() == nullptr){
             mView = CanvasViewPointer(new CanvasGridView(primary->name()));
             mView->show();
-            mView->initRootUrl();
         }
-
+        mView->initRootUrl();
         m_canvasMap.insert(primary, mView);
     }
     else {

@@ -133,6 +133,8 @@ public:
     void setWhetherShowHiddenFiles(bool value)noexcept;
     bool getWhetherShowHiddenFiles()noexcept;
 
+    void setDisplayMode(int mode);
+
 public:
     void dump();
 
