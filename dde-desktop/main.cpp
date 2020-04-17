@@ -199,6 +199,8 @@ int main(int argc, char *argv[])
     DFMGlobal::initOperatorRevocation();
     DFMGlobal::initTagManagerConnect();
     DFMGlobal::initThumbnailConnection();
+    DFMGlobal::initDeviceListener();
+    DFMGlobal::initGvfsMountManager();
 
     if  (!preload) {
         // Notify dde-desktop start up
