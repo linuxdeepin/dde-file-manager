@@ -1,6 +1,7 @@
 #include "canvasviewmanager.h"
 #include "screen/screenhelper.h"
 #include "util/xcb/xcb.h"
+#include "presenter/gridmanager.h"
 
 
 inline QRect relativeRect(const QRect &avRect,const QRect &geometry)
@@ -71,7 +72,7 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
             }
         }
     }
-
+    GridManager::instance()->initGridItemsInfos();
     onBackgroundEnableChanged();
 }
 

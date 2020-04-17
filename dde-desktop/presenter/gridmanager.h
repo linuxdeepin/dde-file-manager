@@ -89,12 +89,16 @@ class GridManager: public QObject, public Singleton<GridManager>
 {
     Q_OBJECT
 public:
-    void initProfile(int screenNum, const QList<DAbstractFileInfoPointer> &items);
-    void initWithoutProfile(int screenNum, const QList<DAbstractFileInfoPointer> &items);
+
+    DUrl getInitRootUrl();
+    void initGridItemsInfos();
+    void initProfile(const QList<DAbstractFileInfoPointer> &items);
+    void initWithoutProfile(const QList<DAbstractFileInfoPointer> &items);
 
     bool add(int screenNum, QPoint pos, const QString &itemId);
     bool add(int screenNum, const QString &itemId);
     bool move(int screenNum, const QStringList &selectedIds, const QString &itemId, int x, int y);
+    bool move(int fromScreen, int toScreen, const QStringList &selectedIds, const QString &itemId, int x, int y);
     bool remove(int screenNum, const QString &itemId);
 
     bool clear();

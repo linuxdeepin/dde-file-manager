@@ -998,15 +998,45 @@ void CanvasGridView::dropEvent(QDropEvent *event)
         if (event->dropAction() == Qt::MoveAction) {
             QModelIndex dropIndex = indexAt(gridRectAt(event->pos()).center());
 
-            if (event->source() == this && (!dropIndex.isValid() || dropOnSelf)) {
+//            if (event->source() == this && (!dropIndex.isValid() || dropOnSelf)) {
+//                if (autoMerge()) {
+//                    return;
+//                }
+//                auto point = event->pos();
+//                auto row = (point.x() - d->viewMargins.left()) / d->cellWidth;
+//                auto col = (point.y() - d->viewMargins.top()) / d->cellHeight;
+//                auto current = model()->fileInfo(d->currentCursorIndex)->fileUrl().toString();
+//                GridManager::instance()->move(m_screenNum, selectLocalFiles, current, row, col);
+//                setState(NoState);
+//                itemDelegate()->hideNotEditingIndexWidget();
+//                DUtil::TimerSingleShot(20, [this]() {
+//                    repaint();
+//                    update();
+//                });
+//                return;
+//            }
+            if (!dropIndex.isValid() || dropOnSelf) {
                 if (autoMerge()) {
                     return;
                 }
                 auto point = event->pos();
                 auto row = (point.x() - d->viewMargins.left()) / d->cellWidth;
                 auto col = (point.y() - d->viewMargins.top()) / d->cellHeight;
-                auto current = model()->fileInfo(d->currentCursorIndex)->fileUrl().toString();
-                GridManager::instance()->move(m_screenNum, selectLocalFiles, current, row, col);
+
+                QString current;
+                if(event->source() != this){
+                    QList<QUrl> urls = event->mimeData()->urls();
+                    for(auto url : urls){
+                        selectLocalFiles << url.toString();
+                    }
+                    current = event->mimeData()->text();
+                    //需要再获取一下drop屏幕id
+                    //GridManager::instance()->move(m_screenNum, selectLocalFiles, current, row, col);
+                }
+                else {
+                    current = model()->fileInfo(d->currentCursorIndex)->fileUrl().toString();
+                    GridManager::instance()->move(m_screenNum, selectLocalFiles, current, row, col);
+                }
                 setState(NoState);
                 itemDelegate()->hideNotEditingIndexWidget();
                 DUtil::TimerSingleShot(20, [this]() {
@@ -1448,6 +1478,7 @@ void CanvasGridView::openUrl(const DUrl &url)
 
 bool CanvasGridView::setCurrentUrl(const DUrl &url)
 {
+#if 0
     DUrl fileUrl = url;
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, fileUrl);
     if (!info) {
@@ -1484,10 +1515,106 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
                                                                                      QStringList(), model()->filters());
     if (autoMerge()) {
-        GridManager::instance()->initWithoutProfile(m_screenNum, infoList);
+        GridManager::instance()->initWithoutProfile(infoList);
     } else {
-        GridManager::instance()->initProfile(m_screenNum, infoList);
+        GridManager::instance()->initWithoutProfile(infoList);
     }
+
+    if(m_screenName != ScreenMrg->primaryScreen()->name())
+        return true;
+
+    d->filesystemWatcher = model()->fileWatcher();
+
+    connect(d->filesystemWatcher, &DAbstractFileWatcher::subfileCreated,
+    this, [ = ](const DUrl & url) {
+        Q_EMIT itemCreated(url);
+        update();
+    });
+
+    connect(d->filesystemWatcher, &DAbstractFileWatcher::fileDeleted,
+    this, [ = ](const DUrl & url) {
+        Q_EMIT itemDeleted(url);
+        update();
+    });
+
+    connect(d->filesystemWatcher, &DAbstractFileWatcher::fileMoved,
+    this, [ = ](const DUrl & oriUrl, const DUrl & dstUrl) {
+
+        bool findOldPos = false;
+        QPoint oldPos = QPoint(-1, -1);
+
+        if (GridManager::instance()->contains(m_screenNum, oriUrl.toString()) && !oriUrl.fileName().isEmpty()) {
+            oldPos = GridManager::instance()->position(m_screenNum, oriUrl.toString());
+            findOldPos = true;
+
+#ifdef QT_DEBUG
+            // TODO: switch to qCDebug()
+            qDebug() << "find oldPos" << oldPos << oriUrl;
+#endif // QT_DEBUG
+        }
+
+        bool findNewPos = false;
+        if (dstUrl.parentUrl() == oriUrl.parentUrl() && !dstUrl.fileName().isEmpty()) {
+            findNewPos = true;
+        }
+
+        findNewPos &= !GridManager::instance()->contains(m_screenNum, dstUrl.toString());
+
+        if (!findNewPos) {
+            Q_EMIT itemDeleted(oriUrl);
+        } else {
+            if (findOldPos) {
+                GridManager::instance()->remove(m_screenNum, oriUrl.toString());
+                GridManager::instance()->add(m_screenNum, oldPos, dstUrl.toString());
+            } else {
+                Q_EMIT itemCreated(dstUrl);
+            }
+        }
+
+        update();
+    });
+    return true;
+#endif
+    DUrl fileUrl = url;
+    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, fileUrl);
+    if (!info) {
+        qDebug() << "This scheme isn't support";
+        return false;
+    }
+
+    const DUrl &checkUrl = currentUrl();
+
+    if (checkUrl == fileUrl) {
+        return false;
+    }
+
+    QModelIndex index = model()->setRootUrl(fileUrl);
+    setRootIndex(index);
+
+    if (!model()->canFetchMore(index)) {
+        // TODO: updateContentLabel
+        qDebug() << "TODO: updateContentLabel()";
+    }
+
+    if (focusWidget() && focusWidget()->window() == window() && fileUrl.isLocalFile()) {
+        QDir::setCurrent(fileUrl.toLocalFile());
+    }
+
+    QAbstractItemView::setCurrentIndex(QModelIndex());
+
+    model()->setFilters(model()->filters());
+
+    if (d->filesystemWatcher) {
+        d->filesystemWatcher->deleteLater();
+    }
+
+//    QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
+//                                                                                     QStringList(), model()->filters());
+//    if (autoMerge()) {
+//        GridManager::instance()->initWithoutProfile(infoList);
+//    } else {
+//        GridManager::instance()->initWithoutProfile(infoList);
+//    }
 
     if(m_screenName != ScreenMrg->primaryScreen()->name())
         return true;
@@ -2142,7 +2269,7 @@ void CanvasGridView::initConnection()
         d->lastMenuNewFilepath = url.toString();
         GridManager::instance()->add(m_screenNum, d->lastMenuNewFilepath);
         /***************************************************************/
-        //lee add 创建或者粘贴时保持之前的状态
+        //创建或者粘贴时保持之前的状态
         if(autoMerge()){
             DMD_TYPES toggleType = MergedDesktopController::checkUrlArrangedType(url);
             bool isExpand = virtualEntryExpandState[toggleType];
