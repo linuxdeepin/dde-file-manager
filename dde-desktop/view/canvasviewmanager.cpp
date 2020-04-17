@@ -29,6 +29,7 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
     //屏幕模式判断
     AbstractScreenManager::DisplayMode mode = (AbstractScreenManager::DisplayMode)imode;
 
+    GridManager::instance()->restCoord();
     //实际是单屏
     if ((AbstractScreenManager::Showonly == mode) || (AbstractScreenManager::Duplicate == mode) //仅显示和复制
             || (ScreenMrg->screens().count() == 1)){
@@ -41,27 +42,43 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
 
         if (mView.get() == nullptr){
             mView = CanvasViewPointer(new CanvasGridView(primary->name()));
+            mView->setScreenNum(1);
+            GridManager::instance()->addCoord(1, {0,0});
             mView->show();
         }
+        else {
+            mView->setScreenNum(1);
+            GridManager::instance()->addCoord(1, {0,0});
+        }
+
+        GridManager::instance()->setDisplayMode(true);
+
         mView->initRootUrl();
         m_canvasMap.insert(primary, mView);
     }
     else {
-        auto currentScreens = ScreenMrg->screens();
+        auto currentScreens = ScreenMrg->logicScreens();
+        int screenNum = 0;
         //检查新增的屏幕
         for (const ScreenPointer &sp : currentScreens){
+            ++screenNum;
             CanvasViewPointer mView = m_canvasMap.value(sp);
 
             //新增
             if (mView.get() == nullptr){
                 mView = CanvasViewPointer(new CanvasGridView(sp->name()));
+                mView->setScreenNum(screenNum);
+                GridManager::instance()->addCoord(screenNum, {0,0});
                 mView->show();
                 mView->initRootUrl();
                 m_canvasMap.insert(sp, mView);
             }
+            else {
+                mView->setScreenNum(screenNum);
+            }
 
             qDebug() << "Sssssss mode" << mode << mView->geometry() <<sp->availableGeometry()<< sp->geometry()
-                     << sp->name();
+                     << sp->name() << "num" << screenNum;
         }
 
         //检查移除的屏幕
@@ -70,8 +87,9 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
                 m_canvasMap.remove(sp);
             }
         }
+        GridManager::instance()->setDisplayMode(false);
     }
-    GridManager::instance()->initGridItemsInfos();
+
     onBackgroundEnableChanged();
 }
 
@@ -108,6 +126,7 @@ void CanvasViewManager::onBackgroundEnableChanged()
             qDebug() << "rrrrrrrrrrrrrrr" << ScreenMrg->primaryScreen()->name() << mView->geometry() << sp->name() << sp->geometry() << sp->availableGeometry();
         }
     }
+    GridManager::instance()->initGridItemsInfos();
 }
 
 void CanvasViewManager::onScreenGeometryChanged(ScreenPointer sp)

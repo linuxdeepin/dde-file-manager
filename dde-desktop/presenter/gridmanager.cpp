@@ -895,14 +895,14 @@ public:
         return  coordInfo.second * coordInfo.first;
     }
 
-    inline void clear()
+    void clear()
     {
         m_itemGrids.clear();
         m_gridItems.clear();
         m_overlapItems.clear();
         m_cellStatus.clear();
 
-        for(int i = 1; i  <= ScreenMrg->screens().size(); ++i){
+        for(int i : screenCode()){
 
             //add empty m_itemGrids
             QMap<QPoint, QString> gridItem;
@@ -946,6 +946,34 @@ public:
 
         sortItems << m_overlapItems;
         return sortItems;
+    }
+
+    void arrange(QStringList sortedItems)
+    {
+        auto screenOrder = screenCode();
+        for (int screenNum : screenOrder) {
+            qDebug() << "arrange Num" << screenNum;
+            QMap<QPoint, QString> gridItems;
+            QMap<QString, QPoint> itemGrids;
+            if (!sortedItems.empty())
+            {
+                auto cellStatus = m_cellStatus.value(screenNum);
+                int coordHeight = screensCoordInfo.value(screenNum).second;
+                for (int i = 0; i < cellStatus.size() && !sortedItems.empty(); ++i) {
+                   QString item = sortedItems.takeFirst();
+                   QPoint pos(i / coordHeight, i % coordHeight);
+                   cellStatus[i] = true;
+                   gridItems.insert(pos, item);
+                   itemGrids.insert(item, pos);
+                }
+                m_cellStatus.insert(screenNum, cellStatus);
+            }
+
+            m_gridItems.insert(screenNum,gridItems);
+            m_itemGrids.insert(screenNum,itemGrids);
+        }
+
+        m_overlapItems = sortedItems;
     }
 
     void arrange()
@@ -1082,7 +1110,7 @@ public:
         }
     }
 
-    inline QPair<int, QPoint> emptyPos() const
+    QPair<int, QPoint> emptyPos() const
     {
         //抽出空位屏编号
         int emptyScreenNum = -1;
@@ -1110,7 +1138,7 @@ public:
         return  posPair;
     }
 
-    inline QPair<int, QPoint> takeEmptyPos()
+    QPair<int, QPoint> takeEmptyPos()
     {
         //兼容单屏幕多屏下获取空位，若无返回重叠位（暂时堆叠在(w-1,h-1)）
         //新的多屏功能下，图标的发展方向的优先级暂时考虑为主屏>编号递增的方式
@@ -1145,7 +1173,7 @@ public:
         return  posPair;
     }
 
-    inline bool add(int screenNum, QPoint pos, const QString &itemId)
+    bool add(int screenNum, QPoint pos, const QString &itemId)
     {
         if (itemId.isEmpty()) {
             qCritical() << "add empty item"; // QVector<QString>.value() may retruen an empty QString
@@ -1201,7 +1229,7 @@ public:
         return QPair<QStringList, QVariantList>(keyList, valueList);
     }
 
-    inline void syncProfile(int screenNum)
+    void syncProfile(int screenNum)
     {
         QPair<QStringList, QVariantList> kvList = generateProfileConfigVariable(screenNum);
 
@@ -1224,7 +1252,7 @@ public:
         emit Presenter::instance()->setConfigList(screenPositionProfile, kvList.first, kvList.second);
     }
 
-    inline bool remove(int screenNum, QPoint pos, const QString &id)
+    bool remove(int screenNum, QPoint pos, const QString &id)
     {
         //m_overlapItems 重叠items
         m_overlapItems.removeAll(id);
@@ -1253,12 +1281,11 @@ public:
         return true;
     }
 
-    inline void refreshPositionProfiles(int screenNum)
+    void refreshPositionProfiles(int screenNum)
     {
         //auto profile = QString("Position_%1_%2x%3").arg(screenNum).arg(w).arg(h);
         QString profile;
-        if ((AbstractScreenManager::Showonly == curDisplayMode)
-                || (AbstractScreenManager::Duplicate == curDisplayMode)){
+        if (m_bSingleMode){
             profile = QString("SinglePosition");  //单一桌面模式和扩展桌面模式需要独立保存桌面项目位置配置文件，以便两种模式互相切换时仍然完好如初
         }else {
             foreach(int key, positionProfiles.keys()){
@@ -1274,7 +1301,7 @@ public:
         }
     }
 
-    inline void resetGridSize(int screenNum, int w, int h)
+    void resetGridSize(int screenNum, int w, int h)
     {
         if(!screensCoordInfo.contains(screenNum))
             return;
@@ -1288,7 +1315,7 @@ public:
         refreshPositionProfiles(screenNum);
     }
 
-    inline void changeGridSize(int screenNum, int w, int h)
+    void changeGridSize(int screenNum, int w, int h)
     {
         auto coordInfo = screensCoordInfo.value(screenNum);
         Q_ASSERT(!(coordInfo.second == h && coordInfo.first == w));
@@ -1464,6 +1491,38 @@ public:
         return m_whetherShowHiddenFiles.load(std::memory_order_consume);
     }
 
+    inline QList<int> screenCode() const
+    {
+        QList<int> screenOrder = screensCoordInfo.keys();
+        qSort(screenOrder.begin(),screenOrder.end());
+        return screenOrder;
+    }
+
+    QStringList allItems() const
+    {
+        QStringList items;
+        auto screens = screenCode();
+        for (int num : screens){
+            auto cells = m_cellStatus.value(num);
+            auto gridItems = m_gridItems.value(num);
+            for (int i = 0; i < cells.size(); ++i){
+                if (cells.value(i)) {
+                    QPoint pos = gridPosAt(num,i);
+                    const QString &item = gridItems.value(pos);
+                    items << item;
+                }
+            }
+        }
+        items << m_overlapItems;
+        return items;
+    }
+
+    void reAutoArrage()
+    {
+        QStringList items = allItems();
+        clear();
+        arrange(items);
+    }
 public:
     QStringList             m_overlapItems;
     QMap<int, QMap<QPoint, QString>> m_gridItems;
@@ -1477,7 +1536,7 @@ public:
     bool                    autoMerge = false;
     int                     createProfileTime{0};
     std::atomic<bool>       m_whetherShowHiddenFiles{ false };
-    int                     curDisplayMode{0};
+    bool                    m_bSingleMode = true;
 };
 
 GridManager::GridManager(): d(new GridManagerPrivate)
@@ -1514,12 +1573,18 @@ void GridManager::initGridItemsInfos()
 {
     DUrl fileUrl = getInitRootUrl();
     d->clear();
-    auto tempModel = new DFileSystemModel(nullptr);
+    QScopedPointer<DFileSystemModel> tempModel(new DFileSystemModel(nullptr));
     QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
                                                                                      QStringList(), tempModel->filters());
     if(GridManager::instance()->autoMerge()){
         GridManager::instance()->initWithoutProfile(infoList);
-    }else {
+    }
+    else if (GridManager::instance()->autoArrange())
+    {
+        //todo 传入前需排列
+        GridManager::instance()->initArrage(infoList);
+    }
+    else {
         GridManager::instance()->initProfile(infoList);
     }
 }
@@ -1536,6 +1601,17 @@ void GridManager::initWithoutProfile(const QList<DAbstractFileInfoPointer> &item
 {
     d->createProfile(); // nothing with profile.
     d->loadWithoutProfile(items);
+}
+
+void GridManager::initArrage(const QList<DAbstractFileInfoPointer> &items)
+{
+    d->clear();
+    QStringList sorted;
+    for (const DAbstractFileInfoPointer &fileInfo: items){
+        sorted.push_back(fileInfo->fileUrl().toString());
+    }
+
+    d->arrange(sorted);
 }
 
 bool GridManager::add(int screenNum, const QString &id)
@@ -1768,6 +1844,16 @@ bool GridManager::clear()
     return true;
 }
 
+void GridManager::restCoord()
+{
+    d->screensCoordInfo.clear();
+    d->m_gridItems.clear();
+    d->m_gridItems.clear();
+    d->m_cellStatus.clear();
+    d->m_overlapItems.clear();
+    d->m_screenFullStatus.clear();
+}
+
 void GridManager::addCoord(int screenNum, QPair<int, int> coordInfo)
 {
     if(d->screensCoordInfo.contains(screenNum))
@@ -1821,13 +1907,15 @@ QStringList GridManager::itemIds(int screenNum)
             ids.append(itemId(screenNum, pos));
         }
     }
-    ids << d->m_overlapItems;
+    if (screenNum == d->screenCode().last())
+        ids << d->m_overlapItems;
     return ids;
 }
 
 bool GridManager::contains(int screebNum, const QString &id)
 {
-    return d->m_itemGrids.value(screebNum).contains(id) || d->m_overlapItems.contains(id);
+    return d->m_itemGrids.value(screebNum).contains(id) ||
+            (d->screenCode().last() == screebNum && d->m_overlapItems.contains(id));
 }
 
 QPoint GridManager::position(int screenNum, const QString &id)
@@ -1855,9 +1943,12 @@ bool GridManager::isEmpty(int screenNum, int x, int y)
     return !cellStatus.value(d->indexOfGridPos(screenNum, QPoint(x, y)));
 }
 
-const QStringList &GridManager::overlapItems() const
+QStringList GridManager::overlapItems(int screen) const
 {
-    return d->m_overlapItems;
+    if (screen == d->screenCode().last())
+        return d->m_overlapItems;
+
+    return QStringList();
 }
 
 bool GridManager::shouldArrange() const
@@ -1899,7 +1990,11 @@ void GridManager::toggleAutoMerge()
 
 void GridManager::reArrange(int screenNum)
 {
-    d->arrange();
+    if (autoArrange()){
+        d->reAutoArrage();
+    }
+    else
+        d->arrange();
 
     if (autoMerge()) {
         return;
@@ -1951,8 +2046,11 @@ QSize GridManager::gridSize(int screenNum) const
 
 void GridManager::updateGridSize(int screenNum, int w, int h)
 {
+    QStringList items = d->allItems();
     if (d->updateGridSize(screenNum, w, h)) {
-        d->arrange();
+        //d->arrange(screenNum);
+        d->clear();
+        d->arrange(items);
     }
     //将单个屏幕加载到配置
     //[Profile]
@@ -2005,8 +2103,8 @@ void GridManager::dump()
         qDebug() << key << d->m_itemGrids.value(key);
     }
 }
-void GridManager::setDisplayMode(int mode)
+void GridManager::setDisplayMode(bool single)
 {
-    d->curDisplayMode = mode;
+    d->m_bSingleMode = single;
 }
 #endif

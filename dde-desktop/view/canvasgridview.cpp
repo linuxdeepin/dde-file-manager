@@ -1172,7 +1172,7 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
         }
     }
 
-    auto overlayItems = GridManager::instance()->overlapItems();
+    auto overlayItems = GridManager::instance()->overlapItems(m_screenNum);
     for (int i = 0; i < 10 && i < overlayItems.length(); ++i) {
         auto localFile = overlayItems.value(i);
         if (!localFile.isEmpty()) {
@@ -1516,12 +1516,16 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
                                                                                      QStringList(), model()->filters());
     if (autoMerge()) {
         GridManager::instance()->initWithoutProfile(infoList);
-    } else {
+    }
+    else if (GridManager::instance()->autoArrange()){
+        GridManager::instance()->initArrage(infoList);
+    }
+    else {
         GridManager::instance()->initWithoutProfile(infoList);
     }
 
-    if(m_screenName != ScreenMrg->primaryScreen()->name())
-        return true;
+//    if(m_screenName != ScreenMrg->primaryScreen()->name())
+//        return true;
 
     d->filesystemWatcher = model()->fileWatcher();
 
@@ -1616,8 +1620,8 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
 //        GridManager::instance()->initWithoutProfile(infoList);
 //    }
 
-    if(m_screenName != ScreenMrg->primaryScreen()->name())
-        return true;
+//    if(m_screenName != ScreenMrg->primaryScreen()->name())
+//        return true;
 
     d->filesystemWatcher = model()->fileWatcher();
 
@@ -1715,6 +1719,11 @@ const DUrlList CanvasGridView::selectedUrls() const
         }
     }
     return urls;
+}
+
+void CanvasGridView::setScreenNum(int num)
+{
+    m_screenNum = num;
 }
 
 bool CanvasGridView::isSelected(const QModelIndex &index) const
@@ -1995,21 +2004,6 @@ static inline QRect getValidNewGeometry(const QRect &geometry, const QRect &oldG
 
 void CanvasGridView::initUI()
 {
-    QVector<ScreenPointer> screens = ScreenMrg->screens();
-    int num = 1;
-    for (auto &oneScreen : screens) {
-        if( m_screenName == oneScreen->name()){
-            QPair<int ,int> coordInfo;
-            coordInfo.first = 0;
-            coordInfo.second = 0;
-            QRect rect = m_screenName == ScreenMrg->primaryScreen()->name() ? oneScreen->availableGeometry() : oneScreen->geometry();
-            QAbstractItemView::setGeometry(rect);
-            GridManager::instance()->addCoord(num, coordInfo);
-            m_screenNum = num;
-            break;
-        }
-        ++num;
-    }
 #ifdef QT_DEBUG
     EnableUIDebug();
 #endif
@@ -3181,6 +3175,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
 
     d->fileViewHelper->handleMenu(menu);
 
+    //todo 处理缩放
     if (DesktopInfo().waylandDectected()) {
 
         QPoint t_tmpPoint = QCursor::pos();
