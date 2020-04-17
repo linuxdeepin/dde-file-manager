@@ -19,6 +19,7 @@ public slots:
 private slots:
     void onBackgroundEnableChanged();
     void onScreenGeometryChanged(ScreenPointer);
+    void onRepaintCanvas();
 private:
     void init();
 private:
