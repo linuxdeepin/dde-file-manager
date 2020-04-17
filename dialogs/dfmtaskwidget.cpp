@@ -214,6 +214,7 @@ void DFMTaskWidgetPrivate::initUI()
 
     m_progress = new DWaterProgress(q);
     m_progress->setFixedSize(64, 64);
+    m_progress->setValue(1);  // fix：使一开始就有一个进度显示
     m_progress->setValue(0);
     QHBoxLayout *normalLayout = new QHBoxLayout;
     normalLayout->setContentsMargins(20, 10, 20, 10);
@@ -367,6 +368,7 @@ void DFMTaskWidget::setProgressValue(int value)
     Q_D(DFMTaskWidget);
     if (value>=0 && d->m_progress->value()==0) {
         d->m_progress->start();
+        d->m_progress->setValue(value);
     }
 
     if (value < 0) {

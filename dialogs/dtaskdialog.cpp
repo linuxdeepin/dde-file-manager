@@ -646,7 +646,7 @@ void DTaskDialog::handleUpdateTaskWidget(const QMap<QString, QString> &jobDetail
             DFMTaskWidget *w = item ? static_cast<DFMTaskWidget *>(item->listWidget()->itemWidget(item)): nullptr;
             if (w) {
                 updateData(w, data);
-                // 预防界面不刷
+                // 预防界面不刷，pangu出现过界面不会刷新的问题
                 w->repaint();
                 qApp->processEvents();
             }
