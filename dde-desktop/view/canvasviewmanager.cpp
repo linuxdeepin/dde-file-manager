@@ -55,6 +55,9 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
 
         mView->initRootUrl();
         m_canvasMap.insert(primary, mView);
+
+        qDebug() << "mode" << mode << mView->geometry() << primary->availableGeometry()<< primary->geometry()
+                 << primary->name() << "num" << 1 << "devicePixelRatio" << ScreenMrg->devicePixelRatio();;
     }
     else {
         auto currentScreens = ScreenMrg->logicScreens();
@@ -69,22 +72,27 @@ void CanvasViewManager::onCanvasViewBuild(int imode)
                 mView = CanvasViewPointer(new CanvasGridView(sp->name()));
                 mView->setScreenNum(screenNum);
                 GridManager::instance()->addCoord(screenNum, {0,0});
+
                 mView->show();
                 mView->initRootUrl();
                 m_canvasMap.insert(sp, mView);
             }
             else {
+                GridManager::instance()->addCoord(screenNum, {0,0});
                 mView->setScreenNum(screenNum);
             }
 
-            qDebug() << "Sssssss mode" << mode << mView->geometry() <<sp->availableGeometry()<< sp->geometry()
-                     << sp->name() << "num" << screenNum;
+            qDebug() << "mode" << mode << mView->geometry() <<sp->availableGeometry()<< sp->geometry()
+                     << sp->name() << "num" << screenNum
+                     << "devicePixelRatio" << ScreenMrg->devicePixelRatio();;
         }
 
         //检查移除的屏幕
         for (const ScreenPointer &sp : m_canvasMap.keys()){
             if (!currentScreens.contains(sp)){
                 m_canvasMap.remove(sp);
+                qDebug() << "mode" << mode << "remove" << sp->name()
+                         << sp->geometry();
             }
         }
         GridManager::instance()->setDisplayMode(false);
@@ -109,7 +117,7 @@ void CanvasViewManager::onBackgroundEnableChanged()
             else {
                 avRect = relativeRect(sp->geometry(),sp->geometry());
             }
-            //qDebug() << "xxxxxxxxxxx" << avRect << sp->geometry() << sp->availableGeometry();
+            qDebug() << mView << avRect << sp->geometry() << sp->availableGeometry();
             mView->show();
             mView->setGeometry(avRect);
         }

@@ -952,14 +952,15 @@ public:
     {
         auto screenOrder = screenCode();
         for (int screenNum : screenOrder) {
-            qDebug() << "arrange Num" << screenNum;
+            qDebug() << "arrange Num" << screenNum << sortedItems.size();
             QMap<QPoint, QString> gridItems;
             QMap<QString, QPoint> itemGrids;
             if (!sortedItems.empty())
             {
                 auto cellStatus = m_cellStatus.value(screenNum);
                 int coordHeight = screensCoordInfo.value(screenNum).second;
-                for (int i = 0; i < cellStatus.size() && !sortedItems.empty(); ++i) {
+                int i = 0;
+                for (; i < cellStatus.size() && !sortedItems.empty(); ++i) {
                    QString item = sortedItems.takeFirst();
                    QPoint pos(i / coordHeight, i % coordHeight);
                    cellStatus[i] = true;
@@ -967,6 +968,7 @@ public:
                    itemGrids.insert(item, pos);
                 }
                 m_cellStatus.insert(screenNum, cellStatus);
+                qDebug() << "screen" << screenNum << "put item:" << i << "cell" << cellStatus.size();
             }
 
             m_gridItems.insert(screenNum,gridItems);
@@ -1870,6 +1872,7 @@ void GridManager::restCoord()
 
 void GridManager::addCoord(int screenNum, QPair<int, int> coordInfo)
 {
+    qDebug() << "add screen" << screenNum << coordInfo;
     if(d->screensCoordInfo.contains(screenNum))
         return;
     //初始化栅格
