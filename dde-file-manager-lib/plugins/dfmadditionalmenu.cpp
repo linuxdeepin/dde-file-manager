@@ -82,7 +82,6 @@ DFMAdditionalMenuPrivate::DFMAdditionalMenuPrivate(DFMAdditionalMenu *qq)
     m_delayedLoadFileTimer = new QTimer(qq);
     m_delayedLoadFileTimer->setSingleShot(true);
     m_delayedLoadFileTimer->setInterval(500);
-    m_delayedLoadFileTimer->start();
     QObject::connect(m_delayedLoadFileTimer, &QTimer::timeout, qq, &DFMAdditionalMenu::loadDesktopFile);
     DUrl url = DUrl::fromLocalFile(MENUEXTENSIONS_PATH);
     DAbstractFileWatcher *dirWatch = DFileService::instance()->createFileWatcher(qq, url, qq);
@@ -301,6 +300,7 @@ DFMAdditionalMenu::DFMAdditionalMenu(QObject *parent)
     : QObject(parent)
     , d_private(new DFMAdditionalMenuPrivate(this))
 {
+    loadDesktopFile();
 }
 
 DFMAdditionalMenu::~DFMAdditionalMenu()
