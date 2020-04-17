@@ -1124,7 +1124,7 @@ public:
         QPair<int, QPoint> posPair;
         if(-1 != emptyScreenNum){
             auto cellStatus = m_cellStatus.value(emptyScreenNum);
-            for (int i = 0; i < m_cellStatus.size(); ++i) {
+            for (int i = 0; i < cellStatus.size(); ++i) {
                 if (!cellStatus[i]) {
                     posPair.first = emptyScreenNum;
                     posPair.second = gridPosAt(emptyScreenNum, i);
@@ -1197,8 +1197,15 @@ public:
             }
         }
 
-         m_gridItems.find(screenNum)->insert(pos, itemId);
-         m_itemGrids.find(screenNum)->insert(itemId, pos);
+        if(m_gridItems.end() != m_gridItems.find(screenNum)){
+            m_gridItems.find(screenNum)->insert(pos, itemId);
+        }
+        if(m_itemGrids.end() != m_itemGrids.find(screenNum)){
+            m_itemGrids.find(screenNum)->insert(itemId, pos);
+        }
+
+//         m_gridItems.find(screenNum)->insert(pos, itemId);
+//         m_itemGrids.find(screenNum)->insert(itemId, pos);
 //        auto tempGridItemsItor = m_gridItems.find(screenNum);
 //        auto tempItemGridsItor = m_itemGrids.find(screenNum);
 //        tempGridItemsItor->insert(pos, itemId);
@@ -1271,7 +1278,10 @@ public:
         if(!m_cellStatus.contains(screenNum))
             return false;
         auto cellStatusItor = m_cellStatus.find(screenNum);
-        cellStatusItor.value()[usageIndex] = false;
+        QVector<bool> cellStatus = cellStatusItor.value();
+        if(usageIndex < cellStatus.size()){
+            cellStatus[usageIndex] = false;
+        }
 
         if (!m_overlapItems.isEmpty()
                 && (pos == overlapPos(screenNum))) {
@@ -1581,6 +1591,10 @@ void GridManager::initGridItemsInfos()
     }
     else if (GridManager::instance()->autoArrange())
     {
+        auto settings = Config::instance()->settings();
+        settings->beginGroup(Config::groupGeneral);
+        int sortBy = settings->value(Config::keySortBy).toInt();
+        settings->endGroup();
         //todo 传入前需排列
         GridManager::instance()->initArrage(infoList);
     }
