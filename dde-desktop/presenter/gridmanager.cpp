@@ -1268,10 +1268,16 @@ public:
         //auto profile = QString("Position_%1_%2x%3").arg(screenNum).arg(w).arg(h);
 
         QString profile;
-        if ((AbstractScreenManager::Showonly == ScreenMrg->displayMode())
-                || (AbstractScreenManager::Duplicate == ScreenMrg->displayMode())){
+        if ((AbstractScreenManager::Showonly == curDisplayMode)
+                || (AbstractScreenManager::Duplicate == curDisplayMode)){
             profile = QString("SinglePosition");  //单一桌面模式和扩展桌面模式需要独立保存桌面项目位置配置文件，以便两种模式互相切换时仍然完好如初
         }else {
+            foreach(int key, positionProfiles.keys()){
+                if (positionProfiles.value(key) == QString("SinglePosition")){
+                    profile = QString("Position_%1").arg(key);
+                    positionProfiles[key]= profile;
+                }
+            }
             profile = QString("Position_%1").arg(screenNum);
         }
 
@@ -1530,6 +1536,7 @@ public:
     bool                    autoMerge = false;
     int                     createProfileTime{0};
     std::atomic<bool>       m_whetherShowHiddenFiles{ false };
+    int                     curDisplayMode{0};
 };
 
 GridManager::GridManager(): d(new GridManagerPrivate)
@@ -2056,5 +2063,9 @@ void GridManager::dump()
     for (auto key : d->m_itemGrids.keys()) {
         qDebug() << key << d->m_itemGrids.value(key);
     }
+}
+void GridManager::setDisplayMode(int mode)
+{
+    d->curDisplayMode = mode;
 }
 #endif
