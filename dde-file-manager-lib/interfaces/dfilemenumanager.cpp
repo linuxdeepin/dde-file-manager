@@ -168,7 +168,15 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
 
     if (urlList.length() == 1) {
         QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SingleFile);
-
+        //修改在挂载的文件下面，不能删除，但是显示了删除
+        //判定逻辑，如果是挂载盘，并且这个文件是对应的不是一个虚拟的项（表示有实体），那么这个文件就有彻底删除权限MenuAction::CompleteDeletion
+        //但是这个文件canrename权限为false，以前的判断输出就是，不能MenuAction::Cut，MenuAction::Rename
+        // MenuAction::delete
+        //当彻底删除时，判断canrename权限，true可以删除，false不可以删除
+        //所以这里要把MenuAction::CompleteDeletion权限不能用
+        if (FileUtils::isGvfsMountFile(info->absoluteFilePath()) && !info->canRename()){
+            disableList << MenuAction::CompleteDeletion;
+        }
         foreach (MenuAction action, unusedList) {
             if (actions.contains(action)) {
                 actions.remove(actions.indexOf(action));
