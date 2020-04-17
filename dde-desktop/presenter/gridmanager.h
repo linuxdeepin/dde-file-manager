@@ -93,7 +93,7 @@ public:
     void initGridItemsInfos();
     void initProfile(const QList<DAbstractFileInfoPointer> &items);
     void initWithoutProfile(const QList<DAbstractFileInfoPointer> &items);
-    void initArrage(const QList<DAbstractFileInfoPointer> &items);
+    void initArrage(const QStringList &items);
 
     bool add(int screenNum, QPoint pos, const QString &itemId);
     bool add(int screenNum, const QString &itemId);
@@ -138,7 +138,8 @@ public:
 
 public:
     void dump();
-
+signals:
+    void sigUpdate();
 protected:
     bool remove(int screenNum, int x, int y, const QString &itemId);
     bool remove(int screenNum, QPoint pos, const QString &itemId);

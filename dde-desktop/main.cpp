@@ -198,6 +198,9 @@ int main(int argc, char *argv[])
     DFMGlobal::initOperatorRevocation();
     DFMGlobal::initTagManagerConnect();
     DFMGlobal::initThumbnailConnection();
+    //右键“发送到U盘
+    DFMGlobal::initDeviceListener();
+    DFMGlobal::initGvfsMountManager();
 
     if  (!preload) {
         // Notify dde-desktop start up

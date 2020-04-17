@@ -161,6 +161,14 @@ void CanvasViewManager::onScreenGeometryChanged(ScreenPointer sp)
     }
 }
 
+void CanvasViewManager::onRepaintCanvas()
+{
+    qDebug() << "update by grid changed";
+    for (CanvasViewPointer view : m_canvasMap.values()){
+        view->update();
+    }
+}
+
 void CanvasViewManager::init()
 {
     //屏幕增删，模式改变
@@ -174,6 +182,9 @@ void CanvasViewManager::init()
     //可用区改变
     connect(ScreenHelper::screenManager(), &AbstractScreenManager::sigScreenAvailableGeometryChanged,
             this, &CanvasViewManager::onScreenGeometryChanged);
+
+    //grid改变
+    connect(GridManager::instance(), &GridManager::sigUpdate, this, &CanvasViewManager::onRepaintCanvas);
 
     onCanvasViewBuild(ScreenMrg->displayMode());
 }
