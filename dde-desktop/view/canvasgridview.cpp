@@ -346,6 +346,7 @@ void CanvasGridView::setGeometry(const QRect &rect)
     }
     else {
         QAbstractItemView::setGeometry(rect);
+        updateCanvas();
         d->waterMaskFrame->updatePosition();
     }
 }
@@ -1306,13 +1307,14 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
     }
 }
 
-void CanvasGridView::resizeEvent(QResizeEvent *event)
-{
-    updateCanvas();
-    // todo restore
+//old
+//void CanvasGridView::resizeEvent(QResizeEvent *event)
+//{
+//    updateCanvas();
+//    // todo restore
 
-    return QAbstractItemView::resizeEvent(event);
-}
+//    return QAbstractItemView::resizeEvent(event);
+//}
 
 void CanvasGridView::focusInEvent(QFocusEvent *event)
 {
