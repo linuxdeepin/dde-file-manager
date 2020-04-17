@@ -86,6 +86,7 @@ protected:
     void keyPressEvent(QKeyEvent *e) override;
     void paintEvent(QPaintEvent *e) override;
     void showEvent(QShowEvent *event) override;
+    void inputMethodEvent(QInputMethodEvent *e) override;
 
 private:
     void initUI();
