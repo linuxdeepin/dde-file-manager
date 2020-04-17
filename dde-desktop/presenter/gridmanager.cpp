@@ -1253,6 +1253,27 @@ public:
         return true;
     }
 
+    inline void refreshPositionProfiles(int screenNum)
+    {
+        //auto profile = QString("Position_%1_%2x%3").arg(screenNum).arg(w).arg(h);
+        QString profile;
+        if ((AbstractScreenManager::Showonly == curDisplayMode)
+                || (AbstractScreenManager::Duplicate == curDisplayMode)){
+            profile = QString("SinglePosition");  //单一桌面模式和扩展桌面模式需要独立保存桌面项目位置配置文件，以便两种模式互相切换时仍然完好如初
+        }else {
+            foreach(int key, positionProfiles.keys()){
+                if (positionProfiles.value(key) == QString("SinglePosition")){
+                    positionProfiles[key]= QString("Position_%1").arg(key);
+                }
+            }
+            profile = QString("Position_%1").arg(screenNum);
+        }
+
+        if (profile != positionProfiles.value(screenNum)) {
+            positionProfiles[screenNum]= profile;
+        }
+    }
+
     inline void resetGridSize(int screenNum, int w, int h)
     {
         if(!screensCoordInfo.contains(screenNum))
@@ -1264,87 +1285,7 @@ public:
         coordInfo.value().second = h;
 
         createProfile();
-
-        //auto profile = QString("Position_%1_%2x%3").arg(screenNum).arg(w).arg(h);
-
-        QString profile;
-        if ((AbstractScreenManager::Showonly == curDisplayMode)
-                || (AbstractScreenManager::Duplicate == curDisplayMode)){
-            profile = QString("SinglePosition");  //单一桌面模式和扩展桌面模式需要独立保存桌面项目位置配置文件，以便两种模式互相切换时仍然完好如初
-        }else {
-            foreach(int key, positionProfiles.keys()){
-                if (positionProfiles.value(key) == QString("SinglePosition")){
-                    profile = QString("Position_%1").arg(key);
-                    positionProfiles[key]= profile;
-                }
-            }
-            profile = QString("Position_%1").arg(screenNum);
-        }
-
-        if (profile != positionProfiles.value(screenNum)) {
-            positionProfiles[screenNum]= profile;
-        }
-    }
-
-    inline void changeGridSizeScared(int screenNum, int w, int h)
-    {
-        if(screensCoordInfo.contains(screenNum))
-            return;
-        auto coordInfo = screensCoordInfo.find(screenNum);
-        Q_ASSERT(!(coordInfo.value().second == h && coordInfo.value().first == w));
-
-        qDebug() << "old grid size" << coordInfo.value().second << coordInfo.value().first;
-        qDebug() << "new grid size" << w << h;
-
-        auto oldCellCount = coordInfo.value().second * coordInfo.value().first;
-        auto newCellCount = w * h;
-
-        auto allItems = m_itemGrids;
-        QVector<int> preferNewIndex;
-        QVector<QString> itemIds;
-
-        // record old pos index
-        for (int i = 0; i < m_cellStatus.value(screenNum).length(); ++i) {
-            if (m_cellStatus.value(screenNum).value(i)) {
-                auto newIndex = i * newCellCount / oldCellCount;
-                preferNewIndex.push_back(newIndex);
-                itemIds.push_back(m_gridItems.value(screenNum).value(gridPosAt(screenNum, i)));
-            }
-        }
-
-        coordInfo.value().second = h;
-        coordInfo.value().first = w;
-
-        createProfile();
-
-        //auto profile = QString("Position_%1_%2x%3").arg(screenNum).arg(w).arg(h);
-        auto profile = QString("Position_%1").arg(screenNum);
-        if (profile != positionProfiles.value(screenNum)) {
-            positionProfiles[screenNum] = profile;
-        }
-
-        if(!allItems.contains(screenNum)){
-            return;
-        }
-        auto oneScreenItems = allItems.find(screenNum);
-
-        for (int i = 0; i < preferNewIndex.length(); ++i) {
-            auto index = preferNewIndex.value(i);
-            if (m_cellStatus.size() > index && !m_cellStatus.value(screenNum).value(index)) {
-                QPoint pos{ gridPosAt(screenNum, index) };
-                add(screenNum, pos, itemIds.value(i));
-            } else {
-                auto freePos = takeEmptyPos();
-                add(screenNum, freePos.second, itemIds.value(i));
-            }
-            oneScreenItems.value().remove(itemIds.value(i));
-        }
-
-        // move forward
-        for (auto id : allItems.value(screenNum).keys()) {
-            auto freePos = takeEmptyPos();
-            add(screenNum, freePos.second, id);
-        }
+        refreshPositionProfiles(screenNum);
     }
 
     inline void changeGridSize(int screenNum, int w, int h)
