@@ -39,6 +39,11 @@ DCompleterListView::DCompleterListView(QWidget *parent)
     setViewportMargins(0, 0, -verticalScrollBar()->sizeHint().width(), 0);
     setMouseTracking(true);
 }
+//解决bug19609文件管理器中，文件夹搜索功能中输入法在输入过程中忽然失效然后恢复
+void DCompleterListView::keyPressEvent(QKeyEvent *e)
+{
+    return QListView::keyPressEvent(e);
+}
 
 void DCompleterListView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
 {

@@ -153,6 +153,8 @@ void DFMAddressBar::setCompleter(QCompleter *c)
             this, &DFMAddressBar::onCompletionModelCountChanged);
 
     completerView->setItemDelegate(&styledItemDelegate);
+    //解决bug19609文件管理器中，文件夹搜索功能中输入法在输入过程中忽然失效然后恢复，设置这个属性listview就可以拥有地址兰的输入法
+    completerView->setWindowFlag(Qt::Sheet);
 
 }
 
@@ -269,9 +271,15 @@ void DFMAddressBar::keyPressEvent(QKeyEvent *e)
             }
             e->accept();
             return;
+        //解决bug19609文件管理器中，文件夹搜索功能中输入法在输入过程中忽然失效然后恢复
+        case Qt::Key_Up:
+        case Qt::Key_Down:
+            completerView->keyPressEvent(e);
+            break;
         default:
            break;
         }
+        setFocus();
     } else {
         // If no compiler
         switch (e->key()) {
@@ -333,6 +341,13 @@ void DFMAddressBar::showEvent(QShowEvent *event)
     updateIndicatorIcon();
 
     return QLineEdit::showEvent(event);
+}
+//解决bug19609文件管理器中，文件夹搜索功能中输入法在输入过程中忽然失效然后恢复
+void DFMAddressBar::inputMethodEvent(QInputMethodEvent *e)
+{
+    if(hasSelectedText())
+        setText(lastEditedString);
+    QLineEdit::inputMethodEvent(e);
 }
 
 void DFMAddressBar::initUI()
@@ -609,6 +624,7 @@ void DFMAddressBar::onCompletionModelCountChanged()
 
 void DFMAddressBar::onTextEdited(const QString &text)
 {
+    lastEditedString = text;
     if (text.isEmpty()) {
         urlCompleter->popup()->hide();
         completerBaseString = "";

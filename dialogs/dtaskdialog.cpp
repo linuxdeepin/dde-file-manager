@@ -76,7 +76,7 @@ DFileCopyMoveJob::Action ErrorHandle::handleError(DFileCopyMoveJob *job, DFileCo
     }
         break;
     case DFileCopyMoveJob::UnknowUrlError: {
-        DDialog dialog("error", QCoreApplication::translate("DTaskDialog", "This action is not supported"));
+        DDialog dialog("Error", QCoreApplication::translate("DTaskDialog", "This action is not supported"));
         dialog.setIcon(QIcon::fromTheme("dialog-error"), QSize(64, 64));
         dialog.exec();
     }
@@ -646,7 +646,7 @@ void DTaskDialog::handleUpdateTaskWidget(const QMap<QString, QString> &jobDetail
             DFMTaskWidget *w = item ? static_cast<DFMTaskWidget *>(item->listWidget()->itemWidget(item)): nullptr;
             if (w) {
                 updateData(w, data);
-                // 预防界面不刷
+                // 预防界面不刷，pangu出现过界面不会刷新的问题
                 w->repaint();
                 qApp->processEvents();
             }
