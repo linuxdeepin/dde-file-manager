@@ -59,10 +59,13 @@
 #define LOCK_SCREEN_BUTTON_ID "lock-screen"
 #define SCREENSAVER_BUTTON_ID "screensaver"
 #define DESKTOP_CAN_SCREENSAVER "DESKTOP_CAN_SCREENSAVER"
+#define SessionManagerService "com.deepin.SessionManager"
+#define SessionManagerPath "/com/deepin/SessionManager"
 
 DWIDGET_USE_NAMESPACE
 DGUI_USE_NAMESPACE
 DCORE_USE_NAMESPACE
+using namespace com::deepin;
 
 static bool previewBackground()
 {
@@ -81,8 +84,9 @@ Frame::Frame(Mode mode, QWidget *parent)
     , m_dbusAppearance(new ComDeepinDaemonAppearanceInterface(AppearanceServ,
                                                               AppearancePath,
                                                               QDBusConnection::sessionBus(),
-                                                              this))
+                                                              this))    
     , m_mouseArea(new DRegionMonitor(this))
+    , m_sessionManagerInter(new SessionManager(SessionManagerService, SessionManagerPath, QDBusConnection::sessionBus(), this))
 {
     // 截止到dtkwidget 2.0.10版本，在多个屏幕设置不同缩放比时
     // DRegionMonitor 计算的缩放后的坐标可能是错误的
@@ -123,6 +127,9 @@ Frame::Frame(Mode mode, QWidget *parent)
             this, &Frame::handleNeedCloseButton);
     connect(m_wallpaperList, &WallpaperList::itemPressed,
             this, &Frame::onItemPressed);
+    connect(m_sessionManagerInter, &SessionManager::LockedChanged, this, [this](bool locked){
+        this->setVisible(!locked);
+    });
 
     QTimer::singleShot(0, this, &Frame::initListView);
 }
