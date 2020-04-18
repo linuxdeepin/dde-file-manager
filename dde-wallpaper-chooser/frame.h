@@ -27,6 +27,7 @@
 
 #include <DBlurEffectWidget>
 #include <dregionmonitor.h>
+#include <com_deepin_sessionmanager.h>
 
 DWIDGET_BEGIN_NAMESPACE
 class DIconButton;
@@ -86,6 +87,7 @@ private:
     void adjustModeSwitcherPoint();
     DButtonBox *m_switchModeControl;
 #endif
+    com::deepin::SessionManager *m_sessionManagerInter;
 
 #ifndef DISABLE_SCREENSAVER
     void setMode(QAbstractButton *toggledBtn, bool on);
