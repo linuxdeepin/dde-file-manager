@@ -572,7 +572,8 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
 static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &list, const DUrl &target, bool slient = false, bool force = false)
 {
     DFileCopyMoveJob *job = new DFileCopyMoveJob();
-    QPair<DUrl, DUrl> currentJob;
+    //但前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
+    static QPair<DUrl, DUrl> currentJob;
 
     if (force) {
         job->setFileHints(DFileCopyMoveJob::ForceDeleteFile);
@@ -600,8 +601,10 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
             : QObject(nullptr)
             , slient(s)
             , fileJob(job)
-            , currentJob(jobInfo)
         {
+            //保存到本地，后面要用，不去访问传入指针
+            currentJob.first = jobInfo->first;
+            currentJob.second = jobInfo->second;
             if (!slient) {
                 timer_id = startTimer(1000);
                 moveToThread(qApp->thread());
@@ -636,7 +639,7 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
             }
 
             DFileCopyMoveJob::Handle *handle = dialogManager->taskDialog()->addTaskJob(job);
-            emit job->currentJobChanged(currentJob->first, currentJob->second);
+            emit job->currentJobChanged(currentJob.first, currentJob.second);
 
             if (!handle) {
                 qWarning() << "addTaskJob create handle failed!!";
@@ -655,18 +658,21 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
             killTimer(timer_id);
             timer_id = 0;
 
-            // 此时说明pasteFilesV2函数已经结束
-            if (!fileJob || !currentJob)
+            //1. 此时说明pasteFilesV2函数已经结束
+            if (!fileJob)
                 return;
-
-            dialogManager->taskDialog()->addTaskJob(fileJob);
-            emit fileJob->currentJobChanged(currentJob->first, currentJob->second);
+            //这里会出现pasteFilesV2函数线程和当前线程是同时在执行，会出现在1处pasteFilesV2所在线程 没结束，但是这时pasteFilesV2所在线程 结束
+            //这里是延时处理，会出现正在执行吃此处代码时，filejob线程完成了
+            if(!fileJob->isFinished()){
+                dialogManager->taskDialog()->addTaskJob(fileJob);
+                emit fileJob->currentJobChanged(currentJob.first, currentJob.second);
+            }
         }
 
         int timer_id = 0;
         bool slient;
         DFileCopyMoveJob *fileJob;
-        QPair<DUrl, DUrl> *currentJob;
+        QPair<DUrl, DUrl> currentJob;
     };
 
     ErrorHandle *error_handle = new ErrorHandle(job, &currentJob, slient);
@@ -679,9 +685,9 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
     QTimer::singleShot(200, dialogManager->taskDialog(), [job] {
         dialogManager->taskDialog()->removeTaskJob(job);
     });
-
-    error_handle->currentJob = nullptr;
-    error_handle->fileJob = nullptr;
+    //当前线程不要去处理error_handle所在的线程资源
+//    error_handle->currentJob = nullptr;
+//    error_handle->fileJob = nullptr;
 
     if (slient) {
         error_handle->deleteLater();
