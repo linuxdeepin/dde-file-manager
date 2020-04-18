@@ -1037,8 +1037,15 @@ open_file: {
         qint64 size_write = toDevice->write(data, size_read);
 
         //fix 修复vfat格式u盘卡死问题，写入数据后立刻同步
-//        if (size_write > 0)
-//            toDevice->syncToDisk();
+        const DStorageInfo &targetStorageInfo = directoryStack.top().targetStorageInfo;
+        if (targetStorageInfo.isValid()) {
+            const QString &fs_type = targetStorageInfo.fileSystemType();
+            if (fs_type == "vfat") {
+                toDevice->inherits("");
+                if (size_write > 0)
+                    toDevice->syncToDisk();
+            }
+        }
 
         if (Q_UNLIKELY(size_write != size_read)) {
             do {
