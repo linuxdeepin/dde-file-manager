@@ -482,7 +482,14 @@ bool DFileCopyMoveJobPrivate::checkFreeSpace(qint64 needSize)
         return true;
     }
 
-    return targetStorageInfo.bytesAvailable() >= needSize;
+    //fix:修正文件发送到光盘时会报磁盘空间不足的问题，这里实现分类处理（常规可挂载移动存储设备和光驱设备）
+    const QString &fs_type = targetStorageInfo.fileSystemType();
+
+    if (fs_type == "iso9660") {
+        return true;
+    } else {
+        return targetStorageInfo.bytesAvailable() >= needSize;
+    }
 }
 
 QString DFileCopyMoveJobPrivate::formatFileName(const QString &name) const

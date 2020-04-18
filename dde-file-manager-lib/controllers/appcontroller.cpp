@@ -22,6 +22,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+//fix:修正临时拷贝文件到光盘的路径问题，不是挂载目录，而是临时缓存目录
+#include "dfilemenumanager.h"
+
 #include "appcontroller.h"
 #include "movejobcontroller.h"
 #include "trashjobcontroller.h"
@@ -1018,7 +1021,14 @@ void AppController::actionSendToRemovableDisk()
     DUrl targetUrl = DUrl(action->property("mounted_root_uri").toString());
     DUrlList urlList = DUrl::fromStringList(action->property("urlList").toStringList());
 
-    fileService->pasteFile(action, DFMGlobal::CopyAction, targetUrl, urlList);
+    //fix:修正临时拷贝文件到光盘的路径问题，不是挂载目录，而是临时缓存目录
+    QString iconName = action->property("iconName").toString();
+    if (iconName.contains("media-optical")) { //notice: dvd/cd/bd
+        DUrl tempTargetUrl = DUrl::fromLocalFile(DFileMenuManager::g_deleteDirPath);
+        fileService->pasteFile(action, DFMGlobal::CopyAction, tempTargetUrl, urlList);
+    } else { // other: usb storage and so on
+        fileService->pasteFile(action, DFMGlobal::CopyAction, targetUrl, urlList);
+    }
 }
 
 void AppController::actionStageFileForBurning()

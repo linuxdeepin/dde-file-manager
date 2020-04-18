@@ -43,6 +43,9 @@ class DFileMenuManager : public QObject
     Q_OBJECT
 
 public:
+    //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
+    static QString g_deleteDirPath;
+
     DFileMenuManager();
 
     static DFileMenu *createDefaultBookMarkMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());

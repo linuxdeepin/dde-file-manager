@@ -69,6 +69,9 @@
 
 #include <plugins/dfmadditionalmenu.h>
 
+//fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
+QString DFileMenuManager::g_deleteDirPath = nullptr;
+
 namespace DFileMenuData
 {
 static QMap<MenuAction, QString> actionKeys;
@@ -328,6 +331,16 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
                 QAction *action = new QAction(pDeviceinfo->getDiskInfo().name(), sendToMountedRemovableDiskMenu);
                 action->setProperty("mounted_root_uri", pDeviceinfo->getDiskInfo().mounted_root_uri());
                 action->setProperty("urlList", DUrl::toStringList(urlList));
+                //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
+                action->setProperty("iconName", pDeviceinfo->getDiskInfo().iconName());
+                //id="/dev/sr1" -> tempId="sr1"
+                QString tempId = pDeviceinfo->getDiskInfo().id().mid(5);
+                //mounted_root_uri="file:///media/union/***" -> tempMediaAddr="union"
+                QString tempMountedRootUrl = pDeviceinfo->getDiskInfo().mounted_root_uri();
+                int tempAddrIndex = tempMountedRootUrl.lastIndexOf("/");
+                QString tempMediaAddr= tempMountedRootUrl.mid(14, tempAddrIndex - 14);
+                //g_deleteDirPath="/home/union/.cache/deepin/discburn/_dev_sr1"
+                DFileMenuManager::g_deleteDirPath = "/home/" + tempMediaAddr + "/.cache/deepin/discburn/_dev_" + tempId;
                 sendToMountedRemovableDiskMenu->addAction(action);
                 connect(action, &QAction::triggered, appController, &AppController::actionSendToRemovableDisk);
             }
