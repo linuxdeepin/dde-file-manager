@@ -351,12 +351,12 @@ bool DGIOFileDevice::flush()
 bool DGIOFileDevice::syncToDisk()
 {
     //fix 修复卡死问题，在vfat格式的U盘g_output_stream_flush无效，使用关闭再打开强制刷新
-//    close();
-//    if (!open(QIODevice::WriteOnly | QIODevice::Append))
-//        return false;
-//    return true;
+    close();
+    if (!open(QIODevice::WriteOnly | QIODevice::Append))
+        return false;
+    return true;
     //old
-    return flush();
+//    return flush();
     //end
 }
 
