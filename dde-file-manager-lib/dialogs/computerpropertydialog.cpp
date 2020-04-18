@@ -173,21 +173,36 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
     QString version;
 
     if (DSysInfo::isDeepin()) {
-        version = m_systemInfo->version();
+        version = DSysInfo::deepinVersion();
     } else {
         version = QString("%1 %2").arg(DSysInfo::productTypeString())
                   .arg(DSysInfo::productVersion());
     }
 
-    QString memoryStr = QString::number(static_cast<double>(m_systemInfo->memoryCap()) / (1024 * 1024 * 1024), 'f', 2) + " GB";
-    QString diskStr = QString::number(static_cast<double>(m_systemInfo->diskCap()) / (1024 * 1024 * 1024), 'f', 2) + " GB";
+    //部分数据优先从dbus读取，如果dbus没有，则从dtk读数据
+    QString memoryStr;
+    QString diskStr;
+    QString processor;
+    QString systemType;
+    if (m_systemInfo->memoryCap() <= 0 || m_systemInfo->diskCap() <= 0) {
+        memoryStr = QString::number(DSysInfo::memoryInstalledSize());
+        diskStr = QString::number(DSysInfo::systemDiskSize());
+        processor = DSysInfo::cpuModelName();
+        systemType = "64";
+    }
+    else {
+        memoryStr = QString::number(static_cast<double>(m_systemInfo->memoryCap()) / (1024 * 1024 * 1024), 'f', 1);
+        diskStr = QString::number(static_cast<double>(m_systemInfo->diskCap()) / (1024 * 1024 * 1024), 'f', 1);
+        processor = m_systemInfo->processor();
+        systemType = QString::number(m_systemInfo->systemType());
+    }
 
     datas.insert(data.at(0), DSysInfo::computerName());
     datas.insert(data.at(1), version);
     datas.insert(data.at(2), QString::number(m_systemInfo->systemType()) + tr("Bit"));
-    datas.insert(data.at(3), m_systemInfo->processor());
-    datas.insert(data.at(4), memoryStr);
-    datas.insert(data.at(5), diskStr);
+    datas.insert(data.at(3), processor);
+    datas.insert(data.at(4), memoryStr + " GB");
+    datas.insert(data.at(5), diskStr + " GB");
 
     return datas;
 }
