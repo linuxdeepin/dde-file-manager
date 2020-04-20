@@ -1013,7 +1013,7 @@ void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl)
 
 //    rootNodeManager->addFile(info);
     fileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
-    q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
+    q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::DirectConnection);
 }
 
 void DFileSystemModelPrivate::_q_onFileDeleted(const DUrl &fileUrl)
@@ -1022,7 +1022,7 @@ void DFileSystemModelPrivate::_q_onFileDeleted(const DUrl &fileUrl)
 
 //    rootNodeManager->removeFile(DFileService::instance()->createFileInfo(q, fileUrl));
     fileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
-    q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
+    q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::DirectConnection);
 }
 
 void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl)
@@ -1083,14 +1083,14 @@ void DFileSystemModelPrivate::_q_onFileRename(const DUrl &from, const DUrl &to)
 
 void DFileSystemModelPrivate::_q_processFileEvent()
 {
-    if (_q_processFileEvent_runing) {
-        return;
-    }
+//    if (_q_processFileEvent_runing) {
+//        return;
+//    }
 
-    _q_processFileEvent_runing = true;
+//    _q_processFileEvent_runing = true;
 
     Q_Q(DFileSystemModel);
-
+qDebug() << "~~~~~" << QThread::currentThreadId();
     while (!fileEventQueue.isEmpty()) {
         const QPair<EventType, DUrl> &event = fileEventQueue.dequeue();
         const DUrl &fileUrl = event.second;
@@ -1141,7 +1141,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         }
     }
 
-    _q_processFileEvent_runing = false;
+//    _q_processFileEvent_runing = false;
 }
 
 DFileSystemModel::DFileSystemModel(DFileViewHelper *parent)
