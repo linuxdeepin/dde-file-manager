@@ -2,7 +2,7 @@
 #include "screen/screenhelper.h"
 #include "util/xcb/xcb.h"
 #include "presenter/gridmanager.h"
-
+#include "desktopitemdelegate.h"
 
 inline QRect relativeRect(const QRect &avRect,const QRect &geometry)
 {
@@ -161,10 +161,13 @@ void CanvasViewManager::onScreenGeometryChanged(ScreenPointer sp)
     }
 }
 
-void CanvasViewManager::onRepaintCanvas()
+void CanvasViewManager::onRepaintCanvas(int state)
 {
     qDebug() << "update by grid changed";
     for (CanvasViewPointer view : m_canvasMap.values()){
+        if (state == 1){
+            view->itemDelegate()->hideNotEditingIndexWidget();
+        }
         view->update();
     }
 }

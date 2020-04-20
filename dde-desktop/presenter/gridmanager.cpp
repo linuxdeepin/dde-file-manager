@@ -1822,7 +1822,6 @@ bool GridManager::move(int screenNum, const QStringList &selecteds, const QStrin
     QPoint currentPos;// = d->m_itemGrids.value(screenNum).value(current);
     int oldScreen = screenNum;
     //临时方案，找源 todo 优化
-
     for (int screen : d->m_itemGrids.keys()){
         if (d->m_itemGrids.value(screen).contains(current)){
             currentPos = d->m_itemGrids.value(screen).value(current);
@@ -1908,7 +1907,7 @@ bool GridManager::move(int screenNum, const QStringList &selecteds, const QStrin
     if (shouldArrange()) {
         reArrange(screenNum);
     }
-    emit sigUpdate();
+    emit sigUpdate(1);
     return true;
 }
 

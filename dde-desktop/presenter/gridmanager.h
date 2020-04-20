@@ -139,7 +139,7 @@ public:
 public:
     void dump();
 signals:
-    void sigUpdate();
+    void sigUpdate(int state = 0);
 protected:
     bool remove(int screenNum, int x, int y, const QString &itemId);
     bool remove(int screenNum, QPoint pos, const QString &itemId);
