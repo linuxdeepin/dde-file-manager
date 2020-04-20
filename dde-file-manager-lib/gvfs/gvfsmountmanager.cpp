@@ -75,6 +75,10 @@ QJsonObject GvfsMountManager::SMBLoginObj = {};
 DFMUrlBaseEvent GvfsMountManager::MountEvent = DFMUrlBaseEvent(Q_NULLPTR, DUrl());
 QPointer<QEventLoop> GvfsMountManager::eventLoop;
 
+//fix: 探测光盘推进,弹出和挂载状态机标识
+bool GvfsMountManager::g_burnVolumeFlag = false;
+bool GvfsMountManager::g_burnMountFlag = false;
+
 #ifdef QT_DEBUG
 Q_LOGGING_CATEGORY(mountManager, "gvfs.mountMgr")
 #else
@@ -466,6 +470,12 @@ void GvfsMountManager::monitor_mount_added(GVolumeMonitor *volume_monitor, GMoun
     qCDebug(mountManager()) << "==============================monitor_mount_added==============================";
     QMount qMount = gMountToqMount(mount);
 
+    //fix: 探测光盘推进,弹出和挂载状态机标识
+    if (qMount.icons().contains("media-optical")) { //CD/DVD
+        GvfsMountManager::g_burnVolumeFlag = true;
+        GvfsMountManager::g_burnMountFlag = true;
+    }
+
     GVolume *volume = g_mount_get_volume(mount);
     qCDebug(mountManager()) << "===================" << qMount.mounted_root_uri() << volume << "=======================";
     qCDebug(mountManager()) << "===================" << qMount << "=======================";
@@ -507,6 +517,11 @@ void GvfsMountManager::monitor_mount_removed(GVolumeMonitor *volume_monitor, GMo
     Q_UNUSED(volume_monitor)
     qCDebug(mountManager()) << "==============================monitor_mount_removed==============================" ;
     QMount qMount = gMountToqMount(mount);
+
+    //fix: 探测光盘推进,弹出和挂载状态机标识
+    if ((qMount.name() == "CD/DVD Drive") || qMount.icons().contains("media-optical")) { //CD/DVD
+        GvfsMountManager::g_burnMountFlag = false;
+    }
 
     qCDebug(mountManager()) << "===================" << qMount.mounted_root_uri() << "=======================";
 
@@ -573,6 +588,12 @@ void GvfsMountManager::monitor_volume_added(GVolumeMonitor *volume_monitor, GVol
 
     qCDebug(mountManager()) << "===================" << qVolume.unix_device() << "=======================";
 
+    //fix: 探测光盘推进,弹出和挂载状态机标识
+    if (qVolume.icons().contains("media-optical")) { //CD/DVD
+        GvfsMountManager::g_burnVolumeFlag = true;
+        GvfsMountManager::g_burnMountFlag = false;
+    }
+
     GDrive *drive = g_volume_get_drive(volume);
     if (drive) {
         QDrive qDrive = gDriveToqDrive(drive);
@@ -612,6 +633,11 @@ void GvfsMountManager::monitor_volume_removed(GVolumeMonitor *volume_monitor, GV
     QVolume qVolume = gVolumeToqVolume(volume);
 
     qCDebug(mountManager()) << "===================" << qVolume.unix_device() << "=======================";
+
+    //fix: 探测光盘推进,弹出和挂载状态机标识
+    if ((qVolume.name() == "CD/DVD Drive") || qVolume.icons().contains("media-optical")) { //CD/DVD
+        GvfsMountManager::g_burnVolumeFlag = false;
+    }
 
     GDrive *drive = g_volume_get_drive(volume);
     if (drive){
