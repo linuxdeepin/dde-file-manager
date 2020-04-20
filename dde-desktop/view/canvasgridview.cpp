@@ -1460,6 +1460,18 @@ void CanvasGridView::openUrl(const DUrl &url)
     DFileService::instance()->openFile(this, url);
 }
 
+void CanvasGridView::openUrls(const QList<DUrl> &urlList)
+{
+    if(urlList.isEmpty())
+        return;
+    DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, urlList.at(0));
+    if(!info || info->isVirtualEntry()) {
+        return;
+    }
+
+    DFileService::instance()->openFiles(this, urlList);
+}
+
 bool CanvasGridView::setCurrentUrl(const DUrl &url)
 {
     DUrl fileUrl = url;
@@ -2852,9 +2864,10 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         switch (action->data().toInt()) {
         case MenuAction::Open: {
             // TODO: Workaround
-            for (auto &url : list) {
-                openUrl(url);
-            }
+//            for (auto &url : list) {
+//                openUrl(url);
+//            }
+            openUrls(list);
         }
         break;
         case FileManagerProperty: {
