@@ -20,6 +20,7 @@
 
 //fixed:CD display size error
 #include "views/dfmopticalmediawidget.h"
+#include "gvfs/gvfsmountmanager.h"
 
 #include "dblockdevice.h"
 #include "ddiskdevice.h"
@@ -160,7 +161,13 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         if (pitmdata->fi) {
             //fixed:CD display size error
             if (static_cast<DFMRootFileInfo::ItemType>(pitmdata->fi->fileType()) == DFMRootFileInfo::ItemType::UDisksOptical) {
-                return DFMOpticalMediaWidget::g_usedSize;
+                //fix: 探测光盘推进,弹出和挂载状态机标识
+                if (!GvfsMountManager::g_burnVolumeFlag && !GvfsMountManager::g_burnMountFlag) { //CD/DVD
+                    DFMOpticalMediaWidget::g_usedSize = 0;
+                    return DFMOpticalMediaWidget::g_usedSize;
+                } else {
+                    return DFMOpticalMediaWidget::g_usedSize;
+                }
             } else {
                 return pitmdata->fi->extraProperties()["fsUsed"];
             }
@@ -171,7 +178,13 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         if (pitmdata->fi) {
             //fixed:CD display size error
             if (static_cast<DFMRootFileInfo::ItemType>(pitmdata->fi->fileType()) == DFMRootFileInfo::ItemType::UDisksOptical) {
-                return DFMOpticalMediaWidget::g_totalSize;
+                //fix: 探测光盘推进,弹出和挂载状态机标识
+                if (!GvfsMountManager::g_burnVolumeFlag && !GvfsMountManager::g_burnMountFlag) { //CD/DVD
+                    DFMOpticalMediaWidget::g_totalSize = 0;
+                    return DFMOpticalMediaWidget::g_totalSize;
+                } else {
+                    return DFMOpticalMediaWidget::g_totalSize;
+                }
             } else {
                 return pitmdata->fi->extraProperties()["fsSize"];
             }
