@@ -919,8 +919,9 @@ public:
         for (auto key : coordkeys) {
             //add empty coordInfo
             QVector<bool> tempVector;
-            auto coordInfo = screensCoordInfo.value(key);
-            tempVector.resize(coordInfo.first * coordInfo.second);
+//            auto coordInfo = screensCoordInfo.value(key);
+//            tempVector.resize(coordInfo.first * coordInfo.second);
+            tempVector.resize(cellCount(key));
             m_cellStatus.insert(key, tempVector);
         }
         auto statusValues = m_cellStatus.values();
@@ -966,14 +967,13 @@ public:
                 for (; i < cellStatus.size() && !sortedItems.empty(); ++i) {
                    QString item = sortedItems.takeFirst();
                    QPoint pos(i / coordHeight, i % coordHeight);
-                   cellStatus[i] = true;
+                   //cellStatus[i] = true;
                    gridItems.insert(pos, item);
                    itemGrids.insert(item, pos);
+                   setCellStatus(screenNum,i, true);
                 }
-                m_cellStatus.insert(screenNum, cellStatus);
                 qDebug() << "screen" << screenNum << "put item:" << i << "cell" << cellStatus.size();
             }
-
             m_gridItems.insert(screenNum,gridItems);
             m_itemGrids.insert(screenNum,itemGrids);
         }
@@ -1055,6 +1055,7 @@ public:
 //        }
 
         //获取个屏幕分组信息对应的图标信息
+        QMap<int, QStringList> moreIcon;
         auto settings = Config::instance()->settings();
         for (auto &screenKey : screenNumProfiles.keys()) {
             settings->beginGroup(screenNumProfiles.value(screenKey));
@@ -1062,20 +1063,37 @@ public:
                 auto coords = key.split("_");
                 auto x = coords.value(0).toInt();
                 auto y = coords.value(1).toInt();
-                auto item = settings->value(key).toString();
+                QString item = settings->value(key).toString();
                 if (existItems.contains(item)) {
-                    QPoint pos{x, y};
-                    add(screenKey, pos, item);
+                    if(m_screenFullStatus.value(screenKey)){
+                        if(moreIcon.contains(screenKey)) {
+                            moreIcon.find(screenKey)->append(item);
+                        }else {
+                            moreIcon.insert(screenKey, QStringList() << item);
+                        }
+                    }
+                    else{
+                        QPoint pos{x, y};
+                        add(screenKey, pos, item);
+                    }
                     existItems.remove(item);
                 }
             }
             settings->endGroup();
         }
 
+        for(int key : moreIcon.keys()){
+            foreach(QString item, moreIcon.value(key)){
+                QPair<int, QPoint> emptyPos = getEmptyPos(key);
+                add(emptyPos.first, emptyPos.second, item);
+            }
+        }
+
         for (auto &item : existItems.keys()) {
             QPair<int, QPoint> empty_pos{ takeEmptyPos() };
             add(empty_pos.first,empty_pos.second, item);
         }
+
     }
 
     void loadWithoutProfile(const QList<DAbstractFileInfoPointer> &fileInfoList)
@@ -1177,7 +1195,8 @@ public:
             auto cellStatus = m_cellStatus.value(emptyScreenNum);
             for (int i = 0; i < cellStatus.size(); ++i) {
                 if (!cellStatus[i]) {
-                    cellStatus[i] = true;
+                    //cellStatus[i] = true;
+                    setCellStatus(emptyScreenNum, i, true);
                     posPair.first = emptyScreenNum;
                     posPair.second = gridPosAt(emptyScreenNum, i);
                     return posPair;
@@ -1190,6 +1209,96 @@ public:
             posPair.second = overlapPos(posPair.first);
         }
         return  posPair;
+    }
+
+    QPair<int, QPoint> getEmptyPos(int screenNum)
+    {
+        QPair<int, QPoint> emptyPosPair;
+        if(getEmptyPos(screenNum, false, emptyPosPair.second)){
+            emptyPosPair.first = screenNum;
+            return emptyPosPair;
+        }
+
+        for(int screenIndex = screenNum - 1; screenIndex > 0; --screenIndex){
+            if(getEmptyPos(screenNum, true, emptyPosPair.second)){
+                emptyPosPair.first = screenIndex;
+                return emptyPosPair;
+            }
+        }
+
+        for(int screenIndex = screenNum + 1; screenIndex < screenCode().size(); ++screenIndex){
+            if(getEmptyPos(screenNum, false, emptyPosPair.second)){
+                emptyPosPair.first = screenIndex;
+                return emptyPosPair;
+            }
+        }
+
+        if(!m_cellStatus.isEmpty()){
+            emptyPosPair.first = m_cellStatus.lastKey();
+            emptyPosPair.second = overlapPos(m_cellStatus.lastKey());
+        }
+        return  emptyPosPair;
+    }
+
+    bool getEmptyPos(int screenNum, bool isRightTop, QPoint &resultPos)
+    {
+        if(!m_screenFullStatus.contains(screenNum) || m_screenFullStatus.value(screenNum)
+                || !m_cellStatus.contains(screenNum) || !screensCoordInfo.contains(screenNum) ){
+            return  false;
+        }
+
+        auto cellStatus = m_cellStatus.value(screenNum);
+
+        if(isRightTop){
+            QPair<int, int> screenSize = screensCoordInfo.value(screenNum);
+            for(int xIndex = screenSize.first-1; xIndex >= 0; --xIndex){
+                for (int yIndex =0; yIndex < screenSize.second; ++yIndex) {
+                    int rightTopIndex = xIndex * screenSize.second + yIndex;
+                    if (rightTopIndex < cellStatus.size() && !cellStatus[rightTopIndex]) {
+                         resultPos = QPoint(xIndex, yIndex);
+                         return  true;
+                    }
+                }
+            }
+        }else {
+            for (int index = 0; index < cellStatus.size(); ++index) {
+                if (!cellStatus[index]) {
+                    resultPos = gridPosAt(screenNum, index);
+                    return true;
+                }
+            }
+        }
+
+        return  false;
+    }
+
+    bool setCellStatus(int screenNum, int index, bool state)
+    {
+        if(!m_cellStatus.contains(screenNum))
+            return false;
+
+        if (m_cellStatus.value(screenNum).length() <= index) {
+            return false;
+        }
+
+        auto cellStatusItor = m_cellStatus.find(screenNum);
+        cellStatusItor.value()[index] = state;
+
+        updateScreenFullStatus(screenNum);
+        return true;
+    }
+
+    void updateScreenFullStatus(int screenNum)
+    {
+        auto cellStatus = m_cellStatus.value(screenNum);
+        for (int index = 0; index < cellStatus.size(); ++index) {
+            if (!cellStatus[index]) {
+                m_screenFullStatus.find(screenNum).value() = false;
+                return;
+            }
+        }
+
+        m_screenFullStatus.find(screenNum).value() = true;
     }
 
     bool add(int screenNum, QPoint pos, const QString &itemId)
@@ -1231,14 +1340,17 @@ public:
 //        tempItemGridsItor->insert(itemId, pos);
 
         int index = indexOfGridPos(screenNum, pos);
-        if (m_cellStatus.value(screenNum).length() <= index) {
-            return false;
-        }
-        if(!m_cellStatus.contains(screenNum))
-            return false;
-        auto cellStatusItor = m_cellStatus.find(screenNum);
-        cellStatusItor.value()[index] = true;
-        return true;
+
+        return setCellStatus(screenNum,index, true);
+
+//        if (m_cellStatus.value(screenNum).length() <= index) {
+//            return false;
+//        }
+//        if(!m_cellStatus.contains(screenNum))
+//            return false;
+//        auto cellStatusItor = m_cellStatus.find(screenNum);
+//        cellStatusItor.value()[index] = true;
+//        return true;
     }
 
     QPair<QStringList, QVariantList> generateProfileConfigVariable(int screenNum)
@@ -1297,11 +1409,13 @@ public:
 
         if(!m_cellStatus.contains(screenNum))
             return false;
-        auto cellStatusItor = m_cellStatus.find(screenNum);
-        QVector<bool> &cellStatus = cellStatusItor.value();
-        if(usageIndex < cellStatus.size()){
-            cellStatus[usageIndex] = false;
-        }
+//        auto cellStatusItor = m_cellStatus.find(screenNum);
+//        QVector<bool> &cellStatus = cellStatusItor.value();
+//        if(usageIndex < cellStatus.size()){
+//            cellStatus[usageIndex] = false;
+//        }
+
+        setCellStatus(screenNum, usageIndex, false);
 
         if (!m_overlapItems.isEmpty()
                 && (pos == overlapPos(screenNum))) {
@@ -1603,12 +1717,15 @@ void GridManager::initGridItemsInfos()
     }
     else if (GridManager::instance()->autoArrange())
     {
-        auto settings = Config::instance()->settings();
-        settings->beginGroup(Config::groupGeneral);
-        DFileSystemModel::Roles sortRole = (DFileSystemModel::Roles)settings->value(Config::keySortBy).toInt();
-        Qt::SortOrder sortOrder = settings->value(Config::keySortOrder).toInt() == Qt::AscendingOrder ?
-                    Qt::DescendingOrder : Qt::AscendingOrder;;
-        settings->endGroup();
+//        auto settings = Config::instance()->settings();
+//        settings->beginGroup(Config::groupGeneral);
+//        DFileSystemModel::Roles sortRole = (DFileSystemModel::Roles)settings->value(Config::keySortBy).toInt();
+//        Qt::SortOrder sortOrder = settings->value(Config::keySortOrder).toInt() == Qt::AscendingOrder ?
+//                    Qt::DescendingOrder : Qt::AscendingOrder;;
+//        settings->endGroup();
+        DFileSystemModel::Roles sortRole = (DFileSystemModel::Roles)Config::instance()->getConfig(Config::groupGeneral,Config::keySortBy).toInt();
+        Qt::SortOrder sortOrder = Config::instance()->getConfig(Config::groupGeneral,Config::keySortOrder).toInt() == Qt::AscendingOrder ?
+                    Qt::DescendingOrder : Qt::AscendingOrder;
 
         qDebug() << "auto arrage" << sortRole << sortOrder;
         QModelIndex index = tempModel->setRootUrl(fileUrl);
@@ -1727,6 +1844,9 @@ bool GridManager::move(int screenNum, const QStringList &selecteds, const QStrin
         QPoint oldPos = d->m_itemGrids.value(oldScreen).value(id);
         d->remove(oldScreen, oldPos, id);
         originPosList << oldPos;
+        destPosMap.remove(oldPos);
+        //destUsedGrids[d->indexOfGridPos(screenNum, oldPos)] = false;
+        d->setCellStatus(screenNum, d->indexOfGridPos(screenNum, oldPos), false);
         auto destPos = oldPos + offset;
         destPosList << destPos;
     }
@@ -1808,7 +1928,8 @@ bool GridManager::move(int fromScreen, int toScreen, const QStringList &selected
         auto oldPos = d->m_itemGrids.value(fromScreen).value(id);
         originPosList << oldPos;
         destPosMap.remove(oldPos);
-        destUsedGrids[d->indexOfGridPos(fromScreen, oldPos)] = false;
+        //destUsedGrids[d->indexOfGridPos(fromScreen, oldPos)] = false;
+        d->setCellStatus(fromScreen, d->indexOfGridPos(fromScreen, oldPos), false);
         auto destPos = oldPos + offset;
         destPosList << destPos;
     }

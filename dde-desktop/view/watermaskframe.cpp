@@ -85,10 +85,7 @@ void WaterMaskFrame::initUI()
         m_isMaskAlwaysOn =  m_configs.value("isMaskAlwaysOn").toBool();
     }
 
-    auto settings = Config::instance()->settings();
-    settings->beginGroup(Config::groupGeneral);
-    bool useJosn = settings->value(Config::keyWaterMask, true).toBool();
-    settings->endGroup();
+    bool useJosn = Config::instance()->getConfig(Config::groupGeneral,Config::keyWaterMask, true).toBool();
     QString maskLogoUri;
     if(useJosn){
         if (m_configs.contains("maskLogoUri")) {
