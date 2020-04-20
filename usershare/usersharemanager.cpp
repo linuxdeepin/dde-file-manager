@@ -488,10 +488,15 @@ void UserShareManager::deleteUserShareByShareName(const QString &shareName)
 
 
     QDBusReply<bool> reply = m_userShareInterface->closeSmbShareByShareName(shareName);
-    if(reply.isValid()){
+    if(reply.isValid() && reply.value()){
         qDebug() << "closeSmbShareByShareName:" << reply.value();
     }else{
         qDebug() <<"closeSmbShareByShareName:" << reply.error();
+        QMap<QString,ShareInfo> shareInfoCache = m_shareInfos;
+        if (shareInfoCache.contains(shareName)) {
+            const QString& filePath = shareInfoCache.value(shareName).path();
+            emit userShareDeleted(filePath);
+        }
         return;
     }
 
