@@ -116,6 +116,7 @@ public:
     double dodgeDuration() const;
 
     void openUrl(const DUrl &url);
+    void openUrls(const QList<DUrl> &urlList);
 
     QMargins cellMargins() const;
     QSize cellSize() const;
