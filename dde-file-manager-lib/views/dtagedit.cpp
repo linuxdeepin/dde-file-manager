@@ -129,6 +129,9 @@ void DTagEdit::initializeLayout()
 void DTagEdit::initializeConnect()
 {
     QObject::connect(this, &DTagEdit::windowDeactivate, this, &DTagEdit::onFocusOut);
+    QObject::connect(m_crumbEdit, &DCrumbEdit::crumbListChanged, m_crumbEdit, [=](){
+        processTags();
+    });
 }
 
 void DTagEdit::processTags()
