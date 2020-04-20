@@ -173,8 +173,13 @@ public:
         }
 
         if (filter->f_comboValid[SIZE_RANGE]) {
-            quint64 fileSize = dataByRole(DFileSystemModel::FileSizeInKiloByteRole).toULongLong() / (1 << 10);
-            if (fileSize < filter->f_sizeRange.first || fileSize > filter->f_sizeRange.second) return true;
+            // note: FileSizeInKiloByteRole is the size of Byte, not KB!
+            quint64 fileSize = dataByRole(DFileSystemModel::FileSizeInKiloByteRole).toULongLong();
+            quint32 blockSize = 1 << 10;
+            quint64 lower = filter->f_sizeRange.first * blockSize;
+            quint64 upper = filter->f_sizeRange.second * blockSize;
+            // filter file size in Bytes, not Kilobytes
+            if (fileSize < lower || fileSize > upper) return true;
         }
 
         if (filter->f_comboValid[DATE_RANGE]) {
