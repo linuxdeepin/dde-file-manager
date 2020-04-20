@@ -224,8 +224,13 @@ QPixmap DFMStyledItemDelegate::getIconPixmap(const QIcon &icon, const QSize &siz
     bool useHighDpiPixmaps = qApp->testAttribute(Qt::AA_UseHighDpiPixmaps);
     qApp->setAttribute(Qt::AA_UseHighDpiPixmaps, false);
 
-
     QSize icon_size = icon.actualSize(size, mode, state);
+    //取出icon的真实大小
+    QList<QSize> iconSizeList = icon.availableSizes();
+    QSize iconRealSize = iconSizeList.first();
+    if (iconRealSize.width() == 0 || iconRealSize.height() == 0) {
+        return icon.pixmap(iconRealSize);
+    }
 
     //确保特殊比例icon的高或宽不为0
     bool isSpecialSize = false;
@@ -249,6 +254,16 @@ QPixmap DFMStyledItemDelegate::getIconPixmap(const QIcon &icon, const QSize &siz
 
     // restore the value
     qApp->setAttribute(Qt::AA_UseHighDpiPixmaps, useHighDpiPixmaps);
+
+//    if (icon_size.width() == 0) {
+//        icon_size.setWidth(1);
+//    }
+//    if (icon_size.height() == 0) {
+//        icon_size.setHeight(1);
+//    }
+
+//    icon_size = icon_size * pixelRatio;
+//    px = px.scaled(icon_size.width(), icon_size.height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 
     //约束特殊比例icon的尺寸
     if (isSpecialSize) {
