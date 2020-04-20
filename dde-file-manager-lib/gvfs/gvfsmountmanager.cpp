@@ -1334,7 +1334,7 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
     gboolean succeeded;
     GError *error = NULL;
     GMountOperation *op = static_cast<GMountOperation*>(user_data);
-    MountStatus status = MOUNT_SUCCESS;
+    MountStatus status = MOUNT_FAILED;
 
     succeeded = g_file_mount_enclosing_volume_finish (G_FILE (object), res, &error);
 
