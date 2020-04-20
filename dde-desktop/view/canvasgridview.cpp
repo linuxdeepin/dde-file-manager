@@ -351,6 +351,26 @@ void CanvasGridView::setGeometry(const QRect &rect)
     }
 }
 
+void CanvasGridView::delayArrage(int ms)
+{
+    static QTimer *arrangeTimer = nullptr;
+    if (arrangeTimer != nullptr){
+        arrangeTimer->stop();
+        delete arrangeTimer;
+        qDebug() << "reset timer" << m_screenNum;
+    }
+    arrangeTimer = new QTimer;
+    arrangeTimer->start(ms);
+    connect(arrangeTimer,&QTimer::timeout,[=](){
+        arrangeTimer->stop();
+        d->resortCount++;
+        qDebug() << "beging sort " << arrangeTimer << m_screenNum
+                 << "resortCount" << d->resortCount;
+        model()->setEnabledSort(true);
+        model()->sort();
+    });
+}
+
 WId CanvasGridView::winId() const
 {
     if (isTopLevel()) {
@@ -973,9 +993,9 @@ void CanvasGridView::dropEvent(QDropEvent *event)
         targetInfo = model()->fileInfo(rootIndex());
     }
 
-    if (event->source() == this && !DFMGlobal::keyCtrlIsPressed()) {
+    CanvasGridView *sourceView = dynamic_cast<CanvasGridView*>(event->source());
+    if (sourceView && !DFMGlobal::keyCtrlIsPressed()) {
         event->setDropAction(Qt::MoveAction);
-
     } else {
         d->fileViewHelper->preproccessDropEvent(event);
     }
@@ -998,46 +1018,16 @@ void CanvasGridView::dropEvent(QDropEvent *event)
     } else {
         if (event->dropAction() == Qt::MoveAction) {
             QModelIndex dropIndex = indexAt(gridRectAt(event->pos()).center());
-
-//            if (event->source() == this && (!dropIndex.isValid() || dropOnSelf)) {
-//                if (autoMerge()) {
-//                    return;
-//                }
-//                auto point = event->pos();
-//                auto row = (point.x() - d->viewMargins.left()) / d->cellWidth;
-//                auto col = (point.y() - d->viewMargins.top()) / d->cellHeight;
-//                auto current = model()->fileInfo(d->currentCursorIndex)->fileUrl().toString();
-//                GridManager::instance()->move(m_screenNum, selectLocalFiles, current, row, col);
-//                setState(NoState);
-//                itemDelegate()->hideNotEditingIndexWidget();
-//                DUtil::TimerSingleShot(20, [this]() {
-//                    repaint();
-//                    update();
-//                });
-//                return;
-//            }
-            if (!dropIndex.isValid() || dropOnSelf) {
+#if 0 //old
+            if (event->source() == this && (!dropIndex.isValid() || dropOnSelf)) {
                 if (autoMerge()) {
                     return;
                 }
                 auto point = event->pos();
                 auto row = (point.x() - d->viewMargins.left()) / d->cellWidth;
                 auto col = (point.y() - d->viewMargins.top()) / d->cellHeight;
-
-                QString current;
-                if(event->source() != this){
-                    QList<QUrl> urls = event->mimeData()->urls();
-                    for(auto url : urls){
-                        selectLocalFiles << url.toString();
-                    }
-                    current = event->mimeData()->text();
-                    //需要再获取一下drop屏幕id
-                    GridManager::instance()->move(m_screenNum, selectLocalFiles, current, row, col);
-                }
-                else {
-                    current = model()->fileInfo(d->currentCursorIndex)->fileUrl().toString();
-                    GridManager::instance()->move(m_screenNum, selectLocalFiles, current, row, col);
-                }
+                auto current = model()->fileInfo(d->currentCursorIndex)->fileUrl().toString();
+                GridManager::instance()->move(m_screenNum, selectLocalFiles, current, row, col);
                 setState(NoState);
                 itemDelegate()->hideNotEditingIndexWidget();
                 DUtil::TimerSingleShot(20, [this]() {
@@ -1046,6 +1036,30 @@ void CanvasGridView::dropEvent(QDropEvent *event)
                 });
                 return;
             }
+#else
+            if (sourceView && (!dropIndex.isValid() || dropOnSelf)) {
+                if (autoMerge() || GridManager::instance()->autoArrange()) {
+                    return;
+                }
+
+                auto point = event->pos();
+                auto row = (point.x() - d->viewMargins.left()) / d->cellWidth;
+                auto col = (point.y() - d->viewMargins.top()) / d->cellHeight;
+
+                QList<QUrl> urls = event->mimeData()->urls();
+                for (auto url : urls){
+                    selectLocalFiles << url.toString();
+                }
+                //todo 夸屏的焦点获取，现在没法获取
+                QString current = selectLocalFiles.empty() ? "" : selectLocalFiles.first();//event->mimeData()->text();
+                //需要再获取一下drop屏幕id
+                GridManager::instance()->move(m_screenNum, selectLocalFiles, current, row, col);
+
+                setState(NoState);
+                itemDelegate()->hideNotEditingIndexWidget();
+                return;
+            }
+#endif
         }
 
         if (!targetIndex.isValid()) {
@@ -2262,11 +2276,11 @@ void CanvasGridView::initConnection()
     });
 
     connect(this, &CanvasGridView::itemCreated, [ = ](const DUrl & url) {
+        qDebug() << "CanvasGridView::itemCreated" << url << m_screenNum;
         d->lastMenuNewFilepath = url.toString();
+        //todo 自定义排列需拿到鼠标在哪，并drop到鼠标位子，调研右键新建
         bool ret = GridManager::instance()->add(m_screenNum, d->lastMenuNewFilepath);
-        //todo 重新获取排列后的文件
-//        if (ret && GridManager::instance()->autoArrange())
-//            GridManager::instance()->reArrange(m_screenNum);
+
         /***************************************************************/
         //创建或者粘贴时保持之前的状态
         if(autoMerge()){
@@ -2283,6 +2297,11 @@ void CanvasGridView::initConnection()
                 model()->refresh();
             }
         }
+
+        //重新排列
+        if (ret && GridManager::instance()->autoArrange()){
+            this->delayArrage();
+        }
         /***************************************************************/
     });
 
@@ -2298,7 +2317,14 @@ void CanvasGridView::initConnection()
             setCurrentIndex(QModelIndex());
         }
 
-        if (GridManager::instance()->shouldArrange()) {
+        //重新排列
+        if (GridManager::instance()->autoArrange()){
+            this->delayArrage();
+            return;
+        }
+
+        //自动整理
+        if (GridManager::instance()->autoMerge()) {
             GridManager::instance()->reArrange(m_screenNum);
         }
     });
@@ -2321,11 +2347,15 @@ void CanvasGridView::initConnection()
                 auto localFile = model()->getUrlByIndex(index).toString();
                 list << localFile;
             }
+
+            //自动排列
             if (GridManager::instance()->autoArrange()){
                 GridManager::instance()->initArrage(list);
                 return ;
             }
 
+            //自动整理 todo
+            //自定义
             for (auto lf : list) {
                 GridManager::instance()->add(m_screenNum, lf);
             }
@@ -2755,14 +2785,14 @@ void CanvasGridView::handleContextMenuAction(int action)
     case IconSize2:
     case IconSize3:
     case IconSize4:
-        setIconByLevel(action - IconSize0);
+        setIconByLevel(action - IconSize0); //todo 多屏同步
         break;
 
     case MenuAction::Name:
     case MenuAction::Size:
     case MenuAction::Type:
     case MenuAction::LastModifiedDate:
-        changeSort = true;
+        changeSort = true; //todo 多屏同步
         break;
 
     default:

@@ -126,6 +126,7 @@ public:
     void toggleAutoMerge(bool enabled = true);
     void toggleEntryExpandedState(const DUrl &url);
     void setGeometry(const QRect &rect);
+    void delayArrage(int ms = 10);
 signals:
     void sortRoleChanged(int role, Qt::SortOrder order);
     void autoAlignToggled();
