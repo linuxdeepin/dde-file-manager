@@ -62,6 +62,10 @@ public:
       MOUNT_OP_ABORTED
     };
 
+    //fix: 探测光盘推进,弹出和挂载状态机标识
+    static bool g_burnVolumeFlag;
+    static bool g_burnMountFlag;
+
     static GvfsMountManager* instance();
     static MountSecretDiskAskPasswordDialog* mountSecretDiskAskPasswordDialog;
 
