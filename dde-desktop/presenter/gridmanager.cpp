@@ -1196,7 +1196,6 @@ public:
             for (int i = 0; i < cellStatus.size(); ++i) {
                 if (!cellStatus[i]) {
                     //cellStatus[i] = true;
-                    setCellStatus(emptyScreenNum, i, true);
                     posPair.first = emptyScreenNum;
                     posPair.second = gridPosAt(emptyScreenNum, i);
                     return posPair;
