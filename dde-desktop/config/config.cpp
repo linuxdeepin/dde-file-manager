@@ -95,3 +95,11 @@ void Config::removeConfigList(const QString &group, const QStringList &keys)
     m_settings->endGroup();
     needSync = true;
 }
+
+QVariant Config::getConfig(const QString &group, const QString &key, const QVariant &defaultValue)
+{
+    m_settings->beginGroup(group);
+    QVariant result = m_settings->value(key, defaultValue);
+    m_settings->endGroup();
+    return result;
+}
