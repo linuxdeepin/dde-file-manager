@@ -1128,16 +1128,17 @@ public:
     QPair<int, QPoint> emptyPos() const
     {
         //抽出空位屏编号
-        int emptyScreenNum = -1;
-        for(auto &key : m_screenFullStatus.keys()){
-            if(!m_screenFullStatus.value(key)){
-                emptyScreenNum = key;
-                break;
-            }
-        }
+//        int emptyScreenNum = -1;
+//        for(auto &key : m_screenFullStatus.keys()){
+//            if(!m_screenFullStatus.value(key)){
+//                emptyScreenNum = key;
+//                break;
+//            }
+//        }
         //返回空位屏编号
         QPair<int, QPoint> posPair;
-        if(-1 != emptyScreenNum){
+        //if(-1 != emptyScreenNum){
+        for (int emptyScreenNum : screenCode()){  //todo 优化效率
             auto cellStatus = m_cellStatus.value(emptyScreenNum);
             for (int i = 0; i < cellStatus.size(); ++i) {
                 if (!cellStatus[i]) {
@@ -1161,17 +1162,18 @@ public:
 
         //我们存就是按照编号来的，所以直接按照编号遍历即可
         //抽出空位屏编号
-        int emptyScreenNum = -1;
-        for(auto &key : m_screenFullStatus.keys()){
-            if(!m_screenFullStatus.value(key)){
-                emptyScreenNum = key;
-                break;
-            }
-        }
+//        int emptyScreenNum = -1;
+//        for(auto &key : m_screenFullStatus.keys()){
+//            if(!m_screenFullStatus.value(key)){
+//                emptyScreenNum = key;
+//                break;
+//            }
+//        }
 
         //返回空位屏以及编号
         QPair<int, QPoint> posPair;
-        if(-1 != emptyScreenNum){
+        //if(-1 != emptyScreenNum){
+        for (int emptyScreenNum : screenCode()){ //todo 优化效率
             auto cellStatus = m_cellStatus.value(emptyScreenNum);
             for (int i = 0; i < cellStatus.size(); ++i) {
                 if (!cellStatus[i]) {
@@ -1256,7 +1258,7 @@ public:
     void syncProfile(int screenNum)
     {
         QPair<QStringList, QVariantList> kvList = generateProfileConfigVariable(screenNum);
-
+#if 0
         if (m_gridItems.value(screenNum).size() != m_itemGrids.value(screenNum).size()) {
             qCritical() << "data sync failed";
             qCritical() << "-----------------------------";
@@ -1270,6 +1272,7 @@ public:
             qCritical() << m_gridItems << m_itemGrids << kvList.first;
             qCritical() << "-----------------------------";
         }
+#endif
         //positionProfile需要调整一下，添加上屏幕编号 :Position_%1_%2x%3
         auto screenPositionProfile = positionProfiles.value(screenNum);
         emit Presenter::instance()->removeConfig(screenPositionProfile, "");
@@ -1295,7 +1298,7 @@ public:
         if(!m_cellStatus.contains(screenNum))
             return false;
         auto cellStatusItor = m_cellStatus.find(screenNum);
-        QVector<bool> cellStatus = cellStatusItor.value();
+        QVector<bool> &cellStatus = cellStatusItor.value();
         if(usageIndex < cellStatus.size()){
             cellStatus[usageIndex] = false;
         }
@@ -1670,9 +1673,17 @@ bool GridManager::add(int screenNum, const QString &id)
         }
     }
 
-    if (d->m_itemGrids.value(screenNum).contains(id)) {
-//        qDebug() << "item exist item" << d->itemGrids.value(id) << id;
-        return false;
+    //old
+//    if (d->m_itemGrids.value(screenNum).contains(id)) {
+////        qDebug() << "item exist item" << d->itemGrids.value(id) << id;
+//        return false;
+//    }
+
+    for (int screenNum : d->screenCode()) {
+        if (d->m_itemGrids.value(screenNum).contains(id)){
+            qDebug() << "item exist item" << screenNum << id;
+            return false;
+        }
     }
 
     QPair<int, QPoint> posPair{ d->takeEmptyPos() };
@@ -1692,20 +1703,30 @@ bool GridManager::add(int screenNum, QPoint pos, const QString &id)
 
 bool GridManager::move(int screenNum, const QStringList &selecteds, const QString &current, int x, int y)
 {
-    auto currentPos = d->m_itemGrids.value(screenNum).value(current);
+    QPoint currentPos;// = d->m_itemGrids.value(screenNum).value(current);
+    int oldScreen = screenNum;
+    //临时方案，找源 todo 优化
+
+    for (int screen : d->m_itemGrids.keys()){
+        if (d->m_itemGrids.value(screen).contains(current)){
+            currentPos = d->m_itemGrids.value(screen).value(current);
+            oldScreen = screen;
+            break;
+        }
+    }
     auto destPos = QPoint(x, y);
     auto offset = destPos - currentPos;
 
     QList<QPoint> originPosList;
     QList<QPoint> destPosList;
     // check dest is empty;
-    auto destPosMap = d->m_gridItems.value(screenNum);
-    auto destUsedGrids = d->m_cellStatus.value(screenNum);
+    auto destPosMap = d->m_gridItems[screenNum];
+    auto destUsedGrids = d->m_cellStatus[screenNum];
+
     for (auto &id : selecteds) {
-        auto oldPos = d->m_itemGrids.value(screenNum).value(id);
+        QPoint oldPos = d->m_itemGrids.value(oldScreen).value(id);
+        d->remove(oldScreen, oldPos, id);
         originPosList << oldPos;
-        destPosMap.remove(oldPos);
-        destUsedGrids[d->indexOfGridPos(screenNum, oldPos)] = false;
         auto destPos = oldPos + offset;
         destPosList << destPos;
     }
@@ -1768,7 +1789,7 @@ bool GridManager::move(int screenNum, const QStringList &selecteds, const QStrin
     if (shouldArrange()) {
         reArrange(screenNum);
     }
-
+    emit sigUpdate();
     return true;
 }
 
@@ -1857,8 +1878,13 @@ bool GridManager::move(int fromScreen, int toScreen, const QStringList &selected
 
 bool GridManager::remove(int screenNum, const QString &id)
 {
-    auto pos = d->m_itemGrids.value(screenNum).value(id);
-    return remove(screenNum, pos, id);
+    if (d->m_itemGrids.value(screenNum).contains(id)){
+        auto pos = d->m_itemGrids.value(screenNum).value(id);
+        bool ret = remove(screenNum, pos, id);
+        qDebug() << screenNum << id  << pos << ret;
+        return ret;
+    }
+    return false;
 }
 
 bool GridManager::remove(int screenNum, int x, int y, const QString &id)
@@ -1870,7 +1896,7 @@ bool GridManager::remove(int screenNum, int x, int y, const QString &id)
 bool GridManager::remove(int screenNum, QPoint pos, const QString &id)
 {
     auto ret = d->remove(screenNum, pos, id);
-    if (ret && !autoMerge()) {
+    if (ret && !(autoMerge() || autoArrange())) {
         d->syncProfile(screenNum);
     }
     return ret;
@@ -2034,6 +2060,8 @@ void GridManager::reArrange(int screenNum)
 {
     if (autoArrange()){
         d->reAutoArrage();
+        emit sigUpdate();
+        return;
     }
     else
         d->arrange();

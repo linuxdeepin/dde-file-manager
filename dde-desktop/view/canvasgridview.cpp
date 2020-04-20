@@ -1032,7 +1032,7 @@ void CanvasGridView::dropEvent(QDropEvent *event)
                     }
                     current = event->mimeData()->text();
                     //需要再获取一下drop屏幕id
-                    //GridManager::instance()->move(m_screenNum, selectLocalFiles, current, row, col);
+                    GridManager::instance()->move(m_screenNum, selectLocalFiles, current, row, col);
                 }
                 else {
                     current = model()->fileInfo(d->currentCursorIndex)->fileUrl().toString();
@@ -2263,7 +2263,10 @@ void CanvasGridView::initConnection()
 
     connect(this, &CanvasGridView::itemCreated, [ = ](const DUrl & url) {
         d->lastMenuNewFilepath = url.toString();
-        GridManager::instance()->add(m_screenNum, d->lastMenuNewFilepath);
+        bool ret = GridManager::instance()->add(m_screenNum, d->lastMenuNewFilepath);
+        //todo 重新获取排列后的文件
+//        if (ret && GridManager::instance()->autoArrange())
+//            GridManager::instance()->reArrange(m_screenNum);
         /***************************************************************/
         //创建或者粘贴时保持之前的状态
         if(autoMerge()){
@@ -2285,7 +2288,8 @@ void CanvasGridView::initConnection()
 
     connect(this, &CanvasGridView::itemDeleted, [ = ](const DUrl & url) {
 
-        GridManager::instance()->remove(m_screenNum, url.toString());
+        if (!GridManager::instance()->remove(m_screenNum, url.toString()))
+            return;
 
         auto index = model()->index(url);
         if (d->currentCursorIndex == index) {
@@ -2317,6 +2321,11 @@ void CanvasGridView::initConnection()
                 auto localFile = model()->getUrlByIndex(index).toString();
                 list << localFile;
             }
+            if (GridManager::instance()->autoArrange()){
+                GridManager::instance()->initArrage(list);
+                return ;
+            }
+
             for (auto lf : list) {
                 GridManager::instance()->add(m_screenNum, lf);
             }
