@@ -97,6 +97,7 @@ public:
     void fakeDropEvent()noexcept;
 
     // list view function
+    QString canvansScreenName();
     QRect rectForIndex(const QModelIndex &index) const;
     DUrl currentUrl() const;
     bool setCurrentUrl(const DUrl &url);
@@ -125,6 +126,7 @@ public:
     void setAutoMerge(bool enabled = false);
     void toggleAutoMerge(bool enabled = true);
     void toggleEntryExpandedState(const DUrl &url);
+    void updateEntryExpandedState(const DUrl &url);
     void setGeometry(const QRect &rect);
     void delayArrage(int ms = 10);
     DUrl currentCursorFile() const;

@@ -953,6 +953,42 @@ public:
         return sortItems;
     }
 
+    void autoMergeItems(QStringList items)
+    {
+        auto screenOrder = screenCode();
+        QTime t;
+        t.start();
+        qDebug() << "screen count" << screenOrder.size();
+        for (int screenNum : screenOrder) {
+            qDebug() << "arrange Num" << screenNum << items.size();
+            QMap<QPoint, QString> gridItems;
+            QMap<QString, QPoint> itemGrids;
+            if (!items.empty())
+            {
+                auto cellStatus = m_cellStatus.value(screenNum);
+                int coordHeight = screensCoordInfo.value(screenNum).second;
+                int i = 0;
+                for (; i < cellStatus.size() && !items.empty(); ++i) {
+                   QString item = items.takeFirst();
+                   QPoint pos(i / coordHeight, i % coordHeight);
+                   cellStatus[i] = true;
+                   gridItems.insert(pos, item);
+                   itemGrids.insert(item, pos);
+                   if(cellStatus.size() - 1 == i && m_screenFullStatus.contains(screenNum)){
+                        m_screenFullStatus.find(screenNum).value() = true;
+                   }
+                }
+                m_cellStatus.insert(screenNum, cellStatus);
+                qDebug() << "screen" << screenNum << "put item:" << i << "cell" << cellStatus.size();
+            }
+
+            m_gridItems.insert(screenNum,gridItems);
+            m_itemGrids.insert(screenNum,itemGrids);
+        }
+        qDebug() << "time " << t.elapsed() << "(ms) overlapItems " << items.size();
+        m_overlapItems = items;
+    }
+
     void arrange(QStringList sortedItems)
     {
         auto screenOrder = screenCode();
@@ -1679,6 +1715,7 @@ public:
     int                     createProfileTime{0};
     std::atomic<bool>       m_whetherShowHiddenFiles{ false };
     bool                    m_bSingleMode = true;
+    bool                    m_doneInit{false};
 };
 
 GridManager::GridManager(): d(new GridManagerPrivate)
@@ -1713,6 +1750,8 @@ DUrl GridManager::getInitRootUrl()
 
 void GridManager::initGridItemsInfos()
 {
+    if(!d->m_doneInit)
+        d->m_doneInit = true;
     DUrl fileUrl = getInitRootUrl();
     d->clear();
     QScopedPointer<DFileSystemModel> tempModel(new DFileSystemModel(nullptr));
@@ -1720,7 +1759,7 @@ void GridManager::initGridItemsInfos()
                                                                                      QStringList(), tempModel->filters());
 
     if(GridManager::instance()->autoMerge()){
-        initWithoutProfile(infoList);
+        GridManager::instance()->initAutoMerge(infoList);
     }
     else if (GridManager::instance()->autoArrange())
     {
@@ -1784,6 +1823,18 @@ void GridManager::initWithoutProfile(const QList<DAbstractFileInfoPointer> &item
     d->createProfile(); // nothing with profile.
     d->loadWithoutProfile(items);
 }
+
+void GridManager::initAutoMerge(const QList<DAbstractFileInfoPointer> &items)
+{
+    d->clear();
+    QStringList list;
+    for (const DAbstractFileInfoPointer &df : items) {
+        list << df->fileUrl().toString();
+    }
+    d->autoMergeItems(list);
+    emit sigUpdate();
+}
+
 
 void GridManager::initArrage(const QStringList &items)
 {
@@ -2180,6 +2231,11 @@ bool GridManager::autoMerge() const
     return d->autoMerge;
 }
 
+bool GridManager::doneInit() const
+{
+    return d->m_doneInit;
+}
+
 void GridManager::toggleArrange(int screenNum)
 {
     d->autoArrange = !d->autoArrange;
@@ -2224,11 +2280,13 @@ void GridManager::reArrange(int screenNum)
 //    emit Presenter::instance()->setConfigList(oneScreenPositionProfile, kvList.first, kvList.second);
 }
 
-int GridManager::gridCount(int screenNum) const
+int GridManager::gridCount() const
 {
-    return d->cellCount(screenNum);
-//    auto coordInfo = d->screensCoordInfo.value(screenNum);
-//    return coordInfo.first * coordInfo.second;
+    int totalCount = 0;
+    for(auto coordInfo : d->screensCoordInfo.values()){
+        totalCount += coordInfo.first * coordInfo.second;
+    }
+    return  totalCount;
 }
 
 QPair<int, QPoint> GridManager::forwardFindEmpty(int screenNum, QPoint start) const
@@ -2325,6 +2383,11 @@ void GridManager::setWhetherShowHiddenFiles(bool value) noexcept
 bool GridManager::getWhetherShowHiddenFiles() noexcept
 {
     return d->getWhetherShowHiddenFiles();
+}
+
+bool GridManager::getCanvasFullStatus(int screenId)
+{
+    return d->m_screenFullStatus.value(screenId);
 }
 
 void GridManager::dump()
