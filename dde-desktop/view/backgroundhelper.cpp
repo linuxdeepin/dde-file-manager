@@ -305,7 +305,8 @@ void BackgroundHelper::onWMChanged()
 void BackgroundHelper::updateBackground(QWidget *l)
 {
     if (backgroundPixmap.isNull())
-        return;
+        return;    
+
     if (DesktopInfo().waylandDectected()) {
 //        QSize trueSize = l->size();
         //修复背景图片被缩放问题
@@ -326,6 +327,28 @@ void BackgroundHelper::updateBackground(QWidget *l)
         pix.setDevicePixelRatio(l->devicePixelRatioF());
         dynamic_cast<BackgroundLabel *>(l)->setPixmap(pix);
         qInfo() << "wayland" << l->windowHandle()->screen() << currentWallpaper << pix;
+
+        QWidget *t_background;
+        QList<QWidget *> t_allBackgrounds;
+        t_background = waylandBackground(Display::instance()->primaryName());
+        t_allBackgrounds = waylandAllBackgrounds();
+        // 隐藏完全重叠的窗口
+        for (QWidget *t_l : t_allBackgrounds) {
+            if(!t_l || !t_background || t_l->property("isPreview").toBool())
+                continue;
+            if (t_l != t_background) {
+                Xcb::XcbMisc::instance().set_window_transparent_input(t_l->winId(), true);
+                t_l->QWidget::setVisible(t_l->geometry().topLeft() != t_background->geometry().topLeft());
+                qInfo() << "updateBackground hide" << t_l <<t_l->isVisible()<< t_l->geometry() << " show" << t_background
+                        << t_background->isVisible() << t_background->geometry();
+            }else  {
+                Xcb::XcbMisc::instance().set_window_transparent_input(l->winId(), false);
+                t_l->show();
+                qInfo() << "updateBackground show" << t_l <<t_l->isVisible() << t_l->geometry() << "    show" << t_background
+                        << t_background->isVisible() << t_background->geometry();
+            }
+        }
+
         return ;
     }
     QScreen *s = l->windowHandle()->screen();
@@ -362,7 +385,7 @@ void BackgroundHelper::updateBackground(QWidget *l)
 
     if (checkTimer) {
         checkTimer->start();
-    }
+    }    
 }
 
 void BackgroundHelper::updateBackground()
@@ -415,7 +438,7 @@ void BackgroundHelper::monitorRectChanged()
         l->windowHandle()->setGeometry(screenRect);
         l->windowHandle()->handle()->setGeometry(otherRect);
         updateBackground(l);
-        //todo mode changed
+        //todo mode changed        
     }
 }
 
