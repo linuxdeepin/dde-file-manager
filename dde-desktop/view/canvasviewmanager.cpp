@@ -180,25 +180,26 @@ void CanvasViewManager::onArrageEditDeal(const QString &file)
     QPair<int, QPoint> orgPos;
     //找文件在哪个屏上
     if (GridManager::instance()->find(file,orgPos)){
-        CanvasViewPointer focusView;
         for (CanvasViewPointer view : m_canvasMap.values()) {
             //绘制屏上，打开编辑框
             if (view->screenNum() == orgPos.first){
-                focusView = view;
+
+                //已有editor，跳过
+                if (view->itemDelegate()->editingIndexWidget()){
+                    continue;
+                }
+
+                //激活编辑框
+                DUrl fileUrl(file);
+                auto index = view->model()->index(fileUrl);
+                view->select(QList<DUrl>() << fileUrl);
+                view->edit(index,QAbstractItemView::EditKeyPressed,0);
+                view->itemDelegate()->editingIndexWidget()->activateWindow();
             } else {
                 //不在，关闭其编辑框
                 view->clearSelection();
-                view->update();
-                auto index = view->model()->index(DUrl(file));
-                //view->edit(QModelIndex(0,0),QAbstractItemView::EditKeyPressed,0);
+                view->itemDelegate()->commitDataAndCloseActiveEditor();
             }
-        }
-
-        if (focusView){
-            DUrl fileUrl(file);
-            auto index = focusView->model()->index(fileUrl);
-            focusView->setFocus();
-            focusView->edit(index,QAbstractItemView::EditKeyPressed,0);
         }
     }
 }

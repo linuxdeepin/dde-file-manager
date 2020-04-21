@@ -357,10 +357,18 @@ void CanvasGridView::delayArrage(int ms)
     if (arrangeTimer != nullptr){
         arrangeTimer->stop();
         delete arrangeTimer;
+        arrangeTimer = nullptr;
         qDebug() << "reset timer" << m_screenNum;
     }
+    if (ms < 1){
+        d->resortCount++;
+        qDebug() << "beging sort " << arrangeTimer << m_screenNum
+                 << "resortCount" << d->resortCount;
+        model()->setEnabledSort(true);
+        model()->sort();
+    }
+
     arrangeTimer = new QTimer;
-    arrangeTimer->start(ms);
     connect(arrangeTimer,&QTimer::timeout,[=](){
         arrangeTimer->stop();
         d->resortCount++;
@@ -369,6 +377,7 @@ void CanvasGridView::delayArrage(int ms)
         model()->setEnabledSort(true);
         model()->sort();
     });
+    arrangeTimer->start(ms);
 }
 
 DUrl CanvasGridView::currentCursorFile() const
@@ -2189,7 +2198,7 @@ void CanvasGridView::initConnection()
             DUrlList removed; //记录移除的
             for (auto relocateItem : selecteds) {
                 auto localFile = relocateItem.toString();
-                //处理夸屏，如果是夸屏的remove会失败，后面就无需再add
+                //处理跨屏，如果是跨屏的remove会失败，后面就无需再add
                 if (GridManager::instance()->remove(m_screenNum, localFile))
                     removed << relocateItem;
             }
@@ -2201,7 +2210,7 @@ void CanvasGridView::initConnection()
                 GridManager::instance()->add(m_screenNum, pos, relocateItem);
             }
 
-            //只有被remove的才add。用于处理夸屏拖动
+            //只有被remove的才add。用于处理跨屏拖动
             for (auto relocateItem : removed) {
                 auto localFile = relocateItem.toString();
                 GridManager::instance()->add(m_screenNum, d->dodgeTargetGrid->pos(m_screenNum, localFile), localFile);
@@ -2314,7 +2323,12 @@ void CanvasGridView::initConnection()
     this, [ = ](const DUrl & fileUrl) {
         if (GridManager::instance()->shouldArrange()){
             //交由viewmanager设置自动排序后的item的编辑框
-            emit GridManager::instance()->sigArrageEditDeal(fileUrl.toString());
+            QTimer::singleShot(100,[fileUrl](){
+                //因为DFileSystemModel::selectAndRenameFile函数中打开编辑框
+                //emit fileSignalManager->requestSelectRenameFile(event);延迟了100ms，所以这里延迟处理
+                //这个信号必须在上个信号之后处理
+                emit GridManager::instance()->sigArrageEditDeal(fileUrl.toString());
+            });
             return ;
         }
         QString localFile = fileUrl.toString();
@@ -2372,7 +2386,7 @@ void CanvasGridView::initConnection()
 
         //重新排列
         if (ret && GridManager::instance()->autoArrange()){
-            //this->delayArrage();
+            this->delayArrage();
         }
         /***************************************************************/
     });
