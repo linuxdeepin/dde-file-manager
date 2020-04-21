@@ -371,6 +371,16 @@ void CanvasGridView::delayArrage(int ms)
     });
 }
 
+DUrl CanvasGridView::currentCursorFile() const
+{
+    DUrl ret;
+    DAbstractFileInfoPointer fp = model()->fileInfo(d->currentCursorIndex);
+    if (fp){
+        ret = fp->fileUrl();
+    }
+    return ret;
+}
+
 WId CanvasGridView::winId() const
 {
     if (isTopLevel()) {
@@ -870,7 +880,18 @@ void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
     }
 
     if (event->source()) {
-        if (!autoMerge()) {
+        //drag进入后，源是view的话设置this view的选择为drag数据，用于处理多个view之间的drag
+        CanvasGridView *sourceView = dynamic_cast<CanvasGridView *>(event->source());
+        if(sourceView){
+            QList<DUrl> urls;
+            if (event->mimeData()){
+                for (const QUrl &qurl : event->mimeData()->urls())
+                    urls << qurl;
+            }
+            this->select(urls);
+        }
+
+        if (!GridManager::instance()->shouldArrange()) {
             d->startDodge = true;
         }
         itemDelegate()->hideNotEditingIndexWidget();
@@ -918,11 +939,15 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
 
     if (hoverIndex.isValid()) {
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(hoverIndex);
-
+        CanvasGridView *view = dynamic_cast<CanvasGridView*>(event->source());
         if (fileInfo) {
-            if (event->source() == this && !DFMGlobal::keyCtrlIsPressed()) {
+            //old
+            //if (event->source() == this && !DFMGlobal::keyCtrlIsPressed()) {
+            //new
+            if (view && !DFMGlobal::keyCtrlIsPressed()) {
                 event->setDropAction(Qt::MoveAction);
             }
+            //end
 
             bool canDrop = fileInfo->canDrop();
             canDrop = fileInfo->isDir() && !fileInfo->isWritable();
@@ -944,7 +969,7 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
         }
     }
 
-    if (!autoMerge()) {
+    if (!GridManager::instance()->shouldArrange()) {
         startDodgeAnimation();
     }
     update();
@@ -953,6 +978,8 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
 void CanvasGridView::dragLeaveEvent(QDragLeaveEvent *event)
 {
     CanvasGridView::m_flag.store(false, std::memory_order_release);
+    //drag离开后，设置this view的选择为空，用于处理多个view之间的drag
+    select({});
 
     d->dodgeDelayTimer.stop();
     d->startDodge = false;
@@ -971,7 +998,7 @@ void CanvasGridView::dropEvent(QDropEvent *event)
 
     QModelIndex targetIndex = indexAt(event->pos());
 
-    QStringList selectLocalFiles;
+    QSet<QString> selectLocalFiles;
     auto selects = selectionModel()->selectedIndexes();
     bool dropOnSelf = false;
     for (auto index : selects) {
@@ -1018,27 +1045,9 @@ void CanvasGridView::dropEvent(QDropEvent *event)
     } else {
         if (event->dropAction() == Qt::MoveAction) {
             QModelIndex dropIndex = indexAt(gridRectAt(event->pos()).center());
-#if 0 //old
-            if (event->source() == this && (!dropIndex.isValid() || dropOnSelf)) {
-                if (autoMerge()) {
-                    return;
-                }
-                auto point = event->pos();
-                auto row = (point.x() - d->viewMargins.left()) / d->cellWidth;
-                auto col = (point.y() - d->viewMargins.top()) / d->cellHeight;
-                auto current = model()->fileInfo(d->currentCursorIndex)->fileUrl().toString();
-                GridManager::instance()->move(m_screenNum, selectLocalFiles, current, row, col);
-                setState(NoState);
-                itemDelegate()->hideNotEditingIndexWidget();
-                DUtil::TimerSingleShot(20, [this]() {
-                    repaint();
-                    update();
-                });
-                return;
-            }
-#else
             if (sourceView && (!dropIndex.isValid() || dropOnSelf)) {
-                if (autoMerge() || GridManager::instance()->autoArrange()) {
+                //自动排列和自动整理不允许屏幕间拖动
+                if (GridManager::instance()->shouldArrange()) {
                     return;
                 }
 
@@ -1050,14 +1059,52 @@ void CanvasGridView::dropEvent(QDropEvent *event)
                 for (auto url : urls){
                     selectLocalFiles << url.toString();
                 }
-                //todo 夸屏的焦点获取，现在没法获取
-                QString current = selectLocalFiles.empty() ? "" : selectLocalFiles.first();//event->mimeData()->text();
-                //需要再获取一下drop屏幕id
-                GridManager::instance()->move(m_screenNum, selectLocalFiles, current, row, col);
+
+                //同屏移动
+                if (sourceView == this){
+                    //获取焦点
+                    QString current = currentCursorFile().toString();
+                    qDebug() << "move " << m_screenNum << "focus" << current << "count" << selectLocalFiles.size();
+                    GridManager::instance()->move(m_screenNum, selectLocalFiles.toList(), current, row, col);
+                }
+                else {  //夸屏移动
+                    //获取源屏幕的焦点
+                    QString current = sourceView->currentCursorFile().toString();
+                    qDebug() << "move form" << sourceView->screenNum() << "to" << m_screenNum
+                             << "focus" << current << selectLocalFiles.size();
+                    GridManager::instance()->move(sourceView->screenNum(),m_screenNum, selectLocalFiles.toList(), current, row, col);
+
+                    //清除源view的选中状态
+                    sourceView->select({});
+                }
 
                 setState(NoState);
                 itemDelegate()->hideNotEditingIndexWidget();
                 return;
+            }
+
+#if 0   //!错误的实现方法
+            if (sourceView == nullptr && (!dropIndex.isValid() || dropOnSelf) ){
+                //非桌面间拖入，只处理自定义
+                if (!GridManager::instance()->shouldArrange()) {
+                    auto point = event->pos();
+                    auto row = (point.x() - d->viewMargins.left()) / d->cellWidth;
+                    auto col = (point.y() - d->viewMargins.top()) / d->cellHeight;
+                    QPoint pos(row,col);
+                    QString item = GridManager::instance()->itemId(m_screenNum, pos);
+
+                    QList<QUrl> urls = event->mimeData()->urls();
+                    qDebug() << "drop" << urls << "pos" << pos
+                             << "item:" << item;
+                    if (item.isEmpty())
+                    {
+                        //todo 设置坐标
+                        qDebug() << "todo user mode add files";
+                    }else { //后面的需要 //!不是在这处理，后续调研 todo
+                        //目标文件item是否可打开urls
+                        //不能打开则交换位子
+                    }
+                }
             }
 #endif
         }
@@ -2138,10 +2185,13 @@ void CanvasGridView::initConnection()
 
         connect(animation, &QPropertyAnimation::finished,
         this, [ = ]() {
-            auto selecteds = selectedUrls();
+            DUrlList selecteds = selectedUrls();
+            DUrlList removed; //记录移除的
             for (auto relocateItem : selecteds) {
                 auto localFile = relocateItem.toString();
-                GridManager::instance()->remove(m_screenNum, localFile);
+                //处理夸屏，如果是夸屏的remove会失败，后面就无需再add
+                if (GridManager::instance()->remove(m_screenNum, localFile))
+                    removed << relocateItem;
             }
 
             // commit dodgeTargetGrid
@@ -2151,7 +2201,8 @@ void CanvasGridView::initConnection()
                 GridManager::instance()->add(m_screenNum, pos, relocateItem);
             }
 
-            for (auto relocateItem : selecteds) {
+            //只有被remove的才add。用于处理夸屏拖动
+            for (auto relocateItem : removed) {
                 auto localFile = relocateItem.toString();
                 GridManager::instance()->add(m_screenNum, d->dodgeTargetGrid->pos(m_screenNum, localFile), localFile);
             }
@@ -3097,6 +3148,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
 
     d->fileViewHelper->handleMenu(menu);
 
+    //todo 处理缩放
     if (DesktopInfo().waylandDectected()) {
 
         QPoint t_tmpPoint = QCursor::pos();
@@ -3187,7 +3239,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
 
         switch (action->data().toInt()) {
         case MenuAction::Open: {
-            // TODO: Workaround
+            // TODO: Workaround todo 修改为openfiles
             for (auto &url : list) {
                 openUrl(url);
             }

@@ -1837,19 +1837,9 @@ bool GridManager::add(int screenNum, QPoint pos, const QString &id)
 
     return ret;
 }
-
 bool GridManager::move(int screenNum, const QStringList &selecteds, const QString &current, int x, int y)
 {
-    QPoint currentPos;// = d->m_itemGrids.value(screenNum).value(current);
-    int oldScreen = screenNum;
-    //临时方案，找源 todo 优化
-    for (int screen : d->m_itemGrids.keys()){
-        if (d->m_itemGrids.value(screen).contains(current)){
-            currentPos = d->m_itemGrids.value(screen).value(current);
-            oldScreen = screen;
-            break;
-        }
-    }
+    auto currentPos = d->m_itemGrids.value(screenNum).value(current);
     auto destPos = QPoint(x, y);
     auto offset = destPos - currentPos;
 
@@ -1858,14 +1848,11 @@ bool GridManager::move(int screenNum, const QStringList &selecteds, const QStrin
     // check dest is empty;
     auto destPosMap = d->m_gridItems[screenNum];
     auto destUsedGrids = d->m_cellStatus[screenNum];
-
     for (auto &id : selecteds) {
-        QPoint oldPos = d->m_itemGrids.value(oldScreen).value(id);
-        d->remove(oldScreen, oldPos, id);
+        auto oldPos = d->m_itemGrids.value(screenNum).value(id);
         originPosList << oldPos;
         destPosMap.remove(oldPos);
-        //destUsedGrids[d->indexOfGridPos(screenNum, oldPos)] = false;
-        d->setCellStatus(screenNum, d->indexOfGridPos(screenNum, oldPos), false);
+        destUsedGrids[d->indexOfGridPos(screenNum, oldPos)] = false;
         auto destPos = oldPos + offset;
         destPosList << destPos;
     }
@@ -1925,30 +1912,39 @@ bool GridManager::move(int screenNum, const QStringList &selecteds, const QStrin
         add(screenNum, point, selecteds.value(i));
     }
 
-    if (shouldArrange()) {
-        reArrange(screenNum);
-    }
-    emit sigUpdate(1);
+    //多屏下的重新排列需要重新考虑一下设计
+//    if (shouldArrange()) {
+//        reArrange(screenNum);
+//    }
+
     return true;
 }
 
 bool GridManager::move(int fromScreen, int toScreen, const QStringList &selectedIds, const QString &itemId, int x, int y)
 {
-    auto currentPos = d->m_itemGrids.value(fromScreen).value(itemId);
-    auto destPos = QPoint(x, y);
-    auto offset = destPos - currentPos;
+    QPoint currentPos = d->m_itemGrids.value(fromScreen).value(itemId);
+    QPoint destPos = QPoint(x, y);
+    QPoint offset = destPos - currentPos;
 
     QList<QPoint> originPosList;
     QList<QPoint> destPosList;
     // check dest is empty;
-    auto destPosMap = d->m_gridItems.value(fromScreen);
-    auto destUsedGrids = d->m_cellStatus.value(fromScreen);
-    for (auto &id : selectedIds) {
-        auto oldPos = d->m_itemGrids.value(fromScreen).value(id);
+    QMap<QPoint, QString> &destPosMap = d->m_gridItems[toScreen];
+    QVector<bool> &destUsedGrids = d->m_cellStatus[toScreen];
+
+    //源
+    QMap<QPoint, QString> &orgPosMap = d->m_gridItems[fromScreen];
+    QMap<QString, QPoint> &orgItemMap = d->m_itemGrids[fromScreen];
+    QVector<bool> &orgUsedGrids = d->m_cellStatus[fromScreen];
+
+    //移除源
+    for (const QString &id : selectedIds) {
+        QPoint oldPos = orgItemMap.value(id);
         originPosList << oldPos;
-        destPosMap.remove(oldPos);
-        //destUsedGrids[d->indexOfGridPos(fromScreen, oldPos)] = false;
-        d->setCellStatus(fromScreen, d->indexOfGridPos(fromScreen, oldPos), false);
+        orgPosMap.remove(oldPos);
+        orgItemMap.remove(id);
+        orgUsedGrids[d->indexOfGridPos(fromScreen, oldPos)] = false;
+
         auto destPos = oldPos + offset;
         destPosList << destPos;
     }
@@ -2008,13 +2004,12 @@ bool GridManager::move(int fromScreen, int toScreen, const QStringList &selected
         add(toScreen, point, selectedIds.value(i));
     }
 
-    //多屏下的重新排列需要重新考虑一下设计
-//    if (shouldArrange()) {
-//        reArrange(screenNum);
-//    }
-
+    //保存源屏配置
+    d->syncProfile(fromScreen);
+    emit sigUpdate(1);
     return true;
 }
+
 
 bool GridManager::remove(int screenNum, const QString &id)
 {
