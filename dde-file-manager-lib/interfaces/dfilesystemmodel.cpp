@@ -1142,7 +1142,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         }
     }
 
-//    _q_processFileEvent_runing = false;
+    _q_processFileEvent_runing = false;
 }
 
 DFileSystemModel::DFileSystemModel(DFileViewHelper *parent)
