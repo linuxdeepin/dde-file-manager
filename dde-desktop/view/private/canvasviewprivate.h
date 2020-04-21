@@ -19,6 +19,7 @@
 #include <QDebug>
 #include <QTimer>
 #include <QLabel>
+#include <QEventLoop>
 
 #include <dfilesystemwatcher.h>
 
@@ -160,6 +161,7 @@ public:
     WaterMaskFrame *waterMaskFrame          = nullptr;
 
     DBusDock            *dbusDock           = nullptr;
+    QEventLoop          *menuLoop           = nullptr;
 
     // debug
     bool                _debug_log          = false;
