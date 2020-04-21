@@ -93,6 +93,7 @@ public:
     void initGridItemsInfos();
     void initProfile(const QList<DAbstractFileInfoPointer> &items);
     void initWithoutProfile(const QList<DAbstractFileInfoPointer> &items);
+    void initAutoMerge(const QList<DAbstractFileInfoPointer> &items);
     void initArrage(const QStringList &items);
 
     bool add(int screenNum, QPoint pos, const QString &itemId);
@@ -120,12 +121,13 @@ public:
     bool shouldArrange() const;
     bool autoArrange() const;
     bool autoMerge() const;
+    bool doneInit()const;
     void toggleArrange(int screenNum);
     void setAutoMerge(bool enable = true);
     void toggleAutoMerge();
     void reArrange(int screenNum);
 
-    int gridCount(int screenNum) const;
+    int gridCount() const;
     QPair<int, QPoint> forwardFindEmpty(int screenNum, QPoint start) const;
     QSize gridSize(int screenNum) const;
     void updateGridSize(int screenNum, int w, int h);
@@ -135,6 +137,8 @@ public:
     void setWhetherShowHiddenFiles(bool value)noexcept;
     bool getWhetherShowHiddenFiles()noexcept;
 
+    bool getCanvasFullStatus(int screenId);
+
     void setDisplayMode(bool single);
 
 public:
@@ -142,6 +146,7 @@ public:
 signals:
     void sigUpdate(int state = 0);
     void sigArrageEditDeal(const QString &);
+    void sigAutoMergeUpdateExpandDate(QString screenName, DUrl url);
 protected:
     bool remove(int screenNum, int x, int y, const QString &itemId);
     bool remove(int screenNum, QPoint pos, const QString &itemId);

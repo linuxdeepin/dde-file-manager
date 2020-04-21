@@ -117,6 +117,8 @@ QModelIndex CanvasGridView::indexAt(const QPoint &point) const
 {
     auto gridPos = gridAt(point);
     auto localFile =  GridManager::instance()->itemId(m_screenNum, gridPos.x(), gridPos.y());
+    if(localFile.isEmpty())
+        return QModelIndex();
     auto rowIndex = model()->index(DUrl(localFile));
     QPoint pos = QPoint(point.x() + horizontalOffset(), point.y() + verticalOffset());
     auto list = itemPaintGeomertys(rowIndex);
@@ -251,6 +253,8 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
                 }
                 if (!GridManager::instance()->isEmpty(m_screenNum, pos.x(), pos.y())) {
                     auto localFile = GridManager::instance()->itemId(m_screenNum, pos.x(), pos.y());
+                    if(localFile.isEmpty())
+                        return QModelIndex();
                     auto index = model()->index(DUrl(localFile));
 
                     QItemSelectionRange selectionRange(index);
@@ -274,6 +278,8 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
                 }
                 if (!GridManager::instance()->isEmpty(m_screenNum, pos.x(), pos.y())) {
                     auto localFile = GridManager::instance()->itemId(m_screenNum, pos.x(), pos.y());
+                    if(localFile.isEmpty())
+                        return QModelIndex();
                     auto index = model()->index(DUrl(localFile));
 
                     QItemSelectionRange selectionRange(index);
@@ -292,6 +298,8 @@ QModelIndex CanvasGridView::moveCursorGrid(CursorAction cursorAction, Qt::Keyboa
     }
 
     auto localFile =  GridManager::instance()->itemId(m_screenNum, pos.x(), pos.y());
+    if(localFile.isEmpty())
+        return QModelIndex();
     auto newIndex = model()->index(DUrl(localFile));
     if (newIndex.isValid()) {
         return newIndex;
@@ -462,7 +470,7 @@ void CanvasGridView::toggleEntryExpandedState(const DUrl &url)
                 possibleChildCount += info->filesCount();
             }
         }
-        if (possibleChildCount > GridManager::instance()->gridCount(m_screenNum)) {
+        if (possibleChildCount > GridManager::instance()->gridCount()) {
             onlyExpandShowClickedEntry = true;
             break;
         }
@@ -477,6 +485,13 @@ void CanvasGridView::toggleEntryExpandedState(const DUrl &url)
 
     // set root url (which will update the view)
     this->setRootUrl(targetUrl);
+    //更新其他canvas的model自动整理数据。 todo:考虑优化没有扩展到的不用刷新
+    emit GridManager::instance()->sigAutoMergeUpdateExpandDate(m_screenName, targetUrl);
+}
+
+void CanvasGridView::updateEntryExpandedState(const DUrl &url)
+{
+    this->setRootUrl(url);
 }
 
 QModelIndex CanvasGridView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
@@ -1457,7 +1472,9 @@ void CanvasGridView::rowsInserted(const QModelIndex &parent, int first, int last
 
     for (int index = first; index <= last; ++index) {
         const QModelIndex &child = parent.child(index, 0);
-
+        if(child.isValid()){
+            continue;
+        }
         DAbstractFileInfoPointer info = model()->fileInfo(child);
         if (info) {
             info->makeToActive();
@@ -1482,6 +1499,11 @@ void CanvasGridView::fakeDropEvent() noexcept
     d->dodgeDelayTimer.stop();
     d->startDodge = false;
     d->dragTargetGrid = QPoint(-1, -1);
+}
+
+QString CanvasGridView::canvansScreenName()
+{
+    return m_screenName;
 }
 
 
@@ -1684,6 +1706,12 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
         d->filesystemWatcher->deleteLater();
     }
 
+    if(m_screenName == ScreenMrg->primaryScreen()->name() && GridManager::instance()->doneInit())
+    {
+        QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
+                                                                                         QStringList(), model()->filters());
+        GridManager::instance()->initAutoMerge(infoList);
+    }
 //    QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
 //                                                                                     QStringList(), model()->filters());
 //    if (autoMerge()) {
@@ -2660,12 +2688,16 @@ inline QRect CanvasGridView::itemIconGeomerty(const QModelIndex &index) const
 inline QModelIndex CanvasGridView::firstIndex()
 {
     auto localFile = GridManager::instance()->firstItemId(m_screenNum);
+    if(localFile.isEmpty())
+        return QModelIndex();
     return model()->index(DUrl(localFile));
 }
 
 inline QModelIndex CanvasGridView::lastIndex()
 {
     auto localFile = GridManager::instance()->lastItemId(m_screenNum);
+    if(localFile.isEmpty())
+        return QModelIndex();
     return model()->index(DUrl(localFile));
 }
 
