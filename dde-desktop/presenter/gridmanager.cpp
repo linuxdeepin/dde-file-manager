@@ -2130,6 +2130,20 @@ QPoint GridManager::position(int screenNum, const QString &id)
     return d->m_itemGrids.value(screenNum).value(id);
 }
 
+bool GridManager::find(const QString &itemId, QPair<int, QPoint> &pos)
+{
+    bool ret = false;
+    for (int screen : d->screenCode()){
+        if (contains(screen,itemId)){
+            pos.first = screen;
+            pos.second = position(screen,itemId);
+            ret = true;
+            break;
+        }
+    }
+    return ret;
+}
+
 QString GridManager::itemId(int screenNum, int x, int y)
 {
     return d->m_gridItems.value(screenNum).value(QPoint(x, y));

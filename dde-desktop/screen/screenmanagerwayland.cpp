@@ -137,7 +137,7 @@ void ScreenManagerWayland::init()
 
     //先尝试使用Qt信号，若有问题再使用DBUS的信号
     connect(qApp, &QGuiApplication::screenAdded, this, &ScreenManagerWayland::onMonitorChanged);
-    connect(qApp, &QGuiApplication::screenRemoved, this, &ScreenManagerWayland::onMonitorChanged);
+    connect(m_display, &DBusDisplay::MonitorsChanged, this, &ScreenManagerWayland::onMonitorChanged);
     connect(qApp, &QGuiApplication::primaryScreenChanged, this, &AbstractScreenManager::sigScreenChanged);
     connect(m_display, &DBusDisplay::DisplayModeChanged, this, &AbstractScreenManager::sigDisplayModeChanged);
 

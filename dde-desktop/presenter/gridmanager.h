@@ -111,6 +111,7 @@ public:
 
     bool contains(int screebNum, const QString &itemId);
     QPoint position(int screenNum, const QString &itemId);
+    bool find(const QString &itemId, QPair<int,QPoint> &pos);
     QString itemId(int screenNum, int x, int y);
     QString itemId(int screenNum, QPoint pos);
     bool isEmpty(int screenNum, int x, int y);
@@ -140,6 +141,7 @@ public:
     void dump();
 signals:
     void sigUpdate(int state = 0);
+    void sigArrageEditDeal(const QString &);
 protected:
     bool remove(int screenNum, int x, int y, const QString &itemId);
     bool remove(int screenNum, QPoint pos, const QString &itemId);
