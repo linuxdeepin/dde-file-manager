@@ -2312,7 +2312,20 @@ void CanvasGridView::initConnection()
 #endif
     connect(this->model(), &DFileSystemModel::newFileByInternal,
     this, [ = ](const DUrl & fileUrl) {
-        auto localFile = fileUrl.toString();
+        if (GridManager::instance()->shouldArrange()){
+            //交由viewmanager设置自动排序后的item的编辑框
+            emit GridManager::instance()->sigArrageEditDeal(fileUrl.toString());
+            return ;
+        }
+        QString localFile = fileUrl.toString();
+
+        int itemScreen = m_screenNum;
+        QPair<int, QPoint> orgPos;
+        if (GridManager::instance()->find(localFile,orgPos)){
+            itemScreen = orgPos.first;
+        }
+        qDebug() << "newFileByInternal item" << localFile << "screen" << itemScreen
+                 << "pos"<< orgPos.second << "to screen" << m_screenNum;
         QPair<int, QPoint> gridPos;
         gridPos.first = m_screenNum;
         gridPos.second = gridAt(d->lastMenuPos);
@@ -2323,7 +2336,15 @@ void CanvasGridView::initConnection()
         }
 
         gridPos = GridManager::instance()->forwardFindEmpty(m_screenNum, gridPos.second);
-        GridManager::instance()->move(m_screenNum, QStringList() << localFile, localFile, gridPos.second.x(), gridPos.second.y());
+        //同屏
+        if (m_screenNum == itemScreen){
+            GridManager::instance()->move(m_screenNum, QStringList() << localFile,
+                                          localFile, gridPos.second.x(), gridPos.second.y());
+        }
+        else{ //夸屏
+            GridManager::instance()->move(itemScreen,m_screenNum, QStringList() << localFile,
+                                          localFile, gridPos.second.x(), gridPos.second.y());
+        }
     });
 
     connect(this, &CanvasGridView::itemCreated, [ = ](const DUrl & url) {
@@ -2351,7 +2372,7 @@ void CanvasGridView::initConnection()
 
         //重新排列
         if (ret && GridManager::instance()->autoArrange()){
-            this->delayArrage();
+            //this->delayArrage();
         }
         /***************************************************************/
     });

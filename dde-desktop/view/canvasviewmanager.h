@@ -20,6 +20,7 @@ private slots:
     void onBackgroundEnableChanged();
     void onScreenGeometryChanged(ScreenPointer);
     void onRepaintCanvas(int state);
+    void onArrageEditDeal(const QString &); //处理自动排列时右键新建文件，编辑框显示问题
 private:
     void init();
 private:
