@@ -13,6 +13,7 @@
 #include <QRect>
 #include <QDebug>
 #include <QStandardPaths>
+#include <QTimer>
 
 #include <dfilesystemmodel.h>
 #include "apppresenter.h"
@@ -882,11 +883,14 @@ class GridManagerPrivate
 public:
     GridManagerPrivate()
     {
-        auto settings = Config::instance()->settings();
-        settings->beginGroup(Config::groupGeneral);
-        autoArrange = settings->value(Config::keyAutoAlign).toBool();
-        autoMerge = settings->value(Config::keyAutoMerge, false).toBool();
-        settings->endGroup();
+        autoArrange = Config::instance()->getConfig(Config::groupGeneral, Config::keyAutoAlign).toBool();
+        autoMerge = Config::instance()->getConfig(Config::groupGeneral, Config::keyAutoMerge, false).toBool();
+
+//        auto settings = Config::instance()->settings();
+//        settings->beginGroup(Config::groupGeneral);
+//        autoArrange = settings->value(Config::keyAutoAlign).toBool();
+//        autoMerge = settings->value(Config::keyAutoMerge, false).toBool();
+//        settings->endGroup();
     }
 
     inline int cellCount(int screenNum) const
@@ -1048,11 +1052,6 @@ public:
                 screenNumProfiles.insert(index, QString("Position_%1").arg(index));
             }
         }
-        //屏幕个数与配置文件不符合时直接自动排列
-//        if(ScreenMrg->screens().size() != screenNumbers.size()){
-//            //调用自动整理接口
-//            return;
-//        }
 
         //获取个屏幕分组信息对应的图标信息
         QMap<int, QStringList> moreIcon;
@@ -1066,7 +1065,7 @@ public:
                 QString item = settings->value(key).toString();
                 if (existItems.contains(item)) {
                     QPoint pos{x, y};
-                    if(m_screenFullStatus.value(screenKey) || !isLegalPos(screenKey, pos)){
+                    if(m_screenFullStatus.value(screenKey) || !isValid(screenKey, pos)){
                         if(moreIcon.contains(screenKey)) {
                             moreIcon.find(screenKey)->append(item);
                         }else {
@@ -1093,13 +1092,6 @@ public:
             QPair<int, QPoint> empty_pos{ takeEmptyPos() };
             add(empty_pos.first,empty_pos.second, item);
         }
-
-        QList<int> screens = screenCode();
-        foreach(int screenNum, screens){
-            syncProfile(screenNum);
-        }
-
-
     }
 
     void loadWithoutProfile(const QList<DAbstractFileInfoPointer> &fileInfoList)
@@ -1120,8 +1112,10 @@ public:
     inline bool isValid(int screenNum, QPoint pos) const
     {
         auto coordInfo= screensCoordInfo.value(screenNum);
-        QRect rect(0, 0, coordInfo.first, coordInfo.second);
-        return rect.contains(pos);
+//        QRect rect(0, 0, coordInfo.first, coordInfo.second;
+//        return rect.contains(pos);
+        return  coordInfo.first > pos.x() && coordInfo.second > pos.y()
+                && pos.x() >= 0 && pos.y() >= 0;
     }
 
     inline QPoint overlapPos(int screenNum) const
@@ -1149,34 +1143,34 @@ public:
         }
     }
 
-    QPair<int, QPoint> emptyPos() const
-    {
-        //抽出空位屏编号
-//        int emptyScreenNum = -1;
-//        for(auto &key : m_screenFullStatus.keys()){
-//            if(!m_screenFullStatus.value(key)){
-//                emptyScreenNum = key;
-//                break;
+//    QPair<int, QPoint> emptyPos() const
+//    {
+//        //抽出空位屏编号
+////        int emptyScreenNum = -1;
+////        for(auto &key : m_screenFullStatus.keys()){
+////            if(!m_screenFullStatus.value(key)){
+////                emptyScreenNum = key;
+////                break;
+////            }
+////        }
+//        //返回空位屏编号
+//        QPair<int, QPoint> posPair;
+//        //if(-1 != emptyScreenNum){
+//        for (int emptyScreenNum : screenCode()){  //todo 优化效率
+//            auto cellStatus = m_cellStatus.value(emptyScreenNum);
+//            for (int i = 0; i < cellStatus.size(); ++i) {
+//                if (!cellStatus[i]) {
+//                    posPair.first = emptyScreenNum;
+//                    posPair.second = gridPosAt(emptyScreenNum, i);
+//                    return posPair;
+//                }
 //            }
 //        }
-        //返回空位屏编号
-        QPair<int, QPoint> posPair;
-        //if(-1 != emptyScreenNum){
-        for (int emptyScreenNum : screenCode()){  //todo 优化效率
-            auto cellStatus = m_cellStatus.value(emptyScreenNum);
-            for (int i = 0; i < cellStatus.size(); ++i) {
-                if (!cellStatus[i]) {
-                    posPair.first = emptyScreenNum;
-                    posPair.second = gridPosAt(emptyScreenNum, i);
-                    return posPair;
-                }
-            }
-        }
 
-        posPair.first = m_cellStatus.lastKey();
-        posPair.second = overlapPos(posPair.first);
-        return  posPair;
-    }
+//        posPair.first = m_cellStatus.lastKey();
+//        posPair.second = overlapPos(posPair.first);
+//        return  posPair;
+//    }
 
     QPair<int, QPoint> takeEmptyPos()
     {
@@ -1310,13 +1304,6 @@ public:
         m_screenFullStatus.find(screenNum).value() = true;
     }
 
-    bool isLegalPos(int screenNum, QPoint pos)
-    {
-        QPoint endPos = overlapPos(screenNum);
-        return endPos.x() >= pos.x() && endPos.y() >= pos.y()
-                && pos.x() >= 0 && pos.y() >= 0;
-    }
-
     bool add(int screenNum, QPoint pos, const QString &itemId)
     {
         if (itemId.isEmpty()) {
@@ -1340,7 +1327,8 @@ public:
                 return false;
             }
         }
-        if(!isLegalPos(screenNum, pos)){
+
+        if(!isValid(screenNum, pos)){
             return false;
         }
 
@@ -1405,7 +1393,14 @@ public:
         }
 #endif
         //positionProfile需要调整一下，添加上屏幕编号 :Position_%1_%2x%3
-        auto screenPositionProfile = positionProfiles.value(screenNum);
+        QString screenPositionProfile;
+        if (m_bSingleMode){
+            screenPositionProfile = QString("SinglePosition");//单一桌面模式和扩展桌面模式需要独立保存桌面项目位置配置文件，以便两种模式互相切换时仍然完好如初
+        }else {
+            screenPositionProfile = QString("Position_%1").arg(screenNum);
+        }
+
+        //auto screenPositionProfile = positionProfiles.value(screenNum);
         emit Presenter::instance()->removeConfig(screenPositionProfile, "");
         emit Presenter::instance()->setConfigList(screenPositionProfile, kvList.first, kvList.second);
     }
@@ -1444,25 +1439,19 @@ public:
         return true;
     }
 
-    void refreshPositionProfiles(int screenNum)
-    {
-        //auto profile = QString("Position_%1_%2x%3").arg(screenNum).arg(w).arg(h);
-        QString profile;
-        if (m_bSingleMode){
-            profile = QString("SinglePosition");  //单一桌面模式和扩展桌面模式需要独立保存桌面项目位置配置文件，以便两种模式互相切换时仍然完好如初
-        }else {
-            foreach(int key, positionProfiles.keys()){
-                if (positionProfiles.value(key) == QString("SinglePosition")){
-                    positionProfiles[key]= QString("Position_%1").arg(key);
-                }
-            }
-            profile = QString("Position_%1").arg(screenNum);
-        }
-
-        if (profile != positionProfiles.value(screenNum)) {
-            positionProfiles[screenNum]= profile;
-        }
-    }
+//    void refreshPositionProfiles()
+//    {
+//        positionProfiles.clear();
+//        //auto profile = QString("Position_%1_%2x%3").arg(screenNum).arg(w).arg(h);
+//        if (m_bSingleMode){
+//            positionProfiles[1]= QString("SinglePosition");//单一桌面模式和扩展桌面模式需要独立保存桌面项目位置配置文件，以便两种模式互相切换时仍然完好如初
+//        }else {
+//            QList<int> screens = screenCode();
+//            foreach(int index, screens){
+//                positionProfiles[index]= QString("Position_%1").arg(index);
+//            }
+//        }
+//    }
 
     void resetGridSize(int screenNum, int w, int h)
     {
@@ -1475,165 +1464,163 @@ public:
         coordInfo.value().second = h;
 
         createProfile();
-        refreshPositionProfiles(screenNum);
+        //refreshPositionProfiles();
     }
 
-    void changeGridSize(int screenNum, int w, int h)
-    {
-        auto coordInfo = screensCoordInfo.value(screenNum);
-        Q_ASSERT(!(coordInfo.second == h && coordInfo.first == w));
+//    void changeGridSize(int screenNum, int w, int h)
+//    {
+//        auto coordInfo = screensCoordInfo.value(screenNum);
+//        Q_ASSERT(!(coordInfo.second == h && coordInfo.first == w));
 
-//        qDebug() << "old grid size" << coordHeight << coordWidth;
-//        qDebug() << "new grid size" << w << h;
-        auto oldCellCount = coordInfo.second * coordInfo.first;
-        auto newCellCount = w * h;
+////        qDebug() << "old grid size" << coordHeight << coordWidth;
+////        qDebug() << "new grid size" << w << h;
+//        auto oldCellCount = coordInfo.second * coordInfo.first;
+//        auto newCellCount = w * h;
 
-        auto allItems = m_itemGrids;
+//        auto allItems = m_itemGrids;
 
-        auto outCellCount = 0;
-        auto cellStatus = m_cellStatus.value(screenNum);
-        for (int i = 0; i < cellStatus.length(); ++i) {
-            if (i >= newCellCount && cellStatus.value(i)) {
-                outCellCount++;
-            }
-        }
+//        auto outCellCount = 0;
+//        auto cellStatus = m_cellStatus.value(screenNum);
+//        for (int i = 0; i < cellStatus.length(); ++i) {
+//            if (i >= newCellCount && cellStatus.value(i)) {
+//                outCellCount++;
+//            }
+//        }
 
-        auto oldCellStatus = cellStatus;
+//        auto oldCellStatus = cellStatus;
 
-        // find empty cell count
-        auto indexEnd = qMin(oldCellCount, newCellCount);
-        auto emptyCellCount = 0;
-        for (int i = 0; i < indexEnd; ++i) {
-            if (!oldCellStatus.value(i)) {
-                emptyCellCount++;
-            }
-        }
+//        // find empty cell count
+//        auto indexEnd = qMin(oldCellCount, newCellCount);
+//        auto emptyCellCount = 0;
+//        for (int i = 0; i < indexEnd; ++i) {
+//            if (!oldCellStatus.value(i)) {
+//                emptyCellCount++;
+//            }
+//        }
 
-        if (newCellCount > oldCellCount) {
-            emptyCellCount += (newCellCount - oldCellCount);
-        }
+//        if (newCellCount > oldCellCount) {
+//            emptyCellCount += (newCellCount - oldCellCount);
+//        }
 
-        if (emptyCellCount <= outCellCount + m_overlapItems.length()) {
-//            qDebug() << "arrange";
-            auto sortItems = rangeItems(screenNum);
-            resetGridSize(screenNum, w, h);
-            for (int i = 0; i < newCellCount; ++i) {
-                add(screenNum, takeEmptyPos().second, sortItems.takeFirst());
-            }
-            m_overlapItems = sortItems;
-        } else {
-            // find start pos
-            auto newEmptyCellCount = emptyCellCount - outCellCount + m_overlapItems.length();
-            QVector<int> keepPosIndex;
-            QVector<QString> keepItems;
+//        if (emptyCellCount <= outCellCount + m_overlapItems.length()) {
+////            qDebug() << "arrange";
+//            auto sortItems = rangeItems(screenNum);
+//            resetGridSize(screenNum, w, h);
+//            for (int i = 0; i < newCellCount; ++i) {
+//                add(screenNum, takeEmptyPos().second, sortItems.takeFirst());
+//            }
+//            m_overlapItems = sortItems;
+//        } else {
+//            // find start pos
+//            auto newEmptyCellCount = emptyCellCount - outCellCount + m_overlapItems.length();
+//            QVector<int> keepPosIndex;
+//            QVector<QString> keepItems;
 
-            auto lastEmptyPosIndex = newCellCount;
-            for (int i = 0; i < oldCellStatus.length(); ++i) {
-                if (oldCellStatus.value(i)) {
-                    keepPosIndex.push_back(i);
-                    keepItems.push_back(m_gridItems.value(screenNum).value(gridPosAt(screenNum, i)));
-                } else {
-                    if (newEmptyCellCount <= 0) {
-                        lastEmptyPosIndex = i;
-                        break;
-                    }
-                    --newEmptyCellCount;
-                }
-            }
+//            auto lastEmptyPosIndex = newCellCount;
+//            for (int i = 0; i < oldCellStatus.length(); ++i) {
+//                if (oldCellStatus.value(i)) {
+//                    keepPosIndex.push_back(i);
+//                    keepItems.push_back(m_gridItems.value(screenNum).value(gridPosAt(screenNum, i)));
+//                } else {
+//                    if (newEmptyCellCount <= 0) {
+//                        lastEmptyPosIndex = i;
+//                        break;
+//                    }
+//                    --newEmptyCellCount;
+//                }
+//            }
 
-            QVector<int> nokeepPosIndex;
-            QVector<QString> nokeepItems;
-            for (int i = lastEmptyPosIndex; i < oldCellStatus.length(); ++i) {
-                if (oldCellStatus.value(i)) {
-                    nokeepPosIndex.push_back(i);
-                    nokeepItems.push_back(m_gridItems.value(screenNum).value(gridPosAt(screenNum, i)));
-                }
-            }
+//            QVector<int> nokeepPosIndex;
+//            QVector<QString> nokeepItems;
+//            for (int i = lastEmptyPosIndex; i < oldCellStatus.length(); ++i) {
+//                if (oldCellStatus.value(i)) {
+//                    nokeepPosIndex.push_back(i);
+//                    nokeepItems.push_back(m_gridItems.value(screenNum).value(gridPosAt(screenNum, i)));
+//                }
+//            }
 
-            auto overlapItems = m_overlapItems;
+//            auto overlapItems = m_overlapItems;
 
-            resetGridSize(screenNum, w, h);
+//            resetGridSize(screenNum, w, h);
 
-            for (int i = 0; i < keepPosIndex.length(); ++i) {
-                auto index = keepPosIndex.value(i);
-                if (m_cellStatus.size() > index && !cellStatus.value(index)) {
-                    QPoint pos{ gridPosAt(screenNum, index) };
-                    add(screenNum, pos, keepItems.value(i));
-                }
-            }
+//            for (int i = 0; i < keepPosIndex.length(); ++i) {
+//                auto index = keepPosIndex.value(i);
+//                if (m_cellStatus.size() > index && !cellStatus.value(index)) {
+//                    QPoint pos{ gridPosAt(screenNum, index) };
+//                    add(screenNum, pos, keepItems.value(i));
+//                }
+//            }
 
-            for (int i = 0; i < nokeepItems.length(); ++i) {
-                QPoint pos{ gridPosAt(screenNum, lastEmptyPosIndex) };
-                add(screenNum, pos, nokeepItems.value(i));
-                lastEmptyPosIndex++;
-            }
+//            for (int i = 0; i < nokeepItems.length(); ++i) {
+//                QPoint pos{ gridPosAt(screenNum, lastEmptyPosIndex) };
+//                add(screenNum, pos, nokeepItems.value(i));
+//                lastEmptyPosIndex++;
+//            }
 
-            // TODO
-            for (auto &item : overlapItems) {
-                QPair<int, QPoint> posPair{ takeEmptyPos() };
-                add(posPair.first,posPair.second, item);
-            }
-        }
-    }
+//            // TODO
+//            for (auto &item : overlapItems) {
+//                QPair<int, QPoint> posPair{ takeEmptyPos() };
+//                add(posPair.first,posPair.second, item);
+//            }
+//        }
+//    }
 
-    bool updateGridSize(int screenNum, int w, int h)
-    {
-#if 0 //older
-        if (coordHeight == h && coordWidth == w) {
-            qWarning() << "profile not changed";
-            return false;
-        }
+//    bool updateGridSize(int screenNum, int w, int h)
+//    {
+//#if 0 //older
+//        if (coordHeight == h && coordWidth == w) {
+//            qWarning() << "profile not changed";
+//            return false;
+//        }
 
-        if (0 == coordWidth && 0 == coordHeight) {
-            resetGridSize(w, h);
-            return false;
-        } else {
-            qDebug() << "change grid from" << coordWidth << coordHeight
-                     << "to" << w << h;
-            changeGridSize(w, h);
+//        if (0 == coordWidth && 0 == coordHeight) {
+//            resetGridSize(w, h);
+//            return false;
+//        } else {
+//            qDebug() << "change grid from" << coordWidth << coordHeight
+//                     << "to" << w << h;
+//            changeGridSize(w, h);
 
-            // check if we should update grid profile.
-            if (autoMerge) {
-                return this->autoArrange;
-            }
+//            // check if we should update grid profile.
+//            if (autoMerge) {
+//                return this->autoArrange;
+//            }
 
-            QPair<QStringList, QVariantList> kvList = generateProfileConfigVariable(screenNum);
+//            QPair<QStringList, QVariantList> kvList = generateProfileConfigVariable(screenNum);
 
-            qDebug() << "updateGridProfile:" << kvList.first.size()
-                     << m_gridItems.size() << m_itemGrids.size();
+//            qDebug() << "updateGridProfile:" << kvList.first.size()
+//                     << m_gridItems.size() << m_itemGrids.size();
 
-            emit Presenter::instance()->removeConfig(positionProfile, "");
-            emit Presenter::instance()->setConfigList(positionProfile, kvList.first, kvList.second);
+//            emit Presenter::instance()->removeConfig(positionProfile, "");
+//            emit Presenter::instance()->setConfigList(positionProfile, kvList.first, kvList.second);
 
-            return this->autoArrange;
-        }
-#else
+//            return this->autoArrange;
+//        }
+//#else
 
-        auto coordInfo = screensCoordInfo.value(screenNum);
-        if (coordInfo.second == h && coordInfo.first == w) {
-            qWarning() << "profile not changed";
-            return false;
-        }
+//        auto coordInfo = screensCoordInfo.value(screenNum);
+//        if (coordInfo.second == h && coordInfo.first == w) {
+//            qWarning() << "profile not changed";
+//            return false;
+//        }
 
-        if (0 == coordInfo.first && 0 == coordInfo.second) {
-            resetGridSize(screenNum, w, h);
-            return false;
-        } else {
-            qDebug() << "change grid from" << coordInfo.first << coordInfo.second
-                     << "to" << w << h;
-            resetGridSize(screenNum, w, h);
-            //changeGridSize(screenNum, w, h);
+//        if (0 == coordInfo.first && 0 == coordInfo.second) {
+//            resetGridSize(screenNum, w, h);
+//            return false;
+//        } else {
+//            qDebug() << "change grid from" << coordWidth << coordHeight
+//                     << "to" << w << h;
+//            changeGridSize(screenNum, w, h);
 
-            // check if we should update grid profile.
-            if (autoMerge) {
-                return this->autoArrange;
-            }
-            //syncProfile(screenNum);
+//            // check if we should update grid profile.
+//            if (autoMerge) {
+//                return this->autoArrange;
+//            }
 
-            return this->autoArrange;
-        }
-#endif
-    }
+//            return this->autoArrange;
+//        }
+//#endif
+//    }
 
 
     inline void setWhetherShowHiddenFiles(bool value)noexcept
@@ -1685,7 +1672,7 @@ public:
     //newer
     QMap<int, bool>             m_screenFullStatus;//屏幕图标状态
     QMap<int, QVector<bool>>    m_cellStatus;//<screenNum, QVector<bool>>
-    QMap<int,QString>           positionProfiles;
+    //QMap<int,QString>           positionProfiles;
     QMap<int,QPair<int, int>>   screensCoordInfo;//<screenNum,<coordWidth,coordHeight>>
     bool                    autoArrange;
     bool                    autoMerge = false;
@@ -1779,6 +1766,16 @@ void GridManager::initProfile(const QList<DAbstractFileInfoPointer> &items)
     //初始化Profile,用实际地址的文件去匹配图标位置（自动整理则图标顺延展开，自定义则按照配置文件对应顺序）
     d->createProfile();
     d->loadProfile(items);
+
+    //d->refreshPositionProfiles();
+    if(d->m_bSingleMode){
+        d->syncProfile(1);
+    }else {
+        QList<int> screens = d->screenCode();
+        foreach(int screenNum, screens){
+            d->syncProfile(screenNum);
+        }
+    }
 }
 
 // init WITHOUT grid item position data from the config file.
@@ -2041,7 +2038,7 @@ bool GridManager::clear()
 {
     d->createProfile();
     //此处暂时删除所有即d->positionProfiles,不知对否，后续调整
-    emit Presenter::instance()->removeConfigList(Config::keyProfile, QStringList());
+    //emit Presenter::instance()->removeConfigList(Config::keyProfile, QStringList());
 
     return true;
 }
@@ -2229,8 +2226,9 @@ void GridManager::reArrange(int screenNum)
 
 int GridManager::gridCount(int screenNum) const
 {
-    auto coordInfo = d->screensCoordInfo.value(screenNum);
-    return coordInfo.first * coordInfo.second;
+    return d->cellCount(screenNum);
+//    auto coordInfo = d->screensCoordInfo.value(screenNum);
+//    return coordInfo.first * coordInfo.second;
 }
 
 QPair<int, QPoint> GridManager::forwardFindEmpty(int screenNum, QPoint start) const
@@ -2254,7 +2252,8 @@ QPair<int, QPoint> GridManager::forwardFindEmpty(int screenNum, QPoint start) co
             }
         }
     }
-    return d->emptyPos();
+    return d->takeEmptyPos();
+    //return d->emptyPos();
 }
 
 QSize GridManager::gridSize(int screenNum) const
@@ -2265,8 +2264,20 @@ QSize GridManager::gridSize(int screenNum) const
 
 void GridManager::updateGridSize(int screenNum, int w, int h)
 {
+    auto coordInfo = d->screensCoordInfo.value(screenNum);
+    if(coordInfo.second == h && coordInfo.first == w){
+        return;
+    }
+
+    if(0 == coordInfo.first && 0 == coordInfo.second){
+        d->resetGridSize(screenNum, w, h);
+        return;
+    }
+
+    d->resetGridSize(screenNum, w, h);
+
     QStringList items = d->allItems();
-    if (d->updateGridSize(screenNum, w, h)) {
+    if (autoArrange()) {
         //d->arrange(screenNum);
         d->clear();
         d->arrange(items);
@@ -2278,13 +2289,9 @@ void GridManager::updateGridSize(int screenNum, int w, int h)
         QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
                                                                                          QStringList(), tempModel->filters());
         initProfile(infoList);
+        emit sigUpdate();
+        qDebug() << "GridManager::updateGridSize() is call,screenNum:" << screenNum;
     }
-    //将单个屏幕加载到配置
-    //[Profile]
-    //1=Position_1_21x9
-    emit Presenter::instance()->setConfig(Config::keyProfile,
-                                          QString::number(screenNum),
-                                          d->positionProfiles.value(screenNum));
 }
 
 GridCore *GridManager::core()
