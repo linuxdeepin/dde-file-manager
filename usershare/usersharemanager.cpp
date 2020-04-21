@@ -439,18 +439,22 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
             return false;
         }
 
-        if (process.exitCode() != 0) {
+        if (err.contains("as we are restricted to only sharing directories we own."))
+        {
             DDialog dialog;
 
             dialog.setIcon(QIcon::fromTheme("dialog-warning"), QSize(64, 64));
             dialog.setTitle(tr("For security, this file can not be shared!"));
             dialog.addButton(tr("Got it."), true);
 
-            qWarning() << err << "err code = " << QString::number(process.exitCode());
             if (dialog.exec() == DDialog::Accepted) {
                 return false;
             }
-//            dialogManager->showErrorDialog(QString(), err);
+        }
+
+        if (process.exitCode() != 0) {
+            qWarning() << err << "err code = " << QString::number(process.exitCode());
+            dialogManager->showErrorDialog(QString(), err);
             return false;
         }
 
