@@ -631,6 +631,45 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
         QtConcurrent::run([fi](){
+            //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
+            if ((FileJob::g_opticalBurnStatus == DISOMasterNS::DISOMaster::JobStatus::Running) || (FileJob::g_opticalBurnStatus == DISOMasterNS::DISOMaster::JobStatus::Stalled)) {
+                FileJob::g_opticalBurnEjectCount++;
+                QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Disk is busy, cannot eject now")),  Q_ARG(QString, ""));
+            } else {
+                bool err = false;
+                QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
+                QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+                QScopedPointer<DBlockDevice> cbblk(DDiskManager::createBlockDevice(blk->cryptoBackingDevice()));
+                if (!blk->mountPoints().empty()) {
+                    blk->unmount({});
+                    err |= blk->lastError().isValid();
+                }
+                if (blk->cryptoBackingDevice().length() > 1) {
+                    err |= cbblk->lastError().isValid();
+                    drv.reset(DDiskManager::createDiskDevice(cbblk->drive()));
+                }
+                drv->eject({});
+                err |= drv->lastError().isValid();
+                if (err) {
+                    QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Disk is busy, cannot eject now")),  Q_ARG(QString, ""));
+                }
+            }
+        });
+    } else {
+        deviceListener->eject(fileUrl.query(DUrl::FullyEncoded));
+    }
+}
+
+void AppController::actionSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent> &event)
+{
+    const DUrl &fileUrl = event->url();
+    if (fileUrl.scheme() == DFMROOT_SCHEME) {
+        //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
+        if ((FileJob::g_opticalBurnStatus == DISOMasterNS::DISOMaster::JobStatus::Running) || (FileJob::g_opticalBurnStatus == DISOMasterNS::DISOMaster::JobStatus::Stalled)) {
+            FileJob::g_opticalBurnEjectCount++;
+            dialogManager->showErrorDialog(tr("Disk is busy, cannot eject now"), QString());
+        } else {
+            DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
             QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
             QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
             QScopedPointer<DBlockDevice> cbblk(DDiskManager::createBlockDevice(blk->cryptoBackingDevice()));
@@ -644,39 +683,11 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
                 err |= cbblk->lastError().isValid();
                 drv.reset(DDiskManager::createDiskDevice(cbblk->drive()));
             }
-            drv->eject({});
+            drv->powerOff({});
             err |= drv->lastError().isValid();
             if (err) {
-                QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("Disk is busy, cannot eject now")),  Q_ARG(QString, ""));
+                dialogManager->showErrorDialog(tr("Disk is busy, cannot eject now"), QString());
             }
-        });
-    } else {
-        deviceListener->eject(fileUrl.query(DUrl::FullyEncoded));
-    }
-}
-
-void AppController::actionSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent> &event)
-{
-    const DUrl &fileUrl = event->url();
-    if (fileUrl.scheme() == DFMROOT_SCHEME) {
-        DAbstractFileInfoPointer fi = fileService->createFileInfo(this, fileUrl);
-        QScopedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(fi->extraProperties()["udisksblk"].toString()));
-        QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
-        QScopedPointer<DBlockDevice> cbblk(DDiskManager::createBlockDevice(blk->cryptoBackingDevice()));
-        bool err = false;
-        if (!blk->mountPoints().empty()) {
-            blk->unmount({});
-            err |= blk->lastError().isValid();
-        }
-        if (blk->cryptoBackingDevice().length() > 1) {
-            cbblk->lock({});
-            err |= cbblk->lastError().isValid();
-            drv.reset(DDiskManager::createDiskDevice(cbblk->drive()));
-        }
-        drv->powerOff({});
-        err |= drv->lastError().isValid();
-        if (err) {
-            dialogManager->showErrorDialog(tr("Disk is busy, cannot eject now"), QString());
         }
     } else {
         QString unix_device = fileUrl.query(DUrl::FullyEncoded);
