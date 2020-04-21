@@ -2780,7 +2780,17 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
 
         if (t_tmpPoint.y() + int(menu->sizeHint().height()/devicePixelRatioF()) > t_tmpRect.bottom())
             t_tmpPoint.setY(t_tmpPoint.y() - int(menu->sizeHint().height()/devicePixelRatioF()));
-        menu->exec(t_tmpPoint);
+//        menu->exec(t_tmpPoint);
+        QEventLoop eventLoop;
+        d->menuLoop = &eventLoop;
+        connect(menu, &QMenu::aboutToHide, this, [=]{
+           if(d->menuLoop)
+               d->menuLoop->exit();
+        });
+        menu->popup(t_tmpPoint);
+        menu->setGeometry(t_tmpPoint.x(), t_tmpPoint.y(), menu->sizeHint().width(), menu->sizeHint().height());
+        eventLoop.exec();
+        d->menuLoop = nullptr;
         menu->deleteLater();
         return;
     }
@@ -2907,7 +2917,17 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
 
         if (t_tmpPoint.y() + int(menu->sizeHint().height()/devicePixelRatioF()) > t_tmpRect.bottom())
             t_tmpPoint.setY(t_tmpPoint.y() - int(menu->sizeHint().height()/devicePixelRatioF()));
-        menu->exec(t_tmpPoint);
+//        menu->exec(t_tmpPoint);
+        QEventLoop eventLoop;
+        d->menuLoop = &eventLoop;
+        connect(menu, &QMenu::aboutToHide, this, [=]{
+           if(d->menuLoop)
+               d->menuLoop->exit();
+        });
+        menu->popup(t_tmpPoint);
+        menu->setGeometry(t_tmpPoint.x(), t_tmpPoint.y(), menu->sizeHint().width(), menu->sizeHint().height());
+        eventLoop.exec();
+        d->menuLoop = nullptr;
         menu->deleteLater();
         return;
     }
