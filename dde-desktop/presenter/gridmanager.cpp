@@ -1065,7 +1065,8 @@ public:
                 auto y = coords.value(1).toInt();
                 QString item = settings->value(key).toString();
                 if (existItems.contains(item)) {
-                    if(m_screenFullStatus.value(screenKey)){
+                    QPoint pos{x, y};
+                    if(m_screenFullStatus.value(screenKey) || !isLegalPos(screenKey, pos)){
                         if(moreIcon.contains(screenKey)) {
                             moreIcon.find(screenKey)->append(item);
                         }else {
@@ -1073,7 +1074,6 @@ public:
                         }
                     }
                     else{
-                        QPoint pos{x, y};
                         add(screenKey, pos, item);
                     }
                     existItems.remove(item);
@@ -1093,6 +1093,12 @@ public:
             QPair<int, QPoint> empty_pos{ takeEmptyPos() };
             add(empty_pos.first,empty_pos.second, item);
         }
+
+        QList<int> screens = screenCode();
+        foreach(int screenNum, screens){
+            syncProfile(screenNum);
+        }
+
 
     }
 
@@ -1213,20 +1219,24 @@ public:
     QPair<int, QPoint> getEmptyPos(int screenNum)
     {
         QPair<int, QPoint> emptyPosPair;
+        if(screenNum <= 0 || screenNum > screenCode().size()){
+            return emptyPosPair;
+        }
+
         if(getEmptyPos(screenNum, false, emptyPosPair.second)){
             emptyPosPair.first = screenNum;
             return emptyPosPair;
         }
 
         for(int screenIndex = screenNum - 1; screenIndex > 0; --screenIndex){
-            if(getEmptyPos(screenNum, true, emptyPosPair.second)){
+            if(getEmptyPos(screenIndex, true, emptyPosPair.second)){
                 emptyPosPair.first = screenIndex;
                 return emptyPosPair;
             }
         }
 
-        for(int screenIndex = screenNum + 1; screenIndex < screenCode().size(); ++screenIndex){
-            if(getEmptyPos(screenNum, false, emptyPosPair.second)){
+        for(int screenIndex = screenNum + 1; screenIndex <= screenCode().size(); ++screenIndex){
+            if(getEmptyPos(screenIndex, false, emptyPosPair.second)){
                 emptyPosPair.first = screenIndex;
                 return emptyPosPair;
             }
@@ -1300,6 +1310,13 @@ public:
         m_screenFullStatus.find(screenNum).value() = true;
     }
 
+    bool isLegalPos(int screenNum, QPoint pos)
+    {
+        QPoint endPos = overlapPos(screenNum);
+        return endPos.x() >= pos.x() && endPos.y() >= pos.y()
+                && pos.x() >= 0 && pos.y() >= 0;
+    }
+
     bool add(int screenNum, QPoint pos, const QString &itemId)
     {
         if (itemId.isEmpty()) {
@@ -1322,6 +1339,9 @@ public:
                 }
                 return false;
             }
+        }
+        if(!isLegalPos(screenNum, pos)){
+            return false;
         }
 
         if(m_gridItems.end() != m_gridItems.find(screenNum)){
@@ -1601,7 +1621,8 @@ public:
         } else {
             qDebug() << "change grid from" << coordInfo.first << coordInfo.second
                      << "to" << w << h;
-            changeGridSize(screenNum, w, h);
+            resetGridSize(screenNum, w, h);
+            //changeGridSize(screenNum, w, h);
 
             // check if we should update grid profile.
             if (autoMerge) {
@@ -2241,6 +2262,13 @@ void GridManager::updateGridSize(int screenNum, int w, int h)
         d->clear();
         d->arrange(items);
         emit sigUpdate();
+    }else if(!autoArrange() && !autoMerge()){
+        DUrl fileUrl = getInitRootUrl();
+        d->clear();
+        QScopedPointer<DFileSystemModel> tempModel(new DFileSystemModel(nullptr));
+        QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
+                                                                                         QStringList(), tempModel->filters());
+        initProfile(infoList);
     }
     //将单个屏幕加载到配置
     //[Profile]
