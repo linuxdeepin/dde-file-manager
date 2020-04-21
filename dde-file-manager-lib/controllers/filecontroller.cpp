@@ -74,6 +74,7 @@
 #include <unistd.h>
 
 #include <QQueue>
+#include <QMutex>
 
 #include "dfmsettings.h"
 #include "dfmapplication.h"
@@ -573,7 +574,6 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
 {
     DFileCopyMoveJob *job = new DFileCopyMoveJob();
     //但前线程退出，局不变currentJob被释放，但是ErrorHandle线程还在使用它
-    static QPair<DUrl, DUrl> currentJob;
 
     if (force) {
         job->setFileHints(DFileCopyMoveJob::ForceDeleteFile);
@@ -589,22 +589,22 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
         job->moveToThread(qApp->thread());
     }
 
-    QObject::connect(job, &DFileCopyMoveJob::currentJobChanged, job, [&](const DUrl & from, const DUrl & to) {
-        currentJob.first = from;
-        currentJob.second = to;
-    }, Qt::DirectConnection);
-
     class ErrorHandle : public QObject, public DFileCopyMoveJob::Handle
     {
     public:
-        ErrorHandle(DFileCopyMoveJob *job, QPair<DUrl, DUrl> *jobInfo, bool s)
+        ErrorHandle(DFileCopyMoveJob *job, bool s)
             : QObject(nullptr)
             , slient(s)
             , fileJob(job)
         {
-            //保存到本地，后面要用，不去访问传入指针
-            currentJob.first = jobInfo->first;
-            currentJob.second = jobInfo->second;
+            //线程启动传递源地址和目标地址
+            connect(job, &DFileCopyMoveJob::currentJobChanged, job, [this](const DUrl & from, const DUrl & to) {
+                    QMutex mutex;
+                    mutex.lock();
+                    currentJob.first = from;
+                    currentJob.second = to;
+                    mutex.unlock();
+                }, Qt::DirectConnection);
             if (!slient) {
                 timer_id = startTimer(1000);
                 moveToThread(qApp->thread());
@@ -675,7 +675,7 @@ static DUrlList pasteFilesV2(DFMGlobal::ClipboardAction action, const DUrlList &
         QPair<DUrl, DUrl> currentJob;
     };
 
-    ErrorHandle *error_handle = new ErrorHandle(job, &currentJob, slient);
+    ErrorHandle *error_handle = new ErrorHandle(job, slient);
 
     job->setErrorHandle(error_handle, slient ? nullptr : error_handle->thread());
     job->setMode(action == DFMGlobal::CopyAction ? DFileCopyMoveJob::CopyMode : DFileCopyMoveJob::MoveMode);

@@ -1146,6 +1146,12 @@ open_file: {
     if (action == DFileCopyMoveJob::SkipAction) {
         return true;
     }
+    //当打开目标文件失败了，就不去校验数据完整性
+    else if(action == DFileCopyMoveJob::CancelAction)
+    {
+        return false;
+    }
+    //校验数据完整性
 
     char data[blockSize + 1];
     ulong target_checksum = adler32(0L, nullptr, 0);
@@ -1441,6 +1447,7 @@ void DFileCopyMoveJobPrivate::updateProgress()
 {
     const qint64 total_size = fileStatistics->totalSize();
     const qint64 data_size = getCompletedDataSize();
+    completedDataSizeOnBlockDevice = data_size;
 
     if (total_size == 0)
         return;
@@ -1925,9 +1932,22 @@ end:
         // 任务完成后执行 sync 同步数据到硬盘, 同时将状态改为 SleepState，用于定时器更新进度和速度信息
         d->setState(IOWaitState);
         QProcess::execute("sync", {"-f", d->targetRootPath});
+        //校验是否完全同步到了移动设备
+        const qint64 total_size = d->fileStatistics->totalSize();
+        qDebug() << "total_size " << total_size << d->completedDataSizeOnBlockDevice;
+        if (total_size > d->completedDataSizeOnBlockDevice)
+        {
+            d->setError(DFileCopyMoveJob::OpenError, "Failed to synchronize to disk u!");
+            DFileCopyMoveJob::Action action = d->handleError(target_info.constData(), nullptr);
+
+            if (action == DFileCopyMoveJob::RetryAction) {
+                goto end;
+            }
+        }
         // 恢复状态
         if (d->state == IOWaitState) {
             d->setState(RunningState);
+
         }
     }
 
