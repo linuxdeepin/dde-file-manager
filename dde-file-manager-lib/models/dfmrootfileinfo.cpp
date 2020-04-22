@@ -118,7 +118,8 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
             //endl
         }
 
-        QString udiskspath = pathList.first();
+        //note: fix the U disk quickly installed and removed into two U disk, last valid
+        QString udiskspath = pathList.last();
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
         if (blk->path().length() != 0) {
             QSharedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
