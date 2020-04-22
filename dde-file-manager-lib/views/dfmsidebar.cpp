@@ -592,6 +592,10 @@ void DFMSideBar::initDeviceConnection()
 
     for (const DAbstractFileInfoPointer &fi : filist) {
         if (static_cast<DFMRootFileInfo::ItemType>(fi->fileType()) != DFMRootFileInfo::ItemType::UserDirectory) {
+            if (devitems.contains(fi->fileUrl())) {
+                devitems.removeOne(fi->fileUrl());
+                removeItem(fi->fileUrl(), groupName(Device));
+            }
             addItem(DFMSideBarDeviceItemHandler::createItem(fi->fileUrl()), groupName(Device));
             devitems.push_back(fi->fileUrl());
         }
