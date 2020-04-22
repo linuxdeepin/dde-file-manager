@@ -1793,7 +1793,7 @@ void GridManager::initGridItemsInfos()
         for (const DAbstractFileInfoPointer &df : infoList) {
             list << df->fileUrl().toString();
         }
-        qDebug() << "sortefd desktop items num" << list.size() << " time "<< t.elapsed();
+        qDebug() << "sorted desktop items num" << list.size() << " time "<< t.elapsed();
         initArrage(list);
     }
     else {
