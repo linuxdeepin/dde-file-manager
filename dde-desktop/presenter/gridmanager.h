@@ -140,6 +140,7 @@ public:
     bool getCanvasFullStatus(int screenId);
 
     void setDisplayMode(bool single);
+    void delaySyncAllProfile(int ms = 100);
 
 public:
     void dump();

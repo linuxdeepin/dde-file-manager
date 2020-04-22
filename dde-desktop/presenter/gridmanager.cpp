@@ -885,7 +885,6 @@ public:
     {
         autoArrange = Config::instance()->getConfig(Config::groupGeneral, Config::keyAutoAlign).toBool();
         autoMerge = Config::instance()->getConfig(Config::groupGeneral, Config::keyAutoMerge, false).toBool();
-
 //        auto settings = Config::instance()->settings();
 //        settings->beginGroup(Config::groupGeneral);
 //        autoArrange = settings->value(Config::keyAutoAlign).toBool();
@@ -1144,6 +1143,17 @@ public:
         }
     }
 
+    void syncAllProfile()
+    {
+        if(m_bSingleMode){
+            syncProfile(1);
+        }else {
+            QList<int> screens = screenCode();
+            foreach(int screenNum, screens){
+               syncProfile(screenNum);
+            }
+        }
+    }
 
     inline bool isValid(int screenNum, QPoint pos) const
     {
@@ -1805,16 +1815,7 @@ void GridManager::initProfile(const QList<DAbstractFileInfoPointer> &items)
     //初始化Profile,用实际地址的文件去匹配图标位置（自动整理则图标顺延展开，自定义则按照配置文件对应顺序）
     d->createProfile();
     d->loadProfile(items);
-
-    //d->refreshPositionProfiles();
-    if(d->m_bSingleMode){
-        d->syncProfile(1);
-    }else {
-        QList<int> screens = d->screenCode();
-        foreach(int screenNum, screens){
-            d->syncProfile(screenNum);
-        }
-    }
+    delaySyncAllProfile();
 }
 
 // init WITHOUT grid item position data from the config file.
@@ -2403,5 +2404,27 @@ void GridManager::dump()
 void GridManager::setDisplayMode(bool single)
 {
     d->m_bSingleMode = single;
+}
+
+void GridManager::delaySyncAllProfile(int ms)
+{
+    static QTimer *syncTimer = nullptr;
+    if (syncTimer != nullptr){
+        syncTimer->stop();
+        delete syncTimer;
+        syncTimer = nullptr;
+        qDebug() << "reset timer" << syncTimer;
+    }
+    if (ms < 1){
+        d->syncAllProfile();
+    }
+
+    syncTimer = new QTimer;
+    syncTimer->setSingleShot(true);
+    connect(syncTimer,&QTimer::timeout,[=](){
+        syncTimer->stop();
+        d->syncAllProfile();
+    });
+    syncTimer->start(ms);
 }
 #endif
