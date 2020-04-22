@@ -171,8 +171,10 @@ const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const
 //        dataInitialized = true;
 //    }
     // blumia: 文件监听占用完了的时候有可能桌面会监听不到文件变动,此时即便 F5 也不会刷新该 Controller 存储的整理桌面数据,故改为每次都重新初始化整理数据
-    initData();
+    static QMutex mtx; //多线程调用时出问题，加锁，禁止多线程
+    mtx.lock();
 
+    initData();
     currentUrl = event->url();
     QString path { currentUrl.path() };
     QList<DAbstractFileInfoPointer> infoList;
@@ -238,6 +240,7 @@ const QList<DAbstractFileInfoPointer> MergedDesktopController::getChildren(const
         }
     }
 
+    mtx.unlock();
     return infoList;
 }
 

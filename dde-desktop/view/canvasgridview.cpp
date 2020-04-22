@@ -2433,7 +2433,6 @@ openEditor:
     connect(this, &CanvasGridView::itemCreated, [ = ](const DUrl & url) {
         qDebug() << "CanvasGridView::itemCreated" << url << m_screenNum;
         d->lastMenuNewFilepath = url.toString();
-        //todo 自定义排列需拿到鼠标在哪，并drop到鼠标位子，调研右键新建
         bool ret = GridManager::instance()->add(m_screenNum, d->lastMenuNewFilepath);
 
         /***************************************************************/
