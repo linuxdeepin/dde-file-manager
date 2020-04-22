@@ -89,6 +89,7 @@ class GridManager: public QObject, public Singleton<GridManager>
 {
     Q_OBJECT
 public:
+    enum SyncOperation{soReedit,soIconSize,soHideEditing,soUpdate};
     DUrl getInitRootUrl();
     void initGridItemsInfos();
     void initProfile(const QList<DAbstractFileInfoPointer> &items);
@@ -145,8 +146,7 @@ public:
 public:
     void dump();
 signals:
-    void sigUpdate(int state = 0);
-    void sigArrageEditDeal(const QString &);
+    void sigSyncOperation(int so,QVariant var = QVariant());
     void sigAutoMergeUpdateExpandDate(QString screenName, DUrl url);
 protected:
     bool remove(int screenNum, int x, int y, const QString &itemId);

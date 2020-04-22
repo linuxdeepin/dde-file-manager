@@ -19,10 +19,10 @@ public slots:
 private slots:
     void onBackgroundEnableChanged();
     void onScreenGeometryChanged(ScreenPointer);
-    void onRepaintCanvas(int state);
-    void onArrageEditDeal(const QString &); //处理自动排列时右键新建文件，编辑框显示问题
+    void onSyncOperation(int so, QVariant var);
 private:
     void init();
+    void arrageEditDeal(const QString &);
 private:
     BackgroundManager *m_background = nullptr;
     QMap<ScreenPointer, CanvasViewPointer> m_canvasMap;

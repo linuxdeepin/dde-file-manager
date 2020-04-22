@@ -164,18 +164,43 @@ void CanvasViewManager::onScreenGeometryChanged(ScreenPointer sp)
     }
 }
 
-void CanvasViewManager::onRepaintCanvas(int state)
+void CanvasViewManager::onSyncOperation(int so,QVariant var)
 {
-    qDebug() << "update by grid changed";
-    for (CanvasViewPointer view : m_canvasMap.values()){
-        if (state == 1){
-            view->itemDelegate()->hideNotEditingIndexWidget();
+    GridManager::SyncOperation type = (GridManager::SyncOperation)so;
+    qDebug() << "sync type" << type << "data" << var;
+
+    switch (type) {
+    case GridManager::soReedit:{ //处理自动排列时右键新建文件，编辑框显示问题
+        QString file = var.toString();
+        arrageEditDeal(file);
+        break;
+    }
+    case GridManager::soIconSize:{  //处理图标大小
+        int level = var.toInt();
+        for (CanvasViewPointer view : m_canvasMap.values()){
+            view->syncIconLevel(level);
         }
-        view->update();
+        break;
+    }
+    case GridManager::soHideEditing:{   //隐藏文件移动后留下编辑框
+        for (CanvasViewPointer view : m_canvasMap.values()){
+            view->itemDelegate()->hideNotEditingIndexWidget();
+            view->update();
+        }
+        break;
+    }
+    case GridManager::soUpdate:{
+        for (CanvasViewPointer view : m_canvasMap.values()){
+            view->update();
+        }
+        break;
+    }
+    default:
+        break;
     }
 }
 
-void CanvasViewManager::onArrageEditDeal(const QString &file)
+void CanvasViewManager::arrageEditDeal(const QString &file)
 {
     QPair<int, QPoint> orgPos;
     //找文件在哪个屏上
@@ -219,9 +244,7 @@ void CanvasViewManager::init()
             this, &CanvasViewManager::onScreenGeometryChanged);
 
     //grid改变
-    connect(GridManager::instance(), &GridManager::sigUpdate, this, &CanvasViewManager::onRepaintCanvas);
-
-    connect(GridManager::instance(), &GridManager::sigArrageEditDeal, this,&CanvasViewManager::onArrageEditDeal,Qt::QueuedConnection);
+    connect(GridManager::instance(), &GridManager::sigSyncOperation, this, &CanvasViewManager::onSyncOperation);
 
     onCanvasViewBuild(ScreenMrg->displayMode());
 }
