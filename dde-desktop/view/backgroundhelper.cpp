@@ -304,7 +304,7 @@ void BackgroundHelper::onWMChanged()
 
 void BackgroundHelper::updateBackground(QWidget *l)
 {
-    if (backgroundPixmap.isNull())
+    if (backgroundPixmap.isNull() || !l)
         return;    
 
     if (DesktopInfo().waylandDectected()) {
@@ -352,6 +352,9 @@ void BackgroundHelper::updateBackground(QWidget *l)
         return ;
     }
     QScreen *s = l->windowHandle()->screen();
+    if(!s){
+        return;
+    }
     l->windowHandle()->handle()->setGeometry(s->handle()->geometry());
 
     QSize trueSize = s->handle()->geometry().size();
@@ -633,16 +636,19 @@ void BackgroundHelper::checkBlackScreen()
             WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
         ps = Display::instance()->primaryScreen();
     }
-
     else {
         ps = qApp->primaryScreen();
     }
 
+    if(!ps){
+        return;
+    }
 
     QWidget *psl = backgroundForScreen(ps);
     QList<QWidget *> ls = allBackgrounds();
     QList<QScreen *> ss = qApp->screens();
     QSet<QScreen *> myScreens;
+
 
     for (QWidget *l : ls) {
         myScreens << l->windowHandle()->screen();
