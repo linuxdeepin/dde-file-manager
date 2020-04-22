@@ -993,8 +993,19 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
         }
     }
 
-    if (!GridManager::instance()->shouldArrange()) {
+    if (!GridManager::instance()->shouldArrange()) {   //自定义
         startDodgeAnimation();
+    }
+    else if (GridManager::instance()->autoArrange()){ //自动排列的drag处理
+        d->fileViewHelper->preproccessDropEvent(event);
+        if (!hoverIndex.isValid()) {
+            if (DFileDragClient::checkMimeData(event->mimeData())) {
+                event->acceptProposedAction();
+                DFileDragClient::setTargetUrl(event->mimeData(), currentUrl());
+            } else {
+                event->accept();
+            }
+        }
     }
     update();
 }
