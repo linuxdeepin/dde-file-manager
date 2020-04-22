@@ -36,6 +36,7 @@
 #include "controllers/jobcontroller.h"
 #include "controllers/appcontroller.h"
 #include "shutil/desktopfile.h"
+#include "shutil/dfmfilelistfile.h"
 
 #include "interfaces/durl.h"
 #include "interfaces/dfileviewhelper.h"
@@ -1024,6 +1025,13 @@ void DFileSystemModelPrivate::_q_onFileDeleted(const DUrl &fileUrl)
     Q_Q(DFileSystemModel);
 
 //    rootNodeManager->removeFile(DFileService::instance()->createFileInfo(q, fileUrl));
+    //当文件删除时，删除隐藏文件集中的隐藏
+    QString absort = fileUrl.path().left(fileUrl.path().length() - fileUrl.fileName().length());
+    DFMFileListFile flf(absort);
+    if (flf.contains(fileUrl.fileName())) {
+        flf.remove(fileUrl.fileName());
+        flf.save();
+    }
     if (!_q_processFileEvent_runing) {
         fileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
         q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::DirectConnection);
