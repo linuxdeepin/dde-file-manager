@@ -114,6 +114,11 @@ void Desktop::onBackgroundEnableChanged()
         qInfo() << "Primary Screen:" << Display::instance()->primaryName();
         if (d->background->isEnabled()) {
             QWidget *background = d->background->waylandBackground(Display::instance()->primaryName());
+            if(!background)
+            {
+                qWarning()<<"Warning:cannot find paimary widget and screen name:"<<Display::instance()->primaryName();
+                return;
+            }
 
             d->screenFrame.setAttribute(Qt::WA_NativeWindow, false);
             d->screenFrame.setParent(background);
@@ -164,6 +169,11 @@ void Desktop::onBackgroundEnableChanged()
             background = d->background->backgroundForScreen(GetPrimaryScreen());
         } else {
             background = d->background->backgroundForScreen(qApp->primaryScreen());
+        }
+        if(!background)
+        {
+            qWarning()<<"Warning:cannot find paimary widget and screen name:"<<Display::instance()->primaryName();
+            return;
         }
 
         d->screenFrame.setAttribute(Qt::WA_NativeWindow, false);

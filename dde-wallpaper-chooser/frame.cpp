@@ -171,6 +171,9 @@ void Frame::show()
                 background = m_backgroundHelper->backgroundForScreen(qApp->primaryScreen());
                 allBackgrounds = m_backgroundHelper->allBackgrounds();
             }
+            if(!background){
+                return;
+            }
 
             qDebug() << "background counts" << allBackgrounds.size();
             // 隐藏完全重叠的窗口
