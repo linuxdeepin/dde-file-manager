@@ -89,7 +89,7 @@ class GridManager: public QObject, public Singleton<GridManager>
 {
     Q_OBJECT
 public:
-    enum SyncOperation{soRename,soIconSize,soSort,soHideEditing,soUpdate};
+    enum SyncOperation{soRename,soIconSize,soSort,soHideEditing,soUpdate,soAutoMergeUpdate};
     DUrl getInitRootUrl();
     void initGridItemsInfos();
     void initProfile(const QList<DAbstractFileInfoPointer> &items);
@@ -142,6 +142,11 @@ public:
 
     void setDisplayMode(bool single);
     void delaySyncAllProfile(int ms = 100);
+
+    void setCurrentVirtualExpandUrl(const DUrl url);
+    DUrl getCurrentVirtualExpandUrl();
+    void setCurrentAllItems(const QList<DAbstractFileInfoPointer> &infoList);
+
 
 public:
     void dump();

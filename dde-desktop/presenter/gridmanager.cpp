@@ -1698,20 +1698,22 @@ public:
         arrange(items);
     }
 public:
-    QStringList             m_overlapItems;
-    QMap<int, QMap<QPoint, QString>> m_gridItems;
-    QMap<int, QMap<QString, QPoint>> m_itemGrids;
+    QStringList                                         m_overlapItems;
+    QList<DAbstractFileInfoPointer>                     m_allItems;
+    QMap<int, QMap<QPoint, QString>>                    m_gridItems;
+    QMap<int, QMap<QString, QPoint>>                    m_itemGrids;
     //newer
-    QMap<int, bool>             m_screenFullStatus;//屏幕图标状态
-    QMap<int, QVector<bool>>    m_cellStatus;//<screenNum, QVector<bool>>
+    QMap<int, bool>                                     m_screenFullStatus;//屏幕图标状态
+    QMap<int, QVector<bool>>                            m_cellStatus;//<screenNum, QVector<bool>>
     //QMap<int,QString>           positionProfiles;
-    QMap<int,QPair<int, int>>   screensCoordInfo;//<screenNum,<coordWidth,coordHeight>>
-    bool                    autoArrange;
-    bool                    autoMerge = false;
-    int                     createProfileTime{0};
-    std::atomic<bool>       m_whetherShowHiddenFiles{ false };
-    bool                    m_bSingleMode = true;
-    bool                    m_doneInit{false};
+    QMap<int,QPair<int, int>>                           screensCoordInfo;//<screenNum,<coordWidth,coordHeight>>
+    bool                                                autoArrange;
+    bool                                                autoMerge = false;
+    int                                                 createProfileTime{0};
+    std::atomic<bool>                                   m_whetherShowHiddenFiles{ false };
+    bool                                                m_bSingleMode = true;
+    bool                                                m_doneInit{false};
+    DUrl                                                m_currentVirtualUrl{""};//保留当前屏幕上的扩展情况，用于插拔屏和分辨率变化等重新刷新图标位置
 };
 
 GridManager::GridManager(): d(new GridManagerPrivate)
@@ -1746,58 +1748,76 @@ DUrl GridManager::getInitRootUrl()
 
 void GridManager::initGridItemsInfos()
 {
-    if(!d->m_doneInit)
+    QList<DAbstractFileInfoPointer> infoList;
+    if(!d->m_doneInit){
         d->m_doneInit = true;
-    DUrl fileUrl = getInitRootUrl();
-    d->clear();
-    QScopedPointer<DFileSystemModel> tempModel(new DFileSystemModel(nullptr));
-    QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
-                                                                                     QStringList(), tempModel->filters());
-
-    if(GridManager::instance()->autoMerge()){
-        GridManager::instance()->initAutoMerge(infoList);
-    }
-    else if (GridManager::instance()->autoArrange())
-    {
-//        auto settings = Config::instance()->settings();
-//        settings->beginGroup(Config::groupGeneral);
-//        DFileSystemModel::Roles sortRole = (DFileSystemModel::Roles)settings->value(Config::keySortBy).toInt();
-//        Qt::SortOrder sortOrder = settings->value(Config::keySortOrder).toInt() == Qt::AscendingOrder ?
-//                    Qt::DescendingOrder : Qt::AscendingOrder;;
-//        settings->endGroup();
-        DFileSystemModel::Roles sortRole = (DFileSystemModel::Roles)Config::instance()->getConfig(Config::groupGeneral,Config::keySortBy).toInt();
-        Qt::SortOrder sortOrder = Config::instance()->getConfig(Config::groupGeneral,Config::keySortOrder).toInt() == Qt::AscendingOrder ?
-                    Qt::DescendingOrder : Qt::AscendingOrder;
-
-        qDebug() << "auto arrage" << sortRole << sortOrder;
+        DUrl fileUrl = getInitRootUrl();;
+        QScopedPointer<DFileSystemModel> tempModel(new DFileSystemModel(nullptr));
+        infoList = DFileService::instance()->getChildren(this, fileUrl, QStringList(), tempModel->filters());
+        d->m_allItems = infoList;
+        d->clear();
+        if(GridManager::instance()->autoMerge()){
+            GridManager::instance()->initAutoMerge(infoList);
+        }
+        else if (GridManager::instance()->autoArrange())
         {
+    //        auto settings = Config::instance()->settings();
+    //        settings->beginGroup(Config::groupGeneral);
+    //        DFileSystemModel::Roles sortRole = (DFileSystemModel::Roles)settings->value(Config::keySortBy).toInt();
+    //        Qt::SortOrder sortOrder = settings->value(Config::keySortOrder).toInt() == Qt::AscendingOrder ?
+    //                    Qt::DescendingOrder : Qt::AscendingOrder;;
+    //        settings->endGroup();
+            DFileSystemModel::Roles sortRole = (DFileSystemModel::Roles)Config::instance()->getConfig(Config::groupGeneral,Config::keySortBy).toInt();
+            Qt::SortOrder sortOrder = Config::instance()->getConfig(Config::groupGeneral,Config::keySortOrder).toInt() == Qt::AscendingOrder ?
+                        Qt::DescendingOrder : Qt::AscendingOrder;
+
+            qDebug() << "auto arrage" << sortRole << sortOrder;
+			{
             QPoint sort(sortRole,sortOrder);
             emit sigSyncOperation(soSort,sort);
-        }
-
-        QModelIndex index = tempModel->setRootUrl(fileUrl);
-        DAbstractFileInfoPointer root = tempModel->fileInfo(index);
-        QTime t;
-        if (root != nullptr){
-            DAbstractFileInfo::CompareFunction sortFun = root->compareFunByColumn(sortRole);
-            qDebug() << "DAbstractFileInfo::CompareFunction " << (sortFun != nullptr);
-            t.start();
-            if (sortFun){
-                qSort(infoList.begin(), infoList.end(), [sortFun, sortOrder](const DAbstractFileInfoPointer &node1, const DAbstractFileInfoPointer &node2) {
-                    return sortFun(node1, node2, sortOrder);
-                });
+        	}
+            QModelIndex index = tempModel->setRootUrl(fileUrl);
+            DAbstractFileInfoPointer root = tempModel->fileInfo(index);
+            QTime t;
+            if (root != nullptr){
+                DAbstractFileInfo::CompareFunction sortFun = root->compareFunByColumn(sortRole);
+                qDebug() << "DAbstractFileInfo::CompareFunction " << (sortFun != nullptr);
+                t.start();
+                if (sortFun){
+                    qSort(infoList.begin(), infoList.end(), [sortFun, sortOrder](const DAbstractFileInfoPointer &node1, const DAbstractFileInfoPointer &node2) {
+                        return sortFun(node1, node2, sortOrder);
+                    });
+                }
+                qDebug() << "sort complete time " <<t.elapsed();
             }
-            qDebug() << "sort complete time " <<t.elapsed();
+            QStringList list;
+            for (const DAbstractFileInfoPointer &df : infoList) {
+                list << df->fileUrl().toString();
+            }
+            qDebug() << "sorted desktop items num" << list.size() << " time "<< t.elapsed();
+            initArrage(list);
         }
-        QStringList list;
-        for (const DAbstractFileInfoPointer &df : infoList) {
-            list << df->fileUrl().toString();
+        else {
+            initProfile(infoList);
         }
-        qDebug() << "sorted desktop items num" << list.size() << " time "<< t.elapsed();
-        initArrage(list);
     }
     else {
-        initProfile(infoList);
+        infoList = d->m_allItems;
+        d->clear();
+        if(GridManager::instance()->autoMerge()){
+            GridManager::instance()->initAutoMerge(infoList);
+        }
+        else if (GridManager::instance()->autoArrange())
+        {
+            QStringList list;
+            for (const DAbstractFileInfoPointer &df : infoList) {
+                list << df->fileUrl().toString();
+            }
+            initArrage(list);
+        }
+        else {
+            initProfile(infoList);
+        }
     }
 }
 
@@ -2090,7 +2110,7 @@ void GridManager::restCoord()
 {
     d->screensCoordInfo.clear();
     d->m_gridItems.clear();
-    d->m_gridItems.clear();
+    d->m_itemGrids.clear();
     d->m_cellStatus.clear();
     d->m_overlapItems.clear();
     d->m_screenFullStatus.clear();
@@ -2099,6 +2119,7 @@ void GridManager::restCoord()
 void GridManager::addCoord(int screenNum, QPair<int, int> coordInfo)
 {
     qDebug() << "add screen" << screenNum << coordInfo;
+    //todo：若在add的时候存在了对应的num，考虑要不要直接更新value，而不是return
     if(d->screensCoordInfo.contains(screenNum))
         return;
     //初始化栅格
@@ -2416,5 +2437,20 @@ void GridManager::delaySyncAllProfile(int ms)
         d->syncAllProfile();
     });
     syncTimer->start(ms);
+}
+
+void GridManager::setCurrentVirtualExpandUrl(const DUrl url)
+{
+    d->m_currentVirtualUrl = url;
+}
+
+DUrl GridManager::getCurrentVirtualExpandUrl()
+{
+    return d->m_currentVirtualUrl;
+}
+
+void GridManager::setCurrentAllItems(const QList<DAbstractFileInfoPointer> &infoList)
+{
+    d->m_allItems = infoList;
 }
 #endif

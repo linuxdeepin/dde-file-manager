@@ -202,6 +202,20 @@ void CanvasViewManager::onSyncOperation(int so,QVariant var)
         }
         break;
     }
+    case GridManager::soAutoMergeUpdate:{
+        qDebug() << "update when canvas folder expand changed";
+        auto mergeMap = var.value<QMap<QString,DUrl>>();
+        if(mergeMap.isEmpty())
+            return;
+        auto one = mergeMap.begin();
+
+        for (CanvasViewPointer view : m_canvasMap.values()){
+            if(one.key() == view->canvansScreenName())
+                continue;
+            view->updateEntryExpandedState(one.value());
+        }
+        break;
+    }
     default:
         break;
     }

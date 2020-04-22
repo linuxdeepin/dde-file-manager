@@ -497,7 +497,10 @@ void CanvasGridView::toggleEntryExpandedState(const DUrl &url)
     // set root url (which will update the view)
     this->setRootUrl(targetUrl);
     //更新其他canvas的model自动整理数据。 todo:考虑优化没有扩展到的不用刷新
-    emit GridManager::instance()->sigAutoMergeUpdateExpandDate(m_screenName, targetUrl);
+    QMap<QString, DUrl> mergeUpInfo;
+    mergeUpInfo.insert(m_screenName, targetUrl);
+    emit GridManager::instance()->sigSyncOperation(GridManager::soAutoMergeUpdate,QVariant::fromValue(mergeUpInfo));
+
 }
 
 void CanvasGridView::updateEntryExpandedState(const DUrl &url)
@@ -1695,6 +1698,8 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     });
     return true;
 #endif
+    if(GridManager::instance()->doneInit())
+        GridManager::instance()->setCurrentVirtualExpandUrl(url);
     DUrl fileUrl = url;
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, fileUrl);
     if (!info) {
@@ -1733,6 +1738,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
         QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
                                                                                          QStringList(), model()->filters());
         GridManager::instance()->initAutoMerge(infoList);
+        GridManager::instance()->setCurrentAllItems(infoList);
     }
 //    QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
 //                                                                                     QStringList(), model()->filters());
