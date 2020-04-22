@@ -46,8 +46,16 @@ protected:
     bool isAccepteDragEvent(DFMDragEvent *event);
 signals:
     void requestRemoveItem();
+
+private slots:
+    void onRowCountChanged();
+
 private:
     bool fetchDragEventUrlsFromSharedMemory();
+    int previousRowCount;
+    QPoint dropPos;
+    QString dragItemName;
+    int dragRow;
 
     QList<QUrl> m_urlsForDragEvent;
 };

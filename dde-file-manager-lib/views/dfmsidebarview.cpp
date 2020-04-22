@@ -45,6 +45,8 @@ DFMSideBarView::DFMSideBarView(QWidget *parent)
 
     setDragDropMode(QAbstractItemView::InternalMove);
     setDragDropOverwriteMode(false);
+    //QListView拖拽时会先插入后删除，于是可以通过rowCountChanged()信号来判断拖拽操作是否结束
+    connect(this, SIGNAL(rowCountChanged()), this, SLOT(onRowCountChanged()));
 }
 
 void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
@@ -66,6 +68,7 @@ void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
 
 void DFMSideBarView::dragEnterEvent(QDragEnterEvent *event)
 {
+    previousRowCount = model()->rowCount();
     fetchDragEventUrlsFromSharedMemory();
 
     if (isAccepteDragEvent(event)) {
@@ -95,6 +98,7 @@ void DFMSideBarView::dragMoveEvent(QDragMoveEvent *event)
 
 void DFMSideBarView::dropEvent(QDropEvent *event)
 {
+    dropPos = event->pos();
     DFMSideBarItem *item = itemAt(event->pos());
     if (!item) {
         return DListView::dropEvent(event);
@@ -129,7 +133,6 @@ void DFMSideBarView::dropEvent(QDropEvent *event)
         event->accept();
         return;
     }
-
     DListView::dropEvent(event);
 }
 
@@ -266,6 +269,24 @@ bool DFMSideBarView::isAccepteDragEvent(DFMDragEvent *event)
     }
 
     return accept;
+}
+
+//添加此函数为解决拖拽后不选中拖拽项目问题
+void DFMSideBarView::onRowCountChanged()
+{
+    if(previousRowCount == model()->rowCount())
+    {
+        setCurrentIndex(indexAt(dropPos));
+        if(dragItemName != model()->data(currentIndex()).toString())
+        {
+            setCurrentIndex(model()->index(currentIndex().row()+ (dragRow > currentIndex().row() ? 1:-1), currentIndex().column()));
+        }
+    }
+    else
+    {
+        dragItemName = model()->data(currentIndex()).toString();
+        dragRow = currentIndex().row();
+    }
 }
 
 bool DFMSideBarView::fetchDragEventUrlsFromSharedMemory()
