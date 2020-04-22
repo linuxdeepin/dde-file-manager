@@ -1080,11 +1080,11 @@ public:
 
         QMap<int, QString> screenNumProfiles;
         if(m_bSingleMode){
-            screenNumProfiles.insert(1, QString("SinglePosition"));
+            screenNumProfiles.insert(1, QString("SingleScreen"));
         }else {
             QList<int> screens = screenCode();
             foreach(int index, screens){
-                screenNumProfiles.insert(index, QString("Position_%1").arg(index));
+                screenNumProfiles.insert(index, QString("Screen_%1").arg(index));
             }
         }
 
@@ -1441,9 +1441,9 @@ public:
         //positionProfile需要调整一下，添加上屏幕编号 :Position_%1_%2x%3
         QString screenPositionProfile;
         if (m_bSingleMode){
-            screenPositionProfile = QString("SinglePosition");//单一桌面模式和扩展桌面模式需要独立保存桌面项目位置配置文件，以便两种模式互相切换时仍然完好如初
+            screenPositionProfile = QString("SingleScreen");//单一桌面模式和扩展桌面模式需要独立保存桌面项目位置配置文件，以便两种模式互相切换时仍然完好如初
         }else {
-            screenPositionProfile = QString("Position_%1").arg(screenNum);
+            screenPositionProfile = QString("Screen_%1").arg(screenNum);
         }
 
         //auto screenPositionProfile = positionProfiles.value(screenNum);
@@ -1485,20 +1485,6 @@ public:
         return true;
     }
 
-//    void refreshPositionProfiles()
-//    {
-//        positionProfiles.clear();
-//        //auto profile = QString("Position_%1_%2x%3").arg(screenNum).arg(w).arg(h);
-//        if (m_bSingleMode){
-//            positionProfiles[1]= QString("SinglePosition");//单一桌面模式和扩展桌面模式需要独立保存桌面项目位置配置文件，以便两种模式互相切换时仍然完好如初
-//        }else {
-//            QList<int> screens = screenCode();
-//            foreach(int index, screens){
-//                positionProfiles[index]= QString("Position_%1").arg(index);
-//            }
-//        }
-//    }
-
     void resetGridSize(int screenNum, int w, int h)
     {
         if(!screensCoordInfo.contains(screenNum))
@@ -1510,7 +1496,6 @@ public:
         coordInfo.value().second = h;
 
         createProfile();
-        //refreshPositionProfiles();
     }
 
 //    void changeGridSize(int screenNum, int w, int h)
