@@ -68,6 +68,8 @@
 #include "app/define.h"
 #include "controllers/mergeddesktopcontroller.h"
 
+#define DESKTOP_CAN_SCREENSAVER "DESKTOP_CAN_SCREENSAVER"
+
 std::atomic<bool> CanvasGridView::m_flag{ false };
 QMap<DMD_TYPES, bool> CanvasGridView::virtualEntryExpandState;
 
@@ -2748,10 +2750,15 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     }
 
     QAction wallpaper(menu);
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
 #ifdef DISABLE_SCREENSAVER
     wallpaper.setText(tr("Set Wallpaper"));
 #else
-    wallpaper.setText(tr("Wallpaper and Screensaver"));
+    if (env.contains(DESKTOP_CAN_SCREENSAVER) && env.value(DESKTOP_CAN_SCREENSAVER).startsWith("N")){
+        wallpaper.setText(tr("Set Wallpaper"));
+    }else {
+        wallpaper.setText(tr("Wallpaper and Screensaver"));
+    }
 #endif
     wallpaper.setData(WallpaperSettings);
     menu->addAction(&wallpaper);
