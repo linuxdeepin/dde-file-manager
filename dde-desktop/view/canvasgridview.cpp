@@ -1925,9 +1925,12 @@ void CanvasGridView::initUI()
 
     DFMSocketInterface::instance();
 
-    d->waterMaskFrame = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json", this);
-    d->waterMaskFrame->lower();
-    d->waterMaskFrame->updatePosition();
+    DGioSettings desktopSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
+    if (desktopSettings.value("water-mask").toBool()) {
+        d->waterMaskFrame = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json", this);
+        d->waterMaskFrame->lower();
+        d->waterMaskFrame->updatePosition();
+    }
 }
 
 void CanvasGridView::updateGeometry(const QRect &geometry)

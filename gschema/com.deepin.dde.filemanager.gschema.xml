@@ -52,6 +52,15 @@
       </description>
     </key>
 
+    <key name='water-mask' type='b'>
+      <default>true</default>
+      <summary>Wether use watermask on the desktop</summary>
+      <description>
+        If enabled, watermask will display on the desktop.
+        If disabled, watermask will not display on the desktop.s
+      </description>
+    </key>
+
   </schema>
 
 </schemalist>
