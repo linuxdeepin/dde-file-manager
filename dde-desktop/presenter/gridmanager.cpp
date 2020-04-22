@@ -1770,6 +1770,11 @@ void GridManager::initGridItemsInfos()
                     Qt::DescendingOrder : Qt::AscendingOrder;
 
         qDebug() << "auto arrage" << sortRole << sortOrder;
+        {
+            QPoint sort(sortRole,sortOrder);
+            emit sigSyncOperation(soSort,sort);
+        }
+
         QModelIndex index = tempModel->setRootUrl(fileUrl);
         DAbstractFileInfoPointer root = tempModel->fileInfo(index);
         QTime t;
@@ -2324,7 +2329,7 @@ void GridManager::updateGridSize(int screenNum, int w, int h)
     if (autoArrange()) {
         d->clear();
         d->arrange(items);
-        sigSyncOperation(soUpdate);
+        emit sigSyncOperation(soUpdate);
     }else if(!autoMerge()){
         DUrl fileUrl = getInitRootUrl();
         d->clear();

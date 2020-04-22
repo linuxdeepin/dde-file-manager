@@ -170,7 +170,7 @@ void CanvasViewManager::onSyncOperation(int so,QVariant var)
     qDebug() << "sync type" << type << "data" << var;
 
     switch (type) {
-    case GridManager::soReedit:{ //处理自动排列时右键新建文件，编辑框显示问题
+    case GridManager::soRename:{ //处理自动排列时右键新建文件，编辑框显示问题
         QString file = var.toString();
         arrageEditDeal(file);
         break;
@@ -179,6 +179,13 @@ void CanvasViewManager::onSyncOperation(int so,QVariant var)
         int level = var.toInt();
         for (CanvasViewPointer view : m_canvasMap.values()){
             view->syncIconLevel(level);
+        }
+        break;
+    }
+    case GridManager::soSort:{
+        QPoint sort = var.toPoint();
+        for (CanvasViewPointer view : m_canvasMap.values()){
+            view->model()->setSortRole(sort.x(),(Qt::SortOrder)sort.y());
         }
         break;
     }
@@ -208,9 +215,9 @@ void CanvasViewManager::arrageEditDeal(const QString &file)
         for (CanvasViewPointer view : m_canvasMap.values()) {
             //绘制屏上，打开编辑框
             if (view->screenNum() == orgPos.first){
-
                 //已有editor，跳过
                 if (view->itemDelegate()->editingIndexWidget()){
+                    qDebug() << "has editor" << view->itemDelegate()->editingIndex();
                     continue;
                 }
 
@@ -218,12 +225,10 @@ void CanvasViewManager::arrageEditDeal(const QString &file)
                 DUrl fileUrl(file);
                 auto index = view->model()->index(fileUrl);
                 view->select(QList<DUrl>() << fileUrl);
-                view->edit(index,QAbstractItemView::EditKeyPressed,0);
-                view->itemDelegate()->editingIndexWidget()->activateWindow();
-            } else {
-                //不在，关闭其编辑框
-                view->clearSelection();
-                view->itemDelegate()->commitDataAndCloseActiveEditor();
+                bool bEdit = view->edit(index,QAbstractItemView::EditKeyPressed,0);
+                QWidget *editor = view->itemDelegate()->editingIndexWidget();
+                if (editor)
+                    editor->activateWindow();
             }
         }
     }
@@ -244,7 +249,8 @@ void CanvasViewManager::init()
             this, &CanvasViewManager::onScreenGeometryChanged);
 
     //grid改变
-    connect(GridManager::instance(), &GridManager::sigSyncOperation, this, &CanvasViewManager::onSyncOperation);
+    connect(GridManager::instance(), &GridManager::sigSyncOperation,
+            this, &CanvasViewManager::onSyncOperation,Qt::QueuedConnection);
 
     onCanvasViewBuild(ScreenMrg->displayMode());
 }

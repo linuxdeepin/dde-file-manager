@@ -24,6 +24,10 @@ CanvasViewHelper::CanvasViewHelper(CanvasGridView *parent): DFileViewHelper(pare
 {
     connect(fileSignalManager, &FileSignalManager::requestSelectFile,
             this, &CanvasViewHelper::handleSelectEvent);
+
+    //交由CanvasView处理，修复项目经过自动排列后编辑框显示问题
+    disconnect(fileSignalManager, SIGNAL(requestSelectRenameFile(DFMUrlBaseEvent)),
+              this, SLOT(_q_selectAndRename(DFMUrlBaseEvent)));
 }
 
 CanvasGridView *CanvasViewHelper::parent() const
