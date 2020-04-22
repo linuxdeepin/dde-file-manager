@@ -48,6 +48,7 @@ public:
     QList<int> userColumnRoles() const override;
     QVariant userColumnData(int userColumnRole) const override;
     QVariant userColumnDisplayName(int userColumnRole) const override;
+    MenuAction menuActionByColumnRole(int userColumnRole) const override;
     int userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const override;
     DUrl mimeDataUrl() const override;
     DUrl parentUrl() const override;
