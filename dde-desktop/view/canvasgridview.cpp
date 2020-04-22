@@ -2373,42 +2373,61 @@ void CanvasGridView::initConnection()
     this, [ = ](const DUrl & fileUrl) {
         if (GridManager::instance()->shouldArrange()){
             //交由viewmanager设置自动排序后的item的编辑框
-            QTimer::singleShot(100,[fileUrl](){
-                //因为DFileSystemModel::selectAndRenameFile函数中打开编辑框
-                //emit fileSignalManager->requestSelectRenameFile(event);延迟了100ms，所以这里延迟处理
-                //这个信号必须在上个信号之后处理
-                emit GridManager::instance()->sigSyncOperation(GridManager::soReedit,fileUrl.toString());
+            QTimer::singleShot(200,[fileUrl](){
+                //需等待排列完成在打开editor
+                emit GridManager::instance()->sigSyncOperation(GridManager::soRename,fileUrl.toString());
             });
             return ;
         }
-        QString localFile = fileUrl.toString();
 
-        int itemScreen = m_screenNum;
+        QString localFile = fileUrl.toString();
+        int itemScreen;
         QPair<int, QPoint> orgPos;
         if (GridManager::instance()->find(localFile,orgPos)){
             itemScreen = orgPos.first;
         }
+        else{
+            qCritical() << "cannot find item" << localFile << "screen" <<m_screenNum;
+            return ;
+        }
+
         qDebug() << "newFileByInternal item" << localFile << "screen" << itemScreen
                  << "pos"<< orgPos.second << "to screen" << m_screenNum;
+
         QPair<int, QPoint> gridPos;
         gridPos.first = m_screenNum;
         gridPos.second = gridAt(d->lastMenuPos);
         if (d->lastMenuNewFilepath == localFile) {
             if (gridPos.second == GridManager::instance()->position(m_screenNum, localFile)) {
-                return;
+                //开启编辑框
+                goto openEditor;
             }
         }
 
         gridPos = GridManager::instance()->forwardFindEmpty(m_screenNum, gridPos.second);
-        //同屏
-        if (m_screenNum == itemScreen){
-            GridManager::instance()->move(m_screenNum, QStringList() << localFile,
-                                          localFile, gridPos.second.x(), gridPos.second.y());
+
+        //无需move
+        if (gridPos == orgPos){
+            goto openEditor;
         }
-        else{ //夸屏
-            GridManager::instance()->move(itemScreen,m_screenNum, QStringList() << localFile,
-                                          localFile, gridPos.second.x(), gridPos.second.y());
+
+        //目标位置在当前屏才move
+        if (gridPos.first == m_screenNum){
+            //同屏
+            if (m_screenNum == itemScreen){
+                GridManager::instance()->move(m_screenNum, QStringList() << localFile,
+                                              localFile, gridPos.second.x(), gridPos.second.y());
+            }
+            else{ //跨屏
+                GridManager::instance()->move(itemScreen,m_screenNum, QStringList() << localFile,
+                                              localFile, gridPos.second.x(), gridPos.second.y());
+            }
         }
+        //else{} //目标位置无法在m_screenNum放下，就不处理
+
+openEditor:
+        emit GridManager::instance()->sigSyncOperation(GridManager::soRename,fileUrl.toString());
+        return ;
     });
 
     connect(this, &CanvasGridView::itemCreated, [ = ](const DUrl & url) {
@@ -2435,7 +2454,7 @@ void CanvasGridView::initConnection()
         }
 
         //重新排列
-        if (ret && GridManager::instance()->autoArrange()){
+        if (GridManager::instance()->autoArrange()){
             this->delayArrage();
         }
         /***************************************************************/
@@ -2514,9 +2533,16 @@ void CanvasGridView::initConnection()
             Presenter::instance(), &Presenter::onSortRoleChanged);
     connect(this, &CanvasGridView::changeIconLevel,
             Presenter::instance(), &Presenter::OnIconLevelChanged);
+
     connect(this, &CanvasGridView::changeIconLevel,
             [](int level){
         emit GridManager::instance()->sigSyncOperation(GridManager::soIconSize,level);
+    });
+
+    connect(this, &CanvasGridView::sortRoleChanged,
+            [](int role, Qt::SortOrder order){
+            QPoint sort(role,order);
+            emit GridManager::instance()->sigSyncOperation(GridManager::soSort,sort);
     });
 
 #if 0 //old
