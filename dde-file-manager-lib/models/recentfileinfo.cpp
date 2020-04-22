@@ -31,6 +31,7 @@
 namespace FileSortFunction
 {
 COMPARE_FUN_DEFINE(readDateTime, LastReadTime, RecentFileInfo)
+COMPARE_FUN_DEFINE(toLocalFile, RecentFilePath, RecentFileInfo)
 }
 
 RecentFileInfo::RecentFileInfo(const DUrl &url)
@@ -196,6 +197,15 @@ QVariant RecentFileInfo::userColumnDisplayName(int userColumnRole) const
     return DAbstractFileInfo::userColumnDisplayName(userColumnRole);
 }
 
+MenuAction RecentFileInfo::menuActionByColumnRole(int userColumnRole) const
+{
+    if (userColumnRole == DFileSystemModel::FileUserRole + 1) {
+        return MenuAction::AbsolutePath;
+    }
+
+    return DAbstractFileInfo::menuActionByColumnRole(userColumnRole);
+}
+
 
 int RecentFileInfo::userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const
 {
@@ -220,6 +230,8 @@ DAbstractFileInfo::CompareFunction RecentFileInfo::compareFunByColumn(int column
     // see RecentFileInfo::userColumnRoles for role function
     if (columnRole == DFileSystemModel::FileLastReadRole) {
         return FileSortFunction::compareFileListByLastReadTime;
+    } else if (columnRole == DFileSystemModel::FileUserRole + 1) {
+        return FileSortFunction::compareFileListByRecentFilePath;
     } else {
         return DAbstractFileInfo::compareFunByColumn(columnRole);
     }
