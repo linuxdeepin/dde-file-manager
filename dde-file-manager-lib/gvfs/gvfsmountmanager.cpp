@@ -1357,11 +1357,27 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
             break;
         }
 
+//        if (showWarnDlg) {
+//            DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
+//                                         tr("Mounting device error"), QString(error->message));
+//        }
         if (showWarnDlg) {
-            DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
-                                         tr("Mounting device error"), QString(error->message));
+                    DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
+                                                 tr("Mounting device error"), QString(error->message));
         }
+        else {
+            if(status ==MOUNT_PASSWORD_WRONG)
+            {
+                    DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
+                                                 tr("Mounting device error"),QString("用户名或密码错误，请重新输入"));
+            }
+            else if(status ==MOUNT_CANCEL)
+            {
+                DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
+                                             tr("Mounting device error"),tr(error->message));
+            }
 
+        }
         qCDebug(mountManager()) << "g_file_mount_enclosing_volume_finish" << succeeded << error;
         qCDebug(mountManager()) << "username" << g_mount_operation_get_username(op) << error->message;
     } else {
