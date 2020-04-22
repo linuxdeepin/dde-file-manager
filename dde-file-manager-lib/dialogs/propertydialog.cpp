@@ -652,7 +652,10 @@ void PropertyDialog::onChildrenRemoved(const DUrl &fileUrl)
         return;
     }
     if (fileUrl == m_url) {
-        close();
+        QTimer::singleShot(100,this, [=]{
+            this->close();
+        });
+//        close();
     }
 }
 
