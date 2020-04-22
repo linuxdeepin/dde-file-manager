@@ -1671,6 +1671,7 @@ public:
         return screenOrder;
     }
 
+    //必须在screensCoordInfo改变前获取，即resetGridSize前获取
     QStringList allItems() const
     {
         QStringList items;
@@ -1818,7 +1819,7 @@ void GridManager::initAutoMerge(const QList<DAbstractFileInfoPointer> &items)
         list << df->fileUrl().toString();
     }
     d->autoMergeItems(list);
-    emit sigUpdate();
+    emit sigSyncOperation(soUpdate);
 }
 
 
@@ -1826,7 +1827,7 @@ void GridManager::initArrage(const QStringList &items)
 {
     d->clear();
     d->arrange(items);
-    emit sigUpdate();
+    emit sigSyncOperation(soUpdate);
 }
 
 bool GridManager::add(int screenNum, const QString &id)
@@ -2040,7 +2041,7 @@ bool GridManager::move(int fromScreen, int toScreen, const QStringList &selected
 
     //保存源屏配置
     d->syncProfile(fromScreen);
-    emit sigUpdate(1);
+    emit sigSyncOperation(soHideEditing);
     return true;
 }
 
@@ -2248,7 +2249,7 @@ void GridManager::reArrange(int screenNum)
 {
     if (autoArrange()){
         d->reAutoArrage();
-        emit sigUpdate();
+        emit sigSyncOperation(soUpdate);
         return;
     }
     else
@@ -2318,22 +2319,21 @@ void GridManager::updateGridSize(int screenNum, int w, int h)
         return;
     }
 
+    QStringList items = d->allItems(); //必须在resetGridSize前获取
     d->resetGridSize(screenNum, w, h);
-
-    QStringList items = d->allItems();
     if (autoArrange()) {
-        //d->arrange(screenNum);
         d->clear();
         d->arrange(items);
-        emit sigUpdate();
-    }else if(!autoArrange() && !autoMerge()){
+        sigSyncOperation(soUpdate);
+    }else if(!autoMerge()){
         DUrl fileUrl = getInitRootUrl();
         d->clear();
+        //todo 优化，是否可以直接使用 items
         QScopedPointer<DFileSystemModel> tempModel(new DFileSystemModel(nullptr));
         QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
                                                                                          QStringList(), tempModel->filters());
         initProfile(infoList);
-        emit sigUpdate();
+        emit sigSyncOperation(soUpdate);
         qDebug() << "GridManager::updateGridSize() is call,screenNum:" << screenNum;
     }
 }

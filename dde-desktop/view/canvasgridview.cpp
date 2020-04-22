@@ -374,6 +374,7 @@ void CanvasGridView::delayArrage(int ms)
                  << "resortCount" << d->resortCount;
         model()->setEnabledSort(true);
         model()->sort();
+        return;
     }
 
     arrangeTimer = new QTimer;
@@ -396,6 +397,16 @@ DUrl CanvasGridView::currentCursorFile() const
         ret = fp->fileUrl();
     }
     return ret;
+}
+
+void CanvasGridView::syncIconLevel(int level)
+{
+    if (itemDelegate()->iconSizeLevel() == level) {
+        return;
+    }
+
+    itemDelegate()->setIconSizeByIconSizeLevel(level);
+    updateCanvas();
 }
 
 WId CanvasGridView::winId() const
@@ -1483,7 +1494,7 @@ void CanvasGridView::rowsInserted(const QModelIndex &parent, int first, int last
 
     for (int index = first; index <= last; ++index) {
         const QModelIndex &child = parent.child(index, 0);
-        if(child.isValid()){
+        if(!child.isValid()){
             continue;
         }
         DAbstractFileInfoPointer info = model()->fileInfo(child);
@@ -2366,7 +2377,7 @@ void CanvasGridView::initConnection()
                 //因为DFileSystemModel::selectAndRenameFile函数中打开编辑框
                 //emit fileSignalManager->requestSelectRenameFile(event);延迟了100ms，所以这里延迟处理
                 //这个信号必须在上个信号之后处理
-                emit GridManager::instance()->sigArrageEditDeal(fileUrl.toString());
+                emit GridManager::instance()->sigSyncOperation(GridManager::soReedit,fileUrl.toString());
             });
             return ;
         }
@@ -2503,6 +2514,11 @@ void CanvasGridView::initConnection()
             Presenter::instance(), &Presenter::onSortRoleChanged);
     connect(this, &CanvasGridView::changeIconLevel,
             Presenter::instance(), &Presenter::OnIconLevelChanged);
+    connect(this, &CanvasGridView::changeIconLevel,
+            [](int level){
+        emit GridManager::instance()->sigSyncOperation(GridManager::soIconSize,level);
+    });
+
 #if 0 //old
     connect(d->dbusDock, &DBusDock::HideModeChanged,
     this, [ = ]() {

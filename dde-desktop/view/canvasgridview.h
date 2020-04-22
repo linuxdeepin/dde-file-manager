@@ -131,6 +131,7 @@ public:
     void delayArrage(int ms = 10);
     DUrl currentCursorFile() const;
     inline int screenNum() const {return m_screenNum;}
+    void syncIconLevel(int level);
 signals:
     void sortRoleChanged(int role, Qt::SortOrder order);
     void autoAlignToggled();
