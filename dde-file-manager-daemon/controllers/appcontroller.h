@@ -33,6 +33,7 @@ class UsbFormatter;
 class CommandManager;
 class DeviceInfoManager;
 class TagManagerDaemon;
+class AcessControlManager;
 
 class AppController : public QObject
 {
@@ -51,6 +52,7 @@ public slots:
 private:
     UserShareManager *m_userShareManager = nullptr;
     TagManagerDaemon *m_tagManagerDaemon = nullptr;
+    AcessControlManager *m_acessController = nullptr;
 };
 
 #endif // APPCONTROLLER_H

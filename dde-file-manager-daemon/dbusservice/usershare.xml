@@ -10,5 +10,9 @@
             <arg type="s" name="groupName" direction="in"/>
             <arg type="b" name="result" direction="out"/>
         </method>
+        <method name="closeSmbShareByShareName">
+            <arg type="b" direction="out"/>
+            <arg name="sharename" type="s" direction="in"/>
+        </method>
     </interface>
 </node>
