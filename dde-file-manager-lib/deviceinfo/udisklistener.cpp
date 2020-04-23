@@ -102,7 +102,7 @@ void UDiskListener::initDiskManager()
 void UDiskListener::initConnect()
 {
     connect(m_diskMgr, &DDiskManager::fileSystemAdded, this, &UDiskListener::insertFileSystemDevice);
-    connect(m_diskMgr, &DDiskManager::fileSystemRemoved, this, [this](const QString& path) {
+    connect(m_diskMgr, &DDiskManager::fileSystemRemoved, this, [this](const QString & path) {
         delete m_fsDevMap.take(path);
     });
     connect(gvfsMountManager, &GvfsMountManager::mount_added, this, &UDiskListener::addMountDiskInfo);
@@ -150,8 +150,8 @@ bool UDiskListener::renameFile(const QSharedPointer<DFMRenameEvent> &event) cons
     const QSharedPointer<DFMCreateFileInfoEvent> e(new DFMCreateFileInfoEvent(nullptr, oldUrl));
     const DAbstractFileInfoPointer &oldDevicePointer = UDiskListener::createFileInfo(e);
 
-    DAbstractFileInfo* info = oldDevicePointer.data();
-    UDiskDeviceInfo* udiskInfo = dynamic_cast<UDiskDeviceInfo*>(info);
+    DAbstractFileInfo *info = oldDevicePointer.data();
+    UDiskDeviceInfo *udiskInfo = dynamic_cast<UDiskDeviceInfo *>(info);
     QString devicePath = udiskInfo->getDBusPath();
     QUrlQuery query(newUrl);
     QString newName = query.queryItemValue("new_name");
@@ -371,6 +371,13 @@ UDiskDeviceInfoPointer UDiskListener::getDeviceByFilePath(const QString &path)
     for (int i = 0; i < m_list.size(); i++) {
         UDiskDeviceInfoPointer info = m_list.at(i);
         if (info && !info->getMountPointUrl().isEmpty()) {
+
+            //获取空白光盘路径有问题，fix
+            if (info->getMountPointUrl().toString() == "burn:///") {
+                return UDiskDeviceInfoPointer();
+            }
+            //获取空白光盘路径有问题，fix
+
             bool flag = (DUrl::fromLocalFile(path) == info->getMountPointUrl());
             if (!flag && path.startsWith(QString("%1").arg(info->getMountPointUrl().toLocalFile()))) {
                 return info;
@@ -609,9 +616,9 @@ void UDiskListener::forceUnmount(const QString &id)
     }
 }
 
-void UDiskListener::fileSystemDeviceIdLabelChanged(const QString & labelName)
+void UDiskListener::fileSystemDeviceIdLabelChanged(const QString &labelName)
 {
-    DBlockDevice* blDev = qobject_cast<DBlockDevice*>(QObject::sender());
+    DBlockDevice *blDev = qobject_cast<DBlockDevice *>(QObject::sender());
     DUrl oldUrl, newUrl;
     oldUrl.setScheme(DEVICE_SCHEME);
     oldUrl.setPath(QString::fromLatin1(blDev->device()));
@@ -631,7 +638,7 @@ void UDiskListener::fileSystemDeviceIdLabelChanged(const QString & labelName)
  */
 void UDiskListener::insertFileSystemDevice(const QString dbusPath)
 {
-    DBlockDevice* blDev = DDiskManager::createBlockDevice(dbusPath);
+    DBlockDevice *blDev = DDiskManager::createBlockDevice(dbusPath);
     if (blDev->hasFileSystem()) {
         blDev->setWatchChanges(true);
         connect(blDev, &DBlockDevice::idLabelChanged, this, &UDiskListener::fileSystemDeviceIdLabelChanged);
@@ -647,7 +654,7 @@ const QList<DAbstractFileInfoPointer> UDiskListener::getChildren(const QSharedPo
 
     if (!frav.isEmpty()) {
         const QList<DAbstractFileInfoPointer> &list = fileService->getChildren(event->sender(), DUrl::fromLocalFile(frav),
-                event->nameFilters(), event->filters(), event->flags());
+                                                                               event->nameFilters(), event->filters(), event->flags());
 
         return list;
     }
