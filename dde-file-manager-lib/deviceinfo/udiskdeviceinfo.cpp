@@ -141,6 +141,7 @@ QString UDiskDeviceInfo::getMountPoint() const
 
 DUrl UDiskDeviceInfo::getMountPointUrl() const
 {
+    DUrl t_url = GvfsMountManager::getRealMountUrl(m_diskInfo);
     if (!getId().isEmpty()) {
         return GvfsMountManager::getRealMountUrl(m_diskInfo);
     } else {
@@ -222,7 +223,7 @@ QString UDiskDeviceInfo::fileName() const
 
 QString UDiskDeviceInfo::fileDisplayName() const
 {
-    static QMap<QString, const char*> i18nMap {
+    static QMap<QString, const char *> i18nMap {
         {"data", "Data Disk"}
     };
 

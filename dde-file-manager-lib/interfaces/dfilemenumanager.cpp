@@ -72,8 +72,7 @@
 //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
 QString DFileMenuManager::g_deleteDirPath = nullptr;
 
-namespace DFileMenuData
-{
+namespace DFileMenuData {
 static QMap<MenuAction, QString> actionKeys;
 static QMap<MenuAction, QIcon> actionIcons;
 static QMap<MenuAction, QAction *> actions;
@@ -177,7 +176,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         // MenuAction::delete
         //当彻底删除时，判断canrename权限，true可以删除，false不可以删除
         //所以这里要把MenuAction::CompleteDeletion权限不能用
-        if (FileUtils::isGvfsMountFile(info->absoluteFilePath()) && !info->canRename()){
+        if (FileUtils::isGvfsMountFile(info->absoluteFilePath()) && !info->canRename()) {
             disableList << MenuAction::CompleteDeletion;
         }
         foreach (MenuAction action, unusedList) {
@@ -238,7 +237,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
                 QStringList mimeTypeList = { fileInfo->mimeType().name() };
                 mimeTypeList.append(fileInfo->mimeType().parentMimeTypes());
                 bool matched = false;
-                for (const QString& oneMimeType : mimeTypeList) {
+                for (const QString &oneMimeType : mimeTypeList) {
                     if (supportedMimeTypes.contains(oneMimeType)) {
                         matched = true;
                         break;
@@ -299,7 +298,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
 
         foreach (QString app, recommendApps) {
 //            const DesktopFile& df = mimeAppsManager->DesktopObjs.value(app);
-        //ignore no show apps
+            //ignore no show apps
 //            if(df.getNoShow())
 //                continue;
             DesktopFile desktopFile(app);
@@ -338,9 +337,15 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
                 //mounted_root_uri="file:///media/union/***" -> tempMediaAddr="union"
                 QString tempMountedRootUrl = pDeviceinfo->getDiskInfo().mounted_root_uri();
                 int tempAddrIndex = tempMountedRootUrl.lastIndexOf("/");
-                QString tempMediaAddr= tempMountedRootUrl.mid(14, tempAddrIndex - 14);
+
+                //获取用户名有问题，fix
+//                QString tempMediaAddr= tempMountedRootUrl.mid(14, tempAddrIndex - 14);
+                QString tempMediaAddr = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
                 //g_deleteDirPath="/home/union/.cache/deepin/discburn/_dev_sr1"
-                DFileMenuManager::g_deleteDirPath = "/home/" + tempMediaAddr + "/.cache/deepin/discburn/_dev_" + tempId;
+//                DFileMenuManager::g_deleteDirPath = "/home/" + tempMediaAddr + "/.cache/deepin/discburn/_dev_" + tempId;
+                DFileMenuManager::g_deleteDirPath = tempMediaAddr + "/.cache/deepin/discburn/_dev_" + tempId;
+                //获取用户名有问题，fix
+
                 sendToMountedRemovableDiskMenu->addAction(action);
                 connect(action, &QAction::triggered, appController, &AppController::actionSendToRemovableDisk);
             }
@@ -646,9 +651,9 @@ void DFileMenuData::initActions()
 }
 
 DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
-        const QSet<MenuAction> &disableList,
-        bool checkable,
-        const QMap<MenuAction, QVector<MenuAction> > &subMenuList, bool isUseCachedAction, bool isRecursiveCall)
+                                                const QSet<MenuAction> &disableList,
+                                                bool checkable,
+                                                const QMap<MenuAction, QVector<MenuAction> > &subMenuList, bool isUseCachedAction, bool isRecursiveCall)
 {
     static bool actions_initialized = false;
 
