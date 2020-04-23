@@ -34,6 +34,7 @@
 #include <QList>
 #include <QMap>
 #include <QDBusArgument>
+#include <QTimer>
 #include <QXmlStreamReader>
 #include <QDBusPendingReply>
 #include "udiskdeviceinfo.h"
@@ -121,14 +122,16 @@ private slots:
     void insertFileSystemDevice(const QString dbusPath);
 
 private:
-    DDiskManager* m_diskMgr = nullptr;
-    QMap<QString, DBlockDevice*> m_fsDevMap;
+    DDiskManager *m_diskMgr = nullptr;
+    QMap<QString, DBlockDevice *> m_fsDevMap;
 
     QList<UDiskDeviceInfoPointer> m_list;
     QMap<QString, UDiskDeviceInfoPointer> m_map;
     QMap<QString, QString> m_volumeLetters;
 
     QList<Subscriber *> m_subscribers;
+
+    QTimer *m_diskTimer;
 
 };
 

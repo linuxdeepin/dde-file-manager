@@ -92,6 +92,8 @@ UDiskListener::UDiskListener(QObject *parent):
 void UDiskListener::initDiskManager()
 {
     m_diskMgr = new DDiskManager(this);
+    m_diskTimer = new QTimer(this);
+    m_diskTimer->start(3000);
     m_diskMgr->setWatchChanges(true);
     QStringList blDevList = m_diskMgr->blockDevices();
     for (const QString &str : blDevList) {
@@ -125,6 +127,21 @@ void UDiskListener::addDevice(UDiskDeviceInfoPointer device)
 {
     m_map.insert(device->getDiskInfo().id(), device);
     m_list.append(device);
+
+    connect(m_diskTimer, &QTimer::timeout, [ = ]() { //这里"="的使用要与this,&的用法相对比,简单点说就是将外部的变量全部引入进来,方便对变量的编辑
+        for (int i = 0; i < m_list.size(); i++) {
+            UDiskDeviceInfoPointer info = m_list.at(i);
+//            qDebug() << "UDiskDeviceInfoPointer" << info->getDiskInfo().drive_unix_device();
+            QString t_device = info->getDiskInfo().drive_unix_device();
+
+            QStringList t_arglst;
+
+            t_arglst << "-t";
+            t_arglst << t_device;
+
+            QProcess::execute("eject", t_arglst);
+        }
+    });
 
     DAbstractFileWatcher::ghostSignal(DUrl(DEVICE_ROOT),
                                       &DAbstractFileWatcher::subfileCreated,
@@ -478,6 +495,8 @@ void UDiskListener::addMountDiskInfo(const QDiskInfo &diskInfo)
         qDebug() << url;
         sub->doSubscriberAction(url);
     }
+
+
 
 }
 
