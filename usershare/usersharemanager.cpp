@@ -60,6 +60,8 @@ UserShareManager::UserShareManager(QObject *parent) : QObject(parent)
 //    m_lazyStartSambaServiceTimer = new QTimer(this);
 //    m_lazyStartSambaServiceTimer->setSingleShot(true);
 //    m_lazyStartSambaServiceTimer->setInterval(3000);
+
+
     m_userShareInterface = new UserShareInterface("com.deepin.filemanager.daemon",
                                                                     "/com/deepin/filemanager/daemon/UserShareManager",
                                                                     QDBusConnection::systemBus(),

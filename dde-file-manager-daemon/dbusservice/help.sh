@@ -38,6 +38,10 @@ echo "=====usershare====="
 qdbusxml2cpp -i usershare/usersharemanager.h -c UserShareAdaptor -l UserShareManager -a dbusadaptor/usershare_adaptor usershare.xml
 qdbusxml2cpp -c UserShareInterface -p dbusinterface/usershare_interface usershare.xml
 
+echo "=====accesscontrol====="
+qdbusxml2cpp -i acesscontrol/acesscontrolmanager.h -c AcessControlAdaptor -l AcessControlManager -a dbusadaptor/acesscontrol_adaptor acesscontrol.xml
+qdbusxml2cpp -c AcessControlInterface -p dbusinterface/acesscontrol_interface acesscontrol.xml
+
 echo "=====usbformatter====="
 qdbusxml2cpp -i usbformatter/usbformatter.h -c UsbFormatterAdaptor -l UsbFormatter -a dbusadaptor/usbformatter_adaptor usbformatter.xml
 qdbusxml2cpp -c UsbFormatterInterface -p dbusinterface/usbformatter_interface usbformatter.xml

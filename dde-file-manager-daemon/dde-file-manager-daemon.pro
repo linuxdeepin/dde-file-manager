@@ -74,7 +74,10 @@ SOURCES += main.cpp \
     dbusservice/dbusinterface/usershare_interface.cpp \
     dbusservice/dbusinterface/usbformatter_interface.cpp \
     tag/tagmanagerdaemon.cpp \
-    dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.cpp
+    dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.cpp \
+    acesscontrol/acesscontrolmanager.cpp \
+    dbusservice/dbusadaptor/acesscontrol_adaptor.cpp \
+    dbusservice/dbusinterface/acesscontrol_interface.cpp
 
 HEADERS += \
     app/filemanagerdaemon.h \
@@ -110,7 +113,10 @@ HEADERS += \
     dbusservice/dbusinterface/usershare_interface.h \
     dbusservice/dbusinterface/usbformatter_interface.h \
     tag/tagmanagerdaemon.h \
-    dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.h
+    dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.h \
+    acesscontrol/acesscontrolmanager.h \
+    dbusservice/dbusadaptor/acesscontrol_adaptor.h \
+    dbusservice/dbusinterface/acesscontrol_interface.h
 
 target.path = /usr/bin
 
