@@ -74,7 +74,7 @@ public:
     static QString groupName(GroupName group);
     static GroupName groupFromName(const QString &name);
 
-    static const int minimumWidth = 100;
+    static const int minimumWidth = 120;
     static const int maximumWidth = 200;
 
 signals:

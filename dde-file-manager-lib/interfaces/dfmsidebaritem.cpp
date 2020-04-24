@@ -33,7 +33,7 @@ DFMSideBarItem::DFMSideBarItem(const QIcon &icon, const QString &text, const DUr
     setGroupName(groupName);
     this->setData(SidebarItem, ItemTypeRole);
     this->setData("none", ItemUseRegisteredHandlerRole);
-    setToolTip(text);
+    // setToolTip(text);
 }
 
 /*!
