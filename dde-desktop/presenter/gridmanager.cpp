@@ -954,38 +954,7 @@ public:
 
     void autoMergeItems(QStringList items)
     {
-        auto screenOrder = screenCode();
-        QTime t;
-        t.start();
-        qDebug() << "screen count" << screenOrder.size();
-        for (int screenNum : screenOrder) {
-            qDebug() << "arrange Num" << screenNum << items.size();
-            QMap<QPoint, QString> gridItems;
-            QMap<QString, QPoint> itemGrids;
-            if (!items.empty())
-            {
-                auto cellStatus = m_cellStatus.value(screenNum);
-                int coordHeight = screensCoordInfo.value(screenNum).second;
-                int i = 0;
-                for (; i < cellStatus.size() && !items.empty(); ++i) {
-                   QString item = items.takeFirst();
-                   QPoint pos(i / coordHeight, i % coordHeight);
-                   cellStatus[i] = true;
-                   gridItems.insert(pos, item);
-                   itemGrids.insert(item, pos);
-                   if(cellStatus.size() - 1 == i && m_screenFullStatus.contains(screenNum)){
-                        m_screenFullStatus.find(screenNum).value() = true;
-                   }
-                }
-                m_cellStatus.insert(screenNum, cellStatus);
-                qDebug() << "screen" << screenNum << "put item:" << i << "cell" << cellStatus.size();
-            }
-
-            m_gridItems.insert(screenNum,gridItems);
-            m_itemGrids.insert(screenNum,itemGrids);
-        }
-        qDebug() << "time " << t.elapsed() << "(ms) overlapItems " << items.size();
-        m_overlapItems = items;
+        arrange(items);
     }
 
     void arrange(QStringList sortedItems)
@@ -1732,7 +1701,14 @@ DUrl GridManager::getInitRootUrl()
 {
     setAutoMerge(d->autoMerge);
     if (d->autoMerge) {
-        return DUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER);
+        //刷新虚拟路径时是先查看是否已有展开状态,即使是初始化也得先检查
+        DUrl virtualExpandUrl = GridManager::instance()->getCurrentVirtualExpandUrl();
+        if(virtualExpandUrl.fragment().isEmpty()){
+            return DUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER);
+        }else {
+            return virtualExpandUrl;
+        }
+
     } else {
         // sa
         QString desktopPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
@@ -1750,6 +1726,7 @@ void GridManager::initGridItemsInfos()
 {
     DUrl fileUrl = getInitRootUrl();
     QScopedPointer<DFileSystemModel> tempModel(new DFileSystemModel(nullptr));
+
     QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl, QStringList(), tempModel->filters());
     d->clear();
 
