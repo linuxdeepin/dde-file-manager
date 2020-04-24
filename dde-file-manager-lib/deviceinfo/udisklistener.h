@@ -72,6 +72,7 @@ public:
 
     QMap<QString, UDiskDeviceInfoPointer> getAllDeviceInfos();
     QList<UDiskDeviceInfoPointer> getDeviceList();
+    QList<UDiskDeviceInfoPointer> getMountList();
 
     bool isDeviceFolder(const QString &path) const;
     bool isInDeviceFolder(const QString &path) const;
@@ -126,6 +127,7 @@ private:
     QMap<QString, DBlockDevice *> m_fsDevMap;
 
     QList<UDiskDeviceInfoPointer> m_list;
+    QList<UDiskDeviceInfoPointer> m_mountList;
     QMap<QString, UDiskDeviceInfoPointer> m_map;
     QMap<QString, QString> m_volumeLetters;
 

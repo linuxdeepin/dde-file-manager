@@ -261,6 +261,11 @@ QList<UDiskDeviceInfoPointer> UDiskListener::getDeviceList()
     return m_list;
 }
 
+QList<UDiskDeviceInfoPointer> UDiskListener::getMountList()
+{
+    return m_mountList;
+}
+
 bool UDiskListener::isDeviceFolder(const QString &path) const
 {
     for (int i = 0; i < m_list.size(); i++) {
@@ -479,6 +484,7 @@ void UDiskListener::addMountDiskInfo(const QDiskInfo &diskInfo)
         DAbstractFileWatcher::ghostSignal(DUrl(DEVICE_ROOT),
                                           &DAbstractFileWatcher::fileAttributeChanged,
                                           DUrl::fromDeviceId(device->getId()));
+        m_mountList.append(device);
         emit mountAdded(device);
     }
 
@@ -518,6 +524,7 @@ void UDiskListener::removeMountDiskInfo(const QDiskInfo &diskInfo)
         DAbstractFileWatcher::ghostSignal(DUrl(DEVICE_ROOT),
                                           &DAbstractFileWatcher::fileAttributeChanged,
                                           DUrl::fromDeviceId(device->getId()));
+        m_mountList.removeOne(device);
         emit mountRemoved(device);
     }
 }
