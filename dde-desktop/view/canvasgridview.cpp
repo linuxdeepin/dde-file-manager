@@ -432,7 +432,7 @@ void CanvasGridView::setAutoMerge(bool enabled)
         //this->setRootUrl(DUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER));
         //刷新虚拟路径时是先查看是否已有展开状态
         DUrl virtualExpandUrl = GridManager::instance()->getCurrentVirtualExpandUrl();
-        if(virtualExpandUrl.isEmpty()){
+        if(virtualExpandUrl.fragment().isEmpty()){
             this->setRootUrl(DUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER));
         }else {
             this->setRootUrl(virtualExpandUrl);
@@ -1735,7 +1735,14 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
         d->filesystemWatcher->deleteLater();
     }
 
-    if(m_screenName == ScreenMrg->primaryScreen()->name() && GridManager::instance()->doneInit())
+//    if(m_screenName == ScreenMrg->primaryScreen()->name() && GridManager::instance()->doneInit())
+//    {
+//        QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
+//                                                                                         QStringList(), model()->filters());
+//        GridManager::instance()->initAutoMerge(infoList);
+//        GridManager::instance()->setCurrentAllItems(infoList);
+//    }
+    if(fileUrl.scheme() == DFMMD_SCHEME && GridManager::instance()->doneInit())
     {
         QList<DAbstractFileInfoPointer> infoList = DFileService::instance()->getChildren(this, fileUrl,
                                                                                          QStringList(), model()->filters());

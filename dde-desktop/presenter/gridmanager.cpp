@@ -1763,17 +1763,13 @@ void GridManager::initGridItemsInfos()
         QPoint sort(sortRole,sortOrder);
         emit sigSyncOperation(soSort, sort);
     }
-
+    if(!d->m_doneInit){
+        d->m_doneInit = true;
+        //todo：考虑用此变量做刷新时的自动整理优化的，不太理想，后续优化看能否有更好的方式
+        //d->m_allItems = infoList;
+    }
     if(GridManager::instance()->autoMerge()){
-        if(!d->m_doneInit){
-            d->m_doneInit = true;
-            //todo：考虑用此变量做刷新时的自动整理优化的，不太理想，后续优化看能否有更好的方式
-            //d->m_allItems = infoList;
-            GridManager::instance()->initAutoMerge(infoList);
-        }else {
-            GridManager::instance()->initAutoMerge(infoList);
-            //GridManager::instance()->initAutoMerge(d->m_allItems);
-        }
+        GridManager::instance()->initAutoMerge(infoList);
     }
     else if (GridManager::instance()->autoArrange())
     {
