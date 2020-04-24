@@ -429,7 +429,14 @@ void CanvasGridView::setAutoMerge(bool enabled)
 {
     GridManager::instance()->setAutoMerge(enabled);
     if (enabled) {
-        this->setRootUrl(DUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER));
+        //this->setRootUrl(DUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER));
+        //刷新虚拟路径时是先查看是否已有展开状态
+        DUrl virtualExpandUrl = GridManager::instance()->getCurrentVirtualExpandUrl();
+        if(virtualExpandUrl.isEmpty()){
+            this->setRootUrl(DUrl(DFMMD_ROOT MERGEDDESKTOP_FOLDER));
+        }else {
+            this->setRootUrl(virtualExpandUrl);
+        }
     } else {
         // sa
         QString desktopPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
@@ -439,6 +446,9 @@ void CanvasGridView::setAutoMerge(bool enabled)
             QDir::home().mkpath(desktopPath);
         }
 
+        //复位成未展开的状态
+        DUrl clearUrl;
+        GridManager::instance()->setCurrentVirtualExpandUrl(DUrl(QUrl()));
         this->setRootUrl(desktopUrl);
     }
 }
@@ -1697,7 +1707,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
     });
     return true;
 #endif
-    if(GridManager::instance()->doneInit())
+    if(GridManager::instance()->doneInit() && GridManager::instance()->autoMerge())
         GridManager::instance()->setCurrentVirtualExpandUrl(url);
     DUrl fileUrl = url;
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, fileUrl);
@@ -1826,6 +1836,9 @@ bool CanvasGridView::setRootUrl(const DUrl &url)
                 virtualEntryExpandState[MergedDesktopController::entryTypeByName(oneEntry)] = true;
             }
         }
+        //虚拟路径展开后立即保存
+        if(GridManager::instance()->doneInit())
+            GridManager::instance()->setCurrentVirtualExpandUrl(url);
     }
 
     itemDelegate()->hideAllIIndexWidget();
