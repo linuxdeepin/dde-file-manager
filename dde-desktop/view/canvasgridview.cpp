@@ -336,9 +336,7 @@ void CanvasGridView::updateHiddenItems()
         GridManager::instance()->remove(m_screenNum, nonexistItem);
     }
 
-    if (GridManager::instance()->shouldArrange()) {
-        GridManager::instance()->reArrange();
-    }
+    GridManager::instance()->reArrange();
 }
 
 void CanvasGridView::setGeometry(const QRect &rect)
@@ -418,11 +416,6 @@ WId CanvasGridView::winId() const
     } else {
         return topLevelWidget()->winId();
     }
-}
-
-bool CanvasGridView::autoMerge() const
-{
-    return GridManager::instance()->autoMerge();
 }
 
 void CanvasGridView::setAutoMerge(bool enabled)
@@ -2460,7 +2453,7 @@ openEditor:
 
         /***************************************************************/
         //创建或者粘贴时保持之前的状态
-        if(autoMerge()){
+        if(GridManager::instance()->autoMerge()){
             DMD_TYPES toggleType = MergedDesktopController::checkUrlArrangedType(url);
             bool isExpand = virtualEntryExpandState[toggleType];
             if(isExpand){
@@ -2474,7 +2467,7 @@ openEditor:
                 model()->refresh();
             }
         }
-        if (GridManager::instance()->autoArrange()){ //重新排列
+        else if (GridManager::instance()->autoArrange()){ //重新排列
             this->delayArrage();
         }
 
@@ -2493,16 +2486,15 @@ openEditor:
             setCurrentIndex(QModelIndex());
         }
 
-        //重新排列
-        if (GridManager::instance()->autoArrange()){
+        //自动整理
+        if (GridManager::instance()->autoMerge()) {
+            GridManager::instance()->reArrange();
+        }
+        else if (GridManager::instance()->autoArrange()){ //重新排列
             this->delayArrage();
             return;
         }
 
-        //自动整理
-//        if (GridManager::instance()->autoMerge()) {
-//            GridManager::instance()->reArrange();
-//        }
     });
 
     connect(this->model(), &DFileSystemModel::requestSelectFiles,
@@ -3187,7 +3179,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
     QVector<MenuAction> actions;
     actions << MenuAction::NewFolder << MenuAction::NewDocument;
-    if(!autoMerge()){
+    if(!GridManager::instance()->autoMerge()){
         actions << MenuAction::SortBy;
     }
     actions << MenuAction::Paste
@@ -3236,7 +3228,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     menuAutoMerge.setText(tr("Auto merge"));
     menuAutoMerge.setData(AutoMerge);
     menuAutoMerge.setCheckable(true);
-    menuAutoMerge.setChecked(autoMerge());
+    menuAutoMerge.setChecked(GridManager::instance()->autoMerge());
     DGioSettings settings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
     if (settings.value("auto-merge").toBool()) {
         menu->insertAction(pasteAction, &menuAutoMerge);
@@ -3247,7 +3239,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     autoSort.setData(AutoSort);
     autoSort.setCheckable(true);
     autoSort.setChecked(GridManager::instance()->autoArrange());
-    if (!autoMerge()) {
+    if (!GridManager::instance()->autoMerge()) {
         menu->insertAction(pasteAction, &autoSort);
 
         //勾选当前使用的排序

@@ -122,7 +122,6 @@ public:
     QSize cellSize() const;
 
     WId winId() const;
-    bool autoMerge() const;
     void setAutoMerge(bool enabled = false);
     void toggleEntryExpandedState(const DUrl &url);
     void updateEntryExpandedState(const DUrl &url);

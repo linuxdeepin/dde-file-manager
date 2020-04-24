@@ -2249,7 +2249,7 @@ void GridManager::toggleAutoMerge()
 
 void GridManager::reArrange()
 {
-    if (autoArrange()){
+    if (shouldArrange()){
         d->reAutoArrage();
         emit sigSyncOperation(soUpdate);
         return;
@@ -2257,9 +2257,9 @@ void GridManager::reArrange()
 //    else  //to deletes
 //        d->arrange();
 
-    if (autoMerge()) {
-        return;
-    }
+//    if (autoMerge()) {
+//        return;
+//    }
 
     //d->syncProfile(screenNum);
 //    QPair<QStringList, QVariantList> kvList = d->generateProfileConfigVariable(screenNum);
